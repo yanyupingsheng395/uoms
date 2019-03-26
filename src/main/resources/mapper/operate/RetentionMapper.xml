@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.RetentionMapper">
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.Retention">
+        <result column="date_time" jdbcType="VARCHAR" property="dateTime"/>
+        <result column="month0" jdbcType="VARCHAR" property="month0"/>
+        <result column="month1" jdbcType="VARCHAR" property="month1"/>
+        <result column="month2" jdbcType="VARCHAR" property="month2"/>
+        <result column="month3" jdbcType="VARCHAR" property="month3"/>
+        <result column="month4" jdbcType="VARCHAR" property="month4"/>
+        <result column="month5" jdbcType="VARCHAR" property="month5"/>
+        <result column="month6" jdbcType="VARCHAR" property="month6"/>
+    </resultMap>
+
+    <select id="findMonthDataByDate" resultMap="BaseResultMap">
+        WITH rt as(
+        select
+        min_month,
+        sum(case when month_diff = 0 then 1 else 0 end) month_0,
+        sum(case when month_diff = 1 then 1 else 0 end) month_1,
+        sum(case when month_diff = 2 then 1 else 0 end) month_2,
+        sum(case when month_diff = 3 then 1 else 0 end) month_3,
+        sum(case when month_diff = 4 then 1 else 0 end) month_4,
+        sum(case when month_diff = 5 then 1 else 0 end) month_5,
+        sum(case when month_diff = 6 then 1 else 0 end) month_6
+        from
+        (
+        SELECT
+        u1.user_id,
+        u1.buy_month,
+        u2.min_month,
+        months_between(to_date(u1.buy_month,'yyyymm'), to_date(u2.min_month,'yyyymm')) month_diff
+        FROM
+        ( SELECT month buy_month,
+        t.user_id
+        FROM w_ORDERS t,w_date dt where t.valid_status=1
+        and dt.month &gt;= #{startDate}
+        and dt.month &lt;= #{endDate}
+        and t.order_dt_wid=dt.row_wid ) u1,
+
+        --获取此区间内每个用户的最小购买月份（首次购买发生的月份）
+        (SELECT min(month) min_month,
+        t.user_id
+        FROM w_ORDERS t,w_date dt where t.valid_status=1
+        and dt.month &gt;= #{startDate}
+        and dt.month &lt;= #{endDate}
+        and t.order_dt_wid=dt.row_wid
+        group by t.user_id) u2
+        where u1.user_id=u2.user_id(+)
+        ) group by min_month
+        ),
+        rt2 as
+        (select min_month month_id,
+        month_0 month0,
+        (case when month_0=0 then 0 else round(month_1/month_0,4)*100 end) month1,
+        (case when month_0=0 then 0 else round(month_2/month_0,4)*100 end) month2,
+        (case when month_0=0 then 0 else round(month_3/month_0,4)*100 end) month3,
+        (case when month_0=0 then 0 else round(month_4/month_0,4)*100 end) month4,
+        (case when month_0=0 then 0 else round(month_5/month_0,4)*100 end) month5,
+        (case when month_0=0 then 0 else round(month_6/month_0,4)*100 end) month6
+        from rt)
+        select
+        dt.month date_time,
+        nvl(rt2.month0,0) month0,
+        nvl(rt2.month1,0) month1,
+        nvl(rt2.month2,0) month2,
+        nvl(rt2.month3,0) month3,
+        nvl(rt2.month4,0) month4,
+        nvl(rt2.month5,0) month5,
+        nvl(rt2.month6,0) month6
+        from rt2,
+        (select distinct month from w_date where month &gt;= #{startDate} and month &lt;= #{endDate}) dt
+        where
+        rt2.month_id(+)=dt.month
+        order by dt.month
+    </select>
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.WeightIndexMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.WeightIndex">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="YEAR_ID" jdbcType="DECIMAL" property="yearId" />
+    <result column="MONTH_ID" jdbcType="DECIMAL" property="monthId" />
+    <result column="INDEX_VALUE" jdbcType="DECIMAL" property="indexValue" />
+    <result column="INDEX_TYPE" jdbcType="VARCHAR" property="indexType" />
+  </resultMap>
+
+  <select id="getWeightIndex" resultMap="BaseResultMap">
+    select * from UO_WEIGHT_INDEX where YEAR_ID = #{year} order by MONTH_ID asc
+  </select>
+</mapper>

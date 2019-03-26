@@ -1,0 +1,109 @@
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title" style="padding:1rem 0">修改目标：</h2>
+    </div>
+    <div class="card-block">
+        <div class="row">
+            <div class="col-md-12">
+                <h5 class="card-title" style="padding:1rem 0">参考数据</h5>
+                <table id="historyDataTable" class="table table-hover table-bordered table-striped"></table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form class="menu-table-form">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">年份：</span>
+                                <div class="form-group">
+                                    <input id="gmvTarget" type="text" class="form-control" style="width: 150px;" value="2019">
+                                    <i class="form-group__bar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">GMV目标值：</span>
+                                <div class="form-group">
+                                    <input id="gmvTarget" type="text" class="form-control" style="width: 150px;" value="225">
+                                    <i class="form-group__bar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="input-group">
+                                <span class="input-group-addon">目标相比上年增长率：</span>
+                                <div class="form-group">
+                                    <input id="targetRate" type="text" class="form-control" style="width: 150px;" value="30%">
+                                    <i class="form-group__bar"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="margin-top: 40px;">
+                <div style="float:left;"><h5>详细数据</h5></div>
+                <div class="btn btn-outline-success" style="float:right;" onclick="save()">保存</div>
+                <div class="btn btn-outline-primary" style="float:right;margin-right: 10px;" onclick="edit()">编辑</div>
+                <table class="table table-hover table-bordered table-striped" id="planDetailData"></table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p>合计 22,620,02.00 与年度目标总额相差 10,000元</p>
+                <p><span class="zmdi zmdi zmdi-dot-circle"></span>&nbsp;保持我目前设置的各月的目标值不变，与年度目标总额的差额更新到总额上</p>
+                <p><span class="zmdi zmdi zmdi-dot-circle"></span>&nbsp;不变更年度目标，将与年度目标总额的差额根据权重指数分摊到各月</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    getYearHistory();
+    function getYearHistory() {
+        var year = '2019';
+        $('#historyDataTable').bootstrapTable({
+            url: '/gmvplan/getYearHistory?year=' + year,
+            striped: true,
+            uniqueId: 'attrValue',
+            columns: [{
+                title: '月份',
+                field: 'yearId'
+            },{
+                title: 'GMV值',
+                field: 'gmvValue'
+            },{
+                title: 'GMV增长率',
+                field: 'gmvRate'
+            }]
+        });
+    }
+    getPlanDetail();
+    function getPlanDetail() {
+        var year = "2019";
+        $('#planDetailData').bootstrapTable({
+            url: '/gmvplan/getPlanDetail?year=' + year,
+            striped: true,
+            uniqueId: 'attrValue',
+            columns: [{
+                title: '月份',
+                field: 'monthId'
+            },{
+                title: 'GMV值',
+                field: 'gmvValue'
+            },{
+                title: 'GMV目标占全年比例',
+                field: 'gmvPct'
+            },{
+                title: '上年同月GMV值',
+                field: 'gmvTb'
+            },{
+                title: '同比上年同比增长额',
+                field: 'gmvTbRate'
+            }]
+        });
+    }
+</script>

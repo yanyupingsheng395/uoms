@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.PlanDetailMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.PlanDetail">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="PLAN_DETAIL_ID" jdbcType="DECIMAL" property="planDetailId" />
+    <result column="PLAN_ID" jdbcType="DECIMAL" property="planId" />
+    <result column="YEAR_ID" jdbcType="DECIMAL" property="yearId" />
+    <result column="MONTH_ID" jdbcType="DECIMAL" property="monthId" />
+    <result column="GMV_VALUE" jdbcType="DECIMAL" property="gmvValue" />
+    <result column="GMV_PCT" jdbcType="DECIMAL" property="gmvPct" />
+    <result column="GMV_TB" jdbcType="DECIMAL" property="gmvTb" />
+    <result column="GMV_TB_RATE" jdbcType="DECIMAL" property="gmvTbRate" />
+    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+    <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+  </resultMap>
+
+  <select id="getPlanDetail" resultMap="BaseResultMap">
+    select * from UO_GMV_PLAN_DETAIL where YEAR_ID = #{year} order by MONTH_ID asc
+  </select>
+</mapper>
