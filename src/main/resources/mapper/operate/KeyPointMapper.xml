@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.KeyPointMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.KeyPointMonth">
+    <result column="MONTH_ID" jdbcType="INTEGER" property="monthId" />
+    <result column="GMV_ACTUAL" jdbcType="DOUBLE" property="gmvActual" />
+    <result column="GMV_TARGET" jdbcType="DOUBLE" property="gmvTarget" />
+    <result column="GMV_CMP_RATE" jdbcType="DOUBLE" property="gmvCmpRate" />
+    <result column="GMV_CMP_TOTALRATE" jdbcType="DOUBLE" property="getGmvCmpTotalRate" />
+    <result column="TIME_RATE" jdbcType="DOUBLE" property="timeRate" />
+    <result column="GMV_LASTMONTH" jdbcType="DOUBLE" property="gmvLastMonth" />
+    <result column="GMV_LASTMONTH_DIFF" jdbcType="DOUBLE" property="gmvLastMonthDiff" />
+    <result column="GMV_LASTMONTH_RATE" jdbcType="DOUBLE" property="gmvLastMonthRate" />
+    <result column="GMV_PREMONTH" jdbcType="DOUBLE" property="gmvPreMonth" />
+    <result column="GMV_PREMONTH_DIFF" jdbcType="DOUBLE" property="gmvPreMonthDiff" />
+    <result column="GMV_PREMONTH_RATE" jdbcType="DOUBLE" property="gmvPreMonthRate" />
+    <result column="COST_MONTH" jdbcType="DOUBLE" property="costMonth" />
+    <result column="INCOME_MONTH" jdbcType="DOUBLE" property="incomeMonth" />
+    <result column="PROFIT_RATE" jdbcType="DOUBLE" property="profitRate" />
+    <result column="PROFIT_ALERT_RATE" jdbcType="DOUBLE" property="profitAlertRate" />
+    <result column="COST_HEALTH_FLAG" jdbcType="VARCHAR" property="costHealthFlag" />
+  </resultMap>
+
+  <resultMap id="keyPointYear" type="com.linksteady.operate.domain.KeyPointYear">
+    <result column="YEAR_ID" jdbcType="INTEGER" property="yearId" />
+
+    <result column="GMV_TARGET" jdbcType="DOUBLE" property="gmvActual" />
+    <result column="GMV_ACTUAL" jdbcType="DOUBLE" property="gmvTarget" />
+    <result column="GMV_CMP_RATE" jdbcType="DOUBLE" property="gmvCmpRate" />
+    <result column="GMV_CMP_TOTALRATE" jdbcType="DOUBLE" property="getGmvCmpTotalRate" />
+    <result column="TIME_RATE" jdbcType="DOUBLE" property="timeRate" />
+    <result column="GMV_PREYEAR" jdbcType="DOUBLE" property="gmvPreYear" />
+    <result column="GMV_PREYEAR_DIFF" jdbcType="DOUBLE" property="gmvPreYearDiff" />
+    <result column="GMV_PREYEAR_RATE" jdbcType="DOUBLE" property="gmvPreYearRate" />
+    <result column="COST_YEAR" jdbcType="DOUBLE" property="costYear" />
+    <result column="INCOME_YEAR" jdbcType="DOUBLE" property="incomeYear" />
+    <result column="PROFIT_RATE" jdbcType="DOUBLE" property="profitRate" />
+    <result column="PROFIT_ALERT_RATE" jdbcType="DOUBLE" property="profitAlertRate" />
+    <result column="COST_HEALTH_FLAG" jdbcType="VARCHAR" property="costHealthFlag" />
+
+    <result column="VOLATILITY" jdbcType="DOUBLE" property="volatility" />
+    <result column="REACH_NUM" jdbcType="INTEGER" property="reachNum" />
+    <result column="UNREACH_NUM" jdbcType="INTEGER" property="unreachNum" />
+    <result column="ONGOING_NUM" jdbcType="INTEGER" property="ongoingNum" />
+    <result column="NOSTART_NUM" jdbcType="INTEGER" property="nostartNum" />
+  </resultMap>
+
+  <select id="getKeyPointMonthData" resultMap="BaseResultMap">
+    select
+      MONTH_ID,
+      GMV_ACTUAL,
+      GMV_TARGET,
+      GMV_CMP_RATE,
+      GMV_CMP_TOTALRATE,
+      TIME_RATE,
+      GMV_LASTMONTH,
+      GMV_LASTMONTH_DIFF,
+      GMV_LASTMONTH_RATE,
+      GMV_PREMONTH,
+      GMV_PREMONTH_DIFF,
+      GMV_PREMONTH_RATE,
+      COST_MONTH,
+      INCOME_MONTH,
+      PROFIT_RATE,
+      PROFIT_ALERT_RATE,
+      COST_HEALTH_FLAG
+    FROM UO_MONTH_KEYPOINT
+   where MONTH_ID = #{month}
+  </select>
+
+  <select id="getGMVByDay" resultType="map">
+    select day_id,gmv_value,gmv_tqz from UO_DAY_HISTORY where MONTH_ID = #{month}
+  </select>
+
+  <select id="getKeyPointYearData" resultMap="keyPointYear">
+    select
+      YEAR_ID,
+      GMV_TARGET,
+      GMV_ACTUAL,
+      GMV_CMP_RATE,
+      GMV_CMP_TOTALRATE,
+      TIME_RATE,
+      GMV_PREYEAR,
+      GMV_PREYEAR_DIFF,
+      GMV_PREYEAR_RATE,
+      COST_YEAR,
+      INCOME_YEAR,
+      PROFIT_RATE,
+      PROFIT_ALERT_RATE,
+      COST_HEALTH_FLAG,
+      VOLATILITY,
+      REACH_NUM,
+      UNREACH_NUM,
+      ONGOING_NUM,
+      NOSTART_NUM
+    FROM UO_YEAR_KEYPOINT
+    where YEAR_ID = #{year}
+  </select>
+
+  <select id="getGMVTrendByMonth" resultType="map">
+    select MONTH_ID,GMV_VALUE from UO_MONTH_HISTORY WHERE YEAR_ID=#{year}
+  </select>
+
+  <select id="getGMVCompareByMonth" resultType="map">
+    select MONTH_ID,GMV_ACTUAL,GMV_TARGET from UO_MONTH_KEYPOINT WHERE YEAR_ID=#{year} ORDER BY MONTH_ID ASC
+  </select>
+
+  <select id="getProfitRateByMonth"  resultType="map">
+    select month_id,profit_rate from UO_MONTH_KEYPOINT where YEAR_ID=#{year} order by month_id asc
+  </select>
+
+  <select id="getKeypointHint" resultType="map">
+    SELECT HINT_INFO,HINT_TYPE FROM UO_KEYPOINT_HINTINFO WHERE YEAR_ID=#{periodvalue} AND MONTH_ID IS NULL ORDER BY ORDER_NO ASC
+  </select>
+
+  <select id="getKeypointHintByMonth" resultType="map">
+    SELECT HINT_INFO,HINT_TYPE FROM UO_KEYPOINT_HINTINFO WHERE MONTH_ID=#{periodvalue} ORDER BY ORDER_NO ASC
+  </select>
+ </mapper>
