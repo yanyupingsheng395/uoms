@@ -6,15 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="edge" />
     <title>用户运营平台</title>
     <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
-    <link rel="stylesheet" th:href="@{css/login.css}" type="text/css">
-    <link rel="stylesheet" th:href="@{css/iCheck/minimal/green.css}" type="text/css">
-    <link rel="stylesheet" th:href="@{css/app.css}" type="text/css">
-    <!-- animate -->
-    <link rel="stylesheet" th:href="@{css/animate/animate.min.css}" type="text/css">
-    <script th:src="@{js/jquery.min.js}"></script>
-    <script th:src="@{js/iCheck/icheck.js}"></script>
-    <script th:src="@{js/bootstrap-notify/bootstrap-notify.min.js}"></script>
-    <script th:src="@{js/common.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/login.css}" type="text/css">
+    <script data-th-src="@{/js/common/jquery.min.js}"></script>
 </head>
 <style>
 
@@ -44,8 +37,5 @@
     </div>
     <div data-th-include="common/footer"></div>
 </body>
-<script th:inline="javascript">
-	var ctx = [[@{/}]];
-</script>
-<script data-th-src="@{js/app/login.js}"></script>
+<script data-th-src="@{/js/app/login.js}"></script>
 </html>

@@ -16,8 +16,8 @@ public class RetentionServiceImpl implements RetentionService {
 
     @Override
     public List<Retention> findMonthDataByDate(String startDate, String endDate) {
-        startDate = startDate.replaceAll("/", "");
-        endDate = endDate.replaceAll("/", "");
+        startDate = startDate.replaceAll("-", "");
+        endDate = endDate.replaceAll("-", "");
         List<Retention> retentionList = retentionMapper.findMonthDataByDate(startDate, endDate);
         retentionList.stream().forEach(retention -> {
             String month0 = retention.getMonth0().equals("0") ? "" : retention.getMonth0();
