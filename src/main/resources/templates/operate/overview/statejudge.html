@@ -1,45 +1,79 @@
-<style>
-    tr{border-top:1px solid #eee;font-size:1rem}tr:last-child{border-bottom:1px solid #eee}tr:hover{background:#fafafa!important}
-</style>
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title" style="padding:1rem 0">用户增长阶段识别：</h2>
-    </div>
-    <div class="card-block">
-        <div id="container" style="height:310px">
-            <table class="table table-hover table-bordered table-striped"
-                   style="word-break: break-all; word-wrap: break-word;">
-                <thead>
-                    <tr>
-                        <th></th> <th></th> <th>用户数占比</th> <th>销售贡献率</th> <th>销售额增长率</th> <th>用户数增长率</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td rowspan="2">新客户</td><td>新客期用户</td>
-                        <td></td><td></td><td></td><td></td>
-                    </tr>
-                    <tr>
-                        <td>成长期用户</td>
-                        <td></td><td></td><td></td><td></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="3">老客户</td><td>成熟期用户</td>
-                        <td></td><td></td><td></td><td></td>
-                    </tr>
-                    <tr>
-                        <td>衰退期用户</td>
-                        <td></td><td></td><td></td><td></td>
-                    </tr>
-                    <tr>
-                        <td>流失期用户</td>
-                        <td></td><td></td><td></td><td></td>
-                    </tr>
-                </tbody>
-            </table>
-            <div>
-                <span class="zmdi zmdi-notifications" style="width: 15px;height: 15px;color: dodgerblue;font-size: 1.2rem;"></span><span>老客的销售贡献率较低，建议提高老客的销售占比。</span>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户运营系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>用户增长阶段识别</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-bordered table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th th:colspan="2"></th> <th>用户数占比</th> <th>销售贡献率</th> <th>销售额增长率</th> <th>用户数增长率</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td rowspan="2" style="text-align: center; vertical-align: middle;">新客户</td><td>新客期用户</td>
+                                            <td>[[${stateJudge.nnUct}]]</td><td>[[${stateJudge.nnProfitRate}]]</td><td>[[${stateJudge.nnSalesRate}]]</td><td>[[${stateJudge.nnUctRate}]]</td>
+                                        </tr>
+                                        <tr>
+                                            <td>成长期用户</td>
+                                            <td>[[${stateJudge.niUct}]]</td><td>[[${stateJudge.niProfitRate}]]</td><td>[[${stateJudge.niSalesRate}]]</td><td>[[${stateJudge.niUctRate}]]</td>
+                                        </tr>
+                                        <tr>
+                                            <td rowspan="3" style="text-align: center; vertical-align: middle;">老客户</td><td>成熟期用户</td>
+                                            <td>[[${stateJudge.omUct}]]</td><td>[[${stateJudge.omProfitRate}]]</td><td>[[${stateJudge.omSalesRate}]]</td><td>[[${stateJudge.omUctRate}]]</td>
+                                        </tr>
+                                        <tr>
+                                            <td>衰退期用户</td>
+                                            <td>[[${stateJudge.odUct}]]</td><td>[[${stateJudge.odProfitRate}]]</td><td>[[${stateJudge.odSalesRate}]]</td><td>[[${stateJudge.odUctRate}]]</td>
+                                        </tr>
+                                        <tr>
+                                            <td>流失期用户</td>
+                                            <td>[[${stateJudge.olUct}]]</td><td>[[${stateJudge.olProfitRate}]]</td><td>[[${stateJudge.olSalesRate}]]</td><td>[[${stateJudge.olUctRate}]]</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <div>
+                                        <i class="mdi mdi-bell mdi-18px" style="color: #383838;font-size: 1.2rem;"></i>
+                                        <span>老客的销售贡献率较低，建议提高老客的销售占比。</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </main>
     </div>
 </div>
+</body>
+</html>

@@ -1,27 +1,28 @@
-<style>
-.navigation { margin-left: 0px; height: 80%; }
-.navigation div { padding-left: 1px; }
-.navigation div ul { overflow: hidden; display: none; height: auto; margin: 0; margin-left: -.8rem; }
-.navigation span { display: block; line-height: 25px; padding: .5rem .5rem; cursor: pointer; }
-.navigation span:hover { background-color: rgba(0, 0, 0, 0.03); }
-.navigation a { color: #333; text-decoration: none; }
-.navigation a:hover { color: #06F; }
-</style>
-<aside class="sidebar">
-    <div class="scrollbar-inner">
-        <div class="user">
-            <div class="user__info" data-toggle="dropdown">
-                <img class="user__img">
-                <div>
-                    <div class="user__name" data-th-utext="${user.username}"></div>
-                    <div class="user__email" data-th-utext="${user.email}"></div>
-                </div>
-            </div>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="#" id="user__profile">个人信息</a>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#update-password">修改密码</a>
-            </div>
-        </div>
-        <div id="navigation" class="navigation"></div>
+<!--左侧导航-->
+<aside class="lyear-layout-sidebar">
+    <!-- logo -->
+    <div id="logo" class="sidebar-header">
+        <a href="#"><img data-th-src="@{/images/logo.jpg}" title="LightYear" alt="LightYear" /></a>
+    </div>
+    <div class="lyear-layout-sidebar-scroll">
+        <nav class="sidebar-main">
+            <ul class="nav nav-drawer">
+                <li class="nav-item active"> <a href="index.html"><i class="mdi mdi-home"></i> 后台首页</a> </li>
+                <li class="nav-item nav-item-has-subnav">
+                    <a href="javascript:void(0)"><i class="mdi mdi-palette"></i>概览</a>
+                    <ul class="nav nav-subnav">
+                        <li> <a href="/stateJudge/index">用户概览</a> </li>
+                        <li> <a href="/retention/index">留存分析</a> </li>
+                    </ul>
+                </li>
+                <li class="nav-item nav-item-has-subnav">
+                    <a href="javascript:void(0)"><i class="mdi mdi-collage"></i>目标定制与分解</a>
+                    <ul class="nav nav-subnav">
+                        <li> <a href="#">运营目标</a> </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
     </div>
 </aside>
+<!--End 左侧导航-->

@@ -1,85 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 
-<style>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户运营系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <!--时间选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
+    <!--日期选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+</head>
 
-    tr{border-top:1px solid #eee;font-size:1rem}tr:last-child{border-bottom:1px solid #eee}tr:hover{background:#fafafa!important}.table-condensed tr{border-top:0px;}.table-condensed tr:last-child{border-bottom:0px;}
-    #dataTable tr:first-child th{border-bottom:1px solid #cccccc}
-    #dataTable tr td:first-child{border-right:1px solid #cccccc}
-    #dataTable tr th:first-child{border-right:1px solid #cccccc}
-    #dataTable tr:first-child{border:0px}
-
-</style>
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title" style="padding:1rem 0">留存分析：</h2>
-    </div>
-    <div class="card-block">
-        <div id="container" style="height:auto;">
-            <div class="row">
-                <div class="col-sm-6 form-inline text-right">
-                    <div class="input-group" id="dateVal1">
-                        <span class="input-group-addon">日期:</span>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="startDate" style="width: 120px;">
-                            <i class="form-group__bar"></i>
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>留存分析</h4>
+                            </div>
+                            <div class="card-body">
+                                <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                                    <div class="form-group">
+                                        <input class="form-control js-datepicker m-b-10" type="text" id="startDate" name="startDate" data-date-format="yyyy-mm" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control js-datepicker m-b-10" type="text" id="endDate" name="endDate" data-date-format="yyyy-mm" />
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-default m-b-10" type="submit">查询</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-
-                        <div class="form-group">
-                            <span>&nbsp;-&nbsp;</span>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="endDate" style="width: 120px;">
-                            <i class="form-group__bar"></i>
-                        </div>
-                    </div>
-                    <div class="dataTables_buttons hidden-sm-down actions">
-                        <span class="actions__item zmdi zmdi-search" onclick="search()" title="查询"></span>
                     </div>
                 </div>
             </div>
-            <table class="table table-hover" id="dataTable"
-                   style="word-break: break-all; word-wrap: break-word;">
-                <thead>
-                <tr>
-                    <th>月份</th> <th>用户数</th> <th>+1月</th> <th>+2月</th> <th>+3月</th> <th>+4月</th><th>+5月</th> <th>+6月</th>
-                </tr>
-                </thead>
-                <tbody id="dataList"></tbody>
-            </table>
-        </div>
+        </main>
     </div>
 </div>
+<!--时间选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/moment.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/locale/zh-cn.js}"></script>
+<!--日期选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
 <script>
-    init();
-    function init() {
-        $MB.initDatePicker('dateVal1', 'month','startDate', 'endDate');
-        $("#startDate").val(date_init());
-        search();
-    }
-    function search() {
-        $.post("/retention/list", {startDate: $("#startDate").val(), endDate: $("#endDate").val()}, function(r) {
-            var htmlCode = "";
-            $.each(r, function (k, v) {
-                htmlCode += "<tr><td>" + v.dateTime + "</td>" +
-                    "<td>" + v.month0 + "</td>" +
-                    "<td>" + v.month1 + "</td>" +
-                    "<td>" + v.month2 + "</td>" +
-                    "<td>" + v.month3 + "</td>" +
-                    "<td>" + v.month4 + "</td>" +
-                    "<td>" + v.month5 + "</td>" +
-                    "<td>" + v.month6 + "</td>" +
-                    "</tr>";
-            });
-            $("#dataList").html("").html(htmlCode);
-            $("#dataTable").find("tr:eq(0)").find("td").css("style", "border-top:1px solid red");
-        });
-    }
-    function date_init(){
-        var d = new Date();
-        d.setMonth(d.getMonth() - 7);
-        var curr_month = d.getMonth() + 1;
-        var curr_year = d.getFullYear();
-        String(curr_month).length < 2 ? (curr_month = "0" + curr_month): curr_month;
-        var formatStr = curr_year + "/" + curr_month;
-        return formatStr;
-    }
+    //选择年月的
+    $('#startDate').datetimepicker({
+        format: 'yyyymm',
+        weekStart: 1,
+        autoclose: true,
+        startView: 3,
+        minView: 3,
+        forceParse: false,
+        language: 'cn'
+    });
 </script>
+</body>
+</html>

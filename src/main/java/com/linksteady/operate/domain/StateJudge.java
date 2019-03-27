@@ -8,121 +8,121 @@ public class StateJudge {
      * 新客户_新客期_销售贡献率
      */
     @Column(name = "NN_PROFIT_RATE")
-    private Short nnProfitRate;
+    private Long nnProfitRate;
 
     /**
      * 新客户_新客期_销售额增长率
      */
     @Column(name = "NN_SALES_RATE")
-    private Short nnSalesRate;
+    private Long nnSalesRate;
 
     /**
      * 新客户_新客期_用户数增长率
      */
     @Column(name = "NN_UCT_RATE")
-    private Short nnUctRate;
+    private Long nnUctRate;
 
     /**
      * 新客户_新客期用户数占比
      */
     @Column(name = "NN_UCT")
-    private Short nnUct;
+    private Long nnUct;
 
     /**
      * 新客户_成长期_销售贡献率
      */
     @Column(name = "NI_PROFIT_RATE")
-    private Short niProfitRate;
+    private Long niProfitRate;
 
     /**
      * 新客户_成长期_销售额增长率
      */
     @Column(name = "NI_SALES_RATE")
-    private Short niSalesRate;
+    private Long niSalesRate;
 
     /**
      * 新客户_成长期_用户数增长率
      */
     @Column(name = "NI_UCT_RATE")
-    private Short niUctRate;
+    private Long niUctRate;
 
     /**
      * 新客户_成长期用户数占比
      */
     @Column(name = "NI_UCT")
-    private Short niUct;
+    private Long niUct;
 
     /**
      * 老客户_成熟期_销售贡献率
      */
     @Column(name = "OM_PROFIT_RATE")
-    private Short omProfitRate;
+    private Long omProfitRate;
 
     /**
      * 老客户_成熟期_销售额增长率
      */
     @Column(name = "OM_SALES_RATE")
-    private Short omSalesRate;
+    private Long omSalesRate;
 
     /**
      * 老客户_成熟期_用户数增长率
      */
     @Column(name = "OM_UCT_RATE")
-    private Short omUctRate;
+    private Long omUctRate;
 
     /**
      * 老客户_成熟期用户数占比
      */
     @Column(name = "OM_UCT")
-    private Short omUct;
+    private Long omUct;
 
     /**
      * 老客户_衰退期_销售贡献率
      */
     @Column(name = "OD_PROFIT_RATE")
-    private Short odProfitRate;
+    private Long odProfitRate;
 
     /**
      * 老客户_衰退期_销售额增长率
      */
     @Column(name = "OD_SALES_RATE")
-    private Short odSalesRate;
+    private Long odSalesRate;
 
     /**
      * 老客户_衰退期_用户数增长率
      */
     @Column(name = "OD_UCT_RATE")
-    private Short odUctRate;
+    private Long odUctRate;
 
     /**
      * 老客户_衰退期用户数占比
      */
     @Column(name = "OD_UCT")
-    private Short odUct;
+    private Long odUct;
 
     /**
      * 老客户_流失期_销售贡献率
      */
     @Column(name = "OL_PROFIT_RATE")
-    private Short olProfitRate;
+    private Long olProfitRate;
 
     /**
      * 老客户_流失期_销售额增长率
      */
     @Column(name = "OL_SALES_RATE")
-    private Short olSalesRate;
+    private Long olSalesRate;
 
     /**
      * 老客户_流失期_用户数增长率
      */
     @Column(name = "OL_UCT_RATE")
-    private Short olUctRate;
+    private Long olUctRate;
 
     /**
      * 老客户_流失期用户数占比
      */
     @Column(name = "OL_UCT")
-    private Short olUct;
+    private Long olUct;
 
     /**
      * 结论提示文本
@@ -134,14 +134,14 @@ public class StateJudge {
      * 月
      */
     @Column(name = "MONTH_ID")
-    private Short monthId;
+    private Long monthId;
 
     /**
      * 获取新客户_新客期_销售贡献率
      *
      * @return NN_PROFIT_RATE - 新客户_新客期_销售贡献率
      */
-    public Short getNnProfitRate() {
+    public Long getNnProfitRate() {
         return nnProfitRate;
     }
 
@@ -150,7 +150,7 @@ public class StateJudge {
      *
      * @param nnProfitRate 新客户_新客期_销售贡献率
      */
-    public void setNnProfitRate(Short nnProfitRate) {
+    public void setNnProfitRate(Long nnProfitRate) {
         this.nnProfitRate = nnProfitRate;
     }
 
@@ -159,7 +159,7 @@ public class StateJudge {
      *
      * @return NN_SALES_RATE - 新客户_新客期_销售额增长率
      */
-    public Short getNnSalesRate() {
+    public Long getNnSalesRate() {
         return nnSalesRate;
     }
 
@@ -168,7 +168,7 @@ public class StateJudge {
      *
      * @param nnSalesRate 新客户_新客期_销售额增长率
      */
-    public void setNnSalesRate(Short nnSalesRate) {
+    public void setNnSalesRate(Long nnSalesRate) {
         this.nnSalesRate = nnSalesRate;
     }
 
@@ -177,7 +177,7 @@ public class StateJudge {
      *
      * @return NN_UCT_RATE - 新客户_新客期_用户数增长率
      */
-    public Short getNnUctRate() {
+    public Long getNnUctRate() {
         return nnUctRate;
     }
 
@@ -186,7 +186,7 @@ public class StateJudge {
      *
      * @param nnUctRate 新客户_新客期_用户数增长率
      */
-    public void setNnUctRate(Short nnUctRate) {
+    public void setNnUctRate(Long nnUctRate) {
         this.nnUctRate = nnUctRate;
     }
 
@@ -195,7 +195,7 @@ public class StateJudge {
      *
      * @return NN_UCT - 新客户_新客期用户数占比
      */
-    public Short getNnUct() {
+    public Long getNnUct() {
         return nnUct;
     }
 
@@ -204,7 +204,7 @@ public class StateJudge {
      *
      * @param nnUct 新客户_新客期用户数占比
      */
-    public void setNnUct(Short nnUct) {
+    public void setNnUct(Long nnUct) {
         this.nnUct = nnUct;
     }
 
@@ -213,7 +213,7 @@ public class StateJudge {
      *
      * @return NI_PROFIT_RATE - 新客户_成长期_销售贡献率
      */
-    public Short getNiProfitRate() {
+    public Long getNiProfitRate() {
         return niProfitRate;
     }
 
@@ -222,7 +222,7 @@ public class StateJudge {
      *
      * @param niProfitRate 新客户_成长期_销售贡献率
      */
-    public void setNiProfitRate(Short niProfitRate) {
+    public void setNiProfitRate(Long niProfitRate) {
         this.niProfitRate = niProfitRate;
     }
 
@@ -231,7 +231,7 @@ public class StateJudge {
      *
      * @return NI_SALES_RATE - 新客户_成长期_销售额增长率
      */
-    public Short getNiSalesRate() {
+    public Long getNiSalesRate() {
         return niSalesRate;
     }
 
@@ -240,7 +240,7 @@ public class StateJudge {
      *
      * @param niSalesRate 新客户_成长期_销售额增长率
      */
-    public void setNiSalesRate(Short niSalesRate) {
+    public void setNiSalesRate(Long niSalesRate) {
         this.niSalesRate = niSalesRate;
     }
 
@@ -249,7 +249,7 @@ public class StateJudge {
      *
      * @return NI_UCT_RATE - 新客户_成长期_用户数增长率
      */
-    public Short getNiUctRate() {
+    public Long getNiUctRate() {
         return niUctRate;
     }
 
@@ -258,7 +258,7 @@ public class StateJudge {
      *
      * @param niUctRate 新客户_成长期_用户数增长率
      */
-    public void setNiUctRate(Short niUctRate) {
+    public void setNiUctRate(Long niUctRate) {
         this.niUctRate = niUctRate;
     }
 
@@ -267,7 +267,7 @@ public class StateJudge {
      *
      * @return NI_UCT - 新客户_成长期用户数占比
      */
-    public Short getNiUct() {
+    public Long getNiUct() {
         return niUct;
     }
 
@@ -276,7 +276,7 @@ public class StateJudge {
      *
      * @param niUct 新客户_成长期用户数占比
      */
-    public void setNiUct(Short niUct) {
+    public void setNiUct(Long niUct) {
         this.niUct = niUct;
     }
 
@@ -285,7 +285,7 @@ public class StateJudge {
      *
      * @return OM_PROFIT_RATE - 老客户_成熟期_销售贡献率
      */
-    public Short getOmProfitRate() {
+    public Long getOmProfitRate() {
         return omProfitRate;
     }
 
@@ -294,7 +294,7 @@ public class StateJudge {
      *
      * @param omProfitRate 老客户_成熟期_销售贡献率
      */
-    public void setOmProfitRate(Short omProfitRate) {
+    public void setOmProfitRate(Long omProfitRate) {
         this.omProfitRate = omProfitRate;
     }
 
@@ -303,7 +303,7 @@ public class StateJudge {
      *
      * @return OM_SALES_RATE - 老客户_成熟期_销售额增长率
      */
-    public Short getOmSalesRate() {
+    public Long getOmSalesRate() {
         return omSalesRate;
     }
 
@@ -312,7 +312,7 @@ public class StateJudge {
      *
      * @param omSalesRate 老客户_成熟期_销售额增长率
      */
-    public void setOmSalesRate(Short omSalesRate) {
+    public void setOmSalesRate(Long omSalesRate) {
         this.omSalesRate = omSalesRate;
     }
 
@@ -321,7 +321,7 @@ public class StateJudge {
      *
      * @return OM_UCT_RATE - 老客户_成熟期_用户数增长率
      */
-    public Short getOmUctRate() {
+    public Long getOmUctRate() {
         return omUctRate;
     }
 
@@ -330,7 +330,7 @@ public class StateJudge {
      *
      * @param omUctRate 老客户_成熟期_用户数增长率
      */
-    public void setOmUctRate(Short omUctRate) {
+    public void setOmUctRate(Long omUctRate) {
         this.omUctRate = omUctRate;
     }
 
@@ -339,7 +339,7 @@ public class StateJudge {
      *
      * @return OM_UCT - 老客户_成熟期用户数占比
      */
-    public Short getOmUct() {
+    public Long getOmUct() {
         return omUct;
     }
 
@@ -348,7 +348,7 @@ public class StateJudge {
      *
      * @param omUct 老客户_成熟期用户数占比
      */
-    public void setOmUct(Short omUct) {
+    public void setOmUct(Long omUct) {
         this.omUct = omUct;
     }
 
@@ -357,7 +357,7 @@ public class StateJudge {
      *
      * @return OD_PROFIT_RATE - 老客户_衰退期_销售贡献率
      */
-    public Short getOdProfitRate() {
+    public Long getOdProfitRate() {
         return odProfitRate;
     }
 
@@ -366,7 +366,7 @@ public class StateJudge {
      *
      * @param odProfitRate 老客户_衰退期_销售贡献率
      */
-    public void setOdProfitRate(Short odProfitRate) {
+    public void setOdProfitRate(Long odProfitRate) {
         this.odProfitRate = odProfitRate;
     }
 
@@ -375,7 +375,7 @@ public class StateJudge {
      *
      * @return OD_SALES_RATE - 老客户_衰退期_销售额增长率
      */
-    public Short getOdSalesRate() {
+    public Long getOdSalesRate() {
         return odSalesRate;
     }
 
@@ -384,7 +384,7 @@ public class StateJudge {
      *
      * @param odSalesRate 老客户_衰退期_销售额增长率
      */
-    public void setOdSalesRate(Short odSalesRate) {
+    public void setOdSalesRate(Long odSalesRate) {
         this.odSalesRate = odSalesRate;
     }
 
@@ -393,7 +393,7 @@ public class StateJudge {
      *
      * @return OD_UCT_RATE - 老客户_衰退期_用户数增长率
      */
-    public Short getOdUctRate() {
+    public Long getOdUctRate() {
         return odUctRate;
     }
 
@@ -402,7 +402,7 @@ public class StateJudge {
      *
      * @param odUctRate 老客户_衰退期_用户数增长率
      */
-    public void setOdUctRate(Short odUctRate) {
+    public void setOdUctRate(Long odUctRate) {
         this.odUctRate = odUctRate;
     }
 
@@ -411,7 +411,7 @@ public class StateJudge {
      *
      * @return OD_UCT - 老客户_衰退期用户数占比
      */
-    public Short getOdUct() {
+    public Long getOdUct() {
         return odUct;
     }
 
@@ -420,7 +420,7 @@ public class StateJudge {
      *
      * @param odUct 老客户_衰退期用户数占比
      */
-    public void setOdUct(Short odUct) {
+    public void setOdUct(Long odUct) {
         this.odUct = odUct;
     }
 
@@ -429,7 +429,7 @@ public class StateJudge {
      *
      * @return OL_PROFIT_RATE - 老客户_流失期_销售贡献率
      */
-    public Short getOlProfitRate() {
+    public Long getOlProfitRate() {
         return olProfitRate;
     }
 
@@ -438,7 +438,7 @@ public class StateJudge {
      *
      * @param olProfitRate 老客户_流失期_销售贡献率
      */
-    public void setOlProfitRate(Short olProfitRate) {
+    public void setOlProfitRate(Long olProfitRate) {
         this.olProfitRate = olProfitRate;
     }
 
@@ -447,7 +447,7 @@ public class StateJudge {
      *
      * @return OL_SALES_RATE - 老客户_流失期_销售额增长率
      */
-    public Short getOlSalesRate() {
+    public Long getOlSalesRate() {
         return olSalesRate;
     }
 
@@ -456,7 +456,7 @@ public class StateJudge {
      *
      * @param olSalesRate 老客户_流失期_销售额增长率
      */
-    public void setOlSalesRate(Short olSalesRate) {
+    public void setOlSalesRate(Long olSalesRate) {
         this.olSalesRate = olSalesRate;
     }
 
@@ -465,7 +465,7 @@ public class StateJudge {
      *
      * @return OL_UCT_RATE - 老客户_流失期_用户数增长率
      */
-    public Short getOlUctRate() {
+    public Long getOlUctRate() {
         return olUctRate;
     }
 
@@ -474,7 +474,7 @@ public class StateJudge {
      *
      * @param olUctRate 老客户_流失期_用户数增长率
      */
-    public void setOlUctRate(Short olUctRate) {
+    public void setOlUctRate(Long olUctRate) {
         this.olUctRate = olUctRate;
     }
 
@@ -483,7 +483,7 @@ public class StateJudge {
      *
      * @return OL_UCT - 老客户_流失期用户数占比
      */
-    public Short getOlUct() {
+    public Long getOlUct() {
         return olUct;
     }
 
@@ -492,7 +492,7 @@ public class StateJudge {
      *
      * @param olUct 老客户_流失期用户数占比
      */
-    public void setOlUct(Short olUct) {
+    public void setOlUct(Long olUct) {
         this.olUct = olUct;
     }
 
@@ -519,7 +519,7 @@ public class StateJudge {
      *
      * @return MONTH_ID - 月
      */
-    public Short getMonthId() {
+    public Long getMonthId() {
         return monthId;
     }
 
@@ -528,7 +528,7 @@ public class StateJudge {
      *
      * @param monthId 月
      */
-    public void setMonthId(Short monthId) {
+    public void setMonthId(Long monthId) {
         this.monthId = monthId;
     }
 }
