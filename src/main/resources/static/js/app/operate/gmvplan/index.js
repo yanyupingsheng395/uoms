@@ -43,10 +43,11 @@ $(function () {
             filed: 'button',
             title: '操作',
             formatter: function (value, row, index) {
+                var year = row.yearId;
                 if (row.status == "D") {
-                    return "<div class='btn btn-success' onclick='executeData('+row.yearId+')'>执行</div>&nbsp;<div class='btn btn-warning' onclick='modifyData('+row.yearId+')'>修改</div>&nbsp;<div class='btn btn-danger' onclick='deleteData('+row.yearId+')'>删除</div>";
+                    return "<div class='btn btn-success' onclick='executeData("+year+")'>执行</div>&nbsp;<div class='btn btn-warning' onclick='modifyData("+year+")'>修改</div>&nbsp;<div class='btn btn-danger' onclick='deleteData("+year+")'>删除</div>";
                 }else if (row.status == "C") {
-                    return "<a class='btn btn-primary' onclick='viewData('+row.yearId+')'>查看</a>&nbsp;<div class='btn btn-info' onclick='changeData('+row.yearId+')'>变更</div>";
+                    return "<a class='btn btn-primary' onclick='viewData("+year+")'>查看</a>&nbsp;<div class='btn btn-info' onclick='changeData("+year+")'>变更</div>";
                 }
             }
         }]
@@ -55,21 +56,45 @@ $(function () {
 });
 
 function executeData(year){
-
+    $.confirm({
+        title: '提示：',
+        content: '确定要执行此运营目标?执行状态的运营目标将会滚动计算，不允许再删除！',
+        buttons: {
+            confirm: {
+                text: '确认',
+                btnClass: 'btn-blue'
+            },
+            cancel: {
+                text: '取消'
+            }
+        }
+    });
 }
 
 function viewData(year){
-    $.post("/gmvplan/view", {year: year});
+    location.href = "/gmvplan/view?year=" + year
 }
 
 function changeData(year){
-
+    location.href = "/gmvplan/change?year=" + year
 }
 
 function deleteData(year){
-
+    $.confirm({
+        title: '提示：',
+        content: '是否删除目标数据？',
+        buttons: {
+            confirm: {
+                text: '确认',
+                btnClass: 'btn-blue',
+            },
+            cancel: {
+                text: '取消'
+            }
+        }
+    });
 }
 
 function modifyData(year){
-
+    location.href = "/gmvplan/edit?year=" + year
 }

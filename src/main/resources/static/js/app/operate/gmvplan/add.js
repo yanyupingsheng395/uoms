@@ -140,6 +140,7 @@ function confirmData() {
         buttons: {
             confirm: {
                 text: '确认',
+                btnClass: 'btn-blue',
                 action: function(){
                     overrideOldData();
                 }

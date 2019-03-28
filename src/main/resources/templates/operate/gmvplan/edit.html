@@ -1,70 +1,106 @@
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title" style="padding:1rem 0">修改目标：</h2>
-    </div>
-    <div class="card-block">
-        <div class="row">
-            <div class="col-md-12">
-                <h5 class="card-title" style="padding:1rem 0">参考数据</h5>
-                <table id="historyDataTable" class="table table-hover table-bordered table-striped"></table>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <form class="menu-table-form">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="input-group">
-                                <span class="input-group-addon">年份：</span>
-                                <div class="form-group">
-                                    <input id="gmvTarget" type="text" class="form-control" style="width: 150px;" value="2019">
-                                    <i class="form-group__bar"></i>
-                                </div>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户运营系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>修改目标</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 class="card-title">月度权重指数</h5>
+                                <table class="table table-bordered">
+                                    <tbody id="weightData"></tbody>
+                                </table>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="input-group">
-                                <span class="input-group-addon">GMV目标值：</span>
-                                <div class="form-group">
-                                    <input id="gmvTarget" type="text" class="form-control" style="width: 150px;" value="225">
-                                    <i class="form-group__bar"></i>
-                                </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 class="card-title">参考数据</h5>
+                                <table id="historyDataTable" class="table table-hover table-bordered table-striped"></table>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="input-group">
-                                <span class="input-group-addon">目标相比上年增长率：</span>
-                                <div class="form-group">
-                                    <input id="targetRate" type="text" class="form-control" style="width: 150px;" value="30%">
-                                    <i class="form-group__bar"></i>
+
+                        <div class="row" style="margin-top:20px;">
+                            <div class="col-md-12">
+                                <form class="form-horizontal" style="border: solid 1px #ccc;">
+                                    <div class="form-group" style="margin-top: 20px;">
+                                        <label class="col-md-3 control-label" for="yearId">目标年份：</label>
+                                        <div class="col-md-5">
+                                            <input class="form-control" readonly type="text" id="yearId" name="yearId" data-th-value="${year}"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label" for="gmvValue">GMV目标值：</label>
+                                        <div class="col-md-5">
+                                            <input class="form-control" readonly type="text" id="gmvValue" name="gmvValue" value="50"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label" for="gmvRate">目标相比上年增长率：</label>
+                                        <div class="col-md-5">
+                                            <input class="form-control" readonly type="text" id="gmvRate" name="gmvRate" value="0.25"/>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" style="margin-top: 40px;">
+                                <div style="float:left;"><h5>详细数据</h5></div>
+                                <div class="text-right" style="margin-top: 10px;">
+                                    <button class="btn btn-success" onclick="updateDetail()">保存</button>
                                 </div>
+                                <table class="table table-hover table-bordered table-striped" id="planDetailData"></table>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col-md-12">
+                                <p>合计 22,620,02.00 与年度目标总额相差 10,000元</p>
+                                <p><span class="mdi mdi-check-circle-outline"></span>&nbsp;保持我目前设置的各月的目标值不变，与年度目标总额的差额更新到总额上</p>
+                                <p><span class="mdi mdi-check-circle-outline"></span>&nbsp;不变更年度目标，将与年度目标总额的差额根据权重指数分摊到各月</p>
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12" style="margin-top: 40px;">
-                <div style="float:left;"><h5>详细数据</h5></div>
-                <div class="btn btn-outline-success" style="float:right;" onclick="save()">保存</div>
-                <div class="btn btn-outline-primary" style="float:right;margin-right: 10px;" onclick="edit()">编辑</div>
-                <table class="table table-hover table-bordered table-striped" id="planDetailData"></table>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <p>合计 22,620,02.00 与年度目标总额相差 10,000元</p>
-                <p><span class="zmdi zmdi zmdi-dot-circle"></span>&nbsp;保持我目前设置的各月的目标值不变，与年度目标总额的差额更新到总额上</p>
-                <p><span class="zmdi zmdi zmdi-dot-circle"></span>&nbsp;不变更年度目标，将与年度目标总额的差额根据权重指数分摊到各月</p>
-            </div>
-        </div>
+        </main>
     </div>
 </div>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
+<script data-th-src="@{/js/app/operate/gmvplan/index.js}"></script>
 <script>
+    var year = "[[${year}]]";
     getYearHistory();
     function getYearHistory() {
-        var year = '2019';
         $('#historyDataTable').bootstrapTable({
             url: '/gmvplan/getYearHistory?year=' + year,
             striped: true,
@@ -83,7 +119,6 @@
     }
     getPlanDetail();
     function getPlanDetail() {
-        var year = "2019";
         $('#planDetailData').bootstrapTable({
             url: '/gmvplan/getPlanDetail?year=' + year,
             striped: true,
@@ -103,7 +138,41 @@
             },{
                 title: '同比上年同比增长额',
                 field: 'gmvTbRate'
-            }]
+            }],
+            onLoadSuccess: function(){  //加载成功时执行
+                $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
+                    v.innerHTML = "<input type='text' name='newGmvValue' class='form-control' value='"+v.innerText+"'/>";
+                });
+            }
+        });
+    }
+
+    weight();
+    function weight() {
+        $.post("/gmvplan/getWeightIndex", {"year": year}, function (r) {
+            var htmlCode1 = "<tr>";
+            var htmlCode2 = "<tr>";
+            $.each(r, function (k, v) {
+                htmlCode1 += "<td>"+ v.monthId +"</td>";
+                htmlCode2 += "<td>"+ v.indexValue +"</td>";
+            });
+            htmlCode1 += "</tr>";
+            htmlCode2 += "</tr>";
+            $("#weightData").html("").html(htmlCode1 + htmlCode2);
+        });
+    }
+
+    function updateDetail() {
+        var json = new Array();
+        $("input[name='newGmvValue']").each(function() {
+            json.push($(this).val());
+        });
+        var year = "[[${year}]]";
+        $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
+            location.href = "/gmvplan/index";
+            alert("更新成功！");
         });
     }
 </script>
+</body>
+</html>

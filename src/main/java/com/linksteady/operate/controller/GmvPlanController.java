@@ -54,6 +54,18 @@ public class GmvPlanController extends BaseController {
         return "operate/gmvplan/view";
     }
 
+    @RequestMapping("/change")
+    public String change(String year, Model model) {
+        model.addAttribute("year", year);
+        return "operate/gmvplan/change";
+    }
+
+    @RequestMapping("/edit")
+    public String edit(String year, Model model) {
+        model.addAttribute("year", year);
+        return "operate/gmvplan/edit";
+    }
+
     @RequestMapping("/getYearHistory")
     @ResponseBody
     public List<YearHistory> getYearHistory(@RequestParam("year") String year) {
@@ -76,16 +88,6 @@ public class GmvPlanController extends BaseController {
     @ResponseBody
     public List<PlanDetail> getPlanDetail(@RequestParam("year") String year) {
         return gmvPlanService.getPlanDetail(year);
-    }
-
-    @RequestMapping("/modify")
-    public String modify() {
-        return "operate/gmvplan/edit";
-    }
-
-    @RequestMapping("/change")
-    public String change() {
-        return "operate/gmvplan/change";
     }
 
     @RequestMapping("/addPlanAndDetail")
