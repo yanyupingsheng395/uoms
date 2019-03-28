@@ -8,8 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.linksteady.common.annotation.ExportConfig;
-
 @Table(name = "t_role")
 public class Role implements Serializable {
 
@@ -21,15 +19,12 @@ public class Role implements Serializable {
 	private Long roleId;
 
 	@Column(name = "ROLE_NAME")
-	@ExportConfig(value = "角色")
 	private String roleName;
 
 	@Column(name = "REMARK")
-	@ExportConfig(value = "描述")
 	private String remark;
 
 	@Column(name = "CREATE_TIME")
-	@ExportConfig(value = "创建时间", convert = "c:TimeConvert")
 	private Date createTime;
 
 	@Column(name = "MODIFY_TIME")

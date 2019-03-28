@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.linksteady.common.annotation.ExportConfig;
 
 @Table(name = "t_log")
 public class SysLog implements Serializable {
@@ -22,35 +21,27 @@ public class SysLog implements Serializable {
 	private Long id;
 
 	@Column(name = "USERNAME")
-	@ExportConfig(value = "操作用户")
 	private String username;
 
 	@Column(name = "OPERATION")
-	@ExportConfig(value = "描述")
 	private String operation;
 
 	@Column(name = "TIME")
-	@ExportConfig(value = "耗时（毫秒）")
 	private Long time;
 
 	@Column(name = "METHOD")
-	@ExportConfig(value = "操作方法")
 	private String method;
 
 	@Column(name = "PARAMS")
-	@ExportConfig(value = "参数")
 	private String params;
 
 	@Column(name = "IP")
-	@ExportConfig(value = "IP地址")
 	private String ip;
 
 	@Column(name = "CREATE_TIME")
-	@ExportConfig(value = "操作时间", convert = "c:TimeConvert")
 	private Date createTime;
 
 	@Column(name = "LOCATION")
-	@ExportConfig(value = "地点")
 	private String location;
 	
 	// 用于搜索条件中的时间字段

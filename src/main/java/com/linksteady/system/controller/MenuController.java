@@ -4,7 +4,6 @@ import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Tree;
-import com.linksteady.common.util.FileUtils;
 import com.linksteady.system.domain.Menu;
 import com.linksteady.system.service.MenuService;
 import org.apache.commons.lang3.StringUtils;
@@ -108,29 +107,29 @@ public class MenuController extends BaseController {
         }
     }
 
-    @RequestMapping("menu/excel")
-    @ResponseBody
-    public ResponseBo menuExcel(Menu menu) {
-        try {
-            List<Menu> list = this.menuService.findAllMenus(menu);
-            return FileUtils.createExcelByPOIKit("菜单表", list, Menu.class);
-        } catch (Exception e) {
-            logger.error("带出菜单列表Excel失败", e);
-            return ResponseBo.error("导出Excel失败，请联系网站管理员！");
-        }
-    }
+//    @RequestMapping("menu/excel")
+//    @ResponseBody
+//    public ResponseBo menuExcel(Menu menu) {
+//        try {
+//            List<Menu> list = this.menuService.findAllMenus(menu);
+//            return FileUtils.createExcelByPOIKit("菜单表", list, Menu.class);
+//        } catch (Exception e) {
+//            logger.error("带出菜单列表Excel失败", e);
+//            return ResponseBo.error("导出Excel失败，请联系网站管理员！");
+//        }
+//    }
 
-    @RequestMapping("menu/csv")
-    @ResponseBody
-    public ResponseBo menuCsv(Menu menu) {
-        try {
-            List<Menu> list = this.menuService.findAllMenus(menu);
-            return FileUtils.createCsv("菜单表", list, Menu.class);
-        } catch (Exception e) {
-            logger.error("导出菜单列表Csv失败", e);
-            return ResponseBo.error("导出Csv失败，请联系网站管理员！");
-        }
-    }
+//    @RequestMapping("menu/csv")
+//    @ResponseBody
+//    public ResponseBo menuCsv(Menu menu) {
+//        try {
+//            List<Menu> list = this.menuService.findAllMenus(menu);
+//            return FileUtils.createCsv("菜单表", list, Menu.class);
+//        } catch (Exception e) {
+//            logger.error("导出菜单列表Csv失败", e);
+//            return ResponseBo.error("导出Csv失败，请联系网站管理员！");
+//        }
+//    }
 
     @RequestMapping("menu/checkMenuName")
     @ResponseBody

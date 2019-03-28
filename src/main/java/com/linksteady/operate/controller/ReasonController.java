@@ -6,6 +6,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.vo.KeyPointMonthVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,8 +30,8 @@ public class ReasonController  extends BaseController {
      * @return
      */
     @RequestMapping("/list")
-    public ResponseBo list(QueryRequest request) {
-        List<Map<String,Object>> result=reasonService.getReasonList(request.getPageNum()*request.getPageSize()+1, (request.getPageNum()+1)*request.getPageSize());
+    public ResponseBo list(@RequestBody  QueryRequest request) {
+        List<Map<String,Object>> result=reasonService.getReasonList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize());
 
         int totalCount= reasonService.getReasonTotalCount();
         return  ResponseBo.okOverPaging("",totalCount,result);

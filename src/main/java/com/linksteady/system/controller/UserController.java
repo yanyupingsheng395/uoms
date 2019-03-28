@@ -3,7 +3,6 @@ package com.linksteady.system.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.linksteady.common.util.FileUtils;
 import com.linksteady.common.util.MD5Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -76,45 +75,45 @@ public class UserController extends BaseController {
         return getDataTable(pageInfo);
     }
 
-    @RequestMapping("user/excel")
-    @ResponseBody
-    public ResponseBo userExcel(User user) {
-        try {
-            List<User> list = this.userService.findUserWithDept(user, null);
-            return FileUtils.createExcelByPOIKit("用户表", list, User.class);
-        } catch (Exception e) {
-            log.error("导出用户信息Excel失败", e);
-            return ResponseBo.error("导出Excel失败，请联系网站管理员！");
-        }
-    }
+//    @RequestMapping("user/excel")
+//    @ResponseBody
+//    public ResponseBo userExcel(User user) {
+//        try {
+//            List<User> list = this.userService.findUserWithDept(user, null);
+//            return FileUtils.createExcelByPOIKit("用户表", list, User.class);
+//        } catch (Exception e) {
+//            log.error("导出用户信息Excel失败", e);
+//            return ResponseBo.error("导出Excel失败，请联系网站管理员！");
+//        }
+//    }
+//
+//    @RequestMapping("user/csv")
+//    @ResponseBody
+//    public ResponseBo userCsv(User user) {
+//        try {
+//            List<User> list = this.userService.findUserWithDept(user, null);
+//            return FileUtils.createCsv("用户表", list, User.class);
+//        } catch (Exception e) {
+//            log.error("导出用户信息Csv失败", e);
+//            return ResponseBo.error("导出Csv失败，请联系网站管理员！");
+//        }
+//    }
 
-    @RequestMapping("user/csv")
-    @ResponseBody
-    public ResponseBo userCsv(User user) {
-        try {
-            List<User> list = this.userService.findUserWithDept(user, null);
-            return FileUtils.createCsv("用户表", list, User.class);
-        } catch (Exception e) {
-            log.error("导出用户信息Csv失败", e);
-            return ResponseBo.error("导出Csv失败，请联系网站管理员！");
-        }
-    }
-
-    @RequestMapping("user/regist")
-    @ResponseBody
-    public ResponseBo regist(User user) {
-        try {
-            User result = this.userService.findByName(user.getUsername());
-            if (result != null) {
-                return ResponseBo.warn("该用户名已被使用！");
-            }
-            this.userService.registUser(user);
-            return ResponseBo.ok();
-        } catch (Exception e) {
-            log.error("注册失败", e);
-            return ResponseBo.error("注册失败，请联系网站管理员！");
-        }
-    }
+//    @RequestMapping("user/regist")
+//    @ResponseBody
+//    public ResponseBo regist(User user) {
+//        try {
+//            User result = this.userService.findByName(user.getUsername());
+//            if (result != null) {
+//                return ResponseBo.warn("该用户名已被使用！");
+//            }
+//            this.userService.registUser(user);
+//            return ResponseBo.ok();
+//        } catch (Exception e) {
+//            log.error("注册失败", e);
+//            return ResponseBo.error("注册失败，请联系网站管理员！");
+//        }
+//    }
 
     @Log("更换主题")
     @RequestMapping("user/theme")
