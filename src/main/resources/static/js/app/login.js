@@ -3,11 +3,11 @@ function login() {
     var username = $(".one input[name='username']").val().trim();
     var password = $(".one input[name='password']").val().trim();
     if (username === "") {
-      //  tips("请输入用户名！");
+        // $MB.n_warning("请输入用户名！");
         return;
     }
     if (password === "") {
-      //  tips("请输入密码！");
+        // $MB.n_warning("请输入密码！");
         return;
     }
     $loginButton.html("").append("<div class='login-loder'><div class='line-scale'><div></div><div></div><div></div><div></div><div></div></div></div>");
@@ -20,10 +20,10 @@ function login() {
         },
         dataType: "json",
         success: function (r) {
-            if (r.code === 0) {
+            if (r.code === 200) {
                 location.href = '/index';
             } else {
-             //   tips(r.msg);
+                // $MB.n_warning(r.msg);
                 $loginButton.html("登录");
             }
         }
