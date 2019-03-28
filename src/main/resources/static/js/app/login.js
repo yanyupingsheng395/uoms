@@ -3,11 +3,11 @@ function login() {
     var username = $(".one input[name='username']").val().trim();
     var password = $(".one input[name='password']").val().trim();
     if (username === "") {
-        $MB.n_warning("请输入用户名！");
+      //  tips("请输入用户名！");
         return;
     }
     if (password === "") {
-        $MB.n_warning("请输入密码！");
+      //  tips("请输入密码！");
         return;
     }
     $loginButton.html("").append("<div class='login-loder'><div class='line-scale'><div></div><div></div><div></div><div></div><div></div></div></div>");
@@ -23,7 +23,7 @@ function login() {
             if (r.code === 0) {
                 location.href = '/index';
             } else {
-                $MB.n_warning(r.msg);
+             //   tips(r.msg);
                 $loginButton.html("登录");
             }
         }

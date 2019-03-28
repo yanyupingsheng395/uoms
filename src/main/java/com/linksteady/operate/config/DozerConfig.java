@@ -9,6 +9,7 @@ import java.util.List;
 
 @Configuration
 public class DozerConfig {
+
     @Bean(name = "org.dozer.Mapper")
     public DozerBeanMapper dozer() {
         //这里是配置文件的路径

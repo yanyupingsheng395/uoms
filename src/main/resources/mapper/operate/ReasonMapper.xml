@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.ReasonMapper">
+  <!--<resultMap id="BaseResultMap" type="com.linksteady.operate.domain.KeyPointMonth">-->
+    <!--<result column="MONTH_ID" jdbcType="INTEGER" property="monthId" />-->
+    <!--<result column="GMV_ACTUAL" jdbcType="DOUBLE" property="gmvActual" />-->
+    <!--<result column="GMV_TARGET" jdbcType="DOUBLE" property="gmvTarget" />-->
+    <!--<result column="GMV_CMP_RATE" jdbcType="DOUBLE" property="gmvCmpRate" />-->
+    <!--<result column="GMV_CMP_TOTALRATE" jdbcType="DOUBLE" property="getGmvCmpTotalRate" />-->
+    <!--<result column="TIME_RATE" jdbcType="DOUBLE" property="timeRate" />-->
+    <!--<result column="GMV_LASTMONTH" jdbcType="DOUBLE" property="gmvLastMonth" />-->
+    <!--<result column="GMV_LASTMONTH_DIFF" jdbcType="DOUBLE" property="gmvLastMonthDiff" />-->
+    <!--<result column="GMV_LASTMONTH_RATE" jdbcType="DOUBLE" property="gmvLastMonthRate" />-->
+    <!--<result column="GMV_PREMONTH" jdbcType="DOUBLE" property="gmvPreMonth" />-->
+    <!--<result column="GMV_PREMONTH_DIFF" jdbcType="DOUBLE" property="gmvPreMonthDiff" />-->
+    <!--<result column="GMV_PREMONTH_RATE" jdbcType="DOUBLE" property="gmvPreMonthRate" />-->
+    <!--<result column="COST_MONTH" jdbcType="DOUBLE" property="costMonth" />-->
+    <!--<result column="INCOME_MONTH" jdbcType="DOUBLE" property="incomeMonth" />-->
+    <!--<result column="PROFIT_RATE" jdbcType="DOUBLE" property="profitRate" />-->
+    <!--<result column="PROFIT_ALERT_RATE" jdbcType="DOUBLE" property="profitAlertRate" />-->
+    <!--<result column="COST_HEALTH_FLAG" jdbcType="VARCHAR" property="costHealthFlag" />-->
+  <!--</resultMap>-->
+
+   <select id="getReasonTotalCount" resultType="int">
+     select count(*) from UO_REASON_LIST
+   </select>
+
+  <select id="getReasonList" resultType="map">
+   SELECT * FROM(
+    SELECT A.*,ROWNUM RN FROM
+      (SELECT
+         REASON_ID,
+         REASON_NAME,
+         STATUS,
+         PROGRESS,
+         BEGIN_DT,
+         END_DT,
+         CREATE_DT,
+         UPDATE_DT,
+         CREATE_BY,
+         UPDATE_BY,
+         KPI_CODE,
+         PERIOD_TYPE,
+         KPI_NAME
+    FROM UO_REASON_LIST ORDER BY REASON_ID DESC) A  WHERE ROWNUM &lt;=#{endRow}
+    ) WHERE RN &gt;=#{startRow}
+
+  </select>
+ </mapper>

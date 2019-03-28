@@ -2,6 +2,7 @@ package com.linksteady.operate.controller;
 
 import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.service.KeyPointService;
 import com.linksteady.operate.vo.KeyPointMonthVO;
 import com.linksteady.operate.vo.KeyPointYearVO;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -18,13 +20,13 @@ import java.util.Map;
 /**
  * 关键指标完成情况相关的controller
  */
-@Controller
+@RestController
 @RequestMapping("/keyPoint")
 public class KeyPontController  extends BaseController {
 
     @Autowired
     private KeyPointService keyPointService;
-
+    @Autowired
     private DozerBeanMapper dozerBeanMapper;
 
     /**
@@ -33,10 +35,10 @@ public class KeyPontController  extends BaseController {
      * @return
      */
     @RequestMapping("/getMonthDetail")
-    @ResponseBody
-    public KeyPointMonthVO getMonthDetail(@RequestParam("month") String month) {
+    public ResponseBo getMonthDetail(@RequestParam("month") String month) {
         KeyPointMonthVO vo=dozerBeanMapper.map(keyPointService.getKeyPointMonthData(month), KeyPointMonthVO.class);
-        return vo;
+
+        return  ResponseBo.ok(vo);
     }
 
     /**
@@ -45,9 +47,18 @@ public class KeyPontController  extends BaseController {
      * @return
      */
     @RequestMapping("/getGMVByDay")
-    @ResponseBody
-    public List<Map<String, Object>> getGMVByDay(@RequestParam("month") String month) {
-        return keyPointService.getGMVByDay(month);
+    public ResponseBo getGMVByDay(@RequestParam("month") String month) {
+        List<Map<String,Object>> cur=keyPointService.getGMVByDay(month);
+
+        //获取去年的月份
+        String lastmonth=String.valueOf(Integer.parseInt(month.substring(0,4))-1)+month.substring(4,6);
+        List<Map<String,Object>> last=keyPointService.getGMVByDay(lastmonth);
+
+        Map<String,List<Map<String,Object>>> obj= Maps.newHashMap();
+        obj.put("cur",cur);
+        obj.put("pre",last);
+
+        return ResponseBo.ok(obj);
     }
 
     /**
@@ -57,9 +68,9 @@ public class KeyPontController  extends BaseController {
      */
     @RequestMapping("/getYearDetail")
     @ResponseBody
-    public KeyPointYearVO getYearDetail(@RequestParam("year") String year) {
+    public ResponseBo getYearDetail(@RequestParam("year") String year) {
         KeyPointYearVO vo=dozerBeanMapper.map(keyPointService.getKeyPointYearData(year), KeyPointYearVO.class);
-        return vo;
+        return ResponseBo.ok(vo);
     }
 
     /**
@@ -68,8 +79,7 @@ public class KeyPontController  extends BaseController {
      * @return
      */
     @RequestMapping("/getGMVTrendByMonth")
-    @ResponseBody
-    public Map<String,List<Map<String,Object>>> getGMVTrendByMonth(@RequestParam("year") String year) {
+    public ResponseBo getGMVTrendByMonth(@RequestParam("year") String year) {
         //获取当年个月的GVM
         List<Map<String,Object>> cur=keyPointService.getGMVTrendByMonth(year);
         //获取去年各月的GMV
@@ -80,7 +90,7 @@ public class KeyPontController  extends BaseController {
         obj.put("cur",cur);
         obj.put("pre",pre);
 
-        return obj;
+        return ResponseBo.ok(obj);
     }
 
     /**
@@ -89,9 +99,8 @@ public class KeyPontController  extends BaseController {
      * @return
      */
     @RequestMapping("/getGMVCompareByMonth")
-    @ResponseBody
-    public List<Map<String,Object>> getGMVCompareByMonth(@RequestParam("year") String year) {
-         return keyPointService.getGMVCompareByMonth(year);
+    public ResponseBo getGMVCompareByMonth(@RequestParam("year") String year) {
+         return ResponseBo.ok(keyPointService.getGMVCompareByMonth(year));
     }
 
     /**
@@ -100,9 +109,8 @@ public class KeyPontController  extends BaseController {
      * @return
      */
     @RequestMapping("/getProfitRateByMonth")
-    @ResponseBody
-    public List<Map<String,Object>> getProfitRateByMonth(@RequestParam("year") String year) {
-        return keyPointService.getProfitRateByMonth(year);
+    public ResponseBo getProfitRateByMonth(@RequestParam("year") String year) {
+        return ResponseBo.ok(keyPointService.getProfitRateByMonth(year));
     }
 
     /**
@@ -111,10 +119,9 @@ public class KeyPontController  extends BaseController {
      * @return
      */
     @RequestMapping("/isFixProfitByMonth")
-    @ResponseBody
-    public String isFixProfitByMonth(@RequestParam("month") String month) {
+    public ResponseBo isFixProfitByMonth(@RequestParam("month") String month) {
        //Y表示已维护 N表示未维护
-        return keyPointService.isFixProfitByMonth(month);
+        return ResponseBo.ok(keyPointService.isFixProfitByMonth(month));
     }
 
     /**
@@ -123,10 +130,9 @@ public class KeyPontController  extends BaseController {
      * @return
      */
     @RequestMapping("/isFixProfitByYear")
-    @ResponseBody
-    public String isFixProfitByYear(@RequestParam("year") String year) {
+    public ResponseBo isFixProfitByYear(@RequestParam("year") String year) {
         //Y表示已维护 N表示未维护
-        return keyPointService.isFixProfitByYear(year);
+        return ResponseBo.ok(keyPointService.isFixProfitByYear(year));
     }
 
     /**
@@ -136,9 +142,8 @@ public class KeyPontController  extends BaseController {
      * @return
      */
     @RequestMapping("/getKeypointHint")
-    @ResponseBody
-    public List<Map<String,Object>> getKeypointHint(@RequestParam("periodtype") String periodtype,@RequestParam("periodvalue") String periodvalue) {
-        return keyPointService.getKeypointHint(periodtype,periodvalue);
+    public ResponseBo getKeypointHint(@RequestParam("periodtype") String periodtype,@RequestParam("periodvalue") String periodvalue) {
+        return ResponseBo.ok(keyPointService.getKeypointHint(periodtype,periodvalue));
     }
 
 
