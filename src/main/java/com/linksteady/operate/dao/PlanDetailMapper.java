@@ -9,4 +9,8 @@ import java.util.List;
 public interface PlanDetailMapper extends MyMapper<PlanDetail> {
 
     List<PlanDetail> getPlanDetail(@Param("year") String year);
+
+    void addPlanDetails(@Param("planDetailList") List<PlanDetail> planDetailList);
+
+    void updateDetail(@Param("planDetail") PlanDetail planDetail);
 }

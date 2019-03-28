@@ -71,12 +71,6 @@ public class PlanDetail {
     @Column(name = "CREATE_BY")
     private String createBy;
 
-    /**
-     * 更新人
-     */
-    @Column(name = "UPDATE_BY")
-    private String updateBy;
-
     public Long getPlanDetailId() {
         return planDetailId;
     }
@@ -172,4 +166,12 @@ public class PlanDetail {
     public void setUpdateBy(String updateBy) {
         this.updateBy = updateBy;
     }
+
+    /**
+     * 更新人
+     */
+    @Column(name = "UPDATE_BY")
+    private String updateBy;
+
+
 }

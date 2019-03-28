@@ -21,13 +21,13 @@ public class GmvPlan {
      * gmv目标值
      */
     @Column(name = "GMV_TARGET")
-    private long gmvTarget;
+    private double gmvTarget;
 
     /**
      * 目标值相比上年增长率
      */
     @Column(name = "TARGET_RATE")
-    private long targetRate;
+    private double targetRate;
 
     /**
      * 状态  D表示草稿  C表示更新数据中 E表示已下达执行
@@ -39,13 +39,13 @@ public class GmvPlan {
      * 预测GMV值
      */
     @Column(name = "FORECAST_GMV")
-    private long forecastGmv;
+    private double forecastGmv;
 
     /**
      * 预测GMV值相比上年增长率
      */
     @Column(name = "FORECAST_RATE")
-    private long forecastRate;
+    private double forecastRate;
 
     /**
      * 创建日期
@@ -65,12 +65,6 @@ public class GmvPlan {
     @Column(name = "CREATE_BY")
     private String createBy;
 
-    /**
-     * 更新人
-     */
-    @Column(name = "UPDATE_BY")
-    private String updateBy;
-
     public long getPlanId() {
         return planId;
     }
@@ -87,19 +81,19 @@ public class GmvPlan {
         this.yearId = yearId;
     }
 
-    public long getGmvTarget() {
+    public double getGmvTarget() {
         return gmvTarget;
     }
 
-    public void setGmvTarget(long gmvTarget) {
+    public void setGmvTarget(double gmvTarget) {
         this.gmvTarget = gmvTarget;
     }
 
-    public long getTargetRate() {
+    public double getTargetRate() {
         return targetRate;
     }
 
-    public void setTargetRate(long targetRate) {
+    public void setTargetRate(double targetRate) {
         this.targetRate = targetRate;
     }
 
@@ -111,19 +105,19 @@ public class GmvPlan {
         this.status = status;
     }
 
-    public long getForecastGmv() {
+    public double getForecastGmv() {
         return forecastGmv;
     }
 
-    public void setForecastGmv(long forecastGmv) {
+    public void setForecastGmv(double forecastGmv) {
         this.forecastGmv = forecastGmv;
     }
 
-    public long getForecastRate() {
+    public double getForecastRate() {
         return forecastRate;
     }
 
-    public void setForecastRate(long forecastRate) {
+    public void setForecastRate(double forecastRate) {
         this.forecastRate = forecastRate;
     }
 
@@ -158,4 +152,12 @@ public class GmvPlan {
     public void setUpdateBy(String updateBy) {
         this.updateBy = updateBy;
     }
+
+    /**
+     * 更新人
+     */
+    @Column(name = "UPDATE_BY")
+    private String updateBy;
+
+
 }

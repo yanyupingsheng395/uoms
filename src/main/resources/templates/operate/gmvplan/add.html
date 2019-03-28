@@ -10,20 +10,16 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/steps/jquery.steps.css}">
-
     <!--时间选择插件-->
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
     <!--日期选择插件-->
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
-
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
-
+    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <style>
-        .wizard-big.wizard > .content{
-            height: auto;
-            min-height: 620px;
+        .mg-stop{
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -47,68 +43,119 @@
                                 <h4>新增运营目标</h4>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div id="wizard" style="height: auto;" class="wizard-big">
-                                            <h1>第一步</h1>
-                                            <div class="step-content">
-                                                <div class="text-center m-t-md">
-                                                    <form class="form-inline" style="padding-left: 10px;">
-                                                        <div class="form-group form-group-sm">
-                                                            <label for="predictDate" class="col-md-4">预测年份：</label>
-                                                            <input class="col-md-7 form-control js-datepicker m-b-10" value="2019" type="text" id="predictDate" name="predictDate" data-date-format="yyyy" />
-                                                        </div>
-                                                    </form>
-                                                </div>
+                                <div class="m-t-md" id="step1">
+                                    <form class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label" for="gmvValue1">目标年份：</label>
+                                            <div class="col-md-5">
+                                                <input class="col-md-7 form-control js-datepicker m-b-10" value="2019" type="text" id="predictDate" name="predictDate" data-date-format="yyyy" />
                                             </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="m-t-md" id="step2">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5>历史数据</h5>
+                                            <table id="historyDataTable" class="table table-hover table-bordered table-striped"></table>
+                                        </div>
+                                    </div>
 
-                                            <h1>第二步</h1>
-                                            <div class="step-content">
-                                                <div class="text-center m-t-md">
-                                                    <div class="card">
-                                                        <div class="card-header text-left">
-                                                            <h4>历史数据</h4>
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <table id="historyDataTable" class="table table-hover table-bordered table-striped"></table>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card">
-                                                        <div class="card-header text-left">
-                                                            <h4>预测数据</h4>
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <table id="predictDataTable" class="table table-hover table-bordered table-striped">
-                                                                        <thead>
-                                                                        <tr>
-                                                                            <th>预测方法</th><th>GMV预测值</th><th>比上年增长率</th>
-                                                                        </tr>
-                                                                        </thead>
-                                                                        <tbody id="predictData">
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                    <div class="row mg-stop">
+                                        <div class="col-md-12">
+                                            <h5>预测数据</h5>
+                                            <table id="predictDataTable" class="table table-hover table-bordered table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th>预测方法</th><th>GMV预测值</th><th>比上年增长率</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="predictData">
+                                                <tr><td>时间序列方法</td><td>2000</td><td>0.25</td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5>目标值</h5>
+                                            <form class="form-horizontal" style="border:solid 1px #ccc;">
+                                                <div class="form-group mg-stop">
+                                                    <label class="col-md-3 control-label" for="gmvValue1">GMV目标值：</label>
+                                                    <div class="col-md-5">
+                                                        <input class="form-control" type="text" id="gmvValue1" name="gmvValue1" value="50"/>
                                                     </div>
                                                 </div>
-                                            </div>
+                                                <div class="form-group">
+                                                    <label class="col-md-3 control-label" for="gmvRate1">目标相比上年增长率：</label>
+                                                    <div class="col-md-5">
+                                                        <input class="form-control" type="text" id="gmvRate1" name="gmvRate1" value="0.25"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                            <h1>第三步</h1>
-                                            <div class="step-content">
-                                                <div class="text-center m-t-md">
-                                                    <h2>第三步</h2>
-                                                    <p>
-                                                        这是第三步的内容 </p>
+                                <div class="m-t-md" id="step3">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5>目标值</h5>
+                                            <form class="form-horizontal">
+                                                <div class="form-group">
+                                                    <label class="col-md-3 control-label" for="gmvValue2">GMV目标值：</label>
+                                                    <div class="col-md-5">
+                                                        <input class="form-control" type="text" readonly id="gmvValue2" name="gmvValue2" value="50"/>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-md-3 control-label" for="gmvRate2">目标相比上年增长率：</label>
+                                                    <div class="col-md-5">
+                                                        <input class="form-control" type="text" readonly id="gmvRate2" name="gmvRate2" value="0.25"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="card-header text-left">
+                                            <h4>GMV月度权重指数</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-bordered">
+                                                        <tbody id="weightData"></tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="card-header text-left">
+                                            <h4>GMV拆解表</h4>
+                                            <div class="text-right">
+                                                <button class="btn btn-primary" onclick="editPlanDetail()">编辑</button>
+                                                <button class="btn btn-success" onclick="updateDetail()">保存</button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-bordered" id="planDetailData"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mg-stop">
+                                    <div class="col-md-12 text-right">
+                                        <button id="prev" class="btn btn-success" onclick="prev()">上一步</button>
+                                        <button id="next" class="btn btn-success" onclick="next()">下一步</button>
+                                        <a id="finished" class="btn btn-default" href="/gmvplan/index">返回</a>
                                     </div>
                                 </div>
                             </div>
@@ -126,9 +173,9 @@
 <!--日期选择插件-->
 <script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
-<script data-th-src="@{/plugins/steps/jquery.steps.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
+<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
 <script data-th-src="@{/js/app/operate/gmvplan/add.js}"></script>
 </body>
 </html>

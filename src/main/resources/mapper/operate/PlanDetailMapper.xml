@@ -22,4 +22,22 @@
   <select id="getPlanDetail" resultMap="BaseResultMap">
     select * from UO_GMV_PLAN_DETAIL where YEAR_ID = #{year} order by MONTH_ID asc
   </select>
+
+  <select id="getPlanDetailId">
+    select seq_uo_plan_detail_id.nextval from dual
+  </select>
+
+  <insert id="addPlanDetails">
+    insert into UO_GMV_PLAN_DETAIL(PLAN_DETAIL_ID, PLAN_ID, YEAR_ID, MONTH_ID, GMV_VALUE, GMV_PCT, GMV_TB, GMV_TB_RATE)
+    select seq_uo_plan_detail_id.nextval, m.* from
+    <foreach collection="list" item="pl" separator="union all" open="(" close=")">
+      select #{pl.planId}, #{pl.yearId}, #{pl.monthId},#{pl.gmvValue},#{pl.gmvPct},#{pl.gmvTb},#{pl.gmvTbRate}
+      from dual
+    </foreach>
+    m
+  </insert>
+
+  <update id="updateDetail">
+     update UO_GMV_PLAN_DETAIL t set GMV_VALUE = ${gmvValue} where t.month_id = ${monthId}
+  </update>
 </mapper>

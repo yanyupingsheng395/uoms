@@ -13,7 +13,7 @@ function login() {
     $loginButton.html("").append("<div class='login-loder'><div class='line-scale'><div></div><div></div><div></div><div></div><div></div></div></div>");
     $.ajax({
         type: "post",
-        url: ctx + "login",
+        url: "/login",
         data: {
             "username": username,
             "password": password
@@ -21,7 +21,7 @@ function login() {
         dataType: "json",
         success: function (r) {
             if (r.code === 0) {
-                location.href = ctx + 'index';
+                location.href = '/index';
             } else {
                 $MB.n_warning(r.msg);
                 $loginButton.html("登录");

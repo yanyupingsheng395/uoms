@@ -1,16 +1,20 @@
 package com.linksteady.operate.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.GmvPlan;
 import com.linksteady.operate.domain.PlanDetail;
 import com.linksteady.operate.domain.WeightIndex;
 import com.linksteady.operate.domain.YearHistory;
 import com.linksteady.operate.service.GmvPlanService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -42,6 +46,12 @@ public class GmvPlanController extends BaseController {
     @RequestMapping("/add")
     public String add() {
         return "operate/gmvplan/add";
+    }
+
+    @RequestMapping("/view")
+    public String view(String year, Model model) {
+        model.addAttribute("year", year);
+        return "operate/gmvplan/view";
     }
 
     @RequestMapping("/getYearHistory")
@@ -76,5 +86,32 @@ public class GmvPlanController extends BaseController {
     @RequestMapping("/change")
     public String change() {
         return "operate/gmvplan/change";
+    }
+
+    @RequestMapping("/addPlanAndDetail")
+    @ResponseBody
+    public void addPlanAndDetail(@RequestParam("year") String year, @RequestParam("gmv") String gmv, @RequestParam("rate") String rate) {
+        gmvPlanService.addPlanAndDetail(year, gmv, rate);
+    }
+
+    @RequestMapping("/getPlanAndDetail")
+    @ResponseBody
+    public ResponseBo getPlanAndDetail(@RequestParam("year") String year) {
+        boolean flag = gmvPlanService.getPlanAndDetail(year);
+        return ResponseBo.ok(flag);
+    }
+
+    @RequestMapping("/overrideOldData")
+    @ResponseBody
+    public void overrideOldData(@RequestParam("year") String year, @RequestParam("gmv") String gmv, @RequestParam("rate") String rate) {
+        gmvPlanService.overrideOldData(year, gmv, rate);
+    }
+
+    @RequestMapping("/updateDetail")
+    @ResponseBody
+    public ResponseBo updateDetail(@RequestParam("year") String year, @RequestParam("gmv") String gmv) {
+        JSONArray jsonArray = JSONArray.parseArray(gmv);
+        gmvPlanService.updateDetail(jsonArray);
+        return ResponseBo.ok("GMV拆解表更新成功！");
     }
 }

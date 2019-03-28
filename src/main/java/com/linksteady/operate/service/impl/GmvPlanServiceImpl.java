@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.linksteady.common.service.impl.BaseService;
 import com.linksteady.operate.dao.GmvPlanMapper;
 import com.linksteady.operate.dao.PlanDetailMapper;
@@ -12,9 +13,11 @@ import com.linksteady.operate.domain.YearHistory;
 import com.linksteady.operate.service.GmvPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanService {
@@ -49,5 +52,86 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
     @Override
     public List<PlanDetail> getPlanDetail(String year) {
         return planDetailMapper.getPlanDetail(year);
+    }
+
+    @Override
+    @Transactional
+    public void addPlanAndDetail(String year, String gmv, String rate) {
+        Long planId = gmvPlanMapper.getPlanId();
+        addPlan(year, gmv, rate, planId);
+        addPlanDetail(year, gmv, rate, planId);
+    }
+
+    @Override
+    public boolean getPlanAndDetail(String year) {
+        Example plan = new Example(GmvPlan.class);
+        plan.createCriteria().andCondition("year_id=", year);
+        List<GmvPlan> gmvPlanList= gmvPlanMapper.selectByExample(plan);
+        Example detail = new Example(PlanDetail.class);
+        detail.createCriteria().andCondition("year_id=", year);
+        List<PlanDetail> planDetailList = planDetailMapper.selectByExample(detail);
+
+        if(gmvPlanList.size() > 0 && planDetailList.size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public void overrideOldData(String year, String gmv, String rate) {
+        Example plan = new Example(GmvPlan.class);
+        plan.createCriteria().andCondition("year_id=", year);
+        gmvPlanMapper.deleteByExample(plan);
+
+        Example detail = new Example(PlanDetail.class);
+        plan.createCriteria().andCondition("year_id=", year);
+        planDetailMapper.deleteByExample(detail);
+        // 新增数据
+        addPlanAndDetail(year, gmv, rate);
+    }
+
+    @Override
+    public void updateDetail(JSONArray jsonArray) {
+        List<PlanDetail> list = new ArrayList<>();
+        for(int i=0; i<jsonArray.size(); i++) {
+            PlanDetail planDetail = new PlanDetail();
+            planDetail.setMonthId(Long.valueOf(i + 1));
+            planDetail.setGmvValue(jsonArray.getDoubleValue(i));
+            list.add(planDetail);
+        }
+
+        for (PlanDetail p:list) {
+            planDetailMapper.updateDetail(p);
+        }
+    }
+
+    private void addPlanDetail(String year, String gmv, String rate, Long planId) {
+        List<PlanDetail> planDetailList = new ArrayList<>();
+        for(int i=1; i<=12; i++) {
+            double gmvValue = 0.88d;
+            double tbRate = 0.25d;
+            PlanDetail planDetail = new PlanDetail();
+            planDetail.setGmvValue(gmvValue);
+            planDetail.setYearId(Long.valueOf(year));
+            planDetail.setMonthId(Long.valueOf(i));
+            planDetail.setGmvTbRate(Double.valueOf(rate));
+            planDetail.setGmvPct(tbRate + 0.2);
+            planDetail.setPlanId(planId);
+            planDetailList.add(planDetail);
+        }
+        planDetailMapper.addPlanDetails(planDetailList);
+    }
+
+    private void addPlan(String year, String gmv, String rate, Long planId) {
+        GmvPlan gmvPlan = new GmvPlan();
+        gmvPlan.setYearId(Long.valueOf(year));
+        gmvPlan.setGmvTarget(Double.valueOf(gmv));
+        gmvPlan.setTargetRate(Double.valueOf(rate));
+        gmvPlan.setPlanId(planId);
+        gmvPlan.setForecastGmv(2000);
+        gmvPlan.setForecastRate(0.25);
+        gmvPlan.setStatus("C");
+        gmvPlanMapper.insert(gmvPlan);
     }
 }
