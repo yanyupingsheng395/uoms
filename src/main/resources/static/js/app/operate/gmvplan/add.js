@@ -59,7 +59,10 @@ function getYearHistory() {
             field: 'gmvValue'
         },{
             title: 'GMV增长率',
-            field: 'gmvRate'
+            field: 'gmvRate',
+            formatter: function (value, row, index) {
+                return value + "%";
+            }
         }]
     });
 }
@@ -77,6 +80,7 @@ function weight() {
         htmlCode1 += "</tr>";
         htmlCode2 += "</tr>";
         $("#weightData").html("").html(htmlCode1 + htmlCode2);
+        $("#weightData").find("tr:eq(0)").addClass("info");
     });
 }
 
@@ -94,13 +98,19 @@ function getPlanDetail() {
             field: 'gmvValue'
         },{
             title: 'GMV目标占全年比例',
-            field: 'gmvPct'
+            field: 'gmvPct',
+            formatter: function (value, row, index) {
+                return value + "%";
+            }
         },{
             title: '上年同月GMV值',
             field: 'gmvTb'
         },{
-            title: '同比上年同比增长额',
-            field: 'gmvTbRate'
+            title: '同比上年同比增长率',
+            field: 'gmvTbRate',
+            formatter: function (value, row, index) {
+                return value + "%";
+            }
         }]
     });
 }

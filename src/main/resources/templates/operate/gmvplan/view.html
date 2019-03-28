@@ -53,19 +53,19 @@
                                     <div class="form-group" style="margin-top: 20px;">
                                         <label class="col-md-3 control-label" for="yearId">目标年份：</label>
                                         <div class="col-md-5">
-                                            <input class="form-control" readonly type="text" id="yearId" name="yearId" data-th-value="${year}"/>
+                                            <input class="form-control" disabled type="text" id="yearId" name="yearId" data-th-value="${year}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-3 control-label" for="gmvValue">GMV目标值：</label>
                                         <div class="col-md-5">
-                                            <input class="form-control" readonly type="text" id="gmvValue" name="gmvValue" value="50"/>
+                                            <input class="form-control" disabled type="text" id="gmvValue" name="gmvValue" value="50"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-3 control-label" for="gmvRate">目标相比上年增长率：</label>
                                         <div class="col-md-5">
-                                            <input class="form-control" readonly type="text" id="gmvRate" name="gmvRate" value="0.25"/>
+                                            <input class="form-control" disabled type="text" id="gmvRate" name="gmvRate" value="0.25%"/>
                                         </div>
                                     </div>
                                 </form>
@@ -78,12 +78,19 @@
                                 <table class="table table-hover table-bordered table-striped" id="planDetailData"></table>
                             </div>
                         </div>
-                        <div class="row" style="margin-top: 10px;">
-                            <div class="col-md-12">
-                                <p>合计 22,620,02.00 与年度目标总额相差 10,000元</p>
-                                <p><span class="mdi mdi-check-circle-outline"></span>&nbsp;保持我目前设置的各月的目标值不变，与年度目标总额的差额更新到总额上</p>
-                                <p><span class="mdi mdi-check-circle-outline"></span>&nbsp;不变更年度目标，将与年度目标总额的差额根据权重指数分摊到各月</p>
-                            </div>
+
+
+                        <!--<div class="row" style="margin-top: 10px;">-->
+                            <!--<div class="col-md-12">-->
+                                <!--<p>合计 22,620,02.00 与年度目标总额相差 10,000元</p>-->
+                                <!--<p><span class="mdi mdi-check-circle-outline"></span>&nbsp;保持我目前设置的各月的目标值不变，与年度目标总额的差额更新到总额上</p>-->
+                                <!--<p><span class="mdi mdi-check-circle-outline"></span>&nbsp;不变更年度目标，将与年度目标总额的差额根据权重指数分摊到各月</p>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    </div>
+                    <div class="row" style="padding-bottom: 20px;">
+                        <div class="col-md-12 text-center">
+                            <a class="btn btn-default" href="/gmvplan/index">返回</a>
                         </div>
                     </div>
                 </div>
@@ -110,7 +117,10 @@
                 field: 'gmvValue'
             },{
                 title: 'GMV增长率',
-                field: 'gmvRate'
+                field: 'gmvRate',
+                formatter: function (value, row, index) {
+                    return value + "%";
+                }
             }]
         });
     }
@@ -128,13 +138,19 @@
                 field: 'gmvValue'
             },{
                 title: 'GMV目标占全年比例',
-                field: 'gmvPct'
+                field: 'gmvPct',
+                formatter: function (value, row, index) {
+                    return value + "%";
+                }
             },{
                 title: '上年同月GMV值',
                 field: 'gmvTb'
             },{
                 title: '同比上年同比增长额',
-                field: 'gmvTbRate'
+                field: 'gmvTbRate',
+                formatter: function (value, row, index) {
+                    return value + "%";
+                }
             }]
         });
     }
@@ -151,6 +167,7 @@
             htmlCode1 += "</tr>";
             htmlCode2 += "</tr>";
             $("#weightData").html("").html(htmlCode1 + htmlCode2);
+            $("#weightData").find("tr:eq(0)").addClass("info");
         });
     }
 </script>

@@ -1,0 +1,10 @@
+tr th, tr td{
+    text-align: center;
+}
+tr th {
+    background: #1E90FF;
+    color: #f0f0f0;
+}
+.mg-stop{
+    margin-top: 20px;
+}

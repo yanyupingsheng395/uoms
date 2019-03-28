@@ -17,11 +17,6 @@
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
-    <style>
-        .mg-stop{
-            margin-top: 20px;
-        }
-    </style>
 </head>
 
 <body>
@@ -57,7 +52,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <h5>历史数据</h5>
-                                            <table id="historyDataTable" class="table table-hover table-bordered table-striped"></table>
+                                            <table id="historyDataTable" class="table table-bordered table-striped"></table>
                                         </div>
                                     </div>
 
@@ -71,7 +66,7 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody id="predictData">
-                                                <tr><td>时间序列方法</td><td>2000</td><td>0.25</td></tr>
+                                                <tr><td>时间序列方法</td><td>2000</td><td>21.25%</td></tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -82,14 +77,15 @@
                                             <form class="form-horizontal" style="border:solid 1px #ccc;">
                                                 <div class="form-group mg-stop">
                                                     <label class="col-md-3 control-label" for="gmvValue1">GMV目标值：</label>
-                                                    <div class="col-md-5">
+                                                    <div class="col-md-5 input-group">
                                                         <input class="form-control" type="text" id="gmvValue1" name="gmvValue1" value="50"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-md-3 control-label" for="gmvRate1">目标相比上年增长率：</label>
-                                                    <div class="col-md-5">
+                                                    <div class="col-md-5 input-group">
                                                         <input class="form-control" type="text" id="gmvRate1" name="gmvRate1" value="0.25"/>
+                                                        <span class="input-group-addon">%</span>
                                                     </div>
                                                 </div>
                                             </form>
@@ -104,49 +100,40 @@
                                             <form class="form-horizontal">
                                                 <div class="form-group">
                                                     <label class="col-md-3 control-label" for="gmvValue2">GMV目标值：</label>
-                                                    <div class="col-md-5">
-                                                        <input class="form-control" type="text" readonly id="gmvValue2" name="gmvValue2" value="50"/>
+                                                    <div class="col-md-5 input-group">
+                                                        <input class="form-control" type="text" disabled id="gmvValue2" name="gmvValue2" value="50"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-md-3 control-label" for="gmvRate2">目标相比上年增长率：</label>
-                                                    <div class="col-md-5">
-                                                        <input class="form-control" type="text" readonly id="gmvRate2" name="gmvRate2" value="0.25"/>
+                                                    <div class="col-md-5 input-group">
+                                                        <input class="form-control" type="text" disabled id="gmvRate2" name="gmvRate2" value="0.25"/>
+                                                        <span class="input-group-addon">%</span>
                                                     </div>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
 
-                                    <div class="card">
-                                        <div class="card-header text-left">
-                                            <h4>GMV月度权重指数</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <table class="table table-bordered">
-                                                        <tbody id="weightData"></tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
+                                    <div class="row mg-stop">
+                                        <div class="col-md-12">
+                                            <h5>GMV月度权重指数</h5>
+                                            <table class="table table-bordered">
+                                                <tbody id="weightData"></tbody>
+                                            </table>
                                         </div>
                                     </div>
 
-                                    <div class="card">
-                                        <div class="card-header text-left">
-                                            <h4>GMV拆解表</h4>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div style="float: left;">
+                                                <h5>GMV拆解表</h5>
+                                            </div>
                                             <div class="text-right">
-                                                <button class="btn btn-primary" onclick="editPlanDetail()">编辑</button>
-                                                <button class="btn btn-success" onclick="updateDetail()">保存</button>
+                                                <button class="btn btn-secondary" onclick="editPlanDetail()">编辑</button>
+                                                <button class="btn btn-info" onclick="updateDetail()">保存</button>
                                             </div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <table class="table table-bordered" id="planDetailData"></table>
-                                                </div>
-                                            </div>
+                                            <table class="table table-bordered" id="planDetailData"></table>
                                         </div>
                                     </div>
                                 </div>

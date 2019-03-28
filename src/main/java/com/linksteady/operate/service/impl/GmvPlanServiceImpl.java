@@ -118,6 +118,7 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
             planDetail.setGmvTbRate(Double.valueOf(rate));
             planDetail.setGmvPct(tbRate + 0.2);
             planDetail.setPlanId(planId);
+            planDetail.setGmvTb(2.55);
             planDetailList.add(planDetail);
         }
         planDetailMapper.addPlanDetails(planDetailList);

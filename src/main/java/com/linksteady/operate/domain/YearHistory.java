@@ -10,6 +10,14 @@ public class YearHistory {
     @Column(name = "YEAR_ID")
     private Long yearId;
 
+    public double getGmvRate() {
+        return gmvRate;
+    }
+
+    public void setGmvRate(double gmvRate) {
+        this.gmvRate = gmvRate;
+    }
+
     /**
      * gmv的值
      */
@@ -20,7 +28,7 @@ public class YearHistory {
      * 相比上年增长率
      */
     @Column(name = "GMV_RATE")
-    private Long gmvRate;
+    private double gmvRate;
 
     public Long getYearId() {
         return yearId;
@@ -38,11 +46,5 @@ public class YearHistory {
         this.gmvValue = gmvValue;
     }
 
-    public Long getGmvRate() {
-        return gmvRate;
-    }
 
-    public void setGmvRate(Long gmvRate) {
-        this.gmvRate = gmvRate;
-    }
 }
