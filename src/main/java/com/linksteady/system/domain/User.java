@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.linksteady.common.annotation.ExportConfig;
 
 @Table(name = "t_user")
 public class User implements Serializable {
@@ -41,7 +40,6 @@ public class User implements Serializable {
 	private Long userId;
 
 	@Column(name = "USERNAME")
-	@ExportConfig(value = "用户名")
 	private String username;
 
 	@Column(name = "PASSWORD")
@@ -51,23 +49,18 @@ public class User implements Serializable {
 	private Long deptId;
 
 	@Transient
-	@ExportConfig(value = "部门")
 	private String deptName;
 
 	@Column(name = "EMAIL")
-	@ExportConfig(value = "邮箱")
 	private String email;
 
 	@Column(name = "MOBILE")
-	@ExportConfig(value = "手机")
 	private String mobile;
 
 	@Column(name = "STATUS")
-	@ExportConfig(value = "状态", convert = "s:0=锁定,1=有效")
 	private String status = STATUS_VALID;
 
 	@Column(name = "CRATE_TIME")
-	@ExportConfig(value = "创建时间", convert = "c:TimeConvert")
 	private Date crateTime;
 
 	@Column(name = "MODIFY_TIME")
@@ -77,7 +70,6 @@ public class User implements Serializable {
 	private Date lastLoginTime;
 
 	@Column(name = "SSEX")
-	@ExportConfig(value = "性别", convert = "s:0=男,1=女,2=保密")
 	private String ssex;
 
 	@Column(name = "THEME")

@@ -1,7 +1,6 @@
 package com.linksteady.system.controller;
 
 import com.linksteady.common.annotation.Log;
-import com.linksteady.common.domain.RedisInfo;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.RedisService;
 import com.alibaba.fastjson.JSON;
@@ -24,13 +23,13 @@ public class RedisController {
     @Autowired
     private RedisService redisService;
 
-    @RequestMapping("info")
-    @RequiresPermissions("redis:list")
-    public String getRedisInfo(Model model) {
-        List<RedisInfo> infoList = this.redisService.getRedisInfo();
-        model.addAttribute("infoList", infoList);
-        return "system/redis/info";
-    }
+//    @RequestMapping("info")
+//    @RequiresPermissions("redis:list")
+//    public String getRedisInfo(Model model) {
+//        List<RedisInfo> infoList = this.redisService.getRedisInfo();
+//        model.addAttribute("infoList", infoList);
+//        return "system/redis/info";
+//    }
 
     @RequestMapping("terminal")
     @RequiresPermissions("redis:terminal")

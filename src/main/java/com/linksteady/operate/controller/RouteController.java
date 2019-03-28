@@ -12,7 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class RouteController {
 
     @RequestMapping("/reason/gotoIndex")
-    public String index() {
+    public String reasonIndex() {
         return "operate/reason/reasonlist";
+    }
+
+    @RequestMapping("/reason/add")
+    public String reasonAdd() {
+        return "operate/reason/reasonadd";
     }
 }
