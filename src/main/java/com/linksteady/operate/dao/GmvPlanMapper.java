@@ -8,6 +8,8 @@ import io.lettuce.core.dynamic.annotation.Param;
 import java.util.List;
 
 public interface GmvPlanMapper extends MyMapper<GmvPlan> {
+    List<GmvPlan> getGmvPlanList(@Param("startRow") int startRow, @Param("endRow") int endRow);
     List<GmvPlan> getPredictData(@Param("year") String year);
     Long getPlanId();
+    int getDataCount();
 }

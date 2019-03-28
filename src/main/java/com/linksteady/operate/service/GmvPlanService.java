@@ -11,6 +11,10 @@ import java.util.List;
 
 public interface GmvPlanService extends IService<GmvPlan> {
 
+    List<GmvPlan> getGmvPlanList(int startRow,int endRow);
+
+    int getDataCount();
+
     List<YearHistory> getYearHistory(String year);
 
     List<GmvPlan> getPredictData(String year);

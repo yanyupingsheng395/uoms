@@ -18,6 +18,22 @@
     <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
   </resultMap>
 
+  <select id="getGmvPlanList" resultMap="BaseResultMap">
+    SELECT * FROM(
+    SELECT A.*,ROWNUM RN FROM
+      (SELECT
+         YEAR_ID,
+         GMV_TARGET,
+         TARGET_RATE,
+         STATUS
+    FROM UO_GMV_PLAN ORDER BY YEAR_ID DESC) A  WHERE ROWNUM &lt;=#{endRow}
+    ) WHERE RN &gt;=#{startRow}
+  </select>
+
+  <select id="getDataCount" resultType="int">
+    select count(1) from UO_GMV_PLAN
+  </select>
+
   <select id="getPredictData" resultMap="BaseResultMap">
     select GMV_TARGET, TARGET_RATE from UO_GMV_PLAN where YEAR_ID = #{year}
   </select>

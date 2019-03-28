@@ -5,13 +5,13 @@ $(function () {
         cache: false,
         pagination: true,
         sidePagination: "server",
-        pageNumber: 1,            //初始化加载第一页，默认第一页
-        pageSize: 10,            //每页的记录行数（*）
+        pageNumber: 1,
+        pageSize: 10,
         pageList: [10, 25, 50, 100],
         queryParams: function (params) {
             return {
                 pageSize: params.limit,
-                pageNum: params.offset / params.limit + 1
+                pageNum: (params.offset / params.limit) + 1
             };
         },
         columns: [{

@@ -35,6 +35,16 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
     private PlanDetailMapper planDetailMapper;
 
     @Override
+    public List<GmvPlan> getGmvPlanList(int startRow, int endRow) {
+        return gmvPlanMapper.getGmvPlanList(startRow, endRow);
+    }
+
+    @Override
+    public int getDataCount() {
+        return gmvPlanMapper.getDataCount();
+    }
+
+    @Override
     public List<YearHistory> getYearHistory(String year) {
         return yearHistoryMapper.getYearHistory(year);
     }
