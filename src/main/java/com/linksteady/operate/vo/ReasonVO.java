@@ -5,6 +5,8 @@ import java.io.Serializable;
 public class ReasonVO implements Serializable {
 
     String kpi;
+
+    String kpiName;
     String startDt;
     String endDt;
     String period;
@@ -75,5 +77,13 @@ public class ReasonVO implements Serializable {
 
     public void setDimDisplay(String[] dimDisplay) {
         this.dimDisplay = dimDisplay;
+    }
+
+    public String getKpiName() {
+        return kpiName;
+    }
+
+    public void setKpiName(String kpiName) {
+        this.kpiName = kpiName;
     }
 }

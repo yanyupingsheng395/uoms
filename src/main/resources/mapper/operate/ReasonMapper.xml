@@ -46,4 +46,40 @@
     ) WHERE RN &gt;=#{startRow}
 
   </select>
+
+   <select id="getReasonPrimaryKey" resultType="int">
+       SELECT UO_REASON_LIST_SEQ.NEXTVAL FROM DUAL
+   </select>
+
+    <insert id="saveReasonData">
+        INSERT INTO UO_REASON_LIST
+            (
+                REASON_ID,
+                REASON_NAME,
+                STATUS,
+                PROGRESS,
+                BEGIN_DT,
+                END_DT,
+                CREATE_DT,
+                UPDATE_DT,
+                CREATE_BY,
+                UPDATE_BY,
+                KPI_CODE,
+                PERIOD_TYPE
+            )VALUES
+            (
+                #{reasonId,jdbcType=INTEGER},
+                #{reasonName},
+                #{status},
+                #{progress,jdbcType=INTEGER},
+                to_date(#{startDt},'yyyy-mm-dd') ,
+                to_date(#{endDt},'yyyy-mm-dd') ,
+                to_date(#{createDt},'yyyy-mm-dd hh24:mi:ss') ,
+                to_date(#{updateDt},'yyyy-mm-dd hh24:mi:ss') ,
+                #{createBy},
+                #{updateBy},
+                #{kpi},
+                #{period}
+            )
+    </insert>
  </mapper>
