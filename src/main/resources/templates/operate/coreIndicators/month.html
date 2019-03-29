@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户运营系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <style>
+        .panel-icon {
+            font-size: 65px;
+            color: #33cabb;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>GMV完成情况</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="card">
+                                            <ul class="nav nav-tabs" id="tabs">
+                                                <li class="active"> <a href="#">本月</a> </li>
+                                                <li> <a href="#">本年</a> </li>
+                                            </ul>
+                                            <div class="tab-content" id="tab_month">
+                                                <div class="tab-pane active">
+                                                    <div class="row">
+                                                        <div class="col-md-9">
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="card bg-light">
+                                                                        <div class="card-body clearfix">
+                                                                            <div class="pull-right">
+                                                                                <p class="h5 text-dark m-t-0">本月实际完成</p>
+                                                                                <p class="h3 text-dark m-b-0">2,125.00</p>
+                                                                            </div>
+
+                                                                            <div class="pull-left"> <span class="img-avatar img-avatar-48 bg-translucent"><span class="iconfont panel-icon">&#xe62e;</span></span> </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="card bg-light">
+                                                                        <div class="card-body clearfix">
+                                                                            <div class="pull-right">
+                                                                                <p class="h5 text-dark m-t-0">本月目标</p>
+                                                                                <p class="h3 text-dark m-b-0">10,000</p>
+                                                                            </div>
+                                                                            <div class="pull-left"> <span class="img-avatar img-avatar-48 bg-translucent"><span class="iconfont panel-icon">&#xe604;</span></span> </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="card bg-light">
+                                                                        <div class="card-body clearfix">
+                                                                            <div class="pull-right">
+                                                                                <p class="h5 text-dark m-t-0">本月达标率</p>
+                                                                                <p class="h3 text-dark m-b-0">20.65%</p>
+                                                                            </div>
+                                                                            <div class="pull-left"> <span class="img-avatar img-avatar-48 bg-translucent"><span class="iconfont panel-icon">&#xeb63;</span></span> </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row">
+                                                                <div class="col-md-2 text-right">
+                                                                    <label class="control-label" style="line-height: 20px;">时间进度：</label>
+                                                                </div>
+                                                                <div class="col-md-10" style="margin-top: 4px;">
+                                                                    <div class="progress progress-lg">
+                                                                        <div class="progress-bar progress-bar-striped progress-bar-success active" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 25%">
+                                                                            <span class="sr-only">25% Complete</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-2 text-right">
+                                                                    <label class="control-label" style="line-height: 20px;">GMV完成进度：</label>
+                                                                </div>
+                                                                <div class="col-md-10" style="margin-top: 4px;">
+                                                                    <div class="progress progress-lg">
+                                                                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+                                                                            <span class="sr-only">45% Complete</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row" style="margin-top: 20px;">
+                                                                <div class="col-md-12">
+                                                                    <table class="table table-bordered">
+                                                                        <tr class="active"><td>去年同期GMV</td><td>去年同期差额</td><td>同比（%）</td><td>上月GMV</td><td>与上月差额</td><td>环比</td></tr>
+                                                                        <tr><td>2500,000</td><td>10,00.00</td><td>25%</td><td>62,354</td><td>3540</td><td>33%</td></tr>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-3">
+                                                            <div class="card" style="height: 295px;">
+                                                                <div class="card-header bg-primary">
+                                                                    <h5>本月预警及合理化建议</h5>
+                                                                    <ul class="card-actions">
+                                                                        <li>
+                                                                            <button type="button"><i class="mdi mdi-more"></i></button>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                                <div class="card-body" style="overflow-y:scroll;height:244px;">
+                                                                    <div class="row">
+                                                                        <div class="col-md-12">
+                                                                            <span class="iconfont" style="color:red;">&#xe6aa;</span><span>警告</span>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <p>本月GMV完成的进度跑赢了时间的进度，完成目标概率较大。但是新客数量完成的不太理想。</p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row" style="margin-top: 48px;">
+                                                                        <div class="col-md-12">
+                                                                            <span class="iconfont" style="color:#1E90FF;">&#xe60b;</span><span>建议</span>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <p>多使用一些流量品类进行拉新。</p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- 本月和去年同期GMV值的对比-->
+                                                    <div class="row" style="margin-top: 20px;">
+                                                        <div class="col-md-12">
+                                                            <h5>本月GMV和去年同期对比图</h5>
+                                                            <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                                                            <div id="gmvChart" style="height: 300px;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- 利润率 -->
+                                                    <div class="row" style="margin-top: 20px;">
+                                                        <div class="col-md-12">
+                                                            <h5>利润率</h5>
+                                                            <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                                                            <div class="row">
+                                                                <div class="col-md-4 text-center">
+                                                                    <div id="profitChart" style="height:180px;"></div>
+                                                                    <h5>本月利润率</h5>
+                                                                </div>
+                                                                <div class="col-md-4" style="margin-top: 20px;">
+                                                                    <table class="table table-hover table-bordered">
+                                                                        <tr><td class="active">销售收入</td><td>50000</td></tr>
+                                                                        <tr><td class="active">成本</td><td>45000</td></tr>
+                                                                        <tr><td class="active">利润率</td><td>4%</td></tr>
+                                                                        <tr><td class="active">预警线</td><td>3%</td></tr>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="col-md-4 text-center">
+                                                                    <span class="iconfont" style="font-size: 100px;color:#15c377;">&#xec80;</span>
+                                                                    <h5>健康</h5>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- 本年 -->
+                                            <div class="tab-content" id="tab_year" style="display: none;">
+                                                <div class="tab-pane active">
+                                                    <div data-th-include="operate/coreIndicators/year"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
+<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<script data-th-src="@{/js/common/perfect-scrollbar.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script src="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>
+<script data-th-src="@{/js/app/operate/coreIndicators/month.js}"></script>
+</body>
+</html>

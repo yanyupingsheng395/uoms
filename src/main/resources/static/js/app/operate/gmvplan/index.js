@@ -45,9 +45,9 @@ $(function () {
             formatter: function (value, row, index) {
                 var year = row.yearId;
                 if (row.status == "D") {
-                    return "<div class='btn btn-success' onclick='executeData("+year+")'>执行</div>&nbsp;<div class='btn btn-warning' onclick='modifyData("+year+")'>修改</div>&nbsp;<div class='btn btn-danger' onclick='deleteData("+year+")'>删除</div>";
+                    return "<div class='btn btn-success btn-sm' onclick='executeData("+year+")'><i class='mdi mdi-check'></i>执行</div>&nbsp;<div class='btn btn-warning btn-sm' onclick='modifyData("+year+")'><i class='mdi mdi-pencil'></i>修改</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='deleteData("+year+")'><i class='mdi mdi-window-close'></i>删除</div>";
                 }else if (row.status == "C") {
-                    return "<a class='btn btn-primary' onclick='viewData("+year+")'>查看</a>&nbsp;<div class='btn btn-info' onclick='changeData("+year+")'>变更</div>";
+                    return "<a class='btn btn-primary btn-sm' onclick='viewData("+year+")'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-info btn-sm' onclick='changeData("+year+")'><i class='mdi mdi-redo'></i>变更</div>";
                 }
             }
         }]

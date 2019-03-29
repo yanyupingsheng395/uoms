@@ -38,10 +38,10 @@
                             <div class="card-body">
                                 <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
                                     <div class="form-group">
-                                        <input class="form-control js-datepicker m-b-10" type="text" id="startDate" name="startDate" data-date-format="yyyy-mm" />
+                                        <input class="form-control js-datepicker m-b-10" type="text" id="startDate" name="startDate" data-date-format="yyyy-mm" value="2018-01"/>
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control js-datepicker m-b-10" type="text" id="endDate" name="endDate" data-date-format="yyyy-mm" />
+                                        <input class="form-control js-datepicker m-b-10" type="text" id="endDate" name="endDate" data-date-format="yyyy-mm" value="2018-08"/>
                                     </div>
                                     <div class="form-group">
                                         <button class="btn btn-default m-b-10" type="button" onclick="search()">查询</button>
@@ -95,6 +95,7 @@
         maxViewMode:'years',
         minViewMode:'months'
     });
+    search();
     function search() {
         $.post("/retention/list", {startDate: $("#startDate").val(), endDate: $("#endDate").val()}, function(r) {
             var htmlCode = "";
