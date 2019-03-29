@@ -1,7 +1,6 @@
 package com.linksteady.common.handler;
 
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.exception.LimitAccessException;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.springframework.core.Ordered;
@@ -32,10 +31,6 @@ public class GlobalExceptionHandler {
         return "login";
     }
 
-    @ExceptionHandler(value = LimitAccessException.class)
-    public ResponseBo handleLimitAccessException(LimitAccessException e) {
-        return ResponseBo.error(e.getMessage());
-    }
 
     private static boolean isAjaxRequest(HttpServletRequest request) {
         return (request.getHeader("X-Requested-With") != null

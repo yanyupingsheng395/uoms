@@ -1,6 +1,5 @@
 package com.linksteady.common.service.impl;
 
-import com.linksteady.common.domain.RedisInfo;
 import com.linksteady.common.service.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,34 +41,6 @@ public class RedisServiceImpl implements RedisService {
             log.error(e.getMessage());
             return null;
         }
-    }
-
-    @Override
-    public List<RedisInfo> getRedisInfo() {
-        String info = (String) this.excuteByJedis(
-                j -> {
-                    Client client = j.getClient();
-                    client.info();
-                    return client.getBulkReply();
-                }
-        );
-        List<RedisInfo> infoList = new ArrayList<>();
-        String[] strs = Objects.requireNonNull(info).split("\n");
-        RedisInfo redisInfo;
-        if (strs.length > 0) {
-            for (String str1 : strs) {
-                redisInfo = new RedisInfo();
-                String[] str = str1.split(":");
-                if (str.length > 1) {
-                    String key = str[0];
-                    String value = str[1];
-                    redisInfo.setKey(key);
-                    redisInfo.setValue(value);
-                    infoList.add(redisInfo);
-                }
-            }
-        }
-        return infoList;
     }
 
     @Override

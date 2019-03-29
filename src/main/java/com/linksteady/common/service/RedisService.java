@@ -1,19 +1,9 @@
 package com.linksteady.common.service;
 
-import com.linksteady.common.domain.RedisInfo;
-
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public interface RedisService {
-
-    /**
-     * 获取 redis 的详细信息
-     *
-     * @return List
-     */
-    List<RedisInfo> getRedisInfo();
 
     /**
      * 获取 redis key 数量

@@ -1,6 +1,5 @@
 package com.linksteady.system.service.impl;
 
-import com.linksteady.common.util.AddressUtils;
 import com.linksteady.system.domain.User;
 import com.linksteady.system.domain.UserOnline;
 import com.linksteady.system.service.SessionService;

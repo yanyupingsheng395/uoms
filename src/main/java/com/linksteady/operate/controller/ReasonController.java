@@ -5,6 +5,7 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.vo.KeyPointMonthVO;
+import com.linksteady.operate.vo.ReasonVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,5 +37,19 @@ public class ReasonController  extends BaseController {
         int totalCount= reasonService.getReasonTotalCount();
         return  ResponseBo.okOverPaging("",totalCount,result);
     }
+
+    /**
+     * 获取原因探究列表
+     * @param reasonVO 原因探究主表
+     * @return
+     */
+    @RequestMapping("/submitAnalysis")
+    public ResponseBo submitAnalysis(@RequestBody ReasonVO reasonVO) {
+        System.out.println(reasonVO);
+        return  ResponseBo.ok(12345);
+    }
+
+
+
 
 }

@@ -17,7 +17,7 @@ $(function () {
         },
         columns: [{
             field: 'REASON_NAME',
-            title: '原因探究名称'
+            title: '编号'
         }, {
             field: 'PROGRESS',
             title: '进度',
@@ -51,7 +51,7 @@ $(function () {
                 if (row.STATUS == "A" || row.STATUS=='F') {
                     return "<div class='btn btn-success' onclick='view()'>查看</div>&nbsp;<div class='btn btn-danger' onclick='del()'>删除</div>";
                 }else if (row.STATUS == "R") {
-                    return "<div class='btn btn-primary' onclick='del()'>查看</div>";
+                    return "<div class='btn btn-success' onclick='del()'>查看</div>";
                 }
             }
         }]

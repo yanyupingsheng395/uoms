@@ -1,6 +1,5 @@
 package com.linksteady.common.config;
 
-import com.linksteady.common.xss.XssFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -17,19 +16,19 @@ public class WebConfig {
     /**
      * XssFilter Bean
      */
-    @Bean
-    public FilterRegistrationBean xssFilterRegistrationBean() {
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        filterRegistrationBean.setFilter(new XssFilter());
-        filterRegistrationBean.setOrder(1);
-        filterRegistrationBean.setEnabled(true);
-        filterRegistrationBean.addUrlPatterns("/*");
-        Map<String, String> initParameters = new HashMap<>();
-        initParameters.put("excludes", "/favicon.ico,/img/*,/js/*,/css/*");
-        initParameters.put("isIncludeRichText", "true");
-        filterRegistrationBean.setInitParameters(initParameters);
-        return filterRegistrationBean;
-    }
+//    @Bean
+//    public FilterRegistrationBean xssFilterRegistrationBean() {
+//        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+//       // filterRegistrationBean.setFilter(new XssFilter());
+//        filterRegistrationBean.setOrder(1);
+//        filterRegistrationBean.setEnabled(true);
+//        filterRegistrationBean.addUrlPatterns("/*");
+//        Map<String, String> initParameters = new HashMap<>();
+//        initParameters.put("excludes", "/favicon.ico,/img/*,/js/*,/css/*");
+//        initParameters.put("isIncludeRichText", "true");
+//        filterRegistrationBean.setInitParameters(initParameters);
+//        return filterRegistrationBean;
+//    }
 
     @Bean
     public ObjectMapper getObjectMapper(SystemProperties systemProperties) {

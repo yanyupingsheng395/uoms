@@ -10,8 +10,12 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <!--日期选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet"  data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link href="https://cdn.bootcss.com/toastr.js/2.1.4/toastr.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -30,20 +34,111 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>新增原因探究</h4>
+                                <h4>新探究</h4>
+                            </div>
+                            <div class="card-body">
+                                <!--维护基本信息-->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5>现象</h5>
+                                        <form class="form-horizontal" style="border:solid 1px #ccc;">
+                                            <div class="form-group mg-stop">
+                                                <label class="col-md-3 control-label" for="zhibiao">选择指标：</label>
+                                                <div class="col-md-5 input-group">
+                                                    <select class="form-control" id="zhibiao" name="zhibiao" size="1">
+                                                        <option value="0">请选择</option>
+                                                        <option value="gmv">GMV</option>
+                                                        <option value="ucnt">用户数</option>
+                                                        <option value="price">客单价</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group mg-stop">
+                                                <label class="col-md-3 control-label">已选择的维度及其值：</label>
+                                                <div class="col-md-5">
+                                                    <button class="btn btn-primary" >选择</button>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-md-3 control-label"></label>
+                                                <div class="col-md-5">
+                                                    <ul class="list-group" id="dimlist">
+                                                        <li class="list-group-item"><input  class="col-xs-11 dimDispaly" value="维度 : 新/用户 - 值:新|旧" style="border:0px" disabled="true" maxlength="150"/><input type="hidden" class="dimKey" value="neworold"/><input type="hidden" class="dimValues" value="new|old" /><span class="mdi mdi-delete" style="color: #006cfa;"></span></li>
+                                                        <li class="list-group-item"><input  class="col-xs-11 dimDispaly" value="维度 : 来源 - 值:线上" style="border:0px" disabled="true" maxlength="150"/><input type="hidden" class="dimKey" value="source"/><input type="hidden" class="dimValues" value="online" /><span class="mdi mdi-delete" style="color: #006cfa;"></span></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group mg-stop">
+                                                <label class="col-md-3 control-label">发生时间区间：</label>
+                                                <div class="input-group col-md-5">
+                                                    <input class="form-control js-datepicker" data-date-format="yyyy-mm-dd" type="text" id="start_dt" name="start_dt" placeholder="从">
+                                                    <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
+                                                    <input class="form-control js-datepicker" data-date-format="yyyy-mm-dd" type="text" id="end_dt" name="end_dt" placeholder="至">
+                                                </div>
+
+                                            </div>
+                                            <div class="form-group mg-stop">
+                                                <label class="col-md-3 control-label" for="peroid">时间粒度：</label>
+                                                <div class="col-md-5 input-group">
+                                                    <select class="form-control" id="peroid" name="peroid" size="1">
+                                                        <option value="D">天</option>
+                                                        <option value="M">月</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+
+                                <!--选择模板-->
+                                <div class="row" style="margin-top: 20px;">
+                                    <div class="col-md-12">
+                                        <h5>探究模板</h5>
+                                        <form class="form-horizontal" style="border:solid 1px #ccc;">
+                                            <div class="form-group mg-stop">
+                                                <label class="col-md-3 control-label">选择探究模板：</label>
+                                                <div class="col-md-5 input-group">
+                                                    <div class="example-box" id="template_select">
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" value="4p" class="tjmb"><span>4P方法论</span>
+                                                        </label>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" value="other"  class="tjmb"><span>其它方法论</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
 
+                <!--按钮-->
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <a class="btn btn-primary" type="button" style="width: 80px" id="submitAnalysis">提交分析</a>
+                        <a class="btn btn-dark" href="/reason/gotoIndex" style="width: 80px">放&nbsp;&nbsp;&nbsp;&nbsp;弃</a>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 </div>
+<!--日期选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
-<script data-th-src="@{/js/app/operate/reason.js}"></script>
+<script src="https://cdn.bootcss.com/toastr.js/2.1.4/toastr.min.js"></script>
+<script data-th-src="@{/plugins/notify/bootstrap-notify.min.js}"></script>
+<script data-th-src="@{/plugins/notify/lightyear.js}"></script>
+<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<script data-th-src="@{/js/app/operate/reasonadd.js}"></script>
 </body>
 </html>

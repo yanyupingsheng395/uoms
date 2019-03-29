@@ -1,6 +1,5 @@
 package com.linksteady.common.config;
 
-import com.linksteady.common.domain.ValidateCodeProperties;
 import com.linksteady.common.shiro.ShiroProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +9,6 @@ import org.springframework.context.annotation.Configuration;
 public class SystemProperties {
 
     private ShiroProperties shiro = new ShiroProperties();
-
-    private ValidateCodeProperties validateCode = new ValidateCodeProperties();
 
     private String timeFormat = "yyyy-MM-dd HH:mm:ss";
 
@@ -25,13 +22,13 @@ public class SystemProperties {
         this.shiro = shiro;
     }
 
-    public ValidateCodeProperties getValidateCode() {
-        return validateCode;
-    }
+//    public ValidateCodeProperties getValidateCode() {
+//        return validateCode;
+//    }
 
-    public void setValidateCode(ValidateCodeProperties validateCode) {
-        this.validateCode = validateCode;
-    }
+ //   public void setValidateCode(ValidateCodeProperties validateCode) {
+//        this.validateCode = validateCode;
+//    }
 
     public String getTimeFormat() {
         return timeFormat;
