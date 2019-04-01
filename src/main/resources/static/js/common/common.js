@@ -3,10 +3,10 @@ $(document).ready(function () {
 });
 // 菜单点击效果
 function menu_tree() {
-    var urlstr = location.href;
+    var urlStr = location.href;
     var status = false;
     $(".sidebar-main ul li a").each(function() {
-        if ((urlstr + '/').indexOf($(this).attr('href')) > -1&&$(this).attr('href')!='') {
+        if ((urlStr + '/').indexOf($(this).attr('href')) > -1&&$(this).attr('href')!='') {
             $(this).parent("li").addClass("active");
             $(this).parent("li").parents("li").addClass("open").addClass("active");
 
@@ -25,56 +25,23 @@ function menu_tree() {
     }
 }
 
-myChart.showLoading();
-
-
-var data = [];
-myChart.hideLoading();
-
-echarts.util.each(data.children, function (datum, index) {
-    index % 2 === 0 && (datum.collapsed = true);
-});
-
-myChart.setOption(option = {
-    tooltip: {
-        trigger: 'item',
-        triggerOn: 'mousemove'
-    },
-    series: [
-        {
-            type: 'tree',
-
-            data: [data],
-
-            top: '1%',
-            left: '7%',
-            bottom: '1%',
-            right: '20%',
-
-            symbolSize: 7,
-
-            label: {
-                normal: {
-                    position: 'left',
-                    verticalAlign: 'middle',
-                    align: 'right',
-                    fontSize: 9
-                }
-            },
-
-            leaves: {
-                label: {
-                    normal: {
-                        position: 'right',
-                        verticalAlign: 'middle',
-                        align: 'left'
-                    }
-                }
-            },
-
-            expandAndCollapse: true,
-            animationDuration: 550,
-            animationDurationUpdate: 750
-        }
-    ]
-});
+/**
+ * 初始化日期插件
+ * @param id 控件ID名称
+ * @param format 时间格式
+ * @param startView 起始选择范围 0为日，1为月，2为年
+ * @param maxViewMode 最大选择范围 0为日，1为月，2为年
+ * @param minViewMode 最小选择范围 0为日，1为月，2为年
+ *
+ */
+function init_date(id, format, startView, maxViewMode, minViewMode) {
+    $('#' + id).datepicker({
+        format: format,
+        language: "zh-CN",
+        todayHighlight: true,
+        autoclose: true,
+        startView: startView,
+        maxViewMode: maxViewMode,
+        minViewMode: minViewMode
+    });
+}

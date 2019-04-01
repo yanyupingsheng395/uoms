@@ -1,10 +1,10 @@
 package com.linksteady.operate.controller;
 
-import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.operate.domain.StateJudge;
 import com.linksteady.operate.service.StateJudgeService;
 import com.linksteady.system.domain.User;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,18 +18,6 @@ public class PageController extends BaseController {
     @Autowired
     private StateJudgeService stateJudgeService;
 
-
-    @RequestMapping("/")
-    public String redirectIndex() {
-        return "redirect:/index";
-    }
-
-    @GetMapping("/403")
-    public String forbid() {
-        return "403";
-    }
-
-    @Log("访问系统")
     @RequestMapping("/index")
     public String index(Model model) {
         // 登录成后，即可通过 Subject 获取登录的用户信息
@@ -37,6 +25,7 @@ public class PageController extends BaseController {
         model.addAttribute("user", user);
         return "index";
     }
+
     /**
      * 用户概览
      * @return
@@ -127,5 +116,10 @@ public class PageController extends BaseController {
     @RequestMapping("/diagnosis/list")
     public String diagnosis() {
         return "operate/diagnosis/list";
+    }
+
+    @RequestMapping("/diagnosis/add")
+    public String diagnosis_add() {
+        return "operate/diagnosis/add";
     }
 }
