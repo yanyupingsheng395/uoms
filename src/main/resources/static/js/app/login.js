@@ -21,7 +21,7 @@ function login() {
         dataType: "json",
         success: function (r) {
             if (r.code === 200) {
-                location.href = '/index';
+                location.href = '/page/index';
             } else {
                 // $MB.n_warning(r.msg);
                 $loginButton.html("登录");

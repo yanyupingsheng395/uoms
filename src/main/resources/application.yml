@@ -93,6 +93,13 @@ spring:
     type:
       redis
 
+  devtools:
+    livereload:
+      enabled: true #是否支持livereload
+      port: 35729
+    restart:
+      enabled: true #是否支持热部署
+
 info:
   app:
     name: "UOMS"
@@ -160,7 +167,7 @@ sys:
     # 登录 url
     loginUrl: /login
     # 登录成功后跳转的 url
-    successUrl: /index
+    successUrl: /page/index
     # 登出 url
     logoutUrl: /logout
     # 未授权跳转 url

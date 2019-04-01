@@ -37,13 +37,6 @@ public class PageController extends BaseController {
         model.addAttribute("user", user);
         return "index";
     }
-
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
     /**
      * 用户概览
      * @return
