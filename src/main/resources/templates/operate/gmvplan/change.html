@@ -75,7 +75,7 @@
                     </div>
                     <div class="row" style="padding-bottom: 20px;">
                         <div class="col-md-12 text-center">
-                            <a class="btn btn-default" href="/gmvplan/index">返回</a>
+                            <a class="btn btn-default" href="/page/gmvplan">返回</a>
                         </div>
                     </div>
                 </div>
@@ -131,7 +131,7 @@
         });
         var year = "[[${year}]]";
         $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
-            location.href = "/gmvplan/index";
+            location.href = "/page/gmvplan";
             alert("更新成功！");
         });
     }

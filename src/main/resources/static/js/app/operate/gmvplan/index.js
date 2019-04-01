@@ -72,11 +72,11 @@ function executeData(year){
 }
 
 function viewData(year){
-    location.href = "/gmvplan/view?year=" + year
+    location.href = "/page/gmvplan/view?year=" + year
 }
 
 function changeData(year){
-    location.href = "/gmvplan/change?year=" + year
+    location.href = "/page/gmvplan/change?year=" + year
 }
 
 function deleteData(year){
@@ -96,5 +96,5 @@ function deleteData(year){
 }
 
 function modifyData(year){
-    location.href = "/gmvplan/edit?year=" + year
+    location.href = "/page/gmvplan/edit?year=" + year
 }

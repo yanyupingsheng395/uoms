@@ -185,7 +185,7 @@ function updateDetail() {
     });
     var year = $("#predictDate").val();
     $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
-        location.href = "/gmvplan/index";
+        location.href = "/page/gmvplan";
         alert("更新成功！");
     });
 }

@@ -7,19 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/retention")
 public class RetentionController extends BaseController {
 
     @Autowired
     private RetentionService retentionService;
-
-    @RequestMapping("/index")
-    public String index() {
-        return "operate/overview/retention";
-    }
 
     /**
      * 根据起止时间查询数据
@@ -28,7 +25,6 @@ public class RetentionController extends BaseController {
      * @return
      */
     @RequestMapping("/list")
-    @ResponseBody
     public List<Retention> list(String startDate, String endDate) {
         List<Retention> retentionList = retentionService.findMonthDataByDate(startDate, endDate);
         return retentionList;
