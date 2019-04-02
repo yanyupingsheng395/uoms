@@ -9,4 +9,6 @@ public interface DiagService{
     List<Diag> getRows(int startRow, int endRow);
 
     Long getTotalCount();
+
+    void save(Diag diag);
 }

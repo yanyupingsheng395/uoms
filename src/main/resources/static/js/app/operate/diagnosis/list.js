@@ -25,7 +25,7 @@ $(function () {
                     return "月";
                 }
                 if (value == "Y") {
-                    return "天";
+                    return "年";
                 }
             }
         }, {

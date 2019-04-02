@@ -422,13 +422,16 @@ function init() {
         }else {
             $("#tab_month").attr("style", "display:none");
             $("#tab_year").attr("style", "display:block");
-
             year_init();
         }
     });
-
-
 }
+
+// $("#tabs li").each(function(k, v) {
+//     $(this).click(function () {
+//         alert(k);
+//     });
+// });
 
 function year_init() {
     var chart1 = echarts.init(document.getElementById('chart1'), 'macarons');

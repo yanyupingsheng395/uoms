@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.DiagDetailMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.DiagDetail">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="DIAG_ID" jdbcType="DECIMAL" property="diagId" />
+    <result column="NODE_ID" jdbcType="DECIMAL" property="nodeId" />
+    <result column="PARENT_ID" jdbcType="DECIMAL" property="parentId" />
+    <result column="NODE_NAME" jdbcType="VARCHAR" property="nodeName" />
+    <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
+    <result column="KPI_LEVEL_ID" jdbcType="DECIMAL" property="kpiLevelId" />
+    <result column="ALARM_FLAG" jdbcType="VARCHAR" property="alarmFlag" />
+    <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
+  </resultMap>
+
+  <insert id="save" parameterType="diagDetail">
+    insert into UO_DIAG_DETAIL(DIAG_ID, NODE_ID, PARENT_ID, NODE_NAME, ALARM_FLAG)
+    values (#{diagId}, #{nodeId}, #{parentId}, #{nodeName}, #{alarmFlag})
+  </insert>
+</mapper>

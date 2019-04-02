@@ -21,4 +21,9 @@
   <select id="getTotalCount" resultType="Long">
     select count(1) from UO_DIAG_LIST
   </select>
+
+  <insert id="save">
+    insert into UO_DIAG_LIST(DIAG_ID, DIAG_NAME, PERIOD_TYPE, BEGIN_DT, END_DT)
+    values(seq_diag_id.nextval, #{diagName}, #{periodType}, #{beginDt}, #{endDt})
+  </insert>
 </mapper>

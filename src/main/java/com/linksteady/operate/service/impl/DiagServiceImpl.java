@@ -5,6 +5,7 @@ import com.linksteady.operate.domain.Diag;
 import com.linksteady.operate.service.DiagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,5 +23,11 @@ public class DiagServiceImpl implements DiagService {
     @Override
     public Long getTotalCount() {
         return diagMapper.getTotalCount();
+    }
+
+    @Override
+    @Transactional
+    public void save(Diag diag) {
+        diagMapper.save(diag);
     }
 }

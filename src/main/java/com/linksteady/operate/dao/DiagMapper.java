@@ -9,4 +9,6 @@ public interface DiagMapper{
     List<Diag> getList(@Param("startRow") int startRow, @Param("endRow") int endRow);
 
     Long getTotalCount();
+
+    void save(@Param("diag") Diag diag);
 }

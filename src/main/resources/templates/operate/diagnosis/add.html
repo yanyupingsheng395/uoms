@@ -36,11 +36,18 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>新增诊断</h4>
+                                <h4>诊断</h4>
                             </div>
                             <div class="card-body">
-                                <div class="m-t-md" id="step1">
-                                    <form class="form-horizontal">
+                                <div class="m-t-md" id="step1" style="display:block;">
+                                    <form class="form-horizontal" id="formTable">
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label" for="beginDt">诊断名称：</label>
+                                            <div class="col-md-3">
+                                                <input type="text" class="form-control" name="diagName" id="diagName" value="诊断001"/>
+                                            </div>
+                                        </div>
+
                                         <div class="form-group">
                                             <label class="col-md-3 control-label" for="beginDt">周期：</label>
                                             <div class="col-md-3">
@@ -54,26 +61,153 @@
                                         <div class="form-group">
                                             <label class="col-md-3 control-label" for="beginDt">开始时间：</label>
                                             <div class="col-md-3" id="startDate">
-                                                <input class="form-control js-datepicker m-b-10" type="text" id="beginDt" name="beginDt"/>
+                                                <input class="form-control js-datepicker m-b-10" type="text" id="beginDt" name="beginDt" value="2009"/>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-md-3 control-label" for="beginDt">结束时间：</label>
                                             <div class="col-md-3" id="endDate">
-                                                <input class="form-control js-datepicker m-b-10" type="text" id="endDt" name="endDt"/>
+                                                <input class="form-control js-datepicker m-b-10" type="text" id="endDt" name="endDt" value="2019"/>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
-                                <div class="m-t-md" id="step2">
+                                <div class="m-t-md" id="step2" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <!-- 时间区 -->
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <span>周期：<span id="period_type"></span></span>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span>时间：<span id="date_area"></span></span>
+                                                </div>
+                                            </div>
+                                            <hr style="margin-top: 5px; margin-bottom: 10px;"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <!-- 左侧区域 -->
+                                        <div class="col-md-7">
+                                            <!-- 流程图区 -->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div data-th-include="operate/diagnosis/progress"></div>
+                                                </div>
+                                            </div>
+                                            <hr style="margin-top: 5px; margin-bottom: 10px;"/>
+                                            <!--操作面板区-->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h5>操作面板区：</h5>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <form class="form-horizontal">
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 control-label" for="beginDt">选择指标：</label>
+                                                            <div class="col-md-6">
+                                                                <select name="periodType" class="selectpicker form-control" id="op1">
+                                                                    <option value="0">GMV</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-3 control-label" for="beginDt">拆分方式：</label>
+                                                            <div class="col-md-6">
+                                                                <select name="periodType" class="selectpicker form-control" id="op2">
+                                                                    <option value="0">加法</option>
+                                                                    <option value="1">乘法</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" id="plus_condition" style="display:none;">
+                                                            <label class="col-md-3 control-label" for="beginDt">乘法公式：</label>
+                                                            <div class="col-md-6">
+                                                                <select name="periodType" class="selectpicker form-control" id="op3">
+                                                                    <option value="0">用户数 * 客单价</option>
+                                                                    <option value="1">订单价 * 订单数</option>
+                                                                    <option value="2">连带率 * 件单价</option>
+                                                                    <option value="3">时间长度 * 购买频率</option>
+                                                                    <option value="4">吊牌价 * 折扣率</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
 
+                                                        <div class="form-group" id="add_condition" style="display:block;">
+                                                            <label class="col-md-3 control-label" for="beginDt">维度：</label>
+                                                            <div class="col-md-6">
+                                                                <select name="periodType" class="selectpicker form-control" id="op4">
+                                                                    <option value="0">首购/非首购</option>
+                                                                    <option value="1">渠道</option>
+                                                                    <option value="2">子品牌</option>
+                                                                    <option value="3">品类/spu</option>
+                                                                    <option value="4">人口属性</option>
+                                                                    <option value="5">经济地域</option>
+                                                                    <option value="6">价值分级</option>
+                                                                    <option value="7">活动分级</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+
+                                                    <div class="form-group text-center">
+                                                        <button class="btn btn-primary" onclick="addCondition()">加入诊断</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 右侧区域 -->
+                                        <div class="col-md-5">
+                                            <div class="card">
+                                                <div class="card-header bg-cyan">
+                                                    <h4>第1季度盈利曲线</h4>
+                                                    <ul class="card-actions">
+                                                        <li>
+                                                            <button type="button" onclick="collapse(this)"><i style="color:#fff;" class="mdi mdi-menu-down mdi-24px"></i></button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="card-body" style="display:none;">
+                                                    <div style="height:400px;width: 100%" id="chart1"></div>
+                                                </div>
+                                            </div>
+                                            <div class="card">
+                                                <div class="card-header bg-cyan">
+                                                    <h4>第2季度盈利曲线</h4>
+                                                    <ul class="card-actions">
+                                                        <li>
+                                                            <button type="button" onclick="collapse(this)"><i class="mdi mdi mdi-menu-down mdi-24px"></i></button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="card-body" style="display:none;">
+                                                    <div style="width:100%;height:400px;" id="chart2"></div>
+                                                </div>
+                                            </div>
+                                            <div class="card">
+                                                <div class="card-header bg-cyan">
+                                                    <h4>第3季度盈利曲线</h4>
+                                                    <ul class="card-actions">
+                                                        <li>
+                                                            <button type="button" onclick="collapse(this)"><i class="mdi mdi mdi-menu-down mdi-24px"></i></button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="card-body" style="display:none;">
+                                                    <div style="width:100%;height:400px;" id="chart3"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="row mg-stop">
                                     <div class="col-md-12 text-right">
-                                        <button id="prev" class="btn btn-info" onclick="prev()">上一步</button>
-                                        <button id="next" class="btn btn-info" onclick="next()">下一步</button>
-                                        <a id="finished" class="btn btn-default" href="/page/gmvplan">返回</a>
+                                        <button id="next" class="btn btn-info" onclick="next(this)">保存并诊断</button>
+                                        <a class="btn btn-default" href="/page/diagnosis/list">返回</a>
                                     </div>
                                 </div>
                             </div>
@@ -95,6 +229,9 @@
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
 <script src="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
 <script data-th-src="@{/js/app/operate/diagnosis/add.js}"></script>
+<script data-th-src="@{/js/common/Chart.js}"></script>
 </body>
 </html>

@@ -4,11 +4,9 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.operate.domain.StateJudge;
 import com.linksteady.operate.service.StateJudgeService;
 import com.linksteady.system.domain.User;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
