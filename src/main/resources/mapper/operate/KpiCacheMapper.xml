@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.KpiCacheMapper">
+    <select id="getDiagKpis" resultType="map">
+        SELECT T.KPI_CODE, T.KPI_NAME, T.DISMANT_FORMULA
+        FROM UO_KPI_LIST_CONFIG T
+        WHERE T.DIAG_FLAG = 'Y' AND T.DISMANT_FLAG='Y'
+    </select>
+
+    <select id="getDismantKpis" resultType="map">
+        SELECT KPI_CODE,
+               KPI_NAME,
+               DISMANT_PART1_CODE,
+               DISMANT_PART1_NAME,
+               DISMANT_PART2_CODE,
+               DISMANT_PART2_NAME
+        FROM UO_KPI_DISMANT_CONFIG
+        WHERE KPI_CODE =#{kpiCode}
+    </select>
+
+ </mapper>

@@ -66,14 +66,12 @@ function submit_analysis(){
         array_template.push($(this).val());
     });
 
-    var dimKey=[];
-    var dimValues=[];
-    var dimDisplay=[];
+    var dim=[];
+
      //遍历已选择的维度
     dimlist.each(function (i) {
-        dimDisplay.push($(this).children(".dimDispaly").get(0).value);
-        dimKey.push($(this).children(".dimKey").get(0).value);
-        dimValues.push($(this).children(".dimValues").get(0).value);
+        var temp=$(this).children(".dimKey").get(0).value+"^"+$(this).children(".dimValues").get(0).value+"^"+$(this).children(".dimDispaly").get(0).value;
+        dim.push(temp);
 
     });
 
@@ -83,9 +81,7 @@ function submit_analysis(){
         endDt:end_dt,
         period:$("#period").val(),
         templates:array_template,
-        dims:dimKey,
-        dimValues:dimValues,
-        dimDisplay:dimDisplay
+        dims:dim
     };
 
     //遮罩层打开

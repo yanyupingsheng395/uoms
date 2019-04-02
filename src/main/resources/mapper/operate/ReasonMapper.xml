@@ -1,25 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.ReasonMapper">
-  <!--<resultMap id="BaseResultMap" type="com.linksteady.operate.domain.KeyPointMonth">-->
-    <!--<result column="MONTH_ID" jdbcType="INTEGER" property="monthId" />-->
-    <!--<result column="GMV_ACTUAL" jdbcType="DOUBLE" property="gmvActual" />-->
-    <!--<result column="GMV_TARGET" jdbcType="DOUBLE" property="gmvTarget" />-->
-    <!--<result column="GMV_CMP_RATE" jdbcType="DOUBLE" property="gmvCmpRate" />-->
-    <!--<result column="GMV_CMP_TOTALRATE" jdbcType="DOUBLE" property="getGmvCmpTotalRate" />-->
-    <!--<result column="TIME_RATE" jdbcType="DOUBLE" property="timeRate" />-->
-    <!--<result column="GMV_LASTMONTH" jdbcType="DOUBLE" property="gmvLastMonth" />-->
-    <!--<result column="GMV_LASTMONTH_DIFF" jdbcType="DOUBLE" property="gmvLastMonthDiff" />-->
-    <!--<result column="GMV_LASTMONTH_RATE" jdbcType="DOUBLE" property="gmvLastMonthRate" />-->
-    <!--<result column="GMV_PREMONTH" jdbcType="DOUBLE" property="gmvPreMonth" />-->
-    <!--<result column="GMV_PREMONTH_DIFF" jdbcType="DOUBLE" property="gmvPreMonthDiff" />-->
-    <!--<result column="GMV_PREMONTH_RATE" jdbcType="DOUBLE" property="gmvPreMonthRate" />-->
-    <!--<result column="COST_MONTH" jdbcType="DOUBLE" property="costMonth" />-->
-    <!--<result column="INCOME_MONTH" jdbcType="DOUBLE" property="incomeMonth" />-->
-    <!--<result column="PROFIT_RATE" jdbcType="DOUBLE" property="profitRate" />-->
-    <!--<result column="PROFIT_ALERT_RATE" jdbcType="DOUBLE" property="profitAlertRate" />-->
-    <!--<result column="COST_HEALTH_FLAG" jdbcType="VARCHAR" property="costHealthFlag" />-->
-  <!--</resultMap>-->
+
+   <resultMap id="relatedkpimap" type="com.linksteady.operate.domain.ReasonKpis">
+       <result column="CONFIG_INFO1" property="chartType"/>
+       <result column="CONFIG_INFO2" property="configInfo2"/>
+       <result column="PERIOD_TYPE" property="periodType"/>
+       <result column="REASON_KPI_NAME" property="reasonKpiName"/>
+       <result column="DATAS" property="datasstr" javaType="String" jdbcType="VARBINARY"/>
+   </resultMap>
 
    <select id="getReasonTotalCount" resultType="int">
      select count(*) from UO_REASON_LIST
@@ -29,20 +18,20 @@
    SELECT * FROM(
     SELECT A.*,ROWNUM RN FROM
       (SELECT
-         REASON_ID,
-         REASON_NAME,
-         STATUS,
-         PROGRESS,
-         TO_CHAR(BEGIN_DT,'YYYY-MM-DD') BEGIN_DT,
-         TO_CHAR(END_DT,'YYYY-MM-DD') END_DT,
-         TO_CHAR(CREATE_DT,'YYYY-MM-DD') CREATE_DT,
-         TO_CHAR(UPDATE_DT,'YYYY-MM-DD') UPDATE_DT,
-         CREATE_BY,
-         UPDATE_BY,
-         KPI_CODE,
-         PERIOD_TYPE,
-         KPI_NAME
-    FROM UO_REASON_LIST ORDER BY REASON_ID DESC) A  WHERE ROWNUM &lt;=#{endRow}
+         RL.REASON_ID,
+         RL.REASON_NAME,
+         RL.STATUS,
+         RL.PROGRESS,
+         TO_CHAR(RL.BEGIN_DT,'YYYY-MM-DD') BEGIN_DT,
+         TO_CHAR(RL.END_DT,'YYYY-MM-DD') END_DT,
+         TO_CHAR(RL.CREATE_DT,'YYYY-MM-DD') CREATE_DT,
+         TO_CHAR(RL.UPDATE_DT,'YYYY-MM-DD') UPDATE_DT,
+         RL.CREATE_BY,
+         RL.UPDATE_BY,
+         RL.KPI_CODE,
+         RL.PERIOD_TYPE,
+         KL.KPI_NAME
+    FROM UO_REASON_LIST RL,UO_KPI_LIST KL WHERE RL.KPI_CODE=KL.KPI_CODE(+) ORDER BY REASON_ID DESC) A  WHERE ROWNUM &lt;=#{endRow}
     ) WHERE RN &gt;=#{startRow}
 
   </select>
@@ -82,4 +71,183 @@
                 #{period}
             )
     </insert>
+
+    <insert id="saveReasonDetail">
+        INSERT INTO UO_REASON_DETAIL
+            (
+                REASON_ID,
+                DIM_CODE,
+                DIM_VALUES,
+                DIM_DISPLAY_VALUE
+            )VALUES
+            (
+                #{primaryKey,jdbcType=INTEGER},
+                #{dimCode},
+                #{dimValues},
+                #{dimDisplay}
+            )
+    </insert>
+
+    <select id="saveReasonTemplate">
+        INSERT INTO UO_REASON_TEMPLATE
+            (
+                REASON_ID,
+                TEMPLATE_CODE
+            )VALUES
+            (
+             #{primaryKey,jdbcType=INTEGER},
+             #{templateCode}
+            )
+    </select>
+
+    <delete id="deleteReasonDetail">
+        delete  from UO_REASON_DETAIL t where t.reason_id=#{reasonId}
+    </delete>
+
+    <delete id="deleteReasonTemplate">
+        delete from UO_REASON_TEMPLATE t where t.reason_id=#{reasonId}
+    </delete>
+
+    <delete id="deleteReasonKpis">
+        delete from UO_REASON_KPIS t where t.reason_id=#{reasonId}
+    </delete>
+
+    <delete id="deleteReasonById">
+        delete from UO_REASON_LIST t where t.reason_id=#{reasonId}
+    </delete>
+
+    <update id="updateProgressById">
+        update UO_REASON_LIST set Progress=#{progress,jdbcType=INTEGER} where reason_id=#{reasonId}
+    </update>
+
+    <update id="updateProgressAndStatusById">
+        update UO_REASON_LIST set Update_Dt=SYSDATE,STATUS='F',Progress=#{progress,jdbcType=INTEGER} where reason_id=#{reasonId}
+    </update>
+
+    <select id="getRelatedKpis" resultType="map">
+        SELECT * FROM (
+                          select
+                              ROUND(DBMS_RANDOM.value(0,1)) RDM,
+                              T.REASON_ID,
+                              T1.TEMPLATE_CODE,
+                              CFG.REASON_KPI_CODE,
+                              CFG.REASON_KPI_TYPE,
+                              TO_CHAR(t.BEGIN_DT,'YYYY-MM-DD') BEGIN_DT,
+                              TO_CHAR(t.END_DT,'YYYY-MM-DD')  END_DT,
+                              t.PERIOD_TYPE,
+                              cfg.CONFIG_INFO1,
+                              cfg.CONFIG_INFO2,
+                              cfg.REASON_KPI_NAME
+                          from UO_REASON_LIST            t,
+                               UO_REASON_TEMPLATE        T1,
+                               UO_REASON_TEMPLATE_CONFIG CFG
+                          WHERE T.REASON_ID = T1.REASON_ID
+                            AND T1.TEMPLATE_CODE = CFG.TEMPLATE_CODE
+                            AND T.REASON_ID = #{reasonId}
+                      ) WHERE  RDM=1
+    </select>
+
+    <insert id="saveRelatedKpis">
+         INSERT INTO UO_REASON_KPIS
+             (
+                 REASON_ID,
+                 TEMPLATE_CODE,
+                 REASON_KPI_CODE,
+                 REASON_KPI_TYPE,
+                 BEGIN_DT,
+                 END_DT,
+                 PERIOD_TYPE,
+                 CONFIG_INFO1,
+                 CONFIG_INFO2,
+                 DATAS,
+                 REASON_KPI_NAME,
+                 RESULTS,
+                 CREATE_DT,
+                 UPDATE_DT
+             ) VALUES
+             (
+                 #{reasonId,jdbcType=INTEGER},
+                 #{templateCode},
+                 #{reasonKpiCode},
+                 #{reasonKpiType},
+                 #{beginDate,jdbcType=DATE},
+                 #{endDate,jdbcType=DATE},
+                 #{periodType},
+                 #{chartType},
+                 #{configInfo2},
+                 #{datas,jdbcType=CLOB},
+                 #{reasonKpiName},
+                 #{result},
+                 #{createDt,jdbcType=DATE},
+                 #{updateDt,jdbcType=DATE}
+             )
+    </insert>
+
+    <select id="getReasonInfoById" resultType="map">
+        SELECT
+            T.REASON_ID,
+            T.KPI_CODE,
+            T.REASON_NAME,
+            TO_CHAR(T.BEGIN_DT,'yyyy-mm-dd') BEGIN_DT,
+            TO_CHAR(T.END_DT,'yyyy-mm-dd') END_DT,
+            DECODE(T.PERIOD_TYPE,'D','天','月') PERIOD_TYPE,
+            T.KPI_CODE,
+            KL.KPI_NAME
+        FROM UO_REASON_LIST T,
+             UO_KPI_LIST KL
+        WHERE T.KPI_CODE=KL.KPI_CODE(+)
+          AND T.REASON_ID=#{reasonId}
+    </select>
+
+    <select id="getReasonDetailById" resultType="map">
+        select DIM_DISPLAY_VALUE from UO_REASON_DETAIL t where reason_id=#{reasonId}
+    </select>
+
+    <select id="getReasonTemplatesById" resultType="map">
+        SELECT T.TEMPLATE_CODE,
+               T2.TEMPLATE_NAME
+        FROM UO_REASON_TEMPLATE T,
+             (SELECT DISTINCT C.TEMPLATE_CODE, C.TEMPLATE_NAME
+              FROM UO_REASON_TEMPLATE_CONFIG C) T2
+        WHERE T.TEMPLATE_CODE = T2.TEMPLATE_CODE(+)
+          AND T.REASON_ID=#{reasonId}
+        ORDER BY T.TEMPLATE_CODE asc
+    </select>
+
+    <select id="getRelatedKpiList" resultType="map">
+        SELECT T.REASON_KPI_CODE, T.REASON_KPI_NAME
+            FROM UO_REASON_KPIS T
+            WHERE T.TEMPLATE_CODE = #{templateCode}
+              AND T.REASON_ID = #{reasonId}
+            ORDER BY T.REASON_KPI_CODE
+    </select>
+
+    <select id="getReasonKpiHistroy" resultType="map">
+        select T.KPI_CODE,
+               T.TEMPLATE_CODE,
+               T.REASON_KPI_CODE,
+               T.REASON_KPI_TYPE,
+               T.REASON_KPI_NAME,
+               T.RELATE_VALUE,
+               T.RELATE_FLAG,
+               T.REGRESSION_VALUE
+        from UO_REASON_KPIS_HISTORY t
+        WHERE
+            T.KPI_CODE=#{kpiCode}
+          AND T.TEMPLATE_CODE=#{templateCode}
+          ORDER BY REGRESSION_VALUE DESC
+    </select>
+
+    <select id="getReasonRelatedKpi" resultMap="relatedkpimap">
+        SELECT
+            T.CONFIG_INFO1,
+            T.CONFIG_INFO2,
+            T.PERIOD_TYPE,
+            T.REASON_KPI_NAME,
+            T.DATAS
+        FROM UO_REASON_KPIS T
+        WHERE T.REASON_ID = #{reasonId}
+          AND T.KPI_CODE=#{kpiCode}
+          AND T.TEMPLATE_CODE=#{templateCode}
+    </select>
  </mapper>

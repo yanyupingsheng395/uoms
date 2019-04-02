@@ -4,16 +4,15 @@ import java.io.Serializable;
 
 public class ReasonVO implements Serializable {
 
-    String kpi;
+    String kpi;  //指标ID
 
-    String kpiName;
+    String kpiName;  //指标名称
     String startDt;
     String endDt;
     String period;
     String [] templates;
-    String [] dims;
-    String [] dimValues;
-    String [] dimDisplay;
+    String [] dims;  //维度名称
+    String [] dimDisplay; //维度显示信息的列表
 
     public String getKpi() {
         return kpi;
@@ -63,12 +62,12 @@ public class ReasonVO implements Serializable {
         this.dims = dims;
     }
 
-    public String[] getDimValues() {
-        return dimValues;
+    public String getKpiName() {
+        return kpiName;
     }
 
-    public void setDimValues(String[] dimValues) {
-        this.dimValues = dimValues;
+     public void setKpiName(String kpiName) {
+        this.kpiName = kpiName;
     }
 
     public String[] getDimDisplay() {
@@ -77,13 +76,5 @@ public class ReasonVO implements Serializable {
 
     public void setDimDisplay(String[] dimDisplay) {
         this.dimDisplay = dimDisplay;
-    }
-
-    public String getKpiName() {
-        return kpiName;
-    }
-
-    public void setKpiName(String kpiName) {
-        this.kpiName = kpiName;
     }
 }
