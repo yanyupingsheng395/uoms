@@ -30,7 +30,19 @@
         <!-- 头部信息 -->
         <div data-th-include="common/header"></div>
         <!-- 页面主要内容 -->
-        <main class="lyear-layout-content">
+        <main class="lyear-layout-content" oncontextmenu="doNothing()" id="main">
+            <!-- 控制面板的右键操作按钮 -->
+            <div id="operateBtns" style="top: 0px;left: 0px;position: absolute; z-index: 100; display: none;">
+                <table style="width: auto;">
+                    <tr>
+                        <td><button class="btn btn-default" data-toggle="modal" data-target="#nodeAddModal" onclick="modalBefore()"><i class="mdi mdi-plus"></i>&nbsp;新增</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default" onclick="alert('删除')"><i class="mdi mdi-delete danger"></i>&nbsp;删除</button></td>
+                    </tr>
+                </table>
+            </div>
+
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
@@ -96,68 +108,6 @@
                                                     <div data-th-include="operate/diagnosis/progress"></div>
                                                 </div>
                                             </div>
-                                            <hr style="margin-top: 5px; margin-bottom: 10px;"/>
-                                            <!--操作面板区-->
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <h5>操作面板区：</h5>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <form class="form-horizontal">
-                                                        <div class="form-group">
-                                                            <label class="col-md-3 control-label" for="beginDt">选择指标：</label>
-                                                            <div class="col-md-6">
-                                                                <select name="periodType" class="selectpicker form-control" id="op1">
-                                                                    <option value="0">GMV</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="col-md-3 control-label" for="beginDt">拆分方式：</label>
-                                                            <div class="col-md-6">
-                                                                <select name="periodType" class="selectpicker form-control" id="op2">
-                                                                    <option value="0">加法</option>
-                                                                    <option value="1">乘法</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group" id="plus_condition" style="display:none;">
-                                                            <label class="col-md-3 control-label" for="beginDt">乘法公式：</label>
-                                                            <div class="col-md-6">
-                                                                <select name="periodType" class="selectpicker form-control" id="op3">
-                                                                    <option value="0">用户数 * 客单价</option>
-                                                                    <option value="1">订单价 * 订单数</option>
-                                                                    <option value="2">连带率 * 件单价</option>
-                                                                    <option value="3">时间长度 * 购买频率</option>
-                                                                    <option value="4">吊牌价 * 折扣率</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="form-group" id="add_condition" style="display:block;">
-                                                            <label class="col-md-3 control-label" for="beginDt">维度：</label>
-                                                            <div class="col-md-6">
-                                                                <select name="periodType" class="selectpicker form-control" id="op4">
-                                                                    <option value="0">首购/非首购</option>
-                                                                    <option value="1">渠道</option>
-                                                                    <option value="2">子品牌</option>
-                                                                    <option value="3">品类/spu</option>
-                                                                    <option value="4">人口属性</option>
-                                                                    <option value="5">经济地域</option>
-                                                                    <option value="6">价值分级</option>
-                                                                    <option value="7">活动分级</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-
-                                                    <div class="form-group text-center">
-                                                        <button class="btn btn-primary" onclick="addCondition()">加入诊断</button>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                         <!-- 右侧区域 -->
                                         <div class="col-md-5">
@@ -215,6 +165,72 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 条件model-->
+            <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="nodeAddModalLabel" id="nodeAddModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="nodeAddModalLabel"></h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label" for="beginDt">选择指标：</label>
+                                            <div class="col-md-6">
+                                                <select name="periodType" class="selectpicker form-control" id="op1">
+                                                    <option value="gmv">销售额/GMV</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label" for="beginDt">拆分方式：</label>
+                                            <div class="col-md-6">
+                                                <select name="periodType" class="selectpicker form-control" id="op2">
+                                                    <option value="0">加法</option>
+                                                    <option value="1">乘法</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="plus_condition" style="display:none;">
+                                            <label class="col-md-3 control-label" for="beginDt">乘法公式：</label>
+                                            <div class="col-md-6">
+                                                <select name="periodType" class="selectpicker form-control" id="op3"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" id="add_condition" style="display:block;">
+                                            <label class="col-md-3 control-label" for="beginDt">维度：</label>
+                                            <div class="col-md-6">
+                                                <select name="periodType" class="selectpicker form-control" id="op4">
+                                                    <option value="0">首购/非首购</option>
+                                                    <option value="1">渠道</option>
+                                                    <option value="2">子品牌</option>
+                                                    <option value="3">品类/spu</option>
+                                                    <option value="4">人口属性</option>
+                                                    <option value="5">经济地域</option>
+                                                    <option value="6">价值分级</option>
+                                                    <option value="7">活动分级</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="addCondition()">确定</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 </div>

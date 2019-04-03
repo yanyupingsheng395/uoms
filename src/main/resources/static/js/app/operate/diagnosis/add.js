@@ -41,16 +41,24 @@ function chartResize(dom) {
     if(chartId == 'chart3') {
         chart3.resize();
     }
-
 }
 
+function doNothing(){
+    window.event.returnValue=false;
+    return false;
+}
+
+// 拆分方式
 $("#op2").change(function() {
-    var optionVal = $(this).find("option:selected").val();
-    if(optionVal == 0) {
+    var option1Val = $("#op1").find("option:selected").val();
+    var option2Val = $(this).find("option:selected").val();
+    if(option2Val == 0) {
         $("#add_condition").attr("style", "display:block;");
         $("#plus_condition").attr("style", "display:none;");
     }
-    if(optionVal == 1) {
+    if(option2Val == 1) {
+        geFormula(option1Val);
+
         $("#plus_condition").attr("style", "display:block;");
         $("#add_condition").attr("style", "display:none;");
     }
@@ -72,13 +80,50 @@ function beforeNext(dom) {
 
 // 加入诊断
 function addCondition() {
-    var optionVal = $("#op2").find("option:selected").val();
-    if(optionVal == 0) { // 加法
-
-    }
-
+    var option1Val = $("#op1").find("option:selected").val();
+    $.get("/progress/getKpi", {code: option1Val}, function(r) {
+        jsmind_refresh(r.data);
+        getKpiComb(option1Val);
+        $("#nodeAddModal").modal('hide');
+    });
 }
 
+function modalBefore() {
+    var e = document.getElementById("operateBtns");
+    e.style.display = "none";
+}
+
+function jsmind_refresh(map) {
+    var parentid = map["KPI_CODE"];
+    var id1 = map["DISMANT_PART1_CODE"];
+    var topic1 = map["DISMANT_PART1_NAME"];
+    var id2 = map["DISMANT_PART2_CODE"];
+    var topic2 = map["DISMANT_PART2_NAME"];
+    jm.enable_edit();
+    jm.add_node(parentid, id1, topic1);
+    jm.add_node(parentid, id2, topic2);
+    jm.disable_edit();
+    addEventListenerOfNode();
+}
+
+function getKpiComb(code) {
+    $.get("/progress/getKpiComb", {code: code}, function (r) {
+        var code = "<option value='"+r.data.k+"'>"+r.data.v+"</option>";
+        $("#op1").html("").html(code);
+        $('#op1').selectpicker('refresh');
+    });
+}
+
+// 获取公式
+function geFormula(optionVal) {
+    $.get("/progress/geFormula", {code: optionVal}, function(r) {
+        var code = "<option value='" + optionVal + "'>" + r.data + "</option>";
+        $("#op3").html("").html(code);
+        $('#op3').selectpicker('refresh');
+    });
+}
+
+var jm = null;
 function load_jsmind(){
     var mind = {
         "meta":{
@@ -87,36 +132,41 @@ function load_jsmind(){
         },
         "format":"node_array",
         "data":[
-            {"id":"root", "isroot":true, "topic":"GMV"},
-            {"id":"sub1", "parentid":"root", "topic":"sub1", "background-color":"#0000ff"},
-            {"id":"sub11", "parentid":"sub1", "topic":"sub11"},
-            {"id":"sub12", "parentid":"sub1", "topic":"sub12"},
-            {"id":"sub13", "parentid":"sub1", "topic":"sub13"},
-
-            {"id":"sub2", "parentid":"root", "topic":"sub2"},
-            {"id":"sub21", "parentid":"sub2", "topic":"sub21"},
-            {"id":"sub22", "parentid":"sub21", "topic":"sub22","foreground-color":"#33ff33"},
-            {"id":"sub23", "parentid":"sub22", "topic":"sub21"},
-            {"id":"sub24", "parentid":"sub23", "topic":"sub22","foreground-color":"#33ff33"},
-            {"id":"sub25", "parentid":"sub24", "topic":"sub21"},
-            {"id":"sub26", "parentid":"sub25", "topic":"sub22","foreground-color":"#33ff33"},
-            {"id":"sub27", "parentid":"sub26", "topic":"sub21"},
-            {"id":"sub28", "parentid":"sub2", "topic":"sub22","foreground-color":"#33ff33"},
-
-            {"id":"sub3", "parentid":"root", "topic":"sub3"},
+            {"id":"gmv", "isroot":true, "topic":"销售额/GMV"}
         ]
     };
     var options = {
         container:'jsmind_container',
-        editable:true,
-        theme:'greensea'
-    }
-    var jm = jsMind.show(options,mind);
-    // jm.disable_edit();
-    // jm.add_node("sub2","sub23", "new node", {"background-color":"red"});
-    // jm.set_node_color('sub21', 'green', '#ccc');
-    jm.disable_edit();
+        editable:false,
+        theme:'info'
+    };
+    jm = jsMind.show(options,mind);
+    addEventListenerOfNode();
 }
+
+function addEventListenerOfNode() {
+    // 注册鼠标右键事件
+    $("jmnode").mousedown(function (event) {
+        var event = event || window.event;
+        var e = document.getElementById("operateBtns");
+        if(event.button == "2"){
+            e.style.top = event.pageY+'px';
+            e.style.left = event.pageX+'px';
+            e.style.display = 'block';
+        }else {
+            e.style.display = 'none';
+        }
+    });
+}
+
+// 判断JM非空，保证在单击面板时，不被隐藏
+$("#main").mousedown(function (event) {
+    var event = event || window.event;
+    var e = document.getElementById("operateBtns");
+    if(event.button == "0" && e.style.display == "block" && jm.get_selected_node() == null){
+        e.style.display = 'none';
+    }
+});
 
 function next(dom) {
     if($("#step1").attr("style") == "display:block;") {
