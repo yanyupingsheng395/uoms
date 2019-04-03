@@ -172,6 +172,9 @@ public class ReasonController  extends BaseController {
         Map<String,String> t2=  KpiCacheManager.getInstance().getCodeFomularPair();  //kpicode 乘法公式 对
         //kpicode --拆解公式(map结构  DISMANT_PART1_CODE,DISMANT_PART1_NAME,DISMANT_PART1_CODE,DISMANT_PART1_NAME 分别代表第一部分的code，name;第二不部分的code,name)对
         Map<String,Object> t3=KpiCacheManager.getInstance().getKpiDismant();
+
+        Map<String,String> t5=KpiCacheManager.getInstance().getDiagDimList();
+        Map<String,Object> t6= KpiCacheManager.getInstance().getDiagDimValueList();
         System.out.println("hello");
         return ResponseBo.ok(111);
     }
