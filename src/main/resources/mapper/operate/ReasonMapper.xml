@@ -31,7 +31,7 @@
          RL.KPI_CODE,
          RL.PERIOD_TYPE,
          KL.KPI_NAME
-    FROM UO_REASON_LIST RL,UO_KPI_LIST KL WHERE RL.KPI_CODE=KL.KPI_CODE(+) ORDER BY REASON_ID DESC) A  WHERE ROWNUM &lt;=#{endRow}
+    FROM UO_REASON_LIST RL,UO_KPI_LIST_CONFIG KL WHERE RL.KPI_CODE=KL.KPI_CODE(+) ORDER BY REASON_ID DESC) A  WHERE ROWNUM &lt;=#{endRow}
     ) WHERE RN &gt;=#{startRow}
 
   </select>
@@ -194,7 +194,7 @@
             T.KPI_CODE,
             KL.KPI_NAME
         FROM UO_REASON_LIST T,
-             UO_KPI_LIST KL
+             UO_KPI_LIST_CONFIG KL
         WHERE T.KPI_CODE=KL.KPI_CODE(+)
           AND T.REASON_ID=#{reasonId}
     </select>
