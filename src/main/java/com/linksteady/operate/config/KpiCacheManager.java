@@ -1,5 +1,7 @@
 package com.linksteady.operate.config;
 
+import com.google.common.collect.Maps;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,15 +24,15 @@ public class KpiCacheManager {
 
     private static KpiCacheManager kpiCacheManager;
 
-    private static Map<String, String> codeNamePair = new HashMap<String, String>();  //kpi code-name对
+    private static Map<String, String> codeNamePair = Maps.newLinkedHashMap();  //kpi code-name对
 
-    private static Map<String, String> codeFomularPair = new HashMap<String, String>();  //kpi code-fomular对
+    private static Map<String, String> codeFomularPair =Maps.newLinkedHashMap();  //kpi code-fomular对
 
-    private static Map<String, Object> kpidismant = new HashMap<String, Object>();  //每个指标 及其对应的乘法公式列表
+    private static Map<String, Object> kpidismant = Maps.newLinkedHashMap();  //每个指标 及其对应的乘法公式列表
 
-    private static Map<String, String> diagDimList = new HashMap<String, String>();  //诊断 维度列表
+    private static Map<String, String> diagDimList = Maps.newLinkedHashMap();  //诊断 维度列表
 
-    private static Map<String, Object> diagDimValueList = new HashMap<String, Object>();  //诊断 维度及其值列表
+    private static Map<String, Object> diagDimValueList = Maps.newLinkedHashMap();  //诊断 维度及其值列表
 
     public static KpiCacheManager getInstance() {
         if (null == kpiCacheManager) {

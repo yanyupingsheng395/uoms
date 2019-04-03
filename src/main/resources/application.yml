@@ -149,6 +149,8 @@ logging:
   level:
     com:
       linksteady:
+        common:
+          dao: debug
         operate:
           dao: debug
 

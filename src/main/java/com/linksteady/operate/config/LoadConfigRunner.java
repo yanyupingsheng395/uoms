@@ -20,10 +20,10 @@ public class LoadConfigRunner implements CommandLineRunner {
 
         List<Map<String,String>> kpis=cacheMapper.getDiagKpis();
 
-        Map<String,String>  codeNamePair = Maps.newHashMap();
-        Map<String,String>  codeFomularPair = Maps.newHashMap();
+        Map<String,String>  codeNamePair = Maps.newLinkedHashMap();
+        Map<String,String>  codeFomularPair = Maps.newLinkedHashMap();
 
-        Map<String,Object> kpidismant=Maps.newHashMap();
+        Map<String,Object> kpidismant=Maps.newLinkedHashMap();
 
         for(Map<String,String> param:kpis)
         {
