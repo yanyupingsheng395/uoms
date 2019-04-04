@@ -36,6 +36,9 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Value("${spring.redis.host}")
     private String host;
 
+    @Value("${spring.redis.database}")
+    private int database;
+
     @Value("${spring.redis.port}")
     private int port;
 
@@ -137,25 +140,29 @@ public class RedisConfig extends CachingConfigurerSupport {
 }
 
 class FastJsonRedisSerializer<T> implements RedisSerializer<T> {
-    private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+
     private Class<T> clazz;
 
-    FastJsonRedisSerializer(Class<T> clazz) {
+    public FastJsonRedisSerializer(Class<T> clazz) {
         super();
         this.clazz = clazz;
     }
 
     @Override
     public byte[] serialize(T t) throws SerializationException {
+        if (t == null) {
+            return new byte[0];
+        }
         return JSON.toJSONString(t, SerializerFeature.WriteClassName).getBytes(DEFAULT_CHARSET);
     }
 
     @Override
     public T deserialize(byte[] bytes) throws SerializationException {
-        if (bytes.length <= 0) {
+        if (bytes == null || bytes.length <= 0) {
             return null;
         }
         String str = new String(bytes, DEFAULT_CHARSET);
-        return JSON.parseObject(str, clazz);
+        return (T) JSON.parseObject(str, clazz);
     }
 }

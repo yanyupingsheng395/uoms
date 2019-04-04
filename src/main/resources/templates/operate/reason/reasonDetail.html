@@ -14,6 +14,7 @@
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <link rel="stylesheet"  data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <link href="https://cdn.bootcss.com/toastr.js/2.1.4/toastr.min.css" rel="stylesheet">
 </head>
@@ -67,9 +68,9 @@
 
                                             </div>
                                             <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label" for="peroid">时间粒度：</label>
+                                                <label class="col-md-3 control-label" for="period">时间粒度：</label>
                                                 <div class="col-md-5 input-group">
-                                                    <input class="form-control" type="text" id="peroid" name="peroid" placeholder="" disabled>
+                                                    <input class="form-control" type="text" id="period" name="period" placeholder="" disabled>
                                                 </div>
                                             </div>
                                         </form>
@@ -80,7 +81,7 @@
                                 <!--选择模板-->
                                 <div class="row">
                                     <div class="col-md-12 mg-stop">
-                                    <h5>探究模板&nbsp;<span class="mdi mdi-help-circle"></span></h5>
+                                    <h5>探究模板&nbsp;<span class="mdi mdi-help-circle"></span><a href="">模板说明</a></h5>
                                     <form class="form-horizontal" style="border:solid 1px #ccc;">
 
                                     <div class="mg-stop">
@@ -101,13 +102,13 @@
                                             <div class="form-group mg-stop">
                                                 <label class="col-md-3 control-label" for="reasonkpiCode">相关指标列表：</label>
                                                 <div class="col-md-5 input-group">
-                                                    <select class="form-control" id="reasonkpiCode" name="reasonkpiCode" size="1">
+                                                    <select class="selectpicker" id="reasonkpiCode" name="reasonkpiCode" size="1">
                                                     </select>
                                                 </div>
                                             </div>
 
-                                            <div class="mg-stop">
-                                                  这里是图形展示区;
+                                            <div class="mg-stop" id="linechart"  style="height: 300px;">
+
                                             </div>
                                         </form>
                                     </div>
@@ -129,6 +130,7 @@
 </div>
 <input id="reasonId" type="hidden" th:value="${reasonId}">
 <input id="kpiCode" type="hidden">
+<input id="templateCode" type="hidden">
 </body>
 <!--日期选择插件-->
 <script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
@@ -139,5 +141,9 @@
 <script data-th-src="@{/plugins/notify/bootstrap-notify.min.js}"></script>
 <script data-th-src="@{/plugins/notify/lightyear.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script src="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>
+<script src="https://cdn.bootcss.com/jsrender/1.0.2/jsrender.min.js"></script>
 <script data-th-src="@{/js/app/operate/reason/reasonDetail.js}"></script>
 </html>

@@ -45,7 +45,7 @@ public interface ReasonMapper {
 
     List<Map<String, Object>> getReasonKpiHistroy(@Param("kpiCode") String kpiCode,@Param("templateCode") String templateCode);
 
-    List<ReasonKpis>  getReasonRelatedKpi(@Param("reasonId") String reasonId,@Param("kpiCode") String kpiCode,@Param("templateCode") String templateCode);
+    List<ReasonKpis>  getReasonRelatedKpi(@Param("reasonId") String reasonId,@Param("templateCode") String templateCode,@Param("reasonKpiCode") String reasonKpiCode);
 
 
 

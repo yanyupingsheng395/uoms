@@ -1,3 +1,16 @@
+var  lineOption= {
+    xAxis: {
+        type: 'category',
+        data: []
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+        data: [],
+        type: 'line'
+    }]
+};
 
 $(function () {
 
@@ -15,7 +28,7 @@ $(function () {
 
            $("#start_dt").val(msg.BEGIN_DT);
            $("#end_dt").val(msg.END_DT);
-           $("#peroid").val(msg.PERIOD_TYPE);
+           $("#period").val(msg.PERIOD_TYPE);
            //获取到详细信息
            var dims=msg.reasonDetail;
            $.each(dims,function (index,item) {
@@ -30,7 +43,9 @@ $(function () {
                if(index==0) //第一个tab为打开状态
                {
                    activeTabCode=item.TEMPLATE_CODE;
+                   $("#templateCode").val(activeTabCode);
                    $("#historyTabs").append("<li class='active'><a href='#"+item.TEMPLATE_CODE+"'  data-toggle='tab'>"+item.TEMPLATE_NAME+"</a></li>");  //加载tab标签
+
 
                    //加载标签页显示数据的表格
                    $("#historyTabContent").append("<div class='tab-pane fade active in' id='"+item.TEMPLATE_CODE+"'><table id='"+item.TEMPLATE_CODE+"Table' class='table text-center'/></div>");
@@ -60,20 +75,7 @@ $(function () {
                 }
             })
 
-
-            //填充此模板下的相关指标列表
-            $.getJSON("/reason/getRelatedKpiList?reasonId="+reasonId+"&templateCode="+activeTabCode, function (resp) {
-                if (resp.code==200){
-                    $.each(resp.msg,function (index,item) {
-                        $("#reasonkpiCode").append("<option value='"+item.REASON_KPI_CODE+"'>"+item.REASON_KPI_NAME+"</option>");
-                    })
-                }
-            })
-
-            //对于第一个指标 渲染图形
-            var defaultRelateKpi=$('#reasonkpiCode').val();
-            console.log($('#reasonkpiCode').find("option:selected"));
-            alert(defaultRelateKpi);
+            InitRelateKpiList(reasonId,activeTabCode);
         }
 
         //为tab页增加事件
@@ -81,6 +83,7 @@ $(function () {
             // 获取已激活的标签页的名称
             var activeTab = $(e.target).attr("href");
             var templateCode=activeTab.substr(1,activeTab.length);
+            $("#templateCode").val(templateCode);
 
             //填充此模板下指标的历史表现
             $.getJSON("/reason/getReasonKpiHistroy?kpiCode="+kpiCode+"&templateCode="+templateCode, function (resp) {
@@ -91,7 +94,17 @@ $(function () {
                     $('#'+tableName).bootstrapTable('load', resp.msg);
 
                 }
+
+                //填充指标下拉列表
+                InitRelateKpiList(reasonId,templateCode);
+
             })
+        });
+
+        //为指标下拉列表增加切换事件
+        $("#reasonkpiCode").on('change',function (e) {
+
+            createChart($("#reasonId").val(),$("#templateCode").val(),$("#reasonkpiCode").find("option:selected").val());
         });
 
 
@@ -101,9 +114,38 @@ $(function () {
 
     //关闭遮罩层
     lightyear.loading('hide');
-
-
 });
+
+function InitRelateKpiList(reasonId,templateCode)
+{
+    //清空相关指标下的选项
+    $("#reasonkpiCode  option").remove();
+
+    //填充此模板下的相关指标列表
+    $.getJSON("/reason/getRelatedKpiList?reasonId="+reasonId+"&templateCode="+templateCode, function (resp) {
+        if (resp.code==200){
+            $.each(resp.msg,function (index,item) {
+                $("#reasonkpiCode").append("<option value='"+item.REASON_KPI_CODE+"'>"+item.REASON_KPI_NAME+"</option>");
+            })
+            $("#reasonkpiCode").selectpicker('refresh');
+            //渲染图形
+            createChart(reasonId,templateCode,$('#reasonkpiCode option:first-child').val());  //原因ID 模板CODE 指标CODE
+        }
+    })
+}
+function createChart(reasonId,templateCode,reasonKpiCode)
+{
+    $.getJSON("/reason/getReasonRelatedKpi?reasonId="+reasonId+"&reasonKpiCode="+reasonKpiCode+"&templateCode="+templateCode, function (resp) {
+        if (resp.code==200){
+           //绘制echarts图
+            lineOption.xAxis.data=resp.data.xdata;
+            lineOption.series[0].data=resp.data.ydata;
+            var kpiChart = echarts.init(document.getElementById('linechart'), 'macarons');
+
+            kpiChart.setOption(lineOption);
+        }
+    })
+}
 
 
 function createTableHeader(tableName)

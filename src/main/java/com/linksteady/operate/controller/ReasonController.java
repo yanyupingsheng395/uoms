@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -9,6 +10,7 @@ import com.linksteady.operate.vo.ReasonVO;
 import com.linksteady.system.domain.User;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +28,9 @@ public class ReasonController  extends BaseController {
 
     @Autowired
     ReasonService reasonService;
+
+    @Autowired
+    RedisTemplate redisTemplate;
 
     /**
      * 获取原因探究列表
@@ -141,13 +146,15 @@ public class ReasonController  extends BaseController {
      * 根据模板CODE、KPI CODE和reasonID 获取到原因KPI的详细数据
      * @param reasonId 原因ID
      * @param templateCode 指标编码
-     * @param kpiCode 指标编码
+     * @param reasonKpiCode 指标编码
      * @return
      */
     @RequestMapping("/getReasonRelatedKpi")
-    public ResponseBo getReasonRelatedKpi(@RequestParam String reasonId,@RequestParam String templateCode,@RequestParam String kpiCode) {
-        reasonService.getReasonRelatedKpi(reasonId,kpiCode,templateCode);
-        return ResponseBo.ok(reasonId);
+    public ResponseBo getReasonRelatedKpi(@RequestParam String reasonId,@RequestParam String templateCode,@RequestParam String reasonKpiCode) {
+        Map<String,Object> result=reasonService.getReasonRelatedKpi(reasonId,templateCode,reasonKpiCode);
+
+        Map rt=reasonService.getReasonRelateKpiDataFromRedis(reasonId,templateCode,reasonKpiCode);
+        return ResponseBo.okWithData(result,rt);
     }
 
     /**
@@ -168,19 +175,7 @@ public class ReasonController  extends BaseController {
     @RequestMapping("/addConcernKpi")
     public ResponseBo addConcernKpi(@RequestParam String reasonId) {
 
-//        Map<String,String> t1= KpiCacheManager.getInstance().getCodeNamePair();  // kpicode -kpiname 对
-//        Map<String,String> t2=  KpiCacheManager.getInstance().getCodeFomularPair();  //kpicode 乘法公式 对
-//        //kpicode --拆解公式(map结构  DISMANT_PART1_CODE,DISMANT_PART1_NAME,DISMANT_PART1_CODE,DISMANT_PART1_NAME 分别代表第一部分的code，name;第二不部分的code,name)对
-//        Map<String,Object> t3=KpiCacheManager.getInstance().getKpiDismant();
-//
-//        Map<String,String> t5=KpiCacheManager.getInstance().getDiagDimList();
-//        Map<String,Object> t6= KpiCacheManager.getInstance().getDiagDimValueList();
-
         return ResponseBo.ok(111);
     }
-
-
-
-
 
 }

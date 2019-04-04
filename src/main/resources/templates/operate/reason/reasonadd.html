@@ -14,6 +14,7 @@
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <link rel="stylesheet"  data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <link href="https://cdn.bootcss.com/toastr.js/2.1.4/toastr.min.css" rel="stylesheet">
 </head>
@@ -45,7 +46,7 @@
                                             <div class="form-group mg-stop">
                                                 <label class="col-md-3 control-label" for="zhibiao">选择指标：</label>
                                                 <div class="col-md-5 input-group">
-                                                    <select class="form-control" id="zhibiao" name="zhibiao" size="1">
+                                                    <select class="selectpicker" id="zhibiao" name="zhibiao" size="1">
                                                         <option value="0">请选择</option>
                                                         <option value="gmv">GMV</option>
                                                         <option value="ucnt">用户数</option>
@@ -80,9 +81,9 @@
 
                                             </div>
                                             <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label" for="peroid">时间粒度：</label>
+                                                <label class="col-md-3 control-label" for="period">时间粒度：</label>
                                                 <div class="col-md-5 input-group">
-                                                    <select class="form-control" id="peroid" name="peroid" size="1">
+                                                    <select class="selectpicker" id="period" name="period" size="1">
                                                         <option value="D">天</option>
                                                         <option value="M">月</option>
                                                     </select>
@@ -139,6 +140,7 @@
 <script data-th-src="@{/plugins/notify/bootstrap-notify.min.js}"></script>
 <script data-th-src="@{/plugins/notify/lightyear.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<script src="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>
 <script data-th-src="@{/js/app/operate/reason/reasonadd.js}"></script>
 </body>
 </html>

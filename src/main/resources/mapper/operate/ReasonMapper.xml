@@ -3,11 +3,13 @@
 <mapper namespace="com.linksteady.operate.dao.ReasonMapper">
 
    <resultMap id="relatedkpimap" type="com.linksteady.operate.domain.ReasonKpis">
+       <result column="REASON_ID" property="reasonId"/>
+       <result column="TEMPLATE_CODE" property="templateCode"/>
+       <result column="REASON_KPI_CODE" property="reasonKpiCode"/>
        <result column="CONFIG_INFO1" property="chartType"/>
        <result column="CONFIG_INFO2" property="configInfo2"/>
        <result column="PERIOD_TYPE" property="periodType"/>
        <result column="REASON_KPI_NAME" property="reasonKpiName"/>
-       <result column="DATAS" property="datasstr" javaType="String" jdbcType="VARBINARY"/>
    </resultMap>
 
    <select id="getReasonTotalCount" resultType="int">
@@ -159,7 +161,6 @@
                  PERIOD_TYPE,
                  CONFIG_INFO1,
                  CONFIG_INFO2,
-                 DATAS,
                  REASON_KPI_NAME,
                  RESULTS,
                  CREATE_DT,
@@ -175,7 +176,6 @@
                  #{periodType},
                  #{chartType},
                  #{configInfo2},
-                 #{datas,jdbcType=CLOB},
                  #{reasonKpiName},
                  #{result},
                  #{createDt,jdbcType=DATE},
@@ -240,6 +240,9 @@
 
     <select id="getReasonRelatedKpi" resultMap="relatedkpimap">
         SELECT
+            T.REASON_ID,
+            T.TEMPLATE_CODE,
+            T.REASON_KPI_CODE,
             T.CONFIG_INFO1,
             T.CONFIG_INFO2,
             T.PERIOD_TYPE,
@@ -247,7 +250,7 @@
             T.DATAS
         FROM UO_REASON_KPIS T
         WHERE T.REASON_ID = #{reasonId}
-          AND T.KPI_CODE=#{kpiCode}
+          AND T.REASON_KPI_CODE=#{reasonKpiCode}
           AND T.TEMPLATE_CODE=#{templateCode}
     </select>
  </mapper>

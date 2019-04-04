@@ -11,8 +11,9 @@ import com.linksteady.operate.vo.ReasonVO;
 import org.assertj.core.util.Lists;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
@@ -30,6 +31,9 @@ public class ReasonServiceImpl implements ReasonService {
 
     @Autowired
     DozerBeanMapper dozerBeanMapper;
+
+    @Autowired
+    RedisTemplate redisTemplate;
 
 
     public List<Map<String,Object>> getReasonList(int startRow,int endRow)
@@ -144,7 +148,11 @@ public class ReasonServiceImpl implements ReasonService {
             String result="";  //todo 暂时不使用
 
             Map<String,List<String>> rdatas=generateData(period,(String)k.get("BEGIN_DT"),(String)k.get("END_DT"),chartType,(String)k.get("REASON_KPI_NAME"));
-            String datas=JSON.toJSONString(rdatas);
+
+            StringBuffer keyName=new StringBuffer();
+            // reason:{resonId}:{templateCode}:{reasonKeyCode}
+            keyName.append("reason:").append(reasonId).append(":").append((String)k.get("TEMPLATE_CODE")).append(":").append((String)k.get("REASON_KPI_CODE"));
+            redisTemplate.opsForValue().set(keyName.toString(),rdatas);
 
             reasonKpis.setReasonId(Integer.valueOf(k.get("REASON_ID").toString()));
             reasonKpis.setTemplateCode((String)k.get("TEMPLATE_CODE"));
@@ -158,7 +166,7 @@ public class ReasonServiceImpl implements ReasonService {
             reasonKpis.setPeriodType(period);
             reasonKpis.setChartType(chartType);
             reasonKpis.setConfigInfo2((String)k.get("CONFIG_INFO2"));
-            reasonKpis.setDatas(datas.getBytes());
+
             reasonKpis.setResult(result);
             reasonKpis.setCreateDt(new Date());
             reasonKpis.setUpdateDt(new Date());
@@ -215,14 +223,26 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-    public Map<String, String> getReasonRelatedKpi(String reasonId, String kpiCode, String templateCode) {
-        List<ReasonKpis>  result=reasonMapper.getReasonRelatedKpi(reasonId,kpiCode,templateCode);
+    public Map<String, Object> getReasonRelatedKpi(String reasonId,String templateCode,String reasonKpiCode) {
+        List<ReasonKpis>  result=reasonMapper.getReasonRelatedKpi(reasonId,templateCode,reasonKpiCode);
 
+        Map<String, Object> map=Maps.newHashMap();
         if(null!=result&&result.size()>0)
         {
-            System.out.println(result.get(0));
+            map.put("chartType",result.get(0).getChartType());
+            map.put("kpiName",result.get(0).getReasonKpiName());
+            map.put("period",result.get(0).getPeriodType());
         }
-        return null;
+        return map;
+    }
+
+    @Override
+    public Map getReasonRelateKpiDataFromRedis(String reasonId,String templateCode,String reasonKpiCode)
+    {
+        StringBuffer key=new StringBuffer();
+        key.append("reason:").append(reasonId).append(":").append(templateCode).append(":").append(reasonKpiCode);
+
+        return (Map)redisTemplate.opsForValue().get(key.toString());
     }
 
     /**

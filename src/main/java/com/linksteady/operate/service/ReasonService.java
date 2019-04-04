@@ -30,5 +30,8 @@ public interface ReasonService {
 
      List<Map<String,Object>> getReasonKpiHistroy(String kpiCode,String templateCode);
 
-     Map<String,String> getReasonRelatedKpi(String reasonId,String kpiCode,String templateCode);
+     Map<String,Object> getReasonRelatedKpi(String reasonId,String templateCode,String reasonKpiCode);
+
+     Map getReasonRelateKpiDataFromRedis(String reasonId,String templateCode,String reasonKpiCode);
+
 }

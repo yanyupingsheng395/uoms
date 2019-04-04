@@ -15,13 +15,10 @@ public class ReasonKpis implements Serializable {
    String periodType;
    String chartType;
    String configInfo2;
-   byte[] datas;
    String result;
 
    Date createDt;
    Date updateDt;
-
-   String datasstr;  //仅供查询时使用
 
     public int getReasonId() {
         return reasonId;
@@ -103,14 +100,6 @@ public class ReasonKpis implements Serializable {
         this.configInfo2 = configInfo2;
     }
 
-    public byte[] getDatas() {
-        return datas;
-    }
-
-    public void setDatas(byte[] datas) {
-        this.datas = datas;
-    }
-
     public String getResult() {
         return result;
     }
@@ -135,11 +124,4 @@ public class ReasonKpis implements Serializable {
         this.updateDt = updateDt;
     }
 
-    public String getDatasstr() {
-        return datasstr;
-    }
-
-    public void setDatasstr(String datasstr) {
-        this.datasstr = datasstr;
-    }
 }
