@@ -10,5 +10,5 @@ public interface DiagService{
 
     Long getTotalCount();
 
-    void save(Diag diag);
+    Long save(Diag diag);
 }

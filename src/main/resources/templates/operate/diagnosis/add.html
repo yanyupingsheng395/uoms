@@ -10,12 +10,13 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
     <!--时间选择插件-->
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
     <!--日期选择插件-->
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-select/bootstrap-select.min.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
 </head>
@@ -38,7 +39,21 @@
                         <td><button class="btn btn-default" data-toggle="modal" data-target="#nodeAddModal" onclick="modalBefore()"><i class="mdi mdi-plus"></i>&nbsp;新增</button></td>
                     </tr>
                     <tr>
-                        <td><button class="btn btn-default" onclick="alert('删除')"><i class="mdi mdi-delete danger"></i>&nbsp;删除</button></td>
+                        <td><button class="btn btn-default" onclick="alert('删除')"><i class="mdi mdi-delete"></i>&nbsp;删除</button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default" data-toggle="modal" data-target="#nodeDetailModal" onclick="modalDetailBefore()"><i class="mdi mdi-file-document-box"></i>&nbsp;详情</button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="btn btn-default" style="width: 75px;">
+                                <i class="mdi mdi-feather"></i>
+                                <label class="lyear-switch switch-danger">
+                                    <input type="checkbox" onclick="alarmFlag(this)" data-flag="false">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -110,51 +125,35 @@
                                             </div>
                                         </div>
                                         <!-- 右侧区域 -->
-                                        <div class="col-md-5">
-                                            <div class="card">
-                                                <div class="card-header bg-cyan">
-                                                    <h4>第1季度盈利曲线</h4>
-                                                    <ul class="card-actions">
-                                                        <li>
-                                                            <button type="button" onclick="collapse(this)"><i style="color:#fff;" class="mdi mdi-menu-down mdi-24px"></i></button>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div class="card-body" style="display:none;">
-                                                    <div style="height:400px;width: 100%" id="chart1"></div>
-                                                </div>
-                                            </div>
-                                            <div class="card">
-                                                <div class="card-header bg-cyan">
-                                                    <h4>第2季度盈利曲线</h4>
-                                                    <ul class="card-actions">
-                                                        <li>
-                                                            <button type="button" onclick="collapse(this)"><i class="mdi mdi mdi-menu-down mdi-24px"></i></button>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div class="card-body" style="display:none;">
-                                                    <div style="width:100%;height:400px;" id="chart2"></div>
+                                        <div class="col-md-5" id="charts">
+                                            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                                <div class="panel panel-primary">
+                                                    <div class="panel-heading" role="tab" id="headingOne">
+                                                        <h4 class="panel-title">
+                                                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                                                0 销售额/GMV
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                                        <div class="panel-body">
+                                                            本月销售额/GMV为55260.15元
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="card">
-                                                <div class="card-header bg-cyan">
-                                                    <h4>第3季度盈利曲线</h4>
-                                                    <ul class="card-actions">
-                                                        <li>
-                                                            <button type="button" onclick="collapse(this)"><i class="mdi mdi mdi-menu-down mdi-24px"></i></button>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div class="card-body" style="display:none;">
-                                                    <div style="width:100%;height:400px;" id="chart3"></div>
-                                                </div>
+                                        </div>
+
+                                        <!-- 保存信息 -->
+                                        <div class="row mg-stop">
+                                            <div class="col-md-12 text-center">
+                                                <button class="btn btn-info" onclick="saveNodes()">保存节点信息</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="row mg-stop">
+                                <div class="row" style="margin-top: 20px;">
                                     <div class="col-md-12 text-right">
                                         <button id="next" class="btn btn-info" onclick="next(this)">保存并诊断</button>
                                         <a class="btn btn-default" href="/page/diagnosis/list">返回</a>
@@ -168,31 +167,31 @@
 
             <!-- 条件model-->
             <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="nodeAddModalLabel" id="nodeAddModal">
-                <div class="modal-dialog" role="document">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="nodeAddModalLabel"></h4>
+                            <h4 class="modal-title" id="nodeAddModalLabel">新增节点：</h4>
                         </div>
                         <div class="modal-body">
-
                             <div class="row">
                                 <div class="col-md-12">
                                     <form class="form-horizontal">
                                         <div class="form-group">
-                                            <label class="col-md-3 control-label" for="beginDt">选择指标：</label>
+                                            <label class="col-md-3 control-label" for="currentNode">当前指标：</label>
                                             <div class="col-md-6">
-                                                <select name="periodType" class="selectpicker form-control" id="op1">
-                                                    <option value="gmv">销售额/GMV</option>
-                                                </select>
+                                                <input type="text" id="currentNode" class="form-control" disabled value="销售额/GMV"/>
+                                                <input type="hidden" id="currentNodeId" value="-1"/>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-md-3 control-label" for="beginDt">拆分方式：</label>
                                             <div class="col-md-6">
                                                 <select name="periodType" class="selectpicker form-control" id="op2">
+                                                    <option value="">请选择</option>
                                                     <option value="0">加法</option>
                                                     <option value="1">乘法</option>
+                                                    <option value="2">仅过滤</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -203,28 +202,85 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group" id="add_condition" style="display:block;">
+                                        <div class="form-group" id="add_condition" style="display:none;">
                                             <label class="col-md-3 control-label" for="beginDt">维度：</label>
                                             <div class="col-md-6">
-                                                <select name="periodType" class="selectpicker form-control" id="op4">
-                                                    <option value="0">首购/非首购</option>
-                                                    <option value="1">渠道</option>
-                                                    <option value="2">子品牌</option>
-                                                    <option value="3">品类/spu</option>
-                                                    <option value="4">人口属性</option>
-                                                    <option value="5">经济地域</option>
-                                                    <option value="6">价值分级</option>
-                                                    <option value="7">活动分级</option>
-                                                </select>
+                                                <select name="periodType" class="selectpicker form-control" id="op4"></select>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h5>请选择条件：</h5>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group" style="display:block;">
+                                                    <label class="col-md-3 control-label" for="beginDt">条件：</label>
+                                                    <div class="col-md-6">
+                                                        <select name="periodType" class="selectpicker form-control" id="op5"></select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group" style="display:block;">
+                                                    <label class="col-md-3 control-label" for="beginDt">值：</label>
+                                                    <div class="col-md-6">
+                                                        <select name="periodType" class="selectpicker form-control" id="op6" multiple></select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 text-center">
+                                                <button type="button" class="btn btn-primary btn-sm" onclick="selectedCondition()"><i class="mdi mdi-plus"></i>&nbsp;增加条件</button>
                                             </div>
                                         </div>
                                     </form>
+                                    <hr/>
+                                    <div class="row">
+                                        <div class="col-md-12"><h5>已选条件：</h5></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table text-left" id="dataTable">
+                                                <tr><td><i class="mdi mdi-alert-circle"></i>暂无数据！</td></tr>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary" onclick="addCondition()">确定</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="resetTableData()">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 详情model-->
+            <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="nodeDetailModalLabel" id="nodeDetailModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="nodeDetailModalLabel">详情：</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table text-left" id="dataTableDetail" style="border-top: 0px;">
+                                        <tr><td><i class="mdi mdi-alert-circle"></i>暂无数据！</td></tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                         </div>
                     </div>
@@ -244,7 +300,8 @@
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
-<script src="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>
+<script data-th-src="@{/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-select/defaults-zh_CN.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
 <script data-th-src="@{/js/app/operate/diagnosis/add.js}"></script>

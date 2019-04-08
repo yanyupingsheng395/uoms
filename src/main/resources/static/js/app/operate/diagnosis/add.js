@@ -1,5 +1,15 @@
+/**
+ * 乘法：序号 name
+ * 加法：序号 name=KPI名称/维度名称
+ * 仅过滤：序号 KPI名称/过滤
+ */
+// 流程图对象
+var jm = null;
+var diagId = 0;
+
 init_date("beginDt", "yyyy", 2,2,2);
 init_date("endDt", "yyyy", 2,2,2);
+
 // 周期切换时间控件
 $("#periodType").change(function () {
     var periodType = $("#periodType option:selected").val();
@@ -32,17 +42,10 @@ function collapse(dom) {
 // 重置echart的大小
 function chartResize(dom) {
     var chartId = $(dom).parents(".card").eq(0).find(".card-body").children("div").attr("id");
-    if(chartId == 'chart1') {
-        chart1.resize();
-    }
-    if(chartId == 'chart2') {
-        chart2.resize();
-    }
-    if(chartId == 'chart3') {
-        chart3.resize();
-    }
+    window[""+chartId+""].resize();
 }
 
+// 屏蔽浏览器的右键事件
 function doNothing(){
     window.event.returnValue=false;
     return false;
@@ -50,16 +53,23 @@ function doNothing(){
 
 // 拆分方式
 $("#op2").change(function() {
-    var option1Val = $("#op1").find("option:selected").val();
+    console.log(jm.get_selected_node());
+    var kpiCode = jm.get_selected_node().data.KPI_CODE;
     var option2Val = $(this).find("option:selected").val();
-    if(option2Val == 0) {
+    if(option2Val == 0) { // 加法过滤
+        getDimension(); // 获取维度
         $("#add_condition").attr("style", "display:block;");
         $("#plus_condition").attr("style", "display:none;");
     }
-    if(option2Val == 1) {
-        geFormula(option1Val);
-
+    if(option2Val == 1) { // 乘法过滤
+        getFormula(kpiCode);
+        getDimension(); // 获取维度
         $("#plus_condition").attr("style", "display:block;");
+        $("#add_condition").attr("style", "display:none;");
+    }
+    if(option2Val == 2 || option2Val == "") { // 仅过滤
+        getDimension();
+        $("#plus_condition").attr("style", "display:none;");
         $("#add_condition").attr("style", "display:none;");
     }
 });
@@ -73,41 +83,692 @@ function beforeNext(dom) {
         $("#step1").attr("style", "display:none;");
         $("#step2").attr("style", "display:block;");
         $(dom).remove();
-        load_jsmind();
-        initChart1();
+        createRootNode();
+        diagId = r.data;
     });
 }
 
+
+
 // 加入诊断
 function addCondition() {
-    var option1Val = $("#op1").find("option:selected").val();
-    $.get("/progress/getKpi", {code: option1Val}, function(r) {
-        jsmind_refresh(r.data);
-        getKpiComb(option1Val);
-        $("#nodeAddModal").modal('hide');
+    var methodId = $("#op2 option:selected").val();
+    if(methodId == 0) { // 加法
+        condition0();
+    }
+    if(methodId == 1) { // 乘法
+        condition1();
+    }
+    if(methodId == 2) { // 仅过滤
+        condition2();
+    }
+    // 隐藏模态框
+    $("#nodeAddModal").modal('hide');
+}
+function resetTableData() {
+    $("#dataTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
+}
+function redisSaveConditions() {
+    var dataArray = new Array();
+    $("#dataTable").find("tr").each(function () {
+        var code = $(this).find("td:eq(0)").find("input").val();
+        var text = $(this).find("td:eq(0)").text();
+        dataArray.push(code + ":" + text);
     });
+    $.post("/diagcondition/redisCreate", {data: dataArray, diagId: diagId, nodeId: jm.get_selected_node().id}, function (r) {
+
+    });
+}
+
+$("#op5").change(function() {
+    var code = $(this).find("option:selected").val();
+    getValueList(code);
+});
+
+// 根据维度value获取值类型
+function getValueList(code) {
+    $.get("/progress/getDiagDimValueList", {code: code}, function(r) {
+        var code = "";
+        $.each(r.data, function (k, v) {
+            code += "<option value='" + k + "'>" + v + "</option>";
+        });
+        $("#op6").html("").html(code);
+        $("#op6").selectpicker('refresh');
+    });
+}
+
+// 保存节点信息
+function saveNodes() {
+    var nodeList = [];
+    var rootNode = jm.get_root();
+    nodeList.push(rootNode);
+    iterationNode(rootNode, nodeList);
+    var data = new Array();
+    for(var i=0; i<nodeList.length; i++) {
+        var tmp = nodeList[i];
+        var obj = new Object();
+        var parentId = getNodeParentId(tmp);
+        obj["diagId"] = diagId;
+        obj["nodeId"] = tmp.id;
+        obj["nodeName"] = tmp.topic;
+        obj["parentId"] = parentId;
+        obj["kpiCode"] = tmp.data.KPI_CODE;
+        obj["kpiName"] = tmp.data.KPI_NAME;
+        obj["kpiLevelId"] = tmp.data.KPI_LEVEL_ID;
+        obj["alarmFlag"] = "n";
+        obj["conditions"] = tmp.data.CONDITION;
+        data.push(obj);
+    }
+
+    $.ajax({
+        url: "/diagdetail/save",
+        type: "post",
+        data: {
+            json: JSON.stringify(data)
+        },
+        dataType : 'json',
+        success: function (r) {
+            alert(r.msg);
+        }
+    });
+}
+
+function getNodeParentId(tmp) {
+    if(tmp.parent != null) {return tmp.parent.id} else {return null};
+}
+
+// 遍历流程图节点信息
+function iterationNode(node, nodeList) {
+    var nodes = node.children;
+    if(nodes == null) {
+        return;
+    }else {
+        for(var i=0; i<nodes.length; i++) {
+            nodeList.push(nodes[i]);
+            iterationNode(nodes[i], nodeList)
+        }
+    }
 }
 
 function modalBefore() {
     var e = document.getElementById("operateBtns");
     e.style.display = "none";
+
+    // 弹窗中获取当前指标
+    var selectedNode = jm.get_selected_node();
+    $("#currentNodeId").val(selectedNode.id);
+    var topic = selectedNode.topic;
+    if(topic.indexOf(" ") > -1) {
+        topic = topic.substring(topic.lastIndexOf(" "), topic.length);
+    }
+    $("#currentNode").val(topic);
+
+    // 设置选中为空，初始化选择框
+    $("#op2").selectpicker('val', "");
+    $("#op2").selectpicker('refresh');
+    $("#plus_condition").attr("style", "display:none;");
+    $("#add_condition").attr("style", "display:none;");
+
+    resetTableData();
+    var code = getParentCondition();
+    if(code == "") {
+        $("#dataTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
+    }else {
+        $("#dataTable").html("").html(code);
+    }
 }
 
-function jsmind_refresh(map) {
-    var parentid = map["KPI_CODE"];
-    var id1 = map["DISMANT_PART1_CODE"];
-    var topic1 = map["DISMANT_PART1_NAME"];
-    var id2 = map["DISMANT_PART2_CODE"];
-    var topic2 = map["DISMANT_PART2_NAME"];
+function alarmFlag(dom) {
+    if($(dom).attr("data-flag") == "true") {
+        $(dom).attr("data-flag", "false");
+        jm.get_selected_node().data.ALARM_FLAG = false;
+    }else {
+        $(dom).attr("data-flag", "true");
+        jm.get_selected_node().data.ALARM_FLAG = true;
+    }
+
+    $(dom).attr("data-flag", "false");
+}
+
+function getParentCondition() {
+    var array = jm.get_selected_node().data.CONDITION;
+    var code = "";
+    $.each(array, function (k, v) {
+        var tmp = v.split(":");
+        code += "<tr><td style='text-align: left;'>" + tmp[1].trim() + ":";
+        code += tmp[2].trim();
+        code += "<input type='hidden' value='"+tmp[0].trim()+"'></td></tr>";
+    });
+    return code;
+}
+
+// 获取加法维度
+function getDimension() {
+    $.get("/progress/getDiagDimList", null, function (r) {
+        var code = "";
+        $.each(r.data, function(k, v) {
+            code += "<option value='" + k + "'> " + v + " </option>";
+        });
+        $("#op4").html("").html(code);
+        $("#op4").selectpicker('refresh');
+
+        $("#op5").html("").html("<option value=''>请选择</option>" + code);
+        $("#op5").selectpicker('refresh');
+
+        getValueList($("#op5").find("option:selected").val());
+    });
+}
+
+var conditionVal = new Array();
+
+// 增加条件
+function selectedCondition() {
+    var arr = $("#op6").selectpicker('val');
+    var condition = $("#op5").find("option:selected").text();
+    var val = $("#op5").find("option:selected").val();
+    var code = "<tr><td style='text-align: left;'>" + condition + ":";
+    for(var i=0;i<arr.length;i++) {
+        var t = $("#op6").find("option[value='"+arr[i]+"']").text();
+        code += t + ",";
+    }
+    code = code.substring(0, code.length - 1);
+    code += "<input type='hidden' value='" + val + "'/></td><td><a style='color:#000000;cursor: pointer;' onclick='removeConditionList(\""+val+"\", this)'><i class='mdi mdi-close'></i></a></td></tr>";
+
+    if($("#dataTable").find("tr td").text().indexOf("暂无数据") > -1) {
+        $("#dataTable").html("").html(code);
+    }else {
+        $("#dataTable").append(code);
+    }
+
+    // 列表中删除
+    $("#op5").find("option[value='"+val+"']").remove();
+    $("#op5").selectpicker('refresh');
+
+    $("#op6").html("");
+    $("#op6").selectpicker('refresh');
+
+    getValueList($("#op5").find("option:selected").val());
+    conditionVal.push(val);
+
+}
+
+// 获取条件
+function filterCondition() {
+    var dataArray = new Array();
+    $("#dataTable").find("tr").each(function () {
+        var code = $(this).find("td:eq(0)").find("input").val();
+        var text = $(this).find("td:eq(0)").text();
+        if(code != undefined) {
+            dataArray.push(code + ":" + text);
+        }
+    });
+    return dataArray;
+}
+
+// 条件详情
+function modalDetailBefore() {
+    var e = document.getElementById("operateBtns");
+    e.style.display = "none";
+
+    var array = jm.get_selected_node().data.CONDITION;
+    var code = "";
+    $.each(array, function (k, v) {
+        var tmp = v.split(":");
+        console.log(tmp)
+        code += "<tr><td style='text-align: left;'>" + tmp[1].trim() + ":";
+        code += tmp[2].trim();
+        code += "</td></tr>";
+    });
+    $("#dataTableDetail").html("").html(code);
+}
+
+// 加法条件
+function condition0() {
+    var levelId = getKpiLevelId();
+    var nodeName = levelId + " " + $("#currentNode").val() + "/" + $("#op4 option:selected").text().trim();
+    createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
+
+    chart0(levelId, nodeName, $("#op4 option:selected").text().trim());
+}
+
+// 取起始范围的随机数
+function getRandom (m,n){
+    var num = Math.floor(Math.random()*(m - n) + n);
+    return num;
+}
+
+// 加法chart 数据
+function getXaxis() {
+    var x = new Array();
+    var start = $("#beginDt").val();
+    var end = $("#endDt").val();
+
+    if($("#periodType option:selected").val() == "M") {
+        var startTime = getDate(start);
+        var endTime = getDate(end);
+        while((endTime.getTime()-startTime.getTime())>=0){
+            var year = startTime.getFullYear();
+            var month = (startTime.getMonth() + 1).toString().length==1?"0"+(startTime.getMonth() + 1).toString():startTime.getMonth() + 1;
+            x.push(year+"-"+month);
+            startTime.setMonth(startTime.getMonth()+1);
+        }
+    }else {
+        var startTime = new Date(start);
+        var endTime = new Date(end);
+        while((endTime.getTime()-startTime.getTime())>=0){
+            var year = startTime.getFullYear();
+            x.push(year);
+            startTime.setFullYear(startTime.getFullYear()+1);
+        }
+    }
+    return x;
+}
+// 月份
+function getDate(datestr){
+    var temp = datestr.split("-");
+    var date = new Date(temp[0],temp[1]);
+    return date;
+}
+
+function chart_condition1(id, name, desc1, desc2) {
+    createChartDom(id, name);
+    var xdata = getXaxis();
+    var ydata1 = new Array();
+    var ydata2 = new Array();
+    for(var i=0; i<xdata.length; i++) {
+        ydata1.push(getRandom(1000, 10000));
+        ydata2.push(getRandom(1000, 10000));
+    }
+    var option1 = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                lineStyle: {
+                    color: '#ddd'
+                }
+            },
+            backgroundColor: 'rgba(255,255,255,1)',
+            padding: [5, 10],
+            textStyle: {
+                color: '#7588E4',
+            },
+            extraCssText: 'box-shadow: 0 0 5px rgba(0,0,0,0.3)'
+        },
+        legend: {
+            right: 20,
+            orient: 'vertical',
+            data: [desc1, desc2]
+        },
+        xAxis: {
+            type: 'category',
+            data: xdata,
+            boundaryGap: false,
+            splitLine: {
+                show: true,
+                interval: 'auto',
+                lineStyle: {
+                    color: ['#D4DFF5']
+                }
+            },
+            axisTick: {
+                show: false
+            },
+            axisLine: {
+                lineStyle: {
+                    color: '#609ee9'
+                }
+            },
+            axisLabel: {
+                margin: 10,
+                textStyle: {
+                    fontSize: 14
+                }
+            }
+        },
+        yAxis: {
+            type: 'value',
+            splitLine: {
+                lineStyle: {
+                    color: ['#D4DFF5']
+                }
+            },
+            axisTick: {
+                show: false
+            },
+            axisLine: {
+                lineStyle: {
+                    color: '#609ee9'
+                }
+            },
+            axisLabel: {
+                margin: 0,
+                textStyle: {
+                    fontSize: 14
+                }
+            }
+        },
+        series: [{
+            name: desc1,
+            type: 'line',
+            smooth: true,
+            showSymbol: false,
+            symbol: 'circle',
+            symbolSize: 6,
+            data: ydata1,
+            areaStyle: {
+                normal: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(199, 237, 250,0.5)'
+                    }, {
+                        offset: 1,
+                        color: 'rgba(199, 237, 250,0.2)'
+                    }], false)
+                }
+            },
+            itemStyle: {
+                normal: {
+                    color: '#f7b851'
+                }
+            },
+            lineStyle: {
+                normal: {
+                    width: 1
+                }
+            }
+        }, {
+            name: desc2,
+            type: 'line',
+            smooth: true,
+            showSymbol: false,
+            symbol: 'circle',
+            symbolSize: 6,
+            data: ydata2,
+            areaStyle: {
+                normal: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: 'rgba(216, 244, 247,1)'
+                    }, {
+                        offset: 1,
+                        color: 'rgba(216, 244, 247,1)'
+                    }], false)
+                }
+            },
+            itemStyle: {
+                normal: {
+                    color: '#58c8da'
+                }
+            },
+            lineStyle: {
+                normal: {
+                    width: 1
+                }
+            }
+        }]
+    };
+    window["chart" + id] = echarts.init(document.getElementById('chart'+id+''), 'macarons');
+    window["chart" + id].setOption(option1);
+    $("#btn"+id+"").click();
+}
+
+function createChartDom(id, name) {
+    // 收起兄弟节点的菜单
+    $("#charts").find("div[role='tabpanel']").each(function () {
+        if($(this).attr("class") == "panel-collapse collapse in"){
+            $(this).removeClass("in");
+        }
+    });
+    var str = "<div class=\"panel panel-primary\">\n" +
+        "<div class=\"panel-heading\" role=\"tab\" id=\"heading"+id+"\">\n" +
+        "   <h4 class=\"panel-title\">\n" +
+        "      <a role=\"button\" data-toggle=\"collapse\" data-parent=\"#accordion\" href=\"#collapse"+id+"\" aria-expanded=\"true\" aria-controls=\"collapse"+id+"\">\n" +
+        "           " + name + "\n" +
+        "      </a>\n" +
+        "   </h4>\n" +
+        "</div>\n" +
+        "<div id=\"collapse"+id+"\" class=\"panel-collapse collapse in\" role=\"tabpanel\" aria-labelledby=\"heading"+id+"\">\n" +
+        "    <div class=\"panel-body\">\n" +
+        "       <div style=\"width:100%;height:300px;\" id=\"chart"+id+"\"></div>\n" +
+        "    </div>\n" +
+        "</div>\n" +
+        "</div>";
+    $("#charts").prepend(str);
+}
+
+// 加法chart
+function chart0(id, name, desc) {
+    createChartDom(id, name);
+
+    var xdata = getXaxis();
+    var ydata = new Array();
+    for(var i=0; i<xdata.length; i++) {
+        ydata.push(getRandom(1000, 10000));
+    }
+
+    var option0 = {
+        color: ['#3398DB'],
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        dataset: {
+            source: [
+                [desc]
+            ]
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis : [
+            {
+                type : 'category',
+                data : xdata,
+                axisTick: {
+                    alignWithLabel: true
+                }
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            {
+                name: desc,
+                type:'bar',
+                barWidth: '60%',
+                data: ydata
+            }
+        ]
+    };
+    window["chart" + id] = echarts.init(document.getElementById('chart'+id+''), 'macarons');
+    window["chart" + id].setOption(option0);
+}
+
+
+// 乘法条件
+function condition1() {
+    var kpiCode = jm.get_selected_node().data.KPI_CODE;
+    $.get("/progress/getKpi", {code: kpiCode}, function(r) {
+        jsmind_refresh(r.data);
+    });
+}
+// 获取根节点
+function rootNode() {
+    var nodeArr = new Array();
+    $.ajax({
+        url: "/progress/getRootNode",
+        type: "GET",
+        async: false,
+        success: function (r) {
+            var kpiCode = "";
+            var kpiName = "";
+            $.each(r.data, function (k, v) {
+                kpiCode = k;
+                kpiName = v;
+            });
+            var node = new Object();
+            node.id = "-1";
+            node.isroot = true;
+            node.topic = kpiName;
+            node.KPI_CODE = kpiCode;
+            node.KPI_NAME = kpiName;
+            nodeArr.push(node);
+        }
+    });
+    return nodeArr;
+}
+
+function createRootNode() {
+    var mind = {
+        "meta":{
+            "name":"gmv_mind",
+            "version":"0.2"
+        },
+        "format":"node_array",
+        "data": rootNode()
+    };
+    var options = {
+        container:'jsmind_container',
+        editable:false,
+        theme:'greensea',
+        mode: "side"
+    };
+    jm = jsMind.show(options,mind);
+    addEventListenerOfNode();
+}
+
+// 仅过滤条件
+function condition2() {
+    var levelId = getKpiLevelId();
+    var nodeName = levelId + " " + $("#currentNode").val() + "/过滤";
+    createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
+
+    chart_condition2(levelId, nodeName);
+}
+
+function chart_condition2(id, name) {
+    var str = "<div class=\"card\">\n" +
+        "<div class=\"card-header bg-cyan\">\n" +
+        "<h4>" + name + "</h4>\n" +
+        "<ul class=\"card-actions\">\n" +
+        "<li>\n" +
+        "<button type=\"button\" onclick=\"collapse(this)\"><i class=\"mdi mdi mdi-menu-down mdi-24px\"></i></button>\n" +
+        "</li>\n" +
+        "</ul>\n" +
+        "</div>\n" +
+        "<div class=\"card-body\" style=\"display:none;\">\n" +
+        "<div style=\"width:100%;height:autop;\" id=\"chart"+id+"\">本时间段GMV值为9,952,556元</div>\n" +
+        "</div>\n" +
+        "</div>";
+
+    $("#charts").append(str);
+}
+
+function createNode(nodeName, levelId, kpiCode, kpiName) {
+    var nodeId = getNodeId();
+    var nodeName = nodeName;
+    var parentId = $("#currentNodeId").val();
+    var kpiCode = kpiCode;
+    var kpiName = kpiName;
+    var kpiLevelId = levelId;
+    var alarmFlag = false;
+    var conditions = filterCondition();
+
+    var data = new Object();
+    data.KPI_CODE = kpiCode;
+    data.KPI_NAME = kpiName;
+    data.KPI_LEVEL_ID = kpiLevelId;
+    data.ALARM_FLAG = alarmFlag;
+    data.CONDITION = conditions;
+
     jm.enable_edit();
-    jm.add_node(parentid, id1, topic1);
-    jm.add_node(parentid, id2, topic2);
+    jm.add_node(parentId, nodeId, nodeName, data);
     jm.disable_edit();
     addEventListenerOfNode();
 }
 
+function getNodeId() {
+    var res = 0;
+    $.ajax({
+        url: "/progress/getNodeId",
+        type: "get",
+        async: false,
+        success: function (r) {
+            res = r.data;
+        }
+    });
+    return res;
+}
+
+function getKpiLevelId() {
+    var res = 0;
+    $.ajax({
+        url: "/progress/getKpiLevelId",
+        data: {id: diagId},
+        type: "get",
+        async: false,
+        success: function (r) {
+            res = r.data;
+        }
+    });
+    return res;
+}
+
+function removeConditionList(val, dom) {
+    $(dom).parent().parent().remove();
+    conditionVal.forEach(function(item, index, arr){
+        if(item == val) {
+            conditionVal.splice(index, 1);
+        }
+    });
+
+    $.get("/progress/getDiagDimList", null, function (r) {
+        var code = "";
+        $.each(r.data, function(k, v) {
+            if(conditionVal.length != 0) {
+                conditionVal.forEach(function(item, index, arr){
+                    if(item != k) {
+                        code += "<option value='" + k + "'> " + v + " </option>";
+                    }
+                });
+            }else {
+                code += "<option value='" + k + "'> " + v + " </option>";
+            }
+        });
+        $("#op5").html("").html("<option value=''>请选择</option>" + code);
+        $("#op5").selectpicker('refresh');
+        getValueList($("#op5").find("option:selected").val());
+    });
+}
+
+function jsmind_refresh(map) {
+    var kpiCode1 = map["DISMANT_PART1_CODE"];
+    var kpiCode2 = map["DISMANT_PART2_CODE"];
+    var kpiName1 = map["DISMANT_PART1_NAME"];
+    var kpiName2 = map["DISMANT_PART2_NAME"];
+
+    var levelId1 = getKpiLevelId();
+    var levelId2 = getKpiLevelId();
+    var nodeName1 = levelId1 + " " + kpiName1;
+    var nodeName2 = levelId2 + " " + kpiName2;
+    createNode(nodeName1, levelId1, kpiCode1, kpiName1);
+    createNode(nodeName2, levelId2, kpiCode2, kpiName2);
+
+    chart_condition1(levelId1, levelId1 + " " + kpiName1 + "*" + kpiName2, kpiName1, kpiName2);
+}
+
 function getKpiComb(code) {
     $.get("/progress/getKpiComb", {code: code}, function (r) {
+        $("#currentNodeId").val(r.data.k);
+
         var code = "<option value='"+r.data.k+"'>"+r.data.v+"</option>";
         $("#op1").html("").html(code);
         $('#op1').selectpicker('refresh');
@@ -115,33 +776,15 @@ function getKpiComb(code) {
 }
 
 // 获取公式
-function geFormula(optionVal) {
-    $.get("/progress/geFormula", {code: optionVal}, function(r) {
-        var code = "<option value='" + optionVal + "'>" + r.data + "</option>";
+function getFormula(kpiCode) {
+    $.get("/progress/getFormula", {code: kpiCode}, function(r) {
+        var code = null;
+        if(r.data != null) {
+            code = "<option value='" + kpiCode + "'>" + r.data + "</option>";
+        }
         $("#op3").html("").html(code);
         $('#op3').selectpicker('refresh');
     });
-}
-
-var jm = null;
-function load_jsmind(){
-    var mind = {
-        "meta":{
-            "name":"gmv_mind",
-            "version":"0.2"
-        },
-        "format":"node_array",
-        "data":[
-            {"id":"gmv", "isroot":true, "topic":"销售额/GMV"}
-        ]
-    };
-    var options = {
-        container:'jsmind_container',
-        editable:false,
-        theme:'info'
-    };
-    jm = jsMind.show(options,mind);
-    addEventListenerOfNode();
 }
 
 function addEventListenerOfNode() {
@@ -173,745 +816,3 @@ function next(dom) {
         beforeNext(dom);
     }
 }
-
-//————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-var chart1 = null;
-var chart2 = null;
-var chart3 = null;
-
-function initChart1() {
-    chart1 = echarts.init(document.getElementById('chart1'), 'macarons');
-    chart1.setOption(option3);
-
-    chart2 = echarts.init(document.getElementById('chart2'), 'macarons');
-    chart2.setOption(option2);
-
-    chart3 = echarts.init(document.getElementById('chart3'), 'macarons');
-    chart3.setOption(option1);
-}
-
-    var data = [
-        {
-            "value": -1.1618426259,
-            "date": "2012-08-28",
-            "l": -2.6017329022,
-            "u": 0.2949717757
-        },
-        {
-            "value": -0.5828247293,
-            "date": "2012-08-29",
-            "l": -1.3166963635,
-            "u": 0.1324086347
-        },
-        {
-            "value": -0.3790770636,
-            "date": "2012-08-30",
-            "l": -0.8712221305,
-            "u": 0.0956413566
-        },
-        {
-            "value": -0.2792926002,
-            "date": "2012-08-31",
-            "l": -0.6541832008,
-            "u": 0.0717120241
-        },
-        {
-            "value": -0.2461165469,
-            "date": "2012-09-01",
-            "l": -0.5222677907,
-            "u": 0.0594188803
-        },
-        {
-            "value": -0.2017354137,
-            "date": "2012-09-02",
-            "l": -0.4434280535,
-            "u": 0.0419213465
-        },
-        {
-            "value": -0.1457476871,
-            "date": "2012-09-03",
-            "l": -0.3543957712,
-            "u": 0.0623761171
-        },
-        {
-            "value": -0.002610973,
-            "date": "2012-09-04",
-            "l": -0.3339911495,
-            "u": 0.031286929
-        },
-        {
-            "value": -0.0080692734,
-            "date": "2012-09-05",
-            "l": -0.2951839941,
-            "u": 0.0301762553
-        },
-        {
-            "value": -0.0296490933,
-            "date": "2012-09-06",
-            "l": -0.2964395801,
-            "u": -0.0029821004
-        },
-        {
-            "value": 0.001317397,
-            "date": "2012-09-07",
-            "l": -0.2295443759,
-            "u": 0.037903312
-        },
-        {
-            "value": -0.0117649838,
-            "date": "2012-09-08",
-            "l": -0.2226376418,
-            "u": 0.0239720183
-        },
-        {
-            "value": 0.0059394263,
-            "date": "2012-09-09",
-            "l": -0.2020479849,
-            "u": 0.0259489347
-        },
-        {
-            "value": -0.0115565898,
-            "date": "2012-09-10",
-            "l": -0.2042048037,
-            "u": 0.0077863806
-        },
-        {
-            "value": 0.0041183019,
-            "date": "2012-09-11",
-            "l": -0.1837263172,
-            "u": 0.0137898406
-        },
-        {
-            "value": 0.0353559544,
-            "date": "2012-09-12",
-            "l": -0.136610008,
-            "u": 0.051403828
-        },
-        {
-            "value": 0.0070046011,
-            "date": "2012-09-13",
-            "l": -0.1569988647,
-            "u": 0.0202266411
-        },
-        {
-            "value": -0.0004251807,
-            "date": "2012-09-14",
-            "l": -0.1410340292,
-            "u": 0.0273410185
-        },
-        {
-            "value": -0.0035461023,
-            "date": "2012-09-15",
-            "l": -0.1438653689,
-            "u": 0.0165445684
-        },
-        {
-            "value": 0.007797889,
-            "date": "2012-09-16",
-            "l": -0.1291975355,
-            "u": 0.0232461153
-        },
-        {
-            "value": 0.0025402723,
-            "date": "2012-09-17",
-            "l": -0.133972479,
-            "u": 0.0116753921
-        },
-        {
-            "value": -0.005317381,
-            "date": "2012-09-18",
-            "l": -0.1269266586,
-            "u": 0.0129723291
-        },
-        {
-            "value": -0.0075841521,
-            "date": "2012-09-19",
-            "l": -0.1283478383,
-            "u": 0.0056371616
-        },
-        {
-            "value": -0.0391388721,
-            "date": "2012-09-20",
-            "l": -0.1571172198,
-            "u": -0.0311678828
-        },
-        {
-            "value": 0.0075430252,
-            "date": "2012-09-21",
-            "l": -0.1097354417,
-            "u": 0.0141132062
-        },
-        {
-            "value": 0.1850284663,
-            "date": "2012-09-22",
-            "l": 0.0333682152,
-            "u": 0.2140709422
-        },
-        {
-            "value": 0.076629596,
-            "date": "2012-09-23",
-            "l": -0.0068472967,
-            "u": 0.1101280569
-        },
-        {
-            "value": -0.0314292271,
-            "date": "2012-09-24",
-            "l": -0.1074281762,
-            "u": 0.0032669363
-        },
-        {
-            "value": -0.0232608674,
-            "date": "2012-09-25",
-            "l": -0.0905197842,
-            "u": 0.0164250295
-        },
-        {
-            "value": -0.01968615,
-            "date": "2012-09-26",
-            "l": -0.084319856,
-            "u": 0.0193319465
-        },
-        {
-            "value": -0.0310196816,
-            "date": "2012-09-27",
-            "l": -0.0914356781,
-            "u": 0.0094436256
-        },
-        {
-            "value": -0.0758746967,
-            "date": "2012-09-28",
-            "l": -0.1169814745,
-            "u": -0.019659551
-        },
-        {
-            "value": 0.0233974572,
-            "date": "2012-09-29",
-            "l": -0.0356839258,
-            "u": 0.0610712506
-        },
-        {
-            "value": 0.011073579,
-            "date": "2012-09-30",
-            "l": -0.0558712863,
-            "u": 0.0346160081
-        },
-        {
-            "value": -0.002094822,
-            "date": "2012-10-01",
-            "l": -0.0707143388,
-            "u": 0.0152899266
-        },
-        {
-            "value": -0.1083707096,
-            "date": "2012-10-02",
-            "l": -0.1718101335,
-            "u": -0.0886271057
-        },
-        {
-            "value": -0.1098258972,
-            "date": "2012-10-03",
-            "l": -0.1881274065,
-            "u": -0.1072157972
-        },
-        {
-            "value": -0.0872970297,
-            "date": "2012-10-04",
-            "l": -0.1731903321,
-            "u": -0.064381434
-        },
-        {
-            "value": -0.0761992047,
-            "date": "2012-10-05",
-            "l": -0.1770373817,
-            "u": 0.100085727
-        },
-        {
-            "value": -0.0416654249,
-            "date": "2012-10-06",
-            "l": -0.1502479611,
-            "u": 0.0751148102
-        },
-        {
-            "value": -0.0410128962,
-            "date": "2012-10-07",
-            "l": -0.1618694445,
-            "u": 0.0881453482
-        },
-        {
-            "value": -0.0214289042,
-            "date": "2012-10-08",
-            "l": -0.1590852977,
-            "u": 0.0871880288
-        },
-        {
-            "value": 0.2430880604,
-            "date": "2012-10-09",
-            "l": 0.063624221,
-            "u": 0.2455101587
-        },
-        {
-            "value": 0.3472823479,
-            "date": "2012-10-10",
-            "l": 0.1553854927,
-            "u": 0.3583991097
-        },
-        {
-            "value": 0.3360734074,
-            "date": "2012-10-11",
-            "l": 0.2055952772,
-            "u": 0.3812162823
-        },
-        {
-            "value": -0.0463648355,
-            "date": "2012-10-12",
-            "l": -0.0626466998,
-            "u": 0.0037342957
-        },
-        {
-            "value": -0.0867009379,
-            "date": "2012-10-13",
-            "l": -0.0867594055,
-            "u": -0.0223791074
-        },
-        {
-            "value": -0.1288672826,
-            "date": "2012-10-14",
-            "l": -0.1161709129,
-            "u": -0.0534789124
-        },
-        {
-            "value": -0.1474426821,
-            "date": "2012-10-15",
-            "l": -0.1559759048,
-            "u": -0.0646995092
-        },
-        {
-            "value": -0.1502405066,
-            "date": "2012-10-16",
-            "l": -0.1604364638,
-            "u": -0.0602562376
-        },
-        {
-            "value": -0.1203765529,
-            "date": "2012-10-17",
-            "l": -0.1569023195,
-            "u": -0.0578129637
-        },
-        {
-            "value": -0.0649122919,
-            "date": "2012-10-18",
-            "l": -0.0782987564,
-            "u": -0.0501999174
-        },
-        {
-            "value": -0.015525562,
-            "date": "2012-10-19",
-            "l": -0.1103873808,
-            "u": -0.0132131311
-        },
-        {
-            "value": -0.006051357,
-            "date": "2012-10-20",
-            "l": -0.1089644497,
-            "u": 0.0230384197
-        },
-        {
-            "value": 0.0003154213,
-            "date": "2012-10-21",
-            "l": -0.1073849227,
-            "u": 0.0017290437
-        },
-        {
-            "value": -0.0063018298,
-            "date": "2012-10-22",
-            "l": -0.1120298155,
-            "u": 0.0173284555
-        },
-        {
-            "value": -0.004294834,
-            "date": "2012-10-23",
-            "l": -0.1076841119,
-            "u": 0.0547933965
-        },
-        {
-            "value": -0.0053400832,
-            "date": "2012-10-24",
-            "l": -0.1096991408,
-            "u": 0.0560555803
-        },
-        {
-            "value": 0.0070057212,
-            "date": "2012-10-25",
-            "l": -0.0940613813,
-            "u": 0.0425517607
-        },
-        {
-            "value": 0.0082121656,
-            "date": "2012-10-26",
-            "l": -0.0906810455,
-            "u": 0.0396884383
-        },
-        {
-            "value": 0.0141422884,
-            "date": "2012-10-27",
-            "l": -0.0841305678,
-            "u": 0.0340050012
-        },
-        {
-            "value": 0.0041613553,
-            "date": "2012-10-28",
-            "l": -0.0886723749,
-            "u": 0.039426727
-        },
-        {
-            "value": -0.0013614287,
-            "date": "2012-10-29",
-            "l": -0.0923481608,
-            "u": 0.0438725574
-        },
-        {
-            "value": -0.0052144933,
-            "date": "2012-10-30",
-            "l": -0.0937763043,
-            "u": 0.0459998555
-        },
-        {
-            "value": 0.0078904741,
-            "date": "2012-10-31",
-            "l": -0.0807028001,
-            "u": 0.0334824169
-        },
-        {
-            "value": 0.0099598702,
-            "date": "2012-11-01",
-            "l": -0.0740001323,
-            "u": 0.0280264274
-        },
-        {
-            "value": 0.0001146029,
-            "date": "2012-11-02",
-            "l": -0.0820430294,
-            "u": 0.0326771125
-        },
-        {
-            "value": 0.0047572651,
-            "date": "2012-11-03",
-            "l": -0.0754113825,
-            "u": 0.0294912577
-        },
-        {
-            "value": 0.006204557,
-            "date": "2012-11-04",
-            "l": -0.0750627059,
-            "u": 0.029693607
-        },
-        {
-            "value": 0.0115231406,
-            "date": "2012-11-05",
-            "l": -0.0663484142,
-            "u": 0.0214084056
-        },
-        {
-            "value": -0.0032634994,
-            "date": "2012-11-06",
-            "l": -0.0793170451,
-            "u": 0.0355159827
-        },
-        {
-            "value": -0.0108985452,
-            "date": "2012-11-07",
-            "l": -0.0846123893,
-            "u": 0.0409797057
-        },
-        {
-            "value": -0.0092766813,
-            "date": "2012-11-08",
-            "l": -0.0802668328,
-            "u": 0.0373886301
-        },
-        {
-            "value": 0.0095972086,
-            "date": "2012-11-09",
-            "l": -0.0623739694,
-            "u": 0.0194918693
-        },
-        {
-            "value": -0.0111809358,
-            "date": "2012-11-10",
-            "l": -0.0819555908,
-            "u": 0.038335749
-        },
-        {
-            "value": -0.0023572296,
-            "date": "2012-11-11",
-            "l": -0.0745443377,
-            "u": 0.0306093592
-        },
-        {
-            "value": 0.0084213775,
-            "date": "2012-11-12",
-            "l": -0.0657707155,
-            "u": 0.0227270619
-        },
-        {
-            "value": 0.0107446453,
-            "date": "2012-11-13",
-            "l": -0.0617995017,
-            "u": 0.0196547867
-        },
-        {
-            "value": 0.009457792,
-            "date": "2012-11-14",
-            "l": -0.0597697849,
-            "u": 0.0191832343
-        },
-        {
-            "value": 0.0031194779,
-            "date": "2012-11-15",
-            "l": -0.0589126783,
-            "u": 0.0186409442
-        },
-        {
-            "value": -0.0115128213,
-            "date": "2012-11-16",
-            "l": -0.0767105447,
-            "u": 0.0370292452
-        },
-        {
-            "value": 0.0058347339,
-            "date": "2012-11-17",
-            "l": -0.0592236472,
-            "u": 0.0198181452
-        },
-        {
-            "value": -0.0235630436,
-            "date": "2012-11-18",
-            "l": -0.083529944,
-            "u": 0.046280909
-        },
-        {
-            "value": -0.0479795964,
-            "date": "2012-11-19",
-            "l": -0.1086422529,
-            "u": 0.0113044645
-        },
-        {
-            "value": -0.0218184359,
-            "date": "2012-11-21",
-            "l": -0.0881634878,
-            "u": 0.0448568265
-        },
-        {
-            "value": -0.0071361172,
-            "date": "2012-11-28",
-            "l": -0.0807350229,
-            "u": 0.0453599734
-        },
-        {
-            "value": -0.0151966912,
-            "date": "2012-12-05",
-            "l": -0.089995793,
-            "u": 0.0558329569
-        },
-        {
-            "value": -0.0097784855,
-            "date": "2012-12-12",
-            "l": -0.089466481,
-            "u": 0.0550191387
-        },
-        {
-            "value": -0.0095681495,
-            "date": "2012-12-19",
-            "l": -0.090513354,
-            "u": 0.057073314
-        },
-        {
-            "value": -0.0034165915,
-            "date": "2012-12-27",
-            "l": -0.0907151292,
-            "u": 0.0561479112
-        },
-        {
-            "value": 0.3297981389,
-            "date": "2012-12-31",
-            "l": 0.1537781522,
-            "u": 0.3499473316
-        }
-    ];
-
-    var option1 = {
-        title: {
-            text: 'Confidence Band',
-            subtext: 'Example in MetricsGraphics.js',
-            left: 'center'
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'cross',
-                animation: false,
-                label: {
-                    backgroundColor: '#ccc',
-                    borderColor: '#aaa',
-                    borderWidth: 1,
-                    shadowBlur: 0,
-                    shadowOffsetX: 0,
-                    shadowOffsetY: 0,
-                    textStyle: {
-                        color: '#222'
-                    }
-                }
-            },
-            formatter: function (params) {
-                return params[2].name + '<br />' + params[2].value;
-            }
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'category',
-            data: data.map(function (item) {
-                return item.date;
-            }),
-            axisLabel: {
-                formatter: function (value, idx) {
-                    var date = new Date(value);
-                    return idx === 0 ? value : [date.getMonth() + 1, date.getDate()].join('-');
-                }
-            },
-            splitLine: {
-                show: false
-            },
-            boundaryGap: false
-        },
-        yAxis: {
-            splitNumber: 3,
-            splitLine: {
-                show: false
-            }
-        },
-        series: [{
-            name: 'L',
-            type: 'line',
-            data: data.map(function (item) {
-                return item.l;
-            }),
-            lineStyle: {
-                normal: {
-                    opacity: 0
-                }
-            },
-            stack: 'confidence-band',
-            symbol: 'none'
-        }, {
-            name: 'U',
-            type: 'line',
-            data: data.map(function (item) {
-                return item.u - item.l;
-            }),
-            lineStyle: {
-                normal: {
-                    opacity: 0
-                }
-            },
-            areaStyle: {
-                normal: {
-                    color: '#ccc'
-                }
-            },
-            stack: 'confidence-band',
-            symbol: 'none'
-        }, {
-            type: 'line',
-            data: data.map(function (item) {
-                return item.value;
-            }),
-            hoverAnimation: false,
-            symbolSize: 6,
-            itemStyle: {
-                normal: {
-                    color: '#c23531'
-                }
-            },
-            showSymbol: false
-        }]
-};
-//------------------------------------------------------
-var option2 = option = {
-    legend: {},
-    tooltip: {},
-    dataset: {
-        source: [
-            ['product', '2012', '2013', '2014', '2015'],
-            ['Matcha Latte', 41.1, 30.4, 65.1, 53.3],
-            ['Milk Tea', 86.5, 92.1, 85.7, 83.1],
-            ['Cheese Cocoa', 24.1, 67.2, 79.5, 86.4]
-        ]
-    },
-    xAxis: [
-        {type: 'category', gridIndex: 0},
-        {type: 'category', gridIndex: 1}
-    ],
-    yAxis: [
-        {gridIndex: 0},
-        {gridIndex: 1}
-    ],
-    grid: [
-        {bottom: '55%'},
-        {top: '55%'}
-    ],
-    series: [
-        // These series are in the first grid.
-        {type: 'bar', seriesLayoutBy: 'row'},
-        {type: 'bar', seriesLayoutBy: 'row'},
-        {type: 'bar', seriesLayoutBy: 'row'},
-        // These series are in the second grid.
-        {type: 'bar', xAxisIndex: 1, yAxisIndex: 1},
-        {type: 'bar', xAxisIndex: 1, yAxisIndex: 1},
-        {type: 'bar', xAxisIndex: 1, yAxisIndex: 1},
-        {type: 'bar', xAxisIndex: 1, yAxisIndex: 1}
-    ]
-};
-
-var option3 = option = {
-    legend: {},
-    tooltip: {},
-    dataset: {
-        source: [
-            ['product', '2012', '2013', '2014', '2015'],
-            ['Matcha Latte', 41.1, 30.4, 65.1, 53.3],
-            ['Milk Tea', 86.5, 92.1, 85.7, 83.1],
-            ['Cheese Cocoa', 24.1, 67.2, 79.5, 86.4]
-        ]
-    },
-    xAxis: [
-        {type: 'category', gridIndex: 0},
-        {type: 'category', gridIndex: 1}
-    ],
-    yAxis: [
-        {gridIndex: 0},
-        {gridIndex: 1}
-    ],
-    grid: [
-        {bottom: '55%'},
-        {top: '55%'}
-    ],
-    series: [
-        // These series are in the first grid.
-        {type: 'bar', seriesLayoutBy: 'row'},
-        {type: 'bar', seriesLayoutBy: 'row'},
-        {type: 'bar', seriesLayoutBy: 'row'},
-        // These series are in the second grid.
-        {type: 'bar', xAxisIndex: 1, yAxisIndex: 1},
-        {type: 'bar', xAxisIndex: 1, yAxisIndex: 1},
-        {type: 'bar', xAxisIndex: 1, yAxisIndex: 1},
-        {type: 'bar', xAxisIndex: 1, yAxisIndex: 1}
-    ]
-};
-
-

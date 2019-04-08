@@ -15,8 +15,13 @@
     <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
   </resultMap>
 
-  <insert id="save" parameterType="diagDetail">
-    insert into UO_DIAG_DETAIL(DIAG_ID, NODE_ID, PARENT_ID, NODE_NAME, ALARM_FLAG)
-    values (#{diagId}, #{nodeId}, #{parentId}, #{nodeName}, #{alarmFlag})
+  <insert id="save">
+    insert into UO_DIAG_DETAIL(DIAG_ID, NODE_ID, PARENT_ID, NODE_NAME, KPI_CODE, KPI_LEVEL_ID, ALARM_FLAG, KPI_NAME)
+    select m.* from
+    <foreach collection="list" item="t" separator="union all" open="(" close=")">
+      select #{t.diagId, jdbcType=NUMERIC}, #{t.nodeId, jdbcType=NUMERIC},#{t.parentId, jdbcType=NUMERIC},#{t.nodeName, jdbcType=VARCHAR},#{t.kpiCode, jdbcType=VARCHAR},#{t.kpiLevelId, jdbcType=NUMERIC},#{t.alarmFlag, jdbcType=VARCHAR},#{t.kpiName, jdbcType=VARCHAR}
+      from dual
+    </foreach>
+    m
   </insert>
 </mapper>

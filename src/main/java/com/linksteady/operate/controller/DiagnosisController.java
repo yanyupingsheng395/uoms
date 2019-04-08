@@ -32,8 +32,8 @@ public class DiagnosisController {
     @PostMapping("/add")
     public ResponseBo add(Diag diag) {
         try {
-            diagService.save(diag);
-            return ResponseBo.ok();
+            Long result = diagService.save(diag);
+            return ResponseBo.okWithData(null, result);
         }catch (Exception e) {
             e.printStackTrace();
             return ResponseBo.error();

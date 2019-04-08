@@ -23,7 +23,10 @@
   </select>
 
   <insert id="save">
+    <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="diagId">
+      select seq_diag_id.nextval from dual
+    </selectKey>
     insert into UO_DIAG_LIST(DIAG_ID, DIAG_NAME, PERIOD_TYPE, BEGIN_DT, END_DT)
-    values(seq_diag_id.nextval, #{diagName}, #{periodType}, #{beginDt}, #{endDt})
+    values(#{diagId}, #{diagName}, #{periodType}, #{beginDt}, #{endDt})
   </insert>
 </mapper>

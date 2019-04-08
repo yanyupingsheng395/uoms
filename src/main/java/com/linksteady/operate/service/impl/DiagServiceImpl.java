@@ -27,7 +27,8 @@ public class DiagServiceImpl implements DiagService {
 
     @Override
     @Transactional
-    public void save(Diag diag) {
+    public Long save(Diag diag) {
         diagMapper.save(diag);
+        return diag.getDiagId();
     }
 }
