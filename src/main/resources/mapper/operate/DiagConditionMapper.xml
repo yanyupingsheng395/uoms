@@ -16,7 +16,7 @@
     insert into UO_DIAG_CONDITION(DIAG_ID, NODE_ID, DIM_CODE, DIM_VALUES, DIM_VALUE_DISPLAY)
     select m.* from
     <foreach collection="list" item="t" separator="union all" open="(" close=")">
-      select #{t.diagId, jdbcType=NUMERIC}, #{t.nodeId, jdbcType=NUMERIC},#{t.dimCode, jdbcType=VARCHAR},#{t.nodeName, jdbcType=VARCHAR},#{t.dimValues, jdbcType=VARCHAR},#{t.dimValueDisplay, jdbcType=VARCHAR}
+      select #{t.diagId, jdbcType=NUMERIC}, #{t.nodeId, jdbcType=NUMERIC},#{t.dimCode, jdbcType=VARCHAR},#{t.dimValues, jdbcType=VARCHAR},#{t.dimValueDisplay, jdbcType=VARCHAR}
       from dual
     </foreach>
     m

@@ -6,7 +6,14 @@
 // 流程图对象
 var jm = null;
 var diagId = 0;
-
+toastr.options = {
+    "progressBar": true,
+    "positionClass": "toast-top-center",
+    "preventDuplicates": true,
+    "timeOut": 1500,
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
 init_date("beginDt", "yyyy", 2,2,2);
 init_date("endDt", "yyyy", 2,2,2);
 
@@ -168,7 +175,15 @@ function saveNodes() {
         },
         dataType : 'json',
         success: function (r) {
-            alert(r.msg);
+            console.log(r);
+            if(r.code == 200) {
+                toastr.success(r.msg);
+            }else {
+                toastr.error(r.msg);
+            }
+            setTimeout(function(){
+                window.location.href = "/page/diagnosis/list";
+            },1500)
         }
     });
 }
