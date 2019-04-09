@@ -56,6 +56,8 @@ public class DiagDetailServiceImpl implements DiagDetailService {
         }
         diagDetailMapper.save(diagDetailList);
         // 保存条件
-        diagConditionMapper.save(conditions);
+        if(conditions.size() != 0) {
+            diagConditionMapper.save(conditions);
+        }
     }
 }

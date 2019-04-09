@@ -43,15 +43,7 @@ public class DiagnosisController {
 
     @PostMapping("/getNodes")
     public ResponseBo getNodes(@RequestParam("diagId") String diagId) {
-        diagService.getNodes(diagId);
-        return null;
-    }
-
-    public static void main(String[] args) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", "123");
-        map.put("name", "zhangsan");
-
-        System.out.println(JSON.toJSON(map));
+        List<Map<String, Object>> res = diagService.getNodes(diagId);
+        return ResponseBo.okWithData(null, JSON.toJSON(res));
     }
 }

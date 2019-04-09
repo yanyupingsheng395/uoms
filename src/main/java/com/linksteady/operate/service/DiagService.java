@@ -13,5 +13,5 @@ public interface DiagService{
 
     Long save(Diag diag);
 
-    Map<String, Object> getNodes(String diagId);
+    List<Map<String, Object>> getNodes(String diagId);
 }

@@ -21,4 +21,8 @@
     </foreach>
     m
   </insert>
+
+  <select id="findByDiagId" resultMap="BaseResultMap">
+    select * from UO_DIAG_CONDITION where DIAG_ID = #{diagId}
+  </select>
 </mapper>

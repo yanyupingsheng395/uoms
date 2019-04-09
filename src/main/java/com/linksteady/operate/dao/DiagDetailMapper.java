@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface DiagDetailMapper extends MyMapper<DiagDetail> {
     void save(@Param("diagDetailList") List<DiagDetail> diagDetailList);
+
+    List<DiagDetail> findByDiagId(@Param("diagId") String diagId);
 }
