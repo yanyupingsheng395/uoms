@@ -38,7 +38,7 @@ $(function () {
             filed: '#',
             title: '操作',
             formatter: function (value, row, index) {
-                    return "<a class='btn btn-primary btn-sm' onclick=''><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-danger btn-sm' onclick=''><i class='mdi mdi-window-close'></i>删除</div>";
+                    return "<a class='btn btn-primary btn-sm' href='/diagnosis/view?id="+row.diagId+"'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-danger btn-sm' onclick=''><i class='mdi mdi-window-close'></i>删除</div>";
             }
         }]
     };

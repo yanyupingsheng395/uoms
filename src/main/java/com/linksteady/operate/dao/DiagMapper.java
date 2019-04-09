@@ -11,4 +11,6 @@ public interface DiagMapper{
     Long getTotalCount();
 
     void save(@Param("diag") Diag diag);
+
+    List<Diag> findByDiagId(@Param("diag") String diagId);
 }

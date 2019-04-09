@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DiagServiceImpl implements DiagService {
@@ -30,5 +32,15 @@ public class DiagServiceImpl implements DiagService {
     public Long save(Diag diag) {
         diagMapper.save(diag);
         return diag.getDiagId();
+    }
+
+    @Override
+    public Map<String, Object> getNodes(String diagId) {
+        Map<String, Object> result = new HashMap<>();
+        List<Diag> diagList = diagMapper.findByDiagId(diagId);
+//        for(Diag d:diagList) {
+////            result.put("id", d.get);
+//        }
+        return null;
     }
 }

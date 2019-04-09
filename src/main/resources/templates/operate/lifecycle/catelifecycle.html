@@ -1,127 +1,112 @@
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4>品类生命周期&运营目标</h4>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-12">
+                <h5>品类留存率与其它指标的关系</h5>
+                <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <div id="retention_freq" style="width:100%;height:300px;"></div>
+                        <h5>留存率随购买次数的变化</h5>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div id="retention_price" style="width:100%;height:300px;"></div>
+                        <h5>留存率与客单价的关系</h5>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div id="retention_gap" style="width:100%;height:300px;"></div>
+                        <h5>留存率与购买间隔的关系</h5>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="card">
-                                <!-- 留存率与其它指标的关系 -->
-                                <div class="row" style="margin-top: 20px;">
-                                    <div class="col-md-12">
-                                        <h5>品类留存率与其它指标的关系</h5>
-                                        <hr style="margin-top: 0px;margin-bottom: 5px;"/>
-                                        <div class="row">
-                                            <div class="col-md-4 text-center">
-                                                <div id="retention_freq" style="width:100%;height:300px;"></div>
-                                                <h5>留存率随购买次数的变化</h5>
-                                            </div>
-                                            <div class="col-md-4 text-center">
-                                                <div id="retention_price" style="width:100%;height:300px;"></div>
-                                                <h5>留存率与客单价的关系</h5>
-                                            </div>
-                                            <div class="col-md-4 text-center">
-                                                <div id="retention_gap" style="width:100%;height:300px;"></div>
-                                                <h5>留存率与购买间隔的关系</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--生命周期划分原理-->
-                                <div class="row" style="margin-top: 20px;">
-                                    <div class="col-md-12">
-                                        <h5>生命周期划分原理</h5>
-                                        <hr style="margin-top: 0px;margin-bottom: 5px;"/>
-                                        <div class="row">
-                                            <div class="col-md-6 text-center">
-                                                <div id="lifecycle_radar" style="width:100%;height:300px;"></div>
-                                            </div>
-                                            <div class="col-md-6 table-responsive">
-                                                <table class="table table-hover table-bordered table-striped">
-                                                    <thead>
-                                                    <tr>
-                                                        <th>组合名称</th> <th>说明</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                     <tr>
-                                                         <td style="text-align: left;vertical-align: middle">组合1</td>
-                                                         <td style="text-align: left">客单价高、购买次数低，此类人群归属于忠诚用户。客单价高、购买次数低，此类人群归属于忠诚用户。</td>
-                                                     </tr>
-                                                     <tr>
-                                                         <td style="text-align: left">组合2</td>
-                                                         <td style="text-align: left">客单价高、购买次数低，此类人群归属于忠诚用户。</td>
-                                                     </tr>
-                                                     <tr>
-                                                         <td style="text-align: left">组合3</td>
-                                                         <td style="text-align: left">客单价高、购买次数低，此类人群归属于忠诚用户。</td>
-                                                     </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--生命周期用户-->
-                                <div class="row" style="margin-top: 20px;">
-                                    <div class="col-md-12">
-                                        <h5>生命周期用户分布及变化</h5>
-                                        <hr style="margin-top: 0px;margin-bottom: 5px;"/>
-                                        <div class="row">
-                                            <div class="col-md-6 text-center">
-                                                <div id="lifecycle_shape" style="width:100%;height:300px;"></div>
+            </div>
+        </div>
+        <!--生命周期划分原理-->
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-12">
+                <h5>生命周期划分原理</h5>
+                <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <div id="lifecycle_radar" style="width:100%;height:300px;margin-top: 20px;"></div>
+                    </div>
+                    <div class="col-md-6 table-responsive" style="margin-top: 20px;">
+                        <table class="table table-hover table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>组合名称</th> <th>说明</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                             <tr>
+                                 <td style="text-align: left;vertical-align: middle">组合1</td>
+                                 <td style="text-align: left">客单价高、购买次数低，此类人群归属于忠诚用户。客单价高、购买次数低，此类人群归属于忠诚用户。</td>
+                             </tr>
+                             <tr>
+                                 <td style="text-align: left">组合2</td>
+                                 <td style="text-align: left">客单价高、购买次数低，此类人群归属于忠诚用户。</td>
+                             </tr>
+                             <tr>
+                                 <td style="text-align: left">组合3</td>
+                                 <td style="text-align: left">客单价高、购买次数低，此类人群归属于忠诚用户。</td>
+                             </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--生命周期用户-->
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-12">
+                <h5>生命周期用户分布及变化</h5>
+                <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <div id="lifecycle_shape" style="width:100%;height:300px;"></div>
 
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div id="lifecycle_shape_table" class="table-responsive">
-                                                    <table class="table table-hover table-bordered table-striped">
-                                                        <thead>
-                                                        <tr>
-                                                            <th th:colspan="2"></th> <th>用户数占比</th> <th>销售贡献率</th> <th>销售额增长率</th> <th>用户数增长率</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr>
-                                                            <td rowspan="2" style="text-align: center; vertical-align: middle;">新客户</td><td>新客期用户</td>
-                                                            <td>[[${stateJudge.nnUct}]]</td><td>[[${stateJudge.nnProfitRate}]]</td><td>[[${stateJudge.nnSalesRate}]]</td><td>[[${stateJudge.nnUctRate}]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>成长期用户</td>
-                                                            <td>[[${stateJudge.niUct}]]</td><td>[[${stateJudge.niProfitRate}]]</td><td>[[${stateJudge.niSalesRate}]]</td><td>[[${stateJudge.niUctRate}]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td rowspan="3" style="text-align: center; vertical-align: middle;">老客户</td><td>成熟期用户</td>
-                                                            <td>[[${stateJudge.omUct}]]</td><td>[[${stateJudge.omProfitRate}]]</td><td>[[${stateJudge.omSalesRate}]]</td><td>[[${stateJudge.omUctRate}]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>衰退期用户</td>
-                                                            <td>[[${stateJudge.odUct}]]</td><td>[[${stateJudge.odProfitRate}]]</td><td>[[${stateJudge.odSalesRate}]]</td><td>[[${stateJudge.odUctRate}]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>流失期用户</td>
-                                                            <td>[[${stateJudge.olUct}]]</td><td>[[${stateJudge.olProfitRate}]]</td><td>[[${stateJudge.olSalesRate}]]</td><td>[[${stateJudge.olUctRate}]]</td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                        <div class="row" style="margin-top: 20px;">
-                                            <div class="col-md-12 text-center">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="lifecycle_shape_table" class="table-responsive" style="margin-top: 20px;">
+                            <table class="table table-hover table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th th:colspan="2"></th> <th>用户数占比</th> <th>销售贡献率</th> <th>销售额增长率</th> <th>用户数增长率</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td rowspan="2" style="text-align: center; vertical-align: middle;">新客户</td><td>新客期用户</td>
+                                    <td>[[${stateJudge.nnUct}]]</td><td>[[${stateJudge.nnProfitRate}]]</td><td>[[${stateJudge.nnSalesRate}]]</td><td>[[${stateJudge.nnUctRate}]]</td>
+                                </tr>
+                                <tr>
+                                    <td>成长期用户</td>
+                                    <td>[[${stateJudge.niUct}]]</td><td>[[${stateJudge.niProfitRate}]]</td><td>[[${stateJudge.niSalesRate}]]</td><td>[[${stateJudge.niUctRate}]]</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="3" style="text-align: center; vertical-align: middle;">老客户</td><td>成熟期用户</td>
+                                    <td>[[${stateJudge.omUct}]]</td><td>[[${stateJudge.omProfitRate}]]</td><td>[[${stateJudge.omSalesRate}]]</td><td>[[${stateJudge.omUctRate}]]</td>
+                                </tr>
+                                <tr>
+                                    <td>衰退期用户</td>
+                                    <td>[[${stateJudge.odUct}]]</td><td>[[${stateJudge.odProfitRate}]]</td><td>[[${stateJudge.odSalesRate}]]</td><td>[[${stateJudge.odUctRate}]]</td>
+                                </tr>
+                                <tr>
+                                    <td>流失期用户</td>
+                                    <td>[[${stateJudge.olUct}]]</td><td>[[${stateJudge.olProfitRate}]]</td><td>[[${stateJudge.olSalesRate}]]</td><td>[[${stateJudge.olUctRate}]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
+
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12 text-center">
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-
+</div>

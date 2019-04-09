@@ -11,7 +11,7 @@ var retention_option1= {
         name: '',
         nameTextStyle: 'oblique',
         boundaryGap: false,
-        nameRotate: 45
+        nameRotate: 73
     },
     axisLabel:{
         interval: 0,
@@ -39,7 +39,7 @@ var retention_option2= {
         name: '',
         nameTextStyle: 'oblique',
         boundaryGap: false,
-        nameRotate: 45
+        nameRotate: 63
     },
     axisLabel:{
         interval: 0,
@@ -67,7 +67,7 @@ var retention_option3= {
         name: '',
         nameTextStyle: 'oblique',
         boundaryGap: false,
-        nameRotate: 45
+        nameRotate: 80
     },
     axisLabel:{
         interval: 0,
@@ -227,6 +227,7 @@ $(function () {
     };
     $('#catListTable').bootstrapTable(settings);
 
+    var flag = false;
     //添加行点击事件
     $('#catListTable').on('click-row.bs.table', function (e,row,$element)
     {
@@ -240,12 +241,15 @@ $(function () {
 
     // 初始化数据
     function dataInit(cate_wid) {
-        $("#initTab1, #initTab2").attr("style", "display:none;");  //隐藏提示
+        if(!flag) {
+            flag = true;
+            $("#initTab1, #initTab2").attr("style", "display:none;");  //隐藏提示
 
-        // todo 判断当前tab处在那个位置
+            // todo 判断当前tab处在那个位置
 
-        $("#tabContent1").attr("class", "chartpanel");
-        $("#tabContent2").attr("class", "chart_none_panel");
+            $("#tabContent1").attr("class", "chartpanel");
+            $("#tabContent2").attr("class", "chart_none_panel");
+        }
     }
 
     $('#catListTable').on('post-body.bs.table', function (e, settings) {
@@ -299,3 +303,10 @@ $(function () {
     });
 
 });
+
+init_date("startDate1", "yyyy-mm", 1,2,1);
+init_date("endDate1", "yyyy-mm", 1,2,1);
+init_date("startDate2", "yyyy-mm", 1,2,1);
+init_date("endDate2", "yyyy-mm", 1,2,1);
+init_date("startDate3", "yyyy-mm", 1,2,1);
+init_date("endDate3", "yyyy-mm", 1,2,1);

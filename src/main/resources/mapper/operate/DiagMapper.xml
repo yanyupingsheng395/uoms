@@ -29,4 +29,8 @@
     insert into UO_DIAG_LIST(DIAG_ID, DIAG_NAME, PERIOD_TYPE, BEGIN_DT, END_DT)
     values(#{diagId}, #{diagName}, #{periodType}, #{beginDt}, #{endDt})
   </insert>
+
+  <select id="findByDiagId" resultMap="BaseResultMap">
+    select * from UO_DIAG_LIST where DIAG_ID = #{diagId}
+  </select>
 </mapper>

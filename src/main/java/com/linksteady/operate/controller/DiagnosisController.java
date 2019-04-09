@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -38,5 +39,19 @@ public class DiagnosisController {
             e.printStackTrace();
             return ResponseBo.error();
         }
+    }
+
+    @PostMapping("/getNodes")
+    public ResponseBo getNodes(@RequestParam("diagId") String diagId) {
+        diagService.getNodes(diagId);
+        return null;
+    }
+
+    public static void main(String[] args) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", "123");
+        map.put("name", "zhangsan");
+
+        System.out.println(JSON.toJSON(map));
     }
 }
