@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户运营系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <style>
+        .changeColor{
+            background-color: #31b0d5  !important;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>品类列表</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12" style="margin-bottom: 20px;">
+                                        <form class="form-inline">
+                                            <div class="form-group col-md-4">
+                                                <label class="control-label" for="cate_name">品类名称：</label>
+                                                <div class="input-group">
+                                                     <input class="form-control" type="text" id="cate_name" name="cate_name" placeholder="品类名称..">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-md-4">
+                                                <label class="control-label" for="orderColumn">排序：按</label>
+                                                <div class="input-group col-md-6">
+                                                    <select class="selectpicker" id="orderColumn" name="orderColumn" size="1">
+                                                        <option value="GMV_RATE">GMV贡献率</option>
+                                                        <option value="PROFIT_RATE">利润贡献率</option>
+                                                    </select>
+                                                </div>
+                                                <label class="control-label" for="orderColumn">倒排序</label>
+                                            </div>
+
+                                            <div class="form-group col-md-4">
+                                                <a class="btn btn-info" type="button" id="query"><i class="mdi mdi-file-find"></i>查询</a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table id="catListTable" class="table table-striped"></table>
+                                </div>
+                            </div>
+
+                            <ul class="nav nav-tabs" id="tabs">
+                                <li class="active"> <a href="#">品类指标监控</a> </li>
+                                <li> <a href="#">品类生命周期</a> </li>
+                            </ul>
+                            <div class="tab-content" id="tab_kpis">
+                                <div class="tab-pane active">
+                                    <div data-th-include="operate/lifecycle/catelifecycle"></div>
+                                </div>
+                            </div>
+                            <div class="tab-content" id="tab_lifecycle"  style="display: none;">
+                                <div class="tab-pane active">
+                                    <div data-th-include="operate/lifecycle/catelifecycle"></div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
+<script data-th-src="@{/plugins/notify/bootstrap-notify.min.js}"></script>
+<script data-th-src="@{/plugins/notify/lightyear.js}"></script>
+<script src="https://cdn.bootcss.com/toastr.js/2.1.4/toastr.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>
+<script data-th-src="@{/js/app/operate/lifecycle/cat_list.js}"></script>
+</body>
+</html>

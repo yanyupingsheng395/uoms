@@ -1,10 +1,8 @@
 package com.linksteady.operate.controller;
 
-import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.vo.ReasonVO;
 import com.linksteady.system.domain.User;
