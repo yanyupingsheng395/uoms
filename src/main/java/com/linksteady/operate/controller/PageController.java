@@ -120,4 +120,9 @@ public class PageController extends BaseController {
     public String diagnosis_add() {
         return "operate/diagnosis/add";
     }
+
+    @RequestMapping("/kpimonitor")
+    public String kpiMonitor() {
+        return "operate/kpimonitor/index";
+    }
 }

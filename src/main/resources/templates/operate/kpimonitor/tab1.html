@@ -1,0 +1,176 @@
+<h5>概览</h5>
+<hr style="margin-top: 5px;margin-bottom: 5px;"/>
+<div class="row">
+    <div class="col-md-12">
+        <form class="form-horizontal" action="#">
+            <div class="form-group">
+                <div class="col-md-4"></div>
+                <label class="col-md-1 control-label" for="dateItem">时间：</label>
+                <div class="col-md-2" id="startDate">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="dateItem" name="dateItem" value="2019-04"/>
+                </div>
+
+                <label class="col-md-1 control-label" for="source">来源：</label>
+                <div class="col-md-2">
+                    <select name="" id="source" class="selectpicker form-control">
+                        <option value="0">所有</option>
+                        <option value="1">门店1</option>
+                        <option value="2">门店2</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary" type="button">查询</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card bg-light">
+            <div class="card-body clearfix">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p class="h5 m-t-0">销售额</p>
+                        <p class="h3 m-b-0">100万元</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 text-left">
+                        <p class="h6">同比<span style="color:red;"><i class="mdi mdi-menu-down mdi-18px"></i>3.33%</span></p>
+                    </div>
+                    <div class="col-xs-6 text-right">
+                        <p class="h6">环比<span style="color:red;"><i class="mdi mdi-menu-down mdi-18px"></i>2.22%</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-light">
+            <div class="card-body clearfix">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <p class="h5 m-b-0">贡献比例</p>
+                        <p class="h3 m-t-0">46%</p>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <p class="h5 m-b-0">贡献比例</p>
+                        <p class="h3 m-t-0">54%</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 text-left">
+                        <p class="h6"><span><i class="mdi mdi-account mdi-18px"></i></span>GMV老客</p>
+                    </div>
+                    <div class="col-xs-6 text-right">
+                        <p class="h6"><span><i class="mdi mdi-account-check mdi-18px"></i></span>GMV老客</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-light">
+            <div class="card-body clearfix">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p class="h5 m-t-0">交易用户数</p>
+                        <p class="h3 m-b-0">100人</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 text-left">
+                        <p class="h6">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>3.33%</span></p>
+                    </div>
+                    <div class="col-xs-6 text-right">
+                        <p class="h6">环比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>2.22%</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-light">
+            <div class="card-body clearfix">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p class="h5 m-t-0">平均客单价</p>
+                        <p class="h3 m-b-0">10元</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 text-left">
+                        <p class="h6">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>3.33%</span></p>
+                    </div>
+                    <div class="col-xs-6 text-right">
+                        <p class="h6">环比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>2.22%</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h5>GMV</h5>
+<hr style="margin-top: 5px;margin-bottom: 5px;"/>
+<div class="row">
+    <div class="col-md-12">
+        <div class="text-center">
+            <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate1" name="startDate1" data-date-format="yyyy-mm" value="2018-01"/>
+                </div>
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate1" name="endDate1" data-date-format="yyyy-mm" value="2018-08"/>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary m-b-10" type="button" onclick="search()">查询</button>
+                </div>
+            </form>
+        </div>
+        <div id="chart1" style="width: 100%; height: 400px;"></div>
+    </div>
+</div>
+
+<h5>交易用户数</h5>
+<hr style="margin-top: 5px;margin-bottom: 5px;"/>
+<div class="row">
+    <div class="col-md-12">
+        <div class="text-center">
+            <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate2" name="startDate1" data-date-format="yyyy-mm" value="2018-01"/>
+                </div>
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate2" name="endDate1" data-date-format="yyyy-mm" value="2018-08"/>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary m-b-10" type="button" onclick="search()">查询</button>
+                </div>
+            </form>
+        </div>
+        <div id="chart2" style="width: 100%; height: 400px;"></div>
+    </div>
+</div>
+
+<h5>平均客单价&nbsp;<i class="mdi mdi-cursor-pointer" style="color:#33cabb;"></i></h5>
+<hr style="margin-top: 5px;margin-bottom: 5px;"/>
+<div class="row">
+    <div class="col-md-12">
+        <div class="text-center">
+            <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate3" name="startDate1" data-date-format="yyyy-mm" value="2018-01"/>
+                </div>
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate3" name="endDate1" data-date-format="yyyy-mm" value="2018-08"/>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary m-b-10" type="button" onclick="search()">查询</button>
+                </div>
+            </form>
+        </div>
+        <div id="chart3" style="width: 100%; height: 400px;"></div>
+    </div>
+</div>

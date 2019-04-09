@@ -670,21 +670,27 @@ function condition2() {
 }
 
 function chart_condition2(id, name) {
-    var str = "<div class=\"card\">\n" +
-        "<div class=\"card-header bg-cyan\">\n" +
-        "<h4>" + name + "</h4>\n" +
-        "<ul class=\"card-actions\">\n" +
-        "<li>\n" +
-        "<button type=\"button\" onclick=\"collapse(this)\"><i class=\"mdi mdi mdi-menu-down mdi-24px\"></i></button>\n" +
-        "</li>\n" +
-        "</ul>\n" +
+    $("#charts").find("div[role='tabpanel']").each(function () {
+        if($(this).attr("class") == "panel-collapse collapse in"){
+            $(this).removeClass("in");
+        }
+    });
+
+    var str = "<div class=\"panel panel-primary\">\n" +
+        "<div class=\"panel-heading\" role=\"tab\" id=\"heading"+id+"\">\n" +
+        "   <h4 class=\"panel-title\">\n" +
+        "      <a role=\"button\" data-toggle=\"collapse\" data-parent=\"#accordion\" href=\"#collapse"+id+"\" aria-expanded=\"true\" aria-controls=\"collapse"+id+"\">\n" +
+        "           " + name + "\n" +
+        "      </a>\n" +
+        "   </h4>\n" +
         "</div>\n" +
-        "<div class=\"card-body\" style=\"display:none;\">\n" +
-        "<div style=\"width:100%;height:autop;\" id=\"chart"+id+"\">本时间段GMV值为9,952,556元</div>\n" +
+        "<div id=\"collapse"+id+"\" class=\"panel-collapse collapse in\" role=\"tabpanel\" aria-labelledby=\"heading"+id+"\">\n" +
+        "    <div class=\"panel-body\">\n" +
+        "       该过滤条件对应销售额为：36262元" +
+        "    </div>\n" +
         "</div>\n" +
         "</div>";
-
-    $("#charts").append(str);
+    $("#charts").prepend(str);
 }
 
 function createNode(nodeName, levelId, kpiCode, kpiName) {

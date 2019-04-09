@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户运营系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+    <!--时间选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
+    <!--日期选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-select/bootstrap-select.min.css}">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>指标监控</h4>
+                            </div>
+                            <div class="card-body">
+                                <ul class="nav nav-tabs" id="tabs">
+                                    <li class="active"> <a data-toggle="tab" href="#tab1" aria-expanded="true">GMV</a> </li>
+                                    <li> <a data-toggle="tab" href="#tab2" onclick="initChart()">单体经济</a> </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="tab1">
+                                        <div th:include="operate/kpimonitor/tab1"></div>
+                                    </div>
+                                    <div class="tab-pane fade" id="tab2">
+                                        <div th:include="operate/kpimonitor/tab2"></div>
+                                    </div>
+                                </div>
+
+                                <!-- 间隔月，自然月 -->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5>同期群分析留存率变化</h5>
+                                        <hr style="margin-top:5px; margin-bottom: 5px;"/>
+                                        <ul class="nav nav-tabs" id="tabs2">
+                                            <li class="active"> <a data-toggle="tab" href="#tab3" aria-expanded="true">自然月</a> </li>
+                                            <li> <a data-toggle="tab" href="#tab4">间隔月</a> </li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane fade active in" id="tab3">
+                                                <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                                                    <div class="form-group">
+                                                        <input class="form-control js-datepicker m-b-10" type="text" id="startDate_1" name="startDate" data-date-format="yyyy-mm" value="2018-01"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input class="form-control js-datepicker m-b-10" type="text" id="endDate_1" name="endDate" data-date-format="yyyy-mm" value="2018-08"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <button class="btn btn-primary m-b-10" type="button" onclick="createData1()">查询</button>
+                                                    </div>
+                                                </form>
+                                                <table class="table table-hover" id="dataTable1"
+                                                       style="word-break: break-all; word-wrap: break-word;"></table>
+                                            </div>
+                                            <div class="tab-pane fade" id="tab4">
+                                                <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                                                    <div class="form-group">
+                                                        <input class="form-control js-datepicker m-b-10" type="text" id="startDate_2" name="startDate" data-date-format="yyyy-mm" value="2018-01"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input class="form-control js-datepicker m-b-10" type="text" id="endDate_2" name="endDate" data-date-format="yyyy-mm" value="2018-08"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <button class="btn btn-primary m-b-10" type="button" onclick="createData2()">查询</button>
+                                                    </div>
+                                                </form>
+                                                <table class="table table-hover" id="dataTable2"
+                                                       style="word-break: break-all; word-wrap: break-word;"></table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5>同期群分析客单价变化</h5>
+                                        <hr style="margin-top:5px; margin-bottom: 5px;"/>
+                                        <ul class="nav nav-tabs" id="tabs3">
+                                            <li class="active"> <a data-toggle="tab" href="#tab5" aria-expanded="true">自然月</a> </li>
+                                            <li> <a data-toggle="tab" href="#tab6">间隔月</a> </li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane fade active in" id="tab5">
+                                                <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                                                    <div class="form-group">
+                                                        <input class="form-control js-datepicker m-b-10" type="text" id="startDate_3" name="startDate" data-date-format="yyyy-mm" value="2018-01"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input class="form-control js-datepicker m-b-10" type="text" id="endDate_3" name="endDate" data-date-format="yyyy-mm" value="2018-08"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <button class="btn btn-primary m-b-10" type="button" onclick="createData3()">查询</button>
+                                                    </div>
+                                                </form>
+                                                <table class="table table-hover" id="dataTable3"
+                                                       style="word-break: break-all; word-wrap: break-word;"></table>
+                                            </div>
+                                            <div class="tab-pane fade" id="tab6">
+                                                <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                                                    <div class="form-group">
+                                                        <input class="form-control js-datepicker m-b-10" type="text" id="startDate_4" name="startDate" data-date-format="yyyy-mm" value="2018-01"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input class="form-control js-datepicker m-b-10" type="text" id="endDate_4" name="endDate" data-date-format="yyyy-mm" value="2018-08"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <button class="btn btn-primary m-b-10" type="button" onclick="createData4()">查询</button>
+                                                    </div>
+                                                </form>
+                                                <table class="table table-hover" id="dataTable4"
+                                                       style="word-break: break-all; word-wrap: break-word;"></table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="chartModalLabel" id="chartModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div style="width:100%;height: 350px;" id="chart8"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--时间选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/moment.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/locale/zh-cn.js}"></script>
+<!--日期选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
+<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<script data-th-src="@{/js/common/perfect-scrollbar.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-select/defaults-zh_CN.min.js}"></script>
+<script data-th-src="@{/js/app/operate/kpimonitor/tab1.js}"></script>
+<script data-th-src="@{/js/app/operate/kpimonitor/tab2.js}"></script>
+<script>
+    init_date("dateItem", "yyyy-mm", 1,2,1);
+    init_date("startDate_1", "yyyy-mm", 1,2,1);
+    init_date("endDate_1", "yyyy-mm", 1,2,1);
+    init_date("startDate_2", "yyyy-mm", 1,2,1);
+    init_date("endDate_2", "yyyy-mm", 1,2,1);
+
+    init_date("startDate_3", "yyyy-mm", 1,2,1);
+    init_date("endDate_3", "yyyy-mm", 1,2,1);
+    init_date("startDate_4", "yyyy-mm", 1,2,1);
+    init_date("endDate_4", "yyyy-mm", 1,2,1);
+
+    init_date("startDate1", "yyyy-mm", 1,2,1);
+    init_date("endDate1", "yyyy-mm", 1,2,1);
+    init_date("startDate2", "yyyy-mm", 1,2,1);
+    init_date("endDate2", "yyyy-mm", 1,2,1);
+    init_date("startDate3", "yyyy-mm", 1,2,1);
+    init_date("endDate3", "yyyy-mm", 1,2,1);
+    init_date("startDate4", "yyyy-mm", 1,2,1);
+    init_date("endDate4", "yyyy-mm", 1,2,1);
+    init_date("startDate5", "yyyy-mm", 1,2,1);
+    init_date("endDate5", "yyyy-mm", 1,2,1);
+    init_date("startDate6", "yyyy-mm", 1,2,1);
+    init_date("endDate6", "yyyy-mm", 1,2,1);
+    init_date("startDate7", "yyyy-mm", 1,2,1);
+    init_date("endDate7", "yyyy-mm", 1,2,1);
+
+    createData1();
+    function createData1() {
+        var start = $("#startDate_1").val();
+        var end = $("#endDate_1").val();
+        var month = getMonthPeriod(start, end);
+        var head = "<thead><tr><th>月份/留存率</th>";
+        var body = "<tbody>";
+        for(var i=0; i<month.length; i++) {
+            head += "<th> " + month[i] + " </th>";
+            body += "<tr><td>" + month[i] + "</td>";
+            for(var j=0; j<month.length; j++) {
+                if(i <= j) {
+                    body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
+                }else {
+                    body += "<td></td>";
+                }
+            }
+            body += "</tr>";
+        }
+        head += "</tr></thead>";
+        body += "</tbody>";
+        $("#dataTable1").html("").html(head);
+        $("#dataTable1").append(body);
+    }
+
+    createData2();
+    function createData2() {
+        var start = $("#startDate_2").val();
+        var end = $("#endDate_2").val();
+        var month = getMonthPeriod(start, end);
+        var head = "<thead><tr><th>月份/留存率</th>";
+        var body = "<tbody>";
+
+        for(var i=0; i<12; i++) {
+            head += "<th>+"+(i+1)+"月</th>";
+        }
+        head += "</tr></thead>";
+
+        for (var  i = 12 ; i>12-month.length; i--){
+            body += "<tr><td>" + month[12-i] + "</td>";
+            for (var r = i; r>=1;r--) {
+                body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
+            }
+            body += "</tr>";
+        }
+        body += "</tbody>";
+
+        $("#dataTable2").html("").html(head);
+        $("#dataTable2").append(body);
+    }
+
+    createData3();
+    function createData3() {
+        var start = $("#startDate_3").val();
+        var end = $("#endDate_3").val();
+        var month = getMonthPeriod(start, end);
+        var head = "<thead><tr><th>月份/客单价</th>";
+        var body = "<tbody>";
+        for(var i=0; i<month.length; i++) {
+            head += "<th> " + month[i] + " </th>";
+            body += "<tr><td>" + month[i] + "</td>";
+            for(var j=0; j<month.length; j++) {
+                if(i <= j) {
+                    body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
+                }else {
+                    body += "<td></td>";
+                }
+            }
+            body += "</tr>";
+        }
+        head += "</tr></thead>";
+        body += "</tbody>";
+        $("#dataTable3").html("").html(head);
+        $("#dataTable3").append(body);
+    }
+
+    createData4();
+    function createData4() {
+        var start = $("#startDate_4").val();
+        var end = $("#endDate_4").val();
+        var month = getMonthPeriod(start, end);
+        var head = "<thead><tr><th>月份/客单价</th>";
+        var body = "<tbody>";
+
+        for(var i=0; i<12; i++) {
+            head += "<th>+"+(i+1)+"月</th>";
+        }
+        head += "</tr></thead>";
+
+        for (var  i = 12 ; i>12-month.length; i--){
+            body += "<tr><td>" + month[12-i] + "</td>";
+            for (var r = i; r>=1;r--) {
+                body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
+            }
+            body += "</tr>";
+        }
+        body += "</tbody>";
+
+        $("#dataTable4").html("").html(head);
+        $("#dataTable4").append(body);
+    }
+
+    // 时间类型的转化
+    function getDate(datestr) {
+        var temp = datestr.split("-");
+        var date = new Date(temp[0], temp[1] - 1);
+        return date;
+    }
+    // 获取月份的时间间隔
+    function getMonthPeriod(start, end) {
+        var x = new Array();
+        var startTime = getDate(start);
+        var endTime = getDate(end);
+        while((endTime.getTime()-startTime.getTime())>=0){
+            var year = startTime.getFullYear();
+            var month = (startTime.getMonth() + 1).toString().length==1?"0"+(startTime.getMonth() + 1).toString():startTime.getMonth() + 1;
+            x.push(String(year) + String(month));
+            startTime.setMonth(startTime.getMonth()+1);
+        }
+        return x;
+    }
+</script>
+</body>
+</html>
