@@ -12,6 +12,13 @@
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
+
+    <!--时间选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
+    <!--日期选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-select/bootstrap-select.min.css}">
+
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <style>
         .changeColor{
@@ -73,21 +80,31 @@
                             </div>
 
                             <ul class="nav nav-tabs" id="tabs">
-                                <li class="active"> <a href="#">品类指标监控</a> </li>
-                                <li> <a href="#">品类生命周期</a> </li>
+                                <li class="active"> <a data-toggle="tab" href="#tab_kpis" aria-expanded="true">品类指标监控</a> </li>
+                                <li> <a data-toggle="tab" href="#tab_lifecycle">品类生命周期</a> </li>
                             </ul>
-                            <div class="tab-content" id="tab_kpis">
-                                <div class="tab-pane active">
-                                    <div data-th-include="operate/lifecycle/catelifecycle"></div>
+                            <div class="tab-content">
+                                <div class="tab-pane fade active in" id="tab_kpis">
+                                    <div id="initTab1">
+                                        <div style="height: 100px;width: 100%;margin-top: 40px;" class="text-center">
+                                            <i class="mdi mdi-alert-circle-outline"></i><span class="h5">请先在品类列表选择品类！</span>
+                                        </div>
+                                    </div>
+                                    <div id="tabContent1" style="display: none;">
+                                        <div th:include="operate/lifecycle/kpimonitor"></div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab_lifecycle">
+                                    <div id="initTab2">
+                                        <div style="height: 100px;width: 100%;margin-top: 40px;" class="text-center">
+                                            <i class="mdi mdi-alert-circle-outline"></i><span class="h5">请先在品类列表选择品类！</span>
+                                        </div>
+                                    </div>
+                                    <div id="tabContent2" style="display: none;">
+                                        <div th:include="operate/lifecycle/catelifecycle"></div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="tab-content" id="tab_lifecycle"  style="display: none;">
-                                <div class="tab-pane active">
-                                    <div data-th-include="operate/lifecycle/catelifecycle"></div>
-                                </div>
-                            </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -95,12 +112,26 @@
         </main>
     </div>
 </div>
+<!--时间选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/moment.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/locale/zh-cn.js}"></script>
+<!--日期选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
+
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/notify/bootstrap-notify.min.js}"></script>
 <script data-th-src="@{/plugins/notify/lightyear.js}"></script>
 <script src="https://cdn.bootcss.com/toastr.js/2.1.4/toastr.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>
+
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-select/defaults-zh_CN.min.js}"></script>
+
 <script data-th-src="@{/js/app/operate/lifecycle/cat_list.js}"></script>
+<script data-th-src="@{/js/app/operate/lifecycle/kpimonitor.js}"></script>
 </body>
 </html>

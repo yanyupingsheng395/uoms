@@ -1,0 +1,62 @@
+<h5>GMV</h5>
+<hr style="margin-top: 5px;margin-bottom: 5px;"/>
+<div class="row">
+    <div class="col-md-12">
+        <div class="text-center">
+            <form class="form-inline">
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate1" name="startDate1" data-date-format="yyyy-mm" value="2018-01"/>
+                </div>
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate1" name="endDate1" data-date-format="yyyy-mm" value="2018-08"/>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary m-b-10" type="button" onclick="search()">查询</button>
+                </div>
+            </form>
+        </div>
+        <div id="chart1" style="width: 100%; height: 400px;"></div>
+    </div>
+</div>
+
+<h5>交易用户数</h5>
+<hr style="margin-top: 5px;margin-bottom: 5px;"/>
+<div class="row">
+    <div class="col-md-12">
+        <div class="text-center">
+            <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate2" name="startDate1" data-date-format="yyyy-mm" value="2018-01"/>
+                </div>
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate2" name="endDate1" data-date-format="yyyy-mm" value="2018-08"/>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary m-b-10" type="button" onclick="search()">查询</button>
+                </div>
+            </form>
+        </div>
+        <div id="chart2" style="width: 100%; height: 400px;"></div>
+    </div>
+</div>
+
+<h5>平均客单价&nbsp;<i class="mdi mdi-cursor-pointer" style="color:#33cabb;"></i></h5>
+<hr style="margin-top: 5px;margin-bottom: 5px;"/>
+<div class="row">
+    <div class="col-md-12">
+        <div class="text-center">
+            <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate3" name="startDate1" data-date-format="yyyy-mm" value="2018-01"/>
+                </div>
+                <div class="form-group">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate3" name="endDate1" data-date-format="yyyy-mm" value="2018-08"/>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary m-b-10" type="button" onclick="search()">查询</button>
+                </div>
+            </form>
+        </div>
+        <div id="chart3" style="width: 100%; height: 400px;"></div>
+    </div>
+</div>

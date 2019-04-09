@@ -4,7 +4,6 @@ $(document).ready(function () {
 // 菜单点击效果
 function menu_tree() {
     var urlStr = location.href;
-    var status = false;
     $(".sidebar-main ul li a").each(function() {
         if ((urlStr + '/').indexOf($(this).attr('href')) > -1&&$(this).attr('href')!='') {
             $(this).parent("li").addClass("active");
@@ -12,17 +11,9 @@ function menu_tree() {
 
             $(this).parent("li").siblings().removeClass("active");
             $(this).parent("li").parents("li").siblings().removeClass("open").removeClass("active");
-            status = true;
             return;
         }
     });
-    if(!status) {
-        $(this).parent("li").addClass("active");
-        $(this).parents("li").addClass("open").addClass("active");
-
-        $(this).parent("li").siblings().removeClass("active");
-        $(this).parent("li").parents("li").siblings().removeClass("open").removeClass("active");
-    }
 }
 
 /**

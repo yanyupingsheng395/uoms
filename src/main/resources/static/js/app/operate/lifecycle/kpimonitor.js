@@ -227,6 +227,11 @@ var option2 = {
         showSymbol: false,
         symbol: 'circle',
         symbolSize: 6,
+        itemStyle: {
+            normal: {
+                color: '#00BFFF'
+            }
+        },
         data: ['1200', '1400', '808', '811', '626', '488', '1600', '1100', '500', '300', '1998', '822']
     }, {
         name: '交易用户数',
@@ -234,6 +239,11 @@ var option2 = {
         smooth: true,
         showSymbol: false,
         symbol: 'circle',
+        itemStyle: {
+            normal: {
+                color: '#f7b851'
+            }
+        },
         symbolSize: 6,
         data: ['', '', '', '1225', '1126', '1388', '1100', '1010', '1300', '1230', '1218', '1122']
     }]
@@ -267,7 +277,7 @@ var option3 = {
         textStyle: {
             color: '#90979c',
         },
-        "data": ['客单价', '订单价', '订单量']
+        "data": ['平均件单价', '平均购买件数']
 
     },
     "calculable": true,
@@ -316,9 +326,9 @@ var option3 = {
 
     }],
     "series": [{
-        "name": "订单量",
+        "name": "平均购买件数",
         "type": "bar",
-        "stack": "订单量",
+        "stack": "平均购买件数",
         "barMaxWidth": 35,
         "barGap": "10%",
         "itemStyle": {
@@ -350,9 +360,9 @@ var option3 = {
             787
         ],
     }, {
-        "name": "订单价",
+        "name": "平均件单价",
         "type": "line",
-        "stack": "订单价",
+        "stack": "平均件单价",
         symbolSize:10,
         symbol:'circle',
         "itemStyle": {
@@ -372,11 +382,6 @@ var option3 = {
                 "color": '#f7b851'
             }
         },
-        "lineStyle": {
-            "normal": {
-                "width": 2
-            }
-        },
         "data": [
             540,
             1024,
@@ -391,197 +396,8 @@ var option3 = {
             1149,
             1087
         ]
-    },{
-        "name": "客单价",
-        "type": "line",
-        "stack": "客单价",
-        symbolSize:10,
-        symbol:'circle',
-        "itemStyle": {
-            "normal": {
-                "barBorderRadius": 0,
-                "label": {
-                    "show": true,
-                    "position": "top",
-                    formatter: function(p) {
-                        return p.value > 0 ? (p.value) : '';
-                    }
-                }
-            }
-        },
-        "data": [
-            1540,
-            1229,
-            1356,
-            1078,
-            1368,
-            1124,
-            1234,
-            1348,
-            1264,
-            1256,
-            1249,
-            1387
-        ]
     }]
 };
 
 var chart3 = echarts.init(document.getElementById('chart3'), 'macarons');
 chart3.setOption(option3);
-
-chart3.on('click', function (params) {
-    if(params.seriesName == "订单价") {
-        $("#chartModal").modal('show');
-        modal3();
-    }
-});
-
-function modal3() {
-    var option = {
-        "tooltip": {
-            "trigger": "axis",
-            "axisPointer": {
-                "type": "shadow",
-                textStyle: {
-                    color: "#fff"
-                }
-
-            },
-        },
-        "grid": {
-            "borderWidth": 0,
-            "top": 110,
-            "bottom": 95,
-            textStyle: {
-                color: "#fff"
-            }
-        },
-        "legend": {
-            right: 20,
-            orient: 'vertical',
-            textStyle: {
-                color: '#90979c',
-            },
-            "data": ['平均连带率', '平均件单价']
-
-        },
-        "calculable": true,
-        "xAxis": [{
-            "type": "category",
-            "axisLine": {
-                lineStyle: {
-                    color: '#90979c'
-                }
-            },
-            "splitLine": {
-                "show": false
-            },
-            "axisTick": {
-                "show": false
-            },
-            "splitArea": {
-                "show": false
-            },
-            "axisLabel": {
-                "interval": 0,
-
-            },
-            "data": xData,
-        }],
-        "yAxis": [{
-            "type": "value",
-            "splitLine": {
-                "show": false
-            },
-            "axisLine": {
-                lineStyle: {
-                    color: '#90979c'
-                }
-            },
-            "axisTick": {
-                "show": false
-            },
-            "axisLabel": {
-                "interval": 0,
-
-            },
-            "splitArea": {
-                "show": false
-            },
-
-        }],
-        "series": [{
-            "name": "平均连带率",
-            "type": "bar",
-            "stack": "平均连带率",
-            "barMaxWidth": 35,
-            "barGap": "10%",
-            "itemStyle": {
-                "normal": {
-                    "label": {
-                        "show": true,
-                        "textStyle": {
-                            "color": "#fff"
-                        },
-                        "position": "insideTop",
-                        formatter: function(p) {
-                            return p.value > 0 ? (p.value) : '';
-                        }
-                    }
-                }
-            },
-            "data": [
-                572,
-                1014,
-                1024,
-                992,
-                1084,
-                658,
-                1224,
-                743,
-                1124,
-                1034,
-                999,
-                1124
-            ],
-        }, {
-            "name": "平均件单价",
-            "type": "line",
-            "stack": "平均件单价",
-            symbolSize:10,
-            symbol:'circle',
-            "itemStyle": {
-                "normal": {
-                    "barBorderRadius": 0,
-                    "label": {
-                        "show": true,
-                        "position": "top",
-                        formatter: function(p) {
-                            return p.value > 0 ? (p.value) : '';
-                        }
-                    }
-                }
-            },
-            "data": [
-                540,
-                1024,
-                1356,
-                1267,
-                1368,
-                1027,
-                1125,
-                1136,
-                1264,
-                1056,
-                1149,
-                1087
-            ]
-        }]
-    };
-
-    var chart = echarts.init(document.getElementById('chart8'), 'macarons');
-    chart.setOption(option);
-    setTimeout(function () {
-        chart.resize();
-    }, 200);
-}

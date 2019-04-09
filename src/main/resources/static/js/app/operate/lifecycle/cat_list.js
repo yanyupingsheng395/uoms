@@ -67,7 +67,21 @@ $(function () {
         selectId=row.ROW_WID;
         $('.changeColor').removeClass('changeColor');
         $($element).addClass('changeColor');
+
+        dataInit();
     });
+
+    // 初始化数据
+    function dataInit() {
+        $("#initTab1, #initTab2").attr("style", "display:none;");
+        $("#tabContent1, #tabContent2").attr("style", "display:block;");
+
+        setTimeout(function () {
+            chart1.resize();
+            chart2.resize();
+            chart3.resize();
+        }, 200);
+    }
 
     $('#catListTable').on('post-body.bs.table', function (e, settings) {
         if(null!=selectId&&selectId!='')
@@ -89,16 +103,13 @@ $(function () {
     });
 
     $("#tabs").find("li").click(function() {
-        $(this).addClass("active");
-        $(this).siblings().removeClass("active");
+        if(selectId == "") {
+            $("#initTab1, #initTab2").attr("style", "display:block;");
+            $("#tabContent1, #tabContent2").attr("style", "display:none;");
 
-        if($(this).index() == 0) {
-            $("#tab_kpis").attr("style", "display:block");
-            $("#tab_lifecycle").attr("style", "display:none");
         }else {
-            $("#tab_kpis").attr("style", "display:none");
-            $("#tab_lifecycle").attr("style", "display:block");
+            $("#initTab1, #initTab2").attr("style", "display:none;");
+            $("#tabContent1, #tabContent2").attr("style", "display:block;");
         }
     });
-
 });
