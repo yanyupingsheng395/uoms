@@ -37,24 +37,16 @@
             <div id="operateBtns" style="top: 0px;left: 0px;position: absolute; z-index: 100; display: none;">
                 <table style="width: auto;">
                     <tr>
-                        <td><button class="btn btn-default" data-toggle="modal" data-target="#nodeAddModal" onclick="modalBefore()"><i class="mdi mdi-plus"></i>&nbsp;新增</button></td>
+                        <td><button class="btn btn-default" data-toggle="modal" data-target="#nodeAddModal" onclick="modalBefore()"><span class="h5"><i class="mdi mdi-plus"></i>&nbsp;新增</span></button></td>
                     </tr>
                     <tr>
-                        <td><button class="btn btn-default" onclick="alert('删除')"><i class="mdi mdi-delete"></i>&nbsp;删除</button></td>
+                        <td><button class="btn btn-default" onclick="alert('删除')"><span class="h5"><i class="mdi mdi-delete"></i>&nbsp;删除</span></button></td>
                     </tr>
                     <tr>
-                        <td><button class="btn btn-default" data-toggle="modal" data-target="#nodeDetailModal" onclick="modalDetailBefore()"><i class="mdi mdi-file-document-box"></i>&nbsp;详情</button></td>
+                        <td><button class="btn btn-default" data-toggle="modal" data-target="#nodeDetailModal" onclick="modalDetailBefore()"><span class="h5"><i class="mdi mdi-file-document-box"></i>&nbsp;详情</span></button></td>
                     </tr>
                     <tr>
-                        <td>
-                            <div class="btn btn-default" style="width: 75px;">
-                                <i class="mdi mdi-feather"></i>
-                                <label class="lyear-switch switch-danger">
-                                    <input type="checkbox" onclick="alarmFlag(this)" data-flag="false">
-                                    <span></span>
-                                </label>
-                            </div>
-                        </td>
+                        <td><button class="btn btn-default" data-code="0" onclick="alarmFlag(this)"><span class="h5"><i class="mdi mdi-check"></i>&nbsp;标记</span></button></td>
                     </tr>
                 </table>
             </div>

@@ -234,15 +234,17 @@ function modalBefore() {
 }
 
 function alarmFlag(dom) {
-    if($(dom).attr("data-flag") == "true") {
-        $(dom).attr("data-flag", "false");
-        jm.get_selected_node().data.ALARM_FLAG = false;
-    }else {
-        $(dom).attr("data-flag", "true");
+    jm.enable_edit();
+    if($(dom).text().trim() == "标记") {
         jm.get_selected_node().data.ALARM_FLAG = true;
+        $(dom).html("").html("<span class='h5'><i class=\"mdi mdi-close\"></i>&nbsp;取消</span>");
+        jm.set_node_color(jm.get_selected_node().id, 'red', '');
+    }else {
+        jm.get_selected_node().data.ALARM_FLAG = false;
+        $(dom).html("").html("<span class='h5'><i class=\"mdi mdi-check\"></i>&nbsp;标记</span>");
+        jm.set_node_color(jm.get_selected_node().id, 'rgb(26, 188, 156)', '');
     }
-
-    $(dom).attr("data-flag", "false");
+    jm.disable_edit();
 }
 
 function getParentCondition() {
