@@ -274,7 +274,7 @@
             body += "<tr><td>" + month[i] + "</td>";
             for(var j=0; j<month.length; j++) {
                 if(i <= j) {
-                    body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
+                    body += "<td>"+getRandom(0, 1000) + "." + getRandom(0, 100) + "</td>";
                 }else {
                     body += "<td></td>";
                 }
@@ -303,7 +303,7 @@
         for (var  i = 12 ; i>12-month.length; i--){
             body += "<tr><td>" + month[12-i] + "</td>";
             for (var r = i; r>=1;r--) {
-                body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
+                body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "</td>";
             }
             body += "</tr>";
         }
