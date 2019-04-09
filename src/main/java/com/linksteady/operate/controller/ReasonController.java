@@ -83,7 +83,7 @@ public class ReasonController  extends BaseController {
     /**
      * 更新原因探究的进度
      * @param reasonId 原因ID
-     * @return
+     * @return ResponseBo对象
      */
     @RequestMapping("/UpdateProgressById")
     public ResponseBo UpdateProgressById(@RequestParam String reasonId) {
@@ -99,7 +99,7 @@ public class ReasonController  extends BaseController {
     /**
      * 获取原因探究的详细信息
      * @param reasonId 原因ID
-     * @return
+     * @return ResponseBo对象
      */
     @RequestMapping("/getReasonDetailById")
     public ResponseBo getReasonDetailById(@RequestParam String reasonId) {
@@ -112,7 +112,7 @@ public class ReasonController  extends BaseController {
      * 根据模板CODE和reasonId获取到原因KPI的列表
      * @param reasonId 原因ID
      * @param   templateCode 模板CODE
-     * @return
+     * @return ResponseBo对象
      */
     @RequestMapping("/getRelatedKpiList")
     public ResponseBo getRelatedKpiList(@RequestParam String reasonId,@RequestParam String templateCode) {
@@ -124,7 +124,7 @@ public class ReasonController  extends BaseController {
      * 根据KPI CODE和模板CODE获取到此模板下指标的历史信息
      * @param kpiCode KPI编码
      * @param templateCode 模板编码
-     * @return
+     * @return ResponseBo对象
      */
     @RequestMapping("/getReasonKpiHistroy")
     public ResponseBo getReasonKpiHistroy(@RequestParam String kpiCode,@RequestParam String templateCode) {
@@ -145,7 +145,7 @@ public class ReasonController  extends BaseController {
      * @param reasonId 原因ID
      * @param templateCode 指标编码
      * @param reasonKpiCode 指标编码
-     * @return
+     * @return ResponseBo对象
      */
     @RequestMapping("/getReasonRelatedKpi")
     public ResponseBo getReasonRelatedKpi(@RequestParam String reasonId,@RequestParam String templateCode,@RequestParam String reasonKpiCode) {
@@ -158,7 +158,7 @@ public class ReasonController  extends BaseController {
     /**
      * 根据reasonID 获取到关注的KPI列表
      * @param reasonId 原因ID
-     * @return
+     * @return ResponseBo对象
      */
     @RequestMapping("/getConcernReasonKpis")
     public ResponseBo getConcernReasonKpis(@RequestParam String reasonId) {
@@ -168,7 +168,7 @@ public class ReasonController  extends BaseController {
     /**
      * 将原因KPI加入到当前的关注列表中
      * @param reasonId 原因ID
-     * @return
+     * @return ResponseBo对象
      */
     @RequestMapping("/addConcernKpi")
     public ResponseBo addConcernKpi(@RequestParam String reasonId) {

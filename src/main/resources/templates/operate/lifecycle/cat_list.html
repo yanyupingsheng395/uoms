@@ -25,6 +25,15 @@
             background-color: #31b0d5  !important;
             color: white;
         }
+
+        .tab-content > .tab-pane > .chart_none_panel{
+            display: block;     /* undo display:none          */
+            height: 0;          /* height:0 is also invisible */
+            overflow-y: hidden; /* no-overflow                */
+        }
+        .tab-content > .tab-pane > .chartpanel{
+            height: auto;       /* let the content decide it  */
+        }
     </style>
 </head>
 
@@ -81,7 +90,7 @@
 
                             <ul class="nav nav-tabs" id="tabs">
                                 <li class="active"> <a data-toggle="tab" href="#tab_kpis" aria-expanded="true">品类指标监控</a> </li>
-                                <li> <a data-toggle="tab" href="#tab_lifecycle">品类生命周期</a> </li>
+                                <li> <a data-toggle="tab" href="#tab_lifecycle">品类生命周期&运营目标</a> </li>
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="tab_kpis">
@@ -90,7 +99,7 @@
                                             <i class="mdi mdi-alert-circle-outline"></i><span class="h5">请先在品类列表选择品类！</span>
                                         </div>
                                     </div>
-                                    <div id="tabContent1" style="display: none;">
+                                    <div id="tabContent1" class="chart_none_panel">
                                         <div th:include="operate/lifecycle/kpimonitor"></div>
                                     </div>
                                 </div>
@@ -100,7 +109,7 @@
                                             <i class="mdi mdi-alert-circle-outline"></i><span class="h5">请先在品类列表选择品类！</span>
                                         </div>
                                     </div>
-                                    <div id="tabContent2" style="display: none;">
+                                    <div id="tabContent2" class="chart_none_panel">
                                         <div th:include="operate/lifecycle/catelifecycle"></div>
                                     </div>
                                 </div>
@@ -130,8 +139,8 @@
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-select/defaults-zh_CN.min.js}"></script>
-
-<script data-th-src="@{/js/app/operate/lifecycle/cat_list.js}"></script>
 <script data-th-src="@{/js/app/operate/lifecycle/kpimonitor.js}"></script>
+<script data-th-src="@{/js/app/operate/lifecycle/cat_list.js}"></script>
+
 </body>
 </html>

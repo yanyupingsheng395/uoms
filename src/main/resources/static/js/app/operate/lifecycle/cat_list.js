@@ -1,4 +1,171 @@
 var selectId='';
+var selectCatName='';
+
+var retention_option1= {
+    tooltip: {
+        trigger: 'axis'
+    },
+    xAxis: {
+        type: 'category',
+        data: [],
+        name: '',
+        nameTextStyle: 'oblique',
+        boundaryGap: false,
+        nameRotate: 45
+    },
+    axisLabel:{
+        interval: 0,
+        rotate: 45
+    },
+    yAxis: {
+        type: 'value',
+        name: '',
+        max: 50
+    },
+    series: [{
+        data: [],
+        type: 'line',
+        smooth: true
+    }]
+};
+
+var retention_option2= {
+    tooltip: {
+        trigger: 'axis'
+    },
+    xAxis: {
+        type: 'category',
+        data: [],
+        name: '',
+        nameTextStyle: 'oblique',
+        boundaryGap: false,
+        nameRotate: 45
+    },
+    axisLabel:{
+        interval: 0,
+        rotate: 45
+    },
+    yAxis: {
+        type: 'value',
+        name: '',
+        max: 50
+    },
+    series: [{
+        data: [],
+        type: 'line',
+        smooth: true
+    }]
+};
+
+var retention_option3= {
+    tooltip: {
+        trigger: 'axis'
+    },
+    xAxis: {
+        type: 'category',
+        data: [],
+        name: '',
+        nameTextStyle: 'oblique',
+        boundaryGap: false,
+        nameRotate: 45
+    },
+    axisLabel:{
+        interval: 0,
+        rotate: 45
+    },
+    yAxis: {
+        type: 'value',
+        name: '',
+        max: 50
+    },
+    series: [{
+        data: [],
+        type: 'line',
+        smooth: true
+    }]
+};
+
+var radar_option = {
+    tooltip: {},
+    legend: {
+        data: ['组合1', '组合2','组合3']
+    },
+    radar: {
+        indicator: [
+            { name: '购买次数', max: 50},
+            { name: '客单价', max: 1000},
+            { name: '购买间隔', max: 365},
+        ],
+        center: ['50%','50%'],
+        radius: 80
+    },
+    series: [{
+        type: 'radar',
+        //  itemStyle: {normal: {areaStyle: {type: 'default'}}},
+        data : [
+            {
+                value : [30, 256, 25],
+                name : '组合1'
+            },
+            {
+                value : [5, 999, 20],
+                name : '组合2'
+            },
+            {
+                value : [40, 500, 45],
+                name : '组合3'
+            }
+        ]
+    }]
+};
+
+var area_option = {
+    tooltip : {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross',
+            label: {
+                backgroundColor: '#6a7985'
+            }
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: []
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+        data: [],
+        type: 'line',
+        areaStyle: {}
+    }]
+};
+
+//构造留存率与其它指标关系的三个图
+retention_option1.xAxis.name="购买次数";
+retention_option1.xAxis.data=['1','2','3','4','5','6','7','8','9','10','11+'];
+retention_option1.yAxis.name="留存率(%)";
+retention_option1.series[0].data=['3','5','5.4','6','12','14','17','17.5','17.6','17.7','17.8'];
+
+retention_option2.xAxis.name="客单价";
+retention_option2.xAxis.data=['0-50','50-100','100-150','150-200','200-250','250-300','300-350','350-400','400-450','450-500','500+'];
+retention_option2.yAxis.name="留存率(%)";
+retention_option2.series[0].data=['3','5','5.4','6','12','14','17','17.5','17.6','17.7','17.8'];
+
+retention_option3.xAxis.name="购买间隔（天）";
+retention_option3.xAxis.data=['0-30','30-60','60-90','90-120','120-150','150-180','180-210','210-240','240-270','270-300','300+'];
+retention_option3.yAxis.name="留存率(%)";
+retention_option3.series[0].data=['3','5','5.4','6','12','14','17','17.5','17.6','17.7','17.8'];
+
+//初始化面积图
+area_option.xAxis.data=['新客期','成长期','成熟期','衰退期','流失期'];
+area_option.series[0].data=[4300,3200,5000,3500,6000]
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 $(function () {
 
     var settings = {
@@ -68,19 +235,17 @@ $(function () {
         $('.changeColor').removeClass('changeColor');
         $($element).addClass('changeColor');
 
-        dataInit();
+        dataInit(selectId);
     });
 
     // 初始化数据
-    function dataInit() {
-        $("#initTab1, #initTab2").attr("style", "display:none;");
-        $("#tabContent1, #tabContent2").attr("style", "display:block;");
+    function dataInit(cate_wid) {
+        $("#initTab1, #initTab2").attr("style", "display:none;");  //隐藏提示
 
-        setTimeout(function () {
-            chart1.resize();
-            chart2.resize();
-            chart3.resize();
-        }, 200);
+        // todo 判断当前tab处在那个位置
+
+        $("#tabContent1").attr("class", "chartpanel");
+        $("#tabContent2").attr("class", "chart_none_panel");
     }
 
     $('#catListTable').on('post-body.bs.table', function (e, settings) {
@@ -102,14 +267,35 @@ $(function () {
         $('#catListTable').bootstrapTable("refresh",opt);
     });
 
-    $("#tabs").find("li").click(function() {
+    //为tab页增加事件
+    $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
+        // 获取已激活的标签页的名称
+        var activeTab = $(e.target).attr("href");
         if(selectId == "") {
             $("#initTab1, #initTab2").attr("style", "display:block;");
-            $("#tabContent1, #tabContent2").attr("style", "display:none;");
-
-        }else {
+        }else
+        {
             $("#initTab1, #initTab2").attr("style", "display:none;");
-            $("#tabContent1, #tabContent2").attr("style", "display:block;");
+            if(activeTab='#tab_kpis')
+            {
+                $("#tabContent2").attr("class", "chartpanel");
+
+                var freqChart = echarts.init(document.getElementById('retention_freq'), 'macarons');
+                var priceChart = echarts.init(document.getElementById('retention_price'), 'macarons');
+                var gapChart = echarts.init(document.getElementById('retention_gap'), 'macarons');
+                var radarChart = echarts.init(document.getElementById('lifecycle_radar'), 'macarons');
+                var shapChart = echarts.init(document.getElementById('lifecycle_shape'), 'macarons');
+
+                freqChart.setOption(retention_option1);
+                priceChart.setOption(retention_option2);
+                gapChart.setOption(retention_option3);
+                radarChart.setOption(radar_option);
+                shapChart.setOption(area_option);
+            }else
+            {
+                $("#tabContent2").attr("class", "chartpanel");
+            }
         }
     });
+
 });
