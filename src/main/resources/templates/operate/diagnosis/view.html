@@ -36,6 +36,11 @@
                                 <div data-th-include="operate/diagnosis/progress"></div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <a class="btn btn-default" href="/page/diagnosis/list">返回</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -49,7 +54,6 @@
     var diagId = "[[${id}]]";
 
     $.post("/diag/getNodes", {diagId: diagId}, function (r) {
-        console.log(r);
         jmInit(r.data);
     });
 
