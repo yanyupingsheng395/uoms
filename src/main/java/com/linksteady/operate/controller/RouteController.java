@@ -80,7 +80,7 @@ public class RouteController {
      */
     @RequestMapping("/op/period")
     public String opPeriodList() {
-        return "operate/op/period";
+        return "operate/op/opperiod";
     }
 
     /**
