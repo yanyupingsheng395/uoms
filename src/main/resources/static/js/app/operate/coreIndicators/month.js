@@ -405,18 +405,6 @@ var option6 = {
     "series": [{
             "name": "本年各月利润率",
             "type": "line",
-            "itemStyle": {
-                "normal": {
-                    "barBorderRadius": 0,
-                    "label": {
-                        "show": true,
-                        "position": "top",
-                        formatter: function(p) {
-                            return p.value > 0 ? (p.value) : '';
-                        }
-                    }
-                }
-            },
             "data": getMonthRandom(0, 100)
         }
     ]

@@ -37,7 +37,6 @@ var option1 = {
     "calculable": true,
     "xAxis": [{
         "type": "category",
-        name: "月份",
         "axisLine": {
             lineStyle: {
                 color: '#90979c'
@@ -80,11 +79,34 @@ var option1 = {
             "show": false
         },
 
+    }, {
+        "type": "value",
+        name: "GMV值（元）",
+        "splitLine": {
+            "show": false
+        },
+        "axisLine": {
+            lineStyle: {
+                color: '#90979c'
+            }
+        },
+        "axisTick": {
+            "show": false
+        },
+        "axisLabel": {
+            "interval": 0,
+
+        },
+        "splitArea": {
+            "show": false
+        },
+
     }],
     "series": [{
         "name": "新客比例",
         "type": "bar",
         "stack": "总量",
+        yAxisIndex:0,
         "barMaxWidth": 35,
         "barGap": "10%",
         "itemStyle": {
@@ -108,6 +130,7 @@ var option1 = {
             "name": "老客比例",
             "type": "bar",
             "stack": "总量",
+            yAxisIndex:0,
             "itemStyle": {
                 "normal": {
                     "barBorderRadius": 0,
@@ -125,6 +148,7 @@ var option1 = {
             "name": "GMV",
             "type": "line",
             "stack": "GMV",
+            yAxisIndex:1,
             symbolSize:10,
             symbol:'circle',
             "itemStyle": {
@@ -139,7 +163,7 @@ var option1 = {
                     }
                 }
             },
-            "data": getMonthRandom(0, 100)
+            "data": getMonthRandom(1000, 2000)
         },
     ]
 };

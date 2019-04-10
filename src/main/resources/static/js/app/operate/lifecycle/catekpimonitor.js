@@ -59,6 +59,29 @@ var option1 = {
     }],
     "yAxis": [{
         "type": "value",
+        name: "占比（%）",
+        "splitLine": {
+            "show": false
+        },
+        "axisLine": {
+            lineStyle: {
+                color: '#90979c'
+            }
+        },
+        "axisTick": {
+            "show": false
+        },
+        "axisLabel": {
+            "interval": 0,
+
+        },
+        "splitArea": {
+            "show": false
+        },
+
+    }, {
+        "type": "value",
+        name: "GMV值（元）",
         "splitLine": {
             "show": false
         },
@@ -83,6 +106,7 @@ var option1 = {
         "name": "新客比例",
         "type": "bar",
         "stack": "总量",
+        yAxisIndex:0,
         "barMaxWidth": 35,
         "barGap": "10%",
         "itemStyle": {
@@ -99,26 +123,14 @@ var option1 = {
                 }
             }
         },
-        "data": [
-            0.25,
-            0.45,
-            0.33,
-            0.41,
-            0.35,
-            0.26,
-            0.39,
-            0.21,
-            0.42,
-            0.32,
-            0.41,
-            0.25
-        ],
+        "data": getMonthRandom(0, 100),
     },
 
         {
             "name": "老客比例",
             "type": "bar",
             "stack": "总量",
+            yAxisIndex:0,
             "itemStyle": {
                 "normal": {
                     "barBorderRadius": 0,
@@ -131,24 +143,12 @@ var option1 = {
                     }
                 }
             },
-            "data": [
-                0.33,
-                0.28,
-                0.56,
-                0.34,
-                0.21,
-                0.12,
-                0.45,
-                0.36,
-                0.42,
-                0.26,
-                0.53,
-                0.11
-            ]
+            "data": getMonthRandom(0, 100)
         }, {
             "name": "GMV",
             "type": "line",
             "stack": "GMV",
+            yAxisIndex:1,
             symbolSize:10,
             symbol:'circle',
             "itemStyle": {
@@ -163,23 +163,22 @@ var option1 = {
                     }
                 }
             },
-            "data": [
-                0.58,
-                0.83,
-                0.89,
-                0.75,
-                0.56,
-                0.38,
-                0.74,
-                0.85,
-                0.64,
-                0.53,
-                0.49,
-                0.87
-            ]
+            "data": getMonthRandom(1000, 2000)
         },
     ]
 };
+function getRandom (m,n){
+    var num = Math.floor(Math.random()*(m - n) + n);
+    return num;
+}
+
+function getMonthRandom(m,n) {
+    var data = new Array();
+    for(var i=0; i<12; i++) {
+        data.push(getRandom(m,n));
+    }
+    return data;
+}
 
 var chart1 = echarts.init(document.getElementById('chart1'), 'macarons');
 chart1.setOption(option1);
