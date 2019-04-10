@@ -80,7 +80,7 @@ function weight() {
         htmlCode1 += "</tr>";
         htmlCode2 += "</tr>";
         $("#weightData").html("").html(htmlCode1 + htmlCode2);
-        $("#weightData").find("tr:eq(0)").addClass("info");
+        $("#weightData").find("tr:eq(0)").addClass("active");
     });
 }
 
