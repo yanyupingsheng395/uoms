@@ -63,4 +63,36 @@ public class RouteController {
         return "operate/lifecycle/cat_list";
     }
 
+    /**
+     * 日运营列表
+     * @param
+     * @return
+     */
+    @RequestMapping("/op/day")
+    public String opDayList() {
+        return "operate/op/opday";
+    }
+
+    /**
+     * 周期运营列表
+     * @param
+     * @return
+     */
+    @RequestMapping("/op/period")
+    public String opPeriodList() {
+        return "operate/op/opperiod";
+    }
+
+    /**
+     * 运营效果
+     * @param
+     * @return
+     */
+    @RequestMapping("/op/opeffect")
+    public String opEffect() {
+        return "operate/op/opeffect";
+    }
+
+
+
 }
