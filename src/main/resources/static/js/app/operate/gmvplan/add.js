@@ -52,16 +52,19 @@ function getYearHistory() {
         striped: true,
         uniqueId: 'attrValue',
         columns: [{
-            title: '月份',
+            title: '年份',
             field: 'yearId'
         },{
             title: 'GMV值',
-            field: 'gmvValue'
+            field: 'gmvValue',
+            formatter: function (value, row, index) {
+                return "¥&nbsp;" + parseFloat(value).toLocaleString();
+            }
         },{
             title: 'GMV增长率',
             field: 'gmvRate',
             formatter: function (value, row, index) {
-                return value + "%";
+                return value.toFixed(2) + "%";
             }
         }]
     });
@@ -179,13 +182,23 @@ function overrideOldData() {
 }
 
 function updateDetail() {
+    toastr.options = {
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": true,
+        "timeOut": 1500,
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
     var json = new Array();
     $("input[name='newGmvValue']").each(function() {
         json.push($(this).val());
     });
     var year = $("#predictDate").val();
     $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
-        location.href = "/page/gmvplan";
-        alert("更新成功！");
+        toastr.success("数据更新成功！");
+        setTimeout(function() {
+            location.href = "/page/gmvplan";
+        }, 1500);
     });
 }

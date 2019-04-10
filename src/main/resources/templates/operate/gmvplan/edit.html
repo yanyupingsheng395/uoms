@@ -111,16 +111,19 @@
             striped: true,
             uniqueId: 'attrValue',
             columns: [{
-                title: '月份',
+                title: '年份',
                 field: 'yearId'
             },{
                 title: 'GMV值',
-                field: 'gmvValue'
+                field: 'gmvValue',
+                formatter: function (value, row, index) {
+                    return "¥&nbsp;" + parseFloat(value).toLocaleString();
+                }
             },{
                 title: 'GMV增长率',
                 field: 'gmvRate',
                 formatter: function (value, row, index) {
-                    return value + "%";
+                    return value.toFixed(2) + "%";
                 }
             }]
         });
