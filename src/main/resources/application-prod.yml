@@ -98,7 +98,7 @@ spring:
       strategy:
         fixed:
           enabled: true
-          paths: /js/**, /v1.0.0/**
+          paths: /js/app/**,/css/**
           version: v1.0.0
 
 #  devtools:
