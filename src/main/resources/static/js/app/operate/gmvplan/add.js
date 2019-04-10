@@ -153,7 +153,7 @@ function confirmData() {
         buttons: {
             confirm: {
                 text: '确认',
-                btnClass: 'btn-blue',
+                btnClass: 'btn-primary',
                 action: function(){
                     overrideOldData();
                 }
