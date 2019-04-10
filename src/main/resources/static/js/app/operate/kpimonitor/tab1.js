@@ -37,6 +37,7 @@ var option1 = {
     "calculable": true,
     "xAxis": [{
         "type": "category",
+        name: "月份",
         "axisLine": {
             lineStyle: {
                 color: '#90979c'
@@ -59,6 +60,7 @@ var option1 = {
     }],
     "yAxis": [{
         "type": "value",
+        name: "占比（%）",
         "splitLine": {
             "show": false
         },
@@ -99,20 +101,7 @@ var option1 = {
                 }
             }
         },
-        "data": [
-            0.25,
-            0.45,
-            0.33,
-            0.41,
-            0.35,
-            0.26,
-            0.39,
-            0.21,
-            0.42,
-            0.32,
-            0.41,
-            0.25
-        ],
+        "data": getMonthRandom(0, 100),
     },
 
         {
@@ -131,20 +120,7 @@ var option1 = {
                     }
                 }
             },
-            "data": [
-                0.33,
-                0.28,
-                0.56,
-                0.34,
-                0.21,
-                0.12,
-                0.45,
-                0.36,
-                0.42,
-                0.26,
-                0.53,
-                0.11
-            ]
+            "data": getMonthRandom(0, 100)
         }, {
             "name": "GMV",
             "type": "line",
@@ -163,23 +139,24 @@ var option1 = {
                     }
                 }
             },
-            "data": [
-                0.58,
-                0.83,
-                0.89,
-                0.75,
-                0.56,
-                0.38,
-                0.74,
-                0.85,
-                0.64,
-                0.53,
-                0.49,
-                0.87
-            ]
+            "data": getMonthRandom(0, 100)
         },
     ]
 };
+
+function getRandom (m,n){
+    var num = Math.floor(Math.random()*(m - n) + n);
+    return num;
+}
+
+function getMonthRandom(m,n) {
+    var data = new Array();
+    for(var i=0; i<12; i++) {
+        data.push(getRandom(m,n));
+    }
+    return data;
+}
+
 
 var chart1 = echarts.init(document.getElementById('chart1'), 'macarons');
 chart1.setOption(option1);
@@ -201,6 +178,7 @@ var option2 = {
         extraCssText: 'box-shadow: 0 0 5px rgba(0,0,0,0.3)'
     },
     xAxis: {
+        name:"月份",
         data: xData,
         splitLine: {
             show: false
@@ -208,6 +186,7 @@ var option2 = {
     },
     yAxis: {
         type: 'value',
+        name: "用户数",
         splitLine: {
             show: false
         },
@@ -219,7 +198,7 @@ var option2 = {
         showSymbol: false,
         symbol: 'circle',
         symbolSize: 6,
-        data: ['1200', '1400', '1008', '1411', '1026', '1288', '1300', '800', '1100', '1000', '1118', '1322']
+        data: getMonthRandom(1200, 2000)
     }, {
         name: '新用户数',
         type: 'line',
@@ -227,7 +206,7 @@ var option2 = {
         showSymbol: false,
         symbol: 'circle',
         symbolSize: 6,
-        data: ['1200', '1400', '808', '811', '626', '488', '1600', '1100', '500', '300', '1998', '822']
+        data: getMonthRandom(1400, 2000)
     }, {
         name: '交易用户数',
         type: 'line',
@@ -235,7 +214,7 @@ var option2 = {
         showSymbol: false,
         symbol: 'circle',
         symbolSize: 6,
-        data: ['', '', '', '1225', '1126', '1388', '1100', '1010', '1300', '1230', '1218', '1122']
+        data: getMonthRandom(1500, 2000)
     }]
 };
 

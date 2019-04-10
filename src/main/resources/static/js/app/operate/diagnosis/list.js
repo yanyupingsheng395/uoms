@@ -38,9 +38,49 @@ $(function () {
             filed: '#',
             title: '操作',
             formatter: function (value, row, index) {
-                    return "<a class='btn btn-primary btn-sm' href='/page/diagnosis/view?id="+row.diagId+"'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-danger btn-sm' onclick=''><i class='mdi mdi-window-close'></i>删除</div>";
+                    return "<a class='btn btn-primary btn-sm' href='/page/diagnosis/view?id="+row.diagId+"'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-danger btn-sm' onclick='deleteConfirm("+row.diagId+")'><i class='mdi mdi-window-close'></i>删除</div>";
             }
         }]
     };
     $('#diagTable').bootstrapTable(settings);
 });
+toastr.options = {
+    "closeButton": true,
+    "progressBar": true,
+    "positionClass": "toast-top-center",
+    "preventDuplicates": true,
+    "timeOut": 1500,
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
+function deleteConfirm(id) {
+    $.confirm({
+        title: '提示：',
+        content: '确认删除这条记录？',
+        buttons: {
+            confirm: {
+                text: '确认',
+                btnClass: 'btn-danger',
+                action: function(){
+                    deleteData(id);
+                }
+            },
+            cancel: {
+                text: '取消'
+            }
+        }
+    });
+}
+
+function deleteData(id) {
+    $.post("/diag/deleteById", {id: id}, function (r) {
+        if(r.code == 200) {
+            toastr.success(r.msg);
+        }else {
+            toastr.error(r.msg);
+        }
+        setTimeout(function () {
+            $('#diagTable').bootstrapTable('refresh');
+        }, 1500)
+    });
+}

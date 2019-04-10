@@ -67,4 +67,12 @@ public class DiagServiceImpl implements DiagService {
         }
         return resultList;
     }
+
+    @Override
+    @Transactional
+    public void deleteById(String id) {
+        diagMapper.deleteById(id);
+        diagDetailMapper.deleteByDiagId(id);
+        diagConditionMapper.deleteByDiagId(id);
+    }
 }

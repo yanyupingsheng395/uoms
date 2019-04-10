@@ -13,4 +13,6 @@ public interface DiagMapper{
     void save(@Param("diag") Diag diag);
 
     List<Diag> findByDiagId(@Param("diag") String diagId);
+
+    void deleteById(@Param("id") String id);
 }

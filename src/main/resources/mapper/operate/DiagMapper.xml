@@ -33,4 +33,8 @@
   <select id="findByDiagId" resultMap="BaseResultMap">
     select * from UO_DIAG_LIST where DIAG_ID = #{diagId}
   </select>
+
+  <delete id="deleteById">
+    delete from UO_DIAG_LIST where DIAG_ID = #{id}
+  </delete>
 </mapper>

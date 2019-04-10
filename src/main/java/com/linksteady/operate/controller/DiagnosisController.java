@@ -6,6 +6,8 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.Diag;
 import com.linksteady.operate.service.DiagService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,8 @@ public class DiagnosisController {
 
     @Autowired
     private DiagService diagService;
+
+    private static Logger logger = LoggerFactory.getLogger(DiagnosisController.class);
 
     @RequestMapping("/list")
     public Map<String, Object> list(@RequestBody QueryRequest request) {
@@ -45,5 +49,16 @@ public class DiagnosisController {
     public ResponseBo getNodes(@RequestParam("diagId") String diagId) {
         List<Map<String, Object>> res = diagService.getNodes(diagId);
         return ResponseBo.okWithData(null, JSON.toJSON(res));
+    }
+
+    @PostMapping("/deleteById")
+    public ResponseBo deleteById(@RequestParam("id") String id) {
+        try {
+            diagService.deleteById(id);
+            return ResponseBo.ok("删除成功！");
+        }catch (Exception ex) {
+            logger.error(ex.toString());
+            return ResponseBo.error("删除失败！");
+        }
     }
 }

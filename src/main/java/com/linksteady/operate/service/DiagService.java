@@ -14,4 +14,6 @@ public interface DiagService{
     Long save(Diag diag);
 
     List<Map<String, Object>> getNodes(String diagId);
+
+    void deleteById(String id);
 }

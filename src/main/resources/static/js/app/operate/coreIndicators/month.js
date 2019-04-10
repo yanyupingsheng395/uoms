@@ -1,3 +1,10 @@
+var xData = function() {
+    var data = [];
+    for (var i = 1; i < 13; i++) {
+        data.push(i + "月份");
+    }
+    return data;
+}();
 //本月按天和去年同期值的对比
 var option1 = {
     // title: {
@@ -22,11 +29,12 @@ var option1 = {
     },
     xAxis: [{
         type: 'category',
+        name: '月份',
         data: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
     }],
     yAxis: [{
         type: 'value',
-        name: 'GMV值',
+        name: 'GMV值（元）',
         axisLabel: {
             formatter: '{value}'
         }
@@ -92,6 +100,11 @@ var option2 = {
 };
 
 var option3 = {
+    legend: {
+        right: 20,
+        orient: 'vertical',
+        data: ['本年各月GMV值','去年各月GMV值']
+    },
     tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -102,90 +115,28 @@ var option3 = {
         padding: [5, 10],
         extraCssText: 'box-shadow: 0 0 5px rgba(0,0,0,0.3)'
     },
-    legend: {
-        right: 20,
-        orient: 'vertical',
-        data: ['本年各月GMV值','去年各月GMV值']
-    },
     xAxis: {
-        type: 'category',
-        data: ['01','02','03','04','05','06','07','08','09','10','11', '12'],
-        boundaryGap: false,
+        name:"月份",
+        data: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
         splitLine: {
-            show: false,
-            interval: 'auto',
-            lineStyle: {
-                color: ['#D4DFF5']
-            }
-        },
-        axisTick: {
             show: false
-        },
-        axisLine: {
-            lineStyle: {
-                color: '#609ee9'
-            }
-        },
-        axisLabel: {
-            margin: 10,
-            textStyle: {
-                fontSize: 14
-            }
         }
     },
     yAxis: {
         type: 'value',
-        name: 'GMV值',
+        name: "GMV值（元）",
         splitLine: {
-            // show: false,
-            lineStyle: {
-                color: ['#D4DFF5']
-            }
-        },
-        axisTick: {
             show: false
         },
-        axisLine: {
-            lineStyle: {
-                color: '#609ee9'
-            }
-        },
-        axisLabel: {
-            margin: 10,
-            textStyle: {
-                fontSize: 14
-            }
-        }
+        splitArea : {show : false}
     },
     series: [{
         name: '本年各月GMV值',
         type: 'line',
-        smooth: true,
         showSymbol: false,
         symbol: 'circle',
         symbolSize: 6,
-        data: ['1200', '1400', '1008', '1411', '1026', '', '', '', '', '', '', ''],
-        areaStyle: {
-            normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                    offset: 0,
-                    color: 'rgba(199, 237, 250,0.5)'
-                }, {
-                    offset: 1,
-                    color: 'rgba(199, 237, 250,0.2)'
-                }], false)
-            }
-        },
-        itemStyle: {
-            normal: {
-                color: '#f7b851'
-            }
-        },
-        lineStyle: {
-            normal: {
-                width: 3
-            }
-        }
+        data: getMonthRandom(800, 2000)
     }, {
         name: '去年各月GMV值',
         type: 'line',
@@ -193,71 +144,141 @@ var option3 = {
         showSymbol: false,
         symbol: 'circle',
         symbolSize: 6,
-        data: ['1200', '1400', '1208', '1211', '1326', '1288', '1100', '1100', '1500', '1300', '1498', '1822'],
-        areaStyle: {
-            normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                    offset: 0,
-                    color: 'rgba(216, 244, 247,1)'
-                }, {
-                    offset: 1,
-                    color: 'rgba(216, 244, 247,1)'
-                }], false)
-            }
-        },
-        itemStyle: {
-            normal: {
-                color: '#58c8da'
-            }
-        },
-        lineStyle: {
-            normal: {
-                width: 3
-            }
-        }
+        data: getMonthRandom(800, 2000)
     }]
 };
+
 
 var option4 = {
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+    "tooltip": {
+        "trigger": "axis",
+        "axisPointer": {
+            "type": "shadow",
+            textStyle: {
+                color: "#fff"
+            }
+
+        },
+    },
+    "grid": {
+        "borderWidth": 0,
+        "top": 110,
+        "bottom": 95,
+        textStyle: {
+            color: "#fff"
         }
     },
-    legend: {
-        data: ['本年实际GMV', '本年目标GMV'],
-        align: 'right',
-        right: 10
+    "legend": {
+        right: 20,
+        orient: 'vertical',
+        textStyle: {
+            color: '#90979c',
+        },
+        "data": ['本年实际GMV', '本年目标GMV']
     },
-    grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
-    },
-    xAxis: [{
-        type: 'category',
-        data: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+    "calculable": false,
+    "xAxis": [{
+        "type": "category",
+        name: "月份",
+        "axisLine": {
+            lineStyle: {
+                color: '#90979c'
+            }
+        },
+        "splitLine": {
+            "show": false
+        },
+        "axisTick": {
+            "show": false
+        },
+        "splitArea": {
+            "show": false
+        },
+        "axisLabel": {
+            "interval": 0,
+
+        },
+        "data": ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
     }],
-    yAxis: [{
-        type: 'value',
-        name: 'GMV值',
-        axisLabel: {
-            formatter: '{value}'
+    "yAxis": [{
+        "type": "value",
+        name: "GMV值（元）",
+        "splitLine": {
+            "show": false
+        },
+        "axisLine": {
+            lineStyle: {
+                color: '#90979c'
+            }
+        },
+        "axisTick": {
+            "show": false
+        },
+        "axisLabel": {
+            "interval": 0,
+
+        },
+        "splitArea": {
+            "show": false
+        },
+
+    }],
+    "series": [{
+        "name": "本年目标GMV",
+        "type": "bar",
+        "stack": "总量1",
+        "barMaxWidth": 35,
+        "barGap": "10%",
+        "itemStyle": {
+            "normal": {
+                "label": {
+                    "show": true,
+                    "textStyle": {
+                        "color": "#fff"
+                    },
+                    "position": "insideTop",
+                    formatter: function(p) {
+                        return p.value > 0 ? (p.value) : '';
+                    }
+                }
+            }
+        },
+        "data": getMonthRandom(0, 100),
+    },
+
+        {
+            "name": "本年实际GMV",
+            "type": "bar",
+            "stack": "总量2",
+            "itemStyle": {
+                "normal": {
+                    "barBorderRadius": 0,
+                    "label": {
+                        "show": true,
+                        "position": "top",
+                        formatter: function(p) {
+                            return p.value > 0 ? (p.value) : '';
+                        }
+                    }
+                }
+            },
+            "data": getMonthRandom(0, 100)
         }
-    }],
-    series: [{
-        name: '本年实际GMV',
-        type: 'bar',
-        data: [12000, 12500, 14000, 22000, 0, 0, 0, 0, 0, 0, 0, 0]
-    }, {
-        name: '本年目标GMV',
-        type: 'bar',
-        data: [12500, 10500, 24000, 22200, 25200, 13200, 12000, 12150, 14000, 12000, 19200, 10250]
-    }]
+    ]
 };
 
+function getRandom (m,n){
+    var num = Math.floor(Math.random()*(m - n) + n);
+    return num;
+}
+
+function getMonthRandom(m,n) {
+    var data = new Array();
+    for(var i=0; i<12; i++) {
+        data.push(getRandom(m,n));
+    }
+    return data;
+}
 // 利润率
 var option5 = {
     tooltip: {
@@ -307,102 +328,98 @@ var option5 = {
     }]
 };
 
-
 var option6 = {
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            lineStyle: {
-                color: '#fff'
+    "tooltip": {
+        "trigger": "axis",
+        "axisPointer": {
+            "type": "shadow",
+            textStyle: {
+                color: "#fff"
             }
-        },
 
-        padding: [5, 10],
-        textStyle: {
-            color: '#fff',
         },
-        extraCssText: 'box-shadow: 0 0 5px rgba(0,0,0,0.3)'
     },
-    legend: {
+    "grid": {
+        "borderWidth": 0,
+        "top": 110,
+        "bottom": 95,
+        textStyle: {
+            color: "#fff"
+        }
+    },
+    "legend": {
         right: 20,
         orient: 'vertical',
-        data: ['本年各月利润率']
+        textStyle: {
+            color: '#90979c',
+        },
+        "data": ['本年实际GMV', '本年目标GMV']
     },
-    xAxis: {
-        type: 'category',
-        data: ['01','02','03','04','05','06','07','08','09','10','11', '12'],
-        boundaryGap: false,
-        splitLine: {
-            show: false
-        },
-        axisTick: {
-            show: false
-        },
-        axisLine: {
+    "calculable": false,
+    "xAxis": [{
+        "type": "category",
+        name: "月份",
+        "axisLine": {
             lineStyle: {
-                color: '#609ee9'
+                color: '#90979c'
             }
         },
-        axisLabel: {
-            margin: 10,
-            textStyle: {
-                fontSize: 14
-            }
-        }
-    },
-    yAxis: {
-        type: 'value',
-        name: '利润率',
-        splitLine: {
+        "splitLine": {
+            "show": false
+        },
+        "axisTick": {
+            "show": false
+        },
+        "splitArea": {
+            "show": false
+        },
+        "axisLabel": {
+            "interval": 0,
+
+        },
+        "data": ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
+    }],
+    "yAxis": [{
+        "type": "value",
+        name: "利润率（%）",
+        "splitLine": {
+            "show": false
+        },
+        "axisLine": {
             lineStyle: {
-                color: ['#D4DFF5']
+                color: '#90979c'
             }
         },
-        axisTick: {
-            show: false
+        "axisTick": {
+            "show": false
         },
-        axisLine: {
-            lineStyle: {
-                color: '#609ee9'
-            }
+        "axisLabel": {
+            "interval": 0,
+
         },
-        axisLabel: {
-            margin: 10,
-            textStyle: {
-                fontSize: 14
-            }
+        "splitArea": {
+            "show": false
+        },
+
+    }],
+    "series": [{
+            "name": "本年各月利润率",
+            "type": "line",
+            "itemStyle": {
+                "normal": {
+                    "barBorderRadius": 0,
+                    "label": {
+                        "show": true,
+                        "position": "top",
+                        formatter: function(p) {
+                            return p.value > 0 ? (p.value) : '';
+                        }
+                    }
+                }
+            },
+            "data": getMonthRandom(0, 100)
         }
-    },
-    series: [{
-        name: '本年各月利润率',
-        type: 'line',
-        smooth: true,
-        showSymbol: false,
-        symbol: 'circle',
-        symbolSize: 6,
-        data: ['25', '33.21', '42', '12', '44', '', '', '', '', '', '', ''],
-        areaStyle: {
-            normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                    offset: 0,
-                    color: 'rgba(199, 237, 250,0.5)'
-                }, {
-                    offset: 1,
-                    color: 'rgba(199, 237, 250,0.2)'
-                }], false)
-            }
-        },
-        itemStyle: {
-            normal: {
-                color: '#f7b851'
-            }
-        },
-        lineStyle: {
-            normal: {
-                width: 3
-            }
-        }
-    }]
+    ]
 };
 init();
 function init() {
@@ -426,12 +443,6 @@ function init() {
         }
     });
 }
-
-// $("#tabs li").each(function(k, v) {
-//     $(this).click(function () {
-//         alert(k);
-//     });
-// });
 
 function year_init() {
     var chart1 = echarts.init(document.getElementById('chart1'), 'macarons');

@@ -28,4 +28,8 @@
   <select id="findByDiagId" resultMap="BaseResultMap">
     select * from UO_DIAG_DETAIL where DIAG_ID = #{diagId}
   </select>
+
+  <delete id="deleteByDiagId">
+    delete from UO_DIAG_DETAIL where DIAG_ID = #{diagId}
+  </delete>
 </mapper>
