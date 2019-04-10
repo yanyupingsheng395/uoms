@@ -18,8 +18,8 @@ import java.util.List;
 /**
  * Shiro Session 对象管理
  *
- * @author MrBird
- * @link https://mrbird.cc/Spring-Boot-Shiro%20session.html
+ * @author
+ * @link
  */
 @Service("sessionService")
 public class SessionServiceImpl implements SessionService {

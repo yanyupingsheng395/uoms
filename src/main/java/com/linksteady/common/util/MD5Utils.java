@@ -9,7 +9,7 @@ public class MD5Utils {
 
 	}
 
-	private static final String SALT = "mrbird";
+	private static final String SALT = "linksteady";
 
 	private static final String ALGORITH_NAME = "md5";
 
