@@ -197,5 +197,12 @@ function updateDetail() {
     var year = $("#predictDate").val();
     $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
         toastr.success("数据更新成功！");
+        setTimeout(function () {
+            $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
+                var val = $(this).find("input").val();
+                $(this).find("input").remove();
+                $(this).text(val);
+            });
+        }, 1500);
     });
 }
