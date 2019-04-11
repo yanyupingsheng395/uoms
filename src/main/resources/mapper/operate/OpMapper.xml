@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.OpMapper">
+    <select id="getOpDayList" resultType="map">
+        SELECT * FROM(
+                         SELECT A.*,ROWNUM RN FROM
+                             (select HEAD_ID, DESCR, INSERT_DT, TOUCH_DT
+                              from UO_OP_DAILY_HEADER  WHERE 1=1
+                                <if test="daywid != null and daywid != ''">
+                                    and to_char(touch_dt,'YYYYMMDD') = #{daywid}
+                                </if>
+                             ORDER BY TOUCH_DT DESC) A  WHERE ROWNUM &lt;=#{endRow}
+                     ) WHERE RN &gt;=#{startRow}
+    </select>
+
+    <select id="getOpDayListCount" resultType="int" parameterType="string">
+        select count(*) from UO_OP_DAILY_HEADER t where 1=1
+        <if test="daywid != null and daywid != ''">
+            and to_char(t.touch_dt,'YYYYMMDD') = #{daywid}
+        </if>
+    </select>
+
+
+ </mapper>

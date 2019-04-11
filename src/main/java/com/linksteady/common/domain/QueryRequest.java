@@ -3,6 +3,7 @@ package com.linksteady.common.domain;
 import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class QueryRequest implements Serializable {
 
@@ -10,6 +11,8 @@ public class QueryRequest implements Serializable {
 
 	private int pageSize;
 	private int pageNum;
+
+	private Map<String,String> param;
 
 	public int getPageSize() {
 		return pageSize;
@@ -23,16 +26,23 @@ public class QueryRequest implements Serializable {
 		return pageNum;
 	}
 
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("pageSize", pageSize)
-				.add("pageNum", pageNum)
-				.toString();
-	}
+//	@Override
+//	public String toString() {
+//		return MoreObjects.toStringHelper(this)
+//				.add("pageSize", pageSize)
+//				.add("pageNum", pageNum)
+//				.toString();
+//	}
 
 	public void setPageNum(int pageNum) {
 		this.pageNum = pageNum;
 	}
 
+	public Map<String, String> getParam() {
+		return param;
+	}
+
+	public void setParam(Map<String, String> param) {
+		this.param = param;
+	}
 }

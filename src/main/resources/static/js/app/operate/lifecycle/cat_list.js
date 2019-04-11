@@ -251,7 +251,7 @@ $(function () {
     $('#catListTable').on('click-row.bs.table', function (e,row,$element)
     {
         //选中的数据放入到全局对象中
-        selectId=row.ROW_WID;
+        selectId=row.CATE_WID;
         $('.changeColor').removeClass('changeColor');
         $($element).addClass('changeColor');
 
@@ -275,7 +275,7 @@ $(function () {
         if(null!=selectId&&selectId!='')
         {
             $.each(settings,function (i,v) {
-                    if(v.ROW_WID === parseInt(selectId)){
+                    if(v.CATE_WID === parseInt(selectId)){
                         $(e.target).find('tbody tr').eq(i).addClass('changeColor');
                     }
             });
