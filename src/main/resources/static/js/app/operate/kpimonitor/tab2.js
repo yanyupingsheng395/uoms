@@ -1,7 +1,7 @@
 var xData = function() {
     var data = [];
     for (var i = 1; i < 13; i++) {
-        data.push(i + "月份");
+        data.push(i);
     }
     return data;
 }();
@@ -38,6 +38,7 @@ function initChart() {
         },
         "calculable": true,
         "xAxis": [{
+            name: "月份",
             "type": "category",
             "axisLine": {
                 lineStyle: {
@@ -60,6 +61,7 @@ function initChart() {
             "data": xData,
         }],
         "yAxis": [{
+            name: "获取成本回报（天）",
             "type": "value",
             "splitLine": {
                 "show": false
@@ -99,20 +101,7 @@ function initChart() {
                     }
                 }
             },
-            "data": [
-                0.58,
-                0.83,
-                0.89,
-                0.75,
-                0.56,
-                0.38,
-                0.74,
-                0.85,
-                0.64,
-                0.53,
-                0.49,
-                0.87
-            ]
+            "data": getMonthRandom(0,30)
         }]
     };
 
@@ -149,6 +138,7 @@ function initChart() {
         },
         "calculable": true,
         "xAxis": [{
+            name: "月份",
             "type": "category",
             "axisLine": {
                 lineStyle: {
@@ -171,6 +161,7 @@ function initChart() {
             "data": xData,
         }],
         "yAxis": [{
+            name: "毛利回收期（%）",
             "type": "value",
             "splitLine": {
                 "show": false
@@ -210,20 +201,7 @@ function initChart() {
                     }
                 }
             },
-            "data": [
-                19,
-                11,
-                15,
-                14,
-                28,
-                22,
-                14,
-                30,
-                22,
-                6,
-                14,
-                21
-            ]
+            "data": getMonthRandom(0, 100)
         }]
     };
 
@@ -259,6 +237,7 @@ function initChart() {
         },
         "calculable": true,
         "xAxis": [{
+            name: "月份",
             "type": "category",
             "axisLine": {
                 lineStyle: {
@@ -281,34 +260,58 @@ function initChart() {
             "data": xData,
         }],
         "yAxis": [{
-            "type": "value",
-            "splitLine": {
-                "show": false
-            },
+            name: "全生命周期价值/月客单价",
+            type: "value",
             "axisLine": {
                 lineStyle: {
                     color: '#90979c'
                 }
             },
+            "splitLine": {
+                "show": false
+            },
             "axisTick": {
+                "show": false
+            },
+            "splitArea": {
                 "show": false
             },
             "axisLabel": {
                 "interval": 0,
 
+            }
+        },{
+            name: "预估的生命周期长度",
+            type: "value",
+            "axisLine": {
+                lineStyle: {
+                    color: '#90979c'
+                }
+            },
+            "splitLine": {
+                "show": false
+            },
+            "axisTick": {
+                "show": false
             },
             "splitArea": {
                 "show": false
             },
+            "axisLabel": {
+                "interval": 0,
+
+            }
 
         }],
         "series": [{
             "name": "全生命周期价值",
+            yAxisIndex:0,
             "type": "line",
             "stack": "全生命周期价值",
-            "data": getMonthRandom()
+            "data": getMonthRandom(0, 1000)
         },{
             "name": "月客单价",
+            yAxisIndex:0,
             "type": "line",
             "stack": "月客单价",
             "itemStyle": {
@@ -321,12 +324,13 @@ function initChart() {
                     "width": 2
                 }
             },
-            "data": getMonthRandom()
+            "data": getMonthRandom(0, 1000)
         },{
             "name": "预估的生命周期长度",
+            yAxisIndex:1,
             "type": "line",
             "stack": "预估的生命周期长度",
-            "data": getMonthRandom()
+            "data": getMonthRandom(0, 30)
         }]
     };
 
@@ -362,6 +366,7 @@ function initChart() {
         },
         "calculable": true,
         "xAxis": [{
+            name: "月份",
             "type": "category",
             "axisLine": {
                 lineStyle: {
@@ -384,6 +389,7 @@ function initChart() {
             "data": xData,
         }],
         "yAxis": [{
+            name: "成本（元）",
             "type": "value",
             "splitLine": {
                 "show": false
@@ -409,12 +415,12 @@ function initChart() {
             "name": "用户平均成本",
             "type": "line",
             "stack": "用户平均成本",
-            "data": getMonthRandom()
+            "data": getMonthRandom(0,1000)
         },{
             "name": "平均获客成本",
             "type": "line",
             "stack": "平均获客成本",
-            "data": getMonthRandom()
+            "data": getMonthRandom(0, 1000)
         },{
             "name": "平均培养成本",
             "type": "line",
@@ -429,7 +435,7 @@ function initChart() {
                     "width": 2
                 }
             },
-            "data": getMonthRandom()
+            "data": getMonthRandom(0, 1000)
         }]
     };
 
@@ -445,7 +451,7 @@ function initChart() {
 
     chart7.on('click', function (params) {
         if(params.seriesName == "平均培养成本") {
-            $("#chartModal").modal('show');
+            $("#chartModal2").modal('show');
             modal1();
         }
     });
@@ -488,6 +494,7 @@ function modal1() {
         },
         "calculable": true,
         "xAxis": [{
+            name: "月份",
             "type": "category",
             "axisLine": {
                 lineStyle: {
@@ -510,6 +517,7 @@ function modal1() {
             "data": xData,
         }],
         "yAxis": [{
+            name: "成本（元）",
             "type": "value",
             "splitLine": {
                 "show": false
@@ -535,16 +543,15 @@ function modal1() {
             "name": "商品折扣成本",
             "type": "line",
             "stack": "商品折扣成本",
-            "data": getMonthRandom()
+            "data": getMonthRandom(0, 1000)
         },{
             "name": "优惠促销成本",
             "type": "line",
             "stack": "优惠促销成本",
-            "data": getMonthRandom()
+            "data": getMonthRandom(0, 1000)
         }]
     };
-
-    var chart = echarts.init(document.getElementById('chart8'), 'macarons');
+    var chart = echarts.init(document.getElementById('chart9'), 'macarons');
     chart.setOption(option);
     setTimeout(function () {
         chart.resize();
@@ -603,6 +610,29 @@ function modal2() {
             "data": xData,
         }],
         "yAxis": [{
+            name: "月订单价（元）",
+            "type": "value",
+            "splitLine": {
+                "show": false
+            },
+            "axisLine": {
+                lineStyle: {
+                    color: '#90979c'
+                }
+            },
+            "axisTick": {
+                "show": false
+            },
+            "axisLabel": {
+                "interval": 0,
+
+            },
+            "splitArea": {
+                "show": false
+            },
+
+        },{
+            name: "月购买频次（次）",
             "type": "value",
             "splitLine": {
                 "show": false
@@ -625,15 +655,17 @@ function modal2() {
 
         }],
         "series": [{
-            "name": "月购买频次",
-            "type": "line",
-            "stack": "月购买频次",
-            "data": getMonthRandom()
-        },{
             "name": "月订单价",
+            yAxisIndex:0,
             "type": "line",
             "stack": "月订单价",
-            "data": getMonthRandom()
+            "data": getMonthRandom(100, 1000)
+        },{
+            "name": "月购买频次",
+            yAxisIndex:1,
+            "type": "line",
+            "stack": "月购买频次",
+            "data": getMonthRandom(0, 100)
         }]
     };
 
@@ -649,10 +681,10 @@ function getRandom (m,n){
     return num;
 }
 
-function getMonthRandom() {
+function getMonthRandom(m, n) {
     var data = new Array();
     for(var i=0; i<12; i++) {
-        data.push(getRandom(100,900));
+        data.push(getRandom(m,n));
     }
     return data;
 }

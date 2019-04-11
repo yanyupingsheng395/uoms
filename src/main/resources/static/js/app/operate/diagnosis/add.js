@@ -778,14 +778,13 @@ function jsmind_refresh(map) {
     var kpiName1 = map["DISMANT_PART1_NAME"];
     var kpiName2 = map["DISMANT_PART2_NAME"];
 
-    var levelId1 = getKpiLevelId();
-    var levelId2 = getKpiLevelId();
-    var nodeName1 = levelId1 + " " + kpiName1;
-    var nodeName2 = levelId2 + " " + kpiName2;
-    createNode(nodeName1, levelId1, kpiCode1, kpiName1);
-    createNode(nodeName2, levelId2, kpiCode2, kpiName2);
+    var levelId = getKpiLevelId();
+    var nodeName1 = levelId + " " + kpiName1;
+    var nodeName2 = levelId + " " + kpiName2;
+    createNode(nodeName1, levelId, kpiCode1, kpiName1);
+    createNode(nodeName2, levelId, kpiCode2, kpiName2);
 
-    chart_condition1(levelId1, levelId1 + " " + kpiName1 + "*" + kpiName2, kpiName1, kpiName2);
+    chart_condition1(levelId, levelId + " " + kpiName1 + "*" + kpiName2, kpiName1, kpiName2);
 }
 
 function getKpiComb(code) {

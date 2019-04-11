@@ -178,6 +178,7 @@ function getMonthRandom(m,n) {
     for(var i=0; i<12; i++) {
         data.push(getRandom(m,n));
     }
+    console.log(data);
     return data;
 }
 
@@ -270,7 +271,7 @@ var option3 = {
         textStyle: {
             color: '#90979c',
         },
-        "data": ['客单价', '订单价', '订单量']
+        "data": ['平均客单价', '平均订单价', '平均订单数']
 
     },
     "calculable": true,
@@ -298,6 +299,29 @@ var option3 = {
     }],
     "yAxis": [{
         "type": "value",
+        name: "平均订单价/平均客单价（元）",
+        "splitLine": {
+            "show": false
+        },
+        "axisLine": {
+            lineStyle: {
+                color: '#90979c'
+            }
+        },
+        "axisTick": {
+            "show": false
+        },
+        "axisLabel": {
+            "interval": 0,
+
+        },
+        "splitArea": {
+            "show": false
+        },
+
+    },{
+        "type": "value",
+        name: "平均订单数（个）",
         "splitLine": {
             "show": false
         },
@@ -319,9 +343,10 @@ var option3 = {
 
     }],
     "series": [{
-        "name": "订单量",
+        "name": "平均订单数",
         "type": "bar",
-        "stack": "订单量",
+        "stack": "平均订单数",
+        yAxisIndex:1,
         "barMaxWidth": 35,
         "barGap": "10%",
         "itemStyle": {
@@ -338,24 +363,12 @@ var option3 = {
                 }
             }
         },
-        "data": [
-            578,
-            1069,
-            678,
-            788,
-            452,
-            607,
-            878,
-            656,
-            787,
-            487,
-            987,
-            787
-        ],
+        "data": getMonthRandom(0, 100),
     }, {
-        "name": "订单价",
+        "name": "平均订单价",
+        yAxisIndex:0,
         "type": "line",
-        "stack": "订单价",
+        "stack": "平均订单价",
         symbolSize:10,
         symbol:'circle',
         "itemStyle": {
@@ -395,9 +408,10 @@ var option3 = {
             1087
         ]
     },{
-        "name": "客单价",
+        "name": "平均客单价",
         "type": "line",
-        "stack": "客单价",
+        "stack": "平均客单价",
+        yAxisIndex:0,
         symbolSize:10,
         symbol:'circle',
         "itemStyle": {
@@ -433,7 +447,7 @@ var chart3 = echarts.init(document.getElementById('chart3'), 'macarons');
 chart3.setOption(option3);
 
 chart3.on('click', function (params) {
-    if(params.seriesName == "订单价") {
+    if(params.seriesName == "平均订单价") {
         $("#chartModal").modal('show');
         modal3();
     }
@@ -492,6 +506,29 @@ function modal3() {
             "data": xData,
         }],
         "yAxis": [{
+            name: "平均件单价（元）",
+            "type": "value",
+            "splitLine": {
+                "show": false
+            },
+            "axisLine": {
+                lineStyle: {
+                    color: '#90979c'
+                }
+            },
+            "axisTick": {
+                "show": false
+            },
+            "axisLabel": {
+                "interval": 0,
+
+            },
+            "splitArea": {
+                "show": false
+            },
+
+        }, {
+            name: "平均连带率（%）",
             "type": "value",
             "splitLine": {
                 "show": false
@@ -514,41 +551,8 @@ function modal3() {
 
         }],
         "series": [{
-            "name": "平均连带率",
-            "type": "bar",
-            "stack": "平均连带率",
-            "barMaxWidth": 35,
-            "barGap": "10%",
-            "itemStyle": {
-                "normal": {
-                    "label": {
-                        "show": true,
-                        "textStyle": {
-                            "color": "#fff"
-                        },
-                        "position": "insideTop",
-                        formatter: function(p) {
-                            return p.value > 0 ? (p.value) : '';
-                        }
-                    }
-                }
-            },
-            "data": [
-                572,
-                1014,
-                1024,
-                992,
-                1084,
-                658,
-                1224,
-                743,
-                1124,
-                1034,
-                999,
-                1124
-            ],
-        }, {
-            "name": "平均件单价",
+            name: "平均件单价",
+            yAxisIndex:0,
             "type": "line",
             "stack": "平均件单价",
             symbolSize:10,
@@ -565,23 +569,15 @@ function modal3() {
                     }
                 }
             },
-            "data": [
-                540,
-                1024,
-                1356,
-                1267,
-                1368,
-                1027,
-                1125,
-                1136,
-                1264,
-                1056,
-                1149,
-                1087
-            ]
+            "data": getMonthRandom(100, 1000)
+        }, {
+            name: "平均连带率",
+            type: "bar",
+            barMaxWidth: 35,
+            yAxisIndex:1,
+            data: [10, 20, 21, 33, 45, 65, 29, 12, 44, 55, 10, 90]
         }]
     };
-
     var chart = echarts.init(document.getElementById('chart8'), 'macarons');
     chart.setOption(option);
     setTimeout(function () {

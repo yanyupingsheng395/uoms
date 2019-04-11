@@ -1,7 +1,7 @@
 var xData = function() {
     var data = [];
     for (var i = 1; i < 13; i++) {
-        data.push(i + "月份");
+        data.push(i);
     }
     return data;
 }();
@@ -59,7 +59,7 @@ var option1 = {
     }],
     "yAxis": [{
         "type": "value",
-        name: "占比（%）",
+        name: "新客比例/老客比例（%）",
         "splitLine": {
             "show": false
         },
@@ -281,6 +281,7 @@ var option3 = {
     },
     "calculable": true,
     "xAxis": [{
+        name: "月份",
         "type": "category",
         "axisLine": {
             lineStyle: {
@@ -303,6 +304,29 @@ var option3 = {
         "data": xData,
     }],
     "yAxis": [{
+        name: "平均件单价（元）",
+        "type": "value",
+        "splitLine": {
+            "show": false
+        },
+        "axisLine": {
+            lineStyle: {
+                color: '#90979c'
+            }
+        },
+        "axisTick": {
+            "show": false
+        },
+        "axisLabel": {
+            "interval": 0,
+
+        },
+        "splitArea": {
+            "show": false
+        },
+
+    }, {
+        name: "平均购买件数（件）",
         "type": "value",
         "splitLine": {
             "show": false
@@ -326,6 +350,7 @@ var option3 = {
     }],
     "series": [{
         "name": "平均购买件数",
+        yAxisIndex:1,
         "type": "bar",
         "stack": "平均购买件数",
         "barMaxWidth": 35,
@@ -360,6 +385,7 @@ var option3 = {
         ],
     }, {
         "name": "平均件单价",
+        yAxisIndex:0,
         "type": "line",
         "stack": "平均件单价",
         symbolSize:10,

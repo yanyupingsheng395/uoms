@@ -197,8 +197,5 @@ function updateDetail() {
     var year = $("#predictDate").val();
     $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
         toastr.success("数据更新成功！");
-        setTimeout(function() {
-            location.href = "/page/gmvplan";
-        }, 1500);
     });
 }
