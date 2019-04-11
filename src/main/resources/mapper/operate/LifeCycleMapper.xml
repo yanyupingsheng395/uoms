@@ -4,7 +4,7 @@
     <select id="getCatList" resultType="map">
         SELECT * FROM(
                          SELECT A.*,ROWNUM RN FROM
-                             (select ROW_WID,
+                             (select CATE_WID,
                                      CATE_TYPE3,
                                      GMV_RATE,
                                      GMV_RELATE,

@@ -31,10 +31,10 @@ public class OpController extends BaseController {
      * @return
      */
     @RequestMapping("/getOpDayList")
-    public ResponseBo getOpDayList(@RequestBody  QueryRequest request,@RequestParam   String dayID) {
-        List<Map<String,Object>> result=opService.getOpDayList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(),dayID);
+    public ResponseBo getOpDayList(@RequestBody  QueryRequest request) {
+        List<Map<String,Object>> result=opService.getOpDayList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(),"");
 
-        int totalCount= opService.getOpDayListCount(dayID);
+        int totalCount= opService.getOpDayListCount("");
         return  ResponseBo.okOverPaging("",totalCount,result);
     }
 
