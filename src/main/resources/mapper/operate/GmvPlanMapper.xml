@@ -41,4 +41,8 @@
   <select id="getPlanId" resultType="Long">
     select seq_uo_plan_id.nextval from dual
   </select>
+
+  <select id="findByYear" resultType="int">
+    select count(1) from UO_GMV_PLAN where YEAR_ID = #{year}
+ </select>
 </mapper>

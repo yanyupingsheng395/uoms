@@ -44,7 +44,7 @@
                                         <div class="form-group">
                                             <label class="col-md-3 control-label" for="gmvValue1">目标年份：</label>
                                             <div class="col-md-5">
-                                                <input class="col-md-7 form-control js-datepicker m-b-10" value="2019" type="text" id="predictDate" name="predictDate" data-date-format="yyyy" />
+                                                <select name="predictDate" id="predictDate" class="selectpicker form-control"></select>
                                             </div>
                                         </div>
                                     </form>
@@ -67,7 +67,7 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody id="predictData">
-                                                <tr><td>时间序列方法</td><td>2000</td><td>21.25%</td></tr>
+                                                <tr><td>时间序列方法</td><td><span id="predictVal"></span></td><td><span id="predictRate"></span></td></tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -77,16 +77,15 @@
                                             <h5>目标值</h5>
                                             <form class="form-horizontal" style="border:solid 1px #ccc;">
                                                 <div class="form-group mg-stop">
-                                                    <label class="col-md-3 control-label" for="gmvValue1">GMV目标值：</label>
+                                                    <label class="col-md-3 control-label" for="gmvValue1">GMV目标值（元）：</label>
                                                     <div class="col-md-5 input-group">
                                                         <input class="form-control" type="text" id="gmvValue1" name="gmvValue1" value="2000"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="col-md-3 control-label" for="gmvRate1">目标相比上年增长率：</label>
+                                                    <label class="col-md-3 control-label" for="gmvRate1">目标相比上年增长率（%）：</label>
                                                     <div class="col-md-5 input-group">
                                                         <input class="form-control" type="text" id="gmvRate1" name="gmvRate1" value="21.25"/>
-                                                        <span class="input-group-addon">%</span>
                                                     </div>
                                                 </div>
                                             </form>
@@ -100,16 +99,15 @@
                                             <h5>目标值</h5>
                                             <form class="form-horizontal">
                                                 <div class="form-group">
-                                                    <label class="col-md-3 control-label" for="gmvValue2">GMV目标值：</label>
+                                                    <label class="col-md-3 control-label" for="gmvValue2">GMV目标值（元）：</label>
                                                     <div class="col-md-5 input-group">
-                                                        <input class="form-control" type="text" disabled id="gmvValue2" name="gmvValue2" value="2000"/>
+                                                        <input class="form-control" type="text" disabled id="gmvValue2" name="gmvValue2"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="col-md-3 control-label" for="gmvRate2">目标相比上年增长率：</label>
+                                                    <label class="col-md-3 control-label" for="gmvRate2">目标相比上年增长率（%）：</label>
                                                     <div class="col-md-5 input-group">
-                                                        <input class="form-control" type="text" disabled id="gmvRate2" name="gmvRate2" value="21.25"/>
-                                                        <span class="input-group-addon">%</span>
+                                                        <input class="form-control" type="text" disabled id="gmvRate2" name="gmvRate2"/>
                                                     </div>
                                                 </div>
                                             </form>
@@ -143,7 +141,7 @@
                                     <div class="col-md-12 text-right">
                                         <button id="prev" class="btn btn-primary" onclick="prev()">上一步</button>
                                         <button id="next" class="btn btn-primary" onclick="next()">下一步</button>
-                                        <a id="finished" class="btn btn-default" href="/page/gmvplan">返回</a>
+                                        <a id="finished" class="btn btn-default" onclick="reback()">返回</a>
                                     </div>
                                 </div>
                             </div>

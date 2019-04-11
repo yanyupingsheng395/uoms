@@ -116,6 +116,11 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
         }
     }
 
+    @Override
+    public int checkYear(String year) {
+        return gmvPlanMapper.findByYear(year);
+    }
+
     private void addPlanDetail(String year, String gmv, String rate, Long planId) {
         List<PlanDetail> planDetailList = new ArrayList<>();
         for(int i=1; i<=12; i++) {
@@ -142,7 +147,7 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
         gmvPlan.setPlanId(planId);
         gmvPlan.setForecastGmv(2000);
         gmvPlan.setForecastRate(0.25);
-        gmvPlan.setStatus("C");
+        gmvPlan.setStatus("D");
         gmvPlanMapper.insert(gmvPlan);
     }
 }

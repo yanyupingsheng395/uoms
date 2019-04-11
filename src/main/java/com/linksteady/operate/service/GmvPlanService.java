@@ -30,4 +30,6 @@ public interface GmvPlanService extends IService<GmvPlan> {
     void overrideOldData(String year, String gmv, String rate);
 
     void updateDetail(JSONArray jsonArray);
+
+    int checkYear(String year);
 }

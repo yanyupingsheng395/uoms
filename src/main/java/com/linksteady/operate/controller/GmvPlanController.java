@@ -76,4 +76,10 @@ public class GmvPlanController extends BaseController {
         gmvPlanService.updateDetail(jsonArray);
         return ResponseBo.ok("GMV拆解表更新成功！");
     }
+
+    @PostMapping("/checkYear")
+    public ResponseBo checkYear(@RequestParam("year") String year) {
+        int size = gmvPlanService.checkYear(year);
+        return ResponseBo.okWithData(null, size);
+    }
 }

@@ -58,3 +58,13 @@ function init_date(id, format, startView, maxViewMode, minViewMode) {
         minViewMode: minViewMode
     });
 }
+
+toastr.options = {
+    "closeButton": true,
+    "progressBar": true,
+    "positionClass": "toast-top-center",
+    "preventDuplicates": true,
+    "timeOut": 1500,
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};

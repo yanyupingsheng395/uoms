@@ -1,42 +1,120 @@
+// 是否有该年份的数据标志
+var flag = false;
+var year = null;
 $(function(){
     stepInit();
+    dateInit();
 });
 
-$('#predictDate').datepicker({
-    format: 'yyyy',
-    language: "zh-CN",
-    todayHighlight: true,
-    autoclose: true,
-    startView: 'years',
-    maxViewMode:'years',
-    minViewMode:'years'
-});
+toastr.options = {
+    "closeButton": true,
+    "progressBar": true,
+    "positionClass": "toast-top-center",
+    "preventDuplicates": true,
+    "timeOut": 1500,
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
 
+function dateInit() {
+    var date = new Date();
+    var current = date.getFullYear();
+    date.setFullYear(date.getFullYear(), 12);
+    var next = date.getFullYear();
+    var code = "<option value='" + current + "'>" + current + "</option>";
+    code += "<option value='" + next + "'>" + next + "</option>";
+    $('#predictDate').html("").html(code);
+    year = $("#predictDate").find("option:selected").val();
+}
+
+var step = 0;
+// 上一步
 function prev() {
-    if($("#step2").attr("style") == "display:block;") {
-        $("#prev").addClass("disabled");
+    if(step > 0) {
+        step = step - 1;
+    }
+    if(step == 0) {
         $("#step1").attr("style", "display:block;");
         $("#step2").attr("style", "display:none;");
         $("#step3").attr("style", "display:none;");
-    }else if($("#step3").attr("style") == "display:block;") {
-        $(this).attr("disabled", false);
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:block;");
-        $("#step3").attr("style", "display:none;");
-        getYearHistory();
-        $("#next").removeClass("disabled");
+        $("#prev").addClass("disabled");
     }
 }
+
+// 下一步
 function next() {
-    if($("#step1").attr("style") == "display:block;") {
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:block;");
-        $("#step3").attr("style", "display:none;");
-        getYearHistory();
-        $("#prev").removeClass("disabled");
-    }else if($("#step2").attr("style") == "display:block;") {
-        confirmData();
+    if(step == 0) {
+        step1();
     }
+    if(step == 1) {
+        step2();
+    }
+    if(step == 2) {
+        step3();
+    }
+}
+
+function step1 () {
+    if(step < 2) {
+        step = step + 1;
+    }
+}
+
+function step2() {
+    // 判断是否有该年份的数据
+    checkYear();
+}
+
+function step3() {
+    $("#gmvValue2").val($("#gmvValue1").val());
+    $("#gmvRate2").val($("#gmvRate1").val());
+
+    $("#step1").attr("style", "display:none;");
+    $("#step2").attr("style", "display:none;");
+    $("#step3").attr("style", "display:block;");
+    $("#next").attr("style", "display:none;");
+    $("#prev").attr("style", "display:none;");
+
+    // 获取权重数据
+    weight();
+    // 插入数据
+    addPlanAndDetail();
+}
+
+// 步骤2新增plan表和plan_detail表
+function addPlanAndDetail() {
+    var gmv = $("#gmvValue1").val();
+    var rate = $("#gmvRate1").val();
+    $.post("/gmvplan/addPlanAndDetail", {year: year, gmv: gmv, rate: rate},function (r) {
+        getPlanDetail();
+    });
+}
+
+
+$("#predictDate").change(function () {
+    year = $("#predictDate").find("option:selected").val();
+});
+
+
+function checkYear() {
+    $.post("/gmvplan/checkYear", {year: year}, function (r) {
+        if(r.data != 0 || r.data != "0") {
+            flag = true;
+            toastr.warning(year + "年的目标记录已经存在，如需修改，请在列表界面选择修改或变更！");
+        }else {
+            $("#step1").attr("style", "display:none;");
+            $("#step2").attr("style", "display:block;");
+            $("#step3").attr("style", "display:none;");
+            $("#prev").removeClass("disabled");
+            // 获取历史数据
+            getYearHistory();
+            // 获取预测数据
+            getPredictData();
+            if(step < 2) {
+                step = step + 1;
+            }
+        }
+    });
 }
 
 function stepInit() {
@@ -46,7 +124,6 @@ function stepInit() {
     $("#step3").attr("style", "display:none;");
 }
 function getYearHistory() {
-    var year = $("#predictDate").val();
     $('#historyDataTable').bootstrapTable({
         url: '/gmvplan/getYearHistory?year=' + year,
         striped: true,
@@ -55,10 +132,10 @@ function getYearHistory() {
             title: '年份',
             field: 'yearId'
         },{
-            title: 'GMV值',
+            title: 'GMV值（元）',
             field: 'gmvValue',
             formatter: function (value, row, index) {
-                return "¥&nbsp;" + parseFloat(value).toLocaleString();
+                return parseFloat(value).toLocaleString();
             }
         },{
             title: 'GMV增长率',
@@ -70,9 +147,26 @@ function getYearHistory() {
     });
 }
 
+function getRandom (m,n){
+    var num = Math.floor(Math.random()*(m - n) + n);
+    return num;
+}
+
+// 获取预测数据
+function getPredictData() {
+    var predictVal = getRandom(1000, 10000);
+    var predictRate = getRandom(0, 100) + "." + getRandom(0, 100);
+    $("#predictVal").text(predictVal);
+    $("#predictRate").text(predictRate + "%");
+
+    $("#gmvValue1").val(predictVal);
+    $("#gmvValue2").val(predictVal);
+    $("#gmvRate1").val(predictRate);
+    $("#gmvRate2").val(predictRate);
+}
+
 
 function weight() {
-    var year = $("#predictDate").val();
     $.post("/gmvplan/getWeightIndex", {"year": year}, function (r) {
         var htmlCode1 = "<tr>";
         var htmlCode2 = "<tr>";
@@ -97,7 +191,7 @@ function getPlanDetail() {
             title: '月份',
             field: 'monthId'
         },{
-            title: 'GMV值',
+            title: 'GMV值（元）',
             field: 'gmvValue'
         },{
             title: 'GMV目标占全年比例',
@@ -106,7 +200,7 @@ function getPlanDetail() {
                 return value + "%";
             }
         },{
-            title: '上年同月GMV值',
+            title: '上年同月GMV值（元）',
             field: 'gmvTb'
         },{
             title: '同比上年同比增长率',
@@ -118,15 +212,6 @@ function getPlanDetail() {
     });
 }
 
-// 步骤2新增plan表和plan_detail表
-function addPlanAndDetail() {
-    var year = $("#predictDate").val();
-    var gmv = $("#gmvValue2").val();
-    var rate = $("#gmvRate2").val();
-    $.post("/gmvplan/addPlanAndDetail", {year: year, gmv: gmv, rate: rate},function (r) {
-        getPlanDetail();
-    });
-}
 
 // 编辑GMV值
 function editPlanDetail() {
@@ -135,27 +220,16 @@ function editPlanDetail() {
     });
 }
 
-function getPlanAndDetail() {
-    var year = $("#predictDate").val();
-    $.post("/gmvplan/getPlanAndDetail", {year: year}, function (r) {
-        if(r.msg) {
-            confirmData();
-        }else {
-            addPlanAndDetail();
-        }
-    });
-}
-
-function confirmData() {
+function reback() {
     $.confirm({
         title: '提示：',
-        content: '查询到已有数据，即将被覆盖？',
+        content: '确认离开当前页？',
         buttons: {
             confirm: {
                 text: '确认',
                 btnClass: 'btn-primary',
                 action: function(){
-                    overrideOldData();
+                    window.location.href = "/page/gmvplan";
                 }
             },
             cancel: {
@@ -165,31 +239,7 @@ function confirmData() {
     });
 }
 
-// 覆盖已有plan/detail数据
-function overrideOldData() {
-    var year = $("#predictDate").val();
-    var gmv = $("#gmvValue2").val();
-    var rate = $("#gmvRate2").val();
-    $.post("/gmvplan/overrideOldData", {year: year, gmv: gmv, rate: rate}, function (r) {
-        weight();
-        getPlanDetail();
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:none;");
-        $("#step3").attr("style", "display:block;");
-        $("#next").attr("style", "display:none;");
-        $("#prev").attr("style", "display:none;");
-    });
-}
-
 function updateDetail() {
-    toastr.options = {
-        "progressBar": true,
-        "positionClass": "toast-top-center",
-        "preventDuplicates": true,
-        "timeOut": 1500,
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    };
     var json = new Array();
     $("input[name='newGmvValue']").each(function() {
         json.push($(this).val());

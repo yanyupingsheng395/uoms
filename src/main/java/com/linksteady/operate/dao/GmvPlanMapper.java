@@ -12,4 +12,5 @@ public interface GmvPlanMapper extends MyMapper<GmvPlan> {
     List<GmvPlan> getPredictData(@Param("year") String year);
     Long getPlanId();
     int getDataCount();
+    int findByYear(@Param("year") String year);
 }
