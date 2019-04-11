@@ -22,6 +22,22 @@
 
 #使用到的js组件
 
+| JS组件名称 | 功能说明 |  版本 | 
+| ------ | ------ | ------ |
+| jquery.min.js | jquery | 2.1.4 |
+| bootstrap.min.js | bootstrap | 3.3.7 |
+| perfect-scrollbar.min.js | 滚动条插件 | 1.4.0 |
+| bootstrap-notify.min.js | bootstrap notify | 3.1.3 |
+| common.js | 封装一些公共组件 | # |
+| bootstrap-datepicker | bootstrap 日期插件 | 1.6.1 |
+| bootstrap-datetimepicker | bootstrap 日期插件 | 4.17.37 |
+| bootstrap-select | bootstrap select | 1.13.7 |
+| bootstrap-table | bootstrap table| 1.14.2 |
+| bootstrap-switch | bootstrap switch | 3.3.4 |
+| echarts | 图表插件 | 3.3.4 |
+| ion-rangeslider | 进度条 | 2.3.0 |
+| jsmind | 思维导图 | # |
+
 #前端js规约
 1. 按钮样式
 
