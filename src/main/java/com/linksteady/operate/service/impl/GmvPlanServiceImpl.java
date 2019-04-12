@@ -147,6 +147,15 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
             planDetail.setPlanId(planId);
             planDetail.setGmvTb(2852.55);
             planDetailList.add(planDetail);
+            if("2019".equals(year)) {
+                if(i <= 4) {
+                    planDetail.setIsHistory("Y");
+                }else {
+                    planDetail.setIsHistory("N");
+                }
+            }else {
+                planDetail.setIsHistory("N");
+            }
         }
         planDetailMapper.addPlanDetails(planDetailList);
     }

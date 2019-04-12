@@ -17,6 +17,7 @@
     <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
     <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
     <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+    <result column="IS_HISTORY" jdbcType="VARCHAR" property="isHistory"/>
   </resultMap>
 
   <select id="getPlanDetail" resultMap="BaseResultMap">
@@ -28,10 +29,10 @@
   </select>
 
   <insert id="addPlanDetails">
-    insert into UO_GMV_PLAN_DETAIL(PLAN_DETAIL_ID, PLAN_ID, YEAR_ID, MONTH_ID, GMV_VALUE, GMV_PCT, GMV_TB, GMV_TB_RATE)
+    insert into UO_GMV_PLAN_DETAIL(PLAN_DETAIL_ID, PLAN_ID, YEAR_ID, MONTH_ID, GMV_VALUE, GMV_PCT, GMV_TB, GMV_TB_RATE, IS_HISTORY)
     select seq_uo_plan_detail_id.nextval, m.* from
     <foreach collection="list" item="pl" separator="union all" open="(" close=")">
-      select #{pl.planId}, #{pl.yearId}, #{pl.monthId},#{pl.gmvValue},#{pl.gmvPct},#{pl.gmvTb},#{pl.gmvTbRate}
+      select #{pl.planId}, #{pl.yearId}, #{pl.monthId},#{pl.gmvValue},#{pl.gmvPct},#{pl.gmvTb},#{pl.gmvTbRate}, #{pl.isHistory, jdbcType=VARCHAR}
       from dual
     </foreach>
     m

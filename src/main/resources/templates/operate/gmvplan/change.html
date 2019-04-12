@@ -61,7 +61,6 @@
                             <div class="col-md-12" style="margin-top: 40px;">
                                 <div style="float:left;"><h5>详细数据</h5></div>
                                 <div class="text-right" style="margin-top: 10px;margin-bottom: 10px;">
-                                    <button class="btn btn-secondary" onclick="editPlanDetail_()"><i class="mdi mdi-lead-pencil"></i>编辑</button>
                                     <button id="saveBtn" class="btn btn-primary" disabled onclick="updateDetail()"><i class="mdi mdi-link"></i>保存</button>
                                     <a class="btn btn-default" onclick="reback_edit()"><i class="mdi mdi-redo"></i>返回</a>
                                 </div>
@@ -96,35 +95,46 @@
 <script>
     var year = "[[${year}]]";
     getYearHistory();
-    getPlanDetail();
-    function editPlanDetail_() {
-        $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
-            if (k > 3) {
-                v.innerHTML = "<input type='text' name='newGmvValue' onchange='totalGmv_()' class='form-control' value='"+v.innerText+"' onkeyup=\"value=value.match(/\\d+\\.?\\d{0,2}/,'')\"/>";
-            }
+    initDetail();
+    function initDetail() {
+        $('#planDetailData').bootstrapTable({
+            url: '/gmvplan/getPlanDetail?year=' + year,
+            striped: true,
+            uniqueId: 'attrValue',
+            columns: [{
+                title: '历史记录',
+                field: 'isHistory',
+                visible: false
+            }, {
+                title: '月份',
+                field: 'monthId'
+            },{
+                title: 'GMV值（元）',
+                field: 'gmvValue',
+                formatter: function (value, row, index) {
+                    if(row.isHistory == "N") {
+                        return "<a style='border-bottom:dashed 1px #000; color: #383838;cursor: pointer;' onclick='edit(this)'><i class='mdi mdi-lead-pencil'></i>" + value + "</a>";
+                    }else {
+                        return value;
+                    }
+                }
+            },{
+                title: 'GMV目标占全年比例',
+                field: 'gmvPct',
+                formatter: function (value, row, index) {
+                    return value + "%";
+                }
+            },{
+                title: '上年同月GMV值（元）',
+                field: 'gmvTb'
+            },{
+                title: '同比上年同比增长率',
+                field: 'gmvTbRate',
+                formatter: function (value, row, index) {
+                    return value + "%";
+                }
+            }]
         });
-        $("#saveBtn").removeAttr("disabled");
-    }
-    function totalGmv_() {
-        var total = 0;
-        $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
-            if(k <= 3) {
-                total += parseFloat($(this).text());
-            }else {
-                total += parseFloat($(this).find("input").val());
-            }
-        });
-        $("#totalGmv").text(total.toFixed(2));
-        var differ = Math.abs(total-parseFloat($("#gmvValue").val())).toFixed(2);
-        $("#totalDiffer").text(differ);
-
-        if(differ != 0 || differ != "0") {
-            $("#totalFooter").attr("style", "display:block;margin-top:20px;");
-            totalFlag = true;
-        }else {
-            $("#totalFooter").attr("style", "display:none;");
-            totalFlag = false;
-        }
     }
 </script>
 </body>

@@ -71,6 +71,9 @@ public class PlanDetail {
     @Column(name = "CREATE_BY")
     private String createBy;
 
+    @Column(name = "isHistory")
+    private String isHistory;
+
     public Long getPlanDetailId() {
         return planDetailId;
     }
@@ -173,5 +176,11 @@ public class PlanDetail {
     @Column(name = "UPDATE_BY")
     private String updateBy;
 
+    public String getIsHistory() {
+        return isHistory;
+    }
 
+    public void setIsHistory(String isHistory) {
+        this.isHistory = isHistory;
+    }
 }

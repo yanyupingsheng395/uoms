@@ -55,11 +55,18 @@ function getPlanDetail() {
         striped: true,
         uniqueId: 'attrValue',
         columns: [{
+            title: '历史记录',
+            field: 'isHistory',
+            visible: false
+        }, {
             title: '月份',
             field: 'monthId'
         },{
             title: 'GMV值（元）',
-            field: 'gmvValue'
+            field: 'gmvValue',
+            formatter: function (value, row, index) {
+                return "<a style='border-bottom:dashed 1px #000; color: #383838;cursor: pointer;' onclick='edit(this)'><i class='mdi mdi-lead-pencil'></i>" + value + "</a>";
+            }
         },{
             title: 'GMV目标占全年比例',
             field: 'gmvPct',
@@ -79,25 +86,43 @@ function getPlanDetail() {
     });
 }
 
+function edit(dom) {
+    var val = $(dom).text();
+    var code = "<input type='text' onchange='totalGmv()' name='newGmvValue' value='"+val+"' class='form-control' onblur='removeInput(this, "+val+")'/>";
+    $(dom).parent().html("").html(code);
+    $("input[name='newGmvValue']").focus();
+}
+
+function removeInput(dom, old) {
+    var val = $(dom).val();
+    if(old == val) {
+        $(dom).parent().html("").html("<a style='border-bottom:dashed 1px #000; color: #383838;cursor: pointer;' onclick='edit(this)'><i class='mdi mdi-lead-pencil'></i>" + val + "</a>");
+    }else {
+        $("#saveBtn").removeAttr("disabled");
+        $(dom).parent().html("").html("<a style='border-bottom:dashed 1px #000; color: #8b95a5;cursor: pointer;' onclick='edit(this)'><i class='mdi mdi-lead-pencil'></i>" + val + "</a>");
+    }
+}
 
 // 编辑GMV值
 function editPlanDetail() {
     $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
         v.innerHTML = "<input type='text' name='newGmvValue' onchange='totalGmv()' class='form-control' value='"+v.innerText+"' onkeyup=\"value=value.match(/\\d+\\.?\\d{0,2}/,'')\"/>";
     });
-    $("#saveBtn").removeAttr("disabled");
 }
 
 var totalFlag = false;
 function totalGmv() {
     var total = 0;
     $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
-        total += parseFloat($(this).find("input").val());
+        if($(this).text() == "") {
+            total += parseFloat($(this).find("input").val());
+        }else {
+            total += parseFloat($(this).text());
+        }
     });
     $("#totalGmv").text(total.toFixed(2));
     var differ = Math.abs(total-parseFloat($("#gmvValue").val())).toFixed(2);
     $("#totalDiffer").text(differ);
-
     if(differ != 0 || differ != "0") {
         $("#totalFooter").attr("style", "display:block;margin-top:20px;");
         totalFlag = true;
@@ -150,26 +175,19 @@ function reback_edit() {
 }
 function updateDetail() {
     var json = new Array();
-    $("input[name='newGmvValue']").each(function() {
-        json.push($(this).val());
+    $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
+        json.push($(this).text().trim());
     });
     var condition = $("input[name='e']:checked").val();
     if(totalFlag && (condition == undefined)) {
         toastr.warning("请选择数据变更策略！");
     }else {
-        $("#saveBtn").attr("disabled","disabled");
         $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
             toastr.success("数据保存成功！");
-            setTimeout(function () {
-                $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
-                    var val = $(this).find("input").val();
-                    $(this).find("input").remove();
-                    $(this).text(val);
-                });
-            }, 1500);
             $("#totalFooter").attr("style", "display:none;");
             totalFlag = false;
             $("input[name='e']").removeAttr("checked");
+            $("#saveBtn").attr("disabled","disabled");
         });
     }
 }
