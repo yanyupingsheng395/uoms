@@ -71,7 +71,9 @@ public class GmvPlanController extends BaseController {
     }
 
     @RequestMapping("/updateDetail")
-    public ResponseBo updateDetail(@RequestParam("year") String year, @RequestParam("gmv") String gmv) {
+    public ResponseBo updateDetail(@RequestParam("year") String year, @RequestParam("gmv") String gmv, @RequestParam("method") String method) {
+        // todo
+        // method 即：变更数据的策略 ==1：策略1； ==2：策略2
         JSONArray jsonArray = JSONArray.parseArray(gmv);
         gmvPlanService.updateDetail(jsonArray);
         return ResponseBo.ok("GMV拆解表更新成功！");

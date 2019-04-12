@@ -103,6 +103,7 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
 
     @Override
     public void updateDetail(JSONArray jsonArray) {
+        // todo
         List<PlanDetail> list = new ArrayList<>();
         for(int i=0; i<jsonArray.size(); i++) {
             PlanDetail planDetail = new PlanDetail();
@@ -175,9 +176,5 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
         gmvPlan.setForecastRate(0.25);
         gmvPlan.setStatus("D");
         gmvPlanMapper.insert(gmvPlan);
-    }
-
-    public static void main(String[] args) {
-        System.out.println();
     }
 }

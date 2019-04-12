@@ -182,7 +182,7 @@ function updateDetail() {
     if(totalFlag && (condition == undefined)) {
         toastr.warning("请选择数据变更策略！");
     }else {
-        $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
+        $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json), method: $("input[name='e']:checked").val()}, function(r) {
             toastr.success("数据保存成功！");
             $("#totalFooter").attr("style", "display:none;");
             totalFlag = false;
