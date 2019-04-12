@@ -44,19 +44,10 @@ function prev() {
 // 下一步
 function next() {
     if(step == 0) {
-        step1();
-    }
-    if(step == 1) {
         step2();
     }
-    if(step == 2) {
+    if(step == 1) {
         step3();
-    }
-}
-
-function step1 () {
-    if(step < 2) {
-        step = step + 1;
     }
 }
 
@@ -216,43 +207,72 @@ function getPlanDetail() {
 // 编辑GMV值
 function editPlanDetail() {
     $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
-        v.innerHTML = "<input type='text' name='newGmvValue' class='form-control' value='"+v.innerText+"'/>";
+        v.innerHTML = "<input type='text' name='newGmvValue' onchange='totalGmv()' class='form-control' value='"+v.innerText+"' onkeyup=\"value=value.match(/\\d+\\.?\\d{0,2}/,'')\"/>";
     });
+}
+
+var totalFlag = false;
+function totalGmv() {
+    var total = 0;
+    $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
+        total += parseFloat($(this).find("input").val());
+    });
+    $("#totalGmv").text(total.toFixed(2));
+    var differ = Math.abs(total-parseFloat($("#gmvValue1").val())).toFixed(2);
+    $("#totalDiffer").text(differ);
+
+    if(differ != 0 || differ != "0") {
+        $("#totalFooter").attr("style", "display:block;margin-top:20px;");
+        totalFlag = true;
+    }else {
+        $("#totalFooter").attr("style", "display:none;");
+        totalFlag = false;
+    }
 }
 
 function reback() {
-    $.confirm({
-        title: '提示：',
-        content: '确认离开当前页？',
-        buttons: {
-            confirm: {
-                text: '确认',
-                btnClass: 'btn-primary',
-                action: function(){
-                    window.location.href = "/page/gmvplan";
+    if(step != 0) {
+        $.confirm({
+            title: '提示：',
+            content: '确认离开当前页？',
+            buttons: {
+                confirm: {
+                    text: '确认',
+                    btnClass: 'btn-primary',
+                    action: function(){
+                        window.location.href = "/page/gmvplan";
+                    }
+                },
+                cancel: {
+                    text: '关闭'
                 }
-            },
-            cancel: {
-                text: '关闭'
             }
-        }
-    });
+        });
+    }else {
+        window.location.href = "/page/gmvplan";
+    }
 }
-
 function updateDetail() {
     var json = new Array();
     $("input[name='newGmvValue']").each(function() {
         json.push($(this).val());
     });
-    var year = $("#predictDate").val();
-    $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
-        toastr.success("数据更新成功！");
-        setTimeout(function () {
-            $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
-                var val = $(this).find("input").val();
-                $(this).find("input").remove();
-                $(this).text(val);
-            });
-        }, 1500);
-    });
+    var condition = $("input[name='e']:checked").val();
+    if(totalFlag && (condition == undefined)) {
+        toastr.warning("请选择数据变更策略！");
+    }else {
+        $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
+            toastr.success("数据更新成功！");
+            setTimeout(function () {
+                $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
+                    var val = $(this).find("input").val();
+                    $(this).find("input").remove();
+                    $(this).text(val);
+                });
+            }, 1500);
+            $("#totalFooter").attr("style", "display:none;");
+            totalFlag = false;
+            $("input[name='e']").removeAttr("checked");
+        });
+    }
 }

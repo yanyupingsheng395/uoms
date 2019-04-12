@@ -107,7 +107,7 @@ function deleteData(year){
                         }
                         setTimeout(function () {
                             $('#gmvPlanTable').bootstrapTable('refresh');
-                        }, 1500)
+                        }, 1000)
                     });
                 }
             },

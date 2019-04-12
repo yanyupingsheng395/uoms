@@ -81,13 +81,21 @@
                                 <table class="table table-hover table-bordered table-striped" id="planDetailData"></table>
                             </div>
                         </div>
-                        <!--<div class="row" style="margin-top: 10px;">-->
-                            <!--<div class="col-md-12">-->
-                                <!--<p>合计 22,620,02.00 与年度目标总额相差 10,000元</p>-->
-                                <!--<p><span class="mdi mdi-check-circle-outline"></span>&nbsp;保持我目前设置的各月的目标值不变，与年度目标总额的差额更新到总额上</p>-->
-                                <!--<p><span class="mdi mdi-check-circle-outline"></span>&nbsp;不变更年度目标，将与年度目标总额的差额根据权重指数分摊到各月</p>-->
-                            <!--</div>-->
-                        <!--</div>-->
+                        <div class="row" style="margin-top: 20px;display: none;" id="totalFooter">
+                            <div class="col-md-12">
+                                <p> 合计：<span id='totalGmv'></span>元，与年度目标总额相差<span id='totalDiffer'>0</span>元。</p>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="lyear-radio radio-inline">
+                                    <input type="radio" name="e"><span>保持我目前设置的各月的目标值不变，将差额更新到年度总额上</span>
+                                </label>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="lyear-radio radio-inline">
+                                    <input type="radio" name="e"><span>不变更年度总额，将与年度目标总额的差额根据权重指数分摊到各月</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     <div class="row" style="padding-bottom: 20px;">
                         <div class="col-md-12 text-center">
@@ -167,7 +175,7 @@
             }],
             onLoadSuccess: function(){  //加载成功时执行
                 $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
-                    v.innerHTML = "<input type='text' name='newGmvValue' class='form-control' value='"+v.innerText+"'/>";
+                    v.innerHTML = "<input type='text' name='newGmvValue' onchange='totalGmv()' onkeyup=\"value=value.match(/\\d+\\.?\\d{0,2}/,'')\" class='form-control' value='"+v.innerText+"'/>";
                 });
             }
         });
@@ -195,14 +203,37 @@
             json.push($(this).val());
         });
         var year = "[[${year}]]";
-        $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
-            toastr.success("更新成功！");
-            setTimeout(function () {
-                location.href = "/page/gmvplan";
-            }, 1500);
-        });
+        var condition = $("input[name='e']:checked").val();
+        if(totalFlag && (condition == undefined)) {
+            toastr.warning("请选择数据变更策略！");
+        }else {
+            $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
+                toastr.success("数据更新成功！");
+                setTimeout(function () {
+                    location.href = "/page/gmvplan";
+                }, 1500);
+            });
+        }
     }
 
+    var totalFlag = false;
+    function totalGmv() {
+        var total = 0;
+        $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
+            total += parseFloat($(this).find("input").val());
+        });
+        $("#totalGmv").text(total.toFixed(2));
+        var differ = Math.abs(total-parseFloat($("#gmvValue").val())).toFixed(2);
+        $("#totalDiffer").text(differ);
+
+        if(differ != 0 || differ != "0") {
+            $("#totalFooter").attr("style", "display:block;margin-top:20px;");
+            totalFlag = true;
+        }else {
+            $("#totalFooter").attr("style", "display:none;");
+            totalFlag = false;
+        }
+    }
 
 </script>
 </body>
