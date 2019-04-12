@@ -82,4 +82,15 @@ public class GmvPlanController extends BaseController {
         int size = gmvPlanService.checkYear(year);
         return ResponseBo.okWithData(null, size);
     }
+
+    @PostMapping("/deleteData")
+    public ResponseBo deleteData(@RequestParam("year") String year) {
+        try {
+            gmvPlanService.deleteDataByYear(year);
+            return ResponseBo.ok();
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseBo.error();
+        }
+    }
 }

@@ -32,4 +32,8 @@ public interface GmvPlanService extends IService<GmvPlan> {
     void updateDetail(JSONArray jsonArray);
 
     int checkYear(String year);
+
+    void deleteDataByYear(String year);
+
+    GmvPlan getByYear(String year);
 }

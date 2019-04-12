@@ -45,4 +45,12 @@
   <select id="findByYear" resultType="int">
     select count(1) from UO_GMV_PLAN where YEAR_ID = #{year}
  </select>
+
+  <delete id="deleteDataByYear">
+    delete from UO_GMV_PLAN where YEAR_ID = #{year}
+  </delete>
+
+  <select id="getByYear" resultMap="BaseResultMap">
+    select * from UO_GMV_PLAN where YEAR_ID = #{year}
+  </select>
 </mapper>

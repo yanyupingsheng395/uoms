@@ -40,4 +40,8 @@
   <update id="updateDetail">
      update UO_GMV_PLAN_DETAIL t set GMV_VALUE = ${gmvValue} where t.month_id = ${monthId}
   </update>
+
+  <delete id="deleteDataByYear">
+    delete from UO_GMV_PLAN_DETAIL where YEAR_ID = #{year}
+  </delete>
 </mapper>

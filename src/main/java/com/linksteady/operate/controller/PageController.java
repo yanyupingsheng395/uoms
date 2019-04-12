@@ -1,7 +1,9 @@
 package com.linksteady.operate.controller;
 
 import com.linksteady.common.controller.BaseController;
+import com.linksteady.operate.domain.GmvPlan;
 import com.linksteady.operate.domain.StateJudge;
+import com.linksteady.operate.service.GmvPlanService;
 import com.linksteady.operate.service.StateJudgeService;
 import com.linksteady.system.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ public class PageController extends BaseController {
 
     @Autowired
     private StateJudgeService stateJudgeService;
+
+    @Autowired
+    private GmvPlanService gmvPlanService;
 
     @RequestMapping("/index")
     public String index(Model model) {
@@ -71,6 +76,8 @@ public class PageController extends BaseController {
     @RequestMapping("/gmvplan/view")
     public String view(String year, Model model) {
         model.addAttribute("year", year);
+        GmvPlan gmvPlan = gmvPlanService.getByYear(year);
+        model.addAttribute("gmvPlan", gmvPlan);
         return "operate/gmvplan/view";
     }
 
@@ -83,6 +90,8 @@ public class PageController extends BaseController {
     @RequestMapping("/gmvplan/change")
     public String change(String year, Model model) {
         model.addAttribute("year", year);
+        GmvPlan gmvPlan = gmvPlanService.getByYear(year);
+        model.addAttribute("gmvPlan", gmvPlan);
         return "operate/gmvplan/change";
     }
 
@@ -96,6 +105,8 @@ public class PageController extends BaseController {
     @RequestMapping("/gmvplan/edit")
     public String edit(String year, Model model) {
         model.addAttribute("year", year);
+        GmvPlan gmvPlan = gmvPlanService.getByYear(year);
+        model.addAttribute("gmvPlan", gmvPlan);
         return "operate/gmvplan/edit";
     }
 

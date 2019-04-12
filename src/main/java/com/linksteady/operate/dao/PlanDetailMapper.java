@@ -13,4 +13,6 @@ public interface PlanDetailMapper extends MyMapper<PlanDetail> {
     void addPlanDetails(@Param("planDetailList") List<PlanDetail> planDetailList);
 
     void updateDetail(@Param("planDetail") PlanDetail planDetail);
+
+    void deleteDataByYear(@Param("year") String year);
 }

@@ -13,4 +13,6 @@ public interface GmvPlanMapper extends MyMapper<GmvPlan> {
     Long getPlanId();
     int getDataCount();
     int findByYear(@Param("year") String year);
+    void deleteDataByYear(@Param("year") String year);
+    GmvPlan getByYear(@Param("year") String year);
 }

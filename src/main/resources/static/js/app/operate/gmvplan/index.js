@@ -1,3 +1,12 @@
+toastr.options = {
+    "closeButton": true,
+    "progressBar": true,
+    "positionClass": "toast-top-center",
+    "preventDuplicates": true,
+    "timeOut": 1500,
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
 $(function () {
     var settings = {
         url: "/gmvplan/list",
@@ -45,7 +54,7 @@ $(function () {
             formatter: function (value, row, index) {
                 var year = row.yearId;
                 if (row.status == "D") {
-                    return "<div class='btn btn-success btn-sm' onclick='executeData("+year+")'><i class='mdi mdi-check'></i>执行</div>&nbsp;<a class='btn btn-primary btn-sm' onclick='viewData(\"+year+\")'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-warning btn-sm' onclick='modifyData("+year+")'><i class='mdi mdi-pencil'></i>修改</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='deleteData("+year+")'><i class='mdi mdi-window-close'></i>删除</div>";
+                    return "<div class='btn btn-success btn-sm' onclick='executeData("+year+")'><i class='mdi mdi-check'></i>执行</div>&nbsp;<a class='btn btn-primary btn-sm' onclick='viewData("+year+")'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-warning btn-sm' onclick='modifyData("+year+")'><i class='mdi mdi-pencil'></i>修改</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='deleteData("+year+")'><i class='mdi mdi-window-close'></i>删除</div>";
                 }else if (row.status == "C") {
                     return "<a class='btn btn-primary btn-sm' onclick='viewData("+year+")'><i class='mdi mdi-eye'></i>查看</a>";
                 } else if (row.status == "E") {
@@ -84,11 +93,23 @@ function changeData(year){
 function deleteData(year){
     $.confirm({
         title: '提示：',
-        content: '是否删除目标数据？',
+        content: '确认删除该记录？',
         buttons: {
             confirm: {
                 text: '确认',
-                btnClass: 'btn-blue',
+                btnClass: 'btn-danger',
+                action: function(){
+                    $.post("/gmvplan/deleteData", {year: year},function (r) {
+                        if(r.code == 200) {
+                            toastr.success("删除成功！");
+                        }else {
+                            toastr.error("删除失败！");
+                        }
+                        setTimeout(function () {
+                            $('#gmvPlanTable').bootstrapTable('refresh');
+                        }, 1500)
+                    });
+                }
             },
             cancel: {
                 text: '取消'

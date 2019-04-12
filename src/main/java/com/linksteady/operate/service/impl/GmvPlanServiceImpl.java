@@ -121,6 +121,18 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
         return gmvPlanMapper.findByYear(year);
     }
 
+    @Override
+    @Transactional
+    public void deleteDataByYear(String year) {
+        gmvPlanMapper.deleteDataByYear(year);
+        planDetailMapper.deleteDataByYear(year);
+    }
+
+    @Override
+    public GmvPlan getByYear(String year) {
+        return gmvPlanMapper.getByYear(year);
+    }
+
     private void addPlanDetail(String year, String gmv, String rate, Long planId) {
         List<PlanDetail> planDetailList = new ArrayList<>();
         for(int i=1; i<=12; i++) {
