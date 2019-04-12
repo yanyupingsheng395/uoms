@@ -22,6 +22,7 @@
     SELECT * FROM(
     SELECT A.*,ROWNUM RN FROM
       (SELECT
+         PLAN_ID,
          YEAR_ID,
          GMV_TARGET,
          TARGET_RATE,
@@ -53,4 +54,8 @@
   <select id="getByYear" resultMap="BaseResultMap">
     select * from UO_GMV_PLAN where YEAR_ID = #{year}
   </select>
+
+  <update id="updateStatus">
+      update UO_GMV_PLAN set STATUS = 'E' where PLAN_ID = #{id}
+  </update>
 </mapper>

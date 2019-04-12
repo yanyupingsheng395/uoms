@@ -11,6 +11,7 @@
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
 </head>
 
@@ -37,19 +38,19 @@
                                     <div class="form-group" style="margin-top: 20px;">
                                         <label class="col-md-3 control-label" for="yearId">目标年份：</label>
                                         <div class="col-md-5">
-                                            <input disabled class="form-control" type="text" id="yearId" name="yearId" data-th-value="${year}"/>
+                                            <input class="form-control" disabled type="text" id="yearId" name="yearId" data-th-value="${year}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-md-3 control-label" for="gmvValue">GMV目标值：</label>
+                                        <label class="col-md-3 control-label" for="gmvValue">GMV目标值（元）：</label>
                                         <div class="col-md-5">
-                                            <input disabled class="form-control" type="text" id="gmvValue" name="gmvValue" value="50"/>
+                                            <input class="form-control" disabled="disabled" type="text" id="gmvValue" name="gmvValue" th:value="${gmvPlan.gmvTarget}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-md-3 control-label" for="gmvRate">目标相比上年增长率：</label>
+                                        <label class="col-md-3 control-label" for="gmvRate">目标相比上年增长率（%）：</label>
                                         <div class="col-md-5">
-                                            <input disabled="disabled" class="form-control" type="text" id="gmvRate" name="gmvRate" value="0.25%"/>
+                                            <input class="form-control" disabled type="text" id="gmvRate" name="gmvRate" th:value="${gmvPlan.targetRate}"/>
                                         </div>
                                     </div>
                                 </form>
@@ -59,23 +60,28 @@
                         <div class="row">
                             <div class="col-md-12" style="margin-top: 40px;">
                                 <div style="float:left;"><h5>详细数据</h5></div>
-                                <div class="text-right" style="margin-top: 10px;">
-                                    <button class="btn btn-success" onclick="updateDetail()">保存</button>
+                                <div class="text-right" style="margin-top: 10px;margin-bottom: 10px;">
+                                    <button class="btn btn-secondary" onclick="editPlanDetail_()"><i class="mdi mdi-lead-pencil"></i>编辑</button>
+                                    <button id="saveBtn" class="btn btn-primary" disabled onclick="updateDetail()"><i class="mdi mdi-link"></i>保存</button>
+                                    <a class="btn btn-default" onclick="reback_edit()"><i class="mdi mdi-redo"></i>返回</a>
                                 </div>
                                 <table class="table table-hover table-bordered table-striped" id="planDetailData"></table>
                             </div>
                         </div>
-                        <!--<div class="row" style="margin-top: 10px;">-->
-                            <!--<div class="col-md-12">-->
-                                <!--<p>合计 22,620,02.00 与年度目标总额相差 10,000元</p>-->
-                                <!--<p><span class="mdi mdi-check-circle-outline"></span>&nbsp;保持我目前设置的各月的目标值不变，与年度目标总额的差额更新到总额上</p>-->
-                                <!--<p><span class="mdi mdi-check-circle-outline"></span>&nbsp;不变更年度目标，将与年度目标总额的差额根据权重指数分摊到各月</p>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    </div>
-                    <div class="row" style="padding-bottom: 20px;">
-                        <div class="col-md-12 text-center">
-                            <a class="btn btn-default" href="/page/gmvplan">返回</a>
+                        <div class="row" style="margin-top: 20px;display: none;" id="totalFooter">
+                            <div class="col-md-12">
+                                <p> 合计：<span id='totalGmv'></span>元，与年度目标总额相差<span id='totalDiffer'>0</span>元。</p>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="lyear-radio radio-inline">
+                                    <input type="radio" name="e"><span>保持我目前设置的各月的目标值不变，将差额更新到年度总额上</span>
+                                </label>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="lyear-radio radio-inline">
+                                    <input type="radio" name="e"><span>不变更年度总额，将与年度目标总额的差额根据权重指数分摊到未来各月</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,55 +91,40 @@
 </div>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
-<script data-th-src="@{/js/app/operate/gmvplan/index.js}"></script>
+<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<script data-th-src="@{/js/app/operate/gmvplan/common.js}"></script>
 <script>
     var year = "[[${year}]]";
+    getYearHistory();
     getPlanDetail();
-    function getPlanDetail() {
-        $('#planDetailData').bootstrapTable({
-            url: '/gmvplan/getPlanDetail?year=' + year,
-            striped: true,
-            uniqueId: 'attrValue',
-            columns: [{
-                title: '月份',
-                field: 'monthId'
-            },{
-                title: 'GMV值',
-                field: 'gmvValue'
-            },{
-                title: 'GMV目标占全年比例',
-                field: 'gmvPct',
-                formatter: function (value, row, index) {
-                    return value + "%";
-                }
-            },{
-                title: '上年同月GMV值',
-                field: 'gmvTb'
-            },{
-                title: '同比上年同比增长额',
-                field: 'gmvTbRate',
-                formatter: function (value, row, index) {
-                    return value + "%";
-                }
-            }],
-            onLoadSuccess: function(){  //加载成功时执行
-                $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
-                    v.innerHTML = "<input type='text' name='newGmvValue' class='form-control' value='"+v.innerText+"'/>";
-                });
+    function editPlanDetail_() {
+        $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
+            if (k > 3) {
+                v.innerHTML = "<input type='text' name='newGmvValue' onchange='totalGmv_()' class='form-control' value='"+v.innerText+"' onkeyup=\"value=value.match(/\\d+\\.?\\d{0,2}/,'')\"/>";
             }
         });
+        $("#saveBtn").removeAttr("disabled");
     }
+    function totalGmv_() {
+        var total = 0;
+        $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
+            if(k <= 3) {
+                total += parseFloat($(this).text());
+            }else {
+                total += parseFloat($(this).find("input").val());
+            }
+        });
+        $("#totalGmv").text(total.toFixed(2));
+        var differ = Math.abs(total-parseFloat($("#gmvValue").val())).toFixed(2);
+        $("#totalDiffer").text(differ);
 
-    function updateDetail() {
-        var json = new Array();
-        $("input[name='newGmvValue']").each(function() {
-            json.push($(this).val());
-        });
-        var year = "[[${year}]]";
-        $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
-            location.href = "/page/gmvplan";
-            alert("更新成功！");
-        });
+        if(differ != 0 || differ != "0") {
+            $("#totalFooter").attr("style", "display:block;margin-top:20px;");
+            totalFlag = true;
+        }else {
+            $("#totalFooter").attr("style", "display:none;");
+            totalFlag = false;
+        }
     }
 </script>
 </body>

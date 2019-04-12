@@ -1,3 +1,4 @@
+var flag = false;
 toastr.options = {
     "closeButton": true,
     "progressBar": true,
@@ -7,7 +8,8 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 };
-function getYearHistory(year) {
+
+function getYearHistory() {
     $('#historyDataTable').bootstrapTable({
         url: '/gmvplan/getYearHistory?year=' + year,
         striped: true,
@@ -31,7 +33,23 @@ function getYearHistory(year) {
     });
 }
 
-function getPlanDetail(year) {
+
+function weight() {
+    $.post("/gmvplan/getWeightIndex", {"year": year}, function (r) {
+        var htmlCode1 = "<tr>";
+        var htmlCode2 = "<tr>";
+        $.each(r, function (k, v) {
+            htmlCode1 += "<td>"+ v.monthId +"</td>";
+            htmlCode2 += "<td>"+ v.indexValue +"</td>";
+        });
+        htmlCode1 += "</tr>";
+        htmlCode2 += "</tr>";
+        $("#weightData").html("").html(htmlCode1 + htmlCode2);
+        $("#weightData").find("tr:eq(0)").addClass("active");
+    });
+}
+
+function getPlanDetail() {
     $('#planDetailData').bootstrapTable({
         url: '/gmvplan/getPlanDetail?year=' + year,
         striped: true,
@@ -61,36 +79,87 @@ function getPlanDetail(year) {
     });
 }
 
-function weight(year) {
-    $.post("/gmvplan/getWeightIndex", {"year": year}, function (r) {
-        var htmlCode1 = "<tr>";
-        var htmlCode2 = "<tr>";
-        $.each(r, function (k, v) {
-            htmlCode1 += "<td>"+ v.monthId +"</td>";
-            htmlCode2 += "<td>"+ v.indexValue +"</td>";
-        });
-        htmlCode1 += "</tr>";
-        htmlCode2 += "</tr>";
-        $("#weightData").html("").html(htmlCode1 + htmlCode2);
-        $("#weightData").find("tr:eq(0)").addClass("active");
+
+// 编辑GMV值
+function editPlanDetail() {
+    $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
+        v.innerHTML = "<input type='text' name='newGmvValue' onchange='totalGmv()' class='form-control' value='"+v.innerText+"' onkeyup=\"value=value.match(/\\d+\\.?\\d{0,2}/,'')\"/>";
     });
+    $("#saveBtn").removeAttr("disabled");
 }
 
-
-// 修改用到的
 var totalFlag = false;
+function totalGmv() {
+    var total = 0;
+    $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
+        total += parseFloat($(this).find("input").val());
+    });
+    $("#totalGmv").text(total.toFixed(2));
+    var differ = Math.abs(total-parseFloat($("#gmvValue").val())).toFixed(2);
+    $("#totalDiffer").text(differ);
+
+    if(differ != 0 || differ != "0") {
+        $("#totalFooter").attr("style", "display:block;margin-top:20px;");
+        totalFlag = true;
+    }else {
+        $("#totalFooter").attr("style", "display:none;");
+        totalFlag = false;
+    }
+}
+
+function reback() {
+    if(step != 0) {
+        $.confirm({
+            title: '提示：',
+            content: '确认离开当前页？',
+            buttons: {
+                confirm: {
+                    text: '确认',
+                    btnClass: 'btn-primary',
+                    action: function(){
+                        window.location.href = "/page/gmvplan";
+                    }
+                },
+                cancel: {
+                    text: '关闭'
+                }
+            }
+        });
+    }else {
+        window.location.href = "/page/gmvplan";
+    }
+}
+
+function reback_edit() {
+    $.confirm({
+        title: '提示：',
+        content: '确认离开当前页？',
+        buttons: {
+            confirm: {
+                text: '确认',
+                btnClass: 'btn-primary',
+                action: function(){
+                    window.location.href = "/page/gmvplan";
+                }
+            },
+            cancel: {
+                text: '关闭'
+            }
+        }
+    });
+}
 function updateDetail() {
     var json = new Array();
     $("input[name='newGmvValue']").each(function() {
         json.push($(this).val());
     });
-    var year = $("#predictDate").val();
     var condition = $("input[name='e']:checked").val();
     if(totalFlag && (condition == undefined)) {
         toastr.warning("请选择数据变更策略！");
     }else {
+        $("#saveBtn").attr("disabled","disabled");
         $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
-            toastr.success("数据更新成功！");
+            toastr.success("数据保存成功！");
             setTimeout(function () {
                 $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
                     var val = $(this).find("input").val();

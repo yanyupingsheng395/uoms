@@ -36,4 +36,6 @@ public interface GmvPlanService extends IService<GmvPlan> {
     void deleteDataByYear(String year);
 
     GmvPlan getByYear(String year);
+
+    void execute(String id);
 }

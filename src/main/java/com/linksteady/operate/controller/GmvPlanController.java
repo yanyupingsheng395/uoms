@@ -93,4 +93,15 @@ public class GmvPlanController extends BaseController {
             return ResponseBo.error();
         }
     }
+
+    @PostMapping("/execute")
+    public ResponseBo execute(@RequestParam("id") String id) {
+        try {
+            gmvPlanService.execute(id);
+            return ResponseBo.ok();
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseBo.error();
+        }
+    }
 }

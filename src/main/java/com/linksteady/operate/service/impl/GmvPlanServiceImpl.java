@@ -151,6 +151,11 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
         planDetailMapper.addPlanDetails(planDetailList);
     }
 
+    @Override
+    public void execute(String id) {
+        gmvPlanMapper.updateStatus(id);
+    }
+
     private void addPlan(String year, String gmv, String rate, Long planId) {
         GmvPlan gmvPlan = new GmvPlan();
         gmvPlan.setYearId(Long.valueOf(year));

@@ -11,6 +11,7 @@
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
 </head>
 
@@ -76,7 +77,9 @@
                             <div class="col-md-12" style="margin-top: 40px;">
                                 <div style="float:left;"><h5>详细数据</h5></div>
                                 <div class="text-right" style="margin-top: 10px;margin-bottom: 10px;">
-                                    <button class="btn btn-info" onclick="updateDetail()"><i class="mdi mdi-redo"></i>更新</button>
+                                    <button class="btn btn-secondary" onclick="editPlanDetail()"><i class="mdi mdi-lead-pencil"></i>编辑</button>
+                                    <button id="saveBtn" class="btn btn-primary" disabled onclick="updateDetail()"><i class="mdi mdi-link"></i>保存</button>
+                                    <a class="btn btn-default" onclick="reback_edit()"><i class="mdi mdi-redo"></i>返回</a>
                                 </div>
                                 <table class="table table-hover table-bordered table-striped" id="planDetailData"></table>
                             </div>
@@ -97,11 +100,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="padding-bottom: 20px;">
-                        <div class="col-md-12 text-center">
-                            <a class="btn btn-default" href="/page/gmvplan">返回</a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </main>
@@ -109,132 +107,13 @@
 </div>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
-<script data-th-src="@{/js/app/operate/gmvplan/index.js}"></script>
+<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<script data-th-src="@{/js/app/operate/gmvplan/common.js}"></script>
 <script>
     var year = "[[${year}]]";
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-center",
-        "preventDuplicates": true,
-        "timeOut": 1500,
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    };
     getYearHistory();
-    function getYearHistory() {
-        $('#historyDataTable').bootstrapTable({
-            url: '/gmvplan/getYearHistory?year=' + year,
-            striped: true,
-            uniqueId: 'attrValue',
-            columns: [{
-                title: '年份',
-                field: 'yearId'
-            },{
-                title: 'GMV值（元）',
-                field: 'gmvValue',
-                formatter: function (value, row, index) {
-                    return parseFloat(value).toLocaleString();
-                }
-            },{
-                title: 'GMV增长率',
-                field: 'gmvRate',
-                formatter: function (value, row, index) {
-                    return value.toFixed(2) + "%";
-                }
-            }]
-        });
-    }
     getPlanDetail();
-    function getPlanDetail() {
-        $('#planDetailData').bootstrapTable({
-            url: '/gmvplan/getPlanDetail?year=' + year,
-            striped: true,
-            uniqueId: 'attrValue',
-            columns: [{
-                title: '月份',
-                field: 'monthId'
-            },{
-                title: 'GMV值',
-                field: 'gmvValue'
-            },{
-                title: 'GMV目标占全年比例',
-                field: 'gmvPct',
-                formatter: function (value, row, index) {
-                    return value + "%";
-                }
-            },{
-                title: '上年同月GMV值',
-                field: 'gmvTb'
-            },{
-                title: '同比上年同比增长额',
-                field: 'gmvTbRate',
-                formatter: function (value, row, index) {
-                    return value + "%";
-                }
-            }],
-            onLoadSuccess: function(){  //加载成功时执行
-                $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
-                    v.innerHTML = "<input type='text' name='newGmvValue' onchange='totalGmv()' onkeyup=\"value=value.match(/\\d+\\.?\\d{0,2}/,'')\" class='form-control' value='"+v.innerText+"'/>";
-                });
-            }
-        });
-    }
-
     weight();
-    function weight() {
-        $.post("/gmvplan/getWeightIndex", {"year": year}, function (r) {
-            var htmlCode1 = "<tr>";
-            var htmlCode2 = "<tr>";
-            $.each(r, function (k, v) {
-                htmlCode1 += "<td>"+ v.monthId +"</td>";
-                htmlCode2 += "<td>"+ v.indexValue +"</td>";
-            });
-            htmlCode1 += "</tr>";
-            htmlCode2 += "</tr>";
-            $("#weightData").html("").html(htmlCode1 + htmlCode2);
-            $("#weightData").find("tr:eq(0)").addClass("active");
-        });
-    }
-
-    function updateDetail() {
-        var json = new Array();
-        $("input[name='newGmvValue']").each(function() {
-            json.push($(this).val());
-        });
-        var year = "[[${year}]]";
-        var condition = $("input[name='e']:checked").val();
-        if(totalFlag && (condition == undefined)) {
-            toastr.warning("请选择数据变更策略！");
-        }else {
-            $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json)}, function(r) {
-                toastr.success("数据更新成功！");
-                setTimeout(function () {
-                    location.href = "/page/gmvplan";
-                }, 1500);
-            });
-        }
-    }
-
-    var totalFlag = false;
-    function totalGmv() {
-        var total = 0;
-        $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
-            total += parseFloat($(this).find("input").val());
-        });
-        $("#totalGmv").text(total.toFixed(2));
-        var differ = Math.abs(total-parseFloat($("#gmvValue").val())).toFixed(2);
-        $("#totalDiffer").text(differ);
-
-        if(differ != 0 || differ != "0") {
-            $("#totalFooter").attr("style", "display:block;margin-top:20px;");
-            totalFlag = true;
-        }else {
-            $("#totalFooter").attr("style", "display:none;");
-            totalFlag = false;
-        }
-    }
-
 </script>
 </body>
 </html>

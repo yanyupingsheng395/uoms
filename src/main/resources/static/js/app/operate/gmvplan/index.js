@@ -24,6 +24,10 @@ $(function () {
             };
         },
         columns: [{
+            field: 'planId',
+            title: 'ID',
+            visible: false
+        },{
             field: 'yearId',
             title: '年份'
         }, {
@@ -53,8 +57,9 @@ $(function () {
             title: '操作',
             formatter: function (value, row, index) {
                 var year = row.yearId;
+                var id = row.planId;
                 if (row.status == "D") {
-                    return "<div class='btn btn-success btn-sm' onclick='executeData("+year+")'><i class='mdi mdi-check'></i>执行</div>&nbsp;<a class='btn btn-primary btn-sm' onclick='viewData("+year+")'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-warning btn-sm' onclick='modifyData("+year+")'><i class='mdi mdi-pencil'></i>修改</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='deleteData("+year+")'><i class='mdi mdi-window-close'></i>删除</div>";
+                    return "<div class='btn btn-success btn-sm' onclick='executeData("+id+")'><i class='mdi mdi-check'></i>执行</div>&nbsp;<a class='btn btn-primary btn-sm' onclick='viewData("+year+")'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-warning btn-sm' onclick='modifyData("+year+")'><i class='mdi mdi-pencil'></i>修改</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='deleteData("+year+")'><i class='mdi mdi-window-close'></i>删除</div>";
                 }else if (row.status == "C") {
                     return "<a class='btn btn-primary btn-sm' onclick='viewData("+year+")'><i class='mdi mdi-eye'></i>查看</a>";
                 } else if (row.status == "E") {
@@ -66,14 +71,19 @@ $(function () {
     $('#gmvPlanTable').bootstrapTable(settings);
 });
 
-function executeData(year){
+function executeData(id){
     $.confirm({
         title: '提示：',
         content: '确定要执行此运营目标?执行状态的运营目标将会滚动计算，不允许再删除！',
         buttons: {
             confirm: {
                 text: '确认',
-                btnClass: 'btn-blue'
+                btnClass: 'btn-blue',
+                action: function(){
+                    $.post("/gmvplan/execute", {id: id}, function (r) {
+                        $('#gmvPlanTable').bootstrapTable('refresh');
+                    });
+                }
             },
             cancel: {
                 text: '取消'
