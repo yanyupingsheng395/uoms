@@ -4,10 +4,10 @@
     <select id="getOpDayList" resultType="map">
         SELECT * FROM(
                          SELECT A.*,ROWNUM RN FROM
-                             (select HEAD_ID, DESCR, INSERT_DT, TOUCH_DT
+                             (select HEAD_ID, DESCR, TOTAL_NUM,INSERT_DT, to_char(TOUCH_DT,'YYYY-MM-DD') TOUCH_DT
                               from UO_OP_DAILY_HEADER  WHERE 1=1
                                 <if test="daywid != null and daywid != ''">
-                                    and to_char(touch_dt,'YYYYMMDD') = #{daywid}
+                                    and to_char(touch_dt,'YYYY-MM-DD') = #{daywid}
                                 </if>
                              ORDER BY TOUCH_DT DESC) A  WHERE ROWNUM &lt;=#{endRow}
                      ) WHERE RN &gt;=#{startRow}
@@ -15,10 +15,116 @@
 
     <select id="getOpDayListCount" resultType="int" parameterType="string">
         select count(*) from UO_OP_DAILY_HEADER t where 1=1
-        <if test="daywid != null and daywid != ''">
-            and to_char(t.touch_dt,'YYYYMMDD') = #{daywid}
+        <if test="_parameter != null and _parameter != ''">
+            and to_char(t.touch_dt,'YYYY-MM-DD') = #{daywid}
         </if>
     </select>
+
+    <select id="getOpDayUserCountInfo" resultType="Integer">
+        select TOTAL_NUM from UO_OP_DAILY_HEADER  WHERE to_char(touch_dt,'YYYY-MM-DD') = #{daywid}
+    </select>
+
+    <select id="getOpDayDetailList" resultType="map">
+        SELECT * FROM(
+           SELECT A.*,ROWNUM RN FROM
+          (
+            SELECT
+                   T.USER_ID,
+                   T.PRODUCT_NAME,
+                   T.PRODUCT_ID,
+                   T.PRODUCT_CODE,
+                   T.DISCOUNT_EFFORT,
+                   T.COUPON,
+                   T.THRESHOLD,
+                   T.GROUP_TYPE
+            FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER H
+            WHERE H.HEAD_ID = T.HEADER_ID
+              AND TO_CHAR(H.TOUCH_DT, 'YYYY-MM-DD') = #{daywid}
+
+        ) A  WHERE ROWNUM &lt;=#{endRow}
+        ) WHERE RN &gt;=#{startRow}
+    </select>
+
+    <select id="getOpDayDetailListCount" resultType="int">
+        SELECT COUNT(T.DAILY_DETAIL_ID)
+        FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER H
+        WHERE H.HEAD_ID = T.HEADER_ID
+          AND TO_CHAR(H.TOUCH_DT, 'YYYY-MM-DD') = #{daywid}
+    </select>
+
+    <select id="getOpDayDetailAllList" resultType="map">
+        SELECT
+            T.USER_ID,
+            T.PRODUCT_NAME,
+            T.PRODUCT_ID,
+            T.PRODUCT_CODE,
+            T.DISCOUNT_EFFORT,
+            T.COUPON,
+            T.THRESHOLD,
+            T.GROUP_TYPE,
+            '满'||T.THRESHOLD||'减'||T.COUPON COUPON_DISPLAY
+        FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER H
+        WHERE H.HEAD_ID = T.HEADER_ID
+          AND TO_CHAR(H.TOUCH_DT, 'YYYY-MM-DD') = #{daywid}
+    </select>
+
+    <select id="getPeriodHeaderList" resultType="map">
+        SELECT * FROM(
+        SELECT A.*,ROWNUM RN FROM
+        (SELECT T.PERIOD_HEADER_ID,
+                T.CURRENT_USER_COUNT,
+                T.PERIOD_TASK_NAME,
+                TO_CHAR(T.PERIOD_START_DT,'YYYY-mm-dd') PERIOD_START_DT,
+                TO_CHAR(T.PERIOD_END_DT,'YYYY-mm-dd') PERIOD_END_DT,
+                T.CREATE_DT
+         FROM UO_OP_PERIOD T
+         ORDER BY T.PERIOD_HEADER_ID DESC ) A  WHERE ROWNUM &lt;=#{endRow}
+        ) WHERE RN &gt;=#{startRow}
+    </select>
+
+    <select id="getPeriodListCount" resultType="int">
+        SELECT COUNT(*) FROM UO_OP_PERIOD T
+    </select>
+
+    <insert id="savePeriodHeaderInfo">
+        <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="periodHeaderId">
+               SELECT UO_OP_PERIOD_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO UO_OP_PERIOD(
+        PERIOD_HEADER_ID,
+        CURRENT_USER_COUNT,
+        PERIOD_TASK_NAME,
+        PERIOD_START_DT,
+        PERIOD_END_DT,
+        CREATE_DT)
+        values(#{periodHeaderId}, 0, #{periodName},to_date(#{startDt},'yyyy-mm-dd'), to_date(#{endDt},'yyyy-mm-dd'), sysdate)
+    </insert>
+
+    <select id="getPeriodUserList" resultType="map">
+        SELECT * FROM(
+        SELECT A.*,ROWNUM RN FROM
+        (
+            SELECT T.PRODUCT_NAME,
+                   T.PERIOD_DETAIL_ID,
+                   T.PERIOD_HEADER_ID,
+                   T.PRODUCT_ID,
+                   T.PRODUCT_CODE,
+                   T.USER_ID,
+                   T.COUPON,
+                   T.THRESHOLD,
+                   T.DISCOUNT_EFFORT,
+                   T.GROUP_TYPE,
+                   '满' || T.THRESHOLD || '减' || T.COUPON COUPON_DISPLAY
+            FROM UO_OP_PERIOD_DETAIL T
+            WHERE T.PERIOD_HEADER_ID =#{headerId}
+            ) A  WHERE ROWNUM &lt;=#{endRow}
+        ) WHERE RN &gt;=#{startRow}
+    </select>
+
+    <select id="getPeriodUserListCount" resultType="int">
+        SELECT COUNT(*) FROM UO_OP_PERIOD_DETAIL T WHERE T.PERIOD_HEADER_ID=#{headerId}
+    </select>
+
 
 
  </mapper>
