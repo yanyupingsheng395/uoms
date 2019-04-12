@@ -209,6 +209,7 @@ function editPlanDetail() {
     $("#planDetailData tbody tr").find("td:eq(1)").each(function (k,v) {
         v.innerHTML = "<input type='text' name='newGmvValue' onchange='totalGmv()' class='form-control' value='"+v.innerText+"' onkeyup=\"value=value.match(/\\d+\\.?\\d{0,2}/,'')\"/>";
     });
+    $("#saveBtn").removeAttr("disabled");
 }
 
 var totalFlag = false;
@@ -253,6 +254,7 @@ function reback() {
     }
 }
 function updateDetail() {
+    $("#saveBtn").attr("disabled","disabled");
     var json = new Array();
     $("input[name='newGmvValue']").each(function() {
         json.push($(this).val());
