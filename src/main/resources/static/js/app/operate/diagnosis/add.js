@@ -90,8 +90,8 @@ function beforeNext(dom) {
         $("#step1").attr("style", "display:none;");
         $("#step2").attr("style", "display:block;");
         $(dom).remove();
-        createRootNode();
         diagId = r.data;
+        createRootNode();
     });
 }
 
@@ -726,6 +726,8 @@ function createRootNode() {
     };
     jm = jsMind.show(options,mind);
     addEventListenerOfNode();
+
+    saveNode("-1");
 }
 
 // 仅过滤条件
