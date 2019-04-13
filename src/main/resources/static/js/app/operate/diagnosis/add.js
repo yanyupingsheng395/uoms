@@ -346,7 +346,11 @@ function modalDetailBefore() {
         }
         code += "</td></tr>";
     });
-    $("#dataTableDetail").html("").html(code);
+    if(code == "") {
+        $("#dataTableDetail").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
+    }else {
+        $("#dataTableDetail").html("").html(code);
+    }
 }
 
 // 加法条件
@@ -864,7 +868,7 @@ function getKpiComb(code) {
     $.get("/progress/getKpiComb", {code: code}, function (r) {
         $("#currentNodeId").val(r.data.k);
 
-        var code = "<option value='"+r.data.k+"'>"+r.data.v+"</option>";
+        var code = "<option value='"+r.data.k+"'>" + r.data.v + "</option>";
         $("#op1").html("").html(code);
         $('#op1').selectpicker('refresh');
     });
@@ -885,6 +889,16 @@ function getFormula(kpiCode) {
 function addEventListenerOfNode() {
     // 注册鼠标右键事件
     $("jmnode").mousedown(function (event) {
+
+        // 动态设置节点为选中状态，参考api的mousedown_handle实现
+        var element = event.target;
+        var nodeid = jm.view.get_binded_nodeid(element);
+        if(!!nodeid) {
+            jm.select_node(nodeid);
+        }else {
+            jm.select_clear();
+        }
+
         var event = event || window.event;
         var e = document.getElementById("operateBtns");
         if(event.button == "2"){
@@ -893,7 +907,6 @@ function addEventListenerOfNode() {
             }else {
                 $("#condition0").attr("style", "display:block;");
             }
-
             e.style.top = event.pageY+'px';
             e.style.left = event.pageX+'px';
             e.style.display = 'block';
