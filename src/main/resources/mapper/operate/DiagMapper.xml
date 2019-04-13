@@ -10,12 +10,13 @@
     <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
     <result column="BEGIN_DT" jdbcType="VARCHAR" property="beginDt" />
     <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
+    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt"></result>
   </resultMap>
 
   <select id="getList" resultMap="BaseResultMap">
     select * from (select ROWNUM rn, t.* from
-    (select DIAG_ID, DIAG_NAME, PERIOD_TYPE, BEGIN_DT, END_DT  from UO_DIAG_LIST
-      order by DIAG_ID DESC ) t where ROWNUM &lt;=#{endRow}) where rn &gt;=#{startRow}
+    (select DIAG_ID, DIAG_NAME, PERIOD_TYPE, BEGIN_DT, END_DT, CREATE_DT  from UO_DIAG_LIST
+      order by CREATE_DT DESC ) t where ROWNUM &lt;=#{endRow}) where rn &gt;=#{startRow}
   </select>
 
   <select id="getTotalCount" resultType="Long">
@@ -26,8 +27,8 @@
     <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="diagId">
       select seq_diag_id.nextval from dual
     </selectKey>
-    insert into UO_DIAG_LIST(DIAG_ID, DIAG_NAME, PERIOD_TYPE, BEGIN_DT, END_DT)
-    values(#{diagId}, #{diagName}, #{periodType}, #{beginDt}, #{endDt})
+    insert into UO_DIAG_LIST(DIAG_ID, DIAG_NAME, PERIOD_TYPE, BEGIN_DT, END_DT, CREATE_DT)
+    values(#{diagId}, #{diagName}, #{periodType}, #{beginDt}, #{endDt}, #{createDt})
   </insert>
 
   <select id="findByDiagId" resultMap="BaseResultMap">

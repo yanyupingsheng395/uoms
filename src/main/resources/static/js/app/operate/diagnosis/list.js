@@ -35,6 +35,9 @@ $(function () {
             field: 'endDt',
             title: '周期结束时间'
         }, {
+            field: 'createDt',
+            title: '创建时间'
+        }, {
             filed: '#',
             title: '操作',
             formatter: function (value, row, index) {

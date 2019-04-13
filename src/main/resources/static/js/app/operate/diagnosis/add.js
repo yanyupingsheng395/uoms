@@ -95,23 +95,23 @@ function beforeNext(dom) {
     });
 }
 
-
-
 // 加入诊断
 function addCondition() {
     var methodId = $("#op2 option:selected").val();
-    if(methodId == 0) { // 加法
+    if(methodId == "0") { // 加法
         condition0();
-    }
-    if(methodId == 1) { // 乘法
+        // 隐藏模态框
+        $("#nodeAddModal").modal('hide');
+    }else if(methodId == "1") { // 乘法
         condition1();
-    }
-    if(methodId == 2) { // 仅过滤
+        // 隐藏模态框
+    }else if(methodId == "2") { // 仅过滤
         condition2();
+    }else if(methodId == ""){
+        toastr.warning("请选择诊断方式！");
     }
-    // 隐藏模态框
-    $("#nodeAddModal").modal('hide');
 }
+
 function resetTableData() {
     $("#dataTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
 }
@@ -144,7 +144,7 @@ function getValueList(code) {
     });
 }
 
-// 保存节点信息
+// 保存所有节点信息
 function saveNodes() {
     var nodeList = [];
     var rootNode = jm.get_root();
@@ -225,12 +225,15 @@ function modalBefore() {
     $("#add_condition").attr("style", "display:none;");
 
     resetTableData();
+    // 获取父节点条件数据
     var code = getParentCondition();
     if(code == "") {
         $("#dataTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
     }else {
         $("#dataTable").html("").html(code);
     }
+
+    conditionVal = new Array();
 }
 
 function alarmFlag(dom) {
@@ -254,7 +257,7 @@ function getParentCondition() {
         var tmp = v.split(":");
         code += "<tr><td style='text-align: left;'>" + tmp[1].trim() + ":";
         code += tmp[2].trim();
-        code += "<input type='hidden' value='"+tmp[0].trim()+"'></td></tr>";
+        code += "<input type='hidden' name='condition' value='"+tmp[0].trim()+"'><input name='inheritFlag' type='hidden' value='Y'></td><td></td></tr>";
     });
     return code;
 }
@@ -280,43 +283,47 @@ var conditionVal = new Array();
 
 // 增加条件
 function selectedCondition() {
-    var arr = $("#op6").selectpicker('val');
-    var condition = $("#op5").find("option:selected").text();
-    var val = $("#op5").find("option:selected").val();
-    var code = "<tr><td style='text-align: left;'>" + condition + ":";
-    for(var i=0;i<arr.length;i++) {
-        var t = $("#op6").find("option[value='"+arr[i]+"']").text();
-        code += t + ",";
-    }
-    code = code.substring(0, code.length - 1);
-    code += "<input type='hidden' value='" + val + "'/></td><td><a style='color:#000000;cursor: pointer;' onclick='removeConditionList(\""+val+"\", this)'><i class='mdi mdi-close'></i></a></td></tr>";
-
-    if($("#dataTable").find("tr td").text().indexOf("暂无数据") > -1) {
-        $("#dataTable").html("").html(code);
+    if($("#op5").find("option:selected").val() == "" || $("#op6").find("option:selected").val() == "") {
+        toastr.warning("未选择条件或值！");
     }else {
-        $("#dataTable").append(code);
+        var arr = $("#op6").selectpicker('val');
+        var condition = $("#op5").find("option:selected").text();
+        var val = $("#op5").find("option:selected").val();
+        var code = "<tr><td style='text-align: left;'>" + condition.trim() + ":";
+        for(var i=0;i<arr.length;i++) {
+            var t = $("#op6").find("option[value='"+arr[i]+"']").text();
+            code += t + ",";
+        }
+        code = code.substring(0, code.length - 1);
+        code += "<input name='condition' type='hidden' value='" + val + "'/><input name='inheritFlag' value='N' type='hidden'/></td><td><a style='color:#000000;cursor: pointer;' onclick='removeConditionList(\""+val+"\", this)'><i class='mdi mdi-close'></i></a></td></tr>";
+
+        if($("#dataTable").find("tr td").text().indexOf("暂无数据") > -1) {
+            $("#dataTable").html("").html(code);
+        }else {
+            $("#dataTable").append(code);
+        }
+
+        // 列表中删除
+        $("#op5").find("option[value='"+val+"']").remove();
+        $("#op5").selectpicker('refresh');
+
+        $("#op6").html("");
+        $("#op6").selectpicker('refresh');
+
+        getValueList($("#op5").find("option:selected").val());
+        conditionVal.push(val);
     }
-
-    // 列表中删除
-    $("#op5").find("option[value='"+val+"']").remove();
-    $("#op5").selectpicker('refresh');
-
-    $("#op6").html("");
-    $("#op6").selectpicker('refresh');
-
-    getValueList($("#op5").find("option:selected").val());
-    conditionVal.push(val);
-
 }
 
 // 获取条件
 function filterCondition() {
     var dataArray = new Array();
     $("#dataTable").find("tr").each(function () {
-        var code = $(this).find("td:eq(0)").find("input").val();
+        var condition = $(this).find("td:eq(0)").find("input[name='condition']").val();
+        var inheritFlag = $(this).find("td:eq(0)").find("input[name='inheritFlag']").val();
         var text = $(this).find("td:eq(0)").text();
-        if(code != undefined) {
-            dataArray.push(code + ":" + text);
+        if(condition != undefined && inheritFlag != undefined) {
+            dataArray.push(condition + ":" + text + ":" + inheritFlag);
         }
     });
     return dataArray;
@@ -326,14 +333,17 @@ function filterCondition() {
 function modalDetailBefore() {
     var e = document.getElementById("operateBtns");
     e.style.display = "none";
-
     var array = jm.get_selected_node().data.CONDITION;
+    $("#kpiNameDetail").html("").html(jm.get_selected_node().data.KPI_NAME);
     var code = "";
     $.each(array, function (k, v) {
         var tmp = v.split(":");
-        console.log(tmp)
         code += "<tr><td style='text-align: left;'>" + tmp[1].trim() + ":";
-        code += tmp[2].trim();
+        if(tmp[3] == "N") {
+            code += tmp[2].trim();
+        }else if(tmp[3] == "Y"){
+            code += tmp[2].trim() + "&nbsp;(继承至父节点)"
+        }
         code += "</td></tr>";
     });
     $("#dataTableDetail").html("").html(code);
@@ -342,10 +352,62 @@ function modalDetailBefore() {
 // 加法条件
 function condition0() {
     var levelId = getKpiLevelId();
-    var nodeName = levelId + " " + $("#currentNode").val() + "/" + $("#op4 option:selected").text().trim();
-    createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
-
+    var nodeName = levelId + " <i class='mdi mdi-key-plus'></i> " + jm.get_selected_node().data.KPI_NAME + "(" + $("#op4 option:selected").text().trim() + ")";
+    var nodeId = createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME, true);
     chart0(levelId, nodeName, $("#op4 option:selected").text().trim());
+
+    endNode(nodeId);
+}
+
+
+function endNode(nodeId) {
+    jm.enable_edit();
+    jm.set_node_color(nodeId, '#8b95a5', '');
+    jm.disable_edit();
+}
+
+//
+//saveNode("-1");
+
+// 单步保存节点信息
+function saveNode(nodeid) {
+    // 加载动画
+    lightyear.loading("show");
+    var nodeList = [];
+    var currentNode = jm.get_node(nodeid);
+    nodeList.push(currentNode);
+
+    var data = new Array();
+    for(var i=0; i<nodeList.length; i++) {
+        var tmp = nodeList[i];
+        var obj = new Object();
+        var parentId = getNodeParentId(tmp);
+        obj["diagId"] = diagId;
+        obj["nodeId"] = tmp.id;
+        obj["nodeName"] = tmp.topic;
+        obj["parentId"] = parentId;
+        obj["kpiCode"] = tmp.data.KPI_CODE;
+        obj["kpiName"] = tmp.data.KPI_NAME;
+        obj["kpiLevelId"] = tmp.data.KPI_LEVEL_ID;
+        obj["alarmFlag"] = "n";
+        obj["conditions"] = tmp.data.CONDITION;
+        data.push(obj);
+    }
+
+    $.ajax({
+        url: "/diagdetail/save",
+        type: "post",
+        data: {
+            json: JSON.stringify(data)
+        },
+        dataType : 'json',
+        success: function (r) {
+            if(r.code != 200) {
+                toastr.error(r.msg);
+            }
+            lightyear.loading("hide");
+        }
+    });
 }
 
 // 取起始范围的随机数
@@ -634,7 +696,7 @@ function rootNode() {
             var node = new Object();
             node.id = "-1";
             node.isroot = true;
-            node.topic = kpiName;
+            node.topic = "0 " + kpiName;
             node.KPI_CODE = kpiCode;
             node.KPI_NAME = kpiName;
             nodeArr.push(node);
@@ -665,10 +727,14 @@ function createRootNode() {
 // 仅过滤条件
 function condition2() {
     var levelId = getKpiLevelId();
-    var nodeName = levelId + " " + $("#currentNode").val() + "/过滤";
-    createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
-
-    chart_condition2(levelId, nodeName);
+    var nodeName = levelId + " <i class='mdi mdi-filter'></i> " + $("#currentNode").val();
+    if(conditionVal.length == 0) {
+        toastr.warning("请选择过滤条件！");
+    }else {
+        createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME, false);
+        chart_condition2(levelId, nodeName);
+        $("#nodeAddModal").modal('hide');
+    }
 }
 
 function chart_condition2(id, name) {
@@ -695,7 +761,8 @@ function chart_condition2(id, name) {
     $("#charts").prepend(str);
 }
 
-function createNode(nodeName, levelId, kpiCode, kpiName) {
+// method过滤条件
+function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf) {
     var nodeId = getNodeId();
     var nodeName = nodeName;
     var parentId = $("#currentNodeId").val();
@@ -711,11 +778,16 @@ function createNode(nodeName, levelId, kpiCode, kpiName) {
     data.KPI_LEVEL_ID = kpiLevelId;
     data.ALARM_FLAG = alarmFlag;
     data.CONDITION = conditions;
+    data.IS_LEFAF = isLeaf;
 
     jm.enable_edit();
     jm.add_node(parentId, nodeId, nodeName, data);
     jm.disable_edit();
     addEventListenerOfNode();
+
+    // 保存节点信息
+    saveNode(nodeId);
+    return nodeId;
 }
 
 function getNodeId() {
@@ -779,12 +851,13 @@ function jsmind_refresh(map) {
     var kpiName2 = map["DISMANT_PART2_NAME"];
 
     var levelId = getKpiLevelId();
-    var nodeName1 = levelId + " " + kpiName1;
-    var nodeName2 = levelId + " " + kpiName2;
-    createNode(nodeName1, levelId, kpiCode1, kpiName1);
-    createNode(nodeName2, levelId, kpiCode2, kpiName2);
+    var nodeName1 = levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName1;
+    var nodeName2 = levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName2;
+    createNode(nodeName1, levelId, kpiCode1, kpiName1, false);
+    createNode(nodeName2, levelId, kpiCode2, kpiName2, false);
 
-    chart_condition1(levelId, levelId + " " + kpiName1 + "*" + kpiName2, kpiName1, kpiName2);
+    chart_condition1(levelId, levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName1 + "*" + kpiName2, kpiName1, kpiName2);
+    $("#nodeAddModal").modal('hide');
 }
 
 function getKpiComb(code) {
@@ -815,6 +888,12 @@ function addEventListenerOfNode() {
         var event = event || window.event;
         var e = document.getElementById("operateBtns");
         if(event.button == "2"){
+            if(jm.get_selected_node().data.IS_LEFAF) {
+                $("#condition0").attr("style", "display:none;");
+            }else {
+                $("#condition0").attr("style", "display:block;");
+            }
+
             e.style.top = event.pageY+'px';
             e.style.left = event.pageX+'px';
             e.style.display = 'block';

@@ -34,6 +34,9 @@ public class DiagCondition {
     @Column(name = "DIM_VALUE_DISPLAY")
     private String dimValueDisplay;
 
+    @Column(name = "INHERIT_FLAG")
+    private String inheritFlag;
+
     /**
      * 获取诊断ID
      *
@@ -122,5 +125,13 @@ public class DiagCondition {
      */
     public void setDimValueDisplay(String dimValueDisplay) {
         this.dimValueDisplay = dimValueDisplay == null ? null : dimValueDisplay.trim();
+    }
+
+    public String getInheritFlag() {
+        return inheritFlag;
+    }
+
+    public void setInheritFlag(String inheritFlag) {
+        this.inheritFlag = inheritFlag;
     }
 }

@@ -1,6 +1,9 @@
 package com.linksteady.operate.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "UO_DIAG_LIST")
 public class Diag {
@@ -33,6 +36,12 @@ public class Diag {
      */
     @Column(name = "END_DT")
     private String endDt;
+
+    /**
+     * 创建时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createDt;
 
     /**
      * 获取主键ID
@@ -122,5 +131,13 @@ public class Diag {
      */
     public void setEndDt(String endDt) {
         this.endDt = endDt == null ? null : endDt.trim();
+    }
+
+    public Date getCreateDt() {
+        return createDt;
+    }
+
+    public void setCreateDt(Date createDt) {
+        this.createDt = createDt;
     }
 }

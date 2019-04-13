@@ -36,17 +36,17 @@
             <!-- 控制面板的右键操作按钮 -->
             <div id="operateBtns" style="top: 0px;left: 0px;position: absolute; z-index: 100; display: none;">
                 <table style="width: auto;">
-                    <tr>
+                    <tr id="condition0">
                         <td><button class="btn btn-default" data-toggle="modal" data-target="#nodeAddModal" onclick="modalBefore()"><span class="h5"><i class="mdi mdi-plus"></i>&nbsp;新增</span></button></td>
-                    </tr>
-                    <tr>
-                        <td><button class="btn btn-default" onclick="alert('删除')"><span class="h5"><i class="mdi mdi-delete"></i>&nbsp;删除</span></button></td>
                     </tr>
                     <tr>
                         <td><button class="btn btn-default" data-toggle="modal" data-target="#nodeDetailModal" onclick="modalDetailBefore()"><span class="h5"><i class="mdi mdi-file-document-box"></i>&nbsp;详情</span></button></td>
                     </tr>
                     <tr>
                         <td><button class="btn btn-default" data-code="0" onclick="alarmFlag(this)"><span class="h5"><i class="mdi mdi-check"></i>&nbsp;标记</span></button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default" onclick="alert('删除')"><span class="h5"><i class="mdi mdi-delete"></i>&nbsp;删除</span></button></td>
                     </tr>
                 </table>
             </div>
@@ -136,20 +136,13 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <!-- 保存信息 -->
-                                        <div class="row mg-stop">
-                                            <div class="col-md-12 text-center">
-                                                <button class="btn btn-primary" onclick="saveNodes()"><i class="mdi mdi-repeat"></i>保存节点信息</button>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="row" style="margin-top: 20px;">
                                     <div class="col-md-12 text-right">
-                                        <button id="next" class="btn btn-primary" onclick="next(this)">保存并诊断</button>
-                                        <a class="btn btn-default" href="/page/diagnosis/list">返回</a>
+                                        <button id="next" class="btn btn-primary" onclick="next(this)"><i class="mdi mdi-share-variant"></i>保存并诊断</button>
+                                        <a class="btn btn-default" href="/page/diagnosis/list"><i class="mdi mdi-reply"></i>返回</a>
                                     </div>
                                 </div>
                             </div>
@@ -164,7 +157,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="nodeAddModalLabel">新增节点：</h4>
+                            <h4 class="modal-title" id="nodeAddModalLabel">新增节点</h4>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -178,13 +171,13 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="col-md-3 control-label" for="beginDt">拆分方式：</label>
+                                            <label class="col-md-3 control-label" for="beginDt">诊断方式：</label>
                                             <div class="col-md-6">
                                                 <select name="periodType" class="selectpicker form-control" id="op2">
                                                     <option value="">请选择</option>
                                                     <option value="0">加法</option>
                                                     <option value="1">乘法</option>
-                                                    <option value="2">仅过滤</option>
+                                                    <option value="2">过滤</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -204,7 +197,7 @@
                                         <hr/>
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <h5>请选择条件：</h5>
+                                                <h5>增加条件：</h5>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -262,13 +255,19 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="nodeDetailModalLabel">详情：</h4>
+                            <h4 class="modal-title" id="nodeDetailModalLabel">详细信息</h4>
                         </div>
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-12">
+                                    <p><span class="h5">指标名称：</span><span id="kpiNameDetail"></span></p>
+                                </div>
+                                <div class="col-md-12">
+                                    <p class="h5">条件：</p>
+                                </div>
+                                <div class="col-md-12">
                                     <table class="table text-left" id="dataTableDetail" style="border-top: 0px;">
-                                        <tr><td><i class="mdi mdi-alert-circle"></i>暂无数据！</td></tr>
+                                        <tr><td><i class="mdi mdi-alert-circle-outline"></i>暂无数据！</td></tr>
                                     </table>
                                 </div>
                             </div>

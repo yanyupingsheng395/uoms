@@ -49,6 +49,7 @@ public class DiagDetailServiceImpl implements DiagDetailService {
                     condition.setDimCode(tmpArray[0]);
                     condition.setDimValues(tmpArray[1]);
                     condition.setDimValueDisplay(tmpArray[2]);
+                    condition.setInheritFlag(tmpArray[3]);
                     condition.setNodeId(diagDetail.getNodeId());
                     conditions.add(condition);
                 }

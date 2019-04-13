@@ -10,13 +10,14 @@
     <result column="DIM_CODE" jdbcType="VARCHAR" property="dimCode" />
     <result column="DIM_VALUES" jdbcType="VARCHAR" property="dimValues" />
     <result column="DIM_VALUE_DISPLAY" jdbcType="VARCHAR" property="dimValueDisplay" />
+    <result column="INHERIT_FLAG" jdbcType="VARCHAR" property="inheritFlag"></result>
   </resultMap>
 
   <insert id="save">
-    insert into UO_DIAG_CONDITION(DIAG_ID, NODE_ID, DIM_CODE, DIM_VALUES, DIM_VALUE_DISPLAY)
+    insert into UO_DIAG_CONDITION(DIAG_ID, NODE_ID, DIM_CODE, DIM_VALUES, DIM_VALUE_DISPLAY, INHERIT_FLAG)
     select m.* from
     <foreach collection="list" item="t" separator="union all" open="(" close=")">
-      select #{t.diagId, jdbcType=NUMERIC}, #{t.nodeId, jdbcType=NUMERIC},#{t.dimCode, jdbcType=VARCHAR},#{t.dimValues, jdbcType=VARCHAR},#{t.dimValueDisplay, jdbcType=VARCHAR}
+      select #{t.diagId, jdbcType=NUMERIC}, #{t.nodeId, jdbcType=NUMERIC},#{t.dimCode, jdbcType=VARCHAR},#{t.dimValues, jdbcType=VARCHAR},#{t.dimValueDisplay, jdbcType=VARCHAR}, #{t.inheritFlag, jdbcType=VARCHAR}
       from dual
     </foreach>
     m
