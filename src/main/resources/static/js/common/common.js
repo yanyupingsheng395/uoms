@@ -39,6 +39,62 @@ function menu_tree() {
 }
 
 /**
+ * 初始化起止日期插件：开始
+ * @param beginId
+ * @param endId
+ * @param format
+ * @param startView
+ * @param maxViewMode
+ * @param minViewMode
+ */
+function init_date_begin(beginId, endId, format, startView, maxViewMode, minViewMode) {
+    $('#' + beginId).datepicker({
+        format: format,
+        language: "zh-CN",
+        todayHighlight: true,
+        autoclose: true,
+        startView: startView,
+        maxViewMode: maxViewMode,
+        minViewMode: minViewMode
+    }).on("changeDate",function(ev){  //值改变事件
+        //选择的日期不能大于第二个日期控件的日期
+        if(ev.date){
+            $("#" + endId).datepicker('setStartDate', new Date(ev.date.valueOf()));
+        }else{
+            $("#" + endId).datepicker('setStartDate',null);
+        }
+    });
+}
+
+/**
+ * 初始化起止日期插件：结束
+ * @param beginId
+ * @param endId
+ * @param format
+ * @param startView
+ * @param maxViewMode
+ * @param minViewMode
+ */
+function init_date_end(beginId, endId, format, startView, maxViewMode, minViewMode) {
+    $('#' + endId).datepicker({
+        format: format,
+        language: "zh-CN",
+        todayHighlight: true,
+        autoclose: true,
+        startView: startView,
+        maxViewMode: maxViewMode,
+        minViewMode: minViewMode
+    }).on("changeDate",function(ev){  //值改变事件
+        //选择的日期不能大于第二个日期控件的日期
+        if(ev.date){
+            $("#" + beginId).datepicker('setEndDate', new Date(ev.date.valueOf()));
+        }else{
+            $("#" + beginId).datepicker('setEndDate',null);
+        }
+    });
+}
+
+/**
  * 初始化日期插件
  * @param id 控件ID名称
  * @param format 时间格式
