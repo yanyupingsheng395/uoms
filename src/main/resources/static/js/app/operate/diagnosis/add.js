@@ -103,7 +103,16 @@ function addCondition() {
         // 隐藏模态框
         $("#nodeAddModal").modal('hide');
     }else if(methodId == "1") { // 乘法
-        condition1();
+        if($("#op3").find("option:selected").val() == null) {
+            if($("#op3").find("option").length == 0) {
+                toastr.warning("该指标无可再拆分的乘法公式，请选择别的拆分方式！");
+            }else {
+                toastr.warning("请选择拆分公式！");
+            }
+        } else {
+            condition1();
+
+        }
         // 隐藏模态框
     }else if(methodId == "2") { // 仅过滤
         condition2();
