@@ -12,8 +12,11 @@
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <link rel="stylesheet"  data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
-    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <!--日期选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
     <link href="https://cdn.bootcss.com/toastr.js/2.1.4/toastr.min.css" rel="stylesheet">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+
 </head>
 
 <body>
@@ -36,10 +39,44 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-12 text-right">
-                                        <div class="form-group">
-                                            <a class="btn btn-primary  m-r-5"  type="button" href="#"><i class="mdi mdi-magnify"></i>查询</a>
-                                        </div>
+                                    <div class="col-lg-12 "  style="margin-bottom: 5px;">
+                                        <form class="form-inline">
+                                            <div class="form-group col-md-3">
+                                                <label class="control-label" for="touchDate">触达日期：</label>
+                                                <div class="input-group">
+                                                    <input class="col-md-7 form-control js-datepicker m-b-10"  type="text" id="touchDate" name="touchDate" data-date-format="yyyy-mm-dd" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="lyear-radio radio-primary m-l-10">
+                                                    <input type="radio" checked="" name="merge" value="PRODUCT_NAME">
+                                                    <span>按产品名称合并显示</span>
+                                                </label>
+                                            </div>
+                                            <div  class="form-group">
+                                                <label class="lyear-radio radio-primary m-l-10">
+                                                    <input type="radio"  name="merge" value="COUPON_DISPLAY">
+                                                    <span>按优惠券类型合并显示</span>
+                                                </label>
+                                            </div>
+
+                                            <!--<div  class="form-group">-->
+                                                <!--<label class="lyear-checkbox checkbox-primary" style="margin-left: 20px;">-->
+                                                    <!--<input type="checkbox" checked="">-->
+                                                    <!--<span>仅显示试验组数据</span>-->
+                                                <!--</label>-->
+                                            <!--</div>-->
+
+                                            <div class="form-group">
+                                                <a class="btn btn-primary m-r-5"  style="margin-left: 20px;"  type="button" id="btn_query"><i class="mdi mdi-magnify"></i>查询</a>
+                                                <a class="btn btn-primary m-r-5"   type="button" id="btn_downLoad"><i class="mdi mdi-download"></i>下载</a>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                    <div class="col-lg-12 "  style="margin-bottom: 15px;">
+                                       <span class="mdi mdi-bell" style="color:#77d2dc;font-size: 25px;"></span>&nbsp;&nbsp;<label id="cdrq">2019-04-07</label>共有<label id="cdrs">0</label>人需要运营!
                                     </div>
                                 </div>
                                 <div class="table-responsive">
@@ -55,10 +92,11 @@
 </div>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
-<script data-th-src="@{/plugins/notify/bootstrap-notify.min.js}"></script>
-<script data-th-src="@{/plugins/notify/lightyear.js}"></script>
 <script src="https://cdn.bootcss.com/toastr.js/2.1.4/toastr.min.js"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<!--日期选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
 <script data-th-src="@{/js/app/operate/op/opday.js}"></script>
 </body>
 </html>
