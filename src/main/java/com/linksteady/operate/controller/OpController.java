@@ -5,6 +5,8 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.service.LifeCycleService;
 import com.linksteady.operate.service.OpService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,9 +26,10 @@ import java.util.Map;
 @RequestMapping("/op")
 public class OpController extends BaseController {
 
+    private final static Logger logger= LoggerFactory.getLogger (OpController.class);
+
     @Autowired
     OpService opService;
-
 
     /**
      * 获取日运营的头表列表

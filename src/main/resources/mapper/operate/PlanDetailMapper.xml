@@ -29,10 +29,19 @@
   </select>
 
   <insert id="addPlanDetails">
-    insert into UO_GMV_PLAN_DETAIL(PLAN_DETAIL_ID, PLAN_ID, YEAR_ID, MONTH_ID, GMV_VALUE, GMV_PCT, GMV_TB, GMV_TB_RATE, IS_HISTORY)
+    insert into UO_GMV_PLAN_DETAIL(PLAN_DETAIL_ID, PLAN_ID, YEAR_ID, MONTH_ID, GMV_VALUE, GMV_PCT, GMV_TB, GMV_TB_RATE, IS_HISTORY,CREATE_DT,UPDATE_DT)
     select seq_uo_plan_detail_id.nextval, m.* from
     <foreach collection="list" item="pl" separator="union all" open="(" close=")">
-      select #{pl.planId}, #{pl.yearId}, #{pl.monthId},#{pl.gmvValue},#{pl.gmvPct},#{pl.gmvTb},#{pl.gmvTbRate}, #{pl.isHistory, jdbcType=VARCHAR}
+      select #{pl.planId,jdbcType=DECIMAL},
+             #{pl.yearId,jdbcType=DECIMAL},
+             #{pl.monthId,jdbcType=DECIMAL},
+             #{pl.gmvValue,jdbcType=DECIMAL},
+             #{pl.gmvPct,jdbcType=DECIMAL},
+             #{pl.gmvTb,jdbcType=DECIMAL},
+             #{pl.gmvTbRate,jdbcType=DECIMAL},
+             #{pl.isHistory, jdbcType=VARCHAR},
+             #{pl.createDt, jdbcType=TIMESTAMP},
+             #{pl.updateDt, jdbcType=TIMESTAMP}
       from dual
     </foreach>
     m

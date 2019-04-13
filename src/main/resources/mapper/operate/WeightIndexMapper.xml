@@ -12,6 +12,6 @@
   </resultMap>
 
   <select id="getWeightIndex" resultMap="BaseResultMap">
-    select * from UO_WEIGHT_INDEX where YEAR_ID = #{year} order by MONTH_ID asc
+    select * from UO_WEIGHT_INDEX where YEAR_ID = #{year} AND INDEX_TYPE='GMV' order by MONTH_ID asc
   </select>
 </mapper>

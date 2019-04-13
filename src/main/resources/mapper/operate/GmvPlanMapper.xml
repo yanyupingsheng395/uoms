@@ -35,10 +35,6 @@
     select count(1) from UO_GMV_PLAN
   </select>
 
-  <select id="getPredictData" resultMap="BaseResultMap">
-    select GMV_TARGET, TARGET_RATE from UO_GMV_PLAN where YEAR_ID = #{year}
-  </select>
-
   <select id="getPlanId" resultType="Long">
     select seq_uo_plan_id.nextval from dual
   </select>

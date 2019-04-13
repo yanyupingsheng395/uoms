@@ -2,9 +2,11 @@ package com.linksteady.operate.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageHelper;
+import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.util.ArithUtil;
 import com.linksteady.operate.domain.GmvPlan;
 import com.linksteady.operate.domain.PlanDetail;
 import com.linksteady.operate.domain.WeightIndex;
@@ -40,13 +42,33 @@ public class GmvPlanController extends BaseController {
     }
 
     @RequestMapping("/getPredictData")
-    public List<GmvPlan> getPredictData(@RequestParam("year") String year) {
-        return gmvPlanService.getPredictData(year);
+    public ResponseBo getPredictData(@RequestParam("year") String year) {
+        //todo 获取GMV的预测值 后续从python提供的接口中取
+
+        //返回结果的包装结构
+        Map<String,Object> result= Maps.newHashMap();
+
+        //获取上一年的GMV值  然后按10%计算增长率
+        Double gmvValue=gmvPlanService.getGmvByYear(String.valueOf(Integer.parseInt(year)-1));
+
+        Double targetValue=0d;
+        if(null!=gmvValue&&gmvValue.intValue()!=0)
+        {
+            targetValue= ArithUtil.formatDouble(ArithUtil.mul(gmvValue,1.1d),0);
+
+            result.put("targetvalue",targetValue);
+            result.put("targetRate","10%");
+
+            return ResponseBo.ok(result);
+        }else
+        {
+            return ResponseBo.error("");
+        }
     }
 
     @RequestMapping("/getWeightIndex")
     public List<WeightIndex> getWeightIndex(@RequestParam("year") String year) {
-        return gmvPlanService.getWeightIndex(year);
+        return gmvPlanService.getWeightIndex(String.valueOf(Integer.parseInt(year)-1));
     }
 
     @RequestMapping("/getPlanDetail")
@@ -55,8 +77,8 @@ public class GmvPlanController extends BaseController {
     }
 
     @RequestMapping("/addPlanAndDetail")
-    public void addPlanAndDetail(@RequestParam("year") String year, @RequestParam("gmv") String gmv, @RequestParam("rate") String rate) {
-        gmvPlanService.addPlanAndDetail(year, gmv, rate);
+    public void addPlanAndDetail(@RequestParam("year") String year, @RequestParam("gmv") String gmv, @RequestParam("rate") String rate,@RequestParam("forecastGmv") String forecastGmv,@RequestParam("forecastRate") String forecastRate) {
+        gmvPlanService.addPlanAndDetail(year, gmv, rate,forecastGmv,forecastRate);
     }
 
     @RequestMapping("/getPlanAndDetail")
@@ -65,10 +87,10 @@ public class GmvPlanController extends BaseController {
         return ResponseBo.ok(flag);
     }
 
-    @RequestMapping("/overrideOldData")
-    public void overrideOldData(@RequestParam("year") String year, @RequestParam("gmv") String gmv, @RequestParam("rate") String rate) {
-        gmvPlanService.overrideOldData(year, gmv, rate);
-    }
+//    @RequestMapping("/overrideOldData")
+//    public void overrideOldData(@RequestParam("year") String year, @RequestParam("gmv") String gmv, @RequestParam("rate") String rate) {
+//        gmvPlanService.overrideOldData(year, gmv, rate);
+//    }
 
     @RequestMapping("/updateDetail")
     public ResponseBo updateDetail(@RequestParam("year") String year, @RequestParam("gmv") String gmv, @RequestParam("method") String method) {

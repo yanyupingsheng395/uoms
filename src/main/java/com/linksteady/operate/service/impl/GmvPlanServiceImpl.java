@@ -1,7 +1,9 @@
 package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.google.common.collect.Maps;
 import com.linksteady.common.service.impl.BaseService;
+import com.linksteady.common.util.ArithUtil;
 import com.linksteady.operate.dao.GmvPlanMapper;
 import com.linksteady.operate.dao.PlanDetailMapper;
 import com.linksteady.operate.dao.WeightIndexMapper;
@@ -16,8 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanService {
@@ -45,13 +50,13 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
     }
 
     @Override
-    public List<YearHistory> getYearHistory(String year) {
-        return yearHistoryMapper.getYearHistory(year);
+    public Double getGmvByYear(String year) {
+        return yearHistoryMapper.getGmvByYear(year);
     }
 
     @Override
-    public List<GmvPlan> getPredictData(String year) {
-        return gmvPlanMapper.getPredictData(year);
+    public List<YearHistory> getYearHistory(String year) {
+        return yearHistoryMapper.getYearHistory(year);
     }
 
     @Override
@@ -66,9 +71,9 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
 
     @Override
     @Transactional
-    public void addPlanAndDetail(String year, String gmv, String rate) {
+    public void addPlanAndDetail(String year, String gmv, String rate,String forecastGmv,String forecastRate) {
         Long planId = gmvPlanMapper.getPlanId();
-        addPlan(year, gmv, rate, planId);
+        addPlan(year, gmv, rate, planId,forecastGmv,forecastRate);
         addPlanDetail(year, gmv, rate, planId);
     }
 
@@ -87,19 +92,19 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
         return false;
     }
 
-    @Override
-    @Transactional
-    public void overrideOldData(String year, String gmv, String rate) {
-        Example plan = new Example(GmvPlan.class);
-        plan.createCriteria().andCondition("year_id=", year);
-        gmvPlanMapper.deleteByExample(plan);
-
-        Example detail = new Example(PlanDetail.class);
-        plan.createCriteria().andCondition("year_id=", year);
-        planDetailMapper.deleteByExample(detail);
-        // 新增数据
-        addPlanAndDetail(year, gmv, rate);
-    }
+//    @Override
+//    @Transactional
+//    public void overrideOldData(String year, String gmv, String rate) {
+//        Example plan = new Example(GmvPlan.class);
+//        plan.createCriteria().andCondition("year_id=", year);
+//        gmvPlanMapper.deleteByExample(plan);
+//
+//        Example detail = new Example(PlanDetail.class);
+//        plan.createCriteria().andCondition("year_id=", year);
+//        planDetailMapper.deleteByExample(detail);
+//        // 新增数据
+//        addPlanAndDetail(year, gmv, rate);
+//    }
 
     @Override
     public void updateDetail(JSONArray jsonArray) {
@@ -136,27 +141,122 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
 
     private void addPlanDetail(String year, String gmv, String rate, Long planId) {
         List<PlanDetail> planDetailList = new ArrayList<>();
-        for(int i=1; i<=12; i++) {
-            double gmvValue = Double.valueOf(String.format("%.2f", Double.valueOf(gmv)/12));
-            double tbRate = Double.valueOf(String.format("%.2f", 1/12d));
-            PlanDetail planDetail = new PlanDetail();
-            planDetail.setGmvValue(gmvValue);
-            planDetail.setYearId(Long.valueOf(year));
-            planDetail.setMonthId(Long.valueOf(i));
-            planDetail.setGmvTbRate(Double.valueOf(rate));
-            planDetail.setGmvPct(tbRate + 0.2);
-            planDetail.setPlanId(planId);
-            planDetail.setGmvTb(2852.55);
-            planDetailList.add(planDetail);
-            if("2019".equals(year)) {
-                if(i <= 4) {
-                    planDetail.setIsHistory("Y");
-                }else {
-                    planDetail.setIsHistory("N");
-                }
-            }else {
-                planDetail.setIsHistory("N");
+
+        List<Long>  monthList=new ArrayList(){{
+            for(int i=1;i<=12;i++)
+            {
+                this.add(Long.parseLong(year+ String.format("%02d", i)));
             }
+
+        }};
+        //gmv按权重指数进行拆解
+        //获取上一年的权重指数
+        List<WeightIndex> lastYearIndex=weightIndexMapper.getWeightIndex(String.valueOf(Integer.parseInt(year)-1));
+
+        Double indexTotal=0d;  //权重指数和
+        Map<Long,Double> pctMap= Maps.newHashMap();
+        Map<Long,Double> gmvMap= Maps.newHashMap();
+
+        Double gmvValue=Double.parseDouble(gmv);
+        Long monthId=null;
+        Double monthPctTemp=0.00d;
+        Double monthPct=0.00d; //每月的比例
+        double monthGmv=0.00d; //每月的GMV
+        double monthTotalPct =0; //累计的比例
+        double monthTotalGmv=0.00d;  //累计的GMV
+
+        if(null!=lastYearIndex&&lastYearIndex.size()==12)  //有权重指数 且权重指数为12个月;
+        {
+            for (WeightIndex weightIndex:lastYearIndex) {
+                indexTotal=ArithUtil.add(indexTotal,weightIndex.getIndexValue());
+            }
+
+            //计算每个月占比、以及拆分到的GMV金额
+            for (WeightIndex weightIndex:lastYearIndex) {
+                monthId=Long.parseLong(year+String.valueOf(weightIndex.getMonthId()).substring(4,6));
+                if(!weightIndex.getMonthId().equals(weightIndex.getYearId()+"12"))
+                {
+
+                    monthPctTemp=ArithUtil.div(weightIndex.getIndexValue(),indexTotal,10);
+                    monthPct=ArithUtil.formatDoubleByMode(ArithUtil.mul(monthPctTemp,100d),2, RoundingMode.DOWN); //每月的指数/指数和*100 保留2位小数
+
+                    monthTotalPct=ArithUtil.add(monthTotalPct,monthPct);
+                    //计算GMV的占比
+                    monthGmv=ArithUtil.formatDouble(ArithUtil.mul(gmvValue,monthPctTemp),0);
+
+                    monthTotalGmv=ArithUtil.add(monthGmv,monthTotalGmv);  // ?? 观察 是否需要格式化一下
+
+                    pctMap.put(monthId,monthPct);
+                    gmvMap.put(monthId,monthGmv);
+
+                }else //12月单独处理 采用1-前11个月  因为采用list 所以保证了12月是最后一个被处理的月份
+                {
+                    pctMap.put(monthId,ArithUtil.sub(100d,monthTotalPct));
+                    gmvMap.put(monthId,ArithUtil.formatDouble( ArithUtil.sub(gmvValue,monthTotalGmv),0));
+                }
+
+
+            }
+
+
+        }else  //按12个月平均
+        {
+            indexTotal=12d;
+            for(Long mth:monthList)
+            {
+                if(!mth.equals(year+"12"))
+                {
+                    monthPctTemp=ArithUtil.div(1d,indexTotal,6);
+                    monthPct=ArithUtil.formatDoubleByMode(ArithUtil.mul(monthPctTemp,100d),2, RoundingMode.DOWN);
+
+                    monthTotalPct+=monthPct.intValue();
+
+                    monthGmv=ArithUtil.formatDouble(ArithUtil.mul(gmvValue,monthPctTemp),0);
+                    monthTotalGmv=ArithUtil.add(monthGmv,monthTotalGmv);  // ?? 观察 是否需要格式化一下
+
+                    pctMap.put(mth,monthPct);
+                    gmvMap.put(mth,monthGmv);
+                }else
+                {
+                    pctMap.put(mth,100-monthTotalPct);
+                    gmvMap.put(mth,ArithUtil.formatDouble( ArithUtil.sub(gmvValue,monthTotalGmv),0));
+                }
+            }
+        }
+
+        //获取上年各月的GMV值
+        List<Map<String, Object>>  lastGmvMapList=yearHistoryMapper.getMonthGmvByYear(String.valueOf(Integer.parseInt(year)-1));
+        Map<Long, Double> lastGmvMap=Maps.newHashMap();
+        for(Map<String, Object> g:lastGmvMapList)
+        {
+            lastGmvMap.put(Long.parseLong(g.get("MONTH_ID").toString()),Double.parseDouble(g.get("GMV_VALUE").toString()));
+        }
+
+        Long lastMonthId=0l;
+        Double gmvTb=null;
+        PlanDetail planDetail=null;
+        for(Long mth:monthList)
+        {
+            lastMonthId=getLastMonthId(mth);
+            planDetail = new PlanDetail();
+            planDetail.setGmvValue(gmvMap.get(mth));
+            planDetail.setYearId(Long.valueOf(year));
+            planDetail.setMonthId(mth);
+            planDetail.setGmvPct(pctMap.get(mth));
+            planDetail.setPlanId(planId);
+
+            //计算同比
+            gmvTb=lastGmvMap.get(lastMonthId);
+            if(null!=gmvTb)
+            {
+                planDetail.setGmvTbRate(computeTbRate(gmvTb,gmvMap.get(mth)));
+                planDetail.setGmvTb(gmvTb);
+            }
+
+            planDetail.setIsHistory("N");
+            planDetail.setCreateDt(new Date());
+            planDetail.setUpdateDt(new Date());
+            planDetailList.add(planDetail);
         }
         planDetailMapper.addPlanDetails(planDetailList);
     }
@@ -166,15 +266,39 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
         gmvPlanMapper.updateStatus(id);
     }
 
-    private void addPlan(String year, String gmv, String rate, Long planId) {
+    private void addPlan(String year, String gmv, String rate, Long planId,String forcastGmv,String forcastRate) {
         GmvPlan gmvPlan = new GmvPlan();
         gmvPlan.setYearId(Long.valueOf(year));
         gmvPlan.setGmvTarget(Double.valueOf(gmv));
         gmvPlan.setTargetRate(Double.valueOf(rate));
         gmvPlan.setPlanId(planId);
-        gmvPlan.setForecastGmv(2000);
-        gmvPlan.setForecastRate(0.25);
+        gmvPlan.setForecastGmv(Double.valueOf(forcastGmv));
+        gmvPlan.setForecastRate(Double.valueOf(forcastRate));
         gmvPlan.setStatus("D");
         gmvPlanMapper.insert(gmvPlan);
+    }
+
+    /**
+     * 根据传入的月份ID 201901 返回上一年对应的月份ID
+     * @param monthId
+     * @return
+     */
+    private Long getLastMonthId(Long monthId)
+    {
+        String str_momthId=String.valueOf(monthId);
+
+        return Long.parseLong((Integer.valueOf(str_momthId.substring(0,4))-1)+str_momthId.substring(4,6));
+    }
+
+    /**
+     * 计算同比增长率  (本期-同期)/同期*100%
+     * @param TbValue
+     * @param CurrentValue
+     * @return
+     */
+    private Double computeTbRate(Double TbValue,Double CurrentValue)
+    {
+        Double value=ArithUtil.mul( ArithUtil.div(ArithUtil.sub(CurrentValue,TbValue),TbValue,6),100d);
+        return ArithUtil.formatDoubleByMode(value,2,RoundingMode.HALF_UP);
     }
 }

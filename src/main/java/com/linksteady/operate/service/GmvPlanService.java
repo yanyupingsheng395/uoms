@@ -17,17 +17,17 @@ public interface GmvPlanService extends IService<GmvPlan> {
 
     List<YearHistory> getYearHistory(String year);
 
-    List<GmvPlan> getPredictData(String year);
+    Double getGmvByYear(String year);
 
     List<WeightIndex> getWeightIndex(String year);
 
     List<PlanDetail> getPlanDetail(String year);
 
-    void addPlanAndDetail(String year, String gmv, String rate);
+    void addPlanAndDetail(String year, String gmv, String rate,String forecastGmv,String forecastRate);
 
     boolean getPlanAndDetail(String year);
 
-    void overrideOldData(String year, String gmv, String rate);
+//    void overrideOldData(String year, String gmv, String rate);
 
     void updateDetail(JSONArray jsonArray);
 
