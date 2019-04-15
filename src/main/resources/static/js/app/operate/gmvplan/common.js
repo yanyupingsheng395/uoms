@@ -44,8 +44,11 @@ function weight() {
         });
         htmlCode1 += "</tr>";
         htmlCode2 += "</tr>";
-        $("#weightData").html("").html(htmlCode1 + htmlCode2);
-        $("#weightData").find("tr:eq(0)").addClass("active");
+        var code = htmlCode1 + htmlCode2;
+        if(r.length != 0) {
+            $("#weightData").html("").html(code);
+            $("#weightData").find("tr:eq(0)").addClass("active");
+        }
     });
 }
 
@@ -80,7 +83,11 @@ function getPlanDetail() {
             title: '同比上年同比增长率',
             field: 'gmvTbRate',
             formatter: function (value, row, index) {
-                return value + "%";
+                if(value == null) {
+                    return "-";
+                }else {
+                    return value + "%";
+                }
             }
         }]
     });

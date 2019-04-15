@@ -66,7 +66,9 @@ function step3() {
 function addPlanAndDetail() {
     var gmv = $("#gmvValue").val();
     var rate = $("#gmvRate").val();
-    $.post("/gmvplan/addPlanAndDetail", {year: year, gmv: gmv, rate: rate},function (r) {
+    var forecastGmv = $("#gmvValue").val();
+    var forecastRate = $("#gmvRate").val();
+    $.post("/gmvplan/addPlanAndDetail", {year: year, gmv: gmv, rate: rate, forecastGmv: forecastGmv, forecastRate: forecastRate},function (r) {
         getPlanDetail();
     });
 }
@@ -110,16 +112,22 @@ function getRandom (m,n){
     var num = Math.floor(Math.random()*(m - n) + n);
     return num;
 }
-
 // 获取预测数据
 function getPredictData() {
-    var predictVal = getRandom(1000, 10000);
-    var predictRate = getRandom(0, 100) + "." + getRandom(0, 100);
-    $("#predictVal").text(predictVal);
-    $("#predictRate").text(predictRate + "%");
+    var predictVal;
+    var predictRate;
+    $.get("/gmvplan/getPredictData", {year: year}, function(r) {
+        if(r.code == 500) {
 
-    $("#gmvValue").val(predictVal);
-    $("#gmvValue2").val(predictVal);
-    $("#gmvRate").val(predictRate);
-    $("#gmvRate2").val(predictRate);
+        }else if(r.code == 200) {
+            predictRate = r.msg.targetRate;
+            predictVal = r.msg.targetvalue;
+            $("#gmvValue").val(predictVal);
+            $("#gmvValue2").val(predictVal);
+            $("#gmvRate").val(predictRate);
+            $("#gmvRate2").val(predictRate);
+            $("#predictVal").text("").text(predictVal);
+            $("#predictRate").text("").text(predictRate);
+        }
+    });
 }

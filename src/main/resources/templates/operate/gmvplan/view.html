@@ -35,7 +35,11 @@
                             <div class="col-md-12">
                                 <h5 class="card-title">月度权重指数</h5>
                                 <table class="table table-bordered">
-                                    <tbody id="weightData"></tbody>
+                                    <tbody id="weightData">
+                                        <tr class="text-center">
+                                            <td><i class="mdi mdi-alert-circle-outline"></i>暂无数据！</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -81,7 +85,7 @@
                     </div>
                     <div class="row" style="padding-bottom: 20px;">
                         <div class="col-md-12 text-center">
-                            <a class="btn btn-default" href="/page/gmvplan">返回</a>
+                            <a class="btn btn-default" href="/page/gmvplan"><i class="mdi mdi-reply"></i>返回</a>
                         </div>
                     </div>
                 </div>
@@ -143,7 +147,11 @@
                 title: '同比上年同比增长额',
                 field: 'gmvTbRate',
                 formatter: function (value, row, index) {
-                    return value + "%";
+                    if(value == null) {
+                        return "-";
+                    }else {
+                        return value + "%";
+                    }
                 }
             }]
         });
@@ -160,8 +168,11 @@
             });
             htmlCode1 += "</tr>";
             htmlCode2 += "</tr>";
-            $("#weightData").html("").html(htmlCode1 + htmlCode2);
-            $("#weightData").find("tr:eq(0)").addClass("active");
+            var code = htmlCode1 + htmlCode2;
+            if(r.length != 0) {
+                $("#weightData").html("").html(code);
+                $("#weightData").find("tr:eq(0)").addClass("active");
+            }
         });
     }
 </script>

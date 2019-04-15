@@ -57,8 +57,7 @@ public class GmvPlanController extends BaseController {
             targetValue= ArithUtil.formatDouble(ArithUtil.mul(gmvValue,1.1d),0);
 
             result.put("targetvalue",targetValue);
-            result.put("targetRate","10%");
-
+            result.put("targetRate","10");
             return ResponseBo.ok(result);
         }else
         {
