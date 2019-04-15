@@ -5,11 +5,32 @@ var xData = function() {
     }
     return data;
 }();
+
+function getDay() {
+    var day = new Array();
+    var i = 0;
+    while (i < 30) {
+        day.push(i + 1);
+        i++;
+    }
+    return day;
+}
+
+function getRandom (m,n){
+    var num = Math.floor(Math.random()*(m - n) + n);
+    return num;
+}
+
+function getPeriodRandom(m,n,k) {
+    var data = new Array();
+    for(var i=0; i<k; i++) {
+        data.push(getRandom(m,n));
+    }
+    return data;
+}
+
 //本月按天和去年同期值的对比
 var option1 = {
-    // title: {
-    //     text: '本月和去年同期GMV值对比'
-    // },
     tooltip: {
         trigger: 'axis',
         axisPointer: { // 坐标轴指示器，坐标轴触发有效
@@ -17,7 +38,7 @@ var option1 = {
         }
     },
     legend: {
-        data: ['本月', '去年同期'],
+        data: ['本月GMV', '去年同期月GMV', '上月GMV日均', '去年同期月GMV日均'],
         align: 'right',
         right: 10
     },
@@ -29,24 +50,40 @@ var option1 = {
     },
     xAxis: [{
         type: 'category',
-        name: '月份',
-        data: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+        name: '日期',
+        splitLine:{show: false},
+        data: getDay()
     }],
     yAxis: [{
         type: 'value',
         name: 'GMV值（元）',
+        splitLine:{show: false},
+        axisTick: {
+            show: false
+        },
+        splitArea: {
+            show: false
+        },
         axisLabel: {
             formatter: '{value}'
         }
     }],
     series: [{
-        name: '本月',
+        name: '本月GMV',
         type: 'bar',
-        data: [1200, 1215, 1400, 1120, 1920, 1200, 1335, 1400, 1420, 1520, 2326, 2211]
+        data: getPeriodRandom(5000, 10000, 15)
     }, {
-        name: '去年同期',
+        name: '去年同期月GMV',
         type: 'bar',
-        data: [625, 1035, 3400, 1220, 5520, 1326, 1200, 1215, 1400, 1120, 1920, 2000]
+        data: getPeriodRandom(5000, 10000, 30)
+    }, {
+        name: '上月GMV日均',
+        type: 'line',
+        data: getPeriodRandom(6000, 6000, 15)
+    }, {
+        name: '去年同期月GMV日均',
+        type: 'line',
+        data: getPeriodRandom(8000, 8000, 15)
     }]
 };
 
@@ -103,7 +140,7 @@ var option3 = {
     legend: {
         right: 20,
         orient: 'vertical',
-        data: ['本年各月GMV值','去年各月GMV值']
+        data: ['本年各月GMV值','去年各月GMV值','本年月平均GMV值','去年月平均GMV值']
     },
     tooltip: {
         trigger: 'axis',
@@ -136,7 +173,7 @@ var option3 = {
         showSymbol: false,
         symbol: 'circle',
         symbolSize: 6,
-        data: getMonthRandom(800, 2000)
+        data: getPeriodRandom(800, 2000,5)
     }, {
         name: '去年各月GMV值',
         type: 'line',
@@ -145,20 +182,32 @@ var option3 = {
         symbol: 'circle',
         symbolSize: 6,
         data: getMonthRandom(800, 2000)
+    },{
+        name: '本年月平均GMV值',
+        type: 'line',
+        showSymbol: false,
+        symbol: 'circle',
+        symbolSize: 6,
+        data: getPeriodRandom(1200, 1200,5)
+    }, {
+        name: '去年月平均GMV值',
+        type: 'line',
+        smooth: true,
+        showSymbol: false,
+        symbol: 'circle',
+        symbolSize: 6,
+        data: getMonthRandom(1400, 1400)
     }]
 };
 
 
 var option4 = {
-    "tooltip": {
-        "trigger": "axis",
-        "axisPointer": {
-            "type": "shadow",
-            textStyle: {
-                color: "#fff"
-            }
-
-        },
+    tooltip: {
+        show: "true",
+        trigger: 'axis',
+        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+        }
     },
     "grid": {
         "borderWidth": 0,
@@ -174,31 +223,37 @@ var option4 = {
         textStyle: {
             color: '#90979c',
         },
-        "data": ['本年实际GMV', '本年目标GMV']
+        "data": ['实际GMV', '目标GMV']
     },
     "calculable": false,
     "xAxis": [{
-        "type": "category",
         name: "月份",
-        "axisLine": {
-            lineStyle: {
-                color: '#90979c'
-            }
+        type: 'category',
+        axisTick: {
+            show: false
         },
-        "splitLine": {
-            "show": false
+        axisLine: {
+            show: true,
         },
-        "axisTick": {
-            "show": false
+        data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+    }, {
+        type: 'category',
+        axisLine: {
+            show: false
         },
-        "splitArea": {
-            "show": false
+        axisTick: {
+            show: false
         },
-        "axisLabel": {
-            "interval": 0,
-
+        axisLabel: {
+            show: false
         },
-        "data": ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
+        splitArea: {
+            show: false
+        },
+        splitLine: {
+            show: false
+        },
+        data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
     }],
     "yAxis": [{
         "type": "value",
@@ -224,9 +279,10 @@ var option4 = {
 
     }],
     "series": [{
-        "name": "本年目标GMV",
+        "name": "目标GMV",
+        xAxisIndex: 1,
+        color: "#ccc",
         "type": "bar",
-        "stack": "总量1",
         "barMaxWidth": 35,
         "barGap": "10%",
         "itemStyle": {
@@ -243,13 +299,15 @@ var option4 = {
                 }
             }
         },
-        "data": getMonthRandom(0, 100),
+        "data": [300,600,500,800,900,800,870,900,700,800,700,880]
     },
 
         {
-            "name": "本年实际GMV",
+            "name": "实际GMV",
+            xAxisIndex: 0,
             "type": "bar",
-            "stack": "总量2",
+            "barMaxWidth": 35,
+            "barGap": "10%",
             "itemStyle": {
                 "normal": {
                     "barBorderRadius": 0,
@@ -262,7 +320,7 @@ var option4 = {
                     }
                 }
             },
-            "data": getMonthRandom(0, 100)
+            "data": [100,200,100,300,500,400,670,800,600,700,600,780]
         }
     ]
 };
@@ -409,6 +467,88 @@ var option6 = {
         }
     ]
 };
+
+
+var option7 = {
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+        }
+    },
+    legend: {
+        data: ['环比增长率'],
+        align: 'right',
+        right: 10
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis: [{
+        type: 'category',
+        name: '月份',
+        splitLine:{show: false},
+        data: ['201901','201902','201903','201904','201905']
+    }],
+    yAxis: [{
+        type: 'value',
+        name: '环比增长率（%）',
+        splitLine:{show: false},
+        axisTick: {
+            show: false
+        },
+        splitArea: {
+            show: false
+        },
+        axisLabel: {
+            formatter: '{value}'
+        }
+    }],
+    series: [{
+        name: '环比增长率',
+        type: 'line',
+        data: [45, 32, 14, 55, 68]
+    }]
+};
+
+getChangeIndex();
+// 变异系数
+function getChangeIndex() {
+    var code = "<tr style='background-color: #f5f6fa'><td>日期</td>";
+    var day = getDay();
+    $.each(day, function (k, v) {
+        code += "<td> " + v + " </td>";
+    });
+    code += "</tr>";
+
+    var t1 = getPeriodRandom(0, 100,30);
+    var t2 = getPeriodRandom(0, 100,30);
+    var t3 = getPeriodRandom(0, 100,30);
+
+    code += "<tr><td>本月</td>";
+    $.each(t1, function (k, v) {
+        code += "<td>0." + v + " </td>";
+    });
+    code += "</tr>";
+
+    code += "<tr><td>去年</td>";
+    $.each(t1, function (k, v) {
+        code += "<td>0." + v + " </td>";
+    });
+    code += "</tr>";
+
+    code += "<tr><td>上月</td>";
+    $.each(t1, function (k, v) {
+        code += "<td>0." + v + " </td>";
+    });
+    code += "</tr>";
+
+    $("#table1").html("").html(code);
+}
+
 init();
 function init() {
     var gmvChart = echarts.init(document.getElementById('gmvChart'), 'macarons');
@@ -430,9 +570,15 @@ function init() {
             year_init();
         }
     });
+
+    var chart_period = echarts.init(document.getElementById('chart_period'), 'macarons');
+    chart_period.setOption(option7);
 }
 
 function year_init() {
+    var chart0 = echarts.init(document.getElementById('chart0'), 'macarons');
+    chart0.setOption(option0);
+
     var chart1 = echarts.init(document.getElementById('chart1'), 'macarons');
     chart1.setOption(option3);
 
@@ -457,3 +603,49 @@ function selectOnchang(obj) {
     }
 
 }
+
+
+var option0 = {
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+        }
+    },
+    legend: {
+        data: ['环比增长率'],
+        align: 'right',
+        right: 10
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis: [{
+        type: 'category',
+        name: '年份',
+        splitLine:{show: false},
+        data: ['2014','2015','2016','2017','2018']
+    }],
+    yAxis: [{
+        type: 'value',
+        name: '环比增长率（%）',
+        splitLine:{show: false},
+        axisTick: {
+            show: false
+        },
+        splitArea: {
+            show: false
+        },
+        axisLabel: {
+            formatter: '{value}'
+        }
+    }],
+    series: [{
+        name: '环比增长率',
+        type: 'line',
+        data: [45, 32, 14, 55, 68]
+    }]
+};

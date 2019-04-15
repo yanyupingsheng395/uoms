@@ -19,6 +19,13 @@
             font-size: 65px;
             color: #33cabb;
         }
+        .progress-bar-lighter {
+            background-color: #f5f6f7;
+        }
+        #table1 td{
+            border: solid 1px #eceeef;
+            padding:3px;
+        }
     </style>
 </head>
 
@@ -57,11 +64,10 @@
                                                                     <div class="card bg-light">
                                                                         <div class="card-body clearfix">
                                                                             <div class="pull-right">
-                                                                                <p class="h5 text-dark m-t-0">本月实际完成（元）</p>
-                                                                                <p class="h3 text-dark m-b-0">2,125.00</p>
+                                                                                <p class="h5 text-dark m-t-0">本月目标（元）</p>
+                                                                                <p class="h3 text-dark m-b-0">10,000</p>
                                                                             </div>
-
-                                                                            <div class="pull-left"> <span class="img-avatar img-avatar-48 bg-translucent"><span class="iconfont panel-icon">&#xe62e;</span></span> </div>
+                                                                            <div class="pull-left"> <span class="img-avatar img-avatar-48 bg-translucent"><span class="iconfont panel-icon">&#xe604;</span></span> </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -69,10 +75,11 @@
                                                                     <div class="card bg-light">
                                                                         <div class="card-body clearfix">
                                                                             <div class="pull-right">
-                                                                                <p class="h5 text-dark m-t-0">本月目标（元）</p>
-                                                                                <p class="h3 text-dark m-b-0">10,000</p>
+                                                                                <p class="h5 text-dark m-t-0">本月实际完成（元）</p>
+                                                                                <p class="h3 text-dark m-b-0">2,125.00</p>
                                                                             </div>
-                                                                            <div class="pull-left"> <span class="img-avatar img-avatar-48 bg-translucent"><span class="iconfont panel-icon">&#xe604;</span></span> </div>
+
+                                                                            <div class="pull-left"> <span class="img-avatar img-avatar-48 bg-translucent"><span class="iconfont panel-icon">&#xe62e;</span></span> </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -96,7 +103,10 @@
                                                                 <div class="col-md-10" style="margin-top: 4px;">
                                                                     <div class="progress progress-lg">
                                                                         <div class="progress-bar progress-bar-striped progress-bar-success active" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 25%">
-                                                                            <span style="line-height: 18px;">25%</span>
+                                                                            <span class="h6" style="line-height: 17px; color: #fff;">经过7.5天</span>
+                                                                        </div>
+                                                                        <div class="progress-bar progress-bar-lighter" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 75%">
+                                                                            <span class="h6" style="line-height: 17px;">尚余22.5天</span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -108,7 +118,11 @@
                                                                 <div class="col-md-10" style="margin-top: 4px;">
                                                                     <div class="progress progress-lg">
                                                                         <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 20.65%">
-                                                                            <span style="line-height: 18px;">20.65%</span>
+                                                                            <span style="line-height: 18px;"></span>
+                                                                            <span class="h6" style="line-height: 17px; color: #fff;">完成3,600元</span>
+                                                                        </div>
+                                                                        <div class="progress-bar progress-bar-lighter" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 75%">
+                                                                            <span class="h6" style="line-height: 17px;">尚余15,000元</span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -117,8 +131,8 @@
                                                             <div class="row" style="margin-top: 20px;">
                                                                 <div class="col-md-12">
                                                                     <table class="table table-bordered">
-                                                                        <tr class="active"><td>去年同期GMV（元）</td><td>去年同期差额（元）</td><td>同比（%）</td><td>上月GMV（元）</td><td>与上月差额（元）</td><td>环比（%）</td></tr>
-                                                                        <tr><td>2500,000</td><td>10,00.00</td><td>25%</td><td>62,354</td><td>3540</td><td>33%</td></tr>
+                                                                        <tr class="active"><td>本月GMV环比（%）</td><td>去年同期GMV值（元）</td><td>本年完成率差（%）</td><td>去年同期完成率差（%）</td></tr>
+                                                                        <tr><td>25%</td><td>24%</td><td>15%</td><td>12%</td></tr>
                                                                     </table>
                                                                 </div>
                                                             </div>
@@ -145,16 +159,16 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="row" style="margin-top: 48px;">
-                                                                        <div class="col-md-12">
-                                                                            <span class="iconfont" style="color:#1E90FF;">&#xe60b;</span><span>建议</span>
-                                                                            <div class="row">
-                                                                                <div class="col-md-12">
-                                                                                    <p>多使用一些流量品类进行拉新。</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
+                                                                    <!--<div class="row" style="margin-top: 48px;">-->
+                                                                        <!--<div class="col-md-12">-->
+                                                                            <!--<span class="iconfont" style="color:#1E90FF;">&#xe60b;</span><span>建议</span>-->
+                                                                            <!--<div class="row">-->
+                                                                                <!--<div class="col-md-12">-->
+                                                                                    <!--<p>多使用一些流量品类进行拉新。</p>-->
+                                                                                <!--</div>-->
+                                                                            <!--</div>-->
+                                                                        <!--</div>-->
+                                                                    <!--</div>-->
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -165,6 +179,26 @@
                                                             <h5>本月GMV和去年同期对比图</h5>
                                                             <hr style="margin-top: 0px;margin-bottom: 5px;"/>
                                                             <div id="gmvChart" style="height: 300px;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- 跨月长趋势和环比增长率-->
+                                                    <div class="row" style="margin-top: 20px;">
+                                                        <div class="col-md-12">
+                                                            <h5>跨月环比增长率</h5>
+                                                            <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                                                            <div id="chart_period" style="height: 300px;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="margin-top: 20px;">
+                                                        <div class="col-md-12">
+                                                            <h5>日变异系数对比图</h5>
+                                                            <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <table style="border:solid 1px #000;" id="table1">
+                                                                    </table>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <!-- 利润率 -->

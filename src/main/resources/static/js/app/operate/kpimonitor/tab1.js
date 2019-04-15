@@ -178,7 +178,6 @@ function getMonthRandom(m,n) {
     for(var i=0; i<12; i++) {
         data.push(getRandom(m,n));
     }
-    console.log(data);
     return data;
 }
 
