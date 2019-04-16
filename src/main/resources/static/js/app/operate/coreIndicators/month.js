@@ -6,9 +6,6 @@ var xData = function() {
     return data;
 }();
 
-init_date("startDate", "yyyy-mm-dd", 0,2,0);
-init_date("endDate", "yyyy-mm-dd", 0,2,0);
-
 function getDay() {
     var day = new Array();
     var i = 0;
@@ -605,9 +602,6 @@ function init() {
 }
 
 function year_init() {
-    init_date("startDate1", "yyyy-mm", 1,2,1);
-    init_date("endDate1", "yyyy-mm", 1,2,1);
-
     var chart0 = echarts.init(document.getElementById('chart0'), 'macarons');
     chart0.setOption(option0);
 

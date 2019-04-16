@@ -12,10 +12,6 @@
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
-    <!--时间选择插件-->
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
-    <!--日期选择插件-->
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <style>
@@ -263,13 +259,10 @@
         </main>
     </div>
 </div>
-!--时间选择插件-->
-<script data-th-src="@{/plugins/bootstrap-datetimepicker/moment.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-datetimepicker/locale/zh-cn.js}"></script>
-<!--日期选择插件-->
-<script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
+<script>
+    init_date_begin("startDate","endDate", "yyyy-mm-dd", 0,2,0);
+    init_date_end("startDate","endDate", "yyyy-mm-dd", 0,2,0);
+</script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
