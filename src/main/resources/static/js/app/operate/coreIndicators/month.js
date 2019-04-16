@@ -52,7 +52,7 @@ var option1 = {
         type: 'category',
         name: '日期',
         splitLine:{show: false},
-        data: getDay()
+        data: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
     }],
     yAxis: [{
         type: 'value',
@@ -75,7 +75,7 @@ var option1 = {
     }, {
         name: '去年同期月GMV',
         type: 'bar',
-        data: getPeriodRandom(5000, 10000, 30)
+        data: getPeriodRandom(5000, 10000, 15)
     }, {
         name: '本月GMV日均',
         type: 'line',
