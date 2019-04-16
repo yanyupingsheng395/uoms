@@ -936,8 +936,22 @@ $("#main").mousedown(function (event) {
     }
 });
 
+function inputCheck(dom) {
+    if($(dom).val() == "") {
+        $(dom).parent().addClass("has-error");
+    }else {
+        $(dom).parent().removeClass("has-error");
+    }
+}
+
 function next(dom) {
-    if($("#step1").attr("style") == "display:block;") {
-        beforeNext(dom);
+    if($("#diagName").val() != "") {
+        $("#diagName").parent().removeClass("has-error");
+        if($("#step1").attr("style") == "display:block;") {
+            beforeNext(dom);
+        }
+    }else {
+        $("#diagName").parent().addClass("has-error");
+        toastr.warning("请输入诊断名称！");
     }
 }
