@@ -22,14 +22,6 @@ public class SystemProperties {
         this.shiro = shiro;
     }
 
-//    public ValidateCodeProperties getValidateCode() {
-//        return validateCode;
-//    }
-
- //   public void setValidateCode(ValidateCodeProperties validateCode) {
-//        this.validateCode = validateCode;
-//    }
-
     public String getTimeFormat() {
         return timeFormat;
     }

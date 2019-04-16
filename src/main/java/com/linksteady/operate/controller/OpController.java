@@ -3,6 +3,8 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.domain.DiagHandleInfo;
+import com.linksteady.operate.service.DiagHandleService;
 import com.linksteady.operate.service.LifeCycleService;
 import com.linksteady.operate.service.OpService;
 import org.slf4j.Logger;
@@ -30,6 +32,9 @@ public class OpController extends BaseController {
 
     @Autowired
     OpService opService;
+
+    @Autowired
+    DiagHandleService diagHandleService;
 
     /**
      * 获取日运营的头表列表
@@ -133,6 +138,23 @@ public class OpController extends BaseController {
 
         int totalCount= opService.getPeriodUserListCount(headerId);
         return  ResponseBo.okOverPaging("",totalCount,result);
+    }
+
+
+    @RequestMapping("/test")
+    public ResponseBo getPeriodUserList() {
+
+        DiagHandleInfo info=new DiagHandleInfo();
+        info.setDiagId(1);
+        info.setKpiLevelId(2);
+        info.setHandleDesc("操作步骤");
+
+        diagHandleService.saveHandleInfoToRedis(info);
+        DiagHandleInfo info2= diagHandleService.getHandleInfoFromRedis(1,2);
+
+        System.out.println(info2);
+
+        return  ResponseBo.ok("success");
     }
 
 
