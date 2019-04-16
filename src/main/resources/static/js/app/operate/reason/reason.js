@@ -36,6 +36,8 @@ $(function () {
                     return "<span class='label label-primary'>计算中</span>";
                 }else if (value == "F") {
                     return "<span class='label label-primary'>完成</span>";
+                }else if (value == "E") {
+                    return "<span class='label label-danger'>错误</span>";
                 }
             }
         },  {
@@ -52,7 +54,7 @@ $(function () {
                 if (row.STATUS == "A" || row.STATUS=='F') {
                     return "<div class='btn btn-primary btn-sm' onclick='view("+reasonId+")'><i class='mdi mdi-eye'></i>查看</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='del("+reasonId+")'><i class='mdi mdi-window-close'></i>删除</div>";
                 }else if (row.STATUS == "R") {
-                    return "<div class='btn btn-primary btn-sm' onclick='view("+reasonId+")'><i class='mdi mdi-eye'></i>查看</div>&nbsp;<div class='btn btn-info btn-sm' onclick='updatedata("+reasonId+")'><i class='mdi mdi-redo'></i>更新</div>";
+                    return "<div class='btn btn-info btn-sm' onclick='updatedata("+reasonId+")'><i class='mdi mdi-redo'></i>更新</div>";
                 }
             }
         }]

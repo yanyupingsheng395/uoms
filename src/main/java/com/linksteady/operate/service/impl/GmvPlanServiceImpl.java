@@ -92,20 +92,6 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
         return false;
     }
 
-//    @Override
-//    @Transactional
-//    public void overrideOldData(String year, String gmv, String rate) {
-//        Example plan = new Example(GmvPlan.class);
-//        plan.createCriteria().andCondition("year_id=", year);
-//        gmvPlanMapper.deleteByExample(plan);
-//
-//        Example detail = new Example(PlanDetail.class);
-//        plan.createCriteria().andCondition("year_id=", year);
-//        planDetailMapper.deleteByExample(detail);
-//        // 新增数据
-//        addPlanAndDetail(year, gmv, rate);
-//    }
-
     @Override
     public void updateDetail(JSONArray jsonArray) {
         // todo

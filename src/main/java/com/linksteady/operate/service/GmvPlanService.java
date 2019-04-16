@@ -27,8 +27,6 @@ public interface GmvPlanService extends IService<GmvPlan> {
 
     boolean getPlanAndDetail(String year);
 
-//    void overrideOldData(String year, String gmv, String rate);
-
     void updateDetail(JSONArray jsonArray);
 
     int checkYear(String year);

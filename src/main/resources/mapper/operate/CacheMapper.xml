@@ -24,6 +24,12 @@
         WHERE DIAG_FLAG = 'Y' ORDER BY ORDER_NO ASC
     </select>
 
+    <select id="getReasonDims" resultType="map">
+        SELECT DIM_CODE, DIM_NAME, VALUE_TYPE, VALUE_SQL
+        FROM UO_DIM_LIST_CONFIG
+        WHERE REASON_FLAG = 'Y' ORDER BY ORDER_NO ASC
+    </select>
+
     <select id="getDimValuesBySql"  parameterType="string" resultType="java.util.LinkedHashMap">
         ${_parameter}
     </select>

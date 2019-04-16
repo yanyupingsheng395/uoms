@@ -34,6 +34,10 @@ public class KpiCacheManager {
 
     private static Map<String, Object> diagDimValueList = Maps.newLinkedHashMap();  //诊断 维度及其值列表
 
+    private static Map<String, String> reaonDimList = Maps.newLinkedHashMap();  //诊断 维度列表
+
+    private static Map<String, Object> reasonDimValueList = Maps.newLinkedHashMap();  //诊断 维度及其值列表
+
     public static KpiCacheManager getInstance() {
         if (null == kpiCacheManager) {
             synchronized (KpiCacheManager.class) {
@@ -82,6 +86,14 @@ public class KpiCacheManager {
                 String key=it.next();
                 diagDimList.put(key,map.get(key));
             }
+        }else if("reaonDimList".equals(type))
+        {
+            reaonDimList.clear();
+            while (it.hasNext())
+            {
+                String key=it.next();
+                reaonDimList.put(key,map.get(key));
+            }
         }
     }
 
@@ -101,6 +113,12 @@ public class KpiCacheManager {
             while (it.hasNext()) {
                 String key = it.next();
                 diagDimValueList.put(key, map.get(key));
+            }
+        }else if("reasonDimValueList".equals(type)) {
+            reasonDimValueList.clear();
+            while (it.hasNext()) {
+                String key = it.next();
+                reasonDimValueList.put(key, map.get(key));
             }
         }
     }
@@ -126,5 +144,17 @@ public class KpiCacheManager {
     {
         return diagDimValueList;
     }
+
+    public Map<String,String> getReasonDimList()
+    {
+        return reaonDimList;
+    }
+
+    public Map<String,Object> getReasonDimValueList()
+    {
+        return reasonDimValueList;
+    }
+
+
 
 }

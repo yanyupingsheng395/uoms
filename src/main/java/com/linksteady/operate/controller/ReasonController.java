@@ -3,6 +3,7 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.vo.ReasonVO;
 import com.linksteady.system.domain.User;
@@ -127,16 +128,8 @@ public class ReasonController  extends BaseController {
      * @return ResponseBo对象
      */
     @RequestMapping("/getReasonKpiHistroy")
-    public ResponseBo getReasonKpiHistroy(@RequestParam String kpiCode,@RequestParam String templateCode) {
-        List<Map<String,Object>> result=null;
-        if(null!=templateCode&&"concern".equals(templateCode))
-        {
-            result= reasonService.getReasonKpiHistroy(kpiCode,"B");
-        }else
-        {
-            result= reasonService.getReasonKpiHistroy(kpiCode,templateCode);
-        }
-
+    public ResponseBo getReasonKpiHistroy(@RequestParam String reasonId,@RequestParam String kpiCode,@RequestParam String templateCode) {
+        List<Map<String,Object>> result=reasonService.getReasonKpiHistroy(reasonId,kpiCode,templateCode);
         return ResponseBo.ok(result);
     }
 
@@ -162,18 +155,52 @@ public class ReasonController  extends BaseController {
      */
     @RequestMapping("/getConcernReasonKpis")
     public ResponseBo getConcernReasonKpis(@RequestParam String reasonId) {
-        return ResponseBo.ok(reasonId);
+        List<Map<String,Object>> result=reasonService.getConcernKpiList(reasonId);
+        return ResponseBo.ok(result);
     }
 
     /**
-     * 将原因KPI加入到当前的关注列表中
+     * 将原因KPI加入到当前的关注列表中 或 取消关注
      * @param reasonId 原因ID
      * @return ResponseBo对象
      */
     @RequestMapping("/addConcernKpi")
-    public ResponseBo addConcernKpi(@RequestParam String reasonId) {
+    public ResponseBo addConcernKpi(@RequestParam String reasonId,@RequestParam String kpiCode,@RequestParam String templateCode,@RequestParam String reasonKpiCode) {
+        //判断是否存在与表中 如果存在，则删除，否则增加
+        int count=reasonService.getConcernKpiCount(reasonId,kpiCode,templateCode,reasonKpiCode);
 
-        return ResponseBo.ok(111);
+        //不在列表中 进行增加操作
+        if(count==0)
+        {
+            reasonService.addConcernKpi(reasonId,kpiCode,templateCode,reasonKpiCode);
+        }else  //进行删除操作
+        {
+            reasonService.deleteConcernKpi(reasonId,kpiCode,templateCode,reasonKpiCode);
+        }
+        return ResponseBo.ok("success");
     }
+
+
+    /**
+     * 获取维度列表
+     * @return ResponseBo对象
+     */
+    @RequestMapping("/getReasonDimList")
+    public ResponseBo getReasonDimList() {
+        Map<String,String> result= KpiCacheManager.getInstance().getReasonDimList();
+        return ResponseBo.okWithData("",result);
+    }
+
+    /**
+     * 获取维度对应的值列表
+     * @param dimCode 维度编码
+     * @return ResponseBo对象
+     */
+    @RequestMapping("/getReasonDimValuesList")
+    public ResponseBo getReasonDimValuesList(@RequestParam String dimCode) {
+        Map<String,String> result=(Map)KpiCacheManager.getInstance().getReasonDimValueList().get(dimCode);
+        return ResponseBo.okWithData("",result);
+    }
+
 
 }

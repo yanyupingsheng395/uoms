@@ -75,12 +75,47 @@ public class LoadConfigRunner implements CommandLineRunner {
             diagDimValueList.put(dimCode,dimValues);
         }
 
+        //获取原因分析的维度列表
+        List<Map<String,String>> reasonDims=cacheMapper.getReasonDims();
+
+        Map<String,String> reasonDimList=Maps.newLinkedHashMap();
+        Map<String,Object> reasonDimValueList=Maps.newLinkedHashMap();
+
+        for(Map<String,String> reasonDim:reasonDims)
+        {
+            dimCode=reasonDim.get("DIM_CODE");
+            valueType=reasonDim.get("VALUE_TYPE");
+            valueSql=reasonDim.get("VALUE_SQL");
+            reasonDimList.put(dimCode,reasonDim.get("DIM_NAME"));
+
+            List<Map<String,String>> dimValuesList2=null;
+            Map<String,String> reasonDimValues=Maps.newHashMap();
+            if("S".equals(valueType))  //通过sql查询
+            {
+                dimValuesList2=cacheMapper.getDimValuesBySql(valueSql);
+
+            }else //从数据库码表中取
+            {
+                dimValuesList2=cacheMapper.getDimValuesDirect(dimCode);
+            }
+
+            for(Map<String,String> param:dimValuesList2)
+            {
+                reasonDimValues.put(param.get("VALUE_CODE"),param.get("VALUE_DESC"));
+            }
+            reasonDimValueList.put(dimCode,reasonDimValues);
+        }
+
+
         KpiCacheManager.getInstance().setCacheMap(codeNamePair,"codeNamePair");
         KpiCacheManager.getInstance().setCacheMap(codeFomularPair,"codeFomularPair");
         KpiCacheManager.getInstance().setCacheMapForObject(kpidismant,"kpidismant");
         KpiCacheManager.getInstance().setCacheMap(DiagDimList,"diagDimList");
 
         KpiCacheManager.getInstance().setCacheMapForObject(diagDimValueList,"diagDimValueList");
+
+        KpiCacheManager.getInstance().setCacheMap(reasonDimList,"reaonDimList");
+        KpiCacheManager.getInstance().setCacheMapForObject(reasonDimValueList,"reasonDimValueList");
 
 
     }

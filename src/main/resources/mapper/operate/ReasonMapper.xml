@@ -223,19 +223,32 @@
     </select>
 
     <select id="getReasonKpiHistroy" resultType="map">
-        select T.KPI_CODE,
-               T.TEMPLATE_CODE,
-               T.REASON_KPI_CODE,
-               T.REASON_KPI_TYPE,
-               T.REASON_KPI_NAME,
-               T.RELATE_VALUE,
-               T.RELATE_FLAG,
-               T.REGRESSION_VALUE
-        from UO_REASON_KPIS_HISTORY t
-        WHERE
-            T.KPI_CODE=#{kpiCode}
-          AND T.TEMPLATE_CODE=#{templateCode}
-          ORDER BY REGRESSION_VALUE DESC
+        SELECT
+            T1.KPI_CODE,
+            T1.TEMPLATE_CODE,
+            T1.REASON_KPI_CODE,
+            REASON_KPI_TYPE,
+            REASON_KPI_NAME,
+            RELATE_VALUE,
+            RELATE_FLAG,
+            REGRESSION_VALUE,
+            DECODE(T2.REASON_ID,NULL,'N','Y') IS_CONCERN
+        FROM
+            (select     T.KPI_CODE,
+                        T.TEMPLATE_CODE,
+                        T.REASON_KPI_CODE,
+                        T.REASON_KPI_TYPE,
+                        T.REASON_KPI_NAME,
+                        T.RELATE_VALUE,
+                        T.RELATE_FLAG,
+                        T.REGRESSION_VALUE
+             from UO_REASON_KPIS_HISTORY t
+             WHERE
+                 T.KPI_CODE=#{kpiCode}
+               AND T.TEMPLATE_CODE=#{templateCode}
+             ORDER BY REGRESSION_VALUE DESC) T1 LEFT JOIN
+                    (SELECT * FROM UO_REASON_CONCERN WHERE REASON_ID=#{reasonId}) T2
+                    ON T1.KPI_CODE=T2.KPI_CODE AND T1.TEMPLATE_CODE=T2.TEMPLATE_CODE AND T1.REASON_KPI_CODE=T2.REASON_KPI_CODE
     </select>
 
     <select id="getReasonRelatedKpi" resultMap="relatedkpimap">
@@ -253,4 +266,43 @@
           AND T.REASON_KPI_CODE=#{reasonKpiCode}
           AND T.TEMPLATE_CODE=#{templateCode}
     </select>
+
+    <select id="getConcernKpiList" resultType="map">
+        select   T.KPI_CODE,
+                 T.TEMPLATE_CODE,
+                 T3.TEMPLATE_NAME,
+                 T.REASON_KPI_CODE,
+                 T.REASON_KPI_TYPE,
+                 T.REASON_KPI_NAME,
+                 T.RELATE_VALUE,
+                 T.RELATE_FLAG,
+                 T.REGRESSION_VALUE
+        from UO_REASON_KPIS_HISTORY t JOIN
+                     (SELECT * FROM UO_REASON_CONCERN WHERE REASON_ID=#{reasonId}) T2
+                     ON T.KPI_CODE=T2.KPI_CODE AND T.TEMPLATE_CODE=T2.TEMPLATE_CODE  AND T.REASON_KPI_CODE=T2.REASON_KPI_CODE
+                                      LEFT JOIN UO_REASON_TEMPLATE_CONFIG T3
+                                                ON T.TEMPLATE_CODE=T3.TEMPLATE_CODE AND T.REASON_KPI_CODE=T3.REASON_KPI_CODE
+        ORDER BY T.TEMPLATE_CODE ASC,T.REASON_KPI_TYPE ASC,T.REGRESSION_VALUE DESC
+    </select>
+
+    <select id="getConcernKpiCount" resultType="int">
+        SELECT COUNT(*)
+        FROM UO_REASON_CONCERN
+        WHERE REASON_ID = #{reasonId}
+          AND KPI_CODE = #{kpiCode}
+          AND TEMPLATE_CODE = #{templateCode}
+          AND REASON_KPI_CODE = #{reasonKpiCode}
+    </select>
+
+    <insert id="addConcernKpi">
+      INSERT INTO UO_REASON_CONCERN(REASON_ID,KPI_CODE,TEMPLATE_CODE,REASON_KPI_CODE) VALUES( #{reasonId},#{kpiCode},#{templateCode},#{reasonKpiCode})
+    </insert>
+
+    <delete id="deleteConcernKpi">
+        DELETE FROM UO_REASON_CONCERN  WHERE REASON_ID = #{reasonId}
+                                         AND KPI_CODE = #{kpiCode}
+                                         AND TEMPLATE_CODE = #{templateCode}
+                                         AND REASON_KPI_CODE = #{reasonKpiCode}
+    </delete>
+
  </mapper>

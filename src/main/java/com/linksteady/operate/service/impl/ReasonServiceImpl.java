@@ -18,10 +18,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class ReasonServiceImpl implements ReasonService {
@@ -218,8 +215,8 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-    public List<Map<String, Object>> getReasonKpiHistroy(String kpiCode, String templateCode) {
-        return reasonMapper.getReasonKpiHistroy(kpiCode,templateCode);
+    public List<Map<String, Object>> getReasonKpiHistroy(String reasonId,String kpiCode, String templateCode) {
+        return reasonMapper.getReasonKpiHistroy(reasonId,kpiCode,templateCode);
     }
 
     @Override
@@ -316,6 +313,27 @@ public class ReasonServiceImpl implements ReasonService {
         datas.put("ydata",ydata);
 
         return datas;
+    }
+
+    @Override
+    public List<Map<String,Object>> getConcernKpiList(String reasonId)
+    {
+        return reasonMapper.getConcernKpiList(reasonId);
+    }
+
+    @Override
+    public int getConcernKpiCount(String reasonId, String kpiCode, String templateCode, String reasonKpiCode) {
+        return reasonMapper.getConcernKpiCount(reasonId,kpiCode,templateCode,reasonKpiCode);
+    }
+
+    @Override
+    public void addConcernKpi(String reasonId, String kpiCode, String templateCode, String reasonKpiCode) {
+          reasonMapper.addConcernKpi(reasonId,kpiCode,templateCode,reasonKpiCode);
+    }
+
+    @Override
+    public void deleteConcernKpi(String reasonId, String kpiCode, String templateCode, String reasonKpiCode) {
+          reasonMapper.deleteConcernKpi(reasonId,kpiCode,templateCode,reasonKpiCode);
     }
 
 
