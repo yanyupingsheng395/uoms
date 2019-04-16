@@ -6,6 +6,9 @@ var xData = function() {
     return data;
 }();
 
+init_date("startDate", "yyyy-mm-dd", 0,2,0);
+init_date("endDate", "yyyy-mm-dd", 0,2,0);
+
 function getDay() {
     var day = new Array();
     var i = 0;
@@ -38,7 +41,7 @@ var option1 = {
         }
     },
     legend: {
-        data: ['本月GMV', '去年同期月GMV', '上月GMV日均', '去年同期月GMV日均'],
+        data: ['本月GMV', '去年同期月GMV', '本月GMV日均', '上月GMV日均', '去年同期月GMV日均'],
         align: 'right',
         right: 10
     },
@@ -76,6 +79,10 @@ var option1 = {
         name: '去年同期月GMV',
         type: 'bar',
         data: getPeriodRandom(5000, 10000, 30)
+    }, {
+        name: '本月GMV日均',
+        type: 'line',
+        data: getPeriodRandom(4000, 4000, 15)
     }, {
         name: '上月GMV日均',
         type: 'line',
@@ -154,7 +161,7 @@ var option3 = {
     },
     xAxis: {
         name:"月份",
-        data: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
+        data: ['1月份', '2月份', '3月份', '4月份', '5月份'],
         splitLine: {
             show: false
         }
@@ -181,7 +188,7 @@ var option3 = {
         showSymbol: false,
         symbol: 'circle',
         symbolSize: 6,
-        data: getMonthRandom(800, 2000)
+        data: getPeriodRandom(800, 2000, 5)
     },{
         name: '本年月平均GMV值',
         type: 'line',
@@ -196,7 +203,7 @@ var option3 = {
         showSymbol: false,
         symbol: 'circle',
         symbolSize: 6,
-        data: getMonthRandom(1400, 1400)
+        data: getPeriodRandom(1400, 1400,5)
     }]
 };
 
@@ -252,6 +259,9 @@ var option4 = {
         },
         splitLine: {
             show: false
+        },
+        axisPointer: {
+            type: 'none'
         },
         data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
     }],
@@ -477,7 +487,7 @@ var option7 = {
         }
     },
     legend: {
-        data: ['环比增长率'],
+        data: ['GMV值', '环比增长率'],
         align: 'right',
         right: 10
     },
@@ -489,11 +499,24 @@ var option7 = {
     },
     xAxis: [{
         type: 'category',
-        name: '月份',
+        name: '日期',
         splitLine:{show: false},
-        data: ['201901','201902','201903','201904','201905']
+        data: ['20190501','20190502','20190503','20190504','20190505','20190506','20190507','20190508','20190509','20190510','201905011']
     }],
     yAxis: [{
+        type: 'value',
+        name: 'GMV值（元）',
+        splitLine:{show: false},
+        axisTick: {
+            show: false
+        },
+        splitArea: {
+            show: false
+        },
+        axisLabel: {
+            formatter: '{value}'
+        }
+    }, {
         type: 'value',
         name: '环比增长率（%）',
         splitLine:{show: false},
@@ -510,7 +533,13 @@ var option7 = {
     series: [{
         name: '环比增长率',
         type: 'line',
-        data: [45, 32, 14, 55, 68]
+        yAxisIndex: 1,
+        data: getPeriodRandom(0, 100, 11)
+    },{
+        name: 'GMV值',
+        type: 'bar',
+        yAxisIndex: 0,
+        data: getPeriodRandom(0, 1000, 11)
     }]
 };
 
@@ -576,6 +605,9 @@ function init() {
 }
 
 function year_init() {
+    init_date("startDate1", "yyyy-mm", 1,2,1);
+    init_date("endDate1", "yyyy-mm", 1,2,1);
+
     var chart0 = echarts.init(document.getElementById('chart0'), 'macarons');
     chart0.setOption(option0);
 
@@ -613,7 +645,7 @@ var option0 = {
         }
     },
     legend: {
-        data: ['环比增长率'],
+        data: ['GMV值','环比增长率'],
         align: 'right',
         right: 10
     },
@@ -627,9 +659,22 @@ var option0 = {
         type: 'category',
         name: '年份',
         splitLine:{show: false},
-        data: ['2014','2015','2016','2017','2018']
+        data: ['201901','201902','201903','201904','201905']
     }],
     yAxis: [{
+        type: 'value',
+        name: 'GMV值（元）',
+        splitLine:{show: false},
+        axisTick: {
+            show: false
+        },
+        splitArea: {
+            show: false
+        },
+        axisLabel: {
+            formatter: '{value}'
+        }
+    },{
         type: 'value',
         name: '环比增长率（%）',
         splitLine:{show: false},
@@ -646,6 +691,12 @@ var option0 = {
     series: [{
         name: '环比增长率',
         type: 'line',
-        data: [45, 32, 14, 55, 68]
+        yAxisIndex: 1,
+        data: getPeriodRandom(0, 100, 5)
+    },{
+        name: 'GMV值',
+        type: 'bar',
+        yAxisIndex: 0,
+        data: getPeriodRandom(0, 1000, 5)
     }]
 };

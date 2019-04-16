@@ -12,6 +12,10 @@
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <!--时间选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
+    <!--日期选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <style>
@@ -131,8 +135,8 @@
                                                             <div class="row" style="margin-top: 20px;">
                                                                 <div class="col-md-12">
                                                                     <table class="table table-bordered">
-                                                                        <tr class="active"><td>本月GMV环比（%）</td><td>去年同期GMV值（元）</td><td>本年完成率差（%）</td><td>去年同期完成率差（%）</td></tr>
-                                                                        <tr><td>25%</td><td>24%</td><td>15%</td><td>12%</td></tr>
+                                                                        <tr class="active"><td>本月GMV环比（%）</td><td>去年同期GMV值（元）</td><td>本年完成率（%）</td><td>去年同期完成率差（%）</td></tr>
+                                                                        <tr><td>25%</td><td>24</td><td>45%</td><td>12%</td></tr>
                                                                     </table>
                                                                 </div>
                                                             </div>
@@ -186,12 +190,25 @@
                                                         <div class="col-md-12">
                                                             <h5>跨月环比增长率</h5>
                                                             <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                                                            <div class="text-center">
+                                                                <form class="form-inline">
+                                                                    <div class="form-group">
+                                                                        <input class="form-control js-datepicker m-b-10" type="text" id="startDate" name="startDate" data-date-format="yyyy-mm-dd" value="2019-05-01"/>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <input class="form-control js-datepicker m-b-10" type="text" id="endDate" name="endDate" data-date-format="yyyy-mm-dd" value="2019-05-11"/>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-primary m-b-10" type="button" onclick="javascript:void(0)"><i class="mdi mdi-magnify"></i>查询</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
                                                             <div id="chart_period" style="height: 300px;"></div>
                                                         </div>
                                                     </div>
                                                     <div class="row" style="margin-top: 20px;">
                                                         <div class="col-md-12">
-                                                            <h5>日变异系数对比图</h5>
+                                                            <h5>日变异系数</h5>
                                                             <hr style="margin-top: 0px;margin-bottom: 5px;"/>
                                                             <div class="row">
                                                                 <div class="col-md-12">
@@ -246,6 +263,13 @@
         </main>
     </div>
 </div>
+!--时间选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/moment.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/locale/zh-cn.js}"></script>
+<!--日期选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
