@@ -86,18 +86,13 @@ public class GmvPlanController extends BaseController {
         return ResponseBo.ok(flag);
     }
 
-//    @RequestMapping("/overrideOldData")
-//    public void overrideOldData(@RequestParam("year") String year, @RequestParam("gmv") String gmv, @RequestParam("rate") String rate) {
-//        gmvPlanService.overrideOldData(year, gmv, rate);
-//    }
-
     @RequestMapping("/updateDetail")
     public ResponseBo updateDetail(@RequestParam("year") String year, @RequestParam("gmv") String gmv, @RequestParam("method") String method) {
         // todo
         // method 即：变更数据的策略 ==1：策略1； ==2：策略2
         JSONArray jsonArray = JSONArray.parseArray(gmv);
         gmvPlanService.updateDetail(jsonArray);
-        return ResponseBo.ok("GMV拆解表更新成功！");
+        return ResponseBo.ok("success！");
     }
 
     @PostMapping("/checkYear")

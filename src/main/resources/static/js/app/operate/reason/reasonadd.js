@@ -1,8 +1,20 @@
+String.prototype.replaceAll = function(s1,s2){
+    return this.replace(new RegExp(s1,"gm"),s2);
+}
+
 $(function () {
     //为提交分析按钮绑定事件
     $("#submitAnalysis").on("click",submit_analysis);
 
-    
+    //为删除维度绑定事件
+    $("#dimlist").on("click",'.dim-remove',function () {
+        $(this).closest('li').remove();
+    });
+
+    $("#dimselectlist").change(function() {
+        var dimCode = $(this).find("option:selected").val();
+        getValueList(dimCode);
+    });
 });
 
 function submit_analysis(){
@@ -120,4 +132,106 @@ function submit_analysis(){
         }
     });
 
+}
+
+function selectDim()
+{
+    //获取当前页面已经选择值
+    var dimlist=$("#dimlist").find("li");
+    var dim=[];
+
+    //遍历已选择的维度
+    dimlist.each(function (i) {
+        var temp=$(this).children(".dimKey").get(0).value;
+        dim.push(temp);
+    });
+
+    var code='';
+    //为维度值选择框动态绑定值
+    $.getJSON("/reason/getReasonDimList", function (resp) {
+        if (resp.code == 200) {
+            //遍历值 然后排除掉已经选择的值
+            $.each(resp.data,function (k,v) {
+                //判断当前元素是否在已选择列表中
+                 if($.inArray(k,dim)==-1)  //找到
+                 {
+                     code += "<option value='" + k + "'> " + v + " </option>";
+                 }
+            });
+
+            $("#dimselectlist").html("").html(code);
+            $("#dimselectlist").selectpicker('refresh');
+
+
+            getValueList($("#dimselectlist").find("option:selected").val());
+        }
+    });
+
+    //弹开对话框
+    $("#dim_modal").modal('show');
+
+}
+
+function getValueList(dimCode) {
+    $.get("/reason/getReasonDimValuesList", {dimCode: dimCode}, function(r) {
+        var code = "";
+        $.each(r.data, function (k, v) {
+            code += "<option value='" + k + "'>" + v + "</option>";
+        });
+        $("#dimvalueselectlist").html("").html(code);
+        $("#dimvalueselectlist").selectpicker('refresh');
+    });
+}
+
+function saveDim() {
+    var alert_str='';
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": true,
+        "timeOut": 5000,
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+
+    //不能不空
+    var selectDim=$("#dimselectlist").find("option:selected").val();
+
+    var dimvaluelist=$("#dimvalueselectlist").find("option:selected");
+
+    if(null==selectDim||selectDim=='')
+    {
+        alert_str+='</br>请选择维度！';
+    }
+    if(null==dimvaluelist||dimvaluelist.length==0)
+    {
+        alert_str+='</br>请选择维度值！';
+    }
+
+    if(null!=alert_str&&alert_str!='')
+    {
+        toastr.warning(alert_str);
+        return;
+    }
+
+    var selectDimLabel=$("#dimselectlist").find("option:selected").text();
+    var selectDimValues=[];
+    var selectDimValuesLabel=[];
+    //保存所选维度
+    //格式： <li class="list-group-item"><input  class="col-xs-11 dimDispaly" value="维度 : 新/用户 - 值:新|旧" style="border:0px" disabled="true" maxlength="150"/><input type="hidden" class="dimKey" value="neworold"/><input type="hidden" class="dimValues" value="new|old" /><span class="mdi mdi-delete" style="color: #006cfa;"></span></li>
+    $.each(dimvaluelist,function (index,value) {
+        selectDimValues.push(value.value);
+        selectDimValuesLabel.push(value.text);
+    });
+
+    var inputValue='维度 : '+selectDimLabel+' - 值 : '+selectDimValuesLabel.join("|");
+    var hiddenValue=selectDimValues.join("|");
+
+    console.log(inputValue);
+    var template="<li class='list-group-item'><input  class='col-xs-11 dimDispaly' value=\""+inputValue+"\"  title=\""+inputValue+"\" style='border:0px' disabled='true'/>" +
+        "<input type='hidden' class='dimKey' value='"+selectDim+"'/><input type='hidden' class='dimValues' value='"+hiddenValue+"' /><span class='mdi mdi-delete dim-remove' style='color: #006cfa;'></span></li>";
+    $("#dimlist").append(template);
+
+    $("#dim_modal").modal('hide');
 }

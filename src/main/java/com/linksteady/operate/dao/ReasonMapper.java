@@ -5,6 +5,7 @@ import com.linksteady.operate.domain.Reason;
 import com.linksteady.operate.domain.ReasonKpis;
 import io.lettuce.core.dynamic.annotation.Param;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +44,17 @@ public interface ReasonMapper {
 
     List<Map<String, String>> getRelatedKpiList(@Param("reasonId") String reasonId,@Param("templateCode") String templateCode);
 
-    List<Map<String, Object>> getReasonKpiHistroy(@Param("kpiCode") String kpiCode,@Param("templateCode") String templateCode);
+    List<Map<String, Object>> getReasonKpiHistroy(@Param("reasonId") String reasonId,@Param("kpiCode") String kpiCode,@Param("templateCode") String templateCode);
 
     List<ReasonKpis>  getReasonRelatedKpi(@Param("reasonId") String reasonId,@Param("templateCode") String templateCode,@Param("reasonKpiCode") String reasonKpiCode);
+
+    List<Map<String, Object>> getConcernKpiList(@Param("reasonId") String reasonId);
+
+    int getConcernKpiCount(@Param("reasonId") String reasonId,@Param("kpiCode") String kpiCode, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
+
+    void addConcernKpi(@Param("reasonId") String reasonId,@Param("kpiCode") String kpiCode, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
+
+    void deleteConcernKpi(@Param("reasonId") String reasonId,@Param("kpiCode") String kpiCode, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
 
 
 
