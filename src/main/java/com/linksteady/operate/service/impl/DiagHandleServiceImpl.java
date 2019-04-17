@@ -26,6 +26,19 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
     @Override
     public DiagResultInfo generateDiagData(DiagHandleInfo diagHandleInfo) {
+        //获取到操作类型
+        String handleType=diagHandleInfo.getHandleType();
+
+        if("M".equals(handleType)) //乘法
+        {
+
+        }else if("A".equals(handleType))  //加法
+        {
+
+        }else if("F".equals(handleType))  //过滤
+        {
+
+        }
         return new DiagResultInfo();
     }
 }

@@ -9,34 +9,31 @@ import java.util.Set;
 
 /**
  * 对一些频繁使用的值进行缓存,在系统启动的时候在LoadConfigRunner中进行初始化，目前未实现更新机制，后续考虑增加定时类更新
- * codeNamePair  诊断功能的 指标列表；
- *
- *
- *
- *
- *
- *
- *
- *
- *
  */
 public class KpiCacheManager {
 
     private static KpiCacheManager kpiCacheManager;
 
+    //所有诊断用到的指标CODE，名称的键-值对。
     private static Map<String, String> codeNamePair = Maps.newLinkedHashMap();  //kpi code-name对
 
+    //所有可被乘法拆解的指标CODE - 拆解公式 的键值对。key为指标编码，value为拆解公式。
     private static Map<String, String> codeFomularPair =Maps.newLinkedHashMap();  //kpi code-fomular对
 
+    //每个指标及其对应的乘法公式。 key为指标编码，value为一个map结构，此map中包括: DISMANT_PART1_CODE 第一个乘数对应的CODE，DISMANT_PART1_NAME第一个乘数对应名称;DISMANT_PART2_CODE 第二个乘数对应的CODE，DISMANT_PART2_NAME第二个乘数对应名称
     private static Map<String, Object> kpidismant = Maps.newLinkedHashMap();  //每个指标 及其对应的乘法公式列表
 
+    //诊断用到维度列表 key为维度编码 value为维度名称
     private static Map<String, String> diagDimList = Maps.newLinkedHashMap();  //诊断 维度列表
 
+    //诊断用到的维度值列表 key为维度编码 value为一个map 此map中key为维度值编码，value为维度值名称
     private static Map<String, Object> diagDimValueList = Maps.newLinkedHashMap();  //诊断 维度及其值列表
 
-    private static Map<String, String> reaonDimList = Maps.newLinkedHashMap();  //诊断 维度列表
+    //原因探究用到维度列表 key为维度编码 value为维度名称
+    private static Map<String, String> reaonDimList = Maps.newLinkedHashMap();  //原因探究 维度列表
 
-    private static Map<String, Object> reasonDimValueList = Maps.newLinkedHashMap();  //诊断 维度及其值列表
+    //原因探究用到的维度值列表 key为维度编码 value为一个map 此map中key为维度值编码，value为维度值名称
+    private static Map<String, Object> reasonDimValueList = Maps.newLinkedHashMap();  //原因探究 维度及其值列表
 
     public static KpiCacheManager getInstance() {
         if (null == kpiCacheManager) {

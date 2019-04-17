@@ -18,6 +18,7 @@ public class LoadConfigRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+        //所有诊断用到KPI
         List<Map<String,String>> kpis=cacheMapper.getDiagKpis();
 
         Map<String,String>  codeNamePair = Maps.newLinkedHashMap();
@@ -28,17 +29,20 @@ public class LoadConfigRunner implements CommandLineRunner {
         for(Map<String,String> param:kpis)
         {
             codeNamePair.put(param.get("KPI_CODE"),param.get("KPI_NAME"));
-            codeFomularPair.put(param.get("KPI_CODE"),param.get("DISMANT_FORMULA"));
 
-            //对于每一个kpi取获取其拆解信息
-            String kpiCode=param.get("KPI_CODE");
-            List<Map<String,String>>  dismantKpis=cacheMapper.getDismantKpis(kpiCode);
-            if(null!=dismantKpis&&dismantKpis.size()>0)
+            if("Y".equals(param.get("DISMANT_FLAG")))
             {
-                 Map<String,String> temp=dismantKpis.get(0);
-                 kpidismant.put(kpiCode,temp);
-            }
+                codeFomularPair.put(param.get("KPI_CODE"),param.get("DISMANT_FORMULA"));
 
+                //对于每一个kpi取获取其拆解信息
+                String kpiCode=param.get("KPI_CODE");
+                List<Map<String,String>>  dismantKpis=cacheMapper.getDismantKpis(kpiCode);
+                if(null!=dismantKpis&&dismantKpis.size()>0)
+                {
+                    Map<String,String> temp=dismantKpis.get(0);
+                    kpidismant.put(kpiCode,temp);
+                }
+            }
         }
 
         //获取诊断功能的维度列表
