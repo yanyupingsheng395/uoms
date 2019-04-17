@@ -6,6 +6,7 @@ import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.config.KpiCacheManager;
+import com.linksteady.operate.domain.DiagAddResultInfo;
 import com.linksteady.operate.domain.DiagHandleInfo;
 import com.linksteady.operate.domain.DiagMultResultInfo;
 import com.linksteady.operate.domain.DiagResultInfo;
@@ -195,19 +196,30 @@ public class DiagHandleServiceImpl implements DiagHandleService {
      */
     private DiagResultInfo processAdd(DiagHandleInfo diagHandleInfo,List<String> periodList)
     {
+        DiagAddResultInfo diagAddResultInfo=new DiagAddResultInfo();
+
         String kpiCode=diagHandleInfo.getKpiCode();
         String kpiName=KpiCacheManager.getInstance().getCodeNamePair().get(kpiCode);
 
+        String[] dimValues=null;  //存放维度值的数组
         //概览信息
         if(null==diagHandleInfo.getAddDimValues()||"".equals(diagHandleInfo.getAddDimValues()))  //如果用户没选择维度值，则系统去取TOP5的
         {
-
-        }else  //否则以用户选择的为准
+            //此处模拟随机取5个
+            //dimValues=getRandomDimValues(diagHandleInfo.getAddDimCode());
+        }else
         {
 
         }
 
         //计算gmv各部分的值 面积图
+        for(String period:periodList)
+        {
+            double gmvValue=getRandomKpiData(period,"gmv");
+
+            //按5个维度拆分
+
+        }
 
         //判断当前是否选择的gmv
         if(!"gmv".equals(kpiCode))   //非核心指标 其它指标各部分的趋势图与均线;

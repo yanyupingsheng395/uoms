@@ -73,6 +73,7 @@ public class ArithUtil {
         if(null == doubleVal) {
             doubleVal = new Double(0);
         }
+        logger.info("需要格式化的值为:"+doubleVal);
         return new BigDecimal(doubleVal).setScale(scale,RoundingMode.HALF_UP).doubleValue();
     }
 
