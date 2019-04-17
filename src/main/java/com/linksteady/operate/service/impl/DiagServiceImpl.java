@@ -1,12 +1,9 @@
 package com.linksteady.operate.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.dao.DiagConditionMapper;
 import com.linksteady.operate.dao.DiagDetailMapper;
 import com.linksteady.operate.dao.DiagMapper;
 import com.linksteady.operate.domain.Diag;
-import com.linksteady.operate.domain.DiagCondition;
 import com.linksteady.operate.domain.DiagDetail;
 import com.linksteady.operate.service.DiagService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -79,9 +79,9 @@ jmnodes.theme-info jmexpander{}
 jmnodes.theme-info jmexpander:hover{}
 
 /* greensea theme */
-jmnodes.theme-greensea jmnode{background-color:#1abc9c;color:#fff;}
+jmnodes.theme-greensea jmnode{background-color:#33cabb;color:#fff;}
 jmnodes.theme-greensea jmnode:hover{background-color:#16a085;}
-jmnodes.theme-greensea jmnode.selected{background-color:#11f;color:#fff;}
+jmnodes.theme-greensea jmnode.selected{background-color:#e4e7ea;color:#4d5259;}
 jmnodes.theme-greensea jmnode.root{}
 jmnodes.theme-greensea jmexpander{}
 jmnodes.theme-greensea jmexpander:hover{}

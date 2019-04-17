@@ -1,7 +1,11 @@
 package com.linksteady.operate.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.config.KpiCacheManager;
+import com.linksteady.operate.domain.DiagHandleInfo;
+import com.linksteady.operate.service.DiagHandleService;
 import com.linksteady.operate.service.ProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,6 +25,9 @@ public class ProgressController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private DiagHandleService diagHandleService;
 
     private final String ROOT_KPI_CODE = "gmv";
 
@@ -96,9 +103,16 @@ public class ProgressController {
 
     // 获取KPI_LEVEL_ID
     public synchronized long seqGeneratorByRedisAtomicLong(String key) {
-        RedisAtomicLong counter = new RedisAtomicLong(key, redisTemplate.getConnectionFactory());
-        long result = counter.incrementAndGet();
-        return result;
+        long res;
+        String value = (String)redisTemplate.opsForValue().get(key);
+        if(value == null) {
+            redisTemplate.opsForValue().set(key, "1");
+            res = 1l;
+        }else {
+            res = Long.valueOf(value) + 1;
+            redisTemplate.opsForValue().set(key, String.valueOf(res));
+        }
+        return res;
     }
 
     @GetMapping("/getNodeId")
@@ -114,5 +128,19 @@ public class ProgressController {
         Map<String, Object> result = new HashMap<>();
         result.put(rootKpiCode, data.get(rootKpiCode));
         return ResponseBo.okWithData(null, result);
+    }
+
+    // redis
+    @PostMapping("/saveDiagHandleInfo")
+    public ResponseBo saveDiagHandleInfo(@RequestParam("diagHandleInfo") String diagHandleInfo) {
+        try{
+            JSONObject jsonObject = JSONObject.parseObject(diagHandleInfo);
+            DiagHandleInfo obj = jsonObject.toJavaObject(DiagHandleInfo.class);
+            diagHandleService.saveHandleInfoToRedis(obj);
+            return ResponseBo.ok();
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseBo.error();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.linksteady.operate.domain;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "UO_DIAG_CONDITION")
 public class DiagCondition {
@@ -23,6 +24,12 @@ public class DiagCondition {
     private String dimCode;
 
     /**
+     * 维度名称
+     */
+    @Column(name = "DIM_NAME")
+    private String dimName;
+
+    /**
      * 维度值
      */
     @Column(name = "DIM_VALUES")
@@ -36,6 +43,12 @@ public class DiagCondition {
 
     @Column(name = "INHERIT_FLAG")
     private String inheritFlag;
+
+    /**
+     * 创建时间
+     */
+    @Column(name = "CREATE_DT")
+    private Date createDt;
 
     /**
      * 获取诊断ID
@@ -133,5 +146,21 @@ public class DiagCondition {
 
     public void setInheritFlag(String inheritFlag) {
         this.inheritFlag = inheritFlag;
+    }
+
+    public String getDimName() {
+        return dimName;
+    }
+
+    public void setDimName(String dimName) {
+        this.dimName = dimName;
+    }
+
+    public Date getCreateDt() {
+        return createDt;
+    }
+
+    public void setCreateDt(Date createDt) {
+        this.createDt = createDt;
     }
 }

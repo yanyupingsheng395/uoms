@@ -59,22 +59,25 @@ function doNothing(){
 }
 
 // 拆分方式
-$("#op2").change(function() {
-    console.log(jm.get_selected_node());
+
+$("input[name='op2']").click(function () {
     var kpiCode = jm.get_selected_node().data.KPI_CODE;
-    var option2Val = $(this).find("option:selected").val();
-    if(option2Val == 0) { // 加法过滤
+    var option2Val = $(this).val();
+    if(option2Val == "A") { // 加法过滤
         getDimension(); // 获取维度
         $("#add_condition").attr("style", "display:block;");
         $("#plus_condition").attr("style", "display:none;");
     }
-    if(option2Val == 1) { // 乘法过滤
+    if(option2Val == "M") { // 乘法过滤
         getFormula(kpiCode);
         getDimension(); // 获取维度
         $("#plus_condition").attr("style", "display:block;");
         $("#add_condition").attr("style", "display:none;");
     }
-    if(option2Val == 2 || option2Val == "") { // 仅过滤
+    if(option2Val == "F" || option2Val == "") { // 仅过滤
+        $("#op7").html("");
+        $("#op7").selectpicker('refresh');
+        var e = document.getElementById("operateBtns");
         getDimension();
         $("#plus_condition").attr("style", "display:none;");
         $("#add_condition").attr("style", "display:none;");
@@ -97,12 +100,12 @@ function beforeNext(dom) {
 
 // 加入诊断
 function addCondition() {
-    var methodId = $("#op2 option:selected").val();
-    if(methodId == "0") { // 加法
+    var methodId = $("input[name='op2']:checked").val();
+    if(methodId == "A") { // 加法
         condition0();
         // 隐藏模态框
         $("#nodeAddModal").modal('hide');
-    }else if(methodId == "1") { // 乘法
+    }else if(methodId == "M") { // 乘法
         if($("#op3").find("option:selected").val() == null) {
             if($("#op3").find("option").length == 0) {
                 toastr.warning("该指标无可再拆分的乘法公式，请选择别的拆分方式！");
@@ -114,7 +117,7 @@ function addCondition() {
 
         }
         // 隐藏模态框
-    }else if(methodId == "2") { // 仅过滤
+    }else if(methodId == "F") { // 仅过滤
         condition2();
     }else if(methodId == ""){
         toastr.warning("请选择诊断方式！");
@@ -138,18 +141,23 @@ function redisSaveConditions() {
 
 $("#op5").change(function() {
     var code = $(this).find("option:selected").val();
-    getValueList(code);
+    getValueList(code, "op6");
+});
+
+$("#op4").change(function() {
+    var code = $(this).find("option:selected").val();
+    getValueList(code, "op7");
 });
 
 // 根据维度value获取值类型
-function getValueList(code) {
+function getValueList(code, id) {
     $.get("/progress/getDiagDimValueList", {code: code}, function(r) {
         var code = "";
         $.each(r.data, function (k, v) {
             code += "<option value='" + k + "'>" + v + "</option>";
         });
-        $("#op6").html("").html(code);
-        $("#op6").selectpicker('refresh');
+        $("#" + id).html("").html(code);
+        $("#" + id).selectpicker('refresh');
     });
 }
 
@@ -215,6 +223,8 @@ function iterationNode(node, nodeList) {
 }
 
 function modalBefore() {
+    $("#op7").html("");
+    $("#op7").selectpicker('refresh');
     var e = document.getElementById("operateBtns");
     e.style.display = "none";
 
@@ -224,12 +234,13 @@ function modalBefore() {
     var topic = selectedNode.topic;
     if(topic.indexOf(" ") > -1) {
         topic = topic.substring(topic.lastIndexOf(" "), topic.length);
+        topic = topic.replace("</a>", "");
     }
     $("#currentNode").val(topic);
 
     // 设置选中为空，初始化选择框
-    $("#op2").selectpicker('val', "");
-    $("#op2").selectpicker('refresh');
+    $("input[name='op2']:checked").removeAttr("checked");
+
     $("#plus_condition").attr("style", "display:none;");
     $("#add_condition").attr("style", "display:none;");
 
@@ -241,7 +252,6 @@ function modalBefore() {
     }else {
         $("#dataTable").html("").html(code);
     }
-
     conditionVal = new Array();
 }
 
@@ -264,9 +274,9 @@ function getParentCondition() {
     var code = "";
     $.each(array, function (k, v) {
         var tmp = v.split(":");
-        code += "<tr><td style='text-align: left;'>" + tmp[1].trim() + ":";
-        code += tmp[2].trim();
-        code += "<input type='hidden' name='condition' value='"+tmp[0].trim()+"'><input name='inheritFlag' type='hidden' value='Y'></td><td></td></tr>";
+        code += "<tr><td style='text-align: left;'>" + tmp[2].trim() + ":";
+        code += tmp[3].trim();
+        code += "<input type='hidden' name='dimValues' value='"+tmp[0].trim()+"'><input type='hidden' name='condition' value='"+tmp[1].trim()+"'><input name='inheritFlag' type='hidden' value='Y'></td><td></td></tr>";
     });
     return code;
 }
@@ -274,14 +284,14 @@ function getParentCondition() {
 // 获取加法维度
 function getDimension() {
     $.get("/progress/getDiagDimList", null, function (r) {
-        var code = "";
+        var code = "<option value=''>请选择</option>";
         $.each(r.data, function(k, v) {
             code += "<option value='" + k + "'> " + v + " </option>";
         });
         $("#op4").html("").html(code);
         $("#op4").selectpicker('refresh');
 
-        $("#op5").html("").html("<option value=''>请选择</option>" + code);
+        $("#op5").html("").html(code);
         $("#op5").selectpicker('refresh');
 
         getValueList($("#op5").find("option:selected").val());
@@ -297,14 +307,18 @@ function selectedCondition() {
     }else {
         var arr = $("#op6").selectpicker('val');
         var condition = $("#op5").find("option:selected").text();
+        console.log(conditionCodes);
         var val = $("#op5").find("option:selected").val();
         var code = "<tr><td style='text-align: left;'>" + condition.trim() + ":";
+        var conditionCodes = "";
         for(var i=0;i<arr.length;i++) {
             var t = $("#op6").find("option[value='"+arr[i]+"']").text();
             code += t + ",";
+            conditionCodes += arr[i] + ","
         }
         code = code.substring(0, code.length - 1);
-        code += "<input name='condition' type='hidden' value='" + val + "'/><input name='inheritFlag' value='N' type='hidden'/></td><td><a style='color:#000000;cursor: pointer;' onclick='removeConditionList(\""+val+"\", this)'><i class='mdi mdi-close'></i></a></td></tr>";
+        conditionCodes = conditionCodes.substring(0, conditionCodes.length - 1);
+        code += "<input name='dimValues' type='hidden' value='"+conditionCodes+"'><input name='condition' type='hidden' value='" + val + "'/><input name='inheritFlag' value='N' type='hidden'/></td><td><a style='color:#000000;cursor: pointer;' onclick='removeConditionList(\""+val+"\", this)'><i class='mdi mdi-close'></i></a></td></tr>";
 
         if($("#dataTable").find("tr td").text().indexOf("暂无数据") > -1) {
             $("#dataTable").html("").html(code);
@@ -330,9 +344,10 @@ function filterCondition() {
     $("#dataTable").find("tr").each(function () {
         var condition = $(this).find("td:eq(0)").find("input[name='condition']").val();
         var inheritFlag = $(this).find("td:eq(0)").find("input[name='inheritFlag']").val();
+        var dimValues = $(this).find("td:eq(0)").find("input[name='dimValues']").val();
         var text = $(this).find("td:eq(0)").text();
         if(condition != undefined && inheritFlag != undefined) {
-            dataArray.push(condition + ":" + text + ":" + inheritFlag);
+            dataArray.push(dimValues + ":" + condition + ":" + text + ":" + inheritFlag);
         }
     });
     return dataArray;
@@ -347,11 +362,12 @@ function modalDetailBefore() {
     var code = "";
     $.each(array, function (k, v) {
         var tmp = v.split(":");
-        code += "<tr><td style='text-align: left;'>" + tmp[1].trim() + ":";
-        if(tmp[3] == "N") {
-            code += tmp[2].trim();
-        }else if(tmp[3] == "Y"){
-            code += tmp[2].trim() + "&nbsp;(继承至父节点)"
+        console.log(tmp)
+        code += "<tr><td style='text-align: left;'>" + tmp[2].trim() + ":";
+        if(tmp[4] == "N") {
+            code += tmp[3].trim();
+        }else if(tmp[4] == "Y"){
+            code += tmp[3].trim() + "&nbsp;(继承至父节点)"
         }
         code += "</td></tr>";
     });
@@ -367,12 +383,11 @@ function condition0() {
     var levelId = getKpiLevelId();
     var nodeName = levelId + " <i class='mdi mdi-key-plus'></i> " + jm.get_selected_node().data.KPI_NAME + "(" + $("#op4 option:selected").text().trim() + ")";
     var nodeId = createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME, true);
-    chart0(levelId, nodeName, $("#op4 option:selected").text().trim());
-
+    //chart0(levelId, nodeName, $("#op4 option:selected").text().trim());
     endNode(nodeId);
 }
 
-
+// 加法节点为叶子节点
 function endNode(nodeId) {
     jm.enable_edit();
     jm.set_node_color(nodeId, '#8b95a5', '');
@@ -709,7 +724,7 @@ function rootNode() {
             var node = new Object();
             node.id = "-1";
             node.isroot = true;
-            node.topic = "0 " + kpiName;
+            node.topic = "<a onclick='modalTest()' style='color: #000;cursor: pointer;border-bottom: solid 1px #000;'>0 "+kpiName+"</a>";
             node.KPI_CODE = kpiCode;
             node.KPI_NAME = kpiName;
             nodeArr.push(node);
@@ -717,6 +732,19 @@ function rootNode() {
     });
     return nodeArr;
 }
+
+function modalTest() {
+    $("#modal").modal('show');
+
+}
+$('#modal').on('shown.bs.modal', function () {
+    template2("chart1");
+    template3_1("chart2");
+    template3_2("chart3");
+    template4_1("chart4");
+    template4_2("chart5");
+    template4_3("chart6");
+});
 
 function createRootNode() {
     var mind = {
@@ -802,8 +830,47 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf) {
 
     // 保存节点信息
     saveNode(nodeId);
+
+    // 封装HandleInfo
+    var handleInfo = new Object();
+    var handleDesc = "";
+    var templateName = "";
+    // M乘法 A加法 F过滤(无操作)
+    var operateType = $("input[name='op2']:checked").val();
+    if(operateType == "M") {
+        handleDesc = kpiName + "按乘法拆分";
+        templateName = "维度模板";
+        handleInfo.formula1 = "";
+    }
+    if(operateType == "A") {
+        handleDesc = kpiName + "按加法拆分";
+        templateName = "指标模板";
+        handleInfo.addDimCode = $("#op4").find("option:selected").val();
+        handleInfo.addDimValues = $("#op7").selectpicker('val').join(",");
+    }
+    if(operateType == "F") {
+        handleDesc = kpiName + "按条件过滤";
+        templateName = "条件过滤说明";
+    }
+    handleInfo.diagId = diagId;
+    handleInfo.kpiLevelId = kpiLevelId;
+    handleInfo.handleDesc = handleDesc;
+    handleInfo.handleType = operateType;
+    handleInfo.templateName = templateName;
+    handleInfo.nodeId = nodeId;
+    // redis封装数据,返回模版文件
+    saveDiagHandleInfo(handleInfo);
     return nodeId;
 }
+
+function saveDiagHandleInfo(handleInfo) {
+    $.post("/progress/saveDiagHandleInfo", {diagHandleInfo: JSON.stringify(handleInfo)}, function (r) {
+        if(r.code == 500) {
+            toastr.error("存储redis发生错误！");
+        }
+    });
+}
+
 
 function getNodeId() {
     var res = 0;
@@ -871,19 +938,19 @@ function jsmind_refresh(map) {
     createNode(nodeName1, levelId, kpiCode1, kpiName1, false);
     createNode(nodeName2, levelId, kpiCode2, kpiName2, false);
 
-    chart_condition1(levelId, levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName1 + "*" + kpiName2, kpiName1, kpiName2);
+    //chart_condition1(levelId, levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName1 + "*" + kpiName2, kpiName1, kpiName2);
     $("#nodeAddModal").modal('hide');
 }
 
-function getKpiComb(code) {
-    $.get("/progress/getKpiComb", {code: code}, function (r) {
-        $("#currentNodeId").val(r.data.k);
-
-        var code = "<option value='"+r.data.k+"'>" + r.data.v + "</option>";
-        $("#op1").html("").html(code);
-        $('#op1').selectpicker('refresh');
-    });
-}
+// function getKpiComb(code) {
+//     $.get("/progress/getKpiComb", {code: code}, function (r) {
+//         $("#currentNodeId").val(r.data.k);
+//
+//         var code = "<option value='"+r.data.k+"'>" + r.data.v + "</option>";
+//         $("#op1").html("").html(code);
+//         $('#op1').selectpicker('refresh');
+//     });
+// }
 
 // 获取公式
 function getFormula(kpiCode) {

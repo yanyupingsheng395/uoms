@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,12 +47,15 @@ public class DiagDetailServiceImpl implements DiagDetailService {
                     String[] tmpArray = tmp.split(":");
                     DiagCondition condition = new DiagCondition();
                     condition.setDiagId(diagDetail.getDiagId());
-                    condition.setDimCode(tmpArray[0]);
-                    condition.setDimValues(tmpArray[1]);
-                    condition.setDimValueDisplay(tmpArray[2]);
-                    condition.setInheritFlag(tmpArray[3]);
+                    condition.setDimValues(tmpArray[0]);
+                    condition.setDimCode(tmpArray[1]);
+                    condition.setDimName(tmpArray[2]);
+                    condition.setDimValueDisplay(tmpArray[3]);
+                    condition.setInheritFlag(tmpArray[4]);
                     condition.setNodeId(diagDetail.getNodeId());
+                    condition.setCreateDt(new Date());
                     conditions.add(condition);
+
                 }
             }
         }

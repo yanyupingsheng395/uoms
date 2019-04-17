@@ -20,6 +20,11 @@
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <link href="https://cdn.bootcss.com/toastr.js/2.1.4/toastr.min.css" rel="stylesheet">
+    <style>
+        .form-horizontal .radio-inline {
+            padding-top:0px; !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -64,7 +69,7 @@
                                         <div class="form-group">
                                             <label class="col-md-3 control-label" for="beginDt">诊断名称：</label>
                                             <div class="col-md-3">
-                                                <input type="text" class="form-control" name="diagName" id="diagName" onchange="inputCheck(this)"/>
+                                                <input type="text" value="123" class="form-control" name="diagName" id="diagName" onchange="inputCheck(this)"/>
                                             </div>
                                         </div>
 
@@ -109,7 +114,7 @@
                                     </div>
                                     <div class="row">
                                         <!-- 左侧区域 -->
-                                        <div class="col-md-7">
+                                        <div class="col-md-12">
                                             <!-- 流程图区 -->
                                             <div class="row">
                                                 <div class="col-md-12">
@@ -118,24 +123,24 @@
                                             </div>
                                         </div>
                                         <!-- 右侧区域 -->
-                                        <div class="col-md-5" id="charts">
-                                            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                                                <div class="panel panel-primary">
-                                                    <div class="panel-heading" role="tab" id="headingOne">
-                                                        <h4 class="panel-title">
-                                                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                                                0 GMV
-                                                            </a>
-                                                        </h4>
-                                                    </div>
-                                                    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                                                        <div class="panel-body">
-                                                            该周期内销售额/GMV为55260.15元
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <!--<div class="col-md-5" id="charts">-->
+                                            <!--<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">-->
+                                                <!--<div class="panel panel-primary">-->
+                                                    <!--<div class="panel-heading" role="tab" id="headingOne">-->
+                                                        <!--<h4 class="panel-title">-->
+                                                            <!--<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">-->
+                                                                <!--0 GMV-->
+                                                            <!--</a>-->
+                                                        <!--</h4>-->
+                                                    <!--</div>-->
+                                                    <!--<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">-->
+                                                        <!--<div class="panel-body">-->
+                                                            <!--该周期内销售额/GMV为55260.15元-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
                                     </div>
                                 </div>
 
@@ -173,12 +178,15 @@
                                         <div class="form-group">
                                             <label class="col-md-3 control-label" for="beginDt">诊断方式：</label>
                                             <div class="col-md-6">
-                                                <select name="periodType" class="selectpicker form-control" id="op2">
-                                                    <option value="">请选择</option>
-                                                    <option value="0">加法</option>
-                                                    <option value="1">乘法</option>
-                                                    <option value="2">过滤</option>
-                                                </select>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="op2" value="A"><span>加法</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="op2" value="M"><span>乘法</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="op2" value="F"><span>无</span>
+                                                </label>
                                             </div>
                                         </div>
                                         <div class="form-group" id="plus_condition" style="display:none;">
@@ -188,10 +196,23 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group" id="add_condition" style="display:none;">
-                                            <label class="col-md-3 control-label" for="beginDt">维度：</label>
-                                            <div class="col-md-6">
-                                                <select name="periodType" class="selectpicker form-control" id="op4"></select>
+                                        <div id="add_condition" style="display: none;">
+                                            <div class="form-group">
+                                                <label class="col-md-3 control-label">维度：</label>
+                                                <div class="col-md-6">
+                                                    <select class="selectpicker form-control" id="op4"></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-md-3 control-label" for="beginDt">值：</label>
+                                                <div class="col-md-6">
+                                                    <select class="selectpicker form-control" id="op7" multiple data-max-options="5"></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-md-9 control-label" style="color: #4c4c4c;font-weight: normal">
+                                                    <i class="mdi mdi-alert-circle-outline"></i>说明：加法拆分，如果没选择维度值，则默认按份额最大的前5个维度值进行拆分；
+                                                </label>
                                             </div>
                                         </div>
                                         <hr/>
@@ -278,7 +299,91 @@
                     </div>
                 </div>
             </div>
-
+            <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tmpModal" id="modal">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="">详细信息</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!--模版1-->
+                            <div class="car">
+                                <div class="card-header">
+                                    <p class="h4">模板1</p>
+                                </div>
+                                <div class="card-body">
+                                    <p class="p5">
+                                        该周期内GMV值为****
+                                    </p>
+                                    <p class="p5">
+                                        该条件下GMV值为****
+                                    </p>
+                                </div>
+                            </div>
+                            <!--模版2-->
+                            <div class="car">
+                                <div class="card-header">
+                                    <p class="h4">模板2</p>
+                                </div>
+                                <div class="card-body">
+                                    <div id="chart1" style="height:300px;width:100%;"></div>
+                                </div>
+                            </div>
+                            <!--模版3-->
+                            <div class="car">
+                                <div class="card-header">
+                                    <p class="h4">模板3</p>
+                                </div>
+                                <div class="card-body">
+                                    <div id="chart2" style="height:300px;width:100%;"></div>
+                                    <div id="chart3" style="height:300px;width:100%;"></div>
+                                </div>
+                            </div>
+                            <!--模板4-->
+                            <div class="car">
+                                <div class="card-header">
+                                    <p class="h4">模板4</p>
+                                </div>
+                                <div class="card-body">
+                                    <p class="h5">
+                                        末期比基期的变化率：25%
+                                    </p>
+                                    <div id="chart4" style="height:300px;width:100%;"></div>
+                                    <p class="h5">
+                                        末期比基期的变化率：25%
+                                    </p>
+                                    <div id="chart5" style="height:300px;width:100%;"></div>
+                                    <p class="h5">
+                                        末期比基期的变化率：25%
+                                    </p>
+                                    <div id="chart6" style="height:300px;width:100%;"></div>
+                                </div>
+                            </div>
+                            <!--模板4-->
+                            <div class="car">
+                                <div class="card-header">
+                                    <p class="h4">模板</p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <td>月份</td><td>1月</td><td>2月</td><td>3月</td><td>4月</td><td>5月</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>变异系数</td><td>0.58</td><td>0.58</td><td>0.58</td><td>0.58</td><td>0.58</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 </div>
@@ -297,6 +402,7 @@
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
 <script src="https://cdn.bootcss.com/toastr.js/2.1.4/toastr.min.js"></script>
+<script data-th-src="@{/js/app/operate/diagnosis/template.js}"></script>
 <script data-th-src="@{/js/app/operate/diagnosis/add.js}"></script>
 </body>
 </html>
