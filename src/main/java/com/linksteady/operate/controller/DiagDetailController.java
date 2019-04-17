@@ -25,6 +25,7 @@ public class DiagDetailController {
             return ResponseBo.ok("保存信息成功！");
         }catch (Exception e) {
             logger.error(e.toString());
+            e.printStackTrace();
             return ResponseBo.error("未知错误发生！");
         }
     }

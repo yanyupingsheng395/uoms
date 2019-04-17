@@ -1,9 +1,12 @@
 package com.linksteady.operate.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 @Table(name = "UO_DIAG_DETAIL")
-public class DiagDetail {
+public class DiagDetail implements Serializable {
     /**
      * 诊断ID
      */
@@ -51,6 +54,9 @@ public class DiagDetail {
      */
     @Column(name = "KPI_NAME")
     private String kpiName;
+
+    @Transient
+    private List<DiagCondition> condition;
 
     public Long getDiagId() {
         return diagId;
@@ -114,5 +120,13 @@ public class DiagDetail {
 
     public void setKpiName(String kpiName) {
         this.kpiName = kpiName;
+    }
+
+    public List<DiagCondition> getCondition() {
+        return condition;
+    }
+
+    public void setCondition(List<DiagCondition> condition) {
+        this.condition = condition;
     }
 }

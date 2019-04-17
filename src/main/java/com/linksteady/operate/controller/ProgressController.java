@@ -1,6 +1,5 @@
 package com.linksteady.operate.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.config.KpiCacheManager;
@@ -9,7 +8,6 @@ import com.linksteady.operate.service.DiagHandleService;
 import com.linksteady.operate.service.ProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 

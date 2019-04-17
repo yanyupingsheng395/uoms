@@ -342,12 +342,18 @@ function selectedCondition() {
 function filterCondition() {
     var dataArray = new Array();
     $("#dataTable").find("tr").each(function () {
+        var tmp = new Object();
         var condition = $(this).find("td:eq(0)").find("input[name='condition']").val();
         var inheritFlag = $(this).find("td:eq(0)").find("input[name='inheritFlag']").val();
         var dimValues = $(this).find("td:eq(0)").find("input[name='dimValues']").val();
         var text = $(this).find("td:eq(0)").text();
         if(condition != undefined && inheritFlag != undefined) {
-            dataArray.push(dimValues + ":" + condition + ":" + text + ":" + inheritFlag);
+            tmp.dim_code = condition;
+            tmp.dim_name = text.split(":")[0];
+            tmp.dim_values = dimValues;
+            tmp.dim_value_display = text.split(":")[1];
+            tmp.inherit_flag = inheritFlag;
+            dataArray.push(tmp);
         }
     });
     return dataArray;
@@ -418,7 +424,7 @@ function saveNode(nodeid) {
         obj["kpiName"] = tmp.data.KPI_NAME;
         obj["kpiLevelId"] = tmp.data.KPI_LEVEL_ID;
         obj["alarmFlag"] = "n";
-        obj["conditions"] = tmp.data.CONDITION;
+        obj["condition"] = tmp.data.CONDITION;
         data.push(obj);
     }
 
@@ -444,261 +450,12 @@ function getRandom (m,n){
     return num;
 }
 
-// 加法chart 数据
-function getXaxis() {
-    var x = new Array();
-    var start = $("#beginDt").val();
-    var end = $("#endDt").val();
-
-    if($("#periodType option:selected").val() == "M") {
-        var startTime = getDate(start);
-        var endTime = getDate(end);
-        while((endTime.getTime()-startTime.getTime())>=0){
-            var year = startTime.getFullYear();
-            var month = (startTime.getMonth() + 1).toString().length==1?"0"+(startTime.getMonth() + 1).toString():startTime.getMonth() + 1;
-            x.push(year+"-"+month);
-            startTime.setMonth(startTime.getMonth()+1);
-        }
-    }else {
-        var startTime = new Date(start);
-        var endTime = new Date(end);
-        while((endTime.getTime()-startTime.getTime())>=0){
-            var year = startTime.getFullYear();
-            x.push(year);
-            startTime.setFullYear(startTime.getFullYear()+1);
-        }
-    }
-    return x;
-}
 // 月份
 function getDate(datestr){
     var temp = datestr.split("-");
     var date = new Date(temp[0],temp[1]);
     return date;
 }
-
-function chart_condition1(id, name, desc1, desc2) {
-    createChartDom(id, name);
-    var xdata = getXaxis();
-    var ydata1 = new Array();
-    var ydata2 = new Array();
-    for(var i=0; i<xdata.length; i++) {
-        ydata1.push(getRandom(1000, 10000));
-        ydata2.push(getRandom(1000, 10000));
-    }
-    var option1 = {
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                lineStyle: {
-                    color: '#ddd'
-                }
-            },
-            backgroundColor: 'rgba(255,255,255,1)',
-            padding: [5, 10],
-            textStyle: {
-                color: '#7588E4',
-            },
-            extraCssText: 'box-shadow: 0 0 5px rgba(0,0,0,0.3)'
-        },
-        legend: {
-            right: 20,
-            orient: 'vertical',
-            data: [desc1, desc2]
-        },
-        xAxis: {
-            type: 'category',
-            data: xdata,
-            boundaryGap: false,
-            splitLine: {
-                show: true,
-                interval: 'auto',
-                lineStyle: {
-                    color: ['#D4DFF5']
-                }
-            },
-            axisTick: {
-                show: false
-            },
-            axisLine: {
-                lineStyle: {
-                    color: '#609ee9'
-                }
-            },
-            axisLabel: {
-                margin: 10,
-                textStyle: {
-                    fontSize: 14
-                }
-            }
-        },
-        yAxis: {
-            type: 'value',
-            splitLine: {
-                lineStyle: {
-                    color: ['#D4DFF5']
-                }
-            },
-            axisTick: {
-                show: false
-            },
-            axisLine: {
-                lineStyle: {
-                    color: '#609ee9'
-                }
-            },
-            axisLabel: {
-                margin: 0,
-                textStyle: {
-                    fontSize: 14
-                }
-            }
-        },
-        series: [{
-            name: desc1,
-            type: 'line',
-            smooth: true,
-            showSymbol: false,
-            symbol: 'circle',
-            symbolSize: 6,
-            data: ydata1,
-            areaStyle: {
-                normal: {
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                        offset: 0,
-                        color: 'rgba(199, 237, 250,0.5)'
-                    }, {
-                        offset: 1,
-                        color: 'rgba(199, 237, 250,0.2)'
-                    }], false)
-                }
-            },
-            itemStyle: {
-                normal: {
-                    color: '#f7b851'
-                }
-            },
-            lineStyle: {
-                normal: {
-                    width: 1
-                }
-            }
-        }, {
-            name: desc2,
-            type: 'line',
-            smooth: true,
-            showSymbol: false,
-            symbol: 'circle',
-            symbolSize: 6,
-            data: ydata2,
-            areaStyle: {
-                normal: {
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                        offset: 0,
-                        color: 'rgba(216, 244, 247,1)'
-                    }, {
-                        offset: 1,
-                        color: 'rgba(216, 244, 247,1)'
-                    }], false)
-                }
-            },
-            itemStyle: {
-                normal: {
-                    color: '#58c8da'
-                }
-            },
-            lineStyle: {
-                normal: {
-                    width: 1
-                }
-            }
-        }]
-    };
-    window["chart" + id] = echarts.init(document.getElementById('chart'+id+''), 'macarons');
-    window["chart" + id].setOption(option1);
-    $("#btn"+id+"").click();
-}
-
-function createChartDom(id, name) {
-    // 收起兄弟节点的菜单
-    $("#charts").find("div[role='tabpanel']").each(function () {
-        if($(this).attr("class") == "panel-collapse collapse in"){
-            $(this).removeClass("in");
-        }
-    });
-    var str = "<div class=\"panel panel-primary\">\n" +
-        "<div class=\"panel-heading\" role=\"tab\" id=\"heading"+id+"\">\n" +
-        "   <h4 class=\"panel-title\">\n" +
-        "      <a role=\"button\" data-toggle=\"collapse\" data-parent=\"#accordion\" href=\"#collapse"+id+"\" aria-expanded=\"true\" aria-controls=\"collapse"+id+"\">\n" +
-        "           " + name + "\n" +
-        "      </a>\n" +
-        "   </h4>\n" +
-        "</div>\n" +
-        "<div id=\"collapse"+id+"\" class=\"panel-collapse collapse in\" role=\"tabpanel\" aria-labelledby=\"heading"+id+"\">\n" +
-        "    <div class=\"panel-body\">\n" +
-        "       <div style=\"width:100%;height:300px;\" id=\"chart"+id+"\"></div>\n" +
-        "    </div>\n" +
-        "</div>\n" +
-        "</div>";
-    $("#charts").prepend(str);
-}
-
-// 加法chart
-function chart0(id, name, desc) {
-    createChartDom(id, name);
-
-    var xdata = getXaxis();
-    var ydata = new Array();
-    for(var i=0; i<xdata.length; i++) {
-        ydata.push(getRandom(1000, 10000));
-    }
-
-    var option0 = {
-        color: ['#3398DB'],
-        tooltip : {
-            trigger: 'axis',
-            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-            }
-        },
-        dataset: {
-            source: [
-                [desc]
-            ]
-        },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-        },
-        xAxis : [
-            {
-                type : 'category',
-                data : xdata,
-                axisTick: {
-                    alignWithLabel: true
-                }
-            }
-        ],
-        yAxis : [
-            {
-                type : 'value'
-            }
-        ],
-        series : [
-            {
-                name: desc,
-                type:'bar',
-                barWidth: '60%',
-                data: ydata
-            }
-        ]
-    };
-    window["chart" + id] = echarts.init(document.getElementById('chart'+id+''), 'macarons');
-    window["chart" + id].setOption(option0);
-}
-
 
 // 乘法条件
 function condition1() {
@@ -833,6 +590,9 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf) {
 
     // 封装HandleInfo
     var handleInfo = new Object();
+    var periodType = $("#periodType option:selected").val();
+    var beginDt = $("#beginDt").val();
+    var endDt = $("#endDt").val();
     var handleDesc = "";
     var templateName = "";
     // M乘法 A加法 F过滤(无操作)
@@ -858,6 +618,11 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf) {
     handleInfo.handleType = operateType;
     handleInfo.templateName = templateName;
     handleInfo.nodeId = nodeId;
+    handleInfo.periodType = periodType;
+    handleInfo.beginDt = beginDt;
+    handleInfo.endDt = endDt;
+    handleInfo.whereinfo = conditions;
+
     // redis封装数据,返回模版文件
     saveDiagHandleInfo(handleInfo);
     return nodeId;

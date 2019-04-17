@@ -38,24 +38,13 @@ public class DiagDetailServiceImpl implements DiagDetailService {
             JSONObject jsonObject = (JSONObject)it.next();
             DiagDetail diagDetail = jsonObject.toJavaObject(DiagDetail.class);
             diagDetailList.add(diagDetail);
-
-            JSONArray conditionJsonArray = jsonObject.getJSONArray("conditions");
-            if(conditionJsonArray != null) {
-                Iterator itConditions = conditionJsonArray.iterator();
-                while(itConditions.hasNext()) {
-                    String tmp = (String) itConditions.next();
-                    String[] tmpArray = tmp.split(":");
-                    DiagCondition condition = new DiagCondition();
-                    condition.setDiagId(diagDetail.getDiagId());
-                    condition.setDimValues(tmpArray[0]);
-                    condition.setDimCode(tmpArray[1]);
-                    condition.setDimName(tmpArray[2]);
-                    condition.setDimValueDisplay(tmpArray[3]);
-                    condition.setInheritFlag(tmpArray[4]);
-                    condition.setNodeId(diagDetail.getNodeId());
-                    condition.setCreateDt(new Date());
-                    conditions.add(condition);
-
+            if(null != diagDetail.getCondition()) {
+                for (DiagCondition d:diagDetail.getCondition()
+                ) {
+                    d.setDiagId(diagDetail.getDiagId());
+                    d.setNodeId(diagDetail.getNodeId());
+                    d.setCreateDt(new Date());
+                    conditions.add(d);
                 }
             }
         }
