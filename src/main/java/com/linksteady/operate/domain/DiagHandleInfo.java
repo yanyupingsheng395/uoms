@@ -1,6 +1,8 @@
 package com.linksteady.operate.domain;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 诊断操作描述的表
@@ -10,6 +12,12 @@ public class DiagHandleInfo implements Serializable {
     int diagId;  //诊断ID
 
     int kpiLevelId;  //等级ID
+
+    String periodType; //诊断周期类型
+
+    String beginDt; //开始时间
+
+    String endDt; //结束时间
 
     String handleDesc;  //操作描述 gmv按XXX做加法分析； GMV 按 XX*XX 拆分；
 
@@ -30,6 +38,10 @@ public class DiagHandleInfo implements Serializable {
     String addDimCode;  //加法按那个维度进行拆分
 
     String addDimValues;  //加法拆分的维度值
+
+    //条件信息 list中每一条记录：select t.dim_code,t.dim_name,t.dim_values,t.dim_value_display,t.inherit_flag from UO_DIAG_CONDITION t
+    List<Map<String,String>> whereinfo;
+
 
     public int getDiagId() {
         return diagId;
@@ -125,5 +137,37 @@ public class DiagHandleInfo implements Serializable {
 
     public void setAddDimValues(String addDimValues) {
         this.addDimValues = addDimValues;
+    }
+
+    public String getPeriodType() {
+        return periodType;
+    }
+
+    public void setPeriodType(String periodType) {
+        this.periodType = periodType;
+    }
+
+    public String getBeginDt() {
+        return beginDt;
+    }
+
+    public void setBeginDt(String beginDt) {
+        this.beginDt = beginDt;
+    }
+
+    public String getEndDt() {
+        return endDt;
+    }
+
+    public void setEndDt(String endDt) {
+        this.endDt = endDt;
+    }
+
+    public List<Map<String, String>> getWhereinfo() {
+        return whereinfo;
+    }
+
+    public void setWhereinfo(List<Map<String, String>> whereinfo) {
+        this.whereinfo = whereinfo;
     }
 }
