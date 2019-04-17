@@ -33,8 +33,10 @@ public class DiagMultResultInfo  extends DiagResultInfo{
     double thirdDown;  //下浮5%值
 
 
-    //变异系数 k为那个的变异系数 v为对应的值列表
+    //变异系数 k为那个的变异系数编码 v为对应的值列表
     Map<String,List<Double>> covValues;
+    //变异系数编码、变异系数名称 编码为cov1 cov2 cov3
+    Map<String,String> covNames;
 
     public List<String> getxData() {
         return xData;
@@ -202,5 +204,13 @@ public class DiagMultResultInfo  extends DiagResultInfo{
 
     public void setThirdAvg(double thirdAvg) {
         this.thirdAvg = thirdAvg;
+    }
+
+    public Map<String, String> getCovNames() {
+        return covNames;
+    }
+
+    public void setCovNames(Map<String, String> covNames) {
+        this.covNames = covNames;
     }
 }

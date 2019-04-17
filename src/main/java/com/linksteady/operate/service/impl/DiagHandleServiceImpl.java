@@ -1,5 +1,8 @@
 package com.linksteady.operate.service.impl;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.config.KpiCacheManager;
@@ -11,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class DiagHandleServiceImpl implements DiagHandleService {
@@ -109,17 +114,78 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         String part2Name=(String)kpiDismant.get("DISMANT_PART2_NAME");
 
         diagMultResultInfo.setxData(periodList);
-        diagMultResultInfo.setxName("D".equals(diagHandleInfo)?"天":"月份");
+        diagMultResultInfo.setxName("D".equals(diagHandleInfo.getPeriodType())?"天":"月份");
 
         //获取三个指标的折线图
+        diagMultResultInfo.setFirYName(kpiName+"(元)");
+        diagMultResultInfo.setSecYName(part1Name);
+        diagMultResultInfo.setThirdYName(part2Name);
 
-        //末期比基期的变化率；
+        LinkedList<Double> firData= Lists.newLinkedList();
+        LinkedList<Double> secData= Lists.newLinkedList();
+        LinkedList<Double> thirdData= Lists.newLinkedList();
+
+        //变异系数值
+        List<Double> firCov=Lists.newArrayList();
+        List<Double> secCov=Lists.newArrayList();
+        List<Double> thirdCov=Lists.newArrayList();
+        Map<String,List<Double>> covValues= Maps.newHashMap(); //变异系数值
+        Map<String,String> covNames=Maps.newHashMap();
+
+        for(String period:periodList)
+        {
+            firData.add(getRandomKpiData(diagHandleInfo.getPeriodType(),kpiCode));
+            secData.add(getRandomKpiData(diagHandleInfo.getPeriodType(),part1Code));
+            thirdData.add(getRandomKpiData(diagHandleInfo.getPeriodType(),part2Code));
+
+            if("M".equals(diagHandleInfo.getPeriodType()))
+            {
+                //获取变异系数值
+                firCov.add(getRandomKpiData(diagHandleInfo.getPeriodType(),"cov"));
+                secCov.add(getRandomKpiData(diagHandleInfo.getPeriodType(),"cov"));
+                thirdCov.add(getRandomKpiData(diagHandleInfo.getPeriodType(),"cov"));
+            }
+
+        }
+
+        covValues.put("cov1",firCov);
+        covValues.put("cov2",secCov);
+        covValues.put("cov3",thirdCov);
+        diagMultResultInfo.setCovValues(covValues);
+
+        covNames.put("cov1",kpiName+"变异系数");
+        covNames.put("cov2",part1Name+"变异系数");
+        covNames.put("cov3",part2Name+"变异系数");
+
+        diagMultResultInfo.setCovNames(covNames);
+
+        diagMultResultInfo.setFirData(firData);
+        diagMultResultInfo.setSecData(secData);
+        diagMultResultInfo.setThirdData(thirdData);
+
+        //末期比基期的变化率
+        diagMultResultInfo.setFirChangeRate(ArithUtil.formatDouble(((firData.getLast()-firData.getFirst())/firData.getFirst()),4)*100);
+        diagMultResultInfo.setSecChangeRate(ArithUtil.formatDouble(((secData.getLast()-secData.getFirst())/secData.getFirst()),4)*100);
+        diagMultResultInfo.setThirdChangeRate(ArithUtil.formatDouble(((thirdData.getLast()-thirdData.getFirst())/thirdData.getFirst()),4)*100);
 
         //均值及上下5%区域；
+        Double firavg=firData.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
+        Double secavg=secData.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
+        Double thirdavg=thirdData.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
 
-        //计算三个指标的变异系数
+        diagMultResultInfo.setFirAvg(ArithUtil.formatDouble(firavg,2));
+        diagMultResultInfo.setFirUp(ArithUtil.formatDouble(firavg*1.05,2));
+        diagMultResultInfo.setFirDown(ArithUtil.formatDouble(firavg*0.95,2));
 
-        return new DiagResultInfo();
+        diagMultResultInfo.setSecAvg(ArithUtil.formatDouble(secavg,2));
+        diagMultResultInfo.setSecUp(ArithUtil.formatDouble(secavg*1.05,2));
+        diagMultResultInfo.setSecDown(ArithUtil.formatDouble(secavg*0.95,2));
+
+        diagMultResultInfo.setThirdAvg(ArithUtil.formatDouble(thirdavg,2));
+        diagMultResultInfo.setThirdUp(ArithUtil.formatDouble(thirdavg*1.05,2));
+        diagMultResultInfo.setThirdDown(ArithUtil.formatDouble(thirdavg*0.95,2));
+
+        return diagMultResultInfo;
     }
 
     /**
@@ -171,11 +237,11 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         {
             for(String period:periodList)
             {
-                kpiValue+=Double.parseDouble(getRandomKpiData(diagHandleInfo.getPeriodType(),kpiCode));
+                kpiValue+=getRandomKpiData(diagHandleInfo.getPeriodType(),kpiCode);
             }
         }else  //不可累加
         {
-            kpiValue=Double.parseDouble(getRandomKpiData(diagHandleInfo.getPeriodType(),kpiCode));
+            kpiValue=getRandomKpiData(diagHandleInfo.getPeriodType(),kpiCode);
         }
 
         resultInfo.setKpiCode(kpiCode);
@@ -184,17 +250,17 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         return new DiagResultInfo();
     }
 
-    private String getRandomKpiData(String period,String kpiCode)
+    private double getRandomKpiData(String period,String kpiCode)
     {
-        String  result ="";
+        double  result =0d;
        if("gmv".equals(kpiCode))
        {
            if("M".equals(period))
            {
-                result= String.valueOf(RandomUtil.getIntRandom(1000000,1200000));
+                result= RandomUtil.getIntRandom(1000000,1200000);
            }else
            {
-               result= String.valueOf(RandomUtil.getIntRandom(35000,50000));
+               result= RandomUtil.getIntRandom(35000,50000);
            }
 
        }
@@ -202,66 +268,71 @@ public class DiagHandleServiceImpl implements DiagHandleService {
        {
             if("M".equals(period))
             {
-                result= String.valueOf(RandomUtil.getIntRandom(1800,2200));
+                result= RandomUtil.getIntRandom(1800,2200);
             }else
             {
-                result= String.valueOf(RandomUtil.getIntRandom(50,80));
+                result= RandomUtil.getIntRandom(50,80);
             }
        }
        else if ("uprice".equals(kpiCode))  //客单价
        {
            if("M".equals(period))
            {
-               result= String.valueOf(RandomUtil.getIntRandom(500,600));
+               result= RandomUtil.getIntRandom(500,600);
            }else
            {
-               result= String.valueOf(RandomUtil.getIntRandom(500,600));
+               result=RandomUtil.getIntRandom(500,600);
            }
        }
        else if ("price".equals(kpiCode))  //订单价
        {
            if("M".equals(period))
            {
-               result= String.valueOf(RandomUtil.getIntRandom(400,600));
+               result=RandomUtil.getIntRandom(400,600);
            }else
            {
-               result= String.valueOf(RandomUtil.getIntRandom(400,600));
+               result= RandomUtil.getIntRandom(400,600);
            }
        }
        else if ("pcnt".equals(kpiCode))  //订单数
        {
            if("M".equals(period))
            {
-               result= String.valueOf(RandomUtil.getIntRandom(2500,3000));
+               result= RandomUtil.getIntRandom(2500,3000);
            }else
            {
-               result= String.valueOf(RandomUtil.getIntRandom(80,120));
+               result= RandomUtil.getIntRandom(80,120);
            }
        }
        else if ("joinrate".equals(kpiCode))  //连带率  1.5-2.5
        {
-           result= String.valueOf(RandomUtil.getIntRandom(15,25)/10.00);
+           result=RandomUtil.getIntRandom(15,25)/10.00;
        }
        else if ("sprice".equals(kpiCode))  //件单价
        {
-           result= String.valueOf(RandomUtil.getIntRandom(200,300));
+           result= RandomUtil.getIntRandom(200,300);
        }
        else if ("sprice2".equals(kpiCode))  //吊牌价
        {
-           result= String.valueOf(RandomUtil.getIntRandom(250,350));
+           result= RandomUtil.getIntRandom(250,350);
        }
        else if ("disrate".equals(kpiCode))  //折扣率 0.7 -0.9
        {
-           result= String.valueOf(RandomUtil.getIntRandom(70,90)/10.00);
+           result= RandomUtil.getIntRandom(70,90)/10.00;
        }
        else if ("freq".equals(kpiCode))  //购买频次  1.1-1.5
        {
-           result= String.valueOf(RandomUtil.getIntRandom(11,15)/10.00);
+           result=RandomUtil.getIntRandom(11,15)/10.00;
        }
        else if ("tspan".equals(kpiCode))  //时间长度
        {
-           result= "0";
+           result= 0.0d;
        }
+       else if ("cov".equals(kpiCode))  //变异系数
+       {
+           result= RandomUtil.getIntRandom(40,55)/10.00;
+       }
+
        return result;
     }
 
