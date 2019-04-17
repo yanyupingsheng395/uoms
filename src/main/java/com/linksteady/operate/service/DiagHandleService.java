@@ -10,4 +10,8 @@ public interface DiagHandleService {
     DiagHandleInfo getHandleInfoFromRedis(int diagId,int kpiLevelId);
 
     DiagResultInfo generateDiagData(DiagHandleInfo diagHandleInfo);
+
+    public void saveResultToRedis(DiagResultInfo diagResultInfo);
+
+    public DiagResultInfo getResultFromRedis(int diagId, int kpiLevelId);
 }
