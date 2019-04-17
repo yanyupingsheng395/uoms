@@ -257,13 +257,8 @@ public class ReasonServiceImpl implements ReasonService {
          //判断时间 period为D 表示按天 M表示按月
         if("M".equals(period))
         {
-            List<String> months=null;
-              //获取两个日期直接的所有月份
-            try {
-                months=DateUtil.getMonthBetween(beginDt.substring(0,7),endDt.substring(0,7));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            //获取两个日期直接的所有月份
+            List<String> months=DateUtil.getMonthBetween(beginDt.substring(0,7),endDt.substring(0,7));
 
             for(String mth:months)
             {

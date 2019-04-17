@@ -17,23 +17,32 @@ public class DateUtil {
     /** 代表数组里的年、月、日 */
     private static final int Y = 0, M = 1, D = 2;
 
-
     private DateUtil(){
 
     }
 
 
-    public static List<String> getMonthBetween(String minDate, String maxDate) throws ParseException {
+    public static List<String> getMonthBetween(String minDate, String maxDate){
         ArrayList<String> result = new ArrayList<String>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");//格式化为年月
 
         Calendar min = Calendar.getInstance();
         Calendar max = Calendar.getInstance();
 
-        min.setTime(sdf.parse(minDate));
+        Date minDt= null;
+        Date maxDt= null;
+        try {
+            minDt = sdf.parse(minDate);
+            maxDt = sdf.parse(maxDate);
+        } catch (ParseException e) {
+           minDt=new Date();
+           maxDt=new Date();
+        }
+
+        min.setTime(minDt);
         min.set(min.get(Calendar.YEAR), min.get(Calendar.MONTH), 1);
 
-        max.setTime(sdf.parse(maxDate));
+        max.setTime(maxDt);
         max.set(max.get(Calendar.YEAR), max.get(Calendar.MONTH), 2);
 
         Calendar curr = min;
