@@ -3,6 +3,7 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.DiagHandleInfo;
 import com.linksteady.operate.service.DiagHandleService;
 import com.linksteady.operate.service.LifeCycleService;
@@ -156,11 +157,5 @@ public class OpController extends BaseController {
 
         return  ResponseBo.ok("success");
     }
-
-
-
-
-
-
 
 }

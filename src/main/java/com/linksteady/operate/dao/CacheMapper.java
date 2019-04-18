@@ -15,7 +15,7 @@ public interface CacheMapper {
 
     List<Map<String,String>> getReasonDims();
 
-    List<Map<String,String>> getDimValuesBySql(@Param("sqlString") String sqlString);
+    List<Map<String,Object>> getDimValuesBySql(@Param("sqlString") String sqlString);
 
-    List<Map<String,String>> getDimValuesDirect(@Param("dimCode") String dimCode);
+    List<Map<String,Object>> getDimValuesDirect(@Param("dimCode") String dimCode);
 }

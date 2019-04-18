@@ -61,7 +61,7 @@ public class LoadConfigRunner implements CommandLineRunner {
             valueSql=diagDim.get("VALUE_SQL");
             DiagDimList.put(dimCode,diagDim.get("DIM_NAME"));
 
-            List<Map<String,String>> dimValuesList=null;
+            List<Map<String,Object>> dimValuesList=null;
             Map<String,String> dimValues=Maps.newHashMap();
             if("S".equals(valueType))  //通过sql查询
             {
@@ -72,9 +72,9 @@ public class LoadConfigRunner implements CommandLineRunner {
                 dimValuesList=cacheMapper.getDimValuesDirect(dimCode);
             }
 
-            for(Map<String,String> param:dimValuesList)
+            for(Map<String,Object> param:dimValuesList)
             {
-                dimValues.put(param.get("VALUE_CODE"),param.get("VALUE_DESC"));
+                dimValues.put(param.get("VALUE_CODE").toString(),param.get("VALUE_DESC").toString());
             }
             diagDimValueList.put(dimCode,dimValues);
         }
@@ -92,7 +92,7 @@ public class LoadConfigRunner implements CommandLineRunner {
             valueSql=reasonDim.get("VALUE_SQL");
             reasonDimList.put(dimCode,reasonDim.get("DIM_NAME"));
 
-            List<Map<String,String>> dimValuesList2=null;
+            List<Map<String,Object>> dimValuesList2=null;
             Map<String,String> reasonDimValues=Maps.newHashMap();
             if("S".equals(valueType))  //通过sql查询
             {
@@ -103,9 +103,9 @@ public class LoadConfigRunner implements CommandLineRunner {
                 dimValuesList2=cacheMapper.getDimValuesDirect(dimCode);
             }
 
-            for(Map<String,String> param:dimValuesList2)
+            for(Map<String,Object> param:dimValuesList2)
             {
-                reasonDimValues.put(param.get("VALUE_CODE"),param.get("VALUE_DESC"));
+                reasonDimValues.put(param.get("VALUE_CODE").toString(),param.get("VALUE_DESC").toString());
             }
             reasonDimValueList.put(dimCode,reasonDimValues);
         }
