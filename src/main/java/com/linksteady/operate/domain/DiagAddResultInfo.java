@@ -22,6 +22,7 @@ public class DiagAddResultInfo extends DiagResultInfo{
     JSONArray  lineAvgData;  //折线图的各部分平均数据
 
     JSONArray  covData;  //变异系数数据
+    JSONArray  relateData;  //相关性数据
 
     JSONArray  nodeList; //加法要插入的节点名称
 
@@ -87,5 +88,13 @@ public class DiagAddResultInfo extends DiagResultInfo{
 
     public void setNodeList(JSONArray nodeList) {
         this.nodeList = nodeList;
+    }
+
+    public JSONArray getRelateData() {
+        return relateData;
+    }
+
+    public void setRelateData(JSONArray relateData) {
+        this.relateData = relateData;
     }
 }

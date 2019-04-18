@@ -289,7 +289,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         diagAddResultInfo.setXname("D".equals(diagHandleInfo.getPeriodType())?"天":"月份");
         diagAddResultInfo.setXdata(periodList);
 
-
+        //变异系数
         JSONArray covArray=new JSONArray();
         JSONObject covObj=new JSONObject();
         covObj.put("name","总体");
@@ -304,6 +304,23 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
             covArray.add(covObj);
         }
+
+        //相关性
+        JSONArray relateArray=new JSONArray();
+        JSONObject relateObj=new JSONObject();
+        relateObj.put("name","总体");
+        relateObj.put("data",getRandomKpiData(diagHandleInfo.getPeriodType(),"relate"));
+        relateArray.add(covObj);
+
+        for(String dv:dimValues)
+        {
+            relateObj=new JSONObject();
+            relateObj.put("name",diagDimValue.get(dv));
+            relateObj.put("data",getRandomKpiData(diagHandleInfo.getPeriodType(),"relate"));
+
+            relateArray.add(covObj);
+        }
+
 
         //先获取到gmv的值集
         Map<String,Double> gmvMap=Maps.newHashMap();
@@ -374,9 +391,13 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         diagAddResultInfo.setLineData(othersData);
         diagAddResultInfo.setLineAvgData(lineAvgData);
         diagAddResultInfo.setCovData(covArray);
+        diagAddResultInfo.setRelateData(relateArray);
 
         //要插入的新节点信息
         diagAddResultInfo.setNodeList(nodeArray);
+
+        //相关性
+
         return diagAddResultInfo;
     }
 
