@@ -206,7 +206,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         link=new JSONObject();
         link.put("name",part2Name);
         link.put("data",getRandomKpiData("","relate"));
-        relArray.add(relObj);
+        relArray.add(link);
 
         relObj.put("data",relArray);
 
