@@ -205,12 +205,15 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         DiagAddResultInfo diagAddResultInfo=new DiagAddResultInfo();
 
         String kpiCode=diagHandleInfo.getKpiCode();
-        //String kpiName=KpiCacheManager.getInstance().getCodeNamePair().get(kpiCode);
 
         List<String> dimNames=Lists.newArrayList();  //存放维度值名称的列表
         List<String> dimValues=null;    //存放维度值编码的列表
         String dimCode=diagHandleInfo.getAddDimCode();
         Map<String,String> diagDimValue=( Map<String,String>)KpiCacheManager.getInstance().getDiagDimValueList().get(dimCode);
+
+        //加法要插入的节点
+        JSONArray nodeArray=new JSONArray();
+        JSONObject node=null;
 
         //概览信息
         if(null==diagHandleInfo.getAddDimValues()||"".equals(diagHandleInfo.getAddDimValues()))  //如果用户没选择维度值，则系统去取TOP5的
@@ -223,6 +226,11 @@ public class DiagHandleServiceImpl implements DiagHandleService {
                 {
                     dimValues.add(key);
                     dimNames.add(diagDimValue.get(key));
+
+                    node=new JSONObject();
+                    node.put("code",key);
+                    node.put("name",diagDimValue.get(key));
+                    nodeArray.add(node);
                 }
                 i++;
             }
@@ -232,6 +240,11 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             for(String v:dimValues)
             {
                 dimNames.add(diagDimValue.get(v));
+
+                node=new JSONObject();
+                node.put("code",v);
+                node.put("name",diagDimValue.get(v));
+                nodeArray.add(node);
             }
         }
 
@@ -343,6 +356,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         diagAddResultInfo.setLineAvgData(lineAvgData);
         diagAddResultInfo.setCovData(covArray);
 
+        //要插入的新节点信息
+        diagAddResultInfo.setNodeList(nodeArray);
         return diagAddResultInfo;
     }
 

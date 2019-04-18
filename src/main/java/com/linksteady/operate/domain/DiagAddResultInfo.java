@@ -23,6 +23,8 @@ public class DiagAddResultInfo extends DiagResultInfo{
 
     JSONArray  covData;  //变异系数数据
 
+    JSONArray  nodeList; //加法要插入的节点名称
+
     public List<String> getLegendData() {
         return legendData;
     }
@@ -77,5 +79,13 @@ public class DiagAddResultInfo extends DiagResultInfo{
 
     public void setCovData(JSONArray covData) {
         this.covData = covData;
+    }
+
+    public JSONArray getNodeList() {
+        return nodeList;
+    }
+
+    public void setNodeList(JSONArray nodeList) {
+        this.nodeList = nodeList;
     }
 }
