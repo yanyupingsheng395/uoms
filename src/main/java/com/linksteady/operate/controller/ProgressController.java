@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.DiagHandleInfo;
+import com.linksteady.operate.domain.DiagResultInfo;
 import com.linksteady.operate.service.DiagHandleService;
 import com.linksteady.operate.service.ProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +114,19 @@ public class ProgressController {
             DiagHandleInfo obj = jsonObject.toJavaObject(DiagHandleInfo.class);
             diagHandleService.saveHandleInfoToRedis(obj);
             return ResponseBo.ok();
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseBo.error();
+        }
+    }
+
+    // 点击节点从redis获取数据
+    @GetMapping("/generateDiagData")
+    public ResponseBo generateDiagData(@RequestParam("diagId") int diagId, @RequestParam("kpiLevelId") int kpiLevelId) {
+        try{
+            DiagHandleInfo diagHandleInfo = diagHandleService.getHandleInfoFromRedis(diagId, kpiLevelId);
+            DiagResultInfo diagResultInfo = diagHandleService.generateDiagData(diagHandleInfo);
+            return ResponseBo.okWithData(null, diagResultInfo);
         }catch (Exception ex) {
             ex.printStackTrace();
             return ResponseBo.error();

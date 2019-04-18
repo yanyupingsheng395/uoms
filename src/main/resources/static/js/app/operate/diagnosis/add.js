@@ -14,8 +14,8 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 };
-init_date_begin("beginDt", "endDt","yyyy", 2,2,2);
-init_date_end("beginDt", "endDt","yyyy", 2,2,2);
+init_date_begin("beginDt", "endDt","yyyy-mm", 1,2,1);
+init_date_end("beginDt", "endDt","yyyy-mm", 1,2,1);
 
 // 周期切换时间控件
 $("#periodType").change(function () {
@@ -25,9 +25,9 @@ $("#periodType").change(function () {
 
     $("#startDate").append("<input class=\"form-control js-datepicker m-b-10\" type=\"text\" id=\"beginDt\" name=\"beginDt\"/>");
     $("#endDate").append("<input class=\"form-control js-datepicker m-b-10\" type=\"text\" id=\"endDt\" name=\"endDt\"/>");
-    if(periodType == "Y") {
-        init_date_begin("beginDt", "endDt", "yyyy", 2,2,2);
-        init_date_end("beginDt", "endDt", "yyyy", 2,2,2);
+    if(periodType == "D") {
+        init_date_begin("beginDt", "endDt", "yyyy-mm-dd", 0,2,0);
+        init_date_end("beginDt", "endDt", "yyyy-mm-dd", 0,2,0);
     }else if(periodType == "M") {
         init_date_begin("beginDt", "endDt", "yyyy-mm", 1,2,1);
         init_date_end("beginDt", "endDt", "yyyy-mm", 1,2,1);
@@ -127,17 +127,7 @@ function addCondition() {
 function resetTableData() {
     $("#dataTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
 }
-function redisSaveConditions() {
-    var dataArray = new Array();
-    $("#dataTable").find("tr").each(function () {
-        var code = $(this).find("td:eq(0)").find("input").val();
-        var text = $(this).find("td:eq(0)").text();
-        dataArray.push(code + ":" + text);
-    });
-    $.post("/diagcondition/redisCreate", {data: dataArray, diagId: diagId, nodeId: jm.get_selected_node().id}, function (r) {
 
-    });
-}
 
 $("#op5").change(function() {
     var code = $(this).find("option:selected").val();
@@ -400,6 +390,22 @@ function endNode(nodeId) {
     jm.disable_edit();
 }
 
+function redisSaveRootNodeHandleInfo() {
+    var handleInfo = new Object();
+    var periodType = $("#periodType option:selected").val();
+    var beginDt = $("#beginDt").val();
+    var endDt = $("#endDt").val();
+    handleInfo.diagId = diagId;
+    handleInfo.kpiLevelId = 0;
+    handleInfo.handleType = "F";
+    handleInfo.handleDesc = "GMV指标概况";
+    handleInfo.templateName = "GMV指标";
+    handleInfo.periodType = periodType;
+    handleInfo.beginDt = beginDt;
+    handleInfo.endDt = endDt;
+    handleInfo.kpiCode = "gmv";
+    saveDiagHandleInfo(handleInfo);
+}
 //
 //saveNode("-1");
 
@@ -481,9 +487,10 @@ function rootNode() {
             var node = new Object();
             node.id = "-1";
             node.isroot = true;
-            node.topic = "<a onclick='modalTest()' style='color: #000;cursor: pointer;border-bottom: solid 1px #000;'>0 "+kpiName+"</a>";
+            node.topic = "0 "+kpiName;
             node.KPI_CODE = kpiCode;
             node.KPI_NAME = kpiName;
+            node.KPI_LEVEL_ID = "0";
             nodeArr.push(node);
         }
     });
@@ -492,7 +499,6 @@ function rootNode() {
 
 function modalTest() {
     $("#modal").modal('show');
-
 }
 $('#modal').on('shown.bs.modal', function () {
     template2("chart1");
@@ -521,6 +527,7 @@ function createRootNode() {
     jm = jsMind.show(options,mind);
     addEventListenerOfNode();
 
+    redisSaveRootNodeHandleInfo();
     saveNode("-1");
 }
 
@@ -532,33 +539,8 @@ function condition2() {
         toastr.warning("请选择过滤条件！");
     }else {
         createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME, false);
-        chart_condition2(levelId, nodeName);
         $("#nodeAddModal").modal('hide');
     }
-}
-
-function chart_condition2(id, name) {
-    $("#charts").find("div[role='tabpanel']").each(function () {
-        if($(this).attr("class") == "panel-collapse collapse in"){
-            $(this).removeClass("in");
-        }
-    });
-
-    var str = "<div class=\"panel panel-primary\">\n" +
-        "<div class=\"panel-heading\" role=\"tab\" id=\"heading"+id+"\">\n" +
-        "   <h4 class=\"panel-title\">\n" +
-        "      <a role=\"button\" data-toggle=\"collapse\" data-parent=\"#accordion\" href=\"#collapse"+id+"\" aria-expanded=\"true\" aria-controls=\"collapse"+id+"\">\n" +
-        "           " + name + "\n" +
-        "      </a>\n" +
-        "   </h4>\n" +
-        "</div>\n" +
-        "<div id=\"collapse"+id+"\" class=\"panel-collapse collapse in\" role=\"tabpanel\" aria-labelledby=\"heading"+id+"\">\n" +
-        "    <div class=\"panel-body\">\n" +
-        "       该过滤条件对应销售额为：36262元" +
-        "    </div>\n" +
-        "</div>\n" +
-        "</div>";
-    $("#charts").prepend(str);
 }
 
 // method过滤条件
@@ -622,6 +604,7 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf) {
     handleInfo.beginDt = beginDt;
     handleInfo.endDt = endDt;
     handleInfo.whereinfo = conditions;
+    handleInfo.kpiCode = kpiCode;
 
     // redis封装数据,返回模版文件
     saveDiagHandleInfo(handleInfo);
@@ -702,20 +685,8 @@ function jsmind_refresh(map) {
     var nodeName2 = levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName2;
     createNode(nodeName1, levelId, kpiCode1, kpiName1, false);
     createNode(nodeName2, levelId, kpiCode2, kpiName2, false);
-
-    //chart_condition1(levelId, levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName1 + "*" + kpiName2, kpiName1, kpiName2);
     $("#nodeAddModal").modal('hide');
 }
-
-// function getKpiComb(code) {
-//     $.get("/progress/getKpiComb", {code: code}, function (r) {
-//         $("#currentNodeId").val(r.data.k);
-//
-//         var code = "<option value='"+r.data.k+"'>" + r.data.v + "</option>";
-//         $("#op1").html("").html(code);
-//         $('#op1').selectpicker('refresh');
-//     });
-// }
 
 // 获取公式
 function getFormula(kpiCode) {
@@ -755,9 +726,162 @@ function addEventListenerOfNode() {
             e.style.display = 'block';
         }else {
             e.style.display = 'none';
+            nodeClick();
         }
     });
 }
+
+function nodeClick() {
+    var kpiLevelId = jm.get_selected_node().data.KPI_LEVEL_ID;
+    $.get("/progress/generateDiagData", {diagId: diagId, kpiLevelId: kpiLevelId}, function (r) {
+        console.log(r)
+        viewChart(r.data);
+    });
+}
+
+function viewChart(obj) {
+    $("#modal").modal('show');
+    var operateType = obj.periodType;
+    if(operateType == "M") {
+        operateType = "月";
+    }else {
+        operateType = "天";
+    }
+    $("#handleDesc").html("").html("<p class='h4'>" + obj.handleDesc + "</p>");
+    $("#operateType").html("").html("<p class='h5'>周期: " + operateType + "</p>");
+    $("#timePeriod").html("").html("<p class='h5'>时间: " + obj.beginDt +"&nbsp;到&nbsp;" + obj.endDt +  "</p>");
+    var isRoot = jm.get_selected_node().isroot;
+    if(isRoot) { // 根节点
+        $("#opdesc").html("").html("<p class='h5'>该周期内GMV指标为：" + obj.kpiValue + "元</p>");
+        $("#template1").attr("style", "display:block;");
+        $("#template2").attr("style", "display:none;");
+    }else {
+        if(obj.periodType == "M") { // 乘法
+            $("#template1").attr("style", "display:none;");
+            $("#template2").attr("style", "display:block;");
+            // 条件
+            var whereinfo = "<div class=\"col-md-12\"><table class='table table-sm'>";
+            $.each(obj.whereinfo, function(k, v){
+                whereinfo += "<tr><td class='text-left'>"+v.dim_name + ":" + v.dim_value_display +"</td></tr>";
+            });
+            whereinfo += "</table></div>";
+            if(obj.whereinfo.length != 0) {
+                $("#whereinfo").html("").html(whereinfo);
+            }
+
+            // 变异系数
+            var chartId = "covChart";
+            covChart(chartId, obj);
+
+            // 指标趋势图
+            t2charts(obj);
+
+        }
+    }
+}
+
+function t2charts(obj) {
+    $("#rate1").html("").html("末期比基期的变化率:" + obj.firChangeRate);
+    $("#rate2").html("").html("末期比基期的变化率:" + obj.secChangeRate);
+    $("#rate3").html("").html("末期比基期的变化率:" + obj.thirdChangeRate);
+    makeT2Chart(obj,"t2chart1", obj.firYName,obj.firData, obj.firAvg, obj.firUp, obj.firDown);
+    makeT2Chart(obj,"t2chart2", obj.secYName,obj.secData, obj.secAvg, obj.secUp, obj.secDown);
+    makeT2Chart(obj,"t2chart3", obj.thirdYName,obj.thirdData, obj.thirdAvg, obj.thirdUp, obj.thirdDown);
+}
+
+function makeT2Chart(obj,chartId,yName, data, avg, up, down) {
+    var legendData = [yName, "均线"];
+    var xAxisData = obj.xData;
+    var xAxisName = obj.xName;
+    var yAxisName = yName;
+    var seriesData = new Array();
+    var avgData = new Array();
+    $.each(data, function () {
+        avgData.push(avg);
+    });
+    var t1 = new Object();
+    t1.name = yName;
+    t1.type = 'line';
+    t1.data = data;
+
+    seriesData.push(t1);
+
+    var t2 = new Object();
+    t2.name = legendData[1];
+    t2.type = 'line';
+    t2.data = avgData;
+    t2.markArea = {itemStyle:{
+        color: '#48b0f7',
+        opacity: 0.2
+    },
+    silent: true,
+        label: {
+        normal: {
+            position: ['10%', '50%']
+        }
+    },
+    data: [
+        [{
+            name: '',
+            yAxis: up,
+            x: '10%',
+            itemStyle: {
+                normal: {
+                    color: '#ff0000'
+                }
+            },
+        }, {
+            yAxis: down,
+            x: '90%'
+        }]
+    ]};
+    seriesData.push(t2);
+    var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
+    var chart = echarts.init(document.getElementById(chartId), 'macarons');
+    chart.setOption(option);
+    setTimeout(function () {
+        chart.resize();
+    }, 200);
+}
+
+function template3_2(chartId) {
+    var legendData = ["子品类一","子品类二","子品类三","子品类一均线","子品类二均线","子品类三均线"];
+    var xAxisData = ["201901", "201902", "201903", "201904"];
+    var xAxisName = "品类";
+    var yAxisName = "GMV值（元）";
+    var seriesData = [{name: '子品类一', type: 'line', data:[100, 200, 400, 320, 500]},
+        {name: '子品类二', type: 'line', data:[300, 200, 500, 230, 430]},
+        {name: '子品类三', type: 'line', data:[200, 400, 100, 330, 350]},
+        {name: '子品类一均线', type: 'line', data:[200, 200, 200, 200, 200]},
+        {name: '子品类二均线', type: 'line', data:[400, 400, 400, 400, 400]}];
+    var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
+    var chart = echarts.init(document.getElementById(chartId), 'macarons');
+    chart.setOption(option);
+}
+
+// 乘法变异系数图
+function covChart(chartId, obj) {
+    var legendData = new Array();
+    var xAxisData = obj.xData;
+    var seriesData = new Array();
+    $.each(obj.covNames, function (k, v) {
+        legendData.push(v);
+        var t = new Object();
+        t.name = v;
+        t.type = 'line';
+        t.data = obj.covValues[k];
+        seriesData.push(t);
+    });
+    var xAxisName = obj.xName;
+    var yAxisName = "变异系数";
+    var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
+    var chart = echarts.init(document.getElementById(chartId), 'macarons');
+    chart.setOption(option);
+    setTimeout(function () {
+        chart.resize();
+    }, 200);
+}
+
 
 // 判断JM非空，保证在单击面板时，不被隐藏
 $("#main").mousedown(function (event) {
@@ -776,7 +900,7 @@ function inputCheck(dom) {
     }
 }
 
-function next(dom) {
+function nextStep(dom) {
     if($("#diagName").val() != "") {
         $("#diagName").parent().removeClass("has-error");
         if($("#step1").attr("style") == "display:block;") {
