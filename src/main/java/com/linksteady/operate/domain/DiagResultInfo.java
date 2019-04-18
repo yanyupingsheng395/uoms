@@ -15,6 +15,7 @@ public class DiagResultInfo  implements Serializable {
     String beginDt; //开始时间
     String endDt; //结束时间
     String handleDesc;  //操作描述 gmv按XXX做加法分析； GMV 按 XX*XX 拆分；
+    String handleType;  //操作类型
 
     String kpiCode;  //指标编码
     String kpiName; //指标名称
@@ -103,5 +104,13 @@ public class DiagResultInfo  implements Serializable {
 
     public void setKpiValue(double kpiValue) {
         this.kpiValue = kpiValue;
+    }
+
+    public String getHandleType() {
+        return handleType;
+    }
+
+    public void setHandleType(String handleType) {
+        this.handleType = handleType;
     }
 }

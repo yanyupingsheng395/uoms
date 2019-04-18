@@ -84,6 +84,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         result.setEndDt(diagHandleInfo.getEndDt());
         result.setPeriodType(diagHandleInfo.getPeriodType());
         result.setHandleDesc(diagHandleInfo.getHandleDesc());
+        result.setHandleType(handleType);
 
         result.setKpiCode(diagHandleInfo.getKpiCode());
         result.setKpiName(KpiCacheManager.getInstance().getCodeNamePair().get(diagHandleInfo.getKpiCode()));
