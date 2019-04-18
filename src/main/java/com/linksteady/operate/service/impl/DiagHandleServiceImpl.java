@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -404,8 +405,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         resultInfo.setKpiCode(kpiCode);
         resultInfo.setKpiName(kpiName);
         resultInfo.setKpiValue(kpiValue);
-
-        return new DiagResultInfo();
+        return resultInfo;
     }
 
     private double getRandomKpiData(String period,String kpiCode)
