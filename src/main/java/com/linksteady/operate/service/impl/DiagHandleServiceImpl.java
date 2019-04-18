@@ -191,6 +191,23 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         diagMultResultInfo.setThirdUp(ArithUtil.formatDouble(thirdavg*1.05,2));
         diagMultResultInfo.setThirdDown(ArithUtil.formatDouble(thirdavg*0.95,2));
 
+        //处理相关性
+        JSONArray relArray=new JSONArray();
+        JSONObject relObj=new JSONObject();
+        relObj.put("name",getRandomKpiData("","relate"));
+
+        relArray.add(relObj);
+
+        relObj=new JSONObject();
+        relObj.put("name",part1Name);
+        relObj.put("data",getRandomKpiData("","relate"));
+        relArray.add(relObj);
+
+        relObj.put("name",part2Name);
+        relObj.put("data",getRandomKpiData("","relate"));
+        relArray.add(relObj);
+
+        diagMultResultInfo.setRelateArray(relArray);
         return diagMultResultInfo;
     }
 
@@ -387,6 +404,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         resultInfo.setKpiCode(kpiCode);
         resultInfo.setKpiName(kpiName);
         resultInfo.setKpiValue(kpiValue);
+
         return new DiagResultInfo();
     }
 
@@ -471,6 +489,10 @@ public class DiagHandleServiceImpl implements DiagHandleService {
        else if ("cov".equals(kpiCode))  //变异系数
        {
            result= RandomUtil.getIntRandom(40,55)/10.00;
+       }
+       else if ("relate".equals(kpiCode))  //相关性
+       {
+           result= RandomUtil.getIntRandom(10,100)/10.00;
        }
 
        return result;
