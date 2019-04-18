@@ -100,12 +100,12 @@ function beforeNext(dom) {
 
 // 加入诊断
 function addCondition() {
-    var methodId = $("input[name='op2']:checked").val();
-    if(methodId == "A") { // 加法
+    var operateType = $("input[name='op2']:checked").val();
+    if(operateType == "A") { // 加法
         condition0();
         // 隐藏模态框
         $("#nodeAddModal").modal('hide');
-    }else if(methodId == "M") { // 乘法
+    }else if(operateType == "M") { // 乘法
         if($("#op3").find("option:selected").val() == null) {
             if($("#op3").find("option").length == 0) {
                 toastr.warning("该指标无可再拆分的乘法公式，请选择别的拆分方式！");
@@ -117,9 +117,9 @@ function addCondition() {
 
         }
         // 隐藏模态框
-    }else if(methodId == "F") { // 仅过滤
+    }else if(operateType == "F") { // 仅过滤
         condition2();
-    }else if(methodId == ""){
+    }else if(operateType == ""){
         toastr.warning("请选择诊断方式！");
     }
 }
@@ -182,7 +182,6 @@ function saveNodes() {
         },
         dataType : 'json',
         success: function (r) {
-            console.log(r);
             if(r.code == 200) {
                 toastr.success(r.msg);
             }else {
@@ -221,12 +220,7 @@ function modalBefore() {
     // 弹窗中获取当前指标
     var selectedNode = jm.get_selected_node();
     $("#currentNodeId").val(selectedNode.id);
-    var topic = selectedNode.topic;
-    if(topic.indexOf(" ") > -1) {
-        topic = topic.substring(topic.lastIndexOf(" "), topic.length);
-        topic = topic.replace("</a>", "");
-    }
-    $("#currentNode").val(topic);
+    $("#currentNode").val(jm.get_selected_node().data.KPI_NAME);
 
     // 设置选中为空，初始化选择框
     $("input[name='op2']:checked").removeAttr("checked");
@@ -296,7 +290,6 @@ function selectedCondition() {
     }else {
         var arr = $("#op6").selectpicker('val');
         var condition = $("#op5").find("option:selected").text();
-        console.log(conditionCodes);
         var val = $("#op5").find("option:selected").val();
         var code = "<tr><td style='text-align: left;'>" + condition.trim() + ":";
         var conditionCodes = "";
@@ -357,7 +350,6 @@ function modalDetailBefore() {
     var code = "";
     $.each(array, function (k, v) {
         var tmp = v.split(":");
-        console.log(tmp)
         code += "<tr><td style='text-align: left;'>" + tmp[2].trim() + ":";
         if(tmp[4] == "N") {
             code += tmp[3].trim();
@@ -376,8 +368,7 @@ function modalDetailBefore() {
 // 加法条件
 function condition0() {
     var levelId = getKpiLevelId();
-    var nodeName = levelId + " <i class='mdi mdi-key-plus'></i> " + jm.get_selected_node().data.KPI_NAME + "(" + $("#op4 option:selected").text().trim() + ")";
-    var nodeId = createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME, true);
+    saveRedisHandleInfo(null,levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
 }
 
 // 加法节点为叶子节点
@@ -401,7 +392,7 @@ function redisSaveRootNodeHandleInfo() {
     handleInfo.beginDt = beginDt;
     handleInfo.endDt = endDt;
     handleInfo.kpiCode = "gmv";
-    saveDiagHandleInfo(handleInfo);
+    saveDiagHandleInfo(handleInfo, "F");
 }
 //
 //saveNode("-1");
@@ -537,6 +528,7 @@ function condition2() {
     }else {
         createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME, false);
         $("#nodeAddModal").modal('hide');
+        saveRedisHandleInfo(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
     }
 }
 
@@ -566,7 +558,11 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf) {
 
     // 保存节点信息
     saveNode(nodeId);
+    return nodeId;
+}
 
+// redis存储HandleInfo
+function saveRedisHandleInfo(nodeName, levelId, kpiCode, kpiName) {
     // 封装HandleInfo
     var handleInfo = new Object();
     var periodType = $("#periodType option:selected").val();
@@ -585,37 +581,50 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf) {
         handleDesc = kpiName + "按加法拆分";
         templateName = "指标模板";
         handleInfo.addDimCode = $("#op4").find("option:selected").val();
-        handleInfo.addDimValues = $("#op7").selectpicker('val').join(",");
+        if($("#op7").selectpicker('val') != null) { // 不选维度值
+            handleInfo.addDimValues = $("#op7").selectpicker('val').join(",");
+        }
     }
     if(operateType == "F") {
         handleDesc = kpiName + "按条件过滤";
         templateName = "条件过滤说明";
     }
     handleInfo.diagId = diagId;
-    handleInfo.kpiLevelId = kpiLevelId;
+    handleInfo.kpiLevelId = levelId;
     handleInfo.handleDesc = handleDesc;
     handleInfo.handleType = operateType;
     handleInfo.templateName = templateName;
-    handleInfo.nodeId = nodeId;
+    handleInfo.nodeId = null;
     handleInfo.periodType = periodType;
     handleInfo.beginDt = beginDt;
     handleInfo.endDt = endDt;
-    handleInfo.whereinfo = conditions;
+    handleInfo.whereinfo = filterCondition();
     handleInfo.kpiCode = kpiCode;
 
     // redis封装数据,返回模版文件
-    saveDiagHandleInfo(handleInfo);
-    return nodeId;
+    saveDiagHandleInfo(handleInfo, operateType);
 }
 
-function saveDiagHandleInfo(handleInfo) {
+function saveDiagHandleInfo(handleInfo, operateType) {
     $.post("/progress/saveDiagHandleInfo", {diagHandleInfo: JSON.stringify(handleInfo)}, function (r) {
         if(r.code == 500) {
             toastr.error("存储redis发生错误！");
+        }else {
+            if(operateType == "A") {
+                var levelId = handleInfo.kpiLevelId;
+                $.get("/progress/generateDiagData", {diagId: diagId, kpiLevelId: levelId}, function (r) {
+                    console.info(r);
+                    var kpiCode = r.data.kpiCode;
+                    var kpiName = r.data.kpiName;
+                    $.each(r.data.nodeList, function(k, v) {
+                        var nodeName = levelId + " <i class='mdi mdi-key-plus'></i> " + $("#op4").find("option:selected").text() + "(" + v.name + ")";
+                        createNode(nodeName, levelId, kpiCode, kpiName, false);
+                    });
+                });
+            }
         }
     });
 }
-
 
 function getNodeId() {
     var res = 0;
@@ -683,6 +692,9 @@ function jsmind_refresh(map) {
     createNode(nodeName1, levelId, kpiCode1, kpiName1, false);
     createNode(nodeName2, levelId, kpiCode2, kpiName2, false);
     $("#nodeAddModal").modal('hide');
+
+    saveRedisHandleInfo(nodeName1, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
+    saveRedisHandleInfo(nodeName2, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
 }
 
 // 获取公式
@@ -771,7 +783,7 @@ function viewChart(obj) {
 
             // 指标趋势图
             t2charts(obj);
-
+            t2Cov(obj);
         } else if (obj.handleType == "A") { // 加法
             $("#template1").attr("style", "display:none;");
             $("#template2").attr("style", "display:none;");
@@ -794,15 +806,30 @@ function viewChart(obj) {
 }
 
 function t3Cov(obj) {
-    var code1 = "<tr class='active'>";
-    var code2 = "<tr>";
+    var code1 = "<tr class='active'><td></td>";
+    var code2 = "<tr><td>变异系数</td>";
+    var code3 = "<tr><td>相关系数</td>";
     $.each(obj.covData, function (k, v) {
         code1 += "<td> " + v.name + " </td>";
         code2 += "<td> "+ v.data +" </td>";
+        code3 += "<td>" + obj.relateData[k].data + "</td>";
     });
     code1 += "</tr>";
     code2 += "</tr>";
-    $("#covTable").html("").html(code1 + code2);
+    code3 += "</tr>";
+    $("#covTable").html("").html(code1 + code2 + code3);
+}
+
+function t2Cov(obj) {
+    var code1 = "<tr class='active'>";
+    var code2 = "<tr>";
+    $.each(obj.relate.data, function (k, v) {
+        code1 += "<td> " + v.name + " </td>";
+        code2 += "<td>" + v.data + "</td>";
+    });
+    code1 += "</tr>";
+    code2 += "</tr>";
+    $("#cov2Table").html("").html(code1 + code2);
 }
 
 function t2charts(obj) {
@@ -861,7 +888,6 @@ function t3chart2(obj, chartId){
         }
         obj.data = data;
         obj.type = 'line';
-        console.log(obj);
         seriesData.push(obj);
     });
 
@@ -994,4 +1020,22 @@ function nextStep(dom) {
         $("#diagName").parent().addClass("has-error");
         toastr.warning("请输入诊断名称！");
     }
+}
+
+// 加法维度值创建节点
+function createNodeByPlus() {
+
+    if(operateType == "A") { // 创建加法的维度节点
+        var kpiLevelId = handleInfo.kpiLevelId;
+        createNodeByPlus(kpiLevelId);
+    }
+    $.get("/progress/generateDiagData", {diagId: diagId, kpiLevelId: kpiLevelId}, function (r) {
+        $.each(r.data.nodeList, function(k, v) {
+            var nodeName = v.name;
+            var levelId = getKpiLevelId();
+            var kpiCode = v.code;
+            var kpiName = v.name;
+            createNode(nodeName, levelId, kpiCode, kpiName, false);
+        });
+    });
 }
