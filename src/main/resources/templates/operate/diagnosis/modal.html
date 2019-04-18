@@ -1,0 +1,84 @@
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tmpModal" id="modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="handleDesc">详细信息</h4>
+            </div>
+            <div class="modal-body">
+                <!--模版1-->
+                <div class="car">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3" id="operateType"></div>
+                            <div class="col-md-3" id="timePeriod"></div>
+                        </div>
+                        <!--条件-->
+                        <p class="h5" style="margin-top: 10px;">过滤条件：</p>
+                        <div class="row" id="whereinfo" style="margin-top: 20px;">
+                            <div class="col-md-12">
+                                <table class="table table-sm">
+                                    <tr><td><i class="mdi mdi-alert-circle-outline"></i>暂无数据！</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row" id="template1" style="display: none;">
+                            <!--gmv和条件无的操作描述-->
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-md-12">
+                                    <p class="h5" id="opdesc"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="template2" style="display: none;">
+                            <p class="h5" id="rate1">末期比基期的变化率：</p>
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-md-12">
+                                    <div id="t2chart1" style="height:300px;width:100%;"></div>
+                                </div>
+                            </div>
+                            <p class="h5" id="rate2">末期比基期的变化率：</p>
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-md-12">
+                                    <div id="t2chart2" style="height:300px;width:100%;"></div>
+                                </div>
+                            </div>
+                            <p class="h5" id="rate3">末期比基期的变化率：</p>
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-md-12">
+                                    <div id="t2chart3" style="height:300px;width:100%;"></div>
+                                </div>
+                            </div>
+                            <!--gmv和条件无的操作描述-->
+                            <p class="h5">变异系数：</p>
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-md-12">
+                                    <div id="covChart" style="height:300px;width:100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--加法模板-->
+                        <div id="template3" style="display: none;">
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-md-12">
+                                    <div id="t3chart1" style="height:300px;width:100%;"></div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 10px;display: none;" id="t2chart">
+                                <div class="col-md-12">
+                                    <div id="t3chart2" style="height:300px;width:100%;"></div>
+                                </div>
+                            </div>
+                            <p class="h5">变异系数</p>
+                            <div class="row">
+                                <div class="col-md-12" id="t3cov">
+                                    <table class="table" id="covTable"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
