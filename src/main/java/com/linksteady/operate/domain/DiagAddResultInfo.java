@@ -11,16 +11,17 @@ import java.util.Map;
 public class DiagAddResultInfo extends DiagResultInfo{
 
     List<String> legendData;  //图例列表
+    String xname;         //x轴名称  (所有图公用)
 
-    List<String> firXdata;  //面积图的x轴数据
-    String firXName;         //面积图的x轴名称  y轴固定为gmv
+    List<String> xdata;  //x轴数据(所有图公用)
+
 
     JSONArray areaData; //面积图的数据
 
     JSONArray  lineData;  //折线图的各部分数据
-    JSONArray  lineAvgData;  //折线图的各部分数据
+    JSONArray  lineAvgData;  //折线图的各部分平均数据
 
-    JSONArray  covData;  //折线图的各部分数据
+    JSONArray  covData;  //变异系数数据
 
     public List<String> getLegendData() {
         return legendData;
@@ -30,20 +31,20 @@ public class DiagAddResultInfo extends DiagResultInfo{
         this.legendData = legendData;
     }
 
-    public List<String> getFirXdata() {
-        return firXdata;
+    public List<String> getXdata() {
+        return xdata;
     }
 
-    public void setFirXdata(List<String> firXdata) {
-        this.firXdata = firXdata;
+    public void setXdata(List<String> xdata) {
+        this.xdata = xdata;
     }
 
-    public String getFirXName() {
-        return firXName;
+    public String getXname() {
+        return xname;
     }
 
-    public void setFirXName(String firXName) {
-        this.firXName = firXName;
+    public void setXname(String xname) {
+        this.xname = xname;
     }
 
     public JSONArray getAreaData() {

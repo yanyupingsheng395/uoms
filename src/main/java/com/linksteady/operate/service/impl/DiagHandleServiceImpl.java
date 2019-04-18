@@ -1,5 +1,8 @@
 package com.linksteady.operate.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.ArithUtil;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +111,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         String kpiName=KpiCacheManager.getInstance().getCodeNamePair().get(kpiCode);
 
         //获取其拆分为的两个指标
-        Map<String,Object> kpiDismant=KpiCacheManager.getInstance().getKpiDismant();
+        Map<String,Object> kpiDismant=(Map<String,Object>)KpiCacheManager.getInstance().getKpiDismant().get(kpiCode);
 
         String part1Code=(String)kpiDismant.get("DISMANT_PART1_CODE");
         String part1Name=(String)kpiDismant.get("DISMANT_PART1_NAME");
@@ -199,37 +203,145 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         DiagAddResultInfo diagAddResultInfo=new DiagAddResultInfo();
 
         String kpiCode=diagHandleInfo.getKpiCode();
-        String kpiName=KpiCacheManager.getInstance().getCodeNamePair().get(kpiCode);
+        //String kpiName=KpiCacheManager.getInstance().getCodeNamePair().get(kpiCode);
 
-        String[] dimValues=null;  //存放维度值的数组
+        List<String> dimNames=Lists.newArrayList();  //存放维度值名称的列表
+        List<String> dimValues=null;    //存放维度值编码的列表
+        String dimCode=diagHandleInfo.getAddDimCode();
+        Map<String,String> diagDimValue=( Map<String,String>)KpiCacheManager.getInstance().getDiagDimValueList().get(dimCode);
+
         //概览信息
         if(null==diagHandleInfo.getAddDimValues()||"".equals(diagHandleInfo.getAddDimValues()))  //如果用户没选择维度值，则系统去取TOP5的
         {
+            dimValues=Lists.newArrayList();
             //此处模拟随机取5个
-            //dimValues=getRandomDimValues(diagHandleInfo.getAddDimCode());
+            int i=0;
+            for (String key : diagDimValue.keySet()) {
+                if(i<5)
+                {
+                    dimValues.add(key);
+                    dimNames.add(diagDimValue.get(key));
+                }
+                i++;
+            }
         }else
         {
-
+            dimValues=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(diagHandleInfo.getAddDimValues());
+            for(String v:dimValues)
+            {
+                dimNames.add(diagDimValue.get(v));
+            }
         }
 
-        //计算gmv各部分的值 面积图
+        int dimSize=dimValues.size();
+
+        Map<String,Integer> pctMap=Maps.newHashMap();
+        int pctSum=0;
+        //随机获得拆分比例
+        for(int i=0;i<dimSize;i++)
+        {
+              if(i==dimSize-1)
+              {
+                  pctMap.put(dimValues.get(i),100-pctSum);
+              }else
+              {
+                  pctSum+=5*i+10;
+                  pctMap.put(dimValues.get(i),5*i+10);
+              }
+        }
+
+
+        diagAddResultInfo.setLegendData(dimNames);
+        diagAddResultInfo.setXname("D".equals(diagHandleInfo.getPeriodType())?"天":"月份");
+        diagAddResultInfo.setXdata(periodList);
+
+
+        JSONArray covArray=new JSONArray();
+        JSONObject covObj=new JSONObject();
+        covObj.put("name","总体");
+        covObj.put("data",getRandomKpiData(diagHandleInfo.getPeriodType(),"cov"));
+        covArray.add(covObj);
+
+        for(String dv:dimValues)
+        {
+            covObj=new JSONObject();
+            covObj.put("name",diagDimValue.get(dv));
+            covObj.put("data",getRandomKpiData(diagHandleInfo.getPeriodType(),"cov"));
+
+            covArray.add(covObj);
+        }
+
+        //先获取到gmv的值集
+        Map<String,Double> gmvMap=Maps.newHashMap();
         for(String period:periodList)
         {
-            double gmvValue=getRandomKpiData(period,"gmv");
-
-            //按5个维度拆分
-
+            gmvMap.put(period,getRandomKpiData(period,"gmv"));
         }
+
+        JSONArray areaData=new JSONArray();
+        JSONObject tempObj=null;
+        LinkedList<Double> tempValue=null;
+
+        //计算gmv各部分的值 面积图
+        //按维度拆分
+        for(String dv:dimValues)
+        {
+            tempObj=new JSONObject();
+            tempObj.put("name",diagDimValue.get(dv));
+            tempValue=Lists.newLinkedList();
+
+            for(String period:periodList)
+            {
+               double gmv=gmvMap.get(period);
+               int pct=  pctMap.get(dv);  //当前维度的拆分比例
+
+               tempValue.add(ArithUtil.formatDouble(gmv*pct/100.00,2));
+            }
+
+            tempObj.put("data",tempValue);
+            areaData.add(tempObj);
+        }
+
+        JSONArray  othersData=new JSONArray();
+        JSONObject othersObj=null;
+        List<Double> othersValue=null;
+
+        JSONArray lineAvgData=new JSONArray();
+        JSONObject avgObj=null;
 
         //判断当前是否选择的gmv
         if(!"gmv".equals(kpiCode))   //非核心指标 其它指标各部分的趋势图与均线;
         {
+            for(String dv:dimValues)  //遍历维度值
+            {
+                othersValue=Lists.newArrayList();
+                othersObj=new JSONObject();
+                avgObj=new JSONObject();
 
+                for(String period:periodList)
+                {
+                    othersValue.add(getRandomKpiData(period,kpiCode));  //其它指标的值
+                }
+
+                othersObj.put("name",diagDimValue.get(dv));
+                othersObj.put("data",othersValue);
+
+                //计算均值
+                avgObj.put("name",diagDimValue.get(dv));
+                avgObj.put("data",othersValue.stream().mapToDouble(Double::doubleValue).average().getAsDouble());
+
+                othersData.add(othersObj);
+                lineAvgData.add(avgObj);
+            }
         }
 
         //变异系数表格(仅针对GMV)
+        diagAddResultInfo.setAreaData(areaData);
+        diagAddResultInfo.setLineData(othersData);
+        diagAddResultInfo.setLineAvgData(lineAvgData);
+        diagAddResultInfo.setCovData(covArray);
 
-        return new DiagResultInfo();
+        return diagAddResultInfo;
     }
 
     /**
