@@ -349,12 +349,11 @@ function modalDetailBefore() {
     $("#kpiNameDetail").html("").html(jm.get_selected_node().data.KPI_NAME);
     var code = "";
     $.each(array, function (k, v) {
-        var tmp = v.split(":");
-        code += "<tr><td style='text-align: left;'>" + tmp[2].trim() + ":";
-        if(tmp[4] == "N") {
-            code += tmp[3].trim();
-        }else if(tmp[4] == "Y"){
-            code += tmp[3].trim() + "&nbsp;(继承至父节点)"
+        code += "<tr><td style='text-align: left;'>" + v.dim_name + ":";
+        if(v.inherit_flag == "N") {
+            code += v.dim_value_display;
+        }else if(v.inherit_flag == "Y"){
+            code += v.dim_value_display + "&nbsp;(继承至父节点)"
         }
         code += "</td></tr>";
     });
@@ -760,22 +759,25 @@ function viewChart(obj) {
         $("#template1").attr("style", "display:block;");
         $("#template2").attr("style", "display:none;");
         $("#template3").attr("style", "display:none;");
-
     } else {
+        // 条件
+        var whereinfo = "<div class=\"col-md-12\"><table class='table table-sm'>";
+        $.each(obj.whereinfo, function (k, v) {
+            if(v.inherit_flag == "Y") {
+                whereinfo += "<tr><td class='text-left'>" + v.dim_name + ":" + v.dim_value_display + "（继承至父节点）</td></tr>";
+            }else {
+                whereinfo += "<tr><td class='text-left'>" + v.dim_name + ":" + v.dim_value_display + "</td></tr>";
+            }
+        });
+        whereinfo += "</table></div>";
+        console.log(whereinfo)
+        if (obj.whereinfo.length != 0) {
+            $("#whereinfo").html("").html(whereinfo);
+        }
         if (obj.handleType == "M") { // 乘法
             $("#template1").attr("style", "display:none;");
             $("#template2").attr("style", "display:block;");
             $("#template3").attr("style", "display:none;");
-
-            // 条件
-            var whereinfo = "<div class=\"col-md-12\"><table class='table table-sm'>";
-            $.each(obj.whereinfo, function (k, v) {
-                whereinfo += "<tr><td class='text-left'>" + v.dim_name + ":" + v.dim_value_display + "</td></tr>";
-            });
-            whereinfo += "</table></div>";
-            if (obj.whereinfo.length != 0) {
-                $("#whereinfo").html("").html(whereinfo);
-            }
 
             // 变异系数
             var chartId = "covChart";
