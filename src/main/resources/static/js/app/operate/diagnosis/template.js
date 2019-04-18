@@ -39,14 +39,6 @@ function getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData) {
     };
 }
 
-function getTemplateOption(templateIndex, legendData, xAxisData, xAxisName, yAxisName, seriesData) {
-    var option = getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData);
-    if(templateIndex = "3") {
-
-    }
-}
-
-
 // 模板2
 function template2(chartId) {
     var legendData = ["首购", "非首购"];
@@ -123,7 +115,7 @@ function template4_3(chartId) {
     var seriesData = [{name: '客单价', type: 'line', data:[100, 120, 140, 350, 200]},
         {name: '均线', type: 'line', markArea: {
                 itemStyle: {
-                    color: '#e6492d',
+                    color: '#48b0f7',
                     opacity: 0.2
                 },
                 silent: true,
@@ -136,7 +128,7 @@ function template4_3(chartId) {
                     [{
                         name: '',
                         yAxis: 121,
-                        x: '15%',
+                        x: '0%',
                         itemStyle: {
                             normal: {
                                 color: '#ff0000'
@@ -144,7 +136,7 @@ function template4_3(chartId) {
                         },
                     }, {
                         yAxis: 260,
-                        x: '87%'
+                        x: '100%'
                     }]
                 ]
             },data:[180, 180, 180, 180, 180]}];

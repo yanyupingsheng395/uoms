@@ -24,8 +24,8 @@ $(function () {
                 if (value == "M") {
                     return "月";
                 }
-                if (value == "Y") {
-                    return "年";
+                if (value == "D") {
+                    return "日";
                 }
             }
         }, {
