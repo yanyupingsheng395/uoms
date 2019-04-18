@@ -310,7 +310,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         JSONObject relateObj=new JSONObject();
         relateObj.put("name","总体");
         relateObj.put("data",getRandomKpiData(diagHandleInfo.getPeriodType(),"relate"));
-        relateArray.add(covObj);
+        relateArray.add(relateObj);
 
         for(String dv:dimValues)
         {
@@ -318,7 +318,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             relateObj.put("name",diagDimValue.get(dv));
             relateObj.put("data",getRandomKpiData(diagHandleInfo.getPeriodType(),"relate"));
 
-            relateArray.add(covObj);
+            relateArray.add(relateObj);
         }
 
 
