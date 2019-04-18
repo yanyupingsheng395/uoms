@@ -1,6 +1,7 @@
 package com.linksteady.operate.domain;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class DiagMultResultInfo  extends DiagResultInfo{
     //变异系数编码、变异系数名称 编码为cov1 cov2 cov3
     Map<String,String> covNames;
 
-    JSONArray relateArray;  //相关性
+    JSONObject relate;  //相关性
 
     public List<String> getxData() {
         return xData;
@@ -218,11 +219,11 @@ public class DiagMultResultInfo  extends DiagResultInfo{
         this.covNames = covNames;
     }
 
-    public JSONArray getRelateArray() {
-        return relateArray;
+    public JSONObject getRelate() {
+        return relate;
     }
 
-    public void setRelateArray(JSONArray relateArray) {
-        this.relateArray = relateArray;
+    public void setRelate(JSONObject relate) {
+        this.relate = relate;
     }
 }

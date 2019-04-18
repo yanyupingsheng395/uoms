@@ -193,22 +193,24 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         diagMultResultInfo.setThirdDown(ArithUtil.formatDouble(thirdavg*0.95,2));
 
         //处理相关性
-        JSONArray relArray=new JSONArray();
         JSONObject relObj=new JSONObject();
+        JSONArray relArray=new JSONArray();
+
         relObj.put("name",getRandomKpiData("","relate"));
 
+        JSONObject link=new JSONObject();
+        link.put("name",part1Name);
+        link.put("data",getRandomKpiData("","relate"));
+        relArray.add(link);
+
+        link=new JSONObject();
+        link.put("name",part2Name);
+        link.put("data",getRandomKpiData("","relate"));
         relArray.add(relObj);
 
-        relObj=new JSONObject();
-        relObj.put("name",part1Name);
-        relObj.put("data",getRandomKpiData("","relate"));
-        relArray.add(relObj);
+        relObj.put("data",relArray);
 
-        relObj.put("name",part2Name);
-        relObj.put("data",getRandomKpiData("","relate"));
-        relArray.add(relObj);
-
-        diagMultResultInfo.setRelateArray(relArray);
+        diagMultResultInfo.setRelate(relObj);
         return diagMultResultInfo;
     }
 
