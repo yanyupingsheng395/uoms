@@ -110,25 +110,31 @@
                                     <div class="col-md-12 mg-stop">
                                         <h5>探究结果-原因指标相关性列表</h5>
                                         <form class="form-horizontal" style="border:solid 1px #ccc;">
-                                                <ul id="historyTab" class="nav nav-tabs" role="tablist">
+                                                <ul id="historyTabs" class="nav nav-tabs" role="tablist">
                                                     <li class="active"><a href="#prod"  data-toggle="tab">产品</a></li>
                                                     <li><a href="#chnl" data-toggle="tab">渠道</a></li>
                                                     <li><a href="#camp" data-toggle="tab">促销/活动</a></li>
                                                     <li><a href="#price" data-toggle="tab">价格</a></li>
                                                 </ul>
                                                 <div id="historyTabContent" class="tab-content">
-                                                    <div class='tab-pane fade active in' id='prod'>1<table id='prodTable' class='table text-center'/></div>
-                                                    <div class='tab-pane fade' id='chnl'>2<table id='chnlTable' class='table text-center'/></div>
-                                                    <div class='tab-pane fade' id='camp'>3<table id='campTable' class='table text-center'/></div>
-                                                    <div class='tab-pane fade' id='price'>4<table id='priceTable' class='table text-center'/></div>
+                                                    <div class='tab-pane fade active in' id='prod'><table id='prodTable' class='table text-center'></table></div>
+                                                    <div class='tab-pane fade' id='chnl'><table id='chnlTable' class='table text-center'></table></div>
+                                                    <div class='tab-pane fade' id='camp'><table id='campTable' class='table text-center'></table></div>
+                                                    <div class='tab-pane fade' id='price'><table id='priceTable' class='table text-center'></table></div>
                                                 </div>
                                         </form>
                                      </div>
                                 </div>
 
-                                <!--按钮-->
+                                <!--矩阵表格 -->
                                 <div class="row">
                                     <div class="col-md-12 text-center">
+                                    </div>
+                                </div>
+
+                                <!--按钮-->
+                                <div class="row">
+                                    <div class="col-md-12 text-center mg-stop">
                                         <a class="btn btn-default" href="/reason/gotoIndex"><span class="mdi mdi-reply"></span>返&nbsp;&nbsp;&nbsp;&nbsp;回</a>
                                     </div>
                                 </div>
@@ -140,29 +146,6 @@
         </main>
     </div>
 </div>
-<!--<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="concern_modal">-->
-    <!--<div class="modal-dialog modal-lg" role="document">-->
-        <!--<div class="modal-content">-->
-            <!--<div class="modal-header">-->
-                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>-->
-                <!--<h4 class="modal-title" id="myLargeModalLabel">我关注的指标</h4>-->
-            <!--</div>-->
-            <!--<div class="modal-body">-->
-                <!--<div class="card">-->
-                    <!--<div class="card-body">-->
-                        <!--<div class="table-responsive">-->
-                            <!--<table id="concernTable" class="table table-striped"></table>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div class="modal-footer">-->
-                    <!--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-<!--</div>-->
-<!--<div th:include="operate/reason/template"></div>-->
 <input id="reasonId" type="hidden" th:value="${reasonId}">
 <input id="kpiCode" type="hidden">
 <input id="templateCode" type="hidden">

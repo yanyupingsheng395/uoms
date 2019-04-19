@@ -31,6 +31,7 @@ $(function () {
             $.getJSON("/reason/getReasonKpisSnp?reasonId="+reasonId+"&templateCode="+defaultTemplateCode, function (resp) {
                 if (resp.code==200){
                     var tableName=defaultTemplateCode+'Table';
+                    createTableHeader(tableName);
                     $('#'+tableName).bootstrapTable('load', resp.msg);
                 }
             })
@@ -48,7 +49,7 @@ $(function () {
             $.getJSON("/reason/getReasonKpisSnp?reasonId="+reasonId+"&templateCode="+templateCode, function (resp) {
                 if (resp.code==200){
                     var tableName=templateCode+'Table';
-                    //createTableHeader(tableName);
+                    createTableHeader(tableName);
                     $('#'+tableName).bootstrapTable('load', resp.msg);
                 }
             })
