@@ -79,13 +79,9 @@ function createTableHeader(tableName)
         dataType: "json",
         showHeader:true,
         columns: [{
-            field: 'REASON_KPI_TYPE',
-            title: '指标分类',
-            align: 'center'
-        }, {
             field: 'REASON_KPI_NAME',
             title: '指标',
-            align: 'center'
+            align: 'left'
         }, {
             field: 'RELATE_VALUE',
             title: '相关性',
@@ -97,10 +93,6 @@ function createTableHeader(tableName)
                     return value+"&nbsp;<span class='mdi mdi-record' style='color:#fd2502;font-size: 16px;'></span>";
                 }
             }
-        }, {
-            field: 'REGRESSION_VALUE',
-            title: '回归系数',
-            align: 'center'
         },
         {
             filed: 'button',
@@ -165,12 +157,11 @@ function processConcern(data,index) {
 
     var reasonKpiCode=data.REASON_KPI_CODE;
     var templateCode=data.TEMPLATE_CODE;
-    var kpiCode=data.KPI_CODE;
     var reasonId = $("#reasonId").val();
-    $.get("/reason/addConcernKpi?reasonId="+reasonId+"&kpiCode="+kpiCode+"&templateCode="+templateCode+"&reasonKpiCode="+reasonKpiCode, null, function (r) {
+    $.get("/reason/addConcernKpi?reasonId="+reasonId+"&templateCode="+templateCode+"&reasonKpiCode="+reasonKpiCode, null, function (r) {
        //刷新当前指标列表页的数据
 
-        $.getJSON("/reason/getReasonKpiHistroy?reasonId="+reasonId+"&kpiCode="+kpiCode+"&templateCode="+templateCode, function (resp) {
+        $.getJSON("/reason/getReasonKpisSnp?reasonId="+reasonId+"&templateCode="+templateCode, function (resp) {
             if (resp.code==200){
                 var tableName=templateCode+'Table';
                 createTableHeader(tableName);

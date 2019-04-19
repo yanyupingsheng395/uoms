@@ -1,5 +1,6 @@
 package com.linksteady.operate.service;
 import com.linksteady.operate.vo.ReasonVO;
+import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,21 +26,23 @@ public interface ReasonService {
 
      Map<String,Object> getReasonInfoById(String reasonId);
 
- //    List<Map<String,String>> getRelatedKpiList(String reasonId,String templateCode);
-
      List<Map<String,Object>> getReasonKpisSnp(String reasonId,String templateCode);
-
- //    Map<String,Object> getReasonRelatedKpi(String reasonId,String templateCode,String reasonKpiCode);
-
- //    Map getReasonRelateKpiDataFromRedis(String reasonId,String templateCode,String reasonKpiCode);
 
      List<Map<String,Object>> getConcernKpiList(String reasonId);
 
-     int getConcernKpiCount(String reasonId,String kpiCode,String templateCode,String reasonKpiCode);
+     int getConcernKpiCount(String reasonId,String templateCode,String reasonKpiCode);
 
-     void addConcernKpi(String reasonId,String kpiCode,String templateCode,String reasonKpiCode);
+     void addConcernKpi(String reasonId,String templateCode,String reasonKpiCode);
 
-     void deleteConcernKpi(String reasonId,String kpiCode,String templateCode,String reasonKpiCode);
+     void deleteConcernKpi(String reasonId, String templateCode, String reasonKpiCode);
+
+     List<Map<String,Object>> getReasonResultList(String reasonId);
+
+     int  getReasonResultCount(String reasonId,String fcode);
+
+     void deleteReasonResult(String reasonId,String fcode);
+
+     void saveReasonResult(String reasonId,String fcode,String fname,String formula,String business);
 
 
 }

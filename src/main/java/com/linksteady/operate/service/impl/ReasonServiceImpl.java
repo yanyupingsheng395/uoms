@@ -117,9 +117,12 @@ public class ReasonServiceImpl implements ReasonService {
                 reasonRelateRecord.setRfname(rfkpi.get("REASON_KPI_NAME"));
                 reasonRelateRecord.setRforderNo(rfkpi.get("REASON_KPI_ORDER"));
 
-                if(j>=i)
+                if(j>i)
                 {
                     reasonRelateRecord.setRelateValue(getRandomRelateValue());
+                }else if(i==j)
+                {
+                    reasonRelateRecord.setRelateValue("1");
                 }else
                 {
                     reasonRelateRecord.setRelateValue("-1");
@@ -136,7 +139,7 @@ public class ReasonServiceImpl implements ReasonService {
 
     private String getRandomRelateValue()
     {
-        return Double.toString(RandomUtil.getIntRandom(1,10)/10.00);
+        return Double.toString(RandomUtil.getIntRandom(1,9)/10.00);
     }
 
     /**
@@ -197,18 +200,39 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-    public int getConcernKpiCount(String reasonId, String kpiCode, String templateCode, String reasonKpiCode) {
-        return reasonMapper.getConcernKpiCount(reasonId,kpiCode,templateCode,reasonKpiCode);
+    public int getConcernKpiCount(String reasonId, String templateCode, String reasonKpiCode) {
+        return reasonMapper.getConcernKpiCount(reasonId,templateCode,reasonKpiCode);
     }
 
     @Override
-    public void addConcernKpi(String reasonId, String kpiCode, String templateCode, String reasonKpiCode) {
-          reasonMapper.addConcernKpi(reasonId,kpiCode,templateCode,reasonKpiCode);
+    public void addConcernKpi(String reasonId, String templateCode, String reasonKpiCode) {
+          reasonMapper.addConcernKpi(reasonId,templateCode,reasonKpiCode);
     }
 
     @Override
-    public void deleteConcernKpi(String reasonId, String kpiCode, String templateCode, String reasonKpiCode) {
-          reasonMapper.deleteConcernKpi(reasonId,kpiCode,templateCode,reasonKpiCode);
+    public void deleteConcernKpi(String reasonId, String templateCode, String reasonKpiCode) {
+          reasonMapper.deleteConcernKpi(reasonId,templateCode,reasonKpiCode);
+    }
+
+    @Override
+    public List<Map<String,Object>> getReasonResultList(String reasonId)
+    {
+        return reasonMapper.getReasonResultList(reasonId);
+    }
+
+    @Override
+    public void deleteReasonResult(String reasonId, String fcode) {
+          reasonMapper.deleteReasonResult(reasonId,fcode);
+    }
+
+    @Override
+    public int getReasonResultCount(String reasonId, String fcode) {
+        return reasonMapper.getReasonResultCount(reasonId,fcode);
+    }
+
+    @Override
+    public void saveReasonResult(String reasonId, String fcode, String fname, String formula, String business) {
+          reasonMapper.saveReasonResult(reasonId,fcode,fname,formula,business);
     }
 
 

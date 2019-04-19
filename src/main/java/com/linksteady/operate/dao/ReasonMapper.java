@@ -51,13 +51,21 @@ public interface ReasonMapper {
 
     List<Map<String, Object>> getConcernKpiList(@Param("reasonId") String reasonId);
 
-    int getConcernKpiCount(@Param("reasonId") String reasonId,@Param("kpiCode") String kpiCode, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
+    int getConcernKpiCount(@Param("reasonId") String reasonId, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
 
-    void addConcernKpi(@Param("reasonId") String reasonId,@Param("kpiCode") String kpiCode, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
+    void addConcernKpi(@Param("reasonId") String reasonId, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
 
-    void deleteConcernKpi(@Param("reasonId") String reasonId,@Param("kpiCode") String kpiCode, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
+    void deleteConcernKpi(@Param("reasonId") String reasonId, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
 
     void saveRelateMatrix(List<ReasonRelateRecord> record);
+
+    List<Map<String,Object>> getReasonResultList(@Param("reasonId") String reasonId);
+
+   int getReasonResultCount(@Param("reasonId") String reasonId,@Param("fcode") String fcode);
+
+   void deleteReasonResult(@Param("reasonId") String reasonId,@Param("fcode") String fcode);
+
+   void saveReasonResult(@Param("reasonId") String reasonId,@Param("fcode") String fcode,@Param("fname") String fname,@Param("formula") String formula,@Param("business") String business);
 
 
 
