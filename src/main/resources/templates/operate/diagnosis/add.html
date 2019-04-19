@@ -27,6 +27,15 @@
     </style>
 </head>
 
+<!--
+节点删除：
+1.获取diagId，nodeId
+2.判断该节点是否为root节点，若是提示即可，若否则向下执行
+3.流程图中删除节点
+4.根据复合主键删除DIAG_DETAIL表的记录
+5.判断有无过滤条件：若有，则删除DIAG_CONDITION表的记录
+6.根据DIAG_ID和KPI_LEVEL_ID删除redis中节点对应的记录
+-->
 <body>
 <!-- 公共组件 -->
 <div data-th-include="common/common"></div>
@@ -61,7 +70,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>诊断</h4>
+                                <h4>新增诊断</h4>
                             </div>
                             <div class="card-body">
                                 <div class="m-t-md" id="step1" style="display:block;">
