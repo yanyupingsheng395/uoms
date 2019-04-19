@@ -214,9 +214,14 @@ function getMatrix() {
 }
 
 function submitData() {
+    var tmp = new Array();
     $("#tableData").find("tr:eq(0)").find("th").find("input[type='checkbox']").each(function (k, v) {
         if($(this).is(':checked')) {
-            console.log(arr[k]);
+            tmp.push(arr[k]['code']);
         }
+    });
+    var code = tmp.join(",");
+    $.get("/reason/getEffectForecast", {reasonId: $("#reasonId").val(), code: code}, function (r){
+        console.log(r);
     });
 }

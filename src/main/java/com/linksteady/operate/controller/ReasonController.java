@@ -192,7 +192,7 @@ public class ReasonController  extends BaseController {
      * @return ResponseBo对象
      */
     @RequestMapping("/getEffectForecast")
-    public ResponseBo getEffectForecast(@RequestParam String reasonId) {
+    public ResponseBo getEffectForecast(@RequestParam String reasonId, @RequestParam("code") String code) {
         //todo 后端进行数据校验
 
         List<String> data= Lists.newArrayList();
