@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.collect.Lists;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -131,21 +132,6 @@ public class ReasonController  extends BaseController {
         return ResponseBo.ok(result);
     }
 
-//    /**
-//     * 根据模板CODE、KPI CODE和reasonID 获取到原因KPI的详细数据
-//     * @param reasonId 原因ID
-//     * @param templateCode 指标编码
-//     * @param reasonKpiCode 指标编码
-//     * @return ResponseBo对象
-//     */
-//    @RequestMapping("/getReasonRelatedKpi")
-//    public ResponseBo getReasonRelatedKpi(@RequestParam String reasonId,@RequestParam String templateCode,@RequestParam String reasonKpiCode) {
-//        Map<String,Object> result=reasonService.getReasonRelatedKpi(reasonId,templateCode,reasonKpiCode);
-//
-//        Map rt=reasonService.getReasonRelateKpiDataFromRedis(reasonId,templateCode,reasonKpiCode);
-//        return ResponseBo.okWithData(result,rt);
-//    }
-
     /**
      * 根据reasonID 获取到关注的KPI列表
      * @param reasonId 原因ID
@@ -163,17 +149,17 @@ public class ReasonController  extends BaseController {
      * @return ResponseBo对象
      */
     @RequestMapping("/addConcernKpi")
-    public ResponseBo addConcernKpi(@RequestParam String reasonId,@RequestParam String kpiCode,@RequestParam String templateCode,@RequestParam String reasonKpiCode) {
+    public ResponseBo addConcernKpi(@RequestParam String reasonId,@RequestParam String templateCode,@RequestParam String reasonKpiCode) {
         //判断是否存在与表中 如果存在，则删除，否则增加
-        int count=reasonService.getConcernKpiCount(reasonId,kpiCode,templateCode,reasonKpiCode);
+        int count=reasonService.getConcernKpiCount(reasonId,templateCode,reasonKpiCode);
 
         //不在列表中 进行增加操作
         if(count==0)
         {
-            reasonService.addConcernKpi(reasonId,kpiCode,templateCode,reasonKpiCode);
+            reasonService.addConcernKpi(reasonId,templateCode,reasonKpiCode);
         }else  //进行删除操作
         {
-            reasonService.deleteConcernKpi(reasonId,kpiCode,templateCode,reasonKpiCode);
+            reasonService.deleteConcernKpi(reasonId,templateCode,reasonKpiCode);
         }
         return ResponseBo.ok("success");
     }
@@ -197,6 +183,33 @@ public class ReasonController  extends BaseController {
     @RequestMapping("/getReasonDimValuesList")
     public ResponseBo getReasonDimValuesList(@RequestParam String dimCode) {
         Map<String,String> result=(Map)KpiCacheManager.getInstance().getReasonDimValueList().get(dimCode);
+        return ResponseBo.okWithData("",result);
+    }
+
+    /**
+     * 效果评估
+     * @param
+     * @return ResponseBo对象
+     */
+    @RequestMapping("/getEffectForecast")
+    public ResponseBo getEffectForecast(@RequestParam String reasonId) {
+        //todo 后端进行数据校验
+
+        List<String> data= Lists.newArrayList();
+        String fcode="";
+        for(String s:data)
+        {
+            //如果存在，先删除
+            if(reasonService.getReasonResultCount(reasonId,fcode)>0)
+            {
+                reasonService.deleteReasonResult(reasonId,fcode);
+            }
+
+            //todo 进行回归分析
+            reasonService.saveReasonResult(reasonId,fcode,"产品","y=a*x+b","x每变动一份，则带动GMV提升b");
+        }
+
+        List<Map<String,Object>> result=reasonService.getReasonResultList(reasonId);
         return ResponseBo.okWithData("",result);
     }
 }
