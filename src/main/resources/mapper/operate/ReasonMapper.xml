@@ -209,10 +209,10 @@
             T1.TEMPLATE_CODE,
             T1.REASON_KPI_CODE,
             REASON_KPI_NAME,
-            RELATE_VALUE
+            RELATE_VALUE,
             DECODE(T2.REASON_ID,NULL,'N','Y') IS_CONCERN
         FROM
-            (select     T.REASON_ID
+            (select     T.REASON_ID,
                         T.TEMPLATE_CODE,
                         T.REASON_KPI_CODE,
                         T.REASON_KPI_NAME,

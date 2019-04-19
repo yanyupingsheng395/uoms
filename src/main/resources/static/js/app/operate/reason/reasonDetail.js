@@ -24,7 +24,17 @@ $(function () {
            })
 
             //获取到第一个模板信息 todo 加载第一个模板下的指标快照信息
-            var activeTabCode='';
+            var defaultTabName=$('#historyTabs').find("li.active a").attr("href");
+           var defaultTemplateCode=defaultTabName.substring(1,defaultTabName.length);
+
+            //填充此次探究此模板下原因指标的快照信息
+            $.getJSON("/reason/getReasonKpisSnp?reasonId="+reasonId+"&templateCode="+defaultTemplateCode, function (resp) {
+                if (resp.code==200){
+                    var tableName=defaultTemplateCode+'Table';
+                    createTableHeader(tableName);
+                    $('#'+tableName).bootstrapTable('load', resp.msg);
+                }
+            })
 
         }
 
@@ -34,10 +44,9 @@ $(function () {
             var activeTab = $(e.target).attr("href");
             var templateCode=activeTab.substr(1,activeTab.length);
             $("#templateCode").val(templateCode);
-            var kpiCode= $("#kpiCode").val();
 
             //填充此次探究此模板下原因指标的快照信息
-            $.getJSON("/reason/getReasonKpiHistroy?reasonId="+reasonId+"&kpiCode="+kpiCode+"&templateCode="+templateCode, function (resp) {
+            $.getJSON("/reason/getReasonKpisSnp?reasonId="+reasonId+"&templateCode="+templateCode, function (resp) {
                 if (resp.code==200){
                     var tableName=templateCode+'Table';
                     createTableHeader(tableName);
