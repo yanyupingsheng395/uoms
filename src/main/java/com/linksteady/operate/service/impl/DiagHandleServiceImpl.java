@@ -499,7 +499,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
        }
        else if ("disrate".equals(kpiCode))  //折扣率 0.7 -0.9
        {
-           result= RandomUtil.getIntRandom(70,90)/10.00;
+           result= RandomUtil.getIntRandom(70,90)/100.00;
        }
        else if ("freq".equals(kpiCode))  //购买频次  1.1-1.5
        {
@@ -515,7 +515,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
        }
        else if ("relate".equals(kpiCode))  //相关性
        {
-           result= RandomUtil.getIntRandom(10,100)/10.00;
+           result= RandomUtil.getIntRandom(10,100)/100.00;
        }
 
        return result;

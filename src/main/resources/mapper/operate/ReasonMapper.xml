@@ -2,16 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.ReasonMapper">
 
-   <resultMap id="relatedkpimap" type="com.linksteady.operate.domain.ReasonKpis">
-       <result column="REASON_ID" property="reasonId"/>
-       <result column="TEMPLATE_CODE" property="templateCode"/>
-       <result column="REASON_KPI_CODE" property="reasonKpiCode"/>
-       <result column="CONFIG_INFO1" property="chartType"/>
-       <result column="CONFIG_INFO2" property="configInfo2"/>
-       <result column="PERIOD_TYPE" property="periodType"/>
-       <result column="REASON_KPI_NAME" property="reasonKpiName"/>
-   </resultMap>
-
    <select id="getReasonTotalCount" resultType="int">
      select count(*) from UO_REASON_LIST
    </select>
@@ -24,8 +14,8 @@
          RL.REASON_NAME,
          RL.STATUS,
          RL.PROGRESS,
-         TO_CHAR(RL.BEGIN_DT,'YYYY-MM-DD') BEGIN_DT,
-         TO_CHAR(RL.END_DT,'YYYY-MM-DD') END_DT,
+         RL.BEGIN_DT,
+         RL.END_DT,
          TO_CHAR(RL.CREATE_DT,'YYYY-MM-DD') CREATE_DT,
          TO_CHAR(RL.UPDATE_DT,'YYYY-MM-DD') UPDATE_DT,
          RL.CREATE_BY,
@@ -65,8 +55,8 @@
                 #{reasonName},
                 #{status},
                 #{progress,jdbcType=INTEGER},
-                to_date(#{startDt},'yyyy-mm-dd') ,
-                to_date(#{endDt},'yyyy-mm-dd') ,
+                #{startDt},
+                #{endDt},
                 to_date(#{createDt},'yyyy-mm-dd hh24:mi:ss') ,
                 to_date(#{updateDt},'yyyy-mm-dd hh24:mi:ss') ,
                 #{createBy},
@@ -117,60 +107,40 @@
         update UO_REASON_LIST set Update_Dt=SYSDATE,STATUS='F',Progress=#{progress,jdbcType=INTEGER} where reason_id=#{reasonId}
     </update>
 
-    <select id="getRelatedKpis" resultType="map">
-        SELECT * FROM (
-                          select
-                              ROUND(DBMS_RANDOM.value(0,1)) RDM,
-                              T.REASON_ID,
-                              T1.TEMPLATE_CODE,
-                              CFG.REASON_KPI_CODE,
-                              CFG.REASON_KPI_TYPE,
-                              TO_CHAR(t.BEGIN_DT,'YYYY-MM-DD') BEGIN_DT,
-                              TO_CHAR(t.END_DT,'YYYY-MM-DD')  END_DT,
-                              t.PERIOD_TYPE,
-                              cfg.CONFIG_INFO1,
-                              cfg.CONFIG_INFO2,
-                              cfg.REASON_KPI_NAME
-                          from UO_REASON_LIST            t,
-                               UO_REASON_TEMPLATE        T1,
-                               UO_REASON_TEMPLATE_CONFIG CFG
-                          WHERE T.REASON_ID = T1.REASON_ID
-                            AND T1.TEMPLATE_CODE = CFG.TEMPLATE_CODE
-                            AND T.REASON_ID = #{reasonId}
-                      ) WHERE  RDM=1
+    <select id="getKeyReasonKpis" resultType="java.lang.String">
+        SELECT REASON_KPI_CODE
+        FROM UO_REASON_KPIS_SNP
+        WHERE REASON_ID =#{REASON_ID} AND RELATE_VALUE>=0.5 ORDER BY REASON_KPI_ORDER ASC
     </select>
 
-    <insert id="saveRelatedKpis">
-         INSERT INTO UO_REASON_KPIS
+    <insert id="saveReasonKpisSnpKpis" parameterType="int">
+         INSERT INTO UO_REASON_KPIS_SNP
              (
                  REASON_ID,
                  TEMPLATE_CODE,
+                 TEMPLATE_NAME,
                  REASON_KPI_CODE,
-                 REASON_KPI_TYPE,
-                 BEGIN_DT,
-                 END_DT,
-                 PERIOD_TYPE,
-                 CONFIG_INFO1,
-                 CONFIG_INFO2,
                  REASON_KPI_NAME,
-                 RESULTS,
+                 RELATE_VALUE,
+                 TEMPLATE_ORDER,
+                 REASON_KPI_ORDER,
                  CREATE_DT,
                  UPDATE_DT
-             ) VALUES
+             )
              (
-                 #{reasonId,jdbcType=INTEGER},
-                 #{templateCode},
-                 #{reasonKpiCode},
-                 #{reasonKpiType},
-                 #{beginDate,jdbcType=DATE},
-                 #{endDate,jdbcType=DATE},
-                 #{periodType},
-                 #{chartType},
-                 #{configInfo2},
-                 #{reasonKpiName},
-                 #{result},
-                 #{createDt,jdbcType=DATE},
-                 #{updateDt,jdbcType=DATE}
+                SELECT
+                    #{REASON_ID,jdbcType=INTEGER},
+                    TEMPLATE_CODE,
+                    TEMPLATE_NAME,
+                    REASON_KPI_CODE,
+                    REASON_KPI_NAME,
+                    ROUND(DBMS_RANDOM.value,4),
+                    TEMPLATE_ORDER,
+                    REASON_KPI_ORDER,
+                    SYSDATE,
+                    SYSDATE
+                FROM UO_REASON_TEMPLATE_CONFIG
+
              )
     </insert>
 
@@ -225,22 +195,6 @@
                     ON T1.REASON_ID=T2.REASON_ID AND T1.TEMPLATE_CODE=T2.TEMPLATE_CODE AND T1.REASON_KPI_CODE=T2.REASON_KPI_CODE
     </select>
 
-    <select id="getReasonRelatedKpi" resultMap="relatedkpimap">
-        SELECT
-            T.REASON_ID,
-            T.TEMPLATE_CODE,
-            T.REASON_KPI_CODE,
-            T.CONFIG_INFO1,
-            T.CONFIG_INFO2,
-            T.PERIOD_TYPE,
-            T.REASON_KPI_NAME,
-            T.DATAS
-        FROM UO_REASON_KPIS T
-        WHERE T.REASON_ID = #{reasonId}
-          AND T.REASON_KPI_CODE=#{reasonKpiCode}
-          AND T.TEMPLATE_CODE=#{templateCode}
-    </select>
-
     <select id="getConcernKpiList" resultType="map">
         select   T.KPI_CODE,
                  T.TEMPLATE_CODE,
@@ -278,5 +232,24 @@
                                          AND TEMPLATE_CODE = #{templateCode}
                                          AND REASON_KPI_CODE = #{reasonKpiCode}
     </delete>
+
+    <insert id="saveRelateMatrix" parameterType="java.util.List">
+        insert into UO_REASON_REL_MATRIX (REASON_ID,F_CODE,F_NAME,RF_CODE,RF_NAME,F_ORDERNO,RF_ORDER_NO,RELATE_VALUE,CREATE_DT)
+        select m.* from
+        <foreach collection="list" item="item" separator="union all" open="(" close=")">
+            select
+              #{item.reasonId,jdbcType=VARCHAR},
+              #{item.fcode,jdbcType=VARCHAR},
+              #{item.fname,jdbcType=VARCHAR},
+              #{item.rfcode,jdbcType=VARCHAR},
+              #{item.rfname,jdbcType=VARCHAR},
+              #{item.forderNo,jdbcType=VARCHAR},
+              #{item.rforderNo,jdbcType=VARCHAR},
+              #{item.relateValue,jdbcType=VARCHAR},
+              SYSDATE
+          from dual
+        </foreach>
+        m
+    </insert>
 
  </mapper>

@@ -1,5 +1,6 @@
 package com.linksteady.operate.config;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.CacheMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +112,23 @@ public class LoadConfigRunner implements CommandLineRunner {
         }
 
 
+        //原因探究 相关指标 缓存
+        List<Map<String,String>> reasonRelateKpis=cacheMapper.getReasonRelateKpis();
+
+        Map<String, Object> reaonRelateKpi= Maps.newHashMap();
+        Map<String,String> temp=null;
+        for(Map<String,String> kpi:reasonRelateKpis)
+        {
+            temp=Maps.newHashMap();
+            temp.put("REASON_KPI_NAME",kpi.get("REASON_KPI_NAME"));
+            temp.put("TEMPLATE_CODE",kpi.get("TEMPLATE_CODE"));
+            temp.put("TEMPLATE_NAME",kpi.get("TEMPLATE_NAME"));
+            temp.put("REASON_KPI_ORDER",String.valueOf(kpi.get("REASON_KPI_ORDER")));
+            temp.put("TEMPLATE_ORDER",String.valueOf(kpi.get("TEMPLATE_ORDER")));
+
+            reaonRelateKpi.put(kpi.get("REASON_KPI_CODE"),temp);
+        }
+
         KpiCacheManager.getInstance().setCacheMap(codeNamePair,"codeNamePair");
         KpiCacheManager.getInstance().setCacheMap(codeFomularPair,"codeFomularPair");
         KpiCacheManager.getInstance().setCacheMapForObject(kpidismant,"kpidismant");
@@ -120,6 +138,8 @@ public class LoadConfigRunner implements CommandLineRunner {
 
         KpiCacheManager.getInstance().setCacheMap(reasonDimList,"reaonDimList");
         KpiCacheManager.getInstance().setCacheMapForObject(reasonDimValueList,"reasonDimValueList");
+
+        KpiCacheManager.getInstance().setCacheMapForObject(reaonRelateKpi,"reasonRelateKpiList");
 
 
     }

@@ -38,4 +38,14 @@
         SELECT VALUE_CODE,VALUE_DESC FROM  UO_DIM_VALUES_CONFIG WHERE DIM_CODE=#{dimCode} ORDER BY ORDER_NO DESC
     </select>
 
+    <select id="getReasonRelateKpis" resultType="map">
+        SELECT TEMPLATE_CODE,
+               TEMPLATE_NAME,
+               REASON_KPI_CODE,
+               REASON_KPI_NAME,
+               REASON_KPI_ORDER,
+               TEMPLATE_ORDER
+        FROM UO_REASON_TEMPLATE_CONFIG
+    </select>
+
  </mapper>

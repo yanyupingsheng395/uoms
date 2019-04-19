@@ -1,24 +1,23 @@
 package com.linksteady.operate.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
-import com.linksteady.common.util.DateUtil;
+import com.linksteady.common.util.RandomUtil;
+import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.dao.ReasonMapper;
 import com.linksteady.operate.domain.Reason;
-import com.linksteady.operate.domain.ReasonKpis;
+import com.linksteady.operate.domain.ReasonRelateRecord;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.vo.ReasonVO;
 import org.assertj.core.util.Lists;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReasonServiceImpl implements ReasonService {
@@ -90,66 +89,54 @@ public class ReasonServiceImpl implements ReasonService {
     public void findReasonKpisSnp(String reasonId)
     {
         //写SNP表
+        reasonMapper.saveReasonKpisSnpKpis(Integer.parseInt(reasonId));
+
+        //获取到阀值大于0.5的原因指标的指标编码
+        List<String> keyCodeList=reasonMapper.getKeyReasonKpis(reasonId);
+
+        Map<String, Object> reasonRelateKpis=KpiCacheManager.getInstance().getReasonRelateKpiList();
+
+        ReasonRelateRecord reasonRelateRecord=null;
+        Map<String,String> fkpi=null;
+        Map<String,String> rfkpi=null;
+        List<ReasonRelateRecord> records= Lists.newArrayList();
+
+        for(int i=0;i<keyCodeList.size();i++)
+        {
+            for(int j=0;j<keyCodeList.size();j++)
+            {
+                fkpi=(Map<String,String>)reasonRelateKpis.get(keyCodeList.get(i));
+                rfkpi=(Map<String,String>)reasonRelateKpis.get(keyCodeList.get(j));
+
+                reasonRelateRecord=new ReasonRelateRecord();
+                reasonRelateRecord.setReasonId(reasonId);
+                reasonRelateRecord.setFcode(keyCodeList.get(i));
+                reasonRelateRecord.setFname(fkpi.get("REASON_KPI_NAME"));
+                reasonRelateRecord.setForderNo(fkpi.get("REASON_KPI_ORDER"));
+                reasonRelateRecord.setRfcode(keyCodeList.get(j));
+                reasonRelateRecord.setRfname(rfkpi.get("REASON_KPI_NAME"));
+                reasonRelateRecord.setRforderNo(rfkpi.get("REASON_KPI_ORDER"));
+
+                if(j>=i)
+                {
+                    reasonRelateRecord.setRelateValue(getRandomRelateValue());
+                }else
+                {
+                    reasonRelateRecord.setRelateValue("-1");
+                }
+                records.add(reasonRelateRecord);
+
+            }
+        }
 
         //写矩阵表
+        reasonMapper.saveRelateMatrix(records);
 
-        //找到此方法下选择了那些模板 及其指标  todo 目前通过随机数模拟选择
-       // List<Map<String,Object>> rkpis=reasonMapper.getRelatedKpis(reasonId);
+    }
 
-        List<Map<String,Object>> rkpis=Lists.newArrayList();
-
-        //写入到UO_REASON_KPIS
-        String period="";
-        Date beginDt=null;
-        Date endDt=null;
-        String chartType="";
-
-        ReasonKpis reasonKpis=null;
-        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
-        for(Map<String,Object> k:rkpis)
-        {
-             reasonKpis=new ReasonKpis();
-            //获取到周期类型
-            period=(String)k.get("PERIOD_TYPE");
-            try {
-                beginDt=sf.parse((String)k.get("BEGIN_DT"));
-                endDt=sf.parse((String)k.get("END_DT"));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            chartType=(String)k.get("CONFIG_INFO1");
-
-
-            //获取到图表的数据和结果集
-            String result="";  //todo 暂时不使用
-
-            Map<String,List<String>> rdatas=generateData(period,(String)k.get("BEGIN_DT"),(String)k.get("END_DT"),chartType,(String)k.get("REASON_KPI_NAME"));
-
-            StringBuffer keyName=new StringBuffer();
-            // reason:{resonId}:{templateCode}:{reasonKeyCode}
-            keyName.append("reason:").append(reasonId).append(":").append((String)k.get("TEMPLATE_CODE")).append(":").append((String)k.get("REASON_KPI_CODE"));
-            redisTemplate.opsForValue().set(keyName.toString(),rdatas);
-
-            reasonKpis.setReasonId(Integer.valueOf(k.get("REASON_ID").toString()));
-            reasonKpis.setTemplateCode((String)k.get("TEMPLATE_CODE"));
-            reasonKpis.setReasonKpiCode((String)k.get("REASON_KPI_CODE"));
-            reasonKpis.setReasonKpiType((String)k.get("REASON_KPI_TYPE"));
-            reasonKpis.setReasonKpiName((String)k.get("REASON_KPI_NAME"));
-
-            reasonKpis.setBeginDate(beginDt);
-            reasonKpis.setEndDate(endDt);
-
-            reasonKpis.setPeriodType(period);
-            reasonKpis.setChartType(chartType);
-            reasonKpis.setConfigInfo2((String)k.get("CONFIG_INFO2"));
-
-            reasonKpis.setResult(result);
-            reasonKpis.setCreateDt(new Date());
-            reasonKpis.setUpdateDt(new Date());
-
-            //保存记录
-           // reasonMapper.saveRelatedKpis(reasonKpis);
-        }
+    private String getRandomRelateValue()
+    {
+        return Double.toString(RandomUtil.getIntRandom(1,10)/10.00);
     }
 
     /**
@@ -198,106 +185,9 @@ public class ReasonServiceImpl implements ReasonService {
 
     }
 
-
-//    @Override
-//    public List<Map<String, String>> getRelatedKpiList(String reasonId, String templateCode) {
-//        return reasonMapper.getRelatedKpiList(reasonId,templateCode);
-//    }
-//
     @Override
     public List<Map<String, Object>> getReasonKpisSnp(String reasonId, String templateCode) {
         return reasonMapper.getReasonKpisSnp(reasonId,templateCode);
-    }
-
-//    @Override
-//    public Map<String, Object> getReasonRelatedKpi(String reasonId,String templateCode,String reasonKpiCode) {
-//        List<ReasonKpis>  result=reasonMapper.getReasonRelatedKpi(reasonId,templateCode,reasonKpiCode);
-//
-//        Map<String, Object> map=Maps.newHashMap();
-//        if(null!=result&&result.size()>0)
-//        {
-//            map.put("chartType",result.get(0).getChartType());
-//            map.put("kpiName",result.get(0).getReasonKpiName());
-//            map.put("period",result.get(0).getPeriodType());
-//        }
-//        return map;
-//    }
-
-//    @Override
-//    public Map getReasonRelateKpiDataFromRedis(String reasonId,String templateCode,String reasonKpiCode)
-//    {
-//        StringBuffer key=new StringBuffer();
-//        key.append("reason:").append(reasonId).append(":").append(templateCode).append(":").append(reasonKpiCode);
-//
-//        return (Map)redisTemplate.opsForValue().get(key.toString());
-//    }
-
-    /**
-    * 根据周期类型生成图表数据
-     */
-    private  Map<String,List<String>> generateData(String period,String beginDt,String endDt,String chartType,String reasonKpiName)
-    {
-        Map<String,List<String>> datas= Maps.newHashMap();
-        List<String> xdata= Lists.newArrayList();
-        List<String> ydata=Lists.newArrayList();
-
-        double value=0d;
-        Random random=new Random();
-
-         //判断时间 period为D 表示按天 M表示按月
-        if("M".equals(period))
-        {
-            //获取两个日期直接的所有月份
-            List<String> months=DateUtil.getMonthBetween(beginDt.substring(0,7),endDt.substring(0,7));
-
-            for(String mth:months)
-            {
-                //根据指标名称判断
-                if(reasonKpiName.contains("率"))
-                {
-                     value=new BigDecimal(random.nextDouble()*100).setScale(2, RoundingMode.DOWN).doubleValue();
-                }else if(reasonKpiName.contains("比"))
-                {
-                    value=new BigDecimal(random.nextDouble()).setScale(2, RoundingMode.DOWN).doubleValue();
-                }else
-                {
-                    value=Math.round(random.nextDouble()*1000);
-                }
-
-                //将生成的值放入到list中
-                xdata.add(mth);
-                ydata.add(String.valueOf(value));
-
-            }
-
-        }else  //按天生成数据
-        {
-            List<String> days= DateUtil.getEveryday(beginDt,endDt);
-
-            for(String dd :days)
-            {
-                //根据指标名称判断
-                if(reasonKpiName.contains("率"))
-                {
-                    value=new BigDecimal(random.nextDouble()*100).setScale(2, RoundingMode.DOWN).doubleValue();
-                }else if(reasonKpiName.contains("比"))
-                {
-                    value=new BigDecimal(random.nextDouble()).setScale(2, RoundingMode.DOWN).doubleValue();
-                }else
-                {
-                    value=Math.round(random.nextDouble()*1000);
-                }
-
-                //将生成的值放入到list中
-                xdata.add(dd);
-                ydata.add(String.valueOf(value));
-            }
-        }
-
-        datas.put("xdata",xdata);
-        datas.put("ydata",ydata);
-
-        return datas;
     }
 
     @Override
