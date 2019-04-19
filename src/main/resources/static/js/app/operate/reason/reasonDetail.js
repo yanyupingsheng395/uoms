@@ -182,15 +182,21 @@ function processConcern(data,index) {
     });
 }
 
+var arr = null;
 // 因子表格
 getMatrix();
 function getMatrix() {
+    arr = new Array();
     $.get("/reasonMartix/getMartix", {reasonId: $("#reasonId").val()}, function (r) {
         var thead = "<thead><tr><th></th>";
         var head = "<tr><td></td>";
         var body = "";
         var flag = false;
+
+        var i=0;
         $.each(r.data, function(k1, v1) {
+            var obj = new Object();
+            obj.index = i;
             body += "<tr><td>" + v1[0]['fName'] + "</td>";
             $.each(v1, function (k2, v2) {
                 if(!flag) {
@@ -204,11 +210,22 @@ function getMatrix() {
                     body += "<td>" + relate + "</td>";
                 }
             });
+            obj.code = v1[0]['fCode'];
             flag = true;
             body += "</tr>";
+            arr.push(obj);
+            i++;
         });
         thead += "</tr></thead>";
         head += "</tr>";
         $("#tableData").html("").html(thead + head + body);
+    });
+}
+
+function submitData() {
+    $("#tableData").find("tr:eq(0)").find("th").find("input[type='checkbox']").each(function (k, v) {
+        if($(this).is(':checked')) {
+            console.log(arr[k]);
+        }
     });
 }
