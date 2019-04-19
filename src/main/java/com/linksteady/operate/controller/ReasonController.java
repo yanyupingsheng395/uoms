@@ -199,6 +199,4 @@ public class ReasonController  extends BaseController {
         Map<String,String> result=(Map)KpiCacheManager.getInstance().getReasonDimValueList().get(dimCode);
         return ResponseBo.okWithData("",result);
     }
-
-
 }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.ReasonRelMatrixMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.ReasonRelMatrix">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="REASON_ID" jdbcType="DECIMAL" property="reasonId" />
+    <result column="F_CODE" jdbcType="VARCHAR" property="fCode" />
+    <result column="F_NAME" jdbcType="VARCHAR" property="fName" />
+    <result column="RF_CODE" jdbcType="VARCHAR" property="rfCode" />
+    <result column="RF_NAME" jdbcType="VARCHAR" property="rfName" />
+    <result column="RELATE_VALUE" jdbcType="DECIMAL" property="relateValue" />
+    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="F_ORDERNO" jdbcType="DECIMAL" property="fOrderno" />
+    <result column="RF_ORDER_NO" jdbcType="DECIMAL" property="rfOrderNo" />
+  </resultMap>
+
+  <select id="getMatrixCode" resultMap="BaseResultMap">
+      select DISTINCT F_ORDERNO, F_CODE, F_NAME from UO_REASON_REL_MATRIX where REASON_ID = #{reasonId} order by F_ORDERNO asc
+  </select>
+  <select id="getMatrix" resultMap="BaseResultMap">
+      select F_CODE, F_NAME, RF_CODE, RF_NAME, RELATE_VALUE, F_ORDERNO,RF_ORDER_NO
+      from UO_REASON_REL_MATRIX where F_CODE = #{code} and REASON_ID = #{reasonId} order by RF_ORDER_NO asc
+  </select>
+</mapper>

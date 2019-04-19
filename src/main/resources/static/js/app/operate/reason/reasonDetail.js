@@ -182,4 +182,33 @@ function processConcern(data,index) {
     });
 }
 
-
+// 因子表格
+getMatrix();
+function getMatrix() {
+    $.get("/reasonMartix/getMartix", {reasonId: $("#reasonId").val()}, function (r) {
+        var thead = "<thead><tr><th></th>";
+        var head = "<tr><td></td>";
+        var body = "";
+        var flag = false;
+        $.each(r.data, function(k1, v1) {
+            body += "<tr><td>" + v1[0]['fName'] + "</td>";
+            $.each(v1, function (k2, v2) {
+                if(!flag) {
+                    head += "<td>" + v2['rfName']+ "</td>";
+                    thead += "<th><input type='checkbox'/></th>";
+                }
+                var relate = v2.relateValue;
+                if(relate == "-1") {
+                    body += "<td></td>";
+                }else {
+                    body += "<td>" + relate + "</td>";
+                }
+            });
+            flag = true;
+            body += "</tr>";
+        });
+        thead += "</tr></thead>";
+        head += "</tr>";
+        $("#tableData").html("").html(thead + head + body);
+    });
+}
