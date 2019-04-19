@@ -52,46 +52,53 @@
                                     <div class="col-md-12">
                                         <h5>现象</h5>
                                         <form class="form-horizontal" style="border:solid 1px #ccc;">
-                                            <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label" for="reasonName">名称：</label>
-                                                <div class="col-md-5 input-group">
-                                                    <input class="form-control" type="text" id="reasonName" name="reasonName" placeholder="" disabled>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mg-stop">
+                                                        <label class="col-md-3 control-label" for="reasonName">名称：</label>
+                                                        <div class="col-md-7 input-group">
+                                                            <input class="form-control" type="text" id="reasonName" name="reasonName" placeholder="" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group mg-stop">
+                                                        <label class="col-md-3 control-label" for="source">来源：</label>
+                                                        <div class="col-md-7 input-group">
+                                                            <input class="form-control" type="text" id="source" name="source" placeholder="" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group mg-stop">
+                                                        <label class="col-md-3 control-label" for="zhibiao">指标：</label>
+                                                        <div class="col-md-7 input-group">
+                                                            <input class="form-control" type="text" id="zhibiao" name="zhibiao" placeholder="" disabled>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mg-stop">
+                                                        <label class="col-md-3 control-label">发生时间区间：</label>
+                                                        <div class="input-group col-md-7">
+                                                            <input class="form-control" type="text" id="start_dt" name="start_dt" disabled>
+                                                            <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
+                                                            <input class="form-control" type="text" id="end_dt" name="end_dt" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group mg-stop">
+                                                        <label class="col-md-3 control-label" for="period">时间粒度：</label>
+                                                        <div class="col-md-7 input-group">
+                                                            <input class="form-control" type="text" id="period" name="period" placeholder="" disabled>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label" for="source">来源：</label>
-                                                <div class="col-md-5 input-group">
-                                                    <input class="form-control" type="text" id="source" name="source" placeholder="" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label" for="zhibiao">指标：</label>
-                                                <div class="col-md-5 input-group">
-                                                    <input class="form-control" type="text" id="zhibiao" name="zhibiao" placeholder="" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label">已选择的维度及其值：</label>
-                                                <div class="col-md-5" style="padding-left:0px">
-                                                    <ul class="list-group" id="dimlist">
-                                                    </ul>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label">发生时间区间：</label>
-                                                <div class="input-group col-md-5">
-                                                    <input class="form-control" type="text" id="start_dt" name="start_dt" disabled>
-                                                    <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
-                                                    <input class="form-control" type="text" id="end_dt" name="end_dt" disabled>
-                                                </div>
-
-                                            </div>
-                                            <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label" for="period">时间粒度：</label>
-                                                <div class="col-md-5 input-group">
-                                                    <input class="form-control" type="text" id="period" name="period" placeholder="" disabled>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group text-center" style="margin-top: 10px;">
+                                                        <label class="col-md-3 control-label">已选择的维度及其值：</label>
+                                                        <div class="col-md-5" style="padding-left:0px">
+                                                            <ul class="list-group" id="dimlist" style="margin-bottom: 7px !important;">
+                                                            </ul>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
