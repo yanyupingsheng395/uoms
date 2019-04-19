@@ -11,29 +11,27 @@ public interface ReasonService {
 
      int getReasonTotalCount();
 
-     String saveReasonData(ReasonVO reasonVO,String curuser,int primaryKey);
+     void saveReasonData(ReasonVO reasonVO,String curuser,int primaryKey);
 
      int getReasonPrimaryKey();
 
      void saveReasonDetail(int primaryKey,String[] dims);
 
-     void saveReasonTemplate(int primaryKey,String [] templates);
-
      void deleteReasonById(String reasonId);
 
      void updateProgressById(String reasonId,int progress);
 
-     void findReasonKpis(String reasonId);
+     void findReasonKpisSnp(String reasonId);
 
      Map<String,Object> getReasonInfoById(String reasonId);
 
-     List<Map<String,String>> getRelatedKpiList(String reasonId,String templateCode);
+ //    List<Map<String,String>> getRelatedKpiList(String reasonId,String templateCode);
 
-     List<Map<String,Object>> getReasonKpiHistroy(String reasonId,String kpiCode,String templateCode);
+     List<Map<String,Object>> getReasonKpisSnp(String reasonId,String templateCode);
 
-     Map<String,Object> getReasonRelatedKpi(String reasonId,String templateCode,String reasonKpiCode);
+ //    Map<String,Object> getReasonRelatedKpi(String reasonId,String templateCode,String reasonKpiCode);
 
-     Map getReasonRelateKpiDataFromRedis(String reasonId,String templateCode,String reasonKpiCode);
+ //    Map getReasonRelateKpiDataFromRedis(String reasonId,String templateCode,String reasonKpiCode);
 
      List<Map<String,Object>> getConcernKpiList(String reasonId);
 

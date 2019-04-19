@@ -23,16 +23,13 @@ $(function () {
             title: '进度',
             formatter: function (value, row, index) {
                 return value == null ? "" : value + "%"
-               // return "<div class='progress_middle' style='height: 19px;'><div class='progress-bar progress_middle' role='progressbar' aria-valuenow='10' aria-valuemin='0' aria-valuemax='100' style='min-width: 2em; width:"+val+"%'>"+val+"%</div></div>";
             }
-        }, {
-            // A表示草稿 R表示计算中 F表示计算完成
+        } ,{
+            // R表示计算中 F表示计算完成
             field: 'STATUS',
             title: '状态',
             formatter: function (value, row, index) {
-                if (value == "A") {
-                    return "<span class='label label-info'>草稿</span>";
-                }else if (value == "R") {
+                if (value == "R") {
                     return "<span class='label label-primary'>计算中</span>";
                 }else if (value == "F") {
                     return "<span class='label label-primary'>完成</span>";
@@ -46,15 +43,20 @@ $(function () {
         }, {
             field: 'CREATE_DT',
             title: '创建时间'
-        }, {
+        },{
+            field: 'SOURCE',
+            title: '来源'
+        },{
             filed: 'button',
             title: '操作',
             formatter: function (value, row, index) {
                 var reasonId=row.REASON_ID;
-                if (row.STATUS == "A" || row.STATUS=='F') {
-                    return "<div class='btn btn-primary btn-sm' onclick='view("+reasonId+")'><i class='mdi mdi-eye'></i>查看</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='del("+reasonId+")'><i class='mdi mdi-window-close'></i>删除</div>";
-                }else if (row.STATUS == "R") {
+                if(row.STATUS=='R')
+                {
                     return "<div class='btn btn-info btn-sm' onclick='updatedata("+reasonId+")'><i class='mdi mdi-redo'></i>更新</div>";
+                }else
+                {
+                    return "<div class='btn btn-primary btn-sm' onclick='view("+reasonId+")'><i class='mdi mdi-eye'></i>查看</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='del("+reasonId+")'><i class='mdi mdi-window-close'></i>删除</div>";
                 }
             }
         }]
@@ -68,7 +70,7 @@ $(function () {
 });
 
 function view(reasonId){
-    //进入查看界面
+    //进入查看界面 todo 更改为post方式
     location.href = "/reason/viewReason?reasonId=" + reasonId;
 
 }

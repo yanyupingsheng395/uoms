@@ -10,9 +10,11 @@ public class ReasonVO implements Serializable {
     String startDt;
     String endDt;
     String period;
-    String [] templates;
+    String source;
     String [] dims;  //维度名称
     String [] dimDisplay; //维度显示信息的列表
+
+    String reasonName;
 
     public String getKpi() {
         return kpi;
@@ -46,14 +48,6 @@ public class ReasonVO implements Serializable {
         this.period = period;
     }
 
-    public String[] getTemplates() {
-        return templates;
-    }
-
-    public void setTemplates(String[] templates) {
-        this.templates = templates;
-    }
-
     public String[] getDims() {
         return dims;
     }
@@ -76,5 +70,21 @@ public class ReasonVO implements Serializable {
 
     public void setDimDisplay(String[] dimDisplay) {
         this.dimDisplay = dimDisplay;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getReasonName() {
+        return reasonName;
+    }
+
+    public void setReasonName(String reasonName) {
+        this.reasonName = reasonName;
     }
 }

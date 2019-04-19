@@ -11,12 +11,16 @@ $(function () {
         $(this).closest('li').remove();
     });
 
+    //为维度选择绑定事件
     $("#dimselectlist").change(function() {
         var dimCode = $(this).find("option:selected").val();
         getValueList(dimCode);
     });
 });
 
+/**
+ * 提交分析的处理方法
+ */
 function submit_analysis(){
     var alert_str="";
     toastr.options = {
@@ -58,25 +62,11 @@ function submit_analysis(){
         }
     }
 
-    //校验选择了模板
-    var ck=$("#template_select").find(":checkbox:checked");
-
-    if(null==ck||ck.length==0)
-    {
-
-        alert_str+='</br>请至少选择一个模板！';
-    }
-
     if(null!=alert_str&&alert_str!='')
     {
         toastr.warning(alert_str);
         return;
     }
-
-    var array_template=[];
-    ck.each(function (i) {
-        array_template.push($(this).val());
-    });
 
     var dim=[];
 
@@ -84,7 +74,6 @@ function submit_analysis(){
     dimlist.each(function (i) {
         var temp=$(this).children(".dimKey").get(0).value+"^"+$(this).children(".dimValues").get(0).value+"^"+$(this).children(".dimDispaly").get(0).value;
         dim.push(temp);
-
     });
 
     var datas={
@@ -92,7 +81,7 @@ function submit_analysis(){
         startDt:start_dt,
         endDt:end_dt,
         period:$("#period").val(),
-        templates:array_template,
+        source: '手工新增',
         dims:dim
     };
 
@@ -103,7 +92,7 @@ function submit_analysis(){
     //向服务端提交数据
     $.ajax({
         type: "post",
-        url: "/reason/submitAnalysis",
+        url: "/reason/submitAnalysisManual",
         data: JSON.stringify(datas),
         dataType: "json",
         headers: {
@@ -121,19 +110,21 @@ function submit_analysis(){
                             text: '确定',
                             btnClass: 'btn-green',
                             action: function(){
+                                //
                                 location.replace("/reason/gotoIndex");
                             }
                         }
                     }
                 });
-
-
             }
         }
     });
 
 }
 
+/**
+ * 选择维度的处理方法
+ */
 function selectDim()
 {
     //获取当前页面已经选择值
@@ -172,6 +163,10 @@ function selectDim()
 
 }
 
+/**
+ * 选择完维度以后，初始化维度值列表
+ * @param dimCode
+ */
 function getValueList(dimCode) {
     $.get("/reason/getReasonDimValuesList", {dimCode: dimCode}, function(r) {
         var code = "";
@@ -183,6 +178,9 @@ function getValueList(dimCode) {
     });
 }
 
+/**
+ * 选择完维度后进行保存
+ */
 function saveDim() {
     var alert_str='';
     toastr.options = {

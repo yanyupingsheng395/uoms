@@ -35,6 +35,14 @@ public class KpiCacheManager {
     //原因探究用到的维度值列表 key为维度编码 value为一个map 此map中key为维度值编码，value为维度值名称
     private static Map<String, Object> reasonDimValueList = Maps.newLinkedHashMap();  //原因探究 维度及其值列表
 
+    //原因探究的模板CODE - NAME 对
+
+    //原因探究的 CODE - <REASON_KPI_CODE,REASON_KPI_NAME>
+
+    //探究的REASON_KPI_CODE - REASON_KPI_NAME 对
+
+
+
     public static KpiCacheManager getInstance() {
         if (null == kpiCacheManager) {
             synchronized (KpiCacheManager.class) {

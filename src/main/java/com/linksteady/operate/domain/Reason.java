@@ -19,6 +19,7 @@ public class Reason implements Serializable {
     String updateDt;
     String createBy;
     String updateBy;
+    String source;
 
     public String getKpi() {
         return kpi;
@@ -115,4 +116,14 @@ public class Reason implements Serializable {
     public void setReasonName(String reasonName) {
         this.reasonName = reasonName;
     }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+
 }

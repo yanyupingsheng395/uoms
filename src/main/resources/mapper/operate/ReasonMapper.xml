@@ -32,7 +32,8 @@
          RL.UPDATE_BY,
          RL.KPI_CODE,
          RL.PERIOD_TYPE,
-         KL.KPI_NAME
+         KL.KPI_NAME,
+         RL.SOURCE
     FROM UO_REASON_LIST RL,UO_KPI_LIST_CONFIG KL WHERE RL.KPI_CODE=KL.KPI_CODE(+) ORDER BY REASON_ID DESC) A  WHERE ROWNUM &lt;=#{endRow}
     ) WHERE RN &gt;=#{startRow}
 
@@ -56,7 +57,8 @@
                 CREATE_BY,
                 UPDATE_BY,
                 KPI_CODE,
-                PERIOD_TYPE
+                PERIOD_TYPE,
+                SOURCE
             )VALUES
             (
                 #{reasonId,jdbcType=INTEGER},
@@ -70,7 +72,8 @@
                 #{createBy},
                 #{updateBy},
                 #{kpi},
-                #{period}
+                #{period},
+                #{source}
             )
     </insert>
 
@@ -90,32 +93,20 @@
             )
     </insert>
 
-    <select id="saveReasonTemplate">
-        INSERT INTO UO_REASON_TEMPLATE
-            (
-                REASON_ID,
-                TEMPLATE_CODE
-            )VALUES
-            (
-             #{primaryKey,jdbcType=INTEGER},
-             #{templateCode}
-            )
-    </select>
-
     <delete id="deleteReasonDetail">
         delete  from UO_REASON_DETAIL t where t.reason_id=#{reasonId}
     </delete>
 
-    <delete id="deleteReasonTemplate">
-        delete from UO_REASON_TEMPLATE t where t.reason_id=#{reasonId}
-    </delete>
-
-    <delete id="deleteReasonKpis">
-        delete from UO_REASON_KPIS t where t.reason_id=#{reasonId}
+    <delete id="deleteReasonKpisSnp">
+        delete from UO_REASON_KPIS_SNP t where t.reason_id=#{reasonId}
     </delete>
 
     <delete id="deleteReasonById">
         delete from UO_REASON_LIST t where t.reason_id=#{reasonId}
+    </delete>
+
+    <delete id="deleteReasonResultById">
+        delete from UO_REASON_RESULT where reason_id=#{reasonId}
     </delete>
 
     <update id="updateProgressById">
@@ -192,7 +183,8 @@
             TO_CHAR(T.END_DT,'yyyy-mm-dd') END_DT,
             DECODE(T.PERIOD_TYPE,'D','天','月') PERIOD_TYPE,
             T.KPI_CODE,
-            KL.KPI_NAME
+            KL.KPI_NAME,
+            T.SOURCE
         FROM UO_REASON_LIST T,
              UO_KPI_LIST_CONFIG KL
         WHERE T.KPI_CODE=KL.KPI_CODE(+)
@@ -203,16 +195,6 @@
         select DIM_DISPLAY_VALUE from UO_REASON_DETAIL t where reason_id=#{reasonId}
     </select>
 
-    <select id="getReasonTemplatesById" resultType="map">
-        SELECT T.TEMPLATE_CODE,
-               T2.TEMPLATE_NAME
-        FROM UO_REASON_TEMPLATE T,
-             (SELECT DISTINCT C.TEMPLATE_CODE, C.TEMPLATE_NAME
-              FROM UO_REASON_TEMPLATE_CONFIG C) T2
-        WHERE T.TEMPLATE_CODE = T2.TEMPLATE_CODE(+)
-          AND T.REASON_ID=#{reasonId}
-        ORDER BY T.TEMPLATE_CODE asc
-    </select>
 
     <select id="getRelatedKpiList" resultType="map">
         SELECT T.REASON_KPI_CODE, T.REASON_KPI_NAME
@@ -222,33 +204,25 @@
             ORDER BY T.REASON_KPI_CODE
     </select>
 
-    <select id="getReasonKpiHistroy" resultType="map">
+    <select id="getReasonKpisSnp" resultType="map">
         SELECT
-            T1.KPI_CODE,
             T1.TEMPLATE_CODE,
             T1.REASON_KPI_CODE,
-            REASON_KPI_TYPE,
             REASON_KPI_NAME,
-            RELATE_VALUE,
-            RELATE_FLAG,
-            REGRESSION_VALUE,
+            RELATE_VALUE
             DECODE(T2.REASON_ID,NULL,'N','Y') IS_CONCERN
         FROM
-            (select     T.KPI_CODE,
+            (select     T.REASON_ID
                         T.TEMPLATE_CODE,
                         T.REASON_KPI_CODE,
-                        T.REASON_KPI_TYPE,
                         T.REASON_KPI_NAME,
-                        T.RELATE_VALUE,
-                        T.RELATE_FLAG,
-                        T.REGRESSION_VALUE
-             from UO_REASON_KPIS_HISTORY t
+                        T.RELATE_VALUE
+             from UO_REASON_KPIS_SNP t
              WHERE
-                 T.KPI_CODE=#{kpiCode}
-               AND T.TEMPLATE_CODE=#{templateCode}
-             ORDER BY REGRESSION_VALUE DESC) T1 LEFT JOIN
+                 T.TEMPLATE_CODE=#{templateCode}
+               AND T.REASON_ID=#{reasonId}) T1 LEFT JOIN
                     (SELECT * FROM UO_REASON_CONCERN WHERE REASON_ID=#{reasonId}) T2
-                    ON T1.KPI_CODE=T2.KPI_CODE AND T1.TEMPLATE_CODE=T2.TEMPLATE_CODE AND T1.REASON_KPI_CODE=T2.REASON_KPI_CODE
+                    ON T1.REASON_ID=T2.REASON_ID AND T1.TEMPLATE_CODE=T2.TEMPLATE_CODE AND T1.REASON_KPI_CODE=T2.REASON_KPI_CODE
     </select>
 
     <select id="getReasonRelatedKpi" resultMap="relatedkpimap">

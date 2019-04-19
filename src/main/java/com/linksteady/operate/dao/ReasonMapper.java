@@ -15,38 +15,46 @@ public interface ReasonMapper {
 
     int getReasonTotalCount();
 
-    void saveReasonData(Reason reasonDo);
-
     int getReasonPrimaryKey();
 
+    //保存原因探究的主信息
+    void saveReasonData(Reason reasonDo);
+
+    //保存原因探究的明细信息(维度及其值)
     void saveReasonDetail(@Param("primaryKey") int primaryKey,@Param("dimCode") String dimCode,@Param("dimValues") String dimValues,@Param("dimDisplay") String dimDisplay);
 
-    void saveReasonTemplate(@Param("primaryKey") int primaryKey,@Param("templateCode") String  templateCode);
-
+    //删除原因探究的明细信息
     void  deleteReasonDetail(@Param("reasonId") String reasonId);
-    void  deleteReasonTemplate(@Param("reasonId") String reasonId);
-    void  deleteReasonKpis(@Param("reasonId") String reasonId);
+
+    //删除原因诊断 原因KPI的快照信息
+    void  deleteReasonKpisSnp(@Param("reasonId") String reasonId);
+
+    //删除原因诊断主信息
     void  deleteReasonById(@Param("reasonId") String reasonId);
+
+    //删除原因诊断结果信息
+    void deleteReasonResultById(@Param("reasonId") String reasonId);
+
+    //获取原因诊断主信息
+    List<Map<String,Object>>  getReasonInfoById(@Param("reasonId") String reasonId);
+
+    //获取原因诊断明细信息
+    List<Map<String,String>>  getReasonDetailById(@Param("reasonId") String reasonId);
 
     void updateProgressById(@Param("reasonId") String reasonId,@Param("progress") int progress);
 
     void updateProgressAndStatusById(@Param("reasonId") String reasonId,@Param("progress") int progress);
 
-    List<Map<String,Object>> getRelatedKpis(@Param("reasonId") String reasonId);
+//    List<Map<String,Object>> getRelatedKpis(@Param("reasonId") String reasonId);
 
-    void saveRelatedKpis(ReasonKpis reasonKpis);
+//    void saveRelatedKpis(ReasonKpis reasonKpis);
 
-    List<Map<String,Object>>  getReasonInfoById(@Param("reasonId") String reasonId);
 
-    List<Map<String,String>>  getReasonDetailById(@Param("reasonId") String reasonId);
+//    List<Map<String, String>> getRelatedKpiList(@Param("reasonId") String reasonId,@Param("templateCode") String templateCode);
 
-    List<Map<String,Object>>  getReasonTemplatesById(@Param("reasonId") String reasonId);
+     List<Map<String, Object>> getReasonKpisSnp(@Param("reasonId") String reasonId,@Param("templateCode") String templateCode);
 
-    List<Map<String, String>> getRelatedKpiList(@Param("reasonId") String reasonId,@Param("templateCode") String templateCode);
-
-    List<Map<String, Object>> getReasonKpiHistroy(@Param("reasonId") String reasonId,@Param("kpiCode") String kpiCode,@Param("templateCode") String templateCode);
-
-    List<ReasonKpis>  getReasonRelatedKpi(@Param("reasonId") String reasonId,@Param("templateCode") String templateCode,@Param("reasonKpiCode") String reasonKpiCode);
+//    List<ReasonKpis>  getReasonRelatedKpi(@Param("reasonId") String reasonId,@Param("templateCode") String templateCode,@Param("reasonKpiCode") String reasonKpiCode);
 
     List<Map<String, Object>> getConcernKpiList(@Param("reasonId") String reasonId);
 

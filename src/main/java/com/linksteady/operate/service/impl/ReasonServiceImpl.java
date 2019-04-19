@@ -44,18 +44,14 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-    public String  saveReasonData(ReasonVO reasonVO,String curuser,int primaryKey) {
+    public void  saveReasonData(ReasonVO reasonVO,String curuser,int primaryKey) {
         //将VO转化成DO
         Reason reasonDo=dozerBeanMapper.map(reasonVO, Reason.class);
 
         SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat sf2=new SimpleDateFormat("yyyyMMdd");
         Date now=new Date();
 
-        String reasonName=sf2.format(now)+"-"+primaryKey;
-
         reasonDo.setReasonId(primaryKey);
-        reasonDo.setReasonName(reasonName);
         reasonDo.setStatus("R");
         reasonDo.setProgress(0);
         reasonDo.setCreateDt(sf.format(now));
@@ -64,7 +60,6 @@ public class ReasonServiceImpl implements ReasonService {
         reasonDo.setUpdateBy(curuser);
         reasonDo.setPeriod(reasonVO.getPeriod());
         reasonMapper.saveReasonData(reasonDo);
-        return reasonName;
     }
 
     @Override
@@ -82,42 +77,26 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-    public void saveReasonTemplate(int primaryKey, String[] templates) {
-        for(String t:templates)
-        {
-            reasonMapper.saveReasonTemplate(primaryKey,t);  //主键 模板code
-        }
-    }
-
-    @Override
     public void deleteReasonById(String reasonId) {
         reasonMapper.deleteReasonDetail(reasonId);
-        reasonMapper.deleteReasonTemplate(reasonId);
-        reasonMapper.deleteReasonKpis(reasonId);
+        reasonMapper.deleteReasonKpisSnp(reasonId);
         reasonMapper.deleteReasonById(reasonId);
+        reasonMapper.deleteReasonResultById(reasonId);
+
 
     }
 
     @Override
-    public void updateProgressById(String reasonId,int progress) {
-
-
-        if(progress==100)
-        {   //更新进度和状态
-            reasonMapper.updateProgressAndStatusById(reasonId,progress);
-        }else
-        {
-            //更新进度
-            reasonMapper.updateProgressById(reasonId,progress);
-        }
-
-    }
-
-    @Override
-    public void findReasonKpis(String reasonId)
+    public void findReasonKpisSnp(String reasonId)
     {
+        //写SNP表
+
+        //写矩阵表
+
         //找到此方法下选择了那些模板 及其指标  todo 目前通过随机数模拟选择
-        List<Map<String,Object>> rkpis=reasonMapper.getRelatedKpis(reasonId);
+       // List<Map<String,Object>> rkpis=reasonMapper.getRelatedKpis(reasonId);
+
+        List<Map<String,Object>> rkpis=Lists.newArrayList();
 
         //写入到UO_REASON_KPIS
         String period="";
@@ -169,7 +148,7 @@ public class ReasonServiceImpl implements ReasonService {
             reasonKpis.setUpdateDt(new Date());
 
             //保存记录
-            reasonMapper.saveRelatedKpis(reasonKpis);
+           // reasonMapper.saveRelatedKpis(reasonKpis);
         }
     }
 
@@ -194,53 +173,64 @@ public class ReasonServiceImpl implements ReasonService {
        result.put("END_DT",reason.get("END_DT"));
        result.put("PERIOD_TYPE",reason.get("PERIOD_TYPE"));
        result.put("KPI_NAME",reason.get("KPI_NAME"));
-        result.put("KPI_CODE",reason.get("KPI_CODE"));
+       result.put("KPI_CODE",reason.get("KPI_CODE"));
+       result.put("SOURCE",reason.get("SOURCE"));
 
       //获取到明细信息
       List<Map<String,String>> reasonDetail=reasonMapper.getReasonDetailById(reasonId);
-
       result.put("reasonDetail",reasonDetail);
-
-      //获取到模板信息
-      List<Map<String,Object>> reasonTemplates=reasonMapper.getReasonTemplatesById(reasonId);
-
-      result.put("template",reasonTemplates);
 
       return result;
     }
 
     @Override
-    public List<Map<String, String>> getRelatedKpiList(String reasonId, String templateCode) {
-        return reasonMapper.getRelatedKpiList(reasonId,templateCode);
-    }
+    public void updateProgressById(String reasonId,int progress) {
 
-    @Override
-    public List<Map<String, Object>> getReasonKpiHistroy(String reasonId,String kpiCode, String templateCode) {
-        return reasonMapper.getReasonKpiHistroy(reasonId,kpiCode,templateCode);
-    }
 
-    @Override
-    public Map<String, Object> getReasonRelatedKpi(String reasonId,String templateCode,String reasonKpiCode) {
-        List<ReasonKpis>  result=reasonMapper.getReasonRelatedKpi(reasonId,templateCode,reasonKpiCode);
-
-        Map<String, Object> map=Maps.newHashMap();
-        if(null!=result&&result.size()>0)
+        if(progress==100)
+        {   //更新进度和状态
+            reasonMapper.updateProgressAndStatusById(reasonId,progress);
+        }else
         {
-            map.put("chartType",result.get(0).getChartType());
-            map.put("kpiName",result.get(0).getReasonKpiName());
-            map.put("period",result.get(0).getPeriodType());
+            //更新进度
+            reasonMapper.updateProgressById(reasonId,progress);
         }
-        return map;
+
     }
 
+
+//    @Override
+//    public List<Map<String, String>> getRelatedKpiList(String reasonId, String templateCode) {
+//        return reasonMapper.getRelatedKpiList(reasonId,templateCode);
+//    }
+//
     @Override
-    public Map getReasonRelateKpiDataFromRedis(String reasonId,String templateCode,String reasonKpiCode)
-    {
-        StringBuffer key=new StringBuffer();
-        key.append("reason:").append(reasonId).append(":").append(templateCode).append(":").append(reasonKpiCode);
-
-        return (Map)redisTemplate.opsForValue().get(key.toString());
+    public List<Map<String, Object>> getReasonKpisSnp(String reasonId, String templateCode) {
+        return reasonMapper.getReasonKpisSnp(reasonId,templateCode);
     }
+
+//    @Override
+//    public Map<String, Object> getReasonRelatedKpi(String reasonId,String templateCode,String reasonKpiCode) {
+//        List<ReasonKpis>  result=reasonMapper.getReasonRelatedKpi(reasonId,templateCode,reasonKpiCode);
+//
+//        Map<String, Object> map=Maps.newHashMap();
+//        if(null!=result&&result.size()>0)
+//        {
+//            map.put("chartType",result.get(0).getChartType());
+//            map.put("kpiName",result.get(0).getReasonKpiName());
+//            map.put("period",result.get(0).getPeriodType());
+//        }
+//        return map;
+//    }
+
+//    @Override
+//    public Map getReasonRelateKpiDataFromRedis(String reasonId,String templateCode,String reasonKpiCode)
+//    {
+//        StringBuffer key=new StringBuffer();
+//        key.append("reason:").append(reasonId).append(":").append(templateCode).append(":").append(reasonKpiCode);
+//
+//        return (Map)redisTemplate.opsForValue().get(key.toString());
+//    }
 
     /**
     * 根据周期类型生成图表数据

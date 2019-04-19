@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -45,27 +47,25 @@ public class ReasonController  extends BaseController {
     }
 
     /**
-     * 获取原因探究列表
+     * 提交分析(手工提交)
      * @param reasonVO 原因探究主表
      * @return
      */
-    @RequestMapping("/submitAnalysis")
-    public ResponseBo submitAnalysis(@RequestBody ReasonVO reasonVO) {
+    @RequestMapping("/submitAnalysisManual")
+    public ResponseBo submitAnalysisManual(@RequestBody ReasonVO reasonVO) {
 
         String curuser=String.valueOf(((User)SecurityUtils.getSubject().getPrincipal()).getUserId());
-
         int primaryKey=reasonService.getReasonPrimaryKey();
 
-        //写入主记录 返回名称
-        String reasonName=reasonService.saveReasonData(reasonVO,curuser,primaryKey);
+        SimpleDateFormat sf2=new SimpleDateFormat("yyyyMMdd");
+        Date now=new Date();
+        String reasonName=sf2.format(now)+"-"+primaryKey;
+        reasonVO.setReasonName(reasonName);
 
-        // 写入选择的维度信息 UO_REASON_DETAIL
-       reasonService.saveReasonDetail(primaryKey,reasonVO.getDims());
-
-        //UO_REASON_TEMPLATE
-        reasonService.saveReasonTemplate(primaryKey,reasonVO.getTemplates());
-
-        //原因KPI列表
+        //写入主记录
+        reasonService.saveReasonData(reasonVO,curuser,primaryKey);
+        //写入选择的维度信息 UO_REASON_DETAIL
+        reasonService.saveReasonDetail(primaryKey,reasonVO.getDims());
 
         return  ResponseBo.ok(reasonName);
     }
@@ -89,7 +89,7 @@ public class ReasonController  extends BaseController {
     @RequestMapping("/UpdateProgressById")
     public ResponseBo UpdateProgressById(@RequestParam String reasonId) {
         //将相关的指标写进目标表 todo 后续交由算法完成
-        reasonService.findReasonKpis(reasonId);
+        reasonService.findReasonKpisSnp(reasonId);
 
         //更新进度
         reasonService.updateProgressById(reasonId,100);
@@ -102,51 +102,49 @@ public class ReasonController  extends BaseController {
      * @param reasonId 原因ID
      * @return ResponseBo对象
      */
-    @RequestMapping("/getReasonDetailById")
-    public ResponseBo getReasonDetailById(@RequestParam String reasonId) {
+    @RequestMapping("/getReasonInfoById")
+    public ResponseBo getReasonInfoById(@RequestParam String reasonId) {
        Map<String,Object> result= reasonService.getReasonInfoById(reasonId);
-
         return ResponseBo.ok(result);
     }
 
-    /**
-     * 根据模板CODE和reasonId获取到原因KPI的列表
-     * @param reasonId 原因ID
-     * @param   templateCode 模板CODE
-     * @return ResponseBo对象
-     */
-    @RequestMapping("/getRelatedKpiList")
-    public ResponseBo getRelatedKpiList(@RequestParam String reasonId,@RequestParam String templateCode) {
-        List<Map<String,String>> result= reasonService.getRelatedKpiList(reasonId,templateCode);
-        return ResponseBo.ok(result);
-    }
+//    /**
+//     * 根据模板CODE和reasonId获取到原因KPI的列表
+//     * @param reasonId 原因ID
+//     * @param   templateCode 模板CODE
+//     * @return ResponseBo对象
+//     */
+//    @RequestMapping("/getRelatedKpiList")
+//    public ResponseBo getRelatedKpiList(@RequestParam String reasonId,@RequestParam String templateCode) {
+//        List<Map<String,String>> result= reasonService.getRelatedKpiList(reasonId,templateCode);
+//        return ResponseBo.ok(result);
+//    }
 
     /**
-     * 根据KPI CODE和模板CODE获取到此模板下指标的历史信息
-     * @param kpiCode KPI编码
+     * 根据reasonId, 模板CODE获取到此模板下原因指标的快照信息
      * @param templateCode 模板编码
      * @return ResponseBo对象
      */
-    @RequestMapping("/getReasonKpiHistroy")
-    public ResponseBo getReasonKpiHistroy(@RequestParam String reasonId,@RequestParam String kpiCode,@RequestParam String templateCode) {
-        List<Map<String,Object>> result=reasonService.getReasonKpiHistroy(reasonId,kpiCode,templateCode);
+    @RequestMapping("/getReasonKpisSnp")
+    public ResponseBo getReasonKpisSnp(@RequestParam String reasonId,@RequestParam String templateCode) {
+        List<Map<String,Object>> result=reasonService.getReasonKpisSnp(reasonId,templateCode);
         return ResponseBo.ok(result);
     }
 
-    /**
-     * 根据模板CODE、KPI CODE和reasonID 获取到原因KPI的详细数据
-     * @param reasonId 原因ID
-     * @param templateCode 指标编码
-     * @param reasonKpiCode 指标编码
-     * @return ResponseBo对象
-     */
-    @RequestMapping("/getReasonRelatedKpi")
-    public ResponseBo getReasonRelatedKpi(@RequestParam String reasonId,@RequestParam String templateCode,@RequestParam String reasonKpiCode) {
-        Map<String,Object> result=reasonService.getReasonRelatedKpi(reasonId,templateCode,reasonKpiCode);
-
-        Map rt=reasonService.getReasonRelateKpiDataFromRedis(reasonId,templateCode,reasonKpiCode);
-        return ResponseBo.okWithData(result,rt);
-    }
+//    /**
+//     * 根据模板CODE、KPI CODE和reasonID 获取到原因KPI的详细数据
+//     * @param reasonId 原因ID
+//     * @param templateCode 指标编码
+//     * @param reasonKpiCode 指标编码
+//     * @return ResponseBo对象
+//     */
+//    @RequestMapping("/getReasonRelatedKpi")
+//    public ResponseBo getReasonRelatedKpi(@RequestParam String reasonId,@RequestParam String templateCode,@RequestParam String reasonKpiCode) {
+//        Map<String,Object> result=reasonService.getReasonRelatedKpi(reasonId,templateCode,reasonKpiCode);
+//
+//        Map rt=reasonService.getReasonRelateKpiDataFromRedis(reasonId,templateCode,reasonKpiCode);
+//        return ResponseBo.okWithData(result,rt);
+//    }
 
     /**
      * 根据reasonID 获取到关注的KPI列表
