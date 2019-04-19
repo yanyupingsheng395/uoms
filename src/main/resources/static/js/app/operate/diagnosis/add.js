@@ -765,3 +765,7 @@ function nextStep(dom) {
         toastr.warning("请输入诊断名称！");
     }
 }
+
+function deleteNode() {
+    toastr.warning("演示环境，暂不支持删除节点！");
+}
