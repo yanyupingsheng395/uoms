@@ -1,8 +1,8 @@
 $(function () {
      //打开遮罩层，开始渲染数据
     lightyear.loading('show');
-
     var reasonId = $("#reasonId").val();
+
     //获取到原因的头数据
     $.getJSON("/reason/getReasonInfoById?reasonId="+reasonId,function (resp) {
         if (resp.code === 200){
@@ -23,15 +23,14 @@ $(function () {
                $("#dimlist").append("<li class='list-group-item' style='height:43px;'><input  class='col-xs-11 dimDispaly'  value=\""+item.DIM_DISPLAY_VALUE+"\"  title=\""+item.DIM_DISPLAY_VALUE+"\" style='border:0px' disabled='true'/></li>");
            })
 
-            //获取到第一个模板信息 todo 加载第一个模板下的指标快照信息
+            //获取到第一个模板信息
             var defaultTabName=$('#historyTabs').find("li.active a").attr("href");
-           var defaultTemplateCode=defaultTabName.substring(1,defaultTabName.length);
+            var defaultTemplateCode=defaultTabName.substring(1,defaultTabName.length);
 
             //填充此次探究此模板下原因指标的快照信息
             $.getJSON("/reason/getReasonKpisSnp?reasonId="+reasonId+"&templateCode="+defaultTemplateCode, function (resp) {
                 if (resp.code==200){
                     var tableName=defaultTemplateCode+'Table';
-                    createTableHeader(tableName);
                     $('#'+tableName).bootstrapTable('load', resp.msg);
                 }
             })
@@ -42,14 +41,14 @@ $(function () {
         $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
             // 获取已激活的标签页的名称
             var activeTab = $(e.target).attr("href");
-            var templateCode=activeTab.substr(1,activeTab.length);
+            var templateCode=activeTab.substring(1,activeTab.length);
             $("#templateCode").val(templateCode);
 
             //填充此次探究此模板下原因指标的快照信息
             $.getJSON("/reason/getReasonKpisSnp?reasonId="+reasonId+"&templateCode="+templateCode, function (resp) {
                 if (resp.code==200){
                     var tableName=templateCode+'Table';
-                    createTableHeader(tableName);
+                    //createTableHeader(tableName);
                     $('#'+tableName).bootstrapTable('load', resp.msg);
                 }
             })
