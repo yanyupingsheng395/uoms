@@ -171,9 +171,9 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         diagMultResultInfo.setThirdData(thirdData);
 
         //末期比基期的变化率
-        diagMultResultInfo.setFirChangeRate(ArithUtil.formatDouble(((firData.getLast()-firData.getFirst())/firData.getFirst()*100),4));
-        diagMultResultInfo.setSecChangeRate(ArithUtil.formatDouble(((secData.getLast()-secData.getFirst())/secData.getFirst()*100),4));
-        diagMultResultInfo.setThirdChangeRate(ArithUtil.formatDouble(((thirdData.getLast()-thirdData.getFirst())/thirdData.getFirst()*100),4));
+        diagMultResultInfo.setFirChangeRate(ArithUtil.formatDouble(((firData.getLast()-firData.getFirst())/firData.getFirst()*100),2));
+        diagMultResultInfo.setSecChangeRate(ArithUtil.formatDouble(((secData.getLast()-secData.getFirst())/secData.getFirst()*100),2));
+        diagMultResultInfo.setThirdChangeRate(ArithUtil.formatDouble(((thirdData.getLast()-thirdData.getFirst())/thirdData.getFirst()*100),2));
 
         //均值及上下5%区域；
         Double firavg=firData.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
