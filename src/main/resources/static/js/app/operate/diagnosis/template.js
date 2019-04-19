@@ -39,7 +39,7 @@ function getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData) {
     };
 }
 
-// 模板2
+// 模板2 面积图demo
 function template2(chartId) {
     var legendData = ["首购", "非首购"];
     var xAxisData = ["201901", "201902", "201903", "201904", "201905"];
@@ -52,7 +52,7 @@ function template2(chartId) {
     chart.setOption(option);
 }
 
-
+// 柱状图demo
 function template3_1(chartId) {
     var legendData = ["客单价"];
     var xAxisData = ["201901", "201902", "201903", "201904"];
@@ -107,6 +107,7 @@ function template4_2(chartId) {
     chart.setOption(option);
 }
 
+// 区域上色demo
 function template4_3(chartId) {
     var legendData = ["客单价", "均线"];
     var xAxisData = ["200901","200902","200903","200904","200905"];

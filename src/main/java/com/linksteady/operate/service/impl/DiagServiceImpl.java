@@ -52,6 +52,7 @@ public class DiagServiceImpl implements DiagService {
             Map<String, Object> result = new HashMap<>();
             result.put("id", d.getNodeId());
             result.put("parentid", d.getParentId());
+            result.put("KPI_LEVEL_ID", d.getKpiLevelId());
             if (d.getParentId() == null) {
                 result.put("isroot", true);
             }else {
