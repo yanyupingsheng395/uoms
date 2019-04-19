@@ -81,16 +81,6 @@
                                                     </ul>
                                                 </div>
                                             </div>
-
-                                            <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label">发生时间区间：</label>
-                                                <div class="input-group col-md-5">
-                                                    <input class="form-control js-datepicker" data-date-format="yyyy-mm-dd" type="text" id="start_dt" name="start_dt" placeholder="从">
-                                                    <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
-                                                    <input class="form-control js-datepicker" data-date-format="yyyy-mm-dd" type="text" id="end_dt" name="end_dt" placeholder="至">
-                                                </div>
-
-                                            </div>
                                             <div class="form-group mg-stop">
                                                 <label class="col-md-3 control-label" for="period">时间粒度：</label>
                                                 <div class="col-md-5 input-group">
@@ -98,6 +88,14 @@
                                                         <option value="D">天</option>
                                                         <option value="M">月</option>
                                                     </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group mg-stop">
+                                                <label class="col-md-3 control-label">发生时间区间：</label>
+                                                <div class="input-group col-md-5" id="date_begin_end">
+                                                    <input class="form-control js-datepicker" data-date-format="yyyy-mm-dd" type="text" id="start_dt" name="start_dt" placeholder="从">
+                                                    <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
+                                                    <input class="form-control js-datepicker" data-date-format="yyyy-mm-dd" type="text" id="end_dt" name="end_dt" placeholder="至">
                                                 </div>
                                             </div>
                                         </form>

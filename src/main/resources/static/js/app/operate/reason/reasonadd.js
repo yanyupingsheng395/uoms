@@ -1,3 +1,23 @@
+// 初始化时间插件
+init_date_begin("start_dt", "end_dt","yyyy-mm-dd", 0,2,0);
+init_date_end("start_dt", "end_dt","yyyy-mm-dd", 0,2,0);
+
+// 时间周期切换
+$("#period").change(function () {
+    var val = $(this).find("option:selected").val();
+    var code = "<input class=\"form-control js-datepicker\" type=\"text\" id=\"start_dt\" name=\"start_dt\" placeholder=\"从\">\n" +
+        "<span class=\"input-group-addon\"><i class=\"mdi mdi-chevron-right\"></i></span>\n" +
+        "<input class=\"form-control js-datepicker\" type=\"text\" id=\"end_dt\" name=\"end_dt\" placeholder=\"至\">";
+    $("#date_begin_end").html("").append(code);
+    if(val == "D") {
+        init_date_begin("start_dt", "end_dt","yyyy-mm-dd", 0,2,0);
+        init_date_end("start_dt", "end_dt","yyyy-mm-dd", 0,2,0);
+    }else if(val == "M") {
+        init_date_begin("start_dt", "end_dt","yyyy-mm", 1,2,1);
+        init_date_end("start_dt", "end_dt","yyyy-mm", 1,2,1);
+    }
+});
+
 String.prototype.replaceAll = function(s1,s2){
     return this.replace(new RegExp(s1,"gm"),s2);
 }
