@@ -38,7 +38,7 @@ public class ProgressController {
      */
     @GetMapping("/getFormula")
     public ResponseBo getFormula(@RequestParam("code") String code) {
-        Map<String, String> data = KpiCacheManager.getInstance().getCodeFomularPair();
+        Map<String, String> data = KpiCacheManager.getInstance().getDiagcodeFomularList();
         String formula = data.get(code);
         return ResponseBo.okWithData(null, formula);
     }
@@ -101,7 +101,7 @@ public class ProgressController {
     @GetMapping("/getRootNode")
     public ResponseBo getRootNode() {
         String rootKpiCode = ROOT_KPI_CODE;
-        Map<String, String> data = KpiCacheManager.getInstance().getCodeNamePair();
+        Map<String, String> data = KpiCacheManager.getInstance().getDiagKpiList();
         Map<String, Object> result = new HashMap<>();
         result.put(rootKpiCode, data.get(rootKpiCode));
         return ResponseBo.okWithData(null, result);

@@ -17,10 +17,10 @@ public class KpiCacheManager {
     private static KpiCacheManager kpiCacheManager;
 
     //所有诊断用到的指标CODE，名称的键-值对。
-    private static Map<String, String> codeNamePair = Maps.newLinkedHashMap();  //kpi code-name对
+    private static Map<String, String> diagKpiList = Maps.newLinkedHashMap();  //kpi code-name对
 
     //所有可被乘法拆解的指标CODE - 拆解公式 的键值对。key为指标编码，value为拆解公式。
-    private static Map<String, String> codeFomularPair =Maps.newLinkedHashMap();  //kpi code-fomular对
+    private static Map<String, String> DiagcodeFomularList =Maps.newLinkedHashMap();  //kpi code-fomular对
 
     //每个指标及其对应的乘法公式。 key为指标编码，KpiDismantInfo为其对应的拆解公式
     private static Map<String, KpiDismantInfo> kpidismant = Maps.newLinkedHashMap();  //每个指标 及其对应的乘法公式列表
@@ -30,6 +30,9 @@ public class KpiCacheManager {
 
     //诊断用到的维度值列表 key为维度编码 value为一个map 此map中key为维度值编码，value为维度值名称
     private static Map<String, Map<String,String>> diagDimValueList = Maps.newLinkedHashMap();  //诊断 维度及其值列表
+
+    //原因探究用到的 指标CODE,名称的键值对
+    private static Map<String, String> reasonKpiList = Maps.newLinkedHashMap();  // reason kpi code-name对
 
     //原因探究用到维度列表 key为维度编码 value为维度名称
     private static Map<String, String> reaonDimList = Maps.newLinkedHashMap();  //原因探究 维度列表
@@ -52,9 +55,9 @@ public class KpiCacheManager {
     }
 
     //获取缓存
-    public Map<String,String> getCodeNamePair()
+    public Map<String,String> getDiagKpiList()
     {
-        return codeNamePair;
+        return diagKpiList;
     }
 
     // kpicode kpiname的对 (适用于value为String的情况)
@@ -63,22 +66,22 @@ public class KpiCacheManager {
         Set<String> set = map.keySet();
         Iterator<String> it = set.iterator();
 
-        if("codeNamePair".equals(type))  //诊断kpi的键值对
+        if("diagKpiList".equals(type))  //诊断kpi的键值对
         {
             //首先清空
-            codeNamePair.clear();
+            diagKpiList.clear();
             while (it.hasNext())
             {
                 String key=it.next();
-                codeNamePair.put(key,map.get(key));
+                diagKpiList.put(key,map.get(key));
             }
-        }else if("codeFomularPair".equals(type))
+        }else if("DiagcodeFomularList".equals(type))
         {
-              codeFomularPair.clear();
+            DiagcodeFomularList.clear();
             while (it.hasNext())
             {
                 String key=it.next();
-                codeFomularPair.put(key,map.get(key));
+                DiagcodeFomularList.put(key,map.get(key));
             }
         }else if("diagDimList".equals(type))
         {
@@ -95,6 +98,14 @@ public class KpiCacheManager {
             {
                 String key=it.next();
                 reaonDimList.put(key,map.get(key));
+            }
+        }else if("reasonKpiList".equals(type))
+        {
+            reasonKpiList.clear();
+            while (it.hasNext())
+            {
+                String key=it.next();
+                reasonKpiList.put(key,map.get(key));
             }
         }
     }
@@ -140,9 +151,8 @@ public class KpiCacheManager {
         }
     }
 
-    public Map<String,String> getCodeFomularPair()
-    {
-        return codeFomularPair;
+    public static Map<String, String> getDiagcodeFomularList() {
+        return DiagcodeFomularList;
     }
 
     public Map<String,String> getDiagDimList()
@@ -158,6 +168,10 @@ public class KpiCacheManager {
     public Map<String,Map<String,String>> getDiagDimValueList()
     {
         return diagDimValueList;
+    }
+
+    public static Map<String, String> getReasonKpiList() {
+        return reasonKpiList;
     }
 
     public Map<String,String> getReasonDimList()

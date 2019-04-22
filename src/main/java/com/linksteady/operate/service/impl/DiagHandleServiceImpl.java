@@ -88,7 +88,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         result.setHandleType(handleType);
 
         result.setKpiCode(diagHandleInfo.getKpiCode());
-        result.setKpiName(KpiCacheManager.getInstance().getCodeNamePair().get(diagHandleInfo.getKpiCode()));
+        result.setKpiName(KpiCacheManager.getInstance().getDiagKpiList().get(diagHandleInfo.getKpiCode()));
 
         //增加条件信息
         result.setWhereinfo(diagHandleInfo.getWhereinfo()); //todo 考虑对map重构，仅返回必要信息，减少数据传输量
@@ -110,7 +110,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         DiagMultResultInfo diagMultResultInfo=new DiagMultResultInfo();
 
         String kpiCode=diagHandleInfo.getKpiCode();
-        String kpiName=KpiCacheManager.getInstance().getCodeNamePair().get(kpiCode);
+        String kpiName=KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode);
 
         //获取其拆分为的两个指标
         Map<String,Object> kpiDismant=(Map<String,Object>)KpiCacheManager.getInstance().getKpiDismant().get(kpiCode);
@@ -411,7 +411,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         DiagResultInfo resultInfo=new DiagResultInfo();
 
         String kpiCode=diagHandleInfo.getKpiCode();
-        String kpiName=KpiCacheManager.getInstance().getCodeNamePair().get(kpiCode);
+        String kpiName=KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode);
 
         double kpiValue=0d;
         if(isSum(kpiCode))  //可累加
