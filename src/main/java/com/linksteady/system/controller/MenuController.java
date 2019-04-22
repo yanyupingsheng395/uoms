@@ -181,10 +181,11 @@ public class MenuController extends BaseController {
     @ResponseBody
     public ResponseBo updateMenu(Menu menu) {
         String name;
-        if (Menu.TYPE_MENU.equals(menu.getType()))
+        if (Menu.TYPE_MENU.equals(menu.getType())) {
             name = "菜单";
-        else
+        } else {
             name = "按钮";
+        }
         try {
             this.menuService.updateMenu(menu);
             return ResponseBo.ok("修改" + name + "成功！");

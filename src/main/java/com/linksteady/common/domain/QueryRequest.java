@@ -26,14 +26,6 @@ public class QueryRequest implements Serializable {
 		return pageNum;
 	}
 
-//	@Override
-//	public String toString() {
-//		return MoreObjects.toStringHelper(this)
-//				.add("pageSize", pageSize)
-//				.add("pageNum", pageNum)
-//				.toString();
-//	}
-
 	public void setPageNum(int pageNum) {
 		this.pageNum = pageNum;
 	}

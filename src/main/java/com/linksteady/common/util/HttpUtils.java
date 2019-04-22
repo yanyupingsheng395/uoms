@@ -112,7 +112,7 @@ public class HttpUtils {
             String ret = "";
             while (ret != null) {
                 ret = indata.readLine();
-                if (ret != null && !ret.trim().equals("")) {
+                if (ret != null && !"".equals(ret.trim())) {
                     result.append(ret);
                 }
             }
@@ -125,20 +125,24 @@ public class HttpUtils {
     }
 
     private static class TrustAnyTrustManager implements X509TrustManager {
+        @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) {
             //trust anything
         }
 
+        @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType) {
             //trust anything
         }
 
+        @Override
         public X509Certificate[] getAcceptedIssuers() {
             return new X509Certificate[]{};
         }
     }
 
     private static class TrustAnyHostnameVerifier implements HostnameVerifier {
+        @Override
         public boolean verify(String hostname, SSLSession session) {
            return true;
         }

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("AlibabaMethodTooLong")
 @Service
 public class DiagHandleServiceImpl implements DiagHandleService {
 
@@ -105,7 +106,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
      * @param diagHandleInfo
      * @return
      */
-    private DiagResultInfo processMultiple(DiagHandleInfo diagHandleInfo,List<String> periodList)
+    @SuppressWarnings("AlibabaMethodTooLong")
+    private DiagResultInfo processMultiple(DiagHandleInfo diagHandleInfo, List<String> periodList)
     {
         DiagMultResultInfo diagMultResultInfo=new DiagMultResultInfo();
 

@@ -92,8 +92,8 @@ public class ReasonController  extends BaseController {
      * @param reasonId 原因ID
      * @return ResponseBo对象
      */
-    @RequestMapping("/UpdateProgressById")
-    public ResponseBo UpdateProgressById(@RequestParam String reasonId) {
+    @RequestMapping("/updateProgressById")
+    public ResponseBo ppdateProgressById(@RequestParam String reasonId) {
         //将相关的指标写进目标表 todo 后续交由算法完成
         reasonService.findReasonKpisSnp(reasonId);
 

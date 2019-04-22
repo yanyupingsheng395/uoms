@@ -35,11 +35,13 @@ public class ReasonServiceImpl implements ReasonService {
     ReasonResultMapper reasonResultMapper;
 
 
-    public List<Map<String,Object>> getReasonList(int startRow,int endRow)
+    @Override
+    public List<Map<String,Object>> getReasonList(int startRow, int endRow)
     {
        return  reasonMapper.getReasonList(startRow,endRow);
     }
 
+    @Override
     public int getReasonTotalCount()
     {
         return  reasonMapper.getReasonTotalCount();

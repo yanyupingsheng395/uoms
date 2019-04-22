@@ -134,10 +134,11 @@ public class UserController extends BaseController {
     @ResponseBody
     public ResponseBo addUser(User user, Long[] roles) {
         try {
-            if (ON.equalsIgnoreCase(user.getStatus()))
+            if (ON.equalsIgnoreCase(user.getStatus())) {
                 user.setStatus(User.STATUS_VALID);
-            else
+            } else {
                 user.setStatus(User.STATUS_LOCK);
+            }
             this.userService.addUser(user, roles);
             return ResponseBo.ok("新增用户成功！");
         } catch (Exception e) {
@@ -152,10 +153,11 @@ public class UserController extends BaseController {
     @ResponseBody
     public ResponseBo updateUser(User user, Long[] rolesSelect) {
         try {
-            if (ON.equalsIgnoreCase(user.getStatus()))
+            if (ON.equalsIgnoreCase(user.getStatus())) {
                 user.setStatus(User.STATUS_VALID);
-            else
+            } else {
                 user.setStatus(User.STATUS_LOCK);
+            }
             this.userService.updateUser(user, rolesSelect);
             return ResponseBo.ok("修改用户成功！");
         } catch (Exception e) {

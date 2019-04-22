@@ -14,7 +14,7 @@ import com.github.pagehelper.PageInfo;
 public class BaseController {
 
 	protected Map<String, Object> getDataTable(PageInfo<?> pageInfo) {
-		Map<String, Object> rspData = new HashMap<>();
+		Map<String, Object> rspData = new HashMap<>(16);
 		rspData.put("rows", pageInfo.getList());
 		rspData.put("total", pageInfo.getTotal());
 		return rspData;

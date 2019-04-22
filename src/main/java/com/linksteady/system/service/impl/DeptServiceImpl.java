@@ -71,8 +71,9 @@ public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 	@Transactional
 	public void addDept(Dept dept) {
 		Long parentId = dept.getParentId();
-		if (parentId == null)
-			dept.setParentId(0L);
+		if (parentId == null) {
+            dept.setParentId(0L);
+        }
 		dept.setCreateTime(new Date());
 		this.save(dept);
 	}

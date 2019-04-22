@@ -128,8 +128,9 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     public void addMenu(Menu menu) {
         menu.setMenuId(menuMapper.getId());
         menu.setCreateTime(new Date());
-        if (menu.getParentId() == null)
+        if (menu.getParentId() == null) {
             menu.setParentId(0L);
+        }
         if (Menu.TYPE_BUTTON.equals(menu.getType())) {
             menu.setUrl(null);
             menu.setIcon(null);
@@ -181,8 +182,9 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     @Transactional
     public void updateMenu(Menu menu) {
         menu.setModifyTime(new Date());
-        if (menu.getParentId() == null)
+        if (menu.getParentId() == null) {
             menu.setParentId(0L);
+        }
         if (Menu.TYPE_BUTTON.equals(menu.getType())) {
             menu.setUrl(null);
             menu.setIcon(null);
