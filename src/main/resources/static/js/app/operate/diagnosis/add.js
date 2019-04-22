@@ -780,5 +780,27 @@ function reasonAdd() {
     var selectedNode = jm.get_selected_node();
     $("#reasonKpiCode").val(selectedNode.data.KPI_CODE);
     $("#reasonKpiName").val(selectedNode.data.KPI_NAME);
+    reasonAddCondition();
     $("#nodeReasonAddModal").modal('show');
+}
+
+// 原因探究：选择维度以及值
+function reasonAddCondition() {
+    var array = jm.get_selected_node().data.CONDITION;
+    if(array != undefined) {
+        $("#kpiNameDetail").html("").html(jm.get_selected_node().data.KPI_NAME);
+        var code = "";
+        $.each(array, function (k, v) {
+            code += "<tr><td style='text-align: left;'>" + v.dim_name + ":";
+            code += v.dim_value_display;
+            code += "<input name='dimValues' type='hidden' value='"+v.dim_values+"'>";
+            code += "<input name='dimKey' type='hidden' value='"+v.dim_code+"'>";
+            code += "</td></tr>";
+        });
+        if(code == "") {
+            $("#selectedTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
+        }else {
+            $("#selectedTable").html("").html(code);
+        }
+    }
 }
