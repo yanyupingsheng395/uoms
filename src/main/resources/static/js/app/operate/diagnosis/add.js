@@ -280,8 +280,6 @@ function getDimension() {
 
         $("#op5").html("").html(code);
         $("#op5").selectpicker('refresh');
-
-        getValueList($("#op5").find("option:selected").val());
     });
 }
 
@@ -319,7 +317,6 @@ function selectedCondition() {
         $("#op6").html("");
         $("#op6").selectpicker('refresh');
 
-        getValueList($("#op5").find("option:selected").val());
         conditionVal.push(val);
     }
 }
@@ -686,10 +683,10 @@ function removeConditionList(val, dom) {
 }
 
 function jsmind_refresh(map) {
-    var kpiCode1 = map["DISMANT_PART1_CODE"];
-    var kpiCode2 = map["DISMANT_PART2_CODE"];
-    var kpiName1 = map["DISMANT_PART1_NAME"];
-    var kpiName2 = map["DISMANT_PART2_NAME"];
+    var kpiCode1 = map["dismantPart1Code"];
+    var kpiCode2 = map["dismantPart2Code"];
+    var kpiName1 = map["dismantPart1Name"];
+    var kpiName2 = map["dismantPart2Name"];
 
     var levelId = getKpiLevelId();
     var nodeName1 = levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName1;
