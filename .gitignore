@@ -58,3 +58,4 @@ local.properties
 # TeXlipse plugin
 .texlipse
 /src/main/resources/config/mybatis-generator.xml
+/log/

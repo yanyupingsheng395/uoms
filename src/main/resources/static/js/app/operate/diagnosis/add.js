@@ -224,7 +224,7 @@ function modalBefore() {
     // 弹窗中获取当前指标
     var selectedNode = jm.get_selected_node();
     $("#currentNodeId").val(selectedNode.id);
-    $("#currentNode").val(jm.get_selected_node().data.KPI_NAME);
+    $("#currentNode").val(selectedNode.data.KPI_NAME);
 
     // 设置选中为空，初始化选择框
     $("input[name='op2']:checked").removeAttr("checked");
@@ -663,6 +663,10 @@ function removeConditionList(val, dom) {
         }
     });
 
+    if(conditionVal.length == 0) {
+        $("#dataTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
+    }
+
     $.get("/progress/getDiagDimList", null, function (r) {
         var code = "";
         $.each(r.data, function(k, v) {
@@ -678,7 +682,6 @@ function removeConditionList(val, dom) {
         });
         $("#op5").html("").html("<option value=''>请选择</option>" + code);
         $("#op5").selectpicker('refresh');
-        getValueList($("#op5").find("option:selected").val());
     });
 }
 
@@ -768,4 +771,14 @@ function nextStep(dom) {
 
 function deleteNode() {
     toastr.warning("演示环境，暂不支持删除节点！");
+}
+
+function reasonAdd() {
+    // 隐藏操作菜单
+    var e = document.getElementById("operateBtns");
+    e.style.display = "none";
+    var selectedNode = jm.get_selected_node();
+    $("#reasonKpiCode").val(selectedNode.data.KPI_CODE);
+    $("#reasonKpiName").val(selectedNode.data.KPI_NAME);
+    $("#nodeReasonAddModal").modal('show');
 }

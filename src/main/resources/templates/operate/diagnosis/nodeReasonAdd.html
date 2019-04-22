@@ -1,0 +1,83 @@
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="nodeReasonAddModal" id="nodeReasonAddModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="nodeDetailModalLabel">原因探究</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">当前指标：</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="reasonKpiName" class="form-control" disabled/>
+                                    <input type="hidden" id="reasonKpiCode" value="gmv"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">周期：</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="reasonPeriod" class="form-control" disabled/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">时间(起止)：</label>
+                                <div class="col-md-3">
+                                    <input type="text" id="reasonTimeBegin" class="form-control" disabled/>
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" id="reasonTimeEnd" class="form-control" disabled/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group" style="display:block;">
+                                        <label class="col-md-3 control-label">维度：</label>
+                                        <div class="col-md-6">
+                                            <select class="selectpicker form-control" id="reasonDimension"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group" style="display:block;">
+                                        <label class="col-md-3 control-label">值：</label>
+                                        <div class="col-md-6">
+                                            <select class="selectpicker form-control" id="reasonDesVal" multiple></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="addDimensionAndVal()"><i class="mdi mdi-plus-circle-outline"></i>&nbsp;增加条件</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-md-12"><h5>已选维度及值：</h5></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table text-left" id="selectedTable">
+                                    <tr><td><i class="mdi mdi-alert-circle-outline"></i>暂无数据！</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="text-center">
+                    <a class="btn btn-primary" type="button" id="submitAnalysis"><span class="mdi mdi-calculator"></span>提交分析</a>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="mdi mdi-close"></i>关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script data-th-src="@{/js/app/operate/diagnosis/reasonAdd.js}"></script>

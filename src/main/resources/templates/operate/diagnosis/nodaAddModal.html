@@ -1,0 +1,113 @@
+<!-- 条件model-->
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="nodeAddModalLabel" id="nodeAddModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="nodeAddModalLabel">新增节点</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="currentNode">当前指标：</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="currentNode" class="form-control" disabled value="销售额/GMV"/>
+                                    <input type="hidden" id="currentNodeId" value="-1"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">诊断方式：</label>
+                                <div class="col-md-6">
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="op2" value="A"><span>加法</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="op2" value="M"><span>乘法</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="op2" value="F"><span>无</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="plus_condition" style="display:none;">
+                                <label class="col-md-3 control-label">乘法公式：</label>
+                                <div class="col-md-6">
+                                    <select name="periodType" class="selectpicker form-control" id="op3"></select>
+                                </div>
+                            </div>
+
+                            <div id="add_condition" style="display: none;">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">维度：</label>
+                                    <div class="col-md-6">
+                                        <select class="selectpicker form-control" id="op4"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">值：</label>
+                                    <div class="col-md-6">
+                                        <select class="selectpicker form-control" id="op7" multiple data-max-options="5"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-9 control-label" style="color: #4c4c4c;font-weight: normal">
+                                        <i class="mdi mdi-alert-circle-outline"></i>说明：加法拆分，如果没选择维度值，则默认按份额最大的前5个维度值进行拆分；
+                                    </label>
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>增加条件：</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group" style="display:block;">
+                                        <label class="col-md-3 control-label">条件：</label>
+                                        <div class="col-md-6">
+                                            <select name="periodType" class="selectpicker form-control" id="op5"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group" style="display:block;">
+                                        <label class="col-md-3 control-label">值：</label>
+                                        <div class="col-md-6">
+                                            <select name="periodType" class="selectpicker form-control" id="op6" multiple></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="selectedCondition()"><i class="mdi mdi-plus-circle-outline"></i>&nbsp;增加条件</button>
+                                </div>
+                            </div>
+                        </form>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-md-12"><h5>已选条件：</h5></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table text-left" id="dataTable">
+                                    <tr><td><i class="mdi mdi-alert-circle-outline"></i>暂无数据！</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="addCondition()">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="resetTableData()">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
