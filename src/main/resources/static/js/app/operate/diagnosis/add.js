@@ -784,6 +784,17 @@ function reasonAdd() {
     $("#nodeReasonAddModal").modal('show');
 }
 
+function reasonAddBefore() {
+    var selectedNode = jm.get_selected_node();
+    $.get("/progress/checkReasonList", {kpiCode: selectedNode.data.KPI_CODE, kpiName: selectedNode.data.KPI_NAME}, function(r) {
+        if(!r.data) {
+            toastr.warning("当前指标暂不支持进行原因探究！");
+        }else {
+            reasonAdd();
+        }
+    });
+}
+
 // 原因探究：选择维度以及值
 function reasonAddCondition() {
     var array = jm.get_selected_node().data.CONDITION;
