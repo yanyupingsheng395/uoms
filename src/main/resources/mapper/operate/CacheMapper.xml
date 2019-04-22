@@ -26,12 +26,24 @@
         <result column="DISMANT_FORMULA" jdbcType="VARCHAR" property="dismantFormula" />
     </resultMap>
 
+    <resultMap id="KpiDismantMap" type="com.linksteady.operate.domain.KpiDismantInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
+        <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
+        <result column="DISMANT_PART1_CODE" jdbcType="VARCHAR" property="dismantPart1Code" />
+        <result column="DISMANT_PART1_NAME" jdbcType="VARCHAR" property="dismantPart1Name" />
+        <result column="DISMANT_PART2_CODE" jdbcType="VARCHAR" property="dismantPart2Code" />
+        <result column="DISMANT_PART2_NAME" jdbcType="VARCHAR" property="dismantPart2Name" />
+    </resultMap>
+
     <select id="getKpiList" resultMap="KpiConfigMap">
         SELECT T.KPI_CODE, T.KPI_NAME, T.DISMANT_FORMULA,T.DISMANT_FLAG,T.DIAG_FLAG,T.REASON_FLAG
         FROM UO_KPI_LIST_CONFIG T
     </select>
 
-    <select id="getDismantKpis" resultType="com.linksteady.operate.domain.KpiDismantInfo">
+    <select id="getDismantKpis" resultMap="KpiDismantMap">
         SELECT KPI_CODE,
                KPI_NAME,
                DISMANT_PART1_CODE,
