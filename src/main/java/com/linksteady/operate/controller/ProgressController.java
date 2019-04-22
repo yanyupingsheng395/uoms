@@ -5,6 +5,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.DiagHandleInfo;
 import com.linksteady.operate.domain.DiagResultInfo;
+import com.linksteady.operate.domain.KpiDismantInfo;
 import com.linksteady.operate.service.DiagHandleService;
 import com.linksteady.operate.service.ProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class ProgressController {
      */
     @GetMapping("/getKpi")
     public ResponseBo getKpi(@RequestParam("code") String code) {
-        Map<String, Object> data = KpiCacheManager.getInstance().getKpiDismant();
+        Map<String, KpiDismantInfo> data = KpiCacheManager.getInstance().getKpiDismant();
         return ResponseBo.okWithData(null, data.get(code));
     }
 
@@ -62,8 +63,8 @@ public class ProgressController {
 
     @GetMapping("/getDiagDimValueList")
     public ResponseBo getDiagDimValueList(@RequestParam("code") String code) {
-        Map<String,Object> result = KpiCacheManager.getInstance().getDiagDimValueList();
-        Map<String, Object> data = (Map)result.get(code);
+        Map<String,Map<String,String>> result = KpiCacheManager.getInstance().getDiagDimValueList();
+        Map<String, String> data = result.get(code);
         return ResponseBo.okWithData(null, data);
     }
 

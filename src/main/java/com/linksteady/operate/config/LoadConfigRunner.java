@@ -3,6 +3,8 @@ package com.linksteady.operate.config;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.CacheMapper;
+import com.linksteady.operate.domain.KpiDismantInfo;
+import com.linksteady.operate.domain.ReasonTemplateInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -25,7 +27,7 @@ public class LoadConfigRunner implements CommandLineRunner {
         Map<String,String>  codeNamePair = Maps.newLinkedHashMap();
         Map<String,String>  codeFomularPair = Maps.newLinkedHashMap();
 
-        Map<String,Object> kpidismant=Maps.newLinkedHashMap();
+        Map<String, KpiDismantInfo> kpidismant=Maps.newLinkedHashMap();
 
         for(Map<String,String> param:kpis)
         {
@@ -37,12 +39,13 @@ public class LoadConfigRunner implements CommandLineRunner {
 
                 //对于每一个kpi取获取其拆解信息
                 String kpiCode=param.get("KPI_CODE");
-                List<Map<String,String>>  dismantKpis=cacheMapper.getDismantKpis(kpiCode);
-                if(null!=dismantKpis&&dismantKpis.size()>0)
+                List<KpiDismantInfo>  dismantInfoList=cacheMapper.getDismantKpis(kpiCode);
+
+                for(KpiDismantInfo kpiDismantInfo:dismantInfoList)
                 {
-                    Map<String,String> temp=dismantKpis.get(0);
-                    kpidismant.put(kpiCode,temp);
+                    kpidismant.put(kpiCode,kpiDismantInfo);
                 }
+
             }
         }
 
@@ -50,7 +53,7 @@ public class LoadConfigRunner implements CommandLineRunner {
         List<Map<String,String>> diagDims=cacheMapper.getDiagDims();
 
         Map<String,String> DiagDimList=Maps.newLinkedHashMap();
-        Map<String,Object> diagDimValueList=Maps.newLinkedHashMap();
+        Map<String,Map<String,String>> diagDimValueList=Maps.newLinkedHashMap();
 
         String dimCode="";
         String valueType="";
@@ -84,7 +87,7 @@ public class LoadConfigRunner implements CommandLineRunner {
         List<Map<String,String>> reasonDims=cacheMapper.getReasonDims();
 
         Map<String,String> reasonDimList=Maps.newLinkedHashMap();
-        Map<String,Object> reasonDimValueList=Maps.newLinkedHashMap();
+        Map<String,Map<String,String>> reasonDimValueList=Maps.newLinkedHashMap();
 
         for(Map<String,String> reasonDim:reasonDims)
         {
@@ -113,33 +116,25 @@ public class LoadConfigRunner implements CommandLineRunner {
 
 
         //原因探究 相关指标 缓存
-        List<Map<String,String>> reasonRelateKpis=cacheMapper.getReasonRelateKpis();
+        List<ReasonTemplateInfo> reasonRelateKpis=cacheMapper.getReasonRelateKpis();
 
-        Map<String, Object> reaonRelateKpi= Maps.newHashMap();
-        Map<String,String> temp=null;
-        for(Map<String,String> kpi:reasonRelateKpis)
+        Map<String, ReasonTemplateInfo> reaonRelateKpi= Maps.newHashMap();
+        for(ReasonTemplateInfo kpi:reasonRelateKpis)
         {
-            temp=Maps.newHashMap();
-            temp.put("REASON_KPI_NAME",kpi.get("REASON_KPI_NAME"));
-            temp.put("TEMPLATE_CODE",kpi.get("TEMPLATE_CODE"));
-            temp.put("TEMPLATE_NAME",kpi.get("TEMPLATE_NAME"));
-            temp.put("REASON_KPI_ORDER",String.valueOf(kpi.get("REASON_KPI_ORDER")));
-            temp.put("TEMPLATE_ORDER",String.valueOf(kpi.get("TEMPLATE_ORDER")));
-
-            reaonRelateKpi.put(kpi.get("REASON_KPI_CODE"),temp);
+            reaonRelateKpi.put(kpi.getReasonKpiCode(),kpi);
         }
 
         KpiCacheManager.getInstance().setCacheMap(codeNamePair,"codeNamePair");
         KpiCacheManager.getInstance().setCacheMap(codeFomularPair,"codeFomularPair");
-        KpiCacheManager.getInstance().setCacheMapForObject(kpidismant,"kpidismant");
+        KpiCacheManager.getInstance().setCacheForKpiDismant(kpidismant);
         KpiCacheManager.getInstance().setCacheMap(DiagDimList,"diagDimList");
 
-        KpiCacheManager.getInstance().setCacheMapForObject(diagDimValueList,"diagDimValueList");
+        KpiCacheManager.getInstance().setCacheMapForCommonMmap(diagDimValueList,"diagDimValueList");
 
         KpiCacheManager.getInstance().setCacheMap(reasonDimList,"reaonDimList");
-        KpiCacheManager.getInstance().setCacheMapForObject(reasonDimValueList,"reasonDimValueList");
+        KpiCacheManager.getInstance().setCacheMapForCommonMmap(reasonDimValueList,"reasonDimValueList");
 
-        KpiCacheManager.getInstance().setCacheMapForObject(reaonRelateKpi,"reasonRelateKpiList");
+        KpiCacheManager.getInstance().setCacheForReasonTemplate(reaonRelateKpi);
 
 
     }

@@ -1,6 +1,8 @@
 package com.linksteady.operate.config;
 
 import com.google.common.collect.Maps;
+import com.linksteady.operate.domain.KpiDismantInfo;
+import com.linksteady.operate.domain.ReasonTemplateInfo;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,23 +22,23 @@ public class KpiCacheManager {
     //所有可被乘法拆解的指标CODE - 拆解公式 的键值对。key为指标编码，value为拆解公式。
     private static Map<String, String> codeFomularPair =Maps.newLinkedHashMap();  //kpi code-fomular对
 
-    //每个指标及其对应的乘法公式。 key为指标编码，value为一个map结构，此map中包括: DISMANT_PART1_CODE 第一个乘数对应的CODE，DISMANT_PART1_NAME第一个乘数对应名称;DISMANT_PART2_CODE 第二个乘数对应的CODE，DISMANT_PART2_NAME第二个乘数对应名称
-    private static Map<String, Object> kpidismant = Maps.newLinkedHashMap();  //每个指标 及其对应的乘法公式列表
+    //每个指标及其对应的乘法公式。 key为指标编码，KpiDismantInfo为其对应的拆解公式
+    private static Map<String, KpiDismantInfo> kpidismant = Maps.newLinkedHashMap();  //每个指标 及其对应的乘法公式列表
 
     //诊断用到维度列表 key为维度编码 value为维度名称
     private static Map<String, String> diagDimList = Maps.newLinkedHashMap();  //诊断 维度列表
 
     //诊断用到的维度值列表 key为维度编码 value为一个map 此map中key为维度值编码，value为维度值名称
-    private static Map<String, Object> diagDimValueList = Maps.newLinkedHashMap();  //诊断 维度及其值列表
+    private static Map<String, Map<String,String>> diagDimValueList = Maps.newLinkedHashMap();  //诊断 维度及其值列表
 
     //原因探究用到维度列表 key为维度编码 value为维度名称
     private static Map<String, String> reaonDimList = Maps.newLinkedHashMap();  //原因探究 维度列表
 
     //原因探究用到的维度值列表 key为维度编码 value为一个map 此map中key为维度值编码，value为维度值名称
-    private static Map<String, Object> reasonDimValueList = Maps.newLinkedHashMap();  //原因探究 维度及其值列表
+    private static Map<String, Map<String,String>> reasonDimValueList = Maps.newLinkedHashMap();  //原因探究 维度及其值列表
 
-    //探究的REASON_KPI_CODE - <REASON_KPI_NAME,REASON_ORDER_NO>
-    private static Map<String, Object> reasonRelateKpiList = Maps.newHashMap();  //原因探究 相关原因指标编码 及指标名称、排序号
+    //探究的REASON_KPI_CODE -  ReasonTemplateInfo(名称,排序号)
+    private static Map<String, ReasonTemplateInfo> reasonRelateKpiList = Maps.newHashMap();  //原因探究 相关原因指标编码 及指标名称、排序号
 
     public static KpiCacheManager getInstance() {
         if (null == kpiCacheManager) {
@@ -55,7 +57,7 @@ public class KpiCacheManager {
         return codeNamePair;
     }
 
-    // kpicode kpiname的对
+    // kpicode kpiname的对 (适用于value为String的情况)
     public void setCacheMap(Map<String,String> map,String type)
     {
         Set<String> set = map.keySet();
@@ -97,18 +99,12 @@ public class KpiCacheManager {
         }
     }
 
-    // kpicode kpiname的对
-    public void setCacheMapForObject(Map<String,Object> map,String type) {
+    // kpicode kpiname的对(适用于value类型为通用map)
+    public void setCacheMapForCommonMmap(Map<String,Map<String,String>> map,String type) {
         Set<String> set = map.keySet();
         Iterator<String> it = set.iterator();
 
-        if ("kpidismant".equals(type)) {
-            kpidismant.clear();
-            while (it.hasNext()) {
-                String key = it.next();
-                kpidismant.put(key, map.get(key));
-            }
-        }else if("diagDimValueList".equals(type)) {
+       if("diagDimValueList".equals(type)) {
             diagDimValueList.clear();
             while (it.hasNext()) {
                 String key = it.next();
@@ -120,17 +116,29 @@ public class KpiCacheManager {
                 String key = it.next();
                 reasonDimValueList.put(key, map.get(key));
             }
-        }else if("reasonRelateKpiList".equals(type)) {
-            reasonRelateKpiList.clear();
-            while (it.hasNext()) {
-                String key = it.next();
-                reasonRelateKpiList.put(key, map.get(key));
-            }
         }
 
     }
 
+    public void setCacheForKpiDismant(Map<String,KpiDismantInfo> map) {
+        Set<String> set = map.keySet();
+        Iterator<String> it = set.iterator();
+        kpidismant.clear();
+        while (it.hasNext()) {
+            String key = it.next();
+            kpidismant.put(key, map.get(key));
+        }
+    }
 
+    public void setCacheForReasonTemplate(Map<String,ReasonTemplateInfo> map) {
+        Set<String> set = map.keySet();
+        Iterator<String> it = set.iterator();
+        reasonRelateKpiList.clear();
+        while (it.hasNext()) {
+            String key = it.next();
+            reasonRelateKpiList.put(key, map.get(key));
+        }
+    }
 
     public Map<String,String> getCodeFomularPair()
     {
@@ -142,12 +150,12 @@ public class KpiCacheManager {
         return diagDimList;
     }
 
-    public Map<String,Object> getKpiDismant()
+    public Map<String,KpiDismantInfo> getKpiDismant()
     {
         return kpidismant;
     }
 
-    public Map<String,Object> getDiagDimValueList()
+    public Map<String,Map<String,String>> getDiagDimValueList()
     {
         return diagDimValueList;
     }
@@ -157,12 +165,12 @@ public class KpiCacheManager {
         return reaonDimList;
     }
 
-    public Map<String,Object> getReasonDimValueList()
+    public Map<String,Map<String,String>> getReasonDimValueList()
     {
         return reasonDimValueList;
     }
 
-    public Map<String, Object> getReasonRelateKpiList() {
+    public Map<String, ReasonTemplateInfo> getReasonRelateKpiList() {
         return reasonRelateKpiList;
     }
 
