@@ -59,15 +59,11 @@ public interface ReasonMapper {
 
     void saveRelateMatrix(List<ReasonRelateRecord> record);
 
-    List<Map<String,Object>> getReasonResultList(@Param("reasonId") String reasonId);
-
    int getReasonResultCount(@Param("reasonId") String reasonId,@Param("fcode") String fcode);
 
    void deleteReasonResult(@Param("reasonId") String reasonId,@Param("fcode") String fcode);
 
    void saveReasonResult(@Param("reasonId") String reasonId,@Param("fcode") String fcode,@Param("fname") String fname,@Param("formula") String formula,@Param("business") String business);
-
-
 
 
 }

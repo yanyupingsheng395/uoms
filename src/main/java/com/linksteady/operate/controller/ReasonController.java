@@ -1,10 +1,14 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.config.KpiCacheManager;
+import com.linksteady.operate.domain.ReasonRelMatrix;
+import com.linksteady.operate.domain.ReasonResult;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.vo.ReasonVO;
 import com.linksteady.system.domain.User;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -109,18 +114,6 @@ public class ReasonController  extends BaseController {
         return ResponseBo.ok(result);
     }
 
-//    /**
-//     * 根据模板CODE和reasonId获取到原因KPI的列表
-//     * @param reasonId 原因ID
-//     * @param   templateCode 模板CODE
-//     * @return ResponseBo对象
-//     */
-//    @RequestMapping("/getRelatedKpiList")
-//    public ResponseBo getRelatedKpiList(@RequestParam String reasonId,@RequestParam String templateCode) {
-//        List<Map<String,String>> result= reasonService.getRelatedKpiList(reasonId,templateCode);
-//        return ResponseBo.ok(result);
-//    }
-
     /**
      * 根据reasonId, 模板CODE获取到此模板下原因指标的快照信息
      * @param templateCode 模板编码
@@ -193,11 +186,11 @@ public class ReasonController  extends BaseController {
      */
     @RequestMapping("/getEffectForecast")
     public ResponseBo getEffectForecast(@RequestParam String reasonId, @RequestParam("code") String code) {
-        //todo 后端进行数据校验
 
-        List<String> data= Lists.newArrayList();
-        String fcode="";
-        for(String s:data)
+        List<String> data= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
+        Map<String,String> k=null;
+
+        for(String fcode:data)
         {
             //如果存在，先删除
             if(reasonService.getReasonResultCount(reasonId,fcode)>0)
@@ -205,11 +198,57 @@ public class ReasonController  extends BaseController {
                 reasonService.deleteReasonResult(reasonId,fcode);
             }
 
+            k=(Map<String,String>)KpiCacheManager.getInstance().getReasonRelateKpiList().get(fcode);
+            String reasonKpiName=k.get("REASON_KPI_NAME");
             //todo 进行回归分析
-            reasonService.saveReasonResult(reasonId,fcode,"产品","y=a*x+b","x每变动一份，则带动GMV提升b");
+            int a= RandomUtil.getIntRandom(1000,10000);
+            int b=RandomUtil.getIntRandom(10000,50000);
+
+            String formual="y="+a+"*x+"+b;
+            String busincess="【"+reasonKpiName+"】 每变动1份子，带动GMV提升"+a+"元";
+            reasonService.saveReasonResult(reasonId,fcode,reasonKpiName,formual,busincess);
         }
 
-        List<Map<String,Object>> result=reasonService.getReasonResultList(reasonId);
+        List<ReasonResult> result=reasonService.getReasonResultList(reasonId);
         return ResponseBo.okWithData("",result);
     }
+
+    /**
+     * 对指标进行校验
+     * @param
+     * @return ResponseBo对象
+     */
+    @RequestMapping("/validateRelateKpi")
+    public ResponseBo validateRelateKpi(@RequestParam String reasonId, @RequestParam("code") String code) {
+
+        List<String> data= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
+        List<String> validateResult=Lists.newArrayList();
+
+        ReasonRelMatrix reasonRelMatrix=null;
+        Double relateValue=0d;
+        String info="";
+
+        if(data.size()>1)
+        {
+            for(int i=0;i<data.size();i++)
+            {
+               for(int j=i+1;j<data.size();j++)
+               {
+                   //获取到交叉的先关系数
+                   reasonRelMatrix=reasonService.getReasonResultByCode(reasonId,data.get(i),data.get(j)).get(0);
+
+
+                   relateValue= reasonRelMatrix.getRelateValue();
+
+                   if(relateValue>=0.7)
+                   {
+                       info="因子【"+reasonRelMatrix.getfName()+"】和因子【"+reasonRelMatrix.getRfName()+"】相关度较高，不能同时选择";
+                       validateResult.add(info);
+                   }
+               }
+            }
+        }
+        return ResponseBo.okWithData("",validateResult);
+    }
 }
+

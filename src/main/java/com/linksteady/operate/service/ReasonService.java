@@ -1,4 +1,6 @@
 package com.linksteady.operate.service;
+import com.linksteady.operate.domain.ReasonRelMatrix;
+import com.linksteady.operate.domain.ReasonResult;
 import com.linksteady.operate.vo.ReasonVO;
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -36,13 +38,15 @@ public interface ReasonService {
 
      void deleteConcernKpi(String reasonId, String templateCode, String reasonKpiCode);
 
-     List<Map<String,Object>> getReasonResultList(String reasonId);
+     List<ReasonResult> getReasonResultList(String reasonId);
 
      int  getReasonResultCount(String reasonId,String fcode);
 
      void deleteReasonResult(String reasonId,String fcode);
 
      void saveReasonResult(String reasonId,String fcode,String fname,String formula,String business);
+
+     List<ReasonRelMatrix> getReasonResultByCode(String reasonId, String fcode, String rfcode);
 
 
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.ReasonResultMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.ReasonResult">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="REASON_ID" jdbcType="DECIMAL" property="reasonId" />
+    <result column="FCODE" jdbcType="VARCHAR" property="fcode" />
+    <result column="FNAME" jdbcType="VARCHAR" property="fname" />
+    <result column="FORMULA" jdbcType="VARCHAR" property="formula" />
+    <result column="BUSINESS" jdbcType="VARCHAR" property="business" />
+    <result column="F_ORDER_NO" jdbcType="DECIMAL" property="fOrderNo" />
+    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+  </resultMap>
+
+  <select id="getReasonResultList" resultMap="BaseResultMap">
+    SELECT REASON_ID,FCODE,FNAME,FORMULA,BUSINESS from UO_REASON_RESULT WHERE REASON_ID=#{reasonId} ORDER BY F_ORDER_NO ASC
+  </select>
+</mapper>

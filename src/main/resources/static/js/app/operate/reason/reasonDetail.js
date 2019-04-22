@@ -69,6 +69,9 @@ $(function () {
     //     })
     // });
 
+    // 因子表格
+    getMatrix();
+
     //关闭遮罩层
     lightyear.loading('hide');
 });
@@ -173,11 +176,9 @@ function processConcern(data,index) {
     });
 }
 
-var arr = null;
-// 因子表格
-getMatrix();
+var arr=null;
 function getMatrix() {
-    arr = new Array();
+     arr = new Array();
     $.get("/reasonMartix/getMartix", {reasonId: $("#reasonId").val()}, function (r) {
         var thead = "<thead><tr><th></th>";
         var head = "<tr><td></td>";
@@ -196,7 +197,7 @@ function getMatrix() {
                 }
                 var relate = v2.relateValue;
                 if(relate == "-1") {
-                    body += "<td></td>";
+                    body += "<td>-</td>";
                 }else {
                     body += "<td>" + relate + "</td>";
                 }
@@ -214,6 +215,19 @@ function getMatrix() {
 }
 
 function submitData() {
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": true,
+        "timeOut": 5000,
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+
+    //开启遮罩层
+    lightyear.loading('show');
+
     var tmp = new Array();
     $("#tableData").find("tr:eq(0)").find("th").find("input[type='checkbox']").each(function (k, v) {
         if($(this).is(':checked')) {
@@ -221,7 +235,70 @@ function submitData() {
         }
     });
     var code = tmp.join(",");
-    $.get("/reason/getEffectForecast", {reasonId: $("#reasonId").val(), code: code}, function (r){
-        console.log(r);
+
+    if(tmp.length==0)
+    {
+        //提示必须选择
+        toastr.warning("至少有一个因子被选择");
+        //关闭遮罩层
+        lightyear.loading('hide');
+        return;
+    }
+
+    //提交后端进行校验
+    $.get("/reason/validateRelateKpi", {reasonId: $("#reasonId").val(), code: code}, function (resp){
+        if (resp.code == 200) {
+            var data=resp.data;
+
+            if(data.length==0)  //校验通过 提交后端进行计算
+            {
+                $.get("/reason/getEffectForecast", {reasonId: $("#reasonId").val(), code: code}, function (resp){
+                    if(resp.code==200)
+                    {
+                        //关闭遮罩层
+                        lightyear.loading('hide');
+                        //弹框显示表格
+                        $("#reasonResult_modal").modal("show");
+                        createResultTableHeader('reasonResultTable');
+                        console.log(resp.data);
+                        $('#reasonResultTable').bootstrapTable('load', resp.data);
+                    }
+                });
+
+            }else  //校验不通过，进行提示
+            {
+                //显示提示信息
+                var alert_val='';
+                $.each(data,function (index,value) {
+                    alert_val+='</br>'+value+"!";
+                })
+
+                //关闭遮罩层
+                lightyear.loading('hide');
+                toastr.warning(alert_val);
+            }
+        }
     });
+}
+
+function createResultTableHeader(tableName)
+{
+    $("#"+tableName).bootstrapTable({
+        dataType: "json",
+        showHeader:true,
+        columns: [{
+            field: 'fname',
+            title: '因子名称',
+            align: 'left'
+        },{
+            field: 'formula',
+            title: '回归公式',
+            align: 'left'
+        }, {
+            field: 'business',
+            title: '说明',
+            align: 'left'
+        }
+        ]
+    })
 }

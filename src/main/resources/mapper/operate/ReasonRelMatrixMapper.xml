@@ -23,4 +23,9 @@
       select F_CODE, F_NAME, RF_CODE, RF_NAME, RELATE_VALUE, F_ORDERNO,RF_ORDER_NO
       from UO_REASON_REL_MATRIX where F_CODE = #{code} and REASON_ID = #{reasonId} order by RF_ORDER_NO asc
   </select>
+
+  <select id="getReasonRelateInfoByCode" resultMap="BaseResultMap">
+    SELECT REASON_ID,F_CODE,F_NAME,RF_CODE,RF_NAME,F_ORDERNO,RF_ORDER_NO,RELATE_VALUE from UO_REASON_REL_MATRIX WHERE REASON_ID=#{reasonId}
+                                                                                                                  AND F_CODE=#{fcode} AND RF_CODE=#{rfcode}
+  </select>
 </mapper>

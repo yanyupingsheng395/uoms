@@ -239,10 +239,6 @@
         m
     </insert>
 
-    <select id="getReasonResultList" resultType="map">
-        SELECT REASON_ID,FCODE,FNAME,FORMULA,BUSINESS from UO_REASON_RESULT WHERE REASON_ID=#{reasonId} ORDER BY F_ORDER_NO ASC
-    </select>
-
     <select id="getReasonResultCount" resultType="int">
         SELECT COUNT(*) from UO_REASON_RESULT WHERE REASON_ID=#{reasonId} AND FCODE=#{fcode}
     </select>
@@ -252,7 +248,7 @@
     </delete>
 
     <insert id="saveReasonResult">
-        INSERT INTO UO_REASON_RESULT(REASON_ID,FCODE,FNAME,FORMULA,BUSINESS,INSERT_DT)
+        INSERT INTO UO_REASON_RESULT(REASON_ID,FCODE,FNAME,FORMULA,BUSINESS,CREATE_DT)
         VALUES (#{reasonId,jdbcType=INTEGER},#{fcode},#{fname},#{formula},#{business},SYSDATE)
     </insert>
 

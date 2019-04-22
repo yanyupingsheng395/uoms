@@ -4,14 +4,18 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.dao.ReasonMapper;
+import com.linksteady.operate.dao.ReasonRelMatrixMapper;
+import com.linksteady.operate.dao.ReasonResultMapper;
 import com.linksteady.operate.domain.Reason;
+import com.linksteady.operate.domain.ReasonRelMatrix;
 import com.linksteady.operate.domain.ReasonRelateRecord;
+import com.linksteady.operate.domain.ReasonResult;
+import com.linksteady.operate.service.ReasonMatrixService;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.vo.ReasonVO;
 import org.assertj.core.util.Lists;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -29,7 +33,10 @@ public class ReasonServiceImpl implements ReasonService {
     DozerBeanMapper dozerBeanMapper;
 
     @Autowired
-    RedisTemplate redisTemplate;
+    ReasonRelMatrixMapper reasonRelMatrixMapper;
+
+    @Autowired
+    ReasonResultMapper reasonResultMapper;
 
 
     public List<Map<String,Object>> getReasonList(int startRow,int endRow)
@@ -215,9 +222,9 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-    public List<Map<String,Object>> getReasonResultList(String reasonId)
+    public List<ReasonResult> getReasonResultList(String reasonId)
     {
-        return reasonMapper.getReasonResultList(reasonId);
+        return reasonResultMapper.getReasonResultList(reasonId);
     }
 
     @Override
@@ -233,6 +240,11 @@ public class ReasonServiceImpl implements ReasonService {
     @Override
     public void saveReasonResult(String reasonId, String fcode, String fname, String formula, String business) {
           reasonMapper.saveReasonResult(reasonId,fcode,fname,formula,business);
+    }
+
+    @Override
+    public List<ReasonRelMatrix> getReasonResultByCode(String reasonId, String fcode, String rfcode){
+        return reasonRelMatrixMapper.getReasonRelateInfoByCode(reasonId,fcode,rfcode);
     }
 
 

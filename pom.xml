@@ -220,4 +220,15 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://repo.rdc.aliyun.com/repository/43551-release-kNuTqk/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://repo.rdc.aliyun.com/repository/43551-snapshot-SJS8sR/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
