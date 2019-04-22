@@ -170,7 +170,7 @@ public class KpiCacheManager {
         return diagDimValueList;
     }
 
-    public static Map<String, String> getReasonKpiList() {
+    public Map<String, String> getReasonKpiList() {
         return reasonKpiList;
     }
 

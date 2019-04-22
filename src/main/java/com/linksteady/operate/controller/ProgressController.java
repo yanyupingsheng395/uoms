@@ -133,4 +133,15 @@ public class ProgressController {
             return ResponseBo.error();
         }
     }
+
+    // 原因探究之前判断该KPI是否在list中
+    @GetMapping("/checkReasonList")
+    public ResponseBo checkReasonList(@RequestParam("kpiCode") String kpiCode, @RequestParam("kpiName") String kpiName) {
+        Map<String, String> result = KpiCacheManager.getInstance().getReasonKpiList();
+        if(null != result.get(kpiCode) && kpiName.equals(result.get(kpiCode))) {
+            return ResponseBo.okWithData(null, true);
+        }else {
+            return ResponseBo.okWithData(null, false);
+        }
+    }
 }
