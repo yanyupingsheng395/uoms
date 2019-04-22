@@ -1,5 +1,8 @@
 package com.linksteady.operate.dao;
 
+import com.linksteady.operate.config.KpiCacheManager;
+import com.linksteady.operate.domain.KpiDismantInfo;
+import com.linksteady.operate.domain.ReasonTemplateInfo;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
@@ -9,7 +12,8 @@ public interface CacheMapper {
 
     List<Map<String,String>> getDiagKpis();
 
-    List<Map<String,String>> getDismantKpis(@Param("kpiCode") String kpiCode);
+    //一个指标 可能会有多个拆解公式
+    List<KpiDismantInfo> getDismantKpis(@Param("kpiCode") String kpiCode);
 
     List<Map<String,String>> getDiagDims();
 
@@ -19,5 +23,5 @@ public interface CacheMapper {
 
     List<Map<String,Object>> getDimValuesDirect(@Param("dimCode") String dimCode);
 
-    List<Map<String,String>> getReasonRelateKpis();
+    List<ReasonTemplateInfo> getReasonRelateKpis();
 }

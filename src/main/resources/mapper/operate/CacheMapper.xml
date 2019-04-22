@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.CacheMapper">
+
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.ReasonTemplateInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="TEMPLATE_CODE" jdbcType="VARCHAR" property="templateCode" />
+        <result column="TEMPLATE_NAME" jdbcType="VARCHAR" property="templateName" />
+        <result column="REASON_KPI_CODE" jdbcType="VARCHAR" property="reasonKpiCode" />
+        <result column="REASON_KPI_NAME" jdbcType="VARCHAR" property="reasonKpiName" />
+        <result column="REASON_KPI_ORDER" jdbcType="DECIMAL" property="reasonKpiOrder" />
+        <result column="TEMPLATE_ORDER" jdbcType="DECIMAL" property="templateOrder" />
+    </resultMap>
+
     <select id="getDiagKpis" resultType="map">
         SELECT T.KPI_CODE, T.KPI_NAME, T.DISMANT_FORMULA,T.DISMANT_FLAG
         FROM UO_KPI_LIST_CONFIG T
         WHERE T.DIAG_FLAG = 'Y'
     </select>
 
-    <select id="getDismantKpis" resultType="map">
+    <select id="getDismantKpis" resultType="com.linksteady.operate.domain.KpiDismantInfo">
         SELECT KPI_CODE,
                KPI_NAME,
                DISMANT_PART1_CODE,
@@ -38,7 +51,7 @@
         SELECT VALUE_CODE,VALUE_DESC FROM  UO_DIM_VALUES_CONFIG WHERE DIM_CODE=#{dimCode} ORDER BY ORDER_NO DESC
     </select>
 
-    <select id="getReasonRelateKpis" resultType="map">
+    <select id="getReasonRelateKpis" resultMap="BaseResultMap">
         SELECT TEMPLATE_CODE,
                TEMPLATE_NAME,
                REASON_KPI_CODE,

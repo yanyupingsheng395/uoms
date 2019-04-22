@@ -6,11 +6,7 @@ import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.dao.ReasonMapper;
 import com.linksteady.operate.dao.ReasonRelMatrixMapper;
 import com.linksteady.operate.dao.ReasonResultMapper;
-import com.linksteady.operate.domain.Reason;
-import com.linksteady.operate.domain.ReasonRelMatrix;
-import com.linksteady.operate.domain.ReasonRelateRecord;
-import com.linksteady.operate.domain.ReasonResult;
-import com.linksteady.operate.service.ReasonMatrixService;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.vo.ReasonVO;
 import org.assertj.core.util.Lists;
@@ -101,28 +97,28 @@ public class ReasonServiceImpl implements ReasonService {
         //获取到阀值大于0.5的原因指标的指标编码
         List<String> keyCodeList=reasonMapper.getKeyReasonKpis(reasonId);
 
-        Map<String, Object> reasonRelateKpis=KpiCacheManager.getInstance().getReasonRelateKpiList();
+        Map<String, ReasonTemplateInfo> reasonRelateKpis=KpiCacheManager.getInstance().getReasonRelateKpiList();
 
         ReasonRelateRecord reasonRelateRecord=null;
-        Map<String,String> fkpi=null;
-        Map<String,String> rfkpi=null;
+        ReasonTemplateInfo fkpi=null;
+        ReasonTemplateInfo rfkpi=null;
         List<ReasonRelateRecord> records= Lists.newArrayList();
 
         for(int i=0;i<keyCodeList.size();i++)
         {
             for(int j=0;j<keyCodeList.size();j++)
             {
-                fkpi=(Map<String,String>)reasonRelateKpis.get(keyCodeList.get(i));
-                rfkpi=(Map<String,String>)reasonRelateKpis.get(keyCodeList.get(j));
+                fkpi=reasonRelateKpis.get(keyCodeList.get(i));
+                rfkpi=reasonRelateKpis.get(keyCodeList.get(j));
 
                 reasonRelateRecord=new ReasonRelateRecord();
                 reasonRelateRecord.setReasonId(reasonId);
                 reasonRelateRecord.setFcode(keyCodeList.get(i));
-                reasonRelateRecord.setFname(fkpi.get("REASON_KPI_NAME"));
-                reasonRelateRecord.setForderNo(fkpi.get("REASON_KPI_ORDER"));
+                reasonRelateRecord.setFname(fkpi.getReasonKpiName());
+                reasonRelateRecord.setForderNo(fkpi.getReasonKpiOrder().toString());
                 reasonRelateRecord.setRfcode(keyCodeList.get(j));
-                reasonRelateRecord.setRfname(rfkpi.get("REASON_KPI_NAME"));
-                reasonRelateRecord.setRforderNo(rfkpi.get("REASON_KPI_ORDER"));
+                reasonRelateRecord.setRfname(rfkpi.getReasonKpiName());
+                reasonRelateRecord.setRforderNo(rfkpi.getReasonKpiOrder().toString());
 
                 if(j>i)
                 {
