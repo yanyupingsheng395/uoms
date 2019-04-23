@@ -4,6 +4,7 @@
     <div class="col-md-12">
         <form class="form-horizontal" action="#">
             <div class="form-group">
+                <div class="col-md-1"></div>
                 <label class="col-md-1 control-label">时间：</label>
                 <div class="col-md-2" id="startDate">
                     <input class="form-control js-datepicker m-b-10" type="text" id="dateItem1" name="dateItem" value="2019-01"/>
@@ -35,6 +36,7 @@
     </div>
 </div>
 <div class="row">
+    <div class="col-md-1"></div>
     <div class="col-md-3">
         <div class="card bg-light">
             <div class="card-body clearfix">
@@ -55,30 +57,6 @@
             </div>
         </div>
     </div>
-    <!--<div class="col-md-3">-->
-        <!--<div class="card bg-light">-->
-            <!--<div class="card-body clearfix">-->
-                <!--<div class="row">-->
-                    <!--<div class="col-md-6 text-center">-->
-                        <!--<p class="h5 m-b-0">贡献比例</p>-->
-                        <!--<p class="h3 m-t-0">46%</p>-->
-                    <!--</div>-->
-                    <!--<div class="col-md-6 text-center">-->
-                        <!--<p class="h5 m-b-0">贡献比例</p>-->
-                        <!--<p class="h3 m-t-0">54%</p>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div class="row">-->
-                    <!--<div class="col-xs-6 text-left">-->
-                        <!--<p class="h6"><span><i class="mdi mdi-account mdi-18px"></i></span>GMV老客</p>-->
-                    <!--</div>-->
-                    <!--<div class="col-xs-6 text-right">-->
-                        <!--<p class="h6"><span><i class="mdi mdi-account-check mdi-18px"></i></span>GMV新客</p>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
     <div class="col-md-3">
         <div class="card bg-light">
             <div class="card-body clearfix">
@@ -128,10 +106,10 @@
         <div class="text-center">
             <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
                 <div class="form-group">
-                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate1" name="startDate1" data-date-format="yyyy-mm" value="2018-01"/>
+                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate1" name="startDate1" value="2019-05-01"/>
                 </div>
                 <div class="form-group">
-                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate1" name="endDate1" data-date-format="yyyy-mm" value="2018-08"/>
+                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate1" name="endDate1" value="2019-05-15"/>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-primary m-b-10" type="button" onclick="search()"><i class="mdi mdi-magnify"></i>查询</button>
@@ -142,28 +120,35 @@
     </div>
 </div>
 
-<h5>交易用户数</h5>
+<h5>交易用户数&平均客单价</h5>
 <hr style="margin-top: 5px;margin-bottom: 5px;"/>
 <div class="row">
     <div class="col-md-12">
         <div class="text-center">
             <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
                 <div class="form-group">
-                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate2" name="startDate1" data-date-format="yyyy-mm" value="2018-01"/>
+                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate2" name="startDate1" data-date-format="yyyy-mm-dd" value="2019-05-01"/>
                 </div>
                 <div class="form-group">
-                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate2" name="endDate1" data-date-format="yyyy-mm" value="2018-08"/>
+                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate2" name="endDate1" data-date-format="yyyy-mm-dd" value="2019-05-15"/>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-primary m-b-10" type="button" onclick="search()"><i class="mdi mdi-magnify"></i>查询</button>
                 </div>
             </form>
         </div>
-        <div id="chart2" style="width: 100%; height: 400px;"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <div id="chart2" style="width: 100%; height: 400px;"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="chart3" style="width: 100%; height: 400px;"></div>
+            </div>
+        </div>
     </div>
 </div>
 
-<h5>平均客单价&nbsp;<i class="mdi mdi-cursor-pointer" style="color:#33cabb;"></i></h5>
+<h5>平均订单价<i class="mdi mdi-cursor-pointer" style="color:#33cabb;"></i>&平均订单数</h5>
 <hr style="margin-top: 5px;margin-bottom: 5px;"/>
 <div class="row">
     <div class="col-md-12">
@@ -180,6 +165,13 @@
                 </div>
             </form>
         </div>
-        <div id="chart3" style="width: 100%; height: 400px;"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <div id="chart4" style="width: 100%; height: 400px;"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="chart5" style="width: 100%; height: 400px;"></div>
+            </div>
+        </div>
     </div>
 </div>

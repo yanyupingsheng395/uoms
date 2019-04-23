@@ -174,11 +174,18 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p class="h5 modal-title">平均件单价&平均件连带率</p>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <div style="width:100%;height: 350px;" id="chart8"></div>
+                        <div style="width:100%;height: 300px;" id="chart80"></div>
+                    </div>
+                </div>
+                <hr/>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div style="width:100%;height: 300px;" id="chart81"></div>
                     </div>
                 </div>
             </div>
@@ -227,8 +234,8 @@
 <script>
     init_date("dateItem1", "yyyy-mm", 1,2,1);
     init_date("dateItem2", "yyyy-mm", 1,2,1);
-    init_date("startDate_1", "yyyy-mm-dd", 1,2,1);
-    init_date("endDate_1", "yyyy-mm-dd", 1,2,1);
+    init_date("startDate_1", "yyyy-mm", 1,2,1);
+    init_date("endDate_1", "yyyy-mm", 1,2,1);
     init_date("startDate_2", "yyyy-mm", 1,2,1);
     init_date("endDate_2", "yyyy-mm", 1,2,1);
 
@@ -237,8 +244,8 @@
     init_date("startDate_4", "yyyy-mm", 1,2,1);
     init_date("endDate_4", "yyyy-mm", 1,2,1);
 
-    init_date("startDate1", "yyyy-mm", 1,2,1);
-    init_date("endDate1", "yyyy-mm", 1,2,1);
+    init_date("startDate1", "yyyy-mm-dd", 0,2,0);
+    init_date("endDate1", "yyyy-mm-dd", 0,2,0);
     init_date("startDate2", "yyyy-mm", 1,2,1);
     init_date("endDate2", "yyyy-mm", 1,2,1);
     init_date("startDate3", "yyyy-mm", 1,2,1);
