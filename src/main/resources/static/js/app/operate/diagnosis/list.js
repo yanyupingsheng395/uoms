@@ -47,19 +47,13 @@ $(function () {
     };
     $('#diagTable').bootstrapTable(settings);
 });
-toastr.options = {
-    "closeButton": true,
-    "progressBar": true,
-    "positionClass": "toast-top-center",
-    "preventDuplicates": true,
-    "timeOut": 1500,
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-};
+
 function deleteConfirm(id) {
     $.confirm({
         title: '提示：',
         content: '确认删除这条记录？',
+        type: 'orange',
+        theme: 'bootstrap',
         buttons: {
             confirm: {
                 text: '确认',

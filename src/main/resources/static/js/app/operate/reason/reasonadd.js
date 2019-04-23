@@ -43,15 +43,6 @@ $(function () {
  */
 function submit_analysis(){
     var alert_str="";
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-center",
-        "preventDuplicates": true,
-        "timeOut": 5000,
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    }
 
     //进行校验
     var zb=$("#zhibiao").val();
@@ -125,6 +116,7 @@ function submit_analysis(){
                     title: '成功',
                     content: "您提交的编号为【"+r.msg+"】的分析已在进行中，在列表页待完成后通过【查看】功能查看详情！",
                     type: 'green',
+                    theme: 'bootstrap',
                     buttons: {
                         omg: {
                             text: '确定',
@@ -203,15 +195,6 @@ function getValueList(dimCode) {
  */
 function saveDim() {
     var alert_str='';
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-center",
-        "preventDuplicates": true,
-        "timeOut": 5000,
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    }
 
     //不能不空
     var selectDim=$("#dimselectlist").find("option:selected").val();

@@ -215,16 +215,6 @@ function getMatrix() {
 }
 
 function submitData() {
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-center",
-        "preventDuplicates": true,
-        "timeOut": 5000,
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    }
-
     //开启遮罩层
     lightyear.loading('show');
 
@@ -239,7 +229,7 @@ function submitData() {
     if(tmp.length==0)
     {
         //提示必须选择
-        toastr.warning("至少有一个因子被选择");
+        toastr.warning('至少有一个因子被选择！');
         //关闭遮罩层
         lightyear.loading('hide');
         return;

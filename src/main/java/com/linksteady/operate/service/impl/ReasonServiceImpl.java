@@ -76,7 +76,8 @@ public class ReasonServiceImpl implements ReasonService {
         for(String dim:dims)
         {
             String[] temp=dim.split("\\^");
-            reasonMapper.saveReasonDetail(primaryKey,temp[0],temp[1],temp[2]);  //主键 维度key 维度值 维度显示
+            //主键 维度key 维度值 维度显示
+            reasonMapper.saveReasonDetail(primaryKey,temp[0],temp[1],temp[2]);
         }
     }
 

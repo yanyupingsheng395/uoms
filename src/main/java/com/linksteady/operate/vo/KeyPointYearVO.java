@@ -5,31 +5,35 @@ import lombok.ToString;
 
 import java.io.Serializable;
 
+/**
+ * 关键指标年度执行情况
+ * @author  huang
+ */
 @Data
 @ToString
 public class KeyPointYearVO implements Serializable {
 
-    int yearId;
+    Integer yearId;
 
-    double gmvActual;
-    double gmvTarget;
-    double gmvCmpRate;
-    double getGmvCmpTotalRate;
-    double timeRate;
+    Double gmvActual;
+    Double gmvTarget;
+    Double gmvCmpRate;
+    Double getGmvCmpTotalRate;
+    Double timeRate;
 
-    double gmvPreYear;
-    double gmvPreYearDiff;
-    double gmvPreYearRate;
+    Double gmvPreYear;
+    Double gmvPreYearDiff;
+    Double gmvPreYearRate;
 
-    double costYear;
-    double incomeYear;
-    double profitRate;
-    double profitAlertRate;
+    Double costYear;
+    Double incomeYear;
+    Double profitRate;
+    Double profitAlertRate;
     String  costHealthFlag;
-    double volatility;
-    int reachNum;
-    int unreachNum;
-    int ongoingNum;
-    int nostartNum;
+    Double volatility;
+    Integer reachNum;
+    Integer unreachNum;
+    Integer ongoingNum;
+    Integer nostartNum;
 
 }

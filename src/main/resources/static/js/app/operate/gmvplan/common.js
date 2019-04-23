@@ -1,13 +1,4 @@
 var flag = false;
-toastr.options = {
-    "closeButton": true,
-    "progressBar": true,
-    "positionClass": "toast-top-center",
-    "preventDuplicates": true,
-    "timeOut": 1500,
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-};
 
 function getYearHistory() {
     $('#historyDataTable').bootstrapTable({
@@ -142,8 +133,10 @@ function totalGmv() {
 function reback() {
     if(step != 0) {
         $.confirm({
-            title: '提示：',
+            title: '确认',
             content: '确认离开当前页？',
+            theme: 'bootstrap',
+            type: 'green',
             buttons: {
                 confirm: {
                     text: '确认',
@@ -164,8 +157,10 @@ function reback() {
 
 function reback_edit() {
     $.confirm({
-        title: '提示：',
+        title: '确认',
         content: '确认离开当前页？',
+        type: 'green',
+        theme: 'bootstrap',
         buttons: {
             confirm: {
                 text: '确认',
@@ -187,10 +182,10 @@ function updateDetail() {
     });
     var condition = $("input[name='e']:checked").val();
     if(totalFlag && (condition == undefined)) {
-        toastr.warning("请选择数据变更策略！");
+        toastr.warning('请选择数据变更策略！');
     }else {
         $.post("/gmvplan/updateDetail", {year: year, gmv: JSON.stringify(json), method: $("input[name='e']:checked").val()}, function(r) {
-            toastr.success("数据保存成功！");
+            toastr.success('数据保存成功！');
             $("#totalFooter").attr("style", "display:none;");
             totalFlag = false;
             $("input[name='e']").removeAttr("checked");

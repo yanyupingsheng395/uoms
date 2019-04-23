@@ -11,37 +11,56 @@ import java.util.Set;
 
 /**
  * 对一些频繁使用的值进行缓存,在系统启动的时候在LoadConfigRunner中进行初始化，目前未实现更新机制，后续考虑增加定时类更新
+ * @author huang
  */
 public class KpiCacheManager {
 
     private static KpiCacheManager kpiCacheManager;
 
-    //所有诊断用到的指标CODE，名称的键-值对。
-    private static Map<String, String> diagKpiList = Maps.newLinkedHashMap();  //kpi code-name对
+    /**
+     * 所有诊断用到的指标CODE，名称的键-值对。 kpi code-name对
+     */
+    private static Map<String, String> diagKpiList = Maps.newLinkedHashMap();
 
-    //所有可被乘法拆解的指标CODE - 拆解公式 的键值对。key为指标编码，value为拆解公式。
-    private static Map<String, String> DiagcodeFomularList =Maps.newLinkedHashMap();  //kpi code-fomular对
+    /**
+     * /所有可被乘法拆解的指标CODE - 拆解公式 的键值对。key为指标编码，value为拆解公式。kpi code-fomular对
+     */
+    private static Map<String, String> DiagcodeFomularList =Maps.newLinkedHashMap();
 
-    //每个指标及其对应的乘法公式。 key为指标编码，KpiDismantInfo为其对应的拆解公式
-    private static Map<String, KpiDismantInfo> kpidismant = Maps.newLinkedHashMap();  //每个指标 及其对应的乘法公式列表
+    /**
+     *每个指标及其对应的乘法公式。 key为指标编码，KpiDismantInfo为其对应的拆解公式。每个指标 及其对应的乘法公式列表
+     */
+    private static Map<String, KpiDismantInfo> kpidismant = Maps.newLinkedHashMap();
 
-    //诊断用到维度列表 key为维度编码 value为维度名称
-    private static Map<String, String> diagDimList = Maps.newLinkedHashMap();  //诊断 维度列表
+    /**
+     *诊断用到维度列表 key为维度编码 value为维度名称
+     */
+    private static Map<String, String> diagDimList = Maps.newLinkedHashMap();
 
-    //诊断用到的维度值列表 key为维度编码 value为一个map 此map中key为维度值编码，value为维度值名称
-    private static Map<String, Map<String,String>> diagDimValueList = Maps.newLinkedHashMap();  //诊断 维度及其值列表
+    /**
+     *诊断用到的维度值列表 key为维度编码 value为一个map 此map中key为维度值编码，value为维度值名称
+     */
+    private static Map<String, Map<String,String>> diagDimValueList = Maps.newLinkedHashMap();
 
-    //原因探究用到的 指标CODE,名称的键值对
-    private static Map<String, String> reasonKpiList = Maps.newLinkedHashMap();  // reason kpi code-name对
+    /**
+     *原因探究用到的 指标CODE,名称的键值对
+     */
+    private static Map<String, String> reasonKpiList = Maps.newLinkedHashMap();
 
-    //原因探究用到维度列表 key为维度编码 value为维度名称
-    private static Map<String, String> reaonDimList = Maps.newLinkedHashMap();  //原因探究 维度列表
+    /**
+     *原因探究用到维度列表 key为维度编码 value为维度名称
+     */
+    private static Map<String, String> reaonDimList = Maps.newLinkedHashMap();
 
-    //原因探究用到的维度值列表 key为维度编码 value为一个map 此map中key为维度值编码，value为维度值名称
-    private static Map<String, Map<String,String>> reasonDimValueList = Maps.newLinkedHashMap();  //原因探究 维度及其值列表
+    /**
+     *原因探究用到的维度值列表 key为维度编码 value为一个map 此map中key为维度值编码，value为维度值名称
+     */
+    private static Map<String, Map<String,String>> reasonDimValueList = Maps.newLinkedHashMap();
 
-    //探究的REASON_KPI_CODE -  ReasonTemplateInfo(名称,排序号)
-    private static Map<String, ReasonTemplateInfo> reasonRelateKpiList = Maps.newHashMap();  //原因探究 相关原因指标编码 及指标名称、排序号
+    /**
+     *探究的REASON_KPI_CODE -  ReasonTemplateInfo(名称,排序号)
+     */
+    private static Map<String, ReasonTemplateInfo> reasonRelateKpiList = Maps.newHashMap();
 
     public static KpiCacheManager getInstance() {
         if (null == kpiCacheManager) {
@@ -60,13 +79,18 @@ public class KpiCacheManager {
         return diagKpiList;
     }
 
-    // kpicode kpiname的对 (适用于value为String的情况)
+    /**
+     *  kpicode kpiname的对 (适用于value为String的情况)
+     * @param map
+     * @param type
+     */
     public void setCacheMap(Map<String,String> map,String type)
     {
         Set<String> set = map.keySet();
         Iterator<String> it = set.iterator();
 
-        if("diagKpiList".equals(type))  //诊断kpi的键值对
+        //诊断kpi的键值对
+        if("diagKpiList".equals(type))
         {
             //首先清空
             diagKpiList.clear();
@@ -110,7 +134,11 @@ public class KpiCacheManager {
         }
     }
 
-    // kpicode kpiname的对(适用于value类型为通用map)
+    /**
+     * kpicode kpiname的对(适用于value类型为通用map)
+     * @param map
+     * @param type
+     */
     public void setCacheMapForCommonMmap(Map<String,Map<String,String>> map,String type) {
         Set<String> set = map.keySet();
         Iterator<String> it = set.iterator();
@@ -187,5 +215,4 @@ public class KpiCacheManager {
     public Map<String, ReasonTemplateInfo> getReasonRelateKpiList() {
         return reasonRelateKpiList;
     }
-
 }

@@ -30,8 +30,11 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.time.Duration;
 
+/**
+ * 系统类
+ * @author Unknown
+ */
 @Configuration
-
 public class RedisConfig extends CachingConfigurerSupport {
 
     @Value("${spring.redis.host}")
@@ -65,7 +68,8 @@ public class RedisConfig extends CachingConfigurerSupport {
         jedisPoolConfig.setMaxIdle(maxIdle);
         jedisPoolConfig.setMaxWaitMillis(maxWaitMillis);
         if (StringUtils.isNotBlank(password)) {
-            return new JedisPool(jedisPoolConfig, host, port, timeout, password,1); //数据库使用分片1
+            //业务数据库使用分片1 后续改到配置文件中
+            return new JedisPool(jedisPoolConfig, host, port, timeout, password,1);
         } else {
             return new JedisPool(jedisPoolConfig, host, port, timeout,null,1);
         }
@@ -81,7 +85,8 @@ public class RedisConfig extends CachingConfigurerSupport {
         redisStandaloneConfiguration.setHostName(host);
         redisStandaloneConfiguration.setPort(port);
         redisStandaloneConfiguration.setPassword(RedisPassword.of(password));
-        redisStandaloneConfiguration.setDatabase(1);  //业务数据存储到分片1中
+        //业务数据存储到分片1中 后续改到配置文件中
+        redisStandaloneConfiguration.setDatabase(1);
 
         JedisClientConfiguration.JedisClientConfigurationBuilder jedisClientConfiguration = JedisClientConfiguration.builder();
         jedisClientConfiguration.connectTimeout(Duration.ofMillis(timeout));
@@ -108,7 +113,11 @@ public class RedisConfig extends CachingConfigurerSupport {
         return template;
     }
 
-    //缓存管理器
+    /**
+     * 缓存管理器
+     * @param redisConnectionFactory
+     * @return
+     */
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager

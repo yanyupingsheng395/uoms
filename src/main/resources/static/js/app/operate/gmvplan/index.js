@@ -1,12 +1,4 @@
-toastr.options = {
-    "closeButton": true,
-    "progressBar": true,
-    "positionClass": "toast-top-center",
-    "preventDuplicates": true,
-    "timeOut": 1500,
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-};
+
 $(function () {
     var settings = {
         url: "/gmvplan/list",
@@ -75,6 +67,8 @@ function executeData(id){
     $.confirm({
         title: '提示：',
         content: '确定要执行此运营目标?执行状态的运营目标将会滚动计算，不允许再删除！',
+        type: 'orange',
+        theme: 'bootstrap',
         buttons: {
             confirm: {
                 text: '确认',
@@ -104,6 +98,8 @@ function deleteData(year){
     $.confirm({
         title: '提示：',
         content: '确认删除该记录？',
+        type: 'orange',
+        theme: 'bootstrap',
         buttons: {
             confirm: {
                 text: '确认',
@@ -111,9 +107,9 @@ function deleteData(year){
                 action: function(){
                     $.post("/gmvplan/deleteData", {year: year},function (r) {
                         if(r.code == 200) {
-                            toastr.success("删除成功！");
+                            toastr.success('删除成功!');
                         }else {
-                            toastr.error("删除失败！");
+                            toastr.error('删除失败!');
                         }
                         setTimeout(function () {
                             $('#gmvPlanTable').bootstrapTable('refresh');

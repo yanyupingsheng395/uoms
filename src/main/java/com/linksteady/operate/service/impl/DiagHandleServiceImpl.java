@@ -60,8 +60,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         DiagResultInfo result=null;
 
         List<String> periodList=null;
-        //获取周期内的每个明细单位
-        if("M".equals(diagHandleInfo.getPeriodType()))  //按月
+        //获取周期内的每个明细单位 //按月
+        if("M".equals(diagHandleInfo.getPeriodType()))
         {
             periodList= DateUtil.getMonthBetween(diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
         }else  //按天
@@ -69,14 +69,17 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             periodList=DateUtil.getEveryday(diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
         }
 
-        if("M".equals(handleType)) //乘法
+        //乘法
+        if("M".equals(handleType))
         {
              result=processMultiple(diagHandleInfo,periodList);
-        }else if("A".equals(handleType))  //加法
+        }else if("A".equals(handleType))
         {
+             //加法
              result=processAdd(diagHandleInfo,periodList);
-        }else if("F".equals(handleType))  //过滤
+        }else if("F".equals(handleType))
         {
+            //过滤
             result=processFilter(diagHandleInfo,periodList);
         }
 
@@ -91,8 +94,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         result.setKpiCode(diagHandleInfo.getKpiCode());
         result.setKpiName(KpiCacheManager.getInstance().getDiagKpiList().get(diagHandleInfo.getKpiCode()));
 
-        //增加条件信息
-        result.setWhereinfo(diagHandleInfo.getWhereinfo()); //todo 考虑对map重构，仅返回必要信息，减少数据传输量
+        //增加条件信息 todo 考虑对map重构，仅返回必要信息，减少数据传输量
+        result.setWhereinfo(diagHandleInfo.getWhereinfo());
 
         //result信息持久化到redis
         //saveResultToRedis(result);
@@ -122,8 +125,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         String part2Code=(String)kpiDismant.get("DISMANT_PART2_CODE");
         String part2Name=(String)kpiDismant.get("DISMANT_PART2_NAME");
 
-        diagMultResultInfo.setxData(periodList);
-        diagMultResultInfo.setxName("D".equals(diagHandleInfo.getPeriodType())?"天":"月份");
+        diagMultResultInfo.setXData(periodList);
+        diagMultResultInfo.setXName("D".equals(diagHandleInfo.getPeriodType())?"天":"月份");
 
         //获取三个指标的折线图
         diagMultResultInfo.setFirYName(kpiName+"(元)");

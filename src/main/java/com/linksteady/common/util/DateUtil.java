@@ -24,7 +24,8 @@ public class DateUtil {
 
     public static List<String> getMonthBetween(String minDate, String maxDate){
         ArrayList<String> result = new ArrayList<String>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");//格式化为年月
+        //格式化为年月
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
 
         Calendar min = Calendar.getInstance();
         Calendar max = Calendar.getInstance();

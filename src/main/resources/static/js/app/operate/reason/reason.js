@@ -4,7 +4,6 @@ $(function () {
         method: 'post',
         cache: false,
         pagination: true,
-     //   striped: true,
         sidePagination: "server",
         pageNumber: 1,            //初始化加载第一页，默认第一页
         pageSize: 10,            //每页的记录行数（*）
@@ -77,22 +76,15 @@ function view(reasonId){
 
 function del(reasonId) {
 
-    toastr.options = {
-        "progressBar": true,
-        "positionClass": "toast-top-center",
-        "preventDuplicates": true,
-        "timeOut": 5000,
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    }
-
     //遮罩层打开
     lightyear.loading('show');
 
     //进行删除提示
         $.confirm({
-            title: '提示：',
+            title: '确认',
             content: '是否删除数据？',
+            theme: 'bootstrap',
+            type: 'orange',
             buttons: {
                 confirm: {
                     text: '确认',
@@ -102,7 +94,7 @@ function del(reasonId) {
                                     if (resp.code === 200){
                                         lightyear.loading('hide');
                                         //提示成功
-                                        toastr.success("删除成功！");
+                                        toastr.success('删除成功!');
                                         //刷新表格
                                         //todo 如果在后面某个页上删除数据后，刷新后还停在当前页
                                         //var pageNum=$('#reasonTable').bootstrapTable('getOptions').pageNumber;
@@ -112,7 +104,10 @@ function del(reasonId) {
                     }
                 },
                 cancel: {
-                    text: '取消'
+                    text: '取消',
+                    action: function () {
+                        lightyear.loading('hide');
+                    }
                 }
             }
         });
@@ -125,7 +120,7 @@ function updatedata(reasonId)
         if (resp.code === 200){
             lightyear.loading('hide');
             //提示成功
-            toastr.success("更新成功！");
+            toastr.success('更新成功!');
             //刷新表格
             $('#reasonTable').bootstrapTable('refresh');
         }

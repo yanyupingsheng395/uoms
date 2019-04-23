@@ -6,14 +6,7 @@
 // 流程图对象
 var jm = null;
 var diagId = 0;
-toastr.options = {
-    "progressBar": true,
-    "positionClass": "toast-top-center",
-    "preventDuplicates": true,
-    "timeOut": 1500,
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-};
+
 init_date_begin("beginDt", "endDt","yyyy-mm", 1,2,1);
 init_date_end("beginDt", "endDt","yyyy-mm", 1,2,1);
 
@@ -104,7 +97,7 @@ function addCondition() {
     var operateType = $("input[name='op2']:checked").val();
     if(operateType == "A") { // 加法
         if($("#op4").find("option:selected").val() == "") {
-            toastr.warning("请选择维度！");
+            toastr.warning('请选择维度！');
         }else {
             condition0();
             // 隐藏模态框
@@ -113,9 +106,9 @@ function addCondition() {
     }else if(operateType == "M") { // 乘法
         if($("#op3").find("option:selected").val() == null) {
             if($("#op3").find("option").length == 0) {
-                toastr.warning("该指标无可再拆分的乘法公式，请选择别的拆分方式！");
+                toastr.warning('该指标无可再拆分的乘法公式，请选择别的拆分方式！');
             }else {
-                toastr.warning("请选择拆分公式！");
+                toastr.warning('请选择拆分公式！');
             }
         } else {
             condition1();
@@ -124,7 +117,7 @@ function addCondition() {
     }else if(operateType == "F") { // 仅过滤
         condition2();
     }else{
-        toastr.warning("请选择诊断方式！");
+        toastr.warning('请选择诊断方式！');
     }
 }
 
@@ -288,7 +281,7 @@ var conditionVal = new Array();
 // 增加条件
 function selectedCondition() {
     if($("#op5").find("option:selected").val() == "" || $("#op6").find("option:selected").val() == "") {
-        toastr.warning("未选择条件或值！");
+        toastr.warning('未选择条件或值！');
     }else {
         var arr = $("#op6").selectpicker('val');
         var condition = $("#op5").find("option:selected").text();
@@ -431,7 +424,7 @@ function saveNode(nodeid) {
         dataType : 'json',
         success: function (r) {
             if(r.code != 200) {
-                toastr.error(r.msg);
+                toastr.success(r.msg);
             }
             lightyear.loading("hide");
         }
@@ -524,7 +517,7 @@ function condition2() {
     var levelId = getKpiLevelId();
     var nodeName = levelId + " <i class='mdi mdi-filter'></i> " + $("#currentNode").val();
     if(conditionVal.length == 0) {
-        toastr.warning("请选择过滤条件！");
+        toastr.warning('请选择过滤条件！');
     }else {
         createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME, false);
         $("#nodeAddModal").modal('hide');
@@ -608,7 +601,7 @@ function saveRedisHandleInfo(nodeName, levelId, kpiCode, kpiName) {
 function saveDiagHandleInfo(handleInfo, operateType) {
     $.post("/progress/saveDiagHandleInfo", {diagHandleInfo: JSON.stringify(handleInfo)}, function (r) {
         if(r.code == 500) {
-            toastr.error("存储redis发生错误！");
+            toastr.error('存储redis发生错误！');
         }else {
             if(operateType == "A") {
                 var levelId = handleInfo.kpiLevelId;
@@ -762,12 +755,17 @@ function nextStep(dom) {
         }
     }else {
         $("#diagName").parent().addClass("has-error");
-        toastr.warning("请输入诊断名称！");
+        toastr.warning('请输入诊断名称！');
     }
 }
 
 function deleteNode() {
-    toastr.warning("演示环境，暂不支持删除节点！");
+    $.alert({
+        title: '提示!',
+        content: '演示环境，暂不支持删除节点！',
+        theme: 'bootstrap'
+    });
+
 }
 
 function reasonAdd() {
@@ -785,7 +783,7 @@ function reasonAddBefore() {
     var selectedNode = jm.get_selected_node();
     $.get("/progress/checkReasonList", {kpiCode: selectedNode.data.KPI_CODE, kpiName: selectedNode.data.KPI_NAME}, function(r) {
         if(!r.data) {
-            toastr.warning("当前指标暂不支持进行原因探究！");
+            toastr.warning('当前指标暂不支持进行原因探究！');
         }else {
             reasonAdd();
         }

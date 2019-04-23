@@ -11,24 +11,24 @@ import java.io.Serializable;
 @Data
 @ToString
 public class KeyPointMonthVO  implements Serializable {
-    int monthId;
+    Integer monthId;
 
-    double gmvActual;
-    double gmvTarget;
-    double gmvCmpRate;
-    double getGmvCmpTotalRate;
-    double timeRate;
-    double gmvLastMonth;
-    double gmvLastMonthDiff;
-    double gmvLastMonthRate;
-    double gmvPreMonth;
-    double gmvPreMonthDiff;
-    double gmvPreMonthRate;
+    Double gmvActual;
+    Double gmvTarget;
+    Double gmvCmpRate;
+    Double getGmvCmpTotalRate;
+    Double timeRate;
+    Double gmvLastMonth;
+    Double gmvLastMonthDiff;
+    Double gmvLastMonthRate;
+    Double gmvPreMonth;
+    Double gmvPreMonthDiff;
+    Double gmvPreMonthRate;
 
-    double costMonth;
-    double incomeMonth;
-    double profitRate;
-    double profitAlertRate;
+    Double costMonth;
+    Double incomeMonth;
+    Double profitRate;
+    Double profitAlertRate;
     String  costHealthFlag;
 
 }

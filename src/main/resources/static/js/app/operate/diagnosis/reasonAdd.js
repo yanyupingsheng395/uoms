@@ -60,6 +60,7 @@ function submit_analysis(){
                     title: '成功',
                     content: "您提交的编号为【"+r.msg+"】的分析已在进行中，在列表页待完成后通过【查看】功能查看详情！",
                     type: 'green',
+                    theme: 'bootstrap',
                     buttons: {
                         omg: {
                             text: '确定',

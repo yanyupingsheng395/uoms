@@ -1,5 +1,25 @@
 $(document).ready(function () {
     menu_tree();
+
+    //消息提示组件
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": true,
+        "rtl": false,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": 300,
+        "hideDuration": 1000,
+        "timeOut": 5000,
+        "extendedTimeOut": 1000,
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
 });
 
 // 菜单点击效果
@@ -136,13 +156,3 @@ function init_date(id, format, startView, maxViewMode, minViewMode) {
         minViewMode: minViewMode
     });
 }
-
-toastr.options = {
-    "closeButton": true,
-    "progressBar": true,
-    "positionClass": "toast-top-center",
-    "preventDuplicates": true,
-    "timeOut": 1500,
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-};

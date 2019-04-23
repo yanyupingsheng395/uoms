@@ -72,16 +72,7 @@
 // }
 //
 // function del(reasonId) {
-//
-//     toastr.options = {
-//         "progressBar": true,
-//         "positionClass": "toast-top-center",
-//         "preventDuplicates": true,
-//         "timeOut": 5000,
-//         "showMethod": "fadeIn",
-//         "hideMethod": "fadeOut"
-//     }
-//
+
 //     //遮罩层打开
 //     lightyear.loading('show');
 //
@@ -98,7 +89,6 @@
 //                                     if (resp.code === 200){
 //                                         lightyear.loading('hide');
 //                                         //提示成功
-//                                         toastr.success("删除成功！");
 //                                         //刷新表格
 //                                         //todo 如果在后面某个页上删除数据后，刷新后还停在当前页
 //                                         //var pageNum=$('#reasonTable').bootstrapTable('getOptions').pageNumber;
@@ -121,7 +111,6 @@
 //         if (resp.code === 200){
 //             lightyear.loading('hide');
 //             //提示成功
-//             toastr.success("更新成功！");
 //             //刷新表格
 //             $('#reasonTable').bootstrapTable('refresh');
 //         }

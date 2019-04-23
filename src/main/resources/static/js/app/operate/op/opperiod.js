@@ -117,14 +117,6 @@ function del(reasonId) {
             btnClass: 'btn-primary'
         }
     });
-    // toastr.options = {
-    //     "progressBar": true,
-    //     "positionClass": "toast-top-center",
-    //     "preventDuplicates": true,
-    //     "timeOut": 5000,
-    //     "showMethod": "fadeIn",
-    //     "hideMethod": "fadeOut"
-    // }
 
     //遮罩层打开
     //lightyear.loading('show');
@@ -142,7 +134,6 @@ function del(reasonId) {
     //                                 if (resp.code === 200){
     //                                     lightyear.loading('hide');
     //                                     //提示成功
-    //                                     toastr.success("删除成功！");
     //                                     //刷新表格
     //                                     $('#reasonTable').bootstrapTable('refresh');
     //                                 }
@@ -200,15 +191,6 @@ function add() {
 function savePeriod()
 {
     var alert_str="";
-    toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-top-center",
-        "preventDuplicates": true,
-        "timeOut": 5000,
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    }
 
     //验证
     var startDt= $('#startDt').val();
@@ -238,8 +220,10 @@ function savePeriod()
 
     //提示是否要保存
         $.confirm({
-            title: '提示：',
+            title: '确认',
             content: '确定要保存数据？',
+            theme: 'bootstrap',
+            type: 'orange',
             buttons: {
                 confirm: {
                     text: '确认',
@@ -249,7 +233,7 @@ function savePeriod()
                                     if (resp.code === 200){
                                         //提示成功
                                         $('#add_modal').modal('hide');
-
+                                        toastr.success("保存成功!");
                                         $('#periodTable').bootstrapTable('refresh');
                                     }
                                 })
