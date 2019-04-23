@@ -58,7 +58,25 @@
                                     <div class="col-md-12">
                                         <h5>同期群分析留存率变化</h5>
                                         <hr style="margin-top:5px; margin-bottom: 5px;"/>
-                                        <ul class="nav nav-tabs" id="tabs2">
+                                        <form class="form-inline pull-left" action="" method="post" onsubmit="return false;">
+                                            <div class="form-group">
+                                                <input class="form-control js-datepicker m-b-10" type="text" id="startDate_1" name="startDate" data-date-format="yyyy-mm-dd" value="2018-01"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <input class="form-control js-datepicker m-b-10" type="text" id="endDate_1" name="endDate" data-date-format="yyyy-mm-dd" value="2018-08"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-primary m-b-10" type="button" onclick="createData1()"><i class="mdi mdi-magnify"></i>查询</button>
+                                            </div>
+                                        </form>
+                                        <div class="pull-right">
+                                            <div class="btn-group">
+                                                <button class="btn btn-secondary">自然月</button>
+                                                <button class="btn btn-default">间隔月</button>
+                                                <button class="btn btn-default">自然周</button>
+                                            </div>
+                                        </div>
+                                        <ul class="nav nav-tabs" style="clear: both;" id="tabs2">
                                             <li class="active"> <a data-toggle="tab" href="#tab3" aria-expanded="true">留存率</a> </li>
                                             <li> <a data-toggle="tab" href="#tab4"> 留存用户数</a> </li>
                                             <li> <a data-toggle="tab" href="#tab4">流失率</a> </li>
@@ -66,17 +84,17 @@
                                         </ul>
                                         <div class="tab-content">
                                             <div class="tab-pane fade active in" id="tab3">
-                                                <form class="form-inline" action="" method="post" onsubmit="return false;">
-                                                    <div class="form-group">
-                                                        <input class="form-control js-datepicker m-b-10" type="text" id="startDate_1" name="startDate" data-date-format="yyyy-mm-dd" value="2018-01"/>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <input class="form-control js-datepicker m-b-10" type="text" id="endDate_1" name="endDate" data-date-format="yyyy-mm-dd" value="2018-08"/>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <button class="btn btn-primary m-b-10" type="button" onclick="createData1()"><i class="mdi mdi-magnify"></i>查询</button>
-                                                    </div>
-                                                </form>
+                                                <!--<form class="form-inline" action="" method="post" onsubmit="return false;">-->
+                                                    <!--<div class="form-group">-->
+                                                        <!--<input class="form-control js-datepicker m-b-10" type="text" id="startDate_1" name="startDate" data-date-format="yyyy-mm-dd" value="2018-01"/>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="form-group">-->
+                                                        <!--<input class="form-control js-datepicker m-b-10" type="text" id="endDate_1" name="endDate" data-date-format="yyyy-mm-dd" value="2018-08"/>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="form-group">-->
+                                                        <!--<button class="btn btn-primary m-b-10" type="button" onclick="createData1()"><i class="mdi mdi-magnify"></i>查询</button>-->
+                                                    <!--</div>-->
+                                                <!--</form>-->
                                                 <table class="table table-hover" id="dataTable1"
                                                        style="word-break: break-all; word-wrap: break-word;"></table>
                                             </div>
