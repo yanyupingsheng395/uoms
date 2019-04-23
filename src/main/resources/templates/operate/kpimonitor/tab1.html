@@ -4,18 +4,27 @@
     <div class="col-md-12">
         <form class="form-horizontal" action="#">
             <div class="form-group">
-                <div class="col-md-4"></div>
-                <label class="col-md-1 control-label" for="dateItem">时间：</label>
+                <label class="col-md-1 control-label">时间：</label>
                 <div class="col-md-2" id="startDate">
-                    <input class="form-control js-datepicker m-b-10" type="text" id="dateItem" name="dateItem" value="2019-04"/>
+                    <input class="form-control js-datepicker m-b-10" type="text" id="dateItem1" name="dateItem" value="2019-01"/>
                 </div>
-
+                <div class="col-md-2" id="endDate">
+                    <input class="form-control js-datepicker m-b-10" type="text" id="dateItem2" name="dateItem" value="2019-04"/>
+                </div>
                 <label class="col-md-1 control-label" for="source">来源：</label>
                 <div class="col-md-2">
                     <select name="" id="source" class="selectpicker form-control">
-                        <option value="0">所有</option>
-                        <option value="1">门店1</option>
-                        <option value="2">门店2</option>
+                        <option value="">所有</option>
+                        <optgroup label="线上">
+                            <option>天猫</option>
+                            <option>京东</option>
+                            <option>当当</option>
+                        </optgroup>
+                        <optgroup label="线下">
+                            <option>望京门店</option>
+                            <option>朝阳门店</option>
+                            <option>丰台门店</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -46,30 +55,30 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-light">
-            <div class="card-body clearfix">
-                <div class="row">
-                    <div class="col-md-6 text-center">
-                        <p class="h5 m-b-0">贡献比例</p>
-                        <p class="h3 m-t-0">46%</p>
-                    </div>
-                    <div class="col-md-6 text-center">
-                        <p class="h5 m-b-0">贡献比例</p>
-                        <p class="h3 m-t-0">54%</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-6 text-left">
-                        <p class="h6"><span><i class="mdi mdi-account mdi-18px"></i></span>GMV老客</p>
-                    </div>
-                    <div class="col-xs-6 text-right">
-                        <p class="h6"><span><i class="mdi mdi-account-check mdi-18px"></i></span>GMV新客</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!--<div class="col-md-3">-->
+        <!--<div class="card bg-light">-->
+            <!--<div class="card-body clearfix">-->
+                <!--<div class="row">-->
+                    <!--<div class="col-md-6 text-center">-->
+                        <!--<p class="h5 m-b-0">贡献比例</p>-->
+                        <!--<p class="h3 m-t-0">46%</p>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-6 text-center">-->
+                        <!--<p class="h5 m-b-0">贡献比例</p>-->
+                        <!--<p class="h3 m-t-0">54%</p>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="row">-->
+                    <!--<div class="col-xs-6 text-left">-->
+                        <!--<p class="h6"><span><i class="mdi mdi-account mdi-18px"></i></span>GMV老客</p>-->
+                    <!--</div>-->
+                    <!--<div class="col-xs-6 text-right">-->
+                        <!--<p class="h6"><span><i class="mdi mdi-account-check mdi-18px"></i></span>GMV新客</p>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
     <div class="col-md-3">
         <div class="card bg-light">
             <div class="card-body clearfix">

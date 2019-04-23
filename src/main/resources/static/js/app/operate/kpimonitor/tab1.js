@@ -31,11 +31,13 @@ var option1 = {
         textStyle: {
             color: '#90979c',
         },
-        "data": ['新客比例', '老客比例', 'GMV']
+        "data": ['首购GMV', '复购GMV']
 
     },
     "calculable": true,
     "xAxis": [{
+        name: "月份",
+        boundaryGap: false,
         "type": "category",
         "axisLine": {
             lineStyle: {
@@ -59,28 +61,6 @@ var option1 = {
     }],
     "yAxis": [{
         "type": "value",
-        name: "占比（%）",
-        "splitLine": {
-            "show": false
-        },
-        "axisLine": {
-            lineStyle: {
-                color: '#90979c'
-            }
-        },
-        "axisTick": {
-            "show": false
-        },
-        "axisLabel": {
-            "interval": 0,
-
-        },
-        "splitArea": {
-            "show": false
-        },
-
-    }, {
-        "type": "value",
         name: "GMV值（元）",
         "splitLine": {
             "show": false
@@ -103,69 +83,18 @@ var option1 = {
 
     }],
     "series": [{
-        "name": "新客比例",
-        "type": "bar",
-        "stack": "总量",
-        yAxisIndex:0,
-        "barMaxWidth": 35,
-        "barGap": "10%",
-        "itemStyle": {
-            "normal": {
-                "label": {
-                    "show": true,
-                    "textStyle": {
-                        "color": "#fff"
-                    },
-                    "position": "insideTop",
-                    formatter: function(p) {
-                        return p.value > 0 ? (p.value) : '';
-                    }
-                }
-            }
-        },
-        "data": getMonthRandom(0, 100),
-    },
-
-        {
-            "name": "老客比例",
-            "type": "bar",
-            "stack": "总量",
-            yAxisIndex:0,
-            "itemStyle": {
-                "normal": {
-                    "barBorderRadius": 0,
-                    "label": {
-                        "show": true,
-                        "position": "top",
-                        formatter: function(p) {
-                            return p.value > 0 ? (p.value) : '';
-                        }
-                    }
-                }
-            },
-            "data": getMonthRandom(0, 100)
-        }, {
-            "name": "GMV",
-            "type": "line",
-            "stack": "GMV",
-            yAxisIndex:1,
-            symbolSize:10,
-            symbol:'circle',
-            "itemStyle": {
-                "normal": {
-                    "barBorderRadius": 0,
-                    "label": {
-                        "show": true,
-                        "position": "top",
-                        formatter: function(p) {
-                            return p.value > 0 ? (p.value) : '';
-                        }
-                    }
-                }
-            },
-            "data": getMonthRandom(1000, 2000)
-        },
-    ]
+        name: "首购GMV",
+        type: "line",
+        stack: "总量",
+        areaStyle: {normal: {}},
+        data: getMonthRandom(1000, 2000),
+    }, {
+        name: "复购GMV",
+        type: "line",
+        areaStyle: {normal: {}},
+        stack: "总量",
+        data: getMonthRandom(1000, 2000)
+    }]
 };
 
 function getRandom (m,n){
