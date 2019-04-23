@@ -2,6 +2,7 @@ package com.linksteady.operate.domain;
 
 import com.alibaba.fastjson.JSONArray;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
  * @author  huang
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class DiagAddResultInfo extends DiagResultInfo{
 
     /**
