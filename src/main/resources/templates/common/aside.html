@@ -5,40 +5,74 @@
         <a href="#"><img data-th-src="@{/images/logo.jpg}" title="" alt="linksteady" /></a>
     </div>
     <div class="lyear-layout-sidebar-scroll">
-        <nav class="sidebar-main">
-            <ul class="nav nav-drawer">
-                <li class="nav-item"> <a href="/page/index"><i class="mdi mdi-home"></i> 首页</a> </li>
-                <li class="nav-item nav-item-has-subnav">
-                    <a href="javascript:void(0)"><i class="mdi mdi-palette"></i>概览</a>
-                    <ul class="nav nav-subnav">
-                        <li> <a href="/page/stateJudge">用户概览</a> </li>
-                        <li> <a href="/page/retention">留存分析</a> </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="/page/gmvplan"><i class="mdi mdi-collage"></i>目标定制与分解</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/page/coreindicators"><i class="mdi mdi-webhook"></i>核心指标概况</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/page/diagnosis/list"><i class="mdi mdi-beaker"></i>用户运营诊断</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/reason/gotoIndex"><i class="mdi mdi-fingerprint"></i>原因探究</a>
-                </li>
-
-                <li class="nav-item nav-item-has-subnav">
-                    <a href="javascript:void(0)"><i class="mdi mdi-recycle"></i>用户运营</a>
-                    <ul class="nav nav-subnav">
-                        <li> <a href="/page/kpimonitor">运营指标监控</a> </li>
-                        <li> <a href="/lifecycle/catlist">品类运营</a> </li>
-                        <li> <a href="/op/day">每日运营</a> </li>
-                        <li> <a href="/op/period">周期运营</a> </li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a class="h5" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            <i class="mdi mdi-stethoscope  mdi-18px"></i>&nbsp;营销诊断系统
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <nav class="sidebar-main">
+                            <ul class="nav nav-drawer">
+                                <!--<li class="nav-item"> <a href="/page/index"><i class="mdi mdi-home"></i> 首页</a> </li>-->
+                                <li class="nav-item nav-item-has-subnav">
+                                    <a href="javascript:void(0)"><i class="mdi mdi-palette"></i>概览</a>
+                                    <ul class="nav nav-subnav">
+                                        <li> <a href="/page/stateJudge">用户概览</a> </li>
+                                        <li> <a href="/page/retention">留存分析</a> </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/page/gmvplan"><i class="mdi mdi-collage"></i>目标定制与分解</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/page/coreindicators"><i class="mdi mdi-webhook"></i>核心指标监控</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/page/diagnosis/list"><i class="mdi mdi-beaker"></i>发现关键问题</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/reason/gotoIndex"><i class="mdi mdi-fingerprint"></i>挖掘主要原因</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                    <h4 class="panel-title">
+                        <a class="collapsed h5" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <i class="mdi mdi-dip-switch  mdi-18px"></i>&nbsp;运营系统
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                    <div class="panel-body">
+                        <nav class="sidebar-main">
+                            <ul class="nav nav-drawer">
+                                <li class="nav-item">
+                                    <a href="/page/kpimonitor"><i class="mdi mdi-access-point"></i>运营指标监控</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/lifecycle/catlist"><i class="mdi mdi-lan"></i>品类运营</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/op/day"><i class="mdi mdi-apps"></i>每日运营</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/op/period"><i class="mdi mdi-debug-step-over"></i>周期运营</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </aside>
 <!--End 左侧导航-->

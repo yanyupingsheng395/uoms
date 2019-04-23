@@ -6,8 +6,11 @@ $(document).ready(function () {
 function menu_tree() {
     var urlStr = location.href;
     var flag = false;
-    $(".sidebar-main ul li a").each(function() {
+    $(".sidebar-main:eq(1) ul li a").each(function() {
         if ((urlStr + '/').indexOf($(this).attr('href')) > -1&&$(this).attr('href')!='') {
+            $("#collapseTwo").addClass("in");
+            $("#collapseOne").removeClass("in");
+
             flag = true;
             localStorage.setItem("menuUrl", urlStr);
             $(this).parent("li").addClass("active");
@@ -21,11 +24,12 @@ function menu_tree() {
 
     // 非url菜单
     if(!flag) {
-        urlStr = localStorage.getItem("menuUrl");
-        $(".sidebar-main ul li a").each(function() {
+        $(".sidebar-main:eq(0) ul li a").each(function() {
             if ((urlStr + '/').indexOf($(this).attr('href')) > -1&&$(this).attr('href')!='') {
+                $("#collapseOne").addClass("in");
+                $("#collapseTwo").removeClass("in");
+
                 flag = true;
-                // menuUrl = urlStr;
                 localStorage.setItem("menuUrl", urlStr);
                 $(this).parent("li").addClass("active");
                 $(this).parent("li").parents("li").addClass("open").addClass("active");
@@ -35,6 +39,24 @@ function menu_tree() {
                 return;
             }
         });
+        if(!flag) {
+            urlStr = localStorage.getItem("menuUrl");
+            $(".sidebar-main:eq(0) ul li a").each(function() {
+                if ((urlStr + '/').indexOf($(this).attr('href')) > -1&&$(this).attr('href')!='') {
+                    flag = true;
+                    $("#collapseOne").addClass("in");
+                    $("#collapseTwo").removeClass("in");
+                    // menuUrl = urlStr;
+                    localStorage.setItem("menuUrl", urlStr);
+                    $(this).parent("li").addClass("active");
+                    $(this).parent("li").parents("li").addClass("open").addClass("active");
+
+                    $(this).parent("li").siblings().removeClass("active");
+                    $(this).parent("li").parents("li").siblings().removeClass("open").removeClass("active");
+                    return;
+                }
+            });
+        }
     }
 }
 
