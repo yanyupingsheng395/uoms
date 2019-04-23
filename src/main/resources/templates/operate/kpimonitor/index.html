@@ -170,21 +170,29 @@
 </div>
 
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="chartModalLabel" id="chartModal">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <p class="h5 modal-title">平均件单价&平均件连带率</p>
             </div>
             <div class="modal-body">
+                <form class="form-inline text-center" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                    <div class="form-group">
+                        <input class="form-control js-datepicker m-b-10" type="text" id="startDate8" name="startDate1" data-date-format="yyyy-mm-dd" value="2019-05-01"/>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control js-datepicker m-b-10" type="text" id="endDate8" name="endDate1" data-date-format="yyyy-mm-dd" value="2019-05-15"/>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary m-b-10" type="button" onclick="search()"><i class="mdi mdi-magnify"></i>查询</button>
+                    </div>
+                </form>
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div style="width:100%;height: 300px;" id="chart80"></div>
                     </div>
-                </div>
-                <hr/>
-                <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div style="width:100%;height: 300px;" id="chart81"></div>
                     </div>
                 </div>
@@ -246,18 +254,20 @@
 
     init_date("startDate1", "yyyy-mm-dd", 0,2,0);
     init_date("endDate1", "yyyy-mm-dd", 0,2,0);
-    init_date("startDate2", "yyyy-mm", 1,2,1);
-    init_date("endDate2", "yyyy-mm", 1,2,1);
-    init_date("startDate3", "yyyy-mm", 1,2,1);
-    init_date("endDate3", "yyyy-mm", 1,2,1);
-    init_date("startDate4", "yyyy-mm", 1,2,1);
-    init_date("endDate4", "yyyy-mm", 1,2,1);
-    init_date("startDate5", "yyyy-mm", 1,2,1);
-    init_date("endDate5", "yyyy-mm", 1,2,1);
-    init_date("startDate6", "yyyy-mm", 1,2,1);
-    init_date("endDate6", "yyyy-mm", 1,2,1);
-    init_date("startDate7", "yyyy-mm", 1,2,1);
-    init_date("endDate7", "yyyy-mm", 1,2,1);
+    init_date("startDate2", "yyyy-mm-dd", 0,2,0);
+    init_date("endDate2", "yyyy-mm-dd", 0,2,0);
+    init_date("startDate3", "yyyy-mm-dd", 0,2,0);
+    init_date("endDate3", "yyyy-mm-dd", 0,2,0);
+    init_date("startDate4", "yyyy-mm-dd", 0,2,0);
+    init_date("endDate4", "yyyy-mm-dd", 0,2,0);
+    init_date("startDate5", "yyyy-mm-dd", 0,2,0);
+    init_date("endDate5", "yyyy-mm-dd", 0,2,0);
+    init_date("startDate6", "yyyy-mm-dd", 0,2,0);
+    init_date("endDate6", "yyyy-mm-dd", 0,2,0);
+    init_date("startDate7", "yyyy-mm-dd", 0,2,0);
+    init_date("endDate7", "yyyy-mm-dd", 0,2,0);
+    init_date("startDate8", "yyyy-mm-dd", 0,2,0);
+    init_date("endDate8", "yyyy-mm-dd", 0,2,0);
 
     createData1();
     function createData1() {
