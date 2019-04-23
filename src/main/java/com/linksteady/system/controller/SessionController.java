@@ -38,7 +38,7 @@ public class SessionController {
     @RequiresPermissions("session:list")
     public Map<String, Object> list() {
         List<UserOnline> list = sessionService.list();
-        Map<String, Object> rspData = new HashMap<>();
+        Map<String, Object> rspData = new HashMap<>(16);
         rspData.put("rows", list);
         rspData.put("total", list.size());
         return rspData;

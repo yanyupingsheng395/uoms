@@ -84,7 +84,7 @@ public class ProgressController {
         String value = (String)redisTemplate.opsForValue().get(key);
         if(value == null) {
             redisTemplate.opsForValue().set(key, "1");
-            res = 1l;
+            res = 1L;
         }else {
             res = Long.valueOf(value) + 1;
             redisTemplate.opsForValue().set(key, String.valueOf(res));

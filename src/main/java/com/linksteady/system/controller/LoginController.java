@@ -1,17 +1,13 @@
 package com.linksteady.system.controller;
 
-import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.MD5Utils;
-import com.linksteady.system.domain.User;
 import com.linksteady.system.service.UserService;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +31,9 @@ public class LoginController extends BaseController {
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         try {
             Subject subject = getSubject();
-            if (subject != null)
+            if (subject != null) {
                 subject.logout();
+            }
             super.login(token);
             this.userService.updateLoginTime(username);
             return ResponseBo.ok();

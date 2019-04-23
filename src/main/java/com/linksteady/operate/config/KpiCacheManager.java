@@ -151,7 +151,7 @@ public class KpiCacheManager {
         }
     }
 
-    public static Map<String, String> getDiagcodeFomularList() {
+    public Map<String, String> getDiagcodeFomularList() {
         return DiagcodeFomularList;
     }
 

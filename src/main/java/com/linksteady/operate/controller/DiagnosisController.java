@@ -25,7 +25,7 @@ public class DiagnosisController {
 
     @RequestMapping("/list")
     public Map<String, Object> list(@RequestBody QueryRequest request) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(16);
         PageHelper.startPage(request.getPageNum(), request.getPageSize());
         List<Diag> diagList = diagService.getRows((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize());
         Long total = diagService.getTotalCount();

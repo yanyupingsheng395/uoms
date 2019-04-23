@@ -45,9 +45,8 @@ public class DiagServiceImpl implements DiagService {
     @Override
     public List<Map<String, Object>> getNodes(String diagId) {
         List<Map<String, Object>> resultList = new ArrayList<>();
-//        List<Diag> diagList = diagMapper.findByDiagId(diagId);
         List<DiagDetail> diagDetailList = diagDetailMapper.findByDiagId(diagId);
-//        List<DiagCondition> diagConditions = diagConditionMapper.findByDiagId(diagId);
+
         for(DiagDetail d:diagDetailList) {
             Map<String, Object> result = new HashMap<>();
             result.put("id", d.getNodeId());

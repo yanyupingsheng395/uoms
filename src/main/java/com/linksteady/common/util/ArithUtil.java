@@ -6,6 +6,10 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * 针对double类型的加、减、乘、除运算提供支持，并提供double类型格式化的方法
+ * @author huang
+ */
 public class ArithUtil {
 
     private final static Logger logger= LoggerFactory.getLogger (ArithUtil.class);

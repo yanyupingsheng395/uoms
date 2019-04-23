@@ -121,7 +121,7 @@ function del(reasonId) {
 function updatedata(reasonId)
 {
     lightyear.loading('show');
-    $.getJSON("/reason/UpdateProgressById?reasonId="+reasonId,function (resp) {
+    $.getJSON("/reason/updateProgressById?reasonId="+reasonId,function (resp) {
         if (resp.code === 200){
             lightyear.loading('hide');
             //提示成功

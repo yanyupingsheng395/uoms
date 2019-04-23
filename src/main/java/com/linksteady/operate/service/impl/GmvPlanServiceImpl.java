@@ -125,6 +125,7 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
         return gmvPlanMapper.getByYear(year);
     }
 
+    @SuppressWarnings("AlibabaMethodTooLong")
     private void addPlanDetail(String year, String gmv, String rate, Long planId) {
         List<PlanDetail> planDetailList = new ArrayList<>();
 
@@ -139,19 +140,25 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
         //获取上一年的权重指数
         List<WeightIndex> lastYearIndex=weightIndexMapper.getWeightIndex(String.valueOf(Integer.parseInt(year)-1));
 
-        Double indexTotal=0d;  //权重指数和
+        //权重指数和
+        Double indexTotal=0d;
         Map<Long,Double> pctMap= Maps.newHashMap();
         Map<Long,Double> gmvMap= Maps.newHashMap();
 
         Double gmvValue=Double.parseDouble(gmv);
         Long monthId=null;
         Double monthPctTemp=0.00d;
-        Double monthPct=0.00d; //每月的比例
-        double monthGmv=0.00d; //每月的GMV
-        double monthTotalPct =0; //累计的比例
-        double monthTotalGmv=0.00d;  //累计的GMV
+        //每月的比例
+        Double monthPct=0.00d;
+        //每月的GMV
+        double monthGmv=0.00d;
+        //累计的比例
+        double monthTotalPct =0;
+        //累计的GMV
+        double monthTotalGmv=0.00d;
 
-        if(null!=lastYearIndex&&lastYearIndex.size()==12)  //有权重指数 且权重指数为12个月;
+        //有权重指数 且权重指数为12个月;
+        if(null!=lastYearIndex&&lastYearIndex.size()==12)
         {
             for (WeightIndex weightIndex:lastYearIndex) {
                 indexTotal=ArithUtil.add(indexTotal,weightIndex.getIndexValue());
@@ -164,13 +171,14 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
                 {
 
                     monthPctTemp=ArithUtil.div(weightIndex.getIndexValue(),indexTotal,10);
-                    monthPct=ArithUtil.formatDoubleByMode(ArithUtil.mul(monthPctTemp,100d),2, RoundingMode.DOWN); //每月的指数/指数和*100 保留2位小数
+                    //每月的指数/指数和*100 保留2位小数
+                    monthPct=ArithUtil.formatDoubleByMode(ArithUtil.mul(monthPctTemp,100d),2, RoundingMode.DOWN);
 
                     monthTotalPct=ArithUtil.add(monthTotalPct,monthPct);
                     //计算GMV的占比
                     monthGmv=ArithUtil.formatDouble(ArithUtil.mul(gmvValue,monthPctTemp),0);
-
-                    monthTotalGmv=ArithUtil.add(monthGmv,monthTotalGmv);  // ?? 观察 是否需要格式化一下
+                    // ?? 观察 是否需要格式化一下
+                    monthTotalGmv=ArithUtil.add(monthGmv,monthTotalGmv);
 
                     pctMap.put(monthId,monthPct);
                     gmvMap.put(monthId,monthGmv);
@@ -198,7 +206,8 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
                     monthTotalPct+=monthPct.intValue();
 
                     monthGmv=ArithUtil.formatDouble(ArithUtil.mul(gmvValue,monthPctTemp),0);
-                    monthTotalGmv=ArithUtil.add(monthGmv,monthTotalGmv);  // ?? 观察 是否需要格式化一下
+                    // ?? 观察 是否需要格式化一下
+                    monthTotalGmv=ArithUtil.add(monthGmv,monthTotalGmv);
 
                     pctMap.put(mth,monthPct);
                     gmvMap.put(mth,monthGmv);
@@ -218,7 +227,7 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
             lastGmvMap.put(Long.parseLong(g.get("MONTH_ID").toString()),Double.parseDouble(g.get("GMV_VALUE").toString()));
         }
 
-        Long lastMonthId=0l;
+        Long lastMonthId= 0L;
         Double gmvTb=null;
         PlanDetail planDetail=null;
         for(Long mth:monthList)
@@ -271,20 +280,20 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
      */
     private Long getLastMonthId(Long monthId)
     {
-        String str_momthId=String.valueOf(monthId);
+        String momthId=String.valueOf(monthId);
 
-        return Long.parseLong((Integer.valueOf(str_momthId.substring(0,4))-1)+str_momthId.substring(4,6));
+        return Long.parseLong((Integer.valueOf(momthId.substring(0,4))-1)+momthId.substring(4,6));
     }
 
     /**
      * 计算同比增长率  (本期-同期)/同期*100%
-     * @param TbValue
-     * @param CurrentValue
+     * @param tbValue
+     * @param currentValue
      * @return
      */
-    private Double computeTbRate(Double TbValue,Double CurrentValue)
+    private Double computeTbRate(Double tbValue,Double currentValue)
     {
-        Double value=ArithUtil.mul( ArithUtil.div(ArithUtil.sub(CurrentValue,TbValue),TbValue,6),100d);
+        Double value=ArithUtil.mul( ArithUtil.div(ArithUtil.sub(currentValue,tbValue),tbValue,6),100d);
         return ArithUtil.formatDoubleByMode(value,2,RoundingMode.HALF_UP);
     }
 }

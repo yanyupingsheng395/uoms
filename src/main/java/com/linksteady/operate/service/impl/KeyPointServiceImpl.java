@@ -19,6 +19,7 @@ public class KeyPointServiceImpl  implements KeyPointService {
     private KeyPointMapper keyPointMapper;
 
 
+    @Override
     public KeyPointMonth getKeyPointMonthData(String month)
     {
        return  keyPointMapper.getKeyPointMonthData(month);

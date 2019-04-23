@@ -114,12 +114,12 @@ public class PageController extends BaseController {
      * 核心指标概况
      */
     @RequestMapping("/coreindicators")
-    public String coreIndicators_month() {
+    public String coreIndicatorsMonth() {
         return "operate/coreIndicators/month";
     }
 
     @RequestMapping("/coreindicators/year")
-    public String coreIndicators_year() {
+    public String coreIndicatorsYear() {
         return "operate/coreIndicators/year";
     }
 
@@ -129,12 +129,12 @@ public class PageController extends BaseController {
     }
 
     @RequestMapping("/diagnosis/add")
-    public String diagnosis_add() {
+    public String diagnosisAdd() {
         return "operate/diagnosis/add";
     }
 
     @RequestMapping("/diagnosis/view")
-    public String diagnosis_view(Model model, @RequestParam("id") String id) {
+    public String diagnosisView(Model model, @RequestParam("id") String id) {
         model.addAttribute("id", id);
         return "operate/diagnosis/view";
     }

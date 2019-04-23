@@ -62,8 +62,9 @@ public class ShiroConfig {
         redisManager.setExpire(systemProperties.getShiro().getExpireIn());
         redisManager.setHost(host);
         redisManager.setPort(port);
-        if (StringUtils.isNotBlank(password))
+        if (StringUtils.isNotBlank(password)) {
             redisManager.setPassword(password);
+        }
         redisManager.setTimeout(timeout);
         return redisManager;
     }
