@@ -255,7 +255,6 @@ public class KpiMonitorController extends BaseController {
         {
             //获取两个日期之间间隔的周
             List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
-           // List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
 
             columns.add("month");
             columns.add("newuser");
@@ -264,13 +263,12 @@ public class KpiMonitorController extends BaseController {
                 columns.add(w.getWeekOfYareName());
             }
 
-
-            //循环月 获取其留存率
+            //循环周 获取其留存率
             for(int i=0;i<weeks.size();i++)
             {
                 ret=Maps.newHashMap();
                 //月份
-                ret.put("month",weeks.get(i).getWeekOfYareName());
+                ret.put("week",weeks.get(i).getWeekOfYareName());
                 //当月新增用户数
                 ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
 
