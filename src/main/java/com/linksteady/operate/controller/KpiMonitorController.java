@@ -1,6 +1,8 @@
 package com.linksteady.operate.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -33,7 +35,6 @@ import java.util.Map;
 @RequestMapping("/kpiMonitor")
 public class KpiMonitorController extends BaseController {
 
-
     /**
      * 获取留存率的同期群数据
      * @param periodType  周期类型
@@ -41,44 +42,47 @@ public class KpiMonitorController extends BaseController {
      */
     @RequestMapping("/getRetainData")
     public ResponseBo list(@RequestParam String periodType,@RequestParam String start,@RequestParam String end) {
-//        Map<String, Object> result = Maps.newHashMap();
-        List<JSONArray> list = Lists.newArrayList();
+
+        JSONObject result=new JSONObject();
+
+        JSONArray retainData=new JSONArray();
+        JSONArray columns=new JSONArray();
+
         //按自然月
         if("month".equals(periodType))
         {
+            //留存率数据
+            JSONObject ret=null;
+
             //获取两个日期之间间隔的月份
             List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
 
-            //留存率数据
-            JSONArray retainData=new JSONArray();
-            JSONArray ret=null;
+            columns.add("month");
+            columns.add("newuser");
+            columns.addAll(months);
 
             //循环月 获取其留存率
             for(int i=0;i<months.size();i++)
             {
-                ret=new JSONArray();
+                ret=new JSONObject();
                 //月份
-                ret.add(months.get(i));
+                ret.put("month",months.get(i));
                 //当月新增用户数
-                ret.add(getRandomData("newuser"));
+                ret.put("newuser",getRandomData("newuser"));
 
-                // 每个月的留存率
-                JSONArray tmp = new JSONArray();
                 for(int j=0;j<months.size();j++)
                 {
                     if(j>=i)
                     {
                         //获取留存率
-                        tmp.add(getRandomData("retain"));
+                        ret.put(months.get(i),getRandomData("retain"));
                     }else
                     {
-                        tmp.add(-1);
+                        ret.put(months.get(i),-1);
                     }
                 }
-                ret.add(tmp);
-                list.add(ret);
+                retainData.add(ret);
             }
-
            //获取汇总数据
 
         }
@@ -94,7 +98,11 @@ public class KpiMonitorController extends BaseController {
         {
 
         }
-        return  ResponseBo.okWithData("",list);
+
+        result.put("columns",columns);
+        result.put("data",retainData);
+        return  ResponseBo.okWithData("",result);
+
     }
 
     private Double getRandomData(String type)
