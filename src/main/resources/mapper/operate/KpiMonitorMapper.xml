@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.KpiMonitorMapper">
+
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.WeekInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="YEAR" jdbcType="DECIMAL" property="year" />
+        <result column="WEEK_WID" jdbcType="DECIMAL" property="weekWid" />
+        <result column="WEEK_OF_YARE_NAME" jdbcType="VARCHAR" property="weekOfYareName" />
+        <result column="WEEK_BEGIN_WID" jdbcType="DECIMAL" property="weekBeginWid" />
+        <result column="WEEK_END_WID" jdbcType="DECIMAL" property="weekEndWid" />
+    </resultMap>
+
+    <select id="getWeekList" resultMap="BaseResultMap">
+        SELECT DISTINCT T.YEAR,
+        T.WEEK_WID,
+        T.WEEK_OF_YARE_NAME,
+        T.WEEK_BEGIN_WID,
+        T.WEEK_END_WID
+        FROM W_DATE T
+        WHERE ROW_WID &gt; #{beginWid}
+        AND ROW_WID &lt;= #{endWid}
+        ORDER BY WEEK_WID ASC
+    </select>
+
+
+ </mapper>

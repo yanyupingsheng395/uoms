@@ -1,33 +1,24 @@
 package com.linksteady.operate.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
-import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.common.util.RandomUtil;
-import com.linksteady.operate.config.KpiCacheManager;
-import com.linksteady.operate.domain.ReasonRelMatrix;
-import com.linksteady.operate.domain.ReasonResult;
-import com.linksteady.operate.service.ReasonService;
-import com.linksteady.operate.vo.ReasonVO;
-import com.linksteady.system.domain.User;
-import org.apache.shiro.SecurityUtils;
+import com.linksteady.operate.domain.WeekInfo;
+import com.linksteady.operate.service.KpiMonitorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +29,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/kpiMonitor")
 public class KpiMonitorController extends BaseController {
+
+    @Autowired
+    KpiMonitorService kpiMonitorService;
 
     /**
      * 获取留存率的同期群数据
@@ -190,9 +184,138 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔周
+        else if("dweek".equals(periodType))
+        {
+            columns.add("week");
+            columns.add("newuser");
+
+            //获取两个日期之间间隔的所有周
+            List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
+            List<String> subCols=Lists.newArrayList();
+
+            for(int i=1;i<=12;i++)
+            {
+                subCols.add("+"+i+"周");
+            }
+
+            columns.addAll(subCols);
+
+            for(int i=0;i<weeks.size();i++)
+            {
+                ret=Maps.newHashMap();
+
+                ret.put("week",weeks.get(i).getWeekOfYareName());
+                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
+
+                for(int j=0;j<subCols.size();j++)
+                {
+                    //j为0时，实际表示的+1周  判断 +1周所在的begin_dt 是否已经超过了当日,如已超过，则不计算
+                    if(greaterThanNow(weeks.get(i).getWeekBeginWid()))
+                    {
+                        ret.put(subCols.get(j),"-1");
+                    }else
+                    {
+                        ret.put(subCols.get(j),String.valueOf(getRandomData("retain")));
+                    }
+                }
+                retainData.add(ret);
+            }
+
+            //获取汇总数据
+            for(String col:columns)
+            {
+                Double total=0D;
+                int count=0;
+                if("week".equals(col)||"newuser".equals(col))
+                {
+                    totalData.put(col,"");
+                    continue;
+                }
+
+                for(Map<String,String> mp:retainData)
+                {
+                    if(!"-1".equals(mp.get(col)))
+                    {
+                        count+=1;
+                        total=Double.parseDouble(mp.get(col));
+                    }
+                }
+
+                if(count>0)
+                {
+                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                }else
+                {
+                    totalData.put(col,"");
+                }
+            }
+        }
+        //按自然周
         else if("week".equals(periodType))
         {
+            //获取两个日期之间间隔的周
+            List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
+           // List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
 
+            columns.add("month");
+            columns.add("newuser");
+            for(WeekInfo w:weeks)
+            {
+                columns.add(w.getWeekOfYareName());
+            }
+
+
+            //循环月 获取其留存率
+            for(int i=0;i<weeks.size();i++)
+            {
+                ret=Maps.newHashMap();
+                //月份
+                ret.put("month",weeks.get(i).getWeekOfYareName());
+                //当月新增用户数
+                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
+
+                for(int j=0;j<weeks.size();j++)
+                {
+                    if(j>=i)
+                    {
+                        //获取留存率
+                        ret.put(weeks.get(j).getWeekOfYareName(),String.valueOf(getRandomData("retain")));
+                    }else
+                    {
+                        ret.put(weeks.get(j).getWeekOfYareName(),"-1");
+                    }
+                }
+                retainData.add(ret);
+            }
+
+            //获取汇总数据
+            for(String col:columns)
+            {
+                Double total=0D;
+                int count=0;
+                if("week".equals(col)||"newuser".equals(col))
+                {
+                    totalData.put(col,"");
+                    continue;
+                }
+
+                for(Map<String,String> mp:retainData)
+                {
+                    if(!"-1".equals(mp.get(col)))
+                    {
+                        count+=1;
+                        total=Double.parseDouble(mp.get(col));
+                    }
+                }
+
+                if(count>0)
+                {
+                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                }else
+                {
+                    totalData.put(col,"");
+                }
+            }
         }
 
         result.put("columns",columns);
@@ -227,18 +350,11 @@ public class KpiMonitorController extends BaseController {
         return Integer.parseInt(month.substring(0,4)+month.substring(5,7))>Integer.parseInt(nowMonth);
     }
 
-    @GetMapping("/test")
-    public Map<String, Object> test() {
-        Map<String, Object> tmp = Maps.newHashMap();
-        Map<String, Object> res = Maps.newHashMap();
-        List<String> list = Lists.newArrayList();
-        for(int i=0;i<10;i++) {
-            list.add("a" + i);
-            tmp.put("a" + i, i);
-        }
-        res.put("columns", list);
-        res.put("data", tmp);
-        return res;
+    private boolean greaterThanNow(BigDecimal daywid)
+    {
+        String now=LocalDate.now().toString().replace("-","");
+        return daywid.intValue()>Integer.parseInt(now);
     }
+
 }
 
