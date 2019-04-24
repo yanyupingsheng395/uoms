@@ -21,7 +21,12 @@ public class DateUtil {
 
     }
 
-
+    /**
+     * 获取两个月份之间所有的月列表 minDate,maxDate均为YYYY-MM格式
+     * @param minDate
+     * @param maxDate
+     * @return
+     */
     public static List<String> getMonthBetween(String minDate, String maxDate){
         ArrayList<String> result = new ArrayList<String>();
         //格式化为年月
