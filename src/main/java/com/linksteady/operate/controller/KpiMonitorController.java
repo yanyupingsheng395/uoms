@@ -101,7 +101,7 @@ public class KpiMonitorController extends BaseController {
                     if(!"-1".equals(mp.get(col)))
                     {
                         count+=1;
-                        total=Double.parseDouble(mp.get(col));
+                        total+=Double.parseDouble(mp.get(col));
                     }
                 }
 
@@ -168,7 +168,7 @@ public class KpiMonitorController extends BaseController {
                     if(!"-1".equals(mp.get(col)))
                     {
                         count+=1;
-                        total=Double.parseDouble(mp.get(col));
+                        total+=Double.parseDouble(mp.get(col));
                     }
 
                 }
@@ -236,7 +236,7 @@ public class KpiMonitorController extends BaseController {
                     if(!"-1".equals(mp.get(col)))
                     {
                         count+=1;
-                        total=Double.parseDouble(mp.get(col));
+                        total+=Double.parseDouble(mp.get(col));
                     }
                 }
 
@@ -301,7 +301,7 @@ public class KpiMonitorController extends BaseController {
                     if(!"-1".equals(mp.get(col)))
                     {
                         count+=1;
-                        total=Double.parseDouble(mp.get(col));
+                        total+=Double.parseDouble(mp.get(col));
                     }
                 }
 
@@ -392,13 +392,13 @@ public class KpiMonitorController extends BaseController {
                     if(!"-1".equals(mp.get(col)))
                     {
                         count+=1;
-                        total=Double.parseDouble(mp.get(col));
+                        total+=Double.parseDouble(mp.get(col));
                     }
                 }
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    totalData.put(col, String.valueOf(total.intValue()));
                 }else
                 {
                     totalData.put(col,"");
@@ -459,14 +459,14 @@ public class KpiMonitorController extends BaseController {
                     if(!"-1".equals(mp.get(col)))
                     {
                         count+=1;
-                        total=Double.parseDouble(mp.get(col));
+                        total+=Double.parseDouble(mp.get(col));
                     }
 
                 }
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    totalData.put(col, String.valueOf(total.intValue()));
                 }else
                 {
                     totalData.put(col,"");
@@ -527,13 +527,13 @@ public class KpiMonitorController extends BaseController {
                     if(!"-1".equals(mp.get(col)))
                     {
                         count+=1;
-                        total=Double.parseDouble(mp.get(col));
+                        total+=Double.parseDouble(mp.get(col));
                     }
                 }
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    totalData.put(col, String.valueOf(total.intValue()));
                 }else
                 {
                     totalData.put(col,"");
@@ -546,7 +546,7 @@ public class KpiMonitorController extends BaseController {
             //获取两个日期之间间隔的周
             List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
 
-            columns.add("month");
+            columns.add("week");
             columns.add("newuser");
             for(WeekInfo w:weeks)
             {
@@ -592,13 +592,13 @@ public class KpiMonitorController extends BaseController {
                     if(!"-1".equals(mp.get(col)))
                     {
                         count+=1;
-                        total=Double.parseDouble(mp.get(col));
+                        total+=Double.parseDouble(mp.get(col));
                     }
                 }
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    totalData.put(col, String.valueOf(total.intValue()));
                 }else
                 {
                     totalData.put(col,"");
@@ -613,585 +613,586 @@ public class KpiMonitorController extends BaseController {
 
     }
 
-//    /**
-//     * 获取留存率的同期群数据
-//     * @param periodType  周期类型
-//     * @return
-//     */
-//    @RequestMapping("/getRetainData")
-//    public ResponseBo list(@RequestParam String periodType,@RequestParam String start,@RequestParam String end) {
-//
-//        JSONObject result=new JSONObject();
-//
-//        //留存数据(每行一条数据)
-//        List<Map<String,String>> retainData=Lists.newArrayList();
-//        //表头
-//        List<String> columns=Lists.newArrayList();
-//        //合计数据
-//        Map<String,String> totalData=Maps.newLinkedHashMap();
-//
-//        //存放留存率的临时变量
-//        Map<String,String> ret=null;
-//
-//        //按自然月
-//        if("month".equals(periodType))
-//        {
-//            //获取两个日期之间间隔的月份
-//            List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
-//
-//            columns.add("month");
-//            columns.add("newuser");
-//            columns.addAll(months);
-//
-//            //循环月 获取其留存率
-//            for(int i=0;i<months.size();i++)
-//            {
-//                ret=Maps.newHashMap();
-//                //月份
-//                ret.put("month",months.get(i));
-//                //当月新增用户数
-//                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
-//
-//                for(int j=0;j<months.size();j++)
-//                {
-//                    if(j>=i)
-//                    {
-//                        //获取留存率
-//                        ret.put(months.get(j),String.valueOf(getRandomData("retain")));
-//                    }else
-//                    {
-//                        ret.put(months.get(j),"-1");
-//                    }
-//                }
-//                retainData.add(ret);
-//            }
-//
-//            //获取汇总数据
-//            for(String col:columns)
-//            {
-//                Double total=0D;
-//                int count=0;
-//                if("month".equals(col)||"newuser".equals(col))
-//                {
-//                    totalData.put(col,"");
-//                    continue;
-//                }
-//
-//                for(Map<String,String> mp:retainData)
-//                {
-//                    if(!"-1".equals(mp.get(col)))
-//                    {
-//                        count+=1;
-//                        total=Double.parseDouble(mp.get(col));
-//                    }
-//                }
-//
-//                if(count>0)
-//                {
-//                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
-//                }else
-//                {
-//                    totalData.put(col,"");
-//                }
-//            }
-//        }
-//        //按间隔月
-//        else if("dmonth".equals(periodType))
-//        {
-//            columns.add("month");
-//            columns.add("newuser");
-//
-//            //获取两个日期之间间隔的月份
-//            List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
-//            List<String> subCols=Lists.newArrayList();
-//
-//            for(int i=1;i<=12;i++)
-//            {
-//                subCols.add("+"+i+"月");
-//            }
-//
-//            columns.addAll(subCols);
-//
-//            for(int i=0;i<months.size();i++)
-//            {
-//                ret=Maps.newHashMap();
-//
-//                ret.put("month",months.get(i));
-//                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
-//
-//                for(int j=0;j<subCols.size();j++)
-//                {
-//                    //j为1时，实际表示的+2月  判断 month + (j+1)个月之后，是否超过了当前月，如果不是，则去取留存用户
-//                    if(greaterThanNow(DateUtil.getOffsetMonthDate(months.get(i),j+1)))
-//                    {
-//                        ret.put(subCols.get(j),"-1");
-//                    }else
-//                    {
-//                        ret.put(subCols.get(j),String.valueOf(getRandomData("retain")));
-//                    }
-//                }
-//                retainData.add(ret);
-//            }
-//
-//            //获取汇总数据
-//            for(String col:columns)
-//            {
-//                Double total=0D;
-//                int count=0;
-//                if("month".equals(col)||"newuser".equals(col))
-//                {
-//                    totalData.put(col,"");
-//                    continue;
-//                }
-//
-//                for(Map<String,String> mp:retainData)
-//                {
-//                    if(!"-1".equals(mp.get(col)))
-//                    {
-//                        count+=1;
-//                        total=Double.parseDouble(mp.get(col));
-//                    }
-//
-//                }
-//
-//                if(count>0)
-//                {
-//                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
-//                }else
-//                {
-//                    totalData.put(col,"");
-//                }
-//            }
-//        }
-//        //按间隔周
-//        else if("dweek".equals(periodType))
-//        {
-//            columns.add("week");
-//            columns.add("newuser");
-//
-//            //获取两个日期之间间隔的所有周
-//            List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
-//            List<String> subCols=Lists.newArrayList();
-//
-//            for(int i=1;i<=12;i++)
-//            {
-//                subCols.add("+"+i+"周");
-//            }
-//
-//            columns.addAll(subCols);
-//
-//            for(int i=0;i<weeks.size();i++)
-//            {
-//                ret=Maps.newHashMap();
-//
-//                ret.put("week",weeks.get(i).getWeekOfYareName());
-//                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
-//
-//                for(int j=0;j<subCols.size();j++)
-//                {
-//                    //j为0时，实际表示的+1周  判断 +1周所在的begin_dt 是否已经超过了当日,如已超过，则不计算
-//                    if(greaterThanNow(weeks.get(i).getWeekBeginWid()))
-//                    {
-//                        ret.put(subCols.get(j),"-1");
-//                    }else
-//                    {
-//                        ret.put(subCols.get(j),String.valueOf(getRandomData("retain")));
-//                    }
-//                }
-//                retainData.add(ret);
-//            }
-//
-//            //获取汇总数据
-//            for(String col:columns)
-//            {
-//                Double total=0D;
-//                int count=0;
-//                if("week".equals(col)||"newuser".equals(col))
-//                {
-//                    totalData.put(col,"");
-//                    continue;
-//                }
-//
-//                for(Map<String,String> mp:retainData)
-//                {
-//                    if(!"-1".equals(mp.get(col)))
-//                    {
-//                        count+=1;
-//                        total=Double.parseDouble(mp.get(col));
-//                    }
-//                }
-//
-//                if(count>0)
-//                {
-//                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
-//                }else
-//                {
-//                    totalData.put(col,"");
-//                }
-//            }
-//        }
-//        //按自然周
-//        else if("week".equals(periodType))
-//        {
-//            //获取两个日期之间间隔的周
-//            List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
-//
-//            columns.add("month");
-//            columns.add("newuser");
-//            for(WeekInfo w:weeks)
-//            {
-//                columns.add(w.getWeekOfYareName());
-//            }
-//
-//            //循环周 获取其留存率
-//            for(int i=0;i<weeks.size();i++)
-//            {
-//                ret=Maps.newHashMap();
-//                //月份
-//                ret.put("week",weeks.get(i).getWeekOfYareName());
-//                //当月新增用户数
-//                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
-//
-//                for(int j=0;j<weeks.size();j++)
-//                {
-//                    if(j>=i)
-//                    {
-//                        //获取留存率
-//                        ret.put(weeks.get(j).getWeekOfYareName(),String.valueOf(getRandomData("retain")));
-//                    }else
-//                    {
-//                        ret.put(weeks.get(j).getWeekOfYareName(),"-1");
-//                    }
-//                }
-//                retainData.add(ret);
-//            }
-//
-//            //获取汇总数据
-//            for(String col:columns)
-//            {
-//                Double total=0D;
-//                int count=0;
-//                if("week".equals(col)||"newuser".equals(col))
-//                {
-//                    totalData.put(col,"");
-//                    continue;
-//                }
-//
-//                for(Map<String,String> mp:retainData)
-//                {
-//                    if(!"-1".equals(mp.get(col)))
-//                    {
-//                        count+=1;
-//                        total=Double.parseDouble(mp.get(col));
-//                    }
-//                }
-//
-//                if(count>0)
-//                {
-//                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
-//                }else
-//                {
-//                    totalData.put(col,"");
-//                }
-//            }
-//        }
-//
-//        result.put("columns",columns);
-//        result.put("data",retainData);
-//        result.put("total",totalData);
-//        return  ResponseBo.okWithData("",result);
-//
-//    }
-//
-//    /**
-//     * 获取留存率的同期群数据
-//     * @param periodType  周期类型
-//     * @return
-//     */
-//    @RequestMapping("/getRetainData")
-//    public ResponseBo list(@RequestParam String periodType,@RequestParam String start,@RequestParam String end) {
-//
-//        JSONObject result=new JSONObject();
-//
-//        //留存数据(每行一条数据)
-//        List<Map<String,String>> retainData=Lists.newArrayList();
-//        //表头
-//        List<String> columns=Lists.newArrayList();
-//        //合计数据
-//        Map<String,String> totalData=Maps.newLinkedHashMap();
-//
-//        //存放留存率的临时变量
-//        Map<String,String> ret=null;
-//
-//        //按自然月
-//        if("month".equals(periodType))
-//        {
-//            //获取两个日期之间间隔的月份
-//            List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
-//
-//            columns.add("month");
-//            columns.add("newuser");
-//            columns.addAll(months);
-//
-//            //循环月 获取其留存率
-//            for(int i=0;i<months.size();i++)
-//            {
-//                ret=Maps.newHashMap();
-//                //月份
-//                ret.put("month",months.get(i));
-//                //当月新增用户数
-//                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
-//
-//                for(int j=0;j<months.size();j++)
-//                {
-//                    if(j>=i)
-//                    {
-//                        //获取留存率
-//                        ret.put(months.get(j),String.valueOf(getRandomData("retain")));
-//                    }else
-//                    {
-//                        ret.put(months.get(j),"-1");
-//                    }
-//                }
-//                retainData.add(ret);
-//            }
-//
-//            //获取汇总数据
-//            for(String col:columns)
-//            {
-//                Double total=0D;
-//                int count=0;
-//                if("month".equals(col)||"newuser".equals(col))
-//                {
-//                    totalData.put(col,"");
-//                    continue;
-//                }
-//
-//                for(Map<String,String> mp:retainData)
-//                {
-//                    if(!"-1".equals(mp.get(col)))
-//                    {
-//                        count+=1;
-//                        total=Double.parseDouble(mp.get(col));
-//                    }
-//                }
-//
-//                if(count>0)
-//                {
-//                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
-//                }else
-//                {
-//                    totalData.put(col,"");
-//                }
-//            }
-//        }
-//        //按间隔月
-//        else if("dmonth".equals(periodType))
-//        {
-//            columns.add("month");
-//            columns.add("newuser");
-//
-//            //获取两个日期之间间隔的月份
-//            List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
-//            List<String> subCols=Lists.newArrayList();
-//
-//            for(int i=1;i<=12;i++)
-//            {
-//                subCols.add("+"+i+"月");
-//            }
-//
-//            columns.addAll(subCols);
-//
-//            for(int i=0;i<months.size();i++)
-//            {
-//                ret=Maps.newHashMap();
-//
-//                ret.put("month",months.get(i));
-//                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
-//
-//                for(int j=0;j<subCols.size();j++)
-//                {
-//                    //j为1时，实际表示的+2月  判断 month + (j+1)个月之后，是否超过了当前月，如果不是，则去取留存用户
-//                    if(greaterThanNow(DateUtil.getOffsetMonthDate(months.get(i),j+1)))
-//                    {
-//                        ret.put(subCols.get(j),"-1");
-//                    }else
-//                    {
-//                        ret.put(subCols.get(j),String.valueOf(getRandomData("retain")));
-//                    }
-//                }
-//                retainData.add(ret);
-//            }
-//
-//            //获取汇总数据
-//            for(String col:columns)
-//            {
-//                Double total=0D;
-//                int count=0;
-//                if("month".equals(col)||"newuser".equals(col))
-//                {
-//                    totalData.put(col,"");
-//                    continue;
-//                }
-//
-//                for(Map<String,String> mp:retainData)
-//                {
-//                    if(!"-1".equals(mp.get(col)))
-//                    {
-//                        count+=1;
-//                        total=Double.parseDouble(mp.get(col));
-//                    }
-//
-//                }
-//
-//                if(count>0)
-//                {
-//                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
-//                }else
-//                {
-//                    totalData.put(col,"");
-//                }
-//            }
-//        }
-//        //按间隔周
-//        else if("dweek".equals(periodType))
-//        {
-//            columns.add("week");
-//            columns.add("newuser");
-//
-//            //获取两个日期之间间隔的所有周
-//            List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
-//            List<String> subCols=Lists.newArrayList();
-//
-//            for(int i=1;i<=12;i++)
-//            {
-//                subCols.add("+"+i+"周");
-//            }
-//
-//            columns.addAll(subCols);
-//
-//            for(int i=0;i<weeks.size();i++)
-//            {
-//                ret=Maps.newHashMap();
-//
-//                ret.put("week",weeks.get(i).getWeekOfYareName());
-//                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
-//
-//                for(int j=0;j<subCols.size();j++)
-//                {
-//                    //j为0时，实际表示的+1周  判断 +1周所在的begin_dt 是否已经超过了当日,如已超过，则不计算
-//                    if(greaterThanNow(weeks.get(i).getWeekBeginWid()))
-//                    {
-//                        ret.put(subCols.get(j),"-1");
-//                    }else
-//                    {
-//                        ret.put(subCols.get(j),String.valueOf(getRandomData("retain")));
-//                    }
-//                }
-//                retainData.add(ret);
-//            }
-//
-//            //获取汇总数据
-//            for(String col:columns)
-//            {
-//                Double total=0D;
-//                int count=0;
-//                if("week".equals(col)||"newuser".equals(col))
-//                {
-//                    totalData.put(col,"");
-//                    continue;
-//                }
-//
-//                for(Map<String,String> mp:retainData)
-//                {
-//                    if(!"-1".equals(mp.get(col)))
-//                    {
-//                        count+=1;
-//                        total=Double.parseDouble(mp.get(col));
-//                    }
-//                }
-//
-//                if(count>0)
-//                {
-//                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
-//                }else
-//                {
-//                    totalData.put(col,"");
-//                }
-//            }
-//        }
-//        //按自然周
-//        else if("week".equals(periodType))
-//        {
-//            //获取两个日期之间间隔的周
-//            List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
-//
-//            columns.add("month");
-//            columns.add("newuser");
-//            for(WeekInfo w:weeks)
-//            {
-//                columns.add(w.getWeekOfYareName());
-//            }
-//
-//            //循环周 获取其留存率
-//            for(int i=0;i<weeks.size();i++)
-//            {
-//                ret=Maps.newHashMap();
-//                //月份
-//                ret.put("week",weeks.get(i).getWeekOfYareName());
-//                //当月新增用户数
-//                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
-//
-//                for(int j=0;j<weeks.size();j++)
-//                {
-//                    if(j>=i)
-//                    {
-//                        //获取留存率
-//                        ret.put(weeks.get(j).getWeekOfYareName(),String.valueOf(getRandomData("retain")));
-//                    }else
-//                    {
-//                        ret.put(weeks.get(j).getWeekOfYareName(),"-1");
-//                    }
-//                }
-//                retainData.add(ret);
-//            }
-//
-//            //获取汇总数据
-//            for(String col:columns)
-//            {
-//                Double total=0D;
-//                int count=0;
-//                if("week".equals(col)||"newuser".equals(col))
-//                {
-//                    totalData.put(col,"");
-//                    continue;
-//                }
-//
-//                for(Map<String,String> mp:retainData)
-//                {
-//                    if(!"-1".equals(mp.get(col)))
-//                    {
-//                        count+=1;
-//                        total=Double.parseDouble(mp.get(col));
-//                    }
-//                }
-//
-//                if(count>0)
-//                {
-//                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
-//                }else
-//                {
-//                    totalData.put(col,"");
-//                }
-//            }
-//        }
-//
-//        result.put("columns",columns);
-//        result.put("data",retainData);
-//        result.put("total",totalData);
-//        return  ResponseBo.okWithData("",result);
-//
-//    }
+    /**
+     * 获取流失率的同期群数据
+     * @param periodType  周期类型
+     * @return
+     */
+    @RequestMapping("/getLossData")
+    public ResponseBo getLossData(@RequestParam String periodType,@RequestParam String start,@RequestParam String end) {
+
+        JSONObject result=new JSONObject();
+
+        //流失率数据(每行一条数据)
+        List<Map<String,String>> lossData=Lists.newArrayList();
+        //表头
+        List<String> columns=Lists.newArrayList();
+        //合计数据
+        Map<String,String> totalData=Maps.newLinkedHashMap();
+
+        //存放流失率的临时变量
+        Map<String,String> loss=null;
+
+        //按自然月
+        if("month".equals(periodType))
+        {
+            //获取两个日期之间间隔的月份
+            List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
+
+            columns.add("month");
+            columns.add("newuser");
+            columns.addAll(months);
+
+            //循环月 获取其流失率
+            for(int i=0;i<months.size();i++)
+            {
+                loss=Maps.newHashMap();
+                //月份
+                loss.put("month",months.get(i));
+                //当月新增用户数
+                loss.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
+
+                for(int j=0;j<months.size();j++)
+                {
+                    if(j>=i)
+                    {
+                        //获取流失率
+                        loss.put(months.get(j),String.valueOf(getRandomData("loss")));
+                    }else
+                    {
+                        loss.put(months.get(j),"-1");
+                    }
+                }
+                lossData.add(loss);
+            }
+
+            //获取汇总数据
+            for(String col:columns)
+            {
+                Double total=0D;
+                int count=0;
+                if("month".equals(col)||"newuser".equals(col))
+                {
+                    totalData.put(col,"");
+                    continue;
+                }
+
+                for(Map<String,String> mp:lossData)
+                {
+                    if(!"-1".equals(mp.get(col)))
+                    {
+                        count+=1;
+                        total+=Double.parseDouble(mp.get(col));
+                    }
+                }
+
+                if(count>0)
+                {
+                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                }else
+                {
+                    totalData.put(col,"");
+                }
+            }
+        }
+        //按间隔月
+        else if("dmonth".equals(periodType))
+        {
+            columns.add("month");
+            columns.add("newuser");
+
+            //获取两个日期之间间隔的月份
+            List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
+            List<String> subCols=Lists.newArrayList();
+
+            for(int i=1;i<=12;i++)
+            {
+                subCols.add("+"+i+"月");
+            }
+
+            columns.addAll(subCols);
+
+            for(int i=0;i<months.size();i++)
+            {
+                loss=Maps.newHashMap();
+
+                loss.put("month",months.get(i));
+               loss.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
+
+                for(int j=0;j<subCols.size();j++)
+                {
+                    //j为1时，实际表示的+2月  判断 month + (j+1)个月之后，是否超过了当前月，如果不是，则去取流失用户
+                    if(greaterThanNow(DateUtil.getOffsetMonthDate(months.get(i),j+1)))
+                    {
+                        loss.put(subCols.get(j),"-1");
+                    }else
+                    {
+                        loss.put(subCols.get(j),String.valueOf(getRandomData("loss")));
+                    }
+                }
+                lossData.add(loss);
+            }
+
+            //获取汇总数据
+            for(String col:columns)
+            {
+                Double total=0D;
+                int count=0;
+                if("month".equals(col)||"loss".equals(col))
+                {
+                    totalData.put(col,"");
+                    continue;
+                }
+
+                for(Map<String,String> mp:lossData)
+                {
+                    if(!"-1".equals(mp.get(col)))
+                    {
+                        count+=1;
+                        total+=Double.parseDouble(mp.get(col));
+                    }
+
+                }
+
+                if(count>0)
+                {
+                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                }else
+                {
+                    totalData.put(col,"");
+                }
+            }
+        }
+        //按间隔周
+        else if("dweek".equals(periodType))
+        {
+            columns.add("week");
+            columns.add("newuser");
+
+            //获取两个日期之间间隔的所有周
+            List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
+            List<String> subCols=Lists.newArrayList();
+
+            for(int i=1;i<=12;i++)
+            {
+                subCols.add("+"+i+"周");
+            }
+
+            columns.addAll(subCols);
+
+            for(int i=0;i<weeks.size();i++)
+            {
+                loss=Maps.newHashMap();
+
+                loss.put("week",weeks.get(i).getWeekOfYareName());
+                loss.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
+
+                for(int j=0;j<subCols.size();j++)
+                {
+                    //j为0时，实际表示的+1周  判断 +1周所在的begin_dt 是否已经超过了当日,如已超过，则不计算
+                    if(greaterThanNow(weeks.get(i).getWeekBeginWid()))
+                    {
+                        loss.put(subCols.get(j),"-1");
+                    }else
+                    {
+                        loss.put(subCols.get(j),String.valueOf(getRandomData("loss")));
+                    }
+                }
+                lossData.add(loss);
+            }
+
+            //获取汇总数据
+            for(String col:columns)
+            {
+                Double total=0D;
+                int count=0;
+                if("week".equals(col)||"newuser".equals(col))
+                {
+                    totalData.put(col,"");
+                    continue;
+                }
+
+                for(Map<String,String> mp:lossData)
+                {
+                    if(!"-1".equals(mp.get(col)))
+                    {
+                        count+=1;
+                        total+=Double.parseDouble(mp.get(col));
+                    }
+                }
+
+                if(count>0)
+                {
+                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                }else
+                {
+                    totalData.put(col,"");
+                }
+            }
+        }
+        //按自然周
+        else if("week".equals(periodType))
+        {
+            //获取两个日期之间间隔的周
+            List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
+
+            columns.add("week");
+            columns.add("newuser");
+            for(WeekInfo w:weeks)
+            {
+                columns.add(w.getWeekOfYareName());
+            }
+
+            //循环周 获取其留存率
+            for(int i=0;i<weeks.size();i++)
+            {
+                loss=Maps.newHashMap();
+                //月份
+                loss.put("week",weeks.get(i).getWeekOfYareName());
+                //当月新增用户数
+                loss.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
+
+                for(int j=0;j<weeks.size();j++)
+                {
+                    if(j>=i)
+                    {
+                        //获取留存率
+                        loss.put(weeks.get(j).getWeekOfYareName(),String.valueOf(getRandomData("retain")));
+                    }else
+                    {
+                        loss.put(weeks.get(j).getWeekOfYareName(),"-1");
+                    }
+                }
+                lossData.add(loss);
+            }
+
+            //获取汇总数据
+            for(String col:columns)
+            {
+                Double total=0D;
+                int count=0;
+                if("week".equals(col)||"newuser".equals(col))
+                {
+                    totalData.put(col,"");
+                    continue;
+                }
+
+                for(Map<String,String> mp:lossData)
+                {
+                    if(!"-1".equals(mp.get(col)))
+                    {
+                        count+=1;
+                        total+=Double.parseDouble(mp.get(col));
+                    }
+                }
+
+                if(count>0)
+                {
+                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                }else
+                {
+                    totalData.put(col,"");
+                }
+            }
+        }
+
+        result.put("columns",columns);
+        result.put("data",lossData);
+        result.put("total",totalData);
+        return  ResponseBo.okWithData("",result);
+
+    }
+
+
+    /**
+     * 获取流失用户数的同期群数据
+     * @param periodType  周期类型
+     * @return
+     */
+    @RequestMapping("/getLossCntData")
+    public ResponseBo getLossCntData(@RequestParam String periodType,@RequestParam String start,@RequestParam String end) {
+
+        JSONObject result=new JSONObject();
+
+        //留存数据(每行一条数据)
+        List<Map<String,String>> lossCntData=Lists.newArrayList();
+        //表头
+        List<String> columns=Lists.newArrayList();
+        //合计数据
+        Map<String,String> totalData=Maps.newLinkedHashMap();
+
+        //存放留存用户数的临时变量
+        Map<String,String> lossCnt=null;
+
+        //按自然月
+        if("month".equals(periodType))
+        {
+            //获取两个日期之间间隔的月份
+            List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
+
+            columns.add("month");
+            columns.add("newuser");
+            columns.addAll(months);
+
+            //循环月 获取留存用户数
+            for(int i=0;i<months.size();i++)
+            {
+                lossCnt=Maps.newHashMap();
+                //月份
+                lossCnt.put("month",months.get(i));
+                //当月新增用户数
+                lossCnt.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
+
+                for(int j=0;j<months.size();j++)
+                {
+                    if(j>=i)
+                    {
+                        //获取留存用户数
+                        lossCnt.put(months.get(j),String.valueOf(getRandomData("lossCnt").intValue()));
+                    }else
+                    {
+                        lossCnt.put(months.get(j),"-1");
+                    }
+                }
+                lossCntData.add(lossCnt);
+            }
+
+            //获取汇总数据
+            for(String col:columns)
+            {
+                Double total=0D;
+                int count=0;
+                if("month".equals(col)||"newuser".equals(col))
+                {
+                    totalData.put(col,"");
+                    continue;
+                }
+
+                for(Map<String,String> mp:lossCntData)
+                {
+                    if(!"-1".equals(mp.get(col)))
+                    {
+                        count+=1;
+                        total+=Double.parseDouble(mp.get(col));
+                    }
+                }
+
+                if(count>0)
+                {
+                    totalData.put(col, String.valueOf(total.intValue()));
+                }else
+                {
+                    totalData.put(col,"");
+                }
+            }
+        }
+        //按间隔月
+        else if("dmonth".equals(periodType))
+        {
+            columns.add("month");
+            columns.add("newuser");
+
+            //获取两个日期之间间隔的月份
+            List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
+            List<String> subCols=Lists.newArrayList();
+
+            for(int i=1;i<=12;i++)
+            {
+                subCols.add("+"+i+"月");
+            }
+
+            columns.addAll(subCols);
+
+            for(int i=0;i<months.size();i++)
+            {
+                lossCnt=Maps.newHashMap();
+
+                lossCnt.put("month",months.get(i));
+                lossCnt.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
+
+                for(int j=0;j<subCols.size();j++)
+                {
+                    //j为1时，实际表示的+2月  判断 month + (j+1)个月之后，是否超过了当前月，如果不是，则去取留存用户
+                    if(greaterThanNow(DateUtil.getOffsetMonthDate(months.get(i),j+1)))
+                    {
+                        lossCnt.put(subCols.get(j),"-1");
+                    }else
+                    {
+                        lossCnt.put(subCols.get(j),String.valueOf(getRandomData("lossCnt").intValue()));
+                    }
+                }
+                lossCntData.add(lossCnt);
+            }
+
+            //获取汇总数据
+            for(String col:columns)
+            {
+                Double total=0D;
+                int count=0;
+                if("month".equals(col)||"newuser".equals(col))
+                {
+                    totalData.put(col,"");
+                    continue;
+                }
+
+                for(Map<String,String> mp:lossCntData)
+                {
+                    if(!"-1".equals(mp.get(col)))
+                    {
+                        count+=1;
+                        total+=Double.parseDouble(mp.get(col));
+                    }
+
+                }
+
+                if(count>0)
+                {
+                    totalData.put(col, String.valueOf(total.intValue()));
+                }else
+                {
+                    totalData.put(col,"");
+                }
+            }
+        }
+        //按间隔周
+        else if("dweek".equals(periodType))
+        {
+            columns.add("week");
+            columns.add("newuser");
+
+            //获取两个日期之间间隔的所有周
+            List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
+            List<String> subCols=Lists.newArrayList();
+
+            for(int i=1;i<=12;i++)
+            {
+                subCols.add("+"+i+"周");
+            }
+
+            columns.addAll(subCols);
+
+            for(int i=0;i<weeks.size();i++)
+            {
+                lossCnt=Maps.newHashMap();
+
+                lossCnt.put("week",weeks.get(i).getWeekOfYareName());
+                lossCnt.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
+
+                for(int j=0;j<subCols.size();j++)
+                {
+                    //j为0时，实际表示的+1周  判断 +1周所在的begin_dt 是否已经超过了当日,如已超过，则不计算
+                    if(greaterThanNow(weeks.get(i).getWeekBeginWid()))
+                    {
+                        lossCnt.put(subCols.get(j),"-1");
+                    }else
+                    {
+                        lossCnt.put(subCols.get(j),String.valueOf(getRandomData("lossCnt").intValue()));
+                    }
+                }
+                lossCntData.add(lossCnt);
+            }
+
+            //获取汇总数据
+            for(String col:columns)
+            {
+                Double total=0D;
+                int count=0;
+                if("week".equals(col)||"newuser".equals(col))
+                {
+                    totalData.put(col,"");
+                    continue;
+                }
+
+                for(Map<String,String> mp:lossCntData)
+                {
+                    if(!"-1".equals(mp.get(col)))
+                    {
+                        count+=1;
+                        total+=Double.parseDouble(mp.get(col));
+                    }
+                }
+
+                if(count>0)
+                {
+                    totalData.put(col, String.valueOf(total.intValue()));
+                }else
+                {
+                    totalData.put(col,"");
+                }
+            }
+        }
+        //按自然周
+        else if("week".equals(periodType))
+        {
+            //获取两个日期之间间隔的周
+            List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
+
+            columns.add("week");
+            columns.add("newuser");
+            for(WeekInfo w:weeks)
+            {
+                columns.add(w.getWeekOfYareName());
+            }
+
+            //循环周 获取其留存率
+            for(int i=0;i<weeks.size();i++)
+            {
+                lossCnt=Maps.newHashMap();
+                //月份
+                lossCnt.put("week",weeks.get(i).getWeekOfYareName());
+                //当月新增用户数
+                lossCnt.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
+
+                for(int j=0;j<weeks.size();j++)
+                {
+                    if(j>=i)
+                    {
+                        //获取留存用户数
+                        lossCnt.put(weeks.get(j).getWeekOfYareName(),String.valueOf(getRandomData("lossCnt").intValue()));
+                    }else
+                    {
+                        lossCnt.put(weeks.get(j).getWeekOfYareName(),"-1");
+                    }
+                }
+                lossCntData.add(lossCnt);
+            }
+
+            //获取汇总数据
+            for(String col:columns)
+            {
+                Double total=0D;
+                int count=0;
+                if("week".equals(col)||"newuser".equals(col))
+                {
+                    totalData.put(col,"");
+                    continue;
+                }
+
+                for(Map<String,String> mp:lossCntData)
+                {
+                    if(!"-1".equals(mp.get(col)))
+                    {
+                        count+=1;
+                        total+=Double.parseDouble(mp.get(col));
+                    }
+                }
+
+                if(count>0)
+                {
+                    totalData.put(col, String.valueOf(total.intValue()));
+                }else
+                {
+                    totalData.put(col,"");
+                }
+            }
+        }
+
+        result.put("columns",columns);
+        result.put("data",lossCntData);
+        result.put("total",totalData);
+        return  ResponseBo.okWithData("",result);
+
+    }
 
     private Double getRandomData(String type)
     {
@@ -1203,6 +1204,12 @@ public class KpiMonitorController extends BaseController {
         {
             result= RandomUtil.getIntRandom(8000,9999)/100.00;
         }else if("retainCnt".equals(type))
+        {
+            result= RandomUtil.getIntRandom(80,100);
+        }else if("loss".equals(type))
+        {
+            result= RandomUtil.getIntRandom(199,999)/100.00;
+        }else if("lossCnt".equals(type))
         {
             result= RandomUtil.getIntRandom(80,100);
         }
