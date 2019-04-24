@@ -155,4 +155,22 @@ public class DateUtil {
         int[] ymd = {year, month, day};
         return ymd;
     }
+
+    /** 
+   * 根据原来的month 获得相对偏移 N 月的月份（month） 
+   * @param protoDate 原来的月份
+   * @param dateOffset（向前移正数，向后移负数） 
+   * @return 月份（如201901） 
+     */
+    public static String getOffsetMonthDate(String month ,int monthOffset){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        Calendar cal = Calendar.getInstance();
+        try {
+            cal.setTime(sdf.parse(month));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        cal.add(Calendar.MONTH, -monthOffset);
+        return  sdf.format(cal.getTime());
+}
 }
