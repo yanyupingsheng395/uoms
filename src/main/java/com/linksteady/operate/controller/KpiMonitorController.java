@@ -76,7 +76,7 @@ public class KpiMonitorController extends BaseController {
                 //月份
                 ret.put("month",months.get(i));
                 //当月新增用户数
-                ret.put("newuser",String.valueOf(getRandomData("newuser")));
+                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
 
                 for(int j=0;j<months.size();j++)
                 {
@@ -143,7 +143,7 @@ public class KpiMonitorController extends BaseController {
                 ret=Maps.newHashMap();
 
                 ret.put("month",months.get(i));
-                ret.put("newuser",String.valueOf(getRandomData("newuser")));
+                ret.put("newuser",String.valueOf(getRandomData("newuser").intValue()));
 
                 for(int j=0;j<subCols.size();j++)
                 {
@@ -218,13 +218,13 @@ public class KpiMonitorController extends BaseController {
 
     /**
      * 判断一个月份ID是否大于当前月，如果是 返回true 否则返回false
-     * @param month
+     * @param month YYYY-MM格式
      * @return
      */
     private boolean greaterThanNow(String month)
     {
         String nowMonth= LocalDate.now().getYear()+String.format("%02d",LocalDate.now().getMonthValue());
-        return Integer.parseInt(month)>Integer.parseInt(nowMonth);
+        return Integer.parseInt(month.substring(0,4)+month.substring(5,7))>Integer.parseInt(nowMonth);
     }
 
     @GetMapping("/test")
