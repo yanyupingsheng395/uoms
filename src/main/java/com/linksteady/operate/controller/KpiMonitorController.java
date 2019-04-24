@@ -30,6 +30,7 @@ import java.util.Map;
 
 /**
  * 运营指标监控相关的controller
+ * @author  linkSteady
  */
 @RestController
 @RequestMapping("/kpiMonitor")
@@ -75,10 +76,10 @@ public class KpiMonitorController extends BaseController {
                     if(j>=i)
                     {
                         //获取留存率
-                        ret.put(months.get(i),getRandomData("retain"));
+                        ret.put(months.get(j),getRandomData("retain"));
                     }else
                     {
-                        ret.put(months.get(i),-1);
+                        ret.put(months.get(j),-1);
                     }
                 }
                 retainData.add(ret);
