@@ -3,6 +3,7 @@ package com.linksteady.operate.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -17,13 +18,11 @@ import com.linksteady.system.domain.User;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +41,8 @@ public class KpiMonitorController extends BaseController {
      */
     @RequestMapping("/getRetainData")
     public ResponseBo list(@RequestParam String periodType,@RequestParam String start,@RequestParam String end) {
-
+//        Map<String, Object> result = Maps.newHashMap();
+        List<JSONArray> list = Lists.newArrayList();
         //按自然月
         if("month".equals(periodType))
         {
@@ -62,17 +62,21 @@ public class KpiMonitorController extends BaseController {
                 //当月新增用户数
                 ret.add(getRandomData("newuser"));
 
+                // 每个月的留存率
+                JSONArray tmp = new JSONArray();
                 for(int j=0;j<months.size();j++)
                 {
                     if(j>=i)
                     {
                         //获取留存率
-                        ret.add(getRandomData("retain"));
+                        tmp.add(getRandomData("retain"));
                     }else
                     {
-                        ret.add(-1);
+                        tmp.add(-1);
                     }
                 }
+                ret.add(tmp);
+                list.add(ret);
             }
 
            //获取汇总数据
@@ -90,7 +94,7 @@ public class KpiMonitorController extends BaseController {
         {
 
         }
-        return  ResponseBo.okWithData("",periodType);
+        return  ResponseBo.okWithData("",list);
     }
 
     private Double getRandomData(String type)
@@ -107,5 +111,18 @@ public class KpiMonitorController extends BaseController {
         return result;
     }
 
+    @GetMapping("/test")
+    public Map<String, Object> test() {
+        Map<String, Object> tmp = Maps.newHashMap();
+        Map<String, Object> res = Maps.newHashMap();
+        List<String> list = Lists.newArrayList();
+        for(int i=0;i<10;i++) {
+            list.add("a" + i);
+            tmp.put("a" + i, i);
+        }
+        res.put("columns", list);
+        res.put("data", tmp);
+        return res;
+    }
 }
 
