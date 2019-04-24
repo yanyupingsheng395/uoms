@@ -250,7 +250,6 @@ function submitData() {
                         //弹框显示表格
                         $("#reasonResult_modal").modal("show");
                         createResultTableHeader('reasonResultTable');
-                        console.log(resp.data);
                         $('#reasonResultTable').bootstrapTable('load', resp.data);
                     }
                 });

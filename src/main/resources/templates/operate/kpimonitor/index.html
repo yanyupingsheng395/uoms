@@ -19,6 +19,57 @@
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-select/bootstrap-select.min.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+
+    <style>
+
+
+        .table{
+            table-layout: fixed;
+        }
+
+        /* 表格 */
+        .table-bordered {
+            border-color: #eceeef;
+        }
+        .table>tbody>tr>td,
+        .table>tbody>tr>th,
+        .table>tfoot>tr>td,
+        .table>tfoot>tr>th,
+        .table>thead>tr>td,
+        .table>thead>tr>th {
+            padding: .75em;
+            line-height: 1;
+            border-color: #eceeef;
+            border-width: 1px;
+            width: 75px;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #fcfdfe;
+        }
+        .table-hover > tbody > tr:hover {
+            background-color: #f9fafb;
+        }
+        .table-vcenter > thead > tr > th,
+        .table-vcenter > thead > tr > td,
+        .table-vcenter > tbody > tr > th,
+        .table-vcenter > tbody > tr > td,
+        .table-vcenter > tfoot > tr > th,
+        .table-vcenter > tfoot > tr > td {
+            vertical-align: middle;
+        }
+        .table-hover tbody tr {
+            -webkit-transition: background-color 0.2s linear;
+            transition: background-color 0.2s linear;
+        }
+        .table-condensed > tbody > tr > td,
+        .table-condensed > tbody > tr > th,
+        .table-condensed > tfoot > tr > td,
+        .table-condensed > tfoot > tr > th,
+        .table-condensed > thead > tr > td,
+        .table-condensed > thead > tr > th {
+            padding: .5em;
+        }
+    </style>
 </head>
 
 <body>
@@ -56,50 +107,40 @@
                                 <!-- 间隔月，自然月 -->
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5>同期群分析留存率变化</h5>
+                                        <h5>同期群分析留存/流失</h5>
                                         <hr style="margin-top:5px; margin-bottom: 5px;"/>
                                         <form class="form-inline pull-left" action="" method="post" onsubmit="return false;">
                                             <div class="form-group">
-                                                <input class="form-control js-datepicker m-b-10" type="text" id="startDate_1" name="startDate" data-date-format="yyyy-mm-dd" value="2018-01"/>
+                                                <input class="form-control js-datepicker m-b-10" type="text" id="startDate_1" name="startDate" data-date-format="yyyy-mm-dd" value="2018-10-01"/>
                                             </div>
                                             <div class="form-group">
-                                                <input class="form-control js-datepicker m-b-10" type="text" id="endDate_1" name="endDate" data-date-format="yyyy-mm-dd" value="2018-08"/>
+                                                <input class="form-control js-datepicker m-b-10" type="text" id="endDate_1" name="endDate" data-date-format="yyyy-mm-dd" value="2019-03-31"/>
                                             </div>
                                             <div class="form-group">
                                                 <button class="btn btn-primary m-b-10" type="button" onclick="createData1()"><i class="mdi mdi-magnify"></i>查询</button>
                                             </div>
                                         </form>
                                         <div class="pull-right">
-                                            <div class="btn-group">
-                                                <button class="btn btn-secondary">自然月</button>
-                                                <button class="btn btn-default">间隔月</button>
-                                                <button class="btn btn-default">自然周</button>
+                                            <div class="btn-group-round" id="cohortbtngroup1">
+                                                <button class="btn btn-primary btn-sm btn-round cohortbtn" name="month">自然月</button>
+                                                <button class="btn btn-default btn-sm btn-round cohortbtn" name="dmonth">间隔月</button>
+                                                <button class="btn btn-default btn-sm btn-round cohortbtn" name="week">&nbsp;&nbsp;周&nbsp;&nbsp;</button>
                                             </div>
                                         </div>
-                                        <ul class="nav nav-tabs" style="clear: both;" id="tabs2">
-                                            <li class="active"> <a data-toggle="tab" href="#tab3" aria-expanded="true">留存率</a> </li>
-                                            <li> <a data-toggle="tab" href="#tab4"> 留存用户数</a> </li>
-                                            <li> <a data-toggle="tab" href="#tab4">流失率</a> </li>
-                                            <li> <a data-toggle="tab" href="#tab4">流失用户数</a> </li>
+                                        <ul class="nav nav-tabs" style="clear: both;" id="tabs02">
+                                            <li class="active"> <a data-toggle="tab" href="#retain">留存率</a> </li>
+                                            <li> <a data-toggle="tab" href="#retain_cnt"> 留存用户数</a> </li>
+                                            <li> <a data-toggle="tab" href="#loss">流失率</a> </li>
+                                            <li> <a data-toggle="tab" href="#loss_cnt">流失用户数</a> </li>
                                         </ul>
                                         <div class="tab-content">
                                             <div class="tab-pane fade active in" id="tab3">
-                                                <!--<form class="form-inline" action="" method="post" onsubmit="return false;">-->
-                                                    <!--<div class="form-group">-->
-                                                        <!--<input class="form-control js-datepicker m-b-10" type="text" id="startDate_1" name="startDate" data-date-format="yyyy-mm-dd" value="2018-01"/>-->
-                                                    <!--</div>-->
-                                                    <!--<div class="form-group">-->
-                                                        <!--<input class="form-control js-datepicker m-b-10" type="text" id="endDate_1" name="endDate" data-date-format="yyyy-mm-dd" value="2018-08"/>-->
-                                                    <!--</div>-->
-                                                    <!--<div class="form-group">-->
-                                                        <!--<button class="btn btn-primary m-b-10" type="button" onclick="createData1()"><i class="mdi mdi-magnify"></i>查询</button>-->
-                                                    <!--</div>-->
-                                                <!--</form>-->
-                                                <table class="table table-hover" id="dataTable1"
-                                                       style="word-break: break-all; word-wrap: break-word;"></table>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover table-bordered table-striped table-condensed" id="dataTable1" style="word-break: break-all; word-wrap: break-word;"></table>
+                                                </div>
                                             </div>
                                             <div class="tab-pane fade" id="tab4">
-                                                <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
+                                                <form class="form-inline" action="" method="post" onsubmit="return false;">
                                                     <div class="form-group">
                                                         <input class="form-control js-datepicker m-b-10" type="text" id="startDate_2" name="startDate" data-date-format="yyyy-mm" value="2018-01"/>
                                                     </div>
@@ -123,7 +164,7 @@
                                         <hr style="margin-top:5px; margin-bottom: 5px;"/>
 
                                         <ul class="nav nav-tabs" id="tabs3">
-                                            <li class="active"> <a data-toggle="tab" href="#tab5" aria-expanded="true">自然月</a> </li>
+                                            <li class="active"> <a data-toggle="tab" href="#tab03" aria-expanded="true">自然月</a> </li>
                                             <li> <a data-toggle="tab" href="#tab6">间隔月</a> </li>
                                         </ul>
                                         <div class="tab-content">
@@ -239,11 +280,11 @@
 <script data-th-src="@{/plugins/bootstrap-select/defaults-zh_CN.min.js}"></script>
 <script data-th-src="@{/js/app/operate/kpimonitor/tab1.js}"></script>
 <script data-th-src="@{/js/app/operate/kpimonitor/tab2.js}"></script>
+<script data-th-src="@{/js/app/operate/kpimonitor/cohort.js}"></script>
 <script>
     init_date("dateItem1", "yyyy-mm", 1,2,1);
     init_date("dateItem2", "yyyy-mm", 1,2,1);
-    init_date("startDate_1", "yyyy-mm", 1,2,1);
-    init_date("endDate_1", "yyyy-mm", 1,2,1);
+
     init_date("startDate_2", "yyyy-mm", 1,2,1);
     init_date("endDate_2", "yyyy-mm", 1,2,1);
 
@@ -268,31 +309,6 @@
     init_date("endDate7", "yyyy-mm-dd", 0,2,0);
     init_date("startDate8", "yyyy-mm-dd", 0,2,0);
     init_date("endDate8", "yyyy-mm-dd", 0,2,0);
-
-    createData1();
-    function createData1() {
-        var start = $("#startDate_1").val();
-        var end = $("#endDate_1").val();
-        var month = getMonthPeriod(start, end);
-        var head = "<thead><tr><th>月份/留存率</th>";
-        var body = "<tbody>";
-        for(var i=0; i<month.length; i++) {
-            head += "<th> " + month[i] + " </th>";
-            body += "<tr><td>" + month[i] + "</td>";
-            for(var j=0; j<month.length; j++) {
-                if(i <= j) {
-                    body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
-                }else {
-                    body += "<td></td>";
-                }
-            }
-            body += "</tr>";
-        }
-        head += "</tr></thead>";
-        body += "</tbody>";
-        $("#dataTable1").html("").html(head);
-        $("#dataTable1").append(body);
-    }
 
     createData2();
     function createData2() {
