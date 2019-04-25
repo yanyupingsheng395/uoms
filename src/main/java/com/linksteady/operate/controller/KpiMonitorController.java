@@ -33,6 +33,23 @@ public class KpiMonitorController extends BaseController {
     KpiMonitorService kpiMonitorService;
 
     /**
+     * 自然月
+     */
+    public static final String PERIOD_TYPE_MONTH="month";
+    /**
+     * 间隔月
+     */
+    public static final String PERIOD_TYPE_INTERVAL_MONTH="dmonth";
+    /**
+     * 自然周
+     */
+    public static final String PERIOD_TYPE_WEEK="week";
+    /**
+     * 间隔周
+     */
+    public static final String PERIOD_TYPE_INTERVAL_WEEK="dweek";
+
+    /**
      * 获取留存率的同期群数据
      * @param periodType  周期类型
      * @return
@@ -53,7 +70,7 @@ public class KpiMonitorController extends BaseController {
         Map<String,String> ret=null;
 
         //按自然月
-        if("month".equals(periodType))
+        if(PERIOD_TYPE_MONTH.equals(periodType))
         {
             //获取两个日期之间间隔的月份
             List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
@@ -115,7 +132,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔月
-        else if("dmonth".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType))
         {
             columns.add("month");
             columns.add("newuser");
@@ -183,7 +200,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔周
-        else if("dweek".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_WEEK.equals(periodType))
         {
             columns.add("week");
             columns.add("newuser");
@@ -250,7 +267,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按自然周
-        else if("week".equals(periodType))
+        else if(PERIOD_TYPE_WEEK.equals(periodType))
         {
             //获取两个日期之间间隔的周
             List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
@@ -344,7 +361,7 @@ public class KpiMonitorController extends BaseController {
         Map<String,String> retCnt=null;
 
         //按自然月
-        if("month".equals(periodType))
+        if(PERIOD_TYPE_MONTH.equals(periodType))
         {
             //获取两个日期之间间隔的月份
             List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
@@ -406,7 +423,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔月
-        else if("dmonth".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType))
         {
             columns.add("month");
             columns.add("newuser");
@@ -474,7 +491,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔周
-        else if("dweek".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_WEEK.equals(periodType))
         {
             columns.add("week");
             columns.add("newuser");
@@ -541,7 +558,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按自然周
-        else if("week".equals(periodType))
+        else if(PERIOD_TYPE_WEEK.equals(periodType))
         {
             //获取两个日期之间间隔的周
             List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
@@ -634,7 +651,7 @@ public class KpiMonitorController extends BaseController {
         Map<String,String> loss=null;
 
         //按自然月
-        if("month".equals(periodType))
+        if(PERIOD_TYPE_MONTH.equals(periodType))
         {
             //获取两个日期之间间隔的月份
             List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
@@ -696,7 +713,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔月
-        else if("dmonth".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType))
         {
             columns.add("month");
             columns.add("newuser");
@@ -764,7 +781,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔周
-        else if("dweek".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_WEEK.equals(periodType))
         {
             columns.add("week");
             columns.add("newuser");
@@ -831,7 +848,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按自然周
-        else if("week".equals(periodType))
+        else if(PERIOD_TYPE_WEEK.equals(periodType))
         {
             //获取两个日期之间间隔的周
             List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
@@ -925,7 +942,7 @@ public class KpiMonitorController extends BaseController {
         Map<String,String> lossCnt=null;
 
         //按自然月
-        if("month".equals(periodType))
+        if(PERIOD_TYPE_MONTH.equals(periodType))
         {
             //获取两个日期之间间隔的月份
             List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
@@ -987,7 +1004,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔月
-        else if("dmonth".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType))
         {
             columns.add("month");
             columns.add("newuser");
@@ -1055,7 +1072,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔周
-        else if("dweek".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_WEEK.equals(periodType))
         {
             columns.add("week");
             columns.add("newuser");
@@ -1122,7 +1139,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按自然周
-        else if("week".equals(periodType))
+        else if(PERIOD_TYPE_WEEK.equals(periodType))
         {
             //获取两个日期之间间隔的周
             List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
@@ -1216,7 +1233,7 @@ public class KpiMonitorController extends BaseController {
         Map<String,String> uprice=null;
 
         //按自然月
-        if("month".equals(periodType))
+        if(PERIOD_TYPE_MONTH.equals(periodType))
         {
             //获取两个日期之间间隔的月份
             List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
@@ -1278,7 +1295,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔月
-        else if("dmonth".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType))
         {
             columns.add("month");
             columns.add("newuser");
@@ -1346,7 +1363,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔周
-        else if("dweek".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_WEEK.equals(periodType))
         {
             columns.add("week");
             columns.add("newuser");
@@ -1413,7 +1430,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按自然周
-        else if("week".equals(periodType))
+        else if(PERIOD_TYPE_WEEK.equals(periodType))
         {
             //获取两个日期之间间隔的周
             List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
@@ -1506,7 +1523,7 @@ public class KpiMonitorController extends BaseController {
         Map<String,String> sprice=null;
 
         //按自然月
-        if("month".equals(periodType))
+        if(PERIOD_TYPE_MONTH.equals(periodType))
         {
             //获取两个日期之间间隔的月份
             List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
@@ -1568,7 +1585,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔月
-        else if("dmonth".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType))
         {
             columns.add("month");
             columns.add("newuser");
@@ -1636,7 +1653,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔周
-        else if("dweek".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_WEEK.equals(periodType))
         {
             columns.add("week");
             columns.add("newuser");
@@ -1703,7 +1720,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按自然周
-        else if("week".equals(periodType))
+        else if(PERIOD_TYPE_WEEK.equals(periodType))
         {
             //获取两个日期之间间隔的周
             List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
@@ -1796,7 +1813,7 @@ public class KpiMonitorController extends BaseController {
         Map<String,String>  joinrate=null;
 
         //按自然月
-        if("month".equals(periodType))
+        if(PERIOD_TYPE_MONTH.equals(periodType))
         {
             //获取两个日期之间间隔的月份
             List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
@@ -1858,7 +1875,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔月
-        else if("dmonth".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType))
         {
             columns.add("month");
             columns.add("newuser");
@@ -1926,7 +1943,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔周
-        else if("dweek".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_WEEK.equals(periodType))
         {
             columns.add("week");
             columns.add("newuser");
@@ -1993,7 +2010,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按自然周
-        else if("week".equals(periodType))
+        else if(PERIOD_TYPE_WEEK.equals(periodType))
         {
             //获取两个日期之间间隔的周
             List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
@@ -2086,7 +2103,7 @@ public class KpiMonitorController extends BaseController {
         Map<String,String> freq=null;
 
         //按自然月
-        if("month".equals(periodType))
+        if(PERIOD_TYPE_MONTH.equals(periodType))
         {
             //获取两个日期之间间隔的月份
             List<String> months=DateUtil.getMonthBetween(start.substring(0,7),end.substring(0,7));
@@ -2148,7 +2165,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔月
-        else if("dmonth".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType))
         {
             columns.add("month");
             columns.add("newuser");
@@ -2216,7 +2233,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按间隔周
-        else if("dweek".equals(periodType))
+        else if(PERIOD_TYPE_INTERVAL_WEEK.equals(periodType))
         {
             columns.add("week");
             columns.add("newuser");
@@ -2283,7 +2300,7 @@ public class KpiMonitorController extends BaseController {
             }
         }
         //按自然周
-        else if("week".equals(periodType))
+        else if(PERIOD_TYPE_WEEK.equals(periodType))
         {
             //获取两个日期之间间隔的周
             List<WeekInfo> weeks=kpiMonitorService.getWeekList(start,end);
