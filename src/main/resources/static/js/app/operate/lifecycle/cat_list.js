@@ -323,12 +323,12 @@ $(function () {
 
 });
 
-init_date("startDate1", "yyyy-mm", 1,2,1);
-init_date("endDate1", "yyyy-mm", 1,2,1);
-init_date("startDate2", "yyyy-mm", 1,2,1);
-init_date("endDate2", "yyyy-mm", 1,2,1);
-init_date("startDate3", "yyyy-mm", 1,2,1);
-init_date("endDate3", "yyyy-mm", 1,2,1);
+init_date("startDate1", "yyyy-mm-dd", 0,2,0);
+init_date("endDate1", "yyyy-mm-dd", 0,2,0);
+init_date("startDate2", "yyyy-mm-dd", 0,2,0);
+init_date("endDate2", "yyyy-mm-dd", 0,2,0);
+init_date("startDate3", "yyyy-mm-dd", 0,2,0);
+init_date("endDate3", "yyyy-mm-dd", 0,2,0);
 
 function view_matrix(period,tasktype) {
     //弹出面板
