@@ -75,6 +75,20 @@ public class ShiroConfig {
         return redisCacheManager;
     }
 
+//    /**
+//     * 设置cookie
+//     * @return
+//     */
+//    @Bean("sessionIdCookie")
+//    public SimpleCookie sessionIdCookie() {
+//        SimpleCookie cookie = new SimpleCookie();
+//        cookie.setName("JSESSIONID");
+//        cookie.setHttpOnly(true);
+//        cookie.setMaxAge(systemProperties.getShiro().getCookieTimeout());
+//        cookie.setDomain("growth-master1.com");
+//        return cookie;
+//    }
+
     @Bean
     public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
@@ -206,6 +220,7 @@ public class ShiroConfig {
         sessionManager.setGlobalSessionTimeout(systemProperties.getShiro().getSessionTimeout());
         sessionManager.setSessionListeners(listeners);
         sessionManager.setSessionDAO(redisSessionDAO());
+       // sessionManager.setSessionIdCookie(sessionIdCookie());
         return sessionManager;
     }
 }

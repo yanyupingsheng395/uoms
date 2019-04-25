@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 8081
   tomcat:
     uri-encoding: utf-8
 spring:
@@ -185,4 +185,4 @@ sys:
   # 时间类型参数在前端页面的展示格式，默认格式为 yyyy-MM-dd HH:mm:ss
   timeFormat: yyyy-MM-dd HH:mm:ss
   # 是否开启 AOP 日志，默认开启
-  openAopLog: open
+  openAopLog: true
