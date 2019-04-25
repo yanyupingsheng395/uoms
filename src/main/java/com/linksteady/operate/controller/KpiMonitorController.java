@@ -2374,11 +2374,11 @@ public class KpiMonitorController extends BaseController {
 
 
     /**
-     * 获取件单价的同期群数据
+     * 获取订单价的同期群数据
      * @param periodType  周期类型
      * @return
      */
-    @RequestMapping("/getSpriceData")
+    @RequestMapping("/getPriceData")
     public ResponseBo getPriceData(@RequestParam String periodType,@RequestParam String start,@RequestParam String end) {
 
         JSONObject result=new JSONObject();

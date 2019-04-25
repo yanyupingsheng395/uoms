@@ -65,6 +65,7 @@ function getData(idx) {
     var end = $("#endDate_1").val();
     var periodType=$("#cohortbtngroup1>.btn-primary:first").attr("name");
     $.get(url, {periodType: periodType, start: start, end: end}, function(r) {
+        console.log(r)
         var columns = r.data.columns;
         var data = r.data.data;
 
@@ -121,11 +122,13 @@ function getData1(idx) {
     if(idx == 1) {
         url = "/kpiMonitor/getUpriceData";
     }else if(idx == 2) {
-        url = "/kpiMonitor/getSpriceData"
+        url = "/kpiMonitor/getPriceData"
     }else if(idx == 3) {
-        url = "/kpiMonitor/getJoinrateData"
-    }else if(idx == 4) {
         url = "/kpiMonitor/getFreqData"
+    }else if(idx == 4) {
+        url = "/kpiMonitor/getSpriceData"
+    }else if(idx == 5) {
+        url = "/kpiMonitor/getJoinrateData"
     }
     var $table = $('#dataTable1' + idx);
     var start = $("#startDate_2").val();
@@ -194,12 +197,10 @@ function initBootstrapTable($el, columns, data, total, periodType) {
     $el.bootstrapTable('destroy').bootstrapTable(option);
     // 合并单元格
     if(periodType.indexOf("month") > -1) {
-        total.month = '汇总：';
+        total.month = '合计：';
         $el.bootstrapTable('append', total);
-        $el.bootstrapTable('mergeCells',{index:data.length, field:'month', colspan: 2});
     }else {
-        total.week = '汇总：';
+        total.week = '合计：';
         $el.bootstrapTable('append', total);
-        $el.bootstrapTable('mergeCells',{index:data.length, field:'week', colspan: 2});
     }
 }

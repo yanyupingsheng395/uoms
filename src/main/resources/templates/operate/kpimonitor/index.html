@@ -68,11 +68,6 @@
         .table-condensed > thead > tr > th {
             padding: .5em;
         }
-
-        /*解决固定表头后,表头与表内容不对齐*/
-        .table_list_box{
-            table-layout:fixed !important;
-        }
     </style>
 </head>
 
@@ -183,25 +178,28 @@
                                         </div>
                                         <ul class="nav nav-tabs" style="clear: both;" id="tabs03">
                                             <li class="active"> <a data-toggle="tab" href="#retain1" onclick="tab1Click(1)">客单价</a> </li>
-                                            <li> <a data-toggle="tab" href="#retain_cnt1" onclick="tab1Click(2)"> 件单价</a> </li>
-                                            <li> <a data-toggle="tab" href="#loss1" onclick="tab1Click(3)">连带率</a> </li>
-                                            <li> <a data-toggle="tab" href="#loss_cnt1" onclick="tab1Click(4)">购买频率</a> </li>
+                                            <li> <a data-toggle="tab" href="#dprice" onclick="tab1Click(2)"> 订单价</a> </li>
+                                            <li> <a data-toggle="tab" href="#loss_cnt1" onclick="tab1Click(3)">购买频率</a> </li>
+                                            <li> <a data-toggle="tab" href="#retain_cnt1" onclick="tab1Click(4)"> 件单价</a> </li>
+                                            <li> <a data-toggle="tab" href="#loss1" onclick="tab1Click(5)">连带率</a> </li>
                                         </ul>
                                         <div class="tab-content">
                                             <div class="tab-pane fade active in" id="retain1">
                                                 <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable11" style="word-break: break-all; word-wrap: break-word;max-height: 400px;overflow:scroll;height: auto;"></table>
                                             </div>
+                                            <div class="tab-pane fade" id="dprice">
+                                                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable12" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
+                                            </div>
+                                            <div class="tab-pane fade" id="loss_cnt1">
+                                                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable13" style="word-break: break-all; word-wrap: break-word;max-height: 400px;overflow:scroll;height: auto;"></table>
+                                            </div>
 
                                             <div class="tab-pane fade" id="retain_cnt1">
-                                                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable12" style="word-break: break-all; word-wrap: break-word;max-height: 400px;overflow:scroll;height: auto;"></table>
+                                                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable14" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
                                             </div>
 
                                             <div class="tab-pane fade" id="loss1">
-                                                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable13" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
-                                            </div>
-
-                                            <div class="tab-pane fade" id="loss_cnt1">
-                                                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable14" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
+                                                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable15" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
                                             </div>
                                         </div>
                                     </div>
@@ -315,83 +313,6 @@
     init_date("endDate7", "yyyy-mm-dd", 0,2,0);
     init_date("startDate8", "yyyy-mm-dd", 0,2,0);
     init_date("endDate8", "yyyy-mm-dd", 0,2,0);
-
-    // createData2();
-    // function createData2() {
-    //     var start = $("#startDate_2").val();
-    //     var end = $("#endDate_2").val();
-    //     var month = getMonthPeriod(start, end);
-    //     var head = "<thead><tr><th>月份/留存率</th>";
-    //     var body = "<tbody>";
-    //
-    //     for(var i=0; i<12; i++) {
-    //         head += "<th>+"+(i+1)+"月</th>";
-    //     }
-    //     head += "</tr></thead>";
-    //
-    //     for (var  i = 12 ; i>12-month.length; i--){
-    //         body += "<tr><td>" + month[12-i] + "</td>";
-    //         for (var r = i; r>=1;r--) {
-    //             body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
-    //         }
-    //         body += "</tr>";
-    //     }
-    //     body += "</tbody>";
-    //
-    //     $("#dataTable2").html("").html(head);
-    //     $("#dataTable2").append(body);
-    // }
-
-    // createData3();
-    // function createData3() {
-    //     var start = $("#startDate_3").val();
-    //     var end = $("#endDate_3").val();
-    //     var month = getMonthPeriod(start, end);
-    //     var head = "<thead><tr><th>月份/客单价</th>";
-    //     var body = "<tbody>";
-    //     for(var i=0; i<month.length; i++) {
-    //         head += "<th> " + month[i] + " </th>";
-    //         body += "<tr><td>" + month[i] + "</td>";
-    //         for(var j=0; j<month.length; j++) {
-    //             if(i <= j) {
-    //                 body += "<td>"+getRandom(0, 1000) + "." + getRandom(0, 100) + "</td>";
-    //             }else {
-    //                 body += "<td></td>";
-    //             }
-    //         }
-    //         body += "</tr>";
-    //     }
-    //     head += "</tr></thead>";
-    //     body += "</tbody>";
-    //     $("#dataTable3").html("").html(head);
-    //     $("#dataTable3").append(body);
-    // }
-
-    // createData4();
-    // function createData4() {
-    //     var start = $("#startDate_4").val();
-    //     var end = $("#endDate_4").val();
-    //     var month = getMonthPeriod(start, end);
-    //     var head = "<thead><tr><th>月份/客单价</th>";
-    //     var body = "<tbody>";
-    //
-    //     for(var i=0; i<12; i++) {
-    //         head += "<th>+"+(i+1)+"月</th>";
-    //     }
-    //     head += "</tr></thead>";
-    //
-    //     for (var  i = 12 ; i>12-month.length; i--){
-    //         body += "<tr><td>" + month[12-i] + "</td>";
-    //         for (var r = i; r>=1;r--) {
-    //             body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "</td>";
-    //         }
-    //         body += "</tr>";
-    //     }
-    //     body += "</tbody>";
-    //
-    //     $("#dataTable4").html("").html(head);
-    //     $("#dataTable4").append(body);
-    // }
 
     // 时间类型的转化
     function getDate(datestr) {

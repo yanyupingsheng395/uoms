@@ -5,7 +5,9 @@ Date.prototype.format=function (){
     s+= this.getDate();                 // 获取日。
     return(s);                          // 返回日期。
 };
-
+var data_1 = getMonthRandom(1000, 2000);
+var data_2 = getMonthRandom(1000, 2000);
+var data_3 = arrPlus(data_1, data_2);
 //按日查询
 function getDayAll(begin,end){
     var dateAllArr = new Array();
@@ -71,7 +73,7 @@ var option1 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购GMV', '复购GMV']
+        data: ['首购GMV', '非首购GMV']
 
     },
     calculable: true,
@@ -129,7 +131,7 @@ var option1 = {
         areaStyle: {normal: {}},
         data: getMonthRandom(1000, 2000),
     }, {
-        name: "复购GMV",
+        name: "非首购GMV",
         type: "line",
         areaStyle: {normal: {}},
         stack: "总量",
@@ -180,7 +182,7 @@ var option2 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购用户数', '复购用户数']
+        data: ['首购用户数', '非首购用户数']
 
     },
     calculable: true,
@@ -243,7 +245,7 @@ var option2 = {
         areaStyle: {normal: {}},
         data: getMonthRandom(1000, 2000),
     }, {
-        name: "复购用户数",
+        name: "非首购用户数",
         type: "line",
         areaStyle: {normal: {}},
         stack: "总量",
@@ -280,7 +282,7 @@ var option3 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购平均客单价', '复购平均客单价']
+        data: ['首购平均客单价', '非首购平均客单价', '平均客单价']
 
     },
     calculable: true,
@@ -339,16 +341,31 @@ var option3 = {
     series: [{
         name: "首购平均客单价",
         type: "line",
-        data: getMonthRandom(1000, 2000),
+        data: data_1,
     }, {
-        name: "复购平均客单价",
+        name: "非首购平均客单价",
         type: "line",
-        data: getMonthRandom(1000, 2000)
+        data: data_2
+    }, {
+        name: "平均客单价",
+        type: "line",
+        data: data_3
     }]
 };
 
+function arrPlus(arr1, arr2) {
+    var arr = new Array();
+    $.each(arr1, function (k, v) {
+        arr.push(v + arr2[k]);
+    });
+    return arr;
+}
+
 var chart3 = echarts.init(document.getElementById('chart3'), 'macarons');
 chart3.setOption(option3);
+
+
+
 
 var option4 = {
     tooltip: {
@@ -375,7 +392,7 @@ var option4 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购平均订单价', '复购平均订单价']
+        data: ['首购平均订单价', '非首购平均订单价', '平均订单价']
 
     },
     calculable: true,
@@ -434,11 +451,15 @@ var option4 = {
     series: [{
         name: "首购平均订单价",
         type: "line",
-        data: getMonthRandom(1000, 2000),
+        data: data_1
     }, {
-        name: "复购平均订单价",
+        name: "非首购平均订单价",
         type: "line",
-        data: getMonthRandom(1000, 2000)
+        data: data_2
+    }, {
+        name: "平均订单价",
+        type: "line",
+        data: data_3
     }]
 };
 var chart4 = echarts.init(document.getElementById('chart4'), 'macarons');
@@ -469,7 +490,7 @@ var option5 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购平均订单数', '复购平均订单数']
+        data: ['首购平均订单数', '非首购平均订单数', '平均订单数']
 
     },
     calculable: true,
@@ -528,11 +549,15 @@ var option5 = {
     series: [{
         name: "首购平均订单数",
         type: "line",
-        data: getMonthRandom(1000, 2000),
+        data: data_1,
     }, {
-        name: "复购平均订单数",
+        name: "非首购平均订单数",
         type: "line",
-        data: getMonthRandom(1000, 2000)
+        data: data_2
+    }, {
+        name: "平均订单数",
+        type: "line",
+        data: data_3
     }]
 };
 var chart5 = echarts.init(document.getElementById('chart5'), 'macarons');
@@ -570,7 +595,7 @@ var option80 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购平均件单价', '复购平均件单价']
+        data: ['首购平均件单价', '非首购平均件单价', '平均件单价']
 
     },
     calculable: true,
@@ -629,11 +654,15 @@ var option80 = {
     series: [{
         name: "首购平均件单价",
         type: "line",
-        data: getMonthRandom(1000, 2000),
+        data: data_1,
     }, {
-        name: "复购平均件单价",
+        name: "非首购平均件单价",
         type: "line",
-        data: getMonthRandom(1000, 2000)
+        data: data_2
+    }, {
+        name: "平均件单价",
+        type: "line",
+        data: data_3
     }]
 };
 var option81 = {
@@ -661,7 +690,7 @@ var option81 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购平均连带率', '复购平均连带率']
+        data: ['首购平均连带率', '非首购平均连带率', '平均连带率']
 
     },
     calculable: true,
@@ -720,11 +749,15 @@ var option81 = {
     series: [{
         name: "首购平均连带率",
         type: "line",
-        data: getMonthRandom(1000, 2000),
+        data: data_1
     }, {
-        name: "复购平均连带率",
+        name: "非首购平均连带率",
         type: "line",
-        data: getMonthRandom(1000, 2000)
+        data: data_2
+    }, {
+        name: "平均连带率",
+        type: "line",
+        data: data_3
     }]
 };
 function modal3() {
