@@ -188,12 +188,11 @@ function initBootstrapTable($el, columns, data, total, periodType) {
         data: data,
         search: false,
         fixedColumns: true,
-        fixedNumber: 2,
-        height:400
+        fixedNumber: 2
     };
-    // if(data.length > 12) {
-    //     option.height = 400;
-    // }
+    if(data.length > 12) {
+        option.height = 400;
+    }
     $el.bootstrapTable('destroy').bootstrapTable(option);
     // 合并单元格
     if(periodType.indexOf("month") > -1) {
