@@ -4,222 +4,117 @@ $(function () {
 
     init_date("startDate_1", "yyyy-mm-dd", 0,2,0);
     init_date("endDate_1", "yyyy-mm-dd", 0,2,0);
-
-    $("#cohortbtngroup1>.cohortbtn").on('click',function () {
-        //判断当前元素是否具有btn-primary 的class属性 如果已经有，则什么也不做
-        if(!$(this).hasClass("btn-primary"))
-        {
-              //修改当前元素的样式
-            $(this).removeClass("btn-default").addClass("btn-primary");
-            $(this).siblings().removeClass("btn-primary").addClass("btn-default");
-
-            //更新数据 TODO
-        }
-    });
-
-    // 给bootstrap tab添加点击事件 todo
-    var start = $("#startDate_1").val();
-    var end = $("#endDate_1").val();
-    var month = getMonthPeriod(start, end);
-
-    $.get("/kpiMonitor/getRetainData", {periodType: "month", start: "2018-01", end: "2019-12"}, function(r) {
-        console.log(r);
-        var thead = "<tr><th>月份</th><th>新增用户数</th>";
-        var tbody = "";
-        $.each(r.data, function (k0, v0) {
-           thead += "<th>" + v0[0] + "</th>";
-           tbody += "<tr><td>" + v0[0] + "</td><td>" + v0[1] + "</td>";
-           $.each(v0[2], function(k1, v1) {
-               if(v1 == "-1") {
-                   tbody += "<td></td>";
-               }else {
-                   tbody += "<td>" + v1 + "</td>";
-               }
-           });
-           tbody += "</tr>";
-        });
-        thead += "</tr>";
-        $("#dataTable1").html("").html(thead + tbody);
-    });
+    getData(1);
 });
 
-// 获取不同周期的留存率，留存用户数，流失率，流失用户数
+// 时间维度的click
+$("#cohortbtngroup1>.cohortbtn").on('click',function () {
+    //判断当前元素是否具有btn-primary 的class属性 如果已经有，则什么也不做
+    if(!$(this).hasClass("btn-primary"))
+    {
+        //修改当前元素的样式
+        $(this).removeClass("btn-default").addClass("btn-primary");
+        $(this).siblings().removeClass("btn-primary").addClass("btn-default");
+    }
+    getData(indexTotal);
+});
 
-/**
- * 留存率
- */
-function createDataForRetain() {
+var indexTotal = 1;
+function tabClick(idx) {
+    indexTotal = idx;
+    getData(idx);
+}
+
+// 获取表格数据
+function getData(idx) {
+    var url = "";
+    if(idx == 1) {
+        url = "/kpiMonitor/getRetainData";
+    }else if(idx == 2) {
+        url = "/kpiMonitor/getRetainCntData"
+    }else if(idx == 3) {
+        url = "/kpiMonitor/getLossData"
+    }else if(idx == 4) {
+        url = "/kpiMonitor/getLossCntData"
+    }
+    var $table = $('#dataTable' + idx);
     var start = $("#startDate_1").val();
     var end = $("#endDate_1").val();
-
-    //获取选择的周期类型
     var periodType=$("#cohortbtngroup1>.btn-primary:first").attr("name");
+    $.get(url, {periodType: periodType, start: start, end: end}, function(r) {
+        console.log(r);
 
-    //清空表头信息
-    columns = [];
-    // $.getJSON("/kpiMonitor/getRetainData?periodType="+periodType+"&startDt="+start+"&endDt="+end, function (resp) {
-    //     if (resp.code==200){
-    //         createTableHeader('dataTable1',resp.msg.columns);
-    //         //加载数据
-    //         $('#dataTable1').bootstrapTable('load', resp.data);
-    //     }
-    // })
+        var columns = r.data.columns;
+        var data = r.data.data;
 
-    $.getJSON("/kpiMonitor/test", function (resp) {
-        console.log(resp)
-        // createTableHeader('dataTable1',resp.columns);
-        //加载数据
-        $('#dataTable1').bootstrapTable('load', resp.data);
+        var tmp = new Array();
+        $.each(columns, function (k, v) {
+            if(v == "month") {
+                tmp.push({
+                    field: v,
+                    title: '月份',
+                    width: '132px',
+                    sortable: false
+                });
+            }else if(v == "week") {
+                tmp.push({
+                    field: v,
+                    title: '周',
+                    width: '132px',
+                    sortable: false
+                });
+            }else if(v == "newuser") {
+                tmp.push({
+                    field: v,
+                    title: '本月新增用户数',
+                    width: '132px',
+                    sortable: false
+                });
+            }else {
+                tmp.push({
+                    field: v,
+                    title: v,
+                    width: '132px',
+                    sortable: false,
+                    formatter: function (value, row, index) {
+                        if(value == "-1") {
+                            return "";
+                        }else {
+                            if(indexTotal == 1 || indexTotal == 3) {
+                                return value + "%";
+                            }else {
+                                return value;
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        initBootstrapTable($table, tmp, data, r.data.total, periodType);
     });
-
-
-    //initTable();
-    // var head = "<thead><tr><th>日期</th>";
-    // var body = "<tbody>";
-    // for(var i=0; i<month.length; i++) {
-    //     head += "<th> " + month[i] + " </th>";
-    //     body += "<tr><td>" + month[i] + "</td>";
-    //     for(var j=0; j<month.length; j++) {
-    //         if(i <= j) {
-    //             body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
-    //         }else {
-    //             body += "<td></td>";
-    //         }
-    //     }
-    //     body += "</tr>";
-    // }
-    // head += "</tr></thead>";
-    // body += "</tbody>";
-    // $("#dataTable1").html("").html(head);
-    // $("#dataTable1").append(body);
 }
 
-function createTableHeader(tableID,columns)
-{
-    console.log(columns);
-    $("#"+tableID).bootstrapTable({
-        dataType: "json",
-        showHeader:true,
+// 初始化dataTable
+function initBootstrapTable($el, columns, data, total, periodType) {
+    var option = {
         columns: columns,
-        fixedColumns : false,
-        pagination : false,
-        height: 400,
-        sidePagination : "server"
-    });
-}
-
-/**
- * 留存用户数量
- */
-function createDataForRetainCnt() {
-    var start = $("#startDate_1").val();
-    var end = $("#endDate_1").val();
-    var month = getMonthPeriod(start, end);
-    //获取列的数量
-
-    //获取行头
-
-    var head = "<thead><tr><th>日期</th>";
-    var body = "<tbody>";
-    for(var i=0; i<month.length; i++) {
-        head += "<th> " + month[i] + " </th>";
-        body += "<tr><td>" + month[i] + "</td>";
-        for(var j=0; j<month.length; j++) {
-            if(i <= j) {
-                body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
-            }else {
-                body += "<td></td>";
-            }
-        }
-        body += "</tr>";
+        data: data,
+        search: false,
+        fixedColumns: true,
+        fixedNumber: 2
+    };
+    // if(data.length > 12) {
+    //     option.height = 400;
+    // }
+    $el.bootstrapTable('destroy').bootstrapTable(option);
+    // 合并单元格
+    if(periodType.indexOf("month") > -1) {
+        total.month = '汇总：';
+        $el.bootstrapTable('append', total);
+        $el.bootstrapTable('mergeCells',{index:data.length, field:'month', colspan: 2});
+    }else {
+        total.week = '汇总：';
+        $el.bootstrapTable('append', total);
+        $el.bootstrapTable('mergeCells',{index:data.length, field:'week', colspan: 2});
     }
-    head += "</tr></thead>";
-    body += "</tbody>";
-    $("#dataTable1").html("").html(head);
-    $("#dataTable1").append(body);
 }
-
-/**
- * 流失率
- */
-function createDataForLoss() {
-    var start = $("#startDate_1").val();
-    var end = $("#endDate_1").val();
-    var month = getMonthPeriod(start, end);
-
-
-    //获取列的数量
-
-    //获取行头
-
-    var head = "<thead><tr><th>日期</th>";
-    var body = "<tbody>";
-    for(var i=0; i<month.length; i++) {
-        head += "<th> " + month[i] + " </th>";
-        body += "<tr><td>" + month[i] + "</td>";
-        for(var j=0; j<month.length; j++) {
-            if(i <= j) {
-                body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
-            }else {
-                body += "<td></td>";
-            }
-        }
-        body += "</tr>";
-    }
-    head += "</tr></thead>";
-    body += "</tbody>";
-    $("#dataTable1").html("").html(head);
-    $("#dataTable1").append(body);
-}
-
-/**
- * 流失用户数量
- */
-function createDataForLossCnt() {
-    var start = $("#startDate_1").val();
-    var end = $("#endDate_1").val();
-    var month = getMonthPeriod(start, end);
-
-
-    //获取列的数量
-
-    //获取行头
-
-    var head = "<thead><tr><th>日期</th>";
-    var body = "<tbody>";
-    for(var i=0; i<month.length; i++) {
-        head += "<th> " + month[i] + " </th>";
-        body += "<tr><td>" + month[i] + "</td>";
-        for(var j=0; j<month.length; j++) {
-            if(i <= j) {
-                body += "<td>"+getRandom(0, 100) + "." + getRandom(0, 100) + "%</td>";
-            }else {
-                body += "<td></td>";
-            }
-        }
-        body += "</tr>";
-    }
-    head += "</tr></thead>";
-    body += "</tbody>";
-    $("#dataTable1").html("").html(head);
-    $("#dataTable1").append(body);
-}
-
-// $("#"+tableName).bootstrapTable({
-//     dataType: "json",
-//     showHeader:true,
-//     columns: [{
-//         field: 'fname',
-//         title: '因子名称',
-//         align: 'left'
-//     },{
-//         field: 'formula',
-//         title: '回归公式',
-//         align: 'left'
-//     }, {
-//         field: 'business',
-//         title: '说明',
-//         align: 'left'
-//     }
-//     ]
-// })

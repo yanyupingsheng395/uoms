@@ -11,6 +11,7 @@
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table-fixed-columns.min.css}">
     <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
     <!--时间选择插件-->
@@ -67,6 +68,11 @@
         .table-condensed > thead > tr > th {
             padding: .5em;
         }
+
+        /*解决固定表头后,表头与表内容不对齐*/
+        .table_list_box{
+            table-layout:fixed !important;
+        }
     </style>
 </head>
 
@@ -115,43 +121,48 @@
                                                 <input class="form-control js-datepicker m-b-10" type="text" id="endDate_1" name="endDate" data-date-format="yyyy-mm-dd" value="2019-03-31"/>
                                             </div>
                                             <div class="form-group">
-                                                <button class="btn btn-primary m-b-10" type="button" onclick="createData1()"><i class="mdi mdi-magnify"></i>查询</button>
+                                                <button class="btn btn-primary m-b-10" type="button" onclick="getData()"><i class="mdi mdi-magnify"></i>查询</button>
                                             </div>
                                         </form>
                                         <div class="pull-right">
                                             <div class="btn-group-round" id="cohortbtngroup1">
                                                 <button class="btn btn-primary btn-sm btn-round cohortbtn" name="month">自然月</button>
                                                 <button class="btn btn-default btn-sm btn-round cohortbtn" name="dmonth">间隔月</button>
-                                                <button class="btn btn-default btn-sm btn-round cohortbtn" name="week">&nbsp;&nbsp;周&nbsp;&nbsp;</button>
+                                                <button class="btn btn-default btn-sm btn-round cohortbtn" name="week">自然周</button>
+                                                <button class="btn btn-default btn-sm btn-round cohortbtn" name="dweek">间隔周</button>
                                             </div>
                                         </div>
                                         <ul class="nav nav-tabs" style="clear: both;" id="tabs02">
-                                            <li class="active"> <a data-toggle="tab" href="#retain">留存率</a> </li>
-                                            <li> <a data-toggle="tab" href="#retain_cnt"> 留存用户数</a> </li>
-                                            <li> <a data-toggle="tab" href="#loss">流失率</a> </li>
-                                            <li> <a data-toggle="tab" href="#loss_cnt">流失用户数</a> </li>
+                                            <li class="active"> <a data-toggle="tab" href="#retain" onclick="tabClick(1)">留存率</a> </li>
+                                            <li> <a data-toggle="tab" href="#retain_cnt" onclick="tabClick(2)"> 留存用户数</a> </li>
+                                            <li> <a data-toggle="tab" href="#loss" onclick="tabClick(3)">流失率</a> </li>
+                                            <li> <a data-toggle="tab" href="#loss_cnt" onclick="tabClick(4)">流失用户数</a> </li>
                                         </ul>
                                         <div class="tab-content">
                                             <div class="tab-pane fade active in" id="retain">
                                                 <div class="table-responsive">
-                                                    <table class="table table-hover table-bordered table-striped table-condensed" id="dataTable1" style="word-break: break-all; word-wrap: break-word;"></table>
+                                                    <table data-height="400" data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable1" style="word-break: break-all; word-wrap: break-word;max-height: 400px;overflow:scroll;height: auto;"></table>
                                                 </div>
                                             </div>
-                                            <!--<div class="tab-pane fade" id="tab4">-->
-                                                <!--<form class="form-inline" action="" method="post" onsubmit="return false;">-->
-                                                    <!--<div class="form-group">-->
-                                                        <!--<input class="form-control js-datepicker m-b-10" type="text" id="startDate_2" name="startDate" data-date-format="yyyy-mm" value="2018-01"/>-->
-                                                    <!--</div>-->
-                                                    <!--<div class="form-group">-->
-                                                        <!--<input class="form-control js-datepicker m-b-10" type="text" id="endDate_2" name="endDate" data-date-format="yyyy-mm" value="2018-08"/>-->
-                                                    <!--</div>-->
-                                                    <!--<div class="form-group">-->
-                                                        <!--<button class="btn btn-primary m-b-10" type="button" onclick="createData2()"><i class="mdi mdi-magnify"></i>查询</button>-->
-                                                    <!--</div>-->
-                                                <!--</form>-->
-                                                <!--<table class="table table-hover" id="dataTable2"-->
-                                                       <!--style="word-break: break-all; word-wrap: break-word;"></table>-->
-                                            <!--</div>-->
+
+                                            <div class="tab-pane fade" id="retain_cnt">
+                                                <div class="table-responsive">
+                                                    <table data-height="400" data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable2" style="word-break: break-all; word-wrap: break-word;max-height: 400px;overflow:scroll;height: auto;"></table>
+                                                </div>
+                                            </div>
+
+                                            <div class="tab-pane fade" id="loss">
+                                                <div class="table-responsive">
+                                                    <table data-height="400" data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable3" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
+                                                </div>
+                                            </div>
+
+                                            <div class="tab-pane fade" id="loss_cnt">
+                                                <div class="table-responsive">
+                                                    <table data-height="400" data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable4" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -178,7 +189,7 @@
                                                         <button class="btn btn-primary m-b-10" type="button" onclick="createData3()"><i class="mdi mdi-magnify"></i>查询</button>
                                                     </div>
                                                 </form>
-                                                <table class="table table-hover" id="dataTable3"
+                                                <table class="table table-hover table_list" id="dataTable5"
                                                        style="word-break: break-all; word-wrap: break-word;"></table>
                                             </div>
                                             <div class="tab-pane fade" id="tab6">
@@ -193,7 +204,7 @@
                                                         <button class="btn btn-primary m-b-10" type="button" onclick="createData4()"><i class="mdi mdi-magnify"></i>查询</button>
                                                     </div>
                                                 </form>
-                                                <table class="table table-hover" id="dataTable4"
+                                                <table class="table table-hover" id="dataTable6"
                                                        style="word-break: break-all; word-wrap: break-word;"></table>
                                             </div>
                                         </div>
@@ -269,6 +280,7 @@
 <script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-fixed-columns.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
 <script data-th-src="@{/js/common/perfect-scrollbar.min.js}"></script>
