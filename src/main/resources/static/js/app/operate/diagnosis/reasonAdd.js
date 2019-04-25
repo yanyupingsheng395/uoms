@@ -13,9 +13,9 @@ function submit_analysis(){
     var alert_str="";
 
     //进行校验
-    if($("#selectedTable").find("tr td").text().indexOf("暂无数据") > -1) {
-        alert_str+='请至少选择一组维度及其值！';
-    }
+    // if($("#selectedTable").find("tr td").text().indexOf("暂无数据") > -1) {
+    //     alert_str+='请至少选择一组维度及其值！';
+    // }
 
     if(null!=alert_str&&alert_str!='')
     {
