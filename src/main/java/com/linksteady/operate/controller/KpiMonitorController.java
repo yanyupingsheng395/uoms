@@ -107,7 +107,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -124,7 +124,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -174,7 +180,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -192,7 +198,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -242,7 +254,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -259,7 +271,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -307,7 +325,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -324,7 +342,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -688,7 +712,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -705,7 +729,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -755,7 +785,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"loss".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -773,7 +803,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -823,7 +859,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -840,7 +876,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -888,7 +930,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -905,7 +947,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -979,7 +1027,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1046,7 +1094,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1114,7 +1162,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1179,7 +1227,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1270,7 +1318,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1287,7 +1335,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -1337,7 +1391,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1355,7 +1409,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -1405,7 +1465,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1422,7 +1482,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -1470,7 +1536,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1487,7 +1553,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -1560,7 +1632,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1577,7 +1649,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -1627,7 +1705,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1645,7 +1723,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -1695,7 +1779,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1712,7 +1796,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -1760,7 +1850,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1777,7 +1867,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -1850,7 +1946,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1867,7 +1963,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -1917,7 +2019,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -1935,7 +2037,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -1985,7 +2093,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -2002,7 +2110,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -2050,7 +2164,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -2067,7 +2181,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -2140,7 +2260,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -2157,7 +2277,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -2207,7 +2333,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -2225,7 +2351,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -2275,7 +2407,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -2292,7 +2424,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -2340,7 +2478,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -2357,7 +2495,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -2378,7 +2522,7 @@ public class KpiMonitorController extends BaseController {
      * @param periodType  周期类型
      * @return
      */
-    @RequestMapping("/getSpriceData")
+    @RequestMapping("/getPriceData")
     public ResponseBo getPriceData(@RequestParam String periodType,@RequestParam String start,@RequestParam String end) {
 
         JSONObject result=new JSONObject();
@@ -2431,7 +2575,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -2448,7 +2592,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -2498,7 +2648,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("month".equals(col)||"newuser".equals(col))
+                if("month".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -2516,7 +2666,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -2566,7 +2722,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -2583,7 +2739,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
@@ -2631,7 +2793,7 @@ public class KpiMonitorController extends BaseController {
             {
                 Double total=0D;
                 int count=0;
-                if("week".equals(col)||"newuser".equals(col))
+                if("week".equals(col))
                 {
                     totalData.put(col,"");
                     continue;
@@ -2648,7 +2810,13 @@ public class KpiMonitorController extends BaseController {
 
                 if(count>0)
                 {
-                    totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    if("newuser".equals(col))
+                    {
+                        totalData.put(col,String.valueOf(total.intValue()));
+                    }else
+                    {
+                        totalData.put(col, String.valueOf(ArithUtil.formatDoubleByMode(total/count,2, RoundingMode.DOWN)));
+                    }
                 }else
                 {
                     totalData.put(col,"");
