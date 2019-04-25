@@ -84,6 +84,9 @@ public class User implements Serializable {
 	@Transient
 	private String roleName;
 
+	@Column(name = "EXPIRE_DATE")
+	private Date expireDate;
+
 	/**
 	 * @return USER_ID
 	 */
@@ -276,6 +279,14 @@ public class User implements Serializable {
 
 	public void setRoleName(String roleName) {
 		this.roleName = roleName;
+	}
+
+	public Date getExpireDate() {
+		return expireDate;
+	}
+
+	public void setExpireDate(Date expireDate) {
+		this.expireDate = expireDate;
 	}
 
 	@Override
