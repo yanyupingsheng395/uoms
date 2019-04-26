@@ -37,4 +37,6 @@ public class LcSpuVO {
     private Double gmvCont;
 
     private Double gmvRelate;
+
+    private int orderNo;
 }

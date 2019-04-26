@@ -90,12 +90,18 @@ public class LifeCycleController extends BaseController {
             temp.put("gmvRelate","GMV相关性");
             columns.add(temp);
 
+            temp=Maps.newHashMap();
+            temp.put("orderNo","名次");
+            columns.add(temp);
+
+
             for(LcSpuInfo lsi:list)
             {
                 lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
 
                 lsVO.setGmvCont(getRandomValue("gmvCont"));
                 lsVO.setGmvRelate(getRandomValue("gmvRelate"));
+                lsVO.setOrderNo(1);
 
                 resultList.add(lsVO);
             }
