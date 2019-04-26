@@ -24,8 +24,8 @@
         <jdbcConnection 
         	driverClass="oracle.jdbc.OracleDriver"
         	connectionURL="jdbc:oracle:thin:@39.98.78.201:1521:orcl"
-        	userId="gimspromote"
-        	password="gimsdemodb123">
+        	userId="gimspromote_dev"
+        	password="gimsdev123">
         </jdbcConnection>
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
@@ -47,7 +47,7 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
         <!-- 配置需要生成的表 -->
-        <table tableName="W_WEEK" domainObjectName="WeekInfo" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        <table tableName="UO_LC_SPU_LIST" domainObjectName="LcSpuInfo" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
             <!--<generatedKey column="id" sqlStatement="oracle" identity="true"/>-->
         </table>
     </context>

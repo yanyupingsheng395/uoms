@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.LifeCycleMapper">
-    <!--<select id="getCatList" resultType="map">-->
-        <!--SELECT * FROM(-->
-                         <!--SELECT A.*,ROWNUM RN FROM-->
-                             <!--(select CATE_WID,-->
-                                     <!--CATE_TYPE3,-->
-                                     <!--GMV_RATE,-->
-                                     <!--GMV_RELATE,-->
-                                     <!--PROFIT_RATE,-->
-                                     <!--PROFIT_RELATE,-->
-                                     <!--PROFIT_PCT,-->
-                                     <!--SALES_CNT-->
-                              <!--from UO_LC_CAT_LIST  WHERE 1=1-->
-                                <!--<if test="cateName != null and cateName != ''">-->
-                                    <!--and CATE_TYPE3 like concat(concat('%', #{cateName}), '%')-->
-                                <!--</if>-->
-                             <!--ORDER BY #{orderColumn} DESC) A  WHERE ROWNUM &lt;=#{endRow}-->
-                     <!--) WHERE RN &gt;=#{startRow}-->
-    <!--</select>-->
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.LcSpuInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="SPU_WID" jdbcType="DECIMAL" property="spuWid" />
+        <result column="SPU_NAME" jdbcType="VARCHAR" property="spuName" />
+        <result column="STOCK_NUM" jdbcType="DECIMAL" property="stockNum" />
+        <result column="SALES_NUM" jdbcType="DECIMAL" property="salesNum" />
+        <result column="TIME_TO_MARKET" jdbcType="TIMESTAMP" property="timeToMarket" />
+        <result column="STOCKBYSALES" jdbcType="DECIMAL" property="stockbysales" />
+        <result column="ONSALE_DURATION" jdbcType="DECIMAL" property="onsaleDuration" />
+        <result column="SALE_BEGIN_DT" jdbcType="TIMESTAMP" property="saleBeginDt" />
+        <result column="SALE_END_DT" jdbcType="TIMESTAMP" property="saleEndDt" />
+    </resultMap>
 
-    <!--<select id="getCatTotalCount" resultType="int" parameterType="string">-->
-        <!--select count(*) from UO_LC_CAT_LIST WHERE 1=1-->
-        <!--<if test="_parameter != null and _parameter != ''">-->
-            <!--and CATE_TYPE3 like concat(concat('%', #{_parameter}), '%')-->
-        <!--</if>-->
-    <!--</select>-->
-
+    <select id="getSpuList" resultMap="BaseResultMap">
+                              select
+                                  SPU_WID,
+                                  SPU_NAME,
+                                  STOCK_NUM,
+                                  SALES_NUM,
+                                  TIME_TO_MARKET,
+                                  STOCKBYSALES,
+                                  ONSALE_DURATION,
+                                  SALE_BEGIN_DT,
+                                  SALE_END_DT
+                              from UO_LC_SPU_LIST
+    </select>
 
  </mapper>
