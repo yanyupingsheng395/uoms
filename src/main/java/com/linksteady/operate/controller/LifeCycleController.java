@@ -7,6 +7,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.domain.LcSpuInfo;
 import com.linksteady.operate.service.LifeCycleService;
+import com.linksteady.operate.service.OrderingConstants;
 import com.linksteady.operate.vo.LcSpuVO;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,9 @@ public class LifeCycleController extends BaseController {
         temp.put("salesDt","适销时间");
         columns.add(temp);
 
+        temp=Maps.newHashMap();
+        temp.put("orderNo","名次");
+        columns.add(temp);
 
         if("gmv".equals(filterType))
         {
@@ -90,46 +94,127 @@ public class LifeCycleController extends BaseController {
             temp.put("gmvRelate","GMV相关性");
             columns.add(temp);
 
-            temp=Maps.newHashMap();
-            temp.put("orderNo","名次");
-            columns.add(temp);
-
-
             for(LcSpuInfo lsi:list)
             {
                 lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
 
                 lsVO.setGmvCont(getRandomValue("gmvCont"));
                 lsVO.setGmvRelate(getRandomValue("gmvRelate"));
-                lsVO.setOrderNo(1);
 
                 resultList.add(lsVO);
             }
 
-
+            //对结果进行排序
+            resultList.sort(OrderingConstants.GMV_CONT_ORDERING);
         }
         else if("user".equals(filterType))
         {
+            temp=Maps.newHashMap();
+            temp.put("userCont","用户数贡献率");
+            columns.add(temp);
 
+            temp=Maps.newHashMap();
+            temp.put("newUserCont","新用户数贡献率");
+            columns.add(temp);
+
+            temp=Maps.newHashMap();
+            temp.put("oldUserCont","复购用户数贡献率");
+            columns.add(temp);
+
+            temp=Maps.newHashMap();
+            temp.put("loyaltyCont","忠诚用户数贡献率");
+            columns.add(temp);
+
+            for(LcSpuInfo lsi:list)
+            {
+                lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
+
+                lsVO.setUserCont(getRandomValue("userCont"));
+                lsVO.setNewUserCont(getRandomValue("userCont"));
+                lsVO.setOldUserCont(getRandomValue("userCont"));
+                lsVO.setLoyaltyCont(getRandomValue("userCont"));
+
+                resultList.add(lsVO);
+            }
+
+            //对结果进行排序
+            resultList.sort(OrderingConstants.USER_CONT_ORDERING);
         }
         else if("pocount".equals(filterType))
         {
+            temp=Maps.newHashMap();
+            temp.put("poCount","订单数贡献率");
+            columns.add(temp);
 
+            for(LcSpuInfo lsi:list)
+            {
+                lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
+                lsVO.setPoCount(getRandomValue("pocount"));
+
+                resultList.add(lsVO);
+            }
+
+            //对结果进行排序
+            resultList.sort(OrderingConstants.POCOUNT_CONT_ORDERING);
         }
         else if("joinrate".equals(filterType))
         {
+            temp=Maps.newHashMap();
+            temp.put("joinrate","连带率");
+            columns.add(temp);
 
+            for(LcSpuInfo lsi:list)
+            {
+                lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
+                lsVO.setJoinrate(getRandomValue("joinrate"));
+
+                resultList.add(lsVO);
+            }
+
+            //对结果进行排序
+            resultList.sort(OrderingConstants.JOINRATE_ORDERING);
         }
         else if("sprice".equals(filterType))
         {
+            temp=Maps.newHashMap();
+            temp.put("sprice","件单价");
+            columns.add(temp);
 
+            for(LcSpuInfo lsi:list)
+            {
+                lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
+                lsVO.setSprice(getRandomValue("sprice"));
+
+                resultList.add(lsVO);
+            }
+
+            //对结果进行排序
+            resultList.sort(OrderingConstants.SPRICE_ORDERING);
         }
         else if("profit".equals(filterType))
         {
+            temp=Maps.newHashMap();
+            temp.put("profit","毛利率");
+            columns.add(temp);
 
+            for(LcSpuInfo lsi:list)
+            {
+                lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
+
+                lsVO.setProfit(getRandomValue("profit"));
+                resultList.add(lsVO);
+            }
+
+            //对结果进行排序
+            resultList.sort(OrderingConstants.PROFIT_ORDERING);
         }
 
-        //对结果进行排序
+        int orderNo=1;
+        for(LcSpuVO v:resultList)
+        {
+             v.setOrderNo(orderNo);
+             orderNo++;
+        }
 
         resultMap.put("columns",columns);
         resultMap.put("data",resultList);
@@ -145,9 +230,24 @@ public class LifeCycleController extends BaseController {
         if("gmvCont".equals(type))
         {
             result= RandomUtil.getIntRandom(20,30)/100.00;
-        }else if("retain".equals(type))
+        }else if("gmvRelate".equals(type))
         {
             result= RandomUtil.getIntRandom(10,100)/100.00;
+        }else if("userCont".equals(type))
+        {
+            result= RandomUtil.getIntRandom(20,30)/100.00;
+        }else if("pocount".equals(type))
+        {
+            result= RandomUtil.getIntRandom(20,30)/100.00;
+        }else if("joinrate".equals(type))
+        {
+            result=RandomUtil.getIntRandom(15,25)/10.00;
+        }else if("sprice".equals(type))
+        {
+            result= RandomUtil.getIntRandom(200,300);
+        }else if("profit".equals(type))
+        {
+            result= RandomUtil.getIntRandom(100,1000)/100.00;
         }
 
         return result;
@@ -190,3 +290,4 @@ public class LifeCycleController extends BaseController {
 
 
 }
+
