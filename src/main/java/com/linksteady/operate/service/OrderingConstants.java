@@ -18,7 +18,7 @@ public interface OrderingConstants {
             if (right == null) {
                 return -1;
             }
-            return Doubles.compare(left.getGmvCont(),right.getGmvCont());
+            return Doubles.compare(right.getGmvCont(),left.getGmvCont());
         }
     };
 
@@ -34,7 +34,7 @@ public interface OrderingConstants {
             if (right == null) {
                 return -1;
             }
-            return Doubles.compare(left.getUserCont(),right.getUserCont());
+            return Doubles.compare(right.getUserCont(),left.getUserCont());
         }
     };
 
@@ -50,7 +50,7 @@ public interface OrderingConstants {
             if (right == null) {
                 return -1;
             }
-            return Doubles.compare(left.getPoCount(),right.getPoCount());
+            return Doubles.compare(right.getPoCount(),left.getPoCount());
         }
     };
 
@@ -66,7 +66,7 @@ public interface OrderingConstants {
             if (right == null) {
                 return -1;
             }
-            return Doubles.compare(left.getJoinrate(),right.getJoinrate());
+            return Doubles.compare(right.getJoinrate(),left.getJoinrate());
         }
     };
 
@@ -82,7 +82,7 @@ public interface OrderingConstants {
             if (right == null) {
                 return -1;
             }
-            return Doubles.compare(left.getSprice(),right.getSprice());
+            return Doubles.compare(right.getSprice(),left.getSprice());
         }
     };
 
@@ -98,7 +98,7 @@ public interface OrderingConstants {
             if (right == null) {
                 return -1;
             }
-            return Doubles.compare(left.getProfit(),right.getProfit());
+            return Doubles.compare(right.getProfit(),left.getProfit());
         }
     };
 }
