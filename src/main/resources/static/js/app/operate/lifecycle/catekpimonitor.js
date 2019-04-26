@@ -159,7 +159,7 @@ var option2 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购用户数', '非首购用户数']
+        data: ['首购用户数', '非首购用户数', '整体交易用户数']
 
     },
     calculable: true,
@@ -227,6 +227,12 @@ var option2 = {
         areaStyle: {normal: {}},
         stack: "总量",
         data: getMonthRandom(1000, 2000)
+    }, {
+        name: "整体交易用户数",
+        type: "line",
+        areaStyle: {normal: {}},
+        stack: "总量",
+        data: getMonthRandom(1000, 2000)
     }]
 };
 
@@ -270,7 +276,7 @@ var option3 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购平均客单价', '非首购平均客单价', '平均客单价']
+        data: ['首购平均客单价', '非首购平均客单价', '整体平均客单价']
 
     },
     calculable: true,
@@ -335,7 +341,7 @@ var option3 = {
         type: "line",
         data: data_2
     }, {
-        name: "平均客单价",
+        name: "整体平均客单价",
         type: "line",
         data: data_3
     }]

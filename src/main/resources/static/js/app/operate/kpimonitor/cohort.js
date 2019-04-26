@@ -1,3 +1,39 @@
+/**
+ * 根据值大小，赋予不同颜色代码值
+ * @param type
+ * @param size
+ */
+function colorCode(type, size) {
+    if(type == 1) {
+        if(size < 30) {
+            return "#87CEFA";
+        }
+        if(size < 50 && size >= 30) {
+            return "#6495ED";
+        }
+        if(size < 100 && size >= 50) {
+            return "#1E90FF";
+        }
+        if(size >= 100) {
+            return "#4169E1";
+        }
+    }
+    if(type == 2) {
+        if(size < 5) {
+            return "#87CEFA";
+        }
+        if(size < 10 && size >= 5) {
+            return "#6495ED";
+        }
+        if(size < 20 && size >= 10) {
+            return "#1E90FF";
+        }
+        if(size >= 20) {
+            return "#4169E1";
+        }
+    }
+}
+
 //表头信息
 var columns = [];
 $(function () {
@@ -181,6 +217,14 @@ function getData1(idx) {
     });
 }
 
+/**
+ * 数据量小会出现表头重叠，否则不出现。通过data.length判断解决
+ * @param $el
+ * @param columns
+ * @param data
+ * @param total
+ * @param periodType
+ */
 // 初始化dataTable
 function initBootstrapTable($el, columns, data, total, periodType) {
     var option = {
@@ -194,6 +238,7 @@ function initBootstrapTable($el, columns, data, total, periodType) {
         option.height = 400;
     }
     $el.bootstrapTable('destroy').bootstrapTable(option);
+    // console.log($el.selector)
     // 合并单元格
     if(periodType.indexOf("month") > -1) {
         total.month = '合计：';
@@ -202,4 +247,13 @@ function initBootstrapTable($el, columns, data, total, periodType) {
         total.week = '合计：';
         $el.bootstrapTable('append', total);
     }
+    // if(('#dataTable1,#dataTable3').indexOf($el.selector) > -1) {
+    //     $el.find("tbody tr").find("td").each(function () {
+    //         var color = colorCode(2, parseFloat($(this).text()));
+    //         console.log($(this).text());
+    //         $(this).attr("style", "background-color:" + color + "");
+    //     });
+    // }
 }
+
+

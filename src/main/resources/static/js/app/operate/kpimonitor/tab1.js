@@ -282,7 +282,7 @@ var option3 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购平均客单价', '非首购平均客单价', '平均客单价']
+        data: ['首购平均客单价', '非首购平均客单价', '整体平均客单价']
 
     },
     calculable: true,
@@ -347,7 +347,7 @@ var option3 = {
         type: "line",
         data: data_2
     }, {
-        name: "平均客单价",
+        name: "整体平均客单价",
         type: "line",
         data: data_3
     }]
@@ -392,7 +392,7 @@ var option4 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购平均订单价', '非首购平均订单价', '平均订单价']
+        data: ['首购平均订单价', '非首购平均订单价', '整体平均订单价']
 
     },
     calculable: true,
@@ -457,7 +457,7 @@ var option4 = {
         type: "line",
         data: data_2
     }, {
-        name: "平均订单价",
+        name: "整体平均订单价",
         type: "line",
         data: data_3
     }]
@@ -490,7 +490,7 @@ var option5 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购平均订单数', '非首购平均订单数', '平均订单数']
+        data: ['首购平均订单数', '非首购平均订单数', '整体平均订单数']
 
     },
     calculable: true,
@@ -555,7 +555,7 @@ var option5 = {
         type: "line",
         data: data_2
     }, {
-        name: "平均订单数",
+        name: "整体平均订单数",
         type: "line",
         data: data_3
     }]
@@ -595,7 +595,7 @@ var option80 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购平均件单价', '非首购平均件单价', '平均件单价']
+        data: ['首购平均件单价', '非首购平均件单价', '整体平均件单价']
 
     },
     calculable: true,
@@ -660,7 +660,7 @@ var option80 = {
         type: "line",
         data: data_2
     }, {
-        name: "平均件单价",
+        name: "整体平均件单价",
         type: "line",
         data: data_3
     }]
@@ -690,7 +690,7 @@ var option81 = {
         textStyle: {
             color: '#90979c',
         },
-        data: ['首购平均连带率', '非首购平均连带率', '平均连带率']
+        data: ['首购平均连带率', '非首购平均连带率', '整体平均连带率']
 
     },
     calculable: true,
@@ -755,7 +755,7 @@ var option81 = {
         type: "line",
         data: data_2
     }, {
-        name: "平均连带率",
+        name: "整体平均连带率",
         type: "line",
         data: data_3
     }]
