@@ -15,13 +15,14 @@ public class LifeCycleServiceImpl implements LifeCycleService {
     private LifeCycleMapper lifeCycleMapper;
 
 
-    @Override
-    public List<Map<String, Object>> getCatList(int startRow, int endRow,String orderColumn,String cateName) {
-        return lifeCycleMapper.getCatList(startRow, endRow,orderColumn,cateName);
-    }
-
-    @Override
-    public int getCatTotalCount(String cateName) {
-        return lifeCycleMapper.getCatTotalCount(cateName);
-    }
+//    @Override
+//    public List<Map<String, Object>> getCatList(int startRow, int endRow,String orderColumn,String cateName) {
+//        return lifeCycleMapper.getCatList(startRow, endRow,orderColumn,cateName);
+//    }
+//
+//    @Override
+//    public int getCatTotalCount(String cateName) {
+//        return lifeCycleMapper.getCatTotalCount(cateName);
+//    }
+//}
 }

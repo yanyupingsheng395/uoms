@@ -1,5 +1,7 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -30,16 +32,50 @@ public class LifeCycleController extends BaseController {
 
 
     /**
-     * 获取品类列表
+     * 获取spu列表
      * @param
      * @return
      */
-    @RequestMapping("/getCatList")
-    public ResponseBo lifecycleCatList(@RequestBody  QueryRequest request,@RequestParam   String cateName,@RequestParam  String orderColumn) {
-        List<Map<String,Object>> result=lifeCycleService.getCatList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(),orderColumn,cateName);
+    @RequestMapping("/getSpuList")
+    public ResponseBo lifecycleCatList(@RequestParam   String startDt,@RequestParam  String endDt,String filterType,String source) {
 
-        int totalCount= lifeCycleService.getCatTotalCount(cateName);
-        return  ResponseBo.okOverPaging("",totalCount,result);
+        return  ResponseBo.ok("");
     }
+
+    /**
+     * 获取SPU的筛选条件列表
+     */
+    @RequestMapping("/getSpuFilterList")
+    public ResponseBo getSpuFilterList() {
+
+        List<Map<String,String>> result= Lists.newArrayList();
+
+        Map<String,String> temp= Maps.newHashMap();
+        temp.put("gmv","GMV贡献率");
+        result.add(temp);
+
+        temp= Maps.newHashMap();
+        temp.put("user","用户数");
+        result.add(temp);
+
+        temp= Maps.newHashMap();
+        temp.put("pocount","订单数");
+        result.add(temp);
+
+        temp= Maps.newHashMap();
+        temp.put("joinrate","连带率");
+        result.add(temp);
+
+        temp= Maps.newHashMap();
+        temp.put("sprice","件单价");
+        result.add(temp);
+
+        temp= Maps.newHashMap();
+        temp.put("profit","毛利率");
+        result.add(temp);
+
+        return  ResponseBo.okWithData("",result);
+    }
+
 
 }

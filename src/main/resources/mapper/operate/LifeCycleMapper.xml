@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.LifeCycleMapper">
-    <select id="getCatList" resultType="map">
-        SELECT * FROM(
-                         SELECT A.*,ROWNUM RN FROM
-                             (select CATE_WID,
-                                     CATE_TYPE3,
-                                     GMV_RATE,
-                                     GMV_RELATE,
-                                     PROFIT_RATE,
-                                     PROFIT_RELATE,
-                                     PROFIT_PCT,
-                                     SALES_CNT
-                              from UO_LC_CAT_LIST  WHERE 1=1
-                                <if test="cateName != null and cateName != ''">
-                                    and CATE_TYPE3 like concat(concat('%', #{cateName}), '%')
-                                </if>
-                             ORDER BY #{orderColumn} DESC) A  WHERE ROWNUM &lt;=#{endRow}
-                     ) WHERE RN &gt;=#{startRow}
-    </select>
+    <!--<select id="getCatList" resultType="map">-->
+        <!--SELECT * FROM(-->
+                         <!--SELECT A.*,ROWNUM RN FROM-->
+                             <!--(select CATE_WID,-->
+                                     <!--CATE_TYPE3,-->
+                                     <!--GMV_RATE,-->
+                                     <!--GMV_RELATE,-->
+                                     <!--PROFIT_RATE,-->
+                                     <!--PROFIT_RELATE,-->
+                                     <!--PROFIT_PCT,-->
+                                     <!--SALES_CNT-->
+                              <!--from UO_LC_CAT_LIST  WHERE 1=1-->
+                                <!--<if test="cateName != null and cateName != ''">-->
+                                    <!--and CATE_TYPE3 like concat(concat('%', #{cateName}), '%')-->
+                                <!--</if>-->
+                             <!--ORDER BY #{orderColumn} DESC) A  WHERE ROWNUM &lt;=#{endRow}-->
+                     <!--) WHERE RN &gt;=#{startRow}-->
+    <!--</select>-->
 
-    <select id="getCatTotalCount" resultType="int" parameterType="string">
-        select count(*) from UO_LC_CAT_LIST WHERE 1=1
-        <if test="_parameter != null and _parameter != ''">
-            and CATE_TYPE3 like concat(concat('%', #{_parameter}), '%')
-        </if>
-    </select>
+    <!--<select id="getCatTotalCount" resultType="int" parameterType="string">-->
+        <!--select count(*) from UO_LC_CAT_LIST WHERE 1=1-->
+        <!--<if test="_parameter != null and _parameter != ''">-->
+            <!--and CATE_TYPE3 like concat(concat('%', #{_parameter}), '%')-->
+        <!--</if>-->
+    <!--</select>-->
 
 
  </mapper>

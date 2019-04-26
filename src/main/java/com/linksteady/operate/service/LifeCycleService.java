@@ -6,8 +6,8 @@ import java.util.Map;
 
 public interface LifeCycleService {
 
-     List<Map<String,Object>> getCatList(int startRow, int endRow,String orderColumn,String cateName);
-
-     int getCatTotalCount(String cateName);
+//     List<Map<String,Object>> getCatList(int startRow, int endRow,String orderColumn,String cateName);
+//
+//     int getCatTotalCount(String cateName);
 
 }
