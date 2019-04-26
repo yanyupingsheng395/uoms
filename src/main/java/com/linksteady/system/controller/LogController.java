@@ -70,7 +70,7 @@ public class LogController extends BaseController {
     @RequiresPermissions("log:delete")
     @RequestMapping("log/delete")
     @ResponseBody
-    public ResponseBo deleteLogss(String ids) {
+    public ResponseBo deleteLogs(String ids) {
         try {
             this.logService.deleteLogs(ids);
             return ResponseBo.ok("删除日志成功！");
