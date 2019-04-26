@@ -39,7 +39,6 @@ public class LoginController extends BaseController {
         return "login";
     }
 
-    @Log("系统登录")
     @PostMapping("/login")
     @ResponseBody
     public ResponseBo login(String username, String password, String code) {
