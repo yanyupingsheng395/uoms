@@ -71,13 +71,17 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
         Log logAnnotation = method.getAnnotation(Log.class);
         if (logAnnotation != null) {
             // 注解上的描述
-            log.setOperation(logAnnotation.value());
+            String loganno = logAnnotation.value();
+            loganno = loganno.length() > 1000 ? loganno.substring(0, 1000):loganno;
+            log.setOperation(loganno);
         }
         // 请求的类名
         String className = joinPoint.getTarget().getClass().getName();
         // 请求的方法名
         String methodName = signature.getName();
-        log.setMethod(className + "." + methodName + "()");
+        String methodParam = className + "." + methodName + "()";
+        methodParam = methodParam.length() > 1000?methodParam.substring(0, 1000):methodParam;
+        log.setMethod(methodParam);
         // 请求的方法参数值
         Object[] args = joinPoint.getArgs();
         // 请求的方法参数名称
@@ -86,10 +90,10 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
         if (args != null && paramNames != null) {
             StringBuilder params = new StringBuilder();
             params = handleParams(params, args, Arrays.asList(paramNames));
+            params = params.length() > 1000?new StringBuilder(params.substring(0, 1000)):params;
             log.setParams(params.toString());
         }
         log.setCreateTime(new Date());
-
         // 保存系统日志
         save(log);
     }
