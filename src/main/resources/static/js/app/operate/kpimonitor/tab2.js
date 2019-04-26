@@ -7,7 +7,7 @@ var xData = function() {
 }();
 
 
-function initChart() {
+function initTab2Chart() {
     var option4 = {
         "tooltip": {
             "trigger": "axis",
@@ -105,7 +105,7 @@ function initChart() {
         }]
     };
 
-    var chart4 = echarts.init(document.getElementById('chart4'), 'macarons');
+    var chart4 = echarts.init(document.getElementById('chart2_4'), 'macarons');
     chart4.setOption(option4);
 
     var option5 = {
@@ -205,7 +205,7 @@ function initChart() {
         }]
     };
 
-    var chart5 = echarts.init(document.getElementById('chart5'), 'macarons');
+    var chart5 = echarts.init(document.getElementById('chart2_5'), 'macarons');
     chart5.setOption(option5);
 
     var option6 = {
