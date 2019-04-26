@@ -187,10 +187,10 @@ function initBootstrapTable($el, columns, data, total, periodType) {
         columns: columns,
         data: data,
         search: false,
-        fixedColumns: true,
-        fixedNumber: 2
     };
     if(data.length > 12) {
+        option.fixedColumns = true;
+        option.fixedNumber = 2;
         option.height = 400;
     }
     $el.bootstrapTable('destroy').bootstrapTable(option);
