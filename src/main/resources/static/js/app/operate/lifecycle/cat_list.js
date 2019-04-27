@@ -20,33 +20,38 @@ opuser_data.push({user_id:'14239',prod_name:'测试产品2',start_dt:'2019-04-10
 opuser_data.push({user_id:'14240',prod_name:'测试产品3',start_dt:'2019-04-10',end_dt:'2019-04-20',yhld:'中'});
 opuser_data.push({user_id:'14241',prod_name:'测试产品4',start_dt:'2019-04-10',end_dt:'2019-04-20',yhld:'低'});
 
-var retention_option1= {
-    tooltip: {
-        trigger: 'axis'
-    },
-    xAxis: {
-        type: 'category',
-        data: [],
-        name: '',
-        nameTextStyle: 'oblique',
-        boundaryGap: false,
-        nameRotate: 73
-    },
-    axisLabel:{
-        interval: 0,
-        rotate: 45
-    },
-    yAxis: {
-        type: 'value',
-        name: '',
-        max: 50
-    },
-    series: [{
-        data: [],
-        type: 'line',
-        smooth: true
-    }]
-};
+// // 留存率与购买间隔
+// var retention_option1= {
+//     tooltip: {
+//         trigger: 'axis'
+//     },
+//     xAxis: {
+//         type: 'category',
+//         data: [],
+//         name: '',
+//         nameTextStyle: 'oblique',
+//         boundaryGap: false,
+//         splitArea : {show : false},
+//         splitLine:{show: false}
+//     },
+//     grid: [{
+//         height:'50%',
+//         left: '10%',
+//         right: '13%',
+//     }],
+//     yAxis: {
+//         type: 'value',
+//         name: '',
+//         max: 20,
+//         splitArea : {show : false},
+//         splitLine:{show: false},
+//     },
+//     series: [{
+//         data: [],
+//         type: 'line',
+//         smooth: true
+//     }]
+// };
 
 var retention_option2= {
     tooltip: {
@@ -163,11 +168,11 @@ var area_option = {
     }]
 };
 
-//构造留存率与其它指标关系的三个图
-retention_option1.xAxis.name="购买次数";
-retention_option1.xAxis.data=['1','2','3','4','5','6','7','8','9','10','11+'];
-retention_option1.yAxis.name="留存率(%)";
-retention_option1.series[0].data=['3','5','5.4','6','12','14','17','17.5','17.6','17.7','17.8'];
+// //构造留存率与其它指标关系的三个图
+// retention_option1.xAxis.name="购买次数";
+// retention_option1.xAxis.data=['1','2','3','4','5','6','7','8','9','10','11+'];
+// retention_option1.yAxis.name="留存率(%)";
+// retention_option1.series[0].data=['3','5','5.4','6','12','14','12','5.5','5.6','4.7','3.8'];
 
 retention_option2.xAxis.name="客单价";
 retention_option2.xAxis.data=['0-50','50-100','100-150','150-200','200-250','250-300','300-350','350-400','400-450','450-500','500+'];
@@ -243,18 +248,7 @@ $(function () {
             if(activeTab='#tab_kpis')
             {
                 $("#tabContent2").attr("class", "chartpanel");
-
-                var freqChart = echarts.init(document.getElementById('retention_freq'), 'macarons');
-                var priceChart = echarts.init(document.getElementById('retention_price'), 'macarons');
-                var gapChart = echarts.init(document.getElementById('retention_gap'), 'macarons');
-                var radarChart = echarts.init(document.getElementById('lifecycle_radar'), 'macarons');
-                var shapChart = echarts.init(document.getElementById('lifecycle_shape'), 'macarons');
-
-                freqChart.setOption(retention_option1);
-                priceChart.setOption(retention_option2);
-                gapChart.setOption(retention_option3);
-                radarChart.setOption(radar_option);
-                shapChart.setOption(area_option);
+                tab2Init();
             }else
             {
                 $("#tabContent2").attr("class", "chartpanel");
@@ -641,8 +635,7 @@ function gearsOption(yName, data1, data2) {
             height:'50%',
             left: '10%',
             right: '10%',
-        }
-        ],
+        }],
         yAxis: [{
             type: 'category',
             data: [''],

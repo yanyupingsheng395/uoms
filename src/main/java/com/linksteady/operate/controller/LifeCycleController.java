@@ -321,7 +321,5 @@ public class LifeCycleController extends BaseController {
 
         return  ResponseBo.okWithData("",result);
     }
-
-
 }
 
