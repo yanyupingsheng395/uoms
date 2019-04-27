@@ -319,23 +319,20 @@ function initTableData() {
                         case "gmv":
                             val = "gmvCont";
                             break;
-                        case "gmv":
-                            val = "gmvCont";
+                        case "user":
+                            val = "userCont";
                             break;
-                        case "gmv":
-                            val = "gmvCont";
+                        case "pocount":
+                            val = "poCount";
                             break;
-                        case "gmv":
-                            val = "gmvCont";
+                        case "joinrate":
+                            val = "joinrate";
                             break;
-                        case "gmv":
-                            val = "gmvCont";
+                        case "sprice":
+                            val = "sprice";
                             break;
-                        case "gmv":
-                            val = "gmvCont";
-                            break;
-                        case "gmv":
-                            val = "gmvCont";
+                        case "profit":
+                            val = "profit";
                             break;
                     }
                     return "<button style='margin-right: 5px;' class='btn btn-secondary btn-sm' onclick='gearBtnClick("+row[""+val+""]+")'><i class='mdi mdi-chemical-weapon'></i>档位</button>";
@@ -725,10 +722,17 @@ function gearsOption(yName, data1, data2) {
                 }
             }
         },{
-            name: 'outlier',
+            name: '实际值',
             type: 'scatter',
             data: [data2],
-            symbolSize: 11
+            symbolSize: 11,
+            tooltip: {
+                formatter: function(param) {
+                    return [
+                        '实际值: ' + param.data
+                    ].join('<br/>')
+                }
+            }
         }]
     };
     console.log(option);
