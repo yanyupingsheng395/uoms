@@ -84,7 +84,7 @@ public class PageController extends BaseController {
      */
     @Log("目标定制与分解-查看")
     @RequestMapping("/page/gmvplan/view")
-    public String gmv_view(String year, Model model) {
+    public String gmvView(String year, Model model) {
         model.addAttribute("year", year);
         GmvPlan gmvPlan = gmvPlanService.getByYear(year);
         model.addAttribute("gmvPlan", gmvPlan);

@@ -69,30 +69,6 @@ public class DeptController {
         }
     }
 
-//    @RequestMapping("dept/excel")
-//    @ResponseBody
-//    public ResponseBo deptExcel(Dept dept) {
-//        try {
-//            List<Dept> list = this.deptService.findAllDepts(dept);
-//            return FileUtils.createExcelByPOIKit("部门表", list, Dept.class);
-//        } catch (Exception e) {
-//            log.error("导出部门信息Excel失败", e);
-//            return ResponseBo.error("导出Excel失败，请联系网站管理员！");
-//        }
-//    }
-
-//    @RequestMapping("dept/csv")
-//    @ResponseBody
-//    public ResponseBo deptCsv(Dept dept) {
-//        try {
-//            List<Dept> list = this.deptService.findAllDepts(dept);
-//            return FileUtils.createCsv("部门表", list, Dept.class);
-//        } catch (Exception e) {
-//            log.error("获取部门信息Csv失败", e);
-//            return ResponseBo.error("导出Csv失败，请联系网站管理员！");
-//        }
-//    }
-
     @RequestMapping("dept/checkDeptName")
     @ResponseBody
     public boolean checkDeptName(String deptName, String oldDeptName) {

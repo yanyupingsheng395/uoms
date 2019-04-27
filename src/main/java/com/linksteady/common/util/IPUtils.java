@@ -2,6 +2,10 @@ package com.linksteady.common.util;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * IP地址相关的工具类
+ * @author  internet
+ */
 public class IPUtils {
 
 	private static final String UNKNOWN = "unknown";

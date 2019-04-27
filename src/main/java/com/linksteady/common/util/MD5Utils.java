@@ -3,6 +3,10 @@ package com.linksteady.common.util;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 
+/**
+ * MD5加密的工具类
+ */
+@SuppressWarnings("ALL")
 public class MD5Utils {
 
 	protected MD5Utils(){
