@@ -292,7 +292,6 @@ function initTableData() {
         data:{startDt:startDt,endDt:endDt, source:source, filterType:filterType},
         async: true,
         success: function (r) {
-            console.log(r.data)
             stats = r.data.stats;
             var columns = new Array();
             $.each(r.data.columns, function (k, v) {
@@ -371,8 +370,6 @@ $('#gearsModal').on('shown.bs.modal', function (event) {
     var chart = echarts.init(document.getElementById('gearChart'), 'macarons');
     chart.setOption(opt);
 });
-
-
 
 init_date("startDate1", "yyyy-mm-dd", 0,2,0);
 init_date("endDate1", "yyyy-mm-dd", 0,2,0);
@@ -735,6 +732,5 @@ function gearsOption(yName, data1, data2) {
             }
         }]
     };
-    console.log(option);
     return option;
 }
