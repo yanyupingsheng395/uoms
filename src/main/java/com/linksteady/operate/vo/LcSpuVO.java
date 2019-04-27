@@ -5,6 +5,10 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * 用户运营-生命周期价值-SPU信息列表
+ * @author  huang
+ */
 @Data
 public class LcSpuVO {
 
@@ -38,7 +42,7 @@ public class LcSpuVO {
 
     private Double gmvRelate;
 
-    private int orderNo;
+    private Integer orderNo;
 
     private Double userCont;
 

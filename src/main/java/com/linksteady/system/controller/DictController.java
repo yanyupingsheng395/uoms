@@ -46,30 +46,6 @@ public class DictController extends BaseController {
         return getDataTable(pageInfo);
     }
 
-//    @RequestMapping("dict/excel")
-//    @ResponseBody
-//    public ResponseBo dictExcel(Dict dict) {
-//        try {
-//            List<Dict> list = this.dictService.findAllDicts(dict, null);
-//            return FileUtils.createExcelByPOIKit("字典表", list, Dict.class);
-//        } catch (Exception e) {
-//            log.error("导出字典信息Excel失败", e);
-//            return ResponseBo.error("导出Excel失败，请联系网站管理员！");
-//        }
-//    }
-
-//    @RequestMapping("dict/csv")
-//    @ResponseBody
-//    public ResponseBo dictCsv(Dict dict) {
-//        try {
-//            List<Dict> list = this.dictService.findAllDicts(dict, null);
-//            return FileUtils.createCsv("字典表", list, Dict.class);
-//        } catch (Exception e) {
-//            log.error("导出字典信息Csv失败", e);
-//            return ResponseBo.error("导出Csv失败，请联系网站管理员！");
-//        }
-//    }
-
     @RequestMapping("dict/getDict")
     @ResponseBody
     public ResponseBo getDict(Long dictId) {

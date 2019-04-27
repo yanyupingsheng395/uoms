@@ -47,30 +47,6 @@ public class RoleController extends BaseController {
         return getDataTable(pageInfo);
     }
 
-//    @RequestMapping("role/excel")
-//    @ResponseBody
-//    public ResponseBo roleExcel(Role role) {
-//        try {
-//            List<Role> list = this.roleService.findAllRole(role);
-//            return FileUtils.createExcelByPOIKit("角色表", list, Role.class);
-//        } catch (Exception e) {
-//            log.error("导出角色信息Excel失败", e);
-//            return ResponseBo.error("导出Excel失败，请联系网站管理员！");
-//        }
-//    }
-//
-//    @RequestMapping("role/csv")
-//    @ResponseBody
-//    public ResponseBo roleCsv(Role role) {
-//        try {
-//            List<Role> list = this.roleService.findAllRole(role);
-//            return FileUtils.createCsv("角色表", list, Role.class);
-//        } catch (Exception e) {
-//            log.error("导出角色信息Csv失败", e);
-//            return ResponseBo.error("导出Csv失败，请联系网站管理员！");
-//        }
-//    }
-
     @RequestMapping("role/getRole")
     @ResponseBody
     public ResponseBo getRole(Long roleId) {
