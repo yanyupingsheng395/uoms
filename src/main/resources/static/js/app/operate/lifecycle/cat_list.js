@@ -181,70 +181,14 @@ retention_option3.series[0].data=['3','5','5.4','6','12','14','17','17.5','17.6'
 
 //初始化面积图
 area_option.xAxis.data=['新客期','成长期','成熟期','衰退期','流失期'];
-area_option.series[0].data=[4300,3200,5000,3500,6000]
+area_option.series[0].data=[4300,3200,5000,3500,6000];
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 $(function () {
-
-    var settings = {
-        url: "/lifecycle/getCatList?cateName="+$("#cate_name").val()+"&orderColumn="+$("#orderColumn").val(),
-        method: 'post',
-        cache: false,
-        pagination: true,
-        //   striped: true,
-        sidePagination: "server",
-        pageNumber: 1,            //初始化加载第一页，默认第一页
-        pageSize: 5,            //每页的记录行数（*）
-        pageList: [5,10, 25, 50, 100],
-        queryParams: function (params) {
-            return {
-                pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit )+ 1  //页码
-            };
-        },
-        columns: [{
-            field: 'CATE_TYPE3',
-            title: '品类名称'
-        }, {
-            field: 'GMV_RATE',
-            title: 'GMV贡献率',
-            formatter: function (value, row, index) {
-                return value == null ? "" : value + "%"
-            }
-        }, {
-            field: 'GMV_RELATE',
-            title: 'GMV相关性',
-            formatter: function (value, row, index) {
-                return value == null ? "":value
-            }
-        }, {
-            field: 'PROFIT_RATE',
-            title: '利润贡献率',
-            formatter: function (value, row, index) {
-                return value == null ? "" : value + "%"
-            }
-        }, {
-            field: 'PROFIT_RELATE',
-            title: '利润相关性',
-            formatter: function (value, row, index) {
-                return value == null ? "":value
-            }
-        }, {
-            field: 'PROFIT_PCT',
-            title: '利润率',
-            formatter: function (value, row, index) {
-                return value == null ? "" : value + "%"
-            }
-        }, {
-            field: 'SALES_CNT',
-            title: '销量',
-            formatter: function (value, row, index) {
-                return value == null ? "":value
-            }
-            }]
-    };
-    $('#catListTable').bootstrapTable(settings);
+    periodTypeOption();
+    // 初始化表格数据
+    initTableData();
 
     var flag = false;
     //添加行点击事件
@@ -275,19 +219,16 @@ $(function () {
         if(null!=selectId&&selectId!='')
         {
             $.each(settings,function (i,v) {
-                    if(v.CATE_WID === parseInt(selectId)){
-                        $(e.target).find('tbody tr').eq(i).addClass('changeColor');
-                    }
+                if(v.CATE_WID === parseInt(selectId)){
+                    $(e.target).find('tbody tr').eq(i).addClass('changeColor');
+                }
             });
         }
     });
 
     //给查询按钮绑定事件
     $("#query").on("click",function () {
-        var opt = {
-            url: "/lifecycle/getCatList?cateName="+$("#cate_name").val()+"&orderColumn="+$("#orderColumn").val()};
-
-        $('#catListTable').bootstrapTable("refresh",opt);
+        initTableData();
     });
 
     //为tab页增加事件
@@ -322,6 +263,119 @@ $(function () {
     });
 
 });
+
+function periodTypeOption() {
+    var option = "";
+    $.ajax({
+        url: '/lifecycle/getSpuFilterList',
+        async: false,
+        success: function (r) {
+            $.each(r.data, function(k, v) {
+                $.each(v, function (k1, v1) {
+                    option += "<option value='"+k1+"'>"+v1+"</option>";
+                });
+            });
+            $("#conditions").html("").html(option);
+        }
+    });
+}
+
+var stats = null;
+function initTableData() {
+    stats = new Object();
+    var startDt =  $("#startDt").val();
+    var endDt = $("#endDt").val();
+    var source = $("#source").find("option:selected").val();
+    var filterType = $("#conditions").find("option:selected").val();
+    $.ajax({
+        url:"/lifecycle/getSpuList",
+        data:{startDt:startDt,endDt:endDt, source:source, filterType:filterType},
+        async: true,
+        success: function (r) {
+            console.log(r.data)
+            stats = r.data.stats;
+            var columns = new Array();
+            $.each(r.data.columns, function (k, v) {
+                var obj = new Object();
+                $.each(v, function (k1, v1) {
+                    obj.field = k1;
+                    obj.title = v1;
+                    obj.formatter = function (value, row, index) {
+                        if(value == null) {
+                            return "";
+                        }else {
+                            return value;
+                        }
+                    };
+                });
+                columns.push(obj);
+            });
+            columns.push({
+                field: "operate",
+                title: "操作",
+                formatter: function (value, row, index) {
+                    var val = null;
+                    switch (filterType) {
+                        case "gmv":
+                            val = "gmvCont";
+                            break;
+                        case "gmv":
+                            val = "gmvCont";
+                            break;
+                        case "gmv":
+                            val = "gmvCont";
+                            break;
+                        case "gmv":
+                            val = "gmvCont";
+                            break;
+                        case "gmv":
+                            val = "gmvCont";
+                            break;
+                        case "gmv":
+                            val = "gmvCont";
+                            break;
+                        case "gmv":
+                            val = "gmvCont";
+                            break;
+                    }
+                    return "<button style='margin-right: 5px;' class='btn btn-secondary btn-sm' onclick='gearBtnClick("+row[""+val+""]+")'><i class='mdi mdi-chemical-weapon'></i>档位</button>";
+                }
+            });
+            var option = {
+                columns: columns,
+                data: r.data.data,
+                pageNumber : 1,
+                pagination : true,
+                sidePagination : 'client',
+                pageSize: 5,
+                pageList: [5,10, 25, 50, 100],
+                search: false
+            };
+            $('#catListTable').bootstrapTable('destroy').bootstrapTable(option);
+        }
+    });
+}
+
+var data2 = null;
+var yName = null;
+function gearBtnClick(val) {
+    data2 = val;
+    yName = $("#conditions").find("option:selected").text();
+    $("#gearsModal").modal('show');
+}
+$('#gearsModal').on('shown.bs.modal', function (event) {
+    var data1 = new Array();
+    data1.push(stats.min);
+    data1.push(stats.q1);
+    data1.push(stats.q2);
+    data1.push(stats.q3);
+    data1.push(stats.max);
+    var opt = gearsOption(yName, data1, data2);
+    var chart = echarts.init(document.getElementById('gearChart'), 'macarons');
+    chart.setOption(opt);
+});
+
+
 
 init_date("startDate1", "yyyy-mm-dd", 0,2,0);
 init_date("endDate1", "yyyy-mm-dd", 0,2,0);
@@ -574,3 +628,109 @@ $('#opuserListTable').bootstrapTable({
     pageList: [5,10, 25, 50, 100],        //可供选择的每页的行数（*）
     columns: opuser_columns
 });
+
+///////////////
+
+// 初始化时间插件
+init_date_begin("startDt", "endDt", "yyyy-mm-dd",0, 2, 0);
+init_date_end("startDt", "endDt", "yyyy-mm-dd", 0, 2, 0);
+
+function gearsOption(yName, data1, data2) {
+    var option = {
+        tooltip: {
+            trigger: 'item',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        grid: [{
+            height:'50%',
+            left: '10%',
+            right: '10%',
+        }
+        ],
+        yAxis: [{
+            type: 'category',
+            data: [''],
+            nameTextStyle: {
+                color: '#3259B8',
+                fontSize: 16,
+            },
+
+            axisTick:{
+                show:false,
+            }
+        }],
+        xAxis: [{
+            name: yName,
+            type: 'value',
+            nameTextStyle: {
+                color: '#3259B8',
+                fontSize: 14,
+            },
+            axisTick:{
+                show:false,
+            }
+
+        }],
+        series: [{
+            name: 'XXX',
+            type: 'boxplot',
+            data:  [data1],
+            itemStyle: {
+                normal:{
+                    borderColor: {
+                        type: 'linear',
+                        x: 1,
+                        y: 0,
+                        x2: 0,
+                        y2: 0,
+                        colorStops: [{
+                            offset: 0,
+                            color: '#3EACE5' // 0% 处的颜色
+                        }, {
+                            offset: 1,
+                            color: '#956FD4' // 100% 处的颜色
+                        }],
+                        globalCoord: false // 缺省为 false
+                    },
+                    borderWidth:2,
+                    color: {
+                        type: 'linear',
+                        x: 1,
+                        y: 0,
+                        x2: 0,
+                        y2: 0,
+                        colorStops: [{
+                            offset: 0,
+                            color: 'rgba(62,172,299,0.7)'  // 0% 处的颜色
+                        }, {
+                            offset: 1,
+                            color:'rgba(149,111,212,0.7)'  // 100% 处的颜色
+                        }],
+                        globalCoord: false // 缺省为 false
+                    },
+                }
+            },
+            tooltip: {
+                formatter: function(param) {
+                    return [
+
+                        '最大值: ' + param.data[5],
+                        '第三个中位数: ' + param.data[4],
+                        '中位数: ' + param.data[3],
+                        '第一个中位数: ' + param.data[2],
+                        '最小值: ' + param.data[1]
+                    ].join('<br/>')
+                }
+            }
+        },{
+            name: 'outlier',
+            type: 'scatter',
+            data: [data2],
+            symbolSize: 11
+        }]
+    };
+    console.log(option);
+    return option;
+}

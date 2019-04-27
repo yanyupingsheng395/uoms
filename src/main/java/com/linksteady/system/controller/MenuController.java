@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 @Controller
 public class MenuController extends BaseController {
@@ -201,6 +202,11 @@ public class MenuController extends BaseController {
     @ResponseBody
     public List<Map<String, String>> getAllUrl() {
         return this.menuService.getAllUrl("1");
+    }
+
+    public static void main(String[] args) {
+        Stack s = new Stack();
+        s.push(1);
     }
 
 }
