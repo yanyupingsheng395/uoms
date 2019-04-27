@@ -420,6 +420,7 @@ function refreshOpUserTable(param) {
         }
 
     }
+    console.log(newData)
     $('#opuserListTable').bootstrapTable('load',newData );
 
 }
