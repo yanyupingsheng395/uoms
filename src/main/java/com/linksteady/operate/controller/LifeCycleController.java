@@ -263,7 +263,7 @@ public class LifeCycleController extends BaseController {
 
         if("gmvCont".equals(type))
         {
-            result= RandomUtil.getIntRandom(20,30)/100.00;
+            result= RandomUtil.getIntRandom(1,200)/10.00;
         }else if("gmvRelate".equals(type))
         {
             result= RandomUtil.getIntRandom(10,100)/100.00;
