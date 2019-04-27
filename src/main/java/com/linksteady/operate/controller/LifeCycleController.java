@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.util.DataStatisticsUtils;
 import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.domain.LcSpuInfo;
 import com.linksteady.operate.service.LifeCycleService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +42,12 @@ public class LifeCycleController extends BaseController {
     @RequestMapping("/getSpuList")
     public ResponseBo lifecycleCatList(@RequestParam   String startDt,@RequestParam  String endDt,String filterType,String source) {
 
+        //最终构造的返回值
         Map<String,Object> resultMap=Maps.newHashMap();
+
+        Map<String,Double> stats=Maps.newHashMap();
+        DoubleSummaryStatistics dst=null;
+        double[] quartiles=null;
 
         //根据startDT,endDT,source获取到符合条件的SPU的列表
         List<LcSpuInfo> list=lifeCycleService.getSpuList();
@@ -106,6 +113,10 @@ public class LifeCycleController extends BaseController {
 
             //对结果进行排序
             resultList.sort(OrderingConstants.GMV_CONT_ORDERING);
+
+            //求统计信息  最大值、最小值
+            dst=resultList.stream().mapToDouble(LcSpuVO::getGmvCont).summaryStatistics();
+            quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getGmvCont).toArray());
         }
         else if("user".equals(filterType))
         {
@@ -139,6 +150,9 @@ public class LifeCycleController extends BaseController {
 
             //对结果进行排序
             resultList.sort(OrderingConstants.USER_CONT_ORDERING);
+            //求统计信息  最大值、最小值
+            dst=resultList.stream().mapToDouble(LcSpuVO::getUserCont).summaryStatistics();
+            quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getUserCont).toArray());
         }
         else if("pocount".equals(filterType))
         {
@@ -156,6 +170,9 @@ public class LifeCycleController extends BaseController {
 
             //对结果进行排序
             resultList.sort(OrderingConstants.POCOUNT_CONT_ORDERING);
+            //求统计信息  最大值、最小值
+            dst=resultList.stream().mapToDouble(LcSpuVO::getPoCount).summaryStatistics();
+            quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getPoCount).toArray());
         }
         else if("joinrate".equals(filterType))
         {
@@ -173,6 +190,9 @@ public class LifeCycleController extends BaseController {
 
             //对结果进行排序
             resultList.sort(OrderingConstants.JOINRATE_ORDERING);
+            //求统计信息  最大值、最小值
+            dst=resultList.stream().mapToDouble(LcSpuVO::getJoinrate).summaryStatistics();
+            quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getJoinrate).toArray());
         }
         else if("sprice".equals(filterType))
         {
@@ -190,6 +210,10 @@ public class LifeCycleController extends BaseController {
 
             //对结果进行排序
             resultList.sort(OrderingConstants.SPRICE_ORDERING);
+
+            //求统计信息  最大值、最小值
+            dst=resultList.stream().mapToDouble(LcSpuVO::getSprice).summaryStatistics();
+            quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getSprice).toArray());
         }
         else if("profit".equals(filterType))
         {
@@ -207,6 +231,9 @@ public class LifeCycleController extends BaseController {
 
             //对结果进行排序
             resultList.sort(OrderingConstants.PROFIT_ORDERING);
+            //求统计信息  最大值、最小值
+            dst=resultList.stream().mapToDouble(LcSpuVO::getProfit).summaryStatistics();
+            quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getProfit).toArray());
         }
 
         int orderNo=1;
@@ -216,8 +243,15 @@ public class LifeCycleController extends BaseController {
              orderNo++;
         }
 
+        stats.put("max",dst.getMax());
+        stats.put("min",dst.getMin());
+        stats.put("q1",quartiles[0]);
+        stats.put("q2",quartiles[1]);
+        stats.put("q3",quartiles[2]);
+
         resultMap.put("columns",columns);
         resultMap.put("data",resultList);
+        resultMap.put("stats",stats);
 
         return  ResponseBo.okWithData("",resultMap);
     }
