@@ -300,11 +300,11 @@ public class LifeCycleController extends BaseController {
         result.add(temp);
 
         temp= Maps.newHashMap();
-        temp.put("user","用户数");
+        temp.put("user","用户数贡献率");
         result.add(temp);
 
         temp= Maps.newHashMap();
-        temp.put("pocount","订单数");
+        temp.put("pocount","订单数贡献率");
         result.add(temp);
 
         temp= Maps.newHashMap();
