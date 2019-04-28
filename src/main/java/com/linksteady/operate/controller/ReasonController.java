@@ -9,6 +9,7 @@ import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.ReasonRelMatrix;
 import com.linksteady.operate.domain.ReasonResult;
+import com.linksteady.operate.domain.ReasonTemplateInfo;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.vo.ReasonVO;
 import com.linksteady.system.domain.User;
@@ -188,7 +189,7 @@ public class ReasonController  extends BaseController {
     public ResponseBo getEffectForecast(@RequestParam String reasonId, @RequestParam("code") String code) {
 
         List<String> data= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
-        Map<String,String> k=null;
+        Map<String,ReasonTemplateInfo> k=null;
 
         for(String fcode:data)
         {
@@ -198,8 +199,8 @@ public class ReasonController  extends BaseController {
                 reasonService.deleteReasonResult(reasonId,fcode);
             }
 
-            k=(Map<String,String>)KpiCacheManager.getInstance().getReasonRelateKpiList().get(fcode);
-            String reasonKpiName=k.get("REASON_KPI_NAME");
+            ReasonTemplateInfo reasonTemplateInfo = KpiCacheManager.getInstance().getReasonRelateKpiList().get(fcode);
+            String reasonKpiName=reasonTemplateInfo.getReasonKpiName();
             //todo 进行回归分析
             int a= RandomUtil.getIntRandom(1000,10000);
             int b=RandomUtil.getIntRandom(10000,50000);
