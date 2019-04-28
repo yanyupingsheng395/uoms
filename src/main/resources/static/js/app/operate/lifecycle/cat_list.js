@@ -230,7 +230,13 @@ function refreshOpUserTable() {
     });
 }
 
-var opuser_columns=[{
+var opuser_columns=[[
+    {
+        title: "洗衣机统计表",
+        align:"center",
+        colspan: 5
+    }
+],[{
     field: 'user_id',
     title: '用户ID'
 }, {
@@ -251,7 +257,7 @@ var opuser_columns=[{
 }, {
     field: "active_level",
     title: "活跃度"
-}];
+}]];
 
 
 

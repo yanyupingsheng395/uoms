@@ -1,6 +1,7 @@
 function nodeClick() {
     var kpiLevelId = jm.get_selected_node().data.KPI_LEVEL_ID;
     $.get("/progress/generateDiagData", {diagId: diagId, kpiLevelId: kpiLevelId}, function (r) {
+
         viewChart(r.data);
     });
 }

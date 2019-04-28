@@ -9,10 +9,7 @@ import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.config.KpiCacheManager;
-import com.linksteady.operate.domain.DiagAddResultInfo;
-import com.linksteady.operate.domain.DiagHandleInfo;
-import com.linksteady.operate.domain.DiagMultResultInfo;
-import com.linksteady.operate.domain.DiagResultInfo;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.DiagHandleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -118,12 +115,11 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         String kpiName=KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode);
 
         //获取其拆分为的两个指标
-        Map<String,Object> kpiDismant=(Map<String,Object>)KpiCacheManager.getInstance().getKpiDismant().get(kpiCode);
-
-        String part1Code=(String)kpiDismant.get("DISMANT_PART1_CODE");
-        String part1Name=(String)kpiDismant.get("DISMANT_PART1_NAME");
-        String part2Code=(String)kpiDismant.get("DISMANT_PART2_CODE");
-        String part2Name=(String)kpiDismant.get("DISMANT_PART2_NAME");
+        KpiDismantInfo kpiDismant=KpiCacheManager.getInstance().getKpiDismant().get(kpiCode);
+        String part1Code=kpiDismant.getDismantPart1Code();
+        String part1Name=kpiDismant.getDismantPart1Name();
+        String part2Code=kpiDismant.getDismantPart2Code();
+        String part2Name=kpiDismant.getDismantPart2Name();
 
         diagMultResultInfo.setXData(periodList);
         diagMultResultInfo.setXName("D".equals(diagHandleInfo.getPeriodType())?"天":"月份");
