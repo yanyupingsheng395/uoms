@@ -235,6 +235,7 @@ var opuser_columns=[[
         field: 'user_id',
         title: '用户ID',
         align:"center",
+        valign:"middle",
         rowspan: 2
     },
     {
