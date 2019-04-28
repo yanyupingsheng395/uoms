@@ -101,7 +101,6 @@ function getData(idx) {
     var end = $("#endDate_1").val();
     var periodType=$("#cohortbtngroup1>.btn-primary:first").attr("name");
     $.get(url, {periodType: periodType, start: start, end: end}, function(r) {
-        console.log(r)
         var columns = r.data.columns;
         var data = r.data.data;
 
@@ -238,7 +237,6 @@ function initBootstrapTable($el, columns, data, total, periodType) {
         option.height = 400;
     }
     $el.bootstrapTable('destroy').bootstrapTable(option);
-    // console.log($el.selector)
     // 合并单元格
     if(periodType.indexOf("month") > -1) {
         total.month = '合计：';

@@ -137,7 +137,6 @@ function initTableData() {
         data:{startDt:startDt,endDt:endDt, source:source, filterType:filterType},
         async: true,
         success: function (r) {
-            console.log(r);
             stats = r.data.stats;
             var columns = new Array();
             $.each(r.data.columns, function (k, v) {
@@ -284,12 +283,7 @@ var opuser_columns=[[
     title: "活跃度"
 }]];
 
-
-
-
-
 ///////////////
-
 // 初始化时间插件
 init_date_begin("startDt", "endDt", "yyyy-mm-dd",0, 2, 0);
 init_date_end("startDt", "endDt", "yyyy-mm-dd", 0, 2, 0);
@@ -305,7 +299,7 @@ function gearsOption(yName, data1, data2) {
         grid: [{
             height:'50%',
             left: '10%',
-            right: '10%',
+            right: '20%',
         }],
         yAxis: [{
             type: 'category',
