@@ -85,7 +85,7 @@ function viewChart(obj) {
 // 乘法变异系数图
 function covChart(chartId, obj) {
     var legendData = new Array();
-    var xAxisData = obj.xData;
+    var xAxisData = obj.xdata;
     var seriesData = new Array();
     $.each(obj.covNames, function (k, v) {
         legendData.push(v);
@@ -132,15 +132,16 @@ function t2Cov(obj) {
 }
 
 function t2charts(obj) {
-    $("#rate1").html("").html("末期比基期的变化率:" + obj.firChangeRate);
-    $("#rate2").html("").html("末期比基期的变化率:" + obj.secChangeRate);
-    $("#rate3").html("").html("末期比基期的变化率:" + obj.thirdChangeRate);
+    $("#rate1").html("").html(obj.firYName + "末期比基期的变化率:" + obj.firChangeRate);
+    $("#rate2").html("").html(obj.secYName + "末期比基期的变化率:" + obj.secChangeRate);
+    $("#rate3").html("").html(obj.thirdYName + "末期比基期的变化率:" + obj.thirdChangeRate);
     makeT2Chart(obj,"t2chart1", obj.firYName,obj.firData, obj.firAvg, obj.firUp, obj.firDown);
     makeT2Chart(obj,"t2chart2", obj.secYName,obj.secData, obj.secAvg, obj.secUp, obj.secDown);
     makeT2Chart(obj,"t2chart3", obj.thirdYName,obj.thirdData, obj.thirdAvg, obj.thirdUp, obj.thirdDown);
 }
 
 function t3chart1(obj, chartId){
+
     var legendData = obj.legendData;
     var xAxisData = obj.xdata;
     var xAxisName = obj.xname;
@@ -200,7 +201,7 @@ function t3chart2(obj, chartId){
 
 function makeT2Chart(obj,chartId,yName, data, avg, up, down) {
     var legendData = [yName, "均线"];
-    var xAxisData = obj.xData;
+    var xAxisData = obj.xdata;
     var xAxisName = obj.xName;
     var yAxisName = yName;
     var seriesData = new Array();
@@ -212,7 +213,6 @@ function makeT2Chart(obj,chartId,yName, data, avg, up, down) {
     t1.name = yName;
     t1.type = 'line';
     t1.data = data;
-
     seriesData.push(t1);
 
     var t2 = new Object();

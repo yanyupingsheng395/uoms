@@ -49,7 +49,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
     @Override
     public DiagResultInfo getResultFromRedis(int diagId, int kpiLevelId) {
-        return (DiagResultInfo)redisTemplate.opsForValue().get("diag:"+diagId+":"+kpiLevelId);
+        return (DiagResultInfo)redisTemplate.opsForValue().get("diagresult:"+diagId+":"+kpiLevelId);
     }
 
 
