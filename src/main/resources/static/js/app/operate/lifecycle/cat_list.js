@@ -232,14 +232,22 @@ function refreshOpUserTable() {
 
 var opuser_columns=[[
     {
-        title: "洗衣机统计表",
+        field: 'user_id',
+        title: '用户ID',
         align:"center",
-        colspan: 5
+        rowspan: 2
+    },
+    {
+        title: "当前目标",
+        align:"center",
+        colspan: 3
+    },
+    {
+        title: "当前状态",
+        align:"center",
+        colspan: 3
     }
 ],[{
-    field: 'user_id',
-    title: '用户ID'
-}, {
     field: 'buy_date',
     title: '购买时间'
 },  {
