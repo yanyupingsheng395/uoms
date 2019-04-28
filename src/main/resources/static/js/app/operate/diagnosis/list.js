@@ -48,19 +48,36 @@ $(function () {
     $('#diagTable').bootstrapTable(settings);
 });
 
+// function deleteConfirm(id) {
+//     $.confirm({
+//         title: '提示：',
+//         content: '确认删除这条记录？',
+//         type: 'orange',
+//         theme: 'bootstrap',
+//         buttons: {
+//             confirm: {
+//                 text: '确认',
+//                 btnClass: 'btn-danger',
+//                 action: function(){
+//                     deleteData(id);
+//                 }
+//             },
+//             cancel: {
+//                 text: '取消'
+//             }
+//         }
+//     });
+// }
 function deleteConfirm(id) {
     $.confirm({
         title: '提示：',
-        content: '确认删除这条记录？',
+        content: '演示环境，数据不可删除！',
         type: 'orange',
         theme: 'bootstrap',
         buttons: {
             confirm: {
                 text: '确认',
-                btnClass: 'btn-danger',
-                action: function(){
-                    deleteData(id);
-                }
+                btnClass: 'btn-danger'
             },
             cancel: {
                 text: '取消'

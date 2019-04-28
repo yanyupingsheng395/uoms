@@ -139,6 +139,9 @@ function initTableData() {
                             return value;
                         }
                     };
+                    if(k1 == "spuWid") {
+                        obj.visible = false;
+                    }
                 });
                 columns.push(obj);
             });

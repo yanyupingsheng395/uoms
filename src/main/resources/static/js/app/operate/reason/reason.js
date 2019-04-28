@@ -74,43 +74,62 @@ function view(reasonId){
 
 }
 
+// function del(reasonId) {
+//
+//     //遮罩层打开
+//     lightyear.loading('show');
+//
+//     //进行删除提示
+//         $.confirm({
+//             title: '确认',
+//             content: '是否删除数据？',
+//             theme: 'bootstrap',
+//             type: 'orange',
+//             buttons: {
+//                 confirm: {
+//                     text: '确认',
+//                     btnClass: 'btn-blue',
+//                     action: function(){
+//                              $.getJSON("/reason/deleteReasonById?reasonId="+reasonId,function (resp) {
+//                                     if (resp.code === 200){
+//                                         lightyear.loading('hide');
+//                                         //提示成功
+//                                         toastr.success('删除成功!');
+//                                         //刷新表格
+//                                         //todo 如果在后面某个页上删除数据后，刷新后还停在当前页
+//                                         //var pageNum=$('#reasonTable').bootstrapTable('getOptions').pageNumber;
+//                                         $('#reasonTable').bootstrapTable('refresh');
+//                                     }
+//                                 })
+//                     }
+//                 },
+//                 cancel: {
+//                     text: '取消',
+//                     action: function () {
+//                         lightyear.loading('hide');
+//                     }
+//                 }
+//             }
+//         });
+// }
+
 function del(reasonId) {
-
-    //遮罩层打开
-    lightyear.loading('show');
-
     //进行删除提示
-        $.confirm({
-            title: '确认',
-            content: '是否删除数据？',
-            theme: 'bootstrap',
-            type: 'orange',
-            buttons: {
-                confirm: {
-                    text: '确认',
-                    btnClass: 'btn-blue',
-                    action: function(){
-                             $.getJSON("/reason/deleteReasonById?reasonId="+reasonId,function (resp) {
-                                    if (resp.code === 200){
-                                        lightyear.loading('hide');
-                                        //提示成功
-                                        toastr.success('删除成功!');
-                                        //刷新表格
-                                        //todo 如果在后面某个页上删除数据后，刷新后还停在当前页
-                                        //var pageNum=$('#reasonTable').bootstrapTable('getOptions').pageNumber;
-                                        $('#reasonTable').bootstrapTable('refresh');
-                                    }
-                                })
-                    }
-                },
-                cancel: {
-                    text: '取消',
-                    action: function () {
-                        lightyear.loading('hide');
-                    }
-                }
+    $.confirm({
+        title: '确认',
+        content: '演示环境，数据不可删除！',
+        theme: 'bootstrap',
+        type: 'orange',
+        buttons: {
+            confirm: {
+                text: '确认',
+                btnClass: 'btn-blue'
+            },
+            cancel: {
+                text: '取消'
             }
-        });
+        }
+    });
 }
 
 function updatedata(reasonId)

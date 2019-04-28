@@ -36,7 +36,7 @@ function viewChart(obj) {
         if (obj.whereinfo.length == 0) {
             whereinfo = "<div class=\"col-md-12\">\n" +
                 "<table class=\"table table-sm\">\n" +
-            "<n></n><tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>\n" +
+            "<n></n><tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>无过滤条件！</td></tr>\n" +
             "</table>\n" +
             "</div>";
         }
