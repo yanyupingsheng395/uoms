@@ -1,7 +1,6 @@
 function nodeClick() {
     var kpiLevelId = jm.get_selected_node().data.KPI_LEVEL_ID;
     $.get("/progress/generateDiagData", {diagId: diagId, kpiLevelId: kpiLevelId}, function (r) {
-
         viewChart(r.data);
     });
 }
@@ -16,12 +15,20 @@ function viewChart(obj) {
     $("#handleDesc").html("").html("<p class='h4'>" + obj.handleDesc + "</p>");
     $("#operateType").html("").html("<p class='h5'>周期: " + operateType + "</p>");
     $("#timePeriod").html("").html("<p class='h5'>时间: " + obj.beginDt + "&nbsp;到&nbsp;" + obj.endDt + "</p>");
+
     var isRoot = jm.get_selected_node().isroot;
     if (isRoot) { // 根节点
         $("#opdesc").html("").html("<p class='h5'>该周期内GMV为：" + obj.kpiValue + "元</p>");
         $("#template1").attr("style", "display:block;");
         $("#template2").attr("style", "display:none;");
         $("#template3").attr("style", "display:none;");
+
+        var whereinfo = "<div class=\"col-md-12\">\n" +
+            "<table class=\"table table-sm\">\n" +
+            "<n></n><tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>无过滤条件！</td></tr>\n" +
+            "</table>\n" +
+            "</div>";
+        $("#whereinfo").html("").html(whereinfo);
     } else {
         // 条件
         var whereinfo = "<div class=\"col-md-12\"><table class='table table-sm'>";
@@ -33,14 +40,15 @@ function viewChart(obj) {
             }
         });
         whereinfo += "</table></div>";
-        if (obj.whereinfo.length == 0) {
+        if (obj.whereinfo != null && obj.whereinfo.length == 0) {
             whereinfo = "<div class=\"col-md-12\">\n" +
                 "<table class=\"table table-sm\">\n" +
-            "<n></n><tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>无过滤条件！</td></tr>\n" +
-            "</table>\n" +
-            "</div>";
+                "<n></n><tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>无过滤条件！</td></tr>\n" +
+                "</table>\n" +
+                "</div>";
         }
         $("#whereinfo").html("").html(whereinfo);
+
         if (obj.handleType == "M") { // 乘法
             $("#template1").attr("style", "display:none;");
             $("#template2").attr("style", "display:block;");
