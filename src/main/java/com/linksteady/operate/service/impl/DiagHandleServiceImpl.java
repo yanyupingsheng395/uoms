@@ -46,7 +46,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
     @Override
     public DiagResultInfo getResultFromRedis(int diagId, int kpiLevelId) {
-        return (DiagResultInfo)redisTemplate.opsForValue().get("diag:"+diagId+":"+kpiLevelId);
+        return (DiagResultInfo)redisTemplate.opsForValue().get("diagresult:"+diagId+":"+kpiLevelId);
     }
 
 
@@ -95,7 +95,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         result.setWhereinfo(diagHandleInfo.getWhereinfo());
 
         //result信息持久化到redis
-        //saveResultToRedis(result);
+        saveResultToRedis(result);
 
         return result;
     }

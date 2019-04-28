@@ -1,6 +1,7 @@
 package com.linksteady.operate.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.DiagHandleInfo;
@@ -113,7 +114,7 @@ public class ProgressController {
         try{
             JSONObject jsonObject = JSONObject.parseObject(diagHandleInfo);
             DiagHandleInfo obj = jsonObject.toJavaObject(DiagHandleInfo.class);
-            diagHandleService.saveHandleInfoToRedis(obj);
+            diagHandleService.generateDiagData(obj);
             return ResponseBo.ok();
         }catch (Exception ex) {
             ex.printStackTrace();
@@ -125,8 +126,8 @@ public class ProgressController {
     @GetMapping("/generateDiagData")
     public ResponseBo generateDiagData(@RequestParam("diagId") int diagId, @RequestParam("kpiLevelId") int kpiLevelId) {
         try{
-            DiagHandleInfo diagHandleInfo = diagHandleService.getHandleInfoFromRedis(diagId, kpiLevelId);
-            DiagResultInfo diagResultInfo = diagHandleService.generateDiagData(diagHandleInfo);
+            ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+            DiagResultInfo diagResultInfo = diagHandleService.getResultFromRedis(diagId, kpiLevelId);
             return ResponseBo.okWithData(null, diagResultInfo);
         }catch (Exception ex) {
             ex.printStackTrace();
