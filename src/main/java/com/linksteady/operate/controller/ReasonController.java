@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +28,7 @@ import java.util.Map;
 
 /**
  * 原因探究相关的controller
+ * @author huang
  */
 @RestController
 @RequestMapping("/reason")
@@ -80,7 +80,7 @@ public class ReasonController  extends BaseController {
     /**
      * 删除原因探究
      * @param reasonId 原因ID
-     * @return
+     * @return 返回包装类
      */
     @RequestMapping("/deleteReasonById")
     public ResponseBo deleteReasonById(@RequestParam String reasonId) {
@@ -176,7 +176,7 @@ public class ReasonController  extends BaseController {
      */
     @RequestMapping("/getReasonDimValuesList")
     public ResponseBo getReasonDimValuesList(@RequestParam String dimCode) {
-        Map<String,String> result=(Map)KpiCacheManager.getInstance().getReasonDimValueList().get(dimCode);
+        Map<String,String> result=KpiCacheManager.getInstance().getReasonDimValueList().get(dimCode);
         return ResponseBo.okWithData("",result);
     }
 
@@ -189,7 +189,7 @@ public class ReasonController  extends BaseController {
     public ResponseBo getEffectForecast(@RequestParam String reasonId, @RequestParam("code") String code) {
 
         List<String> data= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
-        Map<String,ReasonTemplateInfo> k=null;
+        ReasonTemplateInfo reasonTemplateInfo=null;
 
         for(String fcode:data)
         {
@@ -199,7 +199,7 @@ public class ReasonController  extends BaseController {
                 reasonService.deleteReasonResult(reasonId,fcode);
             }
 
-            ReasonTemplateInfo reasonTemplateInfo = KpiCacheManager.getInstance().getReasonRelateKpiList().get(fcode);
+            reasonTemplateInfo = KpiCacheManager.getInstance().getReasonRelateKpiList().get(fcode);
             String reasonKpiName=reasonTemplateInfo.getReasonKpiName();
             //todo 进行回归分析
             int a= RandomUtil.getIntRandom(1000,10000);

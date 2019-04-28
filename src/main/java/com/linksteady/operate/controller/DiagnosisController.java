@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+/**
+ * 诊断
+ * @author caohuixue
+ */
 @RestController
 @RequestMapping("/diag")
 public class DiagnosisController {

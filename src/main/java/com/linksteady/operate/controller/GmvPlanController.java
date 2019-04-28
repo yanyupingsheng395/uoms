@@ -18,6 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 计划制定相关的表
+ * @author  caohuixue
+ */
 @RestController
 @RequestMapping("/gmvplan")
 public class GmvPlanController extends BaseController {

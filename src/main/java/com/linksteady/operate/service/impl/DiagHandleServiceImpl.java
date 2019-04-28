@@ -22,7 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("AlibabaMethodTooLong")
+/**
+ * 诊断-数据处理
+ * @author huang
+ */
 @Service
 public class DiagHandleServiceImpl implements DiagHandleService {
 
@@ -106,7 +109,6 @@ public class DiagHandleServiceImpl implements DiagHandleService {
      * @param diagHandleInfo
      * @return
      */
-    @SuppressWarnings("AlibabaMethodTooLong")
     private DiagResultInfo processMultiple(DiagHandleInfo diagHandleInfo, List<String> periodList)
     {
         DiagMultResultInfo diagMultResultInfo=new DiagMultResultInfo();
