@@ -32,7 +32,6 @@ $(function () {
     periodTypeOption();
     // 初始化表格数据
     initTableData();
-
     var flag = false;
     //添加行点击事件
     $('#catListTable').on('click-row.bs.table', function (e,row,$element)
@@ -73,28 +72,27 @@ $(function () {
     $("#query").on("click",function () {
         initTableData();
     });
+});
 
-    //为tab页增加事件
-    $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
-        // 获取已激活的标签页的名称
-        var activeTab = $(e.target).attr("href");
-        if(selectId == "") {
-            $("#initTab1, #initTab2").attr("style", "display:block;");
+$("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
+    // 获取已激活的标签页的名称
+    var activeTab = $(e.target).attr("href");
+    if(selectId == "") {
+        $("#initTab1, #initTab2").attr("style", "display:block;");
+    }else
+    {
+        $("#initTab1, #initTab2").attr("style", "display:none;");
+        if(activeTab=='#tab_kpis')
+        {
+            $("#tabContent2").attr("class", "chartpanel");
         }else
         {
-            $("#initTab1, #initTab2").attr("style", "display:none;");
-            if(activeTab='#tab_kpis')
-            {
-                $("#tabContent2").attr("class", "chartpanel");
-                tab2Init();
-            }else
-            {
-                $("#tabContent2").attr("class", "chartpanel");
-            }
+            tab2Init();
+            $("#tabContent2").attr("class", "chartpanel");
         }
-    });
-
+    }
 });
+
 
 function periodTypeOption() {
     var option = "";
