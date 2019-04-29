@@ -99,7 +99,7 @@ spring:
         fixed:
           enabled: true
           paths: /js/app/**,/css/**,/fonts/**
-          version: v1.0.13
+          version: v1.0.14
 
 #  devtools:
 #    livereload:

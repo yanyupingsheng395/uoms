@@ -1,16 +1,18 @@
 package com.linksteady.operate.config;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
 import com.linksteady.operate.dao.CacheMapper;
-import com.linksteady.operate.domain.KpiConfigInfo;
-import com.linksteady.operate.domain.KpiDismantInfo;
-import com.linksteady.operate.domain.ReasonTemplateInfo;
+import com.linksteady.operate.domain.*;
+import com.linksteady.operate.vo.DimJoinVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 将需要加载到内存中的数据加载到内存中
@@ -25,9 +27,13 @@ public class LoadConfigRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
          procKpiLoad();
-         procDimLoad();
+         procDiagDimLoad();
          procReasonDimLoad();
          procReasonRelateKpiLoad();
+
+         procKpiSqlTemplate();
+         procDimListLoad();
+         ProcDimJoinInfoLoad();
     }
 
     /**
@@ -85,10 +91,10 @@ public class LoadConfigRunner implements CommandLineRunner {
     /**
      * 维度、维度值相关数据加载到缓存中
      */
-    private  void procDimLoad()
+    private  void procDiagDimLoad()
     {
         //获取诊断功能的维度列表
-        List<Map<String,String>> diagDims=cacheMapper.getDiagDims();
+        List<DimConfigInfo> diagDims=cacheMapper.getAllDimConfig().stream().filter(a->"Y".equals(a.getDiagFlag())).collect(Collectors.toList());
 
         Map<String,String> diagDimList=Maps.newLinkedHashMap();
         Map<String,Map<String,String>> diagDimValueList=Maps.newLinkedHashMap();
@@ -96,12 +102,12 @@ public class LoadConfigRunner implements CommandLineRunner {
         String dimCode="";
         String valueType="";
         String valueSql="";
-        for(Map<String,String> diagDim:diagDims)
+        for(DimConfigInfo diagDim:diagDims)
         {
-            dimCode=diagDim.get("DIM_CODE");
-            valueType=diagDim.get("VALUE_TYPE");
-            valueSql=diagDim.get("VALUE_SQL");
-            diagDimList.put(dimCode,diagDim.get("DIM_NAME"));
+            dimCode=diagDim.getDimCode();
+            valueType=diagDim.getValueType();
+            valueSql=diagDim.getValueSql();
+            diagDimList.put(dimCode,diagDim.getDimName());
 
             List<Map<String,Object>> dimValuesList=null;
             Map<String,String> dimValues=Maps.newHashMap();
@@ -133,7 +139,7 @@ public class LoadConfigRunner implements CommandLineRunner {
     private void procReasonDimLoad()
     {
         //获取原因分析的维度列表
-        List<Map<String,String>> reasonDims=cacheMapper.getReasonDims();
+        List<DimConfigInfo> reasonDims=cacheMapper.getAllDimConfig().stream().filter(a->"Y".equals(a.getReasonFlag())).collect(Collectors.toList());
 
         Map<String,String> reasonDimList=Maps.newLinkedHashMap();
         Map<String,Map<String,String>> reasonDimValueList=Maps.newLinkedHashMap();
@@ -141,12 +147,12 @@ public class LoadConfigRunner implements CommandLineRunner {
         String dimCode="";
         String valueType="";
         String valueSql="";
-        for(Map<String,String> reasonDim:reasonDims)
+        for(DimConfigInfo reasonDim:reasonDims)
         {
-            dimCode=reasonDim.get("DIM_CODE");
-            valueType=reasonDim.get("VALUE_TYPE");
-            valueSql=reasonDim.get("VALUE_SQL");
-            reasonDimList.put(dimCode,reasonDim.get("DIM_NAME"));
+            dimCode=reasonDim.getDimCode();
+            valueType=reasonDim.getValueType();
+            valueSql=reasonDim.getValueSql();
+            reasonDimList.put(dimCode,reasonDim.getDimName());
 
             List<Map<String,Object>> dimValuesList2=null;
 
@@ -187,5 +193,45 @@ public class LoadConfigRunner implements CommandLineRunner {
         }
         KpiCacheManager.getInstance().setCacheForReasonTemplate(reaonRelateKpi);
 
+    }
+
+    /**
+     *  SQL模板加载
+     */
+    private void procKpiSqlTemplate()
+    {
+        List<KpiSqlTemplate> list=cacheMapper.getKpiSqlTemplateList();
+
+        Map<String, KpiSqlTemplate> kpiSqlTemplateMap= Maps.newHashMap();
+        for(KpiSqlTemplate template:list)
+        {
+            kpiSqlTemplateMap.put(template.getSqlTemplateCode(),template);
+        }
+        KpiCacheManager.getInstance().setCacheForKpiSqlTemplate(kpiSqlTemplateMap);
+    }
+
+    /**
+     * 所有的DIM信息加载
+     */
+    private void procDimListLoad()
+    {
+        List<DimConfigInfo> dimConfigList=cacheMapper.getAllDimConfig();
+        Map<String,DimConfigInfo> dimConfigInfoMap=Maps.newHashMap();
+        for(DimConfigInfo dimConfigInfo:dimConfigList)
+        {
+            dimConfigInfoMap.put(dimConfigInfo.getDimCode(),dimConfigInfo);
+        }
+
+        KpiCacheManager.getInstance().setCacheForDimConfigList(dimConfigInfoMap);
+    }
+
+    /**
+     * 所有维度的JOIN信息加载到内存
+     */
+    private void ProcDimJoinInfoLoad()
+    {
+         //获取所有的JOIN信息列表
+        List<DimJoinRelationInfo> joinList=cacheMapper.getDimJoinRelationList();
+        KpiCacheManager.getInstance().setDimJoinList(joinList);
     }
 }

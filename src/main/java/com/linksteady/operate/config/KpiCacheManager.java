@@ -1,13 +1,16 @@
 package com.linksteady.operate.config;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.linksteady.operate.domain.KpiDismantInfo;
-import com.linksteady.operate.domain.ReasonTemplateInfo;
+import com.google.common.collect.Table;
+import com.linksteady.operate.domain.*;
+import com.linksteady.operate.vo.DimJoinVO;
+import com.linksteady.operate.vo.LcSpuVO;
+import org.dozer.DozerBeanMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 对一些频繁使用的值进行缓存,在系统启动的时候在LoadConfigRunner中进行初始化，目前未实现更新机制，后续考虑增加定时类更新
@@ -16,6 +19,9 @@ import java.util.Set;
 public class KpiCacheManager {
 
     private static KpiCacheManager kpiCacheManager;
+
+    @Autowired
+    DozerBeanMapper dozerBeanMapper;
 
     /**
      * 所有诊断用到的指标CODE，名称的键-值对。 kpi code-name对
@@ -61,6 +67,21 @@ public class KpiCacheManager {
      *探究的REASON_KPI_CODE -  ReasonTemplateInfo(名称,排序号)
      */
     private static Map<String, ReasonTemplateInfo> reasonRelateKpiList = Maps.newHashMap();
+
+    /**
+     * SQL模板信息加载
+     */
+    private static Map<String, KpiSqlTemplate> kpiSqlTemplateList = Maps.newHashMap();
+
+    /**
+     * 所有的维度配置信息
+     */
+    private static  Map<String,DimConfigInfo>  dimConfigList= Maps.newHashMap();
+
+    /**
+     * 所有表之间的映射信息
+     */
+    Table<String,String, DimJoinVO> dimJoinList= HashBasedTable.create();
 
     public static KpiCacheManager getInstance() {
         if (null == kpiCacheManager) {
@@ -179,6 +200,38 @@ public class KpiCacheManager {
         }
     }
 
+    public void setCacheForKpiSqlTemplate(Map<String,KpiSqlTemplate> map) {
+        Set<String> set = map.keySet();
+        Iterator<String> it = set.iterator();
+        kpiSqlTemplateList.clear();
+        while (it.hasNext()) {
+            String key = it.next();
+            kpiSqlTemplateList.put(key, map.get(key));
+        }
+    }
+
+    public void setCacheForDimConfigList(Map<String,DimConfigInfo> map) {
+        Set<String> set = map.keySet();
+        Iterator<String> it = set.iterator();
+        dimConfigList.clear();
+        while (it.hasNext()) {
+            String key = it.next();
+            dimConfigList.put(key, map.get(key));
+        }
+    }
+
+    public void setDimJoinList(List<DimJoinRelationInfo> list) {
+        dimJoinList.clear();
+
+        DimJoinVO vo=null;
+        for(DimJoinRelationInfo dimJoinRelationInfo:list)
+        {
+            vo=dozerBeanMapper.map(dimJoinRelationInfo, DimJoinVO.class);
+            dimJoinList.put(dimJoinRelationInfo.getDirverTableName(),dimJoinRelationInfo.getDimCode(),vo);
+        }
+    }
+
+
     public Map<String, String> getDiagcodeFomularList() {
         return DiagcodeFomularList;
     }
@@ -214,5 +267,17 @@ public class KpiCacheManager {
 
     public Map<String, ReasonTemplateInfo> getReasonRelateKpiList() {
         return reasonRelateKpiList;
+    }
+
+    public Map<String, KpiSqlTemplate> getKpiSqlTemplateList() {
+        return kpiSqlTemplateList;
+    }
+
+    public Map<String, DimConfigInfo> getDimConfigList() {
+        return dimConfigList;
+    }
+
+    public Table<String, String, DimJoinVO> getDimJoinList() {
+        return dimJoinList;
     }
 }
