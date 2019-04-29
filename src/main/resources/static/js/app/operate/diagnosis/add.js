@@ -324,11 +324,11 @@ function filterCondition() {
         var dimValues = $(this).find("td:eq(0)").find("input[name='dimValues']").val();
         var text = $(this).find("td:eq(0)").text();
         if(condition != undefined && inheritFlag != undefined) {
-            tmp.dim_code = condition;
-            tmp.dim_name = text.split(":")[0];
-            tmp.dim_values = dimValues;
-            tmp.dim_value_display = text.split(":")[1];
-            tmp.inherit_flag = inheritFlag;
+            tmp.dimCode = condition;
+            tmp.dimName = text.split(":")[0];
+            tmp.dimValues = dimValues;
+            tmp.dimValueDisplay = text.split(":")[1];
+            tmp.inheritFlag = inheritFlag;
             dataArray.push(tmp);
         }
     });
