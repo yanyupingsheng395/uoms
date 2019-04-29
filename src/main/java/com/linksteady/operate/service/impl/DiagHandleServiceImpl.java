@@ -2,35 +2,42 @@ package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.common.util.RandomUtil;
+import com.linksteady.common.util.StringTemplate;
 import com.linksteady.operate.config.KpiCacheManager;
+import com.linksteady.operate.dao.CommonSelectMapper;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.DiagHandleService;
+import com.linksteady.operate.vo.DiagConditionVO;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 诊断-数据处理
  * @author huang
  */
 @Service
+@Slf4j
 public class DiagHandleServiceImpl implements DiagHandleService {
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    @Autowired
+    CommonSelectMapper commonSelectMapper;
 
     @Override
     public void saveHandleInfoToRedis(DiagHandleInfo diagHandleInfo) {
@@ -80,7 +87,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         }else if("F".equals(handleType))
         {
             //过滤
-            result=processFilter(diagHandleInfo,periodList);
+            result=processFilter(diagHandleInfo);
         }
 
         result.setDiagId(diagHandleInfo.getDiagId());
@@ -94,7 +101,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         result.setKpiCode(diagHandleInfo.getKpiCode());
         result.setKpiName(KpiCacheManager.getInstance().getDiagKpiList().get(diagHandleInfo.getKpiCode()));
 
-        //增加条件信息 todo 考虑对map重构，仅返回必要信息，减少数据传输量
+        //增加条件信息
         result.setWhereinfo(diagHandleInfo.getWhereinfo());
 
         //result信息持久化到redis
@@ -135,6 +142,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         LinkedList<Double> secData= Lists.newLinkedList();
         LinkedList<Double> thirdData= Lists.newLinkedList();
 
+        //获取三个指标的数值
+
         //变异系数值
         List<Double> firCov=Lists.newArrayList();
         List<Double> secCov=Lists.newArrayList();
@@ -148,6 +157,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             secData.add(getRandomKpiData(diagHandleInfo.getPeriodType(),part1Code));
             thirdData.add(getRandomKpiData(diagHandleInfo.getPeriodType(),part2Code));
 
+            //按月
             if("M".equals(diagHandleInfo.getPeriodType()))
             {
                 //获取变异系数值
@@ -409,7 +419,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
      * @param diagHandleInfo
      * @return
      */
-    private DiagResultInfo processFilter(DiagHandleInfo diagHandleInfo,List<String> periodList)
+    private DiagResultInfo processFilter(DiagHandleInfo diagHandleInfo)
     {
         DiagResultInfo resultInfo=new DiagResultInfo();
 
@@ -417,21 +427,58 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         String kpiName=KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode);
 
         double kpiValue=0d;
-        if(isSum(kpiCode))  //可累加
+
+        KpiSqlTemplate kpiSqlTemplate=null;
+        //判断用户选择的维度中是否含有品牌、SPU 如果有，则获取 从明细查询的模板
+        if(isRelyOrderDetail(diagHandleInfo.getWhereinfo()))
         {
-            for(String period:periodList)
+            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(kpiCode+"_"+diagHandleInfo.getHandleType()+"_DETAIL");
+        }else
+        {
+            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(kpiCode+"_"+diagHandleInfo.getHandleType());
+        }
+
+
+       //判断是否拿到了模板
+        if(null!=kpiSqlTemplate&& !StringUtils.isBlank(kpiSqlTemplate.getSqlTemplate())) {
+            //构造参数 填充到模板中
+            StringTemplate stringTemplate=new StringTemplate(kpiSqlTemplate.getSqlTemplate());
+
+            //构造where字符串
+            String joinTable="";  //buildWhereInfo(diagHandleInfo.getWhereinfo());
+
+            stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",joinTable);
+
+            if(log.isDebugEnabled())
             {
-                kpiValue+=getRandomKpiData(diagHandleInfo.getPeriodType(),kpiCode);
+                log.debug(stringTemplate.render());
             }
-        }else  //不可累加
-        {
-            kpiValue=getRandomKpiData(diagHandleInfo.getPeriodType(),kpiCode);
+            //发送SQL到数据库中执行，并获取结果
+            kpiValue=commonSelectMapper.selectOnlyDoubleValue(stringTemplate.render());
         }
 
         resultInfo.setKpiCode(kpiCode);
         resultInfo.setKpiName(kpiName);
         resultInfo.setKpiValue(kpiValue);
         return resultInfo;
+    }
+
+//    private String buildWhereInfo( List<Map<String,String>> whereinfo)
+//    {
+//        for(Map<String,String> info:whereinfo)
+//        {
+//            //通过dimcode获取到其背后的表  获取到目标表 同时获取到关联关系
+//        }
+//        return "";
+//    }
+
+    /**
+     * 是否依赖于订单明细表
+     * @return
+     */
+    private boolean isRelyOrderDetail(List<DiagConditionVO> whereInfo)
+    {
+       return true;
     }
 
     private double getRandomKpiData(String period,String kpiCode)
