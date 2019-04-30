@@ -230,7 +230,7 @@ var discount_option = {
         splitArea : {show : false}
     },
     series: [{
-        data: [10, 20, 30, 21, 22, 24, 12, 14, 30, 32],
+        data: [0, 2, 5, 8, 10, 19, 54, 64, 90, 0],
         type: 'bar'
     }],
     tooltip : {
@@ -251,7 +251,7 @@ var preferential_option = {
     xAxis: {
         name: '优惠面额（元）',
         type: 'category',
-        data: ['10', '30', '50', '70', '80', '100', '200', '300', '400', '500'],
+        data: ['2', '5', '8', '10', '15', '20', '30', '40', '50'],
         axisLabel:{
             interval: 0
         },
@@ -265,7 +265,7 @@ var preferential_option = {
         splitArea : {show : false}
     },
     series: [{
-        data: [34, 10, 50, 55, 90, 124, 42, 74, 60, 32],
+        data: [94, 98, 92, 88, 80, 30, 22, 14, 4],
         type: 'bar'
     }],
     tooltip : {
@@ -287,7 +287,7 @@ var piece_price_option = {
     xAxis: {
         name: '目标件单价',
         type: 'category',
-        data: ['100', '600', '1100', '1600', '2100', '2600', '3200', '3700', '4200', '4700'],
+        data: ['99', '129', '149', '199', '249', '299', '349', '399', '449', '499'],
         axisLabel:{
             interval: 0
         },
