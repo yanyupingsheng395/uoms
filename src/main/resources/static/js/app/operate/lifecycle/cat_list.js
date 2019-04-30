@@ -47,24 +47,28 @@ $(function () {
     function dataInit(cate_wid) {
         if(!flag) {
             flag = true;
-            $("#initTab1, #initTab2").attr("style", "display:none;");  //隐藏提示
+            $("#initTab1, #initTab2, #initTab3").attr("style", "display:none;");  //隐藏提示
 
             // todo 判断当前tab处在那个位置
 
-            if($("#tabs").find(".active").children().attr("href") == "#tab_kpis") {
+            var tab = $("#tabs").find(".active").children().attr("href");
+            if(tab == "#tab_kpis") {
                 $("#tabContent1").attr("class", "chartpanel");
-                $("#tabContent2").attr("class", "chart_none_panel");
-            }else {
+            }else if(tab == "tab_lifecycle") {
                 tab2Init();
                 $("#tabContent2").attr("class", "chartpanel");
-                $("#tabContent1").attr("class", "chart_none_panel");
+            }else {
+                tab3DataInit();
+                $("#tabContent3").attr("class", "chartpanel");
             }
         }else {
             $("#tabContent1").attr("class", "chartpanel");
             $("#tabContent2").attr("class", "chartpanel");
+            $("#tabContent3").attr("class", "chartpanel");
 
             $("#tabContent1").removeClass("chart_none_panel");
             $("#tabContent2").removeClass("chart_none_panel");
+            $("#tabContent3").removeClass("chart_none_panel");
         }
     }
 
@@ -90,20 +94,23 @@ $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
     // 获取已激活的标签页的名称
     var activeTab = $(e.target).attr("href");
     if(selectId == "") {
-        $("#initTab1, #initTab2").attr("style", "display:block;");
+        $("#initTab1, #initTab2, #initTab3").attr("style", "display:block;");
     }else
     {
-        $("#initTab1, #initTab2").attr("style", "display:none;");
+        $("#initTab1, #initTab2, #initTab3").attr("style", "display:none;");
         if(activeTab=='#tab_kpis')
         {
             // 初始化表格数据
             $("#tabContent1").attr("class", "chartpanel");
             $("#tabContent1").removeClass("chart_none_panel");
-        }else
-        {
+        }else if(activeTab == "#tab_lifecycle"){
             tab2Init();
             $("#tabContent2").attr("class", "chartpanel");
             $("#tabContent2").removeClass("chart_none_panel");
+        }else {
+            tab3DataInit();
+            $("#tabContent3").attr("class", "chartpanel");
+            $("#tabContent3").removeClass("chart_none_panel");
         }
     }
 });
@@ -391,4 +398,75 @@ function gearsOption(yName, data1, data2) {
         }]
     };
     return option;
+}
+
+function tab3DataInit() {
+    var settings = {
+        url: "/spucycle/list",
+        method: 'post',
+        cache: false,
+        pagination: true,
+        sidePagination: "server",
+        pageNumber: 1,            //初始化加载第一页，默认第一页
+        pageSize: 10,            //每页的记录行数（*）
+        pageList: [10, 25, 50, 100],
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,  ////页面大小
+                pageNum: (params.offset / params.limit )+ 1  //页码
+            };
+        },
+        columns: [{
+            field: 'userId',
+            title: '用户ID'
+        },{
+            field: 'spuName',
+            title: 'SPU/品类',
+            formatter: function (value, row, index) {
+                return currentSpu;
+            }
+        },{
+            field: 'cycleStage',
+            title: '周期阶段'
+        },{
+            field: 'rePurch',
+            title: '复购',
+            formatter: function (value, row, index) {
+                if(value == "Y") {
+                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\"达成目标的理想时间：2019-06-30<br/>达成目标的一般时间：2019-05-30<br/>达成目标的最后时间：2019-08-30\">是</a>";
+                }else {
+                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\"达成目标的理想时间：2019-06-30<br/>达成目标的一般时间：2019-05-30<br/>达成目标的最后时间：2019-08-30\">否</a>";
+                }
+            }
+        },{
+            field: 'avgPiecePrice',
+            title: '平均件单价（元）',
+            formatter: function(value, row, index) {
+                if(value != null) {
+                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\"达成目标的理想时间：2019-06-30<br/>达成目标的一般时间：2019-05-30<br/>达成目标的最后时间：2019-08-30\">"+value+"</a>";
+                }
+            }
+        },{
+            field: 'purchInterval',
+            title: '平均购买间隔（天）'
+        },{
+            field: 'jointRate',
+            title: '平均连带率',
+            formatter: function(value, row, index) {
+                if(value != null) {
+                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\"达成目标的理想时间：2019-06-30<br/>达成目标的一般时间：2019-05-30<br/>达成目标的最后时间：2019-08-30\">"+value+"</a>";
+                }
+            }
+        },{
+            field: 'numPurchType',
+            title: '平均购买品类种数'
+        },{
+            field: 'accPurchTimes',
+            title: '累计购买次数'
+        }],
+        onLoadSuccess: function(data){
+            $("a[data-toggle='tooltip']").tooltip();
+        }
+    };
+    $('#dataTable').bootstrapTable(settings);
 }
