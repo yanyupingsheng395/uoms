@@ -9,6 +9,7 @@ import com.linksteady.operate.domain.DiagResultInfo;
 import com.linksteady.operate.domain.KpiDismantInfo;
 import com.linksteady.operate.service.DiagHandleService;
 import com.linksteady.operate.service.ProgressService;
+import com.linksteady.operate.vo.DiagConditionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -114,6 +115,10 @@ public class ProgressController {
         try{
             JSONObject jsonObject = JSONObject.parseObject(diagHandleInfo);
             DiagHandleInfo obj = jsonObject.toJavaObject(DiagHandleInfo.class);
+            if(null == obj.getWhereinfo()) {
+                List<DiagConditionVO> tmp = new ArrayList<>();
+                obj.setWhereinfo(tmp);
+            }
             diagHandleService.generateDiagData(obj);
             return ResponseBo.ok();
         }catch (Exception ex) {

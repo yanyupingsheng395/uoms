@@ -14,4 +14,8 @@ public class DimJoinVO {
     private String dimWhere;
 
     private String dimWhereType;
+
+    private String dirverTableName;
+
+    private String dimCode;
 }

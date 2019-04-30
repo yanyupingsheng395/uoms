@@ -1,11 +1,15 @@
 package com.linksteady.operate.config;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.linksteady.operate.dao.CacheMapper;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.vo.DimJoinVO;
+import com.linksteady.operate.vo.KpiSqlTemplateVO;
+import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -23,6 +27,9 @@ public class LoadConfigRunner implements CommandLineRunner {
 
     @Autowired
     CacheMapper cacheMapper;
+
+    @Autowired
+    DozerBeanMapper dozerBeanMapper;
 
     @Override
     public void run(String... args) throws Exception {
@@ -202,10 +209,15 @@ public class LoadConfigRunner implements CommandLineRunner {
     {
         List<KpiSqlTemplate> list=cacheMapper.getKpiSqlTemplateList();
 
-        Map<String, KpiSqlTemplate> kpiSqlTemplateMap= Maps.newHashMap();
+        Map<String, KpiSqlTemplateVO> kpiSqlTemplateMap= Maps.newHashMap();
+
+        KpiSqlTemplateVO vo=null;
         for(KpiSqlTemplate template:list)
         {
-            kpiSqlTemplateMap.put(template.getSqlTemplateCode(),template);
+            vo=dozerBeanMapper.map(template,KpiSqlTemplateVO.class);
+
+            vo.setDriverTableMapping( Splitter.on(";").trimResults().withKeyValueSeparator(",").split(template.getDriverTables()));
+            kpiSqlTemplateMap.put(template.getSqlTemplateCode(),vo);
         }
         KpiCacheManager.getInstance().setCacheForKpiSqlTemplate(kpiSqlTemplateMap);
     }
@@ -216,13 +228,8 @@ public class LoadConfigRunner implements CommandLineRunner {
     private void procDimListLoad()
     {
         List<DimConfigInfo> dimConfigList=cacheMapper.getAllDimConfig();
-        Map<String,DimConfigInfo> dimConfigInfoMap=Maps.newHashMap();
-        for(DimConfigInfo dimConfigInfo:dimConfigList)
-        {
-            dimConfigInfoMap.put(dimConfigInfo.getDimCode(),dimConfigInfo);
-        }
 
-        KpiCacheManager.getInstance().setCacheForDimConfigList(dimConfigInfoMap);
+        KpiCacheManager.getInstance().setCacheForDimConfigList(dimConfigList);
     }
 
     /**
@@ -232,6 +239,12 @@ public class LoadConfigRunner implements CommandLineRunner {
     {
          //获取所有的JOIN信息列表
         List<DimJoinRelationInfo> joinList=cacheMapper.getDimJoinRelationList();
-        KpiCacheManager.getInstance().setDimJoinList(joinList);
+
+        List<DimJoinVO> voList= Lists.newArrayList();
+        for(DimJoinRelationInfo dimJoinRelationInfo:joinList)
+        {
+            voList.add(dozerBeanMapper.map(dimJoinRelationInfo,DimJoinVO.class));
+        }
+        KpiCacheManager.getInstance().setDimJoinList(voList);
     }
 }

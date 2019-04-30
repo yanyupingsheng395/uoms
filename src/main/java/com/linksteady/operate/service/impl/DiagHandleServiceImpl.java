@@ -2,10 +2,11 @@ package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.common.util.RandomUtil;
@@ -14,16 +15,15 @@ import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.dao.CommonSelectMapper;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.DiagHandleService;
-import com.linksteady.operate.vo.DiagConditionVO;
+import com.linksteady.operate.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 诊断-数据处理
@@ -428,26 +428,30 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
         double kpiValue=0d;
 
-        KpiSqlTemplate kpiSqlTemplate=null;
+        KpiSqlTemplateVO kpiSqlTemplate=null;
         //判断用户选择的维度中是否含有品牌、SPU 如果有，则获取 从明细查询的模板
         if(isRelyOrderDetail(diagHandleInfo.getWhereinfo()))
         {
-            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(kpiCode+"_"+diagHandleInfo.getHandleType()+"_DETAIL");
+            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(kpiCode.toUpperCase()+"_"+diagHandleInfo.getHandleType()+"_DETAIL");
         }else
         {
-            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(kpiCode+"_"+diagHandleInfo.getHandleType());
+            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(kpiCode.toUpperCase()+"_"+diagHandleInfo.getHandleType());
         }
-
 
        //判断是否拿到了模板
         if(null!=kpiSqlTemplate&& !StringUtils.isBlank(kpiSqlTemplate.getSqlTemplate())) {
             //构造参数 填充到模板中
             StringTemplate stringTemplate=new StringTemplate(kpiSqlTemplate.getSqlTemplate());
 
-            //构造where字符串
-            String joinTable="";  //buildWhereInfo(diagHandleInfo.getWhereinfo());
+            //构造$JOIN_TABLE$字符串和 $WHERE_INFO$
+            List<TemplateFilter> fiters=diagHandleInfo.getWhereinfo().stream().map(e->new TemplateFilter(e.getDimCode(),e.getDimValues())).collect(Collectors.toList());
+            TemplateResult templateResult=buildWhereInfo(kpiSqlTemplate.getDriverTableMapping().get("$JOIN_TABLES$"),fiters);
 
-            stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",joinTable);
+            //$DATE_RANGE$
+            String data_range=buildDateRange(diagHandleInfo.getPeriodType(),diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
+
+            stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
+                    .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",data_range);
 
             if(log.isDebugEnabled())
             {
@@ -463,14 +467,99 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         return resultInfo;
     }
 
-//    private String buildWhereInfo( List<Map<String,String>> whereinfo)
-//    {
-//        for(Map<String,String> info:whereinfo)
-//        {
-//            //通过dimcode获取到其背后的表  获取到目标表 同时获取到关联关系
-//        }
-//        return "";
-//    }
+    /**
+     * @param periodType 周期类型 M表示月 Y表示年 D表示天
+     * @param  beginDt  YYYY-MM-DD格式  月份为YYYYMM格式  年为YYYY格式
+     * @param  endDt
+     * @return 构造完成的字符串
+     */
+    private String buildDateRange(String periodType,String beginDt,String endDt)
+    {
+        StringBuffer bf=new StringBuffer();
+         if("M".equals(periodType))
+         {
+            bf.append(" AND W_DATE.MONTH>=").append(StringUtils.replaceChars(beginDt,"-","")).append(" AND W_DATE.MONTH<=").append(StringUtils.replaceChars(endDt,"-",""));
+         }else if("Y".equals(periodType))
+         {
+             bf.append(" AND W_DATE.MONTH>=").append(StringUtils.replaceChars(beginDt,"-","")).append(" AND W_DATE.MONTH<=").append(StringUtils.replaceChars(endDt,"-",""));
+         }else if("D".equals(periodType))
+         {
+             bf.append(" AND W_DATE.YEAR>=").append(beginDt).append(" AND W_DATE.YEAR<=").append(endDt);
+         }
+
+         return bf.toString();
+    }
+
+
+
+    /**
+     *
+     * @param driverTableName  驱动表名称
+     * @param filterInfo  所选的维度信息列表
+     * @return TemplateResult 返回构建好的join信息和where信息
+     */
+    private TemplateResult buildWhereInfo(String driverTableName,List<TemplateFilter> filterInfo)
+    {
+        Map<String, DimJoinVO> dimJoin=KpiCacheManager.getInstance().getDimJoinList().row(driverTableName);
+
+        StringBuffer joins=new StringBuffer();
+        StringBuffer filters=new StringBuffer();
+
+        Set dimTableAlias= Sets.newHashSet();
+
+        StringBuffer join=new StringBuffer();
+        StringBuffer filter=new StringBuffer();
+        Joiner joiner = Joiner.on(",").skipNulls();
+
+        for(TemplateFilter templateFilter :filterInfo)
+        {
+            //清空
+            filter.setLength(0);
+            join.setLength(0);
+
+            //通过dimcode获取到其背后的信息
+            DimJoinVO dimJoinVO=dimJoin.get(templateFilter.getDimCode());
+
+            //判断dim table是否已经存在(通过DIM_TABLE_ALIAS判断)
+            if(!dimTableAlias.contains(dimJoinVO.getDimTableAlias()))
+            {
+                //加入到判断重复的set中
+                dimTableAlias.add(dimJoinVO.getDimTableAlias());
+                //加入到拼接队列
+                join.append(" JOIN ").append(dimJoinVO.getDimTable()).append(dimJoinVO.getDimTableAlias()).append(" ON ").append(dimJoinVO.getRelation());
+            }
+
+            //where条件
+            List<String> values=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(templateFilter.getDimValues());
+            //字符串类型
+            if("STRING".equals(dimJoinVO.getDimWhereType()))
+            {
+                  if(values.size()==1)
+                  {
+                      filter.append(" AND ").append(dimJoinVO.getDimWhere()).append("='").append(values.get(0)).append("'");
+                  }else
+                  {
+                      filter.append(" AND ").append(dimJoinVO.getDimWhere()).append("IN(").append(joiner.join(values.stream().map(a->"'"+a+"'").toArray())).append(")");
+                  }
+            }else if("NUMBER".equals(dimJoinVO.getDimWhereType())) {
+                //数字类型
+                if (values.size() == 1) {
+                    filter.append(" AND ").append(dimJoinVO.getDimWhere()).append("=").append(values.get(0));
+                } else {
+                    filter.append(" AND ").append(dimJoinVO.getDimWhere()).append("IN(").append(joiner.join(values)).append(")");
+                }
+            }
+
+            filters.append(filter.toString());
+            joins.append(join.toString());
+        }
+
+        TemplateResult result=new TemplateResult();
+        result.setFilterInfo(filters.toString());
+        result.setJoinInfo(joins.toString());
+
+        return result;
+    }
 
     /**
      * 是否依赖于订单明细表
@@ -478,7 +567,19 @@ public class DiagHandleServiceImpl implements DiagHandleService {
      */
     private boolean isRelyOrderDetail(List<DiagConditionVO> whereInfo)
     {
-       return true;
+        if(null==whereInfo||whereInfo.size()==0)
+        {
+            return false;
+        }
+
+        List<String> selectDimCodeList=whereInfo.stream().map(DiagConditionVO::getDimCode).collect(Collectors.toList());
+
+        List<String> relyDimCodeList=KpiCacheManager.getInstance().getDimConfigList().stream()
+                .filter(a->"Y".equals(a.getRelyOrderDetail())).map(DimConfigInfo::getDimCode).collect(Collectors.toList());
+
+
+        List<String> intersection = selectDimCodeList.stream().filter(item -> relyDimCodeList.contains(item)).collect(Collectors.toList());
+       return intersection.size()>0?true:false;
     }
 
     private double getRandomKpiData(String period,String kpiCode)

@@ -1,33 +1,40 @@
 package com.linksteady.operate.domain;
 
+import lombok.Data;
+
 import java.util.Date;
 import javax.persistence.*;
 
+/**
+ * 计划头表
+ * @author  genereate
+ */
 @Table(name = "UO_GMV_PLAN")
+@Data
 public class GmvPlan {
     /**
      * 计划ID
      */
     @Column(name = "PLAN_ID")
-    private long planId;
+    private Long planId;
 
     /**
      * 年ID
      */
     @Column(name = "YEAR_ID")
-    private long yearId;
+    private Long yearId;
 
     /**
      * gmv目标值
      */
     @Column(name = "GMV_TARGET")
-    private double gmvTarget;
+    private Double gmvTarget;
 
     /**
      * 目标值相比上年增长率
      */
     @Column(name = "TARGET_RATE")
-    private double targetRate;
+    private Double targetRate;
 
     /**
      * 状态  D表示草稿  C表示更新数据中 E表示已下达执行
@@ -39,13 +46,13 @@ public class GmvPlan {
      * 预测GMV值
      */
     @Column(name = "FORECAST_GMV")
-    private double forecastGmv;
+    private Double forecastGmv;
 
     /**
      * 预测GMV值相比上年增长率
      */
     @Column(name = "FORECAST_RATE")
-    private double forecastRate;
+    private Double forecastRate;
 
     /**
      * 创建日期
@@ -64,94 +71,6 @@ public class GmvPlan {
      */
     @Column(name = "CREATE_BY")
     private String createBy;
-
-    public long getPlanId() {
-        return planId;
-    }
-
-    public void setPlanId(long planId) {
-        this.planId = planId;
-    }
-
-    public long getYearId() {
-        return yearId;
-    }
-
-    public void setYearId(long yearId) {
-        this.yearId = yearId;
-    }
-
-    public double getGmvTarget() {
-        return gmvTarget;
-    }
-
-    public void setGmvTarget(double gmvTarget) {
-        this.gmvTarget = gmvTarget;
-    }
-
-    public double getTargetRate() {
-        return targetRate;
-    }
-
-    public void setTargetRate(double targetRate) {
-        this.targetRate = targetRate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public double getForecastGmv() {
-        return forecastGmv;
-    }
-
-    public void setForecastGmv(double forecastGmv) {
-        this.forecastGmv = forecastGmv;
-    }
-
-    public double getForecastRate() {
-        return forecastRate;
-    }
-
-    public void setForecastRate(double forecastRate) {
-        this.forecastRate = forecastRate;
-    }
-
-    public Date getCreateDt() {
-        return createDt;
-    }
-
-    public void setCreateDt(Date createDt) {
-        this.createDt = createDt;
-    }
-
-    public Date getUpdateDt() {
-        return updateDt;
-    }
-
-    public void setUpdateDt(Date updateDt) {
-        this.updateDt = updateDt;
-    }
-
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
-    }
-
-    public String getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(String updateBy) {
-        this.updateBy = updateBy;
-    }
 
     /**
      * 更新人

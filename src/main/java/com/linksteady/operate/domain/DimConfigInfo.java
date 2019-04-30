@@ -30,4 +30,9 @@ public class DimConfigInfo {
 
     @Column(name = "ORDER_NO")
     private BigDecimal orderNo;
+
+    @Column(name = "RELY_ORDERDETAIL")
+    private String relyOrderDetail;
+
+
 }

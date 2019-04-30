@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.vo.DimJoinVO;
+import com.linksteady.operate.vo.KpiSqlTemplateVO;
 import com.linksteady.operate.vo.LcSpuVO;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,6 @@ public class KpiCacheManager {
 
     private static KpiCacheManager kpiCacheManager;
 
-    @Autowired
-    DozerBeanMapper dozerBeanMapper;
 
     /**
      * 所有诊断用到的指标CODE，名称的键-值对。 kpi code-name对
@@ -71,15 +70,15 @@ public class KpiCacheManager {
     /**
      * SQL模板信息加载
      */
-    private static Map<String, KpiSqlTemplate> kpiSqlTemplateList = Maps.newHashMap();
+    private static Map<String, KpiSqlTemplateVO> kpiSqlTemplateList = Maps.newHashMap();
 
     /**
      * 所有的维度配置信息
      */
-    private static  Map<String,DimConfigInfo>  dimConfigList= Maps.newHashMap();
+    private static  List<DimConfigInfo>  dimConfigList= Lists.newArrayList();
 
     /**
-     * 所有表之间的映射信息
+     * 所有表之间的映射信息  第一个参数为驱动表名  第二个参数为维度编码 第三个参数为JOIN的关系VO
      */
     Table<String,String, DimJoinVO> dimJoinList= HashBasedTable.create();
 
@@ -200,7 +199,7 @@ public class KpiCacheManager {
         }
     }
 
-    public void setCacheForKpiSqlTemplate(Map<String,KpiSqlTemplate> map) {
+    public void setCacheForKpiSqlTemplate(Map<String,KpiSqlTemplateVO> map) {
         Set<String> set = map.keySet();
         Iterator<String> it = set.iterator();
         kpiSqlTemplateList.clear();
@@ -210,24 +209,19 @@ public class KpiCacheManager {
         }
     }
 
-    public void setCacheForDimConfigList(Map<String,DimConfigInfo> map) {
-        Set<String> set = map.keySet();
-        Iterator<String> it = set.iterator();
+    public void setCacheForDimConfigList(List<DimConfigInfo> list) {
         dimConfigList.clear();
+        Iterator<DimConfigInfo> it = list.iterator();
         while (it.hasNext()) {
-            String key = it.next();
-            dimConfigList.put(key, map.get(key));
+            dimConfigList.add(it.next());
         }
     }
 
-    public void setDimJoinList(List<DimJoinRelationInfo> list) {
+    public void setDimJoinList(List<DimJoinVO> list) {
         dimJoinList.clear();
-
-        DimJoinVO vo=null;
-        for(DimJoinRelationInfo dimJoinRelationInfo:list)
+        for(DimJoinVO vo:list)
         {
-            vo=dozerBeanMapper.map(dimJoinRelationInfo, DimJoinVO.class);
-            dimJoinList.put(dimJoinRelationInfo.getDirverTableName(),dimJoinRelationInfo.getDimCode(),vo);
+            dimJoinList.put(vo.getDirverTableName(),vo.getDimCode(),vo);
         }
     }
 
@@ -269,11 +263,11 @@ public class KpiCacheManager {
         return reasonRelateKpiList;
     }
 
-    public Map<String, KpiSqlTemplate> getKpiSqlTemplateList() {
+    public Map<String, KpiSqlTemplateVO> getKpiSqlTemplateList() {
         return kpiSqlTemplateList;
     }
 
-    public Map<String, DimConfigInfo> getDimConfigList() {
+    public List<DimConfigInfo> getDimConfigList() {
         return dimConfigList;
     }
 

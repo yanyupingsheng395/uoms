@@ -62,6 +62,7 @@
         <result column="REASON_FLAG" jdbcType="VARCHAR" property="reasonFlag" />
         <result column="DIAG_FLAG" jdbcType="VARCHAR" property="diagFlag" />
         <result column="ORDER_NO" jdbcType="DECIMAL" property="orderNo" />
+        <result column="RELY_ORDERDETAIL" jdbcType="VARCHAR" property="relyOrderDetail" />
     </resultMap>
 
     <resultMap id="DimJoinRelationInfoMap" type="com.linksteady.operate.domain.DimJoinRelationInfo">
