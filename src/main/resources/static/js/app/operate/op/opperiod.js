@@ -49,7 +49,7 @@ $(function () {
             title: '操作',
             formatter: function (value, row, index) {
                 var headId=row.PERIOD_HEADER_ID;
-                return "<div class='btn btn-primary btn-sm' onclick='view("+headId+")'><i class='mdi mdi-eye'></i>查看名单</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='viewstatis("+headId+")'><i class='mdi mdi-chart-bar-stacked'></i>查看统计信息</div>&nbsp;" +
+                return "<div class='btn btn-primary btn-sm' onclick='view("+headId+")'><i class='mdi mdi-eye'></i>查看名单</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='operation_category(\"+headId+\")'><i class='mdi mdi-webpack'></i>运营品类</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='viewstatis("+headId+")'><i class='mdi mdi-chart-bar-stacked'></i>查看统计信息</div>&nbsp;" +
                     "<div class='btn btn-primary btn-sm' onclick='download("+headId+")'><i class='mdi mdi-download'></i>导出</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='del(\"+headId+\")'><i class='mdi mdi-window-close'></i>删除</div>";
             }
         }]
@@ -150,15 +150,21 @@ function del(reasonId) {
 function viewstatis(headerId)
 {
     $('#statis_modal').modal('show');
+}
 
-    var catRankChart = echarts.init(document.getElementById('cat_rank_chart'), 'macarons');
-    catRankChart.setOption(cat_rank_option);
-
+$('#statis_modal').on('shown.bs.modal', function () {
     var timeChart = echarts.init(document.getElementById('time_chart'), 'macarons');
     timeChart.setOption(time_option);
 
-    $('#history_price').text('100');
-}
+    var discountChart = echarts.init(document.getElementById('discount_chart'), 'macarons');
+    discountChart.setOption(discount_option);
+
+    var preferentialChart = echarts.init(document.getElementById('preferential_chart'), 'macarons');
+    preferentialChart.setOption(preferential_option);
+
+    var piecePriceChart = echarts.init(document.getElementById('piece_price_chart'), 'macarons');
+    piecePriceChart.setOption(piece_price_option);
+});
 
 function view(headerId)
 {
@@ -178,6 +184,11 @@ function download(headerId) {
             btnClass: 'btn-primary'
         }
     });
+}
+
+// 运营品类
+function operation_category() {
+    $("#operate_modal").modal('show');
 }
 
 function add() {
@@ -271,19 +282,25 @@ var cat_rank_option = {
     ]
 };
 
+// 购买时间分布图
 var time_option = {
     xAxis: {
+        name: '时间',
         type: 'category',
-        data: ['1点', '2点', '3点', '3点', '5点', '6点',
-            '7点','8点', '9点', '10点', '11点', '12点', '13点', '14点',
-            '15点', '16点', '17点', '18点', '19点', '20点', '21点', '22点', '23点', '24点'],
+        data: ['1:00', '2:00', '3:00', '4:00', '5:00', '6:00',
+            '7:00','8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00',
+            '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '24:00'],
         axisLabel:{
-            interval: 0
-        }
+            interval: 1
+        },
+        splitLine:{show: false},
+        splitArea : {show : false}
     },
     yAxis: {
         name: '订单量',
-        type: 'value'
+        type: 'value',
+        splitLine:{show: false},
+        splitArea : {show : false}
     },
     series: [{
         data: [2, 0, 3, 1, 2, 4, 1,1,0,3,5,7,10,1,2,4,3,1,4,3,7,8,1,2],
@@ -297,6 +314,112 @@ var time_option = {
         formatter:function (params, ticket) {
             var htmlStr="<h4 style='color: #ffffff'>"+params[0].axisValueLabel+"</h4>"
             htmlStr+="<p style='color: #ffffff'>订单量："+params[0].value+"</p>"
+            return htmlStr;
+        }
+    }
+};
+
+// 折扣率分布图
+var discount_option = {
+    xAxis: {
+        name: '折扣率（%）',
+        type: 'category',
+        data: ['10', '20', '30', '40', '50', '60', '70', '80', '90', '100'],
+        axisLabel:{
+            interval: 0
+        },
+        splitLine:{show: false},
+        splitArea : {show : false}
+    },
+    yAxis: {
+        name: '推荐次数',
+        type: 'value',
+        splitLine:{show: false},
+        splitArea : {show : false}
+    },
+    series: [{
+        data: [10, 20, 30, 21, 22, 24, 12, 14, 30, 32],
+        type: 'bar'
+    }],
+    tooltip : {
+        trigger: 'axis',
+        axisPointer : {
+            type : 'shadow'
+        },
+        formatter:function (params, ticket) {
+            var htmlStr="<p style='color: #ffffff'>折扣率："+params[0].axisValueLabel+"</p>"
+            htmlStr+="<p style='color: #ffffff'>推荐次数："+params[0].value+"</p>"
+            return htmlStr;
+        }
+    }
+};
+
+// 优惠面额分布图
+var preferential_option = {
+    xAxis: {
+        name: '优惠面额（元）',
+        type: 'category',
+        data: ['10', '30', '50', '70', '80', '100', '200', '300', '400', '500'],
+        axisLabel:{
+            interval: 0
+        },
+        splitLine:{show: false},
+        splitArea : {show : false}
+    },
+    yAxis: {
+        name: '推荐次数',
+        type: 'value',
+        splitLine:{show: false},
+        splitArea : {show : false}
+    },
+    series: [{
+        data: [34, 10, 50, 55, 90, 124, 42, 74, 60, 32],
+        type: 'bar'
+    }],
+    tooltip : {
+        trigger: 'axis',
+        axisPointer : {
+            type : 'shadow'
+        },
+        formatter:function (params, ticket) {
+            var htmlStr="<p style='color: #ffffff'>优惠面额："+params[0].axisValueLabel+"</p>"
+            htmlStr+="<p style='color: #ffffff'>推荐次数："+params[0].value+"</p>"
+            return htmlStr;
+        }
+    }
+};
+
+
+// 目标件单价分布图
+var piece_price_option = {
+    xAxis: {
+        name: '目标件单价',
+        type: 'category',
+        data: ['100', '600', '1100', '1600', '2100', '2600', '3200', '3700', '4200', '4700'],
+        axisLabel:{
+            interval: 0
+        },
+        splitLine:{show: false},
+        splitArea : {show : false}
+    },
+    yAxis: {
+        name: '推荐次数',
+        type: 'value',
+        splitLine:{show: false},
+        splitArea : {show : false}
+    },
+    series: [{
+        data: [44, 50, 56, 35, 40, 12, 42, 74, 60, 32],
+        type: 'bar'
+    }],
+    tooltip : {
+        trigger: 'axis',
+        axisPointer : {
+            type : 'shadow'
+        },
+        formatter:function (params, ticket) {
+            var htmlStr="<p style='color: #ffffff'>目标件单价："+params[0].axisValueLabel+"</p>"
+            htmlStr+="<p style='color: #ffffff'>推荐次数："+params[0].value+"</p>"
             return htmlStr;
         }
     }

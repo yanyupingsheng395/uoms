@@ -55,14 +55,19 @@
     <select id="getOpDayDetailAllList" resultType="map">
         SELECT
             T.USER_ID,
-            T.PRODUCT_NAME,
-            T.PRODUCT_ID,
-            T.PRODUCT_CODE,
-            T.DISCOUNT_EFFORT,
-            T.COUPON,
-            T.THRESHOLD,
-            T.GROUP_TYPE,
-            '满'||T.THRESHOLD||'减'||T.COUPON COUPON_DISPLAY
+            T.PATH_ACTIV,
+            T.USER_VALUE,
+            T.SPU_NAME,
+            T.PIECE_PRICE,
+            T.JOIN_RATE,
+            T.PURCH_TYPE_NUM,
+            T.TAR_IDEAL_DT,
+            T.TAR_GENERAL_DT,
+            T.TAR_DEADLINE,
+            T.RECOM_SPU,
+            T.DISCOUNT_RATE,
+            T.ORDER_PERIOD,
+            T.REFER_DENO
         FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER H
         WHERE H.HEAD_ID = T.HEADER_ID
           AND TO_CHAR(H.TOUCH_DT, 'YYYY-MM-DD') = #{daywid}
