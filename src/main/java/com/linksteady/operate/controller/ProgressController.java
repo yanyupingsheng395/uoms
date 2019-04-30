@@ -114,6 +114,10 @@ public class ProgressController {
         try{
             JSONObject jsonObject = JSONObject.parseObject(diagHandleInfo);
             DiagHandleInfo obj = jsonObject.toJavaObject(DiagHandleInfo.class);
+            if(null == obj.getWhereinfo()) {
+                List<Map<String, String>> tmp = new ArrayList<>();
+                obj.setWhereinfo(tmp);
+            }
             diagHandleService.generateDiagData(obj);
             return ResponseBo.ok();
         }catch (Exception ex) {
