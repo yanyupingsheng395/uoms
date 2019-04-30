@@ -41,6 +41,7 @@ $(function () {
         $($element).addClass('changeColor');
         currentSpu = row.spuName;
         dataInit(selectId);
+        tab3DataInit();
     });
 
     // 初始化数据
@@ -468,5 +469,5 @@ function tab3DataInit() {
             $("a[data-toggle='tooltip']").tooltip();
         }
     };
-    $('#dataTable').bootstrapTable(settings);
+    $('#dataTable').bootstrapTable('destroy').bootstrapTable(settings);
 }
