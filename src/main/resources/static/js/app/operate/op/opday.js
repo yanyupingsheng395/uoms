@@ -86,6 +86,9 @@ $('#statis_modal').on('shown.bs.modal', function () {
 
 $('#opdayTable').bootstrapTable({
         datatype: 'json',
+        pagination: true,
+        sidePagination: "client",
+        pageList: [10, 25, 50, 100],
         columns: [[{
             field: 'USER_ID',
             title: '用户ID',
