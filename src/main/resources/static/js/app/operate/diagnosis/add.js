@@ -253,10 +253,12 @@ function alarmFlag(dom) {
 function getParentCondition() {
     var array = jm.get_selected_node().data.CONDITION;
     var code = "";
+    console.log(array)
+
     $.each(array, function (k, v) {
-        code += "<tr><td style='text-align: left;'>" + v.dim_name.trim() + ":";
-        code += v.dim_value_display.trim();
-        code += "<input type='hidden' name='dimValues' value='"+v.dim_values+"'><input type='hidden' name='condition' value='"+v.dim_code+"'><input name='inheritFlag' type='hidden' value='Y'></td><td></td></tr>";
+        code += "<tr><td style='text-align: left;'>" + v.dimName.trim() + ":";
+        code += v.dimValueDisplay.trim();
+        code += "<input type='hidden' name='dimValues' value='"+v.dimValues+"'><input type='hidden' name='condition' value='"+v.dimCode+"'><input name='inheritFlag' type='hidden' value='Y'></td><td></td></tr>";
     });
     return code;
 }
@@ -343,11 +345,11 @@ function modalDetailBefore() {
     $("#kpiNameDetail").html("").html(jm.get_selected_node().data.KPI_NAME);
     var code = "";
     $.each(array, function (k, v) {
-        code += "<tr><td style='text-align: left;'>" + v.dim_name + ":";
-        if(v.inherit_flag == "N") {
-            code += v.dim_value_display;
-        }else if(v.inherit_flag == "Y"){
-            code += v.dim_value_display + "&nbsp;(继承至父节点)"
+        code += "<tr><td style='text-align: left;'>" + v.dimName + ":";
+        if(v.inheritFlag == "N") {
+            code += v.dimValueDisplay;
+        }else if(v.inheritFlag == "Y"){
+            code += v.dimValueDisplay + "&nbsp;(继承至父节点)"
         }
         code += "</td></tr>";
     });
@@ -797,10 +799,10 @@ function reasonAddCondition() {
         $("#kpiNameDetail").html("").html(jm.get_selected_node().data.KPI_NAME);
         var code = "";
         $.each(array, function (k, v) {
-            code += "<tr><td style='text-align: left;'>" + v.dim_name + ":";
-            code += v.dim_value_display;
-            code += "<input name='dimValues' type='hidden' value='"+v.dim_values+"'>";
-            code += "<input name='dimKey' type='hidden' value='"+v.dim_code+"'>";
+            code += "<tr><td style='text-align: left;'>" + v.dimName + ":";
+            code += v.dimValueDisplay;
+            code += "<input name='dimValues' type='hidden' value='"+v.dimValues+"'>";
+            code += "<input name='dimKey' type='hidden' value='"+v.dimCode+"'>";
             code += "</td></tr>";
         });
         if(code == "") {
