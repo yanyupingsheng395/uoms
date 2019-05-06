@@ -68,6 +68,11 @@ $(function () {
         $("#statis_modal").modal('show');
     });
 
+    // 效果统计表
+    $("#btn_effect").on("click",function () {
+        $("#effect_modal").modal('show');
+    });
+
 });
 
 $('#statis_modal').on('shown.bs.modal', function () {

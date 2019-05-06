@@ -49,7 +49,7 @@ $(function () {
             title: '操作',
             formatter: function (value, row, index) {
                 var headId=row.PERIOD_HEADER_ID;
-                return "<div class='btn btn-primary btn-sm' onclick='view("+headId+")'><i class='mdi mdi-eye'></i>查看名单</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='operation_category(\"+headId+\")'><i class='mdi mdi-webpack'></i>运营品类</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='viewstatis("+headId+")'><i class='mdi mdi-chart-bar-stacked'></i>查看统计信息</div>&nbsp;" +
+                return "<div class='btn btn-primary btn-sm' onclick='view("+headId+")'><i class='mdi mdi-eye'></i>查看名单</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='operation_category(\"+headId+\")'><i class='mdi mdi-webpack'></i>运营品类</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='viewstatis("+headId+")'><i class='mdi mdi-chart-bar-stacked'></i>统计信息</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='vieweffect(\"+headId+\")'><i class='mdi mdi-google-analytics'></i>效果统计</div>&nbsp;" +
                     "<div class='btn btn-primary btn-sm' onclick='download("+headId+")'><i class='mdi mdi-download'></i>导出</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='del(\"+headId+\")'><i class='mdi mdi-window-close'></i>删除</div>";
             }
         }]
@@ -423,3 +423,7 @@ var piece_price_option = {
         }
     }
 };
+
+function vieweffect() {
+    $("#effect_modal").modal('show');
+}

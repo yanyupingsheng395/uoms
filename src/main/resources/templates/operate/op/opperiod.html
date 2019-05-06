@@ -241,6 +241,38 @@
         </div>
     </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="effect_modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">每日运营效果统计</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-nowrap">
+                                <thead>
+                                <tr><th>分组名称</th><th>组别</th><th>发送短信用户数</th><th>购买用户数</th><th>转化率</th><th>购买总金额</th><th>客单价</th><th>连带率</th><th>优惠券的核销率</th><th>触达商品的准确率</th><th>触达品类的准确率</th></tr>
+                                </thead>
+                                <tbody>
+                                <tr><td>本期推荐</td><td>实验组</td><td>1366</td><td>13</td><td>0.95%</td><td>5937</td><td>457</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                                <tr><td>未达推荐节点</td><td>对照组1</td><td>318</td><td>6</td><td>1.89%</td><td>13092</td><td>2182</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                                <tr><td>流失召回</td><td>对照组2</td><td>11924</td><td>53</td><td>0.44%</td><td>36140</td><td>682</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
