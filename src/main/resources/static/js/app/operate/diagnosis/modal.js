@@ -54,9 +54,13 @@ function viewChart(obj) {
             $("#template2").attr("style", "display:block;");
             $("#template3").attr("style", "display:none;");
 
-            // 变异系数
-            var chartId = "covChart";
-            covChart(chartId, obj);
+            if(obj.periodType == "M") {
+                // 变异系数
+                var chartId = "covChart";
+                covChart(chartId, obj);
+            }else {
+                $("#covChartDiv").attr("style", "display:none;");
+            }
 
             // 指标趋势图
             t2charts(obj);
