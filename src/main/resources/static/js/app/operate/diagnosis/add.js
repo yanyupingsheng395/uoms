@@ -143,6 +143,7 @@ function getValueList(code, id) {
         $.each(r.data, function (k, v) {
             code += "<option value='" + k + "'>" + v + "</option>";
         });
+        // $("#" + id).selectpicker('destroy');
         $("#" + id).html("").html(code);
         $("#" + id).selectpicker('refresh');
     });
@@ -253,8 +254,6 @@ function alarmFlag(dom) {
 function getParentCondition() {
     var array = jm.get_selected_node().data.CONDITION;
     var code = "";
-    console.log(array)
-
     $.each(array, function (k, v) {
         code += "<tr><td style='text-align: left;'>" + v.dimName.trim() + ":";
         code += v.dimValueDisplay.trim();
@@ -706,28 +705,34 @@ function getFormula(kpiCode) {
     });
 }
 
+
+
 function addEventListenerOfNode() {
+    // 节点单击事件
+    $("jmnode").unbind('click');
+    $("jmnode").bind('click', function () {
+        nodeClick();
+    });
+
     // 注册鼠标右键事件
     $("jmnode").mousedown(function (event) {
-
         // 动态设置节点为选中状态，参考api的mousedown_handle实现
         var element = event.target;
         var nodeid = jm.view.get_binded_nodeid(element);
         if(!!nodeid) {
             jm.select_node(nodeid);
+
+            var event = event || window.event;
+            var e = document.getElementById("operateBtns");
+            if(event.button == "2"){
+                e.style.top = event.pageY+'px';
+                e.style.left = event.pageX+'px';
+                e.style.display = 'block';
+            }else {
+                e.style.display = 'none';
+            }
         }else {
             jm.select_clear();
-        }
-
-        var event = event || window.event;
-        var e = document.getElementById("operateBtns");
-        if(event.button == "2"){
-            e.style.top = event.pageY+'px';
-            e.style.left = event.pageX+'px';
-            e.style.display = 'block';
-        }else {
-            e.style.display = 'none';
-            nodeClick();
         }
     });
 }

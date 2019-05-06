@@ -33,7 +33,7 @@ function viewChart(obj) {
         // 条件
         var whereinfo = "<div class=\"col-md-12\"><table class='table table-sm'>";
         $.each(obj.whereinfo, function (k, v) {
-            if(v.inherit_flag == "Y") {
+            if(v.inheritFlag == "Y") {
                 whereinfo += "<tr><td class='text-left'>" + v.dimName + ":" + v.dimValueDisplay + "（继承至父节点）</td></tr>";
             }else {
                 whereinfo += "<tr><td class='text-left'>" + v.dimName + ":" + v.dimValueDisplay + "</td></tr>";
