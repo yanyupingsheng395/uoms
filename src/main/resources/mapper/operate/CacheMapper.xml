@@ -24,6 +24,7 @@
         <result column="DISMANT_FLAG" jdbcType="VARCHAR" property="dismantFlag" />
         <result column="DIAG_FLAG" jdbcType="VARCHAR" property="diagFlag" />
         <result column="DISMANT_FORMULA" jdbcType="VARCHAR" property="dismantFormula" />
+        <result column="AXIS_NAME" jdbcType="VARCHAR" property="axisName" />
     </resultMap>
 
     <resultMap id="KpiDismantMap" type="com.linksteady.operate.domain.KpiDismantInfo">
