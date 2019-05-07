@@ -121,11 +121,6 @@ public class DiagMultResultInfo  extends DiagResultInfo {
     Map<String, Double> covValues;
 
     /**
-     *变异系数编码、变异系数名称 编码为cov1 cov2 cov3
-     */
-    //Map<String, String> covNames;  废弃
-
-    /**
      *相关性
      */
     JSONObject relate;
