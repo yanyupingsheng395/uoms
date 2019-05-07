@@ -229,9 +229,8 @@ function saveDim() {
     var inputValue='维度 : '+selectDimLabel+' - 值 : '+selectDimValuesLabel.join("|");
     var hiddenValue=selectDimValues.join("|");
 
-    console.log(inputValue);
     var template="<li class='list-group-item'><input  class='col-xs-11 dimDispaly' value=\""+inputValue+"\"  title=\""+inputValue+"\" style='border:0px' disabled='true'/>" +
-        "<input type='hidden' class='dimKey' value='"+selectDim+"'/><input type='hidden' class='dimValues' value='"+hiddenValue+"' /><span class='mdi mdi-delete dim-remove' style='color: #006cfa;'></span></li>";
+        "<input type='hidden' class='dimKey' value='"+selectDim+"'/><input type='hidden' class='dimValues' value='"+hiddenValue+"' /><span class='mdi mdi-delete dim-remove' style='color: #f96868;'></span></li>";
     $("#dimlist").append(template);
 
     $("#dim_modal").modal('hide');

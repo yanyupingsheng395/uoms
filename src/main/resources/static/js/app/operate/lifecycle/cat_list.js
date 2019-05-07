@@ -30,7 +30,6 @@ function getOpuserDdata() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 $(function () {
     periodTypeOption();
-    // 初始化表格数据
     initTableData();
     var flag = false;
     //添加行点击事件
@@ -52,8 +51,20 @@ $(function () {
 
             // todo 判断当前tab处在那个位置
 
+            if($("#tabs").find(".active").children().attr("href") == "#tab_kpis") {
+                $("#tabContent1").attr("class", "chartpanel");
+                $("#tabContent2").attr("class", "chart_none_panel");
+            }else {
+                tab2Init();
+                $("#tabContent2").attr("class", "chartpanel");
+                $("#tabContent1").attr("class", "chart_none_panel");
+            }
+        }else {
             $("#tabContent1").attr("class", "chartpanel");
-            $("#tabContent2").attr("class", "chart_none_panel");
+            $("#tabContent2").attr("class", "chartpanel");
+
+            $("#tabContent1").removeClass("chart_none_panel");
+            $("#tabContent2").removeClass("chart_none_panel");
         }
     }
 
@@ -75,6 +86,7 @@ $(function () {
 });
 
 $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
+
     // 获取已激活的标签页的名称
     var activeTab = $(e.target).attr("href");
     if(selectId == "") {
@@ -84,11 +96,14 @@ $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
         $("#initTab1, #initTab2").attr("style", "display:none;");
         if(activeTab=='#tab_kpis')
         {
-            $("#tabContent2").attr("class", "chartpanel");
+            // 初始化表格数据
+            $("#tabContent1").attr("class", "chartpanel");
+            $("#tabContent1").removeClass("chart_none_panel");
         }else
         {
             tab2Init();
             $("#tabContent2").attr("class", "chartpanel");
+            $("#tabContent2").removeClass("chart_none_panel");
         }
     }
 });
@@ -122,7 +137,6 @@ function initTableData() {
         data:{startDt:startDt,endDt:endDt, source:source, filterType:filterType},
         async: true,
         success: function (r) {
-            console.log(r);
             stats = r.data.stats;
             var columns = new Array();
             $.each(r.data.columns, function (k, v) {
@@ -269,12 +283,7 @@ var opuser_columns=[[
     title: "活跃度"
 }]];
 
-
-
-
-
 ///////////////
-
 // 初始化时间插件
 init_date_begin("startDt", "endDt", "yyyy-mm-dd",0, 2, 0);
 init_date_end("startDt", "endDt", "yyyy-mm-dd", 0, 2, 0);
@@ -290,7 +299,7 @@ function gearsOption(yName, data1, data2) {
         grid: [{
             height:'50%',
             left: '10%',
-            right: '10%',
+            right: '20%',
         }],
         yAxis: [{
             type: 'category',
