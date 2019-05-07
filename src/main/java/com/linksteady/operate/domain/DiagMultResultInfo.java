@@ -33,27 +33,27 @@ public class DiagMultResultInfo  extends DiagResultInfo {
     /**
      *第1个图的数据
      */
-    List<Double> firData;
+    List<String> firData;
 
     /**
      *第1个图的变化率
      */
-    double firChangeRate;
+    String firChangeRate;
 
     /**
      *第1个平均值
      */
-    double firAvg;
+    String firAvg;
 
     /**
      *上浮5%值
      */
-    double firUp;
+    String firUp;
 
     /**
      *下浮5%值
      */
-    double firDown;
+    String firDown;
 
     /**
      * 第2个图的y轴名称
@@ -63,27 +63,27 @@ public class DiagMultResultInfo  extends DiagResultInfo {
     /**
      *第2个图的数据
      */
-    List<Double> secData;
+    List<String> secData;
 
     /**
      *第2个图的变化率
      */
-    double secChangeRate;
+    String secChangeRate;
 
     /**
      *第2个平均值
      */
-    double secAvg;
+    String secAvg;
 
     /**
      *上浮5%值
      */
-    double secUp;
+    String secUp;
 
     /**
      *下浮5%值
      */
-    double secDown;
+    String secDown;
 
     /**
      *第3个图的y轴名称
@@ -93,27 +93,27 @@ public class DiagMultResultInfo  extends DiagResultInfo {
     /**
      *第3个图的数据
      */
-    List<Double> thirdData;
+    List<String> thirdData;
 
     /**
      *第3个图的变化率
      */
-    double thirdChangeRate;
+    String thirdChangeRate;
 
     /**
      *第3个平均值
      */
-    double thirdAvg;
+    String thirdAvg;
 
     /**
      *上浮5%值
      */
-    double thirdUp;
+    String thirdUp;
 
     /**
      *下浮5%值
      */
-    double thirdDown;
+    String thirdDown;
 
     /**
      *变异系数  k为名称 v为对应的变异系数值

@@ -66,6 +66,6 @@ public class DiagResultInfo  implements Serializable {
     /**
      * 指标值
      */
-    double kpiValue=0d;
+    String kpiValue="0";
 
 }

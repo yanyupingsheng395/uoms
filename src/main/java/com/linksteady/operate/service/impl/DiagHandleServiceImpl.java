@@ -22,6 +22,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -119,13 +120,18 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         String part1Code=kpiDismantInfo.getDismantPart1Code();
         String part2Code=kpiDismantInfo.getDismantPart2Code();
 
+        //获取三个指标的值格式化类型
+        String firFormatType=KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode).getValueFormat();
+        String secFormatType=KpiCacheManager.getInstance().getDiagKpiList().get(part1Code).getValueFormat();
+        String thirdFormatType=KpiCacheManager.getInstance().getDiagKpiList().get(part2Code).getValueFormat();
+
+        //设置轴的名称
         diagMultResultInfo.setFirYName(KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode).getAxisName());
         diagMultResultInfo.setSecYName(KpiCacheManager.getInstance().getDiagKpiList().get(part1Code).getAxisName());
         diagMultResultInfo.setThirdYName(KpiCacheManager.getInstance().getDiagKpiList().get(part2Code).getAxisName());
         diagMultResultInfo.setXName("D".equals(diagHandleInfo.getPeriodType())?"天":"月份");
 
-        //根据配置的模板读取模板数据
-        //判断用户选择的维度中是否含有品牌、SPU 如果有，则获取 从明细查询的模板
+        //根据配置的模板读取模板数据 判断用户选择的维度中是否含有品牌、SPU 如果有，则获取 从明细查询的模板
         KpiSqlTemplateVO kpiSqlTemplate=null;
         List<DiagComnCollector> collectorData=null;
         List<DiagComnCollector> covData=null;
@@ -199,15 +205,15 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             }
         });
 
-        diagMultResultInfo.setFirData(firData);
-        diagMultResultInfo.setSecData(secData);
-        diagMultResultInfo.setThirdData(thirdData);
+        diagMultResultInfo.setFirData(valueFormat(firData,firFormatType));
+        diagMultResultInfo.setSecData(valueFormat(secData,secFormatType));
+        diagMultResultInfo.setThirdData(valueFormat(thirdData,thirdFormatType));
         diagMultResultInfo.setXData(periodList);
 
         //末期比基期的变化率
-        diagMultResultInfo.setFirChangeRate(ArithUtil.formatDouble(((firData.getLast()-firData.getFirst())/firData.getFirst()*100),2));
-        diagMultResultInfo.setSecChangeRate(ArithUtil.formatDouble(((secData.getLast()-secData.getFirst())/secData.getFirst()*100),2));
-        diagMultResultInfo.setThirdChangeRate(ArithUtil.formatDouble(((thirdData.getLast()-thirdData.getFirst())/thirdData.getFirst()*100),2));
+        diagMultResultInfo.setFirChangeRate(valueFormat((firData.getLast()-firData.getFirst())/firData.getFirst()*100,firFormatType));
+        diagMultResultInfo.setSecChangeRate(valueFormat((secData.getLast()-secData.getFirst())/secData.getFirst()*100,secFormatType));
+        diagMultResultInfo.setThirdChangeRate(valueFormat((thirdData.getLast()-thirdData.getFirst())/thirdData.getFirst()*100,thirdFormatType));
 
         //均值及上下5%区域；
         double firavg=firData.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
@@ -215,17 +221,17 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         double thirdavg=thirdData.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
 
 
-        diagMultResultInfo.setFirAvg(ArithUtil.formatDouble(firavg,2));
-        diagMultResultInfo.setFirUp(ArithUtil.formatDouble(firavg*1.05,2));
-        diagMultResultInfo.setFirDown(ArithUtil.formatDouble(firavg*0.95,2));
+        diagMultResultInfo.setFirAvg(valueFormat(firavg,firFormatType));
+        diagMultResultInfo.setFirUp(valueFormat(firavg*1.05,firFormatType));
+        diagMultResultInfo.setFirDown(valueFormat(firavg*0.95,firFormatType));
 
-        diagMultResultInfo.setSecAvg(ArithUtil.formatDouble(secavg,2));
-        diagMultResultInfo.setSecUp(ArithUtil.formatDouble(secavg*1.05,2));
-        diagMultResultInfo.setSecDown(ArithUtil.formatDouble(secavg*0.95,2));
+        diagMultResultInfo.setSecAvg(valueFormat(secavg,secFormatType));
+        diagMultResultInfo.setSecUp(valueFormat(secavg*1.05,secFormatType));
+        diagMultResultInfo.setSecDown(valueFormat(secavg*0.95,secFormatType));
 
-        diagMultResultInfo.setThirdAvg(ArithUtil.formatDouble(thirdavg,2));
-        diagMultResultInfo.setThirdUp(ArithUtil.formatDouble(thirdavg*1.05,2));
-        diagMultResultInfo.setThirdDown(ArithUtil.formatDouble(thirdavg*0.95,2));
+        diagMultResultInfo.setThirdAvg(valueFormat(thirdavg,thirdFormatType));
+        diagMultResultInfo.setThirdUp(valueFormat(thirdavg*1.05,thirdFormatType));
+        diagMultResultInfo.setThirdDown(valueFormat(thirdavg*0.95,thirdFormatType));
 
         //计算相关系数
         processMultiRelateInfo(diagMultResultInfo,codeNamePair.get(kpiCode),codeNamePair.get(part1Code),codeNamePair.get(part2Code),firData,secData,thirdData);
@@ -343,6 +349,10 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         //当前维度下，其具有的值列表 <值编码，值名称>
         Map<String,String> diagDimValue=KpiCacheManager.getInstance().getDiagDimValueList().row(dimCode);
 
+        //获取当前指标的数据格式化类型
+        String lineFormatType=KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode).getValueFormat();
+        String areaFormatType=KpiCacheManager.getInstance().getDiagKpiList().get(UomsConstants.DIAG_KPI_CODE_GMV).getValueFormat();
+
         //加法要插入的节点列表
         JSONArray nodeArray=new JSONArray();
         JSONObject node;
@@ -375,7 +385,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         diagAddResultInfo.setXdata(periodList);
 
         JSONArray areaData=new JSONArray();
-        JSONArray othersData=new JSONArray();
+        JSONArray lineData=new JSONArray();
         JSONArray lineAvgData=new JSONArray();
 
         //首先计算当前周期下，各维度值下GMV的值
@@ -386,11 +396,10 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
         //组装到最后的返回对象中去
         temp.forEach((k,v)->{
-            List<DiagAddDataCollector> temp11=v;
             JSONObject tempObj=new JSONObject();
             tempObj.put("name",KpiCacheManager.getInstance().getDiagDimValueList().row(dimCode).get(k));
             //对数据进行修补，如果出现某个周期上没有数据，则补0
-            tempObj.put("data",fixData(v.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),periodList));
+            tempObj.put("data",valueFormat(fixData(v.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),periodList),areaFormatType));
             areaData.add(tempObj);
         });
 
@@ -398,10 +407,10 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         if(!UomsConstants.DIAG_KPI_CODE_GMV.equals(kpiCode))
         {
             //如果用户选择的指标非GMV，则计算当前选择维度值在此指标下的折线图 以及均线
-            List<DiagAddDataCollector> lineData=getOthersLineData(diagHandleInfo,dimCode,diagHandleInfo.getPeriodType(),"N");
+            List<DiagAddDataCollector> otherLineData=getOthersLineData(diagHandleInfo,dimCode,diagHandleInfo.getPeriodType(),"N");
 
             //按dimCode分组
-            Map<String,List<DiagAddDataCollector>> temp6=lineData.parallelStream().collect(Collectors.groupingBy(DiagAddDataCollector::getDimValue,LinkedHashMap::new,Collectors.toList()));
+            Map<String,List<DiagAddDataCollector>> temp6=otherLineData.parallelStream().collect(Collectors.groupingBy(DiagAddDataCollector::getDimValue,LinkedHashMap::new,Collectors.toList()));
 
             //组装到最后的返回对象中去
             temp6.forEach((k,v)->{
@@ -410,13 +419,13 @@ public class DiagHandleServiceImpl implements DiagHandleService {
                 JSONObject tempObj=new JSONObject();
                 tempObj.put("name",name);
                 List<Double> temp7=v.stream().map(DiagAddDataCollector::getValue).collect(Collectors.toList());
-                tempObj.put("data",fixData(v.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),periodList));
-                othersData.add(tempObj);
+                tempObj.put("data",valueFormat(fixData(v.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),periodList),lineFormatType));
+                lineData.add(tempObj);
 
                 JSONObject avgObj=new JSONObject();
                 avgObj.put("name",name);
                 //求均值
-                avgObj.put("data",temp7.stream().mapToDouble(Double::doubleValue).average().orElse(0d));
+                avgObj.put("data",valueFormat(temp7.stream().mapToDouble(Double::doubleValue).average().orElse(0d),lineFormatType));
                 lineAvgData.add(avgObj);
             });
         }
@@ -461,6 +470,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             JSONObject relateObj=new JSONObject();
             relateObj.put("name",dimValueName);
             relateObj.put("data",ArithUtil.formatDoubleByMode(relateValue,2,RoundingMode.DOWN));
+
+            relateArray.add(relateObj);
         });
 
        //计算总体的变异系数
@@ -472,7 +483,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         covArray.add(covObj);
 
         diagAddResultInfo.setAreaData(areaData);
-        diagAddResultInfo.setLineData(othersData);
+        diagAddResultInfo.setLineData(lineData);
         diagAddResultInfo.setLineAvgData(lineAvgData);
         diagAddResultInfo.setCovData(covArray);
         diagAddResultInfo.setRelateData(relateArray);
@@ -647,7 +658,9 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         DiagResultInfo resultInfo=new DiagResultInfo();
 
         String kpiCode=diagHandleInfo.getKpiCode();
-        String kpiName=KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode).getKpiName();
+        KpiConfigInfo kpiConfigInfo=KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode);
+        String kpiName=kpiConfigInfo.getKpiName();
+        String formatType=kpiConfigInfo.getValueFormat();
 
         double kpiValue=0d;
 
@@ -684,10 +697,11 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             kpiValue=commonSelectMapper.selectOnlyDoubleValue(stringTemplate.render());
         }
 
+        //对结果进行格式化
+
         resultInfo.setKpiCode(kpiCode);
         resultInfo.setKpiName(kpiName);
-        //对结果进行格式化
-        resultInfo.setKpiValue(kpiValue);
+        resultInfo.setKpiValue(valueFormat(kpiValue,formatType));
         return resultInfo;
     }
 
@@ -950,5 +964,54 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
         }
         return periodList;
+    }
+
+    /**
+     * 对指标结果进行格式化
+     */
+    private String valueFormat(Double value,String formatType)
+    {
+        String pattern="#,##0.00";
+        if("DF".equals(formatType))
+        {
+            pattern="#,##0.00";
+        }else if("D".equals(formatType))
+        {
+            pattern="0";
+        }else if("D2F".equals(formatType))
+        {
+            pattern="#,##0.00";
+        }
+        else if("D2".equals(formatType))
+        {
+            pattern="0.00";
+        }
+        else if("D4F".equals(formatType))
+        {
+            pattern="#,##0.0000";
+        }else if("D4".equals(formatType))
+        {
+            pattern="0.0000";
+        }
+
+        double val=value;
+        if("D2".equals(formatType)||"D2F".equals(formatType))
+        {
+            val=ArithUtil.formatDoubleByMode(value,2,RoundingMode.DOWN);
+        }else if("D4".equals(formatType)||"D4F".equals(formatType))
+        {
+            val=ArithUtil.formatDoubleByMode(value,4,RoundingMode.DOWN);
+        }
+        DecimalFormat decimalFormat= new DecimalFormat(pattern);
+
+        return decimalFormat.format(value);
+    }
+
+    /**
+     * 对指标结果进行格式化
+     */
+    private List<String> valueFormat(List<Double> value,String formatType)
+    {
+        return value.stream().map(s->valueFormat(s,formatType)).collect(Collectors.toList());
     }
 }
