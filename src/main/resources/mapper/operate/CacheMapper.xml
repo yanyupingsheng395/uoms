@@ -24,6 +24,7 @@
         <result column="DISMANT_FLAG" jdbcType="VARCHAR" property="dismantFlag" />
         <result column="DIAG_FLAG" jdbcType="VARCHAR" property="diagFlag" />
         <result column="DISMANT_FORMULA" jdbcType="VARCHAR" property="dismantFormula" />
+        <result column="AXIS_NAME" jdbcType="VARCHAR" property="axisName" />
     </resultMap>
 
     <resultMap id="KpiDismantMap" type="com.linksteady.operate.domain.KpiDismantInfo">
@@ -62,6 +63,7 @@
         <result column="REASON_FLAG" jdbcType="VARCHAR" property="reasonFlag" />
         <result column="DIAG_FLAG" jdbcType="VARCHAR" property="diagFlag" />
         <result column="ORDER_NO" jdbcType="DECIMAL" property="orderNo" />
+        <result column="RELY_ORDERDETAIL" jdbcType="VARCHAR" property="relyOrderDetail" />
     </resultMap>
 
     <resultMap id="DimJoinRelationInfoMap" type="com.linksteady.operate.domain.DimJoinRelationInfo">
@@ -78,7 +80,7 @@
     </resultMap>
 
     <select id="getKpiList" resultMap="KpiConfigMap">
-        SELECT T.KPI_CODE, T.KPI_NAME, T.DISMANT_FORMULA,T.DISMANT_FLAG,T.DIAG_FLAG,T.REASON_FLAG
+        SELECT T.KPI_CODE, T.KPI_NAME, T.DISMANT_FORMULA,T.DISMANT_FLAG,T.DIAG_FLAG,T.REASON_FLAG,AXIS_NAME
         FROM UO_KPI_LIST_CONFIG T
     </select>
 

@@ -34,9 +34,9 @@ function viewChart(obj) {
         var whereinfo = "<div class=\"col-md-12\"><table class='table table-sm'>";
         $.each(obj.whereinfo, function (k, v) {
             if(v.inherit_flag == "Y") {
-                whereinfo += "<tr><td class='text-left'>" + v.dim_name + ":" + v.dim_value_display + "（继承至父节点）</td></tr>";
+                whereinfo += "<tr><td class='text-left'>" + v.dimName + ":" + v.dimValueDisplay + "（继承至父节点）</td></tr>";
             }else {
-                whereinfo += "<tr><td class='text-left'>" + v.dim_name + ":" + v.dim_value_display + "</td></tr>";
+                whereinfo += "<tr><td class='text-left'>" + v.dimName + ":" + v.dimValueDisplay + "</td></tr>";
             }
         });
         whereinfo += "</table></div>";

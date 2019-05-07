@@ -1,9 +1,6 @@
 package com.linksteady.common.util;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 数据统计工具类
@@ -207,11 +204,27 @@ public class DataStatisticsUtils {
          * @return
          */
         public static double getStandardDevition(double[] arr) {
+
+            //todo 此处是否需要做判断空呢?
             double sum = 0;
             double mean = getMean(arr);
             for (int i = 0; i < arr.length; i++) {
-                sum += Math.sqrt((arr[i] - mean) * (arr[i] - mean));
+                sum +=(arr[i] - mean) * (arr[i] - mean);
             }
-            return (sum / (arr.length - 1));
+            return Math.sqrt((sum/(arr.length - 1)));
         }
+
+    /**
+     * 求标准差
+     * @param list
+     * @return
+     */
+    public static double getStandardDevitionByList(List<Double> list) {
+
+        double[] arr = new double[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            arr[i] = list.get(i);
+        }
+        return getStandardDevition(arr);
+    }
 }

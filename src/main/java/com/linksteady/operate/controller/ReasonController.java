@@ -10,6 +10,7 @@ import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.ReasonRelMatrix;
 import com.linksteady.operate.domain.ReasonResult;
 import com.linksteady.operate.domain.ReasonTemplateInfo;
+import com.linksteady.operate.service.CacheService;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.vo.ReasonVO;
 import com.linksteady.system.domain.User;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sun.misc.Cache;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,6 +41,9 @@ public class ReasonController  extends BaseController {
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    @Autowired
+    CacheService cacheService;
 
     /**
      * 获取原因探究列表
@@ -176,7 +181,7 @@ public class ReasonController  extends BaseController {
      */
     @RequestMapping("/getReasonDimValuesList")
     public ResponseBo getReasonDimValuesList(@RequestParam String dimCode) {
-        Map<String,String> result=KpiCacheManager.getInstance().getReasonDimValueList().get(dimCode);
+        Map<String,String> result=KpiCacheManager.getInstance().getReasonDimValueList().row(dimCode);
         return ResponseBo.okWithData("",result);
     }
 
@@ -250,6 +255,17 @@ public class ReasonController  extends BaseController {
             }
         }
         return ResponseBo.okWithData("",validateResult);
+    }
+
+    /**
+     * 重新加载缓存
+     * @param
+     * @return
+     */
+    @RequestMapping("/refreshCache")
+    public ResponseBo refreshCache() {
+        cacheService.procAllLoad();
+        return ResponseBo.ok("success");
     }
 }
 
