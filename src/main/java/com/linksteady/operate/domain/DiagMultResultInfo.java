@@ -116,14 +116,14 @@ public class DiagMultResultInfo  extends DiagResultInfo {
     double thirdDown;
 
     /**
-     *变异系数 k为那个的变异系数编码 v为对应的值列表
+     *变异系数  k为名称 v为对应的变异系数值
      */
-    Map<String, List<Double>> covValues;
+    Map<String, Double> covValues;
 
     /**
      *变异系数编码、变异系数名称 编码为cov1 cov2 cov3
      */
-    Map<String, String> covNames;
+    //Map<String, String> covNames;  废弃
 
     /**
      *相关性

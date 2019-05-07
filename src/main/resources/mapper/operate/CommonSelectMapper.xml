@@ -17,11 +17,25 @@
         <result column="FREQ" jdbcType="DECIMAL" property="freq" />
     </resultMap>
 
+    <resultMap id="AddCollectorMap" type="com.linksteady.operate.domain.DiagAddDataCollector">
+        <result column="DIM_VALUE" jdbcType="VARCHAR" property="dimValue" />
+        <result column="PERIOD_NAME" jdbcType="VARCHAR" property="periodName" />
+        <result column="VALUE" jdbcType="DECIMAL" property="value" />
+    </resultMap>
+
     <select id="selectOnlyDoubleValue" parameterType="string" resultType="double">
         ${_parameter}
     </select>
 
     <select id="selectCollectorDataBySql" resultMap="CollectorMap" parameterType="string">
+        ${_parameter}
+    </select>
+
+    <select id="selectStringBySql" resultType="String" parameterType="string">
+        ${_parameter}
+    </select>
+
+    <select id="selectAddData" resultMap="AddCollectorMap" parameterType="string">
         ${_parameter}
     </select>
  </mapper>

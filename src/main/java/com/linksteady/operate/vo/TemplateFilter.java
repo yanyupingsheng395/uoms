@@ -2,6 +2,10 @@ package com.linksteady.operate.vo;
 
 import lombok.Data;
 
+/**
+ * 诊断- 过滤条件
+ * @author  huang
+ */
 @Data
 public class TemplateFilter {
 

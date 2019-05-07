@@ -10,7 +10,7 @@ import lombok.Data;
 public class DiagComnCollector {
 
     /**
-     * 周期类型
+     * 周期名称
      */
     public String periodName;
 
