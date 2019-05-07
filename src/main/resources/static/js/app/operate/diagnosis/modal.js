@@ -173,6 +173,7 @@ function t3chart2(obj, chartId){
     var xAxisName = obj.xname;
     var yAxisName = "GMV值（元）";
     var seriesData = new Array();
+    var selected = {};
     $.each(obj.lineData, function (k, v) {
         var obj = new Object();
         obj.name = v.name;
@@ -184,6 +185,7 @@ function t3chart2(obj, chartId){
     $.each(obj.lineAvgData, function (k, v) {
         var obj = new Object();
         var name = v.name + "均线";
+        selected[name] = false;
         obj.name = name;
         legendData.push(name);
         var data = new Array();
@@ -196,6 +198,10 @@ function t3chart2(obj, chartId){
     });
 
     var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
+    option.grid = [{
+        top:'30%' // legend和图表的间距
+    }];
+    option.legend.selected = selected;
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option);
     setTimeout(function () {
