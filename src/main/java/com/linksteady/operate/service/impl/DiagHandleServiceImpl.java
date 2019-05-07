@@ -686,6 +686,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
         resultInfo.setKpiCode(kpiCode);
         resultInfo.setKpiName(kpiName);
+        //对结果进行格式化
         resultInfo.setKpiValue(kpiValue);
         return resultInfo;
     }
@@ -723,10 +724,10 @@ public class DiagHandleServiceImpl implements DiagHandleService {
          if(UomsConstants.PERIOD_TYPE_MONTH.equals(periodType))
          {
             bf.append(" AND W_DATE.MONTH>=").append(StringUtils.replaceChars(beginDt,"-","")).append(" AND W_DATE.MONTH<=").append(StringUtils.replaceChars(endDt,"-",""));
-         }else if(UomsConstants.PERIOD_TYPE_YEAR.equals(periodType))
-         {
-             bf.append(" AND W_DATE.MONTH>=").append(StringUtils.replaceChars(beginDt,"-","")).append(" AND W_DATE.MONTH<=").append(StringUtils.replaceChars(endDt,"-",""));
          }else if(UomsConstants.PERIOD_TYPE_DAY.equals(periodType))
+         {
+             bf.append(" AND W_DATE.DAY>=").append(StringUtils.replaceChars(beginDt,"-","")).append(" AND W_DATE.DAY<=").append(StringUtils.replaceChars(endDt,"-",""));
+         }else if(UomsConstants.PERIOD_TYPE_YEAR.equals(periodType))
          {
              bf.append(" AND W_DATE.YEAR>=").append(beginDt).append(" AND W_DATE.YEAR<=").append(endDt);
          }
