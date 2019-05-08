@@ -125,8 +125,8 @@ function t3Relate(obj) {
         code1 += "<td>"+v.name+"</td>";
         code2 += "<td>"+v.data+"</td>";
     });
-    code1 = "<tr class='active'>" + code1 + "</tr>";
-    code2 = "<tr>" + code2 + "</tr>";
+    code1 = "<tr class='active'><td>总体</td>" + code1 + "</tr>";
+    code2 = "<tr><td>0.45</td>" + code2 + "</tr>";
     $("#relateTable").html("").html(code1 + code2);
 }
 
