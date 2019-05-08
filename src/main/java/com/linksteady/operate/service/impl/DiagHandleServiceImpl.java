@@ -491,7 +491,6 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         return diagAddResultInfo;
     }
 
-
     /**
      * 加法获取gmv面积图相关的数据
      */
