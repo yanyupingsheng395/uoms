@@ -372,6 +372,11 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         List<String> dimValues;
         //获取进行加法操作的维度编码
         String dimCode=diagHandleInfo.getAddDimCode();
+        //在当前要进行加法操作的维度上 是否同时选了在这个维度上进行过滤，如果选择，那么这个变量就存这些过滤值
+        List<String> selectDimValues=Lists.newArrayList();
+        diagHandleInfo.getWhereinfo().stream().filter(s->dimCode.equals(s.getDimCode())).map(DiagConditionVO::getDimValues).forEach(s->{
+            selectDimValues.addAll(Splitter.on(",").trimResults().omitEmptyStrings().splitToList(s));
+        });
 
         //当前维度下，其具有的值列表 <值编码，值名称>
         Map<String,String> diagDimValue=KpiCacheManager.getInstance().getDiagDimValueList().row(dimCode);
@@ -428,7 +433,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             JSONObject tempObj=new JSONObject();
             tempObj.put("name",KpiCacheManager.getInstance().getDiagDimValueList().row(dimCode).get(dimValue));
 
-            if(null!=t1&&t1.size()>0)
+            //查询出来的数据里面还有当前维度值编码对应的数据，且当前维度值编码在用户选择的where条件中  否则按0处理
+            if(null!=t1&&t1.size()>0&&selectDimValues.contains(dimValue))
             {
                 //对数据进行修补，如果出现某个周期上没有数据，则补0
                 tempObj.put("data",valueFormat(fixData(t1.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),periodList),areaFormatType));
@@ -459,7 +465,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
                 tempObj.put("name",name);
                 avgObj.put("name",name);
 
-                if(null!=t1&&t1.size()>0)
+                if(null!=t1&&t1.size()>0&&selectDimValues.contains(dimValue))
                 {
                     //对数据进行修补，如果出现某个周期上没有数据，则补0
                     tempObj.put("data",valueFormat(fixData(t1.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),periodList),lineFormatType));
@@ -510,7 +516,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             relateObj.put("name",dimValueName);
 
             List<DiagAddDataCollector> t3=temp7.get(dimValue);
-            if(null!=t3&&t3.size()>0)
+            if(null!=t3&&t3.size()>0&&selectDimValues.contains(dimValue))
             {
                 //计算变异系数
                 List<Double> temp8=fixData(t3.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),dayPeriodList);
