@@ -94,6 +94,7 @@ function beforeNext(dom) {
 
 // 加入诊断
 function addCondition() {
+    lightyear.loading("show");
     var operateType = $("input[name='op2']:checked").val();
     if(operateType == "A") { // 加法
         if($("#op4").find("option:selected").val() == "") {
@@ -394,7 +395,6 @@ function redisSaveRootNodeHandleInfo() {
 // 单步保存节点信息
 function saveNode(nodeid) {
     // 加载动画
-    lightyear.loading("show");
     var nodeList = [];
     var currentNode = jm.get_node(nodeid);
     nodeList.push(currentNode);
@@ -427,7 +427,6 @@ function saveNode(nodeid) {
             if(r.code != 200) {
                 toastr.success(r.msg);
             }
-            lightyear.loading("hide");
         }
     });
 }
@@ -552,6 +551,7 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf) {
 
     // 保存节点信息
     saveNode(nodeId);
+    lightyear.loading("hide");
     return nodeId;
 }
 
