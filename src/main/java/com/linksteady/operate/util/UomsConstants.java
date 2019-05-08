@@ -26,6 +26,8 @@ public final class UomsConstants {
 
     public static final String DIAG_KPI_CODE_GMV="gmv";
 
+    public static final String DIAG_KPI_CODE_TSPAN="tspan";
+
     private UomsConstants()
     {
 

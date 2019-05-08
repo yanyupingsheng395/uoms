@@ -118,7 +118,7 @@ public class DiagMultResultInfo  extends DiagResultInfo {
     /**
      *变异系数  k为名称 v为对应的变异系数值
      */
-    Map<String, Double> covValues;
+    Map<String, String> covValues;
 
     /**
      *相关性

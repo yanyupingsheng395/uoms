@@ -16,8 +16,6 @@ public class DozerConfig {
         List<String> mappingFiles = Arrays.asList("dozer/dozer-mapping.xml");
         DozerBeanMapper dozerBean = new DozerBeanMapper();
         dozerBean.setMappingFiles(mappingFiles);
-
-        System.out.println("初始化dozer");
         return dozerBean;
     }
 }
