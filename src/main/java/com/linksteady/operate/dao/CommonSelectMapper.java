@@ -2,6 +2,7 @@ package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.DiagAddDataCollector;
 import com.linksteady.operate.domain.DiagComnCollector;
+import com.linksteady.operate.domain.DiagFilterDataCollector;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 @Mapper
 public interface CommonSelectMapper {
 
-    Double selectOnlyDoubleValue(@Param("sql") String sql);
+    DiagFilterDataCollector selectOnlyDoubleValue(@Param("sql") String sql);
 
     List<DiagComnCollector> selectCollectorDataBySql(@Param("sql") String sql);
 

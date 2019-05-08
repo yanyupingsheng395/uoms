@@ -695,7 +695,6 @@ public class DiagHandleServiceImpl implements DiagHandleService {
                 if(i<5)
                 {
                     top5Values.add(key);
-                    top5Values.add(diagDimValue.get(key));
                 }
                 i++;
             }
@@ -749,7 +748,12 @@ public class DiagHandleServiceImpl implements DiagHandleService {
                 log.debug(stringTemplate.render());
             }
             //发送SQL到数据库中执行，并获取结果
-            kpiValue=commonSelectMapper.selectOnlyDoubleValue(stringTemplate.render());
+            DiagFilterDataCollector diagFilterDataCollector=commonSelectMapper.selectOnlyDoubleValue(stringTemplate.render());
+
+            if(null!=diagFilterDataCollector&&diagFilterDataCollector.getValue()!=null)
+            {
+                kpiValue=diagFilterDataCollector.getValue();
+            }
         }
 
         //对结果进行格式化

@@ -23,7 +23,11 @@
         <result column="VALUE" jdbcType="DECIMAL" property="value" />
     </resultMap>
 
-    <select id="selectOnlyDoubleValue" parameterType="string" resultType="double">
+    <resultMap id="FilterCollectorMap" type="com.linksteady.operate.domain.DiagFilterDataCollector">
+        <result column="VALUE" jdbcType="DECIMAL" property="value" />
+    </resultMap>
+
+    <select id="selectOnlyDoubleValue" parameterType="string" resultMap="FilterCollectorMap">
         ${_parameter}
     </select>
 
