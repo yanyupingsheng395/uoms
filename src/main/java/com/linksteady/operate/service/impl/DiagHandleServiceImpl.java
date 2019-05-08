@@ -487,7 +487,6 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         diagAddResultInfo.setLineAvgData(lineAvgData);
         diagAddResultInfo.setCovData(covArray);
         diagAddResultInfo.setRelateData(relateArray);
-
         return diagAddResultInfo;
     }
 
