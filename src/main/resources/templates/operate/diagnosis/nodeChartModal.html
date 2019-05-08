@@ -11,7 +11,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3" id="operateType"></div>
-                            <div class="col-md-6" id="timePeriod"></div>
+                            <div class="col-md-3" id="timePeriod"></div>
                         </div>
                         <!--条件-->
                         <p class="h5" style="margin-top: 10px;">过滤条件：</p>
@@ -50,18 +50,18 @@
                                 </div>
                             </div>
                             <!--gmv和条件无的操作描述-->
-                            <div id="covChartDiv">
-                                <p class="h5">变异系数：</p>
-                                <div class="row" style="margin-top: 10px;">
-                                    <div class="col-md-12">
-                                        <div id="covChart" style="height:300px;width:100%;"></div>
-                                    </div>
+                            <p class="h5">变异系数</p>
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-md-12">
+                                    <table class="table table-bordered" id="cov1Table">
+
+                                    </table>
                                 </div>
                             </div>
                             <p class="h5">相关系数</p>
                             <div class="row">
                                 <div class="col-md-12" id="t2cov">
-                                    <table class="table" id="cov2Table"></table>
+                                    <table class="table table-bordered" id="relate1Table"></table>
                                 </div>
                             </div>
                         </div>
@@ -77,10 +77,17 @@
                                     <div id="t3chart2" style="height:300px;width:100%;"></div>
                                 </div>
                             </div>
-                            <p class="h5">变异系数&相关系数</p>
+                            <p class="h5">变异系数</p>
                             <div class="row">
-                                <div class="col-md-12" id="t3cov">
-                                    <table class="table" id="covTable"></table>
+                                <div class="col-md-12">
+                                    <table class="table table-bordered" id="covTable"></table>
+                                </div>
+                            </div>
+
+                            <p class="h5">相关系数</p>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-bordered" id="relateTable"></table>
                                 </div>
                             </div>
                         </div>

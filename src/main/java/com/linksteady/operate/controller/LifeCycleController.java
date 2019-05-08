@@ -11,7 +11,6 @@ import com.linksteady.operate.service.LifeCycleService;
 import com.linksteady.operate.service.OrderingConstants;
 import com.linksteady.operate.vo.LcSpuVO;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.asm.Advice;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

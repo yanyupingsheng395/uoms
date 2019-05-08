@@ -38,7 +38,7 @@ function getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData) {
         series: seriesData
     };
 }
-//
+
 // // 模板2 面积图demo
 // function template2(chartId) {
 //     var legendData = ["首购", "非首购"];

@@ -33,7 +33,7 @@ function viewChart(obj) {
         // 条件
         var whereinfo = "<div class=\"col-md-12\"><table class='table table-sm'>";
         $.each(obj.whereinfo, function (k, v) {
-            if(v.inheritFlag == "Y") {
+            if(v.inherit_flag == "Y") {
                 whereinfo += "<tr><td class='text-left'>" + v.dimName + ":" + v.dimValueDisplay + "（继承至父节点）</td></tr>";
             }else {
                 whereinfo += "<tr><td class='text-left'>" + v.dimName + ":" + v.dimValueDisplay + "</td></tr>";
@@ -54,17 +54,14 @@ function viewChart(obj) {
             $("#template2").attr("style", "display:block;");
             $("#template3").attr("style", "display:none;");
 
-            if(obj.periodType == "M") {
-                // 变异系数
-                var chartId = "covChart";
-                covChart(chartId, obj);
-            }else {
-                $("#covChartDiv").attr("style", "display:none;");
-            }
+            // 变异系数
+            var chartId = "covChart";
+            covChart(chartId, obj);
 
             // 指标趋势图
             t2charts(obj);
-            t2Cov(obj);
+            t2Cov1(obj);
+            t2Relate(obj);
         } else if (obj.handleType == "A") { // 加法
             $("#template1").attr("style", "display:none;");
             $("#template2").attr("style", "display:none;");
@@ -77,6 +74,7 @@ function viewChart(obj) {
                 $("#t2chart").attr("style","display:none;");
             }
             t3Cov(obj);
+            t3Relate(obj);
         } else if (obj.handleType == "F") { // 条件过滤
             $("#opdesc").html("").html("<p class='h5'>该周期内"+obj.kpiName+"为：" + obj.kpiValue + "</p>");
             $("#template1").attr("style", "display:block;");
@@ -109,30 +107,56 @@ function covChart(chartId, obj) {
     }, 200);
 }
 function t3Cov(obj) {
-    var code1 = "<tr class='active'><td></td>";
-    var code2 = "<tr><td>变异系数</td>";
-    var code3 = "<tr><td>相关系数</td>";
+    var code1 = "";
+    var code2 = "";
+    var tmp = null;
     $.each(obj.covData, function (k, v) {
-        code1 += "<td> " + v.name + " </td>";
-        code2 += "<td> "+ v.data +" </td>";
-        code3 += "<td>" + obj.relateData[k].data + "</td>";
+        if(v.name == "总体") {
+            tmp = v.data;
+        }else {
+            code1 += "<td>"+v.name+"</td>";
+            code2 += "<td>"+v.data+"</td>";
+        }
+    });
+    code1 = "<tr class='active'><td>总体</td>" + code1 + "</tr>";
+    code2 = "<tr><td>"+tmp+"</td>" + code2 + "</tr>";
+    $("#covTable").html("").html(code1 + code2);
+}
+
+function t3Relate(obj) {
+    var code1 = "";
+    var code2 = "";
+    $.each(obj.relateData, function (k, v) {
+        code1 += "<td>"+v.name+"</td>";
+        code2 += "<td>"+v.data+"</td>";
+    });
+    code1 = "<tr class='active'><td></td>" + code1 + "</tr>";
+    code2 = "<tr><td>总体</td>" + code2 + "</tr>";
+    $("#relateTable").html("").html(code1 + code2);
+}
+
+function t2Cov1(obj) {
+    var code1 = "<tr class='active'>";
+    var code2 = "<tr>";
+    $.each(obj.covValues, function (k, v) {
+        code1 += "<td>"+k+"</td>";
+        code2 += "<td>"+v+"</td>";
     });
     code1 += "</tr>";
     code2 += "</tr>";
-    code3 += "</tr>";
-    $("#covTable").html("").html(code1 + code2 + code3);
+    $("#cov1Table").html("").html(code1 + code2);
 }
 
-function t2Cov(obj) {
-    var code1 = "<tr class='active'>";
-    var code2 = "<tr>";
+function t2Relate(obj) {
+    var code1 = "<tr class='active'><td style='width: 100px;'></td>";
+    var code2 = "<tr><td style='width: 100px;'>"+obj.relate.name+"</td>";
     $.each(obj.relate.data, function (k, v) {
         code1 += "<td> " + v.name + " </td>";
         code2 += "<td>" + v.data + "</td>";
     });
     code1 += "</tr>";
     code2 += "</tr>";
-    $("#cov2Table").html("").html(code1 + code2);
+    $("#relate1Table").html("").html(code1 + code2);
 }
 
 function t2charts(obj) {
@@ -173,7 +197,6 @@ function t3chart2(obj, chartId){
     var xAxisName = obj.xname;
     var yAxisName = "GMV值（元）";
     var seriesData = new Array();
-    var selected = {};
     $.each(obj.lineData, function (k, v) {
         var obj = new Object();
         obj.name = v.name;
@@ -185,7 +208,6 @@ function t3chart2(obj, chartId){
     $.each(obj.lineAvgData, function (k, v) {
         var obj = new Object();
         var name = v.name + "均线";
-        selected[name] = false;
         obj.name = name;
         legendData.push(name);
         var data = new Array();
@@ -198,10 +220,6 @@ function t3chart2(obj, chartId){
     });
 
     var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
-    option.grid = [{
-        top:'30%' // legend和图表的间距
-    }];
-    option.legend.selected = selected;
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option);
     setTimeout(function () {

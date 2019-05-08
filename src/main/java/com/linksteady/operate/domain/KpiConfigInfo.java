@@ -23,4 +23,10 @@ public class KpiConfigInfo {
 
     @Column(name = "DISMANT_FORMULA")
     private String dismantFormula;
+
+    @Column(name = "AXIS_NAME")
+    private String axisName;
+
+    @Column(name = "VALUE_FORMAT")
+    private String  valueFormat;
 }

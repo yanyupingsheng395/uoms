@@ -69,11 +69,11 @@ public class DateUtil {
     public static List<String> getEveryday(String beginDate , String endDate){
         long days = countDay(beginDate, endDate);
         int[] ymd = splitYMD( beginDate );
-        List<String> everyDays = new ArrayList<String>();
+        List<String> everyDays = new ArrayList<>();
         everyDays.add(beginDate);
         for(int i = 0; i < days; i++){
             ymd = addOneDay(ymd[Y], ymd[M], ymd[D]);
-            everyDays.add(ymd[Y]+"-"+ymd[M]+"-"+ymd[D]);
+            everyDays.add(ymd[Y]+"-"+String.format("%02d",ymd[M])+"-"+String.format("%02d",ymd[D]));
         }
         return everyDays;
     }
@@ -173,4 +173,28 @@ public class DateUtil {
         cal.add(Calendar.MONTH, -monthOffset);
         return  sdf.format(cal.getTime());
 }
+
+    /**
+     * 根据输入的YYYY-MM格式的月份获取当月的最后一天 返回YYYY-MM-DD格式
+     * @param yearMonth
+     * @return
+     */
+    public static String getLastDayOfMonth(String yearMonth) {
+        //年
+        int year = Integer.parseInt(yearMonth.split("-")[0]);
+        //月
+        int month = Integer.parseInt(yearMonth.split("-")[1]);
+        Calendar cal = Calendar.getInstance();
+        // 设置年份
+        cal.set(Calendar.YEAR, year);
+        // 设置月份
+        cal.set(Calendar.MONTH, month - 1);
+        // 获取某月最大天数
+        int lastDay = cal.getActualMaximum(Calendar.DATE);
+        // 设置日历中月份的最大天数
+        cal.set(Calendar.DAY_OF_MONTH, lastDay);
+        // 格式化日期
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(cal.getTime());
+    }
 }

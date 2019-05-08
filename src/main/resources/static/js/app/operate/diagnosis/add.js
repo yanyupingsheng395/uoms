@@ -144,7 +144,6 @@ function getValueList(code, id) {
         $.each(r.data, function (k, v) {
             code += "<option value='" + k + "'>" + v + "</option>";
         });
-        // $("#" + id).selectpicker('destroy');
         $("#" + id).html("").html(code);
         $("#" + id).selectpicker('refresh');
     });
@@ -705,8 +704,6 @@ function getFormula(kpiCode) {
     });
 }
 
-
-
 function addEventListenerOfNode() {
     // 节点单击事件
     $("jmnode").unbind('click');
@@ -716,11 +713,15 @@ function addEventListenerOfNode() {
 
     // 注册鼠标右键事件
     $("jmnode").mousedown(function (event) {
+
         // 动态设置节点为选中状态，参考api的mousedown_handle实现
         var element = event.target;
         var nodeid = jm.view.get_binded_nodeid(element);
         if(!!nodeid) {
             jm.select_node(nodeid);
+        }else {
+            jm.select_clear();
+        }
 
             var event = event || window.event;
             var e = document.getElementById("operateBtns");

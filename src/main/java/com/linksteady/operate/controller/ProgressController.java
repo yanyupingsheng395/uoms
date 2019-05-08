@@ -2,13 +2,16 @@ package com.linksteady.operate.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.ParserConfig;
+import com.google.common.collect.Maps;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.DiagHandleInfo;
 import com.linksteady.operate.domain.DiagResultInfo;
+import com.linksteady.operate.domain.KpiConfigInfo;
 import com.linksteady.operate.domain.KpiDismantInfo;
 import com.linksteady.operate.service.DiagHandleService;
 import com.linksteady.operate.service.ProgressService;
+import com.linksteady.operate.vo.DiagConditionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -64,8 +67,7 @@ public class ProgressController {
 
     @GetMapping("/getDiagDimValueList")
     public ResponseBo getDiagDimValueList(@RequestParam("code") String code) {
-        Map<String,Map<String,String>> result = KpiCacheManager.getInstance().getDiagDimValueList();
-        Map<String, String> data = result.get(code);
+        Map<String, String> data =  KpiCacheManager.getInstance().getDiagDimValueList().row(code);
         return ResponseBo.okWithData(null, data);
     }
 
@@ -102,8 +104,14 @@ public class ProgressController {
     @GetMapping("/getRootNode")
     public ResponseBo getRootNode() {
         String rootKpiCode = ROOT_KPI_CODE;
-        Map<String, String> data = KpiCacheManager.getInstance().getDiagKpiList();
-        Map<String, Object> result = new HashMap<>();
+        Map<String, KpiConfigInfo> diagKpiList = KpiCacheManager.getInstance().getDiagKpiList();
+        Map<String, String> data = Maps.newHashMap();
+        diagKpiList.forEach((k,v)->{
+           data.put(k,v.getKpiName());
+        });
+
+        KpiCacheManager.getInstance().getDiagKpiList();
+        Map<String, Object> result = new HashMap<>(16);
         result.put(rootKpiCode, data.get(rootKpiCode));
         return ResponseBo.okWithData(null, result);
     }
@@ -115,7 +123,7 @@ public class ProgressController {
             JSONObject jsonObject = JSONObject.parseObject(diagHandleInfo);
             DiagHandleInfo obj = jsonObject.toJavaObject(DiagHandleInfo.class);
             if(null == obj.getWhereinfo()) {
-                List<Map<String, String>> tmp = new ArrayList<>();
+                List<DiagConditionVO> tmp = new ArrayList<>();
                 obj.setWhereinfo(tmp);
             }
             diagHandleService.generateDiagData(obj);
@@ -139,11 +147,16 @@ public class ProgressController {
         }
     }
 
-    // 原因探究之前判断该KPI是否在list中
+    /**
+     * 原因探究之前判断该KPI是否在list中
+     * @param kpiCode
+     * @param kpiName
+     * @return
+     */
     @GetMapping("/checkReasonList")
     public ResponseBo checkReasonList(@RequestParam("kpiCode") String kpiCode, @RequestParam("kpiName") String kpiName) {
-        Map<String, String> result = KpiCacheManager.getInstance().getReasonKpiList();
-        if(null != result.get(kpiCode) && kpiName.equals(result.get(kpiCode))) {
+        Map<String, KpiConfigInfo> result = KpiCacheManager.getInstance().getReasonKpiList();
+        if(null != result.get(kpiCode) && kpiName.equals(result.get(kpiCode).getKpiName())) {
             return ResponseBo.okWithData(null, true);
         }else {
             return ResponseBo.okWithData(null, false);

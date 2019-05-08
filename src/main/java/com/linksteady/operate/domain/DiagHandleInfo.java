@@ -1,5 +1,6 @@
 package com.linksteady.operate.domain;
 
+import com.linksteady.operate.vo.DiagConditionVO;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -91,6 +92,6 @@ public class DiagHandleInfo implements Serializable {
     /**
      * 条件信息 list中每一条记录：select t.dim_code,t.dim_name,t.dim_values,t.dim_value_display,t.inherit_flag from UO_DIAG_CONDITION t
      */
-    List<Map<String,String>> whereinfo;
+    List<DiagConditionVO> whereinfo;
 
 }

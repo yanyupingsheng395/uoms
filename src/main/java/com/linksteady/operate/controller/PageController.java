@@ -8,6 +8,7 @@ import com.linksteady.operate.service.GmvPlanService;
 import com.linksteady.operate.service.LifeCycleService;
 import com.linksteady.operate.service.StateJudgeService;
 import com.linksteady.system.domain.User;
+import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +27,9 @@ public class PageController extends BaseController {
 
     @Autowired
     private LifeCycleService lifeCycleService;
+
+    @Autowired
+    DozerBeanMapper dozerBeanMapper;
 
     @RequestMapping("/page/index")
     public String index(Model model) {
