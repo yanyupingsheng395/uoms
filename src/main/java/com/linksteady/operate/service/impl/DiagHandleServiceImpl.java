@@ -109,6 +109,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
     private DiagResultInfo processMultiple(DiagHandleInfo diagHandleInfo)
     {
         List<String> periodList=getPeriodList(diagHandleInfo.getPeriodType(),diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
+        List<String> dayPeriodList=getPeriodList(UomsConstants.PERIOD_TYPE_DAY,diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
+
         //返回的结果集对象
         DiagMultResultInfo diagMultResultInfo=new DiagMultResultInfo();
 
@@ -177,7 +179,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
                     .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",data_range).add("$PERIOD_NAME$",buildPeriodInfo(UomsConstants.PERIOD_TYPE_DAY));
 
             covData=commonSelectMapper.selectCollectorDataBySql(covTemplate.render());
-            processMultiCovInfo(diagMultResultInfo,kpiCode,part1Code,part2Code,periodList,covData);
+            processMultiCovInfo(diagMultResultInfo,kpiCode,part1Code,part2Code,dayPeriodList,covData);
         }
 
         LinkedList<Double> firData= Lists.newLinkedList();
