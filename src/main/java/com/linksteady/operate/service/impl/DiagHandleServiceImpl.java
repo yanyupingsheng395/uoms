@@ -433,8 +433,9 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             JSONObject tempObj=new JSONObject();
             tempObj.put("name",KpiCacheManager.getInstance().getDiagDimValueList().row(dimCode).get(dimValue));
 
-            //查询出来的数据里面还有当前维度值编码对应的数据，且当前维度值编码在用户选择的where条件中  否则按0处理
-            if(null!=t1&&t1.size()>0&&selectDimValues.contains(dimValue))
+            //查询出来的数据里面还有当前维度值编码对应的数据，且当前维度值编码在用户选择的where条件中  否则按0处理 (如果用户没有选择任何条件即selectDimValues.size>0，则不做这个判断)
+            boolean flag=selectDimValues.size()==0||selectDimValues.contains(dimValue);
+            if(null!=t1&&t1.size()>0&& flag)
             {
                 //对数据进行修补，如果出现某个周期上没有数据，则补0
                 tempObj.put("data",valueFormat(fixData(t1.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),periodList),areaFormatType));
@@ -465,7 +466,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
                 tempObj.put("name",name);
                 avgObj.put("name",name);
 
-                if(null!=t1&&t1.size()>0&&selectDimValues.contains(dimValue))
+                boolean flag=selectDimValues.size()==0||selectDimValues.contains(dimValue);
+                if(null!=t1&&t1.size()>0&&flag)
                 {
                     //对数据进行修补，如果出现某个周期上没有数据，则补0
                     tempObj.put("data",valueFormat(fixData(t1.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),periodList),lineFormatType));
@@ -516,7 +518,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             relateObj.put("name",dimValueName);
 
             List<DiagAddDataCollector> t3=temp7.get(dimValue);
-            if(null!=t3&&t3.size()>0&&selectDimValues.contains(dimValue))
+            boolean flag=selectDimValues.size()==0||selectDimValues.contains(dimValue);
+            if(null!=t3&&t3.size()>0&&flag)
             {
                 //计算变异系数
                 List<Double> temp8=fixData(t3.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),dayPeriodList);
