@@ -477,18 +477,6 @@ function rootNode() {
     return nodeArr;
 }
 
-function modalTest() {
-    $("#modal").modal('show');
-}
-$('#modal').on('shown.bs.modal', function () {
-    template2("chart1");
-    template3_1("chart2");
-    template3_2("chart3");
-    template4_1("chart4");
-    template4_2("chart5");
-    template4_3("chart6");
-});
-
 function createRootNode() {
     var mind = {
         "meta":{
@@ -723,17 +711,14 @@ function addEventListenerOfNode() {
             jm.select_clear();
         }
 
-            var event = event || window.event;
-            var e = document.getElementById("operateBtns");
-            if(event.button == "2"){
-                e.style.top = event.pageY+'px';
-                e.style.left = event.pageX+'px';
-                e.style.display = 'block';
-            }else {
-                e.style.display = 'none';
-            }
+        var event = event || window.event;
+        var e = document.getElementById("operateBtns");
+        if(event.button == "2"){
+            e.style.top = event.pageY+'px';
+            e.style.left = event.pageX+'px';
+            e.style.display = 'block';
         }else {
-            jm.select_clear();
+            e.style.display = 'none';
         }
     });
 }
