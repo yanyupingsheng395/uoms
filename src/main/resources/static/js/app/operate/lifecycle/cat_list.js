@@ -57,9 +57,11 @@ $(function () {
 
         var tab = $("#tabs").find(".active").children().attr("href");
         if(tab == "#tab_kpis") {
+            lightyear.loading('show');
             gmvChart();
             tradeUserChart();
             avgCsPriceChart();
+            lightyear.loading('hide');
         }else if(tab == "tab_lifecycle") {
             tab2Init();
         }else {
