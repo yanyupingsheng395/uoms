@@ -9,7 +9,8 @@ import java.util.Map;
 
 @Mapper
 public interface KpiMonitorMapper {
-
     List<WeekInfo> getWeekList(@Param("beginWid") int beginWid, @Param("endWid") int endWid);
-
+    List<Map<String, Object>> getGMV(@Param("startDt") String startDt, @Param("endDt") String endDt, @Param("spuId") String spuId);
+    List<Map<String, Object>> getTradeUser(@Param("startDt") String startDt, @Param("endDt") String endDt, @Param("spuId") String spuId);
+    List<Map<String, Object>> getAvgCsPrice(@Param("startDt") String startDt, @Param("endDt") String endDt, @Param("spuId") String spuId);
 }

@@ -10,7 +10,9 @@ import com.linksteady.common.util.DateUtil;
 import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.domain.WeekInfo;
 import com.linksteady.operate.service.KpiMonitorService;
+import com.linksteady.operate.vo.Echart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -2886,5 +2888,22 @@ public class KpiMonitorController extends BaseController {
         return daywid.intValue()>Integer.parseInt(now);
     }
 
+    @GetMapping("/getGMV")
+    public ResponseBo getGMV(String startDt, String endDt, String spuId) {
+        Echart echart = kpiMonitorService.getGMV(startDt, endDt, spuId);
+        return ResponseBo.okWithData(null, echart);
+    }
+
+    @GetMapping("/getTradeUser")
+    public ResponseBo getTradeUser(String startDt, String endDt, String spuId) {
+        Echart echart = kpiMonitorService.getTradeUser(startDt, endDt, spuId);
+        return ResponseBo.okWithData(null, echart);
+    }
+
+    @GetMapping("/getAvgCsPrice")
+    public ResponseBo getAvgCsPrice(String startDt, String endDt, String spuId) {
+        Echart echart = kpiMonitorService.getAvgCsPrice(startDt, endDt, spuId);
+        return ResponseBo.okWithData(null, echart);
+    }
 }
 

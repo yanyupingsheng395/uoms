@@ -49,27 +49,21 @@ $(function () {
         if(!flag) {
             flag = true;
             $("#initTab1, #initTab2, #initTab3").attr("style", "display:none;");  //隐藏提示
+            $("#tabContent1").addClass("chartpanel");
+            $("#tabContent2").addClass("chartpanel");
+            $("#tabContent3").addClass("chartpanel");
+        }
 
-            // todo 判断当前tab处在那个位置
-
-            var tab = $("#tabs").find(".active").children().attr("href");
-            if(tab == "#tab_kpis") {
-                $("#tabContent1").attr("class", "chartpanel");
-            }else if(tab == "tab_lifecycle") {
-                tab2Init();
-                $("#tabContent2").attr("class", "chartpanel");
-            }else {
-                tab3DataInit();
-                $("#tabContent3").attr("class", "chartpanel");
-            }
+        var tab = $("#tabs").find(".active").children().attr("href");
+        if(tab == "#tab_kpis") {
+            cate_wid = "15083190022900";
+            gmvChart(cate_wid);
+            tradeUserChart(cate_wid);
+            avgCsPriceChart(cate_wid);
+        }else if(tab == "tab_lifecycle") {
+            tab2Init();
         }else {
-            $("#tabContent1").attr("class", "chartpanel");
-            $("#tabContent2").attr("class", "chartpanel");
-            $("#tabContent3").attr("class", "chartpanel");
-
-            $("#tabContent1").removeClass("chart_none_panel");
-            $("#tabContent2").removeClass("chart_none_panel");
-            $("#tabContent3").removeClass("chart_none_panel");
+            tab3DataInit();
         }
     }
 
@@ -226,13 +220,6 @@ $('#gearsModal').on('shown.bs.modal', function (event) {
     var chart = echarts.init(document.getElementById('gearChart'), 'macarons');
     chart.setOption(opt);
 });
-
-init_date("startDate1", "yyyy-mm-dd", 0,2,0);
-init_date("endDate1", "yyyy-mm-dd", 0,2,0);
-init_date("startDate2", "yyyy-mm-dd", 0,2,0);
-init_date("endDate2", "yyyy-mm-dd", 0,2,0);
-init_date("startDate3", "yyyy-mm-dd", 0,2,0);
-init_date("endDate3", "yyyy-mm-dd", 0,2,0);
 
 function view_matrix() {
     //弹出面板

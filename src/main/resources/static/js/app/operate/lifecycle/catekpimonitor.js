@@ -1,351 +1,97 @@
+function prefixInteger(num, length) {
+    return (num/Math.pow(10,length)).toFixed(length).substr(2);
+}
+
+// 格式化日期
 Date.prototype.format=function (){
     var s='';
-    s+=this.getFullYear()+'/';          // 获取年份。
-    s+=(this.getMonth()+1)+"/";         // 获取月份。
-    s+= this.getDate();                 // 获取日。
+    s+=this.getFullYear()+'-';          // 获取年份。
+    s+=prefixInteger((this.getMonth()+1), 2)+"-";         // 获取月份。
+    s+= prefixInteger(this.getDate(),2);                 // 获取日。
     return(s);                          // 返回日期。
 };
-//按日查询
-function getDayAll(begin,end){
-    var dateAllArr = new Array();
-    var ab = begin.split("-");
-    var ae = end.split("-");
-    var db = new Date();
-    db.setUTCFullYear(ab[0], ab[1]-1, ab[2]);
-    var de = new Date();
-    de.setUTCFullYear(ae[0], ae[1]-1, ae[2]);
-    var unixDb=db.getTime();
-    var unixDe=de.getTime();
-    for(var k=unixDb;k<=unixDe;){
-        dateAllArr.push((new Date(parseInt(k))).format().toString());
-        k=k+24*60*60*1000;
-    }
-    return dateAllArr;
+// 初始化日期插件
+init_date_begin("startDate1", "endDate1", "yyyy-mm-dd", 0,2,0);
+init_date_end("startDate1", "endDate1", "yyyy-mm-dd", 0,2,0);
+init_date_begin("startDate2","endDate2", "yyyy-mm-dd", 0,2,0);
+init_date_end("startDate2","endDate2", "yyyy-mm-dd", 0,2,0);
+init_date_begin("startDate3","endDate3", "yyyy-mm-dd", 0,2,0);
+init_date_end("startDate3","endDate3", "yyyy-mm-dd", 0,2,0);
+
+// 昨天往前3月
+dateValInint();
+function dateValInint() {
+    var startDt = new Date();
+    startDt.setDate(startDt.getDate()-1);
+    startDt.setMonth(startDt.getMonth()-3);
+    var endDt = new Date();
+    endDt.setDate(endDt.getDate()-1);
+    $("#startDate1").val(startDt.format());
+    $("#endDate1").val(endDt.format());
+    $("#startDate2").val(startDt.format());
+    $("#endDate2").val(endDt.format());
+    $("#startDate3").val(startDt.format());
+    $("#endDate3").val(endDt.format());
 }
+function gmvChart(spuId) {
+    var startDt = $("#startDate1").val();
+    var endDt = $("#endDate1").val();
+    $.get("/kpiMonitor/getGMV", {startDt: startDt, endDt: endDt, spuId: spuId}, function (r) {
+        var legendData = r.data.legendData;
+        var seriesData = new Array();
+        $.each(r.data.seriesData, function (k, v) {
+            v.stack = '总量';
+            v.type = 'line';
+            v.areaStyle = {normal: {}};
+            seriesData.push(v);
+        });
+        var xAxisName = r.data.xAxisName;
+        var yAxisName = r.data.yAxisName;
+        var xAxisData = r.data.xAxisData;
 
-var xData = function() {
-    return getDayAll('2019-05-01', '2019-05-15');
-}();
-
-var option1 = {
-    tooltip: {
-        trigger: "axis",
-        axisPointer: {
-            type: "shadow",
-            textStyle: {
-                color: "#fff"
-            }
-
-        },
-    },
-    grid: {
-        borderWidth: 0,
-        top: 110,
-        bottom: 95,
-        textStyle: {
-            color: "#fff"
-        }
-    },
-    legend: {
-        right: 20,
-        orient: 'vertical',
-        textStyle: {
-            color: '#90979c',
-        },
-        data: ['首购GMV', '非首购GMV']
-
-    },
-    calculable: true,
-    xAxis: [{
-        name: "日期",
-        boundaryGap: false,
-        type: "category",
-        axisLine: {
-            lineStyle: {
-                color: '#90979c'
-            }
-        },
-        splitLine: {
-            "show": false
-        },
-        axisTick: {
-            show: false
-        },
-        splitArea: {
-            show: false
-        },
-        axisLabel: {
-            interval: 0,
-            // rotate: 40
-        },
-        data: xData
-    }],
-    yAxis: [{
-        type: "value",
-        name: "GMV值（元）",
-        splitLine: {
-            show: false
-        },
-        axisLine: {
-            lineStyle: {
-                color: '#90979c'
-            }
-        },
-        axisTick: {
-            show: false
-        },
-        axisLabel: {
-            interval: 0,
-
-        },
-        splitArea: {
-            show: false
-        },
-
-    }],
-    series: [{
-        name: "首购GMV",
-        type: "line",
-        stack: "总量",
-        areaStyle: {normal: {}},
-        data: getMonthRandom(1000, 2000),
-    }, {
-        name: "非首购GMV",
-        type: "line",
-        areaStyle: {normal: {}},
-        stack: "总量",
-        data: getMonthRandom(1000, 2000)
-    }]
-};
-
-function getRandom (m,n){
-    var num = Math.floor(Math.random()*(m - n) + n);
-    return num;
-}
-
-function getMonthRandom(m,n) {
-    var data = new Array();
-    for(var i=0; i<15; i++) {
-        data.push(getRandom(m,n));
-    }
-    return data;
-}
-
-var chart1 = echarts.init(document.getElementById('chart1'), 'macarons');
-chart1.setOption(option1);
-
-var option2 = {
-    tooltip: {
-        trigger: "axis",
-        axisPointer: {
-            type: "shadow",
-            textStyle: {
-                color: "#fff"
-            }
-
-        },
-    },
-    grid: {
-        borderWidth: 0,
-        top: 110,
-        bottom: 95,
-        textStyle: {
-            color: "#fff"
-        }
-    },
-    legend: {
-        right: 20,
-        orient: 'vertical',
-        textStyle: {
-            color: '#90979c',
-        },
-        data: ['首购用户数', '非首购用户数', '整体交易用户数']
-
-    },
-    calculable: true,
-    xAxis: [{
-        name: "日期",
-        boundaryGap: false,
-        type: "category",
-        axisLine: {
-            lineStyle: {
-                color: '#90979c'
-            }
-        },
-        splitLine: {
-            "show": false
-        },
-        axisTick: {
-            show: false
-        },
-        splitArea: {
-            show: false
-        },
-        axisLabel: {
-            interval: 0,
-            rotate: 40
-
-        },
-        grid: {
-            left: '10%',
-            bottom:'35%'
-        },
-        data: xData
-    }],
-    yAxis: [{
-        type: "value",
-        name: "交易用户数",
-        splitLine: {
-            show: false
-        },
-        axisLine: {
-            lineStyle: {
-                color: '#90979c'
-            }
-        },
-        axisTick: {
-            show: false
-        },
-        axisLabel: {
-            interval: 0,
-
-        },
-        splitArea: {
-            show: false
-        },
-
-    }],
-    series: [{
-        name: "首购用户数",
-        type: "line",
-        stack: "总量",
-        areaStyle: {normal: {}},
-        data: getMonthRandom(1000, 2000),
-    }, {
-        name: "非首购用户数",
-        type: "line",
-        areaStyle: {normal: {}},
-        stack: "总量",
-        data: getMonthRandom(1000, 2000)
-    }, {
-        name: "整体交易用户数",
-        type: "line",
-        areaStyle: {normal: {}},
-        stack: "总量",
-        data: getMonthRandom(1000, 2000)
-    }]
-};
-
-var chart2 = echarts.init(document.getElementById('chart2'), 'macarons');
-chart2.setOption(option2);
-
-
-var data_1 = getMonthRandom(1000, 2000);
-var data_2 = getMonthRandom(1000, 2000);
-var data_3 = arrPlus(data_1, data_2);
-
-function arrPlus(arr1, arr2) {
-    var arr = new Array();
-    $.each(arr1, function (k, v) {
-        arr.push(v + arr2[k]);
+        var option = getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData);
+        var chart = echarts.init(document.getElementById("chart1"), 'macarons');
+        chart.setOption(option);
     });
-    return arr;
 }
-var option3 = {
-    tooltip: {
-        trigger: "axis",
-        axisPointer: {
-            type: "shadow",
-            textStyle: {
-                color: "#fff"
-            }
+function tradeUserChart(spuId) {
+    var startDt = $("#startDate2").val();
+    var endDt = $("#endDate2").val();
+    $.get("/kpiMonitor/getTradeUser", {startDt: startDt, endDt: endDt, spuId: spuId}, function (r) {
+        var legendData = r.data.legendData;
+        var seriesData = new Array();
+        $.each(r.data.seriesData, function (k, v) {
+            v.stack = '总量';
+            v.type = 'line';
+            v.areaStyle = {normal: {}};
+            seriesData.push(v);
+        });
+        var xAxisName = r.data.xAxisName;
+        var yAxisName = r.data.yAxisName;
+        var xAxisData = r.data.xAxisData;
 
-        },
-    },
-    grid: {
-        borderWidth: 0,
-        top: 110,
-        bottom: 95,
-        textStyle: {
-            color: "#fff"
-        }
-    },
-    legend: {
-        right: 20,
-        orient: 'vertical',
-        textStyle: {
-            color: '#90979c',
-        },
-        data: ['首购平均客单价', '非首购平均客单价', '整体平均客单价']
+        var option = getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData);
+        var chart = echarts.init(document.getElementById("chart2"), 'macarons');
+        chart.setOption(option);
+    });
+}
+function avgCsPriceChart(spuId) {
+    var startDt = $("#startDate3").val();
+    var endDt = $("#endDate3").val();
+    $.get("/kpiMonitor/getAvgCsPrice", {startDt: startDt, endDt: endDt, spuId: spuId}, function (r) {
+        var legendData = r.data.legendData;
+        var seriesData = new Array();
+        $.each(r.data.seriesData, function (k, v) {
+            v.stack = '总量';
+            v.type = 'line';
+            seriesData.push(v);
+        });
+        var xAxisName = r.data.xAxisName;
+        var yAxisName = r.data.yAxisName;
+        var xAxisData = r.data.xAxisData;
 
-    },
-    calculable: true,
-    xAxis: [{
-        name: "日期",
-        boundaryGap: false,
-        type: "category",
-        axisLine: {
-            lineStyle: {
-                color: '#90979c'
-            }
-        },
-        splitLine: {
-            "show": false
-        },
-        axisTick: {
-            show: false
-        },
-        splitArea: {
-            show: false
-        },
-        axisLabel: {
-            interval: 0,
-            rotate: 40
-
-        },
-        grid: {
-            left: '10%',
-            bottom:'35%'
-        },
-        data: xData
-    }],
-    yAxis: [{
-        type: "value",
-        name: "平均客单价（元）",
-        splitLine: {
-            show: false
-        },
-        axisLine: {
-            lineStyle: {
-                color: '#90979c'
-            }
-        },
-        axisTick: {
-            show: false
-        },
-        axisLabel: {
-            interval: 0,
-
-        },
-        splitArea: {
-            show: false
-        },
-
-    }],
-    series: [{
-        name: "首购平均客单价",
-        type: "line",
-        data: data_1,
-    }, {
-        name: "非首购平均客单价",
-        type: "line",
-        data: data_2
-    }, {
-        name: "整体平均客单价",
-        type: "line",
-        data: data_3
-    }]
-};
-
-var chart3 = echarts.init(document.getElementById('chart3'), 'macarons');
-chart3.setOption(option3);
+        var option = getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData);
+        var chart = echarts.init(document.getElementById("chart3"), 'macarons');
+        chart.setOption(option);
+    });
+}
