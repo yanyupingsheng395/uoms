@@ -50,9 +50,9 @@ $(function () {
         if(!flag) {
             flag = true;
             $("#initTab1, #initTab2, #initTab3").attr("style", "display:none;");  //隐藏提示
-            $("#tabContent1").addClass("chartpanel");
-            $("#tabContent2").addClass("chartpanel");
-            $("#tabContent3").addClass("chartpanel");
+            $("#tabContent1").addClass("chartpanel").removeClass("chart_none_panel");
+            $("#tabContent2").addClass("chartpanel").removeClass("chart_none_panel");
+            $("#tabContent3").addClass("chartpanel").removeClass("chart_none_panel");
         }
 
         var tab = $("#tabs").find(".active").children().attr("href");
