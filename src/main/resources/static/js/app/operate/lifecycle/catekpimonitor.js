@@ -33,7 +33,8 @@ function dateValInint() {
     $("#startDate3").val(startDt.format());
     $("#endDate3").val(endDt.format());
 }
-function gmvChart(spuId) {
+function gmvChart() {
+    var spuId = selectId;
     var startDt = $("#startDate1").val();
     var endDt = $("#endDate1").val();
     $.get("/kpiMonitor/getGMV", {startDt: startDt, endDt: endDt, spuId: spuId}, function (r) {
@@ -54,7 +55,8 @@ function gmvChart(spuId) {
         chart.setOption(option);
     });
 }
-function tradeUserChart(spuId) {
+function tradeUserChart() {
+    var spuId = selectId;
     var startDt = $("#startDate2").val();
     var endDt = $("#endDate2").val();
     $.get("/kpiMonitor/getTradeUser", {startDt: startDt, endDt: endDt, spuId: spuId}, function (r) {
@@ -75,7 +77,8 @@ function tradeUserChart(spuId) {
         chart.setOption(option);
     });
 }
-function avgCsPriceChart(spuId) {
+function avgCsPriceChart() {
+    var spuId = selectId;
     var startDt = $("#startDate3").val();
     var endDt = $("#endDate3").val();
     $.get("/kpiMonitor/getAvgCsPrice", {startDt: startDt, endDt: endDt, spuId: spuId}, function (r) {

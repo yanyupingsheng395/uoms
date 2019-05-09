@@ -37,15 +37,16 @@ $(function () {
     {
         //选中的数据放入到全局对象中
         selectId=row.CATE_WID;
+        selectId = "15083190022900";
         $('.changeColor').removeClass('changeColor');
         $($element).addClass('changeColor');
         currentSpu = row.spuName;
-        dataInit(selectId);
+        dataInit();
         tab3DataInit();
     });
 
     // 初始化数据
-    function dataInit(cate_wid) {
+    function dataInit() {
         if(!flag) {
             flag = true;
             $("#initTab1, #initTab2, #initTab3").attr("style", "display:none;");  //隐藏提示
@@ -56,10 +57,9 @@ $(function () {
 
         var tab = $("#tabs").find(".active").children().attr("href");
         if(tab == "#tab_kpis") {
-            cate_wid = "15083190022900";
-            gmvChart(cate_wid);
-            tradeUserChart(cate_wid);
-            avgCsPriceChart(cate_wid);
+            gmvChart();
+            tradeUserChart();
+            avgCsPriceChart();
         }else if(tab == "tab_lifecycle") {
             tab2Init();
         }else {
