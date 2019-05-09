@@ -87,6 +87,8 @@ function avgCsPriceChart() {
     var spuId = selectId;
     var startDt = $("#startDate3").val();
     var endDt = $("#endDate3").val();
+    var chart = echarts.init(document.getElementById("chart3"), 'macarons');
+    chart.showLoading();
     $.get("/kpiMonitor/getAvgCsPrice", {startDt: startDt, endDt: endDt, spuId: spuId}, function (r) {
         var legendData = r.data.legendData;
         var seriesData = new Array();
@@ -98,9 +100,8 @@ function avgCsPriceChart() {
         var xAxisName = r.data.xAxisName;
         var yAxisName = r.data.yAxisName;
         var xAxisData = r.data.xAxisData;
-
         var option = getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData);
-        var chart = echarts.init(document.getElementById("chart3"), 'macarons');
         chart.setOption(option);
+        chart.hideLoading();
     });
 }
