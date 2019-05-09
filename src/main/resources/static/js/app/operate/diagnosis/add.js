@@ -129,11 +129,13 @@ function resetTableData() {
 
 $("#op5").change(function() {
     var code = $(this).find("option:selected").val();
+    lightyear.loading('show');
     getValueList(code, "op6");
 });
 
 $("#op4").change(function() {
     var code = $(this).find("option:selected").val();
+    lightyear.loading('show');
     getValueList(code, "op7");
 });
 
@@ -146,6 +148,7 @@ function getValueList(code, id) {
         });
         $("#" + id).html("").html(code);
         $("#" + id).selectpicker('refresh');
+        lightyear.loading('hide');
     });
 }
 

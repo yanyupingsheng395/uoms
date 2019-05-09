@@ -390,7 +390,10 @@ button.list-group-item:hover {
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px;
 }
-
+.input-group{
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
 /* 表单 */
 .form-control {
     height: 38px;

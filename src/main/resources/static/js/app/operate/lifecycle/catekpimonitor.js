@@ -10,6 +10,12 @@ Date.prototype.format=function (){
     s+= prefixInteger(this.getDate(),2);                 // 获取日。
     return(s);                          // 返回日期。
 };
+
+$('.bootstrap-select').on('click', function() {
+    var style = "border-color: #33cabb !important;outline: 0;-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(51, 202, 187, .6) !important;box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(51, 202, 187, .6) !important;";
+    $(this).attr("style", style);
+});
+
 // 初始化日期插件
 init_date_begin("startDate1", "endDate1", "yyyy-mm-dd", 0,2,0);
 init_date_end("startDate1", "endDate1", "yyyy-mm-dd", 0,2,0);
