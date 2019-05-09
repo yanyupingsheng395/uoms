@@ -49,7 +49,7 @@ public class PearsonCorrelationUtil {
         // 计算皮尔逊系数
         if(denominator==0)
         {
-            return 0d;
+            return 0.00d;
         }else
         {
             return  numerator / denominator;

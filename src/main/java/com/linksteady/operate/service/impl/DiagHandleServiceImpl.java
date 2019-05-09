@@ -214,17 +214,20 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         diagMultResultInfo.setXData(periodList);
 
         //末期比基期的变化率
-        diagMultResultInfo.setFirChangeRate(valueFormat((firData.getLast()-firData.getFirst())/firData.getFirst()*100,firFormatType));
+        double firChangeRate=firData.getFirst()==0?0:(firData.getLast()-firData.getFirst())/firData.getFirst()*100;
+        diagMultResultInfo.setFirChangeRate(valueFormat(firChangeRate,"D2"));
 
         if(UomsConstants.DIAG_KPI_CODE_TSPAN.equals(part1Code))
         {
             diagMultResultInfo.setSecChangeRate("");
         }else
         {
-            diagMultResultInfo.setSecChangeRate(valueFormat((secData.getLast()-secData.getFirst())/secData.getFirst()*100,secFormatType));
+            double secChangeRate=secData.getFirst()==0?0:(secData.getLast()-secData.getFirst())/secData.getFirst()*100;
+            diagMultResultInfo.setSecChangeRate(valueFormat(secChangeRate,"D2"));
         }
 
-        diagMultResultInfo.setThirdChangeRate(valueFormat((thirdData.getLast()-thirdData.getFirst())/thirdData.getFirst()*100,thirdFormatType));
+        double thirdChangeRate=thirdData.getFirst()==0?0:(thirdData.getLast()-thirdData.getFirst())/thirdData.getFirst()*100;
+        diagMultResultInfo.setThirdChangeRate(valueFormat(thirdChangeRate,"D2"));
 
         //均值及上下5%区域；
         double firavg=firData.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
@@ -296,17 +299,17 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         Double secStand=DataStatisticsUtils.getStandardDevitionByList(secData);
         Double thirdStand=DataStatisticsUtils.getStandardDevitionByList(thirdData);
 
-        String firCov=valueFormat(firStand==0?0:firStand/firavg*100,"D2");
+        String firCov=valueFormat(firStand==0?0.00:firStand/firavg*100,"D2");
         String secCov="";
         if(UomsConstants.DIAG_KPI_CODE_TSPAN.equals(part1Code))
         {
              secCov="";
         }else
         {
-             secCov=valueFormat(secStand==0?0:secStand/secavg*100,"D2");
+             secCov=valueFormat(secStand==0?0.00:secStand/secavg*100,"D2");
         }
 
-        String thirdCov=valueFormat(thirdStand==0?0:thirdStand/thirdavg*100,"D2");
+        String thirdCov=valueFormat(thirdStand==0?0.00:thirdStand/thirdavg*100,"D2");
 
         Map<String,String> codeNamePair=KpiCacheManager.getInstance().getKpiCodeNamePair();
         covValues.put(codeNamePair.get(kpiCode)+"变异系数",firCov);
@@ -334,10 +337,10 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         link.put("name",part1Name);
         if(UomsConstants.DIAG_KPI_CODE_TSPAN.equals(par1Code))
         {
-            link.put("data","");
+            link.put("data","0.00");
         }else
         {
-            link.put("data",ArithUtil.formatDoubleByMode(PearsonCorrelationUtil.getPearsonCorrelationScoreByList(firData,secData), 2,RoundingMode.DOWN));
+            link.put("data",valueFormat(PearsonCorrelationUtil.getPearsonCorrelationScoreByList(firData,secData), "D2"));
         }
 
         relArray.add(link);
@@ -345,7 +348,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         //计算firData和thridData的相关系数
         link=new JSONObject();
         link.put("name",part2Name);
-        link.put("data",ArithUtil.formatDoubleByMode(PearsonCorrelationUtil.getPearsonCorrelationScoreByList(firData,thirdData), 2,RoundingMode.DOWN));
+        link.put("data",valueFormat(PearsonCorrelationUtil.getPearsonCorrelationScoreByList(firData,thirdData),"D2"));
         relArray.add(link);
 
         relObj.put("data",relArray);
@@ -525,15 +528,15 @@ public class DiagHandleServiceImpl implements DiagHandleService {
                 List<Double> temp8=fixData(t3.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),dayPeriodList);
                 double avg=t3.stream().mapToDouble(DiagAddDataCollector::getValue).average().orElse(0d);
                 double stand=DataStatisticsUtils.getStandardDevitionByList(temp8);
-                covObj.put("data",(stand==0?0:ArithUtil.formatDoubleByMode(stand/avg*100,2,RoundingMode.DOWN)));
+                covObj.put("data",(stand==0?0.00:ArithUtil.formatDoubleByMode(stand/avg*100,2,RoundingMode.DOWN)));
 
                 //计算当前数据集与 总体数据的相关系数
                 double relateValue=PearsonCorrelationUtil.getPearsonCorrelationScoreByList(temp8,overallDoubleList);
                 relateObj.put("data",ArithUtil.formatDoubleByMode(relateValue,2,RoundingMode.DOWN));
             }else
             {
-                covObj.put("data","0");
-                relateObj.put("data","0");
+                covObj.put("data","0.00");
+                relateObj.put("data","0.00");
             }
             covArray.add(covObj);
             relateArray.add(relateObj);
@@ -544,7 +547,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         double stand=DataStatisticsUtils.getStandardDevitionByList(overallDoubleList);
         JSONObject covObj=new JSONObject();
         covObj.put("name","总体");
-        covObj.put("data",(stand==0?0:ArithUtil.formatDoubleByMode(stand/avg*100,2,RoundingMode.DOWN)));
+        covObj.put("data",(stand==0?"0.00":valueFormat(stand/avg*100,"D2")));
         covArray.add(covObj);
 
         diagAddResultInfo.setAreaData(areaData);
