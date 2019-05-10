@@ -1109,6 +1109,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         }
 
         double val=value;
+        //做这一步 是因为 DecimalFormat 格式化的时候默认使用的四舍五入模式
         if("D2".equals(formatType)||"D2F".equals(formatType))
         {
             val=ArithUtil.formatDoubleByMode(value,2,RoundingMode.DOWN);
@@ -1118,7 +1119,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         }
         DecimalFormat decimalFormat= new DecimalFormat(pattern);
 
-        return decimalFormat.format(value);
+        return decimalFormat.format(val);
     }
 
     /**
