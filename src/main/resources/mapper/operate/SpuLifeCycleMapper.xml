@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.SpuLifeCycleMapper">
+
+    <select id="retentionPurchaseTimes" resultType="map">
+        select retention, purch_times from UO_LC_SPU_LIFECYCLE where chart_type = 'retention_purch' and spu_id = #{spuId} ORDER BY purch_times asc
+    </select>
+
+    <select id="getPurchDate" resultType="map">
+        select spu_dt, purch_times from UO_LC_SPU_LIFECYCLE
+         where 1=1 and
+         <if test="ltimes != null">
+             purch_times &lt;= #{ltimes} and
+         </if>
+        <if test="gtimes != null">
+            purch_times &gt; #{gtimes} and
+        </if>
+         chart_type = 'purch_date' and spu_id = #{spuId}
+         ORDER BY spu_dt asc
+    </select>
+
+    <select id="getUnitPriceChart" resultType="map">
+        select UNIT_PRICE, PURCH_TIMES from UO_LC_SPU_LIFECYCLE where chart_type = 'uprice_purch' and spu_id = #{spuId} ORDER BY purch_times asc
+    </select>
+
+    <select id="getDtPeriodChart" resultType="map">
+        select DT_PERIOD, PURCH_TIMES from UO_LC_SPU_LIFECYCLE where chart_type = 'date_purch' and spu_id = #{spuId} ORDER BY purch_times asc
+    </select>
+
+    <select id="getRateChart" resultType="map">
+        select JOINT_RATE, PURCH_TIMES from UO_LC_SPU_LIFECYCLE where chart_type = 'rate_purch' and spu_id = #{spuId} ORDER BY purch_times asc
+    </select>
+
+    <select id="getCateChart" resultType="map">
+        select CATE_NUM, PURCH_TIMES from UO_LC_SPU_LIFECYCLE where chart_type = 'cate_purch' and spu_id = #{spuId} ORDER BY purch_times asc
+    </select>
+
+    <select id="getLifeCycleKpi" resultType="map">
+        select SPU_DT, LIFECYCLE_TYPE, USER_COUNT, SALE_VOLUME from UO_LC_SPU_LIFECYCLE_KPI where spu_id = #{spuId} ORDER BY SPU_DT asc
+    </select>
+
+    <select id="getStageNode" resultType="string">
+        SELECT
+            PURCH_TIMES
+        FROM
+            UO_LC_SPU_LIFECYCLE
+        WHERE
+            spu_id = #{spuId}
+            AND LIFECYCLE_STAGE IN (
+            'repurch_node',
+            'loyal_node',
+            'decline_node')
+    </select>
+</mapper>

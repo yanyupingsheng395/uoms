@@ -18,7 +18,9 @@ function getYearHistory() {
             title: 'GMV增长率',
             field: 'gmvRate',
             formatter: function (value, row, index) {
-                return value.toFixed(2) + "%";
+                if(value != null) {
+                    return value.toFixed(2) + "%";
+                }
             }
         }]
     });
