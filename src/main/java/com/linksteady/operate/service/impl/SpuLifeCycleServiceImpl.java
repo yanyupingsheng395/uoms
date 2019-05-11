@@ -115,6 +115,11 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         return echart;
     }
 
+    /**
+     * 时间间隔-购买次数
+     * @param spuId
+     * @return
+     */
     @Override
     public Echart getDtPeriodChart(String spuId) {
         Echart echart = new Echart();
@@ -137,6 +142,11 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         return echart;
     }
 
+    /**
+     * 连带率-购买次数
+     * @param spuId
+     * @return
+     */
     @Override
     public Echart getRateChart(String spuId) {
         Echart echart = new Echart();
@@ -144,7 +154,7 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         List<String> rateList = Lists.newArrayList();
         List<String> purchTimes = Lists.newArrayList();
         data.stream().forEach(t->{
-            rateList.add(String.valueOf(t.get("JOIN_RATE")));
+            rateList.add(String.valueOf(t.get("JOINT_RATE")));
             purchTimes.add(String.valueOf(t.get("PURCH_TIMES")));
         });
         echart.setxAxisName("购买次数");
@@ -162,7 +172,7 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
     @Override
     public Echart getCateChart(String spuId) {
         Echart echart = new Echart();
-        List<Map<String, Object>> data  = spuLifeCycleMapper.getRateChart(spuId);
+        List<Map<String, Object>> data  = spuLifeCycleMapper.getCateChart(spuId);
         List<String> cateList = Lists.newArrayList();
         List<String> purchTimes = Lists.newArrayList();
         data.stream().forEach(t->{
