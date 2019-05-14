@@ -191,7 +191,7 @@ function t3chart2(obj, chartId){
     var legendData = obj.legendData;
     var xAxisData = obj.xdata;
     var xAxisName = obj.xname;
-    var yAxisName = "GMV值（元）";
+    var yAxisName = "GMV值（1元）";
     var seriesData = new Array();
     $.each(obj.lineData, function (k, v) {
         var obj = new Object();
@@ -201,11 +201,14 @@ function t3chart2(obj, chartId){
         seriesData.push(obj);
     });
     var len = xAxisData.length;
+    var tmp = {};
     $.each(obj.lineAvgData, function (k, v) {
         var obj = new Object();
         var name = v.name + "均线";
         obj.name = name;
         legendData.push(name);
+        tmp[""+name+""] = false;
+        tmp[""+v.name+""] = true;
         var data = new Array();
         for(var i=0; i<len;i++) {
             data.push(v.data);
@@ -216,6 +219,8 @@ function t3chart2(obj, chartId){
     });
 
     var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
+    option.legend.selected = tmp;
+    option.grid = {top:'28%'};
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option);
     setTimeout(function () {

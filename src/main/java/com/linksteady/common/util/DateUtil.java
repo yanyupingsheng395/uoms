@@ -41,8 +41,42 @@ public class DateUtil {
             minDt = sdf.parse(minDate);
             maxDt = sdf.parse(maxDate);
         } catch (ParseException e) {
-           minDt=new Date();
-           maxDt=new Date();
+            minDt=new Date();
+            maxDt=new Date();
+        }
+
+        min.setTime(minDt);
+        min.set(min.get(Calendar.YEAR), min.get(Calendar.MONTH), 1);
+
+        max.setTime(maxDt);
+        max.set(max.get(Calendar.YEAR), max.get(Calendar.MONTH), 2);
+
+        Calendar curr = min;
+        while (curr.before(max)) {
+            result.add(sdf.format(curr.getTime()));
+            curr.add(Calendar.MONTH, 1);
+        }
+
+        return result;
+    }
+
+
+    public static List<String> getMonthBetween(String minDate, String maxDate, String format){
+        ArrayList<String> result = new ArrayList<>();
+        //格式化为年月
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+
+        Calendar min = Calendar.getInstance();
+        Calendar max = Calendar.getInstance();
+
+        Date minDt= null;
+        Date maxDt= null;
+        try {
+            minDt = sdf.parse(minDate);
+            maxDt = sdf.parse(maxDate);
+        } catch (ParseException e) {
+            minDt=new Date();
+            maxDt=new Date();
         }
 
         min.setTime(minDt);
@@ -157,10 +191,10 @@ public class DateUtil {
     }
 
     /** 
-   * 根据原来的month 获得相对偏移 N 月的月份（month） 
-   * @param protoDate 原来的月份
-   * @param dateOffset（向前移正数，向后移负数） 
-   * @return 月份（如201901） 
+        * 根据原来的month 获得相对偏移 N 月的月份（month） 
+        * @param protoDate 原来的月份
+        * @param dateOffset（向前移正数，向后移负数） 
+        * @return 月份（如201901） 
      */
     public static String getOffsetMonthDate(String month ,int monthOffset){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
@@ -172,7 +206,7 @@ public class DateUtil {
         }
         cal.add(Calendar.MONTH, -monthOffset);
         return  sdf.format(cal.getTime());
-}
+    }
 
     /**
      * 根据输入的YYYY-MM格式的月份获取当月的最后一天 返回YYYY-MM-DD格式
@@ -196,5 +230,35 @@ public class DateUtil {
         // 格式化日期
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(cal.getTime());
+    }
+
+    /**
+     * 计算起始日期间隔天数
+     * @return
+     */
+    public static int getDaysDuringDates(Date startDt, Date endDt) {
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(startDt);
+
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(endDt);
+        int day1= cal1.get(Calendar.DAY_OF_YEAR);
+        int day2 = cal2.get(Calendar.DAY_OF_YEAR);
+
+        int year1 = cal1.get(Calendar.YEAR);
+        int year2 = cal2.get(Calendar.YEAR);
+        if(year1 != year2) {
+            int timeDistance = 0 ;
+            for(int i = year1 ; i < year2 ; i ++) {
+                if(i % 4 == 0 && i % 100 != 0 || i % 400==0) {
+                    timeDistance += 366;
+                } else {
+                    timeDistance += 365;
+                }
+            }
+            return timeDistance + (day2-day1) ;
+        } else {
+            return day2-day1;
+        }
     }
 }

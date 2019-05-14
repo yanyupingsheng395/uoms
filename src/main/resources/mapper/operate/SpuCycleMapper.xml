@@ -11,7 +11,7 @@
     <result column="PURCH_INTERVAL" jdbcType="VARCHAR" property="purchInterval" />
     <result column="NUM_PURCH_TYPE" jdbcType="VARCHAR" property="numPurchType" />
     <result column="JOINT_RATE" jdbcType="VARCHAR" property="jointRate" />
-    <result column="CYCLE_STAGE" jdbcType="VARCHAR" property="cycleStage" />
+    <result column="LIFECYCLE_TYPE" jdbcType="VARCHAR" property="lifecycleType" />
     <result column="ACC_PURCH_TIMES" jdbcType="VARCHAR" property="accPurchTimes" />
     <result column="AVG_PIECE_PRICE" jdbcType="VARCHAR" property="avgPiecePrice" />
     <result column="SPU_ID" jdbcType="VARCHAR" property="spuId" />
@@ -21,12 +21,12 @@
     SELECT * FROM(
     SELECT A.*,ROWNUM RN FROM
       (SELECT
-         USER_ID, SPU_NAME, RE_PURCH, PURCH_INTERVAL, NUM_PURCH_TYPE, JOINT_RATE, CYCLE_STAGE, ACC_PURCH_TIMES, AVG_PIECE_PRICE
-    FROM UO_SPU_CYCLE) A  WHERE ROWNUM &lt;=#{endRow}
+         USER_ID, SPU_NAME, RE_PURCH, PURCH_INTERVAL, NUM_PURCH_TYPE, JOINT_RATE, LIFECYCLE_TYPE, ACC_PURCH_TIMES, AVG_PIECE_PRICE
+    FROM UO_LC_SPU_TARGET) A  WHERE ROWNUM &lt;=#{endRow}
     ) WHERE RN &gt;=#{startRow}
   </select>
 
   <select id="getTotalCount" resultType="int">
-    select count(1) from UO_SPU_CYCLE
+    select count(1) from UO_LC_SPU_TARGET
   </select>
 </mapper>

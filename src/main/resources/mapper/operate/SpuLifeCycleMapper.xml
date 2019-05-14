@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.SpuLifeCycleMapper">
+
+    <select id="retentionPurchaseTimes" resultType="map">
+        select retention, purch_times from UO_LC_SPU_LIFECYCLE where type = 'retention_purch' and spu_id = #{spuId} ORDER BY purch_times asc
+    </select>
+
+    <select id="getLcDate" resultType="map">
+        select DT_PERIOD, PURCH_TIMES from UO_LC_SPU_LIFECYCLE
+        where spu_id = #{spuId} and type = #{type}
+    </select>
+
+    <select id="getUnitPriceChart" resultType="map">
+        select UNIT_PRICE, PURCH_TIMES from UO_LC_SPU_LIFECYCLE where type = 'uprice_purch' and spu_id = #{spuId} ORDER BY purch_times asc
+    </select>
+
+    <select id="getDtPeriodChart" resultType="map">
+        select DT_PERIOD, PURCH_TIMES from UO_LC_SPU_LIFECYCLE where type = 'date_purch' and spu_id = #{spuId} ORDER BY purch_times asc
+    </select>
+
+    <select id="getRateChart" resultType="map">
+        select JOINT_RATE, PURCH_TIMES from UO_LC_SPU_LIFECYCLE where type = 'rate_purch' and spu_id = #{spuId} ORDER BY purch_times asc
+    </select>
+
+    <select id="getCateChart" resultType="map">
+        select CATE_NUM, PURCH_TIMES from UO_LC_SPU_LIFECYCLE where type = 'cate_purch' and spu_id = #{spuId} ORDER BY purch_times asc
+    </select>
+
+    <select id="getLifeCycleKpi" resultType="map">
+        select LIFECYCLE_TYPE, USER_COUNT, GMV_TOTAL from UO_LC_SPU_LIFECYCLE_KPI where spu_id = #{spuId}
+    </select>
+
+    <select id="getStageNode" resultType="string">
+        SELECT
+            PURCH_TIMES
+        FROM
+            UO_LC_SPU_LIFECYCLE
+        WHERE
+            spu_id = #{spuId}
+            AND TYPE IN (
+            'repurch_node',
+            'loyal_node',
+            'decline_node')
+    </select>
+</mapper>

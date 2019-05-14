@@ -37,12 +37,16 @@ function colorCode(type, size) {
 //表头信息
 var columns = [];
 $(function () {
-
-    init_date("startDate_1", "yyyy-mm-dd", 0,2,0);
-    init_date("endDate_1", "yyyy-mm-dd", 0,2,0);
-
-    init_date("startDate_2", "yyyy-mm-dd", 0,2,0);
-    init_date("endDate_2", "yyyy-mm-dd", 0,2,0);
+    var date = new Date();
+    date.setMonth(date.getMonth()-12);
+    var month = "";
+    if(date.getMonth() < 9) {
+        month = "0" + (date.getMonth() + 1);
+    }else {
+        month = date.getMonth() + 1;
+    }
+    $("#startDate_1").val(date.getFullYear() + "-" + month);
+    $("#startDate_2").val(date.getFullYear() + "-" + month);
     getData(1);
     getData1(1);
 });
@@ -83,6 +87,9 @@ function tab1Click(idx) {
     indexTotal1 = idx;
     getData1(idx);
 }
+function searchData() {
+    getData(indexTotal);
+}
 
 // 获取表格数据
 function getData(idx) {
@@ -90,67 +97,122 @@ function getData(idx) {
     if(idx == 1) {
         url = "/kpiMonitor/getRetainData";
     }else if(idx == 2) {
-        url = "/kpiMonitor/getRetainCntData"
+        url = "/kpiMonitor/getRetainUserCount"
     }else if(idx == 3) {
-        url = "/kpiMonitor/getLossData"
+        url = "/kpiMonitor/getLossUserRate"
     }else if(idx == 4) {
-        url = "/kpiMonitor/getLossCntData"
+        url = "/kpiMonitor/getLossUser"
     }
     var $table = $('#dataTable' + idx);
     var start = $("#startDate_1").val();
-    var end = $("#endDate_1").val();
     var periodType=$("#cohortbtngroup1>.btn-primary:first").attr("name");
-    $.get(url, {periodType: periodType, start: start, end: end}, function(r) {
-        var columns = r.data.columns;
+    $.get(url, {periodType: periodType, start: start}, function(r) {
+        var columns = new Array();
+        var percent = false;
+        if(idx == 1 || idx == 3) {
+            percent = true;
+        }
+        if(periodType == "dmonth") {
+            columns = getDMonthCols(percent);
+        }else if(periodType == "month"){
+            columns = getMonthCols(r.data.columns, percent);
+        }
         var data = r.data.data;
-
-        var tmp = new Array();
-        $.each(columns, function (k, v) {
-            if(v == "month") {
-                tmp.push({
-                    field: v,
-                    title: '月份',
-                    width: '132px',
-                    sortable: false
-                });
-            }else if(v == "week") {
-                tmp.push({
-                    field: v,
-                    title: '周',
-                    width: '132px',
-                    sortable: false
-                });
-            }else if(v == "newuser") {
-                tmp.push({
-                    field: v,
-                    title: '本月新增用户数',
-                    width: '132px',
-                    sortable: false
-                });
-            }else {
-                tmp.push({
-                    field: v,
-                    title: v,
-                    width: '132px',
-                    sortable: false,
-                    formatter: function (value, row, index) {
-                        if(value == "-1") {
-                            return "";
-                        }else {
-                            if(indexTotal == 1 || indexTotal == 3) {
-                                return value + "%";
-                            }else {
-                                return value;
-                            }
-                        }
-                    }
-                });
-            }
-        });
-        initBootstrapTable($table, tmp, data, r.data.total, periodType);
+        initBootstrapTable($table, columns, data, 0, periodType);
     });
 }
 
+// 留存率间隔月
+function getDMonthCols(percent) {
+    var fix = "";
+    if(percent) {
+        fix = "%";
+    }else {
+        fix = "";
+    }
+    var cols = [
+        {field: 'MONTH_ID', title: '月份'},
+        {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px'},
+        {field: 'MONTH1', title: '+1月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH2', title: '+2月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH3', title: '+3月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH4', title: '+4月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH5', title: '+5月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH6', title: '+6月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH7', title: '+7月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH8', title: '+8月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH9', title: '+9月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH10', title: '+10月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH11', title: '+11月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH12', title: '+12月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+    ];
+    return cols;
+}
+// 客单价间隔月
+function getDMonthPriceCols(percent) {
+    var fix = "";
+    if(percent) {
+        fix = "%";
+    }else {
+        fix = "";
+    }
+
+    var fmt = function (value, row, index) {if(value == "0" || value == undefined) {return "";}else {return value + fix;}};
+    var cols = [
+        {field: 'MONTH_ID', title: '月份'},
+        {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px', formatter: fmt},
+        {field: 'UPRICE', title: '本月客单价（元）', width:'132px', formatter: fmt},
+        {field: 'UPRICE1', title: '+1月', formatter: fmt},
+        {field: 'UPRICE2', title: '+2月', formatter: fmt},
+        {field: 'UPRICE3', title: '+3月', formatter: fmt},
+        {field: 'UPRICE4', title: '+4月', formatter: fmt},
+        {field: 'UPRICE5', title: '+5月', formatter: fmt},
+        {field: 'UPRICE6', title: '+6月', formatter: fmt},
+        {field: 'UPRICE7', title: '+7月', formatter: fmt},
+        {field: 'UPRICE8', title: '+8月', formatter: fmt},
+        {field: 'UPRICE9', title: '+9月', formatter: fmt},
+        {field: 'UPRICE10', title: '+10月', formatter: fmt},
+        {field: 'UPRICE11', title: '+11月', formatter: fmt},
+        {field: 'UPRICE12', title: '+12月', formatter: fmt}
+    ];
+    return cols;
+}
+
+// 留存率自然月
+function getMonthCols(data, percent) {
+    var cols = [];
+    $.each(data, function (k, v) {
+        var o = new Object();
+        o.field = v;
+        if(v == "month") {
+            o.title = "月份";
+        }else if(v == "newUsers"){
+            o.title = "本月新增用户数";
+            o.width = "132px";
+        }else {
+            o.title = v;
+        }
+        o.formatter = function (value, row, index) {
+            if (value == "0" || value == null) {
+                return "";
+            } else {
+                var fix;
+                if(percent) {
+                    fix = "%";
+                }else {
+                    fix = "";
+                }
+                if(v != "month" && v != "newUsers") {
+                    return value + fix;
+                }else {
+                    return value;
+                }
+            }
+        };
+        cols.push(o);
+    });
+    return cols;
+}
 
 function getData1(idx) {
     var url = "";
@@ -167,52 +229,20 @@ function getData1(idx) {
     }
     var $table = $('#dataTable1' + idx);
     var start = $("#startDate_2").val();
-    var end = $("#endDate_2").val();
     var periodType=$("#cohortbtngroup2>.btn-primary:first").attr("name");
-    $.get(url, {periodType: periodType, start: start, end: end}, function(r) {
-        var columns = r.data.columns;
+    $.get(url, {periodType: periodType, start: start}, function(r) {
+        var columns = new Array();
+        var percent = false;
+        if(idx == 2 || idx == 4) {
+            percent = true;
+        }
+        if(periodType == "dmonth") {
+            columns = getDMonthPriceCols(percent);
+        }else if(periodType == "month"){
+            columns = getMonthCols(r.data.columns, percent);
+        }
         var data = r.data.data;
-
-        var tmp = new Array();
-        $.each(columns, function (k, v) {
-            if(v == "month") {
-                tmp.push({
-                    field: v,
-                    title: '月份',
-                    width: '132px',
-                    sortable: false
-                });
-            }else if(v == "week") {
-                tmp.push({
-                    field: v,
-                    title: '周',
-                    width: '132px',
-                    sortable: false
-                });
-            }else if(v == "newuser") {
-                tmp.push({
-                    field: v,
-                    title: '本月新增用户数',
-                    width: '132px',
-                    sortable: false
-                });
-            }else {
-                tmp.push({
-                    field: v,
-                    title: v,
-                    width: '132px',
-                    sortable: false,
-                    formatter: function (value, row, index) {
-                        if(value == "-1") {
-                            return "";
-                        }else {
-                            return value;
-                        }
-                    }
-                });
-            }
-        });
-        initBootstrapTable($table, tmp, data, r.data.total, periodType);
+        initBootstrapTable($table, columns, data, 0, periodType);
     });
 }
 
@@ -231,27 +261,7 @@ function initBootstrapTable($el, columns, data, total, periodType) {
         data: data,
         search: false,
     };
-    if(data.length > 12) {
-        option.fixedColumns = true;
-        option.fixedNumber = 2;
-        option.height = 400;
-    }
     $el.bootstrapTable('destroy').bootstrapTable(option);
-    // 合并单元格
-    if(periodType.indexOf("month") > -1) {
-        total.month = '合计：';
-        $el.bootstrapTable('append', total);
-    }else {
-        total.week = '合计：';
-        $el.bootstrapTable('append', total);
-    }
-    // if(('#dataTable1,#dataTable3').indexOf($el.selector) > -1) {
-    //     $el.find("tbody tr").find("td").each(function () {
-    //         var color = colorCode(2, parseFloat($(this).text()));
-    //         console.log($(this).text());
-    //         $(this).attr("style", "background-color:" + color + "");
-    //     });
-    // }
 }
 
 

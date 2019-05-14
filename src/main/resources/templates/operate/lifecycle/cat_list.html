@@ -10,7 +10,9 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap/bootstrap.min.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap/bootstrap-table.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap/bootstrap-table-fixed-columns.css}">
     <!--时间选择插件-->
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
     <!--日期选择插件-->
@@ -22,8 +24,8 @@
         .changeColor{
             background-color: #31b0d5  !important;
             color: white;
+            cursor: pointer;
         }
-
         .tab-content > .tab-pane > .chart_none_panel{
             display: block;     /* undo display:none          */
             height: 0;          /* height:0 is also invisible */
@@ -31,6 +33,10 @@
         }
         .tab-content > .tab-pane > .chartpanel{
             height: auto;       /* let the content decide it  */
+        }
+
+        table tr:hover {
+            color:#000000;
         }
     </style>
 </head>
@@ -95,7 +101,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table id="catListTable" class="table table-striped text-nowrap"></table>
+                                    <table id="catListTable" class="table text-nowrap table-no-bordered"></table>
                                 </div>
                             </div>
 
@@ -103,10 +109,11 @@
                                 <li class="active"> <a data-toggle="tab" href="#tab_kpis" aria-expanded="true">品类指标监控</a> </li>
                                 <li> <a data-toggle="tab" href="#tab_lifecycle">品类生命周期</a> </li>
                                 <li> <a data-toggle="tab" href="#tab_user_target">用户阶段目标</a> </li>
+                                <li> <a data-toggle="tab" href="#tab_contemporaneous">同期群分析</a> </li>
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="tab_kpis">
-                                    <div id="initTab1">
+                                    <div class="initTab">
                                         <div style="height: 100px;width: 100%;margin-top: 40px;" class="text-center">
                                             <i class="mdi mdi-alert-circle-outline"></i><span class="h5">请先在品类列表选择品类！</span>
                                         </div>
@@ -116,7 +123,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="tab_lifecycle">
-                                    <div id="initTab2">
+                                    <div class="initTab">
                                         <div style="height: 100px;width: 100%;margin-top: 40px;" class="text-center">
                                             <i class="mdi mdi-alert-circle-outline"></i><span class="h5">请先在品类列表选择品类！</span>
                                         </div>
@@ -126,13 +133,24 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="tab_user_target">
-                                    <div id="initTab3">
+                                    <div class="initTab">
                                         <div style="height: 100px;width: 100%;margin-top: 40px;" class="text-center">
                                             <i class="mdi mdi-alert-circle-outline"></i><span class="h5">请先在品类列表选择品类！</span>
                                         </div>
                                     </div>
                                     <div id="tabContent3" class="chart_none_panel">
                                         <div th:include="operate/lifecycle/stagetarget"></div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="tab_contemporaneous">
+                                    <div class="initTab">
+                                        <div style="height: 100px;width: 100%;margin-top: 40px;" class="text-center">
+                                            <i class="mdi mdi-alert-circle-outline"></i><span class="h5">请先在品类列表选择品类！</span>
+                                        </div>
+                                    </div>
+                                    <div id="tabContent4" class="chart_none_panel">
+                                        <div th:include="operate/lifecycle/contemporaneous"></div>
                                     </div>
                                 </div>
                             </div>
@@ -169,6 +187,7 @@
 <script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
+<script data-th-src="@{/plugins/bootstrap/bootstrap-table-fixed-columns.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>

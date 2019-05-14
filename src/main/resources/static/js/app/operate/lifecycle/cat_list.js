@@ -1,43 +1,17 @@
+// spu id
 var selectId='';
 var currentSpu = "";
 var stats = null;
-//////////////////////////////////////////////虚拟数据/////////////////////////////////////////////////////////////
 
-function getOpuserDdata() {
-    var opuser_data=[];
-    opuser_data.push();
-    opuser_data.push({user_id:'14256',spu_name: currentSpu,buy_date:'2019-04-10',buy_time:'2',user_value:'0.2', active_level: '低', order_price: '1205'});
-    opuser_data.push({user_id:'14257',spu_name: currentSpu,buy_date:'2019-04-03',buy_time:'3',user_value:'0.3', active_level: '中', order_price: '2310'});
-    opuser_data.push({user_id:'14258',spu_name: currentSpu,buy_date:'2019-04-03',buy_time:'4',user_value:'0.4', active_level: '高', order_price: '205'});
-    opuser_data.push({user_id:'41429',spu_name: currentSpu,buy_date:'2019-04-05',buy_time:'5',user_value:'0.5', active_level: '低', order_price: '1232'});
-    opuser_data.push({user_id:'14230',spu_name: currentSpu,buy_date:'2019-04-10',buy_time:'2',user_value:'0.6', active_level: '中', order_price: '4325'});
-    opuser_data.push({user_id:'14231',spu_name: currentSpu,buy_date:'2019-04-10',buy_time:'2',user_value:'0.7', active_level: '低', order_price: '5485'});
-    opuser_data.push({user_id:'14232',spu_name: currentSpu,buy_date:'2019-04-03',buy_time:'4',user_value:'0.5', active_level: '中', order_price: '1298'});
-    opuser_data.push({user_id:'14233',spu_name: currentSpu,buy_date:'2019-04-10',buy_time:'2',user_value:'0.2', active_level: '高', order_price: '1300'});
-    opuser_data.push({user_id:'14234',spu_name: currentSpu,buy_date:'2019-04-03',buy_time:'5',user_value:'0.2', active_level: '低', order_price: '400'});
-    opuser_data.push({user_id:'14235',spu_name: currentSpu,buy_date:'2019-04-03',buy_time:'2',user_value:'0.5', active_level: '中', order_price: '256'});
-    opuser_data.push({user_id:'14236',spu_name: currentSpu,buy_date:'2019-04-10',buy_time:'4',user_value:'0.2', active_level: '低', order_price: '148'});
-    opuser_data.push({user_id:'14237',spu_name: currentSpu,buy_date:'2019-04-03',buy_time:'2',user_value:'0.2', active_level: '高', order_price: '4135'});
-    opuser_data.push({user_id:'14238',spu_name: currentSpu,buy_date:'2019-04-10',buy_time:'5',user_value:'0.5', active_level: '中', order_price: '412'});
-    opuser_data.push({user_id:'14239',spu_name: currentSpu,buy_date:'2019-04-03',buy_time:'2',user_value:'0.4', active_level: '低', order_price: '135'});
-    opuser_data.push({user_id:'14240',spu_name: currentSpu,buy_date:'2019-04-10',buy_time:'5',user_value:'0.5', active_level: '低', order_price: '505'});
-    opuser_data.push({user_id:'14241',spu_name: currentSpu,buy_date:'2019-04-10',buy_time:'5',user_value:'0.4', active_level: '中', order_price: '705'});
-    opuser_data.push({user_id:'14242',spu_name: currentSpu,buy_date:'2019-04-03',buy_time:'2',user_value:'0.5', active_level: '高', order_price: '205'});
-    opuser_data.push({user_id:'14243',spu_name: currentSpu,buy_date:'2019-04-03',buy_time:'5',user_value:'0.2', active_level: '低', order_price: '1205'});
-    return opuser_data;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 $(function () {
+    init_date("startDate_1", "yyyy-mm", 1,2,1);
     periodTypeOption();
     initTableData();
     var flag = false;
-    //添加行点击事件
+    // 表格点击事件
     $('#catListTable').on('click-row.bs.table', function (e,row,$element)
     {
-        //选中的数据放入到全局对象中
-        selectId=row.CATE_WID;
-        selectId = "15083190022900";
+        selectId=row.spuWid;
         $('.changeColor').removeClass('changeColor');
         $($element).addClass('changeColor');
         currentSpu = row.spuName;
@@ -49,7 +23,7 @@ $(function () {
     function dataInit() {
         if(!flag) {
             flag = true;
-            $("#initTab1, #initTab2, #initTab3").attr("style", "display:none;");  //隐藏提示
+            $(".initTab").attr("style", "display:none;");  //隐藏提示
             $("#tabContent1").addClass("chartpanel").removeClass("chart_none_panel");
             $("#tabContent2").addClass("chartpanel").removeClass("chart_none_panel");
             $("#tabContent3").addClass("chartpanel").removeClass("chart_none_panel");
@@ -62,10 +36,12 @@ $(function () {
             tradeUserChart();
             avgCsPriceChart();
             lightyear.loading('hide');
-        }else if(tab == "tab_lifecycle") {
+        }else if(tab == "#tab_lifecycle") {
             tab2Init();
-        }else {
+        }else if(tab == "#tab_user_target"){
             tab3DataInit();
+        }else if(tab == "#tab_contemporaneous"){
+            getData(1);
         }
     }
 
@@ -86,15 +62,16 @@ $(function () {
     });
 });
 
+// 切换tab时初始化数据
 $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
 
     // 获取已激活的标签页的名称
     var activeTab = $(e.target).attr("href");
     if(selectId == "") {
-        $("#initTab1, #initTab2, #initTab3").attr("style", "display:block;");
+        $(".initTab").attr("style", "display:block;");
     }else
     {
-        $("#initTab1, #initTab2, #initTab3").attr("style", "display:none;");
+        $(".initTab").attr("style", "display:none;");
         if(activeTab=='#tab_kpis')
         {
             // 初始化表格数据
@@ -104,10 +81,14 @@ $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
             tab2Init();
             $("#tabContent2").attr("class", "chartpanel");
             $("#tabContent2").removeClass("chart_none_panel");
-        }else {
+        }else if(activeTab == "#tab_user_target"){
             tab3DataInit();
             $("#tabContent3").attr("class", "chartpanel");
             $("#tabContent3").removeClass("chart_none_panel");
+        }else{
+            getData(1);
+            $("#tabContent4").attr("class", "chartpanel");
+            $("#tabContent4").removeClass("chart_none_panel");
         }
     }
 });
