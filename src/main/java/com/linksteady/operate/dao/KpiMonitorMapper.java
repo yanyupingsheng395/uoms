@@ -28,4 +28,12 @@ public interface KpiMonitorMapper {
     List<Map<String, Object>> getLossUserDMonth(@Param("beginDt") String beginDt, @Param("endDt") String endDt);
     List<Map<String, Object>> getLossUserDMonthBySpu(@Param("spuId") String spuId, @Param("beginDt") String beginDt, @Param("endDt") String endDt);
     List<Map<String, Object>> getUpriceData(@Param("start") String start, @Param("end") String end);
+    List<DatePeriodKpi> getUpriceDataMonth(@Param("start") String start, @Param("end") String end);
+    List<DatePeriodKpi> getUpriceDataMonthBySpu(@Param("spuId") String spuId, @Param("start") String start, @Param("end") String end);
+    List<Map<String, Object>> getUpriceDataBySpu(@Param("spuId") String spuId, @Param("start") String start, @Param("end") String end);
+
+    List<Map<String, Object>> getPriceData(@Param("start") String start, @Param("end") String end);
+    List<DatePeriodKpi> getPriceDataMonth(@Param("start") String start, @Param("end") String end);
+    List<DatePeriodKpi> getPriceDataMonthBySpu(@Param("spuId") String spuId, @Param("start") String start, @Param("end") String end);
+    List<Map<String, Object>> getPriceDataBySpu(@Param("spuId") String spuId, @Param("start") String start, @Param("end") String end);
 }

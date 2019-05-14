@@ -17,6 +17,7 @@
         <result column="MIN_MONTH" property="minPeriod" jdbcType="DECIMAL"></result>
         <result column="BUY_MONTH" property="buyPeriod" jdbcType="DECIMAL"></result>
         <result column="C_USERS" property="kpiValue" jdbcType="DECIMAL"></result>
+        <result column="UPRICE" property="uprice" jdbcType="DECIMAL"></result>
     </resultMap>
 
     <select id="getRetainDMonth" resultType="map">
@@ -975,6 +976,443 @@
         (case when rt.usercnt_10=0 then NULL else trunc(rt.u_fee_10/rt.usercnt_10) end) uprice10,
         (case when rt.usercnt_11=0 then NULL else trunc(rt.u_fee_11/rt.usercnt_11) end) uprice11,
         (case when rt.usercnt_12=0 then NULL else trunc(rt.u_fee_12/rt.usercnt_12) end) uprice12
+        from rt right join
+        (select month_id from w_month  where month_id &gt;=#{start} and month_id &lt;=#{end}) dt
+        on rt.month_id=dt.month_id
+        order by dt.month_id
+    </select>
+
+    <select id="getUpriceDataMonth" resultMap="datePeriodKpiMap">
+        WITH g1 AS
+        (
+        SELECT MONTH BUY_MONTH,
+        T.USER_ID,
+        T.REAL_FEE
+        FROM W_ORDERS T,W_DATE DT  WHERE T.VALID_STATUS=1
+        AND DT.MONTH &gt;= #{start}
+        AND DT.MONTH &lt;= #{end}
+        AND T.ORDER_DT_WID=DT.ROW_WID
+        ),
+        g2 as(
+        SELECT MIN(BUY_MONTH) MIN_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY USER_ID
+        ),
+        g3 as(
+        SELECT BUY_MONTH,
+        USER_ID,
+        SUM(REAL_FEE) SUM_FEE
+        FROM g1
+        GROUP BY BUY_MONTH,USER_ID
+        ),
+        g4 as(
+        SELECT g2.MIN_MONTH,g3.BUY_MONTH,COUNT(*) C_USERS,SUM(SUM_FEE) C_FEE  FROM  g2,g3
+        WHERE g2.USER_ID = g3.USER_ID
+        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH
+        ORDER BY g2.MIN_MONTH,g3.BUY_MONTH)
+        SELECT
+        MIN_MONTH,
+        BUY_MONTH,
+        (CASE WHEN C_USERS=0 THEN 0 ELSE TRUNC(C_FEE/C_USERS) END) UPRICE,
+        C_USERS
+        from g4
+    </select>
+
+    <select id="getUpriceDataMonthBySpu" resultMap="datePeriodKpiMap">
+        WITH g1 AS
+        (
+        SELECT MONTH BUY_MONTH,
+        T.USER_ID,
+        T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE
+        FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        where t.valid_status=1
+        and t.product_id=spu.product_id
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{start}
+        and dt.month &lt;= #{end}
+        and spu.spu_wid= #{spuId}
+        ),
+        g2 as(
+        SELECT MIN(BUY_MONTH) MIN_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY USER_ID
+        ),
+        g3 as(
+        SELECT BUY_MONTH,
+        USER_ID,
+        SUM(REAL_FEE) SUM_FEE
+        FROM g1
+        GROUP BY BUY_MONTH,USER_ID
+        ),
+        g4 as(
+        SELECT g2.MIN_MONTH,g3.BUY_MONTH,COUNT(*) C_USERS,SUM(SUM_FEE) C_FEE  FROM  g2,g3
+        WHERE g2.USER_ID = g3.USER_ID
+        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH
+        ORDER BY g2.MIN_MONTH,g3.BUY_MONTH)
+        SELECT
+        MIN_MONTH,
+        BUY_MONTH,
+        (CASE WHEN C_USERS=0 THEN 0 ELSE TRUNC(C_FEE/C_USERS) END) UPRICE,
+        C_USERS
+        from g4
+    </select>
+
+    <select id="getUpriceDataBySpu" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE,
+        t.user_id
+        FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        where t.valid_status=1
+        and t.product_id=spu.product_id
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;=#{start}
+        and dt.month &lt;=#{end}
+        --  and spu.spu_wid=1
+        ),
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        SELECT
+        count(distinct g1.user_id) usercnt,
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff,
+        sum(g1.real_fee) u_fee
+        FROM g1,g2 where g1.user_id=g2.user_id
+        group by
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm'))
+        ),
+        rt as(
+        select
+        min_month month_id,
+        sum(case when month_diff = 0 then usercnt else 0 end) usercnt,
+        sum(case when month_diff = 0 then u_fee else 0 end) u_fee,
+        sum(case when month_diff = 1 then usercnt else 0 end) usercnt_1,
+        sum(case when month_diff = 1 then u_fee else 0 end) u_fee_1,
+        sum(case when month_diff = 2 then usercnt else 0 end) usercnt_2,
+        sum(case when month_diff = 2 then u_fee else 0 end) u_fee_2,
+        sum(case when month_diff = 3 then usercnt else 0 end) usercnt_3,
+        sum(case when month_diff = 3 then u_fee else 0 end) u_fee_3,
+        sum(case when month_diff = 4 then usercnt else 0 end) usercnt_4,
+        sum(case when month_diff = 4 then u_fee else 0 end) u_fee_4,
+        sum(case when month_diff = 5 then usercnt else 0 end) usercnt_5,
+        sum(case when month_diff = 5 then u_fee else 0 end) u_fee_5,
+        sum(case when month_diff = 6 then usercnt else 0 end) usercnt_6,
+        sum(case when month_diff = 6 then u_fee else 0 end) u_fee_6,
+        sum(case when month_diff = 7 then usercnt else 0 end) usercnt_7,
+        sum(case when month_diff = 7 then u_fee else 0 end) u_fee_7,
+        sum(case when month_diff = 8 then usercnt else 0 end) usercnt_8,
+        sum(case when month_diff = 8 then u_fee else 0 end) u_fee_8,
+        sum(case when month_diff = 9 then usercnt else 0 end) usercnt_9,
+        sum(case when month_diff = 9 then u_fee else 0 end) u_fee_9,
+        sum(case when month_diff = 10 then usercnt else 0 end) usercnt_10,
+        sum(case when month_diff = 10 then u_fee else 0 end) u_fee_10,
+        sum(case when month_diff = 11 then usercnt else 0 end) usercnt_11,
+        sum(case when month_diff = 11 then u_fee else 0 end) u_fee_11,
+        sum(case when month_diff = 12 then usercnt else 0 end) usercnt_12,
+        sum(case when month_diff = 12 then u_fee else 0 end) u_fee_12
+        from g3 group  by min_month
+        )
+        select
+        dt.month_id,
+        rt.usercnt total_user,
+        (case when rt.usercnt=0 then NULL else trunc(rt.u_fee/rt.usercnt) end) uprice,
+        (case when rt.usercnt_1=0 then NULL else trunc(rt.u_fee_1/rt.usercnt_1) end) uprice1,
+        (case when rt.usercnt_2=0 then NULL else trunc(rt.u_fee_2/rt.usercnt_2) end) uprice2,
+        (case when rt.usercnt_3=0 then NULL else trunc(rt.u_fee_3/rt.usercnt_3) end) uprice3,
+        (case when rt.usercnt_4=0 then NULL else trunc(rt.u_fee_4/rt.usercnt_4) end) uprice4,
+        (case when rt.usercnt_5=0 then NULL else trunc(rt.u_fee_5/rt.usercnt_5) end) uprice5,
+        (case when rt.usercnt_6=0 then NULL else trunc(rt.u_fee_6/rt.usercnt_6) end) uprice6,
+        (case when rt.usercnt_7=0 then NULL else trunc(rt.u_fee_7/rt.usercnt_7) end) uprice7,
+        (case when rt.usercnt_8=0 then NULL else trunc(rt.u_fee_8/rt.usercnt_8) end) uprice8,
+        (case when rt.usercnt_9=0 then NULL else trunc(rt.u_fee_9/rt.usercnt_9) end) uprice9,
+        (case when rt.usercnt_10=0 then NULL else trunc(rt.u_fee_10/rt.usercnt_10) end) uprice10,
+        (case when rt.usercnt_11=0 then NULL else trunc(rt.u_fee_11/rt.usercnt_11) end) uprice11,
+        (case when rt.usercnt_12=0 then NULL else trunc(rt.u_fee_12/rt.usercnt_12) end) uprice12
+        from rt right join
+        (select month_id from w_month  where month_id &gt;=#{start} and month_id &lt;=#{end}) dt
+        on rt.month_id=dt.month_id
+        order by dt.month_id
+    </select>
+
+    <select id="getPriceData" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        t.real_fee,
+        t.user_id
+        FROM w_Orders t,w_date dt
+        where t.valid_status=1
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{start}
+        and dt.month &lt;= #{end}
+        ),
+        --获取用户在此区间内的最早购买月份
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        SELECT
+        count(*) pocnt, --订单数
+        count(distinct g1.user_id) usercnt,
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff,
+        sum(g1.real_fee) u_fee
+        FROM g1,g2 where g1.user_id=g2.user_id
+        group by
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm'))
+        ),
+        rt as(
+        select
+        min_month month_id,
+        sum(case when month_diff = 0 then usercnt else 0 end) usercnt,
+        sum(case when month_diff = 0 then pocnt else 0 end) pocnt,
+        sum(case when month_diff = 0 then u_fee else 0 end) u_fee,
+        sum(case when month_diff = 1 then pocnt else 0 end) pocnt_1,
+        sum(case when month_diff = 1 then u_fee else 0 end) u_fee_1,
+        sum(case when month_diff = 2 then pocnt else 0 end) pocnt_2,
+        sum(case when month_diff = 2 then u_fee else 0 end) u_fee_2,
+        sum(case when month_diff = 3 then pocnt else 0 end) pocnt_3,
+        sum(case when month_diff = 3 then u_fee else 0 end) u_fee_3,
+        sum(case when month_diff = 4 then pocnt else 0 end) pocnt_4,
+        sum(case when month_diff = 4 then u_fee else 0 end) u_fee_4,
+        sum(case when month_diff = 5 then pocnt else 0 end) pocnt_5,
+        sum(case when month_diff = 5 then u_fee else 0 end) u_fee_5,
+        sum(case when month_diff = 6 then pocnt else 0 end) pocnt_6,
+        sum(case when month_diff = 6 then u_fee else 0 end) u_fee_6,
+        sum(case when month_diff = 7 then pocnt else 0 end) pocnt_7,
+        sum(case when month_diff = 7 then u_fee else 0 end) u_fee_7,
+        sum(case when month_diff = 8 then pocnt else 0 end) pocnt_8,
+        sum(case when month_diff = 8 then u_fee else 0 end) u_fee_8,
+        sum(case when month_diff = 9 then pocnt else 0 end) pocnt_9,
+        sum(case when month_diff = 9 then u_fee else 0 end) u_fee_9,
+        sum(case when month_diff = 10 then pocnt else 0 end) pocnt_10,
+        sum(case when month_diff = 10 then u_fee else 0 end) u_fee_10,
+        sum(case when month_diff = 11 then pocnt else 0 end) pocnt_11,
+        sum(case when month_diff = 11 then u_fee else 0 end) u_fee_11,
+        sum(case when month_diff = 12 then pocnt else 0 end) pocnt_12,
+        sum(case when month_diff = 12 then u_fee else 0 end) u_fee_12
+        from g3 group  by min_month
+        )
+        select
+        dt.month_id,
+        rt.usercnt total_user,  --用户数
+        (case when rt.pocnt=0 then NULL else trunc(rt.u_fee/rt.pocnt) end) price, --订单价
+        (case when rt.pocnt_1=0 then NULL else trunc(rt.u_fee_1/rt.pocnt_1) end) price1,
+        (case when rt.pocnt_2=0 then NULL else trunc(rt.u_fee_2/rt.pocnt_2) end) price2,
+        (case when rt.pocnt_3=0 then NULL else trunc(rt.u_fee_3/rt.pocnt_3) end) price3,
+        (case when rt.pocnt_4=0 then NULL else trunc(rt.u_fee_4/rt.pocnt_4) end) price4,
+        (case when rt.pocnt_5=0 then NULL else trunc(rt.u_fee_5/rt.pocnt_5) end) price5,
+        (case when rt.pocnt_6=0 then NULL else trunc(rt.u_fee_6/rt.pocnt_6) end) price6,
+        (case when rt.pocnt_7=0 then NULL else trunc(rt.u_fee_7/rt.pocnt_7) end) price7,
+        (case when rt.pocnt_8=0 then NULL else trunc(rt.u_fee_8/rt.pocnt_8) end) price8,
+        (case when rt.pocnt_9=0 then NULL else trunc(rt.u_fee_9/rt.pocnt_9) end) price9,
+        (case when rt.pocnt_10=0 then NULL else trunc(rt.u_fee_10/rt.pocnt_10) end) price10,
+        (case when rt.pocnt_11=0 then NULL else trunc(rt.u_fee_11/rt.pocnt_11) end) price11,
+        (case when rt.pocnt_12=0 then NULL else trunc(rt.u_fee_12/rt.pocnt_12) end) price12
+        from rt right join
+        (select month_id from w_month  where month_id &gt;=#{start} and month_id &lt;=#{end}) dt
+        on rt.month_id=dt.month_id
+        order by dt.month_id
+    </select>
+
+
+    <select id="getPriceDataMonth" resultMap="datePeriodKpiMap">
+        WITH g1 AS
+        (
+        SELECT MONTH BUY_MONTH,
+        T.USER_ID,
+        T.REAL_FEE,
+        T.ID
+        FROM W_ORDERS T,W_DATE DT  WHERE T.VALID_STATUS=1
+        AND DT.MONTH &gt;=#{start}
+        AND DT.MONTH &lt;=#{end}
+        AND T.ORDER_DT_WID=DT.ROW_WID
+        ),
+        --每个用户及其最早购买的月份
+        g2 as(
+        SELECT MIN(BUY_MONTH) MIN_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY USER_ID
+        ),
+        --每个用户 及其购买月份
+        g3 as(
+        SELECT BUY_MONTH,
+        USER_ID,
+        SUM(REAL_FEE) SUM_FEE,
+        COUNT(ID) POCNT
+        FROM g1
+        GROUP BY BUY_MONTH,USER_ID
+        ),
+        g4 as(
+        SELECT g2.MIN_MONTH,g3.BUY_MONTH,COUNT(*) C_USERS,SUM(SUM_FEE) C_FEE,SUM(POCNT) C_POCNT  FROM  g2,g3
+        WHERE g2.USER_ID = g3.USER_ID
+        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH
+        ORDER BY g2.MIN_MONTH,g3.BUY_MONTH)
+        SELECT
+        MIN_MONTH,
+        BUY_MONTH,
+        (CASE WHEN C_POCNT=0 THEN 0 ELSE TRUNC(C_FEE/C_POCNT) END) PRICE,
+        C_USERS
+        from g4
+    </select>
+
+    <select id="getPriceDataMonthBySpu" resultMap="datePeriodKpiMap">
+        WITH g1 AS
+        (
+        SELECT MONTH BUY_MONTH,
+        T.USER_ID,
+        T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE,
+        T.ID
+        FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        where t.valid_status=1
+        and t.product_id=spu.product_id
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{start}
+        and dt.month &lt;= #{end}
+        and spu.spu_wid= #{spuId}
+        ),
+        --每个用户及其最早购买的月份
+        g2 as(
+        SELECT MIN(BUY_MONTH) MIN_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY USER_ID
+        ),
+        --每个用户 及其购买月份
+        g3 as(
+        SELECT BUY_MONTH,
+        USER_ID,
+        SUM(REAL_FEE) SUM_FEE,
+        COUNT(ID) POCNT
+        FROM g1
+        GROUP BY BUY_MONTH,USER_ID
+        ),
+        g4 as(
+        SELECT g2.MIN_MONTH,g3.BUY_MONTH,COUNT(*) C_USERS,SUM(SUM_FEE) C_FEE,SUM(POCNT) C_POCNT  FROM  g2,g3
+        WHERE g2.USER_ID = g3.USER_ID
+        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH
+        ORDER BY g2.MIN_MONTH,g3.BUY_MONTH)
+        SELECT
+        MIN_MONTH,
+        BUY_MONTH,
+        (CASE WHEN C_POCNT=0 THEN 0 ELSE TRUNC(C_FEE/C_POCNT) END) PRICE,
+        C_USERS
+        from g4
+    </select>
+
+    <select id="getPriceDataBySpu" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE,
+        t.user_id
+        FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        where t.valid_status=1
+        and t.product_id=spu.product_id
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{start}
+        and dt.month &lt;= #{end}
+        and spu.spu_wid= #{spuId}
+        ),
+        --获取用户在此区间内的最早购买月份
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        SELECT
+        count(*) pocnt, --订单数
+        count(distinct g1.user_id) usercnt,
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff,
+        sum(g1.real_fee) u_fee
+        FROM g1,g2 where g1.user_id=g2.user_id
+        group by
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm'))
+        ),
+        rt as(
+        select
+        min_month month_id,
+        sum(case when month_diff = 0 then usercnt else 0 end) usercnt,
+        sum(case when month_diff = 0 then pocnt else 0 end) pocnt,
+        sum(case when month_diff = 0 then u_fee else 0 end) u_fee,
+        sum(case when month_diff = 1 then pocnt else 0 end) pocnt_1,
+        sum(case when month_diff = 1 then u_fee else 0 end) u_fee_1,
+        sum(case when month_diff = 2 then pocnt else 0 end) pocnt_2,
+        sum(case when month_diff = 2 then u_fee else 0 end) u_fee_2,
+        sum(case when month_diff = 3 then pocnt else 0 end) pocnt_3,
+        sum(case when month_diff = 3 then u_fee else 0 end) u_fee_3,
+        sum(case when month_diff = 4 then pocnt else 0 end) pocnt_4,
+        sum(case when month_diff = 4 then u_fee else 0 end) u_fee_4,
+        sum(case when month_diff = 5 then pocnt else 0 end) pocnt_5,
+        sum(case when month_diff = 5 then u_fee else 0 end) u_fee_5,
+        sum(case when month_diff = 6 then pocnt else 0 end) pocnt_6,
+        sum(case when month_diff = 6 then u_fee else 0 end) u_fee_6,
+        sum(case when month_diff = 7 then pocnt else 0 end) pocnt_7,
+        sum(case when month_diff = 7 then u_fee else 0 end) u_fee_7,
+        sum(case when month_diff = 8 then pocnt else 0 end) pocnt_8,
+        sum(case when month_diff = 8 then u_fee else 0 end) u_fee_8,
+        sum(case when month_diff = 9 then pocnt else 0 end) pocnt_9,
+        sum(case when month_diff = 9 then u_fee else 0 end) u_fee_9,
+        sum(case when month_diff = 10 then pocnt else 0 end) pocnt_10,
+        sum(case when month_diff = 10 then u_fee else 0 end) u_fee_10,
+        sum(case when month_diff = 11 then pocnt else 0 end) pocnt_11,
+        sum(case when month_diff = 11 then u_fee else 0 end) u_fee_11,
+        sum(case when month_diff = 12 then pocnt else 0 end) pocnt_12,
+        sum(case when month_diff = 12 then u_fee else 0 end) u_fee_12
+        from g3 group  by min_month
+        )
+        select
+        dt.month_id,
+        rt.usercnt total_user,  --用户数
+        (case when rt.pocnt=0 then NULL else trunc(rt.u_fee/rt.pocnt) end) price, --订单价
+        (case when rt.pocnt_1=0 then NULL else trunc(rt.u_fee_1/rt.pocnt_1) end) price1,
+        (case when rt.pocnt_2=0 then NULL else trunc(rt.u_fee_2/rt.pocnt_2) end) price2,
+        (case when rt.pocnt_3=0 then NULL else trunc(rt.u_fee_3/rt.pocnt_3) end) price3,
+        (case when rt.pocnt_4=0 then NULL else trunc(rt.u_fee_4/rt.pocnt_4) end) price4,
+        (case when rt.pocnt_5=0 then NULL else trunc(rt.u_fee_5/rt.pocnt_5) end) price5,
+        (case when rt.pocnt_6=0 then NULL else trunc(rt.u_fee_6/rt.pocnt_6) end) price6,
+        (case when rt.pocnt_7=0 then NULL else trunc(rt.u_fee_7/rt.pocnt_7) end) price7,
+        (case when rt.pocnt_8=0 then NULL else trunc(rt.u_fee_8/rt.pocnt_8) end) price8,
+        (case when rt.pocnt_9=0 then NULL else trunc(rt.u_fee_9/rt.pocnt_9) end) price9,
+        (case when rt.pocnt_10=0 then NULL else trunc(rt.u_fee_10/rt.pocnt_10) end) price10,
+        (case when rt.pocnt_11=0 then NULL else trunc(rt.u_fee_11/rt.pocnt_11) end) price11,
+        (case when rt.pocnt_12=0 then NULL else trunc(rt.u_fee_12/rt.pocnt_12) end) price12
         from rt right join
         (select month_id from w_month  where month_id &gt;=#{start} and month_id &lt;=#{end}) dt
         on rt.month_id=dt.month_id
