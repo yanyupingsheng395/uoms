@@ -15,7 +15,7 @@ function tab2Init() {
 }
 
 function getStageNode() {
-    var spuId = 1;
+    var spuId = selectId;
     $.get("/spuLifeCycle/getStageNode", {spuId: spuId}, function (r) {
         $.each(r.data, function (k, v) {
             $("#stage").find("tbody tr:eq("+k+")").find("td:eq(1)").text(v);
