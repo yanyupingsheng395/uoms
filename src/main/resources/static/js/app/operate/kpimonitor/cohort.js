@@ -180,14 +180,19 @@ function getDMonthPriceCols(percent) {
 
 // 留存率自然月
 function getMonthCols(data, percent) {
+    console.log(data)
     var cols = [];
     $.each(data, function (k, v) {
+        console.log(v)
         var o = new Object();
         o.field = v;
         if(v == "month") {
             o.title = "月份";
         }else if(v == "newUsers"){
             o.title = "本月新增用户数";
+            o.width = "132px";
+        }else if(v == "uprice") {
+            o.title = "本月客单价（元）";
             o.width = "132px";
         }else {
             o.title = v;
@@ -233,7 +238,7 @@ function getData1(idx) {
     $.get(url, {periodType: periodType, start: start}, function(r) {
         var columns = new Array();
         var percent = false;
-        if(idx == 2 || idx == 4) {
+        if(idx == 3 || idx == 4) {
             percent = true;
         }
         if(periodType == "dmonth") {

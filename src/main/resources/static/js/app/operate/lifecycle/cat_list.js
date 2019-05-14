@@ -42,6 +42,7 @@ $(function () {
             tab3DataInit();
         }else if(tab == "#tab_contemporaneous"){
             getData(1);
+            getData1(1);
         }
     }
 
@@ -87,6 +88,7 @@ $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
             $("#tabContent3").removeClass("chart_none_panel");
         }else{
             getData(1);
+            getData1(1);
             $("#tabContent4").attr("class", "chartpanel");
             $("#tabContent4").removeClass("chart_none_panel");
         }

@@ -9,23 +9,19 @@ import java.util.Map;
 public interface KpiMonitorService {
 
      List<WeekInfo> getWeekList(String start, String end);
-
      Echart getGMV(String startDt, String endDt, String spuId);
-
      Echart getTradeUser(String startDt, String endDt, String spuId);
-
      Echart getAvgCsPrice(String startDt, String endDt, String spuId);
-
      Map<String, Object> getRetainData(String period, String begin);
-
      Map<String, Object> getRetentionBySpu(String spuId, String period, String begin);
-
      Map<String, Object> getRetainUserCount(String period, String begin);
-
      Map<String, Object> getRetainUserCountBySpu(String spuId, String period, String begin);
      Map<String, Object> getLossUser(String period, String begin);
      Map<String, Object> getLossUserRate(String period, String begin);
      Map<String, Object> getLossUserBySpu(String spuId, String period, String begin);
      Map<String, Object> getLossUserRateBySpu(String spuId, String period, String begin);
      Map<String, Object> getUpriceData(String periodType, String start);
+     Map<String, Object> getUpriceDataBySpu(String spuId, String periodType, String start);
+     Map<String, Object> getPriceData(String periodType, String start);
+     Map<String, Object> getPriceDataBySpu(String spuId, String periodType, String start);
 }

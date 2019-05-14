@@ -11,6 +11,7 @@ public class DatePeriodKpi {
     private String buyPeriod;
     private String kpiValue;
     private Double retention;
+    private String uprice;
 
     public String getMinPeriod() {
         return minPeriod;
@@ -26,6 +27,22 @@ public class DatePeriodKpi {
         this.minPeriod = minPeriod.toString();
         this.buyPeriod = buyPeriod.toString();
         this.kpiValue = kpiValue.toString();
+    }
+
+
+    public DatePeriodKpi(BigDecimal minPeriod, BigDecimal buyPeriod, BigDecimal kpiValue, BigDecimal uprice) {
+        this.minPeriod = minPeriod.toString();
+        this.buyPeriod = buyPeriod.toString();
+        this.kpiValue = kpiValue.toString();
+        this.uprice = uprice.toString();
+    }
+
+    public String getUprice() {
+        return uprice;
+    }
+
+    public void setUprice(String uprice) {
+        this.uprice = uprice;
     }
 
     public void setMinPeriod(String minPeriod) {

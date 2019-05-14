@@ -356,6 +356,65 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getUpriceData(start, end);
             return getUPriceDMonthData(dataList, false);
         }
+        if(PERIOD_TYPE_MONTH.equals(periodType)) {
+            List<DatePeriodKpi> dataList = kpiMonitorMapper.getUpriceDataMonth(start, end);
+            return getUPriceMonthData(dataList, start, end, false);
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> getUpriceDataBySpu(String spuId, String periodType, String start) {
+        String end = null;
+        if(StringUtils.isNotBlank(start)) {
+            start = start.replaceAll("-", "");
+            end = getEndDate(start);
+        }
+        if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType)) {
+            List<Map<String, Object>> dataList = kpiMonitorMapper.getUpriceDataBySpu(spuId, start, end);
+            return getUPriceDMonthData(dataList, false);
+        }
+        if(PERIOD_TYPE_MONTH.equals(periodType)) {
+            List<DatePeriodKpi> dataList = kpiMonitorMapper.getUpriceDataMonthBySpu(spuId, start, end);
+            return getUPriceMonthData(dataList, start, end, false);
+        }
+        return null;
+    }
+
+
+    @Override
+    public Map<String, Object> getPriceData(String periodType, String start) {
+        String end = null;
+        if(StringUtils.isNotBlank(start)) {
+            start = start.replaceAll("-", "");
+            end = getEndDate(start);
+        }
+        if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType)) {
+            List<Map<String, Object>> dataList = kpiMonitorMapper.getPriceData(start, end);
+            return getUPriceDMonthData(dataList, false);
+        }
+        if(PERIOD_TYPE_MONTH.equals(periodType)) {
+            List<DatePeriodKpi> dataList = kpiMonitorMapper.getPriceDataMonth(start, end);
+            return getUPriceMonthData(dataList, start, end, false);
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> getPriceDataBySpu(String spuId, String periodType, String start) {
+        String end = null;
+        if(StringUtils.isNotBlank(start)) {
+            start = start.replaceAll("-", "");
+            end = getEndDate(start);
+        }
+        if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType)) {
+            List<Map<String, Object>> dataList = kpiMonitorMapper.getPriceDataBySpu(spuId, start, end);
+            return getUPriceDMonthData(dataList, false);
+        }
+        if(PERIOD_TYPE_MONTH.equals(periodType)) {
+            List<DatePeriodKpi> dataList = kpiMonitorMapper.getPriceDataMonthBySpu(spuId, start, end);
+            return getUPriceMonthData(dataList, start, end, false);
+        }
         return null;
     }
 
@@ -416,7 +475,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
      */
     public Map<String, Object> getUPriceDMonthData(List<Map<String, Object>> dataList, boolean percent) {
         List<String> cols = Arrays.asList(D_MONTH_PRICE);
-        Map<String, Object> total = Maps.newHashMap();
+        Map<String, Object> total = Maps.newLinkedHashMap();
         cols.stream().forEach(x-> {
             DoubleSummaryStatistics dss = dataList.stream().map(y-> {
                 if (!x.equals(D_MONTH_PRICE[0])) {
@@ -454,12 +513,11 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         // 将原始数据按各月分组到Map
         Map<String, List<DatePeriodKpi>> datas = getNewData(dataList, begin, end);
         // 分组后的map组装数据到Map
-        List<Map<String, Object>> data =  datas.keySet().stream().map(x-> {
-            Map<String, Object> tmpMap = Maps.newHashMap();
+        List<Map<String, Object>> sortBeforeData =  datas.keySet().stream().map(x-> {
+            Map<String, Object> tmpMap = Maps.newLinkedHashMap();
             List<DatePeriodKpi> list = datas.get(x);
             tmpMap.put("month", x);
             list.stream().forEach(y-> {
-
                 if(percent) {
                     // 月份，新增用户数， 各月的留存率
                     if(y.getBuyPeriod().equals(x)) {
@@ -477,6 +535,8 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             });
             return tmpMap;
         }).collect(Collectors.toList());
+
+        List<Map<String, Object>> data = sortBeforeData.stream().sorted(Comparator.comparing(KpiMonitorServiceImpl::comparingByMonth)).collect(Collectors.toList());
 
         // 求合计值
         DoubleSummaryStatistics newUsersTotal = data.stream().map(x->Double.valueOf((String)x.get("newUsers"))).collect(Collectors.summarizingDouble(v->v));
@@ -502,6 +562,70 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         result.put("data", data);
         cols.add("month");
         cols.add("newUsers");
+        cols.addAll(monthPeriod);
+        result.put("columns", cols);
+        return result;
+    }
+
+    private static Integer comparingByMonth(Map<String, Object> map){
+        return Integer.valueOf(map.get("month").toString());
+    }
+
+    public Map<String, Object> getUPriceMonthData(List<DatePeriodKpi> dataList, String begin, String end, boolean percent) {
+        // 将原始数据按各月分组到Map
+        Map<String, List<DatePeriodKpi>> datas = getNewData(dataList, begin, end);
+        // 分组后的map组装数据到Map
+        List<Map<String, Object>> sortBeforeData =  datas.keySet().stream().map(x-> {
+            Map<String, Object> tmpMap = Maps.newLinkedHashMap();
+            List<DatePeriodKpi> list = datas.get(x);
+            tmpMap.put("month", x);
+            list.stream().forEach(y-> {
+                if(percent) {
+                    // 月份，新增用户数， 各月的留存率
+                    if(y.getBuyPeriod().equals(x)) {
+                        tmpMap.put("newUsers", y.getKpiValue());
+                    }
+                    tmpMap.put(y.getBuyPeriod(), y.getRetention());
+                }else {
+                    // 月份，新增用户数， 本月客单价
+                    if(y.getBuyPeriod().equals(x)) {
+                        tmpMap.put("newUsers", y.getKpiValue());
+                        tmpMap.put("uprice", y.getUprice());
+                    }
+                    tmpMap.put(y.getBuyPeriod(), y.getUprice());
+                }
+
+            });
+            return tmpMap;
+        }).collect(Collectors.toList());
+
+        List<Map<String, Object>> data = sortBeforeData.stream().sorted(Comparator.comparing(KpiMonitorServiceImpl::comparingByMonth)).collect(Collectors.toList());
+
+        // 求合计值
+        DoubleSummaryStatistics newUsersTotal = data.stream().map(x->Double.valueOf((String)x.get("newUsers"))).collect(Collectors.summarizingDouble(v->v));
+        DoubleSummaryStatistics priceTotal = data.stream().map(x->x.get("uprice") == null ? 0:Double.valueOf((String)x.get("uprice"))).collect(Collectors.summarizingDouble(v->v));
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("month", "合计：");
+        map.put("newUsers", newUsersTotal.getSum());
+        map.put("uprice", priceTotal.getSum());
+
+        List<String> monthPeriod = DateUtil.getMonthBetween(begin, end, "yyyyMM");
+        monthPeriod.stream().forEach(t-> {
+            DoubleSummaryStatistics tmp = data.stream().map(x->(x.get(t) != null && StringUtils.isNotBlank(x.get(t).toString())) ? Double.valueOf(x.get(t).toString()):0D).collect(Collectors.summarizingDouble(v->v));
+            if(percent) {
+                Long count = data.stream().filter(x->x.get(t) != null && Double.valueOf(x.get(t).toString()) > 0D).count();
+                map.put(t, count == 0 ? 0 : String.format("%.2f", tmp.getSum()/count));
+            }else {
+                if (tmp.getSum() != 0D) {
+                    map.put(t, String.format("%.2f", tmp.getSum()));
+                }
+            }
+        });
+        data.add(map);
+        List<String> cols = Lists.newArrayList();
+        cols.addAll(Arrays.asList("month", "newUsers", "uprice"));
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("data", data);
         cols.addAll(monthPeriod);
         result.put("columns", cols);
         return result;
