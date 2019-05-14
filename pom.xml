@@ -182,6 +182,12 @@
             <version>1.18.6</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>0.11.0</version>
+        </dependency>
     </dependencies>
 
     <repositories>

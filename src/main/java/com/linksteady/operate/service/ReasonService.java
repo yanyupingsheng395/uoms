@@ -22,7 +22,7 @@ public interface ReasonService {
 
      void deleteReasonById(String reasonId);
 
-     void updateProgressById(String reasonId,int progress);
+//     void updateProgressById(String reasonId,int progress);
 
      void findReasonKpisSnp(String reasonId);
 

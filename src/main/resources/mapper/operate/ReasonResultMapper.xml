@@ -6,15 +6,27 @@
       WARNING - @mbg.generated
     -->
     <result column="REASON_ID" jdbcType="DECIMAL" property="reasonId" />
-    <result column="FCODE" jdbcType="VARCHAR" property="fcode" />
-    <result column="FNAME" jdbcType="VARCHAR" property="fname" />
+    <result column="REASON_CODE" jdbcType="VARCHAR" property="reasonCode" />
+    <result column="FORMULA_DESC" jdbcType="VARCHAR" property="formulaDesc" />
     <result column="FORMULA" jdbcType="VARCHAR" property="formula" />
     <result column="BUSINESS" jdbcType="VARCHAR" property="business" />
-    <result column="F_ORDER_NO" jdbcType="DECIMAL" property="fOrderNo" />
-    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="CREATE_DT" jdbcType="VARCHAR" property="createDt" />
   </resultMap>
 
   <select id="getReasonResultList" resultMap="BaseResultMap">
-    SELECT REASON_ID,FCODE,FNAME,FORMULA,BUSINESS from UO_REASON_RESULT WHERE REASON_ID=#{reasonId} ORDER BY F_ORDER_NO ASC
+    SELECT REASON_ID,REASON_CODE,FORMULA_DESC,FORMULA,BUSINESS,TO_CHAR(CREATE_DT,'YYYY-MM-DD hh24:mi:ss') CREATE_DT from UO_REASON_RESULT WHERE REASON_ID=#{reasonId} ORDER BY CREATE_DT ASC
   </select>
+
+  <select id="getReasonResultCount" resultType="int">
+    SELECT COUNT(*) from UO_REASON_RESULT WHERE REASON_ID=#{reasonId} AND REASON_CODE=#{reasonCode}
+  </select>
+
+  <delete id="deleteReasonResult">
+    DELETE FROM UO_REASON_RESULT WHERE REASON_ID=#{reasonId} AND REASON_CODE=#{reasonCode}
+  </delete>
+
+  <insert id="saveReasonResult">
+    INSERT INTO UO_REASON_RESULT(REASON_ID,FCODE,FNAME,FORMULA,BUSINESS,CREATE_DT)
+    VALUES (#{reasonId,jdbcType=INTEGER},#{reasonCode},#{formulaDesc},#{formula},#{business},SYSDATE)
+  </insert>
 </mapper>

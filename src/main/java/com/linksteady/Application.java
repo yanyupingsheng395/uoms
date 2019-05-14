@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,6 +17,7 @@ import java.time.LocalTime;
 @MapperScan("com.linksteady.*.dao")
 @EnableConfigurationProperties({SystemProperties.class})
 @EnableCaching
+@EnableAsync
 public class Application {
     private static Logger log = LoggerFactory.getLogger(Application.class);
     public static void main(String[] args) {

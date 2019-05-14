@@ -1,6 +1,7 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Maps;
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.dao.ReasonMapper;
@@ -8,10 +9,12 @@ import com.linksteady.operate.dao.ReasonRelMatrixMapper;
 import com.linksteady.operate.dao.ReasonResultMapper;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.ReasonService;
+import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.operate.vo.ReasonVO;
-import org.assertj.core.util.Lists;
+import org.apache.thrift.TException;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -34,6 +37,8 @@ public class ReasonServiceImpl implements ReasonService {
     @Autowired
     ReasonResultMapper reasonResultMapper;
 
+    @Autowired
+    ThriftClient thriftClient;
 
     @Override
     public List<Map<String,Object>> getReasonList(int startRow, int endRow)
@@ -92,61 +97,22 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
+    @Async
     public void findReasonKpisSnp(String reasonId)
     {
-        //写SNP表
-        reasonMapper.saveReasonKpisSnpKpis(Integer.parseInt(reasonId));
-
-        //获取到阀值大于0.5的原因指标的指标编码
-        List<String> keyCodeList=reasonMapper.getKeyReasonKpis(reasonId);
-
-        Map<String, ReasonTemplateInfo> reasonRelateKpis=KpiCacheManager.getInstance().getReasonRelateKpiList();
-
-        ReasonRelateRecord reasonRelateRecord=null;
-        ReasonTemplateInfo fkpi=null;
-        ReasonTemplateInfo rfkpi=null;
-        List<ReasonRelateRecord> records= Lists.newArrayList();
-
-        for(int i=0;i<keyCodeList.size();i++)
-        {
-            for(int j=0;j<keyCodeList.size();j++)
-            {
-                fkpi=reasonRelateKpis.get(keyCodeList.get(i));
-                rfkpi=reasonRelateKpis.get(keyCodeList.get(j));
-
-                reasonRelateRecord=new ReasonRelateRecord();
-                reasonRelateRecord.setReasonId(reasonId);
-                reasonRelateRecord.setFcode(keyCodeList.get(i));
-                reasonRelateRecord.setFname(fkpi.getReasonKpiName());
-                reasonRelateRecord.setForderNo(fkpi.getReasonKpiOrder().toString());
-                reasonRelateRecord.setRfcode(keyCodeList.get(j));
-                reasonRelateRecord.setRfname(rfkpi.getReasonKpiName());
-                reasonRelateRecord.setRforderNo(rfkpi.getReasonKpiOrder().toString());
-
-                if(j>i)
-                {
-                    reasonRelateRecord.setRelateValue(getRandomRelateValue());
-                }else if(i==j)
-                {
-                    reasonRelateRecord.setRelateValue("1");
-                }else
-                {
-                    reasonRelateRecord.setRelateValue("-1");
-                }
-                records.add(reasonRelateRecord);
-
-            }
+        try {
+            thriftClient.getThriftService().submitReasonAanlysis(Integer.parseInt(reasonId));
+        } catch (TException e) {
+            //todo 异常继续向上抛 同时需要将当前数据的状态更新为失败
+            e.printStackTrace();
+           //更新状态
+            reasonMapper.updateProgressAndStatusById(reasonId,"E",1);
+        } finally {
+            //关闭
+            thriftClient.close();
         }
-
-        //写矩阵表
-        reasonMapper.saveRelateMatrix(records);
-
     }
 
-    private String getRandomRelateValue()
-    {
-        return Double.toString(RandomUtil.getIntRandom(1,9)/10.00);
-    }
 
     /**
      * 根据原因ID获取到详细信息
@@ -179,20 +145,20 @@ public class ReasonServiceImpl implements ReasonService {
       return result;
     }
 
-    @Override
-    public void updateProgressById(String reasonId,int progress) {
-
-
-        if(progress==100)
-        {   //更新进度和状态
-            reasonMapper.updateProgressAndStatusById(reasonId,progress);
-        }else
-        {
-            //更新进度
-            reasonMapper.updateProgressById(reasonId,progress);
-        }
-
-    }
+//    @Override
+//    public void updateProgressById(String reasonId,int progress) {
+//
+//
+//        if(progress==100)
+//        {   //更新进度和状态
+//            reasonMapper.updateProgressAndStatusById(reasonId,progress);
+//        }else
+//        {
+//            //更新进度
+//            reasonMapper.updateProgressById(reasonId,progress);
+//        }
+//
+//    }
 
     @Override
     public List<Map<String, Object>> getReasonKpisSnp(String reasonId, String templateCode) {
@@ -227,18 +193,18 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-    public void deleteReasonResult(String reasonId, String fcode) {
-          reasonMapper.deleteReasonResult(reasonId,fcode);
+    public void deleteReasonResult(String reasonId, String reasonCode) {
+        reasonResultMapper.deleteReasonResult(reasonId,reasonCode);
     }
 
     @Override
-    public int getReasonResultCount(String reasonId, String fcode) {
-        return reasonMapper.getReasonResultCount(reasonId,fcode);
+    public int getReasonResultCount(String reasonId, String reasonCode) {
+        return reasonResultMapper.getReasonResultCount(reasonId,reasonCode);
     }
 
     @Override
-    public void saveReasonResult(String reasonId, String fcode, String fname, String formula, String business) {
-          reasonMapper.saveReasonResult(reasonId,fcode,fname,formula,business);
+    public void saveReasonResult(String reasonId, String reasonCode, String formulaDesc, String formula, String business) {
+        reasonResultMapper.saveReasonResult(reasonId,reasonCode,formulaDesc,formula,business);
     }
 
     @Override

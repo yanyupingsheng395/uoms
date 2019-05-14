@@ -45,6 +45,9 @@ public class ShiroConfig {
     @Value("${spring.redis.port}")
     private int port;
 
+    @Value("${spring.redis.database}")
+    private int database;
+
     @Value("${spring.redis.password}")
     private String password;
 
@@ -62,6 +65,7 @@ public class ShiroConfig {
         redisManager.setExpire(systemProperties.getShiro().getExpireIn());
         redisManager.setHost(host);
         redisManager.setPort(port);
+        redisManager.setDatabase(database);
         if (StringUtils.isNotBlank(password)) {
             redisManager.setPassword(password);
         }
