@@ -4,6 +4,7 @@ var currentSpu = "";
 var stats = null;
 
 $(function () {
+    init_date("startDate_1", "yyyy-mm", 1,2,1);
     periodTypeOption();
     initTableData();
     var flag = false;
@@ -40,7 +41,6 @@ $(function () {
         }else if(tab == "#tab_user_target"){
             tab3DataInit();
         }else if(tab == "#tab_contemporaneous"){
-            init_date("startDate_1", "yyyy-mm", 1,2,1);
             getData(1);
         }
     }

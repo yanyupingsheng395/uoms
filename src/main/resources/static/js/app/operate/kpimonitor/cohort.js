@@ -47,8 +47,6 @@ $(function () {
     }
     $("#startDate_1").val(date.getFullYear() + "-" + month);
     $("#startDate_2").val(date.getFullYear() + "-" + month);
-    init_date("startDate_1", "yyyy-mm", 1,2,1);
-    init_date("startDate_2", "yyyy-mm", 1,2,1);
     getData(1);
     getData1(1);
 });
