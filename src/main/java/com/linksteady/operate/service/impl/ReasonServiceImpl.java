@@ -97,11 +97,13 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-    @Async
+//    @Async
     public void findReasonKpisSnp(String reasonId)
     {
         try {
+            thriftClient.open();
             thriftClient.getThriftService().submitReasonAanlysis(Integer.parseInt(reasonId));
+            reasonMapper.updateProgressAndStatusById(reasonId,"F",100);
         } catch (TException e) {
             //todo 异常继续向上抛 同时需要将当前数据的状态更新为失败
             e.printStackTrace();

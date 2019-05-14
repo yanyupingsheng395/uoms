@@ -213,6 +213,7 @@ public class ReasonController  extends BaseController {
 
         //调用thrift的服务，获取回归公式 然后写结果表
         try {
+            thriftClient.open();
             String result=thriftClient.getThriftService().submitReasonForecast(Integer.parseInt(reasonId),kpiCode,code);
 
             //系数和截距通过 | 进行分割

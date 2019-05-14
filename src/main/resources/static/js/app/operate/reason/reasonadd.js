@@ -53,10 +53,10 @@ function submit_analysis(){
 
     //校验至少选择了一个维度
     var dimlist=$("#dimlist").find("li");
-    if(null==dimlist||dimlist.length==0)
-    {
-        alert_str+='</br>请至少选择一组维度及其值！';
-    }
+    // if(null==dimlist||dimlist.length==0)
+    // {
+    //     alert_str+='</br>请至少选择一组维度及其值！';
+    // }
 
     //校验选择了时间区间
     var start_dt=$("#start_dt").val();
