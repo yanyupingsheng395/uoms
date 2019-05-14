@@ -161,7 +161,7 @@ function getDMonthPriceCols(percent) {
     var cols = [
         {field: 'MONTH_ID', title: '月份'},
         {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px', formatter: fmt},
-        {field: 'UPRICE', title: '本月客单价（元）', width:'132px', formatter: fmt},
+        {field: 'UPRICE', title: type, width:'132px', formatter: fmt},
         {field: 'UPRICE1', title: '+1月', formatter: fmt},
         {field: 'UPRICE2', title: '+2月', formatter: fmt},
         {field: 'UPRICE3', title: '+3月', formatter: fmt},
@@ -180,7 +180,6 @@ function getDMonthPriceCols(percent) {
 
 // 留存率自然月
 function getMonthCols(data, percent) {
-    console.log(data)
     var cols = [];
     $.each(data, function (k, v) {
         console.log(v)
@@ -192,7 +191,7 @@ function getMonthCols(data, percent) {
             o.title = "本月新增用户数";
             o.width = "132px";
         }else if(v == "uprice") {
-            o.title = "本月客单价（元）";
+            o.title = type;
             o.width = "132px";
         }else {
             o.title = v;
@@ -221,10 +220,13 @@ function getMonthCols(data, percent) {
 
 function getData1(idx) {
     var url = "";
+    var type = "";
     if(idx == 1) {
         url = "/kpiMonitor/getUpriceData";
+        type = "本月客单价（元）";
     }else if(idx == 2) {
         url = "/kpiMonitor/getPriceData"
+        type = "本月订单价（元）";
     }else if(idx == 3) {
         url = "/kpiMonitor/getFreqData"
     }else if(idx == 4) {
@@ -242,9 +244,9 @@ function getData1(idx) {
             percent = true;
         }
         if(periodType == "dmonth") {
-            columns = getDMonthPriceCols(percent);
+            columns = getDMonthPriceCols(percent, type);
         }else if(periodType == "month"){
-            columns = getMonthCols(r.data.columns, percent);
+            columns = getMonthCols(r.data.columns, percent, type);
         }
         var data = r.data.data;
         initBootstrapTable($table, columns, data, 0, periodType);
