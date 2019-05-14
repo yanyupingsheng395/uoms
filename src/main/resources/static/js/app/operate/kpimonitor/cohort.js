@@ -107,7 +107,6 @@ function getData(idx) {
     var start = $("#startDate_1").val();
     var periodType=$("#cohortbtngroup1>.btn-primary:first").attr("name");
     $.get(url, {periodType: periodType, start: start}, function(r) {
-        console.log(r)
         var columns = new Array();
         var percent = false;
         if(idx == 1 || idx == 3) {
@@ -146,6 +145,35 @@ function getDMonthCols(percent) {
         {field: 'MONTH10', title: '+10月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
         {field: 'MONTH11', title: '+11月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
         {field: 'MONTH12', title: '+12月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+    ];
+    return cols;
+}
+// 客单价间隔月
+function getDMonthPriceCols(percent) {
+    var fix = "";
+    if(percent) {
+        fix = "%";
+    }else {
+        fix = "";
+    }
+
+    var fmt = function (value, row, index) {if(value == "0" || value == undefined) {return "";}else {return value + fix;}};
+    var cols = [
+        {field: 'MONTH_ID', title: '月份'},
+        {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px', formatter: fmt},
+        {field: 'UPRICE', title: '本月客单价（元）', width:'132px', formatter: fmt},
+        {field: 'UPRICE1', title: '+1月', formatter: fmt},
+        {field: 'UPRICE2', title: '+2月', formatter: fmt},
+        {field: 'UPRICE3', title: '+3月', formatter: fmt},
+        {field: 'UPRICE4', title: '+4月', formatter: fmt},
+        {field: 'UPRICE5', title: '+5月', formatter: fmt},
+        {field: 'UPRICE6', title: '+6月', formatter: fmt},
+        {field: 'UPRICE7', title: '+7月', formatter: fmt},
+        {field: 'UPRICE8', title: '+8月', formatter: fmt},
+        {field: 'UPRICE9', title: '+9月', formatter: fmt},
+        {field: 'UPRICE10', title: '+10月', formatter: fmt},
+        {field: 'UPRICE11', title: '+11月', formatter: fmt},
+        {field: 'UPRICE12', title: '+12月', formatter: fmt}
     ];
     return cols;
 }
@@ -201,52 +229,20 @@ function getData1(idx) {
     }
     var $table = $('#dataTable1' + idx);
     var start = $("#startDate_2").val();
-    var end = $("#endDate_2").val();
     var periodType=$("#cohortbtngroup2>.btn-primary:first").attr("name");
-    $.get(url, {periodType: periodType, start: start, end: end}, function(r) {
-        var columns = r.data.columns;
+    $.get(url, {periodType: periodType, start: start}, function(r) {
+        var columns = new Array();
+        var percent = false;
+        if(idx == 2 || idx == 4) {
+            percent = true;
+        }
+        if(periodType == "dmonth") {
+            columns = getDMonthPriceCols(percent);
+        }else if(periodType == "month"){
+            columns = getMonthCols(r.data.columns, percent);
+        }
         var data = r.data.data;
-
-        var tmp = new Array();
-        $.each(columns, function (k, v) {
-            if(v == "month") {
-                tmp.push({
-                    field: v,
-                    title: '月份',
-                    width: '132px',
-                    sortable: false
-                });
-            }else if(v == "week") {
-                tmp.push({
-                    field: v,
-                    title: '周',
-                    width: '132px',
-                    sortable: false
-                });
-            }else if(v == "newuser") {
-                tmp.push({
-                    field: v,
-                    title: '本月新增用户数',
-                    width: '132px',
-                    sortable: false
-                });
-            }else {
-                tmp.push({
-                    field: v,
-                    title: v,
-                    width: '132px',
-                    sortable: false,
-                    formatter: function (value, row, index) {
-                        if(value == "-1") {
-                            return "";
-                        }else {
-                            return value;
-                        }
-                    }
-                });
-            }
-        });
-        initBootstrapTable($table, tmp, data, r.data.total, periodType);
+        initBootstrapTable($table, columns, data, 0, periodType);
     });
 }
 

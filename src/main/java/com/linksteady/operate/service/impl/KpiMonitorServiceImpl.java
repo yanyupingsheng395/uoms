@@ -56,6 +56,8 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
 
     public static final String[] D_MONTH_COLS = {"MONTH_ID", "TOTAL_USER", "MONTH1", "MONTH2", "MONTH3", "MONTH4", "MONTH5", "MONTH6", "MONTH7", "MONTH8", "MONTH9", "MONTH10", "MONTH11", "MONTH12"};
 
+    public static final String[] D_MONTH_PRICE = {"MONTH_ID", "TOTAL_USER", "UPRICE", "UPRICE1", "UPRICE2", "UPRICE3", "UPRICE4", "UPRICE5", "UPRICE6", "UPRICE7", "UPRICE8", "UPRICE9", "UPRICE10", "UPRICE11", "UPRICE12"};
+
     @Override
     public List<WeekInfo> getWeekList(String start, String end) {
         return kpiMonitorMapper.getWeekList(Integer.parseInt(start.replace("-","")),Integer.parseInt(end.replace("-","")));
@@ -213,7 +215,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(period)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getRetainDMonth(begin, end);
-            return getDMonthData(dataList);
+            return getDMonthData(dataList, true);
         }
         if(PERIOD_TYPE_MONTH.equals(period)) {
             List<DatePeriodKpi> dataList =  kpiMonitorMapper.getRetainMonth(begin, end);
@@ -231,7 +233,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(period)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getRetainBySpuDMonth(spuId, begin, end);
-            return getDMonthData(dataList);
+            return getDMonthData(dataList, true);
         }
         if(PERIOD_TYPE_MONTH.equals(period)) {
             List<DatePeriodKpi> dataList =  kpiMonitorMapper.getRetainBySpuMonth(spuId, begin, end);
@@ -255,7 +257,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(period)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getRetainUserCountDMonth(begin ,end);
-            return getDMonthData(dataList);
+            return getDMonthData(dataList,false);
         }
         if(PERIOD_TYPE_MONTH.equals(period)) {
             List<DatePeriodKpi> dataList =  kpiMonitorMapper.getRetainMonth(begin, end);
@@ -273,7 +275,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(period)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getRetainUserCountDMonthBySpu(spuId, begin ,end);
-            return getDMonthData(dataList);
+            return getDMonthData(dataList,false);
         }
         if(PERIOD_TYPE_MONTH.equals(period)) {
             List<DatePeriodKpi> dataList =  kpiMonitorMapper.getRetainMonthBySpu(spuId, begin, end);
@@ -292,7 +294,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(period)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getLossUserRateDMonth(begin, end);
-            return getDMonthData(dataList);
+            return getDMonthData(dataList, true);
         }
         if(PERIOD_TYPE_MONTH.equals(period)) {
             List<DatePeriodKpi> dataList =  kpiMonitorMapper.getLossUserMonth(begin, end);
@@ -310,7 +312,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(period)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getLossUserDMonthBySpu(spuId, begin ,end);
-            return getDMonthData(dataList);
+            return getDMonthData(dataList, false);
         }
         if(PERIOD_TYPE_MONTH.equals(period)) {
             List<DatePeriodKpi> dataList =  kpiMonitorMapper.getLossUserMonthBySpu(spuId, begin, end);
@@ -328,11 +330,31 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(period)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getLossUserRateDMonthBySpu(spuId, begin, end);
-            return getDMonthData(dataList);
+            return getDMonthData(dataList,true);
         }
         if(PERIOD_TYPE_MONTH.equals(period)) {
             List<DatePeriodKpi> dataList =  kpiMonitorMapper.getLossUserMonthBySpu(spuId, begin, end);
             return getMonthData(dataList, begin, end, true);
+        }
+        return null;
+    }
+
+    /**
+     * 同期群客单价分析
+     * @param periodType
+     * @param start
+     * @return
+     */
+    @Override
+    public Map<String, Object> getUpriceData(String periodType, String start) {
+        String end = null;
+        if(StringUtils.isNotBlank(start)) {
+            start = start.replaceAll("-", "");
+            end = getEndDate(start);
+        }
+        if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType)) {
+            List<Map<String, Object>> dataList = kpiMonitorMapper.getUpriceData(start, end);
+            return getUPriceDMonthData(dataList, false);
         }
         return null;
     }
@@ -346,7 +368,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(period)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getLossUserDMonth(begin ,end);
-            return getDMonthData(dataList);
+            return getDMonthData(dataList, false);
         }
         if(PERIOD_TYPE_MONTH.equals(period)) {
             List<DatePeriodKpi> dataList =  kpiMonitorMapper.getLossUserMonth(begin, end);
@@ -359,7 +381,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
      * 获取间隔月的数据
      * @return
      */
-    public Map<String, Object> getDMonthData(List<Map<String, Object>> dataList) {
+    public Map<String, Object> getDMonthData(List<Map<String, Object>> dataList, boolean percent) {
         List<String> cols = Arrays.asList(D_MONTH_COLS);
         Map<String, Object> total = Maps.newHashMap();
         cols.stream().forEach(x-> {
@@ -372,8 +394,45 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             if(x.equals(D_MONTH_COLS[1])) {
                 total.put(D_MONTH_COLS[1], dss.getSum());
             }else if(!x.equals(D_MONTH_COLS[0])){
-                Long count = dataList.stream().filter(z-> z.get(x) != null && Double.valueOf(z.get(x).toString()) > 0D).count();
-                total.put(x, count == 0 ? 0:String.format("%.2f", dss.getSum()/count));
+                if(percent) {
+                    Long count = dataList.stream().filter(z-> z.get(x) != null && Double.valueOf(z.get(x).toString()) > 0D).count();
+                    total.put(x, count == 0 ? 0:String.format("%.2f", dss.getSum()/count));
+                }else {
+                    total.put(x, dss.getSum());
+                }
+            }
+        });
+        total.put(D_MONTH_COLS[0], "合计:");
+        dataList.add(total);
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("data", dataList);
+        return result;
+    }
+
+    /**
+     * 客单价间隔月
+     * @param dataList
+     * @return
+     */
+    public Map<String, Object> getUPriceDMonthData(List<Map<String, Object>> dataList, boolean percent) {
+        List<String> cols = Arrays.asList(D_MONTH_PRICE);
+        Map<String, Object> total = Maps.newHashMap();
+        cols.stream().forEach(x-> {
+            DoubleSummaryStatistics dss = dataList.stream().map(y-> {
+                if (!x.equals(D_MONTH_PRICE[0])) {
+                    return y.get(x) == null ? 0:Double.valueOf(y.get(x).toString());
+                }
+                return 0D;
+            }).collect(Collectors.summarizingDouble(v->v));
+            if(x.equals(D_MONTH_PRICE[1])) {
+                total.put(D_MONTH_PRICE[1], dss.getSum());
+            }else if(!x.equals(D_MONTH_PRICE[0])){
+                if(percent) {
+                    Long count = dataList.stream().filter(z-> z.get(x) != null && Double.valueOf(z.get(x).toString()) > 0D).count();
+                    total.put(x, count == 0 ? 0:String.format("%.2f", dss.getSum()/count));
+                }else {
+                    total.put(x, dss.getSum());
+                }
             }
         });
         total.put(D_MONTH_COLS[0], "合计:");

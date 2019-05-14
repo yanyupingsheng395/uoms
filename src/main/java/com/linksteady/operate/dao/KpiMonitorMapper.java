@@ -27,4 +27,5 @@ public interface KpiMonitorMapper {
     List<DatePeriodKpi> getLossUserMonthBySpu(@Param("spuId") String spuId, @Param("beginDt") String beginDt, @Param("endDt") String endDt);
     List<Map<String, Object>> getLossUserDMonth(@Param("beginDt") String beginDt, @Param("endDt") String endDt);
     List<Map<String, Object>> getLossUserDMonthBySpu(@Param("spuId") String spuId, @Param("beginDt") String beginDt, @Param("endDt") String endDt);
+    List<Map<String, Object>> getUpriceData(@Param("start") String start, @Param("end") String end);
 }

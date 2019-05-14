@@ -892,4 +892,92 @@
         on rt.month_id=dt.month_id
         order by dt.month_id
     </select>
+
+    <select id="getUpriceData" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        t.real_fee,
+        t.user_id
+        FROM w_Orders t,w_date dt
+        where t.valid_status=1
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;=#{start}
+        and dt.month &lt;=#{end}
+        ),
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        SELECT
+        count(distinct g1.user_id) usercnt,
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff,
+        sum(g1.real_fee) u_fee
+        FROM g1,g2 where g1.user_id=g2.user_id
+        group by
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm'))
+        ),
+        rt as(
+        select
+        min_month month_id,
+        sum(case when month_diff = 0 then usercnt else 0 end) usercnt,
+        sum(case when month_diff = 0 then u_fee else 0 end) u_fee,
+        sum(case when month_diff = 1 then usercnt else 0 end) usercnt_1,
+        sum(case when month_diff = 1 then u_fee else 0 end) u_fee_1,
+        sum(case when month_diff = 2 then usercnt else 0 end) usercnt_2,
+        sum(case when month_diff = 2 then u_fee else 0 end) u_fee_2,
+        sum(case when month_diff = 3 then usercnt else 0 end) usercnt_3,
+        sum(case when month_diff = 3 then u_fee else 0 end) u_fee_3,
+        sum(case when month_diff = 4 then usercnt else 0 end) usercnt_4,
+        sum(case when month_diff = 4 then u_fee else 0 end) u_fee_4,
+        sum(case when month_diff = 5 then usercnt else 0 end) usercnt_5,
+        sum(case when month_diff = 5 then u_fee else 0 end) u_fee_5,
+        sum(case when month_diff = 6 then usercnt else 0 end) usercnt_6,
+        sum(case when month_diff = 6 then u_fee else 0 end) u_fee_6,
+        sum(case when month_diff = 7 then usercnt else 0 end) usercnt_7,
+        sum(case when month_diff = 7 then u_fee else 0 end) u_fee_7,
+        sum(case when month_diff = 8 then usercnt else 0 end) usercnt_8,
+        sum(case when month_diff = 8 then u_fee else 0 end) u_fee_8,
+        sum(case when month_diff = 9 then usercnt else 0 end) usercnt_9,
+        sum(case when month_diff = 9 then u_fee else 0 end) u_fee_9,
+        sum(case when month_diff = 10 then usercnt else 0 end) usercnt_10,
+        sum(case when month_diff = 10 then u_fee else 0 end) u_fee_10,
+        sum(case when month_diff = 11 then usercnt else 0 end) usercnt_11,
+        sum(case when month_diff = 11 then u_fee else 0 end) u_fee_11,
+        sum(case when month_diff = 12 then usercnt else 0 end) usercnt_12,
+        sum(case when month_diff = 12 then u_fee else 0 end) u_fee_12
+        from g3 group  by min_month
+        )
+        select
+        dt.month_id,
+        rt.usercnt total_user,
+        (case when rt.usercnt=0 then NULL else trunc(rt.u_fee/rt.usercnt) end) uprice,
+        (case when rt.usercnt_1=0 then NULL else trunc(rt.u_fee_1/rt.usercnt_1) end) uprice1,
+        (case when rt.usercnt_2=0 then NULL else trunc(rt.u_fee_2/rt.usercnt_2) end) uprice2,
+        (case when rt.usercnt_3=0 then NULL else trunc(rt.u_fee_3/rt.usercnt_3) end) uprice3,
+        (case when rt.usercnt_4=0 then NULL else trunc(rt.u_fee_4/rt.usercnt_4) end) uprice4,
+        (case when rt.usercnt_5=0 then NULL else trunc(rt.u_fee_5/rt.usercnt_5) end) uprice5,
+        (case when rt.usercnt_6=0 then NULL else trunc(rt.u_fee_6/rt.usercnt_6) end) uprice6,
+        (case when rt.usercnt_7=0 then NULL else trunc(rt.u_fee_7/rt.usercnt_7) end) uprice7,
+        (case when rt.usercnt_8=0 then NULL else trunc(rt.u_fee_8/rt.usercnt_8) end) uprice8,
+        (case when rt.usercnt_9=0 then NULL else trunc(rt.u_fee_9/rt.usercnt_9) end) uprice9,
+        (case when rt.usercnt_10=0 then NULL else trunc(rt.u_fee_10/rt.usercnt_10) end) uprice10,
+        (case when rt.usercnt_11=0 then NULL else trunc(rt.u_fee_11/rt.usercnt_11) end) uprice11,
+        (case when rt.usercnt_12=0 then NULL else trunc(rt.u_fee_12/rt.usercnt_12) end) uprice12
+        from rt right join
+        (select month_id from w_month  where month_id &gt;=#{start} and month_id &lt;=#{end}) dt
+        on rt.month_id=dt.month_id
+        order by dt.month_id
+    </select>
  </mapper>

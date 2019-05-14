@@ -27,4 +27,5 @@ public interface KpiMonitorService {
      Map<String, Object> getLossUserRate(String period, String begin);
      Map<String, Object> getLossUserBySpu(String spuId, String period, String begin);
      Map<String, Object> getLossUserRateBySpu(String spuId, String period, String begin);
+     Map<String, Object> getUpriceData(String periodType, String start);
 }
