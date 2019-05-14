@@ -5,6 +5,7 @@ var stats = null;
 
 $(function () {
     init_date("startDate_1", "yyyy-mm", 1,2,1);
+    init_date("startDate_2", "yyyy-mm", 1,2,1);
     periodTypeOption();
     initTableData();
     var flag = false;
@@ -95,6 +96,8 @@ $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
     }
 });
 
+init_date("startDate_1", "yyyy-mm", 1,2,1);
+init_date("startDate_2", "yyyy-mm", 1,2,1);
 
 function periodTypeOption() {
     var option = "";
