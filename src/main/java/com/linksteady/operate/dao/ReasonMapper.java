@@ -39,13 +39,7 @@ public interface ReasonMapper {
     //获取原因诊断明细信息
     List<Map<String,String>>  getReasonDetailById(@Param("reasonId") String reasonId);
 
-    void updateProgressById(@Param("reasonId") String reasonId,@Param("progress") int progress);
-
-    void updateProgressAndStatusById(@Param("reasonId") String reasonId,@Param("progress") int progress);
-
-    List<String> getKeyReasonKpis(@Param("reasonId") String reasonId);
-
-    void saveReasonKpisSnpKpis(@Param("reasonId") int reasonId);
+    void updateProgressAndStatusById(@Param("reasonId") String reasonId,@Param("status") String status,@Param("progress") int progress);
 
      List<Map<String, Object>> getReasonKpisSnp(@Param("reasonId") String reasonId,@Param("templateCode") String templateCode);
 
@@ -56,14 +50,6 @@ public interface ReasonMapper {
     void addConcernKpi(@Param("reasonId") String reasonId, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
 
     void deleteConcernKpi(@Param("reasonId") String reasonId, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
-
-    void saveRelateMatrix(List<ReasonRelateRecord> record);
-
-   int getReasonResultCount(@Param("reasonId") String reasonId,@Param("fcode") String fcode);
-
-   void deleteReasonResult(@Param("reasonId") String reasonId,@Param("fcode") String fcode);
-
-   void saveReasonResult(@Param("reasonId") String reasonId,@Param("fcode") String fcode,@Param("fname") String fname,@Param("formula") String formula,@Param("business") String business);
 
 
 }

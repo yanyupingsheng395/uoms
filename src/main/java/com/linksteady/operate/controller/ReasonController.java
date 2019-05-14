@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.linksteady.common.controller.BaseController;
@@ -12,16 +13,17 @@ import com.linksteady.operate.domain.ReasonResult;
 import com.linksteady.operate.domain.ReasonTemplateInfo;
 import com.linksteady.operate.service.CacheService;
 import com.linksteady.operate.service.ReasonService;
+import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.operate.vo.ReasonVO;
 import com.linksteady.system.domain.User;
 import org.apache.shiro.SecurityUtils;
+import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import sun.misc.Cache;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,6 +46,9 @@ public class ReasonController  extends BaseController {
 
     @Autowired
     CacheService cacheService;
+
+    @Autowired
+    ThriftClient thriftClient;
 
     /**
      * 获取原因探究列表
@@ -100,12 +105,10 @@ public class ReasonController  extends BaseController {
      */
     @RequestMapping("/updateProgressById")
     public ResponseBo ppdateProgressById(@RequestParam String reasonId) {
-        //将相关的指标写进目标表 todo 后续交由算法完成
-        reasonService.findReasonKpisSnp(reasonId);
 
-        //更新进度
-        reasonService.updateProgressById(reasonId,100);
-        return ResponseBo.ok("");
+        reasonService.findReasonKpisSnp(reasonId);
+        return ResponseBo.ok();
+
     }
 
 
@@ -191,32 +194,65 @@ public class ReasonController  extends BaseController {
      * @return ResponseBo对象
      */
     @RequestMapping("/getEffectForecast")
-    public ResponseBo getEffectForecast(@RequestParam String reasonId, @RequestParam("code") String code) {
+    public ResponseBo getEffectForecast(@RequestParam String reasonId, @RequestParam("kpiCode") String kpiCode, @RequestParam("code") String code) {
 
+        Joiner joiner=Joiner.on("; ").skipNulls();
         List<String> data= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
-        ReasonTemplateInfo reasonTemplateInfo=null;
+  //      ReasonTemplateInfo reasonTemplateInfo=null;
+        //变量图例
+        List<String> reasonKpiNames=Lists.newArrayList();
+        //说明
+        List<String> busincess=Lists.newArrayList();
+        //回归公式
+        StringBuilder regression=new StringBuilder();
 
-        for(String fcode:data)
-        {
-            //如果存在，先删除
-            if(reasonService.getReasonResultCount(reasonId,fcode)>0)
+        String kpiName=KpiCacheManager.getInstance().getKpiCodeNamePair().get(kpiCode);
+        regression.append("y=");
+        busincess.add("y:"+kpiName);
+
+
+        //调用thrift的服务，获取回归公式 然后写结果表
+        try {
+            String result=thriftClient.getThriftService().submitReasonForecast(Integer.parseInt(reasonId),kpiCode,code);
+
+            //系数和截距通过 | 进行分割
+            List<String> resultList= Splitter.on('|').trimResults().omitEmptyStrings().splitToList(result);
+            //各个系数之间通过 ，分割
+            List<String> ceof= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(resultList.get(0));
+
+            //如果程序正常运行 data的length和ceof的长度是一致的，且顺序对应
+            for(int i=0;i<ceof.size();i++)
             {
-                reasonService.deleteReasonResult(reasonId,fcode);
+                //拼凑回归公式
+                regression.append(ceof.get(i)+"x"+(i+1)+"*");
+                String reasonName=KpiCacheManager.getInstance().getReasonRelateKpiList().get(data.get(i)).getReasonKpiName();
+                reasonKpiNames.add("x"+(i+1)+":"+reasonName);
+                busincess.add(reasonName+"每变动一份，"+kpiName+"变动"+ceof.get(i)+"份");
             }
 
-            reasonTemplateInfo = KpiCacheManager.getInstance().getReasonRelateKpiList().get(fcode);
-            String reasonKpiName=reasonTemplateInfo.getReasonKpiName();
-            //todo 进行回归分析
-            int a= RandomUtil.getIntRandom(1000,10000);
-            int b=RandomUtil.getIntRandom(10000,50000);
+            //拼凑截距
+            regression.append(resultList.get(1));
 
-            String formual="y="+a+"*x+"+b;
-            String busincess="【"+reasonKpiName+"】 每变动1份子，带动GMV提升"+a+"元";
-            reasonService.saveReasonResult(reasonId,fcode,reasonKpiName,formual,busincess);
+          if(reasonService.getReasonResultCount(reasonId,code)>0)
+            {
+                reasonService.deleteReasonResult(reasonId,code);
+            }
+
+            //根据回归公式写结果表
+            reasonService.saveReasonResult(reasonId,code,joiner.join(reasonKpiNames),regression.toString(),joiner.join(busincess));
+
+            List<ReasonResult> reasonResults=reasonService.getReasonResultList(reasonId);
+
+            return ResponseBo.okWithData("",reasonResults);
+        } catch (TException e) {
+            e.printStackTrace();
+            return ResponseBo.error();
+        } finally {
+            thriftClient.close();
         }
 
-        List<ReasonResult> result=reasonService.getReasonResultList(reasonId);
-        return ResponseBo.okWithData("",result);
+
+
     }
 
     /**
@@ -240,7 +276,7 @@ public class ReasonController  extends BaseController {
             {
                for(int j=i+1;j<data.size();j++)
                {
-                   //获取到交叉的先关系数
+                   //获取到交叉的相关系数
                    reasonRelMatrix=reasonService.getReasonResultByCode(reasonId,data.get(i),data.get(j)).get(0);
 
 
@@ -257,15 +293,5 @@ public class ReasonController  extends BaseController {
         return ResponseBo.okWithData("",validateResult);
     }
 
-    /**
-     * 重新加载缓存
-     * @param
-     * @return
-     */
-    @RequestMapping("/refreshCache")
-    public ResponseBo refreshCache() {
-        cacheService.procAllLoad();
-        return ResponseBo.ok("success");
-    }
 }
 

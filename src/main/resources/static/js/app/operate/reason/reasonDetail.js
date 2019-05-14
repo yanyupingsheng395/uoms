@@ -276,8 +276,8 @@ function createResultTableHeader(tableName)
         dataType: "json",
         showHeader:true,
         columns: [{
-            field: 'fname',
-            title: '因子名称',
+            field: 'formula_desc',
+            title: '变量名称',
             align: 'left'
         },{
             field: 'formula',
@@ -285,7 +285,11 @@ function createResultTableHeader(tableName)
             align: 'left'
         }, {
             field: 'business',
-            title: '说明',
+            title: '业务解释',
+            align: 'left'
+        }, {
+            field: 'createDt',
+            title: '创建时间',
             align: 'left'
         }
         ]
