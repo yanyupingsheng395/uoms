@@ -12,7 +12,7 @@ import java.util.Date;
 @Data
 public class LcSpuVO {
 
-    private BigDecimal spuWid;
+    private Long spuWid;
 
 
     private String spuName;

@@ -14,20 +14,79 @@
         <result column="ONSALE_DURATION" jdbcType="DECIMAL" property="onsaleDuration" />
         <result column="SALE_BEGIN_DT" jdbcType="TIMESTAMP" property="saleBeginDt" />
         <result column="SALE_END_DT" jdbcType="TIMESTAMP" property="saleEndDt" />
+        <result column="REAL_FEE" jdbcType="DECIMAL" property="gmvTotal" />
+        <result column="GMV_RELATE" jdbcType="DECIMAL" property="gmvRelate" />
     </resultMap>
 
     <select id="getSpuList" resultMap="BaseResultMap">
-                              select
-                                  SPU_WID,
-                                  SPU_NAME,
-                                  STOCK_NUM,
-                                  SALES_NUM,
-                                  TIME_TO_MARKET,
-                                  STOCKBYSALES,
-                                  ONSALE_DURATION,
-                                  SALE_BEGIN_DT,
-                                  SALE_END_DT
-                              from UO_LC_SPU_LIST
+        with g1 as
+        (
+                SELECT
+                SPU.SPU_WID,
+                SUM(T.PRICE*T.QUANTITY-T.DISCOUNT) REAL_FEE
+                FROM W_ORDER_DETAILS T,W_DATE DT,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+                WHERE
+                T.ORDER_DT_WID=DT.ROW_WID
+                AND T.PRODUCT_ID=SPU.PRODUCT_ID
+                AND T.VALID_STATUS=1
+                AND DT.row_wid &gt;=20190101
+                AND DT.row_wid &lt;=20190601
+                GROUP BY SPU.SPU_WID
+                )
+                select
+                UO_LC_SPU_LIST.SPU_WID,
+                SPU_NAME,
+                STOCK_NUM,
+                SALES_NUM,
+                TIME_TO_MARKET,
+                STOCKBYSALES,
+                ONSALE_DURATION,
+                SALE_BEGIN_DT,
+                SALE_END_DT,
+                REAL_FEE,
+                GMV_RELATE
+        from UO_LC_SPU_LIST JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
     </select>
+
+    <select id="getAllGmvByDay" resultType="double">
+        with g1 as(
+        SELECT
+        DT.ROW_WID,
+        SUM(T.PRICE*T.QUANTITY-T.DISCOUNT) REAL_FEE
+        FROM W_ORDER_DETAILS T
+        JOIN W_DATE DT ON T.ORDER_DT_WID=DT.ROW_WID
+        JOIN (SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu ON T.PRODUCT_ID=SPU.PRODUCT_ID
+        WHERE
+             T.VALID_STATUS=1
+        AND  DT.row_wid &gt;=20190101
+        AND DT.row_wid &lt;=20190430
+        GROUP BY DT.ROW_WID)
+        select NVL(g1.REAL_FEE,0) REAL_FEE FROM g1 right join w_date on g1.ROW_WID=w_date.row_wid
+        where  w_date.row_wid &gt;=20190101
+        AND w_date.row_wid &lt;=20190430
+    </select>
+
+    <select id="getSpuGmvByDay" resultType="double">
+        with g1 as(
+        SELECT
+        DT.ROW_WID,
+        SUM(T.PRICE*T.QUANTITY-T.DISCOUNT) REAL_FEE
+        FROM W_ORDER_DETAILS T
+        JOIN W_DATE DT ON T.ORDER_DT_WID=DT.ROW_WID
+        JOIN (SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu ON T.PRODUCT_ID=SPU.PRODUCT_ID
+        WHERE
+              T.VALID_STATUS=1
+        AND  DT.row_wid &gt;=20190101
+        AND DT.row_wid &lt;=20190430
+        AND SPU.SPU_WID=#{spu_wid}
+        GROUP BY DT.ROW_WID)
+        select NVL(g1.REAL_FEE,0) REAL_FEE FROM g1 right join w_date on g1.ROW_WID=w_date.row_wid
+        where  w_date.row_wid &gt;=20190101
+        AND w_date.row_wid &lt;=20190430
+    </select>
+
+    <update id="updateRelate">
+        update UO_LC_SPU_LIST set GMV_RELATE=#{relate} where SPU_WID=#{spu_wid}
+    </update>
 
  </mapper>

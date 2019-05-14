@@ -9,7 +9,7 @@ import lombok.Data;
 @Table(name = "UO_LC_SPU_LIST")
 public class LcSpuInfo {
     @Column(name = "SPU_WID")
-    private BigDecimal spuWid;
+    private Long spuWid;
 
     @Column(name = "SPU_NAME")
     private String spuName;
@@ -34,4 +34,10 @@ public class LcSpuInfo {
 
     @Column(name = "SALE_END_DT")
     private Date saleEndDt;
+
+    @Column(name = "REAL_FEE")
+    private Double gmvTotal;
+
+    @Column(name = "GMV_RELATE")
+    private BigDecimal gmvRelate;
 }

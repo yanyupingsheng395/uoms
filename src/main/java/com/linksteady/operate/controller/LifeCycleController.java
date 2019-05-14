@@ -4,11 +4,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DataStatisticsUtils;
 import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.domain.LcSpuInfo;
 import com.linksteady.operate.service.LifeCycleService;
 import com.linksteady.operate.service.OrderingConstants;
+import com.linksteady.operate.util.PearsonCorrelationUtil;
 import com.linksteady.operate.vo.LcSpuVO;
 import lombok.extern.slf4j.Slf4j;
 import org.dozer.DozerBeanMapper;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.RoundingMode;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +46,7 @@ public class LifeCycleController extends BaseController {
      * @return
      */
     @RequestMapping("/getSpuList")
-    public ResponseBo lifecycleCatList(@RequestParam   String startDt,@RequestParam  String endDt,String filterType,String source) {
+    public ResponseBo lifecycleCatList(@RequestParam  String startDt,@RequestParam  String endDt,String filterType,String source) {
 
         //最终构造的返回值
         Map<String,Object> resultMap=Maps.newHashMap();
@@ -54,6 +57,9 @@ public class LifeCycleController extends BaseController {
 
         //根据startDT,endDT,source获取到符合条件的SPU的列表
         List<LcSpuInfo> list=lifeCycleService.getSpuList();
+
+        //计算汇总的gmv
+        double gmvSum=list.stream().mapToDouble(LcSpuInfo::getGmvTotal).sum();
 
         LcSpuVO  lsVO=null;
         List<LcSpuVO> resultList=Lists.newArrayList();
@@ -108,9 +114,7 @@ public class LifeCycleController extends BaseController {
             {
                 lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
 
-                lsVO.setGmvCont(getRandomValue("gmvCont"));
-                lsVO.setGmvRelate(getRandomValue("gmvRelate"));
-
+                lsVO.setGmvCont(gmvSum==0?0:ArithUtil.formatDoubleByMode(lsi.getGmvTotal()/gmvSum*100,2,RoundingMode.DOWN));
                 resultList.add(lsVO);
             }
 
@@ -300,27 +304,55 @@ public class LifeCycleController extends BaseController {
         temp.put("gmv","GMV贡献率");
         result.add(temp);
 
-        temp= Maps.newHashMap();
-        temp.put("user","用户数贡献率");
-        result.add(temp);
-
-        temp= Maps.newHashMap();
-        temp.put("pocount","订单数贡献率");
-        result.add(temp);
-
-        temp= Maps.newHashMap();
-        temp.put("joinrate","连带率");
-        result.add(temp);
-
-        temp= Maps.newHashMap();
-        temp.put("sprice","件单价");
-        result.add(temp);
-
-        temp= Maps.newHashMap();
-        temp.put("profit","毛利率");
-        result.add(temp);
+//        temp= Maps.newHashMap();
+//        temp.put("user","用户数贡献率");
+//        result.add(temp);
+//
+//        temp= Maps.newHashMap();
+//        temp.put("pocount","订单数贡献率");
+//        result.add(temp);
+//
+//        temp= Maps.newHashMap();
+//        temp.put("joinrate","连带率");
+//        result.add(temp);
+//
+//        temp= Maps.newHashMap();
+//        temp.put("sprice","件单价");
+//        result.add(temp);
+//
+//        temp= Maps.newHashMap();
+//        temp.put("profit","毛利率");
+//        result.add(temp);
 
         return  ResponseBo.okWithData("",result);
     }
+
+    /**
+     * 获取spu列表
+     * @param
+     * @return
+     */
+    @RequestMapping("/updateGmvRelate")
+    public ResponseBo updateGmvRelate() {
+
+        List<LcSpuInfo> list=lifeCycleService.getSpuList();
+
+        List<Double> gmv=lifeCycleService.getAllGmvByDay();
+        //获取总的GMV数据集（按天）
+        for(LcSpuInfo lcSpuInfo:list)
+        {
+            int spuWid=lcSpuInfo.getSpuWid().intValue();
+            //获取当前SPU的GMV数据集
+            List<Double> spugmv=lifeCycleService.getSpuGmvByDay(spuWid);
+
+            double relate=PearsonCorrelationUtil.getPearsonCorrelationScoreByList(gmv,spugmv);
+
+            //更新到数据库
+            lifeCycleService.updateRelate(spuWid, ArithUtil.formatDoubleByMode(relate,2, RoundingMode.DOWN));
+        }
+        return ResponseBo.ok();
+    }
+
+
 }
 

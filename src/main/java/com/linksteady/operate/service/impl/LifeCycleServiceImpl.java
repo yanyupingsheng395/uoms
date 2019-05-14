@@ -21,4 +21,19 @@ public class LifeCycleServiceImpl implements LifeCycleService {
         return lifeCycleMapper.getSpuList();
     }
 
+    @Override
+    public List<Double> getAllGmvByDay() {
+        return lifeCycleMapper.getAllGmvByDay();
+    }
+
+    @Override
+    public List<Double> getSpuGmvByDay(int spu_wid) {
+        return lifeCycleMapper.getSpuGmvByDay(spu_wid);
+    }
+
+    @Override
+    public void updateRelate(int spuWid, double relate) {
+        lifeCycleMapper.updateRelate(spuWid,relate);
+    }
+
 }
