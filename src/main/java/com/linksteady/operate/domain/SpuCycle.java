@@ -45,8 +45,8 @@ public class SpuCycle {
     /**
      * 周期阶段
      */
-    @Column(name = "CYCLE_STAGE")
-    private String cycleStage;
+    @Column(name = "LIFECYCLE_TYPE")
+    private String lifecycleType;
 
     /**
      * 累计购买次数
