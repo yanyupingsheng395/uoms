@@ -13,6 +13,319 @@
         <result column="WEEK_END_WID" jdbcType="DECIMAL" property="weekEndWid" />
     </resultMap>
 
+    <resultMap id="datePeriodKpiMap" type="com.linksteady.operate.domain.DatePeriodKpi">
+        <result column="MIN_MONTH" property="minPeriod" jdbcType="DECIMAL"></result>
+        <result column="BUY_MONTH" property="buyPeriod" jdbcType="DECIMAL"></result>
+        <result column="C_USERS" property="kpiValue" jdbcType="DECIMAL"></result>
+    </resultMap>
+
+    <select id="getRetainDMonth" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        t.user_id
+        FROM w_Orders t,w_date dt
+        where t.valid_status=1
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{beginDt}
+        and dt.month &lt;= #{endDt}
+        ),
+        --获取用户在此区间内的最早购买月份
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        --如果用户一个月有多单，则只计算一次
+        SELECT
+        DISTINCT
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff
+        FROM g1,g2 where g1.user_id=g2.user_id
+        ),
+        rt as(
+        select
+        min_month,
+        sum(case when month_diff = 0 then 1 else 0 end) month_0,
+        sum(case when month_diff = 1 then 1 else 0 end) month_1,
+        sum(case when month_diff = 2 then 1 else 0 end) month_2,
+        sum(case when month_diff = 3 then 1 else 0 end) month_3,
+        sum(case when month_diff = 4 then 1 else 0 end) month_4,
+        sum(case when month_diff = 5 then 1 else 0 end) month_5,
+        sum(case when month_diff = 6 then 1 else 0 end) month_6,
+        sum(case when month_diff = 7 then 1 else 0 end) month_7,
+        sum(case when month_diff = 8 then 1 else 0 end) month_8,
+        sum(case when month_diff = 9 then 1 else 0 end) month_9,
+        sum(case when month_diff = 10 then 1 else 0 end) month_10,
+        sum(case when month_diff = 11 then 1 else 0 end) month_11,
+        sum(case when month_diff = 12 then 1 else 0 end) month_12
+        from g3 group  by min_month
+        ),
+        rt2 as
+        (select min_month month_id,
+        month_0 month0,
+        (case when month_0=0 then 0 else round(month_1/month_0,4)*100 end) month1,
+        (case when month_0=0 then 0 else round(month_2/month_0,4)*100 end) month2,
+        (case when month_0=0 then 0 else round(month_3/month_0,4)*100 end) month3,
+        (case when month_0=0 then 0 else round(month_4/month_0,4)*100 end) month4,
+        (case when month_0=0 then 0 else round(month_5/month_0,4)*100 end) month5,
+        (case when month_0=0 then 0 else round(month_6/month_0,4)*100 end) month6,
+        (case when month_0=0 then 0 else round(month_7/month_0,4)*100 end) month7,
+        (case when month_0=0 then 0 else round(month_8/month_0,4)*100 end) month8,
+        (case when month_0=0 then 0 else round(month_9/month_0,4)*100 end) month9,
+        (case when month_0=0 then 0 else round(month_10/month_0,4)*100 end) month10,
+        (case when month_0=0 then 0 else round(month_11/month_0,4)*100 end) month11,
+        (case when month_0=0 then 0 else round(month_12/month_0,4)*100 end) month12
+        from rt)
+        select
+        dt.month_id,
+        nvl(rt2.month0,0) total_user,
+        nvl(rt2.month1,0) month1,
+        nvl(rt2.month2,0) month2,
+        nvl(rt2.month3,0) month3,
+        nvl(rt2.month4,0) month4,
+        nvl(rt2.month5,0) month5,
+        nvl(rt2.month6,0) month6,
+        nvl(rt2.month7,0) month7,
+        nvl(rt2.month8,0) month8,
+        nvl(rt2.month9,0) month9,
+        nvl(rt2.month10,0) month10,
+        nvl(rt2.month11,0) month11,
+        nvl(rt2.month12,0) month12
+        from rt2 right join
+        (select month_id from w_month  where month_id &gt;= #{beginDt} and month_id &lt;= #{endDt}) dt
+        on rt2.month_id=dt.month_id
+        order by dt.month_id
+    </select>
+
+    <!--&#45;&#45;  and spu.spu_wid=1-->
+    <select id="getRetainBySpuDMonth" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        t.user_id
+        FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        where t.valid_status=1
+        and t.product_id=spu.product_id
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{beginDt}
+        and dt.month &lt;= #{endDt}
+        ),
+        --获取用户在此区间内的最早购买月份
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        --如果用户一个月有多单，则只计算一次
+        SELECT
+        DISTINCT
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff
+        FROM g1,g2 where g1.user_id=g2.user_id
+        ),
+        rt as(
+        select
+        min_month,
+        sum(case when month_diff = 0 then 1 else 0 end) month_0,
+        sum(case when month_diff = 1 then 1 else 0 end) month_1,
+        sum(case when month_diff = 2 then 1 else 0 end) month_2,
+        sum(case when month_diff = 3 then 1 else 0 end) month_3,
+        sum(case when month_diff = 4 then 1 else 0 end) month_4,
+        sum(case when month_diff = 5 then 1 else 0 end) month_5,
+        sum(case when month_diff = 6 then 1 else 0 end) month_6,
+        sum(case when month_diff = 7 then 1 else 0 end) month_7,
+        sum(case when month_diff = 8 then 1 else 0 end) month_8,
+        sum(case when month_diff = 9 then 1 else 0 end) month_9,
+        sum(case when month_diff = 10 then 1 else 0 end) month_10,
+        sum(case when month_diff = 11 then 1 else 0 end) month_11,
+        sum(case when month_diff = 12 then 1 else 0 end) month_12
+        from g3  group  by min_month),
+        rt2 as
+        (select min_month month_id,
+        month_0 month0,
+        (case when month_0=0 then 0 else round(month_1/month_0,4)*100 end) month1,
+        (case when month_0=0 then 0 else round(month_2/month_0,4)*100 end) month2,
+        (case when month_0=0 then 0 else round(month_3/month_0,4)*100 end) month3,
+        (case when month_0=0 then 0 else round(month_4/month_0,4)*100 end) month4,
+        (case when month_0=0 then 0 else round(month_5/month_0,4)*100 end) month5,
+        (case when month_0=0 then 0 else round(month_6/month_0,4)*100 end) month6,
+        (case when month_0=0 then 0 else round(month_7/month_0,4)*100 end) month7,
+        (case when month_0=0 then 0 else round(month_8/month_0,4)*100 end) month8,
+        (case when month_0=0 then 0 else round(month_9/month_0,4)*100 end) month9,
+        (case when month_0=0 then 0 else round(month_10/month_0,4)*100 end) month10,
+        (case when month_0=0 then 0 else round(month_11/month_0,4)*100 end) month11,
+        (case when month_0=0 then 0 else round(month_12/month_0,4)*100 end) month12
+        from rt)
+        select
+        dt.month_id,
+        nvl(rt2.month0,0) total_user,
+        nvl(rt2.month1,0) month1,
+        nvl(rt2.month2,0) month2,
+        nvl(rt2.month3,0) month3,
+        nvl(rt2.month4,0) month4,
+        nvl(rt2.month5,0) month5,
+        nvl(rt2.month6,0) month6,
+        nvl(rt2.month7,0) month7,
+        nvl(rt2.month8,0) month8,
+        nvl(rt2.month9,0) month9,
+        nvl(rt2.month10,0) month10,
+        nvl(rt2.month11,0) month11,
+        nvl(rt2.month12,0) month12
+        from rt2 right join
+        (select month_id from w_month  where month_id &gt;= #{beginDt} and month_id &lt;= #{endDt}) dt
+        on rt2.month_id=dt.month_id
+        order by dt.month_id
+    </select>
+
+    <select id="getRetainUserCountDMonth" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        t.user_id
+        FROM w_Orders t,w_date dt
+        where t.valid_status=1
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{beginDt}
+        and dt.month &lt;= #{endDt}
+        ),
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        SELECT
+        DISTINCT
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff
+        FROM g1,g2 where g1.user_id=g2.user_id
+        ),
+        rt as(
+        select
+        min_month month_id,
+        sum(case when month_diff = 0 then 1 else 0 end) month_0,
+        sum(case when month_diff = 1 then 1 else 0 end) month_1,
+        sum(case when month_diff = 2 then 1 else 0 end) month_2,
+        sum(case when month_diff = 3 then 1 else 0 end) month_3,
+        sum(case when month_diff = 4 then 1 else 0 end) month_4,
+        sum(case when month_diff = 5 then 1 else 0 end) month_5,
+        sum(case when month_diff = 6 then 1 else 0 end) month_6,
+        sum(case when month_diff = 7 then 1 else 0 end) month_7,
+        sum(case when month_diff = 8 then 1 else 0 end) month_8,
+        sum(case when month_diff = 9 then 1 else 0 end) month_9,
+        sum(case when month_diff = 10 then 1 else 0 end) month_10,
+        sum(case when month_diff = 11 then 1 else 0 end) month_11,
+        sum(case when month_diff = 12 then 1 else 0 end) month_12
+        from g3 group  by min_month
+        )
+        select
+        dt.month_id,
+        nvl(rt.month_0,0) total_user,
+        nvl(rt.month_1,0) month1,
+        nvl(rt.month_2,0) month2,
+        nvl(rt.month_3,0) month3,
+        nvl(rt.month_4,0) month4,
+        nvl(rt.month_5,0) month5,
+        nvl(rt.month_6,0) month6,
+        nvl(rt.month_7,0) month7,
+        nvl(rt.month_8,0) month8,
+        nvl(rt.month_9,0) month9,
+        nvl(rt.month_10,0) month10,
+        nvl(rt.month_11,0) month11,
+        nvl(rt.month_12,0) month12
+        from rt right join
+        (select month_id from w_month  where month_id  &gt;= #{beginDt} and month_id &lt;= #{endDt}) dt
+        on rt.month_id=dt.month_id
+        order by dt.month_id
+    </select>
+
+    <select id="getRetainUserCountDMonthBySpu" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        t.user_id
+        FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        where t.valid_status=1
+        and t.product_id=spu.product_id
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{beginDt}
+        and dt.month &lt;= #{endDt}
+        AND SPU.SPU_WID= #{spuId}
+        ),
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        SELECT
+        DISTINCT
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff
+        FROM g1,g2 where g1.user_id=g2.user_id
+        ),
+        rt as(
+        select
+        min_month month_id,
+        sum(case when month_diff = 0 then 1 else 0 end) month_0,
+        sum(case when month_diff = 1 then 1 else 0 end) month_1,
+        sum(case when month_diff = 2 then 1 else 0 end) month_2,
+        sum(case when month_diff = 3 then 1 else 0 end) month_3,
+        sum(case when month_diff = 4 then 1 else 0 end) month_4,
+        sum(case when month_diff = 5 then 1 else 0 end) month_5,
+        sum(case when month_diff = 6 then 1 else 0 end) month_6,
+        sum(case when month_diff = 7 then 1 else 0 end) month_7,
+        sum(case when month_diff = 8 then 1 else 0 end) month_8,
+        sum(case when month_diff = 9 then 1 else 0 end) month_9,
+        sum(case when month_diff = 10 then 1 else 0 end) month_10,
+        sum(case when month_diff = 11 then 1 else 0 end) month_11,
+        sum(case when month_diff = 12 then 1 else 0 end) month_12
+        from g3 group  by min_month
+        )
+        select
+        dt.month_id,
+        nvl(rt.month_0,0) total_user,
+        nvl(rt.month_1,0) month1,
+        nvl(rt.month_2,0) month2,
+        nvl(rt.month_3,0) month3,
+        nvl(rt.month_4,0) month4,
+        nvl(rt.month_5,0) month5,
+        nvl(rt.month_6,0) month6,
+        nvl(rt.month_7,0) month7,
+        nvl(rt.month_8,0) month8,
+        nvl(rt.month_9,0) month9,
+        nvl(rt.month_10,0) month10,
+        nvl(rt.month_11,0) month11,
+        nvl(rt.month_12,0) month12
+        from rt right join
+        (select month_id from w_month  where month_id &gt;=#{beginDt} and month_id &lt;=#{endDt}) dt
+        on rt.month_id=dt.month_id
+        order by dt.month_id
+    </select>
+
     <select id="getWeekList" resultMap="BaseResultMap">
         SELECT DISTINCT T.YEAR,
         T.WEEK_WID,
@@ -101,5 +414,482 @@
         (CASE WHEN g2.FP_CNT=0 THEN 0 ELSE TRUNC(g2.FP_GMV/g2.FP_CNT,2) END) FP_PRICE,
         (CASE WHEN g2.RP_CNT=0 THEN 0 ELSE TRUNC(g2.RP_GMV/g2.RP_CNT,2) END) RP_PRICE
         FROM g2 ORDER BY g2.PERIOD_NAME ASC
+    </select>
+
+    <select id="getRetainMonth" resultMap="datePeriodKpiMap">
+        WITH g1 AS
+        (
+        SELECT MONTH BUY_MONTH,
+        T.USER_ID
+        FROM W_ORDERS T,W_DATE DT  WHERE T.VALID_STATUS=1
+        AND DT.MONTH &gt;= #{beginDt}
+        AND DT.MONTH &lt;= #{endDt}
+        AND T.ORDER_DT_WID=DT.ROW_WID
+        ),
+        --每个用户及其最早购买的月份
+        g2 as(
+        SELECT MIN(BUY_MONTH) MIN_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY USER_ID
+        ),
+        --每个用户 及其购买月份
+        g3 as(
+        SELECT BUY_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY BUY_MONTH,USER_ID
+        )
+        SELECT g2.MIN_MONTH,g3.BUY_MONTH,COUNT(*) C_USERS FROM  g2,g3
+        WHERE g2.USER_ID = g3.USER_ID
+        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH
+        ORDER BY g2.MIN_MONTH,g3.BUY_MONTH
+    </select>
+
+    <select id="getRetainMonthBySpu" resultMap="datePeriodKpiMap">
+        WITH g1 AS
+        (
+        SELECT MONTH BUY_MONTH,
+        T.USER_ID
+        FROM W_ORDER_DETAILS T,W_DATE DT,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        WHERE
+        T.ORDER_DT_WID=DT.ROW_WID
+        AND T.PRODUCT_ID=SPU.PRODUCT_ID
+        AND T.VALID_STATUS=1
+        AND DT.MONTH &gt;=#{beginDt}
+        AND DT.MONTH &lt;=#{endDt}
+        AND SPU.SPU_WID= #{spuId}
+        ),
+        --每个用户及其最早购买的月份
+        g2 as(
+        SELECT MIN(BUY_MONTH) MIN_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY USER_ID
+        ),
+        --每个用户 及其购买月份
+        g3 as(
+        SELECT BUY_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY BUY_MONTH,USER_ID
+        )
+        SELECT g2.MIN_MONTH,g3.BUY_MONTH,COUNT(*) C_USERS FROM  g2,g3
+        WHERE g2.USER_ID = g3.USER_ID
+        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH
+        ORDER BY g2.MIN_MONTH,g3.BUY_MONTH
+    </select>
+
+
+    <!--AND SPU.SPU_WID=1-->
+
+    <select id="getRetainBySpuMonth" resultMap="datePeriodKpiMap">
+        WITH g1 AS
+        (
+        SELECT MONTH BUY_MONTH,
+        T.USER_ID
+        FROM W_ORDER_DETAILS T,W_DATE DT,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        WHERE
+        T.ORDER_DT_WID=DT.ROW_WID
+        AND T.PRODUCT_ID=SPU.PRODUCT_ID
+        AND T.VALID_STATUS=1
+        AND DT.MONTH &gt;= #{beginDt}
+        AND DT.MONTH &lt;= #{endDt}
+        AND SPU.SPU_WID= #{spuId}
+        ),
+        --每个用户及其最早购买的月份
+        g2 as(
+        SELECT MIN(BUY_MONTH) MIN_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY USER_ID
+        ),
+        --每个用户 及其购买月份
+        g3 as(
+        SELECT BUY_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY BUY_MONTH,USER_ID
+        )
+        SELECT g2.MIN_MONTH,g3.BUY_MONTH,COUNT(*) C_USERS FROM  g2,g3
+        WHERE g2.USER_ID = g3.USER_ID
+        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH
+        ORDER BY g2.MIN_MONTH,g3.BUY_MONTH
+    </select>
+
+    <select id="getLossUserRateDMonth" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        t.user_id
+        FROM w_Orders t,w_date dt
+        where t.valid_status=1
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{beginDt}
+        and dt.month &lt;= #{endDt}
+        ),
+        --获取用户在此区间内的最早购买月份
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        --如果用户一个月有多单，则只计算一次
+        SELECT
+        DISTINCT
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff
+        FROM g1,g2 where g1.user_id=g2.user_id
+        ),
+        rt as(
+        select
+        min_month,
+        sum(case when month_diff = 0 then 1 else 0 end) month_0,
+        sum(case when month_diff = 1 then 1 else 0 end) month_1,
+        sum(case when month_diff = 2 then 1 else 0 end) month_2,
+        sum(case when month_diff = 3 then 1 else 0 end) month_3,
+        sum(case when month_diff = 4 then 1 else 0 end) month_4,
+        sum(case when month_diff = 5 then 1 else 0 end) month_5,
+        sum(case when month_diff = 6 then 1 else 0 end) month_6,
+        sum(case when month_diff = 7 then 1 else 0 end) month_7,
+        sum(case when month_diff = 8 then 1 else 0 end) month_8,
+        sum(case when month_diff = 9 then 1 else 0 end) month_9,
+        sum(case when month_diff = 10 then 1 else 0 end) month_10,
+        sum(case when month_diff = 11 then 1 else 0 end) month_11,
+        sum(case when month_diff = 12 then 1 else 0 end) month_12
+        from g3 group  by min_month
+        ),
+        rt2 as
+        (select min_month month_id,
+        month_0 month0,
+        (case when month_0=0 then 0 else round((month_0 - month_1)/month_0,4)*100 end) month1,
+        (case when month_0=0 then 0 else round((month_0 - month_2)/month_0,4)*100 end) month2,
+        (case when month_0=0 then 0 else round((month_0 - month_3)/month_0,4)*100 end) month3,
+        (case when month_0=0 then 0 else round((month_0 - month_4)/month_0,4)*100 end) month4,
+        (case when month_0=0 then 0 else round((month_0 - month_5)/month_0,4)*100 end) month5,
+        (case when month_0=0 then 0 else round((month_0 - month_6)/month_0,4)*100 end) month6,
+        (case when month_0=0 then 0 else round((month_0 - month_7)/month_0,4)*100 end) month7,
+        (case when month_0=0 then 0 else round((month_0 - month_8)/month_0,4)*100 end) month8,
+        (case when month_0=0 then 0 else round((month_0 - month_9)/month_0,4)*100 end) month9,
+        (case when month_0=0 then 0 else round((month_0 - month_10)/month_0,4)*100 end) month10,
+        (case when month_0=0 then 0 else round((month_0 - month_11)/month_0,4)*100 end) month11,
+        (case when month_0=0 then 0 else round((month_0 - month_12)/month_0,4)*100 end) month12
+        from rt)
+        select
+        dt.month_id,
+        nvl(rt2.month0,0) total_user,
+        nvl(rt2.month1,0) month1,
+        nvl(rt2.month2,0) month2,
+        nvl(rt2.month3,0) month3,
+        nvl(rt2.month4,0) month4,
+        nvl(rt2.month5,0) month5,
+        nvl(rt2.month6,0) month6,
+        nvl(rt2.month7,0) month7,
+        nvl(rt2.month8,0) month8,
+        nvl(rt2.month9,0) month9,
+        nvl(rt2.month10,0) month10,
+        nvl(rt2.month11,0) month11,
+        nvl(rt2.month12,0) month12
+        from rt2 right join
+        (select month_id from w_month  where month_id &gt;= #{beginDt} and month_id &lt;= #{endDt}) dt
+        on rt2.month_id=dt.month_id
+        order by dt.month_id
+    </select>
+
+    <select id="getLossUserRateDMonthBySpu" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        t.user_id
+        FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        where t.valid_status=1
+        and t.product_id=spu.product_id
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{beginDt}
+        and dt.month &lt;= #{endDt}
+        AND SPU.SPU_WID= #{spuId}
+        ),
+        --获取用户在此区间内的最早购买月份
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        --如果用户一个月有多单，则只计算一次
+        SELECT
+        DISTINCT
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff
+        FROM g1,g2 where g1.user_id=g2.user_id
+        ),
+        rt as(
+        select
+        min_month,
+        sum(case when month_diff = 0 then 1 else 0 end) month_0,
+        sum(case when month_diff = 1 then 1 else 0 end) month_1,
+        sum(case when month_diff = 2 then 1 else 0 end) month_2,
+        sum(case when month_diff = 3 then 1 else 0 end) month_3,
+        sum(case when month_diff = 4 then 1 else 0 end) month_4,
+        sum(case when month_diff = 5 then 1 else 0 end) month_5,
+        sum(case when month_diff = 6 then 1 else 0 end) month_6,
+        sum(case when month_diff = 7 then 1 else 0 end) month_7,
+        sum(case when month_diff = 8 then 1 else 0 end) month_8,
+        sum(case when month_diff = 9 then 1 else 0 end) month_9,
+        sum(case when month_diff = 10 then 1 else 0 end) month_10,
+        sum(case when month_diff = 11 then 1 else 0 end) month_11,
+        sum(case when month_diff = 12 then 1 else 0 end) month_12
+        from g3 group  by min_month
+        ),
+        rt2 as
+        (select min_month month_id,
+        month_0 month0,
+        (case when month_0=0 then 0 else round((month_0 - month_1)/month_0,4)*100 end) month1,
+        (case when month_0=0 then 0 else round((month_0 - month_2)/month_0,4)*100 end) month2,
+        (case when month_0=0 then 0 else round((month_0 - month_3)/month_0,4)*100 end) month3,
+        (case when month_0=0 then 0 else round((month_0 - month_4)/month_0,4)*100 end) month4,
+        (case when month_0=0 then 0 else round((month_0 - month_5)/month_0,4)*100 end) month5,
+        (case when month_0=0 then 0 else round((month_0 - month_6)/month_0,4)*100 end) month6,
+        (case when month_0=0 then 0 else round((month_0 - month_7)/month_0,4)*100 end) month7,
+        (case when month_0=0 then 0 else round((month_0 - month_8)/month_0,4)*100 end) month8,
+        (case when month_0=0 then 0 else round((month_0 - month_9)/month_0,4)*100 end) month9,
+        (case when month_0=0 then 0 else round((month_0 - month_10)/month_0,4)*100 end) month10,
+        (case when month_0=0 then 0 else round((month_0 - month_11)/month_0,4)*100 end) month11,
+        (case when month_0=0 then 0 else round((month_0 - month_12)/month_0,4)*100 end) month12
+        from rt)
+        select
+        dt.month_id,
+        nvl(rt2.month0,0) total_user,
+        nvl(rt2.month1,0) month1,
+        nvl(rt2.month2,0) month2,
+        nvl(rt2.month3,0) month3,
+        nvl(rt2.month4,0) month4,
+        nvl(rt2.month5,0) month5,
+        nvl(rt2.month6,0) month6,
+        nvl(rt2.month7,0) month7,
+        nvl(rt2.month8,0) month8,
+        nvl(rt2.month9,0) month9,
+        nvl(rt2.month10,0) month10,
+        nvl(rt2.month11,0) month11,
+        nvl(rt2.month12,0) month12
+        from rt2 right join
+        (select month_id from w_month  where month_id &gt;= #{beginDt} and month_id &lt;= #{endDt}) dt
+        on rt2.month_id=dt.month_id
+        order by dt.month_id
+    </select>
+
+    <select id="getLossUserMonthBySpu" resultMap="datePeriodKpiMap">
+        WITH g1 AS
+        (
+        SELECT MONTH BUY_MONTH,
+        T.USER_ID
+        FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        where t.valid_status=1
+        and t.product_id=spu.product_id
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{beginDt}
+        and dt.month &lt;= #{endDt}
+        AND SPU.SPU_WID= #{spuId}
+        ),
+        --每个用户及其最早购买的月份
+        g2 as(
+        SELECT MIN(BUY_MONTH) MIN_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY USER_ID
+        ),
+        --每个用户 及其购买月份
+        g3 as(
+        SELECT BUY_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY BUY_MONTH,USER_ID
+        )
+        SELECT g2.MIN_MONTH,g3.BUY_MONTH,COUNT(*) C_USERS FROM  g2,g3
+        WHERE g2.USER_ID = g3.USER_ID
+        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH
+        ORDER BY g2.MIN_MONTH,g3.BUY_MONTH
+    </select>
+
+
+    <select id="getLossUserMonth" resultMap="datePeriodKpiMap">
+        WITH g1 AS
+        (
+        SELECT MONTH BUY_MONTH,
+        T.USER_ID
+        FROM W_ORDERS T,W_DATE DT  WHERE T.VALID_STATUS=1
+        AND DT.MONTH &gt;= #{beginDt}
+        AND DT.MONTH &lt;= #{endDt}
+        AND T.ORDER_DT_WID=DT.ROW_WID
+        ),
+        --每个用户及其最早购买的月份
+        g2 as(
+        SELECT MIN(BUY_MONTH) MIN_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY USER_ID
+        ),
+        --每个用户 及其购买月份
+        g3 as(
+        SELECT BUY_MONTH,
+        USER_ID
+        FROM g1
+        GROUP BY BUY_MONTH,USER_ID
+        )
+        SELECT g2.MIN_MONTH,g3.BUY_MONTH,COUNT(*) C_USERS FROM  g2,g3
+        WHERE g2.USER_ID = g3.USER_ID
+        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH
+        ORDER BY g2.MIN_MONTH,g3.BUY_MONTH
+    </select>
+
+    <select id="getLossUserDMonth" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        t.user_id
+        FROM w_Orders t,w_date dt
+        where t.valid_status=1
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{beginDt}
+        and dt.month &lt;= #{endDt}
+        ),
+        --获取用户在此区间内的最早购买月份
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        --如果用户一个月有多单，则只计算一次
+        SELECT
+        DISTINCT
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff
+        FROM g1,g2 where g1.user_id=g2.user_id
+        ),
+        rt as(
+        select
+        min_month month_id,
+        sum(case when month_diff = 0 then 1 else 0 end) month0,
+        sum(case when month_diff = 1 then 1 else 0 end) month1,
+        sum(case when month_diff = 2 then 1 else 0 end) month2,
+        sum(case when month_diff = 3 then 1 else 0 end) month3,
+        sum(case when month_diff = 4 then 1 else 0 end) month4,
+        sum(case when month_diff = 5 then 1 else 0 end) month5,
+        sum(case when month_diff = 6 then 1 else 0 end) month6,
+        sum(case when month_diff = 7 then 1 else 0 end) month7,
+        sum(case when month_diff = 8 then 1 else 0 end) month8,
+        sum(case when month_diff = 9 then 1 else 0 end) month9,
+        sum(case when month_diff = 10 then 1 else 0 end) month10,
+        sum(case when month_diff = 11 then 1 else 0 end) month11,
+        sum(case when month_diff = 12 then 1 else 0 end) month12
+        from g3 group  by min_month
+        )
+        select
+        dt.month_id,
+        nvl(rt.month0,0) total_user,
+        nvl(rt.month0,0) - nvl(rt.month1,0) month1,
+        nvl(rt.month0,0) - nvl(rt.month2,0) month2,
+        nvl(rt.month0,0) - nvl(rt.month3,0) month3,
+        nvl(rt.month0,0) - nvl(rt.month4,0) month4,
+        nvl(rt.month0,0) - nvl(rt.month5,0) month5,
+        nvl(rt.month0,0) - nvl(rt.month6,0) month6,
+        nvl(rt.month0,0) - nvl(rt.month7,0) month7,
+        nvl(rt.month0,0) - nvl(rt.month8,0) month8,
+        nvl(rt.month0,0) - nvl(rt.month9,0) month9,
+        nvl(rt.month0,0) - nvl(rt.month10,0) month10,
+        nvl(rt.month0,0) - nvl(rt.month11,0) month11,
+        nvl(rt.month0,0) - nvl(rt.month12,0) month12
+        from rt right join
+        (select month_id from w_month  where month_id &gt;= #{beginDt} and month_id &lt;= #{endDt}) dt
+        on rt.month_id=dt.month_id
+        order by dt.month_id
+    </select>
+
+    <select id="getLossUserDMonthBySpu" resultType="map">
+        with g1 as
+        (
+        SELECT
+        dt.month buy_month,
+        t.user_id
+        FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        where t.valid_status=1
+        and t.product_id=spu.product_id
+        and t.order_dt_wid=dt.row_wid
+        and dt.month &gt;= #{beginDt}
+        and dt.month &lt;= #{endDt}
+        AND SPU.SPU_WID= #{spuId}
+        ),
+        --获取用户在此区间内的最早购买月份
+        g2 as(
+        SELECT
+        min(buy_month) min_month,
+        user_id
+        FROM g1
+        group by user_id
+        ),
+        g3 as(
+        --如果用户一个月有多单，则只计算一次
+        SELECT
+        DISTINCT
+        g1.user_id,
+        g1.buy_month,
+        g2.min_month,
+        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff
+        FROM g1,g2 where g1.user_id=g2.user_id
+        ),
+        rt as(
+        select
+        min_month month_id,
+        sum(case when month_diff = 0 then 1 else 0 end) month0,
+        sum(case when month_diff = 1 then 1 else 0 end) month1,
+        sum(case when month_diff = 2 then 1 else 0 end) month2,
+        sum(case when month_diff = 3 then 1 else 0 end) month3,
+        sum(case when month_diff = 4 then 1 else 0 end) month4,
+        sum(case when month_diff = 5 then 1 else 0 end) month5,
+        sum(case when month_diff = 6 then 1 else 0 end) month6,
+        sum(case when month_diff = 7 then 1 else 0 end) month7,
+        sum(case when month_diff = 8 then 1 else 0 end) month8,
+        sum(case when month_diff = 9 then 1 else 0 end) month9,
+        sum(case when month_diff = 10 then 1 else 0 end) month10,
+        sum(case when month_diff = 11 then 1 else 0 end) month11,
+        sum(case when month_diff = 12 then 1 else 0 end) month12
+        from g3 group  by min_month
+        )
+        select
+        dt.month_id,
+        nvl(rt.month0,0) total_user,
+        nvl(rt.month0,0) - nvl(rt.month1,0) month1,
+        nvl(rt.month0,0) - nvl(rt.month2,0) month2,
+        nvl(rt.month0,0) - nvl(rt.month3,0) month3,
+        nvl(rt.month0,0) - nvl(rt.month4,0) month4,
+        nvl(rt.month0,0) - nvl(rt.month5,0) month5,
+        nvl(rt.month0,0) - nvl(rt.month6,0) month6,
+        nvl(rt.month0,0) - nvl(rt.month7,0) month7,
+        nvl(rt.month0,0) - nvl(rt.month8,0) month8,
+        nvl(rt.month0,0) - nvl(rt.month9,0) month9,
+        nvl(rt.month0,0) - nvl(rt.month10,0) month10,
+        nvl(rt.month0,0) - nvl(rt.month11,0) month11,
+        nvl(rt.month0,0) - nvl(rt.month12,0) month12
+        from rt right join
+        (select month_id from w_month  where month_id &gt;= #{beginDt} and month_id &lt;= #{endDt}) dt
+        on rt.month_id=dt.month_id
+        order by dt.month_id
     </select>
  </mapper>

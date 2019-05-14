@@ -60,6 +60,40 @@ public class DateUtil {
         return result;
     }
 
+
+    public static List<String> getMonthBetween(String minDate, String maxDate, String format){
+        ArrayList<String> result = new ArrayList<>();
+        //格式化为年月
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+
+        Calendar min = Calendar.getInstance();
+        Calendar max = Calendar.getInstance();
+
+        Date minDt= null;
+        Date maxDt= null;
+        try {
+            minDt = sdf.parse(minDate);
+            maxDt = sdf.parse(maxDate);
+        } catch (ParseException e) {
+            minDt=new Date();
+            maxDt=new Date();
+        }
+
+        min.setTime(minDt);
+        min.set(min.get(Calendar.YEAR), min.get(Calendar.MONTH), 1);
+
+        max.setTime(maxDt);
+        max.set(max.get(Calendar.YEAR), max.get(Calendar.MONTH), 2);
+
+        Calendar curr = min;
+        while (curr.before(max)) {
+            result.add(sdf.format(curr.getTime()));
+            curr.add(Calendar.MONTH, 1);
+        }
+
+        return result;
+    }
+
     /**
      * 以循环的方式计算日期
      * @param beginDate endDate

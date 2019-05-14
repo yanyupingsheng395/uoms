@@ -22,11 +22,11 @@
     SELECT A.*,ROWNUM RN FROM
       (SELECT
          USER_ID, SPU_NAME, RE_PURCH, PURCH_INTERVAL, NUM_PURCH_TYPE, JOINT_RATE, CYCLE_STAGE, ACC_PURCH_TIMES, AVG_PIECE_PRICE
-    FROM UO_SPU_CYCLE) A  WHERE ROWNUM &lt;=#{endRow}
+    FROM UO_LC_SPU_TARGET) A  WHERE ROWNUM &lt;=#{endRow}
     ) WHERE RN &gt;=#{startRow}
   </select>
 
   <select id="getTotalCount" resultType="int">
-    select count(1) from UO_SPU_CYCLE
+    select count(1) from UO_LC_SPU_TARGET
   </select>
 </mapper>

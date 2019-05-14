@@ -205,8 +205,8 @@ public class PageController extends BaseController {
     @Log("品类运营")
     @RequestMapping("/lifecycle/catlist")
     public String catlist(Model model) {
-        StateJudge stateJudge = stateJudgeService.selectAll().get(0);
-        model.addAttribute("stateJudge", stateJudge);
+//        StateJudge stateJudge = stateJudgeService.selectAll().get(0);
+//        model.addAttribute("stateJudge", stateJudge);
         return "operate/lifecycle/cat_list";
     }
 

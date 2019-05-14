@@ -29,8 +29,8 @@ public class SpuLifeCycleController {
     }
 
     @GetMapping("/getPurchDateChart")
-    public ResponseBo getPurchDateChart(String spuId, Integer gt, Integer lt) throws Exception {
-        Echart echart = spuLifeCycleService.getPurchDateChart(spuId, gt, lt);
+    public ResponseBo getPurchDateChart(String spuId, String type){
+        Echart echart = spuLifeCycleService.getPurchDateChart(spuId, type);
         return ResponseBo.okWithData(null, echart);
     }
 

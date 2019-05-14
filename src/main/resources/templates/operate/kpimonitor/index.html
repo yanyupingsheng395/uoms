@@ -111,21 +111,18 @@
                                         <hr style="margin-top:5px; margin-bottom: 5px;"/>
                                         <form class="form-inline pull-left" action="" method="post" onsubmit="return false;">
                                             <div class="form-group">
-                                                <input class="form-control js-datepicker m-b-10" type="text" id="startDate_1" name="startDate" data-date-format="yyyy-mm-dd" value="2018-10-01"/>
+                                                <input class="form-control js-datepicker m-b-10" type="text" id="startDate_1" name="startDate" data-date-format="yyyy-mm"/>
                                             </div>
                                             <div class="form-group">
-                                                <input class="form-control js-datepicker m-b-10" type="text" id="endDate_1" name="endDate" data-date-format="yyyy-mm-dd" value="2019-03-31"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <button class="btn btn-primary m-b-10" type="button" onclick="getData()"><i class="mdi mdi-magnify"></i>查询</button>
+                                                <button class="btn btn-primary m-b-10" type="button" onclick="searchData()"><i class="mdi mdi-magnify"></i>查询</button>
                                             </div>
                                         </form>
                                         <div class="pull-right">
                                             <div class="btn-group-round" id="cohortbtngroup1">
                                                 <button class="btn btn-primary btn-sm btn-round cohortbtn" name="month">自然月</button>
                                                 <button class="btn btn-default btn-sm btn-round cohortbtn" name="dmonth">间隔月</button>
-                                                <button class="btn btn-default btn-sm btn-round cohortbtn" name="week">自然周</button>
-                                                <button class="btn btn-default btn-sm btn-round cohortbtn" name="dweek">间隔周</button>
+                                                <!--<button class="btn btn-default btn-sm btn-round cohortbtn" name="week">自然周</button>-->
+                                                <!--<button class="btn btn-default btn-sm btn-round cohortbtn" name="dweek">间隔周</button>-->
                                             </div>
                                         </div>
                                         <ul class="nav nav-tabs" style="clear: both;" id="tabs02">
@@ -160,10 +157,7 @@
                                         <hr style="margin-top:5px; margin-bottom: 5px;"/>
                                         <form class="form-inline pull-left" action="" method="post" onsubmit="return false;">
                                             <div class="form-group">
-                                                <input class="form-control js-datepicker m-b-10" type="text" id="startDate_2" name="startDate" data-date-format="yyyy-mm-dd" value="2018-10-01"/>
-                                            </div>
-                                            <div class="form-group">
-                                                <input class="form-control js-datepicker m-b-10" type="text" id="endDate_2" name="endDate" data-date-format="yyyy-mm-dd" value="2019-03-31"/>
+                                                <input class="form-control js-datepicker m-b-10" type="text" id="startDate_2" name="startDate" data-date-format="yyyy-mm"/>
                                             </div>
                                             <div class="form-group">
                                                 <button class="btn btn-primary m-b-10" type="button" onclick="getData()"><i class="mdi mdi-magnify"></i>查询</button>
@@ -173,8 +167,8 @@
                                             <div class="btn-group-round" id="cohortbtngroup2">
                                                 <button class="btn btn-primary btn-sm btn-round cohortbtn" name="month">自然月</button>
                                                 <button class="btn btn-default btn-sm btn-round cohortbtn" name="dmonth">间隔月</button>
-                                                <button class="btn btn-default btn-sm btn-round cohortbtn" name="week">自然周</button>
-                                                <button class="btn btn-default btn-sm btn-round cohortbtn" name="dweek">间隔周</button>
+                                                <!--<button class="btn btn-default btn-sm btn-round cohortbtn" name="week">自然周</button>-->
+                                                <!--<button class="btn btn-default btn-sm btn-round cohortbtn" name="dweek">间隔周</button>-->
                                             </div>
                                         </div>
                                         <ul class="nav nav-tabs" style="clear: both;" id="tabs03">

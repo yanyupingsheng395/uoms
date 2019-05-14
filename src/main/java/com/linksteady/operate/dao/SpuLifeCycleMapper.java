@@ -11,7 +11,7 @@ import java.util.Map;
 public interface SpuLifeCycleMapper {
     List<Map<String, Object>> retentionPurchaseTimes(@Param("spuId") String spuId);
 
-    List<Map<String, Object>> getPurchDate(@Param("spuId")String spuId, @Param("gtimes")Integer gtimes, @Param("ltimes")Integer ltimes);
+    List<Map<String, Object>> getLcDate(@Param("spuId")String spuId, @Param("type") String type);
 
     List<Map<String, Object>> getUnitPriceChart(@Param("spuId") String spuId);
 

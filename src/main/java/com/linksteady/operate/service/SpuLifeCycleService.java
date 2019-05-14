@@ -8,9 +8,8 @@ import java.util.List;
  * Created by hxcao on 2019-05-10
  */
 public interface SpuLifeCycleService {
-
     Echart retentionPurchaseTimes(String spuId);
-    Echart getPurchDateChart(String spuId, Integer gt, Integer lt) throws Exception;
+    Echart getPurchDateChart(String spuId, String type);
     Echart getUnitPriceChart(String spuId);
     Echart getDtPeriodChart(String spuId);
     Echart getRateChart(String spuId);

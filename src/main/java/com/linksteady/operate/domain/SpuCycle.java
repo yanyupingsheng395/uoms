@@ -4,7 +4,7 @@ import javax.persistence.*;
 import lombok.Data;
 
 @Data
-@Table(name = "UO_SPU_CYCLE")
+@Table(name = "UO_LC_SPU_TRAGET")
 public class SpuCycle {
     /**
      * 用户ID

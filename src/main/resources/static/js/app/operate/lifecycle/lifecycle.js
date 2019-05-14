@@ -1,8 +1,8 @@
 function tab2Init() {
     retention_time();
-    freq_time("freq1", "次数（1-2次）", 1, 2);
-    freq_time("freq2", "次数（2-10次）", 2, 10);
-    freq_time("freq3", "次数（>=10次）", 10, null);
+    freq_time("freq1", "购买次数（复购）", "puchtimes_gap_repurch");
+    freq_time("freq2", "购买次数（忠诚）", "puchtimes_gap_loyal");
+    freq_time("freq3", "购买次数（衰退）","puchtimes_gap_decline");
 
     getUnitPriceChart();
     getDtPeriodChart();
@@ -17,7 +17,6 @@ function tab2Init() {
 function getStageNode() {
     var spuId = 1;
     $.get("/spuLifeCycle/getStageNode", {spuId: spuId}, function (r) {
-        console.log(r)
         $.each(r.data, function (k, v) {
             $("#stage").find("tbody tr:eq("+k+")").find("td:eq(1)").text(v);
         });
@@ -25,7 +24,7 @@ function getStageNode() {
 }
 
 function retention_time() {
-    var spuId = 1;
+    var spuId = selectId;
     $.get("/spuLifeCycle/retentionPurchaseTimes", {spuId: spuId}, function (r) {
         var series = r.data.seriesData[0];
         series.type = 'line';
@@ -39,9 +38,10 @@ function retention_time() {
 }
 
 // 购买次数随时间间隔的变化
-function freq_time(chartId, yName, gt, lt) {
-    var spuId = 1;
-    $.get("/spuLifeCycle/getPurchDateChart", {spuId: spuId, gt: gt, lt: lt}, function (r) {
+function freq_time(chartId, yName, type) {
+    var spuId = selectId;
+    $.get("/spuLifeCycle/getPurchDateChart", {spuId: spuId, type: type}, function (r) {
+        console.log(r);
         var series = r.data.seriesData[0];
         series.type = 'line';
         series.smooth = true;
@@ -54,7 +54,7 @@ function freq_time(chartId, yName, gt, lt) {
 }
 
 function getUnitPriceChart() {
-    var spuId = 1;
+    var spuId = selectId;
     $.get("/spuLifeCycle/getUnitPriceChart", {spuId: spuId}, function (r) {
         var series = r.data.seriesData[0];
         series.type = 'line';
@@ -68,7 +68,7 @@ function getUnitPriceChart() {
 }
 
 function getDtPeriodChart() {
-    var spuId = 1;
+    var spuId = selectId;
     $.get("/spuLifeCycle/getDtPeriodChart", {spuId: spuId}, function (r) {
         var series = r.data.seriesData[0];
         series.type = 'line';
@@ -83,7 +83,7 @@ function getDtPeriodChart() {
 
 
 function getRateChart() {
-    var spuId = 1;
+    var spuId = selectId;
     $.get("/spuLifeCycle/getRateChart", {spuId: spuId}, function (r) {
         var series = r.data.seriesData[0];
         series.type = 'line';
@@ -98,7 +98,7 @@ function getRateChart() {
 
 
 function getCateChart() {
-    var spuId = 1;
+    var spuId = selectId;
     $.get("/spuLifeCycle/getCateChart", {spuId: spuId}, function (r) {
         var series = r.data.seriesData[0];
         series.type = 'line';
@@ -112,7 +112,7 @@ function getCateChart() {
 }
 
 function userCount() {
-    var spuId = 1;
+    var spuId = selectId;
     $.get("/spuLifeCycle/getUserCountChart", {spuId: spuId}, function (r) {
         var legendData = r.data.legendData;
         var seriesData = new Array();
@@ -134,7 +134,7 @@ function userCount() {
 }
 
 function saleVolume() {
-    var spuId = 1;
+    var spuId = selectId;
     $.get("/spuLifeCycle/getSaleVolumeChart", {spuId: spuId}, function (r) {
         var legendData = r.data.legendData;
         var seriesData = new Array();

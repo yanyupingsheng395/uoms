@@ -8,12 +8,7 @@ import com.linksteady.operate.service.SpuLifeCycleService;
 import com.linksteady.operate.vo.Echart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,42 +44,22 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         return echart;
     }
 
-
+    /**
+     * puchtimes_gap_repurch  --复购 购买次数随购买间隔的变化
+     * puchtimes_gap_loyal  --忠诚 购买次数随购买间隔的变化
+     * puchtimes_gap_decline  --衰退 购买次数随购买间隔的变化
+     * @param spuId
+     * @param gt
+     * @param lt
+     * @return
+     */
     @Override
-    public Echart getPurchDateChart(String spuId, Integer gt, Integer lt) throws Exception {
-        List<Map<String, Object>> data = spuLifeCycleMapper.getPurchDate(spuId, gt, lt);
-        // todo startDt取样时间，后续传值
-        DateFormat df = new SimpleDateFormat("yyyyMMdd");
-        String startDt = "20190401";
-        Calendar endDt = Calendar.getInstance();
-        endDt.add(Calendar.DATE, -1);
-        int days = DateUtil.getDaysDuringDates(df.parse(startDt), endDt.getTime());
-
-        List<String> daysList = Lists.newArrayList();
-        List<String> dataList = Lists.newArrayList();
-        for(int i=1; i<=days; i++) {
-            boolean flag = false;
-            daysList.add(String.valueOf(i));
-            for(int j=0; j<data.size(); j++) {
-                Map<String, Object> t = data.get(j);
-                try {
-                    int daysTmp = DateUtil.getDaysDuringDates(df.parse(String.valueOf(t.get("SPU_DT"))), endDt.getTime());
-                    if(daysTmp == i) {
-                        flag = true;
-                        dataList.add(String.valueOf(t.get("PURCH_TIMES")));
-                        break;
-                    }
-                }catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            if(!flag) {
-                dataList.add("0");
-            }
-        }
-
+    public Echart getPurchDateChart(String spuId, String type) {
+        List<Map<String, Object>> data = spuLifeCycleMapper.getLcDate(spuId, type);
+        List<String> xdata = data.stream().map(x->x.get("dt_period").toString()).collect(Collectors.toList());
+        List<String> dataList = data.stream().map(x->x.get("purch_times").toString()).collect(Collectors.toList());
         Echart echart = new Echart();
-        echart.setxAxisData(daysList);
+        echart.setxAxisData(xdata);
         Map<String, Object> tmp = Maps.newHashMap();
         tmp.put("data", dataList);
         List list = Lists.newArrayList();
@@ -265,16 +240,16 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         Map<String,Double> datas4 = Maps.newHashMap();
         data.stream().forEach(t-> {
             if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("0")) {
-                datas1.put(String.valueOf(t.get("SPU_DT")), Double.valueOf((String)(t.get("SALE_VOLUME"))));
+                datas1.put(String.valueOf(t.get("COMPUTE_DT")), Double.valueOf((String)(t.get("GMV_TOTAL"))));
             }
             if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("1")) {
-                datas2.put(String.valueOf(t.get("SPU_DT")), Double.valueOf((String)(t.get("SALE_VOLUME"))));
+                datas2.put(String.valueOf(t.get("COMPUTE_DT")), Double.valueOf((String)(t.get("GMV_TOTAL"))));
             }
             if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("2")) {
-                datas3.put(String.valueOf(t.get("SPU_DT")), Double.valueOf((String)(t.get("SALE_VOLUME"))));
+                datas3.put(String.valueOf(t.get("COMPUTE_DT")), Double.valueOf((String)(t.get("GMV_TOTAL"))));
             }
             if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("3")) {
-                datas4.put(String.valueOf(t.get("SPU_DT")), Double.valueOf((String)(t.get("SALE_VOLUME"))));
+                datas4.put(String.valueOf(t.get("COMPUTE_DT")), Double.valueOf((String)(t.get("GMV_TOTAL"))));
             }
         });
 
