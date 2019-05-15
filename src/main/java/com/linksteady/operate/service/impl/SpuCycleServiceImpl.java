@@ -18,12 +18,12 @@ public class SpuCycleServiceImpl implements SpuCycleService {
     private SpuCycleMapper spuCycleMapper;
 
     @Override
-    public List<SpuCycle> getDataList(int startRow, int endRow) {
-        return spuCycleMapper.getDataList(startRow, endRow);
+    public List<SpuCycle> getDataList(int startRow, int endRow, String spuId) {
+        return spuCycleMapper.getDataList(startRow, endRow, spuId);
     }
 
     @Override
-    public int getTotalCount() {
-        return spuCycleMapper.getTotalCount();
+    public int getTotalCount(String spuId) {
+        return spuCycleMapper.getTotalCount(spuId);
     }
 }

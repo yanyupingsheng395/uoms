@@ -8,7 +8,7 @@ import java.util.List;
  * Created by hxcao on 2019-04-29
  */
 public interface SpuCycleService {
-    List<SpuCycle> getDataList(int startRow,int endRow);
+    List<SpuCycle> getDataList(int startRow,int endRow, String spuId);
 
-    int getTotalCount();
+    int getTotalCount(String spuId);
 }

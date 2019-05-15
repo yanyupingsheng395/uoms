@@ -28,7 +28,7 @@
     </select>
 
     <select id="getLifeCycleKpi" resultType="map">
-        select LIFECYCLE_TYPE, USER_COUNT, GMV_TOTAL from UO_LC_SPU_LIFECYCLE_KPI where spu_id = #{spuId}
+        select COMPUTE_DT, LIFECYCLE_TYPE, USER_COUNT, GMV_TOTAL from UO_LC_SPU_LIFECYCLE_KPI where spu_id = #{spuId} order by COMPUTE_DT asc
     </select>
 
     <select id="getStageNode" resultType="string">

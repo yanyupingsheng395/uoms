@@ -7,6 +7,6 @@ import io.lettuce.core.dynamic.annotation.Param;
 import java.util.List;
 
 public interface SpuCycleMapper extends MyMapper<SpuCycle> {
-    List<SpuCycle> getDataList(@Param("startRow") int startRow, @Param("endRow") int endRow);
-    int getTotalCount();
+    List<SpuCycle> getDataList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("spuId") String spuId);
+    int getTotalCount(@Param("spuId") String spuId);
 }

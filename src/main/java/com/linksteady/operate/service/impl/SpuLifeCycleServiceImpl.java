@@ -6,6 +6,7 @@ import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.SpuLifeCycleMapper;
 import com.linksteady.operate.service.SpuLifeCycleService;
 import com.linksteady.operate.vo.Echart;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -54,9 +55,6 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
      * puchtimes_gap_loyal  --忠诚 购买次数随购买间隔的变化
      * puchtimes_gap_decline  --衰退 购买次数随购买间隔的变化
      * @param spuId
-     * @param gt
-     * @param lt
-     * @return
      */
     @Override
     public Echart getPurchDateChart(String spuId, String type) {
@@ -184,46 +182,37 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         legendData.add("衰退期");
         echart.setLegendData(legendData);
 
-        Map<String,Double> datas1 = Maps.newHashMap();
-        Map<String,Double> datas2 = Maps.newHashMap();
-        Map<String,Double> datas3 = Maps.newHashMap();
-        Map<String,Double> datas4 = Maps.newHashMap();
-        data.stream().forEach(t-> {
-            if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("0")) {
-                datas1.put(String.valueOf(t.get("SPU_DT")), ((BigDecimal)(t.get("USER_COUNT"))).doubleValue());
-            }
-            if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("1")) {
-                datas2.put(String.valueOf(t.get("SPU_DT")), ((BigDecimal)(t.get("USER_COUNT"))).doubleValue());
-            }
-            if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("2")) {
-                datas3.put(String.valueOf(t.get("SPU_DT")), ((BigDecimal)(t.get("USER_COUNT"))).doubleValue());
-            }
-            if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("3")) {
-                datas4.put(String.valueOf(t.get("SPU_DT")), ((BigDecimal)(t.get("USER_COUNT"))).doubleValue());
-            }
-        });
+        List<String> xdata = data.stream().map(x-> String.valueOf(x.get("COMPUTE_DT"))).distinct().collect(Collectors.toList());
 
-        List<String> dayPeriodList=DateUtil.getEveryday("2019-05-01","2019-05-31");
         List<Map<String, Object>> series = Lists.newArrayList();
         Map<String, Object> tmp = Maps.newHashMap();
         tmp.put("name", "新客期");
-        tmp.put("data", fixData(datas1, dayPeriodList));
+        tmp.put("data", getResult(data, "USER_COUNT", "0"));
         series.add(tmp);
         tmp = Maps.newHashMap();
         tmp.put("name", "成长期");
-        tmp.put("data", fixData(datas2, dayPeriodList));
+        tmp.put("data", getResult(data, "USER_COUNT", "1"));
         series.add(tmp);
         tmp = Maps.newHashMap();
         tmp.put("name", "成熟期");
-        tmp.put("data", fixData(datas3, dayPeriodList));
+        tmp.put("data", getResult(data, "USER_COUNT", "2"));
         series.add(tmp);
         tmp = Maps.newHashMap();
         tmp.put("name", "衰退期");
-        tmp.put("data", fixData(datas4, dayPeriodList));
+        tmp.put("data", getResult(data, "USER_COUNT", "3"));
         series.add(tmp);
         echart.setSeriesData(series);
-        echart.setxAxisData(dayPeriodList);
+        echart.setxAxisData(xdata);
         return echart;
+    }
+
+    private List<Double> getResult(List<Map<String, Object>> data, String filed, String type) {
+        return data.stream().map(x-> {
+            if(StringUtils.isNotBlank(String.valueOf(x.get("LIFECYCLE_TYPE"))) && x.get("LIFECYCLE_TYPE").equals(type)) {
+                return Double.valueOf(x.get(filed).toString());
+            }
+            return 0D;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -231,7 +220,7 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         List<Map<String, Object>> data = spuLifeCycleMapper.getLifeCycleKpi(spuId);
         Echart echart = new Echart();
         echart.setxAxisName("日期");
-        echart.setyAxisName("用户数");
+        echart.setyAxisName("销售额（元）");
         List<String> legendData = Lists.newArrayList();
         legendData.add("新客期");
         legendData.add("成长期");
@@ -239,45 +228,27 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         legendData.add("衰退期");
         echart.setLegendData(legendData);
 
-        Map<String,Double> datas1 = Maps.newHashMap();
-        Map<String,Double> datas2 = Maps.newHashMap();
-        Map<String,Double> datas3 = Maps.newHashMap();
-        Map<String,Double> datas4 = Maps.newHashMap();
-        data.stream().forEach(t-> {
-            if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("0")) {
-                datas1.put(String.valueOf(t.get("COMPUTE_DT")), Double.valueOf((String)(t.get("GMV_TOTAL"))));
-            }
-            if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("1")) {
-                datas2.put(String.valueOf(t.get("COMPUTE_DT")), Double.valueOf((String)(t.get("GMV_TOTAL"))));
-            }
-            if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("2")) {
-                datas3.put(String.valueOf(t.get("COMPUTE_DT")), Double.valueOf((String)(t.get("GMV_TOTAL"))));
-            }
-            if(t.get("LIFECYCLE_TYPE") != null && t.get("LIFECYCLE_TYPE").equals("3")) {
-                datas4.put(String.valueOf(t.get("COMPUTE_DT")), Double.valueOf((String)(t.get("GMV_TOTAL"))));
-            }
-        });
+        List<String> xdata = data.stream().map(x-> String.valueOf(x.get("COMPUTE_DT"))).distinct().collect(Collectors.toList());
 
-        List<String> dayPeriodList=DateUtil.getEveryday("2019-05-01","2019-05-31");
         List<Map<String, Object>> series = Lists.newArrayList();
         Map<String, Object> tmp = Maps.newHashMap();
         tmp.put("name", "新客期");
-        tmp.put("data", fixData(datas1, dayPeriodList));
+        tmp.put("data", getResult(data, "GMV_TOTAL", "0"));
         series.add(tmp);
         tmp = Maps.newHashMap();
         tmp.put("name", "成长期");
-        tmp.put("data", fixData(datas2, dayPeriodList));
+        tmp.put("data", getResult(data, "GMV_TOTAL", "1"));
         series.add(tmp);
         tmp = Maps.newHashMap();
         tmp.put("name", "成熟期");
-        tmp.put("data", fixData(datas3, dayPeriodList));
+        tmp.put("data", getResult(data, "GMV_TOTAL", "2"));
         series.add(tmp);
         tmp = Maps.newHashMap();
         tmp.put("name", "衰退期");
-        tmp.put("data", fixData(datas4, dayPeriodList));
+        tmp.put("data", getResult(data, "GMV_TOTAL", "3"));
         series.add(tmp);
         echart.setSeriesData(series);
-        echart.setxAxisData(dayPeriodList);
+        echart.setxAxisData(xdata);
         return echart;
     }
 

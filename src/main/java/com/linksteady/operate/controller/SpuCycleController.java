@@ -19,9 +19,9 @@ public class SpuCycleController {
     private SpuCycleService spuCycleService;
 
     @PostMapping("/list")
-    public ResponseBo getDataList(@RequestBody QueryRequest request) {
-        List<SpuCycle> result=spuCycleService.getDataList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize());
-        int totalCount= spuCycleService.getTotalCount();
+    public ResponseBo getDataList(@RequestBody QueryRequest request, String spuId) {
+        List<SpuCycle> result=spuCycleService.getDataList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(), spuId);
+        int totalCount= spuCycleService.getTotalCount(spuId);
         return  ResponseBo.okOverPaging("",totalCount,result);
     }
 }

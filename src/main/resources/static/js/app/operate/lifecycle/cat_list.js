@@ -394,23 +394,20 @@ function tab3DataInit() {
             title: '用户ID'
         },{
             field: 'spuName',
-            title: 'SPU/品类',
-            formatter: function (value, row, index) {
-                return currentSpu;
-            }
+            title: 'SPU/品类'
         },{
-            field: 'cycleStage',
-            title: '周期阶段'
-        },{
-            field: 'rePurch',
-            title: '复购',
+            field: 'lifecycleType',
+            title: '周期阶段',
             formatter: function (value, row, index) {
-                if(value == "Y") {
-                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\"达成目标的理想时间：2019-06-30<br/>达成目标的一般时间：2019-05-30<br/>达成目标的最后时间：2019-08-30\">是</a>";
-                }else {
-                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\"达成目标的理想时间：2019-06-30<br/>达成目标的一般时间：2019-05-30<br/>达成目标的最后时间：2019-08-30\">否</a>";
+                if(value == "0") {
+                    return "新客期";
+                } else if(value == "1") {
+                    return "成长期";
                 }
             }
+        },{
+            field: 'rePurch',
+            title: '复购'
         },{
             field: 'avgPiecePrice',
             title: '平均件单价（元）',
