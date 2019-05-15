@@ -1418,4 +1418,8 @@
         on rt.month_id=dt.month_id
         order by dt.month_id
     </select>
+
+    <select id="getCeofBySpu" resultType="string" parameterType="string">
+        SELECT FORMULA_VALUE FROM UO_LC_SPU_LIFECYCLE WHERE SPU_WID=#{spuId}
+    </select>
  </mapper>
