@@ -152,7 +152,7 @@
             if(periodType == "dmonth") {
                 columns = getDMonthCols(percent);
             }else if(periodType == "month"){
-                columns = getMonthCols(r.data.columns, percent);
+                columns = getMonthCols(r.data.columns, percent, null);
             }
             var data = r.data.data;
             initBootstrapTable($table, columns, data);

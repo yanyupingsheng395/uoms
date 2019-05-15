@@ -115,7 +115,7 @@ function getData(idx) {
         if(periodType == "dmonth") {
             columns = getDMonthCols(percent);
         }else if(periodType == "month"){
-            columns = getMonthCols(r.data.columns, percent);
+            columns = getMonthCols(r.data.columns, percent, null);
         }
         var data = r.data.data;
         initBootstrapTable($table, columns, data, 0, periodType);
@@ -179,7 +179,7 @@ function getDMonthPriceCols(percent) {
 }
 
 // 留存率自然月
-function getMonthCols(data, percent) {
+function getMonthCols(data, percent, type) {
     var cols = [];
     $.each(data, function (k, v) {
         console.log(v)
