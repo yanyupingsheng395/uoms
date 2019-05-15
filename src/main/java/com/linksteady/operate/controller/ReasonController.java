@@ -268,26 +268,26 @@ public class ReasonController  extends BaseController {
     @RequestMapping("/validateRelateKpi")
     public ResponseBo validateRelateKpi(@RequestParam String reasonId, @RequestParam("code") String code) {
 
-        List<String> data= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
+        List<String> codeList= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
         List<String> validateResult=Lists.newArrayList();
 
         ReasonRelMatrix reasonRelMatrix=null;
         Double relateValue=0d;
         String info="";
 
-        if(data.size()>1)
+        if(codeList.size()>1)
         {
-            for(int i=0;i<data.size();i++)
+            for(int i=0;i<codeList.size();i++)
             {
-               for(int j=i+1;j<data.size();j++)
+               for(int j=i+1;j<codeList.size();j++)
                {
                    //获取到交叉的相关系数
-                   reasonRelMatrix=reasonService.getReasonResultByCode(reasonId,data.get(i),data.get(j)).get(0);
+                   reasonRelMatrix=reasonService.getReasonResultByCode(reasonId,codeList.get(i),codeList.get(j)).get(0);
 
 
                    relateValue= reasonRelMatrix.getRelateValue();
 
-                   if(relateValue>=0.7)
+                   if(relateValue>=0.3)
                    {
                        info="因子【"+reasonRelMatrix.getfName()+"】和因子【"+reasonRelMatrix.getRfName()+"】相关度较高，不能同时选择";
                        validateResult.add(info);
