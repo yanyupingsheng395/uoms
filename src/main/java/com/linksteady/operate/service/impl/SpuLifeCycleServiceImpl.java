@@ -27,9 +27,10 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
     private static final String STAGE_PERIOD_2 = "puchtimes_gap_decline"; // 衰退
 
     @Override
-    public Echart retentionPurchaseTimes(String spuId) {
+    public Map<String, Object> retentionPurchaseTimes(String spuId) {
         Echart echart = new Echart();
         List<Map<String, Object>> data = spuLifeCycleMapper.retentionPurchaseTimes(spuId);
+        List<String> imPurchTimes = data.stream().filter(x->x.get("IF_UNUM_LIMIT").equals("Y")).map(y->y.get("PURCH_TIMES").toString()).collect(Collectors.toList());
         List<String> retention = Lists.newArrayList();
         List<String> purchTimes = Lists.newArrayList();
         data.stream().forEach(t->{
@@ -45,7 +46,11 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         List list = Lists.newArrayList();
         list.add(tmp);
         echart.setSeriesData(list);
-        return echart;
+
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("point", imPurchTimes.get(0));
+        result.put("chart", echart);
+        return result;
     }
 
     /**

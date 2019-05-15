@@ -3,7 +3,7 @@
 <mapper namespace="com.linksteady.operate.dao.SpuLifeCycleMapper">
 
     <select id="retentionPurchaseTimes" resultType="map">
-        select retention, purch_times from UO_LC_SPU_LIFECYCLE where type = 'retention_purch' and spu_id = #{spuId} ORDER BY purch_times asc
+        select retention, purch_times, IF_UNUM_LIMIT from UO_LC_SPU_LIFECYCLE where type = 'retention_purch' and spu_id = #{spuId} ORDER BY purch_times asc
     </select>
 
     <select id="getLcDate" resultType="map">

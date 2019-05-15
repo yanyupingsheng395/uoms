@@ -65,12 +65,14 @@ $(function () {
 
     // 统计图表
     $("#btn_statistics").on("click",function () {
-        $("#statis_modal").modal('show');
+        // $("#statis_modal").modal('show');
+        toastr.warning("暂无统计，稍后再试。");
     });
 
     // 效果统计表
     $("#btn_effect").on("click",function () {
-        $("#effect_modal").modal('show');
+        // $("#effect_modal").modal('show');
+        toastr.warning("尚未进行触达，无法查看效果统计。");
     });
 
 });
