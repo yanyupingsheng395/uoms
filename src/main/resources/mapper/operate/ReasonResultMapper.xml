@@ -14,7 +14,7 @@
   </resultMap>
 
   <select id="getReasonResultList" resultMap="BaseResultMap">
-    SELECT REASON_ID,REASON_CODE,FORMULA_DESC,FORMULA,BUSINESS,TO_CHAR(CREATE_DT,'YYYY-MM-DD hh24:mi:ss') CREATE_DT from UO_REASON_RESULT WHERE REASON_ID=#{reasonId} ORDER BY CREATE_DT ASC
+    SELECT REASON_ID,REASON_CODE,FORMULA_DESC,FORMULA,BUSINESS,TO_CHAR(CREATE_DT,'YYYY-MM-DD hh24:mi:ss') CREATE_DT from UO_REASON_RESULT WHERE REASON_ID=#{reasonId} ORDER BY CREATE_DT DESC
   </select>
 
   <select id="getReasonResultCount" resultType="int">
@@ -26,7 +26,7 @@
   </delete>
 
   <insert id="saveReasonResult">
-    INSERT INTO UO_REASON_RESULT(REASON_ID,FCODE,FNAME,FORMULA,BUSINESS,CREATE_DT)
+    INSERT INTO UO_REASON_RESULT(REASON_ID,REASON_CODE,FORMULA_DESC,FORMULA,BUSINESS,CREATE_DT)
     VALUES (#{reasonId,jdbcType=INTEGER},#{reasonCode},#{formulaDesc},#{formula},#{business},SYSDATE)
   </insert>
 </mapper>

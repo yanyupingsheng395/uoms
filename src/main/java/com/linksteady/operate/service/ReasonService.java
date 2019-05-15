@@ -1,4 +1,5 @@
 package com.linksteady.operate.service;
+import com.linksteady.operate.domain.Reason;
 import com.linksteady.operate.domain.ReasonRelMatrix;
 import com.linksteady.operate.domain.ReasonResult;
 import com.linksteady.operate.vo.ReasonVO;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 public interface ReasonService {
 
-     List<Map<String,Object>> getReasonList(int startRow,int endRow);
+     List<Reason> getReasonList(int startRow, int endRow);
 
      int getReasonTotalCount();
 
@@ -22,11 +23,11 @@ public interface ReasonService {
 
      void deleteReasonById(String reasonId);
 
-//     void updateProgressById(String reasonId,int progress);
-
      void findReasonKpisSnp(String reasonId);
 
-     Map<String,Object> getReasonInfoById(String reasonId);
+     Reason getReasonHeaderInfoById(String reasonId);
+
+     Map<String,Object> getReasonAllInfoById(String reasonId);
 
      List<Map<String,Object>> getReasonKpisSnp(String reasonId,String templateCode);
 

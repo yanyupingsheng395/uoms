@@ -5,16 +5,22 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @author system
+ */
 @Data
 public class Reason implements Serializable {
 
+    int rn;
     int reasonId;
-    String kpi;
+    String kpiCode;
+    String kpiName;
 
     String reasonName;
-    String startDt;
+    String beginDt;
     String endDt;
-    String period;
+    String periodType;
+    String periodName;
 
     String status;
     int progress;

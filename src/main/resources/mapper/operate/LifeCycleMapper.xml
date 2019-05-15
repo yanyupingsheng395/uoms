@@ -30,7 +30,7 @@
                 AND T.PRODUCT_ID=SPU.PRODUCT_ID
                 AND T.VALID_STATUS=1
                 AND DT.row_wid &gt;=20190101
-                AND DT.row_wid &lt;=20190601
+                AND DT.row_wid &lt;=20190430
                 GROUP BY SPU.SPU_WID
                 )
                 select
@@ -64,6 +64,7 @@
         select NVL(g1.REAL_FEE,0) REAL_FEE FROM g1 right join w_date on g1.ROW_WID=w_date.row_wid
         where  w_date.row_wid &gt;=20190101
         AND w_date.row_wid &lt;=20190430
+        ORDER BY w_date.row_wid ASC
     </select>
 
     <select id="getSpuGmvByDay" resultType="double">
@@ -83,6 +84,7 @@
         select NVL(g1.REAL_FEE,0) REAL_FEE FROM g1 right join w_date on g1.ROW_WID=w_date.row_wid
         where  w_date.row_wid &gt;=20190101
         AND w_date.row_wid &lt;=20190430
+        ORDER BY w_date.row_wid ASC
     </select>
 
     <update id="updateRelate">

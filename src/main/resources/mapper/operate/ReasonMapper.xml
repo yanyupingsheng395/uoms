@@ -2,11 +2,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.ReasonMapper">
 
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.Reason">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="RN" jdbcType="INTEGER" property="rn" />
+        <result column="REASON_ID" jdbcType="INTEGER" property="reasonId" />
+        <result column="REASON_NAME" jdbcType="VARCHAR" property="reasonName" />
+        <result column="STATUS" jdbcType="VARCHAR" property="status" />
+        <result column="PROGRESS" jdbcType="INTEGER" property="progress" />
+        <result column="BEGIN_DT" jdbcType="VARCHAR" property="beginDt" />
+        <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
+        <result column="CREATE_DT" jdbcType="VARCHAR" property="createDt" />
+        <result column="UPDATE_DT" jdbcType="VARCHAR" property="updateDt" />
+        <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+        <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+        <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
+        <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
+        <result column="PERIOD_NAME" jdbcType="VARCHAR" property="periodName" />
+        <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
+        <result column="SOURCE" jdbcType="VARCHAR" property="source" />
+    </resultMap>
+
    <select id="getReasonTotalCount" resultType="int">
      select count(*) from UO_REASON_LIST
    </select>
 
-  <select id="getReasonList" resultType="map">
+  <select id="getReasonList" resultMap="BaseResultMap">
    SELECT * FROM(
     SELECT A.*,ROWNUM RN FROM
       (SELECT
@@ -55,14 +77,14 @@
                 #{reasonName},
                 #{status},
                 #{progress,jdbcType=INTEGER},
-                #{startDt},
+                #{beginDt},
                 #{endDt},
                 to_date(#{createDt},'yyyy-mm-dd hh24:mi:ss') ,
                 to_date(#{updateDt},'yyyy-mm-dd hh24:mi:ss') ,
                 #{createBy},
                 #{updateBy},
-                #{kpi},
-                #{period},
+                #{kpiCode},
+                #{periodType},
                 #{source}
             )
     </insert>
@@ -103,14 +125,14 @@
         update UO_REASON_LIST set Update_Dt=SYSDATE,STATUS=#{status},Progress=#{progress,jdbcType=INTEGER} where reason_id=#{reasonId}
     </update>
 
-    <select id="getReasonInfoById" resultType="map">
+    <select id="getReasonInfoById" resultMap="BaseResultMap">
         SELECT
             T.REASON_ID,
             T.KPI_CODE,
             T.REASON_NAME,
             T.BEGIN_DT,
             T.END_DT,
-            DECODE(T.PERIOD_TYPE,'D','天','月') PERIOD_TYPE,
+            DECODE(T.PERIOD_TYPE,'D','天','月') PERIOD_NAME,
             T.KPI_CODE,
             KL.KPI_NAME,
             T.SOURCE

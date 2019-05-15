@@ -8,6 +8,7 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.config.KpiCacheManager;
+import com.linksteady.operate.domain.Reason;
 import com.linksteady.operate.domain.ReasonRelMatrix;
 import com.linksteady.operate.domain.ReasonResult;
 import com.linksteady.operate.domain.ReasonTemplateInfo;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +59,7 @@ public class ReasonController  extends BaseController {
      */
     @RequestMapping("/list")
     public ResponseBo list(@RequestBody  QueryRequest request) {
-        List<Map<String,Object>> result=reasonService.getReasonList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize());
+        List<Reason> result=reasonService.getReasonList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize());
 
         int totalCount= reasonService.getReasonTotalCount();
         return  ResponseBo.okOverPaging("",totalCount,result);
@@ -119,7 +121,7 @@ public class ReasonController  extends BaseController {
      */
     @RequestMapping("/getReasonInfoById")
     public ResponseBo getReasonInfoById(@RequestParam String reasonId) {
-       Map<String,Object> result= reasonService.getReasonInfoById(reasonId);
+       Map<String,Object> result= reasonService.getReasonAllInfoById(reasonId);
         return ResponseBo.ok(result);
     }
 
@@ -194,11 +196,15 @@ public class ReasonController  extends BaseController {
      * @return ResponseBo对象
      */
     @RequestMapping("/getEffectForecast")
-    public ResponseBo getEffectForecast(@RequestParam String reasonId, @RequestParam("kpiCode") String kpiCode, @RequestParam("code") String code) {
+    public ResponseBo getEffectForecast(@RequestParam String reasonId, @RequestParam("code") String code) {
 
-        Joiner joiner=Joiner.on("; ").skipNulls();
+        List<String> signal= Arrays.asList("a","b","d","d","e","f","g","h","i","j","k","l","m","n");
+        //根据reasonId获取kpiCode
+        String kpiCode=reasonService.getReasonHeaderInfoById(reasonId).getKpiCode();
+
+        Joiner joiner=Joiner.on("</br>").skipNulls();
         List<String> data= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
-  //      ReasonTemplateInfo reasonTemplateInfo=null;
+
         //变量图例
         List<String> reasonKpiNames=Lists.newArrayList();
         //说明
@@ -208,27 +214,27 @@ public class ReasonController  extends BaseController {
 
         String kpiName=KpiCacheManager.getInstance().getKpiCodeNamePair().get(kpiCode);
         regression.append("y=");
-        busincess.add("y:"+kpiName);
-
+        reasonKpiNames.add("y : "+kpiName);
 
         //调用thrift的服务，获取回归公式 然后写结果表
         try {
             thriftClient.open();
-            String result=thriftClient.getThriftService().submitReasonForecast(Integer.parseInt(reasonId),kpiCode,code);
+            String callback=thriftClient.getThriftService().submitReasonForecast(Integer.parseInt(reasonId),kpiCode,code);
 
             //系数和截距通过 | 进行分割
-            List<String> resultList= Splitter.on('|').trimResults().omitEmptyStrings().splitToList(result);
+            List<String> resultList= Splitter.on('|').trimResults().omitEmptyStrings().splitToList(callback);
             //各个系数之间通过 ，分割
             List<String> ceof= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(resultList.get(0));
 
             //如果程序正常运行 data的length和ceof的长度是一致的，且顺序对应
             for(int i=0;i<ceof.size();i++)
             {
+                String sign=signal.get(i);
                 //拼凑回归公式
-                regression.append(ceof.get(i)+"x"+(i+1)+"*");
+                regression.append(ceof.get(i)+"*"+sign);
                 String reasonName=KpiCacheManager.getInstance().getReasonRelateKpiList().get(data.get(i)).getReasonKpiName();
-                reasonKpiNames.add("x"+(i+1)+":"+reasonName);
-                busincess.add(reasonName+"每变动一份，"+kpiName+"变动"+ceof.get(i)+"份");
+                reasonKpiNames.add(sign+" : "+reasonName);
+                busincess.add(reasonName+"每变动一份，"+kpiName+"变动"+ceof.get(i)+"份; ");
             }
 
             //拼凑截距
@@ -251,8 +257,6 @@ public class ReasonController  extends BaseController {
         } finally {
             thriftClient.close();
         }
-
-
 
     }
 

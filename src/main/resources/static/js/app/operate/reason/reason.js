@@ -15,17 +15,17 @@ $(function () {
             };
         },
         columns: [{
-            field: 'REASON_NAME',
+            field: 'reasonName',
             title: '编号'
         }, {
-            field: 'PROGRESS',
+            field: 'progress',
             title: '进度',
             formatter: function (value, row, index) {
                 return value == null ? "" : value + "%"
             }
         } ,{
             // R表示计算中 F表示计算完成
-            field: 'STATUS',
+            field: 'status',
             title: '状态',
             formatter: function (value, row, index) {
                 if (value == "R") {
@@ -37,20 +37,20 @@ $(function () {
                 }
             }
         },  {
-            field: 'KPI_NAME',
+            field: 'kpiName',
             title: '指标'
         }, {
-            field: 'CREATE_DT',
+            field: 'createDt',
             title: '创建时间'
         },{
-            field: 'SOURCE',
+            field: 'source',
             title: '来源'
         },{
             filed: 'button',
             title: '操作',
             formatter: function (value, row, index) {
-                var reasonId=row.REASON_ID;
-                if(row.STATUS=='R')
+                var reasonId=row.reasonId;
+                if(row.status=='R')
                 {
                     return "<div class='btn btn-info btn-sm' onclick='updatedata("+reasonId+")'><i class='mdi mdi-redo'></i>更新</div>";
                     // return "";
@@ -75,63 +75,63 @@ function view(reasonId){
 
 }
 
-// function del(reasonId) {
-//
-//     //遮罩层打开
-//     lightyear.loading('show');
-//
-//     //进行删除提示
-//         $.confirm({
-//             title: '确认',
-//             content: '是否删除数据？',
-//             theme: 'bootstrap',
-//             type: 'orange',
-//             buttons: {
-//                 confirm: {
-//                     text: '确认',
-//                     btnClass: 'btn-blue',
-//                     action: function(){
-//                              $.getJSON("/reason/deleteReasonById?reasonId="+reasonId,function (resp) {
-//                                     if (resp.code === 200){
-//                                         lightyear.loading('hide');
-//                                         //提示成功
-//                                         toastr.success('删除成功!');
-//                                         //刷新表格
-//                                         //todo 如果在后面某个页上删除数据后，刷新后还停在当前页
-//                                         //var pageNum=$('#reasonTable').bootstrapTable('getOptions').pageNumber;
-//                                         $('#reasonTable').bootstrapTable('refresh');
-//                                     }
-//                                 })
-//                     }
-//                 },
-//                 cancel: {
-//                     text: '取消',
-//                     action: function () {
-//                         lightyear.loading('hide');
-//                     }
-//                 }
-//             }
-//         });
-// }
-
 function del(reasonId) {
+
+    //遮罩层打开
+    lightyear.loading('show');
+
     //进行删除提示
-    $.confirm({
-        title: '确认',
-        content: '演示环境，数据不可删除！',
-        theme: 'bootstrap',
-        type: 'orange',
-        buttons: {
-            confirm: {
-                text: '确认',
-                btnClass: 'btn-blue'
-            },
-            cancel: {
-                text: '取消'
+        $.confirm({
+            title: '确认',
+            content: '是否删除数据？',
+            theme: 'bootstrap',
+            type: 'orange',
+            buttons: {
+                confirm: {
+                    text: '确认',
+                    btnClass: 'btn-blue',
+                    action: function(){
+                             $.getJSON("/reason/deleteReasonById?reasonId="+reasonId,function (resp) {
+                                    if (resp.code === 200){
+                                        lightyear.loading('hide');
+                                        //提示成功
+                                        toastr.success('删除成功!');
+                                        //刷新表格
+                                        //todo 如果在后面某个页上删除数据后，刷新后还停在当前页
+                                        //var pageNum=$('#reasonTable').bootstrapTable('getOptions').pageNumber;
+                                        $('#reasonTable').bootstrapTable('refresh');
+                                    }
+                                })
+                    }
+                },
+                cancel: {
+                    text: '取消',
+                    action: function () {
+                        lightyear.loading('hide');
+                    }
+                }
             }
-        }
-    });
+        });
 }
+
+// function del(reasonId) {
+//     //进行删除提示
+//     $.confirm({
+//         title: '确认',
+//         content: '演示环境，数据不可删除！',
+//         theme: 'bootstrap',
+//         type: 'orange',
+//         buttons: {
+//             confirm: {
+//                 text: '确认',
+//                 btnClass: 'btn-blue'
+//             },
+//             cancel: {
+//                 text: '取消'
+//             }
+//         }
+//     });
+// }
 
 function updatedata(reasonId)
 {
