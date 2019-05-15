@@ -15,7 +15,7 @@ public class ReasonVO implements Serializable {
     String kpi;
 
     String kpiName;
-    String startDt;
+    String beginDt;
     String endDt;
     String period;
     String source;

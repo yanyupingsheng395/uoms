@@ -2,8 +2,6 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.util.RandomUtil;
-import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.dao.ReasonMapper;
 import com.linksteady.operate.dao.ReasonRelMatrixMapper;
 import com.linksteady.operate.dao.ReasonResultMapper;
