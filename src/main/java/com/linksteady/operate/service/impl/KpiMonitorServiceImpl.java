@@ -1,34 +1,26 @@
 package com.linksteady.operate.service.impl;
 
-import afu.org.checkerframework.checker.oigj.qual.O;
-import com.google.common.collect.HashBasedTable;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Table;
+import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.KpiMonitorMapper;
-import com.linksteady.operate.dao.OpMapper;
 import com.linksteady.operate.domain.DatePeriodKpi;
 import com.linksteady.operate.domain.WeekInfo;
 import com.linksteady.operate.service.KpiMonitorService;
-import com.linksteady.operate.service.OpService;
 import com.linksteady.operate.vo.Echart;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -720,5 +712,45 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             ex.printStackTrace();
         }
         return null;
+    }
+
+
+    /**
+     * 根据公式和购买次数生成拟合曲线数据
+     */
+    private List<Double> generateFittingData(String spuId,List<Integer> purchTimes)
+    {
+        List<Double> result=Lists.newArrayList();
+
+        //获取当前SPU的生成的系数和截距  字符串的格式为 a,b,c|f
+        String param=kpiMonitorMapper.getCeofBySpu(spuId);
+
+        if(null==param||param.length()==0||!param.contains(",")||!param.contains("|"))
+        {
+            return result;
+        }
+
+        // 第一个值为系数 第二个值为截距
+        List<String> paramList=Splitter.on('|').trimResults().omitEmptyStrings().splitToList(param);
+
+        List<String> ceofList=Splitter.on(',').trimResults().omitEmptyStrings().splitToList(paramList.get(0));
+
+        double ceof1=Double.parseDouble(ceofList.get(1));
+        double ceof2=Double.parseDouble(ceofList.get(2));
+        double ceof3=Double.parseDouble(ceofList.get(3));
+        double intercept=Double.parseDouble(paramList.get(1));
+
+        for(int i:purchTimes)
+        {
+            //获取对应的系数值
+            result.add(calculateFormulaValue(i,ceof1,ceof2,ceof3,intercept));
+        }
+       return result;
+    }
+
+    private double calculateFormulaValue(int x,double ceof1,double ceof2,double ceof3,double intercept)
+    {
+         double result= ArithUtil.formatDoubleByMode(Math.pow(x,3)*ceof1+Math.pow(x,2)*ceof2+x*ceof3+intercept,0, RoundingMode.DOWN);
+         return result;
     }
 }

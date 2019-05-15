@@ -36,4 +36,6 @@ public interface KpiMonitorMapper {
     List<DatePeriodKpi> getPriceDataMonth(@Param("start") String start, @Param("end") String end);
     List<DatePeriodKpi> getPriceDataMonthBySpu(@Param("spuId") String spuId, @Param("start") String start, @Param("end") String end);
     List<Map<String, Object>> getPriceDataBySpu(@Param("spuId") String spuId, @Param("start") String start, @Param("end") String end);
+
+    String getCeofBySpu(@Param("spuId") String spuId);
 }

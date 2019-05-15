@@ -22,6 +22,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 原因探究相关的服务类
+ * @author huang
+ */
 @Service
 public class ReasonServiceImpl implements ReasonService {
 

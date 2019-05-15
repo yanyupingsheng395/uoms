@@ -275,17 +275,17 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
     }
 
 
-    private List<Double> fixData(Map<String,Double> datas,List<String> periodList)
-    {
-        return periodList.stream().map(s->{
-            s = s.replaceAll("-", "");
-            if(null==datas.get(s)||"".equals(datas.get(s)))
-            {
-                return 0d;
-            }else
-            {
-                return datas.get(s);
-            }
-        }).collect(Collectors.toList());
-    }
+//    private List<Double> fixData(Map<String,Double> datas,List<String> periodList)
+//    {
+//        return periodList.stream().map(s->{
+//            s = s.replaceAll("-", "");
+//            if(null==datas.get(s)||"".equals(datas.get(s)))
+//            {
+//                return 0d;
+//            }else
+//            {
+//                return datas.get(s);
+//            }
+//        }).collect(Collectors.toList());
+//    }
 }
