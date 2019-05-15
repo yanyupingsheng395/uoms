@@ -1,8 +1,8 @@
 function tab2Init() {
     retention_time();
-    freq_time("freq1", "购买次数（复购）", "puchtimes_gap_repurch");
-    freq_time("freq2", "购买次数（忠诚）", "puchtimes_gap_loyal");
-    freq_time("freq3", "购买次数（衰退）","puchtimes_gap_decline");
+    freq_time("freq1", "频次（复购）", "puchtimes_gap_repurch");
+    freq_time("freq2", "频次（忠诚）", "puchtimes_gap_loyal");
+    freq_time("freq3", "频次（衰退）","puchtimes_gap_decline");
 
     getUnitPriceChart();
     getDtPeriodChart();
@@ -47,7 +47,7 @@ function freq_time(chartId, yName, type) {
         series.smooth = true;
         var option = getOption(null, r.data.xAxisData, "时间间隔（天）", yName, series);
         option.grid = {right: '26%', left: '14%'};
-        option.tooltip = {formatter:'人次：{b}<br/>间隔：{c}'};
+        option.tooltip = {formatter:'频次：{c}<br/>间隔：{b}'};
         var freqChart = echarts.init(document.getElementById(chartId), 'macarons');
         freqChart.setOption(option);
     });
@@ -89,7 +89,7 @@ function getRateChart() {
         series.type = 'line';
         series.smooth = true;
         var option = getOption(null, r.data.xAxisData, r.data.xAxisName, r.data.yAxisName, series);
-        option.tooltip = {formatter:'&nbsp;&nbsp;购买次数：{b}<br/>&nbsp;&nbsp;连带率：{c}%'};
+        option.tooltip = {formatter:'&nbsp;&nbsp;购买次数：{b}<br/>&nbsp;&nbsp;连带率：{c}'};
         option.grid = {left: '20%',right:'25%'};
         var chart = echarts.init(document.getElementById('kpi3'), 'macarons');
         chart.setOption(option);

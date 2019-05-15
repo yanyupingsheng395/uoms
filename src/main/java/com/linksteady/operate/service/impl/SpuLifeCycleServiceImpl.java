@@ -2,14 +2,12 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.SpuLifeCycleMapper;
 import com.linksteady.operate.service.SpuLifeCycleService;
 import com.linksteady.operate.vo.Echart;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -136,7 +134,7 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
             purchTimes.add(String.valueOf(t.get("PURCH_TIMES")));
         });
         echart.setxAxisName("购买次数");
-        echart.setyAxisName("连带率（%）");
+        echart.setyAxisName("连带率");
 
         echart.setxAxisData(purchTimes);
         Map<String, Object> tmp = Maps.newHashMap();
@@ -207,12 +205,7 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
     }
 
     private List<Double> getResult(List<Map<String, Object>> data, String filed, String type) {
-        return data.stream().map(x-> {
-            if(StringUtils.isNotBlank(String.valueOf(x.get("LIFECYCLE_TYPE"))) && x.get("LIFECYCLE_TYPE").equals(type)) {
-                return Double.valueOf(x.get(filed).toString());
-            }
-            return 0D;
-        }).collect(Collectors.toList());
+        return data.stream().filter(y-> StringUtils.isNotBlank(String.valueOf(y.get("LIFECYCLE_TYPE"))) && y.get("LIFECYCLE_TYPE").equals(type)).map(x->Double.valueOf(x.get(filed).toString())).collect(Collectors.toList());
     }
 
     @Override

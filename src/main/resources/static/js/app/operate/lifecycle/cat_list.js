@@ -374,6 +374,7 @@ function gearsOption(yName, data1, data2) {
 }
 
 function tab3DataInit() {
+    var spuId = selectId;
     var settings = {
         url: "/spucycle/list",
         method: 'post',
@@ -386,7 +387,8 @@ function tab3DataInit() {
         queryParams: function (params) {
             return {
                 pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit )+ 1  //页码
+                pageNum: (params.offset / params.limit )+ 1,  //页码
+                param: {spuId: spuId}
             };
         },
         columns: [{
@@ -403,6 +405,10 @@ function tab3DataInit() {
                     return "新客期";
                 } else if(value == "1") {
                     return "成长期";
+                } else if(value == "2") {
+                    return "成熟期";
+                } else if(value == "3") {
+                    return "衰退期";
                 }
             }
         },{

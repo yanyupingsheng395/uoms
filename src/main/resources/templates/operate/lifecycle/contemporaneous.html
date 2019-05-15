@@ -89,16 +89,18 @@
 </div>
 
 <script>
-    var date = new Date();
-    date.setMonth(date.getMonth()-12);
-    var month = "";
-    if(date.getMonth() < 9) {
-        month = "0" + (date.getMonth() + 1);
-    }else {
-        month = date.getMonth() + 1;
-    }
-    $("#startDate_1").val(date.getFullYear() + "-" + month);
-    $("#startDate_2").val(date.getFullYear() + "-" + month);
+    // var date = new Date();
+    // date.setMonth(date.getMonth()-12);
+    // var month = "";
+    // if(date.getMonth() < 9) {
+    //     month = "0" + (date.getMonth() + 1);
+    // }else {
+    //     month = date.getMonth() + 1;
+    // }
+    // $("#startDate_1").val(date.getFullYear() + "-" + month);
+    // $("#startDate_2").val(date.getFullYear() + "-" + month);
+    $("#startDate_1").val('2019-01');
+    $("#startDate_2").val('2019-01');
     init_date("startDate_1", "yyyy-mm", 1,2,1);
     init_date("startDate_2", "yyyy-mm", 1,2,1);
 

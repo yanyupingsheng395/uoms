@@ -552,7 +552,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
                 map.put(t, count == 0 ? 0 : String.format("%.2f", tmp.getSum()/count));
             }else {
                 if (tmp.getSum() != 0D) {
-                    map.put(t, String.format("%.2f", tmp.getSum()));
+                    map.put(t, tmp.getSum());
                 }
             }
         });
@@ -617,7 +617,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
                 map.put(t, count == 0 ? 0 : String.format("%.2f", tmp.getSum()/count));
             }else {
                 if (tmp.getSum() != 0D) {
-                    map.put(t, String.format("%.2f", tmp.getSum()));
+                    map.put(t, tmp.getSum());
                 }
             }
         });

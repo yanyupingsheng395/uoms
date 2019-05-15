@@ -69,7 +69,7 @@
             T.ORDER_PERIOD,
             T.REFER_DENO
         FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER H
-        WHERE H.HEAD_ID = T.HEADER_ID
+        WHERE H.HEAD_ID =  T.daily_detail_id
           AND TO_CHAR(H.TOUCH_DT, 'YYYY-MM-DD') = #{daywid}
     </select>
 

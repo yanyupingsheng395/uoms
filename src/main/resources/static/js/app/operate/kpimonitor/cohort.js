@@ -37,16 +37,16 @@ function colorCode(type, size) {
 //表头信息
 var columns = [];
 $(function () {
-    var date = new Date();
-    date.setMonth(date.getMonth()-12);
-    var month = "";
-    if(date.getMonth() < 9) {
-        month = "0" + (date.getMonth() + 1);
-    }else {
-        month = date.getMonth() + 1;
-    }
-    $("#startDate_1").val(date.getFullYear() + "-" + month);
-    $("#startDate_2").val(date.getFullYear() + "-" + month);
+    // var date = new Date();
+    // date.setMonth(date.getMonth()-12);
+    // var month = "";
+    // if(date.getMonth() < 9) {
+    //     month = "0" + (date.getMonth() + 1);
+    // }else {
+    //     month = date.getMonth() + 1;
+    // }
+    // $("#startDate_1").val(date.getFullYear() + "-" + month);
+    // $("#startDate_2").val(date.getFullYear() + "-" + month);
     getData(1);
     getData1(1);
 });
@@ -87,8 +87,21 @@ function tab1Click(idx) {
     indexTotal1 = idx;
     getData1(idx);
 }
-function searchData() {
-    getData(indexTotal);
+
+function searchData1() {
+    if($("#startDate_2").val() == "") {
+        toastr.warning("请输入起始时间！");
+    }else {
+        $("#tabs02").find("li[class='active']").find("a").click();
+    }
+}
+
+function searchData2() {
+    if($("#startDate_2").val() == "") {
+        toastr.warning("请输入起始时间！");
+    }else {
+        $("#tabs03").find("li[class='active']").find("a").click();
+    }
 }
 
 // 获取表格数据

@@ -191,7 +191,7 @@ function t3chart2(obj, chartId){
     var legendData = obj.legendData;
     var xAxisData = obj.xdata;
     var xAxisName = obj.xname;
-    var yAxisName = "GMV值（1元）";
+    var yAxisName = obj.kpiName;
     var seriesData = new Array();
     $.each(obj.lineData, function (k, v) {
         var obj = new Object();
