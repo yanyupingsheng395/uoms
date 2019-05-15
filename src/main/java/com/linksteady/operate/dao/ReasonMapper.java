@@ -1,7 +1,6 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.Reason;
-import com.linksteady.operate.domain.ReasonRelateRecord;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;

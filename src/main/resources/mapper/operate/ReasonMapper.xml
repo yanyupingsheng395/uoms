@@ -77,7 +77,7 @@
                 #{reasonName},
                 #{status},
                 #{progress,jdbcType=INTEGER},
-                #{startDt},
+                #{beginDt},
                 #{endDt},
                 to_date(#{createDt},'yyyy-mm-dd hh24:mi:ss') ,
                 to_date(#{updateDt},'yyyy-mm-dd hh24:mi:ss') ,

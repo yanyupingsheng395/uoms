@@ -33,7 +33,7 @@ function submit_analysis(){
     var end_dt = $("#endDt").val();
     var datas={
         kpi:$("#reasonKpiCode").val(),
-        startDt:start_dt,
+        beginDt:start_dt,
         endDt:end_dt,
         period:$("#periodType").find("option:selected").val(),
         source: '运营诊断',

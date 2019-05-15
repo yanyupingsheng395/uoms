@@ -89,7 +89,7 @@ function submit_analysis(){
 
     var datas={
         kpi:zb,
-        startDt:start_dt,
+        beginDt:start_dt,
         endDt:end_dt,
         period:$("#period").val(),
         source: '手工新增',
