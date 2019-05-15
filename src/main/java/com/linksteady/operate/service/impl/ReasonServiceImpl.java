@@ -113,13 +113,12 @@ public class ReasonServiceImpl implements ReasonService {
             //todo 异常继续向上抛 同时需要将当前数据的状态更新为失败
             e.printStackTrace();
            //更新状态
-            reasonMapper.updateProgressAndStatusById(reasonId,"E",1);
+            reasonMapper.updateProgressAndStatusById(reasonId,"E",0);
         } finally {
             //关闭
             thriftClient.close();
         }
     }
-
 
     /**
      * 根据原因ID获取到头信息
@@ -150,6 +149,7 @@ public class ReasonServiceImpl implements ReasonService {
        result.put("BEGIN_DT",reason.getBeginDt());
        result.put("END_DT",reason.getEndDt());
        result.put("PERIOD_TYPE",reason.getPeriodType());
+       result.put("PERIOD_NAME",reason.getPeriodName());
        result.put("KPI_NAME",reason.getKpiName());
        result.put("KPI_CODE",reason.getKpiCode());
        result.put("SOURCE",reason.getSource());
