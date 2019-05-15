@@ -25,7 +25,6 @@
   </select>
 
   <select id="getReasonRelateInfoByCode" resultMap="BaseResultMap">
-    SELECT REASON_ID,F_CODE,F_NAME,RF_CODE,RF_NAME,F_ORDERNO,RF_ORDER_NO,RELATE_VALUE from UO_REASON_REL_MATRIX WHERE REASON_ID=#{reasonId}
-                                                                                                                  AND F_CODE=#{fcode} AND RF_CODE=#{rfcode}
+    SELECT REASON_ID,F_CODE,F_NAME,RF_CODE,RF_NAME,F_ORDERNO,RF_ORDER_NO,RELATE_VALUE from UO_REASON_REL_MATRIX WHERE REASON_ID=#{reasonId}                                                                                                       AND F_CODE=#{fcode} AND RF_CODE=#{rfcode}
   </select>
 </mapper>

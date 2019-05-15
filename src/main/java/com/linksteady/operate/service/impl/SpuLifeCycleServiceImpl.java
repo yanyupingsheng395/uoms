@@ -9,6 +9,7 @@ import com.linksteady.operate.vo.Echart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,6 +22,10 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
 
     @Autowired
     private SpuLifeCycleMapper spuLifeCycleMapper;
+
+    private static final String STAGE_PERIOD_0 = "puchtimes_gap_repurch"; // 复购
+    private static final String STAGE_PERIOD_1 = "puchtimes_gap_loyal"; // 忠诚
+    private static final String STAGE_PERIOD_2 = "puchtimes_gap_decline"; // 衰退
 
     @Override
     public Echart retentionPurchaseTimes(String spuId) {
@@ -279,6 +284,25 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
     @Override
     public List<String> getStageNode(String spuId) {
         return spuLifeCycleMapper.getStageNode(spuId);
+    }
+
+    /**
+     * 阶段随购买次数分布图
+     * @param spuId
+     * @param type
+     * @return
+     */
+    @Override
+    public Echart getStagePeriodData(String spuId, String type) {
+        List<Map<String, Object>> dataList = spuLifeCycleMapper.getStagePeriodData(spuId, type);
+        Echart echart = new Echart();
+        List<String> xdata = dataList.stream().map(x->String.valueOf(x.get("DT_PERIOD"))).collect(Collectors.toList());
+        echart.setxAxisData(xdata);
+        List<String> seriesData = dataList.stream().map(x->String.valueOf(x.get("PERIOD_NUM"))).collect(Collectors.toList());
+        Map<String, Object> series = Maps.newHashMap();
+        series.put("data", seriesData);
+        echart.setSeriesData(Arrays.asList(series));
+        return echart;
     }
 
 

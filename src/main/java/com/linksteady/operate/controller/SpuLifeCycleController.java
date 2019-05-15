@@ -28,12 +28,6 @@ public class SpuLifeCycleController {
         return ResponseBo.okWithData(null, echart);
     }
 
-    @GetMapping("/getPurchDateChart")
-    public ResponseBo getPurchDateChart(String spuId, String type){
-        Echart echart = spuLifeCycleService.getPurchDateChart(spuId, type);
-        return ResponseBo.okWithData(null, echart);
-    }
-
     @GetMapping("/getUnitPriceChart")
     public ResponseBo getUnitPriceChart(String spuId) {
         Echart echart = spuLifeCycleService.getUnitPriceChart(spuId);
@@ -78,5 +72,15 @@ public class SpuLifeCycleController {
     @GetMapping("/getStageNode")
     public ResponseBo getStageNode(String spuId) {
         return ResponseBo.okWithData(null, spuLifeCycleService.getStageNode(spuId));
+    }
+
+    /**
+     * 每个阶段购买间隔分布图
+     * @param spuId
+     * @return
+     */
+    @GetMapping("/getStagePeriodData")
+    public ResponseBo getStagePeriodData(String spuId, String type) {
+        return ResponseBo.okWithData(null, spuLifeCycleService.getStagePeriodData(spuId, type));
     }
 }
