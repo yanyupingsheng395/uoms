@@ -68,6 +68,7 @@ public class ReasonServiceImpl implements ReasonService {
         reasonDo.setCreateBy(curuser);
         reasonDo.setUpdateBy(curuser);
         reasonDo.setPeriodType(reasonVO.getPeriod());
+        reasonDo.setKpiCode(reasonVO.getKpi());
         reasonMapper.saveReasonData(reasonDo);
     }
 
