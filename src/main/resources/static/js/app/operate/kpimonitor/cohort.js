@@ -149,7 +149,7 @@ function getDMonthCols(percent) {
     return cols;
 }
 // 客单价间隔月
-function getDMonthPriceCols(percent) {
+function getDMonthPriceCols(percent, type) {
     var fix = "";
     if(percent) {
         fix = "%";
