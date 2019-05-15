@@ -16,7 +16,7 @@ $(function () {
 
            $("#start_dt").val(msg.BEGIN_DT);
            $("#end_dt").val(msg.END_DT);
-           $("#period").val(msg.PERIOD_TYPE);
+           $("#period").val(msg.PERIOD_NAME);
            //获取到详细信息
            var dims=msg.reasonDetail;
            $.each(dims,function (index,item) {
