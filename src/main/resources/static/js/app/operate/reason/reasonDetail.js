@@ -276,7 +276,7 @@ function createResultTableHeader(tableName)
         dataType: "json",
         showHeader:true,
         columns: [{
-            field: 'formula_desc',
+            field: 'formulaDesc',
             title: '变量名称',
             align: 'left'
         },{

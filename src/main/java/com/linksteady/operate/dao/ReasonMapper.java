@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface ReasonMapper {
 
-    List<Map<String,Object>> getReasonList(@Param("startRow") int startRow,@Param("endRow") int endRow);
+    List<Reason> getReasonList(@Param("startRow") int startRow,@Param("endRow") int endRow);
 
     int getReasonTotalCount();
 
@@ -34,7 +34,7 @@ public interface ReasonMapper {
     void deleteReasonResultById(@Param("reasonId") String reasonId);
 
     //获取原因诊断主信息
-    List<Map<String,Object>>  getReasonInfoById(@Param("reasonId") String reasonId);
+    Reason  getReasonInfoById(@Param("reasonId") String reasonId);
 
     //获取原因诊断明细信息
     List<Map<String,String>>  getReasonDetailById(@Param("reasonId") String reasonId);

@@ -41,7 +41,7 @@ public class ReasonServiceImpl implements ReasonService {
     ThriftClient thriftClient;
 
     @Override
-    public List<Map<String,Object>> getReasonList(int startRow, int endRow)
+    public List<Reason> getReasonList(int startRow, int endRow)
     {
        return  reasonMapper.getReasonList(startRow,endRow);
     }
@@ -67,7 +67,7 @@ public class ReasonServiceImpl implements ReasonService {
         reasonDo.setUpdateDt(sf.format(now));
         reasonDo.setCreateBy(curuser);
         reasonDo.setUpdateBy(curuser);
-        reasonDo.setPeriod(reasonVO.getPeriod());
+        reasonDo.setPeriodType(reasonVO.getPeriod());
         reasonMapper.saveReasonData(reasonDo);
     }
 
@@ -117,28 +117,37 @@ public class ReasonServiceImpl implements ReasonService {
 
 
     /**
+     * 根据原因ID获取到头信息
+     * @param reasonId
+     */
+    @Override
+    public  Reason getReasonHeaderInfoById(String reasonId) {
+
+        return reasonMapper.getReasonInfoById(reasonId);
+    }
+
+    /**
      * 根据原因ID获取到详细信息
      * @param reasonId
      */
     @Override
-    public  Map<String,Object> getReasonInfoById(String reasonId) {
+    public  Map<String,Object> getReasonAllInfoById(String reasonId) {
 
         //构造返回的对象
         Map<String,Object> result=Maps.newHashMap();
 
        //获取到头表信息
-       List<Map<String,Object>> reasonlist=reasonMapper.getReasonInfoById(reasonId);
+      Reason reason=reasonMapper.getReasonInfoById(reasonId);
 
-       Map<String,Object> reason=reasonlist.get(0);
 
-       result.put("REASON_ID",reason.get("REASON_ID"));
-       result.put("REASON_NAME",reason.get("REASON_NAME"));
-       result.put("BEGIN_DT",reason.get("BEGIN_DT"));
-       result.put("END_DT",reason.get("END_DT"));
-       result.put("PERIOD_TYPE",reason.get("PERIOD_TYPE"));
-       result.put("KPI_NAME",reason.get("KPI_NAME"));
-       result.put("KPI_CODE",reason.get("KPI_CODE"));
-       result.put("SOURCE",reason.get("SOURCE"));
+       result.put("REASON_ID",reason.getReasonId());
+       result.put("REASON_NAME",reason.getReasonName());
+       result.put("BEGIN_DT",reason.getBeginDt());
+       result.put("END_DT",reason.getEndDt());
+       result.put("PERIOD_TYPE",reason.getPeriodType());
+       result.put("KPI_NAME",reason.getKpiName());
+       result.put("KPI_CODE",reason.getKpiCode());
+       result.put("SOURCE",reason.getSource());
 
       //获取到明细信息
       List<Map<String,String>> reasonDetail=reasonMapper.getReasonDetailById(reasonId);
@@ -147,20 +156,6 @@ public class ReasonServiceImpl implements ReasonService {
       return result;
     }
 
-//    @Override
-//    public void updateProgressById(String reasonId,int progress) {
-//
-//
-//        if(progress==100)
-//        {   //更新进度和状态
-//            reasonMapper.updateProgressAndStatusById(reasonId,progress);
-//        }else
-//        {
-//            //更新进度
-//            reasonMapper.updateProgressById(reasonId,progress);
-//        }
-//
-//    }
 
     @Override
     public List<Map<String, Object>> getReasonKpisSnp(String reasonId, String templateCode) {
