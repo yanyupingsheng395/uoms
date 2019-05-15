@@ -27,7 +27,7 @@
         dt.month buy_month,
         t.user_id
         FROM w_Orders t,w_date dt
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
         and dt.month &lt;= #{endDt}
@@ -113,7 +113,7 @@
         dt.month buy_month,
         t.user_id
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.product_id=spu.product_id
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
@@ -198,7 +198,7 @@
         dt.month buy_month,
         t.user_id
         FROM w_Orders t,w_date dt
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
         and dt.month &lt;= #{endDt}
@@ -265,7 +265,7 @@
         dt.month buy_month,
         t.user_id
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.product_id=spu.product_id
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
@@ -422,7 +422,7 @@
         (
         SELECT MONTH BUY_MONTH,
         T.USER_ID
-        FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1 AND T.IS_FP='Y'
+        FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1
         AND DT.MONTH &gt;= #{beginDt}
         AND DT.MONTH &lt;= #{endDt}
         AND T.ORDER_DT_WID=DT.ROW_WID
@@ -456,7 +456,7 @@
         WHERE
         T.ORDER_DT_WID=DT.ROW_WID
         AND T.PRODUCT_ID=SPU.PRODUCT_ID
-        AND t.valid_status=1 AND T.IS_FP='Y'
+        AND t.valid_status=1
         AND DT.MONTH &gt;=#{beginDt}
         AND DT.MONTH &lt;=#{endDt}
         AND SPU.SPU_WID= #{spuId}
@@ -493,7 +493,7 @@
         WHERE
         T.ORDER_DT_WID=DT.ROW_WID
         AND T.PRODUCT_ID=SPU.PRODUCT_ID
-        AND t.valid_status=1 AND T.IS_FP='Y'
+        AND t.valid_status=1
         AND DT.MONTH &gt;= #{beginDt}
         AND DT.MONTH &lt;= #{endDt}
         AND SPU.SPU_WID= #{spuId}
@@ -525,7 +525,7 @@
         dt.month buy_month,
         t.user_id
         FROM w_Orders t,w_date dt
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
         and dt.month &lt;= #{endDt}
@@ -610,7 +610,7 @@
         dt.month buy_month,
         t.user_id
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.product_id=spu.product_id
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
@@ -696,7 +696,7 @@
         SELECT MONTH BUY_MONTH,
         T.USER_ID
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.product_id=spu.product_id
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
@@ -729,7 +729,7 @@
         (
         SELECT MONTH BUY_MONTH,
         T.USER_ID
-        FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1 AND T.IS_FP='Y'
+        FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1
         AND DT.MONTH &gt;= #{beginDt}
         AND DT.MONTH &lt;= #{endDt}
         AND T.ORDER_DT_WID=DT.ROW_WID
@@ -761,7 +761,7 @@
         dt.month buy_month,
         t.user_id
         FROM w_Orders t,w_date dt
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
         and dt.month &lt;= #{endDt}
@@ -830,7 +830,7 @@
         dt.month buy_month,
         t.user_id
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.product_id=spu.product_id
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
@@ -902,7 +902,7 @@
         t.real_fee,
         t.user_id
         FROM w_Orders t,w_date dt
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;=#{start}
         and dt.month &lt;=#{end}
@@ -988,7 +988,7 @@
         SELECT MONTH BUY_MONTH,
         T.USER_ID,
         T.REAL_FEE
-        FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1 AND T.IS_FP='Y'
+        FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1
         AND DT.MONTH &gt;= #{start}
         AND DT.MONTH &lt;= #{end}
         AND T.ORDER_DT_WID=DT.ROW_WID
@@ -1026,7 +1026,7 @@
         T.USER_ID,
         T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.product_id=spu.product_id
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{start}
@@ -1067,7 +1067,7 @@
         T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE,
         t.user_id
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.product_id=spu.product_id
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;=#{start}
@@ -1157,7 +1157,7 @@
         t.real_fee,
         t.user_id
         FROM w_Orders t,w_date dt
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{start}
         and dt.month &lt;= #{end}
@@ -1248,7 +1248,7 @@
         T.USER_ID,
         T.REAL_FEE,
         T.ID
-        FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1 AND T.IS_FP='Y'
+        FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1
         AND DT.MONTH &gt;=#{start}
         AND DT.MONTH &lt;=#{end}
         AND T.ORDER_DT_WID=DT.ROW_WID
@@ -1290,7 +1290,7 @@
         T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE,
         T.ID
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.product_id=spu.product_id
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{start}
@@ -1334,7 +1334,7 @@
         T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE,
         t.user_id
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
-        where t.valid_status=1 AND T.IS_FP='Y'
+        where t.valid_status=1
         and t.product_id=spu.product_id
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{start}
