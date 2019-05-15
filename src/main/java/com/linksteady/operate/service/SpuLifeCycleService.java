@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by hxcao on 2019-05-10
  */
 public interface SpuLifeCycleService {
-    Map<String, Object> retentionPurchaseTimes(String spuId);
+    Echart retentionPurchaseTimes(String spuId);
     Echart getPurchDateChart(String spuId, String type);
     Echart getUnitPriceChart(String spuId);
     Echart getDtPeriodChart(String spuId);

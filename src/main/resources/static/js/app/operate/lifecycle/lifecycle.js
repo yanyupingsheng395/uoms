@@ -18,7 +18,32 @@ function getStageNode() {
     var spuId = selectId;
     $.get("/spuLifeCycle/getStageNode", {spuId: spuId}, function (r) {
         $.each(r.data, function (k, v) {
+            var content = "";
+            var val = "";
+            if(v == "0" || v == 0) {
+                if(k == 0) {
+                    cotent = "该品类购买人数过少，尚未形成购买规律";
+                }
+                if(k == 1) {
+                    cotent = "该品类尚未形成忠诚购买规律";
+                }
+                if(k == 2) {
+                    content = "该品类尚未出现衰退趋势";
+                }
+                v = "-";
+            }else {
+                if(k == 0) {
+                    cotent = "从该点开始，出现复购行为";
+                }
+                if(k == 1) {
+                    content = "从该点开始，留存率变化趋于平缓";
+                }
+                if(k == 2) {
+                    content = "从该点开始，留存率变化呈明显下降的趋势";
+                }
+            }
             $("#stage").find("tbody tr:eq("+k+")").find("td:eq(1)").text(v);
+            $("#stage").find("tbody tr:eq("+k+")").find("td:eq(2)").text(content);
         });
     });
 }
@@ -26,12 +51,10 @@ function getStageNode() {
 function retention_time() {
     var spuId = selectId;
     $.get("/spuLifeCycle/retentionPurchaseTimes", {spuId: spuId}, function (r) {
-        var point = r.data.point;
-        var chart = r.data.chart;
+        var chart = r.data;
         var series = chart.seriesData[0];
         series.type = 'line';
         series.smooth = true;
-        // series.
         var option = getOption(null, chart.xAxisData, chart.xAxisName, chart.yAxisName, series);
         option.tooltip = {formatter:'购买次数：{b}<br/>留存率：{c}%'};
         option.grid = {right:'22%'};

@@ -27,10 +27,18 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
     private static final String STAGE_PERIOD_2 = "puchtimes_gap_decline"; // 衰退
 
     @Override
-    public Map<String, Object> retentionPurchaseTimes(String spuId) {
+    public Echart retentionPurchaseTimes(String spuId) {
         Echart echart = new Echart();
         List<Map<String, Object>> data = spuLifeCycleMapper.retentionPurchaseTimes(spuId);
-        List<String> imPurchTimes = data.stream().filter(x->x.get("IF_UNUM_LIMIT").equals("Y")).map(y->y.get("PURCH_TIMES").toString()).collect(Collectors.toList());
+        List<Map<String, Object>> points = Lists.newArrayList();
+        data.stream().filter(x->x.get("IF_UNUM_LIMIT").equals("Y")).forEach(y->{
+            Map<String, Object> tmp = Maps.newHashMap();
+            tmp.put("xAxis", y.get("PURCH_TIMES"));
+            tmp.put("yAxis", y.get("RETENTION"));
+            if(points.size() == 0) {
+                points.add(tmp);
+            }
+        });
         List<String> retention = Lists.newArrayList();
         List<String> purchTimes = Lists.newArrayList();
         data.stream().forEach(t->{
@@ -43,14 +51,15 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         echart.setxAxisData(purchTimes);
         Map<String, Object> tmp = Maps.newHashMap();
         tmp.put("data", retention);
+
+        Map<String, Object> pointData = Maps.newHashMap();
+        pointData.put("data", points);
+        tmp.put("markPoint", pointData);
         List list = Lists.newArrayList();
         list.add(tmp);
         echart.setSeriesData(list);
 
-        Map<String, Object> result = Maps.newHashMap();
-        result.put("point", imPurchTimes.get(0));
-        result.put("chart", echart);
-        return result;
+        return echart;
     }
 
     /**
