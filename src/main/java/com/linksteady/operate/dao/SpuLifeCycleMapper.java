@@ -24,4 +24,6 @@ public interface SpuLifeCycleMapper {
     List<Map<String, Object>> getLifeCycleKpi(@Param("spuId") String spuId);
 
     List<String> getStageNode(@Param("spuId") String spuId);
+
+    List<Map<String, Object>> getStagePeriodData(@Param("spuId") String spuId, @Param("type") String type);
 }

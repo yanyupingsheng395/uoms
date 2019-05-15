@@ -37,10 +37,10 @@ function retention_time() {
     });
 }
 
-// 购买次数随时间间隔的变化
+// 每个阶段购买间隔分布图
 function freq_time(chartId, yName, type) {
     var spuId = selectId;
-    $.get("/spuLifeCycle/getPurchDateChart", {spuId: spuId, type: type}, function (r) {
+    $.get("/spuLifeCycle/getStagePeriodData", {spuId: spuId, type: type}, function (r) {
         console.log(r);
         var series = r.data.seriesData[0];
         series.type = 'line';

@@ -43,4 +43,8 @@
             'loyal_node',
             'decline_node')
     </select>
+
+    <select id="getStagePeriodData" resultType="map">
+        select DT_PERIOD, PERIOD_NUM from UO_LC_SPU_LIFECYCLE where TYPE = #{type} and SPU_ID = #{spuId} order by DT_PERIOD asc
+    </select>
 </mapper>

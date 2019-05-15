@@ -17,4 +17,5 @@ public interface SpuLifeCycleService {
     Echart getUserCountChart(String spuId);
     Echart getSaleVolumeChart(String spuId);
     List<String> getStageNode(String spuId);
+    Echart getStagePeriodData(String spuId, String type);
 }
