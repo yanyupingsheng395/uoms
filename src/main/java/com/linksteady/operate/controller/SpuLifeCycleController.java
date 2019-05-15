@@ -24,8 +24,7 @@ public class SpuLifeCycleController {
      */
     @GetMapping("/retentionPurchaseTimes")
     public ResponseBo retentionPurchaseTimes(String spuId) {
-        Echart echart = spuLifeCycleService.retentionPurchaseTimes(spuId);
-        return ResponseBo.okWithData(null, echart);
+        return ResponseBo.okWithData(null, spuLifeCycleService.retentionPurchaseTimes(spuId));
     }
 
     @GetMapping("/getUnitPriceChart")

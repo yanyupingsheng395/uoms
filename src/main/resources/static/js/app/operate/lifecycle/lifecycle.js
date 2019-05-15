@@ -26,10 +26,13 @@ function getStageNode() {
 function retention_time() {
     var spuId = selectId;
     $.get("/spuLifeCycle/retentionPurchaseTimes", {spuId: spuId}, function (r) {
-        var series = r.data.seriesData[0];
+        var point = r.data.point;
+        var chart = r.data.chart;
+        var series = chart.seriesData[0];
         series.type = 'line';
         series.smooth = true;
-        var option = getOption(null, r.data.xAxisData, r.data.xAxisName, r.data.yAxisName, series);
+        // series.
+        var option = getOption(null, chart.xAxisData, chart.xAxisName, chart.yAxisName, series);
         option.tooltip = {formatter:'购买次数：{b}<br/>留存率：{c}%'};
         option.grid = {right:'22%'};
         var freqChart = echarts.init(document.getElementById('retention_freq'), 'macarons');
