@@ -400,7 +400,6 @@ function saveNode(nodeid) {
     var nodeList = [];
     var currentNode = jm.get_node(nodeid);
     nodeList.push(currentNode);
-
     var data = new Array();
     for(var i=0; i<nodeList.length; i++) {
         var tmp = nodeList[i];
@@ -509,14 +508,14 @@ function condition2() {
     if(conditionVal.length == 0) {
         toastr.warning('请选择过滤条件！');
     }else {
-        createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME, false);
+        createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME, false, null);
         $("#nodeAddModal").modal('hide');
         saveRedisHandleInfo(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
     }
 }
 
 // method过滤条件
-function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf) {
+function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf, condition) {
     var nodeId = getNodeId();
     var nodeName = nodeName;
     var parentId = $("#currentNodeId").val();
@@ -524,7 +523,11 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf) {
     var kpiName = kpiName;
     var kpiLevelId = levelId;
     var alarmFlag = false;
-    var conditions = filterCondition();
+    var conditions = new Array();
+    if(condition != null) {
+        conditions.push(condition);
+    }
+    conditions = conditions.concat(filterCondition());
 
     var data = new Object();
     data.KPI_CODE = kpiCode;
@@ -601,12 +604,24 @@ function saveDiagHandleInfo(handleInfo, operateType) {
                     var kpiName = r.data.kpiName;
                     $.each(r.data.nodeList, function(k, v) {
                         var nodeName = levelId + " <i class='mdi mdi-key-plus'></i> " + $("#op4").find("option:selected").text() + "(" + v.name + ")";
-                        createNode(nodeName, levelId, kpiCode, kpiName, false);
+                        var condition = getConditionList(v);
+                        createNode(nodeName, levelId, kpiCode, kpiName, false, condition);
+                        // 加法将条件加入到列表
                     });
                 });
             }
         }
     });
+}
+
+function getConditionList(v) {
+    var tmp = new Object();
+    tmp.dimCode = v.dimCode;
+    tmp.dimName = v.dimName;
+    tmp.dimValues = v.code;
+    tmp.dimValueDisplay = v.name;
+    tmp.inheritFlag = "N";
+    return tmp;
 }
 
 function getNodeId() {
@@ -675,8 +690,8 @@ function jsmind_refresh(map) {
     var levelId = getKpiLevelId();
     var nodeName1 = levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName1;
     var nodeName2 = levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName2;
-    createNode(nodeName1, levelId, kpiCode1, kpiName1, false);
-    createNode(nodeName2, levelId, kpiCode2, kpiName2, false);
+    createNode(nodeName1, levelId, kpiCode1, kpiName1, false, null);
+    createNode(nodeName2, levelId, kpiCode2, kpiName2, false, null);
     $("#nodeAddModal").modal('hide');
 
     saveRedisHandleInfo(nodeName1, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
