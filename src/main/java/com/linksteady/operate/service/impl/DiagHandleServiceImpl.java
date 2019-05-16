@@ -432,29 +432,29 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             nodeArray.add(node);
         }
 
-        if(null!=orialCondition&&orialCondition.size()>0)
-        {
-            orialCondition.forEach(s->{
+        orialCondition.forEach(s-> {
+            //如果是当前做加法的维度的话，则不做复制
+            if(!s.getDimCode().equals(dimCode))
+            {
+                DiagConditionNew nc = dozerBeanMapper.map(s, DiagConditionNew.class);
+                newCondition.add(nc);
+            }else
+            {
+                DiagConditionNew nc=new DiagConditionNew();
+                nc.setDimCode(dimCode);
+                nc.setDimName(KpiCacheManager.getInstance().getDiagDimList().get(dimCode));
+                String tempValue=s.getDimValues();
+                String tempValueDisplay=s.getDimValueDisplay();
 
-                if(null==orialConditionMap.get(s.getDimCode()))
-                {
-                    DiagConditionNew nc= dozerBeanMapper.map(s,DiagConditionNew.class);
-                    newCondition.add(nc);
-                }else
-                {
-                    DiagConditionNew nc=new DiagConditionNew();
-                    nc.setDimCode(dimCode);
-                    nc.setDimName(KpiCacheManager.getInstance().getDiagDimList().get(dimCode));
-                    String tempValue=s.getDimValues();
-                    String tempValueDisplay=s.getDimValueDisplay();
+                nc.setDimValues(tempValue+","+Joiner.on(",").join(dimValues));
+                nc.setDimValueDisplay(tempValueDisplay+Joiner.on(",").join(dimNames));
+                nc.setInheritFlag("N");
+                newCondition.add(nc);
+            }
+        });
 
-                    nc.setDimValues(tempValue+","+Joiner.on(",").join(dimValues));
-                    nc.setDimValueDisplay(tempValueDisplay+Joiner.on(",").join(dimNames));
-                    nc.setInheritFlag("N");
-                    newCondition.add(nc);
-                }
-            });
-        }else
+        //如果什么条件也没有
+        if(null==newCondition||newCondition.size()==0)
         {
             DiagConditionNew nc=new DiagConditionNew();
             nc.setDimCode(dimCode);
