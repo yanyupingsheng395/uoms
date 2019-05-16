@@ -8,7 +8,6 @@ import com.linksteady.operate.dao.DiagDetailMapper;
 import com.linksteady.operate.domain.DiagCondition;
 import com.linksteady.operate.domain.DiagDetail;
 import com.linksteady.operate.service.DiagDetailService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

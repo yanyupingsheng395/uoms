@@ -1,16 +1,11 @@
 function tab2Init() {
     retention_time();
-    freq_time("freq1", "频次（复购）", "puchtimes_gap_repurch");
-    freq_time("freq2", "频次（忠诚）", "puchtimes_gap_loyal");
-    freq_time("freq3", "频次（衰退）","puchtimes_gap_decline");
-
     getUnitPriceChart();
     getDtPeriodChart();
     getRateChart();
     getCateChart();
     userCount();
     saleVolume();
-
     getStageNode();
 }
 
@@ -22,50 +17,90 @@ function getStageNode() {
             var content = "";
             if(v == "0" || v == 0) {
                 if(k == 0) {
-                    cotent = "该品类购买人数过少，尚未形成购买规律";
+                    content = "该品类购买人数过少，尚未形成购买规律";
+                    yAxisTitle.push("频次（首购到复购）");
                 }
                 if(k == 1) {
-                    cotent = "该品类尚未形成忠诚购买规律";
+                    content = "该品类尚未形成忠诚购买规律";
+                    yAxisTitle.push("频次（成长期）");
                 }
                 if(k == 2) {
                     content = "该品类尚未出现衰退趋势";
+                    yAxisTitle.push("频次（成熟期）");
                 }
                 v = "-";
             }else {
                 if(k == 0) {
-                    cotent = "从该点开始，出现复购行为";
+                    content = "从该点开始，出现复购行为";
+                    yAxisTitle.push("频次（首购到复购，1次-" + v + "次）");
                 }
                 if(k == 1) {
                     content = "从该点开始，留存率变化趋于平缓";
+                    yAxisTitle.push("频次（成长期，"+r.data[0]+"次-" + v + "次）");
                 }
                 if(k == 2) {
                     content = "从该点开始，留存率变化呈明显下降的趋势";
+                    yAxisTitle.push("频次（成熟期，"+r.data[1]+"次-" + v + "次）");
                 }
             }
             $("#stage").find("tbody tr:eq("+k+")").find("td:eq(1)").text(v);
             $("#stage").find("tbody tr:eq("+k+")").find("td:eq(2)").text(content);
         });
+
+        freq_time("freq1", yAxisTitle[0], "puchtimes_gap_repurch");
+        freq_time("freq2", yAxisTitle[1], "puchtimes_gap_loyal");
+        freq_time("freq3", yAxisTitle[2],"puchtimes_gap_decline");
     });
+}
+
+function getRetentionByMethod(purchTimes) {
+    var data = new Array();
+    $.ajax({
+        url: "/kpiMonitor/generateFittingData",
+        data:{spuId: selectId, purchCount: purchTimes},
+        async: false,
+        success: function (r) {
+            data = r.data;
+        }
+    });
+    return data;
 }
 
 function retention_time() {
     var spuId = selectId;
     $.get("/spuLifeCycle/retentionPurchaseTimes", {spuId: spuId}, function (r) {
         var chart = r.data;
-        var series = chart.seriesData[0];
-        series.type = 'line';
-        series.smooth = true;
-        series.markPoint.tooltip = {
+        var seriesDatas = new Array();
+        var series0 = chart.seriesData[0];
+        console.log(series0);
+        series0.type = 'line';
+        series0.smooth = true;
+        series0.markPoint.tooltip = {
             show: true, // 是否显示
                 formatter: '从该点开始购买次数过少', // 内容格式器 a（系列名称），b（类目值），c（数值）, d（无）
                 trigger: 'item', // 触发类型，默认数据触发，见下图，可选为：'item' | 'axis'
         };
-        series.markPoint.symbolSize = 30;
-        var option = getOption(null, chart.xAxisData, chart.xAxisName, chart.yAxisName, series);
+        series0.markPoint.symbolSize = 30;
+        series0.name = "实际值";
+        seriesDatas.push(series0);
+
+        var series1Data = getRetentionByMethod(chart.xAxisData.join(","));
+        console.log("-------")
+        console.log(series1Data)
+        var series1 = new Object();
+        series1.data = series1Data;
+        console.log(series1Data);
+        series1.type = 'line';
+        series1.smooth = true;
+        series1.name = "拟合值";
+        seriesDatas.push(series1);
+
+        var option = getOption(["实际值", "拟合值"], chart.xAxisData, chart.xAxisName, chart.yAxisName, seriesDatas);
         option.tooltip = {formatter:'购买次数：{b}<br/>留存率：{c}%'};
         option.grid = {right:'22%'};
         var freqChart = echarts.init(document.getElementById('retention_freq'), 'macarons');
         freqChart.setOption(option);
+
     });
 }
 
@@ -73,12 +108,11 @@ function retention_time() {
 function freq_time(chartId, yName, type) {
     var spuId = selectId;
     $.get("/spuLifeCycle/getStagePeriodData", {spuId: spuId, type: type}, function (r) {
-        console.log(r);
         var series = r.data.seriesData[0];
         series.type = 'line';
         series.smooth = true;
-        var option = getOption(null, r.data.xAxisData, "时间间隔（天）", yName, series);
-        option.grid = {right: '26%', left: '14%'};
+        var option = getOption(null, r.data.xAxisData, "间隔（天）", yName, series);
+        option.grid = {right: '20%', left: '24%'};
         option.tooltip = {formatter:'频次：{c}<br/>间隔：{b}'};
         var freqChart = echarts.init(document.getElementById(chartId), 'macarons');
         freqChart.setOption(option);

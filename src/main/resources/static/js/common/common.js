@@ -134,7 +134,6 @@ function init_date_end(beginId, endId, format, startView, maxViewMode, minViewMo
         endDate: dataDt
     }).on("changeDate",function(ev){  //值改变事件
         //选择的日期不能大于第二个日期控件的日期
-        console.log(ev);
         if(ev.date){
             $("#" + beginId).datepicker('setEndDate', new Date(ev.date.valueOf()));
         }else{

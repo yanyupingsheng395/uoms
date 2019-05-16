@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -26,10 +27,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 运营指标监控相关的controller
@@ -146,6 +145,12 @@ public class KpiMonitorController extends BaseController {
     public ResponseBo getAvgCsPrice(String startDt, String endDt, String spuId) {
         Echart echart = kpiMonitorService.getAvgCsPrice(startDt, endDt, spuId);
         return ResponseBo.okWithData(null, echart);
+    }
+
+    @GetMapping("/generateFittingData")
+    public ResponseBo generateFittingData(String spuId, String purchCount) {
+        List<Integer> purchTimes = Arrays.asList(purchCount.split(",")).stream().map(x->Integer.valueOf(x)).collect(Collectors.toList());
+        return ResponseBo.okWithData(null, kpiMonitorService.generateFittingData(spuId, purchTimes));
     }
 }
 
