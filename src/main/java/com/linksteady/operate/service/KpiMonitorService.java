@@ -24,4 +24,5 @@ public interface KpiMonitorService {
      Map<String, Object> getUpriceDataBySpu(String spuId, String periodType, String start);
      Map<String, Object> getPriceData(String periodType, String start);
      Map<String, Object> getPriceDataBySpu(String spuId, String periodType, String start);
+     List<Double> generateFittingData(String spuId,List<Integer> purchTimes);
 }

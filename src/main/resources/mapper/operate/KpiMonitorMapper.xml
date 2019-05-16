@@ -1420,6 +1420,6 @@
     </select>
 
     <select id="getCeofBySpu" resultType="string" parameterType="string">
-        SELECT FORMULA_VALUE FROM UO_LC_SPU_LIFECYCLE WHERE SPU_WID=#{spuId}
+        SELECT FORMULA_VALUE FROM UO_LC_SPU_LIFECYCLE WHERE SPU_ID=#{spuId} and FORMULA_VALUE is not null
     </select>
 </mapper>

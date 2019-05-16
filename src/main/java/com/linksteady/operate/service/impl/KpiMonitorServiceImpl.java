@@ -718,7 +718,8 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
     /**
      * 根据公式和购买次数生成拟合曲线数据
      */
-    private List<Double> generateFittingData(String spuId,List<Integer> purchTimes)
+    @Override
+    public List<Double> generateFittingData(String spuId,List<Integer> purchTimes)
     {
         List<Double> result=Lists.newArrayList();
 
@@ -734,10 +735,9 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         List<String> paramList=Splitter.on('|').trimResults().omitEmptyStrings().splitToList(param);
 
         List<String> ceofList=Splitter.on(',').trimResults().omitEmptyStrings().splitToList(paramList.get(0));
-
-        double ceof1=Double.parseDouble(ceofList.get(1));
-        double ceof2=Double.parseDouble(ceofList.get(2));
-        double ceof3=Double.parseDouble(ceofList.get(3));
+        double ceof1=Double.parseDouble(ceofList.get(0));
+        double ceof2=Double.parseDouble(ceofList.get(1));
+        double ceof3=Double.parseDouble(ceofList.get(2));
         double intercept=Double.parseDouble(paramList.get(1));
 
         for(int i:purchTimes)

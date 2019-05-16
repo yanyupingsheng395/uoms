@@ -67,7 +67,8 @@
             T.RECOM_SPU,
             T.DISCOUNT_RATE,
             T.ORDER_PERIOD,
-            T.REFER_DENO
+            T.REFER_DENO,
+            T.DISCOUNT_LEVEL
         FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER H
         WHERE H.HEAD_ID =  T.daily_detail_id
           AND TO_CHAR(H.TOUCH_DT, 'YYYY-MM-DD') = #{daywid}

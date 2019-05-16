@@ -140,7 +140,7 @@ $('#opdayTable').bootstrapTable({
                 field: 'RECOM_SPU',
                 title: '推荐品类'
             },{
-                field: 'DISCOUNT_RATE',
+                field: 'DISCOUNT_LEVEL',
                 title: '折扣率'
             },{
                 field: 'ORDER_PERIOD',
