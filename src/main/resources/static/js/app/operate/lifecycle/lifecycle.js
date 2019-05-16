@@ -16,10 +16,10 @@ function tab2Init() {
 
 function getStageNode() {
     var spuId = selectId;
+    var yAxisTitle = new Array();
     $.get("/spuLifeCycle/getStageNode", {spuId: spuId}, function (r) {
         $.each(r.data, function (k, v) {
             var content = "";
-            var val = "";
             if(v == "0" || v == 0) {
                 if(k == 0) {
                     cotent = "该品类购买人数过少，尚未形成购买规律";
@@ -55,6 +55,12 @@ function retention_time() {
         var series = chart.seriesData[0];
         series.type = 'line';
         series.smooth = true;
+        series.markPoint.tooltip = {
+            show: true, // 是否显示
+                formatter: '从该点开始购买次数过少', // 内容格式器 a（系列名称），b（类目值），c（数值）, d（无）
+                trigger: 'item', // 触发类型，默认数据触发，见下图，可选为：'item' | 'axis'
+        };
+        series.markPoint.symbolSize = 30;
         var option = getOption(null, chart.xAxisData, chart.xAxisName, chart.yAxisName, series);
         option.tooltip = {formatter:'购买次数：{b}<br/>留存率：{c}%'};
         option.grid = {right:'22%'};

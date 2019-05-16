@@ -97,7 +97,7 @@ function covChart(chartId, obj) {
     var yAxisName = "变异系数";
     var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
-    chart.setOption(option);
+    chart.setOption(option, true);
     setTimeout(function () {
         chart.resize();
     }, 200);
@@ -182,7 +182,7 @@ function t3chart1(obj, chartId){
     });
     var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
-    chart.setOption(option);
+    chart.setOption(option, true);
     setTimeout(function () {
         chart.resize();
     }, 200);
@@ -222,7 +222,7 @@ function t3chart2(obj, chartId){
     option.legend.selected = tmp;
     option.grid = {top:'28%'};
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
-    chart.setOption(option);
+    chart.setOption(option, true);
     setTimeout(function () {
         chart.resize();
     }, 200);
@@ -276,7 +276,7 @@ function makeT2Chart(obj,chartId,yName, data, avg, up, down) {
     seriesData.push(t2);
     var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
-    chart.setOption(option);
+    chart.setOption(option, true);
     setTimeout(function () {
         chart.resize();
     }, 200);
