@@ -378,10 +378,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         List<DiagConditionVO> orialCondition=diagHandleInfo.getWhereinfo();
         List<DiagConditionNew> newCondition=Lists.newArrayList();
 
-        orialCondition.forEach(s->{
-            DiagConditionNew nc= dozerBeanMapper.map(s,DiagConditionNew.class);
-            newCondition.add(nc);
-        });
+        Map<String,DiagConditionVO> orialConditionMap=orialCondition.stream().collect(Collectors.toMap(DiagConditionVO::getDimCode,a -> a));
+
 
         List<String> periodList=getPeriodList(diagHandleInfo.getPeriodType(),diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
         List<String> dayPeriodList=getPeriodList(UomsConstants.PERIOD_TYPE_DAY,diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
@@ -432,16 +430,29 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             node.put("dimName",dimName);
 
             nodeArray.add(node);
-
-            DiagConditionNew nc=new DiagConditionNew();
-            nc.setDimCode(dimCode);
-            nc.setDimName(dimName);
-            nc.setDimValues(v);
-            nc.setDimValueDisplay(diagDimValue.get(v));
-            nc.setInheritFlag("N");
-            newCondition.add(nc);
-
         }
+
+
+        orialCondition.forEach(s->{
+
+            if(null==orialConditionMap.get(s.getDimCode()))
+            {
+                DiagConditionNew nc= dozerBeanMapper.map(s,DiagConditionNew.class);
+                newCondition.add(nc);
+            }else
+            {
+                DiagConditionNew nc=new DiagConditionNew();
+                nc.setDimCode(dimCode);
+                nc.setDimName(KpiCacheManager.getInstance().getDiagDimList().get(dimCode));
+                String tempValue=s.getDimValues();
+                String tempValueDisplay=s.getDimValueDisplay();
+
+                nc.setDimValues(tempValue+","+Joiner.on(",").join(dimValues));
+                nc.setDimValueDisplay(tempValueDisplay+Joiner.on(",").join(dimNames));
+                nc.setInheritFlag("N");
+                newCondition.add(nc);
+            }
+        });
 
         //设置图例名称列表
         diagAddResultInfo.setLegendData(dimNames);
