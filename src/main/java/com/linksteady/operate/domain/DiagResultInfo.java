@@ -1,6 +1,5 @@
 package com.linksteady.operate.domain;
 
-import com.linksteady.operate.vo.DiagConditionNew;
 import com.linksteady.operate.vo.DiagConditionVO;
 import lombok.Data;
 
