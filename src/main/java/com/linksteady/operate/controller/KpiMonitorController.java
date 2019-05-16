@@ -51,7 +51,7 @@ public class KpiMonitorController extends BaseController {
     }
 
     /**
-     * 获取留存率同期群数据
+     * 获取留存率同期群数据（按SPU查看）
      * @return
      */
     @RequestMapping("/getRetentionBySpu")
