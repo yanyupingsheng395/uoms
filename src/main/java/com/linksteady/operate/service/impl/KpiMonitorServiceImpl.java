@@ -62,7 +62,12 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         List<String> dayPeriodList= DateUtil.getEveryday(startDt, endDt);
         startDt = startDt.replaceAll("-", "");
         endDt = endDt.replaceAll("-", "");
-        List<Map<String, Object>> list = kpiMonitorMapper.getGMV(startDt, endDt, spuId);
+        List<Map<String, Object>> list = Lists.newArrayList();
+        if(StringUtils.isNotBlank(spuId)) {
+            list = kpiMonitorMapper.getGMVBySpu(startDt, endDt, spuId);
+        }else {
+            list = kpiMonitorMapper.getGMV(startDt, endDt);
+        }
 
         Map<String, Double> fp = new HashMap<>();
         Map<String, Double> rp = new HashMap<>();
@@ -101,8 +106,12 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         List<String> dayPeriodList= DateUtil.getEveryday(startDt, endDt);
         startDt = startDt.replaceAll("-", "");
         endDt = endDt.replaceAll("-", "");
-        List<Map<String, Object>> list = kpiMonitorMapper.getTradeUser(startDt, endDt, spuId);
-
+        List<Map<String, Object>> list  = Lists.newArrayList();
+        if(StringUtils.isNotBlank(spuId)) {
+            list = kpiMonitorMapper.getTradeUserBySpu(startDt, endDt, spuId);
+        }else {
+            list = kpiMonitorMapper.getTradeUser(startDt, endDt);
+        }
         Map<String, Double> fp = Maps.newHashMap();
         Map<String, Double> rp = Maps.newHashMap();
         Map<String, Double> total = Maps.newHashMap();
@@ -147,8 +156,12 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         List<String> dayPeriodList= DateUtil.getEveryday(startDt, endDt);
         startDt = startDt.replaceAll("-", "");
         endDt = endDt.replaceAll("-", "");
-        List<Map<String, Object>> list = kpiMonitorMapper.getAvgCsPrice(startDt, endDt, spuId);
-
+        List<Map<String, Object>> list = Lists.newArrayList();
+        if(StringUtils.isNotBlank(spuId)) {
+            list = kpiMonitorMapper.getAvgCsPriceBySpu(startDt, endDt, spuId);
+        }else {
+            list = kpiMonitorMapper.getAvgCsPrice(startDt, endDt);
+        }
         Map<String, Double> fp = Maps.newHashMap();
         Map<String, Double> rp = Maps.newHashMap();
         Map<String, Double> total = Maps.newHashMap();
@@ -819,12 +832,12 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             //获取对应的系数值
             result.add(calculateFormulaValue(i,ceof1,ceof2,ceof3,intercept));
         }
-       return result;
+        return result;
     }
 
     private double calculateFormulaValue(int x,double ceof1,double ceof2,double ceof3,double intercept)
     {
-         double result= ArithUtil.formatDoubleByMode(Math.pow(x,3)*ceof1+Math.pow(x,2)*ceof2+x*ceof3+intercept,0, RoundingMode.DOWN);
-         return result;
+        double result= ArithUtil.formatDoubleByMode(Math.pow(x,3)*ceof1+Math.pow(x,2)*ceof2+x*ceof3+intercept,0, RoundingMode.DOWN);
+        return result;
     }
 }
