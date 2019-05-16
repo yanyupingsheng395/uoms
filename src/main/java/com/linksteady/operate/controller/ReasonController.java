@@ -212,7 +212,7 @@ public class ReasonController  extends BaseController {
         //回归公式
         StringBuilder regression=new StringBuilder();
 
-        String kpiName=KpiCacheManager.getInstance().getKpiCodeNamePair().get(kpiCode);
+        String kpiName=KpiCacheManager.getInstance().getKpiCodeNamePair().get("gmv");
         regression.append("y=");
         reasonKpiNames.add("y : "+kpiName);
 
