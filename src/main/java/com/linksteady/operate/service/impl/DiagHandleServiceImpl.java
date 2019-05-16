@@ -432,27 +432,40 @@ public class DiagHandleServiceImpl implements DiagHandleService {
             nodeArray.add(node);
         }
 
+        if(null!=orialCondition&&orialCondition.size()>0)
+        {
+            orialCondition.forEach(s->{
 
-        orialCondition.forEach(s->{
+                if(null==orialConditionMap.get(s.getDimCode()))
+                {
+                    DiagConditionNew nc= dozerBeanMapper.map(s,DiagConditionNew.class);
+                    newCondition.add(nc);
+                }else
+                {
+                    DiagConditionNew nc=new DiagConditionNew();
+                    nc.setDimCode(dimCode);
+                    nc.setDimName(KpiCacheManager.getInstance().getDiagDimList().get(dimCode));
+                    String tempValue=s.getDimValues();
+                    String tempValueDisplay=s.getDimValueDisplay();
 
-            if(null==orialConditionMap.get(s.getDimCode()))
-            {
-                DiagConditionNew nc= dozerBeanMapper.map(s,DiagConditionNew.class);
-                newCondition.add(nc);
-            }else
-            {
-                DiagConditionNew nc=new DiagConditionNew();
-                nc.setDimCode(dimCode);
-                nc.setDimName(KpiCacheManager.getInstance().getDiagDimList().get(dimCode));
-                String tempValue=s.getDimValues();
-                String tempValueDisplay=s.getDimValueDisplay();
+                    nc.setDimValues(tempValue+","+Joiner.on(",").join(dimValues));
+                    nc.setDimValueDisplay(tempValueDisplay+Joiner.on(",").join(dimNames));
+                    nc.setInheritFlag("N");
+                    newCondition.add(nc);
+                }
+            });
+        }else
+        {
+            DiagConditionNew nc=new DiagConditionNew();
+            nc.setDimCode(dimCode);
+            nc.setDimName(KpiCacheManager.getInstance().getDiagDimList().get(dimCode));
 
-                nc.setDimValues(tempValue+","+Joiner.on(",").join(dimValues));
-                nc.setDimValueDisplay(tempValueDisplay+Joiner.on(",").join(dimNames));
-                nc.setInheritFlag("N");
-                newCondition.add(nc);
-            }
-        });
+            nc.setDimValues(Joiner.on(",").join(dimValues));
+            nc.setDimValueDisplay(Joiner.on(",").join(dimNames));
+            nc.setInheritFlag("N");
+            newCondition.add(nc);
+        }
+
 
         //设置图例名称列表
         diagAddResultInfo.setLegendData(dimNames);
