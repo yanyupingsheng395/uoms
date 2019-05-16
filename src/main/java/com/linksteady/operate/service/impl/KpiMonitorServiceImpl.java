@@ -7,7 +7,6 @@ import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.KpiMonitorMapper;
 import com.linksteady.operate.domain.DatePeriodKpi;
-import com.linksteady.operate.domain.WeekInfo;
 import com.linksteady.operate.service.KpiMonitorService;
 import com.linksteady.operate.vo.Echart;
 import org.apache.commons.lang3.StringUtils;
@@ -18,8 +17,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -519,13 +516,11 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             Map<String, Object> tmpMap = Maps.newLinkedHashMap();
             List<DatePeriodKpi> list = datas.get(x);
             tmpMap.put("month", x);
-            list.stream().forEach(y-> {
-                    // 月份，新增用户数， 各月的留存率
-                    if(y.getBuyPeriod().equals(x)) {
-                        tmpMap.put("newUsers", y.getKpiValue());
-                    }
+            list.stream().filter(z->!z.getBuyPeriod().equals(x)).forEach(y-> {
                     tmpMap.put(y.getBuyPeriod(), y.getRetention());
-
+            });
+            list.stream().filter(z->z.getBuyPeriod().equals(x)).forEach(y-> {
+                tmpMap.put("newUsers", y.getKpiValue());
             });
             return tmpMap;
         }).collect(Collectors.toList());
@@ -550,6 +545,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         result.put("data", data);
         cols.add("month");
         cols.add("newUsers");
+        monthPeriod.remove(0);
         cols.addAll(monthPeriod);
         result.put("columns", cols);
         return result;
@@ -566,26 +562,24 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
     public Map<String, Object> getMonthData(List<DatePeriodKpi> dataList, String begin, String end, boolean percent) {
         // 将原始数据按各月分组到Map
         Map<String, List<DatePeriodKpi>> datas = getNewData(dataList, begin, end);
+
         // 分组后的map组装数据到Map
         List<Map<String, Object>> sortBeforeData =  datas.keySet().stream().map(x-> {
             Map<String, Object> tmpMap = Maps.newLinkedHashMap();
             List<DatePeriodKpi> list = datas.get(x);
             tmpMap.put("month", x);
-            list.stream().forEach(y-> {
+            list.stream().filter(z->!z.getBuyPeriod().equals(x)).forEach(y-> {
                 if(percent) {
-                    // 月份，新增用户数， 各月的留存率
-                    if(y.getBuyPeriod().equals(x)) {
-                        tmpMap.put("newUsers", y.getKpiValue());
-                    }
                     tmpMap.put(y.getBuyPeriod(), y.getRetention());
                 }else {
-                    // 月份，新增用户数， 各月的留存率
-                    if(y.getBuyPeriod().equals(x)) {
-                        tmpMap.put("newUsers", y.getKpiValue());
-                    }
                     tmpMap.put(y.getBuyPeriod(), y.getKpiValue());
                 }
-
+                if(y.getBuyPeriod().equals(x)) {
+                    tmpMap.put("newUsers", y.getKpiValue());
+                }
+            });
+            list.stream().filter(z->z.getBuyPeriod().equals(x)).forEach(y-> {
+                tmpMap.put("newUsers", y.getKpiValue());
             });
             return tmpMap;
         }).collect(Collectors.toList());
@@ -593,7 +587,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         List<Map<String, Object>> data = sortBeforeData.stream().sorted(Comparator.comparing(KpiMonitorServiceImpl::comparingByMonth)).collect(Collectors.toList());
 
         // 求合计值
-        DoubleSummaryStatistics newUsersTotal = data.stream().map(x->Double.valueOf((String)x.get("newUsers"))).collect(Collectors.summarizingDouble(v->v));
+        DoubleSummaryStatistics newUsersTotal = data.stream().map(x->x.get("newUsers") == null ? 0D:Double.valueOf((String)x.get("newUsers"))).collect(Collectors.summarizingDouble(v->v));
         Map<String, Object> map = Maps.newHashMap();
         map.put("month", "合计：");
         map.put("newUsers", newUsersTotal.getSum());
@@ -616,6 +610,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         result.put("data", data);
         cols.add("month");
         cols.add("newUsers");
+        monthPeriod.remove(0);
         cols.addAll(monthPeriod);
         result.put("columns", cols);
         return result;
@@ -633,22 +628,20 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             Map<String, Object> tmpMap = Maps.newLinkedHashMap();
             List<DatePeriodKpi> list = datas.get(x);
             tmpMap.put("month", x);
-            list.stream().forEach(y-> {
+            list.stream().filter(z->!z.getBuyPeriod().equals(x)).forEach(y-> {
                 if(percent) {
-                    // 月份，新增用户数， 各月的留存率
-                    if(y.getBuyPeriod().equals(x)) {
-                        tmpMap.put("newUsers", y.getKpiValue());
-                    }
                     tmpMap.put(y.getBuyPeriod(), y.getRetention());
                 }else {
-                    // 月份，新增用户数， 本月客单价
-                    if(y.getBuyPeriod().equals(x)) {
-                        tmpMap.put("newUsers", y.getKpiValue());
-                        tmpMap.put("uprice", y.getUprice());
-                    }
                     tmpMap.put(y.getBuyPeriod(), y.getUprice());
                 }
-
+            });
+            list.stream().filter(z->z.getBuyPeriod().equals(x)).forEach(y-> {
+                if(percent) {
+                    tmpMap.put("newUsers", y.getKpiValue());
+                }else {
+                    tmpMap.put("newUsers", y.getKpiValue());
+                    tmpMap.put("uprice", y.getUprice());
+                }
             });
             return tmpMap;
         }).collect(Collectors.toList());
@@ -680,6 +673,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         cols.addAll(Arrays.asList("month", "newUsers", "uprice"));
         Map<String, Object> result = Maps.newHashMap();
         result.put("data", data);
+        monthPeriod.remove(0);
         cols.addAll(monthPeriod);
         result.put("columns", cols);
         return result;
@@ -740,7 +734,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             List<DatePeriodKpi> list = minPeriodKeysMap.get(c);
 
             //获取第一个数据 因为上面已经完成了补0 所以此处不用考虑为空
-            String kpiValue=list.stream().filter(a->beginDt.equals(a.getBuyPeriod())).map(x->x.getKpiValue()).findFirst().get();
+            String kpiValue=list.stream().filter(a->c.equals(a.getBuyPeriod())).map(x->x.getKpiValue()).findFirst().get();
             double newUserCount=Double.valueOf("".equals(kpiValue)?"0":kpiValue);
 
             list.stream().forEach(x-> {
