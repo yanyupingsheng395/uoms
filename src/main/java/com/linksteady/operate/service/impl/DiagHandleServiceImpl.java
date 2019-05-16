@@ -581,7 +581,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         //构造$JOIN_TABLE$字符串和 $WHERE_INFO$
         List<TemplateFilter> fiters=diagHandleInfo.getWhereinfo().stream().map(e->new TemplateFilter(e.getDimCode(),e.getDimValues())).collect(Collectors.toList());
 
-        TemplateResult templateResult=buildWhereInfo(kpiSqlTemplate.getDriverTableMapping().get("$JOIN_TABLES$"),fiters,dimCode,dimValues,isOverall);
+        TemplateResult templateResult=buildWhereInfo(kpiSqlTemplate.getDriverTableMapping().get("$JOIN_TABLES$"),fiters,dimCode,dimValues);
 
         //$DATE_RANGE$
         String data_range=buildDateRange(diagHandleInfo.getPeriodType(),diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
@@ -595,8 +595,17 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         StringBuffer columnInfo=new StringBuffer();
         groupInfo.append(" GROUP BY ");
 
-        groupInfo.append(dimCodeParam).append(",").append(periodName);
-        columnInfo.append(" ").append(dimCodeParam).append(" DIM_VALUE,").append(periodName).append(" PERIOD_NAME,");
+        if("N".equals(isOverall))
+        {
+            groupInfo.append(dimCodeParam).append(",").append(periodName);
+            columnInfo.append(" ").append(dimCodeParam).append(" DIM_VALUE,").append(periodName).append(" PERIOD_NAME,");
+        }else
+        {
+            //如果获取的是总体数据的话，则只需要根据 时间进行汇总，并不需要根据维度值进行group by
+            groupInfo.append(periodName);
+            columnInfo.append(" ").append(periodName).append(" PERIOD_NAME,");
+        }
+
 
         stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
                 .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",data_range).add("$COLUMN_INFO$",columnInfo.toString())
@@ -628,7 +637,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         //构造$JOIN_TABLE$字符串和 $WHERE_INFO$
         List<TemplateFilter> fiters=diagHandleInfo.getWhereinfo().stream().map(e->new TemplateFilter(e.getDimCode(),e.getDimValues())).collect(Collectors.toList());
 
-        TemplateResult templateResult=buildWhereInfo(kpiSqlTemplate.getDriverTableMapping().get("$JOIN_TABLES$"),fiters,dimCode,dimValues,isOverall);
+        TemplateResult templateResult=buildWhereInfo(kpiSqlTemplate.getDriverTableMapping().get("$JOIN_TABLES$"),fiters,dimCode,dimValues);
 
         //$DATE_RANGE$
         String dataRange=buildDateRange(diagHandleInfo.getPeriodType(),diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
@@ -681,7 +690,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         //构造$JOIN_TABLE$字符串和 $WHERE_INFO$
         List<TemplateFilter> fiters=diagHandleInfo.getWhereinfo().stream().map(e->new TemplateFilter(e.getDimCode(),e.getDimValues())).collect(Collectors.toList());
 
-        TemplateResult templateResult=buildWhereInfo(kpiSqlTemplate.getDriverTableMapping().get("$JOIN_TABLES$"),fiters,dimCode,null,"");
+        TemplateResult templateResult=buildWhereInfo(kpiSqlTemplate.getDriverTableMapping().get("$JOIN_TABLES$"),fiters,dimCode,null);
 
         //$DATE_RANGE$
         String dataRange=buildDateRange(diagHandleInfo.getPeriodType(),diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
@@ -825,7 +834,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
      * @param dimCode 维度类型
      * @return TemplateResult 返回构建好的join信息和where信息
      */
-    private TemplateResult buildWhereInfo(String driverTableName,List<TemplateFilter> filterInfo,String dimCode,List<String> dimValues,String isOverAll)
+    private TemplateResult buildWhereInfo(String driverTableName,List<TemplateFilter> filterInfo,String dimCode,List<String> dimValues)
     {
         Map<String, DimJoinVO> dimJoin=KpiCacheManager.getInstance().getDimJoinList().row(driverTableName);
 
@@ -847,14 +856,6 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         });
 
         // todo 获取汇总数据的时候，不考虑用户在当前做加法时选的这个维度
-//        if(null!=isOverAll&&"Y".equals(isOverAll))
-//        {
-//
-//        }else
-//        {
-//
-//        }
-
 
         //以用户选择的过滤值为准线,同时合并用户选择的维度，这是为了防止 spu cate等一些值非常多的维度进行group by 会崩溃。
         if(null!=dimValues)
