@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface KpiMonitorService {
 
-     List<WeekInfo> getWeekList(String start, String end);
+//     List<WeekInfo> getWeekList(String start, String end);
      Echart getGMV(String startDt, String endDt, String spuId);
      Echart getTradeUser(String startDt, String endDt, String spuId);
      Echart getAvgCsPrice(String startDt, String endDt, String spuId);

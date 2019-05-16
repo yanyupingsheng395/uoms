@@ -50,10 +50,10 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
 
     public static final String[] D_MONTH_PRICE = {"MONTH_ID", "TOTAL_USER", "UPRICE", "UPRICE1", "UPRICE2", "UPRICE3", "UPRICE4", "UPRICE5", "UPRICE6", "UPRICE7", "UPRICE8", "UPRICE9", "UPRICE10", "UPRICE11", "UPRICE12"};
 
-    @Override
-    public List<WeekInfo> getWeekList(String start, String end) {
-        return kpiMonitorMapper.getWeekList(Integer.parseInt(start.replace("-","")),Integer.parseInt(end.replace("-","")));
-    }
+//    @Override
+//    public List<WeekInfo> getWeekList(String start, String end) {
+//        return kpiMonitorMapper.getWeekList(Integer.parseInt(start.replace("-","")),Integer.parseInt(end.replace("-","")));
+//    }
 
     /**
      *
