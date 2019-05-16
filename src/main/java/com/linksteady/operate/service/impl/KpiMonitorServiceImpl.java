@@ -50,10 +50,6 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
 
     public static final String[] D_MONTH_PRICE = {"MONTH_ID", "TOTAL_USER", "UPRICE", "UPRICE1", "UPRICE2", "UPRICE3", "UPRICE4", "UPRICE5", "UPRICE6", "UPRICE7", "UPRICE8", "UPRICE9", "UPRICE10", "UPRICE11", "UPRICE12"};
 
-//    @Override
-//    public List<WeekInfo> getWeekList(String start, String end) {
-//        return kpiMonitorMapper.getWeekList(Integer.parseInt(start.replace("-","")),Integer.parseInt(end.replace("-","")));
-//    }
 
     /**
      *
@@ -210,8 +206,9 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             return getDMonthData(dataList, true);
         }
         if(PERIOD_TYPE_MONTH.equals(period)) {
+            //自然月数据
             List<DatePeriodKpi> dataList =  kpiMonitorMapper.getRetainMonth(begin, end);
-            return getMonthData(dataList, begin, end, true);
+            return getMonthPercentData(dataList, begin, end);
         }
         return null;
     }
@@ -494,6 +491,58 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
     }
 
     /**
+     * 获取自然月的率  合计数据为 求平均值
+     * @param dataList
+     * @param begin
+     * @param end
+     * @return
+     */
+    public Map<String, Object> getMonthPercentData(List<DatePeriodKpi> dataList, String begin, String end) {
+        // 将原始数据按各月分组到Map
+        Map<String, List<DatePeriodKpi>> datas = getNewData(dataList, begin, end);
+
+        // 分组后的map组装数据到Map x为每行的月份
+        List<Map<String, Object>> sortBeforeData =  datas.keySet().stream().map(x-> {
+            Map<String, Object> tmpMap = Maps.newLinkedHashMap();
+            List<DatePeriodKpi> list = datas.get(x);
+            tmpMap.put("month", x);
+            list.stream().forEach(y-> {
+                    // 月份，新增用户数， 各月的留存率
+                    if(y.getBuyPeriod().equals(x)) {
+                        tmpMap.put("newUsers", y.getKpiValue());
+                    }
+                    tmpMap.put(y.getBuyPeriod(), y.getRetention());
+
+            });
+            return tmpMap;
+        }).collect(Collectors.toList());
+
+        List<Map<String, Object>> data = sortBeforeData.stream().sorted(Comparator.comparing(KpiMonitorServiceImpl::comparingByMonth)).collect(Collectors.toList());
+
+        // 求合计值
+        DoubleSummaryStatistics newUsersTotal = data.stream().map(x->Double.valueOf((String)x.get("newUsers"))).collect(Collectors.summarizingDouble(v->v));
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("month", "合计：");
+        map.put("newUsers", newUsersTotal.getSum());
+
+        List<String> monthPeriod = DateUtil.getMonthBetween(begin, end, "yyyyMM");
+        monthPeriod.stream().forEach(t-> {
+            DoubleSummaryStatistics tmp = data.stream().map(x->(x.get(t) != null && StringUtils.isNotBlank(x.get(t).toString())) ? Double.valueOf(x.get(t).toString()):0D).collect(Collectors.summarizingDouble(v->v));
+            Long count = data.stream().filter(x->x.get(t) != null && Double.valueOf(x.get(t).toString()) > 0D).count();
+            map.put(t, count == 0 ? 0 : String.format("%.2f", tmp.getSum()/count));
+        });
+        data.add(map);
+        List<String> cols = Lists.newArrayList();
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("data", data);
+        cols.add("month");
+        cols.add("newUsers");
+        cols.addAll(monthPeriod);
+        result.put("columns", cols);
+        return result;
+    }
+
+    /**
      * 获取自然月的数据
      * @param dataList
      * @param begin
@@ -631,29 +680,38 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
      * @param endDt yyyyMM
      * @return
      */
-    private static Map<String, List<DatePeriodKpi>> getNewData(List<DatePeriodKpi> data, String beginDt, String endDt) {
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMM");
+    private Map<String, List<DatePeriodKpi>> getNewData(List<DatePeriodKpi> data, String beginDt, String endDt) {
+        //起始和结束之间所有的月份
         List<String> monthPeriod = DateUtil.getMonthBetween(beginDt, endDt, "yyyyMM");
+
+        //按行分组 每行代表同期群分析表中的一行
         Map<String, List<DatePeriodKpi>> minPeriodKeysMap = data.stream().collect(Collectors.groupingBy(DatePeriodKpi::getMinPeriod, LinkedHashMap::new,Collectors.toList()));
+
         monthPeriod.stream().map(m-> {
+            //如果当前月没数据
             if(!minPeriodKeysMap.keySet().contains(m)) {
-                List<DatePeriodKpi> tmpList = Lists.newArrayList();
-                monthPeriod.stream().forEach(m1-> {
-                    YearMonth ym1 = YearMonth.parse(m1, df);
-                    YearMonth ym2 = YearMonth.parse(m, df);
-                    if(m1.equals(m) || ym1.isAfter(ym2)) {
-                        tmpList.add(new DatePeriodKpi(m, m1, "0"));
-                    }
-                });
+
+                List<DatePeriodKpi> tmpList = monthPeriod.stream().map(n->{
+                    if(compareMonth(m,n))
+                    {
+                        return new DatePeriodKpi(m,n,"0");
+                    }else
+                    {
+                        return new DatePeriodKpi(m,n,"");
+                     }
+                }).collect(Collectors.toList());
+
                 minPeriodKeysMap.put(m, tmpList);
             }else {
+                //当前月有数据
                 List<DatePeriodKpi> tmpList = Lists.newArrayList();
-                List<String> ttt = minPeriodKeysMap.get(m).stream().map(o-> o.getBuyPeriod()).collect(Collectors.toList());
+                List<String> temp = minPeriodKeysMap.get(m).stream().map(o-> o.getBuyPeriod()).collect(Collectors.toList());
                 monthPeriod.stream().forEach(t-> {
-                    if(!ttt.contains(t) ) {
-                        YearMonth ym1 = YearMonth.parse(t, df);
-                        YearMonth ym2 = YearMonth.parse(m, df);
-                        if(ym1.isAfter(ym2)) {
+                    if(!temp.contains(t)) {
+                        if(compareMonth(t,m)) {
+                            tmpList.add(new DatePeriodKpi(m, t, "0"));
+                        }else
+                        {
                             tmpList.add(new DatePeriodKpi(m, t, ""));
                         }
                     }
@@ -665,17 +723,33 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }).collect(Collectors.toList());
 
         minPeriodKeysMap.keySet().stream().forEach(c-> {
+            //每一行数据
             List<DatePeriodKpi> list = minPeriodKeysMap.get(c);
-            DoubleSummaryStatistics d = list.stream().map(x-> x.getKpiValue().equals("") ? 0D:Double.valueOf(x.getKpiValue())).collect(Collectors.summarizingDouble(v->v));
+
+            //获取第一个数据 因为上面已经完成了补0 所以此处不用考虑为空
+            String kpiValue=list.stream().filter(a->beginDt.equals(a.getBuyPeriod())).map(x->x.getKpiValue()).findFirst().get();
+            double newUserCount=Double.valueOf("".equals(kpiValue)?"0":kpiValue);
+
             list.stream().forEach(x-> {
-                double retention = 0D;
-                if(d.getSum() != retention) {
-                    retention = Double.valueOf(x.getKpiValue().equals("") ? 0D:Double.valueOf(x.getKpiValue())/d.getSum());
+                if(!org.springframework.util.StringUtils.isEmpty(x.getKpiValue()))
+                {
+                    double retention = Double.valueOf(newUserCount==0? 0D:Double.valueOf(x.getKpiValue())/newUserCount*100);
+                    x.setRetention(Double.valueOf(String.format("%.2f", retention)));
                 }
-                x.setRetention(Double.valueOf(String.format("%.2f", retention)));
             });
         });
         return minPeriodKeysMap;
+    }
+
+    /**
+     * 比较两个YYYYMM格式的月份那个大，如果end比start大，则返回true 否则返回false
+     * @param startMonth
+     * @param endMonth
+     * @return
+     */
+    private boolean compareMonth(String startMonth,String endMonth)
+    {
+        return Integer.parseInt(endMonth)>=Integer.parseInt(startMonth);
     }
 
     private List<Double> fixData(Map<String,Double> datas,List<String> periodList) {

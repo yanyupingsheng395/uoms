@@ -20,34 +20,31 @@
         <result column="UPRICE" property="uprice" jdbcType="DECIMAL"></result>
     </resultMap>
 
+    <!-- 获取间隔月的留存率数据 -->
     <select id="getRetainDMonth" resultType="map">
         with g1 as
         (
         SELECT
-        dt.month buy_month,
-        t.user_id
+             dt.month buy_month,
+             t.user_id,
+             t.is_fp
         FROM w_Orders t,w_date dt
         where t.valid_status=1
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
         and dt.month &lt;= #{endDt}
         ),
-        --获取用户在此区间内的最早购买月份
-        g2 as(
-        SELECT
-        min(buy_month) min_month,
-        user_id
-        FROM g1
-        group by user_id
+        g2 as(  --每月新增的用户
+        select g1.user_id,g1.buy_month from g1 where g1.is_fp='Y' group by g1.user_id,g1.buy_month
         ),
         g3 as(
         --如果用户一个月有多单，则只计算一次
         SELECT
-        DISTINCT
-        g1.user_id,
-        g1.buy_month,
-        g2.min_month,
-        months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.min_month,'yyyymm')) month_diff
+            DISTINCT
+            g1.user_id,
+            g1.buy_month,
+            g2.buy_month min_month, --这个用户在那个月新增的
+            months_between(to_date(g1.buy_month,'yyyymm'), to_date(g2.buy_month,'yyyymm')) month_diff
         FROM g1,g2 where g1.user_id=g2.user_id
         ),
         rt as(
@@ -105,13 +102,14 @@
         order by dt.month_id
     </select>
 
-    <!--&#45;&#45;  and spu.spu_wid=1-->
+    <!--按SPU获取用户的间隔月留存率数据-->
     <select id="getRetainBySpuDMonth" resultType="map">
         with g1 as
         (
         SELECT
         dt.month buy_month,
-        t.user_id
+        t.user_id,
+        t.is_fp
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
         where t.valid_status=1
         and t.product_id=spu.product_id
@@ -119,13 +117,8 @@
         and dt.month &gt;= #{beginDt}
         and dt.month &lt;= #{endDt}
         ),
-        --获取用户在此区间内的最早购买月份
-        g2 as(
-        SELECT
-        min(buy_month) min_month,
-        user_id
-        FROM g1
-        group by user_id
+        g2 as(  --每月新增的用户及其新新增的月份
+        select g1.user_id,g1.buy_month min_month from g1 where g1.is_fp='Y' group by g1.user_id,g1.buy_month
         ),
         g3 as(
         --如果用户一个月有多单，则只计算一次
@@ -191,6 +184,7 @@
         order by dt.month_id
     </select>
 
+    <!-- 按间隔月看留存用户数 -->
     <select id="getRetainUserCountDMonth" resultType="map">
         with g1 as
         (
@@ -258,6 +252,7 @@
         order by dt.month_id
     </select>
 
+    <!-- 按间隔月查看某个spu下的留存用户数 -->
     <select id="getRetainUserCountDMonthBySpu" resultType="map">
         with g1 as
         (
@@ -327,17 +322,18 @@
         order by dt.month_id
     </select>
 
-    <select id="getWeekList" resultMap="BaseResultMap">
-        SELECT DISTINCT T.YEAR,
-        T.WEEK_WID,
-        T.WEEK_OF_YARE_NAME,
-        T.WEEK_BEGIN_WID,
-        T.WEEK_END_WID
-        FROM W_DATE T
-        WHERE ROW_WID &gt; #{beginWid}
-        AND ROW_WID &lt;= #{endWid}
-        ORDER BY WEEK_WID ASC
-    </select>
+    <!-- 获取所有的周 -->
+    <!--<select id="getWeekList" resultMap="BaseResultMap">-->
+        <!--SELECT DISTINCT T.YEAR,-->
+        <!--T.WEEK_WID,-->
+        <!--T.WEEK_OF_YARE_NAME,-->
+        <!--T.WEEK_BEGIN_WID,-->
+        <!--T.WEEK_END_WID-->
+        <!--FROM W_DATE T-->
+        <!--WHERE ROW_WID &gt; #{beginWid}-->
+        <!--AND ROW_WID &lt;= #{endWid}-->
+        <!--ORDER BY WEEK_WID ASC-->
+    <!--</select>-->
 
     <select id="getGMV" resultType="map">
         SELECT
@@ -417,22 +413,20 @@
         FROM g2 ORDER BY g2.PERIOD_NAME ASC
     </select>
 
+    <!-- 按自然月获取留存率 -->
     <select id="getRetainMonth" resultMap="datePeriodKpiMap">
         WITH g1 AS
         (
         SELECT MONTH BUY_MONTH,
-        T.USER_ID
+        T.USER_ID,
+        T.IS_FP
         FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1
         AND DT.MONTH &gt;= #{beginDt}
         AND DT.MONTH &lt;= #{endDt}
         AND T.ORDER_DT_WID=DT.ROW_WID
         ),
-        --每个用户及其最早购买的月份
-        g2 as(
-        SELECT MIN(BUY_MONTH) MIN_MONTH,
-        USER_ID
-        FROM g1
-        GROUP BY USER_ID
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         --每个用户 及其购买月份
         g3 as(
@@ -447,11 +441,13 @@
         ORDER BY g2.MIN_MONTH,g3.BUY_MONTH
     </select>
 
+    <!-- 计算某个SPU下的留存用户数 -->
     <select id="getRetainMonthBySpu" resultMap="datePeriodKpiMap">
         WITH g1 AS
         (
         SELECT MONTH BUY_MONTH,
-        T.USER_ID
+        T.USER_ID,
+        T.IS_FP
         FROM W_ORDER_DETAILS T,W_DATE DT,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
         WHERE
         T.ORDER_DT_WID=DT.ROW_WID
@@ -461,12 +457,8 @@
         AND DT.MONTH &lt;=#{endDt}
         AND SPU.SPU_WID= #{spuId}
         ),
-        --每个用户及其最早购买的月份
-        g2 as(
-        SELECT MIN(BUY_MONTH) MIN_MONTH,
-        USER_ID
-        FROM g1
-        GROUP BY USER_ID
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         --每个用户 及其购买月份
         g3 as(
@@ -482,13 +474,13 @@
     </select>
 
 
-    <!--AND SPU.SPU_WID=1-->
-
+    <!-- 计算某个spu下的自然月的留存率 -->
     <select id="getRetainBySpuMonth" resultMap="datePeriodKpiMap">
         WITH g1 AS
         (
         SELECT MONTH BUY_MONTH,
-        T.USER_ID
+        T.USER_ID,
+        T.IS_FP
         FROM W_ORDER_DETAILS T,W_DATE DT,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
         WHERE
         T.ORDER_DT_WID=DT.ROW_WID
@@ -498,12 +490,8 @@
         AND DT.MONTH &lt;= #{endDt}
         AND SPU.SPU_WID= #{spuId}
         ),
-        --每个用户及其最早购买的月份
-        g2 as(
-        SELECT MIN(BUY_MONTH) MIN_MONTH,
-        USER_ID
-        FROM g1
-        GROUP BY USER_ID
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         --每个用户 及其购买月份
         g3 as(
@@ -518,25 +506,22 @@
         ORDER BY g2.MIN_MONTH,g3.BUY_MONTH
     </select>
 
+    <!-- 计算流失率的 间隔月  -->
     <select id="getLossUserRateDMonth" resultType="map">
         with g1 as
         (
         SELECT
         dt.month buy_month,
-        t.user_id
+        t.user_id,
+        is_fp
         FROM w_Orders t,w_date dt
         where t.valid_status=1
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
         and dt.month &lt;= #{endDt}
         ),
-        --获取用户在此区间内的最早购买月份
-        g2 as(
-        SELECT
-        min(buy_month) min_month,
-        user_id
-        FROM g1
-        group by user_id
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         g3 as(
         --如果用户一个月有多单，则只计算一次
@@ -603,12 +588,14 @@
         order by dt.month_id
     </select>
 
+    <!--计算某个SPU下的流失率 间隔月-->
     <select id="getLossUserRateDMonthBySpu" resultType="map">
         with g1 as
         (
         SELECT
         dt.month buy_month,
-        t.user_id
+        t.user_id,
+        t.is_fp
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
         where t.valid_status=1
         and t.product_id=spu.product_id
@@ -617,13 +604,8 @@
         and dt.month &lt;= #{endDt}
         AND SPU.SPU_WID= #{spuId}
         ),
-        --获取用户在此区间内的最早购买月份
-        g2 as(
-        SELECT
-        min(buy_month) min_month,
-        user_id
-        FROM g1
-        group by user_id
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         g3 as(
         --如果用户一个月有多单，则只计算一次
@@ -690,11 +672,13 @@
         order by dt.month_id
     </select>
 
+    <!-- 计算某个spu下流失用户数 -->
     <select id="getLossUserMonthBySpu" resultMap="datePeriodKpiMap">
         WITH g1 AS
         (
         SELECT MONTH BUY_MONTH,
-        T.USER_ID
+        T.USER_ID,
+        T.IS_FP
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
         where t.valid_status=1
         and t.product_id=spu.product_id
@@ -703,12 +687,8 @@
         and dt.month &lt;= #{endDt}
         AND SPU.SPU_WID= #{spuId}
         ),
-        --每个用户及其最早购买的月份
-        g2 as(
-        SELECT MIN(BUY_MONTH) MIN_MONTH,
-        USER_ID
-        FROM g1
-        GROUP BY USER_ID
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         --每个用户 及其购买月份
         g3 as(
@@ -723,23 +703,20 @@
         ORDER BY g2.MIN_MONTH,g3.BUY_MONTH
     </select>
 
-
+    <!-- 按自然月查看流失用户数 -->
     <select id="getLossUserMonth" resultMap="datePeriodKpiMap">
         WITH g1 AS
         (
         SELECT MONTH BUY_MONTH,
-        T.USER_ID
+        T.USER_ID,
+        T.IS_FP
         FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1
         AND DT.MONTH &gt;= #{beginDt}
         AND DT.MONTH &lt;= #{endDt}
         AND T.ORDER_DT_WID=DT.ROW_WID
         ),
-        --每个用户及其最早购买的月份
-        g2 as(
-        SELECT MIN(BUY_MONTH) MIN_MONTH,
-        USER_ID
-        FROM g1
-        GROUP BY USER_ID
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         --每个用户 及其购买月份
         g3 as(
@@ -754,25 +731,22 @@
         ORDER BY g2.MIN_MONTH,g3.BUY_MONTH
     </select>
 
+    <!-- 按间隔月查看流失用户数 -->
     <select id="getLossUserDMonth" resultType="map">
         with g1 as
         (
         SELECT
         dt.month buy_month,
-        t.user_id
+        t.user_id,
+        t.is_fp
         FROM w_Orders t,w_date dt
         where t.valid_status=1
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{beginDt}
         and dt.month &lt;= #{endDt}
         ),
-        --获取用户在此区间内的最早购买月份
-        g2 as(
-        SELECT
-        min(buy_month) min_month,
-        user_id
-        FROM g1
-        group by user_id
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         g3 as(
         --如果用户一个月有多单，则只计算一次
@@ -823,12 +797,14 @@
         order by dt.month_id
     </select>
 
+    <!-- 查看某个spu下的流失用户 -->
     <select id="getLossUserDMonthBySpu" resultType="map">
         with g1 as
         (
         SELECT
         dt.month buy_month,
-        t.user_id
+        t.user_id,
+        t.is_fp
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
         where t.valid_status=1
         and t.product_id=spu.product_id
@@ -837,13 +813,8 @@
         and dt.month &lt;= #{endDt}
         AND SPU.SPU_WID= #{spuId}
         ),
-        --获取用户在此区间内的最早购买月份
-        g2 as(
-        SELECT
-        min(buy_month) min_month,
-        user_id
-        FROM g1
-        group by user_id
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         g3 as(
         --如果用户一个月有多单，则只计算一次
@@ -894,25 +865,23 @@
         order by dt.month_id
     </select>
 
+    <!-- 按间隔月查看客单价 -->
     <select id="getUpriceData" resultType="map">
         with g1 as
         (
         SELECT
         dt.month buy_month,
         t.real_fee,
-        t.user_id
+        t.user_id,
+        t.is_fp
         FROM w_Orders t,w_date dt
         where t.valid_status=1
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;=#{start}
         and dt.month &lt;=#{end}
         ),
-        g2 as(
-        SELECT
-        min(buy_month) min_month,
-        user_id
-        FROM g1
-        group by user_id
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         g3 as(
         SELECT
@@ -982,22 +951,21 @@
         order by dt.month_id
     </select>
 
+    <!-- 按自然月查看客单价 -->
     <select id="getUpriceDataMonth" resultMap="datePeriodKpiMap">
         WITH g1 AS
         (
         SELECT MONTH BUY_MONTH,
         T.USER_ID,
-        T.REAL_FEE
+        T.REAL_FEE,
+        t.is_fp
         FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1
         AND DT.MONTH &gt;= #{start}
         AND DT.MONTH &lt;= #{end}
         AND T.ORDER_DT_WID=DT.ROW_WID
         ),
-        g2 as(
-        SELECT MIN(BUY_MONTH) MIN_MONTH,
-        USER_ID
-        FROM g1
-        GROUP BY USER_ID
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         g3 as(
         SELECT BUY_MONTH,
@@ -1019,12 +987,14 @@
         from g4
     </select>
 
+    <!-- 查看某个spu下的客单价 间隔月 -->
     <select id="getUpriceDataMonthBySpu" resultMap="datePeriodKpiMap">
         WITH g1 AS
         (
         SELECT MONTH BUY_MONTH,
         T.USER_ID,
-        T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE
+        T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE,
+        T.IS_FP
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
         where t.valid_status=1
         and t.product_id=spu.product_id
@@ -1033,11 +1003,8 @@
         and dt.month &lt;= #{end}
         and spu.spu_wid= #{spuId}
         ),
-        g2 as(
-        SELECT MIN(BUY_MONTH) MIN_MONTH,
-        USER_ID
-        FROM g1
-        GROUP BY USER_ID
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         g3 as(
         SELECT BUY_MONTH,
@@ -1059,27 +1026,25 @@
         from g4
     </select>
 
+     <!-- 查看某个SPU下的客单价 按自然月 -->
     <select id="getUpriceDataBySpu" resultType="map">
         with g1 as
         (
         SELECT
         dt.month buy_month,
         T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE,
-        t.user_id
+        t.user_id,
+        t.is_fp
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
         where t.valid_status=1
         and t.product_id=spu.product_id
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;=#{start}
         and dt.month &lt;=#{end}
-        --  and spu.spu_wid=1
+        and spu.spu_wid= #{spuId}
         ),
-        g2 as(
-        SELECT
-        min(buy_month) min_month,
-        user_id
-        FROM g1
-        group by user_id
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         g3 as(
         SELECT
@@ -1149,26 +1114,23 @@
         order by dt.month_id
     </select>
 
+    <!-- 查看订单价 间隔月 -->
     <select id="getPriceData" resultType="map">
         with g1 as
         (
         SELECT
         dt.month buy_month,
         t.real_fee,
-        t.user_id
+        t.user_id,
+        t.is_fp
         FROM w_Orders t,w_date dt
         where t.valid_status=1
         and t.order_dt_wid=dt.row_wid
         and dt.month &gt;= #{start}
         and dt.month &lt;= #{end}
         ),
-        --获取用户在此区间内的最早购买月份
-        g2 as(
-        SELECT
-        min(buy_month) min_month,
-        user_id
-        FROM g1
-        group by user_id
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         g3 as(
         SELECT
@@ -1240,25 +1202,22 @@
         order by dt.month_id
     </select>
 
-
+    <!-- 按自然月查看订单价 -->
     <select id="getPriceDataMonth" resultMap="datePeriodKpiMap">
         WITH g1 AS
         (
         SELECT MONTH BUY_MONTH,
         T.USER_ID,
         T.REAL_FEE,
-        T.ID
+        T.ID,
+        T.IS_FP
         FROM W_ORDERS T,W_DATE DT  WHERE t.valid_status=1
         AND DT.MONTH &gt;=#{start}
         AND DT.MONTH &lt;=#{end}
         AND T.ORDER_DT_WID=DT.ROW_WID
         ),
-        --每个用户及其最早购买的月份
-        g2 as(
-        SELECT MIN(BUY_MONTH) MIN_MONTH,
-        USER_ID
-        FROM g1
-        GROUP BY USER_ID
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         --每个用户 及其购买月份
         g3 as(
@@ -1282,13 +1241,15 @@
         from g4
     </select>
 
+    <!-- 查看某个SPU下的订单价 自然月 -->
     <select id="getPriceDataMonthBySpu" resultMap="datePeriodKpiMap">
         WITH g1 AS
         (
         SELECT MONTH BUY_MONTH,
         T.USER_ID,
         T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE,
-        T.ID
+        T.ID,
+        T.IS_FP
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
         where t.valid_status=1
         and t.product_id=spu.product_id
@@ -1297,12 +1258,8 @@
         and dt.month &lt;= #{end}
         and spu.spu_wid= #{spuId}
         ),
-        --每个用户及其最早购买的月份
-        g2 as(
-        SELECT MIN(BUY_MONTH) MIN_MONTH,
-        USER_ID
-        FROM g1
-        GROUP BY USER_ID
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         --每个用户 及其购买月份
         g3 as(
@@ -1326,13 +1283,15 @@
         from g4
     </select>
 
+    <!-- 查看某个SPU下的订单价 按间隔月 -->
     <select id="getPriceDataBySpu" resultType="map">
         with g1 as
         (
         SELECT
         dt.month buy_month,
         T.PRICE*T.QUANTITY-T.DISCOUNT REAL_FEE,
-        t.user_id
+        t.user_id,
+        t.is_fp
         FROM w_Order_Details t,w_date dt,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
         where t.valid_status=1
         and t.product_id=spu.product_id
@@ -1341,13 +1300,8 @@
         and dt.month &lt;= #{end}
         and spu.spu_wid= #{spuId}
         ),
-        --获取用户在此区间内的最早购买月份
-        g2 as(
-        SELECT
-        min(buy_month) min_month,
-        user_id
-        FROM g1
-        group by user_id
+        g2 as(  --每月新增的用户
+        SELECT G1.USER_ID,G1.BUY_MONTH MIN_MONTH FROM G1 WHERE G1.IS_FP='Y' GROUP BY G1.USER_ID,G1.BUY_MONTH
         ),
         g3 as(
         SELECT
@@ -1419,6 +1373,7 @@
         order by dt.month_id
     </select>
 
+    <!-- 获取某个SPU的拟合曲线 数据 -->
     <select id="getCeofBySpu" resultType="string" parameterType="string">
         SELECT FORMULA_VALUE FROM UO_LC_SPU_LIFECYCLE WHERE SPU_WID=#{spuId}
     </select>
