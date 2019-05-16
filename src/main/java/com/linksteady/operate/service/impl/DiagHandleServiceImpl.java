@@ -95,6 +95,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
         result.setKpiCode(diagHandleInfo.getKpiCode());
         result.setKpiName(KpiCacheManager.getInstance().getDiagKpiList().get(diagHandleInfo.getKpiCode()).getKpiName());
+        result.setWhereinfo(diagHandleInfo.getWhereinfo());
 
         //result信息持久化到redis
         saveResultToRedis(result);
@@ -115,15 +116,6 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
         //返回的结果集对象
         DiagMultResultInfo diagMultResultInfo=new DiagMultResultInfo();
-        List<DiagConditionVO> orialCondition=diagHandleInfo.getWhereinfo();
-        List<DiagConditionNew> newCondition=Lists.newArrayList();
-
-        orialCondition.forEach(s->{
-            DiagConditionNew nc= dozerBeanMapper.map(s,DiagConditionNew.class);
-            newCondition.add(nc);
-        });
-
-        diagMultResultInfo.setWhereinfo(newCondition);
 
         Map<String,String> codeNamePair=KpiCacheManager.getInstance().getKpiCodeNamePair();
         //获取当前要进行乘法的指标编码和指标名称
@@ -375,12 +367,6 @@ public class DiagHandleServiceImpl implements DiagHandleService {
     private DiagResultInfo processAdd(DiagHandleInfo diagHandleInfo)
     {
         DiagAddResultInfo diagAddResultInfo=new DiagAddResultInfo();
-        List<DiagConditionVO> orialCondition=diagHandleInfo.getWhereinfo();
-        List<DiagConditionNew> newCondition=Lists.newArrayList();
-
-        Map<String,DiagConditionVO> orialConditionMap=orialCondition.stream().collect(Collectors.toMap(DiagConditionVO::getDimCode,a -> a));
-
-
         List<String> periodList=getPeriodList(diagHandleInfo.getPeriodType(),diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
         List<String> dayPeriodList=getPeriodList(UomsConstants.PERIOD_TYPE_DAY,diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
 
@@ -431,41 +417,6 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
             nodeArray.add(node);
         }
-
-        orialCondition.forEach(s-> {
-            //如果是当前做加法的维度的话，则不做复制
-            if(!s.getDimCode().equals(dimCode))
-            {
-                DiagConditionNew nc = dozerBeanMapper.map(s, DiagConditionNew.class);
-                newCondition.add(nc);
-            }else
-            {
-                DiagConditionNew nc=new DiagConditionNew();
-                nc.setDimCode(dimCode);
-                nc.setDimName(KpiCacheManager.getInstance().getDiagDimList().get(dimCode));
-                String tempValue=s.getDimValues();
-                String tempValueDisplay=s.getDimValueDisplay();
-
-                nc.setDimValues(tempValue+","+Joiner.on(",").join(dimValues));
-                nc.setDimValueDisplay(tempValueDisplay+Joiner.on(",").join(dimNames));
-                nc.setInheritFlag("N");
-                newCondition.add(nc);
-            }
-        });
-
-        //如果什么条件也没有
-        if(null==newCondition||newCondition.size()==0)
-        {
-            DiagConditionNew nc=new DiagConditionNew();
-            nc.setDimCode(dimCode);
-            nc.setDimName(KpiCacheManager.getInstance().getDiagDimList().get(dimCode));
-
-            nc.setDimValues(Joiner.on(",").join(dimValues));
-            nc.setDimValueDisplay(Joiner.on(",").join(dimNames));
-            nc.setInheritFlag("N");
-            newCondition.add(nc);
-        }
-
 
         //设置图例名称列表
         diagAddResultInfo.setLegendData(dimNames);
@@ -612,7 +563,6 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         diagAddResultInfo.setLineAvgData(lineAvgData);
         diagAddResultInfo.setCovData(covArray);
         diagAddResultInfo.setRelateData(relateArray);
-        diagAddResultInfo.setWhereinfo(newCondition);
 
         return diagAddResultInfo;
     }
@@ -783,16 +733,6 @@ public class DiagHandleServiceImpl implements DiagHandleService {
     private DiagResultInfo processFilter(DiagHandleInfo diagHandleInfo)
     {
         DiagResultInfo resultInfo=new DiagResultInfo();
-
-        List<DiagConditionVO> orialCondition=diagHandleInfo.getWhereinfo();
-        List<DiagConditionNew> newCondition=Lists.newArrayList();
-
-        orialCondition.forEach(s->{
-            DiagConditionNew nc= dozerBeanMapper.map(s,DiagConditionNew.class);
-            newCondition.add(nc);
-        });
-
-        resultInfo.setWhereinfo(newCondition);
 
         String kpiCode=diagHandleInfo.getKpiCode();
         KpiConfigInfo kpiConfigInfo=KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode);

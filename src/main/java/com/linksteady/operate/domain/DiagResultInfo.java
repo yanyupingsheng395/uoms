@@ -62,7 +62,7 @@ public class DiagResultInfo  implements Serializable {
     /**
      *条件信息
      */
-    List<DiagConditionNew> whereinfo;
+    List<DiagConditionVO> whereinfo;
 
     /**
      * 指标值
