@@ -339,7 +339,7 @@
         ORDER BY WEEK_WID ASC
     </select>
 
-    <select id="getGMV" resultType="map">
+    <select id="getGMVBySpu" resultType="map">
         SELECT
         W_DATE.DAY_SHORT_NAME PERIOD_NAME,
         SUM (W_ORDER_DETAILS.PRICE*QUANTITY-W_ORDER_DETAILS.DISCOUNT) TOTAL_GMV,  --总的gmv金额
@@ -359,7 +359,23 @@
         ORDER BY W_DATE.DAY_SHORT_NAME ASC
     </select>
 
-    <select id="getTradeUser" resultType="map">
+    <select id="getGMV" resultType="map">
+        SELECT
+        W_DATE.DAY_SHORT_NAME PERIOD_NAME,
+        SUM (W_ORDER_DETAILS.PRICE*QUANTITY-W_ORDER_DETAILS.DISCOUNT) TOTAL_GMV,  --总的gmv金额
+        SUM(CASE WHEN W_ORDER_DETAILS.IS_FP='Y' THEN W_ORDER_DETAILS.PRICE*QUANTITY-W_ORDER_DETAILS.DISCOUNT ELSE 0 END) FP_GMV, --首购金额
+        SUM(CASE WHEN W_ORDER_DETAILS.IS_FP='N' THEN W_ORDER_DETAILS.PRICE*QUANTITY-W_ORDER_DETAILS.DISCOUNT ELSE 0 END) RP_GMV  --复购金额
+        FROM
+        W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID=W_DATE.ROW_WID
+        WHERE
+        W_ORDER_DETAILS.VALID_STATUS = 1
+        AND W_DATE.ROW_WID &gt;= #{startDt}
+        AND W_DATE.ROW_WID &lt;= #{endDt}
+        GROUP BY W_DATE.DAY_SHORT_NAME
+        ORDER BY W_DATE.DAY_SHORT_NAME ASC
+    </select>
+
+    <select id="getTradeUserBySpu" resultType="map">
         SELECT
         W_DATE.DAY_SHORT_NAME PERIOD_NAME,
         COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) TOTAL_CNT,
@@ -377,7 +393,59 @@
         GROUP BY W_DATE.DAY_SHORT_NAME
     </select>
 
+    <select id="getTradeUser" resultType="map">
+        SELECT
+        W_DATE.DAY_SHORT_NAME PERIOD_NAME,
+        COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) TOTAL_CNT,
+        COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='Y' THEN W_ORDER_DETAILS.USER_ID END) FP_CNT,
+        COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='N' THEN W_ORDER_DETAILS.USER_ID END) RP_CNT
+        FROM
+        W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID=W_DATE.ROW_WID
+        WHERE
+        W_ORDER_DETAILS.VALID_STATUS = 1
+        AND W_DATE.ROW_WID &gt;=#{startDt}
+        AND W_DATE.ROW_WID &lt;=#{endDt}
+        GROUP BY W_DATE.DAY_SHORT_NAME
+    </select>
+
     <select id="getAvgCsPrice" resultType="map">
+        WITH g1 as(
+        SELECT
+        W_DATE.DAY_SHORT_NAME PERIOD_NAME,
+        W_ORDER_DETAILS.PRICE,
+        W_ORDER_DETAILS.QUANTITY,
+        W_ORDER_DETAILS.DISCOUNT,
+        NVL(W_ORDER_DETAILS.PRICE*QUANTITY-W_ORDER_DETAILS.DISCOUNT,0) GMV,
+        W_ORDER_DETAILS.IS_FP,
+        W_ORDER_DETAILS.USER_ID
+        FROM
+        W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID=W_DATE.ROW_WID
+        WHERE
+        W_ORDER_DETAILS.VALID_STATUS = 1
+        AND W_DATE.ROW_WID &gt;=#{startDt}
+        AND W_DATE.ROW_WID &lt;=#{endDt}
+        ),
+        g2 as(
+        SELECT
+        g1.PERIOD_NAME,
+        COUNT(DISTINCT g1.USER_ID) TOTAL_CNT,
+        COUNT(DISTINCT CASE WHEN g1.IS_FP='Y' THEN g1.USER_ID END) FP_CNT,
+        COUNT(DISTINCT CASE WHEN g1.IS_FP='N' THEN g1.USER_ID END) RP_CNT,
+        SUM(gmv) TOTAL_GMV,  --总的gmv金额
+        SUM(CASE WHEN g1.IS_FP='Y' THEN GMV ELSE 0 END) FP_GMV, --首购金额
+        SUM(CASE WHEN g1.IS_FP='N' THEN GMV ELSE 0 END) RP_GMV  --复购金额
+        FROM g1
+        GROUP BY g1.PERIOD_NAME
+        )
+        SELECT
+        g2.PERIOD_NAME,
+        (CASE WHEN g2.TOTAL_CNT=0 THEN 0 ELSE TRUNC(g2.TOTAL_GMV/g2.TOTAL_CNT,2) END) PRICE,
+        (CASE WHEN g2.FP_CNT=0 THEN 0 ELSE TRUNC(g2.FP_GMV/g2.FP_CNT,2) END) FP_PRICE,
+        (CASE WHEN g2.RP_CNT=0 THEN 0 ELSE TRUNC(g2.RP_GMV/g2.RP_CNT,2) END) RP_PRICE
+        FROM g2 ORDER BY g2.PERIOD_NAME ASC
+    </select>
+
+    <select id="getAvgCsPriceBySpu" resultType="map">
         WITH g1 as(
         SELECT
         W_DATE.DAY_SHORT_NAME PERIOD_NAME,
