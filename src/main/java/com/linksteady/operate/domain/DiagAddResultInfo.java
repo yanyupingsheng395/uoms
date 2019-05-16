@@ -59,4 +59,5 @@ public class DiagAddResultInfo extends DiagResultInfo{
      */
     JSONArray  nodeList;
 
+
 }
