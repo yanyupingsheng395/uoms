@@ -65,8 +65,8 @@ $(function () {
 
     // 统计图表
     $("#btn_statistics").on("click",function () {
-        $("#statis_modal").modal('show');
-        // toastr.warning("暂无统计，稍后再试。");
+        // $("#statis_modal").modal('show');
+         toastr.warning("暂无统计，稍后再试。");
     });
 
     // 效果统计表

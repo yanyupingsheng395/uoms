@@ -13,6 +13,7 @@ import com.linksteady.operate.service.OrderingConstants;
 import com.linksteady.operate.util.PearsonCorrelationUtil;
 import com.linksteady.operate.vo.LcSpuVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,10 +54,11 @@ public class LifeCycleController extends BaseController {
 
         Map<String,Double> stats=Maps.newHashMap();
         DoubleSummaryStatistics dst=null;
+        //存放四分位数的数组
         double[] quartiles=null;
 
         //根据startDT,endDT,source获取到符合条件的SPU的列表
-        List<LcSpuInfo> list=lifeCycleService.getSpuList();
+        List<LcSpuInfo> list=lifeCycleService.getSpuList(StringUtils.replace(startDt,"-",""),StringUtils.replace(endDt,"-",""));
 
         //计算汇总的gmv
         double gmvSum=list.stream().mapToDouble(LcSpuInfo::getGmvTotal).sum();
@@ -335,9 +337,12 @@ public class LifeCycleController extends BaseController {
     @RequestMapping("/updateGmvRelate")
     public ResponseBo updateGmvRelate() {
 
-        List<LcSpuInfo> list=lifeCycleService.getSpuList();
+        String startDt="20190101";
+        String endDt="20190430";
 
-        List<Double> gmv=lifeCycleService.getAllGmvByDay();
+        List<LcSpuInfo> list=lifeCycleService.getSpuList(startDt,endDt);
+
+        List<Double> gmv=lifeCycleService.getAllGmvByDay(startDt,endDt);
         //获取总的GMV数据集（按天）
         for(LcSpuInfo lcSpuInfo:list)
         {

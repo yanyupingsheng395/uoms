@@ -3,20 +3,20 @@ package com.linksteady.operate.controller;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.Reason;
 import com.linksteady.operate.domain.ReasonRelMatrix;
 import com.linksteady.operate.domain.ReasonResult;
-import com.linksteady.operate.domain.ReasonTemplateInfo;
 import com.linksteady.operate.service.CacheService;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.operate.vo.ReasonVO;
 import com.linksteady.system.domain.User;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +31,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 原因探究相关的controller
  * @author huang
  */
+@Slf4j
 @RestController
 @RequestMapping("/reason")
 public class ReasonController  extends BaseController {
@@ -169,6 +172,20 @@ public class ReasonController  extends BaseController {
     }
 
 
+/**
+ * 获取原因的指标列表
+ * @return ResponseBo对象
+ */
+    @RequestMapping("/getReasonKpiList")
+    public ResponseBo getReasonKpiList() {
+        Map<String,String> reasonKpiList= Maps.newHashMap();
+       KpiCacheManager.getInstance().getReasonKpiList().forEach((k,v)->{
+           reasonKpiList.put(k,v.getKpiName());
+        });
+        return ResponseBo.okWithData("",reasonKpiList);
+    }
+
+
     /**
      * 获取维度列表
      * @return ResponseBo对象
@@ -252,7 +269,7 @@ public class ReasonController  extends BaseController {
 
             return ResponseBo.okWithData("",reasonResults);
         } catch (TException e) {
-            e.printStackTrace();
+            log.error("效果评估出错",e);
             return ResponseBo.error();
         } finally {
             thriftClient.close();

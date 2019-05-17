@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface LifeCycleMapper {
 
-    List<LcSpuInfo> getSpuList();
+    List<LcSpuInfo> getSpuList(@Param("startDt") String startDt,@Param("endDt") String endDt);
 
     List<Double> getAllGmvByDay();
 

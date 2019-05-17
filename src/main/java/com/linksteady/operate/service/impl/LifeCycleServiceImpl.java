@@ -17,12 +17,12 @@ public class LifeCycleServiceImpl implements LifeCycleService {
 
 
     @Override
-    public List<LcSpuInfo> getSpuList() {
-        return lifeCycleMapper.getSpuList();
+    public List<LcSpuInfo> getSpuList(String startDt,String endDt) {
+        return lifeCycleMapper.getSpuList(startDt,endDt);
     }
 
     @Override
-    public List<Double> getAllGmvByDay() {
+    public List<Double> getAllGmvByDay(String startDt,String endDt) {
         return lifeCycleMapper.getAllGmvByDay();
     }
 

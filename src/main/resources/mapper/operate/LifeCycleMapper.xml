@@ -29,8 +29,8 @@
                 T.ORDER_DT_WID=DT.ROW_WID
                 AND T.PRODUCT_ID=SPU.PRODUCT_ID
                 AND T.VALID_STATUS=1
-                AND DT.row_wid &gt;=20190101
-                AND DT.row_wid &lt;=20190430
+                AND DT.row_wid &gt;=#{startDt}
+                AND DT.row_wid &lt;=#{endDt}
                 GROUP BY SPU.SPU_WID
                 )
                 select
@@ -58,12 +58,12 @@
         JOIN (SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu ON T.PRODUCT_ID=SPU.PRODUCT_ID
         WHERE
              T.VALID_STATUS=1
-        AND  DT.row_wid &gt;=20190101
-        AND DT.row_wid &lt;=20190430
+        AND DT.row_wid &gt;=#{startDt}
+        AND DT.row_wid &lt;=#{endDt}
         GROUP BY DT.ROW_WID)
         select NVL(g1.REAL_FEE,0) REAL_FEE FROM g1 right join w_date on g1.ROW_WID=w_date.row_wid
-        where  w_date.row_wid &gt;=20190101
-        AND w_date.row_wid &lt;=20190430
+        where  w_date.row_wid  &gt;=#{startDt}
+        AND w_date.row_wid &lt;=#{endDt}
         ORDER BY w_date.row_wid ASC
     </select>
 
@@ -77,13 +77,13 @@
         JOIN (SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu ON T.PRODUCT_ID=SPU.PRODUCT_ID
         WHERE
               T.VALID_STATUS=1
-        AND  DT.row_wid &gt;=20190101
-        AND DT.row_wid &lt;=20190430
+        AND  DT.row_wid &gt;=#{startDt}
+        AND DT.row_wid &lt;=#{endDt}
         AND SPU.SPU_WID=#{spu_wid}
         GROUP BY DT.ROW_WID)
         select NVL(g1.REAL_FEE,0) REAL_FEE FROM g1 right join w_date on g1.ROW_WID=w_date.row_wid
-        where  w_date.row_wid &gt;=20190101
-        AND w_date.row_wid &lt;=20190430
+        where  w_date.row_wid &gt;=#{startDt}
+        AND w_date.row_wid &lt;=#{endDt}
         ORDER BY w_date.row_wid ASC
     </select>
 

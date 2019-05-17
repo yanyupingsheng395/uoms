@@ -46,6 +46,7 @@ public class DiagnosisController {
             return ResponseBo.okWithData(null, result);
         }catch (Exception e) {
             e.printStackTrace();
+            logger.error("保存诊断信息错误，",e);
             return ResponseBo.error();
         }
     }

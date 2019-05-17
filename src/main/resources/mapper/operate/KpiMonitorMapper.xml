@@ -764,11 +764,24 @@
         USER_ID
         FROM g1
         GROUP BY BUY_MONTH,USER_ID
-        )
-        SELECT g2.MIN_MONTH,g3.BUY_MONTH,COUNT(*) C_USERS FROM  g2,g3
+        ),
+        g4 as(
+        SELECT MIN_MONTH,COUNT(USER_ID) BEGIN_USERS FROM G2 GROUP BY MIN_MONTH
+        ),
+        g5 as(
+        SELECT
+        g2.MIN_MONTH,
+        g3.BUY_MONTH,
+        COUNT(*) RETAIN_USERS
+        FROM  g2,g3
         WHERE g2.USER_ID = g3.USER_ID
-        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH
-        ORDER BY g2.MIN_MONTH,g3.BUY_MONTH
+        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH)
+        select
+            g5.MIN_MONTH,
+            g5.BUY_MONTH,
+            (CASE WHEN g5.MIN_MONTH=g5.BUY_MONTH THEN g4.BEGIN_USERS ELSE (g4.BEGIN_USERS-RETAIN_USERS) END) C_USERS
+        from g5,g4 where g5.MIN_MONTH=g4.MIN_MONTH
+        ORDER BY g5.MIN_MONTH,g5.BUY_MONTH
     </select>
 
     <!-- 按自然月查看流失用户数 -->
@@ -792,11 +805,25 @@
         USER_ID
         FROM g1
         GROUP BY BUY_MONTH,USER_ID
-        )
-        SELECT g2.MIN_MONTH,g3.BUY_MONTH,COUNT(*) C_USERS FROM  g2,g3
+        ),
+        g4 as(
+        SELECT MIN_MONTH,COUNT(USER_ID) BEGIN_USERS FROM G2 GROUP BY MIN_MONTH
+        ),
+        g5 as(
+        SELECT
+        g2.MIN_MONTH,
+        g3.BUY_MONTH,
+        COUNT(*) RETAIN_USERS
+        FROM  g2,g3
         WHERE g2.USER_ID = g3.USER_ID
-        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH
-        ORDER BY g2.MIN_MONTH,g3.BUY_MONTH
+        GROUP BY g2.MIN_MONTH,g3.BUY_MONTH)
+        select
+            g5.MIN_MONTH,
+            g5.BUY_MONTH,
+            (CASE WHEN g5.MIN_MONTH=g5.BUY_MONTH THEN g4.BEGIN_USERS ELSE (g4.BEGIN_USERS-RETAIN_USERS) END) C_USERS
+        from g5,g4 where g5.MIN_MONTH=g4.MIN_MONTH
+        ORDER BY g5.MIN_MONTH,g5.BUY_MONTH
+
     </select>
 
     <!-- 按间隔月查看流失用户数 -->
