@@ -84,7 +84,15 @@ function retention_time() {
         seriesDatas.push(series0);
 
         var legend = ["实际值"];
-        var series1Data = getRetentionByMethod(chart.xAxisData.join(","));
+        var x = chart.xAxisData[parseInt(series0.markPoint.data[0].xAxis)];
+        console.log(x);
+        var xdata = new Array();
+        $.each(chart.xAxisData, function (k, v) {
+            if(parseInt(v) <= parseInt(x)) {
+                xdata.push(v);
+            }
+        });
+        var series1Data = getRetentionByMethod(xdata.join(","));
         var flag = checkIfFitting(series1Data);
         if(flag) {
             var series1 = new Object();
@@ -96,7 +104,7 @@ function retention_time() {
             legend.push("拟合值");
         }
         var option = getOption(legend, chart.xAxisData, chart.xAxisName, chart.yAxisName, seriesDatas);
-        option.tooltip = {formatter:'购买次数：{b}<br/>留存率：{c}%'};
+        // option.tooltip = {formatter:'购买次数：{b}<br/>留存率：{c}%'};
         option.grid = {right:'22%'};
         if(flag) {
             option.legend.selected = {'实际值':true, '拟合值':false};
