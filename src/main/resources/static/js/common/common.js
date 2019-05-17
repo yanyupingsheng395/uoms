@@ -22,6 +22,28 @@ $(document).ready(function () {
     }
 });
 
+$(function(){
+    $.ajaxSetup({
+        type: "POST",
+        error: function(jqXHR, textStatus, errorThrown) {
+            switch(jqXHR.code) {
+               case(401):
+                alert("未登录");
+                break;
+               case(500):
+                alert("无权限执行此操作");
+                break;
+               case(201):
+                alert("请求超时");
+                break;
+              default:
+                alert("未知错误");
+             }
+        }
+    });
+});
+
+
 // 菜单点击效果
 function menu_tree() {
     var urlStr = location.href;
