@@ -3,15 +3,14 @@ package com.linksteady.operate.controller;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.Reason;
 import com.linksteady.operate.domain.ReasonRelMatrix;
 import com.linksteady.operate.domain.ReasonResult;
-import com.linksteady.operate.domain.ReasonTemplateInfo;
 import com.linksteady.operate.service.CacheService;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.thrift.ThriftClient;
@@ -166,6 +165,20 @@ public class ReasonController  extends BaseController {
             reasonService.deleteConcernKpi(reasonId,templateCode,reasonKpiCode);
         }
         return ResponseBo.ok("success");
+    }
+
+
+/**
+ * 获取原因的指标列表
+ * @return ResponseBo对象
+ */
+    @RequestMapping("/getReasonKpiList")
+    public ResponseBo getReasonKpiList() {
+        Map<String,String> reasonKpiList= Maps.newHashMap();
+       KpiCacheManager.getInstance().getReasonKpiList().forEach((k,v)->{
+           reasonKpiList.put(k,v.getKpiName());
+        });
+        return ResponseBo.okWithData("",reasonKpiList);
     }
 
 

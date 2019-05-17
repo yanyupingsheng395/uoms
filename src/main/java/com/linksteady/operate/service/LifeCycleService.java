@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface LifeCycleService {
 
-     List<LcSpuInfo> getSpuList();
+     List<LcSpuInfo> getSpuList(String startDt,String endDt);
 
-     List<Double> getAllGmvByDay();
+     List<Double> getAllGmvByDay(String startDt,String endDt);
 
      List<Double> getSpuGmvByDay(int spu_wid);
 

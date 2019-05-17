@@ -18,10 +18,6 @@ $("#period").change(function () {
     }
 });
 
-String.prototype.replaceAll = function(s1,s2){
-    return this.replace(new RegExp(s1,"gm"),s2);
-}
-
 $(function () {
     //为提交分析按钮绑定事件
     $("#submitAnalysis").on("click",submit_analysis);
@@ -36,6 +32,17 @@ $(function () {
         var dimCode = $(this).find("option:selected").val();
         getValueList(dimCode);
     });
+
+    //指标列表从库中加载
+    $.get("/reason/getReasonKpiList", function(r) {
+        var code = "";
+        $.each(r.data, function (k, v) {
+            code += "<option value='" + k + "'>" + v + "</option>";
+        });
+        $("#zhibiao").html("").html(code);
+        $("#zhibiao").selectpicker('refresh');
+    });
+
 });
 
 /**
