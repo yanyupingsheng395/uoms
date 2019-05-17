@@ -283,7 +283,11 @@
                 percent = true;
             }
             if(periodType == "dmonth") {
-                columns = getDMonthPriceCols(percent, type);
+                if(idx == 1) {
+                    columns = getDMonthUPriceCols(percent, type);
+                }else if(idx == 2) {
+                    columns = getDMonthPriceCols(percent, type);
+                }
             }else if(periodType == "month"){
                 columns = getMonthCols(r.data.columns, percent, type);
             }
@@ -292,7 +296,8 @@
         });
     }
 
-    // 客单价间隔月
+
+    // 订单价间隔月
     function getDMonthPriceCols(percent, type) {
         var fix = "";
         if(percent) {
@@ -305,22 +310,63 @@
         var cols = [
             {field: 'MONTH_ID', title: '月份'},
             {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px', formatter: fmt},
-            {field: 'UPRICE', title: type, width:'132px', formatter: fmt},
-            {field: 'UPRICE1', title: '+1月', formatter: fmt},
-            {field: 'UPRICE2', title: '+2月', formatter: fmt},
-            {field: 'UPRICE3', title: '+3月', formatter: fmt},
-            {field: 'UPRICE4', title: '+4月', formatter: fmt},
-            {field: 'UPRICE5', title: '+5月', formatter: fmt},
-            {field: 'UPRICE6', title: '+6月', formatter: fmt},
-            {field: 'UPRICE7', title: '+7月', formatter: fmt},
-            {field: 'UPRICE8', title: '+8月', formatter: fmt},
-            {field: 'UPRICE9', title: '+9月', formatter: fmt},
-            {field: 'UPRICE10', title: '+10月', formatter: fmt},
-            {field: 'UPRICE11', title: '+11月', formatter: fmt},
-            {field: 'UPRICE12', title: '+12月', formatter: fmt}
+            {field: 'PRICE', title: type, width:'132px', formatter: fmt},
+            {field: 'PRICE1', title: '+1月', formatter: fmt},
+            {field: 'PRICE2', title: '+2月', formatter: fmt},
+            {field: 'PRICE3', title: '+3月', formatter: fmt},
+            {field: 'PRICE4', title: '+4月', formatter: fmt},
+            {field: 'PRICE5', title: '+5月', formatter: fmt},
+            {field: 'PRICE6', title: '+6月', formatter: fmt},
+            {field: 'PRICE7', title: '+7月', formatter: fmt},
+            {field: 'PRICE8', title: '+8月', formatter: fmt},
+            {field: 'PRICE9', title: '+9月', formatter: fmt},
+            {field: 'PRICE10', title: '+10月', formatter: fmt},
+            {field: 'PRICE11', title: '+11月', formatter: fmt},
+            {field: 'PRICE12', title: '+12月', formatter: fmt}
         ];
         return cols;
     }
+
+    // 留存率自然月
+    function getMonthCols(data, percent, type) {
+        var cols = [];
+        $.each(data, function (k, v) {
+            console.log(v)
+            var o = new Object();
+            o.field = v;
+            if(v == "month") {
+                o.title = "月份";
+            }else if(v == "newUsers"){
+                o.title = "本月新增用户数";
+                o.width = "132px";
+            }else if(v == "uprice") {
+                o.title = type;
+                o.width = "132px";
+            }else {
+                o.title = v;
+            }
+            o.formatter = function (value, row, index) {
+                if (value == "0" || value == null) {
+                    return "";
+                } else {
+                    var fix;
+                    if(percent) {
+                        fix = "%";
+                    }else {
+                        fix = "";
+                    }
+                    if(v != "month" && v != "newUsers") {
+                        return value + fix;
+                    }else {
+                        return value;
+                    }
+                }
+            };
+            cols.push(o);
+        });
+        return cols;
+    }
+
 
     $("#cohortbtngroup2>.cohortbtn").on('click',function () {
         //判断当前元素是否具有btn-primary 的class属性 如果已经有，则什么也不做
