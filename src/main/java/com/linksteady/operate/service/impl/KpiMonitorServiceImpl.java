@@ -265,6 +265,13 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         return null;
     }
 
+    /**
+     * 按SPU获取留存用户数
+     * @param spuId
+     * @param period
+     * @param begin
+     * @return
+     */
     @Override
     public Map<String, Object> getRetainUserCountBySpu(String spuId, String period, String begin) {
         String end = null;
@@ -283,7 +290,12 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         return null;
     }
 
-
+    /**
+     * 获取流失率数据
+     * @param period
+     * @param begin
+     * @return
+     */
     @Override
     public Map<String, Object> getLossUserRate(String period, String begin) {
         String end = null;
@@ -302,6 +314,37 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         return null;
     }
 
+    /**
+     * 获取流失用户数数据
+     * @param period
+     * @param begin
+     * @return
+     */
+    @Override
+    public Map<String, Object> getLossUser(String period, String begin) {
+        String end = null;
+        if(StringUtils.isNotBlank(begin)) {
+            begin = begin.replaceAll("-", "");
+            end = getEndDate(begin);
+        }
+        if(PERIOD_TYPE_INTERVAL_MONTH.equals(period)) {
+            List<Map<String, Object>> dataList = kpiMonitorMapper.getLossUserDMonth(begin ,end);
+            return getDMonthData(dataList, false);
+        }
+        if(PERIOD_TYPE_MONTH.equals(period)) {
+            List<DatePeriodKpi> dataList =  kpiMonitorMapper.getLossUserMonth(begin, end);
+            return getMonthData(dataList, begin, end, false);
+        }
+        return null;
+    }
+
+    /**
+     * 按spu获取流失用户数数据
+     * @param spuId
+     * @param period
+     * @param begin
+     * @return
+     */
     @Override
     public Map<String, Object> getLossUserBySpu(String spuId, String period, String begin) {
         String end = null;
@@ -320,6 +363,13 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         return null;
     }
 
+    /**
+     * 按SPU获取流失率数据
+     * @param spuId
+     * @param period
+     * @param begin
+     * @return
+     */
     @Override
     public Map<String, Object> getLossUserRateBySpu(String spuId, String period, String begin) {
         String end = null;
@@ -362,6 +412,13 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         return null;
     }
 
+    /**
+     * 按SPU获取客单价数据
+     * @param spuId
+     * @param periodType
+     * @param start
+     * @return
+     */
     @Override
     public Map<String, Object> getUpriceDataBySpu(String spuId, String periodType, String start) {
         String end = null;
@@ -380,7 +437,12 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         return null;
     }
 
-
+    /**
+     * 获取订单价数据
+     * @param periodType
+     * @param start
+     * @return
+     */
     @Override
     public Map<String, Object> getPriceData(String periodType, String start) {
         String end = null;
@@ -399,6 +461,13 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         return null;
     }
 
+    /**
+     * 获取某个SPU下的订单价数据
+     * @param spuId
+     * @param periodType
+     * @param start
+     * @return
+     */
     @Override
     public Map<String, Object> getPriceDataBySpu(String spuId, String periodType, String start) {
         String end = null;
@@ -417,22 +486,37 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         return null;
     }
 
-    @Override
-    public Map<String, Object> getLossUser(String period, String begin) {
-        String end = null;
-        if(StringUtils.isNotBlank(begin)) {
-            begin = begin.replaceAll("-", "");
-            end = getEndDate(begin);
-        }
-        if(PERIOD_TYPE_INTERVAL_MONTH.equals(period)) {
-            List<Map<String, Object>> dataList = kpiMonitorMapper.getLossUserDMonth(begin ,end);
-            return getDMonthData(dataList, false);
-        }
-        if(PERIOD_TYPE_MONTH.equals(period)) {
-            List<DatePeriodKpi> dataList =  kpiMonitorMapper.getLossUserMonth(begin, end);
-            return getMonthData(dataList, begin, end, false);
-        }
-        return null;
+    /**
+     * 客单价间隔月数据
+     * @param dataList
+     * @return
+     */
+    public Map<String, Object> getUPriceDMonthData(List<Map<String, Object>> dataList, boolean percent) {
+        List<String> cols = Arrays.asList(D_MONTH_PRICE);
+        Map<String, Object> total = Maps.newLinkedHashMap();
+        cols.stream().forEach(x-> {
+            DoubleSummaryStatistics dss = dataList.stream().map(y-> {
+                if (!x.equals(D_MONTH_PRICE[0])) {
+                    return y.get(x) == null ? 0:Double.valueOf(y.get(x).toString());
+                }
+                return 0D;
+            }).collect(Collectors.summarizingDouble(v->v));
+            if(x.equals(D_MONTH_PRICE[1])) {
+                total.put(D_MONTH_PRICE[1], dss.getSum());
+            }else if(!x.equals(D_MONTH_PRICE[0])){
+                if(percent) {
+                    Long count = dataList.stream().filter(z-> z.get(x) != null && Double.valueOf(z.get(x).toString()) > 0D).count();
+                    total.put(x, count == 0 ? 0:String.format("%.2f", dss.getSum()/count));
+                }else {
+                    total.put(x, dss.getSum());
+                }
+            }
+        });
+        total.put(D_MONTH_COLS[0], "合计:");
+        dataList.add(total);
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("data", dataList);
+        return result;
     }
 
     /**
@@ -452,39 +536,6 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             if(x.equals(D_MONTH_COLS[1])) {
                 total.put(D_MONTH_COLS[1], dss.getSum());
             }else if(!x.equals(D_MONTH_COLS[0])){
-                if(percent) {
-                    Long count = dataList.stream().filter(z-> z.get(x) != null && Double.valueOf(z.get(x).toString()) > 0D).count();
-                    total.put(x, count == 0 ? 0:String.format("%.2f", dss.getSum()/count));
-                }else {
-                    total.put(x, dss.getSum());
-                }
-            }
-        });
-        total.put(D_MONTH_COLS[0], "合计:");
-        dataList.add(total);
-        Map<String, Object> result = Maps.newHashMap();
-        result.put("data", dataList);
-        return result;
-    }
-
-    /**
-     * 客单价间隔月
-     * @param dataList
-     * @return
-     */
-    public Map<String, Object> getUPriceDMonthData(List<Map<String, Object>> dataList, boolean percent) {
-        List<String> cols = Arrays.asList(D_MONTH_PRICE);
-        Map<String, Object> total = Maps.newLinkedHashMap();
-        cols.stream().forEach(x-> {
-            DoubleSummaryStatistics dss = dataList.stream().map(y-> {
-                if (!x.equals(D_MONTH_PRICE[0])) {
-                    return y.get(x) == null ? 0:Double.valueOf(y.get(x).toString());
-                }
-                return 0D;
-            }).collect(Collectors.summarizingDouble(v->v));
-            if(x.equals(D_MONTH_PRICE[1])) {
-                total.put(D_MONTH_PRICE[1], dss.getSum());
-            }else if(!x.equals(D_MONTH_PRICE[0])){
                 if(percent) {
                     Long count = dataList.stream().filter(z-> z.get(x) != null && Double.valueOf(z.get(x).toString()) > 0D).count();
                     total.put(x, count == 0 ? 0:String.format("%.2f", dss.getSum()/count));
@@ -783,6 +834,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             endCal.add(Calendar.MONTH, 12);
 
             Calendar current = Calendar.getInstance();
+            current.add(Calendar.MONTH,-1);
 
             if(endCal.after(current)) {
                 return df.format(current.getTime());

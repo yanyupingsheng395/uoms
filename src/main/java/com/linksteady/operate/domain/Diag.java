@@ -1,10 +1,12 @@
 package com.linksteady.operate.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
 
+@Data
 @Table(name = "UO_DIAG_LIST")
 public class Diag {
     /**
@@ -44,100 +46,33 @@ public class Diag {
     private Date createDt;
 
     /**
-     * 获取主键ID
-     *
-     * @return DIAG_ID - 主键ID
+     * 更新时间
      */
-    public Long getDiagId() {
-        return diagId;
-    }
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateDt;
 
     /**
-     * 设置主键ID
-     *
-     * @param diagId 主键ID
+     * 创建人
      */
-    public void setDiagId(Long diagId) {
-        this.diagId = diagId;
-    }
+    @Column(name = "CREATE_BY")
+    private String createBy;
 
     /**
-     * 获取诊断名称
-     *
-     * @return DIAG_NAME - 诊断名称
+     * 更新人
      */
-    public String getDiagName() {
-        return diagName;
-    }
+    @Column(name = "UPDATE_BY")
+    private String updateBy;
 
     /**
-     * 设置诊断名称
-     *
-     * @param diagName 诊断名称
+     * 创建人
      */
-    public void setDiagName(String diagName) {
-        this.diagName = diagName == null ? null : diagName.trim();
-    }
+    @Column(name = "CREATE_BY")
+    private String createByName;
 
     /**
-     * 获取周期类型 M表示按月 Y表示按天
-     *
-     * @return PERIOD_TYPE - 周期类型 M表示按月 Y表示按天
+     * 更新人
      */
-    public String getPeriodType() {
-        return periodType;
-    }
+    @Column(name = "UPDATE_BY")
+    private String updateByName;
 
-    /**
-     * 设置周期类型 M表示按月 Y表示按天
-     *
-     * @param periodType 周期类型 M表示按月 Y表示按天
-     */
-    public void setPeriodType(String periodType) {
-        this.periodType = periodType == null ? null : periodType.trim();
-    }
-
-    /**
-     * 获取周期开始时间
-     *
-     * @return BEGIN_DT - 周期开始时间
-     */
-    public String getBeginDt() {
-        return beginDt;
-    }
-
-    /**
-     * 设置周期开始时间
-     *
-     * @param beginDt 周期开始时间
-     */
-    public void setBeginDt(String beginDt) {
-        this.beginDt = beginDt == null ? null : beginDt.trim();
-    }
-
-    /**
-     * 获取周期结束时间
-     *
-     * @return END_DT - 周期结束时间
-     */
-    public String getEndDt() {
-        return endDt;
-    }
-
-    /**
-     * 设置周期结束时间
-     *
-     * @param endDt 周期结束时间
-     */
-    public void setEndDt(String endDt) {
-        this.endDt = endDt == null ? null : endDt.trim();
-    }
-
-    public Date getCreateDt() {
-        return createDt;
-    }
-
-    public void setCreateDt(Date createDt) {
-        this.createDt = createDt;
-    }
 }

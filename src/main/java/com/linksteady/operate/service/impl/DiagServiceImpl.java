@@ -38,6 +38,7 @@ public class DiagServiceImpl implements DiagService {
     @Transactional
     public Long save(Diag diag) {
         diag.setCreateDt(new Date());
+        diag.setUpdateDt(new Date());
         diagMapper.save(diag);
         return diag.getDiagId();
     }

@@ -16,6 +16,7 @@ import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.operate.vo.ReasonVO;
 import com.linksteady.system.domain.User;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 原因探究相关的controller
  * @author huang
  */
+@Slf4j
 @RestController
 @RequestMapping("/reason")
 public class ReasonController  extends BaseController {
@@ -265,7 +269,7 @@ public class ReasonController  extends BaseController {
 
             return ResponseBo.okWithData("",reasonResults);
         } catch (TException e) {
-            e.printStackTrace();
+            log.error("效果评估出错",e);
             return ResponseBo.error();
         } finally {
             thriftClient.close();
