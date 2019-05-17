@@ -149,8 +149,11 @@ public class KpiMonitorController extends BaseController {
 
     @GetMapping("/generateFittingData")
     public ResponseBo generateFittingData(String spuId, String purchCount) {
-        List<Integer> purchTimes = Arrays.asList(purchCount.split(",")).stream().map(x->Integer.valueOf(x)).collect(Collectors.toList());
-        return ResponseBo.okWithData(null, kpiMonitorService.generateFittingData(spuId, purchTimes));
+        if(!"".equals(purchCount)) {
+            List<Integer> purchTimes = Arrays.asList(purchCount.split(",")).stream().map(x->Integer.valueOf(x)).collect(Collectors.toList());
+            return ResponseBo.okWithData(null, kpiMonitorService.generateFittingData(spuId, purchTimes));
+        }
+        return ResponseBo.okWithData(null, null);
     }
 }
 

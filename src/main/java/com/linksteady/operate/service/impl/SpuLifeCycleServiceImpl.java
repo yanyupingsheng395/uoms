@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -31,17 +32,13 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         Echart echart = new Echart();
         List<Map<String, Object>> data = spuLifeCycleMapper.retentionPurchaseTimes(spuId);
         Map<String, Object> points = Maps.newHashMap();
-        String xpoint = String.valueOf(data.stream().filter(x->x.get("IF_UNUM_LIMIT").equals("Y")).findFirst().get().get("PURCH_TIMES"));
+        Map<String, Object> xpoint =  data.stream().filter(x->x.get("IF_UNUM_LIMIT").equals("Y")).findFirst().orElse(null);
         List<String> retention = Lists.newArrayList();
         List<String> purchTimes = Lists.newArrayList();
         data.stream().forEach(t->{
             retention.add(String.valueOf(t.get("RETENTION")));
             purchTimes.add(String.valueOf(t.get("PURCH_TIMES")));
         });
-
-        int index = purchTimes.stream().filter(y->y.equals(xpoint)).map(x->purchTimes.indexOf(x)).findFirst().get();
-        points.put("xAxis", index);
-        points.put("yAxis", retention.get(index));
         echart.setxAxisName("购买次数");
         echart.setyAxisName("留存率（%）");
 
@@ -49,13 +46,18 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         Map<String, Object> tmp = Maps.newHashMap();
         tmp.put("data", retention);
 
-        Map<String, Object> pointData = Maps.newHashMap();
-        pointData.put("data", Arrays.asList(points));
-        tmp.put("markPoint", pointData);
+        if(xpoint != null) {
+            String p = String.valueOf(xpoint.get("PURCH_TIMES"));
+            int index = purchTimes.stream().filter(y->y.equals(p)).map(x->purchTimes.indexOf(x)).findFirst().get();
+            points.put("xAxis", index);
+            points.put("yAxis", retention.get(index));
+            Map<String, Object> pointData = Maps.newHashMap();
+            pointData.put("data", Arrays.asList(points));
+            tmp.put("markPoint", pointData);
+        }
         List list = Lists.newArrayList();
         list.add(tmp);
         echart.setSeriesData(list);
-
         return echart;
     }
 
