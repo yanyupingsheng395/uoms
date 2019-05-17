@@ -108,10 +108,10 @@ function t3Cov(obj) {
     var tmp = null;
     $.each(obj.covData, function (k, v) {
         if(v.name == "总体") {
-            tmp = v.data;
+            tmp = v.data + "%";
         }else {
             code1 += "<td>"+v.name+"</td>";
-            code2 += "<td>"+v.data+"</td>";
+            code2 += "<td>"+v.data+"%</td>";
         }
     });
     code1 = "<tr class='active'><td>总体</td>" + code1 + "</tr>";
@@ -136,7 +136,7 @@ function t2Cov1(obj) {
     var code2 = "<tr>";
     $.each(obj.covValues, function (k, v) {
         code1 += "<td>"+k+"</td>";
-        code2 += "<td>"+v+"</td>";
+        code2 += "<td>"+v+"%</td>";
     });
     code1 += "</tr>";
     code2 += "</tr>";
