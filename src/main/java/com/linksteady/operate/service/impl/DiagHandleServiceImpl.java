@@ -182,6 +182,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
                     .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",data_range).add("$PERIOD_NAME$",buildPeriodInfo(UomsConstants.PERIOD_TYPE_DAY));
 
             covData=commonSelectMapper.selectCollectorDataBySql(covTemplate.render());
+            //计算变异系数和相关系数
             processMultiCovInfo(diagMultResultInfo,kpiCode,part1Code,part2Code,dayPeriodList,covData);
         }
 
@@ -251,12 +252,11 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         diagMultResultInfo.setThirdDown(valueFormat(thirdavg*0.95,thirdFormatType));
 
         //计算相关系数
-        processMultiRelateInfo(diagMultResultInfo,codeNamePair.get(kpiCode),codeNamePair.get(part1Code),codeNamePair.get(part2Code),firData,secData,thirdData,part1Code);
         return diagMultResultInfo;
     }
 
     /**
-     * 处理乘法的变异系数
+     * 处理乘法的变异系数 和 相关系数
      */
     private void processMultiCovInfo(DiagMultResultInfo diagMultResultInfo,String kpiCode,String part1Code,String part2Code,List<String> periodList, List<DiagComnCollector> covData)
     {
@@ -270,24 +270,15 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
         Map<String,DiagComnCollector> diagComnCollectorMap=covData.stream().collect(Collectors.toMap(DiagComnCollector::getPeriodName, Function.identity()));
         //从所有数据中获取当前周期所有的数据
-        periodList.stream().forEach(p->{
-            if(null!=diagComnCollectorMap.get(p))
-            {
-                DiagComnCollector s=diagComnCollectorMap.get(p);
-                try {
-                    firData.add((Double) s.getClass().getDeclaredField(kpiCode).get(s));
-                    secData.add((Double)s.getClass().getDeclaredField(part1Code).get(s));
-                    thirdData.add((Double)s.getClass().getDeclaredField(part2Code).get(s));
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                }
-            }else
-            {
-                firData.add(0.0d);
-                secData.add(0.0d);
-                thirdData.add(0.0d);
+        diagComnCollectorMap.forEach((k,v)->{
+            try {
+                firData.add((Double)v.getClass().getDeclaredField(kpiCode).get(v));
+                secData.add((Double)v.getClass().getDeclaredField(part1Code).get(v));
+                thirdData.add((Double)v.getClass().getDeclaredField(part2Code).get(v));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
             }
         });
 
@@ -320,25 +311,15 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         covValues.put(codeNamePair.get(part2Code)+"变异系数",thirdCov);
         diagMultResultInfo.setCovValues(covValues);
 
-    }
 
-    /**
-     * 处理乘法 - 相关性数据
-     */
-    private void  processMultiRelateInfo(DiagMultResultInfo diagMultResultInfo,String kpiName,String part1Name,String part2Name,
-                                            LinkedList<Double> firData,
-                                            LinkedList<Double> secData,
-                                            LinkedList<Double> thirdData,
-                                           String par1Code)
-    {
         //处理相关性
         JSONObject relObj=new JSONObject();
         JSONArray relArray=new JSONArray();
         JSONObject link=new JSONObject();
 
         //计算firData和secData的相关系数
-        link.put("name",part1Name);
-        if(UomsConstants.DIAG_KPI_CODE_TSPAN.equals(par1Code))
+        link.put("name",codeNamePair.get(kpiCode));
+        if(UomsConstants.DIAG_KPI_CODE_TSPAN.equals(part1Code))
         {
             link.put("data","0.00");
         }else
@@ -350,14 +331,16 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
         //计算firData和thridData的相关系数
         link=new JSONObject();
-        link.put("name",part2Name);
+        link.put("name",codeNamePair.get(part1Code));
         link.put("data",valueFormat(PearsonCorrelationUtil.getPearsonCorrelationScoreByList(firData,thirdData),"D2"));
         relArray.add(link);
 
         relObj.put("data",relArray);
-        relObj.put("name",kpiName);
+        relObj.put("name",codeNamePair.get(part2Code));
         diagMultResultInfo.setRelate(relObj);
+
     }
+
 
     /**
      * 处理加法运算
