@@ -141,21 +141,14 @@ public class OpController extends BaseController {
         return  ResponseBo.okOverPaging("",totalCount,result);
     }
 
-
-    @RequestMapping("/test")
-    public ResponseBo getPeriodUserList() {
-
-        DiagHandleInfo info=new DiagHandleInfo();
-        info.setDiagId(1);
-        info.setKpiLevelId(2);
-        info.setHandleDesc("操作步骤");
-
-        diagHandleService.saveHandleInfoToRedis(info);
-        DiagHandleInfo info2= diagHandleService.getHandleInfoFromRedis(1,2);
-
-        System.out.println(info2);
-
-        return  ResponseBo.ok("success");
+    @RequestMapping("/getSpuStatis")
+    public ResponseBo getSpuStatis(String touchDt) {
+        List<Map<String, Object>> dataList = opService.getSpuStatis(touchDt);
+        return ResponseBo.okWithData(null, dataList);
     }
 
+    @RequestMapping("/getChartData")
+    public ResponseBo getChartData(String touchDt, String type) {
+        return ResponseBo.okWithData(null, opService.getChartData(touchDt, type));
+    }
 }

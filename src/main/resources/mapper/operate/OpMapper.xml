@@ -131,6 +131,30 @@
         SELECT COUNT(*) FROM UO_OP_PERIOD_DETAIL T WHERE T.PERIOD_HEADER_ID=#{headerId}
     </select>
 
+    <select id="getSpuStatis" resultType="map">
+        SELECT
+            T.SPU_NAME,
+            T.RECOMEND_TIMES
+        FROM
+            UO_OP_DAILY_SPU_STATIS T,
+            UO_OP_DAILY_HEADER H
+        WHERE
+            H.HEAD_ID = T.HEAD_ID
+            AND TO_CHAR( H.TOUCH_DT, 'YYYY-MM-DD' ) = #{touchDt}
+            ORDER BY T.RECOMEND_TIMES desc
+    </select>
 
-
+    <select id="getChartData" resultType="map">
+    SELECT
+        T.X_DATA,
+        T.Y_DATA
+    FROM
+        UO_OP_DAILY_DATA_STATIS T,
+        UO_OP_DAILY_HEADER H
+    WHERE
+        H.HEAD_ID = T.HEAD_ID
+        AND TO_CHAR( H.TOUCH_DT, 'YYYY-MM-DD' ) = #{touchDt}
+        and T.DATA_TYPE = #{type}
+        ORDER BY T.SORT_NUM asc
+    </select>
  </mapper>

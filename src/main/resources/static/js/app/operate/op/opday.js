@@ -65,8 +65,8 @@ $(function () {
 
     // 统计图表
     $("#btn_statistics").on("click",function () {
-        // $("#statis_modal").modal('show');
-         toastr.warning("暂无统计，稍后再试。");
+        $("#statis_modal").modal('show');
+        //  toastr.warning("暂无统计，稍后再试。");
     });
 
     // 效果统计表
@@ -77,18 +77,48 @@ $(function () {
 
 });
 
+function getStatisSpu() {
+    var touchDt = $("#touchDate").val();
+    $.get("/op/getSpuStatis", {touchDt: touchDt}, function (r) {
+        var c1 = "<tr class='active'><td>推荐品类</td>";
+        var c2 = "<tr><td>推荐次数</td>";
+        $.each(r.data, function (k, v) {
+            c1 += "<td>" + v.SPU_NAME + "</td>";
+            c2 += "<td>" + v.RECOMEND_TIMES + "</td>";
+        });
+        c1 += "</tr>";
+        c2 += "</tr>";
+        $("#recomDataTable").html("").html(c1 + c2);
+    });
+}
+
+// 购买时段分布图
+function getChartData(type, id, toolXname, toolYname) {
+    var touchDt = $("#touchDate").val();
+    $.get("/op/getChartData", {touchDt: touchDt, type: type}, function (r) {
+        makeChart(r.data, id, toolXname, toolYname);
+    });
+}
+
+function makeChart(data, id, toolXname, toolYname) {
+    var chart = echarts.init(document.getElementById(id), 'macarons');
+    chart.showLoading();
+    var seriesData = data.yAxisData;
+    var xAxisName = data.xAxisName;
+    var yAxisName = data.yAxisName;
+    var xAxisData = data.xAxisData;
+    var option = getBarOption(xAxisData, xAxisName, yAxisName, seriesData, toolXname, toolYname);
+    console.log(option)
+    chart.setOption(option, true);
+    chart.hideLoading();
+}
+
 $('#statis_modal').on('shown.bs.modal', function () {
-    var timeChart = echarts.init(document.getElementById('time_chart'), 'macarons');
-    timeChart.setOption(time_option);
-
-    var discountChart = echarts.init(document.getElementById('discount_chart'), 'macarons');
-    discountChart.setOption(discount_option);
-
-    var preferentialChart = echarts.init(document.getElementById('preferential_chart'), 'macarons');
-    preferentialChart.setOption(preferential_option);
-
-    var piecePriceChart = echarts.init(document.getElementById('piece_price_chart'), 'macarons');
-    piecePriceChart.setOption(piece_price_option);
+    getChartData("unit_price", "piece_price_chart", "目标件单价", "推荐次数");
+    getChartData("discount_rate", "discount_chart", "折扣率", "推荐次数");
+    getChartData("buying_time", "time_chart", "购买时间（小时）", "订单量");
+    getChartData("refer_deno", "preferential_chart", "优惠面额", "推荐次数");
+    getStatisSpu();
 });
 
 $('#opdayTable').bootstrapTable({
@@ -180,146 +210,3 @@ function mergeCells(data,fieldName,colspan)
         index += count;
     }
 }
-
-// 购买时间分布图
-var time_option = {
-    xAxis: {
-        name: '时间',
-        type: 'category',
-        data: ['1:00', '2:00', '3:00', '4:00', '5:00', '6:00',
-            '7:00','8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00',
-            '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '24:00'],
-        axisLabel:{
-            interval: 1
-        },
-        splitLine:{show: false},
-        splitArea : {show : false}
-    },
-    yAxis: {
-        name: '订单量',
-        type: 'value',
-        splitLine:{show: false},
-        splitArea : {show : false}
-    },
-    series: [{
-        data: [2, 0, 3, 1, 2, 4, 1,1,0,3,5,7,10,1,2,4,3,1,4,3,7,8,1,2],
-        type: 'bar'
-    }],
-    tooltip : {
-        trigger: 'axis',
-        axisPointer : {
-            type : 'shadow'
-        },
-        formatter:function (params, ticket) {
-            var htmlStr="<h4 style='color: #ffffff'>"+params[0].axisValueLabel+"</h4>"
-            htmlStr+="<p style='color: #ffffff'>订单量："+params[0].value+"</p>"
-            return htmlStr;
-        }
-    }
-};
-
-// 折扣率分布图
-var discount_option = {
-    xAxis: {
-        name: '折扣率（%）',
-        type: 'category',
-        data: ['10', '20', '30', '40', '50', '60', '70', '80', '90', '100'],
-        axisLabel:{
-            interval: 0
-        },
-        splitLine:{show: false},
-        splitArea : {show : false}
-    },
-    yAxis: {
-        name: '推荐次数',
-        type: 'value',
-        splitLine:{show: false},
-        splitArea : {show : false}
-    },
-    series: [{
-        data: [0, 2, 5, 8, 10, 19, 54, 64, 90, 0],
-        type: 'bar'
-    }],
-    tooltip : {
-        trigger: 'axis',
-        axisPointer : {
-            type : 'shadow'
-        },
-        formatter:function (params, ticket) {
-            var htmlStr="<p style='color: #ffffff'>折扣率："+params[0].axisValueLabel+"</p>"
-            htmlStr+="<p style='color: #ffffff'>推荐次数："+params[0].value+"</p>"
-            return htmlStr;
-        }
-    }
-};
-
-// 优惠面额分布图
-var preferential_option = {
-    xAxis: {
-        name: '优惠面额（元）',
-        type: 'category',
-        data: ['2', '5', '8', '10', '15', '20', '30', '40', '50'],
-        axisLabel:{
-            interval: 0
-        },
-        splitLine:{show: false},
-        splitArea : {show : false}
-    },
-    yAxis: {
-        name: '推荐次数',
-        type: 'value',
-        splitLine:{show: false},
-        splitArea : {show : false}
-    },
-    series: [{
-        data: [94, 98, 92, 88, 80, 30, 22, 14, 4],
-        type: 'bar'
-    }],
-    tooltip : {
-        trigger: 'axis',
-        axisPointer : {
-            type : 'shadow'
-        },
-        formatter:function (params, ticket) {
-            var htmlStr="<p style='color: #ffffff'>优惠面额："+params[0].axisValueLabel+"</p>"
-            htmlStr+="<p style='color: #ffffff'>推荐次数："+params[0].value+"</p>"
-            return htmlStr;
-        }
-    }
-};
-
-
-// 目标件单价分布图
-var piece_price_option = {
-    xAxis: {
-        name: '目标件单价',
-        type: 'category',
-        data: ['99', '129', '149', '199', '249', '299', '349', '399', '449', '499'],
-        axisLabel:{
-            interval: 0
-        },
-        splitLine:{show: false},
-        splitArea : {show : false}
-    },
-    yAxis: {
-        name: '推荐次数',
-        type: 'value',
-        splitLine:{show: false},
-        splitArea : {show : false}
-    },
-    series: [{
-        data: [44, 50, 56, 35, 40, 12, 42, 74, 60, 32],
-        type: 'bar'
-    }],
-    tooltip : {
-        trigger: 'axis',
-        axisPointer : {
-            type : 'shadow'
-        },
-        formatter:function (params, ticket) {
-            var htmlStr="<p style='color: #ffffff'>目标件单价："+params[0].axisValueLabel+"</p>"
-            htmlStr+="<p style='color: #ffffff'>推荐次数："+params[0].value+"</p>"
-            return htmlStr;
-        }
-    }
-};

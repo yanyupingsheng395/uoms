@@ -39,6 +39,44 @@ function getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData) {
     };
 }
 
+// 柱状图
+function getBarOption (xAxisData, xAxisName, yAxisName, seriesData, toolXname, toolYname) {
+    return {
+        xAxis: {
+            name: xAxisName,
+            type: 'category',
+            data: xAxisData,
+            axisLabel:{
+                interval: 0
+            },
+            splitLine:{show: false},
+            splitArea : {show : false}
+        },
+        grid: {right:'13%'},
+        yAxis: {
+            name: yAxisName,
+            type: 'value',
+            splitLine:{show: false},
+            splitArea : {show : false}
+        },
+        series: [{
+            data: seriesData,
+            type: 'bar'
+        }],
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {
+                type : 'shadow'
+            },
+            formatter:function (params, ticket) {
+                var htmlStr="<p style='color: #ffffff'>"+toolXname+"："+params[0].axisValueLabel+"</p>"
+                htmlStr+="<p style='color: #ffffff'>"+toolYname+"："+params[0].value+"</p>"
+                return htmlStr;
+            }
+        }
+    };
+}
+
 // // 模板2 面积图demo
 // function template2(chartId) {
 //     var legendData = ["首购", "非首购"];

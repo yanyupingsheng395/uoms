@@ -1,5 +1,7 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.operate.vo.Echart;
+
 import java.util.List;
 import java.util.Map;
 
@@ -28,4 +30,7 @@ public interface OpService {
 
      int getPeriodUserListCount(String headerId);
 
+     List<Map<String, Object>> getSpuStatis(String touchDt);
+
+     Echart getChartData(String touchDt, String type);
 }

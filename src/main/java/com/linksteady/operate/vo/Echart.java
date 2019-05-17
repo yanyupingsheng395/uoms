@@ -1,5 +1,7 @@
 package com.linksteady.operate.vo;
 
+import lombok.Data;
+
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +19,16 @@ public class Echart {
     private String yAxisName;
 
     private List<Map<String, Object>> seriesData;
+
+    private List<String> yAxisData;
+
+    public List<String> getyAxisData() {
+        return yAxisData;
+    }
+
+    public void setyAxisData(List<String> yAxisData) {
+        this.yAxisData = yAxisData;
+    }
 
     public List<String> getLegendData() {
         return legendData;

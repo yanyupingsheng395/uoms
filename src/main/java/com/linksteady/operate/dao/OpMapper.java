@@ -31,5 +31,8 @@ public interface OpMapper{
 
     int getPeriodUserListCount(@Param(value="headerId") String headerId);
 
+    List<Map<String, Object>> getSpuStatis(@Param("touchDt") String touchDt);
+
+    List<Map<String, Object>> getChartData(@Param("touchDt") String touchDt, @Param("type") String type);
 
 }
