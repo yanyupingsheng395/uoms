@@ -318,7 +318,7 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         JSONObject link=new JSONObject();
 
         //计算firData和secData的相关系数
-        link.put("name",codeNamePair.get(kpiCode));
+        link.put("name",codeNamePair.get(part1Code));
         if(UomsConstants.DIAG_KPI_CODE_TSPAN.equals(part1Code))
         {
             link.put("data","0.00");
@@ -331,12 +331,12 @@ public class DiagHandleServiceImpl implements DiagHandleService {
 
         //计算firData和thridData的相关系数
         link=new JSONObject();
-        link.put("name",codeNamePair.get(part1Code));
+        link.put("name",codeNamePair.get(part2Code));
         link.put("data",valueFormat(PearsonCorrelationUtil.getPearsonCorrelationScoreByList(firData,thirdData),"D2"));
         relArray.add(link);
 
         relObj.put("data",relArray);
-        relObj.put("name",codeNamePair.get(part2Code));
+        relObj.put("name",codeNamePair.get(kpiCode));
         diagMultResultInfo.setRelate(relObj);
 
     }
