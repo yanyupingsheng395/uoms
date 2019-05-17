@@ -30,21 +30,18 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
     public Echart retentionPurchaseTimes(String spuId) {
         Echart echart = new Echart();
         List<Map<String, Object>> data = spuLifeCycleMapper.retentionPurchaseTimes(spuId);
-        List<Map<String, Object>> points = Lists.newArrayList();
-        data.stream().filter(x->x.get("IF_UNUM_LIMIT").equals("Y")).forEach(y->{
-            Map<String, Object> tmp = Maps.newHashMap();
-            tmp.put("xAxis", y.get("PURCH_TIMES"));
-            tmp.put("yAxis", y.get("RETENTION"));
-            if(points.size() == 0) {
-                points.add(tmp);
-            }
-        });
+        Map<String, Object> points = Maps.newHashMap();
+        String xpoint = String.valueOf(data.stream().filter(x->x.get("IF_UNUM_LIMIT").equals("Y")).findFirst().get().get("PURCH_TIMES"));
         List<String> retention = Lists.newArrayList();
         List<String> purchTimes = Lists.newArrayList();
         data.stream().forEach(t->{
             retention.add(String.valueOf(t.get("RETENTION")));
             purchTimes.add(String.valueOf(t.get("PURCH_TIMES")));
         });
+
+        int index = purchTimes.stream().filter(y->y.equals(xpoint)).map(x->purchTimes.indexOf(x)).findFirst().get();
+        points.put("xAxis", index);
+        points.put("yAxis", retention.get(index));
         echart.setxAxisName("购买次数");
         echart.setyAxisName("留存率（%）");
 
@@ -53,7 +50,7 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         tmp.put("data", retention);
 
         Map<String, Object> pointData = Maps.newHashMap();
-        pointData.put("data", points);
+        pointData.put("data", Arrays.asList(points));
         tmp.put("markPoint", pointData);
         List list = Lists.newArrayList();
         list.add(tmp);
