@@ -90,7 +90,7 @@ function createTableHeader(tableName)
             title: '相关性',
             align: 'center',
             formatter:function(value,row,index){
-                if (value>0.5){
+                if (Math.abs(value)>0.4){
                     return value+"&nbsp;<span class='mdi mdi-record' style='color:#02fd4f;font-size: 16px;'></span>";
                 }else{
                     return value+"&nbsp;<span class='mdi mdi-record' style='color:#fd2502;font-size: 16px;'></span>";
