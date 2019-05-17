@@ -831,7 +831,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
 
     private double calculateFormulaValue(int x,double ceof1,double ceof2,double ceof3,double intercept)
     {
-        double result= ArithUtil.formatDoubleByMode(Math.pow(x,3)*ceof1+Math.pow(x,2)*ceof2+x*ceof3+intercept,0, RoundingMode.DOWN);
+        double result= ArithUtil.formatDoubleByMode((Math.pow(x,3)*ceof1+Math.pow(x,2)*ceof2+x*ceof3+intercept) * 100,2, RoundingMode.DOWN);
         return result;
     }
 }
