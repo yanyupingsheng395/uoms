@@ -18,15 +18,15 @@ function getStageNode() {
             if(v == "0" || v == 0) {
                 if(k == 0) {
                     content = "该品类购买人数过少，尚未形成购买规律";
-                    yAxisTitle.push("频次（首购到复购）");
+                    yAxisTitle.push("频次（首购到复购, 1次-）");
                 }
                 if(k == 1) {
                     content = "该品类尚未形成忠诚购买规律";
-                    yAxisTitle.push("频次（成长期）");
+                    yAxisTitle.push("频次（成长期, "+r.data[0]+"次-）");
                 }
                 if(k == 2) {
                     content = "该品类尚未出现衰退趋势";
-                    yAxisTitle.push("频次（成熟期）");
+                    yAxisTitle.push("频次（成熟期, "+r.data[1]+"次-）");
                 }
                 v = "-";
             }else {
