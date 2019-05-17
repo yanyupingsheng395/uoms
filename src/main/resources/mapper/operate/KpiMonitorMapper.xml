@@ -1304,7 +1304,7 @@
         SELECT
         MIN_MONTH,
         BUY_MONTH,
-        (CASE WHEN C_POCNT=0 THEN 0 ELSE TRUNC(C_FEE/C_POCNT) END) PRICE,
+        (CASE WHEN C_POCNT=0 THEN 0 ELSE TRUNC(C_FEE/C_POCNT) END) UPRICE,
         C_USERS
         from g4
     </select>
@@ -1346,7 +1346,7 @@
         SELECT
         MIN_MONTH,
         BUY_MONTH,
-        (CASE WHEN C_POCNT=0 THEN 0 ELSE TRUNC(C_FEE/C_POCNT) END) PRICE,
+        (CASE WHEN C_POCNT=0 THEN 0 ELSE TRUNC(C_FEE/C_POCNT) END) UPRICE,
         C_USERS
         from g4
     </select>

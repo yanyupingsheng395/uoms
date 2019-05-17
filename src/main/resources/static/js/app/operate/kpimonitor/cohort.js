@@ -162,7 +162,7 @@ function getDMonthCols(percent) {
     return cols;
 }
 // 客单价间隔月
-function getDMonthPriceCols(percent, type) {
+function getDMonthUPriceCols(percent, type) {
     var fix = "";
     if(percent) {
         fix = "%";
@@ -187,6 +187,36 @@ function getDMonthPriceCols(percent, type) {
         {field: 'UPRICE10', title: '+10月', formatter: fmt},
         {field: 'UPRICE11', title: '+11月', formatter: fmt},
         {field: 'UPRICE12', title: '+12月', formatter: fmt}
+    ];
+    return cols;
+}
+
+// 订单价间隔月
+function getDMonthPriceCols(percent, type) {
+    var fix = "";
+    if(percent) {
+        fix = "%";
+    }else {
+        fix = "";
+    }
+
+    var fmt = function (value, row, index) {if(value == "0" || value == undefined) {return "";}else {return value + fix;}};
+    var cols = [
+        {field: 'MONTH_ID', title: '月份'},
+        {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px', formatter: fmt},
+        {field: 'PRICE', title: type, width:'132px', formatter: fmt},
+        {field: 'PRICE1', title: '+1月', formatter: fmt},
+        {field: 'PRICE2', title: '+2月', formatter: fmt},
+        {field: 'PRICE3', title: '+3月', formatter: fmt},
+        {field: 'PRICE4', title: '+4月', formatter: fmt},
+        {field: 'PRICE5', title: '+5月', formatter: fmt},
+        {field: 'PRICE6', title: '+6月', formatter: fmt},
+        {field: 'PRICE7', title: '+7月', formatter: fmt},
+        {field: 'PRICE8', title: '+8月', formatter: fmt},
+        {field: 'PRICE9', title: '+9月', formatter: fmt},
+        {field: 'PRICE10', title: '+10月', formatter: fmt},
+        {field: 'PRICE11', title: '+11月', formatter: fmt},
+        {field: 'PRICE12', title: '+12月', formatter: fmt}
     ];
     return cols;
 }
@@ -257,7 +287,11 @@ function getData1(idx) {
             percent = true;
         }
         if(periodType == "dmonth") {
-            columns = getDMonthPriceCols(percent, type);
+            if(idx == 1) {
+                columns = getDMonthUPriceCols(percent, type);
+            }else if(idx == 2) {
+                columns = getDMonthPriceCols(percent, type);
+            }
         }else if(periodType == "month"){
             columns = getMonthCols(r.data.columns, percent, type);
         }

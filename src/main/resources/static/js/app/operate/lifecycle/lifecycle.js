@@ -72,7 +72,6 @@ function retention_time() {
         var chart = r.data;
         var seriesDatas = new Array();
         var series0 = chart.seriesData[0];
-        console.log(series0);
         series0.type = 'line';
         series0.smooth = true;
         series0.markPoint.tooltip = {
@@ -84,24 +83,41 @@ function retention_time() {
         series0.name = "实际值";
         seriesDatas.push(series0);
 
+        var legend = ["实际值"];
         var series1Data = getRetentionByMethod(chart.xAxisData.join(","));
-        console.log("-------")
-        console.log(series1Data)
-        var series1 = new Object();
-        series1.data = series1Data;
-        console.log(series1Data);
-        series1.type = 'line';
-        series1.smooth = true;
-        series1.name = "拟合值";
-        seriesDatas.push(series1);
-
-        var option = getOption(["实际值", "拟合值"], chart.xAxisData, chart.xAxisName, chart.yAxisName, seriesDatas);
+        var flag = checkIfFitting(series1Data);
+        if(flag) {
+            var series1 = new Object();
+            series1.data = series1Data;
+            series1.type = 'line';
+            series1.smooth = true;
+            series1.name = "拟合值";
+            seriesDatas.push(series1);
+            legend.push("拟合值");
+        }
+        var option = getOption(legend, chart.xAxisData, chart.xAxisName, chart.yAxisName, seriesDatas);
         option.tooltip = {formatter:'购买次数：{b}<br/>留存率：{c}%'};
         option.grid = {right:'22%'};
+        if(flag) {
+            option.legend.selected = {'实际值':true, '拟合值':false};
+            $("#fitRemark").attr("style", "display:none;");
+        }else {
+            $("#fitRemark").attr("style", "display:block;");
+        }
         var freqChart = echarts.init(document.getElementById('retention_freq'), 'macarons');
-        freqChart.setOption(option);
-
+        freqChart.setOption(option, true);
     });
+}
+
+// 判断是否有拟合曲线
+function checkIfFitting(data) {
+    var flag = false;
+    $.each(data, function (k, v) {
+        if(parseInt(v) != 0) {
+            flag = true;
+        }
+    });
+    return flag;
 }
 
 // 每个阶段购买间隔分布图
