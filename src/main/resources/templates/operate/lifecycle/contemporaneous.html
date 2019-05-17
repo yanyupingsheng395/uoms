@@ -130,7 +130,6 @@
 
     // 获取表格数据
     function getData(idx) {
-        lightyear.loading('show');
         var url = "";
         if(idx == 1) {
             url = "/kpiMonitor/getRetentionBySpu";
@@ -252,7 +251,6 @@
             search: false,
         };
         $el.bootstrapTable('destroy').bootstrapTable(option);
-        lightyear.loading('hide');
     }
 
 

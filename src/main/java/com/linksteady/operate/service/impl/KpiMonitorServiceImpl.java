@@ -9,6 +9,7 @@ import com.linksteady.operate.dao.KpiMonitorMapper;
 import com.linksteady.operate.domain.DatePeriodKpi;
 import com.linksteady.operate.service.KpiMonitorService;
 import com.linksteady.operate.vo.Echart;
+import javafx.scene.input.DataFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,8 +47,11 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
 
     public static final String[] D_MONTH_COLS = {"MONTH_ID", "TOTAL_USER", "MONTH1", "MONTH2", "MONTH3", "MONTH4", "MONTH5", "MONTH6", "MONTH7", "MONTH8", "MONTH9", "MONTH10", "MONTH11", "MONTH12"};
 
-    public static final String[] D_MONTH_PRICE = {"MONTH_ID", "TOTAL_USER", "UPRICE", "UPRICE1", "UPRICE2", "UPRICE3", "UPRICE4", "UPRICE5", "UPRICE6", "UPRICE7", "UPRICE8", "UPRICE9", "UPRICE10", "UPRICE11", "UPRICE12"};
+    // 客单价
+    public static final String[] D_MONTH_UPRICE = {"MONTH_ID", "TOTAL_USER", "UPRICE", "UPRICE1", "UPRICE2", "UPRICE3", "UPRICE4", "UPRICE5", "UPRICE6", "UPRICE7", "UPRICE8", "UPRICE9", "UPRICE10", "UPRICE11", "UPRICE12"};
 
+    // 订单价
+    public static final String[] D_MONTH_PRICE = {"MONTH_ID", "TOTAL_USER", "PRICE", "PRICE1", "PRICE2", "PRICE3", "PRICE4", "PRICE5", "PRICE6", "PRICE7", "PRICE8", "PRICE9", "PRICE10", "PRICE11", "PRICE12"};
 
     /**
      *
@@ -353,11 +358,11 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getUpriceData(start, end);
-            return getUPriceDMonthData(dataList, false);
+            return getUPriceDMonthData(dataList, true);
         }
         if(PERIOD_TYPE_MONTH.equals(periodType)) {
             List<DatePeriodKpi> dataList = kpiMonitorMapper.getUpriceDataMonth(start, end);
-            return getUPriceMonthData(dataList, start, end, false);
+            return getUPriceMonthData(dataList, start, end, true);
         }
         return null;
     }
@@ -371,11 +376,11 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getUpriceDataBySpu(spuId, start, end);
-            return getUPriceDMonthData(dataList, false);
+            return getUPriceDMonthData(dataList, true);
         }
         if(PERIOD_TYPE_MONTH.equals(periodType)) {
             List<DatePeriodKpi> dataList = kpiMonitorMapper.getUpriceDataMonthBySpu(spuId, start, end);
-            return getUPriceMonthData(dataList, start, end, false);
+            return getUPriceMonthData(dataList, start, end, true);
         }
         return null;
     }
@@ -390,11 +395,11 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getPriceData(start, end);
-            return getUPriceDMonthData(dataList, false);
+            return getPriceDMonthData(dataList, true);
         }
         if(PERIOD_TYPE_MONTH.equals(periodType)) {
             List<DatePeriodKpi> dataList = kpiMonitorMapper.getPriceDataMonth(start, end);
-            return getUPriceMonthData(dataList, start, end, false);
+            return getUPriceMonthData(dataList, start, end, true);
         }
         return null;
     }
@@ -408,11 +413,11 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }
         if(PERIOD_TYPE_INTERVAL_MONTH.equals(periodType)) {
             List<Map<String, Object>> dataList = kpiMonitorMapper.getPriceDataBySpu(spuId, start, end);
-            return getUPriceDMonthData(dataList, false);
+            return getPriceDMonthData(dataList, true);
         }
         if(PERIOD_TYPE_MONTH.equals(periodType)) {
             List<DatePeriodKpi> dataList = kpiMonitorMapper.getPriceDataMonthBySpu(spuId, start, end);
-            return getUPriceMonthData(dataList, start, end, false);
+            return getUPriceMonthData(dataList, start, end, true);
         }
         return null;
     }
@@ -473,6 +478,38 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
      * @return
      */
     public Map<String, Object> getUPriceDMonthData(List<Map<String, Object>> dataList, boolean percent) {
+        DecimalFormat df = new DecimalFormat("#");
+        List<String> cols = Arrays.asList(D_MONTH_UPRICE);
+        Map<String, Object> total = Maps.newLinkedHashMap();
+        cols.stream().forEach(x-> {
+            DoubleSummaryStatistics dss = dataList.stream().map(y-> {
+                if (!x.equals(D_MONTH_UPRICE[0])) {
+                    return y.get(x) == null ? 0:Double.valueOf(y.get(x).toString());
+                }
+                return 0D;
+            }).collect(Collectors.summarizingDouble(v->v));
+
+            // 计算本月新增用户数的和
+            if(x.equals(D_MONTH_UPRICE[1])) {
+                total.put(D_MONTH_UPRICE[1], dss.getSum());
+            }else if(!x.equals(D_MONTH_UPRICE[0])){
+                if(percent) {
+                    Long count = dataList.stream().filter(z-> z.get(x) != null && Double.valueOf(z.get(x).toString()) > 0D).count();
+                    total.put(x, count == 0 ? 0:df.format(dss.getSum()/count));
+                }else {
+                    total.put(x, dss.getSum());
+                }
+            }
+        });
+        total.put(D_MONTH_UPRICE[0], "合计:");
+        dataList.add(total);
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("data", dataList);
+        return result;
+    }
+
+    public Map<String, Object> getPriceDMonthData(List<Map<String, Object>> dataList, boolean percent) {
+        DecimalFormat df = new DecimalFormat("#");
         List<String> cols = Arrays.asList(D_MONTH_PRICE);
         Map<String, Object> total = Maps.newLinkedHashMap();
         cols.stream().forEach(x-> {
@@ -482,18 +519,20 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
                 }
                 return 0D;
             }).collect(Collectors.summarizingDouble(v->v));
+
+            // 计算本月新增用户数的和
             if(x.equals(D_MONTH_PRICE[1])) {
                 total.put(D_MONTH_PRICE[1], dss.getSum());
             }else if(!x.equals(D_MONTH_PRICE[0])){
                 if(percent) {
                     Long count = dataList.stream().filter(z-> z.get(x) != null && Double.valueOf(z.get(x).toString()) > 0D).count();
-                    total.put(x, count == 0 ? 0:String.format("%.2f", dss.getSum()/count));
+                    total.put(x, count == 0 ? 0:df.format(dss.getSum()/count));
                 }else {
                     total.put(x, dss.getSum());
                 }
             }
         });
-        total.put(D_MONTH_COLS[0], "合计:");
+        total.put(D_MONTH_PRICE[0], "合计:");
         dataList.add(total);
         Map<String, Object> result = Maps.newHashMap();
         result.put("data", dataList);
@@ -621,6 +660,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
     }
 
     public Map<String, Object> getUPriceMonthData(List<DatePeriodKpi> dataList, String begin, String end, boolean percent) {
+        DecimalFormat df = new DecimalFormat("#");
         // 将原始数据按各月分组到Map
         Map<String, List<DatePeriodKpi>> datas = getNewData(dataList, begin, end);
         // 分组后的map组装数据到Map
@@ -630,18 +670,14 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             tmpMap.put("month", x);
             list.stream().filter(z->!z.getBuyPeriod().equals(x)).forEach(y-> {
                 if(percent) {
-                    tmpMap.put(y.getBuyPeriod(), y.getRetention());
+                    tmpMap.put(y.getBuyPeriod(), y.getUprice());
                 }else {
                     tmpMap.put(y.getBuyPeriod(), y.getUprice());
                 }
             });
             list.stream().filter(z->z.getBuyPeriod().equals(x)).forEach(y-> {
-                if(percent) {
-                    tmpMap.put("newUsers", y.getKpiValue());
-                }else {
-                    tmpMap.put("newUsers", y.getKpiValue());
-                    tmpMap.put("uprice", y.getUprice());
-                }
+                tmpMap.put("newUsers", y.getKpiValue());
+                tmpMap.put("uprice", y.getUprice());
             });
             return tmpMap;
         }).collect(Collectors.toList());
@@ -654,14 +690,16 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         Map<String, Object> map = Maps.newHashMap();
         map.put("month", "合计：");
         map.put("newUsers", newUsersTotal.getSum());
-        map.put("uprice", priceTotal.getSum());
+
+        Long priceCount = data.stream().filter(x->x.get("uprice") != null && Double.valueOf(x.get("uprice").toString()) > 0D).count();
+        map.put("uprice", df.format(priceTotal.getSum()/priceCount));
 
         List<String> monthPeriod = DateUtil.getMonthBetween(begin, end, "yyyyMM");
         monthPeriod.stream().forEach(t-> {
             DoubleSummaryStatistics tmp = data.stream().map(x->(x.get(t) != null && StringUtils.isNotBlank(x.get(t).toString())) ? Double.valueOf(x.get(t).toString()):0D).collect(Collectors.summarizingDouble(v->v));
             if(percent) {
                 Long count = data.stream().filter(x->x.get(t) != null && Double.valueOf(x.get(t).toString()) > 0D).count();
-                map.put(t, count == 0 ? 0 : String.format("%.2f", tmp.getSum()/count));
+                map.put(t, count == 0 ? 0 : df.format(tmp.getSum()/count));
             }else {
                 if (tmp.getSum() != 0D) {
                     map.put(t, tmp.getSum());
