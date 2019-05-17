@@ -74,37 +74,37 @@ function retention_time() {
         var series0 = chart.seriesData[0];
         series0.type = 'line';
         series0.smooth = true;
-        series0.markPoint.tooltip = {
-            show: true, // 是否显示
+        var legend = ["实际值"];
+        if(series0.markPoint != undefined) {
+            series0.markPoint.tooltip = {
+                show: true, // 是否显示
                 formatter: '从该点开始购买次数过少', // 内容格式器 a（系列名称），b（类目值），c（数值）, d（无）
                 trigger: 'item', // 触发类型，默认数据触发，见下图，可选为：'item' | 'axis'
-        };
-        series0.markPoint.symbolSize = 30;
-        series0.name = "实际值";
-        seriesDatas.push(series0);
+            };
+            series0.markPoint.symbolSize = 30;
+            series0.name = "实际值";
 
-        var legend = ["实际值"];
-        var x = chart.xAxisData[parseInt(series0.markPoint.data[0].xAxis)];
-        console.log(x);
-        var xdata = new Array();
-        $.each(chart.xAxisData, function (k, v) {
-            if(parseInt(v) <= parseInt(x)) {
-                xdata.push(v);
+            var x = chart.xAxisData[parseInt(series0.markPoint.data[0].xAxis)];
+            var xdata = new Array();
+            $.each(chart.xAxisData, function (k, v) {
+                if(parseInt(v) <= parseInt(x)) {
+                    xdata.push(v);
+                }
+            });
+            var series1Data = getRetentionByMethod(xdata.join(","));
+            var flag = checkIfFitting(series1Data);
+            if(flag) {
+                var series1 = new Object();
+                series1.data = series1Data;
+                series1.type = 'line';
+                series1.smooth = true;
+                series1.name = "拟合值";
+                seriesDatas.push(series1);
+                legend.push("拟合值");
             }
-        });
-        var series1Data = getRetentionByMethod(xdata.join(","));
-        var flag = checkIfFitting(series1Data);
-        if(flag) {
-            var series1 = new Object();
-            series1.data = series1Data;
-            series1.type = 'line';
-            series1.smooth = true;
-            series1.name = "拟合值";
-            seriesDatas.push(series1);
-            legend.push("拟合值");
         }
+        seriesDatas.push(series0);
         var option = getOption(legend, chart.xAxisData, chart.xAxisName, chart.yAxisName, seriesDatas);
-        // option.tooltip = {formatter:'购买次数：{b}<br/>留存率：{c}%'};
         option.grid = {right:'22%'};
         if(flag) {
             option.legend.selected = {'实际值':true, '拟合值':false};
