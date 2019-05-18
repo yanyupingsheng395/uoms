@@ -20,29 +20,75 @@ $(document).ready(function () {
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
-});
 
-$(function(){
+    //为所有ajax设置
     $.ajaxSetup({
-        type: "POST",
-        error: function(jqXHR, textStatus, errorThrown) {
-            switch(jqXHR.code) {
-               case(401):
-                alert("未登录");
-                break;
-               case(500):
-                alert("无权限执行此操作");
-                break;
-               case(201):
-                alert("请求超时");
-                break;
-              default:
-                alert("未知错误");
-             }
+        statusCode: {
+            404: function() {
+                $.confirm({
+                    title: '提示',
+                    content: '请求的资源不存在，请联系系统维护人员！',
+                    theme: 'bootstrap',
+                    type: 'orange',
+                    buttons: {
+                        confirm: {
+                            text: '确认',
+                            btnClass: 'btn-blue'
+                        }
+                    }
+                });
+            },
+            403: function() {
+                $.confirm({
+                    title: '提示',
+                    content: '无权限的访问请求，请联系系统管理员获取授权！',
+                    theme: 'bootstrap',
+                    type: 'orange',
+                    buttons: {
+                        confirm: {
+                            text: '确认',
+                            btnClass: 'btn-blue'
+                        }
+                    }
+                });
+            },
+            401: function() {
+                $.confirm({
+                    title: '提示',
+                    content: '会话失效，请重新登录系统！',
+                    theme: 'bootstrap',
+                    type: 'orange',
+                    buttons: {
+                        confirm: {
+                            text: '确认',
+                            btnClass: 'btn-blue',
+                            action: function(){
+                                window.location= "/index"
+                            }
+                        }
+                    }
+                });
+            },
+            500: function() {
+                $.confirm({
+                    title: '提示',
+                    content: '操作失败，服务出现异常了，快反馈给系统运维人员吧！',
+                    theme: 'bootstrap',
+                    type: 'orange',
+                    buttons: {
+                        confirm: {
+                            text: '确认',
+                            btnClass: 'btn-blue'
+                        }
+                    }
+                });
+                //不管有没有出现loading 组件，都进行一次隐藏操作
+                lightyear.loading('hide');
+
+            }
         }
     });
 });
-
 
 // 菜单点击效果
 function menu_tree() {

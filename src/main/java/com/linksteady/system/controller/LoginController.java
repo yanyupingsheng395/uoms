@@ -44,12 +44,12 @@ public class LoginController extends BaseController {
     public ResponseBo login(String username, String password, String code) {
 
         if (!StringUtils.isNotBlank(code)) {
-            return ResponseBo.warn("验证码不能为空！");
+            return ResponseBo.error("验证码不能为空！");
         }
         Session session = super.getSession();
         String sessionCode = (String) session.getAttribute(CODE_KEY);
         if (!code.equalsIgnoreCase(sessionCode)) {
-            return ResponseBo.warn("验证码错误！");
+            return ResponseBo.error("验证码错误！");
         }
 
         password = MD5Utils.encrypt(username.toLowerCase(), password);

@@ -62,7 +62,7 @@ public class UserController extends BaseController {
             return ResponseBo.ok(user);
         } catch (Exception e) {
             log.error("获取用户失败", e);
-            return ResponseBo.error("获取用户失败，请联系网站管理员！");
+            return ResponseBo.error("获取用户失败，请联系系统运维人员！");
         }
     }
 
@@ -105,7 +105,7 @@ public class UserController extends BaseController {
             return ResponseBo.ok("新增用户成功！");
         } catch (Exception e) {
             log.error("新增用户失败", e);
-            return ResponseBo.error("新增用户失败，请联系网站管理员！");
+            return ResponseBo.error("新增用户失败，请联系系统运维人员！");
         }
     }
 
@@ -124,7 +124,7 @@ public class UserController extends BaseController {
             return ResponseBo.ok("修改用户成功！");
         } catch (Exception e) {
             log.error("修改用户失败", e);
-            return ResponseBo.error("修改用户失败，请联系网站管理员！");
+            return ResponseBo.error("修改用户失败，请联系系统运维人员！");
         }
     }
 
@@ -138,7 +138,7 @@ public class UserController extends BaseController {
             return ResponseBo.ok("删除用户成功！");
         } catch (Exception e) {
             log.error("删除用户失败", e);
-            return ResponseBo.error("删除用户失败，请联系网站管理员！");
+            return ResponseBo.error("删除用户失败，请联系系统运维人员！");
         }
     }
 
@@ -158,7 +158,7 @@ public class UserController extends BaseController {
             return ResponseBo.ok("更改密码成功！");
         } catch (Exception e) {
             log.error("修改密码失败", e);
-            return ResponseBo.error("更改密码失败，请联系网站管理员！");
+            return ResponseBo.error("更改密码失败，请联系系统运维人员！");
         }
     }
 
@@ -187,7 +187,7 @@ public class UserController extends BaseController {
             return ResponseBo.ok(this.userService.findUserProfile(user));
         } catch (Exception e) {
             log.error("获取用户信息失败", e);
-            return ResponseBo.error("获取用户信息失败，请联系网站管理员！");
+            return ResponseBo.error("获取用户信息失败，请联系系统运维人员！");
         }
     }
 
@@ -199,7 +199,7 @@ public class UserController extends BaseController {
             return ResponseBo.ok("更新个人信息成功！");
         } catch (Exception e) {
             log.error("更新用户信息失败", e);
-            return ResponseBo.error("更新用户信息失败，请联系网站管理员！");
+            return ResponseBo.error("更新用户信息失败，请联系系统运维人员！");
         }
     }
 
@@ -215,7 +215,7 @@ public class UserController extends BaseController {
             return ResponseBo.ok("更新头像成功！");
         } catch (Exception e) {
             log.error("更换头像失败", e);
-            return ResponseBo.error("更新头像失败，请联系网站管理员！");
+            return ResponseBo.error("更新头像失败，请联系系统运维人员！");
         }
     }
 }

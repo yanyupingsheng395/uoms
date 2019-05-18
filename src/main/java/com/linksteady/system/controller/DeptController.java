@@ -53,7 +53,7 @@ public class DeptController {
             return ResponseBo.ok(dept);
         } catch (Exception e) {
             log.error("获取部门信息失败", e);
-            return ResponseBo.error("获取部门信息失败，请联系网站管理员！");
+            return ResponseBo.error("获取部门信息失败，请联系系统运维人员！");
         }
     }
 
@@ -89,7 +89,7 @@ public class DeptController {
             return ResponseBo.ok("新增部门成功！");
         } catch (Exception e) {
             log.error("新增部门失败", e);
-            return ResponseBo.error("新增部门失败，请联系网站管理员！");
+            return ResponseBo.error("新增部门失败，请联系系统运维人员！");
         }
     }
 
@@ -103,7 +103,7 @@ public class DeptController {
             return ResponseBo.ok("删除部门成功！");
         } catch (Exception e) {
             log.error("删除部门失败", e);
-            return ResponseBo.error("删除部门失败，请联系网站管理员！");
+            return ResponseBo.error("删除部门失败，请联系系统运维人员！");
         }
     }
 
@@ -117,7 +117,7 @@ public class DeptController {
             return ResponseBo.ok("修改部门成功！");
         } catch (Exception e) {
             log.error("修改部门失败", e);
-            return ResponseBo.error("修改部门失败，请联系网站管理员！");
+            return ResponseBo.error("修改部门失败，请联系系统运维人员！");
         }
     }
 }

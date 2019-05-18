@@ -24,4 +24,12 @@ public class ShiroSessionListener implements SessionListener{
 	public void onExpiration(Session session) {
 		sessionCount.decrementAndGet();
 	}
+
+	/**
+	 * 获取在线人数使用
+	 * @return
+	 */
+	public AtomicInteger getSessionCount() {
+		return sessionCount;
+	}
 }

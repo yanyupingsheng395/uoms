@@ -6,7 +6,7 @@
     <title>用户运营平台</title>
     <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
     <link rel="stylesheet" th:href="@{/css/login.css}" type="text/css">
-    <link href="https://cdn.bootcss.com/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
+    <link rel="stylesheet" data-th-href="@{/plugins/toastr/toastr.css}">
     <script data-th-src="@{/js/common/jquery.min.js}"></script>
 </head>
 <style>
@@ -42,6 +42,6 @@
     </div>
 </div>
 </body>
-<script src="https://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
+<script data-th-src="@{/plugins/toastr/toastr.min.js}"></script>
 <script data-th-src="@{/js/app/login.js}"></script>
 </html>

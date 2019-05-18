@@ -27,6 +27,8 @@ import org.springframework.context.annotation.DependsOn;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import javax.servlet.Filter;
 
 /**
  * Shiro 配置类
@@ -96,6 +98,11 @@ public class ShiroConfig {
     @Bean
     public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+
+        //获取filters
+        Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
+        filters.put("user", new CustomUserFilter());
+
         // 设置 securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         // 登录的 url

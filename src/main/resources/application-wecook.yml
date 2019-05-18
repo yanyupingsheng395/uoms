@@ -168,10 +168,10 @@ logging:
 # system 配置
 sys:
   shiro:
-    # shiro redis缓存时长，默认1800秒
-    expireIn: 18000
-    # session 超时时间，默认1800000毫秒
-    sessionTimeout: 1800000
+    # shiro redis缓存时长，默认1800秒 现在值为2小时
+    expireIn: 7200
+    # session 超时时间，默认1800000毫秒 现在值为2小时
+    sessionTimeout: 7200000
     # rememberMe cookie有效时长，默认86400秒，即一天
     cookieTimeout: 86400
     # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等

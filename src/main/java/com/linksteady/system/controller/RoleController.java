@@ -55,7 +55,7 @@ public class RoleController extends BaseController {
             return ResponseBo.ok(role);
         } catch (Exception e) {
             log.error("获取角色信息失败", e);
-            return ResponseBo.error("获取角色信息失败，请联系网站管理员！");
+            return ResponseBo.error("获取角色信息失败，请联系系统运维人员！");
         }
     }
 
@@ -79,7 +79,7 @@ public class RoleController extends BaseController {
             return ResponseBo.ok("新增角色成功！");
         } catch (Exception e) {
             log.error("新增角色失败", e);
-            return ResponseBo.error("新增角色失败，请联系网站管理员！");
+            return ResponseBo.error("新增角色失败，请联系系统运维人员！");
         }
     }
 
@@ -93,7 +93,7 @@ public class RoleController extends BaseController {
             return ResponseBo.ok("删除角色成功！");
         } catch (Exception e) {
             log.error("删除角色失败", e);
-            return ResponseBo.error("删除角色失败，请联系网站管理员！");
+            return ResponseBo.error("删除角色失败，请联系系统运维人员！");
         }
     }
 
@@ -107,7 +107,7 @@ public class RoleController extends BaseController {
             return ResponseBo.ok("修改角色成功！");
         } catch (Exception e) {
             log.error("修改角色失败", e);
-            return ResponseBo.error("修改角色失败，请联系网站管理员！");
+            return ResponseBo.error("修改角色失败，请联系系统运维人员！");
         }
     }
 }

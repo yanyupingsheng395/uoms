@@ -56,7 +56,7 @@ public class MenuController extends BaseController {
             return ResponseBo.ok(menu);
         } catch (Exception e) {
             logger.error("获取菜单信息失败", e);
-            return ResponseBo.error("获取信息失败，请联系网站管理员！");
+            return ResponseBo.error("获取信息失败，请联系系统运维人员！");
         }
     }
 
@@ -134,7 +134,7 @@ public class MenuController extends BaseController {
             return ResponseBo.ok("新增" + name + "成功！");
         } catch (Exception e) {
             logger.error("新增{}失败", name, e);
-            return ResponseBo.error("新增" + name + "失败，请联系网站管理员！");
+            return ResponseBo.error("新增" + name + "失败，请联系系统运维人员！");
         }
     }
 
@@ -148,7 +148,7 @@ public class MenuController extends BaseController {
             return ResponseBo.ok("删除成功！");
         } catch (Exception e) {
             logger.error("获取菜单失败", e);
-            return ResponseBo.error("删除失败，请联系网站管理员！");
+            return ResponseBo.error("删除失败，请联系系统运维人员！");
         }
     }
 
@@ -168,7 +168,7 @@ public class MenuController extends BaseController {
             return ResponseBo.ok("修改" + name + "成功！");
         } catch (Exception e) {
             logger.error("修改{}失败", name, e);
-            return ResponseBo.error("修改" + name + "失败，请联系网站管理员！");
+            return ResponseBo.error("修改" + name + "失败，请联系系统运维人员！");
         }
     }
 
