@@ -10,9 +10,10 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap/bootstrap.min.css}">
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap/bootstrap-table.css}">
+    <!--<link rel="stylesheet" data-th-href="@{/plugins/bootstrap/bootstrap.min.css}">-->
+    <!--<link rel="stylesheet" data-th-href="@{/plugins/bootstrap/bootstrap-table.css}">-->
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap/bootstrap-table-fixed-columns.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <!--时间选择插件-->
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
     <!--日期选择插件-->
@@ -25,18 +26,6 @@
             background-color: #31b0d5  !important;
             color: white;
             cursor: pointer;
-        }
-        .tab-content > .tab-pane > .chart_none_panel{
-            display: block;     /* undo display:none          */
-            height: 0;          /* height:0 is also invisible */
-            overflow-y: hidden; /* no-overflow                */
-        }
-        .tab-content > .tab-pane > .chartpanel{
-            height: auto;       /* let the content decide it  */
-        }
-
-        table tr:hover {
-            color:#000000;
         }
     </style>
 </head>
@@ -175,9 +164,12 @@
 <!--日期选择插件-->
 <script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
+<!--<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>-->
 <script data-th-src="@{/plugins/bootstrap/bootstrap-table-fixed-columns.js}"></script>
+<!--<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>-->
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
+
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
