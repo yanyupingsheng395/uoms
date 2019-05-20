@@ -25,4 +25,11 @@ public interface KpiMonitorService {
      Map<String, Object> getPriceData(String periodType, String start);
      Map<String, Object> getPriceDataBySpu(String spuId, String periodType, String start);
      List<Double> generateFittingData(String spuId,List<Integer> purchTimes);
+     Map<String, Object> getTotalGmv(String startDt, String endDt);
+     Map<String, Object> getTotalTradeUser(String startDt, String endDt);
+     Map<String, Object> getTotalAvgPrice(String startDt, String endDt);
+     Echart getOrderAvgPrice(String startDt, String endDt);
+     Echart getAvgOrderQuantity(String startDt, String endDt);
+     Echart getAvgPiecePrice(String startDt, String endDt);
+     Echart getAvgJoinRate(String startDt, String endDt);
 }

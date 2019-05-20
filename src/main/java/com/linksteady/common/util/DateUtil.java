@@ -2,6 +2,9 @@ package com.linksteady.common.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Period;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class DateUtil {
@@ -260,5 +263,18 @@ public class DateUtil {
         } else {
             return day2-day1;
         }
+    }
+
+    /**
+     * 获取去年同期
+     * @param dateStr yyyy-MM
+     * @return
+     */
+    public static String getLastYear(String dateStr) {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM");
+        YearMonth ym = YearMonth.parse(dateStr, df);
+        ym = ym.plusYears(Period.ofYears(-1).getYears());
+        String result = ym.format(df);
+        return result;
     }
 }

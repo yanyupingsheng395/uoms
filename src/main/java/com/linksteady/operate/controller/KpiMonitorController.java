@@ -155,5 +155,64 @@ public class KpiMonitorController extends BaseController {
         }
         return ResponseBo.okWithData(null, null);
     }
+
+    @GetMapping("/getTotalGmv")
+    public ResponseBo getTotalGmv(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getTotalGmv(startDt, endDt));
+    }
+
+    @GetMapping("/getTotalTradeUser")
+    public ResponseBo getTotalTradeUser(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getTotalTradeUser(startDt, endDt));
+    }
+
+    @GetMapping("/getTotalAvgPrice")
+    public ResponseBo getTotalAvgPrice(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getTotalAvgPrice(startDt, endDt));
+    }
+
+    /**
+     * 平均订单价趋势图
+     * @param startDt
+     * @param endDt
+     * @return
+     */
+    @GetMapping("/getOrderAvgPrice")
+    public ResponseBo getOrderAvgPrice(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getOrderAvgPrice(startDt, endDt));
+    }
+
+    /**
+     * 平均订单数趋势图
+     * @param startDt
+     * @param endDt
+     * @return
+     */
+    @GetMapping("/getAvgOrderQuantity")
+    public ResponseBo getAvgOrderQuantity(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getAvgOrderQuantity(startDt, endDt));
+    }
+
+    /**
+     * 件单价趋势图
+     * @param startDt
+     * @param endDt
+     * @return
+     */
+    @GetMapping("/getAvgPiecePrice")
+    public ResponseBo getAvgPiecePrice(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getAvgPiecePrice(startDt, endDt));
+    }
+
+    /**
+     * 平均连带率趋势图
+     * @param startDt
+     * @param endDt
+     * @return
+     */
+    @GetMapping("/getAvgJoinRate")
+    public ResponseBo getAvgJoinRate(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getAvgJoinRate(startDt, endDt));
+    }
 }
 

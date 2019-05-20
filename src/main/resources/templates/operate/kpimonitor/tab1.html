@@ -42,12 +42,12 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <p class="h5 m-t-0">销售额</p>
-                        <p class="h3 m-b-0">100万元</p>
+                        <p class="h3 m-b-0" id="totalGmv">0.00元</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <p class="h6">同比<span style="color:red;"><i class="mdi mdi-menu-down mdi-18px"></i>3.33%</span></p>
+                        <p class="h6" id="totalGmvYny">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>0.00%</span></p>
                     </div>
                 </div>
             </div>
@@ -59,12 +59,12 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <p class="h5 m-t-0">交易用户数</p>
-                        <p class="h3 m-b-0">100人</p>
+                        <p class="h3 m-b-0" id="tradeUser">0人</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12 text-center">
-                        <p class="h6">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>3.33%</span></p>
+                        <p class="h6" id="tradeUserYny">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>0.00%</span></p>
                     </div>
                 </div>
             </div>
@@ -76,12 +76,12 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <p class="h5 m-t-0">平均客单价</p>
-                        <p class="h3 m-b-0">10元</p>
+                        <p class="h3 m-b-0" id="avgPrice">0元</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12 text-center">
-                        <p class="h6">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>3.33%</span></p>
+                        <p class="h6" id="avgPriceYny">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>0.00%</span></p>
                     </div>
                 </div>
             </div>
@@ -96,10 +96,10 @@
         <div class="text-center">
             <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
                 <div class="form-group">
-                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate1" name="startDate1" value="2019-05-01"/>
+                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate1" name="startDate1" value="2019-01-01"/>
                 </div>
                 <div class="form-group">
-                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate1" name="endDate1" value="2019-05-15"/>
+                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate1" name="endDate1" value="2019-05-01"/>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-primary m-b-10" type="button" onclick="search()"><i class="mdi mdi-magnify"></i>查询</button>
@@ -117,10 +117,10 @@
         <div class="text-center">
             <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
                 <div class="form-group">
-                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate2" name="startDate1" data-date-format="yyyy-mm-dd" value="2019-05-01"/>
+                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate2" name="startDate1" data-date-format="yyyy-mm-dd" value="2019-01-01"/>
                 </div>
                 <div class="form-group">
-                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate2" name="endDate1" data-date-format="yyyy-mm-dd" value="2019-05-15"/>
+                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate2" name="endDate1" data-date-format="yyyy-mm-dd" value="2019-05-01"/>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-primary m-b-10" type="button" onclick="search()"><i class="mdi mdi-magnify"></i>查询</button>
@@ -145,10 +145,10 @@
         <div class="text-center">
             <form class="form-inline" action="lyear_forms_elements.html" method="post" onsubmit="return false;">
                 <div class="form-group">
-                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate3" name="startDate1" data-date-format="yyyy-mm-dd" value="2019-05-01"/>
+                    <input class="form-control js-datepicker m-b-10" type="text" id="startDate3" name="startDate1" data-date-format="yyyy-mm-dd" value="2019-01-01"/>
                 </div>
                 <div class="form-group">
-                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate3" name="endDate1" data-date-format="yyyy-mm-dd" value="2019-05-15"/>
+                    <input class="form-control js-datepicker m-b-10" type="text" id="endDate3" name="endDate1" data-date-format="yyyy-mm-dd" value="2019-05-01"/>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-primary m-b-10" type="button" onclick="search()"><i class="mdi mdi-magnify"></i>查询</button>

@@ -225,7 +225,6 @@ function getDMonthPriceCols(percent, type) {
 function getMonthCols(data, percent, type) {
     var cols = [];
     $.each(data, function (k, v) {
-        console.log(v)
         var o = new Object();
         o.field = v;
         if(v == "month") {
