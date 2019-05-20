@@ -27,6 +27,15 @@
             color: white;
             cursor: pointer;
         }
+        .tab-content > .tab-pane > .chart_none_panel{
+            display: block;     /* undo display:none          */
+            height: 0;          /* height:0 is also invisible */
+            overflow-y: hidden; /* no-overflow                */
+        }
+        .tab-content > .tab-pane > .chartpanel{
+            height: auto;       /* let the content decide it  */
+        }
+
     </style>
 </head>
 
