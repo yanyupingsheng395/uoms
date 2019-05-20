@@ -876,7 +876,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         lastYearEndDt = lastYearEndDt.replaceAll("-", "");
 
         Map<String, Object> result = Maps.newHashMap();
-        DecimalFormat df = new DecimalFormat(",###.##");
+        DecimalFormat df = new DecimalFormat(",###");
         Double d1 = kpiMonitorMapper.getTotalGmv(startDt, endDt);
 
         Double d2 = kpiMonitorMapper.getTotalGmv(lastYearStartDt, lastYearEndDt);
@@ -926,7 +926,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         lastYearEndDt = lastYearEndDt.replaceAll("-", "");
 
         Map<String, Object> result = Maps.newHashMap();
-        DecimalFormat df = new DecimalFormat(",###.##");
+        DecimalFormat df = new DecimalFormat(",###");
         Double d1 = kpiMonitorMapper.getTotalAvgPrice(startDt, endDt);
 
         Double d2 = kpiMonitorMapper.getTotalAvgPrice(lastYearStartDt, lastYearEndDt);

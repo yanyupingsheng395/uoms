@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.common.util.RandomUtil;
+import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.WeekInfo;
 import com.linksteady.operate.service.KpiMonitorService;
 import com.linksteady.operate.vo.Echart;
@@ -213,6 +215,13 @@ public class KpiMonitorController extends BaseController {
     @GetMapping("/getAvgJoinRate")
     public ResponseBo getAvgJoinRate(String startDt, String endDt) {
         return ResponseBo.okWithData(null, kpiMonitorService.getAvgJoinRate(startDt, endDt));
+    }
+
+    @GetMapping("/getSource")
+    public ResponseBo getSource() {
+        Table<String, String, String> table = KpiCacheManager.getInstance().getDiagDimValueList();
+        Map<String, String> result = table.row("source");
+        return ResponseBo.okWithData(null, result);
     }
 }
 

@@ -13,6 +13,22 @@ function initData() {
 
 }
 
+getSource();
+function getSource() {
+    $.get("/kpiMonitor/getSource", {}, function (r) {
+        var arr = Object.keys(r.data);
+        var len = arr.length;
+        var code = "<option value=''>所有</option>";
+        if(len != 0) {
+            $.each(r.data, function (k, v) {
+                code += "<option value='"+k+"'>"+v+"</option>";
+            });
+        }
+        $("#source").html("").html(code);
+        $("#source").selectpicker('refresh');
+    });
+}
+
 // 查询所有
 function searchTotal() {
     getTotalGmv();
