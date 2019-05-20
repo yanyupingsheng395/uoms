@@ -7,6 +7,31 @@ function initData() {
     gmvChart();
     tradeUserChart();
     avgCsPriceChart();
+
+    getOrderAvgPrice();
+    getAvgOrderQuantity();
+
+}
+
+// 查询所有
+function searchTotal() {
+    getTotalGmv();
+    getTotalTradeUser();
+    getTotalAvgPrice();
+}
+
+function searchGmv() {
+    gmvChart();
+}
+
+function searchTradeAndPrice() {
+    tradeUserChart();
+    avgCsPriceChart();
+}
+
+function searchOrderPrice() {
+    getOrderAvgPrice();
+    getAvgOrderQuantity();
 }
 
 function gmvChart() {
@@ -123,7 +148,6 @@ function getTotalAvgPrice() {
     });
 }
 
-getOrderAvgPrice();
 function getOrderAvgPrice() {
     var startDt = $("#startDate3").val();
     var endDt = $("#endDate3").val();
@@ -153,7 +177,6 @@ function getOrderAvgPrice() {
 
 }
 
-getAvgOrderQuantity();
 function getAvgOrderQuantity() {
     var startDt = $("#startDate3").val();
     var endDt = $("#endDate3").val();
@@ -226,3 +249,8 @@ $('#chartModal').on('shown.bs.modal', function () {
     getAvgJoinRate();
 });
 
+
+function rateAndPiece() {
+    getAvgPiecePrice();
+    getAvgJoinRate();
+}
