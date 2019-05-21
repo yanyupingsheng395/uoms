@@ -2,11 +2,18 @@ package com.linksteady.common.shiro;
 
 public class ShiroProperties {
 
-    // shiro redis缓存时长，默认值 1800 秒
-    private int expireIn = 1800;
-    // session 超时时间，默认 1800000毫秒
-    private long sessionTimeout = 1800000L;
-    // rememberMe 有效时长，默认为 86400 秒，即一天
+    /**
+     * shiro redis缓存时长，默认值 7200 秒
+     */
+    private int expireIn = 7200;
+    /**
+     *session 超时时间，默认 1800000毫秒
+     */
+    private long sessionTimeout = 7200000L;
+
+    /**
+     * rememberMe 有效时长，默认为 86400 秒，即一天
+     */
     private int cookieTimeout = 86400;
 
     private String anonUrl;

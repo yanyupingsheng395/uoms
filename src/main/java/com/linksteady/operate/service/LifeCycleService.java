@@ -11,7 +11,7 @@ public interface LifeCycleService {
 
      List<Double> getAllGmvByDay(String startDt,String endDt);
 
-     List<Double> getSpuGmvByDay(int spu_wid);
+     List<Double> getSpuGmvByDay(int spu_wid,String startDt,String endDt);
 
      void updateRelate(int spuWid,double relate);
 

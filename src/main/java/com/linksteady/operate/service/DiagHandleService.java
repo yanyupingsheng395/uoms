@@ -5,13 +5,9 @@ import com.linksteady.operate.domain.DiagResultInfo;
 
 public interface DiagHandleService {
 
-    void saveHandleInfoToRedis(DiagHandleInfo diagHandleInfo);
-
-    DiagHandleInfo getHandleInfoFromRedis(int diagId,int kpiLevelId);
-
     DiagResultInfo generateDiagData(DiagHandleInfo diagHandleInfo);
 
-    public void saveResultToRedis(DiagResultInfo diagResultInfo);
+    void saveResultToRedis(DiagResultInfo diagResultInfo);
 
-    public DiagResultInfo getResultFromRedis(int diagId, int kpiLevelId);
+    DiagResultInfo getResultFromRedis(int diagId, int kpiLevelId);
 }

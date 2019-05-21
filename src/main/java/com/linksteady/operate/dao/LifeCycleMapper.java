@@ -9,9 +9,9 @@ public interface LifeCycleMapper {
 
     List<LcSpuInfo> getSpuList(@Param("startDt") String startDt,@Param("endDt") String endDt);
 
-    List<Double> getAllGmvByDay();
+    List<Double> getAllGmvByDay(@Param("startDt") String startDt,@Param("endDt") String endDt);
 
-    List<Double> getSpuGmvByDay(@Param("spu_wid") int spu_wid);
+    List<Double> getSpuGmvByDay(@Param("spu_wid") int spu_wid,@Param("startDt") String startDt,@Param("endDt") String endDt);
 
     void updateRelate(@Param("spu_wid") int spu_wid,@Param("relate") double relate);
 
