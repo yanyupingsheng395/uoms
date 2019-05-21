@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.common.util.RandomUtil;
+import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.WeekInfo;
 import com.linksteady.operate.service.KpiMonitorService;
 import com.linksteady.operate.vo.Echart;
@@ -154,6 +156,72 @@ public class KpiMonitorController extends BaseController {
             return ResponseBo.okWithData(null, kpiMonitorService.generateFittingData(spuId, purchTimes));
         }
         return ResponseBo.okWithData(null, null);
+    }
+
+    @GetMapping("/getTotalGmv")
+    public ResponseBo getTotalGmv(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getTotalGmv(startDt, endDt));
+    }
+
+    @GetMapping("/getTotalTradeUser")
+    public ResponseBo getTotalTradeUser(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getTotalTradeUser(startDt, endDt));
+    }
+
+    @GetMapping("/getTotalAvgPrice")
+    public ResponseBo getTotalAvgPrice(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getTotalAvgPrice(startDt, endDt));
+    }
+
+    /**
+     * 平均订单价趋势图
+     * @param startDt
+     * @param endDt
+     * @return
+     */
+    @GetMapping("/getOrderAvgPrice")
+    public ResponseBo getOrderAvgPrice(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getOrderAvgPrice(startDt, endDt));
+    }
+
+    /**
+     * 平均订单数趋势图
+     * @param startDt
+     * @param endDt
+     * @return
+     */
+    @GetMapping("/getAvgOrderQuantity")
+    public ResponseBo getAvgOrderQuantity(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getAvgOrderQuantity(startDt, endDt));
+    }
+
+    /**
+     * 件单价趋势图
+     * @param startDt
+     * @param endDt
+     * @return
+     */
+    @GetMapping("/getAvgPiecePrice")
+    public ResponseBo getAvgPiecePrice(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getAvgPiecePrice(startDt, endDt));
+    }
+
+    /**
+     * 平均连带率趋势图
+     * @param startDt
+     * @param endDt
+     * @return
+     */
+    @GetMapping("/getAvgJoinRate")
+    public ResponseBo getAvgJoinRate(String startDt, String endDt) {
+        return ResponseBo.okWithData(null, kpiMonitorService.getAvgJoinRate(startDt, endDt));
+    }
+
+    @GetMapping("/getSource")
+    public ResponseBo getSource() {
+        Table<String, String, String> table = KpiCacheManager.getInstance().getDiagDimValueList();
+        Map<String, String> result = table.row("source");
+        return ResponseBo.okWithData(null, result);
     }
 }
 
