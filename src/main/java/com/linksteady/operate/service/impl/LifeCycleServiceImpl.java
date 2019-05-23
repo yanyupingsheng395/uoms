@@ -23,12 +23,12 @@ public class LifeCycleServiceImpl implements LifeCycleService {
 
     @Override
     public List<Double> getAllGmvByDay(String startDt,String endDt) {
-        return lifeCycleMapper.getAllGmvByDay();
+        return lifeCycleMapper.getAllGmvByDay(startDt,endDt);
     }
 
     @Override
-    public List<Double> getSpuGmvByDay(int spu_wid) {
-        return lifeCycleMapper.getSpuGmvByDay(spu_wid);
+    public List<Double> getSpuGmvByDay(int spu_wid,String startDt,String endDt) {
+        return lifeCycleMapper.getSpuGmvByDay(spu_wid,startDt,endDt);
     }
 
     @Override

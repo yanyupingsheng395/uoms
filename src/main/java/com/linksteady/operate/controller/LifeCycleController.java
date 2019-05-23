@@ -338,7 +338,7 @@ public class LifeCycleController extends BaseController {
     public ResponseBo updateGmvRelate() {
 
         String startDt="20190101";
-        String endDt="20190430";
+        String endDt="20190530";
 
         List<LcSpuInfo> list=lifeCycleService.getSpuList(startDt,endDt);
 
@@ -348,7 +348,7 @@ public class LifeCycleController extends BaseController {
         {
             int spuWid=lcSpuInfo.getSpuWid().intValue();
             //获取当前SPU的GMV数据集
-            List<Double> spugmv=lifeCycleService.getSpuGmvByDay(spuWid);
+            List<Double> spugmv=lifeCycleService.getSpuGmvByDay(spuWid,startDt,endDt);
 
             double relate=PearsonCorrelationUtil.getPearsonCorrelationScoreByList(gmv,spugmv);
 
