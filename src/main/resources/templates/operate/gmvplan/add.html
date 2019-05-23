@@ -7,7 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="edge" />
     <title>用户运营系统</title>
     <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
-    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <!--<link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>-->
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <!--时间选择插件-->
@@ -35,130 +36,94 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>新增运营目标</h4>
+                                <h4>设定新目标</h4>
                             </div>
                             <div class="card-body">
                                 <div class="m-t-md" id="step1">
-                                    <form class="form-horizontal">
+                                    <form class="form-horizontal" id="formData1">
                                         <div class="form-group">
-                                            <label class="col-md-3 control-label" for="predictDate">目标年份：</label>
+                                            <label class="col-md-3 control-label">名称：</label>
                                             <div class="col-md-5">
-                                                <select name="predictDate" id="predictDate" class="selectpicker form-control"></select>
+                                                <input type="text" name="name" class="form-control"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">目标周期：</label>
+                                            <div class="col-md-5">
+                                                <select id="targetPeriod" name="periodType" class="selectpicker form-control">
+                                                    <option value="year">年</option>
+                                                    <option value="month">月</option>
+                                                    <option value="day">日</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label" id="dateLabel">目标时间：</label>
+                                            <div class="col-md-5">
+                                                <input type="text" name="startDt" class="form-control js-datepicker m-b-10" id="startDt"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="endDtDiv" hidden>
+                                            <label class="col-md-3 control-label">结束时间：</label>
+                                            <div class="col-md-5">
+                                                <input type="text" name="endDt" class="form-control js-datepicker m-b-10" id="endDt"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">指标：</label>
+                                            <div class="col-md-5">
+                                                <select name="kpiCode" id="targetKpi" class="selectpicker form-control"></select>
+                                                <input type="hidden" id="targetKpiTxt" name="targetKpiTxt">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">维度：</label>
+                                            <div class="col-md-5">
+                                                <button class="btn btn-primary" type="button" onclick="btnSelect()">选择</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="conditions" hidden>
+                                            <label class="col-md-3 control-label">已选择：</label>
+                                            <div class="col-md-5">
+                                                <table class="table table-no-bordered text-left" id="dataTable"></table>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="m-t-md" id="step2">
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <h5>历史数据</h5>
-                                            <table id="historyDataTable" class="table table-bordered table-striped"></table>
+                                        <div class="col-md-6"><span class="h5">指标：</span><span id="_kpi"></span></div>
+                                        <div class="col-md-6"><span class="h5">时间：</span><span id="_tgtDate"></span></div>
+                                    </div>
+                                    <div class="row" style="margin-top: 20px;">
+                                        <div class="col-md-12"><span class="h5">维度&值：</span></div>
+                                    </div>
+                                    <div class="row" style="margin-top: 20px;">
+                                        <div class="col-md-6">
+                                            <ol id="_dimensions"></ol>
                                         </div>
                                     </div>
-
-                                    <div class="row mg-stop">
+                                    <div class="row" style="margin-top: 20px;">
                                         <div class="col-md-12">
-                                            <h5>预测数据</h5>
-                                            <table id="predictDataTable" class="table table-hover table-bordered table-striped">
-                                                <thead>
-                                                <tr>
-                                                    <th>预测方法</th><th>GMV预测值（元）</th><th>比上年增长率（%）</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody id="predictData">
-                                                <tr><td>时间序列方法</td><td><span id="predictVal"></span></td><td><span id="predictRate"></span></td></tr>
-                                                </tbody>
+                                            <p class="h5">目标参照：</p>
+                                            <table class="table table-bordered table-sm">
+                                                <thead><tr><th>周期</th><th>目标关键指标</th><th>同比</th><th>环比</th></tr></thead>
+                                                <tbody id="_reference"></tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h5>目标值</h5>
-                                            <form class="form-horizontal" style="border:solid 1px #ccc;">
-                                                <div class="form-group mg-stop">
-                                                    <label class="col-md-3 control-label" for="gmvValue">GMV目标值（元）：</label>
-                                                    <div class="col-md-5 input-group">
-                                                        <input class="form-control" type="text" id="gmvValue" name="gmvValue" value="2000"/>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-md-3 control-label" for="gmvRate">目标相比上年增长率（%）：</label>
-                                                    <div class="col-md-5 input-group">
-                                                        <input class="form-control" type="text" id="gmvRate" name="gmvRate" value="21.25"/>
-                                                    </div>
-                                                </div>
+                                    <div class="row" style="margin-top: 20px;">
+                                        <div class="col-md-4">
+                                            <span style="float: left; width: 70px; line-height: 34px;"><span class="h5">目标值：</span></span>
+                                            <form id="formData2">
+                                                <input name="targetVal" style="width:calc(100% - 70px);resize:none; float: left" class="form-control" placeholder="请输入目标值">
                                             </form>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="m-t-md" id="step3">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h5>目标值</h5>
-                                            <form class="form-horizontal">
-                                                <div class="form-group">
-                                                    <label class="col-md-3 control-label" for="gmvValue2">GMV目标值（元）：</label>
-                                                    <div class="col-md-5 input-group">
-                                                        <input class="form-control" type="text" disabled id="gmvValue2" name="gmvValue2"/>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-md-3 control-label" for="gmvRate2">目标相比上年增长率（%）：</label>
-                                                    <div class="col-md-5 input-group">
-                                                        <input class="form-control" type="text" disabled id="gmvRate2" name="gmvRate2"/>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mg-stop">
-                                        <div class="col-md-12">
-                                            <h5>GMV月度权重指数</h5>
-                                            <table class="table table-bordered">
-                                                <tbody id="weightData">
-                                                    <tr class="text-center">
-                                                        <td><i class="mdi mdi-alert-circle-outline"></i>暂无数据！</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div style="float: left;">
-                                                <h5>GMV拆解表</h5>
-                                            </div>
-                                            <div class="text-right" style="margin-bottom: 10px;">
-                                                <button id="saveBtn" class="btn btn-primary" disabled onclick="updateDetail()"><i class="mdi mdi-link"></i>保存</button>
-                                                <button class="btn btn-default" onclick="reback()"><i class="mdi mdi-redo"></i>返回</button>
-                                            </div>
-                                            <table class="table table-bordered" id="planDetailData"></table>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="margin-top: 20px;display: none;" id="totalFooter">
-                                        <div class="col-md-12">
-                                            <p> 合计：<span id='totalGmv'></span>元，与年度目标总额相差<span id='totalDiffer'>0</span>元。</p>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label class="lyear-radio radio-inline">
-                                                <input type="radio" name="e" value="1"><span>保持我目前设置的各月的目标值不变，将差额更新到年度总额上</span>
-                                            </label>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label class="lyear-radio radio-inline">
-                                                <input type="radio" name="e" value="2"><span>不变更年度总额，将与年度目标总额的差额根据权重指数分摊到各月</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="row mg-stop">
                                     <div class="col-md-12 text-right">
-                                        <button id="prev" class="btn btn-primary" onclick="prev()">上一步</button>
-                                        <button id="next" class="btn btn-primary" onclick="next()">下一步</button>
+                                        <button id="next" class="btn btn-primary" onclick="next(this)">下一步</button>
                                         <a id="reback" class="btn btn-default" href="/page/gmvplan">返回</a>
                                     </div>
                                 </div>
@@ -168,6 +133,38 @@
                 </div>
             </div>
         </main>
+    </div>
+</div>
+<div class="modal fade" id="denModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form class="form-horizontal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">请选择</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">维度：</label>
+                        <div class="col-md-5">
+                            <select id="dimension" class="form-control selectpicker"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">值：</label>
+                        <div class="col-md-5">
+                            <select id="dimensionVal" class="form-control selectpicker" multiple>
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="addDimension()">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 <!--时间选择插件-->

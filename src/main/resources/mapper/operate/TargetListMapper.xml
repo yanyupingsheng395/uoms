@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.TargetListMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.TargetList">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
+    <result column="START_DT" jdbcType="VARCHAR" property="startDt" />
+    <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
+    <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
+    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+    <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+    <result column="TARGET_VAL" jdbcType="VARCHAR" property="targetVal" />
+  </resultMap>
+
+  <insert id="save">
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="BEFORE" >
+      SELECT seq_tgt_list_id.NEXTVAL from DUAL
+    </selectKey>
+    INSERT INTO UO_TGT_LIST(ID, NAME, PERIOD_TYPE, START_DT, END_DT, KPI_CODE, CREATE_DT, CREATE_BY, TARGET_VAL)
+    VALUES (#{id}, #{name}, #{periodType}, #{startDt}, #{endDt}, #{kpiCode}, #{createDt}, #{createBy}, #{targetVal})
+  </insert>
+
+  <select id="getPageList" resultType="map">
+    select * from (
+      select A.*,ROWNUM RN from (select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, tgt.CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME, tgt.TARGET_VAL from UO_TGT_LIST tgt
+      LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.CREATE_BY = #{userId} order by tgt.CREATE_DT DESC) A
+      where ROWNUM &lt;=#{endRow}
+    ) where RN &gt;=#{startRow}
+  </select>
+
+  <select id="getTotalCount" resultType="int">
+    select count(1) from UO_TGT_LIST
+  </select>
+
+  <select id="getDataById" resultType="map">
+      select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, tgt.CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME from UO_TGT_LIST tgt
+      LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.ID = #{id}
+  </select>
+</mapper>

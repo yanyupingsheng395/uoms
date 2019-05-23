@@ -158,8 +158,6 @@ function menu_tree() {
  * @param minViewMode
  */
 function init_date_begin(beginId, endId, format, startView, maxViewMode, minViewMode) {
-    var dataDt = new Date();
-    dataDt.setDate(dataDt.getDate()-1);
     $('#' + beginId).datepicker({
         format: format,
         language: "zh-CN",
@@ -168,13 +166,12 @@ function init_date_begin(beginId, endId, format, startView, maxViewMode, minView
         startView: startView,
         maxViewMode: maxViewMode,
         minViewMode: minViewMode,
-        endDate: dataDt
     }).on("changeDate",function(ev){  //值改变事件
         //选择的日期不能大于第二个日期控件的日期
         if(ev.date){
             $("#" + endId).datepicker('setStartDate', new Date(ev.date.valueOf()));
         }else{
-            $("#" + endId).datepicker('setStartDate',null);
+            $("#" + endId).datepicker('setStartDate', null);
         }
     });
 }
@@ -189,8 +186,6 @@ function init_date_begin(beginId, endId, format, startView, maxViewMode, minView
  * @param minViewMode
  */
 function init_date_end(beginId, endId, format, startView, maxViewMode, minViewMode) {
-    var dataDt = new Date();
-    dataDt.setDate(dataDt.getDate()-1);
     $('#' + endId).datepicker({
         format: format,
         language: "zh-CN",
@@ -199,7 +194,6 @@ function init_date_end(beginId, endId, format, startView, maxViewMode, minViewMo
         startView: startView,
         maxViewMode: maxViewMode,
         minViewMode: minViewMode,
-        endDate: dataDt
     }).on("changeDate",function(ev){  //值改变事件
         //选择的日期不能大于第二个日期控件的日期
         if(ev.date){

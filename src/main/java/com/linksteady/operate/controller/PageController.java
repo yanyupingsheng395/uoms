@@ -241,4 +241,13 @@ public class PageController extends BaseController {
     public String opEffect() {
         return "operate/op/opeffect";
     }
+
+    /**
+     * 目标设定与分解-目标详情
+     */
+    @RequestMapping("/target/detail")
+    public String targetDetail(@RequestParam("id") String id, Model model) {
+        model.addAttribute("id", id);
+        return "operate/gmvplan/detail";
+    }
 }

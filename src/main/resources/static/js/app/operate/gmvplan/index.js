@@ -1,7 +1,7 @@
 
 $(function () {
     var settings = {
-        url: "/gmvplan/list",
+        url: "/target/getPageList",
         method: 'post',
         cache: false,
         pagination: true,
@@ -16,53 +16,63 @@ $(function () {
             };
         },
         columns: [{
-            field: 'planId',
+            field: 'ID',
             title: 'ID',
             visible: false
         },{
-            field: 'yearId',
-            title: '年份'
+            field: 'NAME',
+            title: '目标名称'
+        },{
+            field: 'START_DT',
+            title: '开始时间'
         }, {
-            field: 'gmvTarget',
-            title: 'GMV目标值（元）'
+            field: 'END_DT',
+            title: '结束时间'
         }, {
-            field: 'targetRate',
-            title: '相比上年增长率',
+            field: 'KPI_NAME',
+            title: '指标'
+        },{
+            field: 'TARGET_VAL',
+            title: '目标值'
+        },{
+            field: 'DIMENSIONS',
+            title: '维度&值',
             formatter: function (value, row, index) {
-                return value == null ? "" : value + "%"
-            }
-        }, {
-            // D表示草稿  C表示更新数据中 E表示已下达执行
-            field: 'status',
-            title: '状态',
-            formatter: function (value, row, index) {
-                if (value == "D") {
-                    return "<span class='label label-info'>草稿</span>";
-                }else if (value == "C") {
-                    return "<span class='label label-primary'>更新数据中</span>";
-                }else if (value == "E") {
-                    return "<span class='label label-warning'>执行</span>";
+                if(value.length >= 10) {
+                    var newVal = value.substr(0, 10) + "...";
+                    var title = value.split("|").join("<br/>");
+                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\""+title+"\">"+newVal+"</a>";
+                }else {
+                    return value;
                 }
             }
-        }, {
-            filed: 'button',
+        },{
             title: '操作',
-            formatter: function (value, row, index) {
-                var year = row.yearId;
-                var id = row.planId;
-                if (row.status == "D") {
-                    return "<div class='btn btn-success btn-sm' onclick='executeData("+id+")'><i class='mdi mdi-check'></i>执行</div>&nbsp;<a class='btn btn-primary btn-sm' onclick='viewData("+year+")'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-warning btn-sm' onclick='modifyData("+year+")'><i class='mdi mdi-pencil'></i>修改</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='deleteData("+year+")'><i class='mdi mdi-window-close'></i>删除</div>";
-                }else if (row.status == "C") {
-                    return "<a class='btn btn-primary btn-sm' onclick='viewData("+year+")'><i class='mdi mdi-eye'></i>查看</a>";
-                } else if (row.status == "E") {
-                    return "<div class='btn btn-info btn-sm' onclick='changeData("+year+")'><i class='mdi mdi-redo'></i>变更</div>";
-                }
+            formatter: function (values, row,index) {
+                return "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>" +
+                    "&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
             }
-        }]
+        }],
+        onLoadSuccess: function(data){
+            $("a[data-toggle='tooltip']").tooltip();
+        }
     };
     $('#gmvPlanTable').bootstrapTable(settings);
 });
-
+function deleteDatas(){
+    $.confirm({
+        title: '提示',
+        content: '演示环境，暂不支持删除数据！',
+        theme: 'bootstrap',
+        type: 'orange',
+        buttons: {
+            confirm: {
+                text: '确认',
+                btnClass: 'btn-blue'
+            }
+        }
+    });
+}
 function executeData(id){
     $.confirm({
         title: '提示：',

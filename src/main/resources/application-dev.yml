@@ -9,8 +9,8 @@ spring:
       db-type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: oracle.jdbc.OracleDriver
       url: jdbc:oracle:thin:@39.98.78.201:1521:orcl
-      username: wecook_dev
-      password: wecookdev123
+      username: gimspromote_dev
+      password: gimsdev123
       # 连接池配置
       initial-size: 5
       min-idle: 5
