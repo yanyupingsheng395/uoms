@@ -55,7 +55,7 @@ $(function () {
                 }else if (row.status == "C") {
                     return "<a class='btn btn-primary btn-sm' onclick='viewData("+year+")'><i class='mdi mdi-eye'></i>查看</a>";
                 } else if (row.status == "E") {
-                    return "<div class='btn btn-info btn-sm' onclick='changeData("+year+")'><i class='mdi mdi-redo'></i>变更</div>";
+                    return "<a class='btn btn-primary btn-sm' onclick='viewData(\"+year+\")'><i class='mdi mdi-eye'></i>查看</a><div class='btn btn-info btn-sm' onclick='changeData("+year+")'><i class='mdi mdi-redo'></i>变更</div>";
                 }
             }
         }]
