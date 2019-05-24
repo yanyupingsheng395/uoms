@@ -44,6 +44,7 @@ public class TargetListServiceImpl implements TargetListService {
     @Autowired
     private TargetDimensionMapper targetDimensionMapper;
 
+
     private static final String TARGET_PERIOD_YEAR="year";
     private static final String TARGET_PERIOD_MONTH="month";
     private static final String TARGET_PERIOD_DAY="day";
@@ -60,7 +61,7 @@ public class TargetListServiceImpl implements TargetListService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int save(TargetInfo target) {
+    public long save(TargetInfo target) {
         User user = (User)SecurityUtils.getSubject().getPrincipal();
         target.setCreateBy(user.getUsername());
         target.setCreateDt(new Date());
@@ -74,7 +75,7 @@ public class TargetListServiceImpl implements TargetListService {
         });
         targetDimensionMapper.save(dimensionList);
 
-        return tgtId.intValue();
+        return tgtId;
     }
 
     @Override
@@ -235,7 +236,7 @@ public class TargetListServiceImpl implements TargetListService {
     private List<TgtReference> getGmvHistoryByYear(List<String> periodList,Map<String, String> dimInfo)
     {
            String sqlTemplate=" SELECT\n" +
-               "            W_DATE.YEAR PERIOD_NAME\n" +
+               "            W_DATE.YEAR PERIOD_NAM,E\n" +
                "            TRUNC(SUM(W_ORDERS.REAL_FEE)) VALUE\n" +
                "        FROM\n" +
                "            W_ORDERS JOIN W_DATE ON W_ORDERS.ORDER_DT_WID=W_DATE.ROW_WID\n" +
@@ -272,7 +273,7 @@ public class TargetListServiceImpl implements TargetListService {
     private List<TgtReference> getGmvHistoryByMonth(List<String> periodList,Map<String, String> dimInfo)
     {
         String sqlTemplate=" SELECT\n" +
-                "            W_DATE.MONTH_NAME PERIOD_NAME\n" +
+                "            W_DATE.MONTH_NAME PERIOD_NAME,\n" +
                 "            TRUNC(SUM(W_ORDERS.REAL_FEE)) VALUE\n" +
                 "        FROM\n" +
                 "            W_ORDERS JOIN W_DATE ON W_ORDERS.ORDER_DT_WID=W_DATE.ROW_WID\n" +
