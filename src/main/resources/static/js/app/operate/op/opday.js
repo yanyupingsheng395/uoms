@@ -108,7 +108,6 @@ function makeChart(data, id, toolXname, toolYname) {
     var yAxisName = data.yAxisName;
     var xAxisData = data.xAxisData;
     var option = getBarOption(xAxisData, xAxisName, yAxisName, seriesData, toolXname, toolYname);
-    console.log(option)
     chart.setOption(option, true);
     chart.hideLoading();
 }
