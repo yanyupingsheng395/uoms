@@ -33,6 +33,11 @@ public class TargetListServiceImpl implements TargetListService {
     }
 
     @Override
+    public Map<String, Object> getMonitorVal(String targetId) {
+        return targetListMapper.getMonitorVal(targetId);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(TargetList target) {
         User user = (User)SecurityUtils.getSubject().getPrincipal();

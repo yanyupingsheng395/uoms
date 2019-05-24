@@ -2,7 +2,6 @@ package com.linksteady.operate.domain;
 
 import javax.persistence.*;
 import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -71,17 +70,68 @@ public class TargetList implements Serializable {
     private String updateBy;
 
     /**
-     * 状态（0：停用，1：启用）
+     * 状态
      */
     @Column(name = "STATUS")
     private String status;
+
+    /**
+     * 目标值
+     */
+    @Column(name = "TARGET_VAL")
+    private Double targetVal;
+
+    /**
+     * 计算日期
+     */
+    @Column(name = "COMPUTE_DT")
+    private Date computeDt;
+
+    /**
+     * 实际值
+     */
+    @Column(name = "ACTUAL_VAL")
+    private Double actualVal;
+
+    /**
+     * 实际值去年同比
+     */
+    @Column(name = "ACTUAL_VAL_RATE")
+    private Double actualValRate;
+
+    /**
+     * 实际值去年同期
+     */
+    @Column(name = "ACTUAL_VAL_LAST")
+    private Double actualValLast;
+
+    /**
+     * 完成率
+     */
+    @Column(name = "FINISH_RATE")
+    private Double finishRate;
+
+    /**
+     * 完成率差
+     */
+    @Column(name = "FINISH_RATE_DIFFER")
+    private Double finishRateDiffer;
+
+    /**
+     * 完成率去年同期
+     */
+    @Column(name = "FINISH_RATE_LAST")
+    private Double finishRateLast;
+
+    /**
+     * 指标度量单位
+     */
+    @Column(name = "KPI_UNIT")
+    private String kpiUnit;
 
     @Transient
     private List<TargetDimension> dimensionList;
 
     @Transient
     private String kpiName;
-
-    @Column(name="TARGET_VAL")
-    private String targetVal;
 }

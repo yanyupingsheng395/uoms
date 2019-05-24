@@ -1,20 +1,59 @@
 // 获取监控目标
 getTargetList();
 function getTargetList() {
-    $.get("/target/getTargetList", {}, function (r) {
-        var code = "";
-        $.each(r.data, function (k, v) {
-            if(v.endDt == null) {
-                code += "<option value='"+v.id+"' data-code='"+v.startDt+"'>"+v.name+"</option>";
-            }else {
-                code += "<option value='"+v.id+"' data-code='"+v.startDt+"~"+v.endDt+"'>"+v.name+"</option>";
-            }
-        });
-        $("#tgtList").html("").html(code);
-        $("#tgtList").selectpicker('refresh');
-        $("#tgtDate").html("").html($("#tgtList").find("option:eq(0)").attr("data-code"));
+    $.ajax({
+        url: "/target/getTargetList",
+        data: {},
+        async: false,
+        type: 'GET',
+        success: function (r) {
+            var code = "";
+            $.each(r.data, function (k, v) {
+                if(v.endDt == null) {
+                    code += "<option value='"+v.id+"' data-code='"+v.startDt+"'>"+v.name+"</option>";
+                }else {
+                    code += "<option value='"+v.id+"' data-code='"+v.startDt+"~"+v.endDt+"'>"+v.name+"</option>";
+                }
+            });
+            $("#tgtList").html("").html(code);
+            $("#tgtList").selectpicker('refresh');
+            $("#tgtDate").html("").html($("#tgtList").find("option:eq(0)").attr("data-code"));
+        }
     });
 }
+
+var tgtId = $("#tgtList").find("option:selected").val();
+getMonitorVal();
+function getMonitorVal() {
+    if(tgtId != "") {
+        $.get("/tgtKpiMonitor/getMonitorVal", {id: tgtId}, function (r) {
+            var unit = r.data["KPI_UNIT"] == undefined ? "" : r.data["KPI_UNIT"];
+            var targetVal = r.data["TARGET_VAL"] == undefined ? 0.00 + unit:r.data["TARGET_VAL"] + unit;
+            var actualVal = r.data["ACTUAL_VAL"] == undefined ? 0.00 + unit:r.data["ACTUAL_VAL"] + unit;
+            var actualValRate = r.data["ACTUAL_VAL_RATE"] == undefined ? 0.00:r.data["ACTUAL_VAL_RATE"];
+            var actualValLast = r.data["ACTUAL_VAL_LAST"] == undefined ? 0.00 + unit:r.data["ACTUAL_VAL_LAST"] + unit;
+            var finishRate = r.data["FINISH_RATE"] == undefined ? 0.00 + "%":r.data["TARGET_VAL"] + "%";
+            var finishRateDiffer = r.data["FINISH_RATE_DIFFER"] == undefined ? 0.00 + "%":r.data["TARGET_VAL"] + "%";
+            var finishRateLast = r.data["FINISH_RATE_LAST"] == undefined ? 0.00 + "%":r.data["FINISH_RATE_LAST"] + "%";
+
+            $("#targetVal").html("").html(targetVal);
+            $("#actualVal").html("").html(actualVal);
+            $("#actualValRate").html("").html(actualValRate > 0 ? "同比<span style=\"color:green;\"><i class=\"mdi mdi-menu-up mdi-18px\"></i>"+actualValRate+"%</span>":"同比<span style=\"color:red;\"><i class=\"mdi mdi-menu-down mdi-18px\"></i>"+actualValRate+"%</span>");
+            $("#actualValLast").html("").html(actualValLast);
+            $("#finishRate").html("").html(finishRate);
+            $("#finishRateDiffer").html("").html(finishRateDiffer);
+            $("#finishRateLast").html("").html(finishRateLast);
+            console.log(r);
+        });
+    }
+}
+getCharts();
+function getCharts() {
+    $.get("/tgtKpiMonitor/getCharts", {id:tgtId}, function (r) {
+        console.log(r)
+    });
+}
+
 
 $("#tgtList").change(function () {
     $("#tgtDate").html("").html($(this).find("option:selected").attr("data-code"));

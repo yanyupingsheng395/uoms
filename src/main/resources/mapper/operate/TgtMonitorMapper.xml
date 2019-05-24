@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.TgtMonitorMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.TgtMonitor">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="PERIOD_DATE" jdbcType="VARCHAR" property="periodDate" />
+    <result column="DATA_TYPE" jdbcType="VARCHAR" property="dataType" />
+    <result column="ACTUAL_VAL" jdbcType="DECIMAL" property="actualVal" />
+    <result column="TGT_VAL" jdbcType="DECIMAL" property="tgtVal" />
+    <result column="ACTUAL_VAL_LAST" jdbcType="DECIMAL" property="actualValLast" />
+    <result column="GROWTH_RATE" jdbcType="DECIMAL" property="growthRate" />
+    <result column="COMPUTE_DT" jdbcType="TIMESTAMP" property="computeDt" />
+    <result column="TGT_ID" jdbcType="DECIMAL" property="tgtId" />
+  </resultMap>
+
+  <select id="getDataByTgtId" resultMap="BaseResultMap">
+    select PERIOD_DATE, ACTUAL_VAL, TGT_VAL, ACTUAL_VAL_LAST,GROWTH_RATE  from UO_TGT_MONITOR where TGT_ID = #{id} and DATA_TYPE = #{type} order by PERIOD_DATE asc
+  </select>
+</mapper>

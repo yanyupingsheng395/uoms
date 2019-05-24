@@ -12,4 +12,5 @@ public interface TargetListService {
     int getTotalCount();
     Map<String, Object> getDataById(Long id);
     List<TargetList> getTargetList();
+    Map<String, Object> getMonitorVal(String targetId);
 }

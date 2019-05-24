@@ -10,6 +10,7 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-select/bootstrap-select.min.css}">
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
@@ -69,7 +70,7 @@
                                                 <div class="row">
                                                     <div class="col-md-12 text-center">
                                                         <p class="h5 m-t-0"><i class="mdi mdi-coffee"></i>本周期目标</p>
-                                                        <p class="h3 m-b-0">0.00元</p>
+                                                        <p class="h3 m-b-0" id="targetVal">0.00元</p>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -89,15 +90,15 @@
                                                 <div class="row">
                                                     <div class="col-md-12 text-center">
                                                         <p class="h5 m-t-0"><i class="mdi mdi-coffee-to-go"></i>本周期实际完成</p>
-                                                        <p class="h3 m-b-0">0.00元</p>
+                                                        <p class="h3 m-b-0" id="actualVal">0.00元</p>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-6 text-center">
-                                                        <p class="h6">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>0.00%</span></p>
+                                                        <p class="h6" id="actualValRate">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>0.00%</span></p>
                                                     </div>
                                                     <div class="col-md-6 text-center">
-                                                        <p class="h6">去年同期:<span style="line-height: 30px;">0.00元</span></p>
+                                                        <p class="h6">去年同期:<span style="line-height: 30px;" id="actualValLast">0.00元</span></p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -108,16 +109,16 @@
                                             <div class="card-body clearfix">
                                                 <div class="row">
                                                     <div class="col-md-12 text-center">
-                                                        <p class="h5 m-t-0"><i class="mdi mdi-percent"></i>本周期达标率</p>
-                                                        <p class="h3 m-b-0">0.00%</p>
+                                                        <p class="h5 m-t-0"><i class="mdi mdi-percent"></i>本周期完成率</p>
+                                                        <p class="h3 m-b-0" id="finishRate">0.00%</p>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-6 text-center">
-                                                        <p class="h6">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>0.00%</span></p>
+                                                        <p class="h6">完成率差:<span style="line-height: 30px;" id="finishRateDiffer">0.00%</span></p>
                                                     </div>
                                                     <div class="col-md-6 text-center">
-                                                        <p class="h6">去年同期:<span style="line-height: 30px;">0.00%</span></p>
+                                                        <p class="h6">去年同期:<span id="finishRateLast" style="line-height: 30px;">0.00%</span></p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -217,7 +218,8 @@
 <script data-th-src="@{/js/common/perfect-scrollbar.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
-<script src="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>
+<script data-th-src="@{/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-select/defaults-zh_CN.js}"></script>
 <script data-th-src="@{/js/app/operate/coreIndicators/index.js}"></script>
 </body>
 </html>
