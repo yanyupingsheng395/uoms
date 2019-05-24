@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.TargetListMapper">
-  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.TargetList">
+  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.TargetInfo">
     <!--
       WARNING - @mbg.generated
     -->
@@ -24,6 +24,14 @@
     <result column="FINISH_RATE_DIFFER" jdbcType="DECIMAL" property="finishRateDiffer" />
     <result column="FINISH_RATE_LAST" jdbcType="DECIMAL" property="finishRateLast" />
     <result column="KPI_UNIT" jdbcType="VARCHAR" property="kpiUnit" />
+  </resultMap>
+
+  <resultMap id="TgtReferenceMap" type="com.linksteady.operate.domain.TgtReference">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="PERIOD_NAME" jdbcType="VARCHAR" property="periodName" />
+    <result column="VALUE" jdbcType="DECIMAL" property="value" />
   </resultMap>
 
   <insert id="save">
@@ -58,5 +66,13 @@
   <select id="getMonitorVal" resultType="map">
     select TARGET_VAL, ACTUAL_VAL, ACTUAL_VAL_RATE, ACTUAL_VAL_LAST, FINISH_RATE, FINISH_RATE_DIFFER, FINISH_RATE_LAST, KPI_UNIT from UO_TGT_LIST
     where ID = #{targetId}
+  </select>
+
+  <select id="getGmvHistoryByPeroid" resultMap="TgtReferenceMap" parameterType="string">
+    ${_parameter}
+  </select>
+
+  <select id="getGmvHistoryByPeriodDay" resultMap="TgtReferenceMap" parameterType="string">
+    ${_parameter}
   </select>
 </mapper>

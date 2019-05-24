@@ -42,9 +42,7 @@
                 ONSALE_DURATION,
                 SALE_BEGIN_DT,
                 SALE_END_DT,
-                REAL_FEE
-        from UO_LC_SPU_LIST JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
+                nvl(REAL_FEE,0) REAL_FEE
+        from UO_LC_SPU_LIST left JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
     </select>
-
-
  </mapper>

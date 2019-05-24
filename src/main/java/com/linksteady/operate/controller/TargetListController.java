@@ -3,22 +3,28 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.config.KpiCacheManager;
+import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.domain.TargetList;
 import com.linksteady.operate.domain.TgtReference;
 import com.linksteady.operate.service.TargetDimensionService;
 import com.linksteady.operate.service.TargetListService;
+import com.linksteady.operate.service.TargetSplitAsyncService;
+import com.linksteady.operate.vo.TgtReferenceVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 /**
  * Created by hxcao on 2019-05-21
+ * @author hxcao
  */
 @RestController
 @RequestMapping("/target")
@@ -29,6 +35,12 @@ public class TargetListController {
     @Autowired
     private TargetDimensionService targetDimensionService;
 
+    @Autowired
+    TargetSplitAsyncService targetSplitAsyncService;
+
+    private static final List<String> TARGET_KPI_LIST= Arrays.asList("gmv");
+    private static final List<String> TARGET_DIM_LIST= Arrays.asList("neworold","source");
+
     /**
      * 获取指标列表
      * @return
@@ -36,7 +48,13 @@ public class TargetListController {
     @GetMapping("/getKpi")
     public ResponseBo getKpi() {
         Map<String, Object> map = Maps.newHashMap();
-        map.put("gmv", "GMV");
+        KpiCacheManager.getInstance().getKpiCodeNamePair().forEach((k,v)->{
+            if(TARGET_KPI_LIST.contains(k))
+            {
+                map.put(k,v);
+            }
+        });
+
         return ResponseBo.okWithData(null, map);
     }
 
@@ -47,8 +65,13 @@ public class TargetListController {
     @GetMapping("/getDimension")
     public ResponseBo getDimension() {
         Map<String, Object> map = Maps.newLinkedHashMap();
-        map.put("neworold", "首购/非首购");
-        map.put("source", "渠道");
+
+        KpiCacheManager.getInstance().getDiagDimList().forEach((k,v)->{
+            if(TARGET_DIM_LIST.contains(k))
+            {
+                map.put(k,v);
+            }
+        });
         return ResponseBo.okWithData(null, map);
     }
 
@@ -58,19 +81,7 @@ public class TargetListController {
      */
     @GetMapping("/getDimensionVal")
     public ResponseBo getDimensionVal(String key) {
-        Map<String, Object> map = Maps.newLinkedHashMap();
-        Map<String, Object> value = Maps.newLinkedHashMap();
-        value.put("Y", "首购");
-        value.put("N", "非首购");
-        map.put("neworold", value);
-
-        value = Maps.newLinkedHashMap();
-        value.put("1", "PC商城");
-        value.put("2", "小程序");
-        value.put("3", "APP");
-        value.put("4", "wap站");
-        map.put("source", value);
-        return ResponseBo.okWithData(null, map.get(key));
+        return ResponseBo.okWithData(null,KpiCacheManager.getInstance().getDiagDimValueList().row(key));
     }
 
     /**
@@ -79,8 +90,12 @@ public class TargetListController {
      * @return
      */
     @PostMapping("/save")
-    public ResponseBo save(@RequestBody TargetList target) {
-        targetListService.save(target);
+    public ResponseBo save(@RequestBody TargetInfo target) {
+        int targetId=targetListService.save(target);
+
+        //提交后台进行拆解
+        targetSplitAsyncService.targetSplit(targetId);
+
         return ResponseBo.ok();
     }
 
@@ -101,45 +116,26 @@ public class TargetListController {
         return ResponseBo.okWithData(null, targetListService.getDataById(id));
     }
 
+    /**
+     * 获取参考数据 如果是年 获取的是过去三年的数据 如果是月 获取的是过去三个月的数据，如果是天到天，获取的是这个周期 过去三年的数据
+     * @param kpiCode 指标名称
+     * @param startDt 开始时间
+     * @param endDt   结束时间
+     * @param period  周期类型
+     * @param dimInfo 维度信息
+     * @return
+     */
     @GetMapping("/getReferenceData")
-    public ResponseBo getReferenceData(@RequestParam("startDt") String startDt, @RequestParam("endDt") String endDt,@RequestParam("period") String period) {
-        List<TgtReference> list = Lists.newArrayList();
-        Random ra =new Random();
-        if("year".equals(period)) {
-            TgtReference tgtReference1 = new TgtReference(String.valueOf(Long.valueOf(startDt)-1), "GMV", String.valueOf(ra.nextInt(100)),String.valueOf(ra.nextInt(100)));
-            TgtReference tgtReference2 = new TgtReference(String.valueOf(Long.valueOf(startDt)-2), "GMV", String.valueOf(ra.nextInt(100)),String.valueOf(ra.nextInt(100)));
-            TgtReference tgtReference3 = new TgtReference(String.valueOf(Long.valueOf(startDt)-3), "GMV", String.valueOf(ra.nextInt(100)),String.valueOf(ra.nextInt(100)));
-            list.add(tgtReference1);
-            list.add(tgtReference2);
-            list.add(tgtReference3);
-        }
-        if("month".equals(period)) {
-            YearMonth yearMonth = YearMonth.parse(startDt, DateTimeFormatter.ofPattern("yyyy-MM"));
-            yearMonth = yearMonth.plusMonths(-1);
-            TgtReference tgtReference1 = new TgtReference(yearMonth.format(DateTimeFormatter.ofPattern("yyyyMM")), "GMV", String.valueOf(ra.nextInt(100)),String.valueOf(ra.nextInt(100)));
-            yearMonth = yearMonth.plusMonths(-1);
-            TgtReference tgtReference2 = new TgtReference(yearMonth.format(DateTimeFormatter.ofPattern("yyyyMM")), "GMV", String.valueOf(ra.nextInt(100)),String.valueOf(ra.nextInt(100)));
-            yearMonth = yearMonth.plusMonths(-1);
-            TgtReference tgtReference3 = new TgtReference(yearMonth.format(DateTimeFormatter.ofPattern("yyyyMM")), "GMV", String.valueOf(ra.nextInt(100)),String.valueOf(ra.nextInt(100)));
-            list.add(tgtReference1);
-            list.add(tgtReference2);
-            list.add(tgtReference3);
-        }
-        if("day".equals(period)) {
-            LocalDate localDate1 = LocalDate.parse(startDt, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            LocalDate localDate2 = LocalDate.parse(endDt, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            localDate1 = localDate1.plusMonths(-1);
-            localDate2 = localDate2.plusMonths(-1);
-            TgtReference tgtReference1 = new TgtReference(localDate1.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "~"+localDate2.format(DateTimeFormatter.ofPattern("yyyyMMdd")), "GMV", String.valueOf(ra.nextInt(100)),String.valueOf(ra.nextInt(100)));
-            localDate1 = localDate1.plusMonths(-1);
-            localDate2 = localDate2.plusMonths(-1);
-            TgtReference tgtReference2 = new TgtReference(localDate1.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "~"+localDate2.format(DateTimeFormatter.ofPattern("yyyyMMdd")), "GMV", String.valueOf(ra.nextInt(100)),String.valueOf(ra.nextInt(100)));
-            localDate1 = localDate1.plusMonths(-1);
-            localDate2 = localDate2.plusMonths(-1);
-            TgtReference tgtReference3 = new TgtReference(localDate1.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "~"+localDate2.format(DateTimeFormatter.ofPattern("yyyyMMdd")), "GMV", String.valueOf(ra.nextInt(100)),String.valueOf(ra.nextInt(100)));
-            list.add(tgtReference1);
-            list.add(tgtReference2);
-            list.add(tgtReference3);
+    public ResponseBo getReferenceData(@RequestParam("kpiCode") String kpiCode,@RequestParam("startDt") String startDt, @RequestParam("endDt") String endDt,@RequestParam("period") String period,@RequestBody Map<String,String> dimInfo) {
+        List<TgtReferenceVO> list=null;
+
+        if("gmv".equals(kpiCode))
+        {
+            list=targetListService.getGmvReferenceData(period,startDt,endDt,dimInfo);
+
+        }else
+        {
+            list=Lists.newArrayList();
         }
         return ResponseBo.okWithData(null, list);
     }

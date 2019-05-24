@@ -8,22 +8,7 @@ import lombok.Data;
 @Data
 public class TgtReference {
 
-    private String period;
+    String periodName;
 
-    private String kpi;
-
-    private String yearOnYear;
-
-    private String yearOverYear;
-
-    public TgtReference() {
-
-    }
-
-    public TgtReference(String period, String kpi, String yearOnYear, String yearOverYear) {
-        this.period = period;
-        this.kpi = kpi;
-        this.yearOnYear = yearOnYear;
-        this.yearOverYear = yearOverYear;
-    }
+    double value;
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @Table(name = "UO_TGT_LIST")
-public class TargetList implements Serializable {
+public class TargetInfo implements Serializable {
     /**
      * 目标ID
      */

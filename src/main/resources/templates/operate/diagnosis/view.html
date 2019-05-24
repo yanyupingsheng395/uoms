@@ -65,7 +65,6 @@
     var jm;
 
     $.post("/diag/getNodes", {diagId: diagId}, function (r) {
-        console.log(r)
         jmInit(r.data);
     });
 
@@ -104,7 +103,6 @@
             if(event.button == "2"){
 
             }else {
-                console.log(jm.get_selected_node());
                 nodeClick();
             }
         });
