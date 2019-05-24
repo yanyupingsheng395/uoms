@@ -9,12 +9,6 @@ public interface LifeCycleService {
 
      List<LcSpuInfo> getSpuList(String startDt,String endDt);
 
-     List<Double> getAllGmvByDay(String startDt,String endDt);
-
-     List<Double> getSpuGmvByDay(int spu_wid,String startDt,String endDt);
-
-     void updateRelate(int spuWid,double relate);
-
 
 
 }
