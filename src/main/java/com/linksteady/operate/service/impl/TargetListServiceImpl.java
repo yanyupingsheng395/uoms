@@ -10,10 +10,8 @@ import com.linksteady.operate.dao.TargetDimensionMapper;
 import com.linksteady.operate.dao.TargetListMapper;
 import com.linksteady.operate.domain.TargetDimension;
 import com.linksteady.operate.domain.TargetInfo;
-import com.linksteady.operate.domain.TargetList;
 import com.linksteady.operate.domain.TgtReference;
 import com.linksteady.operate.service.TargetListService;
-import com.linksteady.operate.service.TargetSplitAsyncService;
 import com.linksteady.operate.vo.DimJoinVO;
 import com.linksteady.operate.vo.TemplateResult;
 import com.linksteady.operate.vo.TgtReferenceVO;
@@ -51,7 +49,7 @@ public class TargetListServiceImpl implements TargetListService {
     private static final String TARGET_PERIOD_DAY="day";
 
     @Override
-    public List<TargetList> getTargetList() {
+    public List<TargetInfo> getTargetList() {
         return targetListMapper.getTargetList();
     }
 

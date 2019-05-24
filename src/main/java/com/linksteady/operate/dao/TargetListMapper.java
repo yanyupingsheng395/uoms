@@ -2,7 +2,6 @@ package com.linksteady.operate.dao;
 
 import com.linksteady.common.config.MyMapper;
 import com.linksteady.operate.domain.TargetInfo;
-import com.linksteady.operate.domain.TargetList;
 import com.linksteady.operate.domain.TgtReference;
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -23,4 +22,6 @@ public interface TargetListMapper extends MyMapper<TargetInfo> {
     TgtReference getGmvHistoryByPeriodDay(@Param("sql") String sql);
 
     List<TargetInfo> getTargetList();
+
+    Map<String, Object> getMonitorVal(String targetId);
 }

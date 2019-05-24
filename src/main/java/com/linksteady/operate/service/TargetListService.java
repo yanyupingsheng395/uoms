@@ -1,7 +1,5 @@
 package com.linksteady.operate.service;
 import com.linksteady.operate.domain.TargetInfo;
-import com.linksteady.operate.domain.TargetList;
-import com.linksteady.operate.domain.TgtReference;
 import com.linksteady.operate.vo.TgtReferenceVO;
 
 import java.util.List;
@@ -22,6 +20,7 @@ public interface TargetListService {
 
     List<TargetInfo> getTargetList();
 
+    Map<String, Object> getMonitorVal(String targetId);
 
     List<TgtReferenceVO> getGmvReferenceData(String period, String startDt, String endDt, Map<String,String> dimInfo);
 }

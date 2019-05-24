@@ -5,22 +5,15 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.TargetInfo;
-import com.linksteady.operate.domain.TargetList;
-import com.linksteady.operate.domain.TgtReference;
 import com.linksteady.operate.service.TargetDimensionService;
 import com.linksteady.operate.service.TargetListService;
 import com.linksteady.operate.service.TargetSplitAsyncService;
 import com.linksteady.operate.vo.TgtReferenceVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Created by hxcao on 2019-05-21
