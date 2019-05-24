@@ -47,6 +47,18 @@ $(function () {
                 }
             }
         },{
+            field: 'STATUS',
+            title: '状态',
+            formatter: function (value, row, index) {
+                if(value == 1) {
+                    return "<span class=\"label label-success\">启用</span>";
+                }else if(value == "0") {
+                    return "<span class=\"label label-danger\">停用</span>";
+                }else {
+                    return "-";
+                }
+            }
+        }, {
             title: '操作',
             formatter: function (values, row,index) {
                 return "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>" +

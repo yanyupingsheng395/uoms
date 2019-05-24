@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 import com.linksteady.operate.dao.TargetDimensionMapper;
+import com.linksteady.operate.domain.TargetDimension;
 import com.linksteady.operate.service.TargetDimensionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,11 @@ public class TargetDimensionServiceImpl implements TargetDimensionService {
 
     @Autowired
     private TargetDimensionMapper targetDimensionMapper;
+
+    @Override
+    public List<Map<String, Object>> getDimensionsById(String id) {
+        return targetDimensionMapper.getListByTgtId(Long.valueOf(id));
+    }
 
     @Override
     public List<Map<String, Object>> getDataList(List<Map<String, Object>> dataList) {

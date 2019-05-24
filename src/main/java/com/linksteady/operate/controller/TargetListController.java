@@ -144,9 +144,17 @@ public class TargetListController {
         return ResponseBo.okWithData(null, list);
     }
 
-    public static void main(String[] args) {
-        YearMonth yearMonth = YearMonth.parse("2018-01", DateTimeFormatter.ofPattern("yyyy-MM"));
-        yearMonth = yearMonth.plusMonths(-1);
-        System.out.println(yearMonth);
+    /**
+     * 获取启用状态的目标
+     * @return
+     */
+    @GetMapping("/getTargetList")
+    public ResponseBo getTargetList() {
+        return ResponseBo.okWithData(null, targetListService.getTargetList());
+    }
+
+    @GetMapping("/getDimensionsById")
+    public ResponseBo getDimensionsById(@RequestParam("id") String id) {
+        return ResponseBo.okWithData(null, targetDimensionService.getDimensionsById(id));
     }
 }

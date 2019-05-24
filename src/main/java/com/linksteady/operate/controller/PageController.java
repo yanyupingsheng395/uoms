@@ -132,13 +132,7 @@ public class PageController extends BaseController {
     @Log("核心指标监控-月")
     @RequestMapping("/page/coreindicators")
     public String coreIndicatorsMonth() {
-        return "operate/coreIndicators/month";
-    }
-
-    @Log("核心指标监控-年")
-    @RequestMapping("/page/coreindicators/year")
-    public String coreIndicatorsYear() {
-        return "operate/coreIndicators/year";
+        return "operate/coreIndicators/index";
     }
 
     @Log("发现关键问题")

@@ -28,11 +28,17 @@ public class TargetListServiceImpl implements TargetListService {
     private TargetDimensionMapper targetDimensionMapper;
 
     @Override
+    public List<TargetList> getTargetList() {
+        return targetListMapper.getTargetList();
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(TargetList target) {
         User user = (User)SecurityUtils.getSubject().getPrincipal();
         target.setCreateBy(user.getUsername());
         target.setCreateDt(new Date());
+        target.setStatus("1");
         targetListMapper.save(target);
         Long tgtId = target.getId();
         List<TargetDimension> dimensionList = target.getDimensionList();

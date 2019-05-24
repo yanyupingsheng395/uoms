@@ -12,4 +12,5 @@ public interface TargetListMapper extends MyMapper<TargetList> {
     List<Map<String, Object>> getPageList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("userId") String userId);
     int getTotalCount();
     Map<String, Object> getDataById(Long id);
+    List<TargetList> getTargetList();
 }

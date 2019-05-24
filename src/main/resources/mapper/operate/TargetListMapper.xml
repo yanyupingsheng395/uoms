@@ -22,13 +22,13 @@
     <selectKey resultType="java.lang.Long" keyProperty="id" order="BEFORE" >
       SELECT seq_tgt_list_id.NEXTVAL from DUAL
     </selectKey>
-    INSERT INTO UO_TGT_LIST(ID, NAME, PERIOD_TYPE, START_DT, END_DT, KPI_CODE, CREATE_DT, CREATE_BY, TARGET_VAL)
-    VALUES (#{id}, #{name}, #{periodType}, #{startDt}, #{endDt}, #{kpiCode}, #{createDt}, #{createBy}, #{targetVal})
+    INSERT INTO UO_TGT_LIST(ID, NAME, PERIOD_TYPE, START_DT, END_DT, KPI_CODE, CREATE_DT, CREATE_BY, TARGET_VAL, STATUS)
+    VALUES (#{id}, #{name}, #{periodType}, #{startDt}, #{endDt}, #{kpiCode}, #{createDt}, #{createBy}, #{targetVal}, #{status})
   </insert>
 
   <select id="getPageList" resultType="map">
     select * from (
-      select A.*,ROWNUM RN from (select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, tgt.CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME, tgt.TARGET_VAL from UO_TGT_LIST tgt
+      select A.*,ROWNUM RN from (select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, tgt.CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME, tgt.TARGET_VAL, tgt.STATUS from UO_TGT_LIST tgt
       LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.CREATE_BY = #{userId} order by tgt.CREATE_DT DESC) A
       where ROWNUM &lt;=#{endRow}
     ) where RN &gt;=#{startRow}
@@ -41,5 +41,9 @@
   <select id="getDataById" resultType="map">
       select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, tgt.CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME from UO_TGT_LIST tgt
       LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.ID = #{id}
+  </select>
+
+  <select id="getTargetList" resultMap="BaseResultMap">
+      select ID, NAME, START_DT, END_DT from UO_TGT_LIST where STATUS = '1' order by CREATE_DT DESC
   </select>
 </mapper>

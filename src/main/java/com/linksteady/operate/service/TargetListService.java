@@ -11,4 +11,5 @@ public interface TargetListService {
     List<Map<String, Object>> getPageList(int startRow, int endRow);
     int getTotalCount();
     Map<String, Object> getDataById(Long id);
+    List<TargetList> getTargetList();
 }
