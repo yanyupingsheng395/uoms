@@ -12,5 +12,6 @@
     <result column="COMPUTE_DT" jdbcType="VARCHAR" property="computeDt" />
     <result column="TGT_ID" jdbcType="DECIMAL" property="tgtId" />
     <result column="TGT_VAL" jdbcType="DECIMAL" property="tgtVal" />
+    <result column="TGT_PERCENT" jdbcType="DECIMAL" property="tgtPercent" />
   </resultMap>
 </mapper>
