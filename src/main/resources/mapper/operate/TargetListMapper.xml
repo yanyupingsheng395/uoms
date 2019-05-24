@@ -15,15 +15,23 @@
     <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
     <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
     <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
-    <result column="TARGET_VAL" jdbcType="VARCHAR" property="targetVal" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="TARGET_VAL" jdbcType="DECIMAL" property="targetVal" />
+    <result column="ACTUAL_VAL" jdbcType="DECIMAL" property="actualVal" />
+    <result column="ACTUAL_VAL_RATE" jdbcType="DECIMAL" property="actualValRate" />
+    <result column="ACTUAL_VAL_LAST" jdbcType="DECIMAL" property="actualValLast" />
+    <result column="FINISH_RATE" jdbcType="DECIMAL" property="finishRate" />
+    <result column="FINISH_RATE_DIFFER" jdbcType="DECIMAL" property="finishRateDiffer" />
+    <result column="FINISH_RATE_LAST" jdbcType="DECIMAL" property="finishRateLast" />
+    <result column="KPI_UNIT" jdbcType="VARCHAR" property="kpiUnit" />
   </resultMap>
 
   <insert id="save">
     <selectKey resultType="java.lang.Long" keyProperty="id" order="BEFORE" >
       SELECT seq_tgt_list_id.NEXTVAL from DUAL
     </selectKey>
-    INSERT INTO UO_TGT_LIST(ID, NAME, PERIOD_TYPE, START_DT, END_DT, KPI_CODE, CREATE_DT, CREATE_BY, TARGET_VAL, STATUS)
-    VALUES (#{id}, #{name}, #{periodType}, #{startDt}, #{endDt}, #{kpiCode}, #{createDt}, #{createBy}, #{targetVal}, #{status})
+    INSERT INTO UO_TGT_LIST(ID, NAME, PERIOD_TYPE, START_DT, END_DT, KPI_CODE, CREATE_DT, CREATE_BY, TARGET_VAL, STATUS, KPI_UNIT)
+    VALUES (#{id}, #{name}, #{periodType}, #{startDt}, #{endDt}, #{kpiCode}, #{createDt}, #{createBy}, #{targetVal}, #{status}, '元')
   </insert>
 
   <select id="getPageList" resultType="map">
@@ -45,5 +53,10 @@
 
   <select id="getTargetList" resultMap="BaseResultMap">
       select ID, NAME, START_DT, END_DT from UO_TGT_LIST where STATUS = '1' order by CREATE_DT DESC
+  </select>
+
+  <select id="getMonitorVal" resultType="map">
+    select TARGET_VAL, ACTUAL_VAL, ACTUAL_VAL_RATE, ACTUAL_VAL_LAST, FINISH_RATE, FINISH_RATE_DIFFER, FINISH_RATE_LAST, KPI_UNIT from UO_TGT_LIST
+    where ID = #{targetId}
   </select>
 </mapper>
