@@ -108,10 +108,6 @@ public class LifeCycleController extends BaseController {
             temp.put("gmvCont","GMV贡献率");
             columns.add(temp);
 
-            temp=Maps.newHashMap();
-            temp.put("gmvRelate","GMV相关性");
-            columns.add(temp);
-
             for(LcSpuInfo lsi:list)
             {
                 lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
@@ -327,35 +323,6 @@ public class LifeCycleController extends BaseController {
 //        result.add(temp);
 
         return  ResponseBo.okWithData("",result);
-    }
-
-    /**
-     * 获取spu列表
-     * @param
-     * @return
-     */
-    @RequestMapping("/updateGmvRelate")
-    public ResponseBo updateGmvRelate() {
-
-        String startDt="20190101";
-        String endDt="20190530";
-
-        List<LcSpuInfo> list=lifeCycleService.getSpuList(startDt,endDt);
-
-        List<Double> gmv=lifeCycleService.getAllGmvByDay(startDt,endDt);
-        //获取总的GMV数据集（按天）
-        for(LcSpuInfo lcSpuInfo:list)
-        {
-            int spuWid=lcSpuInfo.getSpuWid().intValue();
-            //获取当前SPU的GMV数据集
-            List<Double> spugmv=lifeCycleService.getSpuGmvByDay(spuWid,startDt,endDt);
-
-            double relate=PearsonCorrelationUtil.getPearsonCorrelationScoreByList(gmv,spugmv);
-
-            //更新到数据库
-            lifeCycleService.updateRelate(spuWid, ArithUtil.formatDoubleByMode(relate,2, RoundingMode.DOWN));
-        }
-        return ResponseBo.ok();
     }
 
 

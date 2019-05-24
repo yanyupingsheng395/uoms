@@ -38,6 +38,4 @@ public class LcSpuInfo {
     @Column(name = "REAL_FEE")
     private Double gmvTotal;
 
-    @Column(name = "GMV_RELATE")
-    private BigDecimal gmvRelate;
 }
