@@ -47,4 +47,10 @@ public class TgtDismant {
      */
     @Column(name = "TGT_VAL")
     private Double tgtVal;
+
+    /**
+     * 目标占比
+     */
+    @Column(name = "TGT_PERCENT")
+    private Double tgtPercent;
 }
