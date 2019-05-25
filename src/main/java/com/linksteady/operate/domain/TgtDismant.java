@@ -40,7 +40,7 @@ public class TgtDismant {
      * 目标ID
      */
     @Column(name = "TGT_ID")
-    private Double tgtId;
+    private Long tgtId;
 
     /**
      * 目标值

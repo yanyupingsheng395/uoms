@@ -61,7 +61,8 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
 
     @Override
     public List<WeightIndex> getWeightIndex(String year) {
-        return weightIndexMapper.getWeightIndex(year);
+       // return weightIndexMapper.getWeightIndex(year);
+        return null;
     }
 
     @Override
@@ -138,7 +139,7 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
         }};
         //gmv按权重指数进行拆解
         //获取上一年的权重指数
-        List<WeightIndex> lastYearIndex=weightIndexMapper.getWeightIndex(String.valueOf(Integer.parseInt(year)-1));
+        List<WeightIndex> lastYearIndex=null; //weightIndexMapper.getWeightIndex(String.valueOf(Integer.parseInt(year)-1));
 
         //权重指数和
         Double indexTotal=0d;

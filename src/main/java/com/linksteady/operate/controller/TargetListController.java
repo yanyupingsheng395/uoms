@@ -84,7 +84,7 @@ public class TargetListController {
      */
     @PostMapping("/save")
     public ResponseBo save(@RequestBody TargetInfo target) {
-        int targetId=targetListService.save(target);
+        long targetId=targetListService.save(target);
 
         //提交后台进行拆解
         targetSplitAsyncService.targetSplit(targetId);

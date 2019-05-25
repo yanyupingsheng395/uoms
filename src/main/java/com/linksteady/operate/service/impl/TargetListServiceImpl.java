@@ -17,6 +17,7 @@ import com.linksteady.operate.vo.TemplateResult;
 import com.linksteady.operate.vo.TgtReferenceVO;
 import com.linksteady.system.domain.User;
 import org.apache.shiro.SecurityUtils;
+import org.apache.thrift.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +27,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -122,9 +120,9 @@ public class TargetListServiceImpl implements TargetListService {
             for(int i=0;i<=periodList.size()-1;i++)
             {
                 //获取当年的值
-                double current=dataMap.get(periodList.get(i));
+                double current= Optional.ofNullable(dataMap.get(periodList.get(i))).orElse(0d);
                 //获取上一年的值
-                double pre=dataMap.get(periodList.get(i+1));
+                double pre= Optional.ofNullable(dataMap.get(periodList.get(i+1))).orElse(0d);
                 //计算同比增长率
                 double tb=pre==0?0: ArithUtil.formatDoubleByMode((current-pre)/pre*100,2, RoundingMode.DOWN);
 
@@ -167,10 +165,10 @@ public class TargetListServiceImpl implements TargetListService {
                 //去年同期月份名称
                 String preMonthName=periodList.get(j).minus(Period.ofMonths(1)).format(DateTimeFormatter.ofPattern("yyyy年MM月"));
 
-                double currentValue=dataMap.get(currentMonthName);
-                double lastMonthValue=dataMap.get(lastMonthName);
+                double currentValue= Optional.ofNullable(dataMap.get(currentMonthName)).orElse(0d);
+                double lastMonthValue= Optional.ofNullable(dataMap.get(lastMonthName)).orElse(0d);
                 //去年同期值
-                double preMonthValue=dataMap.get(preMonthName);
+                double preMonthValue= Optional.ofNullable(dataMap.get(preMonthName)).orElse(0d);
 
                 //计算同比增长率
                 double tb=preMonthValue==0?0: ArithUtil.formatDoubleByMode((currentValue-preMonthValue)/preMonthValue*100,2, RoundingMode.DOWN);
@@ -210,7 +208,6 @@ public class TargetListServiceImpl implements TargetListService {
 
                     TgtReferenceVO vo=new TgtReferenceVO();
                     vo.setPeriod(tempStartDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"))+"-"+tempEndDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")));
-
 
                     double prevalue=null==prePeriodValue?0:prePeriodValue.getValue();
                     double curvalue=null==currPeriodValue?0:currPeriodValue.getValue();

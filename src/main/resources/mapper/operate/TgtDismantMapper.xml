@@ -14,4 +14,25 @@
     <result column="TGT_VAL" jdbcType="DECIMAL" property="tgtVal" />
     <result column="TGT_PERCENT" jdbcType="DECIMAL" property="tgtPercent" />
   </resultMap>
+
+  <insert id="saveTargetDismant" parameterType="list">
+        <selectKey resultType ="java.lang.Integer" keyProperty= "id"  order= "BEFORE">
+          SELECT seq_tgt_dismant_id.NEXTVAL from DUAL
+        </selectKey >
+        insert into UO_TGT_DISMANT
+        (ID, PERIOD_TYPE, PERIOD_DATE, ACTUAL_VAL,COMPUTE_DT,TGT_ID,TGT_VAL)
+        values
+        <foreach collection ="list" item="item" index= "index" separator =",">
+          (
+          #{id},
+          #{item.periodType},
+          #{item.periodDate},
+          #{item.actualVal},
+          #{item.computeDt},
+          #{item.tgtId},
+          #{item.tgtVal},
+          #{item.tgtPercent}
+          )
+        </foreach >
+  </insert>
 </mapper>

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface WeightIndexMapper extends MyMapper<WeightIndex> {
 
-    List<WeightIndex> getWeightIndex(@Param("year") String year);
+    List<WeightIndex> getWeightIndex(@Param("year") String year,@Param("kpiCode")  String kpiCode);
 }

@@ -1,4 +1,5 @@
 package com.linksteady.operate.service;
+
 import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.vo.TgtReferenceVO;
 
@@ -10,7 +11,7 @@ import java.util.Map;
  */
 public interface TargetListService {
 
-    int save(TargetInfo target);
+    long save(TargetInfo target);
 
     List<Map<String, Object>> getPageList(int startRow, int endRow);
 
