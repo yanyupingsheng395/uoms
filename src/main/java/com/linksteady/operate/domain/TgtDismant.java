@@ -3,6 +3,8 @@ package com.linksteady.operate.domain;
 import javax.persistence.*;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 @Table(name = "UO_TGT_DISMANT")
 public class TgtDismant {
@@ -34,7 +36,7 @@ public class TgtDismant {
      * 计算日期
      */
     @Column(name = "COMPUTE_DT")
-    private String computeDt;
+    private Date computeDt;
 
     /**
      * 目标ID

@@ -1,20 +1,23 @@
 package com.linksteady.operate.domain;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
-@Table(name = "UO_WEIGHT_INDEX")
+@Data
+@Table(name = "UO_WEIGHT_INDEX_CONFIG")
 public class WeightIndex {
     /**
-     * 年ID
+     * 周期ID
      */
-    @Column(name = "YEAR_ID")
-    private Long yearId;
+    @Column(name = "PERIOD_ID")
+    private String periodId;
 
     /**
-     * 月份ID
+     * 周期类型
      */
-    @Column(name = "MONTH_ID")
-    private Long monthId;
+    @Column(name = "PERIOD_TYPE")
+    private String periodType;
 
     /**
      * 权重指数值
@@ -28,35 +31,4 @@ public class WeightIndex {
     @Column(name = "INDEX_TYPE")
     private String indexType;
 
-    public Long getYearId() {
-        return yearId;
-    }
-
-    public void setYearId(Long yearId) {
-        this.yearId = yearId;
-    }
-
-    public Long getMonthId() {
-        return monthId;
-    }
-
-    public void setMonthId(Long monthId) {
-        this.monthId = monthId;
-    }
-
-    public Double getIndexValue() {
-        return indexValue;
-    }
-
-    public void setIndexValue(Double indexValue) {
-        this.indexValue = indexValue;
-    }
-
-    public String getIndexType() {
-        return indexType;
-    }
-
-    public void setIndexType(String indexType) {
-        this.indexType = indexType;
-    }
 }

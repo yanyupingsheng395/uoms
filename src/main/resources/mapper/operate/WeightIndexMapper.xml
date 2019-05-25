@@ -5,13 +5,38 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <result column="YEAR_ID" jdbcType="DECIMAL" property="yearId" />
-    <result column="MONTH_ID" jdbcType="DECIMAL" property="monthId" />
+    <result column="PERIOD_ID" jdbcType="VARCHAR" property="periodId" />
+    <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
     <result column="INDEX_VALUE" jdbcType="DECIMAL" property="indexValue" />
     <result column="INDEX_TYPE" jdbcType="VARCHAR" property="indexType" />
   </resultMap>
 
   <select id="getWeightIndex" resultMap="BaseResultMap">
-    select * from UO_WEIGHT_INDEX where YEAR_ID = #{year} AND INDEX_TYPE=#{kpiCode} order by MONTH_ID asc
+    select * from UO_WEIGHT_INDEX_CONFIG where PERIOD_TYPE = #{periodType} AND INDEX_TYPE=#{kpiCode} order by PERIOD_ID asc
+  </select>
+
+  <select id="getWeightIndexByMonth"  resultMap="BaseResultMap">
+    SELECT DAY_SHORT_NAME PERIOD_ID,
+           INDEX_VALUE
+    FROM W_DATE D
+           JOIN UO_WEIGHT_INDEX_CONFIG C
+                ON D.WEEKDAY = C.PERIOD_ID
+    WHERE C.PERIOD_TYPE = 'D'
+      AND C.INDEX_TYPE=#{kpiCode}
+      AND D.MONTH_SHORT_NAME = #{month}
+    ORDER BY D.ROW_WID ASC
+  </select>
+
+  <select id="getWeightIndexByDay"  resultMap="BaseResultMap">
+    SELECT DAY_SHORT_NAME PERIOD_ID,
+           INDEX_VALUE
+    FROM W_DATE D
+           JOIN UO_WEIGHT_INDEX_CONFIG C
+                ON D.WEEKDAY = C.PERIOD_ID
+    WHERE C.PERIOD_TYPE = 'D'
+      AND C.INDEX_TYPE=#{kpiCode}
+      AND D.ROW_WID &gt; =#{startDt}
+      AND D.ROW_WID &lt; =#{endDt}
+    ORDER BY D.ROW_WID ASC
   </select>
 </mapper>

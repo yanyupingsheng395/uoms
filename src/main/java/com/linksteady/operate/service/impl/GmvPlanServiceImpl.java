@@ -130,130 +130,130 @@ public class GmvPlanServiceImpl extends BaseService<GmvPlan> implements GmvPlanS
     private void addPlanDetail(String year, String gmv, String rate, Long planId) {
         List<PlanDetail> planDetailList = new ArrayList<>();
 
-        List<Long>  monthList=new ArrayList(){{
-            for(int i=1;i<=12;i++)
-            {
-                this.add(Long.parseLong(year+ String.format("%02d", i)));
-            }
 
-        }};
-        //gmv按权重指数进行拆解
-        //获取上一年的权重指数
-        List<WeightIndex> lastYearIndex=null; //weightIndexMapper.getWeightIndex(String.valueOf(Integer.parseInt(year)-1));
-
-        //权重指数和
-        Double indexTotal=0d;
-        Map<Long,Double> pctMap= Maps.newHashMap();
-        Map<Long,Double> gmvMap= Maps.newHashMap();
-
-        Double gmvValue=Double.parseDouble(gmv);
-        Long monthId=null;
-        Double monthPctTemp=0.00d;
-        //每月的比例
-        Double monthPct=0.00d;
-        //每月的GMV
-        double monthGmv=0.00d;
-        //累计的比例
-        double monthTotalPct =0;
-        //累计的GMV
-        double monthTotalGmv=0.00d;
-
-        //有权重指数 且权重指数为12个月;
-        if(null!=lastYearIndex&&lastYearIndex.size()==12)
-        {
-            for (WeightIndex weightIndex:lastYearIndex) {
-                indexTotal=ArithUtil.add(indexTotal,weightIndex.getIndexValue());
-            }
-
-            //计算每个月占比、以及拆分到的GMV金额
-            for (WeightIndex weightIndex:lastYearIndex) {
-                monthId=Long.parseLong(year+String.valueOf(weightIndex.getMonthId()).substring(4,6));
-                if(!weightIndex.getMonthId().equals(weightIndex.getYearId()+"12"))
-                {
-
-                    monthPctTemp=ArithUtil.div(weightIndex.getIndexValue(),indexTotal,10);
-                    //每月的指数/指数和*100 保留2位小数
-                    monthPct=ArithUtil.formatDoubleByMode(ArithUtil.mul(monthPctTemp,100d),2, RoundingMode.DOWN);
-
-                    monthTotalPct=ArithUtil.add(monthTotalPct,monthPct);
-                    //计算GMV的占比
-                    monthGmv=ArithUtil.formatDouble(ArithUtil.mul(gmvValue,monthPctTemp),0);
-                    // ?? 观察 是否需要格式化一下
-                    monthTotalGmv=ArithUtil.add(monthGmv,monthTotalGmv);
-
-                    pctMap.put(monthId,monthPct);
-                    gmvMap.put(monthId,monthGmv);
-
-                }else //12月单独处理 采用1-前11个月  因为采用list 所以保证了12月是最后一个被处理的月份
-                {
-                    pctMap.put(monthId,ArithUtil.sub(100d,monthTotalPct));
-                    gmvMap.put(monthId,ArithUtil.formatDouble( ArithUtil.sub(gmvValue,monthTotalGmv),0));
-                }
-
-
-            }
-
-
-        }else  //按12个月平均
-        {
-            indexTotal=12d;
-            for(Long mth:monthList)
-            {
-                if(!mth.equals(year+"12"))
-                {
-                    monthPctTemp=ArithUtil.div(1d,indexTotal,6);
-                    monthPct=ArithUtil.formatDoubleByMode(ArithUtil.mul(monthPctTemp,100d),2, RoundingMode.DOWN);
-
-                    monthTotalPct+=monthPct.intValue();
-
-                    monthGmv=ArithUtil.formatDouble(ArithUtil.mul(gmvValue,monthPctTemp),0);
-                    // ?? 观察 是否需要格式化一下
-                    monthTotalGmv=ArithUtil.add(monthGmv,monthTotalGmv);
-
-                    pctMap.put(mth,monthPct);
-                    gmvMap.put(mth,monthGmv);
-                }else
-                {
-                    pctMap.put(mth,100-monthTotalPct);
-                    gmvMap.put(mth,ArithUtil.formatDouble( ArithUtil.sub(gmvValue,monthTotalGmv),0));
-                }
-            }
-        }
-
-        //获取上年各月的GMV值
-        List<Map<String, Object>>  lastGmvMapList=yearHistoryMapper.getMonthGmvByYear(String.valueOf(Integer.parseInt(year)-1));
-        Map<Long, Double> lastGmvMap=Maps.newHashMap();
-        for(Map<String, Object> g:lastGmvMapList)
-        {
-            lastGmvMap.put(Long.parseLong(g.get("MONTH_ID").toString()),Double.parseDouble(g.get("GMV_VALUE").toString()));
-        }
-
-        Long lastMonthId= 0L;
-        Double gmvTb=null;
-        PlanDetail planDetail=null;
-        for(Long mth:monthList)
-        {
-            lastMonthId=getLastMonthId(mth);
-            planDetail = new PlanDetail();
-            planDetail.setGmvValue(gmvMap.get(mth));
-            planDetail.setYearId(Long.valueOf(year));
-            planDetail.setMonthId(mth);
-            planDetail.setGmvPct(pctMap.get(mth));
-            planDetail.setPlanId(planId);
-
-            //计算同比
-            gmvTb=lastGmvMap.get(lastMonthId);
-            if(null!=gmvTb)
-            {
-                planDetail.setGmvTbRate(computeTbRate(gmvTb,gmvMap.get(mth)));
-                planDetail.setGmvTb(gmvTb);
-            }
-
-            planDetail.setIsHistory("N");
-            planDetail.setCreateDt(new Date());
-            planDetail.setUpdateDt(new Date());
-            planDetailList.add(planDetail);
-        }
+//                    monthPctTemp=ArithUtil.div(1d,indexTotal,6);
+//                    monthPct=ArithUtil.formatDoubleByMode(ArithUtil.mul(monthPctTemp,100d),2, RoundingMode.DOWN);
+//                    List<Long>  monthList=new ArrayList(){{
+//                        for(int i=1;i<=12;i++)
+//                        {
+//                            this.add(Long.parseLong(year+ String.format("%02d", i)));
+//                        }
+//
+//                    }};
+//                    //gmv按权重指数进行拆解
+//                    //获取上一年的权重指数
+//                    List<WeightIndex> lastYearIndex=null; //weightIndexMapper.getWeightIndex(String.valueOf(Integer.parseInt(year)-1));
+//
+//                    //权重指数和
+//                    Double indexTotal=0d;
+//                    Map<Long,Double> pctMap= Maps.newHashMap();
+//                    Map<Long,Double> gmvMap= Maps.newHashMap();
+//
+//                    Double gmvValue=Double.parseDouble(gmv);
+//                    Long monthId=null;
+//                    Double monthPctTemp=0.00d;
+//                    //每月的比例
+//                    Double monthPct=0.00d;
+//                    //每月的GMV
+//                    double monthGmv=0.00d;
+//                    //累计的比例
+//                    double monthTotalPct =0;
+//                    //累计的GMV
+//                    double monthTotalGmv=0.00d;
+//
+//                    //有权重指数 且权重指数为12个月;
+//                    if(null!=lastYearIndex&&lastYearIndex.size()==12)
+//                    {
+//                        for (WeightIndex weightIndex:lastYearIndex) {
+//                            indexTotal=ArithUtil.add(indexTotal,weightIndex.getIndexValue());
+//                        }
+//
+//                        //计算每个月占比、以及拆分到的GMV金额
+//                        for (WeightIndex weightIndex:lastYearIndex) {
+//                            monthId=Long.parseLong(year+String.valueOf(weightIndex.getMonthId()).substring(4,6));
+//                            if(!weightIndex.getMonthId().equals(weightIndex.getYearId()+"12"))
+//                            {
+//
+//                                monthPctTemp=ArithUtil.div(weightIndex.getIndexValue(),indexTotal,10);
+//                                //每月的指数/指数和*100 保留2位小数
+//                                monthPct=ArithUtil.formatDoubleByMode(ArithUtil.mul(monthPctTemp,100d),2, RoundingMode.DOWN);
+//
+//                                monthTotalPct=ArithUtil.add(monthTotalPct,monthPct);
+//                                //计算GMV的占比
+//                                monthGmv=ArithUtil.formatDouble(ArithUtil.mul(gmvValue,monthPctTemp),0);
+//                                // ?? 观察 是否需要格式化一下
+//                                monthTotalGmv=ArithUtil.add(monthGmv,monthTotalGmv);
+//
+//                                pctMap.put(monthId,monthPct);
+//                                gmvMap.put(monthId,monthGmv);
+//
+//                            }else //12月单独处理 采用1-前11个月  因为采用list 所以保证了12月是最后一个被处理的月份
+//                            {
+//                                pctMap.put(monthId,ArithUtil.sub(100d,monthTotalPct));
+//                                gmvMap.put(monthId,ArithUtil.formatDouble( ArithUtil.sub(gmvValue,monthTotalGmv),0));
+//                            }
+//
+//
+//                        }
+//
+//
+//                    }else  //按12个月平均
+//                    {
+//                        indexTotal=12d;
+//                        for(Long mth:monthList)
+//                        {
+//                            if(!mth.equals(year+"12"))
+//                            {
+//                    monthTotalPct+=monthPct.intValue();
+//
+//                    monthGmv=ArithUtil.formatDouble(ArithUtil.mul(gmvValue,monthPctTemp),0);
+//                    // ?? 观察 是否需要格式化一下
+//                    monthTotalGmv=ArithUtil.add(monthGmv,monthTotalGmv);
+//
+//                    pctMap.put(mth,monthPct);
+//                    gmvMap.put(mth,monthGmv);
+//                }else
+//                {
+//                    pctMap.put(mth,100-monthTotalPct);
+//                    gmvMap.put(mth,ArithUtil.formatDouble( ArithUtil.sub(gmvValue,monthTotalGmv),0));
+//                }
+//            }
+//        }
+//
+//        //获取上年各月的GMV值
+//        List<Map<String, Object>>  lastGmvMapList=yearHistoryMapper.getMonthGmvByYear(String.valueOf(Integer.parseInt(year)-1));
+//        Map<Long, Double> lastGmvMap=Maps.newHashMap();
+//        for(Map<String, Object> g:lastGmvMapList)
+//        {
+//            lastGmvMap.put(Long.parseLong(g.get("MONTH_ID").toString()),Double.parseDouble(g.get("GMV_VALUE").toString()));
+//        }
+//
+//        Long lastMonthId= 0L;
+//        Double gmvTb=null;
+//        PlanDetail planDetail=null;
+//        for(Long mth:monthList)
+//        {
+//            lastMonthId=getLastMonthId(mth);
+//            planDetail = new PlanDetail();
+//            planDetail.setGmvValue(gmvMap.get(mth));
+//            planDetail.setYearId(Long.valueOf(year));
+//            planDetail.setMonthId(mth);
+//            planDetail.setGmvPct(pctMap.get(mth));
+//            planDetail.setPlanId(planId);
+//
+//            //计算同比
+//            gmvTb=lastGmvMap.get(lastMonthId);
+//            if(null!=gmvTb)
+//            {
+//                planDetail.setGmvTbRate(computeTbRate(gmvTb,gmvMap.get(mth)));
+//                planDetail.setGmvTb(gmvTb);
+//            }
+//
+//            planDetail.setIsHistory("N");
+//            planDetail.setCreateDt(new Date());
+//            planDetail.setUpdateDt(new Date());
+//            planDetailList.add(planDetail);
+//        }
         planDetailMapper.addPlanDetails(planDetailList);
     }
 
