@@ -60,13 +60,32 @@ function step2Init() {
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
     var periodType = $("#targetPeriod").find("option:selected").val();
-    $.get("/target/getReferenceData", {startDt: startDt, endDt: endDt, period: periodType}, function (r) {
+
+    var dimInfo = getDimInfo();
+    var kpiCode = $("#targetKpi").find("option:selected").val();
+    $.get("/target/getReferenceData", {kpiCode: kpiCode, startDt: startDt, endDt: endDt, period: periodType, dimInfo:JSON.stringify(dimInfo)}, function (r) {
         var code = "";
         $.each(r.data, function(k, v){
             code += "<tr><td>"+v["period"]+"</td><td>"+v["kpi"]+"</td><td>"+v["yearOnYear"]+"%</td><td>"+v["yearOverYear"]+"%</td></tr>";
         });
         $("#_reference").html("").html(code);
     });
+}
+
+function getDimInfo() {
+    var result = new Array();
+    $("#dataTable").find("input[name='dimensions']").each(function (k, v) {
+        var arr = $(this).val().split("&");
+        var o = new Object();
+        $.each(arr, function (k1, v1) {
+            if(k1 != "" && v1 != "") {
+                var t = v1.split("=");
+                o[t[0]] = t[1];
+            }
+        });
+        result.push(o);
+    });
+    return result;
 }
 
 // 保存目标
