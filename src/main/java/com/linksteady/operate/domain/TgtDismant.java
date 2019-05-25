@@ -53,4 +53,7 @@ public class TgtDismant {
      */
     @Column(name = "TGT_PERCENT")
     private Double tgtPercent;
+
+    @Column(name = "TGT_WEIGHT_IDX")
+    private Double tgtWeightIdx;
 }
