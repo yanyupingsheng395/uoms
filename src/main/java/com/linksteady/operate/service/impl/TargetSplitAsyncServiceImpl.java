@@ -11,6 +11,7 @@ import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.domain.TgtDismant;
 import com.linksteady.operate.domain.WeightIndex;
 import com.linksteady.operate.service.TargetSplitAsyncService;
+import com.linksteady.operate.vo.Echart;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -21,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 目标进行分解的异步任务
