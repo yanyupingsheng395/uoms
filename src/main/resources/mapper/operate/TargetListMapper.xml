@@ -24,6 +24,12 @@
     <result column="FINISH_RATE_DIFFER" jdbcType="DECIMAL" property="finishRateDiffer" />
     <result column="FINISH_RATE_LAST" jdbcType="DECIMAL" property="finishRateLast" />
     <result column="KPI_UNIT" jdbcType="VARCHAR" property="kpiUnit" />
+    <result column="FINISH_DEGREE" jdbcType="DECIMAL" property="finishDegree"/>
+    <result column="REMAIN_TGT" jdbcType="DECIMAL" property="remainTgt"/>
+    <result column="REMAIN_COUNT" jdbcType="DECIMAL" property="remainCount"/>
+    <result column="REMAIN_LIST" jdbcType="VARCHAR" property="remainList"/>
+    <result column="VARY_IDX" jdbcType="DECIMAL" property="varyIdx"/>
+    <result column="VARY_IDX_LAST" jdbcType="DECIMAL" property="varyIdxLast"/>
   </resultMap>
 
   <resultMap id="TgtReferenceMap" type="com.linksteady.operate.domain.TgtReference">
