@@ -135,4 +135,41 @@ public class TargetInfo implements Serializable {
 
     @Transient
     private String kpiName;
+
+    /**
+     * 完成率（%）
+     */
+    @Column(name = "FINISH_DEGREE")
+    private Double finishDegree;
+
+    /**
+     * 剩余目标
+     */
+    @Column(name = "REMAIN_TGT")
+    private Double remainTgt;
+
+    /**
+     * 剩余目标个数
+     */
+    @Column(name = "REMAIN_COUNT")
+    private Integer remainCount;
+
+    /**
+     * 剩余目标的日期，多值以逗号隔开
+     */
+    @Column(name = "REMAIN_LIST")
+    private String remainList;
+
+    /**
+     * 变异系数（本年迄今为止）
+     */
+    @Column(name = "VARY_IDX")
+    private Double varyIdx;
+
+    /**
+     * 变异系数（去年同期）
+     */
+    @Column(name = "VARY_IDX_LAST")
+    private Double varyIdxLast;
+
 }
