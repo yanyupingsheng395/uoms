@@ -17,7 +17,6 @@ import com.linksteady.operate.vo.TemplateResult;
 import com.linksteady.operate.vo.TgtReferenceVO;
 import com.linksteady.system.domain.User;
 import org.apache.shiro.SecurityUtils;
-import org.apache.thrift.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,12 +125,20 @@ public class TargetListServiceImpl implements TargetListService {
                 //计算同比增长率
                 double tb=pre==0?0: ArithUtil.formatDoubleByMode((current-pre)/pre*100,2, RoundingMode.DOWN);
 
-                TgtReferenceVO vo=new TgtReferenceVO();
-                vo.setPeriod(periodList.get(i));
-                vo.setKpi(String.valueOf(current));
-                vo.setYearOnYear(String.valueOf(tb));
+                //如果当年的值为0，则不计入参照
+                if(current!=0)
+                {
+                    TgtReferenceVO vo=new TgtReferenceVO();
+                    vo.setPeriod(periodList.get(i));
+                    vo.setKpi(String.valueOf(current));
+                    if(tb!=0)
+                    {
+                        vo.setYearOnYear(String.valueOf(tb));
+                    }
 
-                result.add(vo);
+                    result.add(vo);
+                }
+
             }
 
         }else if(TARGET_PERIOD_MONTH.equals(period))
@@ -175,13 +182,24 @@ public class TargetListServiceImpl implements TargetListService {
                 //环比
                 double hb=lastMonthValue==0?0: ArithUtil.formatDoubleByMode((currentValue-lastMonthValue)/lastMonthValue*100,2, RoundingMode.DOWN);
 
-                TgtReferenceVO vo=new TgtReferenceVO();
-                vo.setPeriod(periodList.get(j).format(DateTimeFormatter.ofPattern("yyyy年MM月")));
-                vo.setKpi(String.valueOf(currentValue));
-                vo.setYearOnYear(String.valueOf(tb));
-                vo.setYearOverYear(String.valueOf(hb));
+                //如果当年的值为0，则不计入参照
+                if(currentValue!=0)
+                {
+                    TgtReferenceVO vo=new TgtReferenceVO();
+                    vo.setPeriod(periodList.get(j).format(DateTimeFormatter.ofPattern("yyyy年MM月")));
+                    vo.setKpi(String.valueOf(currentValue));
+                    if(tb!=0)
+                    {
+                        vo.setYearOnYear(String.valueOf(tb));
+                    }
+                    if(hb!=0)
+                    {
+                        vo.setYearOverYear(String.valueOf(hb));
+                    }
 
-                result.add(vo);
+                    result.add(vo);
+                }
+
             }
         }else if(TARGET_PERIOD_DAY.equals(period))
         {
@@ -206,16 +224,20 @@ public class TargetListServiceImpl implements TargetListService {
                     //当前周期的值
                     currPeriodValue=getGmvHistoryByPeriodDay(tempStartDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")),tempEndDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")),dimInfo);
 
-                    TgtReferenceVO vo=new TgtReferenceVO();
-                    vo.setPeriod(tempStartDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"))+"-"+tempEndDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")));
-
                     double prevalue=null==prePeriodValue?0:prePeriodValue.getValue();
                     double curvalue=null==currPeriodValue?0:currPeriodValue.getValue();
-                    vo.setKpi(String.valueOf(curvalue));
-                    double tb=prevalue==0?0: ArithUtil.formatDoubleByMode((curvalue-prevalue)/prevalue*100,2, RoundingMode.DOWN);
-                    vo.setYearOnYear(String.valueOf(tb));
-
-                    result.add(vo);
+                    if(curvalue!=0)
+                    {
+                        TgtReferenceVO vo=new TgtReferenceVO();
+                        vo.setPeriod(tempStartDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"))+"-"+tempEndDate.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")));
+                        vo.setKpi(String.valueOf(curvalue));
+                        double tb=prevalue==0?0: ArithUtil.formatDoubleByMode((curvalue-prevalue)/prevalue*100,2, RoundingMode.DOWN);
+                        if(tb!=0)
+                        {
+                            vo.setYearOnYear(String.valueOf(tb));
+                        }
+                        result.add(vo);
+                    }
 
                     //将当次的值设置为上一次的值
                     prePeriodValue=currPeriodValue;
