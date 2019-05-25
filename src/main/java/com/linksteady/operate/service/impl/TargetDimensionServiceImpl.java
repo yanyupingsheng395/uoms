@@ -31,7 +31,9 @@ public class TargetDimensionServiceImpl implements TargetDimensionService {
             for (Map<String, Object> map: tmpList) {
                 dimension += map.get("DIMENSION_NAME") + ":" + map.get("DIMENSION_VAL_NAME") + "|";
             }
-            dimension = dimension.substring(0, dimension.lastIndexOf("|"));
+            if(!dimension.equals("")) {
+                dimension = dimension.substring(0, dimension.lastIndexOf("|"));
+            }
             x.put("DIMENSIONS", dimension);
         });
         return dataList;
