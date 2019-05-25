@@ -47,144 +47,157 @@ function getMonitorVal() {
         });
     }
 }
+
+/**
+ * 获取三个echart图
+ */
 getCharts();
 function getCharts() {
     $.get("/tgtKpiMonitor/getCharts", {id:tgtId}, function (r) {
-        console.log(r)
+        console.log(r);
+        actualTgtVal(r.data[0]);
+
     });
 }
+
+// 各月目标和实际值对比图
+function actualTgtVal(chartData) {
+    var legend = chartData['legendData'];
+    var xname = chartData['xAxisName'];
+    var yname = chartData['yAxisName'];
+    var xdata = chartData['xAxisData'];
+    var series = chartData['seriesData'];
+    var option = getBarOption(xdata, xname, yname, series, "日期", "目标值/实际值");
+    var chart = echarts.init(document.getElementById('chart1'), 'macarons');
+    chart.setOption(option);
+}
+
 
 
 $("#tgtList").change(function () {
     $("#tgtDate").html("").html($(this).find("option:selected").attr("data-code"));
 });
 
-var option1 = {
-    tooltip: {
-        show: "true",
-        trigger: 'axis',
-        axisPointer: { // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-        }
-    },
-    "grid": {
-        "borderWidth": 0,
-        "top": 110,
-        "bottom": 95,
-        textStyle: {
-            color: "#fff"
-        }
-    },
-    "legend": {
-        right: 20,
-        orient: 'vertical',
-        textStyle: {
-            color: '#90979c',
-        },
-        "data": ['实际值', '目标值']
-    },
-    "calculable": false,
-    "xAxis": [{
-        name: "日期",
-        type: 'category',
-        axisTick: {
-            show: false
-        },
-        axisLine: {
-            show: true,
-        },
-        data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
-    }, {
-        type: 'category',
-        axisLine: {
-            show: false
-        },
-        axisTick: {
-            show: false
-        },
-        axisLabel: {
-            show: false
-        },
-        splitArea: {
-            show: false
-        },
-        splitLine: {
-            show: false
-        },
-        axisPointer: {
-            type: 'none'
-        },
-        data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
-    }],
-    "yAxis": [{
-        "type": "value",
-        name: "指标值",
-        "splitLine": {
-            "show": false
-        },
-        "axisLine": {
-            lineStyle: {
-                color: '#90979c'
+
+function getOptionAcc(legend, xAxis, series) {
+    return {
+        tooltip: {
+            show: "true",
+            trigger: 'axis',
+            axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
             }
         },
-        "axisTick": {
-            "show": false
-        },
-        "axisLabel": {
-            "interval": 0,
-
-        },
-        "splitArea": {
-            "show": false
-        },
-
-    }],
-    "series": [{
-        "name": "目标值",
-        xAxisIndex: 1,
-        color: "#ccc",
-        "type": "bar",
-        "barMaxWidth": 35,
-        "barGap": "10%",
-        "itemStyle": {
-            "normal": {
-                "label": {
-                    "show": true,
-                    "textStyle": {
-                        "color": "#fff"
-                    },
-                    "position": "insideTop",
-                    formatter: function(p) {
-                        return p.value > 0 ? (p.value) : '';
-                    }
-                }
+        grid: {
+            borderWidth: 0,
+            top: 110,
+            bottom: 95,
+            textStyle: {
+                color: "#fff"
             }
         },
-        "data": [300,600,500,800,900,800,870,900,700,800,700,880]
-    },
+        legend: {
+            right: 20,
+            orient: 'vertical',
+            textStyle: {
+                color: '#90979c',
+            },
+            data: ['实际值', '目标值']
+        },
+        calculable: false,
+        xAxis: [{
+            name: "日期",
+            type: 'category',
+            axisTick: {
+                show: false
+            },
+            axisLine: {
+                show: true,
+            },
+            data: xAxis
+        }, {
+            type: 'category',
+            axisLine: {
+                show: false
+            },
+            axisTick: {
+                show: false
+            },
+            axisLabel: {
+                show: false
+            },
+            splitArea: {
+                show: false
+            },
+            splitLine: {
+                show: false
+            },
+            axisPointer: {
+                type: 'none'
+            },
+            data: xAxis
+        }],
+        yAxis: [{
+            type: "value",
+            name: "指标值",
+            splitLine: {
+                show: false
+            },
+            axisTick: {
+                show: false
+            },
+            axisLabel: {
+                interval: 0,
 
-        {
-            "name": "实际值",
-            xAxisIndex: 0,
-            "type": "bar",
-            "barMaxWidth": 35,
-            "barGap": "10%",
-            "itemStyle": {
-                "normal": {
-                    "barBorderRadius": 0,
-                    "label": {
-                        "show": true,
-                        "position": "top",
+            },
+            splitArea: {
+                show: false
+            },
+
+        }],
+        series: [{
+            name: series.name,
+            xAxisIndex: 1,
+            type: "bar",
+            barMaxWidth: 35,
+            barGap: "10%",
+            itemStyle: {
+                normal: {
+                    label: {
+                        show: true,
+                        position: "insideTop",
                         formatter: function(p) {
                             return p.value > 0 ? (p.value) : '';
                         }
                     }
                 }
             },
-            "data": [100,200,100,300,500,400,670,800,600,700,600,780]
+            data: series.data
         }
-    ]
-};
+
+            // {
+            //     name: "实际值",
+            //     xAxisIndex: 0,
+            //     type: "bar",
+            //     barMaxWidth: 35,
+            //     barGap: "10%",
+            //     itemStyle: {
+            //         normal: {
+            //             barBorderRadius: 0,
+            //             label: {
+            //                 show: true,
+            //                 position: "top",
+            //                 formatter: function(p) {
+            //                     return p.value > 0 ? (p.value) : '';
+            //                 }
+            //             }
+            //         }
+            //     },
+            //     data: [100,200,100,300,500,400,670,800,600,700,600,780]
+            // }
+        ]
+    };
+}
 
 var option2 = {
     legend: {
