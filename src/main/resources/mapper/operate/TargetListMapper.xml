@@ -75,4 +75,8 @@
   <select id="getGmvHistoryByPeriodDay" resultMap="TgtReferenceMap" parameterType="string">
     ${_parameter}
   </select>
+
+  <update id="updateTargetStatus">
+      update UO_TGT_LIST set STATUS=#{status} WHERE ID=#{id}
+  </update>
 </mapper>

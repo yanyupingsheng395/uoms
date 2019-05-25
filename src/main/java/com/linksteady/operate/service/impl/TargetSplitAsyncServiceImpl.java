@@ -1,6 +1,5 @@
 package com.linksteady.operate.service.impl;
 
-import afu.org.checkerframework.checker.oigj.qual.O;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.ArithUtil;
@@ -12,24 +11,22 @@ import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.domain.TgtDismant;
 import com.linksteady.operate.domain.WeightIndex;
 import com.linksteady.operate.service.TargetSplitAsyncService;
-import com.linksteady.operate.vo.Echart;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
-
 import java.math.RoundingMode;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 目标进行分解的异步任务
  * @author  huang
  */
+@Slf4j
 @Service
 public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
 
@@ -49,20 +46,30 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
     @Async
     @Override
     public void targetSplit(Long targetId) {
+        try{
+            //获取目标的详细信息
+            TargetInfo targetInfo=targetListMapper.selectByPrimaryKey(targetId);
 
-        //获取目标的详细信息
-        TargetInfo targetInfo=targetListMapper.selectByPrimaryKey(targetId);
+            //如果是年，则拆分到12个月  //如果是月，则拆分到天  如果是天到天，则拆分到每天
+            if(TARGET_PERIOD_YEAR.equals(targetInfo.getPeriodType()))
+            {
+                splitByYear(targetInfo.getPeriodType(),targetInfo.getId(),targetInfo.getStartDt(),targetInfo.getTargetVal(),targetInfo.getKpiCode());
+            }else if(TARGET_PERIOD_MONTH.equals(targetInfo.getPeriodType()))
+            {
+                splitByMonth(targetInfo.getPeriodType(),targetInfo.getId(),targetInfo.getStartDt(),targetInfo.getTargetVal(),targetInfo.getKpiCode());
+            }else if(TARGET_PERIOD_DAY.equals(targetInfo.getPeriodType()))
+            {
+                splitByDay(targetInfo.getPeriodType(),targetInfo.getId(),targetInfo.getStartDt(),targetInfo.getTargetVal(),targetInfo.getKpiCode());
+            }
 
-        //如果是年，则拆分到12个月  //如果是月，则拆分到天  如果是天到天，则拆分到每天
-        if(TARGET_PERIOD_YEAR.equals(targetInfo.getPeriodType()))
+            //对任务进行计算
+            calculateTarget(targetInfo);
+
+        }catch (Exception e)
         {
-             splitByYear(targetInfo.getPeriodType(),targetInfo.getId(),targetInfo.getStartDt(),targetInfo.getTargetVal(),targetInfo.getKpiCode());
-        }else if(TARGET_PERIOD_MONTH.equals(targetInfo.getPeriodType()))
-        {
-            splitByMonth(targetInfo.getPeriodType(),targetInfo.getId(),targetInfo.getStartDt(),targetInfo.getTargetVal(),targetInfo.getKpiCode());
-        }else if(TARGET_PERIOD_DAY.equals(targetInfo.getPeriodType()))
-        {
-            splitByDay(targetInfo.getPeriodType(),targetInfo.getId(),targetInfo.getStartDt(),targetInfo.getTargetVal(),targetInfo.getKpiCode());
+             log.error("ID: {} 拆分计算任务异常",targetId,e);
+             //更新目标的状态为错误状态
+            targetListMapper.updateTargetStatus(targetId,"-1");
         }
     }
 
@@ -113,7 +120,9 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
         //权重指数和
         Double indexTotal=0d;
         Map<Long,Double> pctMap= Maps.newHashMap();
-        Map<Long,Double> gmvMap= Maps.newHashMap();
+        Map<Long,Double> valueMap= Maps.newHashMap();
+        //存放权重指数
+        Map<Long,Double> indexMap= Maps.newHashMap();
 
         Double monthPctTemp=0.00d;
         //每月的比例
@@ -150,13 +159,15 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
                     monthTotalTarget=ArithUtil.add(monthTarget,monthTotalTarget);
 
                     pctMap.put(monthId,monthPct);
-                    gmvMap.put(monthId,monthTarget);
+                    valueMap.put(monthId,monthTarget);
 
                 }else //12月单独处理 采用1-前11个月  因为采用list 所以保证了12月是最后一个被处理的月份
                 {
                     pctMap.put(monthId,ArithUtil.sub(100d,monthTotalPct));
-                    gmvMap.put(monthId,ArithUtil.formatDouble( ArithUtil.sub(targetValue,monthTotalTarget),0));
+                    valueMap.put(monthId,ArithUtil.formatDouble( ArithUtil.sub(targetValue,monthTotalTarget),0));
                 }
+                indexMap.put(monthId,weightIndex.getIndexValue());
+
             }
         }else  //按12个月平均
         {
@@ -175,12 +186,13 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
                     monthTotalTarget=ArithUtil.add(monthTarget,monthTotalTarget);
 
                     pctMap.put(mth,monthPct);
-                    gmvMap.put(mth,monthTarget);
+                    valueMap.put(mth,monthTarget);
                 }else
                 {
                     pctMap.put(mth,100-monthTotalPct);
-                    gmvMap.put(mth,ArithUtil.formatDouble( ArithUtil.sub(targetValue,monthTotalTarget),0));
+                    valueMap.put(mth,ArithUtil.formatDouble( ArithUtil.sub(targetValue,monthTotalTarget),0));
                 }
+                indexMap.put(mth,1d);
             }
         }
 
@@ -189,13 +201,14 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
         for(Long mth:monthList)
         {
             tgtDismant = new TgtDismant();
-            tgtDismant.setTgtVal(gmvMap.get(mth));
+            tgtDismant.setTgtVal(valueMap.get(mth));
             tgtDismant.setTgtPercent(pctMap.get(mth));
             tgtDismant.setTgtId(targetId);
             tgtDismant.setPeriodType(periodType);
-            tgtDismant.setPeriodDate(year);
-            tgtDismant.setComputeDt(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            tgtDismant.setPeriodDate(String.valueOf(mth));
+            tgtDismant.setComputeDt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             tgtDismant.setActualVal(0d);
+            tgtDismant.setTgtWeightIdx(indexMap.get(mth));
 
             targetDismantList.add(tgtDismant);
         }
@@ -403,5 +416,12 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
     private Map<String,Double> getIndexWeight(String startDt,String endDt,String kpiCode)
     {
         return null;
+    }
+
+    private void calculateTarget(TargetInfo targetInfo)
+    {
+        //todo 对目前执行情况进行计算
+
+        targetListMapper.updateTargetStatus(targetInfo.getId(),"2");
     }
 }

@@ -20,11 +20,10 @@
         <selectKey resultType ="java.lang.Integer" keyProperty= "id"  order= "BEFORE">
           SELECT seq_tgt_dismant_id.NEXTVAL from DUAL
         </selectKey >
-        INSERT ALL
-        <foreach collection ="list" item="item" index= "index" separator =",">
-           into UO_TGT_DISMANT
-            (ID, PERIOD_TYPE, PERIOD_DATE, ACTUAL_VAL,COMPUTE_DT,TGT_ID,TGT_VAL) values
-          (
+      insert into UO_TGT_DISMANT
+      (ID, PERIOD_TYPE, PERIOD_DATE, ACTUAL_VAL,COMPUTE_DT,TGT_ID,TGT_VAL,TGT_PERCENT,TGT_WEIGHT_IDX)
+        <foreach collection ="list" item="item" index= "index" separator ="union all">
+         SELECT
           #{id},
           #{item.periodType},
           #{item.periodDate},
@@ -32,10 +31,10 @@
           #{item.computeDt},
           #{item.tgtId},
           #{item.tgtVal},
-          #{item.tgtPercent}
-          )
+          #{item.tgtPercent},
+          #{item.tgtWeightIdx}
+        FROM DUAL
         </foreach >
-      SELECT 1 FROM DUAL
   </insert>
 
     <select id="findByTgtId" resultMap="BaseResultMap">
