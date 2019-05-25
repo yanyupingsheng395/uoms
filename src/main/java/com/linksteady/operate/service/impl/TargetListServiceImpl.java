@@ -66,12 +66,13 @@ public class TargetListServiceImpl implements TargetListService {
         targetListMapper.save(target);
         Long tgtId = target.getId();
         List<TargetDimension> dimensionList = target.getDimensionList();
-        dimensionList.stream().forEach(x->{
-            x.setId(targetDimensionMapper.getIdFromDual());
-            x.setTgtId(tgtId);
-        });
-        targetDimensionMapper.save(dimensionList);
-
+        if(dimensionList.size() > 0) {
+            dimensionList.stream().forEach(x->{
+                x.setId(targetDimensionMapper.getIdFromDual());
+                x.setTgtId(tgtId);
+            });
+            targetDimensionMapper.save(dimensionList);
+        }
         return tgtId;
     }
 
