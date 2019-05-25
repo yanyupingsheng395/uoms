@@ -12,6 +12,7 @@ public class TargetInfo implements Serializable {
     /**
      * 目标ID
      */
+    @Id
     @Column(name = "ID")
     private Long id;
 
