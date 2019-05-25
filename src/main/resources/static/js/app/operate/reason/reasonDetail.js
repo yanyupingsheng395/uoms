@@ -251,6 +251,10 @@ function submitData() {
                         $("#reasonResult_modal").modal("show");
                         createResultTableHeader('reasonResultTable');
                         $('#reasonResultTable').bootstrapTable('load', resp.data);
+                    }else{
+                        //关闭遮罩层
+                        lightyear.loading('hide');
+                        toastr.error('服务异常，快反馈给系统运维人员吧！');
                     }
                 });
 

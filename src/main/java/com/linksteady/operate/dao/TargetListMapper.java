@@ -24,4 +24,6 @@ public interface TargetListMapper extends MyMapper<TargetInfo> {
     List<TargetInfo> getTargetList();
 
     Map<String, Object> getMonitorVal(String targetId);
+
+    void updateTargetStatus(@Param("id") long id,@Param("status") String status);
 }
