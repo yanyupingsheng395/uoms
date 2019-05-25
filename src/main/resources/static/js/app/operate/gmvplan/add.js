@@ -66,8 +66,13 @@ function step2Init() {
     $.get("/target/getReferenceData", {kpiCode: kpiCode, startDt: startDt, endDt: endDt, period: periodType, dimInfo:JSON.stringify(dimInfo)}, function (r) {
         var code = "";
         $.each(r.data, function(k, v){
-            code += "<tr><td>"+v["period"]+"</td><td>"+v["kpi"]+"</td><td>"+v["yearOnYear"]+"%</td><td>"+v["yearOverYear"]+"%</td></tr>";
+            var yearOnYear = v["yearOnYear"] == null ? "-" : v["yearOnYear"] + "%";
+            var yearOverYear = v["yearOverYear"] == null ? "-" : v["yearOverYear"] + "%";
+            code += "<tr><td>"+v["period"]+"</td><td>"+v["kpi"]+"</td><td>"+yearOnYear+"</td><td>"+yearOverYear+"</td></tr>";
         });
+        if(code == "") {
+            code += "<tr><td class='text-center'><i class='mdi mdi-alert-circle-outline'></i>暂无参照值！</td></tr>";
+        }
         $("#_reference").html("").html(code);
     });
 }
