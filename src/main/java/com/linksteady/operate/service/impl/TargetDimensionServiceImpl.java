@@ -1,6 +1,5 @@
 package com.linksteady.operate.service.impl;
 import com.linksteady.operate.dao.TargetDimensionMapper;
-import com.linksteady.operate.domain.TargetDimension;
 import com.linksteady.operate.service.TargetDimensionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

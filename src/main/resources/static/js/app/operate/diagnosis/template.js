@@ -68,6 +68,8 @@ function getBarOption (xAxisData, xAxisName, yAxisName, seriesData, toolXname, t
             axisPointer : {
                 type : 'shadow'
             },
+            padding: [15, 20],
+            extraCssText: 'box-shadow: 0 0 5px rgba(0,0,0,0.3)',
             formatter:function (params, ticket) {
                 var htmlStr="<p style='color: #ffffff'>"+toolXname+"："+params[0].axisValueLabel+"</p>"
                 htmlStr+="<p style='color: #ffffff'>"+toolYname+"："+params[0].value+"</p>"

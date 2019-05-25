@@ -37,8 +37,8 @@ public class TgtKpiMonitorController {
     }
 
     @GetMapping("getCharts")
-    public ResponseBo getCharts(@RequestParam("id") String targetId) {
-        List<Echart> result = tgtMonitorService.getCharts(targetId);
+    public ResponseBo getCharts(@RequestParam("id") String targetId, @RequestParam("periodType") String periodType,@RequestParam("dt") String dt) {
+        List<Echart> result = tgtMonitorService.getCharts(targetId, periodType, dt);
         return ResponseBo.okWithData(null, result);
     }
 }

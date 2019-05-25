@@ -154,4 +154,41 @@ public class TargetListController {
     public ResponseBo getDimensionsById(@RequestParam("id") String id) {
         return ResponseBo.okWithData(null, targetDimensionService.getDimensionsById(id));
     }
+
+    /**
+     * 获取参考数据 如果是年 获取的是过去三年的数据 如果是月 获取的是过去三个月的数据，如果是天到天，获取的是这个周期 过去三年的数据
+     * @return
+     */
+    @GetMapping("/getReferenceDataById")
+    public ResponseBo getReferenceData(@RequestParam("id") Long id) {
+        Map<String, Object> map = targetListService.getDataById(id);
+        String kpiCode = (String)map.get("KPI_CODE");
+        String startDt = (String)map.get("START_DT");
+        String endDt = (String)map.get("END_DT");
+        String period = (String)map.get("PERIOD_TYPE");
+        List<Map<String, Object>> dimInfoList = (List)map.get("DIMENSIONS");
+        Map<String, String> dimInfo = Maps.newHashMap();
+        dimInfoList.stream().forEach(x-> {
+            dimInfo.put(String.valueOf(x.get("DIMENSION_CODE")), String.valueOf(x.get("DIMENSION_VAL_CODE")));
+        });
+        List<TgtReferenceVO> resultList;
+        if("gmv".equals(kpiCode))
+        {
+            resultList=targetListService.getGmvReferenceData(period,startDt,endDt,dimInfo);
+
+        }else
+        {
+            resultList=Lists.newArrayList();
+        }
+        return ResponseBo.okWithData(null, resultList);
+    }
+
+    /**
+     * 获取拆解后的结果
+     * @return
+     */
+    @RequestMapping("/getDismantData")
+    public ResponseBo getDismantData(@RequestParam("id") Long targetId) {
+        return ResponseBo.okWithData(null, targetSplitAsyncService.getDismantData(targetId));
+    }
 }

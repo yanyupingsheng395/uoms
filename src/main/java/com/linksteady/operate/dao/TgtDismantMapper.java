@@ -8,4 +8,6 @@ import java.util.List;
 public interface TgtDismantMapper extends MyMapper<TgtDismant> {
 
     void saveTargetDismant(List<TgtDismant> list);
+
+    List<TgtDismant> findByTgtId(Long targetId);
 }

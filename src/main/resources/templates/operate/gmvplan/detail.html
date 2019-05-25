@@ -47,8 +47,7 @@
                                     <div class="col-md-12"><span class="h5">维度&值：</span></div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <ol id="dimensions"></ol>
+                                    <div class="col-md-12" id="dimensions">
                                     </div>
                                 </div>
 
@@ -57,10 +56,10 @@
                                         <span class="h5">目标参照：</span>
                                         <table class="table table-bordered">
                                             <thead><tr><th>周期</th><th>目标关键指标</th><th>同比</th><th>环比</th></tr></thead>
-                                            <tbody>
-                                            <tr><td>2019</td><td>GMV</td><td>20%</td><td>19%</td></tr>
-                                            <tr><td>2018</td><td>GMV</td><td>20%</td><td>19%</td></tr>
-                                            <tr><td>2017</td><td>GMV</td><td>20%</td><td>19%</td></tr>
+                                            <tbody id="reference">
+                                            <tr><td>2019</td><td>10</td><td>20%</td><td>19%</td></tr>
+                                            <tr><td>2018</td><td>10</td><td>20%</td><td>19%</td></tr>
+                                            <tr><td>2017</td><td>10</td><td>20%</td><td>19%</td></tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -69,6 +68,14 @@
                                     <div class="col-md-12">
                                         <span class="h5">目标分解结果：</span>
                                         <div id="chart" style="width: 100%;height: 400px;"></div>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top: 20px;">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table text-nowrap" id="dismantDataTable">
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row" style="margin-top: 20px;">
@@ -110,150 +117,14 @@
         $.each(r.data["DIMENSIONS"], function (k, v) {
             code += "<li>"+v["DIMENSION_NAME"] + ":" + v["DIMENSION_VAL_NAME"]+"</li>";
         });
+        if(code == "") {
+            code += "<p style='margin-left: 20px;'><i class='mdi mdi-alert-circle-outline'></i>暂无维度及其值！</p>";
+        }else {
+            code = "<ol>" + code;
+            code += "</ol>";
+        }
         $("#dimensions").html("").html(code);
     });
-
-    var xdata = ['2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019'];
-    // var option = {
-    //     tooltip: {
-    //         trigger: 'axis',
-    //         axisPointer: { // 坐标轴指示器，坐标轴触发有效
-    //             type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-    //         }
-    //     },
-    //     legend: {
-    //         data: ['绝对值','占比值'],
-    //         align: 'right',
-    //         right: 10
-    //     },
-    //     grid: {
-    //         left: '3%',
-    //         right: '4%',
-    //         bottom: '3%',
-    //         containLabel: true
-    //     },
-    //     xAxis: [{
-    //         type: 'category',
-    //         name: '日期',
-    //         splitLine:{show: false},
-    //         data: ['201901','201902','201903','201904','201905']
-    //     }],
-    //     yAxis: [{
-    //         type: 'value',
-    //         name: '绝对值（元）',
-    //         splitLine:{show: false},
-    //         axisTick: {
-    //             show: false
-    //         },
-    //         splitArea: {
-    //             show: false
-    //         },
-    //         axisLabel: {
-    //             formatter: '{value}'
-    //         }
-    //     },{
-    //         type: 'value',
-    //         name: '占比值（%）',
-    //         splitLine:{show: false},
-    //         axisTick: {
-    //             show: false
-    //         },
-    //         splitArea: {
-    //             show: false
-    //         },
-    //         axisLabel: {
-    //             formatter: '{value}'
-    //         }
-    //     }],
-    //     series: [{
-    //         name: '占比值',
-    //         type: 'bar',
-    //         yAxisIndex: 1,
-    //         data: [20, 10 ,30, 40,10]
-    //     },{
-    //         name: '绝对值',
-    //         type: 'bar',
-    //         yAxisIndex: 0,
-    //         data: [20, 10 ,30, 40,10]
-    //     }]
-    // };
-    var option = {
-        tooltip: {formatter: function (params, ticket, callback) {
-            return params.name + "<br/>" + "分解目标：" + params.value + "<br/>" + "权重系数：" + weight(params.name);
-        }},
-        legend: {
-            data:['201801','201802','201803','201804','201805','201806']
-        },
-        xAxis: {
-            data: ['201801','201802','201803','201804','201805','201806'],
-            splitLine:{show: false}
-        },
-        yAxis: {splitLine:{show: false},splitArea: {show: false}},
-        series: [
-            {
-                name: '201801',
-                type: 'bar',
-                barGap:'-100%',
-                data: [5, 0, 0, 0, 0, 0]
-            },
-            {
-                name: '201802',
-                type: 'bar',
-                barGap:'-100%',
-                data: [0, 20, 0, 0, 0, 0]
-            },
-            {
-                name: '201803',
-                type: 'bar',
-                barGap:'-100%',
-                data: [0, 0, 36, 0, 0, 0]
-            },
-            {
-                name: '201804',
-                type: 'bar',
-                barGap:'-100%',
-                data: [0, 0, 0, 10, 0, 0]
-            },
-            {
-                name: '201805',
-                type: 'bar',
-                barGap:'-100%',
-                data: [0, 0, 0, 0, 10, 0]
-            },
-            {
-                name: '201806',
-                type: 'bar',
-                barGap:'-100%',
-                data: [0, 0, 0, 0, 0, 20]
-            },
-            {
-                name: '目标占比',
-                type: 'pie',
-                radius : '28%',
-                center: ['75%', '35%'],
-                tooltip:  {formatter: function (params, ticket, callback) {
-                    return ((params.value/101) * 100).toFixed(2) + "%";
-                    }},
-                data:[
-                    {value:5, name:'201801'},
-                    {value:20, name:'201802'},
-                    {value:36, name:'201803'},
-                    {value:10, name:'201804'},
-                    {value:10, name:'201805'},
-                    {value:20, name:'201806'}
-                ],
-                itemStyle: {
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
-                }
-            }
-        ]
-    };
-    var chart = echarts.init(document.getElementById("chart"), 'macarons');
-    chart.setOption(option);
 
     function weight(val) {
         var obj = new Object();
@@ -264,6 +135,61 @@
         obj["201805"] = "0.03";
         obj["201806"] = "0.09";
         return obj[val];
+    }
+
+    getReferenceData();
+    function getReferenceData() {
+        $.get("/target/getReferenceDataById", {id: id}, function (r) {
+            var code = "";
+            $.each(r.data, function (k, v) {
+                var yearOnYear = v['yearOnYear'] == null ? "-":v['yearOnYear'] + "%";
+                var yearOverYear = v['yearOverYear'] == null ? "-":v['yearOverYear'] + "%";
+                code += "<tr><td>"+v['period']+"</td><td>"+v['kpi']+"</td><td>"+yearOnYear+"</td><td>"+yearOverYear+"</td></tr>";
+            });
+            if(code == "") {
+                code += "<tr><td class='text-center' colspan='4'><i class='mdi mdi-alert-circle-outline'></i>没有参照值！</td></tr>";
+            }
+            $("#reference").html("").html(code);
+        });
+    }
+    getDismantData();
+    function getDismantData() {
+        $.get("/target/getDismantData", {id: id}, function (r) {
+            var chart = r.data['chart'];
+            var option = getBarOption(chart['xAxisData'], chart['xAxisName'], chart['yAxisName'],  chart['yAxisData'], chart['xAxisName'], chart['yAxisName']);
+            var c = echarts.init(document.getElementById("chart"), 'macarons');
+            c.setOption(option);
+            makeTable(r.data);
+        });
+    }
+
+    function makeTable(data) {
+        var code = "<thead><tr><th></th>";
+        $.each(data['head'], function (k, v) {
+            code += "<th>" + v + "</th>";
+        });
+        code += "</tr></thead>";
+        code += "<tbody><tr><td>分解目标</td>";
+        $.each(data.row1, function (k, v) {
+            code += "<td>" + v + "</td>";
+        });
+        code += "</tr>";
+        code += "<tr><td>权重指数</td>";
+        $.each(data.row2, function (k, v) {
+            code += "<td>" + v + "</td>";
+        });
+        code += "</tr>";
+        code += "<tr><td>目标占比</td>";
+        $.each(data.row3, function (k, v) {
+            code += "<td>" + v + "</td>";
+        });
+        code += "</tr>";
+        code += "</tbody>";
+        if(data['head'].length != 0) {
+            $("#dismantDataTable").html("").html(code);
+        }else {
+            $("#dismantDataTable").hide();
+        }
     }
 </script>
 </body>

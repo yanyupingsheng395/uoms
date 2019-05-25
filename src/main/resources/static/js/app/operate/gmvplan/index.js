@@ -23,12 +23,15 @@ $(function () {
             field: 'NAME',
             title: '目标名称'
         },{
-            field: 'START_DT',
-            title: '开始时间'
-        }, {
-            field: 'END_DT',
-            title: '结束时间'
-        }, {
+            title: '目标周期',
+            formatter: function (values, row, index) {
+                if(row["END_DT"] == null) {
+                    return row["START_DT"];
+                }else {
+                    return row["START_DT"] + "至" + row["END_DT"];
+                }
+            }
+        },{
             field: 'KPI_NAME',
             title: '指标'
         },{

@@ -71,7 +71,7 @@ function step2Init() {
             code += "<tr><td>"+v["period"]+"</td><td>"+v["kpi"]+"</td><td>"+yearOnYear+"</td><td>"+yearOverYear+"</td></tr>";
         });
         if(code == "") {
-            code += "<tr><td class='text-center'><i class='mdi mdi-alert-circle-outline'></i>暂无参照值！</td></tr>";
+            code += "<tr><td class='text-center' colspan='4'><i class='mdi mdi-alert-circle-outline'></i>没有参照值！</td></tr>";
         }
         $("#_reference").html("").html(code);
     });

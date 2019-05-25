@@ -13,7 +13,7 @@
     <result column="TGT_ID" jdbcType="DECIMAL" property="tgtId" />
     <result column="TGT_VAL" jdbcType="DECIMAL" property="tgtVal" />
     <result column="TGT_PERCENT" jdbcType="DECIMAL" property="tgtPercent" />
-    <result column="TGT_WEIGHT_IDX" jdbcType="DECIMAL" property="tgtWeightIdx"></result>
+    <result column="TGT_WEIGHT_IDX" jdbcType="DECIMAL" property="tgtWeightIdx"/>
   </resultMap>
 
   <insert id="saveTargetDismant" parameterType="list">
@@ -37,4 +37,8 @@
         </foreach >
       SELECT 1 FROM DUAL
   </insert>
+
+    <select id="findByTgtId" resultMap="BaseResultMap">
+      select PERIOD_DATE,TGT_VAL,TGT_PERCENT,TGT_WEIGHT_IDX from UO_TGT_DISMANT where TGT_ID = #{targetId} order by PERIOD_DATE asc
+    </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import afu.org.checkerframework.checker.oigj.qual.O;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.ArithUtil;
@@ -11,15 +12,19 @@ import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.domain.TgtDismant;
 import com.linksteady.operate.domain.WeightIndex;
 import com.linksteady.operate.service.TargetSplitAsyncService;
+import com.linksteady.operate.vo.Echart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
+
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 目标进行分解的异步任务
@@ -59,6 +64,27 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
         {
             splitByDay(targetInfo.getPeriodType(),targetInfo.getId(),targetInfo.getStartDt(),targetInfo.getTargetVal(),targetInfo.getKpiCode());
         }
+    }
+
+    @Override
+    public Map<String, Object> getDismantData(Long targetId) {
+        List<TgtDismant> dataList = tgtDismantMapper.findByTgtId(targetId);
+        Echart echart = new Echart();
+        echart.setxAxisName("日期");
+        echart.setyAxisName("分解目标");
+        List<String> xdata = dataList.stream().map(x->x.getPeriodDate()).collect(Collectors.toList());
+        echart.setxAxisData(xdata);
+        echart.setyAxisData(dataList.stream().map(x->String.valueOf(x.getTgtVal())).collect(Collectors.toList()));
+        List<Double> row1 = dataList.stream().map(x->x.getTgtVal()).collect(Collectors.toList());
+        List<Double> row2 = dataList.stream().map(x->x.getTgtWeightIdx()).collect(Collectors.toList());
+        List<Double> row3 = dataList.stream().map(x->x.getTgtPercent()).collect(Collectors.toList());
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("chart", echart);
+        result.put("head", xdata);
+        result.put("row1", row1);
+        result.put("row2", row2);
+        result.put("row3", row3);
+        return result;
     }
 
 

@@ -60,7 +60,7 @@
   </select>
 
   <select id="getTargetList" resultMap="BaseResultMap">
-      select ID, NAME, START_DT, END_DT from UO_TGT_LIST where STATUS = '1' order by CREATE_DT DESC
+      select ID, NAME, START_DT, END_DT, PERIOD_TYPE from UO_TGT_LIST where STATUS = '1' order by CREATE_DT DESC
   </select>
 
   <select id="getMonitorVal" resultType="map">
