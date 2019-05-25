@@ -233,7 +233,7 @@ public class TargetListServiceImpl implements TargetListService {
     private List<TgtReference> getGmvHistoryByYear(List<String> periodList,Map<String, String> dimInfo)
     {
            String sqlTemplate=" SELECT\n" +
-               "            W_DATE.YEAR PERIOD_NAM,E\n" +
+               "            W_DATE.YEAR PERIOD_NAME,\n" +
                "            TRUNC(SUM(W_ORDERS.REAL_FEE)) VALUE\n" +
                "        FROM\n" +
                "            W_ORDERS JOIN W_DATE ON W_ORDERS.ORDER_DT_WID=W_DATE.ROW_WID\n" +
@@ -252,7 +252,7 @@ public class TargetListServiceImpl implements TargetListService {
             periodInfo.append(" AND W_DATE.YEAR="+periodList.get(0));
         }else
         {
-            periodInfo.append(" AND W_DATE.YEAR IN "+Joiner.on(",").skipNulls().join(periodList)+")");
+            periodInfo.append(" AND W_DATE.YEAR IN ("+Joiner.on(",").skipNulls().join(periodList)+")");
         }
 
         StringTemplate stringTemplate=new StringTemplate(sqlTemplate);
@@ -290,7 +290,7 @@ public class TargetListServiceImpl implements TargetListService {
             periodInfo.append(" AND W_DATE.MONTH="+periodList.get(0));
         }else
         {
-            periodInfo.append(" AND W_DATE.MONTH IN "+Joiner.on(",").skipNulls().join(periodList)+")");
+            periodInfo.append(" AND W_DATE.MONTH IN ("+Joiner.on(",").skipNulls().join(periodList)+")");
         }
 
         StringTemplate stringTemplate=new StringTemplate(sqlTemplate);
