@@ -117,7 +117,7 @@ public class TargetListServiceImpl implements TargetListService {
             Map<String,Double> dataMap=data.stream().collect(Collectors.toMap(TgtReference::getPeriodName,TgtReference::getValue));
 
             //计算同比信息
-            for(int i=0;i<=periodList.size()-1;i++)
+            for(int i=0;i<periodList.size()-1;i++)
             {
                 //获取当年的值
                 double current= Optional.ofNullable(dataMap.get(periodList.get(i))).orElse(0d);
