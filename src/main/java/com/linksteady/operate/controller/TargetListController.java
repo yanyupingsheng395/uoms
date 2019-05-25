@@ -1,9 +1,11 @@
 package com.linksteady.operate.controller;
+import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.config.KpiCacheManager;
+import com.linksteady.operate.domain.TargetDimension;
 import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.service.TargetDimensionService;
 import com.linksteady.operate.service.TargetListService;
@@ -119,18 +121,24 @@ public class TargetListController {
      * @return
      */
     @GetMapping("/getReferenceData")
-    public ResponseBo getReferenceData(@RequestParam("kpiCode") String kpiCode,@RequestParam("startDt") String startDt, @RequestParam("endDt") String endDt,@RequestParam("period") String period,@RequestBody Map<String,String> dimInfo) {
-        List<TgtReferenceVO> list=null;
+    public ResponseBo getReferenceData(@RequestParam("kpiCode") String kpiCode,@RequestParam("startDt") String startDt, @RequestParam("endDt") String endDt,@RequestParam("period") String period, @RequestParam("dimInfo") String dimInfo) {
+        JSONArray jsonArray = JSONArray.parseArray(dimInfo);
+        List<TargetDimension> list = jsonArray.toJavaList(TargetDimension.class);
+        Map<String, String> dimInfoMap = Maps.newHashMap();
+        list.stream().forEach(x-> {
+            dimInfoMap.put(x.getDimensionCode(), x.getDimensionValCode());
+        });
 
+        List<TgtReferenceVO> resultList;
         if("gmv".equals(kpiCode))
         {
-            list=targetListService.getGmvReferenceData(period,startDt,endDt,dimInfo);
+            resultList=targetListService.getGmvReferenceData(period,startDt,endDt,dimInfoMap);
 
         }else
         {
-            list=Lists.newArrayList();
+            resultList=Lists.newArrayList();
         }
-        return ResponseBo.okWithData(null, list);
+        return ResponseBo.okWithData(null, resultList);
     }
 
     /**
