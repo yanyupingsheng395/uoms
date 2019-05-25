@@ -62,7 +62,7 @@ public class TargetListServiceImpl implements TargetListService {
         User user = (User)SecurityUtils.getSubject().getPrincipal();
         target.setCreateBy(user.getUsername());
         target.setCreateDt(new Date());
-        target.setStatus("1");
+        target.setStatus("0");
         targetListMapper.save(target);
         Long tgtId = target.getId();
         List<TargetDimension> dimensionList = target.getDimensionList();
