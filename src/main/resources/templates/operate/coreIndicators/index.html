@@ -113,7 +113,8 @@
                                     <div class="col-md-12">
                                         <div class="alert alert-info" role="alert">
                                             <p>
-                                                <i class="mdi mdi-alert-circle-outline"></i>目标的完成度为%；尚有业绩XX需要完成；已经过的时间尚有YY业绩缺口；没有完成目标的单位周期有N个，分别是a、b；
+                                                <i class="mdi mdi-alert-circle-outline"></i>目标的完成度为<span id="finishRate2"></span>；尚有业绩<span id="remainTgt"></span>需要完成；已经过的时间尚有<span id="finishDiffer"></span>业绩缺口；没有完成目标的单位周期有<span id="remainCount"></span>个，<a
+                                                    href="#" style="text-decoration: underline;color:#000;cursor: pointer;">详情</a>；
                                             </p>
                                         </div>
                                     </div>
@@ -154,8 +155,8 @@
                                             <tbody>
                                             <tr>
                                                 <td>变异系数</td>
-                                                <td>1.23</td>
-                                                <td>1.05</td>
+                                                <td id="varyIdx">0.00</td>
+                                                <td id="varIdxLast">0.00</td>
                                             </tr>
                                             </tbody>
                                         </table>

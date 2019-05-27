@@ -172,4 +172,10 @@ public class TargetInfo implements Serializable {
     @Column(name = "VARY_IDX_LAST")
     private Double varyIdxLast;
 
+    /**
+     * 业绩缺口
+     */
+    @Column(name = "FINISH_DIFFER")
+    private Double finishDiffer;
+
 }

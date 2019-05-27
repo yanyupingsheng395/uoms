@@ -81,7 +81,28 @@ $(function () {
         }, {
             title: '操作',
             formatter: function (values, row,index) {
-                return "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
+                var res = "";
+                switch (row['STATUS']) {
+                    case "1":
+                        res =  "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>";
+                        break;
+                    case "2":
+                        res =  "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
+                        break;
+                    case "3":
+                        res =  "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
+                        break;
+                    case "4":
+                        res =  "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
+                        break;
+                    case "-1":
+                        res =  "<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
+                        break;
+                    default:
+                        res =  "-";
+                        break;
+                }
+                return res;
             }
         }],
         onLoadSuccess: function(data){
