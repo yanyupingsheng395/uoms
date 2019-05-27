@@ -47,8 +47,8 @@ public class TargetListServiceImpl implements TargetListService {
     private static final String TARGET_PERIOD_DAY="day";
 
     @Override
-    public List<TargetInfo> getTargetList() {
-        return targetListMapper.getTargetList();
+    public List<TargetInfo> getTargetList(String username) {
+        return targetListMapper.getTargetList(username);
     }
 
     @Override

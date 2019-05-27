@@ -21,7 +21,7 @@ public interface TargetListMapper extends MyMapper<TargetInfo> {
 
     TgtReference getGmvHistoryByPeriodDay(@Param("sql") String sql);
 
-    List<TargetInfo> getTargetList();
+    List<TargetInfo> getTargetList(@Param("username") String username);
 
     Map<String, Object> getMonitorVal(String targetId);
 
