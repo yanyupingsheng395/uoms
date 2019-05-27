@@ -63,9 +63,12 @@ $(function () {
                         return "<span class=\"label label-primary\">拆解计算中</span>";
                         break;
                     case "2":
-                        return "<span class=\"label label-success\">停止</span>";
+                        return "<span class=\"label label-success\">执行中</span>";
                         break;
                     case "3":
+                        return "<span class=\"label label-success\">停止</span>";
+                        break;
+                    case "4":
                         return "<span class=\"label label-warning\">失效</span>";
                         break;
                     case "-1":
@@ -79,28 +82,30 @@ $(function () {
             title: '操作',
             formatter: function (values, row,index) {
                 var res = "";
-                switch (row['STATUS']) {
-                    case "0":
-                        res = "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>" +
-                            "&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
-                        break;
-                    case "1":
-                        res = "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>" +
-                            "&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
-                        break;
-                    case "2":
-                        res = "<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
-                        break;
-                    case "3":
-                        res = "<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
-                        break;
-                    case "-1":
-                        res = "<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
-                        break;
-                    default:
-                        return "-";
-                }
-                return res;
+                // switch (row['STATUS']) {
+                //     case "0":
+                //         res = "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>" +
+                //             "&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
+                //         break;
+                //     case "1":
+                //         res = "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>" +
+                //             "&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
+                //         break;
+                //     case "2":
+                //         res = "<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
+                //         break;
+                //     case "3":
+                //         res = "<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
+                //         break;
+                //     case "-1":
+                //         res = "<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
+                //         break;
+                //     default:
+                //         return "-";
+                // }
+
+
+                return "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
             }
         }],
         onLoadSuccess: function(data){

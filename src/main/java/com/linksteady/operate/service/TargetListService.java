@@ -19,7 +19,7 @@ public interface TargetListService {
 
     Map<String, Object> getDataById(Long id);
 
-    List<TargetInfo> getTargetList();
+    List<TargetInfo> getTargetList(String username);
 
     Map<String, Object> getMonitorVal(String targetId);
 

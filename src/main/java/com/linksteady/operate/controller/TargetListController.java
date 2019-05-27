@@ -11,6 +11,8 @@ import com.linksteady.operate.service.TargetDimensionService;
 import com.linksteady.operate.service.TargetListService;
 import com.linksteady.operate.service.TargetSplitAsyncService;
 import com.linksteady.operate.vo.TgtReferenceVO;
+import com.linksteady.system.domain.User;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
@@ -147,7 +149,8 @@ public class TargetListController {
      */
     @GetMapping("/getTargetList")
     public ResponseBo getTargetList() {
-        return ResponseBo.okWithData(null, targetListService.getTargetList());
+        String user = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
+        return ResponseBo.okWithData(null, targetListService.getTargetList(user));
     }
 
     @GetMapping("/getDimensionsById")
