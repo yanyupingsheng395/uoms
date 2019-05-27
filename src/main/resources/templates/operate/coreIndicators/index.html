@@ -55,32 +55,24 @@
                                         <select class="selectpicker" id="tgtList" style="width:calc(100% - 80px);resize:none; height: 34px; float: left"></select>
                                     </div>
                                     <div class="col-md-4">
-                                        <span style="float: left; height: 34px; width: 80px; line-height: 34px;">目标时间：</span>
+                                        <span style="float: left; height: 34px; width: 80px; line-height: 34px;">目标周期：</span>
                                         <span id="tgtDate" style="width:calc(100% - 80px);resize:none; line-height: 34px; float: left">2019年</span>
                                     </div>
                                     <div class="col-md-3">
-                                        <a style="line-height: 34px;text-decoration: underline;color: #4d5259;cursor: pointer;" onclick="$('#dimensionVal').modal('show')"><i class="mdi mdi-mouse"></i>指标维度&值</a></span>
+                                        <a style="line-height: 34px;text-decoration: underline;color: #4d5259;cursor: pointer;" onclick="getDimensionList()"><i class="mdi mdi-mouse"></i>指标维度&值</a></span>
                                     </div>
                                 </div>
                                 <hr>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="card bg-light">
-                                            <div class="card-body clearfix">
+                                            <div class="card-body clearfix" style="padding-bottom: 60px;">
                                                 <div class="row">
                                                     <div class="col-md-12 text-center">
                                                         <p class="h5 m-t-0"><i class="mdi mdi-coffee"></i>本周期目标</p>
                                                         <p class="h3 m-b-0" id="targetVal">0.00元</p>
                                                     </div>
                                                 </div>
-                                                <!--<div class="row">-->
-                                                    <!--<div class="col-md-6 text-center">-->
-                                                        <!--<p class="h6">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>0.00%</span></p>-->
-                                                    <!--</div>-->
-                                                    <!--<div class="col-md-6 text-center">-->
-                                                        <!--<p class="h6">去年同期:<span style="line-height: 30px;">0.00元</span></p>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
                                             </div>
                                         </div>
                                     </div>
@@ -106,19 +98,11 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="card bg-light">
-                                            <div class="card-body clearfix">
+                                            <div class="card-body clearfix" style="padding-bottom: 60px;">
                                                 <div class="row">
                                                     <div class="col-md-12 text-center">
                                                         <p class="h5 m-t-0"><i class="mdi mdi-percent"></i>本周期完成率</p>
                                                         <p class="h3 m-b-0" id="finishRate">0.00%</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 text-center">
-                                                        <p class="h6">完成率差:<span style="line-height: 30px;" id="finishRateDiffer">0.00%</span></p>
-                                                    </div>
-                                                    <div class="col-md-6 text-center">
-                                                        <p class="h6">去年同期:<span id="finishRateLast" style="line-height: 30px;">0.00%</span></p>
                                                     </div>
                                                 </div>
                                             </div>

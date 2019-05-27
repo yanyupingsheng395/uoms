@@ -51,7 +51,7 @@
   <select id="getPageList" resultType="map">
     select * from (
       select A.*,ROWNUM RN from (select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, tgt.CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME, tgt.TARGET_VAL, tgt.STATUS from UO_TGT_LIST tgt
-      LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.CREATE_BY = #{userId} order by tgt.CREATE_DT DESC) A
+      LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.CREATE_BY = #{userId} and tgt.STATUS &lt;&gt; '-2'  order by tgt.CREATE_DT DESC) A
       where ROWNUM &lt;=#{endRow}
     ) where RN &gt;=#{startRow}
   </select>

@@ -270,8 +270,7 @@ function getRandom (m,n){
     return num;
 }
 
-// 获取目标的维度和值
-$("#dimensionVal").on('shown.bs.modal', function () {
+function getDimensionList() {
     var id = $("#tgtList").find("option:selected").val();
     if(id != "") {
         $.get("/target/getDimensionsById", {id: id}, function (r) {
@@ -279,9 +278,37 @@ $("#dimensionVal").on('shown.bs.modal', function () {
             $.each(r.data, function (k, v) {
                 code += "<li>" + v["DIMENSION_NAME"] + ":" + v["DIMENSION_VAL_NAME"] +  "</li>";
             });
-            $("#dimensionList").html("").html(code);
+
+            if(code == "") {
+                toastr.warning("该目标没有维度和值！");
+            }else {
+                $("#dimensionVal").modal('show');
+                $("#dimensionList").html("").html(code);
+            }
         });
     }else {
         toastr.warning("请选择目标！");
     }
-});
+}
+//
+// // 获取目标的维度和值
+// $("#dimensionVal").on('shown.bs.modal', function () {
+//     var id = $("#tgtList").find("option:selected").val();
+//     if(id != "") {
+//         $.get("/target/getDimensionsById", {id: id}, function (r) {
+//             var code = "";
+//             $.each(r.data, function (k, v) {
+//                 code += "<li>" + v["DIMENSION_NAME"] + ":" + v["DIMENSION_VAL_NAME"] +  "</li>";
+//             });
+//
+//             if(code == "") {
+//                 $("#dimensionVal").modal('hide');
+//                 toastr.warning("该目标没有维度和值！");
+//             }else {
+//                 $("#dimensionList").html("").html(code);
+//             }
+//         });
+//     }else {
+//         toastr.warning("请选择目标！");
+//     }
+// });

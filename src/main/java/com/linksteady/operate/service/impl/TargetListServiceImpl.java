@@ -248,6 +248,10 @@ public class TargetListServiceImpl implements TargetListService {
         return result;
     }
 
+    @Override
+    public void deleteDataById(String id) {
+        targetListMapper.updateTargetStatus(Long.valueOf(id), "-2");
+    }
 
     /**
      * 按年获取gmv的历史数据

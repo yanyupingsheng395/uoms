@@ -81,31 +81,7 @@ $(function () {
         }, {
             title: '操作',
             formatter: function (values, row,index) {
-                var res = "";
-                // switch (row['STATUS']) {
-                //     case "0":
-                //         res = "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>" +
-                //             "&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
-                //         break;
-                //     case "1":
-                //         res = "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>" +
-                //             "&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
-                //         break;
-                //     case "2":
-                //         res = "<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
-                //         break;
-                //     case "3":
-                //         res = "<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
-                //         break;
-                //     case "-1":
-                //         res = "<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
-                //         break;
-                //     default:
-                //         return "-";
-                // }
-
-
-                return "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas()'><i class='mdi mdi-close'></i>删除</a>";
+                return "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
             }
         }],
         onLoadSuccess: function(data){
@@ -114,17 +90,35 @@ $(function () {
     };
     $('#gmvPlanTable').bootstrapTable(settings);
 });
-function deleteDatas(){
+function deleteDatas(id){
     $.confirm({
         title: '提示',
-        content: '演示环境，暂不支持删除数据！',
+        content: '确认删除这条记录？',
         theme: 'bootstrap',
         type: 'orange',
         buttons: {
             confirm: {
                 text: '确认',
-                btnClass: 'btn-blue'
+                btnClass: 'btn-blue',
+                action: function() {
+                    delData(id);
+                }
+            },
+            cancel: {
+                text: '取消'
             }
+        }
+    });
+}
+
+// 点击删除按钮，将数据状态更新为-2
+function delData(id) {
+    $.get("/target/deleteDataById", {id: id}, function (r) {
+        if(r.code == 200) {
+            toastr.success("删除成功！");
+            $('#gmvPlanTable').bootstrapTable('refresh');
+        }else {
+            toastr.error("未知异常！");
         }
     });
 }

@@ -12,6 +12,7 @@ import com.linksteady.operate.service.TargetListService;
 import com.linksteady.operate.service.TargetSplitAsyncService;
 import com.linksteady.operate.vo.TgtReferenceVO;
 import com.linksteady.system.domain.User;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import java.util.Map;
  * Created by hxcao on 2019-05-21
  * @author hxcao
  */
+@Slf4j
 @RestController
 @RequestMapping("/target")
 public class TargetListController {
@@ -193,5 +195,16 @@ public class TargetListController {
     @RequestMapping("/getDismantData")
     public ResponseBo getDismantData(@RequestParam("id") Long targetId) {
         return ResponseBo.okWithData(null, targetSplitAsyncService.getDismantData(targetId));
+    }
+
+    @RequestMapping("/deleteDataById")
+    public ResponseBo deleteDataById(@RequestParam("id") String id) {
+        try {
+            targetListService.deleteDataById(id);
+            return ResponseBo.ok();
+        } catch(Exception ex){
+            log.error(ex.getMessage());
+            return ResponseBo.error();
+        }
     }
 }
