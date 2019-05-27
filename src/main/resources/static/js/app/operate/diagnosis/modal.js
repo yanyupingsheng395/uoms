@@ -4,6 +4,23 @@ function nodeClick() {
         viewChart(r.data);
     });
 }
+
+function getRootCondition() {
+    var code = "";
+    $.ajax({
+        url: "/diag/getDimByDiagId",
+        data: {diagId: diagId},
+        async: false,
+        success: function (r) {
+            console.log(r)
+            $.each(r.data.split(";"), function (k, v) {
+                code += "<li>"+v+"</li>";
+            })
+        }
+    });
+    return code;
+}
+
 function viewChart(obj) {
     $("#modal").modal('show');
     var operateType = obj.periodType;
@@ -22,13 +39,10 @@ function viewChart(obj) {
         $("#template1").attr("style", "display:block;");
         $("#template2").attr("style", "display:none;");
         $("#template3").attr("style", "display:none;");
-
-        var whereinfo = "<div class=\"col-md-12\">\n" +
-            "<table class=\"table table-sm\">\n" +
-            "<n></n><tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>无过滤条件！</td></tr>\n" +
-            "</table>\n" +
-            "</div>";
-        $("#whereinfo").html("").html(whereinfo);
+        var code = getRootCondition();
+        if(code != "") {
+            $("#conditions").html("").html("<ol>"+code+"</ol>");
+        }
     } else {
         // 条件
         var whereinfo = "<div class=\"col-md-12\"><table class='table table-sm'>";

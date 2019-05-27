@@ -4,8 +4,11 @@ import com.linksteady.operate.dao.DiagConditionMapper;
 import com.linksteady.operate.dao.DiagDetailMapper;
 import com.linksteady.operate.dao.DiagMapper;
 import com.linksteady.operate.domain.Diag;
+import com.linksteady.operate.domain.DiagCondition;
 import com.linksteady.operate.domain.DiagDetail;
 import com.linksteady.operate.service.DiagService;
+import com.linksteady.system.domain.User;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,11 +39,23 @@ public class DiagServiceImpl implements DiagService {
 
     @Override
     @Transactional
-    public Long save(Diag diag) {
+    public Long save(Diag diag, List<DiagCondition> diagConditions) {
+        String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
+        diag.setCreateBy(username);
         diag.setCreateDt(new Date());
         diag.setUpdateDt(new Date());
         diagMapper.save(diag);
-        return diag.getDiagId();
+        Long diagId = diag.getDiagId();
+        if(diagConditions.size() > 0) {
+            diagConditions.stream().forEach(x-> {
+                x.setNodeId(-1L);
+                x.setDiagId(diagId);
+                x.setInheritFlag("n");
+                x.setCreateDt(new Date());
+            });
+            diagConditionMapper.save(diagConditions);
+        }
+        return diagId;
     }
 
     @Override
@@ -70,5 +85,10 @@ public class DiagServiceImpl implements DiagService {
         diagMapper.deleteById(id);
         diagDetailMapper.deleteByDiagId(id);
         diagConditionMapper.deleteByDiagId(id);
+    }
+
+    @Override
+    public String getDimByDiagId(String diagId) {
+        return diagMapper.getDimByDiagId(diagId);
     }
 }

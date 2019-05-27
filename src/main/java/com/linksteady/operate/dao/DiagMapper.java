@@ -15,4 +15,6 @@ public interface DiagMapper{
     List<Diag> findByDiagId(@Param("diag") String diagId);
 
     void deleteById(@Param("id") String id);
+
+    String getDimByDiagId(@Param("diagId") String diagId);
 }

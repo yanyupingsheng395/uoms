@@ -106,6 +106,25 @@
                                                 <input class="form-control js-datepicker m-b-10" type="text" id="endDt" name="endDt" value="2019-05"/>
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">指标：</label>
+                                            <div class="col-md-3">
+                                                <select name="kpiCode" id="targetKpi" class="selectpicker form-control"></select>
+                                                <input type="hidden" id="targetKpiTxt" name="targetKpiTxt">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label">维度：</label>
+                                            <div class="col-md-5">
+                                                <button class="btn btn-primary" type="button" onclick="btnSelect()">选择</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" id="conditions" hidden>
+                                            <label class="col-md-3 control-label">已选择：</label>
+                                            <div class="col-md-5">
+                                                <table class="table table-no-bordered text-left" id="dataTable"></table>
+                                            </div>
+                                        </div>
                                     </form>
                                 </div>
                                 <div class="m-t-md" id="step2" style="display: none;">
@@ -138,7 +157,7 @@
 
                                 <div class="row" style="margin-top: 20px;">
                                     <div class="col-md-12 text-right">
-                                        <button id="next" class="btn btn-primary" onclick="nextStep(this)"><i class="mdi mdi-share-variant"></i>保存并诊断</button>
+                                        <button id="next" class="btn btn-primary" onclick="saveDiagInfo(this)"><i class="mdi mdi-share-variant"></i>保存并诊断</button>
                                         <a class="btn btn-default" href="/page/diagnosis/list"><i class="mdi mdi-reply"></i>返回</a>
                                     </div>
                                 </div>
@@ -176,6 +195,38 @@
         </main>
     </div>
 </div>
+<div class="modal fade" id="denModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form class="form-horizontal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">请选择</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">维度：</label>
+                        <div class="col-md-5">
+                            <select id="dimension" class="form-control selectpicker"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">值：</label>
+                        <div class="col-md-5">
+                            <select id="dimensionVal" class="form-control selectpicker" multiple>
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="addDimension()">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <!--时间选择插件-->
 <script data-th-src="@{/plugins/bootstrap-datetimepicker/moment.min.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
@@ -192,6 +243,7 @@
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
 <script data-th-src="@{/js/app/operate/diagnosis/template.js}"></script>
 <script data-th-src="@{/js/app/operate/diagnosis/modal.js}"></script>
+<script data-th-src="@{/js/app/operate/diagnosis/dismant.js}"></script>
 <script data-th-src="@{/js/app/operate/diagnosis/add.js}"></script>
 </body>
 </html>
