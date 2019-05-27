@@ -5,15 +5,17 @@ function nodeClick() {
     });
 }
 
-function getRootCondition() {
+function getRootDiagInfo() {
     var code = "";
     $.ajax({
         url: "/diag/getDimByDiagId",
         data: {diagId: diagId},
         async: false,
         success: function (r) {
-            console.log(r)
-            $.each(r.data.split(";"), function (k, v) {
+            $("#_diagName").html("").html("<p class='h5'>名称: " + r.data['DIAG_NAME'] + "</p>");
+            $("#diagKpiCode").html("").html("<p class='h5'>指标: " + r.data['KPI_NAME'] + "</p>");
+            var dimInfos = r.data['DIM_DISPLAY_NAME'].split(";");
+            $.each(dimInfos, function (k, v) {
                 code += "<li>"+v+"</li>";
             })
         }
@@ -39,9 +41,9 @@ function viewChart(obj) {
         $("#template1").attr("style", "display:block;");
         $("#template2").attr("style", "display:none;");
         $("#template3").attr("style", "display:none;");
-        var code = getRootCondition();
+        var code = getRootDiagInfo();
         if(code != "") {
-            $("#conditions").html("").html("<ol>"+code+"</ol>");
+            $("#_conditions").html("").html("<ol>"+code+"</ol>");
         }
     } else {
         // 条件

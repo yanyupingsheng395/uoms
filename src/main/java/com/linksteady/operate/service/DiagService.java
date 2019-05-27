@@ -18,5 +18,5 @@ public interface DiagService{
 
     void deleteById(String id);
 
-    String getDimByDiagId(String diagId);
+    Map<String, Object> geDiagInfoById(String diagId);
 }

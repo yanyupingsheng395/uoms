@@ -74,6 +74,6 @@ public class DiagnosisController {
 
     @GetMapping("/getDimByDiagId")
     public ResponseBo getDimByDiagId(@RequestParam("diagId") String diagId) {
-        return ResponseBo.okWithData(null, diagService.getDimByDiagId(diagId));
+        return ResponseBo.okWithData(null, diagService.geDiagInfoById(diagId));
     }
 }

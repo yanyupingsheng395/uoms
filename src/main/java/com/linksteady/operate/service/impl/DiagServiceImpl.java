@@ -88,7 +88,7 @@ public class DiagServiceImpl implements DiagService {
     }
 
     @Override
-    public String getDimByDiagId(String diagId) {
-        return diagMapper.getDimByDiagId(diagId);
+    public Map<String, Object> geDiagInfoById(String diagId) {
+        return diagMapper.geDiagInfoById(diagId);
     }
 }

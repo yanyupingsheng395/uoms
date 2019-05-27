@@ -41,7 +41,21 @@
     delete from UO_DIAG_LIST where DIAG_ID = #{id}
   </delete>
 
-  <select id="getDimByDiagId" resultType="string">
-    select DIM_DISPLAY_NAME from UO_DIAG_LIST where DIAG_ID = #{diagId}
+  <select id="geDiagInfoById" resultType="map">
+      SELECT
+          *
+      FROM
+          (
+          SELECT
+              d.DIAG_ID,
+              d.DIAG_NAME,
+              d.DIM_DISPLAY_NAME,
+              k.KPI_NAME
+          FROM
+              UO_DIAG_LIST d
+              LEFT JOIN UO_KPI_LIST_CONFIG k ON d.KPI_CODE = k.KPI_CODE
+          ) t
+      WHERE
+          t.DIAG_ID = #{diagId}
   </select>
 </mapper>
