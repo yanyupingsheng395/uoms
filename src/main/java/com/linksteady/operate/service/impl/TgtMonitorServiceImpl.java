@@ -2,8 +2,8 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.linksteady.operate.dao.TgtMonitorMapper;
-import com.linksteady.operate.domain.TgtMonitor;
+import com.linksteady.operate.dao.TgtDismantMapper;
+import com.linksteady.operate.domain.TgtDismant;
 import com.linksteady.operate.service.TgtMonitorService;
 import com.linksteady.operate.vo.Echart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +29,13 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
     private static final String CHART_VAL_RATE = "val_rate";
 
     @Autowired
-    private TgtMonitorMapper tgtMonitorMapper;
+    private TgtDismantMapper tgtDismantMapper;
 
     @Override
     public List<Echart> getCharts(String targetId, String periodType, String dt) {
-        List<String> xdata = getPeriodDate(periodType, dt);
-        Echart echart1 = getActualTgtVal(targetId, CHART_AC_TGT, xdata);
-        Echart echart2 = getCurrLastVal(targetId, CHART_CURR_LAST, xdata);
-        Echart echart3 = getValRate(targetId, CHART_VAL_RATE, xdata);
+        Echart echart1 = getActualTgtVal(targetId, CHART_AC_TGT, getPeriodDate(periodType, dt, false));
+        Echart echart2 = getCurrLastVal(targetId, CHART_CURR_LAST, getPeriodDate(periodType, dt, true));
+        Echart echart3 = getValRate(targetId, CHART_VAL_RATE, getPeriodDate(periodType, dt, true));
         List<Echart> list = Lists.newArrayList();
         list.add(echart1);
         list.add(echart2);
@@ -49,7 +48,7 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
      * @return
      */
     private Echart getActualTgtVal(String targetId, String type, List<String> xdata) {
-        List<TgtMonitor> dataList = tgtMonitorMapper.getDataByTgtId(targetId, type);
+        List<TgtDismant> dataList = tgtDismantMapper.findByTgtId(Long.valueOf(targetId));
         Echart echart = new Echart();
         echart.setxAxisName("日期");
         echart.setyAxisName("指标值");
@@ -58,7 +57,7 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
         List<Map<String, Object>> list = Lists.newArrayList();
         Map<String, Object> map = Maps.newHashMap();
         map.put("name", "目标值");
-        Map<String, Double> datas = dataList.stream().collect(Collectors.toMap(TgtMonitor::getPeriodDate, TgtMonitor::getTgtVal));
+        Map<String, Double> datas = dataList.stream().collect(Collectors.toMap(TgtDismant::getPeriodDate, TgtDismant::getTgtVal));
         List<Double> data = fixData(datas, xdata);
         map.put("data", data);
         map.put("type", "bar");
@@ -66,7 +65,7 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
         list.add(map);
         map = Maps.newHashMap();
         map.put("name", "实际值");
-        datas = dataList.stream().collect(Collectors.toMap(TgtMonitor::getPeriodDate, TgtMonitor::getActualVal));
+        datas = dataList.stream().collect(Collectors.toMap(TgtDismant::getPeriodDate, TgtDismant::getActualVal));
         data = fixData(datas, xdata);
         map.put("data", data);
         map.put("type", "bar");
@@ -84,16 +83,16 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
      */
     private Echart getCurrLastVal(String targetId, String type, List<String> xdata) {
         DecimalFormat df = new DecimalFormat("#.##");
-        List<TgtMonitor> dataList = tgtMonitorMapper.getDataByTgtId(targetId, type);
+        List<TgtDismant> dataList = tgtDismantMapper.findByTgtId(Long.valueOf(targetId));
         Echart echart = new Echart();
         echart.setxAxisName("日期");
         echart.setyAxisName("指标值");
         echart.setxAxisData(xdata);
-        echart.setLegendData(Arrays.asList("本年指标值", "去年指标值", "本年平均指标值", "去年平均指标值"));
+        echart.setLegendData(Arrays.asList("本周期指标值", "去年同期指标值", "本周期平均指标值", "去年同期平均指标值"));
         List<Map<String, Object>> list = Lists.newArrayList();
         Map<String, Object> map = Maps.newHashMap();
-        map.put("name", "本年指标值");
-        Map<String, Double> datas = dataList.stream().collect(Collectors.toMap(TgtMonitor::getPeriodDate, TgtMonitor::getActualVal));
+        map.put("name", "本周期指标值");
+        Map<String, Double> datas = dataList.stream().collect(Collectors.toMap(TgtDismant::getPeriodDate, TgtDismant::getActualVal));
         List<Double> current = fixData(datas, xdata);
         map.put("data", current);
         map.put("type", "line");
@@ -103,14 +102,17 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
         List<String> avgCurrentList = current.stream().map(x->avgCurrent).collect(Collectors.toList());
 
         map = Maps.newHashMap();
-        map.put("name", "本年平均指标值");
+        map.put("name", "本周期平均指标值");
         map.put("data", avgCurrentList);
         map.put("type", "line");
         list.add(map);
         map = Maps.newHashMap();
-        map.put("name", "去年指标值");
+        map.put("name", "去年同期指标值");
         map.put("type", "line");
-        datas = dataList.stream().collect(Collectors.toMap(TgtMonitor::getPeriodDate, TgtMonitor::getActualValLast));
+        dataList.stream().forEach(x-> {
+            x.setActualValLast(x.getActualValLast() == null ? 0D:x.getActualValLast());
+        });
+        datas = dataList.stream().collect(Collectors.toMap(TgtDismant::getPeriodDate, TgtDismant::getActualValLast));
         List<Double> last = fixData(datas, xdata);
         map.put("data", last);
         list.add(map);
@@ -120,7 +122,7 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
         String avgLast = df.format(sts.getSum()/last.stream().count());
         List<String> avgLastList = last.stream().map(x->avgLast).collect(Collectors.toList());
         map = Maps.newHashMap();
-        map.put("name", "去年平均指标值");
+        map.put("name", "去年同期平均指标值");
         map.put("data", avgLastList);
         map.put("type", "line");
         list.add(map);
@@ -129,7 +131,7 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
     }
 
     private Echart getValRate(String targetId, String type, List<String> xdata) {
-        List<TgtMonitor> dataList = tgtMonitorMapper.getDataByTgtId(targetId, type);
+        List<TgtDismant> dataList = tgtDismantMapper.findByTgtId(Long.valueOf(targetId));
         Echart echart = new Echart();
         echart.setxAxisName("日期");
         echart.setyAxisName("指标值");
@@ -138,14 +140,17 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
         List<Map<String, Object>> list = Lists.newArrayList();
         Map<String, Object> map = Maps.newHashMap();
         map.put("name", "指标值");
-        Map<String, Double> datas = dataList.stream().collect(Collectors.toMap(TgtMonitor::getPeriodDate, TgtMonitor::getActualVal));
+        Map<String, Double> datas = dataList.stream().collect(Collectors.toMap(TgtDismant::getPeriodDate, TgtDismant::getActualVal));
         List<Double> data = fixData(datas, xdata);
         map.put("data", data);
         map.put("type", "bar");
         list.add(map);
         map = Maps.newHashMap();
         map.put("name", "环比增长率");
-        datas = dataList.stream().collect(Collectors.toMap(TgtMonitor::getPeriodDate, TgtMonitor::getGrowthRate));
+        dataList.stream().forEach(x-> {
+            x.setGrowthRate(x.getGrowthRate() == null ? 0D:x.getGrowthRate());
+        });
+        datas = dataList.stream().collect(Collectors.toMap(TgtDismant::getPeriodDate, TgtDismant::getGrowthRate));
         data = fixData(datas, xdata);
         map.put("data", data);
         map.put("type", "line");
@@ -154,16 +159,35 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
         return echart;
     }
 
+    public static void main(String[] args) {
+        LocalDate now = LocalDate.now();
+        System.out.println(now.getMonthValue());
+    }
+
     /**
      * 获取周期内的时间
+     * @param periodType
+     * @param dt
+     * @param flag 如果true，则截止当前日期的前一个周期
      * @return
      */
-    private static List<String> getPeriodDate(String periodType, String dt) {
+    private static List<String> getPeriodDate(String periodType, String dt, Boolean flag) {
+        LocalDate now = LocalDate.now();
         List<String> dateList = Lists.newArrayList();
         if("year".equals(periodType)) {
             for(int i=1; i<=12;i++) {
-                String t = i < 10 ? "0" + i:String.valueOf(i);
-                dateList.add(dt+t);
+                if(flag) {
+                    if(Integer.valueOf(dt) == now.getYear()) {
+                        if(i<now.getMonthValue()) {
+                            String t = i < 10 ? "0" + i:String.valueOf(i);
+                            dateList.add(dt+t);
+                        }
+                    }
+                }
+                if(!flag) {
+                    String t = i < 10 ? "0" + i:String.valueOf(i);
+                    dateList.add(dt+t);
+                }
             }
         }
         if("month".equals(periodType)) {
@@ -171,22 +195,50 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
             LocalDate localDate = LocalDate.parse(dt + "-01", df);
             LocalDate firstDay = LocalDate.of(localDate.getYear(),localDate.getMonth(),1);
             LocalDate lastDay =localDate.with(TemporalAdjusters.lastDayOfMonth());
-            while(firstDay.isBefore(lastDay)) {
+
+            if(flag) {
+                LocalDate lstDay = now.plusDays(-1);
+                lastDay = lastDay.isAfter(now) ? lstDay:lastDay;
+
+                if(firstDay.isBefore(now)) {
+                    while(firstDay.isBefore(lastDay)) {
+                        dateList.add(firstDay.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                        firstDay = firstDay.plusDays(1);
+                    }
+                    dateList.add(firstDay.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                }
+            }else {
+                while(firstDay.isBefore(lastDay)) {
+                    dateList.add(firstDay.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                    firstDay = firstDay.plusDays(1);
+                }
                 dateList.add(firstDay.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                firstDay = firstDay.plusDays(1);
             }
-            dateList.add(firstDay.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         }
         if("day".equals(periodType)) {
             String[] dateArray = dt.split("~");
             DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate startDt = LocalDate.parse(dateArray[0], df);
             LocalDate endDt = LocalDate.parse(dateArray[1], df);
-            while(startDt.isBefore(endDt)) {
+
+            if(flag) {
+                LocalDate lstDay = now.plusDays(-1);
+                endDt = endDt.isAfter(now) ? lstDay:endDt;
+
+                if(startDt.isBefore(now)) {
+                    while(startDt.isBefore(endDt)) {
+                        dateList.add(startDt.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                        startDt = startDt.plusDays(1);
+                    }
+                    dateList.add(startDt.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                }
+            }else {
+                while(startDt.isBefore(endDt)) {
+                    dateList.add(startDt.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                    startDt = startDt.plusDays(1);
+                }
                 dateList.add(startDt.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                startDt = startDt.plusDays(1);
             }
-            dateList.add(startDt.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         }
         return dateList;
     }

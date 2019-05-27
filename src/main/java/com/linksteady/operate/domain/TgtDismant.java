@@ -61,4 +61,16 @@ public class TgtDismant {
      */
     @Column(name = "TGT_WEIGHT_IDX")
     private Double tgtWeightIdx;
+
+    /**
+     * 去年指标值
+     */
+    @Column(name = "ACTUAL_VAL_LAST")
+    private Double actualValLast;
+
+    /**
+     * 环比增长率
+     */
+    @Column(name = "GROWTH_RATE")
+    private Double growthRate;
 }
