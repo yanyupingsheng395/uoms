@@ -24,18 +24,14 @@ import java.util.stream.Collectors;
 @Service
 public class TgtMonitorServiceImpl implements TgtMonitorService {
 
-    private static final String CHART_AC_TGT = "acc_tgt";
-    private static final String CHART_CURR_LAST = "curr_last";
-    private static final String CHART_VAL_RATE = "val_rate";
-
     @Autowired
     private TgtDismantMapper tgtDismantMapper;
 
     @Override
     public List<Echart> getCharts(String targetId, String periodType, String dt) {
-        Echart echart1 = getActualTgtVal(targetId, CHART_AC_TGT, getPeriodDate(periodType, dt, false));
-        Echart echart2 = getCurrLastVal(targetId, CHART_CURR_LAST, getPeriodDate(periodType, dt, true));
-        Echart echart3 = getValRate(targetId, CHART_VAL_RATE, getPeriodDate(periodType, dt, true));
+        Echart echart1 = getActualTgtVal(targetId, getPeriodDate(periodType, dt, false));
+        Echart echart2 = getCurrLastVal(targetId, getPeriodDate(periodType, dt, true));
+        Echart echart3 = getValRate(targetId, getPeriodDate(periodType, dt, true));
         List<Echart> list = Lists.newArrayList();
         list.add(echart1);
         list.add(echart2);
@@ -47,7 +43,7 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
      * 获取周期内目标值和实际值
      * @return
      */
-    private Echart getActualTgtVal(String targetId, String type, List<String> xdata) {
+    private Echart getActualTgtVal(String targetId, List<String> xdata) {
         List<TgtDismant> dataList = tgtDismantMapper.findByTgtId(Long.valueOf(targetId));
         Echart echart = new Echart();
         echart.setxAxisName("日期");
@@ -78,10 +74,9 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
     /**
      *
      * @param targetId
-     * @param type
      * @return
      */
-    private Echart getCurrLastVal(String targetId, String type, List<String> xdata) {
+    private Echart getCurrLastVal(String targetId, List<String> xdata) {
         DecimalFormat df = new DecimalFormat("#.##");
         List<TgtDismant> dataList = tgtDismantMapper.findByTgtId(Long.valueOf(targetId));
         Echart echart = new Echart();
@@ -130,7 +125,7 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
         return echart;
     }
 
-    private Echart getValRate(String targetId, String type, List<String> xdata) {
+    private Echart getValRate(String targetId, List<String> xdata) {
         List<TgtDismant> dataList = tgtDismantMapper.findByTgtId(Long.valueOf(targetId));
         Echart echart = new Echart();
         echart.setxAxisName("日期");
