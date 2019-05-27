@@ -17,7 +17,7 @@ function getTargetList() {
             });
             $("#tgtList").html("").html(code);
             $("#tgtList").selectpicker('refresh');
-            $("#tgtDate").html("").html($("#tgtList").find("option:eq(0)").attr("data-code"));
+            $("#tgtDate").html("").html($("#tgtList").find("option:eq(0)").attr("data-code").replace("~", "至"));
         }
     });
 }
@@ -25,6 +25,7 @@ function getTargetList() {
 var tgtId = $("#tgtList").find("option:selected").val();
 getMonitorVal();
 function getMonitorVal() {
+    var tgtId = $("#tgtList").find("option:selected").val();
     if(tgtId != "") {
         $.get("/tgtKpiMonitor/getMonitorVal", {id: tgtId}, function (r) {
             var unit = r.data["KPI_UNIT"] == undefined ? "" : r.data["KPI_UNIT"];
@@ -32,18 +33,27 @@ function getMonitorVal() {
             var actualVal = r.data["ACTUAL_VAL"] == undefined ? 0.00 + unit:r.data["ACTUAL_VAL"] + unit;
             var actualValRate = r.data["ACTUAL_VAL_RATE"] == undefined ? 0.00:r.data["ACTUAL_VAL_RATE"];
             var actualValLast = r.data["ACTUAL_VAL_LAST"] == undefined ? 0.00 + unit:r.data["ACTUAL_VAL_LAST"] + unit;
-            var finishRate = r.data["FINISH_RATE"] == undefined ? 0.00 + "%":r.data["TARGET_VAL"] + "%";
-            var finishRateDiffer = r.data["FINISH_RATE_DIFFER"] == undefined ? 0.00 + "%":r.data["TARGET_VAL"] + "%";
-            var finishRateLast = r.data["FINISH_RATE_LAST"] == undefined ? 0.00 + "%":r.data["FINISH_RATE_LAST"] + "%";
+            var finishRate = r.data["FINISH_RATE"] == undefined ? 0.00 + "%":r.data["FINISH_RATE"] + "%";
+
+            var remainTgt = r.data["REMAIN_TGT"] == undefined ? 0.00 + unit:r.data["REMAIN_TGT"] + unit;
+            var finishDiffer = r.data["FINISH_DIFFER"] == undefined ? 0.00 + unit:r.data["FINISH_DIFFER"] + unit;
+            var remainCount = r.data["REMAIN_COUNT"] == undefined ? 0:r.data["REMAIN_COUNT"];
+            var varyIdx = r.data["VARY_IDX"] == undefined ? 0.00:r.data["VARY_IDX"];
+            var varyIdxLast = r.data["VARY_IDX_LAST"] == undefined ? 0.00:r.data["VARY_IDX_LAST"];
+
 
             $("#targetVal").html("").html(targetVal);
             $("#actualVal").html("").html(actualVal);
             $("#actualValRate").html("").html(actualValRate > 0 ? "同比<span style=\"color:green;\"><i class=\"mdi mdi-menu-up mdi-18px\"></i>"+actualValRate+"%</span>":"同比<span style=\"color:red;\"><i class=\"mdi mdi-menu-down mdi-18px\"></i>"+actualValRate+"%</span>");
             $("#actualValLast").html("").html(actualValLast);
             $("#finishRate").html("").html(finishRate);
-            $("#finishRateDiffer").html("").html(finishRateDiffer);
-            $("#finishRateLast").html("").html(finishRateLast);
-            console.log(r);
+            // 完成度
+            $("#finishRate2").html("").html(finishRate);
+            $("#remainTgt").html("").html(remainTgt);
+            $("#finishDiffer").html("").html(finishDiffer);
+            $("#remainCount").html("").html(remainCount);
+            $("#varyIdx").html("").html(varyIdx);
+            $("#varyIdxLast").html("").html(varyIdxLast);
         });
     }
 }
@@ -86,11 +96,12 @@ function chartInit(chartData, chartId) {
 }
 
 $("#tgtList").change(function () {
-    $("#tgtDate").html("").html($(this).find("option:selected").attr("data-code"));
+    $("#tgtDate").html("").html($(this).find("option:selected").attr("data-code").replace("~", "至"));
     // 请求面板数据
     var periodType = $(this).find("option:selected").attr("data-period");
     var dt = $(this).find("option:selected").attr("data-code");
     getCharts(periodType, dt);
+    getMonitorVal();
 });
 
 
@@ -270,8 +281,7 @@ function getRandom (m,n){
     return num;
 }
 
-// 获取目标的维度和值
-$("#dimensionVal").on('shown.bs.modal', function () {
+function getDimensionList() {
     var id = $("#tgtList").find("option:selected").val();
     if(id != "") {
         $.get("/target/getDimensionsById", {id: id}, function (r) {
@@ -279,9 +289,37 @@ $("#dimensionVal").on('shown.bs.modal', function () {
             $.each(r.data, function (k, v) {
                 code += "<li>" + v["DIMENSION_NAME"] + ":" + v["DIMENSION_VAL_NAME"] +  "</li>";
             });
-            $("#dimensionList").html("").html(code);
+
+            if(code == "") {
+                toastr.warning("该目标没有维度和值！");
+            }else {
+                $("#dimensionVal").modal('show');
+                $("#dimensionList").html("").html(code);
+            }
         });
     }else {
         toastr.warning("请选择目标！");
     }
-});
+}
+//
+// // 获取目标的维度和值
+// $("#dimensionVal").on('shown.bs.modal', function () {
+//     var id = $("#tgtList").find("option:selected").val();
+//     if(id != "") {
+//         $.get("/target/getDimensionsById", {id: id}, function (r) {
+//             var code = "";
+//             $.each(r.data, function (k, v) {
+//                 code += "<li>" + v["DIMENSION_NAME"] + ":" + v["DIMENSION_VAL_NAME"] +  "</li>";
+//             });
+//
+//             if(code == "") {
+//                 $("#dimensionVal").modal('hide');
+//                 toastr.warning("该目标没有维度和值！");
+//             }else {
+//                 $("#dimensionList").html("").html(code);
+//             }
+//         });
+//     }else {
+//         toastr.warning("请选择目标！");
+//     }
+// });

@@ -30,6 +30,7 @@
     <result column="REMAIN_LIST" jdbcType="VARCHAR" property="remainList"/>
     <result column="VARY_IDX" jdbcType="DECIMAL" property="varyIdx"/>
     <result column="VARY_IDX_LAST" jdbcType="DECIMAL" property="varyIdxLast"/>
+    <result column="FINISH_DIFFER" jdbcType="DECIMAL" property="finishDiffer"/>
   </resultMap>
 
   <resultMap id="TgtReferenceMap" type="com.linksteady.operate.domain.TgtReference">
@@ -51,7 +52,7 @@
   <select id="getPageList" resultType="map">
     select * from (
       select A.*,ROWNUM RN from (select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, tgt.CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME, tgt.TARGET_VAL, tgt.STATUS from UO_TGT_LIST tgt
-      LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.CREATE_BY = #{userId} order by tgt.CREATE_DT DESC) A
+      LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.CREATE_BY = #{userId} and tgt.STATUS &lt;&gt; '-2'  order by tgt.CREATE_DT DESC) A
       where ROWNUM &lt;=#{endRow}
     ) where RN &gt;=#{startRow}
   </select>
@@ -66,11 +67,28 @@
   </select>
 
   <select id="getTargetList" resultMap="BaseResultMap">
-      select ID, NAME, START_DT, END_DT, PERIOD_TYPE from UO_TGT_LIST where STATUS in ('2', '3', '4') and CREATE_BY = #{username} order by CREATE_DT DESC
+      select * from (
+      SELECT
+          ID,
+          NAME,
+          START_DT,
+          END_DT,
+          PERIOD_TYPE,
+          CREATE_DT
+      FROM
+          UO_TGT_LIST
+      WHERE
+          STATUS IN ( '2', '3', '4' )
+          AND CREATE_BY = #{username}
+      ORDER BY
+          STATUS ASC
+      ) t ORDER BY t.CREATE_DT DESC
   </select>
 
   <select id="getMonitorVal" resultType="map">
-    select TARGET_VAL, ACTUAL_VAL, ACTUAL_VAL_RATE, ACTUAL_VAL_LAST, FINISH_RATE, FINISH_RATE_DIFFER, FINISH_RATE_LAST, KPI_UNIT from UO_TGT_LIST
+    select TARGET_VAL, ACTUAL_VAL, ACTUAL_VAL_RATE, ACTUAL_VAL_LAST, FINISH_RATE, FINISH_RATE_DIFFER, FINISH_RATE_LAST, KPI_UNIT,
+    REMAIN_TGT, REMAIN_COUNT,VARY_IDX,VARY_IDX_LAST,FINISH_DIFFER
+    from UO_TGT_LIST
     where ID = #{targetId}
   </select>
 
