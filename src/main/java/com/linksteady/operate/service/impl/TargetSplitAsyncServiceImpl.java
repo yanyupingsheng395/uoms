@@ -3,7 +3,6 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.ArithUtil;
-import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.TargetListMapper;
 import com.linksteady.operate.dao.TgtDismantMapper;
 import com.linksteady.operate.dao.WeightIndexMapper;
@@ -16,10 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -316,6 +313,10 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
     {
         //todo 对目前执行情况进行计算
         log.info("开始对目标ID为 {} 的目标进行计算!",targetInfo.getId());
+
+        //计算头信息
+
+        //计算完成信息
 
         log.info("对目标ID为 {} 的目标计算完成!",targetInfo.getId());
         targetListMapper.updateTargetStatus(targetInfo.getId(),"2");

@@ -22,7 +22,7 @@ public interface OrderingConstants {
         }
     };
 
-    Ordering<LcSpuVO> USER_CONT_ORDERING = new Ordering<LcSpuVO>() {
+    Ordering<LcSpuVO> NEW_USER_CONT_ORDERING = new Ordering<LcSpuVO>() {
         @Override
         public int compare(LcSpuVO left, LcSpuVO right) {
             if (left == null && right == null) {
@@ -34,7 +34,24 @@ public interface OrderingConstants {
             if (right == null) {
                 return -1;
             }
-            return Doubles.compare(right.getUserCont(),left.getUserCont());
+            return Doubles.compare(right.getNewUserCont(),left.getNewUserCont());
+        }
+    };
+
+
+    Ordering<LcSpuVO> OLD_USER_CONT_ORDERING = new Ordering<LcSpuVO>() {
+        @Override
+        public int compare(LcSpuVO left, LcSpuVO right) {
+            if (left == null && right == null) {
+                return 0;
+            }
+            if (left == null) {
+                return 1;
+            }
+            if (right == null) {
+                return -1;
+            }
+            return Doubles.compare(right.getOldUserCont(),left.getOldUserCont());
         }
     };
 
@@ -86,19 +103,4 @@ public interface OrderingConstants {
         }
     };
 
-    Ordering<LcSpuVO> PROFIT_ORDERING = new Ordering<LcSpuVO>() {
-        @Override
-        public int compare(LcSpuVO left, LcSpuVO right) {
-            if (left == null && right == null) {
-                return 0;
-            }
-            if (left == null) {
-                return 1;
-            }
-            if (right == null) {
-                return -1;
-            }
-            return Doubles.compare(right.getProfit(),left.getProfit());
-        }
-    };
 }

@@ -57,13 +57,9 @@ public class LifeCycleController extends BaseController {
         //存放四分位数的数组
         double[] quartiles=null;
 
-        //根据startDT,endDT,source获取到符合条件的SPU的列表
-        List<LcSpuInfo> list=lifeCycleService.getSpuList(StringUtils.replace(startDt,"-",""),StringUtils.replace(endDt,"-",""));
-
-        //计算汇总的gmv
-        double gmvSum=list.stream().mapToDouble(LcSpuInfo::getGmvTotal).sum();
-
-        LcSpuVO  lsVO=null;
+        //数据库返回的spu列表
+        List<LcSpuInfo> list=null;
+        //返回的spu列表
         List<LcSpuVO> resultList=Lists.newArrayList();
 
         //表头
@@ -103,15 +99,20 @@ public class LifeCycleController extends BaseController {
 
         if("gmv".equals(filterType))
         {
-             //返回的列信息
+            //根据startDT,endDT,source获取到符合条件的SPU的列表及其gmv
+            list=lifeCycleService.getSpuList(StringUtils.replace(startDt,"-",""),StringUtils.replace(endDt,"-",""));
+
+            //计算汇总的gmv
+            double gmvSum=list.stream().mapToDouble(LcSpuInfo::getGmvTotal).sum();
+
+            //返回的列信息
             temp=Maps.newHashMap();
             temp.put("gmvCont","GMV贡献率");
             columns.add(temp);
 
             for(LcSpuInfo lsi:list)
             {
-                lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
-
+                LcSpuVO lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
                 lsVO.setGmvCont(gmvSum==0?0:ArithUtil.formatDoubleByMode(lsi.getGmvTotal()/gmvSum*100,2,RoundingMode.DOWN));
                 resultList.add(lsVO);
             }
@@ -123,41 +124,55 @@ public class LifeCycleController extends BaseController {
             dst=resultList.stream().mapToDouble(LcSpuVO::getGmvCont).summaryStatistics();
             quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getGmvCont).toArray());
         }
-        else if("user".equals(filterType))
+        else if("newuser".equals(filterType))
         {
             temp=Maps.newHashMap();
-            temp.put("userCont","用户数贡献率");
+            temp.put("newUserCont","首购用户数贡献率");
             columns.add(temp);
 
-            temp=Maps.newHashMap();
-            temp.put("newUserCont","新用户数贡献率");
-            columns.add(temp);
+            //根据startDT,endDT,source获取到符合条件的SPU的列表及其新用户数
+            list=lifeCycleService.getSpuListWithUserCount(StringUtils.replace(startDt,"-",""),StringUtils.replace(endDt,"-",""));
 
+            //计算所有的首购用户数
+            double newuserSum=list.stream().mapToInt(LcSpuInfo::getNewuser).sum();
+
+            for(LcSpuInfo lsi:list)
+            {
+                LcSpuVO lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
+                lsVO.setNewUserCont(newuserSum==0?0:ArithUtil.formatDoubleByMode(lsi.getNewuser()/newuserSum*100,2,RoundingMode.DOWN));
+                resultList.add(lsVO);
+            }
+
+            //对结果进行排序 按用户数贡献率排序
+            resultList.sort(OrderingConstants.NEW_USER_CONT_ORDERING);
+            //求统计信息  最大值、最小值
+            dst=resultList.stream().mapToDouble(LcSpuVO::getNewUserCont).summaryStatistics();
+            quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getNewUserCont).toArray());
+        }
+        else if("olduser".equals(filterType))
+        {
             temp=Maps.newHashMap();
             temp.put("oldUserCont","复购用户数贡献率");
             columns.add(temp);
 
-            temp=Maps.newHashMap();
-            temp.put("loyaltyCont","忠诚用户数贡献率");
-            columns.add(temp);
+            //根据startDT,endDT,source获取到符合条件的SPU的列表及其老用户数
+            list=lifeCycleService.getSpuListWithUserCount(StringUtils.replace(startDt,"-",""),StringUtils.replace(endDt,"-",""));
+
+            //计算所有的首购用户数
+            double olduserSum=list.stream().mapToDouble(LcSpuInfo::getOlduser).sum();
 
             for(LcSpuInfo lsi:list)
             {
-                lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
-
-                lsVO.setUserCont(getRandomValue("userCont"));
-                lsVO.setNewUserCont(getRandomValue("userCont"));
-                lsVO.setOldUserCont(getRandomValue("userCont"));
-                lsVO.setLoyaltyCont(getRandomValue("userCont"));
-
+                LcSpuVO lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
+                lsVO.setOldUserCont(olduserSum==0?0:ArithUtil.formatDoubleByMode(lsi.getOlduser()/olduserSum*100,2,RoundingMode.DOWN));
                 resultList.add(lsVO);
             }
 
-            //对结果进行排序
-            resultList.sort(OrderingConstants.USER_CONT_ORDERING);
+            //对结果进行排序 按用户数贡献率排序
+            resultList.sort(OrderingConstants.OLD_USER_CONT_ORDERING);
             //求统计信息  最大值、最小值
-            dst=resultList.stream().mapToDouble(LcSpuVO::getUserCont).summaryStatistics();
-            quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getUserCont).toArray());
+            dst=resultList.stream().mapToDouble(LcSpuVO::getOldUserCont).summaryStatistics();
+            quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getOldUserCont).toArray());
         }
         else if("pocount".equals(filterType))
         {
@@ -165,10 +180,16 @@ public class LifeCycleController extends BaseController {
             temp.put("poCount","订单数贡献率");
             columns.add(temp);
 
+            //根据startDT,endDT,source获取到符合条件的SPU的列表及其订单数
+            list=lifeCycleService.getSpuListWithPoCount(StringUtils.replace(startDt,"-",""),StringUtils.replace(endDt,"-",""));
+
+            //计算所有的订单数
+            double poCountSum=list.stream().mapToDouble(LcSpuInfo::getPoCount).sum();
+
             for(LcSpuInfo lsi:list)
             {
-                lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
-                lsVO.setPoCount(getRandomValue("pocount"));
+                LcSpuVO lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
+                lsVO.setPoCount(poCountSum==0?0:ArithUtil.formatDoubleByMode(lsi.getPoCount()/poCountSum*100,2,RoundingMode.DOWN));
 
                 resultList.add(lsVO);
             }
@@ -185,10 +206,12 @@ public class LifeCycleController extends BaseController {
             temp.put("joinrate","连带率");
             columns.add(temp);
 
+            //根据startDT,endDT,source获取到符合条件的SPU的列表及其连带率
+            list=lifeCycleService.getSpuListWithJoinRate(StringUtils.replace(startDt,"-",""),StringUtils.replace(endDt,"-",""));
+
             for(LcSpuInfo lsi:list)
             {
-                lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
-                lsVO.setJoinrate(getRandomValue("joinrate"));
+                LcSpuVO lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
                 resultList.add(lsVO);
             }
 
@@ -204,10 +227,12 @@ public class LifeCycleController extends BaseController {
             temp.put("sprice","件单价");
             columns.add(temp);
 
+            //根据startDT,endDT,source获取到符合条件的SPU的列表及其件单价
+            list=lifeCycleService.getSpuListWithSprice(StringUtils.replace(startDt,"-",""),StringUtils.replace(endDt,"-",""));
+
             for(LcSpuInfo lsi:list)
             {
-                lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
-                lsVO.setSprice(getRandomValue("sprice"));
+                LcSpuVO lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
                 resultList.add(lsVO);
             }
 
@@ -217,26 +242,6 @@ public class LifeCycleController extends BaseController {
             //求统计信息  最大值、最小值
             dst=resultList.stream().mapToDouble(LcSpuVO::getSprice).summaryStatistics();
             quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getSprice).toArray());
-        }
-        else if("profit".equals(filterType))
-        {
-            temp=Maps.newHashMap();
-            temp.put("profit","毛利率");
-            columns.add(temp);
-
-            for(LcSpuInfo lsi:list)
-            {
-                lsVO=dozerBeanMapper.map(lsi, LcSpuVO.class);
-
-                lsVO.setProfit(getRandomValue("profit"));
-                resultList.add(lsVO);
-            }
-
-            //对结果进行排序
-            resultList.sort(OrderingConstants.PROFIT_ORDERING);
-            //求统计信息  最大值、最小值
-            dst=resultList.stream().mapToDouble(LcSpuVO::getProfit).summaryStatistics();
-            quartiles=DataStatisticsUtils.getQuartiles(resultList.stream().mapToDouble(LcSpuVO::getProfit).toArray());
         }
 
         int orderNo=1;
@@ -260,36 +265,6 @@ public class LifeCycleController extends BaseController {
     }
 
 
-    private Double getRandomValue(String type)
-    {
-        double  result =0d;
-
-        if("gmvCont".equals(type))
-        {
-            result= RandomUtil.getIntRandom(1,200)/10.00;
-        }else if("gmvRelate".equals(type))
-        {
-            result= RandomUtil.getIntRandom(10,100)/100.00;
-        }else if("userCont".equals(type))
-        {
-            result= RandomUtil.getIntRandom(20,30)/100.00;
-        }else if("pocount".equals(type))
-        {
-            result= RandomUtil.getIntRandom(20,30)/100.00;
-        }else if("joinrate".equals(type))
-        {
-            result=RandomUtil.getIntRandom(15,25)/10.00;
-        }else if("sprice".equals(type))
-        {
-            result= RandomUtil.getIntRandom(200,300);
-        }else if("profit".equals(type))
-        {
-            result= RandomUtil.getIntRandom(100,1000)/100.00;
-        }
-
-        return result;
-    }
-
     /**
      * 获取SPU的筛选条件列表
      */
@@ -302,25 +277,25 @@ public class LifeCycleController extends BaseController {
         temp.put("gmv","GMV贡献率");
         result.add(temp);
 
-//        temp= Maps.newHashMap();
-//        temp.put("user","用户数贡献率");
-//        result.add(temp);
-//
-//        temp= Maps.newHashMap();
-//        temp.put("pocount","订单数贡献率");
-//        result.add(temp);
-//
-//        temp= Maps.newHashMap();
-//        temp.put("joinrate","连带率");
-//        result.add(temp);
-//
-//        temp= Maps.newHashMap();
-//        temp.put("sprice","件单价");
-//        result.add(temp);
-//
-//        temp= Maps.newHashMap();
-//        temp.put("profit","毛利率");
-//        result.add(temp);
+        temp= Maps.newHashMap();
+        temp.put("newuser","首购用户数贡献率");
+        result.add(temp);
+
+        temp= Maps.newHashMap();
+        temp.put("olduser","复购用户数贡献率");
+        result.add(temp);
+
+        temp= Maps.newHashMap();
+        temp.put("pocount","订单数贡献率");
+        result.add(temp);
+
+        temp= Maps.newHashMap();
+        temp.put("joinrate","连带率");
+        result.add(temp);
+
+        temp= Maps.newHashMap();
+        temp.put("sprice","件单价");
+        result.add(temp);
 
         return  ResponseBo.okWithData("",result);
     }

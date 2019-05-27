@@ -9,6 +9,14 @@ public interface LifeCycleService {
 
      List<LcSpuInfo> getSpuList(String startDt,String endDt);
 
+     List<LcSpuInfo> getSpuListWithUserCount(String startDt,String endDt);
+
+     List<LcSpuInfo> getSpuListWithPoCount(String startDt,String endDt);
+
+     List<LcSpuInfo> getSpuListWithJoinRate(String startDt,String endDt);
+
+     List<LcSpuInfo> getSpuListWithSprice(String startDt,String endDt);
+
 
 
 }
