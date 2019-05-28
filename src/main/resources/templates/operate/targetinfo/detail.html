@@ -104,6 +104,9 @@
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
 <script data-th-src="@{/js/app/operate/diagnosis/template.js}"></script>
-<script data-th-src="@{/js/app/operate/target/detail.js}"></script>
+<script>
+    var id = [[${id}]];
+</script>
+<script data-th-src="@{/js/app/operate/targetinfo/detail.js}"></script>
 </body>
 </html>

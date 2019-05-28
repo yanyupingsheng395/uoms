@@ -6,7 +6,7 @@
 getKpi();
 // 获取指标
 function getKpi() {
-    $.get("/target/getKpi", {}, function (r) {
+    $.get("/targetinfo/getKpi", {}, function (r) {
         var code = "<option>请选择</option>";
         $.each(r.data, function (k, v) {
             code += "<option value='"+k+"'>"+v+"</option>";
@@ -32,7 +32,7 @@ $("#denModal").on('shown.bs.modal', function () {
 
 // 获取维度
 function getDimensionList() {
-    $.get("/target/getDimension", {}, function (r) {
+    $.get("/targetinfo/getDimension", {}, function (r) {
         var code = "<option>请选择</option>";
         $.each(r.data, function (k, v) {
             code += "<option value='"+k+"'>"+v+"</option>";
@@ -51,7 +51,7 @@ $("#dimension").change(function() {
 
 // 获取维度值
 function getDimensionVal(key) {
-    $.get("/target/getDimensionVal", {key: key}, function (r) {
+    $.get("/targetinfo/getDimensionVal", {key: key}, function (r) {
         var code = "";
         $.each(r.data, function (k, v) {
             code += "<option value='"+k+"'>"+v+"</option>";
