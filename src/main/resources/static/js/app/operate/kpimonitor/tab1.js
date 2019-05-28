@@ -170,27 +170,23 @@ function getOrderAvgPrice() {
     $.get("/kpiMonitor/getOrderAvgPrice", {startDt: startDt, endDt: endDt}, function (r) {
         var chart = echarts.init(document.getElementById("chart4"), 'macarons');
         chart.showLoading();
-        $.get("/kpiMonitor/getAvgCsPrice", {startDt: startDt, endDt: endDt}, function (r) {
-            var legendData = r.data.legendData;
-            var seriesData = new Array();
-            $.each(r.data.seriesData, function (k, v) {
-                v.stack = '总量';
-                v.type = 'line';
-                seriesData.push(v);
-            });
-            var xAxisName = r.data.xAxisName;
-            var yAxisName = r.data.yAxisName;
-            var xAxisData = r.data.xAxisData;
-            var option = getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData);
-            chart.setOption(option);
-            chart.hideLoading();
-            chart.on('click', function (params) {
-                $("#chartModal").modal('show');
-            });
+        var legendData = r.data.legendData;
+        var seriesData = new Array();
+        $.each(r.data.seriesData, function (k, v) {
+            v.stack = '总量';
+            v.type = 'line';
+            seriesData.push(v);
+        });
+        var xAxisName = r.data.xAxisName;
+        var yAxisName = r.data.yAxisName;
+        var xAxisData = r.data.xAxisData;
+        var option = getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData);
+        chart.setOption(option);
+        chart.hideLoading();
+        chart.on('click', function (params) {
+            $("#chartModal").modal('show');
         });
     });
-
-
 }
 
 function getAvgOrderQuantity() {
