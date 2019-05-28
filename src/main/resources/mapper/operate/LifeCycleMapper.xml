@@ -15,6 +15,11 @@
         <result column="SALE_BEGIN_DT" jdbcType="TIMESTAMP" property="saleBeginDt" />
         <result column="SALE_END_DT" jdbcType="TIMESTAMP" property="saleEndDt" />
         <result column="REAL_FEE" jdbcType="DECIMAL" property="gmvTotal" />
+        <result column="POCOUNT" jdbcType="DECIMAL" property="poCount" />
+        <result column="JOINRATE" jdbcType="DECIMAL" property="joinrate" />
+        <result column="SPRICE" jdbcType="DECIMAL" property="sprice" />
+        <result column="NEWUSER" jdbcType="DECIMAL" property="newuser" />
+        <result column="OLDUSER" jdbcType="DECIMAL" property="olduser" />
     </resultMap>
 
     <select id="getSpuList" resultMap="BaseResultMap">
@@ -43,6 +48,125 @@
                 SALE_BEGIN_DT,
                 SALE_END_DT,
                 nvl(REAL_FEE,0) REAL_FEE
+        from UO_LC_SPU_LIST left JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
+    </select>
+
+    <select id="getSpuListWithUserCount" resultMap="BaseResultMap">
+        with g1 as
+        (
+        SELECT
+        SPU.SPU_WID,
+        count(distinct case when t.is_fp='Y' then t.user_id end) NEWUSER,
+        count(distinct case when t.is_fp='N' then t.user_id end) OLDUSER
+        FROM W_ORDER_DETAILS T,W_DATE DT,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        WHERE
+        T.ORDER_DT_WID=DT.ROW_WID
+        AND T.PRODUCT_ID=SPU.PRODUCT_ID
+        AND T.VALID_STATUS=1
+        AND DT.row_wid &gt;=#{startDt}
+        AND DT.row_wid &lt;=#{endDt}
+        GROUP BY SPU.SPU_WID
+        )
+        select
+            UO_LC_SPU_LIST.SPU_WID,
+            SPU_NAME,
+            STOCK_NUM,
+            SALES_NUM,
+            TIME_TO_MARKET,
+            STOCKBYSALES,
+            ONSALE_DURATION,
+            SALE_BEGIN_DT,
+            SALE_END_DT,
+            nvl(NEWUSER,0) NEWUSER,
+            nvl(OLDUSER,0) OLDUSER
+        from UO_LC_SPU_LIST left JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
+    </select>
+
+    <select id="getSpuListWithPoCount" resultMap="BaseResultMap">
+        with g1 as
+        (
+        SELECT
+        SPU.SPU_WID,
+        count(distinct t.order_id) pocount
+        FROM W_ORDER_DETAILS T,W_DATE DT,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        WHERE
+        T.ORDER_DT_WID=DT.ROW_WID
+        AND T.PRODUCT_ID=SPU.PRODUCT_ID
+        AND T.VALID_STATUS=1
+        AND DT.row_wid &gt;=#{startDt}
+        AND DT.row_wid &lt;=#{endDt}
+        GROUP BY SPU.SPU_WID
+        )
+        select
+            UO_LC_SPU_LIST.SPU_WID,
+            SPU_NAME,
+            STOCK_NUM,
+            SALES_NUM,
+            TIME_TO_MARKET,
+            STOCKBYSALES,
+            ONSALE_DURATION,
+            SALE_BEGIN_DT,
+            SALE_END_DT,
+            nvl(POCOUNT,0) POCOUNT
+        from UO_LC_SPU_LIST left JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
+    </select>
+
+    <select id="getSpuListWithJoinRate" resultMap="BaseResultMap">
+        with g1 as
+        (
+        SELECT
+        SPU.SPU_WID,
+        (CASE WHEN COUNT(DISTINCT t.ORDER_ID)=0 THEN 0 ELSE
+           TRUNC(SUM(QUANTITY)/COUNT(DISTINCT t.ORDER_ID),2) END) JOINRATE
+        FROM W_ORDER_DETAILS T,W_DATE DT,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        WHERE
+        T.ORDER_DT_WID=DT.ROW_WID
+        AND T.PRODUCT_ID=SPU.PRODUCT_ID
+        AND T.VALID_STATUS=1
+        AND DT.row_wid &gt;=#{startDt}
+        AND DT.row_wid &lt;=#{endDt}
+        GROUP BY SPU.SPU_WID
+        )
+        select
+            UO_LC_SPU_LIST.SPU_WID,
+            SPU_NAME,
+            STOCK_NUM,
+            SALES_NUM,
+            TIME_TO_MARKET,
+            STOCKBYSALES,
+            ONSALE_DURATION,
+            SALE_BEGIN_DT,
+            SALE_END_DT,
+            NVL(JOINRATE,0) JOINRATE
+        from UO_LC_SPU_LIST left JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
+    </select>
+
+    <select id="getSpuListWithSprice" resultMap="BaseResultMap">
+        with g1 as
+        (
+        SELECT
+        SPU.SPU_WID,
+        (CASE WHEN SUM(t.QUANTITY)=0 THEN 0 ELSE TRUNC(SUM(t.PRICE*QUANTITY-t.DISCOUNT)/SUM(t.QUANTITY),2) END) SPRICE
+        FROM W_ORDER_DETAILS T,W_DATE DT,(SELECT PRODUCT_ID,SPU_WID FROM W_PRODUCT) spu
+        WHERE
+        T.ORDER_DT_WID=DT.ROW_WID
+        AND T.PRODUCT_ID=SPU.PRODUCT_ID
+        AND T.VALID_STATUS=1
+        AND DT.row_wid &gt;=#{startDt}
+        AND DT.row_wid &lt;=#{endDt}
+        GROUP BY SPU.SPU_WID
+        )
+        select
+            UO_LC_SPU_LIST.SPU_WID,
+            SPU_NAME,
+            STOCK_NUM,
+            SALES_NUM,
+            TIME_TO_MARKET,
+            STOCKBYSALES,
+            ONSALE_DURATION,
+            SALE_BEGIN_DT,
+            SALE_END_DT,
+            NVL(SPRICE,0) SPRICE
         from UO_LC_SPU_LIST left JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
     </select>
  </mapper>

@@ -40,16 +40,11 @@ public class LcSpuVO {
 
     private Double gmvCont;
 
-
     private Integer orderNo;
-
-    private Double userCont;
 
     private Double newUserCont;
 
     private Double oldUserCont;
-
-    private Double loyaltyCont;
 
     private Double poCount;
 
@@ -57,5 +52,4 @@ public class LcSpuVO {
 
     private Double sprice;
 
-    private Double profit;
 }
