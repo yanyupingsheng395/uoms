@@ -1,4 +1,4 @@
-package com.linksteady.operate.service.impl;
+package com.linksteady.operate.task;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -9,12 +9,12 @@ import com.linksteady.operate.dao.WeightIndexMapper;
 import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.domain.TgtDismant;
 import com.linksteady.operate.domain.WeightIndex;
-import com.linksteady.operate.service.TargetSplitAsyncService;
+import com.linksteady.operate.service.impl.TgtGmvCalculateServiceImpl;
 import com.linksteady.operate.vo.Echart;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.math.RoundingMode;
 import java.util.Date;
@@ -23,12 +23,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 目标进行分解的异步任务
- * @author  huang
+ * 对目标进行拆解
  */
 @Slf4j
-@Service
-public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
+@Component
+public class TargetSplitAsyncTask {
 
     @Autowired
     private TargetListMapper targetListMapper;
@@ -39,14 +38,16 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
     @Autowired
     private TgtDismantMapper tgtDismantMapper;
 
+    @Autowired
+    TgtGmvCalculateServiceImpl tgtGmvCalculateService;
+
     private static final String TARGET_PERIOD_YEAR="year";
     private static final String TARGET_PERIOD_MONTH="month";
     private static final String TARGET_PERIOD_DAY="day";
 
     @Async
-    @Override
     public void targetSplit(Long targetId) {
-         log.info("开始对目标ID为 {} 的目标进行拆解!",targetId);
+        log.info("开始对目标ID为 {} 的目标进行拆解!",targetId);
         try{
             //获取目标的详细信息
             TargetInfo targetInfo=targetListMapper.selectByPrimaryKey(targetId);
@@ -64,38 +65,21 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
             }
 
             //对任务进行计算
-            calculateTarget(targetInfo);
+            if("gmv".equals(targetInfo.getKpiCode()))
+            {
+                tgtGmvCalculateService.calculateTarget(targetInfo);
+            }
 
+            //更新状态
+            targetListMapper.updateTargetStatus(targetId,"2");
             log.info("对目标ID为 {} 的目标拆解完成!",targetId);
         }catch (Exception e)
         {
-             log.error("ID: {} 拆分计算任务异常",targetId,e);
-             //更新目标的状态为错误状态
+            log.error("ID: {} 拆分计算任务异常",targetId,e);
+            //更新目标的状态为错误状态
             targetListMapper.updateTargetStatus(targetId,"-1");
         }
     }
-
-    @Override
-    public Map<String, Object> getDismantData(Long targetId) {
-        List<TgtDismant> dataList = tgtDismantMapper.findByTgtId(targetId);
-        Echart echart = new Echart();
-        echart.setxAxisName("日期");
-        echart.setyAxisName("分解目标");
-        List<String> xdata = dataList.stream().map(x->x.getPeriodDate()).collect(Collectors.toList());
-        echart.setxAxisData(xdata);
-        echart.setyAxisData(dataList.stream().map(x->String.valueOf(x.getTgtVal())).collect(Collectors.toList()));
-        List<Double> row1 = dataList.stream().map(x->x.getTgtVal()).collect(Collectors.toList());
-        List<Double> row2 = dataList.stream().map(x->x.getTgtWeightIdx()).collect(Collectors.toList());
-        List<Double> row3 = dataList.stream().map(x->x.getTgtPercent()).collect(Collectors.toList());
-        Map<String, Object> result = Maps.newHashMap();
-        result.put("chart", echart);
-        result.put("head", xdata);
-        result.put("row1", row1);
-        result.put("row2", row2);
-        result.put("row3", row3);
-        return result;
-    }
-
 
     /**
      * 按年拆分目标值
@@ -140,7 +124,7 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
             if(!"12".equals(weightIndex.getPeriodId()))
             {
                 //每月的权重指数占比
-                double monthPctTemp=ArithUtil.div(weightIndex.getIndexValue(),indexTotal,10);
+                double monthPctTemp= ArithUtil.div(weightIndex.getIndexValue(),indexTotal,10);
                 //占比*100 保留2位小数
                 double monthPct=ArithUtil.formatDoubleByMode(ArithUtil.mul(monthPctTemp,100d),2, RoundingMode.DOWN);
 
@@ -303,23 +287,5 @@ public class TargetSplitAsyncServiceImpl implements TargetSplitAsyncService {
 
         }
         tgtDismantMapper.saveTargetDismant(targetDismantList);
-    }
-
-    /**
-     * 针对每个目标进行运算
-     * @param targetInfo
-     */
-    private void calculateTarget(TargetInfo targetInfo)
-    {
-        //todo 对目前执行情况进行计算
-        log.info("开始对目标ID为 {} 的目标进行计算!",targetInfo.getId());
-
-        //计算头信息
-
-        //计算完成信息
-
-        log.info("对目标ID为 {} 的目标计算完成!",targetInfo.getId());
-        targetListMapper.updateTargetStatus(targetInfo.getId(),"2");
-
     }
 }

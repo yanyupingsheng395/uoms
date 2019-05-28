@@ -73,4 +73,18 @@ public class TgtDismant {
      */
     @Column(name = "GROWTH_RATE")
     private Double growthRate;
+
+
+    /**
+     * 时间窗口是否已过去
+     */
+    @Column(name = "PAST_FLAG")
+    private String pastFlag;
+
+    /**
+     * 是否已完成
+     */
+    @Column(name = "FINISH_FLAG")
+    private String finishFlag;
+
 }

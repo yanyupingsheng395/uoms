@@ -220,26 +220,26 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
 
         //计算变异系数
         //均值
-        Double firavg=firData.stream().mapToDouble(Double::doubleValue).average().orElse(0d);
-        Double secavg=secData.stream().mapToDouble(Double::doubleValue).average().orElse(0d);
-        Double thirdavg=thirdData.stream().mapToDouble(Double::doubleValue).average().orElse(0d);
+        double firavg=firData.stream().mapToDouble(Double::doubleValue).average().orElse(0d);
+        double secavg=secData.stream().mapToDouble(Double::doubleValue).average().orElse(0d);
+        double thirdavg=thirdData.stream().mapToDouble(Double::doubleValue).average().orElse(0d);
 
         //标准差
-        Double firStand= DataStatisticsUtils.getStandardDevitionByList(firData);
-        Double secStand=DataStatisticsUtils.getStandardDevitionByList(secData);
-        Double thirdStand=DataStatisticsUtils.getStandardDevitionByList(thirdData);
+        double firStand= DataStatisticsUtils.getStandardDevitionByList(firData);
+        double secStand=DataStatisticsUtils.getStandardDevitionByList(secData);
+        double thirdStand=DataStatisticsUtils.getStandardDevitionByList(thirdData);
 
-        String firCov=diagOpCommonService.valueFormat(firStand==0?0.00:firStand/firavg*100,"D2");
+        String firCov=diagOpCommonService.valueFormat(firavg==0?0.00:firStand/firavg*100,"D2");
         String secCov="";
         if(UomsConstants.DIAG_KPI_CODE_TSPAN.equals(part1Code))
         {
             secCov="";
         }else
         {
-            secCov=diagOpCommonService.valueFormat(secStand==0?0.00:secStand/secavg*100,"D2");
+            secCov=diagOpCommonService.valueFormat(secavg==0?0.00:secStand/secavg*100,"D2");
         }
 
-        String thirdCov=diagOpCommonService.valueFormat(thirdStand==0?0.00:thirdStand/thirdavg*100,"D2");
+        String thirdCov=diagOpCommonService.valueFormat(thirdavg==0?0.00:thirdStand/thirdavg*100,"D2");
 
         Map<String,String> codeNamePair=KpiCacheManager.getInstance().getKpiCodeNamePair();
         covValues.put(codeNamePair.get(kpiCode)+"变异系数",firCov);

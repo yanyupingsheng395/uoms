@@ -24,7 +24,6 @@
     <result column="FINISH_RATE_DIFFER" jdbcType="DECIMAL" property="finishRateDiffer" />
     <result column="FINISH_RATE_LAST" jdbcType="DECIMAL" property="finishRateLast" />
     <result column="KPI_UNIT" jdbcType="VARCHAR" property="kpiUnit" />
-    <result column="FINISH_DEGREE" jdbcType="DECIMAL" property="finishDegree"/>
     <result column="REMAIN_TGT" jdbcType="DECIMAL" property="remainTgt"/>
     <result column="REMAIN_COUNT" jdbcType="DECIMAL" property="remainCount"/>
     <result column="REMAIN_LIST" jdbcType="VARCHAR" property="remainList"/>
@@ -101,6 +100,41 @@
   </select>
 
   <update id="updateTargetStatus">
-      update UO_TGT_LIST set STATUS=#{status} WHERE ID=#{id}
+      update UO_TGT_LIST set STATUS=#{status},UPDATE_DT=SYSDATE WHERE ID=#{id}
   </update>
+
+    <update id="updateTargetActualValue">
+        UPDATE UO_TGT_LIST SET
+        <if test="finishRate != null and finishRate != ''">
+            FINISH_RATE=#{finishRate},
+        </if>
+            REMAIN_TGT=#{remainTgt},
+        <if test="varyIdx != null and varyIdx != ''">
+            VARY_IDX=#{varyIdx},
+        </if>
+        <if test="varyIdxLast != null and varyIdxLast != ''">
+            VARY_IDX_LAST=#{varyIdxLast},
+        </if>
+        ACTUAL_VAL=#{actualVal},
+        ACTUAL_VAL_LAST=#{actualValLast},
+        ACTUAL_VAL_RATE=#{actualValRate},
+        COMPUTE_DT=#{item.computeDt,jdbcType=DATE}
+        WHERE ID=#{id}
+    </update>
+
+    <update id="updateFinshDiff">
+        UPDATE UO_TGT_LIST C SET (C.FINISH_DIFFER,C.REMAIN_COUNT)=(
+                                  SELECT SUM(T.TGT_VAL-T.ACTUAL_VAL),COUNT(*) FROM UO_TGT_DISMANT T WHERE T.TGT_ID=C.ID AND T.PAST_FLAG='Y' AND T.FINISH_FLAG='N'
+            ) WHERE C.ID=#{targetId}
+    </update>
+
+    <update id="updateFinshDiffWithZero">
+        UPDATE UO_TGT_LIST C SET (C.FINISH_DIFFER,C.REMAIN_COUNT)=(
+                                  SELECT 0,COUNT(*) FROM UO_TGT_DISMANT T WHERE T.TGT_ID=C.ID AND T.PAST_FLAG='Y' AND T.FINISH_FLAG='N'
+            ) WHERE C.ID=#{targetId}
+    </update>
+
+    <select id="getAllRuningTarget"  resultMap="BaseResultMap">
+      SELECT  * FROM UO_TGT_LIST WHERE STATUS='2'
+    </select>
 </mapper>

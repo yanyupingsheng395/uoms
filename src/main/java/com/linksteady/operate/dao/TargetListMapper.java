@@ -26,4 +26,17 @@ public interface TargetListMapper extends MyMapper<TargetInfo> {
     Map<String, Object> getMonitorVal(String targetId);
 
     void updateTargetStatus(@Param("id") long id,@Param("status") String status);
+
+    void updateTargetActualValue(TargetInfo targetInfo);
+
+    void updateFinshDiff(@Param("targetId") long targetId);
+
+    void updateFinshDiffWithZero(@Param("targetId") long targetId);
+
+    /**
+     * 获取所有处于执行中的任务列表
+     * @return
+     */
+    List<TargetInfo> getAllRuningTarget();
+
 }

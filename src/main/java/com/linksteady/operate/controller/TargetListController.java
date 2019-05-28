@@ -9,7 +9,9 @@ import com.linksteady.operate.domain.TargetDimension;
 import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.service.TargetDimensionService;
 import com.linksteady.operate.service.TargetListService;
-import com.linksteady.operate.service.TargetSplitAsyncService;
+import com.linksteady.operate.service.impl.TgtGmvCalculateServiceImpl;
+import com.linksteady.operate.task.CalculateAllTargetTask;
+import com.linksteady.operate.task.TargetSplitAsyncTask;
 import com.linksteady.operate.vo.TgtReferenceVO;
 import com.linksteady.system.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +37,13 @@ public class TargetListController {
     private TargetDimensionService targetDimensionService;
 
     @Autowired
-    TargetSplitAsyncService targetSplitAsyncService;
+    TgtGmvCalculateServiceImpl tgtGmvCalculateService;
+
+    @Autowired
+    TargetSplitAsyncTask targetSplitAsyncTask;
+
+    @Autowired
+    CalculateAllTargetTask calculateAllTargetTask;
 
     private static final List<String> TARGET_KPI_LIST= Arrays.asList("gmv");
     private static final List<String> TARGET_DIM_LIST= Arrays.asList("neworold","source");
@@ -93,7 +101,7 @@ public class TargetListController {
         long targetId=targetListService.save(target);
 
         //提交后台进行拆解
-        targetSplitAsyncService.targetSplit(targetId);
+        targetSplitAsyncTask.targetSplit(targetId);
 
         return ResponseBo.ok();
     }
@@ -136,7 +144,7 @@ public class TargetListController {
         List<TgtReferenceVO> resultList;
         if("gmv".equals(kpiCode))
         {
-            resultList=targetListService.getGmvReferenceData(period,startDt,endDt,dimInfoMap);
+            resultList=tgtGmvCalculateService.getReferenceData(period,startDt,endDt,dimInfoMap);
 
         }else
         {
@@ -179,7 +187,7 @@ public class TargetListController {
         List<TgtReferenceVO> resultList;
         if("gmv".equals(kpiCode))
         {
-            resultList=targetListService.getGmvReferenceData(period,startDt,endDt,dimInfo);
+            resultList=tgtGmvCalculateService.getReferenceData(period,startDt,endDt,dimInfo);
 
         }else
         {
@@ -194,7 +202,7 @@ public class TargetListController {
      */
     @RequestMapping("/getDismantData")
     public ResponseBo getDismantData(@RequestParam("id") Long targetId) {
-        return ResponseBo.okWithData(null, targetSplitAsyncService.getDismantData(targetId));
+        return ResponseBo.okWithData(null, targetListService.getDismantData(targetId));
     }
 
     @RequestMapping("/deleteDataById")
@@ -206,5 +214,30 @@ public class TargetListController {
             log.error(ex.getMessage());
             return ResponseBo.error();
         }
+    }
+
+
+    /**
+     * 对某个目标的实际完成情况进行手工运算
+     * @return
+     */
+    @RequestMapping("/calculate")
+    public ResponseBo calculate(@RequestParam("targetId") Long targetId) {
+
+        TargetInfo targetInfo=targetListService.selectByPrimaryKey(targetId);
+        tgtGmvCalculateService.calculateTarget(targetInfo);
+
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 对所有目标的实际完成情况进行手工运算
+     * @return
+     */
+    @RequestMapping("/calculateAll")
+    public ResponseBo calculateAll() {
+
+        calculateAllTargetTask.calculate();
+        return ResponseBo.ok();
     }
 }

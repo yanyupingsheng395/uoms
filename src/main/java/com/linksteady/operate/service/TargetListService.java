@@ -23,7 +23,9 @@ public interface TargetListService {
 
     Map<String, Object> getMonitorVal(String targetId);
 
-    List<TgtReferenceVO> getGmvReferenceData(String period, String startDt, String endDt, Map<String,String> dimInfo);
-
     void deleteDataById(String id);
+
+    Map<String, Object> getDismantData(Long targetId);
+
+    TargetInfo selectByPrimaryKey(long targetId);
 }
