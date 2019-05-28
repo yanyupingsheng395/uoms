@@ -41,7 +41,7 @@ public class PageController extends BaseController {
     @Log("目标设定与分解")
     @RequestMapping("/page/target")
     public String target() {
-        return "operate/target/index";
+        return "operate/targetinfo/index";
     }
 
     /**
@@ -50,7 +50,7 @@ public class PageController extends BaseController {
     @Log("目标设定与分解-新增")
     @RequestMapping("/page/target/add")
     public String add() {
-        return "operate/target/add";
+        return "operate/targetinfo/add";
     }
 
     /**
@@ -167,6 +167,6 @@ public class PageController extends BaseController {
     @RequestMapping("/target/detail")
     public String targetDetail(@RequestParam("id") String id, Model model) {
         model.addAttribute("id", id);
-        return "operate/target/detail";
+        return "operate/targetinfo/detail";
     }
 }
