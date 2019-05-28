@@ -157,6 +157,10 @@
         $.get("/target/getDismantData", {id: id}, function (r) {
             var chart = r.data['chart'];
             var option = getBarOption(chart['xAxisData'], chart['xAxisName'], chart['yAxisName'],  chart['yAxisData'], chart['xAxisName'], chart['yAxisName']);
+            option.xAxis.axisLabel =  {
+                interval:0,
+                rotate:40
+            };
             var c = echarts.init(document.getElementById("chart"), 'macarons');
             c.setOption(option);
             makeTable(r.data);
