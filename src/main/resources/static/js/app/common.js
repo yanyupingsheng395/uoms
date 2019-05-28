@@ -1,6 +1,6 @@
 $(document).ready(function () {
     menu_tree();
-
+    $(".selectpicker").selectpicker();
     //消息提示组件
     toastr.options = {
         "closeButton": true,
@@ -224,3 +224,4 @@ function init_date(id, format, startView, maxViewMode, minViewMode) {
         minViewMode: minViewMode
     });
 }
+
