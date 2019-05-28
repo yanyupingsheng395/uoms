@@ -39,12 +39,33 @@ $(function () {
         },  {
             field: 'kpiName',
             title: '指标'
-        }, {
-            field: 'createDt',
-            title: '创建时间'
+        },{
+            field: 'beginDt',
+            title: '开始时间'
+        },{
+            field: 'endDt',
+            title: '结束时间'
         },{
             field: 'source',
             title: '来源'
+        }, {
+            field: 'dimDisplayName',
+            title: '维度&值',
+            formatter: function (value, row, index) {
+                value = value.replace(";", "");
+                if(value.length >= 10) {
+                    var newVal = value.substr(0, 10) + "...";
+                    var title = value.split(";").join("<br/>");
+                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\""+title+"\">"+newVal+"</a>";
+                }else if(value.indexOf("暂无数据") > -1){
+                    return "-";
+                }else {
+                    return "-";
+                }
+            }
+        },{
+            field: 'createDt',
+            title: '创建时间'
         },{
             filed: 'button',
             title: '操作',
@@ -59,7 +80,9 @@ $(function () {
                     return "<div class='btn btn-primary btn-sm' onclick='view("+reasonId+")'><i class='mdi mdi-eye'></i>查看</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='del("+reasonId+")'><i class='mdi mdi-window-close'></i>删除</div>";
                 }
             }
-        }]
+        }],onLoadSuccess: function(data){
+            $("a[data-toggle='tooltip']").tooltip();
+        }
     };
     $('#reasonTable').bootstrapTable(settings);
 

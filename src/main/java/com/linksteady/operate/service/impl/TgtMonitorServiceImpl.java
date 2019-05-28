@@ -60,7 +60,6 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
         List<Double> data = fixData(datas, xdata);
         map.put("data", data);
         map.put("type", "bar");
-        map.put("xAxisIndex", 0);
         list.add(map);
         map = Maps.newHashMap();
         map.put("name", "实际值");
@@ -68,7 +67,6 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
         data = fixData(datas, xdata);
         map.put("data", data);
         map.put("type", "bar");
-        map.put("xAxisIndex", 1);
         list.add(map);
         echart.setSeriesData(list);
         return echart;
@@ -156,7 +154,14 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
         });
         datas = dataList.stream().collect(Collectors.toMap(TgtDismant::getPeriodDate, TgtDismant::getGrowthRate));
         data = fixData(datas, xdata);
-        map.put("data", data);
+        List<String> newData = data.stream().map(x->{
+            if(x == 0D) {
+                return "";
+            }else {
+                return String.valueOf(x);
+            }
+        }).collect(Collectors.toList());
+        map.put("data", newData);
         map.put("type", "line");
         list.add(map);
         echart.setSeriesData(list);

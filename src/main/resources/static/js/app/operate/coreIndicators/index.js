@@ -37,7 +37,7 @@ function getMonitorVal() {
             var unit = r.data["KPI_UNIT"] == undefined ? "" : r.data["KPI_UNIT"];
             var targetVal = r.data["TARGET_VAL"] == undefined ? 0.00 + unit:r.data["TARGET_VAL"] + unit;
             var actualVal = r.data["ACTUAL_VAL"] == undefined ? 0.00 + unit:r.data["ACTUAL_VAL"] + unit;
-            var actualValRate = r.data["ACTUAL_VAL_RATE"] == undefined ? 0.00:r.data["ACTUAL_VAL_RATE"];
+            var actualValRate = r.data["ACTUAL_VAL_RATE"] == undefined ? '--':r.data["ACTUAL_VAL_RATE"] + '%';
             var actualValLast = r.data["ACTUAL_VAL_LAST"] == undefined ? 0.00 + unit:r.data["ACTUAL_VAL_LAST"] + unit;
             var finishRate = r.data["FINISH_RATE"] == undefined ? 0.00 + "%":r.data["FINISH_RATE"] + "%";
 
@@ -45,12 +45,16 @@ function getMonitorVal() {
             var finishDiffer = r.data["FINISH_DIFFER"] == undefined ? 0.00 + unit:r.data["FINISH_DIFFER"] + unit;
             var remainCount = r.data["REMAIN_COUNT"] == undefined ? 0:r.data["REMAIN_COUNT"];
             var varyIdx = r.data["VARY_IDX"] == undefined ? 0.00:r.data["VARY_IDX"];
-            var varyIdxLast = r.data["VARY_IDX_LAST"] == undefined ? 0.00:r.data["VARY_IDX_LAST"];
+            var varyIdxLast = r.data["VARY_IDX_LAST"] == undefined ? '--':r.data["VARY_IDX_LAST"];
 
 
             $("#targetVal").html("").html(targetVal);
             $("#actualVal").html("").html(actualVal);
-            $("#actualValRate").html("").html(actualValRate > 0 ? "同比<span style=\"color:green;\"><i class=\"mdi mdi-menu-up mdi-18px\"></i>"+actualValRate+"%</span>":"同比<span style=\"color:red;\"><i class=\"mdi mdi-menu-down mdi-18px\"></i>"+actualValRate+"%</span>");
+            if(actualValRate == '--') {
+                $("#actualValRate").html("").html("<span style='line-height: 30px;'>同比:"+actualValRate+"</span>");
+            }else {
+                $("#actualValRate").html("").html(actualValRate > 0 ? "同比<span style=\"color:green;\"><i class=\"mdi mdi-menu-up mdi-18px\"></i>"+actualValRate+"</span>":"同比<span style=\"color:red;\"><i class=\"mdi mdi-menu-down mdi-18px\"></i>"+actualValRate+"</span>");
+            }
             $("#actualValLast").html("").html(actualValLast);
             $("#finishRate").html("").html(finishRate);
             // 完成度
@@ -59,7 +63,7 @@ function getMonitorVal() {
             $("#finishDiffer").html("").html(finishDiffer);
             $("#remainCount").html("").html(remainCount);
             $("#varyIdx").html("").html(varyIdx);
-            $("#varyIdxLast").html("").html(varyIdxLast);
+            $("#varIdxLast").html("").html(varyIdxLast);
         });
     }
 }
@@ -200,7 +204,7 @@ function currLastValOption(legend, xdata, xAxis, yAxis, series) {
             right: 20,
             orient: 'vertical',
             data: legend,
-            selected: {'本年指标值': true, '去年指标值': true,'本年平均指标值': false,'去年平均指标值': false}
+            selected: {'本周期指标值': true, '去年同期指标值': true,'本周期平均指标值': false,'去年同期平均指标值': false}
         },
         tooltip: {
             trigger: 'axis',
@@ -244,7 +248,7 @@ function getValRateOption(legend, xdata, xAxis, yAxis, series) {
             name: xAxis,
             splitLine:{show: false},
             data: xdata,
-            boundaryGap: false
+            boundaryGap: true
         }],
         yAxis: [{
             type: 'value',

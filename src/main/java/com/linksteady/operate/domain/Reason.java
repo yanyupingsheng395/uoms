@@ -29,5 +29,5 @@ public class Reason implements Serializable {
     String createBy;
     String updateBy;
     String source;
-
+    String dimDisplayName;
 }

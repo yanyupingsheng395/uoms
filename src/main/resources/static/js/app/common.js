@@ -1,6 +1,6 @@
 $(document).ready(function () {
     menu_tree();
-    $(".selectpicker").selectpicker();
+
     //消息提示组件
     toastr.options = {
         "closeButton": true,
@@ -19,7 +19,7 @@ $(document).ready(function () {
         "hideEasing": "linear",
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
-    }
+    };
 
     //为所有ajax设置
     $.ajaxSetup({
@@ -158,6 +158,8 @@ function menu_tree() {
  * @param minViewMode
  */
 function init_date_begin(beginId, endId, format, startView, maxViewMode, minViewMode) {
+    var date = new Date();
+    date.setMonth(date.getMonth() - 1);
     $('#' + beginId).datepicker({
         format: format,
         language: "zh-CN",
@@ -171,7 +173,7 @@ function init_date_begin(beginId, endId, format, startView, maxViewMode, minView
         if(ev.date){
             $("#" + endId).datepicker('setStartDate', new Date(ev.date.valueOf()));
         }else{
-            $("#" + endId).datepicker('setStartDate', null);
+            $("#" + endId).datepicker('setStartDate', date);
         }
     });
 }
@@ -224,4 +226,3 @@ function init_date(id, format, startView, maxViewMode, minViewMode) {
         minViewMode: minViewMode
     });
 }
-

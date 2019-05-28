@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 原因探究相关的服务类
@@ -45,7 +46,18 @@ public class ReasonServiceImpl implements ReasonService {
     @Override
     public List<Reason> getReasonList(int startRow, int endRow)
     {
-       return  reasonMapper.getReasonList(startRow,endRow);
+        List<Reason> dataList = reasonMapper.getReasonList(startRow,endRow);
+        dataList.stream().forEach(x->{
+            String reasonId = String.valueOf(x.getReasonId());
+            List<Map<String,String>> reasonDetail=reasonMapper.getReasonDetailById(reasonId);
+            String displayName = "";
+            List<String> list = reasonDetail.stream().filter(z->null != z.get("DIM_DISPLAY_VALUE")).map(y->y.get("DIM_DISPLAY_VALUE")).collect(Collectors.toList());
+            for(String l:list) {
+                displayName += l + ";";
+            }
+            x.setDimDisplayName(displayName);
+        });
+       return  dataList;
     }
 
     @Override
