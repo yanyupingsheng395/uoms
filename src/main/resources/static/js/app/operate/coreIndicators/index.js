@@ -150,7 +150,7 @@ function getOptionAcc(legend, xdata, xAxis, yAxis, series) {
                 show: true,
             },
             data: xdata,
-            boundaryGap: false
+            boundaryGap: true
         }, {
             type: 'category',
             axisLine: {

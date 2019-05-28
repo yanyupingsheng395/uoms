@@ -439,10 +439,10 @@ function tab3DataInit() {
         },{
             field: 'accPurchTimes',
             title: '累计购买次数'
-        }],
-        onLoadSuccess: function(data){
-            $("a[data-toggle='tooltip']").tooltip();
-        }
+        }]
+        // onLoadSuccess: function(data){
+        //     $("a[data-toggle='tooltip']").tooltip();
+        // }
     };
     $('#dataTable').bootstrapTable('destroy').bootstrapTable(settings);
 }

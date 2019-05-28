@@ -45,6 +45,9 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
      */
     private Echart getActualTgtVal(String targetId, List<String> xdata) {
         List<TgtDismant> dataList = tgtDismantMapper.findByTgtId(Long.valueOf(targetId));
+        dataList.stream().forEach(x-> {
+            x.setPeriodDate(x.getPeriodDate().replaceAll("-", ""));
+        });
         Echart echart = new Echart();
         echart.setxAxisName("日期");
         echart.setyAxisName("指标值");
@@ -79,6 +82,9 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
     private Echart getCurrLastVal(String targetId, List<String> xdata) {
         DecimalFormat df = new DecimalFormat("#.##");
         List<TgtDismant> dataList = tgtDismantMapper.findByTgtId(Long.valueOf(targetId));
+        dataList.stream().forEach(x-> {
+            x.setPeriodDate(x.getPeriodDate().replaceAll("-", ""));
+        });
         Echart echart = new Echart();
         echart.setxAxisName("日期");
         echart.setyAxisName("指标值");
@@ -127,6 +133,9 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
 
     private Echart getValRate(String targetId, List<String> xdata) {
         List<TgtDismant> dataList = tgtDismantMapper.findByTgtId(Long.valueOf(targetId));
+        dataList.stream().forEach(x-> {
+            x.setPeriodDate(x.getPeriodDate().replaceAll("-", ""));
+        });
         Echart echart = new Echart();
         echart.setxAxisName("日期");
         echart.setyAxisName("指标值");
@@ -219,7 +228,6 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
             if(flag) {
                 LocalDate lstDay = now.plusDays(-1);
                 endDt = endDt.isAfter(now) ? lstDay:endDt;
-
                 if(startDt.isBefore(now)) {
                     while(startDt.isBefore(endDt)) {
                         dateList.add(startDt.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
