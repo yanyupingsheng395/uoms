@@ -1,6 +1,5 @@
 package com.linksteady.operate.service.impl;
 
-import com.linksteady.operate.dao.GmvPlanMapper;
 import com.linksteady.operate.dao.KeyPointMapper;
 import com.linksteady.operate.domain.KeyPointMonth;
 import com.linksteady.operate.domain.KeyPointYear;
