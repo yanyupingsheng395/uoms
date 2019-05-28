@@ -4,6 +4,25 @@ function nodeClick() {
         viewChart(r.data);
     });
 }
+
+function getRootDiagInfo() {
+    var code = "";
+    $.ajax({
+        url: "/diag/getDimByDiagId",
+        data: {diagId: diagId},
+        async: false,
+        success: function (r) {
+            $("#_diagName").html("").html("<p class='h5'>名称: " + r.data['DIAG_NAME'] + "</p>");
+            $("#diagKpiCode").html("").html("<p class='h5'>指标: " + r.data['KPI_NAME'] + "</p>");
+            var dimInfos = r.data['DIM_DISPLAY_NAME'].split(";");
+            $.each(dimInfos, function (k, v) {
+                code += "<li>"+v+"</li>";
+            })
+        }
+    });
+    return code;
+}
+
 function viewChart(obj) {
     $("#modal").modal('show');
     var operateType = obj.periodType;
@@ -22,13 +41,10 @@ function viewChart(obj) {
         $("#template1").attr("style", "display:block;");
         $("#template2").attr("style", "display:none;");
         $("#template3").attr("style", "display:none;");
-
-        var whereinfo = "<div class=\"col-md-12\">\n" +
-            "<table class=\"table table-sm\">\n" +
-            "<n></n><tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>无过滤条件！</td></tr>\n" +
-            "</table>\n" +
-            "</div>";
-        $("#whereinfo").html("").html(whereinfo);
+        var code = getRootDiagInfo();
+        if(code != "") {
+            $("#_conditions").html("").html("<ol>"+code+"</ol>");
+        }
     } else {
         // 条件
         var whereinfo = "<div class=\"col-md-12\"><table class='table table-sm'>";

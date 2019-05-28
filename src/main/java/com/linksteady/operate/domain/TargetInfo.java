@@ -137,12 +137,6 @@ public class TargetInfo implements Serializable {
     private String kpiName;
 
     /**
-     * 完成率（%）
-     */
-    @Column(name = "FINISH_DEGREE")
-    private Double finishDegree;
-
-    /**
      * 剩余目标
      */
     @Column(name = "REMAIN_TGT")

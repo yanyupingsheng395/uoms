@@ -1,10 +1,12 @@
 package com.linksteady.operate.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageHelper;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.Diag;
+import com.linksteady.operate.domain.DiagCondition;
 import com.linksteady.operate.service.DiagService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +42,11 @@ public class DiagnosisController {
     }
 
     @PostMapping("/add")
-    public ResponseBo add(Diag diag) {
+    public ResponseBo add(Diag diag, String conditions) {
         try {
-            Long result = diagService.save(diag);
+            JSONArray jsonArray = JSONArray.parseArray(conditions);
+            List<DiagCondition> conditionList = jsonArray.toJavaList(DiagCondition.class);
+            Long result = diagService.save(diag, conditionList);
             return ResponseBo.okWithData(null, result);
         }catch (Exception e) {
             e.printStackTrace();
@@ -66,5 +70,10 @@ public class DiagnosisController {
             logger.error(ex.toString());
             return ResponseBo.error("删除失败！");
         }
+    }
+
+    @GetMapping("/getDimByDiagId")
+    public ResponseBo getDimByDiagId(@RequestParam("diagId") String diagId) {
+        return ResponseBo.okWithData(null, diagService.geDiagInfoById(diagId));
     }
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Table(name = "UO_DIAG_LIST")
@@ -75,4 +76,12 @@ public class Diag {
     @Column(name = "UPDATE_BY")
     private String updateByName;
 
+    @Column(name = "KPI_CODE")
+    private String kpiCode;
+
+    @Column(name = "DIM_DISPLAY_NAME")
+    private String dimDisplayName;
+
+    @Transient
+    private List<DiagCondition> conditionList;
 }

@@ -11,6 +11,8 @@
     <result column="BEGIN_DT" jdbcType="VARCHAR" property="beginDt" />
     <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
     <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt"></result>
+    <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode"></result>
+    <result column="DIM_DISPLAY_NAME" jdbcType="VARCHAR" property="dimDisplayName"></result>
   </resultMap>
 
   <select id="getList" resultMap="BaseResultMap">
@@ -27,8 +29,8 @@
     <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="diagId">
       select seq_diag_id.nextval from dual
     </selectKey>
-    insert into UO_DIAG_LIST(DIAG_ID, DIAG_NAME, PERIOD_TYPE, BEGIN_DT, END_DT, CREATE_DT)
-    values(#{diagId}, #{diagName}, #{periodType}, #{beginDt}, #{endDt}, #{createDt})
+    insert into UO_DIAG_LIST(DIAG_ID, DIAG_NAME, PERIOD_TYPE, BEGIN_DT, END_DT, CREATE_DT, KPI_CODE, DIM_DISPLAY_NAME)
+    values(#{diagId}, #{diagName}, #{periodType}, #{beginDt}, #{endDt}, #{createDt}, #{kpiCode}, #{dimDisplayName})
   </insert>
 
   <select id="findByDiagId" resultMap="BaseResultMap">
@@ -38,4 +40,22 @@
   <delete id="deleteById">
     delete from UO_DIAG_LIST where DIAG_ID = #{id}
   </delete>
+
+  <select id="geDiagInfoById" resultType="map">
+      SELECT
+          *
+      FROM
+          (
+          SELECT
+              d.DIAG_ID,
+              d.DIAG_NAME,
+              d.DIM_DISPLAY_NAME,
+              k.KPI_NAME
+          FROM
+              UO_DIAG_LIST d
+              LEFT JOIN UO_KPI_LIST_CONFIG k ON d.KPI_CODE = k.KPI_CODE
+          ) t
+      WHERE
+          t.DIAG_ID = #{diagId}
+  </select>
 </mapper>

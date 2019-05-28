@@ -1,5 +1,4 @@
 // 获取监控目标
-getTargetList();
 function getTargetList() {
     $.ajax({
         url: "/target/getTargetList",
@@ -17,16 +16,23 @@ function getTargetList() {
             });
             $("#tgtList").html("").html(code);
             $("#tgtList").selectpicker('refresh');
-            $("#tgtDate").html("").html($("#tgtList").find("option:eq(0)").attr("data-code").replace("~", "至"));
+            if(r.data.length != 0) {
+                $("#tgtDate").html("").html($("#tgtList").find("option:eq(0)").attr("data-code").replace("~", "至"));
+            }
         }
     });
+}
+
+init();
+function init() {
+    getTargetList();
 }
 
 var tgtId = $("#tgtList").find("option:selected").val();
 getMonitorVal();
 function getMonitorVal() {
     var tgtId = $("#tgtList").find("option:selected").val();
-    if(tgtId != "") {
+    if(tgtId != "" && tgtId != null) {
         $.get("/tgtKpiMonitor/getMonitorVal", {id: tgtId}, function (r) {
             var unit = r.data["KPI_UNIT"] == undefined ? "" : r.data["KPI_UNIT"];
             var targetVal = r.data["TARGET_VAL"] == undefined ? 0.00 + unit:r.data["TARGET_VAL"] + unit;
@@ -68,12 +74,14 @@ var dt = $("#tgtList").find("option:selected").attr("data-code");
 var periodType = $("#tgtList").find("option:selected").attr("data-period");
 getCharts(periodType, dt);
 function getCharts(periodType, dt) {
-    $.get("/tgtKpiMonitor/getCharts", {id:tgtId, periodType:periodType, dt: dt}, function (r) {
-        console.log(r)
-        chartInit(r.data[0], "chart1");
-        chartInit(r.data[1], "chart2");
-        chartInit(r.data[2], "chart3");
-    });
+    if(tgtId != "" && tgtId != null) {
+        $.get("/tgtKpiMonitor/getCharts", {id:tgtId, periodType:periodType, dt: dt}, function (r) {
+            console.log(r)
+            chartInit(r.data[0], "chart1");
+            chartInit(r.data[1], "chart2");
+            chartInit(r.data[2], "chart3");
+        });
+    }
 }
 
 // 各月目标和实际值对比图
@@ -301,25 +309,3 @@ function getDimensionList() {
         toastr.warning("请选择目标！");
     }
 }
-//
-// // 获取目标的维度和值
-// $("#dimensionVal").on('shown.bs.modal', function () {
-//     var id = $("#tgtList").find("option:selected").val();
-//     if(id != "") {
-//         $.get("/target/getDimensionsById", {id: id}, function (r) {
-//             var code = "";
-//             $.each(r.data, function (k, v) {
-//                 code += "<li>" + v["DIMENSION_NAME"] + ":" + v["DIMENSION_VAL_NAME"] +  "</li>";
-//             });
-//
-//             if(code == "") {
-//                 $("#dimensionVal").modal('hide');
-//                 toastr.warning("该目标没有维度和值！");
-//             }else {
-//                 $("#dimensionList").html("").html(code);
-//             }
-//         });
-//     }else {
-//         toastr.warning("请选择目标！");
-//     }
-// });
