@@ -15,7 +15,7 @@ public interface ReasonService {
 
      int getReasonTotalCount();
 
-     void saveReasonData(ReasonVO reasonVO,String curuser,int primaryKey);
+     void saveReasonData(ReasonVO reasonVO,String username,int primaryKey);
 
      int getReasonPrimaryKey();
 

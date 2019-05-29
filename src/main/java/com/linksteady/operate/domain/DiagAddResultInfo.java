@@ -30,7 +30,7 @@ public class DiagAddResultInfo extends DiagResultInfo{
     List<String> xdata;
 
     /**
-     * 面积图的数据
+     * 面积图的数据(主指标)
      */
     JSONArray areaData;
 
@@ -58,6 +58,16 @@ public class DiagAddResultInfo extends DiagResultInfo{
      * 加法要插入的节点名称
      */
     JSONArray  nodeList;
+
+    /**
+     * 主指标的 条图数据 （不分时间，仅根据维度）
+     */
+    JSONArray  mainKpiBarData;
+
+    /**
+     * 当前指标的 条图数据 （不分时间，仅根据维度）
+     */
+    JSONArray  currKpiBarData;
 
 
 }

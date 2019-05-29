@@ -77,7 +77,10 @@ $(function () {
                         return "-";
                 }
             }
-        }, {
+        },{
+            field: 'CREATE_DT',
+            title: '创建时间'
+        },{
             title: '操作',
             formatter: function (values, row,index) {
                 var res = "";
@@ -95,7 +98,7 @@ $(function () {
                         res =  "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
                         break;
                     case "-1":
-                        res =  "<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
+                        res =  "<a class='btn btn-primary btn-sm' href='/target/detail?id=\"+row.ID+\"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
                         break;
                     default:
                         res =  "-";
@@ -108,7 +111,12 @@ $(function () {
             $("a[data-toggle='tooltip']").tooltip();
         }
     };
-    $('#gmvPlanTable').bootstrapTable(settings);
+    $('#targetTable').bootstrapTable(settings);
+
+    //为刷新按钮绑定事件
+    $("#btn_refresh").on("click",function () {
+        $('#targetTable').bootstrapTable('refresh');
+    });
 });
 function deleteDatas(id){
     $.confirm({
@@ -136,7 +144,7 @@ function delData(id) {
     $.get("/target/deleteDataById", {id: id}, function (r) {
         if(r.code == 200) {
             toastr.success("删除成功！");
-            $('#gmvPlanTable').bootstrapTable('refresh');
+            $('#targetTable').bootstrapTable('refresh');
         }else {
             toastr.error("未知异常！");
         }
@@ -161,7 +169,7 @@ function deleteData(year){
                             toastr.error('删除失败!');
                         }
                         setTimeout(function () {
-                            $('#gmvPlanTable').bootstrapTable('refresh');
+                            $('#targetTable').bootstrapTable('refresh');
                         }, 1000)
                     });
                 }

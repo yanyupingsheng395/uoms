@@ -67,7 +67,7 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-    public void  saveReasonData(ReasonVO reasonVO,String curuser,int primaryKey) {
+    public void  saveReasonData(ReasonVO reasonVO,String username,int primaryKey) {
         //将VO转化成DO
         Reason reasonDo=dozerBeanMapper.map(reasonVO, Reason.class);
 
@@ -79,8 +79,8 @@ public class ReasonServiceImpl implements ReasonService {
         reasonDo.setProgress(0);
         reasonDo.setCreateDt(sf.format(now));
         reasonDo.setUpdateDt(sf.format(now));
-        reasonDo.setCreateBy(curuser);
-        reasonDo.setUpdateBy(curuser);
+        reasonDo.setCreateBy(username);
+        reasonDo.setUpdateBy(username);
         reasonDo.setPeriodType(reasonVO.getPeriod());
         reasonDo.setKpiCode(reasonVO.getKpi());
         reasonMapper.saveReasonData(reasonDo);
