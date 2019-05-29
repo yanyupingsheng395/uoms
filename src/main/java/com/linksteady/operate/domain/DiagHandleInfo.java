@@ -94,4 +94,9 @@ public class DiagHandleInfo implements Serializable {
      */
     List<DiagConditionVO> whereinfo;
 
+    /**
+    *主指标编码（根节点对应的编码）
+    */
+    String mainKpiCode;
+
 }
