@@ -14,7 +14,10 @@ public interface ReasonMapper {
 
     int getReasonPrimaryKey();
 
-    //保存原因探究的主信息
+    /**
+     * 保存原因探究的主信息
+     * @param reasonDo
+     */
     void saveReasonData(Reason reasonDo);
 
     //保存原因探究的明细信息(维度及其值)
