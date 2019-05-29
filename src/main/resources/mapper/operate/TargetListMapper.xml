@@ -118,7 +118,7 @@
         ACTUAL_VAL=#{actualVal},
         ACTUAL_VAL_LAST=#{actualValLast},
         ACTUAL_VAL_RATE=#{actualValRate},
-        COMPUTE_DT=#{item.computeDt,jdbcType=DATE}
+        COMPUTE_DT=#{computeDt,jdbcType=DATE}
         WHERE ID=#{id}
     </update>
 

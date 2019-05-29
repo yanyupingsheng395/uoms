@@ -112,9 +112,9 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-//    @Async
     public void findReasonKpisSnp(String reasonId)
     {
+        //todo 后续如果响应慢，考虑在python服务端进行处理
         try {
             thriftClient.open();
             thriftClient.getThriftService().submitReasonAanlysis(Integer.parseInt(reasonId));

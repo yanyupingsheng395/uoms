@@ -188,7 +188,8 @@ sys:
   timeFormat: yyyy-MM-dd HH:mm:ss
   # 是否开启 AOP 日志，默认开启
   openAopLog: true
-
+  # 是否开启对thrift接口连通性的检测
+  validateThrift: false
 
 thrift:
   server:

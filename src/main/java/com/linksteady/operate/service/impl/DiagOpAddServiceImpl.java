@@ -49,7 +49,10 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         List<String> periodList=diagOpCommonService.getPeriodList(diagHandleInfo.getPeriodType(),diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
         List<String> dayPeriodList=diagOpCommonService.getPeriodList(UomsConstants.PERIOD_TYPE_DAY,diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
 
-        //获取指标名称
+        //获取主指标编码
+        String mainKpiCode="gmv";
+
+        //获取当前指标编码
         String kpiCode=diagHandleInfo.getKpiCode();
         //存放维度值名称的列表
         List<String> dimNames= Lists.newArrayList();
@@ -59,6 +62,7 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         String dimCode=diagHandleInfo.getAddDimCode();
         //在当前要进行加法操作的维度上 是否同时选了在这个维度上进行过滤，如果选择，那么这个变量就存这些过滤值
         List<String> selectDimValues=Lists.newArrayList();
+
         diagHandleInfo.getWhereinfo().stream().filter(s->dimCode.equals(s.getDimCode())).map(DiagConditionVO::getDimValues).forEach(s->{
             selectDimValues.addAll(Splitter.on(",").trimResults().omitEmptyStrings().splitToList(s));
         });
@@ -66,9 +70,6 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         //当前维度下，其具有的值列表 <值编码，值名称>
         Map<String,String> diagDimValue= KpiCacheManager.getInstance().getDiagDimValueList().row(dimCode);
 
-        //获取当前指标的数据格式化类型
-        String lineFormatType=KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode).getValueFormat();
-        String areaFormatType=KpiCacheManager.getInstance().getDiagKpiList().get(UomsConstants.DIAG_KPI_CODE_GMV).getValueFormat();
 
         //加法要插入的节点列表
         JSONArray nodeArray=new JSONArray();
@@ -105,12 +106,30 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         //x轴的数据
         diagAddResultInfo.setXdata(periodList);
 
+       //构造主指标的数据
+        buildMainKpi(mainKpiCode,diagHandleInfo,dimCode,dimValues,selectDimValues,periodList,diagAddResultInfo);
+
+        //如果用户当前进行加法的指标非当前记录的主指标，则还需要计算当前指标的折线图
+        if(!mainKpiCode.equals(kpiCode)) {
+           buildCurrentKpi(diagHandleInfo,kpiCode,dimCode,dimValues,selectDimValues,periodList,diagAddResultInfo);
+        }
+
+        BuildCovAndRelate(mainKpiCode,diagHandleInfo,kpiCode,dimCode,dimValues,selectDimValues,dayPeriodList,diagAddResultInfo);
+        return diagAddResultInfo;
+    }
+
+    /**
+     * 构建主指标的数据
+     */
+    private void buildMainKpi(String mainKpiCode,DiagHandleInfo diagHandleInfo,String dimCode,List<String> dimValues,List<String> selectDimValues,List<String> periodList,DiagAddResultInfo diagResultInfo)
+    {
+        //主指标的面积图数据
         JSONArray areaData=new JSONArray();
-        JSONArray lineData=new JSONArray();
-        JSONArray lineAvgData=new JSONArray();
+
+        String areaFormatType=KpiCacheManager.getInstance().getDiagKpiList().get(mainKpiCode).getValueFormat();
 
         //首先计算当前周期下，各维度值下GMV的值
-        List<DiagAddDataCollector>  diagAddDataCollectorList=getGmvAreaData(diagHandleInfo,dimCode,diagHandleInfo.getPeriodType(),"N",dimValues);
+        List<DiagAddDataCollector>  diagAddDataCollectorList=getMainKpiAreaData(mainKpiCode,diagHandleInfo,dimCode,diagHandleInfo.getPeriodType(),"N",dimValues);
 
         //按维度值编码进行分组进行分组
         Map<String,List<DiagAddDataCollector>> temp=diagAddDataCollectorList.parallelStream().collect(Collectors.groupingBy(DiagAddDataCollector::getDimValue, LinkedHashMap::new,Collectors.toList()));
@@ -133,131 +152,23 @@ public class DiagOpAddServiceImpl implements DiagOpService {
                 tempObj.put("data",diagOpCommonService.valueFormat(diagOpCommonService.fixData(Maps.newHashMap(),periodList),areaFormatType));
             }
             areaData.add(tempObj);
+
+            diagResultInfo.setAreaData(areaData);
         }
-
-        //如果用户选择的非gmv指标，则还需要计算其它指标的折线图
-        if(!UomsConstants.DIAG_KPI_CODE_GMV.equals(kpiCode))
-        {
-            //如果用户选择的指标非GMV，则计算当前选择维度值在此指标下的折线图 以及均线
-            List<DiagAddDataCollector> otherLineData=getOthersLineData(diagHandleInfo,dimCode,diagHandleInfo.getPeriodType(),"N",dimValues);
-
-            //按dimCode分组
-            Map<String,List<DiagAddDataCollector>> temp6=otherLineData.parallelStream().collect(Collectors.groupingBy(DiagAddDataCollector::getDimValue,LinkedHashMap::new,Collectors.toList()));
-
-            //组装到最后的返回对象中去
-            for(String dimValue:dimValues)
-            {
-                List<DiagAddDataCollector> t1=temp6.get(dimValue);
-                JSONObject tempObj=new JSONObject();
-                JSONObject avgObj=new JSONObject();
-
-                String name=KpiCacheManager.getInstance().getDiagDimValueList().row(dimCode).get(dimValue);
-                tempObj.put("name",name);
-                avgObj.put("name",name);
-
-                boolean flag=selectDimValues.size()==0||selectDimValues.contains(dimValue);
-                if(null!=t1&&t1.size()>0&&flag)
-                {
-                    //对数据进行修补，如果出现某个周期上没有数据，则补0
-                    tempObj.put("data",diagOpCommonService.valueFormat(diagOpCommonService.fixData(t1.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),periodList),lineFormatType));
-                    //求均值
-                    avgObj.put("data",diagOpCommonService.valueFormat(t1.stream().mapToDouble(DiagAddDataCollector::getValue).average().orElse(0d),lineFormatType));
-                }else
-                {
-                    tempObj.put("data",diagOpCommonService.valueFormat(diagOpCommonService.fixData(Maps.newHashMap(),periodList),lineFormatType));
-                    avgObj.put("data","0");
-                }
-                lineData.add(tempObj);
-                lineAvgData.add(avgObj);
-            }
-
-        }
-
-        JSONArray covArray=new JSONArray();
-        JSONArray relateArray=new JSONArray();
-        List<DiagAddDataCollector> covList;
-        List<DiagAddDataCollector> overallList;
-
-        //获取汇总的数据是否要去掉所有的条件呢?  答案是：要去掉所有的条件
-        //计算 变异系数 获取当前指标按天的数据
-        if(UomsConstants.DIAG_KPI_CODE_GMV.equals(kpiCode))
-        {
-            //按天的明细数据
-            covList=getGmvAreaData(diagHandleInfo,dimCode,UomsConstants.PERIOD_TYPE_DAY,"N",dimValues);
-            //获取总体数据，仅有周期维度
-            overallList=getGmvAreaData(diagHandleInfo,dimCode,UomsConstants.PERIOD_TYPE_DAY,"Y",dimValues);
-        }else
-        {    //其它指标
-            covList=getOthersLineData(diagHandleInfo,dimCode,UomsConstants.PERIOD_TYPE_DAY,"N",dimValues);
-            //获取总体数据
-            overallList=getOthersLineData(diagHandleInfo,dimCode,UomsConstants.PERIOD_TYPE_DAY,"Y",dimValues);
-        }
-
-        List<Double> overallDoubleList=diagOpCommonService.fixData(overallList.parallelStream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),dayPeriodList);
-
-        //按维度值编码进行分组进行分组
-        Map<String,List<DiagAddDataCollector>> temp7=covList.parallelStream().collect(Collectors.groupingBy(DiagAddDataCollector::getDimValue,LinkedHashMap::new,Collectors.toList()));
-
-        for(String dimValue:dimValues)
-        {
-            JSONObject covObj=new JSONObject();
-            String dimValueName=KpiCacheManager.getInstance().getDiagDimValueList().row(dimCode).get(dimValue);
-            covObj.put("name",dimValueName);
-
-            JSONObject relateObj=new JSONObject();
-            relateObj.put("name",dimValueName);
-
-            List<DiagAddDataCollector> t3=temp7.get(dimValue);
-            boolean flag=selectDimValues.size()==0||selectDimValues.contains(dimValue);
-            if(null!=t3&&t3.size()>0&&flag)
-            {
-                //计算变异系数
-                List<Double> temp8=diagOpCommonService.fixData(t3.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),dayPeriodList);
-                double avg=t3.stream().mapToDouble(DiagAddDataCollector::getValue).average().orElse(0d);
-                double stand= DataStatisticsUtils.getStandardDevitionByList(temp8);
-                covObj.put("data",(stand==0?0.00: ArithUtil.formatDoubleByMode(stand/avg*100,2, RoundingMode.DOWN)));
-
-                //计算当前数据集与 总体数据的相关系数
-                double relateValue= PearsonCorrelationUtil.getPearsonCorrelationScoreByList(temp8,overallDoubleList);
-                relateObj.put("data",ArithUtil.formatDoubleByMode(relateValue,2,RoundingMode.DOWN));
-            }else
-            {
-                covObj.put("data","0.00");
-                relateObj.put("data","0.00");
-            }
-            covArray.add(covObj);
-            relateArray.add(relateObj);
-        }
-
-        //计算总体的变异系数
-        double avg=overallDoubleList.parallelStream().mapToDouble(Double::doubleValue).average().orElse(0d);
-        double stand=DataStatisticsUtils.getStandardDevitionByList(overallDoubleList);
-        JSONObject covObj=new JSONObject();
-        covObj.put("name","总体");
-        covObj.put("data",(stand==0?"0.00":diagOpCommonService.valueFormat(stand/avg*100,"D2")));
-        covArray.add(covObj);
-
-        diagAddResultInfo.setAreaData(areaData);
-        diagAddResultInfo.setLineData(lineData);
-        diagAddResultInfo.setLineAvgData(lineAvgData);
-        diagAddResultInfo.setCovData(covArray);
-        diagAddResultInfo.setRelateData(relateArray);
-
-        return diagAddResultInfo;
     }
 
     /**
-     * 加法获取gmv面积图相关的数据
+     * 加法获取主指标相关的数据 (按加法的维度值、时间进行group by的主指标数据)
      */
-    private List<DiagAddDataCollector> getGmvAreaData(DiagHandleInfo diagHandleInfo,String dimCode,String periodType,String isOverall,List<String> dimValues)
+    private List<DiagAddDataCollector> getMainKpiAreaData(String mainKpiCode,DiagHandleInfo diagHandleInfo,String dimCode,String periodType,String isOverall,List<String> dimValues)
     {
         KpiSqlTemplateVO kpiSqlTemplate;
         if(diagOpCommonService.isRelyOrderDetail(diagHandleInfo.getWhereinfo())||diagOpCommonService.isRelyOrderDetail(dimCode))
         {
-            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(diagHandleInfo.getHandleType()+"_GMV_DETAIL");
+            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(diagHandleInfo.getHandleType()+"_"+mainKpiCode+"_DETAIL");
         }else
         {
-            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(diagHandleInfo.getHandleType()+"_GMV");
+            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(diagHandleInfo.getHandleType()+"_"+mainKpiCode);
         }
 
         StringTemplate stringTemplate=new StringTemplate(kpiSqlTemplate.getSqlTemplate());
@@ -300,12 +211,65 @@ public class DiagOpAddServiceImpl implements DiagOpService {
     }
 
     /**
+     * 加法获取当前指标的数据
+     */
+    private void buildCurrentKpi(DiagHandleInfo diagHandleInfo,String kpiCode,String dimCode,List<String> dimValues,List<String> selectDimValues,List<String> periodList,DiagAddResultInfo diagResultInfo)
+    {
+        //当前指标
+        JSONArray lineData=new JSONArray();
+        JSONArray lineAvgData=new JSONArray();
+
+        //获取当前指标的数据格式化类型
+        String lineFormatType=KpiCacheManager.getInstance().getDiagKpiList().get(kpiCode).getValueFormat();
+
+        //如果用户选择的指标非GMV，则计算当前选择维度值在此指标下的折线图 以及均线
+        List<DiagAddDataCollector> currentLineData=getCurrentKpiLineData(diagHandleInfo,dimCode,diagHandleInfo.getPeriodType(),"N",dimValues);
+
+        //按dimCode分组
+        Map<String,List<DiagAddDataCollector>> temp6=currentLineData.parallelStream().collect(Collectors.groupingBy(DiagAddDataCollector::getDimValue,LinkedHashMap::new,Collectors.toList()));
+
+        //组装到最后的返回对象中去
+        for(String dimValue:dimValues)
+        {
+            List<DiagAddDataCollector> t1=temp6.get(dimValue);
+            JSONObject tempObj=new JSONObject();
+            JSONObject avgObj=new JSONObject();
+
+            String name=KpiCacheManager.getInstance().getDiagDimValueList().row(dimCode).get(dimValue);
+            tempObj.put("name",name);
+            avgObj.put("name",name);
+
+            boolean flag=selectDimValues.size()==0||selectDimValues.contains(dimValue);
+            if(null!=t1&&t1.size()>0&&flag)
+            {
+                //对数据进行修补，如果出现某个周期上没有数据，则补0
+                tempObj.put("data",diagOpCommonService.valueFormat(diagOpCommonService.fixData(t1.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),periodList),lineFormatType));
+                //求均值
+                avgObj.put("data",diagOpCommonService.valueFormat(t1.stream().mapToDouble(DiagAddDataCollector::getValue).average().orElse(0d),lineFormatType));
+            }else
+            {
+                tempObj.put("data",diagOpCommonService.valueFormat(diagOpCommonService.fixData(Maps.newHashMap(),periodList),lineFormatType));
+                avgObj.put("data","0");
+            }
+            lineData.add(tempObj);
+            lineAvgData.add(avgObj);
+        }
+
+        diagResultInfo.setLineData(lineData);
+        diagResultInfo.setLineAvgData(lineAvgData);
+
+        //这里还要构造条图数据 (仅按维度值，不按时间汇总)
+
+
+    }
+
+    /**
      * 加法获取其它指标的折线图
      * @param diagHandleInfo 操作对象
      * @param dimCode 维度编码
      * @return  加法操作的返回值对象
      */
-    private List<DiagAddDataCollector> getOthersLineData(DiagHandleInfo diagHandleInfo,String dimCode,String periodType,String isOverall,List<String> dimValues)
+    private List<DiagAddDataCollector> getCurrentKpiLineData(DiagHandleInfo diagHandleInfo,String dimCode,String periodType,String isOverall,List<String> dimValues)
     {
         KpiSqlTemplateVO kpiSqlTemplate;
         if(diagOpCommonService.isRelyOrderDetail(diagHandleInfo.getWhereinfo())||diagOpCommonService.isRelyOrderDetail(dimCode))
@@ -357,6 +321,77 @@ public class DiagOpAddServiceImpl implements DiagOpService {
                 .add("$COLUMN_INFO$",columnInfo.toString()).add("$PERIOD_NAME$",periodName);;
 
         return commonSelectMapper.selectAddData(stringTemplate.render());
+    }
+
+    private void BuildCovAndRelate(String mainKpiCode,DiagHandleInfo diagHandleInfo,String kpiCode,String dimCode,List<String> dimValues,List<String> selectDimValues,List<String> dayPeriodList,DiagAddResultInfo diagAddResultInfo)
+    {
+        JSONArray covArray=new JSONArray();
+        JSONArray relateArray=new JSONArray();
+        List<DiagAddDataCollector> covList;
+        List<DiagAddDataCollector> overallList;
+
+        //获取汇总的数据是否要去掉所有的条件呢?  答案是：要去掉所有的条件
+        //计算 变异系数 获取当前指标按天的数据
+        if(mainKpiCode.equals(kpiCode))
+        {   //如果当前指标就是主指标
+            //按天的明细数据
+            covList=getMainKpiAreaData(mainKpiCode,diagHandleInfo,dimCode,UomsConstants.PERIOD_TYPE_DAY,"N",dimValues);
+            //获取总体数据，仅有周期维度
+            overallList=getMainKpiAreaData(mainKpiCode,diagHandleInfo,dimCode,UomsConstants.PERIOD_TYPE_DAY,"Y",dimValues);
+        }else
+        {    //其它指标
+            covList=getCurrentKpiLineData(diagHandleInfo,dimCode,UomsConstants.PERIOD_TYPE_DAY,"N",dimValues);
+            //获取总体数据
+            overallList=getCurrentKpiLineData(diagHandleInfo,dimCode,UomsConstants.PERIOD_TYPE_DAY,"Y",dimValues);
+        }
+
+        List<Double> overallDoubleList=diagOpCommonService.fixData(overallList.parallelStream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),dayPeriodList);
+
+        //按维度值编码进行分组进行分组
+        Map<String,List<DiagAddDataCollector>> temp7=covList.parallelStream().collect(Collectors.groupingBy(DiagAddDataCollector::getDimValue,LinkedHashMap::new,Collectors.toList()));
+
+        for(String dimValue:dimValues)
+        {
+            JSONObject covObj=new JSONObject();
+            String dimValueName=KpiCacheManager.getInstance().getDiagDimValueList().row(dimCode).get(dimValue);
+            covObj.put("name",dimValueName);
+
+            JSONObject relateObj=new JSONObject();
+            relateObj.put("name",dimValueName);
+
+            List<DiagAddDataCollector> t3=temp7.get(dimValue);
+            boolean flag=selectDimValues.size()==0||selectDimValues.contains(dimValue);
+            if(null!=t3&&t3.size()>0&&flag)
+            {
+                //计算变异系数
+                List<Double> temp8=diagOpCommonService.fixData(t3.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),dayPeriodList);
+                double avg=t3.stream().mapToDouble(DiagAddDataCollector::getValue).average().orElse(0d);
+                double stand= DataStatisticsUtils.getStandardDevitionByList(temp8);
+                covObj.put("data",(stand==0?0.00: ArithUtil.formatDoubleByMode(stand/avg*100,2, RoundingMode.DOWN)));
+
+                //计算当前数据集与 总体数据的相关系数
+                double relateValue= PearsonCorrelationUtil.getPearsonCorrelationScoreByList(temp8,overallDoubleList);
+                relateObj.put("data",ArithUtil.formatDoubleByMode(relateValue,2,RoundingMode.DOWN));
+            }else
+            {
+                covObj.put("data","0.00");
+                relateObj.put("data","0.00");
+            }
+            covArray.add(covObj);
+            relateArray.add(relateObj);
+        }
+
+        //计算总体的变异系数
+        double avg=overallDoubleList.parallelStream().mapToDouble(Double::doubleValue).average().orElse(0d);
+        double stand=DataStatisticsUtils.getStandardDevitionByList(overallDoubleList);
+        JSONObject covObj=new JSONObject();
+        covObj.put("name","总体");
+        covObj.put("data",(stand==0?"0.00":diagOpCommonService.valueFormat(stand/avg*100,"D2")));
+        covArray.add(covObj);
+
+        diagAddResultInfo.setCovData(covArray);
+        diagAddResultInfo.setRelateData(relateArray);
+
     }
 
     /**
@@ -578,15 +613,6 @@ public class DiagOpAddServiceImpl implements DiagOpService {
             filters.append(filter.toString());
             joins.append(join.toString());
         }
-
-//        //判断当前做加法的维度是否已经加入到join信息，如果没有，则增加
-//        DimJoinVO dimJoinVO=dimJoin.get(dimCode);
-//        if(!dimTableAliasSet.contains(dimJoinVO.getDimTableAlias()))
-//        {
-//            //如果还没加入，则增加
-//            join.append(" JOIN ").append(dimJoinVO.getDimTable()).append(" ").append(dimJoinVO.getDimTableAlias()).append(" ON ").append(dimJoinVO.getRelation());
-//            joins.append(join.toString());
-//        }
 
         TemplateResult result=new TemplateResult();
         result.setFilterInfo(filters.toString());

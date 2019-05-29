@@ -60,10 +60,6 @@ function submit_analysis(){
 
     //校验至少选择了一个维度
     var dimlist=$("#dimlist").find("li");
-    // if(null==dimlist||dimlist.length==0)
-    // {
-    //     alert_str+='</br>请至少选择一组维度及其值！';
-    // }
 
     //校验选择了时间区间
     var start_dt=$("#start_dt").val();
@@ -227,17 +223,17 @@ function saveDim() {
     var selectDimValues=[];
     var selectDimValuesLabel=[];
     //保存所选维度
-    //格式： <li class="list-group-item"><input  class="col-xs-11 dimDispaly" value="维度 : 新/用户 - 值:新|旧" style="border:0px" disabled="true" maxlength="150"/><input type="hidden" class="dimKey" value="neworold"/><input type="hidden" class="dimValues" value="new|old" /><span class="mdi mdi-delete" style="color: #006cfa;"></span></li>
+    //格式： <li class="list-group-item"><input  class="col-xs-11 dimDispaly" value="新/用户 : 新|旧" style="border:0px" disabled="true" maxlength="150"/><input type="hidden" class="dimKey" value="neworold"/><input type="hidden" class="dimValues" value="new|old" /><span class="mdi mdi-delete" style="color: #006cfa;"></span></li>
     $.each(dimvaluelist,function (index,value) {
         selectDimValues.push(value.value);
         selectDimValuesLabel.push(value.text);
     });
 
-    var inputValue='维度 : '+selectDimLabel+' - 值 : '+selectDimValuesLabel.join("|");
+    var inputValue=selectDimLabel+' : '+selectDimValuesLabel.join("|");
     var hiddenValue=selectDimValues.join("|");
 
     var template="<li class='list-group-item'><input  class='col-xs-11 dimDispaly' value=\""+inputValue+"\"  title=\""+inputValue+"\" style='border:0px' disabled='true'/>" +
-        "<input type='hidden' class='dimKey' value='"+selectDim+"'/><input type='hidden' class='dimValues' value='"+hiddenValue+"' /><span class='mdi mdi-delete dim-remove' style='color: #f96868;'></span></li>";
+        "<input type='hidden' class='dimKey' value='"+selectDim+"'/><input type='hidden' class='dimValues' value='"+hiddenValue+"' /><span class='mdi mdi-close dim-remove'></span></li>";
     $("#dimlist").append(template);
 
     $("#dim_modal").modal('hide');

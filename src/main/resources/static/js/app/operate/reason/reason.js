@@ -40,11 +40,11 @@ $(function () {
             field: 'kpiName',
             title: '指标'
         },{
-            field: 'beginDt',
-            title: '开始时间'
-        },{
-            field: 'endDt',
-            title: '结束时间'
+            field: 'periodName',
+            title: '周期',
+            formatter: function (value, row, index) {
+               return row.beginDt+"至"+row.endDt;
+            }
         },{
             field: 'source',
             title: '来源'

@@ -14,6 +14,8 @@ public class SystemProperties {
 
     private boolean openAopLog = true;
 
+    private boolean validateThrift = false;
+
     public ShiroProperties getShiro() {
         return shiro;
     }
@@ -36,5 +38,13 @@ public class SystemProperties {
 
     public void setOpenAopLog(boolean openAopLog) {
         this.openAopLog = openAopLog;
+    }
+
+    public boolean isValidateThrift() {
+        return validateThrift;
+    }
+
+    public void setValidateThrift(boolean validateThrift) {
+        this.validateThrift = validateThrift;
     }
 }
