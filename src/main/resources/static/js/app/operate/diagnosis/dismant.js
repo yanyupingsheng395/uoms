@@ -253,11 +253,13 @@ function alarmFlag(dom) {
 function getParentCondition() {
     var array = jm.get_selected_node().data.CONDITION;
     var code = "";
-    $.each(array, function (k, v) {
-        code += "<tr><td style='text-align: left;'>" + v.dimName.trim() + ":";
-        code += v.dimValueDisplay.trim();
-        code += "<input type='hidden' name='dimValues' value='"+v.dimValues+"'><input type='hidden' name='condition' value='"+v.dimCode+"'><input name='inheritFlag' type='hidden' value='Y'></td><td></td></tr>";
-    });
+    if(array != null && array != undefined) {
+        $.each(array, function (k, v) {
+            code += "<tr><td style='text-align: left;'>" + v.dimName.trim() + ":";
+            code += v.dimValueDisplay.trim();
+            code += "<input type='hidden' name='dimValues' value='"+v.dimValues+"'><input type='hidden' name='condition' value='"+v.dimCode+"'><input name='inheritFlag' type='hidden' value='Y'></td><td></td></tr>";
+        });
+    }
     return code;
 }
 
@@ -286,12 +288,12 @@ function selectedCondition() {
         var arr = $("#op6").selectpicker('val');
         var condition = $("#op5").find("option:selected").text();
         var val = $("#op5").find("option:selected").val();
-        var code = "<tr><td style='text-align: left;'>" + condition.trim() + ":";
+        var code = "<tr><td style='text-align: left;'>" + condition.trim() + "&nbsp;:&nbsp;";
         var conditionCodes = "";
         for(var i=0;i<arr.length;i++) {
             var t = $("#op6").find("option[value='"+arr[i]+"']").text();
-            code += t + ",";
-            conditionCodes += arr[i] + ","
+            code += t + "|";
+            conditionCodes += arr[i] + "|"
         }
         code = code.substring(0, code.length - 1);
         conditionCodes = conditionCodes.substring(0, conditionCodes.length - 1);
@@ -302,7 +304,6 @@ function selectedCondition() {
         }else {
             $("#dataTable").append(code);
         }
-
         // 列表中删除
         $("#op5").find("option[value='"+val+"']").remove();
         $("#op5").selectpicker('refresh');

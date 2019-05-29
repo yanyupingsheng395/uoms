@@ -72,13 +72,13 @@ function addDimension() {
         }
     });
 
-    if($("#dataTable").find("tr").length == 0) {
+    if($("#dimDataTable").find("tr").length == 0) {
         $("#conditions").show();
     }
     var v_text = textArr.join(",");
 
     var flag = false;
-    $("#dataTable").find("tr").each(function (k, v) {
+    $("#dimDataTable").find("tr").each(function (k, v) {
         if($(this).find("td:eq(0)").text() == k_text + ":" + v_text) {
             flag = true;
             toastr.warning("已有相同维度值在列表中！");
@@ -89,14 +89,14 @@ function addDimension() {
         var code = "<tr><input type='hidden' name='dimensions' value='&dimCode="+k_code+"&dimName="+k_text+"&dimValues="+v_code+"&dimValueDisplay="+v_text+"'/>";
         code += "<td class='text-left'>"+k_text + ":" + v_text +"</td><td class=\"text-right\"><i class=\"mdi mdi-close\" onclick='removeTd(this)'></i></td>";
         code += "</tr>";
-        $("#dataTable").append(code);
+        $("#dimDataTable").append(code);
         $("#denModal").modal('hide');
     }
 }
 
 function removeTd(dom) {
     $(dom).parent().parent().remove();
-    if($("#dataTable").find("tr").length == 0) {
+    if($("#dimDataTable").find("tr").length == 0) {
         $("#conditions").hide();
     }
 }
@@ -144,7 +144,7 @@ function validate() {
 
 function getDimensionInfo() {
     var arr = new Array();
-    $("#dataTable").find("tr").each(function(k, v) {
+    $("#dimDataTable").find("tr").each(function(k, v) {
         arr.push($(this).find("td:eq(0)").text());
     });
     return arr.join(";");
@@ -152,7 +152,7 @@ function getDimensionInfo() {
 
 function getDimAndVal() {
     var arr = new Array();
-    $("#dataTable").find("tr").each(function(k, v) {
+    $("#dimDataTable").find("tr").each(function(k, v) {
         var flag = false;
         var dimensions = $(this).find("input[name='dimensions']").val();
         var o = new Object();

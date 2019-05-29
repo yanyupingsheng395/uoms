@@ -52,14 +52,17 @@ $(function () {
             field: 'dimDisplayName',
             title: '维度&值',
             formatter: function (value, row, index) {
-                value = value.replace(";", "");
                 if(value.length >= 10) {
                     var newVal = value.substr(0, 10) + "...";
-                    var title = value.split(";").join("<br/>");
+                    var title = value.replace(";", ";&nbsp;&nbsp;");
                     return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+title+"\">"+newVal+"</a>";
-                }else if(value.indexOf("暂无数据") > -1){
+                }else if(value.length < 10 && value.length > 0) {
+                    return value;
+                }
+                if(value.indexOf("暂无数据") > -1){
                     return "-";
-                }else {
+                }
+                if(value == "" || value == null || value == undefined) {
                     return "-";
                 }
             }
