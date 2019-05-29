@@ -369,7 +369,7 @@ public class DiagOpAddServiceImpl implements DiagOpService {
             templateResult=buildWhereInfo(kpiSqlTemplate.getDriverTableMapping().get("$JOIN_TABLES$"),fiters,dimCode,dimValues);
 
             groupInfo.append(dimCodeParam);
-            columnInfo.append(" ").append(periodName).append(" DIM_VALUE,");
+            columnInfo.append(" ").append(dimCodeParam).append(" DIM_VALUE,");
 
             stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
                     .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",dataRange).add("$GROUP_INFO$",groupInfo.toString())
