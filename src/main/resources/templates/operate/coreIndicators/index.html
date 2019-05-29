@@ -46,7 +46,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>目标完成监控</h4>
+                                <h4>指标异常监控</h4>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -63,6 +63,12 @@
                                     </div>
                                 </div>
                                 <hr>
+                                <div class="row" style="margin-top: 10px;">
+                                    <div class="col-md-12">
+                                        <h5>目标完成状态及风险预警</h5>
+                                    </div>
+                                </div>
+                                <hr style="margin-top: 0px;margin-bottom: 5px;"/>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="card bg-light">
@@ -111,19 +117,17 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
+                                        <div id="chart1" style="width:100%;height: 400px;"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
                                         <div class="alert alert-info" role="alert">
                                             <p>
                                                 <i class="mdi mdi-alert-circle-outline"></i>目标的完成度为<span id="finishRate2"></span>；尚有业绩<span id="remainTgt"></span>需要完成；已经过的时间尚有<span id="finishDiffer"></span>业绩缺口；没有完成目标的单位周期有<span id="remainCount"></span>个。
                                                 <!--，<a href="#" style="text-decoration: underline;color:#000;cursor: pointer;">详情</a>；-->
                                             </p>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5>目标完成风险</h5>
-                                        <hr style="margin-top: 0px;margin-bottom: 5px;"/>
-                                        <div id="chart1" style="width:100%;height: 400px;"></div>
                                     </div>
                                 </div>
                                 <div class="row">
