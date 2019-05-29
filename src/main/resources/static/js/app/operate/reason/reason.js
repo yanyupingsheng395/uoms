@@ -56,7 +56,7 @@ $(function () {
                 if(value.length >= 10) {
                     var newVal = value.substr(0, 10) + "...";
                     var title = value.split(";").join("<br/>");
-                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\""+title+"\">"+newVal+"</a>";
+                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+title+"\">"+newVal+"</a>";
                 }else if(value.indexOf("暂无数据") > -1){
                     return "-";
                 }else {
