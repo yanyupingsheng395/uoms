@@ -35,6 +35,13 @@ public final class UomsConstants {
      * 可被用于目标的指标
      */
     public static final List<String> TARGET_KPI_LIST= Arrays.asList("gmv");
+
+    /**
+     * 可被用于指标拆解的指标
+     */
+    public static final List<String> DIAG_KPI_LIST= Arrays.asList("gmv");
+
+
     /**
      *可被用于目标的维度
      */

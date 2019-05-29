@@ -3,11 +3,14 @@ package com.linksteady.operate.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageHelper;
+import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.Diag;
 import com.linksteady.operate.domain.DiagCondition;
 import com.linksteady.operate.service.DiagService;
+import com.linksteady.operate.util.UomsConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +78,22 @@ public class DiagnosisController {
     @GetMapping("/getDimByDiagId")
     public ResponseBo getDimByDiagId(@RequestParam("diagId") String diagId) {
         return ResponseBo.okWithData(null, diagService.geDiagInfoById(diagId));
+    }
+
+    /**
+     * 获取指标列表
+     * @return
+     */
+    @GetMapping("/getKpi")
+    public ResponseBo getKpi() {
+        Map<String, Object> map = Maps.newHashMap();
+        KpiCacheManager.getInstance().getKpiCodeNamePair().forEach((k, v)->{
+            if(UomsConstants.DIAG_KPI_LIST.contains(k))
+            {
+                map.put(k,v);
+            }
+        });
+
+        return ResponseBo.okWithData(null, map);
     }
 }

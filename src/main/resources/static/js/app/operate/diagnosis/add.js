@@ -6,7 +6,7 @@
 getKpi();
 // 获取指标
 function getKpi() {
-    $.get("/target/getKpi", {}, function (r) {
+    $.get("/diag/getKpi", {}, function (r) {
         var code = "<option>请选择</option>";
         $.each(r.data, function (k, v) {
             code += "<option value='"+k+"'>"+v+"</option>";
