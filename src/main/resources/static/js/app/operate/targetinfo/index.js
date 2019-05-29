@@ -40,14 +40,15 @@ $(function () {
             field: 'DIMENSIONS',
             title: '维度&值',
             formatter: function (value, row, index) {
+                if(value == null || value == "") {
+                    return "-";
+                }
                 if(value.length >= 10) {
                     var newVal = value.substr(0, 10) + "...";
                     var title = value.split("|").join("<br/>");
                     return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\""+title+"\">"+newVal+"</a>";
-                }else if(value != "" && value != null){
+                }else if(value != null && value != ""){
                     return value;
-                }else {
-                    return "-";
                 }
             }
         },{
