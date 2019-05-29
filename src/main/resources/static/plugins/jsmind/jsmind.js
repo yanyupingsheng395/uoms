@@ -949,7 +949,7 @@
         },
 
         dom:{
-            //targetinfo,eventType,handler
+            //target,eventType,handler
             add_event:function(t,e,h){
                 if(!!t.addEventListener){
                     t.addEventListener(e,h,false);
