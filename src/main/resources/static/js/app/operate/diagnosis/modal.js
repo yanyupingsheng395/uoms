@@ -34,7 +34,6 @@ function viewChart(obj) {
     $("#handleDesc").html("").html("<p class='h4'>" + obj.handleDesc + "</p>");
     $("#operateType").html("").html("<p class='h5'>周期: " + operateType + "</p>");
     $("#timePeriod").html("").html("<p class='h5'>时间: " + obj.beginDt + "&nbsp;到&nbsp;" + obj.endDt + "</p>");
-
     var isRoot = jm.get_selected_node().isroot;
     if (isRoot) { // 根节点
         $("#opdesc").html("").html("<p class='h5'>该周期内GMV为：" + obj.kpiValue + "元</p>");

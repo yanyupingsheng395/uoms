@@ -17,7 +17,7 @@
 
   <select id="getList" resultMap="BaseResultMap">
     select * from (select ROWNUM rn, t.* from
-    (select DIAG_ID, DIAG_NAME, PERIOD_TYPE, BEGIN_DT, END_DT, CREATE_DT  from UO_DIAG_LIST
+    (select DIAG_ID, DIAG_NAME, PERIOD_TYPE, BEGIN_DT, END_DT, CREATE_DT, DIM_DISPLAY_NAME  from UO_DIAG_LIST
       order by CREATE_DT DESC ) t where ROWNUM &lt;=#{endRow}) where rn &gt;=#{startRow}
   </select>
 

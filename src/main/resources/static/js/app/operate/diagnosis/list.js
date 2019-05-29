@@ -29,11 +29,29 @@ $(function () {
                 }
             }
         }, {
-            field: 'beginDt',
-            title: '周期开始时间'
+            title: '周期时间',
+            formatter: function (value, row, index) {
+                return row.beginDt + "至" + row.endDt;
+            }
         }, {
-            field: 'endDt',
-            title: '周期结束时间'
+            field: 'dimDisplayName',
+            title: '维度&值',
+            formatter: function (value, row, index) {
+                if(value == null) {
+                    return "-";
+                }else {
+                    if(value.length >= 10) {
+                        var newVal = value.substr(0, 10) + "...";
+                        var title = value.replace(";", ";&nbsp;&nbsp;");
+                        return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+title+"\">"+newVal+"</a>";
+                    }else if(value.length < 10 && value.length > 0) {
+                        return value;
+                    }
+                    if(value == "" || value == undefined) {
+                        return "-";
+                    }
+                }
+            }
         }, {
             field: 'createDt',
             title: '创建时间'
@@ -43,7 +61,9 @@ $(function () {
             formatter: function (value, row, index) {
                     return "<a class='btn btn-primary btn-sm' href='/page/diagnosis/view?id="+row.diagId+"'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-danger btn-sm' onclick='deleteConfirm("+row.diagId+")'><i class='mdi mdi-window-close'></i>删除</div>";
             }
-        }]
+        }],onLoadSuccess: function(data){
+            $("a[data-toggle='tooltip']").tooltip();
+        }
     };
     $('#diagTable').bootstrapTable(settings);
 });
