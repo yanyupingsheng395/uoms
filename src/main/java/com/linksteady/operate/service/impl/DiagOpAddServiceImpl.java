@@ -210,22 +210,30 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         {   //同时按时间周期、加法维度值分组
             groupInfo.append(dimCodeParam).append(",").append(periodName);
             columnInfo.append(" ").append(dimCodeParam).append(" DIM_VALUE,").append(periodName).append(" PERIOD_NAME,");
+
+            stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
+                    .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",data_range).add("$COLUMN_INFO$",columnInfo.toString())
+                    .add("$GROUP_INFO$",groupInfo.toString()).add("$PERIOD_NAME$",periodName);
         }else if(groupType==2)
-        {
-            //仅按维度分组，不考虑时间周期
-            groupInfo.append(dimCodeParam);
-            columnInfo.append(" ").append(dimCodeParam).append(" DIM_VALUE,");
-        }
-        else if(groupType==3)
         {
             //如果获取的是总体数据的话，则只需要根据 时间进行汇总，并不需要根据维度值进行group by
             groupInfo.append(periodName);
             columnInfo.append(" ").append(periodName).append(" PERIOD_NAME,");
-        }
 
-        stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
-                .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",data_range).add("$COLUMN_INFO$",columnInfo.toString())
-                .add("$GROUP_INFO$",groupInfo.toString()).add("$PERIOD_NAME$",periodName);
+            stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
+                    .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",data_range).add("$COLUMN_INFO$",columnInfo.toString())
+                    .add("$GROUP_INFO$",groupInfo.toString()).add("$PERIOD_NAME$",periodName);
+        }
+        else if(groupType==3)
+        {
+            //仅按维度分组，不考虑时间周期
+            groupInfo.append(dimCodeParam);
+            columnInfo.append(" ").append(dimCodeParam).append(" DIM_VALUE,");
+
+            stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
+                    .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",data_range).add("$COLUMN_INFO$",columnInfo.toString())
+                    .add("$GROUP_INFO$",groupInfo.toString()).add("$PERIOD_NAME$","1");
+        }
 
         List<DiagAddDataCollector> addDataCollectorList=commonSelectMapper.selectAddData(stringTemplate.render());
         return addDataCollectorList;
@@ -340,6 +348,10 @@ public class DiagOpAddServiceImpl implements DiagOpService {
 
             groupInfo.append(dimCodeParam).append(",").append(periodName);
             columnInfo.append(" ").append(dimCodeParam).append(" DIM_VALUE,").append(periodName).append(" PERIOD_NAME,");
+
+            stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
+                    .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",dataRange).add("$GROUP_INFO$",groupInfo.toString())
+                    .add("$COLUMN_INFO$",columnInfo.toString()).add("$PERIOD_NAME$",periodName);
         }else  if(groupType==2)
         {
             //如果获取的是总体数据的话，则只需要根据 时间进行汇总，并不需要根据维度值进行group by
@@ -347,6 +359,10 @@ public class DiagOpAddServiceImpl implements DiagOpService {
 
             groupInfo.append(periodName);
             columnInfo.append(" ").append(periodName).append(" PERIOD_NAME,");
+
+            stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
+                    .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",dataRange).add("$GROUP_INFO$",groupInfo.toString())
+                    .add("$COLUMN_INFO$",columnInfo.toString()).add("$PERIOD_NAME$",periodName);
         }else  if(groupType==3)
         {
             //只根据加法维度值进行group by 不需要考虑时间周期
@@ -354,11 +370,11 @@ public class DiagOpAddServiceImpl implements DiagOpService {
 
             groupInfo.append(dimCodeParam);
             columnInfo.append(" ").append(periodName).append(" DIM_VALUE,");
-        }
 
-        stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
-                .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",dataRange).add("$GROUP_INFO$",groupInfo.toString())
-                .add("$COLUMN_INFO$",columnInfo.toString()).add("$PERIOD_NAME$",periodName);;
+            stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
+                    .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",dataRange).add("$GROUP_INFO$",groupInfo.toString())
+                    .add("$COLUMN_INFO$",columnInfo.toString()).add("$PERIOD_NAME$","1");
+        }
 
         return commonSelectMapper.selectAddData(stringTemplate.render());
     }
