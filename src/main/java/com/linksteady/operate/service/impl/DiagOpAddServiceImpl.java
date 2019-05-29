@@ -164,7 +164,7 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         {
             mainKpiBar=new JSONObject();
             mainKpiBar.put("name",diagDimValuesMap.get(diagAddDataCollector.getDimValue()));
-            mainKpiBar.put("data",diagAddDataCollector.getValue());
+            mainKpiBar.put("value",diagAddDataCollector.getValue());
 
             mainKpiBarData.add(mainKpiBar);
         }
@@ -287,7 +287,7 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         {
             currKpiBar=new JSONObject();
             currKpiBar.put("name",diagDimValuesMap.get(diagAddDataCollector.getDimValue()));
-            currKpiBar.put("data",diagAddDataCollector.getValue());
+            currKpiBar.put("value",diagAddDataCollector.getValue());
 
             currKpiBarData.add(currKpiBar);
         }
