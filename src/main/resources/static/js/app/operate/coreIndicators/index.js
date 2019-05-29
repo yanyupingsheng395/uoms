@@ -296,7 +296,7 @@ function getRandom (m,n){
 function getDimensionList() {
     var id = $("#tgtList").find("option:selected").val();
     if(id != "") {
-        $.get("/targetinfo/getDimensionsById", {id: id}, function (r) {
+        $.get("/target/getDimensionsById", {id: id}, function (r) {
             var code = "";
             $.each(r.data, function (k, v) {
                 code += "<li>" + v["DIMENSION_NAME"] + ":" + v["DIMENSION_VAL_NAME"] +  "</li>";
