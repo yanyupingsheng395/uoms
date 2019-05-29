@@ -32,7 +32,7 @@ $("#denModal").on('shown.bs.modal', function () {
 
 // 获取维度
 function getDimensionList() {
-    $.get("/targetinfo/getDimension", {}, function (r) {
+    $.get("/diag/getDimension", {}, function (r) {
         var code = "<option>请选择</option>";
         $.each(r.data, function (k, v) {
             code += "<option value='"+k+"'>"+v+"</option>";
@@ -51,7 +51,7 @@ $("#dimension").change(function() {
 
 // 获取维度值
 function getDimensionVal(key) {
-    $.get("/targetinfo/getDimensionVal", {key: key}, function (r) {
+    $.get("/diag/getDimensionVal", {key: key}, function (r) {
         var code = "";
         $.each(r.data, function (k, v) {
             code += "<option value='"+k+"'>"+v+"</option>";

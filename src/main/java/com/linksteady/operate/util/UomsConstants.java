@@ -47,6 +47,11 @@ public final class UomsConstants {
      */
     public static final List<String> TARGET_DIM_LIST= Arrays.asList("neworold","source");
 
+    /**
+     *可被用于指标拆解的维度
+     */
+    public static final List<String> DIAG_DIM_LIST= Arrays.asList("neworold","source");
+
 
     private UomsConstants()
     {

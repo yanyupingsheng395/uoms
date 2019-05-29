@@ -96,4 +96,31 @@ public class DiagnosisController {
 
         return ResponseBo.okWithData(null, map);
     }
+
+    /**
+     * 获取维度列表
+     * @return
+     */
+    @GetMapping("/getDimension")
+    public ResponseBo getDimension() {
+        Map<String, Object> map = Maps.newLinkedHashMap();
+
+        KpiCacheManager.getInstance().getDiagDimList().forEach((k,v)->{
+            if(UomsConstants.DIAG_DIM_LIST.contains(k))
+            {
+                map.put(k,v);
+            }
+        });
+        return ResponseBo.okWithData(null, map);
+    }
+
+    /**
+     * 根据维度code获取值
+     * @return
+     */
+    @GetMapping("/getDimensionVal")
+    public ResponseBo getDimensionVal(String key) {
+        return ResponseBo.okWithData(null,KpiCacheManager.getInstance().getDiagDimValueList().row(key));
+    }
+
 }
