@@ -18,9 +18,6 @@ public class KpiConfigInfo {
     @Column(name = "DISMANT_FLAG")
     private String dismantFlag;
 
-    @Column(name = "DIAG_FLAG")
-    private String diagFlag;
-
     @Column(name = "DISMANT_FORMULA")
     private String dismantFormula;
 

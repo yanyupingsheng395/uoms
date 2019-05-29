@@ -1,5 +1,8 @@
 package com.linksteady.operate.util;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * UOMS下定义的一些常量
  * @author huang
@@ -27,6 +30,16 @@ public final class UomsConstants {
     public static final String DIAG_KPI_CODE_GMV="gmv";
 
     public static final String DIAG_KPI_CODE_TSPAN="tspan";
+
+    /**
+     * 可被用于目标的指标
+     */
+    public static final List<String> TARGET_KPI_LIST= Arrays.asList("gmv");
+    /**
+     *可被用于目标的维度
+     */
+    public static final List<String> TARGET_DIM_LIST= Arrays.asList("neworold","source");
+
 
     private UomsConstants()
     {

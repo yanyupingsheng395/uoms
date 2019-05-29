@@ -53,22 +53,19 @@ public class CacheServiceImpl implements CacheService {
         {
             kpiCodeNamePair.put(kpiConfigInfo.getKpiCode(),kpiConfigInfo.getKpiName());
             //诊断指标列表
-            if("Y".equals(kpiConfigInfo.getDiagFlag()))
+            diagKpiList.put(kpiConfigInfo.getKpiCode(),kpiConfigInfo);
+
+            //是否可拆解的标志
+            if("Y".equals(kpiConfigInfo.getDismantFlag()))
             {
-                diagKpiList.put(kpiConfigInfo.getKpiCode(),kpiConfigInfo);
+                diagcodeFomularList.put(kpiConfigInfo.getKpiCode(),kpiConfigInfo.getDismantFormula());
 
-                //是否可拆解的标志
-                if("Y".equals(kpiConfigInfo.getDismantFlag()))
+                //对于每一个kpi取获取其拆解信息
+                List<KpiDismantInfo>  dismantInfoList=cacheMapper.getDismantKpis(kpiConfigInfo.getKpiCode());
+
+                for(KpiDismantInfo kpiDismantInfo:dismantInfoList)
                 {
-                    diagcodeFomularList.put(kpiConfigInfo.getKpiCode(),kpiConfigInfo.getDismantFormula());
-
-                    //对于每一个kpi取获取其拆解信息
-                    List<KpiDismantInfo>  dismantInfoList=cacheMapper.getDismantKpis(kpiConfigInfo.getKpiCode());
-
-                    for(KpiDismantInfo kpiDismantInfo:dismantInfoList)
-                    {
-                        kpidismant.put(kpiConfigInfo.getKpiCode(),kpiDismantInfo);
-                    }
+                    kpidismant.put(kpiConfigInfo.getKpiCode(),kpiDismantInfo);
                 }
             }
 

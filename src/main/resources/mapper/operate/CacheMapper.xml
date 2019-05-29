@@ -22,7 +22,6 @@
         <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
         <result column="REASON_FLAG" jdbcType="VARCHAR" property="reasonFlag" />
         <result column="DISMANT_FLAG" jdbcType="VARCHAR" property="dismantFlag" />
-        <result column="DIAG_FLAG" jdbcType="VARCHAR" property="diagFlag" />
         <result column="DISMANT_FORMULA" jdbcType="VARCHAR" property="dismantFormula" />
         <result column="AXIS_NAME" jdbcType="VARCHAR" property="axisName" />
         <result column="VALUE_FORMAT" jdbcType="VARCHAR" property="valueFormat" />
@@ -81,7 +80,7 @@
     </resultMap>
 
     <select id="getKpiList" resultMap="KpiConfigMap">
-        SELECT T.KPI_CODE, T.KPI_NAME, T.DISMANT_FORMULA,T.DISMANT_FLAG,T.DIAG_FLAG,T.REASON_FLAG,AXIS_NAME,VALUE_FORMAT
+        SELECT T.KPI_CODE, T.KPI_NAME, T.DISMANT_FORMULA,T.DISMANT_FLAG,T.REASON_FLAG,AXIS_NAME,VALUE_FORMAT
         FROM UO_KPI_LIST_CONFIG T
     </select>
 

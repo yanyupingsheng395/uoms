@@ -12,6 +12,7 @@ import com.linksteady.operate.service.TargetListService;
 import com.linksteady.operate.service.impl.TgtGmvCalculateServiceImpl;
 import com.linksteady.operate.task.CalculateAllTargetTask;
 import com.linksteady.operate.task.TargetSplitAsyncTask;
+import com.linksteady.operate.util.UomsConstants;
 import com.linksteady.operate.vo.TgtReferenceVO;
 import com.linksteady.system.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -45,9 +46,6 @@ public class TargetListController {
     @Autowired
     CalculateAllTargetTask calculateAllTargetTask;
 
-    private static final List<String> TARGET_KPI_LIST= Arrays.asList("gmv");
-    private static final List<String> TARGET_DIM_LIST= Arrays.asList("neworold","source");
-
     /**
      * 获取指标列表
      * @return
@@ -56,7 +54,7 @@ public class TargetListController {
     public ResponseBo getKpi() {
         Map<String, Object> map = Maps.newHashMap();
         KpiCacheManager.getInstance().getKpiCodeNamePair().forEach((k,v)->{
-            if(TARGET_KPI_LIST.contains(k))
+            if(UomsConstants.TARGET_KPI_LIST.contains(k))
             {
                 map.put(k,v);
             }
@@ -74,7 +72,7 @@ public class TargetListController {
         Map<String, Object> map = Maps.newLinkedHashMap();
 
         KpiCacheManager.getInstance().getDiagDimList().forEach((k,v)->{
-            if(TARGET_DIM_LIST.contains(k))
+            if(UomsConstants.TARGET_DIM_LIST.contains(k))
             {
                 map.put(k,v);
             }
