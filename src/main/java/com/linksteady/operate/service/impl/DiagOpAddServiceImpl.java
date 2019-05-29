@@ -180,10 +180,10 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         KpiSqlTemplateVO kpiSqlTemplate;
         if(diagOpCommonService.isRelyOrderDetail(diagHandleInfo.getWhereinfo())||diagOpCommonService.isRelyOrderDetail(dimCode))
         {
-            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(diagHandleInfo.getHandleType()+"_"+mainKpiCode+"_DETAIL");
+            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(diagHandleInfo.getHandleType()+"_"+mainKpiCode.toUpperCase()+"_DETAIL");
         }else
         {
-            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(diagHandleInfo.getHandleType()+"_"+mainKpiCode);
+            kpiSqlTemplate=KpiCacheManager.getInstance().getKpiSqlTemplateList().get(diagHandleInfo.getHandleType()+"_"+mainKpiCode.toUpperCase());
         }
 
         StringTemplate stringTemplate=new StringTemplate(kpiSqlTemplate.getSqlTemplate());
