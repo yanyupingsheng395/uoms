@@ -50,7 +50,7 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         List<String> dayPeriodList=diagOpCommonService.getPeriodList(UomsConstants.PERIOD_TYPE_DAY,diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
 
         //获取主指标编码
-        String mainKpiCode="gmv";
+        String mainKpiCode=diagHandleInfo.getMainKpiCode();
 
         //获取当前指标编码
         String kpiCode=diagHandleInfo.getKpiCode();
@@ -70,7 +70,6 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         //当前维度下，其具有的值列表 <值编码，值名称>
         Map<String,String> diagDimValuesMap= KpiCacheManager.getInstance().getDiagDimValueList().row(dimCode);
 
-
         //加法要插入的节点列表
         JSONArray nodeArray=new JSONArray();
         JSONObject node;
@@ -78,6 +77,7 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         //如果用户没选择维度值，则系统去取TOP5的
         if(null==diagHandleInfo.getAddDimValues()||"".equals(diagHandleInfo.getAddDimValues()))
         {
+            //根据用户的选择去选择不同的值
             dimValues=getTop5DimValues(diagHandleInfo,dimCode);
         }else
         {
@@ -106,14 +106,15 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         //x轴的数据
         diagAddResultInfo.setXdata(periodList);
 
-       //构造主指标的数据
+       //构造主指标的数据 (主指标的 趋势数据和大小数据)
         buildMainKpi(mainKpiCode,diagHandleInfo,dimCode,dimValues,selectDimValues,periodList,diagAddResultInfo,diagDimValuesMap);
 
-        //如果用户当前进行加法的指标非当前记录的主指标，则还需要计算当前指标的折线图
+        //如果用户当前进行加法的指标非当前记录的主指标，则还需要计算当前指标的趋势数据和大小数据
         if(!mainKpiCode.equals(kpiCode)) {
            buildCurrentKpi(diagHandleInfo,kpiCode,dimCode,dimValues,selectDimValues,periodList,diagAddResultInfo,diagDimValuesMap);
         }
 
+        //计算相关系数和变异系数
         BuildCovAndRelate(mainKpiCode,diagHandleInfo,kpiCode,dimCode,dimValues,selectDimValues,dayPeriodList,diagAddResultInfo,diagDimValuesMap);
         return diagAddResultInfo;
     }
@@ -422,15 +423,15 @@ public class DiagOpAddServiceImpl implements DiagOpService {
                 List<Double> temp8=diagOpCommonService.fixData(t3.stream().collect(Collectors.toMap(DiagAddDataCollector::getPeriodName,DiagAddDataCollector::getValue)),dayPeriodList);
                 double avg=t3.stream().mapToDouble(DiagAddDataCollector::getValue).average().orElse(0d);
                 double stand= DataStatisticsUtils.getStandardDevitionByList(temp8);
-                covObj.put("data",(stand==0?0.00: ArithUtil.formatDoubleByMode(stand/avg*100,2, RoundingMode.DOWN)));
+                covObj.put("data",(stand==0?null: ArithUtil.formatDoubleByMode(stand/avg*100,2, RoundingMode.DOWN)));
 
                 //计算当前数据集与 总体数据的相关系数
                 double relateValue= PearsonCorrelationUtil.getPearsonCorrelationScoreByList(temp8,overallDoubleList);
                 relateObj.put("data",ArithUtil.formatDoubleByMode(relateValue,2,RoundingMode.DOWN));
             }else
             {
-                covObj.put("data","0.00");
-                relateObj.put("data","0.00");
+                covObj.put("data","");
+                relateObj.put("data","");
             }
             covArray.add(covObj);
             relateArray.add(relateObj);
@@ -441,7 +442,7 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         double stand=DataStatisticsUtils.getStandardDevitionByList(overallDoubleList);
         JSONObject covObj=new JSONObject();
         covObj.put("name","总体");
-        covObj.put("data",(stand==0?"0.00":diagOpCommonService.valueFormat(stand/avg*100,"D2")));
+        covObj.put("data",(stand==0?"null":diagOpCommonService.valueFormat(stand/avg*100,"D2")));
         covArray.add(covObj);
 
         diagAddResultInfo.setCovData(covArray);

@@ -30,19 +30,29 @@ public class DiagAddResultInfo extends DiagResultInfo{
     List<String> xdata;
 
     /**
-     * 面积图的数据(主指标)
+     * 主指标的散点图数据（ 表现趋势）
      */
     JSONArray areaData;
 
     /**
-     * 折线图的各部分数据
+     * 主指标的 条图数据 （不分时间，仅根据维度 表现大小）
+     */
+    JSONArray  mainKpiBarData;
+
+    /**
+     * 当前指标的散点图数据（表现趋势）
      */
     JSONArray  lineData;
 
     /**
-     * 折线图的各部分平均数据
+     * 当前指标的各部分平均数据
      */
     JSONArray  lineAvgData;
+
+    /**
+     * 当前指标的 条图数据 （不分时间，仅根据维度 表现大小）
+     */
+    JSONArray  currKpiBarData;
 
     /**
      * 变异系数数据
@@ -58,16 +68,5 @@ public class DiagAddResultInfo extends DiagResultInfo{
      * 加法要插入的节点名称
      */
     JSONArray  nodeList;
-
-    /**
-     * 主指标的 条图数据 （不分时间，仅根据维度）
-     */
-    JSONArray  mainKpiBarData;
-
-    /**
-     * 当前指标的 条图数据 （不分时间，仅根据维度）
-     */
-    JSONArray  currKpiBarData;
-
 
 }

@@ -47,13 +47,14 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
 
     @Override
     public DiagResultInfo process(DiagHandleInfo diagHandleInfo) {
+        //用户选择的周期类型内所有的列表 （如果为月，则为月列表，如果为天，则为天列表)
         List<String> periodList=diagOpCommonService.getPeriodList(diagHandleInfo.getPeriodType(),diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
+
         List<String> dayPeriodList=diagOpCommonService.getPeriodList(UomsConstants.PERIOD_TYPE_DAY,diagHandleInfo.getBeginDt(),diagHandleInfo.getEndDt());
 
         //返回的结果集对象
         DiagMultResultInfo diagMultResultInfo=new DiagMultResultInfo();
 
-        Map<String,String> codeNamePair= KpiCacheManager.getInstance().getKpiCodeNamePair();
         //获取当前要进行乘法的指标编码和指标名称
         String kpiCode=diagHandleInfo.getKpiCode();
         //获取其拆分为的两个指标
@@ -154,7 +155,7 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
         diagMultResultInfo.setXData(periodList);
 
         //末期比基期的变化率
-        double firChangeRate=firData.getFirst()==0?0:(firData.getLast()-firData.getFirst())/firData.getFirst()*100;
+        Double firChangeRate=firData.getFirst()==0?null:(firData.getLast()-firData.getFirst())/firData.getFirst()*100;
         diagMultResultInfo.setFirChangeRate(diagOpCommonService.valueFormat(firChangeRate,"D2"));
 
         if(UomsConstants.DIAG_KPI_CODE_TSPAN.equals(part1Code))
@@ -162,11 +163,11 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
             diagMultResultInfo.setSecChangeRate("");
         }else
         {
-            double secChangeRate=secData.getFirst()==0?0:(secData.getLast()-secData.getFirst())/secData.getFirst()*100;
+            Double secChangeRate=secData.getFirst()==0?null:(secData.getLast()-secData.getFirst())/secData.getFirst()*100;
             diagMultResultInfo.setSecChangeRate(diagOpCommonService.valueFormat(secChangeRate,"D2"));
         }
 
-        double thirdChangeRate=thirdData.getFirst()==0?0:(thirdData.getLast()-thirdData.getFirst())/thirdData.getFirst()*100;
+        Double thirdChangeRate=thirdData.getFirst()==0?null:(thirdData.getLast()-thirdData.getFirst())/thirdData.getFirst()*100;
         diagMultResultInfo.setThirdChangeRate(diagOpCommonService.valueFormat(thirdChangeRate,"D2"));
 
         //均值及上下5%区域；
@@ -187,7 +188,6 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
         diagMultResultInfo.setThirdUp(diagOpCommonService.valueFormat(thirdavg*1.05,thirdFormatType));
         diagMultResultInfo.setThirdDown(diagOpCommonService.valueFormat(thirdavg*0.95,thirdFormatType));
 
-        //计算相关系数
         return diagMultResultInfo;
     }
 
@@ -220,7 +220,7 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
 
         //计算变异系数
         //均值
-        double firavg=firData.stream().mapToDouble(Double::doubleValue).average().orElse(0d);
+        Double firavg=firData.stream().mapToDouble(Double::doubleValue).average().orElse(0d);
         double secavg=secData.stream().mapToDouble(Double::doubleValue).average().orElse(0d);
         double thirdavg=thirdData.stream().mapToDouble(Double::doubleValue).average().orElse(0d);
 
@@ -229,17 +229,17 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
         double secStand=DataStatisticsUtils.getStandardDevitionByList(secData);
         double thirdStand=DataStatisticsUtils.getStandardDevitionByList(thirdData);
 
-        String firCov=diagOpCommonService.valueFormat(firavg==0?0.00:firStand/firavg*100,"D2");
+        String firCov=diagOpCommonService.valueFormat(firavg==0?null:firStand/firavg*100,"D2");
         String secCov="";
         if(UomsConstants.DIAG_KPI_CODE_TSPAN.equals(part1Code))
         {
             secCov="";
         }else
         {
-            secCov=diagOpCommonService.valueFormat(secavg==0?0.00:secStand/secavg*100,"D2");
+            secCov=diagOpCommonService.valueFormat(secavg==0?null:secStand/secavg*100,"D2");
         }
 
-        String thirdCov=diagOpCommonService.valueFormat(thirdavg==0?0.00:thirdStand/thirdavg*100,"D2");
+        String thirdCov=diagOpCommonService.valueFormat(thirdavg==0?null:thirdStand/thirdavg*100,"D2");
 
         Map<String,String> codeNamePair=KpiCacheManager.getInstance().getKpiCodeNamePair();
         covValues.put(codeNamePair.get(kpiCode)+"变异系数",firCov);
@@ -257,7 +257,7 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
         link.put("name",codeNamePair.get(part1Code));
         if(UomsConstants.DIAG_KPI_CODE_TSPAN.equals(part1Code))
         {
-            link.put("data","0.00");
+            link.put("data","");
         }else
         {
             link.put("data",diagOpCommonService.valueFormat(PearsonCorrelationUtil.getPearsonCorrelationScoreByList(firData,secData), "D2"));
