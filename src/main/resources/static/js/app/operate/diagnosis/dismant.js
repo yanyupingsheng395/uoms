@@ -699,10 +699,14 @@ function jsmind_refresh(map) {
 
 // 获取公式
 function getFormula(kpiCode) {
+    var name = $("#currentNode").val();
     $.get("/progress/getFormula", {code: kpiCode}, function(r) {
         var code = null;
         if(r.data != null) {
             code = "<option value='" + kpiCode + "'>" + r.data + "</option>";
+        }
+        if(code == null) {
+            $("#op3").parent().append("<span style='font-size: 10px;'><i class='mdi mdi-alert-circle-outline'></i>"+name+"没有匹配到可拆解的指标！</span>");
         }
         $("#op3").html("").html(code);
         $('#op3').selectpicker('refresh');

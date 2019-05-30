@@ -190,9 +190,12 @@ function t2Relate(obj) {
 }
 
 function t2charts(obj) {
-    $("#rate1").html("").html(obj.firYName + "末期比基期的变化率:" + obj.firChangeRate);
-    $("#rate2").html("").html(obj.secYName + "末期比基期的变化率:" + obj.secChangeRate);
-    $("#rate3").html("").html(obj.thirdYName + "末期比基期的变化率:" + obj.thirdChangeRate);
+    var frate = obj.firChangeRate == ""?"--":obj.firChangeRate;
+    var srate = obj.secChangeRate == ""?"--":obj.secChangeRate;
+    var trate = obj.thirdChangeRate == ""?"--":obj.thirdChangeRate;
+    $("#rate1").html("").html(obj.firYName + "末期比基期的变化率:" + frate);
+    $("#rate2").html("").html(obj.secYName + "末期比基期的变化率:" + srate);
+    $("#rate3").html("").html(obj.thirdYName + "末期比基期的变化率:" + trate);
     makeT2Chart(obj,"t2chart1", obj.firYName,obj.firData, obj.firAvg, obj.firUp, obj.firDown);
     makeT2Chart(obj,"t2chart2", obj.secYName,obj.secData, obj.secAvg, obj.secUp, obj.secDown);
     makeT2Chart(obj,"t2chart3", obj.thirdYName,obj.thirdData, obj.thirdAvg, obj.thirdUp, obj.thirdDown);
