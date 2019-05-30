@@ -11,6 +11,7 @@ function getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData) {
     return {
         tooltip: {
             trigger: 'axis',
+            padding: [15, 20],
             axisPointer: {
                 type: 'shadow'
             }
@@ -26,6 +27,51 @@ function getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData) {
             name: xAxisName,
             splitLine:{show: false},
             data: xAxisData
+        }],
+        yAxis: [{
+            type: 'value',
+            name: yAxisName,
+            splitLine: {show: false},
+            axisTick:  {show: false},
+            splitArea: {show: false},
+            axisLabel: {formatter: '{value}'}
+        }],
+        series: seriesData
+    };
+}
+
+/**
+ * 柱状图模版
+ * @param legendData
+ * @param xAxisData
+ * @param xAxisName
+ * @param yAxisName
+ * @param seriesData
+ * @returns {{yAxis: {axisLabel: {formatter: string}, splitArea: {show: boolean}, name: *, splitLine: {show: boolean}, axisTick: {show: boolean}, type: string}[], xAxis: {axisLabel: {interval: number}, data: *, name: *, splitLine: {show: boolean}, type: string, boundaryGap: boolean}[], legend: {data: *, right: number, align: string}, series: *, tooltip: {padding: number[], axisPointer: {type: string}, trigger: string}}}
+ */
+function getBarOption2(legendData, xAxisData, xAxisName, yAxisName, seriesData) {
+    return {
+        tooltip: {
+            trigger: 'axis',
+            padding: [15, 20],
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        legend: {
+            data: legendData,
+            align: 'right',
+            right: 10
+        },
+        xAxis: [{
+            type: 'category',
+            boundaryGap : true,
+            name: xAxisName,
+            splitLine:{show: false},
+            data: xAxisData,
+            axisLabel:{
+                interval: 0
+            }
         }],
         yAxis: [{
             type: 'value',
@@ -77,6 +123,122 @@ function getBarOption (xAxisData, xAxisName, yAxisName, seriesData, toolXname, t
             }
         }
     };
+}
+
+/**
+ * 获取散点图
+ */
+function getScatterOption(obj) {
+    var series = getScatterSeries(obj, true, max, min);
+    var option = {
+        tooltip: {},
+        grid: {
+            right: '12%'
+        },
+        legend: {data:legend},
+        xAxis: {
+            name: xname,
+            type: "category",
+            boundaryGap: false,
+            splitArea: {show:false},
+            splitLine: {show:false},
+            data: xdata
+        },
+        yAxis: {
+            name: yname,
+            splitArea: {show:false},
+            splitLine: {show:false},
+        },
+        series: series
+    };
+
+    var chart = echarts.init(document.getElementById("t3chart3"), 'macarons');
+    chart.setOption(option, true);
+    setTimeout(function () {
+        chart.resize();
+    }, 200);
+}
+
+/**
+ *
+ * @param obj
+ * @param flag true:目标指标，false：上层指标
+ * @returns {Array}
+ */
+function getScatterSeries(obj, flag, max, min) {
+    var series =  [];
+    var data = flag ? obj["areaData"] : obj["lineData"];
+    var xdata = obj["xdata"];
+    for(var i=0; i<data.length; i++) {
+        var o = new Object();
+        o.name = data[i].name;
+        o.type = 'scatter';
+        o.symbol = 'circle';
+        var odata = [];
+        for(var j=0; j<xdata.length; j++) {
+            odata.push([xdata[j], data[i]["data"][j], data[i]["data"][j]]);
+        }
+        o.data = odata;
+        o.symbolSize = function (data) {
+            return ((data[2]-min)/(max-min)) * 80; // 归一法
+        };
+        series.push(o);
+    }
+    return series;
+}
+
+
+function getXBarOption(obj, chartId) {
+    var mainKpi = obj["mainKpiBarData"];
+    var xdata = [];
+    var ydata = [];
+    $.each(mainKpi, function (k, v) {
+        xdata.push(v["value"]);
+        ydata.push(v["name"]);
+    });
+    var series = [{type:'bar', data:xdata}];
+    var xname = "GMV";
+
+    var option = {
+        grid: {
+            left: '3%',
+            right: '7%',
+            bottom: '10%',
+            containLabel: true
+        },
+
+        tooltip: {
+            show:"true",
+            trigger: 'axis',
+            axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        xAxis:  {
+            name: xname,
+            type: 'value',
+            axisTick : {show: false},
+            splitLine: {show: false},
+            splitArea: {show: false}
+        },
+        yAxis: [
+            {
+                type: 'category',
+                axisLine: {show:true},
+                axisTick: {show:false},
+                axisLabel: {show:true},
+                splitArea: {show:false},
+                splitLine: {show:false},
+                data: ydata
+            }
+        ],
+        series: series
+    };
+    var chart = echarts.init(document.getElementById(chartId), 'macarons');
+    chart.setOption(option, true);
+    setTimeout(function () {
+        chart.resize();
+    }, 200);
 }
 
 // // 模板2 面积图demo

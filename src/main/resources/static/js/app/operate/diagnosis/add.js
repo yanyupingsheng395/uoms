@@ -168,7 +168,6 @@ function getDimAndVal() {
             arr.push(o);
         }
     });
-    console.log(arr)
     return arr;
 }
 

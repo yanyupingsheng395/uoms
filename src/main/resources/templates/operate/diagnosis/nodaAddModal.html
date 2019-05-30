@@ -13,7 +13,7 @@
                             <div class="form-group">
                                 <label class="col-md-3 control-label" for="currentNode">当前指标：</label>
                                 <div class="col-md-6">
-                                    <input type="text" id="currentNode" class="form-control" disabled value="销售额/GMV"/>
+                                    <input type="text" id="currentNode" class="form-control" disabled/>
                                     <input type="hidden" id="currentNodeId" value="-1"/>
                                 </div>
                             </div>
@@ -59,6 +59,17 @@
                             </div>
                             <hr/>
                             <div class="row">
+                                <div class="col-md-12"><h5>已选条件：</h5></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table text-left" id="dataTable">
+                                        <tr><td><i class="mdi mdi-alert-circle-outline"></i>暂无数据！</td></tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class="row">
                                 <div class="col-md-12">
                                     <h5>增加条件：</h5>
                                 </div>
@@ -89,17 +100,6 @@
                                 </div>
                             </div>
                         </form>
-                        <hr/>
-                        <div class="row">
-                            <div class="col-md-12"><h5>已选条件：</h5></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <table class="table text-left" id="dataTable">
-                                    <tr><td><i class="mdi mdi-alert-circle-outline"></i>暂无数据！</td></tr>
-                                </table>
-                            </div>
-                        </div>
                     </div>
                 </div>
 

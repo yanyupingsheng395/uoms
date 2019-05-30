@@ -77,51 +77,50 @@
                             <div class="card-body">
                                 <div class="m-t-md" id="step1" style="display:block;">
                                     <form class="form-horizontal" id="formTable">
-                                        <div class="form-group">
+                                        <div class="form-group col-md-6">
                                             <label class="col-md-3 control-label" for="beginDt">诊断名称：</label>
-                                            <div class="col-md-3">
+                                            <div class="col-md-9">
                                                 <input type="text" class="form-control" name="diagName" id="diagName" onchange="inputCheck(this)"/>
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
+                                        <div class="form-group col-md-6">
                                             <label class="col-md-3 control-label" for="beginDt">周期：</label>
-                                            <div class="col-md-3 input-group">
+                                            <div class="col-md-9 input-group">
                                                 <select name="periodType" class="selectpicker form-control" id="periodType">
                                                     <option value="M">月</option>
                                                     <option value="D">日</option>
                                                 </select>
                                             </div>
                                         </div>
-
-                                        <div class="form-group">
-                                            <label class="col-md-3 control-label" for="beginDt">开始时间：</label>
-                                            <div class="col-md-3" id="startDate">
-                                                <input class="form-control js-datepicker m-b-10" type="text" id="beginDt" name="beginDt" value="2019-01"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-md-3 control-label" for="beginDt">结束时间：</label>
-                                            <div class="col-md-3" id="endDate">
-                                                <input class="form-control js-datepicker m-b-10" type="text" id="endDt" name="endDt" value="2019-05"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
+                                        <div class="form-group col-md-6">
                                             <label class="col-md-3 control-label">指标：</label>
-                                            <div class="col-md-3">
+                                            <div class="col-md-9">
                                                 <select name="kpiCode" id="targetKpi" class="selectpicker form-control"></select>
                                                 <input type="hidden" id="targetKpiTxt" name="targetKpiTxt">
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group col-md-6">
                                             <label class="col-md-3 control-label">维度：</label>
-                                            <div class="col-md-5">
+                                            <div class="col-md-9">
                                                 <button class="btn btn-primary" type="button" onclick="btnSelect()">选择</button>
                                             </div>
                                         </div>
-                                        <div class="form-group" id="conditions" hidden>
-                                            <label class="col-md-3 control-label">已选择：</label>
-                                            <div class="col-md-5">
+                                        <div class="form-group col-md-6">
+                                            <label class="col-md-3 control-label">开始时间：</label>
+                                            <div class="col-md-9" id="startDate">
+                                                <input class="form-control js-datepicker m-b-10" type="text" id="beginDt" name="beginDt" value="2019-01"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label class="col-md-3 control-label">结束时间：</label>
+                                            <div class="col-md-9" id="endDate">
+                                                <input class="form-control js-datepicker m-b-10" type="text" id="endDt" name="endDt" value="2019-05"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-6" id="conditions" hidden>
+                                            <label class="col-md-3 control-label">维度&值：</label>
+                                            <div class="col-md-9">
                                                 <table class="table table-no-bordered text-left" id="dimDataTable"></table>
                                             </div>
                                         </div>

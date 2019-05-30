@@ -2,6 +2,7 @@ function nodeClick() {
     var kpiLevelId = jm.get_selected_node().data.KPI_LEVEL_ID;
     $.get("/progress/generateDiagData", {diagId: diagId, kpiLevelId: kpiLevelId}, function (r) {
         viewChart(r.data);
+        console.log(r.data)
     });
 }
 
@@ -14,10 +15,12 @@ function getRootDiagInfo() {
         success: function (r) {
             $("#_diagName").html("").html("<p class='h5'>名称: " + r.data['DIAG_NAME'] + "</p>");
             $("#diagKpiCode").html("").html("<p class='h5'>指标: " + r.data['KPI_NAME'] + "</p>");
-            var dimInfos = r.data['DIM_DISPLAY_NAME'].split(";");
-            $.each(dimInfos, function (k, v) {
-                code += "<li>"+v+"</li>";
-            })
+            var dimInfos = r.data['DIM_DISPLAY_NAME'] == null ? null:r.data['DIM_DISPLAY_NAME'].split(";");
+            if(dimInfos != null) {
+                $.each(dimInfos, function (k, v) {
+                    code += "<li>"+v+"</li>";
+                });
+            }
         }
     });
     return code;
@@ -78,11 +81,20 @@ function viewChart(obj) {
             $("#template2").attr("style", "display:none;");
             $("#template3").attr("style", "display:block;");
             t3chart1(obj, 't3chart1');
-            if(obj.lineData.length != 0 && obj.lineAvgData.length != 0) {
+
+            $("#t3chart").attr("style","display:block;");
+            t3chart4(obj, "t3chart4");
+
+            //  判断是否为目标指标
+            if(obj.lineData != null && obj.lineData.length != 0) {
                 $("#t2chart").attr("style","display:block;");
+                $("#t2chart_target").attr("style","display:none;");
                 t3chart2(obj, 't3chart2');
+                t3chart4(obj, 't3chart42');
+                t3chart6(obj, 't3chart6');
             }else {
                 $("#t2chart").attr("style","display:none;");
+                $("#t2chart_target").attr("style","display:block;");
             }
             t3Cov(obj);
             t3Relate(obj);
@@ -179,23 +191,28 @@ function t2charts(obj) {
     makeT2Chart(obj,"t2chart3", obj.thirdYName,obj.thirdData, obj.thirdAvg, obj.thirdUp, obj.thirdDown);
 }
 
+/**
+ * 不同维度对目标指标的影响效果
+ * 首购/非首购：面积图
+ * 其他维度：条形图
+ * @param obj
+ * @param chartId
+ */
 function t3chart1(obj, chartId){
-
     var legendData = obj.legendData;
     var xAxisData = obj.xdata;
     var xAxisName = obj.xname;
-    var yAxisName = "GMV值（元）";
+    var yAxisName = "GMV";
     var seriesData = new Array();
+    var option = null;
     $.each(obj.areaData, function (k, v) {
         var obj = new Object();
         obj.name = v.name;
         obj.data = v.data;
         obj.type = 'line';
-        obj.stack = '总量';
-        obj.areaStyle = {normal: {}};
         seriesData.push(obj);
     });
-    var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
+    option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option, true);
     setTimeout(function () {
@@ -237,6 +254,225 @@ function t3chart2(obj, chartId){
     option.legend.selected = tmp;
     option.grid = {top:'28%'};
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
+    chart.setOption(option, true);
+    setTimeout(function () {
+        chart.resize();
+    }, 200);
+}
+
+
+// 条形图
+function t3chart4(obj, chartId) {
+    var mainKpi = obj["mainKpiBarData"];
+    var xdata = [];
+    var ydata = [];
+    $.each(mainKpi, function (k, v) {
+        xdata.push(v["name"]);
+        ydata.push(v["value"]);
+    });
+    var series = [{type:'bar', data:ydata}];
+    var yname = "GMV";
+
+    var option = {
+        grid: {
+            left: '3%',
+            right: '7%',
+            bottom: '10%',
+            containLabel: true
+        },
+
+        tooltip: {
+            show:"true",
+            trigger: 'axis',
+            axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        xAxis:  {
+            type: 'category',
+            axisTick : {show: false},
+            splitLine: {show: false},
+            splitArea: {show: false},
+            data: xdata
+        },
+        yAxis: [
+            {
+                name: yname,
+                type: 'value',
+                axisLine: {show:true},
+                axisTick: {show:false},
+                axisLabel: {show:true},
+                splitArea: {show:false},
+                splitLine: {show:false}
+            }
+        ],
+        series: series
+    };
+    var chart = echarts.init(document.getElementById(chartId), 'macarons');
+    chart.setOption(option, true);
+    setTimeout(function () {
+        chart.resize();
+    }, 200);
+}
+
+/**
+ *
+ * @param obj
+ * @param flag true:目标指标，false：上层指标
+ * @returns {Array}
+ */
+function getScatterSeries(obj, flag, max, min) {
+    var series =  [];
+    var data = flag ? obj["areaData"] : obj["lineData"];
+    var xdata = obj["xdata"];
+    for(var i=0; i<data.length; i++) {
+        var o = new Object();
+        o.name = data[i].name;
+        o.type = 'scatter';
+        o.symbol = 'circle';
+        var odata = [];
+        for(var j=0; j<xdata.length; j++) {
+            odata.push([xdata[j], data[i]["data"][j], data[i]["data"][j]]);
+        }
+        o.data = odata;
+        o.symbolSize = function (data) {
+            return ((data[2]-min)/(max-min)) * 80;
+        };
+        series.push(o);
+    }
+    return series;
+}
+function t3chart5(obj, chartId){
+    var xdata = obj["xdata"];
+    var xname = obj["xname"];
+    var yname = obj["kpiName"];
+    var legend = obj["legendData"];
+    var allData = [];
+    $.each(obj["lineData"], function (k, v) {
+        allData = allData.concat(v["data"]);
+    });
+    var max = Math.max.apply(null, allData);
+    var min = Math.min.apply(null, allData);
+    var series = getScatterSeries(obj, false, max, min);
+    var option = {
+        tooltip: {},
+        grid: {
+            right: '12%'
+        },
+        legend: {data:legend},
+        xAxis: {
+            name: xname,
+            type: "category",
+            boundaryGap: false,
+            splitArea: {show:false},
+            splitLine: {show:false},
+            data: xdata
+        },
+        yAxis: {
+            name: yname,
+            splitArea: {show:false},
+            splitLine: {show:false},
+        },
+        series: series
+    };
+
+    var chart = echarts.init(document.getElementById(chartId), 'macarons');
+    chart.setOption(option, true);
+    setTimeout(function () {
+        chart.resize();
+    }, 200);
+}
+
+function t3chart6(obj, chartId){
+    var mainKpi = obj["currKpiBarData"];
+    var xdata = [];
+    var ydata = [];
+    $.each(mainKpi, function (k, v) {
+        xdata.push(v["name"]);
+        ydata.push(v["value"]);
+    });
+    var series = [{type:'bar', data:ydata}];
+    var yname = obj["kpiName"];
+
+    var option = {
+        grid: {
+            left: '3%',
+            right: '7%',
+            bottom: '10%',
+            containLabel: true
+        },
+
+        tooltip: {
+            show:"true",
+            trigger: 'axis',
+            axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        xAxis:  {
+            type: 'category',
+            axisTick : {show: false},
+            splitLine: {show: false},
+            splitArea: {show: false},
+            data: xdata
+        },
+        yAxis: [
+            {
+                name: yname,
+                type: 'value',
+                axisLine: {show:true},
+                axisTick: {show:false},
+                axisLabel: {show:true},
+                splitArea: {show:false},
+                splitLine: {show:false}
+            }
+        ],
+        series: series
+    };
+    var chart = echarts.init(document.getElementById(chartId), 'macarons');
+    chart.setOption(option, true);
+    setTimeout(function () {
+        chart.resize();
+    }, 200);
+}
+// 目标指标的散点图
+function t3chart3(obj) {
+    var xdata = obj["xdata"];
+    var xname = obj["xname"];
+    console.log(jm.get_root());
+    var yname = $("#targetKpi").find("option:selected").text();
+    var legend = obj["legendData"];
+    var allData = [];
+    $.each(obj["areaData"], function (k, v) {
+        allData = allData.concat(v["data"]);
+    });
+
+    var max = Math.max.apply(null, allData);
+    var min = Math.min.apply(null, allData);
+    var series = getScatterSeries(obj, true, max, min);
+    var option = {
+        tooltip: {},
+        grid: {
+            right: '12%'
+        },
+        legend: {data:legend},
+        xAxis: {
+            name: xname,
+            type: "category",
+            boundaryGap: false,
+            splitArea: {show:false},
+            splitLine: {show:false},
+            data: xdata
+        },
+        yAxis: {
+            name: yname,
+            splitArea: {show:false},
+            splitLine: {show:false},
+        },
+        series: series
+    };
+
+    var chart = echarts.init(document.getElementById("t3chart3"), 'macarons');
     chart.setOption(option, true);
     setTimeout(function () {
         chart.resize();

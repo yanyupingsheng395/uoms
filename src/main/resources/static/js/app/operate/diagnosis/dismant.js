@@ -378,6 +378,7 @@ function redisSaveRootNodeHandleInfo() {
     var periodType = $("#periodType option:selected").val();
     var beginDt = $("#beginDt").val();
     var endDt = $("#endDt").val();
+    var mainKpiCode = "";
     handleInfo.diagId = diagId;
     handleInfo.kpiLevelId = 0;
     handleInfo.handleType = "F";
@@ -387,6 +388,7 @@ function redisSaveRootNodeHandleInfo() {
     handleInfo.beginDt = beginDt;
     handleInfo.endDt = endDt;
     handleInfo.kpiCode = kpiCode;
+    handleInfo.mainKpiCode = kpiCode;
     saveDiagHandleInfo(handleInfo, "F");
 }
 //
@@ -585,7 +587,7 @@ function saveRedisHandleInfo(nodeName, levelId, kpiCode, kpiName) {
     handleInfo.endDt = endDt;
     handleInfo.whereinfo = filterCondition();
     handleInfo.kpiCode = kpiCode;
-
+    handleInfo.mainKpiCode = kpiCode;
     // redis封装数据,返回模版文件
     saveDiagHandleInfo(handleInfo, operateType);
 }
