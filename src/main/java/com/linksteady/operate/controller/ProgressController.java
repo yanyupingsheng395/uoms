@@ -126,6 +126,7 @@ public class ProgressController {
                 List<DiagConditionVO> tmp = new ArrayList<>();
                 obj.setWhereinfo(tmp);
             }
+            diagHandleService.setDiagHandleInfoToRedis(obj);
             diagHandleService.generateDiagData(obj);
             return ResponseBo.ok();
         }catch (Exception ex) {
@@ -146,6 +147,26 @@ public class ProgressController {
             return ResponseBo.error();
         }
     }
+
+    /**
+     *
+     * @param diagId
+     * @param kpiLevelId
+     * @return
+     */
+    @GetMapping("/generateDiagDataOfEdit")
+    public ResponseBo generateDiagDataOfEdit(@RequestParam("diagId") int diagId, @RequestParam("kpiLevelId") int kpiLevelId) {
+        try{
+            ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+            DiagHandleInfo diagHandleInfo = diagHandleService.getDiagHandleInfoFromRedis(diagId, kpiLevelId);
+            DiagResultInfo diagResultInfo = diagHandleService.generateDiagData(diagHandleInfo);
+            return ResponseBo.okWithData(null, diagResultInfo);
+        }catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseBo.error();
+        }
+    }
+
 
     /**
      * 原因探究之前判断该KPI是否在list中

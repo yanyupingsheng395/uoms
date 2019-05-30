@@ -1,8 +1,15 @@
 function nodeClick() {
-    var kpiLevelId = jm.get_selected_node().data.KPI_LEVEL_ID;
-    $.get("/progress/generateDiagData", {diagId: diagId, kpiLevelId: kpiLevelId}, function (r) {
+    var opDataType = $("#opDataType").val();
+    var url = "";
+    if(opDataType == "edit") {
+        url = "/progress/generateDiagDataOfEdit";
+    }
+    if(opDataType == "add") {
+        url = "/progress/generateDiagData";
+    }
+    var kpiLevelId = jm.get_selected_node().data.kpiLevelId;
+    $.get(url, {diagId: diagId, kpiLevelId: kpiLevelId}, function (r) {
         viewChart(r.data);
-        console.log(r.data)
     });
 }
 

@@ -59,7 +59,7 @@ $(function () {
             filed: '#',
             title: '操作',
             formatter: function (value, row, index) {
-                    return "<a class='btn btn-primary btn-sm' href='/page/diagnosis/view?id="+row.diagId+"'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-danger btn-sm' onclick='deleteConfirm("+row.diagId+")'><i class='mdi mdi-window-close'></i>删除</div>";
+                    return "<a class='btn btn-primary btn-sm' href='/page/diagnosis/view?id="+row.diagId+"'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-warning btn-sm' onclick='editDiag("+row.diagId+")'><i class='mdi mdi-pencil'></i>编辑</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='deleteConfirm("+row.diagId+")'><i class='mdi mdi-window-close'></i>删除</div>";
             }
         }],onLoadSuccess: function(data){
             $("a[data-toggle='tooltip']").tooltip();
@@ -67,6 +67,10 @@ $(function () {
     };
     $('#diagTable').bootstrapTable(settings);
 });
+
+function editDiag(diagId) {
+    location.href = "/diag/edit?id=" + diagId;
+}
 
 // function deleteConfirm(id) {
 //     $.confirm({

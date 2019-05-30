@@ -50,7 +50,10 @@
               d.DIAG_ID,
               d.DIAG_NAME,
               d.DIM_DISPLAY_NAME,
-              k.KPI_NAME
+              k.KPI_NAME,
+              d.BEGIN_DT,
+              d.END_DT,
+              d.PERIOD_TYPE
           FROM
               UO_DIAG_LIST d
               LEFT JOIN UO_KPI_LIST_CONFIG k ON d.KPI_CODE = k.KPI_CODE

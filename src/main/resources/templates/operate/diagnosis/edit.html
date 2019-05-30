@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户运营系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <style>
+        .form-horizontal .radio-inline {
+            padding-top:0px; !important;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content" oncontextmenu="doNothing()">
+            <!-- 控制面板的右键操作按钮 -->
+            <div id="operateBtns" style="top: 0px;left: 0px;position: absolute; z-index: 100; display: none;">
+                <table style="width: auto;">
+                    <tr id="condition0">
+                        <td><button class="btn btn-default" data-toggle="modal" data-target="#nodeAddModal" onclick="modalBefore()"><span class="h5"><i class="mdi mdi-plus"></i>&nbsp;新增</span></button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default" data-toggle="modal" data-target="#nodeDetailModal" onclick="modalDetailBefore()"><span class="h5"><i class="mdi mdi-file-document-box"></i>&nbsp;详情</span></button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default" data-code="0" onclick="alarmFlag(this)"><span class="h5"><i class="mdi mdi-check"></i>&nbsp;标记</span></button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default" data-code="0" onclick="reasonAddBefore()"><span class="h5"><i class="mdi mdi-fingerprint"></i>&nbsp;探究</span></button></td>
+                    </tr>
+                    <tr>
+                        <td><button class="btn btn-default" onclick="deleteNode()"><span class="h5"><i class="mdi mdi-delete"></i>&nbsp;删除</span></button></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>诊断详情</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div data-th-include="operate/diagnosis/progress"></div>
+                            </div>
+                        </div>
+
+                        <!--图标区-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div th:include="operate/diagnosis/nodeChartModal"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <a class="btn btn-default" href="/page/diagnosis/list"><i class="mdi mdi-reply"></i>返回</a>
+                            </div>
+                        </div>
+
+                        <!--节点新增按钮-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div th:include="operate/diagnosis/nodaAddModal"></div>
+                            </div>
+                        </div>
+
+                        <!-- 节点详情按钮-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div th:include="operate/diagnosis/nodeDetailModal"></div>
+                            </div>
+                        </div>
+                        <!--节点鼠标左击图标-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div th:include="operate/diagnosis/nodeChartModal"></div>
+                            </div>
+                        </div>
+                        <!--节点原因探究按钮-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div th:include="operate/diagnosis/nodeReasonAdd"></div>
+                            </div>
+                        </div>
+                        <input id="diagId" type="hidden" th:value="${id}"/>
+                        <input id="beginDt" type="hidden" th:value="${diag.BEGIN_DT}"/>
+                        <input id="endDt" type="hidden" th:value="${diag.END_DT}"/>
+                        <input id="periodType" type="hidden" th:value="${diag.PERIOD_TYPE}"/>
+                        <input id="opDataType" type="hidden" value="edit"/>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/js/app/operate/diagnosis/template.js}"></script>
+<script data-th-src="@{/js/app/operate/diagnosis/modal.js}"></script>
+<script data-th-src="@{/js/app/operate/diagnosis/dismant.js}"></script>
+<script data-th-src="@{/js/app/operate/diagnosis/edit.js}"></script>
+</body>
+</html>

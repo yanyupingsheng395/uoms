@@ -1,12 +1,16 @@
 package com.linksteady.operate.service.impl;
 
+import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.DiagConditionMapper;
 import com.linksteady.operate.dao.DiagDetailMapper;
 import com.linksteady.operate.dao.DiagMapper;
 import com.linksteady.operate.domain.Diag;
 import com.linksteady.operate.domain.DiagCondition;
 import com.linksteady.operate.domain.DiagDetail;
+import com.linksteady.operate.domain.DiagHandleInfo;
 import com.linksteady.operate.service.DiagService;
+import com.linksteady.operate.vo.DiagConditionVO;
+import com.linksteady.operate.vo.NodeDataVO;
 import com.linksteady.system.domain.User;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,27 +62,35 @@ public class DiagServiceImpl implements DiagService {
         return diagId;
     }
 
+    /**
+     *  查看，编辑获取节点信息
+     * @param diagId
+     * @return
+     */
     @Override
-    public List<Map<String, Object>> getNodes(String diagId) {
-        List<Map<String, Object>> resultList = new ArrayList<>();
+    public List<NodeDataVO> getNodes(String diagId) {
+        List<NodeDataVO> resultList = new ArrayList<>();
         List<DiagDetail> diagDetailList = diagDetailMapper.findByDiagId(diagId);
-
         for(DiagDetail d:diagDetailList) {
-            Map<String, Object> result = new HashMap<>();
-            result.put("id", d.getNodeId());
-            result.put("parentid", d.getParentId());
-            result.put("KPI_LEVEL_ID", d.getKpiLevelId());
+            NodeDataVO node = new NodeDataVO();
+            node.setId(String.valueOf(d.getNodeId()));
+            node.setParentid(String.valueOf(d.getParentId()));
             if (d.getParentId() == null) {
-                result.put("isroot", true);
+                node.setIsroot(true);
             }else {
-                result.put("isroot", false);
+                node.setIsroot(false);
             }
-            result.put("topic", d.getNodeName());
-            resultList.add(result);
+            node.setTopic(d.getNodeName());
+            List<DiagCondition> diagConditions = diagConditionMapper.findByDiagIdAndNodeId(diagId, String.valueOf(d.getNodeId()));
+            node.setKpiCode(d.getKpiCode());
+            node.setKpiName(d.getKpiName());
+            node.setAlarmFlag(d.getAlarmFlag());
+            node.setKpiLevelId(String.valueOf(d.getKpiLevelId()));
+            node.setConditions(diagConditions);
+            resultList.add(node);
         }
         return resultList;
     }
-
     @Override
     @Transactional
     public void deleteById(String id) {

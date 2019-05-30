@@ -2,7 +2,9 @@ package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
+import com.linksteady.operate.domain.Diag;
 import com.linksteady.operate.domain.StateJudge;
+import com.linksteady.operate.service.DiagService;
 import com.linksteady.operate.service.LifeCycleService;
 import com.linksteady.operate.service.StateJudgeService;
 import com.linksteady.system.domain.User;
@@ -13,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Map;
+
 @Controller
 @RequestMapping("/")
 public class PageController extends BaseController {
@@ -22,6 +26,9 @@ public class PageController extends BaseController {
 
     @Autowired
     private LifeCycleService lifeCycleService;
+
+    @Autowired
+    private DiagService diagService;
 
     @Autowired
     DozerBeanMapper dozerBeanMapper;
@@ -168,5 +175,13 @@ public class PageController extends BaseController {
     public String targetDetail(@RequestParam("id") String id, Model model) {
         model.addAttribute("id", id);
         return "operate/targetinfo/detail";
+    }
+
+    @RequestMapping("/diag/edit")
+    public String diagEdit(@RequestParam("id") String id, Model model) {
+        Map<String, Object> diag = diagService.geDiagInfoById(id);
+        model.addAttribute("diag", diag);
+        model.addAttribute("id", id);
+        return "operate/diagnosis/edit";
     }
 }

@@ -50,7 +50,7 @@ function doNothing(){
 // 拆分方式
 
 $("input[name='op2']").click(function () {
-    var kpiCode = jm.get_selected_node().data.KPI_CODE;
+    var kpiCode = jm.get_selected_node().data.kpiCode;
     var option2Val = $(this).val();
     if(option2Val == "A") { // 加法过滤
         getDimension(); // 获取维度
@@ -163,11 +163,11 @@ function saveNodes() {
         obj["nodeId"] = tmp.id;
         obj["nodeName"] = tmp.topic;
         obj["parentId"] = parentId;
-        obj["kpiCode"] = tmp.data.KPI_CODE;
-        obj["kpiName"] = tmp.data.KPI_NAME;
-        obj["kpiLevelId"] = tmp.data.KPI_LEVEL_ID;
+        obj["kpiCode"] = tmp.data.kpiCode;
+        obj["kpiName"] = tmp.data.kpiName;
+        obj["kpiLevelId"] = tmp.data.kpiLevelId;
         obj["alarmFlag"] = "n";
-        obj["conditions"] = tmp.data.CONDITION;
+        obj["conditions"] = tmp.data.conditions;
         data.push(obj);
     }
 
@@ -217,7 +217,7 @@ function modalBefore() {
     // 弹窗中获取当前指标
     var selectedNode = jm.get_selected_node();
     $("#currentNodeId").val(selectedNode.id);
-    $("#currentNode").val(selectedNode.data.KPI_NAME);
+    $("#currentNode").val(selectedNode.data.kpiName);
 
     // 设置选中为空，初始化选择框
     $("input[name='op2']:checked").removeAttr("checked");
@@ -340,8 +340,8 @@ function filterCondition() {
 function modalDetailBefore() {
     var e = document.getElementById("operateBtns");
     e.style.display = "none";
-    var array = jm.get_selected_node().data.CONDITION;
-    $("#kpiNameDetail").html("").html(jm.get_selected_node().data.KPI_NAME);
+    var array = jm.get_selected_node().data.conditions;
+    $("#kpiNameDetail").html("").html(jm.get_selected_node().data.kpiName);
     var code = "";
     $.each(array, function (k, v) {
         code += "<tr><td style='text-align: left;'>" + v.dimName + ":";
@@ -362,7 +362,7 @@ function modalDetailBefore() {
 // 加法条件
 function condition0() {
     var levelId = getKpiLevelId();
-    saveRedisHandleInfo(null,levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
+    saveRedisHandleInfo(null,levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName);
 }
 
 // 加法节点为叶子节点
@@ -378,7 +378,6 @@ function redisSaveRootNodeHandleInfo() {
     var periodType = $("#periodType option:selected").val();
     var beginDt = $("#beginDt").val();
     var endDt = $("#endDt").val();
-    var mainKpiCode = "";
     handleInfo.diagId = diagId;
     handleInfo.kpiLevelId = 0;
     handleInfo.handleType = "F";
@@ -409,11 +408,11 @@ function saveNode(nodeid) {
         obj["nodeId"] = tmp.id;
         obj["nodeName"] = tmp.topic;
         obj["parentId"] = parentId;
-        obj["kpiCode"] = tmp.data.KPI_CODE;
-        obj["kpiName"] = tmp.data.KPI_NAME;
-        obj["kpiLevelId"] = tmp.data.KPI_LEVEL_ID;
+        obj["kpiCode"] = tmp.data.kpiCode;
+        obj["kpiName"] = tmp.data.kpiName;
+        obj["kpiLevelId"] = tmp.data.kpiLevelId;
         obj["alarmFlag"] = "n";
-        obj["condition"] = tmp.data.CONDITION;
+        obj["condition"] = tmp.data.conditions;
         data.push(obj);
     }
 
@@ -447,7 +446,7 @@ function getDate(datestr){
 
 // 乘法条件
 function condition1() {
-    var kpiCode = jm.get_selected_node().data.KPI_CODE;
+    var kpiCode = jm.get_selected_node().data.kpiCode;
     $.get("/progress/getKpi", {code: kpiCode}, function(r) {
         jsmind_refresh(r.data);
     });
@@ -470,9 +469,9 @@ function rootNode() {
             node.id = "-1";
             node.isroot = true;
             node.topic = "0 "+kpiName;
-            node.KPI_CODE = kpiCode;
-            node.KPI_NAME = kpiName;
-            node.KPI_LEVEL_ID = "0";
+            node.kpiCode = kpiCode;
+            node.kpiName = kpiName;
+            node.kpiLevelId = "0";
             nodeArr.push(node);
         }
     });
@@ -508,9 +507,9 @@ function condition2() {
     if(conditionVal.length == 0) {
         toastr.warning('请选择过滤条件！');
     }else {
-        createNode(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME, false, null);
+        createNode(nodeName, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName, false, null);
         $("#nodeAddModal").modal('hide');
-        saveRedisHandleInfo(nodeName, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
+        saveRedisHandleInfo(nodeName, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName);
     }
 }
 
@@ -530,12 +529,12 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf, condition) {
     conditions = conditions.concat(filterCondition());
 
     var data = new Object();
-    data.KPI_CODE = kpiCode;
-    data.KPI_NAME = kpiName;
-    data.KPI_LEVEL_ID = kpiLevelId;
-    data.ALARM_FLAG = alarmFlag;
-    data.CONDITION = conditions;
-    data.IS_LEFAF = isLeaf;
+    data.kpiCode = kpiCode;
+    data.kpiName = kpiName;
+    data.kpiLevelId = kpiLevelId;
+    data.alarmFlag = alarmFlag;
+    data.conditions = conditions;
+    data.isLeaf = isLeaf;
 
     jm.enable_edit();
     jm.add_node(parentId, nodeId, nodeName, data);
@@ -552,7 +551,7 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf, condition) {
 function saveRedisHandleInfo(nodeName, levelId, kpiCode, kpiName) {
     // 封装HandleInfo
     var handleInfo = new Object();
-    var periodType = $("#periodType option:selected").val();
+    var periodType = $("#periodType option:selected").val() == null ? $("#periodType").val():$("#periodType option:selected").val();
     var beginDt = $("#beginDt").val();
     var endDt = $("#endDt").val();
     var handleDesc = "";
@@ -694,8 +693,8 @@ function jsmind_refresh(map) {
     createNode(nodeName2, levelId, kpiCode2, kpiName2, false, null);
     $("#nodeAddModal").modal('hide');
 
-    saveRedisHandleInfo(nodeName1, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
-    saveRedisHandleInfo(nodeName2, levelId, jm.get_selected_node().data.KPI_CODE, jm.get_selected_node().data.KPI_NAME);
+    saveRedisHandleInfo(nodeName1, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName);
+    saveRedisHandleInfo(nodeName2, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName);
 }
 
 // 获取公式
@@ -784,15 +783,15 @@ function reasonAdd() {
     var e = document.getElementById("operateBtns");
     e.style.display = "none";
     var selectedNode = jm.get_selected_node();
-    $("#reasonKpiCode").val(selectedNode.data.KPI_CODE);
-    $("#reasonKpiName").val(selectedNode.data.KPI_NAME);
+    $("#reasonKpiCode").val(selectedNode.data.kpiCode);
+    $("#reasonKpiName").val(selectedNode.data.kpiName);
     reasonAddCondition();
     $("#nodeReasonAddModal").modal('show');
 }
 
 function reasonAddBefore() {
     var selectedNode = jm.get_selected_node();
-    $.get("/progress/checkReasonList", {kpiCode: selectedNode.data.KPI_CODE, kpiName: selectedNode.data.KPI_NAME}, function(r) {
+    $.get("/progress/checkReasonList", {kpiCode: selectedNode.data.kpiCode, kpiName: selectedNode.data.kpiName}, function(r) {
         if(!r.data) {
             toastr.warning('当前指标暂不支持进行原因探究！');
         }else {
@@ -803,9 +802,9 @@ function reasonAddBefore() {
 
 // 原因探究：选择维度以及值
 function reasonAddCondition() {
-    var array = jm.get_selected_node().data.CONDITION;
+    var array = jm.get_selected_node().data.conditions;
     if(array != undefined) {
-        $("#kpiNameDetail").html("").html(jm.get_selected_node().data.KPI_NAME);
+        $("#kpiNameDetail").html("").html(jm.get_selected_node().data.kpiName);
         var code = "";
         $.each(array, function (k, v) {
             code += "<tr><td style='text-align: left;'>" + v.dimName + ":";

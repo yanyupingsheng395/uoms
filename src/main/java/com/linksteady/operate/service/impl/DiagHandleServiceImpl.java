@@ -51,6 +51,15 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         return (DiagResultInfo)redisTemplate.opsForValue().get("diagresult:"+diagId+":"+kpiLevelId);
     }
 
+    @Override
+    public DiagHandleInfo getDiagHandleInfoFromRedis(int diagId, int kpiLevelId) {
+        return (DiagHandleInfo)redisTemplate.opsForValue().get("diagHandleInfo:"+diagId+":"+kpiLevelId);
+    }
+
+    @Override
+    public void setDiagHandleInfoToRedis(DiagHandleInfo diagHandleInfo) {
+        redisTemplate.opsForValue().set("diagHandleInfo:"+diagHandleInfo.getDiagId()+":"+diagHandleInfo.getKpiLevelId(),diagHandleInfo);
+    }
 
     @Override
     public DiagResultInfo generateDiagData(DiagHandleInfo diagHandleInfo) {

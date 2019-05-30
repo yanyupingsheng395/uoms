@@ -30,6 +30,10 @@
     select * from UO_DIAG_CONDITION where DIAG_ID = #{diagId}
   </select>
 
+  <select id="findByDiagIdAndNodeId" resultMap="BaseResultMap">
+    select DIM_CODE,DIM_VALUES,DIM_VALUE_DISPLAY,DIM_NAME,INHERIT_FLAG from UO_DIAG_CONDITION where DIAG_ID = #{diagId} and NODE_ID = #{nodeId}
+  </select>
+
   <delete id="deleteByDiagId">
     delete from UO_DIAG_CONDITION where DIAG_ID = #{diagId}
   </delete>

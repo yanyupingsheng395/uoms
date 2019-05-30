@@ -11,6 +11,7 @@ import com.linksteady.operate.domain.Diag;
 import com.linksteady.operate.domain.DiagCondition;
 import com.linksteady.operate.service.DiagService;
 import com.linksteady.operate.util.UomsConstants;
+import com.linksteady.operate.vo.NodeDataVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class DiagnosisController {
 
     @PostMapping("/getNodes")
     public ResponseBo getNodes(@RequestParam("diagId") String diagId) {
-        List<Map<String, Object>> res = diagService.getNodes(diagId);
+        List<NodeDataVO> res = diagService.getNodes(diagId);
         return ResponseBo.okWithData(null, JSON.toJSON(res));
     }
 
