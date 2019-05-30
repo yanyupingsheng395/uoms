@@ -4,7 +4,7 @@ function nodeClick() {
     if(opDataType == "edit") {
         url = "/progress/generateDiagDataOfEdit";
     }
-    if(opDataType == "add") {
+    if(opDataType == "add" || opDataType == "view") {
         url = "/progress/generateDiagData";
     }
     var kpiLevelId = jm.get_selected_node().data.kpiLevelId;
