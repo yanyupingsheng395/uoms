@@ -82,6 +82,11 @@ class DiagOpCommonServiceImpl {
      */
     String valueFormat(Double value,String formatType)
     {
+        if(null==value)
+        {
+            return "";
+        }
+
         String pattern="#,##0.00";
         if("DF".equals(formatType))
         {
