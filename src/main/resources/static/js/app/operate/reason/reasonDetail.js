@@ -178,7 +178,7 @@ function submitData() {
 }
 
 /**
- * 将原因结果加入跟踪列表
+ * 将原因结果取消追踪
  */
 function  deleteTrace(reasonId,reasonResultId) {
     //遮罩层打开
