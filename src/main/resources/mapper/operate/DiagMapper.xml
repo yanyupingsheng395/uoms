@@ -54,7 +54,8 @@
               k.KPI_NAME,
               d.BEGIN_DT,
               d.END_DT,
-              d.PERIOD_TYPE
+              d.PERIOD_TYPE,
+              d.KPI_CODE
           FROM
               UO_DIAG_LIST d
               LEFT JOIN UO_KPI_LIST_CONFIG k ON d.KPI_CODE = k.KPI_CODE

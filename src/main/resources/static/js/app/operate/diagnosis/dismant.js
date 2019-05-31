@@ -549,6 +549,13 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf, condition) {
 
 // redis存储HandleInfo
 function saveRedisHandleInfo(nodeName, levelId, kpiCode, kpiName) {
+    var op = $("#opDataType").val();
+    var mainKpiCode = "";
+    if(op == "edit") {
+        mainKpiCode = $("#mainKpiCode").val();
+    }else if(op == "add"){
+        mainKpiCode = $("#targetKpi").find("option:selected").val();
+    }
     // 封装HandleInfo
     var handleInfo = new Object();
     var periodType = $("#periodType option:selected").val() == null ? $("#periodType").val():$("#periodType option:selected").val();
@@ -586,7 +593,7 @@ function saveRedisHandleInfo(nodeName, levelId, kpiCode, kpiName) {
     handleInfo.endDt = endDt;
     handleInfo.whereinfo = filterCondition();
     handleInfo.kpiCode = kpiCode;
-    handleInfo.mainKpiCode = kpiCode;
+    handleInfo.mainKpiCode = mainKpiCode;
     // redis封装数据,返回模版文件
     saveDiagHandleInfo(handleInfo, operateType);
 }

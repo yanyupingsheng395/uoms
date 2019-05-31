@@ -2,11 +2,8 @@ package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
-import com.linksteady.operate.domain.Diag;
-import com.linksteady.operate.domain.StateJudge;
 import com.linksteady.operate.service.DiagService;
 import com.linksteady.operate.service.LifeCycleService;
-import com.linksteady.operate.service.StateJudgeService;
 import com.linksteady.system.domain.User;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +17,6 @@ import java.util.Map;
 @Controller
 @RequestMapping("/")
 public class PageController extends BaseController {
-
-    @Autowired
-    private StateJudgeService stateJudgeService;
-
-    @Autowired
-    private LifeCycleService lifeCycleService;
 
     @Autowired
     private DiagService diagService;
@@ -126,8 +117,6 @@ public class PageController extends BaseController {
      */
     @RequestMapping("/lifecycle/lifecycle")
     public String lifecycleIndex(Model model) {
-        StateJudge stateJudge = stateJudgeService.selectAll().get(0);
-        model.addAttribute("stateJudge", stateJudge);
         return "catelifecycle";
     }
 

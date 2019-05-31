@@ -32,9 +32,16 @@ function getRootDiagInfo() {
     });
     return code;
 }
-
+var o = new Object();
 function viewChart(obj) {
+    o = obj;
+    lightyear.loading('show');
     $("#modal").modal('show');
+}
+
+
+$('#modal').on('shown.bs.modal', function () {
+    var obj = o;
     var operateType = obj.periodType;
     if (operateType == "M") {
         operateType = "月";
@@ -101,6 +108,7 @@ function viewChart(obj) {
             t3chart4(obj, "t3chart4");
 
             //  判断是否为目标指标
+            console.log(obj.lineData != null && obj.lineData.length != 0);
             if(obj.lineData != null && obj.lineData.length != 0) {
                 $("#t2chart").attr("style","display:block;");
                 $("#t2chart_target").attr("style","display:none;");
@@ -108,6 +116,7 @@ function viewChart(obj) {
                 t3chart4(obj, 't3chart42');
                 t3chart6(obj, 't3chart6');
             }else {
+
                 $("#t2chart").attr("style","display:none;");
                 $("#t2chart_target").attr("style","display:block;");
             }
@@ -120,7 +129,9 @@ function viewChart(obj) {
             $("#template3").attr("style", "display:none;");
         }
     }
-}
+
+    lightyear.loading('hide');
+});
 
 // 乘法变异系数图
 function covChart(chartId, obj) {
@@ -140,9 +151,6 @@ function covChart(chartId, obj) {
     var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option, true);
-    setTimeout(function () {
-        chart.resize();
-    }, 200);
 }
 function t3Cov(obj) {
     var code1 = "";
@@ -233,9 +241,6 @@ function t3chart1(obj, chartId){
     option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option, true);
-    setTimeout(function () {
-        chart.resize();
-    }, 200);
 }
 function t3chart2(obj, chartId){
     var legendData = obj.legendData;
@@ -273,9 +278,6 @@ function t3chart2(obj, chartId){
     option.grid = {top:'28%'};
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option, true);
-    setTimeout(function () {
-        chart.resize();
-    }, 200);
 }
 
 
@@ -328,9 +330,6 @@ function t3chart4(obj, chartId) {
     };
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option, true);
-    setTimeout(function () {
-        chart.resize();
-    }, 200);
 }
 
 /**
@@ -396,9 +395,6 @@ function t3chart5(obj, chartId){
 
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option, true);
-    setTimeout(function () {
-        chart.resize();
-    }, 200);
 }
 
 function t3chart6(obj, chartId){
@@ -449,9 +445,6 @@ function t3chart6(obj, chartId){
     };
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option, true);
-    setTimeout(function () {
-        chart.resize();
-    }, 200);
 }
 // 目标指标的散点图
 function t3chart3(obj) {
@@ -492,9 +485,6 @@ function t3chart3(obj) {
 
     var chart = echarts.init(document.getElementById("t3chart3"), 'macarons');
     chart.setOption(option, true);
-    setTimeout(function () {
-        chart.resize();
-    }, 200);
 }
 
 function makeT2Chart(obj,chartId,yName, data, avg, up, down) {
@@ -546,7 +536,4 @@ function makeT2Chart(obj,chartId,yName, data, avg, up, down) {
     var option = getOption(legendData,xAxisData,xAxisName,yAxisName,seriesData);
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option, true);
-    setTimeout(function () {
-        chart.resize();
-    }, 200);
 }
