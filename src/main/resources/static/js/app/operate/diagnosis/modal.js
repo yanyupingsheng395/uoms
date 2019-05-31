@@ -57,7 +57,7 @@ function viewChart(obj) {
     } else {
         var treeArr = [];
         // 条件
-        var whereinfo = "<div class=\"col-md-12\"><table class='table table-sm'>";
+        var whereinfo = "<div class=\"col-md-12\" id='_conditions'><table class='table table-sm'>";
         $.each(obj.whereinfo, function (k, v) {
             var o = new Object();
             if(v.inherit_flag == "Y") {
@@ -74,7 +74,7 @@ function viewChart(obj) {
 
         whereinfo += "</table></div>";
         if (obj.whereinfo != null && obj.whereinfo.length == 0) {
-            whereinfo = "<div class=\"col-md-12\">\n" +
+            whereinfo = "<div class=\"col-md-12\" id='_conditions'>\n" +
                 "<table class=\"table table-sm\">\n" +
                 "<n></n><tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>无过滤条件！</td></tr>\n" +
                 "</table>\n" +

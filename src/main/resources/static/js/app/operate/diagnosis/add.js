@@ -75,11 +75,11 @@ function addDimension() {
     if($("#dimDataTable").find("tr").length == 0) {
         $("#conditions").show();
     }
-    var v_text = textArr.join(",");
+    var v_text = textArr.join("|");
 
     var flag = false;
     $("#dimDataTable").find("tr").each(function (k, v) {
-        if($(this).find("td:eq(0)").text() == k_text + ":" + v_text) {
+        if($(this).find("td:eq(0)").text() == k_text + "&nbsp;:&nbsp;" + v_text) {
             flag = true;
             toastr.warning("已有相同维度值在列表中！");
         }
@@ -87,7 +87,7 @@ function addDimension() {
 
     if(!flag) {
         var code = "<tr><input type='hidden' name='dimensions' value='&dimCode="+k_code+"&dimName="+k_text+"&dimValues="+v_code+"&dimValueDisplay="+v_text+"'/>";
-        code += "<td class='text-left'>"+k_text + ":" + v_text +"</td><td class=\"text-right\"><i class=\"mdi mdi-close\" onclick='removeTd(this)'></i></td>";
+        code += "<td class='text-left'>"+k_text + "&nbsp;:&nbsp;" + v_text +"</td><td class=\"text-right\"><i class=\"mdi mdi-close\" onclick='removeTd(this)'></i></td>";
         code += "</tr>";
         $("#dimDataTable").append(code);
         $("#denModal").modal('hide');
