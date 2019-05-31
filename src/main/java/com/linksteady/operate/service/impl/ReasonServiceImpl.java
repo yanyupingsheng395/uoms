@@ -66,7 +66,8 @@ public class ReasonServiceImpl implements ReasonService {
     @Override
     public int getReasonTotalCount()
     {
-        return  reasonMapper.getReasonTotalCount();
+        String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
+        return  reasonMapper.getReasonTotalCountByUserName(username);
     }
 
     @Override

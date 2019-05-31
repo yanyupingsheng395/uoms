@@ -3,26 +3,26 @@
 <mapper namespace="com.linksteady.operate.dao.ReasonMapper">
 
     <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.Reason">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <result column="RN" jdbcType="INTEGER" property="rn" />
-    <result column="REASON_ID" jdbcType="INTEGER" property="reasonId" />
-    <result column="REASON_NAME" jdbcType="VARCHAR" property="reasonName" />
-    <result column="STATUS" jdbcType="VARCHAR" property="status" />
-    <result column="PROGRESS" jdbcType="INTEGER" property="progress" />
-    <result column="BEGIN_DT" jdbcType="VARCHAR" property="beginDt" />
-    <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
-    <result column="CREATE_DT" jdbcType="VARCHAR" property="createDt" />
-    <result column="UPDATE_DT" jdbcType="VARCHAR" property="updateDt" />
-    <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
-    <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
-    <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
-    <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
-    <result column="PERIOD_NAME" jdbcType="VARCHAR" property="periodName" />
-    <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
-    <result column="SOURCE" jdbcType="VARCHAR" property="source" />
-</resultMap>
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="RN" jdbcType="INTEGER" property="rn" />
+        <result column="REASON_ID" jdbcType="INTEGER" property="reasonId" />
+        <result column="REASON_NAME" jdbcType="VARCHAR" property="reasonName" />
+        <result column="STATUS" jdbcType="VARCHAR" property="status" />
+        <result column="PROGRESS" jdbcType="INTEGER" property="progress" />
+        <result column="BEGIN_DT" jdbcType="VARCHAR" property="beginDt" />
+        <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
+        <result column="CREATE_DT" jdbcType="VARCHAR" property="createDt" />
+        <result column="UPDATE_DT" jdbcType="VARCHAR" property="updateDt" />
+        <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+        <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+        <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
+        <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
+        <result column="PERIOD_NAME" jdbcType="VARCHAR" property="periodName" />
+        <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
+        <result column="SOURCE" jdbcType="VARCHAR" property="source" />
+    </resultMap>
 
     <resultMap id="reasonResultMap" type="com.linksteady.operate.domain.ReasonKpisSnp">
         <result column="REASON_ID" jdbcType="INTEGER" property="reasonId" />
@@ -35,11 +35,15 @@
         <result column="REASON_KPI_ORDER" jdbcType="VARCHAR" property="reasonKpiOrder" />
     </resultMap>
 
-   <select id="getReasonTotalCount" resultType="int">
+    <select id="getReasonTotalCountByUserName" resultType="int">
+     select count(*) from UO_REASON_LIST where CREATE_BY = #{username}
+   </select>
+
+    <select id="getReasonTotalCount" resultType="int">
      select count(*) from UO_REASON_LIST
    </select>
 
-  <select id="getReasonList" resultMap="BaseResultMap">
+    <select id="getReasonList" resultMap="BaseResultMap">
    SELECT * FROM(
     SELECT A.*,ROWNUM RN FROM
       (SELECT
@@ -62,7 +66,7 @@
 
   </select>
 
-   <select id="getReasonPrimaryKey" resultType="int">
+    <select id="getReasonPrimaryKey" resultType="int">
        SELECT UO_REASON_LIST_SEQ.NEXTVAL FROM DUAL
    </select>
 
@@ -186,4 +190,4 @@
     <delete id="deleteReasonTrace">
         delete UO_REASON_CONCERN  WHERE REASON_ID=#{reasonId}
     </delete>
- </mapper>
+</mapper>

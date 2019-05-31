@@ -39,7 +39,8 @@ public class DiagServiceImpl implements DiagService {
 
     @Override
     public Long getTotalCount() {
-        return diagMapper.getTotalCount();
+        String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
+        return diagMapper.getTotalCount(username);
     }
 
     @Override

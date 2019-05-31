@@ -23,7 +23,7 @@
   </select>
 
     <select id="getTotalCount" resultType="Long">
-    select count(1) from UO_DIAG_LIST
+    select count(1) from UO_DIAG_LIST where CREATE_BY = #{username}
   </select>
 
     <insert id="save">
