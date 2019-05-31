@@ -49,8 +49,8 @@ $('#modal').on('shown.bs.modal', function () {
         operateType = "天";
     }
     $("#handleDesc").html("").html("<p class='h4'>" + obj.handleDesc + "</p>");
-    $("#operateType").html("").html("<p class='h5'>周期: " + operateType + "</p>");
-    $("#timePeriod").html("").html("<p class='h5'>时间: " + obj.beginDt + "&nbsp;到&nbsp;" + obj.endDt + "</p>");
+    $("#operateType").html("").html("<p>周期: " + operateType + "</p>");
+    $("#timePeriod").html("").html("<p>时间: " + obj.beginDt + "&nbsp;到&nbsp;" + obj.endDt + "</p>");
     var isRoot = jm.get_selected_node().isroot;
     if (isRoot) { // 根节点
         $("#opdesc").html("").html("<p class='h5'>该周期内GMV为：" + obj.kpiValue + "元</p>");
@@ -64,30 +64,20 @@ $('#modal').on('shown.bs.modal', function () {
     } else {
         var treeArr = [];
         // 条件
-        var whereinfo = "<div class=\"col-md-12\" id='_conditions'><table class='table table-sm'>";
         $.each(obj.whereinfo, function (k, v) {
             var o = new Object();
-            if(v.inherit_flag == "Y") {
+            if(v["inherit_flag"] == "Y") {
                 o.id = k + 1;
                 o.name = v.dimName + ":" + v.dimValueDisplay + "(继承至父节点)";
-                whereinfo += "<tr><td class='text-left'>" + v.dimName + ":" + v.dimValueDisplay + "（继承至父节点）</td></tr>";
             }else {
                 o.id = k + 1;
                 o.name = v.dimName + ":" + v.dimValueDisplay;
-                whereinfo += "<tr><td class='text-left'>" + v.dimName + ":" + v.dimValueDisplay + "</td></tr>";
             }
+            o.pId = 0;
             treeArr.push(o);
         });
-
-        whereinfo += "</table></div>";
-        if (obj.whereinfo != null && obj.whereinfo.length == 0) {
-            whereinfo = "<div class=\"col-md-12\" id='_conditions'>\n" +
-                "<table class=\"table table-sm\">\n" +
-                "<n></n><tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>无过滤条件！</td></tr>\n" +
-                "</table>\n" +
-                "</div>";
-        }
-        $("#whereinfo").html("").html(whereinfo);
+        treeArr.push({id:0, pId:-1, name:'过滤条件'});
+        createWhereInfoTree(treeArr);
 
         if (obj.handleType == "M") { // 乘法
             $("#template1").attr("style", "display:none;");
@@ -132,6 +122,21 @@ $('#modal').on('shown.bs.modal', function () {
 
     lightyear.loading('hide');
 });
+
+// 创建过滤条件树
+function createWhereInfoTree(nodes) {
+    var setting = {
+        view: {
+            showIcon: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        }
+    };
+    $.fn.zTree.init($("#tree"), setting, nodes);
+}
 
 // 乘法变异系数图
 function covChart(chartId, obj) {
