@@ -200,67 +200,66 @@ public class ReasonController  extends BaseController {
 
         List<String> signal= Arrays.asList("a","b","d","d","e","f","g","h","i","j","k","l","m","n");
 
-//        if(reasonService.getReasonResultCount(reasonId,code)==0)
-//        {
-//            //根据reasonId获取kpiCode
-//            String kpiCode=reasonService.getReasonHeaderInfoById(reasonId).getKpiCode();
-//
-//            Joiner joiner=Joiner.on("</br>").skipNulls();
-//            List<String> data= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
-//
-//            //变量图例
-//            List<String> reasonKpiNames=Lists.newArrayList();
-//            //说明
-//            List<String> busincess=Lists.newArrayList();
-//            //回归公式
-//            StringBuilder regression=new StringBuilder();
-//
-//            String kpiName=KpiCacheManager.getInstance().getKpiCodeNamePair().get("gmv");
-//            regression.append("y=");
-//            reasonKpiNames.add("y : "+kpiName);
-//
-//            //调用thrift的服务，获取回归公式 然后写结果表
-//            try {
-//                thriftClient.open();
-//                String callback=thriftClient.getThriftService().submitReasonForecast(Integer.parseInt(reasonId),kpiCode,code);
-//
-//                //系数和截距通过 | 进行分割
-//                List<String> resultList= Splitter.on('|').trimResults().omitEmptyStrings().splitToList(callback);
-//                //各个系数之间通过 ，分割
-//                List<String> ceof= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(resultList.get(0));
-//
-//                //如果程序正常运行 data的length和ceof的长度是一致的，且顺序对应
-//                for(int i=0;i<ceof.size();i++)
-//                {
-//                    String sign=signal.get(i);
-//                    //拼凑回归公式
-//                    regression.append(ceof.get(i)+"*"+sign);
-//                    String reasonName=KpiCacheManager.getInstance().getReasonRelateKpiList().get(data.get(i)).getReasonKpiName();
-//                    reasonKpiNames.add(sign+" : "+reasonName);
-//                    busincess.add(reasonName+"每变动一份，"+kpiName+"变动"+ceof.get(i)+"份; ");
-//                }
-//
-//                //拼凑截距
-//                regression.append(resultList.get(1));
-//
-//                //根据回归公式写结果表
-//                reasonService.saveReasonResult(reasonId,code,joiner.join(reasonKpiNames),regression.toString(),joiner.join(busincess));
-//
-//                List<ReasonResult> reasonResults=reasonService.getReasonResultList(reasonId);
-//                return ResponseBo.okWithData("",reasonResults);
-//            } catch (TException e) {
-//                log.error("效果评估出错",e);
-//                return ResponseBo.error();
-//            } finally {
-//                thriftClient.close();
-//            }
-//        }else{
+        if(reasonService.getReasonResultCount(reasonId,code)==0)
+        {
+            //根据reasonId获取kpiCode
+            String kpiCode=reasonService.getReasonHeaderInfoById(reasonId).getKpiCode();
 
-         //   reasonService.saveReasonResult(reasonId,code,"测试","y=ax+b","测试说明");
+            Joiner joiner=Joiner.on("</br>").skipNulls();
+            List<String> data= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
+
+            //变量图例
+            List<String> reasonKpiNames=Lists.newArrayList();
+            //说明
+            List<String> busincess=Lists.newArrayList();
+            //回归公式
+            StringBuilder regression=new StringBuilder();
+
+            String kpiName=KpiCacheManager.getInstance().getKpiCodeNamePair().get("gmv");
+            regression.append("y=");
+            reasonKpiNames.add("y : "+kpiName);
+
+            //调用thrift的服务，获取回归公式 然后写结果表
+            try {
+                thriftClient.open();
+                String callback=thriftClient.getThriftService().submitReasonForecast(Integer.parseInt(reasonId),kpiCode,code);
+
+                //系数和截距通过 | 进行分割
+                List<String> resultList= Splitter.on('|').trimResults().omitEmptyStrings().splitToList(callback);
+                //各个系数之间通过 ，分割
+                List<String> ceof= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(resultList.get(0));
+
+                //如果程序正常运行 data的length和ceof的长度是一致的，且顺序对应
+                for(int i=0;i<ceof.size();i++)
+                {
+                    String sign=signal.get(i);
+                    //拼凑回归公式
+                    regression.append(ceof.get(i)+"*"+sign);
+                    String reasonName=KpiCacheManager.getInstance().getReasonRelateKpiList().get(data.get(i)).getReasonKpiName();
+                    reasonKpiNames.add(sign+" : "+reasonName);
+                    busincess.add(reasonName+"每变动一份，"+kpiName+"变动"+ceof.get(i)+"份; ");
+                }
+
+                //拼凑截距
+                regression.append(resultList.get(1));
+
+                //根据回归公式写结果表
+                reasonService.saveReasonResult(reasonId,code,joiner.join(reasonKpiNames),regression.toString(),joiner.join(busincess));
+
+                List<ReasonResult> reasonResults=reasonService.getReasonResultList(reasonId);
+                return ResponseBo.okWithData("",reasonResults);
+            } catch (TException e) {
+                log.error("效果评估出错",e);
+                return ResponseBo.error();
+            } finally {
+                thriftClient.close();
+            }
+        }else{
+
             List<ReasonResult> reasonResults=reasonService.getReasonResultList(reasonId);
             return ResponseBo.okWithData("",reasonResults);
        }
-//    }
+    }
 
     /**
      * 对指标进行校验
@@ -342,7 +341,7 @@ public class ReasonController  extends BaseController {
     public ResponseBo getResultTracelist() {
 
         List<ReasonResultTrace> list=reasonService.getReasonResultTraceList(getCurrentUser().getUsername());
-        return ResponseBo.okWithData("",list);
+        return ResponseBo.okOverPaging("",0,list);
     }
 
 }

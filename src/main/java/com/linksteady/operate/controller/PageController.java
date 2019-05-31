@@ -113,6 +113,12 @@ public class PageController extends BaseController {
         return "operate/reason/reasonDetail";
     }
 
+    @Log("寻找关键原因-查看效果跟踪")
+    @RequestMapping("/reason/reasonResultTrace")
+    public String reasonResultTrace() {
+        return "operate/reason/reasonResultTrace";
+    }
+
     /**
      * 品牌生命周期功能(暂时废弃)
      * @param model
