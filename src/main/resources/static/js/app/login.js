@@ -1,21 +1,8 @@
-toastr.options = {
-    "closeButton": true,
-    "debug": false,
-    "newestOnTop": true,
-    "progressBar": true,
-    "rtl": false,
-    "positionClass": "toast-top-center",
-    "preventDuplicates": true,
-    "onclick": null,
-    "showDuration": 300,
-    "hideDuration": 1000,
-    "timeOut": 1500,
-    "extendedTimeOut": 1000,
-    "showEasing": "swing",
-    "hideEasing": "linear",
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
-};
+var layer;
+$(document).ready(function () {
+    layui.use(['layer'], function(){
+        layer = layui.layer;});
+});
 
 function login() {
     var $loginButton = $("#loginButton");
@@ -23,15 +10,15 @@ function login() {
     var password = $(".one input[name='password']").val().trim();
     var code = $(".one input[name='code']").val().trim();
     if (username === "") {
-        toastr.warning("请输入用户名！");
+        layer.msg("请输入用户名！");
         return;
     }
     if (password === "") {
-        toastr.warning("请输入密码！");
+        layer.msg("请输入密码！");
         return;
     }
     if (code === "") {
-        toastr.warning("请输入验证码！");
+        layer.msg("请输入验证码！");
         return;
     }
     $loginButton.html("").append("<div class='login-loder'><div class='line-scale'><div></div><div></div><div></div><div></div><div></div></div></div>");
@@ -49,7 +36,7 @@ function login() {
                 location.href = '/page/index';
             } else {
                 reloadCode();
-                toastr.warning(r.msg);
+                layer.msg(r.msg);
                 $loginButton.html("登录");
             }
         }

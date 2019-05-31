@@ -20,8 +20,8 @@ function getRootDiagInfo() {
         data: {diagId: diagId},
         async: false,
         success: function (r) {
-            $("#_diagName").html("").html("<p class='h5'>名称: " + r.data['DIAG_NAME'] + "</p>");
-            $("#diagKpiCode").html("").html("<p class='h5'>指标: " + r.data['KPI_NAME'] + "</p>");
+            $("#_diagName").html("").html("<p>名称: " + r.data['DIAG_NAME'] + "</p>");
+            $("#diagKpiCode").html("").html("<p>指标: " + r.data['KPI_NAME'] + "</p>");
             var dimInfos = r.data['DIM_DISPLAY_NAME'] == null ? null:r.data['DIM_DISPLAY_NAME'].split(";");
             if(dimInfos != null) {
                 $.each(dimInfos, function (k, v) {
@@ -53,7 +53,7 @@ $('#modal').on('shown.bs.modal', function () {
     $("#timePeriod").html("").html("<p>时间: " + obj.beginDt + "&nbsp;到&nbsp;" + obj.endDt + "</p>");
     var isRoot = jm.get_selected_node().isroot;
     if (isRoot) { // 根节点
-        $("#opdesc").html("").html("<p class='h5'>该周期内GMV为：" + obj.kpiValue + "元</p>");
+        $("#opdesc").html("").html("<p>该周期内GMV为：" + obj.kpiValue + "元</p>");
         $("#template1").attr("style", "display:block;");
         $("#template2").attr("style", "display:none;");
         $("#template3").attr("style", "display:none;");
@@ -98,7 +98,6 @@ $('#modal').on('shown.bs.modal', function () {
             t3chart4(obj, "t3chart4");
 
             //  判断是否为目标指标
-            console.log(obj.lineData != null && obj.lineData.length != 0);
             if(obj.lineData != null && obj.lineData.length != 0) {
                 $("#t2chart").attr("style","display:block;");
                 $("#t2chart_target").attr("style","display:none;");
@@ -125,17 +124,19 @@ $('#modal').on('shown.bs.modal', function () {
 
 // 创建过滤条件树
 function createWhereInfoTree(nodes) {
-    var setting = {
-        view: {
-            showIcon: false
-        },
-        data: {
-            simpleData: {
-                enable: true
+    if(nodes.length > 1) {
+        var setting = {
+            view: {
+                showIcon: false
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
             }
-        }
-    };
-    $.fn.zTree.init($("#tree"), setting, nodes);
+        };
+        $.fn.zTree.init($("#tree"), setting, nodes);
+    }
 }
 
 // 乘法变异系数图
