@@ -32,7 +32,6 @@ function getPeriodTypeVal() {
 }
 
 function submit_analysis(){
-    alert(1)
     var alert_str="";
 
     //进行校验
