@@ -5,16 +5,43 @@
     <!--
       WARNING - @mbg.generated
     -->
+    <result column="REASON_RESULT_ID" jdbcType="DECIMAL" property="reasonResultId" />
     <result column="REASON_ID" jdbcType="DECIMAL" property="reasonId" />
     <result column="REASON_CODE" jdbcType="VARCHAR" property="reasonCode" />
     <result column="FORMULA_DESC" jdbcType="VARCHAR" property="formulaDesc" />
     <result column="FORMULA" jdbcType="VARCHAR" property="formula" />
     <result column="BUSINESS" jdbcType="VARCHAR" property="business" />
     <result column="CREATE_DT" jdbcType="VARCHAR" property="createDt" />
+    <result column="TRACE_FLAG" jdbcType="VARCHAR" property="traceFlag" />
   </resultMap>
 
+    <resultMap id="traceMap" type="com.linksteady.operate.domain.ReasonResultTrace">
+        <result column="REASON_ID" jdbcType="DECIMAL" property="reasonId" />
+        <result column="REASON_NAME" jdbcType="VARCHAR" property="reasonName" />
+        <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
+        <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
+        <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
+        <result column="BEGIN_DT" jdbcType="VARCHAR" property="beginDt" />
+        <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
+        <result column="REASON_RESULT_ID" jdbcType="DECIMAL" property="reasonResultId" />
+        <result column="REASON_CODE" jdbcType="VARCHAR" property="reasonCode" />
+        <result column="FORMULA_DESC" jdbcType="VARCHAR" property="formulaDesc" />
+        <result column="FORMULA" jdbcType="VARCHAR" property="formula" />
+        <result column="BUSINESS" jdbcType="VARCHAR" property="business" />
+        <result column="CREATE_DT" jdbcType="VARCHAR" property="createDt" />
+    </resultMap>
+
   <select id="getReasonResultList" resultMap="BaseResultMap">
-    SELECT REASON_ID,REASON_CODE,FORMULA_DESC,FORMULA,BUSINESS,TO_CHAR(CREATE_DT,'YYYY-MM-DD hh24:mi:ss') CREATE_DT from UO_REASON_RESULT WHERE REASON_ID=#{reasonId} ORDER BY CREATE_DT DESC
+    SELECT UO_REASON_RESULT.REASON_RESULT_ID,
+           UO_REASON_RESULT.REASON_ID,
+           REASON_CODE,
+           FORMULA_DESC,
+           FORMULA,BUSINESS,
+           TO_CHAR(UO_REASON_RESULT.CREATE_DT, 'YYYY-MM-DD hh24:mi:ss') CREATE_DT,
+           (CASE WHEN UO_REASON_CONCERN.REASON_RESULT_ID IS NULL THEN 'N' ELSE 'Y' END) TRACE_FLAG
+    from UO_REASON_RESULT LEFT JOIN UO_REASON_CONCERN
+                                    ON UO_REASON_RESULT.REASON_RESULT_ID=UO_REASON_CONCERN.REASON_RESULT_ID
+    WHERE UO_REASON_RESULT.REASON_ID=#{reasonId}  ORDER BY UO_REASON_RESULT.CREATE_DT DESC
   </select>
 
   <select id="getReasonResultCount" resultType="int">
@@ -22,11 +49,38 @@
   </select>
 
   <delete id="deleteReasonResult">
-    DELETE FROM UO_REASON_RESULT WHERE REASON_ID=#{reasonId} AND REASON_CODE=#{reasonCode}
+    DELETE FROM UO_REASON_RESULT WHERE REASON_RESULT_ID=#{reasonResultId}
   </delete>
 
   <insert id="saveReasonResult">
-    INSERT INTO UO_REASON_RESULT(REASON_ID,REASON_CODE,FORMULA_DESC,FORMULA,BUSINESS,CREATE_DT)
-    VALUES (#{reasonId,jdbcType=INTEGER},#{reasonCode},#{formulaDesc},#{formula},#{business},SYSDATE)
+    <selectKey resultType ="java.lang.Integer" keyProperty= "resultId"  order= "BEFORE">
+      SELECT SEQ_REASON_RESULT.NEXTVAL from DUAL
+    </selectKey >
+    INSERT INTO UO_REASON_RESULT(REASON_RESULT_ID,REASON_ID,REASON_CODE,FORMULA_DESC,FORMULA,BUSINESS,CREATE_DT)
+    VALUES (#{resultId},#{reasonId,jdbcType=INTEGER},#{reasonCode},#{formulaDesc},#{formula},#{business},SYSDATE)
   </insert>
+
+  <select id="getReasonResultTraceList" resultMap="traceMap">
+      SELECT
+          UO_REASON_LIST.REASON_ID,
+          UO_REASON_LIST.REASON_NAME,
+          UO_REASON_LIST.KPI_CODE,
+          UO_KPI_LIST_CONFIG.KPI_NAME,
+          UO_REASON_LIST.PERIOD_TYPE,
+          UO_REASON_LIST.BEGIN_DT,
+          UO_REASON_LIST.END_DT,
+          UO_REASON_RESULT.REASON_RESULT_ID,
+          UO_REASON_RESULT.REASON_CODE,
+          FORMULA_DESC,
+          FORMULA,
+          BUSINESS,
+          TO_CHAR(UO_REASON_CONCERN.CREATE_DT,'YYYY-MM-DD hh24:mi:ss') CREATE_DT
+      FROM UO_REASON_CONCERN JOIN UO_REASON_RESULT
+                                  ON UO_REASON_RESULT.REASON_RESULT_ID=UO_REASON_CONCERN.REASON_RESULT_ID
+                             JOIN UO_REASON_LIST ON UO_REASON_CONCERN.REASON_ID=UO_REASON_LIST.REASON_ID
+                             LEFT JOIN UO_KPI_LIST_CONFIG ON  UO_REASON_LIST.KPI_CODE=UO_KPI_LIST_CONFIG.KPI_CODE
+      WHERE
+         UO_REASON_LIST.CREATE_BY=#{username}
+      ORDER BY CREATE_DT DESC
+  </select>
 </mapper>

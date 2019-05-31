@@ -8,9 +8,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.config.KpiCacheManager;
-import com.linksteady.operate.domain.Reason;
-import com.linksteady.operate.domain.ReasonRelMatrix;
-import com.linksteady.operate.domain.ReasonResult;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.CacheService;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.thrift.ThriftClient;
@@ -53,6 +51,10 @@ public class ReasonController  extends BaseController {
 
     @Autowired
     ThriftClient thriftClient;
+
+
+    private static  final double RELATE_VALUE_THRESHOLD=0.4d;
+    private static final double RELATE_VALUE_CONTRIBUTION_THRESHOLD=0.3d;
 
     /**
      * 获取原因探究列表
@@ -107,13 +109,12 @@ public class ReasonController  extends BaseController {
      * @return ResponseBo对象
      */
     @RequestMapping("/updateProgressById")
-    public ResponseBo ppdateProgressById(@RequestParam String reasonId) {
+    public ResponseBo updateProgressById(@RequestParam String reasonId) {
 
         reasonService.findReasonKpisSnp(reasonId);
         return ResponseBo.ok();
 
     }
-
 
     /**
      * 获取原因探究的详细信息
@@ -133,40 +134,13 @@ public class ReasonController  extends BaseController {
      */
     @RequestMapping("/getReasonKpisSnp")
     public ResponseBo getReasonKpisSnp(@RequestParam String reasonId,@RequestParam String templateCode) {
-        List<Map<String,Object>> result=reasonService.getReasonKpisSnp(reasonId,templateCode);
-        return ResponseBo.ok(result);
-    }
+        List<ReasonKpisSnp> result=reasonService.getReasonKpisSnp(reasonId,templateCode);
 
-    /**
-     * 根据reasonID 获取到关注的KPI列表
-     * @param reasonId 原因ID
-     * @return ResponseBo对象
-     */
-    @RequestMapping("/getConcernReasonKpis")
-    public ResponseBo getConcernReasonKpis(@RequestParam String reasonId) {
-        List<Map<String,Object>> result=reasonService.getConcernKpiList(reasonId);
-        return ResponseBo.ok(result);
-    }
-
-    /**
-     * 将原因KPI加入到当前的关注列表中 或 取消关注
-     * @param reasonId 原因ID
-     * @return ResponseBo对象
-     */
-    @RequestMapping("/addConcernKpi")
-    public ResponseBo addConcernKpi(@RequestParam String reasonId,@RequestParam String templateCode,@RequestParam String reasonKpiCode) {
-        //判断是否存在与表中 如果存在，则删除，否则增加
-        int count=reasonService.getConcernKpiCount(reasonId,templateCode,reasonKpiCode);
-
-        //不在列表中 进行增加操作
-        if(count==0)
+        for(ReasonKpisSnp reasonKpisSnp:result)
         {
-            reasonService.addConcernKpi(reasonId,templateCode,reasonKpiCode);
-        }else  //进行删除操作
-        {
-            reasonService.deleteConcernKpi(reasonId,templateCode,reasonKpiCode);
+            reasonKpisSnp.setRelateFlag(reasonKpisSnp.getRelateValue()>=RELATE_VALUE_THRESHOLD?"Y":"N");
         }
-        return ResponseBo.ok("success");
+        return ResponseBo.ok(result);
     }
 
 
@@ -206,6 +180,17 @@ public class ReasonController  extends BaseController {
     }
 
     /**
+     * 删除效果评估结果对象
+     * @param
+     * @return ResponseBo对象
+     */
+    @RequestMapping("/deleteResonResult")
+    public ResponseBo deleteResonResult(@RequestParam String reasonResultId) {
+        reasonService.deleteReasonResult(reasonResultId);
+        return ResponseBo.ok();
+    }
+
+    /**
      * 效果评估
      * @param
      * @return ResponseBo对象
@@ -215,65 +200,67 @@ public class ReasonController  extends BaseController {
 
         List<String> signal= Arrays.asList("a","b","d","d","e","f","g","h","i","j","k","l","m","n");
 
-        if(reasonService.getReasonResultCount(reasonId,code)==0)
-        {
-            //根据reasonId获取kpiCode
-            String kpiCode=reasonService.getReasonHeaderInfoById(reasonId).getKpiCode();
+//        if(reasonService.getReasonResultCount(reasonId,code)==0)
+//        {
+//            //根据reasonId获取kpiCode
+//            String kpiCode=reasonService.getReasonHeaderInfoById(reasonId).getKpiCode();
+//
+//            Joiner joiner=Joiner.on("</br>").skipNulls();
+//            List<String> data= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
+//
+//            //变量图例
+//            List<String> reasonKpiNames=Lists.newArrayList();
+//            //说明
+//            List<String> busincess=Lists.newArrayList();
+//            //回归公式
+//            StringBuilder regression=new StringBuilder();
+//
+//            String kpiName=KpiCacheManager.getInstance().getKpiCodeNamePair().get("gmv");
+//            regression.append("y=");
+//            reasonKpiNames.add("y : "+kpiName);
+//
+//            //调用thrift的服务，获取回归公式 然后写结果表
+//            try {
+//                thriftClient.open();
+//                String callback=thriftClient.getThriftService().submitReasonForecast(Integer.parseInt(reasonId),kpiCode,code);
+//
+//                //系数和截距通过 | 进行分割
+//                List<String> resultList= Splitter.on('|').trimResults().omitEmptyStrings().splitToList(callback);
+//                //各个系数之间通过 ，分割
+//                List<String> ceof= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(resultList.get(0));
+//
+//                //如果程序正常运行 data的length和ceof的长度是一致的，且顺序对应
+//                for(int i=0;i<ceof.size();i++)
+//                {
+//                    String sign=signal.get(i);
+//                    //拼凑回归公式
+//                    regression.append(ceof.get(i)+"*"+sign);
+//                    String reasonName=KpiCacheManager.getInstance().getReasonRelateKpiList().get(data.get(i)).getReasonKpiName();
+//                    reasonKpiNames.add(sign+" : "+reasonName);
+//                    busincess.add(reasonName+"每变动一份，"+kpiName+"变动"+ceof.get(i)+"份; ");
+//                }
+//
+//                //拼凑截距
+//                regression.append(resultList.get(1));
+//
+//                //根据回归公式写结果表
+//                reasonService.saveReasonResult(reasonId,code,joiner.join(reasonKpiNames),regression.toString(),joiner.join(busincess));
+//
+//                List<ReasonResult> reasonResults=reasonService.getReasonResultList(reasonId);
+//                return ResponseBo.okWithData("",reasonResults);
+//            } catch (TException e) {
+//                log.error("效果评估出错",e);
+//                return ResponseBo.error();
+//            } finally {
+//                thriftClient.close();
+//            }
+//        }else{
 
-            Joiner joiner=Joiner.on("</br>").skipNulls();
-            List<String> data= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(code);
-
-            //变量图例
-            List<String> reasonKpiNames=Lists.newArrayList();
-            //说明
-            List<String> busincess=Lists.newArrayList();
-            //回归公式
-            StringBuilder regression=new StringBuilder();
-
-            String kpiName=KpiCacheManager.getInstance().getKpiCodeNamePair().get("gmv");
-            regression.append("y=");
-            reasonKpiNames.add("y : "+kpiName);
-
-            //调用thrift的服务，获取回归公式 然后写结果表
-            try {
-                thriftClient.open();
-                String callback=thriftClient.getThriftService().submitReasonForecast(Integer.parseInt(reasonId),kpiCode,code);
-
-                //系数和截距通过 | 进行分割
-                List<String> resultList= Splitter.on('|').trimResults().omitEmptyStrings().splitToList(callback);
-                //各个系数之间通过 ，分割
-                List<String> ceof= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(resultList.get(0));
-
-                //如果程序正常运行 data的length和ceof的长度是一致的，且顺序对应
-                for(int i=0;i<ceof.size();i++)
-                {
-                    String sign=signal.get(i);
-                    //拼凑回归公式
-                    regression.append(ceof.get(i)+"*"+sign);
-                    String reasonName=KpiCacheManager.getInstance().getReasonRelateKpiList().get(data.get(i)).getReasonKpiName();
-                    reasonKpiNames.add(sign+" : "+reasonName);
-                    busincess.add(reasonName+"每变动一份，"+kpiName+"变动"+ceof.get(i)+"份; ");
-                }
-
-                //拼凑截距
-                regression.append(resultList.get(1));
-
-                //根据回归公式写结果表
-                reasonService.saveReasonResult(reasonId,code,joiner.join(reasonKpiNames),regression.toString(),joiner.join(busincess));
-
-                List<ReasonResult> reasonResults=reasonService.getReasonResultList(reasonId);
-                return ResponseBo.okWithData("",reasonResults);
-            } catch (TException e) {
-                log.error("效果评估出错",e);
-                return ResponseBo.error();
-            } finally {
-                thriftClient.close();
-            }
-        }else{
+         //   reasonService.saveReasonResult(reasonId,code,"测试","y=ax+b","测试说明");
             List<ReasonResult> reasonResults=reasonService.getReasonResultList(reasonId);
             return ResponseBo.okWithData("",reasonResults);
-        }
-    }
+       }
+//    }
 
     /**
      * 对指标进行校验
@@ -299,10 +286,9 @@ public class ReasonController  extends BaseController {
                    //获取到交叉的相关系数
                    reasonRelMatrix=reasonService.getReasonResultByCode(reasonId,codeList.get(i),codeList.get(j)).get(0);
 
-
                    relateValue= reasonRelMatrix.getRelateValue();
 
-                   if(relateValue>=0.3)
+                   if(relateValue>=RELATE_VALUE_CONTRIBUTION_THRESHOLD)
                    {
                        info="因子【"+reasonRelMatrix.getfName()+"】和因子【"+reasonRelMatrix.getRfName()+"】相关度较高，不能同时选择";
                        validateResult.add(info);
@@ -311,6 +297,52 @@ public class ReasonController  extends BaseController {
             }
         }
         return ResponseBo.okWithData("",validateResult);
+    }
+
+    /**
+     * 指标结果加入跟踪列表
+     * @param
+     * @return ResponseBo对象
+     */
+    @RequestMapping("/addReasonResultToTrace")
+    public ResponseBo addReasonResultToTrace(@RequestParam String reasonId,@RequestParam String reasonResultId) {
+       //判断当前结果是否已经被加入，如果是 直接返回
+        int count =reasonService.getResultTraceCount(reasonResultId);
+
+        if(count>0)
+        {
+            return ResponseBo.error("result is exist");
+        }else
+        {
+            //加入结果列表 同时调用异步方法通知进行运算
+            reasonService.addResultToTrace(reasonId,reasonResultId);
+            return ResponseBo.ok("add success");
+
+        }
+    }
+
+    /**
+     * 指标结果取消跟踪
+     * @param
+     * @return ResponseBo对象
+     */
+    @RequestMapping("/deleteReasonResultToTrace")
+    public ResponseBo deleteReasonResultToTrace(@RequestParam String reasonId,@RequestParam String reasonResultId) {
+            //取消跟踪
+            reasonService.deleteResultToTrace(reasonResultId);
+            return ResponseBo.ok("add success");
+    }
+
+    /**
+     * 获取已跟踪指标列表
+     * @param
+     * @return ResponseBo对象
+     */
+    @RequestMapping("/getResultTracelist")
+    public ResponseBo getResultTracelist() {
+
+        List<ReasonResultTrace> list=reasonService.getReasonResultTraceList(getCurrentUser().getUsername());
+        return ResponseBo.okWithData("",list);
     }
 
 }

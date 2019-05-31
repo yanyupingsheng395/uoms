@@ -3,25 +3,36 @@
 <mapper namespace="com.linksteady.operate.dao.ReasonMapper">
 
     <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.Reason">
-        <!--
-          WARNING - @mbg.generated
-        -->
-        <result column="RN" jdbcType="INTEGER" property="rn" />
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="RN" jdbcType="INTEGER" property="rn" />
+    <result column="REASON_ID" jdbcType="INTEGER" property="reasonId" />
+    <result column="REASON_NAME" jdbcType="VARCHAR" property="reasonName" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="PROGRESS" jdbcType="INTEGER" property="progress" />
+    <result column="BEGIN_DT" jdbcType="VARCHAR" property="beginDt" />
+    <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
+    <result column="CREATE_DT" jdbcType="VARCHAR" property="createDt" />
+    <result column="UPDATE_DT" jdbcType="VARCHAR" property="updateDt" />
+    <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+    <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+    <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
+    <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
+    <result column="PERIOD_NAME" jdbcType="VARCHAR" property="periodName" />
+    <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
+    <result column="SOURCE" jdbcType="VARCHAR" property="source" />
+</resultMap>
+
+    <resultMap id="reasonResultMap" type="com.linksteady.operate.domain.ReasonKpisSnp">
         <result column="REASON_ID" jdbcType="INTEGER" property="reasonId" />
-        <result column="REASON_NAME" jdbcType="VARCHAR" property="reasonName" />
-        <result column="STATUS" jdbcType="VARCHAR" property="status" />
-        <result column="PROGRESS" jdbcType="INTEGER" property="progress" />
-        <result column="BEGIN_DT" jdbcType="VARCHAR" property="beginDt" />
-        <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
-        <result column="CREATE_DT" jdbcType="VARCHAR" property="createDt" />
-        <result column="UPDATE_DT" jdbcType="VARCHAR" property="updateDt" />
-        <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
-        <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
-        <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
-        <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
-        <result column="PERIOD_NAME" jdbcType="VARCHAR" property="periodName" />
-        <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
-        <result column="SOURCE" jdbcType="VARCHAR" property="source" />
+        <result column="TEMPLATE_CODE" jdbcType="VARCHAR" property="templateCode" />
+        <result column="REASON_KPI_CODE" jdbcType="VARCHAR" property="reasonKpiCode" />
+        <result column="REASON_KPI_NAME" jdbcType="VARCHAR" property="reasonKpiName" />
+        <result column="TEMPLATE_NAME" jdbcType="VARCHAR" property="templateName" />
+        <result column="RELATE_VALUE" jdbcType="DECIMAL" property="relateValue" />
+        <result column="TEMPLATE_ORDER" jdbcType="VARCHAR" property="templateOrder" />
+        <result column="REASON_KPI_ORDER" jdbcType="VARCHAR" property="reasonKpiOrder" />
     </resultMap>
 
    <select id="getReasonTotalCount" resultType="int">
@@ -146,59 +157,33 @@
         select DIM_DISPLAY_VALUE from UO_REASON_DETAIL t where reason_id=#{reasonId}
     </select>
 
-    <select id="getReasonKpisSnp" resultType="map">
-        SELECT
-            T1.TEMPLATE_CODE,
-            T1.REASON_KPI_CODE,
-            REASON_KPI_NAME,
-            RELATE_VALUE,
-            DECODE(T2.REASON_ID,NULL,'N','Y') IS_CONCERN
-        FROM
-            (select     T.REASON_ID,
-                        T.TEMPLATE_CODE,
-                        T.REASON_KPI_CODE,
-                        T.REASON_KPI_NAME,
-                        T.RELATE_VALUE,
-                        T.REASON_KPI_ORDER
-             from UO_REASON_KPIS_SNP t
-             WHERE
-                 T.TEMPLATE_CODE=#{templateCode}
-               AND T.REASON_ID=#{reasonId}) T1 LEFT JOIN
-                    (SELECT * FROM UO_REASON_CONCERN WHERE REASON_ID=#{reasonId}) T2
-                    ON T1.REASON_ID=T2.REASON_ID AND T1.TEMPLATE_CODE=T2.TEMPLATE_CODE AND T1.REASON_KPI_CODE=T2.REASON_KPI_CODE
-         ORDER BY REASON_KPI_ORDER ASC
+    <select id="getReasonKpisSnp" resultMap="reasonResultMap">
+        select     T.REASON_ID,
+                   T.TEMPLATE_CODE,
+                   T.REASON_KPI_CODE,
+                   T.REASON_KPI_NAME,
+                   T.RELATE_VALUE,
+                   T.REASON_KPI_ORDER
+        from UO_REASON_KPIS_SNP t
+        WHERE
+            T.TEMPLATE_CODE=#{templateCode}
+          AND T.REASON_ID=#{reasonId}
+        ORDER BY REASON_KPI_ORDER ASC
     </select>
 
-    <select id="getConcernKpiList" resultType="map">
-        SELECT
-            T1.TEMPLATE_CODE,
-            T1.TEMPLATE_NAME,
-            T1.REASON_KPI_CODE,
-            T1.REASON_KPI_NAME,
-            T1.RELATE_VALUE
-        FROM UO_REASON_KPIS_SNP T1 JOIN UO_REASON_CONCERN T2
-                                        ON T1.TEMPLATE_CODE=T2.TEMPLATE_CODE AND T1.REASON_KPI_CODE=T2.REASON_KPI_CODE
-                                            AND T1.REASON_ID=T2.REASON_ID
-        WHERE T1.REASON_ID=#{reasonId}
-        ORDER BY T1.REASON_KPI_ORDER ASC
+    <select id="getResultTraceCount" resultType="int">
+        SELECT COUNT(*) FROM UO_REASON_CONCERN WHERE REASON_RESULT_ID=#{reasonResultId}
     </select>
 
-    <select id="getConcernKpiCount" resultType="int">
-        SELECT COUNT(*)
-        FROM UO_REASON_CONCERN
-        WHERE REASON_ID = #{reasonId}
-          AND TEMPLATE_CODE = #{templateCode}
-          AND REASON_KPI_CODE = #{reasonKpiCode}
-    </select>
-
-    <insert id="addConcernKpi">
-      INSERT INTO UO_REASON_CONCERN(REASON_ID,TEMPLATE_CODE,REASON_KPI_CODE) VALUES( #{reasonId},#{templateCode},#{reasonKpiCode})
+    <insert id="addResultToTrace">
+        INSERT INTO UO_REASON_CONCERN(REASON_ID,REASON_RESULT_ID,CREATE_DT) VALUES (#{reasonId},#{reasonResultId},SYSDATE)
     </insert>
 
-    <delete id="deleteConcernKpi">
-        DELETE FROM UO_REASON_CONCERN  WHERE REASON_ID = #{reasonId}
-                                         AND TEMPLATE_CODE = #{templateCode}
-                                         AND REASON_KPI_CODE = #{reasonKpiCode}
+    <delete id="deleteResultToTrace">
+        delete UO_REASON_CONCERN  WHERE REASON_RESULT_ID=#{reasonResultId}
     </delete>
 
+    <delete id="deleteReasonTrace">
+        delete UO_REASON_CONCERN  WHERE REASON_ID=#{reasonId}
+    </delete>
  </mapper>

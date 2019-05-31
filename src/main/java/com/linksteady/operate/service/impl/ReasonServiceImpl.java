@@ -107,6 +107,7 @@ public class ReasonServiceImpl implements ReasonService {
         reasonMapper.deleteReasonKpisSnp(reasonId);
         reasonMapper.deleteReasonById(reasonId);
         reasonMapper.deleteReasonResultById(reasonId);
+        reasonMapper.deleteReasonTrace(reasonId);
 
 
     }
@@ -138,6 +139,39 @@ public class ReasonServiceImpl implements ReasonService {
     public  Reason getReasonHeaderInfoById(String reasonId) {
 
         return reasonMapper.getReasonInfoById(reasonId);
+    }
+
+    @Override
+    public int getResultTraceCount(String reasonResultId) {
+        return reasonMapper.getResultTraceCount(reasonResultId);
+    }
+
+    @Override
+    public void addResultToTrace(String reasonId, String reasonResultId) {
+        reasonMapper.addResultToTrace(reasonId,reasonResultId);
+    }
+
+    @Override
+    public void deleteResultToTrace(String reasonResultId) {
+        reasonMapper.deleteResultToTrace(reasonResultId);
+    }
+
+    @Override
+    public List<ReasonResultTrace> getReasonResultTraceList(String username) {
+        List<ReasonResultTrace>  list=reasonResultMapper.getReasonResultTraceList(username);
+
+        list.stream().forEach(x->{
+            String reasonId = String.valueOf(x.getReasonId());
+            List<Map<String,String>> reasonDetail=reasonMapper.getReasonDetailById(reasonId);
+            String displayName = "";
+            List<String> detailList = reasonDetail.stream().filter(z->null != z.get("DIM_DISPLAY_VALUE")).map(y->y.get("DIM_DISPLAY_VALUE")).collect(Collectors.toList());
+            for(String l:detailList) {
+                displayName += l + ";";
+            }
+            x.setDimDisplayName(displayName);
+        });
+
+        return list;
     }
 
     /**
@@ -173,29 +207,8 @@ public class ReasonServiceImpl implements ReasonService {
 
 
     @Override
-    public List<Map<String, Object>> getReasonKpisSnp(String reasonId, String templateCode) {
+    public List<ReasonKpisSnp> getReasonKpisSnp(String reasonId, String templateCode) {
         return reasonMapper.getReasonKpisSnp(reasonId,templateCode);
-    }
-
-    @Override
-    public List<Map<String,Object>> getConcernKpiList(String reasonId)
-    {
-        return reasonMapper.getConcernKpiList(reasonId);
-    }
-
-    @Override
-    public int getConcernKpiCount(String reasonId, String templateCode, String reasonKpiCode) {
-        return reasonMapper.getConcernKpiCount(reasonId,templateCode,reasonKpiCode);
-    }
-
-    @Override
-    public void addConcernKpi(String reasonId, String templateCode, String reasonKpiCode) {
-          reasonMapper.addConcernKpi(reasonId,templateCode,reasonKpiCode);
-    }
-
-    @Override
-    public void deleteConcernKpi(String reasonId, String templateCode, String reasonKpiCode) {
-          reasonMapper.deleteConcernKpi(reasonId,templateCode,reasonKpiCode);
     }
 
     @Override
@@ -205,13 +218,13 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-    public void deleteReasonResult(String reasonId, String reasonCode) {
-        reasonResultMapper.deleteReasonResult(reasonId,reasonCode);
+    public int getReasonResultCount(String reasonId, String reasonCode) {
+        return reasonResultMapper.getReasonResultCount(reasonId,reasonCode);
     }
 
     @Override
-    public int getReasonResultCount(String reasonId, String reasonCode) {
-        return reasonResultMapper.getReasonResultCount(reasonId,reasonCode);
+    public void deleteReasonResult(String reasonResultId) {
+        reasonResultMapper.deleteReasonResult(reasonResultId);
     }
 
     @Override
