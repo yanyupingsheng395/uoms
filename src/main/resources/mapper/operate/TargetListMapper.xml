@@ -60,6 +60,10 @@
     select count(1) from UO_TGT_LIST
   </select>
 
+    <select id="getTotalCountByUsername" resultType="int">
+    select count(1) from UO_TGT_LIST where CREATE_BY = #{username}
+    </select>
+
   <select id="getDataById" resultType="map">
       select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, tgt.CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME from UO_TGT_LIST tgt
       LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.ID = #{id}

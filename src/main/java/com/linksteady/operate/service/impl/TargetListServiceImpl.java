@@ -85,7 +85,8 @@ public class TargetListServiceImpl implements TargetListService {
 
     @Override
     public int getTotalCount() {
-        return targetListMapper.getTotalCount();
+        String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
+        return targetListMapper.getTotalCountByUsername(username);
     }
 
     @Override

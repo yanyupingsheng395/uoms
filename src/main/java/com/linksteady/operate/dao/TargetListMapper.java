@@ -15,6 +15,8 @@ public interface TargetListMapper extends MyMapper<TargetInfo> {
 
     int getTotalCount();
 
+    int getTotalCountByUsername(@Param("username") String username);
+
     Map<String, Object> getDataById(Long id);
 
     List<TgtReference> getGmvHistoryByPeroid(@Param("sql") String sql);
