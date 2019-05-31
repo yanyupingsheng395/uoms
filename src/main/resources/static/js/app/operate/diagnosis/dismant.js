@@ -706,7 +706,7 @@ function getFormula(kpiCode) {
             code = "<option value='" + kpiCode + "'>" + r.data + "</option>";
         }
         if(code == null) {
-            $("#op3").parent().append("<span style='font-size: 10px;'><i class='mdi mdi-alert-circle-outline'></i>"+name+"没有匹配到可拆解的指标！</span>");
+            toastr.warning(name+"没有匹配到可拆解的指标！");
         }
         $("#op3").html("").html(code);
         $('#op3').selectpicker('refresh');
