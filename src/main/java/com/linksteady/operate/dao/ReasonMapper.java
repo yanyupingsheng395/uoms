@@ -1,6 +1,7 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.Reason;
+import com.linksteady.operate.domain.ReasonKpisSnp;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
@@ -43,15 +44,16 @@ public interface ReasonMapper {
 
     void updateProgressAndStatusById(@Param("reasonId") String reasonId,@Param("status") String status,@Param("progress") int progress);
 
-     List<Map<String, Object>> getReasonKpisSnp(@Param("reasonId") String reasonId,@Param("templateCode") String templateCode);
+     List<ReasonKpisSnp> getReasonKpisSnp(@Param("reasonId") String reasonId, @Param("templateCode") String templateCode);
 
-    List<Map<String, Object>> getConcernKpiList(@Param("reasonId") String reasonId);
+     int getResultTraceCount(@Param("reasonResultId") String reasonResultId);
 
-    int getConcernKpiCount(@Param("reasonId") String reasonId, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
+    void addResultToTrace(@Param("reasonId") String reasonId,@Param("reasonResultId") String reasonResultId);
 
-    void addConcernKpi(@Param("reasonId") String reasonId, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
+    void deleteResultToTrace(@Param("reasonResultId") String reasonResultId);
 
-    void deleteConcernKpi(@Param("reasonId") String reasonId, @Param("kpiCode")String templateCode, @Param("reasonKpiCode")String reasonKpiCode);
+    void deleteReasonTrace(@Param("reasonId") String reasonId);
+
 
 
 }
