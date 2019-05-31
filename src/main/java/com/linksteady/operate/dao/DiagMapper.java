@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface DiagMapper{
 
-    List<Diag> getList(@Param("startRow") int startRow, @Param("endRow") int endRow);
+    List<Diag> getList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("username") String username);
 
     Long getTotalCount();
 

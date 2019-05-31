@@ -1,12 +1,34 @@
 reasonModalInit();
 function reasonModalInit() {
     // 初始化时间
-    $("#reasonPeriod").val($("#periodType").find("option:selected").text());
+    $("#reasonPeriod").val(getPeriodType());
     $("#reasonTimeBegin").val($("#beginDt").val());
     $("#reasonTimeEnd").val($("#endDt").val());
 
     // 提交分析
     $("#submitAnalysis").on("click",submit_analysis);
+}
+
+function getPeriodType() {
+    var opDataType = $("#opDataType").val();
+    var period = "";
+    if(opDataType == "edit") {
+        period = $("#periodType").val() == "M" ? "月":"日";
+    }else {
+        period = $("#periodType").find("option:selected").text();
+    }
+    return period;
+}
+
+function getPeriodTypeVal() {
+    var opDataType = $("#opDataType").val();
+    var period = "";
+    if(opDataType == "edit") {
+        period = $("#periodType").val();
+    }else {
+        period = $("#periodType").find("option:selected").val();
+    }
+    return period;
 }
 
 function submit_analysis(){
@@ -25,17 +47,19 @@ function submit_analysis(){
 
     var dim=[];
     //遍历已选择的维度
-    $("#selectedTable").find("tr").each(function (i) {
-        var temp = $(this).find("td").find("input[name='dimKey']").val() + "^" + $(this).find("td").find("input[name='dimValues']").val() + "^" + $(this).find("td").text();
-        dim.push(temp);
-    });
+    if($("#selectedTable").find("tr").find("td").text().indexOf("暂无数据") == -1) {
+        $("#selectedTable").find("tr").each(function (i) {
+            var temp = $(this).find("td").find("input[name='dimKey']").val() + "^" + $(this).find("td").find("input[name='dimValues']").val() + "^" + $(this).find("td").text();
+            dim.push(temp);
+        });
+    }
     var start_dt = $("#beginDt").val();
     var end_dt = $("#endDt").val();
     var datas={
         kpi:$("#reasonKpiCode").val(),
         beginDt:start_dt,
         endDt:end_dt,
-        period:$("#periodType").find("option:selected").val(),
+        period:getPeriodTypeVal(),
         source: '运营诊断',
         dims:dim
     };

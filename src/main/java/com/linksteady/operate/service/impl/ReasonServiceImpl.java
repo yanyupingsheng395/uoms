@@ -9,6 +9,8 @@ import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.operate.vo.ReasonVO;
+import com.linksteady.system.domain.User;
+import org.apache.shiro.SecurityUtils;
 import org.apache.thrift.TException;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,8 @@ public class ReasonServiceImpl implements ReasonService {
     @Override
     public List<Reason> getReasonList(int startRow, int endRow)
     {
-        List<Reason> dataList = reasonMapper.getReasonList(startRow,endRow);
+        String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
+        List<Reason> dataList = reasonMapper.getReasonList(startRow,endRow, username);
         dataList.stream().forEach(x->{
             String reasonId = String.valueOf(x.getReasonId());
             List<Map<String,String>> reasonDetail=reasonMapper.getReasonDetailById(reasonId);

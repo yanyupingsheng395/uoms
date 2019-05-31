@@ -33,7 +33,8 @@ public class DiagServiceImpl implements DiagService {
 
     @Override
     public List<Diag> getRows(int startRow, int endRow) {
-        return diagMapper.getList(startRow, endRow);
+        String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
+        return diagMapper.getList(startRow, endRow, username);
     }
 
     @Override

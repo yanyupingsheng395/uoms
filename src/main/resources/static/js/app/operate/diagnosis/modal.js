@@ -55,15 +55,23 @@ function viewChart(obj) {
             $("#_conditions").html("").html("<ol>"+code+"</ol>");
         }
     } else {
+        var treeArr = [];
         // 条件
         var whereinfo = "<div class=\"col-md-12\"><table class='table table-sm'>";
         $.each(obj.whereinfo, function (k, v) {
+            var o = new Object();
             if(v.inherit_flag == "Y") {
+                o.id = k + 1;
+                o.name = v.dimName + ":" + v.dimValueDisplay + "(继承至父节点)";
                 whereinfo += "<tr><td class='text-left'>" + v.dimName + ":" + v.dimValueDisplay + "（继承至父节点）</td></tr>";
             }else {
+                o.id = k + 1;
+                o.name = v.dimName + ":" + v.dimValueDisplay;
                 whereinfo += "<tr><td class='text-left'>" + v.dimName + ":" + v.dimValueDisplay + "</td></tr>";
             }
+            treeArr.push(o);
         });
+
         whereinfo += "</table></div>";
         if (obj.whereinfo != null && obj.whereinfo.length == 0) {
             whereinfo = "<div class=\"col-md-12\">\n" +

@@ -293,7 +293,7 @@ function selectedCondition() {
         for(var i=0;i<arr.length;i++) {
             var t = $("#op6").find("option[value='"+arr[i]+"']").text();
             code += t + "|";
-            conditionCodes += arr[i] + "|"
+            conditionCodes += arr[i] + ","
         }
         code = code.substring(0, code.length - 1);
         conditionCodes = conditionCodes.substring(0, conditionCodes.length - 1);

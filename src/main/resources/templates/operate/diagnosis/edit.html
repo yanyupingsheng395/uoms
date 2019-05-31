@@ -29,7 +29,7 @@
         <!-- 头部信息 -->
         <div data-th-include="common/header"></div>
         <!-- 页面主要内容 -->
-        <main class="lyear-layout-content" oncontextmenu="doNothing()">
+        <main class="lyear-layout-content" oncontextmenu="doNothing()" id="main">
             <!-- 控制面板的右键操作按钮 -->
             <div id="operateBtns" style="top: 0px;left: 0px;position: absolute; z-index: 100; display: none;">
                 <table style="width: auto;">
@@ -118,5 +118,6 @@
 <script data-th-src="@{/js/app/operate/diagnosis/modal.js}"></script>
 <script data-th-src="@{/js/app/operate/diagnosis/dismant.js}"></script>
 <script data-th-src="@{/js/app/operate/diagnosis/edit.js}"></script>
+<script data-th-src="@{/js/app/operate/diagnosis/reasonAdd.js}"></script>
 </body>
 </html>

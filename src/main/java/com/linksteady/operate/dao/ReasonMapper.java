@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface ReasonMapper {
 
-    List<Reason> getReasonList(@Param("startRow") int startRow,@Param("endRow") int endRow);
+    List<Reason> getReasonList(@Param("startRow") int startRow,@Param("endRow") int endRow, @Param("username") String username);
 
     int getReasonTotalCount();
 
