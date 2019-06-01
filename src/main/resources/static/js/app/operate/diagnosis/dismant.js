@@ -605,7 +605,7 @@ function saveRedisHandleInfo(nodeName, levelId, kpiCode, kpiName) {
 function saveDiagHandleInfo(handleInfo, operateType) {
     $.post("/progress/saveDiagHandleInfo", {diagHandleInfo: JSON.stringify(handleInfo)}, function (r) {
         if(r.code == 500) {
-            toastr.error('存储redis发生错误！');
+            toastr.error('操作失败，服务出现异常了，快反馈给系统运维人员吧！');
         }else {
             if(operateType == "A") {
                 var levelId = handleInfo.kpiLevelId;
