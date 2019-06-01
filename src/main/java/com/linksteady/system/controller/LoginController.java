@@ -1,6 +1,5 @@
 package com.linksteady.system.controller;
 
-import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.MD5Utils;
@@ -85,7 +84,8 @@ public class LoginController extends BaseController {
         ImageCode imageCode = imageCodeGenerator.createCode();
         BufferedImage image = imageCode.getImage();
         imageCode.setImage(null);
-        HttpSession session = request.getSession();
+
+        Session session =super.getSession();
         session.removeAttribute(CODE_KEY);
         session.setAttribute(CODE_KEY, imageCode.getCode());
         response.setContentType("image/jpeg");
