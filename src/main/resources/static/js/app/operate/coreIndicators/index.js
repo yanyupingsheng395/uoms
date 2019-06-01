@@ -80,7 +80,6 @@ getCharts(periodType, dt);
 function getCharts(periodType, dt) {
     if(tgtId != "" && tgtId != null) {
         $.get("/tgtKpiMonitor/getCharts", {id:tgtId, periodType:periodType, dt: dt}, function (r) {
-            console.log(r)
             chartInit(r.data[0], "chart1");
             chartInit(r.data[1], "chart2");
             chartInit(r.data[2], "chart3");
