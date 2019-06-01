@@ -35,12 +35,12 @@ function getRootDiagInfo() {
 var o = new Object();
 function viewChart(obj) {
     o = obj;
-    lightyear.loading('show');
     $("#modal").modal('show');
 }
 
 
 $('#modal').on('shown.bs.modal', function () {
+    lightyear.loading('show');
     var obj = o;
     var operateType = obj.periodType;
     if (operateType == "M") {
