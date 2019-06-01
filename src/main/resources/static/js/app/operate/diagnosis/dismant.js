@@ -95,6 +95,7 @@ function addCondition() {
     if(operateType == "A") { // 加法
         if($("#op4").find("option:selected").val() == "") {
             toastr.warning('请选择维度！');
+            lightyear.loading("hide");
         }else {
             condition0();
             // 隐藏模态框
@@ -104,8 +105,10 @@ function addCondition() {
         if($("#op3").find("option:selected").val() == null) {
             if($("#op3").find("option").length == 0) {
                 toastr.warning('该指标无可再拆分的乘法公式，请选择别的拆分方式！');
+                lightyear.loading("show");
             }else {
                 toastr.warning('请选择拆分公式！');
+                lightyear.loading("show");
             }
         } else {
             condition1();
@@ -115,6 +118,7 @@ function addCondition() {
         condition2();
     }else{
         toastr.warning('请选择诊断方式！');
+        lightyear.loading("show");
     }
 }
 
@@ -713,7 +717,7 @@ function getFormula(kpiCode) {
             code = "<option value='" + kpiCode + "'>" + r.data + "</option>";
         }
         if(code == null) {
-            toastr.warning(name+"没有匹配到可拆解的指标！");
+            toastr.warning(name+"无法按乘法进行诊断！");
         }
         $("#op3").html("").html(code);
         $('#op3').selectpicker('refresh');
