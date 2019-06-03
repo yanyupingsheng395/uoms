@@ -138,6 +138,11 @@ public class TargetListServiceImpl implements TargetListService {
         return targetListMapper.selectByPrimaryKey(targetId);
     }
 
+    @Override
+    public void updateTargetStatus(long targetId, String status) {
+        targetListMapper.updateTargetStatus(targetId,status);
+    }
+
 }
 
 

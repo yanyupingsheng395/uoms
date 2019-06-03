@@ -10,5 +10,5 @@ public class TgtReference {
 
     String periodName;
 
-    double value;
+    Double value;
 }

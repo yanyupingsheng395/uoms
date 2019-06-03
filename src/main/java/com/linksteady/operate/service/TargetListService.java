@@ -28,4 +28,6 @@ public interface TargetListService {
     Map<String, Object> getDismantData(Long targetId);
 
     TargetInfo selectByPrimaryKey(long targetId);
+
+    void updateTargetStatus(long targetId,String status);
 }

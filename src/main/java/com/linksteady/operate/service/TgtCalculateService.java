@@ -8,6 +8,10 @@ import java.util.Map;
 
 public interface TgtCalculateService {
 
+     String TARGET_PERIOD_YEAR="year";
+     String  TARGET_PERIOD_MONTH="month";
+     String TARGET_PERIOD_DAY="day";
+
     /**
      * 获取参照信息
      * @param period
@@ -23,4 +27,12 @@ public interface TgtCalculateService {
      * @param targetInfo
      */
     void calculateTarget(TargetInfo targetInfo);
+
+
+    /**
+     * 对目标进行拆解
+     * @param targetId
+     */
+    void targetSplit(Long targetId) throws Exception;
+
 }

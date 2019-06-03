@@ -27,8 +27,6 @@ public final class UomsConstants {
     //过滤
     public static final String DIAG_OPERATION_TYPE_FILTER="F";
 
-//    public static final String DIAG_KPI_CODE_GMV="gmv";
-
     public static final String DIAG_KPI_CODE_TSPAN="tspan";
 
     /**
