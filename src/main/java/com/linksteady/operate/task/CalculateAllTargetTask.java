@@ -5,6 +5,7 @@ import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.service.impl.TgtGmvCalculateServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import java.util.List;
 
 /**
  * 对所有目标进行运算
+ * @author huang
  */
 @Slf4j
 @Component
@@ -23,6 +25,7 @@ public class CalculateAllTargetTask {
     @Autowired
     TgtGmvCalculateServiceImpl tgtGmvCalculateService;
 
+    @Async
     public void calculate()
     {
           log.info("开始批量计算任务的完成信息，开始的时间为:{}", LocalDate.now());

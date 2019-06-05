@@ -73,7 +73,6 @@ function getMonitorVal() {
  * periodType：时间周期
  * dt：时间
  */
-
 var dt = $("#tgtList").find("option:selected").attr("data-code");
 var periodType = $("#tgtList").find("option:selected").attr("data-period");
 getCharts(periodType, dt);

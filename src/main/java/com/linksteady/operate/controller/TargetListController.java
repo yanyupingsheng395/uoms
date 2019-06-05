@@ -9,9 +9,8 @@ import com.linksteady.operate.domain.TargetDimension;
 import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.service.TargetDimensionService;
 import com.linksteady.operate.service.TargetListService;
-import com.linksteady.operate.service.impl.TgtGmvCalculateServiceImpl;
+import com.linksteady.operate.service.impl.TgtCalculateContext;
 import com.linksteady.operate.task.CalculateAllTargetTask;
-import com.linksteady.operate.task.TargetSplitAsyncTask;
 import com.linksteady.operate.util.UomsConstants;
 import com.linksteady.operate.vo.TgtReferenceVO;
 import com.linksteady.system.domain.User;
@@ -19,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,13 +36,10 @@ public class TargetListController {
     private TargetDimensionService targetDimensionService;
 
     @Autowired
-    TgtGmvCalculateServiceImpl tgtGmvCalculateService;
-
-    @Autowired
-    TargetSplitAsyncTask targetSplitAsyncTask;
-
-    @Autowired
     CalculateAllTargetTask calculateAllTargetTask;
+
+    @Autowired
+    TgtCalculateContext tgtCalculateContext;
 
     /**
      * 获取指标列表
@@ -99,7 +94,16 @@ public class TargetListController {
         long targetId=targetListService.save(target);
 
         //提交后台进行拆解
-        targetSplitAsyncTask.targetSplit(targetId);
+        try {
+            TargetInfo targetInfo=targetListService.selectByPrimaryKey(targetId);
+            tgtCalculateContext.calculateTarget(targetInfo.getKpiCode(),targetInfo);
+
+            tgtCalculateContext.targetSplit(targetInfo.getKpiCode(),targetId);
+        } catch (Exception e) {
+            log.error("ID: {} 拆分计算任务异常",targetId,e);
+            //更新目标的状态为错误状态
+            targetListService.updateTargetStatus(targetId,"-1");
+        }
 
         return ResponseBo.ok();
     }
@@ -139,15 +143,7 @@ public class TargetListController {
             dimInfoMap.put(x.getDimensionCode(), x.getDimensionValCode());
         });
 
-        List<TgtReferenceVO> resultList;
-        if("gmv".equals(kpiCode))
-        {
-            resultList=tgtGmvCalculateService.getReferenceData(period,startDt,endDt,dimInfoMap);
-
-        }else
-        {
-            resultList=Lists.newArrayList();
-        }
+        List<TgtReferenceVO> resultList=tgtCalculateContext.getReferenceData(kpiCode,period,startDt,endDt,dimInfoMap);
         return ResponseBo.okWithData(null, resultList);
     }
 
@@ -182,15 +178,8 @@ public class TargetListController {
         dimInfoList.stream().forEach(x-> {
             dimInfo.put(String.valueOf(x.get("DIMENSION_CODE")), String.valueOf(x.get("DIMENSION_VAL_CODE")));
         });
-        List<TgtReferenceVO> resultList;
-        if("gmv".equals(kpiCode))
-        {
-            resultList=tgtGmvCalculateService.getReferenceData(period,startDt,endDt,dimInfo);
+        List<TgtReferenceVO> resultList=tgtCalculateContext.getReferenceData(kpiCode,period,startDt,endDt,dimInfo);
 
-        }else
-        {
-            resultList=Lists.newArrayList();
-        }
         return ResponseBo.okWithData(null, resultList);
     }
 
@@ -223,7 +212,7 @@ public class TargetListController {
     public ResponseBo calculate(@RequestParam("targetId") Long targetId) {
 
         TargetInfo targetInfo=targetListService.selectByPrimaryKey(targetId);
-        tgtGmvCalculateService.calculateTarget(targetInfo);
+        tgtCalculateContext.calculateTarget(targetInfo.getKpiCode(),targetInfo);
 
         return ResponseBo.ok();
     }
@@ -236,6 +225,28 @@ public class TargetListController {
     public ResponseBo calculateAll() {
 
         calculateAllTargetTask.calculate();
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 提交后台进行拆解
+     * @return
+     */
+    @RequestMapping("/submitToSplit")
+    public ResponseBo submitToSplit(@RequestParam("targetId") long targetId) {
+        //获取目标对象
+        Map<String,Object> targetInfo=targetListService.getDataById(targetId);
+        String kpiCode = (String)targetInfo.get("KPI_CODE");
+
+        //提交后台进行拆解
+        try {
+            tgtCalculateContext.targetSplit(kpiCode,targetId);
+        } catch (Exception e) {
+            log.error("ID: {} 拆分计算任务异常",targetId,e);
+            //更新目标的状态为错误状态
+            targetListService.updateTargetStatus(targetId,"-1");
+        }
+
         return ResponseBo.ok();
     }
 }
