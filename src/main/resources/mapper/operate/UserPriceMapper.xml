@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.UserPriceMapper">
+
+    <!--获取年月日不同周期的用户数-->
+    <select id="getUserCntOfDifferPeriod" resultType="Double">
+        SELECT SUM(COUNT(DISTINCT W_ORDER_DETAILS.USER_ID)) TOTAL_CNT
+        FROM
+        W_ORDER_DETAILS
+        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        WHERE
+        W_ORDER_DETAILS.VALID_STATUS = 1
+        AND TRUNC(W_DATE.CALENDAR_DATE, #{truncFormat}) &gt;= TRUNC(TO_DATE(#{startDt}, #{format}), #{truncFormat})
+        AND TRUNC(W_DATE.CALENDAR_DATE, #{truncFormat}) &lt;= TRUNC(TO_DATE(#{endDt}, #{format}), #{truncFormat})
+        GROUP BY
+        W_DATE.DAY_SHORT_NAME
+    </select>
+
+    <!--查询起止时间段内的GMV值-->
+    <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        SELECT COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) kpiVal,
+        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') kpiDate
+        FROM
+        W_ORDER_DETAILS
+        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        WHERE
+        W_ORDER_DETAILS.VALID_STATUS = 1
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &lt;= trunc( TO_DATE( #{end}, '${format}'), '${truncFormat}')
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &gt;= trunc( TO_DATE( #{start}, '${format}'), '${truncFormat}')
+        GROUP BY
+        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}')
+        ORDER BY
+        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') ASC
+    </select>
+
+    <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        SELECT
+        SUM(COUNT(DISTINCT W_ORDER_DETAILS.USER_ID)) kpiVal,
+        SUM(COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='Y' THEN W_ORDER_DETAILS.USER_ID END)) fpKpiVal,
+        SUM(COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='N' THEN W_ORDER_DETAILS.USER_ID END)) spKpiVal
+        FROM
+        W_ORDER_DETAILS
+        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        WHERE
+        W_ORDER_DETAILS.VALID_STATUS = 1
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &gt;= trunc( TO_DATE( #{start}, #{format} ), '${truncFormat}' )
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &lt;= trunc( TO_DATE( #{end}, #{format} ), '${truncFormat}' )
+        GROUP BY
+        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' )
+        ORDER BY
+        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' ) ASC
+    </select>
+
+    <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        SELECT
+        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}') kpiDate,
+        COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) kpiVal,
+        COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='Y' THEN W_ORDER_DETAILS.USER_ID END) fpKpiVal,
+        COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='N' THEN W_ORDER_DETAILS.USER_ID END) spKpiVal
+        FROM
+        W_ORDER_DETAILS
+        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        WHERE
+        W_ORDER_DETAILS.VALID_STATUS = 1
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &gt;= trunc( TO_DATE( #{start}, #{format} ), '${truncFormat}' )
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &lt;= trunc( TO_DATE( #{end}, #{format} ), '${truncFormat}' )
+        GROUP BY
+        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' )
+        ORDER BY
+        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' ) ASC
+    </select>
+
+    <select id="getSpOrFpKpiVal" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        SELECT
+        COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='${isFp}' THEN W_ORDER_DETAILS.USER_ID END) kpiVal,
+        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') kpiDate
+        FROM
+        W_ORDER_DETAILS
+        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        WHERE
+        W_ORDER_DETAILS.VALID_STATUS = 1
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &lt;= trunc( TO_DATE( #{end}, '${format}'), '${truncFormat}')
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &gt;= trunc( TO_DATE( #{start}, '${format}'), '${truncFormat}')
+        GROUP BY
+        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}')
+        ORDER BY
+        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') ASC
+    </select>
+</mapper>

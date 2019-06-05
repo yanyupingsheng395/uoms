@@ -1,7 +1,11 @@
 package com.linksteady.common.util;
 
+import com.google.common.collect.Maps;
+
+import javax.swing.text.DateFormatter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.Period;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -275,6 +279,50 @@ public class DateUtil {
         YearMonth ym = YearMonth.parse(dateStr, df);
         ym = ym.plusYears(Period.ofYears(-1).getYears());
         String result = ym.format(df);
+        return result;
+    }
+
+
+    /**
+     * 获取上周期
+     * @param dateStr yyyy-MM
+     * @return
+     */
+    public static String getLast(String dateStr) {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM");
+        YearMonth ym = YearMonth.parse(dateStr, df);
+        ym = ym.plusMonths(Period.ofMonths(-1).getMonths());
+        String result = ym.format(df);
+        return result;
+    }
+
+    /**
+     * 获取天到天的上周期
+     * @return
+     */
+    public static Map<String, Object> getLastOfDay(String startDt, String endDt) {
+        Map<String, Object> result = Maps.newHashMap();
+        LocalDate startDt0 = LocalDate.parse(startDt, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate endDt0 = LocalDate.parse(endDt, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+
+        LocalDate lastEndDt = startDt0;
+        int span = startDt0.getDayOfYear()-endDt0.getDayOfYear();
+        LocalDate lastStartDt = lastEndDt.plusDays(Period.ofDays(span).getDays());
+        result.put("start", lastStartDt);
+        result.put("end", lastEndDt);
+        return result;
+    }
+
+    public static Map<String, Object> getLastYearOfDay(String startDt, String endDt) {
+        Map<String, Object> result = Maps.newHashMap();
+        LocalDate startDt0 = LocalDate.parse(startDt, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate endDt0 = LocalDate.parse(endDt, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        LocalDate lastYearStartDt = startDt0.plusYears(Period.ofYears(-1).getYears());
+        LocalDate lastYearEndDt = endDt0.plusYears(Period.ofYears(-1).getYears());
+        result.put("start", lastYearStartDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        result.put("end", lastYearEndDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         return result;
     }
 }

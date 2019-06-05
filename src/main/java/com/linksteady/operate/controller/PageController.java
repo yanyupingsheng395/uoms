@@ -179,4 +179,9 @@ public class PageController extends BaseController {
         model.addAttribute("id", id);
         return "operate/diagnosis/edit";
     }
+
+    @RequestMapping("/operator/user")
+    public String userOperator() {
+        return "operate/useroperator/monitor";
+    }
 }

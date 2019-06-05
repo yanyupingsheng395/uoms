@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户运营系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
+    <!--<link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>-->
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <!--时间选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
+    <!--日期选择插件-->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/jsmind/jsmind.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <style>
+        #jsmind_container{
+            width:100%;
+            height:320px;
+            background:#ffffff;
+        }
+    </style>
+</head>
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>用户运营监控</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <form class="form-horizontal">
+                                        <div class="row">
+                                            <div class="form-group col-md-4">
+                                                <label class="col-md-4 control-label">周期：</label>
+                                                <div class="col-md-8">
+                                                    <select name="" id="period" class="selectpicker form-control">
+                                                        <option value="Y">年</option>
+                                                        <option value="M">月</option>
+                                                        <option value="D">日</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="col-md-4 control-label" id="dateLabel">目标周期：</label>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="startDt" class="form-control js-datepicker m-b-10" id="startDt" value="2019"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-4" hidden id="endDtDiv">
+                                                <label class="col-md-4 control-label">结束时间：</label>
+                                                <div class="col-md-8">
+                                                    <input type="text" name="endDt" class="form-control js-datepicker m-b-10" id="endDt"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-4">
+                                                <label class="col-md-4 control-label">渠道：</label>
+                                                <div class="col-md-8">
+                                                    <select name="" id="source" class="selectpicker form-control"></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="col-md-4 control-label">品牌：</label>
+                                                <div class="col-md-8">
+                                                    <select name="" id="brand" class="selectpicker form-control"></select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <div class="col-md-12 text-right">
+                                                    <button class="btn btn-primary" type="button"><i class="mdi mdi-magnify"></i>查询</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <ul class="nav nav-tabs nav-justified">
+                                    <li class="active">
+                                        <a data-toggle="tab" href="#overview" aria-expanded="true">概览</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a data-toggle="tab" href="#gmv" aria-expanded="false">GMV</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a data-toggle="tab" href="#user-num">用户数</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a data-toggle="tab" href="#customer-unit-price">客单价</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a data-toggle="tab" href="#retention">留存率</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a data-toggle="tab" href="#order-num">订单数</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a data-toggle="tab" href="#order-price">订单价</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a data-toggle="tab" href="#joint-rate">连带率</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a data-toggle="tab" href="#unit-price">件单价</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade active in" id="overview">
+                                        <div data-th-include="operate/useroperator/jsmind"></div>
+                                    </div>
+                                    <div class="tab-pane fade" id="gmv"></div>
+                                    <div class="tab-pane fade" id="user-num"></div>
+                                    <div class="tab-pane fade" id="customer-unit-price"></div>
+                                    <div class="tab-pane fade" id="retention"></div>
+                                    <div class="tab-pane fade" id="order-num"></div>
+                                    <div class="tab-pane fade" id="order-price"></div>
+                                    <div class="tab-pane fade" id="joint-rate"></div>
+                                    <div class="tab-pane fade" id="unit-price"></div>
+                                </div>
+                                <div id="template" style="display:none;">
+                                    <div data-th-include="operate/useroperator/kpival"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<!--时间选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/moment.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datetimepicker/locale/zh-cn.js}"></script>
+<!--日期选择插件-->
+<script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
+<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
+<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<script data-th-src="@{/plugins/jsmind/jsmind.js}"></script>
+<script data-th-src="@{/plugins/jsmind/jsmind.draggable.js}"></script>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/js/app/operate/diagnosis/template.js}"></script>
+<script data-th-src="@{/js/app/operate/useroperator/monitor.js}"></script>
+</body>
+</html>
