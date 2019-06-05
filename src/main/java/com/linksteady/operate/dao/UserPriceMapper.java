@@ -9,12 +9,13 @@ import com.linksteady.operate.vo.KpiInfoVo;
 import java.util.List;
 
 /**
- * 用户数
+ * 客单价
  */
 public interface UserPriceMapper {
-    Double getUserCntOfDifferPeriod(String startDt, String endDt, String format, String truncFormat);
+    Double getUserPriceOfDifferPeriod(String startDt, String endDt, String format, String truncFormat);
     List<KpiInfoVo> getDatePeriodData(String start, String end, String truncFormat, String format);
     KpiInfoVo getSpAndFpKpiTotal(String start, String end, String format, String truncFormat);
     List<KpiInfoVo> getSpAndFpKpi(String start, String end, String format, String truncFormat);
-    List<KpiInfoVo> getSpOrFpKpiVal(String isFp, String start, String end, String format, String truncFormat);
+    List<KpiInfoVo> getSpOrFpKpiValForOld(String start, String end, String format, String truncFormat);
+    List<KpiInfoVo> getSpOrFpKpiValForNew(String start, String end, String format, String truncFormat);
 }

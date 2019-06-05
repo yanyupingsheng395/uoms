@@ -127,6 +127,36 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 unit = "人";
                 $("#kpiName").html("").html("用户数");
             }
+            if(e.target.href.endWith("#customer-unit-price")) {
+                kpiType = "userPrice";
+                unit = "元";
+                $("#kpiName").html("").html("客单价");
+            }
+            if(e.target.href.endWith("#retention")) {
+                kpiType = "retention";
+                unit = "%";
+                $("#kpiName").html("").html("留存率");
+            }
+            if(e.target.href.endWith("#order-num")) {
+                kpiType = "orderCnt";
+                unit = "个";
+                $("#kpiName").html("").html("订单数");
+            }
+            if(e.target.href.endWith("#order-price")) {
+                kpiType = "orderPrice";
+                unit = "元";
+                $("#kpiName").html("").html("订单价");
+            }
+            if(e.target.href.endWith("#joint-rate")) {
+                kpiType = "jointRate";
+                unit = "";
+                $("#kpiName").html("").html("连带率");
+            }
+            if(e.target.href.endWith("#unit-price")) {
+                kpiType = "unitPrice";
+                unit = "元";
+                $("#kpiName").html("").html("件单价");
+            }
             kpiChart(kpiType);
             allChart(kpiType);
             fpChart(kpiType);

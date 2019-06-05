@@ -3,87 +3,367 @@
 <mapper namespace="com.linksteady.operate.dao.UserPriceMapper">
 
     <!--获取年月日不同周期的用户数-->
-    <select id="getUserCntOfDifferPeriod" resultType="Double">
-        SELECT SUM(COUNT(DISTINCT W_ORDER_DETAILS.USER_ID)) TOTAL_CNT
+    <select id="getUserPriceOfDifferPeriod" resultType="Double">
+        WITH g1 as(
+        SELECT
+        W_DATE.DAY_SHORT_NAME PERIOD_NAME,
+        W_ORDER_DETAILS.PRICE,
+        W_ORDER_DETAILS.QUANTITY,
+        W_ORDER_DETAILS.DISCOUNT,
+        NVL(W_ORDER_DETAILS.PRICE*QUANTITY-W_ORDER_DETAILS.DISCOUNT,0) GMV,
+        W_ORDER_DETAILS.USER_ID
         FROM
-        W_ORDER_DETAILS
-        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID=W_DATE.ROW_WID
         WHERE
         W_ORDER_DETAILS.VALID_STATUS = 1
-        AND TRUNC(W_DATE.CALENDAR_DATE, #{truncFormat}) &gt;= TRUNC(TO_DATE(#{startDt}, #{format}), #{truncFormat})
-        AND TRUNC(W_DATE.CALENDAR_DATE, #{truncFormat}) &lt;= TRUNC(TO_DATE(#{endDt}, #{format}), #{truncFormat})
-        GROUP BY
-        W_DATE.DAY_SHORT_NAME
+        AND trunc(W_DATE.CALENDAR_DATE, #{truncFormat}) &gt;= TRUNC(TO_DATE(#{startDt}, #{format}), #{truncFormat})
+        AND trunc(W_DATE.CALENDAR_DATE, #{truncFormat}) &lt;= TRUNC(TO_DATE(#{endDt}, #{format}), #{truncFormat})
+        ),
+        g2 as(
+        SELECT
+        g1.PERIOD_NAME,
+        COUNT(DISTINCT g1.USER_ID) TOTAL_CNT,
+        SUM(gmv) TOTAL_GMV
+        FROM g1
+        GROUP BY g1.PERIOD_NAME
+        )
+        SELECT
+        AVG((CASE WHEN g2.TOTAL_CNT=0 THEN 0 ELSE TRUNC(g2.TOTAL_GMV/g2.TOTAL_CNT,2) END)) PRICE
+        FROM g2 ORDER BY g2.PERIOD_NAME ASC
     </select>
 
     <!--查询起止时间段内的GMV值-->
     <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVo">
-        SELECT COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) kpiVal,
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') kpiDate
+        WITH g1 AS (
+        SELECT
+        to_char(W_DATE.CALENDAR_DATE, '${format}') kpiDate,
+        W_ORDER_DETAILS.PRICE,
+        W_ORDER_DETAILS.QUANTITY,
+        W_ORDER_DETAILS.DISCOUNT,
+        NVL(
+        W_ORDER_DETAILS.PRICE * QUANTITY - W_ORDER_DETAILS.DISCOUNT,
+        0
+        ) GMV,
+        W_ORDER_DETAILS.IS_FP,
+        W_ORDER_DETAILS.USER_ID
         FROM
         W_ORDER_DETAILS
         JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
         WHERE
         W_ORDER_DETAILS.VALID_STATUS = 1
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &lt;= trunc( TO_DATE( #{end}, '${format}'), '${truncFormat}')
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &gt;= trunc( TO_DATE( #{start}, '${format}'), '${truncFormat}')
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &gt;= trunc( to_date(#{start}, #{format}), '${truncFormat}' )
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &lt;= trunc( to_date(#{end}, #{format}), '${truncFormat}' )),
+        g2 AS (
+        SELECT
+        g1.kpiDate,
+        COUNT( DISTINCT g1.USER_ID ) TOTAL_CNT,
+        COUNT(
+        DISTINCT
+        CASE
+
+        WHEN g1.IS_FP = 'Y' THEN
+        g1.USER_ID
+        END
+        ) FP_CNT,
+        COUNT(
+        DISTINCT
+        CASE
+
+        WHEN g1.IS_FP = 'N' THEN
+        g1.USER_ID
+        END
+        ) RP_CNT,
+        SUM( gmv ) TOTAL_GMV,--总的gmv金额
+        SUM(
+        CASE
+
+        WHEN g1.IS_FP = 'Y' THEN
+        GMV ELSE 0
+        END
+        ) FP_GMV,--首购金额
+        SUM(
+        CASE
+
+        WHEN g1.IS_FP = 'N' THEN
+        GMV ELSE 0
+        END
+        ) RP_GMV --复购金额
+
+        FROM
+        g1
         GROUP BY
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}')
+        g1.kpiDate
+        ) SELECT
+        g2.kpiDate,
+        (
+        CASE
+
+        WHEN g2.TOTAL_CNT = 0 THEN
+        0 ELSE TRUNC( g2.TOTAL_GMV / g2.TOTAL_CNT, 2 )
+        END
+        ) kpiVal,
+        (
+        CASE
+
+        WHEN g2.FP_CNT = 0 THEN
+        0 ELSE TRUNC( g2.FP_GMV / g2.FP_CNT, 2 )
+        END
+        ) fpKpiVal,
+        (
+        CASE
+
+        WHEN g2.RP_CNT = 0 THEN
+        0 ELSE TRUNC( g2.RP_GMV / g2.RP_CNT, 2 )
+        END
+        ) spKpiVal
+        FROM
+        g2
         ORDER BY
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') ASC
+        g2.kpiDate ASC
     </select>
 
     <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        WITH g1 AS (
         SELECT
-        SUM(COUNT(DISTINCT W_ORDER_DETAILS.USER_ID)) kpiVal,
-        SUM(COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='Y' THEN W_ORDER_DETAILS.USER_ID END)) fpKpiVal,
-        SUM(COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='N' THEN W_ORDER_DETAILS.USER_ID END)) spKpiVal
+        to_char(W_DATE.CALENDAR_DATE, '${format}') kpiDate,
+        W_ORDER_DETAILS.PRICE,
+        W_ORDER_DETAILS.QUANTITY,
+        W_ORDER_DETAILS.DISCOUNT,
+        NVL(
+        W_ORDER_DETAILS.PRICE * QUANTITY - W_ORDER_DETAILS.DISCOUNT,
+        0
+        ) GMV,
+        W_ORDER_DETAILS.IS_FP,
+        W_ORDER_DETAILS.USER_ID
         FROM
         W_ORDER_DETAILS
         JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
         WHERE
         W_ORDER_DETAILS.VALID_STATUS = 1
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &gt;= trunc( TO_DATE( #{start}, #{format} ), '${truncFormat}' )
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &lt;= trunc( TO_DATE( #{end}, #{format} ), '${truncFormat}' )
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &gt;= trunc( to_date(#{start}, #{format}), '${truncFormat}' )
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &lt;= trunc( to_date(#{end}, #{format}), '${truncFormat}' )),
+        g2 AS (
+        SELECT
+        g1.kpiDate,
+        COUNT( DISTINCT g1.USER_ID ) TOTAL_CNT,
+        COUNT(
+        DISTINCT
+        CASE
+
+        WHEN g1.IS_FP = 'Y' THEN
+        g1.USER_ID
+        END
+        ) FP_CNT,
+        COUNT(
+        DISTINCT
+        CASE
+
+        WHEN g1.IS_FP = 'N' THEN
+        g1.USER_ID
+        END
+        ) RP_CNT,
+        SUM( gmv ) TOTAL_GMV,--总的gmv金额
+        SUM(
+        CASE
+
+        WHEN g1.IS_FP = 'Y' THEN
+        GMV ELSE 0
+        END
+        ) FP_GMV,--首购金额
+        SUM(
+        CASE
+
+        WHEN g1.IS_FP = 'N' THEN
+        GMV ELSE 0
+        END
+        ) RP_GMV --复购金额
+
+        FROM
+        g1
         GROUP BY
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' )
+        g1.kpiDate
+        ) SELECT
+        g2.kpiDate,
+        (
+        CASE
+
+        WHEN g2.TOTAL_CNT = 0 THEN
+        0 ELSE TRUNC( g2.TOTAL_GMV / g2.TOTAL_CNT, 2 )
+        END
+        ) kpiVal,
+        (
+        CASE
+
+        WHEN g2.FP_CNT = 0 THEN
+        0 ELSE TRUNC( g2.FP_GMV / g2.FP_CNT, 2 )
+        END
+        ) fpKpiVal,
+        (
+        CASE
+
+        WHEN g2.RP_CNT = 0 THEN
+        0 ELSE TRUNC( g2.RP_GMV / g2.RP_CNT, 2 )
+        END
+        ) spKpiVal
+        FROM
+        g2
         ORDER BY
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' ) ASC
+        g2.kpiDate ASC
     </select>
 
     <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        WITH g1 AS (
         SELECT
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}') kpiDate,
-        COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) kpiVal,
-        COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='Y' THEN W_ORDER_DETAILS.USER_ID END) fpKpiVal,
-        COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='N' THEN W_ORDER_DETAILS.USER_ID END) spKpiVal
+        to_char(W_DATE.CALENDAR_DATE, '${format}') kpiDate,
+        W_ORDER_DETAILS.PRICE,
+        W_ORDER_DETAILS.QUANTITY,
+        W_ORDER_DETAILS.DISCOUNT,
+        NVL(
+        W_ORDER_DETAILS.PRICE * QUANTITY - W_ORDER_DETAILS.DISCOUNT,
+        0
+        ) GMV,
+        W_ORDER_DETAILS.IS_FP,
+        W_ORDER_DETAILS.USER_ID
         FROM
         W_ORDER_DETAILS
         JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
         WHERE
         W_ORDER_DETAILS.VALID_STATUS = 1
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &gt;= trunc( TO_DATE( #{start}, #{format} ), '${truncFormat}' )
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &lt;= trunc( TO_DATE( #{end}, #{format} ), '${truncFormat}' )
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &gt;= trunc( to_date(#{start}, #{format}), '${truncFormat}' )
+        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &lt;= trunc( to_date(#{end}, #{format}), '${truncFormat}' )),
+        g2 AS (
+        SELECT
+        g1.kpiDate,
+        COUNT( DISTINCT g1.USER_ID ) TOTAL_CNT,
+        COUNT(
+        DISTINCT
+        CASE
+
+        WHEN g1.IS_FP = 'Y' THEN
+        g1.USER_ID
+        END
+        ) FP_CNT,
+        COUNT(
+        DISTINCT
+        CASE
+
+        WHEN g1.IS_FP = 'N' THEN
+        g1.USER_ID
+        END
+        ) RP_CNT,
+        SUM( gmv ) TOTAL_GMV,--总的gmv金额
+        SUM(
+        CASE
+
+        WHEN g1.IS_FP = 'Y' THEN
+        GMV ELSE 0
+        END
+        ) FP_GMV,--首购金额
+        SUM(
+        CASE
+
+        WHEN g1.IS_FP = 'N' THEN
+        GMV ELSE 0
+        END
+        ) RP_GMV --复购金额
+
+        FROM
+        g1
         GROUP BY
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' )
+        g1.kpiDate
+        ) SELECT
+        g2.kpiDate,
+        (
+        CASE
+
+        WHEN g2.TOTAL_CNT = 0 THEN
+        0 ELSE TRUNC( g2.TOTAL_GMV / g2.TOTAL_CNT, 2 )
+        END
+        ) kpiVal,
+        (
+        CASE
+
+        WHEN g2.FP_CNT = 0 THEN
+        0 ELSE TRUNC( g2.FP_GMV / g2.FP_CNT, 2 )
+        END
+        ) fpKpiVal,
+        (
+        CASE
+
+        WHEN g2.RP_CNT = 0 THEN
+        0 ELSE TRUNC( g2.RP_GMV / g2.RP_CNT, 2 )
+        END
+        ) spKpiVal
+        FROM
+        g2
         ORDER BY
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' ) ASC
+        g2.kpiDate ASC
     </select>
 
-    <select id="getSpOrFpKpiVal" resultType="com.linksteady.operate.vo.KpiInfoVo">
-        SELECT
-        COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='${isFp}' THEN W_ORDER_DETAILS.USER_ID END) kpiVal,
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') kpiDate
-        FROM
-        W_ORDER_DETAILS
-        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+    <select id="getSpOrFpKpiValForOld" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        -- 老用户按天客单价
+        WITH FP_USER AS(
+        SELECT v1.USER_ID FROM (
+        SELECT DISTINCT USER_ID FROM
+        W_ORDERS t1,W_DATE t2
         WHERE
-        W_ORDER_DETAILS.VALID_STATUS = 1
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &lt;= trunc( TO_DATE( #{end}, '${format}'), '${truncFormat}')
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &gt;= trunc( TO_DATE( #{start}, '${format}'), '${truncFormat}')
-        GROUP BY
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}')
-        ORDER BY
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') ASC
+        t1.Order_Dt_Wid = t2.ROW_WID
+        AND t1.VALID_STATUS = 1
+        AND t2.CALENDAR_DATE &gt;= TRUNC(TO_DATE('${start}', '${format}'), '${truncFormat}')
+        AND t2.CALENDAR_DATE &lt;= TRUNC(TO_DATE('${end}', '${format}'), '${truncFormat}')
+        ) v1,(
+        SELECT DISTINCT USER_ID FROM
+        W_ORDERS t1,W_DATE t2
+        WHERE
+        t1.Order_Dt_Wid = t2.ROW_WID
+        AND t1.VALID_STATUS = 1
+        AND t2.CALENDAR_DATE &gt;= TRUNC(TO_DATE('${start}', '${format}'), '${truncFormat}')
+        AND t2.CALENDAR_DATE &lt;= TRUNC(TO_DATE('${end}', '${format}'), '${truncFormat}')
+        AND t1.IS_FP = 'Y'
+        )v2
+        WHERE v1.USER_ID = v2.USER_ID(+)
+        AND v2.USER_ID IS NULL
+        )
+
+        SELECT kpiDate,(CASE WHEN S_USER = 0 THEN 0 ELSE TRUNC(S_FEE/S_USER,2) END) kpiVal
+        FROM (
+        SELECT to_char(t2.CALENDAR_DATE, '${format}') kpiDate,SUM(t1.REAL_FEE) S_FEE, COUNT(DISTINCT t1.USER_ID) S_USER
+        FROM W_ORDERS t1,W_DATE t2,FP_USER t3
+        WHERE
+        t1.Order_Dt_Wid = t2.ROW_WID
+        AND t1.USER_ID = t3.USER_ID
+        AND t1.VALID_STATUS = 1
+        AND t2.CALENDAR_DATE &gt;= TRUNC(TO_DATE('${start}', '${format}'), '${truncFormat}')
+        AND t2.CALENDAR_DATE &lt;= TRUNC(TO_DATE('${end}', '${format}'), '${truncFormat}')
+        GROUP BY to_char(t2.CALENDAR_DATE, '${format}')
+        )
+        ORDER BY kpiDate
+    </select>
+
+    <select id="getSpOrFpKpiValForNew" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        -- 首购用户按天客单价
+        WITH FP_USER AS(
+        SELECT DISTINCT USER_ID FROM
+        W_ORDERS t1,W_DATE t2
+        WHERE
+        t1.Order_Dt_Wid = t2.ROW_WID
+        AND t1.VALID_STATUS = 1
+        AND t2.CALENDAR_DATE &gt;= TRUNC(TO_DATE('${start}', '${format}'), '${truncFormat}')
+        AND t2.CALENDAR_DATE &lt;= TRUNC(TO_DATE('${end}', '${format}'), '${truncFormat}')
+        AND t1.IS_FP = 'Y'
+        )
+        SELECT kpiDate,(CASE WHEN S_USER = 0 THEN 0 ELSE TRUNC(S_FEE/S_USER,2) END) kpiVal
+        FROM (
+        SELECT to_char(t2.CALENDAR_DATE, '${format}') kpiDate,SUM(t1.REAL_FEE) S_FEE, COUNT(DISTINCT t1.USER_ID) S_USER
+        FROM W_ORDERS t1,W_DATE t2,FP_USER t3
+        WHERE
+        t1.Order_Dt_Wid = t2.ROW_WID
+        AND t1.USER_ID = t3.USER_ID
+        AND t1.VALID_STATUS = 1
+        AND t2.CALENDAR_DATE &gt;= TRUNC(TO_DATE('${start}', '${format}'), '${truncFormat}')
+        AND t2.CALENDAR_DATE &lt;= TRUNC(TO_DATE('${end}', '${format}'), '${truncFormat}')
+        GROUP BY to_char(t2.CALENDAR_DATE, '${format}')
+        )
+        ORDER BY kpiDate
     </select>
 </mapper>

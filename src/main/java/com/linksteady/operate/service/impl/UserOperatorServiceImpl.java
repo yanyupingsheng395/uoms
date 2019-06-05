@@ -2,10 +2,7 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.DateUtil;
-import com.linksteady.operate.dao.BrandMapper;
-import com.linksteady.operate.dao.KpiMonitorMapper;
-import com.linksteady.operate.dao.SourceMapper;
-import com.linksteady.operate.dao.UserCntMapper;
+import com.linksteady.operate.dao.*;
 import com.linksteady.operate.service.UserOperatorService;
 import com.linksteady.operate.util.DatePeriodUtil;
 import com.linksteady.operate.vo.KpiInfoVo;
@@ -35,6 +32,15 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     @Autowired
     private UserCntMapper userCntMapper;
 
+    @Autowired
+    private UserPriceMapper userPriceMapper;
+
+    @Autowired
+    private OrderCntMapper orderCntMapper;
+
+    @Autowired
+    private OrderPriceMapper orderPriceMapper;
+
     @Override
     public List<Map<String, Object>> getSource() {
         return sourceMapper.findAll();
@@ -45,6 +51,13 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     private static final String OP_DATA_GMV = "gmv"; // GMV
 
     private static final String OP_DATA_USER_CNT = "userCnt"; // 用户数
+
+    private static final String OP_DATA_USER_PRICE = "userPrice"; // 客单价
+
+    private static final String OP_DATA_ORDER_CNT = "orderCnt"; // 客单价
+
+    private static final String OP_DATA_ORDER_PRICE = "orderPrice"; // 订单价
+
 
     @Override
     public List<Map<String, Object>> getBrand() {
@@ -112,6 +125,15 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         if(type.equals(OP_DATA_USER_CNT)) {
             return  userCntMapper.getUserCntOfDifferPeriod(startDt, endDt, format, truncFormat);
         }
+        if(type.equals(OP_DATA_USER_PRICE)) {
+            return  userPriceMapper.getUserPriceOfDifferPeriod(startDt, endDt, format, truncFormat);
+        }
+        if(type.equals(OP_DATA_ORDER_CNT)) {
+            return  orderCntMapper.getKpiOfDifferPeriod(startDt, endDt, format, truncFormat);
+        }
+        if(type.equals(OP_DATA_ORDER_PRICE)) {
+            return  orderPriceMapper.getKpiOfDifferPeriod(startDt, endDt, format, truncFormat);
+        }
         return null;
     }
 
@@ -176,6 +198,15 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         if(kpiType.equals(OP_DATA_USER_CNT)) {
             return  userCntMapper.getDatePeriodData(start, end, truncFormat, format);
         }
+        if(kpiType.equals(OP_DATA_USER_PRICE)) {
+            return  userPriceMapper.getDatePeriodData(start, end, truncFormat, format);
+        }
+        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
+            return  orderCntMapper.getDatePeriodData(start, end, truncFormat, format);
+        }
+        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
+            return  orderPriceMapper.getDatePeriodData(start, end, truncFormat, format);
+        }
         return null;
     }
 
@@ -230,6 +261,15 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         if(kpiType.equals(OP_DATA_USER_CNT)) {
             return userCntMapper.getSpAndFpKpi(start, end, format, truncFormat);
         }
+        if(kpiType.equals(OP_DATA_USER_PRICE)) {
+            return  userPriceMapper.getSpAndFpKpi(start, end, format, truncFormat);
+        }
+        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
+            return  orderCntMapper.getSpAndFpKpi(start, end, format, truncFormat);
+        }
+        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
+            return  orderPriceMapper.getSpAndFpKpi(start, end, format, truncFormat);
+        }
         return null;
     }
 
@@ -281,12 +321,25 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         return result;
     }
 
-    private List<KpiInfoVo> getSpOrFpKpiVal(String kpitType, String isFp, String start, String end, String format, String truncFormat) {
-        if(kpitType.equals(OP_DATA_GMV)) {
+    private List<KpiInfoVo> getSpOrFpKpiVal(String kpiType, String isFp, String start, String end, String format, String truncFormat) {
+        if(kpiType.equals(OP_DATA_GMV)) {
             return kpiMonitorMapper.getSpOrFpKpiVal(isFp, start, end, format, truncFormat);
         }
-        if(kpitType.equals(OP_DATA_USER_CNT)) {
+        if(kpiType.equals(OP_DATA_USER_CNT)) {
             return userCntMapper.getSpOrFpKpiVal(isFp, start, end, format, truncFormat);
+        }
+        if(kpiType.equals(OP_DATA_USER_PRICE)) {
+            if(isFp.equals("Y")) {
+                return  userPriceMapper.getSpOrFpKpiValForNew(start, end, format, truncFormat);
+            }else {
+                return  userPriceMapper.getSpOrFpKpiValForOld(start, end, format, truncFormat);
+            }
+        }
+        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
+            return  orderCntMapper.getSpOrFpKpiVal(isFp, start, end, format, truncFormat);
+        }
+        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
+            return  orderPriceMapper.getSpOrFpKpiVal(isFp, start, end, format, truncFormat);
         }
         return null;
     }
@@ -376,10 +429,10 @@ public class UserOperatorServiceImpl implements UserOperatorService {
             }
         }
 
-        String fpAbs = kpiInfoVos.getFpKpiVal() == null ? DEFAULT_VAL : String.valueOf(kpiInfoVos.getFpKpiVal());
-        String spAbs = kpiInfoVos.getSpKpiVal() == null ? DEFAULT_VAL : String.valueOf(kpiInfoVos.getSpKpiVal());
-        String fpContributeRate = kpiInfoVos.getFpKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == null ? DEFAULT_VAL : decimalFormat.format(kpiInfoVos.getFpKpiVal()/kpiInfoVos.getKpiVal()));
-        String spContributeRate = kpiInfoVos.getSpKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == null ? DEFAULT_VAL : decimalFormat.format(kpiInfoVos.getSpKpiVal()/kpiInfoVos.getKpiVal()));
+        String fpAbs = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getFpKpiVal() == null ? DEFAULT_VAL : String.valueOf(kpiInfoVos.getFpKpiVal()));
+        String spAbs = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getSpKpiVal() == null ? DEFAULT_VAL : String.valueOf(kpiInfoVos.getSpKpiVal()));
+        String fpContributeRate = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getFpKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == null ? DEFAULT_VAL : decimalFormat.format(kpiInfoVos.getFpKpiVal()/kpiInfoVos.getKpiVal())));
+        String spContributeRate = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getSpKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == null ? DEFAULT_VAL : decimalFormat.format(kpiInfoVos.getSpKpiVal()/kpiInfoVos.getKpiVal())));
         result.put("fpAbs", fpAbs); // 首购绝对值
         result.put("spAbs", spAbs); // 复购绝对值
         result.put("fpContributeRate", fpContributeRate); // 首购贡献率
@@ -393,6 +446,15 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         }
         if(kpiType.equals(OP_DATA_USER_CNT)) {
             return userCntMapper.getSpAndFpKpiTotal(start, end, format, truncFormat);
+        }
+        if(kpiType.equals(OP_DATA_USER_PRICE)) {
+            return  userPriceMapper.getSpAndFpKpiTotal(start, end, format, truncFormat);
+        }
+        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
+            return  orderCntMapper.getSpAndFpKpiTotal(start, end, format, truncFormat);
+        }
+        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
+            return  orderPriceMapper.getSpAndFpKpiTotal(start, end, format, truncFormat);
         }
         return null;
     }
