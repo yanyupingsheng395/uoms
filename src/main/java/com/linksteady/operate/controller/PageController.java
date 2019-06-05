@@ -172,6 +172,12 @@ public class PageController extends BaseController {
         return "operate/targetinfo/detail";
     }
 
+    /**
+     * 诊断编辑页面
+     * @param id
+     * @param model
+     * @return
+     */
     @RequestMapping("/diag/edit")
     public String diagEdit(@RequestParam("id") String id, Model model) {
         Map<String, Object> diag = diagService.geDiagInfoById(id);
@@ -179,4 +185,35 @@ public class PageController extends BaseController {
         model.addAttribute("id", id);
         return "operate/diagnosis/edit";
     }
+
+    /**
+     * 报表 - 店铺运营日报
+     * @param
+     * @return
+     */
+    @RequestMapping("/report/opDaillyReport")
+    public String opDaillyReport() {
+        return "operate/report/opDaillyReport";
+    }
+
+    /**
+     * 报表 - 品牌报表
+     * @param
+     * @return
+     */
+    @RequestMapping("/report/brandReport")
+    public String brandReport() {
+        return "operate/report/brandReport";
+    }
+
+    /**
+     * 报表 - 会员日报
+     * @param
+     * @return
+     */
+    @RequestMapping("/report/userDailyReport")
+    public String userDailyReport() {
+        return "operate/report/userDailyReport";
+    }
+
 }
