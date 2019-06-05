@@ -145,6 +145,8 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             spChart(kpiType);
             getKpiInfo(kpiType, unit);
             getKpiCalInfo(kpiType);
+        }else {
+            load_jsmind();
         }
     }
 });
