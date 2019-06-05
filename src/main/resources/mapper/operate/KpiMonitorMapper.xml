@@ -20,6 +20,17 @@
         <result column="UPRICE" property="uprice" jdbcType="DECIMAL"></result>
     </resultMap>
 
+    <resultMap id="kpiSummeryMap" type="com.linksteady.operate.domain.KpiSumeryInfo">
+        <result column="GMV" property="gmv" jdbcType="DECIMAL"></result>
+        <result column="UCNT" property="ucnt" jdbcType="DECIMAL"></result>
+        <result column="UPRICE" property="uprice" jdbcType="DECIMAL"></result>
+        <result column="PCNT" property="pcnt" jdbcType="DECIMAL"></result>
+        <result column="FREQ" property="freq" jdbcType="DECIMAL"></result>
+        <result column="PRICE" property="price" jdbcType="DECIMAL"></result>
+        <result column="JOINRATE" property="joinrate" jdbcType="DECIMAL"></result>
+        <result column="SPRICE" property="sprice" jdbcType="DECIMAL"></result>
+    </resultMap>
+
     <!-- 获取间隔月的留存率数据 -->
     <select id="getRetainDMonth" resultType="map">
         with g1 as
@@ -1748,5 +1759,32 @@
         TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' )
         ORDER BY
         TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' ) ASC
+    </select>
+
+    <select id="getSummaryKpiInfo" resultMap="kpiSummeryMap">
+        SELECT
+            SUM(W_ORDERS.REAL_FEE) GMV,  --gmv
+            COUNT(DISTINCT W_ORDERS.USER_ID) UCNT,  --用户数
+            (CASE WHEN
+                      COUNT(DISTINCT W_ORDERS.USER_ID)=0 THEN 0 ELSE
+                      TRUNC(SUM(W_ORDERS.REAL_FEE)/COUNT(DISTINCT W_ORDERS.USER_ID),2) END) UPRICE, --客单价
+            COUNT(W_ORDERS.ID) PCNT, --订单数
+            (CASE WHEN COUNT(DISTINCT W_ORDERS.USER_ID)=0 THEN 0 ELSE
+                TRUNC(COUNT(W_ORDERS.ID)/COUNT(DISTINCT W_ORDERS.USER_ID),2) END) FREQ, --购买频率
+            TRUNC(AVG(W_ORDERS.REAL_FEE),2) PRICE,  --订单价
+            (CASE WHEN COUNT(W_ORDERS.ID)=0 THEN 0 ELSE
+                TRUNC(SUM(W_ORDERS.QUANTITY)/COUNT(W_ORDERS.ID),2) END) JOINRATE, --连带率
+            (CASE WHEN SUM(W_ORDERS.QUANTITY)=0 THEN 0 ELSE
+                TRUNC(SUM(W_ORDERS.REAL_FEE)/SUM(W_ORDERS.QUANTITY),2) END) SPRICE  --件单价
+        FROM
+            W_ORDERS JOIN W_DATE ON W_ORDERS.ORDER_DT_WID=W_DATE.ROW_WID
+            <if test="joinInfo != null and joinInfo != ''">
+                ${joinInfo}
+            </if>
+        WHERE
+            W_ORDERS.VALID_STATUS = 1
+            <if test="whereInfo != null and whereInfo != ''">
+                ${whereInfo}
+            </if>
     </select>
 </mapper>

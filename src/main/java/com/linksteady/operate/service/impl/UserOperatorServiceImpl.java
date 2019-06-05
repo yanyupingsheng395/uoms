@@ -1,14 +1,18 @@
 package com.linksteady.operate.service.impl;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.BrandMapper;
 import com.linksteady.operate.dao.KpiMonitorMapper;
 import com.linksteady.operate.dao.SourceMapper;
 import com.linksteady.operate.dao.UserCntMapper;
+import com.linksteady.operate.domain.KpiSumeryInfo;
 import com.linksteady.operate.service.UserOperatorService;
 import com.linksteady.operate.util.DatePeriodUtil;
 import com.linksteady.operate.vo.KpiInfoVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.text.DecimalFormat;
@@ -452,5 +456,44 @@ public class UserOperatorServiceImpl implements UserOperatorService {
             result = DateUtil.getLastYearOfDay(startDt, endDt);
         }
         return result;
+    }
+
+    @Override
+    public KpiSumeryInfo getSummaryKpiInfo(String periodType, String startDt, String endDt, String source) {
+        Joiner joiner = Joiner.on(",").skipNulls();
+        //构造where条件
+        StringBuffer bf=new StringBuffer();
+        StringBuffer join=new StringBuffer();
+
+        //处理条件 Y M D
+        if("D".equals(periodType))
+        {
+            bf.append(" AND W_DATE.DAY>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.DAY<=").append(StringUtils.replaceChars(endDt,"-",""));
+        }else if("M".equals(periodType))
+        {
+            bf.append(" AND W_DATE.MONTH=").append(StringUtils.replaceChars(startDt,"-",""));
+        }else if("Y".equals(periodType))
+        {
+            bf.append(" AND W_DATE.YEAR=").append(startDt);
+        }
+
+        if(null!=source&&!"".equals(source))
+        {
+             join.append(" JOIN  W_SOURCE ON W_ORDERS.SOURCE_ID=W_SOURCE.SOURCE_ID");
+
+             List<String> sourceList=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(source);
+
+            if(sourceList.size()==1)
+            {
+                bf.append(" AND ").append("W_SOURCE.SOURCE_ID").append("=").append(sourceList.get(0));
+            }else
+            {
+                bf.append(" AND ").append("W_SOURCE.SOURCE_ID").append(" IN(").append(joiner.join(sourceList)).append(")");
+            }
+
+
+        }
+
+        return kpiMonitorMapper.getSummaryKpiInfo(join.toString(),bf.toString());
     }
 }
