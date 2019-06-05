@@ -1,6 +1,7 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.DatePeriodKpi;
+import com.linksteady.operate.domain.KpiSumeryInfo;
 import com.linksteady.operate.domain.WeekInfo;
 import com.linksteady.operate.vo.KpiInfoVo;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -53,4 +54,6 @@ public interface KpiMonitorMapper {
     List<KpiInfoVo> getSpAndFpKpi(@Param("start") String start, @Param("end") String end, @Param("format") String format, @Param("truncFormat") String truncFormat);
     KpiInfoVo getSpAndFpKpiTotal(@Param("start") String start, @Param("end") String end, @Param("format") String format, @Param("truncFormat") String truncFormat);
     List<KpiInfoVo> getSpOrFpKpiVal(@Param("isFp") String isFp, @Param("start") String start, @Param("end") String end, @Param("format") String format, @Param("truncFormat") String truncFormat);
+
+    KpiSumeryInfo getSummaryKpiInfo(@Param("joinInfo") String joinInfo, @Param("whereInfo") String whereInfo);
 }

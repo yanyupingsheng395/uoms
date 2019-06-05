@@ -1,11 +1,31 @@
-<link rel="stylesheet" data-th-href="@{/plugins/jsmind/jsmind.css}"/>
-<style>
-    #jsmind_container{
-        width:100%;
-        height:320px;
-        background:#ffffff;
-    }
-</style>
-<div id="jsmind_container"></div>
-<script data-th-src="@{/plugins/jsmind/jsmind.js}"></script>
-<script data-th-src="@{/plugins/jsmind/jsmind.draggable.js}"></script>
+<link rel="stylesheet" data-th-href="@{/plugins/bootstrap-orgchart/orgchart.css}"/>
+<h1></h1>
+<div class="container-fluid">
+    <h3>运营监控拆解图</h3>
+    <div id="orgChart"><div class="org-tree"><div class="row"><div class="item col-lg-12 col-md-12 child-width-6" data-width="100"><div class="child root"><div class="parent"><div class="node center-block text-center">
+        <strong>GMV</strong><br>
+        <em id="KPI_GMV">&nbsp;</em>
+    </div></div></div><div class="row"><div class="item col-lg-6 col-md-6 child-width-6" data-width="50"><div class="child"><div class="parent"><div class="node center-block text-center">
+        <strong>用户数</strong><br>
+        <em id="KPI_UCNT">&nbsp;</em>
+    </div></div></div><div class="row"><div class="item col-lg-12 col-md-12" data-width="50"><div class="child"><div class="node center-block text-center">
+        <strong>留存率</strong><br>
+        <em id="KPI_RETENTION">&nbsp;</em>
+    </div></div></div></div></div><div class="item col-lg-6 col-md-6 child-width-3" data-width="50"><div class="child"><div class="parent"><div class="node center-block text-center">
+        <strong>客单价</strong><br>
+        <em id="KPI_UPRICE">&nbsp;</em>
+    </div></div></div><div class="row"><div class="item col-lg-6 child-width-2" data-width="25"><div class="child"><div class="parent"><div class="node center-block text-center">
+        <strong>订单价</strong><br>
+        <em id="KPI_PRICE">&nbsp;</em>
+    </div></div></div><div class="row"><div class="item col-lg-6" data-width="12"><div class="child"><div class="node center-block text-center">
+        <strong>件单价</strong><br>
+        <em id="KPI_SPRICE">&nbsp;</em>
+    </div></div></div><div class="item col-lg-6" data-width="12"><div class="child"><div class="node center-block text-center">
+        <strong>连带率</strong><br>
+        <em id="KPI_JOINRATE">&nbsp;</em>
+    </div></div></div></div></div><div class="item col-lg-6" data-width="25"><div class="child"><div class="node center-block text-center">
+        <strong>订单数</strong><br>
+        <em id="KPI_PCNT">&nbsp;</em>
+    </div></div></div></div></div></div></div></div></div></div>
+</div>
+<script data-th-src="@{/plugins/bootstrap-orgchart/orgchart.js}"></script>

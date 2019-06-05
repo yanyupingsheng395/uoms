@@ -34,42 +34,24 @@ function getSource() {
     });
 }
 
-var _jm = null;
 load_jsmind();
 function load_jsmind(){
-    var mind = {
-        meta:{
-            version:'0.2'
-        },
-        format:'node_array',
-        data:[
-            {"id":"0", "isroot":true, "topic":"GMV"},
-            {"id":"1", "parentid":"0", "topic":"用户数"},
-            {"id":"2", "parentid":"0", "topic":"客单价"},
-            {"id":"3", "parentid":"1", "topic":"留存率"},
-            {"id":"4", "parentid":"2", "topic":"订单数"},
-            {"id":"5", "parentid":"2", "topic":"订单价"},
-            {"id":"6", "parentid":"5", "topic":"连带率"},
-            {"id":"7", "parentid":"5", "topic":"件单价"}
-        ]
-    };
-    var options = {
-        container:'jsmind_container',
-        editable:true,
-        theme:'primary',
-        shortcut:{
-            handles:{
-                test:function(j,e){
-                    console.log(j);
-                }
-            },
-            mapping:{
-                test:89
-            }
+    var periodType = $("#period").find("option:selected").val();
+    var startDt = $("#startDt").val();
+    var endDt = $("#endDt").val();
+
+    $.get("/useroperator/getOrgChartData",{ periodType: periodType, startDt: startDt, endDt: endDt}, function (resp) {
+        if(null!=resp.data.gmv||resp.data.gmv!='null')
+        {
+            $("#KPI_GMV").html("").html(resp.data.gmv+"元");
+            $("#KPI_UCNT").html("").html(resp.data.ucnt+"人");
+            $("#KPI_UPRICE").html("").html(resp.data.uprice+"元");
+            $("#KPI_PRICE").html("").html(resp.data.price+"元");
+            $("#KPI_SPRICE").html("").html(resp.data.sprice+"元");
+            $("#KPI_JOINRATE").html("").html(resp.data.joinrate);
+            $("#KPI_PCNT").html("").html(resp.data.pcnt+"笔");
         }
-    };
-    _jm = jsMind.show(options,mind);
-    _jm.disable_edit();
+    });
 }
 init_date("startDt", "yyyy", 2,2,2);
 // 时间周期选择事件

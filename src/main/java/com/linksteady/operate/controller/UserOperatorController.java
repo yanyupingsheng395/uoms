@@ -1,10 +1,16 @@
 package com.linksteady.operate.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.domain.KpiSumeryInfo;
 import com.linksteady.operate.service.UserOperatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+
 /**
  * Created by hxcao on 2019-06-03
  */
@@ -65,5 +71,16 @@ public class UserOperatorController {
     @RequestMapping("/getKpiCalInfo")
     public ResponseBo getKpiCalInfo(String kpiType, String periodType, String startDt, String endDt) {
         return ResponseBo.okWithData(null, userOperatorService.getKpiCalInfo(kpiType, periodType, startDt, endDt));
+    }
+
+    /**
+     *获取结构图的数据
+     */
+    @RequestMapping("/getOrgChartData")
+    public ResponseBo getOrgChartData(String periodType, String startDt, String endDt,String source) {
+
+        //获取所有的指标值
+        KpiSumeryInfo result=userOperatorService.getSummaryKpiInfo(periodType,startDt,endDt,source);
+        return ResponseBo.okWithData(null, result);
     }
 }

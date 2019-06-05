@@ -1,5 +1,7 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.operate.domain.KpiSumeryInfo;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,4 +16,6 @@ public interface UserOperatorService {
     Map<String, Object> getSpAndFpKpi(String kpiType, String periodType, String startDt, String endDt);
     Map<String, Object> getSpOrFpKpiVal(String kpiType, String isFp, String periodType, String startDt, String endDt);
     Map<String, Object> getKpiCalInfo(String kpiType, String periodType, String startDt, String endDt);
+
+    KpiSumeryInfo getSummaryKpiInfo(String periodType, String startDt, String endDt, String source);
 }
