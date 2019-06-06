@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8083
   tomcat:
     uri-encoding: utf-8
 spring:
@@ -64,15 +64,15 @@ spring:
 
   redis:
     # Redis数据库索引（默认为0） 存放session数据 ShiroConfig.java中使用
-    database: 0
+    database: 4
     # businessdatabase 存放业务数据的库 RedisConfig.java中使用
-    businessdatabase: 0
+    businessdatabase: 4
     # Redis服务器地址
     host: 127.0.0.1
     # Redis服务器连接端口
-    port: 6379
+    port: 6376
     # Redis 密码
-    password:
+    password: growthmaster666
     jedis:
       pool:
         # 连接池中的最小空闲连接
@@ -101,7 +101,7 @@ spring:
         fixed:
           enabled: true
           paths: /js/app/**,/css/**,/fonts/**
-          version: v1.0.15
+          version: v1.0.16
 
 #  devtools:
 #    livereload:
@@ -195,4 +195,4 @@ sys:
 thrift:
   server:
     host: 127.0.0.1
-    port: 9999
+    port: 9996

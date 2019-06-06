@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8083
   tomcat:
     uri-encoding: utf-8
 spring:
