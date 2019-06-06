@@ -557,8 +557,6 @@ public class UserOperatorServiceImpl implements UserOperatorService {
                 bf.append(" AND ").append("W_SOURCE.SOURCE_ID").append(" IN(").append(joiner.join(sourceList)).append(")");
             }
         }
-        System.out.println(join.toString());
-        System.out.println(bf.toString());
         return kpiMonitorMapper.getSummaryKpiInfo(join.toString(),bf.toString());
     }
 }
