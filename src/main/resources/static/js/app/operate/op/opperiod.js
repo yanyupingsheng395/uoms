@@ -49,7 +49,7 @@ $(function () {
             title: '操作',
             formatter: function (value, row, index) {
                 var headId=row.PERIOD_HEADER_ID;
-                return "<div class='btn btn-primary btn-sm' onclick='view("+headId+")'><i class='mdi mdi-eye'></i>查看名单</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='operation_category(\"+headId+\")'><i class='mdi mdi-webpack'></i>运营品类</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='viewstatis("+headId+")'><i class='mdi mdi-chart-bar-stacked'></i>统计信息</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='vieweffect(\"+headId+\")'><i class='mdi mdi-google-analytics'></i>效果统计</div>&nbsp;" +
+                return "<div class='btn btn-primary btn-sm' onclick='view("+headId+")'><i class='mdi mdi-eye'></i>查看名单</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='viewstatis("+headId+")'><i class='mdi mdi-chart-bar-stacked'></i>统计信息</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='vieweffect(\"+headId+\")'><i class='mdi mdi-google-analytics'></i>效果统计</div>&nbsp;" +
                     "<div class='btn btn-primary btn-sm' onclick='download("+headId+")'><i class='mdi mdi-download'></i>导出</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='del(\"+headId+\")'><i class='mdi mdi-window-close'></i>删除</div>";
             }
         }]
@@ -77,46 +77,66 @@ $(function () {
                     pageNum: (params.offset / params.limit )+ 1  //页码
                 };
             },
-            columns: [
+            columns: [[{
+                field: 'USER_ID',
+                title: '用户ID',
+                rowspan: 2,
+                valign:"middle"
+            },{
+                title: '具体目标',
+                colspan: 9
+            },{
+                title: '策略',
+                colspan: 4
+            }],[{
+                field: 'PATH_ACTIV',
+                title: '路径活跃度'
+            },
                 {
-                    field: 'PRODUCT_NAME',
-                    title: '产品名称'
+                    field: 'USER_VALUE',
+                    title: '用户价值'
                 },
                 {
-                    field: 'COUPON_DISPLAY',
-                    title: '优惠券'
-                },
-                {
-                    field: 'USER_ID',
-                    title: '用户ID'
-                },
-                {
-                    field: 'DISCOUNT_EFFORT',
-                    title: '优惠力度',
-                    formatter: function (value, row, index) {
-                        if (value == 'H') {
-                            return "高";
-                        } else if (value == 'M') {
-                            return "中";
-                        } else {
-                            return "低";
-                        }
-                    }
-                }]
+                    field: 'SPU_NAME',
+                    title: 'SPU/品类'
+                },{
+                    field: 'PIECE_PRICE',
+                    title: '件单价'
+                },{
+                    field: 'JOIN_RATE',
+                    title: '连带率'
+                },{
+                    field: 'PURCH_TYPE_NUM',
+                    title: '购买品类种数'
+                },{
+                    field: 'TAR_IDEAL_DT',
+                    title: '达成目标的理想时间'
+                },{
+                    field: 'TAR_GENERAL_DT',
+                    title: '达成目标的一般时间'
+                },{
+                    field: 'TAR_DEADLINE',
+                    title: '达成目标的最后期限'
+                },{
+                    field: 'RECOM_SPU',
+                    title: '推荐品类'
+                },{
+                    field: 'DISCOUNT_LEVEL',
+                    title: '折扣率'
+                },{
+                    field: 'ORDER_PERIOD',
+                    title: '平均订单时段'
+                },{
+                    field: 'REFER_DENO',
+                    title: '优惠面额'
+                }
+            ]]
         });
 
 });
 
 function del(reasonId) {
-
-    $.alert({
-        title: '提示：',
-        content: '演示环境，不支持删除！',
-        confirm: {
-            text: '确认',
-            btnClass: 'btn-primary'
-        }
-    });
+    toastr.warning("非生产环境，不支持删除！");
 
     //遮罩层打开
     //lightyear.loading('show');
@@ -147,10 +167,62 @@ function del(reasonId) {
     //     });
 }
 
+/**
+ * 查看统计信息
+ * @param headerId
+ */
 function viewstatis(headerId)
 {
+    //放入隐藏域
+    $("#headerId").val(headerId);
     $('#statis_modal').modal('show');
 }
+
+$('#statis_modal').on('shown.bs.modal', function () {
+    getChartData("unit_price", "piece_price_chart", "目标件单价", "推荐次数");
+    getChartData("discount_rate", "discount_chart", "折扣率", "推荐次数");
+    getChartData("buying_time", "time_chart", "购买时间（小时）", "订单量");
+    getChartData("refer_deno", "preferential_chart", "优惠面额", "推荐次数");
+    getStatisSpu();
+});
+
+
+function getStatisSpu() {
+    var headerId = $("#headerId").val();
+    $.get("/op/getPeriodSpuStatis", {headerId: headerId}, function (r) {
+        var c1 = "<tr class='active'><td>推荐品类</td>";
+        var c2 = "<tr><td>推荐次数</td>";
+        $.each(r.data, function (k, v) {
+            c1 += "<td>" + v.SPU_NAME + "</td>";
+            c2 += "<td>" + v.RECOMEND_TIMES + "</td>";
+        });
+        c1 += "</tr>";
+        c2 += "</tr>";
+        $("#recomDataTable").html("").html(c1 + c2);
+    });
+}
+
+// 购买时段分布图
+function getChartData(type, id, toolXname, toolYname) {
+    var headerId = $("#headerId").val();
+    $.get("/op/getPeriodChartData", {headerId: headerId, type: type}, function (r) {
+        makeChart(r.data, id, toolXname, toolYname);
+    });
+}
+
+function makeChart(data, id, toolXname, toolYname) {
+    var chart = echarts.init(document.getElementById(id), 'macarons');
+    chart.showLoading();
+    var seriesData = data.yAxisData;
+    var xAxisName = data.xAxisName;
+    var yAxisName = data.yAxisName;
+    var xAxisData = data.xAxisData;
+    var option = getBarOption(xAxisData, xAxisName, yAxisName, seriesData, toolXname, toolYname);
+    chart.setOption(option, true);
+    chart.hideLoading();
+}
+
+
 
 $('#statis_modal').on('shown.bs.modal', function () {
     var timeChart = echarts.init(document.getElementById('time_chart'), 'macarons');
@@ -176,14 +248,7 @@ function view(headerId)
 }
 
 function download(headerId) {
-    $.alert({
-        title: '提示：',
-        content: '演示环境，不支持下载！',
-        confirm: {
-            text: '确认',
-            btnClass: 'btn-primary'
-        }
-    });
+    toastr.warning("非生产环境，不支持下载！");
 }
 
 // 运营品类
@@ -425,5 +490,6 @@ var piece_price_option = {
 };
 
 function vieweffect() {
-    $("#effect_modal").modal('show');
+    //$("#effect_modal").modal('show');
+    toastr.warning("尚未触达，暂无效果统计！");
 }

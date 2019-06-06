@@ -55,7 +55,7 @@
 </div>
 <!--用户名单的查看面板-->
 <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel1" id="userlist_modal">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg" role="document" style="width: 75%">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
@@ -72,12 +72,14 @@
         </div>
     </div>
 </div>
+
+
 <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="statis_modal">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title" id="myLargeModalLabel">周期运营统计信息</h4>
+                <h4 class="modal-title" id="myLargeModalLabel">每日运营统计信息</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -85,9 +87,7 @@
                         <p class="h5">运营品类表</p>
                         <hr/>
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered text-nowrap">
-                                <tr class="active"><td>品类名称</td><td>4/4模杯文胸(聚拢)</td><td>高腰三角裤</td><td>其他文胸(美背)</td><td>三角杯文胸(舒适)</td><td>4/4模杯文胸(无痕)</td><td>4/4模杯文胸(大罩杯)</td><td>休闲外穿(分身套装)</td><td>三角杯文胸(聚拢)</td></tr>
-                                <tr><td>推荐次数</td><td>64</td><td>62</td><td>60</td><td>58</td><td>52</td><td>50</td><td>34</td><td>23</td></tr>
+                            <table class="table table-striped table-bordered text-nowrap" id="recomDataTable">
                             </table>
                         </div>
                     </div>
@@ -131,6 +131,7 @@
         </div>
     </div>
 </div>
+
 <!--新增活动-->
 <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal">
     <div class="modal-dialog modal-lg" role="document">
@@ -171,39 +172,39 @@
     </div>
 </div>
 <!--运营品类-->
-<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="operate_modal">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title">运营品类</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <p class="h5">品类推荐频次表</p>
-                        <hr/>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered text-nowrap">
-                                <tr class="active"><td>品类名称</td><td>目标用户数贡献率（现在）</td><td>历史同期销售额贡献率</td></tr>
-                                <tr><td>基础打底(保暖裤)</td><td>52%</td><td>32%</td></tr>
-                                <tr><td>1/2模杯文胸(可摘卸肩带)</td><td>46%</td><td>39%</td></tr>
-                                <tr><td>小吊衣/裙</td><td>34%</td><td>62%</td></tr>
-                                <tr><td>鞋</td><td>33%</td><td>32%</td></tr>
-                                <tr><td>休闲外穿(睡裙)</td><td>62%</td><td>36%</td></tr>
-                                <tr><td>3/4模杯文胸(无钢托)</td><td>23%</td><td>59%</td></tr>
-                                <tr><td>4/4模杯文胸(舒适)</td><td>67%</td><td>34%</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!--<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="operate_modal">-->
+    <!--<div class="modal-dialog modal-lg" role="document">-->
+        <!--<div class="modal-content">-->
+            <!--<div class="modal-header">-->
+                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>-->
+                <!--<h4 class="modal-title">运营品类</h4>-->
+            <!--</div>-->
+            <!--<div class="modal-body">-->
+                <!--<div class="row">-->
+                    <!--<div class="col-md-12">-->
+                        <!--<p class="h5">品类推荐频次表</p>-->
+                        <!--<hr/>-->
+                        <!--<div class="table-responsive">-->
+                            <!--<table class="table table-striped table-bordered text-nowrap">-->
+                                <!--<tr class="active"><td>品类名称</td><td>目标用户数贡献率（现在）</td><td>历史同期销售额贡献率</td></tr>-->
+                                <!--<tr><td>基础打底(保暖裤)</td><td>52%</td><td>32%</td></tr>-->
+                                <!--<tr><td>1/2模杯文胸(可摘卸肩带)</td><td>46%</td><td>39%</td></tr>-->
+                                <!--<tr><td>小吊衣/裙</td><td>34%</td><td>62%</td></tr>-->
+                                <!--<tr><td>鞋</td><td>33%</td><td>32%</td></tr>-->
+                                <!--<tr><td>休闲外穿(睡裙)</td><td>62%</td><td>36%</td></tr>-->
+                                <!--<tr><td>3/4模杯文胸(无钢托)</td><td>23%</td><td>59%</td></tr>-->
+                                <!--<tr><td>4/4模杯文胸(舒适)</td><td>67%</td><td>34%</td></tr>-->
+                            <!--</table>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="modal-footer">-->
+                <!--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
 
 <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="effect_modal">
     <div class="modal-dialog modal-lg" role="document">
@@ -221,9 +222,6 @@
                                 <tr><th>分组名称</th><th>组别</th><th>发送短信用户数</th><th>购买用户数</th><th>转化率</th><th>购买总金额</th><th>客单价</th><th>连带率</th><th>优惠券的核销率</th><th>触达商品的准确率</th><th>触达品类的准确率</th></tr>
                                 </thead>
                                 <tbody>
-                                <tr><td>本期推荐</td><td>实验组</td><td>1366</td><td>13</td><td>0.95%</td><td>5937</td><td>457</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
-                                <tr><td>未达推荐节点</td><td>对照组1</td><td>318</td><td>6</td><td>1.89%</td><td>13092</td><td>2182</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
-                                <tr><td>流失召回</td><td>对照组2</td><td>11924</td><td>53</td><td>0.44%</td><td>36140</td><td>682</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -236,6 +234,8 @@
         </div>
     </div>
 </div>
+
+<input id="headerId" type="hidden">
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
 <script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
@@ -244,6 +244,7 @@
 
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/js/app/operate/diagnosis/template.js}"></script>
 <script data-th-src="@{/js/app/operate/op/opperiod.js}"></script>
 </body>
 </html>

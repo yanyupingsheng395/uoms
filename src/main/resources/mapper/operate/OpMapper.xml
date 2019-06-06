@@ -110,25 +110,30 @@
         SELECT * FROM(
         SELECT A.*,ROWNUM RN FROM
         (
-            SELECT T.PRODUCT_NAME,
-                   T.PERIOD_DETAIL_ID,
-                   T.PERIOD_HEADER_ID,
-                   T.PRODUCT_ID,
-                   T.PRODUCT_CODE,
-                   T.USER_ID,
-                   T.COUPON,
-                   T.THRESHOLD,
-                   T.DISCOUNT_EFFORT,
-                   T.GROUP_TYPE,
-                   '满' || T.THRESHOLD || '减' || T.COUPON COUPON_DISPLAY
+            SELECT
+                T.USER_ID,
+                T.PATH_ACTIV,
+                T.USER_VALUE,
+                T.SPU_NAME,
+                T.PIECE_PRICE,
+                T.JOIN_RATE,
+                T.PURCH_TYPE_NUM,
+                T.TAR_IDEAL_DT,
+                T.TAR_GENERAL_DT,
+                T.TAR_DEADLINE,
+                T.RECOM_SPU,
+                T.DISCOUNT_RATE,
+                T.ORDER_PERIOD,
+                T.REFER_DENO,
+                T.DISCOUNT_LEVEL
             FROM UO_OP_PERIOD_DETAIL T
-            WHERE T.PERIOD_HEADER_ID =#{headerId}
+            WHERE T.HEADER_ID =#{headerId}
             ) A  WHERE ROWNUM &lt;=#{endRow}
         ) WHERE RN &gt;=#{startRow}
     </select>
 
     <select id="getPeriodUserListCount" resultType="int">
-        SELECT COUNT(*) FROM UO_OP_PERIOD_DETAIL T WHERE T.PERIOD_HEADER_ID=#{headerId}
+        SELECT COUNT(*) FROM UO_OP_PERIOD_DETAIL T WHERE T.HEADER_ID=#{headerId}
     </select>
 
     <select id="getSpuStatis" resultType="map">
@@ -155,6 +160,26 @@
         H.HEAD_ID = T.HEAD_ID
         AND TO_CHAR( H.TOUCH_DT, 'YYYY-MM-DD' ) = #{touchDt}
         and T.DATA_TYPE = #{type}
+        ORDER BY T.SORT_NUM asc
+    </select>
+
+    <select id="getPeriodSpuStatis" resultType="map">
+        SELECT SPU_NAME,RECOMEND_TIMES FROM (
+                                     SELECT
+                                         SPU_NAME,
+                                         COUNT(*) RECOMEND_TIMES
+                                     FROM UO_OP_PERIOD_DETAIL WHERE HEADER_ID=#{headerId} GROUP BY SPU_NAME) ORDER BY RECOMEND_TIMES DESC
+    </select>
+
+    <select id="getPeriodChartData" resultType="map">
+        SELECT
+            T.X_DATA,
+            T.Y_DATA
+        FROM
+            UO_OP_PERIOD_DATA_STATIS T
+        WHERE
+             T.HEAD_ID=#{headerId}
+          and T.DATA_TYPE = #{type}
         ORDER BY T.SORT_NUM asc
     </select>
  </mapper>
