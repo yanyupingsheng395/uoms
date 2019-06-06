@@ -1,0 +1,85 @@
+<div class="row">
+    <div class="col-md-12">
+        <h5>同期群分析留存/流失</h5>
+        <!--<form class="form-inline pull-left" action="" method="post" onsubmit="return false;">-->
+            <!--<div class="form-group">-->
+                <!--<input class="form-control js-datepicker m-b-10" type="text" id="startDate_1" name="startDate" data-date-format="yyyy-mm" value="2019-01"/>-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+                <!--<button class="btn btn-primary m-b-10" type="button" onclick="searchData1()"><i class="mdi mdi-magnify"></i>查询</button>-->
+            <!--</div>-->
+        <!--</form>-->
+        <div class="pull-right">
+            <div class="btn-group-round" id="cohortbtngroup1">
+                <button class="btn btn-primary btn-sm btn-round cohortbtn" name="month">自然月</button>
+                <button class="btn btn-default btn-sm btn-round cohortbtn" name="dmonth">间隔月</button>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" style="clear: both;" id="tabs02">
+            <li class="active"> <a data-toggle="tab" href="#retain" onclick="tabClick(1)">留存率</a> </li>
+            <li> <a data-toggle="tab" href="#retain_cnt" onclick="tabClick(2)"> 留存用户数</a> </li>
+            <li> <a data-toggle="tab" href="#loss" onclick="tabClick(3)">流失率</a> </li>
+            <li> <a data-toggle="tab" href="#loss_cnt" onclick="tabClick(4)">流失用户数</a> </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade active in" id="retain">
+                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable1" style="word-break: break-all; word-wrap: break-word;max-height: 400px;overflow:scroll;height: auto;"></table>
+            </div>
+
+            <div class="tab-pane fade" id="retain_cnt">
+                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable2" style="word-break: break-all; word-wrap: break-word;max-height: 400px;overflow:scroll;height: auto;"></table>
+            </div>
+
+            <div class="tab-pane fade" id="loss">
+                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable3" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
+            </div>
+
+            <div class="tab-pane fade" id="loss_cnt">
+                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable4" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h5>同期群分析客单价变化</h5>
+        <!--<form class="form-inline pull-left" action="" method="post" onsubmit="return false;">-->
+            <!--<div class="form-group">-->
+                <!--<input class="form-control js-datepicker m-b-10" type="text" id="startDate_2" data-date-format="yyyy-mm" value="2019-01"/>-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+                <!--<button class="btn btn-primary m-b-10" type="button" onclick="searchData2()"><i class="mdi mdi-magnify"></i>查询</button>-->
+            <!--</div>-->
+        <!--</form>-->
+        <div class="pull-right">
+            <div class="btn-group-round" id="cohortbtngroup2">
+                <button class="btn btn-primary btn-sm btn-round cohortbtn" name="month">自然月</button>
+                <button class="btn btn-default btn-sm btn-round cohortbtn" name="dmonth">间隔月</button>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" style="clear: both;" id="tabs03">
+            <li class="active"> <a data-toggle="tab" href="#retain1" onclick="tab1Click(1)">客单价</a> </li>
+            <li> <a data-toggle="tab" href="#dprice" onclick="tab1Click(2)"> 订单价</a> </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade active in" id="retain1">
+                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable11" style="word-break: break-all; word-wrap: break-word;max-height: 400px;overflow:scroll;height: auto;"></table>
+            </div>
+            <div class="tab-pane fade" id="dprice">
+                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable12" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
+            </div>
+            <div class="tab-pane fade" id="loss_cnt1">
+                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable13" style="word-break: break-all; word-wrap: break-word;max-height: 400px;overflow:scroll;height: auto;"></table>
+            </div>
+
+            <div class="tab-pane fade" id="retain_cnt1">
+                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable14" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
+            </div>
+
+            <div class="tab-pane fade" id="loss1">
+                <table data-show-columns="false" class="table table-hover table-bordered table-striped table-condensed" id="dataTable15" style="word-break: break-all; word-wrap: break-word;height: auto;"></table>
+            </div>
+        </div>
+    </div>
+</div>

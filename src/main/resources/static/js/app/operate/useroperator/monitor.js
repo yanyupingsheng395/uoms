@@ -84,14 +84,16 @@ $("#period").change(function () {
     }
 });
 
-$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+$("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var startDt = $("#startDt").val();
     if(startDt == "") {
         toastr.warning("请选择时间！");
     }else {
-        if(!e.target.href.endWith("#overview")) {
+        if(!e.target.href.endWith("#overview") && !e.target.href.endWith("#retention")) {
+            $("#selectCondition1").show();
+            $("#selectCondition2").hide();
             // 解决相同模板导致ID冲突
-            if(!e.relatedTarget.href.endWith("#overview")) {
+            if(!e.relatedTarget.href.endWith("#overview") && !e.relatedTarget.href.endWith("#retention")) {
                 var relatedTarget = e.relatedTarget.href.substring(e.relatedTarget.href.lastIndexOf("#"), e.relatedTarget.href.length);
                 $(relatedTarget).html("");
             }
@@ -113,11 +115,6 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 kpiType = "userPrice";
                 unit = "元";
                 $("#kpiName").html("").html("客单价");
-            }
-            if(e.target.href.endWith("#retention")) {
-                kpiType = "retention";
-                unit = "%";
-                $("#kpiName").html("").html("留存率");
             }
             if(e.target.href.endWith("#order-num")) {
                 kpiType = "orderCnt";
@@ -145,8 +142,14 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             spChart(kpiType);
             getKpiInfo(kpiType, unit);
             getKpiCalInfo(kpiType);
-        }else {
+        }else if(e.target.href.endWith("#overview")) {
+            $("#selectCondition1").show();
+            $("#selectCondition2").hide();
             load_jsmind();
+        }else if(e.target.href.endWith("#retention")) { // 留存率变化
+            // todo 初始化日期
+            $("#selectCondition1").hide();
+            $("#selectCondition2").show();
         }
     }
 });

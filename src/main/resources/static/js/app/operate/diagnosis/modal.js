@@ -35,6 +35,7 @@ function getRootDiagInfo() {
 var o = new Object();
 function viewChart(obj) {
     o = obj;
+    console.log(o)
     $("#modal").modal('show');
 }
 

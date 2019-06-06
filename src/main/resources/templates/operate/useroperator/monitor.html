@@ -46,7 +46,7 @@
                                 <h4>用户运营监控</h4>
                             </div>
                             <div class="card-body">
-                                <div class="row">
+                                <div class="row" id="selectCondition1">
                                     <form class="form-horizontal">
                                         <div class="row">
                                             <div class="form-group col-md-4">
@@ -93,12 +93,24 @@
                                         </div>
                                     </form>
                                 </div>
+                                <div class="row" id="selectCondition2" hidden>
+                                    <div class="col-md-12">
+                                        <form class="form-inline pull-left">
+                                            <div class="form-group">
+                                                日期：<input class="form-control js-datepicker m-b-10" type="text" id="startDateOfRetention" name="startDate" data-date-format="yyyy-mm" value="2019-01"/>
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-primary m-b-10" type="button" onclick="searchData()"><i class="mdi mdi-magnify"></i>查询</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div class="card">
                             <div class="card-body">
-                                <ul class="nav nav-tabs nav-justified">
+                                <ul class="nav nav-tabs nav-justified" id="navTabs1">
                                     <li class="active">
                                         <a data-toggle="tab" href="#overview" aria-expanded="true">概览</a>
                                     </li>
@@ -111,9 +123,9 @@
                                     <li class="nav-item">
                                         <a data-toggle="tab" href="#customer-unit-price">客单价</a>
                                     </li>
-                                    <!--<li class="nav-item">-->
-                                        <!--<a data-toggle="tab" href="#retention">留存率</a>-->
-                                    <!--</li>-->
+                                    <li class="nav-item">
+                                        <a data-toggle="tab" href="#retention">留存率</a>
+                                    </li>
                                     <li class="nav-item">
                                         <a data-toggle="tab" href="#order-num">订单数</a>
                                     </li>
@@ -134,7 +146,9 @@
                                     <div class="tab-pane fade" id="gmv"></div>
                                     <div class="tab-pane fade" id="user-num"></div>
                                     <div class="tab-pane fade" id="customer-unit-price"></div>
-                                    <div class="tab-pane fade" id="retention"></div>
+                                    <div class="tab-pane fade" id="retention">
+                                        <div data-th-include="operate/useroperator/cohort"></div>
+                                    </div>
                                     <div class="tab-pane fade" id="order-num"></div>
                                     <div class="tab-pane fade" id="order-price"></div>
                                     <div class="tab-pane fade" id="joint-rate"></div>
@@ -142,6 +156,9 @@
                                 </div>
                                 <div id="template" style="display:none;">
                                     <div data-th-include="operate/useroperator/kpival"></div>
+                                </div>
+                                <div id="retentionDiv" style="display:none;">
+                                    <div data-th-include="operate/useroperator/cohort"></div>
                                 </div>
                             </div>
                         </div>
@@ -167,5 +184,10 @@
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
 <script data-th-src="@{/js/app/operate/diagnosis/template.js}"></script>
 <script data-th-src="@{/js/app/operate/useroperator/monitor.js}"></script>
+<script data-th-src="@{/js/app/operate/useroperator/cohort.js}"></script>
+
+<script>
+    init_date("startDateOfRetention", "yyyy-mm", 1,2,1);
+</script>
 </body>
 </html>
