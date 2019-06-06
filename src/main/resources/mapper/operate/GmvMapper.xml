@@ -1,4 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.GmvMapper">
+
+    <!--获取年月日不同周期的GMV-->
+    <select id="getKpiOfDifferPeriod" resultType="Double">
+        SELECT
+        SUM(W_ORDERS.REAL_FEE) TOTAL_GMV
+        FROM
+        W_ORDERS
+        JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
+        WHERE
+        W_ORDERS.VALID_STATUS = 1
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
+    </select>
+
+    <!--查询起止时间段内的GMV值-->
+    <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        SELECT
+        SUM(W_ORDERS.REAL_FEE) kpiVal,
+        ${period_name} kpiDate
+        FROM
+        W_ORDERS
+        JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
+        WHERE
+        W_ORDERS.VALID_STATUS = 1
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
+        GROUP BY  ${period_name}
+        ORDER BY  ${period_name} ASC
+    </select>
+
+    <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        SELECT
+        ${period_name} kpiDate,
+        SUM( W_ORDERS.REAL_FEE ) kpiVal,
+        SUM(CASE WHEN W_ORDERS.IS_FP='Y' THEN W_ORDERS.REAL_FEE ELSE 0 END) fpKpiVal,
+        SUM(CASE WHEN W_ORDERS.IS_FP='N' THEN W_ORDERS.REAL_FEE ELSE 0 END) spKpiVal
+        FROM
+        W_ORDERS
+        JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
+        WHERE
+        W_ORDERS.VALID_STATUS = 1
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
+        GROUP BY  ${period_name}
+        ORDER BY  ${period_name} ASC
+    </select>
+
+    <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        SELECT
+        SUM(W_ORDERS.REAL_FEE) kpiVal,
+        SUM(CASE WHEN W_ORDERS.IS_FP='Y' THEN W_ORDERS.REAL_FEE ELSE 0 END) fpKpiVal,
+        SUM(CASE WHEN W_ORDERS.IS_FP='N' THEN W_ORDERS.REAL_FEE ELSE 0 END) spKpiVal
+        FROM
+        W_ORDERS
+        JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
+        WHERE
+        W_ORDERS.VALID_STATUS = 1
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
+    </select>
 </mapper>

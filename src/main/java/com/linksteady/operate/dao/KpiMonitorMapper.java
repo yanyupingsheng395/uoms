@@ -49,11 +49,5 @@ public interface KpiMonitorMapper {
     List<Map<String, Object>> getAvgOrderQuantity(@Param("startDt") String startDt, @Param("endDt") String endDt);
     List<Map<String, Object>> getAvgPiecePrice(@Param("startDt") String startDt, @Param("endDt") String endDt);
     List<Map<String, Object>> getAvgJoinRate(@Param("startDt") String startDt, @Param("endDt") String endDt);
-    Double getGmvOfDifferPeriod(@Param("startDt") String startDt, @Param("endDt") String endDt, @Param("format") String format, @Param("truncFormat") String truncFormat);
-    List<KpiInfoVo> getDatePeriodData(@Param("start") String start, @Param("end") String end, @Param("truncFormat") String truncFormat, @Param("format") String format);
-    List<KpiInfoVo> getSpAndFpKpi(@Param("start") String start, @Param("end") String end, @Param("format") String format, @Param("truncFormat") String truncFormat);
-    KpiInfoVo getSpAndFpKpiTotal(@Param("start") String start, @Param("end") String end, @Param("format") String format, @Param("truncFormat") String truncFormat);
-    List<KpiInfoVo> getSpOrFpKpiVal(@Param("isFp") String isFp, @Param("start") String start, @Param("end") String end, @Param("format") String format, @Param("truncFormat") String truncFormat);
-
     KpiSumeryInfo getSummaryKpiInfo(@Param("joinInfo") String joinInfo, @Param("whereInfo") String whereInfo);
 }

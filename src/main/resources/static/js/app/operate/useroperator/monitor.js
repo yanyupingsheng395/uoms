@@ -148,8 +148,7 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             }
             kpiChart(kpiType);
             allChart(kpiType);
-            fpChart(kpiType);
-            spChart(kpiType);
+            makeSpAndFpChart(kpiType);
             getKpiInfo(kpiType, unit);
             getKpiCalInfo(kpiType);
         }else if(e.target.href.endWith("#overview")) {
@@ -190,8 +189,8 @@ function getKpiInfo(kpiType, unit) {
                 $("#lastYearOnYear").html("").html("<span style=\"color:green;\"><i class=\"mdi mdi-menu-up mdi-18px\"></i>"+yny+"</span>");
             }
         }
-        if(yoy == "--") {
-            $("#lastPeriodYearOnYear").html("").html(yoy);
+        if(yoy == "--" || yoy == undefined) {
+            $("#lastPeriodYearOnYear").html("").html("--");
         }else {
             if(yny.indexOf("-") > -1) {
                 $("#lastPeriodYearOnYear").html("").html("<span style=\"color:red;\"><i class=\"mdi mdi-menu-down mdi-18px\"></i>"+yoy+"</span>");
@@ -199,7 +198,7 @@ function getKpiInfo(kpiType, unit) {
                 $("#lastPeriodYearOnYear").html("").html("<span style=\"color:green;\"><i class=\"mdi mdi-menu-up mdi-18px\"></i>"+yoy+"</span>");
             }
         }
-        $("#lastPeriod").text(r.data["lastKpiVal"] == "--" ? r.data["lastKpiVal"] : r.data["lastKpiVal"] + unit);
+        $("#lastPeriod").text(r.data["lastKpiVal"] == "--" || r.data['lastKpiVal'] == undefined ? '--' : r.data["lastKpiVal"] + unit);
     });
 }
 
@@ -260,7 +259,6 @@ function allChart(kpiType) {
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
     $.get("/useroperator/getSpAndFpKpi", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt}, function (r) {
-        console.log(r)
         var seriesData = [];
         var o1 = new Object();
         o1.name = "总体";
@@ -285,142 +283,142 @@ function allChart(kpiType) {
     });
 }
 
-function fpChart(kpiType) {
+function makeSpAndFpChart(kpiType) {
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    $.get("/useroperator/getSpOrFpKpiVal", {kpiType:kpiType, isFp: 'Y',periodType: periodType, startDt: startDt, endDt: endDt}, function (r) {
-        var seriesData = [];
-        var o1 = new Object();
-        o1.name = "本周期指标";
-        o1.data = r.data['kpiVal'];
-        o1.type = 'line';
-        seriesData.push(o1);
-        var o2 = new Object();
-        o2.name = "去年同期指标";
-        o2.data = r.data['lastKpiVal'];
-        o2.type = 'line';
-        seriesData.push(o2);
-
-        var o3 = new Object();
-        o3.name = "本周期均值";
-        o3.data = r.data['avgKpiVal'];
-        o3.type = 'line';
-        o3.smooth = false;
-        o3.itemStyle = {
-            normal:{
-                lineStyle:{
-                    width:2,
-                    type:'dotted'  //'dotted'虚线 'solid'实线
-                }
-            }
-        };
-        seriesData.push(o3);
-        var o4 = new Object();
-        o4.name = "去年同期均值";
-        o4.data = r.data['avgLastKpiVal'];
-        o4.type = 'line';
-        o4.smooth = false;
-        o4.itemStyle = {
-            normal:{
-                lineStyle:{
-                    width:2,
-                    type:'dotted'  //'dotted'虚线 'solid'实线
-                }
-            }
-        };
-        seriesData.push(o4);
-        var option = getOption(["本周期指标", "去年同期指标", "本周期均值", "去年同期均值"], r.data['xData'], "日期", "指标值",seriesData);
-        option.title = {
-            text: '新客指标报告期变化趋势图',
-            x:'center',
-            y: 'bottom',
-            textStyle:{
-                //文字颜色
-                color:'#000',
-                //字体风格,'normal','italic','oblique'
-                fontStyle:'normal',
-                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-                fontWeight:'normal',
-                //字体系列
-                fontFamily:'sans-serif',
-                //字体大小
-                fontSize:12
-            }
-        };
-        option.grid = {left:'12%'};
-        var c = echarts.init(document.getElementById("fpChart"), 'macarons');
-        c.setOption(option);
+    $.get("/useroperator/getSpOrFpKpiVal", {kpiType:kpiType,periodType: periodType, startDt: startDt, endDt: endDt}, function (r) {
+        fpChart(r);
+        spChart(r);
     });
 }
 
-function spChart(kpiType) {
-    var periodType = $("#period").find("option:selected").val();
-    var startDt = $("#startDt").val();
-    var endDt = $("#endDt").val();
-    $.get("/useroperator/getSpOrFpKpiVal", {kpiType:kpiType, isFp: 'N',periodType: periodType, startDt: startDt, endDt: endDt}, function (r) {
-        var seriesData = [];
-        var o1 = new Object();
-        o1.name = "本周期指标";
-        o1.data = r.data['kpiVal'];
-        o1.type = 'line';
-        seriesData.push(o1);
-        var o2 = new Object();
-        o2.name = "去年同期指标";
-        o2.data = r.data['lastKpiVal'];
-        o2.type = 'line';
-        seriesData.push(o2);
+function fpChart(r) {
+    var seriesData = [];
+    var o1 = new Object();
+    o1.name = "本周期指标";
+    o1.data = r.data['fpKpiVal'];
+    o1.type = 'line';
+    seriesData.push(o1);
+    var o2 = new Object();
+    o2.name = "去年同期指标";
+    o2.data = r.data['lastFpKpiVal'];
+    o2.type = 'line';
+    seriesData.push(o2);
 
-        var o3 = new Object();
-        o3.name = "本周期均值";
-        o3.data = r.data['avgKpiVal'];
-        o3.type = 'line';
-        o3.smooth = false;
-        o3.itemStyle = {
-            normal:{
-                lineStyle:{
-                    width:2,
-                    type:'dotted'  //'dotted'虚线 'solid'实线
-                }
+    var o3 = new Object();
+    o3.name = "本周期均值";
+    o3.data = r.data['avgFpKpiVal'];
+    o3.type = 'line';
+    o3.smooth = false;
+    o3.itemStyle = {
+        normal:{
+            lineStyle:{
+                width:2,
+                type:'dotted'  //'dotted'虚线 'solid'实线
             }
-        };
-        seriesData.push(o3);
-        var o4 = new Object();
-        o4.name = "去年同期均值";
-        o4.data = r.data['avgLastKpiVal'];
-        o4.type = 'line';
-        o4.smooth = false;
-        o4.itemStyle = {
-            normal:{
-                lineStyle:{
-                    width:2,
-                    type:'dotted'  //'dotted'虚线 'solid'实线
-                }
+        }
+    };
+    seriesData.push(o3);
+    var o4 = new Object();
+    o4.name = "去年同期均值";
+    o4.data = r.data['avgLastFpKpiVal'];
+    o4.type = 'line';
+    o4.smooth = false;
+    o4.itemStyle = {
+        normal:{
+            lineStyle:{
+                width:2,
+                type:'dotted'  //'dotted'虚线 'solid'实线
             }
-        };
-        seriesData.push(o4);
-        var option = getOption(["本周期指标", "去年同期指标", "本周期均值", "去年同期均值"], r.data['xData'], "日期", "指标值",seriesData);
-        option.title = {
-            text: '老客指标报告期变化趋势图',
-            x:'center',
-            y: 'bottom',
-            textStyle:{
-                //文字颜色
-                color:'#000',
-                //字体风格,'normal','italic','oblique'
-                fontStyle:'normal',
-                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-                fontWeight:'normal',
-                //字体系列
-                fontFamily:'sans-serif',
-                //字体大小
-                fontSize:12
+        }
+    };
+    seriesData.push(o4);
+    var option = getOption(["本周期指标", "去年同期指标", "本周期均值", "去年同期均值"], r.data['xData'], "日期", "指标值",seriesData);
+    option.title = {
+        text: '新客指标报告期变化趋势图',
+        x:'center',
+        y: 'bottom',
+        textStyle:{
+            //文字颜色
+            color:'#000',
+            //字体风格,'normal','italic','oblique'
+            fontStyle:'normal',
+            //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+            fontWeight:'normal',
+            //字体系列
+            fontFamily:'sans-serif',
+            //字体大小
+            fontSize:12
+        }
+    };
+    option.grid = {left:'12%'};
+    var c = echarts.init(document.getElementById("fpChart"), 'macarons');
+    c.setOption(option);
+}
+
+function spChart(r) {
+    var seriesData = [];
+    var o1 = new Object();
+    o1.name = "本周期指标";
+    o1.data = r.data['spKpiVal'];
+    o1.type = 'line';
+    seriesData.push(o1);
+    var o2 = new Object();
+    o2.name = "去年同期指标";
+    o2.data = r.data['lastSpKpiVal'];
+    o2.type = 'line';
+    seriesData.push(o2);
+
+    var o3 = new Object();
+    o3.name = "本周期均值";
+    o3.data = r.data['avgSpKpiVal'];
+    o3.type = 'line';
+    o3.smooth = false;
+    o3.itemStyle = {
+        normal:{
+            lineStyle:{
+                width:2,
+                type:'dotted'  //'dotted'虚线 'solid'实线
             }
-        };
-        option.grid = {left:'12%'};
-        var c = echarts.init(document.getElementById("spChart"), 'macarons');
-        c.setOption(option);
-    });
+        }
+    };
+    seriesData.push(o3);
+    var o4 = new Object();
+    o4.name = "去年同期均值";
+    o4.data = r.data['avgLastSpKpiVal'];
+    o4.type = 'line';
+    o4.smooth = false;
+    o4.itemStyle = {
+        normal:{
+            lineStyle:{
+                width:2,
+                type:'dotted'  //'dotted'虚线 'solid'实线
+            }
+        }
+    };
+    seriesData.push(o4);
+    var option = getOption(["本周期指标", "去年同期指标", "本周期均值", "去年同期均值"], r.data['xData'], "日期", "指标值",seriesData);
+    option.title = {
+        text: '老客指标报告期变化趋势图',
+        x:'center',
+        y: 'bottom',
+        textStyle:{
+            //文字颜色
+            color:'#000',
+            //字体风格,'normal','italic','oblique'
+            fontStyle:'normal',
+            //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+            fontWeight:'normal',
+            //字体系列
+            fontFamily:'sans-serif',
+            //字体大小
+            fontSize:12
+        }
+    };
+    option.grid = {left:'12%'};
+    var c = echarts.init(document.getElementById("spChart"), 'macarons');
+    c.setOption(option);
 }
 
 function getKpiCalInfo(kpiType) {

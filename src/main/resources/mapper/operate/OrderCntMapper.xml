@@ -4,84 +4,71 @@
 
     <!--获取年月日不同周期的用户数-->
     <select id="getKpiOfDifferPeriod" resultType="Double">
-        SELECT SUM(COUNT(W_ORDERS.ID)) TOTAL_CNT
+        SELECT COUNT(W_ORDERS.ID) TOTAL_CNT
         FROM
         W_ORDERS
         JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
         WHERE
         W_ORDERS.VALID_STATUS = 1
-        AND TRUNC(W_DATE.CALENDAR_DATE, #{truncFormat}) &gt;= TRUNC(TO_DATE(#{startDt}, #{format}), #{truncFormat})
-        AND TRUNC(W_DATE.CALENDAR_DATE, #{truncFormat}) &lt;= TRUNC(TO_DATE(#{endDt}, #{format}), #{truncFormat})
-        GROUP BY
-        W_DATE.DAY_SHORT_NAME
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
     </select>
 
     <!--查询起止时间段内的GMV值-->
     <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVo">
         SELECT COUNT(W_ORDERS.ID) kpiVal,
-        to_char(W_DATE.CALENDAR_DATE, '${format}') kpiDate
+        ${period_name} kpiDate
         FROM
         W_ORDERS
         JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
         WHERE
         W_ORDERS.VALID_STATUS = 1
-        AND TRUNC(W_DATE.CALENDAR_DATE, '${truncFormat}') &gt;= TRUNC(TO_DATE(#{start}, '${format}'), 'mm')
-        AND TRUNC(W_DATE.CALENDAR_DATE, '${truncFormat}') &lt;= TRUNC(TO_DATE(#{end}, '${format}'), 'mm')
-        GROUP BY
-        to_char(W_DATE.CALENDAR_DATE, '${format}')
-        order by
-        to_char(W_DATE.CALENDAR_DATE, '${format}') asc
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
+        GROUP BY  ${period_name}
+        ORDER BY  ${period_name} ASC
     </select>
 
     <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
         SELECT COUNT(W_ORDERS.ID) kpiVal,
-            TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') kpiDate,
             COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='Y' THEN W_ORDERS.ID END) fpKpiVal,
             COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='N' THEN W_ORDERS.ID END) spKpiVal
             FROM
             W_ORDERS
             JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
+            <if test="joinInfo != null and joinInfo != ''">
+                ${joinInfo}
+            </if>
             WHERE
             W_ORDERS.VALID_STATUS = 1
-            AND TRUNC(W_DATE.CALENDAR_DATE, '${truncFormat}') &gt;= TRUNC(TO_DATE(#{start}, '${format}'), 'mm')
-            AND TRUNC(W_DATE.CALENDAR_DATE, '${truncFormat}') &lt;= TRUNC(TO_DATE(#{end}, '${format}'), 'mm')
-            GROUP BY
-            TO_CHAR(W_DATE.CALENDAR_DATE, '${format}')
-            order by
-            TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') asc
+            <if test="whereInfo != null and whereInfo != ''">
+                ${whereInfo}
+            </if>
     </select>
 
     <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
         SELECT
-            SUM(COUNT(W_ORDERS.ID)) kpiVal,
-            SUM(COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='Y' THEN W_ORDERS.ID END)) fpKpiVal,
-            SUM(COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='N' THEN W_ORDERS.ID END)) spKpiVal
+            COUNT(W_ORDERS.ID) kpiVal,
+            COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='Y' THEN W_ORDERS.ID END) fpKpiVal,
+            COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='N' THEN W_ORDERS.ID END) spKpiVal
             FROM
             W_ORDERS
             JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
+            <if test="joinInfo != null and joinInfo != ''">
+                ${joinInfo}
+            </if>
             WHERE
             W_ORDERS.VALID_STATUS = 1
-            AND TRUNC(W_DATE.CALENDAR_DATE, '${truncFormat}') &gt;= TRUNC(TO_DATE(#{start}, '${format}'), 'mm')
-            AND TRUNC(W_DATE.CALENDAR_DATE, '${truncFormat}') &lt;= TRUNC(TO_DATE(#{end}, '${format}'), 'mm')
-            GROUP BY
-            TO_CHAR(W_DATE.CALENDAR_DATE, '${format}')
-            order by
-            TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') asc
-    </select>
-    <select id="getSpOrFpKpiVal" resultType="com.linksteady.operate.vo.KpiInfoVo">
-        SELECT
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') kpiDate,
-        COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='${isFp}' THEN W_ORDERS.ID END) kpiVal
-        FROM
-        W_ORDERS
-        JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
-        WHERE
-        W_ORDERS.VALID_STATUS = 1
-        AND TRUNC(W_DATE.CALENDAR_DATE, '${truncFormat}') &gt;= TRUNC(TO_DATE(#{start}, '${format}'), 'mm')
-        AND TRUNC(W_DATE.CALENDAR_DATE, '${truncFormat}') &lt;= TRUNC(TO_DATE(#{end}, '${format}'), 'mm')
-        GROUP BY
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}')
-        order by
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') asc
+            <if test="whereInfo != null and whereInfo != ''">
+                ${whereInfo}
+            </if>
     </select>
 </mapper>

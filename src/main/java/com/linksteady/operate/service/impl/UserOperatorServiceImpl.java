@@ -52,6 +52,12 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     @Autowired
     private UserJoinRateMapper userJoinRateMapper;
 
+    @Autowired
+    private SpriceMapper spriceMapper;
+
+    @Autowired
+    private GmvMapper gmvMapper;
+
     @Override
     public List<Map<String, Object>> getSource() {
         return sourceMapper.findAll();
@@ -89,6 +95,10 @@ public class UserOperatorServiceImpl implements UserOperatorService {
      */
     private static final String OP_DATA_ORDER_JOINRATE= "jointRate";
 
+    /**
+     * 件单价
+     */
+    private static final String OP_DATA_SPRICE = "unitPrice";
 
     @Override
     public List<Map<String, Object>> getBrand() {
@@ -153,24 +163,27 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     private Double getKpiOfDifferPeriod(String type, String startDt, String endDt,String periodType,String source) {
 
         TemplateResult templateResult=buildJoinInfoAndFilter(periodType,startDt,endDt,source);
-//
-//        if(type.equals(OP_DATA_GMV)) {
-//            return kpiMonitorMapper.getGmvOfDifferPeriod(startDt, endDt, format, truncFormat);
-//        }
-//        if(type.equals(OP_DATA_USER_CNT)) {
-//            return  userCntMapper.getUserCntOfDifferPeriod(startDt, endDt, format, truncFormat);
-//        }
-//        if(type.equals(OP_DATA_USER_PRICE)) {
-//            return  userPriceMapper.getUserPriceOfDifferPeriod(startDt, endDt, format, truncFormat);
-//        }
-//        if(type.equals(OP_DATA_ORDER_CNT)) {
-//            return  orderCntMapper.getKpiOfDifferPeriod(startDt, endDt, format, truncFormat);
-//        }
-//        if(type.equals(OP_DATA_ORDER_PRICE)) {
-//            return  orderPriceMapper.getKpiOfDifferPeriod(startDt, endDt, format, truncFormat);
-//        }
+
+        if(type.equals(OP_DATA_GMV)) {
+            return gmvMapper.getKpiOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
+        }
+        if(type.equals(OP_DATA_USER_CNT)) {
+            return  userCntMapper.getUserCntOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
+        }
+        if(type.equals(OP_DATA_USER_PRICE)) {
+            return  userPriceMapper.getUserPriceOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
+        }
+        if(type.equals(OP_DATA_ORDER_CNT)) {
+            return  orderCntMapper.getKpiOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
+        }
+        if(type.equals(OP_DATA_ORDER_PRICE)) {
+            return  orderPriceMapper.getKpiOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
+        }
         if(type.equals(OP_DATA_ORDER_JOINRATE)) {
             return  userJoinRateMapper.getUserJoinRateOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
+        }
+        if(type.equals(OP_DATA_SPRICE)) {
+            return spriceMapper.getSpriceOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
         }
         return null;
     }
@@ -185,32 +198,20 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     @Override
     public Map<String, Object> getKpiChart(String kpiType, String periodType, String startDt, String endDt,String source) {
         Map<String, Object> result = Maps.newHashMap();
-
         //获取周期内的明细列表
         List<String> dateList = getDateList(periodType, startDt, endDt);
-        //周期内的开始日期和结束日期
-        String start = dateList.get(0);
-        String end = dateList.get(dateList.size()-1);
-
-        //获取周期内的指标值
-        List<KpiInfoVo> currentDataList = getDatePeriodData(kpiType, start, end, periodType, source);
+        List<KpiInfoVo> currentDataList = getDatePeriodData(kpiType, startDt, endDt, periodType, source);
         Map<String, Object> currentDataMap = currentDataList.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getKpiVal));
         //修补数据为时间周期上连续，方便echarts展现
         List<Double> currentList = fixData(currentDataMap, dateList);
-
         String lastStart = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("start"));
         String lastEnd = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("end"));
-        List<String> lastDateList = getDateList(periodType, lastStart, lastEnd);
-        start = lastDateList.get(0);
-        end = lastDateList.get(dateList.size()-1);
-        List<KpiInfoVo> lastDataList = getDatePeriodData(kpiType, start, end, periodType, source);
-
+        List<String> lastYearDateList = getDateList(periodType, lastStart, lastEnd);
+        List<KpiInfoVo> lastDataList = getDatePeriodData(kpiType, lastStart, lastEnd, periodType, source);
         Map<String, Object> lastDataMap = lastDataList.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getKpiVal));
-        List<Double> lastList = fixData(lastDataMap, dateList);
-
+        List<Double> lastList = fixData(lastDataMap, lastYearDateList);
         Double currentAvg = currentList.stream().mapToDouble(x->x).average().getAsDouble();
         Double lastAvg = lastList.stream().mapToDouble(x->x).average().getAsDouble();
-
         List<Double> currentAvgList = dateList.stream().map(x->currentAvg).collect(Collectors.toList());
         List<Double> lastAvgList = dateList.stream().map(x->lastAvg).collect(Collectors.toList());
         result.put("xData", dateList);
@@ -234,23 +235,26 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         TemplateResult templateResult=buildJoinInfoAndFilter(periodType,startDt,endDt,source);
         String peroidName=buildPeriodName(periodType);
 
-//        if(kpiType.equals(OP_DATA_GMV)) {
-//            return kpiMonitorMapper.getDatePeriodData(start, end, truncFormat, format);
-//        }
-//        if(kpiType.equals(OP_DATA_USER_CNT)) {
-//            return  userCntMapper.getDatePeriodData(start, end, truncFormat, format);
-//        }
-//        if(kpiType.equals(OP_DATA_USER_PRICE)) {
-//            return  userPriceMapper.getDatePeriodData(start, end, truncFormat, format);
-//        }
-//        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
-//            return  orderCntMapper.getDatePeriodData(start, end, truncFormat, format);
-//        }
-//        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
-//            return  orderPriceMapper.getDatePeriodData(start, end, truncFormat, format);
-//        }
+        if(kpiType.equals(OP_DATA_GMV)) {
+            return gmvMapper.getDatePeriodData(peroidName, templateResult.getJoinInfo(),templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_USER_CNT)) {
+            return  userCntMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_USER_PRICE)) {
+            return  userPriceMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
+            return  orderCntMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
+            return  orderPriceMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
         if(kpiType.equals(OP_DATA_ORDER_JOINRATE)) {
             return  userJoinRateMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_SPRICE)) {
+            return spriceMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
         }
         return null;
     }
@@ -274,20 +278,14 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     @Override
     public Map<String, Object> getSpAndFpKpi(String kpiType, String periodType, String startDt, String endDt,String source) {
         Map<String, Object> result = Maps.newHashMap();
-
         List<String> dateList = getDateList(periodType, startDt, endDt);
-        String start = dateList.get(0);
-        String end = dateList.get(dateList.size()-1);
-
-        //todo ? 周期选的是年，这里传进去的start是月份  应该是传年
-        List<KpiInfoVo> kpiInfoVos = getSpAndFpKpiDetail(kpiType, start, end, periodType, source);
+        List<KpiInfoVo> kpiInfoVos = getSpAndFpKpiDetail(kpiType, startDt, endDt, periodType, source);
         Map<String, Object> kpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getKpiVal));
         Map<String, Object> fpKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getSpKpiVal));
         Map<String, Object> spKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getFpKpiVal));
         List<Double> kpiValList = fixData(kpiValMap, dateList);
         List<Double> spKpiValList = fixData(spKpiValMap, dateList);
         List<Double> fpKpiValList = fixData(fpKpiValMap, dateList);
-
         result.put("xData", dateList);
         result.put("kpiVal", kpiValList);
         result.put("fpKpiVal", fpKpiValList);
@@ -298,23 +296,26 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     private List<KpiInfoVo> getSpAndFpKpiDetail(String kpiType, String startDt, String endDt , String periodType, String source) {
         TemplateResult templateResult=buildJoinInfoAndFilter(periodType,startDt,endDt,source);
         String peroidName=buildPeriodName(periodType);
-//        if(kpiType.equals(OP_DATA_GMV)) {
-//            return kpiMonitorMapper.getSpAndFpKpi(start, end, format, truncFormat);
-//        }
-//        if(kpiType.equals(OP_DATA_USER_CNT)) {
-//            return userCntMapper.getSpAndFpKpi(start, end, format, truncFormat);
-//        }
-//        if(kpiType.equals(OP_DATA_USER_PRICE)) {
-//            return  userPriceMapper.getSpAndFpKpi(start, end, format, truncFormat);
-//        }
-//        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
-//            return  orderCntMapper.getSpAndFpKpi(start, end, format, truncFormat);
-//        }
-//        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
-//            return  orderPriceMapper.getSpAndFpKpi(start, end, format, truncFormat);
-//        }
+        if(kpiType.equals(OP_DATA_GMV)) {
+            return gmvMapper.getSpAndFpKpi(peroidName, templateResult.getJoinInfo(),templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_USER_CNT)) {
+            return userCntMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_USER_PRICE)) {
+            return  userPriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
+            return  orderCntMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
+            return  orderPriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
         if(kpiType.equals(OP_DATA_ORDER_JOINRATE)) {
             return  userJoinRateMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_SPRICE)) {
+            return spriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
         }
         return null;
     }
@@ -329,113 +330,74 @@ public class UserOperatorServiceImpl implements UserOperatorService {
      * @return
      */
     @Override
-    public Map<String, Object> getFpKpiVal(String kpiType,String periodType, String startDt, String endDt,String source) {
+    public Map<String, Object> getSpAndFpKpiPeriodData(String kpiType,String periodType, String startDt, String endDt,String source) {
         Map<String, Object> result = Maps.newHashMap();
-
         List<String> dateList = getDateList(periodType, startDt, endDt);
-        String start = dateList.get(0);
-        String end = dateList.get(dateList.size()-1);
-
-        List<KpiInfoVo> kpiInfoVos = getSpOrFpKpiValDetail(kpiType,start, end, periodType, source);
-
+        List<KpiInfoVo> kpiInfoVos = getSpOrFpKpiValDetail(kpiType,startDt, endDt, periodType, source);
         //获取去年同期的值
         String lastStart = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("start"));
         String lastEnd = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("end"));
         List<String> lastDateList = getDateList(periodType, lastStart, lastEnd);
-        start = lastDateList.get(0);
-        end = lastDateList.get(dateList.size()-1);
-        List<KpiInfoVo> lastKpiInfoVos = getSpOrFpKpiValDetail(kpiType, start, end, periodType, source);
+        List<KpiInfoVo> lastKpiInfoVos = getSpOrFpKpiValDetail(kpiType, lastStart, lastEnd, periodType, source);
 
-        Map<String, Object> kpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getFpKpiVal));
-        Map<String, Object> lastKpiValMap = lastKpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getFpKpiVal));
-        List<Double> kpiValList = fixData(kpiValMap, dateList);
-        List<Double> lastKpiValList = fixData(lastKpiValMap, dateList);
+        Map<String, Object> fpKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getFpKpiVal));
+        Map<String, Object> lastFpKpiValMap = lastKpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getFpKpiVal));
+        List<Double> fpKpiValList = fixData(fpKpiValMap, dateList);
+        List<Double> lastFpKpiValList = fixData(lastFpKpiValMap, lastDateList);
 
-        Double avgKpiVal = kpiValList.stream().mapToDouble(x->x).average().getAsDouble();
-        Double avgLastKpiVal = lastKpiValList.stream().mapToDouble(x->x).average().getAsDouble();
+        Map<String, Object> spKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getSpKpiVal));
+        Map<String, Object> lastSpKpiValMap = lastKpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getSpKpiVal));
+        List<Double> spKpiValList = fixData(spKpiValMap, dateList);
+        List<Double> lastSpKpiValList = fixData(lastSpKpiValMap, lastDateList);
 
-        List<Double> avgKpiValList = dateList.stream().map(x->avgKpiVal).collect(Collectors.toList());
-        List<Double> lastAvgKpiValList = dateList.stream().map(x->avgLastKpiVal).collect(Collectors.toList());
+        Double avgFpKpiVal = fpKpiValList.stream().mapToDouble(x->x).average().getAsDouble();
+        Double avgLastFpKpiVal = lastFpKpiValList.stream().mapToDouble(x->x).average().getAsDouble();
+
+        Double avgSpKpiVal = spKpiValList.stream().mapToDouble(x->x).average().getAsDouble();
+        Double avgLastSpKpiVal = lastSpKpiValList.stream().mapToDouble(x->x).average().getAsDouble();
+
+        List<Double> avgFpKpiValList = dateList.stream().map(x->avgFpKpiVal).collect(Collectors.toList());
+        List<Double> lastAvgFpKpiValList = dateList.stream().map(x->avgLastFpKpiVal).collect(Collectors.toList());
+
+        List<Double> avgSpKpiValList = dateList.stream().map(x->avgSpKpiVal).collect(Collectors.toList());
+        List<Double> lastAvgSpKpiValList = dateList.stream().map(x->avgLastSpKpiVal).collect(Collectors.toList());
+        result.put("spKpiVal", spKpiValList);
+        result.put("fpKpiVal", fpKpiValList);
+        result.put("lastSpKpiVal", lastSpKpiValList);
+        result.put("lastFpKpiVal", lastFpKpiValList);
+        result.put("avgSpKpiVal", avgSpKpiValList);
+        result.put("avgFpKpiVal", avgFpKpiValList);
+        result.put("avgLastSpKpiVal", lastAvgSpKpiValList);
+        result.put("avgLastFpKpiVal", lastAvgFpKpiValList);
         result.put("xData", dateList);
-        result.put("kpiVal", kpiValList);
-        result.put("lastKpiVal", lastKpiValList);
-        result.put("avgKpiVal", avgKpiValList);
-        result.put("avgLastKpiVal", lastAvgKpiValList);
-
         return result;
     }
 
-    /**
-     * 获取复购的指标值列表及其去年同期、均值
-     * @param kpiType
-     * @param periodType
-     * @param startDt
-     * @param endDt
-     * @param source
-     * @return
-     */
-    @Override
-    public Map<String, Object> getSpKpiVal(String kpiType,String periodType, String startDt, String endDt,String source) {
-        Map<String, Object> result = Maps.newHashMap();
-
-        List<String> dateList = getDateList(periodType, startDt, endDt);
-        String start = dateList.get(0);
-        String end = dateList.get(dateList.size()-1);
-        //获取指标值 如果isFp='Y' 则取fpKpiVal 否则取spKpiVal
-        List<KpiInfoVo> kpiInfoVos = getSpOrFpKpiValDetail(kpiType,start, end, periodType, source);
-
-        //获取去年同期的值
-        String lastStart = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("start"));
-        String lastEnd = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("end"));
-        List<String> lastDateList = getDateList(periodType, lastStart, lastEnd);
-        start = lastDateList.get(0);
-        end = lastDateList.get(dateList.size()-1);
-        List<KpiInfoVo> lastKpiInfoVos = getSpOrFpKpiValDetail(kpiType,start, end, periodType, source);
-
-        Map<String, Object> kpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getSpKpiVal));
-        Map<String, Object> lastKpiValMap = lastKpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getSpKpiVal));
-        List<Double> kpiValList = fixData(kpiValMap, dateList);
-        List<Double> lastKpiValList = fixData(lastKpiValMap, dateList);
-
-        Double avgKpiVal = kpiValList.stream().mapToDouble(x->x).average().getAsDouble();
-        Double avgLastKpiVal = lastKpiValList.stream().mapToDouble(x->x).average().getAsDouble();
-
-        List<Double> avgKpiValList = dateList.stream().map(x->avgKpiVal).collect(Collectors.toList());
-        List<Double> lastAvgKpiValList = dateList.stream().map(x->avgLastKpiVal).collect(Collectors.toList());
-        result.put("xData", dateList);
-        result.put("kpiVal", kpiValList);
-        result.put("lastKpiVal", lastKpiValList);
-        result.put("avgKpiVal", avgKpiValList);
-        result.put("avgLastKpiVal", lastAvgKpiValList);
-
-        return result;
-    }
 
     private List<KpiInfoVo> getSpOrFpKpiValDetail(String kpiType,String startDt, String endDt, String periodType, String source) {
         TemplateResult templateResult=buildJoinInfoAndFilter(periodType,startDt,endDt,source);
         String peroidName=buildPeriodName(periodType);
 
-//        if(kpiType.equals(OP_DATA_GMV)) {
-//            return kpiMonitorMapper.getSpOrFpKpiVal(isFp, start, end, format, truncFormat);
-//        }
-//        if(kpiType.equals(OP_DATA_USER_CNT)) {
-//            return userCntMapper.getSpOrFpKpiVal(isFp, start, end, format, truncFormat);
-//        }
-//        if(kpiType.equals(OP_DATA_USER_PRICE)) {
-//            if(isFp.equals("Y")) {
-//                return  userPriceMapper.getSpOrFpKpiValForNew(start, end, format, truncFormat);
-//            }else {
-//                return  userPriceMapper.getSpOrFpKpiValForOld(start, end, format, truncFormat);
-//            }
-//        }
-//        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
-//            return  orderCntMapper.getSpOrFpKpiVal(isFp, start, end, format, truncFormat);
-//        }
-//        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
-//            return  orderPriceMapper.getSpOrFpKpiVal(isFp, start, end, format, truncFormat);
-//        }
+        if(kpiType.equals(OP_DATA_GMV)) {
+            return gmvMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_USER_CNT)) {
+            return userCntMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_USER_PRICE)) {
+            return  userPriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
+            return  orderCntMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
+            return  orderPriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
         if(kpiType.equals(OP_DATA_ORDER_JOINRATE)) {
             return  userJoinRateMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_SPRICE)) {
+            return spriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
         }
         return null;
     }
@@ -449,54 +411,44 @@ public class UserOperatorServiceImpl implements UserOperatorService {
      * @return
      */
     @Override
-    public Map<String, Object> getKpiCalInfo(String kpiType, String periodType, String startDt, String endDt) {
+    public Map<String, Object> getKpiCalInfo(String source, String kpiType, String periodType, String startDt, String endDt) {
         Map<String, Object> result = Maps.newHashMap();
-        String format = "", truncFormat = "";
-        switch (periodType){
-            case "Y":
-                format = "yyyy";
-                truncFormat = "yy";
-                break;
-            case "M":
-                format = "yyyymm";
-                truncFormat = "mm";
-                break;
-            case "D":
-                format = "yyyymmdd";
-                truncFormat = "dd";
-                break;
-        }
-
-        // 计算当前时间GMV值
-        String newStartDt = startDt.replaceAll("-", "");
-        String newEndDt = "".equals(endDt) ? newStartDt : endDt.replaceAll("-", "");
-        KpiInfoVo kpiInfoVos = getSpAndFpKpiTotal(kpiType, newStartDt, newEndDt, format, truncFormat);
-
+        KpiInfoVo kpiInfoVos = getSpAndFpKpiTotal(kpiType, periodType, startDt, endDt, source);
         // 计算上一周期的GMV值
         Map<String, Object> lastDateMap = getLastPeriod(periodType, startDt, endDt);
         String lastStart = String.valueOf(lastDateMap.get("start"));
         String lastEnd = String.valueOf(lastDateMap.get("end"));
-        KpiInfoVo lastKpiInfoVos = getSpAndFpKpiTotal(kpiType, lastStart, lastEnd, format, truncFormat);
-
+        KpiInfoVo lastKpiInfoVos = null;
+        if(!lastStart.equals("")) {
+            lastKpiInfoVos = getSpAndFpKpiTotal(kpiType, periodType, lastStart, lastEnd, source);
+        }
         // 计算去年的GMV值
-        Map<String, Object> lastYearMap = getLastPeriod(periodType, startDt, endDt);
+        Map<String, Object> lastYearMap = getLastYearPeriod(periodType, startDt, endDt);
         String lastYearStart = String.valueOf(lastYearMap.get("start"));
         String lastYearEnd = String.valueOf(lastYearMap.get("end"));
-        KpiInfoVo lastYearKpiInfoVos = getSpAndFpKpiTotal(kpiType, lastYearStart, lastYearEnd, format, truncFormat);
+        KpiInfoVo lastYearKpiInfoVos = getSpAndFpKpiTotal(kpiType, periodType, lastYearStart, lastYearEnd, source);
 
         DecimalFormat decimalFormat = new DecimalFormat(".##%");
         if(periodType.equals("Y") || periodType.equals("M")) {
             if(kpiInfoVos != null && lastYearKpiInfoVos != null) {
                 if(kpiInfoVos.getFpKpiVal() != null && lastYearKpiInfoVos.getFpKpiVal() != null) {
-                    Double fpTb = (kpiInfoVos.getFpKpiVal() - lastYearKpiInfoVos.getFpKpiVal())/lastYearKpiInfoVos.getFpKpiVal();
-                    result.put("fpTb", decimalFormat.format(fpTb));
+                    if(lastYearKpiInfoVos.getFpKpiVal() != 0D) {
+                        Double fpTb = (kpiInfoVos.getFpKpiVal() - lastYearKpiInfoVos.getFpKpiVal())/lastYearKpiInfoVos.getFpKpiVal();
+                        result.put("fpTb", decimalFormat.format(fpTb));
+                    }else {
+                        result.put("fpTb", DEFAULT_VAL);
+                    }
                 }else {
                     result.put("fpTb", DEFAULT_VAL);
                 }
 
                 if(kpiInfoVos.getSpKpiVal() != null && lastYearKpiInfoVos.getSpKpiVal() != null) {
-                    Double fpTb = (kpiInfoVos.getSpKpiVal() - lastYearKpiInfoVos.getSpKpiVal())/lastYearKpiInfoVos.getSpKpiVal();
-                    result.put("spTb", decimalFormat.format(fpTb));
+                    if(lastYearKpiInfoVos.getSpKpiVal() == 0D) {
+                        result.put("spTb", DEFAULT_VAL);
+                    }else {
+                        Double spTb = (kpiInfoVos.getSpKpiVal() - lastYearKpiInfoVos.getSpKpiVal())/lastYearKpiInfoVos.getSpKpiVal();
+                        result.put("spTb", decimalFormat.format(spTb));
+                    }
                 }else {
                     result.put("spTb", DEFAULT_VAL);
                 }
@@ -527,8 +479,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
 
         String fpAbs = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getFpKpiVal() == null ? DEFAULT_VAL : String.valueOf(kpiInfoVos.getFpKpiVal()));
         String spAbs = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getSpKpiVal() == null ? DEFAULT_VAL : String.valueOf(kpiInfoVos.getSpKpiVal()));
-        String fpContributeRate = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getFpKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == null ? DEFAULT_VAL : decimalFormat.format(kpiInfoVos.getFpKpiVal()/kpiInfoVos.getKpiVal())));
-        String spContributeRate = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getSpKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == null ? DEFAULT_VAL : decimalFormat.format(kpiInfoVos.getSpKpiVal()/kpiInfoVos.getKpiVal())));
+        String fpContributeRate = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getFpKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == 0D ? DEFAULT_VAL: decimalFormat.format(kpiInfoVos.getFpKpiVal()/kpiInfoVos.getKpiVal()))));
+        String spContributeRate = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getSpKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == 0D ? DEFAULT_VAL : decimalFormat.format(kpiInfoVos.getSpKpiVal()/kpiInfoVos.getKpiVal()))));
         result.put("fpAbs", fpAbs); // 首购绝对值
         result.put("spAbs", spAbs); // 复购绝对值
         result.put("fpContributeRate", fpContributeRate); // 首购贡献率
@@ -536,21 +488,29 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         return result;
     }
 
-    private KpiInfoVo getSpAndFpKpiTotal(String kpiType, String start, String end, String format, String truncFormat) {
+    private KpiInfoVo getSpAndFpKpiTotal(String kpiType, String periodType, String startDt, String endDt, String source) {
+        TemplateResult templateResult=buildJoinInfoAndFilter(periodType,startDt,endDt,source);
+        String peroidName=buildPeriodName(periodType);
         if(kpiType.equals(OP_DATA_GMV)) {
-            return kpiMonitorMapper.getSpAndFpKpiTotal(start, end, format, truncFormat);
+            return gmvMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
         }
         if(kpiType.equals(OP_DATA_USER_CNT)) {
-            return userCntMapper.getSpAndFpKpiTotal(start, end, format, truncFormat);
+            return userCntMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
         }
         if(kpiType.equals(OP_DATA_USER_PRICE)) {
-            return  userPriceMapper.getSpAndFpKpiTotal(start, end, format, truncFormat);
+            return  userPriceMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
         }
         if(kpiType.equals(OP_DATA_ORDER_CNT)) {
-            return  orderCntMapper.getSpAndFpKpiTotal(start, end, format, truncFormat);
+            return  orderCntMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
         }
         if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
-            return  orderPriceMapper.getSpAndFpKpiTotal(start, end, format, truncFormat);
+            return  orderPriceMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_ORDER_JOINRATE)) {
+            return  userJoinRateMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
+        }
+        if(kpiType.equals(OP_DATA_SPRICE)) {
+            return spriceMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
         }
         return null;
     }
@@ -622,7 +582,6 @@ public class UserOperatorServiceImpl implements UserOperatorService {
      */
     @Override
     public KpiSumeryInfo getSummaryKpiInfo(String periodType, String startDt, String endDt, String source) {
-
         TemplateResult templateResult=buildJoinInfoAndFilter(periodType,startDt,endDt,source);
         return kpiMonitorMapper.getSummaryKpiInfo(templateResult.getJoinInfo(),templateResult.getFilterInfo());
     }

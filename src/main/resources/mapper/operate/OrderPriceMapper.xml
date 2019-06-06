@@ -4,45 +4,55 @@
 
     <select id="getKpiOfDifferPeriod" resultType="Double">
         SELECT
-        AVG(TRUNC(AVG(W_ORDERS.REAL_FEE),2)) kpiVal
+        TRUNC(AVG(W_ORDERS.REAL_FEE),2) kpiVal
         FROM W_ORDERS
         JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
         WHERE
         W_ORDERS.VALID_STATUS = 1
-        AND TRUNC( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &gt;= TRUNC( TO_DATE( #{startDt}, '${format}' ), '${truncFormat}')
-        AND TRUNC( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &lt;= TRUNC( TO_DATE( #{endDt}, '${format}' ), '${truncFormat}' )
-        GROUP BY
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}')
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
     </select>
 
     <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVo">
         SELECT
         TRUNC(AVG(W_ORDERS.REAL_FEE),2) kpiVal,
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}') kpiDate
+        ${period_name} kpiDate
         FROM
         W_ORDERS
         JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
         WHERE
         W_ORDERS.VALID_STATUS = 1
-        AND TRUNC( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &gt;= TRUNC( TO_DATE( #{start}, '${format}' ), '${truncFormat}')
-        AND TRUNC( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &lt;= TRUNC( TO_DATE( #{end}, '${format}' ), '${truncFormat}' )
-        GROUP BY
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}')
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
+        GROUP BY  ${period_name}
+        ORDER BY  ${period_name} ASC
     </select>
 
     <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
         WITH g1 as(
         SELECT
-        to_char(W_DATE.CALENDAR_DATE, '${format}') kpiDate,
+        ${period_name} kpiDate,
         NVL(W_ORDERS.REAL_FEE,0) FEE,
         W_ORDERS.IS_FP,
         W_ORDERS.USER_ID
         FROM
         W_ORDERS JOIN W_DATE ON W_ORDERS.ORDER_DT_WID=W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
         WHERE
         W_ORDERS.VALID_STATUS = 1
-        AND W_DATE.CALENDAR_DATE &gt;= trunc(to_date('${start}', '${format}'), '${truncFormat}')
-        AND W_DATE.CALENDAR_DATE &lt;= trunc(to_date('${end}', '${format}'), '${truncFormat}')
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
         ),
         g2 as(
         SELECT
@@ -67,20 +77,22 @@
     <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
         WITH g1 as(
         SELECT
-        to_char(W_DATE.CALENDAR_DATE, '${format}') kpiDate,
         NVL(W_ORDERS.REAL_FEE,0) FEE,
         W_ORDERS.IS_FP,
         W_ORDERS.USER_ID
         FROM
         W_ORDERS JOIN W_DATE ON W_ORDERS.ORDER_DT_WID=W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
         WHERE
         W_ORDERS.VALID_STATUS = 1
-        AND W_DATE.CALENDAR_DATE &gt;= trunc(to_date('${start}', '${format}'), '${truncFormat}')
-        AND W_DATE.CALENDAR_DATE &lt;= trunc(to_date('${end}', '${format}'), '${truncFormat}')
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
         ),
         g2 as(
         SELECT
-        g1.kpiDate,
         COUNT(DISTINCT g1.USER_ID) TOTAL_CNT,
         COUNT(DISTINCT CASE WHEN g1.IS_FP='Y' THEN g1.USER_ID END) FP_CNT,
         COUNT(DISTINCT CASE WHEN g1.IS_FP='N' THEN g1.USER_ID END) RP_CNT,
@@ -88,39 +100,11 @@
         SUM(CASE WHEN g1.IS_FP='Y' THEN FEE ELSE 0 END) FP_FEE, --首购金额
         SUM(CASE WHEN g1.IS_FP='N' THEN FEE ELSE 0 END) RP_FEE  --复购金额
         FROM g1
-        GROUP BY g1.kpiDate
         )
         SELECT
         AVG((CASE WHEN g2.TOTAL_CNT=0 THEN 0 ELSE TRUNC(g2.TOTAL_FEE/g2.TOTAL_CNT,2) END)) kpiVal,
         AVG((CASE WHEN g2.FP_CNT=0 THEN 0 ELSE TRUNC(g2.FP_FEE/g2.FP_CNT,2) END)) fpKpiVal,
         AVG((CASE WHEN g2.RP_CNT=0 THEN 0 ELSE TRUNC(g2.RP_FEE/g2.RP_CNT,2) END)) spKpival
         FROM g2
-    </select>
-    <select id="getSpOrFpKpiVal" resultType="com.linksteady.operate.vo.KpiInfoVo">
-        WITH g1 as(
-        SELECT
-        to_char(W_DATE.CALENDAR_DATE, '${format}') kpiDate,
-        NVL(W_ORDERS.REAL_FEE,0) FEE,
-        W_ORDERS.IS_FP,
-        W_ORDERS.USER_ID
-        FROM
-        W_ORDERS JOIN W_DATE ON W_ORDERS.ORDER_DT_WID=W_DATE.ROW_WID
-        WHERE
-        W_ORDERS.VALID_STATUS = 1
-        AND W_DATE.CALENDAR_DATE &gt;= trunc(to_date('${start}', '${format}'), '${truncFormat}')
-        AND W_DATE.CALENDAR_DATE &lt;= trunc(to_date('${end}', '${format}'), '${truncFormat}')
-        ),
-        g2 as(
-        SELECT
-        g1.kpiDate,
-        COUNT(DISTINCT CASE WHEN g1.IS_FP='${isFp}' THEN g1.USER_ID END) SF_CNT,
-        SUM(CASE WHEN g1.IS_FP='${isFp}' THEN FEE ELSE 0 END) SF_FEE
-        FROM g1
-        GROUP BY g1.kpiDate
-        )
-        SELECT
-        g2.kpiDate,
-        (CASE WHEN g2.SF_CNT=0 THEN 0 ELSE TRUNC(g2.SF_FEE/g2.SF_CNT,2) END) kpival
-        FROM g2 ORDER BY g2.kpiDate ASC
     </select>
 </mapper>

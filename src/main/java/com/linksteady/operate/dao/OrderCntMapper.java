@@ -12,9 +12,8 @@ import java.util.List;
  * 订单数
  */
 public interface OrderCntMapper {
-    Double getKpiOfDifferPeriod(String startDt, String endDt, String format, String truncFormat);
-    List<KpiInfoVo> getDatePeriodData(String start, String end, String truncFormat, String format);
-    List<KpiInfoVo> getSpAndFpKpi(String start, String end, String format, String truncFormat);
-    KpiInfoVo getSpAndFpKpiTotal(String start, String end, String format, String truncFormat);
-    List<KpiInfoVo> getSpOrFpKpiVal(String isFp, String start, String end, String format, String truncFormat);
+    Double getKpiOfDifferPeriod(String joinInfo, String whereInfo);
+    List<KpiInfoVo> getDatePeriodData(String period_name, String joinInfo, String whereInfo);
+    List<KpiInfoVo> getSpAndFpKpi(String period_name, String joinInfo, String whereInfo);
+    KpiInfoVo getSpAndFpKpiTotal(String period_name, String joinInfo, String whereInfo);
 }

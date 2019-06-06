@@ -41,7 +41,6 @@
         WITH G1 AS
         (
         SELECT
-        ${period_name} PERIOD_NAME,
         W_ORDER_DETAILS.USER_ID,
         W_ORDER_DETAILS.IS_FP
         FROM W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
@@ -80,7 +79,7 @@
         </if>
         )
         SELECT
-        G1.PERIOD_NAME,
+        G1.PERIOD_NAME kpiDate,
         COUNT(DISTINCT G1.USER_ID) kpiVal,
         COUNT(DISTINCT CASE WHEN G1.IS_FP='Y' THEN USER_ID END) fpKpiVal,
         COUNT(DISTINCT CASE WHEN G1.IS_FP='N' THEN USER_ID END) spKpiVal

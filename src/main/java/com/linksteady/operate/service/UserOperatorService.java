@@ -20,11 +20,9 @@ public interface UserOperatorService {
 
     Map<String, Object> getSpAndFpKpi(String kpiType, String periodType, String startDt, String endDt,String source);
 
-    Map<String, Object> getFpKpiVal(String kpiType, String periodType, String startDt, String endDt,String source);
+    Map<String, Object> getSpAndFpKpiPeriodData(String kpiType, String periodType, String startDt, String endDt,String source);
 
-    Map<String, Object> getSpKpiVal(String kpiType, String periodType, String startDt, String endDt,String source);
-
-    Map<String, Object> getKpiCalInfo(String kpiType, String periodType, String startDt, String endDt);
+    Map<String, Object> getKpiCalInfo(String source, String kpiType, String periodType, String startDt, String endDt);
 
     KpiSumeryInfo getSummaryKpiInfo(String periodType, String startDt, String endDt, String source);
 }

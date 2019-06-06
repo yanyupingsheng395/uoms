@@ -61,23 +61,16 @@ public class UserOperatorController {
      * 获取首购趋势图
      */
     @RequestMapping("/getSpOrFpKpiVal")
-    public ResponseBo getSpOrFpKpiVal(String kpiType, String isFp, String periodType, String startDt, String endDt) {
-        if("Y".equals(isFp))
-        {
-            return ResponseBo.okWithData(null, userOperatorService.getFpKpiVal(kpiType, isFp, periodType, startDt, endDt));
-        }else
-        {
-            return ResponseBo.okWithData(null, userOperatorService.getSpKpiVal(kpiType, isFp, periodType, startDt, endDt));
-        }
-
+    public ResponseBo getSpOrFpKpiVal(String kpiType, String periodType, String startDt, String endDt, String source) {
+        return ResponseBo.okWithData(null, userOperatorService.getSpAndFpKpiPeriodData(kpiType, periodType, startDt, endDt, source));
     }
 
     /**
      * 获取首购，非首购用户的绝对值，同比，环比，贡献率或均值比
      */
     @RequestMapping("/getKpiCalInfo")
-    public ResponseBo getKpiCalInfo(String kpiType, String periodType, String startDt, String endDt) {
-        return ResponseBo.okWithData(null, userOperatorService.getKpiCalInfo(kpiType, periodType, startDt, endDt));
+    public ResponseBo getKpiCalInfo(String source, String kpiType, String periodType, String startDt, String endDt) {
+        return ResponseBo.okWithData(null, userOperatorService.getKpiCalInfo(source, kpiType, periodType, startDt, endDt));
     }
 
     /**
