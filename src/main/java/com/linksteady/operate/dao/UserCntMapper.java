@@ -10,9 +10,12 @@ import java.util.List;
  * 用户数
  */
 public interface UserCntMapper {
-    Double getUserCntOfDifferPeriod(String startDt, String endDt, String format, String truncFormat);
-    List<KpiInfoVo> getDatePeriodData(String start, String end, String truncFormat, String format);
-    KpiInfoVo getSpAndFpKpiTotal(String start, String end, String format, String truncFormat);
-    List<KpiInfoVo> getSpAndFpKpi(String start, String end, String format, String truncFormat);
-    List<KpiInfoVo> getSpOrFpKpiVal(String isFp, String start, String end, String format, String truncFormat);
+    Double getUserCntOfDifferPeriod(String joinInfo, String whereInfo);
+
+    List<KpiInfoVo> getDatePeriodData(String period_name, String joinInfo, String whereInfo);
+
+    KpiInfoVo getSpAndFpKpiTotal(String period_name, String joinInfo, String whereInfo);
+
+    List<KpiInfoVo> getSpAndFpKpi(String period_name, String joinInfo, String whereInfo);
+
 }

@@ -35,4 +35,8 @@ public interface OpMapper{
 
     List<Map<String, Object>> getChartData(@Param("touchDt") String touchDt, @Param("type") String type);
 
+    List<Map<String, Object>> getPeriodSpuStatis(@Param("headerId") String headerId);
+
+    List<Map<String, Object>> getPeriodChartData(@Param("headerId") String headerId, @Param("type") String type);
+
 }

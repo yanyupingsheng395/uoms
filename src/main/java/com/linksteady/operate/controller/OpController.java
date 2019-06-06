@@ -151,4 +151,15 @@ public class OpController extends BaseController {
     public ResponseBo getChartData(String touchDt, String type) {
         return ResponseBo.okWithData(null, opService.getChartData(touchDt, type));
     }
+
+    @RequestMapping("/getPeriodSpuStatis")
+    public ResponseBo getPeriodSpuStatis(String headerId) {
+        List<Map<String, Object>> dataList = opService.getPeriodSpuStatis(headerId);
+        return ResponseBo.okWithData(null, dataList);
+    }
+
+    @RequestMapping("/getPeriodChartData")
+    public ResponseBo getPeriodChartData(String headerId, String type) {
+        return ResponseBo.okWithData(null, opService.getPeriodChartData(headerId, type));
+    }
 }

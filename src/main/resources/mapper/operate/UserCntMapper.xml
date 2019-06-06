@@ -2,86 +2,89 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.UserCntMapper">
 
-    <!--获取年月日不同周期的用户数-->
+    <!--获取不同周期的用户数-->
     <select id="getUserCntOfDifferPeriod" resultType="Double">
-        SELECT COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) TOTAL_CNT
+        SELECT
+        COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) TOTAL_CNT
         FROM
-        W_ORDER_DETAILS
-        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
         WHERE
         W_ORDER_DETAILS.VALID_STATUS = 1
-        AND TRUNC(W_DATE.CALENDAR_DATE, #{truncFormat}) &gt;= TRUNC(TO_DATE(#{startDt}, #{format}), #{truncFormat})
-        AND TRUNC(W_DATE.CALENDAR_DATE, #{truncFormat}) &lt;= TRUNC(TO_DATE(#{endDt}, #{format}), #{truncFormat})
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
     </select>
 
-    <!--查询起止时间段内的GMV值-->
+    <!--查询起止时间段内的连带率值-->
     <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVo">
-        SELECT COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) kpiVal,
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') kpiDate
-        FROM
-        W_ORDER_DETAILS
-        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        SELECT
+        COUNT(DISTINCT W_ORDER_DETAILS.USER_ID)  kpiVal,
+        ${period_name} kpiDate
+        FROM W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
         WHERE
         W_ORDER_DETAILS.VALID_STATUS = 1
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &lt;= trunc( TO_DATE( #{end}, '${format}'), '${truncFormat}')
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &gt;= trunc( TO_DATE( #{start}, '${format}'), '${truncFormat}')
-        GROUP BY
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}')
-        ORDER BY
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') ASC
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
+        GROUP BY  ${period_name}
+        ORDER BY  ${period_name} ASC
     </select>
 
+    <!--获取首购和复购的连带率汇总值-->
     <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        WITH G1 AS
+        (
         SELECT
-        SUM(COUNT(DISTINCT W_ORDER_DETAILS.USER_ID)) kpiVal,
-        SUM(COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='Y' THEN W_ORDER_DETAILS.USER_ID END)) fpKpiVal,
-        SUM(COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='N' THEN W_ORDER_DETAILS.USER_ID END)) spKpiVal
-        FROM
-        W_ORDER_DETAILS
-        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        ${period_name} PERIOD_NAME,
+        W_ORDER_DETAILS.USER_ID,
+        W_ORDER_DETAILS.IS_FP
+        FROM W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
         WHERE
         W_ORDER_DETAILS.VALID_STATUS = 1
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &gt;= trunc( TO_DATE( #{start}, #{format} ), '${truncFormat}' )
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &lt;= trunc( TO_DATE( #{end}, #{format} ), '${truncFormat}' )
-        GROUP BY
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' )
-        ORDER BY
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' ) ASC
-    </select>
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
+        )
+        SELECT
+        COUNT(DISTINCT G1.USER_ID) kpiVal,
+        COUNT(DISTINCT CASE WHEN G1.IS_FP='Y' THEN USER_ID END) fpKpiVal,
+        COUNT(DISTINCT CASE WHEN G1.IS_FP='N' THEN USER_ID END) spKpiVal
+        FROM G1
 
+    </select>
+    <!--获取首购和复购的明细数据 -->
     <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
+        WITH G1 AS
+        (
         SELECT
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}') kpiDate,
-        COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) kpiVal,
-        COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='Y' THEN W_ORDER_DETAILS.USER_ID END) fpKpiVal,
-        COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='N' THEN W_ORDER_DETAILS.USER_ID END) spKpiVal
-        FROM
-        W_ORDER_DETAILS
-        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        ${period_name} PERIOD_NAME,
+        W_ORDER_DETAILS.USER_ID,
+        W_ORDER_DETAILS.IS_FP
+        FROM W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
+        <if test="joinInfo != null and joinInfo != ''">
+            ${joinInfo}
+        </if>
         WHERE
         W_ORDER_DETAILS.VALID_STATUS = 1
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &gt;= trunc( TO_DATE( #{start}, #{format} ), '${truncFormat}' )
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}' ) &lt;= trunc( TO_DATE( #{end}, #{format} ), '${truncFormat}' )
-        GROUP BY
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' )
-        ORDER BY
-        TO_CHAR( W_DATE.CALENDAR_DATE, '${format}' ) ASC
+        <if test="whereInfo != null and whereInfo != ''">
+            ${whereInfo}
+        </if>
+        )
+        SELECT
+        G1.PERIOD_NAME,
+        COUNT(DISTINCT G1.USER_ID) kpiVal,
+        COUNT(DISTINCT CASE WHEN G1.IS_FP='Y' THEN USER_ID END) fpKpiVal,
+        COUNT(DISTINCT CASE WHEN G1.IS_FP='N' THEN USER_ID END) spKpiVal
+        FROM G1 GROUP BY G1.PERIOD_NAME
     </select>
 
-    <select id="getSpOrFpKpiVal" resultType="com.linksteady.operate.vo.KpiInfoVo">
-        SELECT
-        COUNT(DISTINCT CASE WHEN W_ORDER_DETAILS.IS_FP='${isFp}' THEN W_ORDER_DETAILS.USER_ID END) kpiVal,
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') kpiDate
-        FROM
-        W_ORDER_DETAILS
-        JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
-        WHERE
-        W_ORDER_DETAILS.VALID_STATUS = 1
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &lt;= trunc( TO_DATE( #{end}, '${format}'), '${truncFormat}')
-        AND trunc( W_DATE.CALENDAR_DATE, '${truncFormat}') &gt;= trunc( TO_DATE( #{start}, '${format}'), '${truncFormat}')
-        GROUP BY
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}')
-        ORDER BY
-        TO_CHAR(W_DATE.CALENDAR_DATE, '${format}') ASC
-    </select>
 </mapper>
