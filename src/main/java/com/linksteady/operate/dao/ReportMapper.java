@@ -21,4 +21,5 @@ public interface ReportMapper {
     LinkedHashMap<String,String> getOpDaillyReport(@Param("sourceType") String sourceType, @Param("startDate") String startDate, @Param("endDate") String endDate,
                                                    @Param("laststartDate") String laststartDate, @Param("lastendDate") String lastendDate);
 
+    List<Map<String,String>> getBrandReportData(@Param("sourceType") String sourceType, @Param("startDate") String startDate, @Param("endDate") String endDate);
 }

@@ -36,13 +36,13 @@ public class UserOperatorController {
     }
 
     @RequestMapping("/getKpiInfo")
-    public ResponseBo getKpiInfo(String kpiType, String periodType, String startDt, String endDt) {
-        return ResponseBo.okWithData(null, userOperatorService.getKpiInfo(kpiType, periodType, startDt, endDt));
+    public ResponseBo getKpiInfo(String kpiType, String periodType, String startDt, String endDt,String source) {
+        return ResponseBo.okWithData(null, userOperatorService.getKpiInfo(kpiType, periodType, startDt, endDt,source));
     }
 
     @RequestMapping("/getKpiChart")
-    public ResponseBo getKpiChart(String kpiType, String periodType, String startDt, String endDt) {
-        return  ResponseBo.okWithData(null, userOperatorService.getKpiChart(kpiType, periodType, startDt, endDt));
+    public ResponseBo getKpiChart(String kpiType, String periodType, String startDt, String endDt,String source) {
+        return  ResponseBo.okWithData(null, userOperatorService.getKpiChart(kpiType, periodType, startDt, endDt,source));
     }
 
     /**
@@ -53,8 +53,8 @@ public class UserOperatorController {
      * @return
      */
     @RequestMapping("/getSpAndFpKpi")
-    public ResponseBo getSpAndFpKpi(String kpiType, String periodType, String startDt, String endDt) {
-        return  ResponseBo.okWithData(null, userOperatorService.getSpAndFpKpi(kpiType, periodType, startDt, endDt));
+    public ResponseBo getSpAndFpKpi(String kpiType, String periodType, String startDt, String endDt,String source) {
+        return  ResponseBo.okWithData(null, userOperatorService.getSpAndFpKpi(kpiType, periodType, startDt, endDt,source));
     }
 
     /**
@@ -62,7 +62,14 @@ public class UserOperatorController {
      */
     @RequestMapping("/getSpOrFpKpiVal")
     public ResponseBo getSpOrFpKpiVal(String kpiType, String isFp, String periodType, String startDt, String endDt) {
-        return ResponseBo.okWithData(null, userOperatorService.getSpOrFpKpiVal(kpiType, isFp, periodType, startDt, endDt));
+        if("Y".equals(isFp))
+        {
+            return ResponseBo.okWithData(null, userOperatorService.getFpKpiVal(kpiType, isFp, periodType, startDt, endDt));
+        }else
+        {
+            return ResponseBo.okWithData(null, userOperatorService.getSpKpiVal(kpiType, isFp, periodType, startDt, endDt));
+        }
+
     }
 
     /**

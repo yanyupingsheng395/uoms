@@ -30,4 +30,9 @@ public class ReportServiceImpl implements ReportService {
     public LinkedHashMap<String,String> getOpDaillyReport(String sourceType, String startDate, String endDate, String laststartDate, String lastendDate) {
         return reportMapper.getOpDaillyReport(sourceType,startDate,endDate,laststartDate,lastendDate);
     }
+
+    @Override
+    public List<Map<String,String>> getBrandReportData(String sourceType, String startDate, String endDate) {
+        return reportMapper.getBrandReportData(sourceType,startDate,endDate);
+    }
 }
