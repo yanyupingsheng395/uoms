@@ -11,4 +11,5 @@ public interface ReportService {
     LinkedHashMap<String,String> getOpDaillyReport(String sourceType, String startDate, String endDate,
                                                    String laststartDate, String lastendDate);
 
+    List<Map<String,String>> getBrandReportData(String sourceType, String startDate, String endDate);
 }

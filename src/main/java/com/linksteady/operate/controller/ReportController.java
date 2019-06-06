@@ -50,10 +50,10 @@ public class ReportController extends BaseController {
      * @return ResponseBo对象
      */
     @RequestMapping("/getBrandReportData")
-    public ResponseBo getBrandReportData() {
+    public ResponseBo getBrandReportData(@RequestParam String source,@RequestParam String startDt,@RequestParam String endDt) {
 
-        List<String> result= Lists.newArrayList();
-        return ResponseBo.okOverPaging("",0,result);
+        List<Map<String,String>> result= reportService.getBrandReportData(source, StringUtils.replace(startDt,"-",""),StringUtils.replace(endDt,"-",""));
+        return ResponseBo.okWithData("",result);
     }
 
     /**

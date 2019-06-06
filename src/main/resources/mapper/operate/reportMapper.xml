@@ -156,4 +156,49 @@
         AND GAP0.ID=GAP.ID
     </select>
 
+    <select id="getBrandReportData" resultType="java.util.LinkedHashMap">
+        WITH GAP AS (
+        SELECT
+        T4.KPI_NAME BRAND_NAME,
+        SUM(T2.PRICE*T2.QUANTITY- T2.DISCOUNT) LINE_FEE
+        FROM
+        W_ORDER_DETAILS T2,
+        W_BRAND T4
+        WHERE
+        T2.BRAND_ID = T4.BRAND_ID
+        AND T2.ORDER_DT_WID &gt;= #{startDate}
+        AND T2.ORDER_DT_WID &lt;= #{endDate}
+        <if test="sourceType != null and sourceType != ''">
+              AND T2.SOURCE_ID = #{sourceType}
+       </if>
+        GROUP BY T4.KPI_NAME
+        ),
+        --除AIMER品牌之外其余品牌的金额和占比
+        PCT1 AS(
+        SELECT
+        BRAND_NAME,
+        SUM(LINE_FEE) BRAND_FEE,
+        TRUNC(SUM(LINE_FEE)/(SELECT SUM(LINE_FEE) FROM GAP),4) * 100 BRAND_PCT
+        FROM GAP WHERE BRAND_NAME!='Aimer'
+        GROUP BY GAP.BRAND_NAME
+        ),
+        PCT3 AS(
+        SELECT SUM(BRAND_PCT) TOTALPCT FROM PCT1
+        ),
+        PCT2 AS(
+        SELECT
+        BRAND_NAME,
+        SUM(LINE_FEE) BRAND_FEE,
+        100-(SELECT TOTALPCT FROM PCT3) BRAND_PCT
+        FROM GAP WHERE BRAND_NAME='Aimer'
+        GROUP BY GAP.BRAND_NAME
+        )
+        SELECT
+        BRAND_NAME,BRAND_FEE,BRAND_PCT FROM PCT2
+        UNION ALL
+        SELECT
+        BRAND_NAME,BRAND_FEE,BRAND_PCT FROM PCT1
+
+    </select>
+
  </mapper>

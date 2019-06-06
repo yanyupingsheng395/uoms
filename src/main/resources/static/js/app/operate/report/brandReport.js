@@ -70,14 +70,15 @@ function queryReport() {
     }
 
     // //填充数据
-    // $.getJSON("/report/getOpDaillyReportData?startDt="+startDt+"&endDt="+endDt+"&source="+source, function (resp) {
-    //     if (resp.code == 200) {
-    //         jQuery.each(resp.data, function(i, val) {
-    //             $('#'+i).text(val);
-    //         });
-    //
-    //     }
-    // });
+    $.getJSON("/report/getBrandReportData?startDt="+startDt+"&endDt="+endDt+"&source="+source, function (resp) {
+        if (resp.code == 200) {
+            $('#brandbody').html('');
+            $.each(resp.data, function(i, val) {
+                $('#brandbody').append( "<tr> <td>"+val.BRAND_NAME+"</td> <td>"+val.BRAND_FEE+"</td> <td>"+val.BRAND_PCT+"</td> </tr>");
+            });
+
+        }
+    });
 }
 
 function downLoadReport()

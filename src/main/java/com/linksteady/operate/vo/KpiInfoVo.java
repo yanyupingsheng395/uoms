@@ -8,11 +8,23 @@ import lombok.Data;
 @Data
 public class KpiInfoVo {
 
+    /**
+     * 指标值
+     */
     private Double kpiVal;
 
+    /**
+     * 时间周期类型
+     */
     private String kpiDate;
 
-    private Double spKpiVal; // 复购值
+    /**
+     * 复购指标值
+     */
+    private Double spKpiVal;
 
-    private Double fpKpiVal; // 首购值
+    /**
+     * 首购指标值
+     */
+    private Double fpKpiVal;
 }

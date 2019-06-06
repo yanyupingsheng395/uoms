@@ -272,8 +272,8 @@ public class TgtGmvCalculateServiceImpl implements TgtCalculateService {
             LocalDate tempStartDate=startLocalDate.minusYears(1);
             LocalDate tempEndDate=endLocalDate.minusYears(1);
 
-            actualResult=getGmvHistoryByDay(tempStartDate.toString().replace("-",""),targetInfo.getEndDt().replace("-",""),diminfo);
-            lastResult=getGmvHistoryByDay(tempEndDate.toString().replace("-",""),targetInfo.getEndDt().replace("-",""),diminfo);
+            actualResult=getGmvHistoryByDay(targetInfo.getStartDt().replace("-",""),targetInfo.getEndDt().replace("-",""),diminfo);
+            lastResult=getGmvHistoryByDay(tempStartDate.toString().replace("-",""),tempEndDate.toString().replace("-",""),diminfo);
 
             //结束天
             closeDate=Long.parseLong(targetInfo.getEndDt().replace("-",""));
