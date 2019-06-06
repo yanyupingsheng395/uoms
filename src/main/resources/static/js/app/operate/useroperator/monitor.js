@@ -84,6 +84,10 @@ $("#period").change(function () {
     }
 });
 
+function searchKpiInfo() {
+    var source = $("#source").selectpicker('val');
+}
+
 $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     lightyear.loading('show');
     var startDt = $("#startDt").val();

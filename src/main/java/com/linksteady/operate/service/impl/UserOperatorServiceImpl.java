@@ -284,6 +284,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     @Override
     public Map<String, Object> getSpOrFpKpiVal(String kpiType, String isFp, String periodType, String startDt, String endDt) {
         Map<String, Object> result = Maps.newHashMap();
+        DecimalFormat df = new DecimalFormat("#.##");
         String format = "", truncFormat = "";
         switch (periodType){
             case "Y":
@@ -318,14 +319,13 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         Double avgKpiVal = kpiValList.stream().mapToDouble(x->x).average().getAsDouble();
         Double avgLastKpiVal = lastKpiValList.stream().mapToDouble(x->x).average().getAsDouble();
 
-        List<Double> avgKpiValList = dateList.stream().map(x->avgKpiVal).collect(Collectors.toList());
-        List<Double> lastAvgKpiValList = dateList.stream().map(x->avgLastKpiVal).collect(Collectors.toList());
+        List<String> avgKpiValList = dateList.stream().map(x->df.format(avgKpiVal)).collect(Collectors.toList());
+        List<String> lastAvgKpiValList = dateList.stream().map(x->df.format(avgLastKpiVal)).collect(Collectors.toList());
         result.put("xData", dateList);
         result.put("kpiVal", kpiValList);
         result.put("lastKpiVal", lastKpiValList);
         result.put("avgKpiVal", avgKpiValList);
         result.put("avgLastKpiVal", lastAvgKpiValList);
-
         return result;
     }
 
