@@ -85,6 +85,7 @@ $("#period").change(function () {
 });
 
 $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    lightyear.loading('show');
     var startDt = $("#startDt").val();
     if(startDt == "") {
         toastr.warning("请选择时间！");
@@ -152,6 +153,7 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             $("#selectCondition2").show();
         }
     }
+    lightyear.loading('hide');
 });
 
 /**
@@ -184,7 +186,7 @@ function getKpiInfo(kpiType, unit) {
                 $("#lastPeriodYearOnYear").html("").html("<span style=\"color:green;\"><i class=\"mdi mdi-menu-up mdi-18px\"></i>"+yoy+"</span>");
             }
         }
-        $("#lastPeriod").text(r.data["yoy"] == "--" ? r.data["yoy"] : r.data["yoy"] + unit);
+        $("#lastPeriod").text(r.data["lastKpiVal"] == "--" ? r.data["lastKpiVal"] : r.data["lastKpiVal"] + unit);
     });
 }
 

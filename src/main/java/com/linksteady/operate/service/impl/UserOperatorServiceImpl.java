@@ -118,7 +118,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
             Double d3 = getKpiOfDifferPeriod(kpiType, lastStart, lastEnd, format, truncFormat);
             // 上一周期
             result.put("lastKpiVal", d3 == null ? "--" : df1.format(d3));
-            result.put("yoy", d1 == null ? DEFAULT_VAL : (d3 == null ? DEFAULT_VAL:df2.format((d1 - d3)/d3)));
+            result.put("yoy", d1 == null ? DEFAULT_VAL : (d3 == null || d3 == 0D ? DEFAULT_VAL:df2.format((d1 - d3)/d3)));
         }
         // 同比
         result.put("yny", d1 == null ? DEFAULT_VAL : (d2 == null ? DEFAULT_VAL : df2.format((d1-d2)/d2)));

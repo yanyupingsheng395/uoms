@@ -4,7 +4,7 @@
 
     <!--获取年月日不同周期的用户数-->
     <select id="getUserCntOfDifferPeriod" resultType="Double">
-        SELECT SUM(COUNT(DISTINCT W_ORDER_DETAILS.USER_ID)) TOTAL_CNT
+        SELECT COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) TOTAL_CNT
         FROM
         W_ORDER_DETAILS
         JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
@@ -12,8 +12,6 @@
         W_ORDER_DETAILS.VALID_STATUS = 1
         AND TRUNC(W_DATE.CALENDAR_DATE, #{truncFormat}) &gt;= TRUNC(TO_DATE(#{startDt}, #{format}), #{truncFormat})
         AND TRUNC(W_DATE.CALENDAR_DATE, #{truncFormat}) &lt;= TRUNC(TO_DATE(#{endDt}, #{format}), #{truncFormat})
-        GROUP BY
-        W_DATE.DAY_SHORT_NAME
     </select>
 
     <!--查询起止时间段内的GMV值-->
