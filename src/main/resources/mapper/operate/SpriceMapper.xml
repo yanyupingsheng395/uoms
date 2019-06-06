@@ -59,7 +59,6 @@
         ),
         G2 AS (
         SELECT
-               G1.PERIOD_NAME,
                SUM(G1.ORDER_FEE) ALL_FEE,
                SUM(G1.QUANTITY) ALL_QUANTITY,
                SUM(CASE WHEN G1.IS_FP='Y' THEN ORDER_FEE END) FP_FEE,
