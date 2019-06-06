@@ -12,10 +12,13 @@ import java.util.List;
  * 客单价
  */
 public interface UserPriceMapper {
-    Double getUserPriceOfDifferPeriod(String start, String end, String format, String truncFormat);
-    List<KpiInfoVo> getDatePeriodData(String start, String end, String truncFormat, String format);
-    KpiInfoVo getSpAndFpKpiTotal(String start, String end, String format, String truncFormat);
-    List<KpiInfoVo> getSpAndFpKpi(String start, String end, String format, String truncFormat);
-    List<KpiInfoVo> getSpOrFpKpiValForOld(String start, String end, String format, String truncFormat);
-    List<KpiInfoVo> getSpOrFpKpiValForNew(String start, String end, String format, String truncFormat);
+
+    Double getUserPriceOfDifferPeriod(String joinInfo, String whereInfo);
+
+    List<KpiInfoVo> getDatePeriodData(String period_name, String joinInfo, String whereInfo);
+
+    KpiInfoVo getSpAndFpKpiTotal(String period_name, String joinInfo, String whereInfo);
+
+    List<KpiInfoVo> getSpAndFpKpi(String period_name, String joinInfo, String whereInfo);
+
 }

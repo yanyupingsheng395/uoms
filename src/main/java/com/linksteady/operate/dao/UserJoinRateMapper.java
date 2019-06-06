@@ -48,14 +48,4 @@ public interface UserJoinRateMapper {
      */
     List<KpiInfoVo> getSpAndFpKpi(String period_name, String joinInfo, String whereInfo);
 
-//    /**
-//     *获取首购或复购的明细数据
-//     * @param isFp
-//     * @param start
-//     * @param end
-//     * @param format
-//     * @param truncFormat
-//     * @return
-//     */
-//    List<KpiInfoVo> getSpOrFpKpiVal(String isFp, String start, String end, String format, String truncFormat);
 }
