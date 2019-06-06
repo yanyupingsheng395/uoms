@@ -155,7 +155,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     @Override
     public Map<String, Object> getKpiChart(String kpiType, String periodType, String startDt, String endDt) {
         Map<String, Object> result = Maps.newHashMap();
-        String format = "", truncFormat = "", resultFormat = "";
+        String format = "", truncFormat = "";
         switch (periodType){
             case "Y":
                 format = "yyyyMM";
