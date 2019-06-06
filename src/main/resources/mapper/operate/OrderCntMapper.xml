@@ -40,7 +40,8 @@
     <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
         SELECT COUNT(W_ORDERS.ID) kpiVal,
             COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='Y' THEN W_ORDERS.ID END) fpKpiVal,
-            COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='N' THEN W_ORDERS.ID END) spKpiVal
+            COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='N' THEN W_ORDERS.ID END) spKpiVal,
+            ${period_name} kpiDate
             FROM
             W_ORDERS
             JOIN W_DATE ON W_ORDERS.ORDER_DT_WID = W_DATE.ROW_WID
@@ -52,6 +53,8 @@
             <if test="whereInfo != null and whereInfo != ''">
                 ${whereInfo}
             </if>
+        GROUP BY  ${period_name}
+        ORDER BY  ${period_name} ASC
     </select>
 
     <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
