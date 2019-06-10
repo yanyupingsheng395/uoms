@@ -13,10 +13,7 @@ import com.linksteady.operate.service.CacheService;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.operate.vo.ReasonVO;
-import com.linksteady.system.domain.User;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -200,7 +197,7 @@ public class ReasonController  extends BaseController {
 
         List<String> signal= Arrays.asList("a","b","d","d","e","f","g","h","i","j","k","l","m","n");
 
-        if(reasonService.getReasonResultCount(reasonId,code)==0)
+        if(reasonService.getReasonResultCount(reasonId,code)!=0)
         {
             //根据reasonId获取kpiCode
             String kpiCode=reasonService.getReasonHeaderInfoById(reasonId).getKpiCode();
