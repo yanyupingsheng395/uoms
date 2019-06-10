@@ -176,6 +176,7 @@ function saveDiagInfo(dom) {
     var flag = validator.form();
     if(flag) {
         var conditionList = getDimAndVal();
+        console.log(conditionList);
         var dimDisplayName = getDimensionInfo();
         var formData = $("#formTable").serialize() + "&dimDisplayName=" + dimDisplayName + "&conditions=" + JSON.stringify(conditionList);
         $.post("/diag/add", formData, function(r) {
@@ -187,7 +188,7 @@ function saveDiagInfo(dom) {
             $(dom).parent("div").removeClass("text-right").addClass("text-center");
             $(dom).remove();
             diagId = r.data;
-            createRootNode();
+            createRootNode(conditionList);
         });
     }
 }

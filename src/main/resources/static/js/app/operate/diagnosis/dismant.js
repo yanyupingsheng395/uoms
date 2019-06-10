@@ -74,19 +74,19 @@ $("input[name='op2']").click(function () {
 });
 
 // 提交数据到列表中
-function beforeNext(dom) {
-    $.post("/diag/add", $("#formTable").serialize(), function(r) {
-        $("#period_type").html("").html($("#periodType option:selected").text());
-        $("#date_area").html("").html($("#beginDt").val() + "&nbsp;到&nbsp;" + $("#endDt").val());
-
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:block;");
-        $(dom).parent("div").removeClass("text-right").addClass("text-center");
-        $(dom).remove();
-        diagId = r.data;
-        createRootNode();
-    });
-}
+// function beforeNext(dom) {
+//     $.post("/diag/add", $("#formTable").serialize(), function(r) {
+//         $("#period_type").html("").html($("#periodType option:selected").text());
+//         $("#date_area").html("").html($("#beginDt").val() + "&nbsp;到&nbsp;" + $("#endDt").val());
+//
+//         $("#step1").attr("style", "display:none;");
+//         $("#step2").attr("style", "display:block;");
+//         $(dom).parent("div").removeClass("text-right").addClass("text-center");
+//         $(dom).remove();
+//         diagId = r.data;
+//         createRootNode();
+//     });
+// }
 
 // 加入诊断
 function addCondition() {
@@ -255,7 +255,7 @@ function alarmFlag(dom) {
 }
 
 function getParentCondition() {
-    var array = jm.get_selected_node().data.CONDITION;
+    var array = jm.get_selected_node().data.conditions;
     var code = "";
     if(array != null && array != undefined) {
         $.each(array, function (k, v) {
@@ -376,7 +376,7 @@ function endNode(nodeId) {
     jm.disable_edit();
 }
 
-function redisSaveRootNodeHandleInfo() {
+function redisSaveRootNodeHandleInfo(whereinfo) {
     var kpiCode = $("#targetKpi").find("option:selected").val();
     var handleInfo = new Object();
     var periodType = $("#periodType option:selected").val();
@@ -392,6 +392,7 @@ function redisSaveRootNodeHandleInfo() {
     handleInfo.endDt = endDt;
     handleInfo.kpiCode = kpiCode;
     handleInfo.mainKpiCode = kpiCode;
+    handleInfo.whereinfo = whereinfo;
     saveDiagHandleInfo(handleInfo, "F");
 }
 //
@@ -456,7 +457,7 @@ function condition1() {
     });
 }
 // 获取根节点
-function rootNode() {
+function rootNode(dimList) {
     var nodeArr = new Array();
     $.ajax({
         url: "/progress/getRootNode",
@@ -476,20 +477,21 @@ function rootNode() {
             node.kpiCode = kpiCode;
             node.kpiName = kpiName;
             node.kpiLevelId = "0";
+            node.conditions = dimList;
             nodeArr.push(node);
         }
     });
     return nodeArr;
 }
 
-function createRootNode() {
+function createRootNode(dimList) {
     var mind = {
         "meta":{
             "name":"gmv_mind",
             "version":"0.2"
         },
         "format":"node_array",
-        "data": rootNode()
+        "data": rootNode(dimList)
     };
     var options = {
         container:'jsmind_container',
@@ -500,7 +502,7 @@ function createRootNode() {
     jm = jsMind.show(options,mind);
     addEventListenerOfNode();
 
-    redisSaveRootNodeHandleInfo();
+    redisSaveRootNodeHandleInfo(dimList);
     saveNode("-1");
 }
 
@@ -610,6 +612,8 @@ function saveDiagHandleInfo(handleInfo, operateType) {
             if(operateType == "A") {
                 var levelId = handleInfo.kpiLevelId;
                 $.get("/progress/generateDiagData", {diagId: diagId, kpiLevelId: levelId}, function (r) {
+                    console.log("========");
+                    console.log(r);
                     var kpiCode = r.data.kpiCode;
                     var kpiName = r.data.kpiName;
                     $.each(r.data.nodeList, function(k, v) {
@@ -772,17 +776,17 @@ function inputCheck(dom) {
     }
 }
 
-function nextStep(dom) {
-    if($("#diagName").val() != "") {
-        $("#diagName").parent().removeClass("has-error");
-        if($("#step1").attr("style") == "display:block;") {
-            beforeNext(dom);
-        }
-    }else {
-        $("#diagName").parent().addClass("has-error");
-        toastr.warning('请输入诊断名称！');
-    }
-}
+// function nextStep(dom) {
+//     if($("#diagName").val() != "") {
+//         $("#diagName").parent().removeClass("has-error");
+//         if($("#step1").attr("style") == "display:block;") {
+//             beforeNext(dom);
+//         }
+//     }else {
+//         $("#diagName").parent().addClass("has-error");
+//         toastr.warning('请输入诊断名称！');
+//     }
+// }
 
 function deleteNode() {
     $.alert({

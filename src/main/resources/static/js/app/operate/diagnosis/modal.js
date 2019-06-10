@@ -39,6 +39,9 @@ function viewChart(obj) {
     $("#modal").modal('show');
 }
 
+$('#modal').on('hidden.bs.modal', function () {
+    $.fn.zTree.destroy();
+});
 
 $('#modal').on('shown.bs.modal', function () {
     lightyear.loading('show');
@@ -53,6 +56,24 @@ $('#modal').on('shown.bs.modal', function () {
     $("#operateType").html("").html("<p>周期: " + operateType + "</p>");
     $("#timePeriod").html("").html("<p>时间: " + obj.beginDt + "&nbsp;到&nbsp;" + obj.endDt + "</p>");
     var isRoot = jm.get_selected_node().isroot;
+
+    var treeArr = [];
+    // 条件
+    $.each(obj.whereinfo, function (k, v) {
+        var o = new Object();
+        if(v["inherit_flag"] == "Y") {
+            o.id = k + 1;
+            o.name = v.dimName + ":" + v.dimValueDisplay + "(继承至父节点)";
+        }else {
+            o.id = k + 1;
+            o.name = v.dimName + ":" + v.dimValueDisplay;
+        }
+        o.pId = 0;
+        treeArr.push(o);
+    });
+    treeArr.push({id:0, pId:-1, name:'过滤条件'});
+    createWhereInfoTree(treeArr);
+
     if (isRoot) { // 根节点
         $("#opdesc").html("").html("<p>该周期内GMV为：" + obj.kpiValue + "元</p>");
         $("#template1").attr("style", "display:block;");
@@ -63,23 +84,6 @@ $('#modal').on('shown.bs.modal', function () {
             $("#_conditions").html("").html("<ol>"+code+"</ol>");
         }
     } else {
-        var treeArr = [];
-        // 条件
-        $.each(obj.whereinfo, function (k, v) {
-            var o = new Object();
-            if(v["inherit_flag"] == "Y") {
-                o.id = k + 1;
-                o.name = v.dimName + ":" + v.dimValueDisplay + "(继承至父节点)";
-            }else {
-                o.id = k + 1;
-                o.name = v.dimName + ":" + v.dimValueDisplay;
-            }
-            o.pId = 0;
-            treeArr.push(o);
-        });
-        treeArr.push({id:0, pId:-1, name:'过滤条件'});
-        createWhereInfoTree(treeArr);
-
         if (obj.handleType == "M") { // 乘法
             $("#template1").attr("style", "display:none;");
             $("#template2").attr("style", "display:block;");
@@ -457,7 +461,6 @@ function t3chart6(obj, chartId){
 function t3chart3(obj) {
     var xdata = obj["xdata"];
     var xname = obj["xname"];
-    console.log(jm.get_root());
     var yname = $("#targetKpi").find("option:selected").text();
     var legend = obj["legendData"];
     var allData = [];
