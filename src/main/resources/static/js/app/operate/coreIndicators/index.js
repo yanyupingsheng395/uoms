@@ -245,7 +245,7 @@ function getValRateOption(legend, xdata, xAxis, yAxis, series) {
         },
         xAxis: [{
             type: 'category',
-            name: xAxis,
+            // name: xAxis,
             splitLine:{show: false},
             data: xdata,
             boundaryGap: true

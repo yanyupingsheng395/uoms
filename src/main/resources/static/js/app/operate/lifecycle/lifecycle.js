@@ -239,6 +239,18 @@ function saleVolume() {
         var xAxisData = r.data.xAxisData;
 
         var option = getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData);
+        console.log(option)
+        option.yAxis[0].axisLabel = {
+            margin: 2,
+            formatter: function (value, index) {
+                if (value >= 10000 && value < 10000000) {
+                    value = value / 10000 + "万";
+                } else if (value >= 10000000) {
+                    value = value / 10000000 + "千万";
+                }
+                return value;
+            }
+        };
         var chart = echarts.init(document.getElementById("saleVolume"), 'macarons');
         chart.setOption(option);
     });
