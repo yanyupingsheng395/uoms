@@ -39,7 +39,7 @@ function viewChart(obj) {
 }
 
 $('#modal').on('hidden.bs.modal', function () {
-    $.fn.zTree.destroy();
+    $.fn.zTree.destroy('tree');
 });
 
 $('#modal').on('shown.bs.modal', function () {
