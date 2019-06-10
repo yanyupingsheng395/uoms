@@ -100,6 +100,8 @@ function chartInit(chartData, chartId) {
         option = currLastValOption(legend, xdata, xname, yname, series);
     }else if(chartId == "chart3") {
         option = getValRateOption(legend, xdata, xname, yname, series);
+        option.series[0].yAxisIndex = 0;
+        option.series[1].yAxisIndex = 1;
     }
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option);
