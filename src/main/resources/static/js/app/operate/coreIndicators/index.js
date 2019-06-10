@@ -35,10 +35,10 @@ function getMonitorVal() {
     if(tgtId != "" && tgtId != null) {
         $.get("/tgtKpiMonitor/getMonitorVal", {id: tgtId}, function (r) {
             var unit = r.data["KPI_UNIT"] == undefined ? "" : r.data["KPI_UNIT"];
-            var targetVal = r.data["TARGET_VAL"] == undefined ? 0.00 + unit:r.data["TARGET_VAL"] + unit;
-            var actualVal = r.data["ACTUAL_VAL"] == undefined ? 0.00 + unit:r.data["ACTUAL_VAL"] + unit;
+            var targetVal = r.data["TARGET_VAL"] == undefined ? 0.00 + unit:accounting.formatNumber(r.data["TARGET_VAL"]) + unit;
+            var actualVal = r.data["ACTUAL_VAL"] == undefined ? 0.00 + unit:accounting.formatNumber(r.data["ACTUAL_VAL"]) + unit;
             var actualValRate = r.data["ACTUAL_VAL_RATE"] == undefined ? '--':r.data["ACTUAL_VAL_RATE"] + '%';
-            var actualValLast = r.data["ACTUAL_VAL_LAST"] == undefined ? 0.00 + unit:r.data["ACTUAL_VAL_LAST"] + unit;
+            var actualValLast = r.data["ACTUAL_VAL_LAST"] == undefined ? 0.00 + unit:accounting.formatNumber(r.data["ACTUAL_VAL_LAST"] )+ unit;
             var finishRate = r.data["FINISH_RATE"] == undefined ? 0.00 + "%":r.data["FINISH_RATE"] + "%";
 
             var remainTgt = r.data["REMAIN_TGT"] == undefined ? 0.00 + unit:r.data["REMAIN_TGT"] + unit;
