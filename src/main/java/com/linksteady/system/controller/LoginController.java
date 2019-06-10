@@ -47,7 +47,7 @@ public class LoginController extends BaseController {
         }
         Session session = super.getSession();
         String sessionCode = (String) session.getAttribute(CODE_KEY);
-        if (!code.equalsIgnoreCase(sessionCode)) {
+        if (null!=sessionCode&&!"".equals(sessionCode)&&!code.equalsIgnoreCase(sessionCode)) {
             return ResponseBo.error("验证码错误！");
         }
 

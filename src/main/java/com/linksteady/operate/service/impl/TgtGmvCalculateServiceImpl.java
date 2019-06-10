@@ -222,6 +222,7 @@ public class TgtGmvCalculateServiceImpl implements TgtCalculateService {
         log.info("开始对目标ID为 {} 的目标进行计算!",targetInfo.getId());
 
         Long targetId=targetInfo.getId();
+        String periodType=targetInfo.getPeriodType();
 
         Map<String,String> diminfo=null;
         if(null!=targetInfo.getDimensionList()&&targetInfo.getDimensionList().size()>0)
@@ -242,7 +243,7 @@ public class TgtGmvCalculateServiceImpl implements TgtCalculateService {
         String currentDt="";
 
         //获取实际执行情况 年，则获取12个月的情况
-        if(TARGET_PERIOD_YEAR.equals(targetInfo.getPeriodType()))
+        if(TARGET_PERIOD_YEAR.equals(periodType))
         {
             actualResult=getGmvHistoryByMonth(targetInfo.getStartDt(),diminfo);
             String preYear=String.valueOf(Long.valueOf(targetInfo.getStartDt())-1);
@@ -252,7 +253,7 @@ public class TgtGmvCalculateServiceImpl implements TgtCalculateService {
             closeDate=Long.parseLong(targetInfo.getStartDt()+"1231");
             //当前月
             currentDt=LocalDate.now().format( DateTimeFormatter.ofPattern("yyyy-MM"));
-        }else if(TARGET_PERIOD_MONTH.equals(targetInfo.getPeriodType()))
+        }else if(TARGET_PERIOD_MONTH.equals(periodType))
         {
             actualResult=getGmvHistoryByDay(targetInfo.getStartDt().replace("-",""),diminfo);
             YearMonth yearMonth = YearMonth.parse(targetInfo.getStartDt(), DateTimeFormatter.ofPattern("yyyy-MM"));
@@ -265,7 +266,7 @@ public class TgtGmvCalculateServiceImpl implements TgtCalculateService {
 
             //当天
             currentDt=LocalDate.now().format( DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        }else if(TARGET_PERIOD_DAY.equals(targetInfo.getPeriodType()))
+        }else if(TARGET_PERIOD_DAY.equals(periodType))
         {
             LocalDate startLocalDate = LocalDate.parse(targetInfo.getStartDt(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             LocalDate endLocalDate = LocalDate.parse(targetInfo.getEndDt(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -339,7 +340,9 @@ public class TgtGmvCalculateServiceImpl implements TgtCalculateService {
             tgtDismant.setPeriodDate(tgtReference.getPeriodName());
             tgtDismant.setActualVal(Optional.ofNullable(actualMap.get(tgtReference.getPeriodName())).orElse(0d));
             tgtDismant.setComputeDt(new Date());
-            tgtDismant.setActualValLast(Optional.ofNullable(lastMap.get(tgtReference.getPeriodName())).orElse(0d));
+            //根据当前周期计算上一周期的周期值
+
+            tgtDismant.setActualValLast(Optional.ofNullable(lastMap.get(getPrePeroidName(periodType,tgtReference.getPeriodName()))).orElse(0d));
 
             tgtList.add(tgtDismant);
         }
@@ -393,6 +396,8 @@ public class TgtGmvCalculateServiceImpl implements TgtCalculateService {
                 }
                 prePeriodValue=currentPeriodValue;
             }
+
+            i++;
         }
         //更新环比增长率
         if(growthRateList.size()>0)
@@ -882,5 +887,29 @@ public class TgtGmvCalculateServiceImpl implements TgtCalculateService {
 
         }
         tgtDismantMapper.saveTargetDismant(targetDismantList);
+    }
+
+    /**
+     * 根据周期类型和周期值 找到其上一个周期的周期名称（方便计算环比)
+     * @param periodType
+     * @param periodName
+     * @return
+     */
+    private String getPrePeroidName(String periodType,String periodName)
+    {
+        //如果类型为年，则周期名称为YYYY-MM格式
+       if(TARGET_PERIOD_YEAR.equals(periodType))
+       {
+           YearMonth yearMonth = YearMonth.parse(periodName, DateTimeFormatter.ofPattern("yyyy-MM"));
+           YearMonth preYearMonth=yearMonth.minus(Period.ofYears(1));
+           return preYearMonth.format( DateTimeFormatter.ofPattern("yyyy-MM"));
+
+       }else if(TARGET_PERIOD_MONTH.equals(periodType)|| TARGET_PERIOD_DAY.equals(periodType))
+       {
+          //如果周期类型为月或日，则周期名称为YYYY-MM-DD格式
+          LocalDate preLocalDate = LocalDate.parse(periodName, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+          return preLocalDate.minusYears(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+       }
+       return "";
     }
 }
