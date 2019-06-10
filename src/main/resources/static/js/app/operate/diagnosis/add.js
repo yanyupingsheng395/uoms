@@ -175,6 +175,7 @@ function getDimAndVal() {
 function saveDiagInfo(dom) {
     var flag = validator.form();
     if(flag) {
+        $("#diagAddName").html("").html("寻找关键部分");
         var conditionList = getDimAndVal();
         console.log(conditionList);
         var dimDisplayName = getDimensionInfo();
