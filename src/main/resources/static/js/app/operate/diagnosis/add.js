@@ -177,7 +177,6 @@ function saveDiagInfo(dom) {
     if(flag) {
         $("#diagAddName").html("").html("寻找关键部分");
         var conditionList = getDimAndVal();
-        console.log(conditionList);
         var dimDisplayName = getDimensionInfo();
         var formData = $("#formTable").serialize() + "&dimDisplayName=" + dimDisplayName + "&conditions=" + JSON.stringify(conditionList);
         $.post("/diag/add", formData, function(r) {
@@ -190,6 +189,21 @@ function saveDiagInfo(dom) {
             $(dom).remove();
             diagId = r.data;
             createRootNode(conditionList);
+            makeInitConditionTree("initConditionTree", conditionList);
         });
     }
+}
+
+function makeInitConditionTree(treeId, data) {
+    var treeArr = [];
+    // 条件
+    $.each(data, function (k, v) {
+        var o = new Object();
+        o.id = k + 1;
+        o.name = v.dimName + ":" + v.dimValueDisplay;
+        o.pId = 0;
+        treeArr.push(o);
+    });
+    treeArr.push({id:0, pId:-1, name:'过滤条件'});
+    createWhereInfoTree(treeId, treeArr);
 }

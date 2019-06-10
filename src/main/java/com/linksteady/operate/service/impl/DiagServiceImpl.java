@@ -52,15 +52,6 @@ public class DiagServiceImpl implements DiagService {
         diag.setUpdateDt(new Date());
         diagMapper.save(diag);
         Long diagId = diag.getDiagId();
-        if(diagConditions.size() > 0) {
-            diagConditions.stream().forEach(x-> {
-                x.setNodeId(-1L);
-                x.setDiagId(diagId);
-                x.setInheritFlag("n");
-                x.setCreateDt(new Date());
-            });
-            diagConditionMapper.save(diagConditions);
-        }
         return diagId;
     }
 

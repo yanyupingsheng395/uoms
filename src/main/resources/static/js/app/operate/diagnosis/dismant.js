@@ -612,8 +612,6 @@ function saveDiagHandleInfo(handleInfo, operateType) {
             if(operateType == "A") {
                 var levelId = handleInfo.kpiLevelId;
                 $.get("/progress/generateDiagData", {diagId: diagId, kpiLevelId: levelId}, function (r) {
-                    console.log("========");
-                    console.log(r);
                     var kpiCode = r.data.kpiCode;
                     var kpiName = r.data.kpiName;
                     $.each(r.data.nodeList, function(k, v) {
@@ -804,9 +802,22 @@ function reasonAdd() {
     var selectedNode = jm.get_selected_node();
     $("#reasonKpiCode").val(selectedNode.data.kpiCode);
     $("#reasonKpiName").val(selectedNode.data.kpiName);
+    var period = getPeriodTypeVal() == 'M' ? '月':'日';
+    $("#reasonPeriod").val(period);
+    $("#reasonTimeBegin").val($("#beginDt").val());
+    $("#reasonTimeEnd").val($("#endDt").val());
     reasonAddCondition();
     $("#nodeReasonAddModal").modal('show');
 }
+
+$("#nodeReasonAddModal").on("hidden.bs.modal", function () {
+    $("#reasonKpiCode").val("");
+    $("#reasonKpiName").val("");
+    $("#reasonPeriod").val("");
+    $("#reasonTimeBegin").val("");
+    $("#reasonTimeEnd").val("");
+    $("#selectedTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
+});
 
 function reasonAddBefore() {
     var selectedNode = jm.get_selected_node();

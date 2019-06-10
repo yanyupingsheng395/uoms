@@ -35,7 +35,6 @@ function getRootDiagInfo() {
 var o = new Object();
 function viewChart(obj) {
     o = obj;
-    console.log(o)
     $("#modal").modal('show');
 }
 
@@ -72,7 +71,7 @@ $('#modal').on('shown.bs.modal', function () {
         treeArr.push(o);
     });
     treeArr.push({id:0, pId:-1, name:'过滤条件'});
-    createWhereInfoTree(treeArr);
+    createWhereInfoTree("tree", treeArr);
 
     if (isRoot) { // 根节点
         $("#opdesc").html("").html("<p>该周期内GMV为：" + obj.kpiValue + "元</p>");
@@ -128,7 +127,7 @@ $('#modal').on('shown.bs.modal', function () {
 });
 
 // 创建过滤条件树
-function createWhereInfoTree(nodes) {
+function createWhereInfoTree(treeId, nodes) {
     if(nodes.length > 1) {
         var setting = {
             view: {
@@ -140,7 +139,7 @@ function createWhereInfoTree(nodes) {
                 }
             }
         };
-        $.fn.zTree.init($("#tree"), setting, nodes);
+        $.fn.zTree.init($("#" + treeId), setting, nodes);
     }
 }
 
