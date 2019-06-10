@@ -25,7 +25,6 @@
       (ID, PERIOD_TYPE, PERIOD_DATE, ACTUAL_VAL,COMPUTE_DT,TGT_ID,TGT_VAL,TGT_PERCENT,TGT_WEIGHT_IDX)
       SELECT seq_tgt_dismant_id.NEXTVAL, m.* FROM(
         <foreach collection="list" item="item" index="index" separator="union all">SELECT
-            #{id},
             #{item.periodType},
             #{item.periodDate},
             #{item.actualVal},
