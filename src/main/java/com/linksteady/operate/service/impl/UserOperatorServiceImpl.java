@@ -150,7 +150,6 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         return result;
     }
 
-
     /**
      * 根据传入的周期类型、时间、获取到对应的值
      * @param type  指标类型
@@ -161,9 +160,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
      * @return
      */
     private Double getKpiOfDifferPeriod(String type, String startDt, String endDt,String periodType,String source) {
-
-        TemplateResult templateResult=buildJoinInfoAndFilter(periodType,startDt,endDt,source);
-
+        TemplateResult templateResult = getTemplateResult(type, startDt, endDt, periodType, source);
         if(type.equals(OP_DATA_GMV)) {
             return gmvMapper.getKpiOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
         }
@@ -232,7 +229,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
      * @return
      */
     private List<KpiInfoVo> getDatePeriodData(String kpiType, String startDt, String endDt, String periodType, String source) {
-        TemplateResult templateResult=buildJoinInfoAndFilter(periodType,startDt,endDt,source);
+        TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
         String peroidName=buildPeriodName(periodType);
 
         if(kpiType.equals(OP_DATA_GMV)) {
@@ -294,7 +291,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     }
 
     private List<KpiInfoVo> getSpAndFpKpiDetail(String kpiType, String startDt, String endDt , String periodType, String source) {
-        TemplateResult templateResult=buildJoinInfoAndFilter(periodType,startDt,endDt,source);
+        TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
         String peroidName=buildPeriodName(periodType);
         if(kpiType.equals(OP_DATA_GMV)) {
             return gmvMapper.getSpAndFpKpi(peroidName, templateResult.getJoinInfo(),templateResult.getFilterInfo());
@@ -373,11 +370,37 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         return result;
     }
 
+    private TemplateResult getTemplateResult(String type, String startDt, String endDt, String periodType, String source) {
+        TemplateResult templateResult = null;
+        switch (type) {
+            case OP_DATA_GMV:
+                templateResult = buildJoinInfoAndFilter(periodType,startDt,endDt,source);
+                break;
+            case OP_DATA_USER_CNT:
+                templateResult = buildJoinInfoAndFilterOfOrderDetails(periodType,startDt,endDt,source);
+                break;
+            case OP_DATA_USER_PRICE:
+                templateResult = buildJoinInfoAndFilterOfOrderDetails(periodType,startDt,endDt,source);
+                break;
+            case OP_DATA_ORDER_CNT:
+                templateResult = buildJoinInfoAndFilter(periodType,startDt,endDt,source);
+                break;
+            case OP_DATA_ORDER_PRICE:
+                templateResult = buildJoinInfoAndFilter(periodType,startDt,endDt,source);
+                break;
+            case OP_DATA_ORDER_JOINRATE:
+                templateResult = buildJoinInfoAndFilterOfOrderDetails(periodType,startDt,endDt,source);
+                break;
+            case OP_DATA_SPRICE:
+                templateResult = buildJoinInfoAndFilterOfOrderDetails(periodType,startDt,endDt,source);
+                break;
+        }
+        return templateResult;
+    }
 
     private List<KpiInfoVo> getSpOrFpKpiValDetail(String kpiType,String startDt, String endDt, String periodType, String source) {
-        TemplateResult templateResult=buildJoinInfoAndFilter(periodType,startDt,endDt,source);
+        TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
         String peroidName=buildPeriodName(periodType);
-
         if(kpiType.equals(OP_DATA_GMV)) {
             return gmvMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
         }
@@ -489,7 +512,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     }
 
     private KpiInfoVo getSpAndFpKpiTotal(String kpiType, String periodType, String startDt, String endDt, String source) {
-        TemplateResult templateResult=buildJoinInfoAndFilter(periodType,startDt,endDt,source);
+        TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
         String peroidName=buildPeriodName(periodType);
         if(kpiType.equals(OP_DATA_GMV)) {
             return gmvMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
@@ -613,6 +636,47 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         if(null!=source&&!"".equals(source))
         {
             join.append(" JOIN  W_SOURCE ON W_ORDERS.SOURCE_ID=W_SOURCE.SOURCE_ID");
+
+            List<String> sourceList=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(source);
+
+            if(sourceList.size()==1)
+            {
+                bf.append(" AND ").append("W_SOURCE.SOURCE_ID").append("=").append(sourceList.get(0));
+            }else
+            {
+                bf.append(" AND ").append("W_SOURCE.SOURCE_ID").append(" IN(").append(joiner.join(sourceList)).append(")");
+            }
+        }
+
+        TemplateResult templateResult=new TemplateResult();
+        templateResult.setJoinInfo(join.toString());
+        templateResult.setFilterInfo(bf.toString());
+
+        return templateResult;
+    }
+
+    private TemplateResult buildJoinInfoAndFilterOfOrderDetails(String periodType, String startDt, String endDt,String source)
+    {
+        Joiner joiner = Joiner.on(",").skipNulls();
+        //构造where条件
+        StringBuffer bf=new StringBuffer();
+        StringBuffer join=new StringBuffer();
+
+        //处理条件 Y M D
+        if("D".equals(periodType))
+        {
+            bf.append(" AND W_DATE.DAY>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.DAY<=").append(StringUtils.replaceChars(endDt,"-",""));
+        }else if("M".equals(periodType))
+        {
+            bf.append(" AND W_DATE.MONTH=").append(StringUtils.replaceChars(startDt,"-",""));
+        }else if("Y".equals(periodType))
+        {
+            bf.append(" AND W_DATE.YEAR=").append(startDt);
+        }
+
+        if(null!=source&&!"".equals(source))
+        {
+            join.append(" JOIN  W_SOURCE ON W_ORDER_DETAILS.SOURCE_ID=W_SOURCE.SOURCE_ID");
 
             List<String> sourceList=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(source);
 

@@ -39,8 +39,9 @@ function load_jsmind(){
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-
-    $.get("/useroperator/getOrgChartData",{ periodType: periodType, startDt: startDt, endDt: endDt}, function (resp) {
+    var source = $("#source").selectpicker('val');
+    source = source == null ? null:source.join(",");
+    $.get("/useroperator/getOrgChartData",{ periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (resp) {
         if(null!=resp.data.gmv||resp.data.gmv!='null')
         {
             $("#KPI_GMV").html("").html(resp.data.gmv+"元");
@@ -85,7 +86,62 @@ $("#period").change(function () {
 });
 
 function searchKpiInfo() {
-    var source = $("#source").selectpicker('val');
+    lightyear.loading('show');
+    var href = $("#navTabs1").find('a[data-toggle="tab"][aria-expanded="true"]').attr("href");
+    switch (href) {
+        case "#overview":
+            load_jsmind();
+            break;
+        case "#retention":
+            getData();
+            getData1();
+            break;
+        default:
+            var kpiType = "";
+            var unit = "";
+            if (href.endWith("#gmv")) {
+                kpiType = "gmv";
+                unit = "元";
+                $("#kpiName").html("").html("GMV");
+            }
+            if(href.endWith("#user-num")) {
+                kpiType = "userCnt";
+                unit = "人";
+                $("#kpiName").html("").html("用户数");
+            }
+            if(href.endWith("#customer-unit-price")) {
+                kpiType = "userPrice";
+                unit = "元";
+                $("#kpiName").html("").html("客单价");
+            }
+            if(href.endWith("#order-num")) {
+                kpiType = "orderCnt";
+                unit = "个";
+                $("#kpiName").html("").html("订单数");
+            }
+            if(href.endWith("#order-price")) {
+                kpiType = "orderPrice";
+                unit = "元";
+                $("#kpiName").html("").html("订单价");
+            }
+            if(href.endWith("#joint-rate")) {
+                kpiType = "jointRate";
+                unit = "";
+                $("#kpiName").html("").html("连带率");
+            }
+            if(href.endWith("#unit-price")) {
+                kpiType = "unitPrice";
+                unit = "元";
+                $("#kpiName").html("").html("件单价");
+            }
+
+            kpiChart(kpiType);
+            allChart(kpiType);
+            makeSpAndFpChart(kpiType);
+            getKpiInfo(kpiType, unit);
+            getKpiCalInfo(kpiType);
+    }
+    lightyear.loading('hide');
 }
 
 $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -175,7 +231,9 @@ function getKpiInfo(kpiType, unit) {
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    $.get("/useroperator/getKpiInfo", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt}, function (r) {
+    var source = $("#source").selectpicker('val');
+    source = source == null ? null:source.join(",");
+    $.get("/useroperator/getKpiInfo", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
         var yny = r.data["yny"];
         var yoy = r.data["yoy"];
         $("#actualVal").html("").html(r.data["kpiVal"] + "<span class='h5'>"+unit+"</span>");
@@ -207,7 +265,9 @@ function kpiChart(kpiType) {
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    $.get("/useroperator/getKpiChart", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt}, function (r) {
+    var source = $("#source").selectpicker('val');
+    source = source == null ? null:source.join(",");
+    $.get("/useroperator/getKpiChart", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
         var seriesData = [];
         var o1 = new Object();
         o1.name = "本周期指标";
@@ -258,7 +318,9 @@ function allChart(kpiType) {
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    $.get("/useroperator/getSpAndFpKpi", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt}, function (r) {
+    var source = $("#source").selectpicker('val');
+    source = source == null ? null:source.join(",");
+    $.get("/useroperator/getSpAndFpKpi", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
         var seriesData = [];
         var o1 = new Object();
         o1.name = "总体";
@@ -287,7 +349,9 @@ function makeSpAndFpChart(kpiType) {
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    $.get("/useroperator/getSpOrFpKpiVal", {kpiType:kpiType,periodType: periodType, startDt: startDt, endDt: endDt}, function (r) {
+    var source = $("#source").selectpicker('val');
+    source = source == null ? null:source.join(",");
+    $.get("/useroperator/getSpOrFpKpiVal", {kpiType:kpiType,periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
         fpChart(r);
         spChart(r);
     });
@@ -425,7 +489,9 @@ function getKpiCalInfo(kpiType) {
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    $.get("/useroperator/getKpiCalInfo", {kpiType:kpiType, isFp: 'N',periodType: periodType, startDt: startDt, endDt: endDt}, function (r) {
+    var source = $("#source").selectpicker('val');
+    source = source == null ? null:source.join(",");
+    $.get("/useroperator/getKpiCalInfo", {kpiType:kpiType, isFp: 'N',periodType: periodType, startDt: startDt, endDt: endDt, source:source}, function (r) {
         $("#fpAbs").html("").html(r.data['fpAbs']);
         $("#fpContributeRate").html("").html(r.data['fpContributeRate']);
         $("#fpHb").html("").html(r.data['fpHb']);
