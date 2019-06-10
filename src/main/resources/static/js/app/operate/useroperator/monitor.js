@@ -44,7 +44,7 @@ function load_jsmind(){
     $.get("/useroperator/getOrgChartData",{ periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (resp) {
         if(null!=resp.data.gmv||resp.data.gmv!='null')
         {
-            $("#KPI_GMV").html("").html(resp.data.gmv+"元");
+            $("#KPI_GMV").html("").html(accounting.formatNumber(resp.data.gmv)+"元");
             $("#KPI_UCNT").html("").html(resp.data.ucnt+"人");
             $("#KPI_UPRICE").html("").html(resp.data.uprice+"元");
             $("#KPI_PRICE").html("").html(resp.data.price+"元");

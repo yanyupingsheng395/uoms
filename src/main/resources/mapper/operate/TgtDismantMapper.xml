@@ -23,19 +23,20 @@
         </selectKey >
       insert into UO_TGT_DISMANT
       (ID, PERIOD_TYPE, PERIOD_DATE, ACTUAL_VAL,COMPUTE_DT,TGT_ID,TGT_VAL,TGT_PERCENT,TGT_WEIGHT_IDX)
-        <foreach collection ="list" item="item" index= "index" separator ="union all">
-         SELECT
-          #{id},
-          #{item.periodType},
-          #{item.periodDate},
-          #{item.actualVal},
-          #{item.computeDt},
-          #{item.tgtId},
-          #{item.tgtVal},
-          #{item.tgtPercent},
-          #{item.tgtWeightIdx}
-        FROM DUAL
+      SELECT seq_tgt_dismant_id.NEXTVAL, m.* FROM(
+        <foreach collection="list" item="item" index="index" separator="union all">SELECT
+            #{id},
+            #{item.periodType},
+            #{item.periodDate},
+            #{item.actualVal},
+            #{item.computeDt},
+            #{item.tgtId},
+            #{item.tgtVal},
+            #{item.tgtPercent},
+            #{item.tgtWeightIdx}
+            FROM DUAL
         </foreach >
+         ) m
   </insert>
 
     <select id="findByTgtId" resultMap="BaseResultMap">
