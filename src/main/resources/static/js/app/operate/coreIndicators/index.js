@@ -98,6 +98,24 @@ function chartInit(chartData, chartId) {
         option = getOptionAcc(legend, xdata, xname, yname, series);
     }else if(chartId == "chart2") {
         option = currLastValOption(legend, xdata, xname, yname, series);
+        option.series[1].smooth = false;
+        option.series[1].itemStyle = {
+            normal:{
+                lineStyle:{
+                    width:2,
+                    type:'dotted'
+                }
+            }
+        };
+        option.series[3].smooth = false;
+        option.series[3].itemStyle = {
+            normal:{
+                lineStyle:{
+                    width:2,
+                    type:'dotted'
+                }
+            }
+        };
     }else if(chartId == "chart3") {
         option = getValRateOption(legend, xdata, xname, yname, series);
         option.series[0].yAxisIndex = 0;
