@@ -1,3 +1,12 @@
+$(function () {
+    getTargetList();
+    getMonitorVal();
+
+    var dt = $("#tgtList").find("option:selected").attr("data-code");
+    var periodType = $("#tgtList").find("option:selected").attr("data-period");
+    getCharts(periodType, dt);
+});
+
 // 获取监控目标
 function getTargetList() {
     $.ajax({
@@ -23,13 +32,6 @@ function getTargetList() {
     });
 }
 
-init();
-function init() {
-    getTargetList();
-}
-
-var tgtId = $("#tgtList").find("option:selected").val();
-getMonitorVal();
 function getMonitorVal() {
     var tgtId = $("#tgtList").find("option:selected").val();
     if(tgtId != "" && tgtId != null) {
@@ -73,10 +75,9 @@ function getMonitorVal() {
  * periodType：时间周期
  * dt：时间
  */
-var dt = $("#tgtList").find("option:selected").attr("data-code");
-var periodType = $("#tgtList").find("option:selected").attr("data-period");
-getCharts(periodType, dt);
+
 function getCharts(periodType, dt) {
+    var tgtId = $("#tgtList").find("option:selected").val();
     if(tgtId != "" && tgtId != null) {
         $.get("/tgtKpiMonitor/getCharts", {id:tgtId, periodType:periodType, dt: dt}, function (r) {
             chartInit(r.data[0], "chart1");
@@ -133,7 +134,6 @@ $("#tgtList").change(function () {
     getCharts(periodType, dt);
     getMonitorVal();
 });
-
 
 function getOptionAcc(legend, xdata, xAxis, yAxis, series) {
     return {
@@ -216,6 +216,7 @@ function getOptionAcc(legend, xdata, xAxis, yAxis, series) {
         series:series
     };
 }
+
 function currLastValOption(legend, xdata, xAxis, yAxis, series) {
     return {
         legend: {
