@@ -105,10 +105,10 @@ function addCondition() {
         if($("#op3").find("option:selected").val() == null) {
             if($("#op3").find("option").length == 0) {
                 toastr.warning('该指标无可再拆分的乘法公式，请选择别的拆分方式！');
-                lightyear.loading("show");
+                lightyear.loading("hide");
             }else {
                 toastr.warning('请选择拆分公式！');
-                lightyear.loading("show");
+                lightyear.loading("hide");
             }
         } else {
             condition1();
@@ -118,7 +118,7 @@ function addCondition() {
         condition2();
     }else{
         toastr.warning('请选择诊断方式！');
-        lightyear.loading("show");
+        lightyear.loading("hide");
     }
 }
 
@@ -170,7 +170,7 @@ function saveNodes() {
         obj["kpiCode"] = tmp.data.kpiCode;
         obj["kpiName"] = tmp.data.kpiName;
         obj["kpiLevelId"] = tmp.data.kpiLevelId;
-        obj["alarmFlag"] = "n";
+        obj["alarmFlag"] = "N";
         obj["conditions"] = tmp.data.conditions;
         data.push(obj);
     }
@@ -261,7 +261,8 @@ function getParentCondition() {
         $.each(array, function (k, v) {
             code += "<tr><td style='text-align: left;'>" + v.dimName.trim() + ":";
             code += v.dimValueDisplay.trim();
-            code += "<input type='hidden' name='dimValues' value='"+v.dimValues+"'><input type='hidden' name='condition' value='"+v.dimCode+"'><input name='inheritFlag' type='hidden' value='Y'></td><td></td></tr>";
+            var inheritFlag = (v.inheritFlag == undefined || v.inheritFlag == null) ? "":v.inheritFlag;
+            code += "<input type='hidden' name='dimValues' value='"+v.dimValues+"'><input type='hidden' name='condition' value='"+v.dimCode+"'><input name='inheritFlag' type='hidden' value='"+ inheritFlag +"'></td><td></td></tr>";
         });
     }
     return code;
@@ -319,6 +320,7 @@ function selectedCondition() {
     }
 }
 
+
 // 获取条件
 function filterCondition() {
     var dataArray = new Array();
@@ -353,6 +355,10 @@ function modalDetailBefore() {
             code += v.dimValueDisplay;
         }else if(v.inheritFlag == "Y"){
             code += v.dimValueDisplay + "&nbsp;(继承至父节点)"
+        }else if(v.inheritFlag == "A"){
+            code += v.dimValueDisplay + "&nbsp;(加法拆分的维度)"
+        }else if(v.inheritFlag == "N"){
+            code += v.dimValueDisplay;
         }
         code += "</td></tr>";
     });
@@ -366,7 +372,7 @@ function modalDetailBefore() {
 // 加法条件
 function condition0() {
     var levelId = getKpiLevelId();
-    saveRedisHandleInfo(null,levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName);
+    saveRedisHandleInfo(null,levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName, null);
 }
 
 // 加法节点为叶子节点
@@ -393,10 +399,8 @@ function redisSaveRootNodeHandleInfo(whereinfo) {
     handleInfo.kpiCode = kpiCode;
     handleInfo.mainKpiCode = kpiCode;
     handleInfo.whereinfo = whereinfo;
-    saveDiagHandleInfo(handleInfo, "F");
+    saveDiagHandleInfo(handleInfo, null);
 }
-//
-//saveNode("-1");
 
 // 单步保存节点信息
 function saveNode(nodeid) {
@@ -416,7 +420,7 @@ function saveNode(nodeid) {
         obj["kpiCode"] = tmp.data.kpiCode;
         obj["kpiName"] = tmp.data.kpiName;
         obj["kpiLevelId"] = tmp.data.kpiLevelId;
-        obj["alarmFlag"] = "n";
+        obj["alarmFlag"] = "N";
         obj["condition"] = tmp.data.conditions;
         data.push(obj);
     }
@@ -512,8 +516,9 @@ function condition2() {
     var nodeName = levelId + " <i class='mdi mdi-filter'></i> " + $("#currentNode").val();
     if(conditionVal.length == 0) {
         toastr.warning('请选择过滤条件！');
+        lightyear.loading('hide');
     }else {
-        createNode(nodeName, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName, false, null);
+        // createNode(nodeName, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName, false, null);
         $("#nodeAddModal").modal('hide');
         saveRedisHandleInfo(nodeName, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName);
     }
@@ -528,18 +533,18 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf, condition) {
     var kpiName = kpiName;
     var kpiLevelId = levelId;
     var alarmFlag = false;
-    var conditions = new Array();
-    if(condition != null) {
-        conditions.push(condition);
-    }
-    conditions = conditions.concat(filterCondition());
+    // var conditions = new Array();
+    // if(condition != null) {
+    //     conditions.push(condition);
+    // }
+    // conditions = conditions.concat(filterCondition());
 
     var data = new Object();
     data.kpiCode = kpiCode;
     data.kpiName = kpiName;
     data.kpiLevelId = kpiLevelId;
     data.alarmFlag = alarmFlag;
-    data.conditions = conditions;
+    data.conditions = condition;
     data.isLeaf = isLeaf;
 
     jm.enable_edit();
@@ -554,7 +559,7 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf, condition) {
 }
 
 // redis存储HandleInfo
-function saveRedisHandleInfo(nodeName, levelId, kpiCode, kpiName) {
+function saveRedisHandleInfo(nodeName, levelId, kpiCode, kpiName, map) {
     var op = $("#opDataType").val();
     var mainKpiCode = "";
     if(op == "edit") {
@@ -601,12 +606,12 @@ function saveRedisHandleInfo(nodeName, levelId, kpiCode, kpiName) {
     handleInfo.kpiCode = kpiCode;
     handleInfo.mainKpiCode = mainKpiCode;
     // redis封装数据,返回模版文件
-    saveDiagHandleInfo(handleInfo, operateType);
+    saveDiagHandleInfo(handleInfo, operateType, map);
 }
-
-function saveDiagHandleInfo(handleInfo, operateType) {
-    $.post("/progress/saveDiagHandleInfo", {diagHandleInfo: JSON.stringify(handleInfo)}, function (r) {
-        if(r.code == 500) {
+var flag = false;
+function saveDiagHandleInfo(handleInfo, operateType, map) {
+    $.post("/progress/saveDiagHandleInfo", {diagHandleInfo: JSON.stringify(handleInfo)}, function (res) {
+        if(res.code == 500) {
             toastr.error('操作失败，服务出现异常了，快反馈给系统运维人员吧！');
         }else {
             if(operateType == "A") {
@@ -616,11 +621,40 @@ function saveDiagHandleInfo(handleInfo, operateType) {
                     var kpiName = r.data.kpiName;
                     $.each(r.data.nodeList, function(k, v) {
                         var nodeName = levelId + " <i class='mdi mdi-key-plus'></i> " + $("#op4").find("option:selected").text() + "(" + v.name + ")";
-                        var condition = getConditionList(v);
+                        var condition = r.data.whereinfo;
+                        if(condition == null ) {
+                            condition = new Array();
+                        }
+                        condition = condition.concat(getConditionList(v));
                         createNode(nodeName, levelId, kpiCode, kpiName, false, condition);
-                        // 加法将条件加入到列表
                     });
                 });
+            }
+            if(operateType == "M" && !flag) {
+                var levelId = handleInfo.kpiLevelId;
+                $.get("/progress/generateDiagData", {diagId: diagId, kpiLevelId: levelId}, function (r) {
+                    var condition = r.data.whereinfo;
+                    var kpiCode1 = map["dismantPart1Code"];
+                    var kpiCode2 = map["dismantPart2Code"];
+                    var kpiName1 = map["dismantPart1Name"];
+                    var kpiName2 = map["dismantPart2Name"];
+                    var nodeName1 = levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName1;
+                    createNode(nodeName1, levelId, kpiCode1, kpiName1, false, condition);
+                    var nodeName2 = levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName2;
+                    createNode(nodeName2, levelId, kpiCode2, kpiName2, false, condition);
+                });
+                flag = true;
+            }
+            if(operateType == "F") {
+                var levelId = handleInfo.kpiLevelId;
+                $.get("/progress/generateDiagData", {diagId: diagId, kpiLevelId: levelId}, function (r) {
+                    var condition = r.data.whereinfo;
+                    var nodeName = levelId + " <i class='mdi mdi-filter'></i> " + $("#currentNode").val();
+                    var kpiCode = r.data.kpiCode;
+                    var kpiName = r.data.kpiName;
+                    createNode(nodeName, levelId, kpiCode, kpiName, false, condition);
+                });
+                flag = true;
             }
         }
     });
@@ -632,7 +666,7 @@ function getConditionList(v) {
     tmp.dimName = v.dimName;
     tmp.dimValues = v.code;
     tmp.dimValueDisplay = v.name;
-    tmp.inheritFlag = "N";
+    tmp.inheritFlag = "A";
     return tmp;
 }
 
@@ -664,7 +698,11 @@ function getKpiLevelId() {
 }
 
 function removeConditionList(val, dom) {
+    console.log($(dom).parent());
+    console.log($(dom).parent().parent());
     $(dom).parent().parent().remove();
+
+    // 条件数组去除该记录
     conditionVal.forEach(function(item, index, arr){
         if(item == val) {
             conditionVal.splice(index, 1);
@@ -672,7 +710,9 @@ function removeConditionList(val, dom) {
     });
 
     if(conditionVal.length == 0) {
-        $("#dataTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
+        if($("#dataTable").find("tr").text() == "") {
+            $("#dataTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
+        }
     }
 
     $.get("/progress/getDiagDimList", null, function (r) {
@@ -694,20 +734,15 @@ function removeConditionList(val, dom) {
 }
 
 function jsmind_refresh(map) {
-    var kpiCode1 = map["dismantPart1Code"];
-    var kpiCode2 = map["dismantPart2Code"];
     var kpiName1 = map["dismantPart1Name"];
     var kpiName2 = map["dismantPart2Name"];
-
     var levelId = getKpiLevelId();
     var nodeName1 = levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName1;
     var nodeName2 = levelId + " <i class='mdi mdi-key-remove'></i> " + kpiName2;
-    createNode(nodeName1, levelId, kpiCode1, kpiName1, false, null);
-    createNode(nodeName2, levelId, kpiCode2, kpiName2, false, null);
     $("#nodeAddModal").modal('hide');
-
-    saveRedisHandleInfo(nodeName1, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName);
-    saveRedisHandleInfo(nodeName2, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName);
+    saveRedisHandleInfo(nodeName1, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName, map);
+    saveRedisHandleInfo(nodeName2, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName, map);
+    flag = false;
 }
 
 // 获取公式
@@ -773,18 +808,6 @@ function inputCheck(dom) {
         $(dom).parent().removeClass("has-error");
     }
 }
-
-// function nextStep(dom) {
-//     if($("#diagName").val() != "") {
-//         $("#diagName").parent().removeClass("has-error");
-//         if($("#step1").attr("style") == "display:block;") {
-//             beforeNext(dom);
-//         }
-//     }else {
-//         $("#diagName").parent().addClass("has-error");
-//         toastr.warning('请输入诊断名称！');
-//     }
-// }
 
 function deleteNode() {
     $.alert({

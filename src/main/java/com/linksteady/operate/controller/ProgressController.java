@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 流程图拆解过程
@@ -124,6 +125,10 @@ public class ProgressController {
             DiagHandleInfo obj = jsonObject.toJavaObject(DiagHandleInfo.class);
             if(null == obj.getWhereinfo()) {
                 List<DiagConditionVO> tmp = new ArrayList<>();
+                obj.setWhereinfo(tmp);
+            }else {
+                List<DiagConditionVO> tmp = obj.getWhereinfo();
+                tmp = tmp.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()->new TreeSet<>(Comparator.comparing(DiagConditionVO::getDimCode).thenComparing(DiagConditionVO::getDimValues))), ArrayList::new));
                 obj.setWhereinfo(tmp);
             }
             diagHandleService.setDiagHandleInfoToRedis(obj);

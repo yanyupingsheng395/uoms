@@ -8,14 +8,13 @@ import com.linksteady.operate.dao.DiagDetailMapper;
 import com.linksteady.operate.domain.DiagCondition;
 import com.linksteady.operate.domain.DiagDetail;
 import com.linksteady.operate.service.DiagDetailService;
+import com.linksteady.operate.vo.DiagConditionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DiagDetailServiceImpl implements DiagDetailService {
@@ -50,6 +49,8 @@ public class DiagDetailServiceImpl implements DiagDetailService {
         diagDetailMapper.save(diagDetailList);
         // 保存条件
         if(conditions.size() != 0) {
+            // todo
+            conditions = conditions.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()->new TreeSet<>(Comparator.comparing(DiagCondition::getDimCode).thenComparing(DiagCondition::getDimValues))), ArrayList::new));
             diagConditionMapper.save(conditions);
         }
     }

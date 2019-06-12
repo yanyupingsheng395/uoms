@@ -60,9 +60,12 @@ $('#modal').on('shown.bs.modal', function () {
     // 条件
     $.each(obj.whereinfo, function (k, v) {
         var o = new Object();
-        if(v["inherit_flag"] == "Y") {
+        if(v["inheritFlag"] == "Y") {
             o.id = k + 1;
-            o.name = v.dimName + ":" + v.dimValueDisplay + "(继承至父节点)";
+            o.name = v.dimName + ":" + v.dimValueDisplay + "（继承至父节点）";
+        }else if(v["inheritFlag"] == "A"){
+            o.id = k + 1;
+            o.name = v.dimName + ":" + v.dimValueDisplay + "（加法拆分的维度）";
         }else {
             o.id = k + 1;
             o.name = v.dimName + ":" + v.dimValueDisplay;
