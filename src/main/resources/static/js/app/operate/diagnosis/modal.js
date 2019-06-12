@@ -9,7 +9,7 @@ function nodeClick() {
     }
     var kpiLevelId = jm.get_selected_node().data.kpiLevelId;
     $.get(url, {diagId: diagId, kpiLevelId: kpiLevelId}, function (r) {
-        if(r.code == 200) {int
+        if(r.code == 200) {
             viewChart(r.data);
         }else {
             lightyear.loading(hide);
