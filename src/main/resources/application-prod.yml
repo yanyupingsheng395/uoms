@@ -95,13 +95,21 @@ spring:
     type:
       redis
 
+#  resources:
+#    chain:
+#      strategy:
+#        fixed:
+#          enabled: true
+#          paths: /js/app/**,/css/**,/fonts/**
+#          version: v1.0.16
+
+  #MD5 方式请求静态资源
   resources:
     chain:
       strategy:
-        fixed:
+        content:
           enabled: true
-          paths: /js/app/**,/css/**,/fonts/**
-          version: v1.0.16
+          paths: /**
 
 #  devtools:
 #    livereload:

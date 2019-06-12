@@ -97,13 +97,22 @@ spring:
     type:
       redis
 
+#  resources:
+#    chain:
+#      strategy:
+#        fixed:
+#          enabled: true
+#          paths: /js/app/**,/css/**,/fonts/**
+#          version: v1.0.0
+#        content:
+#          enabled: true
+
   resources:
     chain:
       strategy:
-        fixed:
+        content:
           enabled: true
-          paths: /js/app/**,/css/**,/fonts/**
-          version: v1.0.0
+          paths: /**
 
 #  devtools:
 #    livereload:
