@@ -12,7 +12,7 @@ function nodeClick() {
         if(r.code == 200) {
             viewChart(r.data);
         }else {
-            lightyear.loading(hide);
+            lightyear.loading('hide');
             toastr.error("发生未知异常！");
         }
     });
