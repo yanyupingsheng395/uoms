@@ -171,7 +171,11 @@ function t3Cov(obj) {
     var tmp = null;
     $.each(obj.covData, function (k, v) {
         if(v.name == "总体") {
-            tmp = v.data + "%";
+            if(v.data != null && v.data != "null") {
+                tmp = v.data + "%";
+            }else {
+                tmp = "--";
+            }
         }else {
             code1 += "<td>"+v.name+"</td>";
             if(v.data == "") {
