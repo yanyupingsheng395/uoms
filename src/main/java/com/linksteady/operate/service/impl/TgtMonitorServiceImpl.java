@@ -168,11 +168,6 @@ public class TgtMonitorServiceImpl implements TgtMonitorService {
         return echart;
     }
 
-    public static void main(String[] args) {
-        LocalDate now = LocalDate.now();
-        System.out.println(now.getMonthValue());
-    }
-
     /**
      * 获取周期内的时间
      * @param periodType
