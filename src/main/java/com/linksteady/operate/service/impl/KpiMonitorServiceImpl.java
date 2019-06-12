@@ -8,6 +8,7 @@ import com.linksteady.operate.dao.KpiMonitorMapper;
 import com.linksteady.operate.domain.DatePeriodKpi;
 import com.linksteady.operate.service.KpiMonitorService;
 import com.linksteady.operate.vo.Echart;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class KpiMonitorServiceImpl implements KpiMonitorService {
 
@@ -825,7 +827,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
                 return df.format(endCal.getTime());
             }
         }catch (Exception ex) {
-            ex.printStackTrace();
+            log.error("获取日期异常：", ex);
         }
         return null;
     }
