@@ -164,4 +164,9 @@ public class DiagOpFilterServiceImpl implements DiagOpService {
 
         return result;
     }
+
+    public static void main(String[] args) {
+        StringTemplate hello = new StringTemplate("123");
+        System.out.println(hello.render());
+    }
 }
