@@ -4,9 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DataStatisticsUtils;
 import com.linksteady.common.util.StringTemplate;
@@ -24,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.RoundingMode;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -161,14 +156,30 @@ public class DiagOpAddServiceImpl implements DiagOpService {
 
         JSONArray mainKpiBarData=new JSONArray();
         JSONObject mainKpiBar=null;
-        for(DiagAddDataCollector diagAddDataCollector:barDataList)
-        {
-            mainKpiBar=new JSONObject();
-            mainKpiBar.put("name",diagDimValuesMap.get(diagAddDataCollector.getDimValue()));
-            mainKpiBar.put("value",diagAddDataCollector.getValue());
 
-            mainKpiBarData.add(mainKpiBar);
+        if(null==barDataList||barDataList.size()==0)
+        {
+            //根据用户选择的加法维度，填充空数据
+            for(String v:dimValues)
+            {
+                mainKpiBar=new JSONObject();
+                mainKpiBar.put("name",diagDimValuesMap.get(v));
+                mainKpiBar.put("value",0);
+
+                mainKpiBarData.add(mainKpiBar);
+            }
+        }else
+        {
+            for(DiagAddDataCollector diagAddDataCollector:barDataList)
+            {
+                mainKpiBar=new JSONObject();
+                mainKpiBar.put("name",diagDimValuesMap.get(diagAddDataCollector.getDimValue()));
+                mainKpiBar.put("value",diagAddDataCollector.getValue());
+
+                mainKpiBarData.add(mainKpiBar);
+            }
         }
+
         diagResultInfo.setMainKpiBarData(mainKpiBarData);
 
     }
@@ -292,14 +303,30 @@ public class DiagOpAddServiceImpl implements DiagOpService {
 
         JSONArray currKpiBarData=new JSONArray();
         JSONObject currKpiBar=null;
-        for(DiagAddDataCollector diagAddDataCollector:barDataList)
-        {
-            currKpiBar=new JSONObject();
-            currKpiBar.put("name",diagDimValuesMap.get(diagAddDataCollector.getDimValue()));
-            currKpiBar.put("value",diagAddDataCollector.getValue());
 
-            currKpiBarData.add(currKpiBar);
+        if(null==barDataList||barDataList.size()==0)
+        {
+            //根据用户选择的加法维度，填充空数据
+            for(String v:dimValues)
+            {
+                currKpiBar=new JSONObject();
+                currKpiBar.put("name",diagDimValuesMap.get(v));
+                currKpiBar.put("value",0);
+
+                currKpiBarData.add(currKpiBar);
+            }
+        }else
+        {
+            for(DiagAddDataCollector diagAddDataCollector:barDataList)
+            {
+                currKpiBar=new JSONObject();
+                currKpiBar.put("name",diagDimValuesMap.get(diagAddDataCollector.getDimValue()));
+                currKpiBar.put("value",diagAddDataCollector.getValue());
+
+                currKpiBarData.add(currKpiBar);
+            }
         }
+
         diagResultInfo.setCurrKpiBarData(currKpiBarData);
 
     }
@@ -380,6 +407,18 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         return commonSelectMapper.selectAddData(stringTemplate.render());
     }
 
+    /**
+     * 计算变异系数 和 相关系数
+     * @param mainKpiCode
+     * @param diagHandleInfo
+     * @param kpiCode
+     * @param dimCode
+     * @param dimValues
+     * @param selectDimValues
+     * @param dayPeriodList
+     * @param diagAddResultInfo
+     * @param diagDimValuesMap
+     */
     private void BuildCovAndRelate(String mainKpiCode,DiagHandleInfo diagHandleInfo,String kpiCode,String dimCode,List<String> dimValues,List<String> selectDimValues,List<String> dayPeriodList,DiagAddResultInfo diagAddResultInfo,Map<String,String> diagDimValuesMap)
     {
         JSONArray covArray=new JSONArray();
@@ -521,27 +560,26 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         Joiner joiner = Joiner.on(",").skipNulls();
 
         //合并用户选择的条件和 加法操作时用户选择分组的条件
-        Map<String,List<String>> mergetMap=Maps.newHashMap();
+        Multimap<String,List<String>> filterMap= ArrayListMultimap.create();
 
+        //将用户选择的条件先放入进去
         filterInfo.stream().forEach(s->{
-            mergetMap.put(s.getDimCode(),Splitter.on(",").trimResults().omitEmptyStrings().splitToList(s.getDimValues()));
+            filterMap.put(s.getDimCode(),Splitter.on(",").trimResults().omitEmptyStrings().splitToList(s.getDimValues()));
         });
 
         //以用户选择的过滤值为准线,同时合并用户选择的维度，这是为了防止 spu cate等一些值非常多的维度进行group by 会崩溃。
+
+        //对于同一纬度的值某个值既做了过滤条件 又做了加法的拆分依据，这时候不要合并，合并以后会有问题。如按渠道->PC 加法拆分用户数，而又选了过滤条件为 渠道->APP，如果
+        //选择合并，这时候生成的where 条件为 CHNL_ID IN(APP,PC) 这是错的，应该是生成 CHNL_ID =APP AND CHNL_APP=PC 才对。
         if(null!=dimValues)
         {
-            //判断当前用户选的条件中是否已经存在做加法的维度
-            if(mergetMap.containsKey(dimCode))
-            {
-                mergetMap.put(dimCode,mergeValues(dimValues,mergetMap.get(dimCode)));
-            }else
-            {
-                mergetMap.put(dimCode,dimValues);
-            }
+            filterMap.put(dimCode,dimValues);
         }
 
-        for(Map.Entry<String,List<String>> entry:mergetMap.entrySet())
-        {
+        Iterator<Map.Entry<String,List<String>>> iter = filterMap.entries().iterator();
+        while(iter.hasNext()){
+            Map.Entry<String,List<String>> entry =iter.next();
+
             //清空
             filter.setLength(0);
             join.setLength(0);
@@ -677,14 +715,14 @@ public class DiagOpAddServiceImpl implements DiagOpService {
         return result;
     }
 
-    /**
-     * 合并两个list的值，对于重复的值只返回一个 (并集去重)
-     */
-    private List<String> mergeValues(List<String> list1,List<String> list2)
-    {
-        List<String> list=Lists.newArrayList();
-        list.addAll(list1);
-        list.addAll(list2);
-        return list.stream().distinct().collect(Collectors.toList());
-    }
+//    /**
+//     * 合并两个list的值，对于重复的值只返回一个 (并集去重)
+//     */
+//    private List<String> mergeValues(List<String> list1,List<String> list2)
+//    {
+//        List<String> list=Lists.newArrayList();
+//        list.addAll(list1);
+//        list.addAll(list2);
+//        return list.stream().distinct().collect(Collectors.toList());
+//    }
 }

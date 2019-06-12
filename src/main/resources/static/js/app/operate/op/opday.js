@@ -53,14 +53,7 @@ $(function () {
     });
 
     $("#btn_downLoad").on("click",function () {
-        $.alert({
-            title: '提示：',
-            content: '演示环境，不支持导出！',
-            confirm: {
-                text: '确认',
-                btnClass: 'btn-primary'
-            }
-        });
+        toastr.warning("尚未触达，暂无效果统计！");
     });
 
     // 统计图表
