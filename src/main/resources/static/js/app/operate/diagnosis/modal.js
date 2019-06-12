@@ -210,8 +210,12 @@ function t2Cov1(obj) {
     var code1 = "<tr class='active'>";
     var code2 = "<tr>";
     $.each(obj.covValues, function (k, v) {
+        if(v != "") {
+            code2 += "<td>"+v+"%</td>";
+        }else {
+            code2 += "<td>--</td>";
+        }
         code1 += "<td>"+k+"</td>";
-        code2 += "<td>"+v+"%</td>";
     });
     code1 += "</tr>";
     code2 += "</tr>";
