@@ -1,4 +1,7 @@
 
+$(function () {
+    getDimension();
+});
 // 流程图对象
 var jm = null;
 var diagId = 0;

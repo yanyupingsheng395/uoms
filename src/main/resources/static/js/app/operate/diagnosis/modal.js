@@ -174,7 +174,11 @@ function t3Cov(obj) {
             tmp = v.data + "%";
         }else {
             code1 += "<td>"+v.name+"</td>";
-            code2 += "<td>"+v.data+"%</td>";
+            if(v.data == "") {
+                code2 += "<td>--</td>";
+            }else {
+                code2 += "<td>"+v.data+"%</td>";
+            }
         }
     });
     code1 = "<tr class='active'><td>总体</td>" + code1 + "</tr>";
@@ -187,7 +191,11 @@ function t3Relate(obj) {
     var code2 = "";
     $.each(obj.relateData, function (k, v) {
         code1 += "<td>"+v.name+"</td>";
-        code2 += "<td>"+v.data+"</td>";
+        if(v.data == "") {
+            code2 += "<td>--</td>";
+        }else {
+            code2 += "<td>"+v.data+"</td>";
+        }
     });
     code1 = "<tr class='active'><td></td>" + code1 + "</tr>";
     code2 = "<tr><td>总体</td>" + code2 + "</tr>";
