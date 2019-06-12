@@ -12,6 +12,7 @@ import com.linksteady.operate.domain.KpiDismantInfo;
 import com.linksteady.operate.service.DiagHandleService;
 import com.linksteady.operate.service.ProgressService;
 import com.linksteady.operate.vo.DiagConditionVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 /**
  * 流程图拆解过程
  */
+@Slf4j
 @RestController
 @RequestMapping("/progress")
 public class ProgressController {
@@ -117,7 +119,11 @@ public class ProgressController {
         return ResponseBo.okWithData(null, result);
     }
 
-    // redis
+    /**
+     * 保存handler对象到redis
+     * @param diagHandleInfo
+     * @return
+     */
     @PostMapping("/saveDiagHandleInfo")
     public ResponseBo saveDiagHandleInfo(@RequestParam("diagHandleInfo") String diagHandleInfo) {
         try{
@@ -135,12 +141,17 @@ public class ProgressController {
             diagHandleService.generateDiagData(obj);
             return ResponseBo.ok();
         }catch (Exception ex) {
-            ex.printStackTrace();
+            log.error("保存handler到redis错误",ex);
             return ResponseBo.error();
         }
     }
 
-    // 点击节点从redis获取数据
+    /**
+     * 点击节点从redis获取数据
+     * @param diagId
+     * @param kpiLevelId
+     * @return
+     */
     @GetMapping("/generateDiagData")
     public ResponseBo generateDiagData(@RequestParam("diagId") int diagId, @RequestParam("kpiLevelId") int kpiLevelId) {
         try{
@@ -148,7 +159,7 @@ public class ProgressController {
             DiagResultInfo diagResultInfo = diagHandleService.getResultFromRedis(diagId, kpiLevelId);
             return ResponseBo.okWithData(null, diagResultInfo);
         }catch (Exception ex) {
-            ex.printStackTrace();
+            log.error("生成数据报错",ex);
             return ResponseBo.error();
         }
     }
@@ -167,7 +178,7 @@ public class ProgressController {
             DiagResultInfo diagResultInfo = diagHandleService.generateDiagData(diagHandleInfo);
             return ResponseBo.okWithData(null, diagResultInfo);
         }catch (Exception ex) {
-            ex.printStackTrace();
+            log.error("生成数据报错",ex);
             return ResponseBo.error();
         }
     }
