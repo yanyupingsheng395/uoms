@@ -1,6 +1,7 @@
 package com.linksteady.common.util;
 
 import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.text.DateFormatter;
 import java.text.ParseException;
@@ -11,6 +12,7 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@Slf4j
 public class DateUtil {
 
     private static transient int gregorianCutoverYear = 1582;
@@ -135,7 +137,7 @@ public class DateUtil {
             endDate= format.parse(end);
             day=(endDate.getTime()-beginDate.getTime())/(24*60*60*1000);
         } catch (ParseException e) {
-            e.printStackTrace();
+            log.error("Exception:", e);
         }
         return day;
     }
@@ -209,7 +211,7 @@ public class DateUtil {
         try {
             cal.setTime(sdf.parse(month));
         } catch (ParseException e) {
-            e.printStackTrace();
+            log.error("Exception:", e);
         }
         cal.add(Calendar.MONTH, -monthOffset);
         return  sdf.format(cal.getTime());

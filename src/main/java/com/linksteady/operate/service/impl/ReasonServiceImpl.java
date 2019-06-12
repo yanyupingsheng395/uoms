@@ -10,6 +10,7 @@ import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.operate.vo.ReasonVO;
 import com.linksteady.system.domain.User;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.thrift.TException;
 import org.dozer.DozerBeanMapper;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
  * 原因探究相关的服务类
  * @author huang
  */
+@Slf4j
 @Service
 public class ReasonServiceImpl implements ReasonService {
 
@@ -126,7 +128,7 @@ public class ReasonServiceImpl implements ReasonService {
             reasonMapper.updateProgressAndStatusById(reasonId,"F",100);
         } catch (TException e) {
             //todo 异常继续向上抛 同时需要将当前数据的状态更新为失败
-            e.printStackTrace();
+            log.error("Exception:", e);
            //更新状态
             reasonMapper.updateProgressAndStatusById(reasonId,"E",0);
         } finally {

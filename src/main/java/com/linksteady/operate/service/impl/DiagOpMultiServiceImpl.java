@@ -137,9 +137,9 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
                     secData.add((Double)s.getClass().getDeclaredField(part1Code).get(s));
                     thirdData.add((Double)s.getClass().getDeclaredField(part2Code).get(s));
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    log.error("获取信息失败：", e);
                 } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
+                    log.error("获取信息失败：", e);
                 }
             }else
             {
@@ -212,9 +212,9 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
                 secData.add((Double)v.getClass().getDeclaredField(part1Code).get(v));
                 thirdData.add((Double)v.getClass().getDeclaredField(part2Code).get(v));
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                log.error("获取当前周期所有数据:", e);
             } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+                log.error("获取当前周期所有数据:", e);
             }
         });
 

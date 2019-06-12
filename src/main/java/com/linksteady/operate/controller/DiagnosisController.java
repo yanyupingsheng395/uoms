@@ -53,7 +53,6 @@ public class DiagnosisController {
             Long result = diagService.save(diag, conditionList);
             return ResponseBo.okWithData(null, result);
         }catch (Exception e) {
-            e.printStackTrace();
             logger.error("保存诊断信息错误，",e);
             return ResponseBo.error();
         }
@@ -71,7 +70,7 @@ public class DiagnosisController {
             diagService.deleteById(id);
             return ResponseBo.ok("删除成功！");
         }catch (Exception ex) {
-            logger.error(ex.toString());
+            logger.error("删除错误：", ex);
             return ResponseBo.error("删除失败！");
         }
     }

@@ -1,5 +1,6 @@
 package com.linksteady.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.api.ProgressCallback;
 import org.mybatis.generator.api.VerboseProgressCallback;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class GeneratorCode {
 
     private static void shell() {
@@ -26,10 +28,10 @@ public class GeneratorCode {
             myBatisGenerator.generate(null);
             myBatisGenerator.generate(progressCallback);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Shell Exception:", e);
         }
         for (String warning : warnings) {
-            System.out.println(warning);
+            log.warn("Shell Warnings:", warning);
         }
     }
 

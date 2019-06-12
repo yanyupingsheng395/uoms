@@ -28,8 +28,7 @@ public class DiagDetailController {
             service.save(json);
             return ResponseBo.ok("保存信息成功！");
         }catch (Exception e) {
-            logger.error(e.toString());
-            e.printStackTrace();
+            logger.error("保存信失败：", e);
             return ResponseBo.error("未知错误发生！");
         }
     }
