@@ -95,6 +95,7 @@ spring:
     type:
       redis
 
+# 追加版本号的方式请求静态资源
 #  resources:
 #    chain:
 #      strategy:
@@ -109,7 +110,7 @@ spring:
       strategy:
         content:
           enabled: true
-          paths: /**
+          paths: /js/app/**
 
 #  devtools:
 #    livereload:
