@@ -59,3 +59,4 @@ local.properties
 .texlipse
 /src/main/resources/config/mybatis-generator.xml
 /log/
+/application.pid

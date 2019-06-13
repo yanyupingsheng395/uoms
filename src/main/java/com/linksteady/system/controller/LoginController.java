@@ -1,5 +1,6 @@
 package com.linksteady.system.controller;
 
+import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.MD5Utils;
@@ -11,6 +12,7 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
+import java.util.Map;
 
 /**
  * @author
@@ -32,6 +35,36 @@ public class LoginController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    /**
+     * 当前系统简称
+     */
+    @Value("${app.name}")
+    private String appname;
+
+    /**
+     * 当前版本
+     */
+    @Value("${app.version}")
+    private String version;
+
+    /**
+     * 当前系统中文名称
+     */
+    @Value("${app.description}")
+    private String appdesc;
+
+    /**
+     * 当前spring boot的版本
+     */
+    @Value("${app.spring-boot-version}")
+    private String bootversion;
+
+    /**
+     * 打包时间
+     */
+    @Value("${app.build.time}")
+    private String buildTime;
 
     @GetMapping("/login")
     public String login() {
@@ -91,4 +124,20 @@ public class LoginController extends BaseController {
         response.setContentType("image/jpeg");
         ImageIO.write(image, "jpeg", response.getOutputStream());
     }
+
+    @RequestMapping("/sysinfo")
+    @ResponseBody
+    public ResponseBo getSysInfo() {
+        Map result= Maps.newHashMap();
+
+        result.put("appname",appname);
+        result.put("version",version);
+        result.put("appdesc",appdesc);
+        result.put("buildtime",buildTime);
+        result.put("bootversion",bootversion);
+        return ResponseBo.okWithData("",result);
+
+    }
+
+
 }

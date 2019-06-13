@@ -5,7 +5,7 @@
 
     <groupId>com.linksteady</groupId>
     <artifactId>uoms</artifactId>
-    <version>2.0</version>
+    <version>1.01</version>
     <packaging>jar</packaging>
 
     <name>link steady</name>
@@ -22,6 +22,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <relativePath/>
+        <!--maven.build.timestamp保存了maven编译时间戳-->
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <!--指定时间格式-->
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
     </properties>
 
     <dependencies>
@@ -190,15 +194,13 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>nexus-aliyun</id>
-            <name>Nexus aliyun</name>
-            <url>http://maven.aliyun.com/nexus/content/groups/public</url>
-        </repository>
-    </repositories>
-
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -234,14 +236,4 @@
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>rdc-releases</id>
-            <url>https://repo.rdc.aliyun.com/repository/43551-release-kNuTqk/</url>
-        </repository>
-        <snapshotRepository>
-            <id>rdc-snapshots</id>
-            <url>https://repo.rdc.aliyun.com/repository/43551-snapshot-SJS8sR/</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>
