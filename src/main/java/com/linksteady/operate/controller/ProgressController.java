@@ -84,7 +84,9 @@ public class ProgressController {
         return ResponseBo.okWithData(null, kpiLevelId);
     }
 
-    // 获取KPI_LEVEL_ID
+    /**
+     *  获取KPI_LEVEL_ID
+      */
     public synchronized long seqGeneratorByRedisAtomicLong(String key) {
         long res;
         String value = (String)redisTemplate.opsForValue().get(key);

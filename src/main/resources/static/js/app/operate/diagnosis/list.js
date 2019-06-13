@@ -92,16 +92,24 @@ function editDiag(diagId) {
 //         }
 //     });
 // }
+
+/**
+ * 删除确认
+ * @param id
+ */
 function deleteConfirm(id) {
     $.confirm({
         title: '提示：',
-        content: '演示环境，数据不可删除！',
+        content: '确认删除该条记录？',
         type: 'orange',
         theme: 'bootstrap',
         buttons: {
             confirm: {
                 text: '确认',
-                btnClass: 'btn-danger'
+                btnClass: 'btn-danger',
+                action: function () {
+                    deleteData(id);
+                }
             },
             cancel: {
                 text: '取消'

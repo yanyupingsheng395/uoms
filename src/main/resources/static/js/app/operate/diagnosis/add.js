@@ -3,8 +3,12 @@
  * 加法：序号 name=KPI名称/维度名称
  * 仅过滤：序号 KPI名称/过滤
  */
-getKpi();
-// 获取指标
+
+$(function () {
+    getKpi();
+});
+
+// 设定诊断问题-获取指标
 function getKpi() {
     $.get("/diag/getKpi", {}, function (r) {
         var code = "<option>请选择</option>";
@@ -16,17 +20,17 @@ function getKpi() {
     });
 }
 
-// 选择维度
-function btnSelect() {
-    $('#denModal').modal('show');
+// 设定诊断问题-选择维度
+function dimSelected() {
+    $('#dimModal').modal('show');
 }
 
-$("#denModal").on('show.bs.modal', function () {
+$("#dimModal").on('show.bs.modal', function () {
     $("#dimension").selectpicker('val', '');
     $("#dimensionVal").selectpicker('val', '');
 });
 
-$("#denModal").on('shown.bs.modal', function () {
+$("#dimModal").on('shown.bs.modal', function () {
     getDimensionList();
 });
 
@@ -61,36 +65,32 @@ function getDimensionVal(key) {
     });
 }
 
+// 用于存储已选的值
+var temp = "";
 function addDimension() {
     var k_code = $("#dimension").find("option:selected").val();
-    var k_text = $("#dimension").find("option:selected").text();
     var v_code = $("#dimensionVal").selectpicker('val');
-    var textArr = new Array();
-    $("#dimensionVal").find("option").each(function (k, v) {
-        if(v_code.indexOf($(this).val()) > -1) {
-            textArr.push($(this).text());
+    var codeStr = k_code + ":" + v_code;
+    if(temp != "" && temp.indexOf(codeStr) == -1) {
+        temp += codeStr + "|";
+        var k_text = $("#dimension").find("option:selected").text();
+        var textArr = new Array();
+        $("#dimensionVal").find("option").each(function (k, v) {
+            if(v_code.indexOf($(this).val()) > -1) {
+                textArr.push($(this).text());
+            }
+        });
+        if($("#dimDataTable").find("tr").length == 0) {
+            $("#conditions").show();
         }
-    });
-
-    if($("#dimDataTable").find("tr").length == 0) {
-        $("#conditions").show();
-    }
-    var v_text = textArr.join("|");
-
-    var flag = false;
-    $("#dimDataTable").find("tr").each(function (k, v) {
-        if($(this).find("td:eq(0)").text() == k_text + "&nbsp;:&nbsp;" + v_text) {
-            flag = true;
-            toastr.warning("已有相同维度值在列表中！");
-        }
-    });
-
-    if(!flag) {
+        var v_text = textArr.join("|");
         var code = "<tr><input type='hidden' name='dimensions' value='&dimCode="+k_code+"&dimName="+k_text+"&dimValues="+v_code+"&dimValueDisplay="+v_text+"'/>";
         code += "<td class='text-left'>"+k_text + "&nbsp;:&nbsp;" + v_text +"</td><td class=\"text-right\"><i class=\"mdi mdi-close\" onclick='removeTd(this)'></i></td>";
         code += "</tr>";
         $("#dimDataTable").append(code);
         $("#denModal").modal('hide');
+    }else {
+        toastr.warning("已有相同维度值在列表中！");
     }
 }
 
