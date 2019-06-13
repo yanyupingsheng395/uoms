@@ -71,7 +71,7 @@ function addDimension() {
     var k_code = $("#dimension").find("option:selected").val();
     var v_code = $("#dimensionVal").selectpicker('val');
     var codeStr = k_code + ":" + v_code;
-    if(temp != "" && temp.indexOf(codeStr) == -1) {
+    if(temp.indexOf(codeStr) == -1) {
         temp += codeStr + "|";
         var k_text = $("#dimension").find("option:selected").text();
         var textArr = new Array();
@@ -88,9 +88,10 @@ function addDimension() {
         code += "<td class='text-left'>"+k_text + "&nbsp;:&nbsp;" + v_text +"</td><td class=\"text-right\"><i class=\"mdi mdi-close\" onclick='removeTd(this)'></i></td>";
         code += "</tr>";
         $("#dimDataTable").append(code);
-        $("#denModal").modal('hide');
+        $("#dimModal").modal('hide');
     }else {
         toastr.warning("已有相同维度值在列表中！");
+        $("#dimModal").modal('hide');
     }
 }
 
