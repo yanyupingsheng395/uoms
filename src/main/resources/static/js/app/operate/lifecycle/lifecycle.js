@@ -239,7 +239,6 @@ function saleVolume() {
         var xAxisData = r.data.xAxisData;
 
         var option = getOption(legendData, xAxisData, xAxisName, yAxisName, seriesData);
-        console.log(option)
         option.yAxis[0].axisLabel = {
             margin: 2,
             formatter: function (value, index) {

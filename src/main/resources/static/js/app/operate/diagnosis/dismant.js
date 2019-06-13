@@ -701,10 +701,7 @@ function getKpiLevelId() {
 }
 
 function removeConditionList(val, dom) {
-    console.log($(dom).parent());
-    console.log($(dom).parent().parent());
     $(dom).parent().parent().remove();
-
     // 条件数组去除该记录
     conditionVal.forEach(function(item, index, arr){
         if(item == val) {
