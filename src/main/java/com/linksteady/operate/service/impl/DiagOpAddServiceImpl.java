@@ -38,6 +38,11 @@ public class DiagOpAddServiceImpl implements DiagOpService {
     @Autowired
     CommonSelectMapper commonSelectMapper;
 
+    /**
+     * 加法拆解
+     * @param diagHandleInfo 封装操作信息的类
+     * @return
+     */
     @Override
     public DiagResultInfo process(DiagHandleInfo diagHandleInfo) {
         DiagAddResultInfo diagAddResultInfo=new DiagAddResultInfo();
@@ -714,15 +719,4 @@ public class DiagOpAddServiceImpl implements DiagOpService {
 
         return result;
     }
-
-//    /**
-//     * 合并两个list的值，对于重复的值只返回一个 (并集去重)
-//     */
-//    private List<String> mergeValues(List<String> list1,List<String> list2)
-//    {
-//        List<String> list=Lists.newArrayList();
-//        list.addAll(list1);
-//        list.addAll(list2);
-//        return list.stream().distinct().collect(Collectors.toList());
-//    }
 }

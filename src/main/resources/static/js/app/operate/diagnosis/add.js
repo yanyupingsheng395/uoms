@@ -95,6 +95,10 @@ function addDimension() {
     }
 }
 
+/**
+ * 从维度&值列表移除dom元素
+ * @param dom
+ */
 function removeTd(dom) {
     $(dom).parent().parent().remove();
     if($("#dimDataTable").find("tr").length == 0) {
@@ -106,6 +110,9 @@ $("#targetKpi").change(function () {
     $("#targetKpiTxt").val($(this).find("option:selected").val());
 });
 
+/**
+ * 表单验证
+ */
 validate();
 var validator;
 function validate() {
@@ -143,6 +150,10 @@ function validate() {
     validator = $("#formTable").validate(rule);
 }
 
+/**
+ * 获取维度信息
+ * @returns {string}
+ */
 function getDimensionInfo() {
     var arr = new Array();
     $("#dimDataTable").find("tr").each(function(k, v) {
@@ -151,6 +162,10 @@ function getDimensionInfo() {
     return arr.join(";");
 }
 
+/**
+ * 获取维度和值
+ * @returns {any[]}
+ */
 function getDimAndVal() {
     var arr = new Array();
     $("#dimDataTable").find("tr").each(function(k, v) {
@@ -195,6 +210,11 @@ function saveDiagInfo(dom) {
     }
 }
 
+/**
+ * 根节点的过滤条件tree
+ * @param treeId
+ * @param data
+ */
 function makeInitConditionTree(treeId, data) {
     var treeArr = [];
     // 条件

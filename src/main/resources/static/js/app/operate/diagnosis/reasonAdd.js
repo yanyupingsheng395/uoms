@@ -9,6 +9,7 @@ function reasonModalInit() {
     $("#submitAnalysis").on("click",submit_analysis);
 }
 
+// 获取周期类型
 function getPeriodType() {
     var opDataType = $("#opDataType").val();
     var period = "";
@@ -20,6 +21,7 @@ function getPeriodType() {
     return period;
 }
 
+// 获取周期类型
 function getPeriodTypeVal() {
     var opDataType = $("#opDataType").val();
     var period = "";
@@ -31,6 +33,7 @@ function getPeriodTypeVal() {
     return period;
 }
 
+// 提交原因探究
 function submit_analysis(){
     var alert_str="";
 

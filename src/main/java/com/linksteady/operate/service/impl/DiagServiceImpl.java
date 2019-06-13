@@ -31,20 +31,36 @@ public class DiagServiceImpl implements DiagService {
     @Autowired
     private DiagConditionMapper diagConditionMapper;
 
+    /**
+     * 获取诊断数据行
+     * @param startRow
+     * @param endRow
+     * @return
+     */
     @Override
     public List<Diag> getRows(int startRow, int endRow) {
         String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
         return diagMapper.getList(startRow, endRow, username);
     }
 
+    /**
+     * 获取当前登录账号总的诊断数据行
+     * @return
+     */
     @Override
     public Long getTotalCount() {
         String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
         return diagMapper.getTotalCount(username);
     }
 
+    /**
+     * 保存诊断头数据
+     * @param diag
+     * @param diagConditions
+     * @return
+     */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Long save(Diag diag, List<DiagCondition> diagConditions) {
         String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
         diag.setCreateBy(username);
@@ -56,7 +72,7 @@ public class DiagServiceImpl implements DiagService {
     }
 
     /**
-     *  查看，编辑获取节点信息
+     *  查看，编辑获取diagId关联的所有节点信息
      * @param diagId
      * @return
      */
@@ -84,14 +100,24 @@ public class DiagServiceImpl implements DiagService {
         }
         return resultList;
     }
+
+    /**
+     * 删除诊断头数据
+     * @param id
+     */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteById(String id) {
         diagMapper.deleteById(id);
         diagDetailMapper.deleteByDiagId(id);
         diagConditionMapper.deleteByDiagId(id);
     }
 
+    /**
+     * 通过ID获取诊断数据信息
+     * @param diagId
+     * @return
+     */
     @Override
     public Map<String, Object> geDiagInfoById(String diagId) {
         return diagMapper.geDiagInfoById(diagId);

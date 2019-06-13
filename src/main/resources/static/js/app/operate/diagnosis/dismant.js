@@ -51,7 +51,6 @@ function doNothing(){
 }
 
 // 拆分方式
-
 $("input[name='op2']").click(function () {
     var kpiCode = jm.get_selected_node().data.kpiCode;
     var option2Val = $(this).val();
@@ -385,6 +384,10 @@ function endNode(nodeId) {
     jm.disable_edit();
 }
 
+/**
+ * 根节点的handleType为F
+ * @param whereinfo
+ */
 function redisSaveRootNodeHandleInfo(whereinfo) {
     var kpiCode = $("#targetKpi").find("option:selected").val();
     var handleInfo = new Object();

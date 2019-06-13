@@ -25,8 +25,12 @@ public class DiagDetailServiceImpl implements DiagDetailService {
     @Autowired
     private DiagConditionMapper diagConditionMapper;
 
+    /**
+     * 保存节点详细信息和节点的条件信息
+     * @param data
+     */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void save(String data) {
         List<DiagDetail> diagDetailList = new ArrayList<>();
         List<DiagCondition> conditions = new ArrayList<>();
@@ -49,7 +53,9 @@ public class DiagDetailServiceImpl implements DiagDetailService {
         diagDetailMapper.save(diagDetailList);
         // 保存条件
         if(conditions.size() != 0) {
-            // todo
+            /**
+             * 过滤重复条件
+             */
             conditions = conditions.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()->new TreeSet<>(Comparator.comparing(DiagCondition::getDimCode).thenComparing(DiagCondition::getDimValues))), ArrayList::new));
             diagConditionMapper.save(conditions);
         }

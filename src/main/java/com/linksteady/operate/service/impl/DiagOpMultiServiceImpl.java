@@ -45,6 +45,11 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
     @Autowired
     CommonSelectMapper commonSelectMapper;
 
+    /**
+     * 乘法拆解指标
+     * @param diagHandleInfo 封装操作信息的类
+     * @return
+     */
     @Override
     public DiagResultInfo process(DiagHandleInfo diagHandleInfo) {
         //用户选择的周期类型内所有的列表 （如果为月，则为月列表，如果为天，则为天列表)

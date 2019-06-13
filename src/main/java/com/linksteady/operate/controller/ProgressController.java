@@ -20,6 +20,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * @author caohuixue
+ *
  * 流程图拆解过程
  */
 @Slf4j
@@ -40,7 +42,7 @@ public class ProgressController {
 
     /**
      * 获取乘法公式
-     * @param code
+     * @param code 待拆解指标code
      * @return
      */
     @GetMapping("/getFormula")
@@ -52,7 +54,7 @@ public class ProgressController {
 
     /**
      * 获取可拆解的指标
-     * @param code
+     * @param code 待拆解的指标code
      * @return
      */
     @GetMapping("/getKpi")
@@ -61,13 +63,21 @@ public class ProgressController {
         return ResponseBo.okWithData(null, data.get(code));
     }
 
-
+    /**
+     * 从缓存中获取维度信息
+     * @return
+     */
     @GetMapping("/getDiagDimList")
     public ResponseBo getDiagDimList() {
         Map<String,String> result = KpiCacheManager.getInstance().getDiagDimList();
         return ResponseBo.okWithData(null, result);
     }
 
+    /**
+     * 从缓存中获取维度的值信息
+     * @param code
+     * @return
+     */
     @GetMapping("/getDiagDimValueList")
     public ResponseBo getDiagDimValueList(@RequestParam("code") String code) {
         Map<String, String> data =  KpiCacheManager.getInstance().getDiagDimValueList().row(code);
@@ -75,7 +85,7 @@ public class ProgressController {
     }
 
     /**
-     * 通过Diag_ID 设置为levelID的key
+     * 从redis中获取节点的levelId
      * @return
      */
     @GetMapping("/getKpiLevelId")
@@ -85,8 +95,10 @@ public class ProgressController {
     }
 
     /**
-     *  获取KPI_LEVEL_ID
-      */
+     * 获取节点的LevelId
+     * @param key redis的key
+     * @return
+     */
     public synchronized long seqGeneratorByRedisAtomicLong(String key) {
         long res;
         String value = (String)redisTemplate.opsForValue().get(key);
@@ -100,12 +112,20 @@ public class ProgressController {
         return res;
     }
 
+    /**
+     * 从数据库中sequence序列获取节点ID
+     * @return
+     */
     @GetMapping("/getNodeId")
     public ResponseBo getNodeIdFromSequence() {
         long id = progressService.getNodeIdFromSequence();
         return ResponseBo.okWithData(null, id);
     }
 
+    /**
+     * 获取根节点信息渲染jsmind
+     * @return
+     */
     @GetMapping("/getRootNode")
     public ResponseBo getRootNode() {
         String rootKpiCode = ROOT_KPI_CODE;
@@ -122,7 +142,7 @@ public class ProgressController {
     }
 
     /**
-     * 保存handler对象到redis
+     * 保存handlerInfo对象到redis
      * @param diagHandleInfo
      * @return
      */
@@ -149,7 +169,7 @@ public class ProgressController {
     }
 
     /**
-     * 点击节点从redis获取数据
+     * 点击节点从redis获取节点图表数据
      * @param diagId
      * @param kpiLevelId
      * @return
@@ -167,7 +187,7 @@ public class ProgressController {
     }
 
     /**
-     *
+     * 编辑页通过diagId，kpiLevelId获取图表数据
      * @param diagId
      * @param kpiLevelId
      * @return
@@ -184,7 +204,6 @@ public class ProgressController {
             return ResponseBo.error();
         }
     }
-
 
     /**
      * 原因探究之前判断该KPI是否在list中

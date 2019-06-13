@@ -41,26 +41,52 @@ public class DiagHandleServiceImpl implements DiagHandleService {
     DiagOpFilterServiceImpl diagOpFilterService;
 
 
+    /**
+     * 将diagResultInfo存储到redis中
+     * @param diagResultInfo
+     */
     @Override
     public void saveResultToRedis(DiagResultInfo diagResultInfo) {
         redisTemplate.opsForValue().set("diagresult:"+diagResultInfo.getDiagId()+":"+diagResultInfo.getKpiLevelId(),diagResultInfo);
     }
 
+    /**
+     * 从redis中获取DiagResultInfo对象
+     * @param diagId
+     * @param kpiLevelId
+     * @return
+     */
     @Override
     public DiagResultInfo getResultFromRedis(int diagId, int kpiLevelId) {
         return (DiagResultInfo)redisTemplate.opsForValue().get("diagresult:"+diagId+":"+kpiLevelId);
     }
 
+    /**
+     * 从redis中获取DiagHandleInfo对象
+     * @param diagId
+     * @param kpiLevelId
+     * @return
+     */
     @Override
     public DiagHandleInfo getDiagHandleInfoFromRedis(int diagId, int kpiLevelId) {
         return (DiagHandleInfo)redisTemplate.opsForValue().get("diagHandleInfo:"+diagId+":"+kpiLevelId);
     }
 
+    /**
+     * 将diagHandleInfo对象存储到redis中
+     * @param diagHandleInfo
+     */
     @Override
     public void setDiagHandleInfoToRedis(DiagHandleInfo diagHandleInfo) {
         redisTemplate.opsForValue().set("diagHandleInfo:"+diagHandleInfo.getDiagId()+":"+diagHandleInfo.getKpiLevelId(),diagHandleInfo);
     }
 
+    /**
+     * 通过diagHandleInfo 获取图表拆解后数据，并存储到redis中
+     * 如果是跟节点，handleType为F，和过滤条件的处理方式一样
+     * @param diagHandleInfo
+     * @return
+     */
     @Override
     public DiagResultInfo generateDiagData(DiagHandleInfo diagHandleInfo) {
         //获取到操作类型

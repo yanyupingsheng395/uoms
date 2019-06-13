@@ -39,6 +39,11 @@ public class DiagOpFilterServiceImpl implements DiagOpService {
     @Autowired
     CommonSelectMapper commonSelectMapper;
 
+    /**
+     * 过滤条件的拆解
+     * @param diagHandleInfo 封装操作信息的类
+     * @return
+     */
     @Override
     public DiagResultInfo process(DiagHandleInfo diagHandleInfo) {
         DiagResultInfo resultInfo=new DiagResultInfo();
