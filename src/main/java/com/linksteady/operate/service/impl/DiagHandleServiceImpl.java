@@ -89,6 +89,8 @@ public class DiagHandleServiceImpl implements DiagHandleService {
      */
     @Override
     public DiagResultInfo generateDiagData(DiagHandleInfo diagHandleInfo) {
+
+        long beginTime = System.currentTimeMillis();
         //获取到操作类型
         String handleType=diagHandleInfo.getHandleType();
         DiagResultInfo result=null;
@@ -124,6 +126,12 @@ public class DiagHandleServiceImpl implements DiagHandleService {
         //result信息持久化到redis
         saveResultToRedis(result);
 
+        long time = System.currentTimeMillis() - beginTime;
+
+        if(log.isDebugEnabled())
+        {
+            log.debug("诊断ID={},LEVEL_ID={},获取数据消耗的时间长度为{}",diagHandleInfo.getDiagId(),diagHandleInfo.getKpiLevelId(),time);
+        }
         return result;
     }
 }

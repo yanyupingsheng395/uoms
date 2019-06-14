@@ -113,8 +113,9 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
 
             if(log.isDebugEnabled())
             {
-                log.debug(stringTemplate.render());
+                log.debug("诊断ID={},LEVEL_ID={},乘法获取数据的SQL为{}",diagHandleInfo.getDiagId(),diagHandleInfo.getKpiLevelId(),stringTemplate.render());
             }
+
             //发送SQL到数据库中执行，并获取结果
             collectorData=commonSelectMapper.selectCollectorDataBySql(stringTemplate.render());
 
@@ -122,6 +123,12 @@ public class DiagOpMultiServiceImpl implements DiagOpService {
             //固定按天获取明细数据
             covTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
                     .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",data_range).add("$PERIOD_NAME$",diagOpCommonService.buildPeriodInfo(UomsConstants.PERIOD_TYPE_DAY));
+
+
+            if(log.isDebugEnabled())
+            {
+                log.debug("诊断ID={},LEVEL_ID={},乘法获取变异系数的SQL为{}",diagHandleInfo.getDiagId(),diagHandleInfo.getKpiLevelId(),covTemplate.render());
+            }
 
             covData=commonSelectMapper.selectCollectorDataBySql(covTemplate.render());
             //计算变异系数和相关系数

@@ -82,8 +82,9 @@ public class DiagOpFilterServiceImpl implements DiagOpService {
 
             if(log.isDebugEnabled())
             {
-                log.debug(stringTemplate.render());
+                log.debug("诊断ID={},LEVEL_ID={},过滤的SQL为{}",diagHandleInfo.getDiagId(),diagHandleInfo.getKpiLevelId(),stringTemplate.render());
             }
+
             //发送SQL到数据库中执行，并获取结果
             DiagFilterDataCollector diagFilterDataCollector=commonSelectMapper.selectOnlyDoubleValue(stringTemplate.render());
 
