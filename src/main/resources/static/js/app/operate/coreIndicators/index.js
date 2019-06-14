@@ -139,11 +139,7 @@ function getOptionAcc(legend, xdata, xAxis, yAxis, series) {
     return {
         tooltip: {
             trigger: 'axis',
-            padding: [15, 20],
-            extraCssText: 'box-shadow: 0 0 5px rgba(0,0,0,0.3)',
-            formatter: function (params) {
-                return "日期：" + params[0].name + "<br/>" + params[0].seriesName + ":" + params[0].value + "<br/>" + params[1].seriesName + ":" + params[1].value;
-            }
+            padding: [15, 20]
         },
         grid: {
             borderWidth: 0,
