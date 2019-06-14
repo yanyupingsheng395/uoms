@@ -4,14 +4,15 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.DateUtil;
-import com.linksteady.operate.dao.*;
 import com.linksteady.operate.dao.BrandMapper;
 import com.linksteady.operate.dao.KpiMonitorMapper;
 import com.linksteady.operate.dao.SourceMapper;
-import com.linksteady.operate.dao.UserCntMapper;
 import com.linksteady.operate.domain.KpiSumeryInfo;
 import com.linksteady.operate.service.UserOperatorService;
 import com.linksteady.operate.util.DatePeriodUtil;
+import com.linksteady.operate.util.UomsConstants;
+import com.linksteady.operate.util.UserOperaterMapper;
+import com.linksteady.operate.util.UserOperatorMapperFactory;
 import com.linksteady.operate.vo.KpiInfoVo;
 import com.linksteady.operate.vo.TemplateResult;
 import org.apache.commons.lang3.StringUtils;
@@ -38,25 +39,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     private KpiMonitorMapper kpiMonitorMapper;
 
     @Autowired
-    private UserCntMapper userCntMapper;
-
-    @Autowired
-    private UserPriceMapper userPriceMapper;
-
-    @Autowired
-    private OrderCntMapper orderCntMapper;
-
-    @Autowired
-    private OrderPriceMapper orderPriceMapper;
-
-    @Autowired
-    private UserJoinRateMapper userJoinRateMapper;
-
-    @Autowired
-    private SpriceMapper spriceMapper;
-
-    @Autowired
-    private GmvMapper gmvMapper;
+    private UserOperatorMapperFactory mapperFactory;
 
     @Override
     public List<Map<String, Object>> getSource() {
@@ -64,41 +47,6 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     }
 
     private static final String DEFAULT_VAL = "--";
-
-    /**
-     * GMV
-     */
-    private static final String OP_DATA_GMV = "gmv";
-
-    /**
-     * 用户数
-     */
-    private static final String OP_DATA_USER_CNT = "userCnt";
-
-    /**
-     * 客单价
-     */
-    private static final String OP_DATA_USER_PRICE = "userPrice";
-
-    /**
-     * 订单数
-     */
-    private static final String OP_DATA_ORDER_CNT = "orderCnt";
-
-    /**
-     * 订单价
-     */
-    private static final String OP_DATA_ORDER_PRICE = "orderPrice";
-
-    /**
-     *连带率
-     */
-    private static final String OP_DATA_ORDER_JOINRATE= "jointRate";
-
-    /**
-     * 件单价
-     */
-    private static final String OP_DATA_SPRICE = "unitPrice";
 
     @Override
     public List<Map<String, Object>> getBrand() {
@@ -161,28 +109,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
      */
     private Double getKpiOfDifferPeriod(String type, String startDt, String endDt,String periodType,String source) {
         TemplateResult templateResult = getTemplateResult(type, startDt, endDt, periodType, source);
-        if(type.equals(OP_DATA_GMV)) {
-            return gmvMapper.getKpiOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
-        }
-        if(type.equals(OP_DATA_USER_CNT)) {
-            return  userCntMapper.getUserCntOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
-        }
-        if(type.equals(OP_DATA_USER_PRICE)) {
-            return  userPriceMapper.getUserPriceOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
-        }
-        if(type.equals(OP_DATA_ORDER_CNT)) {
-            return  orderCntMapper.getKpiOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
-        }
-        if(type.equals(OP_DATA_ORDER_PRICE)) {
-            return  orderPriceMapper.getKpiOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
-        }
-        if(type.equals(OP_DATA_ORDER_JOINRATE)) {
-            return  userJoinRateMapper.getUserJoinRateOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
-        }
-        if(type.equals(OP_DATA_SPRICE)) {
-            return spriceMapper.getSpriceOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
-        }
-        return null;
+        UserOperaterMapper mapperTemplate = mapperFactory.getMapperTemplate(type);
+        return mapperTemplate.getKpiOfDifferPeriod(templateResult.getJoinInfo(),templateResult.getFilterInfo());
     }
 
     /**
@@ -231,29 +159,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     private List<KpiInfoVo> getDatePeriodData(String kpiType, String startDt, String endDt, String periodType, String source) {
         TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
         String peroidName=buildPeriodName(periodType);
-
-        if(kpiType.equals(OP_DATA_GMV)) {
-            return gmvMapper.getDatePeriodData(peroidName, templateResult.getJoinInfo(),templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_USER_CNT)) {
-            return  userCntMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_USER_PRICE)) {
-            return  userPriceMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
-            return  orderCntMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
-            return  orderPriceMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_JOINRATE)) {
-            return  userJoinRateMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_SPRICE)) {
-            return spriceMapper.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        return null;
+        UserOperaterMapper mapperTemplate = mapperFactory.getMapperTemplate(kpiType);
+        return mapperTemplate.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
     }
 
     private List<String> getDateList(String periodType, String startDt, String endDt) {
@@ -292,29 +199,9 @@ public class UserOperatorServiceImpl implements UserOperatorService {
 
     private List<KpiInfoVo> getSpAndFpKpiDetail(String kpiType, String startDt, String endDt , String periodType, String source) {
         TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
+        UserOperaterMapper mapperTemplate = mapperFactory.getMapperTemplate(kpiType);
         String peroidName=buildPeriodName(periodType);
-        if(kpiType.equals(OP_DATA_GMV)) {
-            return gmvMapper.getSpAndFpKpi(peroidName, templateResult.getJoinInfo(),templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_USER_CNT)) {
-            return userCntMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_USER_PRICE)) {
-            return  userPriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
-            return  orderCntMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
-            return  orderPriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_JOINRATE)) {
-            return  userJoinRateMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_SPRICE)) {
-            return spriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        return null;
+        return mapperTemplate.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
     }
 
     /**
@@ -373,25 +260,25 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     private TemplateResult getTemplateResult(String type, String startDt, String endDt, String periodType, String source) {
         TemplateResult templateResult = null;
         switch (type) {
-            case OP_DATA_GMV:
+            case UomsConstants.OP_DATA_GMV:
                 templateResult = buildJoinInfoAndFilter(periodType,startDt,endDt,source);
                 break;
-            case OP_DATA_USER_CNT:
+            case UomsConstants.OP_DATA_USER_CNT:
                 templateResult = buildJoinInfoAndFilterOfOrderDetails(periodType,startDt,endDt,source);
                 break;
-            case OP_DATA_USER_PRICE:
+            case UomsConstants.OP_DATA_USER_PRICE:
                 templateResult = buildJoinInfoAndFilterOfOrderDetails(periodType,startDt,endDt,source);
                 break;
-            case OP_DATA_ORDER_CNT:
+            case UomsConstants.OP_DATA_ORDER_CNT:
                 templateResult = buildJoinInfoAndFilter(periodType,startDt,endDt,source);
                 break;
-            case OP_DATA_ORDER_PRICE:
+            case UomsConstants.OP_DATA_ORDER_PRICE:
                 templateResult = buildJoinInfoAndFilter(periodType,startDt,endDt,source);
                 break;
-            case OP_DATA_ORDER_JOINRATE:
+            case UomsConstants.OP_DATA_ORDER_JOINRATE:
                 templateResult = buildJoinInfoAndFilterOfOrderDetails(periodType,startDt,endDt,source);
                 break;
-            case OP_DATA_SPRICE:
+            case UomsConstants.OP_DATA_SPRICE:
                 templateResult = buildJoinInfoAndFilterOfOrderDetails(periodType,startDt,endDt,source);
                 break;
         }
@@ -400,29 +287,9 @@ public class UserOperatorServiceImpl implements UserOperatorService {
 
     private List<KpiInfoVo> getSpOrFpKpiValDetail(String kpiType,String startDt, String endDt, String periodType, String source) {
         TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
+        UserOperaterMapper mapperTemplate = mapperFactory.getMapperTemplate(kpiType);
         String peroidName=buildPeriodName(periodType);
-        if(kpiType.equals(OP_DATA_GMV)) {
-            return gmvMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_USER_CNT)) {
-            return userCntMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_USER_PRICE)) {
-            return  userPriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
-            return  orderCntMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
-            return  orderPriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_JOINRATE)) {
-            return  userJoinRateMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_SPRICE)) {
-            return spriceMapper.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        return null;
+        return mapperTemplate.getSpAndFpKpi(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
     }
 
     /**
@@ -514,28 +381,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     private KpiInfoVo getSpAndFpKpiTotal(String kpiType, String periodType, String startDt, String endDt, String source) {
         TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
         String peroidName=buildPeriodName(periodType);
-        if(kpiType.equals(OP_DATA_GMV)) {
-            return gmvMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_USER_CNT)) {
-            return userCntMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_USER_PRICE)) {
-            return  userPriceMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_CNT)) {
-            return  orderCntMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_PRICE)) {
-            return  orderPriceMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_ORDER_JOINRATE)) {
-            return  userJoinRateMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        if(kpiType.equals(OP_DATA_SPRICE)) {
-            return spriceMapper.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-        }
-        return null;
+        UserOperaterMapper mapperTemplate = mapperFactory.getMapperTemplate(kpiType);
+        return mapperTemplate.getSpAndFpKpiTotal(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
     }
 
     private List<Double> fixData(Map<String, Object> datas, List<String> periodList)

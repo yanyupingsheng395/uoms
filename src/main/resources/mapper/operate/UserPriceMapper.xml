@@ -3,7 +3,7 @@
 <mapper namespace="com.linksteady.operate.dao.UserPriceMapper">
 
     <!--获取不同周期的客单价-->
-    <select id="getUserPriceOfDifferPeriod" resultType="Double">
+    <select id="getKpiOfDifferPeriod" resultType="Double">
         SELECT
         (CASE WHEN
         COUNT(DISTINCT W_ORDER_DETAILS.USER_ID)=0 THEN 0 ELSE

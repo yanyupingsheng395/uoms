@@ -3,7 +3,7 @@
 <mapper namespace="com.linksteady.operate.dao.UserCntMapper">
 
     <!--获取不同周期的用户数-->
-    <select id="getUserCntOfDifferPeriod" resultType="Double">
+    <select id="getKpiOfDifferPeriod" resultType="Double">
         SELECT
         COUNT(DISTINCT W_ORDER_DETAILS.USER_ID) TOTAL_CNT
         FROM

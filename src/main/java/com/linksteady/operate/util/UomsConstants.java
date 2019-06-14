@@ -9,6 +9,45 @@ import java.util.List;
  */
 public final class UomsConstants {
 
+    /**
+     * *********************用户运营监控的常量******************
+     */
+    public static final String OP_DATA_GMV = "gmv";
+
+    /**
+     * 用户数
+     */
+    public static final String OP_DATA_USER_CNT = "userCnt";
+
+    /**
+     * 客单价
+     */
+    public static final String OP_DATA_USER_PRICE = "userPrice";
+
+    /**
+     * 订单数
+     */
+    public static final String OP_DATA_ORDER_CNT = "orderCnt";
+
+    /**
+     * 订单价
+     */
+    public static final String OP_DATA_ORDER_PRICE = "orderPrice";
+
+    /**
+     *连带率
+     */
+    public static final String OP_DATA_ORDER_JOINRATE= "jointRate";
+
+    /**
+     * 件单价
+     */
+    public static final String OP_DATA_SPRICE = "unitPrice";
+
+    /**
+     * *********************用户运营监控的常量******************
+     */
+
     //周期类型-月
     public static final String PERIOD_TYPE_MONTH="M";
 

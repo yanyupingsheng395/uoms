@@ -3,7 +3,7 @@
 <mapper namespace="com.linksteady.operate.dao.SpriceMapper">
 
     <!--获取不同周期的连带率-->
-    <select id="getSpriceOfDifferPeriod" resultType="Double">
+    <select id="getKpiOfDifferPeriod" resultType="Double">
         SELECT
             (CASE WHEN SUM(W_ORDER_DETAILS.QUANTITY)=0 THEN 0 ELSE
                 TRUNC(SUM(W_ORDER_DETAILS.PRICE*W_ORDER_DETAILS.QUANTITY-W_ORDER_DETAILS.DISCOUNT)/SUM(W_ORDER_DETAILS.QUANTITY),2) END) SPRICE
