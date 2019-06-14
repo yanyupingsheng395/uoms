@@ -122,6 +122,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
      */
     @Override
     public Map<String, Object> getKpiChart(String kpiType, String periodType, String startDt, String endDt,String source) {
+        DecimalFormat df = new DecimalFormat(".##");
         Map<String, Object> result = Maps.newHashMap();
         //获取周期内的明细列表
         List<String> dateList = getDateList(periodType, startDt, endDt);
@@ -137,8 +138,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         List<Double> lastList = fixData(lastDataMap, lastYearDateList);
         Double currentAvg = currentList.stream().mapToDouble(x->x).average().getAsDouble();
         Double lastAvg = lastList.stream().mapToDouble(x->x).average().getAsDouble();
-        List<Double> currentAvgList = dateList.stream().map(x->currentAvg).collect(Collectors.toList());
-        List<Double> lastAvgList = dateList.stream().map(x->lastAvg).collect(Collectors.toList());
+        List<String> currentAvgList = dateList.stream().map(x->df.format(currentAvg)).collect(Collectors.toList());
+        List<String> lastAvgList = dateList.stream().map(x->df.format(lastAvg)).collect(Collectors.toList());
         result.put("xData", dateList);
         result.put("current", currentList);
         result.put("currentAvg", currentAvgList);
@@ -215,6 +216,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
      */
     @Override
     public Map<String, Object> getSpAndFpKpiPeriodData(String kpiType,String periodType, String startDt, String endDt,String source) {
+        DecimalFormat df = new DecimalFormat("#.##");
         Map<String, Object> result = Maps.newHashMap();
         List<String> dateList = getDateList(periodType, startDt, endDt);
         List<KpiInfoVo> kpiInfoVos = getSpOrFpKpiValDetail(kpiType,startDt, endDt, periodType, source);
@@ -240,11 +242,11 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         Double avgSpKpiVal = spKpiValList.stream().mapToDouble(x->x).average().getAsDouble();
         Double avgLastSpKpiVal = lastSpKpiValList.stream().mapToDouble(x->x).average().getAsDouble();
 
-        List<Double> avgFpKpiValList = dateList.stream().map(x->avgFpKpiVal).collect(Collectors.toList());
-        List<Double> lastAvgFpKpiValList = dateList.stream().map(x->avgLastFpKpiVal).collect(Collectors.toList());
+        List<String> avgFpKpiValList = dateList.stream().map(x->df.format(avgFpKpiVal)).collect(Collectors.toList());
+        List<String> lastAvgFpKpiValList = dateList.stream().map(x->df.format(avgLastFpKpiVal)).collect(Collectors.toList());
 
-        List<Double> avgSpKpiValList = dateList.stream().map(x->avgSpKpiVal).collect(Collectors.toList());
-        List<Double> lastAvgSpKpiValList = dateList.stream().map(x->avgLastSpKpiVal).collect(Collectors.toList());
+        List<String> avgSpKpiValList = dateList.stream().map(x->df.format(avgSpKpiVal)).collect(Collectors.toList());
+        List<String> lastAvgSpKpiValList = dateList.stream().map(x->df.format(avgLastSpKpiVal)).collect(Collectors.toList());
         result.put("spKpiVal", spKpiValList);
         result.put("fpKpiVal", fpKpiValList);
         result.put("lastSpKpiVal", lastSpKpiValList);
@@ -257,6 +259,15 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         return result;
     }
 
+    /**
+     * 判断从W_ORDERS或W_ORDER_DETAIL中拿数据
+     * @param type
+     * @param startDt
+     * @param endDt
+     * @param periodType
+     * @param source
+     * @return
+     */
     private TemplateResult getTemplateResult(String type, String startDt, String endDt, String periodType, String source) {
         TemplateResult templateResult = null;
         switch (type) {
@@ -280,6 +291,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
                 break;
             case UomsConstants.OP_DATA_SPRICE:
                 templateResult = buildJoinInfoAndFilterOfOrderDetails(periodType,startDt,endDt,source);
+                break;
+            default:
                 break;
         }
         return templateResult;
@@ -464,18 +477,16 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     private TemplateResult buildJoinInfoAndFilter(String periodType, String startDt, String endDt,String source)
     {
         Joiner joiner = Joiner.on(",").skipNulls();
-        //构造where条件
-        StringBuffer bf=new StringBuffer();
-        StringBuffer join=new StringBuffer();
-
+        StringBuffer bf = new StringBuffer();
+        StringBuffer join = new StringBuffer();
         //处理条件 Y M D
-        if("D".equals(periodType))
+        if(UomsConstants.PERIOD_TYPE_DAY.equals(periodType))
         {
             bf.append(" AND W_DATE.DAY>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.DAY<=").append(StringUtils.replaceChars(endDt,"-",""));
-        }else if("M".equals(periodType))
+        }else if(UomsConstants.PERIOD_TYPE_MONTH.equals(periodType))
         {
             bf.append(" AND W_DATE.MONTH=").append(StringUtils.replaceChars(startDt,"-",""));
-        }else if("Y".equals(periodType))
+        }else if(UomsConstants.PERIOD_TYPE_YEAR.equals(periodType))
         {
             bf.append(" AND W_DATE.YEAR=").append(startDt);
         }
@@ -546,19 +557,14 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     /**
      * 构造周期类型名称
      */
-    private String buildPeriodName(String periodType)
-    {
-        if("D".equals(periodType))
-        {
+    private String buildPeriodName(String periodType) {
+        if(UomsConstants.PERIOD_TYPE_DAY.equals(periodType)) {
             return " W_DATE.DAY";
-        }else if("M".equals(periodType))
-        {
+        }else if(UomsConstants.PERIOD_TYPE_MONTH.equals(periodType)) {
             return " W_DATE.DAY";
-        }else if("Y".equals(periodType))
-        {
+        }else if(UomsConstants.PERIOD_TYPE_YEAR.equals(periodType)) {
             return " W_DATE.MONTH";
-        }else
-        {
+        }else {
             return "";
         }
     }
