@@ -18,6 +18,7 @@ import com.linksteady.operate.service.DiagOpService;
 import com.linksteady.operate.util.PearsonCorrelationUtil;
 import com.linksteady.operate.util.UomsConstants;
 import com.linksteady.operate.vo.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  * @author  huang
  */
 @Service
+@Slf4j
 public class DiagOpAddServiceImpl implements DiagOpService {
 
     @Autowired
@@ -252,6 +254,11 @@ public class DiagOpAddServiceImpl implements DiagOpService {
                     .add("$GROUP_INFO$",groupInfo.toString()).add("$PERIOD_NAME$","1");
         }
 
+        if(log.isDebugEnabled())
+        {
+            log.debug("诊断ID={},LEVEL_ID={},获取主指标的SQL为{}",diagHandleInfo.getDiagId(),diagHandleInfo.getKpiLevelId(),stringTemplate.render());
+        }
+
         List<DiagAddDataCollector> addDataCollectorList=commonSelectMapper.selectAddData(stringTemplate.render());
         return addDataCollectorList;
     }
@@ -409,6 +416,11 @@ public class DiagOpAddServiceImpl implements DiagOpService {
                     .add("$COLUMN_INFO$",columnInfo.toString()).add("$PERIOD_NAME$","1");
         }
 
+        if(log.isDebugEnabled())
+        {
+            log.debug("诊断ID={},LEVEL_ID={},获取当前指标的SQL为{}",diagHandleInfo.getDiagId(),diagHandleInfo.getKpiLevelId(),stringTemplate.render());
+        }
+
         return commonSelectMapper.selectAddData(stringTemplate.render());
     }
 
@@ -523,6 +535,11 @@ public class DiagOpAddServiceImpl implements DiagOpService {
 
         stringTemplate.add("$START$",diagHandleInfo.getBeginDt()).add("$END$",diagHandleInfo.getEndDt()).add("$JOIN_TABLES$",templateResult.getJoinInfo())
                 .add("$WHERE_INFO$",templateResult.getFilterInfo()).add("$DATE_RANGE$",dataRange).add("$DIM_CODE$",dimCodeParam);
+
+        if(log.isDebugEnabled())
+        {
+            log.debug("诊断ID={},LEVEL_ID={},获取TOP5维度的SQL为{}",diagHandleInfo.getDiagId(),diagHandleInfo.getKpiLevelId(),stringTemplate.render());
+        }
 
         List<String> top5Values=commonSelectMapper.selectStringBySql(stringTemplate.render());
 
