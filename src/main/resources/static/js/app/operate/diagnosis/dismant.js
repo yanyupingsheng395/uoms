@@ -358,7 +358,7 @@ function modalDetailBefore() {
         }else if(v.inheritFlag == "Y"){
             code += v.dimValueDisplay + "&nbsp;(继承至父节点)"
         }else if(v.inheritFlag == "A"){
-            code += v.dimValueDisplay + "&nbsp;(加法拆分的维度)"
+            code += v.dimValueDisplay + "&nbsp;(加法拆分)"
         }else if(v.inheritFlag == "N"){
             code += v.dimValueDisplay;
         }
