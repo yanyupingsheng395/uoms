@@ -119,7 +119,7 @@ spring:
       strategy:
         content:
           enabled: true
-          paths: /js/app/**
+          paths: /js/app/**, /css/**
 
 #  devtools:
 #    livereload:
