@@ -138,6 +138,4 @@ public class LoginController extends BaseController {
         return ResponseBo.okWithData("",result);
 
     }
-
-
 }
