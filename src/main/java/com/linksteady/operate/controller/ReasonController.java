@@ -197,7 +197,8 @@ public class ReasonController  extends BaseController {
 
         List<String> signal= Arrays.asList("a","b","d","d","e","f","g","h","i","j","k","l","m","n");
 
-        if(reasonService.getReasonResultCount(reasonId,code)!=0)
+        //如果找不到 则调用thrift接口进行计算，如果能找到，直接显示列表
+        if(null!=code&&!"".equals(code)&&reasonService.getReasonResultCount(reasonId,code)==0)
         {
             //根据reasonId获取kpiCode
             String kpiCode=reasonService.getReasonHeaderInfoById(reasonId).getKpiCode();
