@@ -90,17 +90,12 @@
     </div>
 </aside>
 <!--End 左侧导航-->
-
 <script>
     initVersionInfo();
     function initVersionInfo() {
-        var version = localStorage.getItem("uoms:version");
-        if(version == null) {
-            $.get("/sysinfo", {}, function (r) {
-                version = r.data.version;
-                $("#version").html("").html("v" + version);
-            });
-        }
-        $("#version").html("").html("v" + version);
+        $.get("/sysinfo", {}, function (r) {
+            var version = r.data.version;
+            $("#version").html("").html("v" + version);
+        });
     }
 </script>
