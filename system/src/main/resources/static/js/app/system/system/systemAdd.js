@@ -10,7 +10,7 @@ $(function () {
         if (flag) {
             if (name === "save") {
                 $.post(ctx + "system/add", $systemAddForm.serialize(), function (r) {
-                    if (r.code === 0) {
+                    if (r.code === 200) {
                         closeModal();
                         $MB.n_success(r.msg);
                         $MB.refreshTable("systemTable");
@@ -19,7 +19,7 @@ $(function () {
             }
             if (name === "update") {
                 $.post(ctx + "system/update", $systemAddForm.serialize(), function (r) {
-                    if (r.code === 0) {
+                    if (r.code === 200) {
                         closeModal();
                         $MB.n_success(r.msg);
                         $MB.refreshTable("systemTable");
@@ -71,6 +71,16 @@ function validateRule() {
                     }
                 }
             },
+            domain: {
+                required: true
+            },
+            logo: {
+                required: true
+            },
+            sortNum: {
+                required: true,
+                digits: true
+            },
             remark: {
                 maxlength: 50
             },
@@ -84,8 +94,14 @@ function validateRule() {
                 minlength: icon + "系统名称长度3到10个字符",
                 remote: icon + "该系统名已经存在"
             },
+            logo: icon + "请输入系统Logo",
+            sortNum: {
+                required: "请输入系统序号",
+                digits: "只能是非负整数"
+
+            },
             remark: icon + "系统描述不能超过50个字符",
-            domain: icon + "请选择相应菜单权限"
+            domain: icon + "请输入系统域名"
         }
     });
 }

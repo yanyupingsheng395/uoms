@@ -16,6 +16,23 @@ $(function () {
             field: 'name',
             title: '名称'
         }, {
+            field: 'domain',
+            title: '访问地址'
+        }, {
+            field: 'logo',
+            title: '系统Logo'
+        },{
+            field: 'sortNum',
+            title: '序号'
+        },{
+            field: 'enableFlag',
+            title: '状态',
+            formatter: function (value, row, index) {
+                var res = "";
+                value == '1' ? res = "<span class=\"badge bg-success\">启用</span>" : res = "<span class=\"badge bg-warning\">禁用</span>";
+                return res;
+            }
+        },{
             field: 'remark',
             title: '描述'
         }, {
@@ -54,9 +71,9 @@ function deleteSystem() {
         content: "确定删除系统信息？"
     }, function () {
         $.post(ctx + 'system/delete', {"ids": ids}, function (r) {
-            if (r.code === 0) {
+            if (r.code === 200) {
                 $MB.n_success(r.msg);
-                refresh();
+                refreshSystem();
             } else {
                 $MB.n_danger(r.msg);
             }

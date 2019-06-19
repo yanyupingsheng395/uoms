@@ -4,6 +4,10 @@
   <resultMap id="BaseResultMap" type="com.linksteady.common.domain.System">
     <result column="ID" jdbcType="DECIMAL" property="id" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="ENABLE_FLAG" jdbcType="VARCHAR" property="enableFlag"/>
+    <result column="DOMAIN" jdbcType="VARCHAR" property="domain"/>
+    <result column="LOGO" jdbcType="VARCHAR" property="logo"/>
+    <result column="SORT_NUM" jdbcType="DECIMAL" property="sortNum"/>
     <result column="REMARK" jdbcType="VARCHAR" property="remark" />
     <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
   </resultMap>

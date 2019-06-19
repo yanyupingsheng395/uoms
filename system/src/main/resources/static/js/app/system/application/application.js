@@ -21,14 +21,7 @@ $(function () {
             title: '地址'
         }, {
             field: 'remark',
-            title: '应用logo'
-        }, {
-            field: 'enableFlag',
-            title: '是否启用',
-            formatter: function (value, row, index) {
-                if (value === 'Y') return '<span class="badge bg-success">启用</span>';
-                if (value === 'N') return '<span class="badge bg-warning">未启用</span>';
-            }
+            title: '备注'
         }]
     };
 
