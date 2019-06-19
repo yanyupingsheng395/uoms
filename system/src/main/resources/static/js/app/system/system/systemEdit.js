@@ -11,7 +11,7 @@ function updateSystem() {
     }
     var id = selected[0].id;
     $.post(ctx + "system/getSystem", {"id": id}, function (r) {
-        if (r.code === 0) {
+        if (r.code === 200) {
             var $form = $('#system-add');
             $form.modal();
             var system = r.msg;
@@ -21,6 +21,10 @@ function updateSystem() {
             $form.find("input[name='id']").val(system.id);
             $form.find("input[name='remark']").val(system.remark);
             $form.find("input[name='domain']").val(system.domain);
+            $form.find("input[name='sortNum']").val(system.sortNum);
+            $form.find("input[name='logo']").val(system.logo);
+            $form.find("input[name='enableFlag']").removeAttr("checked");
+            $("input[name='enableFlag']:radio[value='" + system.enableFlag + "']").prop("checked", true);
             $("#system-add-button").attr("name", "update");
         } else {
             $MB.n_danger(r.msg);

@@ -76,9 +76,6 @@ function validateRule() {
             },
             domain: {
                 required: true
-            },
-            enableFlag: {
-                required: true
             }
         },
         messages: {

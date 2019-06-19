@@ -21,7 +21,6 @@ function updateApplication() {
             $form.find("input[name='applicationId']").val(application.applicationId);
             $form.find("input[name='remark']").val(application.remark);
             $form.find("input[name='domain']").val(application.domain);
-            $("input[name='enableFlag']:radio[value='" + application.enableFlag + "']").prop("checked", true);
             $("#application-add-button").attr("name", "update");
         } else {
             $MB.n_danger(r.msg);

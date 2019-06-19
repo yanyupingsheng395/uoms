@@ -26,8 +26,4 @@ public class Application {
 
     @Column(name = "REMARK")
     private String remark;
-
-    @Column(name = "ENABLE_FLAG")
-    private String enableFlag;
-
 }
