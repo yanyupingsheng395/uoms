@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.linksteady</groupId>
-    <artifactId>uoms</artifactId>
+    <artifactId>uoms2</artifactId>
     <version>1.03</version>
     <modules>
         <module>common</module>
@@ -198,4 +198,18 @@
         </dependency>
     </dependencies>
 
+
+    <!--发布到私服配置-->
+    <distributionManagement>
+        <repository>
+            <id>deploy</id>
+            <name>Internal Release</name>
+            <url>http://nexus.growth-master.com/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>deploy</id>
+            <name>Internal Snapshots</name>
+            <url>http://nexus.growth-master.com/repository/maven-releases/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
