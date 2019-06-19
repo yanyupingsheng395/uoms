@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.system.dao.ApplicationMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.common.domain.Application">
+    <result column="APPLICATION_ID" jdbcType="DECIMAL" property="applicationId" />
+    <result column="APPLICATION_NAME" jdbcType="VARCHAR" property="applicationName" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="DOMAIN" jdbcType="VARCHAR" property="domain" />
+    <result column="ENABLE_FLAG" jdbcType="VARCHAR" property="enableFlag" />
+  </resultMap>
+
+  <select id="getIdFromSeq" resultType="String">
+    select seq_t_application_id.nextval from dual
+  </select>
+
+  <select id="findApplication" resultMap="BaseResultMap">
+    select * from T_APPLICATION where application_id = #{id}
+  </select>
+
+  <select id="findAll" resultMap="BaseResultMap">
+    select ID, APPLICATION_NAME from T_APPLICATION order by APPLICATION_ID ASC
+  </select>
+
+  <select id="getNameById" resultType="String">
+    select APPLICATION_NAME from APPLICATION_ID where APPLICATION_ID = #{id}
+  </select>
+
+</mapper>

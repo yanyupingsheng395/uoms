@@ -1,0 +1,101 @@
+<!--左侧导航-->
+<style>
+    .fixed{ position:fixed; left:0px; bottom:10px; width:100%; height:50px; z-index:9999;border: 0px;}
+</style>
+<aside class="lyear-layout-sidebar">
+    <!-- logo -->
+    <div id="logo" class="sidebar-header">
+        <a href="#"><img data-th-src="@{/images/logo.jpg}" title="" alt="linksteady" /></a>
+    </div>
+    <div class="lyear-layout-sidebar-scroll">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a class="h5" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            <i class="mdi mdi-stethoscope  mdi-18px"></i>&nbsp;系统管理
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        <nav class="sidebar-main">
+                            <ul class="nav nav-drawer">
+                                <li class="nav-item">
+                                    <a href="/page/target"><i class="mdi mdi-collage"></i>目标设定与分解</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/page/coreindicators"><i class="mdi mdi-webhook"></i>指标异常监控</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/page/diagnosis/list"><i class="mdi mdi-beaker"></i>发现关键问题</a>
+                                </li>
+
+                                <li class="nav-item nav-item-has-subnav">
+                                    <a href="javascript:void(0)"><i class="mdi mdi-palette"></i>挖掘主要原因</a>
+                                    <ul class="nav nav-subnav">
+                                        <li> <a href="/reason/gotoIndex">原因任务管理</a> </li>
+                                        <li> <a href="/reason/reasonResultTrace">原因效果跟踪</a> </li>
+                                    </ul>
+                                </li>
+
+                                <li class="nav-item nav-item-has-subnav">
+                                    <a href="javascript:void(0)"><i class="mdi mdi-book-open"></i>报表</a>
+                                    <ul class="nav nav-subnav">
+                                        <li> <a href="/report/opDaillyReport">店铺运营报表</a> </li>
+                                        <li> <a href="/report/brandReport">品牌销售情况统计</a> </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                    <h4 class="panel-title">
+                        <a class="collapsed h5" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <i class="mdi mdi-dip-switch  mdi-18px"></i>&nbsp;运营系统
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                    <div class="panel-body">
+                        <nav class="sidebar-main">
+                            <ul class="nav nav-drawer">
+                                <li class="nav-item">
+                                    <a href="/operator/user"><i class="mdi mdi-access-point"></i>用户运营监控</a>
+                                </li>
+                                <!--<li class="nav-item">-->
+                                    <!--<a href="/page/kpimonitor"><i class="mdi mdi-access-point"></i>用户运营监控</a>-->
+                                <!--</li>-->
+                                <li class="nav-item">
+                                    <a href="/lifecycle/catlist"><i class="mdi mdi-lan"></i>品类运营</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/op/day"><i class="mdi mdi-apps"></i>每日运营</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/op/period"><i class="mdi mdi-debug-step-over"></i>周期运营</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-footer text-center fixed">
+            <span class="h6" style="color: #838383">当前版本&nbsp;:&nbsp;<span id="version" th:text="${version}"></span></span>
+        </div>
+    </div>
+</aside>
+<!--End 左侧导航-->
+<script>
+    initVersionInfo();
+    function initVersionInfo() {
+        $.get("/sysinfo", {}, function (r) {
+            var version = r.data.version;
+            $("#version").html("").html("v" + version);
+        });
+    }
+</script>
