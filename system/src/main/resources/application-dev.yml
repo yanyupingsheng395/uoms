@@ -76,7 +76,7 @@ spring:
     # Redis数据库索引（默认为0） 存放session数据 ShiroConfig.java中使用
     database: 0
     # businessdatabase 存放业务数据的库 RedisConfig.java中使用
-    businessdatabase: 0
+    businessdatabase: 1
     # Redis服务器地址
     host: 127.0.0.1
     # Redis服务器连接端口
@@ -120,11 +120,6 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
-
-# spring boot admin配置结束
-jasypt:
-  encryptor:
-    password: linksteady
 
 mybatis:
   # type-aliases扫描路径

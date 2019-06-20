@@ -179,8 +179,5 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         this.updateNotNull(user);
     }
 
-    public static void main(String[] args) {
-        System.out.println(MD5Utils.encrypt("duyanyan", "duyanyan123"));
-    }
 
 }
