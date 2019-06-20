@@ -91,7 +91,7 @@ function deleteUsers() {
         content: "确定删除选中用户?"
     }, function () {
         $.post(ctx + 'user/delete', {"ids": ids}, function (r) {
-            if (r.code === 0) {
+            if (r.code === 200) {
                 $MB.n_success(r.msg);
                 refreshUser();
             } else {
@@ -103,7 +103,7 @@ function deleteUsers() {
 
 function exportUserExcel() {
     $.post(ctx + "user/excel", $(".user-table-form").serialize(), function (r) {
-        if (r.code === 0) {
+        if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
             $MB.n_warning(r.msg);
@@ -113,7 +113,7 @@ function exportUserExcel() {
 
 function exportUserCsv() {
     $.post(ctx + "user/csv", $(".user-table-form").serialize(), function (r) {
-        if (r.code === 0) {
+        if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
             $MB.n_warning(r.msg);

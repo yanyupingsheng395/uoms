@@ -9,7 +9,7 @@ $(function () {
         var flag = validateUpdatePassword.form();
         if (flag) {
             $.post(ctx + "user/updatePassword", $updatePasswordForm.serialize(), function (r) {
-                if (r.code === 0) {
+                if (r.code === 200) {
                     validateUpdatePassword.resetForm();
                     $MB.closeAndRestModal("update-password");
                     $MB.n_success(r.msg);

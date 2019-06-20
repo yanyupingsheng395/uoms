@@ -1,5 +1,6 @@
 $(function () {
     initTreeTable();
+    getSystem();
 });
 
 var ctx = "/";
@@ -14,7 +15,8 @@ function initTreeTable() {
         expandColumn: "1",
         ajaxParams: {
             menuName: $menuTableForm.find("input[name='menuName']").val() == null ? null : $menuTableForm.find("input[name='menuName']").val().trim(),
-            type: $menuTableForm.find("select[name='type']").find("option:selected").val()
+            type: $menuTableForm.find("select[name='type']").find("option:selected").val(),
+            sysId: $menuTableForm.find("select[name='systemId']").find("option:selected").val()
         },
         columns: [
             {
@@ -73,6 +75,16 @@ function initTreeTable() {
     $MB.initTreeTable('menuTable', setting);
 }
 
+function getSystem() {
+    $.get(ctx + "system/findAllSystem", {}, function (r) {
+        var options = "<option value=''>所有</option>";
+        $(r.msg).each(function (k, v) {
+            options += "<option value='"+v.id+"'>"+v.name+"</option>";
+        });
+        $("#systemId").html("").html(options);
+    });
+}
+
 function searchMenu() {
     initTreeTable();
 }
@@ -100,9 +112,9 @@ function deleteMenus() {
         content: "确定删除选中菜单或按钮？"
     }, function () {
         $.post(ctx + 'menu/delete', {"ids": ids_arr}, function (r) {
-            if (r.code === 0) {
+            if (r.code === 200) {
                 $MB.n_success(r.msg);
-                refresh();
+                refreshMenu();
             } else {
                 $MB.n_danger(r.msg);
             }
@@ -112,7 +124,7 @@ function deleteMenus() {
 
 function exportMenuExcel() {
     $.post(ctx + "menu/excel", $(".menu-table-form").serialize(), function (r) {
-        if (r.code === 0) {
+        if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
             $MB.n_warning(r.msg);
@@ -122,7 +134,7 @@ function exportMenuExcel() {
 
 function exportMenuCsv() {
     $.post(ctx + "menu/csv", $(".menu-table-form").serialize(), function (r) {
-        if (r.code === 0) {
+        if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
             $MB.n_warning(r.msg);

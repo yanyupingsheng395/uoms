@@ -21,7 +21,7 @@
   </select>
 
   <select id="findAll" resultMap="BaseResultMap">
-    select ID, NAME from T_SYSTEM order by CREATE_DT DESC
+    select ID, NAME from T_SYSTEM where ENABLE_FLAG = '1' order by SORT_NUM ASC
   </select>
 
   <select id="getNameById" resultType="String">
@@ -29,7 +29,7 @@
   </select>
 
   <select id="findUserSystem" resultMap="BaseResultMap">
-    select name, domain from T_SYSTEM where ID in (
+    select * from T_SYSTEM where ID in (
       select m.SYS_ID from t_menu m
       where m.type &lt;&gt; '1' and m.MENU_ID in
           (select distinct rm.menu_id from t_role_menu rm
@@ -38,5 +38,6 @@
           left join t_user u on (u.user_id = ur.user_id)
           where u.username = #{userName})
     )
+    ORDER BY SORT_NUM ASC
   </select>
 </mapper>

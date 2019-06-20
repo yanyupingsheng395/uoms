@@ -26,6 +26,7 @@ function updateMenu() {
             $form.find("input[name='perms']").val(menu.perms);
             $form.find("input[name='orderNum']").val(menu.orderNum);
             $form.find("select[name='sysId']").selectpicker('val', menu.sysId);
+            $form.find("select[name='appId']").selectpicker('val', menu.appId);
             $menuTree.jstree('select_node', menu.parentId, true);
             $menuTree.jstree('disable_node', menu.menuId);
             $("#menu-add-button").attr("name", "update");

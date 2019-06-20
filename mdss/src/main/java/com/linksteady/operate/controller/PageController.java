@@ -59,7 +59,7 @@ public class PageController extends BaseController {
     @Value("${app.build.time}")
     private String buildTime;
 
-    @RequestMapping("/page/index")
+    @RequestMapping("/index")
     public String index(Model model) {
         // 登录成后，即可通过 Subject 获取登录的用户信息
         User user = super.getCurrentUser();

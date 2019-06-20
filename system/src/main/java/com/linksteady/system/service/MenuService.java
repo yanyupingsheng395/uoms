@@ -13,7 +13,7 @@ public interface MenuService extends IService<Menu> {
 
     List<Menu> findUserPermissions(String userName);
 
-    List<Menu> findUserMenus(String userName);
+    List<Menu> findUserMenus(String userName, String sysId);
 
     List<Menu> findAllMenus(Menu menu);
 
@@ -21,7 +21,7 @@ public interface MenuService extends IService<Menu> {
 
     Tree<Menu> getMenuTree(String sysId);
 
-    Tree<Menu> getUserMenu(String userName);
+    Tree<Menu> getUserMenu(String userName, String sysId);
 
     Menu findById(Long menuId);
 

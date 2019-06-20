@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
@@ -38,17 +39,17 @@ public class MenuController extends BaseController {
         return "system/menu/menu";
     }
 
-    @RequestMapping("menu/menu")
-    @ResponseBody
-    public ResponseBo getMenu(String userName) {
-        try {
-            List<Menu> menus = this.menuService.findUserMenus(userName);
-            return ResponseBo.ok(menus);
-        } catch (Exception e) {
-            logger.error("获取菜单失败", e);
-            return ResponseBo.error("获取菜单失败！");
-        }
-    }
+//    @RequestMapping("menu/menu")
+//    @ResponseBody
+//    public ResponseBo getMenu(String userName) {
+//        try {
+//            List<Menu> menus = this.menuService.findUserMenus(userName);
+//            return ResponseBo.ok(menus);
+//        } catch (Exception e) {
+//            logger.error("获取菜单失败", e);
+//            return ResponseBo.error("获取菜单失败！");
+//        }
+//    }
 
     @RequestMapping("menu/getMenu")
     @ResponseBody
@@ -88,14 +89,14 @@ public class MenuController extends BaseController {
 
     @RequestMapping("menu/getUserMenu")
     @ResponseBody
-    public ResponseBo getUserMenu() {
+    public ResponseBo getUserMenu(@RequestParam("sysId") String sysId) {
         Map<String, Object> result = new HashMap<>();
         User user = super.getCurrentUser();
         String userName = user.getUsername();
         result.put("username", userName);
         result.put("version", version);
         try {
-            Tree<Menu> tree = this.menuService.getUserMenu(userName);
+            Tree<Menu> tree = this.menuService.getUserMenu(userName, sysId);
             result.put("tree", tree);
             return ResponseBo.ok(result);
         } catch (Exception e) {

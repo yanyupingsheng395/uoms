@@ -33,7 +33,7 @@ function login() {
         dataType: "json",
         success: function (r) {
             if (r.code === 200) {
-                location.href = '/index';
+                location.href = '/main';
             } else {
                 reloadCode();
                 layer.msg(r.msg);

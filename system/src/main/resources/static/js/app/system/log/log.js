@@ -77,7 +77,7 @@ function deleteLogs() {
         $.post(ctx + 'log/delete', {"ids": ids}, function (r) {
             if (r.code === 0) {
                 $MB.n_success(r.msg);
-                refresh();
+                refreshLog();
             } else {
                 $MB.n_danger(r.msg);
             }
@@ -87,7 +87,7 @@ function deleteLogs() {
 
 function exportLogExcel() {
     $.post(ctx + "log/excel", $(".log-table-form").serialize(), function (r) {
-        if (r.code === 0) {
+        if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
             $MB.n_warning(r.msg);
@@ -97,7 +97,7 @@ function exportLogExcel() {
 
 function exportLogCsv() {
     $.post(ctx + "log/csv", $(".log-table-form").serialize(), function (r) {
-        if (r.code === 0) {
+        if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
             $MB.n_warning(r.msg);

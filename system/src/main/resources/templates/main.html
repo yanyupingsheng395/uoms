@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户运营系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/common.css}">
+    <style>
+        .system {
+            background: #fff;
+            border-radius: 6px;
+            margin-top: 10px;
+            padding-top: 5px;
+            padding-bottom: 13px;
+            box-shadow: 1px 1px 3px rgba(0,0,0,.2);
+            height: 100px;
+            width: 32%;
+        }
+    </style>
+</head>
+
+<body class="lyear-layout-sidebar-close">
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-sidebar-scroll" hidden></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 头部信息 -->
+        <header class="lyear-layout-header">
+            <nav class="navbar navbar-default">
+                <div class="topbar">
+                    <div class="topbar-left">
+                        <img data-th-src="@{/images/logo.jpg}">
+                    </div>
+                    <ul class="topbar-right">
+                        <li class="dropdown dropdown-profile">
+                            <a href="javascript:void(0)" data-toggle="dropdown">
+                                <img class="img-avatar img-avatar-48 m-r-10" data-th-src="@{/images/avatar/20180414165840.jpg}" alt="用户运营系统" />
+                                <span id="loginUser"><span class="caret"></span></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li> <a href="/logout"><i class="mdi mdi-logout-variant"></i> 退出登录</a> </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-fluid">
+                <div class="container-div ui-layout-center">
+                    <div class="row" style="margin-top: 100px;">
+                        <div class="col-md-12 center-block" id="sys">
+                            <!--&lt;!&ndash;<div class="system pull-right"></div>&ndash;&gt;-->
+                            <!--<div class="col-md-2"></div>-->
+                            <!--<div class="col-md-3" onclick="sysRedirect('http://localhost:9091/user')"  style='cursor: pointer'>-->
+                                <!--<div class="system center-block" style="border-radius:200px;height: 200px;width:200px;">-->
+                                    <!--<img data-th-src="@{/images/system.svg}" alt="" class="center-block m-auto" style="margin-top:40px;">-->
+                                <!--</div>-->
+                                <!--<div class="text-center" style="margin-top: 10px;">-->
+                                    <!--<p class="h4"><a href="http://localhost:9091" style="color: #838383">系统管理</a></p>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-3" onclick="sysRedirect('http://localhost:9092')" style='cursor: pointer'>-->
+                                <!--<div class="system center-block" style="border-radius:200px;height: 200px;width:200px;">-->
+                                    <!--<img data-th-src="@{/images/operator.svg}" alt="" class="center-block m-auto" style="margin-top:40px;">-->
+                                <!--</div>-->
+                                <!--<div class="text-center" style="margin-top: 10px;">-->
+                                    <!--<p class="h4"><a href="http://localhost:9092" style="color: #838383">用户运营</a></p>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-3" onclick="sysRedirect('http://localhost:9092')" style='cursor: pointer'>-->
+                                <!--<div class="system center-block" style="border-radius:200px;height: 200px;width:200px;">-->
+                                    <!--<img data-th-src="@{/images/systemlogo/diag.svg}" alt="" class="center-block m-auto" style="margin-top:40px;">-->
+                                <!--</div>-->
+                                <!--<div class="text-center" style="margin-top: 10px;">-->
+                                    <!--<p class="h4"><a href="http://localhost:9092" style="color: #838383">营销诊断</a></p>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script>
+    $.get("/system/findUserSystem", {}, function (r) {
+        var code =  "";
+        $.each(r.msg, function (k, v) {
+            code += "<div class=\"col-md-3\" onclick='sysRedirect(\""+v.domain+"\", \""+v.id+"\")'>\n" +
+                "<div class=\"system center-block\" style=\"border-radius:200px;height: 200px;width:200px;\">\n" +
+                "<img src='"+v.logo+"' alt=\"\" class=\"center-block m-auto\" style=\"margin-top:40px;\">\n" +
+                "</div>\n" +
+                "<div class=\"text-center\" style=\"margin-top: 10px;\">\n" +
+                "<p class=\"h4\"><a onclick='sysRedirect(\""+v.domain+"\", \""+v.id+"\")' style=\"color: #838383\">"+v.name+"</a></p>\n" +
+                "</div>\n" +
+                "</div>";
+        });
+        $("#sys").html("").append("<div class=\"col-md-2\"></div>" + code);
+    });
+
+    function sysRedirect(url, id) {
+        window.location.href = url + "?id=" + id;
+    }
+</script>
+</body>
+</html>

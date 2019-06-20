@@ -17,13 +17,19 @@ public class PageController extends BaseController {
 
     @RequestMapping("/index")
         public String index(Model model) {
-        System.out.println(SecurityUtils.getSubject().isAuthenticated());
-
         // 登录成后，即可通过 Subject 获取登录的用户信息
-            User user = super.getCurrentUser();
-            model.addAttribute("user", user);
-            model.addAttribute("version", version);
-            return "index";
+        User user = super.getCurrentUser();
+        model.addAttribute("user", user);
+        model.addAttribute("version", version);
+        return "index";
     }
 
+    @RequestMapping("/main")
+    public String main(Model model) {
+        // 登录成后，即可通过 Subject 获取登录的用户信息
+        User user = super.getCurrentUser();
+        model.addAttribute("user", user);
+        model.addAttribute("version", version);
+        return "main";
+    }
 }

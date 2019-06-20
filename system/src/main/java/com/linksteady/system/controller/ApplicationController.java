@@ -115,7 +115,7 @@ public class ApplicationController extends BaseController {
         }
     }
 
-    @RequestMapping("system/findAllApplication")
+    @RequestMapping("application/findAllApplication")
     @ResponseBody
     public ResponseBo findAllApplication() {
         List<Application> list = this.applicationService.findAllApplication();

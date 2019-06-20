@@ -17,7 +17,7 @@
   </select>
 
   <select id="findAll" resultMap="BaseResultMap">
-    select ID, APPLICATION_NAME from T_APPLICATION order by APPLICATION_ID ASC
+    select APPLICATION_ID, APPLICATION_NAME from T_APPLICATION order by APPLICATION_ID ASC
   </select>
 
   <select id="getNameById" resultType="String">

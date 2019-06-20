@@ -7,6 +7,7 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
@@ -26,8 +27,8 @@ public class OpenApiController {
 
     @ResponseBody
     @RequestMapping("/getUserMenu")
-    public ResponseBo getUserMenu() {
+    public ResponseBo getUserMenu(@RequestParam("sysId") String sysId) {
         String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
-        return openApiService.getUserMenu(username);
+        return openApiService.getUserMenu(username, sysId);
     }
 }

@@ -1,7 +1,29 @@
 var urlstr = "";
+var sysId = null;
 $(document).ready(function () {
-    getUserMenu();
-    //为所有ajax设置
+    allExceptionCatch();
+    if(sysId == null) {
+        sysId = getQueryVariable("id");
+        if(sysId) {
+            localStorage.setItem("sysId", sysId);
+        }else {
+            sysId = localStorage.getItem("sysId");
+        }
+    }
+    getUserMenu(sysId);
+});
+
+function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        if(pair[0] == variable){return pair[1];}
+    }
+    return(false);
+}
+
+function allExceptionCatch() {
     $.ajaxSetup({
         statusCode: {
             404: function() {
@@ -67,11 +89,11 @@ $(document).ready(function () {
             }
         }
     });
-});
+}
 
 
-function getUserMenu() {
-    $.get("/menu/getUserMenu", {}, function (r) {
+function getUserMenu(sysId) {
+    $.get("/menu/getUserMenu", {sysId: sysId}, function (r) {
         $(".nav-drawer").html("").html(forTree(r.msg.tree.children));
         var username = r.msg.username;
         $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");

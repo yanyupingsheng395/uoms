@@ -16,7 +16,7 @@ $(function () {
         if (flag) {
             if (name === "save") {
                 $.post(ctx + "user/add", $userAddForm.serialize(), function (r) {
-                    if (r.code === 0) {
+                    if (r.code === 200) {
                         closeModal();
                         $MB.n_success(r.msg);
                         $MB.refreshTable("userTable");
@@ -25,7 +25,7 @@ $(function () {
             }
             if (name === "update") {
                 $.post(ctx + "user/update", $userAddForm.serialize(), function (r) {
-                    if (r.code === 0) {
+                    if (r.code === 200) {
                         closeModal();
                         $MB.n_success(r.msg);
                         $MB.refreshTable("userTable");

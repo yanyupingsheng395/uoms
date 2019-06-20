@@ -54,9 +54,9 @@ function deleteRoles() {
         confirmButtonText: "确定删除"
     }, function () {
         $.post(ctx + 'role/delete', {"ids": ids}, function (r) {
-            if (r.code === 0) {
+            if (r.code === 200) {
                 $MB.n_success(r.msg);
-                refresh();
+                refreshRole();
             } else {
                 $MB.n_danger(r.msg);
             }
@@ -66,7 +66,7 @@ function deleteRoles() {
 
 function exportRoleExcel() {
     $.post(ctx + "role/excel", $(".role-table-form").serialize(), function (r) {
-        if (r.code === 0) {
+        if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
             $MB.n_warning(r.msg);
@@ -76,7 +76,7 @@ function exportRoleExcel() {
 
 function exportRoleCsv() {
     $.post(ctx + "role/csv", $(".role-table-form").serialize(), function (r) {
-        if (r.code === 0) {
+        if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
             $MB.n_warning(r.msg);

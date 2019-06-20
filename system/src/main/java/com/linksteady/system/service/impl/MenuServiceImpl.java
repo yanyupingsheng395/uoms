@@ -52,8 +52,8 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     }
 
     @Override
-    public List<Menu> findUserMenus(String userName) {
-        return this.menuMapper.findUserMenus(userName);
+    public List<Menu> findUserMenus(String userName, String sysId) {
+        return this.menuMapper.findUserMenus(userName, sysId);
     }
 
     @Override
@@ -143,9 +143,9 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     }
 
     @Override
-    public Tree<Menu> getUserMenu(String userName) {
+    public Tree<Menu> getUserMenu(String userName, String sysId) {
         List<Tree<Menu>> trees = new ArrayList<>();
-        List<Menu> menus = this.findUserMenus(userName);
+        List<Menu> menus = this.findUserMenus(userName, sysId);
         menus.forEach(menu -> {
             Tree<Menu> tree = new Tree<>();
             tree.setId(menu.getMenuId().toString());

@@ -13,7 +13,8 @@ public interface OpenApiService {
     /**
      * 获取当前用户的菜单列表
      * @param username
+     * @param sysId
      * @return
      */
-    ResponseBo getUserMenu(String username);
+    ResponseBo getUserMenu(String username, String sysId);
 }

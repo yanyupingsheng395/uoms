@@ -55,9 +55,9 @@ function deleteApplication() {
         content: "确定删除应用信息？"
     }, function () {
         $.post(ctx + 'application/delete', {"ids": ids}, function (r) {
-            if (r.code === 0) {
+            if (r.code === 200) {
                 $MB.n_success(r.msg);
-                refresh();
+                refreshApplication();
             } else {
                 $MB.n_danger(r.msg);
             }

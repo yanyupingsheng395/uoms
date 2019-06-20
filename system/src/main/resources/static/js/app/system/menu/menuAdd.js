@@ -12,7 +12,8 @@ $(function () {
     $icon_drop.hide();
     validateRule();
     createMenuTree();
-    getSystem();
+    getSystemInfo();
+    getApplication();
 
     $menuAddForm.find("input[name='type']").change(function () {
         var $value = $menuAddForm.find("input[name='type']:checked").val();
@@ -54,7 +55,7 @@ $(function () {
             validator = $menuAddForm.validate();
             if (name === "save") {
                 $.post(ctx + "menu/add", $menuAddForm.serialize(), function (r) {
-                    if (r.code === 0) {
+                    if (r.code === 200) {
                         refreshMenu();
                         closeModal();
                         $MB.n_success(r.msg);
@@ -63,7 +64,7 @@ $(function () {
             }
             if (name === "update") {
                 $.post(ctx + "menu/update", $menuAddForm.serialize(), function (r) {
-                    if (r.code === 0) {
+                    if (r.code === 200) {
                         refreshMenu();
                         closeModal();
                         $MB.n_success(r.msg);
@@ -81,7 +82,7 @@ $(function () {
 });
 
 // 获取所有业务系统
-function getSystem() {
+function getSystemInfo() {
     $.get(ctx + "system/findAllSystem", {}, function (r) {
         var options = "<option value=''>请选择</option>";
         $(r.msg).each(function (k, v) {
@@ -89,6 +90,18 @@ function getSystem() {
         });
         $("#sysId").html("").html(options);
         $("#sysId").selectpicker("refresh");
+    });
+}
+
+// 获取应用
+function getApplication() {
+    $.get(ctx + "application/findAllApplication", {}, function (r) {
+        var options = "<option value=''>请选择</option>";
+        $(r.msg).each(function (k, v) {
+            options += "<option value='"+v.applicationId+"'>"+v.applicationName+"</option>";
+        });
+        $("#appId").html("").html(options);
+        $("#appId").selectpicker("refresh");
     });
 }
 
@@ -142,6 +155,7 @@ function validateRule() {
                 }
             },
             system: {required: true},
+            appName: {required: true},
             orderNum: {required: true, digits: true}
         },
         messages: {
@@ -152,6 +166,9 @@ function validateRule() {
             },
             system: {
                 required: icon + "请选择业务系统"
+            },
+            appName: {
+                required: icon + "请选择应用"
             },
             orderNum: {required: icon + "请输入显示排序", digits: icon + "只能输入0或正整数"}
         }
@@ -166,6 +183,12 @@ $('#sysId').on('changed.bs.select',function(e){
     $.jstree.destroy();
     createMenuTree(sysId);
 });
+
+$('#appId').on('changed.bs.select',function(e){
+    var appId = $(this).val();
+    $("input[name='appName']").val(appId);
+});
+
 function createMenuTree(sysId) {
     $.post(ctx + "menu/tree", {sysId: sysId}, function (r) {
         if (r.code === 200) {

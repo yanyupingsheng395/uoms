@@ -27,9 +27,9 @@ public class OpenApiServiceImpl implements OpenApiService {
      * @return
      */
     @Override
-    public ResponseBo getUserMenu(String username) {
+    public ResponseBo getUserMenu(String username, String sysId) {
         Map<String, Object> result = Maps.newHashMap();
-        Tree<Menu> tree = menuService.getUserMenu(username);
+        Tree<Menu> tree = menuService.getUserMenu(username, sysId);
         result.put("tree", tree);
         return ResponseBo.okWithData(null, result);
     }
