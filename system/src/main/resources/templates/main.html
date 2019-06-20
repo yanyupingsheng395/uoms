@@ -58,34 +58,7 @@
             <div class="container-fluid">
                 <div class="container-div ui-layout-center">
                     <div class="row" style="margin-top: 100px;">
-                        <div class="col-md-12 center-block" id="sys">
-                            <!--&lt;!&ndash;<div class="system pull-right"></div>&ndash;&gt;-->
-                            <!--<div class="col-md-2"></div>-->
-                            <!--<div class="col-md-3" onclick="sysRedirect('http://localhost:9091/user')"  style='cursor: pointer'>-->
-                                <!--<div class="system center-block" style="border-radius:200px;height: 200px;width:200px;">-->
-                                    <!--<img data-th-src="@{/images/system.svg}" alt="" class="center-block m-auto" style="margin-top:40px;">-->
-                                <!--</div>-->
-                                <!--<div class="text-center" style="margin-top: 10px;">-->
-                                    <!--<p class="h4"><a href="http://localhost:9091" style="color: #838383">系统管理</a></p>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                            <!--<div class="col-md-3" onclick="sysRedirect('http://localhost:9092')" style='cursor: pointer'>-->
-                                <!--<div class="system center-block" style="border-radius:200px;height: 200px;width:200px;">-->
-                                    <!--<img data-th-src="@{/images/operator.svg}" alt="" class="center-block m-auto" style="margin-top:40px;">-->
-                                <!--</div>-->
-                                <!--<div class="text-center" style="margin-top: 10px;">-->
-                                    <!--<p class="h4"><a href="http://localhost:9092" style="color: #838383">用户运营</a></p>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                            <!--<div class="col-md-3" onclick="sysRedirect('http://localhost:9092')" style='cursor: pointer'>-->
-                                <!--<div class="system center-block" style="border-radius:200px;height: 200px;width:200px;">-->
-                                    <!--<img data-th-src="@{/images/systemlogo/diag.svg}" alt="" class="center-block m-auto" style="margin-top:40px;">-->
-                                <!--</div>-->
-                                <!--<div class="text-center" style="margin-top: 10px;">-->
-                                    <!--<p class="h4"><a href="http://localhost:9092" style="color: #838383">营销诊断</a></p>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        </div>
+                        <div class="col-md-12 center-block" id="sys"></div>
                     </div>
                 </div>
             </div>
@@ -93,20 +66,39 @@
     </div>
 </div>
 <script>
-    $.get("/system/findUserSystem", {}, function (r) {
-        var code =  "";
-        $.each(r.msg, function (k, v) {
-            code += "<div class=\"col-md-3\" onclick='sysRedirect(\""+v.domain+"\", \""+v.id+"\")'>\n" +
-                "<div class=\"system center-block\" style=\"border-radius:200px;height: 200px;width:200px;\">\n" +
-                "<img src='"+v.logo+"' alt=\"\" class=\"center-block m-auto\" style=\"margin-top:40px;\">\n" +
-                "</div>\n" +
-                "<div class=\"text-center\" style=\"margin-top: 10px;\">\n" +
-                "<p class=\"h4\"><a onclick='sysRedirect(\""+v.domain+"\", \""+v.id+"\")' style=\"color: #838383\">"+v.name+"</a></p>\n" +
-                "</div>\n" +
-                "</div>";
-        });
-        $("#sys").html("").append("<div class=\"col-md-2\"></div>" + code);
+
+    $(function () {
+        getSysInfo();
     });
+
+    function getSysInfo() {
+        $.get("/system/findUserSystem", {}, function (r) {
+            var code =  "";
+            var i = 0;
+            $.each(r.msg.list, function (k, v) {
+                i++;
+                code += "<div class=\"col-md-3\" onclick='sysRedirect(\""+v.domain+"\", \""+v.id+"\")'>\n" +
+                    "<div class=\"system center-block\" style=\"border-radius:200px;height: 200px;width:200px;\">\n" +
+                    "<img src='"+v.logo+"' alt=\"\" class=\"center-block m-auto\" style=\"margin-top:40px;\">\n" +
+                    "</div>\n" +
+                    "<div class=\"text-center\" style=\"margin-top: 10px;\">\n" +
+                    "<p class=\"h4\"><a onclick='sysRedirect(\""+v.domain+"\", \""+v.id+"\")' style=\"color: #838383\">"+v.name+"</a></p>\n" +
+                    "</div>\n" +
+                    "</div>";
+            });
+            $("#sys").html("").append(code);
+            if(i == 1) {
+                $("#sys").find("div").eq(0).addClass("col-md-offset-4");
+            }else if(i === 2){
+                $("#sys").find("div").eq(0).addClass("col-md-offset-3");
+            }else if(i === 3){
+                $("#sys").find("div").eq(0).addClass("col-md-offset-2");
+            }
+
+            var username = r.msg.username;
+            $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
+        });
+    }
 
     function sysRedirect(url, id) {
         window.location.href = url;

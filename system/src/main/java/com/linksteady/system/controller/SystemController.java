@@ -2,6 +2,7 @@ package com.linksteady.system.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Maps;
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
@@ -129,8 +130,11 @@ public class SystemController extends BaseController {
     @RequestMapping("system/findUserSystem")
     @ResponseBody
     public ResponseBo findUserSystem() {
+        Map<String, Object> result = Maps.newHashMap();
         String username = super.getCurrentUser().getUsername();
         List<System> list = this.systemService.findUserSystem(username);
-        return ResponseBo.ok(list);
+        result.put("list", list);
+        result.put("username", username);
+        return ResponseBo.ok(result);
     }
 }

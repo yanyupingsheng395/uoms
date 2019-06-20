@@ -126,7 +126,7 @@ function allExceptionCatch() {
 
 function getUserMenu() {
     var sysId = getSysIdFromSession();
-    if(sysId != null) {
+    if(sysId != 'null') {
         $.get("/api/getUserMenu", {sysId: sysId}, function (r) {
             $(".nav-drawer").html("").html(forTree(r.data.tree.children));
             menu_tree();

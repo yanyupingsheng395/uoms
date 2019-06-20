@@ -101,7 +101,7 @@ function allExceptionCatch() {
  */
 function getUserMenu() {
     var sysId = getSysIdFromSession();
-    if(sysId != null) {
+    if(sysId != 'null') {
         $.get("/menu/getUserMenu", {sysId: sysId}, function (r) {
             $(".nav-drawer").html("").html(forTree(r.msg.tree.children));
             var username = r.msg.username;

@@ -37,7 +37,7 @@
           left join t_user_role ur on(ur.role_id = r.role_id)
           left join t_user u on (u.user_id = ur.user_id)
           where u.username = #{userName})
-    )
+    ) and ENABLE_FLAG = '1'
     ORDER BY SORT_NUM ASC
   </select>
 </mapper>
