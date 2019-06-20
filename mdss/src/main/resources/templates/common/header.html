@@ -30,14 +30,8 @@
 </header>
 <!--End 头部信息-->
 <script>
-    initUserInfo();
-    function initUserInfo() {
-        var username = localStorage.getItem("uoms:username");
-        $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
-    }
-
     function logout() {
-        window.location.href = "/logout";
+        window.location.href = "http://localhost:9091/logout";
         localStorage.clear();
     }
 </script>

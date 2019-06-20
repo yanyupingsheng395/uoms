@@ -6,7 +6,6 @@
     <result column="APPLICATION_NAME" jdbcType="VARCHAR" property="applicationName" />
     <result column="REMARK" jdbcType="VARCHAR" property="remark" />
     <result column="DOMAIN" jdbcType="VARCHAR" property="domain" />
-    <result column="ENABLE_FLAG" jdbcType="VARCHAR" property="enableFlag" />
   </resultMap>
 
   <select id="getIdFromSeq" resultType="String">

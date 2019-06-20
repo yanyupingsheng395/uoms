@@ -1,6 +1,8 @@
+var urlstr = "";
 $(document).ready(function () {
-    menu_tree();
-
+    getUserMenu();
+    allExceptionCatch();
+    initSysInfo();
     //消息提示组件
     toastr.options = {
         "closeButton": true,
@@ -20,8 +22,23 @@ $(document).ready(function () {
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     };
+});
 
-    //为所有ajax设置
+/**
+ * 初始化系统信息
+ */
+function initSysInfo() {
+    $.get("/sysinfo", {}, function (r) {
+        var version = r.data.version;
+        var username = r.data.currentUser;
+
+        $("#version").html("").html("v" + version);
+        $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
+    });
+}
+
+// 全局异常拦截
+function allExceptionCatch() {
     $.ajaxSetup({
         statusCode: {
             404: function() {
@@ -88,64 +105,95 @@ $(document).ready(function () {
             }
         }
     });
-});
+}
+
+function getUserMenu() {
+    $.get("/api/getUserMenu", {}, function (r) {
+        $(".nav-drawer").html("").html(forTree(r.data.tree.children));
+        menu_tree();
+        subMenu();
+    });
+}
+
+
+function subMenu() {
+    $('.nav-item-has-subnav > a' ).on( 'click', function() {
+        $subnavToggle = jQuery( this );
+        $navHasSubnav = $subnavToggle.parent();
+        $topHasSubNav = $subnavToggle.parents('.nav-item-has-subnav').last();
+        $subnav       = $navHasSubnav.find('.nav-subnav').first();
+        $viSubHeight  = $navHasSubnav.siblings().find('.nav-subnav:visible').outerHeight();
+        $scrollBox    = $('.lyear-layout-sidebar-scroll');
+        $navHasSubnav.siblings().find('.nav-subnav:visible').slideUp(500).parent().removeClass('open');
+        $subnav.slideToggle( 300, function() {
+            $navHasSubnav.toggleClass( 'open' );
+
+            // 新增滚动条处理
+            var scrollHeight  = 0;
+            pervTotal     = $topHasSubNav.prevAll().length,
+                boxHeight     = $scrollBox.outerHeight(),
+                innerHeight   = $('.sidebar-main').outerHeight(),
+                thisScroll    = $scrollBox.scrollTop(),
+                thisSubHeight = $(this).outerHeight(),
+                footHeight    = 121;
+
+            if (footHeight + innerHeight - boxHeight >= (pervTotal * 48)) {
+                scrollHeight = pervTotal * 48;
+            }
+            if ($subnavToggle.parents('.nav-item-has-subnav').length == 1) {
+                $scrollBox.animate({scrollTop: scrollHeight}, 300);
+            } else {
+                // 子菜单操作
+                if (typeof($viSubHeight) != 'undefined' && $viSubHeight != null) {
+                    scrollHeight = thisScroll + thisSubHeight - $viSubHeight;
+                    $scrollBox.animate({scrollTop: scrollHeight}, 300);
+                } else {
+                    if ((thisScroll + boxHeight - $scrollBox[0].scrollHeight) == 0) {
+                        scrollHeight = thisScroll - thisSubHeight;
+                        $scrollBox.animate({scrollTop: scrollHeight}, 300);
+                    }
+                }
+            }
+        });
+    });
+}
+
+var forTree = function (o) {
+    for (var i = 0; i < o.length; i++) {
+        try {
+            if(o[i]["hasChildren"]) {
+                urlstr += " <li class=\"nav-item nav-item-has-subnav\">";
+                urlstr += "<a href=\"javascript:void(0)\"><i class=\"" + o[i]["icon"] + "\"></i>" + o[i]["text"] + "</a>";
+                urlstr += "<ul class=\"nav nav-subnav\">";
+                forTree(o[i]["children"]);
+                urlstr += "</ul>";
+                urlstr += "</li>";
+            }else {
+                if(o[i]["hasParent"]) {
+                    urlstr += "<li> <a href=\"/"+o[i]["url"]+"\">"+o[i]["text"]+"</a> </li>";
+                }else {
+                    urlstr += "<li class=\"nav-item\"> <a href=\"/"+o[i]["url"]+"\"><i class=\""+o[i]["icon"]+"\"></i>"+o[i]["text"]+"</a> </li>";
+                }
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    return urlstr;
+};
 
 // 菜单点击效果
 function menu_tree() {
     var urlStr = location.href;
-    var flag = false;
-    $(".sidebar-main:eq(1) ul li a").each(function() {
-        if ((urlStr + '/').indexOf($(this).attr('href')) > -1&&$(this).attr('href')!='') {
-            $("#collapseTwo").addClass("in");
-            $("#collapseOne").removeClass("in");
-
-            flag = true;
-            localStorage.setItem("menuUrl", urlStr);
+    $(".sidebar-main ul li a").each(function () {
+        if ((urlStr + '/').indexOf($(this).attr('href')) > -1 && $(this).attr('href') != '') {
             $(this).parent("li").addClass("active");
             $(this).parent("li").parents("li").addClass("open").addClass("active");
-
             $(this).parent("li").siblings().removeClass("active");
             $(this).parent("li").parents("li").siblings().removeClass("open").removeClass("active");
             return;
         }
     });
-
-    // 非url菜单
-    if(!flag) {
-        $(".sidebar-main:eq(0) ul li a").each(function() {
-            if ((urlStr + '/').indexOf($(this).attr('href')) > -1&&$(this).attr('href')!='') {
-                $("#collapseOne").addClass("in");
-                $("#collapseTwo").removeClass("in");
-
-                flag = true;
-                localStorage.setItem("menuUrl", urlStr);
-                $(this).parent("li").addClass("active");
-                $(this).parent("li").parents("li").addClass("open").addClass("active");
-
-                $(this).parent("li").siblings().removeClass("active");
-                $(this).parent("li").parents("li").siblings().removeClass("open").removeClass("active");
-                return;
-            }
-        });
-        if(!flag) {
-            urlStr = localStorage.getItem("menuUrl");
-            $(".sidebar-main:eq(0) ul li a").each(function() {
-                if ((urlStr + '/').indexOf($(this).attr('href')) > -1&&$(this).attr('href')!='') {
-                    flag = true;
-                    $("#collapseOne").addClass("in");
-                    $("#collapseTwo").removeClass("in");
-                    // menuUrl = urlStr;
-                    localStorage.setItem("menuUrl", urlStr);
-                    $(this).parent("li").addClass("active");
-                    $(this).parent("li").parents("li").addClass("open").addClass("active");
-
-                    $(this).parent("li").siblings().removeClass("active");
-                    $(this).parent("li").parents("li").siblings().removeClass("open").removeClass("active");
-                    return;
-                }
-            });
-        }
-    }
 }
 
 /**

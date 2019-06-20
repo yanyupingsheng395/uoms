@@ -12,6 +12,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,9 @@ public class MenuController extends BaseController {
 
     @Autowired
     private MenuService menuService;
+
+    @Value("${app.version}")
+    private String version;
 
     @Log("获取菜单信息")
     @RequestMapping("menu")
@@ -89,6 +93,7 @@ public class MenuController extends BaseController {
         User user = super.getCurrentUser();
         String userName = user.getUsername();
         result.put("username", userName);
+        result.put("version", version);
         try {
             Tree<Menu> tree = this.menuService.getUserMenu(userName);
             result.put("tree", tree);

@@ -1,12 +1,14 @@
 package com.linksteady.operate.config;
 
+import com.linksteady.operate.shiro.ShiroProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "sys")
+@ConfigurationProperties(prefix = "mdss")
 public class SystemProperties {
 
+    private ShiroProperties shiro = new ShiroProperties();
 
     private String timeFormat = "yyyy-MM-dd HH:mm:ss";
 
@@ -36,5 +38,13 @@ public class SystemProperties {
 
     public void setValidateThrift(boolean validateThrift) {
         this.validateThrift = validateThrift;
+    }
+
+    public ShiroProperties getShiro() {
+        return shiro;
+    }
+
+    public void setShiro(ShiroProperties shiro) {
+        this.shiro = shiro;
     }
 }

@@ -30,16 +30,5 @@
         </main>
     </div>
 </div>
-<script>
-    initInfo();
-    function initInfo() {
-        var username = "[[${user.username}]]";
-        localStorage.setItem("uoms:username", username);
-        $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
-
-        var version = "[[${version}]]";
-        localStorage.setItem("uoms:version", version);
-    }
-</script>
 </body>
 </html>

@@ -2,11 +2,14 @@ package com.linksteady.common.domain;
 
 import com.alibaba.fastjson.JSON;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Tree<T> {
+public class Tree<T> implements Serializable {
+
+
 	/**
 	 * 节点ID
 	 */

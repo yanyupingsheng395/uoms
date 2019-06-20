@@ -1,9 +1,13 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.collect.Maps;
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.User;
+import com.linksteady.common.service.OpenApiService;
 import com.linksteady.operate.service.DiagService;
+import org.apache.shiro.SecurityUtils;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +15,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Controller
@@ -23,9 +29,35 @@ public class PageController extends BaseController {
 
     @Autowired
     DozerBeanMapper dozerBeanMapper;
+    /**
+     * 当前系统简称
+     */
+    @Value("${app.name}")
+    private String appname;
 
+    /**
+     * 当前版本
+     */
     @Value("${app.version}")
     private String version;
+
+    /**
+     * 当前系统中文名称
+     */
+    @Value("${app.description}")
+    private String appdesc;
+
+    /**
+     * 当前spring boot的版本
+     */
+    @Value("${app.spring-boot-version}")
+    private String bootversion;
+
+    /**
+     * 打包时间
+     */
+    @Value("${app.build.time}")
+    private String buildTime;
 
     @RequestMapping("/page/index")
     public String index(Model model) {
@@ -225,4 +257,17 @@ public class PageController extends BaseController {
         return "operate/report/userDailyReport";
     }
 
+    @RequestMapping("/sysinfo")
+    @ResponseBody
+    public ResponseBo getSysInfo() {
+        String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
+        Map result= Maps.newHashMap();
+        result.put("appname",appname);
+        result.put("version",version);
+        result.put("appdesc",appdesc);
+        result.put("buildtime",buildTime);
+        result.put("bootversion",bootversion);
+        result.put("currentUser",username);
+        return ResponseBo.okWithData("",result);
+    }
 }

@@ -81,6 +81,7 @@ public class ApplicationController extends BaseController {
             Application application = this.applicationService.findApplication(id);
             return ResponseBo.ok(application);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("获取应用信息失败", e);
             return ResponseBo.error("获取应用信息失败，请联系管理员！");
         }

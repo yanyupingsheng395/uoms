@@ -851,3 +851,4 @@ label {
     right: 24px;
     top: 18px;
 }
+.fixed {position:absolute;left:0;bottom:0;}

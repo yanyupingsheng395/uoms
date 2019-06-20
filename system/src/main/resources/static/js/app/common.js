@@ -75,6 +75,7 @@ function getUserMenu() {
         $(".nav-drawer").html("").html(forTree(r.msg.tree.children));
         var username = r.msg.username;
         $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
+        $("#version").html("").html("v" + r.msg.version);
         menu_tree();
         subMenu();
     });

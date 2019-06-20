@@ -48,6 +48,9 @@ public class Menu implements Serializable {
 	@Column(name = "SYS_ID")
 	private String sysId;
 
+	@Column(name = "APP_ID")
+	private String appId;
+
 	@Transient
 	private String sysName;
 
