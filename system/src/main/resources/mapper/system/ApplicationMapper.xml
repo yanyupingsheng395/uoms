@@ -12,6 +12,10 @@
     select seq_t_application_id.nextval from dual
   </select>
 
+  <select id="getDomainById" resultType="String">
+    select domain from T_APPLICATION where application_id = #{id}
+  </select>
+
   <select id="findApplication" resultMap="BaseResultMap">
     select * from T_APPLICATION where application_id = #{id}
   </select>

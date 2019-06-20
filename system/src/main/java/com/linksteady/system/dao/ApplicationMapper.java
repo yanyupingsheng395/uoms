@@ -15,6 +15,8 @@ public interface ApplicationMapper extends MyMapper<Application> {
 
     Application findApplication(@Param("id") String id);
 
+    String getDomainById(String id);
+
     List<Application> findAll();
 
     String getNameById(@Param("id") String id);

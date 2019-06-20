@@ -125,9 +125,9 @@ var forTree = function (o) {
                 urlstr += "</li>";
             }else {
                 if(o[i]["hasParent"]) {
-                    urlstr += "<li> <a href=\"/"+o[i]["url"]+"\">"+o[i]["text"]+"</a> </li>";
+                    urlstr += "<li> <a href=\""+o[i]["url"]+"\">"+o[i]["text"]+"</a> </li>";
                 }else {
-                    urlstr += "<li class=\"nav-item\"> <a href=\"/"+o[i]["url"]+"\"><i class=\""+o[i]["icon"]+"\"></i>"+o[i]["text"]+"</a> </li>";
+                    urlstr += "<li class=\"nav-item\"> <a href=\""+o[i]["url"]+"\"><i class=\""+o[i]["icon"]+"\"></i>"+o[i]["text"]+"</a> </li>";
                 }
             }
         } catch (e) {

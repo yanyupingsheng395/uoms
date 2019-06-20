@@ -3,6 +3,7 @@ package com.linksteady.system.service.impl;
 import java.util.*;
 
 import com.linksteady.common.util.TreeUtils;
+import com.linksteady.system.dao.ApplicationMapper;
 import com.linksteady.system.dao.SystemMapper;
 import com.linksteady.common.domain.System;
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +43,9 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
     @Autowired
     private RoleMenuServie roleMenuService;
+
+    @Autowired
+    private ApplicationMapper applicationMapper;
 
     @Autowired
     private WebApplicationContext applicationContext;
@@ -152,10 +156,16 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             tree.setParentId(menu.getParentId().toString());
             tree.setText(menu.getMenuName());
             tree.setIcon(menu.getIcon());
-            tree.setUrl(menu.getUrl());
+            tree.setUrl(getMenuFullUrl(menu.getAppId(), menu.getUrl()));
             trees.add(tree);
         });
         return TreeUtils.build(trees);
+    }
+
+    private String getMenuFullUrl(String appId, String url) {
+        String domain = applicationMapper.getDomainById(appId);
+        url = domain + url;
+        return url;
     }
 
     @Override
