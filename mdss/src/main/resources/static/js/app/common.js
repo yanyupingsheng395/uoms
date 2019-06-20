@@ -1,17 +1,8 @@
 var urlstr = "";
-var sysId = null;
 $(document).ready(function () {
     allExceptionCatch();
     initSysInfo();
-    if(sysId == null) {
-        sysId = getQueryVariable("id");
-        if(sysId) {
-            localStorage.setItem("sysId", sysId);
-        }else {
-            sysId = localStorage.getItem("sysId");
-        }
-    }
-    getUserMenu(sysId);
+    getUserMenu();
 
     //消息提示组件
     toastr.options = {
@@ -33,15 +24,23 @@ $(document).ready(function () {
         "hideMethod": "fadeOut"
     };
 });
-function getQueryVariable(variable) {
-    var query = window.location.search.substring(1);
-    var vars = query.split("&");
-    for (var i=0;i<vars.length;i++) {
-        var pair = vars[i].split("=");
-        if(pair[0] == variable){return pair[1];}
-    }
-    return(false);
+/**
+ * 从session中获取sysId
+ * @returns {*}
+ */
+function getSysIdFromSession() {
+    var sysId;
+    $.ajax({
+        url:"/getSysIdFromSession",
+        async: false,
+        data:{},
+        success: function (r) {
+            sysId = r.data;
+        }
+    });
+    return sysId;
 }
+
 /**
  * 初始化系统信息
  */
@@ -125,14 +124,16 @@ function allExceptionCatch() {
     });
 }
 
-function getUserMenu(sysId) {
-    $.get("/api/getUserMenu", {sysId: sysId}, function (r) {
-        $(".nav-drawer").html("").html(forTree(r.data.tree.children));
-        menu_tree();
-        subMenu();
-    });
+function getUserMenu() {
+    var sysId = getSysIdFromSession();
+    if(sysId != null) {
+        $.get("/api/getUserMenu", {sysId: sysId}, function (r) {
+            $(".nav-drawer").html("").html(forTree(r.data.tree.children));
+            menu_tree();
+            subMenu();
+        });
+    }
 }
-
 
 function subMenu() {
     $('.nav-item-has-subnav > a' ).on( 'click', function() {

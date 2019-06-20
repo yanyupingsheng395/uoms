@@ -1,17 +1,21 @@
 var urlstr = "";
-var sysId = null;
 $(document).ready(function () {
     allExceptionCatch();
-    if(sysId == null) {
-        sysId = getQueryVariable("id");
-        if(sysId) {
-            localStorage.setItem("sysId", sysId);
-        }else {
-            sysId = localStorage.getItem("sysId");
-        }
-    }
-    getUserMenu(sysId);
+    getUserMenu();
 });
+
+function getSysIdFromSession() {
+    var sysId;
+    $.ajax({
+        url:"/getSysIdFromSession",
+        async: false,
+        data:{},
+        success: function (r) {
+            sysId = r.data;
+        }
+    });
+    return sysId;
+}
 
 function getQueryVariable(variable) {
     var query = window.location.search.substring(1);
@@ -91,16 +95,22 @@ function allExceptionCatch() {
     });
 }
 
-
-function getUserMenu(sysId) {
-    $.get("/menu/getUserMenu", {sysId: sysId}, function (r) {
-        $(".nav-drawer").html("").html(forTree(r.msg.tree.children));
-        var username = r.msg.username;
-        $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
-        $("#version").html("").html("v" + r.msg.version);
-        menu_tree();
-        subMenu();
-    });
+/**
+ * 获取登录用户的菜单
+ * @param sysId
+ */
+function getUserMenu() {
+    var sysId = getSysIdFromSession();
+    if(sysId != null) {
+        $.get("/menu/getUserMenu", {sysId: sysId}, function (r) {
+            $(".nav-drawer").html("").html(forTree(r.msg.tree.children));
+            var username = r.msg.username;
+            $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
+            $("#version").html("").html("v" + r.msg.version);
+            menu_tree();
+            subMenu();
+        });
+    }
 }
 
 var forTree = function (o) {

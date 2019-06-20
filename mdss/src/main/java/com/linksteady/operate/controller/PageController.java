@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -269,5 +270,19 @@ public class PageController extends BaseController {
         result.put("bootversion",bootversion);
         result.put("currentUser",username);
         return ResponseBo.okWithData("",result);
+    }
+
+    @RequestMapping("/getSysIdFromSession")
+    @ResponseBody
+    public ResponseBo getSysIdFromSession(HttpServletRequest request) {
+        String sysId = String.valueOf(request.getSession().getAttribute("sysId"));
+        return ResponseBo.okWithData(null, sysId);
+    }
+
+    @RequestMapping("/setSysIdToSession")
+    @ResponseBody
+    public ResponseBo setSysIdToSession(HttpServletRequest request, @RequestParam("sysId") String sysId) {
+        request.getSession().setAttribute("sysId", sysId);
+        return ResponseBo.ok();
     }
 }
