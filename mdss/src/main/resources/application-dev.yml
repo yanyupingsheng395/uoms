@@ -121,9 +121,6 @@ management:
     health:
       show-details: ALWAYS
 
-jasypt:
-  encryptor:
-    password: linksteady
 
 mybatis:
   # type-aliases扫描路径
