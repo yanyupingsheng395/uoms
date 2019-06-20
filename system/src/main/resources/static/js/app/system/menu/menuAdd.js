@@ -129,6 +129,14 @@ $('#menu-add').on('hidden.bs.modal', function () {
     clearMenuAddForm();
 });
 
+$('#menu-add').on('shown.bs.modal', function () {
+    if($(".btn-save").attr("name") === 'update' && currentMenuId != null && currentMenuParentId != null) {
+        $("#menuTree").jstree('select_node', currentMenuParentId, true);
+        $("#menuTree").jstree('disable_node', currentMenuId);
+    }
+});
+
+
 function validateRule() {
     var icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i> ";
     validator = $menuAddForm.validate({

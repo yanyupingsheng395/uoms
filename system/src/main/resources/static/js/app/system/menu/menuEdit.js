@@ -1,3 +1,5 @@
+var currentMenuId = null;
+var currentMenuParentId = null;
 function updateMenu() {
     var selected = $("#menuTable").bootstrapTreeTable("getSelections");
     var selected_length = selected.length;
@@ -27,11 +29,12 @@ function updateMenu() {
             $form.find("input[name='orderNum']").val(menu.orderNum);
             $form.find("select[name='sysId']").selectpicker('val', menu.sysId);
             $form.find("select[name='appId']").selectpicker('val', menu.appId);
-            $menuTree.jstree('select_node', menu.parentId, true);
-            $menuTree.jstree('disable_node', menu.menuId);
+            currentMenuId = menu.menuId;
+            currentMenuParentId = menu.parentId;
             $("#menu-add-button").attr("name", "update");
         } else {
             $MB.n_danger(r.msg);
         }
     });
+
 }
