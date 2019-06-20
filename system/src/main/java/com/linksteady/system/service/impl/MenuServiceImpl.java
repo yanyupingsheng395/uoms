@@ -164,9 +164,16 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
     private String getMenuFullUrl(String appId, String url) {
         String domain = applicationMapper.getDomainById(appId);
-        url = domain + url;
+        if(StringUtils.isNotBlank(domain)) {
+            if(domain.indexOf("/") > -1) {
+                url = domain + url;
+            }else {
+                url = domain + "/" +url;
+            }
+        }
         return url;
     }
+
 
     @Override
     public Menu findByNameAndType(String menuName, String type) {
