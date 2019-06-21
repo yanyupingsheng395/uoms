@@ -1,9 +1,9 @@
 package com.linksteady.system.service;
 
 import com.linksteady.common.domain.Application;
-import com.linksteady.common.domain.System;
-
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hxcao on 2019-05-06
@@ -24,4 +24,5 @@ public interface ApplicationService extends IService<Application> {
 
     void deleteApplication(String ids);
 
+    Map<String, String> getCodeAndUrl();
 }

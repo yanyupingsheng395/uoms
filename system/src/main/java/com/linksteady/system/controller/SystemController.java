@@ -8,7 +8,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Role;
-import com.linksteady.common.domain.System;
+import com.linksteady.common.domain.SysInfo;
 import com.linksteady.system.service.RoleService;
 import com.linksteady.system.service.SystemService;
 import org.apache.commons.lang3.StringUtils;
@@ -45,10 +45,10 @@ public class SystemController extends BaseController {
     @RequestMapping("system/list")
     @RequiresPermissions("system:list")
     @ResponseBody
-    public Map<String, Object> systemList(QueryRequest request, System system) {
+    public Map<String, Object> systemList(QueryRequest request, SysInfo system) {
         PageHelper.startPage(request.getPageNum(), request.getPageSize());
-        List<System> list = this.systemService.findAllSystem(system);
-        PageInfo<System> pageInfo = new PageInfo<>(list);
+        List<SysInfo> list = this.systemService.findAllSystem(system);
+        PageInfo<SysInfo> pageInfo = new PageInfo<>(list);
         return getDataTable(pageInfo);
     }
 
@@ -58,7 +58,7 @@ public class SystemController extends BaseController {
         if (StringUtils.isNotBlank(oldName) && name.equalsIgnoreCase(oldName)) {
             return true;
         }
-        System result = this.systemService.findByName(name);
+        SysInfo result = this.systemService.findByName(name);
         return result == null;
     }
 
@@ -66,7 +66,7 @@ public class SystemController extends BaseController {
     @RequiresPermissions("system:add")
     @RequestMapping("system/add")
     @ResponseBody
-    public ResponseBo addSystem(System system) {
+    public ResponseBo addSystem(SysInfo system) {
         try {
             this.systemService.addSystem(system);
             return ResponseBo.ok("新增系统成功！");
@@ -80,7 +80,7 @@ public class SystemController extends BaseController {
     @ResponseBody
     public ResponseBo getSystem(String id) {
         try {
-            System system = this.systemService.findSystem(id);
+            SysInfo system = this.systemService.findSystem(id);
             return ResponseBo.ok(system);
         } catch (Exception e) {
             log.error("获取系统信息失败", e);
@@ -92,7 +92,7 @@ public class SystemController extends BaseController {
     @RequiresPermissions("system:update")
     @RequestMapping("system/update")
     @ResponseBody
-    public ResponseBo updateSystem(System system) {
+    public ResponseBo updateSystem(SysInfo system) {
         try {
             this.systemService.updateSystem(system);
             return ResponseBo.ok("修改系统成功！");
@@ -119,7 +119,7 @@ public class SystemController extends BaseController {
     @RequestMapping("system/findAllSystem")
     @ResponseBody
     public ResponseBo findAllSystem() {
-        List<System> list = this.systemService.findAllSystem();
+        List<SysInfo> list = this.systemService.findAllSystem();
         return ResponseBo.ok(list);
     }
 
@@ -132,7 +132,7 @@ public class SystemController extends BaseController {
     public ResponseBo findUserSystem() {
         Map<String, Object> result = Maps.newHashMap();
         String username = super.getCurrentUser().getUsername();
-        List<System> list = this.systemService.findUserSystem(username);
+        List<SysInfo> list = this.systemService.findUserSystem(username);
         result.put("list", list);
         result.put("username", username);
         return ResponseBo.ok(result);

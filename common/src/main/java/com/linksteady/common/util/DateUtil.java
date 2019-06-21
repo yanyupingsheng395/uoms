@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.text.DateFormatter;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -326,5 +327,34 @@ public class DateUtil {
         result.put("start", lastYearStartDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         result.put("end", lastYearEndDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         return result;
+    }
+
+    /**
+     * 同期群：根据开时间计算结束日期，如果开始时间到当前时间小于12个月，结束时间为当前日期，否则开始时间往后推12个月
+     * @param startDt 开始时间，格式：yyyyMM
+     * @return
+     */
+    public static String getEndDateOfMonth(String startDt) {
+        try {
+            DateFormat df = new SimpleDateFormat("yyyyMM");
+            Date startDate = df.parse(startDt);
+
+            Calendar startCal = Calendar.getInstance();
+            startCal.setTime(startDate);
+
+            Calendar endCal = Calendar.getInstance();
+            endCal.add(Calendar.MONTH, 12);
+
+            Calendar current = Calendar.getInstance();
+
+            if(endCal.after(current)) {
+                return df.format(current.getTime());
+            }else {
+                return df.format(endCal.getTime());
+            }
+        }catch (Exception ex) {
+            log.error("获取结束日期异常：", ex);
+        }
+        return null;
     }
 }

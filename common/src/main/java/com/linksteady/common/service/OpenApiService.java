@@ -9,7 +9,6 @@ import java.util.Map;
  * @date 2019-06-19
  */
 public interface OpenApiService {
-
     /**
      * 获取当前用户的菜单列表
      * @param username

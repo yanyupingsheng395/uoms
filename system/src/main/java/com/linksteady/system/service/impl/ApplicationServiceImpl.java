@@ -1,12 +1,8 @@
 package com.linksteady.system.service.impl;
 
 import com.linksteady.common.domain.Application;
-import com.linksteady.common.domain.Role;
-import com.linksteady.common.domain.System;
 import com.linksteady.system.dao.ApplicationMapper;
-import com.linksteady.system.dao.SystemMapper;
 import com.linksteady.system.service.ApplicationService;
-import com.linksteady.system.service.SystemService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by hxcao on 2019-05-06
@@ -59,6 +53,13 @@ public class ApplicationServiceImpl extends BaseService<Application> implements 
     public void deleteApplication(String ids) {
         List<String> list = Arrays.asList(ids.split(","));
         this.batchDelete(list, "applicationId", Application.class);
+    }
+
+    @Override
+    public Map<String, String> getCodeAndUrl() {
+        List<Application> data = applicationMapper.findAll();
+        Map<String, String> codeUrlMap = data.stream().collect(Collectors.toMap(Application::getApplicationName, Application::getDomain));
+        return codeUrlMap;
     }
 
     @Override

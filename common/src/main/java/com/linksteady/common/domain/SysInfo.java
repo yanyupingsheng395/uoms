@@ -12,7 +12,7 @@ import java.util.Date;
  */
 @Data
 @Table(name = "T_SYSTEM")
-public class System {
+public class SysInfo {
 
     @Id
     @Column(name = "ID")

@@ -5,7 +5,7 @@ import java.util.*;
 import com.linksteady.common.util.TreeUtils;
 import com.linksteady.system.dao.ApplicationMapper;
 import com.linksteady.system.dao.SystemMapper;
-import com.linksteady.common.domain.System;
+import com.linksteady.common.domain.SysInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -90,7 +90,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     public Tree<Menu> getMenuButtonTree() {
         List<Tree<Menu>> trees = new ArrayList<>();
         List<Menu> menus = this.findAllMenus(new Menu());
-        List<System> systems = systemMapper.findAll();
+        List<SysInfo> systems = systemMapper.findAll();
         buildTrees(trees, menus, systems);
         return TreeUtils.build(trees);
     }
@@ -122,7 +122,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         });
     }
 
-    private void buildTrees(List<Tree<Menu>> trees, List<Menu> menus, List<System> systems) {
+    private void buildTrees(List<Tree<Menu>> trees, List<Menu> menus, List<SysInfo> systems) {
         menus.forEach(menu -> {
             Tree<Menu> tree = new Tree<>();
             tree.setId(menu.getMenuId().toString());

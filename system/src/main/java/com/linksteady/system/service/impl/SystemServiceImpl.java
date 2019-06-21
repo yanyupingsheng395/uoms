@@ -1,8 +1,9 @@
 package com.linksteady.system.service.impl;
 
+import com.linksteady.common.domain.SysInfo;
 import com.linksteady.system.dao.SystemMapper;
 import com.linksteady.common.domain.Role;
-import com.linksteady.common.domain.System;
+import com.linksteady.common.domain.SysInfo;
 import com.linksteady.system.service.SystemService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,14 +22,14 @@ import java.util.List;
  * Created by hxcao on 2019-05-06
  */
 @Service
-public class SystemServiceImpl extends BaseService<System> implements SystemService {
+public class SystemServiceImpl extends BaseService<SysInfo> implements SystemService {
 
     @Autowired
     private SystemMapper systemMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void addSystem(System system) {
+    public void addSystem(SysInfo system) {
         String id = systemMapper.getIdFromSeq();
         system.setId(id);
         system.setCreateDt(new Date());
@@ -36,13 +37,13 @@ public class SystemServiceImpl extends BaseService<System> implements SystemServ
     }
 
     @Override
-    public System findSystem(String id) {
+    public SysInfo findSystem(String id) {
         return systemMapper.findSystem(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateSystem(System system) {
+    public void updateSystem(SysInfo system) {
         try{
             this.updateNotNull(system);
         }catch (Exception e) {
@@ -54,15 +55,15 @@ public class SystemServiceImpl extends BaseService<System> implements SystemServ
     @Transactional(rollbackFor = Exception.class)
     public void deleteSystem(String ids) {
         List<String> list = Arrays.asList(ids.split(","));
-        this.batchDelete(list, "id", System.class);
+        this.batchDelete(list, "id", SysInfo.class);
     }
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public List<System> findAllSystem(System system) {
+    public List<SysInfo> findAllSystem(SysInfo system) {
         try {
-            Example example = new Example(System.class);
+            Example example = new Example(SysInfo.class);
             if (StringUtils.isNotBlank(system.getName())) {
                 example.createCriteria().andCondition("name=", system.getName());
             }
@@ -75,20 +76,20 @@ public class SystemServiceImpl extends BaseService<System> implements SystemServ
     }
 
     @Override
-    public List<System> findAllSystem() {
+    public List<SysInfo> findAllSystem() {
         return systemMapper.findAll();
     }
 
     @Override
-    public System findByName(String name) {
+    public SysInfo findByName(String name) {
         Example example = new Example(Role.class);
         example.createCriteria().andCondition("lower(name)=", name.toLowerCase());
-        List<System> list = this.selectByExample(example);
+        List<SysInfo> list = this.selectByExample(example);
         return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
-    public List<System> findUserSystem(String username) {
+    public List<SysInfo> findUserSystem(String username) {
           return systemMapper.findUserSystem(username);
     }
 }

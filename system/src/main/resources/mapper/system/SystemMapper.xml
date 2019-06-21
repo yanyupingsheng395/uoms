@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.system.dao.SystemMapper">
-  <resultMap id="BaseResultMap" type="com.linksteady.common.domain.System">
+  <resultMap id="BaseResultMap" type="com.linksteady.common.domain.SysInfo">
     <result column="ID" jdbcType="DECIMAL" property="id" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="ENABLE_FLAG" jdbcType="VARCHAR" property="enableFlag"/>
