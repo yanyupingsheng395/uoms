@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by hxcao on 2019-05-06
+ * @author hxcao on 2019-05-06
  */
 @Service
 public class ApplicationServiceImpl extends BaseService<Application> implements ApplicationService {

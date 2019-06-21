@@ -7,7 +7,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.Application;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.domain.System;
+import com.linksteady.common.domain.SysInfo;
 import com.linksteady.system.service.ApplicationService;
 import com.linksteady.system.service.SystemService;
 import org.apache.commons.lang3.StringUtils;

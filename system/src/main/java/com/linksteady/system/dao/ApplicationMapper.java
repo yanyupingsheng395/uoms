@@ -1,6 +1,5 @@
 package com.linksteady.system.dao;
 import com.linksteady.common.domain.Application;
-import com.linksteady.common.domain.System;
 import com.linksteady.system.config.MyMapper;
 import io.lettuce.core.dynamic.annotation.Param;
 

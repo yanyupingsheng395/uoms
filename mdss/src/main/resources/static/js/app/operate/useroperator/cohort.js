@@ -90,80 +90,56 @@ function getDMonthCols(percent) {
     }else {
         fix = "";
     }
+    var fmt = function (value, row, index) {if(value == null || value == 0) {return "";}else {return value + fix;}};
     var cols = [
         {field: 'MONTH_ID', title: '月份'},
         {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px'},
-        {field: 'MONTH1', title: '+1月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
-        {field: 'MONTH2', title: '+2月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
-        {field: 'MONTH3', title: '+3月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
-        {field: 'MONTH4', title: '+4月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
-        {field: 'MONTH5', title: '+5月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
-        {field: 'MONTH6', title: '+6月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
-        {field: 'MONTH7', title: '+7月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
-        {field: 'MONTH8', title: '+8月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
-        {field: 'MONTH9', title: '+9月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
-        {field: 'MONTH10', title: '+10月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
-        {field: 'MONTH11', title: '+11月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
-        {field: 'MONTH12', title: '+12月', formatter: function (value, row, index) {if(value == "0") {return "";}else {return value + fix;}}},
+        {field: 'MONTH1', title: '+1月', formatter: fmt},
+        {field: 'MONTH2', title: '+2月', formatter: fmt},
+        {field: 'MONTH3', title: '+3月', formatter: fmt},
+        {field: 'MONTH4', title: '+4月', formatter: fmt},
+        {field: 'MONTH5', title: '+5月', formatter: fmt},
+        {field: 'MONTH6', title: '+6月', formatter: fmt},
+        {field: 'MONTH7', title: '+7月', formatter: fmt},
+        {field: 'MONTH8', title: '+8月', formatter: fmt},
+        {field: 'MONTH9', title: '+9月', formatter: fmt},
+        {field: 'MONTH10', title: '+10月', formatter: fmt},
+        {field: 'MONTH11', title: '+11月', formatter: fmt},
+        {field: 'MONTH12', title: '+12月', formatter: fmt},
     ];
     return cols;
 }
-// 客单价间隔月
-function getDMonthUPriceCols(percent, type) {
+
+function getKpiDMonthCols(percent, type) {
     var fix = "";
     if(percent) {
         fix = "%";
     }else {
         fix = "";
     }
-
-    var fmt = function (value, row, index) {if(value == "0" || value == undefined) {return "";}else {return value + fix;}};
+    var fmt = function (value, row, index) {
+        if(value == null) {
+            return "";
+        }else {
+            return value + fix;
+        }
+    };
     var cols = [
         {field: 'MONTH_ID', title: '月份'},
-        {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px', formatter: fmt},
-        {field: 'UPRICE', title: type, width:'132px', formatter: fmt},
-        {field: 'UPRICE1', title: '+1月', formatter: fmt},
-        {field: 'UPRICE2', title: '+2月', formatter: fmt},
-        {field: 'UPRICE3', title: '+3月', formatter: fmt},
-        {field: 'UPRICE4', title: '+4月', formatter: fmt},
-        {field: 'UPRICE5', title: '+5月', formatter: fmt},
-        {field: 'UPRICE6', title: '+6月', formatter: fmt},
-        {field: 'UPRICE7', title: '+7月', formatter: fmt},
-        {field: 'UPRICE8', title: '+8月', formatter: fmt},
-        {field: 'UPRICE9', title: '+9月', formatter: fmt},
-        {field: 'UPRICE10', title: '+10月', formatter: fmt},
-        {field: 'UPRICE11', title: '+11月', formatter: fmt},
-        {field: 'UPRICE12', title: '+12月', formatter: fmt}
-    ];
-    return cols;
-}
-
-// 订单价间隔月
-function getDMonthPriceCols(percent, type) {
-    var fix = "";
-    if(percent) {
-        fix = "%";
-    }else {
-        fix = "";
-    }
-
-    var fmt = function (value, row, index) {if(value == "0" || value == undefined) {return "";}else {return value + fix;}};
-    var cols = [
-        {field: 'MONTH_ID', title: '月份'},
-        {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px', formatter: fmt},
-        {field: 'PRICE', title: type, width:'132px', formatter: fmt},
-        {field: 'PRICE1', title: '+1月', formatter: fmt},
-        {field: 'PRICE2', title: '+2月', formatter: fmt},
-        {field: 'PRICE3', title: '+3月', formatter: fmt},
-        {field: 'PRICE4', title: '+4月', formatter: fmt},
-        {field: 'PRICE5', title: '+5月', formatter: fmt},
-        {field: 'PRICE6', title: '+6月', formatter: fmt},
-        {field: 'PRICE7', title: '+7月', formatter: fmt},
-        {field: 'PRICE8', title: '+8月', formatter: fmt},
-        {field: 'PRICE9', title: '+9月', formatter: fmt},
-        {field: 'PRICE10', title: '+10月', formatter: fmt},
-        {field: 'PRICE11', title: '+11月', formatter: fmt},
-        {field: 'PRICE12', title: '+12月', formatter: fmt}
+        {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px'},
+        {field: 'CURRENT_MONTH', title: type, width:'132px', formatter: fmt},
+        {field: 'MONTH1', title: '+1月', formatter: fmt},
+        {field: 'MONTH2', title: '+2月', formatter: fmt},
+        {field: 'MONTH3', title: '+3月', formatter: fmt},
+        {field: 'MONTH4', title: '+4月', formatter: fmt},
+        {field: 'MONTH5', title: '+5月', formatter: fmt},
+        {field: 'MONTH6', title: '+6月', formatter: fmt},
+        {field: 'MONTH7', title: '+7月', formatter: fmt},
+        {field: 'MONTH8', title: '+8月', formatter: fmt},
+        {field: 'MONTH9', title: '+9月', formatter: fmt},
+        {field: 'MONTH10', title: '+10月', formatter: fmt},
+        {field: 'MONTH11', title: '+11月', formatter: fmt},
+        {field: 'MONTH12', title: '+12月', formatter: fmt}
     ];
     return cols;
 }
@@ -186,9 +162,9 @@ function getMonthCols(data, percent, type) {
             o.title = v;
         }
         o.formatter = function (value, row, index) {
-            if (value == "0" || value == null) {
+            if (value == null) {
                 return "";
-            } else {
+            }else {
                 var fix;
                 if(percent) {
                     fix = "%";
@@ -214,14 +190,17 @@ function getData1(idx) {
         url = "/kpiMonitor/getUpriceData";
         type = "本月客单价（元）";
     }else if(idx == 2) {
-        url = "/kpiMonitor/getPriceData"
+        url = "/kpiMonitor/getPriceData";
         type = "本月订单价（元）";
     }else if(idx == 3) {
-        url = "/kpiMonitor/getFreqData"
+        url = "/kpiMonitor/getPurchFreq";
+        type = "本月购买频率";
     }else if(idx == 4) {
-        url = "/kpiMonitor/getSpriceData"
+        url = "/kpiMonitor/getUnitPriceData";
+        type = "本月件单价（元）";
     }else if(idx == 5) {
-        url = "/kpiMonitor/getJoinrateData"
+        url = "/kpiMonitor/getJoinRateData";
+        type = "本月连带率";
     }
     var $table = $('#dataTable1' + idx);
     var start = $("#startDateOfRetention").val();
@@ -229,15 +208,8 @@ function getData1(idx) {
     $.get(url, {periodType: periodType, start: start}, function(r) {
         var columns = new Array();
         var percent = false;
-        if(idx == 3 || idx == 4) {
-            percent = true;
-        }
         if(periodType == "dmonth") {
-            if(idx == 1) {
-                columns = getDMonthUPriceCols(percent, type);
-            }else if(idx == 2) {
-                columns = getDMonthPriceCols(percent, type);
-            }
+            columns = getKpiDMonthCols(percent, type);
         }else if(periodType == "month"){
             columns = getMonthCols(r.data.columns, percent, type);
         }
@@ -259,9 +231,7 @@ function initBootstrapTable($el, columns, data, total, periodType) {
     var option = {
         columns: columns,
         data: data,
-        search: false,
+        search: false
     };
     $el.bootstrapTable('destroy').bootstrapTable(option);
 }
-
-

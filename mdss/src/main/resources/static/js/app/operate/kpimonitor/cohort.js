@@ -267,14 +267,17 @@ function getData1(idx) {
         url = "/kpiMonitor/getUpriceData";
         type = "本月客单价（元）";
     }else if(idx == 2) {
-        url = "/kpiMonitor/getPriceData"
+        url = "/kpiMonitor/getPriceData";
         type = "本月订单价（元）";
     }else if(idx == 3) {
-        url = "/kpiMonitor/getFreqData"
+        url = "/kpiMonitor/getPurchFreq";
+        type = "本月购买频率";
     }else if(idx == 4) {
-        url = "/kpiMonitor/getSpriceData"
+        url = "/kpiMonitor/getUnitPriceData";
+        type = "本月件单价（元）";
     }else if(idx == 5) {
-        url = "/kpiMonitor/getJoinrateData"
+        url = "/kpiMonitor/getJoinRateData";
+        type = "本月连带率";
     }
     var $table = $('#dataTable1' + idx);
     var start = $("#startDate_2").val();
@@ -286,17 +289,41 @@ function getData1(idx) {
             percent = true;
         }
         if(periodType == "dmonth") {
-            if(idx == 1) {
-                columns = getDMonthUPriceCols(percent, type);
-            }else if(idx == 2) {
-                columns = getDMonthPriceCols(percent, type);
-            }
+            columns = getKpiDMonthCols(percent, type);
         }else if(periodType == "month"){
             columns = getMonthCols(r.data.columns, percent, type);
         }
         var data = r.data.data;
         initBootstrapTable($table, columns, data, 0, periodType);
     });
+}
+
+function getKpiDMonthCols(percent, type) {
+    var fix = "";
+    if(percent) {
+        fix = "%";
+    }else {
+        fix = "";
+    }
+    var fmt = function (value, row, index) {if(value == "0" || value == null) {return "";}else {return value + fix;}};
+    var cols = [
+        {field: 'MONTH_ID', title: '月份'},
+        {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px'},
+        {field: 'CURRENT_MONTH', title: type, width:'132px', formatter: fmt},
+        {field: 'MONTH1', title: '+1月', formatter: fmt},
+        {field: 'MONTH2', title: '+2月', formatter: fmt},
+        {field: 'MONTH3', title: '+3月', formatter: fmt},
+        {field: 'MONTH4', title: '+4月', formatter: fmt},
+        {field: 'MONTH5', title: '+5月', formatter: fmt},
+        {field: 'MONTH6', title: '+6月', formatter: fmt},
+        {field: 'MONTH7', title: '+7月', formatter: fmt},
+        {field: 'MONTH8', title: '+8月', formatter: fmt},
+        {field: 'MONTH9', title: '+9月', formatter: fmt},
+        {field: 'MONTH10', title: '+10月', formatter: fmt},
+        {field: 'MONTH11', title: '+11月', formatter: fmt},
+        {field: 'MONTH12', title: '+12月', formatter: fmt}
+    ];
+    return cols;
 }
 
 /**

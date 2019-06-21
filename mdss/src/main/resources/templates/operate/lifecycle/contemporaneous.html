@@ -62,9 +62,9 @@
         <ul class="nav nav-tabs" style="clear: both;" id="tabs03">
             <li class="active"> <a data-toggle="tab" href="#retain1" onclick="tab1Click(1)">客单价</a> </li>
             <li> <a data-toggle="tab" href="#dprice" onclick="tab1Click(2)"> 订单价</a> </li>
-            <!--<li> <a data-toggle="tab" href="#loss_cnt1" onclick="tab1Click(3)">购买频率</a> </li>-->
-            <!--<li> <a data-toggle="tab" href="#retain_cnt1" onclick="tab1Click(4)"> 件单价</a> </li>-->
-            <!--<li> <a data-toggle="tab" href="#loss1" onclick="tab1Click(5)">连带率</a> </li>-->
+            <li> <a data-toggle="tab" href="#loss_cnt1" onclick="tab1Click(3)">购买频率</a> </li>
+            <li> <a data-toggle="tab" href="#retain_cnt1" onclick="tab1Click(4)"> 件单价</a> </li>
+            <li> <a data-toggle="tab" href="#loss1" onclick="tab1Click(5)">连带率</a> </li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade active in table-responsive" id="retain1">
@@ -132,19 +132,19 @@
     function getData(idx) {
         var url = "";
         if(idx == 1) {
-            url = "/kpiMonitor/getRetentionBySpu";
+            url = "/kpiMonitor/getRetainData";
         }else if(idx == 2) {
-            url = "/kpiMonitor/getRetainUserCountBySpu"
+            url = "/kpiMonitor/getRetainUserCount"
         }else if(idx == 3) {
-            url = "/kpiMonitor/getLossUserRateBySpu"
+            url = "/kpiMonitor/getLossUserRate"
         }else if(idx == 4) {
-            url = "/kpiMonitor/getLossUserBySpu"
+            url = "/kpiMonitor/getLossUser"
         }
         var $table = $('#dataTable' + idx);
         var spuId = selectId;
         var startDt = $("#startDate_1").val();
         var periodType=$("#cohortbtngroup1>.btn-primary:first").attr("name");
-        $.get(url, {spuId: spuId, startDt: startDt, periodType:periodType}, function(r) {
+        $.get(url, {spuId: spuId, start: startDt, periodType:periodType}, function(r) {
             var columns = new Array();
             var percent = false;
             if(idx == 1 || idx == 3) {
@@ -258,17 +258,20 @@
         var url = "";
         var type = "";
         if(idx == 1) {
-            url = "/kpiMonitor/getUpriceDataBySpu";
+            url = "/kpiMonitor/getUpriceData";
             type = "本月客单价（元）";
         }else if(idx == 2) {
-            url = "/kpiMonitor/getPriceDataBySpu"
+            url = "/kpiMonitor/getPriceData";
             type = "本月订单价（元）";
         }else if(idx == 3) {
-            url = "/kpiMonitor/getFreqData"
+            url = "/kpiMonitor/getPurchFreq";
+            type = "本月购买频率";
         }else if(idx == 4) {
-            url = "/kpiMonitor/getSpriceData"
+            url = "/kpiMonitor/getUnitPriceData";
+            type = "本月件单价（元）";
         }else if(idx == 5) {
-            url = "/kpiMonitor/getJoinrateData"
+            url = "/kpiMonitor/getJoinRateData";
+            type = "本月连带率";
         }
         var $table = $('#dataTable1' + idx);
         var start = $("#startDate_2").val();
@@ -277,83 +280,14 @@
         $.get(url, {spuId:spuId, periodType: periodType, start: start}, function(r) {
             var columns = new Array();
             var percent = false;
-            if(idx == 3 || idx == 4) {
-                percent = true;
-            }
             if(periodType == "dmonth") {
-                if(idx == 1) {
-                    columns = getDMonthUPriceCols(percent, type);
-                }else if(idx == 2) {
-                    columns = getDMonthPriceCols(percent, type);
-                }
+                columns = getKpiDMonthCols(percent, type);
             }else if(periodType == "month"){
                 columns = getMonthCols(r.data.columns, percent, type);
             }
             var data = r.data.data;
             initBootstrapTable($table, columns, data, 0, periodType);
         });
-    }
-
-
-
-    // 客单价间隔月
-    function getDMonthUPriceCols(percent, type) {
-        var fix = "";
-        if(percent) {
-            fix = "%";
-        }else {
-            fix = "";
-        }
-
-        var fmt = function (value, row, index) {if(value == "0" || value == undefined) {return "";}else {return value + fix;}};
-        var cols = [
-            {field: 'MONTH_ID', title: '月份'},
-            {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px', formatter: fmt},
-            {field: 'UPRICE', title: type, width:'132px', formatter: fmt},
-            {field: 'UPRICE1', title: '+1月', formatter: fmt},
-            {field: 'UPRICE2', title: '+2月', formatter: fmt},
-            {field: 'UPRICE3', title: '+3月', formatter: fmt},
-            {field: 'UPRICE4', title: '+4月', formatter: fmt},
-            {field: 'UPRICE5', title: '+5月', formatter: fmt},
-            {field: 'UPRICE6', title: '+6月', formatter: fmt},
-            {field: 'UPRICE7', title: '+7月', formatter: fmt},
-            {field: 'UPRICE8', title: '+8月', formatter: fmt},
-            {field: 'UPRICE9', title: '+9月', formatter: fmt},
-            {field: 'UPRICE10', title: '+10月', formatter: fmt},
-            {field: 'UPRICE11', title: '+11月', formatter: fmt},
-            {field: 'UPRICE12', title: '+12月', formatter: fmt}
-        ];
-        return cols;
-    }
-
-    // 订单价间隔月
-    function getDMonthPriceCols(percent, type) {
-        var fix = "";
-        if(percent) {
-            fix = "%";
-        }else {
-            fix = "";
-        }
-
-        var fmt = function (value, row, index) {if(value == "0" || value == undefined) {return "";}else {return value + fix;}};
-        var cols = [
-            {field: 'MONTH_ID', title: '月份'},
-            {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px', formatter: fmt},
-            {field: 'PRICE', title: type, width:'132px', formatter: fmt},
-            {field: 'PRICE1', title: '+1月', formatter: fmt},
-            {field: 'PRICE2', title: '+2月', formatter: fmt},
-            {field: 'PRICE3', title: '+3月', formatter: fmt},
-            {field: 'PRICE4', title: '+4月', formatter: fmt},
-            {field: 'PRICE5', title: '+5月', formatter: fmt},
-            {field: 'PRICE6', title: '+6月', formatter: fmt},
-            {field: 'PRICE7', title: '+7月', formatter: fmt},
-            {field: 'PRICE8', title: '+8月', formatter: fmt},
-            {field: 'PRICE9', title: '+9月', formatter: fmt},
-            {field: 'PRICE10', title: '+10月', formatter: fmt},
-            {field: 'PRICE11', title: '+11月', formatter: fmt},
-            {field: 'PRICE12', title: '+12月', formatter: fmt}
-        ];
-        return cols;
     }
 
     // 留存率自然月
@@ -395,7 +329,6 @@
         return cols;
     }
 
-
     $("#cohortbtngroup2>.cohortbtn").on('click',function () {
         //判断当前元素是否具有btn-primary 的class属性 如果已经有，则什么也不做
         if(!$(this).hasClass("btn-primary"))
@@ -406,4 +339,32 @@
         }
         $("#tabs03").find("li[class='active']").find("a").click();
     });
+
+    function getKpiDMonthCols(percent, type) {
+        var fix = "";
+        if(percent) {
+            fix = "%";
+        }else {
+            fix = "";
+        }
+        var fmt = function (value, row, index) {if(value == "0" || value == null) {return "";}else {return value + fix;}};
+        var cols = [
+            {field: 'MONTH_ID', title: '月份'},
+            {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px'},
+            {field: 'CURRENT_MONTH', title: type, width:'132px', formatter: fmt},
+            {field: 'MONTH1', title: '+1月', formatter: fmt},
+            {field: 'MONTH2', title: '+2月', formatter: fmt},
+            {field: 'MONTH3', title: '+3月', formatter: fmt},
+            {field: 'MONTH4', title: '+4月', formatter: fmt},
+            {field: 'MONTH5', title: '+5月', formatter: fmt},
+            {field: 'MONTH6', title: '+6月', formatter: fmt},
+            {field: 'MONTH7', title: '+7月', formatter: fmt},
+            {field: 'MONTH8', title: '+8月', formatter: fmt},
+            {field: 'MONTH9', title: '+9月', formatter: fmt},
+            {field: 'MONTH10', title: '+10月', formatter: fmt},
+            {field: 'MONTH11', title: '+11月', formatter: fmt},
+            {field: 'MONTH12', title: '+12月', formatter: fmt}
+        ];
+        return cols;
+    }
 </script>

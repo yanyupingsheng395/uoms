@@ -13,12 +13,11 @@ import com.linksteady.common.util.RandomUtil;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.WeekInfo;
 import com.linksteady.operate.service.KpiMonitorService;
+import com.linksteady.operate.service.SynGroupService;
 import com.linksteady.operate.vo.Echart;
+import com.linksteady.operate.vo.ParamVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -43,22 +42,19 @@ public class KpiMonitorController extends BaseController {
     @Autowired
     KpiMonitorService kpiMonitorService;
 
+    @Autowired
+    private SynGroupService synGroupService;
+
     /**
-     * 获取留存率同期群数据
+     * 同期群-留存率
      * @return
      */
     @RequestMapping("/getRetainData")
-    public ResponseBo getRetainData(@RequestParam String periodType,@RequestParam String start) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getRetainData(periodType, start));
-    }
-
-    /**
-     * 获取留存率同期群数据（按SPU查看）
-     * @return
-     */
-    @RequestMapping("/getRetentionBySpu")
-    public ResponseBo getRetentionBySpu(@RequestParam String spuId, @RequestParam String periodType,@RequestParam String startDt) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getRetentionBySpu(spuId, periodType, startDt));
+    public ResponseBo getRetainData(@RequestParam("periodType") String periodType, @RequestParam("start") String start, @RequestParam(required = false, value = "spuId") String spuId) {
+        ParamVO paramVO = new ParamVO();
+        paramVO.setStartDt(start);
+        paramVO.setPeriodType(periodType);
+        return ResponseBo.okWithData(null, synGroupService.getRetentionData(paramVO, spuId));
     }
 
     /**
@@ -66,13 +62,11 @@ public class KpiMonitorController extends BaseController {
      * @return
      */
     @RequestMapping("/getLossUserRate")
-    public ResponseBo getLossUserRate(@RequestParam String periodType,@RequestParam String start) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getLossUserRate(periodType, start));
-    }
-
-    @RequestMapping("/getLossUserRateBySpu")
-    public ResponseBo getLossUserRateBySpu(@RequestParam String spuId, @RequestParam String periodType,@RequestParam String startDt) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getLossUserRateBySpu(spuId, periodType, startDt));
+    public ResponseBo getLossUserRate(@RequestParam String periodType,@RequestParam String start, String spuId) {
+        ParamVO paramVO = new ParamVO();
+        paramVO.setStartDt(start);
+        paramVO.setPeriodType(periodType);
+        return ResponseBo.okWithData(null, synGroupService.getLossUserRate(paramVO, spuId));
     }
 
     /**
@@ -80,17 +74,11 @@ public class KpiMonitorController extends BaseController {
      * @return
      */
     @RequestMapping("/getLossUser")
-    public ResponseBo getLossUser(@RequestParam String periodType,@RequestParam String start) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getLossUser(periodType, start));
-    }
-
-    /**
-     * 获取流失用户数
-     * @return
-     */
-    @RequestMapping("/getLossUserBySpu")
-    public ResponseBo getLossUserBySpu(@RequestParam String spuId, @RequestParam String periodType,@RequestParam String startDt) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getLossUserBySpu(spuId, periodType, startDt));
+    public ResponseBo getLossUser(@RequestParam String periodType,@RequestParam String start, String spuId) {
+        ParamVO paramVO = new ParamVO();
+        paramVO.setStartDt(start);
+        paramVO.setPeriodType(periodType);
+        return ResponseBo.okWithData(null, synGroupService.getLossUser(paramVO, spuId));
     }
 
     /**
@@ -98,37 +86,51 @@ public class KpiMonitorController extends BaseController {
      * @return
      */
     @RequestMapping("/getRetainUserCount")
-    public ResponseBo getRetainUserCount(@RequestParam String periodType,@RequestParam String start) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getRetainUserCount(periodType, start));
-    }
-
-    /**
-     * 获取留存用户数
-     * @return
-     */
-    @RequestMapping("/getRetainUserCountBySpu")
-    public ResponseBo getRetainUserCountBySpu(@RequestParam String spuId, @RequestParam String periodType,@RequestParam String startDt) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getRetainUserCountBySpu(spuId, periodType, startDt));
+    public ResponseBo getRetainUserCount(@RequestParam String periodType,@RequestParam String start, String spuId) {
+        ParamVO paramVO = new ParamVO();
+        paramVO.setStartDt(start);
+        paramVO.setPeriodType(periodType);
+        return ResponseBo.okWithData(null, synGroupService.getRetainUserCount(paramVO, spuId));
     }
 
     @RequestMapping("/getUpriceData")
-    public ResponseBo getUpriceData(@RequestParam String periodType,@RequestParam String start) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getUpriceData(periodType, start));
-    }
-
-    @RequestMapping("/getUpriceDataBySpu")
-    public ResponseBo getUpriceDataBySpu(@RequestParam String spuId, @RequestParam String periodType,@RequestParam String start) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getUpriceDataBySpu(spuId, periodType, start));
+    public ResponseBo getUpriceData(@RequestParam String periodType,@RequestParam String start, String spuId) {
+        ParamVO paramVO = new ParamVO();
+        paramVO.setStartDt(start);
+        paramVO.setPeriodType(periodType);
+        return ResponseBo.okWithData(null, synGroupService.getUpriceData(paramVO, spuId));
     }
 
     @RequestMapping("/getPriceData")
-    public ResponseBo getPriceData(@RequestParam String periodType,@RequestParam String start) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getPriceData(periodType, start));
+    public ResponseBo getPriceData(@RequestParam String periodType,@RequestParam String start, String spuId) {
+        ParamVO paramVO = new ParamVO();
+        paramVO.setStartDt(start);
+        paramVO.setPeriodType(periodType);
+        return ResponseBo.okWithData(null, synGroupService.getPriceData(paramVO, spuId));
     }
 
-    @RequestMapping("/getPriceDataBySpu")
-    public ResponseBo getPriceDataBySpu(@RequestParam String spuId, @RequestParam String periodType,@RequestParam String start) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getPriceDataBySpu(spuId, periodType, start));
+    @RequestMapping("/getUnitPriceData")
+    public ResponseBo getUnitPriceData(@RequestParam String periodType,@RequestParam String start, String spuId) {
+        ParamVO paramVO = new ParamVO();
+        paramVO.setStartDt(start);
+        paramVO.setPeriodType(periodType);
+        return ResponseBo.okWithData(null, synGroupService.getUnitPriceData(paramVO, spuId));
+    }
+
+    @RequestMapping("/getJoinRateData")
+    public ResponseBo getJoinRateData(@RequestParam String periodType,@RequestParam String start, String spuId) {
+        ParamVO paramVO = new ParamVO();
+        paramVO.setStartDt(start);
+        paramVO.setPeriodType(periodType);
+        return ResponseBo.okWithData(null, synGroupService.getJoinRateData(paramVO, spuId));
+    }
+
+    @RequestMapping("/getPurchFreq")
+    public ResponseBo getPurchFreq(@RequestParam String periodType,@RequestParam String start, String spuId) {
+        ParamVO paramVO = new ParamVO();
+        paramVO.setStartDt(start);
+        paramVO.setPeriodType(periodType);
+        return ResponseBo.okWithData(null, synGroupService.getPurchFreq(paramVO, spuId));
     }
 
     @GetMapping("/getGMV")
