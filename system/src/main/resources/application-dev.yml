@@ -157,6 +157,7 @@ logging:
     com:
       linksteady:
         system: debug
+        lognotice: debug
 
 # system 配置
 sys:
@@ -183,3 +184,11 @@ sys:
   openAopLog: true
   # 是否开启对thrift接口连通性的检测
   validateThrift: false
+  #是否开启错误日志上报
+  openExceptionNotice: false
+  #上报错误日志的地址
+  exceptionNoticeUrl: http://logstash.growth-master.com/logNoticeService
+  #上报错误日志的当前应用名称
+  exceptionNoticeAppName: uoms2-dev
+  #默认的日志预警的模式 (BATCH 批量 IMME 立即)
+  exceptionNoticeMode: BATCH

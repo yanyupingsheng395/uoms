@@ -52,7 +52,15 @@ public class LogController extends BaseController {
             return ResponseBo.ok("删除日志成功！");
         } catch (Exception e) {
             logger.error("删除日志失败", e);
-            return ResponseBo.error("删除日志失败，请联系网站管理员！");
+            return ResponseBo.error("删除日志失败，请联系管理员！");
         }
+    }
+
+
+    @RequestMapping("log/test")
+    @ResponseBody
+    public ResponseBo test() {
+        System.out.println(1/0);
+        return ResponseBo.ok();
     }
 }

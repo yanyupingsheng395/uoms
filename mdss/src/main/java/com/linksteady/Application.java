@@ -1,4 +1,5 @@
 package com.linksteady;
+import com.linksteady.lognotice.annotation.EnableExceptionNotice;
 import com.linksteady.operate.config.SystemProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import java.time.LocalTime;
 @EnableConfigurationProperties({SystemProperties.class})
 @EnableCaching
 @EnableAsync
+@EnableExceptionNotice
 public class Application {
     private static Logger log = LoggerFactory.getLogger(Application.class);
     public static void main(String[] args) {
