@@ -2,8 +2,13 @@ package com.linksteady.common.handler;
 
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.HttpUtils;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.AuthorizationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -23,6 +28,34 @@ import javax.servlet.http.HttpServletResponse;
 @RestControllerAdvice
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionHandler {
+
+    /**
+     * 是否开启异常上报
+     */
+    @Value("${sys.openExceptionNotice:false}")
+    private boolean openExceptionNotice;
+
+    /**
+     * 错误日志上报地址
+     */
+    @Value("${sys.exceptionNoticeUrl:''}")
+    private String exceptionNoticeUrl;
+
+    /**
+     * 错误日志上报所在的应用
+     */
+    @Value("${sys.exceptionNoticeAppName:''}")
+    private String exceptionNoticeAppName;
+
+    /**
+     * 错误日志上报的模式 BATCH 批量延迟模式 IMME 立即预警
+     */
+    @Value("${sys.exceptionNoticeMode:'BATCH'}")
+    private String exceptionNoticeMode;
+
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     @ExceptionHandler(value = AuthorizationException.class)
     public Object handleAuthorizationException(HttpServletRequest request, ServletResponse response) {
@@ -46,6 +79,9 @@ public class GlobalExceptionHandler {
 
         //打印日志
         log.error("全局异常捕获",e);
+
+        //进行异常日志的上报
+        exceptionNoticeHandler.exceptionNotice(exceptionNoticeAppName,StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512),exceptionNoticeMode);
 
         if (HttpUtils.isAjaxRequest(request)) {
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;
