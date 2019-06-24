@@ -35,7 +35,7 @@ public class ClientServerConfig {
      * @throws Exception
      */
     @Bean
-    public HttpInvokerProxyFactoryBean testService() throws Exception{
+    public HttpInvokerProxyFactoryBean service() throws Exception{
         HttpInvokerProxyFactoryBean httpInvokerProxyFactoryBean = new HttpInvokerProxyFactoryBean();
         Map<String, String> codeUrlMap = (Map<String, String>)redisTemplate.opsForValue().get("codeUrlMap:20190621");
         String url = codeUrlMap.get(serviceDomain) + "/" + serverServiceUrl;
