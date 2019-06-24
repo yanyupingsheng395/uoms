@@ -21,9 +21,9 @@ public interface OpMapper{
 
     List<Map<String, Object>> getOpDayDetailAllList(@Param("daywid") String daywid);
 
-    List<Map<String, Object>> getPeriodHeaderList(@Param("startRow") int startRow, @Param("endRow") int endRow);
+    List<Map<String, Object>> getPeriodHeaderList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("taskName") String taskName);
 
-    int getPeriodListCount();
+    int getPeriodListCount(@Param("taskName") String taskName);
 
     void savePeriodHeaderInfo(@Param("periodName") String periodName,@Param("startDt") String startDt,@Param("endDt") String  endDt);
 

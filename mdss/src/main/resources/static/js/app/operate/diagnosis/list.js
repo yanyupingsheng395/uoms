@@ -11,7 +11,8 @@ $(function () {
         queryParams: function (params) {
             return {
                 pageSize: params.limit,
-                pageNum: (params.offset / params.limit) + 1
+                pageNum: (params.offset / params.limit) + 1,
+                param: {diagName: $("input[name='diagName']").val()}
             };
         },
         columns: [{
@@ -91,7 +92,7 @@ function editDiag() {
         return;
     }
     var id = selected[0]["diagId"];
-    location.href = "/diag/edit?id=" + diagId;
+    window.location.href = "/page/diagnosis/edit?id=" + id;
 }
 
 /**
@@ -115,7 +116,7 @@ function deleteDiag() {
         title: "<i class='mdi mdi-alert-outline'></i>提示：",
         content: "确定删除选中的诊断?"
     }, function () {
-        delData(ids);
+        deleteData(ids);
     });
 }
 
@@ -128,4 +129,13 @@ function deleteData(id) {
         }
         $('#diagTable').bootstrapTable('refresh');
     });
+}
+
+function searchDiag() {
+    $MB.refreshTable('diagTable');
+}
+
+function resetDiag() {
+    $("input[name='diagName']").val('');
+    $MB.refreshTable('diagTable');
 }

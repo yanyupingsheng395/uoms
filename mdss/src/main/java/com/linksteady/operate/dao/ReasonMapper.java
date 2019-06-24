@@ -9,9 +9,9 @@ import java.util.Map;
 
 public interface ReasonMapper {
 
-    List<Reason> getReasonList(@Param("startRow") int startRow,@Param("endRow") int endRow, @Param("username") String username);
+    List<Reason> getReasonList(@Param("startRow") int startRow,@Param("endRow") int endRow, @Param("username") String username, @Param("reasonName") String reasonName);
 
-    int getReasonTotalCountByUserName(@Param("username") String username);
+    int getReasonTotalCountByUserName(@Param("username") String username, @Param("reasonName") String reasonName);
 
     int getReasonTotalCount();
 
@@ -27,16 +27,16 @@ public interface ReasonMapper {
     void saveReasonDetail(@Param("primaryKey") int primaryKey,@Param("dimCode") String dimCode,@Param("dimValues") String dimValues,@Param("dimDisplay") String dimDisplay);
 
     //删除原因探究的明细信息
-    void  deleteReasonDetail(@Param("reasonId") String reasonId);
+    void  deleteReasonDetail(@Param("ids") List<String> ids);
 
     //删除原因诊断 原因KPI的快照信息
-    void  deleteReasonKpisSnp(@Param("reasonId") String reasonId);
+    void  deleteReasonKpisSnp(@Param("ids") List<String> ids);
 
     //删除原因诊断主信息
-    void  deleteReasonById(@Param("reasonId") String reasonId);
+    void  deleteReasonById(@Param("ids") List<String> ids);
 
     //删除原因诊断结果信息
-    void deleteReasonResultById(@Param("reasonId") String reasonId);
+    void deleteReasonResultById(@Param("ids") List<String> ids);
 
     //获取原因诊断主信息
     Reason  getReasonInfoById(@Param("reasonId") String reasonId);
@@ -54,7 +54,7 @@ public interface ReasonMapper {
 
     void deleteResultToTrace(@Param("reasonResultId") String reasonResultId);
 
-    void deleteReasonTrace(@Param("reasonId") String reasonId);
+    void deleteReasonTrace(@Param("ids") List<String> ids);
 
 
 

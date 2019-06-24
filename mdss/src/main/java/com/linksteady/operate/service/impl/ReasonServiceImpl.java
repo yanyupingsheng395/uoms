@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -48,10 +49,10 @@ public class ReasonServiceImpl implements ReasonService {
     ThriftClient thriftClient;
 
     @Override
-    public List<Reason> getReasonList(int startRow, int endRow)
+    public List<Reason> getReasonList(int startRow, int endRow, String reasonName)
     {
         String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
-        List<Reason> dataList = reasonMapper.getReasonList(startRow,endRow, username);
+        List<Reason> dataList = reasonMapper.getReasonList(startRow,endRow, username, reasonName);
         dataList.stream().forEach(x->{
             String reasonId = String.valueOf(x.getReasonId());
             List<Map<String,String>> reasonDetail=reasonMapper.getReasonDetailById(reasonId);
@@ -66,10 +67,10 @@ public class ReasonServiceImpl implements ReasonService {
     }
 
     @Override
-    public int getReasonTotalCount()
+    public int getReasonTotalCount(String reasonName)
     {
         String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
-        return  reasonMapper.getReasonTotalCountByUserName(username);
+        return  reasonMapper.getReasonTotalCountByUserName(username, reasonName);
     }
 
     @Override
@@ -109,13 +110,12 @@ public class ReasonServiceImpl implements ReasonService {
 
     @Override
     public void deleteReasonById(String reasonId) {
-        reasonMapper.deleteReasonDetail(reasonId);
-        reasonMapper.deleteReasonKpisSnp(reasonId);
-        reasonMapper.deleteReasonById(reasonId);
-        reasonMapper.deleteReasonResultById(reasonId);
-        reasonMapper.deleteReasonTrace(reasonId);
-
-
+        List<String> ids = Arrays.asList(reasonId.split(","));
+        reasonMapper.deleteReasonDetail(ids);
+        reasonMapper.deleteReasonKpisSnp(ids);
+        reasonMapper.deleteReasonById(ids);
+        reasonMapper.deleteReasonResultById(ids);
+        reasonMapper.deleteReasonTrace(ids);
     }
 
     @Override

@@ -11,162 +11,150 @@ $(function () {
         queryParams: function (params) {
             return {
                 pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit )+ 1  //页码
+                pageNum: (params.offset / params.limit )+ 1,  //页码
+                param: {reasonName: $("input[name='reasonName']").val()}
             };
         },
-        columns: [{
-            field: 'reasonName',
-            title: '编号'
-        }, {
-            field: 'progress',
-            title: '进度',
-            formatter: function (value, row, index) {
-                return value == null ? "" : value + "%"
-            }
-        } ,{
-            // R表示计算中 F表示计算完成
-            field: 'status',
-            title: '状态',
-            formatter: function (value, row, index) {
-                if (value == "R") {
-                    return "<span class='label label-primary'>计算中</span>";
-                }else if (value == "F") {
-                    return "<span class='label label-primary'>完成</span>";
-                }else if (value == "E") {
-                    return "<span class='label label-danger'>错误</span>";
+        columns: [
+            {checkbox: true}, {
+                field: 'reasonName',
+                title: '编号'}, {
+                field: 'progress',
+                title: '进度',
+                formatter: function (value, row, index) {
+                    return value == null ? "" : value + "%"
                 }
-            }
-        },  {
-            field: 'kpiName',
-            title: '指标'
-        },{
-            field: 'periodName',
-            title: '周期',
-            formatter: function (value, row, index) {
-               return row.beginDt+"至"+row.endDt;
-            }
-        },{
-            field: 'source',
-            title: '来源'
-        }, {
-            field: 'dimDisplayName',
-            title: '维度&值',
-            formatter: function (value, row, index) {
-                if(null == value || value == "" || value == undefined) {
-                    return "-";
-                }else {
-                    if(value.length >= 10) {
-                        var newVal = value.substr(0, 10) + "...";
-                        var title = value.replace(";", ";&nbsp;&nbsp;");
-                        return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+title+"\">"+newVal+"</a>";
-                    }else {
-                        return value;
+            } ,{
+                // R表示计算中 F表示计算完成
+                field: 'status',
+                title: '状态',
+                formatter: function (value, row, index) {
+                    if (value == "R") {
+                        return "<span class='badge label-primary'>计算中</span>";
+                    }else if (value == "F") {
+                        return "<span class='badge label-primary'>完成</span>";
+                    }else if (value == "E") {
+                        return "<span class='badge label-danger'>错误</span>";
                     }
                 }
-            }
-        },{
-            field: 'createDt',
-            title: '创建时间'
-        },{
-            filed: 'button',
-            title: '操作',
-            formatter: function (value, row, index) {
-                var reasonId=row.reasonId;
-                if(row.status=='R')
-                {
-                    return "<div class='btn btn-info btn-sm' onclick='updatedata("+reasonId+")'><i class='mdi mdi-redo'></i>更新</div>";
-                    // return "";
-                }else
-                {
-                    return "<div class='btn btn-primary btn-sm' onclick='view("+reasonId+")'><i class='mdi mdi-eye'></i>查看</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='del("+reasonId+")'><i class='mdi mdi-window-close'></i>删除</div>";
+            },  {
+                field: 'kpiName',
+                title: '指标'
+            },{
+                field: 'periodName',
+                title: '周期',
+                formatter: function (value, row, index) {
+                    return row.beginDt+"至"+row.endDt;
                 }
-            }
-        }],onLoadSuccess: function(data){
+            },{
+                field: 'source',
+                title: '来源'
+            }, {
+                field: 'dimDisplayName',
+                title: '维度&值',
+                formatter: function (value, row, index) {
+                    if(null == value || value == "" || value == undefined) {
+                        return "-";
+                    }else {
+                        if(value.length >= 10) {
+                            var newVal = value.substr(0, 10) + "...";
+                            var title = value.replace(";", ";&nbsp;&nbsp;");
+                            return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+title+"\">"+newVal+"</a>";
+                        }else {
+                            return value;
+                        }
+                    }
+                }
+            },{
+                field: 'createDt',
+                title: '创建时间'
+            }],onLoadSuccess: function(data){
             $("a[data-toggle='tooltip']").tooltip();
         }
     };
     $('#reasonTable').bootstrapTable(settings);
-
     //为刷新按钮绑定事件
     $("#btn_refresh").on("click",function () {
         $('#reasonTable').bootstrapTable('refresh');
     });
 });
 
-function view(reasonId){
+function viewReason(){
+    var selected = $("#reasonTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要查看的原因任务！');
+        return;
+    }
+    if (selected_length > 1) {
+        $MB.n_warning('一次只能查看一个原因任务！');
+        return;
+    }
+    var reasonId = selected[0]["reasonId"];
     //进入查看界面 todo 更改为post方式
-    location.href = "/reason/viewReason?reasonId=" + reasonId;
-
+    window.location.href = "/page/reason/viewReason?reasonId=" + reasonId;
 }
 
-function del(reasonId) {
+function deleteReason() {
+    var selected = $("#reasonTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要删除的原因任务！');
+        return;
+    }
+
+    var ids = "";
+    for (var i = 0; i < selected_length; i++) {
+        ids += selected[i].reasonId;
+        if (i !== (selected_length - 1)) ids += ",";
+    }
 
     //遮罩层打开
     lightyear.loading('show');
-
-    //进行删除提示
-        $.confirm({
-            title: '确认',
-            content: '是否删除数据？',
-            theme: 'bootstrap',
-            type: 'orange',
-            buttons: {
-                confirm: {
-                    text: '确认',
-                    btnClass: 'btn-blue',
-                    action: function(){
-                             $.getJSON("/reason/deleteReasonById?reasonId="+reasonId,function (resp) {
-                                    if (resp.code === 200){
-                                        lightyear.loading('hide');
-                                        //提示成功
-                                        toastr.success('删除成功!');
-                                        //刷新表格
-                                        //todo 如果在后面某个页上删除数据后，刷新后还停在当前页
-                                        //var pageNum=$('#reasonTable').bootstrapTable('getOptions').pageNumber;
-                                        $('#reasonTable').bootstrapTable('refresh');
-                                    }
-                                })
-                    }
-                },
-                cancel: {
-                    text: '取消',
-                    action: function () {
-                        lightyear.loading('hide');
-                    }
-                }
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认删除选中的原因任务？'
+    }, function () {
+        $.getJSON("/reason/deleteReasonById?reasonId="+ids,function (resp) {
+            if (resp.code === 200){
+                lightyear.loading('hide');
+                //提示成功
+                $MB.n_success('删除成功!');
+                //刷新表格
+                //todo 如果在后面某个页上删除数据后，刷新后还停在当前页
+                $('#reasonTable').bootstrapTable('refresh');
             }
-        });
+        })
+    });
 }
 
-// function del(reasonId) {
-//     //进行删除提示
-//     $.confirm({
-//         title: '确认',
-//         content: '演示环境，数据不可删除！',
-//         theme: 'bootstrap',
-//         type: 'orange',
-//         buttons: {
-//             confirm: {
-//                 text: '确认',
-//                 btnClass: 'btn-blue'
-//             },
-//             cancel: {
-//                 text: '取消'
-//             }
-//         }
-//     });
-// }
-
-function updatedata(reasonId)
-{
+function updateReason() {
+    var selected = $("#reasonTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要变更的原因任务！');
+        return;
+    }
+    if (selected_length > 1) {
+        $MB.n_warning('一次只能变更一个原因任务！');
+        return;
+    }
+    var reasonId = selected[0]["reasonId"];
     lightyear.loading('show');
     $.getJSON("/reason/updateProgressById?reasonId="+reasonId,function (resp) {
         if (resp.code === 200){
             lightyear.loading('hide');
-            //提示成功
-            toastr.success('更新成功!');
-            //刷新表格
+            $MB.n_success('更新成功!');
             $('#reasonTable').bootstrapTable('refresh');
         }
     });
+}
+
+function searchReason() {
+    $MB.refreshTable('reasonTable');
+}
+
+function resetReason() {
+    $("input[name='reasonName']").val('');
+    $MB.refreshTable('reasonTable');
 }

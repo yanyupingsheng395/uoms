@@ -84,12 +84,13 @@
                 TO_CHAR(T.PERIOD_END_DT,'YYYY-mm-dd') PERIOD_END_DT,
                 T.CREATE_DT
          FROM UO_OP_PERIOD T
+         where t.PERIOD_TASK_NAME like concat('%', concat(#{taskName}, '%'))
          ORDER BY T.PERIOD_HEADER_ID DESC ) A  WHERE ROWNUM &lt;=#{endRow}
         ) WHERE RN &gt;=#{startRow}
     </select>
 
     <select id="getPeriodListCount" resultType="int">
-        SELECT COUNT(*) FROM UO_OP_PERIOD T
+        SELECT COUNT(*) FROM UO_OP_PERIOD T where PERIOD_TASK_NAME like concat('%', concat(#{taskName}, '%'))
     </select>
 
     <insert id="savePeriodHeaderInfo">

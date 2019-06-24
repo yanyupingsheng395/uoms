@@ -521,7 +521,10 @@ var $MB = (function () {
                     action: callback
                 },
                 close: {
-                    text: '取消'
+                    text: '取消',
+                    action: function () {
+                        $MB.loading('hide');
+                    }
                 }
             }
         });

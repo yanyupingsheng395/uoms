@@ -9,9 +9,9 @@ import java.util.Map;
 
 public interface ReasonService {
 
-     List<Reason> getReasonList(int startRow, int endRow);
+     List<Reason> getReasonList(int startRow, int endRow, String reasonName);
 
-     int getReasonTotalCount();
+     int getReasonTotalCount(String reasonName);
 
      void saveReasonData(ReasonVO reasonVO,String username,int primaryKey);
 

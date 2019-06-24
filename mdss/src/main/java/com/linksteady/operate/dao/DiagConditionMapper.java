@@ -15,5 +15,5 @@ public interface DiagConditionMapper extends MyMapper<DiagCondition> {
 
     List<DiagCondition> findByDiagIdAndNodeId(@Param("diagId") String diagId, @Param("nodeId") String nodeId);
 
-    void deleteByDiagId(@Param("diagId") String diagId);
+    void deleteByDiagId(@Param("ids") List<String> ids);
 }

@@ -60,8 +60,8 @@ public class ReasonController  extends BaseController {
      */
     @RequestMapping("/list")
     public ResponseBo list(@RequestBody  QueryRequest request) {
-        List<Reason> result=reasonService.getReasonList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize());
-        int totalCount= reasonService.getReasonTotalCount();
+        List<Reason> result=reasonService.getReasonList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(), request.getParam().get("reasonName"));
+        int totalCount= reasonService.getReasonTotalCount(request.getParam().get("reasonName"));
         return  ResponseBo.okOverPaging("",totalCount,result);
     }
 

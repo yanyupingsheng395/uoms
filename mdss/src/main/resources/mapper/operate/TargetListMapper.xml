@@ -1,75 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.TargetListMapper">
-  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.TargetInfo">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <result column="ID" jdbcType="DECIMAL" property="id" />
-    <result column="NAME" jdbcType="VARCHAR" property="name" />
-    <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
-    <result column="START_DT" jdbcType="VARCHAR" property="startDt" />
-    <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
-    <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
-    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
-    <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
-    <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
-    <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
-    <result column="STATUS" jdbcType="VARCHAR" property="status" />
-    <result column="TARGET_VAL" jdbcType="DECIMAL" property="targetVal" />
-    <result column="ACTUAL_VAL" jdbcType="DECIMAL" property="actualVal" />
-    <result column="ACTUAL_VAL_RATE" jdbcType="DECIMAL" property="actualValRate" />
-    <result column="ACTUAL_VAL_LAST" jdbcType="DECIMAL" property="actualValLast" />
-    <result column="FINISH_RATE" jdbcType="DECIMAL" property="finishRate" />
-    <result column="FINISH_RATE_DIFFER" jdbcType="DECIMAL" property="finishRateDiffer" />
-    <result column="FINISH_RATE_LAST" jdbcType="DECIMAL" property="finishRateLast" />
-    <result column="KPI_UNIT" jdbcType="VARCHAR" property="kpiUnit" />
-    <result column="REMAIN_TGT" jdbcType="DECIMAL" property="remainTgt"/>
-    <result column="REMAIN_COUNT" jdbcType="DECIMAL" property="remainCount"/>
-    <result column="REMAIN_LIST" jdbcType="VARCHAR" property="remainList"/>
-    <result column="VARY_IDX" jdbcType="DECIMAL" property="varyIdx"/>
-    <result column="VARY_IDX_LAST" jdbcType="DECIMAL" property="varyIdxLast"/>
-    <result column="FINISH_DIFFER" jdbcType="DECIMAL" property="finishDiffer"/>
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.TargetInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="ID" jdbcType="DECIMAL" property="id" />
+        <result column="NAME" jdbcType="VARCHAR" property="name" />
+        <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
+        <result column="START_DT" jdbcType="VARCHAR" property="startDt" />
+        <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
+        <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
+        <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+        <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
+        <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+        <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+        <result column="STATUS" jdbcType="VARCHAR" property="status" />
+        <result column="TARGET_VAL" jdbcType="DECIMAL" property="targetVal" />
+        <result column="ACTUAL_VAL" jdbcType="DECIMAL" property="actualVal" />
+        <result column="ACTUAL_VAL_RATE" jdbcType="DECIMAL" property="actualValRate" />
+        <result column="ACTUAL_VAL_LAST" jdbcType="DECIMAL" property="actualValLast" />
+        <result column="FINISH_RATE" jdbcType="DECIMAL" property="finishRate" />
+        <result column="FINISH_RATE_DIFFER" jdbcType="DECIMAL" property="finishRateDiffer" />
+        <result column="FINISH_RATE_LAST" jdbcType="DECIMAL" property="finishRateLast" />
+        <result column="KPI_UNIT" jdbcType="VARCHAR" property="kpiUnit" />
+        <result column="REMAIN_TGT" jdbcType="DECIMAL" property="remainTgt"/>
+        <result column="REMAIN_COUNT" jdbcType="DECIMAL" property="remainCount"/>
+        <result column="REMAIN_LIST" jdbcType="VARCHAR" property="remainList"/>
+        <result column="VARY_IDX" jdbcType="DECIMAL" property="varyIdx"/>
+        <result column="VARY_IDX_LAST" jdbcType="DECIMAL" property="varyIdxLast"/>
+        <result column="FINISH_DIFFER" jdbcType="DECIMAL" property="finishDiffer"/>
+    </resultMap>
 
-  <resultMap id="TgtReferenceMap" type="com.linksteady.operate.domain.TgtReference">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <result column="PERIOD_NAME" jdbcType="VARCHAR" property="periodName" />
-    <result column="VALUE" jdbcType="DECIMAL" property="value" />
-  </resultMap>
+    <resultMap id="TgtReferenceMap" type="com.linksteady.operate.domain.TgtReference">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="PERIOD_NAME" jdbcType="VARCHAR" property="periodName" />
+        <result column="VALUE" jdbcType="DECIMAL" property="value" />
+    </resultMap>
 
-  <insert id="save">
-    <selectKey resultType="java.lang.Long" keyProperty="id" order="BEFORE" >
-      SELECT seq_tgt_list_id.NEXTVAL from DUAL
-    </selectKey>
-    INSERT INTO UO_TGT_LIST(ID, NAME, PERIOD_TYPE, START_DT, END_DT, KPI_CODE, CREATE_DT, CREATE_BY, TARGET_VAL, STATUS, KPI_UNIT)
-    VALUES (#{id}, #{name}, #{periodType}, #{startDt}, #{endDt}, #{kpiCode}, #{createDt}, #{createBy}, #{targetVal}, #{status}, '元')
-  </insert>
+    <insert id="save">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="BEFORE" >
+            SELECT seq_tgt_list_id.NEXTVAL from DUAL
+        </selectKey>
+        INSERT INTO UO_TGT_LIST(ID, NAME, PERIOD_TYPE, START_DT, END_DT, KPI_CODE, CREATE_DT, CREATE_BY, TARGET_VAL, STATUS, KPI_UNIT)
+        VALUES (#{id}, #{name}, #{periodType}, #{startDt}, #{endDt}, #{kpiCode}, #{createDt}, #{createBy}, #{targetVal}, #{status}, '元')
+    </insert>
 
-  <select id="getPageList" resultType="map">
+    <select id="getPageList" resultType="map">
     select * from (
       select A.*,ROWNUM RN from (select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, to_char(tgt.CREATE_DT,'yyyy-mm-dd hh24:mi:ss') CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME, tgt.TARGET_VAL, tgt.STATUS from UO_TGT_LIST tgt
-      LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.CREATE_BY = #{userId} and tgt.STATUS &lt;&gt; '-2'  order by tgt.CREATE_DT DESC) A
+      LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.CREATE_BY = #{userId} and tgt.STATUS &lt;&gt; '-2' and tgt.NAME like concat('%', concat(#{tgtName}, '%'))  order by tgt.CREATE_DT DESC) A
       where ROWNUM &lt;=#{endRow}
     ) where RN &gt;=#{startRow}
   </select>
 
-  <select id="getTotalCount" resultType="int">
+    <select id="getTotalCount" resultType="int">
     select count(1) from UO_TGT_LIST
   </select>
 
     <select id="getTotalCountByUsername" resultType="int">
-    select count(1) from UO_TGT_LIST where CREATE_BY = #{username}
+    select count(1) from UO_TGT_LIST tgt where tgt.CREATE_BY = #{username} and tgt.NAME like concat('%', concat(#{targetName}, '%'))
     </select>
 
-  <select id="getDataById" resultType="map">
+    <select id="getDataById" resultType="map">
       select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, tgt.CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME from UO_TGT_LIST tgt
       LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.ID = #{id}
   </select>
 
-  <select id="getTargetList" resultMap="BaseResultMap">
+    <select id="getTargetList" resultMap="BaseResultMap">
       select * from (
       SELECT
           ID,
@@ -88,22 +88,22 @@
       ) t ORDER BY t.CREATE_DT DESC
   </select>
 
-  <select id="getMonitorVal" resultType="map">
+    <select id="getMonitorVal" resultType="map">
     select TARGET_VAL, ACTUAL_VAL, ACTUAL_VAL_RATE, ACTUAL_VAL_LAST, FINISH_RATE, FINISH_RATE_DIFFER, FINISH_RATE_LAST, KPI_UNIT,
     REMAIN_TGT, REMAIN_COUNT,VARY_IDX,VARY_IDX_LAST,FINISH_DIFFER
     from UO_TGT_LIST
     where ID = #{targetId}
   </select>
 
-  <select id="getGmvHistoryByPeroid" resultMap="TgtReferenceMap" parameterType="string">
+    <select id="getGmvHistoryByPeroid" resultMap="TgtReferenceMap" parameterType="string">
     ${_parameter}
   </select>
 
-  <select id="getGmvHistoryByPeriodDay" resultMap="TgtReferenceMap" parameterType="string">
+    <select id="getGmvHistoryByPeriodDay" resultMap="TgtReferenceMap" parameterType="string">
     ${_parameter}
   </select>
 
-  <update id="updateTargetStatus">
+    <update id="updateTargetStatus">
       update UO_TGT_LIST set STATUS=#{status},UPDATE_DT=SYSDATE WHERE ID=#{id}
   </update>
 
@@ -112,7 +112,7 @@
         <if test="finishRate != null and finishRate != ''">
             FINISH_RATE=#{finishRate},
         </if>
-            REMAIN_TGT=#{remainTgt},
+        REMAIN_TGT=#{remainTgt},
         <if test="varyIdx != null and varyIdx != ''">
             VARY_IDX=#{varyIdx},
         </if>

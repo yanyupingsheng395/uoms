@@ -10,7 +10,6 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/ztree/zTreeStyle.css}">
     <style>
@@ -51,69 +50,72 @@
                     </tr>
                 </table>
             </div>
-            <div class="container-fluid">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>寻找关键部分</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div data-th-include="operate/diagnosis/progress"></div>
-                            </div>
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-lg-12 select-table table-striped">
+                        <div class="col-md-12">
+                            <h5 class="modal-title pull-left" style="margin-top: 20px;">寻找关键部分 - 编辑</h5>
                         </div>
+                        <div class="col-md-12">
+                            <hr class="hr"/>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div data-th-include="operate/diagnosis/progress"></div>
+                                </div>
+                            </div>
 
-                        <!--图标区-->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div th:include="operate/diagnosis/nodeChartModal"></div>
+                            <!--图标区-->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div th:include="operate/diagnosis/nodeChartModal"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 text-center">
-                                <a class="btn btn-default" href="/page/diagnosis/list"><i class="mdi mdi-reply"></i>返回</a>
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <a class="btn btn-secondary btn-sm" href="/page/diagnosis"><i class="mdi mdi-redo-variant"></i>返回</a>
+                                </div>
                             </div>
-                        </div>
 
-                        <!--节点新增按钮-->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div th:include="operate/diagnosis/nodaAddModal"></div>
+                            <!--节点新增按钮-->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div th:include="operate/diagnosis/nodaAddModal"></div>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- 节点详情按钮-->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div th:include="operate/diagnosis/nodeDetailModal"></div>
+                            <!-- 节点详情按钮-->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div th:include="operate/diagnosis/nodeDetailModal"></div>
+                                </div>
                             </div>
-                        </div>
-                        <!--节点鼠标左击图标-->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div th:include="operate/diagnosis/nodeChartModal"></div>
+                            <!--节点鼠标左击图标-->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div th:include="operate/diagnosis/nodeChartModal"></div>
+                                </div>
                             </div>
-                        </div>
-                        <!--节点原因探究按钮-->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div th:include="operate/diagnosis/nodeReasonAdd"></div>
+                            <!--节点原因探究按钮-->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div th:include="operate/diagnosis/nodeReasonAdd"></div>
+                                </div>
                             </div>
+                            <input id="diagId" type="hidden" th:value="${id}"/>
+                            <input id="beginDt" type="hidden" th:value="${diag.BEGIN_DT}"/>
+                            <input id="endDt" type="hidden" th:value="${diag.END_DT}"/>
+                            <input id="periodType" type="hidden" th:value="${diag.PERIOD_TYPE}"/>
+                            <input id="opDataType" type="hidden" value="edit"/>
+                            <input type="hidden" id="mainKpiCode" th:value="${diag.KPI_CODE}">
                         </div>
-                        <input id="diagId" type="hidden" th:value="${id}"/>
-                        <input id="beginDt" type="hidden" th:value="${diag.BEGIN_DT}"/>
-                        <input id="endDt" type="hidden" th:value="${diag.END_DT}"/>
-                        <input id="periodType" type="hidden" th:value="${diag.PERIOD_TYPE}"/>
-                        <input id="opDataType" type="hidden" value="edit"/>
-                        <input type="hidden" id="mainKpiCode" th:value="${diag.KPI_CODE}">
                     </div>
                 </div>
             </div>
         </main>
     </div>
 </div>
-<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/ztree/jquery.ztree.all.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>

@@ -109,10 +109,8 @@ public class OpController extends BaseController {
      */
     @RequestMapping("/periodHeaderList")
     public ResponseBo getPeriodHeaderList(@RequestBody  QueryRequest request) {
-
-        List<Map<String,Object>> result=opService.getPeriodHeaderList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize());
-
-        int totalCount= opService.getPeriodListCount();
+        List<Map<String,Object>> result=opService.getPeriodHeaderList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(), request.getParam().get("taskName"));
+        int totalCount= opService.getPeriodListCount(request.getParam().get("taskName"));
         return  ResponseBo.okOverPaging("",totalCount,result);
     }
 

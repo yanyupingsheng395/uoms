@@ -50,13 +50,13 @@ public class OpServiceImpl implements OpService {
     }
 
     @Override
-    public List<Map<String, Object>> getPeriodHeaderList(int startRow, int endRow) {
-        return opMapper.getPeriodHeaderList(startRow,endRow);
+    public List<Map<String, Object>> getPeriodHeaderList(int startRow, int endRow, String taskName) {
+        return opMapper.getPeriodHeaderList(startRow,endRow, taskName);
     }
 
     @Override
-    public int getPeriodListCount() {
-        return opMapper.getPeriodListCount();
+    public int getPeriodListCount(String taskName) {
+        return opMapper.getPeriodListCount(taskName);
     }
 
     @Override

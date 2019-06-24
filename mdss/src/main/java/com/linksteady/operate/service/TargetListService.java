@@ -13,9 +13,9 @@ public interface TargetListService {
 
     long save(TargetInfo target);
 
-    List<Map<String, Object>> getPageList(int startRow, int endRow);
+    List<Map<String, Object>> getPageList(int startRow, int endRow, String targetName);
 
-    int getTotalCount();
+    int getTotalCount(String targetName);
 
     Map<String, Object> getDataById(Long id);
 

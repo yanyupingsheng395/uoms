@@ -219,7 +219,7 @@ function validateRule() {
             name: {
                 required: true,
                 minlength: 2,
-                maxlength: 10,
+                maxlength: 64,
             },
             startDt: {required: true},
             targetKpiTxt: {required: true}
@@ -227,7 +227,7 @@ function validateRule() {
         messages: {
             name: {
                 required: icon + "请输入目标名称",
-                minlength: icon + "名称长度2到10个字符"
+                minlength: icon + "名称长度2到64个字符"
             },
             startDt: {
                 required: icon + "请输入目标时间"

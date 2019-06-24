@@ -11,5 +11,5 @@ public interface DiagDetailMapper extends MyMapper<DiagDetail> {
 
     List<DiagDetail> findByDiagId(@Param("diagId") String diagId);
 
-    void deleteByDiagId(@Param("diagId") String diagId);
+    void deleteByDiagId(@Param("ids") List<String> ids);
 }

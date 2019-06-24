@@ -126,7 +126,7 @@ function submit_analysis(){
                             btnClass: 'btn-green',
                             action: function(){
                                 //
-                                location.replace("/reason/gotoIndex");
+                                location.replace("/page/reason");
                             }
                         }
                     }

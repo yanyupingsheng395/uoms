@@ -10,7 +10,6 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
     <link rel="stylesheet"  data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <!--日期选择插件-->
     <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
@@ -28,42 +27,40 @@
         <div data-th-include="common/header"></div>
         <!-- 页面主要内容 -->
         <main class="lyear-layout-content">
-            <div class="container-fluid">
+            <div class="container-div ui-layout-center">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>店铺运营报表</h4>
+                    <div class="col-sm-12 search-collapse">
+                        <form id="user-form">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        日期：
+                                        <input class="js-datepicker" type="text" id="startDt" data-date-format="yyyy-mm-dd"  placeholder="开始日期">
+                                        <input class="js-datepicker" type="text" id="endDt" data-date-format="yyyy-mm-dd"  placeholder="结束日期">
+                                    </li>
+                                    <li>
+                                        来源：<select id="source" name="source"></select>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="btn_query"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="refreshUser()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-lg-12 "  style="margin-bottom: 5px;">
-                                        <form class="form-inline">
-                                            <div class="form-group col-md-6">
-                                                <label class="control-label">日期：</label>
-                                                <div class="input-group">
-                                                    <input class="form-control js-datepicker" type="text" id="startDt" data-date-format="yyyy-mm-dd"  placeholder="开始日期">
-                                                </div>
-                                                <div class="input-group">
-                                                    <input class="form-control js-datepicker" type="text" id="endDt" data-date-format="yyyy-mm-dd"  placeholder="结束日期">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group col-md-4">
-                                                <label class="control-label">来源：</label>
-                                                <div class="input-group col-md-8">
-                                                    <select class="selectpicker form-control" id="source" name="source"></select>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <a class="btn btn-primary m-r-5"  style="margin-left: 20px;"  type="button" id="btn_query"><i class="mdi mdi-magnify"></i>查询</a>
-                                                <a class="btn btn-primary m-r-5"   type="button" id="btn_downLoad"><i class="mdi mdi-download"></i>下载</a>
-                                            </div>
-
-                                        </form>
-                                    </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-12 select-table table-striped">
+                        <div class="row" style="margin-top: 12px;">
+                            <div class="col-sm-12">
+                                <div class="btn-group-sm" id="toolbar" role="group">
+                                    <a class="btn btn-info" id="btn_downLoad">
+                                        <i class="fa fa-download"></i> 下载
+                                    </a>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 12px;">
+                            <div class="col-sm-12">
                                 <div class="table-responsive">
                                     <table id="opDaillyReportTable"  data-toggle="table" class="table table-striped text-nowrap">
                                         <thead>
@@ -74,101 +71,101 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td rowspan="4">全网</td>
-                                                <td>线上注册用户</td>
-                                                <td id="ONLINE_USER"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>线下注册用户</td>
-                                                <td id="OFFLINE_USER"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>来自线上的首次购买用户</td>
-                                                <td id="ONLINE_FP_USER"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>来自线下的首次购买用户</td>
-                                                <td id="OFFLINE_FP_USER"></td>
-                                            </tr>
+                                        <tr>
+                                            <td rowspan="4" class="">全网</td>
+                                            <td>线上注册用户</td>
+                                            <td id="ONLINE_USER"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>线下注册用户</td>
+                                            <td id="OFFLINE_USER"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>来自线上的首次购买用户</td>
+                                            <td id="ONLINE_FP_USER"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>来自线下的首次购买用户</td>
+                                            <td id="OFFLINE_FP_USER"></td>
+                                        </tr>
 
-                                            <tr>
-                                               <td rowspan="19">订单情况</td>
-                                                <td>当前周期销售额(元)</td>
-                                                <td id="CURENTTOTAL"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>正常订单金额(元)</td>
-                                                <td id="CURENTTOTAL_G"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>特卖(元)</td>
-                                                <td id="CANCOUNT"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>内购(元)</td>
-                                                <td id="YESCOUNT"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>团购(元)</td>
-                                                <td id="INNERCOUNT"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>一线体验(元)</td>
-                                                <td id="TIYANCOUNT"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>电子券(元)</td>
-                                                <td id="TICKETCOUNT"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>去年同期销售金额（元）</td>
-                                                <td id="PRETOTALGMV"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>去年同期正常销售金额(元)</td>
-                                                <td id="PRETOTALGMV_G"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>总销售额同比(%)</td>
-                                                <td id="GMV_GROWTH"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>正常订单金额同比(%)</td>
-                                                <td id="GMV_GROWTH_G"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>无线占比(%)</td>
-                                                <td id="WIRELESS_PCT"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>订单数(笔)</td>
-                                                <td id="ORDERCOUNT"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>笔单价(元)</td>
-                                                <td id="PRICE"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>件数(件)</td>
-                                                <td id="SUM_QUANTITY"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>件单价(元)</td>
-                                                <td id="PPRICE"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>吊牌价(元)</td>
-                                                <td id="MKT_PRICE"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>卖出价(元)</td>
-                                                <td id="SALES_PRICE"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>折扣率(%)</td>
-                                                <td id="DISCOUNT"></td>
-                                            </tr>
+                                        <tr>
+                                            <td rowspan="19">订单情况</td>
+                                            <td>当前周期销售额(元)</td>
+                                            <td id="CURENTTOTAL"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>正常订单金额(元)</td>
+                                            <td id="CURENTTOTAL_G"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>特卖(元)</td>
+                                            <td id="CANCOUNT"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>内购(元)</td>
+                                            <td id="YESCOUNT"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>团购(元)</td>
+                                            <td id="INNERCOUNT"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>一线体验(元)</td>
+                                            <td id="TIYANCOUNT"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>电子券(元)</td>
+                                            <td id="TICKETCOUNT"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>去年同期销售金额（元）</td>
+                                            <td id="PRETOTALGMV"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>去年同期正常销售金额(元)</td>
+                                            <td id="PRETOTALGMV_G"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>总销售额同比(%)</td>
+                                            <td id="GMV_GROWTH"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>正常订单金额同比(%)</td>
+                                            <td id="GMV_GROWTH_G"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>无线占比(%)</td>
+                                            <td id="WIRELESS_PCT"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>订单数(笔)</td>
+                                            <td id="ORDERCOUNT"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>笔单价(元)</td>
+                                            <td id="PRICE"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>件数(件)</td>
+                                            <td id="SUM_QUANTITY"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>件单价(元)</td>
+                                            <td id="PPRICE"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>吊牌价(元)</td>
+                                            <td id="MKT_PRICE"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>卖出价(元)</td>
+                                            <td id="SALES_PRICE"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>折扣率(%)</td>
+                                            <td id="DISCOUNT"></td>
+                                        </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -181,8 +178,6 @@
     </div>
 </div>
 
-<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
 <!--日期选择插件-->
 <script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>

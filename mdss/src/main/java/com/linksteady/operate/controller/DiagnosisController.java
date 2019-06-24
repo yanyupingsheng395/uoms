@@ -38,8 +38,8 @@ public class DiagnosisController {
     public Map<String, Object> list(@RequestBody QueryRequest request) {
         Map<String, Object> result = new HashMap<>(16);
         PageHelper.startPage(request.getPageNum(), request.getPageSize());
-        List<Diag> diagList = diagService.getRows((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize());
-        Long total = diagService.getTotalCount();
+        List<Diag> diagList = diagService.getRows((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(), request.getParam().get("diagName"));
+        Long total = diagService.getTotalCount(request.getParam().get("diagName"));
         result.put("rows", diagList);
         result.put("total", total);
         return result;

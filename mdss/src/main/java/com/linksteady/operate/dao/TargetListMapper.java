@@ -12,11 +12,11 @@ import java.util.Map;
 public interface TargetListMapper extends MyMapper<TargetInfo> {
     Long save(@Param("target") TargetInfo target);
 
-    List<Map<String, Object>> getPageList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("userId") String userId);
+    List<Map<String, Object>> getPageList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("userId") String userId, @Param("tgtName") String tgtName);
 
     int getTotalCount();
 
-    int getTotalCountByUsername(@Param("username") String username);
+    int getTotalCountByUsername(@Param("username") String username, @Param("targetName") String targetName);
 
     Map<String, Object> getDataById(Long id);
 

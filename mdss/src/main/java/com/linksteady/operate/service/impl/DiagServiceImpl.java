@@ -38,9 +38,9 @@ public class DiagServiceImpl implements DiagService {
      * @return
      */
     @Override
-    public List<Diag> getRows(int startRow, int endRow) {
+    public List<Diag> getRows(int startRow, int endRow, String diagName) {
         String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
-        return diagMapper.getList(startRow, endRow, username);
+        return diagMapper.getList(startRow, endRow, username, diagName);
     }
 
     /**
@@ -48,9 +48,9 @@ public class DiagServiceImpl implements DiagService {
      * @return
      */
     @Override
-    public Long getTotalCount() {
+    public Long getTotalCount(String diagName) {
         String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
-        return diagMapper.getTotalCount(username);
+        return diagMapper.getTotalCount(username, diagName);
     }
 
     /**
@@ -108,9 +108,10 @@ public class DiagServiceImpl implements DiagService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteById(String id) {
-        diagMapper.deleteById(id);
-        diagDetailMapper.deleteByDiagId(id);
-        diagConditionMapper.deleteByDiagId(id);
+        List<String> ids = Arrays.asList(id.split(","));
+        diagMapper.deleteById(ids);
+        diagDetailMapper.deleteByDiagId(ids);
+        diagConditionMapper.deleteByDiagId(ids);
     }
 
     /**

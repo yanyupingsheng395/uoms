@@ -446,3 +446,8 @@ function tab3DataInit() {
     };
     $('#dataTable').bootstrapTable('destroy').bootstrapTable(settings);
 }
+
+function resetCatList() {
+    $("#startDt").val('');
+    $("#endDt").val('');
+}

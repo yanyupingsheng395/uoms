@@ -20,9 +20,9 @@ public interface OpService {
      List<Map<String,Object>> getOpDayDetailAllList(String daywid);
 
 
-     List<Map<String,Object>> getPeriodHeaderList(int startRow, int endRow);
+     List<Map<String,Object>> getPeriodHeaderList(int startRow, int endRow, String taskName);
 
-     int getPeriodListCount();
+     int getPeriodListCount(String taskName);
 
      void savePeriodHeaderInfo(String periodName,String startDt,String endDt);
 

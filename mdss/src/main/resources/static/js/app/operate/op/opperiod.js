@@ -26,7 +26,8 @@ $(function () {
         queryParams: function (params) {
             return {
                 pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit )+ 1  //页码
+                pageNum: (params.offset / params.limit )+ 1,  //页码
+                param: {taskName: $("input[name='taskName']").val()}
             };
         },
         columns: [{
@@ -491,5 +492,14 @@ var piece_price_option = {
 
 function vieweffect() {
     //$("#effect_modal").modal('show');
-    toastr.warning("尚未触达，暂无效果统计！");
+    $MB.n_warning("尚未触达，暂无效果统计！");
+}
+
+function searchOpPeriod() {
+    $MB.refreshTable('periodTable');
+}
+
+function resetOpPeriod() {
+    $("input[name='taskName']").val("");
+    $MB.refreshTable('periodTable')
 }

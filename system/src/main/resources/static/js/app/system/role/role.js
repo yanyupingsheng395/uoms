@@ -50,8 +50,8 @@ function deleteRoles() {
     }
 
     $MB.confirm({
-        text: "删除选中角色将导致该角色对应账户失去相应的权限，确定删除？",
-        confirmButtonText: "确定删除"
+        title: "提示：",
+        content: "删除选中角色将导致该角色对应账户失去相应的权限，确定删除？"
     }, function () {
         $.post(ctx + 'role/delete', {"ids": ids}, function (r) {
             if (r.code === 200) {

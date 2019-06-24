@@ -40,97 +40,70 @@
         <div data-th-include="common/header"></div>
         <!-- 页面主要内容 -->
         <main class="lyear-layout-content">
-            <div class="container-fluid">
+            <div class="container-div ui-layout-center">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>设定原因探究</h4>
-                            </div>
-                            <div class="card-body">
-                                <!--维护基本信息-->
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5>现象</h5>
-                                        <form class="form-horizontal" style="border:solid 1px #ccc;">
-                                            <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label" for="zhibiao">选择指标：</label>
-                                                <div class="col-md-5 input-group">
-                                                    <select class="selectpicker" id="zhibiao" name="zhibiao" size="1">
-                                                        <option value="0">请选择</option>
-                                                    </select>
-                                                </div>
+                    <div class="col-lg-12 select-table table-striped">
+                        <div class="col-md-12">
+                            <h5 class="modal-title pull-left" style="margin-top: 20px;">设定原因探究</h5>
+                        </div>
+                        <div class="col-md-12">
+                            <hr class="hr"/>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form class="form-horizontal">
+                                        <div class="form-group mg-stop">
+                                            <label class="col-md-3 control-label" for="zhibiao">选择指标：</label>
+                                            <div class="col-md-5 input-group">
+                                                <select class="selectpicker" id="zhibiao" name="zhibiao" size="1">
+                                                    <option value="0">请选择</option>
+                                                </select>
                                             </div>
-                                            <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label">已选择的维度及其值：</label>
-                                                <div class="col-md-5">
-                                                    <button class="btn btn-primary" type="button"  onclick="selectDim()">选择</button>
-                                                </div>
+                                        </div>
+                                        <div class="form-group mg-stop">
+                                            <label class="col-md-3 control-label">维度及值：</label>
+                                            <div class="col-md-5 input-group">
+                                                <button class="btn btn-primary" type="button"  onclick="selectDim()">选择</button>
                                             </div>
+                                        </div>
 
-                                            <div class="form-group">
-                                                <label class="col-md-3 control-label"></label>
-                                                <div class="col-md-5" style="padding-left:0px">
-                                                    <ul class="list-group" id="dimlist" style="margin:0px;">
-                                                        <!--<li class="list-group-item"><input  class="col-xs-11 dimDispaly" value="维度 : 新/用户 - 值:新|旧" style="border:0px" disabled="true" maxlength="150"/><input type="hidden" class="dimKey" value="neworold"/><input type="hidden" class="dimValues" value="new|old" /><span class="mdi mdi-delete" style="color: #006cfa;"></span></li>-->
-                                                        <!--<li class="list-group-item"><input  class="col-xs-11 dimDispaly" value="维度 : 来源 - 值:线上" style="border:0px" disabled="true" maxlength="150"/><input type="hidden" class="dimKey" value="source"/><input type="hidden" class="dimValues" value="online" /><span class="mdi mdi-delete" style="color: #006cfa;"></span></li>-->
-                                                    </ul>
-                                                </div>
+                                        <div class="form-group">
+                                            <label class="col-md-3 control-label"></label>
+                                            <div class="col-md-5" style="padding-left:0px">
+                                                <ul class="list-group" id="dimlist" style="margin:0px;">
+                                                </ul>
                                             </div>
-                                            <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label" for="period">时间粒度：</label>
-                                                <div class="col-md-5 input-group">
-                                                    <select class="selectpicker" id="period" name="period" size="1">
-                                                        <option value="D">天</option>
-                                                        <option value="M">月</option>
-                                                    </select>
-                                                </div>
+                                        </div>
+                                        <div class="form-group mg-stop">
+                                            <label class="col-md-3 control-label" for="period">时间粒度：</label>
+                                            <div class="col-md-5 input-group">
+                                                <select class="selectpicker" id="period" name="period" size="1">
+                                                    <option value="D">天</option>
+                                                    <option value="M">月</option>
+                                                </select>
                                             </div>
-                                            <div class="form-group mg-stop">
-                                                <label class="col-md-3 control-label">发生时间区间：</label>
-                                                <div class="input-group col-md-5" id="date_begin_end">
-                                                    <input class="form-control js-datepicker" data-date-format="yyyy-mm-dd" type="text" id="start_dt" name="start_dt" placeholder="从">
-                                                    <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
-                                                    <input class="form-control js-datepicker" data-date-format="yyyy-mm-dd" type="text" id="end_dt" name="end_dt" placeholder="至">
-                                                </div>
+                                        </div>
+                                        <div class="form-group mg-stop">
+                                            <label class="col-md-3 control-label">发生时间区间：</label>
+                                            <div class="input-group col-md-5" id="date_begin_end">
+                                                <input class="form-control js-datepicker" data-date-format="yyyy-mm-dd" type="text" id="start_dt" name="start_dt" placeholder="从">
+                                                <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
+                                                <input class="form-control js-datepicker" data-date-format="yyyy-mm-dd" type="text" id="end_dt" name="end_dt" placeholder="至">
                                             </div>
-                                        </form>
-                                    </div>
-
+                                        </div>
+                                    </form>
                                 </div>
-
-                                <!--选择模板-->
-                                <!--<div class="row" style="margin-top: 20px;">-->
-                                    <!--<div class="col-md-12">-->
-                                        <!--<h5>探究模板&nbsp;&nbsp;<a href="#"  data-toggle="modal" data-targetinfo="#template_desc_modal">模板说明</a><span class="mdi mdi-help-circle"></span></h5>-->
-
-                                        <!--<form class="form-horizontal" style="border:solid 1px #ccc;">-->
-                                            <!--<div class="form-group mg-stop">-->
-                                                <!--<label class="col-md-3 control-label">选择探究模板：</label>-->
-                                                <!--<div class="col-md-5 input-group">-->
-                                                    <!--<div class="example-box" id="template_select">-->
-                                                        <!--<label class="lyear-checkbox checkbox-inline checkbox-primary">-->
-                                                            <!--<input type="checkbox" value="A" class="tjmb"><span>4P方法论</span>-->
-                                                        <!--</label>-->
-                                                        <!--<label class="lyear-checkbox checkbox-inline checkbox-primary">-->
-                                                            <!--<input type="checkbox" value="B"  class="tjmb"><span>其它方法论</span>-->
-                                                        <!--</label>-->
-                                                    <!--</div>-->
-                                                <!--</div>-->
-                                            <!--</div>-->
-                                        <!--</form>-->
-                                    <!--</div>-->
-                                <!--</div>-->
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!--按钮-->
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <a class="btn btn-primary" type="button" id="submitAnalysis"><span class="mdi mdi-calculator"></span>提交分析</a>
-                        <a class="btn btn-default" href="/reason/gotoIndex"><span class="mdi mdi-reply"></span>放&nbsp;&nbsp;&nbsp;&nbsp;弃</a>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <a class="btn btn-primary btn-sm" type="button" id="submitAnalysis"><span class="mdi mdi-calculator"></span>提交分析</a>
+                                    <a class="btn btn-secondary btn-sm" href="/page/reason"><span class="mdi mdi-reply"></span>放&nbsp;&nbsp;&nbsp;&nbsp;弃</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

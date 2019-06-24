@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/page")
 public class PageController extends BaseController {
 
     @Autowired
@@ -30,51 +30,13 @@ public class PageController extends BaseController {
 
     @Autowired
     DozerBeanMapper dozerBeanMapper;
-    /**
-     * 当前系统简称
-     */
-    @Value("${app.name}")
-    private String appname;
-
-    /**
-     * 当前版本
-     */
-    @Value("${app.version}")
-    private String version;
-
-    /**
-     * 当前系统中文名称
-     */
-    @Value("${app.description}")
-    private String appdesc;
-
-    /**
-     * 当前spring boot的版本
-     */
-    @Value("${app.spring-boot-version}")
-    private String bootversion;
-
-    /**
-     * 打包时间
-     */
-    @Value("${app.build.time}")
-    private String buildTime;
-
-    @RequestMapping("/index")
-    public String index(Model model) {
-        // 登录成后，即可通过 Subject 获取登录的用户信息
-        User user = super.getCurrentUser();
-        model.addAttribute("user", user);
-        model.addAttribute("version", version);
-        return "index";
-    }
 
     /**
      * 目标设定与分解
      * @return
      */
     @Log("目标设定与分解")
-    @RequestMapping("/page/target")
+    @RequestMapping("/target")
     public String target() {
         return "operate/targetinfo/index";
     }
@@ -83,7 +45,7 @@ public class PageController extends BaseController {
      * 目标设定与分解
      */
     @Log("目标设定与分解-新增")
-    @RequestMapping("/page/target/add")
+    @RequestMapping("/target/add")
     public String add() {
         return "operate/targetinfo/add";
     }
@@ -92,38 +54,52 @@ public class PageController extends BaseController {
      * 指标异常监控
      */
     @Log("指标异常监控")
-    @RequestMapping("/page/coreindicators")
+    @RequestMapping("/coreindicators")
     public String coreIndicatorsMonth() {
         return "operate/coreIndicators/index";
     }
 
     @Log("寻找关键问题")
-    @RequestMapping("/page/diagnosis/list")
+    @RequestMapping("/diagnosis")
     public String diagnosis() {
         return "operate/diagnosis/list";
     }
 
     @Log("目标设定与分解-新增")
-    @RequestMapping("/page/diagnosis/add")
+    @RequestMapping("/diagnosis/add")
     public String diagnosisAdd() {
         return "operate/diagnosis/add";
     }
 
     @Log("目标设定与分解-查看")
-    @RequestMapping("/page/diagnosis/view")
+    @RequestMapping("/diagnosis/view")
     public String diagnosisView(Model model, @RequestParam("id") String id) {
         model.addAttribute("id", id);
         return "operate/diagnosis/view";
     }
 
+    /**
+     * 诊断编辑页面
+     * @param id
+     * @param model
+     * @return
+     */
+    @RequestMapping("/diagnosis/edit")
+    public String diagEdit(@RequestParam("id") String id, Model model) {
+        Map<String, Object> diag = diagService.geDiagInfoById(id);
+        model.addAttribute("diag", diag);
+        model.addAttribute("id", id);
+        return "operate/diagnosis/edit";
+    }
+
     @Log("运营指标监控")
-    @RequestMapping("/page/kpimonitor")
+    @RequestMapping("/kpimonitor")
     public String kpiMonitor() {
         return "operate/kpimonitor/index";
     }
 
     @Log("寻找关键原因")
-    @RequestMapping("/reason/gotoIndex")
+    @RequestMapping("/reason")
     public String reasonIndex() {
         return "operate/reason/reasonlist";
     }
@@ -142,7 +118,7 @@ public class PageController extends BaseController {
     }
 
     @Log("寻找关键原因-查看效果跟踪")
-    @RequestMapping("/reason/reasonResultTrace")
+    @RequestMapping("/reasonResultTrace")
     public String reasonResultTrace() {
         return "operate/reason/reasonResultTrace";
     }
@@ -209,20 +185,6 @@ public class PageController extends BaseController {
         return "operate/targetinfo/detail";
     }
 
-    /**
-     * 诊断编辑页面
-     * @param id
-     * @param model
-     * @return
-     */
-    @RequestMapping("/diag/edit")
-    public String diagEdit(@RequestParam("id") String id, Model model) {
-        Map<String, Object> diag = diagService.geDiagInfoById(id);
-        model.addAttribute("diag", diag);
-        model.addAttribute("id", id);
-        return "operate/diagnosis/edit";
-    }
-
     @RequestMapping("/operator/user")
     public String userOperator() {
         return "operate/useroperator/monitor";
@@ -256,33 +218,5 @@ public class PageController extends BaseController {
     @RequestMapping("/report/userDailyReport")
     public String userDailyReport() {
         return "operate/report/userDailyReport";
-    }
-
-    @RequestMapping("/sysinfo")
-    @ResponseBody
-    public ResponseBo getSysInfo() {
-        String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
-        Map result= Maps.newHashMap();
-        result.put("appname",appname);
-        result.put("version",version);
-        result.put("appdesc",appdesc);
-        result.put("buildtime",buildTime);
-        result.put("bootversion",bootversion);
-        result.put("currentUser",username);
-        return ResponseBo.okWithData("",result);
-    }
-
-    @RequestMapping("/getSysIdFromSession")
-    @ResponseBody
-    public ResponseBo getSysIdFromSession(HttpServletRequest request) {
-        String sysId = String.valueOf(request.getSession().getAttribute("sysId"));
-        return ResponseBo.okWithData(null, sysId);
-    }
-
-    @RequestMapping("/setSysIdToSession")
-    @ResponseBody
-    public ResponseBo setSysIdToSession(HttpServletRequest request, @RequestParam("sysId") String sysId) {
-        request.getSession().setAttribute("sysId", sysId);
-        return ResponseBo.ok();
     }
 }

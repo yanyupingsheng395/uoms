@@ -40,7 +40,6 @@ function  initSourceList() {
                 code += "<option value='" + k + "'>" + v + "</option>";
             });
             $("#source").html("").html(code);
-            $("#source").selectpicker('refresh');
         }
     });
 }
@@ -72,11 +71,12 @@ function queryReport() {
     // //填充数据
     $.getJSON("/report/getBrandReportData?startDt="+startDt+"&endDt="+endDt+"&source="+source, function (resp) {
         if (resp.code == 200) {
-            $('#brandbody').html('');
+            var code = "";
             $.each(resp.data, function(i, val) {
-                $('#brandbody').append( "<tr> <td>"+val.BRAND_NAME+"</td> <td>"+val.BRAND_FEE+"</td> <td>"+val.BRAND_PCT+"</td> </tr>");
+                code += "<tr> <td>"+val.BRAND_NAME+"</td> <td>"+val.BRAND_FEE+"</td> <td>"+val.BRAND_PCT+"</td> </tr>";
             });
-
+            if(code == "") code = "<tr><td class='text-center' colspan='3'>没有找到匹配的记录</td></tr>";
+            $('#brandbody').html('').append(code);
         }
     });
 }

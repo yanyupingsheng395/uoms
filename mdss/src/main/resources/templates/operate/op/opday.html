@@ -28,53 +28,54 @@
         <div data-th-include="common/header"></div>
         <!-- 页面主要内容 -->
         <main class="lyear-layout-content">
-            <div class="container-fluid">
+            <div class="container-div ui-layout-center">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>每日运营</h4>
+                    <div class="col-sm-12 search-collapse">
+                        <form id="user-form">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        触达日期：<input type="text" name="touchDate" id="touchDate" class="js-datepicker"/>
+                                    </li>
+                                    <li>
+                                        <label class="lyear-radio radio-primary m-l-10">
+                                            <input type="radio" checked="" name="merge" value="RECOM_SPU">
+                                            <span>按推荐品类合并显示</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label class="lyear-radio radio-primary m-l-10">
+                                            <input type="radio"  name="merge" value="REFER_DENO">
+                                            <span>按优惠面额合并显示</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="btn_query"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetOpday()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-lg-12 "  style="margin-bottom: 5px;">
-                                        <form class="form-inline">
-                                            <div class="form-group">
-                                                <label class="control-label" for="touchDate">触达日期：</label>
-                                                <div class="input-group">
-                                                    <input class="col-md-7 form-control js-datepicker m-b-10"  type="text" id="touchDate" name="touchDate" data-date-format="yyyy-mm-dd" />
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="lyear-radio radio-primary m-l-10">
-                                                    <input type="radio" checked="" name="merge" value="RECOM_SPU">
-                                                    <span>按推荐品类合并显示</span>
-                                                </label>
-                                            </div>
-                                            <div  class="form-group">
-                                                <label class="lyear-radio radio-primary m-l-10">
-                                                    <input type="radio"  name="merge" value="REFER_DENO">
-                                                    <span>按优惠面额合并显示</span>
-                                                </label>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <a class="btn btn-primary m-r-5"  style="margin-left: 20px;"  type="button" id="btn_query"><i class="mdi mdi-magnify"></i>查询</a>
-                                                <a class="btn btn-primary m-r-5"   type="button" id="btn_downLoad"><i class="mdi mdi-download"></i>下载</a>
-                                                <a class="btn btn-primary m-r-5"   type="button" id="btn_statistics"><i class="mdi mdi-chart-bar"></i>统计</a>
-                                                <a class="btn btn-primary m-r-5"   type="button" id="btn_effect"><i class="mdi mdi-google-analytics"></i>效果统计</a>
-                                            </div>
-
-                                        </form>
-                                    </div>
-                                    <div class="col-lg-12 "  style="margin-bottom: 15px;">
-                                       <span class="mdi mdi-bell" style="color:#77d2dc;font-size: 25px;"></span>&nbsp;&nbsp;<label id="cdrq">2019-04-07</label>共有<label id="cdrs">0</label>人需要运营!
-                                    </div>
+                        </form>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row" style="margin-top: 12px;">
+                            <div class="col-sm-12">
+                                <div class="btn-group-sm" id="toolbar" role="group">
+                                    <a class="btn btn-info" id="btn_downLoad">
+                                        <i class="fa fa-download"></i> 下载
+                                    </a>
+                                    <a class="btn btn-warning btn-view" id="btn_statistics">
+                                        <i class="fa fa-calculator"></i> 统计
+                                    </a>
+                                    <a class="btn btn-warning btn-del" id="btn_effect">
+                                        <i class="fa fa-calendar"></i> 效果统计
+                                    </a>
                                 </div>
-                                <div class="table-responsive">
-                                    <table id="opdayTable" class="table table-striped text-nowrap"></table>
-                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 12px;">
+                            <div class="col-sm-12">
+                                <table id="opdayTable" class="table  table-striped table-bordered text-nowrap"></table>
                             </div>
                         </div>
                     </div>

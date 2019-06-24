@@ -38,115 +38,115 @@
         <div data-th-include="common/header"></div>
         <!-- 页面主要内容 -->
         <main class="lyear-layout-content">
-            <div class="container-fluid">
+            <div class="container-div ui-layout-center">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>原因探究详情</h4>
-                            </div>
-                            <div class="card-body">
-                                <!--维护基本信息-->
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5>现象</h5>
-                                        <form class="form-horizontal" style="border:solid 1px #ccc;">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group mg-stop">
-                                                        <label class="col-md-3 control-label" for="reasonName">名称：</label>
-                                                        <div class="col-md-7 input-group">
-                                                            <input class="form-control" type="text" id="reasonName" name="reasonName" placeholder="" disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group mg-stop">
-                                                        <label class="col-md-3 control-label" for="source">来源：</label>
-                                                        <div class="col-md-7 input-group">
-                                                            <input class="form-control" type="text" id="source" name="source" placeholder="" disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group mg-stop">
-                                                        <label class="col-md-3 control-label" for="zhibiao">指标：</label>
-                                                        <div class="col-md-7 input-group">
-                                                            <input class="form-control" type="text" id="zhibiao" name="zhibiao" placeholder="" disabled>
-                                                        </div>
+                    <div class="col-lg-12 select-table table-striped">
+                        <div class="col-md-12">
+                            <h5 class="modal-title pull-left" style="margin-top: 20px;">原因探究详情</h5>
+                        </div>
+                        <div class="col-md-12">
+                            <hr class="hr"/>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>现象</h5>
+                                    <form class="form-horizontal" style="border:solid 1px #ccc;">
+                                        <div class="row" style="margin-top: 20px;">
+                                            <div class="col-md-6">
+                                                <div class="form-group mg-stop">
+                                                    <label class="col-md-3 control-label" for="reasonName">名称：</label>
+                                                    <div class="col-md-7 input-group">
+                                                        <input class="form-control" type="text" id="reasonName" name="reasonName" placeholder="" disabled>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group mg-stop">
-                                                        <label class="col-md-3 control-label">发生时间区间：</label>
-                                                        <div class="input-group col-md-7">
-                                                            <input class="form-control" type="text" id="start_dt" name="start_dt" disabled>
-                                                            <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
-                                                            <input class="form-control" type="text" id="end_dt" name="end_dt" disabled>
-                                                        </div>
+                                                <div class="form-group mg-stop">
+                                                    <label class="col-md-3 control-label" for="source">来源：</label>
+                                                    <div class="col-md-7 input-group">
+                                                        <input class="form-control" type="text" id="source" name="source" placeholder="" disabled>
                                                     </div>
-                                                    <div class="form-group mg-stop">
-                                                        <label class="col-md-3 control-label" for="period">时间粒度：</label>
-                                                        <div class="col-md-7 input-group">
-                                                            <input class="form-control" type="text" id="period" name="period" placeholder="" disabled>
-                                                        </div>
+                                                </div>
+                                                <div class="form-group mg-stop">
+                                                    <label class="col-md-3 control-label" for="zhibiao">指标：</label>
+                                                    <div class="col-md-7 input-group">
+                                                        <input class="form-control" type="text" id="zhibiao" name="zhibiao" placeholder="" disabled>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group" style="margin-top: 10px;">
-                                                        <label class="col-md-3 control-label">维度及其值：</label>
-                                                        <div class="col-md-9" style="padding-left:0px">
-                                                            <ul class="list-group" id="dimlist" style="margin-bottom: 7px !important;">
-                                                            </ul>
-                                                        </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group mg-stop">
+                                                    <label class="col-md-3 control-label">发生时间区间：</label>
+                                                    <div class="input-group col-md-7">
+                                                        <input class="form-control" type="text" id="start_dt" name="start_dt" disabled>
+                                                        <span class="input-group-addon"><i class="mdi mdi-chevron-right"></i></span>
+                                                        <input class="form-control" type="text" id="end_dt" name="end_dt" disabled>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mg-stop">
+                                                    <label class="col-md-3 control-label" for="period">时间粒度：</label>
+                                                    <div class="col-md-7 input-group">
+                                                        <input class="form-control" type="text" id="period" name="period" placeholder="" disabled>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                <!--选择模板-->
-                                <div class="row">
-                                    <div class="col-md-12 mg-stop">
-                                        <h5>原因初步识别</h5>
-                                        <form class="form-horizontal" style="border:solid 1px #ccc;">
-                                            <ul id="historyTabs" class="nav nav-tabs" role="tablist">
-                                                <li class="active"><a href="#prod"  data-toggle="tab">产品</a></li>
-                                                <li><a href="#chnl" data-toggle="tab">渠道</a></li>
-                                                <li><a href="#camp" data-toggle="tab">促销/活动</a></li>
-                                                <li><a href="#price" data-toggle="tab">价格</a></li>
-                                            </ul>
-                                            <div id="historyTabContent" class="tab-content">
-                                                <div class='tab-pane fade active in' id='prod'><table id='prodTable' class='table text-center'></table></div>
-                                                <div class='tab-pane fade' id='chnl'><table id='chnlTable' class='table text-center'></table></div>
-                                                <div class='tab-pane fade' id='camp'><table id='campTable' class='table text-center'></table></div>
-                                                <div class='tab-pane fade' id='price'><table id='priceTable' class='table text-center'></table></div>
-                                            </div>
-                                        </form>
-                                     </div>
-                                </div>
-
-                                <!--矩阵表格 -->
-                                <div class="row mg-stop">
-                                    <div class="col-md-12">
-                                        <h5>探究结果-各因子相关系数表</h5>
-                                        <div style="border:solid 1px #ccc;height: auto">
-                                            <div class="row" style="margin-top: 10px; margin-bottom: 10px;margin-right: 1px;">
-                                                <div class="col-md-12 text-right">
-                                                    <button class="btn btn-primary" onclick="submitData()"><i class="mdi mdi-plus"></i>行动评估</button>
-                                                </div>
-                                            </div>
-                                            <table class="table table-bordered" id="tableData" style="margin-bottom: 0px !important;">
-                                                <tr><td class="text-center">正在加载数据...</td></tr>
-                                            </table>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group" style="margin-top: 10px;">
+                                                    <label class="col-md-3 control-label">维度及其值：</label>
+                                                    <div class="col-md-9" style="padding-left:0px">
+                                                        <ul class="list-group" id="dimlist" style="margin-bottom: 7px !important;">
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!--选择模板-->
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-md-12 mg-stop">
+                                    <h5>原因初步识别</h5>
+                                    <form class="form-horizontal" style="border:solid 1px #ccc;">
+                                        <ul id="historyTabs" class="nav nav-tabs" role="tablist">
+                                            <li class="active"><a href="#prod"  data-toggle="tab">产品</a></li>
+                                            <li><a href="#chnl" data-toggle="tab">渠道</a></li>
+                                            <li><a href="#camp" data-toggle="tab">促销/活动</a></li>
+                                            <li><a href="#price" data-toggle="tab">价格</a></li>
+                                        </ul>
+                                        <div id="historyTabContent" class="tab-content">
+                                            <div class='tab-pane fade active in' id='prod'><table id='prodTable' class='table text-center'></table></div>
+                                            <div class='tab-pane fade' id='chnl'><table id='chnlTable' class='table text-center'></table></div>
+                                            <div class='tab-pane fade' id='camp'><table id='campTable' class='table text-center'></table></div>
+                                            <div class='tab-pane fade' id='price'><table id='priceTable' class='table text-center'></table></div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!--矩阵表格 -->
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-md-12">
+                                    <h5>探究结果-各因子相关系数表</h5>
+                                    <div style="border:solid 1px #ccc;height: auto">
+                                        <div class="row" style="margin-top: 10px; margin-bottom: 10px;margin-right: 1px;">
+                                            <div class="col-md-12 text-right">
+                                                <button class="btn btn-primary" onclick="submitData()"><i class="mdi mdi-plus"></i>行动评估</button>
+                                            </div>
+                                        </div>
+                                        <table class="table table-bordered" id="tableData" style="margin-bottom: 0px !important;">
+                                            <tr><td class="text-center">正在加载数据...</td></tr>
+                                        </table>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!--按钮-->
-                                <div class="row">
-                                    <div class="col-md-12 text-center mg-stop">
-                                        <a class="btn btn-default" href="/reason/gotoIndex"><span class="mdi mdi-reply"></span>返&nbsp;&nbsp;&nbsp;&nbsp;回</a>
-                                    </div>
+                            <!--按钮-->
+                            <div class="row" style="margin-top: 20px">
+                                <div class="col-md-12 text-center">
+                                    <a class="btn btn-secondary btn-sm" href="/page/reason"><span class="mdi mdi-redo-variant"></span>返&nbsp;&nbsp;&nbsp;&nbsp;回</a>
                                 </div>
                             </div>
                         </div>

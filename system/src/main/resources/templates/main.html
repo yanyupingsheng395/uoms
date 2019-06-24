@@ -72,6 +72,7 @@
     });
 
     function getSysInfo() {
+        $MB.loading('show');
         $.get("/system/findUserSystem", {}, function (r) {
             var code =  "";
             var i = 0;
@@ -97,6 +98,7 @@
 
             var username = r.msg.username;
             $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
+            $MB.loading('hide');
         });
     }
 

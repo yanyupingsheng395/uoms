@@ -1,15 +1,7 @@
+init_date('touchDate', 'yyyy-mm-dd', 2,2,2);
 $(function () {
-
-    $('#touchDate').datepicker({
-        format: 'yyyy-mm-dd',
-        language: "zh-CN",
-        todayHighlight: true,
-        autoclose: true
-    });
-
     $("#touchDate").datepicker("setDate", new Date());
     $('#cdrq').text($('#touchDate').val());
-
     //获取当日需要运营的总人数
     $.getJSON("/op/getOpDayHeadInfo?daywid="+$('#touchDate').val(), function (resp) {
         if (resp.code==200){
@@ -53,7 +45,7 @@ $(function () {
     });
 
     $("#btn_downLoad").on("click",function () {
-        toastr.warning("尚未触达，暂无效果统计！");
+        $MB.n_warning("尚未触达，暂无效果统计！");
     });
 
     // 统计图表
@@ -64,7 +56,7 @@ $(function () {
     // 效果统计表
     $("#btn_effect").on("click",function () {
         // $("#effect_modal").modal('show');
-        toastr.warning("尚未进行触达，无法查看效果统计。");
+        $MB.n_warning("尚未进行触达，无法查看效果统计。");
     });
 
 });
@@ -200,4 +192,9 @@ function mergeCells(data,fieldName,colspan)
         $("#opdayTable").bootstrapTable('mergeCells',{index:index, field:fieldName, colspan: colspan, rowspan: count});
         index += count;
     }
+}
+
+function resetOpday() {
+    $("#touchDate").val('');
+    $MB.refreshTable('opdayTable');
 }

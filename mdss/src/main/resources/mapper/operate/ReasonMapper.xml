@@ -36,7 +36,7 @@
     </resultMap>
 
     <select id="getReasonTotalCountByUserName" resultType="int">
-     select count(*) from UO_REASON_LIST where CREATE_BY = #{username}
+     select count(*) from UO_REASON_LIST where CREATE_BY = #{username} and reason_name = #{reasonName}
    </select>
 
     <select id="getReasonTotalCount" resultType="int">
@@ -61,7 +61,7 @@
          RL.PERIOD_TYPE,
          KL.KPI_NAME,
          RL.SOURCE
-    FROM UO_REASON_LIST RL,UO_KPI_LIST_CONFIG KL WHERE RL.KPI_CODE=KL.KPI_CODE(+) AND RL.CREATE_BY = #{username} ORDER BY CREATE_DT DESC) A  WHERE ROWNUM &lt;=#{endRow}
+    FROM UO_REASON_LIST RL,UO_KPI_LIST_CONFIG KL WHERE RL.KPI_CODE=KL.KPI_CODE(+) AND RL.CREATE_BY = #{username} AND RL.REASON_NAME like concat('%', concat(#{reasonName}, '%')) ORDER BY CREATE_DT DESC) A  WHERE ROWNUM &lt;=#{endRow}
     ) WHERE RN &gt;=#{startRow}
 
   </select>
@@ -121,19 +121,31 @@
     </insert>
 
     <delete id="deleteReasonDetail">
-        delete  from UO_REASON_DETAIL t where t.reason_id=#{reasonId}
+        delete  from UO_REASON_DETAIL t where t.reason_id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
     </delete>
 
     <delete id="deleteReasonKpisSnp">
-        delete from UO_REASON_KPIS_SNP t where t.reason_id=#{reasonId}
+        delete from UO_REASON_KPIS_SNP t where t.reason_id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
     </delete>
 
     <delete id="deleteReasonById">
-        delete from UO_REASON_LIST t where t.reason_id=#{reasonId}
+        delete from UO_REASON_LIST t where t.reason_id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
     </delete>
 
     <delete id="deleteReasonResultById">
-        delete from UO_REASON_RESULT where reason_id=#{reasonId}
+        delete from UO_REASON_RESULT where reason_id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
     </delete>
 
     <update id="updateProgressAndStatusById">
@@ -188,6 +200,9 @@
     </delete>
 
     <delete id="deleteReasonTrace">
-        delete UO_REASON_CONCERN  WHERE REASON_ID=#{reasonId}
+        delete UO_REASON_CONCERN  WHERE REASON_ID in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
     </delete>
 </mapper>

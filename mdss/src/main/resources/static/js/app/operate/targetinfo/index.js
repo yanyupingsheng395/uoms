@@ -11,7 +11,8 @@ $(function () {
         queryParams: function (params) {
             return {
                 pageSize: params.limit,
-                pageNum: (params.offset / params.limit) + 1
+                pageNum: (params.offset / params.limit) + 1,
+                param: {targetName: $("input[name='targetName']").val()}
             };
         },
         columns: [{
@@ -104,7 +105,7 @@ function viewTarget() {
         return;
     }
     var tgtId = selected[0]["ID"];
-    window.location.href = "/target/detail?id=" + tgtId;
+    window.location.href = "/page/target/detail?id=" + tgtId;
 }
 
 function deleteData(){
@@ -142,4 +143,13 @@ function delData(id) {
 
 function addTarget() {
     window.location.href = "/page/target/add";
+}
+
+function searchTarget() {
+    $MB.refreshTable("targetTable");
+}
+
+function resetTarget() {
+    $("input[name='targetName']").val("");
+    $('#targetTable').bootstrapTable('refresh');
 }

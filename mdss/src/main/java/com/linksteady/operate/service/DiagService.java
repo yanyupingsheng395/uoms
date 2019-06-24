@@ -9,9 +9,9 @@ import java.util.Map;
 
 public interface DiagService{
 
-    List<Diag> getRows(int startRow, int endRow);
+    List<Diag> getRows(int startRow, int endRow, String diagName);
 
-    Long getTotalCount();
+    Long getTotalCount(String diagName);
 
     Long save(Diag diag, List<DiagCondition> conditionList);
 

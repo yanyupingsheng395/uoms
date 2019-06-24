@@ -70,15 +70,15 @@ public class TargetListServiceImpl implements TargetListService {
     }
 
     @Override
-    public List<Map<String, Object>> getPageList(int startRow, int endRow) {
+    public List<Map<String, Object>> getPageList(int startRow, int endRow, String tgtName) {
         String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
-        return targetListMapper.getPageList(startRow, endRow, username);
+        return targetListMapper.getPageList(startRow, endRow, username, tgtName);
     }
 
     @Override
-    public int getTotalCount() {
+    public int getTotalCount(String targetName) {
         String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
-        return targetListMapper.getTotalCountByUsername(username);
+        return targetListMapper.getTotalCountByUsername(username, targetName);
     }
 
     @Override

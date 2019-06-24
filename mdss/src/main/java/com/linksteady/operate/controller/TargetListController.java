@@ -114,9 +114,9 @@ public class TargetListController {
      */
     @PostMapping(value = "/getPageList")
     public ResponseBo getPageList(@RequestBody QueryRequest request) {
-        List<Map<String, Object>> dataList = targetListService.getPageList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize());
+        List<Map<String, Object>> dataList = targetListService.getPageList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(), request.getParam().get("targetName"));
         List<Map<String, Object>> newDataList = targetDimensionService.getDataList(dataList);
-        int count = targetListService.getTotalCount();
+        int count = targetListService.getTotalCount(request.getParam().get("targetName"));
         return ResponseBo.okOverPaging(null, count, newDataList);
     }
 

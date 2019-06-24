@@ -318,13 +318,13 @@ function getDimensionList() {
             });
 
             if(code == "") {
-                toastr.warning("该目标没有维度和值！");
+                $MB.n_warning("该目标没有维度和值！");
             }else {
                 $("#dimensionVal").modal('show');
                 $("#dimensionList").html("").html(code);
             }
         });
     }else {
-        toastr.warning("请选择目标！");
+        $MB.n_warning("请选择目标！");
     }
 }

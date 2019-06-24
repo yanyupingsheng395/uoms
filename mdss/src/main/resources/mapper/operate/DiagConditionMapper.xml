@@ -35,6 +35,9 @@
   </select>
 
   <delete id="deleteByDiagId">
-    delete from UO_DIAG_CONDITION where DIAG_ID = #{diagId}
+    delete from UO_DIAG_CONDITION where DIAG_ID in
+    <foreach collection="list" item="item" open="(" close=")" separator=",">
+      #{item}
+    </foreach>
   </delete>
 </mapper>
