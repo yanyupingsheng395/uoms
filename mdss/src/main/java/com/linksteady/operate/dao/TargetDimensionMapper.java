@@ -14,4 +14,6 @@ public interface TargetDimensionMapper extends MyMapper<TargetDimension> {
     Long getIdFromDual();
 
     List<Map<String, Object>> getListByTgtId(Long id);
+
+    void deleteTgtDimensionById(@Param("ids") List<String> ids);
 }

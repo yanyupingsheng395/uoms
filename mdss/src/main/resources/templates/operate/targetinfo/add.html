@@ -11,12 +11,6 @@
     <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <!--时间选择插件-->
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
-    <!--日期选择插件-->
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.css}">
-    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
 </head>
 
@@ -31,101 +25,102 @@
         <div data-th-include="common/header"></div>
         <!-- 页面主要内容 -->
         <main class="lyear-layout-content">
-            <div class="container-fluid">
+            <div class="container-div ui-layout-center">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>设定新目标</h4>
+                    <div class="col-lg-12 select-table table-striped">
+                        <div class="col-md-12">
+                            <h5 class="modal-title pull-left" style="margin-top: 20px;">设定新目标</h5>
+                        </div>
+                        <div class="col-md-12">
+                            <hr class="hr"/>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="m-t-md" id="step1">
+                                <form class="form-horizontal" id="formData1">
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">名称：</label>
+                                        <div class="col-md-5">
+                                            <input type="text" name="name" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">目标周期：</label>
+                                        <div class="col-md-5">
+                                            <select id="targetPeriod" name="periodType" class="selectpicker form-control">
+                                                <option value="year">年</option>
+                                                <option value="month">月</option>
+                                                <option value="day">日</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label" id="dateLabel">目标周期：</label>
+                                        <div class="col-md-5">
+                                            <input type="text" name="startDt" class="form-control js-datepicker m-b-10" id="startDt"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="endDtDiv" hidden>
+                                        <label class="col-md-3 control-label">结束时间：</label>
+                                        <div class="col-md-5">
+                                            <input type="text" name="endDt" class="form-control js-datepicker m-b-10" id="endDt"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">指标：</label>
+                                        <div class="col-md-5">
+                                            <select name="kpiCode" id="targetKpi" class="selectpicker form-control"></select>
+                                            <input type="hidden" id="targetKpiTxt" name="targetKpiTxt">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">维度：</label>
+                                        <div class="col-md-5">
+                                            <button class="btn btn-primary btn-sm" type="button" onclick="btnSelect()"><i class="mdi mdi-tooltip-edit"></i>选择</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="conditions" hidden>
+                                        <label class="col-md-3 control-label">已选择：</label>
+                                        <div class="col-md-5">
+                                            <table class="table table-no-bordered text-left" id="dataTable"></table>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="card-body">
-                                <div class="m-t-md" id="step1">
-                                    <form class="form-horizontal" id="formData1">
-                                        <div class="form-group">
-                                            <label class="col-md-3 control-label">名称：</label>
-                                            <div class="col-md-5">
-                                                <input type="text" name="name" class="form-control"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-md-3 control-label">目标周期：</label>
-                                            <div class="col-md-5">
-                                                <select id="targetPeriod" name="periodType" class="selectpicker form-control">
-                                                    <option value="year">年</option>
-                                                    <option value="month">月</option>
-                                                    <option value="day">日</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-md-3 control-label" id="dateLabel">目标周期：</label>
-                                            <div class="col-md-5">
-                                                <input type="text" name="startDt" class="form-control js-datepicker m-b-10" id="startDt"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="endDtDiv" hidden>
-                                            <label class="col-md-3 control-label">结束时间：</label>
-                                            <div class="col-md-5">
-                                                <input type="text" name="endDt" class="form-control js-datepicker m-b-10" id="endDt"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-md-3 control-label">指标：</label>
-                                            <div class="col-md-5">
-                                                <select name="kpiCode" id="targetKpi" class="selectpicker form-control"></select>
-                                                <input type="hidden" id="targetKpiTxt" name="targetKpiTxt">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-md-3 control-label">维度：</label>
-                                            <div class="col-md-5">
-                                                <button class="btn btn-primary" type="button" onclick="btnSelect()">选择</button>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="conditions" hidden>
-                                            <label class="col-md-3 control-label">已选择：</label>
-                                            <div class="col-md-5">
-                                                <table class="table table-no-bordered text-left" id="dataTable"></table>
-                                            </div>
-                                        </div>
-                                    </form>
+                            <div class="m-t-md" id="step2">
+                                <div class="row">
+                                    <div class="col-md-6"><span class="h5">指标：</span><span id="_kpi"></span></div>
+                                    <div class="col-md-6"><span class="h5">时间：</span><span id="_tgtDate"></span></div>
                                 </div>
-                                <div class="m-t-md" id="step2">
-                                    <div class="row">
-                                        <div class="col-md-6"><span class="h5">指标：</span><span id="_kpi"></span></div>
-                                        <div class="col-md-6"><span class="h5">时间：</span><span id="_tgtDate"></span></div>
-                                    </div>
-                                    <div class="row" style="margin-top: 20px;">
-                                        <div class="col-md-12"><span class="h5">维度&值：</span></div>
-                                    </div>
-                                    <div class="row" style="margin-top: 20px;">
-                                        <div class="col-md-6">
-                                            <ol id="_dimensions"></ol>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="margin-top: 20px;">
-                                        <div class="col-md-12">
-                                            <p class="h5">目标参照：</p>
-                                            <table class="table table-bordered table-sm">
-                                                <thead><tr><th>周期</th><th>目标关键指标</th><th>同比</th><th>环比</th></tr></thead>
-                                                <tbody id="_reference"></tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="margin-top: 20px;">
-                                        <div class="col-md-4">
-                                            <span style="float: left; width: 70px; line-height: 34px;"><span class="h5">目标值：</span></span>
-                                            <form id="formData2">
-                                                <input name="targetVal" style="width:calc(100% - 70px);resize:none; float: left" class="form-control" placeholder="请输入目标值">
-                                            </form>
-                                        </div>
+                                <div class="row" style="margin-top: 20px;">
+                                    <div class="col-md-12"><span class="h5">维度&值：</span></div>
+                                </div>
+                                <div class="row" style="margin-top: 20px;">
+                                    <div class="col-md-6">
+                                        <ol id="_dimensions"></ol>
                                     </div>
                                 </div>
-                                <div class="row mg-stop">
-                                    <div class="col-md-12 text-right">
-                                        <button id="next" class="btn btn-primary" onclick="next(this)">下一步</button>
-                                        <a id="reback" class="btn btn-default" href="/page/target">返回</a>
+                                <div class="row" style="margin-top: 20px;">
+                                    <div class="col-md-12">
+                                        <p class="h5">目标参照：</p>
+                                        <table class="table table-bordered table-sm">
+                                            <thead><tr><th>周期</th><th>目标关键指标</th><th>同比</th><th>环比</th></tr></thead>
+                                            <tbody id="_reference"></tbody>
+                                        </table>
                                     </div>
+                                </div>
+                                <div class="row" style="margin-top: 20px;">
+                                    <div class="col-md-4">
+                                        <span style="float: left; width: 70px; line-height: 34px;"><span class="h5">目标值：</span></span>
+                                        <form id="formData2">
+                                            <input name="targetVal" style="width:calc(100% - 70px);resize:none; float: left" class="form-control" placeholder="请输入目标值">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mg-stop">
+                                <div class="col-md-12 text-right">
+                                    <button id="next" class="btn btn-primary btn-sm" onclick="next(this)"><i class="mdi mdi-arrow-right-bold"></i>下一步</button>
+                                    <a id="reback" class="btn btn-secondary btn-sm" href="/page/target"><i class="mdi mdi-redo-variant"></i>返回</a>
                                 </div>
                             </div>
                         </div>
@@ -167,15 +162,6 @@
         </form>
     </div>
 </div>
-<!--时间选择插件-->
-<script data-th-src="@{/plugins/bootstrap-datetimepicker/moment.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-datetimepicker/locale/zh-cn.js}"></script>
-<!--日期选择插件-->
-<script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
 <script data-th-src="@{/js/app/operate/targetinfo/add.js}"></script>
 </body>

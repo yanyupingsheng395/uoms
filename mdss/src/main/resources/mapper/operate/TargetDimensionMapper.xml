@@ -29,4 +29,11 @@
   <select id="getListByTgtId" resultType="map">
     select DIMENSION_CODE, DIMENSION_NAME, DIMENSION_VAL_NAME, DIMENSION_VAL_CODE from UO_TGT_DIMENSION where TGT_ID = #{id}
   </select>
+
+  <delete id="deleteTgtDimensionById">
+    DELETE FROM UO_TGT_DIMENSION where TGT_ID IN
+    <foreach collection="list" separator="," open="(" close=")" item="id">
+      #{id}
+    </foreach>
+  </delete>
 </mapper>

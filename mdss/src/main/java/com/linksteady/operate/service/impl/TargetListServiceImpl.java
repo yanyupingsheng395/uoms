@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.User;
 import com.linksteady.operate.dao.TargetDimensionMapper;
@@ -10,11 +11,13 @@ import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.domain.TgtDismant;
 import com.linksteady.operate.service.TargetListService;
 import com.linksteady.operate.vo.Echart;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -87,8 +90,12 @@ public class TargetListServiceImpl implements TargetListService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteDataById(String id) {
-        targetListMapper.updateTargetStatus(Long.valueOf(id), "-2");
+        List<String> ids = Arrays.asList(StringUtils.split(id,","));
+        targetListMapper.deleteTgtListById(ids);
+        tgtDismantMapper.deleteTgtDismantById(ids);
+        targetDimensionMapper.deleteTgtDimensionById(ids);
     }
 
     /**

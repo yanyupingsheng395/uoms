@@ -44,130 +44,131 @@
         <div data-th-include="common/header"></div>
         <!-- 页面主要内容 -->
         <main class="lyear-layout-content">
-            <div class="container-fluid">
+            <div class="container-div ui-layout-center">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>指标异常监控</h4>
+                    <div class="col-lg-12 select-table table-striped">
+                        <div class="col-md-12">
+                            <h5 class="modal-title pull-left" style="margin-top: 20px;">指标异常监控</h5>
+                        </div>
+                        <div class="col-md-12">
+                            <hr class="hr"/>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <span style="float: left; height: 34px; width: 80px; line-height: 34px;">监控目标：</span>
+                                    <select class="selectpicker" id="tgtList" style="width:calc(100% - 80px);resize:none; height: 34px; float: left"></select>
+                                </div>
+                                <div class="col-md-4">
+                                    <span style="float: left; height: 34px; width: 80px; line-height: 34px;">目标周期：</span>
+                                    <span id="tgtDate" style="width:calc(100% - 80px);resize:none; line-height: 34px; float: left">2019年</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <a style="line-height: 34px;text-decoration: underline;color: #4d5259;cursor: pointer;" onclick="getDimensionList()"><i class="mdi mdi-mouse"></i>指标维度&值</a></span>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <span style="float: left; height: 34px; width: 80px; line-height: 34px;">监控目标：</span>
-                                        <select class="selectpicker" id="tgtList" style="width:calc(100% - 80px);resize:none; height: 34px; float: left"></select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <span style="float: left; height: 34px; width: 80px; line-height: 34px;">目标周期：</span>
-                                        <span id="tgtDate" style="width:calc(100% - 80px);resize:none; line-height: 34px; float: left">2019年</span>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <a style="line-height: 34px;text-decoration: underline;color: #4d5259;cursor: pointer;" onclick="getDimensionList()"><i class="mdi mdi-mouse"></i>指标维度&值</a></span>
-                                    </div>
+                            <hr>
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-md-12">
+                                    <h5>目标完成状态及风险预警</h5>
                                 </div>
-                                <hr>
-                                <div class="row" style="margin-top: 10px;">
-                                    <div class="col-md-12">
-                                        <h5>目标完成状态及风险预警</h5>
-                                    </div>
-                                </div>
-                                <hr style="margin-top: 0px;margin-bottom: 5px;"/>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="card bg-light">
-                                            <div class="card-body clearfix" style="padding-bottom: 60px;">
-                                                <div class="row">
-                                                    <div class="col-md-12 text-center">
-                                                        <p class="h5 m-t-0"><i class="mdi mdi-coffee"></i>本周期目标</p>
-                                                        <p class="h3 m-b-0" id="targetVal">0.00元</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="card bg-light">
-                                            <div class="card-body clearfix">
-                                                <div class="row">
-                                                    <div class="col-md-12 text-center">
-                                                        <p class="h5 m-t-0"><i class="mdi mdi-coffee-to-go"></i>本周期实际完成</p>
-                                                        <p class="h3 m-b-0" id="actualVal">0.00元</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-5 text-center">
-                                                        <p class="h6" id="actualValRate">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>0.00%</span></p>
-                                                    </div>
-                                                    <div class="col-md-7 text-center">
-                                                        <p class="h6">去年同期:<span style="line-height: 30px;" id="actualValLast">0.00元</span></p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="card bg-light">
-                                            <div class="card-body clearfix" style="padding-bottom: 60px;">
-                                                <div class="row">
-                                                    <div class="col-md-12 text-center">
-                                                        <p class="h5 m-t-0"><i class="mdi mdi-percent"></i>本周期完成率</p>
-                                                        <p class="h3 m-b-0" id="finishRate">0.00%</p>
-                                                    </div>
+                            </div>
+                            <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body clearfix" style="padding-bottom: 60px;">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <p class="h5 m-t-0"><i class="mdi mdi-coffee"></i>本周期目标</p>
+                                                    <p class="h3 m-b-0" id="targetVal">0.00元</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div id="chart1" style="width:100%;height: 400px;"></div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="alert alert-info" role="alert">
-                                            <p>
-                                                <i class="mdi mdi-alert-circle-outline"></i>目标的完成度为<span id="finishRate2"></span>；尚有业绩<span id="remainTgt"></span>需要完成；已经过的时间尚有<span id="finishDiffer"></span>业绩缺口；没有完成目标的单位周期有<span id="remainCount"></span>个。
-                                                <!--，<a href="#" style="text-decoration: underline;color:#000;cursor: pointer;">详情</a>；-->
-                                            </p>
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body clearfix">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <p class="h5 m-t-0"><i class="mdi mdi-coffee-to-go"></i>本周期实际完成</p>
+                                                    <p class="h3 m-b-0" id="actualVal">0.00元</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-5 text-center">
+                                                    <p class="h6" id="actualValRate">同比<span style="color:green;"><i class="mdi mdi-menu-up mdi-18px"></i>0.00%</span></p>
+                                                </div>
+                                                <div class="col-md-7 text-center">
+                                                    <p class="h6">去年同期:<span style="line-height: 30px;" id="actualValLast">0.00元</span></p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5>指标对比监控</h5>
-                                        <hr style="margin-top: 0px;margin-bottom: 5px;"/>
-                                        <div id="chart2" style="height: 370px;"></div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body clearfix" style="padding-bottom: 60px;">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <p class="h5 m-t-0"><i class="mdi mdi-percent"></i>本周期完成率</p>
+                                                    <p class="h3 m-b-0" id="finishRate">0.00%</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5>指标趋势监控</h5>
-                                        <hr style="margin-top: 0px;margin-bottom: 5px;"/>
-                                        <div id="chart3" style="width:100%;height: 300px;"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="chart1" style="width:100%;height: 400px;"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="alert alert-success" role="alert">
+                                        <p>
+                                            <i class="mdi mdi-alert-circle-outline"></i>目标的完成度为<span id="finishRate2"></span>；尚有业绩<span id="remainTgt"></span>需要完成；已经过的时间尚有<span id="finishDiffer"></span>业绩缺口；没有完成目标的单位周期有<span id="remainCount"></span>个。
+                                            <!--，<a href="#" style="text-decoration: underline;color:#000;cursor: pointer;">详情</a>；-->
+                                        </p>
                                     </div>
                                 </div>
-                                <div class="row" style="margin-top: 20px;">
-                                    <div class="col-md-12">
-                                        <h5>指标波动监控</h5>
-                                        <hr style="margin-top: 0px;margin-bottom: 5px;"/>
-                                        <table class="table table-no-bordered">
-                                            <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th>本周期迄今为止</th>
-                                                <th>去年同期</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr>
-                                                <td>变异系数</td>
-                                                <td id="varyIdx">0.00</td>
-                                                <td id="varIdxLast">0.00</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>指标对比监控</h5>
+                                    <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                                    <div id="chart2" style="height: 370px;"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5>指标趋势监控</h5>
+                                    <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                                    <div id="chart3" style="width:100%;height: 300px;"></div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-md-12">
+                                    <h5>指标波动监控</h5>
+                                    <hr style="margin-top: 0px;margin-bottom: 5px;"/>
+                                    <table class="table table-no-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>本周期迄今为止</th>
+                                            <th>去年同期</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>变异系数</td>
+                                            <td id="varyIdx">0.00</td>
+                                            <td id="varIdxLast">0.00</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>

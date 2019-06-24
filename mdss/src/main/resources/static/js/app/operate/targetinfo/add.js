@@ -22,7 +22,7 @@ function next(dom) {
             }else {
                 $("#step1").attr("style", "display:none;");
                 $("#step2").attr("style", "display:block;");
-                $(dom).text("保存");
+                $(dom).html("").html("<i class='fa fa-save'></i>保存");
                 $(dom).attr("onclick", "saveTarget()");
                 $("#_tgtDate").html("").html($("input[name='startDt']").val());
                 step2Init();
@@ -124,7 +124,7 @@ function saveTarget() {
             type: 'POST',
             contentType: "application/json;charset=utf-8",
             success: function (r) {
-                toastr.success("保存成功！");
+                $MB.n_success("保存成功！");
                 setTimeout(function () {
                     location.href = "/page/target";
                 }, 1500)
@@ -293,7 +293,7 @@ function addDimension() {
     $("#dataTable").find("tr").each(function (k, v) {
         if($(this).find("td:eq(0)").text() == k_text + ":" + v_text) {
             flag = true;
-            toastr.warning("已有相同维度值在列表中！");
+            $MB.n_warning("已有相同维度值在列表中！");
         }
     });
 

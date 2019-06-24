@@ -852,3 +852,5 @@ label {
     top: 18px;
 }
 .fixed {position:absolute;left:0;bottom:0;}
+
+.hr {margin-top: 20px;}

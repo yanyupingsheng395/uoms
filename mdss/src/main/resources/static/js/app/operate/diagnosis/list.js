@@ -15,6 +15,8 @@ $(function () {
             };
         },
         columns: [{
+            checkbox: true
+        }, {
             field: 'diagName',
             title: '名称'
         }, {
@@ -55,12 +57,6 @@ $(function () {
         }, {
             field: 'createDt',
             title: '创建时间'
-        }, {
-            filed: '#',
-            title: '操作',
-            formatter: function (value, row, index) {
-                    return "<a class='btn btn-primary btn-sm' href='/page/diagnosis/view?id="+row.diagId+"'><i class='mdi mdi-eye'></i>查看</a>&nbsp;<div class='btn btn-warning btn-sm' onclick='editDiag("+row.diagId+")'><i class='mdi mdi-pencil'></i>编辑</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='deleteConfirm("+row.diagId+")'><i class='mdi mdi-window-close'></i>删除</div>";
-            }
         }],onLoadSuccess: function(data){
             $("a[data-toggle='tooltip']").tooltip();
         }
@@ -68,65 +64,68 @@ $(function () {
     $('#diagTable').bootstrapTable(settings);
 });
 
-function editDiag(diagId) {
-    location.href = "/diag/edit?id=" + diagId;
+function viewDiag() {
+    var selected = $("#diagTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要查看的诊断！');
+        return;
+    }
+    if (selected_length > 1) {
+        $MB.n_warning('一次只能查看一个诊断！');
+        return;
+    }
+    var id = selected[0]["diagId"];
+    window.location.href = "/page/diagnosis/view?id=" + id;
 }
 
-// function deleteConfirm(id) {
-//     $.confirm({
-//         title: '提示：',
-//         content: '确认删除这条记录？',
-//         type: 'orange',
-//         theme: 'bootstrap',
-//         buttons: {
-//             confirm: {
-//                 text: '确认',
-//                 btnClass: 'btn-danger',
-//                 action: function(){
-//                     deleteData(id);
-//                 }
-//             },
-//             cancel: {
-//                 text: '取消'
-//             }
-//         }
-//     });
-// }
+function editDiag() {
+    var selected = $("#diagTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要查看的诊断！');
+        return;
+    }
+    if (selected_length > 1) {
+        $MB.n_warning('一次只能编辑一个诊断！');
+        return;
+    }
+    var id = selected[0]["diagId"];
+    location.href = "/diag/edit?id=" + diagId;
+}
 
 /**
  * 删除确认
  * @param id
  */
-function deleteConfirm(id) {
-    $.confirm({
-        title: '提示：',
-        content: '确认删除该条记录？',
-        type: 'orange',
-        theme: 'bootstrap',
-        buttons: {
-            confirm: {
-                text: '确认',
-                btnClass: 'btn-danger',
-                action: function () {
-                    deleteData(id);
-                }
-            },
-            cancel: {
-                text: '取消'
-            }
-        }
+function deleteDiag() {
+    var selected = $("#diagTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要删除的诊断！');
+        return;
+    }
+
+    var ids = "";
+    for (var i = 0; i < selected_length; i++) {
+        ids += selected[i].diagId;
+        if (i !== (selected_length - 1)) ids += ",";
+    }
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定删除选中的诊断?"
+    }, function () {
+        delData(ids);
     });
 }
 
 function deleteData(id) {
     $.post("/diag/deleteById", {id: id}, function (r) {
         if(r.code == 200) {
-            toastr.success(r.msg);
+            $MB.n_success(r.msg);
         }else {
-            toastr.error(r.msg);
+            $MB.n_danger(r.msg);
         }
-        setTimeout(function () {
-            $('#diagTable').bootstrapTable('refresh');
-        }, 1500)
+        $('#diagTable').bootstrapTable('refresh');
     });
 }

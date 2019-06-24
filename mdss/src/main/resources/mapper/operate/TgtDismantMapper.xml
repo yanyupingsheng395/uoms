@@ -73,4 +73,11 @@
             where ID=#{item.id}
         </foreach>
     </update>
+
+    <delete id="deleteTgtDismantById">
+        DELETE FROM UO_TGT_DISMANT where TGT_ID IN
+        <foreach collection="list" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

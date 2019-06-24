@@ -141,4 +141,11 @@
     <select id="getAllRuningTarget"  resultMap="BaseResultMap">
       SELECT  * FROM UO_TGT_LIST WHERE STATUS='2'
     </select>
+
+    <delete id="deleteTgtListById">
+        DELETE FROM UO_TGT_LIST where ID IN
+        <foreach collection="list" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

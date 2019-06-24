@@ -21,4 +21,6 @@ public interface TgtDismantMapper extends MyMapper<TgtDismant> {
     List<TgtDismant>  getPastDismantInfo(@Param("targetId") long targetId);
 
     void updateGrowthRate(@Param(value = "growthRate")List<TgtDismant> list);
+
+    void deleteTgtDismantById(@Param("ids") List<String> ids);
 }

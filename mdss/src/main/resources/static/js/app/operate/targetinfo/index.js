@@ -15,6 +15,8 @@ $(function () {
             };
         },
         columns: [{
+            checkbox: true
+        }, {
             field: 'ID',
             title: 'ID',
             visible: false
@@ -57,22 +59,22 @@ $(function () {
             formatter: function (value, row, index) {
                 switch (value) {
                     case "0":
-                        return "<span class=\"label label-default\">待拆解</span>";
+                        return "<span class=\"badge label-default\">待拆解</span>";
                         break;
                     case "1":
-                        return "<span class=\"label label-primary\">拆解计算中</span>";
+                        return "<span class=\"badge label-primary\">拆解计算中</span>";
                         break;
                     case "2":
-                        return "<span class=\"label label-success\">执行中</span>";
+                        return "<span class=\"badge label-success\">执行中</span>";
                         break;
                     case "3":
-                        return "<span class=\"label label-success\">停止</span>";
+                        return "<span class=\"badge label-success\">停止</span>";
                         break;
                     case "4":
-                        return "<span class=\"label label-warning\">失效</span>";
+                        return "<span class=\"badge label-warning\">失效</span>";
                         break;
                     case "-1":
-                        return "<span class=\"label label-danger\">异常</span>";
+                        return "<span class=\"badge label-danger\">异常</span>";
                         break;
                     default:
                         return "-";
@@ -81,62 +83,48 @@ $(function () {
         },{
             field: 'CREATE_DT',
             title: '创建时间'
-        },{
-            title: '操作',
-            formatter: function (values, row,index) {
-                var res = "";
-                switch (row['STATUS']) {
-                    case "1":
-                        res =  "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>";
-                        break;
-                    case "2":
-                        res =  "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
-                        break;
-                    case "3":
-                        res =  "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
-                        break;
-                    case "4":
-                        res =  "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
-                        break;
-                    case "-1":
-                        res =  "<a class='btn btn-primary btn-sm' href='/target/detail?id="+row.ID+"'><i class='mdi mdi-eye'></i>目标详情</a>&nbsp;&nbsp;<a class='btn btn-danger btn-sm' onclick='deleteDatas("+row.ID+")'><i class='mdi mdi-close'></i>删除</a>";
-                        break;
-                    default:
-                        res =  "-";
-                        break;
-                }
-                return res;
-            }
         }],
         onLoadSuccess: function(data){
             $("a[data-toggle='tooltip']").tooltip();
         }
     };
-    $('#targetTable').bootstrapTable(settings);
-
-    //为刷新按钮绑定事件
-    $("#btn_refresh").on("click",function () {
-        $('#targetTable').bootstrapTable('refresh');
-    });
+    $MB.initTable('targetTable', settings);
 });
-function deleteDatas(id){
-    $.confirm({
-        title: '提示',
-        content: '确认删除这条记录？',
-        theme: 'bootstrap',
-        type: 'orange',
-        buttons: {
-            confirm: {
-                text: '确认',
-                btnClass: 'btn-blue',
-                action: function() {
-                    delData(id);
-                }
-            },
-            cancel: {
-                text: '取消'
-            }
-        }
+
+// 查看目标
+function viewTarget() {
+    var selected = $("#targetTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要查看的目标！');
+        return;
+    }
+    if (selected_length > 1) {
+        $MB.n_warning('一次只能查看一个目标！');
+        return;
+    }
+    var tgtId = selected[0]["ID"];
+    window.location.href = "/target/detail?id=" + tgtId;
+}
+
+function deleteData(){
+    var selected = $("#targetTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要删除的目标！');
+        return;
+    }
+
+    var ids = "";
+    for (var i = 0; i < selected_length; i++) {
+        ids += selected[i].ID;
+        if (i !== (selected_length - 1)) ids += ",";
+    }
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定删除选中的目标?"
+    }, function () {
+        delData(ids);
     });
 }
 
@@ -144,40 +132,14 @@ function deleteDatas(id){
 function delData(id) {
     $.get("/target/deleteDataById", {id: id}, function (r) {
         if(r.code == 200) {
-            toastr.success("删除成功！");
+            $MB.n_success("删除成功！");
             $('#targetTable').bootstrapTable('refresh');
         }else {
-            toastr.error("未知异常！");
+            $MB.n_danger("未知异常！");
         }
     });
 }
 
-function deleteData(year){
-    $.confirm({
-        title: '提示：',
-        content: '确认删除该记录？',
-        type: 'orange',
-        theme: 'bootstrap',
-        buttons: {
-            confirm: {
-                text: '确认',
-                btnClass: 'btn-danger',
-                action: function(){
-                    $.post("/target/deleteData", {year: year},function (r) {
-                        if(r.code == 200) {
-                            toastr.success('删除成功!');
-                        }else {
-                            toastr.error('删除失败!');
-                        }
-                        setTimeout(function () {
-                            $('#targetTable').bootstrapTable('refresh');
-                        }, 1000)
-                    });
-                }
-            },
-            cancel: {
-                text: '取消'
-            }
-        }
-    });
+function addTarget() {
+    window.location.href = "/page/target/add";
 }

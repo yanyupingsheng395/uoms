@@ -4,6 +4,7 @@ import com.linksteady.operate.config.MyMapper;
 import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.domain.TgtReference;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Delete;
 
 import java.util.List;
 import java.util.Map;
@@ -41,4 +42,5 @@ public interface TargetListMapper extends MyMapper<TargetInfo> {
      */
     List<TargetInfo> getAllRuningTarget();
 
+    void deleteTgtListById(@Param("ids") List<String> ids);
 }
