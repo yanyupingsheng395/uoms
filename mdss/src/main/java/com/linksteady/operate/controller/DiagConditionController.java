@@ -11,18 +11,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/diagcondition")
 public class DiagConditionController {
 
-    @Autowired
-    private DiagConditionService service;
-
-    @GetMapping("/redisCreate")
-    public ResponseBo redisCreate(@RequestParam("data") String data, @RequestParam("diagId") String diagId, @RequestParam("nodeId") String nodeId) throws Exception{
-        service.redisCreate(data, diagId, nodeId);
-        return null;
-    }
-
-    @GetMapping("/redisRead")
-    public String redisRead(@RequestParam("diagId") String diagId, @RequestParam("nodeId") String nodeId) throws Exception{
-        String result = service.redisRead(diagId, nodeId);
-        return result;
-    }
 }
