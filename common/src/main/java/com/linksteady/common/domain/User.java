@@ -1,5 +1,6 @@
 package com.linksteady.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -77,10 +78,20 @@ public class User implements Serializable {
 	private String roleName;
 
 	@Column(name = "EXPIRE_DATE")
+	@JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
 	private Date expireDate;
 
 	@Transient
 	private String expire;
+
+	@Column(name = "CREATE_BY")
+	private String createBy;
+
+	@Column(name = "UPDATE_BY")
+	private String updateBy;
+
+	@Column(name = "FIRSTLOGIN")
+	private String firstLogin;
 
 
 	@Override

@@ -11,7 +11,7 @@ public class SysLog implements Serializable {
 	private static final long serialVersionUID = -8878596941954995444L;
 
 	@Id
-	@GeneratedValue(generator = "JDBC")
+	@GeneratedValue(strategy = GenerationType.IDENTITY,generator="SELECT seq_t_log_id.NEXTVAL FROM dual")
 	@Column(name = "ID")
 	private Long id;
 

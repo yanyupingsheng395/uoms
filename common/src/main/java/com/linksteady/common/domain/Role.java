@@ -1,9 +1,6 @@
 package com.linksteady.common.domain;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -13,7 +10,7 @@ public class Role implements Serializable {
 	private static final long serialVersionUID = -1714476694755654924L;
 
 	@Id
-	@GeneratedValue(generator = "JDBC")
+	@GeneratedValue(strategy = GenerationType.IDENTITY,generator="SELECT seq_t_role_id.NEXTVAL FROM dual")
 	@Column(name = "ROLE_ID")
 	private Long roleId;
 

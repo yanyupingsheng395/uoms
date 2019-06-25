@@ -28,8 +28,8 @@ public class MD5Utils {
 				HASH_ITERATIONS).toHex();
 	}
 
-//	public static void main(String[] args) {
-//		System.out.println(MD5Utils.encrypt("trendy","trendy123"));
-//	}
+	public static void main(String[] args) {
+		System.out.println(MD5Utils.encrypt("admin","linksteady911"));
+	}
 
 }
