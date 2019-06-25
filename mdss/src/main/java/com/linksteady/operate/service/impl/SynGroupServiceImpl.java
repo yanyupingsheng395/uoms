@@ -14,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -23,6 +27,9 @@ import java.util.stream.Collectors;
  * @date 2019-06-15
  *
  * 同期群数据
+ *
+ * 如果数据在三角形内，但为NULL（即当月无数据）则置为0
+ * 如果数据在三角形外，则置为NULL
  */
 @Service
 public class SynGroupServiceImpl implements SynGroupService {
@@ -45,7 +52,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         TemplateResult templateResult = buildFromAndInfo(spuId);
         if(UomsConstants.PERIOD_TYPE_INTERVAL_MONTH.equals(period)) {
             List<Map<String, Object>> dataList = synGroupMapper.getRetentionDMonth(paramVO, templateResult);
-            return getDMonthData(dataList, true, false);
+            return getDMonthData(startDt, endDt, dataList, true, false);
         }
         if(UomsConstants.PERIOD_TYPE_NOMAL_MONTH.equals(period)) {
             //自然月数据
@@ -67,7 +74,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         TemplateResult templateResult = buildFromAndInfo(spuId);
         if(UomsConstants.PERIOD_TYPE_INTERVAL_MONTH.equals(paramVO.getPeriodType())) {
             List<Map<String, Object>> dataList = synGroupMapper.getLossUserRateDMonth(paramVO, templateResult);
-            return getDMonthData(dataList, true, false);
+            return getDMonthData(paramVO.getStartDt(), paramVO.getEndDt(), dataList, true, false);
         }
         if(UomsConstants.PERIOD_TYPE_NOMAL_MONTH.equals(paramVO.getPeriodType())) {
             List<DatePeriodKpi> dataList =  synGroupMapper.getLossUserMonth(paramVO, templateResult);
@@ -88,7 +95,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         TemplateResult templateResult = buildFromAndInfo(spuId);
         if(UomsConstants.PERIOD_TYPE_INTERVAL_MONTH.equals(paramVO.getPeriodType())) {
             List<Map<String, Object>> dataList = synGroupMapper.getLossUserDMonth(paramVO ,templateResult);
-            return getDMonthData(dataList, false, false);
+            return getDMonthData(paramVO.getStartDt(), paramVO.getEndDt(), dataList, false, false);
         }
         if(UomsConstants.PERIOD_TYPE_NOMAL_MONTH.equals(paramVO.getPeriodType())) {
             List<DatePeriodKpi> dataList =  synGroupMapper.getLossUserNMonth(paramVO, templateResult);
@@ -107,7 +114,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         TemplateResult templateResult = buildFromAndInfo(spuId);
         if(UomsConstants.PERIOD_TYPE_INTERVAL_MONTH.equals(paramVO.getPeriodType())) {
             List<Map<String, Object>> dataList = synGroupMapper.getRetainUserCountDMonth(paramVO, templateResult);
-            return getDMonthData(dataList,false, false);
+            return getDMonthData(paramVO.getStartDt(), paramVO.getEndDt(), dataList,false, false);
         }
         if(UomsConstants.PERIOD_TYPE_NOMAL_MONTH.equals(paramVO.getPeriodType())) {
             List<DatePeriodKpi> dataList =  synGroupMapper.getRetainUserCountNMonth(paramVO, templateResult);
@@ -128,7 +135,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         TemplateResult templateResult = buildFromAndInfo(spuId);
         if(UomsConstants.PERIOD_TYPE_INTERVAL_MONTH.equals(paramVO.getPeriodType())) {
             List<Map<String, Object>> dataList = synGroupMapper.getPriceDMonth(paramVO, templateResult);
-            return getDMonthData(dataList, true, true);
+            return getDMonthData( paramVO.getStartDt(), paramVO.getEndDt(), dataList, true, true);
         }
         if(UomsConstants.PERIOD_TYPE_NOMAL_MONTH.equals(paramVO.getPeriodType())) {
             List<DatePeriodKpi> dataList = synGroupMapper.getPriceNMonth(paramVO, templateResult);
@@ -149,7 +156,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         TemplateResult templateResult = buildFromAndInfo(spuId);
         if(UomsConstants.PERIOD_TYPE_INTERVAL_MONTH.equals(paramVO.getPeriodType())) {
             List<Map<String, Object>> dataList = synGroupMapper.getUnitPriceDMonth(paramVO, templateResult);
-            return getDMonthData(dataList, true, true);
+            return getDMonthData( paramVO.getStartDt(), paramVO.getEndDt(), dataList, true, true);
         }
         if(UomsConstants.PERIOD_TYPE_NOMAL_MONTH.equals(paramVO.getPeriodType())) {
             List<DatePeriodKpi> dataList = synGroupMapper.getUnitPriceNMonth(paramVO, templateResult);
@@ -170,7 +177,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         TemplateResult templateResult = buildFromAndInfo(spuId);
         if(UomsConstants.PERIOD_TYPE_INTERVAL_MONTH.equals(paramVO.getPeriodType())) {
             List<Map<String, Object>> dataList = synGroupMapper.getJoinRateDMonth(paramVO, templateResult);
-            return getDMonthData(dataList, true, true);
+            return getDMonthData( paramVO.getStartDt(), paramVO.getEndDt(), dataList, true, true);
         }
         if(UomsConstants.PERIOD_TYPE_NOMAL_MONTH.equals(paramVO.getPeriodType())) {
             List<DatePeriodKpi> dataList = synGroupMapper.getJoinRateNMonth(paramVO, templateResult);
@@ -191,7 +198,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         TemplateResult templateResult = buildFromAndInfo(spuId);
         if(UomsConstants.PERIOD_TYPE_INTERVAL_MONTH.equals(paramVO.getPeriodType())) {
             List<Map<String, Object>> dataList = synGroupMapper.getPurchFreqDMonth(paramVO, templateResult);
-            return getDMonthData(dataList, true, true);
+            return getDMonthData( paramVO.getStartDt(), paramVO.getEndDt(), dataList, true, true);
         }
         if(UomsConstants.PERIOD_TYPE_NOMAL_MONTH.equals(paramVO.getPeriodType())) {
             List<DatePeriodKpi> dataList = synGroupMapper.getPurchFreqNMonth(paramVO, templateResult);
@@ -269,7 +276,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         TemplateResult templateResult = buildFromAndInfo(spuId);
         if(UomsConstants.PERIOD_TYPE_INTERVAL_MONTH.equals(paramVO.getPeriodType())) {
             List<Map<String, Object>> dataList = synGroupMapper.getUpriceDMonth(paramVO, templateResult);
-            return getDMonthData(dataList, true, true);
+            return getDMonthData( paramVO.getStartDt(), paramVO.getEndDt(), dataList, true, true);
         }
         if(UomsConstants.PERIOD_TYPE_NOMAL_MONTH.equals(paramVO.getPeriodType())) {
             List<DatePeriodKpi> dataList = synGroupMapper.getUpriceNMonth(paramVO, templateResult);
@@ -409,17 +416,51 @@ public class SynGroupServiceImpl implements SynGroupService {
     }
 
     /**
+     * 获取日期和cols字段的映射关系
+     * @param startDt
+     * @param endDt
+     * @return
+     */
+    private Map<String, String> colAndDateMap(String startDt, String endDt) {
+        Map<String, String> result = Maps.newHashMap();
+        int period = DateUtil.getPeriod(startDt, endDt);
+        for (int i=0; i < period; i++) {
+            result.put("MONTH" + (i+1), DateUtil.getDateByPlusMonth(startDt, i));
+        }
+        return result;
+    }
+
+    /**
      * 获取间隔月的数据
      * dataList:查询数据
      * isAvg:均值/求和
      * hasCurrentMonthKpi:是否包含当前月指标
      * @return
      */
-    public Map<String, Object> getDMonthData(List<Map<String, Object>> dataList, boolean isAvg, boolean hasCurrentMonthKpi) {
+    public Map<String, Object> getDMonthData(String startDt, String endDt, List<Map<String, Object>> dataList, boolean isAvg, boolean hasCurrentMonthKpi) {
         // 分两种列类型，同期群流失/留存，同期群客单价
         final String[] COL_NAMES = hasCurrentMonthKpi ? UomsConstants.D_MONTH_KPI_COLS : UomsConstants.D_MONTH_COLS;
         List<String> cols = Arrays.asList(COL_NAMES);
         Map<String, Object> total = Maps.newHashMap();
+        // 将未来数据置为空
+        dataList.stream().forEach(x-> {
+            // 当前行的日期
+            String startDt0 = String.valueOf(x.get("MONTH_ID"));
+            Map<String, String> tmpMap = colAndDateMap(startDt0, endDt);
+            x.keySet().stream().forEach(y-> {
+                List<String> colsList = Arrays.asList(UomsConstants.D_MONTH_COMMONS_COLS);
+                if (!colsList.contains(y) && null == tmpMap.get(y)) {
+                    x.put(y, null);
+                }
+                if (null != tmpMap.get(y)) {
+                    if(x.get(y) == null) {
+                        x.put(y, "0");
+                    }
+                }
+            });
+        });
+
+        Map<String, String> colsMap = colAndDateMap(startDt, endDt);
         cols.stream().forEach(x-> {
             DoubleSummaryStatistics dss = dataList.stream().map(y-> {
                 if (!x.equals(COL_NAMES[0])) {
@@ -441,12 +482,16 @@ public class SynGroupServiceImpl implements SynGroupService {
                      * 均值
                      */
                     Long count = dataList.stream().filter(z-> z.get(x) != null && Double.valueOf(z.get(x).toString()) > 0D).count();
-                    total.put(x, count == 0 ? 0:String.format("%.2f", dss.getSum()/count));
+                    if(colsMap.get(x) != null || x.equals("CURRENT_MONTH")) {
+                        total.put(x, count == 0 ? 0:String.format("%.2f", dss.getSum()/count));
+                    }
                 }else {
                     /**
                      * 求和
                      */
-                    total.put(x, dss.getSum());
+                    if(colsMap.get(x) != null) {
+                        total.put(x, dss.getSum());
+                    }
                 }
             }
         });

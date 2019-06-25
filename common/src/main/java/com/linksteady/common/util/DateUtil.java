@@ -357,4 +357,30 @@ public class DateUtil {
         }
         return null;
     }
+
+    /**
+     * 获取两个日期间隔的月数
+     * @param startDt
+     * @param endDt
+     * @return
+     */
+    public static Integer getPeriod(String startDt, String endDt) {
+        YearMonth start = YearMonth.parse(startDt, DateTimeFormatter.ofPattern("yyyyMM"));
+        YearMonth end = YearMonth.parse(endDt, DateTimeFormatter.ofPattern("yyyyMM"));
+        LocalDate startDate = LocalDate.of(start.getYear(), start.getMonth(), 1);
+        LocalDate endDate = LocalDate.of(end.getYear(), end.getMonth(), 1);
+        return Period.between(startDate, endDate).getYears() * 12 + Period.between(startDate, endDate).getMonths();
+    }
+
+    /**
+     * 获取某个间隔后的日期
+     * @param startDt
+     * @param interval
+     * @return
+     */
+    public static String getDateByPlusMonth(String startDt, int interval) {
+        YearMonth start = YearMonth.parse(startDt, DateTimeFormatter.ofPattern("yyyyMM"));
+        YearMonth end = start.plusMonths(interval);
+        return end.format(DateTimeFormatter.ofPattern("yyyyMM"));
+    }
 }

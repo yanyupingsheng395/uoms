@@ -90,7 +90,7 @@ function getDMonthCols(percent) {
     }else {
         fix = "";
     }
-    var fmt = function (value, row, index) {if(value == null || value == 0) {return "";}else {return value + fix;}};
+    var fmt = function (value, row, index) {if(value == null) {return "";}else {return value + fix;}};
     var cols = [
         {field: 'MONTH_ID', title: '月份'},
         {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px'},

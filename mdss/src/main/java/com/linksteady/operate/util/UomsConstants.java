@@ -33,6 +33,11 @@ public final class UomsConstants {
     public static final String[] D_MONTH_KPI_COLS = {"MONTH_ID", "TOTAL_USER", "CURRENT_MONTH", "MONTH1", "MONTH2", "MONTH3", "MONTH4", "MONTH5", "MONTH6", "MONTH7", "MONTH8", "MONTH9", "MONTH10", "MONTH11", "MONTH12"};
 
     /**
+     * 同期群 - 间隔月并集列
+     */
+    public static final String[] D_MONTH_COMMONS_COLS = {"MONTH_ID", "TOTAL_USER", "CURRENT_MONTH"};
+
+    /**
      * ********************* 同期群常量 *********************
      */
 
