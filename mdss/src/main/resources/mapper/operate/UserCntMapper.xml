@@ -52,13 +52,13 @@
         <if test="whereInfo != null and whereInfo != ''">
             ${whereInfo}
         </if>
+        ),G2 AS (
+          select COUNT(DISTINCT G1.USER_ID) kpiVal,
+          COUNT(DISTINCT CASE WHEN G1.IS_FP='N' THEN USER_ID END) spKpiVal
+          from G1
         )
-        SELECT
-        COUNT(DISTINCT G1.USER_ID) kpiVal,
-        COUNT(DISTINCT CASE WHEN G1.IS_FP='Y' THEN USER_ID END) fpKpiVal,
-        COUNT(DISTINCT CASE WHEN G1.IS_FP='N' THEN USER_ID END) spKpiVal
-        FROM G1
-
+        SELECT (G2.kpiVal - G2.spKpiVal) fpKpiVal, G2.kpiVal, G2.spKpiVal
+        FROM G2
     </select>
     <!--获取首购和复购的明细数据 -->
     <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
@@ -77,13 +77,14 @@
         <if test="whereInfo != null and whereInfo != ''">
             ${whereInfo}
         </if>
-        )
+        ), G2 AS (
         SELECT
-        G1.PERIOD_NAME kpiDate,
-        COUNT(DISTINCT G1.USER_ID) kpiVal,
-        COUNT(DISTINCT CASE WHEN G1.IS_FP='Y' THEN USER_ID END) fpKpiVal,
-        COUNT(DISTINCT CASE WHEN G1.IS_FP='N' THEN USER_ID END) spKpiVal
+        G1.PERIOD_NAME KPIDATE,
+        COUNT(DISTINCT G1.USER_ID) KPIVAL,
+        COUNT(DISTINCT CASE WHEN G1.IS_FP='N' THEN USER_ID END) SPKPIVAL
         FROM G1 GROUP BY G1.PERIOD_NAME
+        )
+        SELECT G2.KPIDATE, G2.KPIVAL, G2.SPKPIVAL, (G2.KPIVAL-G2.SPKPIVAL) FPKPIVAL FROM G2
     </select>
 
 </mapper>
