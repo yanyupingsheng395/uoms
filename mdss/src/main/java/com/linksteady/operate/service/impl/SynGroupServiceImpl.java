@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -75,6 +76,12 @@ public class SynGroupServiceImpl implements SynGroupService {
         return null;
     }
 
+    /**
+     * 获取流失用户数
+     * @param paramVO
+     * @param spuId
+     * @return
+     */
     @Override
     public Map<String, Object> getLossUser(ParamVO paramVO, String spuId) {
         paramVO = resetParam(paramVO);
@@ -202,16 +209,14 @@ public class SynGroupServiceImpl implements SynGroupService {
             Map<String, Object> tmpMap = Maps.newLinkedHashMap();
             List<DatePeriodKpi> list = datas.get(x);
             tmpMap.put("month", x);
-            list.stream().filter(z->!z.getBuyPeriod().equals(x)).forEach(y-> {
-                if(percent) {
-                    tmpMap.put(y.getBuyPeriod(), y.getUprice());
-                }else {
-                    tmpMap.put(y.getBuyPeriod(), y.getUprice());
-                }
+
+            // 购买周期和
+            list.stream().filter(z->!z.getBuyPeriod().equals(x) && compareMonth(x, z.getBuyPeriod())).forEach(y-> {
+                tmpMap.put(y.getBuyPeriod(), null == y.getUprice() ? 0D:y.getUprice());
             });
             list.stream().filter(z->z.getBuyPeriod().equals(x)).forEach(y-> {
-                tmpMap.put("newUsers", y.getKpiValue());
-                tmpMap.put("uprice", y.getUprice());
+                tmpMap.put("newUsers", y.getKpiValue() == null ? "0":y.getKpiValue());
+                tmpMap.put("uprice", y.getUprice() == null ? "0":y.getUprice());
             });
             return tmpMap;
         }).collect(Collectors.toList());
@@ -219,7 +224,8 @@ public class SynGroupServiceImpl implements SynGroupService {
         List<Map<String, Object>> data = sortBeforeData.stream().sorted(Comparator.comparing(SynGroupServiceImpl::comparingByMonth)).collect(Collectors.toList());
 
         // 求合计值
-        DoubleSummaryStatistics newUsersTotal = data.stream().map(x->Double.valueOf((String)x.get("newUsers"))).collect(Collectors.summarizingDouble(v->v));
+        // 新增用户数如果没有数据会为空，这里需要做非空的处理,可以在put(newUsers)做添加0的处理
+        DoubleSummaryStatistics newUsersTotal = data.stream().map(x-> null == x.get("newUsers") ? 0D : Double.valueOf((String)x.get("newUsers"))).collect(Collectors.summarizingDouble(v->v));
         DoubleSummaryStatistics priceTotal = data.stream().map(x->x.get("uprice") == null ? 0:Double.valueOf((String)x.get("uprice"))).collect(Collectors.summarizingDouble(v->v));
         Map<String, Object> map = Maps.newHashMap();
         map.put("month", "合计：");
@@ -292,7 +298,8 @@ public class SynGroupServiceImpl implements SynGroupService {
                 tmpMap.put(y.getBuyPeriod(), y.getRetention());
             });
             list.stream().filter(z->z.getBuyPeriod().equals(x)).forEach(y-> {
-                tmpMap.put("newUsers", y.getKpiValue());
+                // 新增用户数非空处理，由于下文进行obj to string 类型的转换故为"0"
+                tmpMap.put("newUsers", y.getKpiValue() == null ? "0":y.getKpiValue());
             });
             return tmpMap;
         }).collect(Collectors.toList());
@@ -300,7 +307,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         List<Map<String, Object>> data = sortBeforeData.stream().sorted(Comparator.comparing(SynGroupServiceImpl::comparingByMonth)).collect(Collectors.toList());
 
         // 求合计值
-        DoubleSummaryStatistics newUsersTotal = data.stream().map(x->Double.valueOf((String)x.get("newUsers"))).collect(Collectors.summarizingDouble(v->v));
+        DoubleSummaryStatistics newUsersTotal = data.stream().map(x->null == x.get("newUsers") ? 0D : Double.valueOf((String)x.get("newUsers"))).collect(Collectors.summarizingDouble(v->v));
         Map<String, Object> map = Maps.newHashMap();
         map.put("month", "合计：");
         map.put("newUsers", newUsersTotal.getSum());
@@ -324,6 +331,7 @@ public class SynGroupServiceImpl implements SynGroupService {
     }
 
     /**
+     * kpiValue为0：代表三角形中的数据，kpiValue为null：代表三角形外的数据
      * @param data
      * @param beginDt yyyyMM
      * @param endDt yyyyMM
@@ -332,36 +340,33 @@ public class SynGroupServiceImpl implements SynGroupService {
     private Map<String, List<DatePeriodKpi>> getNewData(List<DatePeriodKpi> data, String beginDt, String endDt) {
         //起始和结束之间所有的月份
         List<String> monthPeriod = DateUtil.getMonthBetween(beginDt, endDt, "yyyyMM");
-
         //按行分组 每行代表同期群分析表中的一行
         Map<String, List<DatePeriodKpi>> minPeriodKeysMap = data.stream().collect(Collectors.groupingBy(DatePeriodKpi::getMinPeriod, LinkedHashMap::new,Collectors.toList()));
-
         monthPeriod.stream().map(m-> {
             //如果当前月没数据
             if(!minPeriodKeysMap.keySet().contains(m)) {
 
                 List<DatePeriodKpi> tmpList = monthPeriod.stream().map(n->{
-                    if(compareMonth(m,n))
+                    if(compareMonth(n, m))
                     {
-                        return new DatePeriodKpi(m,n,"0");
+                        return new DatePeriodKpi(m,n,null);
                     }else
                     {
-                        return new DatePeriodKpi(m,n,"");
+                        return new DatePeriodKpi(m,n,"0");
                     }
                 }).collect(Collectors.toList());
-
                 minPeriodKeysMap.put(m, tmpList);
             }else {
                 //当前月有数据
                 List<DatePeriodKpi> tmpList = Lists.newArrayList();
-                List<String> temp = minPeriodKeysMap.get(m).stream().map(o-> o.getBuyPeriod()).collect(Collectors.toList());
+                List<String> buyPeriodList = minPeriodKeysMap.get(m).stream().map(o-> o.getBuyPeriod()).collect(Collectors.toList());
                 monthPeriod.stream().forEach(t-> {
-                    if(!temp.contains(t)) {
-                        if(compareMonth(t,m)) {
-                            tmpList.add(new DatePeriodKpi(m, t, "0"));
+                    if(!buyPeriodList.contains(t)) {
+                        if(compareMonth(t, m)) {
+                            tmpList.add(new DatePeriodKpi(m, t, null));
                         }else
                         {
-                            tmpList.add(new DatePeriodKpi(m, t, ""));
+                            tmpList.add(new DatePeriodKpi(m, t, "0"));
                         }
                     }
                 });
@@ -370,20 +375,23 @@ public class SynGroupServiceImpl implements SynGroupService {
             }
             return minPeriodKeysMap;
         }).collect(Collectors.toList());
-
         minPeriodKeysMap.keySet().stream().forEach(c-> {
             //每一行数据
             List<DatePeriodKpi> list = minPeriodKeysMap.get(c);
-
-            //获取第一个数据 因为上面已经完成了补0 所以此处不用考虑为空
-            String kpiValue=list.stream().filter(a->c.equals(a.getBuyPeriod())).map(x->x.getKpiValue()).findFirst().get();
-            double newUserCount=Double.valueOf("".equals(kpiValue)?"0":kpiValue);
-
+            // minPeriod 和 buyPeriod 相同则为当前月的kpi值
+            String kpiValue = null;
+            // 默认为空，以下表达式排除空的情况
+            kpiValue = list.stream().filter(a->c.equals(a.getBuyPeriod()) && a.getKpiValue() != null).map(x->x.getKpiValue()).findFirst().orElse(null);
+            // 新增用户数
+            Double newUserCount = kpiValue == null ? null : Double.valueOf(kpiValue);
             list.stream().forEach(x-> {
-                if(!org.springframework.util.StringUtils.isEmpty(x.getKpiValue()))
-                {
-                    double retention = Double.valueOf(newUserCount==0? 0D:Double.valueOf(x.getKpiValue())/newUserCount*100);
-                    x.setRetention(Double.valueOf(String.format("%.2f", retention)));
+                if(!StringUtils.isEmpty(x.getKpiValue())) {
+                    if(newUserCount != null) {
+                        double retention = Double.valueOf(newUserCount==0? 0D:Double.valueOf(x.getKpiValue())/newUserCount*100);
+                        x.setRetention(Double.valueOf(String.format("%.2f", retention)));
+                    } else {
+                        x.setRetention(null);
+                    }
                 }
             });
         });
@@ -516,12 +524,9 @@ public class SynGroupServiceImpl implements SynGroupService {
                 }else {
                     tmpMap.put(y.getBuyPeriod(), y.getKpiValue());
                 }
-                if(y.getBuyPeriod().equals(x)) {
-                    tmpMap.put("newUsers", y.getKpiValue());
-                }
             });
             list.stream().filter(z->z.getBuyPeriod().equals(x)).forEach(y-> {
-                tmpMap.put("newUsers", y.getKpiValue());
+                tmpMap.put("newUsers", null == y.getKpiValue()?"0":y.getKpiValue());
             });
             return tmpMap;
         }).collect(Collectors.toList());
@@ -541,9 +546,7 @@ public class SynGroupServiceImpl implements SynGroupService {
                 Long count = data.stream().filter(x->x.get(t) != null && Double.valueOf(x.get(t).toString()) > 0D).count();
                 map.put(t, count == 0 ? 0 : String.format("%.2f", tmp.getSum()/count));
             }else {
-                if (tmp.getSum() != 0D) {
-                    map.put(t, tmp.getSum());
-                }
+                map.put(t, tmp.getSum());
             }
         });
         data.add(map);
