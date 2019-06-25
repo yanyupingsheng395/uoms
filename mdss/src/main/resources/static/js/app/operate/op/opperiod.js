@@ -291,7 +291,7 @@ function savePeriod()
 
     if(null!=alert_str&&alert_str!='')
     {
-        toastr.warning(alert_str);
+        $MB.n_warning(alert_str);
         return;
     }
 
@@ -310,7 +310,7 @@ function savePeriod()
                                     if (resp.code === 200){
                                         //提示成功
                                         $('#add_modal').modal('hide');
-                                        toastr.success("保存成功!");
+                                        $MB.n_success("保存成功!");
                                         $('#periodTable').bootstrapTable('refresh');
                                     }
                                 })

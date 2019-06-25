@@ -90,7 +90,7 @@ function tab1Click(idx) {
 
 function searchData1() {
     if($("#startDate_2").val() == "") {
-        toastr.warning("请输入起始时间！");
+        $MB.n_warning("请输入起始时间！");
     }else {
         $("#tabs02").find("li[class='active']").find("a").click();
     }
@@ -98,7 +98,7 @@ function searchData1() {
 
 function searchData2() {
     if($("#startDate_2").val() == "") {
-        toastr.warning("请输入起始时间！");
+        $MB.n_warning("请输入起始时间！");
     }else {
         $("#tabs03").find("li[class='active']").find("a").click();
     }

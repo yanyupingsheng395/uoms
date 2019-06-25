@@ -57,14 +57,14 @@ function queryReport() {
     if(null==startDt||startDt=='')
     {
        //提示
-        toastr.warning("开始日期不能为空！");
+        $MB.n_warning("开始日期不能为空！");
         return;
     }
 
     if(null==endDt||endDt=='')
     {
         //提示
-        toastr.warning("结束日期不能为空！");
+        $MB.n_warning("结束日期不能为空！");
         return;
     }
 
@@ -90,18 +90,18 @@ function downLoadReport()
     if(null==startDt||startDt=='')
     {
         //提示
-        toastr.warning("开始日期不能为空！");
+        $MB.n_warning("开始日期不能为空！");
         return;
     }
 
     if(null==endDt||endDt=='')
     {
         //提示
-        toastr.warning("结束日期不能为空！");
+        $MB.n_warning("结束日期不能为空！");
         return;
     }
 
     //下载数据
-    toastr.warning("非生产环境，不支持下载！");
+    $MB.n_warning("非生产环境，不支持下载！");
 }
 

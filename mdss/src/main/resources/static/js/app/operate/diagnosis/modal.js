@@ -13,7 +13,7 @@ function nodeClick() {
             viewChart(r.data);
         }else {
             lightyear.loading('hide');
-            toastr.error("发生未知异常！");
+            $MB.n_danger("发生未知异常！");
         }
     });
 }
@@ -183,7 +183,7 @@ function t3Cov(obj) {
             }
         }else {
             code1 += "<td>"+v.name+"</td>";
-            if(v.data == "") {
+            if(v.data == "" || v.data == null || v.data == 'null' || v.data == undefined) {
                 code2 += "<td>--</td>";
             }else {
                 code2 += "<td>"+v.data+"%</td>";
@@ -231,8 +231,9 @@ function t2Relate(obj) {
     var code1 = "<tr class='active'><td style='width: 100px;'></td>";
     var code2 = "<tr><td style='width: 100px;'>"+obj.relate.name+"</td>";
     $.each(obj.relate.data, function (k, v) {
+        var data = v.data == "" ? "-" : v.data;
         code1 += "<td> " + v.name + " </td>";
-        code2 += "<td>" + v.data + "</td>";
+        code2 += "<td>" + data + "</td>";
     });
     code1 += "</tr>";
     code2 += "</tr>";

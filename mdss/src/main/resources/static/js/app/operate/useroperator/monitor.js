@@ -148,7 +148,7 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     lightyear.loading('show');
     var startDt = $("#startDt").val();
     if(startDt == "") {
-        toastr.warning("请选择时间！");
+        $MB.n_warning("请选择时间！");
     }else {
         if(!e.target.href.endWith("#overview") && !e.target.href.endWith("#retention")) {
             $("#selectCondition1").show();

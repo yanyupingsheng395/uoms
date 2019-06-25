@@ -44,7 +44,7 @@ function submit_analysis(){
 
     if(null!=alert_str&&alert_str!='')
     {
-        toastr.warning(alert_str);
+        $MB.n_warning(alert_str);
         return;
     }
 

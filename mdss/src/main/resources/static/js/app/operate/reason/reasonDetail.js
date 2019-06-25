@@ -157,7 +157,7 @@ function submitData() {
                     }else{
                         //关闭遮罩层
                         lightyear.loading('hide');
-                        toastr.error('服务异常，快反馈给系统运维人员吧！');
+                        $MB.n_danger('服务异常，快反馈给系统运维人员吧！');
                     }
                 });
 
@@ -171,7 +171,7 @@ function submitData() {
 
                 //关闭遮罩层
                 lightyear.loading('hide');
-                toastr.warning(alert_val);
+                $MB.n_warning(alert_val);
             }
         }
     });
@@ -203,9 +203,9 @@ function  deleteTrace(reasonId,reasonResultId) {
                                 {
                                     $('#reasonResultTable').bootstrapTable('load', resp.data);
                                     //提示成功
-                                    toastr.success('取消成功!');
+                                    $MB.n_success('取消成功!');
                                 }else{
-                                    toastr.error('服务异常，快反馈给系统运维人员吧！');
+                                    $MB.n_danger('服务异常，快反馈给系统运维人员吧！');
                                 }
                             });
                             lightyear.loading('hide');
@@ -249,9 +249,9 @@ function  trace(reasonId,reasonResultId) {
                                 {
                                     $('#reasonResultTable').bootstrapTable('load', resp.data);
                                     //提示成功
-                                    toastr.success('加入成功，请稍后查看跟踪结果!');
+                                    $MB.n_success('加入成功，请稍后查看跟踪结果!');
                                 }else{
-                                    toastr.error('服务异常，快反馈给系统运维人员吧！');
+                                    $MB.n_danger('服务异常，快反馈给系统运维人员吧！');
                                 }
                             });
                             lightyear.loading('hide');

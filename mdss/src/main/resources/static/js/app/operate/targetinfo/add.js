@@ -18,7 +18,7 @@ function next(dom) {
         var periodType = $("#targetPeriod").find("option:selected").val();
         if(periodType == "year" || periodType == "month") {
             if(startDt == "") {
-                toastr.warning("请选择目标日期！");
+                $MB.n_warning("请选择目标日期！");
             }else {
                 $("#step1").attr("style", "display:none;");
                 $("#step2").attr("style", "display:block;");
@@ -29,7 +29,7 @@ function next(dom) {
             }
         }else {
             if(startDt == "" || endDt == "") {
-                toastr.warning("请选择开始或结束日期！");
+                $MB.n_warning("请选择开始或结束日期！");
             }else {
                 $("#step1").attr("style", "display:none;");
                 $("#step2").attr("style", "display:block;");

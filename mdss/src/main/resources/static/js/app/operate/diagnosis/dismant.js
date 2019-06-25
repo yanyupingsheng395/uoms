@@ -96,7 +96,7 @@ function addCondition() {
     var operateType = $("input[name='op2']:checked").val();
     if(operateType == "A") { // 加法
         if($("#op4").find("option:selected").val() == "") {
-            toastr.warning('请选择维度！');
+            $MB.n_warning('请选择维度！');
             lightyear.loading("hide");
         }else {
             condition0();
@@ -106,10 +106,10 @@ function addCondition() {
     }else if(operateType == "M") { // 乘法
         if($("#op3").find("option:selected").val() == null) {
             if($("#op3").find("option").length == 0) {
-                toastr.warning('该指标无可再拆分的乘法公式，请选择别的拆分方式！');
+                $MB.n_warning('该指标无可再拆分的乘法公式，请选择别的拆分方式！');
                 lightyear.loading("hide");
             }else {
-                toastr.warning('请选择拆分公式！');
+                $MB.n_warning('请选择拆分公式！');
                 lightyear.loading("hide");
             }
         } else {
@@ -119,7 +119,7 @@ function addCondition() {
     }else if(operateType == "F") { // 仅过滤
         condition2();
     }else{
-        toastr.warning('请选择诊断方式！');
+        $MB.n_warning('请选择诊断方式！');
         lightyear.loading("hide");
     }
 }
@@ -186,9 +186,9 @@ function saveNodes() {
         dataType : 'json',
         success: function (r) {
             if(r.code == 200) {
-                toastr.success(r.msg);
+                $MB.n_success(r.msg);
             }else {
-                toastr.error(r.msg);
+                $MB.n_danger(r.msg);
             }
             setTimeout(function(){
                 window.location.href = "/page/diagnosis/list";
@@ -290,7 +290,7 @@ var conditionVal = new Array();
 // 增加条件
 function selectedCondition() {
     if($("#op5").find("option:selected").val() == "" || $("#op6").find("option:selected").val() == "") {
-        toastr.warning('未选择条件或值！');
+        $MB.n_warning('未选择条件或值！');
     }else {
         var arr = $("#op6").selectpicker('val');
         var condition = $("#op5").find("option:selected").text();
@@ -440,7 +440,7 @@ function saveNode(nodeid) {
         dataType : 'json',
         success: function (r) {
             if(r.code != 200) {
-                toastr.success(r.msg);
+                $MB.n_success(r.msg);
             }
         }
     });
@@ -521,7 +521,7 @@ function condition2() {
     var levelId = getKpiLevelId();
     var nodeName = levelId + " <i class='mdi mdi-filter'></i> " + $("#currentNode").val();
     if(conditionVal.length == 0) {
-        toastr.warning('请选择过滤条件！');
+        $MB.n_warning('请选择过滤条件！');
         lightyear.loading('hide');
     }else {
         // createNode(nodeName, levelId, jm.get_selected_node().data.kpiCode, jm.get_selected_node().data.kpiName, false, null);
@@ -618,7 +618,7 @@ var flag = false;
 function saveDiagHandleInfo(handleInfo, operateType, map) {
     $.post("/progress/saveDiagHandleInfo", {diagHandleInfo: JSON.stringify(handleInfo)}, function (res) {
         if(res.code == 500) {
-            toastr.error('操作失败，服务出现异常了，快反馈给系统运维人员吧！');
+            $MB.n_danger('操作失败，服务出现异常了，快反馈给系统运维人员吧！');
         }else {
             if(operateType == "A") {
                 var levelId = handleInfo.kpiLevelId;
@@ -757,7 +757,7 @@ function getFormula(kpiCode) {
             code = "<option value='" + kpiCode + "'>" + r.data + "</option>";
         }
         if(code == null) {
-            toastr.warning(name+"无法按乘法进行诊断！");
+            $MB.n_warning(name+"无法按乘法进行诊断！");
         }
         $("#op3").html("").html(code);
         $('#op3').selectpicker('refresh');
@@ -849,7 +849,7 @@ function reasonAddBefore() {
     var selectedNode = jm.get_selected_node();
     $.get("/progress/checkReasonList", {kpiCode: selectedNode.data.kpiCode, kpiName: selectedNode.data.kpiName}, function(r) {
         if(!r.data) {
-            toastr.warning('当前指标暂不支持进行原因探究！');
+            $MB.n_warning('当前指标暂不支持进行原因探究！');
         }else {
             reasonAdd();
         }

@@ -90,7 +90,7 @@ function addDimension() {
         $("#dimDataTable").append(code);
         $("#dimModal").modal('hide');
     }else {
-        toastr.warning("已有相同维度值在列表中！");
+        $MB.n_warning("已有相同维度值在列表中！");
         $("#dimModal").modal('hide');
     }
 }
