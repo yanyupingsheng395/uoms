@@ -45,7 +45,7 @@ $(function () {
     });
 
     $("#btn_downLoad").on("click",function () {
-        $MB.n_warning("尚未触达，暂无效果统计！");
+        $MB.n_warning("演示环境，暂不支持数据下载！");
     });
 
     // 统计图表

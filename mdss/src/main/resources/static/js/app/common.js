@@ -3,26 +3,6 @@ $(document).ready(function () {
     allExceptionCatch();
     initSysInfo();
     getUserMenu();
-
-    //消息提示组件
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "newestOnTop": true,
-        "progressBar": true,
-        "rtl": false,
-        "positionClass": "toast-top-center",
-        "preventDuplicates": true,
-        "onclick": null,
-        "showDuration": 300,
-        "hideDuration": 1000,
-        "timeOut": 5000,
-        "extendedTimeOut": 1000,
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    };
 });
 /**
  * 从session中获取sysId
@@ -48,7 +28,6 @@ function initSysInfo() {
     $.get("/sysinfo", {}, function (r) {
         var version = r.data.version;
         var username = r.data.currentUser;
-
         $("#version").html("").html("v" + version);
         $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
     });
@@ -131,8 +110,15 @@ function getUserMenu() {
             $(".nav-drawer").html("").html(forTree(r.data.tree.children));
             menu_tree();
             subMenu();
+            getSysNameBySysId(sysId);
         });
     }
+}
+
+function getSysNameBySysId(sysId) {
+    $.get("/api/getSysName", {sysId: sysId}, function (r) {
+        $("#pageTitle").html("").html(r);
+    });
 }
 
 function subMenu() {

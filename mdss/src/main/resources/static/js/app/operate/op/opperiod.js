@@ -137,7 +137,7 @@ $(function () {
 });
 
 function del(reasonId) {
-    toastr.warning("非生产环境，不支持删除！");
+    $MB.n_warning("非生产环境，不支持删除！");
 
     //遮罩层打开
     //lightyear.loading('show');
@@ -249,7 +249,7 @@ function view(headerId)
 }
 
 function download(headerId) {
-    toastr.warning("非生产环境，不支持下载！");
+    $MB.n_warning("非生产环境，不支持下载！");
 }
 
 // 运营品类

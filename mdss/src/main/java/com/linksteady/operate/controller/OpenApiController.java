@@ -31,4 +31,10 @@ public class OpenApiController {
         String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
         return openApiService.getUserMenu(username, sysId);
     }
+
+    @ResponseBody
+    @RequestMapping("/getSysName")
+    public String getSysName(@RequestParam("sysId") String sysId) {
+        return openApiService.getSysName(sysId);
+    }
 }

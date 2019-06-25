@@ -109,9 +109,17 @@ function getUserMenu() {
             $("#version").html("").html("v" + r.msg.version);
             menu_tree();
             subMenu();
+            getSysNameBySysId(sysId);
         });
     }
 }
+
+function getSysNameBySysId(sysId) {
+    $.get("/system/getSystem", {id: sysId}, function (r) {
+        $("#pageTitle").html("").html(r.msg.name);
+    });
+}
+
 
 var forTree = function (o) {
     for (var i = 0; i < o.length; i++) {
