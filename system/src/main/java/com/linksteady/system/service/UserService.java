@@ -40,4 +40,7 @@ public interface UserService extends IService<User> {
     User findUserProfile(User user);
 
     void updateUserProfile(User user);
+
+    @CacheEvict(key = "#p0", allEntries = true)
+    void resetPassword(String userId);
 }

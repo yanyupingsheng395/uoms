@@ -15,4 +15,6 @@ public interface UserMapper extends MyMapper<User> {
 	User findUserProfile(User user);
 
 	Long getSeqId();
+
+	void resetPassword(String userId,String password,String modifyName);
 }

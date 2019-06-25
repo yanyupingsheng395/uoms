@@ -51,4 +51,13 @@ public class PageController extends BaseController {
         request.getSession().setAttribute("sysId", sysId);
         return ResponseBo.ok();
     }
+
+    @RequestMapping("/resetPass")
+    public String resetPass(Model model) {
+        // 登录成后，即可通过 Subject 获取登录的用户信息
+        User user = super.getCurrentUser();
+        model.addAttribute("user", user);
+        model.addAttribute("version", version);
+        return "resetPassword";
+    }
 }

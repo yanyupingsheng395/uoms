@@ -8,6 +8,8 @@
     <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon.ico}" />
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <!--<link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>-->
+    <link rel="stylesheet"  data-th-href="@{/css//bootstrap.min.css}">
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/common.css}">
@@ -34,11 +36,11 @@
                             <div class="select-list">
                                 <ul>
                                     <li>
-                                        用户名：<input type="text" name="username"/>
+                                        用户名：<input type="text" name="qusername"/>
                                     </li>
 
                                     <li>
-                                        性别：<select name="ssex">
+                                        性别：<select name="qssex">
                                             <option value="" selected>所有</option>
                                             <option value="0">男</option>
                                             <option value="1">女</option>
@@ -46,7 +48,7 @@
                                     </li>
 
                                     <li>
-                                        状态：<select name="status">
+                                        状态：<select name="qstatus">
                                         <option value="" selected>所有</option>
                                         <option value="0">锁定</option>
                                         <option value="1">有效</option>
@@ -73,6 +75,9 @@
                                     </a>
                                     <a class="btn btn-danger btn-del" onclick="deleteUsers()" shiro:hasPermission="user:delete">
                                         <i class="fa fa-remove"></i> 删除
+                                    </a>
+                                    <a class="btn btn-danger btn-del" onclick="restPassword()" shiro:hasPermission="user:resetPassword">
+                                        <i class="fa fa-remove"></i> 重置密码
                                     </a>
                                 </div>
                             </div>

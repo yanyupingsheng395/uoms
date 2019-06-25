@@ -3,13 +3,14 @@ $(function () {
     var settings = {
         url: "/user/list",
         pageSize: 10,
+        singleSelect: true,
         queryParams: function (params) {
             return {
                 pageSize: params.limit,
                 pageNum: params.offset / params.limit + 1,
-                username: $userTableForm.find("input[name='username']").val().trim(),
-                ssex: $userTableForm.find("select[name='ssex']").val(),
-                status: $userTableForm.find("select[name='status']").val()
+                username: $userTableForm.find("input[name='qusername']").val().trim(),
+                ssex: $userTableForm.find("select[name='qssex']").val(),
+                status: $userTableForm.find("select[name='qstatus']").val()
             };
         },
         columns: [{
@@ -41,8 +42,8 @@ $(function () {
             field: 'status',
             title: '状态',
             formatter: function (value, row, index) {
-                if (value === '1') return '<span class="badge bg-success">有效</span>';
-                if (value === '0') return '<span class="badge bg-warning">锁定</span>';
+                if (value === '1') return '<span class="badge bg-success">启用</span>';
+                if (value === '0') return '<span class="badge bg-warning">禁用</span>';
             }
         },
         {
@@ -60,9 +61,9 @@ function searchUser() {
 }
 
 function refreshUser() {
-    $("input[name='username']").val("");
-    $("select[name='ssex']").find("option:selected").removeAttr("selected");
-    $("select[name='status']").find("option:selected").removeAttr("selected");
+    $("input[name='qusername']").val("");
+    $("select[name='qssex']").find("option:selected").removeAttr("selected");
+    $("select[name='qstatus']").find("option:selected").removeAttr("selected");
     $MB.refreshTable('userTable');
 }
 
@@ -91,6 +92,35 @@ function deleteUsers() {
         content: "确定删除选中用户?"
     }, function () {
         $.post(ctx + 'user/delete', {"ids": ids}, function (r) {
+            if (r.code === 200) {
+                $MB.n_success(r.msg);
+                refreshUser();
+            } else {
+                $MB.n_danger(r.msg);
+            }
+        });
+    });
+}
+
+function restPassword() {
+    var userId = $("#userTable").bootstrapTable('getSelections')[0].userId;
+    var uName = $("#userTable").bootstrapTable('getSelections')[0].username;
+
+    if (null==userId||""==userId) {
+        $MB.n_warning('请勾选需要重置密码的用户！');
+        return;
+    }
+
+    if (userName === uName) {
+        $MB.n_warning('勾选用户中包含当前登录用户，无法重置密码！');
+        return;
+    }
+
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定要重置选中用户的密码么?"
+    }, function () {
+        $.post(ctx + 'user/resetPassword', {"userId": userId}, function (r) {
             if (r.code === 200) {
                 $MB.n_success(r.msg);
                 refreshUser();

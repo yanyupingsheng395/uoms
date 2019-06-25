@@ -18,10 +18,13 @@
     <result column="THEME" jdbcType="VARCHAR" property="theme" />
     <result column="AVATAR" jdbcType="VARCHAR" property="avatar" />
     <result column="DESCRIPTION" jdbcType="VARCHAR" property="description"/>
+	<result column="EXPIRE_DATE" jdbcType="TIMESTAMP" property="expireDate"/>
+	<result column="CREATE_BY" jdbcType="VARCHAR" property="createBy"/>
+	<result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy"/>
   </resultMap>
   <select id="findUsers" resultType="com.linksteady.common.domain.User" parameterType="com.linksteady.common.domain.User">
   		select u.user_id userId,u.username,u.email,u.mobile,u.status,u.crate_time crateTime,
-  		u.ssex from t_user u
+  		u.ssex,u.expire_date expireDate from t_user u
   		where 1=1
   		<if test="username != null and username != ''">
         	AND u.username = #{username}
@@ -77,4 +80,11 @@
 	<select id="getSeqId" resultType="Long">
 		select seq_t_user_id.nextval from dual
 	</select>
+
+	<update id="resetPassword">
+		update t_user t set t.password=#{password},
+							t.modify_time=sysdate,
+							t.update_by=#{modifyName}
+							t.firstLogin='Y' where t.user_id=#{userId}
+	</update>
 </mapper>

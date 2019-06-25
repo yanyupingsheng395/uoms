@@ -26,6 +26,8 @@ public class ShiroProperties {
 
     private String unauthorizedUrl;
 
+    private String resetPasswordUrl="/resetPass";
+
     public int getExpireIn() {
         return expireIn;
     }
@@ -88,5 +90,13 @@ public class ShiroProperties {
 
     public void setUnauthorizedUrl(String unauthorizedUrl) {
         this.unauthorizedUrl = unauthorizedUrl;
+    }
+
+    public String getResetPasswordUrl() {
+        return resetPasswordUrl;
+    }
+
+    public void setResetPasswordUrl(String resetPasswordUrl) {
+        this.resetPasswordUrl = resetPasswordUrl;
     }
 }

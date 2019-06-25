@@ -54,6 +54,10 @@ function clearReset() {
     $userAddForm.find(".user_password").show();
     $userAddForm.find("input[name='status']:checked").removeAttr("checked");
     $userAddForm.find("input[name='ssex']:checked").removeAttr("checked");
+
+    $("input[name='status']:radio[value='1']").prop("checked", true);
+    $("input[name='ssex']:radio[value='0']").prop("checked", true);
+
     $("#user-add-modal-title").html('新增用户');
 }
 

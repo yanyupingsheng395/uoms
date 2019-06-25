@@ -91,7 +91,11 @@ public class LoginController extends BaseController {
             }
             super.login(token);
             this.userService.updateLoginTime(username);
-            return ResponseBo.ok();
+
+            //判断用户是否首次登陆 如果是强制跳到修改密码界面
+            String firstLogin=userService.findByName(username).getFirstLogin();
+
+            return ResponseBo.ok(firstLogin);
         } catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e) {
             return ResponseBo.error(e.getMessage());
         } catch (AuthenticationException e) {

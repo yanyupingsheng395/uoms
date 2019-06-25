@@ -104,10 +104,12 @@ public class ShiroConfig {
         //获取filters
         Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
         filters.put("user", new CustomUserFilter());
+       // filters.put("resetpass",new ChangePasswordFilter());
 
         // 设置 securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         // 登录的 url
+        System.out.println("loginURL:"+systemProperties.getShiro().getLoginUrl());
         shiroFilterFactoryBean.setLoginUrl(systemProperties.getShiro().getLoginUrl());
         // 登录成功后跳转的 url
         shiroFilterFactoryBean.setSuccessUrl(systemProperties.getShiro().getSuccessUrl());

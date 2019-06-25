@@ -94,6 +94,14 @@ public class UserController extends BaseController {
     @ResponseBody
     public ResponseBo addUser(User user, Long[] roles) {
         try {
+            //判断用户是否已经存在
+            User addUser=userService.findByName(user.getUsername());
+
+            if(null!=addUser)
+            {
+                return ResponseBo.error("当前用户名已经存在，换个用户名吧！");
+            }
+
             this.userService.addUser(user, roles);
             return ResponseBo.ok("新增用户成功！");
         } catch (Exception e) {
@@ -127,6 +135,20 @@ public class UserController extends BaseController {
         } catch (Exception e) {
             log.error("删除用户失败", e);
             return ResponseBo.error("删除用户失败，请联系管理员！");
+        }
+    }
+
+    @Log("重置用户密码")
+    @RequiresPermissions("user:resetPassword")
+    @RequestMapping("user/resetPassword")
+    @ResponseBody
+    public ResponseBo resetPassword(String userId) {
+        try {
+            this.userService.resetPassword(userId);
+            return ResponseBo.ok("重置用户密码成功！");
+        } catch (Exception e) {
+            log.error("重置用户密码失败", e);
+            return ResponseBo.error("重置用户密码失败，请联系管理员！");
         }
     }
 

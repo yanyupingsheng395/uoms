@@ -45,8 +45,8 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
             }
             if (StringUtils.isNotBlank(log.getTimeField())) {
                 String[] timeArr = log.getTimeField().split("~");
-                criteria.andCondition("date_format(CREATE_TIME,'%Y-%m-%d') >=", timeArr[0]);
-                criteria.andCondition("date_format(CREATE_TIME,'%Y-%m-%d') <=", timeArr[1]);
+                criteria.andCondition("to_char(create_time,'YYYYMMDD') >=", timeArr[0].replace("-",""));
+                criteria.andCondition("to_char(create_time,'YYYYMMDD') <=", timeArr[1].replace("-",""));
             }
             example.setOrderByClause("create_time desc");
             return this.selectByExample(example);

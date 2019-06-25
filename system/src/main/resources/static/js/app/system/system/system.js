@@ -3,6 +3,7 @@ $(function () {
     var settings = {
         url: ctx + "system/list",
         pageSize: 10,
+        singleSelect: true,
         queryParams: function (params) {
             return {
                 pageSize: params.limit,

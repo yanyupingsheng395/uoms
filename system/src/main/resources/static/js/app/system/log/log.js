@@ -4,6 +4,7 @@ $(function () {
     var settings = {
         url: ctx + "log/list",
         pageSize: 10,
+        singleSelect: true,
         queryParams: function (params) {
             return {
                 pageSize: params.limit,
@@ -25,12 +26,6 @@ $(function () {
             }, {
                 field: 'time',
                 title: '耗时（毫秒）'
-            }, {
-                field: 'method',
-                title: '操作方法'
-            }, {
-                field: 'params',
-                title: '参数'
             }, {
                 field: 'ip',
                 title: 'IP地址'
