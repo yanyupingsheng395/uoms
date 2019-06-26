@@ -125,6 +125,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put(systemProperties.getShiro().getLogoutUrl(), "logout");
         //强制修改密码的链接
         filterChainDefinitionMap.put(systemProperties.getShiro().getResetPasswordUrl(), "user");
+        filterChainDefinitionMap.put("/user/updatePassword", "user");
 
         // 除上以外所有 url都必须认证通过才可以访问，未通过认证自动访问 LoginUrl
         filterChainDefinitionMap.put("/**", "user");
