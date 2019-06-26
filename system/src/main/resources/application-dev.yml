@@ -163,13 +163,13 @@ logging:
 sys:
   shiro:
     # shiro redis缓存时长，默认1800秒
-    expireIn: 7200
+    expireIn: 1800
     # session 超时时间，默认1800000毫秒
-    sessionTimeout: 7200000
+    sessionTimeout: 1800000
     # rememberMe cookie有效时长，默认86400秒，即一天
     cookieTimeout: 86400
     # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-    anonUrl: /api/**,/plugins/**/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/user/regist,/gifCode,/,/actuator/**,/test/**,/sysinfo
+    anonUrl: /api/**,/plugins/**/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/user/regist,/gifCode,/,/actuator/**,/test/**,/sysinfo,/login
     # 登录 url
     loginUrl: /login
     # 登录成功后跳转的 url
@@ -180,6 +180,8 @@ sys:
     unauthorizedUrl: /403
     #强制修改密码的url
     resetPasswordUrl: /resetPass
+    #首次登陆是否强制要求修改密码
+    allowResetPassword: false
 
   # 时间类型参数在前端页面的展示格式，默认格式为 yyyy-MM-dd HH:mm:ss
   timeFormat: yyyy-MM-dd HH:mm:ss

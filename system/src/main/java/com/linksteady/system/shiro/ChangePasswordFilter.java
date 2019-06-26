@@ -1,9 +1,12 @@
 package com.linksteady.system.shiro;
 
 import com.linksteady.common.domain.User;
+import com.linksteady.common.util.SpringContextUtils;
+import com.linksteady.system.config.SystemProperties;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -17,7 +20,17 @@ public class ChangePasswordFilter extends AccessControlFilter {
 
     @Override
     protected boolean isAccessAllowed(ServletRequest servletRequest, ServletResponse servletResponse, Object o) throws Exception {
+//        String requestUrl=WebUtils.getPathWithinApplication(WebUtils.toHttp(servletRequest));
+//
+//        if(requestUrl.equals("/login"))
+//        {
+//            return true;
+//        }else
+//        {
+//           return false;
+//        }
         return false;
+
     }
 
     /**
@@ -29,19 +42,25 @@ public class ChangePasswordFilter extends AccessControlFilter {
      */
     @Override
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
+
+        SystemProperties systemProperties=(SystemProperties) SpringContextUtils.getBean("systemProperties");
+        System.out.println(WebUtils.getPathWithinApplication(WebUtils.toHttp(servletRequest)));
+        String requestUrl=WebUtils.getPathWithinApplication(WebUtils.toHttp(servletRequest));
         Subject subject = getSubject(servletRequest, servletResponse);
         // 表示没有登录，重定向到登录页面
         if (subject.getPrincipal() == null) {
             saveRequest(servletRequest);
-            WebUtils.issueRedirect(servletRequest, servletResponse, "/login");
+            WebUtils.issueRedirect(servletRequest, servletResponse, systemProperties.getShiro().getLoginUrl());
+            return false;
         } else {
             User user = (User) subject.getPrincipal();
             // 如果首次登录未修改密码，则跳转到修改密码页面
-            if (null!=user.getFirstLogin()||"Y".equals(user.getFirstLogin())) {
-                WebUtils.issueRedirect(servletRequest, servletResponse, "/resetPassword");
+            if (systemProperties.getShiro().isAllowResetPassword()&&"Y".equals(user.getFirstLogin())) {
+                WebUtils.issueRedirect(servletRequest, servletResponse, systemProperties.getShiro().getResetPasswordUrl());
+                return false;
             }
+            return true;
         }
-        return false;
     }
     
 }

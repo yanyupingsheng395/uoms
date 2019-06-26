@@ -103,13 +103,12 @@ public class ShiroConfig {
 
         //获取filters
         Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
-        filters.put("user", new CustomUserFilter());
-       // filters.put("resetpass",new ChangePasswordFilter());
+        filters.put("user",new CustomUserFilter());
+        filters.put("resetpass",new ChangePasswordFilter());
 
         // 设置 securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         // 登录的 url
-        System.out.println("loginURL:"+systemProperties.getShiro().getLoginUrl());
         shiroFilterFactoryBean.setLoginUrl(systemProperties.getShiro().getLoginUrl());
         // 登录成功后跳转的 url
         shiroFilterFactoryBean.setSuccessUrl(systemProperties.getShiro().getSuccessUrl());
@@ -121,10 +120,15 @@ public class ShiroConfig {
         for (String url : anonUrls) {
             filterChainDefinitionMap.put(url, "anon");
         }
+
         // 配置退出过滤器，其中具体的退出代码 Shiro已经替我们实现了
         filterChainDefinitionMap.put(systemProperties.getShiro().getLogoutUrl(), "logout");
+        //强制修改密码的链接
+        filterChainDefinitionMap.put(systemProperties.getShiro().getResetPasswordUrl(), "user");
+
         // 除上以外所有 url都必须认证通过才可以访问，未通过认证自动访问 LoginUrl
         filterChainDefinitionMap.put("/**", "user");
+        filterChainDefinitionMap.put("/**", "resetpass");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 

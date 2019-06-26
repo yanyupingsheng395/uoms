@@ -33,7 +33,14 @@ function login() {
         dataType: "json",
         success: function (r) {
             if (r.code === 200) {
-                location.href = '/main';
+                if("Y"===r.msg)
+                {
+                    location.href = '/resetPass';
+                }else
+                {
+                    location.href = '/main';
+                }
+
             } else {
                 reloadCode();
                 layer.msg(r.msg);
