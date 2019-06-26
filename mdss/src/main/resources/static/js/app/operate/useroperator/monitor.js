@@ -503,7 +503,7 @@ function getKpiCalInfo(kpiType) {
 
 function resetCondition2() {
     var date = new Date();
-    $("#startDateOfRetention").val(date.getFullYear() + "-" + date.getMonth());
+    $("#startDateOfRetention").val(date.getFullYear() + "-01");
 }
 
 function resetCondition1() {

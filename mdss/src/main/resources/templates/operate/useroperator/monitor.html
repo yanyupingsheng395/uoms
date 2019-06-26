@@ -169,6 +169,9 @@
 
 <script>
     init_date("startDateOfRetention", "yyyy-mm", 1,2,1);
+    var d = new Date();
+    d.setMonth(d.getMonth());
+    $("#startDateOfRetention").datepicker('setEndDate',d);
 </script>
 </body>
 </html>
