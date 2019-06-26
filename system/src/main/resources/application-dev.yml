@@ -181,7 +181,7 @@ sys:
     #强制修改密码的url
     resetPasswordUrl: /resetPass
     #首次登陆是否强制要求修改密码
-    allowResetPassword: false
+    allowResetPassword: true
 
   # 时间类型参数在前端页面的展示格式，默认格式为 yyyy-MM-dd HH:mm:ss
   timeFormat: yyyy-MM-dd HH:mm:ss

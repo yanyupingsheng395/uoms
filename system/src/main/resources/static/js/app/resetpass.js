@@ -5,12 +5,12 @@ function updatePwd() {
                 $MB.n_success(r.msg);
                 setTimeout(function () {
                     window.location.href = "/logout";
-                }, 2000)
+                }, 2000);
             }else {
                 $MB.n_danger(r.msg);
                 setTimeout(function () {
                     window.location.href = "/logout";
-                }, 2000)
+                }, 2000);
             }
         });
     }

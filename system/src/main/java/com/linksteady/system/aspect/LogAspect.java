@@ -63,7 +63,7 @@ public class LogAspect {
             // 保存日志
             User user = (User) SecurityUtils.getSubject().getPrincipal();
             SysLog log = new SysLog();
-            log.setUsername(user.getUsername());
+            log.setUsername(null == user ? "":user.getUsername());
             log.setIp(ip);
             log.setTime(time);
             logService.saveLog(point, log);

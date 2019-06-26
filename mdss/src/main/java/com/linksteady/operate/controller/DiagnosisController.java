@@ -35,14 +35,11 @@ public class DiagnosisController {
     private static Logger logger = LoggerFactory.getLogger(DiagnosisController.class);
 
     @RequestMapping("/list")
-    public Map<String, Object> list(@RequestBody QueryRequest request) {
-        Map<String, Object> result = new HashMap<>(16);
+    public ResponseBo list(@RequestBody QueryRequest request) {
         PageHelper.startPage(request.getPageNum(), request.getPageSize());
         List<Diag> diagList = diagService.getRows((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(), request.getParam().get("diagName"));
         Long total = diagService.getTotalCount(request.getParam().get("diagName"));
-        result.put("rows", diagList);
-        result.put("total", total);
-        return result;
+        return ResponseBo.okOverPaging(null, total.intValue(), diagList);
     }
 
     @PostMapping("/add")

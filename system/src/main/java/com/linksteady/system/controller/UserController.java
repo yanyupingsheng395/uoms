@@ -165,6 +165,7 @@ public class UserController extends BaseController {
     public ResponseBo updatePassword(String newPassword) {
         try {
             this.userService.updatePassword(newPassword);
+            getSubject().logout();
             return ResponseBo.ok("更改密码成功！");
         } catch (Exception e) {
             log.error("修改密码失败", e);

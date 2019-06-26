@@ -55,8 +55,7 @@ $(function () {
             }
         }]
     };
-    $('#periodTable').bootstrapTable(settings);
-
+    $MB.initTable('periodTable', settings);
     //为刷新按钮绑定事件
     $("#btn_refresh").on("click",function () {
         $('#periodTable').bootstrapTable('refresh');
