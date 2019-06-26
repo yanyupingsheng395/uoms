@@ -103,7 +103,7 @@ public class ShiroConfig {
 
         //获取filters
         Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
-        filters.put("user", new CustomUserFilter());
+        filters.put("user",new CustomUserFilter());
         filters.put("resetpass",new ChangePasswordFilter());
 
         // 设置 securityManager

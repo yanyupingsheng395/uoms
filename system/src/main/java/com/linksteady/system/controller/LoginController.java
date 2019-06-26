@@ -3,6 +3,7 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.MD5Utils;
+import com.linksteady.system.config.SystemProperties;
 import com.linksteady.system.util.code.img.ImageCode;
 import com.linksteady.system.util.code.img.ImageCodeGenerator;
 import com.linksteady.system.service.UserService;
@@ -30,6 +31,9 @@ import java.util.Map;
 public class LoginController extends BaseController {
 
     private static final String CODE_KEY = "_code";
+
+    @Autowired
+    SystemProperties systemProperties;
 
     @Autowired
     private UserService userService;
@@ -94,8 +98,17 @@ public class LoginController extends BaseController {
 
             //判断用户是否首次登陆 如果是强制跳到修改密码界面
             String firstLogin=userService.findByName(username).getFirstLogin();
+            if(systemProperties.getShiro().isAllowResetPassword()&&"Y".equals(firstLogin))
+            {
+                //首次登陆强制要求修改密码
+                return ResponseBo.ok("Y");
+            }else
+            {
+                //不要求修改密码
+                return ResponseBo.ok("N");
+            }
 
-            return ResponseBo.ok(firstLogin);
+
         } catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e) {
             return ResponseBo.error(e.getMessage());
         } catch (AuthenticationException e) {

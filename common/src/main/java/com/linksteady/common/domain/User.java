@@ -91,7 +91,7 @@ public class User implements Serializable {
 	private String updateBy;
 
 	@Column(name = "FIRSTLOGIN")
-	private String firstLogin;
+	private String firstLogin ="N";
 
 
 	@Override
