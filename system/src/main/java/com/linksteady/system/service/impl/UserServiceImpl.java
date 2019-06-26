@@ -159,9 +159,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         Example example = new Example(User.class);
         example.createCriteria().andCondition("username=", user.getUsername());
-        example.createCriteria().andCondition("FIRSTLOGIN=", "N");
         String newPassword = MD5Utils.encrypt(user.getUsername().toLowerCase(), password);
         user.setPassword(newPassword);
+        user.setFirstLogin("N");
         this.userMapper.updateByExampleSelective(user, example);
     }
 
