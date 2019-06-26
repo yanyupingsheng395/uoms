@@ -62,7 +62,7 @@ $(function () {
             $("a[data-toggle='tooltip']").tooltip();
         }
     };
-    $('#diagTable').bootstrapTable(settings);
+    $MB.initTable('diagTable', settings);
 });
 
 function viewDiag() {
