@@ -132,7 +132,7 @@ mybatis:
   # mapper xml实现扫描路径
   mapper-locations: classpath:mapper/*/*.xml
   property:
-    order: BEFORE
+    order: before
   configuration:
     # 注意这里需要加单引号
     jdbc-type-for-null: 'null'
@@ -143,7 +143,7 @@ mapper:
   mappers: com.linksteady.system.config.MyMapper
   not-empty: false
   identity: oracle
-  order: after
+  order: before
 
 #pagehelper
 pagehelper:
@@ -194,6 +194,6 @@ sys:
   #上报错误日志的地址
   exceptionNoticeUrl: http://logstash.growth-master.com/logNoticeService
   #上报错误日志的当前应用名称
-  exceptionNoticeAppName: uoms2-dev
+  exceptionNoticeAppName: uoms2-dev-sys
   #默认的日志预警的模式 (BATCH 批量 IMME 立即)
   exceptionNoticeMode: BATCH

@@ -28,6 +28,8 @@ public class ShiroProperties {
 
     private String resetPasswordUrl="/resetPass";
 
+    private boolean allowResetPassword =false;
+
     public int getExpireIn() {
         return expireIn;
     }
@@ -98,5 +100,13 @@ public class ShiroProperties {
 
     public void setResetPasswordUrl(String resetPasswordUrl) {
         this.resetPasswordUrl = resetPasswordUrl;
+    }
+
+    public boolean isAllowResetPassword() {
+        return allowResetPassword;
+    }
+
+    public void setAllowResetPassword(boolean allowResetPassword) {
+        this.allowResetPassword = allowResetPassword;
     }
 }

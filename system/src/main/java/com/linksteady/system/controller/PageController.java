@@ -1,5 +1,6 @@
 package com.linksteady.system.controller;
 
+import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.User;
@@ -52,6 +53,7 @@ public class PageController extends BaseController {
         return ResponseBo.ok();
     }
 
+    @Log("强制修改密码")
     @RequestMapping("/resetPass")
     public String resetPass(Model model) {
         // 登录成后，即可通过 Subject 获取登录的用户信息

@@ -1,5 +1,6 @@
 package com.linksteady.system.controller;
 import com.google.common.collect.Maps;
+import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.MD5Utils;
@@ -73,6 +74,7 @@ public class LoginController extends BaseController {
         return "login";
     }
 
+    @Log("登陆系统")
     @PostMapping("/login")
     @ResponseBody
     public ResponseBo login(String username, String password, String code) {

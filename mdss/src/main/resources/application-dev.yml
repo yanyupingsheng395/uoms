@@ -128,7 +128,7 @@ mybatis:
   # mapper xml实现扫描路径
   mapper-locations: classpath:mapper/*/*.xml
   property:
-    order: BEFORE
+    order: before
   configuration:
     # 注意这里需要加单引号
     jdbc-type-for-null: 'null'
@@ -139,7 +139,7 @@ mapper:
   mappers: com.linksteady.operate.config.MyMapper
   not-empty: false
   identity: oracle
-  order: after
+  order: before
 
 #pagehelper
 pagehelper:
@@ -158,14 +158,14 @@ logging:
 # system 配置
 mdss:
   shiro:
-    # shiro redis缓存时长，默认1800秒
-    expireIn: 7200
-    # session 超时时间，默认1800000毫秒
-    sessionTimeout: 7200000
+    # shiro redis缓存时长，默认1800秒  7200
+    expireIn: 1800
+    # session 超时时间，默认1800000毫秒 7200000
+    sessionTimeout: 1800000
     # rememberMe cookie有效时长，默认86400秒，即一天
     cookieTimeout: 86400
     # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-    anonUrl: /plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo
+    anonUrl: /plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo,/login
     # 登录 url
     loginUrl: http://localhost:9091/login
     # 登录成功后跳转的 url
@@ -174,6 +174,11 @@ mdss:
     logoutUrl: http://localhost:9091/logout
     # 未授权跳转 url
     unauthorizedUrl: /403
+    #强制修改密码的url
+    resetPasswordUrl:  http://localhost:9091/resetPass
+    #首次登陆是否强制要求修改密码
+    allowResetPassword: false
+
   # 时间类型参数在前端页面的展示格式，默认格式为 yyyy-MM-dd HH:mm:ss
   timeFormat: yyyy-MM-dd HH:mm:ss
   # 是否开启 AOP 日志，默认开启
@@ -185,7 +190,7 @@ mdss:
   #上报错误日志的地址
   exceptionNoticeUrl: http://logstash.growth-master.com/logNoticeService
   #上报错误日志的当前应用名称
-  exceptionNoticeAppName: uoms2-dev
+  exceptionNoticeAppName: uoms2-dev-mdss
   #默认的日志预警的模式 (BATCH 批量 IMME 立即)
   exceptionNoticeMode: BATCH
 

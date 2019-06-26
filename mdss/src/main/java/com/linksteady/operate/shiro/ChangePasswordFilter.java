@@ -1,16 +1,14 @@
-package com.linksteady.system.shiro;
+package com.linksteady.operate.shiro;
 
 import com.linksteady.common.domain.User;
 import com.linksteady.common.util.SpringContextUtils;
-import com.linksteady.system.config.SystemProperties;
+import com.linksteady.operate.config.SystemProperties;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 首次登陆用户强制修改密码过滤器
@@ -20,15 +18,6 @@ public class ChangePasswordFilter extends AccessControlFilter {
 
     @Override
     protected boolean isAccessAllowed(ServletRequest servletRequest, ServletResponse servletResponse, Object o) throws Exception {
-//        String requestUrl=WebUtils.getPathWithinApplication(WebUtils.toHttp(servletRequest));
-//
-//        if(requestUrl.equals("/login"))
-//        {
-//            return true;
-//        }else
-//        {
-//           return false;
-//        }
         return false;
 
     }
