@@ -58,6 +58,6 @@ public class PageController extends BaseController {
         User user = super.getCurrentUser();
         model.addAttribute("user", user);
         model.addAttribute("version", version);
-        return "resetPassword";
+        return "resetpass";
     }
 }
