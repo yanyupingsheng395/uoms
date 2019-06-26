@@ -29,7 +29,7 @@ public class MD5Utils {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(MD5Utils.encrypt("gede","gede0626"));
+		System.out.println(MD5Utils.encrypt("test","test123"));
 	}
 
 }

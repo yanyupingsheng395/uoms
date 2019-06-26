@@ -153,6 +153,7 @@ logging:
     com:
       linksteady:
         operate: debug
+        dao: debug
 
 
 # system 配置

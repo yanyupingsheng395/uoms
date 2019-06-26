@@ -10,9 +10,6 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <!--日期选择插件-->
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
-    <link rel="stylesheet"  data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
 
@@ -116,10 +113,10 @@
                                             <li><a href="#price" data-toggle="tab">价格</a></li>
                                         </ul>
                                         <div id="historyTabContent" class="tab-content">
-                                            <div class='tab-pane fade active in' id='prod'><table id='prodTable' class='table text-center'></table></div>
-                                            <div class='tab-pane fade' id='chnl'><table id='chnlTable' class='table text-center'></table></div>
-                                            <div class='tab-pane fade' id='camp'><table id='campTable' class='table text-center'></table></div>
-                                            <div class='tab-pane fade' id='price'><table id='priceTable' class='table text-center'></table></div>
+                                            <div class='tab-pane fade active in' id='prod'><table id='prodTable' class='table table-bordered text-center'></table></div>
+                                            <div class='tab-pane fade' id='chnl'><table id='chnlTable' class='table table-bordered text-center'></table></div>
+                                            <div class='tab-pane fade' id='camp'><table id='campTable' class='table table-bordered text-center'></table></div>
+                                            <div class='tab-pane fade' id='price'><table id='priceTable' class='table table-bordered text-center'></table></div>
                                         </div>
                                     </form>
                                 </div>
@@ -145,7 +142,7 @@
                             <!--按钮-->
                             <div class="row" style="margin-top: 20px">
                                 <div class="col-md-12 text-center">
-                                    <a class="btn btn-secondary btn-sm" href="/page/reason"><span class="mdi mdi-redo-variant"></span>返&nbsp;&nbsp;&nbsp;&nbsp;回</a>
+                                    <a class="btn btn-dark btn-sm" href="/page/reason"><span class="mdi mdi-redo-variant"></span>返回</a>
                                 </div>
                             </div>
                         </div>
@@ -182,15 +179,7 @@
 <input id="kpiCode" type="hidden">
 <input id="templateCode" type="hidden">
 </body>
-<!--日期选择插件-->
-<script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
-<script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
-<script data-th-src="@{/js/common/lightyear.js}"></script>
-<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-select/bootstrap-select.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-select/defaults-zh_CN.min.js}"></script>
 <script data-th-src="@{/js/app/operate/reason/reasonDetail.js}"></script>
 </html>

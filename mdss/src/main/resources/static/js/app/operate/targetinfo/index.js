@@ -2,6 +2,7 @@ $(function () {
     var settings = {
         url: "/target/getPageList",
         method: 'post',
+        singleSelect: true,
         cache: false,
         pagination: true,
         sidePagination: "server",

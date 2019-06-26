@@ -2,6 +2,7 @@ $(function () {
     var settings = {
         url: "/diag/list",
         method: 'post',
+        singleSelect: true,
         cache: false,
         pagination: true,
         sidePagination: "server",

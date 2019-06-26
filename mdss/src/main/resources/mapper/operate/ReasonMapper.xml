@@ -36,7 +36,7 @@
     </resultMap>
 
     <select id="getReasonTotalCountByUserName" resultType="int">
-     select count(*) from UO_REASON_LIST where CREATE_BY = #{username} and reason_name = #{reasonName}
+     select count(*) from UO_REASON_LIST where CREATE_BY = #{username} AND REASON_NAME like concat('%', concat(#{reasonName}, '%'))
    </select>
 
     <select id="getReasonTotalCount" resultType="int">

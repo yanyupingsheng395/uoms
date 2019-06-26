@@ -2,6 +2,7 @@ $(function () {
     var settings = {
         url: "/reason/list",
         method: 'post',
+        singleSelect: true,
         cache: false,
         pagination: true,
         sidePagination: "server",
@@ -72,7 +73,9 @@ $(function () {
             $("a[data-toggle='tooltip']").tooltip();
         }
     };
-    $('#reasonTable').bootstrapTable(settings);
+
+    $MB.initTable('reasonTable',settings);
+
     //为刷新按钮绑定事件
     $("#btn_refresh").on("click",function () {
         $('#reasonTable').bootstrapTable('refresh');
@@ -132,11 +135,11 @@ function updateReason() {
     var selected = $("#reasonTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请选择需要变更的原因任务！');
+        $MB.n_warning('请选择需要计算的原因任务！');
         return;
     }
     if (selected_length > 1) {
-        $MB.n_warning('一次只能变更一个原因任务！');
+        $MB.n_warning('一次只能计算一个原因任务！');
         return;
     }
     var reasonId = selected[0]["reasonId"];
@@ -144,7 +147,7 @@ function updateReason() {
     $.getJSON("/reason/updateProgressById?reasonId="+reasonId,function (resp) {
         if (resp.code === 200){
             lightyear.loading('hide');
-            $MB.n_success('更新成功!');
+            $MB.n_success('计算成功!');
             $('#reasonTable').bootstrapTable('refresh');
         }
     });

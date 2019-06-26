@@ -339,7 +339,7 @@ public class ReasonController  extends BaseController {
     public ResponseBo getResultTracelist() {
 
         List<ReasonResultTrace> list=reasonService.getReasonResultTraceList(getCurrentUser().getUsername());
-        return ResponseBo.okOverPaging("",0,list);
+        return ResponseBo.okOverPaging("",list.size(),list);
     }
 
 }
