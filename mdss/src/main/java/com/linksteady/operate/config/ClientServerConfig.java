@@ -37,8 +37,8 @@ public class ClientServerConfig {
     @Bean
     public HttpInvokerProxyFactoryBean service() throws Exception{
         HttpInvokerProxyFactoryBean httpInvokerProxyFactoryBean = new HttpInvokerProxyFactoryBean();
-        Map<String, String> codeUrlMap = (Map<String, String>)redisTemplate.opsForValue().get("codeUrlMap:20190621");
-        String url = codeUrlMap.get(serviceDomain) + "/" + serverServiceUrl;
+        Map<String, String> applicationInfoMap = (Map<String, String>)redisTemplate.opsForValue().get("applicationInfoMap");
+        String url = applicationInfoMap.get(serviceDomain) + "/" + serverServiceUrl;
         httpInvokerProxyFactoryBean.setServiceUrl(url);
         httpInvokerProxyFactoryBean.setServiceInterface(OpenApiService.class);
         return httpInvokerProxyFactoryBean;

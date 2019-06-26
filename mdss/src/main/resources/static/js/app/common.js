@@ -1,37 +1,21 @@
 var urlstr = "";
 $(document).ready(function () {
     allExceptionCatch();
-    initSysInfo();
+    // initSysInfo();
     getUserMenu();
 });
-/**
- * 从session中获取sysId
- * @returns {*}
- */
-function getSysIdFromSession() {
-    var sysId;
-    $.ajax({
-        url:"/getSysIdFromSession",
-        async: false,
-        data:{},
-        success: function (r) {
-            sysId = r.data;
-        }
-    });
-    return sysId;
-}
 
 /**
  * 初始化系统信息
  */
-function initSysInfo() {
-    $.get("/sysinfo", {}, function (r) {
-        var version = r.data.version;
-        var username = r.data.currentUser;
-        $("#version").html("").html("v" + version);
-        $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
-    });
-}
+// function initSysInfo() {
+//     $.get("/sysinfo", {}, function (r) {
+//         var version = r.data.version;
+//         var username = r.data.currentUser;
+//         $("#version").html("").html("v" + version);
+//         $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
+//     });
+// }
 
 // 全局异常拦截
 function allExceptionCatch() {
@@ -104,21 +88,26 @@ function allExceptionCatch() {
 }
 
 function getUserMenu() {
-    var sysId = getSysIdFromSession();
-    if(sysId != 'null') {
-        $.get("/api/getUserMenu", {sysId: sysId}, function (r) {
-            $(".nav-drawer").html("").html(forTree(r.data.tree.children));
-            menu_tree();
-            subMenu();
-            getSysNameBySysId(sysId);
-        });
-    }
-}
+        $.get("/api/getUserMenu", function (r) {
+            if(r.code===200)
+            {
+                var username=r.msg.username;
+                $(".nav-drawer").html("").html(forTree(r.msg.tree.children));
+                $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
 
-function getSysNameBySysId(sysId) {
-    $.get("/api/getSysName", {sysId: sysId}, function (r) {
-        $("#pageTitle").html("").html(r);
-    });
+                menu_tree();
+                subMenu();
+                $("#pageTitle").html("").html(r.data);
+
+                //设置返回导航页
+                $("#navigatorUrl").attr("href",r.msg.navigatorUrl);
+
+                //设置退出
+                $("#logoutbtn").attr("href",r.msg.logoutUrl);
+
+
+            }
+        });
 }
 
 function subMenu() {

@@ -38,11 +38,11 @@ public class OpenApiServiceImpl implements OpenApiService {
      * @return
      */
     @Override
-    public ResponseBo getUserMenu(String username, String sysId) {
+    public Map<String, Object> getUserMenu(String username, String sysId) {
         Map<String, Object> result = Maps.newHashMap();
         Tree<Menu> tree = menuService.getUserMenu(username, sysId);
         result.put("tree", tree);
-        return ResponseBo.okWithData(null, result);
+        return result;
     }
 
     @Override

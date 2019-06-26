@@ -18,7 +18,7 @@ $(function () {
             title: '名称'
         }, {
             field: 'domain',
-            title: '访问地址'
+            title: '默认页'
         }, {
             field: 'logo',
             title: '系统Logo'

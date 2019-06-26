@@ -58,16 +58,11 @@ public class RootPathController extends BaseController {
         return "index";
     }
 
-    @RequestMapping("/getSysIdFromSession")
-    @ResponseBody
-    public ResponseBo getSysIdFromSession(HttpServletRequest request) {
-        String sysId = String.valueOf(request.getSession().getAttribute("sysId"));
-        return ResponseBo.okWithData(null, sysId);
-    }
 
     @RequestMapping("/setSysIdToSession")
     @ResponseBody
     public ResponseBo setSysIdToSession(HttpServletRequest request, @RequestParam("sysId") String sysId) {
+        //将sysId放入session中，当获取当前用户的菜单时候使用
         request.getSession().setAttribute("sysId", sysId);
         return ResponseBo.ok();
     }

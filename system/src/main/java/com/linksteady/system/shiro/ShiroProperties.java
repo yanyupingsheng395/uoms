@@ -109,4 +109,5 @@ public class ShiroProperties {
     public void setAllowResetPassword(boolean allowResetPassword) {
         this.allowResetPassword = allowResetPassword;
     }
+
 }

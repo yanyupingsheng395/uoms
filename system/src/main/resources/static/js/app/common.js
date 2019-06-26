@@ -4,18 +4,6 @@ $(document).ready(function () {
     getUserMenu();
 });
 
-function getSysIdFromSession() {
-    var sysId;
-    $.ajax({
-        url:"/getSysIdFromSession",
-        async: false,
-        data:{},
-        success: function (r) {
-            sysId = r.data;
-        }
-    });
-    return sysId;
-}
 
 function getQueryVariable(variable) {
     var query = window.location.search.substring(1);
@@ -100,25 +88,25 @@ function allExceptionCatch() {
  * @param sysId
  */
 function getUserMenu() {
-    var sysId = getSysIdFromSession();
-    if(sysId != 'null') {
-        $.get("/menu/getUserMenu", {sysId: sysId}, function (r) {
+    $.get("/menu/getUserMenu", function (r) {
+        if(r.code===200)
+        {
             $(".nav-drawer").html("").html(forTree(r.msg.tree.children));
             var username = r.msg.username;
             $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
             $("#version").html("").html("v" + r.msg.version);
             menu_tree();
             subMenu();
-            getSysNameBySysId(sysId);
-        });
-    }
-}
+            //设置当前业务系统的标题
+            $("#pageTitle").html("").html(r.data);
 
-function getSysNameBySysId(sysId) {
-    $.get("/system/getSystem", {id: sysId}, function (r) {
-        $("#pageTitle").html("").html(r.msg.name);
+            //设置返回导航页
+            $("#navigatorUrl").attr("href",r.msg.navigatorUrl);
+
+        }
     });
 }
+
 
 
 var forTree = function (o) {

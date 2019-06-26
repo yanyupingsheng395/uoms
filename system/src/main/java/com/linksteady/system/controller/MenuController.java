@@ -2,10 +2,8 @@ package com.linksteady.system.controller;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
-import com.linksteady.common.domain.Menu;
-import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.domain.Tree;
-import com.linksteady.common.domain.User;
+import com.linksteady.common.domain.*;
+import com.linksteady.system.config.SystemProperties;
 import com.linksteady.system.service.MenuService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -13,12 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Controller
@@ -28,6 +28,12 @@ public class MenuController extends BaseController {
 
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
+    @Autowired
+    SystemProperties systemProperties;
 
     @Value("${app.version}")
     private String version;
@@ -39,17 +45,6 @@ public class MenuController extends BaseController {
         return "system/menu/menu";
     }
 
-//    @RequestMapping("menu/menu")
-//    @ResponseBody
-//    public ResponseBo getMenu(String userName) {
-//        try {
-//            List<Menu> menus = this.menuService.findUserMenus(userName);
-//            return ResponseBo.ok(menus);
-//        } catch (Exception e) {
-//            logger.error("获取菜单失败", e);
-//            return ResponseBo.error("获取菜单失败！");
-//        }
-//    }
 
     @RequestMapping("menu/getMenu")
     @ResponseBody
@@ -89,16 +84,36 @@ public class MenuController extends BaseController {
 
     @RequestMapping("menu/getUserMenu")
     @ResponseBody
-    public ResponseBo getUserMenu(@RequestParam("sysId") String sysId) {
+    public ResponseBo getUserMenu(HttpServletRequest request) {
+        //获取当前用户的sysId
+        String sysId = String.valueOf(request.getSession().getAttribute("sysId"));
+
+        if(null==sysId||"".equals(sysId)||"null".equals(sysId))
+        {
+            return ResponseBo.error("");
+        }
+
+        //返回的数据集
         Map<String, Object> result = new HashMap<>();
         User user = super.getCurrentUser();
         String userName = user.getUsername();
         result.put("username", userName);
         result.put("version", version);
+        Map<String,String> appMap=(Map<String, String>)redisTemplate.opsForValue().get("applicationInfoMap");
+        result.put("navigatorUrl",appMap.get("SYS")+"main");
+        result.put("logoutUrl",appMap.get("SYS")+"logout");
+
+
+
+        //获取当前子系统名称
+        Map<String, SysInfo> sysInfoMap=(Map<String, SysInfo>)redisTemplate.opsForValue().get("sysInfoMap");
+        String sysName=null==sysInfoMap.get(sysId)?"":sysInfoMap.get(sysId).getName();
+
         try {
             Tree<Menu> tree = this.menuService.getUserMenu(userName, sysId);
             result.put("tree", tree);
-            return ResponseBo.ok(result);
+
+            return ResponseBo.okWithData(result,sysName);
         } catch (Exception e) {
             logger.error("获取用户菜单失败", e);
             return ResponseBo.error("获取用户菜单失败！");

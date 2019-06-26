@@ -24,5 +24,4 @@ public interface ApplicationService extends IService<Application> {
 
     void deleteApplication(String ids);
 
-    Map<String, String> getCodeAndUrl();
 }

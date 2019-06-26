@@ -15,7 +15,7 @@ public interface OpenApiService {
      * @param sysId
      * @return
      */
-    ResponseBo getUserMenu(String username, String sysId);
+    Map<String, Object> getUserMenu(String username, String sysId);
 
     String getSysName(String sysId);
 }
