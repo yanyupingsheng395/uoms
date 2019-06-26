@@ -39,16 +39,17 @@ function load_jsmind(){
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    var source = $("#source").selectpicker('val');
-    source = source == null ? null:source.join(",");
+    var source = $("#source").find("option:selected").val();
     $.get("/useroperator/getOrgChartData",{ periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (resp) {
         if(null!=resp.data.gmv||resp.data.gmv!='null')
         {
+            var price = resp.data.price == null ? "0" : resp.data.price;
+            var sprice = resp.data.sprice == null ? "0" : resp.data.sprice;
             $("#KPI_GMV").html("").html(accounting.formatNumber(resp.data.gmv)+"元");
             $("#KPI_UCNT").html("").html(resp.data.ucnt+"人");
             $("#KPI_UPRICE").html("").html(resp.data.uprice+"元");
-            $("#KPI_PRICE").html("").html(resp.data.price+"元");
-            $("#KPI_SPRICE").html("").html(resp.data.sprice+"元");
+            $("#KPI_PRICE").html("").html(price+"元");
+            $("#KPI_SPRICE").html("").html(sprice+"元");
             $("#KPI_JOINRATE").html("").html(resp.data.joinrate);
             $("#KPI_PCNT").html("").html(resp.data.pcnt+"笔");
         }
@@ -67,16 +68,18 @@ $("#period").change(function () {
         $("#endDtDiv").hide();
         init_date("startDt", "yyyy", 2, 2, 2);
         // $('#startDt').datepicker("setStartDate", dataDt);
+        $("#btns").removeClass("pull-right");
     }
     if(period == "M") {
         $("#dateLabel").html("").html("时间：");
         $("#endDtDiv").hide();
         init_date("startDt", "yyyy-mm", 1, 2, 1);
-        // $('#startDt').datepicker("setStartDate", dataDt);
+        $("#btns").removeClass("pull-right");
     }
     if(period == "D") {
         $("#endDtDiv").show();
         $("#dateLabel").html("").html("开始时间：");
+        $("#btns").addClass("pull-right");
         // var date = new Date();
         // date.setDate(date.getDate() + 1);
         init_date_begin("startDt", "endDt", "yyyy-mm-dd",0,2 ,0);
@@ -231,8 +234,7 @@ function getKpiInfo(kpiType, unit) {
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    var source = $("#source").selectpicker('val');
-    source = source == null ? null:source.join(",");
+    var source = $("#source").find("option:selected").val();
     $.get("/useroperator/getKpiInfo", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
         var yny = r.data["yny"];
         var yoy = r.data["yoy"];
@@ -265,8 +267,7 @@ function kpiChart(kpiType) {
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    var source = $("#source").selectpicker('val');
-    source = source == null ? null:source.join(",");
+    var source = $("#source").find("option:selected").val();
     $.get("/useroperator/getKpiChart", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
         var seriesData = [];
         var o1 = new Object();
@@ -318,8 +319,7 @@ function allChart(kpiType) {
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    var source = $("#source").selectpicker('val');
-    source = source == null ? null:source.join(",");
+    var source = $("#source").find("option:selected").val();
     $.get("/useroperator/getSpAndFpKpi", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
         var seriesData = [];
         var o1 = new Object();
@@ -349,8 +349,7 @@ function makeSpAndFpChart(kpiType) {
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    var source = $("#source").selectpicker('val');
-    source = source == null ? null:source.join(",");
+    var source = $("#source").find("option:selected").val();
     $.get("/useroperator/getSpOrFpKpiVal", {kpiType:kpiType,periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
         fpChart(r);
         spChart(r);
@@ -489,8 +488,7 @@ function getKpiCalInfo(kpiType) {
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
-    var source = $("#source").selectpicker('val');
-    source = source == null ? null:source.join(",");
+    var source = $("#source").find("option:selected").val();
     $.get("/useroperator/getKpiCalInfo", {kpiType:kpiType, isFp: 'N',periodType: periodType, startDt: startDt, endDt: endDt, source:source}, function (r) {
         $("#fpAbs").html("").html(r.data['fpAbs']);
         $("#fpContributeRate").html("").html(r.data['fpContributeRate']);
@@ -501,4 +499,16 @@ function getKpiCalInfo(kpiType) {
         $("#spHb").html("").html(r.data['spHb']);
         $("#spTb").html("").html(r.data['spTb']);
     });
+}
+
+function resetCondition2() {
+    var date = new Date();
+    $("#startDateOfRetention").val(date.getFullYear() + "-" + date.getMonth());
+}
+
+function resetCondition1() {
+    var date = new Date();
+    $("#period").find("option[value='Y']").attr("selected", "selected");
+    $("#startDt").val(date.getFullYear());
+    $("#endDt").val(date.getFullYear());
 }

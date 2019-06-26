@@ -41,70 +41,56 @@
                 <div class="row">
                     <div class="col-lg-12 select-table table-striped">
                         <div class="col-md-12">
-                            <h5 class="modal-title pull-left" style="margin-top: 20px;">用户运营监控</h5>
+                            <div class="row">
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">用户运营监控</h5>
+                            </div>
+                            <div class="row">
+                                <hr class="hr"/>
+                            </div>
                         </div>
                         <div class="col-md-12">
-                            <hr class="hr"/>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="row" id="selectCondition1">
-                                <form class="form-horizontal">
-                                    <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label class="col-md-4 control-label">周期：</label>
-                                            <div class="col-md-8">
-                                                <select name="" id="period" class="selectpicker form-control">
+                            <div class="row">
+                                <form id="user-form">
+                                    <div class="select-list" id="selectCondition1">
+                                        <ul>
+                                            <li>
+                                                周期：
+                                                <select name="" id="period">
                                                     <option value="Y">年</option>
                                                     <option value="M">月</option>
                                                     <option value="D">日</option>
                                                 </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label class="col-md-4 control-label" id="dateLabel">目标周期：</label>
-                                            <div class="col-md-8">
-                                                <input type="text" name="startDt" class="form-control js-datepicker m-b-10" id="startDt" value="2019"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-4" hidden id="endDtDiv">
-                                            <label class="col-md-4 control-label">结束时间：</label>
-                                            <div class="col-md-8">
-                                                <input type="text" name="endDt" class="form-control js-datepicker m-b-10" id="endDt"/>
-                                            </div>
-                                        </div>
+                                            </li>
+                                            <li>
+                                                <span id="dateLabel">时间：</span>
+                                                <input type="text" name="startDt" class="js-datepicker" id="startDt" value="2019"/>
+                                            </li>
+                                            <li id="endDtDiv" hidden>
+                                                结束时间：
+                                                <input type="text" name="endDt" class="js-datepicker" id="endDt" value="2019"/>
+                                            </li>
+                                            <li>
+                                                渠道：
+                                                <select name="source" id="source"></select>
+                                            </li>
+                                            <li id="btns">
+                                                <a class="btn btn-primary btn-rounded btn-sm" onclick="searchKpiInfo()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                <a class="btn btn-warning btn-rounded btn-sm" onclick="resetCondition1()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label class="col-md-4 control-label">渠道：</label>
-                                            <div class="col-md-8">
-                                                <select name="" id="source" class="selectpicker form-control" multiple></select>
-                                            </div>
-                                        </div>
-                                        <!--<div class="form-group col-md-4">-->
-                                        <!--<label class="col-md-4 control-label">品牌：</label>-->
-                                        <!--<div class="col-md-8">-->
-                                        <!--<select name="" id="brand" class="selectpicker form-control"></select>-->
-                                        <!--</div>-->
-                                        <!--</div>-->
-                                        <div class="form-group col-md-8">
-                                            <div class="col-md-12 text-right">
-                                                <button class="btn btn-primary" type="button" onclick="searchKpiInfo()"><i class="mdi mdi-magnify"></i>查询</button>
-                                            </div>
-                                        </div>
+                                    <div class="select-list" id="selectCondition2" hidden>
+                                        <ul>
+                                            <li>
+                                                日期：<input class="js-datepicker" type="text" id="startDateOfRetention" name="startDate" data-date-format="yyyy-mm" value="2019-01"/>
+                                            </li>
+                                            <li>
+                                                <a class="btn btn-primary btn-rounded btn-sm" onclick="searchData()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                <a class="btn btn-warning btn-rounded btn-sm" onclick="resetCondition2()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </form>
-                            </div>
-                            <div class="row" id="selectCondition2" hidden>
-                                <div class="col-md-12">
-                                    <form class="form-inline pull-left">
-                                        <div class="form-group">
-                                            日期：<input class="form-control js-datepicker m-b-10" type="text" id="startDateOfRetention" name="startDate" data-date-format="yyyy-mm" value="2019-01"/>
-                                        </div>
-                                        <div class="form-group">
-                                            <button class="btn btn-primary m-b-10" type="button" onclick="searchData()"><i class="mdi mdi-magnify"></i>查询</button>
-                                        </div>
-                                    </form>
-                                </div>
                             </div>
                         </div>
                     </div>

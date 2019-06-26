@@ -397,7 +397,7 @@ public class SynGroupServiceImpl implements SynGroupService {
                         double retention = Double.valueOf(newUserCount==0? 0D:Double.valueOf(x.getKpiValue())/newUserCount*100);
                         x.setRetention(Double.valueOf(String.format("%.2f", retention)));
                     } else {
-                        x.setRetention(null);
+                        x.setRetention(0D);
                     }
                 }
             });
