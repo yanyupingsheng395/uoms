@@ -78,6 +78,13 @@ public class LoginController extends BaseController {
     @ResponseBody
     public ResponseBo login(String username, String password, String code) {
 
+        if (!StringUtils.isNotBlank(username)) {
+            return ResponseBo.error("用户名不能为空！");
+        }
+        if (!StringUtils.isNotBlank(password)) {
+            return ResponseBo.error("密码不能为空！");
+        }
+
         if (!StringUtils.isNotBlank(code)) {
             return ResponseBo.error("验证码不能为空！");
         }

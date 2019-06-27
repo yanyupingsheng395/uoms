@@ -1,47 +1,89 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <title>系统登录</title>
     <meta http-equiv="X-UA-Compatible" content="edge" />
-    <title>登录</title>
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/font-awesome-4.7.0/css/font-awesome.css}"/>
     <link rel="stylesheet" th:href="@{/css/login.css}" type="text/css">
-    <link rel="stylesheet" data-th-href="@{/plugins/layui/css/layui.css}">
-    <script data-th-src="@{/js/common/jquery.min.js}"></script>
-</head>
-<style>
+    <link rel="stylesheet" data-th-href="@{/css/common.css}">
 
-</style>
+</head>
 <body>
-<!-- Form-->
-<div class="form">
-    <div class="form-toggle"></div>
-    <div class="form-panel one">
-        <div class="form-header">
-            <h1 style="text-transform:capitalize;" >LinkSteady</h1>
-            <h1>营销诊断/运营系统</h1>
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100">
+            <div class="login100-form-title" style="background-image: url(/images/bg-01.jpg);">
+					<span class="login100-form-title-1">
+						营销诊断/运营系统 登录
+					</span>
+            </div>
+
+            <form class="login100-form validate-form" id="loginform">
+                <div class="wrap-input100 validate-input m-b-18" data-validate="用户名不能为空">
+                    <span class="label-input100">用户名</span>
+                    <input class="input100" type="text" name="username" placeholder="输入登录用户名">
+                    <span class="focus-input100"></span>
+                </div>
+
+                <div class="wrap-input100 validate-input m-b-18" data-validate = "密码不能为空">
+                    <span class="label-input100">密码</span>
+                    <input class="input100" type="password" name="password" placeholder="输入密码">
+                    <span class="focus-input100"></span>
+                </div>
+
+                <!--<div class="wrap-input100 validate-input m-b-18" data-validate = "验证码不能为空">-->
+                <!--<span class="label-input100">验证码</span>-->
+                <!--<input class="input100" type="text" name="code" placeholder="输入验证码">-->
+                <!--<span class="focus-input100"></span>-->
+                <!--</div>-->
+
+
+
+                <div class="flex-sb-m w-full p-b-18">
+                    <div class="wrap-input100 validate-input m-b-18" data-validate = "验证码不能为空">
+                        <span class="label-input100">验证码</span>
+                        <input class="input100" type="text" name="code" placeholder="输入验证码">
+                        <span class="focus-input100"></span>
+                    </div>
+                    <div>
+                        <img id="validateCodeImg" data-th-src="@{gifCode}" onclick="reloadCode()" style="vertical-align:middle;display:inline-block" />
+                    </div>
+                </div>
+
+                <div class="flex-sb-m w-full p-b-30">
+                    <!--<div class="contact100-form-checkbox">-->
+                    <!--<input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">-->
+                    <!--<label class="label-checkbox100" for="ckb1">-->
+                    <!--Remember me-->
+                    <!--</label>-->
+                    <!--</div>-->
+
+                    <div>
+                        <a href="#" class="txt1"  data-container="body" data-toggle="popover" data-placement="top"
+                           data-content="" title="请发邮件至  service@link-steady.com  寻求帮助!">忘记密码?</a>
+                    </div>
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <button class="login100-form-btn" id="loginButton" type="button">登录</button>
+                </div>
+            </form>
         </div>
-        <div class="form-content">
-            <div class="form-group">
-                <label>用户名</label>
-                <input type="text" name="username" />
-            </div>
-            <div class="form-group">
-                <label>密码</label>
-                <input type="password" name="password" />
-            </div>
-            <div class="form-group" style="display:inline-block">
-                <label>验证码</label>
-                <input type="text" name="code" style="width:60%; display:inline-block;" />
-                <img id="validateCodeImg" data-th-src="@{gifCode}" onclick="reloadCode()" style="vertical-align:middle;display:inline-block" />
-            </div>
-            <div class="form-group">
-                <button onclick="login()" id="loginButton">登录</button>
-            </div>
-        </div>
+
     </div>
+    <div style="background:#ebeeef;text-align: center;padding-bottom: 10px;">LinkSteady 版权所有</div>
 </div>
-<script data-th-src="@{/plugins/layui/layui.js}"></script>
+
+<script data-th-src="@{/js/common/jquery.min.js}"></script>
+<script data-th-src="@{/js/common/bootstrap.min.js}"></script>
+<!--notify -->
+<script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
 <script data-th-src="@{/js/app/login.js}"></script>
+
 </body>
 </html>

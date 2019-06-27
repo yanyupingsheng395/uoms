@@ -53,3 +53,7 @@
 | 查看 | class="btn btn-primary" | mdi-eye |
 | 执行/检查 | class="btn btn-success" | mdi-check |
 
+#系统构建
+##修改版本号
+versions:set -DnewVersion=1.04
+

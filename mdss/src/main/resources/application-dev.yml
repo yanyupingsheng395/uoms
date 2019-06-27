@@ -168,19 +168,33 @@ sys:
     # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
     anonUrl: /plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo,/login
     # 登录 url
-    loginUrl: http://localhost:9091/login
+    loginUrl: http://prod.growth-master.com/login
     # 登录成功后跳转的 url
     successUrl: /page/index
     # 登出 url
-    logoutUrl: http://localhost:9091/logout
+    logoutUrl: http://prod.growth-master.com/logout
     # 未授权跳转 url
     unauthorizedUrl: /403
     #强制修改密码的url
-    resetPasswordUrl:  http://localhost:9091/resetPass
+    resetPasswordUrl: http://prod.growth-master.com/resetPass
     #首次登陆是否强制要求修改密码
     allowResetPassword: false
     #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
     cookieDomain: localhost
+
+#    # 登录 url
+#    loginUrl: http://localhost:9091/login
+#    # 登录成功后跳转的 url
+#    successUrl: /page/index
+#    # 登出 url
+#    logoutUrl: http://localhost:9091/logout
+#    # 未授权跳转 url
+#    unauthorizedUrl: /403
+#    #强制修改密码的url
+#    resetPasswordUrl:  http://localhost:9091/resetPass
+#    #首次登陆是否强制要求修改密码
+#    allowResetPassword: false
+
 
   # 时间类型参数在前端页面的展示格式，默认格式为 yyyy-MM-dd HH:mm:ss
   timeFormat: yyyy-MM-dd HH:mm:ss
