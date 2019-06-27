@@ -15,11 +15,13 @@ spring:
   datasource:
     druid:
       # 数据库访问配置, 使用druid数据源
-      db-type: com.alibaba.druid.pool.DruidDataSource
+      db-type: com.alibaba.druid.pool.DruidDataSourc
       driver-class-name: oracle.jdbc.OracleDriver
       url: jdbc:oracle:thin:@39.98.78.201:1521:orcl
-      username: aimergrowth_dev
-      password: aimergrowthdev123
+      username: gimspromote_dev
+      password: gimsdev123
+#      username: aimergrowth_dev
+#      password: aimergrowthdev123
       # 连接池配置
       initial-size: 5
       min-idle: 5
@@ -152,10 +154,9 @@ logging:
     com:
       linksteady:
         operate:
-          dao: debug
+          dao: info
 
 
-# system 配置
 sys:
   shiro:
     # shiro redis缓存时长，默认1800秒
@@ -167,15 +168,15 @@ sys:
     # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
     anonUrl: /plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo
     # 登录 url
-    loginUrl: /login
+    loginUrl: http://prod.growth-master.com/login
     # 登录成功后跳转的 url
     successUrl: /page/index
     # 登出 url
-    logoutUrl: http://localhost:9091/logout
+    logoutUrl: http://prod.growth-master.com/logout
     # 未授权跳转 url
     unauthorizedUrl: /403
     #强制修改密码的url
-    resetPasswordUrl: http://localhost:9091/resetPass
+    resetPasswordUrl: http://prod.growth-master.com/resetPass
     #首次登陆是否强制要求修改密码
     allowResetPassword: false
 

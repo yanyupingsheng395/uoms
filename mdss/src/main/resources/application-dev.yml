@@ -157,7 +157,7 @@ logging:
 
 
 # system 配置
-mdss:
+sys:
   shiro:
     # shiro redis缓存时长，默认1800秒  7200
     expireIn: 1800

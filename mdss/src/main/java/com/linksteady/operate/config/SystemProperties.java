@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "mdss")
+@ConfigurationProperties(prefix = "sys")
 public class SystemProperties {
 
     private ShiroProperties shiro = new ShiroProperties();
