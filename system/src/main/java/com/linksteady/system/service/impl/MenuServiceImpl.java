@@ -1,7 +1,9 @@
 package com.linksteady.system.service.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.google.common.collect.Maps;
 import com.linksteady.common.util.TreeUtils;
 import com.linksteady.system.dao.ApplicationMapper;
 import com.linksteady.system.dao.SystemMapper;
@@ -58,6 +60,11 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     @Override
     public List<Menu> findUserMenus(String userName, String sysId) {
         return this.menuMapper.findUserMenus(userName, sysId);
+    }
+
+    @Override
+    public List<Menu> findUserMenus(String userName) {
+        return this.menuMapper.findUserMenusOfAllSys(userName);
     }
 
     @Override
@@ -162,6 +169,26 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         return TreeUtils.build(trees);
     }
 
+    @Override
+    public Map<String, Tree<Menu>> getUserMenu(String userName) {
+        List<Menu> menus = this.findUserMenus(userName);
+        Map<String, Tree<Menu>> result = Maps.newHashMap();
+        menus.stream().collect(Collectors.groupingBy(Menu::getSysId)).entrySet().stream().forEach(x->{
+            List<Tree<Menu>> trees = new ArrayList<>();
+            x.getValue().forEach(menu -> {
+                Tree<Menu> tree = new Tree<>();
+                tree.setId(menu.getMenuId().toString());
+                tree.setParentId(menu.getParentId().toString());
+                tree.setText(menu.getMenuName());
+                tree.setIcon(menu.getIcon());
+                tree.setUrl(getMenuFullUrl(menu.getAppId(), menu.getUrl()));
+                trees.add(tree);
+            });
+            result.put(x.getKey(), TreeUtils.build(trees));
+        });
+        return result;
+    }
+
     private String getMenuFullUrl(String appId, String url) {
         String domain = applicationMapper.getDomainById(appId);
         if(StringUtils.isNotBlank(domain)) {
@@ -173,7 +200,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         }
         return url;
     }
-
 
     @Override
     public Menu findByNameAndType(String menuName, String type) {

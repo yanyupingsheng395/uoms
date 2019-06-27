@@ -94,6 +94,8 @@ public class ShiroRealm extends AuthorizingRealm {
                 throw new LockedAccountException("账号已过期,请联系管理员！");
             }
         }
+        // 登录成功之后获取菜单
+        user.setUserMenuTree(menuService.getUserMenu(userName));
         return new SimpleAuthenticationInfo(user, password, getName());
     }
 }

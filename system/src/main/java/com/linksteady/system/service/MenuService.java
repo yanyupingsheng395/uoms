@@ -15,6 +15,8 @@ public interface MenuService extends IService<Menu> {
 
     List<Menu> findUserMenus(String userName, String sysId);
 
+    List<Menu> findUserMenus(String userName);
+
     List<Menu> findAllMenus(Menu menu);
 
     Tree<Menu> getMenuButtonTree();
@@ -22,6 +24,8 @@ public interface MenuService extends IService<Menu> {
     Tree<Menu> getMenuTree(String sysId);
 
     Tree<Menu> getUserMenu(String userName, String sysId);
+
+    Map<String, Tree<Menu>> getUserMenu(String userName);
 
     Menu findById(Long menuId);
 

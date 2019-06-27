@@ -29,14 +29,28 @@
   </select>
 
     <select id="findUserMenus" resultMap="menu">
-  	select m.* from t_menu m
-    where m.type &lt;&gt; '1' and m.sys_id = #{sysId} and m.MENU_ID in
+        select m.* from t_menu m
+        where m.type &lt;&gt; '1'
+        <if test="sysId != null">
+            and m.sys_id = #{sysId}
+        </if>
+        and m.MENU_ID in
         (select distinct rm.menu_id from t_role_menu rm
-		left join t_role r on(rm.role_id = r.role_id)
+        left join t_role r on(rm.role_id = r.role_id)
         left join t_user_role ur on(ur.role_id = r.role_id)
         left join t_user u on (u.user_id = ur.user_id)
         where u.username = #{userName}) order by m.order_num,m.sys_id asc
-  </select>
+    </select>
+
+    <select id="findUserMenusOfAllSys" resultMap="menu">
+        select m.* from t_menu m
+        where m.type &lt;&gt; '1' and m.MENU_ID in
+        (select distinct rm.menu_id from t_role_menu rm
+        left join t_role r on(rm.role_id = r.role_id)
+        left join t_user_role ur on(ur.role_id = r.role_id)
+        left join t_user u on (u.user_id = ur.user_id)
+        where u.username = #{userName}) order by m.order_num,m.sys_id asc
+    </select>
 
     <update id="changeToTop" parameterType="java.util.List">
         update t_menu set parent_id = 0 where menu_id in ( select a.menu_id from (

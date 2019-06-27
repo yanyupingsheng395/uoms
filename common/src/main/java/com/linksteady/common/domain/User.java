@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 @Data
 @Table(name = "t_user")
@@ -93,24 +94,9 @@ public class User implements Serializable {
 	@Column(name = "FIRSTLOGIN")
 	private String firstLogin ="N";
 
-
-	@Override
-	public String toString() {
-		return "User{" +
-				"userId=" + userId +
-				", username='" + username + '\'' +
-				", password='" + password + '\'' +
-				", email='" + email + '\'' +
-				", mobile='" + mobile + '\'' +
-				", status='" + status + '\'' +
-				", crateTime=" + crateTime +
-				", modifyTime=" + modifyTime +
-				", lastLoginTime=" + lastLoginTime +
-				", ssex='" + ssex + '\'' +
-				", theme='" + theme + '\'' +
-				", avatar='" + avatar + '\'' +
-				", description='" + description + '\'' +
-				", roleName='" + roleName + '\'' +
-				'}';
-	}
+	/**
+	 * 用户所拥有的菜单 key:sysId
+	 */
+	@Transient
+	private Map<String, Tree<Menu>> userMenuTree;
 }

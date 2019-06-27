@@ -88,7 +88,7 @@ function allExceptionCatch() {
  * @param sysId
  */
 function getUserMenu() {
-    $.get("/menu/getUserMenu", function (r) {
+    $.get("/findUserMenu", function (r) {
         if(r.code===200)
         {
             $(".nav-drawer").html("").html(forTree(r.msg.tree.children));
@@ -99,7 +99,6 @@ function getUserMenu() {
             subMenu();
             //设置当前业务系统的标题
             $("#pageTitle").html("").html(r.data);
-
             //设置返回导航页
             $("#navigatorUrl").attr("href",r.msg.navigatorUrl);
 
