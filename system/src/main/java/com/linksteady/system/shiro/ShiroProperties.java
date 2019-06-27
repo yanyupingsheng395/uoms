@@ -30,6 +30,11 @@ public class ShiroProperties {
 
     private boolean allowResetPassword =false;
 
+    /**
+     * 设置cookie的域名，所有业务子系统和权限管理系统保持一致，否则session不生效。
+     */
+    private String cookieDomain;
+
     public int getExpireIn() {
         return expireIn;
     }
@@ -110,4 +115,11 @@ public class ShiroProperties {
         this.allowResetPassword = allowResetPassword;
     }
 
+    public String getCookieDomain() {
+        return cookieDomain;
+    }
+
+    public void setCookieDomain(String cookieDomain) {
+        this.cookieDomain = cookieDomain;
+    }
 }

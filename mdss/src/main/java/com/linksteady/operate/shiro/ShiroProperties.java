@@ -30,6 +30,8 @@ public class ShiroProperties {
 
     private boolean allowResetPassword =false;
 
+    private String cookieDomain;
+
     public int getExpireIn() {
         return expireIn;
     }
@@ -108,5 +110,13 @@ public class ShiroProperties {
 
     public void setAllowResetPassword(boolean allowResetPassword) {
         this.allowResetPassword = allowResetPassword;
+    }
+
+    public String getCookieDomain() {
+        return cookieDomain;
+    }
+
+    public void setCookieDomain(String cookieDomain) {
+        this.cookieDomain = cookieDomain;
     }
 }
