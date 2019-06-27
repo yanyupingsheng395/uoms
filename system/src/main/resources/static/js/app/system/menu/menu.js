@@ -6,6 +6,7 @@ $(function () {
 var ctx = "/";
 
 function initTreeTable() {
+    $MB.loading('show');
     var $menuTableForm = $("#menu-table-form");
     var setting = {
         id: 'menuId',
@@ -71,8 +72,8 @@ function initTreeTable() {
             }
         ]
     };
-
     $MB.initTreeTable('menuTable', setting);
+    $MB.loading('hide');
 }
 
 function getSystem() {

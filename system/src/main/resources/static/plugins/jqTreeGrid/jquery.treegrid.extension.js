@@ -13,7 +13,8 @@
         var hasSelectItem = false;
         var target = $(this);
         // 在外层包装一下div，样式用的bootstrap-table的
-        var _main_div = $("<div class='fixed-table-container'></div>");
+        // var _main_div = $("<div class='fixed-table-container'></div>");
+        var _main_div = $("<div></div>");
         target.before(_main_div);
         _main_div.append(target);
         target.addClass("table table-hover treegrid-table table-bordered");
