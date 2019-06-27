@@ -242,10 +242,13 @@ public class ShiroConfig {
         sessionManager.setGlobalSessionTimeout(systemProperties.getShiro().getSessionTimeout());
         sessionManager.setSessionListeners(listeners);
         sessionManager.setSessionDAO(redisSessionDAO());
+
         sessionManager.setSessionIdUrlRewritingEnabled(false);
+
         sessionManager.setDeleteInvalidSessions(false);
         sessionManager.setSessionValidationSchedulerEnabled(false);
-        sessionManager.setSessionIdCookie(sessionIdCookie());
+
+       // sessionManager.setSessionIdCookie(sessionIdCookie());
         return sessionManager;
     }
 }

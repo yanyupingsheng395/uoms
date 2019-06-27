@@ -1,7 +1,7 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Maps;
-import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.domain.User;
 import com.linksteady.operate.dao.ReasonMapper;
 import com.linksteady.operate.dao.ReasonRelMatrixMapper;
 import com.linksteady.operate.dao.ReasonResultMapper;
@@ -9,13 +9,11 @@ import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.operate.vo.ReasonVO;
-import com.linksteady.common.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.thrift.TException;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
