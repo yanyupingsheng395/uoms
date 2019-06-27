@@ -15,7 +15,7 @@
         <dependency>
             <groupId>com.linksteady</groupId>
             <artifactId>common</artifactId>
-            <version>1.03</version>
+            <version>1.04</version>
         </dependency>
     </dependencies>
     <build>
