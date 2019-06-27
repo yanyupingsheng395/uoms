@@ -83,19 +83,19 @@ public class ShiroConfig {
         return redisCacheManager;
     }
 
-//    /**
-//     * 设置cookie
-//     * @return
-//     */
-//    @Bean("sessionIdCookie")
-//    public SimpleCookie sessionIdCookie() {
-//        SimpleCookie cookie = new SimpleCookie();
-//        cookie.setName("JSESSIONID");
-//        cookie.setHttpOnly(true);
-//        cookie.setMaxAge(systemProperties.getShiro().getCookieTimeout());
-//        cookie.setDomain("growth-master1.com");
-//        return cookie;
-//    }
+    /**
+     * 设置cookie
+     * @return
+     */
+    @Bean("sessionIdCookie")
+    public SimpleCookie sessionIdCookie() {
+        SimpleCookie cookie = new SimpleCookie();
+        cookie.setName("JSESSIONID");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(systemProperties.getShiro().getCookieTimeout());
+        cookie.setDomain("prod.growth-master.com");
+        return cookie;
+    }
 
     @Bean
     public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
@@ -248,7 +248,7 @@ public class ShiroConfig {
         sessionManager.setDeleteInvalidSessions(false);
         sessionManager.setSessionValidationSchedulerEnabled(false);
 
-       // sessionManager.setSessionIdCookie(sessionIdCookie());
+        sessionManager.setSessionIdCookie(sessionIdCookie());
         return sessionManager;
     }
 }
