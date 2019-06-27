@@ -248,7 +248,7 @@ public class ShiroConfig {
         sessionManager.setDeleteInvalidSessions(false);
         sessionManager.setSessionValidationSchedulerEnabled(false);
 
-       // sessionManager.setSessionIdCookie(sessionIdCookie());
+        sessionManager.setSessionIdCookie(sessionIdCookie());
         return sessionManager;
     }
 }
