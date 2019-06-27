@@ -91,7 +91,7 @@ public class ShiroConfig {
         cookie.setName("JSESSIONID");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(systemProperties.getShiro().getCookieTimeout());
-        cookie.setDomain("prod.growth-master.com");
+        cookie.setDomain(systemProperties.getShiro().getCookieDomain());
         return cookie;
     }
 
