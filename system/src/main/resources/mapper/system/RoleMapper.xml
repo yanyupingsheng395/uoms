@@ -25,5 +25,4 @@
 	left join t_role_menu rm on(r.role_id = rm.role_id)
 	where r.role_id = #{roleId}
   </select>
-  
 </mapper>

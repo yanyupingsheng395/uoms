@@ -5,6 +5,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+import com.linksteady.common.bo.UserRoleBo;
+import com.linksteady.common.domain.*;
+import com.linksteady.system.dao.UserRoleMapper;
+import com.linksteady.system.util.TreeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.linksteady.system.dao.RoleMapper;
 import com.linksteady.system.dao.RoleMenuMapper;
-import com.linksteady.common.domain.Role;
-import com.linksteady.common.domain.RoleMenu;
-import com.linksteady.common.domain.RoleWithMenu;
 import com.linksteady.system.service.RoleMenuServie;
 import com.linksteady.system.service.RoleService;
 import com.linksteady.system.service.UserRoleService;
@@ -40,6 +42,9 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
     @Autowired
     private RoleMenuServie roleMenuService;
+
+    @Autowired
+    private UserRoleMapper userRoleMapper;
 
     @Override
     public List<Role> findUserRole(String userName) {
@@ -123,4 +128,25 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
         setRoleMenus(role, menuIds);
     }
 
+    @Override
+    public Tree<UserRoleBo> getUserRoleTree(String roleId) {
+        Role role = roleMapper.selectByPrimaryKey(roleId);
+        List<Tree<UserRoleBo>> userRoleTree = Lists.newArrayList();
+        List<UserRoleBo> userRoleBos = userRoleMapper.findUserRole(roleId);
+        userRoleBos.forEach(x->{
+            Tree<UserRoleBo> tree = new Tree<>();
+            tree.setId(x.getUserId());
+            tree.setText(x.getUserName());
+            tree.setParentId("-1");
+            tree.setIcon("fa fa-user");
+            tree.setChecked(x.getHasPermission().equalsIgnoreCase("1")?true:false);
+            userRoleTree.add(tree);
+        });
+        Tree<UserRoleBo> tree = new Tree<>();
+        tree.setId("-1");
+        tree.setText(role.getRoleName());
+        tree.setIcon("fa fa-address-card");
+        userRoleTree.add(tree);
+        return TreeUtils.build(userRoleTree);
+    }
 }

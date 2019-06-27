@@ -2,8 +2,10 @@ package com.linksteady.system.service;
 
 import java.util.List;
 
+import com.linksteady.common.bo.UserRoleBo;
 import com.linksteady.common.domain.Role;
 import com.linksteady.common.domain.RoleWithMenu;
+import com.linksteady.common.domain.Tree;
 
 public interface RoleService extends IService<Role> {
 
@@ -20,4 +22,6 @@ public interface RoleService extends IService<Role> {
 	void updateRole(Role role, Long[] menuIds);
 
 	void deleteRoles(String roleIds);
+
+	Tree<UserRoleBo> getUserRoleTree(String roleId);
 }

@@ -3,7 +3,11 @@ package com.linksteady.system.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.linksteady.common.bo.UserRoleBo;
+import com.linksteady.common.domain.*;
 import com.linksteady.system.dao.RoleMapper;
+import com.linksteady.system.service.UserRoleService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -11,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
@@ -18,9 +23,6 @@ import com.github.pagehelper.PageInfo;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
-import com.linksteady.common.domain.QueryRequest;
-import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.domain.Role;
 import com.linksteady.system.service.RoleService;
 
 @Controller
@@ -30,6 +32,9 @@ public class RoleController extends BaseController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private UserRoleService userRoleService;
 
     @Log("获取角色信息")
     @RequestMapping("role")
@@ -109,6 +114,25 @@ public class RoleController extends BaseController {
         } catch (Exception e) {
             log.error("修改角色失败", e);
             return ResponseBo.error("修改角色失败，请联系网站管理员！");
+        }
+    }
+
+    @RequestMapping("role/getUserRoleTree")
+    @ResponseBody
+    public ResponseBo getUserRoleTree(@RequestParam("roleId") String roleId) {
+        Tree<UserRoleBo> res = this.roleService.getUserRoleTree(roleId);
+        return ResponseBo.okWithData(null, res);
+    }
+
+    @RequestMapping("role/updateUserRole")
+    @ResponseBody
+    public ResponseBo updateUserRole(@RequestParam("userIds") String userIds, @RequestParam("roleId") String roleId) {
+        try {
+            userRoleService.updateUserRole(userIds, roleId);
+            return ResponseBo.ok("授权成功！");
+        }catch (Exception e) {
+            log.error("授权失败，", e);
+            return ResponseBo.error("授权失败，未知异常！");
         }
     }
 }

@@ -67,6 +67,9 @@
                                     <a class="btn btn-danger btn-del" onclick="deleteRoles()" shiro:hasPermission="role:delete">
                                         <i class="fa fa-remove"></i> 删除
                                     </a>
+                                    <a class="btn btn-info" onclick="setUserRoles()" shiro:hasPermission="role:delete">
+                                        <i class="fa fa-gavel"></i> 授权
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -79,6 +82,7 @@
                 </div>
             </div>
             <div data-th-include="system/role/roleAdd"></div>
+            <div data-th-include="system/role/rolePermit"></div>
         </main>
     </div>
 </div>
