@@ -182,20 +182,6 @@ sys:
     #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
     cookieDomain: localhost
 
-#    # 登录 url
-#    loginUrl: http://localhost:9091/login
-#    # 登录成功后跳转的 url
-#    successUrl: /page/index
-#    # 登出 url
-#    logoutUrl: http://localhost:9091/logout
-#    # 未授权跳转 url
-#    unauthorizedUrl: /403
-#    #强制修改密码的url
-#    resetPasswordUrl:  http://localhost:9091/resetPass
-#    #首次登陆是否强制要求修改密码
-#    allowResetPassword: false
-
-
   # 时间类型参数在前端页面的展示格式，默认格式为 yyyy-MM-dd HH:mm:ss
   timeFormat: yyyy-MM-dd HH:mm:ss
   # 是否开启 AOP 日志，默认开启
