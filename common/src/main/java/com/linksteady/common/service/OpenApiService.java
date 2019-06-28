@@ -18,4 +18,6 @@ public interface OpenApiService {
     Map<String, Object> getUserMenu(String username, String sysId);
 
     String getSysName(String sysId);
+
+    void updatePassword(String userName, String newPassword);
 }

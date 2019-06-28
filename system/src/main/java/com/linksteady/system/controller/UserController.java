@@ -169,7 +169,7 @@ public class UserController extends BaseController {
             return ResponseBo.ok("更改密码成功！");
         } catch (Exception e) {
             log.error("修改密码失败", e);
-            return ResponseBo.error("更改密码失败，请联系网理员！");
+            return ResponseBo.error("更改密码失败，请联系管理员！");
         }
     }
 

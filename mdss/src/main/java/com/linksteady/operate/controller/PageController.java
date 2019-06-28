@@ -228,42 +228,4 @@ public class PageController extends BaseController {
     public String userDailyReport() {
         return "operate/report/userDailyReport";
     }
-
-    /**
-     * 获取登录用户的菜单
-     * @return
-     */
-    @RequestMapping("/findUserMenu")
-    @ResponseBody
-    public ResponseBo getUserMenu(HttpServletRequest request) {
-        String sysId = String.valueOf(request.getSession().getAttribute("sysId"));
-        User user = super.getCurrentUser();
-
-        if(null==sysId||"".equals(sysId)||"null".equals(sysId))
-        {
-            return ResponseBo.error("");
-        }
-
-        //返回的数据集
-        Map<String, Object> result = new HashMap<>();
-        String userName = user.getUsername();
-        result.put("username", userName);
-        result.put("version", version);
-        Map<String,String> appMap=(Map<String, String>)redisTemplate.opsForValue().get("applicationInfoMap");
-        result.put("navigatorUrl",appMap.get("SYS")+"main");
-        result.put("logoutUrl",appMap.get("SYS")+"logout");
-
-
-        //获取当前子系统名称
-        Map<String, SysInfo> sysInfoMap=(Map<String, SysInfo>)redisTemplate.opsForValue().get("sysInfoMap");
-        String sysName=null==sysInfoMap.get(sysId)?"":sysInfoMap.get(sysId).getName();
-        try {
-            Tree<Menu> tree = user.getUserMenuTree().get(sysId);
-            result.put("tree", tree);
-            return ResponseBo.okWithData(result,sysName);
-        } catch (Exception e) {
-            log.error("获取用户菜单失败", e);
-            return ResponseBo.error("获取用户菜单失败！");
-        }
-    }
 }

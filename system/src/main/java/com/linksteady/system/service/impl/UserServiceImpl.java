@@ -165,6 +165,23 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         this.userMapper.updateByExampleSelective(user, example);
     }
 
+    /**
+     * RPC调用更改密码的服务，由于无法获取当前登录的账号信息，所以重载该方法
+     * @param username
+     * @param password
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updatePassword(String username, String password) {
+        User user = this.findByName(username);
+        Example example = new Example(User.class);
+        example.createCriteria().andCondition("username=", user.getUsername());
+        String newPassword = MD5Utils.encrypt(user.getUsername().toLowerCase(), password);
+        user.setPassword(newPassword);
+        user.setFirstLogin("N");
+        this.userMapper.updateByExampleSelective(user, example);
+    }
+
     @Override
     public UserWithRole findById(Long userId) {
         List<UserWithRole> list = this.userMapper.findUserWithRole(userId);

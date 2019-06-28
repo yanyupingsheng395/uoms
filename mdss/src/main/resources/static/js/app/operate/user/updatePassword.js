@@ -7,7 +7,7 @@ $(function () {
         validateUpdatePassword = $updatePasswordForm.validate();
         var flag = validateUpdatePassword.form();
         if (flag) {
-            $.post("/user/updatePassword", $updatePasswordForm.serialize(), function (r) {
+            $.post("/api/updatePassword", $updatePasswordForm.serialize(), function (r) {
                 if (r.code === 200) {
                     validateUpdatePassword.resetForm();
                     $MB.closeAndRestModal("update-password");
@@ -31,7 +31,7 @@ function validateUpdatePasswordRule() {
             oldPassword: {
                 required: true,
                 remote: {
-                    url: "user/checkPassword",
+                    url: "/user/checkPassword",
                     type: "get",
                     dataType: "json",
                     data: {

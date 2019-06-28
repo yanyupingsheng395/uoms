@@ -9,6 +9,7 @@ import com.linksteady.common.service.OpenApiService;
 import com.linksteady.system.service.ApplicationService;
 import com.linksteady.system.service.MenuService;
 import com.linksteady.system.service.SystemService;
+import com.linksteady.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,9 @@ public class OpenApiServiceImpl implements OpenApiService {
     @Autowired
     private SystemService systemService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 获取当前用户的菜单树
      * @param username
@@ -48,5 +52,10 @@ public class OpenApiServiceImpl implements OpenApiService {
     @Override
     public String getSysName(String sysId) {
         return systemService.selectByKey(sysId).getName();
+    }
+
+    @Override
+    public void updatePassword(String userName, String newPassword) {
+        userService.updatePassword(userName, newPassword);
     }
 }

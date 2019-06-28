@@ -4,7 +4,6 @@ $(document).ready(function () {
     getUserMenu();
 });
 
-
 function getQueryVariable(variable) {
     var query = window.location.search.substring(1);
     var vars = query.split("&");
@@ -101,7 +100,6 @@ function getUserMenu() {
             $("#pageTitle").html("").html(r.data);
             //设置返回导航页
             $("#navigatorUrl").attr("href",r.msg.navigatorUrl);
-
         }
     });
 }
