@@ -194,6 +194,7 @@ public class PageController extends BaseController {
         return "operate/targetinfo/detail";
     }
 
+    @Log("用户运营监控")
     @RequestMapping("/operator/user")
     public String userOperator() {
         return "operate/useroperator/monitor";
