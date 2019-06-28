@@ -20,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint("/chat")
 public class WebSocketChatServer {
 
-
     /**
      * 全部在线会话  PS: 基于场景考虑 这里使用线程安全的Map存储会话对象。
      */
@@ -33,8 +32,7 @@ public class WebSocketChatServer {
     @OnOpen
     public void onOpen(Session session) {
         onlineSessions.put(session.getId(), session);
-        String username = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
-        sendMessageToAll(Message.jsonStr(Message.ENTER, username, "建立连接...", onlineSessions.size()));
+        sendMessageToAll("嘘，有人来了...，" + "当前在线人数：" + onlineSessions.size());
     }
 
     /**
@@ -45,7 +43,7 @@ public class WebSocketChatServer {
     @OnMessage
     public void onMessage(Session session, String jsonStr) {
         Message message = JSON.parseObject(jsonStr, Message.class);
-        sendMessageToAll(Message.jsonStr(Message.SPEAK, message.getUsername(), message.getMsg(), onlineSessions.size()));
+        sendMessageToAll(message.getUsername() + "：" + message.getMsg());
     }
 
     /**
@@ -54,7 +52,7 @@ public class WebSocketChatServer {
     @OnClose
     public void onClose(Session session) {
         onlineSessions.remove(session.getId());
-        sendMessageToAll(Message.jsonStr(Message.QUIT, "", "下线了！", onlineSessions.size()));
+        sendMessageToAll("有人下线了！" + "当前在线人数：" + onlineSessions.size());
     }
 
     /**
