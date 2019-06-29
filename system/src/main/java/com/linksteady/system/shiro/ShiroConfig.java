@@ -130,12 +130,14 @@ public class ShiroConfig {
 
         // 剔除main页面的请求
         filterChainDefinitionMap.put("/main", "user,resetpass");
+        // 获取系统导航的系统信息
         filterChainDefinitionMap.put("/system/findUserSystem", "user,resetpass");
+        // 将sysId放到session中
+        filterChainDefinitionMap.put("/setSysIdToSession", "user,resetpass");
 
         // 除上以外所有 url都必须认证通过才可以访问，未通过认证自动访问 LoginUrl
         filterChainDefinitionMap.put("/**", "user,resetpass,redirectMainFilter");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
-
         return shiroFilterFactoryBean;
     }
 

@@ -46,6 +46,7 @@ public class RedirectMainFilter extends AccessControlFilter {
             String sysId = String.valueOf(session.getAttribute("sysId"));
             if (StringUtils.isEmpty(sysId) || "null".equals(sysId)) {
                 WebUtils.issueRedirect(servletRequest, servletResponse, systemProperties.getShiro().getSuccessUrl());
+                return false;
             }
         }
         return true;
