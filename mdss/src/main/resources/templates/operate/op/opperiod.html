@@ -53,6 +53,27 @@
                     <div class="col-sm-12 select-table table-striped">
                         <div class="row" style="margin-top: 12px;">
                             <div class="col-sm-12">
+                                <div class="btn-group-sm" id="toolbar" role="group">
+                                    <a class="btn btn-success" id="btn_view" onclick="viewPeriod()">
+                                        <i class="fa fa-eye"></i> 查看名单
+                                    </a>
+                                    <a class="btn btn-warning btn-view" id="btn_statistics" onclick="viewstatis()">
+                                        <i class="fa fa-calculator"></i> 统计
+                                    </a>
+                                    <a class="btn btn-warning btn-del" id="btn_effect" onclick="vieweffect()">
+                                        <i class="fa fa-calendar"></i> 效果统计
+                                    </a>
+                                    <a class="btn btn-info" id="btn_downLoad" onclick="downloadPeriod()">
+                                        <i class="fa fa-download"></i> 下载
+                                    </a>
+                                    <a class="btn btn-danger" id="btn_delete" onclick="del()">
+                                        <i class="fa fa-close"></i> 删除
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 12px;">
+                            <div class="col-sm-12">
                                 <table id="periodTable" class="table  table-striped table-bordered"></table>
                             </div>
                         </div>
@@ -68,11 +89,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title" id="myLargeModalLabel1">用户列表</h4>
+                <h5 class="modal-title" id="myLargeModalLabel1">用户列表</h5>
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
-                    <table id="periodUserListTable" class="table table-striped"></table>
+                    <table id="periodUserListTable" class="table table-striped table-bordered"></table>
                 </div>
             </div>
             <div class="modal-footer">
@@ -88,7 +109,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title" id="myLargeModalLabel">每日运营统计信息</h4>
+                <h4 class="modal-title" id="myLargeModalLabel">周期运营统计信息</h4>
             </div>
             <div class="modal-body">
                 <div class="row">

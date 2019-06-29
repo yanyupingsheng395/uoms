@@ -140,8 +140,7 @@ public class LoginController extends BaseController {
     }
 
     @Log("登录系统")
-    private void loginToLog()
-    {
+    private void loginToLog() {
 
     }
 
