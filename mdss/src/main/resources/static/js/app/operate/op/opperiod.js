@@ -19,6 +19,7 @@ $(function () {
         method: 'post',
         cache: false,
         pagination: true,
+        singleSelect: true,
         sidePagination: "server",
         pageNumber: 1,            //初始化加载第一页，默认第一页
         pageSize: 10,            //每页的记录行数（*）
@@ -31,6 +32,8 @@ $(function () {
             };
         },
         columns: [{
+            checkbox: true
+        }, {
             field: 'PERIOD_TASK_NAME',
             title: '活动名称'
         }, {
@@ -45,14 +48,6 @@ $(function () {
         }, {
             field: 'CREATE_DT',
             title: '创建时间'
-        }, {
-            filed: 'button',
-            title: '操作',
-            formatter: function (value, row, index) {
-                var headId=row.PERIOD_HEADER_ID;
-                return "<div class='btn btn-primary btn-sm' onclick='view("+headId+")'><i class='mdi mdi-eye'></i>查看名单</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='viewstatis("+headId+")'><i class='mdi mdi-chart-bar-stacked'></i>统计信息</div>&nbsp;<div class='btn btn-primary btn-sm' onclick='vieweffect(\"+headId+\")'><i class='mdi mdi-google-analytics'></i>效果统计</div>&nbsp;" +
-                    "<div class='btn btn-primary btn-sm' onclick='download("+headId+")'><i class='mdi mdi-download'></i>导出</div>&nbsp;<div class='btn btn-danger btn-sm' onclick='del(\"+headId+\")'><i class='mdi mdi-window-close'></i>删除</div>";
-            }
         }]
     };
     $MB.initTable('periodTable', settings);
@@ -135,7 +130,48 @@ $(function () {
 
 });
 
-function del(reasonId) {
+// 查看名单
+function viewPeriod() {
+    var selected = $("#periodTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要查看的活动！');
+        return;
+    }
+    if (selected_length > 1) {
+        $MB.n_warning('一次只能查看一个活动！');
+        return;
+    }
+    var periodId = selected[0]["PERIOD_HEADER_ID"];
+
+    var opt={
+        url: "/op/getPeriodUserList?headerId="+periodId
+    };
+    $('#periodUserListTable').bootstrapTable("refresh",opt);
+    $("#periodUserListTable").find("thead").attr("style", "background-color:#eff3f8;");
+
+    $('#userlist_modal').modal('show');
+}
+
+// 查看统计
+function viewstatis() {
+    var selected = $("#periodTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要查看的活动！');
+        return;
+    }
+    if (selected_length > 1) {
+        $MB.n_warning('一次只能查看一个活动！');
+        return;
+    }
+    var periodId = selected[0]["PERIOD_HEADER_ID"];
+
+    $("#headerId").val(periodId);
+    $('#statis_modal').modal('show');
+}
+
+function del() {
     $MB.n_warning("非生产环境，不支持删除！");
 
     //遮罩层打开
@@ -165,17 +201,6 @@ function del(reasonId) {
     //             }
     //         }
     //     });
-}
-
-/**
- * 查看统计信息
- * @param headerId
- */
-function viewstatis(headerId)
-{
-    //放入隐藏域
-    $("#headerId").val(headerId);
-    $('#statis_modal').modal('show');
 }
 
 $('#statis_modal').on('shown.bs.modal', function () {
@@ -238,16 +263,7 @@ $('#statis_modal').on('shown.bs.modal', function () {
     piecePriceChart.setOption(piece_price_option);
 });
 
-function view(headerId)
-{
-    var opt={
-        url: "/op/getPeriodUserList?headerId="+headerId
-    };
-    $('#periodUserListTable').bootstrapTable("refresh",opt);
-    $('#userlist_modal').modal('show');
-}
-
-function download(headerId) {
+function downloadPeriod() {
     $MB.n_warning("非生产环境，不支持下载！");
 }
 
@@ -490,7 +506,6 @@ var piece_price_option = {
 };
 
 function vieweffect() {
-    //$("#effect_modal").modal('show');
     $MB.n_warning("尚未触达，暂无效果统计！");
 }
 
