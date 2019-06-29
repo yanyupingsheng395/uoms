@@ -62,6 +62,6 @@
     </update>
 
     <select id="getId" resultType="Long">
-      select t_menu_id.nextval from dual
+      select seq_t_menu_id.nextval from dual
   </select>
 </mapper>
