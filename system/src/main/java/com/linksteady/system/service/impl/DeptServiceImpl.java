@@ -23,7 +23,6 @@
 //@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 //public class DeptServiceImpl extends BaseService<Dept> implements DeptService {
 //
-//	private Logger log = LoggerFactory.getLogger(this.getClass());
 //
 //	@Autowired
 //	private DeptMapper deptMapper;

@@ -2,10 +2,13 @@ package com.linksteady.system.service.impl;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.domain.SysLog;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.service.LogService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
@@ -25,33 +28,37 @@ import java.util.*;
 
 @Service("logService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Slf4j
 public class LogServiceImpl extends BaseService<SysLog> implements LogService {
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
+
     @Override
-    public List<SysLog> findAllLogs(SysLog log) {
+    public List<SysLog> findAllLogs(SysLog sysLog) {
         try {
             Example example = new Example(SysLog.class);
             Criteria criteria = example.createCriteria();
-            if (StringUtils.isNotBlank(log.getUsername())) {
-                criteria.andCondition("username=", log.getUsername().toLowerCase());
+            if (StringUtils.isNotBlank(sysLog.getUsername())) {
+                criteria.andCondition("username=", sysLog.getUsername().toLowerCase());
             }
-            if (StringUtils.isNotBlank(log.getOperation())) {
-                criteria.andCondition("operation like", "%" + log.getOperation() + "%");
+            if (StringUtils.isNotBlank(sysLog.getOperation())) {
+                criteria.andCondition("operation like", "%" + sysLog.getOperation() + "%");
             }
-            if (StringUtils.isNotBlank(log.getTimeField())) {
-                String[] timeArr = log.getTimeField().split("~");
+            if (StringUtils.isNotBlank(sysLog.getTimeField())) {
+                String[] timeArr = sysLog.getTimeField().split("~");
                 criteria.andCondition("to_char(create_time,'YYYYMMDD') >=", timeArr[0].replace("-",""));
                 criteria.andCondition("to_char(create_time,'YYYYMMDD') <=", timeArr[1].replace("-",""));
             }
             example.setOrderByClause("create_time desc");
             return this.selectByExample(example);
         } catch (Exception e) {
-            logger.error("获取系统日志失败", e);
+            log.error("获取系统日志失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return new ArrayList<>();
         }
     }

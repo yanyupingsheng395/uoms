@@ -1,5 +1,6 @@
 package com.linksteady.common.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -11,9 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @Controller
+@Slf4j
 public class CommonController {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @RequestMapping("common/download")
     public void fileDownload(String fileName, Boolean delete, HttpServletResponse response) throws IOException {

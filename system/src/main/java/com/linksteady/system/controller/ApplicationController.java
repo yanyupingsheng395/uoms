@@ -8,9 +8,12 @@ import com.linksteady.common.domain.Application;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.SysInfo;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.service.ApplicationService;
 import com.linksteady.system.service.SystemService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +29,14 @@ import java.util.Map;
  * Created by hxcao on 2019-05-05
  */
 @Controller
+@Slf4j
 public class ApplicationController extends BaseController {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ApplicationService applicationService;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Log("获取应用信息")
     @RequestMapping("application")
@@ -70,6 +75,8 @@ public class ApplicationController extends BaseController {
             return ResponseBo.ok("新增应用成功！");
         } catch (Exception e) {
             log.error("新增应用失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("新增应用失败，请联系管理员！");
         }
     }
@@ -81,8 +88,9 @@ public class ApplicationController extends BaseController {
             Application application = this.applicationService.findApplication(id);
             return ResponseBo.ok(application);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("获取应用信息失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("获取应用信息失败，请联系管理员！");
         }
     }
@@ -97,6 +105,8 @@ public class ApplicationController extends BaseController {
             return ResponseBo.ok("修改应用成功！");
         } catch (Exception e) {
             log.error("修改应用失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("修改应用失败，请联系管理员！");
         }
     }
@@ -111,6 +121,8 @@ public class ApplicationController extends BaseController {
             return ResponseBo.ok("删除应用成功！");
         } catch (Exception e) {
             log.error("删除应用失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("删除应用失败，请联系管理员！");
         }
     }

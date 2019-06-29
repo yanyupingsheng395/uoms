@@ -29,8 +29,6 @@ import java.util.Map;
 @RequestMapping("/op")
 public class OpController extends BaseController {
 
-    private final static Logger logger= LoggerFactory.getLogger (OpController.class);
-
     @Autowired
     OpService opService;
 

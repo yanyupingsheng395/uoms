@@ -1,9 +1,12 @@
 package com.linksteady.system.service.impl;
 
 import com.linksteady.common.domain.Application;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.dao.ApplicationMapper;
 import com.linksteady.system.service.ApplicationService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +21,14 @@ import java.util.stream.Collectors;
  * @author hxcao on 2019-05-06
  */
 @Service
+@Slf4j
 public class ApplicationServiceImpl extends BaseService<Application> implements ApplicationService {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ApplicationMapper applicationMapper;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -44,7 +49,8 @@ public class ApplicationServiceImpl extends BaseService<Application> implements 
         try{
             this.updateNotNull(application);
         }catch (Exception e) {
-            e.printStackTrace();
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
         }
     }
 
@@ -73,6 +79,8 @@ public class ApplicationServiceImpl extends BaseService<Application> implements 
             return this.selectByExample(example);
         } catch (Exception e) {
             log.error("获取系统信息失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return new ArrayList<>();
         }
     }

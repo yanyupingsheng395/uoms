@@ -9,9 +9,12 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Role;
 import com.linksteady.common.domain.SysInfo;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.service.RoleService;
 import com.linksteady.system.service.SystemService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +31,14 @@ import java.util.Map;
  * Created by hxcao on 2019-05-05
  */
 @Controller
+@Slf4j
 public class SystemController extends BaseController {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private SystemService systemService;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Log("获取系统信息")
     @RequestMapping("system")
@@ -72,7 +77,9 @@ public class SystemController extends BaseController {
             return ResponseBo.ok("新增系统成功！");
         } catch (Exception e) {
             log.error("新增系统失败", e);
-            return ResponseBo.error("新增系统失败，请联系网站管理员！");
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            return ResponseBo.error("新增系统失败，请联系管理员！");
         }
     }
 
@@ -84,7 +91,9 @@ public class SystemController extends BaseController {
             return ResponseBo.ok(system);
         } catch (Exception e) {
             log.error("获取系统信息失败", e);
-            return ResponseBo.error("获取系统信息失败，请联系网站管理员！");
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            return ResponseBo.error("获取系统信息失败，请联系管理员！");
         }
     }
 
@@ -98,7 +107,9 @@ public class SystemController extends BaseController {
             return ResponseBo.ok("修改系统成功！");
         } catch (Exception e) {
             log.error("修改系统失败", e);
-            return ResponseBo.error("修改系统失败，请联系网站管理员！");
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            return ResponseBo.error("修改系统失败，请联系管理员！");
         }
     }
 
@@ -112,7 +123,9 @@ public class SystemController extends BaseController {
             return ResponseBo.ok("删除系统成功！");
         } catch (Exception e) {
             log.error("删除系统失败", e);
-            return ResponseBo.error("删除系统失败，请联系网站管理员！");
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            return ResponseBo.error("删除系统失败，请联系管理员！");
         }
     }
 

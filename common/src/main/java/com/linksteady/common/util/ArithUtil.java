@@ -1,5 +1,6 @@
 package com.linksteady.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,9 +11,9 @@ import java.math.RoundingMode;
  * 针对double类型的加、减、乘、除运算提供支持，并提供double类型格式化的方法
  * @author huang
  */
+@Slf4j
 public class ArithUtil {
 
-    private final static Logger logger= LoggerFactory.getLogger (ArithUtil.class);
     /**
      * 提供精确加法计算的add方法
      * @param value1 被加数
@@ -61,7 +62,7 @@ public class ArithUtil {
         //如果精确范围小于0，抛出异常信息
         if(scale<0){
             //throw new IllegalAccessException("精确度不能小于0");
-            logger.error("精确度不能小于0");
+            log.error("精确度不能小于0");
         }
         BigDecimal b1 = new BigDecimal(Double.valueOf(value1));
         BigDecimal b2 = new BigDecimal(Double.valueOf(value2));

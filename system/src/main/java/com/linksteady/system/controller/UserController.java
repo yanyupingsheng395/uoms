@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.linksteady.common.util.MD5Utils;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +28,14 @@ import com.linksteady.common.domain.User;
 import com.linksteady.system.service.UserService;
 
 @Controller
+@Slf4j
 public class UserController extends BaseController {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     private static final String ON = "on";
 
@@ -60,6 +65,8 @@ public class UserController extends BaseController {
             return ResponseBo.ok(user);
         } catch (Exception e) {
             log.error("获取用户失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("获取用户失败，请联系管理员！");
         }
     }
@@ -84,6 +91,8 @@ public class UserController extends BaseController {
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("修改主题失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error();
         }
     }
@@ -106,6 +115,8 @@ public class UserController extends BaseController {
             return ResponseBo.ok("新增用户成功！");
         } catch (Exception e) {
             log.error("新增用户失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("新增用户失败，请联系管理员！");
         }
     }
@@ -120,6 +131,8 @@ public class UserController extends BaseController {
             return ResponseBo.ok("修改用户成功！");
         } catch (Exception e) {
             log.error("修改用户失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("修改用户失败，请联系管理员！");
         }
     }
@@ -134,6 +147,8 @@ public class UserController extends BaseController {
             return ResponseBo.ok("删除用户成功！");
         } catch (Exception e) {
             log.error("删除用户失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("删除用户失败，请联系管理员！");
         }
     }
@@ -148,6 +163,8 @@ public class UserController extends BaseController {
             return ResponseBo.ok("重置用户密码成功！");
         } catch (Exception e) {
             log.error("重置用户密码失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("重置用户密码失败，请联系管理员！");
         }
     }
@@ -169,6 +186,8 @@ public class UserController extends BaseController {
             return ResponseBo.ok("更改密码成功！");
         } catch (Exception e) {
             log.error("修改密码失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("更改密码失败，请联系管理员！");
         }
     }
@@ -198,6 +217,8 @@ public class UserController extends BaseController {
             return ResponseBo.ok(this.userService.findUserProfile(user));
         } catch (Exception e) {
             log.error("获取用户信息失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("获取用户信息失败，请联系管理员！");
         }
     }
@@ -210,6 +231,8 @@ public class UserController extends BaseController {
             return ResponseBo.ok("更新个人信息成功！");
         } catch (Exception e) {
             log.error("更新用户信息失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("更新用户信息失败，请联系管理员！");
         }
     }
@@ -226,6 +249,8 @@ public class UserController extends BaseController {
             return ResponseBo.ok("更新头像成功！");
         } catch (Exception e) {
             log.error("更换头像失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("更新头像失败，请联系管理员！");
         }
     }

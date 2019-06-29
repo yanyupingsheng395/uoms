@@ -2,11 +2,15 @@ package com.linksteady.system.service.impl;
 
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.Dict;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.service.DictService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +23,11 @@ import java.util.List;
 
 @Service("dictService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Slf4j
 public class DictServiceImpl extends BaseService<Dict> implements DictService {
 
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+	@Autowired
+	ExceptionNoticeHandler exceptionNoticeHandler;
 
 	@Override
 	public List<Dict> findAllDicts(Dict dict, QueryRequest request) {
@@ -44,6 +50,8 @@ public class DictServiceImpl extends BaseService<Dict> implements DictService {
 			return this.selectByExample(example);
 		} catch (Exception e) {
 			log.error("获取字典信息失败", e);
+			//进行异常日志的上报
+			exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
 			return new ArrayList<>();
 		}
 	}

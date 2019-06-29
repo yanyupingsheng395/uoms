@@ -1,6 +1,7 @@
 package com.linksteady.common.util;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,10 +11,8 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.cert.X509Certificate;
-
+@Slf4j
 public class HttpUtils {
-
-    private static Logger log = LoggerFactory.getLogger(HttpUtils.class);
 
     private static final String USER_AGENT = "user-agent";
     private static final String USER_AGENT_VALUE = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)";

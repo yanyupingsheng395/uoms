@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +23,14 @@ import com.linksteady.system.service.SessionService;
 
 
 @Controller
+@Slf4j
 public class SessionController {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     SessionService sessionService;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Log("获取在线用户信息")
     @RequestMapping("session")
@@ -53,6 +59,8 @@ public class SessionController {
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("踢出用户失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("踢出用户失败");
         }
 

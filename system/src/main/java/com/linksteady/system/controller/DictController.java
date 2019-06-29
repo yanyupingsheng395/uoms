@@ -3,6 +3,10 @@ package com.linksteady.system.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +26,14 @@ import com.linksteady.common.domain.Dict;
 import com.linksteady.system.service.DictService;
 
 @Controller
+@Slf4j
 public class DictController extends BaseController {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private DictService dictService;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Log("获取字典信息")
     @RequestMapping("dict")
@@ -54,7 +60,9 @@ public class DictController extends BaseController {
             return ResponseBo.ok(dict);
         } catch (Exception e) {
             log.error("获取字典信息失败", e);
-            return ResponseBo.error("获取字典信息失败，请联系网站管理员！");
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            return ResponseBo.error("获取字典信息失败，请联系管理员！");
         }
     }
 
@@ -68,7 +76,9 @@ public class DictController extends BaseController {
             return ResponseBo.ok("新增字典成功！");
         } catch (Exception e) {
             log.error("新增字典失败", e);
-            return ResponseBo.error("新增字典失败，请联系网站管理员！");
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            return ResponseBo.error("新增字典失败，请联系管理员！");
         }
     }
 
@@ -82,7 +92,9 @@ public class DictController extends BaseController {
             return ResponseBo.ok("删除字典成功！");
         } catch (Exception e) {
             log.error("删除字典失败", e);
-            return ResponseBo.error("删除字典失败，请联系网站管理员！");
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            return ResponseBo.error("删除字典失败，请联系管理员！");
         }
     }
 
@@ -96,7 +108,9 @@ public class DictController extends BaseController {
             return ResponseBo.ok("修改字典成功！");
         } catch (Exception e) {
             log.error("修改字典失败", e);
-            return ResponseBo.error("修改字典失败，请联系网站管理员！");
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            return ResponseBo.error("修改字典失败，请联系管理员！");
         }
     }
 }

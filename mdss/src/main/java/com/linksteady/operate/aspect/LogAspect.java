@@ -7,6 +7,7 @@ import com.linksteady.common.util.HttpContextUtils;
 import com.linksteady.common.util.IPUtils;
 import com.linksteady.operate.config.SystemProperties;
 import com.linksteady.operate.service.LogService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -27,9 +28,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Aspect
 @Component
+@Slf4j
 public class LogAspect {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private SystemProperties systemProperties;

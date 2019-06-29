@@ -1,10 +1,13 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.service.TargetListService;
 import com.linksteady.operate.service.TgtCalculateService;
 import com.linksteady.operate.vo.TgtReferenceVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +33,9 @@ public class TgtCalculateContext {
 
     @Autowired
     TargetListService targetListService;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
 
     private TgtCalculateService getTgtCalculateService(String kpiCode)
@@ -80,6 +86,8 @@ public class TgtCalculateContext {
             tgtCalculateService.targetSplit(targetId);
         } catch (Exception e) {
             log.error("ID: {} 拆分计算任务异常",targetId,e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             //更新目标的状态为错误状态
             targetListService.updateTargetStatus(targetId,"-1");
         }

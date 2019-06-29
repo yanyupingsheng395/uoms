@@ -12,6 +12,9 @@ import java.util.List;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.util.MD5Utils;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +34,8 @@ import tk.mybatis.mapper.entity.Example;
 
 @Service("userService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Slf4j
 public class UserServiceImpl extends BaseService<User> implements UserService {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private UserMapper userMapper;
@@ -43,6 +45,9 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Override
     public User findByName(String userName) {
@@ -58,6 +63,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             return this.userMapper.findUsers(user);
         } catch (Exception e) {
             log.error("error", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return new ArrayList<>();
         }
     }

@@ -7,6 +7,7 @@ import com.linksteady.common.domain.SysLog;
 import com.linksteady.common.domain.User;
 import com.linksteady.system.service.LogService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -27,9 +28,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Aspect
 @Component
+@Slf4j
 public class LogAspect {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private SystemProperties systemProperties;

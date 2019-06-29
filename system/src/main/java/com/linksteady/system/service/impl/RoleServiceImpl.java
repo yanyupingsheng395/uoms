@@ -8,9 +8,12 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.linksteady.common.bo.UserRoleBo;
 import com.linksteady.common.domain.*;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.dao.UserRoleMapper;
 import com.linksteady.system.util.TreeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +30,8 @@ import tk.mybatis.mapper.entity.Example;
 
 @Service("roleService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Slf4j
 public class RoleServiceImpl extends BaseService<Role> implements RoleService {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private RoleMapper roleMapper;
@@ -45,6 +47,9 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
     @Autowired
     private UserRoleMapper userRoleMapper;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Override
     public List<Role> findUserRole(String userName) {
@@ -62,6 +67,8 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
             return this.selectByExample(example);
         } catch (Exception e) {
             log.error("获取角色信息失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return new ArrayList<>();
         }
     }

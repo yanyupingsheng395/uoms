@@ -29,31 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
-    /**
-     * 是否开启异常上报
-     */
-    @Value("${sys.openExceptionNotice:false}")
-    private boolean openExceptionNotice;
-
-    /**
-     * 错误日志上报地址
-     */
-    @Value("${sys.exceptionNoticeUrl:''}")
-    private String exceptionNoticeUrl;
-
-    /**
-     * 错误日志上报所在的应用
-     */
-    @Value("${sys.exceptionNoticeAppName:''}")
-    private String exceptionNoticeAppName;
-
-    /**
-     * 错误日志上报的模式 BATCH 批量延迟模式 IMME 立即预警
-     */
-    @Value("${sys.exceptionNoticeMode:'BATCH'}")
-    private String exceptionNoticeMode;
-
-
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
 
@@ -81,7 +56,7 @@ public class GlobalExceptionHandler {
         log.error("全局异常捕获",e);
 
         //进行异常日志的上报
-        exceptionNoticeHandler.exceptionNotice(exceptionNoticeAppName,StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512),exceptionNoticeMode);
+        exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
 
         if (HttpUtils.isAjaxRequest(request)) {
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;

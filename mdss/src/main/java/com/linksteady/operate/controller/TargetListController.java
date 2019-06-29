@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.TargetDimension;
 import com.linksteady.operate.domain.TargetInfo;
@@ -15,6 +16,8 @@ import com.linksteady.operate.util.UomsConstants;
 import com.linksteady.operate.vo.TgtReferenceVO;
 import com.linksteady.common.domain.User;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +43,9 @@ public class TargetListController {
 
     @Autowired
     TgtCalculateContext tgtCalculateContext;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     /**
      * 获取指标列表
@@ -101,6 +107,8 @@ public class TargetListController {
             tgtCalculateContext.targetSplit(targetInfo.getKpiCode(),targetId);
         } catch (Exception e) {
             log.error("ID: {} 拆分计算任务异常",targetId,e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             //更新目标的状态为错误状态
             targetListService.updateTargetStatus(targetId,"-1");
         }
@@ -243,6 +251,8 @@ public class TargetListController {
             tgtCalculateContext.targetSplit(kpiCode,targetId);
         } catch (Exception e) {
             log.error("ID: {} 拆分计算任务异常",targetId,e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             //更新目标的状态为错误状态
             targetListService.updateTargetStatus(targetId,"-1");
         }

@@ -6,12 +6,16 @@ import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.Diag;
 import com.linksteady.operate.domain.DiagCondition;
 import com.linksteady.operate.service.DiagService;
 import com.linksteady.operate.util.UomsConstants;
 import com.linksteady.operate.vo.NodeDataVO;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +31,16 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/diag")
+@Slf4j
 public class DiagnosisController {
 
     @Autowired
     private DiagService diagService;
 
-    private static Logger logger = LoggerFactory.getLogger(DiagnosisController.class);
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
+
+
 
     @RequestMapping("/list")
     public ResponseBo list(@RequestBody QueryRequest request) {
@@ -50,7 +58,9 @@ public class DiagnosisController {
             Long result = diagService.save(diag, conditionList);
             return ResponseBo.okWithData(null, result);
         }catch (Exception e) {
-            logger.error("保存诊断信息错误，",e);
+            log.error("保存诊断信息错误，",e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error();
         }
     }
@@ -67,7 +77,9 @@ public class DiagnosisController {
             diagService.deleteById(id);
             return ResponseBo.ok("删除成功！");
         }catch (Exception ex) {
-            logger.error("删除错误：", ex);
+            log.error("删除错误：", ex);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(ex),1,512));
             return ResponseBo.error("删除失败！");
         }
     }

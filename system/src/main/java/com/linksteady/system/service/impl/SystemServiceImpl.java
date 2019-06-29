@@ -1,11 +1,14 @@
 package com.linksteady.system.service.impl;
 
 import com.linksteady.common.domain.SysInfo;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.dao.SystemMapper;
 import com.linksteady.common.domain.Role;
 import com.linksteady.common.domain.SysInfo;
 import com.linksteady.system.service.SystemService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +25,14 @@ import java.util.List;
  * Created by hxcao on 2019-05-06
  */
 @Service
+@Slf4j
 public class SystemServiceImpl extends BaseService<SysInfo> implements SystemService {
 
     @Autowired
     private SystemMapper systemMapper;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -47,7 +54,8 @@ public class SystemServiceImpl extends BaseService<SysInfo> implements SystemSer
         try{
             this.updateNotNull(system);
         }catch (Exception e) {
-            e.printStackTrace();
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
         }
     }
 
@@ -57,8 +65,6 @@ public class SystemServiceImpl extends BaseService<SysInfo> implements SystemSer
         List<String> list = Arrays.asList(ids.split(","));
         this.batchDelete(list, "id", SysInfo.class);
     }
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public List<SysInfo> findAllSystem(SysInfo system) {
@@ -71,6 +77,8 @@ public class SystemServiceImpl extends BaseService<SysInfo> implements SystemSer
             return this.selectByExample(example);
         } catch (Exception e) {
             log.error("获取系统信息失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return new ArrayList<>();
         }
     }

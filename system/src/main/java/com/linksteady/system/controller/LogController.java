@@ -3,6 +3,7 @@ package com.linksteady.system.controller;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,8 @@ import com.linksteady.common.domain.SysLog;
 import com.linksteady.system.service.LogService;
 
 @Controller
+@Slf4j
 public class LogController extends BaseController {
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private LogService logService;
@@ -51,7 +51,7 @@ public class LogController extends BaseController {
             this.logService.deleteLogs(ids);
             return ResponseBo.ok("删除日志成功！");
         } catch (Exception e) {
-            logger.error("删除日志失败", e);
+            log.error("删除日志失败", e);
             return ResponseBo.error("删除日志失败，请联系管理员！");
         }
     }

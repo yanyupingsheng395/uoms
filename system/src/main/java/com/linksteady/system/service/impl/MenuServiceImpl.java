@@ -8,6 +8,7 @@ import com.linksteady.common.util.TreeUtils;
 import com.linksteady.system.dao.ApplicationMapper;
 import com.linksteady.system.dao.SystemMapper;
 import com.linksteady.common.domain.SysInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -31,9 +32,8 @@ import tk.mybatis.mapper.entity.Example.Criteria;
 
 @Service("menuService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+@Slf4j
 public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
-
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final String NODE_PREFIX = "S_";
 

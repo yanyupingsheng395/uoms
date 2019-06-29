@@ -4,7 +4,10 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.*;
 import com.linksteady.common.util.MD5Utils;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,11 +30,16 @@ import java.util.Map;
 @Controller
 @RequestMapping("/")
 public class RootPathController extends BaseController {
-    @Value("${app.name}")
-    private String appname;
+
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
+
+    @Value("${app.name}")
+    private String appname;
 
     /**
      * 当前版本
@@ -123,6 +131,8 @@ public class RootPathController extends BaseController {
             return ResponseBo.okWithData(result,sysName);
         } catch (Exception e) {
             log.error("获取用户菜单失败", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("获取用户菜单失败！");
         }
     }

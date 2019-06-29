@@ -1,9 +1,12 @@
 package com.linksteady.operate.task;
 
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.dao.TargetListMapper;
 import com.linksteady.operate.domain.TargetInfo;
 import com.linksteady.operate.service.impl.TgtGmvCalculateServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -25,6 +28,9 @@ public class CalculateAllTargetTask {
     @Autowired
     TgtGmvCalculateServiceImpl tgtGmvCalculateService;
 
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
+
     @Async
     public void calculate()
     {
@@ -39,6 +45,8 @@ public class CalculateAllTargetTask {
                   try {
                       tgtGmvCalculateService.calculateTarget(targetInfo);
                   } catch (Exception e) {
+                      //进行异常日志的上报
+                      exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
                       //更新任务的状态为失败
                       targetListMapper.updateTargetStatus(targetInfo.getId(),"-1");
 
