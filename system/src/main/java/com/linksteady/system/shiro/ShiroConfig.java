@@ -105,6 +105,7 @@ public class ShiroConfig {
         Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
         filters.put("user",new CustomUserFilter());
         filters.put("resetpass",new ChangePasswordFilter());
+        filters.put("redirectMainFilter", new RedirectMainFilter());
 
         // 设置 securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
@@ -127,9 +128,12 @@ public class ShiroConfig {
         filterChainDefinitionMap.put(systemProperties.getShiro().getResetPasswordUrl(), "user");
         filterChainDefinitionMap.put("/user/updatePassword", "user");
 
-        // 除上以外所有 url都必须认证通过才可以访问，未通过认证自动访问 LoginUrl
-        filterChainDefinitionMap.put("/**", "user,resetpass");
+        // 剔除main页面的请求
+        filterChainDefinitionMap.put("/main", "user,resetpass");
+        filterChainDefinitionMap.put("/system/findUserSystem", "user,resetpass");
 
+        // 除上以外所有 url都必须认证通过才可以访问，未通过认证自动访问 LoginUrl
+        filterChainDefinitionMap.put("/**", "user,resetpass,redirectMainFilter");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
         return shiroFilterFactoryBean;

@@ -20,7 +20,7 @@ public class ShiroProperties {
 
     private String loginUrl = "/login";
 
-    private String successUrl = "/index";
+    private String successUrl = "/main";
 
     private String logoutUrl = "/logout";
 

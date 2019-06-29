@@ -168,7 +168,7 @@ sys:
     # 登录 url
     loginUrl: http://dev.growth-master.com/login
     # 登录成功后跳转的 url
-    successUrl: /page/index
+    successUrl: http://dev.growth-master.com/main
     # 登出 url
     logoutUrl: http://dev.growth-master.com/logout
     # 未授权跳转 url

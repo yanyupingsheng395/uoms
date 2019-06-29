@@ -79,21 +79,23 @@ function allExceptionCatch() {
  * @param sysId
  */
 function getUserMenu() {
-    $.get("/findUserMenu", function (r) {
-        if(r.code===200)
-        {
-            $(".nav-drawer").html("").html(forTree(r.msg.tree.children));
-            var username = r.msg.username;
-            $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
-            $("#version").html("").html("v" + r.msg.version);
-            menu_tree();
-            subMenu();
-            //设置当前业务系统的标题
-            $("#pageTitle").html("").html(r.data);
-            //设置返回导航页
-            $("#navigatorUrl").attr("href",r.msg.navigatorUrl);
-        }
-    });
+    if(document.getElementsByClassName("sidebar-main").length != 0) {
+        $.get("/findUserMenu", function (r) {
+            if(r.code===200)
+            {
+                $(".nav-drawer").html("").html(forTree(r.msg.tree.children));
+                var username = r.msg.username;
+                $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
+                $("#version").html("").html("v" + r.msg.version);
+                menu_tree();
+                subMenu();
+                //设置当前业务系统的标题
+                $("#pageTitle").html("").html(r.data);
+                //设置返回导航页
+                $("#navigatorUrl").attr("href",r.msg.navigatorUrl);
+            }
+        });
+    }
 }
 
 var forTree = function (o) {

@@ -34,7 +34,7 @@ function login()
             var password = $(".validate-form input[name='password']").val().trim();
             var code = $(".validate-form input[name='code']").val().trim();
 
-            $loginButton.html("").append("<div class='login-loder'><div class='line-scale'><div></div><div></div><div></div><div></div><div></div></div></div>");
+            $loginButton.html("").append("登录中...");
             $.ajax({
                 type: "post",
                 url: "/login",
@@ -160,4 +160,3 @@ function hideValidate(input) {
 
     $(thisAlert).removeClass('alert-validate');
 }
-

@@ -170,7 +170,7 @@ sys:
     # 登录 url
     loginUrl: http://localhost:9091/login
     # 登录成功后跳转的 url
-    successUrl: /page/index
+    successUrl: http://localhost:9091/main
     # 登出 url
     logoutUrl: http://localhost:9091/logout
     # 未授权跳转 url
