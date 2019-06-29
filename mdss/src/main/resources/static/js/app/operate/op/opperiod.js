@@ -56,8 +56,24 @@ $(function () {
         $('#periodTable').bootstrapTable('refresh');
     });
 
+});
+
+// 查看名单
+function viewPeriod() {
+    var selected = $("#periodTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要查看的活动！');
+        return;
+    }
+    if (selected_length > 1) {
+        $MB.n_warning('一次只能查看一个活动！');
+        return;
+    }
+    var periodId = selected[0]["PERIOD_HEADER_ID"];
     $('#periodUserListTable').bootstrapTable(
         {
+            url: "/op/getPeriodUserList?headerId="+periodId,
             datatype: 'json',
             method: 'post',
             cache: false,
@@ -127,29 +143,6 @@ $(function () {
                 }
             ]]
         });
-
-});
-
-// 查看名单
-function viewPeriod() {
-    var selected = $("#periodTable").bootstrapTable('getSelections');
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请选择需要查看的活动！');
-        return;
-    }
-    if (selected_length > 1) {
-        $MB.n_warning('一次只能查看一个活动！');
-        return;
-    }
-    var periodId = selected[0]["PERIOD_HEADER_ID"];
-
-    var opt={
-        url: "/op/getPeriodUserList?headerId="+periodId
-    };
-    $('#periodUserListTable').bootstrapTable("refresh",opt);
-    $("#periodUserListTable").find("thead").attr("style", "background-color:#eff3f8;");
-
     $('#userlist_modal').modal('show');
 }
 
