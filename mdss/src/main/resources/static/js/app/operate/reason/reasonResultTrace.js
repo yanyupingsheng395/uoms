@@ -2,6 +2,7 @@ $(function () {
     var settings = {
         url: "/reason/getResultTracelist",
         method: 'post',
+        singleSelect: true,
         cache: false,
         pagination: true,
         sidePagination: "server",
@@ -15,6 +16,8 @@ $(function () {
             };
         },
         columns: [{
+            checkbox: true
+        },{
             field: 'reasonName',
             title: '原因编号'
         } ,  {
@@ -35,12 +38,6 @@ $(function () {
         },{
             field: 'createDt',
             title: '加入跟踪时间'
-        },{
-            filed: 'button',
-            title: '操作',
-            formatter: function (value, row, index) {
-                return "<div class='btn btn-primary btn-sm' onclick='viewTraceData("+row.reasonId+","+row.reasonResultId+")'><i class='mdi mdi-eye'></i>查看数据</div>&nbsp;&nbsp;<div class='btn btn-warning btn-sm' onclick='deleteTrace("+row.reasonId+","+row.reasonResultId+")'><i class='mdi mdi-monitor'></i>取消跟踪效果</div>";
-            }
         }]
     };
     $MB.initTable('reasonResultTraceTable',settings);
@@ -49,7 +46,18 @@ $(function () {
 /**
  * 将原因结果取消跟踪
  */
-function  deleteTrace(reasonId,reasonResultId) {
+function  deleteTrace() {
+
+    var selected = $("#reasonResultTraceTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要取消的原因效果！');
+        return;
+    }
+    var reasonId = selected[0]["reasonId"];
+    var reasonResultId = selected[0]["reasonResultId"];
+
+
     //遮罩层打开
     lightyear.loading('show');
 
@@ -126,7 +134,16 @@ var trace_option= {
 trace_option.xAxis.name="时间周期";
 trace_option.xAxis.data=['2019-01','2019-02','2019-03','2019-04','2019-05'];
 
-function viewTraceData(reasonId,reasonResultId){
+function viewTraceData(){
+    var selected = $("#reasonResultTraceTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要查看的原因效果！');
+        return;
+    }
+    var reasonId = selected[0]["reasonId"];
+    var reasonResultId = selected[0]["reasonResultId"];
+
     //加载数据，弹开bootstrap窗口
     $('#reasonResultTrace_modal').modal('show');
     var traceChart = echarts.init(document.getElementById('trace_chart'), 'macarons');
