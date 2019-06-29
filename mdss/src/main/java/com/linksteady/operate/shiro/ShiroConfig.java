@@ -125,8 +125,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put(systemProperties.getShiro().getResetPasswordUrl(), "user");
 
         // 除上以外所有 url都必须认证通过才可以访问，未通过认证自动访问 LoginUrl
-        filterChainDefinitionMap.put("/**", "user");
-        filterChainDefinitionMap.put("/**", "resetpass");
+        filterChainDefinitionMap.put("/**", "user,resetpass");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 

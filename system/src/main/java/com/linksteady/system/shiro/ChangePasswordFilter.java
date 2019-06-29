@@ -20,15 +20,6 @@ public class ChangePasswordFilter extends AccessControlFilter {
 
     @Override
     protected boolean isAccessAllowed(ServletRequest servletRequest, ServletResponse servletResponse, Object o) throws Exception {
-//        String requestUrl=WebUtils.getPathWithinApplication(WebUtils.toHttp(servletRequest));
-//
-//        if(requestUrl.equals("/login"))
-//        {
-//            return true;
-//        }else
-//        {
-//           return false;
-//        }
         return false;
 
     }
