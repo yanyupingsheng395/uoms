@@ -193,7 +193,7 @@ sys:
   #上报错误日志的当前应用名称
   exceptionNoticeAppName: uoms2-dev-mdss
   #默认的日志预警的模式 (BATCH 批量 IMME 立即)
-  exceptionNoticeMode: BATCH
+  exceptionNoticeMode: IMME
 
 thrift:
   server:

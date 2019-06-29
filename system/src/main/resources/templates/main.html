@@ -77,9 +77,9 @@
             var i = 0;
             $.each(r.msg.list, function (k, v) {
                 i++;
-                code += "<div class=\"col-md-3\" onclick='sysRedirect(\""+v.domain+"\", \""+v.id+"\")'>\n" +
+                code += "<div class=\"col-md-3\">\n" +
                     "<div class=\"system center-block\" style=\"border-radius:200px;height: 200px;width:200px;\">\n" +
-                    "<img src='"+v.logo+"' alt=\"\" class=\"center-block m-auto\" style=\"margin-top:40px;cursor: pointer\">\n" +
+                    "<img src='"+v.logo+"' alt=\"\" class=\"center-block m-auto\" style=\"margin-top:40px;cursor: pointer\" onclick='sysRedirect(\""+v.domain+"\", \""+v.id+"\")'>\n" +
                     "</div>\n" +
                     "<div class=\"text-center\" style=\"margin-top: 10px;\">\n" +
                     "<p class=\"h4\"><a onclick='sysRedirect(\""+v.domain+"\", \""+v.id+"\")' style=\"color: #838383;cursor: pointer\">"+v.name+"</a></p>\n" +
