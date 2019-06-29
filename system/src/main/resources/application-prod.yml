@@ -169,7 +169,7 @@ sys:
     # 登录 url
     loginUrl: /login
     # 登录成功后跳转的 url
-    successUrl: /index
+    successUrl: /main
     # 登出 url
     logoutUrl: /logout
     # 未授权跳转 url
