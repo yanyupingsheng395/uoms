@@ -34,7 +34,8 @@ function login()
             var password = $(".validate-form input[name='password']").val().trim();
             var code = $(".validate-form input[name='code']").val().trim();
 
-            $loginButton.html("").append("登录中...");
+            $loginButton.html("").append("<i class=\"fa fa-spinner fa-pulse\"></i>&nbsp;登录中");
+            $loginButton.attr("disabled", true);
             $.ajax({
                 type: "post",
                 url: "/login",
@@ -62,6 +63,7 @@ function login()
                         //提示
                         login_notify(r.msg);
                         $loginButton.html("登录");
+                        $loginButton.attr("disabled", false);
                     }
                 }
             });

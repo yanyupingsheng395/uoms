@@ -4,15 +4,11 @@ import com.linksteady.common.domain.User;
 import com.linksteady.common.util.SpringContextUtils;
 import com.linksteady.system.config.SystemProperties;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -50,6 +46,7 @@ public class RedirectMainFilter extends AccessControlFilter {
             String sysId = String.valueOf(session.getAttribute("sysId"));
             if (StringUtils.isEmpty(sysId) || "null".equals(sysId)) {
                 WebUtils.issueRedirect(servletRequest, servletResponse, systemProperties.getShiro().getSuccessUrl());
+                return false;
             }
         }
         return true;
