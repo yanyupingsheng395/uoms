@@ -125,7 +125,7 @@ function addCondition() {
 }
 
 function resetTableData() {
-    $("#dataTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
+    $("#selectedCondition").attr("style", "display:none;");
 }
 
 
@@ -235,8 +235,9 @@ function modalBefore() {
     // 获取父节点条件数据
     var code = getParentCondition();
     if(code == "") {
-        $("#dataTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
+        $("#selectedCondition").attr("style", "display:none;");
     }else {
+        $("#selectedCondition").attr("style", "display:block;");
         $("#dataTable").html("").html(code);
     }
     conditionVal = new Array();
@@ -306,7 +307,8 @@ function selectedCondition() {
         conditionCodes = conditionCodes.substring(0, conditionCodes.length - 1);
         code += "<input name='dimValues' type='hidden' value='"+conditionCodes+"'><input name='condition' type='hidden' value='" + val + "'/><input name='inheritFlag' value='N' type='hidden'/></td><td><a style='color:#000000;cursor: pointer;' onclick='removeConditionList(\""+val+"\", this)'><i class='mdi mdi-close'></i></a></td></tr>";
 
-        if($("#dataTable").find("tr td").text().indexOf("暂无数据") > -1) {
+        if($("#dataTable").find("tr").length == 0) {
+            $("#selectedCondition").attr("style", "display:block;");
             $("#dataTable").html("").html(code);
         }else {
             $("#dataTable").append(code);
@@ -713,8 +715,8 @@ function removeConditionList(val, dom) {
     });
 
     if(conditionVal.length == 0) {
-        if($("#dataTable").find("tr").text() == "") {
-            $("#dataTable").html("").html("<tr><td><i class=\"mdi mdi-alert-circle-outline\"></i>暂无数据！</td></tr>");
+        if($("#dataTable").find("tr").length == 0) {
+            $("#selectedCondition").attr("style", "display:none;");
         }
     }
 
