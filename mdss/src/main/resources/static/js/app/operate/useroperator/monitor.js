@@ -89,6 +89,19 @@ $("#period").change(function () {
 });
 
 function searchKpiInfo() {
+    var period = $("#period").find("option:selected").val();
+    if(period == "Y" || period == "M") {
+        if($("#startDt").val() == "") {
+            $MB.n_warning("请选择查询时间！");
+            return;
+        }
+    }else{
+        if($("#startDt").val() == "" || $("#endDt").val() == "") {
+            $MB.n_warning("请选择起始时间！");
+            return;
+        }
+    }
+
     lightyear.loading('show');
     var href = $("#navTabs1").find('a[data-toggle="tab"][aria-expanded="true"]').attr("href");
     switch (href) {
