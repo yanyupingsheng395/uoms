@@ -181,7 +181,7 @@ sys:
     #强制修改密码的url
     resetPasswordUrl: /resetPass
     #首次登陆是否强制要求修改密码
-    allowResetPassword: true
+    allowResetPassword: false
     #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
     cookieDomain: localhost
 

@@ -11,6 +11,11 @@
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <style>
+        .table tbody tr td{
+            vertical-align: middle;
+        }
+    </style>
 </head>
 
 <body>
@@ -77,7 +82,7 @@
                                         </thead>
                                         <tbody>
                                         <tr>
-                                            <td rowspan="4" class="">全网</td>
+                                            <td rowspan="4" style="vertical-align:middle;">全网</td>
                                             <td>线上注册用户</td>
                                             <td id="ONLINE_USER"></td>
                                         </tr>
@@ -95,7 +100,7 @@
                                         </tr>
 
                                         <tr>
-                                            <td rowspan="19">订单情况</td>
+                                            <td rowspan="19"  style="vertical-align:middle;">订单情况</td>
                                             <td>当前周期销售额(元)</td>
                                             <td id="CURENTTOTAL"></td>
                                         </tr>

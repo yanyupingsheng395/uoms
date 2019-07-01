@@ -25,4 +25,8 @@
 	left join t_role_menu rm on(r.role_id = rm.role_id)
 	where r.role_id = #{roleId}
   </select>
+
+    <select id="findAll" resultMap="roleMap">
+        select ROLE_ID, ROLE_NAME from T_ROLE order by ROLE_ID ASC
+    </select>
 </mapper>

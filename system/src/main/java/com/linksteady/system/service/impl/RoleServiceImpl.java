@@ -74,6 +74,12 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
     }
 
     @Override
+    public List<Role> findAllRole() {
+        return roleMapper.findAll();
+    }
+
+
+    @Override
     public Role findByName(String roleName) {
         Example example = new Example(Role.class);
         example.createCriteria().andCondition("lower(role_name)=", roleName.toLowerCase());
