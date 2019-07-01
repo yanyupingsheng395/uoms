@@ -34,7 +34,7 @@ function login()
             var password = $(".validate-form input[name='password']").val().trim();
             var code = $(".validate-form input[name='code']").val().trim();
 
-            $loginButton.html("").append("登录中...");
+            $loginButton.html("").append("<i class=\"fa fa-spinner fa-pulse\"></i>&nbsp;登录中");
             $.ajax({
                 type: "post",
                 url: "/login",
