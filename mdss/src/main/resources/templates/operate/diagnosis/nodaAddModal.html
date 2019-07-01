@@ -33,52 +33,41 @@
                             </div>
                             <div class="form-group" id="plus_condition" style="display:none;">
                                 <label class="col-md-3 control-label">乘法公式：</label>
-                                <div class="input-group col-md-6">
+                                <div class="col-md-6">
                                     <select name="periodType" class="selectpicker form-control" id="op3"></select>
                                 </div>
                             </div>
-
                             <div id="add_condition" style="display: none;">
                                 <div class="form-group">
                                     <label class="col-md-3 control-label">维度：</label>
-                                    <div class="input-group col-md-6">
+                                    <div class="col-md-6">
                                         <select class="selectpicker form-control" id="op4"></select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-3 control-label">值：</label>
-                                    <div class="input-group col-md-6">
+                                    <div class="col-md-6">
                                         <select class="selectpicker form-control" data-live-search="true" data-selected-text-format="count > 2" id="op7" multiple data-max-options="5"></select>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-9 control-label" style="color: #4c4c4c;font-weight: normal">
+                                    <label class="col-md-9 control-label" style="color: #4c4c4c;font-weight: normal; color:#ccc;font-size: 11px;">
                                         <i class="mdi mdi-alert-circle-outline"></i>说明：加法拆分，如果没选择维度值，则默认按份额最大的前5个维度值进行拆分；
                                     </label>
                                 </div>
                             </div>
-                            <hr/>
-                            <div class="row">
-                                <div class="col-md-12"><h5>已选条件：</h5></div>
-                            </div>
-                            <div class="row">
+                            <div class="form-group">
                                 <div class="col-md-12">
-                                    <table class="table text-left" id="dataTable">
-                                        <tr><td><i class="mdi mdi-alert-circle-outline"></i>暂无数据！</td></tr>
-                                    </table>
-                                </div>
-                            </div>
-                            <hr/>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h5>增加条件：</h5>
+                                    <div class="divider text-uppercase">
+                                        筛选条件
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group" style="display:block;">
                                         <label class="col-md-3 control-label">条件：</label>
-                                        <div class="input-group col-md-6">
+                                        <div class="col-md-6">
                                             <select name="periodType" class="selectpicker form-control" id="op5"></select>
                                         </div>
                                     </div>
@@ -88,7 +77,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group" style="display:block;">
                                         <label class="col-md-3 control-label">值：</label>
-                                        <div class="input-group col-md-6">
+                                        <div class="col-md-6">
                                             <select name="periodType" data-selected-text-format="count > 2" class="selectpicker form-control" id="op6" multiple></select>
                                         </div>
                                     </div>
@@ -96,7 +85,23 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12 text-center">
-                                    <button type="button" class="btn btn-primary btn-sm" onclick="selectedCondition()"><i class="mdi mdi-plus-circle-outline"></i>&nbsp;增加条件</button>
+                                    <a class="btn btn-success btn-sm" onclick="selectedCondition()">
+                                        <i class="fa fa-plus"></i> 新增条件
+                                    </a>
+                                </div>
+                            </div>
+                            <div id="selectedCondition" style="display: none;">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="divider text-uppercase">
+                                            已选条件
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table text-left" id="dataTable"></table>
+                                    </div>
                                 </div>
                             </div>
                         </form>
