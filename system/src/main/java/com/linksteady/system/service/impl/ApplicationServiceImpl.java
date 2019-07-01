@@ -61,13 +61,6 @@ public class ApplicationServiceImpl extends BaseService<Application> implements 
         this.batchDelete(list, "applicationId", Application.class);
     }
 
-//    @Override
-//    public Map<String, String> getCodeAndUrl() {
-//        List<Application> data = applicationMapper.findAll();
-//        Map<String, String> codeUrlMap = data.stream().collect(Collectors.toMap(Application::getApplicationName, Application::getDomain));
-//        return codeUrlMap;
-//    }
-
     @Override
     public List<Application> findAllApplication(Application application) {
         try {

@@ -2,6 +2,7 @@ package com.linksteady.system.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.linksteady.common.bo.UserRoleBo;
 import com.linksteady.common.domain.*;
@@ -55,6 +56,17 @@ public class RoleController extends BaseController {
         List<Role> list = this.roleService.findAllRole(role);
         PageInfo<Role> pageInfo = new PageInfo<>(list);
         return getDataTable(pageInfo);
+    }
+
+    /**
+     * 获取所有的角色列表（无权限控制)
+     * @return
+     */
+    @RequestMapping("role/list2")
+    @ResponseBody
+    public ResponseBo roleList2(){
+       Map<Long,String> roleMap = this.roleService.findAllRole().stream().collect(Collectors.toMap(Role::getRoleId,Role::getRoleName));
+        return ResponseBo.okWithData("",roleMap);
     }
 
     @RequestMapping("role/getRole")

@@ -129,12 +129,13 @@ function validateRule() {
 }
 
 function initRole() {
-    $.post(ctx + "role/list", {}, function (r) {
-        var data = r.rows;
+    $.post(ctx + "role/list2", {}, function (r) {
+        var data = r.data;
         var option = "";
-        for (var i = 0; i < data.length; i++) {
-            option += "<option value='" + data[i].roleId + "'>" + data[i].roleName + "</option>"
-        }
+        $.each(data, function(key, val) {
+            option += "<option value='" + key + "'>" + val + "</option>"
+        });
+
         $rolesSelect.html("").append(option);
         $rolesSelect.selectpicker('refresh');
     });
