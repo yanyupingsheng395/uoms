@@ -92,7 +92,7 @@ public class User implements Serializable {
 	private String updateBy;
 
 	@Column(name = "FIRSTLOGIN")
-	private String firstLogin ="N";
+	private String firstLogin ="Y";
 
 	/**
 	 * 用户所拥有的菜单 key:sysId
