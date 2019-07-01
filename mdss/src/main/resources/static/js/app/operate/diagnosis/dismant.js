@@ -244,17 +244,31 @@ function modalBefore() {
 }
 
 function alarmFlag(dom) {
+    var flag = null;
+    flag = jm.get_selected_node().data.alarmFlag;
     jm.enable_edit();
-    if($(dom).text().trim() == "标记") {
-        jm.get_selected_node().data.ALARM_FLAG = true;
-        $(dom).html("").html("<i class=\"fa fa-close\" data-item=\"2\"></i>&nbsp; 取消");
-        jm.set_node_color(jm.get_selected_node().id, 'red', '');
-    }else {
-        jm.get_selected_node().data.ALARM_FLAG = false;
+    if(flag === "Y") {
+        flag = "N";
+        jm.get_selected_node().data.alarmFlag = flag;
         $(dom).html("").html("<i class=\"fa fa-check-square\" data-item=\"2\"></i>&nbsp; 标记");
         jm.set_node_color(jm.get_selected_node().id, 'rgb(26, 188, 156)', '');
+    }else if(flag === "N" || flag == undefined || flag == null) {
+        flag = "Y";
+        jm.get_selected_node().data.alarmFlag = flag;
+        $(dom).html("").html("<i class=\"fa fa-close\" data-item=\"2\"></i>&nbsp; 取消");
+        jm.set_node_color(jm.get_selected_node().id, 'red', '');
     }
     jm.disable_edit();
+    updateAlarmFlag(flag);
+}
+
+function updateAlarmFlag(flag) {
+    var nodeId =  jm.get_selected_node().id;
+    $.post("/diagdetail/updateAlarmFlag", {diagId: diagId, nodeId: nodeId, flag: flag}, function (r) {
+        if(r.code != 200) {
+            $MB.n_danger("节点标记失败！");
+        }
+    });
 }
 
 function getParentCondition() {
@@ -793,14 +807,13 @@ function addEventListenerOfNode() {
 
             // 将操作按钮的标记初始化
             jm.enable_edit();
-            var flag = jm.get_selected_node().data.ALARM_FLAG;
-            if(flag == undefined || !flag) {
+            var flag = jm.get_selected_node().data.alarmFlag;
+            if(flag == undefined || flag == "N") {
                 $("#alarmFlag").html("").html("<i class=\"fa fa-check-square\" data-item=\"2\"></i>&nbsp; 标记");
-            }else if(flag){
+            }else if(flag == "Y"){
                 $("#alarmFlag").html("").html("<i class=\"fa fa-close\" data-item=\"2\"></i>&nbsp; 取消");
             }
             jm.disable_edit();
-
             e.style.display = 'block';
         }else {
             e.style.display = 'none';

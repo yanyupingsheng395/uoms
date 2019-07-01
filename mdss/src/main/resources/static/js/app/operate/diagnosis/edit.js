@@ -20,5 +20,14 @@ function jmInit(data) {
         mode: "side"
     };
     jm = jsMind.show(options,mind);
+
+    jm.enable_edit();
+    $.each(data, function (k, v) {
+       if(v.alarmFlag == "Y") {
+           jm.set_node_color(v.id, 'red', '');
+       }
+    });
+    jm.disable_edit();
+
     addEventListenerOfNode();
 }

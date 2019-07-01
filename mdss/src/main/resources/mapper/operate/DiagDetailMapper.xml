@@ -35,4 +35,8 @@
       #{item}
     </foreach>
   </delete>
+
+  <update id="updateAlarmFlag">
+    update UO_DIAG_DETAIL set ALARM_FLAG = #{flag} where NODE_ID = #{nodeId} and DIAG_ID = #{diagId}
+  </update>
 </mapper>

@@ -40,4 +40,19 @@ public class DiagDetailController {
             return ResponseBo.error("未知错误发生！");
         }
     }
+
+    /**
+     * 更改节点的标记状态
+     * @return
+     */
+    @PostMapping("/updateAlarmFlag")
+    public ResponseBo updateAlarmFlag(@RequestParam("diagId") String diagId, @RequestParam("nodeId") String nodeId, @RequestParam("flag") String flag) {
+        try {
+            service.updateAlarmFlag(diagId, nodeId, flag);
+            return ResponseBo.ok();
+        }catch (Exception e) {
+            log.error("标记节点失败", e);
+            return ResponseBo.error();
+        }
+    }
 }
