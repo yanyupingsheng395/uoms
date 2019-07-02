@@ -268,6 +268,9 @@ function updateAlarmFlag(flag) {
         if(r.code != 200) {
             $MB.n_danger("节点标记失败！");
         }
+        // 隐藏操作按钮
+        var e = document.getElementById("operateBtns");
+        e.style.display = "none";
     });
 }
 
@@ -554,7 +557,7 @@ function createNode(nodeName, levelId, kpiCode, kpiName,isLeaf, condition) {
     var kpiCode = kpiCode;
     var kpiName = kpiName;
     var kpiLevelId = levelId;
-    var alarmFlag = false;
+    var alarmFlag = "N";
     // var conditions = new Array();
     // if(condition != null) {
     //     conditions.push(condition);
