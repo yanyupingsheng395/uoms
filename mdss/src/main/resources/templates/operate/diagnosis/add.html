@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="edge" />
-    <title>营销诊断系统</title>
+    <title>增长诊断系统</title>
     <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
@@ -95,7 +95,7 @@
             <div class="wrap-ms-right" style="display: none; top: 312px; left: 584px;" id="operateBtns">
                 <li id="condition0" class="ms-item" data-item="0" data-toggle="modal" data-target="#nodeAddModal" onclick="modalBefore()"><i class="fa fa-plus" data-item="0"></i>&nbsp; 新增</li>
                 <li class="ms-item" data-item="1" data-toggle="modal" data-target="#nodeDetailModal" onclick="modalDetailBefore()"><i class="fa fa-files-o" data-item="1"></i>&nbsp; 详情</li>
-                <li class="ms-item" data-item="2" onclick="alarmFlag(this)"><i class="fa fa-check-square" data-item="2"></i>&nbsp; 标记</li>
+                <li class="ms-item" data-item="2" onclick="alarmFlag(this)" id="alarmFlag"><i class="fa fa-check-square" data-item="2"></i>&nbsp; 标记</li>
                 <li class="ms-item" data-item="3" onclick="reasonAddBefore()"><i class="fa fa-plug" data-item="3"></i>&nbsp; 探究</li>
                 <li class="ms-item" data-item="3" onclick="deleteNode()"><i class="fa fa-trash" data-item="3"></i>&nbsp; 删除</li>
             </div>
@@ -119,7 +119,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label class="col-md-3 control-label" for="beginDt">周期：</label>
+                                        <label class="col-md-3 control-label" for="beginDt">时间粒度：</label>
                                         <div class="col-md-9">
                                             <select name="periodType" class="selectpicker form-control" id="periodType">
                                                 <option value="M">月</option>
@@ -128,14 +128,14 @@
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label class="col-md-3 control-label">指标：</label>
+                                        <label class="col-md-3 control-label">目标指标：</label>
                                         <div class="col-md-9">
                                             <select name="kpiCode" id="targetKpi" class="selectpicker form-control"></select>
                                             <input type="hidden" id="targetKpiTxt" name="targetKpiTxt">
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label class="col-md-3 control-label">维度：</label>
+                                        <label class="col-md-3 control-label">指标范围：</label>
                                         <div class="col-md-9">
                                             <button class="btn btn-primary" type="button" onclick="dimSelected()">选择</button>
                                         </div>

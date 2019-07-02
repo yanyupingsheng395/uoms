@@ -60,4 +60,10 @@ public class DiagDetailServiceImpl implements DiagDetailService {
             diagConditionMapper.save(conditions);
         }
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateAlarmFlag(String diagId, String nodeId, String flag) {
+        diagDetailMapper.updateAlarmFlag(diagId, nodeId, flag);
+    }
 }
