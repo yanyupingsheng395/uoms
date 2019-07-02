@@ -1,6 +1,8 @@
-init_date('touchDate', 'yyyy-mm-dd', 2,2,2);
+init_date('touchDate', 'yyyy-mm-dd', 0,2,0);
+$("#touchDate").datepicker("setDate", new Date());
+$("#touchDate").datepicker("setEndDate", new Date());
+
 $(function () {
-    $("#touchDate").datepicker("setDate", new Date());
     $('#cdrq').text($('#touchDate').val());
     //获取当日需要运营的总人数
     $.getJSON("/op/getOpDayHeadInfo?daywid="+$('#touchDate').val(), function (resp) {
