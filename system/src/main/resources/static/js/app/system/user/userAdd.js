@@ -76,7 +76,7 @@ function validateRule() {
             username: {
                 required: true,
                 minlength: 3,
-                maxlength: 10,
+                maxlength: 30,
                 remote: {
                     url: "user/checkUserName",
                     type: "get",
