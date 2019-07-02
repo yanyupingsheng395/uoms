@@ -73,8 +73,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         //获取上一周期的开始时间和结束时间
         date = getLastPeriod(periodType, startDt, endDt);
 
-        DecimalFormat df1 = new DecimalFormat(",###.00");
-        DecimalFormat df2 = new DecimalFormat("#.00%");
+        DecimalFormat df1 = new DecimalFormat(",###.##");
+        DecimalFormat df2 = new DecimalFormat("#.##%");
 
         //获取指标的当前值
         Double d1 = getKpiOfDifferPeriod(kpiType, startDt, endDt, periodType, source);
@@ -94,7 +94,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
             result.put("yoy", d1 == null ? DEFAULT_VAL : (d3 == null || d3 == 0D ? DEFAULT_VAL:df2.format((d1 - d3)/d3)));
         }
         // 同比
-        result.put("yny", d1 == null ? DEFAULT_VAL : (d2 == null ? DEFAULT_VAL : df2.format((d1-d2)/d2)));
+        result.put("yny", d1 == null ? DEFAULT_VAL : (d2 == null || d2 == 0D ? DEFAULT_VAL : df2.format((d1-d2)/d2)));
         return result;
     }
 
