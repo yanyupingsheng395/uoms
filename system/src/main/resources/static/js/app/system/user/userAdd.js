@@ -117,7 +117,7 @@ function validateRule() {
         messages: {
             username: {
                 required: icon + "请输入用户名",
-                minlength: icon + "用户名长度3到10个字符",
+                minlength: icon + "用户名长度3到30个字符",
                 remote: icon + "用户名已经存在"
             },
             roles: icon + "请选择用户角色",
