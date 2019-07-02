@@ -49,8 +49,13 @@ public class ReasonController  extends BaseController {
     @Autowired
     ThriftClient thriftClient;
 
-
+    /**
+     * 判断是否相关的阀值
+     */
     private static  final double RELATE_VALUE_THRESHOLD=0.4d;
+    /**
+     * 判断相关度较高的阀值
+     */
     private static final double RELATE_VALUE_CONTRIBUTION_THRESHOLD=0.3d;
 
     /**
