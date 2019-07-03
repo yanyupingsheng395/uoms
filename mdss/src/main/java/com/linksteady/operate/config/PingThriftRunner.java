@@ -1,8 +1,11 @@
 package com.linksteady.operate.config;
 
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.config.SystemProperties;
 import com.linksteady.operate.thrift.ThriftClient;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -24,6 +27,9 @@ public class PingThriftRunner implements CommandLineRunner {
     @Autowired
     private SystemProperties systemProperties;
 
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
+
     @Override
     public void run(String... args) throws Exception {
         if(systemProperties.isValidateThrift())
@@ -34,6 +40,8 @@ public class PingThriftRunner implements CommandLineRunner {
                 thriftClient.close();
             } catch (TException e) {
                 log.error("thrift服务无法正常连接，请检查!",e);
+                //进行异常日志的上报
+                exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
                 throw new Exception("thrift服务无法连接，系统停止运行！");
             }
         }

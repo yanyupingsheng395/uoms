@@ -2,6 +2,7 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.User;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.dao.ReasonMapper;
 import com.linksteady.operate.dao.ReasonRelMatrixMapper;
 import com.linksteady.operate.dao.ReasonResultMapper;
@@ -10,6 +11,8 @@ import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.operate.vo.ReasonVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.thrift.TException;
 import org.dozer.DozerBeanMapper;
@@ -45,6 +48,9 @@ public class ReasonServiceImpl implements ReasonService {
 
     @Autowired
     ThriftClient thriftClient;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Override
     public List<Reason> getReasonList(int startRow, int endRow, String reasonName)
@@ -127,6 +133,8 @@ public class ReasonServiceImpl implements ReasonService {
         } catch (TException e) {
             //todo 异常继续向上抛 同时需要将当前数据的状态更新为失败
             log.error("Exception:", e);
+            //进行异常日志的上报
+            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
            //更新状态
             reasonMapper.updateProgressAndStatusById(reasonId,"E",0);
         } finally {
