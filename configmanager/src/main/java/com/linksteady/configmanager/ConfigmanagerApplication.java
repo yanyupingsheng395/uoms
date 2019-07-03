@@ -1,4 +1,4 @@
-package com.linksteady.jobmanager;
+package com.linksteady.configmanager;
 
 import com.linksteady.lognotice.annotation.EnableExceptionNotice;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.time.LocalTime;
 public class ConfigmanagerApplication {
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(JobmanagerApplication.class);
+        SpringApplication app = new SpringApplication(ConfigmanagerApplication.class);
         app.addListeners(new ApplicationPidFileWriter());
         app.run(args);
         log.info("配置管理模块 started up successfully at {} {}", LocalDate.now(), LocalTime.now());

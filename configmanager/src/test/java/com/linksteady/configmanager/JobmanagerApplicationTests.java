@@ -1,4 +1,4 @@
-package com.linksteady.jobmanager;
+package com.linksteady.configmanager;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
