@@ -1,5 +1,6 @@
 var ctx = "/";
 $(function () {
+    setUsername();
     var $logTableForm = $(".log-table-form");
     var settings = {
         url: ctx + "log/list",
@@ -10,7 +11,7 @@ $(function () {
                 pageSize: params.limit,
                 pageNum: params.offset / params.limit + 1,
                 timeField: $logTableForm.find("input[name='timeField']").val().trim(),
-                username: $logTableForm.find("input[name='username']").val().trim(),
+                username: $logTableForm.find("select[name='username']").find("option:selected").val(),
                 operation: $logTableForm.find("input[name='operation']").val().trim()
             };
         },
@@ -42,6 +43,15 @@ $(function () {
     $MB.initTable('logTable', settings);
     $MB.calenders('input[name="timeField"]', true, false);
 });
+function setUsername() {
+    var code = "<option value=''>所有</option>";
+    $.get("/user/findAllUser", {}, function (r) {
+        $.each(r.data, function (k, v) {
+            code += "<option value='" + v["USERNAME"] + "'>" + v["USERNAME"] + "</option>";
+        });
+        $("#username").html("").append(code);
+    });
+}
 
 function searchLog() {
     $MB.refreshTable('logTable');

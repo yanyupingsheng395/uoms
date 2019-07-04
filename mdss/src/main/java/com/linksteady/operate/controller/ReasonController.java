@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.CacheService;
@@ -14,6 +15,8 @@ import com.linksteady.operate.service.ReasonService;
 import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.operate.vo.ReasonVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -48,6 +51,9 @@ public class ReasonController  extends BaseController {
 
     @Autowired
     ThriftClient thriftClient;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     /**
      * 判断是否相关的阀值
@@ -253,6 +259,8 @@ public class ReasonController  extends BaseController {
                 return ResponseBo.okWithData("",reasonResults);
             } catch (TException e) {
                 log.error("效果评估出错",e);
+                //进行异常日志的上报
+                exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
                 return ResponseBo.error();
             } finally {
                 thriftClient.close();

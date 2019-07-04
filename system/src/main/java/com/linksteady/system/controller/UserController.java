@@ -71,7 +71,7 @@ public class UserController extends BaseController {
         }
     }
 
-    @Log("获取用户信息")
+//    @Log("获取用户信息")
     @RequestMapping("user/list")
     @RequiresPermissions("user:list")
     @ResponseBody
@@ -253,5 +253,15 @@ public class UserController extends BaseController {
             exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("更新头像失败，请联系管理员！");
         }
+    }
+
+    /**
+     * 日志查询条件：所有有效账号
+     * @return
+     */
+    @RequestMapping("user/findAllUser")
+    @ResponseBody
+    public ResponseBo findAllUser() {
+        return ResponseBo.okWithData(null, this.userService.findAllUser());
     }
 }

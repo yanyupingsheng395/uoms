@@ -10,6 +10,8 @@
         <module>common</module>
         <module>system</module>
         <module>mdss</module>
+        <module>jobmanager</module>
+        <module>configmanager</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -34,6 +36,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

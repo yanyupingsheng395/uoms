@@ -218,7 +218,7 @@ public class MenuController extends BaseController {
     }
 
 
-    @Log("获取系统所有URL")
+//    @Log("获取系统所有URL")
     @GetMapping("menu/urlList")
     @ResponseBody
     public List<Map<String, String>> getAllUrl() {
