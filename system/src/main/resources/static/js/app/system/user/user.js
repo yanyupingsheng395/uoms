@@ -35,10 +35,7 @@ $(function () {
                 else if (value === '1') return '女';
                 else return '未知';
             }
-        }, {
-            field: 'crateTime',
-            title: '创建时间'
-        }, {
+        },{
             field: 'status',
             title: '状态',
             formatter: function (value, row, index) {
@@ -49,8 +46,13 @@ $(function () {
         {
             field: 'expireDate',
             title: '失效日期'
-        }
-
+        },{
+            field: 'description',
+            title: '备注'
+        }, {
+                field: 'crateTime',
+                title: '创建时间'
+            }
         ]
     };
     $MB.initTable('userTable', settings);

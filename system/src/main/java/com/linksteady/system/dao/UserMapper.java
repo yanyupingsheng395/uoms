@@ -1,6 +1,7 @@
 package com.linksteady.system.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.linksteady.system.config.MyMapper;
 import com.linksteady.common.domain.User;
@@ -17,4 +18,6 @@ public interface UserMapper extends MyMapper<User> {
 	Long getSeqId();
 
 	void resetPassword(String userId,String password,String modifyName);
+
+	List<Map<String, Object>> findAllUser();
 }

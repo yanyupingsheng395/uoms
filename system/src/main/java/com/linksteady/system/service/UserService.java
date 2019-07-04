@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
+import java.util.Map;
 
 @CacheConfig(cacheNames = "UserService")
 public interface UserService extends IService<User> {
@@ -45,4 +46,6 @@ public interface UserService extends IService<User> {
 
     @CacheEvict(key = "#p0", allEntries = true)
     void resetPassword(String userId);
+
+    List<Map<String, Object>> findAllUser();
 }

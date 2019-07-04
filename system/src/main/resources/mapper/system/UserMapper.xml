@@ -24,7 +24,7 @@
   </resultMap>
   <select id="findUsers" resultType="com.linksteady.common.domain.User" parameterType="com.linksteady.common.domain.User">
   		select u.user_id userId,u.username,u.email,u.mobile,u.status,u.crate_time crateTime,
-  		u.ssex,u.expire_date expireDate from t_user u
+  		u.ssex,u.expire_date expireDate, u.description from t_user u
   		where 1=1
   		<if test="username != null and username != ''">
         	AND u.username = #{username}
@@ -41,7 +41,7 @@
     
   <select id="findUserWithRole" resultType="com.linksteady.common.domain.UserWithRole">
 		select u.user_id userId,u.username,u.dept_id deptId,u.email,u.mobile,
-		u.status,u.ssex,ur.role_id roleId, u.expire_date expireDate from t_user u
+		u.status,u.ssex,ur.role_id roleId, u.expire_date expireDate, u.description from t_user u
 		left join t_user_role ur on (u.user_id = ur.user_id)
 		where u.user_id = #{userId}
   </select>
@@ -87,4 +87,8 @@
 							t.update_by=#{modifyName}
 							t.firstLogin='Y' where t.user_id=#{userId}
 	</update>
+
+	<select id="findAllUser" resultType="map">
+ 		SELECT USER_ID USERID, USERNAME FROM T_USER
+ 	</select>
 </mapper>

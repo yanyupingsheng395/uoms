@@ -4,10 +4,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.util.MD5Utils;
@@ -231,5 +228,8 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         this.userMapper.resetPassword(userId,password,currentUser.getUsername());
     }
 
-
+    @Override
+    public List<Map<String, Object>> findAllUser() {
+        return this.userMapper.findAllUser();
+    }
 }
