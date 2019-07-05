@@ -19,6 +19,5 @@ public interface CacheService {
 
        void procDimJoinInfoLoad();
 
-     void procAllLoad();
-
+       void procAllLoad();
 }

@@ -541,6 +541,15 @@ function makeT2Chart(obj,chartId,yName, data, avg, up, down) {
     t2.name = legendData[1];
     t2.type = 'line';
     t2.data = avgData;
+    t2.smooth = false;
+    t2.itemStyle = {
+        normal:{
+            lineStyle:{
+                width:2,
+                type:'dotted'  //'dotted'虚线 'solid'实线
+            }
+        }
+    };
     t2.markArea = {itemStyle:{
             color: '#48b0f7',
             opacity: 0.2
