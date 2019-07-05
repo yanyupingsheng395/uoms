@@ -57,3 +57,9 @@
 ##修改版本号
 versions:set -DnewVersion=1.04
 
+#模块划分
+## system 系统管理
+## mdss 用户增长诊断/成长系统
+## configmanager 配置管理
+## jobmanager 调度管理模块
+

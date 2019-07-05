@@ -84,7 +84,7 @@
 	<update id="resetPassword">
 		update t_user t set t.password=#{password},
 							t.modify_time=sysdate,
-							t.update_by=#{modifyName}
+							t.update_by=#{modifyName},
 							t.firstLogin='Y' where t.user_id=#{userId}
 	</update>
 
