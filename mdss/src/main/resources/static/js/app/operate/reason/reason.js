@@ -142,6 +142,11 @@ function updateReason() {
         $MB.n_warning('一次只能计算一个原因任务！');
         return;
     }
+    // 计算状态的记录不可重复计算
+    if (selected[0]["status"] === "F") {
+        $MB.n_warning('该记录已计算完成！');
+        return;
+    }
     var reasonId = selected[0]["reasonId"];
     lightyear.loading('show');
     $.getJSON("/reason/updateProgressById?reasonId="+reasonId,function (resp) {
