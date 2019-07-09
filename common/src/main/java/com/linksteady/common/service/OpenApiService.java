@@ -10,14 +10,9 @@ import java.util.Map;
  */
 public interface OpenApiService {
     /**
-     * 获取当前用户的菜单列表
-     * @param username
-     * @param sysId
-     * @return
+     * 更改用户密码
+     * @param userName
+     * @param newPassword
      */
-    Map<String, Object> getUserMenu(String username, String sysId);
-
-    String getSysName(String sysId);
-
     void updatePassword(String userName, String newPassword);
 }

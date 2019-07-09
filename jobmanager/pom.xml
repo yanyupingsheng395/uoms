@@ -21,6 +21,12 @@
             <artifactId>common</artifactId>
             <version>1.06</version>
         </dependency>
+
+        <!-- quartz -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -73,5 +79,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

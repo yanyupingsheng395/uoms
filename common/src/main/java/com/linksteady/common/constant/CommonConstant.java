@@ -19,4 +19,5 @@ public class CommonConstant {
      * 诊断系统编码
      */
     public static final String DIAG_CODE = "DIAG";
+
 }

@@ -25,34 +25,7 @@ import java.util.stream.Collectors;
 public class OpenApiServiceImpl implements OpenApiService {
 
     @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private ApplicationService applicationService;
-
-    @Autowired
-    private SystemService systemService;
-
-    @Autowired
     private UserService userService;
-
-    /**
-     * 获取当前用户的菜单树
-     * @param username
-     * @return
-     */
-    @Override
-    public Map<String, Object> getUserMenu(String username, String sysId) {
-        Map<String, Object> result = Maps.newHashMap();
-        Tree<Menu> tree = menuService.getUserMenu(username, sysId);
-        result.put("tree", tree);
-        return result;
-    }
-
-    @Override
-    public String getSysName(String sysId) {
-        return systemService.selectByKey(sysId).getName();
-    }
 
     @Override
     public void updatePassword(String userName, String newPassword) {

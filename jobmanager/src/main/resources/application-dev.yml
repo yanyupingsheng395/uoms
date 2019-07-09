@@ -1,17 +1,16 @@
 app:
-  name: "UOMS"
-  description: "link steady 诊断&运营系统"
+  name: "JOB"
+  description: "link steady 调度系统"
   spring-boot-version: "2.0.4.RELEASE"
   version: @project.version@
   build:
     time: @timestamp@
 
 server:
-  port: 9091
+  port: 9093
   tomcat:
     uri-encoding: utf-8
 spring:
-
   thymeleaf:
     cache: false
 
@@ -21,14 +20,12 @@ spring:
     type:
       redis
 
-  #MD5 方式请求静态资源
   resources:
     chain:
       strategy:
         content:
           enabled: true
           paths: /js/job/**, /css/**
-
 
 management:
   endpoints:
@@ -42,9 +39,9 @@ management:
 
 mybatis:
   # type-aliases扫描路径
-  type-aliases-package: com.linksteady.system.domain
-  # mapper xml实现扫描路径
-  mapper-locations: classpath:mapper/*/*.xml
+  type-aliases-package: com.linksteady.jobmanager.domain
+  # dao xml实现扫描路径
+  mapper-locations: classpath:mapper/*.xml
   property:
     order: before
   configuration:
@@ -54,7 +51,7 @@ mybatis:
 
 #mappers 多个接口时逗号隔开
 mapper:
-  mappers: com.linksteady.system.config.MyMapper
+  mappers: com.linksteady.jobmanager.config.MyMapper
   not-empty: false
   identity: oracle
   order: before
@@ -66,35 +63,39 @@ pagehelper:
   supportMethodsArguments: true
   params: count=countSql
 
-#日志等级配置
 logging:
   level:
     com:
       linksteady:
-        system: info
+        operate: debug
+        dao: debug
 
-# system 配置
 sys:
   shiro:
-    # shiro redis缓存时长，默认1800秒
-    expireIn: 7200
-    # session 超时时间，默认1800000毫秒
-    sessionTimeout: 7200000
+    # shiro redis缓存时长，默认1800秒  7200
+    expireIn: 1800
+    # session 超时时间，默认1800000毫秒 7200000
+    sessionTimeout: 1800000
     # rememberMe cookie有效时长，默认86400秒，即一天
     cookieTimeout: 86400
     # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-    anonUrl: /api/**, /plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/user/regist,/gifCode,/,/actuator/**,/test/**,/sysinfo,/login
+    anonUrl: /plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo,/login
     # 登录 url
-    loginUrl: /login
+    loginUrl: http://localhost:9091/login
     # 登录成功后跳转的 url
-    successUrl: /main
+    successUrl: http://localhost:9091/main
     # 登出 url
-    logoutUrl: /logout
+    logoutUrl: http://localhost:9091/logout
     # 未授权跳转 url
     unauthorizedUrl: /403
     #强制修改密码的url
-    resetPasswordUrl: /resetPass
+    resetPasswordUrl: http://localhost:9091/resetPass
     #首次登陆是否强制要求修改密码
     allowResetPassword: false
     #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
-    cookieDomain: dev.growth-master.com
+    cookieDomain: localhost
+
+thrift:
+  server:
+    host: 127.0.0.1
+    port: 9999

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="edge" />
-    <title>系统管理</title>
+    <title>调度系统</title>
     <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
@@ -30,7 +30,7 @@
                     <div class="col-sm-12 search-collapse">
                         <div class="col-md-12">
                             <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">操作日志</h5>
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">调度日志</h5>
                             </div>
                             <div class="row">
                                 <hr class="hr"/>
@@ -42,16 +42,17 @@
                             <div class="select-list">
                                 <ul>
                                     <li>
-                                        操作时间：<input type="text" name="timeField"/>
+                                        Bean名称：<input type="text" name="beanName"/>
                                     </li>
                                     <li>
-                                        操作用户：
-                                        <select name="username" id="username">
-
+                                        方法名称：<input type="text" name="methodName"/>
+                                    </li>
+                                    <li>状态:
+                                        <select name="status">
+                                            <option value="" selected>所有</option>
+                                            <option value="0">成功</option>
+                                            <option value="1">失败</option>
                                         </select>
-                                    </li>
-                                    <li>
-                                        描述：<input type="text" name="operation"/>
                                     </li>
                                     <li>
                                         <a class="btn btn-primary btn-rounded btn-sm" onclick="searchLog()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -66,7 +67,7 @@
                         <div class="row" style="margin-top: 12px;">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
-                                    <a class="btn btn-danger btn-del" onclick="deleteLogs()" shiro:hasPermission="log:delete">
+                                    <a class="btn btn-danger btn-del" onclick="deleteJobLog()">
                                         <i class="fa fa-remove"></i> 删除
                                     </a>
                                 </div>
@@ -74,7 +75,7 @@
                         </div>
                         <div class="row" style="margin-top: 12px;">
                             <div class="col-sm-12 table-responsive">
-                                <table id="logTable" class="table table-bordered text-nowrap"></table>
+                                <table id="jobLogTable" class="table table-bordered text-nowrap"></table>
                             </div>
                         </div>
                     </div>
@@ -83,6 +84,6 @@
         </main>
     </div>
 </div>
-<script data-th-src="@{js/app/system/log/log.js}"></script>
+<script data-th-src="@{/js/app/job/jobLog.js}"></script>
 </body>
 </html>

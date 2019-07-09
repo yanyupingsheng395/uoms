@@ -1,4 +1,4 @@
-package com.linksteady.operate.controller;
+package com.linksteady.jobmanager.controller;
 
 import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
@@ -24,13 +24,12 @@ import java.util.Map;
 
 /**
  * @author hxcao
- * @date 2019-06-24
+ * @date 2019-07-08
  */
 @Slf4j
 @Controller
 @RequestMapping("/")
 public class RootPathController extends BaseController {
-
 
     @Autowired
     RedisTemplate redisTemplate;

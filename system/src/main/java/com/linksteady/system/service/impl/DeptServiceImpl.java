@@ -12,7 +12,7 @@
 //import org.springframework.stereotype.Service;
 //import org.springframework.transaction.annotation.Propagation;
 //import org.springframework.transaction.annotation.Transactional;
-//import tk.mybatis.mapper.entity.Example;
+//import tk.mybatis.dao.entity.Example;
 //
 //import java.util.ArrayList;
 //import java.util.Arrays;

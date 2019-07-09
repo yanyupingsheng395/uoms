@@ -23,10 +23,10 @@ import java.time.LocalTime;
 @EnableAsync
 @EnableExceptionNotice
 @Slf4j
-public class Application {
+public class SystemApplication {
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(Application.class);
+        SpringApplication app = new SpringApplication(SystemApplication.class);
         app.addListeners(new ApplicationPidFileWriter());
         app.run(args);
         log.info("系统管理模块 started up successfully at {} {}", LocalDate.now(), LocalTime.now());

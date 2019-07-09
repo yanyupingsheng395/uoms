@@ -32,34 +32,33 @@ public class CalculateAllTargetTask {
     ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Async
-    public void calculate()
-    {
-          log.info("开始批量计算任务的完成信息，开始的时间为:{}", LocalDate.now());
-          //获取到所有需要计算的目标 (状态为 执行中)
-          List<TargetInfo> list=targetListMapper.getAllRuningTarget();
+    public void calculate()  {
+        log.info("开始批量计算任务的完成信息，开始的时间为:{}, 线程名称：{}", LocalDate.now(), Thread.currentThread().getName());
+        // 获取到所有需要计算的目标 (状态为 执行中)
+        List<TargetInfo> list=targetListMapper.getAllRuningTarget();
 
-          for(TargetInfo targetInfo:list)
-          {
-              if("gmv".equals(targetInfo.getKpiCode()))
-              {
-                  try {
-                      tgtGmvCalculateService.calculateTarget(targetInfo);
-                  } catch (Exception e) {
-                      //进行异常日志的上报
-                      exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
-                      //更新任务的状态为失败
-                      targetListMapper.updateTargetStatus(targetInfo.getId(),"-1");
+        for(TargetInfo targetInfo:list)
+        {
+            if("gmv".equals(targetInfo.getKpiCode()))
+            {
+                try {
+                    tgtGmvCalculateService.calculateTarget(targetInfo);
+                } catch (Exception e) {
+                    //进行异常日志的上报
+                    exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+                    //更新任务的状态为失败
+                    targetListMapper.updateTargetStatus(targetInfo.getId(),"-1");
 
-                      //todo 写入预警表
+                    //todo 写入预警表
 
-                      log.info("批量计算ID为{}的任务失败",targetInfo.getId(),e);
+                    log.info("批量计算ID为{}的任务失败",targetInfo.getId(),e);
 
-                  }
-              }else
-              {
-                  log.error("尚未配置此指标的计算");
-              }
-          }
-        log.info("结束批量计算任务的完成信息，结束的时间为:{}", LocalDate.now());
+                }
+            }else
+            {
+                log.error("尚未配置此指标的计算");
+            }
+        }
+        log.info("结束批量计算任务的完成信息，结束的时间为:{}, 线程名称：{}", LocalDate.now(), Thread.currentThread().getName());
     }
 }

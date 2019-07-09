@@ -72,7 +72,7 @@
             <version>1.3.2</version>
         </dependency>
 
-        <!-- 通用 mapper -->
+        <!-- 通用 dao -->
         <dependency>
             <groupId>tk.mybatis</groupId>
             <artifactId>mapper-spring-boot-starter</artifactId>
