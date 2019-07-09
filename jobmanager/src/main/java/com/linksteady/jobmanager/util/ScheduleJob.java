@@ -1,5 +1,6 @@
 package com.linksteady.jobmanager.util;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.linksteady.common.util.SpringContextUtils;
 import com.linksteady.jobmanager.domain.Job;
 import com.linksteady.jobmanager.domain.JobLog;
@@ -11,9 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * 定时任务
@@ -22,7 +21,9 @@ import java.util.concurrent.Future;
  */
 public class ScheduleJob extends QuartzJobBean {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    private ExecutorService service = Executors.newSingleThreadExecutor();
+
+    ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat("thread-call-runner-%d").build();
+    ExecutorService service = new ThreadPoolExecutor(2, 16, 60L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>(16), threadFactory);
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
@@ -42,7 +43,7 @@ public class ScheduleJob extends QuartzJobBean {
 
         try {
             // 执行任务
-            logger.info("任务准备执行，任务ID：{}", scheduleJob.getJobId());
+            logger.info("任务准备执行，任务ID：{}, 当前线程：{}", scheduleJob.getJobId(), Thread.currentThread().getName());
             ScheduleRunnable task = new ScheduleRunnable(scheduleJob.getBeanName(), scheduleJob.getMethodName(),
                     scheduleJob.getParams());
             Future<?> future = service.submit(task);
@@ -52,7 +53,7 @@ public class ScheduleJob extends QuartzJobBean {
             // 任务状态 0：成功 1：失败
             log.setStatus("0");
 
-            logger.info("任务执行完毕，任务ID：{} 总共耗时：{} 毫秒", scheduleJob.getJobId(), times);
+            logger.info("任务执行完毕，任务ID：{} 总共耗时：{} 毫秒, 当前线程：{}", scheduleJob.getJobId(), times, Thread.currentThread().getName());
         } catch (Exception e) {
             logger.error("任务执行失败，任务ID：" + scheduleJob.getJobId(), e);
             long times = System.currentTimeMillis() - startTime;

@@ -13,7 +13,7 @@ $(function () {
                 status: $jobTableForm.find("select[name='status']").val()
             };
         },
-        singleSelect: true,
+        // singleSelect: true,
         columns: [{
             checkbox: true
         },
