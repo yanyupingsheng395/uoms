@@ -37,12 +37,13 @@ public class PingThriftRunner implements CommandLineRunner {
             try {
                 thriftClient.open();
                 thriftClient.getThriftService().ping();
-                thriftClient.close();
             } catch (TException e) {
                 log.error("thrift服务无法正常连接，请检查!",e);
                 //进行异常日志的上报
                 exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
                 throw new Exception("thrift服务无法连接，系统停止运行！");
+            }finally {
+                thriftClient.close();
             }
         }
 
