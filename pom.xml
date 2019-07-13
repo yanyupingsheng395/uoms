@@ -10,7 +10,6 @@
         <module>common</module>
         <module>system</module>
         <module>mdss</module>
-        <module>jobmanager</module>
         <module>configmanager</module>
     </modules>
     <packaging>pom</packaging>
