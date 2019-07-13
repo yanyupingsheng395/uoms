@@ -72,6 +72,10 @@ logging:
           dao: info
 
 sys:
+  job:
+    token: LINKSTEADY  #和调度中心通信校验用的token
+    callbackUrl: http://job.growth-master.com/api/jobcallback   #回写任务状态的回调地址
+    jobrewriteUrl: http://job.growth-master.com//api/jobrewrite  #回写任务执行日志的地址
   shiro:
     # shiro redis缓存时长，默认1800秒
     expireIn: 7200
@@ -80,7 +84,7 @@ sys:
     # rememberMe cookie有效时长，默认86400秒，即一天
     cookieTimeout: 86400
     # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-    anonUrl: /api/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo
+    anonUrl: /job/**,/api/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo
     # 登录 url
     loginUrl: http://dev.growth-master.com/login
     # 登录成功后跳转的 url
