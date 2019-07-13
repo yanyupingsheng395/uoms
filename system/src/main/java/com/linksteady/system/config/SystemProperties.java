@@ -5,9 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-@Configuration
 @ConfigurationProperties(prefix = "sys")
-@Component
 public class SystemProperties {
 
     private ShiroProperties shiro = new ShiroProperties();

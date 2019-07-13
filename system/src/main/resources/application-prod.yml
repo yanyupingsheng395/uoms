@@ -27,7 +27,7 @@ spring:
       strategy:
         content:
           enabled: true
-          paths: /js/job/**, /css/**
+          paths: /js/app/**, /css/**
 
 
 management:
