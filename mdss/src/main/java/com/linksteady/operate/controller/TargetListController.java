@@ -226,17 +226,6 @@ public class TargetListController {
     }
 
     /**
-     * 对所有目标的实际完成情况进行手工运算
-     * @return
-     */
-    @RequestMapping("/calculateAll")
-    public ResponseBo calculateAll() {
-
-        calculateAllTargetTask.calculate();
-        return ResponseBo.ok();
-    }
-
-    /**
      * 提交后台进行拆解
      * @return
      */
