@@ -1,5 +1,8 @@
 package com.linksteady.operate.task;
 
+import com.linksteady.jobclient.annotation.JobHandler;
+import com.linksteady.jobclient.domain.ResultInfo;
+import com.linksteady.jobclient.service.IJobHandler;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.dao.TargetListMapper;
 import com.linksteady.operate.domain.TargetInfo;
@@ -20,7 +23,8 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class CalculateAllTargetTask {
+@JobHandler(value = "calculateAllTargetTask")
+public class CalculateAllTargetTask extends IJobHandler {
 
     @Autowired
     private TargetListMapper targetListMapper;
@@ -31,8 +35,8 @@ public class CalculateAllTargetTask {
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
 
-    @Async
-    public void calculate()  {
+    @Override
+    public ResultInfo execute(String param) throws Exception {
         log.info("开始批量计算任务的完成信息，开始的时间为:{}, 线程名称：{}", LocalDate.now(), Thread.currentThread().getName());
         // 获取到所有需要计算的目标 (状态为 执行中)
         List<TargetInfo> list=targetListMapper.getAllRuningTarget();
@@ -50,7 +54,6 @@ public class CalculateAllTargetTask {
                     targetListMapper.updateTargetStatus(targetInfo.getId(),"-1");
 
                     //todo 写入预警表
-
                     log.info("批量计算ID为{}的任务失败",targetInfo.getId(),e);
 
                 }
@@ -60,5 +63,6 @@ public class CalculateAllTargetTask {
             }
         }
         log.info("结束批量计算任务的完成信息，结束的时间为:{}, 线程名称：{}", LocalDate.now(), Thread.currentThread().getName());
+        return ResultInfo.success("success");
     }
 }
