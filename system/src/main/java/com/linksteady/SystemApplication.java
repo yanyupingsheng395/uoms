@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.time.LocalDate;
@@ -28,7 +29,19 @@ public class SystemApplication {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(SystemApplication.class);
         app.addListeners(new ApplicationPidFileWriter());
-        app.run(args);
+        ConfigurableApplicationContext context = app.run(args);
         log.info("系统管理模块 started up successfully at {} {}", LocalDate.now(), LocalTime.now());
+        dumpBeansToConsole(context);
     }
+
+    private static void dumpBeansToConsole(ConfigurableApplicationContext applicationContext) {
+        String[] definitionNames = applicationContext.getBeanDefinitionNames();
+        for (String name : definitionNames) {
+            Object bean = applicationContext.getBean(name);
+            if(name.indexOf("SystemProperties") > -1) {
+                System.out.printf("%s[%s]\n", name, bean.getClass().getName());
+            }
+        }
+    }
+
 }

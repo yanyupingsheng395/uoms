@@ -3,13 +3,12 @@ import com.linksteady.lognotice.annotation.EnableExceptionNotice;
 import com.linksteady.operate.config.SystemProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.time.LocalDate;
@@ -28,7 +27,7 @@ public class MdssApplication {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(MdssApplication.class);
         app.addListeners(new ApplicationPidFileWriter());
-        app.run(args);
+        ConfigurableApplicationContext context = app.run(args);
         log.info("mdss started up successfully at {} {}", LocalDate.now(), LocalTime.now());
     }
 }

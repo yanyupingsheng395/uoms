@@ -33,7 +33,7 @@ public class ChangePasswordFilter extends AccessControlFilter {
      */
     @Override
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
-        SystemProperties systemProperties=(SystemProperties) SpringContextUtils.getBean("systemProperties");
+        SystemProperties systemProperties=(SystemProperties) SpringContextUtils.getBean("sys-com.linksteady.system.config.SystemProperties");
         String requestUrl=WebUtils.getPathWithinApplication(WebUtils.toHttp(servletRequest));
         Subject subject = getSubject(servletRequest, servletResponse);
         // 表示没有登录，重定向到登录页面

@@ -7,10 +7,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Spring Context 工具类
- * 
- * @author MrBird
- *
  */
+@Component
 public class SpringContextUtils implements ApplicationContextAware {
 
 	private static ApplicationContext applicationContext;
@@ -22,6 +20,10 @@ public class SpringContextUtils implements ApplicationContextAware {
 
 	public static Object getBean(String name) {
 		return applicationContext.getBean(name);
+	}
+
+	public static Object getBean(Class<?> clazz) {
+		return applicationContext.getBean(clazz);
 	}
 
 	public static <T> T getBean(String name, Class<T> requiredType) {
