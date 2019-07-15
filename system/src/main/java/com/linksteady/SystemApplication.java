@@ -29,19 +29,7 @@ public class SystemApplication {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(SystemApplication.class);
         app.addListeners(new ApplicationPidFileWriter());
-        ConfigurableApplicationContext context = app.run(args);
+        app.run();
         log.info("系统管理模块 started up successfully at {} {}", LocalDate.now(), LocalTime.now());
-        dumpBeansToConsole(context);
     }
-
-    private static void dumpBeansToConsole(ConfigurableApplicationContext applicationContext) {
-        String[] definitionNames = applicationContext.getBeanDefinitionNames();
-        for (String name : definitionNames) {
-            Object bean = applicationContext.getBean(name);
-            if(name.indexOf("SystemProperties") > -1) {
-                System.out.printf("%s[%s]\n", name, bean.getClass().getName());
-            }
-        }
-    }
-
 }
