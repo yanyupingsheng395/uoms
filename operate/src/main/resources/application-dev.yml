@@ -1,0 +1,101 @@
+app:
+  name: "OPERATE"
+  description: "link steady用户成长系统"
+  spring-boot-version: "2.0.4.RELEASE"
+  version: @project.version@
+  build:
+    time: @timestamp@
+
+server:
+  port: 9094
+  tomcat:
+    uri-encoding: utf-8
+spring:
+  thymeleaf:
+    cache: false
+
+  aop:
+    proxy-target-class: true
+  cache:
+    type:
+      redis
+
+  resources:
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /js/app/**, /css/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+
+mybatis:
+  # type-aliases扫描路径
+  type-aliases-package: com.linksteady.mdss.domain
+  # mapper xml实现扫描路径
+  mapper-locations: classpath:mapper/*.xml
+  property:
+    order: before
+  configuration:
+    # 注意这里需要加单引号
+    jdbc-type-for-null: 'null'
+    call-setters-on-nulls: true
+
+#mappers 多个接口时逗号隔开
+mapper:
+  mappers: com.linksteady.operate.config.MyMapper
+  not-empty: false
+  identity: oracle
+  order: before
+
+#pagehelper
+pagehelper:
+  helperDialect: oracle
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+logging:
+  level:
+    com:
+      linksteady:
+        operate: debug
+        dao: debug
+
+sys:
+  shiro:
+    # shiro redis缓存时长，默认1800秒  7200
+    expireIn: 1800
+    # session 超时时间，默认1800000毫秒 7200000
+    sessionTimeout: 1800000
+    # rememberMe cookie有效时长，默认86400秒，即一天
+    cookieTimeout: 86400
+    # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
+    anonUrl: /api/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo,/login
+    # 登录 url
+    loginUrl: http://localhost:9091/login
+    # 登录成功后跳转的 url
+    successUrl: http://localhost:9091/main
+    # 登出 url
+    logoutUrl: http://localhost:9091/logout
+    # 未授权跳转 url
+    unauthorizedUrl: /403
+    #强制修改密码的url
+    resetPasswordUrl: http://localhost:9091/resetPass
+    #首次登陆是否强制要求修改密码
+    allowResetPassword: false
+    #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
+    cookieDomain: localhost
+
+thrift:
+  server:
+    host: 127.0.0.1
+    port: 9999

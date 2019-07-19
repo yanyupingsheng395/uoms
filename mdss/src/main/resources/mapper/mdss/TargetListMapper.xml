@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.mdss.dao.TargetListMapper">
+    <resultMap id="BaseResultMap" type="com.linksteady.mdss.domain.TargetInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="ID" jdbcType="DECIMAL" property="id" />
+        <result column="NAME" jdbcType="VARCHAR" property="name" />
+        <result column="PERIOD_TYPE" jdbcType="VARCHAR" property="periodType" />
+        <result column="START_DT" jdbcType="VARCHAR" property="startDt" />
+        <result column="END_DT" jdbcType="VARCHAR" property="endDt" />
+        <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
+        <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+        <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
+        <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+        <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+        <result column="STATUS" jdbcType="VARCHAR" property="status" />
+        <result column="TARGET_VAL" jdbcType="DECIMAL" property="targetVal" />
+        <result column="ACTUAL_VAL" jdbcType="DECIMAL" property="actualVal" />
+        <result column="ACTUAL_VAL_RATE" jdbcType="DECIMAL" property="actualValRate" />
+        <result column="ACTUAL_VAL_LAST" jdbcType="DECIMAL" property="actualValLast" />
+        <result column="FINISH_RATE" jdbcType="DECIMAL" property="finishRate" />
+        <result column="FINISH_RATE_DIFFER" jdbcType="DECIMAL" property="finishRateDiffer" />
+        <result column="FINISH_RATE_LAST" jdbcType="DECIMAL" property="finishRateLast" />
+        <result column="KPI_UNIT" jdbcType="VARCHAR" property="kpiUnit" />
+        <result column="REMAIN_TGT" jdbcType="DECIMAL" property="remainTgt"/>
+        <result column="REMAIN_COUNT" jdbcType="DECIMAL" property="remainCount"/>
+        <result column="REMAIN_LIST" jdbcType="VARCHAR" property="remainList"/>
+        <result column="VARY_IDX" jdbcType="DECIMAL" property="varyIdx"/>
+        <result column="VARY_IDX_LAST" jdbcType="DECIMAL" property="varyIdxLast"/>
+        <result column="FINISH_DIFFER" jdbcType="DECIMAL" property="finishDiffer"/>
+    </resultMap>
+
+    <resultMap id="TgtReferenceMap" type="com.linksteady.mdss.domain.TgtReference">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="PERIOD_NAME" jdbcType="VARCHAR" property="periodName" />
+        <result column="VALUE" jdbcType="DECIMAL" property="value" />
+    </resultMap>
+
+    <insert id="save">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="BEFORE" >
+            SELECT seq_tgt_list_id.NEXTVAL from DUAL
+        </selectKey>
+        INSERT INTO UO_TGT_LIST(ID, NAME, PERIOD_TYPE, START_DT, END_DT, KPI_CODE, CREATE_DT, CREATE_BY, TARGET_VAL, STATUS, KPI_UNIT)
+        VALUES (#{id}, #{name}, #{periodType}, #{startDt}, #{endDt}, #{kpiCode}, #{createDt}, #{createBy}, #{targetVal}, #{status}, '元')
+    </insert>
+
+    <select id="getPageList" resultType="map">
+    select * from (
+      select A.*,ROWNUM RN from (select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, to_char(tgt.CREATE_DT,'yyyy-mm-dd hh24:mi:ss') CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME, tgt.TARGET_VAL, tgt.STATUS from UO_TGT_LIST tgt
+      LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.CREATE_BY = #{userId} and tgt.STATUS &lt;&gt; '-2' and tgt.NAME like concat('%', concat(#{tgtName}, '%'))  order by tgt.CREATE_DT DESC) A
+      where ROWNUM &lt;=#{endRow}
+    ) where RN &gt;=#{startRow}
+  </select>
+
+    <select id="getTotalCount" resultType="int">
+    select count(1) from UO_TGT_LIST
+  </select>
+
+    <select id="getTotalCountByUsername" resultType="int">
+    select count(1) from UO_TGT_LIST tgt where tgt.CREATE_BY = #{username} and tgt.NAME like concat('%', concat(#{targetName}, '%'))
+    </select>
+
+    <select id="getDataById" resultType="map">
+      select tgt.ID, tgt.NAME, tgt.PERIOD_TYPE, tgt.START_DT, tgt.END_DT, tgt.KPI_CODE, tgt.CREATE_DT, tgt.CREATE_BY, kpi.KPI_NAME from UO_TGT_LIST tgt
+      LEFT JOIN UO_KPI_LIST_CONFIG kpi on kpi.KPI_CODE = tgt.KPI_CODE where tgt.ID = #{id}
+  </select>
+
+    <select id="getTargetList" resultMap="BaseResultMap">
+      select * from (
+      SELECT
+          ID,
+          NAME,
+          START_DT,
+          END_DT,
+          PERIOD_TYPE,
+          CREATE_DT
+      FROM
+          UO_TGT_LIST
+      WHERE
+          STATUS IN ( '2', '3', '4' )
+          AND CREATE_BY = #{username}
+      ORDER BY
+          STATUS ASC
+      ) t ORDER BY t.CREATE_DT DESC
+  </select>
+
+    <select id="getMonitorVal" resultType="map">
+    select TARGET_VAL, ACTUAL_VAL, ACTUAL_VAL_RATE, ACTUAL_VAL_LAST, FINISH_RATE, FINISH_RATE_DIFFER, FINISH_RATE_LAST, KPI_UNIT,
+    REMAIN_TGT, REMAIN_COUNT,VARY_IDX,VARY_IDX_LAST,FINISH_DIFFER
+    from UO_TGT_LIST
+    where ID = #{targetId}
+  </select>
+
+    <select id="getGmvHistoryByPeroid" resultMap="TgtReferenceMap" parameterType="string">
+    ${_parameter}
+  </select>
+
+    <select id="getGmvHistoryByPeriodDay" resultMap="TgtReferenceMap" parameterType="string">
+    ${_parameter}
+  </select>
+
+    <update id="updateTargetStatus">
+      update UO_TGT_LIST set STATUS=#{status},UPDATE_DT=SYSDATE WHERE ID=#{id}
+  </update>
+
+    <update id="updateTargetActualValue">
+        UPDATE UO_TGT_LIST SET
+        <if test="finishRate != null and finishRate != ''">
+            FINISH_RATE=#{finishRate},
+        </if>
+        REMAIN_TGT=#{remainTgt},
+        <if test="varyIdx != null and varyIdx != ''">
+            VARY_IDX=#{varyIdx},
+        </if>
+        <if test="varyIdxLast != null and varyIdxLast != ''">
+            VARY_IDX_LAST=#{varyIdxLast},
+        </if>
+        ACTUAL_VAL=#{actualVal},
+        ACTUAL_VAL_LAST=#{actualValLast},
+        ACTUAL_VAL_RATE=#{actualValRate},
+        COMPUTE_DT=#{computeDt,jdbcType=DATE}
+        WHERE ID=#{id}
+    </update>
+
+    <update id="updateFinshDiff">
+        UPDATE UO_TGT_LIST C SET (C.FINISH_DIFFER,C.REMAIN_COUNT)=(
+                                  SELECT SUM(T.TGT_VAL-T.ACTUAL_VAL),COUNT(*) FROM UO_TGT_DISMANT T WHERE T.TGT_ID=C.ID AND T.PAST_FLAG='Y' AND T.FINISH_FLAG='N'
+            ) WHERE C.ID=#{targetId}
+    </update>
+
+    <update id="updateFinshDiffWithZero">
+        UPDATE UO_TGT_LIST C SET (C.FINISH_DIFFER,C.REMAIN_COUNT)=(
+                                  SELECT 0,COUNT(*) FROM UO_TGT_DISMANT T WHERE T.TGT_ID=C.ID AND T.PAST_FLAG='Y' AND T.FINISH_FLAG='N'
+            ) WHERE C.ID=#{targetId}
+    </update>
+
+    <select id="getAllRuningTarget"  resultMap="BaseResultMap">
+      SELECT  * FROM UO_TGT_LIST WHERE STATUS='2'
+    </select>
+
+    <delete id="deleteTgtListById">
+        DELETE FROM UO_TGT_LIST where ID IN
+        <foreach collection="list" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

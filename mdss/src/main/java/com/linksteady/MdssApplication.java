@@ -1,6 +1,6 @@
 package com.linksteady;
 import com.linksteady.lognotice.annotation.EnableExceptionNotice;
-import com.linksteady.operate.config.SystemProperties;
+import com.linksteady.mdss.config.SystemProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

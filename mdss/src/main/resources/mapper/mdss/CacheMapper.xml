@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.mdss.dao.CacheMapper">
+
+    <resultMap id="BaseResultMap" type="com.linksteady.mdss.domain.ReasonTemplateInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="TEMPLATE_CODE" jdbcType="VARCHAR" property="templateCode" />
+        <result column="TEMPLATE_NAME" jdbcType="VARCHAR" property="templateName" />
+        <result column="REASON_KPI_CODE" jdbcType="VARCHAR" property="reasonKpiCode" />
+        <result column="REASON_KPI_NAME" jdbcType="VARCHAR" property="reasonKpiName" />
+        <result column="REASON_KPI_ORDER" jdbcType="DECIMAL" property="reasonKpiOrder" />
+        <result column="TEMPLATE_ORDER" jdbcType="DECIMAL" property="templateOrder" />
+    </resultMap>
+
+    <resultMap id="KpiConfigMap" type="com.linksteady.mdss.domain.KpiConfigInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
+        <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
+        <result column="REASON_FLAG" jdbcType="VARCHAR" property="reasonFlag" />
+        <result column="DISMANT_FLAG" jdbcType="VARCHAR" property="dismantFlag" />
+        <result column="DISMANT_FORMULA" jdbcType="VARCHAR" property="dismantFormula" />
+        <result column="AXIS_NAME" jdbcType="VARCHAR" property="axisName" />
+        <result column="VALUE_FORMAT" jdbcType="VARCHAR" property="valueFormat" />
+    </resultMap>
+
+    <resultMap id="KpiDismantMap" type="com.linksteady.mdss.domain.KpiDismantInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="KPI_CODE" jdbcType="VARCHAR" property="kpiCode" />
+        <result column="KPI_NAME" jdbcType="VARCHAR" property="kpiName" />
+        <result column="DISMANT_PART1_CODE" jdbcType="VARCHAR" property="dismantPart1Code" />
+        <result column="DISMANT_PART1_NAME" jdbcType="VARCHAR" property="dismantPart1Name" />
+        <result column="DISMANT_PART2_CODE" jdbcType="VARCHAR" property="dismantPart2Code" />
+        <result column="DISMANT_PART2_NAME" jdbcType="VARCHAR" property="dismantPart2Name" />
+    </resultMap>
+
+    <resultMap id="kpiSqlTemplateMap" type="com.linksteady.mdss.domain.KpiSqlTemplate">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="SQL_TEMPLATE_CODE" jdbcType="VARCHAR" property="sqlTemplateCode" />
+        <result column="SQL_TEMPLATE" jdbcType="VARCHAR" property="sqlTemplate" />
+        <result column="COMMENTS" jdbcType="VARCHAR" property="comments" />
+        <result column="RESULT_TYPE" jdbcType="VARCHAR" property="resultType" />
+        <result column="RESULT_MAPPING" jdbcType="VARCHAR" property="resultMapping" />
+        <result column="DRIVER_TABLES" jdbcType="VARCHAR" property="driverTables" />
+    </resultMap>
+
+    <resultMap id="DimconfigInfoMap" type="com.linksteady.mdss.domain.DimConfigInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="DIM_CODE" jdbcType="VARCHAR" property="dimCode" />
+        <result column="DIM_NAME" jdbcType="VARCHAR" property="dimName" />
+        <result column="VALUE_TYPE" jdbcType="VARCHAR" property="valueType" />
+        <result column="VALUE_SQL" jdbcType="VARCHAR" property="valueSql" />
+        <result column="IS_ALL" jdbcType="VARCHAR" property="isAll" />
+        <result column="REASON_FLAG" jdbcType="VARCHAR" property="reasonFlag" />
+        <result column="DIAG_FLAG" jdbcType="VARCHAR" property="diagFlag" />
+        <result column="ORDER_NO" jdbcType="DECIMAL" property="orderNo" />
+        <result column="RELY_ORDERDETAIL" jdbcType="VARCHAR" property="relyOrderDetail" />
+    </resultMap>
+
+    <resultMap id="DimJoinRelationInfoMap" type="com.linksteady.mdss.domain.DimJoinRelationInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="DIRVER_TABLE_NAME" jdbcType="CHAR" property="dirverTableName" />
+        <result column="DIM_CODE" jdbcType="VARCHAR" property="dimCode" />
+        <result column="DIM_TABLE" jdbcType="VARCHAR" property="dimTable" />
+        <result column="RELATION" jdbcType="VARCHAR" property="relation" />
+        <result column="DIM_TABLE_ALIAS" jdbcType="VARCHAR" property="dimTableAlias" />
+        <result column="DIM_WHERE" jdbcType="VARCHAR" property="dimWhere" />
+        <result column="DIM_WHERE_TYPE" jdbcType="VARCHAR" property="dimWhereType" />
+    </resultMap>
+
+    <select id="getKpiList" resultMap="KpiConfigMap">
+        SELECT T.KPI_CODE, T.KPI_NAME, T.DISMANT_FORMULA,T.DISMANT_FLAG,T.REASON_FLAG,AXIS_NAME,VALUE_FORMAT
+        FROM UO_KPI_LIST_CONFIG T
+    </select>
+
+    <select id="getDismantKpis" resultMap="KpiDismantMap">
+        SELECT KPI_CODE,
+               KPI_NAME,
+               DISMANT_PART1_CODE,
+               DISMANT_PART1_NAME,
+               DISMANT_PART2_CODE,
+               DISMANT_PART2_NAME
+        FROM UO_KPI_DISMANT_CONFIG
+        WHERE KPI_CODE =#{kpiCode}
+    </select>
+
+    <select id="getDimValuesBySql"  parameterType="string" resultType="java.util.LinkedHashMap">
+        ${_parameter}
+    </select>
+
+    <select id="getDimValuesDirect" resultType="java.util.LinkedHashMap">
+        SELECT VALUE_CODE,VALUE_DESC FROM  UO_DIM_VALUES_CONFIG WHERE DIM_CODE=#{dimCode} ORDER BY ORDER_NO DESC
+    </select>
+
+    <select id="getReasonRelateKpis" resultMap="BaseResultMap">
+        SELECT TEMPLATE_CODE,
+               TEMPLATE_NAME,
+               REASON_KPI_CODE,
+               REASON_KPI_NAME,
+               REASON_KPI_ORDER,
+               TEMPLATE_ORDER
+        FROM UO_REASON_TEMPLATE_CONFIG
+    </select>
+
+    <select id="getKpiSqlTemplateList" resultMap="kpiSqlTemplateMap">
+        SELECT SQL_TEMPLATE_CODE,
+               SQL_TEMPLATE,
+               COMMENTS,
+               RESULT_TYPE,
+               RESULT_MAPPING,
+               DRIVER_TABLES
+        FROM UO_KPI_SQLTEMPLATE_CONFIG
+    </select>
+
+    <select id="getAllDimConfig" resultMap="DimconfigInfoMap">
+        SELECT DIM_CODE,
+               DIM_NAME,
+               VALUE_TYPE,
+               VALUE_SQL,
+               REASON_FLAG,
+               DIAG_FLAG,
+               ORDER_NO,
+               RELY_ORDERDETAIL
+        FROM UO_DIM_LIST_CONFIG
+        ORDER BY ORDER_NO ASC
+    </select>
+
+    <select id="getDimJoinRelationList" resultMap="DimJoinRelationInfoMap">
+        SELECT DIRVER_TABLE_NAME,
+               DIM_CODE,
+               DIM_TABLE,
+               DIM_TABLE_ALIAS,
+               RELATION,
+               DIM_WHERE,
+               DIM_WHERE_TYPE
+        FROM UO_DIM_JOINRELATION_CONFIG
+    </select>
+ </mapper>
