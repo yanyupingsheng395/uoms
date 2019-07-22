@@ -5,45 +5,11 @@ $("#touchDate").datepicker("setEndDate", new Date());
 $(function () {
     $('#cdrq').text($('#touchDate').val());
     //获取当日需要运营的总人数
-    $.getJSON("/op/getOpDayHeadInfo?daywid="+$('#touchDate').val(), function (resp) {
-        if (resp.code==200){
-            $('#cdrq').text($('#touchDate').val());
-            $('#cdrs').text(resp.msg);
-        }
-    });
-
-    //加载明细数据
-    $.getJSON("/op/getOpDayDetailAllList?daywid="+$('#touchDate').val(), function (resp) {
-        if (resp.code == 200) {
-            $('#opdayTable').bootstrapTable('load', resp.data);
-            var data = $('#opdayTable').bootstrapTable('getData', true);
-            var merge =$(":radio[name='merge']:checked").val();
-            //合并单元格
-            mergeCells(data, merge, 1);
-        }
-    });
+    getTableData();
 
     //为刷新按钮绑定事件
     $("#btn_query").on("click",function () {
-
-        //获取当日需要运营的总人数
-        $.getJSON("/op/getOpDayHeadInfo?daywid=" + $('#touchDate').val(), function (resp) {
-            if (resp.code == 200) {
-                $('#cdrq').text($('#touchDate').val());
-                $('#cdrs').text(resp.msg);
-            }
-        });
-
-        //加载明细数据
-        $.getJSON("/op/getOpDayDetailAllList?daywid=" + $('#touchDate').val(), function (resp) {
-            if (resp.code == 200) {
-                $('#opdayTable').bootstrapTable('load', resp.data);
-                var data = $('#opdayTable').bootstrapTable('getData', true);
-                //合并单元格
-                var merge =$(":radio[name='merge']:checked").val();
-                mergeCells(data, merge, 1);
-            }
-        });
+        getTableData();
     });
 
     $("#btn_downLoad").on("click",function () {
@@ -60,8 +26,33 @@ $(function () {
         // $("#effect_modal").modal('show');
         $MB.n_warning("尚未进行触达，无法查看效果统计。");
     });
-
 });
+
+// 获取表格数据
+function getTableData() {
+    var dayWid = $('#touchDate').val();
+    var userActiv = $("#pathActiv").find("option:selected").val();
+    var userValue = $("#userValue").find("option:selected").val();
+
+    //获取当日需要运营的总人数
+    $.getJSON("/op/getOpDayHeadInfo", {daywid: dayWid}, function (resp) {
+        if (resp.code == 200) {
+            $('#cdrq').text($('#touchDate').val());
+            $('#cdrs').text(resp.msg);
+        }
+    });
+
+    //加载明细数据
+    $.getJSON("/op/getOpDayDetailAllList", {daywid: dayWid, userActiv: userActiv, userValue: userValue}, function (resp) {
+        if (resp.code == 200) {
+            $('#opdayTable').bootstrapTable('load', resp.data);
+            var data = $('#opdayTable').bootstrapTable('getData', true);
+            //合并单元格
+            var merge =$(":radio[name='merge']:checked").val();
+            mergeCells(data, merge, 1);
+        }
+    });
+}
 
 function getStatisSpu() {
     var touchDt = $("#touchDate").val();
@@ -111,6 +102,8 @@ $('#opdayTable').bootstrapTable({
         pagination: true,
         sidePagination: "client",
         pageList: [10, 25, 50, 100],
+        sortable: true,
+        sortOrder: "asc",
         columns: [[{
             field: 'USER_ID',
             title: '用户ID',
@@ -125,34 +118,66 @@ $('#opdayTable').bootstrapTable({
         },{
             title: '用户策略',
             colspan: 5
-        }],[{
-                field: 'PATH_ACTIV',
-                title: '用户活跃度'
-            },
-            {
+        }], [{
+            field: 'PATH_ACTIV',
+            title: '用户活跃度',
+            sortable: true,
+            formatter:function (value, row, index) {
+                var res = "";
+                switch (value) {
+                    case "UAC_01":
+                        res = "高度活跃";
+                        break;
+                    case "UAC_02":
+                        res = "中度活跃";
+                        break;
+                    case "UAC_03":
+                        res = "流失预警";
+                        break;
+                    case "UAC_04":
+                        res = "弱流失";
+                        break;
+                    case "UAC_05":
+                        res = "强流失";
+                        break;
+                    case "UAC_06":
+                        res = "沉睡";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
+            }
+            }
+            ,{
                 field: 'USER_VALUE',
-                title: '用户价值'
+                title: '用户价值',
+                sortable: true,
+                formatter: function (value, row, index) {
+                    var res = "";
+                    switch (value) {
+                        case "ULC_01":
+                            res = "重要";
+                            break;
+                        case "ULC_02":
+                            res = "主要";
+                            break;
+                        case "ULC_03":
+                            res = "普通";
+                            break;
+                        case "ULC_04":
+                            res = "长尾";
+                            break;
+                        default:
+                            res = "-";
+                    }
+                    return res;
+                }
             },
             {
                 field: 'PIECE_PRICE',
                 title: '件单价'
             },
-            // {
-            //     field: 'JOIN_RATE',
-            //     title: '连带率'
-            // },{
-            //     field: 'PURCH_TYPE_NUM',
-            //     title: '购买品类种数'
-            // },{
-            //     field: 'TAR_IDEAL_DT',
-            //     title: '达成目标的理想时间'
-            // },{
-            //     field: 'TAR_GENERAL_DT',
-            //     title: '达成目标的一般时间'
-            // },{
-            //     field: 'TAR_DEADLINE',
-            //     title: '达成目标的最后期限'
-            // },
             {
                 field: 'SPU_NAME',
                 title: '留存SPU'
@@ -172,10 +197,7 @@ $('#opdayTable').bootstrapTable({
         ]]
     });
 
-
-
-function mergeCells(data,fieldName,colspan)
-{
+function mergeCells(data,fieldName,colspan) {
     //声明一个map计算相同属性值在data对象出现的次数和
     var sortMap = {};
     for(var i = 0 ; i < data.length ; i++){

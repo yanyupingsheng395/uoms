@@ -85,9 +85,8 @@ public class OpController extends BaseController {
      * @return
      */
     @RequestMapping("/getOpDayDetailAllList")
-    public ResponseBo getOpDayDetailAllList(@RequestParam  String daywid) {
-
-        List<Map<String,Object>> result=opService.getOpDayDetailAllList(daywid);
+    public ResponseBo getOpDayDetailAllList(@RequestParam  String daywid, @RequestParam String userActiv, @RequestParam String userValue) {
+        List<Map<String,Object>> result=opService.getOpDayDetailAllList(daywid, userActiv, userValue);
         return  ResponseBo.okWithData("",result);
     }
 

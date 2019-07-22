@@ -43,8 +43,8 @@ public class OpServiceImpl implements OpService {
     }
 
     @Override
-    public List<Map<String, Object>> getOpDayDetailAllList(String daywid) {
-        return opMapper.getOpDayDetailAllList(daywid);
+    public List<Map<String, Object>> getOpDayDetailAllList(String daywid, String userActiv, String userValue) {
+        return opMapper.getOpDayDetailAllList(daywid, userActiv, userValue);
     }
 
     @Override

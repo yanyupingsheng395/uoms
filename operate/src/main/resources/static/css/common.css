@@ -854,3 +854,12 @@ label {
 .fixed {position:absolute;left:0;bottom:0;}
 
 .hr {margin-top: 20px;}
+
+.th-inner {
+    font-weight: normal;
+    font-size: 13px;
+}
+
+table > thead > tr > th {
+    text-align: center;
+}

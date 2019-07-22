@@ -3,14 +3,14 @@
 <mapper namespace="com.linksteady.operate.dao.OpMapper">
     <select id="getOpDayList" resultType="map">
         SELECT * FROM(
-                         SELECT A.*,ROWNUM RN FROM
-                             (select HEAD_ID, DESCR, TOTAL_NUM,INSERT_DT, to_char(TOUCH_DT,'YYYY-MM-DD') TOUCH_DT
-                              from UO_OP_DAILY_HEADER  WHERE 1=1
-                                <if test="daywid != null and daywid != ''">
-                                    and to_char(touch_dt,'YYYY-MM-DD') = #{daywid}
-                                </if>
-                             ORDER BY TOUCH_DT DESC) A  WHERE ROWNUM &lt;=#{endRow}
-                     ) WHERE RN &gt;=#{startRow}
+        SELECT A.*,ROWNUM RN FROM
+        (select HEAD_ID, DESCR, TOTAL_NUM,INSERT_DT, to_char(TOUCH_DT,'YYYY-MM-DD') TOUCH_DT
+        from UO_OP_DAILY_HEADER  WHERE 1=1
+        <if test="daywid != null and daywid != ''">
+            and to_char(touch_dt,'YYYY-MM-DD') = #{daywid}
+        </if>
+        ORDER BY TOUCH_DT DESC) A  WHERE ROWNUM &lt;=#{endRow}
+        ) WHERE RN &gt;=#{startRow}
     </select>
 
     <select id="getOpDayListCount" resultType="int" parameterType="string">
@@ -54,24 +54,30 @@
 
     <select id="getOpDayDetailAllList" resultType="map">
         SELECT
-            T.USER_ID,
-            T.PATH_ACTIV,
-            T.USER_VALUE,
-            T.SPU_NAME,
-            T.PIECE_PRICE,
-            T.JOIN_RATE,
-            T.PURCH_TYPE_NUM,
-            T.TAR_IDEAL_DT,
-            T.TAR_GENERAL_DT,
-            T.TAR_DEADLINE,
-            T.RECOM_SPU,
-            T.DISCOUNT_RATE,
-            T.ORDER_PERIOD,
-            T.REFER_DENO,
-            T.DISCOUNT_LEVEL
+        T.USER_ID,
+        T.PATH_ACTIV,
+        T.USER_VALUE,
+        T.SPU_NAME,
+        T.PIECE_PRICE,
+        T.JOIN_RATE,
+        T.PURCH_TYPE_NUM,
+        T.TAR_IDEAL_DT,
+        T.TAR_GENERAL_DT,
+        T.TAR_DEADLINE,
+        T.RECOM_SPU,
+        T.DISCOUNT_RATE,
+        T.ORDER_PERIOD,
+        T.REFER_DENO,
+        T.DISCOUNT_LEVEL
         FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER H
         WHERE H.HEAD_ID =  T.daily_detail_id
-          AND TO_CHAR(H.TOUCH_DT, 'YYYY-MM-DD') = #{daywid}
+        AND TO_CHAR(H.TOUCH_DT, 'YYYY-MM-DD') = #{daywid}
+        <if test="userActiv != ''">
+            AND T.PATH_ACTIV = #{userActiv}
+        </if>
+        <if test="userValue != ''">
+            AND T.USER_VALUE = #{userValue}
+        </if>
     </select>
 
     <select id="getPeriodHeaderList" resultType="map">
@@ -82,7 +88,7 @@
                 T.PERIOD_TASK_NAME,
                 TO_CHAR(T.PERIOD_START_DT,'YYYY-mm-dd') PERIOD_START_DT,
                 TO_CHAR(T.PERIOD_END_DT,'YYYY-mm-dd') PERIOD_END_DT,
-                T.CREATE_DT
+                TO_CHAR(T.CREATE_DT,'YYYY-mm-dd HH:mm:ss') CREATE_DT
          FROM UO_OP_PERIOD T
          where t.PERIOD_TASK_NAME like concat('%', concat(#{taskName}, '%'))
          ORDER BY T.PERIOD_HEADER_ID DESC ) A  WHERE ROWNUM &lt;=#{endRow}
@@ -95,7 +101,7 @@
 
     <insert id="savePeriodHeaderInfo">
         <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="periodHeaderId">
-               SELECT UO_OP_PERIOD_SEQ.NEXTVAL FROM DUAL
+            SELECT UO_OP_PERIOD_SEQ.NEXTVAL FROM DUAL
         </selectKey>
         INSERT INTO UO_OP_PERIOD(
         PERIOD_HEADER_ID,
@@ -183,4 +189,4 @@
           and T.DATA_TYPE = #{type}
         ORDER BY T.SORT_NUM asc
     </select>
- </mapper>
+</mapper>

@@ -19,7 +19,7 @@ public interface OpMapper {
 
     Integer getOpDayDetailListCount(@Param(value = "daywid") String daywid);
 
-    List<Map<String, Object>> getOpDayDetailAllList(@Param("daywid") String daywid);
+    List<Map<String, Object>> getOpDayDetailAllList(@Param("daywid") String daywid, @Param("userActive") String userActiv, @Param("userValue") String userValue);
 
     List<Map<String, Object>> getPeriodHeaderList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("taskName") String taskName);
 

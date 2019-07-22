@@ -17,7 +17,7 @@ public interface OpService {
 
      int getOpDayDetailListCount(String daywid);
 
-     List<Map<String,Object>> getOpDayDetailAllList(String daywid);
+     List<Map<String,Object>> getOpDayDetailAllList(String daywid, String userActiv, String userValue);
 
 
      List<Map<String,Object>> getPeriodHeaderList(int startRow, int endRow, String taskName);
