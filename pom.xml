@@ -4,14 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.linksteady</groupId>
-    <artifactId>uoms</artifactId>
+    <artifactId>uoms2</artifactId>
     <version>1.06</version>
     <modules>
         <module>common</module>
         <module>system</module>
         <module>mdss</module>
         <module>operate</module>
-        <module>configmanager</module>
     </modules>
     <packaging>pom</packaging>
 
