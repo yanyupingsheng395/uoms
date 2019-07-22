@@ -9,6 +9,8 @@ import java.util.Map;
  * Created by hxcao on 2019-05-10
  */
 public interface SpuLifeCycleMapper {
+    String getSampleDate(@Param("spuId") String spuId);
+
     List<Map<String, Object>> retentionPurchaseTimes(@Param("spuId") String spuId);
 
     List<Map<String, Object>> getLcDate(@Param("spuId") String spuId, @Param("type") String type);

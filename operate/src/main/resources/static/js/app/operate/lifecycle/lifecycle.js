@@ -7,6 +7,14 @@ function tab2Init() {
     userCount();
     saleVolume();
     getStageNode();
+    getSampleDate();
+}
+
+function getSampleDate() {
+    var spuId = selectId;
+    $.getJSON("/spuLifeCycle/getSampleDate", {spuId: spuId}, function (r) {
+        $("#sampleDate").html("").append(r.data);
+    });
 }
 
 function getStageNode() {

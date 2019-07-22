@@ -28,6 +28,11 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
     private static final String STAGE_PERIOD_2 = "puchtimes_gap_decline"; // 衰退
 
     @Override
+    public String getSampleDate(String spuId) {
+        return spuLifeCycleMapper.getSampleDate(spuId);
+    }
+
+    @Override
     public Echart retentionPurchaseTimes(String spuId) {
         Echart echart = new Echart();
         List<Map<String, Object>> data = spuLifeCycleMapper.retentionPurchaseTimes(spuId);

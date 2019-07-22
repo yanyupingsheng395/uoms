@@ -284,17 +284,17 @@ function savePeriod()
 
     if(null==periodName||periodName=='')
     {
-        alert_str+='</br>周期活动名称不能为空！';
+        alert_str+='周期活动名称不能为空！';
     }
 
     if(null==startDt||startDt=='')
     {
-        alert_str+='</br>周期活动开始日期不能为空！';
+        alert_str+='周期活动开始日期不能为空！';
     }
 
     if(null==endDt||endDt=='')
     {
-        alert_str+='</br>周期活动结束日期不能为空！';
+        alert_str+='周期活动结束日期不能为空！';
     }
 
     if(null!=alert_str&&alert_str!='')
@@ -330,6 +330,12 @@ function savePeriod()
             }
         });
 }
+
+$("#add_modal").on('hidden.bs.modal', function () {
+    $('#startDt').val("");
+    $('#endDt').val("");
+    $('#periodName').val("");
+});
 
 //////////////////////////////////////////////////////////////////////////////////////////
 var cat_rank_option = {

@@ -1,5 +1,6 @@
 package com.linksteady.operate.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -23,7 +24,7 @@ public class LcSpuVO {
 
     private BigDecimal salesNum;
 
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date timeToMarket;
 
 

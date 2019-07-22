@@ -54,7 +54,10 @@
                         <div class="row" style="margin-top: 12px;">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
-                                    <a class="btn btn-success" id="btn_view" onclick="viewPeriod()">
+                                    <a class="btn btn-success" id="btn_add" data-target="#add_modal" data-toggle="modal">
+                                        <i class="fa fa-plus"></i> 新增活动
+                                    </a>
+                                    <a class="btn btn-primary" id="btn_view" onclick="viewPeriod()">
                                         <i class="fa fa-eye"></i> 查看名单
                                     </a>
                                     <a class="btn btn-warning btn-view" id="btn_statistics" onclick="viewstatis()">
@@ -173,7 +176,7 @@
                     <div class="form-group mg-stop">
                         <label class="col-md-3 control-label" for="periodName">周期活动名称：</label>
                         <div class="col-md-5 input-group">
-                            <input class="form-control" type="text" id="periodName" name="periodName" placeholder="周期活动名称..">
+                            <input class="form-control" type="text" id="periodName" name="periodName"/>
                         </div>
                     </div>
 

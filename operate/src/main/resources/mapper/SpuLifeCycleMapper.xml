@@ -2,6 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.SpuLifeCycleMapper">
 
+    <select id="getSampleDate" resultType="string">
+        SELECT t.INSERT_DT FROM (
+            SELECT
+                TO_CHAR( INSERT_DT, 'SYYYY-MM-DD') INSERT_DT,
+                ROWNUM rm
+            FROM
+                UO_LC_SPU_LIFECYCLE
+            WHERE
+                TYPE = 'retention_purch'
+                AND spu_id = #{spuId}
+            ORDER BY
+                purch_times ASC
+        ) t
+        WHERE
+            rm = 1
+    </select>
+
     <select id="retentionPurchaseTimes" resultType="map">
         select retention, purch_times, IF_UNUM_LIMIT from UO_LC_SPU_LIFECYCLE where type = 'retention_purch' and spu_id = #{spuId} ORDER BY purch_times asc
     </select>

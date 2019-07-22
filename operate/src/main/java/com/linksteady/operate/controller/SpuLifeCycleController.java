@@ -6,6 +6,7 @@ import com.linksteady.operate.vo.Echart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -17,6 +18,12 @@ public class SpuLifeCycleController {
 
     @Autowired
     private SpuLifeCycleService spuLifeCycleService;
+
+    @GetMapping("/getSampleDate")
+    public ResponseBo getSampleDate(@RequestParam String spuId) {
+        String date = spuLifeCycleService.getSampleDate(spuId);
+        return ResponseBo.okWithData(null, date);
+    }
 
     /**
      * 留存率随购买次数变化表

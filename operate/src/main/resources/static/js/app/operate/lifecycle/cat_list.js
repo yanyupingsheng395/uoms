@@ -267,6 +267,16 @@ var opuser_columns=[[
 // 初始化时间插件
 init_date_begin("startDt", "endDt", "yyyy-mm-dd",0, 2, 0);
 init_date_end("startDt", "endDt", "yyyy-mm-dd", 0, 2, 0);
+$("#startDt").val(new Date().getFullYear() + "-01-01");
+$("#endDt").val(getCurrentDate());
+
+function getCurrentDate() {
+    var d = new Date();
+    var year = d.getFullYear();
+    var month = d.getMonth() < 10 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1;
+    var day = d.getDay() < 10 ? "0" + (d.getDay() + 1) : d.getDay() + 1;
+    return year + "-" + month + "-" + day;
+}
 
 function gearsOption(yName, data1, data2) {
     var option = {
