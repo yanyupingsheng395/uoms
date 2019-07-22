@@ -1,5 +1,6 @@
 package com.linksteady.common.util;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +27,8 @@ public class DateUtil {
 
     /** 代表数组里的年、月、日 */
     private static final int Y = 0, M = 1, D = 2;
+
+    private static final String YEAR = "Y", MONTH = "M", DAY = "D";
 
     private DateUtil(){
 
@@ -382,5 +385,43 @@ public class DateUtil {
         YearMonth start = YearMonth.parse(startDt, DateTimeFormatter.ofPattern("yyyyMM"));
         YearMonth end = start.plusMonths(interval);
         return end.format(DateTimeFormatter.ofPattern("yyyyMM"));
+    }
+
+    /**
+     * 获取年月日起止日期的时间段
+     * @param type
+     * @param start
+     * @param end
+     * @return
+     */
+    public static List<String> getPeriodDate(String type, String start, String end) {
+        List<String> dateList = Lists.newLinkedList();
+        if(YEAR.equals(type)) {
+            LocalDate startDt = LocalDate.of(Integer.valueOf(start),1,1);
+            LocalDate endDt = LocalDate.of(Integer.valueOf(end),1,1);
+            do {
+                dateList.add(String.valueOf(startDt.getYear()));
+                startDt = startDt.plusYears(1);
+            }while (startDt.isBefore(endDt) || startDt.equals(endDt));
+        }
+        if(MONTH.equals(type)) {
+            String format = "yyyy-MM";
+            YearMonth startDt = YearMonth.parse(start, DateTimeFormatter.ofPattern(format));
+            YearMonth endDt = YearMonth.parse(end, DateTimeFormatter.ofPattern(format));
+            do {
+                dateList.add(startDt.format(DateTimeFormatter.ofPattern(format)));
+                startDt = startDt.plusMonths(1);
+            }while (startDt.isBefore(endDt) || startDt.equals(endDt));
+        }
+        if(DAY.equals(type)) {
+            String format = "yyyy-MM-dd";
+            LocalDate startDt = LocalDate.parse(start, DateTimeFormatter.ofPattern(format));
+            LocalDate endDt = LocalDate.parse(end, DateTimeFormatter.ofPattern(format));
+            do {
+                dateList.add(startDt.format(DateTimeFormatter.ofPattern(format)));
+                startDt = startDt.plusDays(1);
+            }while (startDt.isBefore(endDt) || startDt.equals(endDt));
+        }
+        return dateList;
     }
 }

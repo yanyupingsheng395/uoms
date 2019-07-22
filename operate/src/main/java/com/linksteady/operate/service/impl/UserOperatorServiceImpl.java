@@ -125,7 +125,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         DecimalFormat df = new DecimalFormat(".##");
         Map<String, Object> result = Maps.newHashMap();
         //获取周期内的明细列表
-        List<String> dateList = getDateList(periodType, startDt, endDt);
+        List<String> dateList = DateUtil.getPeriodDate(periodType, startDt, endDt);
         List<KpiInfoVo> currentDataList = getDatePeriodData(kpiType, startDt, endDt, periodType, source);
         Map<String, Object> currentDataMap = currentDataList.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getKpiVal));
         //修补数据为时间周期上连续，方便echarts展现
@@ -183,7 +183,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     @Override
     public Map<String, Object> getSpAndFpKpi(String kpiType, String periodType, String startDt, String endDt,String source) {
         Map<String, Object> result = Maps.newHashMap();
-        List<String> dateList = getDateList(periodType, startDt, endDt);
+        List<String> dateList = DateUtil.getPeriodDate(periodType, startDt, endDt);
         List<KpiInfoVo> kpiInfoVos = getSpAndFpKpiDetail(kpiType, startDt, endDt, periodType, source);
         Map<String, Object> kpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getKpiVal));
         Map<String, Object> fpKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getSpKpiVal));
@@ -218,7 +218,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     public Map<String, Object> getSpAndFpKpiPeriodData(String kpiType,String periodType, String startDt, String endDt,String source) {
         DecimalFormat df = new DecimalFormat("#.##");
         Map<String, Object> result = Maps.newHashMap();
-        List<String> dateList = getDateList(periodType, startDt, endDt);
+        List<String> dateList = DateUtil.getPeriodDate(periodType, startDt, endDt);
         List<KpiInfoVo> kpiInfoVos = getSpOrFpKpiValDetail(kpiType,startDt, endDt, periodType, source);
         //获取去年同期的值
         String lastStart = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("start"));
@@ -363,14 +363,14 @@ public class UserOperatorServiceImpl implements UserOperatorService {
             if(kpiInfoVos != null && lastKpiInfoVos != null) {
                 if(kpiInfoVos.getFpKpiVal() != null && lastKpiInfoVos.getFpKpiVal() != null) {
                     Double fpHb = (kpiInfoVos.getFpKpiVal() - lastKpiInfoVos.getFpKpiVal())/lastKpiInfoVos.getFpKpiVal();
-                    result.put("fpHb", fpHb);
+                    result.put("fpHb", decimalFormat.format(fpHb));
                 }else {
                     result.put("fpHb", DEFAULT_VAL);
                 }
 
                 if(kpiInfoVos.getSpKpiVal() != null && lastKpiInfoVos.getSpKpiVal() != null) {
-                    Double fpHb = (kpiInfoVos.getSpKpiVal() - lastKpiInfoVos.getSpKpiVal())/lastKpiInfoVos.getSpKpiVal();
-                    result.put("spHb", fpHb);
+                    Double spHb = (kpiInfoVos.getSpKpiVal() - lastKpiInfoVos.getSpKpiVal())/lastKpiInfoVos.getSpKpiVal();
+                    result.put("spHb", decimalFormat.format(spHb));
                 }else {
                     result.put("spHb", DEFAULT_VAL);
                 }
@@ -401,6 +401,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     private List<Double> fixData(Map<String, Object> datas, List<String> periodList)
     {
         return periodList.stream().map(s->{
+            s = s.replaceAll("-", "");
             if(null==datas.get(s)||"".equals(datas.get(s)))
             {
                 return 0d;
@@ -485,10 +486,10 @@ public class UserOperatorServiceImpl implements UserOperatorService {
             bf.append(" AND W_DATE.DAY>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.DAY<=").append(StringUtils.replaceChars(endDt,"-",""));
         }else if(UomsConstants.PERIOD_TYPE_MONTH.equals(periodType))
         {
-            bf.append(" AND W_DATE.MONTH=").append(StringUtils.replaceChars(startDt,"-",""));
+            bf.append(" AND W_DATE.MONTH>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.MONTH<=").append(StringUtils.replaceChars(endDt,"-",""));
         }else if(UomsConstants.PERIOD_TYPE_YEAR.equals(periodType))
         {
-            bf.append(" AND W_DATE.YEAR=").append(startDt);
+            bf.append(" AND W_DATE.YEAR>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.YEAR<=").append(StringUtils.replaceChars(endDt,"-",""));
         }
 
         if(null!=source&&!"".equals(source))
@@ -521,15 +522,15 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         StringBuffer join=new StringBuffer();
 
         //处理条件 Y M D
-        if("D".equals(periodType))
+        if(UomsConstants.PERIOD_TYPE_DAY.equals(periodType))
         {
             bf.append(" AND W_DATE.DAY>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.DAY<=").append(StringUtils.replaceChars(endDt,"-",""));
-        }else if("M".equals(periodType))
+        }else if(UomsConstants.PERIOD_TYPE_MONTH.equals(periodType))
         {
-            bf.append(" AND W_DATE.MONTH=").append(StringUtils.replaceChars(startDt,"-",""));
-        }else if("Y".equals(periodType))
+            bf.append(" AND W_DATE.MONTH>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.MONTH<=").append(StringUtils.replaceChars(endDt,"-",""));
+        }else if(UomsConstants.PERIOD_TYPE_YEAR.equals(periodType))
         {
-            bf.append(" AND W_DATE.YEAR=").append(startDt);
+            bf.append(" AND W_DATE.YEAR>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.YEAR<=").append(StringUtils.replaceChars(endDt,"-",""));
         }
 
         if(null!=source&&!"".equals(source))
@@ -561,9 +562,9 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         if(UomsConstants.PERIOD_TYPE_DAY.equals(periodType)) {
             return " W_DATE.DAY";
         }else if(UomsConstants.PERIOD_TYPE_MONTH.equals(periodType)) {
-            return " W_DATE.DAY";
-        }else if(UomsConstants.PERIOD_TYPE_YEAR.equals(periodType)) {
             return " W_DATE.MONTH";
+        }else if(UomsConstants.PERIOD_TYPE_YEAR.equals(periodType)) {
+            return " W_DATE.YEAR";
         }else {
             return "";
         }

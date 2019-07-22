@@ -10,6 +10,17 @@ String.prototype.endWith=function(str){
 
 init();
 function init() {
+    // 起止日期初始化
+    init_date_begin("startDt", "endDt", "yyyy-MM",1,2 ,1);
+    init_date_end("startDt", "endDt", "yyyy-MM",1,2 ,1);
+    $('#startDt').datepicker("setEndDate", new Date());
+    $('#endDt').datepicker("setEndDate", new Date());
+    var currentYear = new Date().getFullYear();
+    var currentMonth = new Date().getMonth() + 1;
+    $("#startDt").val(currentYear + "-01");
+    $("#endDt").val(currentYear + "-" + (currentMonth < 10 ? "0" + currentMonth : currentMonth));
+
+    // 获取渠道和品牌
     getSource();
     getBrand();
 }
@@ -25,7 +36,7 @@ function getBrand() {
 }
 
 function getSource() {
-    var code = "";
+    var code = "<option value=''>所有</option>";
     $.get("/useroperator/getSource", {}, function (r) {
         $.each(r.data, function (k, v) {
             code += "<option value='"+v["SOURCE_ID"]+"'>" + v["SOURCE_NAME"] + " </option>";
@@ -55,7 +66,7 @@ function load_jsmind(){
         }
     });
 }
-init_date("startDt", "yyyy", 2,2,2);
+
 // 时间周期选择事件
 $("#period").change(function () {
     $("#startDt").val("");
@@ -64,42 +75,30 @@ $("#period").change(function () {
     $("#endDt").datepicker('destroy');
     var period = $(this).find("option:selected").val();
     if(period == 'Y') {
-        $("#dateLabel").html("").html("时间：");
-        $("#endDtDiv").hide();
-        init_date("startDt", "yyyy", 2, 2, 2);
-        // $('#startDt').datepicker("setStartDate", dataDt);
-        $("#btns").removeClass("pull-right");
+        init_date_begin("startDt", "endDt", "yyyy",2,2 ,2);
+        init_date_end("startDt", "endDt", "yyyy",2,2 ,2);
     }
     if(period == "M") {
-        $("#dateLabel").html("").html("时间：");
-        $("#endDtDiv").hide();
-        init_date("startDt", "yyyy-mm", 1, 2, 1);
-        $("#btns").removeClass("pull-right");
+        init_date_begin("startDt", "endDt", "yyyy-mm",1,2 ,1);
+        init_date_end("startDt", "endDt", "yyyy-mm",1,2 ,1);
     }
     if(period == "D") {
-        $("#endDtDiv").show();
-        $("#dateLabel").html("").html("开始时间：");
-        $("#btns").addClass("pull-right");
-        // var date = new Date();
-        // date.setDate(date.getDate() + 1);
         init_date_begin("startDt", "endDt", "yyyy-mm-dd",0,2 ,0);
-        // $('#startDt').datepicker("setStartDate", date);
         init_date_end("startDt", "endDt", "yyyy-mm-dd",0,2 ,0);
     }
+    $('#startDt').datepicker("setEndDate", new Date());
+    $('#endDt').datepicker("setEndDate", new Date());
 });
 
 function searchKpiInfo() {
     var period = $("#period").find("option:selected").val();
-    if(period == "Y" || period == "M") {
-        if($("#startDt").val() == "") {
-            $MB.n_warning("请选择查询时间！");
-            return;
-        }
-    }else{
-        if($("#startDt").val() == "" || $("#endDt").val() == "") {
-            $MB.n_warning("请选择起止时间！");
-            return;
-        }
+    if($("#startDt").val() == "") {
+        $MB.n_warning("请选择开始时间！");
+        return;
+    }
+    if($("#endDt").val() == "") {
+        $MB.n_warning("请选择结束时间！");
+        return;
     }
 
     lightyear.loading('show');

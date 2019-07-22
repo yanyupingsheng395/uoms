@@ -57,15 +57,15 @@
                                                 周期：
                                                 <select name="" id="period">
                                                     <option value="Y">年</option>
-                                                    <option value="M">月</option>
+                                                    <option value="M" selected>月</option>
                                                     <option value="D">日</option>
                                                 </select>
                                             </li>
                                             <li>
-                                                <span id="dateLabel">时间：</span>
+                                                开始时间：
                                                 <input type="text" name="startDt" class="js-datepicker" id="startDt" value="2019"/>
                                             </li>
-                                            <li id="endDtDiv" hidden>
+                                            <li>
                                                 结束时间：
                                                 <input type="text" name="endDt" class="js-datepicker" id="endDt" value="2019"/>
                                             </li>
@@ -73,7 +73,7 @@
                                                 渠道：
                                                 <select name="source" id="source"></select>
                                             </li>
-                                            <li id="btns">
+                                            <li id="btns" class="pull-right">
                                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="searchKpiInfo()"><i class="fa fa-search"></i>&nbsp;搜索</a>
                                                 <a class="btn btn-warning btn-rounded btn-sm" onclick="resetCondition1()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
                                             </li>
