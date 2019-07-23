@@ -11,14 +11,15 @@ public interface OpService {
 
      int getOpDayListCount(String daywid);
 
+     int getOpDayListCount(String daywid, String userActiv, String userValue);
+
      Integer getOpDayUserCountInfo(String daywid);
 
      List<Map<String,Object>> getOpDayDetailList(int startRow, int endRow, String daywid);
 
      int getOpDayDetailListCount(String daywid);
 
-     List<Map<String,Object>> getOpDayDetailAllList(String daywid, String userActiv, String userValue);
-
+     List<Map<String,Object>> getOpDayDetailAllList(String daywid, String userActiv, String userValue, int start, int end, String sortColumn, String sortOrder);
 
      List<Map<String,Object>> getPeriodHeaderList(int startRow, int endRow, String taskName);
 

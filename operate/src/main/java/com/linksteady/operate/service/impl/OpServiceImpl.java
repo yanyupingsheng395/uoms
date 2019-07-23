@@ -16,7 +16,6 @@ public class OpServiceImpl implements OpService {
     @Autowired
     private OpMapper opMapper;
 
-
     @Override
     public List<Map<String, Object>> getOpDayList(int startRow, int endRow,String daywid) {
         return opMapper.getOpDayList(startRow, endRow,daywid);
@@ -25,6 +24,11 @@ public class OpServiceImpl implements OpService {
     @Override
     public int getOpDayListCount(String daywid) {
         return opMapper.getOpDayListCount(daywid);
+    }
+
+    @Override
+    public int getOpDayListCount(String daywid, String userActiv, String userValue) {
+        return opMapper.getOpDayListCountOfCondition(daywid, userActiv, userValue);
     }
 
     @Override
@@ -43,8 +47,8 @@ public class OpServiceImpl implements OpService {
     }
 
     @Override
-    public List<Map<String, Object>> getOpDayDetailAllList(String daywid, String userActiv, String userValue) {
-        return opMapper.getOpDayDetailAllList(daywid, userActiv, userValue);
+    public List<Map<String, Object>> getOpDayDetailAllList(String daywid, String userActiv, String userValue, int start, int end, String sortColumn, String sortOrder) {
+        return opMapper.getOpDayDetailAllList(daywid, userActiv, userValue, start, end, sortColumn, sortOrder);
     }
 
     @Override

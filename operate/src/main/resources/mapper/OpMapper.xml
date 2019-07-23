@@ -20,6 +20,18 @@
         </if>
     </select>
 
+    <select id="getOpDayListCountOfCondition" resultType="int">
+        SELECT COUNT(*) FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER H
+        WHERE H.HEAD_ID =  T.daily_detail_id
+        AND TO_CHAR(H.TOUCH_DT, 'YYYY-MM-DD') = #{daywid}
+        <if test="userActiv != ''">
+            AND T.PATH_ACTIV = #{userActiv}
+        </if>
+        <if test="userValue != ''">
+            AND T.USER_VALUE = #{userValue}
+        </if>
+    </select>
+
     <select id="getOpDayUserCountInfo" resultType="Integer">
         select TOTAL_NUM from UO_OP_DAILY_HEADER  WHERE to_char(touch_dt,'YYYY-MM-DD') = #{daywid}
     </select>
@@ -53,31 +65,37 @@
     </select>
 
     <select id="getOpDayDetailAllList" resultType="map">
-        SELECT
-        T.USER_ID,
-        T.PATH_ACTIV,
-        T.USER_VALUE,
-        T.SPU_NAME,
-        T.PIECE_PRICE,
-        T.JOIN_RATE,
-        T.PURCH_TYPE_NUM,
-        T.TAR_IDEAL_DT,
-        T.TAR_GENERAL_DT,
-        T.TAR_DEADLINE,
-        T.RECOM_SPU,
-        T.DISCOUNT_RATE,
-        T.ORDER_PERIOD,
-        T.REFER_DENO,
-        T.DISCOUNT_LEVEL
-        FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER H
-        WHERE H.HEAD_ID =  T.daily_detail_id
-        AND TO_CHAR(H.TOUCH_DT, 'YYYY-MM-DD') = #{daywid}
-        <if test="userActiv != ''">
-            AND T.PATH_ACTIV = #{userActiv}
-        </if>
-        <if test="userValue != ''">
-            AND T.USER_VALUE = #{userValue}
-        </if>
+        select * from (select A.*, ROWNUM rn from (
+            SELECT
+            T.USER_ID,
+            T.PATH_ACTIV,
+            T.USER_VALUE,
+            T.SPU_NAME,
+            T.PIECE_PRICE,
+            T.JOIN_RATE,
+            T.PURCH_TYPE_NUM,
+            T.TAR_IDEAL_DT,
+            T.TAR_GENERAL_DT,
+            T.TAR_DEADLINE,
+            T.RECOM_SPU,
+            T.DISCOUNT_RATE,
+            T.ORDER_PERIOD,
+            T.REFER_DENO,
+            T.DISCOUNT_LEVEL
+            FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER H
+            WHERE H.HEAD_ID =  T.daily_detail_id
+            AND TO_CHAR(H.TOUCH_DT, 'YYYY-MM-DD') = #{daywid}
+            <if test="userActiv != ''">
+                AND T.PATH_ACTIV = #{userActiv}
+            </if>
+            <if test="userValue != ''">
+                AND T.USER_VALUE = #{userValue}
+            </if>
+            <if test="sortColumn != null and sortOrder != null">
+                order by ${sortColumn} ${sortOrder}
+            </if>
+        ) A where ROWNUM &lt;= #{end})
+        where rn &gt;= #{start}
     </select>
 
     <select id="getPeriodHeaderList" resultType="map">

@@ -32,8 +32,8 @@
         <if test="whereInfo != null and whereInfo != ''">
             ${whereInfo}
         </if>
-        GROUP BY  ${period_name}
-        ORDER BY  ${period_name} ASC
+        GROUP BY ${period_name}
+        ORDER BY ${period_name} ASC
     </select>
 
     <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">

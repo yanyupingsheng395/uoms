@@ -6,10 +6,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.service.OpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -85,9 +82,17 @@ public class OpController extends BaseController {
      * @return
      */
     @RequestMapping("/getOpDayDetailAllList")
-    public ResponseBo getOpDayDetailAllList(@RequestParam  String daywid, @RequestParam String userActiv, @RequestParam String userValue) {
-        List<Map<String,Object>> result=opService.getOpDayDetailAllList(daywid, userActiv, userValue);
-        return  ResponseBo.okWithData("",result);
+    public ResponseBo getOpDayDetailAllList(QueryRequest request) {
+        int start = (request.getPageNum()-1)*request.getPageSize()+1;
+        int end = request.getPageNum()*request.getPageSize();
+        String daywid = request.getParam().get("daywid");
+        String userActiv = request.getParam().get("userActiv");
+        String userValue = request.getParam().get("userValue");
+        String sortColumn = request.getSort();
+        String sortOrder = request.getSortOrder();
+        List<Map<String,Object>> result=opService.getOpDayDetailAllList(daywid, userActiv, userValue, start, end, sortColumn, sortOrder);
+        int totalCount = opService.getOpDayListCount(daywid, userActiv, userValue);
+        return ResponseBo.okOverPaging(null,totalCount, result);
     }
 
     /**
