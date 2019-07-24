@@ -103,10 +103,11 @@ function validateRule() {
     });
 }
 
+var ids = new Array();
 function createMenuTree() {
     $.post(ctx + "menu/menuButtonTree", {}, function (r) {
+        var data = r.msg;
         if (r.code === 200) {
-            var data = r.msg;
             $('#menuTree').jstree({
                 "core": {
                     'data': data.children
@@ -122,7 +123,10 @@ function createMenuTree() {
         } else {
             $MB.n_danger(r.msg);
         }
-    })
+        data.children.forEach((item, index, data) => {
+            ids.push(item.id);
+        });
+    });
 }
 
 
@@ -135,3 +139,9 @@ function getMenu() {
     });
     $("[name='menuId']").val(menuIds);
 }
+
+$("#role-add").on('shown.bs.modal', function () {
+    ids.forEach((item, index, ids) => {
+        $("#menuTree").jstree('disable_node', item);
+    });
+});

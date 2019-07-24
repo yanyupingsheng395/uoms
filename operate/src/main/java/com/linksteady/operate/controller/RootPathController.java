@@ -79,15 +79,6 @@ public class RootPathController extends BaseController {
         return "index";
     }
 
-
-    @RequestMapping("/setSysIdToSession")
-    @ResponseBody
-    public ResponseBo setSysIdToSession(HttpServletRequest request, @RequestParam("sysId") String sysId) {
-        //将sysId放入session中，当获取当前用户的菜单时候使用
-        request.getSession().setAttribute("sysId", sysId);
-        return ResponseBo.ok();
-    }
-
     @RequestMapping("/sysinfo")
     @ResponseBody
     public ResponseBo getSysInfo() {

@@ -54,20 +54,6 @@ public class PageController extends BaseController {
         return "main";
     }
 
-    @RequestMapping("/getSysIdFromSession")
-    @ResponseBody
-    public ResponseBo getSysIdFromSession(HttpServletRequest request) {
-        String sysId = String.valueOf(request.getSession().getAttribute("sysId"));
-        return ResponseBo.okWithData(null, sysId);
-    }
-
-    @RequestMapping("/setSysIdToSession")
-    @ResponseBody
-    public ResponseBo setSysIdToSession(HttpServletRequest request, @RequestParam("sysId") String sysId) {
-        request.getSession().setAttribute("sysId", sysId);
-        return ResponseBo.ok();
-    }
-
     @Log("强制修改密码")
     @RequestMapping("/resetPass")
     public String resetPass(Model model) {

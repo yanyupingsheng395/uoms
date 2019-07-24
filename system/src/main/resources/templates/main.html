@@ -106,16 +106,7 @@
     }
 
     function sysRedirect(url, id) {
-        setSysIdToSession(id);
         window.location.href = url;
-    }
-
-    /**
-     * 将sysId存储到session
-     * @param sysId
-     */
-    function setSysIdToSession(sysId) {
-        $.get("/setSysIdToSession", {sysId: sysId}, function (r) {});
     }
 </script>
 </body>

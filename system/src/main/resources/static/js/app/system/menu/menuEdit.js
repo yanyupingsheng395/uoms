@@ -28,7 +28,6 @@ function updateMenu() {
             $form.find("input[name='perms']").val(menu.perms);
             $form.find("input[name='orderNum']").val(menu.orderNum);
             $form.find("select[name='sysId']").selectpicker('val', menu.sysId);
-            $form.find("select[name='appId']").selectpicker('val', menu.appId);
             currentMenuId = menu.menuId;
             currentMenuParentId = menu.parentId;
             $("#menu-add-button").attr("name", "update");
@@ -36,5 +35,10 @@ function updateMenu() {
             $MB.n_danger(r.msg);
         }
     });
-
 }
+
+$("#menu-add").on('shown.bs.modal', function () {
+    if(currentMenuParentId != null && currentMenuParentId != 0) {
+        $("#menuTree").jstree('select_node', currentMenuParentId, true);
+    }
+});
