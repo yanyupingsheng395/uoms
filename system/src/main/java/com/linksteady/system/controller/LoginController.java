@@ -146,7 +146,7 @@ public class LoginController extends BaseController {
 
     @RequestMapping("/")
     public String redirectIndex() {
-        return "redirect:/main";
+        return "redirect:/index";
     }
 
     @GetMapping("/403")
@@ -179,6 +179,11 @@ public class LoginController extends BaseController {
         result.put("buildtime",buildTime);
         result.put("bootversion",bootversion);
         return ResponseBo.okWithData("",result);
+    }
 
+    @RequestMapping("/logout")
+    public String logout() {
+        getSubject().logout();
+        return "redirect:/login";
     }
 }

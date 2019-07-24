@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.linksteady.common.domain.SysInfo">
     <result column="ID" jdbcType="DECIMAL" property="id" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="CODE" jdbcType="VARCHAR" property="code"/>
     <result column="ENABLE_FLAG" jdbcType="VARCHAR" property="enableFlag"/>
     <result column="DOMAIN" jdbcType="VARCHAR" property="domain"/>
     <result column="LOGO" jdbcType="VARCHAR" property="logo"/>
@@ -21,7 +22,7 @@
   </select>
 
   <select id="findAll" resultMap="BaseResultMap">
-    select ID, NAME from T_SYSTEM where ENABLE_FLAG = '1' order by SORT_NUM ASC
+    select ID, NAME, CODE, DOMAIN from T_SYSTEM where ENABLE_FLAG = '1' order by SORT_NUM ASC
   </select>
 
   <select id="getNameById" resultType="String">

@@ -5,14 +5,11 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.TreeUtils;
-import com.linksteady.system.dao.ApplicationMapper;
 import com.linksteady.system.dao.SystemMapper;
 import com.linksteady.common.domain.SysInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -45,9 +42,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
     @Autowired
     private RoleMenuServie roleMenuService;
-
-    @Autowired
-    private ApplicationMapper applicationMapper;
 
     @Autowired
     private WebApplicationContext applicationContext;
@@ -163,7 +157,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             tree.setParentId(menu.getParentId().toString());
             tree.setText(menu.getMenuName());
             tree.setIcon(menu.getIcon());
-            tree.setUrl(getMenuFullUrl(menu.getAppId(), menu.getUrl()));
+            tree.setUrl(menu.getUrl());
             trees.add(tree);
         });
         return TreeUtils.build(trees);
@@ -181,24 +175,12 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
                 tree.setParentId(menu.getParentId().toString());
                 tree.setText(menu.getMenuName());
                 tree.setIcon(menu.getIcon());
-                tree.setUrl(getMenuFullUrl(menu.getAppId(), menu.getUrl()));
+                tree.setUrl(menu.getUrl());
                 trees.add(tree);
             });
             result.put(x.getKey(), TreeUtils.build(trees));
         });
         return result;
-    }
-
-    private String getMenuFullUrl(String sysId, String url) {
-        String domain = applicationMapper.getDomainById(sysId);
-        if(StringUtils.isNotBlank(domain)) {
-            if(domain.indexOf("/") > -1) {
-                url = domain + url;
-            }else {
-                url = domain + "/" +url;
-            }
-        }
-        return url;
     }
 
     @Override

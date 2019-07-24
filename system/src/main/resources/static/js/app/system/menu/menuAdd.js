@@ -13,7 +13,6 @@ $(function () {
     validateRule();
     createMenuTree();
     getSystemInfo();
-    getApplication();
 
     $menuAddForm.find("input[name='type']").change(function () {
         var $value = $menuAddForm.find("input[name='type']:checked").val();
@@ -90,18 +89,6 @@ function getSystemInfo() {
         });
         $("#sysId").html("").html(options);
         $("#sysId").selectpicker("refresh");
-    });
-}
-
-// 获取应用
-function getApplication() {
-    $.get(ctx + "application/findAllApplication", {}, function (r) {
-        var options = "<option value=''>请选择</option>";
-        $(r.msg).each(function (k, v) {
-            options += "<option value='"+v.applicationId+"'>"+v.applicationName+"</option>";
-        });
-        $("#appId").html("").html(options);
-        $("#appId").selectpicker("refresh");
     });
 }
 

@@ -71,6 +71,9 @@ function validateRule() {
                     }
                 }
             },
+            code: {
+                required: true
+            },
             domain: {
                 required: true
             },
@@ -93,6 +96,9 @@ function validateRule() {
                 required: icon + "请输入系统名称",
                 minlength: icon + "系统名称长度3到10个字符",
                 remote: icon + "该系统名已经存在"
+            },
+            code: {
+                required: icon + "请输入系统CODE"
             },
             logo: icon + "请输入系统Logo",
             sortNum: {

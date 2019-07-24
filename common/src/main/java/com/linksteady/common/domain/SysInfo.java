@@ -21,8 +21,8 @@ public class SysInfo {
     @Column(name = "NAME")
     private String name;
 
-    @Column(name = "CREATE_DT")
-    private Date createDt;
+    @Column(name = "CODE")
+    private String code;
 
     @Column(name = "ENABLE_FLAG")
     private String enableFlag;
@@ -38,4 +38,7 @@ public class SysInfo {
 
     @Column(name = "REMARK")
     private String remark;
+
+    @Column(name = "CREATE_DT")
+    private Date createDt;
 }

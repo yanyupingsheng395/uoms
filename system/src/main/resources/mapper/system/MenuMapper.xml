@@ -14,7 +14,6 @@
         <result column="TYPE" jdbcType="CHAR" property="type" />
         <result column="ORDER_NUM" jdbcType="DECIMAL" property="orderNum" />
         <result column="SYS_ID" jdbcType="VARCHAR" property="sysId"/>
-        <result column="APP_ID" jdbcType="VARCHAR" property="appId"/>
         <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
         <result column="MODIFY_TIME" jdbcType="TIMESTAMP" property="modifyTime" />
     </resultMap>

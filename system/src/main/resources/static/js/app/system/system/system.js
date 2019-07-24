@@ -17,8 +17,11 @@ $(function () {
             field: 'name',
             title: '名称'
         }, {
+            field: 'code',
+            title: '编码'
+        }, {
             field: 'domain',
-            title: '默认页'
+            title: '地址'
         }, {
             field: 'logo',
             title: '系统Logo'

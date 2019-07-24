@@ -91,6 +91,10 @@ function getUserMenu() {
 
             //设置退出
             $("#logoutbtn").attr("href",r.msg.logoutUrl);
+
+            if(r.msg.single) {
+                $("#selectSys").attr("hidden", true);
+            }
         }
     });
 }

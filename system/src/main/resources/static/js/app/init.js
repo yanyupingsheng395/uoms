@@ -93,6 +93,10 @@ function getUserMenu() {
                 $("#pageTitle").html("").html(r.data);
                 //设置返回导航页
                 $("#navigatorUrl").attr("href",r.msg.navigatorUrl);
+
+                if(r.msg.single) {
+                    $("#selectSys").attr("hidden", true);
+                }
             }
         });
     }

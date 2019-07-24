@@ -93,7 +93,9 @@ public class PageController extends BaseController {
     @RequestMapping("/findUserMenu")
     @ResponseBody
     public ResponseBo getUserMenu(HttpServletRequest request) {
-        String sysId = String.valueOf(request.getSession().getAttribute("sysId"));
+        Map<String, SysInfo> sysInfoMap=(Map<String, SysInfo>)redisTemplate.opsForValue().get("sysInfoMap");
+        SysInfo sysInfo = sysInfoMap.get("system");
+        String sysId = sysInfo.getId();
         User user = super.getCurrentUser();
 
         if(null==sysId||"".equals(sysId)||"null".equals(sysId))
@@ -106,14 +108,12 @@ public class PageController extends BaseController {
         String userName = user.getUsername();
         result.put("username", userName);
         result.put("version", version);
-        Map<String,String> appMap=(Map<String, String>)redisTemplate.opsForValue().get("applicationInfoMap");
-        result.put("navigatorUrl",appMap.get("SYS")+"main");
-        result.put("logoutUrl",appMap.get("SYS")+"logout");
-
-
+        String sysDomain = sysInfo.getDomain();
+        result.put("navigatorUrl",sysDomain +"/main");
+        result.put("logoutUrl",sysDomain + "/logout");
+        result.put("single", user.getUserMenuTree().keySet().size() == 1);
         //获取当前子系统名称
-        Map<String, SysInfo> sysInfoMap=(Map<String, SysInfo>)redisTemplate.opsForValue().get("sysInfoMap");
-        String sysName=null==sysInfoMap.get(sysId)?"":sysInfoMap.get(sysId).getName();
+        String sysName=sysInfo.getName();
         try {
             Tree<Menu> tree = user.getUserMenuTree().get(sysId);
             result.put("tree", tree);

@@ -31,7 +31,6 @@ import java.util.Map;
 @RequestMapping("/")
 public class RootPathController extends BaseController {
 
-
     @Autowired
     RedisTemplate redisTemplate;
 
@@ -79,15 +78,6 @@ public class RootPathController extends BaseController {
         return "index";
     }
 
-
-    @RequestMapping("/setSysIdToSession")
-    @ResponseBody
-    public ResponseBo setSysIdToSession(HttpServletRequest request, @RequestParam("sysId") String sysId) {
-        //将sysId放入session中，当获取当前用户的菜单时候使用
-        request.getSession().setAttribute("sysId", sysId);
-        return ResponseBo.ok();
-    }
-
     @RequestMapping("/sysinfo")
     @ResponseBody
     public ResponseBo getSysInfo() {
@@ -109,9 +99,10 @@ public class RootPathController extends BaseController {
     @RequestMapping("/findUserMenu")
     @ResponseBody
     public ResponseBo getUserMenu(HttpServletRequest request) {
-        String sysId = String.valueOf(request.getSession().getAttribute("sysId"));
+        Map<String, SysInfo> sysInfoMap=(Map<String, SysInfo>)redisTemplate.opsForValue().get("sysInfoMap");
+        SysInfo sysInfo = sysInfoMap.get("mdss");
+        String sysId = sysInfo.getId();
         User user = super.getCurrentUser();
-
         if(null==sysId||"".equals(sysId)||"null".equals(sysId))
         {
             return ResponseBo.error("");
@@ -122,14 +113,13 @@ public class RootPathController extends BaseController {
         String userName = user.getUsername();
         result.put("username", userName);
         result.put("version", version);
-        Map<String,String> appMap=(Map<String, String>)redisTemplate.opsForValue().get("applicationInfoMap");
-        result.put("navigatorUrl",appMap.get("SYS")+"main");
-        result.put("logoutUrl",appMap.get("SYS")+"logout");
-
+        String sysDomain = sysInfoMap.get("system").getDomain();
+        result.put("navigatorUrl",sysDomain +"/main");
+        result.put("logoutUrl",sysDomain + "/logout");
+        result.put("single", user.getUserMenuTree().keySet().size() == 1);
 
         //获取当前子系统名称
-        Map<String, SysInfo> sysInfoMap=(Map<String, SysInfo>)redisTemplate.opsForValue().get("sysInfoMap");
-        String sysName=null==sysInfoMap.get(sysId)?"":sysInfoMap.get(sysId).getName();
+        String sysName=sysInfo.getName();
         try {
             Tree<Menu> tree = user.getUserMenuTree().get(sysId);
             result.put("tree", tree);
