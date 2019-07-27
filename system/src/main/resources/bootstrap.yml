@@ -1,0 +1,28 @@
+app:
+  name: "UOMS"
+  description: "link steady 诊断&运营系统-系统管理模块"
+  spring-boot-version: "2.0.4.RELEASE"
+  version: @project.version@
+  build:
+    time: @timestamp@
+
+spring:
+  application:
+    name: system
+  cloud:
+    config:
+      uri: http://localhost:9090
+      username: admin
+      password: linksteady123
+
+  profiles:
+    active: prod
+
+# 配置加密的秘钥
+jasypt:
+  encryptor:
+    password: linksteady123
+# 仅用于测试环境使用，勿提交
+#spring:
+#  profiles:
+#    active: dev
