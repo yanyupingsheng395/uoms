@@ -274,7 +274,7 @@ function getCurrentDate() {
     var d = new Date();
     var year = d.getFullYear();
     var month = d.getMonth() < 10 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1;
-    var day = d.getDay() < 10 ? "0" + (d.getDay() + 1) : d.getDay() + 1;
+    var day = d.getDate() < 10 ? "0" + d.getDate() : d.getDate();
     return year + "-" + month + "-" + day;
 }
 

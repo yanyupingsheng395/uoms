@@ -151,7 +151,7 @@ function freq_time(chartId, title, type) {
         series.type = 'line';
         series.smooth = true;
         var option = getOption(null, r.data.xAxisData, "间隔（天）", "人次", series);
-        option.grid = {right: '19%', left: '5%'};
+        option.grid = {right: '19%', left: '7%'};
         option.tooltip = {formatter:'人次：{c}次<br/>&nbsp;&nbsp;间隔：{b}天'};
         var freqChart = echarts.init(document.getElementById(chartId), 'macarons');
         option.title = {

@@ -11,8 +11,8 @@ String.prototype.endWith=function(str){
 init();
 function init() {
     // 起止日期初始化
-    init_date_begin("startDt", "endDt", "yyyy-MM",1,2 ,1);
-    init_date_end("startDt", "endDt", "yyyy-MM",1,2 ,1);
+    init_date_begin("startDt", "endDt", "yyyy-mm",1,2 ,1);
+    init_date_end("startDt", "endDt", "yyyy-mm",1,2 ,1);
     $('#startDt').datepicker("setEndDate", new Date());
     $('#endDt').datepicker("setEndDate", new Date());
     var currentYear = new Date().getFullYear();
