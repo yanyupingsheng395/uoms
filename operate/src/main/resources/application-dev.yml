@@ -123,7 +123,7 @@ management:
 
 mybatis:
   # type-aliases扫描路径
-  type-aliases-package: com.linksteady.mdss.domain
+  type-aliases-package: com.linksteady.operate.domain
   # mapper xml实现扫描路径
   mapper-locations: classpath:mapper/*.xml
   property:
