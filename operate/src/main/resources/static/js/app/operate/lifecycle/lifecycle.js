@@ -13,6 +13,10 @@ function tab2Init() {
 function getSampleDate() {
     var spuId = selectId;
     $.getJSON("/spuLifeCycle/getSampleDate", {spuId: spuId}, function (r) {
+        var data = '--';
+        if(data != undefined && data != null) {
+            data = r.data;
+        }
         $("#sampleDate").html("").append(r.data);
     });
 }
@@ -121,9 +125,9 @@ function retention_time() {
         option.grid = {right:'22%'};
         if(flag) {
             option.legend.selected = {'实际值':true, '拟合值':false};
-            $("#kpi1Tip").attr("style", "display:none;");
+            $("#fitRemark").attr("style", "display:none;");
         }else {
-            $("#kpi1Tip").attr("style", "display:block;");
+            $("#fitRemark").attr("style", "display:block;");
         }
         var freqChart = echarts.init(document.getElementById('retention_freq'), 'macarons');
         freqChart.setOption(option, true);
@@ -133,12 +137,13 @@ function retention_time() {
 // 判断是否有拟合曲线
 function checkIfFitting(data) {
     var flag = false;
-    console.log(data)
-    $.each(data, function (k, v) {
-        if(parseInt(v) != 0) {
-            flag = true;
-        }
-    });
+    if(data != null && data != undefined) {
+        $.each(data, function (k, v) {
+            if(parseInt(v) != 0) {
+                flag = true;
+            }
+        });
+    }
     return flag;
 }
 
