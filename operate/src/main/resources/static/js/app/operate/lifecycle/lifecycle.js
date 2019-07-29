@@ -13,11 +13,11 @@ function tab2Init() {
 function getSampleDate() {
     var spuId = selectId;
     $.getJSON("/spuLifeCycle/getSampleDate", {spuId: spuId}, function (r) {
-        var data = '--';
-        if(data != undefined && data != null) {
-            data = r.data;
+        var data = r.data;
+        if(data == null || data == undefined) {
+            data = '--';
         }
-        $("#sampleDate").html("").append(r.data);
+        $("#sampleDate").html("").append(data);
     });
 }
 
