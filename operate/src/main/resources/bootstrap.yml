@@ -11,7 +11,7 @@ spring:
     name: operate
   cloud:
     config:
-      uri: http://localhost:9090
+      uri: http://config.dev.growth-master.com
       username: admin
       password: linksteady123
 

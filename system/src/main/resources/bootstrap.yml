@@ -11,13 +11,16 @@ spring:
     name: system
   cloud:
     config:
-      uri: http://localhost:9090
+      uri: http://config.dev.growth-master.com
       username: admin
       password: linksteady123
 
   profiles:
     active: prod
-
+http://config:
+  dev:
+    growth-master:
+      com:
 # 配置加密的秘钥
 jasypt:
   encryptor:
