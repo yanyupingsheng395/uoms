@@ -1,7 +1,6 @@
 package com.linksteady.operate.domain;
 
 import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Table;
 import java.math.BigDecimal;

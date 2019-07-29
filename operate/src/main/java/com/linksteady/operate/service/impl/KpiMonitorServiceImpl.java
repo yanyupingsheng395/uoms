@@ -192,39 +192,6 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         }).collect(Collectors.toList());
     }
 
-    /**
-     * 根据公式和购买次数生成拟合曲线数据
-     */
-    @Override
-    public List<Double> generateFittingData(String spuId,List<Integer> purchTimes)
-    {
-        List<Double> result=Lists.newArrayList();
-
-        //获取当前SPU的生成的系数和截距  字符串的格式为 a,b,c|f
-        String param=kpiMonitorMapper.getCeofBySpu(spuId);
-
-        if(null==param||param.length()==0||!param.contains(",")||!param.contains("|"))
-        {
-            return result;
-        }
-
-        // 第一个值为系数 第二个值为截距
-        List<String> paramList=Splitter.on('|').trimResults().omitEmptyStrings().splitToList(param);
-
-        List<String> ceofList=Splitter.on(',').trimResults().omitEmptyStrings().splitToList(paramList.get(0));
-        double ceof1=Double.parseDouble(ceofList.get(0));
-        double ceof2=Double.parseDouble(ceofList.get(1));
-        double ceof3=Double.parseDouble(ceofList.get(2));
-        double intercept=Double.parseDouble(paramList.get(1));
-
-        for(int i:purchTimes)
-        {
-            //获取对应的系数值
-            result.add(calculateFormulaValue(i,ceof1,ceof2,ceof3,intercept));
-        }
-        return result;
-    }
-
     @Override
     public Map<String, Object> getTotalGmv(String startDt, String endDt) {
         String lastYearStartDt = DateUtil.getLastYear(startDt);
@@ -247,11 +214,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         return result;
     }
 
-    private double calculateFormulaValue(int x,double ceof1,double ceof2,double ceof3,double intercept)
-    {
-        double result= ArithUtil.formatDoubleByMode((Math.pow(x,3)*ceof1+Math.pow(x,2)*ceof2+x*ceof3+intercept) * 100,2, RoundingMode.DOWN);
-        return result;
-    }
+
 
     @Override
     public Map<String, Object> getTotalTradeUser(String startDt, String endDt) {

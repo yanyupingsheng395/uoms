@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.FitDataMapper">
+
+    <!-- 获取某个SPU的拟合曲线 数据 -->
+    <select id="getCeofBySpu" resultType="string" parameterType="string">
+      SELECT FORMULA_VALUE FROM UO_LC_SPU_LIFECYCLE WHERE SPU_ID=#{spuId} and TYPE = #{formulaType} and FORMULA_VALUE is not null
+    </select>
+
+</mapper>

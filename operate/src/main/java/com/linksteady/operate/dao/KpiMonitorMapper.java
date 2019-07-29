@@ -16,7 +16,6 @@ public interface KpiMonitorMapper {
     List<Map<String, Object>> getTradeUser(@Param("startDt") String startDt, @Param("endDt") String endDt);
     List<Map<String, Object>> getAvgCsPriceBySpu(@Param("startDt") String startDt, @Param("endDt") String endDt, @Param("spuId") String spuId);
     List<Map<String, Object>> getAvgCsPrice(@Param("startDt") String startDt, @Param("endDt") String endDt);
-    String getCeofBySpu(@Param("spuId") String spuId);
     Double getTotalGmv(@Param("startDt") String startDt, @Param("endDt") String endDt);
     Double getTotalTradeUser(@Param("startDt") String startDt, @Param("endDt") String endDt);
     Double getTotalAvgPrice(@Param("startDt") String startDt, @Param("endDt") String endDt);

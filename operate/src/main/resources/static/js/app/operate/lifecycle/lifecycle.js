@@ -26,29 +26,29 @@ function getStageNode() {
             if(v == "0" || v == 0) {
                 if(k == 0) {
                     content = "该品类购买人数过少，尚未形成购买规律";
-                    yAxisTitle.push("频次（首购到复购, 1次-）");
+                    yAxisTitle.push("首购到复购[1次-]");
                 }
                 if(k == 1) {
                     content = "该品类尚未形成忠诚购买规律";
-                    yAxisTitle.push("频次（成长期, "+r.data[0]+"次-）");
+                    yAxisTitle.push("成长期["+r.data[0]+"次-]");
                 }
                 if(k == 2) {
                     content = "该品类尚未出现衰退趋势";
-                    yAxisTitle.push("频次（成熟期, "+r.data[1]+"次-）");
+                    yAxisTitle.push("成熟期["+r.data[1]+"次-]");
                 }
                 v = "-";
             }else {
                 if(k == 0) {
                     content = "从该点开始，出现复购行为";
-                    yAxisTitle.push("频次（首购到复购，1次-" + v + "次）");
+                    yAxisTitle.push("首购到复购[1次-" + v + "次]");
                 }
                 if(k == 1) {
                     content = "从该点开始，留存率变化趋于平缓";
-                    yAxisTitle.push("频次（成长期，"+r.data[0]+"次-" + v + "次）");
+                    yAxisTitle.push("成长期["+r.data[0]+"次-" + v + "次]");
                 }
                 if(k == 2) {
                     content = "从该点开始，留存率变化呈明显下降的趋势";
-                    yAxisTitle.push("频次（成熟期，"+r.data[1]+"次-" + v + "次）");
+                    yAxisTitle.push("成熟期["+r.data[1]+"次-" + v + "次]");
                 }
             }
             $("#stage").find("tbody tr:eq("+k+")").find("td:eq(1)").text(v);
@@ -61,11 +61,11 @@ function getStageNode() {
     });
 }
 
-function getRetentionByMethod(purchTimes) {
+function getRetentionByMethod(purchTimes, type) {
     var data = new Array();
     $.ajax({
-        url: "/kpiMonitor/generateFittingData",
-        data:{spuId: selectId, purchCount: purchTimes},
+        url: "/fitdata/generateFittingData",
+        data:{spuId: selectId, purchCount: purchTimes, type: type},
         async: false,
         success: function (r) {
             data = r.data;
@@ -87,7 +87,7 @@ function retention_time() {
             series0.markPoint.tooltip = {
                 show: true, // 是否显示
                 formatter: '从该点开始购买次数过少', // 内容格式器 a（系列名称），b（类目值），c（数值）, d（无）
-                trigger: 'item', // 触发类型，默认数据触发，见下图，可选为：'item' | 'axis'
+                trigger: 'item' // 触发类型，默认数据触发，见下图，可选为：'item' | 'axis'
             };
             series0.markPoint.symbolSize = 30;
             series0.name = "实际值";
@@ -95,11 +95,9 @@ function retention_time() {
             var x = chart.xAxisData[parseInt(series0.markPoint.data[0].xAxis)];
             var xdata = new Array();
             $.each(chart.xAxisData, function (k, v) {
-                if(parseInt(v) <= parseInt(x)) {
-                    xdata.push(v);
-                }
+                xdata.push(v);
             });
-            var series1Data = getRetentionByMethod(xdata.join(","));
+            var series1Data = getRetentionByMethod(xdata.join(","), "formula");
             var flag = checkIfFitting(series1Data);
             if(flag) {
                 var series1 = new Object();
@@ -107,6 +105,13 @@ function retention_time() {
                 series1.type = 'line';
                 series1.smooth = true;
                 series1.name = "拟合值";
+                series1.itemStyle = {
+                    normal: {
+                        color: '#F9A589',
+                        borderWidth: 3,
+                        borderColor: "#F9A589"
+                    }
+                };
                 seriesDatas.push(series1);
                 legend.push("拟合值");
             }
@@ -116,9 +121,9 @@ function retention_time() {
         option.grid = {right:'22%'};
         if(flag) {
             option.legend.selected = {'实际值':true, '拟合值':false};
-            $("#fitRemark").attr("style", "display:none;");
+            $("#kpi1Tip").attr("style", "display:none;");
         }else {
-            $("#fitRemark").attr("style", "display:block;");
+            $("#kpi1Tip").attr("style", "display:block;");
         }
         var freqChart = echarts.init(document.getElementById('retention_freq'), 'macarons');
         freqChart.setOption(option, true);
@@ -128,6 +133,7 @@ function retention_time() {
 // 判断是否有拟合曲线
 function checkIfFitting(data) {
     var flag = false;
+    console.log(data)
     $.each(data, function (k, v) {
         if(parseInt(v) != 0) {
             flag = true;
@@ -136,17 +142,35 @@ function checkIfFitting(data) {
     return flag;
 }
 
-// 每个阶段购买间隔分布图
-function freq_time(chartId, yName, type) {
+// 每个阶段购买间隔柱状图
+function freq_time(chartId, title, type) {
     var spuId = selectId;
     $.get("/spuLifeCycle/getStagePeriodData", {spuId: spuId, type: type}, function (r) {
         var series = r.data.seriesData[0];
+        // series.symbol = "none";
         series.type = 'line';
         series.smooth = true;
-        var option = getOption(null, r.data.xAxisData, "间隔（天）", yName, series);
-        option.grid = {right: '20%', left: '24%'};
-        option.tooltip = {formatter:'频次：{c}<br/>间隔：{b}'};
+        var option = getOption(null, r.data.xAxisData, "间隔（天）", "人次", series);
+        option.grid = {right: '19%', left: '5%'};
+        option.tooltip = {formatter:'人次：{c}次<br/>&nbsp;&nbsp;间隔：{b}天'};
         var freqChart = echarts.init(document.getElementById(chartId), 'macarons');
+        option.title = {
+            text: title,
+            x:'center',
+            y: 'bottom',
+            textStyle:{
+                //文字颜色
+                color:'#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle:'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight:'normal',
+                //字体系列
+                fontFamily:'sans-serif',
+                //字体大小
+                fontSize:12
+            }
+        };
         freqChart.setOption(option);
     });
 }
@@ -154,12 +178,34 @@ function freq_time(chartId, yName, type) {
 function getUnitPriceChart() {
     var spuId = selectId;
     $.get("/spuLifeCycle/getUnitPriceChart", {spuId: spuId}, function (r) {
-        var series = r.data.seriesData[0];
-        series.type = 'line';
-        series.smooth = true;
-        var option = getOption(null, r.data.xAxisData, r.data.xAxisName, r.data.yAxisName, series);
+        var chart = r.data;
+        chart = getFittingDataOfKpi(chart, "uprice_purch_formula");
+        var option = getOption(chart.legend, chart.xAxisData, chart.xAxisName, chart.yAxisName, chart.seriesDatas);
         option.tooltip = {formatter:'购买次数：{b}<br/>&nbsp;&nbsp;件单价：{c}'};
         option.grid = {left: '20%',right:'25%'};
+        if(chart.flag) {
+            option.legend.selected = {'实际值':true, '拟合值':false};
+            $("#kpi1Tip").attr("style", "display:none;");
+        }else {
+            $("#kpi1Tip").attr("style", "display:block;");
+        }
+        option.title = {
+            text: '件单价随购买次数变化趋势图',
+            x:'center',
+            y: 'bottom',
+            textStyle:{
+                //文字颜色
+                color:'#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle:'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight:'normal',
+                //字体系列
+                fontFamily:'sans-serif',
+                //字体大小
+                fontSize:12
+            }
+        };
         var chart = echarts.init(document.getElementById('kpi1'), 'macarons');
         chart.setOption(option);
     });
@@ -168,13 +214,35 @@ function getUnitPriceChart() {
 function getDtPeriodChart() {
     var spuId = selectId;
     $.get("/spuLifeCycle/getDtPeriodChart", {spuId: spuId}, function (r) {
-        var series = r.data.seriesData[0];
-        series.type = 'line';
-        series.smooth = true;
-        var option = getOption(null, r.data.xAxisData, r.data.xAxisName, r.data.yAxisName, series);
+        var chart = r.data;
+        chart = getFittingDataOfKpi(chart, "date_purch_formula");
+        var option = getOption(chart.legend, chart.xAxisData, chart.xAxisName, chart.yAxisName, chart.seriesDatas);
         option.tooltip = {formatter:'&nbsp;&nbsp;购买次数：{b}<br/>&nbsp;&nbsp;时间间隔：{c}'};
         option.grid = {left: '20%',right:'25%'};
+        if(chart.flag) {
+            option.legend.selected = {'实际值':true, '拟合值':false};
+            $("#kpi2Tip").attr("style", "display:none;");
+        }else {
+            $("#kpi2Tip").attr("style", "display:block;");
+        }
         var chart = echarts.init(document.getElementById('kpi2'), 'macarons');
+        option.title = {
+            text: '时间间隔随购买次数变化趋势图',
+            x:'center',
+            y: 'bottom',
+            textStyle:{
+                //文字颜色
+                color:'#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle:'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight:'normal',
+                //字体系列
+                fontFamily:'sans-serif',
+                //字体大小
+                fontSize:12
+            }
+        };
         chart.setOption(option);
     });
 }
@@ -183,28 +251,111 @@ function getDtPeriodChart() {
 function getRateChart() {
     var spuId = selectId;
     $.get("/spuLifeCycle/getRateChart", {spuId: spuId}, function (r) {
-        var series = r.data.seriesData[0];
-        series.type = 'line';
-        series.smooth = true;
-        var option = getOption(null, r.data.xAxisData, r.data.xAxisName, r.data.yAxisName, series);
+        var chart = r.data;
+        chart = getFittingDataOfKpi(chart, "rate_purch_formula");
+        var option = getOption(chart.legend, chart.xAxisData, chart.xAxisName, chart.yAxisName, chart.seriesDatas);
         option.tooltip = {formatter:'&nbsp;&nbsp;购买次数：{b}<br/>&nbsp;&nbsp;连带率：{c}'};
         option.grid = {left: '20%',right:'25%'};
+        if(chart.flag) {
+            option.legend.selected = {'实际值':true, '拟合值':false};
+            $("#kpi3Tip").attr("style", "display:none;");
+        }else {
+            $("#kpi3Tip").attr("style", "display:block;");
+        }
         var chart = echarts.init(document.getElementById('kpi3'), 'macarons');
+        option.title = {
+            text: '连带率随购买次数变化趋势图',
+            x:'center',
+            y: 'bottom',
+            textStyle:{
+                //文字颜色
+                color:'#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle:'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight:'normal',
+                //字体系列
+                fontFamily:'sans-serif',
+                //字体大小
+                fontSize:12
+            }
+        };
         chart.setOption(option);
     });
+}
+
+// 封装KPI拟合曲线
+function getFittingDataOfKpi(chart, type) {
+    var seriesDatas = new Array();
+    var series0 = chart.seriesData[0];
+    series0.type = 'line';
+    series0.smooth = true;
+    series0.name = "实际值";
+    var legend = ["实际值"];
+
+    var xdata = new Array();
+    $.each(chart.xAxisData, function (k, v) {
+        xdata.push(v);
+    });
+
+    var series1Data = getRetentionByMethod(xdata.join(","), type);
+    var flag = checkIfFitting(series1Data);
+    if(flag) {
+        var series1 = new Object();
+        series1.data = series1Data;
+        series1.type = 'line';
+        series1.smooth = true;
+        series1.name = "拟合值";
+        series1.itemStyle = {
+            normal: {
+                color: '#F9A589',
+                    borderWidth: 3,
+                    borderColor: "#F9A589"
+            }
+        };
+        seriesDatas.push(series1);
+        legend.push("拟合值");
+    }
+    seriesDatas.push(series0);
+    chart.seriesDatas = seriesDatas;
+    chart.legend = legend;
+    chart.flag = flag;
+    return chart;
 }
 
 
 function getCateChart() {
     var spuId = selectId;
     $.get("/spuLifeCycle/getCateChart", {spuId: spuId}, function (r) {
-        var series = r.data.seriesData[0];
-        series.type = 'line';
-        series.smooth = true;
-        var option = getOption(null, r.data.xAxisData, r.data.xAxisName, r.data.yAxisName, series);
+        var chart = r.data;
+        chart = getFittingDataOfKpi(chart, "cate_purch_formula");
+        var option = getOption(chart.legend, chart.xAxisData, chart.xAxisName, chart.yAxisName, chart.seriesDatas);
         option.tooltip = {formatter:'&nbsp;&nbsp;购买次数：{b}<br/>&nbsp;&nbsp;品类种数：{c}'};
         option.grid = {left: '20%',right:'25%'};
+        if(chart.flag) {
+            option.legend.selected = {'实际值':true, '拟合值':false};
+            $("#kpi4Tip").attr("style", "display:none;");
+        }else {
+            $("#kpi4Tip").attr("style", "display:block;");
+        }
         var chart = echarts.init(document.getElementById('kpi4'), 'macarons');
+        option.title = {
+            text: '品类种数随购买次数变化趋势图',
+            x:'center',
+            y: 'bottom',
+            textStyle:{
+                //文字颜色
+                color:'#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle:'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight:'normal',
+                //字体系列
+                fontFamily:'sans-serif',
+                //字体大小
+                fontSize:12
+            }
+        };
         chart.setOption(option);
     });
 }

@@ -168,7 +168,6 @@ function validateRule() {
             orderNum: {required: icon + "请输入显示排序", digits: icon + "只能输入0或正整数"}
         }
     });
-
 }
 
 $('#sysId').on('changed.bs.select',function(e){

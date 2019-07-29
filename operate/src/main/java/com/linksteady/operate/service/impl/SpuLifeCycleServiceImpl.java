@@ -287,18 +287,18 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
         return echart;
     }
 
-
-//    private List<Double> fixData(Map<String,Double> datas,List<String> periodList)
-//    {
-//        return periodList.stream().map(s->{
-//            s = s.replaceAll("-", "");
-//            if(null==datas.get(s)||"".equals(datas.get(s)))
-//            {
-//                return 0d;
-//            }else
-//            {
-//                return datas.get(s);
-//            }
-//        }).collect(Collectors.toList());
-//    }
+    /**
+     * 获取分组后的x轴的数据
+     */
+    private List<String> getRegroupData(int groupNum, int max) {
+        int groupSize = max / groupNum;
+        List<String> newXdata = Lists.newLinkedList();
+        for(int i=0; i < groupNum; i++) {
+            newXdata.add(String.valueOf((i + 1) * groupSize));
+        }
+        if(max%groupNum != 0) {
+            newXdata.add(String.valueOf(max));
+        }
+        return newXdata;
+    }
 }
