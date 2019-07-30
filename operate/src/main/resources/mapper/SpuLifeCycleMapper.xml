@@ -5,7 +5,7 @@
     <select id="getSampleDate" resultType="string">
         SELECT t.INSERT_DT FROM (
             SELECT
-                TO_CHAR( INSERT_DT, 'SYYYY-MM-DD') INSERT_DT,
+                TO_CHAR(INSERT_DT, 'SYYYY-MM-DD') INSERT_DT,
                 ROWNUM rm
             FROM
                 UO_LC_SPU_LIFECYCLE

@@ -139,7 +139,7 @@ $(function () {
 });
 
 function refreshOpDataTable() {
-    $("#opdayTable").bootstrapTable('refresh');
+    $MB.refreshTable('opdayTable');
 }
 
 // 获取表格数据
@@ -236,5 +236,7 @@ function mergeCells(data,fieldName,colspan) {
 
 function resetOpday() {
     $("#touchDate").val('');
+    $("#pathActiv").find("option:selected").attr("selected", false);
+    $("#userValue").find("option:selected").attr("selected", false);
     $MB.refreshTable('opdayTable');
 }
