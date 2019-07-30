@@ -160,6 +160,7 @@ function searchKpiInfo() {
 }
 
 $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+
     lightyear.loading('show');
     var startDt = $("#startDt").val();
     if(startDt == "") {
@@ -168,16 +169,10 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         if(!e.target.href.endWith("#overview") && !e.target.href.endWith("#retention")) {
             $("#selectCondition1").show();
             $("#selectCondition2").hide();
-            // 解决相同模板导致ID冲突
-
-            // 清空上一个DIV的模板
-            if(!e.relatedTarget.href.endWith("#overview") && !e.relatedTarget.href.endWith("#retention")) {
-                var relatedTarget = e.relatedTarget.href.substring(e.relatedTarget.href.lastIndexOf("#"), e.relatedTarget.href.length);
-                $(relatedTarget).html("");
-            }
             // 给当前DIV赋值模板
-
             var target = e.target.href.substring(e.target.href.lastIndexOf("#"), e.target.href.length);
+            // 清空上一个DIV的模板,解决相同模板导致ID冲突
+            $(target).siblings().not("#overview").not("#retention").html("");
             $(target).html($("#template").html());
 
             var kpiType = "";
@@ -230,10 +225,6 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             // todo 初始化日期
             $("#selectCondition1").hide();
             $("#selectCondition2").show();
-            if(!e.relatedTarget.href.endWith("#overview")) {
-                var relatedTarget = e.relatedTarget.href.substring(e.relatedTarget.href.lastIndexOf("#"), e.relatedTarget.href.length);
-                $(relatedTarget).html("");
-            }
         }
     }
     lightyear.loading('hide');

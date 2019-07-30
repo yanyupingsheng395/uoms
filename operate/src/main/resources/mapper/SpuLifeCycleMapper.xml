@@ -48,9 +48,9 @@
         select COMPUTE_DT, LIFECYCLE_TYPE, USER_COUNT, GMV_TOTAL from UO_LC_SPU_LIFECYCLE_KPI where spu_id = #{spuId} order by COMPUTE_DT asc
     </select>
 
-    <select id="getStageNode" resultType="string">
+    <select id="getStageNode" resultType="map">
         SELECT
-            PURCH_TIMES
+            TYPE, PURCH_TIMES
         FROM
             UO_LC_SPU_LIFECYCLE
         WHERE

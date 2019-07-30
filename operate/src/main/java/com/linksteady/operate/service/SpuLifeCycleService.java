@@ -3,6 +3,7 @@ package com.linksteady.operate.service;
 import com.linksteady.operate.vo.Echart;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hxcao on 2019-05-10
@@ -17,6 +18,6 @@ public interface SpuLifeCycleService {
     Echart getCateChart(String spuId);
     Echart getUserCountChart(String spuId);
     Echart getSaleVolumeChart(String spuId);
-    List<String> getStageNode(String spuId);
+    List<Map<String, Object>> getStageNode(String spuId);
     Echart getStagePeriodData(String spuId, String type);
 }

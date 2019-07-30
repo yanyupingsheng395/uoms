@@ -319,7 +319,6 @@ function getFittingDataOfKpi(chart, type) {
     if(flag) {
         var series1 = new Object();
         series1.data = series1Data;
-        console.log(series1Data);
         series1.type = 'line';
         series1.smooth = true;
         series1.name = "拟合值";

@@ -264,8 +264,9 @@ public class SpuLifeCycleServiceImpl implements SpuLifeCycleService {
     }
 
     @Override
-    public List<String> getStageNode(String spuId) {
-        return spuLifeCycleMapper.getStageNode(spuId);
+    public List<Map<String, Object>> getStageNode(String spuId) {
+        List<Map<String, Object>> mapList = spuLifeCycleMapper.getStageNode(spuId);
+        return mapList;
     }
 
     /**

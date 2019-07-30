@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.collect.Lists;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.service.SpuLifeCycleService;
 import com.linksteady.operate.vo.Echart;
@@ -8,6 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hxcao on 2019-05-10
@@ -77,7 +81,32 @@ public class SpuLifeCycleController {
      */
     @GetMapping("/getStageNode")
     public ResponseBo getStageNode(String spuId) {
-        return ResponseBo.okWithData(null, spuLifeCycleService.getStageNode(spuId));
+        List<Map<String, Object>> dataList = spuLifeCycleService.getStageNode(spuId);
+        List<String> result = Lists.newLinkedList();
+        dataList.stream().forEach(x-> {
+            String k = String.valueOf(x.get("TYPE"));
+            String v = String.valueOf(x.get("PURCH_TIMES"));
+            if(k.equals("repurch_node")) {
+                result.add(0, v);
+            }
+            if(k.equals("loyal_node")) {
+                result.add(1, v);
+            }
+            if(k.equals("decline_node")) {
+                result.add(2, v);
+            }
+        });
+        return ResponseBo.okWithData(null, result);
+    }
+
+    public static void main(String[] args) {
+        List<String> list = Lists.newLinkedList();
+        list.add(0,"1");
+        list.add(1,"2");
+
+        list.stream().forEach(x->{
+            System.out.println(x);
+        });
     }
 
     /**
