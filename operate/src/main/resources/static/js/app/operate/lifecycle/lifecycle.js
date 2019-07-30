@@ -66,7 +66,7 @@ function getStageNode() {
 }
 
 function getRetentionByMethod(purchTimes, type) {
-    var data = new Array();
+    var data = null;
     $.ajax({
         url: "/fitdata/generateFittingData",
         data:{spuId: selectId, purchCount: purchTimes, type: type},
@@ -78,6 +78,7 @@ function getRetentionByMethod(purchTimes, type) {
     return data;
 }
 
+// 留存率随购买次数变化
 function retention_time() {
     var spuId = selectId;
     $.get("/spuLifeCycle/retentionPurchaseTimes", {spuId: spuId}, function (r) {
@@ -102,6 +103,11 @@ function retention_time() {
                 xdata.push(v);
             });
             var series1Data = getRetentionByMethod(xdata.join(","), "formula");
+            if(series1Data != null) {
+                series1Data = series1Data.filter(function(value, index, arr) {
+                    return  value >= 0;
+                });
+            }
             var flag = checkIfFitting(series1Data);
             if(flag) {
                 var series1 = new Object();
@@ -304,10 +310,16 @@ function getFittingDataOfKpi(chart, type) {
     });
 
     var series1Data = getRetentionByMethod(xdata.join(","), type);
+    if(series1Data != null) {
+        series1Data = series1Data.filter(function(value, index, arr) {
+            return  value >= 0;
+        });
+    }
     var flag = checkIfFitting(series1Data);
     if(flag) {
         var series1 = new Object();
         series1.data = series1Data;
+        console.log(series1Data);
         series1.type = 'line';
         series1.smooth = true;
         series1.name = "拟合值";
