@@ -9,7 +9,7 @@ $(function () {
 
     //为刷新按钮绑定事件
     $("#btn_query").on("click",function () {
-        // getTableData();
+        refreshOpDataTable();
     });
 
     $("#btn_downLoad").on("click",function () {
@@ -27,12 +27,8 @@ $(function () {
         $MB.n_warning("尚未进行触达，无法查看效果统计。");
     });
 
-    var dayWid = $('#touchDate').val();
-    var userActiv = $("#pathActiv").find("option:selected").val();
-    var userValue = $("#userValue").find("option:selected").val();
     var settings = {
         url: '/op/getOpDayDetailAllList',
-        // datatype: 'json',
         pagination: true,
         sidePagination: "server",
         pageList: [10, 25, 50, 100],
@@ -44,7 +40,7 @@ $(function () {
                 pageNum: (params.offset / params.limit) + 1,  //页码
                 sort: params.sort,      //排序列名
                 sortOrder: params.order,
-                param: {daywid: dayWid, userActiv: userActiv, userValue: userValue}
+                param: {daywid: $('#touchDate').val(), userActiv: $("#pathActiv").find("option:selected").val(), userValue: $("#userValue").find("option:selected").val()}
             };
         },
         columns: [[{
@@ -141,6 +137,10 @@ $(function () {
     };
     $MB.initTable('opdayTable', settings);
 });
+
+function refreshOpDataTable() {
+    $("#opdayTable").bootstrapTable('refresh');
+}
 
 // 获取表格数据
 // function getTableData() {
