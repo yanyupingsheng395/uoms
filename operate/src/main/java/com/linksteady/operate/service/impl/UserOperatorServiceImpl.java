@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -380,8 +381,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
             }
         }
 
-        String fpAbs = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getFpKpiVal() == null ? DEFAULT_VAL : String.valueOf(kpiInfoVos.getFpKpiVal()));
-        String spAbs = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getSpKpiVal() == null ? DEFAULT_VAL : String.valueOf(kpiInfoVos.getSpKpiVal()));
+        String fpAbs = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getFpKpiVal() == null ? DEFAULT_VAL : formatDouble(kpiInfoVos.getFpKpiVal()));
+        String spAbs = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getSpKpiVal() == null ? DEFAULT_VAL : formatDouble(kpiInfoVos.getSpKpiVal()));
         String fpContributeRate = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getFpKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == 0D ? DEFAULT_VAL: decimalFormat.format(kpiInfoVos.getFpKpiVal()/kpiInfoVos.getKpiVal()))));
         String spContributeRate = kpiInfoVos == null ? DEFAULT_VAL : (kpiInfoVos.getSpKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == null ? DEFAULT_VAL : (kpiInfoVos.getKpiVal() == 0D ? DEFAULT_VAL : decimalFormat.format(kpiInfoVos.getSpKpiVal()/kpiInfoVos.getKpiVal()))));
         result.put("fpAbs", fpAbs); // 首购绝对值
@@ -440,15 +441,18 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     private static Map<String, Object> getLastYearPeriod(String periodType, String startDt, String endDt) {
         Map<String, Object> result = Maps.newHashMap();
         String lastStartDt;
+        String lastEndDt;
         if(periodType.equals("Y")) { // 年
             lastStartDt = String.valueOf((Integer.valueOf(startDt) - 1));
+            lastEndDt = String.valueOf((Integer.valueOf(startDt) - 1));
             result.put("start", lastStartDt);
-            result.put("end", lastStartDt);
+            result.put("end", lastEndDt);
         }
         if(periodType.equals("M")) {
             lastStartDt = DateUtil.getLastYear(startDt);
+            lastEndDt = DateUtil.getLastYear(endDt);
             result.put("start", lastStartDt);
-            result.put("end", lastStartDt);
+            result.put("end", lastEndDt);
         }
         if(periodType.equals("D")) {
             result = DateUtil.getLastYearOfDay(startDt, endDt);
@@ -568,5 +572,16 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         }else {
             return "";
         }
+    }
+
+    /**
+     *  当double数据位数足够长时，会出现科学计数法。
+     *  用于取消科学计数法显示
+      */
+    private String formatDouble(Double d) {
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(20);
+        nf.setGroupingUsed(false);
+        return nf.format(d);
     }
 }
