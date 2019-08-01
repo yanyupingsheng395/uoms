@@ -44,4 +44,8 @@
     <update id="updateStatus">
         update UO_OP_DAILY_HEADER set status = #{status} where head_id = #{headId}
     </update>
+
+    <update id="updateActualNum">
+        update UO_OP_DAILY_HEADER set ACTUAL_NUM = #{num} where head_id = #{headId}
+    </update>
 </mapper>

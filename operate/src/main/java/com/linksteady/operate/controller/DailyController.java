@@ -1,6 +1,7 @@
 package com.linksteady.operate.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.google.common.collect.Lists;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.DailyDetail;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * 每日运营
@@ -104,13 +108,32 @@ public class DailyController {
      * @return
      */
     @GetMapping("/submitData")
-    public ResponseBo submitData(String headId, String groups) {
+    public ResponseBo submitData(String headId) {
         // 生成推送名单中
         String status = "pre_push";
-        List<DailyGroup> groupList = JSONArray.parseArray(groups).toJavaList(DailyGroup.class);
-
         dailyService.updateStatus(headId, status);
-        dailyGroupService.updateIsChecked(headId, groupList);
         return ResponseBo.ok();
+    }
+
+    /**
+     * 更改group是否选中
+     * @param headId
+     * @param groupId
+     * @return
+     */
+    @GetMapping("/updateGroupCheck")
+    public ResponseBo updateGroupCheck(String headId, String groups) {
+        List<DailyGroup> groupList = JSONArray.parseArray(groups).toJavaList(DailyGroup.class);
+        dailyGroupService.updateIsChecked(headId, groupList);
+        // 更改实际选择人数
+        List<String> groupIds = groupList.stream().map(x->x.getGroupId().toString()).collect(Collectors.toList());
+        dailyService.updateCheckNum(headId, groupIds);
+        return ResponseBo.ok();
+    }
+
+    @GetMapping("/getOriginalGroupCheck")
+    public ResponseBo getOriginalGroupCheck() {
+        List<Map<String, Object>> dataList = dailyGroupService.getOriginalGroupCheck();
+        return ResponseBo.okWithData(null, dataList);
     }
 }

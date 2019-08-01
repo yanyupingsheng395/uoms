@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author hxcao
@@ -22,6 +23,9 @@ import java.util.Map;
 @Slf4j
 @Service
 public class DailyDetailServiceImpl implements DailyDetailService {
+
+    private final String[] RETENTION_CODE = {"target01", "target02", "target03"};
+
 
     @Autowired
     private DailyDetailMapper dailyDetailMapper;
@@ -45,18 +49,19 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         xAxisData.add("留存");
         xAxisData.add("挽回");
 
-        yAxisData1 = getYAxisData(allData);
-        yAxisData2 = getYAxisData(checkedData);
+        List<String> cols = Arrays.asList(RETENTION_CODE);
+        yAxisData1 = convertData(getYAxisData(allData), cols);
+        yAxisData2 = convertData(getYAxisData(checkedData), cols);
 
         Map<String, Object> series1 = Maps.newHashMap();
         series1.put("name", "默认推荐用户");
         series1.put("type", "bar");
-        series1.put("data", yAxisData1.toArray());
+        series1.put("data", yAxisData1);
 
         Map<String, Object> series2 = Maps.newHashMap();
         series2.put("name", "实际推荐用户");
         series2.put("type", "bar");
-        series2.put("data", yAxisData2.toArray());
+        series2.put("data", yAxisData2);
 
         seriesData.add(series1);
         seriesData.add(series2);
@@ -65,18 +70,36 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         echart.setxAxisData(xAxisData);
         echart.setLegendData(legend);
         echart.setxAxisName("目标分类");
-        echart.setyAxisName("百分比");
+        echart.setyAxisName("占比(%)");
         return echart;
     }
 
-    private List<String> getYAxisData(List<Map<String, Object>> dataList) {
-        DecimalFormat df = new DecimalFormat("#.##%");
-        List<String> yAxisData = Lists.newLinkedList();
-        int total = dataList.stream().map(x-> x.get("count")).mapToInt(x->Integer.valueOf(x.toString())).sum();
-        dataList.stream().forEach(x-> {
-            yAxisData.add( df.format(Integer.valueOf(x.get("count").toString())/total)); });
-        return yAxisData;
+    private Map<String, Double> getYAxisData(List<Map<String, Object>> dataList) {
+        int total = dataList.stream().map(x-> x.get("COUNT")).mapToInt(x->Integer.valueOf(x.toString())).sum();
+        List<String> k = dataList.stream().map(x->x.get("TYPE").toString()).collect(Collectors.toList());
+        List<Double> v = dataList.stream().map(x-> Double.valueOf(x.get("COUNT").toString())/total).collect(Collectors.toList());
+
+        Map<String, Double> result = Maps.newHashMap();
+        for(int i=0; i<k.size();i++) {
+            result.put(k.get(i), v.get(i));
+        }
+        return result;
     }
+
+    public List<String> convertData(Map<String, Double> map, List<String> cols) {
+        DecimalFormat df = new DecimalFormat(".##");
+        List<String> result = Lists.newLinkedList();
+        for(String c:cols) {
+            Double v = map.get(c);
+            if(v != null) {
+                result.add(df.format(v * 100D));
+            }else {
+                result.add("0%");
+            }
+        }
+        return result;
+    }
+
 
     @Override
     public Echart getUrgency(String headId) {
@@ -96,8 +119,8 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         String[] x = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"};
         xAxisData = Arrays.asList(x);
 
-        yAxisData1 = getYAxisData(allData);
-        yAxisData2 = getYAxisData(checkedData);
+        yAxisData1 = convertData(getYAxisData(allData), xAxisData);
+        yAxisData2 = convertData(getYAxisData(checkedData), xAxisData);
 
         Map<String, Object> series1 = Maps.newHashMap();
         series1.put("name", "默认推荐用户");
@@ -116,7 +139,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         echart.setxAxisData(xAxisData);
         echart.setLegendData(legend);
         echart.setxAxisName("紧迫度");
-        echart.setyAxisName("百分比");
+        echart.setyAxisName("占比(%)");
         return echart;
     }
 

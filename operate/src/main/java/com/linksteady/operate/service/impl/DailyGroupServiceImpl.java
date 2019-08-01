@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -26,5 +27,10 @@ public class DailyGroupServiceImpl implements DailyGroupService {
     @Override
     public void updateIsChecked(String headId, List<DailyGroup> groupList) {
         dailyGroupMapper.updateIsChecked(headId, groupList);
+    }
+
+    @Override
+    public List<Map<String, Object>> getOriginalGroupCheck() {
+        return dailyGroupMapper.getOriginalGroupCheck();
     }
 }

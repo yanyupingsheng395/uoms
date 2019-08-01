@@ -19,4 +19,6 @@ public interface DailyMapper {
     Map<String, Object> getTipInfo(@Param("headId") String headId);
 
     void updateStatus(@Param("headId") String headId, @Param("status") String status);
+
+    void updateActualNum(String headId, int num);
 }

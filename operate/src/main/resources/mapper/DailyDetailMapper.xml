@@ -80,7 +80,7 @@
         ) where RN &gt;=#{start}
     </select>
 
-    <select id="getDataCount" resultMap="baseResult">
+    <select id="getDataCount" resultType="int">
         select count(1) from UO_OP_DAILY_DETAIL where head_id = #{headId} and group_id = #{groupId}
     </select>
 </mapper>

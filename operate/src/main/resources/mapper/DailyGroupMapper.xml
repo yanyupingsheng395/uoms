@@ -18,7 +18,7 @@
 
     <select id="getDataList" resultMap="baseResult">
         select GROUP_ID, GROUP_NAME, GROUP_DESC, USER_COUNT, IS_CHECK
-        from UO_OP_DAILY_GROUP where head_id = #{headId}
+        from UO_OP_DAILY_GROUP where head_id = #{headId} order by GROUP_ID asc
     </select>
 
     <update id="updateIsChecked">
@@ -30,4 +30,12 @@
             where head_id = #{headId} and group_id = #{item.groupId}
         </foreach>
     </update>
+
+    <select id="getOriginalGroupCheck" resultType="map">
+        select group_id id, CHECKED from UO_OP_DAILY_TEMPLATE_CONFIG
+    </select>
+
+    <select id="sumCheckedNum" resultType="int">
+        select case when sum(USER_COUNT) = 0 then 0 else sum(USER_COUNT) end from UO_OP_DAILY_GROUP where head_id = #{headId} and is_check = '1'
+    </select>
 </mapper>

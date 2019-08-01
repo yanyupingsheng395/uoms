@@ -1,11 +1,14 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.operate.dao.DailyGroupMapper;
 import com.linksteady.operate.dao.DailyMapper;
+import com.linksteady.operate.domain.DailyGroup;
 import com.linksteady.operate.domain.DailyInfo;
 import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.vo.Echart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,9 @@ public class DailyServiceImpl implements DailyService {
 
     @Autowired
     private DailyMapper dailyMapper;
+
+    @Autowired
+    private DailyGroupMapper dailyGroupMapper;
 
     @Override
     public List<DailyInfo> getPageList(int start, int end, String touchDt) {
@@ -36,7 +42,15 @@ public class DailyServiceImpl implements DailyService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateStatus(String headId, String status) {
         dailyMapper.updateStatus(headId, status);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateCheckNum(String headId, List<String> groupIds) {
+        int num = dailyGroupMapper.sumCheckedNum(headId);
+        dailyMapper.updateActualNum(headId, num);
     }
 }

@@ -19,4 +19,6 @@ public interface DailyService {
     Map<String, Object> getTipInfo(String headId);
 
     void updateStatus(String headId, String status);
+
+    void updateCheckNum(String headId, List<String> groupIds);
 }

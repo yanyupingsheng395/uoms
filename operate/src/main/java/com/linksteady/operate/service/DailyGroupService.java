@@ -3,6 +3,7 @@ package com.linksteady.operate.service;
 import com.linksteady.operate.domain.DailyGroup;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -13,4 +14,6 @@ public interface DailyGroupService {
     List<DailyGroup> getDataList(String headId);
 
     void updateIsChecked(String headId, List<DailyGroup> groupList);
+
+    List<Map<String, Object>> getOriginalGroupCheck();
 }

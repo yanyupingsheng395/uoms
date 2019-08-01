@@ -71,12 +71,13 @@ function getGroupDataList() {
             field: 'groupName',
             title: '分组名称'
         },{
-            field: 'totalNum',
+            field: 'userCount',
             title: '用户数量'
         },{
-            field: 'actualNum',
+            field: 'groupDesc',
             title: '描述'
         },{
+            field: 'operate',
             title: '操作',
             formatter: function (value, row, index) {
                 return "<a style='text-decoration: underline;color: #000;cursor: pointer;' onclick='userDetail(" + row.groupId + ")'>查看用户列表</a>";
@@ -88,26 +89,94 @@ function getGroupDataList() {
                     $("#groupTable").bootstrapTable("check", index);
                 }
             });
+            tableCheck();
+        },onClickRow: function (row, $element, field) {
+            // 设置点击查看列表该记录选中状态不变
+            var id = row['groupId'];
+            if(field == 'operate') {
+                if(row[0]) {
+                    $("#groupTable").bootstrapTable("uncheckBy", {field:"groupId", values:[id]})
+                }else {
+                    $("#groupTable").bootstrapTable("checkBy", {field:"groupId", values:[id]})
+                }
+            }
         }
     };
     $MB.initTable('groupTable', settings);
 }
-$('#groupTable').on('check.bs.table', function (e) {
 
-});
+// 注册tableCheck事件
+function tableCheck() {
+    $('#groupTable').on('check.bs.table', function ($element, row) {
+        var groupId = row['groupId'];
+        var isCheck = "1";
+        var groupData = new Array();
+        groupData.push({groupId: groupId, isCheck: isCheck});
+        updateIfCheck(groupData);
+    });
 
-$('#groupTable').on('uncheck.bs.table', function (e) {
+    $('#groupTable').on('uncheck.bs.table', function ($element, row) {
+        var groupId = row['groupId'];
+        var isCheck = "0";
+        var groupData = new Array();
+        groupData.push({groupId: groupId, isCheck: isCheck});
+        updateIfCheck(groupData);
+    });
 
-});
+    $('#groupTable').on('check-all.bs.table', function ($element, row) {
+        var allData = $("#groupTable").bootstrapTable('getData');
+        var groupData = new Array();
+        allData.forEach(function(value, index, arr) {
+            var id = value.groupId;
+            groupData.push({groupId: id, isCheck: '1'});
+        });
+        updateIfCheck(groupData);
+    });
 
-function userDetail(groupId) {
-    $("#user_modal").modal('show');
-    getDetailDataList(groupId);
+    $('#groupTable').on('uncheck-all.bs.table', function ($element, row) {
+        var allData = $("#groupTable").bootstrapTable('getData');
+        var groupData = new Array();
+        allData.forEach(function(value, index, arr) {
+            var id = value.groupId;
+            groupData.push({groupId: id, isCheck: '0'});
+        });
+        updateIfCheck(groupData);
+    });
 }
+
+
+/**
+ * 当选中或取消一条记录时，更改数据，并刷行当前页面图表信息
+ * @param groupId
+ * @param isCheck
+ */
+function updateIfCheck(groupData) {
+    $.get('/daily/updateGroupCheck', {groups:JSON.stringify(groupData), headId: headId}, function (r) {
+        if(r.code === 200) {
+            getTargetType();
+            getUrgency();
+            getTipInfo();
+        }else {
+            $MB.n_danger("发生未知异常！");
+        }
+    });
+}
+
+var GROUP_ID = "";
+function userDetail(groupId) {
+    GROUP_ID = groupId;
+    $("#user_modal").modal('show');
+}
+
+$('#user_modal').on('shown.bs.modal', function () {
+    if(GROUP_ID != "") {
+        getDetailDataList(GROUP_ID);
+    }
+});
 
 function getDetailDataList(groupId) {
     var settings = {
-        url: '/daily/getGroupDataList',
+        url: '/daily/getDetailPageList',
         pagination: true,
         sidePagination: "server",
         pageList: [10, 25, 50, 100],
@@ -115,7 +184,7 @@ function getDetailDataList(groupId) {
         sortOrder: "asc",
         queryParams: function (params) {
             return {
-                pageSize: params.limit,  ////页面大小
+                pageSize: params.limit,  //页面大小
                 pageNum: (params.offset / params.limit) + 1,
                 param: {headId: headId, groupId: groupId}
             };
@@ -207,14 +276,58 @@ function getDetailDataList(groupId) {
 function getTipInfo() {
     $.get("/daily/getTipInfo", {headId: headId}, function (r) {
         var data = r.data;
-        var actual = data['ACTUAL'] == null ? data['TOTAL'] : data['ACTUAL'];
-        var code = "<i class=\"mdi mdi-alert-circle-outline\"></i>"+data['TOUCHDT']+":有 " + data['TOTAL'] + " 个用户需要完成成长目标，您实际选择" + actual + "个用户进行成长管理；";
-        $("#tipContent").html("").append(code);
+        if(data != null) {
+            var actual = data['ACTUAL'] == null ? data['TOTAL'] : data['ACTUAL'];
+            var code = "<i class=\"mdi mdi-alert-circle-outline\"></i>"+data['TOUCHDT']+":有 " + data['TOTAL'] + " 个用户需要完成成长目标，您实际选择" + actual + "个用户进行成长管理；";
+            $("#tipContent").html("").append(code);
+        }
     });
 }
 
-// 提交数据
+/**
+ * 提交数据，生成名单
+ */
 function submitData() {
+    $.get("/daily/submitData", {headId: headId}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("提交成功！");
+        }else {
+            $MB.n_danger("未知错误！");
+        }
+        setTimeout(function () {
+            window.location.href = "/page/daily";
+        }, 1000);
+    });
+}
+
+/**
+ * 还原数据选中状态
+ */
+function resetDataCheck() {
+    $.get("/daily/getOriginalGroupCheck", {}, function (r) {
+        var data = r.data;
+        var allData = $("#groupTable").bootstrapTable('getData');
+        var selectedIds = new Array();
+        allData.forEach(function(value, index, arr) {
+            selectedIds.push(value.groupId);
+        });
+        if(data != null) {
+            $.each(data, function (k,v) {
+                var id = v['ID'];
+                if(selectedIds.indexOf(id) > -1) {
+                    if(v['CHECKED'] == '1') {
+                        $("#groupTable").bootstrapTable("checkBy", {field:"groupId", values:[id]})
+                    }else if(v['CHECKED'] == '0') {
+                        $("#groupTable").bootstrapTable("uncheckBy", {field:"groupId", values:[id]})
+                    }
+                }
+            });
+        }
+    });
+}
+
+// 选中或取消所有
+function checkAllData() {
     var selectedData = $("#groupTable").bootstrapTable('getSelections');
     var allData = $("#groupTable").bootstrapTable('getData');
     var groupData = new Array();
