@@ -22,7 +22,7 @@
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM RN from (
-          select t1.ID, t1.HEAD_ID,t1.TOUCH_RATE,t1.LOSS_RATE,t1.ABANDON_RATE,t1.CONVERT_RATE,t1.CONVERT_AMOUNT,t1.SUBSIDY_COUNT,t1.CANCLE_RATE,
+          select t1.HEAD_ID,t1.TOUCH_RATE,t1.LOSS_RATE,t1.ABANDON_RATE,t1.CONVERT_RATE,t1.CONVERT_AMOUNT,t1.SUBSIDY_COUNT,t1.CANCLE_RATE,
           t1.CANCLE_COUNT, t1.SUBSIDY_ROI, t1.CONVERT_COUNT, t2.TOUCH_DT, t2.TOTAL_NUM, t2.ACTUAL_NUM from UO_OP_DAILY_STATIS t1
           LEFT JOIN UO_OP_DAILY_HEADER t2 on t1.HEAD_ID = t2.HEAD_ID
           where 1=1
