@@ -17,7 +17,17 @@
     </resultMap>
 
     <select id="getDataList" resultMap="baseResult">
-        select GROUP_ID, GROUP_NAME, GROUP_DESC, USER_COUNT
+        select GROUP_ID, GROUP_NAME, GROUP_DESC, USER_COUNT, IS_CHECK
         from UO_OP_DAILY_GROUP where head_id = #{headId}
     </select>
+
+    <update id="updateIsChecked">
+        <foreach collection="groupList" item="item" index="index" open="begin" close=";end;" separator=";">
+            update UO_OP_DAILY_GROUP
+            <set>
+                IS_CHECK = #{item.isCheck}
+            </set>
+            where head_id = #{headId} and group_id = #{item.groupId}
+        </foreach>
+    </update>
 </mapper>

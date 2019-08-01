@@ -11,4 +11,6 @@ import java.util.List;
 public interface DailyGroupService {
 
     List<DailyGroup> getDataList(String headId);
+
+    void updateIsChecked(String headId, List<DailyGroup> groupList);
 }

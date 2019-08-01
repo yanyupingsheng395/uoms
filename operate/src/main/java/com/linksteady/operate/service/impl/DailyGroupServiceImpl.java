@@ -22,4 +22,9 @@ public class DailyGroupServiceImpl implements DailyGroupService {
     public List<DailyGroup> getDataList(String headId) {
         return dailyGroupMapper.getDataList(headId);
     }
+
+    @Override
+    public void updateIsChecked(String headId, List<DailyGroup> groupList) {
+        dailyGroupMapper.updateIsChecked(headId, groupList);
+    }
 }

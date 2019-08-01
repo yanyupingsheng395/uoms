@@ -1,9 +1,11 @@
 package com.linksteady.operate.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.DailyDetail;
 import com.linksteady.operate.domain.DailyEffect;
+import com.linksteady.operate.domain.DailyGroup;
 import com.linksteady.operate.domain.DailyInfo;
 import com.linksteady.operate.service.DailyDetailService;
 import com.linksteady.operate.service.DailyEffectService;
@@ -11,8 +13,10 @@ import com.linksteady.operate.service.DailyGroupService;
 import com.linksteady.operate.service.DailyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -85,6 +89,11 @@ public class DailyController {
         return ResponseBo.okOverPaging(null, count, dailyEffectList);
     }
 
+    /**
+     * 获取编辑页xxx，共x人，选择y人
+     * @param headId
+     * @return
+     */
     @GetMapping("/getTipInfo")
     public ResponseBo getTipInfo(@RequestParam String headId) {
         return ResponseBo.okWithData(null, dailyService.getTipInfo(headId));
@@ -95,10 +104,13 @@ public class DailyController {
      * @return
      */
     @GetMapping("/submitData")
-    public ResponseBo submitData(String headId, String groupIds) {
+    public ResponseBo submitData(String headId, String groups) {
         // 生成推送名单中
         String status = "pre_push";
+        List<DailyGroup> groupList = JSONArray.parseArray(groups).toJavaList(DailyGroup.class);
+
         dailyService.updateStatus(headId, status);
-        return null;
+        dailyGroupService.updateIsChecked(headId, groupList);
+        return ResponseBo.ok();
     }
 }

@@ -61,6 +61,9 @@ function getGroupDataList() {
         columns: [{
             checkbox: true
         },{
+            field: 'isCheck',
+            visible: false
+        },{
             field: 'groupId',
             title: 'ID',
             visible: false
@@ -78,11 +81,17 @@ function getGroupDataList() {
             formatter: function (value, row, index) {
                 return "<a style='text-decoration: underline;color: #000;cursor: pointer;' onclick='userDetail(" + row.groupId + ")'>查看用户列表</a>";
             }
-        }]
+        }],onLoadSuccess: function () {
+            var allData = $("#groupTable").bootstrapTable('getData');
+            allData.forEach(function(value, index, arr) {
+                if(value.isCheck == '1') {
+                    $("#groupTable").bootstrapTable("check", index);
+                }
+            });
+        }
     };
     $MB.initTable('groupTable', settings);
 }
-
 $('#groupTable').on('check.bs.table', function (e) {
 
 });
@@ -204,9 +213,31 @@ function getTipInfo() {
     });
 }
 
-//
+// 提交数据
 function submitData() {
-    $.get("/daily/submitData", {headId: headId}, function (r) {
-
+    var selectedData = $("#groupTable").bootstrapTable('getSelections');
+    var allData = $("#groupTable").bootstrapTable('getData');
+    var groupData = new Array();
+    var selectedIds = new Array();
+    selectedData.forEach(function(value, index, arr) {
+        selectedIds.push(value.groupId);
+    });
+    allData.forEach(function(value, index, arr) {
+        var id = value.groupId;
+        if(selectedIds.indexOf(id) > -1) {
+            groupData.push({groupId: id, isCheck: '1'});
+        }else {
+            groupData.push({groupId: id, isCheck: '0'});
+        }
+    });
+    $.get("/daily/submitData", {headId: headId, groups: JSON.stringify(groupData)}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("提交成功！");
+        }else {
+            $MB.n_danger("未知错误！");
+        }
+        setTimeout(function () {
+            window.location.href = "/page/daily";
+        }, 1000);
     });
 }
