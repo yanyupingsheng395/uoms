@@ -34,4 +34,9 @@ public class DailyServiceImpl implements DailyService {
     public Map<String, Object> getTipInfo(String headId) {
         return dailyMapper.getTipInfo(headId);
     }
+
+    @Override
+    public void updateStatus(String headId, String status) {
+        dailyMapper.updateStatus(headId, status);
+    }
 }

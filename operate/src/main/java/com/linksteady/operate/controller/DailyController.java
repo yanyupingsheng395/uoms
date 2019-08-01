@@ -89,4 +89,16 @@ public class DailyController {
     public ResponseBo getTipInfo(@RequestParam String headId) {
         return ResponseBo.okWithData(null, dailyService.getTipInfo(headId));
     }
+
+    /**
+     * 提交数据，更改状态，生成名单
+     * @return
+     */
+    @GetMapping("/submitData")
+    public ResponseBo submitData(String headId, String groupIds) {
+        // 生成推送名单中
+        String status = "pre_push";
+        dailyService.updateStatus(headId, status);
+        return null;
+    }
 }

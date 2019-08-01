@@ -203,3 +203,10 @@ function getTipInfo() {
         $("#tipContent").html("").append(code);
     });
 }
+
+//
+function submitData() {
+    $.get("/daily/submitData", {headId: headId}, function (r) {
+
+    });
+}

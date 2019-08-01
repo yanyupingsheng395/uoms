@@ -17,4 +17,6 @@ public interface DailyMapper {
     int getTotalCount(@Param("touchDt") String touchDt);
 
     Map<String, Object> getTipInfo(@Param("headId") String headId);
+
+    void updateStatus(@Param("headId") String headId, @Param("status") String status);
 }

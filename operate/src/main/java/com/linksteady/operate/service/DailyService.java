@@ -17,4 +17,6 @@ public interface DailyService {
     int getTotalCount(String touchDt);
 
     Map<String, Object> getTipInfo(String headId);
+
+    void updateStatus(String headId, String status);
 }

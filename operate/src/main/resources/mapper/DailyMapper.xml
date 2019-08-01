@@ -40,4 +40,8 @@
     <select id="getTipInfo" resultType="map">
         select to_char(touch_dt, 'YYYY-MM-DD') touchDt, TOTAL_NUM total, ACTUAL_NUM actual from UO_OP_DAILY_HEADER where head_id = #{headId}
     </select>
+
+    <update id="updateStatus">
+        update UO_OP_DAILY_HEADER set status = #{status} where head_id = #{headId}
+    </update>
 </mapper>
