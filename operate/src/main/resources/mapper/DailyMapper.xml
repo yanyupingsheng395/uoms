@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.DailyMapper">
+
+    <resultMap id="baseResult" type="com.linksteady.operate.domain.DailyInfo">
+        <result column="HEAD_ID" property="headId" jdbcType="DECIMAL"></result>
+        <result column="TOTAL_NUM" property="totalNum" jdbcType="DECIMAL"></result>
+        <result column="ACTUAL_NUM" property="actualNum" jdbcType="DECIMAL"></result>
+        <result column="TOUCH_RATE" property="touchRate" jdbcType="DECIMAL"></result>
+        <result column="CONVERT_COUNT" property="convertCount" jdbcType="DECIMAL"></result>
+        <result column="CONVERT_RATE" property="convertRate" jdbcType="DECIMAL"></result>
+        <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"></result>
+        <result column="TOUCH_DT" property="touchDt" jdbcType="DATE"></result>
+    </resultMap>
+
+    <select id="getPageList" resultMap="baseResult">
+        select * from (
+        select t.*, ROWNUM rn from (
+        SELECT T1.HEAD_ID, T1.TOTAL_NUM, T1.ACTUAL_NUM, T1.TOUCH_DT, T1.STATUS,
+         T2.TOUCH_RATE, T2.CONVERT_COUNT, T2.CONVERT_RATE, T2.CONVERT_AMOUNT
+         FROM UO_OP_DAILY_HEADER T1
+        LEFT JOIN UO_OP_DAILY_STATIS T2 ON T1.HEAD_ID = T2.HEAD_ID
+        where 1=1
+        <if test="touchDt != ''">
+            and to_char(T1.touch_dt, 'YYYY-MM-DD') = #{touchDt}
+        </if>
+        ORDER BY t1.TOUCH_DT desc
+        ) t where ROWNUM &lt;= #{end}
+        )where rn &gt;= #{start}
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        select count(1) from UO_OP_DAILY_HEADER
+        where 1=1
+        <if test="touchDt != ''">
+            and to_char(touch_dt, 'YYYY-MM-DD') = #{touchDt}
+        </if>
+    </select>
+
+    <select id="getTipInfo" resultType="map">
+        select to_char(touch_dt, 'YYYY-MM-DD') touchDt, TOTAL_NUM total, ACTUAL_NUM actual from UO_OP_DAILY_HEADER where head_id = #{headId}
+    </select>
+</mapper>

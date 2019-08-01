@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.DailyDetailMapper">
+
+    <resultMap id="baseResult" type="com.linksteady.operate.domain.DailyDetail">
+        <result column="DAILY_DETAIL_ID" jdbcType="DECIMAL" property="dailyDetailId"></result>
+        <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"></result>
+        <result column="TAR_TYPE" jdbcType="VARCHAR" property="tarType"></result>
+        <result column="PATH_ACTIV" jdbcType="VARCHAR" property="pathActiv"></result>
+        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
+        <result column="SPU_NAME" jdbcType="VARCHAR" property="spuName"></result>
+        <result column="PIECE_PRICE" jdbcType="VARCHAR" property="piecePrice"></result>
+        <result column="JOIN_RATE" jdbcType="VARCHAR" property="joinRate"></result>
+        <result column="PURCH_TYPE_NUM" jdbcType="VARCHAR" property="purchTypeNum"></result>
+        <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"></result>
+        <result column="REFER_DENO" jdbcType="VARCHAR" property="referDeno"></result>
+        <result column="DISCOUNT_LEVEL" jdbcType="VARCHAR" property="discountLevel"></result>
+        <result column="COMPLETE_PURCH" jdbcType="VARCHAR" property="completePurch"></result>
+        <result column="URGENCY_LEVEL" jdbcType="VARCHAR" property="urgencyLevel"></result>
+        <result column="REC_RETENTION_NAME" jdbcType="VARCHAR" property="recRetentionName"></result>
+        <result column="REC_UP_NAME" jdbcType="VARCHAR" property="recUpName"></result>
+        <result column="REC_CROSS_NAME" jdbcType="VARCHAR" property="recCrossName"></result>
+        <result column="REC_LAST_NAME" jdbcType="VARCHAR" property="recLastName"></result>
+        <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"></result>
+        <result column="GROWTH_STRATEGY_ID" jdbcType="DECIMAL" property="growthStrategyId"></result>
+        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
+    </resultMap>
+
+    <select id="getTargetType" resultType="map">
+        select count(1) count, tar_type type from UO_OP_DAILY_DETAIL
+        where head_id = #{headId}
+        GROUP BY tar_type
+        order by tar_type asc
+    </select>
+
+    <select id="getTargetTypeOfCheck" resultType="map">
+        SELECT
+            count(1) count,
+            tar_type type
+        FROM
+            UO_OP_DAILY_DETAIL
+        WHERE
+            head_id = #{headId}
+            and group_id in
+            (select group_id from UO_OP_DAILY_GROUP where is_check = '1' and HEAD_ID = #{headId})
+        GROUP BY
+            tar_type
+        order by tar_type asc
+    </select>
+
+    <select id="getUrgency" resultType="map">
+        select count(1) count, URGENCY_LEVEL type from UO_OP_DAILY_DETAIL
+        where head_id = #{headId}
+        GROUP BY URGENCY_LEVEL
+        order by URGENCY_LEVEL asc
+    </select>
+
+    <select id="getUrgencyOfCheck" resultType="map">
+        SELECT
+            count( 1 ) count,
+            URGENCY_LEVEL type
+        FROM
+            UO_OP_DAILY_DETAIL
+        WHERE
+            head_id = #{headId}
+            and group_id in
+            (select group_id from UO_OP_DAILY_GROUP where is_check = '1' and HEAD_ID = #{headId})
+        GROUP BY
+            URGENCY_LEVEL
+        order by URGENCY_LEVEL asc
+    </select>
+
+    <select id="getPageList" resultMap="baseResult">
+        select * from (
+        select t.*, ROWNUM RN from (
+        select USER_ID, PURCH_PRODUCT_NAME, PURCH_TIMES, TAR_TYPE, PIECE_PRICE, SPU_NAME, COMPLETE_PURCH, PATH_ACTIV, USER_VALUE, URGENCY_LEVEL,REC_RETENTION_NAME,REC_UP_NAME,REC_CROSS_NAME,ORDER_PERIOD,REFER_DENO,DISCOUNT_LEVEL
+        from UO_OP_DAILY_DETAIL where head_id = #{headId} and group_id = #{groupId}
+        ) t where ROWNUM &lt;=#{end}
+        ) where RN &gt;=#{start}
+    </select>
+
+    <select id="getDataCount" resultMap="baseResult">
+        select count(1) from UO_OP_DAILY_DETAIL where head_id = #{headId} and group_id = #{groupId}
+    </select>
+</mapper>

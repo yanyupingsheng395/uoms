@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.DailyGroupMapper">
+    <resultMap id="baseResult" type="com.linksteady.operate.domain.DailyGroup">
+        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
+        <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
+        <result column="GROUP_NAME" jdbcType="DECIMAL" property="groupName"></result>
+        <result column="GROUP_DESC" jdbcType="DECIMAL" property="groupDesc"></result>
+        <result column="LIFECYLE" jdbcType="DECIMAL" property="lifeCycle"></result>
+        <result column="USER_VALUE" jdbcType="DECIMAL" property="userValue"></result>
+        <result column="PATH_ACTIVE" jdbcType="DECIMAL" property="pathActive"></result>
+        <result column="TAR_TYPE" jdbcType="DECIMAL" property="tarType"></result>
+        <result column="PATH_MULTI" jdbcType="DECIMAL" property="pathMulti"></result>
+        <result column="USER_COUNT" jdbcType="DECIMAL" property="userCount"></result>
+        <result column="IS_CHECK" jdbcType="DECIMAL" property="isCheck"></result>
+        <result column="URGENCY_LEVEL" jdbcType="DECIMAL" property="urgencyLevel"></result>
+    </resultMap>
+
+    <select id="getDataList" resultMap="baseResult">
+        select GROUP_ID, GROUP_NAME, GROUP_DESC, USER_COUNT
+        from UO_OP_DAILY_GROUP where head_id = #{headId}
+    </select>
+</mapper>

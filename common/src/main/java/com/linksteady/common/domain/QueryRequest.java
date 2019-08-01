@@ -19,6 +19,10 @@ public class QueryRequest implements Serializable {
 
 	private Map<String,String> param;
 
+	private int start;
+
+	private int end;
+
 	public String getSort() {
 		return sort;
 	}
@@ -57,5 +61,13 @@ public class QueryRequest implements Serializable {
 
 	public void setParam(Map<String, String> param) {
 		this.param = param;
+	}
+
+	public int getStart() {
+		return (pageNum-1) * pageSize + 1;
+	}
+
+	public int getEnd() {
+		return pageNum * pageSize;
 	}
 }

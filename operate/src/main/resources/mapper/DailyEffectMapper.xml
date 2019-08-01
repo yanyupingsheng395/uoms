@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.DailyEffectMapper">
+
+    <resultMap id="baseResult" type="com.linksteady.operate.domain.DailyEffect">
+        <result column="HEAD_ID" property="headId" jdbcType="DECIMAL"></result>
+        <result column="TOUCH_RATE" property="touchRate" jdbcType="DECIMAL"></result>
+        <result column="LOSS_RATE" property="lossRate" jdbcType="DECIMAL"></result>
+        <result column="ABANDON_RATE" property="abandonRate" jdbcType="DECIMAL"></result>
+        <result column="CONVERT_RATE" property="convertRate" jdbcType="DECIMAL"></result>
+        <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"></result>
+        <result column="SUBSIDY_COUNT" property="subsidyCount" jdbcType="DECIMAL"></result>
+        <result column="CANCLE_RATE" property="cancleRate" jdbcType="DECIMAL"></result>
+        <result column="CANCLE_COUNT" property="cancleCount" jdbcType="DECIMAL"></result>
+        <result column="SUBSIDY_ROI" property="subsidyRoi" jdbcType="DECIMAL"></result>
+        <result column="CONVERT_COUNT" property="convertCount" jdbcType="DECIMAL"></result>
+        <result column="TOUCH_DT" property="touchDt" jdbcType="DATE"></result>
+        <result column="TOTAL_NUM" property="totalNum" jdbcType="DECIMAL"></result>
+        <result column="ACTUAL_NUM" property="actualNum" jdbcType="DECIMAL"></result>
+    </resultMap>
+
+    <select id="getPageList" resultMap="baseResult">
+        select * from (
+        select t.*, ROWNUM RN from (
+          select t1.ID, t1.HEAD_ID,t1.TOUCH_RATE,t1.LOSS_RATE,t1.ABANDON_RATE,t1.CONVERT_RATE,t1.CONVERT_AMOUNT,t1.SUBSIDY_COUNT,t1.CANCLE_RATE,
+          t1.CANCLE_COUNT, t1.SUBSIDY_ROI, t1.CONVERT_COUNT, t2.TOUCH_DT, t2.TOTAL_NUM, t2.ACTUAL_NUM from UO_OP_DAILY_STATIS t1
+          LEFT JOIN UO_OP_DAILY_HEADER t2 on t1.HEAD_ID = t2.HEAD_ID
+          where 1=1
+          <if test="touchDt != ''">
+            and to_char(T2.touch_dt, 'yyyy-MM-dd') = #{touchDt}
+          </if>
+        ) t where ROWNUM &lt;=#{end}
+        ) where RN &gt;=#{start}
+    </select>
+
+    <select id="getDataCount" resultType="int">
+        select count(1) from UO_OP_DAILY_STATIS t1 LEFT JOIN UO_OP_DAILY_HEADER t2 on t1.HEAD_ID = t2.HEAD_ID
+        where 1=1
+        <if test="touchDt != ''">
+            and to_char(T2.touch_dt, 'yyyy-MM-dd') = #{touchDt}
+        </if>
+    </select>
+</mapper>

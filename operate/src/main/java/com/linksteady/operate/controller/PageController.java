@@ -3,7 +3,9 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.annotation.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author hxcao
@@ -51,6 +53,22 @@ public class PageController {
     @RequestMapping("/op/period")
     public String opPeriodList() {
         return "operate/op/opperiod";
+    }
+
+    @RequestMapping("/daily")
+    public String daily() {
+        return "operate/daily/list";
+    }
+
+    @RequestMapping("/daily/edit")
+    public String dailyEdit(Model model, @RequestParam("id") String headId) {
+        model.addAttribute("headId", headId);
+        return "operate/daily/edit";
+    }
+
+    @RequestMapping("/effect")
+    public String effect() {
+        return "operate/daily/effect";
     }
 
 }
