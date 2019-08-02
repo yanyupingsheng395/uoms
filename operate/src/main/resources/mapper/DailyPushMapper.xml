@@ -85,24 +85,15 @@
     </select>
 
     <insert id="savePushInfo">
-        INTO UO_OP_DAILY_PUSHLIST(PUSHLIST_ID,HEAD_ID,USER_ID,PHONE_NUM,SMS_CONTENT,SMS_CODE ,DAILY_DETAIL_ID,REC_LAST_ID,REC_LAST_NAME,COUPON_ID,GROWTH_STRATEGY_ID,GROUP_ID,COUPON_NAME,ORDER_PERIOD,STATUS)
+        INSERT INTO UO_OP_DAILY_PUSHLIST(PUSHLIST_ID,HEAD_ID,USER_ID,SMS_CONTENT,SMS_CODE,STATUS)
         SELECT SEQ_UO_OP_DAILY_PUSHLIST.NEXTVAL,A.*
                FROM (
         <foreach item="item" index="index" collection="list" separator="UNION ALL">
             SELECT
                  #{item.headId},
                  #{item.userId},
-                 #{item.phoneNum},
                  #{item.smsContent},
                  #{item.smsCode},
-                 #{item.dailyDetailId},
-                 #{item.recLastId},
-                 #{item.recLastName},
-                 #{item.couponId},
-                 #{item.growthStreadyId},
-                 #{item.groupId},
-                 #{item.couponName},
-                 #{item.orderPeriod},
                  'P'
             FROM DUAL
         </foreach>
