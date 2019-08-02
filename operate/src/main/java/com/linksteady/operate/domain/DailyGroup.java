@@ -68,4 +68,21 @@ public class DailyGroup {
      * 紧迫度
      */
     private String urgencyLevel;
+
+    /**
+     * 无券短信模板
+     */
+    private String smsCode;
+
+    /**
+     * 有券短信模板
+     */
+    private String prodSmsCode;
+
+    /**
+     * 模板内容
+     */
+    private String smsContent;
+
+    private String prodSmsContent;
 }

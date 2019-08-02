@@ -25,6 +25,10 @@
         <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"></result>
         <result column="GROWTH_STRATEGY_ID" jdbcType="DECIMAL" property="growthStrategyId"></result>
         <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
+        <result column="COUPON_DENOM" jdbcType="VARCHAR" property="couponDenom"></result>
+        <result column="PURCH_PRODUCT_NAME" jdbcType="VARCHAR" property="purchProductName"></result>
+        <result column="PURCH_TIMES" jdbcType="VARCHAR" property="purchTimes"></result>
+        <result column="REC_TYPE" jdbcType="VARCHAR" property="recType"></result>
     </resultMap>
 
     <select id="getTargetType" resultType="map">
@@ -74,8 +78,8 @@
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM RN from (
-        select USER_ID, PURCH_PRODUCT_NAME, PURCH_TIMES, TAR_TYPE, PIECE_PRICE, SPU_NAME, COMPLETE_PURCH, PATH_ACTIV, USER_VALUE, URGENCY_LEVEL,REC_RETENTION_NAME,REC_UP_NAME,REC_CROSS_NAME,ORDER_PERIOD,REFER_DENO,DISCOUNT_LEVEL
-        from UO_OP_DAILY_DETAIL where head_id = #{headId} and group_id = #{groupId}
+        select USER_ID, PURCH_PRODUCT_NAME, PURCH_TIMES, TAR_TYPE, PIECE_PRICE, SPU_NAME, COMPLETE_PURCH, PATH_ACTIV, USER_VALUE, URGENCY_LEVEL,REC_RETENTION_NAME,REC_UP_NAME,REC_CROSS_NAME,ORDER_PERIOD,REFER_DENO, t2.COUPON_DENOM, DISCOUNT_LEVEL, REC_TYPE
+        from UO_OP_DAILY_DETAIL t1, UO_OP_COUPON t2 where t1.COUPON_ID = t2.COUPON_ID(+) and t1.head_id = #{headId} and group_id = #{groupId}
         ) t where ROWNUM &lt;=#{end}
         ) where RN &gt;=#{start}
     </select>

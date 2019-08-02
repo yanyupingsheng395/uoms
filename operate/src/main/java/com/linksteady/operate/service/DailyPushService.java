@@ -1,6 +1,7 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.DailyInfo;
+import com.linksteady.operate.domain.DailyPush;
 import com.linksteady.operate.domain.DailyPushInfo;
 
 import java.util.List;
@@ -34,5 +35,9 @@ public interface DailyPushService {
      * 更新主记录的触达统计信息
      */
     void updateHeaderSendStatis();
+
+    List<DailyPush> getPushList(int start, int end, String headId);
+
+    int getDataTotalCount(String headId);
 
 }

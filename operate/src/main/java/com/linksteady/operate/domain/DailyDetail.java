@@ -133,4 +133,14 @@ public class DailyDetail {
      * 组ID
      */
     private Long groupId;
+
+    /**
+     * 优惠券大小
+     */
+    private String couponDenom;
+
+    /**
+     * 推荐类型
+     */
+    private String recType;
 }

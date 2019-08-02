@@ -17,41 +17,6 @@ public class OpServiceImpl implements OpService {
     private OpMapper opMapper;
 
     @Override
-    public List<Map<String, Object>> getOpDayList(int startRow, int endRow,String daywid) {
-        return opMapper.getOpDayList(startRow, endRow,daywid);
-    }
-
-    @Override
-    public int getOpDayListCount(String daywid) {
-        return opMapper.getOpDayListCount(daywid);
-    }
-
-    @Override
-    public int getOpDayListCount(String daywid, String userActiv, String userValue) {
-        return opMapper.getOpDayListCountOfCondition(daywid, userActiv, userValue);
-    }
-
-    @Override
-    public Integer getOpDayUserCountInfo(String daywid) {
-        return opMapper.getOpDayUserCountInfo(daywid);
-    }
-
-    @Override
-    public List<Map<String, Object>> getOpDayDetailList(int startRow, int endRow, String daywid) {
-        return opMapper.getOpDayDetailList(startRow,endRow,daywid);
-    }
-
-    @Override
-    public int getOpDayDetailListCount(String daywid) {
-        return opMapper.getOpDayDetailListCount(daywid);
-    }
-
-    @Override
-    public List<Map<String, Object>> getOpDayDetailAllList(String daywid, String userActiv, String userValue, int start, int end, String sortColumn, String sortOrder) {
-        return opMapper.getOpDayDetailAllList(daywid, userActiv, userValue, start, end, sortColumn, sortOrder);
-    }
-
-    @Override
     public List<Map<String, Object>> getPeriodHeaderList(int startRow, int endRow, String taskName) {
         return opMapper.getPeriodHeaderList(startRow,endRow, taskName);
     }

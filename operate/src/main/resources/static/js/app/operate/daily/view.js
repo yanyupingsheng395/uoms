@@ -59,8 +59,6 @@ function getGroupDataList() {
             return {headId: headId};
         },
         columns: [{
-            checkbox: true
-        },{
             field: 'isCheck',
             visible: false
         },{
@@ -77,19 +75,11 @@ function getGroupDataList() {
             field: 'groupDesc',
             title: '描述'
         },{
-            field: 'smsContent',
-            title: '无券短信模板',
-            formatter: function (value, row, index) {
-                var tmp = value.substring(0, 10) + "...";
-                return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\""+value+"\">"+tmp+"</a>";
-            }
+            field: 'smsCode',
+            title: '无券短信模板'
         },{
-            field: 'prodSmsContent',
-            title: '有券短信模板',
-            formatter: function (value, row, index) {
-                var tmp = value.substring(0, 10) + "...";
-                return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\""+value+"\">"+tmp+"</a>";
-            }
+            field: 'prodSmsCode',
+            title: '有券短信模板'
         },{
             field: 'operate',
             title: '操作',
@@ -97,85 +87,12 @@ function getGroupDataList() {
                 return "<a style='text-decoration: underline;color: #000;cursor: pointer;' onclick='userDetail(" + row.groupId + ")'>查看用户列表</a>";
             }
         }],onLoadSuccess: function () {
-            $("a[data-toggle='tooltip']").tooltip();
-            var allData = $("#groupTable").bootstrapTable('getData');
-            allData.forEach(function(value, index, arr) {
-                if(value.isCheck == '1') {
-                    $("#groupTable").bootstrapTable("check", index);
-                }
-            });
-            tableCheck();
-        },onClickRow: function (row, $element, field) {
-            // 设置点击查看列表该记录选中状态不变
-            var id = row['groupId'];
-            if(field == 'operate') {
-                if(row[0]) {
-                    $("#groupTable").bootstrapTable("uncheckBy", {field:"groupId", values:[id]})
-                }else {
-                    $("#groupTable").bootstrapTable("checkBy", {field:"groupId", values:[id]})
-                }
-            }
+
         }
     };
     $MB.initTable('groupTable', settings);
 }
 
-// 注册tableCheck事件
-function tableCheck() {
-    $('#groupTable').on('check.bs.table', function ($element, row) {
-        var groupId = row['groupId'];
-        var isCheck = "1";
-        var groupData = new Array();
-        groupData.push({groupId: groupId, isCheck: isCheck});
-        updateIfCheck(groupData);
-    });
-
-    $('#groupTable').on('uncheck.bs.table', function ($element, row) {
-        var groupId = row['groupId'];
-        var isCheck = "0";
-        var groupData = new Array();
-        groupData.push({groupId: groupId, isCheck: isCheck});
-        updateIfCheck(groupData);
-    });
-
-    $('#groupTable').on('check-all.bs.table', function ($element, row) {
-        var allData = $("#groupTable").bootstrapTable('getData');
-        var groupData = new Array();
-        allData.forEach(function(value, index, arr) {
-            var id = value.groupId;
-            groupData.push({groupId: id, isCheck: '1'});
-        });
-        updateIfCheck(groupData);
-    });
-
-    $('#groupTable').on('uncheck-all.bs.table', function ($element, row) {
-        var allData = $("#groupTable").bootstrapTable('getData');
-        var groupData = new Array();
-        allData.forEach(function(value, index, arr) {
-            var id = value.groupId;
-            groupData.push({groupId: id, isCheck: '0'});
-        });
-        updateIfCheck(groupData);
-    });
-}
-
-
-/**
- * 当选中或取消一条记录时，更改数据，并刷行当前页面图表信息
- * @param groupId
- * @param isCheck
- */
-function updateIfCheck(groupData) {
-    $.get('/daily/updateGroupCheck', {groups:JSON.stringify(groupData), headId: headId}, function (r) {
-        if(r.code === 200) {
-            getTargetType();
-            getUrgency();
-            getTipInfo();
-        }else {
-            $MB.n_danger("发生未知异常！");
-        }
-    });
-}
 
 var GROUP_ID = "";
 function userDetail(groupId) {
@@ -320,28 +237,6 @@ function getDetailDataList(groupId) {
                 field: 'recCrossName',
                 title: '交叉推荐'
             },{
-                field: 'recType',
-                title: '推荐类型',
-                formatter: function (value, row, index) {
-                    var res = "";
-                    switch (value) {
-                        case "1":
-                            res = "留存推荐";
-                            break;
-                        case "2":
-                            res = "向上推荐";
-                            break;
-                        case "3":
-                            res = "交叉推荐";
-                            break;
-                        default:
-                            res = "-";
-                            break;
-                    }
-                    return res;
-                }
-            },
-            {
                 field: 'discountLevel',
                 title: '优惠力度'
             },{
@@ -351,7 +246,7 @@ function getDetailDataList(groupId) {
                 field: 'orderPeriod',
                 title: '触达时段'
             }
-            ]]
+        ]]
     };
     $('#userListTable').bootstrapTable('destroy');
     $MB.initTable('userListTable', settings);
@@ -365,81 +260,5 @@ function getTipInfo() {
             var code = "<i class=\"mdi mdi-alert-circle-outline\"></i>"+data['TOUCHDT']+":有 " + data['TOTAL'] + " 个用户需要完成成长目标，您实际选择" + actual + "个用户进行成长管理；";
             $("#tipContent").html("").append(code);
         }
-    });
-}
-
-/**
- * 提交数据，生成名单
- */
-function submitData() {
-    $MB.confirm({
-        title: "<i class='mdi mdi-alert-outline'></i>提示：",
-        content: "确定提交当前数据?"
-    }, function () {
-        $.get("/daily/submitData", {headId: headId}, function (r) {
-            if(r.code === 200) {
-                $MB.n_success("提交成功！");
-            }else {
-                $MB.n_danger("未知错误！");
-            }
-            setTimeout(function () {
-                window.location.href = "/page/daily";
-            }, 1000);
-        });
-    });
-}
-
-/**
- * 还原数据选中状态
- */
-function resetDataCheck() {
-    $.get("/daily/getOriginalGroupCheck", {}, function (r) {
-        var data = r.data;
-        var allData = $("#groupTable").bootstrapTable('getData');
-        var selectedIds = new Array();
-        allData.forEach(function(value, index, arr) {
-            selectedIds.push(value.groupId);
-        });
-        if(data != null) {
-            $.each(data, function (k,v) {
-                var id = v['ID'];
-                if(selectedIds.indexOf(id) > -1) {
-                    if(v['CHECKED'] == '1') {
-                        $("#groupTable").bootstrapTable("checkBy", {field:"groupId", values:[id]})
-                    }else if(v['CHECKED'] == '0') {
-                        $("#groupTable").bootstrapTable("uncheckBy", {field:"groupId", values:[id]})
-                    }
-                }
-            });
-        }
-    });
-}
-
-// 选中或取消所有
-function checkAllData() {
-    var selectedData = $("#groupTable").bootstrapTable('getSelections');
-    var allData = $("#groupTable").bootstrapTable('getData');
-    var groupData = new Array();
-    var selectedIds = new Array();
-    selectedData.forEach(function(value, index, arr) {
-        selectedIds.push(value.groupId);
-    });
-    allData.forEach(function(value, index, arr) {
-        var id = value.groupId;
-        if(selectedIds.indexOf(id) > -1) {
-            groupData.push({groupId: id, isCheck: '1'});
-        }else {
-            groupData.push({groupId: id, isCheck: '0'});
-        }
-    });
-    $.get("/daily/submitData", {headId: headId, groups: JSON.stringify(groupData)}, function (r) {
-        if(r.code === 200) {
-            $MB.n_success("提交成功！");
-        }else {
-            $MB.n_danger("未知错误！");
-        }
-        setTimeout(function () {
-            window.location.href = "/page/daily";
-        }, 1000);
     });
 }

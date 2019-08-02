@@ -37,6 +37,17 @@ public class DailyServiceImpl implements DailyService {
     }
 
     @Override
+    public List<DailyInfo> getTouchPageList(int start, int end, String touchDt) {
+        return dailyMapper.getTouchPageList(start, end, touchDt);
+    }
+
+    @Override
+    public int getTouchTotalCount(String touchDt) {
+        return dailyMapper.getTouchTotalCount(touchDt);
+    }
+
+
+    @Override
     public Map<String, Object> getTipInfo(String headId) {
         return dailyMapper.getTipInfo(headId);
     }

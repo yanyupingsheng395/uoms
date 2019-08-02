@@ -65,6 +65,12 @@ public class PageController {
         return "operate/daily/edit";
     }
 
+    @RequestMapping("/daily/view")
+    public String dailyView(Model model, @RequestParam("id") String headId) {
+        model.addAttribute("headId", headId);
+        return "operate/daily/view";
+    }
+
     /**
      * 短信模板配置
      * @param
@@ -93,4 +99,8 @@ public class PageController {
         return "operate/daily/effect";
     }
 
+    @RequestMapping("/touch")
+    public String touch() {
+        return "operate/daily/touch";
+    }
 }

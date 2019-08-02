@@ -4,14 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Lists;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.DailyDetail;
-import com.linksteady.operate.domain.DailyEffect;
-import com.linksteady.operate.domain.DailyGroup;
-import com.linksteady.operate.domain.DailyInfo;
-import com.linksteady.operate.service.DailyDetailService;
-import com.linksteady.operate.service.DailyEffectService;
-import com.linksteady.operate.service.DailyGroupService;
-import com.linksteady.operate.service.DailyService;
+import com.linksteady.operate.domain.*;
+import com.linksteady.operate.service.*;
+import com.linksteady.operate.thread.PushListThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -44,6 +39,9 @@ public class DailyController {
     @Autowired
     private DailyEffectService dailyEffectService;
 
+    @Autowired
+    private DailyPushService dailyPushService;
+
     @GetMapping("/getPageList")
     public ResponseBo getPageList(QueryRequest request) {
 
@@ -53,6 +51,24 @@ public class DailyController {
 
         int count = dailyService.getTotalCount(touchDt);
         List<DailyInfo> dailyInfos = dailyService.getPageList(start, end, touchDt);
+
+        return ResponseBo.okOverPaging(null, count, dailyInfos);
+    }
+
+    /**
+     * 触达记录
+     * @param request
+     * @return
+     */
+    @GetMapping("/getTouchPageList")
+    public ResponseBo getTouchPageList(QueryRequest request) {
+
+        int start = request.getStart();
+        int end = request.getEnd();
+        String touchDt = request.getParam().get("touchDt");
+
+        int count = dailyService.getTouchTotalCount(touchDt);
+        List<DailyInfo> dailyInfos = dailyService.getTouchPageList(start, end, touchDt);
 
         return ResponseBo.okOverPaging(null, count, dailyInfos);
     }
@@ -112,13 +128,15 @@ public class DailyController {
         // 生成推送名单中
         String status = "pre_push";
         dailyService.updateStatus(headId, status);
+        PushListThread.generatePushList(headId);
+        status = "ready_push";
+        dailyService.updateStatus(headId, status);
         return ResponseBo.ok();
     }
 
     /**
      * 更改group是否选中
      * @param headId
-     * @param groupId
      * @return
      */
     @GetMapping("/updateGroupCheck")
@@ -135,5 +153,27 @@ public class DailyController {
     public ResponseBo getOriginalGroupCheck() {
         List<Map<String, Object>> dataList = dailyGroupService.getOriginalGroupCheck();
         return ResponseBo.okWithData(null, dataList);
+    }
+
+    @GetMapping("/getPushList")
+    public ResponseBo getPushList(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        String headId = request.getParam().get("headId");
+        List<DailyPush> dataList = dailyPushService.getPushList(start, end, headId);
+        int count = dailyPushService.getDataTotalCount(headId);
+        return ResponseBo.okOverPaging(null, count, dataList);
+    }
+
+    /**
+     * 推送名单
+     * @return
+     */
+    @GetMapping("/pushList")
+    public ResponseBo pushList(@RequestParam String headId) {
+        // 推送名单
+        String status = "doing";
+        dailyService.updateStatus(headId, status);
+        return ResponseBo.ok();
     }
 }

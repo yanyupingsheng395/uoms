@@ -24,8 +24,8 @@
         select t.*, ROWNUM RN from (
           select t1.HEAD_ID,t1.TOUCH_RATE,t1.LOSS_RATE,t1.ABANDON_RATE,t1.CONVERT_RATE,t1.CONVERT_AMOUNT,t1.SUBSIDY_COUNT,t1.CANCLE_RATE,
           t1.CANCLE_COUNT, t1.SUBSIDY_ROI, t1.CONVERT_COUNT, t2.TOUCH_DT, t2.TOTAL_NUM, t2.ACTUAL_NUM from UO_OP_DAILY_STATIS t1
-          LEFT JOIN UO_OP_DAILY_HEADER t2 on t1.HEAD_ID = t2.HEAD_ID
-          where 1=1
+          INNER JOIN UO_OP_DAILY_HEADER t2 on t1.HEAD_ID = t2.HEAD_ID
+          where 1=1 and t2.status in ('done', 'finished')
           <if test="touchDt != ''">
             and to_char(T2.touch_dt, 'yyyy-MM-dd') = #{touchDt}
           </if>
@@ -34,8 +34,8 @@
     </select>
 
     <select id="getDataCount" resultType="int">
-        select count(1) from UO_OP_DAILY_STATIS t1 LEFT JOIN UO_OP_DAILY_HEADER t2 on t1.HEAD_ID = t2.HEAD_ID
-        where 1=1
+        select count(1) from UO_OP_DAILY_STATIS t1 INNER JOIN UO_OP_DAILY_HEADER t2 on t1.HEAD_ID = t2.HEAD_ID
+        where 1=1 and t2.status in ('done', 'finished')
         <if test="touchDt != ''">
             and to_char(T2.touch_dt, 'yyyy-MM-dd') = #{touchDt}
         </if>

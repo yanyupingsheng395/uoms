@@ -14,7 +14,11 @@ public interface DailyMapper {
 
     List<DailyInfo> getPageList(int start, int end, String touchDt);
 
+    List<DailyInfo> getTouchPageList(int start, int end, String touchDt);
+
     int getTotalCount(@Param("touchDt") String touchDt);
+
+    int getTouchTotalCount(@Param("touchDt") String touchDt);
 
     Map<String, Object> getTipInfo(@Param("headId") String headId);
 
