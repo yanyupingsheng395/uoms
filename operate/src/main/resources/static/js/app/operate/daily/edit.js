@@ -77,6 +77,12 @@ function getGroupDataList() {
             field: 'groupDesc',
             title: '描述'
         },{
+            field: 'smsCode',
+            title: '无券短信模板'
+        },{
+            field: 'prodSmsCode',
+            title: '有券短信模板'
+        },{
             field: 'operate',
             title: '操作',
             formatter: function (value, row, index) {
@@ -270,6 +276,7 @@ function getDetailDataList(groupId) {
             }
             ]]
     };
+    $('#userListTable').bootstrapTable('destroy');
     $MB.initTable('userListTable', settings);
 }
 

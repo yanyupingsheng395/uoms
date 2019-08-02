@@ -11,6 +11,11 @@
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <style>
+        #pushTable thead {
+            background-color: #eff3f8;
+        }
+    </style>
 </head>
 
 <body>
@@ -71,6 +76,24 @@
                 </div>
             </div>
         </main>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="user_modal" id="push_modal">
+    <div class="modal-dialog modal-lg" role="document" style="width: 75%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title">推送名单</h5>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="pushTable" class="table table-striped text-nowrap"></table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
     </div>
 </div>
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>

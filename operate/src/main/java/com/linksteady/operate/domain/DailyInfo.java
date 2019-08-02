@@ -54,4 +54,29 @@ public class DailyInfo {
      */
     @JsonFormat(pattern = "yyyyMMdd", timezone = "GMT+8")
     private Date touchDt;
+
+    /**
+     * 状态
+     */
+    private String status;
+
+    /**
+     * 实际选择人数
+     */
+    private Long optNum;
+
+    /**
+     * 计划人数
+     */
+    private Long planNum;
+
+    /**
+     * 失败人数
+     */
+    private Long faildNum;
+
+    /**
+     * 成功人数
+     */
+    private Long successNum;
 }

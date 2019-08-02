@@ -14,10 +14,12 @@
         <result column="USER_COUNT" jdbcType="DECIMAL" property="userCount"></result>
         <result column="IS_CHECK" jdbcType="DECIMAL" property="isCheck"></result>
         <result column="URGENCY_LEVEL" jdbcType="DECIMAL" property="urgencyLevel"></result>
+        <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode"></result>
+        <result column="PROD_SMS_CODE" jdbcType="VARCHAR" property="prodSmsCode"></result>
     </resultMap>
 
     <select id="getDataList" resultMap="baseResult">
-        select GROUP_ID, GROUP_NAME, GROUP_DESC, USER_COUNT, IS_CHECK
+        select GROUP_ID, GROUP_NAME, GROUP_DESC, USER_COUNT, IS_CHECK, SMS_CODE, PROD_SMS_CODE
         from UO_OP_DAILY_GROUP where head_id = #{headId} order by GROUP_ID asc
     </select>
 

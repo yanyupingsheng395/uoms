@@ -6,25 +6,28 @@
         <result column="HEAD_ID" property="headId" jdbcType="DECIMAL"></result>
         <result column="TOTAL_NUM" property="totalNum" jdbcType="DECIMAL"></result>
         <result column="ACTUAL_NUM" property="actualNum" jdbcType="DECIMAL"></result>
+        <result column="OPT_NUM" property="optNum" jdbcType="DECIMAL"></result>
+        <result column="PLAN_NUM" property="planNum" jdbcType="DECIMAL"></result>
+        <result column="FAILD_NUM" property="faildNum" jdbcType="DECIMAL"></result>
+        <result column="SUCCESS_NUM" property="successNum" jdbcType="DECIMAL"></result>
         <result column="TOUCH_RATE" property="touchRate" jdbcType="DECIMAL"></result>
         <result column="CONVERT_COUNT" property="convertCount" jdbcType="DECIMAL"></result>
         <result column="CONVERT_RATE" property="convertRate" jdbcType="DECIMAL"></result>
         <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"></result>
         <result column="TOUCH_DT" property="touchDt" jdbcType="DATE"></result>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"></result>
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM rn from (
-        SELECT T1.HEAD_ID, T1.TOTAL_NUM, T1.ACTUAL_NUM, T1.TOUCH_DT, T1.STATUS,
-         T2.TOUCH_RATE, T2.CONVERT_COUNT, T2.CONVERT_RATE, T2.CONVERT_AMOUNT
-         FROM UO_OP_DAILY_HEADER T1
-        LEFT JOIN UO_OP_DAILY_STATIS T2 ON T1.HEAD_ID = T2.HEAD_ID
+        SELECT HEAD_ID, TOUCH_DT, ACTUAL_NUM, PLAN_NUM, FAILD_NUM, SUCCESS_NUM, STATUS
+         FROM UO_OP_DAILY_HEADER
         where 1=1
         <if test="touchDt != ''">
-            and to_char(T1.touch_dt, 'YYYY-MM-DD') = #{touchDt}
+            and to_char(TOUCH_DT, 'YYYY-MM-DD') = #{touchDt}
         </if>
-        ORDER BY t1.TOUCH_DT desc
+        ORDER BY TOUCH_DT desc
         ) t where ROWNUM &lt;= #{end}
         )where rn &gt;= #{start}
     </select>
@@ -38,7 +41,7 @@
     </select>
 
     <select id="getTipInfo" resultType="map">
-        select to_char(touch_dt, 'YYYY-MM-DD') touchDt, TOTAL_NUM total, ACTUAL_NUM actual from UO_OP_DAILY_HEADER where head_id = #{headId}
+        select to_char(touch_dt, 'YYYY-MM-DD') touchDt, TOTAL_NUM total, OPT_NUM actual from UO_OP_DAILY_HEADER where head_id = #{headId}
     </select>
 
     <update id="updateStatus">
@@ -46,6 +49,6 @@
     </update>
 
     <update id="updateActualNum">
-        update UO_OP_DAILY_HEADER set ACTUAL_NUM = #{num} where head_id = #{headId}
+        update UO_OP_DAILY_HEADER set OPT_NUM = #{num} where head_id = #{headId}
     </update>
 </mapper>

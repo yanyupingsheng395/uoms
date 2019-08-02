@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.DailyPushMapper">
+
+    <resultMap id="baseResultMap" type="com.linksteady.operate.domain.DailyPush">
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"></result>
+        <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
+        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"></result>
+    </resultMap>
+
+    <select id="getPushList" resultMap="baseResultMap">
+        select * from (
+          select t.*, ROWNUM RN from (
+              select user_id, SMS_CONTENT, status from UO_OP_DAILY_PUSHLIST where head_id = #{headId}
+          ) t where ROWNUM &lt;=#{end}
+        ) where rn &gt;= #{start}
+    </select>
+
+    <select id="getDataTotalCount" resultType="int">
+        select count(1) from UO_OP_DAILY_PUSHLIST where head_id = #{headId}
+    </select>
+</mapper>

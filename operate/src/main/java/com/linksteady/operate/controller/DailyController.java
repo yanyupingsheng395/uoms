@@ -4,14 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Lists;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.DailyDetail;
-import com.linksteady.operate.domain.DailyEffect;
-import com.linksteady.operate.domain.DailyGroup;
-import com.linksteady.operate.domain.DailyInfo;
-import com.linksteady.operate.service.DailyDetailService;
-import com.linksteady.operate.service.DailyEffectService;
-import com.linksteady.operate.service.DailyGroupService;
-import com.linksteady.operate.service.DailyService;
+import com.linksteady.operate.domain.*;
+import com.linksteady.operate.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -43,6 +37,9 @@ public class DailyController {
 
     @Autowired
     private DailyEffectService dailyEffectService;
+
+    @Autowired
+    private DailyPushService dailyPushService;
 
     @GetMapping("/getPageList")
     public ResponseBo getPageList(QueryRequest request) {
@@ -135,5 +132,15 @@ public class DailyController {
     public ResponseBo getOriginalGroupCheck() {
         List<Map<String, Object>> dataList = dailyGroupService.getOriginalGroupCheck();
         return ResponseBo.okWithData(null, dataList);
+    }
+
+    @GetMapping("/getPushList")
+    public ResponseBo getPushList(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        String headId = request.getParam().get("headId");
+        List<DailyPush> dataList = dailyPushService.getPageList(start, end, headId);
+        int count = dailyPushService.getDataTotalCount(headId);
+        return ResponseBo.okOverPaging(null, count, dataList);
     }
 }
