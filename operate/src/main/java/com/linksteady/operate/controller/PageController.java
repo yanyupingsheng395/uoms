@@ -3,7 +3,6 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.annotation.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -64,6 +63,29 @@ public class PageController {
     public String dailyEdit(Model model, @RequestParam("id") String headId) {
         model.addAttribute("headId", headId);
         return "operate/daily/edit";
+    }
+
+    /**
+     * 短信模板配置
+     * @param
+     * @return
+     */
+    @Log("短信模板列表")
+    @RequestMapping("/cfg/smsTemplate")
+    public String smsTemplateList() {
+        return "operate/config/smstemplate";
+    }
+
+
+    /**
+     * 优惠券配置
+     * @param
+     * @return
+     */
+    @Log("短信模板列表")
+    @RequestMapping("/cfg/coupon")
+    public String couponList() {
+        return "operate/config/coupon";
     }
 
     @RequestMapping("/effect")

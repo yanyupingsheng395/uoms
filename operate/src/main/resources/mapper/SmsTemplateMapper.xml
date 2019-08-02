@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.SmsTemplateMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.SmsTemplate">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode" />
+    <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent" />
+  </resultMap>
+
+  <select id="getSmsTemplateList" resultMap="BaseResultMap">
+    SELECT * FROM(
+    SELECT A.*,ROWNUM RN FROM
+      (SELECT
+         SMS_CODE, SMS_CONTENT
+    FROM UO_OP_SMS_TEMPLATE WHERE 1=1
+    <if test="smsCode != null and smsCode != ''">
+      SMS_CODE=#{smsCode}
+    </if>
+    ) A  WHERE ROWNUM &lt;=#{endRow}
+    ) WHERE RN &gt;=#{startRow}
+  </select>
+
+  <select id="getTotalCount" resultType="int">
+    select count(1) from UO_OP_SMS_TEMPLATE where 1=1
+    <if test="_parameter != null and _parameter != ''">
+      SMS_CODE=#{_parameter,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+  <insert id="saveSmsTemplate">
+     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE,SMS_CONTENT) VALUES(#{smsCode},#{smsContent})
+  </insert>
+
+  <select id="refrenceCount" resultType="int">
+     SELECT COUNT(*) FROM UO_OP_DAILY_TEMPLATE_CONFIG WHERE SMS_CODE=#{smsCode} or PROD_SMS_CDOE=#{smsCode}
+  </select>
+
+  <delete id="deleteSmsTemplate">
+    delete from UO_OP_SMS_TEMPLATE where SMS_CODE=#{smsCode}
+  </delete>
+</mapper>
