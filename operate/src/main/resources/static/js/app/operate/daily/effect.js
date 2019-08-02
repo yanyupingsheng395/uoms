@@ -47,7 +47,7 @@ function initTable() {
                 field: 'abandonRate',
                 title: '放弃率（%）'
             },{
-                field: 'completePurch',
+                field: 'convertCount',
                 title: '转化人数（人）'
             },{
                 field: 'convertRate',

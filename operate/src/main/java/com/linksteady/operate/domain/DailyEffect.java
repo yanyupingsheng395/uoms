@@ -65,7 +65,7 @@ public class DailyEffect {
     private Double subsidyRoi;
 
     /**
-     * 触达人数
+     * 转化人数
      */
     private Long convertCount;
 
