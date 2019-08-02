@@ -1,15 +1,22 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.DailyPush;
+import com.linksteady.operate.domain.DailyPushInfo;
+import com.linksteady.operate.domain.DailyPushQuery;
+import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
 
-/**
- * @author hxcao
- * @date 2019-08-02
- */
 public interface DailyPushMapper {
-    List<DailyPush> getPushList(int start, int end, String headId);
 
-    int getDataTotalCount(String headId);
+    List<DailyPushQuery> getDataList(@Param("headId") String headId);
+
+    void savePushInfo(List<DailyPushInfo> list);
+
+    List<DailyPushInfo> getSendSmsList();
+
+    void updateSendStatus(@Param("list") List<DailyPushInfo> list, @Param("status") String status);
+
+    void updateHeaderToDone();
+
+    void updateHeaderSendStatis();
 }
