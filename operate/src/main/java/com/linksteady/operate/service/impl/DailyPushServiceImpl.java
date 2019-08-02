@@ -79,10 +79,25 @@ public class DailyPushServiceImpl implements DailyPushService {
               }
 
               //对短信模板中的内容进行替换
-              smsContent=smsContent.replace("{PROD}",dailyPushQuery.getRecLastName());
-              smsContent=smsContent.replace("{PROD_URL}",shortUrl);
-              smsContent=smsContent.replace("{CONPON_NAME}",dailyPushQuery.getCouponName());
-              smsContent=smsContent.replace("{CONPON_URL}",shortUrl);
+              if(smsContent.indexOf("{PROD}")!=-1)
+              {
+                  smsContent=smsContent.replace("{PROD}",dailyPushQuery.getRecLastName());
+              }
+
+              if(smsContent.indexOf("{PROD_URL}")!=-1)
+              {
+                  smsContent=smsContent.replace("{PROD_URL}",shortUrl);
+              }
+
+              if(smsContent.indexOf("{CONPON_NAME}")!=-1)
+              {
+                  smsContent=smsContent.replace("{CONPON_NAME}",dailyPushQuery.getCouponName());
+              }
+
+              if(smsContent.indexOf("{CONPON_URL}")!=-1)
+              {
+                  smsContent=smsContent.replace("{CONPON_URL}",shortUrl);
+              }
 
               dailyPushInfo.setHeadId(dailyPushQuery.getHeadId());
               dailyPushInfo.setDailyDetailId(dailyPushQuery.getDailyDetailId());
