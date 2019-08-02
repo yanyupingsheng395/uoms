@@ -101,15 +101,11 @@ function viewPeriod() {
                 colspan: 4
             }],[{
                 field: 'PATH_ACTIV',
-                title: '路径活跃度'
+                title: '用户活跃度'
             },
                 {
                     field: 'USER_VALUE',
                     title: '用户价值'
-                },
-                {
-                    field: 'SPU_NAME',
-                    title: 'SPU/品类'
                 },{
                     field: 'PIECE_PRICE',
                     title: '件单价'
@@ -119,15 +115,6 @@ function viewPeriod() {
                 },{
                     field: 'PURCH_TYPE_NUM',
                     title: '购买品类种数'
-                },{
-                    field: 'TAR_IDEAL_DT',
-                    title: '达成目标的理想时间'
-                },{
-                    field: 'TAR_GENERAL_DT',
-                    title: '达成目标的一般时间'
-                },{
-                    field: 'TAR_DEADLINE',
-                    title: '达成目标的最后期限'
                 },{
                     field: 'RECOM_SPU',
                     title: '推荐品类'

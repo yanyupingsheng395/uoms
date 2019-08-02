@@ -64,21 +64,22 @@ public class DailyPushServiceImpl implements DailyPushService {
                   longUrl=dailyPushQuery.getRecLastLongurl();
               }
 
-              String url="http://shorturl.growth-master.com/short_url/shorten?appid=1&uid=" +dailyPushQuery.getUserId()+
-                      "&longUrl="+ URLEncoder.encode(longUrl,"UTF-8");
-              //根据长链接生成短链接
-              String result=callTextPlain(url);
-              JSONObject rowData = JSONObject.parseObject(result);
-
-              String shortUrl="";
-              if(null!=rowData&&!StringUtils.isEmpty(rowData.getString("data")))
-              {
-                  shortUrl=rowData.getString("data");
-              }else
-              {
-                  //todo 此处应该抛出异常
-              }
-
+//              String url="http://shorturl.growth-master.com/short_url/shorten?appid=1&uid=" +dailyPushQuery.getUserId()+
+//                      "&longUrl="+ URLEncoder.encode(longUrl,"UTF-8");
+//              //根据长链接生成短链接
+//              String result=callTextPlain(url);
+//              JSONObject rowData = JSONObject.parseObject(result);
+//
+//              String shortUrl="";
+//              if(null!=rowData&&!StringUtils.isEmpty(rowData.getString("data")))
+//              {
+//                  shortUrl=rowData.getString("data");
+//              }else
+//              {
+//                  //todo 此处应该抛出异常
+//                  shortUrl="";
+//              }
+              String shortUrl="yhl.pub:81/n2e2ue";
 //              //对短信模板中的内容进行替换
 //              if(smsContent.indexOf("{PROD}")!=-1)
 //              {
@@ -106,7 +107,7 @@ public class DailyPushServiceImpl implements DailyPushService {
               dailyPushInfo.setPhoneNum(dailyPushQuery.getPhoneNum());
 
               dailyPushInfo.setSmsCode(smsCode);
-              dailyPushInfo.setSmsContent(smsContent);
+              dailyPushInfo.setSmsContent(smsContent.replace("{","").replace("}",""));
 
               dailyPushInfo.setRecLastId(dailyPushQuery.getRecLastId());
               dailyPushInfo.setRecLastName(dailyPushQuery.getRecLastName());
