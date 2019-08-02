@@ -132,7 +132,7 @@
         set (t.plan_num,t.faild_num,t.success_num)=
             (
              select
-             SUM(case when c.status='P' then 1 else 0 end) plan_num,
+
              SUM(case when c.status='F' then 1 else 0 end) faild_num,
              SUM(case when c.status='S' then 1 else 0 end) success_num
              from uo_op_daily_pushlist c where c.head_id = t.head_id
