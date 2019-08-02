@@ -95,7 +95,7 @@ function viewPeriod() {
                 valign:"middle"
             },{
                 title: '具体目标',
-                colspan: 9
+                colspan: 6
             },{
                 title: '策略',
                 colspan: 4
@@ -116,7 +116,7 @@ function viewPeriod() {
                     field: 'PURCH_TYPE_NUM',
                     title: '购买品类种数'
                 },{
-                    field: 'RECOM_SPU',
+                    field: 'SPU_NAME',
                     title: '推荐品类'
                 },{
                     field: 'DISCOUNT_LEVEL',
