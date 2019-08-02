@@ -30,4 +30,9 @@ public interface DailyPushService {
      */
     void updateHeaderToDone();
 
+    /**
+     * 更新主记录的触达统计信息
+     */
+    void updateHeaderSendStatis();
+
 }

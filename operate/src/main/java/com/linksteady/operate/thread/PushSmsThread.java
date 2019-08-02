@@ -36,12 +36,11 @@ public class PushSmsThread {
                 List<DailyPushInfo> successResult= Lists.newArrayList();
 
                 int size=100;
-
+                log.info("---------对待发送的短信列表进行监控----------------");
                 while(true)
                 {
                     failedResult.clear();
                     successResult.clear();
-                    log.info("---------对待发送的短信列表进行监控----------------");
                     Random random = new Random();
                     //获取所有头处于doing状态  发送列表处于P 且在当前推荐时间段内发送的短信列表
                     List<DailyPushInfo> list=dailyPushService.getSendSmsList();
@@ -118,6 +117,9 @@ public class PushSmsThread {
 
                     //更新主记录的状态
                     dailyPushService.updateHeaderToDone();
+
+                    //对最近三日的触达情况进行汇总、更新
+                    dailyPushService.updateHeaderSendStatis();
                     //每隔10分钟执行一次
                     try {
                         TimeUnit.MINUTES.sleep(5);

@@ -147,6 +147,11 @@ public class DailyPushServiceImpl implements DailyPushService {
         dailyPushMapper.updateHeaderToDone();
     }
 
+    @Override
+    public void updateHeaderSendStatis() {
+        dailyPushMapper.updateHeaderSendStatis();
+    }
+
 
     @SneakyThrows
     private String callTextPlain(String url) {

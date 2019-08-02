@@ -17,4 +17,6 @@ public interface DailyPushMapper {
     void updateSendStatus(@Param("list") List<DailyPushInfo> list, @Param("status") String status);
 
     void updateHeaderToDone();
+
+    void updateHeaderSendStatis();
 }

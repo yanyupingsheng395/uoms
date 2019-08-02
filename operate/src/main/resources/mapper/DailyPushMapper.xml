@@ -127,4 +127,17 @@
             select * from UO_OP_DAILY_PUSHLIST p where p.status='P' and p.head_id=c.head_id
             )
     </update>
+
+    <update id="updateHeaderSendStatis">
+        update UO_OP_DAILY_HEADER t
+        set (t.plan_num,t.faild_num,t.success_num)=
+            (
+             select
+             SUM(case when c.status='P' then 1 else 0 end) plan_num,
+             SUM(case when c.status='F' then 1 else 0 end) faild_num,
+             SUM(case when c.status='S' then 1 else 0 end) success_num
+             from uo_op_daily_pushlist c where c.head_id = t.head_id
+            )where
+            trunc(touch_dt)>trunc(sysdate-3) and status in ('doing','done','finished')
+    </update>
 </mapper>
