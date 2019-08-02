@@ -1,5 +1,6 @@
 package com.linksteady.operate.dao;
 
+import com.linksteady.operate.domain.DailyPush;
 import com.linksteady.operate.domain.DailyPushInfo;
 import com.linksteady.operate.domain.DailyPushQuery;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -19,4 +20,8 @@ public interface DailyPushMapper {
     void updateHeaderToDone();
 
     void updateHeaderSendStatis();
+
+    List<DailyPush> getPushList(int start, int end, String headId);
+
+    int getDataTotalCount(String headId);
 }

@@ -5,7 +5,7 @@ $(function () {
 });
 function initTable() {
     var settings = {
-        url: '/daily/getPageList',
+        url: '/daily/getTouchPageList',
         pagination: true,
         singleSelect: true,
         sidePagination: "server",
@@ -29,12 +29,18 @@ function initTable() {
             field: 'touchDt',
             title: '日期'
         },{
-            field: 'totalNum',
-            title: '任务建议（人）'
+            field: 'planNum',
+            title: '计划推送（人）'
         },{
-            field: 'optNum',
-            title: '实际选择（人）'
+            field: 'actualNum',
+            title: '实际推送（人）'
         },{
+            field: 'successNum',
+            title: '推送成功（人）'
+        },{
+            field: 'failNum',
+            title: '推送失败（人）'
+        }, {
             field: 'status',
             title: '状态',
             formatter: function (value, row, indx) {
@@ -65,14 +71,10 @@ function initTable() {
                 return res;
             }
         }, {
-                title: '推送名单',
-                formatter: function (value, row, indx) {
-                    if(row.status == 'ready_push') {
-                        return "<a style='text-decoration: underline;color: #000;cursor: pointer;' onclick='getPushList(" + row.headId + ")'>推送名单</a>";
-                    }else {
-                        return '-';
-                    }
-                }
+            title: '推送名单',
+            formatter: function (value, row, indx) {
+                return "<a style='text-decoration: underline;color: #000;cursor: pointer;' onclick='getPushList(" + row.headId + ")'>推送名单</a>";
+            }
         }]
     };
     $MB.initTable('dailyTable', settings);
@@ -94,46 +96,8 @@ $("#btn_edit").click(function () {
         $MB.n_warning('请勾选需要编辑的任务！');
         return;
     }
-    var status = selected[0].status;
-    if(status != "todo") {
-        $MB.n_warning('当前记录不可编辑，请选择草稿状态的记录！');
-        return;
-    }
     var headId = selected[0].headId;
     window.location.href = "/page/daily/edit?id=" + headId;
-});
-
-$("#btn_view").click(function () {
-    var selected = $("#dailyTable").bootstrapTable('getSelections');
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请勾选需要查看的任务！');
-        return;
-    }
-    var headId = selected[0].headId;
-    window.location.href = "/page/daily/view?id=" + headId;
-});
-
-$("#btn_push").click(function () {
-    var selected = $("#dailyTable").bootstrapTable('getSelections');
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请勾选需要推送的记录！');
-        return;
-    }
-    var status = selected[0].status;
-    if(status != "ready_push") {
-        $MB.n_warning('请勾选待推送的记录！');
-        return;
-    }
-    var headId = selected[0].headId;
-    $.get("/daily/pushList", {headId: headId}, function (r) {
-        if(r.code == 200) {
-            $MB.n_success("推送成功！");
-        }else {
-            $MB.n_success("推送失败！未知异常！");
-        }
-    });
 });
 
 var HEAD_ID;
@@ -167,6 +131,30 @@ $("#push_modal").on('shown.bs.modal', function () {
         },{
             field: 'smsContent',
             title: '短信内容'
+        }, {
+            field: 'status',
+            title: '状态',
+            formatter: function (value, row, index) {
+                var res;
+                switch (value) {
+                    case "P":
+                        res = "计划中";
+                        break;
+                    case "D":
+                        res = "已发送，待反馈结果";
+                        break;
+                    case "S":
+                        res = "成功";
+                        break;
+                    case "F":
+                        res = "失败";
+                        break;
+                    default:
+                        res = "-";
+                        break;
+                }
+                return res;
+            }
         }]
     };
     $('#pushTable').bootstrapTable('destroy');

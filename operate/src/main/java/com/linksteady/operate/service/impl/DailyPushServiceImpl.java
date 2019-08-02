@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.linksteady.operate.dao.DailyPushMapper;
+import com.linksteady.operate.domain.DailyPush;
 import com.linksteady.operate.domain.DailyPushInfo;
 import com.linksteady.operate.domain.DailyPushQuery;
 import com.linksteady.operate.service.DailyPushService;
@@ -152,6 +153,15 @@ public class DailyPushServiceImpl implements DailyPushService {
         dailyPushMapper.updateHeaderSendStatis();
     }
 
+    @Override
+    public List<DailyPush> getPushList(int start, int end, String headId) {
+        return dailyPushMapper.getPushList(start, end, headId);
+    }
+
+    @Override
+    public int getDataTotalCount(String headId) {
+        return dailyPushMapper.getDataTotalCount(headId);
+    }
 
     @SneakyThrows
     private String callTextPlain(String url) {
@@ -176,4 +186,6 @@ public class DailyPushServiceImpl implements DailyPushService {
                 .build();
         return client;
     }
+
+
 }

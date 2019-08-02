@@ -21,12 +21,10 @@
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM rn from (
-        SELECT HEAD_ID, TOUCH_DT, ACTUAL_NUM, PLAN_NUM, FAILD_NUM, SUCCESS_NUM, STATUS
-         FROM UO_OP_DAILY_HEADER
-        where 1=1
-        <if test="touchDt != ''">
-            and to_char(TOUCH_DT, 'YYYY-MM-DD') = #{touchDt}
-        </if>
+        SELECT T1.HEAD_ID, T1.TOTAL_NUM, T1.OPT_NUM, T1.TOUCH_DT, T1.STATUS,
+        T2.TOUCH_RATE, T2.CONVERT_COUNT, T2.CONVERT_RATE, T2.CONVERT_AMOUNT
+        FROM UO_OP_DAILY_HEADER T1
+        LEFT JOIN UO_OP_DAILY_STATIS T2 ON T1.HEAD_ID = T2.HEAD_ID
         ORDER BY TOUCH_DT desc
         ) t where ROWNUM &lt;= #{end}
         )where rn &gt;= #{start}
@@ -35,6 +33,28 @@
     <select id="getTotalCount" resultType="int">
         select count(1) from UO_OP_DAILY_HEADER
         where 1=1
+        <if test="touchDt != ''">
+            and to_char(touch_dt, 'YYYY-MM-DD') = #{touchDt}
+        </if>
+    </select>
+
+    <select id="getTouchPageList" resultMap="baseResult">
+        select * from (
+        select t.*, ROWNUM rn from (
+        SELECT HEAD_ID, TOUCH_DT, ACTUAL_NUM, PLAN_NUM, FAILD_NUM, SUCCESS_NUM, STATUS
+        FROM UO_OP_DAILY_HEADER
+        where 1=1 and STATUS in ('doing', 'done', 'finished')
+        <if test="touchDt != ''">
+            and to_char(TOUCH_DT, 'YYYY-MM-DD') = #{touchDt}
+        </if>
+        ORDER BY TOUCH_DT desc
+        ) t where ROWNUM &lt;= #{end}
+        )where rn &gt;= #{start}
+    </select>
+
+    <select id="getTouchTotalCount" resultType="int">
+        select count(1) from UO_OP_DAILY_HEADER
+        where 1=1 and STATUS in ('doing', 'done', 'finished')
         <if test="touchDt != ''">
             and to_char(touch_dt, 'YYYY-MM-DD') = #{touchDt}
         </if>
