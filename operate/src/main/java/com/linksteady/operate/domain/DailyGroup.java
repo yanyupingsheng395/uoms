@@ -78,4 +78,11 @@ public class DailyGroup {
      * 有券短信模板
      */
     private String prodSmsCode;
+
+    /**
+     * 模板内容
+     */
+    private String smsContent;
+
+    private String prodSmsContent;
 }

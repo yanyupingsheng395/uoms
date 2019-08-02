@@ -171,13 +171,59 @@ function getDetailDataList(groupId) {
                 title: '成长SPU'
             },{
                 field: 'completePurch',
-                title: '完成购买'
+                title: '完成购买(次)'
             },{
                 field: 'pathActiv',
-                title: '活跃度'
+                title: '活跃度',
+                formatter: function (value, row, index) {
+                    var res = "";
+                    switch (value) {
+                        case "UAC_01":
+                            res = "高度活跃";
+                            break;
+                        case "UAC_02":
+                            res = "中度活跃";
+                            break;
+                        case "UAC_03":
+                            res = "流失预警";
+                            break;
+                        case "UAC_04":
+                            res = "弱流失";
+                            break;
+                        case "UAC_05":
+                            res = "强流失";
+                            break;
+                        case "UAC_06":
+                            res = "沉睡";
+                            break;
+                        default:
+                            res = "-";
+                    }
+                    return res;
+                }
             },{
                 field: 'userValue',
-                title: '价值'
+                title: '价值',
+                formatter: function (value, row, index) {
+                    var res = "";
+                    switch (value) {
+                        case "ULC_01":
+                            res = "重要";
+                            break;
+                        case "ULC_02":
+                            res = "主要";
+                            break;
+                        case "ULC_03":
+                            res = "普通";
+                            break;
+                        case "ULC_04":
+                            res = "长尾";
+                            break;
+                        default:
+                            res = "-";
+                    }
+                    return res;
+                }
             },{
                 field: 'urgencyLevel',
                 title: '紧迫度'
@@ -194,7 +240,7 @@ function getDetailDataList(groupId) {
                 field: 'discountLevel',
                 title: '优惠力度'
             },{
-                field: 'referDeno',
+                field: 'couponDenom',
                 title: '优惠面额'
             },{
                 field: 'orderPeriod',

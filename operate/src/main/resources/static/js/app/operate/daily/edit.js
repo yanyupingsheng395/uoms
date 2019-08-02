@@ -77,11 +77,19 @@ function getGroupDataList() {
             field: 'groupDesc',
             title: '描述'
         },{
-            field: 'smsCode',
-            title: '无券短信模板'
+            field: 'smsContent',
+            title: '无券短信模板',
+            formatter: function (value, row, index) {
+                var tmp = value.substring(0, 10) + "...";
+                return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\""+value+"\">"+tmp+"</a>";
+            }
         },{
-            field: 'prodSmsCode',
-            title: '有券短信模板'
+            field: 'prodSmsContent',
+            title: '有券短信模板',
+            formatter: function (value, row, index) {
+                var tmp = value.substring(0, 10) + "...";
+                return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\""+value+"\">"+tmp+"</a>";
+            }
         },{
             field: 'operate',
             title: '操作',
@@ -89,6 +97,7 @@ function getGroupDataList() {
                 return "<a style='text-decoration: underline;color: #000;cursor: pointer;' onclick='userDetail(" + row.groupId + ")'>查看用户列表</a>";
             }
         }],onLoadSuccess: function () {
+            $("a[data-toggle='tooltip']").tooltip();
             var allData = $("#groupTable").bootstrapTable('getData');
             allData.forEach(function(value, index, arr) {
                 if(value.isCheck == '1') {
@@ -245,13 +254,59 @@ function getDetailDataList(groupId) {
                 title: '成长SPU'
             },{
                 field: 'completePurch',
-                title: '完成购买'
+                title: '完成购买(次)'
             },{
                 field: 'pathActiv',
-                title: '活跃度'
+                title: '活跃度',
+                formatter: function (value, row, index) {
+                    var res = "";
+                    switch (value) {
+                        case "UAC_01":
+                            res = "高度活跃";
+                            break;
+                        case "UAC_02":
+                            res = "中度活跃";
+                            break;
+                        case "UAC_03":
+                            res = "流失预警";
+                            break;
+                        case "UAC_04":
+                            res = "弱流失";
+                            break;
+                        case "UAC_05":
+                            res = "强流失";
+                            break;
+                        case "UAC_06":
+                            res = "沉睡";
+                            break;
+                        default:
+                            res = "-";
+                    }
+                    return res;
+                }
             },{
                 field: 'userValue',
-                title: '价值'
+                title: '价值',
+                formatter: function (value, row, index) {
+                    var res = "";
+                    switch (value) {
+                        case "ULC_01":
+                            res = "重要";
+                            break;
+                        case "ULC_02":
+                            res = "主要";
+                            break;
+                        case "ULC_03":
+                            res = "普通";
+                            break;
+                        case "ULC_04":
+                            res = "长尾";
+                            break;
+                        default:
+                            res = "-";
+                    }
+                    return res;
+                }
             },{
                 field: 'urgencyLevel',
                 title: '紧迫度'
@@ -265,10 +320,32 @@ function getDetailDataList(groupId) {
                 field: 'recCrossName',
                 title: '交叉推荐'
             },{
+                field: 'recType',
+                title: '推荐类型',
+                formatter: function (value, row, index) {
+                    var res = "";
+                    switch (value) {
+                        case "1":
+                            res = "留存推荐";
+                            break;
+                        case "2":
+                            res = "向上推荐";
+                            break;
+                        case "3":
+                            res = "交叉推荐";
+                            break;
+                        default:
+                            res = "-";
+                            break;
+                    }
+                    return res;
+                }
+            },
+            {
                 field: 'discountLevel',
                 title: '优惠力度'
             },{
-                field: 'referDeno',
+                field: 'couponDenom',
                 title: '优惠面额'
             },{
                 field: 'orderPeriod',

@@ -9,20 +9,6 @@ import java.util.Map;
 @Mapper
 public interface OpMapper {
 
-    List<Map<String, Object>> getOpDayList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("daywid") String daywid);
-
-    int getOpDayListCount(@Param(value = "daywid") String daywid);
-
-    int getOpDayListCountOfCondition(@Param(value = "daywid") String daywid, @Param("userActiv") String userActiv, @Param("userValue") String userValue);
-
-    Integer getOpDayUserCountInfo(@Param(value = "daywid") String daywid);
-
-    List<Map<String, Object>> getOpDayDetailList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("daywid") String daywid);
-
-    Integer getOpDayDetailListCount(@Param(value = "daywid") String daywid);
-
-    List<Map<String, Object>> getOpDayDetailAllList(@Param("daywid") String daywid, @Param("userActive") String userActiv, @Param("userValue") String userValue, @Param("start") int start, @Param("end") int end, @Param("sortColumn") String sortColumn, @Param("sortOrder") String sortOrder);
-
     List<Map<String, Object>> getPeriodHeaderList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("taskName") String taskName);
 
     int getPeriodListCount(@Param("taskName") String taskName);

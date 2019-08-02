@@ -16,11 +16,17 @@
         <result column="URGENCY_LEVEL" jdbcType="DECIMAL" property="urgencyLevel"></result>
         <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode"></result>
         <result column="PROD_SMS_CODE" jdbcType="VARCHAR" property="prodSmsCode"></result>
+        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
+        <result column="PROD_SMS_CONTENT" jdbcType="VARCHAR" property="prodSmsContent"></result>
     </resultMap>
 
     <select id="getDataList" resultMap="baseResult">
-        select GROUP_ID, GROUP_NAME, GROUP_DESC, USER_COUNT, IS_CHECK, SMS_CODE, PROD_SMS_CODE
-        from UO_OP_DAILY_GROUP where head_id = #{headId} order by GROUP_ID asc
+        select GROUP_ID, GROUP_NAME, GROUP_DESC, USER_COUNT, IS_CHECK, t1.SMS_CODE, PROD_SMS_CODE,t2.sms_content,t3.sms_content PROD_SMS_CONTENT
+        FROM UO_OP_DAILY_GROUP t1,UO_OP_SMS_TEMPLATE t2, UO_OP_SMS_TEMPLATE t3
+        where
+        t1.SMS_CODE = t2.sms_code(+)
+        AND t1.PROD_SMS_CODE = t3.sms_code(+)
+        AND head_id = #{headId} order by GROUP_ID asc
     </select>
 
     <update id="updateIsChecked">

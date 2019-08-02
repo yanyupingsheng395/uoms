@@ -133,6 +133,7 @@ $("#btn_push").click(function () {
         }else {
             $MB.n_success("推送失败！未知异常！");
         }
+        $MB.refreshTable('dailyTable');
     });
 });
 
