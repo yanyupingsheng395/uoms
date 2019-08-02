@@ -13,7 +13,9 @@ public interface OpMapper {
 
     int getPeriodListCount(@Param("taskName") String taskName);
 
-    void savePeriodHeaderInfo(@Param("periodName") String periodName, @Param("startDt") String startDt, @Param("endDt") String endDt);
+    void savePeriodHeaderInfo(@Param("periodHeaderId") int periodHeaderId,@Param("periodName") String periodName, @Param("startDt") String startDt, @Param("endDt") String endDt);
+
+    int getPeriodPrimaryKey();
 
     List<Map<String, Object>> getPeriodUserList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("headerId") String headerId);
 
@@ -26,5 +28,9 @@ public interface OpMapper {
     List<Map<String, Object>> getPeriodSpuStatis(@Param("headerId") String headerId);
 
     List<Map<String, Object>> getPeriodChartData(@Param("headerId") String headerId, @Param("type") String type);
+
+    void copyPeriodStatis(@Param("periodId") int periodId);
+
+    void copyPeriodDetail(@Param("periodId") int periodId);
 
 }

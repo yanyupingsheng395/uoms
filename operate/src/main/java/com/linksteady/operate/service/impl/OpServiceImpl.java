@@ -28,7 +28,11 @@ public class OpServiceImpl implements OpService {
 
     @Override
     public void savePeriodHeaderInfo(String periodName, String startDt, String endDt) {
-        opMapper.savePeriodHeaderInfo(periodName,startDt,endDt);
+        //获取主键
+        int pk=opMapper.getPeriodPrimaryKey();
+        opMapper.savePeriodHeaderInfo(pk,periodName,startDt,endDt);
+        opMapper.copyPeriodDetail(pk);
+        opMapper.copyPeriodStatis(pk);
     }
 
     @Override

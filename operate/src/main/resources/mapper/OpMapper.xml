@@ -22,10 +22,11 @@
         SELECT COUNT(*) FROM UO_OP_PERIOD T where PERIOD_TASK_NAME like concat('%', concat(#{taskName}, '%'))
     </select>
 
+    <select id="getPeriodPrimaryKey" resultType="int">
+        SELECT UO_OP_PERIOD_SEQ.NEXTVAL FROM DUAL
+    </select>
+
     <insert id="savePeriodHeaderInfo">
-        <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="periodHeaderId">
-            SELECT UO_OP_PERIOD_SEQ.NEXTVAL FROM DUAL
-        </selectKey>
         INSERT INTO UO_OP_PERIOD(
         PERIOD_HEADER_ID,
         CURRENT_USER_COUNT,
@@ -33,7 +34,7 @@
         PERIOD_START_DT,
         PERIOD_END_DT,
         CREATE_DT)
-        values(#{periodHeaderId}, 0, #{periodName},to_date(#{startDt},'yyyy-mm-dd'), to_date(#{endDt},'yyyy-mm-dd'), sysdate)
+        values(#{periodHeaderId}, 451, #{periodName},to_date(#{startDt},'yyyy-mm-dd'), to_date(#{endDt},'yyyy-mm-dd'), sysdate)
     </insert>
 
     <select id="getPeriodUserList" resultType="map">
@@ -112,4 +113,63 @@
           and T.DATA_TYPE = #{type}
         ORDER BY T.SORT_NUM asc
     </select>
+
+    <insert id="copyPeriodStatis" parameterType="int">
+        INSERT INTO uo_op_period_data_statis
+        (  head_id,
+           data_type,
+           x_data,
+           y_data,
+           sort_num)
+        select
+            #{periodId},
+            data_type,
+            x_data,
+            y_data,
+            sort_num
+        from  uo_op_period_data_statis where  head_id=21
+    </insert>
+
+    <insert id="copyPeriodDetail" parameterType="int">
+        INSERT INTO UO_OP_PERIOD_DETAIL(
+            daily_detail_id  ,
+            header_id        ,
+            user_id          ,
+            path_activ       ,
+            user_value       ,
+            spu_name         ,
+            piece_price      ,
+            join_rate        ,
+            purch_type_num   ,
+            tar_ideal_dt     ,
+            tar_general_dt   ,
+            tar_deadline     ,
+            recom_spu        ,
+            discount_rate    ,
+            order_period     ,
+            refer_deno       ,
+            discount_level   ,
+            last_finish_date
+        )
+        SELECT
+            daily_detail_id  ,
+            #{periodId},
+            user_id          ,
+            path_activ       ,
+            user_value       ,
+            spu_name         ,
+            piece_price      ,
+            join_rate        ,
+            purch_type_num   ,
+            tar_ideal_dt     ,
+            tar_general_dt   ,
+            tar_deadline     ,
+            recom_spu        ,
+            discount_rate    ,
+            order_period     ,
+            refer_deno       ,
+            discount_level   ,
+            last_finish_date
+        FROM UO_OP_PERIOD_DETAIL WHERE header_id=21
+    </insert>
 </mapper>
