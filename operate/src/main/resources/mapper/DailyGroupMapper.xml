@@ -18,10 +18,11 @@
         <result column="PROD_SMS_CODE" jdbcType="VARCHAR" property="prodSmsCode"></result>
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
         <result column="PROD_SMS_CONTENT" jdbcType="VARCHAR" property="prodSmsContent"></result>
+        <result column="IS_NEW" jdbcType="VARCHAR" property="isNew"></result>
     </resultMap>
 
     <select id="getDataList" resultMap="baseResult">
-        select GROUP_ID, GROUP_NAME, GROUP_DESC, USER_COUNT, IS_CHECK, t1.SMS_CODE, PROD_SMS_CODE,t2.sms_content,t3.sms_content PROD_SMS_CONTENT
+        select GROUP_ID, IS_NEW, PATH_MULTI, USER_VALUE,PATH_ACTIVE,LIFECYLE,USER_COUNT, GROUP_NAME, GROUP_DESC, USER_COUNT, IS_CHECK, t1.SMS_CODE, PROD_SMS_CODE,t2.sms_content,t3.sms_content PROD_SMS_CONTENT
         FROM UO_OP_DAILY_GROUP t1,UO_OP_SMS_TEMPLATE t2, UO_OP_SMS_TEMPLATE t3
         where
         t1.SMS_CODE = t2.sms_code(+)
@@ -44,6 +45,6 @@
     </select>
 
     <select id="sumCheckedNum" resultType="int">
-        select case when sum(USER_COUNT) = 0 then 0 else sum(USER_COUNT) end from UO_OP_DAILY_GROUP where head_id = #{headId} and is_check = '1'
+        select case when sum(USER_COUNT) is null then 0 else sum(USER_COUNT) end from UO_OP_DAILY_GROUP where head_id = #{headId} and is_check = '1'
     </select>
 </mapper>

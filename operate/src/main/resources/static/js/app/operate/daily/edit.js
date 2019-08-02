@@ -58,45 +58,116 @@ function getGroupDataList() {
         queryParams: function (params) {
             return {headId: headId};
         },
-        columns: [{
-            checkbox: true
-        },{
-            field: 'isCheck',
-            visible: false
-        },{
-            field: 'groupId',
-            title: 'ID',
-            visible: false
-        },{
-            field: 'groupName',
-            title: '分组名称'
-        },{
-            field: 'userCount',
-            title: '用户数量'
-        },{
-            field: 'groupDesc',
-            title: '描述'
-        },{
-            field: 'smsContent',
-            title: '无券短信模板',
+        columns: [[
+            {
+                checkbox: true,
+                rowspan: 2,
+                valign:"middle"
+            },{
+                field: 'isCheck',
+                visible: false,
+                rowspan: 2,
+                valign:"middle"
+            },{
+                field: 'groupId',
+                title: 'ID',
+                rowspan: 2,
+                visible: false,
+                valign:"middle"
+            },{
+                field: 'groupName',
+                rowspan: 2,
+                title: '群组优先级',
+                valign:"middle"
+            }, {
+                field: 'operate',
+                title: '用户目标与策略明细',
+                rowspan: 2,
+                valign:"middle",
+                formatter: function (value, row, index) {
+                    return "<a style='text-align:center;text-decoration: underline;color: #000;cursor: pointer;' onclick='userDetail(" + row.groupId + ")'><font color='#1e90ff' style='font-size: 18px;'><i class='fa fa-id-card'></i></font></a>";
+                },
+            },{
+                field: 'userCount',
+                rowspan: 2,
+                title: '用户数量',
+                valign:"middle"
+            }, {
+                title: '当日成长群组描述',
+                colspan: 4
+            }],[{
+            field: 'userValue',
+            title: '用户价值',
+            formatter: function (value,row,index) {
+                switch (value) {
+                    case "ULC_01":
+                        res = "重要";
+                        break;
+                    case "ULC_02":
+                        res = "主要";
+                        break;
+                    case "ULC_03":
+                        res = "普通";
+                        break;
+                    case "ULC_04":
+                        res = "长尾";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
+            }
+        }, {
+            field: 'pathActive',
+            title: '活跃度',
             formatter: function (value, row, index) {
-                var tmp = value.substring(0, 10) + "...";
-                return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\""+value+"\">"+tmp+"</a>";
+                var res = "";
+                switch (value) {
+                    case "UAC_01":
+                        res = "高度活跃";
+                        break;
+                    case "UAC_02":
+                        res = "中度活跃";
+                        break;
+                    case "UAC_03":
+                        res = "流失预警";
+                        break;
+                    case "UAC_04":
+                        res = "弱流失";
+                        break;
+                    case "UAC_05":
+                        res = "强流失";
+                        break;
+                    case "UAC_06":
+                        res = "沉睡";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
             }
         },{
-            field: 'prodSmsContent',
-            title: '有券短信模板',
-            formatter: function (value, row, index) {
-                var tmp = value.substring(0, 10) + "...";
-                return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\""+value+"\">"+tmp+"</a>";
+            field: 'isNew',
+            title: '周期阶段',
+            formatter:function (value, row, index) {
+                if(value == "1") {
+                    return "非新手期";
+                }else {
+                    return "新手期";
+                }
             }
-        },{
-            field: 'operate',
-            title: '操作',
-            formatter: function (value, row, index) {
-                return "<a style='text-decoration: underline;color: #000;cursor: pointer;' onclick='userDetail(" + row.groupId + ")'>查看用户列表</a>";
+        }, {
+            field: 'pathMulti',
+            title: '成长SPU数量',
+            formatter:function (value, row, index) {
+                if(value == '1') {
+                    return "大于1";
+                }else {
+                    return "1";
+                }
             }
-        }],onLoadSuccess: function () {
+        }]],onLoadSuccess: function () {
+            $("#groupTable").find("tr").find("td").addClass("text-center");
             $("a[data-toggle='tooltip']").tooltip();
             var allData = $("#groupTable").bootstrapTable('getData');
             allData.forEach(function(value, index, arr) {
@@ -118,6 +189,7 @@ function getGroupDataList() {
         }
     };
     $MB.initTable('groupTable', settings);
+
 }
 
 // 注册tableCheck事件

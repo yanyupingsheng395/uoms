@@ -85,4 +85,7 @@ public class DailyGroup {
     private String smsContent;
 
     private String prodSmsContent;
+
+
+    private String isNew;
 }
