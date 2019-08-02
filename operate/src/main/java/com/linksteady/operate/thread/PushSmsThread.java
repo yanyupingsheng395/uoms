@@ -120,7 +120,7 @@ public class PushSmsThread {
                     dailyPushService.updateHeaderToDone();
                     //每隔10分钟执行一次
                     try {
-                        TimeUnit.MINUTES.sleep(1);
+                        TimeUnit.MINUTES.sleep(5);
                         log.info("---------持续对待发送的短信列表进行监控----------------");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
