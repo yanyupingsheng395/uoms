@@ -25,4 +25,6 @@ public interface DailyMapper {
     void updateStatus(@Param("headId") String headId, @Param("status") String status);
 
     void updateActualNum(String headId, int num);
+
+    String getStatusById(String headId);
 }

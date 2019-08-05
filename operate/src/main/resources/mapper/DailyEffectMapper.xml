@@ -17,12 +17,13 @@
         <result column="TOUCH_DT" property="touchDt" jdbcType="DATE"></result>
         <result column="TOTAL_NUM" property="totalNum" jdbcType="DECIMAL"></result>
         <result column="ACTUAL_NUM" property="actualNum" jdbcType="DECIMAL"></result>
+        <result column="SUBSIDY_AMOUNT" property="subsidyAmount" jdbcType="DECIMAL"></result>
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM RN from (
-          select t1.HEAD_ID,t1.TOUCH_RATE,t1.LOSS_RATE,t1.ABANDON_RATE,t1.CONVERT_RATE,t1.CONVERT_AMOUNT,t1.SUBSIDY_COUNT,t1.CANCLE_RATE,
+          select t1.SUBSIDY_AMOUNT, t1.HEAD_ID,t1.TOUCH_RATE,t1.LOSS_RATE,t1.ABANDON_RATE,t1.CONVERT_RATE,t1.CONVERT_AMOUNT,t1.SUBSIDY_COUNT,t1.CANCLE_RATE,
           t1.CANCLE_COUNT, t1.SUBSIDY_ROI, t1.CONVERT_COUNT, t2.TOUCH_DT, t2.TOTAL_NUM, t2.ACTUAL_NUM from UO_OP_DAILY_STATIS t1
           INNER JOIN UO_OP_DAILY_HEADER t2 on t1.HEAD_ID = t2.HEAD_ID
           where 1=1 and t2.status in ('done', 'finished')

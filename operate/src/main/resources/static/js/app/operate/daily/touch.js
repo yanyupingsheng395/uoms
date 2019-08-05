@@ -29,16 +29,16 @@ function initTable() {
             field: 'touchDt',
             title: '日期'
         },{
-            field: 'planNum',
-            title: '计划推送（人）'
-        },{
             field: 'actualNum',
-            title: '实际推送（人）'
+            title: '总推送（人）'
+        },{
+            field: 'planNum',
+            title: '计划中（人）'
         },{
             field: 'successNum',
             title: '推送成功（人）'
         },{
-            field: 'failNum',
+            field: 'faildNum',
             title: '推送失败（人）'
         }, {
             field: 'status',

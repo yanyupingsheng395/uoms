@@ -71,4 +71,8 @@
     <update id="updateActualNum">
         update UO_OP_DAILY_HEADER set OPT_NUM = #{num} where head_id = #{headId}
     </update>
+
+    <select id="getStatusById" resultType="string">
+        SELECT STATUS FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}
+    </select>
 </mapper>

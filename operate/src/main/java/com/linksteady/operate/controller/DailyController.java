@@ -176,4 +176,9 @@ public class DailyController {
         dailyService.updateStatus(headId, status);
         return ResponseBo.ok();
     }
+
+    @GetMapping("/getStatusById")
+    public ResponseBo getStatusById(@RequestParam String headId) {
+        return ResponseBo.okWithData(null, dailyService.getStatusById(headId));
+    }
 }

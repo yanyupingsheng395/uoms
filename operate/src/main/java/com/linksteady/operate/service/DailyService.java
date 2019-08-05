@@ -25,4 +25,6 @@ public interface DailyService {
     void updateStatus(String headId, String status);
 
     void updateCheckNum(String headId, List<String> groupIds);
+
+    String getStatusById(String headId);
 }

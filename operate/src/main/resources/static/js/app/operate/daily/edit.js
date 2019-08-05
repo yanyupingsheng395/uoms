@@ -77,7 +77,7 @@ function getGroupDataList() {
             },{
                 field: 'groupName',
                 rowspan: 2,
-                title: '群组优先级',
+                title: '<a style=\'color: #000000;border-bottom: 1px solid\' data-toggle="tooltip" data-html="true" title="" data-original-title="根据目标分类和紧迫度等级分组，默认按照需要运营的优先级排序"><i class="mdi mdi-alert-circle-outline"></i>群组优先级</a>',
                 valign:"middle"
             }, {
                 field: 'operate',
@@ -446,7 +446,7 @@ function getTipInfo() {
 function submitData() {
     $MB.confirm({
         title: "<i class='mdi mdi-alert-outline'></i>提示：",
-        content: "确定提交当前数据?"
+        content: "确定提交已选群组?"
     }, function () {
         $.get("/daily/submitData", {headId: headId}, function (r) {
             if(r.code === 200) {

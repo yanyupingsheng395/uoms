@@ -1,6 +1,9 @@
 package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
+import com.linksteady.operate.service.DailyService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/page")
 public class PageController {
+
+    @Autowired
+    private DailyService dailyService;
 
     @Log("用户运营监控")
     @RequestMapping("/operator/user")
@@ -59,10 +65,17 @@ public class PageController {
         return "operate/daily/list";
     }
 
+
     @RequestMapping("/daily/edit")
     public String dailyEdit(Model model, @RequestParam("id") String headId) {
-        model.addAttribute("headId", headId);
-        return "operate/daily/edit";
+        String status = dailyService.getStatusById(headId);
+        if(StringUtils.isNotEmpty(status)) {
+            if(status.equals("todo")) {
+                model.addAttribute("headId", headId);
+                return "operate/daily/edit";
+            }
+        }
+        return "redirect:/page/daily";
     }
 
     @RequestMapping("/daily/view")

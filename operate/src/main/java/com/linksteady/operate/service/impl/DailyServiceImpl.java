@@ -64,4 +64,9 @@ public class DailyServiceImpl implements DailyService {
         int num = dailyGroupMapper.sumCheckedNum(headId);
         dailyMapper.updateActualNum(headId, num);
     }
+
+    @Override
+    public String getStatusById(String headId) {
+        return dailyMapper.getStatusById(headId);
+    }
 }
