@@ -100,16 +100,11 @@ $("#btn_edit").click(function () {
     window.location.href = "/page/daily/edit?id=" + headId;
 });
 
-var HEAD_ID;
 /**
  * 查看推送名单
  */
 function getPushList(headId) {
-    HEAD_ID = headId;
     $("#push_modal").modal('show');
-}
-
-$("#push_modal").on('shown.bs.modal', function () {
     var settings = {
         url: '/daily/getPushList',
         pagination: true,
@@ -122,7 +117,7 @@ $("#push_modal").on('shown.bs.modal', function () {
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,
-                param: {headId: HEAD_ID}
+                param: {headId: headId}
             };
         },
         columns: [{
@@ -159,4 +154,4 @@ $("#push_modal").on('shown.bs.modal', function () {
     };
     $('#pushTable').bootstrapTable('destroy');
     $MB.initTable('pushTable', settings);
-});
+}
