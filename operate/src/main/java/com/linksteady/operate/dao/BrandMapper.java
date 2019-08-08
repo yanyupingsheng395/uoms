@@ -11,5 +11,6 @@ import java.util.Map;
  * 品牌表
  */
 public interface BrandMapper {
+
     List<Map<String, Object>> findAll();
 }

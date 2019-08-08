@@ -8,7 +8,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -49,11 +48,6 @@ public class PushSmsThread {
                     {
                         //假装我在发短信
                         log.info("模拟发送短信给{}:{}",dailyPushInfo.getUserId(),dailyPushInfo.getSmsContent());
-//                        try {
-//                            TimeUnit.SECONDS.sleep(3);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
 
                         //模拟状态
                         int rint=random.nextInt(100);
