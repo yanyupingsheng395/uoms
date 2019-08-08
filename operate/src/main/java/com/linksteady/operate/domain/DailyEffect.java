@@ -84,4 +84,14 @@ public class DailyEffect {
      * 实际推送人数
      */
     private Long actualNum;
+
+    /**
+     * 触达人数
+     */
+    private Long touchCount;
+
+    /**
+     * 每元补贴创收
+     */
+    private Double subsidyPerUnit;
 }

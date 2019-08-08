@@ -13,4 +13,6 @@ public interface DailyEffectService {
     List<DailyEffect> getPageList(int start, int end, String touchDt);
 
     int getDataCount(String touchDt);
+
+    DailyEffect getKpiStatis(String headId);
 }

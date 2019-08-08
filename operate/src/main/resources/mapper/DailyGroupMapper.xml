@@ -8,12 +8,12 @@
         <result column="GROUP_DESC" jdbcType="DECIMAL" property="groupDesc"></result>
         <result column="LIFECYLE" jdbcType="DECIMAL" property="lifeCycle"></result>
         <result column="USER_VALUE" jdbcType="DECIMAL" property="userValue"></result>
-        <result column="PATH_ACTIVE" jdbcType="DECIMAL" property="pathActive"></result>
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
         <result column="TAR_TYPE" jdbcType="DECIMAL" property="tarType"></result>
         <result column="PATH_MULTI" jdbcType="DECIMAL" property="pathMulti"></result>
         <result column="USER_COUNT" jdbcType="DECIMAL" property="userCount"></result>
         <result column="IS_CHECK" jdbcType="DECIMAL" property="isCheck"></result>
-        <result column="URGENCY_LEVEL" jdbcType="DECIMAL" property="urgencyLevel"></result>
+        <result column="URGENCY_LEVEL" jdbcType="VARCHAR" property="urgencyLevel"></result>
         <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode"></result>
         <result column="PROD_SMS_CODE" jdbcType="VARCHAR" property="prodSmsCode"></result>
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
@@ -22,12 +22,16 @@
     </resultMap>
 
     <select id="getDataList" resultMap="baseResult">
-        select GROUP_ID, IS_NEW, PATH_MULTI, USER_VALUE,PATH_ACTIVE,LIFECYLE,USER_COUNT, GROUP_NAME, GROUP_DESC, USER_COUNT, IS_CHECK, t1.SMS_CODE, PROD_SMS_CODE,t2.sms_content,t3.sms_content PROD_SMS_CONTENT
+        select * from (
+          select t.*, ROWNUM RN from (
+            select GROUP_ID, IS_NEW, PATH_MULTI, USER_VALUE,PATH_ACTIVE,LIFECYLE,USER_COUNT, GROUP_NAME, GROUP_DESC, IS_CHECK, t1.SMS_CODE, PROD_SMS_CODE,t2.sms_content,t3.sms_content PROD_SMS_CONTENT
         FROM UO_OP_DAILY_GROUP t1,UO_OP_SMS_TEMPLATE t2, UO_OP_SMS_TEMPLATE t3
         where
         t1.SMS_CODE = t2.sms_code(+)
         AND t1.PROD_SMS_CODE = t3.sms_code(+)
         AND head_id = #{headId} order by GROUP_ID asc
+          ) t where ROWNUM &lt;=#{end}
+        ) where RN &gt;=#{start}
     </select>
 
     <update id="updateIsChecked">
@@ -47,4 +51,53 @@
     <select id="sumCheckedNum" resultType="int">
         select case when sum(USER_COUNT) is null then 0 else sum(USER_COUNT) end from UO_OP_DAILY_GROUP where head_id = #{headId} and is_check = '1'
     </select>
+
+    <select id="getSelectedGroup" resultType="map">
+        select GROUP_ID id, GROUP_NAME name from UO_OP_DAILY_GROUP where head_id = #{headId} and is_check = '1'
+        <if test="activeIdList != null and activeIdList.size() != 0">
+            and PATH_ACTIVE in
+            <foreach collection="activeIdList" item="item" open="(" close=")" separator=",">
+                 #{item}
+            </foreach>
+        </if>
+        <if test="growthIdList != null and growthIdList.size() != 0">
+            and URGENCY_LEVEL in
+            <foreach collection="growthIdList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        order by group_id asc
+    </select>
+
+    <select id="getDefaultActive" resultType="string">
+        select DISTINCT PATH_ACTIVE from UO_OP_DAILY_GROUP where head_Id = #{headId} and is_check = '1' order by PATH_ACTIVE
+    </select>
+
+    <select id="getDefaultGrowth" resultType="string">
+        select DISTINCT URGENCY_LEVEL from UO_OP_DAILY_GROUP where head_Id = #{headId} and is_check = '1' order by TO_NUMBER(URGENCY_LEVEL)
+    </select>
+
+    <update id="setIsCheckIsTrue">
+        update UO_OP_DAILY_GROUP set is_check = '1' where head_id = #{headId}
+        and group_id in
+        <foreach collection="groupIdList" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="setIsCheckIsFalse">
+        update UO_OP_DAILY_GROUP set is_check = '0' where head_id = #{headId}
+        and group_id not in
+        <foreach collection="groupIdList" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getGroupDataCount" resultType="int">
+        select count(1) from UO_OP_DAILY_GROUP where head_id = #{headId}
+    </select>
+
+    <update id="setSmsCode">
+        update UO_OP_DAILY_GROUP set sms_code = #{smsCode} where head_id = #{headId} and group_id = #{groupId}
+    </update>
 </mapper>

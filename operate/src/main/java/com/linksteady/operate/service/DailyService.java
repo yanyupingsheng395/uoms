@@ -27,4 +27,8 @@ public interface DailyService {
     void updateCheckNum(String headId, List<String> groupIds);
 
     String getStatusById(String headId);
+
+    DailyInfo getKpiVal(String headId);
+
+    Map<String, Object> getCurrentAndTaskDate(String headId);
 }

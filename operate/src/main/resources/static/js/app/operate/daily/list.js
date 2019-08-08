@@ -30,10 +30,22 @@ function initTable() {
             title: '日期'
         },{
             field: 'totalNum',
-            title: '任务建议（人）'
+            title: '建议推送人数（人）'
         },{
             field: 'optNum',
-            title: '实际选择（人）'
+            title: '实际选择人数（人）'
+        },{
+            field: 'executeRate',
+            title: '执行率（%）'
+        },{
+            field: 'convertCount',
+            title: '任务转化人数（人）'
+        },{
+            field: 'convertRate',
+            title: '转化率（%）'
+        },{
+            field: 'convertAmount',
+            title: '转化金额（元）'
         },{
             field: 'status',
             title: '状态',
@@ -41,22 +53,17 @@ function initTable() {
                 var res;
                 switch (value) {
                     case "todo":
-                        res = "草稿、待推送";
-                        break;
-                    case "pre_push":
-                        res = "生成推送名单中";
+                        res = "<span class=\"badge bg-info\">待编辑</span>";
                         break;
                     case "ready_push":
-                        res = "已生成名单，待推送";
-                        break;
                     case "doing":
-                        res = "推送中";
+                        res = "<span class=\"badge bg-warning\">执行中</span>";
                         break;
                     case "done":
-                        res = "推送结束、效果统计中";
+                        res = "<span class=\"badge bg-success\">已执行</span>";
                         break;
                     case "finished":
-                        res = "结束";
+                        res = "<span class=\"badge bg-primary\">已结束</span>";
                         break;
                     default:
                         res = "-";
@@ -64,15 +71,6 @@ function initTable() {
                 }
                 return res;
             }
-        }, {
-                title: '推送名单',
-                formatter: function (value, row, indx) {
-                    if(row.status == 'ready_push') {
-                        return "<a style='text-decoration: underline;color: #000;cursor: pointer;' onclick='getPushList(" + row.headId + ")'>推送名单</a>";
-                    }else {
-                        return '-';
-                    }
-                }
         }]
     };
     $MB.initTable('dailyTable', settings);
@@ -168,3 +166,15 @@ function getPushList(headId) {
     $('#pushTable').bootstrapTable('destroy');
     $MB.initTable('pushTable', settings);
 }
+
+
+$("#btn_catch").click(function () {
+    var selected = $("#dailyTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请勾选需要查看效果跟踪的任务！');
+        return;
+    }
+    var headId = selected[0].headId;
+    window.location.href = "/page/daily/effect?id=" + headId;
+});

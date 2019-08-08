@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.DailyGroupMapper;
 import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.DailyGroup;
@@ -10,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -68,5 +72,20 @@ public class DailyServiceImpl implements DailyService {
     @Override
     public String getStatusById(String headId) {
         return dailyMapper.getStatusById(headId);
+    }
+
+    @Override
+    public DailyInfo getKpiVal(String headId) {
+        DailyInfo dailyInfo = dailyMapper.getKpiVal(headId);
+        return dailyInfo;
+    }
+
+    @Override
+    public Map<String, Object> getCurrentAndTaskDate(String headId) {
+        Map<String, Object> result = Maps.newHashMap();
+        String touchDt = dailyMapper.getTouchDt(headId);
+        result.put("taskDt", touchDt);
+        result.put("currentDt", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+        return result;
     }
 }

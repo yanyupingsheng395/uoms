@@ -116,4 +116,23 @@ public class PageController {
     public String touch() {
         return "operate/daily/touch";
     }
+
+    /**
+     * 步骤图
+     * @return
+     */
+    @RequestMapping("/daily/step")
+    public String step(@RequestParam String headId) {
+        return "step2";
+    }
+
+    /**
+     * 日运营-效果跟踪
+     * @return
+     */
+    @RequestMapping("daily/effect")
+    public String effectTrack(Model model, @RequestParam("id") String headId) {
+        model.addAttribute("headId", headId);
+        return "operate/daily/effect";
+    }
 }

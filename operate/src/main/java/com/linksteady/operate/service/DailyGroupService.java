@@ -11,9 +11,21 @@ import java.util.Map;
  */
 public interface DailyGroupService {
 
-    List<DailyGroup> getDataList(String headId);
+    List<DailyGroup> getDataList(String headId, int start, int end);
 
     void updateIsChecked(String headId, List<DailyGroup> groupList);
 
     List<Map<String, Object>> getOriginalGroupCheck();
+
+    List<Map<String, Object>> getSelectedGroup(String headId, String activeIds, String growthIds);
+
+    List<String> getDefaultActive(String headId);
+
+    List<String> getDefaultGrowth(String headId);
+
+    void setGroupCheck(String headId, String groupIds);
+
+    int getGroupDataCount(String headId);
+
+    void setSmsCode(String headId, String groupId, String smsCode);
 }

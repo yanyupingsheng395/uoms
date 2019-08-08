@@ -14,4 +14,6 @@ public interface DailyEffectMapper {
     List<DailyEffect> getPageList(int start, int end, String touchDt);
 
     int getDataCount(@Param("touchDt") String touchDt);
+
+    DailyEffect getKpiStatis(String headId);
 }

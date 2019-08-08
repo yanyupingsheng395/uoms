@@ -15,7 +15,7 @@ public interface DailyDetailService {
 
     Echart getUrgency(String headId);
 
-    List<DailyDetail> getPageList(int start, int end, String headId, String groupId);
+    List<DailyDetail> getPageList(int start, int end, String headId, String groupIds);
 
-    int getDataCount(String headId, String groupId);
+    int getDataCount(String headId, String groupIds);
 }

@@ -29,6 +29,7 @@
         <result column="PURCH_PRODUCT_NAME" jdbcType="VARCHAR" property="purchProductName"></result>
         <result column="PURCH_TIMES" jdbcType="VARCHAR" property="purchTimes"></result>
         <result column="REC_TYPE" jdbcType="VARCHAR" property="recType"></result>
+        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
     </resultMap>
 
     <select id="getTargetType" resultType="map">
@@ -78,13 +79,26 @@
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM RN from (
-        select USER_ID, PURCH_PRODUCT_NAME, PURCH_TIMES, TAR_TYPE, PIECE_PRICE, SPU_NAME, COMPLETE_PURCH, PATH_ACTIV, USER_VALUE, URGENCY_LEVEL,REC_RETENTION_NAME,REC_UP_NAME,REC_CROSS_NAME,ORDER_PERIOD,REFER_DENO, t2.COUPON_DENOM, DISCOUNT_LEVEL, REC_TYPE
-        from UO_OP_DAILY_DETAIL t1, UO_OP_COUPON t2 where t1.COUPON_ID = t2.COUPON_ID(+) and t1.head_id = #{headId} and group_id = #{groupId}
-        ) t where ROWNUM &lt;=#{end}
-        ) where RN &gt;=#{start}
+          select USER_ID, t3.GROUP_NAME, PURCH_PRODUCT_NAME, PURCH_TIMES, PIECE_PRICE, SPU_NAME, COMPLETE_PURCH, PATH_ACTIV, t1.USER_VALUE, t1.URGENCY_LEVEL,REC_RETENTION_NAME,REC_UP_NAME,REC_CROSS_NAME,ORDER_PERIOD,REFER_DENO, t2.COUPON_DENOM, DISCOUNT_LEVEL, REC_TYPE
+            from UO_OP_DAILY_DETAIL t1, UO_OP_COUPON t2, UO_OP_DAILY_GROUP t3
+          where t1.COUPON_ID = t2.COUPON_ID(+)  and t1.head_id = t3.head_id(+) and t1.GROUP_ID = t3.GROUP_ID(+) and t1.head_id = #{headId}
+          <if test="groupIdList != null and groupIdList.size()>0">
+            and t1.group_id in
+            <foreach collection="groupIdList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+          </if>
+          ) t where ROWNUM &lt;=#{end}
+          ) where RN &gt;=#{start}
     </select>
 
     <select id="getDataCount" resultType="int">
-        select count(1) from UO_OP_DAILY_DETAIL where head_id = #{headId} and group_id = #{groupId}
+        select count(1) from UO_OP_DAILY_DETAIL where head_id = #{headId}
+        <if test="groupIdList != null and groupIdList.size()>0">
+            and group_id in
+            <foreach collection="groupIdList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
     </select>
 </mapper>

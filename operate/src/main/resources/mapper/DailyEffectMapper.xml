@@ -18,6 +18,8 @@
         <result column="TOTAL_NUM" property="totalNum" jdbcType="DECIMAL"></result>
         <result column="ACTUAL_NUM" property="actualNum" jdbcType="DECIMAL"></result>
         <result column="SUBSIDY_AMOUNT" property="subsidyAmount" jdbcType="DECIMAL"></result>
+        <result column="TOUCH_COUNT" property="touchCount" jdbcType="DECIMAL"></result>
+        <result column="SUBSIDY_PER_UNIT" property="subsidyPerUnit" jdbcType="DECIMAL"></result>
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
@@ -40,5 +42,10 @@
         <if test="touchDt != ''">
             and to_char(T2.touch_dt, 'yyyy-MM-dd') = #{touchDt}
         </if>
+    </select>
+
+    <select id="getKpiStatis" resultMap="baseResult">
+        select CONVERT_AMOUNT, SUBSIDY_AMOUNT,SUBSIDY_PER_UNIT，SUBSIDY_COUNT，CANCLE_COUNT，CANCLE_RATE from UO_OP_DAILY_STATIS
+        where head_id = #{headId}
     </select>
 </mapper>

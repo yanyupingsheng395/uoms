@@ -12,11 +12,25 @@ import java.util.Map;
  */
 public interface DailyGroupMapper {
 
-    List<DailyGroup> getDataList(String headId);
+    List<DailyGroup> getDataList(String headId, int start, int end);
 
     void updateIsChecked(String headId, List<DailyGroup> groupList);
 
     List<Map<String, Object>> getOriginalGroupCheck();
 
     int sumCheckedNum(@Param("headId") String headId);
+
+    List<Map<String, Object>> getSelectedGroup(String headId,@Param("activeIdList") List<String> activeIdList, @Param("growthIdList") List<String> growthIdList);
+
+    List<String> getDefaultActive(@Param("headId") String headId);
+
+    List<String> getDefaultGrowth(@Param("headId") String headId);
+
+    void setIsCheckIsTrue(String headId, @Param("groupIdList") List<String> groupIdList);
+
+    void setIsCheckIsFalse(String headId, @Param("groupIdList") List<String> groupIdList);
+
+    int getGroupDataCount(@Param("headId") String headId);
+
+    void setSmsCode(String headId, String groupId, String smsCode);
 }

@@ -16,16 +16,17 @@
         <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"></result>
         <result column="TOUCH_DT" property="touchDt" jdbcType="DATE"></result>
         <result column="STATUS" property="status" jdbcType="VARCHAR"></result>
+        <result column="TOUCH_COUNT" property="touchCount" jdbcType="DECIMAL"></result>
+        <result column="EXECUTE_RATE" property="executeRate" jdbcType="DECIMAL"></result>
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM rn from (
-        SELECT T1.HEAD_ID, T1.TOTAL_NUM, T1.OPT_NUM, T1.TOUCH_DT, T1.STATUS,
-        T2.TOUCH_RATE, T2.CONVERT_COUNT, T2.CONVERT_RATE, T2.CONVERT_AMOUNT
+        SELECT T1.HEAD_ID, T1.TOUCH_DT, T1.TOTAL_NUM, T1.OPT_NUM, T1.EXECUTE_RATE, T2.TOUCH_COUNT, T2.TOUCH_RATE, T2.CONVERT_COUNT,T2.CONVERT_RATE, T2.CONVERT_AMOUNT, T1.STATUS
         FROM UO_OP_DAILY_HEADER T1
         LEFT JOIN UO_OP_DAILY_STATIS T2 ON T1.HEAD_ID = T2.HEAD_ID
-        ORDER BY TOUCH_DT desc
+        ORDER BY T1.TOUCH_DT desc
         ) t where ROWNUM &lt;= #{end}
         )where rn &gt;= #{start}
     </select>
@@ -74,5 +75,14 @@
 
     <select id="getStatusById" resultType="string">
         SELECT STATUS FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}
+    </select>
+
+    <select id="getKpiVal" resultMap="baseResult">
+        select TOTAL_NUM, OPT_NUM, SUCCESS_NUM, CONVERT_COUNT,EXECUTE_RATE, TOUCH_RATE, CONVERT_RATE
+        from UO_OP_DAILY_HEADER where head_id = #{headId}
+    </select>
+
+    <select id="getTouchDt" resultType="string">
+        select to_char(TOUCH_DT, 'yyyymmdd') from UO_OP_DAILY_HEADER where head_id = #{headId}
     </select>
 </mapper>

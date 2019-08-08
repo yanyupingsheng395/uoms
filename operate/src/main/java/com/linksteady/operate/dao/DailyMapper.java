@@ -27,4 +27,8 @@ public interface DailyMapper {
     void updateActualNum(String headId, int num);
 
     String getStatusById(String headId);
+
+    DailyInfo getKpiVal(String headId);
+
+    String getTouchDt(String headId);
 }

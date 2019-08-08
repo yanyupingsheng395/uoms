@@ -143,4 +143,9 @@ public class DailyDetail {
      * 推荐类型
      */
     private String recType;
+
+    /**
+     * 所在群组
+     */
+    private String groupName;
 }

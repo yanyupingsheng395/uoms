@@ -79,4 +79,14 @@ public class DailyInfo {
      * 成功人数
      */
     private Long successNum;
+
+    /**
+     * 触达人数
+     */
+    private Long touchCount;
+
+    /**
+     * 执行率
+     */
+    private Double executeRate;
 }
