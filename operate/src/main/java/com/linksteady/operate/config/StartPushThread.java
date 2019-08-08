@@ -12,12 +12,11 @@ public class StartPushThread implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         //开启生成推送名单的线程
-
        log.info("-----------开启日推送生成名单线程的执行---------------------");
-        PushListThread.getInstance().start();
+       PushListThread.getInstance().start();
 
-        //开启推送短信的线程
-        log.info("-----------开启日推送短信的线程的执行---------------------");
+       //开启推送短信的线程
+       log.info("-----------开启日推送短信的线程的执行---------------------");
         PushSmsThread.getInstance().start();
     }
 }

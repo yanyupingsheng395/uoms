@@ -42,7 +42,7 @@ public class DailyPushServiceImpl implements DailyPushService {
           //对list进行遍历 todo 此处要考虑如果list比较大的话要进行分页
 
         List<DailyPushInfo> targetList= Lists.newArrayList();
-        DailyPushInfo dailyPushInfo=null;
+       DailyPushInfo dailyPushInfo=null;
 
           for(DailyPushQuery dailyPushQuery:list)
           {
@@ -52,7 +52,7 @@ public class DailyPushServiceImpl implements DailyPushService {
               String longUrl="";
 
               //判断是否有券的ID
-              if(null!=dailyPushInfo.getCouponId()&&dailyPushInfo.getCouponId()!=-1L)
+              if(null!=dailyPushQuery.getCouponId()&&dailyPushQuery.getCouponId()!=-1L)
               {
                   smsContent=dailyPushQuery.getSmsContent();
                   smsCode=dailyPushQuery.getSmsCode();
@@ -64,42 +64,58 @@ public class DailyPushServiceImpl implements DailyPushService {
                   longUrl=dailyPushQuery.getRecLastLongurl();
               }
 
-//              String url="http://shorturl.growth-master.com/short_url/shorten?appid=1&uid=" +dailyPushQuery.getUserId()+
-//                      "&longUrl="+ URLEncoder.encode(longUrl,"UTF-8");
-//              //根据长链接生成短链接
-//              String result=callTextPlain(url);
-//              JSONObject rowData = JSONObject.parseObject(result);
-//
-//              String shortUrl="";
-//              if(null!=rowData&&!StringUtils.isEmpty(rowData.getString("data")))
-//              {
-//                  shortUrl=rowData.getString("data");
-//              }else
-//              {
-//                  //todo 此处应该抛出异常
-//                  shortUrl="";
-//              }
-              String shortUrl="yhl.pub:81/n2e2ue";
-//              //对短信模板中的内容进行替换
-//              if(smsContent.indexOf("{PROD}")!=-1)
-//              {
-//                  smsContent=smsContent.replace("{PROD}",dailyPushQuery.getRecLastName());
-//              }
-//
-//              if(smsContent.indexOf("{PROD_URL}")!=-1)
-//              {
-//                  smsContent=smsContent.replace("{PROD_URL}",shortUrl);
-//              }
-//
-//              if(smsContent.indexOf("{CONPON_NAME}")!=-1)
-//              {
-//                  smsContent=smsContent.replace("{CONPON_NAME}",dailyPushQuery.getCouponName());
-//              }
-//
-//              if(smsContent.indexOf("{CONPON_URL}")!=-1)
-//              {
-//                  smsContent=smsContent.replace("{CONPON_URL}",shortUrl);
- //             }
+              String url="http://shorturl.growth-master.com/short_url/shorten?appid=1&uid=" +dailyPushQuery.getUserId()+
+                      "&longUrl="+ URLEncoder.encode(longUrl,"UTF-8");
+              //根据长链接生成短链接
+              String result=callTextPlain(url);
+              JSONObject rowData = JSONObject.parseObject(result);
+
+              String shortUrl="";
+              if(null!=rowData&&!StringUtils.isEmpty(rowData.getString("data")))
+              {
+                  shortUrl=rowData.getString("data");
+              }else
+              {
+                  //todo 此处应该抛出异常
+                  shortUrl="";
+              }
+
+              //对短信模板中的内容进行替换
+              if(smsContent.indexOf("{PROD}")!=-1)
+              {
+                  smsContent=smsContent.replace("{PROD}",dailyPushQuery.getRecLastName());
+              }
+
+              if(smsContent.indexOf("{PROD_URL}")!=-1)
+              {
+                  smsContent=smsContent.replace("{PROD_URL}",shortUrl);
+              }
+
+              //当前用户有优惠券
+              if(null!=dailyPushQuery.getCouponId()&&dailyPushQuery.getCouponId()!=-1L)
+              {
+                  if(smsContent.indexOf("{CONPON_NAME}")!=-1)
+                  {
+                      //优惠券可能不存在
+                      if(null==dailyPushQuery.getCouponName()||"".equals(dailyPushQuery.getCouponName()))
+                      {
+                          smsContent=smsContent.replace("{CONPON_NAME}","");
+                      }else
+                      {
+                          smsContent=smsContent.replace("{CONPON_NAME}",dailyPushQuery.getCouponName());
+                      }
+                  }
+              }else
+              {
+                  //当前用户无优惠券 但是给的短信模板里面存在 {COUPON_NAME}占位符 这种属于模板配错，应该给予提示
+                  //todo 错误提示
+
+              }
+
+              if(smsContent.indexOf("{CONPON_URL}")!=-1)
+              {
+                  smsContent=smsContent.replace("{CONPON_URL}",shortUrl);
+              }
 
               dailyPushInfo.setHeadId(dailyPushQuery.getHeadId());
               dailyPushInfo.setDailyDetailId(dailyPushQuery.getDailyDetailId());
@@ -107,7 +123,7 @@ public class DailyPushServiceImpl implements DailyPushService {
               dailyPushInfo.setPhoneNum(dailyPushQuery.getPhoneNum());
 
               dailyPushInfo.setSmsCode(smsCode);
-              dailyPushInfo.setSmsContent(smsContent.replace("{","").replace("}",""));
+              dailyPushInfo.setSmsContent(smsContent);
 
               dailyPushInfo.setRecLastId(dailyPushQuery.getRecLastId());
               dailyPushInfo.setRecLastName(dailyPushQuery.getRecLastName());

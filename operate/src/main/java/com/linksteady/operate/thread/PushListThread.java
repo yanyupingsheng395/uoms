@@ -61,8 +61,8 @@ public class PushListThread {
                         dailyService.updateStatus(headerId,"ready_push");
 
                         log.info("日推送heaerId:{},的推送名单已生成",headerId);
-                    } catch (InterruptedException e) {
-                        //异常日志上报
+                    } catch (Exception e) {
+                        //异常消息上报
                         e.printStackTrace();
                     }
                 }

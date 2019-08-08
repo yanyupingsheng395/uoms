@@ -85,7 +85,7 @@
     </select>
 
     <insert id="savePushInfo">
-        INSERT INTO UO_OP_DAILY_PUSHLIST(PUSHLIST_ID,HEAD_ID,USER_ID,SMS_CONTENT,SMS_CODE,STATUS)
+        INSERT INTO UO_OP_DAILY_PUSHLIST(PUSHLIST_ID,HEAD_ID,USER_ID,SMS_CONTENT,SMS_CODE,STATUS,PHONE_NUM,ORDER_PERIOD,DAILY_DETAIL_ID,REC_LAST_ID,REC_LAST_NAME,COUPON_ID,GROWTH_STRATEGY_ID,GROUP_ID,COUPON_NAME)
         SELECT SEQ_UO_OP_DAILY_PUSHLIST.NEXTVAL,A.*
                FROM (
         <foreach item="item" index="index" collection="list" separator="UNION ALL">
@@ -94,7 +94,16 @@
                  #{item.userId},
                  #{item.smsContent},
                  #{item.smsCode},
-                 'P'
+                 'P',
+                #{item.phoneNum},
+                #{item.orderPeriod},
+                #{item.dailyDetailId},
+                #{item.recLastId},
+                #{item.recLastName},
+                #{item.couponId},
+                #{item.growthStreadyId},
+                #{item.groupId},
+                #{item.couponName}
             FROM DUAL
         </foreach>
         ) A
@@ -129,14 +138,15 @@
 
     <update id="updateHeaderSendStatis">
         update UO_OP_DAILY_HEADER t
-        set (t.faild_num,t.success_num)=
+        set (t.plan_num,t.faild_num,t.success_num)=
             (
              select
+             SUM(case when c.status='P' then 1 else 0 end) plan_num,
              SUM(case when c.status='F' then 1 else 0 end) faild_num,
              SUM(case when c.status='S' then 1 else 0 end) success_num
              from uo_op_daily_pushlist c where c.head_id = t.head_id
             )where
-            trunc(touch_dt)>trunc(sysdate-3) and status in ('doing','done','finished')
+            trunc(touch_dt)>trunc(sysdate-15) and status in ('doing','done','finished')
     </update>
 
     <select id="getPushList" resultMap="pageResult">

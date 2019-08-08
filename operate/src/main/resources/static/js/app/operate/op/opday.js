@@ -178,13 +178,6 @@ function getStatisSpu() {
     });
 }
 
-// 购买时段分布图
-function getChartData(type, id, toolXname, toolYname) {
-    var touchDt = $("#touchDate").val();
-    $.get("/op/getChartData", {touchDt: touchDt, type: type}, function (r) {
-        makeChart(r.data, id, toolXname, toolYname);
-    });
-}
 
 function makeChart(data, id, toolXname, toolYname) {
     var chart = echarts.init(document.getElementById(id), 'macarons');

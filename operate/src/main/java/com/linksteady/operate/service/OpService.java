@@ -18,10 +18,6 @@ public interface OpService {
 
      int getPeriodUserListCount(String headerId);
 
-     List<Map<String, Object>> getSpuStatis(String touchDt);
-
-     Echart getChartData(String touchDt, String type);
-
      List<Map<String, Object>> getPeriodSpuStatis(String headerId);
 
      Echart getPeriodChartData(String headerId, String type);

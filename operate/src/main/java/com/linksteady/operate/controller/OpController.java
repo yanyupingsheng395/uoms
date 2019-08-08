@@ -60,17 +60,6 @@ public class OpController extends BaseController {
         return  ResponseBo.okOverPaging("",totalCount,result);
     }
 
-    @RequestMapping("/getSpuStatis")
-    public ResponseBo getSpuStatis(String touchDt) {
-        List<Map<String, Object>> dataList = opService.getSpuStatis(touchDt);
-        return ResponseBo.okWithData(null, dataList);
-    }
-
-    @RequestMapping("/getChartData")
-    public ResponseBo getChartData(String touchDt, String type) {
-        return ResponseBo.okWithData(null, opService.getChartData(touchDt, type));
-    }
-
     @RequestMapping("/getPeriodSpuStatis")
     public ResponseBo getPeriodSpuStatis(String headerId) {
         List<Map<String, Object>> dataList = opService.getPeriodSpuStatis(headerId);
