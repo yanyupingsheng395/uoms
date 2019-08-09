@@ -250,23 +250,23 @@ public class DailyPushServiceImpl implements DailyPushService {
     public int sendMessage(String userIdentify,String smsContent)
     {
         //判断近N天是否触达过
-        ValueOperations<String,String> operations=redisTemplate.opsForValue();
-        String value=operations.get("PUSH_"+userIdentify);
-
-        if(null!=value&&!"".equals(value))
-        {
-            log.error("用户{}存在被重复触达的风险！！",userIdentify);
-            return -1;
-        }else
-        {
+//        ValueOperations<String,String> operations=redisTemplate.opsForValue();
+//        String value=operations.get("PUSH_"+userIdentify);
+//
+//        if(null!=value&&!"".equals(value))
+//        {
+//            log.error("用户{}存在被重复触达的风险！！",userIdentify);
+//            return -1;
+//        }else
+//        {
             log.info("模拟触达给{}:{}",userIdentify,smsContent);
-            operations.set("PUSH_"+userIdentify,userIdentify,604800);
+          //  operations.set("PUSH_"+userIdentify,userIdentify,604800);
 
             Random random = new Random();
             //模拟发送状态
             int rint=random.nextInt(100);
             return rint;
-        }
+    //    }
     }
 
 
