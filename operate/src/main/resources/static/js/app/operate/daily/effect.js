@@ -144,10 +144,8 @@ function getKpiStatis() {
             code += "<tr class='text-center'><td>任务转化金额（元）</td><td>"+convertAmout+"</td><td>补贴发放数（个）</td><td>"+subsidyCount+"</td></tr>";
             code += "<tr class='text-center'><td>任务补贴金额（元）</td><td>"+subsidyAmount+"</td><td>补贴核销数（个）</td><td>"+cancleCount+"</td></tr>";
             code += "<tr class='text-center'><td>每元补贴创收（元）</td><td>"+subsidyPerUnit+"</td><td>核销率（%）</td><td>"+cancleRate+"</td></tr>";
-        }else {
-            code = "<tr class='text-center'><td colspan='4'>没有任何记录。</td></tr>";
+            $("#statisData").html('').append(code);
         }
-        $("#statisData").html('').append(code);
     });
 }
 
