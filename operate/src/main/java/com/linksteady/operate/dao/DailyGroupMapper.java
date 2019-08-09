@@ -22,6 +22,8 @@ public interface DailyGroupMapper {
 
     List<Map<String, Object>> getSelectedGroup(String headId,@Param("activeIdList") List<String> activeIdList, @Param("growthIdList") List<String> growthIdList);
 
+    List<Map<String, Object>> getSelectedGroupByIsCheck(String headId);
+
     List<String> getDefaultActive(@Param("headId") String headId);
 
     List<String> getDefaultGrowth(@Param("headId") String headId);

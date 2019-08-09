@@ -63,6 +63,14 @@
                 #{item}
             </foreach>
         </if>
+        <if test="(activeIdList == null or activeIdList.size() == 0) and (growthIdList.size() == 0 or growthIdList == null)">
+            and 1 = 0
+        </if>
+        order by group_id asc
+    </select>
+
+    <select id="getSelectedGroupByIsCheck" resultType="map">
+        select GROUP_ID id, GROUP_NAME name from UO_OP_DAILY_GROUP where head_id = #{headId} and is_check = '1'
         order by group_id asc
     </select>
 

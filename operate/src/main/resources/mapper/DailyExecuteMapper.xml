@@ -8,6 +8,8 @@
         <result column="SELL_CNT" jdbcType="DECIMAL" property="sellCnt"></result>
         <result column="CONVERT_AMOUNT" jdbcType="DECIMAL" property="convertAmount"></result>
         <result column="EXECUTE_DT" jdbcType="DECIMAL" property="executeDt"></result>
+        <result column="EXECUTE_DT" jdbcType="DECIMAL" property="executeDt"></result>
+        <result column="EXECUTE_DT" jdbcType="DECIMAL" property="executeDt"></result>
     </resultMap>
 
     <select id="getKpiTrend" resultMap="base">

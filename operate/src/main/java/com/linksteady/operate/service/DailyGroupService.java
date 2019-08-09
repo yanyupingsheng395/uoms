@@ -19,6 +19,8 @@ public interface DailyGroupService {
 
     List<Map<String, Object>> getSelectedGroup(String headId, String activeIds, String growthIds);
 
+    List<Map<String, Object>> getSelectedGroup(String headId);
+
     List<String> getDefaultActive(String headId);
 
     List<String> getDefaultGrowth(String headId);

@@ -16,4 +16,6 @@ public interface DailyEffectMapper {
     int getDataCount(@Param("touchDt") String touchDt);
 
     DailyEffect getKpiStatis(String headId);
+
+    void updateExecuteAndLossRate(String executeRate, String headId);
 }

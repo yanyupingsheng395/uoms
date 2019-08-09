@@ -1,4 +1,3 @@
-
 let active_arr = [{
     id:'UAC_01',
     text: '高度活跃'
@@ -80,7 +79,7 @@ function createJsTree() {
         },
         "plugins": ["wholerow", "checkbox"]
     }).bind('click.jstree', function(event) {
-        selectGroup();
+        selectGroup(true);
     }).bind('loaded.jstree ', function (event) {
         getDefaultActive();
     });
@@ -103,14 +102,17 @@ function createJsTree() {
         },
         "plugins": ["wholerow", "checkbox"]
     }).bind('click.jstree', function(event) {
-        selectGroup();
+        selectGroup(true);
     }).bind('loaded.jstree ', function (event) {
         getDefaultGrowth();
     });
 }
 
-// 根据树获取对应的群组和名单
-function selectGroup() {
+/**
+ * 根据树获取对应的群组和名单
+ * @param flag 判断是否需要根据前2个框筛数据
+ */
+function selectGroup(flag) {
     let selected_active_ids;
     let selected_growth_ids;
 
@@ -175,7 +177,9 @@ function selectGroup() {
     });
     $("#selected_condition").html('').append(code);
 
-    getSelectedGroup(activeIds.join(","), growthIds.join(","));
+    if(flag) {
+        getSelectedGroup(activeIds.join(","), growthIds.join(","));
+    }
 }
 
 function removeTr(dom, id, type) {
@@ -185,8 +189,9 @@ function removeTr(dom, id, type) {
         $("#tree_urgency").jstree('deselect_node', id, true);
     }
     $(dom).parent().parent().remove();
-    selectGroup();
+    selectGroup(true);
 }
+
 getSelectedGroup();
 function getSelectedGroup(activeIds, growthIds) {
     let code = "";
@@ -332,7 +337,7 @@ function getDefaultActive() {
         activeIds.forEach(v=>{
             $("#tree_active").jstree('select_node', v, true);
         });
-        selectGroup();
+        selectGroup(false);
     });
 }
 
@@ -342,7 +347,7 @@ function getDefaultGrowth() {
         growthIds.forEach(v=>{
             $("#tree_urgency").jstree('select_node', v, true);
         });
-        selectGroup();
+        selectGroup(false);
     });
 }
 

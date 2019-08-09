@@ -31,4 +31,6 @@ public interface DailyMapper {
     DailyInfo getKpiVal(String headId);
 
     String getTouchDt(String headId);
+
+    Map<String, Object> getTotalNum(String headId);
 }
