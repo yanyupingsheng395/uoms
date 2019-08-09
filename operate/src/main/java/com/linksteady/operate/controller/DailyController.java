@@ -254,4 +254,22 @@ public class DailyController {
         dailyGroupService.setSmsCode(headId, groupId, smsCode);
         return ResponseBo.ok();
     }
+
+    /**
+     * 获取检查评估个体效果数据
+     * @return
+     */
+    @GetMapping("/getUserEffect")
+    public ResponseBo getUserEffect(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        String headId = request.getParam().get("headId");
+        String userValue = request.getParam().get("userValue");
+        String pathActive = request.getParam().get("pathActive");
+        String status = request.getParam().get("status");
+
+        List<DailyDetail> dataList = dailyDetailService.getUserEffect(headId, start, end, userValue, pathActive, status);
+        int count = dailyDetailService.getDataListCount(headId, userValue, pathActive, status);
+        return ResponseBo.okOverPaging(null, count, dataList);
+    }
 }

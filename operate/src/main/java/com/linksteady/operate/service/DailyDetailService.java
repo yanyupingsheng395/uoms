@@ -18,4 +18,8 @@ public interface DailyDetailService {
     List<DailyDetail> getPageList(int start, int end, String headId, String groupIds);
 
     int getDataCount(String headId, String groupIds);
+
+    List<DailyDetail> getUserEffect(String headId, int start, int end, String userValue, String pathActive, String status);
+
+    int getDataListCount(String headId, String userValue, String pathActive, String status);
 }

@@ -4,9 +4,9 @@
             <a class="btn btn-primary" id="btn_prev" onclick="step1()">
                 <i class="fa fa-arrow-left"></i> 上一步
             </a>
-            <a class="btn btn-primary" id="btn_push" onclick="submitData()">
+            <button class="btn btn-primary" id="btn_push" onclick="submitData()">
                 <i class="fa fa-location-arrow"></i> 启动群组推送
-            </a>
+            </button>
         </div>
     </div>
 </div>
@@ -21,7 +21,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h5 class="modal-title">选择短信模板</h5>
+                <h5 class="modal-title">选择消息模板</h5>
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" onclick="setSmsCode()">提交短信模板</button>
+                <button type="button" class="btn btn-success" onclick="setSmsCode()">更新消息模板</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>

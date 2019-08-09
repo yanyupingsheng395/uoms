@@ -132,7 +132,13 @@ public class PageController {
      */
     @RequestMapping("daily/effect")
     public String effectTrack(Model model, @RequestParam("id") String headId) {
-        model.addAttribute("headId", headId);
-        return "operate/daily/effect";
+        String status = dailyService.getStatusById(headId);
+        if(StringUtils.isNotEmpty(status)) {
+            if(status.equals("done") || status.equals("finished")) {
+                model.addAttribute("headId", headId);
+                return "operate/daily/effect";
+            }
+        }
+        return "redirect:/page/daily";
     }
 }

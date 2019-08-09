@@ -23,4 +23,8 @@ public interface DailyDetailMapper {
     List<DailyDetail> getPageList(int start, int end, String headId, @Param("groupIdList") List<String> groupIdList);
 
     int getDataCount(String headId, @Param("groupIdList") List<String> groupIdList);
+
+    List<DailyDetail> getUserEffect(String headId, int start, int end, String whereInfo);
+
+    int getDataListCount(String headId, String whereInfo);
 }

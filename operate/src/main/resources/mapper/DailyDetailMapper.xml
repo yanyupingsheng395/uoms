@@ -10,7 +10,7 @@
         <result column="PATH_ACTIV" jdbcType="VARCHAR" property="pathActiv"></result>
         <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
         <result column="SPU_NAME" jdbcType="VARCHAR" property="spuName"></result>
-        <result column="PIECE_PRICE" jdbcType="VARCHAR" property="piecePrice"></result>
+        <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="piecePrice"></result>
         <result column="JOIN_RATE" jdbcType="VARCHAR" property="joinRate"></result>
         <result column="PURCH_TYPE_NUM" jdbcType="VARCHAR" property="purchTypeNum"></result>
         <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"></result>
@@ -26,10 +26,27 @@
         <result column="GROWTH_STRATEGY_ID" jdbcType="DECIMAL" property="growthStrategyId"></result>
         <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
         <result column="COUPON_DENOM" jdbcType="VARCHAR" property="couponDenom"></result>
-        <result column="PURCH_PRODUCT_NAME" jdbcType="VARCHAR" property="purchProductName"></result>
+        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="purchProductName"></result>
         <result column="PURCH_TIMES" jdbcType="VARCHAR" property="purchTimes"></result>
         <result column="REC_TYPE" jdbcType="VARCHAR" property="recType"></result>
         <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
+    </resultMap>
+
+    <resultMap id="effectResult" type="com.linksteady.operate.domain.DailyDetail">
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"></result>
+        <result column="IS_CHECK" jdbcType="VARCHAR" property="isCheck"></result>
+        <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"></result>
+        <result column="IS_CONVERSION" jdbcType="VARCHAR" property="isConversion"></result>
+        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
+        <result column="PATH_ACTIV" jdbcType="VARCHAR" property="pathActiv"></result>
+        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
+        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="purchProductName"></result>
+        <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="piecePrice"></result>
+        <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"></result>
+        <result column="COUPON_DENOM" jdbcType="VARCHAR" property="couponDenom"></result>
+        <result column="ACT_PROD_NAME" jdbcType="VARCHAR" property="actProdName"></result>
+        <result column="ACT_PIECE_PERICE" jdbcType="VARCHAR" property="actPiecePrice"></result>
+        <result column="IS_CANCLE" jdbcType="VARCHAR" property="isCancle"></result>
     </resultMap>
 
     <select id="getTargetType" resultType="map">
@@ -79,7 +96,7 @@
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM RN from (
-          select USER_ID, t3.GROUP_NAME, PURCH_PRODUCT_NAME, PURCH_TIMES, PIECE_PRICE, SPU_NAME, COMPLETE_PURCH, PATH_ACTIV, t1.USER_VALUE, t1.URGENCY_LEVEL,REC_RETENTION_NAME,REC_UP_NAME,REC_CROSS_NAME,ORDER_PERIOD,REFER_DENO, t2.COUPON_DENOM, DISCOUNT_LEVEL, REC_TYPE
+          select USER_ID, t3.GROUP_NAME, REC_PROD_NAME, PURCH_TIMES, REC_PIECE_PRICE, SPU_NAME, COMPLETE_PURCH, PATH_ACTIV, t1.USER_VALUE, t1.URGENCY_LEVEL,REC_RETENTION_NAME,REC_UP_NAME,REC_CROSS_NAME,ORDER_PERIOD,REFER_DENO, t2.COUPON_DENOM, DISCOUNT_LEVEL, REC_TYPE
             from UO_OP_DAILY_DETAIL t1, UO_OP_COUPON t2, UO_OP_DAILY_GROUP t3
           where t1.COUPON_ID = t2.COUPON_ID(+)  and t1.head_id = t3.head_id(+) and t1.GROUP_ID = t3.GROUP_ID(+) and t1.head_id = #{headId}
           <if test="groupIdList != null and groupIdList.size()>0">
@@ -99,6 +116,25 @@
             <foreach collection="groupIdList" item="item" open="(" close=")" separator=",">
                 #{item}
             </foreach>
+        </if>
+    </select>
+
+    <select id="getUserEffect" resultMap="effectResult">
+        select * from (
+        select t.*, ROWNUM RN from (
+        select USER_ID, t1.PATH_ACTIV, t1.IS_CHECK,IS_PUSH,IS_CONVERSION,t3.GROUP_NAME,t1.USER_VALUE,REC_PROD_NAME,REC_PIECE_PRICE, t2.COUPON_DENOM,ACT_PROD_NAME,ACT_PIECE_PERICE,IS_CANCLE
+        from UO_OP_DAILY_DETAIL t1, UO_OP_COUPON t2, UO_OP_DAILY_GROUP t3 where t1.COUPON_ID = t2.COUPON_ID(+) and t1.head_id = t3.head_id(+) and t1.group_id = t3.group_id(+) and t1.head_id = #{headId}
+        <if test="whereInfo != ''">
+            ${whereInfo}
+        </if>
+        ) t where ROWNUM &lt;=#{end}
+        ) where RN &gt;=#{start}
+    </select>
+
+    <select id="getDataListCount" resultType="int">
+        select count(1) from UO_OP_DAILY_DETAIL t1 where head_id = #{headId}
+        <if test="whereInfo != ''">
+            ${whereInfo}
         </if>
     </select>
 </mapper>

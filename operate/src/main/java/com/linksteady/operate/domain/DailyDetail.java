@@ -148,4 +148,39 @@ public class DailyDetail {
      * 所在群组
      */
     private String groupName;
+
+    /**
+     * 是否选中
+     */
+    private String isCheck;
+
+    /**
+     * 是否触达
+     */
+    private String isPush;
+
+    /**
+     * 是否已转化
+     */
+    private String isConversion;
+
+    /**
+     * 实际购买商品名称
+     */
+    private String actProdName;
+
+    /**
+     * 实际件单价
+     */
+    private String actPiecePrice;
+
+    /**
+     * 是否核销
+     */
+    private String isCancle;
+
+    /**
+     * 状态
+     */
+    private String status;
 }

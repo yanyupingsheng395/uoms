@@ -24,7 +24,7 @@ function getGroupDataList() {
             colspan: 3
         }, {
             field: 'smsContent',
-            title: '选择短信模板',
+            title: '选择消息模板',
             rowspan: 2,
             valign: 'middle',
             formatter: function (value, row, idx) {
@@ -120,16 +120,16 @@ function setSmsCode() {
     var selected_length = selected.length;
     var contain = false;
     if (!selected_length) {
-        $MB.n_warning('请选择短信模板！');
+        $MB.n_warning('请选择消息模板！');
         return;
     }
     var smsCode = selected[0].smsCode;
     var groupId = $("#currentGroupId").val();
     $.get('/daily/setSmsCode', {groupId: groupId, smsCode: smsCode, headId: headId}, function (r) {
         if(r.code === 200) {
-            $MB.n_success("设置短信模板成功！");
+            $MB.n_success("设置消息模板成功！");
         }else {
-            $MB.n_danger("设置短信模板失败！发生未知异常！");
+            $MB.n_danger("设置消息模板失败！发生未知异常！");
         }
         $("#msg_modal").modal('hide');
         $MB.refreshTable('groupTable');
@@ -176,6 +176,7 @@ function smsTemplateTable() {
  * 启动群组推送
  */
 function submitData() {
+    $("#btn_push").attr("disabled", true);
     $MB.confirm({
         title: "<i class='mdi mdi-alert-outline'></i>提示：",
         content: "确定启动推送群组?"
@@ -185,6 +186,7 @@ function submitData() {
             if(r.code === 200) {
                 $MB.n_success("启动推送成功！");
             }else {
+                $("#btn_push").attr("disabled", false);
                 $MB.n_danger("推送失败，请稍后重试！")
             }
             setTimeout(function () {

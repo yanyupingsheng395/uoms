@@ -172,7 +172,12 @@ $("#btn_catch").click(function () {
     var selected = $("#dailyTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请勾选需要查看效果跟踪的任务！');
+        $MB.n_warning('请勾选需要查看的任务！');
+        return;
+    }
+    var status = selected[0].status;
+    if(status != 'done' && status != 'finished') {
+        $MB.n_warning("仅已执行和已结束状态的可检查评估！");
         return;
     }
     var headId = selected[0].headId;

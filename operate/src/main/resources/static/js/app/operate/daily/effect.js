@@ -132,17 +132,21 @@ function getKpiStatis() {
     $.get("/daily/getKpiStatis", {headId:headId}, function (r) {
         var data = r.data;
         var code = "";
-        var convertAmout = data['convertAmount']==null?'-':data['convertAmount'];
-        var subsidyAmount = data['subsidyAmount']==null?'-':data['subsidyAmount'];
-        var subsidyPerUnit = data['subsidyPerUnit']==null?'-':data['subsidyPerUnit'];
-        var subsidyCount = data['subsidyCount']==null?'-':data['subsidyCount'];
-        var cancleCount = data['cancleCount']==null?'-':data['cancleCount'];
-        var cancleRate = data['cancleRate']==null?'-':data['cancleRate'];
+        if(data != null) {
+            var convertAmout = data['convertAmount']==null?'-':data['convertAmount'];
+            var subsidyAmount = data['subsidyAmount']==null?'-':data['subsidyAmount'];
+            var subsidyPerUnit = data['subsidyPerUnit']==null?'-':data['subsidyPerUnit'];
+            var subsidyCount = data['subsidyCount']==null?'-':data['subsidyCount'];
+            var cancleCount = data['cancleCount']==null?'-':data['cancleCount'];
+            var cancleRate = data['cancleRate']==null?'-':data['cancleRate'];
 
-        var convertAmout = data['convertAmount']==null?'-':data['convertAmount'];
-        code += "<tr class='text-center'><td>任务转化金额（元）</td><td>"+convertAmout+"</td><td>补贴发放数（个）</td><td>"+subsidyCount+"</td></tr>";
-        code += "<tr class='text-center'><td>任务补贴金额（元）</td><td>"+subsidyAmount+"</td><td>补贴核销数（个）</td><td>"+cancleCount+"</td></tr>";
-        code += "<tr class='text-center'><td>每元补贴创收（元）</td><td>"+subsidyPerUnit+"</td><td>核销率（%）</td><td>"+cancleRate+"</td></tr>";
+            var convertAmout = data['convertAmount']==null?'-':data['convertAmount'];
+            code += "<tr class='text-center'><td>任务转化金额（元）</td><td>"+convertAmout+"</td><td>补贴发放数（个）</td><td>"+subsidyCount+"</td></tr>";
+            code += "<tr class='text-center'><td>任务补贴金额（元）</td><td>"+subsidyAmount+"</td><td>补贴核销数（个）</td><td>"+cancleCount+"</td></tr>";
+            code += "<tr class='text-center'><td>每元补贴创收（元）</td><td>"+subsidyPerUnit+"</td><td>核销率（%）</td><td>"+cancleRate+"</td></tr>";
+        }else {
+            code = "<tr class='text-center'><td colspan='4'>没有任何记录。</td></tr>";
+        }
         $("#statisData").html('').append(code);
     });
 }
@@ -172,4 +176,136 @@ function createTrendChart(chartId, data) {
     };
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option);
+}
+
+/**
+ * 获取个体效果
+ */
+getUserEffect();
+function getUserEffect() {
+    var settings = {
+        url: '/daily/getUserEffect',
+        pagination: true,
+        sidePagination: "server",
+        pageList: [10, 25, 50, 100],
+        sortable: true,
+        sortOrder: "asc",
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,  //页面大小
+                pageNum: (params.offset / params.limit) + 1,
+                param: {
+                    headId: headId,
+                    userValue: $("select[name='userValue']").find("option:selected").val(),
+                    pathActive: $("select[name='pathActive']").find("option:selected").val(),
+                    status: $("select[name='status']").find("option:selected").val()
+                }
+            };
+        },
+        columns: [{
+            field: 'userId',
+            title: '用户ID',
+        },{
+            title: '状态',
+            formatter: function (value, row, idx) {
+                if(row.isCheck == '1') {
+                    if(row.isPush == '1') {
+                        if(row.isConversion == '1') {
+                            return "已转化";
+                        }else {
+                            return "未转化";
+                        }
+                    }else {
+                        return "未触达";
+                    }
+                }else {
+                    return "未选择";
+                }
+            }
+        },{
+            field: 'groupName',
+            title: '所在群组'
+        },{
+            field: 'pathActiv',
+            title: '活跃度',
+            formatter: function (value, row, index) {
+                var res = "";
+                switch (value) {
+                    case "UAC_01":
+                        res = "高度活跃";
+                        break;
+                    case "UAC_02":
+                        res = "中度活跃";
+                        break;
+                    case "UAC_03":
+                        res = "流失预警";
+                        break;
+                    case "UAC_04":
+                        res = "弱流失";
+                        break;
+                    case "UAC_05":
+                        res = "强流失";
+                        break;
+                    case "UAC_06":
+                        res = "沉睡";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
+            }
+        },{
+            field: 'userValue',
+            title: '价值',
+            formatter: function (value, row, index) {
+                var res = "";
+                switch (value) {
+                    case "ULC_01":
+                        res = "重要";
+                        break;
+                    case "ULC_02":
+                        res = "主要";
+                        break;
+                    case "ULC_03":
+                        res = "普通";
+                        break;
+                    case "ULC_04":
+                        res = "长尾";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
+            }
+        },{
+            field: 'purchProductName',
+            title: '推荐商品'
+        },{
+            field: 'piecePrice',
+            title: '件单价（元）'
+        },{
+            field: 'couponDenom',
+            title: '优惠券'
+        },{
+            field: 'actProdName',
+            title: '购买商品'
+        },{
+            field: 'actPiecePrice',
+            title: '件单价（元）'
+        },{
+            field: 'isCancle',
+            title: '是否核销'
+        }]
+    };
+    $MB.initTable('userTable', settings);
+}
+
+function searchUser() {
+    $MB.refreshTable('userTable');
+}
+
+function refreshUser() {
+    $("input[name='userValue']").find("option[value='']").attr("selected",true);
+    $("input[name='pathActive']").find("option[value='']").attr("selected",true);
+    $("input[name='status']").find("option[value='']").attr("selected",true);
 }
