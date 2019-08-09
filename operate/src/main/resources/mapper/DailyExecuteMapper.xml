@@ -11,7 +11,7 @@
     </resultMap>
 
     <select id="getKpiTrend" resultMap="base">
-        select CONVERT_CNT, SELL_CNT, CONVERT_AMOUNT, to_char(EXECUTE_DT, 'yyyymmdd') EXECUTE_DT from UO_OP_DAILY_EXECUTE_STATIS
+        select CONVERT_CNT, SELL_CNT, CONVERT_AMOUNT, to_char(EXECUTE_DT, 'yyyymmdd') EXECUTE_DT from UO_OP_DAILY_STATIS_SNP
         where head_id = #{headId} order by EXECUTE_DT asc
     </select>
 </mapper>

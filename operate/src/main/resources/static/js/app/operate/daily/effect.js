@@ -72,7 +72,7 @@ function createFunnelChart(chartId, data1, data2, data3, data4) {
             },
 
             {
-                top:0,
+                top: 0,
                 type: 'funnel',
                 left: '10%',
                 width: '80%',
