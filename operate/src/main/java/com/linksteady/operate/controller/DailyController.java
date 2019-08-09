@@ -133,6 +133,7 @@ public class DailyController {
     public ResponseBo submitData(String headId) {
         // 生成推送名单中
         String status = "ready_push";
+        PushListThread.generatePushList(headId);
         dailyService.updateStatus(headId, status);
         return ResponseBo.ok();
     }

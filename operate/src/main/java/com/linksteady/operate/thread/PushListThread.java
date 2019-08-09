@@ -33,7 +33,7 @@ public class PushListThread {
      */
      public static void generatePushList(String headerId)
      {
-         log.info("日推送收到heaerId:{},待生成名单!",headerId);
+         log.info("日推送收到headerId:{},待生成名单!",headerId);
          getInstance().triggerQueue.add(headerId);
      }
 
