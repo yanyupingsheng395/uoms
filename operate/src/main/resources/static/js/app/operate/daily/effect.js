@@ -168,7 +168,7 @@ function createTrendChart(chartId, data) {
     var seriesData = [{type: 'line', data:yAxisData}];
     var option = getOption(null,xAxisData,xAxisName,yAxisName,seriesData);
     option.grid = {
-        left: '5%',
+        left: '16%',
         right: '14%',
         top:'15%',
         bottom: '2%',
