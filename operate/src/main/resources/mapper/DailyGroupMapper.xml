@@ -63,6 +63,9 @@
                 #{item}
             </foreach>
         </if>
+        <if test="(activeIdList == null or activeIdList.size() == 0) and (growthIdList.size() == 0 or growthIdList == null)">
+            and 1 = 0
+        </if>
         order by group_id asc
     </select>
 

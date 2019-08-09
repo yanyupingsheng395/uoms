@@ -94,4 +94,9 @@ public class DailyEffect {
      * 每元补贴创收
      */
     private Double subsidyPerUnit;
+
+    /**
+     * 执行率
+     */
+    private String executeRate;
 }

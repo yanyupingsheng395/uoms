@@ -192,7 +192,7 @@ function removeTr(dom, id, type) {
     selectGroup(true);
 }
 
-getSelectedGroup(null, null);
+getSelectedGroup();
 function getSelectedGroup(activeIds, growthIds) {
     let code = "";
     $.get("/daily/getSelectedGroup", {headId: headId, activeIds:activeIds, growthIds:growthIds}, function (r) {

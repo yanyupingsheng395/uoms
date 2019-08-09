@@ -20,6 +20,7 @@
         <result column="SUBSIDY_AMOUNT" property="subsidyAmount" jdbcType="DECIMAL"></result>
         <result column="TOUCH_COUNT" property="touchCount" jdbcType="DECIMAL"></result>
         <result column="SUBSIDY_PER_UNIT" property="subsidyPerUnit" jdbcType="DECIMAL"></result>
+        <result column="EXECUTE_RATE" property="executeRate" jdbcType="VARCHAR"></result>
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
@@ -48,4 +49,8 @@
         select CONVERT_AMOUNT, SUBSIDY_AMOUNT,SUBSIDY_PER_UNIT，SUBSIDY_COUNT，CANCLE_COUNT，CANCLE_RATE from UO_OP_DAILY_STATIS
         where head_id = #{headId}
     </select>
+
+    <update id="updateExecuteAndLossRate">
+        update UO_OP_DAILY_STATIS set EXECUTE_RATE = #{executeRate} where HEAD_ID = #{headId}
+    </update>
 </mapper>

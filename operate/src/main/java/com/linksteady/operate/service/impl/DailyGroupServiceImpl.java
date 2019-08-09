@@ -2,8 +2,11 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.operate.dao.DailyEffectMapper;
+import com.linksteady.operate.dao.DailyExecuteMapper;
 import com.linksteady.operate.dao.DailyGroupMapper;
 import com.linksteady.operate.dao.DailyMapper;
+import com.linksteady.operate.domain.DailyExecute;
 import com.linksteady.operate.domain.DailyGroup;
 import com.linksteady.operate.service.DailyGroupService;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +32,9 @@ public class DailyGroupServiceImpl implements DailyGroupService {
 
     @Autowired
     private DailyMapper dailyMapper;
+
+    @Autowired
+    private DailyEffectMapper dailyEffectMapper;
 
     @Override
     public List<DailyGroup> getDataList(String headId, int start, int end) {
@@ -58,6 +66,7 @@ public class DailyGroupServiceImpl implements DailyGroupService {
         if(activeIds == null && growthIds == null) {
             return dailyGroupMapper.getSelectedGroupByIsCheck(headId);
         }
+
         return dailyGroupMapper.getSelectedGroup(headId, activeIdList, growthIdList);
     }
 
@@ -89,7 +98,19 @@ public class DailyGroupServiceImpl implements DailyGroupService {
             // 更改实际选择人数
             int num = dailyGroupMapper.sumCheckedNum(headId);
             dailyMapper.updateActualNum(headId, num);
+
+            updateExecuteRate(headId);
         }
+    }
+
+    /**
+     * 更行执行率
+     */
+    private void updateExecuteRate(String headId) {
+        DecimalFormat df = new DecimalFormat("#");
+        Map<String, Object> totalAndOptMap = dailyMapper.getTotalNum(headId);
+        Double executeRate = ((BigDecimal)totalAndOptMap.get("OPT")).doubleValue()/((BigDecimal)totalAndOptMap.get("TOTAL")).doubleValue() * 100D;
+        dailyEffectMapper.updateExecuteAndLossRate(df.format(executeRate), headId);
     }
 
     @Override

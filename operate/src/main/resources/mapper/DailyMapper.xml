@@ -85,4 +85,8 @@
     <select id="getTouchDt" resultType="string">
         select to_char(TOUCH_DT, 'yyyymmdd') from UO_OP_DAILY_HEADER where head_id = #{headId}
     </select>
+
+    <select id="getTotalNum" resultType="map">
+        select total_num total, OPT_NUM opt from UO_OP_DAILY_HEADER where head_id = #{headId}
+    </select>
 </mapper>
