@@ -47,13 +47,23 @@ public class DailyGroupServiceImpl implements DailyGroupService {
     public List<Map<String, Object>> getSelectedGroup(String headId, String activeIds, String growthIds) {
         List<String> activeIdList = Lists.newArrayList();
         List<String> growthIdList = Lists.newArrayList();
+        boolean ifCheck = false;
         if(activeIds != null) {
             activeIdList = Arrays.asList(StringUtils.split(activeIds, ","));
         }
         if(growthIds != null) {
             growthIdList = Arrays.asList(StringUtils.split(growthIds, ","));
         }
+
+        if(activeIds == null && growthIds == null) {
+            return dailyGroupMapper.getSelectedGroupByIsCheck(headId);
+        }
         return dailyGroupMapper.getSelectedGroup(headId, activeIdList, growthIdList);
+    }
+
+    @Override
+    public List<Map<String, Object>> getSelectedGroup(String headId) {
+        return dailyGroupMapper.getSelectedGroupByIsCheck(headId);
     }
 
     @Override

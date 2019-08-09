@@ -66,6 +66,11 @@
         order by group_id asc
     </select>
 
+    <select id="getSelectedGroupByIsCheck" resultType="map">
+        select GROUP_ID id, GROUP_NAME name from UO_OP_DAILY_GROUP where head_id = #{headId} and is_check = '1'
+        order by group_id asc
+    </select>
+
     <select id="getDefaultActive" resultType="string">
         select DISTINCT PATH_ACTIVE from UO_OP_DAILY_GROUP where head_Id = #{headId} and is_check = '1' order by PATH_ACTIVE
     </select>
