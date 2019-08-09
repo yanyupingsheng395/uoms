@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.DailyGroupMapper;
+import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.DailyGroup;
 import com.linksteady.operate.service.DailyGroupService;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,9 @@ public class DailyGroupServiceImpl implements DailyGroupService {
 
     @Autowired
     private DailyGroupMapper dailyGroupMapper;
+
+    @Autowired
+    private DailyMapper dailyMapper;
 
     @Override
     public List<DailyGroup> getDataList(String headId, int start, int end) {
@@ -71,6 +75,10 @@ public class DailyGroupServiceImpl implements DailyGroupService {
             List<String> groupIdList = Arrays.asList(groupIds.split(","));
             dailyGroupMapper.setIsCheckIsTrue(headId, groupIdList);
             dailyGroupMapper.setIsCheckIsFalse(headId, groupIdList);
+
+            // 更改实际选择人数
+            int num = dailyGroupMapper.sumCheckedNum(headId);
+            dailyMapper.updateActualNum(headId, num);
         }
     }
 
