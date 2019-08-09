@@ -91,5 +91,15 @@ public class SmsTemplateController extends BaseController {
         return ResponseBo.ok();
     }
 
+
+    /**
+     * 删除短信模板
+     */
+    @RequestMapping("/test")
+    public ResponseBo test(HttpServletRequest request) {
+        PushListThread.generatePushList("13");
+        return ResponseBo.ok();
+    }
+
 }
 

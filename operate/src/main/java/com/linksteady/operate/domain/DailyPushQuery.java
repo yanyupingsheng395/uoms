@@ -9,10 +9,6 @@ import lombok.Data;
 @Data
 public class DailyPushQuery {
 
-    /**
-     * ID
-     */
-    private Long groupId;
 
     /**
      * 头表ID
@@ -23,15 +19,11 @@ public class DailyPushQuery {
 
     private String userId;
 
-    private String phoneNum;
+    private String userIdentify;
 
     private String smsCode;
 
     private String smsContent;
-
-    private String prodSmsCode;
-
-    private String prodSmsContent;
 
     private String recLastId;
 
@@ -46,6 +38,4 @@ public class DailyPushQuery {
     private String couponUrl;
 
     private Long growthStreadyId;
-
-    private String orderPeriod;
 }

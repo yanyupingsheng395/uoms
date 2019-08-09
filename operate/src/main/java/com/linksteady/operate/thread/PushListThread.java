@@ -6,7 +6,10 @@ import com.linksteady.operate.service.impl.DailyServiceImpl;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 生成每日运营推送名单的多线程类
@@ -44,26 +47,22 @@ public class PushListThread {
         generatePushThread=new Thread(new Runnable() {
             @Override
             public void run() {
-               //对queue中取出header_id
                 while(true)
                 {
+                    String headerId="";
                     try {
-                        String headerId=getInstance().triggerQueue.take();
+                        //从queue中取出header_id
+                        headerId=getInstance().triggerQueue.take();
                         log.info("日推送从队列中取到heaerId:{},待生成名单!",headerId);
 
-                        //将此headerId对应的用户写入到推送明细表中去
+                        //针对推送名单 填充消息模板 生成文案
                         DailyPushServiceImpl dailyPushService=(DailyPushServiceImpl)SpringContextUtils.getBean("dailyPushServiceImpl");
-
                         dailyPushService.generatePushList(headerId);
 
-                        //更新当前header_Id对应数据的状态为ready_push
-                        DailyServiceImpl dailyService=(DailyServiceImpl)SpringContextUtils.getBean("dailyServiceImpl");
-                        dailyService.updateStatus(headerId,"ready_push");
-
-                        log.info("日推送heaerId:{},的推送名单已生成",headerId);
+                        log.info("日推送heaerId:{},的推送名单已生成,即将开始推送",headerId);
                     } catch (Exception e) {
                         //异常消息上报
-                        e.printStackTrace();
+                        log.error("日运营{}生成推送名单报错{}，",headerId,e);
                     }
                 }
             }
