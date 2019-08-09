@@ -45,5 +45,9 @@ public interface DailyPushService {
      */
     int sendMessage(String userIdentify,String smsContent);
 
+    /**
+     * 更新统计表中的触达信息
+     */
+    void updatePushStatInfo();
 
 }

@@ -112,6 +112,9 @@ public class PushSmsThread {
 
                     //对最近三日的触达情况进行汇总、更新
                     dailyPushService.updateHeaderSendStatis();
+
+                    //统计触达率、触达人数、损失率 后续改为每天运行一次
+                    dailyPushService.updatePushStatInfo();
                     //每隔10分钟执行一次
                     try {
                         TimeUnit.MINUTES.sleep(5);
