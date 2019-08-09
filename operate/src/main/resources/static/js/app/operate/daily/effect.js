@@ -305,7 +305,8 @@ function searchUser() {
 }
 
 function refreshUser() {
-    $("input[name='userValue']").find("option[value='']").attr("selected",true);
-    $("input[name='pathActive']").find("option[value='']").attr("selected",true);
-    $("input[name='status']").find("option[value='']").attr("selected",true);
+    $("select[name='userValue']").find("option:selected").removeAttr("selected");
+    $("select[name='pathActive']").find("option:selected").removeAttr("selected");
+    $("select[name='status']").find("option:selected").removeAttr("selected");
+    $MB.refreshTable('userTable');
 }
