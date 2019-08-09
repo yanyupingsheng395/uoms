@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.net.URLEncoder;
@@ -47,6 +48,7 @@ public class DailyPushServiceImpl implements DailyPushService {
      */
     @Override
     @SneakyThrows
+    @Transactional(rollbackFor = Exception.class)
     public void generatePushList(String headerId) {
         //根据headerID获取当前有多少人需要推送
         int pushUserCount= dailyPushMapper.getPushUserCount(headerId);
@@ -230,6 +232,14 @@ public class DailyPushServiceImpl implements DailyPushService {
     @Override
     public void updateHeaderSendStatis() {
         dailyPushMapper.updateHeaderSendStatis();
+    }
+
+    /**
+     * 更新统计表中的触达信息
+     */
+    @Override
+    public void updatePushStatInfo(){
+        dailyPushMapper.updatePushStatInfo();
     }
 
     /**

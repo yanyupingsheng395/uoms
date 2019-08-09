@@ -53,4 +53,9 @@ public interface DailyPushMapper {
      */
     void updateHeaderSendStatis();
 
+    /**
+     * 更新统计表中的触达统计信息
+     */
+    void updatePushStatInfo();
+
 }
