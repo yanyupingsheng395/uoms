@@ -38,8 +38,6 @@ public class DailyController {
     @Autowired
     private DailyEffectService dailyEffectService;
 
-    @Autowired
-    private DailyPushService dailyPushService;
 
     @Autowired
     private DailyExecuteService dailyExecuteService;
@@ -158,16 +156,6 @@ public class DailyController {
     public ResponseBo getOriginalGroupCheck() {
         List<Map<String, Object>> dataList = dailyGroupService.getOriginalGroupCheck();
         return ResponseBo.okWithData(null, dataList);
-    }
-
-    @GetMapping("/getPushList")
-    public ResponseBo getPushList(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
-        String headId = request.getParam().get("headId");
-        List<DailyPush> dataList = dailyPushService.getPushList(start, end, headId);
-        int count = dailyPushService.getDataTotalCount(headId);
-        return ResponseBo.okOverPaging(null, count, dataList);
     }
 
     /**

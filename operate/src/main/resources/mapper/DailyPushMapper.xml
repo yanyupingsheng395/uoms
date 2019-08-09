@@ -2,23 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.DailyPushMapper">
 
-    <resultMap id="pageResult" type="com.linksteady.operate.domain.DailyPush">
-        <result column="USER_ID" jdbcType="DECIMAL" property="userId"></result>
-        <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
-        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
-        <result column="STATUS" jdbcType="VARCHAR" property="status"></result>
-    </resultMap>
-
     <resultMap id="baseResult" type="com.linksteady.operate.domain.DailyPushQuery">
-
         <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
         <result column="DAILY_DETAIL_ID" jdbcType="DECIMAL" property="dailyDetailId"></result>
         <result column="USER_ID" jdbcType="VARCHAR" property="userId"></result>
-        <result column="PHONE_NUM" jdbcType="VARCHAR" property="phoneNum"></result>
+        <result column="USER_IDENTIFY" jdbcType="VARCHAR" property="userIdentify"></result>
         <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode"></result>
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
-        <result column="PROD_SMS_CODE" jdbcType="VARCHAR" property="prodSmsCode"></result>
-        <result column="PROD_SMS_CONTENT" jdbcType="VARCHAR" property="prodSmsContent"></result>
         <result column="REC_LAST_ID" jdbcType="VARCHAR" property="recLastId"></result>
         <result column="REC_LAST_NAME" jdbcType="VARCHAR" property="recLastName"></result>
         <result column="REC_LAST_LONGURL" jdbcType="VARCHAR" property="recLastLongurl"></result>
@@ -26,113 +16,101 @@
         <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
         <result column="COUPON_URL" jdbcType="VARCHAR" property="couponUrl"></result>
         <result column="GROWTH_STRATEGY_ID" jdbcType="DECIMAL" property="growthStreadyId"></result>
-        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
-        <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"></result>
     </resultMap>
 
     <resultMap id="pushInfoResult" type="com.linksteady.operate.domain.DailyPushInfo">
-        <result column="PUSHLIST_ID" jdbcType="DECIMAL" property="pushListId"></result>
-        <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
         <result column="DAILY_DETAIL_ID" jdbcType="DECIMAL" property="dailyDetailId"></result>
         <result column="USER_ID" jdbcType="VARCHAR" property="userId"></result>
-        <result column="PHONE_NUM" jdbcType="VARCHAR" property="phoneNum"></result>
-        <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode"></result>
+        <result column="USER_IDENTIFY" jdbcType="VARCHAR" property="userIdentify"></result>
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
-        <result column="REC_LAST_ID" jdbcType="VARCHAR" property="recLastId"></result>
-        <result column="REC_LAST_NAME" jdbcType="VARCHAR" property="recLastName"></result>
-        <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"></result>
-        <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
         <result column="GROWTH_STRATEGY_ID" jdbcType="DECIMAL" property="growthStreadyId"></result>
-        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
-        <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"></result>
     </resultMap>
 
-    <select id="getDataList" resultMap="baseResult">
+    <select id="getPushUserCount" resultType="int">
         select
-            T1.HEAD_ID,
-            T2.DAILY_DETAIL_ID,
-            T2.USER_ID,
-            T2.USER_ID PHONE_NUM,
-            T3.SMS_CODE,
-            SMS.SMS_CONTENT,
-            T3.PROD_SMS_CODE,
-            SMS2.SMS_CONTENT PROD_SMS_CONTENT,
-            T2.REC_LAST_ID,
-            T2.REC_LAST_NAME,
-            PT.PROD_LONG_URL REC_LAST_LONGURL,
-            T2.COUPON_ID,
-            T2.GROWTH_STRATEGY_ID,
-            T3.GROUP_ID,
-            CP.COUPON_NAME,
-            CP.COUPON_URL,
-            T2.ORDER_PERIOD
+            count(*)
         FROM  UO_OP_DAILY_HEADER T1,
               UO_OP_DAILY_DETAIL T2,
-              UO_OP_DAILY_GROUP T3,
-              UO_OP_COUPON CP,
-              UO_OP_SMS_TEMPLATE SMS,
-              UO_OP_SMS_TEMPLATE SMS2,
-              W_PRODUCT PT
+              UO_OP_DAILY_GROUP T3
         WHERE T1.HEAD_ID=T2.HEAD_ID
           AND T2.HEAD_ID=T3.HEAD_ID
           AND T2.GROUP_ID=T3.GROUP_ID
-          AND T2.COUPON_ID=CP.COUPON_ID(+)
-          AND T3.SMS_CODE=SMS.SMS_CODE
-          AND T3.PROD_SMS_CODE=SMS2.SMS_CODE
-          AND T2.REC_LAST_ID=PT.PRODUCT_ID
           AND T3.IS_CHECK='1'
           AND T1.HEAD_ID=#{headId}
     </select>
 
-    <insert id="savePushInfo">
-        INSERT INTO UO_OP_DAILY_PUSHLIST(PUSHLIST_ID,HEAD_ID,USER_ID,SMS_CONTENT,SMS_CODE,STATUS,PHONE_NUM,ORDER_PERIOD,DAILY_DETAIL_ID,REC_LAST_ID,REC_LAST_NAME,COUPON_ID,GROWTH_STRATEGY_ID,GROUP_ID,COUPON_NAME)
-        SELECT SEQ_UO_OP_DAILY_PUSHLIST.NEXTVAL,A.*
-               FROM (
-        <foreach item="item" index="index" collection="list" separator="UNION ALL">
-            SELECT
-                 #{item.headId},
-                 #{item.userId},
-                 #{item.smsContent},
-                 #{item.smsCode},
-                 'P',
-                #{item.phoneNum},
-                #{item.orderPeriod},
-                #{item.dailyDetailId},
-                #{item.recLastId},
-                #{item.recLastName},
-                #{item.couponId},
-                #{item.growthStreadyId},
-                #{item.groupId},
-                #{item.couponName}
-            FROM DUAL
+    <select id="getPushUserList" resultMap="baseResult">
+        SELECT *
+        FROM (
+                 select
+                     T1.HEAD_ID,
+                     T2.DAILY_DETAIL_ID,
+                     T2.USER_ID,
+                     T2.USER_ID  USER_IDENTIFY,
+                     T3.SMS_CODE,
+                     SMS.SMS_CONTENT,
+                     T2.REC_LAST_ID,
+                     T2.REC_LAST_NAME,
+                     PT.PROD_LONG_URL REC_LAST_LONGURL,
+                     T2.COUPON_ID,
+                     T2.GROWTH_STRATEGY_ID,
+                     CP.COUPON_NAME,
+                     CP.COUPON_URL,
+                     ROWNUM   RN
+                 FROM UO_OP_DAILY_HEADER T1,
+                      UO_OP_DAILY_DETAIL T2,
+                      UO_OP_DAILY_GROUP T3,
+                      UO_OP_COUPON CP,
+                      UO_OP_SMS_TEMPLATE SMS,
+                      W_PRODUCT PT
+                 WHERE T1.HEAD_ID = T2.HEAD_ID
+                   AND T2.HEAD_ID = T3.HEAD_ID
+                   AND T2.GROUP_ID = T3.GROUP_ID
+                   AND T2.COUPON_ID = CP.COUPON_ID(+)
+                   AND T3.SMS_CODE = SMS.SMS_CODE
+                   AND T2.REC_LAST_ID = PT.PRODUCT_ID
+                   AND T3.IS_CHECK = '1'
+                   AND T1.HEAD_ID = #{headId}
+                   AND ROWNUM &lt;= #{end}
+             ) WHERE RN &gt;= #{start}
+    </select>
+
+    <update id="updatePushContent">
+        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+            update UO_OP_DAILY_DETAIL
+            <set>
+                IS_CHECK='1',
+                SMS_CONTENT=#{item.smsContent},
+                PUSH_STATUS='P'
+            </set>
+            where DAILY_DETAIL_ID=#{item.dailyDetailId}
         </foreach>
-        ) A
-    </insert>
+    </update>
 
     <select id="getSendSmsList" resultMap="pushInfoResult">
-        select T.PUSHLIST_ID,T.HEAD_ID, T.USER_ID, T.PHONE_NUM, T.SMS_CONTENT
-        FROM UO_OP_DAILY_PUSHLIST T, UO_OP_DAILY_HEADER C
+        select T.DAILY_DETAIL_ID,T.HEAD_ID, T.USER_ID, T.USER_ID USER_IDENTIFY, T.SMS_CONTENT
+        FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER C
         WHERE T.HEAD_ID = C.HEAD_ID
-          AND C.STATUS = 'doing'
-          AND T.STATUS = 'P'
-          AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
+        AND C.STATUS = 'doing'
+        AND T.PUSH_STATUS = 'P'
+        AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
     </select>
 
     <update id="updateSendStatus">
 
         <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
-              update UO_OP_DAILY_PUSHLIST
+              update UO_OP_DAILY_DETAIL
             <set>
-                status=#{status}
+                PUSH_STATUS=#{status}
             </set>
-              where PUSHLIST_ID=#{item.pushListId}
+              where DAILY_DETAIL_ID=#{item.dailyDetailId}
         </foreach>
     </update>
 
     <update id="updateHeaderToDone">
         UPDATE UO_OP_DAILY_HEADER c SET c.STATUS='done' WHERE c.STATUS='doing' AND not exists
           (
-            select * from UO_OP_DAILY_PUSHLIST p where p.status='P' and p.head_id=c.head_id
+            select * from UO_OP_DAILY_DETAIL p where p.PUSH_STATUS='P' and p.head_id=c.head_id
             )
     </update>
 
@@ -141,23 +119,12 @@
         set (t.plan_num,t.faild_num,t.success_num)=
             (
              select
-             SUM(case when c.status='P' then 1 else 0 end) plan_num,
-             SUM(case when c.status='F' then 1 else 0 end) faild_num,
-             SUM(case when c.status='S' then 1 else 0 end) success_num
-             from uo_op_daily_pushlist c where c.head_id = t.head_id
+             SUM(case when c.PUSH_STATUS='P' then 1 else 0 end) plan_num,
+             SUM(case when c.PUSH_STATUS='F' then 1 else 0 end) faild_num,
+             SUM(case when c.PUSH_STATUS='S' then 1 else 0 end) success_num
+             from UO_OP_DAILY_DETAIL c where c.head_id = t.head_id
             )where
             trunc(touch_dt)>trunc(sysdate-15) and status in ('doing','done','finished')
     </update>
 
-    <select id="getPushList" resultMap="pageResult">
-        select * from (
-          select t.*, ROWNUM RN from (
-              select user_id, SMS_CONTENT, status from UO_OP_DAILY_PUSHLIST where head_id = #{headId}
-          ) t where ROWNUM &lt;=#{end}
-        ) where rn &gt;= #{start}
-    </select>
-
-    <select id="getDataTotalCount" resultType="int">
-        select count(1) from UO_OP_DAILY_PUSHLIST where head_id = #{headId}
-    </select>
 </mapper>

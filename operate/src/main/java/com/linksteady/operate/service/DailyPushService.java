@@ -1,11 +1,8 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.DailyInfo;
-import com.linksteady.operate.domain.DailyPush;
 import com.linksteady.operate.domain.DailyPushInfo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author hxcao
@@ -19,6 +16,12 @@ public interface DailyPushService {
      * 获取当前待发送的短信列表
      */
     List<DailyPushInfo> getSendSmsList();
+
+    /**
+     * 保存文案信息
+     * @param targetList
+     */
+    void updatePushContent( List<DailyPushInfo> targetList);
 
     /**
      * 更新短信发送的状态
@@ -36,8 +39,11 @@ public interface DailyPushService {
      */
     void updateHeaderSendStatis();
 
-    List<DailyPush> getPushList(int start, int end, String headId);
+    /**
+     * 发送消息
+     * @return
+     */
+    int sendMessage(String userIdentify,String smsContent);
 
-    int getDataTotalCount(String headId);
 
 }

@@ -8,7 +8,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -26,6 +25,7 @@ public class PushSmsThread {
     @SneakyThrows
     public void start()
     {
+
         pushSmsThread=new Thread(new Runnable() {
             @Override
             public void run() {
@@ -35,23 +35,21 @@ public class PushSmsThread {
                 List<DailyPushInfo> successResult= Lists.newArrayList();
 
                 int size=100;
-                log.info("---------对待发送的短信列表进行监控----------------");
+                log.info("---------对待发送的推送列表进行监控----------------");
                 while(true)
                 {
                     failedResult.clear();
                     successResult.clear();
-                    Random random = new Random();
-                    //获取所有头处于doing状态  发送列表处于P 且在当前推荐时间段内发送的短信列表
+
+                    //获取所有头处于doing状态  发送列表处于P 且在当前推荐时间段内发送的推送列表
                     List<DailyPushInfo> list=dailyPushService.getSendSmsList();
 
                     for(DailyPushInfo dailyPushInfo:list)
                     {
-                        //假装我在发短信
-                        log.info("模拟发送短信给{}:{}",dailyPushInfo.getUserId(),dailyPushInfo.getSmsContent());
+                        //调用发短信服务
+                        int result=dailyPushService.sendMessage(dailyPushInfo.getUserIdentify(),dailyPushInfo.getSmsContent());
 
-                        //模拟状态
-                        int rint=random.nextInt(100);
-                        if(rint<=5)
+                        if(result<=5)
                         {   //失败
                             failedResult.add(dailyPushInfo);
                         }else
@@ -109,7 +107,7 @@ public class PushSmsThread {
                         }
                     }
 
-                    //更新主记录的状态
+                    //更新主记录的状态 (对于已全部完成发送的更改头表状态为done)
                     dailyPushService.updateHeaderToDone();
 
                     //对最近三日的触达情况进行汇总、更新
