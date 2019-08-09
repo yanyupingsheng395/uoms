@@ -23,7 +23,7 @@
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM rn from (
-        SELECT T1.HEAD_ID, T1.TOUCH_DT, T1.TOTAL_NUM, T1.OPT_NUM, T1.EXECUTE_RATE, T2.TOUCH_COUNT, T2.TOUCH_RATE, T2.CONVERT_COUNT,T2.CONVERT_RATE, T2.CONVERT_AMOUNT, T1.STATUS
+        SELECT T1.HEAD_ID, T1.TOUCH_DT, T1.TOTAL_NUM, T1.OPT_NUM, T2.EXECUTE_RATE, T2.TOUCH_COUNT, T2.TOUCH_RATE, T2.CONVERT_COUNT,T2.CONVERT_RATE, T2.CONVERT_AMOUNT, T1.STATUS
         FROM UO_OP_DAILY_HEADER T1
         LEFT JOIN UO_OP_DAILY_STATIS T2 ON T1.HEAD_ID = T2.HEAD_ID
         ORDER BY T1.TOUCH_DT desc
@@ -79,7 +79,7 @@
 
     <select id="getKpiVal" resultMap="baseResult">
         select TOTAL_NUM, OPT_NUM, SUCCESS_NUM, CONVERT_COUNT,EXECUTE_RATE, TOUCH_RATE, CONVERT_RATE
-        from UO_OP_DAILY_HEADER where head_id = #{headId}
+        from UO_OP_DAILY_HEADER t1, UO_OP_DAILY_STATIS t2 where t1.head_id = #{headId} and t1.head_id = t2.head_id(+)
     </select>
 
     <select id="getTouchDt" resultType="string">
