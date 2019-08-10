@@ -9,6 +9,7 @@ import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.thread.PushListThread;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -126,15 +127,16 @@ public class DailyController {
     }
 
     /**
-     * 提交数据，更改状态ready_push
+     * 启动群组推送
      * @return
      */
     @GetMapping("/submitData")
+    @Transactional(rollbackFor = Exception.class)
     public ResponseBo submitData(String headId) {
-        // 生成推送名单中
         String status = "ready_push";
-        PushListThread.generatePushList(headId);
         dailyService.updateStatus(headId, status);
+        // 启动线程推送
+        PushListThread.generatePushList(headId);
         return ResponseBo.ok();
     }
 
@@ -222,11 +224,21 @@ public class DailyController {
         return ResponseBo.okWithData(null, dailyGroupService.getSelectedGroup(headId, activeIds, growthIds));
     }
 
+    /**
+     * 获取活跃度指标的选中情况
+     * @param headId
+     * @return
+     */
     @GetMapping("/getDefaultActive")
     public ResponseBo getDefaultActive(@RequestParam("headId") String headId) {
         return ResponseBo.okWithData(null, dailyGroupService.getDefaultActive(headId));
     }
 
+    /**
+     * 获取成长性指标的选中情况
+     * @param headId
+     * @return
+     */
     @GetMapping("/getDefaultGrowth")
     public ResponseBo getDefaultGrowth(@RequestParam("headId") String headId) {
         return ResponseBo.okWithData(null, dailyGroupService.getDefaultGrowth(headId));

@@ -134,7 +134,7 @@ public class PageController {
     public String effectTrack(Model model, @RequestParam("id") String headId) {
         String status = dailyService.getStatusById(headId);
         if(StringUtils.isNotEmpty(status)) {
-            if(status.equals("done") || status.equals("finished")) {
+            if(status.equals("done") || status.equals("finished") || status.equals("doing")) {
                 model.addAttribute("headId", headId);
                 return "operate/daily/effect";
             }

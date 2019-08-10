@@ -176,8 +176,8 @@ $("#btn_catch").click(function () {
         return;
     }
     var status = selected[0].status;
-    if(status != 'done' && status != 'finished') {
-        $MB.n_warning("仅已执行和已结束状态的可检查评估！");
+    if(status != 'done' && status != 'finished' && status != 'doing') {
+        $MB.n_warning("执行中，已执行和已结束状态的可检查评估！");
         return;
     }
     var headId = selected[0].headId;

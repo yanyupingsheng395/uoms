@@ -53,13 +53,13 @@ public class PushListThread {
                     try {
                         //从queue中取出header_id
                         headerId=getInstance().triggerQueue.take();
-                        log.info("日推送从队列中取到heaerId:{},待生成名单!",headerId);
+                        log.info("日推送从队列中取到headerId:{},待生成名单!",headerId);
 
                         //针对推送名单 填充消息模板 生成文案
                         DailyPushServiceImpl dailyPushService=(DailyPushServiceImpl)SpringContextUtils.getBean("dailyPushServiceImpl");
                         dailyPushService.generatePushList(headerId);
 
-                        log.info("日推送heaerId:{},的推送名单已生成,即将开始推送",headerId);
+                        log.info("日推送headerId:{},的推送名单已生成,即将开始推送",headerId);
                     } catch (Exception e) {
                         //异常消息上报
                         log.error("日运营{}生成推送名单报错{}，",headerId,e);
