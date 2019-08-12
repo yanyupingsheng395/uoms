@@ -15,13 +15,17 @@
     <result column="ACC_PURCH_TIMES" jdbcType="VARCHAR" property="accPurchTimes" />
     <result column="AVG_PIECE_PRICE" jdbcType="VARCHAR" property="avgPiecePrice" />
     <result column="SPU_ID" jdbcType="VARCHAR" property="spuId" />
+    <result column="HIGH_ACTIVE_DUAL" jdbcType="DATE" property="highActiveDual" />
+    <result column="MODERATE_ACTIVE_DUAL" jdbcType="DATE" property="moderateActiveDual" />
+    <result column="LOSS_WARNING_DUAL" jdbcType="DATE" property="lossWarningDual" />
+    <result column="SURPLUS_TIMES" jdbcType="DECIMAL" property="surplusTimes" />
   </resultMap>
 
   <select id="getDataList" resultMap="BaseResultMap">
     SELECT * FROM(
     SELECT A.*,ROWNUM RN FROM
       (SELECT
-         USER_ID, SPU_NAME, RE_PURCH, PURCH_INTERVAL, NUM_PURCH_TYPE, JOINT_RATE, LIFECYCLE_TYPE, ACC_PURCH_TIMES, AVG_PIECE_PRICE
+         USER_ID, SPU_NAME, RE_PURCH, PURCH_INTERVAL, NUM_PURCH_TYPE, JOINT_RATE, LIFECYCLE_TYPE, ACC_PURCH_TIMES, AVG_PIECE_PRICE, HIGH_ACTIVE_DUAL,MODERATE_ACTIVE_DUAL,LOSS_WARNING_DUAL,SURPLUS_TIMES
     FROM UO_LC_SPU_TARGET where SPU_ID = #{spuId} order by LIFECYCLE_TYPE asc) A  WHERE ROWNUM &lt;=#{endRow}
     ) WHERE RN &gt;=#{startRow}
   </select>

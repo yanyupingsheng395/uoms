@@ -20,9 +20,9 @@ public interface DailyDetailMapper {
 
     List<Map<String, Object>> getUrgencyOfCheck(String headId);
 
-    List<DailyDetail> getPageList(int start, int end, String headId, @Param("groupIdList") List<String> groupIdList);
+    List<DailyDetail> getPageList(int start, int end, String headId, @Param("groupIdList") List<String> groupIdList, String pathActive, String sortColumn, String sortOrder);
 
-    int getDataCount(String headId, @Param("groupIdList") List<String> groupIdList);
+    int getDataCount(String headId, @Param("groupIdList") List<String> groupIdList, String pathActive);
 
     List<DailyDetail> getUserEffect(String headId, int start, int end, String whereInfo);
 

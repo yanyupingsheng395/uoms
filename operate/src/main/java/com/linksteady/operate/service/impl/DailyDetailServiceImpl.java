@@ -154,21 +154,21 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     }
 
     @Override
-    public List<DailyDetail> getPageList(int start, int end, String headId, String groupIds) {
+    public List<DailyDetail> getPageList(int start, int end, String headId, String groupIds, String pathActive, String sortColumn, String sortOrder) {
         List<String> groupIdList = Lists.newArrayList();
         if(groupIds != null) {
             groupIdList = Arrays.asList(groupIds.split(","));
         }
-        return dailyDetailMapper.getPageList(start, end, headId, groupIdList);
+        return dailyDetailMapper.getPageList(start, end, headId, groupIdList, pathActive, sortColumn, sortOrder);
     }
 
     @Override
-    public int getDataCount(String headId, String groupIds) {
+    public int getDataCount(String headId, String groupIds, String pathActive) {
         List<String> groupIdList = Lists.newArrayList();
         if(groupIds != null) {
             groupIdList = Arrays.asList(groupIds.split(","));
         }
-        return dailyDetailMapper.getDataCount(headId, groupIdList);
+        return dailyDetailMapper.getDataCount(headId, groupIdList, pathActive);
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.linksteady.operate.controller;
 
 import com.alibaba.fastjson.JSONArray;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.*;
@@ -11,9 +9,6 @@ import com.linksteady.operate.thread.PushListThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,6 +37,8 @@ public class DailyController {
 
     @Autowired
     private DailyExecuteService dailyExecuteService;
+
+    private static byte[] LOCK = new byte[0];
 
     @GetMapping("/getPageList")
     public ResponseBo getPageList(QueryRequest request) {
@@ -100,9 +97,15 @@ public class DailyController {
         int end = request.getEnd();
         String headId = request.getParam().get("headId");
         String groupIds = request.getParam().get("groupIds");
+        String pathActive = request.getParam().get("pathActive");
+        String sortColumn = request.getSort();
+        if(null != sortColumn && sortColumn.equalsIgnoreCase("groupName")) {
+            sortColumn = "GROUP_NAME";
+        }
+        String sortOrder = request.getSortOrder();
 
-        List<DailyDetail> dataList = dailyDetailService.getPageList(start, end, headId, groupIds);
-        int count = dailyDetailService.getDataCount(headId, groupIds);
+        List<DailyDetail> dataList = dailyDetailService.getPageList(start, end, headId, groupIds, pathActive, sortColumn, sortOrder);
+        int count = dailyDetailService.getDataCount(headId, groupIds, pathActive);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -133,10 +136,19 @@ public class DailyController {
     @GetMapping("/submitData")
     @Transactional(rollbackFor = Exception.class)
     public ResponseBo submitData(String headId) {
-        String status = "ready_push";
-        dailyService.updateStatus(headId, status);
-        // 启动线程推送
-        PushListThread.generatePushList(headId);
+        synchronized (LOCK) {
+            String status = dailyService.getStatusById(headId);
+            if(!status.equalsIgnoreCase("todo")) {
+                return ResponseBo.error("数据已被其它用户修改，请查看！");
+            }else {
+                status = "ready_push";
+                dailyService.updateStatus(headId, status);
+                // 计算执行率
+                dailyEffectService.updateExecuteRate(headId);
+                // 启动线程推送
+                PushListThread.generatePushList(headId);
+            }
+        }
         return ResponseBo.ok();
     }
 

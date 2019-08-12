@@ -98,19 +98,7 @@ public class DailyGroupServiceImpl implements DailyGroupService {
             // 更改实际选择人数
             int num = dailyGroupMapper.sumCheckedNum(headId);
             dailyMapper.updateActualNum(headId, num);
-
-            updateExecuteRate(headId);
         }
-    }
-
-    /**
-     * 更行执行率
-     */
-    private void updateExecuteRate(String headId) {
-        DecimalFormat df = new DecimalFormat("#");
-        Map<String, Object> totalAndOptMap = dailyMapper.getTotalNum(headId);
-        Double executeRate = ((BigDecimal)totalAndOptMap.get("OPT")).doubleValue()/((BigDecimal)totalAndOptMap.get("TOTAL")).doubleValue() * 100D;
-        dailyEffectMapper.updateExecuteAndLossRate(df.format(executeRate), headId);
     }
 
     @Override

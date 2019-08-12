@@ -94,22 +94,11 @@ $("#btn_edit").click(function () {
     }
     var status = selected[0].status;
     if(status != "todo") {
-        $MB.n_warning('当前记录不可编辑，请选择草稿状态的记录！');
+        $MB.n_warning('当前记录不可编辑，请选择待编辑状态的记录！');
         return;
     }
     var headId = selected[0].headId;
     window.location.href = "/page/daily/edit?id=" + headId;
-});
-
-$("#btn_view").click(function () {
-    var selected = $("#dailyTable").bootstrapTable('getSelections');
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请勾选需要查看的任务！');
-        return;
-    }
-    var headId = selected[0].headId;
-    window.location.href = "/page/daily/view?id=" + headId;
 });
 
 $("#btn_push").click(function () {

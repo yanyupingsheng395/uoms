@@ -433,9 +433,6 @@ function tab3DataInit() {
                 }
             }
         },{
-            field: 'purchInterval',
-            title: '平均购买间隔（天）'
-        },{
             field: 'jointRate',
             title: '平均连带率',
             formatter: function(value, row, index) {
@@ -449,6 +446,18 @@ function tab3DataInit() {
         },{
             field: 'accPurchTimes',
             title: '累计购买次数'
+        },{
+            field: 'highActiveDual',
+            title: '完成目标最早时间'
+        },{
+            field: 'moderateActiveDual',
+            title: '完成目标集中时间'
+        },{
+            field: 'lossWarningDual',
+            title: '完成目标最晚时间'
+        },{
+            field: 'surplusTimes',
+            title: '剩余购买次数'
         }]
         // onLoadSuccess: function(data){
         //     $("a[data-toggle='tooltip']").tooltip();

@@ -280,7 +280,7 @@ function getUserEffect() {
             title: '推荐商品'
         },{
             field: 'piecePrice',
-            title: '件单价（元）'
+            title: '目标件单价（元）'
         },{
             field: 'couponDenom',
             title: '优惠券'
@@ -289,7 +289,7 @@ function getUserEffect() {
             title: '购买商品'
         },{
             field: 'actPiecePrice',
-            title: '件单价（元）'
+            title: '实际件单价（元）'
         },{
             field: 'isCancle',
             title: '是否核销'

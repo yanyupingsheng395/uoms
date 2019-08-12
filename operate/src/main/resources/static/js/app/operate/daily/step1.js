@@ -192,6 +192,9 @@ function removeTr(dom, id, type) {
     selectGroup(true);
 }
 
+var GLOBAL_ACTIVE_IDS;
+var GLOBAL_GROWTH_IDS;
+
 getSelectedGroup();
 function getSelectedGroup(activeIds, growthIds) {
     let code = "";
@@ -203,13 +206,33 @@ function getSelectedGroup(activeIds, growthIds) {
             groupIds.push(v['ID']);
         });
         $("#selected_group").html('').append(code);
+
         getUserDataList(groupIds.join(","));
         $("#selectedGroupIds").val(groupIds.join(","));
+        setGroupCondition(data);
     });
+    if(activeIds != undefined) {
+        GLOBAL_ACTIVE_IDS = activeIds;
+    }
+    if(growthIds != undefined) {
+        GLOBAL_GROWTH_IDS = growthIds;
+    }
+}
+
+/**
+ * 给群组筛选条件设置值
+ */
+function setGroupCondition(data) {
+    console.log(data);
+    var code = "<option value=''>所有</option>";
+    data.forEach(v=> {
+        code += "<option value='"+v['ID']+"'>" + v['NAME'] + "</option>";
+    });
+    $("#selectedGroup").html('').append(code);
 }
 
 // 获取已选群组的用户名单
-function getUserDataList(groupIds) {
+function getUserDataList(groupIds, optType) {
     var settings = {
         url: '/daily/getDetailPageList',
         pagination: true,
@@ -221,7 +244,9 @@ function getUserDataList(groupIds) {
             return {
                 pageSize: params.limit,  //页面大小
                 pageNum: (params.offset / params.limit) + 1,
-                param: {headId: headId, groupIds: groupIds}
+                param: {headId: headId, groupIds: groupIds, pathActive: $("#allPathActive").find("option:selected").val()},
+                sort: params.sort,      //排序列名
+                sortOrder: params.order,
             };
         },
         columns: [[{
@@ -302,7 +327,8 @@ function getUserDataList(groupIds) {
                 }
             },{
                 field: 'groupName',
-                title: '所在群组'
+                title: '所在群组',
+                sortable: true
             },{
                 field: 'recRetentionName',
                 title: '留存推荐商品'
@@ -323,7 +349,10 @@ function getUserDataList(groupIds) {
                 title: '建议触达时段'
             }
         ]], onLoadSuccess: function (data) {
-            $("#optNum").html('').append($("#userListTable").bootstrapTable("getOptions").totalRows);
+            var pathActive = $("#allPathActive").find("option:selected").val();
+            if(optType == undefined && pathActive == '') {
+                $("#optNum").html('').append($("#userListTable").bootstrapTable("getOptions").totalRows);
+            }
         }
     };
     $('#userListTable').bootstrapTable('destroy');
@@ -395,4 +424,27 @@ function step2() {
     $("#step2").attr("style", "display: block;");
     // 获取群组信息
     getGroupDataList();
+}
+
+/**
+ * 搜索群组内的用户
+ */
+function searchSelectedUser() {
+    var groupId = $("#selectedGroup").find("option:selected").val();
+    if(groupId != '') {
+        getUserDataList(groupId, 'search');
+    }else {
+        var activeIds = GLOBAL_ACTIVE_IDS;
+        var growthIds = GLOBAL_GROWTH_IDS;
+        getSelectedGroup(activeIds, growthIds);
+    }
+}
+
+function refreshSelectedUser() {
+    $("#selectedGroup").find("option:selected").removeAttr("selected");
+    $("#allPathActive").find("option:selected").removeAttr("selected");
+
+    var activeIds = GLOBAL_ACTIVE_IDS;
+    var growthIds = GLOBAL_GROWTH_IDS;
+    getSelectedGroup(activeIds, growthIds);
 }

@@ -15,4 +15,6 @@ public interface DailyEffectService {
     int getDataCount(String touchDt);
 
     DailyEffect getKpiStatis(String headId);
+
+    void updateExecuteRate(String headId);
 }

@@ -146,7 +146,7 @@ public class LoginController extends BaseController {
 
     @RequestMapping("/")
     public String redirectIndex() {
-        return "redirect:/index";
+        return "redirect:/main";
     }
 
     @GetMapping("/403")

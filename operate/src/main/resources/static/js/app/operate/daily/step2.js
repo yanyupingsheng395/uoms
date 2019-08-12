@@ -87,6 +87,7 @@ function getGroupDataList() {
             setTrColor();
         }
     };
+    $('#groupTable').bootstrapTable('destroy');
     $MB.initTable('groupTable', settings);
 }
 
@@ -181,13 +182,12 @@ function submitData() {
         title: "<i class='mdi mdi-alert-outline'></i>提示：",
         content: "确定启动推送群组?"
     }, function () {
-        setGroupCheck();
         $.get("/daily/submitData", {headId: headId}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("启动推送成功！");
             }else {
                 $("#btn_push").attr("disabled", false);
-                $MB.n_danger("推送失败，请稍后重试！")
+                $MB.n_warning("数据已被其它用户修改，请查看！")
             }
             setTimeout(function () {
                 window.location.href = "/page/daily";

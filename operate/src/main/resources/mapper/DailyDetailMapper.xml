@@ -105,6 +105,12 @@
                 #{item}
             </foreach>
           </if>
+          <if test="pathActive != '' and pathActive != null">
+              and t1.PATH_ACTIV = #{pathActive}
+          </if>
+          <if test="sortColumn != '' and sortColumn != null">
+              order by ${sortColumn} ${sortOrder}
+          </if>
           ) t where ROWNUM &lt;=#{end}
           ) where RN &gt;=#{start}
     </select>
@@ -116,6 +122,10 @@
             <foreach collection="groupIdList" item="item" open="(" close=")" separator=",">
                 #{item}
             </foreach>
+        </if>
+
+        <if test="pathActive != '' and pathActive != null">
+            and PATH_ACTIV = #{pathActive}
         </if>
     </select>
 

@@ -70,8 +70,7 @@ public class DailyPushServiceImpl implements DailyPushService {
             ExecutorService pool = null;
             try {
                 //生成线程池 (线程数量为4)
-                pool = new ThreadPoolExecutor(4, 4, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-                ;
+                pool = new ThreadPoolExecutor(4, 4, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());;
 
                 //分页多线程处理
 
