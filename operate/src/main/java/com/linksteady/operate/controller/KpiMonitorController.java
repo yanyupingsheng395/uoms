@@ -3,7 +3,6 @@ package com.linksteady.operate.controller;
 import com.google.common.collect.Table;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.config.KpiCacheManager;
 import com.linksteady.operate.service.KpiMonitorService;
 import com.linksteady.operate.service.SynGroupService;
 import com.linksteady.operate.vo.Echart;
@@ -13,11 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 运营指标监控相关的controller
@@ -152,57 +146,6 @@ public class KpiMonitorController extends BaseController {
     @GetMapping("/getTotalAvgPrice")
     public ResponseBo getTotalAvgPrice(String startDt, String endDt) {
         return ResponseBo.okWithData(null, kpiMonitorService.getTotalAvgPrice(startDt, endDt));
-    }
-
-    /**
-     * 平均订单价趋势图
-     * @param startDt
-     * @param endDt
-     * @return
-     */
-    @GetMapping("/getOrderAvgPrice")
-    public ResponseBo getOrderAvgPrice(String startDt, String endDt) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getOrderAvgPrice(startDt, endDt));
-    }
-
-    /**
-     * 平均订单数趋势图
-     * @param startDt
-     * @param endDt
-     * @return
-     */
-    @GetMapping("/getAvgOrderQuantity")
-    public ResponseBo getAvgOrderQuantity(String startDt, String endDt) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getAvgOrderQuantity(startDt, endDt));
-    }
-
-    /**
-     * 件单价趋势图
-     * @param startDt
-     * @param endDt
-     * @return
-     */
-    @GetMapping("/getAvgPiecePrice")
-    public ResponseBo getAvgPiecePrice(String startDt, String endDt) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getAvgPiecePrice(startDt, endDt));
-    }
-
-    /**
-     * 平均连带率趋势图
-     * @param startDt
-     * @param endDt
-     * @return
-     */
-    @GetMapping("/getAvgJoinRate")
-    public ResponseBo getAvgJoinRate(String startDt, String endDt) {
-        return ResponseBo.okWithData(null, kpiMonitorService.getAvgJoinRate(startDt, endDt));
-    }
-
-    @GetMapping("/getSource")
-    public ResponseBo getSource() {
-        Table<String, String, String> table = KpiCacheManager.getInstance().getDiagDimValueList();
-        Map<String, String> result = table.row("source");
-        return ResponseBo.okWithData(null, result);
     }
 }
 
