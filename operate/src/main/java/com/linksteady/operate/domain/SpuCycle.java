@@ -73,23 +73,20 @@ public class SpuCycle {
     /**
      * 完成最早时间
      */
-    @JsonFormat(pattern = "yyyyMMdd", timezone = "GMT+8")
     @Column(name = "HIGH_ACTIVE_DUAL")
-    private Date highActiveDual;
+    private Long highActiveDual;
 
     /**
      * 完成集中时间
      */
-    @JsonFormat(pattern = "yyyyMMdd", timezone = "GMT+8")
     @Column(name = "MODERATE_ACTIVE_DUAL")
-    private Date moderateActiveDual;
+    private Long moderateActiveDual;
 
     /**
      * 完成最晚时间
      */
-    @JsonFormat(pattern = "yyyyMMdd", timezone = "GMT+8")
     @Column(name = "LOSS_WARNING_DUAL")
-    private Date lossWarningDual;
+    private Long lossWarningDual;
 
     /**
      * 剩余购买次数

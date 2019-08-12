@@ -15,9 +15,9 @@
     <result column="ACC_PURCH_TIMES" jdbcType="VARCHAR" property="accPurchTimes" />
     <result column="AVG_PIECE_PRICE" jdbcType="VARCHAR" property="avgPiecePrice" />
     <result column="SPU_ID" jdbcType="VARCHAR" property="spuId" />
-    <result column="HIGH_ACTIVE_DUAL" jdbcType="DATE" property="highActiveDual" />
-    <result column="MODERATE_ACTIVE_DUAL" jdbcType="DATE" property="moderateActiveDual" />
-    <result column="LOSS_WARNING_DUAL" jdbcType="DATE" property="lossWarningDual" />
+    <result column="HIGH_ACTIVE_DUAL" jdbcType="DECIMAL" property="highActiveDual" />
+    <result column="MODERATE_ACTIVE_DUAL" jdbcType="DECIMAL" property="moderateActiveDual" />
+    <result column="LOSS_WARNING_DUAL" jdbcType="DECIMAL" property="lossWarningDual" />
     <result column="SURPLUS_TIMES" jdbcType="DECIMAL" property="surplusTimes" />
   </resultMap>
 

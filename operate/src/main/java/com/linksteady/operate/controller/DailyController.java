@@ -34,11 +34,8 @@ public class DailyController {
     @Autowired
     private DailyEffectService dailyEffectService;
 
-
     @Autowired
     private DailyExecuteService dailyExecuteService;
-
-    private static byte[] LOCK = new byte[0];
 
     @GetMapping("/getPageList")
     public ResponseBo getPageList(QueryRequest request) {
@@ -135,19 +132,17 @@ public class DailyController {
      */
     @GetMapping("/submitData")
     @Transactional(rollbackFor = Exception.class)
-    public ResponseBo submitData(String headId) {
-        synchronized (LOCK) {
-            String status = dailyService.getStatusById(headId);
-            if(!status.equalsIgnoreCase("todo")) {
-                return ResponseBo.error("数据已被其它用户修改，请查看！");
-            }else {
-                status = "ready_push";
-                dailyService.updateStatus(headId, status);
-                // 计算执行率
-                dailyEffectService.updateExecuteRate(headId);
-                // 启动线程推送
-                PushListThread.generatePushList(headId);
-            }
+    public synchronized ResponseBo submitData(String headId) {
+        String status = dailyService.getStatusById(headId);
+        if(!status.equalsIgnoreCase("todo")) {
+            return ResponseBo.error("数据已被其它用户修改，请查看！");
+        }else {
+            status = "ready_push";
+            dailyService.updateStatus(headId, status);
+            // 计算执行率
+            dailyEffectService.updateExecuteRate(headId);
+            // 启动线程推送
+            PushListThread.generatePushList(headId);
         }
         return ResponseBo.ok();
     }
