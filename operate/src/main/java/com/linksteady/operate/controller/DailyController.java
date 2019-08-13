@@ -37,6 +37,11 @@ public class DailyController {
     @Autowired
     private DailyExecuteService dailyExecuteService;
 
+    /**
+     * 获取任务列表信息
+     * @param request
+     * @return
+     */
     @GetMapping("/getPageList")
     public ResponseBo getPageList(QueryRequest request) {
 
@@ -68,16 +73,31 @@ public class DailyController {
         return ResponseBo.okOverPaging(null, count, dailyInfos);
     }
 
+    /**
+     * 获取目标类型
+     * @param headId
+     * @return
+     */
     @GetMapping("/getTargetType")
     public ResponseBo getTargetType(@RequestParam String headId) {
         return ResponseBo.okWithData(null, dailyDetailService.getTargetType(headId));
     }
 
+    /**
+     * 根据headId获取紧迫度列表
+     * @param headId
+     * @return
+     */
     @GetMapping("/getUrgency")
     public ResponseBo getUrgency(@RequestParam String headId) {
         return ResponseBo.okWithData(null, dailyDetailService.getUrgency(headId));
     }
 
+    /**
+     * 获取群组列表
+     * @param request
+     * @return
+     */
     @GetMapping("/getGroupDataList")
     public ResponseBo getGroupDataList(QueryRequest request) {
         String headId = request.getParam().get("headId");
@@ -88,6 +108,11 @@ public class DailyController {
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
+    /**
+     * 获取群组对应的用户列表
+     * @param request
+     * @return
+     */
     @GetMapping("/getDetailPageList")
     public ResponseBo getDetailPageList(QueryRequest request) {
         int start = request.getStart();
@@ -106,6 +131,11 @@ public class DailyController {
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
+    /**
+     *
+     * @param request
+     * @return
+     */
     @GetMapping("/getEffectPageList")
     public ResponseBo getEffectPageList(QueryRequest request) {
         int start = request.getStart();
@@ -162,12 +192,6 @@ public class DailyController {
         return ResponseBo.ok();
     }
 
-    @GetMapping("/getOriginalGroupCheck")
-    public ResponseBo getOriginalGroupCheck() {
-        List<Map<String, Object>> dataList = dailyGroupService.getOriginalGroupCheck();
-        return ResponseBo.okWithData(null, dataList);
-    }
-
     /**
      * 推送名单
      * @return
@@ -181,6 +205,11 @@ public class DailyController {
         return ResponseBo.ok();
     }
 
+    /**
+     * 根据headId获取当前记录的状态
+     * @param headId
+     * @return
+     */
     @GetMapping("/getStatusById")
     public ResponseBo getStatusById(@RequestParam String headId) {
         return ResponseBo.okWithData(null, dailyService.getStatusById(headId));
@@ -206,6 +235,11 @@ public class DailyController {
         return ResponseBo.okWithData(null, dailyEffectService.getKpiStatis(headId));
     }
 
+    /**
+     * 效果评估页获取指标趋势
+     * @param headId
+     * @return
+     */
     @GetMapping("/getKpiTrend")
     public ResponseBo getKpiTrend(@RequestParam String headId) {
         return ResponseBo.okWithData(null, dailyExecuteService.getKpiTrend(headId));
@@ -251,12 +285,25 @@ public class DailyController {
         return ResponseBo.okWithData(null, dailyGroupService.getDefaultGrowth(headId));
     }
 
+    /**
+     * 更改groupId的isCheck状态为1
+     * @param headId
+     * @param groupIds
+     * @return
+     */
     @GetMapping("/setGroupCheck")
     public ResponseBo setGroupCheck(@RequestParam("headId") String headId, @RequestParam("groupIds") String groupIds) {
         dailyGroupService.setGroupCheck(headId, groupIds);
         return ResponseBo.ok();
     }
 
+    /**
+     * 设置短信模板
+     * @param headId
+     * @param groupId
+     * @param smsCode
+     * @return
+     */
     @GetMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam String headId, @RequestParam String groupId, @RequestParam String smsCode) {
         dailyGroupService.setSmsCode(headId, groupId, smsCode);
