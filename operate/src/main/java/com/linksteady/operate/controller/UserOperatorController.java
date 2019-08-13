@@ -26,11 +26,24 @@ public class UserOperatorController {
         return ResponseBo.okWithData(null, userOperatorService.getSource());
     }
 
+    /**
+     * 获取品牌数据
+     * @return
+     */
     @RequestMapping("/getBrand")
     public ResponseBo getBrand() {
         return ResponseBo.okWithData(null, userOperatorService.getBrand());
     }
 
+    /**
+     *
+     * @param kpiType
+     * @param periodType
+     * @param startDt
+     * @param endDt
+     * @param source
+     * @return
+     */
     @RequestMapping("/getKpiInfo")
     public ResponseBo getKpiInfo(String kpiType, String periodType, String startDt, String endDt,String source) {
         return ResponseBo.okWithData(null, userOperatorService.getKpiInfo(kpiType, periodType, startDt, endDt,source));

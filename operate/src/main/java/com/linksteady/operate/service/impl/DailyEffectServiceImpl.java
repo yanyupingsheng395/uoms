@@ -32,11 +32,6 @@ public class DailyEffectServiceImpl implements DailyEffectService {
     }
 
     @Override
-    public int getDataCount(String touchDt) {
-        return dailyEffectMapper.getDataCount(touchDt);
-    }
-
-    @Override
     public DailyEffect getKpiStatis(String headId) {
         return dailyEffectMapper.getKpiStatis(headId);
     }

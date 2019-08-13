@@ -132,21 +132,6 @@ public class DailyController {
     }
 
     /**
-     *
-     * @param request
-     * @return
-     */
-    @GetMapping("/getEffectPageList")
-    public ResponseBo getEffectPageList(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
-        String touchDt = request.getParam().get("touchDt");
-        List<DailyEffect> dailyEffectList = dailyEffectService.getPageList(start, end, touchDt);
-        int count = dailyEffectService.getDataCount(touchDt);
-        return ResponseBo.okOverPaging(null, count, dailyEffectList);
-    }
-
-    /**
      * 获取编辑页xxx，共x人，选择y人
      * @param headId
      * @return

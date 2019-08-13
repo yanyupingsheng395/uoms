@@ -4,8 +4,6 @@ function tab2Init() {
     getDtPeriodChart();
     getRateChart();
     getCateChart();
-    // userCount();
-    // saleVolume();
     getStageNode();
     getSampleDate();
 }

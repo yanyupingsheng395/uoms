@@ -426,20 +426,10 @@ function tab3DataInit() {
             title: '复购'
         },{
             field: 'avgPiecePrice',
-            title: '平均件单价（元）',
-            formatter: function(value, row, index) {
-                if(value != null) {
-                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\"达成目标的理想时间：2019-06-30<br/>达成目标的一般时间：2019-05-30<br/>达成目标的最后时间：2019-08-30\">"+value+"</a>";
-                }
-            }
+            title: '平均件单价（元）'
         },{
             field: 'jointRate',
-            title: '平均连带率',
-            formatter: function(value, row, index) {
-                if(value != null) {
-                    return "<a style='color: #000000;border-bottom: 1px solid' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-original-title=\"达成目标的理想时间：2019-06-30<br/>达成目标的一般时间：2019-05-30<br/>达成目标的最后时间：2019-08-30\">"+value+"</a>";
-                }
-            }
+            title: '平均连带率'
         },{
             field: 'numPurchType',
             title: '平均购买品类种数'

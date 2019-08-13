@@ -37,14 +37,6 @@
         ) where RN &gt;=#{start}
     </select>
 
-    <select id="getDataCount" resultType="int">
-        select count(1) from UO_OP_DAILY_STATIS t1 INNER JOIN UO_OP_DAILY_HEADER t2 on t1.HEAD_ID = t2.HEAD_ID
-        where 1=1 and t2.status in ('done', 'finished')
-        <if test="touchDt != ''">
-            and to_char(T2.touch_dt, 'yyyy-MM-dd') = #{touchDt}
-        </if>
-    </select>
-
     <select id="getKpiStatis" resultMap="baseResult">
         select CONVERT_AMOUNT, SUBSIDY_AMOUNT,SUBSIDY_PER_UNIT，SUBSIDY_COUNT，CANCLE_COUNT，CANCLE_RATE from UO_OP_DAILY_STATIS
         where head_id = #{headId}

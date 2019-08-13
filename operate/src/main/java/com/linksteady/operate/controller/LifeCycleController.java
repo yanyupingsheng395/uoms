@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 原因探究相关的controller
+ * 用户成长洞察
  * @author huang
  */
 @RestController

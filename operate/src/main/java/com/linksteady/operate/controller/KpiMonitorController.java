@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 运营指标监控相关的controller
  * @author  linkSteady
  */
 @RestController
@@ -75,6 +74,13 @@ public class KpiMonitorController extends BaseController {
         return ResponseBo.okWithData(null, synGroupService.getRetainUserCount(paramVO, spuId));
     }
 
+    /**
+     * 获取客单价数据
+     * @param periodType
+     * @param start
+     * @param spuId
+     * @return
+     */
     @RequestMapping("/getUpriceData")
     public ResponseBo getUpriceData(@RequestParam String periodType,@RequestParam String start, String spuId) {
         ParamVO paramVO = new ParamVO();
@@ -83,6 +89,13 @@ public class KpiMonitorController extends BaseController {
         return ResponseBo.okWithData(null, synGroupService.getUpriceData(paramVO, spuId));
     }
 
+    /**
+     * 获取件单价
+     * @param periodType
+     * @param start
+     * @param spuId
+     * @return
+     */
     @RequestMapping("/getPriceData")
     public ResponseBo getPriceData(@RequestParam String periodType,@RequestParam String start, String spuId) {
         ParamVO paramVO = new ParamVO();
@@ -91,6 +104,13 @@ public class KpiMonitorController extends BaseController {
         return ResponseBo.okWithData(null, synGroupService.getPriceData(paramVO, spuId));
     }
 
+    /**
+     * 获取件单价数据
+     * @param periodType
+     * @param start
+     * @param spuId
+     * @return
+     */
     @RequestMapping("/getUnitPriceData")
     public ResponseBo getUnitPriceData(@RequestParam String periodType,@RequestParam String start, String spuId) {
         ParamVO paramVO = new ParamVO();
@@ -99,6 +119,13 @@ public class KpiMonitorController extends BaseController {
         return ResponseBo.okWithData(null, synGroupService.getUnitPriceData(paramVO, spuId));
     }
 
+    /**
+     * 获取连带率
+     * @param periodType
+     * @param start
+     * @param spuId
+     * @return
+     */
     @RequestMapping("/getJoinRateData")
     public ResponseBo getJoinRateData(@RequestParam String periodType,@RequestParam String start, String spuId) {
         ParamVO paramVO = new ParamVO();
@@ -107,6 +134,13 @@ public class KpiMonitorController extends BaseController {
         return ResponseBo.okWithData(null, synGroupService.getJoinRateData(paramVO, spuId));
     }
 
+    /**
+     * 获取购买频次
+     * @param periodType
+     * @param start
+     * @param spuId
+     * @return
+     */
     @RequestMapping("/getPurchFreq")
     public ResponseBo getPurchFreq(@RequestParam String periodType,@RequestParam String start, String spuId) {
         ParamVO paramVO = new ParamVO();
@@ -115,12 +149,26 @@ public class KpiMonitorController extends BaseController {
         return ResponseBo.okWithData(null, synGroupService.getPurchFreq(paramVO, spuId));
     }
 
+    /**
+     * 获取GMV
+     * @param startDt
+     * @param endDt
+     * @param spuId
+     * @return
+     */
     @GetMapping("/getGMV")
     public ResponseBo getGMV(String startDt, String endDt, String spuId) {
         Echart echart = kpiMonitorService.getGMV(startDt, endDt, spuId);
         return ResponseBo.okWithData(null, echart);
     }
 
+    /**
+     * 获取用户数
+     * @param startDt
+     * @param endDt
+     * @param spuId
+     * @return
+     */
     @GetMapping("/getTradeUser")
     public ResponseBo getTradeUser(String startDt, String endDt, String spuId) {
         Echart echart = kpiMonitorService.getTradeUser(startDt, endDt, spuId);
@@ -142,6 +190,7 @@ public class KpiMonitorController extends BaseController {
     public ResponseBo getTotalTradeUser(String startDt, String endDt) {
         return ResponseBo.okWithData(null, kpiMonitorService.getTotalTradeUser(startDt, endDt));
     }
+
 
     @GetMapping("/getTotalAvgPrice")
     public ResponseBo getTotalAvgPrice(String startDt, String endDt) {
