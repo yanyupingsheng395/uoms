@@ -85,14 +85,14 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         if(StringUtils.isNotEmpty(status)) {
             // 未选择
             if(status.equals(IS_CHECK_0)) {
-                sb.append(" and t1.is_check = '0'");
+                sb.append(" and t1.IS_CHECK = '0'");
             }
             if(status.equals(IS_PUSH_0)) {
-                sb.append(" and t1.is_push = '0' and t1.is_check = '1'");
+                sb.append(" and t1.IS_PUSH = '0' and t1.is_check = '1'");
             }
 
             if(status.equals(IS_CONVERT_0)) {
-                sb.append(" and t1.is_push = '1' and t1.IS_CONVERSION = '0'");
+                sb.append(" and t1.IS_PUSH = '1' and t1.IS_CONVERSION = '0'");
             }
 
             if(status.equals(IS_CONVERT_1)) {
@@ -113,12 +113,5 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     public int getDataListCount(String headId, String userValue, String pathActive, String status) {
         String whereInfo = getWhereInfo(userValue, pathActive, status);
         return dailyDetailMapper.getDataListCount(headId, whereInfo);
-    }
-
-    public static void main(String[] args) {
-        ThreadGroup tg1 = new ThreadGroup("tg1");
-        System.out.println(tg1.getParent().getName());
-        ThreadGroup tg2 = new ThreadGroup(tg1,"tg2");
-        System.out.println(tg2.getParent().getName());
     }
 }
