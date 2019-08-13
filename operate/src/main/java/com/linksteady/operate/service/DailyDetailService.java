@@ -10,11 +10,6 @@ import java.util.List;
  * @date 2019-07-31
  */
 public interface DailyDetailService {
-
-    Echart getTargetType(String headId);
-
-    Echart getUrgency(String headId);
-
     List<DailyDetail> getPageList(int start, int end, String headId, String groupIds, String pathActive, String sortColumn, String sortOrder);
 
     int getDataCount(String headId, String groupIds, String pathActive);

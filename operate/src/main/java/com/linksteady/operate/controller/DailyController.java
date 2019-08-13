@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -74,27 +73,7 @@ public class DailyController {
     }
 
     /**
-     * 获取目标类型
-     * @param headId
-     * @return
-     */
-    @GetMapping("/getTargetType")
-    public ResponseBo getTargetType(@RequestParam String headId) {
-        return ResponseBo.okWithData(null, dailyDetailService.getTargetType(headId));
-    }
-
-    /**
-     * 根据headId获取紧迫度列表
-     * @param headId
-     * @return
-     */
-    @GetMapping("/getUrgency")
-    public ResponseBo getUrgency(@RequestParam String headId) {
-        return ResponseBo.okWithData(null, dailyDetailService.getUrgency(headId));
-    }
-
-    /**
-     * 获取群组列表
+     * 根据组ID获取群组列表
      * @param request
      * @return
      */
@@ -109,7 +88,7 @@ public class DailyController {
     }
 
     /**
-     * 获取群组对应的用户列表
+     * 根据成长性，活跃度，组Id获取对应的用户列表
      * @param request
      * @return
      */
@@ -174,19 +153,6 @@ public class DailyController {
         // 更改实际选择人数
         List<String> groupIds = groupList.stream().map(x->x.getGroupId().toString()).collect(Collectors.toList());
         dailyService.updateCheckNum(headId, groupIds);
-        return ResponseBo.ok();
-    }
-
-    /**
-     * 推送名单
-     * @return
-     */
-    @GetMapping("/pushList")
-    public ResponseBo pushList(@RequestParam String headId) {
-        // 推送名单
-        String status = "doing";
-        dailyService.updateStatus(headId, status);
-        PushListThread.generatePushList(headId);
         return ResponseBo.ok();
     }
 
