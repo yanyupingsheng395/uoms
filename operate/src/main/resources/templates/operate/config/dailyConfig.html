@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet"  data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">每日用户成长运营配置</h5>
+                            </div>
+                            <div class="row">
+                                <hr class="hr"/>
+                            </div>
+                        </div>
+                        <form class="form-horizontal" id="config-form" action="" onsubmit="return false;">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">开启推送</label>
+                                <div class="col-md-4">
+                                    <label class="lyear-switch switch-solid switch-primary">
+                                        <input type="checkbox" checked="" id="pushFlag" name="pushFlag">
+                                        <span></span>
+                                    </label>
+                                    <small class="help-block"></small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">开启防重复推送</label>
+                                <div class="col-md-4">
+                                    <label class="lyear-switch switch-solid switch-primary">
+                                        <input type="checkbox" checked="" id="repeatPush">
+                                        <span></span>
+                                    </label>
+                                    <small class="help-block">关闭防重复推送后，将可能对用户可能造成重复推动</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="repeatPushDays">避免重复推送的天数</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="repeatPushDays" name="repeatPushDays">
+                                    <small class="help-block">此配置在开启防重复推送后生效，在设置的天数内，对同一用户的重复推送将会被忽略！</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="statsDays">效果统计的天数</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="statsDays" name="statsDays">
+                                    <small class="help-block">进行效果统计的有效天数！</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">触达方式</label>
+                                <div class="controls-box col-md-4">
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="pushType" value="SMS" checked><span>短信</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="pushType" value="WX"><span>公众号消息</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="pushType" value="NONE"><span>自行触达</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">开启推送异常预警</label>
+                                <div class="col-md-4">
+                                    <label class="lyear-switch switch-solid switch-primary">
+                                        <input type="checkbox" checked="" id="openAlert">
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="alertPhoneNum">推送异常预警手机号</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="alertPhoneNum" name="alertPhoneNum">
+                                    <small class="help-block">多个手机号之间用逗号分隔！</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-9 col-md-offset-3">
+                                    <button class="btn btn-primary" type="submit" id="saveConfig">保存</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
+<script data-th-src="@{/js/common/lightyear.js}"></script>
+<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<script data-th-src="@{/js/app/operate/config/dailyConfig.js}"></script>
+</body>
+</html>

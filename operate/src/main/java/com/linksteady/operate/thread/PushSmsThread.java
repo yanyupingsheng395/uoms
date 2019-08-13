@@ -2,6 +2,7 @@ package com.linksteady.operate.thread;
 
 import com.google.common.collect.Lists;
 import com.linksteady.operate.common.util.SpringContextUtils;
+import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.DailyPushInfo;
 import com.linksteady.operate.service.impl.DailyPushServiceImpl;
 import lombok.SneakyThrows;
@@ -30,6 +31,7 @@ public class PushSmsThread {
             @Override
             public void run() {
                 DailyPushServiceImpl dailyPushService=(DailyPushServiceImpl)SpringContextUtils.getBean("dailyPushServiceImpl");
+                DailyProperties dailyProperties=(DailyProperties)SpringContextUtils.getBean("dailyProperties");
                 //存储最终发送状态的list
                 List<DailyPushInfo> failedResult= Lists.newArrayList();
                 List<DailyPushInfo> successResult= Lists.newArrayList();
@@ -38,6 +40,28 @@ public class PushSmsThread {
                 log.info("---------对待发送的推送列表进行监控----------------");
                 while(true)
                 {
+                    if(null!=dailyProperties&&"N".equals(dailyProperties.getPushFlag()))
+                    {
+                        log.info("----------------推送服务已通过配置停止---------------");
+                        try {
+                            //每隔1分钟执行一次
+                            TimeUnit.MINUTES.sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        continue;
+
+                    }
+
+                    //每隔5分钟执行一次
+                    try {
+                        TimeUnit.MINUTES.sleep(5);
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    log.info("---------开始下一次推送----------------");
                     failedResult.clear();
                     successResult.clear();
 
@@ -115,13 +139,9 @@ public class PushSmsThread {
 
                     //统计触达率、触达人数、损失率 后续改为每天运行一次
                     dailyPushService.updatePushStatInfo();
-                    //每隔10分钟执行一次
-                    try {
-                        TimeUnit.MINUTES.sleep(5);
-                        log.info("---------持续对待发送的短信列表进行监控----------------");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+
+
+                    log.info("---------推送结束，持续对待发送的短信列表进行监控----------------");
                 }
             }
         });

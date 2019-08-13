@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.DailyPropertiesMapper">
+
+    <resultMap id="baseResult" type="com.linksteady.operate.domain.DailyProperties">
+        <result column="REPEAT_PUSH" jdbcType="VARCHAR" property="repeatPush"></result>
+        <result column="REPEATPUSHDAYS" jdbcType="DECIMAL" property="repeatPushDays"></result>
+        <result column="PUSH_FLAG" jdbcType="VARCHAR" property="pushFlag"></result>
+        <result column="STATSDAYS" jdbcType="DECIMAL" property="statsDays"></result>
+        <result column="PUSH_TYPE" jdbcType="VARCHAR" property="pushType"></result>
+        <result column="OPEN_ELART" jdbcType="VARCHAR" property="openAlert"></result>
+    </resultMap>
+
+    <select id="getDailyProperties" resultMap="baseResult">
+        select
+            repeat_push,
+            repeatpushdays,
+            push_flag,
+            statsdays,
+            push_type,
+            open_elart
+        from uo_op_daily_config where rownum=1
+    </select>
+
+    <update id="updateProperties">
+        update uo_op_daily_config
+        set
+            repeat_push=#{repeatPush},
+            repeatpushdays=#{repeatPushDays},
+            push_flag=#{pushFlag},
+            statsdays=#{statsDays},
+            push_type=#{pushType},
+            open_elart=#{openAlert}
+    </update>
+
+</mapper>

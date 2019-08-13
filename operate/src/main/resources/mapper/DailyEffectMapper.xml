@@ -38,7 +38,7 @@
     </select>
 
     <select id="getKpiStatis" resultMap="baseResult">
-        select CONVERT_AMOUNT, SUBSIDY_AMOUNT,SUBSIDY_PER_UNIT，SUBSIDY_COUNT，CANCLE_COUNT，CANCLE_RATE from UO_OP_DAILY_STATIS
+        select CONVERT_AMOUNT, SUBSIDY_AMOUNT,SUBSIDY_PER_UNIT,SUBSIDY_COUNT,CANCLE_COUNT,CANCLE_RATE from UO_OP_DAILY_STATIS
         where head_id = #{headId}
     </select>
 
