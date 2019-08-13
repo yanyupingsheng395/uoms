@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 日运营群组
  * @author hxcao
  * @date 2019-07-31
  */
@@ -33,9 +34,6 @@ public class DailyGroupServiceImpl implements DailyGroupService {
     @Autowired
     private DailyMapper dailyMapper;
 
-    @Autowired
-    private DailyEffectMapper dailyEffectMapper;
-
     @Override
     public List<DailyGroup> getDataList(String headId, int start, int end) {
         return dailyGroupMapper.getDataList(headId, start, end);
@@ -44,11 +42,6 @@ public class DailyGroupServiceImpl implements DailyGroupService {
     @Override
     public void updateIsChecked(String headId, List<DailyGroup> groupList) {
         dailyGroupMapper.updateIsChecked(headId, groupList);
-    }
-
-    @Override
-    public List<Map<String, Object>> getOriginalGroupCheck() {
-        return dailyGroupMapper.getOriginalGroupCheck();
     }
 
     @Override
@@ -68,11 +61,6 @@ public class DailyGroupServiceImpl implements DailyGroupService {
         }
 
         return dailyGroupMapper.getSelectedGroup(headId, activeIdList, growthIdList);
-    }
-
-    @Override
-    public List<Map<String, Object>> getSelectedGroup(String headId) {
-        return dailyGroupMapper.getSelectedGroupByIsCheck(headId);
     }
 
     @Override

@@ -15,11 +15,7 @@ public interface DailyGroupService {
 
     void updateIsChecked(String headId, List<DailyGroup> groupList);
 
-    List<Map<String, Object>> getOriginalGroupCheck();
-
     List<Map<String, Object>> getSelectedGroup(String headId, String activeIds, String growthIds);
-
-    List<Map<String, Object>> getSelectedGroup(String headId);
 
     List<String> getDefaultActive(String headId);
 

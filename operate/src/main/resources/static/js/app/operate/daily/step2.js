@@ -32,7 +32,7 @@ function getGroupDataList() {
                 if(row['isCheck'] == '1') {
                     return '<a onclick="editSmsContent(\''+row['groupId']+'\', \'' + row['groupName'] + '\')" style=\'color: #000000;border-bottom: 1px solid;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '"><i class="fa fa-edit"></i>'+temp+'</a>';
                 }else {
-                    return '<a style=\'color: #CDC9C9;border-bottom: 1px solid\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">'+temp+'</a>';
+                    return '<a style=\'color: #CDC9C9;cursor: pointer\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">'+temp+'</a>';
                 }
             }
         },{

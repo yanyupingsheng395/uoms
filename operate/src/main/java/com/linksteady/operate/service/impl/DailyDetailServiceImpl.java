@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * 群组用户
  * @author hxcao
  * @date 2019-07-31
  */

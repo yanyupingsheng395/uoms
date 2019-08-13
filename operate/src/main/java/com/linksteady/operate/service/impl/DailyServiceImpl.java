@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 日运营头表
  * @author hxcao
  * @date 2019-07-31
  */
