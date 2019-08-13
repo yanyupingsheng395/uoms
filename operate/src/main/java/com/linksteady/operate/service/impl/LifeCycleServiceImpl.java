@@ -39,6 +39,4 @@ public class LifeCycleServiceImpl implements LifeCycleService {
     public List<LcSpuInfo> getSpuListWithSprice(String startDt, String endDt) {
         return lifeCycleMapper.getSpuListWithSprice(startDt,endDt);
     }
-
-
 }

@@ -28,13 +28,21 @@ public class DailyDetailServiceImpl implements DailyDetailService {
 
     private final String[] RETENTION_CODE = {"target01", "target02", "target03"};
 
-    //未选择
+    /**
+     * 未选择
+     */
     private static final String IS_CHECK_0 = "check:0";
-    //未触达
+    /**
+     * 未触达
+     */
     private static final String IS_PUSH_0 = "push:0";
-    //未转化
+    /**
+     * 未转化
+     */
     private static final String IS_CONVERT_0 = "convert:0";
-    //已转化
+    /**
+     * 已转化
+     */
     private static final String IS_CONVERT_1 = "convert:1";
 
     @Autowired
@@ -65,6 +73,13 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         return dataList;
     }
 
+    /**
+     * 根据选择的状态拼接SQL where条件
+     * @param userValue
+     * @param pathActive
+     * @param status
+     * @return
+     */
     private String getWhereInfo(String userValue, String pathActive, String status) {
         StringBuffer sb = new StringBuffer();
         if(StringUtils.isNotEmpty(status)) {
@@ -98,5 +113,12 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     public int getDataListCount(String headId, String userValue, String pathActive, String status) {
         String whereInfo = getWhereInfo(userValue, pathActive, status);
         return dailyDetailMapper.getDataListCount(headId, whereInfo);
+    }
+
+    public static void main(String[] args) {
+        ThreadGroup tg1 = new ThreadGroup("tg1");
+        System.out.println(tg1.getParent().getName());
+        ThreadGroup tg2 = new ThreadGroup(tg1,"tg2");
+        System.out.println(tg2.getParent().getName());
     }
 }
