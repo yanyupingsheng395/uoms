@@ -91,7 +91,7 @@
     </update>
 
     <select id="getPrePushUserMaxId" resultType="int">
-        select max(DAILY_DETAIL_ID)
+        select nvl(max(DAILY_DETAIL_ID),-1)
         FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER C
         WHERE T.HEAD_ID = C.HEAD_ID
           AND C.STATUS = 'doing'
