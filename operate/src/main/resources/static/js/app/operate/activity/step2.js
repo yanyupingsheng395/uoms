@@ -100,10 +100,9 @@ $("#btn_next_2_plat").click(function () {
 });
 
 function step3() {
-    loading2();
+    $MB.loadingDesc('show', '正在计算数据中...');
     setTimeout(function(){
-        removeLoading('test');
-
+        $MB.loadingDesc('hide');
         $("#step1").attr("style", "display:none;");
         $("#step2_own").attr("style", "display:none;");
         $("#step2_plat").attr("style", "display:none;");

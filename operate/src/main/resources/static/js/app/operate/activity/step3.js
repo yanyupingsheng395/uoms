@@ -89,13 +89,11 @@ function getUserList() {
 }
 
 $("#btn_next_3").click(function () {
-
-    loading2();
+    $MB.loadingDesc('show', '正在计算数据中...');
     setTimeout(function(){
-        removeLoading('test');
+        $MB.loadingDesc('hide');
         step4();
     },1000);
-
 });
 
 function step4() {

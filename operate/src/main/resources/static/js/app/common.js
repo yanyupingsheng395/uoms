@@ -417,6 +417,28 @@ var $MB = (function () {
         }
         return false;
     };
+    
+    var _pageLoaderDesc = function ($mode, $desc) {
+        $mode      = $mode || 'show';
+        if ($mode === 'show') {
+            $('body').loading({
+                loadingWidth:140,
+                title:'',
+                name:'load',
+                discription: $desc,
+                direction:'column',
+                type:'origin',
+                originDivWidth:10,
+                originDivHeight:10,
+                originWidth:3,
+                originHeight:3,
+                smallLoading:false,
+                loadingMaskBg:'rgba(0,0,0,0.2)'
+            });
+        } else if ($mode === 'hide') {
+            removeLoading('load');
+        }
+    };
 
     return {
         initTable: function (id, setting) {
@@ -474,6 +496,9 @@ var $MB = (function () {
         },
         loading: function ($mode) {
             _pageLoader($mode);
+        },
+        loadingDesc: function ($mode, $desc) {
+            _pageLoaderDesc($mode, $desc);
         }
     }
 })($);
