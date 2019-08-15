@@ -62,6 +62,9 @@ public class OpController extends BaseController {
 
     @RequestMapping("/getPeriodSpuStatis")
     public ResponseBo getPeriodSpuStatis(String headerId) {
+        if(StringUtils.isEmpty(headerId)) {
+            headerId = "110";
+        }
         List<Map<String, Object>> dataList = opService.getPeriodSpuStatis(headerId);
         return ResponseBo.okWithData(null, dataList);
     }

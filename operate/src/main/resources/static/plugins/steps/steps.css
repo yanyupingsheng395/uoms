@@ -100,9 +100,10 @@
     border-radius: 50%;
 }
 .step-title {
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', sans-serif;
     white-space: pre-line;
     padding-right: 10%;
-    font-size: 16px;
+    font-size: 14px;
     margin-bottom: 10px;
 }
 .steps-vertical .step-title {

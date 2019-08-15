@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.ActivityWeightMapper">
+
+    <select id="getWeightIdx" resultType="map">
+        select WEIGHT_IDX, to_char(ACTIV_DT, 'yyyyMMdd') DT from UO_OP_ACTIVITY_WEIGHT
+        where 1=1
+        <if test="startDt != '' and startDt != null">
+            and ACTIV_DT &gt;= to_date(#{startDt}, 'yyyy-MM-dd')
+        </if>
+        <if test="endDt != '' and endDt != null">
+            and ACTIV_DT &lt;= to_date(#{endDt}, 'yyyy-MM-dd')
+        </if>
+        order by ACTIV_DT asc
+    </select>
+</mapper>

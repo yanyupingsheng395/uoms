@@ -141,4 +141,24 @@ public class PageController {
         }
         return "redirect:/page/daily";
     }
+
+    /**
+     * 活动运营
+     * @return
+     */
+    @RequestMapping("/activity")
+    public String activity() {
+        return "operate/activity/list";
+    }
+
+    @RequestMapping("/activity/edit")
+    public String activityEdit(Model model, String id) {
+        model.addAttribute("headId", id);
+        return "operate/activity/edit";
+    }
+
+    @RequestMapping("/activity/add")
+    public String activityAdd() {
+        return "operate/activity/add";
+    }
 }

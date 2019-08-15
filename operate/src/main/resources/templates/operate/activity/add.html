@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/steps/steps.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/ion-rangeslider/ion.rangeSlider.min.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/loading/css/animate.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/loading/css/loading.css}">
+
+    <style>
+        #userListTable thead {
+            background-color: #eff3f8;
+        }
+        .step-icon-number {
+            cursor: pointer;
+        }
+        .irs--flat .irs-bar {
+            background-color: #33cabb;
+        }
+        .irs-single{
+            background-color: #33cabb;
+        }
+        .irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before{
+            background-top-color: #33cabb;
+        }
+        .irs--flat .irs-from, .irs--flat .irs-to, .irs--flat .irs-single {
+            background-color: #33cabb;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="pull-left">
+                                    <h5 class="modal-title pull-left" style="margin-top: 20px;">新增活动</h5>
+                                </div>
+                                <!--<div class="pull-right" style="margin-top: 20px;">-->
+                                    <!--<a href="/page/activity" title="点击返回">-->
+                                        <!--<span class="fa-stack">-->
+                                          <!--<i class="fa fa-square-o fa-stack-2x"></i>-->
+                                          <!--<i class="fa fa-mail-forward fa-stack-1x"></i>-->
+                                        <!--</span>-->
+                                    <!--</a>-->
+                                <!--</div>-->
+                            </div>
+                            <div class="row">
+                                <hr class="hr"/>
+                            </div>
+                            <div class="row">
+                                <!--步骤条-->
+                                <div class="pull-right col-md-6">
+                                    <div id="step" style="height: 80px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table table-striped" id="stepContent">
+                        <div data-th-include="operate/activity/step1" id="step1"></div>
+                        <div data-th-include="operate/activity/step2_own" style="display: none;" id="step2_own"></div>
+                        <div data-th-include="operate/activity/step2_plat" style="display: none;" id="step2_plat"></div>
+                        <div data-th-include="operate/activity/step3" style="display: none;" id="step3"></div>
+                        <div data-th-include="operate/activity/step4" style="display: none;" id="step4"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/js/app/operate/common/template.js}"></script>
+<script data-th-src="@{/plugins/steps/steps.js}"></script>
+<script data-th-src="@{/plugins/ion-rangeslider/ion.rangeSlider.min.js}"></script>
+<script data-th-src="@{/js/app/operate/activity/add.js}"></script>
+<script data-th-src="@{/js/app/operate/activity/step1.js}"></script>
+<script data-th-src="@{/js/app/operate/activity/step2.js}"></script>
+<script data-th-src="@{/js/app/operate/activity/step3.js}"></script>
+<script data-th-src="@{/js/app/operate/activity/step4.js}"></script>
+<script data-th-src="@{/plugins/loading/js/loading.js}"></script>
+<script>
+    function loading2() {
+        $('body').loading({
+            loadingWidth:140,
+            title:'',
+            name:'test',
+            discription:'正在计算数据中...',
+            direction:'column',
+            type:'origin',
+            // originBg:'#71EA71',
+            originDivWidth:10,
+            originDivHeight:10,
+            originWidth:3,
+            originHeight:3,
+            smallLoading:false,
+            loadingMaskBg:'rgba(0,0,0,0.2)'
+        });
+    }
+</script>
+</body>
+</html>

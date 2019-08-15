@@ -424,4 +424,57 @@ public class DateUtil {
         }
         return dateList;
     }
+
+    public static List<String> getPeriodDate(String type, String start, String end, String format) {
+        List<String> dateList = Lists.newLinkedList();
+        if(YEAR.equals(type)) {
+            LocalDate startDt = LocalDate.of(Integer.valueOf(start),1,1);
+            LocalDate endDt = LocalDate.of(Integer.valueOf(end),1,1);
+            do {
+                dateList.add(String.valueOf(startDt.getYear()));
+                startDt = startDt.plusYears(1);
+            }while (startDt.isBefore(endDt) || startDt.equals(endDt));
+        }
+        if(MONTH.equals(type)) {
+            YearMonth startDt = YearMonth.parse(start, DateTimeFormatter.ofPattern(format));
+            YearMonth endDt = YearMonth.parse(end, DateTimeFormatter.ofPattern(format));
+            do {
+                dateList.add(startDt.format(DateTimeFormatter.ofPattern(format)));
+                startDt = startDt.plusMonths(1);
+            }while (startDt.isBefore(endDt) || startDt.equals(endDt));
+        }
+        if(DAY.equals(type)) {
+            LocalDate startDt = LocalDate.parse(start, DateTimeFormatter.ofPattern(format));
+            LocalDate endDt = LocalDate.parse(end, DateTimeFormatter.ofPattern(format));
+            do {
+                dateList.add(startDt.format(DateTimeFormatter.ofPattern(format)));
+                startDt = startDt.plusDays(1);
+            }while (startDt.isBefore(endDt) || startDt.equals(endDt));
+        }
+        return dateList;
+    }
+
+    /**
+     * 2个日期格式的转化
+     * @param sourceFormat
+     * @param targetFormat
+     * @param date
+     * @return
+     */
+    public static String convertDateFormat(String sourceFormat, String targetFormat, String date) {
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(sourceFormat));
+        return localDate.format(DateTimeFormatter.ofPattern(targetFormat));
+    }
+
+    /**
+     * 日期加N天
+     * @param date
+     * @param format
+     * @param plusDay
+     * @return
+     */
+    public static String plusDays(String date, String format, Long plusDay) {
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(format));
+        return localDate.plusDays(plusDay).format(DateTimeFormatter.ofPattern(format));
+    }
 }
