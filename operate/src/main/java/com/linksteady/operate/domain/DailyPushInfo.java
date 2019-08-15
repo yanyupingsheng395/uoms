@@ -17,7 +17,7 @@ public class DailyPushInfo {
 
     private String userId;
 
-    private String userIdentify;
+    private String userPhone;
 
-
+    private String userOpenid;
 }

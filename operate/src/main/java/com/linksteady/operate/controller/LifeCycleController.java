@@ -6,7 +6,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DataStatisticsUtils;
-import com.linksteady.operate.common.util.OrderingConstants;
+import com.linksteady.operate.util.OrderingConstants;
 import com.linksteady.operate.domain.LcSpuInfo;
 import com.linksteady.operate.vo.LcSpuVO;
 import com.linksteady.operate.service.LifeCycleService;

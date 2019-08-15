@@ -6,7 +6,8 @@
         <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
         <result column="DAILY_DETAIL_ID" jdbcType="DECIMAL" property="dailyDetailId"></result>
         <result column="USER_ID" jdbcType="VARCHAR" property="userId"></result>
-        <result column="USER_IDENTIFY" jdbcType="VARCHAR" property="userIdentify"></result>
+        <result column="USER_PHONE" jdbcType="VARCHAR" property="userPhone"></result>
+        <result column="USER_OPENID" jdbcType="VARCHAR" property="userOpenid"></result>
         <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode"></result>
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
         <result column="REC_LAST_ID" jdbcType="VARCHAR" property="recLastId"></result>
@@ -21,12 +22,13 @@
     <resultMap id="pushInfoResult" type="com.linksteady.operate.domain.DailyPushInfo">
         <result column="DAILY_DETAIL_ID" jdbcType="DECIMAL" property="dailyDetailId"></result>
         <result column="USER_ID" jdbcType="VARCHAR" property="userId"></result>
-        <result column="USER_IDENTIFY" jdbcType="VARCHAR" property="userIdentify"></result>
+        <result column="USER_PHONE" jdbcType="VARCHAR" property="userPhone"></result>
+        <result column="USER_OPENID" jdbcType="VARCHAR" property="userOpenid"></result>
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
         <result column="GROWTH_STRATEGY_ID" jdbcType="DECIMAL" property="growthStreadyId"></result>
     </resultMap>
 
-    <select id="getPushUserCount" resultType="int">
+    <select id="getUserCount" resultType="int">
         select
             count(*)
         FROM  UO_OP_DAILY_HEADER T1,
@@ -39,14 +41,15 @@
           AND T1.HEAD_ID=#{headId}
     </select>
 
-    <select id="getPushUserList" resultMap="baseResult">
+    <select id="getUserList" resultMap="baseResult">
         SELECT *
         FROM (
                  select
                      T1.HEAD_ID,
                      T2.DAILY_DETAIL_ID,
                      T2.USER_ID,
-                     T2.USER_ID  USER_IDENTIFY,
+                     T2.USER_ID  USER_PHONE,
+                     T2.USER_ID  USER_OPENID,
                      T3.SMS_CODE,
                      SMS.SMS_CONTENT,
                      T2.REC_LAST_ID,
@@ -87,13 +90,43 @@
         </foreach>
     </update>
 
-    <select id="getSendSmsList" resultMap="pushInfoResult">
-        select T.DAILY_DETAIL_ID,T.HEAD_ID, T.USER_ID, T.USER_ID USER_IDENTIFY, T.SMS_CONTENT
+    <select id="getPrePushUserMaxId" resultType="int">
+        select max(DAILY_DETAIL_ID)
         FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER C
         WHERE T.HEAD_ID = C.HEAD_ID
-        AND C.STATUS = 'doing'
-        AND T.PUSH_STATUS = 'P'
-        AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
+          AND C.STATUS = 'doing'
+          AND T.PUSH_STATUS = 'P'
+          AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
+    </select>
+
+    <select id="getPrePushUserCount" resultType="int">
+        select count(*)
+         FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER C
+        WHERE T.HEAD_ID = C.HEAD_ID
+          AND C.STATUS = 'doing'
+          AND T.PUSH_STATUS = 'P'
+          AND T.DAILY_DETAIL_ID&lt;=#{dailyDetailId}
+          AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
+    </select>
+
+    <select id="getPrePushUserList" resultMap="pushInfoResult">
+        SELECT *
+        FROM (
+                select T.DAILY_DETAIL_ID,
+                       T.HEAD_ID,
+                       T.USER_ID,
+                       T.USER_ID USER_PHONE,
+                       T.USER_ID USER_OPENID,
+                       T.SMS_CONTENT,
+                       ROWNUM   RN
+                FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER C
+                WHERE T.HEAD_ID = C.HEAD_ID
+                AND C.STATUS = 'doing'
+                AND T.PUSH_STATUS = 'P'
+                AND T.DAILY_DETAIL_ID&lt;=#{dailyDetailId}
+                AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
+                AND ROWNUM &lt;= #{end}
+             ) WHERE RN &gt;= #{start}
     </select>
 
     <update id="updateSendStatus">

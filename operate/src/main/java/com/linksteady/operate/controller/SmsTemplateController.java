@@ -1,35 +1,20 @@
 package com.linksteady.operate.controller;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.util.ArithUtil;
-import com.linksteady.common.util.DataStatisticsUtils;
-import com.linksteady.operate.common.util.OrderingConstants;
-import com.linksteady.operate.domain.LcSpuInfo;
+import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.SmsTemplate;
-import com.linksteady.operate.domain.SpuCycle;
-import com.linksteady.operate.service.LifeCycleService;
 import com.linksteady.operate.service.SmsTemplateService;
 import com.linksteady.operate.service.impl.DailyPushServiceImpl;
-import com.linksteady.operate.thread.PushListThread;
-import com.linksteady.operate.vo.LcSpuVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.RoundingMode;
-import java.util.DoubleSummaryStatistics;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 短信相关的controller
@@ -45,6 +30,9 @@ public class SmsTemplateController extends BaseController {
 
     @Autowired
     DailyPushServiceImpl dailyPushService;
+
+    @Autowired
+    DailyProperties opDailyProperties;
 
 
     /**
@@ -97,8 +85,9 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/test")
     public ResponseBo test(HttpServletRequest request) {
-        PushListThread.generatePushList("13");
-        return ResponseBo.ok();
+      //  PushListThread.generatePushList("13");
+
+        return ResponseBo.ok(opDailyProperties);
     }
 
 }

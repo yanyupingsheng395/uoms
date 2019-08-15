@@ -9,21 +9,20 @@ import java.util.List;
 public interface DailyPushMapper {
 
     /**
-     * 获取当前header_id下待推送的用户数量
+     * 获取当前header_id下选中的用户数量
      * @param headId
      * @return
      */
-    int getPushUserCount(@Param("headId") String headId);
+    int getUserCount(@Param("headId") String headId);
 
     /**
-     * 分页获取当前需要推送的用户名单
+     * 分页获取当header_id下选中的用户名单
      * @param headId
      * @param start
      * @param end
      * @return
      */
-    List<DailyPushQuery> getPushUserList(@Param("headId") String headId,@Param("start") int start,@Param("end") int end);
-
+    List<DailyPushQuery> getUserList(@Param("headId") String headId,@Param("start") int start,@Param("end") int end);
 
     /**
      * 保存推送的文案信息
@@ -31,10 +30,22 @@ public interface DailyPushMapper {
     void updatePushContent(@Param("list") List<DailyPushInfo> list);
 
     /**
-     * 获得当前要推送的消息列表
+     * 获得当前要推送的最大的daily_detail_id
      * @return
      */
-    List<DailyPushInfo> getSendSmsList();
+    int getPrePushUserMaxId();
+
+    /**
+     * 获得当前要推送的消息数量
+     * @return
+     */
+    int getPrePushUserCount(int dailyDetailId);
+
+    /**
+     * 获得当前要推送的消息列表(分页)
+     * @return
+     */
+    List<DailyPushInfo> getPrePushUserList(@Param("dailyDetailId") int dailyDetailId,@Param("start") int start,@Param("end") int end);
 
     /**
      * 更新已推送的消息的状态

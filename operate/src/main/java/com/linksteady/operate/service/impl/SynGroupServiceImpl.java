@@ -3,7 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.DateUtil;
-import com.linksteady.operate.common.util.UomsConstants;
+import com.linksteady.operate.util.UomsConstants;
 import com.linksteady.operate.dao.SynGroupMapper;
 import com.linksteady.operate.domain.DatePeriodKpi;
 import com.linksteady.operate.service.SynGroupService;

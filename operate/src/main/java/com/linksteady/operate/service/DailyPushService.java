@@ -13,9 +13,20 @@ public interface DailyPushService {
     void generatePushList(String headerId);
 
     /**
-     * 获取当前待发送的短信列表
+     * 获得当前要推送的最大的daily_detail_id
+     * @return
      */
-    List<DailyPushInfo> getSendSmsList();
+    int getPrePushUserMaxId();
+
+    /**
+     * 获取当前待发送的消息数量
+     */
+    int getPrePushUserCount(int dailyDetailId);
+
+    /**
+     * 获取当前待发送的消息列表
+     */
+    List<DailyPushInfo> getPrePushUserList(int dailyDetailId,int start,int end);
 
     /**
      * 保存文案信息
@@ -40,14 +51,13 @@ public interface DailyPushService {
     void updateHeaderSendStatis();
 
     /**
-     * 发送消息
-     * @return
-     */
-    int sendMessage(String userIdentify,String smsContent);
-
-    /**
      * 更新统计表中的触达信息
      */
     void updatePushStatInfo();
+
+    /**
+     * 消息推送
+     */
+    void push(List<DailyPushInfo> list);
 
 }

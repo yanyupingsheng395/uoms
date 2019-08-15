@@ -107,6 +107,17 @@ public class PageController {
         return "operate/config/coupon";
     }
 
+    /**
+     * 每日用户成长任务配置
+     * @param
+     * @return
+     */
+    @Log("每日用户成长任务配置")
+    @RequestMapping("/cfg/dailyConfig")
+    public String dailyConfig() {
+        return "operate/config/dailyConfig";
+    }
+
     @RequestMapping("/effect")
     public String effect() {
         return "operate/daily/effect";

@@ -4,7 +4,7 @@ package com.linksteady.operate.dao;
  * Created by hxcao on 2019-06-05
  */
 
-import com.linksteady.operate.common.util.UserOperaterMapper;
+import com.linksteady.operate.util.UserOperaterMapper;
 import com.linksteady.operate.vo.KpiInfoVo;
 
 import java.util.List;
