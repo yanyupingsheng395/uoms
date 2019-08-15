@@ -4,18 +4,12 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.CouponInfo;
-import com.linksteady.operate.domain.SmsTemplate;
-import com.linksteady.operate.service.SmsTemplateService;
 import com.linksteady.operate.service.impl.CouponServiceImpl;
-import com.linksteady.operate.service.impl.DailyPushServiceImpl;
-import com.linksteady.operate.thread.PushListThread;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
