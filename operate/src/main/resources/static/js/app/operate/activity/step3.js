@@ -12,7 +12,7 @@ function getUserList() {
                 pageSize: params.limit,  //页面大小
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
-                    headId: '34'
+                    headId: '131'
                 }
             };
         },

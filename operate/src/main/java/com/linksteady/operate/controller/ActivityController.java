@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityHead;
@@ -11,7 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -83,5 +88,17 @@ public class ActivityController {
     @GetMapping("/getDataById")
     public ResponseBo getDataById(String headId) {
         return ResponseBo.okWithData(null, activityHeadService.getDataById(headId));
+    }
+
+    /**
+     * 获取自主类型的开始和结束日期
+     * @return
+     */
+    @GetMapping("/getStartAndEndDate")
+    public ResponseBo getStartAndEndDate() {
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("start", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        result.put("end", LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        return ResponseBo.okWithData(null, result);
     }
 }

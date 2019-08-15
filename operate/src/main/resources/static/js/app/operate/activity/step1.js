@@ -33,6 +33,7 @@ $("#btn_next_1").click(function () {
         init_date_end("platActBeginDt", "platActEndDt", "yyyy-mm-dd",0,2,0);
         $("#platActBeginDt").datepicker('setStartDate', new Date());
 
+        getStartAndEndDate();
         var startDt = $("#platActBeginDt").val();
         var endDt = $("#platActEndDt").val();
 
@@ -54,3 +55,15 @@ $("#btn_next_1").click(function () {
     }
     step.setActive(1);
 });
+
+function getStartAndEndDate() {
+    $.ajax({
+        url: '/activity/getStartAndEndDate',
+        async:false,
+        success: function (r) {
+            var data = r.data;
+            $("#platActBeginDt").val(data.start);
+            $("#platActEndDt").val(data.end);
+        }
+    });
+}
