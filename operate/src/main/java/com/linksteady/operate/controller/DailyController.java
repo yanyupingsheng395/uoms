@@ -5,7 +5,7 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
-import com.linksteady.operate.thread.PushListThread;
+import com.linksteady.operate.thread.GenPushListThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -135,8 +135,8 @@ public class DailyController {
             dailyService.updateStatus(headId, status);
             // 计算执行率
             dailyEffectService.updateExecuteRate(headId);
-            // 启动线程推送
-            PushListThread.generatePushList(headId);
+            // 生成推送名单
+            GenPushListThread.generatePushList(headId);
         }
         return ResponseBo.ok();
     }

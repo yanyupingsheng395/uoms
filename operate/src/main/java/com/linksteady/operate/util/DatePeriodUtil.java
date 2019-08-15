@@ -1,4 +1,4 @@
-package com.linksteady.operate.common.util;
+package com.linksteady.operate.util;
 
 import com.google.common.collect.Lists;
 

@@ -1,24 +1,20 @@
 package com.linksteady.operate.thread;
 
-import com.linksteady.operate.common.util.SpringContextUtils;
+import com.linksteady.common.util.SpringContextUtils;
 import com.linksteady.operate.service.impl.DailyPushServiceImpl;
-import com.linksteady.operate.service.impl.DailyServiceImpl;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 生成每日运营推送名单的多线程类
  */
 @Slf4j
-public class PushListThread {
+public class GenPushListThread {
 
-    private static PushListThread instance = new PushListThread();
-    public static PushListThread getInstance(){
+    private static GenPushListThread instance = new GenPushListThread();
+    public static GenPushListThread getInstance(){
         return instance;
     }
     /**
@@ -55,6 +51,8 @@ public class PushListThread {
                         headerId=getInstance().triggerQueue.take();
                         log.info("日推送从队列中取到headerId:{},待生成名单!",headerId);
 
+                        //todo 进行一次预校验 确保发送都能成功
+
                         //针对推送名单 填充消息模板 生成文案
                         DailyPushServiceImpl dailyPushService=(DailyPushServiceImpl)SpringContextUtils.getBean("dailyPushServiceImpl");
                         dailyPushService.generatePushList(headerId);
@@ -69,7 +67,7 @@ public class PushListThread {
         });
 
         generatePushThread.setDaemon(true);
-        generatePushThread.setName("generate op daily push list");
+        generatePushThread.setName("GenPushListThread");
         generatePushThread.start();
     }
 }

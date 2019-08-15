@@ -1,4 +1,4 @@
-package com.linksteady.operate.common.util;
+package com.linksteady.operate.util;
 
 import java.util.Arrays;
 import java.util.List;

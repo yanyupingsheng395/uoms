@@ -19,7 +19,9 @@ public class DailyPushQuery {
 
     private String userId;
 
-    private String userIdentify;
+    private String userPhone;
+
+    private String userOpenid;
 
     private String smsCode;
 

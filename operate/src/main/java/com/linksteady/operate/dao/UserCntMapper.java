@@ -5,7 +5,7 @@ package com.linksteady.operate.dao;
  *
  * @author cao
  */
-import com.linksteady.operate.common.util.UserOperaterMapper;
+import com.linksteady.operate.util.UserOperaterMapper;
 import com.linksteady.operate.vo.KpiInfoVo;
 
 import java.util.List;
