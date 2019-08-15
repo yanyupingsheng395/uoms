@@ -2,6 +2,7 @@ package com.linksteady.operate;
 
 import com.linksteady.lognotice.annotation.EnableExceptionNotice;
 import com.linksteady.operate.config.SystemProperties;
+import com.linksteady.operate.service.impl.DailyPushServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -22,10 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Slf4j
 public class OperateApplication {
 	public static void main(String[] args) {
-		ApplicationContext ctx =SpringApplication.run(OperateApplication.class, args);
+		SpringApplication.run(OperateApplication.class, args);
 		log.info("用户成长系统启动成功.");
-
 	}
-
-
 }

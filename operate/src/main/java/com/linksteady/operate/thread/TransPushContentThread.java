@@ -1,9 +1,9 @@
 package com.linksteady.operate.thread;
 
-import com.linksteady.common.util.SpringContextUtils;
 import com.linksteady.operate.domain.DailyPushInfo;
 import com.linksteady.operate.domain.DailyPushQuery;
 import com.linksteady.operate.service.impl.DailyPushServiceImpl;
+import com.linksteady.operate.util.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

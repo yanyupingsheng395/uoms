@@ -1,9 +1,9 @@
 package com.linksteady.operate.thread;
 
-import com.linksteady.common.util.SpringContextUtils;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.DailyPushInfo;
 import com.linksteady.operate.service.impl.DailyPushServiceImpl;
+import com.linksteady.operate.util.SpringContextUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +31,7 @@ public class PushMessageThread {
         pushSmsThread=new Thread(new Runnable() {
             @Override
             public void run() {
-                DailyPushServiceImpl dailyPushService=(DailyPushServiceImpl)SpringContextUtils.getBean("dailyPushServiceImpl");
+                DailyPushServiceImpl dailyPushService=(DailyPushServiceImpl) SpringContextUtils.getBean("dailyPushServiceImpl");
                 DailyProperties dailyProperties=(DailyProperties)SpringContextUtils.getBean("dailyProperties");
 
                 int size=100;

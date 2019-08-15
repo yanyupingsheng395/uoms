@@ -1,7 +1,7 @@
 package com.linksteady.operate.thread;
 
-import com.linksteady.common.util.SpringContextUtils;
 import com.linksteady.operate.service.impl.DailyPushServiceImpl;
+import com.linksteady.operate.util.SpringContextUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,7 +54,7 @@ public class GenPushListThread {
                         //todo 进行一次预校验 确保发送都能成功
 
                         //针对推送名单 填充消息模板 生成文案
-                        DailyPushServiceImpl dailyPushService=(DailyPushServiceImpl)SpringContextUtils.getBean("dailyPushServiceImpl");
+                        DailyPushServiceImpl dailyPushService=(DailyPushServiceImpl) SpringContextUtils.getBean("dailyPushServiceImpl");
                         dailyPushService.generatePushList(headerId);
 
                         log.info("日推送headerId:{},的推送名单已生成,即将开始推送",headerId);

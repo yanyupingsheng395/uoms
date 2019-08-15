@@ -1,4 +1,4 @@
-package com.linksteady.common.util;
+package com.linksteady.system.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

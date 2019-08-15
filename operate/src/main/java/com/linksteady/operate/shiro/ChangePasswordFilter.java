@@ -1,8 +1,8 @@
 package com.linksteady.operate.shiro;
 
 import com.linksteady.common.domain.User;
-import com.linksteady.common.util.SpringContextUtils;
 import com.linksteady.operate.config.SystemProperties;
+import com.linksteady.operate.util.SpringContextUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;

@@ -17,8 +17,8 @@ app:
 #
 #  profiles:
 #    active: prod
-
-# 配置加密的秘钥
+#
+## 配置加密的秘钥
 #jasypt:
 #  encryptor:
 #    password: linksteady123
