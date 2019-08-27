@@ -70,6 +70,12 @@ var temp = "";
 function addDimension() {
     var k_code = $("#dimension").find("option:selected").val();
     var v_code = $("#dimensionVal").selectpicker('val');
+
+    if(k_code == '' || v_code == '') {
+        $MB.n_warning('请选择维度或值！');
+        return;
+    }
+
     var codeStr = k_code + ":" + v_code;
     if(temp.indexOf(codeStr) == -1) {
         temp += codeStr + "|";
