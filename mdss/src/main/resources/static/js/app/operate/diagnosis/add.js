@@ -71,7 +71,7 @@ function addDimension() {
     var k_code = $("#dimension").find("option:selected").val();
     var v_code = $("#dimensionVal").selectpicker('val');
 
-    if(k_code == '' || v_code == '') {
+    if(k_code == '' || !(v_code != null && v_code.join() != '')) {
         $MB.n_warning('请选择维度或值！');
         return;
     }
