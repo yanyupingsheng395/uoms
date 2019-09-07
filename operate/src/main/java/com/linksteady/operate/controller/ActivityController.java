@@ -101,4 +101,15 @@ public class ActivityController {
         result.put("end", LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         return ResponseBo.okWithData(null, result);
     }
+
+
+    /**
+     * 活动获取影响开始日期和结束日期
+     * @return
+     */
+    @GetMapping("/getEffectDateInfo")
+    public ResponseBo getEffectDateInfo(String beginDate,String endDate) {
+        Map<String,String> result=activityWeightService.getEffectDate(beginDate,endDate);
+        return ResponseBo.okWithData(null, result);
+    }
 }

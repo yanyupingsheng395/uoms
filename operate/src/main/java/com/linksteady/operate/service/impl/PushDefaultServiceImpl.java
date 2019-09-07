@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class PushMessageServiceImpl implements PushMessageService {
+public class PushDefaultServiceImpl implements PushMessageService {
 
     @Autowired
     DailyProperties dailyProperties;

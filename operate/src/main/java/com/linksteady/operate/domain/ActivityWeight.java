@@ -11,8 +11,6 @@ import java.util.Date;
 @Data
 public class ActivityWeight {
 
-    private Long headId;
-
     /**
      * 权重指数
      */
@@ -22,4 +20,9 @@ public class ActivityWeight {
      * 活动日期
      */
     private Date activDt;
+
+    /**
+     * 活动日期(字符串 YYYYMMDD格式)
+     */
+    private String activDtStr;
 }
