@@ -193,4 +193,15 @@ public class ActivityController {
     public ResponseBo getCouponBoxData(String productId, String startDate, String endDate) {
         return ResponseBo.okWithData(null, activityProductService.getCouponBoxData(productId, startDate, endDate));
     }
+
+
+    /**
+     * 活动获取影响开始日期和结束日期
+     * @return
+     */
+    @GetMapping("/getEffectDateInfo")
+    public ResponseBo getEffectDateInfo(String beginDate,String endDate) {
+        Map<String,String> result=activityWeightService.getEffectDate(beginDate,endDate);
+        return ResponseBo.okWithData(null, result);
+    }
 }

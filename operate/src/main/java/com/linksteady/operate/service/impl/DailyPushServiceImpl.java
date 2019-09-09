@@ -39,7 +39,7 @@ public class DailyPushServiceImpl implements DailyPushService {
     DailyProperties dailyProperties;
 
     @Autowired
-    PushMessageServiceImpl pushMessageService;
+    PushDefaultServiceImpl pushDefaultService;
 
     @Autowired
     PushAliSmsServiceImpl pushAliSmsService;
@@ -256,7 +256,7 @@ public class DailyPushServiceImpl implements DailyPushService {
         }else if("NONE".equals(dailyProperties.getPushType()))
         {
             //测试，打印
-            pushMessageService.push(list);
+            pushDefaultService.push(list);
         }
     }
 }
