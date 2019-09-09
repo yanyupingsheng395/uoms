@@ -35,15 +35,11 @@ public interface ActivityHeadService {
      */
     void updateData(String headId, String startDt, String endDt, String dateRange, String type);
 
-    /**
-     * 新增记录
-     * @param actName
-     * @param startDt
-     * @param endDt
-     * @param dateRange
-     * @param type
-     */
-    void addData(String actName, String startDt, String endDt, String dateRange, String type);
-
     Map<String, Object> getDataById(String headId);
+
+    /**
+     * 活动头表新增数据
+     * @param activityHead
+     */
+    Long addData(ActivityHead activityHead);
 }

@@ -67,10 +67,14 @@ public class DataStatisticsUtils {
         public static double getMedian(double[] arr) {
             double[] tempArr = Arrays.copyOf(arr, arr.length);
             Arrays.sort(tempArr);
-            if (tempArr.length % 2 == 0) {
-                return (tempArr[tempArr.length >> 1] + tempArr[(tempArr.length >> 1) - 1]) / 2;
-            } else {
-                return tempArr[(tempArr.length >> 1)];
+            if(tempArr.length != 0) {
+                if (tempArr.length % 2 == 0) {
+                    return (tempArr[tempArr.length >> 1] + tempArr[(tempArr.length >> 1) - 1]) / 2;
+                } else {
+                    return tempArr[(tempArr.length >> 1)];
+                }
+            }else {
+                return 0D;
             }
         }
 

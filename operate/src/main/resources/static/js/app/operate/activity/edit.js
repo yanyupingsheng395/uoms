@@ -2,27 +2,10 @@ let fromVal = 0;
 $(function () {
     getDataById();
 });
-/**
- * 初始化步骤条
- */
-var step = steps({
-    el: "#step",
-    data: [
-        { title: "选择活动类型", description: "" },
-        { title: "设置活动时间", description: "" },
-        { title: "成长用户分析", description: "" },
-        { title: "成长用户策略", description: "" }
-    ],
-    space: 180,
-    center: true,
-    active: 0,
-    dataOrder: ["line", "title", "description"]
-});
 
 function updateData(actType, startDt, endDt, dateRange) {
     $.get("/activity/updateData", {headId:headId, actType: actType, startDt:startDt, endDt:endDt, dateRange: dateRange}, function (r) {
         console.log(r);
-
     });
 }
 
@@ -37,7 +20,7 @@ function getDataById() {
         $("#actName").val(data['ACT_NAME']);
         $("#actName").attr('disabled', true);
 
-        $("#actType").find("option[value='"+data['ACT_TYPE']+"']").attr("selected", "selected");
+        $("#actType").find("option[value='"+data['ACT_TYPE']+"']").prop("selected", "selected");
         $("#actType").attr('disabled', true);
 
         if(data['ACT_TYPE'] == 'own') {

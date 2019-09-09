@@ -62,7 +62,7 @@ public class DailyPushServiceImpl implements DailyPushService {
           //判断如果条数大于100 则进行分页
         if(pushUserCount<=pageSize)
         {
-            List<DailyPushQuery> list= getUserList(headerId,1,pushUserCount);
+            List<DailyPushQuery> list = getUserList(headerId,1,pushUserCount);
             //填充模板 生成文案
             List<DailyPushInfo> targetList=transPushList(list);
             //保存要推送的文案
@@ -259,6 +259,4 @@ public class DailyPushServiceImpl implements DailyPushService {
             pushMessageService.push(list);
         }
     }
-
 }
-

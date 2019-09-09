@@ -6,7 +6,7 @@ function getUserDataCount(startDt, endDt, chartId, dateRange) {
         var chart = r.data;
         var seriesData = [{name: '',type: 'line', data: chart['yAxisData']}];
         var option = getOption(null, chart['xAxisData'], chart['xAxisName'], chart['yAxisName'], seriesData);
-        option.grid = {right:'13%'};
+        option.grid = {right:'13%', top: '10%'};
         option.title = {
             text: '成长用户数量分布图',
             x:'center',
@@ -30,7 +30,7 @@ function getWeightIdx(startDt, endDt, chartId, dateRange) {
         var chart = r.data;
         var seriesData = [{name: '',type: 'line', data: chart['yAxisData']}];
         var option = getOption(null, chart['xAxisData'], chart['xAxisName'], chart['yAxisName'], seriesData);
-        option.grid = {right:'13%'};
+        option.grid = {right:'13%', top: '10%'};
         option.title = {
             text: '活动前后权重指数图',
             x:'center',

@@ -18,7 +18,7 @@ public interface ActivityHeadMapper {
 
     void updateData(String headId, String startDt, String endDt, String dateRange, String actType);
 
-    void addData(String actName, String startDt, String endDt, String dateRange, String actType);
+    void addData(ActivityHead activityHead);
 
     Map<String, Object> getDataById(String headId);
 }

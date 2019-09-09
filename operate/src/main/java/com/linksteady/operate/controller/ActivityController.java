@@ -3,15 +3,15 @@ package com.linksteady.operate.controller;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.domain.ActivityConfig;
 import com.linksteady.operate.domain.ActivityHead;
-import com.linksteady.operate.service.ActivityDetailService;
-import com.linksteady.operate.service.ActivityHeadService;
-import com.linksteady.operate.service.ActivityWeightService;
+import com.linksteady.operate.domain.ActivityProduct;
+import com.linksteady.operate.domain.ActivityUser;
+import com.linksteady.operate.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.nio.channels.ReadPendingException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
@@ -35,6 +35,15 @@ public class ActivityController {
     @Autowired
     private ActivityWeightService activityWeightService;
 
+    @Autowired
+    private ActivityConfigService activityConfigService;
+
+    @Autowired
+    private ActivityUserService activityUserService;
+
+    @Autowired
+    private ActivityProductService activityProductService;
+
     /**
      * 获取头表的分页数据
      */
@@ -52,7 +61,7 @@ public class ActivityController {
 
     /**
      * 用户成长数量分布图
-     * @param headId
+     *
      * @param endDt
      * @return
      */
@@ -63,7 +72,7 @@ public class ActivityController {
 
     /**
      * 活动权重指数分布图
-     * @param headId
+     *
      * @param startDt
      * @param endDt
      * @return
@@ -79,10 +88,13 @@ public class ActivityController {
         return ResponseBo.ok();
     }
 
+    /**
+     * 活动头表新增数据
+     * @return
+     */
     @GetMapping("/addData")
-    public ResponseBo addData(String actName, String startDt, String endDt,String dateRange, String actType) {
-        activityHeadService.addData(actName, startDt, endDt, dateRange, actType);
-        return ResponseBo.ok();
+    public ResponseBo addData(ActivityHead activityHead) {
+        return ResponseBo.okWithData(null, activityHeadService.addData(activityHead));
     }
 
     @GetMapping("/getDataById")
@@ -92,6 +104,7 @@ public class ActivityController {
 
     /**
      * 获取自主类型的开始和结束日期
+     *
      * @return
      */
     @GetMapping("/getStartAndEndDate")
@@ -100,5 +113,84 @@ public class ActivityController {
         result.put("start", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         result.put("end", LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         return ResponseBo.okWithData(null, result);
+    }
+
+    /**
+     * 日历上新增活动
+     * @param config
+     * @return
+     */
+    @PostMapping("/saveActivityConfig")
+    public ResponseBo saveActivityConfig(ActivityConfig config) {
+        activityConfigService.save(config);
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 获取日历上的活动
+     * @return
+     */
+    @GetMapping("/getActivityConfig")
+    public ResponseBo getActivityConfig() {
+        return ResponseBo.okWithData(null, activityConfigService.getActivityConfigList());
+    }
+
+    @GetMapping("/getActivityConfigByType")
+    public ResponseBo getActivityConfigByType(@RequestParam String type) {
+        return ResponseBo.okWithData(null, activityConfigService.getActivityConfigByType(type));
+    }
+
+    @GetMapping("/getActivityConfigById")
+    public ResponseBo getActivityConfigById(@RequestParam String id) {
+        return ResponseBo.okWithData(null, activityConfigService.getActivityConfigById(id));
+    }
+
+    /**
+     * 获取活动运营用户群体
+     * @return
+     */
+    @GetMapping("getActivityUserListPage")
+    public ResponseBo getActivityUserListPage(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        String startDate = request.getParam().get("startDate");
+        String endDate = request.getParam().get("endDate");
+        int total = activityUserService.getCount(startDate, endDate);
+        List<ActivityUser> activityUsers = activityUserService.getActivityUserListPage(start, end, startDate, endDate);
+        return ResponseBo.okOverPaging(null, total, activityUsers);
+    }
+
+    /**
+     * 获取活动运营商品方案
+     */
+    @GetMapping("/getActivityProductListPage")
+    public ResponseBo getActivityProductListPage(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        String headId = request.getParam().get("headId");
+        int total = activityProductService.getCount(headId);
+        List<ActivityProduct> activityProducts = activityProductService.getActivityProductListPage(start, end, headId);
+        return ResponseBo.okOverPaging(null, total, activityProducts);
+    }
+
+    /**
+     * 根据开始结束日期获取商品优惠信息并插入到数据库
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    @GetMapping("/saveActivityProduct")
+    public ResponseBo saveActivityProduct(String startDate, String endDate, String headId) {
+        activityProductService.saveActivityProduct(startDate, endDate, headId);
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 获取用户数在优惠券上的分布数据（箱线图）
+     * @return
+     */
+    @GetMapping("/getCouponBoxData")
+    public ResponseBo getCouponBoxData(String productId, String startDate, String endDate) {
+        return ResponseBo.okWithData(null, activityProductService.getCouponBoxData(productId, startDate, endDate));
     }
 }

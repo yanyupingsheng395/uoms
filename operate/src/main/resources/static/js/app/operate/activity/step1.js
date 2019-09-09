@@ -3,7 +3,7 @@ $("#btn_next_1").click(function () {
     let actType = $("#actType").find("option:selected").val();
     let actName = $("#actName").val();
 
-    if(actType == '') {
+    if(actType == '' && $("#actType").attr("style", "display:none;")) {
         $MB.n_warning("请选择活动类型！");
         return;
     }

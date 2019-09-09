@@ -37,8 +37,9 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void addData(String actName, String startDt, String endDt, String dateRange, String type) {
-        activityHeadMapper.addData(actName, startDt, endDt, dateRange, type);
+    public Long addData(ActivityHead activityHead) {
+        activityHeadMapper.addData(activityHead);
+        return activityHead.getHeadId();
     }
 
     @Override

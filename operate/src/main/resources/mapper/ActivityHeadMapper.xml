@@ -3,28 +3,27 @@
 <mapper namespace="com.linksteady.operate.dao.ActivityHeadMapper">
     <resultMap id="baseResult" type="com.linksteady.operate.domain.ActivityHead">
         <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"></result>
-        <result property="actName" jdbcType="VARCHAR" column="ACT_NAME"></result>
-        <result property="actType" jdbcType="VARCHAR" column="ACT_TYPE"></result>
-        <result property="beginDt" jdbcType="DATE" column="BEGIN_DT"></result>
-        <result property="endDt" jdbcType="DATE" column="END_DT"></result>
-        <result property="beginDt" jdbcType="DATE" column="BEGIN_DT"></result>
-        <result property="endDt" jdbcType="DATE" column="END_DT"></result>
+        <result property="activityName" jdbcType="VARCHAR" column="ACTIVITY_NAME"></result>
+        <result property="activityType" jdbcType="VARCHAR" column="ACTIVITY_TYPE"></result>
+        <result property="startDate" jdbcType="VARCHAR" column="START_DATE"></result>
+        <result property="endDate" jdbcType="VARCHAR" column="END_DATE"></result>
+        <result property="beforeDate" jdbcType="VARCHAR" column="BEFORE_DATE"></result>
+        <result property="afterDate" jdbcType="VARCHAR" column="AFTER_DATE"></result>
         <result property="coverNum" jdbcType="DECIMAL" column="COVER_NUM"></result>
         <result property="convertNum" jdbcType="DECIMAL" column="CONVERT_NUM"></result>
         <result property="numYearPercent" jdbcType="DECIMAL" column="NUM_YEAR_PERCENT"></result>
         <result property="convertAmount" jdbcType="DECIMAL" column="CONVERT_AMOUNT"></result>
         <result property="amountYearPercent" jdbcType="DECIMAL" column="AMOUNT_YEAR_PERCENT"></result>
         <result property="status" jdbcType="VARCHAR" column="STATUS"></result>
-        <result property="dateRange" jdbcType="DECIMAL" column="DATE_RANGE"></result>
     </resultMap>
 
     <select id="getDataListOfPage" resultMap="baseResult">
         select * from (
           select t.*, ROWNUM rn from (
-            select HEAD_ID, ACT_NAME, ACT_TYPE, BEGIN_DT, END_DT, COVER_NUM, CONVERT_NUM, NUM_YEAR_PERCENT, CONVERT_AMOUNT, AMOUNT_YEAR_PERCENT,STATUS
+            select HEAD_ID, ACTIVITY_NAME, ACTIVITY_TYPE, to_char(START_DATE, 'yyyymmdd') START_DATE, to_char(END_DATE, 'yyyymmdd') END_DATE, COVER_NUM, CONVERT_NUM, NUM_YEAR_PERCENT, CONVERT_AMOUNT, AMOUNT_YEAR_PERCENT,STATUS, to_char(BEFORE_DATE, 'yyyymmdd') BEFORE_DATE, to_char(AFTER_DATE, 'yyyymmdd') AFTER_DATE
             from UO_OP_ACTIVITY_HEADER where 1=1
             <if test="name != '' and name != null">
-                and ACT_NAME = #{name}
+                and ACTIVITY_NAME = #{name}
             </if>
             order by HEAD_ID desc
           ) t where ROWNUM &lt;=#{end}
@@ -34,12 +33,12 @@
     <select id="getDataCount" resultType="int">
         select count(1) from UO_OP_ACTIVITY_HEADER where 1=1
         <if test="name != '' and name != null">
-            and ACT_NAME = #{name}
+            and ACTIVITY_NAME = #{name}
         </if>
     </select>
 
     <update id="updateData">
-        update UO_OP_ACTIVITY_HEADER set BEGIN_DT = to_date(#{startDt}, 'yyyy-mm-dd'), END_DT = to_date(#{endDt}, 'yyyy-mm-dd'), ACT_TYPE = #{actType}
+        update UO_OP_ACTIVITY_HEADER set START_DATE = to_date(#{startDt}, 'yyyy-mm-dd'), END_DT = to_date(#{endDt}, 'yyyy-mm-dd'), ACTIVITY_TYPE = #{actType}
         <if test="dateRange != '' and dateRange != null">
             , DATE_RANGE = #{dateRange}
         </if>
@@ -50,19 +49,11 @@
         <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="headId">
             select seq_activity_head_id.nextval from dual
         </selectKey>
-        insert into UO_OP_ACTIVITY_HEADER(HEAD_ID, ACT_NAME, ACT_TYPE, BEGIN_DT, END_DT, STATUS
-        <if test="dateRange != '' and dateRange != null">
-            , DATE_RANGE
-        </if>
-        )
-        values (#{headId}, #{actName}, #{actType}, to_date(#{startDt}, 'yyyy-mm-dd'), to_date(#{endDt}, 'yyyy-mm-dd'), 'todo'
-        <if test="dateRange != '' and dateRange != null">
-            , #{dateRange}
-        </if>
-        )
+        insert into UO_OP_ACTIVITY_HEADER(HEAD_ID, ACTIVITY_NAME, ACTIVITY_TYPE, START_DATE, END_DATE, BEFORE_DATE, AFTER_DATE, STATUS)
+        values (#{headId}, #{activityName}, #{activityType}, to_date(#{startDate}, 'yyyy-mm-dd'), to_date(#{endDate}, 'yyyy-mm-dd'), to_date(#{beforeDate}, 'yyyy-mm-dd'), to_date(#{afterDate}, 'yyyy-mm-dd'), 'todo')
     </insert>
 
     <select id="getDataById" resultType="map">
-        select HEAD_ID, ACT_TYPE, to_char(BEGIN_DT, 'yyyy-mm-dd') BEGIN_DT, to_char(END_DT, 'yyyy-mm-dd') END_DT, COVER_NUM, CONVERT_NUM, NUM_YEAR_PERCENT, CONVERT_AMOUNT, AMOUNT_YEAR_PERCENT, STATUS, ACT_NAME, DATE_RANGE from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
+        select HEAD_ID, ACTIVITY_TYPE, to_char(START_DATE, 'yyyy-mm-dd') BEGIN_DT, to_char(END_DT, 'yyyy-mm-dd') END_DT, COVER_NUM, CONVERT_NUM, NUM_YEAR_PERCENT, CONVERT_AMOUNT, AMOUNT_YEAR_PERCENT, STATUS, ACT_NAME, DATE_RANGE from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
     </select>
 </mapper>

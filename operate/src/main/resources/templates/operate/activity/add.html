@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
     <title>用户成长系统</title>
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
@@ -20,18 +20,23 @@
         #userListTable thead {
             background-color: #eff3f8;
         }
+
         .step-icon-number {
             cursor: pointer;
         }
+
         .irs--flat .irs-bar {
             background-color: #33cabb;
         }
-        .irs-single{
+
+        .irs-single {
             background-color: #33cabb;
         }
-        .irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before{
+
+        .irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before {
             background-top-color: #33cabb;
         }
+
         .irs--flat .irs-from, .irs--flat .irs-to, .irs--flat .irs-single {
             background-color: #33cabb;
         }
@@ -57,40 +62,54 @@
                                 <div class="pull-left">
                                     <h5 class="modal-title pull-left" style="margin-top: 20px;">新增活动</h5>
                                 </div>
-                                <!--<div class="pull-right" style="margin-top: 20px;">-->
-                                    <!--<a href="/page/activity" title="点击返回">-->
-                                        <!--<span class="fa-stack">-->
-                                          <!--<i class="fa fa-square-o fa-stack-2x"></i>-->
-                                          <!--<i class="fa fa-mail-forward fa-stack-1x"></i>-->
-                                        <!--</span>-->
-                                    <!--</a>-->
-                                <!--</div>-->
                             </div>
                             <div class="row">
                                 <hr class="hr"/>
                             </div>
                             <div class="row">
                                 <!--步骤条-->
-                                <div class="pull-right col-md-6">
-                                    <div id="step" style="height: 80px;"></div>
+                                <div class="col-md-4 col-md-offset-8">
+                                    <div id="step" style="height: 80px;" class=""></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 select-table table-striped" id="stepContent">
-                        <div data-th-include="operate/activity/step1" id="step1"></div>
-                        <div data-th-include="operate/activity/step2_own" style="display: none;" id="step2_own"></div>
-                        <div data-th-include="operate/activity/step2_plat" style="display: none;" id="step2_plat"></div>
-                        <div data-th-include="operate/activity/step3" style="display: none;" id="step3"></div>
-                        <div data-th-include="operate/activity/step4" style="display: none;" id="step4"></div>
+                    <div class="col-md-12 select-table">
+                        <div id="step1" data-th-include="operate/activity/step1"></div>
+                        <div id="step2" data-th-include="operate/activity/step2" style="display: none;"></div>
+                        <div id="step3" data-th-include="operate/activity/step3" style="display: none;"></div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 </div>
+
+<div class="modal fade" id="userMapModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">优惠分析</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="userMapChart" style="width:100%;height: 200px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save" id="activity-add-btn" name="save">保存</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/plugins/echarts/dataTool.min.js}"></script>
 <script data-th-src="@{/js/app/operate/common/template.js}"></script>
 <script data-th-src="@{/plugins/steps/steps.js}"></script>
 <script data-th-src="@{/plugins/ion-rangeslider/ion.rangeSlider.min.js}"></script>

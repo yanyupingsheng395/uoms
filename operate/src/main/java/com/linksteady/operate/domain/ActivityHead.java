@@ -20,24 +20,22 @@ public class ActivityHead {
     /**
      * 活动名称
      */
-    private String actName;
+    private String activityName;
 
     /**
      * 活动类型
      */
-    private String actType;
+    private String activityType;
 
     /**
      * 活动开始时间
      */
-    @JsonFormat(pattern = "yyyyMMdd", timezone = "GMT+8")
-    private Date beginDt;
+    private String startDate;
 
     /**
      * 活动结束时间
      */
-    @JsonFormat(pattern = "yyyyMMdd", timezone = "GMT+8")
-    private Date endDt;
+    private String endDate;
 
     /**
      * 预计覆盖人数
@@ -70,8 +68,18 @@ public class ActivityHead {
     private String status;
 
     /**
-     * 活动延展天数
+     * 活动影响开始日期
      */
-    private Long dateRange;
+    private String beforeDate;
+
+    /**
+     * 活动影响结束日期
+     */
+    private String afterDate;
+
+    /**
+     * 创建日期
+     */
+    private String createDt;
 
 }

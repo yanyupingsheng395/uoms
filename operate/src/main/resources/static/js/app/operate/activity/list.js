@@ -22,10 +22,10 @@ $(function () {
             title: 'ID',
             visible: false
         }, {
-            field: 'actName',
+            field: 'activityName',
             title: '活动名称'
         }, {
-            field: 'actType',
+            field: 'activityType',
             title: '活动类型',
             formatter: function (value, row, index) {
                 if(value == "own") {
@@ -37,11 +37,17 @@ $(function () {
                 }
             }
         }, {
-            field: 'beginDt',
-            title: '开始时间'
+            field: 'startDate',
+            title: '活动开始时间'
         },  {
-            field: 'endDt',
-            title: '结束时间'
+            field: 'endDate',
+            title: '活动结束时间'
+        }, {
+            field: 'beforeDate',
+            title: '活动影响开始时间'
+        },  {
+            field: 'afterDate',
+            title: '活动影响结束时间'
         }, {
             field: 'coverNum',
             title: '预计覆盖人数（人）'
@@ -84,7 +90,7 @@ $("#btn_edit").click(function () {
     let selected = $("#activityTable").bootstrapTable('getSelections');
     let selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请勾选需要编辑的活动！');
+        $MB.n_warning('请勾选需要查看的活动！');
         return;
     }
     // let status = selected[0].status;
@@ -98,4 +104,14 @@ $("#btn_edit").click(function () {
 
 $("#btn_add").click(function () {
     window.location.href = "/page/activity/add";
+});
+
+$("#btn_catch").click(function () {
+    let selected = $("#activityTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请勾选需要评估的活动！');
+        return;
+    }
+    $MB.n_warning("活动未执行,暂无法查看效果数据。");
 });

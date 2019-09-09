@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableExceptionNotice
 @Slf4j
 public class OperateApplication {
+
 	public static void main(String[] args) {
 		SpringApplication.run(OperateApplication.class, args);
 		log.info("用户成长系统启动成功.");

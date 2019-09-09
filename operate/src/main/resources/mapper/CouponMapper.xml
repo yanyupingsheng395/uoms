@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.CouponMapper">
-  <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.CouponInfo">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId" />
-    <result column="COUPON_DENOM" jdbcType="DECIMAL" property="couponDenom" />
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.CouponInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"/>
+        <result column="COUPON_DENOM" jdbcType="DECIMAL" property="couponDenom"/>
 
-    <result column="COUPON_THRESHOLD" jdbcType="DECIMAL" property="couponThreshold" />
-    <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName" />
-    <result column="COUPON_URL" jdbcType="VARCHAR" property="couponUrl" />
-  </resultMap>
+        <result column="COUPON_THRESHOLD" jdbcType="DECIMAL" property="couponThreshold"/>
+        <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"/>
+        <result column="COUPON_URL" jdbcType="VARCHAR" property="couponUrl"/>
+    </resultMap>
 
-  <select id="getList" resultMap="BaseResultMap">
+    <select id="getList" resultMap="BaseResultMap">
     SELECT * FROM(
     SELECT A.*,ROWNUM RN FROM
       (SELECT
@@ -23,7 +23,7 @@
     ) WHERE RN &gt;=#{startRow}
   </select>
 
-  <select id="getTotalCount" resultType="int">
+    <select id="getTotalCount" resultType="int">
     select count(1) from UO_OP_COUPON
   </select>
 </mapper>
