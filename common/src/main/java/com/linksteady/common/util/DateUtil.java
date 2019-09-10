@@ -477,4 +477,16 @@ public class DateUtil {
         LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(format));
         return localDate.plusDays(plusDay).format(DateTimeFormatter.ofPattern(format));
     }
+
+    
+    public static String formatCSTTime(String date, String format) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+        Date d = sdf.parse(date);
+        return DateUtil.getDateFormat(d, format);
+    }
+
+    public static String getDateFormat(Date date, String dateFormatType) {
+        SimpleDateFormat simformat = new SimpleDateFormat(dateFormatType);
+        return simformat.format(date);
+    }
 }

@@ -33,6 +33,7 @@
         <!--指定时间格式-->
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
         <spring-cloud.version>Finchley.SR2</spring-cloud.version>
+        <poi.version>3.13</poi.version>
     </properties>
 
     <dependencies>
@@ -209,11 +210,23 @@
             <version>1.02</version>
         </dependency>
 
+        <!-- poi -->
         <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>4.0.1</version>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>

@@ -219,8 +219,6 @@ public class ActivityController {
 
     @GetMapping("/download")
     public void download(HttpServletResponse response) throws Exception{
-
-
         String fileName = "单品宝.xlsx";
         File file = ResourceUtils.getFile("classpath:templates/excel_template/123.xlsx");
         response.setContentType("application/vnd..ms-excel");
@@ -237,7 +235,6 @@ public class ActivityController {
             e.printStackTrace();
         }
     }
-
 
     @RequestMapping("downloadFile")
     public void fileDownload(HttpServletResponse response) throws IOException {
@@ -262,4 +259,6 @@ public class ActivityController {
             log.error("文件下载失败", e);
         }
     }
+
+
 }
