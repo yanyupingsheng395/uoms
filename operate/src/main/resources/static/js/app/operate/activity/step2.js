@@ -46,9 +46,6 @@ function getWeightIdx(startDt, endDt, chartId, dateRange) {
         var echart = echarts.init(document.getElementById(chartId), 'macarons');
         echart.setOption(option);
         echart.resize();
-
-        console.log(chartId)
-        console.log($(chartId).html())
     });
 }
 

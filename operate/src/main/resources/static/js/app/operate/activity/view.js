@@ -11,6 +11,19 @@ var step = steps({
     dataOrder: ["line", "title", "description"]
 });
 
+$(function () {
+    if(activityType == 'own') {
+        $("#chart_own").attr("style", "display:block");
+        $("#chart_plat").attr("style", "display:none");
+        getUserDataCount(beforeDate, afterDate, 'chart3', 0);
+    }else {
+        $("#chart_own").attr("style", "display:none");
+        $("#chart_plat").attr("style", "display:block");
+        getUserDataCount(beforeDate, afterDate, 'chart1', 0);
+        getWeightIdx(beforeDate, afterDate, 'chart2', 0);
+    }
+});
+
 function nextStep(i) {
     step.setActive(i);
     if (i == 1) {

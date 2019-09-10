@@ -108,7 +108,10 @@
     </div>
 </div>
 <script>
-    var headId = [[${id}]];
+    var headId = "[[${id}]]";
+    var activityType = "[[${activityHead.activityType}]]";
+    var beforeDate = "[[${activityHead.beforeDate}]]";
+    var afterDate = "[[${activityHead.afterDate}]]";
 </script>
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
@@ -117,11 +120,7 @@
 <script data-th-src="@{/plugins/steps/steps.js}"></script>
 <script data-th-src="@{/plugins/ion-rangeslider/ion.rangeSlider.min.js}"></script>
 <script data-th-src="@{/js/app/operate/activity/view.js}"></script>
-<!--<script data-th-src="@{/js/app/operate/activity/add.js}"></script>-->
-<!--<script data-th-src="@{/js/app/operate/activity/step1.js}"></script>-->
-<!--<script data-th-src="@{/js/app/operate/activity/step2.js}"></script>-->
-<!--<script data-th-src="@{/js/app/operate/activity/step3.js}"></script>-->
-<!--<script data-th-src="@{/js/app/operate/activity/step4.js}"></script>-->
+<script data-th-src="@{/js/app/operate/activity/step2.js}"></script>
 <script data-th-src="@{/plugins/loading/js/loading.js}"></script>
 </body>
 </html>
