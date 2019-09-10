@@ -244,13 +244,13 @@ public class ActivityController {
         String fileName = "单品宝.xlsx";
         if (StringUtils.isNotBlank(fileName) && !fileName.endsWith(".xlsx") && !fileName.endsWith(".csv"))
             throw new RuntimeException("不支持该类型文件下载");
-        String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf('_') + 1);
-        ClassPathResource resource = new ClassPathResource("templates/excel_template/danpinbao.xlsx");
-        File file = resource.getFile();
+        String realFileName = System.currentTimeMillis() + "_" + fileName.substring(fileName.indexOf('_') + 1);
+
+        File file = new File("file/danpinbao.xlsx");
         if (!file.exists())
             throw new RuntimeException("文件未找到");
-        response.setHeader("Content-Disposition", "attachment;fileName=" + java.net.URLEncoder.encode(realFileName, "utf-8"));
-        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "inline;fileName=" + java.net.URLEncoder.encode(realFileName, "utf-8"));
+        response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
         try (InputStream inputStream = new FileInputStream(file); OutputStream os = response.getOutputStream()) {
             byte[] b = new byte[2048];

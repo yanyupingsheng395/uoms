@@ -414,6 +414,5 @@ function gearsOption(yName, data, id) {
 }
 
 $("#btn_download").click(function () {
-    $MB.n_warning("暂不支持导出数据！");
-    // window.location.href = "/activity/downloadFile";
+    window.location.href = "/activity/downloadFile";
 });

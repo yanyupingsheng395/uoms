@@ -46,11 +46,4 @@ public class ActivityConfigServiceImpl implements ActivityConfigService {
     public ActivityConfig getActivityConfigById(String id) {
         return activityConfigMapper.getActivityConfigById(id);
     }
-
-    public static void main(String[] args) {
-        LocalDate now = LocalDate.now();
-        String currentDay = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String next2Month = now.plusMonths(2).with(TemporalAdjusters.lastDayOfMonth()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        System.out.println(next2Month);
-    }
 }

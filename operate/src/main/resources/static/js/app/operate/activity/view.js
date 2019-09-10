@@ -321,3 +321,7 @@ function gearsOption(yName, data, id) {
     };
     return option;
 }
+
+$("#btn_download").click(function () {
+    window.location.href = "/activity/downloadFile";
+});
