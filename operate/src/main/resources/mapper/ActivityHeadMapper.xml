@@ -54,6 +54,14 @@
     </insert>
 
     <select id="getDataById" resultType="map">
-        select HEAD_ID, ACTIVITY_TYPE, to_char(START_DATE, 'yyyy-mm-dd') BEGIN_DT, to_char(END_DT, 'yyyy-mm-dd') END_DT, COVER_NUM, CONVERT_NUM, NUM_YEAR_PERCENT, CONVERT_AMOUNT, AMOUNT_YEAR_PERCENT, STATUS, ACT_NAME, DATE_RANGE from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
+        select HEAD_ID, ACTIVITY_TYPE, to_char(START_DATE, 'yyyy-mm-dd') BEGIN_DT, to_char(END_DT, 'yyyy-mm-dd') END_DT, COVER_NUM, CONVERT_NUM, NUM_YEAR_PERCENT, CONVERT_AMOUNT, AMOUNT_YEAR_PERCENT, STATUS from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
     </select>
+
+    <select id="findById" resultMap="baseResult">
+        select HEAD_ID, ACTIVITY_NAME, ACTIVITY_TYPE, to_char(START_DATE, 'yyyy-mm-dd') START_DATE, to_char(END_DATE, 'yyyy-mm-dd') END_DATE, COVER_NUM, CONVERT_NUM, NUM_YEAR_PERCENT, CONVERT_AMOUNT, AMOUNT_YEAR_PERCENT, STATUS, to_char(BEFORE_DATE, 'yyyy-mm-dd') BEFORE_DATE, to_char(AFTER_DATE, 'yyyy-mm-dd') AFTER_DATE  from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
+    </select>
+
+    <update id="updateCoverUserCnt">
+        update UO_OP_ACTIVITY_HEADER set COVER_NUM = #{userCnt} where head_id = #{headId}
+    </update>
 </mapper>

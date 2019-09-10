@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.ActivityUserMapper;
 import com.linksteady.operate.domain.ActivityUser;
 import com.linksteady.operate.service.ActivityUserService;
@@ -20,11 +21,13 @@ public class ActivityUserServiceImpl implements ActivityUserService {
 
     @Override
     public List<ActivityUser> getActivityUserListPage(int start, int end, String startDate, String endDate) {
-        return activityUserMapper.getActivityUserListPage(start, end, startDate, endDate);
+        Long dayPeriod = DateUtil.countDay(startDate, endDate);
+        return activityUserMapper.getActivityUserListPage(start, end, startDate, endDate, dayPeriod);
     }
 
     @Override
     public int getCount(String startDate, String endDate) {
-        return activityUserMapper.getCount(startDate, endDate);
+        Long dayPeriod = DateUtil.countDay(startDate, endDate);
+        return activityUserMapper.getCount(startDate, endDate, dayPeriod);
     }
 }

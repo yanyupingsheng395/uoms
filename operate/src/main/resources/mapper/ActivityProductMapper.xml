@@ -29,21 +29,54 @@
     </select>
 
     <insert id="saveDataList">
-        INSERT ALL
-        <foreach item="item" index="index" collection="list">
-            into UO_OP_ACTIVITY_PRODUCT(head_id, product_id, user_count, product_price, prefer_type, prefer_value,
-            product_act_price, min_price15, min_price30)
-            values (#{item.headId},
-            #{item.productId},#{item.userCount},#{item.productPrice},#{item.preferType},#{item.preferValue},#{item.productActPrice},
-            (select fifteen_lowerst_price from w_product t where t.PRODUCT_ID = #{item.productId}),
-            (select thirty_lowerst_price from w_product t where t.PRODUCT_ID = #{item.productId})
-            )
+        insert into UO_OP_ACTIVITY_PRODUCT(head_id, product_id, user_count, product_price, prefer_type, prefer_value,
+        product_act_price, min_price15, min_price30)
+        <foreach item="item"  collection="list" index="index" separator="union all">
+            select #{item.headId}, #{item.productId},#{item.userCount},#{item.productPrice},#{item.preferType},#{item.preferValue},#{item.productActPrice},
+            #{item.minPrice15}, #{item.minPrice30} from dual
         </foreach>
-        select 1 from dual
     </insert>
 
-    <select id="getLowestProductPrice" resultType="map">
-        select t.product_id,fifteen_lowerst_price min15,thirty_lowerst_price min30
-        from w_product t where t.PRODUCT_ID = #{productId}
-    </select>
+    <insert id="insertProductList">
+        insert into UO_OP_ACTIVITY_PRODUCT(head_id, product_id, user_count, product_price, prefer_value,
+        product_act_price, min_price15, min_price30, prefer_type)
+        select head_id,
+        product_id,
+        user_count,
+        product_price,
+        prefer_value,
+        product_act_price,
+        min_price15,
+        min_price30,
+        prefer_type
+        from (select
+        #{headId} head_id,
+        REC_PROD_ID product_id,
+        count(1) user_count,
+        max(o.price) product_price,
+        TRUNC(avg(refer_deno), 2) prefer_value,
+        (max(o.price) - TRUNC(avg(refer_deno), 2)) product_act_price,
+        w.FIFTEEN_LOWERST_PRICE min_price15,
+        w.THIRTY_LOWERST_PRICE min_price30,
+        case
+        when (max(o.price) - TRUNC(avg(refer_deno), 2)) &lt;= 100 then
+        'promote'
+        else (case
+        when max(o.price) &lt;= 370 then
+        'discount'
+        when max(o.PRICE) &gt; 370 then
+        'reduce' end) end prefer_type
+        from UO_OP_ACTIVITY_OPTION o,
+        W_PRODUCT w
+        where ((TOUCH_DT &lt;= to_date(#{startDate}, 'yyyy-mm-dd') and
+        TOUCH_DT &lt;= to_date(#{endDate}, 'yyyy-mm-dd')) or (
+        data_type = '2' and REMAIN_TIME &lt;= #{dayPeriod} + 90
+        ))
+        and o.rec_prod_id = w.product_id(+)
+        group by rec_prod_id, w.FIFTEEN_LOWERST_PRICE, w.THIRTY_LOWERST_PRICE)
+    </insert>
+
+    <delete id="deleteByHeadId">
+        delete from UO_OP_ACTIVITY_PRODUCT where head_id = #{headId}
+    </delete>
 </mapper>

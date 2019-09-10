@@ -46,7 +46,7 @@
                         </div>
                         <div class="btn-group-sm text-center" role="group">
                             <a class="btn btn-primary" onclick="$('#activity-add').modal('show')">
-                                <i class="fa fa-pencil"></i> 新增活动
+                                <i class="fa fa-plus"></i> 新增活动
                             </a>
                         </div>
                     </div>
@@ -76,7 +76,7 @@
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
                                     <a class="btn btn-success btn-edit" id="btn_add">
-                                        <i class="fa fa-plus"></i> 新增活动
+                                        <i class="fa fa-edit"></i> 编辑活动
                                     </a>
                                     <a class="btn btn-primary btn-edit" id="btn_view">
                                         <i class="fa fa-edit"></i> 查看活动
@@ -327,6 +327,15 @@
         });
         return data;
     }
+
+    $("#btn_view").click(function () {
+        var headId = $("#activityTable").bootstrapTable('getSelections')[0].headId;
+        if (null == headId || ""== headId) {
+            $MB.n_warning('请勾选需要评估的活动！');
+            return;
+        }
+        window.location.href = "/page/activity/view?id=" + headId;
+    });
 </script>
 </body>
 </html>

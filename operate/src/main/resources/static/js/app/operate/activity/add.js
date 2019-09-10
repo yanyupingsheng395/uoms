@@ -1,17 +1,14 @@
 let fromVal = 0;
 let headId;
 
-init_date_begin('startDate', 'endDate', 'yyyy-mm-dd', 0, 2, 0);
-init_date_end('startDate', 'endDate', 'yyyy-mm-dd', 0, 2, 0);
-
 $("#activityType").change(function () {
     let val = $(this).find("option:selected").val();
 
     $("#startDate").val("");
     $("#endDate").val("");
     $("#activityName").val("");
-    // $("#beforeDate").val("");
-    // $("#afterDate").val("");
+    $("#beforeDate").val("");
+    $("#afterDate").val("");
     $("#chart_own").attr("style", "display:none;");
     $("#chart_plat").attr("style", "display:none;");
 
@@ -36,18 +33,18 @@ $("#activityId").change(function () {
             var data = r.data;
             $("#startDate").val(data['startDate']);
             $("#endDate").val(data['endDate']);
-            // $("#beforeDate").val(data['beforeDate']);
-            // $("#afterDate").val(data['afterDate']);
+            $("#beforeDate").val(data['beforeDate']);
+            $("#afterDate").val(data['afterDate']);
 
             if ($("#activityType").find("option:selected").val() == 'own') {
                 $("#chart_own").attr("style", "display:block");
                 $("#chart_plat").attr("style", "display:none");
-                getUserDataCount(data['startDate'], data['endDate'], 'chart3', 0);
+                getUserDataCount(data['beforeDate'], data['afterDate'], 'chart3', 0);
             } else {
                 $("#chart_own").attr("style", "display:none");
                 $("#chart_plat").attr("style", "display:block");
-                getUserDataCount(data['startDate'], data['endDate'], 'chart1', 0);
-                getWeightIdx(data['startDate'], data['endDate'], 'chart2', 0);
+                getUserDataCount(data['beforeDate'], data['afterDate'], 'chart1', 0);
+                getWeightIdx(data['beforeDate'], data['afterDate'], 'chart2', 0);
             }
         });
     }
@@ -114,6 +111,7 @@ function nextStep(i) {
 function saveActivity() {
     var activityType = $("#activityType").find("option:selected").val();
     var activityId = $("#activityId").find("option:selected").val();
+
     if (activityType == '' || activityId == '') {
         $MB.n_warning("请选择活动类型或活动名称！");
         return;
@@ -189,7 +187,7 @@ function step2Init() {
     $MB.initTable('activityUserTable', settings);
 }
 
-function getActivityProducTable() {
+function getActivityProductTable() {
     var settings = {
         url: '/activity/getActivityProductListPage',
         pagination: true,
@@ -224,7 +222,7 @@ function getActivityProducTable() {
             formatter: function (value, row, index) {
                 let headId = row['headId'];
                 let productId = row['productId'];
-                let code = "<a style='color: #0f0f0f;text-decoration: underline;' onclick='getUserMap(" + headId + ", " + productId + ")'><i class='fa fa-wrench fa-12x'></i></a>";
+                let code = "<a style='color: #0f0f0f;text-decoration: underline;' onclick='getUserMap(" + headId + ", " + productId + ")'><i class='fa fa-area-chart fa-12x'></i></a>";
                 return code;
             }
         }, {
@@ -243,10 +241,12 @@ function getActivityProducTable() {
             }
         }, {
             field: 'preferValue',
-            title: '优惠值（元）',
+            title: '优惠值',
             formatter: function (value, row, index) {
                 if(row['preferType'] == "discount") {
-                    return (value / row['productPrice']).toFixed(2);
+                    return (100 - (value / row['productPrice']).toFixed(2) * 100) + "%";
+                }else {
+                    return value;
                 }
             }
         }, {
@@ -271,7 +271,7 @@ function step3Init() {
         endDate: $("#afterDate").val()
     }, function (r) {
         if (r.code === 200) {
-            getActivityProducTable();
+            getActivityProductTable();
             $("#step2").attr("style", "display: none;");
             $("#step3").attr("style", "display: block;");
         } else {
@@ -412,3 +412,8 @@ function gearsOption(yName, data, id) {
     };
     return option;
 }
+
+$("#btn_download").click(function () {
+    $MB.n_warning("暂不支持导出数据！");
+    // window.location.href = "/activity/downloadFile";
+});

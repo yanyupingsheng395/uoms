@@ -17,6 +17,8 @@ public interface ActivityProductService {
 
     void saveActivityProduct(String startDate, String endDate, String headId);
 
+    void saveActivityProductBySql(String startDate, String endDate, String headId);
+
     /**
      * 用户数在优惠券上的分布图
      * @param productId

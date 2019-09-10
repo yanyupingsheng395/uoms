@@ -17,5 +17,7 @@ public interface ActivityProductMapper {
 
     void saveDataList(List<ActivityProduct> productList);
 
-    Map<String, Object> getLowestProductPrice(String productId);
+    void insertProductList(String startDate, String endDate, String headId, Long dayPeriod);
+
+    void deleteByHeadId(String headId);
 }

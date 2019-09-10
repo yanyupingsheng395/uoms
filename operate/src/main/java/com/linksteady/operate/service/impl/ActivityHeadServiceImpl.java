@@ -1,7 +1,9 @@
 package com.linksteady.operate.service.impl;
 
 import com.linksteady.operate.dao.ActivityHeadMapper;
+import com.linksteady.operate.dao.ActivityUserMapper;
 import com.linksteady.operate.domain.ActivityHead;
+import com.linksteady.operate.domain.ActivityUser;
 import com.linksteady.operate.service.ActivityHeadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 
     @Autowired
     private ActivityHeadMapper activityHeadMapper;
+
+    @Autowired
+    private ActivityUserMapper activityUserMapper;
 
     @Override
     public List<ActivityHead> getDataListOfPage(int start, int end, String name) {
@@ -47,5 +52,8 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         return activityHeadMapper.getDataById(headId);
     }
 
-
+    @Override
+    public ActivityHead findById(String headId) {
+        return activityHeadMapper.findById(headId);
+    }
 }

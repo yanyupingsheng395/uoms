@@ -8,10 +8,18 @@ import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.ActivityProduct;
 import com.linksteady.operate.domain.ActivityUser;
 import com.linksteady.operate.service.*;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.nio.channels.ReadPendingException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
@@ -22,6 +30,7 @@ import java.util.Map;
  * @author hxcao
  * @date 2019-08-13
  */
+@Slf4j
 @RestController
 @RequestMapping("/activity")
 public class ActivityController {
@@ -122,6 +131,9 @@ public class ActivityController {
      */
     @PostMapping("/saveActivityConfig")
     public ResponseBo saveActivityConfig(ActivityConfig config) {
+        Map<String, String> effectDate = activityWeightService.getEffectDate(config.getStartDate(), config.getEndDate());
+        config.setBeforeDate(effectDate.get("begin"));
+        config.setAfterDate(effectDate.get("end"));
         activityConfigService.save(config);
         return ResponseBo.ok();
     }
@@ -181,7 +193,7 @@ public class ActivityController {
      */
     @GetMapping("/saveActivityProduct")
     public ResponseBo saveActivityProduct(String startDate, String endDate, String headId) {
-        activityProductService.saveActivityProduct(startDate, endDate, headId);
+        activityProductService.saveActivityProductBySql(startDate, endDate, headId);
         return ResponseBo.ok();
     }
 
@@ -203,5 +215,51 @@ public class ActivityController {
     public ResponseBo getEffectDateInfo(String beginDate,String endDate) {
         Map<String,String> result=activityWeightService.getEffectDate(beginDate,endDate);
         return ResponseBo.okWithData(null, result);
+    }
+
+    @GetMapping("/download")
+    public void download(HttpServletResponse response) throws Exception{
+
+
+        String fileName = "单品宝.xlsx";
+        File file = ResourceUtils.getFile("classpath:templates/excel_template/123.xlsx");
+        response.setContentType("application/vnd..ms-excel");
+        response.setHeader("Content-Disposition", "attachment;fileName=" + java.net.URLEncoder.encode(fileName, "utf-8"));
+        response.setCharacterEncoding("utf-8");
+
+        try (InputStream inputStream = new FileInputStream(file); OutputStream os = response.getOutputStream()) {
+            byte[] b = new byte[2048];
+            int length;
+            while ((length = inputStream.read(b)) > 0) {
+                os.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping("downloadFile")
+    public void fileDownload(HttpServletResponse response) throws IOException {
+        String fileName = "单品宝.xlsx";
+        if (StringUtils.isNotBlank(fileName) && !fileName.endsWith(".xlsx") && !fileName.endsWith(".csv"))
+            throw new RuntimeException("不支持该类型文件下载");
+        String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf('_') + 1);
+        ClassPathResource resource = new ClassPathResource("templates/excel_template/danpinbao.xlsx");
+        File file = resource.getFile();
+        if (!file.exists())
+            throw new RuntimeException("文件未找到");
+        response.setHeader("Content-Disposition", "attachment;fileName=" + java.net.URLEncoder.encode(realFileName, "utf-8"));
+        response.setContentType("application/octet-stream");
+        response.setCharacterEncoding("utf-8");
+        try (InputStream inputStream = new FileInputStream(file); OutputStream os = response.getOutputStream()) {
+            byte[] b = new byte[2048];
+            int length;
+            while ((length = inputStream.read(b)) > 0) {
+                os.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            log.error("文件下载失败", e);
+        }
     }
 }

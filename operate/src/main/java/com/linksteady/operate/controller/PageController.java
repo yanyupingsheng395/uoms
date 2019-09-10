@@ -1,11 +1,14 @@
 package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
+import com.linksteady.operate.domain.ActivityHead;
+import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.DailyService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,6 +22,9 @@ public class PageController {
 
     @Autowired
     private DailyService dailyService;
+
+    @Autowired
+    private ActivityHeadService activityHeadService;
 
     @Log("用户运营监控")
     @RequestMapping("/operator/user")
@@ -171,5 +177,13 @@ public class PageController {
     @RequestMapping("/activity/add")
     public String activityAdd() {
         return "operate/activity/add";
+    }
+
+    @RequestMapping("/activity/view")
+    public String activityView(@RequestParam("id") String id, Model model) {
+        ActivityHead activityHead = activityHeadService.findById(id);
+        model.addAttribute("id", id);
+        model.addAttribute("activityHead", activityHead);
+        return "operate/activity/view";
     }
 }

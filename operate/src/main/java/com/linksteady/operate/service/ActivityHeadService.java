@@ -42,4 +42,6 @@ public interface ActivityHeadService {
      * @param activityHead
      */
     Long addData(ActivityHead activityHead);
+
+    ActivityHead findById(String headId);
 }

@@ -6,6 +6,9 @@ import com.linksteady.operate.service.ActivityConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +22,8 @@ public class ActivityConfigServiceImpl implements ActivityConfigService {
     @Autowired
     private ActivityConfigMapper activityConfigMapper;
 
+
+
     @Override
     public void save(ActivityConfig config) {
         activityConfigMapper.save(config);
@@ -31,11 +36,21 @@ public class ActivityConfigServiceImpl implements ActivityConfigService {
 
     @Override
     public List<Map<String, Object>> getActivityConfigByType(String type) {
-        return activityConfigMapper.getActivityConfigByType(type);
+        LocalDate now = LocalDate.now();
+        String currentDay = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String next2Month = now.plusMonths(2).with(TemporalAdjusters.lastDayOfMonth()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return activityConfigMapper.getActivityConfigByType(type, currentDay, next2Month);
     }
 
     @Override
     public ActivityConfig getActivityConfigById(String id) {
         return activityConfigMapper.getActivityConfigById(id);
+    }
+
+    public static void main(String[] args) {
+        LocalDate now = LocalDate.now();
+        String currentDay = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String next2Month = now.plusMonths(2).with(TemporalAdjusters.lastDayOfMonth()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        System.out.println(next2Month);
     }
 }

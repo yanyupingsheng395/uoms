@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/steps/steps.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/ion-rangeslider/ion.rangeSlider.min.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/loading/css/animate.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/loading/css/loading.css}">
+
+    <style>
+        #userListTable thead {
+            background-color: #eff3f8;
+        }
+
+        .step-icon-number {
+            cursor: pointer;
+        }
+
+        .irs--flat .irs-bar {
+            background-color: #33cabb;
+        }
+
+        .irs-single {
+            background-color: #33cabb;
+        }
+
+        .irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before {
+            background-top-color: #33cabb;
+        }
+
+        .irs--flat .irs-from, .irs--flat .irs-to, .irs--flat .irs-single {
+            background-color: #33cabb;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="pull-left">
+                                    <h5 class="modal-title pull-left" style="margin-top: 20px;">编辑活动</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <hr class="hr"/>
+                            </div>
+                            <div class="row">
+                                <!--步骤条-->
+                                <div class="col-md-4 col-md-offset-8">
+                                    <div id="step" style="height: 80px;" class=""></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table">
+                        <div id="step1" data-th-include="operate/activity/step1_view"></div>
+                        <div id="step2" data-th-include="operate/activity/step2_view" style="display: none;"></div>
+                        <div id="step3" data-th-include="operate/activity/step3_view" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="userMapModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">优惠分析</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="userMapChart" style="width:100%;height: 200px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save" id="activity-add-btn" name="save">保存</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var headId = [[${id}]];
+</script>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/plugins/echarts/dataTool.min.js}"></script>
+<script data-th-src="@{/js/app/operate/common/template.js}"></script>
+<script data-th-src="@{/plugins/steps/steps.js}"></script>
+<script data-th-src="@{/plugins/ion-rangeslider/ion.rangeSlider.min.js}"></script>
+<script data-th-src="@{/js/app/operate/activity/view.js}"></script>
+<!--<script data-th-src="@{/js/app/operate/activity/add.js}"></script>-->
+<!--<script data-th-src="@{/js/app/operate/activity/step1.js}"></script>-->
+<!--<script data-th-src="@{/js/app/operate/activity/step2.js}"></script>-->
+<!--<script data-th-src="@{/js/app/operate/activity/step3.js}"></script>-->
+<!--<script data-th-src="@{/js/app/operate/activity/step4.js}"></script>-->
+<script data-th-src="@{/plugins/loading/js/loading.js}"></script>
+</body>
+</html>

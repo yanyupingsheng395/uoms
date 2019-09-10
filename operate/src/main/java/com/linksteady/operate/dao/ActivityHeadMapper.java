@@ -21,4 +21,8 @@ public interface ActivityHeadMapper {
     void addData(ActivityHead activityHead);
 
     Map<String, Object> getDataById(String headId);
+
+    ActivityHead findById(String headId);
+
+    void updateCoverUserCnt(String headId, Long userCnt);
 }

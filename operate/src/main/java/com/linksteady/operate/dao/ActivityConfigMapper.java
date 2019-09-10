@@ -15,7 +15,7 @@ public interface ActivityConfigMapper {
 
     List<ActivityConfig> getActivityConfigList();
 
-    List<Map<String, Object>> getActivityConfigByType(String type);
+    List<Map<String, Object>> getActivityConfigByType(String type, String currentDay, String next2Month);
 
     ActivityConfig getActivityConfigById(String id);
 }
