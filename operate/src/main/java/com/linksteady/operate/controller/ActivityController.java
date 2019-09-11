@@ -9,17 +9,16 @@ import com.linksteady.operate.domain.ActivityProduct;
 import com.linksteady.operate.domain.ActivityUser;
 import com.linksteady.operate.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.channels.ReadPendingException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
@@ -52,6 +51,8 @@ public class ActivityController {
 
     @Autowired
     private ActivityProductService activityProductService;
+
+    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 
     /**
      * 获取头表的分页数据
@@ -243,7 +244,13 @@ public class ActivityController {
             throw new RuntimeException("不支持该类型文件下载");
         String realFileName = System.currentTimeMillis() + "_" + fileName.substring(fileName.indexOf('_') + 1);
 
-        File file = new File("file/danpinbao.xlsx");
+
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("excel/danpinbao.xlsx");
+        File file = new File("danpinbao.xlsx");
+        FileUtils.copyInputStreamToFile(stream, file);
+
+        // 这种方式服务器获取不倒
+        //File file = ResourceUtils.getFile("classpath:***");
         if (!file.exists())
             throw new RuntimeException("文件未找到");
         response.setHeader("Content-Disposition", "inline;fileName=" + java.net.URLEncoder.encode(realFileName, "utf-8"));
@@ -259,6 +266,4 @@ public class ActivityController {
             log.error("文件下载失败", e);
         }
     }
-
-
 }

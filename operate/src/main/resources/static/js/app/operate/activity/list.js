@@ -106,12 +106,181 @@ $("#btn_add").click(function () {
     window.location.href = "/page/activity/add";
 });
 
-$("#btn_catch").click(function () {
-    let selected = $("#activityTable").bootstrapTable('getSelections');
+let validator;
+let $activityAddForm = $("#activity-add-form");
+
+function init() {
+    init_date_begin('startDate', 'endDate', 'yyyy-mm-dd', 0, 2, 0);
+    init_date_end('startDate', 'endDate', 'yyyy-mm-dd', 0, 2, 0);
+    $('#startDate').datepicker('setStartDate', new Date());
+}
+
+$(function () {
+    $MB.loading('show');
+    init();
+    validateRule();
+    getCalendar();
+    $MB.loading('hide');
+});
+
+
+function validateRule() {
+    var icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i> ";
+    validator = $activityAddForm.validate({
+        rules: {
+            activityTypeVal: {
+                required: true
+            },
+            activityName: {
+                required: true
+            },
+            startDate: {
+                required: true
+            },
+            endDate: {
+                required: true
+            }
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":checkbox") || element.is(":radio")) {
+                error.appendTo(element.parent().parent());
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        messages: {
+            activityTypeVal: {
+                required: icon + "请输入活动类型"
+            },
+            activityName: {
+                required: icon + "请输入活动名称"
+            },
+            startDate: {
+                required: icon + "请输入开始日期"
+            },
+            endDate: {
+                required: icon + "请输入结束日期"
+            }
+        }
+    });
+}
+
+$("#activityType").change(function () {
+    $("#activityTypeVal").val($(this).find("option:selected").val());
+});
+
+$("#activity-add-btn").click(function () {
+    let validator = $activityAddForm.validate();
+    let flag = validator.form();
+    if (flag) {
+        $.post("/activity/saveActivityConfig", $activityAddForm.serialize(), function (r) {
+            $("#activity-add").modal('hide');
+            if (r.code == 200) {
+                $MB.n_success("新增活动成功！");
+                getCalendar();
+            } else {
+                $MB.n_danger("未知错误！");
+            }
+            getCalendarDataSource();
+        });
+    }
+});
+
+// 关闭modal清空值
+$("#activity-add").on('hidden.bs.modal', function () {
+    $("#activityType").find("option[value='']").prop("selected", "selected");
+    $("#activityName").val("");
+    $("#startDate").val("");
+    $("#endDate").val("");
+});
+
+// 封装calendar的datasource
+function getCalendarDataSource() {
+    let data = getActivityConfig();
+    let dataSource = [];
+    data.forEach(e => {
+        let o = new Object();
+        o.id = e.id;
+        o.name = e.activityName;
+        o.startDate = detailDate(e.startDate);
+        o.endDate = detailDate(e.endDate);
+        dataSource.push(o);
+    });
+
+    return dataSource;
+}
+
+// 将日期处理成calendar需要的日期
+function detailDate(date) {
+    let dateArr = date.split("-");
+    return new Date(Number.parseInt(dateArr[0]), Number.parseInt(dateArr[1]) - 1, Number.parseInt(dateArr[2]));
+}
+
+// 获取日历
+function getCalendar() {
+    $('#calendar').html('');
+    let date = new Date();
+    let today = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+    let dataSource = getCalendarDataSource();
+    $('#calendar').calendar({
+        language: 'zh-CN',
+        mouseOnDay: function (e) {
+            let content = '';
+            for (let i in e.events) {
+                content += '<div class="event-tooltip-content">'
+                    + '<div class="event-name">' + e.events[i].name + '</div>'
+                    + '</div>';
+            }
+            $(e.element).popover({
+                trigger: 'manual',
+                container: 'body',
+                html: true,
+                content: content,
+                placement: 'top'
+            });
+
+            $(e.element).popover('show');
+        },
+        mouseOutDay: function (e) {
+            if (e.events.length > 0) {
+                $(e.element).popover('hide');
+            }
+        },
+        dataSource: dataSource,
+        customDayRenderer: function (element, date) {
+            if (date.getTime() == today) {
+                $(element).css('background-color', 'red');
+                $(element).css('color', 'white');
+                $(element).css('border-radius', '2px');
+            }
+        }
+    });
+    $('[data-toggle="tooltip"]').tooltip({
+        "container": 'body',
+    });
+}
+
+// 获取创建的活动
+function getActivityConfig() {
+    let data = null;
+    $.ajax({
+        url: '/activity/getActivityConfig',
+        data: {},
+        async: false,
+        success: function (r) {
+            data = r.data;
+        }
+    });
+    return data;
+}
+
+$("#btn_view").click(function () {
+    var selected = $("#activityTable").bootstrapTable('getSelections');
     let selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请勾选需要评估的活动！');
+        $MB.n_warning('请勾选需要查看的活动！');
         return;
     }
-    $MB.n_warning("活动未执行,暂无法查看效果数据。");
+    let headId = selected[0].headId;
+    window.location.href = "/page/activity/view?id=" + headId;
 });
