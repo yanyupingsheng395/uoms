@@ -138,14 +138,14 @@ public class DailyPushServiceImpl implements DailyPushService {
                     smsContent=smsContent.replace("{CONPON_URL}",shortUrl);
                     smsContent=smsContent.replace("{CONPON_NAME}",dailyPushQuery.getCouponName());
 
-                    smsContent=smsContent.replace("{PROD}",dailyPushQuery.getRecLastName());
+                    smsContent=smsContent.replace("{PROD}",dailyPushQuery.getRecProdName());
                     smsContent=smsContent.replace("{PROD_URL}",shortUrl);
                 }
             }else
             {
                 longUrl=dailyPushQuery.getRecLastLongurl();
                 String shortUrl=shortUrlService.produceShortUrl("1",dailyPushQuery.getUserId(),longUrl);
-                smsContent=smsContent.replace("{PROD}",dailyPushQuery.getRecLastName());
+                smsContent=smsContent.replace("{PROD}",dailyPushQuery.getRecProdName());
                 smsContent=smsContent.replace("{PROD_URL}",shortUrl);
             }
 

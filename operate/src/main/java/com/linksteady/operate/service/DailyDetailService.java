@@ -22,4 +22,6 @@ public interface DailyDetailService {
     List<DailyDetail> getUserEffect(String headId, int start, int end, String userValue, String pathActive, String status);
 
     int getDataListCount(String headId, String userValue, String pathActive, String status);
+
+    int findCountByPushStatus(String headId);
 }

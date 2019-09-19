@@ -62,22 +62,29 @@ function getUserStrategyList() {
                 field: 'recProdName',
                 title: '目标商品'
             }, {
-                field: 'tarProductNum',
+                field: 'referDeno',
                 title: '建议补贴面额（元）'
             }, {
-                field: 'tarProductNum',
+                field: 'orderPeriod',
                 title: '建议触达时段（时）'
             },{
-                field: 'tarProductNum',
+                field: 'couponMin',
                 title: '优惠门槛（元）'
             },{
                 field: 'couponDeno',
                 title: '优惠面额（元）'
             },{
-                field: 'tarProductNum',
-                title: '短信文案'
+                field: 'smsContent',
+                title: '短信文案',
+                formatter: function (value, row, idx) {
+                    let temp = value.substring(0, 20) + "...";
+                    return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">'+temp+'</a>';
+                }
             }
-        ]]
+        ]],
+        onLoadSuccess: function () {
+            $("a[data-toggle='tooltip']").tooltip();
+        }
     };
     $('#userStrategyListTable').bootstrapTable('destroy');
     $MB.initTable('userStrategyListTable', settings);

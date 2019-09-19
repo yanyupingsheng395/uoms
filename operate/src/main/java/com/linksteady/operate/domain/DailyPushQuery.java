@@ -27,9 +27,9 @@ public class DailyPushQuery {
 
     private String smsContent;
 
-    private String recLastId;
+    private String recProdId;
 
-    private String recLastName;
+    private String recProdName;
 
     private String recLastLongurl;
 

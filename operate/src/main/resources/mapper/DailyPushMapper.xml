@@ -10,8 +10,8 @@
         <result column="USER_OPENID" jdbcType="VARCHAR" property="userOpenid"></result>
         <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode"></result>
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
-        <result column="REC_LAST_ID" jdbcType="VARCHAR" property="recLastId"></result>
-        <result column="REC_LAST_NAME" jdbcType="VARCHAR" property="recLastName"></result>
+        <result column="REC_PROD_ID" jdbcType="VARCHAR" property="recProdId"></result>
+        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"></result>
         <result column="REC_LAST_LONGURL" jdbcType="VARCHAR" property="recLastLongurl"></result>
         <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"></result>
         <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
@@ -52,8 +52,8 @@
                      T2.USER_ID  USER_OPENID,
                      T3.SMS_CODE,
                      SMS.SMS_CONTENT,
-                     T2.REC_LAST_ID,
-                     T2.REC_LAST_NAME,
+                     T2.REC_PROD_ID,
+                     T2.REC_PROD_NAME,
                      PT.PROD_LONG_URL REC_LAST_LONGURL,
                      T2.COUPON_ID,
                      T2.GROWTH_STRATEGY_ID,
@@ -71,7 +71,7 @@
                    AND T2.GROUP_ID = T3.GROUP_ID
                    AND T2.COUPON_ID = CP.COUPON_ID(+)
                    AND T3.SMS_CODE = SMS.SMS_CODE
-                   AND T2.REC_LAST_ID = PT.PRODUCT_ID
+                   AND T2.REC_PROD_ID = PT.PRODUCT_ID
                    AND T3.IS_CHECK = '1'
                    AND T1.HEAD_ID = #{headId}
                    AND ROWNUM &lt;= #{end}
@@ -82,7 +82,6 @@
         <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
             update UO_OP_DAILY_DETAIL
             <set>
-                IS_CHECK='1',
                 SMS_CONTENT=#{item.smsContent},
                 PUSH_STATUS='P'
             </set>

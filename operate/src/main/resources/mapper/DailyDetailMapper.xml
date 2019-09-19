@@ -23,6 +23,8 @@
         <result column="TAR_PRODUCT_NUM" jdbcType="VARCHAR" property="tarProductNum"></result>
         <result column="COUPON_MIN" jdbcType="VARCHAR" property="couponMin"></result>
         <result column="COUPON_DENO" jdbcType="VARCHAR" property="couponDeno"></result>
+        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"></result>
+        <result column="COMPLETE_PURCH" jdbcType="VARCHAR" property="completePurch"></result>
     </resultMap>
 
     <resultMap id="effectResult" type="com.linksteady.operate.domain.DailyDetail">
@@ -41,6 +43,7 @@
         <result column="ACT_PIECE_PERICE" jdbcType="VARCHAR" property="actPiecePrice"></result>
         <result column="IS_CANCLE" jdbcType="VARCHAR" property="isCancle"></result>
         <result column="TAR_ORDER_PRICE" jdbcType="VARCHAR" property="tarOrderPrice"></result>
+        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"></result>
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
@@ -100,5 +103,9 @@
         <if test="whereInfo != ''">
             ${whereInfo}
         </if>
+    </select>
+
+    <select id="findCountByPushStatus" resultType="int">
+        select count(1) from UO_OP_DAILY_DETAIL where HEAD_ID = #{headId} and push_status = 'X'
     </select>
 </mapper>

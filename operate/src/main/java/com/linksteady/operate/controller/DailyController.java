@@ -8,6 +8,7 @@ import com.linksteady.operate.service.*;
 import com.linksteady.operate.service.impl.DailyPushServiceImpl;
 import com.linksteady.operate.thread.GenPushListThread;
 import com.linksteady.operate.util.SpringContextUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
  * @author hxcao
  * @date 2019-07-31
  */
+@Slf4j
 @RestController
 @RequestMapping("/daily")
 public class DailyController {
@@ -280,7 +282,14 @@ public class DailyController {
      */
     @GetMapping("/generatePushList")
     public ResponseBo generatePushList(String headId) {
-        dailyPushService.generatePushList(headId);
+        int count = dailyDetailService.findCountByPushStatus(headId);
+        if(count > 0) {
+            log.info("HEAD_ID:{},正在生成短信模板...", headId);
+            dailyPushService.generatePushList(headId);
+            log.info("HEAD_ID:{},短信模板生成完毕.", headId);
+        }else {
+            log.info("HEAD_ID:{},短信模板已生成，不需要重复操作.", headId);
+        }
         return ResponseBo.ok();
     }
 

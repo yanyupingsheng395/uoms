@@ -196,4 +196,6 @@ public class DailyDetail {
     private String couponDeno;
 
     private String tarOrderPrice;
+
+    private String recProdName;
 }

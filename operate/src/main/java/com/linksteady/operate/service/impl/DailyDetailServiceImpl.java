@@ -106,4 +106,9 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         String whereInfo = getWhereInfo(userValue, pathActive, status);
         return dailyDetailMapper.getDataListCount(headId, whereInfo);
     }
+
+    @Override
+    public int findCountByPushStatus(String headId) {
+        return dailyDetailMapper.findCountByPushStatus(headId);
+    }
 }

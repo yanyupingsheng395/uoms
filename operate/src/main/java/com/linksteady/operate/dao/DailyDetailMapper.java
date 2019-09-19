@@ -23,4 +23,6 @@ public interface DailyDetailMapper {
     List<DailyDetail> getUserEffect(String headId, int start, int end, String whereInfo);
 
     int getDataListCount(String headId, String whereInfo);
+
+    int findCountByPushStatus(String headId);
 }

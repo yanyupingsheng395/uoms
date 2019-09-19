@@ -107,10 +107,18 @@ function getUserDataList() {
 }
 
 function step2() {
-    step.setActive(1);
-    $("#step1").attr("style", "display: none;");
-    $("#step2").attr("style", "display: block;");
-    getUserStrategyList();
+    $MB.loadingDesc('show', '计算数据中，请稍后...');
+    $.get("/daily/generatePushList", {headId: headId}, function (r) {
+        if(r.code == 200) {
+            step.setActive(1);
+            $("#step1").attr("style", "display: none;");
+            $("#step2").attr("style", "display: block;");
+            getUserStrategyList();
+        }else {
+            $MB.n_danger("未知异常发生！");
+        }
+        $MB.loadingDesc('hide');
+    });
 }
 
 /**
