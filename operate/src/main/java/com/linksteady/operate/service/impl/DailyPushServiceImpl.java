@@ -69,7 +69,7 @@ public class DailyPushServiceImpl implements DailyPushService {
             updatePushContent(targetList);
 
             //更新当前任务状态为doing
-            dailyMapper.updateStatus(headerId,"doing");
+//            dailyMapper.updateStatus(headerId,"doing");
         }else
         {
             ExecutorService pool = null;
@@ -103,8 +103,7 @@ public class DailyPushServiceImpl implements DailyPushService {
             }
 
             //更新当前任务状态为doing
-            dailyMapper.updateStatus(headerId,"doing");
-
+//            dailyMapper.updateStatus(headerId,"doing");
         }
     }
 

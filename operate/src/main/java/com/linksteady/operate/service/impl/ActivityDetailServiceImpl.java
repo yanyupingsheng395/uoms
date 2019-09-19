@@ -87,4 +87,8 @@ public class ActivityDetailServiceImpl implements ActivityDetailService {
         LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(format));
         return localDate.plusDays(plusDay).format(DateTimeFormatter.ofPattern(format));
     }
+
+    public static void main(String[] args) {
+        System.out.println(System.getProperty("user.home"));
+    }
 }

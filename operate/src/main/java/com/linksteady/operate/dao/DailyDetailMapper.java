@@ -12,17 +12,13 @@ import java.util.Map;
  */
 public interface DailyDetailMapper {
 
-    List<Map<String, Object>> getTargetType(String headId);
+    List<DailyDetail> getPageList(int start, int end, String headId, String userValue, String pathActive);
 
-    List<Map<String, Object>> getTargetTypeOfCheck(String headId);
+    int getDataCount(String headId, String userValue, String pathActive);
 
-    List<Map<String, Object>> getUrgency(String headId);
+    List<DailyDetail> getStrategyPageList(int start, int end, String headId);
 
-    List<Map<String, Object>> getUrgencyOfCheck(String headId);
-
-    List<DailyDetail> getPageList(int start, int end, String headId, @Param("groupIdList") List<String> groupIdList, String pathActive, String sortColumn, String sortOrder);
-
-    int getDataCount(String headId, @Param("groupIdList") List<String> groupIdList, String pathActive);
+    int getStrategyCount(String headId);
 
     List<DailyDetail> getUserEffect(String headId, int start, int end, String whereInfo);
 

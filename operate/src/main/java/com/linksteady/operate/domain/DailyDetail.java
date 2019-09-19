@@ -25,11 +25,6 @@ public class DailyDetail {
     private String userId;
 
     /**
-     * 目标分类
-     */
-    private String tarType;
-
-    /**
      * 活跃度
      */
     private String pathActiv;
@@ -183,4 +178,22 @@ public class DailyDetail {
      * 状态
      */
     private String status;
+
+    private String pushStatus;
+
+    private String smsContent;
+
+    private String actOrderPerice;
+
+    private String userPhone;
+
+    private String userOpenid;
+
+    private String tarProductNum;
+
+    private String couponMin;
+
+    private String couponDeno;
+
+    private String tarOrderPrice;
 }

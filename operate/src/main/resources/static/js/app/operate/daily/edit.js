@@ -15,8 +15,8 @@ Array.prototype.remove = function(val) {
 let step = steps({
     el: "#step",
     data: [
-        { title: "选定群组", description: "" },
-        { title: "群组推送", description: "" }
+        { title: "本日成长用户", description: "" },
+        { title: "用户成长策略", description: "" }
     ],
     space: 100,
     center: true,
@@ -31,7 +31,7 @@ function getTipInfo() {
             var actual = data['ACTUAL'] == null ? data['TOTAL'] : data['ACTUAL'];
             $("#touchDt").html('').append(data['TOUCHDT']);
             $("#totalNum").html('').append(data['TOTAL']);
-            $("#optNum").html('').append(actual);
+            // $("#optNum").html('').append(actual);
         }
     });
 }

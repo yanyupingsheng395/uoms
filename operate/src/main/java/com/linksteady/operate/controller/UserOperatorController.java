@@ -87,7 +87,6 @@ public class UserOperatorController {
      */
     @RequestMapping("/getOrgChartData")
     public ResponseBo getOrgChartData(String periodType, String startDt, String endDt,String source) {
-
         //获取所有的指标值
         KpiSumeryInfo result=userOperatorService.getSummaryKpiInfo(periodType,startDt,endDt,source);
         return ResponseBo.okWithData(null, result);

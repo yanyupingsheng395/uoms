@@ -85,7 +85,7 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
         List<String> dayPeriodList= DateUtil.getEveryday(startDt, endDt);
         startDt = startDt.replaceAll("-", "");
         endDt = endDt.replaceAll("-", "");
-        List<Map<String, Object>> list  = Lists.newArrayList();
+        List<Map<String, Object>> list;
         if(StringUtils.isNotBlank(spuId)) {
             list = kpiMonitorMapper.getTradeUserBySpu(startDt, endDt, spuId);
         }else {

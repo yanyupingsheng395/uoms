@@ -5,7 +5,9 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
+import com.linksteady.operate.service.impl.DailyPushServiceImpl;
 import com.linksteady.operate.thread.GenPushListThread;
+import com.linksteady.operate.util.SpringContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +37,9 @@ public class DailyController {
 
     @Autowired
     private DailyExecuteService dailyExecuteService;
+
+    @Autowired
+    private DailyPushService dailyPushService;
 
     /**
      * 获取任务列表信息
@@ -97,16 +102,24 @@ public class DailyController {
         int start = request.getStart();
         int end = request.getEnd();
         String headId = request.getParam().get("headId");
-        String groupIds = request.getParam().get("groupIds");
+        String userValue = request.getParam().get("userValue");
         String pathActive = request.getParam().get("pathActive");
-        String sortColumn = request.getSort();
-        if(null != sortColumn && sortColumn.equalsIgnoreCase("groupName")) {
-            sortColumn = "GROUP_NAME";
-        }
-        String sortOrder = request.getSortOrder();
+        List<DailyDetail> dataList = dailyDetailService.getPageList(start, end, headId, userValue, pathActive);
+        int count = dailyDetailService.getDataCount(headId, userValue, pathActive);
+        return ResponseBo.okOverPaging(null, count, dataList);
+    }
 
-        List<DailyDetail> dataList = dailyDetailService.getPageList(start, end, headId, groupIds, pathActive, sortColumn, sortOrder);
-        int count = dailyDetailService.getDataCount(headId, groupIds, pathActive);
+    /**
+     * 获取用户成长策略表
+     * @return
+     */
+    @GetMapping("/getUserStrategyList")
+    public ResponseBo getUserStrategyList(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        String headId = request.getParam().get("headId");
+        List<DailyDetail> dataList = dailyDetailService.getStrategyPageList(start, end, headId);
+        int count = dailyDetailService.getStrategyCount(headId);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -258,6 +271,16 @@ public class DailyController {
     @GetMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam String headId, @RequestParam String groupId, @RequestParam String smsCode) {
         dailyGroupService.setSmsCode(headId, groupId, smsCode);
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 生成待推送的名单
+     * @return
+     */
+    @GetMapping("/generatePushList")
+    public ResponseBo generatePushList(String headId) {
+        dailyPushService.generatePushList(headId);
         return ResponseBo.ok();
     }
 

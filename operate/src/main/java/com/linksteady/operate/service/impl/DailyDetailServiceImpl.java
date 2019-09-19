@@ -49,29 +49,16 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     private DailyDetailMapper dailyDetailMapper;
 
     @Override
-    public List<DailyDetail> getPageList(int start, int end, String headId, String groupIds, String pathActive, String sortColumn, String sortOrder) {
-        List<String> groupIdList = Lists.newArrayList();
-        if(groupIds != null) {
-            groupIdList = Arrays.asList(groupIds.split(","));
-        }
-        return dailyDetailMapper.getPageList(start, end, headId, groupIdList, pathActive, sortColumn, sortOrder);
+    public List<DailyDetail> getPageList(int start, int end, String headId, String userValue, String pathActive) {
+        return dailyDetailMapper.getPageList(start, end, headId, userValue, pathActive);
     }
 
     @Override
-    public int getDataCount(String headId, String groupIds, String pathActive) {
-        List<String> groupIdList = Lists.newArrayList();
-        if(groupIds != null) {
-            groupIdList = Arrays.asList(groupIds.split(","));
-        }
-        return dailyDetailMapper.getDataCount(headId, groupIdList, pathActive);
+    public int getDataCount(String headId, String userValue, String pathActive) {
+        return dailyDetailMapper.getDataCount(headId, userValue, pathActive);
     }
 
-    @Override
-    public List<DailyDetail> getUserEffect(String headId, int start, int end, String userValue, String pathActive, String status) {
-        String whereInfo = getWhereInfo(userValue, pathActive, status);
-        List<DailyDetail> dataList = dailyDetailMapper.getUserEffect(headId, start, end, whereInfo);
-        return dataList;
-    }
+
 
     /**
      * 根据选择的状态拼接SQL where条件
@@ -80,33 +67,38 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      * @param status
      * @return
      */
-    private String getWhereInfo(String userValue, String pathActive, String status) {
+    private String getWhereInfo(String userValue, String pathActive, String isConvert) {
         StringBuffer sb = new StringBuffer();
-        if(StringUtils.isNotEmpty(status)) {
-            // 未选择
-            if(status.equals(IS_CHECK_0)) {
-                sb.append(" and t1.IS_CHECK = '0'");
-            }
-            if(status.equals(IS_PUSH_0)) {
-                sb.append(" and t1.IS_PUSH = '0' and t1.is_check = '1'");
-            }
-
-            if(status.equals(IS_CONVERT_0)) {
-                sb.append(" and t1.IS_PUSH = '1' and t1.IS_CONVERSION = '0'");
-            }
-
-            if(status.equals(IS_CONVERT_1)) {
-                sb.append(" and t1.IS_CONVERSION = '1'");
-            }
+        if(StringUtils.isNotEmpty(isConvert)) {
+            sb.append(" and t1.is_conversion = '" + isConvert + "'");
         }
-
         if(StringUtils.isNotEmpty(userValue)) {
             sb.append(" and t1.user_value = '" + userValue + "'");
         }
         if(StringUtils.isNotEmpty(pathActive)) {
-            sb.append(" and t1.PATH_ACTIV = '" + pathActive + "'");
+            sb.append(" and t1.path_activ = '" + pathActive + "'");
         }
         return sb.toString();
+    }
+
+
+
+    @Override
+    public List<DailyDetail> getStrategyPageList(int start, int end, String headId) {
+        return dailyDetailMapper.getStrategyPageList(start, end, headId);
+
+    }
+
+    @Override
+    public int getStrategyCount(String headId) {
+        return dailyDetailMapper.getStrategyCount(headId);
+    }
+
+    @Override
+    public List<DailyDetail> getUserEffect(String headId, int start, int end, String userValue, String pathActive, String status) {
+        String whereInfo = getWhereInfo(userValue, pathActive, status);
+        List<DailyDetail> dataList = dailyDetailMapper.getUserEffect(headId, start, end, whereInfo);
+        return dataList;
     }
 
     @Override

@@ -7,6 +7,8 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DayOfWeek;
+
 /**
  * 每日运营配置信息维护
  * @author hxcao
@@ -52,5 +54,4 @@ public class DailyPropertiesController {
 
         return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
     }
-
 }

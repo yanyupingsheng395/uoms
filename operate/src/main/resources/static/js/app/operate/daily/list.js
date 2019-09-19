@@ -32,12 +32,6 @@ function initTable() {
             field: 'totalNum',
             title: '建议推送人数（人）'
         },{
-            field: 'optNum',
-            title: '实际选择人数（人）'
-        },{
-            field: 'executeRate',
-            title: '执行率（%）'
-        },{
             field: 'convertCount',
             title: '任务转化人数（人）'
         },{

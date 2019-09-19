@@ -3,10 +3,8 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.service.SmsTemplateService;
-import com.linksteady.operate.service.impl.DailyPushServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,13 +25,6 @@ public class SmsTemplateController extends BaseController {
 
     @Autowired
     SmsTemplateService smsTemplateService;
-
-    @Autowired
-    DailyPushServiceImpl dailyPushService;
-
-    @Autowired
-    DailyProperties opDailyProperties;
-
 
     /**
      * 获取短信模板
@@ -80,15 +71,15 @@ public class SmsTemplateController extends BaseController {
     }
 
 
-    /**
-     * 删除短信模板
-     */
-    @RequestMapping("/test")
-    public ResponseBo test(HttpServletRequest request) {
-      //  PushListThread.generatePushList("13");
-
-        return ResponseBo.ok(opDailyProperties);
-    }
+//    /**
+//     * 删除短信模板
+//     */
+//    @RequestMapping("/test")
+//    public ResponseBo test(HttpServletRequest request) {
+//      //  PushListThread.generatePushList("13");
+//
+//        return ResponseBo.ok(opDailyProperties);
+//    }
 
 }
 

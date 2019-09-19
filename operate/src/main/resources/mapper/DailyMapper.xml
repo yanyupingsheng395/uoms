@@ -6,7 +6,6 @@
         <result column="HEAD_ID" property="headId" jdbcType="DECIMAL"></result>
         <result column="TOTAL_NUM" property="totalNum" jdbcType="DECIMAL"></result>
         <result column="ACTUAL_NUM" property="actualNum" jdbcType="DECIMAL"></result>
-        <result column="OPT_NUM" property="optNum" jdbcType="DECIMAL"></result>
         <result column="PLAN_NUM" property="planNum" jdbcType="DECIMAL"></result>
         <result column="FAILD_NUM" property="faildNum" jdbcType="DECIMAL"></result>
         <result column="SUCCESS_NUM" property="successNum" jdbcType="DECIMAL"></result>
@@ -23,7 +22,7 @@
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM rn from (
-        SELECT T1.HEAD_ID, T1.TOUCH_DT, T1.TOTAL_NUM, T1.OPT_NUM, T2.EXECUTE_RATE, T2.TOUCH_COUNT, T2.TOUCH_RATE, T2.CONVERT_COUNT,T2.CONVERT_RATE, T2.CONVERT_AMOUNT, T1.STATUS
+        SELECT T1.HEAD_ID, T1.TOUCH_DT, T1.TOTAL_NUM, T2.EXECUTE_RATE, T2.TOUCH_COUNT, T2.TOUCH_RATE, T2.CONVERT_COUNT,T2.CONVERT_RATE, T2.CONVERT_AMOUNT, T1.STATUS
         FROM UO_OP_DAILY_HEADER T1, UO_OP_DAILY_STATIS T2 where T1.HEAD_ID = T2.HEAD_ID(+)
         <if test="touchDt != '' and touchDt != null">
             and to_char(t1.touch_dt, 'yyyy-mm-dd') = #{touchDt}
@@ -64,7 +63,7 @@
     </select>
 
     <select id="getTipInfo" resultType="map">
-        select to_char(touch_dt, 'YYYY-MM-DD') touchDt, TOTAL_NUM total, OPT_NUM actual from UO_OP_DAILY_HEADER where head_id = #{headId}
+        select to_char(touch_dt, 'YYYY-MM-DD') touchDt, TOTAL_NUM total from UO_OP_DAILY_HEADER where head_id = #{headId}
     </select>
 
     <update id="updateStatus">
@@ -80,7 +79,7 @@
     </select>
 
     <select id="getKpiVal" resultMap="baseResult">
-        select TOTAL_NUM, OPT_NUM, SUCCESS_NUM, CONVERT_COUNT,EXECUTE_RATE, TOUCH_RATE, CONVERT_RATE
+        select TOTAL_NUM, SUCCESS_NUM, CONVERT_COUNT,EXECUTE_RATE, TOUCH_RATE, CONVERT_RATE
         from UO_OP_DAILY_HEADER t1, UO_OP_DAILY_STATIS t2 where t1.head_id = #{headId} and t1.head_id = t2.head_id(+)
     </select>
 

@@ -61,11 +61,6 @@ public class DailyInfo {
     private String status;
 
     /**
-     * 实际选择人数
-     */
-    private Long optNum;
-
-    /**
      * 计划人数
      */
     private Long planNum;

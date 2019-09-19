@@ -18,17 +18,16 @@ function getKpiVal() {
         var data = r.data;
         var data1 = new Array();
         data1.push({value: data['totalNum'] == null ? '-' : data['totalNum'], name: '建议推送人数'});
-        data1.push({value: data['optNum']== null ? '-' : data['optNum'], name: '实际选择人数'});
+        // data1.push({value: data['optNum']== null ? '-' : data['optNum'], name: '实际选择人数'});
         data1.push({value: data['successNum']== null ? '-' : data['successNum'], name: '成功触达人数'});
         data1.push({value: data['convertCount']== null ? '-' : data['convertCount'], name: '任务转化人数'});
-        var data2 = "执行率 " + (data['executeRate'] == null ? '-' : data['executeRate']) + "%";
-        var data3 = "触达率 " + (data['touchRate'] == null ? '-' : data['touchRate']) + "%";
-        var data4 = "转化率 " + (data['convertRate'] == null ? '-' : data['convertRate']) + "%";
-        createFunnelChart('chart1', data1, data2, data3, data4);
+        var data2 = "触达率 " + (data['touchRate'] == null ? '-' : data['touchRate']) + "%";
+        var data3 = "转化率 " + (data['convertRate'] == null ? '-' : data['convertRate']) + "%";
+        createFunnelChart('chart1', data1, data2, data3);
     });
 }
 
-function createFunnelChart(chartId, data1, data2, data3, data4) {
+function createFunnelChart(chartId, data1, data2, data3) {
     var colors=['#f36119','#ff9921','#20c8ff','#2cb7ff','#1785ef'];
     var option = {
         backgroundColor:'#ffffff',
@@ -118,8 +117,7 @@ function createFunnelChart(chartId, data1, data2, data3, data4) {
                     {value: 100, name: '',labelLine:{show:false},label:{show:false}},
                     {value: 80, name: data2},
                     {value: 60, name: data3},
-                    {value: 40, name: data4},
-                    {value: 20, name: '',labelLine:{show:false},label:{show:false}},
+                    {value: 60, name: '',labelLine:{show:false},label:{show:false}}
                 ]
             }
         ]
@@ -200,30 +198,41 @@ function getUserEffect() {
                 }
             };
         },
-        columns: [{
+        columns: [[{
             field: 'userId',
             title: '用户ID',
-        },{
-            title: '状态',
-            formatter: function (value, row, idx) {
-                if(row.isCheck == '1') {
-                    if(row.isPush == '1') {
-                        if(row.isConversion == '1') {
-                            return "已转化";
-                        }else {
-                            return "未转化";
-                        }
-                    }else {
-                        return "未触达";
-                    }
-                }else {
-                    return "未选择";
+            rowspan: 2,
+            valign: "middle"
+        }, {
+            title: '当日用户状态',
+            colspan: 2
+        }, {
+            title: '推送结果',
+            colspan: 4
+        }], [{
+            field: 'userValue',
+            title: '价值',
+            formatter: function (value, row, index) {
+                var res = "";
+                switch (value) {
+                    case "ULC_01":
+                        res = "重要";
+                        break;
+                    case "ULC_02":
+                        res = "主要";
+                        break;
+                    case "ULC_03":
+                        res = "普通";
+                        break;
+                    case "ULC_04":
+                        res = "长尾";
+                        break;
+                    default:
+                        res = "-";
                 }
+                return res;
             }
-        },{
-            field: 'groupName',
-            title: '所在群组'
-        },{
+        }, {
             field: 'pathActiv',
             title: '活跃度',
             formatter: function (value, row, index) {
@@ -252,48 +261,37 @@ function getUserEffect() {
                 }
                 return res;
             }
-        },{
-            field: 'userValue',
-            title: '价值',
+        }, {
+            field: 'isPush',
+            title: '是否触达',
             formatter: function (value, row, index) {
-                var res = "";
-                switch (value) {
-                    case "ULC_01":
-                        res = "重要";
-                        break;
-                    case "ULC_02":
-                        res = "主要";
-                        break;
-                    case "ULC_03":
-                        res = "普通";
-                        break;
-                    case "ULC_04":
-                        res = "长尾";
-                        break;
-                    default:
-                        res = "-";
+                if(value == '1') {
+                    return "已触达";
                 }
-                return res;
+                if(value == '0') {
+                    return "未触达";
+                }
+                return "-";
             }
-        },{
-            field: 'purchProductName',
-            title: '推荐商品'
-        },{
-            field: 'piecePrice',
-            title: '目标件单价（元）'
-        },{
-            field: 'couponDenom',
-            title: '优惠券'
-        },{
-            field: 'actProdName',
-            title: '购买商品'
-        },{
-            field: 'actPiecePrice',
-            title: '实际件单价（元）'
-        },{
-            field: 'isCancle',
-            title: '是否核销'
-        }]
+        }, {
+            field: 'isConvertion',
+            title: '是否转化',
+            formatter: function (value, row, index) {
+                if(value == '1') {
+                    return "已转化";
+                }
+                if(value == '0') {
+                    return "未转化";
+                }
+                return "-";
+            }
+        }, {
+            field: 'recOrderPrice',
+            title: '目标订单价（元/单）'
+        }, {
+            field: 'actOrderPrice',
+            title: '实际订单价（元/单）'
+        }]]
     };
     $MB.initTable('userTable', settings);
 }
