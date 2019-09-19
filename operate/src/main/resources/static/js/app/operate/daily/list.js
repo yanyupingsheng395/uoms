@@ -47,11 +47,7 @@ function initTable() {
                 var res;
                 switch (value) {
                     case "todo":
-                        res = "<span class=\"badge bg-info\">待编辑</span>";
-                        break;
-                    case "ready_push":
-                    case "doing":
-                        res = "<span class=\"badge bg-warning\">执行中</span>";
+                        res = "<span class=\"badge bg-info\">待执行</span>";
                         break;
                     case "done":
                         res = "<span class=\"badge bg-success\">已执行</span>";
