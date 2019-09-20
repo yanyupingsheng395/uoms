@@ -70,4 +70,10 @@ public interface DailyDetailService {
      */
     int getDataListCount(String headId, String userValue, String pathActive, String status);
 
+    /**
+     *
+     * @param headId
+     * @return
+     */
+//    int findCountByPushStatus(String headId);
 }

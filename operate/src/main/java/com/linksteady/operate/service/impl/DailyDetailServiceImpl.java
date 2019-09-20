@@ -151,4 +151,8 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         return dailyDetailMapper.getDataListCount(headId, whereInfo);
     }
 
+//    @Override
+//    public int findCountByPushStatus(String headId) {
+//        return dailyDetailMapper.findCountByPushStatus(headId);
+//    }
 }

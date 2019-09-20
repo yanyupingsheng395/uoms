@@ -66,4 +66,7 @@ public interface DailyDetailMapper {
      * @return
      */
     List<SmsInfo> findSmsInfoByHeadId(String headId);
+
+
+//    int findCountByPushStatus(String headId);
 }
