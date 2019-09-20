@@ -8,22 +8,14 @@ import com.linksteady.operate.domain.DailyPushInfo;
 import com.linksteady.operate.domain.DailyPushQuery;
 import com.linksteady.operate.service.DailyPushService;
 import com.linksteady.operate.service.ShortUrlService;
-import com.linksteady.operate.sms.domain.SmsInfo;
-import com.linksteady.operate.sms.montnets.send.SendSms;
 import com.linksteady.operate.thread.TransPushContentThread;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 /**
  * @author hxcao
@@ -74,8 +66,6 @@ public class DailyPushServiceImpl implements DailyPushService {
             //保存要推送的文案
             updatePushContent(targetList);
 
-            //更新当前任务状态为doing
-//            dailyMapper.updateStatus(headerId,"doing");
         }else
         {
             ExecutorService pool = null;
@@ -102,14 +92,11 @@ public class DailyPushServiceImpl implements DailyPushService {
                 latch.await();
             } catch (Exception e) {
                 //错误日志上报
-
                 e.printStackTrace();
             }finally {
                 pool.shutdown();
             }
 
-            //更新当前任务状态为doing
-//            dailyMapper.updateStatus(headerId,"doing");
         }
     }
 
@@ -204,7 +191,7 @@ public class DailyPushServiceImpl implements DailyPushService {
     }
 
     /**
-     * 获取(当前时间节点)待推送的消息列表
+     * 获取(当前时间节点)待推送的列表
      * @return
      */
     @Override
@@ -213,21 +200,11 @@ public class DailyPushServiceImpl implements DailyPushService {
     }
 
     /**
-     * 更新每条记录的推送状态
-     * @param list
-     * @param status
+     * 更新日运营状态为已结束
      */
     @Override
-    public void updateSendStatus(List<DailyPushInfo> list,String status){
-        dailyPushMapper.updateSendStatus(list,status);
-    }
-
-    /**
-     * 更新日运营状态为 完成推送，统计效果中
-     */
-    @Override
-    public void updateHeaderToDone() {
-        dailyPushMapper.updateHeaderToDone();
+    public void updateHeaderToFinish() {
+        dailyPushMapper.updateHeaderToFinish();
     }
 
     /**

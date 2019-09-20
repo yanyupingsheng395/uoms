@@ -76,8 +76,7 @@
         <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
             update UO_OP_DAILY_DETAIL
             <set>
-                SMS_CONTENT=#{item.smsContent},
-                PUSH_STATUS='P'
+                SMS_CONTENT=#{item.smsContent}
             </set>
             where DAILY_DETAIL_ID=#{item.dailyDetailId}
         </foreach>
@@ -87,7 +86,7 @@
         select nvl(max(DAILY_DETAIL_ID),-1)
         FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER C
         WHERE T.HEAD_ID = C.HEAD_ID
-          AND C.STATUS = 'doing'
+          AND C.STATUS = 'done'
           AND T.PUSH_STATUS = 'P'
           AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
     </select>
@@ -96,7 +95,7 @@
         select count(*)
          FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER C
         WHERE T.HEAD_ID = C.HEAD_ID
-          AND C.STATUS = 'doing'
+          AND C.STATUS = 'done'
           AND T.PUSH_STATUS = 'P'
           AND T.DAILY_DETAIL_ID&lt;=#{dailyDetailId}
           AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
@@ -114,25 +113,13 @@
                        ROWNUM   RN
                 FROM UO_OP_DAILY_DETAIL T, UO_OP_DAILY_HEADER C
                 WHERE T.HEAD_ID = C.HEAD_ID
-                AND C.STATUS = 'doing'
+                AND C.STATUS = 'done'
                 AND T.PUSH_STATUS = 'P'
                 AND T.DAILY_DETAIL_ID&lt;=#{dailyDetailId}
                 AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
                 AND ROWNUM &lt;= #{end}
              ) WHERE RN &gt;= #{start}
     </select>
-
-    <update id="updateSendStatus">
-
-        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
-              update UO_OP_DAILY_DETAIL
-            <set>
-                IS_PUSH='1',
-                PUSH_STATUS=#{status}
-            </set>
-              where DAILY_DETAIL_ID=#{item.dailyDetailId}
-        </foreach>
-    </update>
 
     <update id="updateSendMsgStatus">
         <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
@@ -150,8 +137,8 @@
         </foreach>
     </update>
 
-    <update id="updateHeaderToDone">
-        UPDATE UO_OP_DAILY_HEADER c SET c.STATUS='done' WHERE c.STATUS='doing' AND not exists
+    <update id="updateHeaderToFinish">
+        UPDATE UO_OP_DAILY_HEADER c SET c.STATUS='finished' WHERE c.STATUS='done' AND not exists
           (
             select * from UO_OP_DAILY_DETAIL p where p.PUSH_STATUS='P' and p.head_id=c.head_id
             )
@@ -167,7 +154,7 @@
              SUM(case when c.PUSH_STATUS='S' then 1 else 0 end) success_num
              from UO_OP_DAILY_DETAIL c where c.head_id = t.head_id
             )where
-            trunc(touch_dt)>trunc(sysdate-15) and status in ('doing','done','finished')
+            trunc(touch_dt)>trunc(sysdate-15) and status in ('done','finished')
     </update>
 
     <!--更新触达人数、触达率、流失率-->

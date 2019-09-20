@@ -67,13 +67,13 @@ public class PushWxMessageServiceImpl implements PushMessageService {
              if(nList.size()>0)
              {
                  //已推送 待反馈触达结果
-                 dailyPushMapper.updateSendStatus(nList,"R");
+                 //dailyPushMapper.updateSendStatus(nList,"R");
              }
 
              if(cList.size()>0)
              {
                  //标记为已被防骚扰拦截
-                 dailyPushMapper.updateSendStatus(cList,"C");
+                 //dailyPushMapper.updateSendStatus(cList,"C");
              }
 
          }else
@@ -86,7 +86,7 @@ public class PushWxMessageServiceImpl implements PushMessageService {
 
              if(list.size()>0)
              {
-                 dailyPushMapper.updateSendStatus(list,"S");
+                 //dailyPushMapper.updateSendStatus(list,"S");
              }
          }
 

@@ -116,9 +116,9 @@
         </if>
     </select>
 
-    <select id="findCountByPushStatus" resultType="int">
-        select count(1) from UO_OP_DAILY_DETAIL where HEAD_ID = #{headId} and push_status = 'X'
-    </select>
+    <!--<select id="findCountByPushStatus" resultType="int">-->
+        <!--select count(1) from UO_OP_DAILY_DETAIL where HEAD_ID = #{headId}-->
+    <!--</select>-->
 
     <select id="findSmsInfoByHeadId" resultMap="taskInfoMap">
         select DAILY_DETAIL_ID, USER_ID, USER_PHONE,SMS_CONTENT,ORDER_PERIOD,PUSH_STATUS from UO_OP_DAILY_DETAIL where HEAD_ID = #{headId}

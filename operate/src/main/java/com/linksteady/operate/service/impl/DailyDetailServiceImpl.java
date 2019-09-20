@@ -48,11 +48,27 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     @Autowired
     private DailyDetailMapper dailyDetailMapper;
 
+    /**
+     * 每日运营用户列表分页
+     * @param start
+     * @param end
+     * @param headId
+     * @param userValue
+     * @param pathActive
+     * @return
+     */
     @Override
     public List<DailyDetail> getPageList(int start, int end, String headId, String userValue, String pathActive) {
         return dailyDetailMapper.getPageList(start, end, headId, userValue, pathActive);
     }
 
+    /**
+     * 每日运营明细记录数
+     * @param headId
+     * @param userValue
+     * @param pathActive
+     * @return
+     */
     @Override
     public int getDataCount(String headId, String userValue, String pathActive) {
         return dailyDetailMapper.getDataCount(headId, userValue, pathActive);
@@ -64,7 +80,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      * 根据选择的状态拼接SQL where条件
      * @param userValue
      * @param pathActive
-     * @param status
      * @return
      */
     private String getWhereInfo(String userValue, String pathActive, String isConvert) {
@@ -82,18 +97,39 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     }
 
 
-
+    /**
+     * 策略列表用户数
+     * @param start
+     * @param end
+     * @param headId
+     * @return
+     */
     @Override
     public List<DailyDetail> getStrategyPageList(int start, int end, String headId) {
         return dailyDetailMapper.getStrategyPageList(start, end, headId);
 
     }
 
+    /**
+     * 策略列表记录数
+     * @param headId
+     * @return
+     */
     @Override
     public int getStrategyCount(String headId) {
         return dailyDetailMapper.getStrategyCount(headId);
     }
 
+    /**
+     * 效果评估-个体效果分页
+     * @param headId
+     * @param start
+     * @param end
+     * @param userValue
+     * @param pathActive
+     * @param status
+     * @return
+     */
     @Override
     public List<DailyDetail> getUserEffect(String headId, int start, int end, String userValue, String pathActive, String status) {
         String whereInfo = getWhereInfo(userValue, pathActive, status);
@@ -101,14 +137,18 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         return dataList;
     }
 
+    /**
+     * 效果评估记录数
+     * @param headId
+     * @param userValue
+     * @param pathActive
+     * @param status
+     * @return
+     */
     @Override
     public int getDataListCount(String headId, String userValue, String pathActive, String status) {
         String whereInfo = getWhereInfo(userValue, pathActive, status);
         return dailyDetailMapper.getDataListCount(headId, whereInfo);
     }
 
-    @Override
-    public int findCountByPushStatus(String headId) {
-        return dailyDetailMapper.findCountByPushStatus(headId);
-    }
 }

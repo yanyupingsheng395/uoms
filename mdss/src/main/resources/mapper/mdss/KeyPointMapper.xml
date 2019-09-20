@@ -37,7 +37,6 @@
     <result column="PROFIT_RATE" jdbcType="DOUBLE" property="profitRate" />
     <result column="PROFIT_ALERT_RATE" jdbcType="DOUBLE" property="profitAlertRate" />
     <result column="COST_HEALTH_FLAG" jdbcType="VARCHAR" property="costHealthFlag" />
-
     <result column="VOLATILITY" jdbcType="DOUBLE" property="volatility" />
     <result column="REACH_NUM" jdbcType="INTEGER" property="reachNum" />
     <result column="UNREACH_NUM" jdbcType="INTEGER" property="unreachNum" />

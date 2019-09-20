@@ -10,6 +10,10 @@ import java.util.List;
  */
 public interface DailyPushService {
 
+    /**
+     * 生成短信文案
+     * @param headerId
+     */
     void generatePushList(String headerId);
 
     /**
@@ -35,15 +39,9 @@ public interface DailyPushService {
     void updatePushContent( List<DailyPushInfo> targetList);
 
     /**
-     * 更新短信发送的状态
-     *
+     * 更新主记录为已结束
      */
-    void updateSendStatus(List<DailyPushInfo> list,String status);
-
-    /**
-     * 更新主记录为 完成推送，效果统计中
-     */
-    void updateHeaderToDone();
+    void updateHeaderToFinish();
 
     /**
      * 更新主记录的触达统计信息

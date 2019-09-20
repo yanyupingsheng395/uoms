@@ -37,15 +37,4 @@ public class DailyEffectServiceImpl implements DailyEffectService {
         return dailyEffectMapper.getKpiStatis(headId);
     }
 
-    /**
-     * 更行执行率
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateExecuteRate(String headId) {
-        DecimalFormat df = new DecimalFormat("#");
-        Map<String, Object> totalAndOptMap = dailyMapper.getTotalNum(headId);
-        Double executeRate = ((BigDecimal)totalAndOptMap.get("OPT")).doubleValue()/((BigDecimal)totalAndOptMap.get("TOTAL")).doubleValue() * 100D;
-        dailyEffectMapper.updateExecuteAndLossRate(df.format(executeRate), headId);
-    }
 }
