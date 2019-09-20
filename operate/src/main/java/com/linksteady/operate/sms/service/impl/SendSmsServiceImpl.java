@@ -69,7 +69,7 @@ public class SendSmsServiceImpl implements SendSmsService {
         ConfigManager.IS_ENCRYPT_PWD = true;
 
         Map<String, Object> result = Maps.newHashMap();
-        SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd);
+        SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress, null, null, null);
         Remains remain = sendSms.getRemains(new Message());
         result.put("userid", userid);
         result.put("balance", remain.getBalance());
@@ -86,6 +86,7 @@ public class SendSmsServiceImpl implements SendSmsService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void sendMsg(TaskInfo taskInfo) {
+        String taskId = taskInfo.getTaskId();
         String runType = taskInfo.getRunType();
         String sendType = taskInfo.getSendMsgType();
         List<SmsInfo> smsInfos = taskInfo.getSmsInfoList();
@@ -109,7 +110,7 @@ public class SendSmsServiceImpl implements SendSmsService {
         final String RUN_TYPE_SCHEDULED = "scheduled";
         if (RUN_TYPE_SCHEDULED.equalsIgnoreCase(runType)) {
             if (smsInfos.size() < MAX_MSG_COUNT) {
-                sendMsgListScheduled(sendType, smsInfos);
+                sendMsgListScheduled(taskId, sendType, smsInfos);
             } else {
                 int count = smsInfos.size();
                 int totalPage = count % MAX_MSG_COUNT == 0 ? count / MAX_MSG_COUNT : count / MAX_MSG_COUNT + 1;
@@ -117,7 +118,7 @@ public class SendSmsServiceImpl implements SendSmsService {
                     int start = i * MAX_MSG_COUNT + 1;
                     int end = (i + 1) * MAX_MSG_COUNT;
                     List<SmsInfo> subList = smsInfos.subList(start, end);
-                    sendMsgListScheduled(sendType, subList);
+                    sendMsgListScheduled(taskId,sendType, subList);
                 }
             }
         }
@@ -130,7 +131,7 @@ public class SendSmsServiceImpl implements SendSmsService {
      * @param smsInfos
      */
     private void sendMsgList(String sendType, List<SmsInfo> smsInfos) {
-        SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd);
+        SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
         // todo 通过关联数据查询list
         if (SEND_TYPE_SINGLE.equalsIgnoreCase(sendType)) {
             Future<List<SmsInfo>> future = threadPool.submit(() -> {
@@ -192,85 +193,80 @@ public class SendSmsServiceImpl implements SendSmsService {
      * @param sendType
      * @param smsInfos
      */
-    private void sendMsgListScheduled(String sendType, List<SmsInfo> smsInfos) {
-        SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd);
+    private void sendMsgListScheduled(String taskId, String sendType, List<SmsInfo> smsInfos) {
+        SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
         Map<String, List<SmsInfo>> tmpMap = smsInfos.stream().collect(Collectors.groupingBy(SmsInfo::getTouchTime));
-        if (SEND_TYPE_SINGLE.equalsIgnoreCase(sendType)) {
-            log.info(">>>正在使用单条推送方式推送短信.");
-            tmpMap.entrySet().stream().forEach(x -> {
-                List<SmsInfo> tmpList = x.getValue();
-                log.info(">>>正在推送{}个用户。", tmpList.size());
-                final ScheduledFuture<List<SmsInfo>> schedule = scheduledThreadPool.schedule(() -> {
-                    tmpList.stream().forEach(v -> {
-                        Message message = new Message();
-                        message.setMobile(v.getMobile());
-                        message.setContent(v.getContent());
-                        int result = sendSms.singleSend(message);
-                        v.setStatus(String.valueOf(result));
+        threadPool.submit(()->{
+            if (SEND_TYPE_SINGLE.equalsIgnoreCase(sendType)) {
+                log.info(">>>正在使用单条推送方式推送短信.");
+                tmpMap.entrySet().stream().forEach(x -> {
+                    List<SmsInfo> tmpList = x.getValue();
+                    log.info(">>>正在推送{}个用户。", tmpList.size());
+                    final ScheduledFuture<List<SmsInfo>> schedule = scheduledThreadPool.schedule(() -> {
+                        tmpList.stream().forEach(v -> {
+                            Message message = new Message();
+                            message.setMobile(v.getMobile());
+                            message.setContent(v.getContent());
+                            int result = sendSms.singleSend(message);
+                            v.setStatus(String.valueOf(result));
+                        });
+                        return tmpList;
+                    }, getDelay(Integer.valueOf(x.getKey())), TimeUnit.MINUTES);
+                    try {
+                        final List<SmsInfo> smsInfoList = schedule.get();
+                        log.info(">>>推送完毕[{}:00]的用户。", LocalTime.now().format(DateTimeFormatter.ofPattern("HH")));
+                        updateSmsInfoStatus(smsInfoList, taskId);
+                    } catch (InterruptedException e) {
+                        log.error(">>>推送用户短信发生异常", e);
+                    } catch (ExecutionException e) {
+                        log.error(">>>推送用户短信发生异常", e);
+                    }
+                    // todo future.get() 到list数据进行smsInfo和taskInfo字段的更新
+                });
+            }
+            if (SEND_TYPE_BATCH.equalsIgnoreCase(sendType)) {
+                tmpMap.entrySet().stream().forEach(x -> {
+                    Message message = new Message();
+                    String mobiles;
+                    List<String> mobileList = Lists.newArrayList();
+                    x.getValue().stream().forEach(v -> {
+                        mobileList.add(v.getMobile());
                     });
-                    return tmpList;
-                }, getDelay(Integer.valueOf(x.getKey())), TimeUnit.MINUTES);
-                try {
-                    final List<SmsInfo> smsInfoList = schedule.get();
-                    log.info(">>>推送完毕[{}:00]的用户。", LocalTime.now().format(DateTimeFormatter.ofPattern("HH")));
-                    updateSmsInfoStatus(smsInfoList);
-                } catch (InterruptedException e) {
-                    log.error(">>>推送用户短信发生异常", e);
-                } catch (ExecutionException e) {
-                    log.error(">>>推送用户短信发生异常", e);
-                }
-                // todo future.get() 到list数据进行smsInfo和taskInfo字段的更新
-            });
-        }
-        if (SEND_TYPE_BATCH.equalsIgnoreCase(sendType)) {
-            tmpMap.entrySet().stream().forEach(x -> {
-                Message message = new Message();
-                String mobiles;
-                List<String> mobileList = Lists.newArrayList();
-                x.getValue().stream().forEach(v -> {
-                    mobileList.add(v.getMobile());
+                    String[] tmp = new String[mobileList.size()];
+                    mobileList.toArray(tmp);
+                    mobiles = StringUtils.join(tmp, ",");
+                    message.setMobile(mobiles);
+                    message.setContent(x.getValue().get(0).getContent());
+                    ScheduledFuture<List<SmsInfo>> schedule = scheduledThreadPool.schedule(() -> {
+                        int result = sendSms.batchSend(message);
+                        x.getValue().stream().forEach(v -> v.setStatus(String.valueOf(result)));
+                        return smsInfos;
+                    }, getDelay(Integer.valueOf(x.getKey())), TimeUnit.MINUTES);
                 });
-                String[] tmp = new String[mobileList.size()];
-                mobileList.toArray(tmp);
-                mobiles = StringUtils.join(tmp, ",");
-                message.setMobile(mobiles);
-                message.setContent(x.getValue().get(0).getContent());
-                ScheduledFuture<List<SmsInfo>> schedule = scheduledThreadPool.schedule(() -> {
-                    int result = sendSms.batchSend(message);
-                    x.getValue().stream().forEach(v -> v.setStatus(String.valueOf(result)));
-                    return smsInfos;
-                }, getDelay(Integer.valueOf(x.getKey())), TimeUnit.MINUTES);
-            });
-            // todo do update taskInfo, smsInfo
-        }
-
-        if (SEND_TYPE_MULTI.equalsIgnoreCase(sendType)) {
-            log.info(">>>使用MULTI方式发送短信.");
-            tmpMap.entrySet().stream().forEach(x -> {
-                List<MultiMt> multiMts = Lists.newArrayList();
-                x.getValue().stream().forEach(v -> {
-                    MultiMt multiMt = new MultiMt();
-                    multiMt.setMobile(v.getMobile());
-                    multiMt.setContent(v.getContent());
-                    multiMts.add(multiMt);
-                });
-
-                final ScheduledFuture<List<SmsInfo>> schedule = scheduledThreadPool.schedule(() -> {
-                    int result = sendSms.multiSend(multiMts, new Message());
-                    x.getValue().stream().forEach(v -> v.setStatus(String.valueOf(result)));
-                    return smsInfos;
-                }, getDelay(Integer.valueOf(x.getKey())), TimeUnit.MINUTES);
                 // todo do update taskInfo, smsInfo
-            });
-        }
+            }
+
+            if (SEND_TYPE_MULTI.equalsIgnoreCase(sendType)) {
+                log.info(">>>使用MULTI方式发送短信.");
+                tmpMap.entrySet().stream().forEach(x -> {
+                    List<MultiMt> multiMts = Lists.newArrayList();
+                    x.getValue().stream().forEach(v -> {
+                        MultiMt multiMt = new MultiMt();
+                        multiMt.setMobile(v.getMobile());
+                        multiMt.setContent(v.getContent());
+                        multiMts.add(multiMt);
+                    });
+
+                    final ScheduledFuture<List<SmsInfo>> schedule = scheduledThreadPool.schedule(() -> {
+                        int result = sendSms.multiSend(multiMts, new Message());
+                        x.getValue().stream().forEach(v -> v.setStatus(String.valueOf(result)));
+                        return smsInfos;
+                    }, getDelay(Integer.valueOf(x.getKey())), TimeUnit.MINUTES);
+                    // todo do update taskInfo, smsInfo
+                });
+            }
+        });
     }
-
-    public static void main(String[] args) {
-        log.info(">>>推送完毕[{}:00]的用户。", LocalTime.now().format(DateTimeFormatter.ofPattern("HH")));
-
-        System.out.println(LocalTime.now().format(DateTimeFormatter.ofPattern("HH")));
-    }
-
     /**
      * 获取当前时间和触达时间的时间差
      *
@@ -289,9 +285,9 @@ public class SendSmsServiceImpl implements SendSmsService {
         threadPool.shutdownNow();
     }
 
-    private void updateSmsInfoStatus(List<SmsInfo> smsInfos) {
+    private void updateSmsInfoStatus(List<SmsInfo> smsInfos, String taskId) {
         log.info("正在更新短信发送状态...");
-        dailyPushMapper.updateSendMsgStatus(smsInfos);
-        log.info("短信发送状态发送完毕.");
+        dailyPushMapper.updateSendMsgStatus(smsInfos, taskId);
+        log.info("短信发送状态更新完毕.");
     }
 }

@@ -58,17 +58,15 @@
                      ROWNUM   RN
                  FROM UO_OP_DAILY_HEADER T1,
                       UO_OP_DAILY_DETAIL T2,
-                      UO_OP_DAILY_GROUP T3,
+                      UO_OP_DAILY_TEMPLATE_CONFIG T3,
                       UO_OP_COUPON CP,
                       UO_OP_SMS_TEMPLATE SMS,
                       W_PRODUCT PT
                  WHERE T1.HEAD_ID = T2.HEAD_ID
-                   AND T2.HEAD_ID = T3.HEAD_ID
                    AND T2.GROUP_ID = T3.GROUP_ID
                    AND T2.COUPON_ID = CP.COUPON_ID(+)
                    AND T3.SMS_CODE = SMS.SMS_CODE
                    AND T2.REC_PROD_ID = PT.PRODUCT_ID
-                   AND T3.IS_CHECK = '1'
                    AND T1.HEAD_ID = #{headId}
                    AND ROWNUM &lt;= #{end}
              ) WHERE RN &gt;= #{start}
@@ -125,15 +123,17 @@
 
     <update id="updateSendMsgStatus">
         <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
-            update UO_OP_DAILY_DETAIL set
-                <if test="item.pushStatus == '0'">
+            update UO_OP_DAILY_DETAIL
+            <set>
+                <if test="item.status == '0'">
                     IS_PUSH= '1',
                 </if>
-                <if test="item.pushStatus != '0'">
+                <if test="item.status != '0'">
                     IS_PUSH= '0',
                 </if>
-                PUSH_STATUS=#{item.pushStatus}
-            where DAILY_DETAIL_ID=#{item.dailyDetailId}
+                PUSH_STATUS=#{item.status}
+            </set>
+            where DAILY_DETAIL_ID=#{item.id} and head_id = #{headId}
         </foreach>
     </update>
 
