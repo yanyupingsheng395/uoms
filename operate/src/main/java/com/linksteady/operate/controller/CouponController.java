@@ -24,7 +24,6 @@ public class CouponController extends BaseController {
     @Autowired
     CouponServiceImpl couponService;
 
-
     /**
      * 获取短信模板
      * @param

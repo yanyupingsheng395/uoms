@@ -107,7 +107,7 @@ function getUserDataList() {
 }
 
 function step2() {
-    $MB.loadingDesc('show', '计算数据中，请稍后...');
+    $MB.loadingDesc('show', '策略生成中，请稍后...');
     $.get("/daily/generatePushList", {headId: headId}, function (r) {
         if(r.code == 200) {
             step.setActive(1);

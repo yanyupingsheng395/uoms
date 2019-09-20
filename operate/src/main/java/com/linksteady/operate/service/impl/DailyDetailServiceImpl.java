@@ -1,22 +1,13 @@
 package com.linksteady.operate.service.impl;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.domain.DailyDetail;
 import com.linksteady.operate.service.DailyDetailService;
-import com.linksteady.operate.vo.Echart;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 /**
  * 群组用户
  * @author hxcao
@@ -25,25 +16,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class DailyDetailServiceImpl implements DailyDetailService {
-
-    private final String[] RETENTION_CODE = {"target01", "target02", "target03"};
-
-    /**
-     * 未选择
-     */
-    private static final String IS_CHECK_0 = "check:0";
-    /**
-     * 未触达
-     */
-    private static final String IS_PUSH_0 = "push:0";
-    /**
-     * 未转化
-     */
-    private static final String IS_CONVERT_0 = "convert:0";
-    /**
-     * 已转化
-     */
-    private static final String IS_CONVERT_1 = "convert:1";
 
     @Autowired
     private DailyDetailMapper dailyDetailMapper;
@@ -73,8 +45,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     public int getDataCount(String headId, String userValue, String pathActive) {
         return dailyDetailMapper.getDataCount(headId, userValue, pathActive);
     }
-
-
 
     /**
      * 根据选择的状态拼接SQL where条件
@@ -107,7 +77,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     @Override
     public List<DailyDetail> getStrategyPageList(int start, int end, String headId) {
         return dailyDetailMapper.getStrategyPageList(start, end, headId);
-
     }
 
     /**
@@ -150,9 +119,4 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         String whereInfo = getWhereInfo(userValue, pathActive, status);
         return dailyDetailMapper.getDataListCount(headId, whereInfo);
     }
-
-//    @Override
-//    public int findCountByPushStatus(String headId) {
-//        return dailyDetailMapper.findCountByPushStatus(headId);
-//    }
 }

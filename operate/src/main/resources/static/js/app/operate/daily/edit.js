@@ -15,7 +15,7 @@ Array.prototype.remove = function(val) {
 let step = steps({
     el: "#step",
     data: [
-        { title: "本日成长用户", description: "" },
+        { title: "成长用户列表", description: "" },
         { title: "用户成长策略", description: "" }
     ],
     space: 100,
