@@ -70,13 +70,13 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     private String getWhereInfo(String userValue, String pathActive, String isConvert) {
         StringBuffer sb = new StringBuffer();
         if(StringUtils.isNotEmpty(isConvert)) {
-            sb.append(" and t1.is_conversion = '" + isConvert + "'");
+            sb.append(" and is_conversion = '" + isConvert + "'");
         }
         if(StringUtils.isNotEmpty(userValue)) {
-            sb.append(" and t1.user_value = '" + userValue + "'");
+            sb.append(" and user_value = '" + userValue + "'");
         }
         if(StringUtils.isNotEmpty(pathActive)) {
-            sb.append(" and t1.path_activ = '" + pathActive + "'");
+            sb.append(" and path_activ = '" + pathActive + "'");
         }
         return sb.toString();
     }

@@ -1,5 +1,6 @@
 package com.linksteady.operate.sms.montnets.send;
 
+import com.linksteady.operate.sms.montnets.config.ConfigManager;
 import com.linksteady.operate.sms.montnets.domain.Message;
 import com.linksteady.operate.sms.montnets.domain.MultiMt;
 import com.linksteady.operate.sms.montnets.domain.Remains;
@@ -29,12 +30,20 @@ public class SendSms {
      */
     private final boolean isEncryptPwd;
 
+    private final String masterIpAddress, ipAddress1, ipAddress2, ipAddress3;
+
+
     private SimpleDateFormat sdf = new SimpleDateFormat("MMddHHmmss");
 
-    public SendSms(String userid, String pwd, boolean isEncryptPwd) {
+    public SendSms(String userid, String pwd, boolean isEncryptPwd, String masterIpAddress, String ipAddress1, String ipAddress2, String ipAddress3) {
         this.userid = userid;
         this.pwd = pwd;
         this.isEncryptPwd = isEncryptPwd;
+        this.masterIpAddress = masterIpAddress;
+        this.ipAddress1 = ipAddress1;
+        this.ipAddress2 = ipAddress2;
+        this.ipAddress3 = ipAddress3;
+        ConfigManager.setIpInfo(masterIpAddress, ipAddress1, ipAddress2, ipAddress1);
     }
 
     /**
