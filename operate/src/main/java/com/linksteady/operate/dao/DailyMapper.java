@@ -1,5 +1,6 @@
 package com.linksteady.operate.dao;
 
+import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyInfo;
 import org.apache.ibatis.annotations.Param;
 
@@ -35,4 +36,10 @@ public interface DailyMapper {
     Map<String, Object> getTotalNum(String headId);
 
     DailyInfo findById(String headId);
+
+    int getUserGroupCount();
+
+    List<DailyGroupTemplate> getUserGroupListPage(int start, int end);
+
+    void setSmsCode(List<String> groupIds, String smsCode);
 }

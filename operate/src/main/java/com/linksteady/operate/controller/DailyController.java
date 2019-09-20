@@ -214,10 +214,23 @@ public class DailyController {
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
-//    @GetMapping("/pushMessage")
-//    public ResponseBo pushMessage(String headId) {
-//        TaskInfo taskInfo = dailyService.getTaskInfo(headId);
-//        sendSmsService.sendMsg(taskInfo);
-//        return ResponseBo.ok();
-//    }
+    /**
+     * 获取用户组配置分页数据
+     * @param request
+     * @return
+     */
+    @GetMapping("/userGroupListPage")
+    public ResponseBo userGroupListPage(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        List<DailyGroupTemplate> dataList = dailyService.getUserGroupListPage(start, end);
+        int count = dailyService.getUserGroupCount();
+        return ResponseBo.okOverPaging(null, count, dataList);
+    }
+
+    @GetMapping("/setSmsCode")
+    public ResponseBo setSmsCode(@RequestParam String groupId, @RequestParam String smsCode) {
+        dailyService.setSmsCode(groupId, smsCode);
+        return ResponseBo.ok();
+    }
 }

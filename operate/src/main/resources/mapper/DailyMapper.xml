@@ -19,6 +19,14 @@
         <result column="EXECUTE_RATE" property="executeRate" jdbcType="DECIMAL"></result>
     </resultMap>
 
+    <resultMap id="templateResult" type="com.linksteady.operate.domain.DailyGroupTemplate">
+        <result column="GROUP_ID" jdbcType="VARCHAR" property="groupId"></result>
+        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
+        <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode"></result>
+        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
+        <result column="IS_COUPON" jdbcType="VARCHAR" property="isCoupon"></result>
+    </resultMap>
+
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM rn from (
@@ -94,4 +102,30 @@
     <select id="findById" resultMap="baseResult">
         select head_id, total_num, descr, insert_dt, update_dt, touch_dt, status, plan_num, faild_num, success_num from UO_OP_DAILY_HEADER where HEAD_ID = #{headId}
     </select>
+
+    <select id="getUserGroupCount" resultType="int">
+        select count(1) from UO_OP_DAILY_TEMPLATE_CONFIG
+    </select>
+
+    <select id="getUserGroupListPage" resultMap="templateResult">
+        select * from (
+        select t.*, ROWNUM rn from (
+        SELECT GROUP_ID, GROUP_NAME, IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT
+        FROM UO_OP_DAILY_TEMPLATE_CONFIG t1, UO_OP_SMS_TEMPLATE t2
+        where t1.SMS_CODE = t2.SMS_CODE(+)
+        ORDER BY GROUP_ID asc
+        ) t where ROWNUM &lt;= #{end}
+        )where rn &gt;= #{start}
+    </select>
+
+    <update id="setSmsCode">
+        update UO_OP_DAILY_TEMPLATE_CONFIG
+        <set>
+            SMS_CODE = #{smsCode}
+        </set>
+        where 1=1 and group_id in
+        <foreach collection="groupIds" open="(" close=")" separator="," item="item">
+            ${item}
+        </foreach>
+    </update>
 </mapper>

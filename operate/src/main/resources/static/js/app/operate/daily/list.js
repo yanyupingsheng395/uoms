@@ -84,7 +84,7 @@ $("#btn_edit").click(function () {
     }
     var status = selected[0].status;
     if(status != "todo") {
-        $MB.n_warning('当前记录不可编辑，请选择待编辑状态的记录！');
+        $MB.n_warning('当前记录已被执行，请选择待执行状态的记录！');
         return;
     }
     var headId = selected[0].headId;

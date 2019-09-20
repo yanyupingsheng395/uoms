@@ -186,4 +186,13 @@ public class PageController {
         model.addAttribute("activityHead", activityHead);
         return "operate/activity/view";
     }
+
+    /**
+     * 用户组模板配置表
+     * @return
+     */
+    @RequestMapping("/usergroup")
+    public String userGroup() {
+        return "operate/daily/usergroup";
+    }
 }

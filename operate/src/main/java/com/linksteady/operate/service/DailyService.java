@@ -1,5 +1,6 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyInfo;
 import com.linksteady.operate.sms.domain.TaskInfo;
 import com.linksteady.operate.vo.Echart;
@@ -32,4 +33,10 @@ public interface DailyService {
     Map<String, Object> getCurrentAndTaskDate(String headId);
 
     TaskInfo getTaskInfo(String headId);
+
+    List<DailyGroupTemplate> getUserGroupListPage(int start, int end);
+
+    int getUserGroupCount();
+
+    void setSmsCode(String groupId, String smsCode);
 }

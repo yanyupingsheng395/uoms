@@ -3,10 +3,12 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.dao.DailyMapper;
+import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyInfo;
 import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.sms.domain.SmsInfo;
 import com.linksteady.operate.sms.domain.TaskInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -102,5 +105,38 @@ public class DailyServiceImpl implements DailyService {
         taskInfo.setSmsInfoList(smsInfoList);
         taskInfo.setRunType("scheduled");
         return taskInfo;
+    }
+
+    /**
+     * 获取用户组配置表的分页数据
+     * @param start
+     * @param end
+     * @return
+     */
+    @Override
+    public List<DailyGroupTemplate> getUserGroupListPage(int start, int end) {
+        return dailyMapper.getUserGroupListPage(start, end);
+    }
+
+    /**
+     * 获取用户组配置表的数据
+     * @return
+     */
+    @Override
+    public int getUserGroupCount() {
+        return dailyMapper.getUserGroupCount();
+    }
+
+    /**
+     * 设置短信模板code
+     * @param groupId
+     * @param smsCode
+     */
+    @Override
+    public void setSmsCode(String groupId, String smsCode) {
+        if(StringUtils.isNotEmpty(groupId)) {
+            List<String> groupIds = Arrays.asList(groupId.split(","));
+            dailyMapper.setSmsCode(groupIds, smsCode);
+        }
     }
 }
