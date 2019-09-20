@@ -1,4 +1,4 @@
-package com.linksteady.operate.service;
+package com.linksteady.operate.push;
 
 import com.linksteady.operate.domain.DailyPushInfo;
 

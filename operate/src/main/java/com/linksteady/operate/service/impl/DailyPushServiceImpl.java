@@ -6,6 +6,9 @@ import com.linksteady.operate.dao.DailyPushMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.DailyPushInfo;
 import com.linksteady.operate.domain.DailyPushQuery;
+import com.linksteady.operate.push.impl.PushSmsServiceImpl;
+import com.linksteady.operate.push.impl.PushDefaultServiceImpl;
+import com.linksteady.operate.push.impl.PushWxMessageServiceImpl;
 import com.linksteady.operate.service.DailyPushService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransPushContentThread;
@@ -41,7 +44,7 @@ public class DailyPushServiceImpl implements DailyPushService {
     PushDefaultServiceImpl pushDefaultService;
 
     @Autowired
-    PushAliSmsServiceImpl pushAliSmsService;
+    PushSmsServiceImpl pushSmsService;
 
     @Autowired
     PushWxMessageServiceImpl pushWxMessageService;
@@ -230,7 +233,7 @@ public class DailyPushServiceImpl implements DailyPushService {
         if("SMS".equals(dailyProperties.getPushType()))
         {
             //短信触达
-            pushAliSmsService.push(list);
+            pushSmsService.push(list);
         }else if("WX".equals(dailyProperties.getPushType()))
         {
             //微信消息

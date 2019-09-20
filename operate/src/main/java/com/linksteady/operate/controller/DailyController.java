@@ -37,9 +37,6 @@ public class DailyController {
     @Autowired
     private DailyPushService dailyPushService;
 
-    @Autowired
-    private SendSmsService sendSmsService;
-
     /**
      * 获取任务列表信息
      * @param request
@@ -131,10 +128,6 @@ public class DailyController {
             // 更改状态
             status = "done";
             dailyService.updateStatus(headId, status);
-
-            // 短信推送
-            TaskInfo taskInfo = dailyService.getTaskInfo(headId);
-            sendSmsService.sendMsg(taskInfo);
         }
         return ResponseBo.ok();
     }
@@ -195,18 +188,14 @@ public class DailyController {
      */
     @GetMapping("/generatePushList")
     public ResponseBo generatePushList(String headId) {
-//        int count = dailyDetailService.findCountByPushStatus(headId);
-//        if(count > 0) {
-//            log.info("HEAD_ID:{},正在生成短信模板...", headId);
-//            dailyPushService.generatePushList(headId);
-//            log.info("HEAD_ID:{},短信模板生成完毕.", headId);
-//        }else {
-//            log.info("HEAD_ID:{},短信模板已生成，不需要重复操作.", headId);
-//        }
-        log.info("HEAD_ID:{},正在生成短信模板...", headId);
-        dailyPushService.generatePushList(headId);
-        log.info("HEAD_ID:{},短信模板生成完毕.", headId);
-        return ResponseBo.ok();
+        try {
+            dailyPushService.generatePushList(headId);
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBo.error("策略生成错误，请检查配置！");
+        }
+
     }
 
     /**
@@ -226,4 +215,11 @@ public class DailyController {
         int count = dailyDetailService.getDataListCount(headId, userValue, pathActive, status);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
+
+//    @GetMapping("/pushMessage")
+//    public ResponseBo pushMessage(String headId) {
+//        TaskInfo taskInfo = dailyService.getTaskInfo(headId);
+//        sendSmsService.sendMsg(taskInfo);
+//        return ResponseBo.ok();
+//    }
 }

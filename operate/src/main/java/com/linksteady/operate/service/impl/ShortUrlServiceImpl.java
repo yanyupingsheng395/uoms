@@ -9,6 +9,9 @@ import org.springframework.util.StringUtils;
 
 import java.net.URLEncoder;
 
+/**
+ * 根据长链接生成短链接的服务
+ */
 @Service
 public class ShortUrlServiceImpl implements ShortUrlService {
 
