@@ -91,7 +91,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             sb.append(" and user_value = '" + userValue + "'");
         }
         if(StringUtils.isNotEmpty(pathActive)) {
-            sb.append(" and path_activ = '" + pathActive + "'");
+            sb.append(" and path_active = '" + pathActive + "'");
         }
         return sb.toString();
     }
