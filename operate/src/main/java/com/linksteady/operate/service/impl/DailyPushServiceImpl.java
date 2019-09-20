@@ -8,15 +8,22 @@ import com.linksteady.operate.domain.DailyPushInfo;
 import com.linksteady.operate.domain.DailyPushQuery;
 import com.linksteady.operate.service.DailyPushService;
 import com.linksteady.operate.service.ShortUrlService;
+import com.linksteady.operate.sms.domain.SmsInfo;
+import com.linksteady.operate.sms.montnets.send.SendSms;
 import com.linksteady.operate.thread.TransPushContentThread;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * @author hxcao
@@ -57,7 +64,6 @@ public class DailyPushServiceImpl implements DailyPushService {
     public void generatePushList(String headerId) {
         //根据headerID获取当前有多少人需要推送
         int pushUserCount= dailyPushMapper.getUserCount(headerId);
-
         int pageSize=100;
           //判断如果条数大于100 则进行分页
         if(pushUserCount<=pageSize)

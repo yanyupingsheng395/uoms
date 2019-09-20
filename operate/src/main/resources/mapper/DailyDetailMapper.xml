@@ -6,7 +6,7 @@
         <result column="DAILY_DETAIL_ID" jdbcType="DECIMAL" property="dailyDetailId"></result>
         <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
         <result column="USER_ID" jdbcType="DECIMAL" property="userId"></result>
-        <result column="PATH_ACTIV" jdbcType="VARCHAR" property="pathActiv"></result>
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
         <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
         <result column="SPU_NAME" jdbcType="VARCHAR" property="spuName"></result>
         <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="piecePrice"></result>
@@ -25,6 +25,7 @@
         <result column="COUPON_DENO" jdbcType="VARCHAR" property="couponDeno"></result>
         <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"></result>
         <result column="COMPLETE_PURCH" jdbcType="VARCHAR" property="completePurch"></result>
+        <result column="TAR_ORDER_PRICE" jdbcType="VARCHAR" property="tarOrderPrice"></result>
     </resultMap>
 
     <resultMap id="effectResult" type="com.linksteady.operate.domain.DailyDetail">
@@ -33,7 +34,7 @@
         <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"></result>
         <result column="IS_CONVERSION" jdbcType="VARCHAR" property="isConversion"></result>
         <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
-        <result column="PATH_ACTIV" jdbcType="VARCHAR" property="pathActiv"></result>
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
         <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
         <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="purchProductName"></result>
         <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="piecePrice"></result>
@@ -46,26 +47,36 @@
         <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"></result>
     </resultMap>
 
+    <resultMap id="taskInfoMap" type="com.linksteady.operate.sms.domain.SmsInfo">
+        <result column="DAILY_DETAIL_ID" jdbcType="VARCHAR" property="id"></result>
+        <result column="USER_ID" jdbcType="VARCHAR" property="userId"></result>
+        <result column="USER_PHONE" jdbcType="VARCHAR" property="mobile"></result>
+        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="content"></result>
+        <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="touchTime"></result>
+        <result column="PUSH_STATUS" jdbcType="VARCHAR" property="status"></result>
+    </resultMap>
+
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM RN from (
-          select USER_ID, SPU_NAME, COMPLETE_PURCH, TAR_ORDER_PRICE, REC_PROD_NAME, TAR_PRODUCT_NUM, USER_VALUE, PATH_ACTIV
-            from UO_OP_DAILY_DETAIL where head_id = #{headId}
-          <if test="pathActive != '' and pathActive != null">
-              and PATH_ACTIV = #{pathActive}
-          </if>
-          <if test="userValue != '' and userValue != null">
-              and USER_VALUE = #{userValue}
-          </if>
-          order by PATH_ACTIV, USER_VALUE asc
-          ) t where ROWNUM &lt;=#{end}
-          ) where RN &gt;=#{start}
+        select USER_ID, SPU_NAME, COMPLETE_PURCH, TAR_ORDER_PRICE, REC_PROD_NAME, TAR_PRODUCT_NUM, USER_VALUE,
+        PATH_ACTIVE
+        from UO_OP_DAILY_DETAIL where head_id = #{headId}
+        <if test="pathActive != '' and pathActive != null">
+            and PATH_ACTIVE = #{pathActive}
+        </if>
+        <if test="userValue != '' and userValue != null">
+            and USER_VALUE = #{userValue}
+        </if>
+        order by PATH_ACTIVE, USER_VALUE asc
+        ) t where ROWNUM &lt;=#{end}
+        ) where RN &gt;=#{start}
     </select>
 
     <select id="getDataCount" resultType="int">
         select count(1) from UO_OP_DAILY_DETAIL where head_id = #{headId}
         <if test="pathActive != '' and pathActive != null">
-            and PATH_ACTIV = #{pathActive}
+            and PATH_ACTIVE = #{pathActive}
         </if>
         <if test="userValue != '' and userValue != null">
             and USER_VALUE = #{userValue}
@@ -77,7 +88,7 @@
         select t.*, ROWNUM RN from (
         select USER_ID, TAR_ORDER_PRICE, REC_PROD_NAME, REFER_DENO, ORDER_PERIOD, COUPON_MIN, COUPON_DENO, SMS_CONTENT
         from UO_OP_DAILY_DETAIL where head_id = #{headId}
-        order by PATH_ACTIV, USER_VALUE asc
+        order by PATH_ACTIVE, USER_VALUE asc
         ) t where ROWNUM &lt;=#{end}
         ) where RN &gt;=#{start}
     </select>
@@ -89,7 +100,7 @@
     <select id="getUserEffect" resultMap="effectResult">
         select * from (
         select t.*, ROWNUM RN from (
-        select USER_ID, PATH_ACTIV,IS_PUSH,IS_CONVERSION, USER_VALUE,REC_PROD_NAME, TAR_ORDER_PRICE,ACT_ORDER_PRICE
+        select USER_ID, PATH_ACTIVE,IS_PUSH,IS_CONVERSION, USER_VALUE,REC_PROD_NAME, TAR_ORDER_PRICE,ACT_ORDER_PRICE
         from UO_OP_DAILY_DETAIL where head_id = #{headId}
         <if test="whereInfo != ''">
             ${whereInfo}
@@ -107,5 +118,9 @@
 
     <select id="findCountByPushStatus" resultType="int">
         select count(1) from UO_OP_DAILY_DETAIL where HEAD_ID = #{headId} and push_status = 'X'
+    </select>
+
+    <select id="findSmsInfoByHeadId" resultMap="taskInfoMap">
+        select DAILY_DETAIL_ID, USER_ID, USER_PHONE,SMS_CONTENT,ORDER_PERIOD,PUSH_STATUS from UO_OP_DAILY_DETAIL where HEAD_ID = #{headId}
     </select>
 </mapper>

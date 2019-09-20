@@ -48,7 +48,7 @@ function getUserDataList() {
                 field: 'tarProductNum',
                 title: '目标商品件数（件）'
             }, {
-                field: 'pathActiv',
+                field: 'pathActive',
                 title: '活跃度',
                 formatter: function (value, row, index) {
                     var res = "";

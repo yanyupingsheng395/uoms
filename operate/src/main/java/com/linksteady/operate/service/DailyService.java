@@ -1,6 +1,7 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.DailyInfo;
+import com.linksteady.operate.sms.domain.TaskInfo;
 import com.linksteady.operate.vo.Echart;
 
 import java.util.List;
@@ -31,4 +32,6 @@ public interface DailyService {
     DailyInfo getKpiVal(String headId);
 
     Map<String, Object> getCurrentAndTaskDate(String headId);
+
+    TaskInfo getTaskInfo(String headId);
 }

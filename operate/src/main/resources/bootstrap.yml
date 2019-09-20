@@ -26,3 +26,9 @@ app:
 spring:
   profiles:
     active: dev
+
+sms:
+  montnets:
+    userid: E109EI
+    pwd: mIjExT
+    masterIpAddress: api01.monyun.cn:7901

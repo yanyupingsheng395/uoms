@@ -2,6 +2,7 @@ package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.DailyPushInfo;
 import com.linksteady.operate.domain.DailyPushQuery;
+import com.linksteady.operate.sms.domain.SmsInfo;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
@@ -53,6 +54,12 @@ public interface DailyPushMapper {
      * @param status
      */
     void updateSendStatus(@Param("list") List<DailyPushInfo> list, @Param("status") String status);
+
+    /**
+     * 更新已推送的消息的状态
+     * @param list
+     */
+    void updateSendMsgStatus(@Param("list") List<SmsInfo> list);
 
     /**
      * 更新日运营头信息状态为 推送结束、效果统计中 (当前为doing 推送中 且 明细表中push_status没有为P状态的，将其status更新为done 推送结束、效果统计中)

@@ -1,11 +1,15 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Maps;
+import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.dao.DailyGroupMapper;
 import com.linksteady.operate.dao.DailyMapper;
+import com.linksteady.operate.domain.DailyDetail;
 import com.linksteady.operate.domain.DailyGroup;
 import com.linksteady.operate.domain.DailyInfo;
 import com.linksteady.operate.service.DailyService;
+import com.linksteady.operate.sms.domain.SmsInfo;
+import com.linksteady.operate.sms.domain.TaskInfo;
 import com.linksteady.operate.vo.Echart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,12 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 日运营头表
+ *
  * @author hxcao
  * @date 2019-07-31
  */
@@ -30,6 +36,9 @@ public class DailyServiceImpl implements DailyService {
 
     @Autowired
     private DailyGroupMapper dailyGroupMapper;
+
+    @Autowired
+    private DailyDetailMapper dailyDetailMapper;
 
     @Override
     public List<DailyInfo> getPageList(int start, int end, String touchDt) {
@@ -88,5 +97,24 @@ public class DailyServiceImpl implements DailyService {
         result.put("taskDt", touchDt);
         result.put("currentDt", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         return result;
+    }
+
+    /**
+     * 获取发送短信任务信息
+     * @param headId
+     * @return
+     */
+    @Override
+    public TaskInfo getTaskInfo(String headId) {
+        DailyInfo dailyInfo = dailyMapper.findById(headId);
+        TaskInfo taskInfo = new TaskInfo();
+        taskInfo.setTaskId(headId);
+        taskInfo.setTaskName("每日运营[" + dailyInfo.getTouchDt() + "]");
+        taskInfo.setSendMsgType("single");
+        taskInfo.setCreateTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:SS")));
+        List<SmsInfo> smsInfoList = dailyDetailMapper.findSmsInfoByHeadId(headId);
+        taskInfo.setSmsInfoList(smsInfoList);
+        taskInfo.setRunType("scheduled");
+        return taskInfo;
     }
 }

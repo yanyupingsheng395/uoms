@@ -32,12 +32,8 @@
         select
             count(*)
         FROM  UO_OP_DAILY_HEADER T1,
-              UO_OP_DAILY_DETAIL T2,
-              UO_OP_DAILY_GROUP T3
+              UO_OP_DAILY_DETAIL T2
         WHERE T1.HEAD_ID=T2.HEAD_ID
-          AND T2.HEAD_ID=T3.HEAD_ID
-          AND T2.GROUP_ID=T3.GROUP_ID
-          AND T3.IS_CHECK='1'
           AND T1.HEAD_ID=#{headId}
     </select>
 
@@ -140,6 +136,20 @@
         </foreach>
     </update>
 
+    <update id="updateSendMsgStatus">
+        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+            update UO_OP_DAILY_DETAIL set
+                <if test="item.pushStatus == '0'">
+                    IS_PUSH= '1',
+                </if>
+                <if test="item.pushStatus != '0'">
+                    IS_PUSH= '0',
+                </if>
+                PUSH_STATUS=#{item.pushStatus}
+            where DAILY_DETAIL_ID=#{item.dailyDetailId}
+        </foreach>
+    </update>
+
     <update id="updateHeaderToDone">
         UPDATE UO_OP_DAILY_HEADER c SET c.STATUS='done' WHERE c.STATUS='doing' AND not exists
           (
@@ -172,7 +182,4 @@
             SELECT HEAD_ID FROM UO_OP_DAILY_HEADER where trunc(touch_dt)>trunc(sysdate-15) and status in ('done','finished')
             )
     </update>
-
-
-
 </mapper>

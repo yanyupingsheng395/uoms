@@ -1,6 +1,7 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.DailyDetail;
+import com.linksteady.operate.sms.domain.SmsInfo;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
@@ -25,4 +26,11 @@ public interface DailyDetailMapper {
     int getDataListCount(String headId, String whereInfo);
 
     int findCountByPushStatus(String headId);
+
+    /**
+     * 获取短信列表信息
+     * @param headId
+     * @return
+     */
+    List<SmsInfo> findSmsInfoByHeadId(String headId);
 }

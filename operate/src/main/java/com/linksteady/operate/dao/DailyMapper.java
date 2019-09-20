@@ -33,4 +33,6 @@ public interface DailyMapper {
     String getTouchDt(String headId);
 
     Map<String, Object> getTotalNum(String headId);
+
+    DailyInfo findById(String headId);
 }

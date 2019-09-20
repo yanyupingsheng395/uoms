@@ -6,6 +6,8 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.service.impl.DailyPushServiceImpl;
+import com.linksteady.operate.sms.domain.TaskInfo;
+import com.linksteady.operate.sms.service.SendSmsService;
 import com.linksteady.operate.thread.GenPushListThread;
 import com.linksteady.operate.util.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +44,9 @@ public class DailyController {
 
     @Autowired
     private DailyPushService dailyPushService;
+
+    @Autowired
+    private SendSmsService sendSmsService;
 
     /**
      * 获取任务列表信息
@@ -309,5 +314,12 @@ public class DailyController {
         List<DailyDetail> dataList = dailyDetailService.getUserEffect(headId, start, end, userValue, pathActive, status);
         int count = dailyDetailService.getDataListCount(headId, userValue, pathActive, status);
         return ResponseBo.okOverPaging(null, count, dataList);
+    }
+
+    @GetMapping("/pushMessage")
+    public ResponseBo pushMessage(String headId) {
+        TaskInfo taskInfo = dailyService.getTaskInfo(headId);
+        sendSmsService.sendMsg(taskInfo);
+        return ResponseBo.ok();
     }
 }

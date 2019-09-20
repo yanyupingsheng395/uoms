@@ -27,7 +27,7 @@ public class DailyDetail {
     /**
      * 活跃度
      */
-    private String pathActiv;
+    private String pathActive;
 
     /**
      * 用户价值

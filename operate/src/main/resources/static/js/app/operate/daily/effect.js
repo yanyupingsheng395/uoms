@@ -233,7 +233,7 @@ function getUserEffect() {
                 return res;
             }
         }, {
-            field: 'pathActiv',
+            field: 'pathActive',
             title: '活跃度',
             formatter: function (value, row, index) {
                 var res = "";

@@ -90,4 +90,8 @@
     <select id="getTotalNum" resultType="map">
         select total_num total, OPT_NUM opt from UO_OP_DAILY_HEADER where head_id = #{headId}
     </select>
+
+    <select id="findById" resultMap="baseResult">
+        select head_id, total_num, descr, insert_dt, update_dt, touch_dt, status, plan_num, faild_num, success_num from UO_OP_DAILY_HEADER where HEAD_ID = #{headId}
+    </select>
 </mapper>
