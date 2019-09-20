@@ -196,6 +196,7 @@ public class SendSmsServiceImpl implements SendSmsService {
     private void sendMsgListScheduled(String taskId, String sendType, List<SmsInfo> smsInfos) {
         SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
         Map<String, List<SmsInfo>> tmpMap = smsInfos.stream().collect(Collectors.groupingBy(SmsInfo::getTouchTime));
+        // 由于是阻塞获取结果，导致main线程阻塞，故通过线程池完成提交任务。
         threadPool.submit(()->{
             if (SEND_TYPE_SINGLE.equalsIgnoreCase(sendType)) {
                 log.info(">>>正在使用单条推送方式推送短信.");
@@ -281,10 +282,19 @@ public class SendSmsServiceImpl implements SendSmsService {
         return delay;
     }
 
+    /**
+     * 手动停止任务
+     */
     public void stopSendMsg() {
         threadPool.shutdownNow();
     }
 
+    /**
+     * 更新业务数据的状态，这里可以通过不同业务类型切换mapper。
+     *
+     * @param smsInfos
+     * @param taskId
+     */
     private void updateSmsInfoStatus(List<SmsInfo> smsInfos, String taskId) {
         log.info("正在更新短信发送状态...");
         dailyPushMapper.updateSendMsgStatus(smsInfos, taskId);

@@ -2,20 +2,15 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.DailyDetailMapper;
-import com.linksteady.operate.dao.DailyGroupMapper;
 import com.linksteady.operate.dao.DailyMapper;
-import com.linksteady.operate.domain.DailyDetail;
-import com.linksteady.operate.domain.DailyGroup;
 import com.linksteady.operate.domain.DailyInfo;
 import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.sms.domain.SmsInfo;
 import com.linksteady.operate.sms.domain.TaskInfo;
-import com.linksteady.operate.vo.Echart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,9 +28,6 @@ public class DailyServiceImpl implements DailyService {
 
     @Autowired
     private DailyMapper dailyMapper;
-
-    @Autowired
-    private DailyGroupMapper dailyGroupMapper;
 
     @Autowired
     private DailyDetailMapper dailyDetailMapper;
@@ -72,12 +64,6 @@ public class DailyServiceImpl implements DailyService {
         dailyMapper.updateStatus(headId, status);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateCheckNum(String headId, List<String> groupIds) {
-        int num = dailyGroupMapper.sumCheckedNum(headId);
-        dailyMapper.updateActualNum(headId, num);
-    }
 
     @Override
     public String getStatusById(String headId) {

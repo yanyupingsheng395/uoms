@@ -34,9 +34,6 @@ public class DailyController {
     private DailyDetailService dailyDetailService;
 
     @Autowired
-    private DailyGroupService dailyGroupService;
-
-    @Autowired
     private DailyEffectService dailyEffectService;
 
     @Autowired
@@ -85,21 +82,6 @@ public class DailyController {
     }
 
     /**
-     * 根据组ID获取群组列表
-     * @param request
-     * @return
-     */
-    @GetMapping("/getGroupDataList")
-    public ResponseBo getGroupDataList(QueryRequest request) {
-        String headId = request.getParam().get("headId");
-        int start = request.getStart();
-        int end = request.getEnd();
-        int count = dailyGroupService.getGroupDataCount(headId);
-        List<DailyGroup> dataList = dailyGroupService.getDataList(headId, start, end);
-        return ResponseBo.okOverPaging(null, count, dataList);
-    }
-
-    /**
      * 根据成长性，活跃度，组Id获取对应的用户列表
      * @param request
      * @return
@@ -117,7 +99,7 @@ public class DailyController {
     }
 
     /**
-     * 获取用户成长策略表
+     * 获取用户成长策略表（第二步）
      * @return
      */
     @GetMapping("/getUserStrategyList")
@@ -149,30 +131,16 @@ public class DailyController {
     public synchronized ResponseBo submitData(String headId) {
         String status = dailyService.getStatusById(headId);
         if(!status.equalsIgnoreCase("todo")) {
-            return ResponseBo.error("数据已被其它用户修改，请查看！");
+            return ResponseBo.error("当前数据状态不支持该操作！");
         }else {
-            status = "ready_push";
+            // 更改状态
+            status = "done";
             dailyService.updateStatus(headId, status);
-            // 计算执行率
-            dailyEffectService.updateExecuteRate(headId);
-            // 生成推送名单
-            GenPushListThread.generatePushList(headId);
-        }
-        return ResponseBo.ok();
-    }
 
-    /**
-     * 更改group是否选中
-     * @param headId
-     * @return
-     */
-    @GetMapping("/updateGroupCheck")
-    public ResponseBo updateGroupCheck(String headId, String groups) {
-        List<DailyGroup> groupList = JSONArray.parseArray(groups).toJavaList(DailyGroup.class);
-        dailyGroupService.updateIsChecked(headId, groupList);
-        // 更改实际选择人数
-        List<String> groupIds = groupList.stream().map(x->x.getGroupId().toString()).collect(Collectors.toList());
-        dailyService.updateCheckNum(headId, groupIds);
+            // 短信推送
+            TaskInfo taskInfo = dailyService.getTaskInfo(headId);
+            sendSmsService.sendMsg(taskInfo);
+        }
         return ResponseBo.ok();
     }
 
@@ -227,61 +195,6 @@ public class DailyController {
     }
 
     /**
-     * 根据紧迫度和活跃度获取系统推荐的群组
-     * ids:紧迫度ID + "," + 活跃度ID
-     * @return
-     */
-    @GetMapping("/getSelectedGroup")
-    public ResponseBo getSelectedGroup(@RequestParam String headId, String activeIds, String growthIds) {
-        return ResponseBo.okWithData(null, dailyGroupService.getSelectedGroup(headId, activeIds, growthIds));
-    }
-
-    /**
-     * 获取活跃度指标的选中情况
-     * @param headId
-     * @return
-     */
-    @GetMapping("/getDefaultActive")
-    public ResponseBo getDefaultActive(@RequestParam("headId") String headId) {
-        return ResponseBo.okWithData(null, dailyGroupService.getDefaultActive(headId));
-    }
-
-    /**
-     * 获取成长性指标的选中情况
-     * @param headId
-     * @return
-     */
-    @GetMapping("/getDefaultGrowth")
-    public ResponseBo getDefaultGrowth(@RequestParam("headId") String headId) {
-        return ResponseBo.okWithData(null, dailyGroupService.getDefaultGrowth(headId));
-    }
-
-    /**
-     * 更改groupId的isCheck状态为1
-     * @param headId
-     * @param groupIds
-     * @return
-     */
-    @GetMapping("/setGroupCheck")
-    public ResponseBo setGroupCheck(@RequestParam("headId") String headId, @RequestParam("groupIds") String groupIds) {
-        dailyGroupService.setGroupCheck(headId, groupIds);
-        return ResponseBo.ok();
-    }
-
-    /**
-     * 设置短信模板
-     * @param headId
-     * @param groupId
-     * @param smsCode
-     * @return
-     */
-    @GetMapping("/setSmsCode")
-    public ResponseBo setSmsCode(@RequestParam String headId, @RequestParam String groupId, @RequestParam String smsCode) {
-        dailyGroupService.setSmsCode(headId, groupId, smsCode);
-        return ResponseBo.ok();
-    }
-
-    /**
      * 生成待推送的名单
      * @return
      */
@@ -314,12 +227,5 @@ public class DailyController {
         List<DailyDetail> dataList = dailyDetailService.getUserEffect(headId, start, end, userValue, pathActive, status);
         int count = dailyDetailService.getDataListCount(headId, userValue, pathActive, status);
         return ResponseBo.okOverPaging(null, count, dataList);
-    }
-
-    @GetMapping("/pushMessage")
-    public ResponseBo pushMessage(String headId) {
-        TaskInfo taskInfo = dailyService.getTaskInfo(headId);
-        sendSmsService.sendMsg(taskInfo);
-        return ResponseBo.ok();
     }
 }
