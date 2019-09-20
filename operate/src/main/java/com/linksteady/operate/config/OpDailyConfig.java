@@ -2,7 +2,6 @@ package com.linksteady.operate.config;
 
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.service.DailyPropertiesService;
-import com.linksteady.operate.thread.GenPushListThread;
 import com.linksteady.operate.thread.PushMessageThread;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +43,6 @@ public class OpDailyConfig implements CommandLineRunner {
      */
     private void startThread()
     {
-        //开启生成推送名单的线程
-        log.info("-----------开启日推送生成名单线程的执行---------------------");
-        GenPushListThread.getInstance().start();
-
         //开启推送短信的线程
         log.info("-----------开启日推送短信的线程的执行---------------------");
         PushMessageThread.getInstance().start();

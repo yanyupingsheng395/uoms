@@ -8,7 +8,6 @@ import com.linksteady.operate.service.*;
 import com.linksteady.operate.service.impl.DailyPushServiceImpl;
 import com.linksteady.operate.sms.domain.TaskInfo;
 import com.linksteady.operate.sms.service.SendSmsService;
-import com.linksteady.operate.thread.GenPushListThread;
 import com.linksteady.operate.util.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,12 +150,9 @@ public class DailyController {
         if(!status.equalsIgnoreCase("todo")) {
             return ResponseBo.error("数据已被其它用户修改，请查看！");
         }else {
-            status = "ready_push";
+            //修改主记录状态为已执行
+            status = "done";
             dailyService.updateStatus(headId, status);
-            // 计算执行率
-            dailyEffectService.updateExecuteRate(headId);
-            // 生成推送名单
-            GenPushListThread.generatePushList(headId);
         }
         return ResponseBo.ok();
     }
@@ -287,15 +283,14 @@ public class DailyController {
      */
     @GetMapping("/generatePushList")
     public ResponseBo generatePushList(String headId) {
-        int count = dailyDetailService.findCountByPushStatus(headId);
-        if(count > 0) {
-            log.info("HEAD_ID:{},正在生成短信模板...", headId);
+        try {
             dailyPushService.generatePushList(headId);
-            log.info("HEAD_ID:{},短信模板生成完毕.", headId);
-        }else {
-            log.info("HEAD_ID:{},短信模板已生成，不需要重复操作.", headId);
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBo.error("策略生成错误，请检查配置！");
         }
-        return ResponseBo.ok();
+
     }
 
     /**

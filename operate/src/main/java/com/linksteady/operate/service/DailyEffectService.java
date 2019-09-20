@@ -14,5 +14,4 @@ public interface DailyEffectService {
 
     DailyEffect getKpiStatis(String headId);
 
-    void updateExecuteRate(String headId);
 }

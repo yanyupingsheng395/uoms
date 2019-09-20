@@ -81,8 +81,8 @@ public class PushMessageThread {
                         }
                     }
 
-                    //更新主记录的状态 (对于已全部完成发送的更改头表状态为done)
-                    dailyPushService.updateHeaderToDone();
+                    //更新主记录的状态 (对于已全部完成发送的更改头表状态为finish 已结束)
+                    dailyPushService.updateHeaderToFinish();
 
                     //对最近15日的触达情况进行汇总、更新
                     dailyPushService.updateHeaderSendStatis();

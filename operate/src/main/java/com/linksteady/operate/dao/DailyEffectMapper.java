@@ -15,5 +15,4 @@ public interface DailyEffectMapper {
 
     DailyEffect getKpiStatis(String headId);
 
-    void updateExecuteAndLossRate(String executeRate, String headId);
 }

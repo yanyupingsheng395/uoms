@@ -42,7 +42,4 @@
         where head_id = #{headId}
     </select>
 
-    <update id="updateExecuteAndLossRate">
-        update UO_OP_DAILY_STATIS set EXECUTE_RATE = #{executeRate} where HEAD_ID = #{headId}
-    </update>
 </mapper>

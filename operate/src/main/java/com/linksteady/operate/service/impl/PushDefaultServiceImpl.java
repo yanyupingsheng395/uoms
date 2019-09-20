@@ -66,13 +66,13 @@ public class PushDefaultServiceImpl implements PushMessageService {
              if(nList.size()>0)
              {
                  //模拟打印实现，状态直接为成功
-                 dailyPushMapper.updateSendStatus(nList,"S");
+                 //dailyPushMapper.updateSendStatus(nList,"S");
              }
 
              if(cList.size()>0)
              {
                  //标记为已被防骚扰拦截
-                 dailyPushMapper.updateSendStatus(cList,"C");
+                 //dailyPushMapper.updateSendStatus(cList,"C");
              }
 
          }else
@@ -84,7 +84,7 @@ public class PushDefaultServiceImpl implements PushMessageService {
 
              if(list.size()>0)
              {
-                 dailyPushMapper.updateSendStatus(list,"S");
+                // dailyPushMapper.updateSendStatus(list,"S");
              }
          }
 

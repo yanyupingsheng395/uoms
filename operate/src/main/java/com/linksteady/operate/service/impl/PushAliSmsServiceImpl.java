@@ -63,30 +63,30 @@ public class PushAliSmsServiceImpl implements PushMessageService {
                 //todo 调用阿里云发短信的接口
              }
 
-             if(nList.size()>0)
-             {
-                 //已推送 待反馈触达结果
-                 dailyPushMapper.updateSendStatus(nList,"R");
-             }
-
-             if(cList.size()>0)
-             {
-                 //标记为已被防骚扰拦截
-                 dailyPushMapper.updateSendStatus(cList,"C");
-             }
-
-         }else
-         {
-             for(DailyPushInfo dailyPushInfo:list)
-             {
-                 //todo 调用阿里云短信接口
-             }
-
-             if(list.size()>0)
-             {
-                 dailyPushMapper.updateSendStatus(list,"S");
-             }
-         }
+//             if(nList.size()>0)
+//             {
+//                 //已推送 待反馈触达结果
+//                 dailyPushMapper.updateSendStatus(nList,"R");
+//             }
+//
+//             if(cList.size()>0)
+//             {
+//                 //标记为已被防骚扰拦截
+//                 dailyPushMapper.updateSendStatus(cList,"C");
+//             }
+//
+//         }else
+//         {
+//             for(DailyPushInfo dailyPushInfo:list)
+//             {
+//                 //todo 调用阿里云短信接口
+//             }
+//
+//             if(list.size()>0)
+//             {
+//                 dailyPushMapper.updateSendStatus(list,"S");
+//             }
+        }
 
     }
 }
