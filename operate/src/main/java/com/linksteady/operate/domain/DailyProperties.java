@@ -45,7 +45,7 @@ public class DailyProperties {
  private String alertPhone;
 
  /**
-  * 推送方式 IMME立即推送 AI智能推送
+  * 推送方式 IMME:IMME立即推送 AI:AI智能推送
   */
  private String pushMethod;
 

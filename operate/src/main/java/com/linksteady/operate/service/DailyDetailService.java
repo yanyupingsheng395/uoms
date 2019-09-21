@@ -5,6 +5,7 @@ import com.linksteady.operate.sms.domain.TaskInfo;
 import com.linksteady.operate.vo.Echart;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -69,6 +70,20 @@ public interface DailyDetailService {
      * @return
      */
     int getDataListCount(String headId, String userValue, String pathActive, String status);
+
+    /**
+     * 获取短信内容列表
+     * @param headId
+     * @return
+     */
+    List<Map<String, Object>> getContentList(String headId);
+
+    /**
+     * 更新短信推送时段
+     * @param headId
+     * @param pushOrderPeriod
+     */
+    void updatePushOrderPeriod(String headId, String pushOrderPeriod);
 
     /**
      *

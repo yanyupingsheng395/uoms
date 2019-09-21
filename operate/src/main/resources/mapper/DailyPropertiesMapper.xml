@@ -9,6 +9,7 @@
         <result column="STATSDAYS" jdbcType="DECIMAL" property="statsDays"></result>
         <result column="PUSH_TYPE" jdbcType="VARCHAR" property="pushType"></result>
         <result column="OPEN_ELART" jdbcType="VARCHAR" property="openAlert"></result>
+        <result column="PUSH_METHOD" jdbcType="VARCHAR" property="pushMethod"></result>
     </resultMap>
 
     <select id="getDailyProperties" resultMap="baseResult">
@@ -18,7 +19,8 @@
             push_flag,
             statsdays,
             push_type,
-            open_elart
+            open_elart,
+            PUSH_METHOD
         from uo_op_daily_config where rownum=1
     </select>
 

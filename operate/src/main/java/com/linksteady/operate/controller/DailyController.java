@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.*;
@@ -8,10 +9,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 每日运营
+ *
  * @author hxcao
  * @date 2019-07-31
  */
@@ -40,6 +47,7 @@ public class DailyController {
 
     /**
      * 获取任务列表信息
+     *
      * @param request
      * @return
      */
@@ -58,6 +66,7 @@ public class DailyController {
 
     /**
      * 触达记录
+     *
      * @param request
      * @return
      */
@@ -76,6 +85,7 @@ public class DailyController {
 
     /**
      * 根据成长性，活跃度，组Id获取对应的用户列表
+     *
      * @param request
      * @return
      */
@@ -93,6 +103,7 @@ public class DailyController {
 
     /**
      * 获取用户成长策略表（第二步）
+     *
      * @return
      */
     @GetMapping("/getUserStrategyList")
@@ -107,6 +118,7 @@ public class DailyController {
 
     /**
      * 获取编辑页xxx，共x人，选择y人
+     *
      * @param headId
      * @return
      */
@@ -117,28 +129,73 @@ public class DailyController {
 
     /**
      * 启动群组推送
+     *
      * @return
      */
     @GetMapping("/submitData")
     @Transactional(rollbackFor = Exception.class)
-    public synchronized ResponseBo submitData(String headId) {
+    public synchronized ResponseBo submitData(String headId, String pushMethod, String pushPeriod) {
         String status = dailyService.getStatusById(headId);
-        if(!status.equalsIgnoreCase("todo")) {
+        if (!status.equalsIgnoreCase("todo")) {
             return ResponseBo.error("当前数据状态不支持该操作！");
-        }else {
-            //todo 完成短信文案的校验  (是否包含变量，短信长度)
-
-           //todo 完成短信的应触达时段的更新  DailyProperties.pushMethod   推送方式 IMME立即推送 AI智能推送
-
-            // 更改状态
-            status = "done";
-            dailyService.updateStatus(headId, status);
         }
+
+        // 短信文案的校验  (是否包含变量，短信长度)
+        String validResult = smsContentValid(headId);
+        if (null == validResult) {
+            return ResponseBo.error(validResult);
+        }
+        // 推送方式 IMME立即推送 AI智能推送
+        updateSmsPushMethod(headId, pushMethod, pushPeriod);
+        status = "done";
+        dailyService.updateStatus(headId, status);
         return ResponseBo.ok();
+
+    }
+
+    /**
+     * 根据推送方式更新短信推送时间
+     */
+    private void updateSmsPushMethod(String headId, String method, String period) {
+        String pushOrderPeriod = "";
+        if("IMME".equalsIgnoreCase(method)) {
+            pushOrderPeriod = String.valueOf(LocalTime.now().plusMinutes(10).getHour());
+        }
+
+        if("FIXED".equalsIgnoreCase(method)) {
+            pushOrderPeriod = String.valueOf(LocalTime.parse(period, DateTimeFormatter.ofPattern("HH:mm")).getHour());
+        }
+        // 默认是AI
+        dailyDetailService.updatePushOrderPeriod(headId, pushOrderPeriod);
+    }
+
+    /**
+     * 发送之前校验短信内容
+     * @param headId
+     * @return
+     */
+    private String smsContentValid(String headId) {
+        List<Map<String, Object>> smsContentList = dailyDetailService.getContentList(headId);
+        // 短信长度超出限制
+        List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).length() > dailyProperties.getSmsLengthLimit())
+                .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
+        // 短信含未被替换的模板变量
+        List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).contains("$"))
+                .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
+        if (0 != lengthIds.size()) {
+
+            return "短信长度超出限制，对应ID为[" + String.join(",", lengthIds) + "]";
+        }
+        if (0 != invalidIds.size()) {
+
+            return "短信含未被替换的模板变量，对应ID为[" + String.join(",", invalidIds) + "]";
+        }
+        return null;
     }
 
     /**
      * 根据headId获取当前记录的状态
+     *
      * @param headId
      * @return
      */
@@ -149,6 +206,7 @@ public class DailyController {
 
     /**
      * 获取当前时间的指标值
+     *
      * @param headId
      * @return
      */
@@ -159,6 +217,7 @@ public class DailyController {
 
     /**
      * 获取效果统计
+     *
      * @param headId
      * @return
      */
@@ -169,6 +228,7 @@ public class DailyController {
 
     /**
      * 效果评估页获取指标趋势
+     *
      * @param headId
      * @return
      */
@@ -179,6 +239,7 @@ public class DailyController {
 
     /**
      * 获取当前日期和任务日期
+     *
      * @param headId
      * @return
      */
@@ -189,6 +250,7 @@ public class DailyController {
 
     /**
      * 生成待推送的名单
+     *
      * @return
      */
     @GetMapping("/generatePushList")
@@ -205,6 +267,7 @@ public class DailyController {
 
     /**
      * 获取检查评估个体效果数据
+     *
      * @return
      */
     @GetMapping("/getUserEffect")
@@ -223,6 +286,7 @@ public class DailyController {
 
     /**
      * 获取用户组配置分页数据
+     *
      * @param request
      * @return
      */
@@ -239,5 +303,24 @@ public class DailyController {
     public ResponseBo setSmsCode(@RequestParam String groupId, @RequestParam String smsCode) {
         dailyService.setSmsCode(groupId, smsCode);
         return ResponseBo.ok();
+    }
+
+    /**
+     * 获取默认推送方式和定时推送时间
+     * @return
+     */
+    @GetMapping("/getPushInfo")
+    public ResponseBo getPushInfo() {
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("method", dailyProperties.getPushMethod());
+        int hour = LocalTime.now().getHour();
+        final List<String> timeList = IntStream.rangeClosed(8, 22).filter(x -> x > hour).boxed().map(y -> {
+            if (y < 10) {
+                return "0" + y + ":00";
+            }
+            return y + ":00";
+        }).collect(Collectors.toList());
+        result.put("timeList", timeList);
+        return ResponseBo.okWithData(null, result);
     }
 }

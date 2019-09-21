@@ -119,4 +119,18 @@
     <select id="findSmsInfoByHeadId" resultMap="taskInfoMap">
         select DAILY_DETAIL_ID, USER_ID, USER_PHONE,SMS_CONTENT,ORDER_PERIOD,PUSH_STATUS from UO_OP_DAILY_DETAIL where HEAD_ID = #{headId}
     </select>
+
+    <select id="getContentList" resultType="map">
+        select DAILY_DETAIL_ID id, SMS_CONTENT content from UO_OP_DAILY_DETAIL where head_id = #{headId}
+    </select>
+
+    <update id="updatePushOrderPeriod">
+        update UO_OP_DAILY_DETAIL
+            <if test="pushOrderPeriod != ''">
+                set PUSH_ORDER_PERIOD = #{pushOrderPeriod}
+            </if>
+            <if test="pushOrderPeriod == ''">
+                set PUSH_ORDER_PERIOD = ORDER_PERIOD
+            </if>
+    </update>
 </mapper>

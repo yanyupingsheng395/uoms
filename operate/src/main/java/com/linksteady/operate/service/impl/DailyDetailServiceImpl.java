@@ -7,7 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+import java.util.Map;
+
 /**
  * 群组用户
  * @author hxcao
@@ -118,5 +122,21 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     public int getDataListCount(String headId, String userValue, String pathActive, String status) {
         String whereInfo = getWhereInfo(userValue, pathActive, status);
         return dailyDetailMapper.getDataListCount(headId, whereInfo);
+    }
+
+    /**
+     * 获取headId对应的短信内容列表
+     * @param headId
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> getContentList(String headId) {
+        return dailyDetailMapper.getContentList(headId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updatePushOrderPeriod(String headId, String pushOrderPeriod) {
+        dailyDetailMapper.updatePushOrderPeriod(headId, pushOrderPeriod);
     }
 }

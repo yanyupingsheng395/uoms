@@ -15,6 +15,7 @@ public interface DailyDetailMapper {
 
     /**
      * 每日运营明细分页查询
+     *
      * @param start
      * @param end
      * @param headId
@@ -26,6 +27,7 @@ public interface DailyDetailMapper {
 
     /**
      * 根据活跃度和价值获取当前head_ID下符合条件的记录数
+     *
      * @param headId
      * @param userValue
      * @param pathActive
@@ -35,6 +37,7 @@ public interface DailyDetailMapper {
 
     /**
      * 每日运营策略分页
+     *
      * @param start
      * @param end
      * @param headId
@@ -44,6 +47,7 @@ public interface DailyDetailMapper {
 
     /**
      * 每日运营策略记录数
+     *
      * @param headId
      * @return
      */
@@ -53,6 +57,7 @@ public interface DailyDetailMapper {
 
     /**
      * 根据条件获取每日运营明细的记录数
+     *
      * @param headId
      * @param whereInfo
      * @return
@@ -62,10 +67,27 @@ public interface DailyDetailMapper {
 
     /**
      * 获取短信列表信息
+     *
      * @param headId
      * @return
      */
     List<SmsInfo> findSmsInfoByHeadId(String headId);
+
+    /**
+     * 获取短信列表
+     *
+     * @param headId
+     * @return
+     */
+    List<Map<String, Object>> getContentList(String headId);
+
+    /**
+     * 更新短信推送时段
+     *
+     * @param headId
+     * @param pushOrderPeriod
+     */
+    void updatePushOrderPeriod(String headId, String pushOrderPeriod);
 
 //    int findCountByPushStatus(String headId);
 }

@@ -7,12 +7,15 @@ function submitData() {
         title: "<i class='mdi mdi-alert-outline'></i>提示：",
         content: "确定启动推送群组?"
     }, function () {
-        $.get("/daily/submitData", {headId: headId}, function (r) {
-            if(r.code === 200) {
+        $.get("/daily/submitData", {
+            headId: headId, pushMethod: $("input[name='pushMethod']:checked").val(),
+            pushPeriod: $("#pushPeriod").find("option:selected").val()
+        }, function (r) {
+            if (r.code === 200) {
                 $MB.n_success("启动推送成功！");
-            }else {
+            } else {
                 $("#btn_push").attr("disabled", false);
-                $MB.n_warning("数据已被其它用户修改，请查看！")
+                $MB.n_danger(r.msg);
             }
             setTimeout(function () {
                 window.location.href = "/page/daily";
@@ -67,18 +70,18 @@ function getUserStrategyList() {
             }, {
                 field: 'orderPeriod',
                 title: '建议触达时段（时）'
-            },{
+            }, {
                 field: 'couponMin',
                 title: '优惠门槛（元）'
-            },{
+            }, {
                 field: 'couponDeno',
                 title: '优惠面额（元）'
-            },{
+            }, {
                 field: 'smsContent',
                 title: '短信文案',
                 formatter: function (value, row, idx) {
                     let temp = value.substring(0, 20) + "...";
-                    return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">'+temp+'</a>';
+                    return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
                 }
             }
         ]],
@@ -89,3 +92,23 @@ function getUserStrategyList() {
     $('#userStrategyListTable').bootstrapTable('destroy');
     $MB.initTable('userStrategyListTable', settings);
 }
+
+$("#push_msg_modal").on('shown.bs.modal', function () {
+    $.get("/daily/getPushInfo", {}, function (r) {
+        let code = "";
+        r.data['timeList'].forEach((v, k) => {
+            code += "<option value='" + v + "'>" + v + "</option>";
+        });
+        $("#pushPeriod").html('').append(code);
+        $('input[name="pushMethod"]').removeAttr("checked");
+        $('input[name="pushMethod"][value="' + r.data.method + '"]').prop("checked", true);
+    });
+});
+
+$('input[name="pushMethod"]').click(function () {
+    if($(this).val() == "FIXED") {
+        $("#pushPeriodDiv").show();
+    }else {
+        $("#pushPeriodDiv").hide();
+    }
+});
