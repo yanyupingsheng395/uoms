@@ -47,7 +47,7 @@ public class DailyPropertiesController {
         dailyProperties.setStatsDays(dp.getStatsDays());
         dailyProperties.setPushType(dp.getPushType());
         dailyProperties.setOpenAlert(dp.getOpenAlert());
-        dailyProperties.setAlertPhoneNum(dp.getAlertPhoneNum());
+        dailyProperties.setAlertPhone(dp.getAlertPhone());
 
         //更新属性
         dailyPropertiesService.updateProperties(dailyProperties);

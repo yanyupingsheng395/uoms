@@ -35,6 +35,9 @@ public class DailyController {
     @Autowired
     private DailyPushService dailyPushService;
 
+    @Autowired
+    private DailyProperties dailyProperties;
+
     /**
      * 获取任务列表信息
      * @param request
@@ -123,6 +126,10 @@ public class DailyController {
         if(!status.equalsIgnoreCase("todo")) {
             return ResponseBo.error("当前数据状态不支持该操作！");
         }else {
+            //todo 完成短信文案的校验  (是否包含变量，短信长度)
+
+           //todo 完成短信的应触达时段的更新  DailyProperties.pushMethod   推送方式 IMME立即推送 AI智能推送
+
             // 更改状态
             status = "done";
             dailyService.updateStatus(headId, status);

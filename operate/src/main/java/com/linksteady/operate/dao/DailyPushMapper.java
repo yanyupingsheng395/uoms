@@ -48,12 +48,6 @@ public interface DailyPushMapper {
      */
     List<DailyPushInfo> getPrePushUserList(@Param("dailyDetailId") int dailyDetailId,@Param("start") int start,@Param("end") int end);
 
-//    /**
-//     * 更新已推送的消息的状态
-//     * @param list
-//     */
-//    void updateSendMsgStatus(@Param("list") List<SmsInfo> list, String headId);
-
     /**
      * 更新日运营头信息状态为 完成 (当前为done执行中 且 明细表中push_status没有为P状态的，将其status更新为finish 结束)
      */

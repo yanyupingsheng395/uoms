@@ -42,7 +42,32 @@ public class DailyProperties {
  /**
   * 预警手机号码 (暂时不启用)
   */
- private String alertPhoneNum;
+ private String alertPhone;
+
+ /**
+  * 推送方式 IMME立即推送 AI智能推送
+  */
+ private String pushMethod;
+
+ /**
+  * 优惠券领用方式 MANUAL 表示需要手动领取 AUTO表示会自动打入用户账号
+  */
+ private String couponMthod;
+
+ /**
+  * 领券方式 FIX表示固定领券地址 PERSONAL表示个性化领券
+  */
+ private String couponUrlType;
+
+ /**
+  * 券是否需要处理成短链接
+  */
+
+ /**
+  * 短信是否包含产品明细页链接
+  */
+
+
 
 
 }

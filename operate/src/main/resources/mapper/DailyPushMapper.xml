@@ -88,7 +88,7 @@
         WHERE T.HEAD_ID = C.HEAD_ID
           AND C.STATUS = 'done'
           AND T.PUSH_STATUS = 'P'
-          AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
+          AND TO_NUMBER(PUSH_ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
     </select>
 
     <select id="getPrePushUserCount" resultType="int">
@@ -98,7 +98,7 @@
           AND C.STATUS = 'done'
           AND T.PUSH_STATUS = 'P'
           AND T.DAILY_DETAIL_ID&lt;=#{dailyDetailId}
-          AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
+          AND TO_NUMBER(PUSH_ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
     </select>
 
     <select id="getPrePushUserList" resultMap="pushInfoResult">
@@ -116,7 +116,7 @@
                 AND C.STATUS = 'done'
                 AND T.PUSH_STATUS = 'P'
                 AND T.DAILY_DETAIL_ID&lt;=#{dailyDetailId}
-                AND TO_NUMBER(ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
+                AND TO_NUMBER(PUSH_ORDER_PERIOD)&lt;= to_char(sysdate,'hh24')
                 AND ROWNUM &lt;= #{end}
              ) WHERE RN &gt;= #{start}
     </select>
