@@ -195,11 +195,6 @@ public class DailyController {
         return null;
     }
 
-    public static void main(String[] args) {
-        String a = "123";
-        System.out.println(a.substring(0, 30));
-    }
-
     /**
      * 根据headId获取当前记录的状态
      *
