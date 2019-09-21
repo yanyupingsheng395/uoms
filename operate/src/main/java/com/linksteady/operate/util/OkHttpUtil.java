@@ -7,6 +7,17 @@ import java.util.concurrent.TimeUnit;
 
 public class OkHttpUtil {
 
+    private static OkHttpClient okHttpClient;
+
+    static {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(1, TimeUnit.SECONDS)
+                .writeTimeout(2, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .build();
+        okHttpClient = client;
+    }
+
     /**
      * 调用一次get请求
      * @param url
@@ -18,7 +29,7 @@ public class OkHttpUtil {
                 .url(url)
                 .build();
 
-        Call call = buildOkHttpClient().newCall(request);
+        Call call = okHttpClient.newCall(request);
         Response response = call.execute();
         ResponseBody responseBody = response.body();
         return responseBody.string();
