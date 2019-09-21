@@ -54,6 +54,7 @@ function initTable() {
 }
 
 function editSmsContent(groupId, groupName) {
+    $("#groupName").show();
     $("#currentGroupName").text(groupName);
     $("#msg_modal").modal('show');
     smsTemplateTable();
@@ -117,6 +118,7 @@ function setSmsCode() {
 }
 
 function batchUpdateTemplate() {
+    $("#groupName").hide();
     var selected = $("#dailyGroupTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {

@@ -75,14 +75,14 @@
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
-                    <p class="h5" style="font-weight: normal;">当前群组名称：<span id="currentGroupName"></span></p>
+                    <p class="h5" style="font-weight: normal;" id="groupName">当前群组名称：<span id="currentGroupName"></span></p>
                     <table id="smsTemplateTable" class="table table-striped text-nowrap"></table>
                     <input type="hidden" id="currentGroupId"/>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" onclick="setSmsCode()">提交短信模板</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="setSmsCode()">提交短信模板</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
