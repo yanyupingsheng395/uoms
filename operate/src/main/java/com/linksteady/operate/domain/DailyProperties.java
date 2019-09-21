@@ -67,6 +67,11 @@ public class DailyProperties {
   * 短信是否包含产品明细页链接
   */
 
+ /**
+  * 短信内容的长度限制
+  */
+ private int smsLengthLimit=66;
+
 
 
 
