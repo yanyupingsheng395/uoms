@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.net.URLEncoder;
+import java.util.stream.IntStream;
 
 /**
  * 根据长链接生成短链接的服务
@@ -36,5 +37,4 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         }
         return shortUrl;
     }
-
 }

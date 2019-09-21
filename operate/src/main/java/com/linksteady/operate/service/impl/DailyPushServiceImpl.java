@@ -125,6 +125,8 @@ public class DailyPushServiceImpl implements DailyPushService {
 
                     smsContent=smsContent.replace("${PROD}",dailyPushQuery.getRecProdName());
                     smsContent=smsContent.replace("${PROD_URL}",shortUrl);
+                }else {
+                    System.out.println(1);
                 }
             }else
             {

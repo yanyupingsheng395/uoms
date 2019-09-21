@@ -142,7 +142,7 @@ public class DailyController {
 
         // 短信文案的校验  (是否包含变量，短信长度)
         String validResult = smsContentValid(headId);
-        if (null == validResult) {
+        if (null != validResult) {
             return ResponseBo.error(validResult);
         }
         // 推送方式 IMME立即推送 AI智能推送
