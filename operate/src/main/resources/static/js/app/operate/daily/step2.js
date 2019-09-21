@@ -19,6 +19,9 @@ function submitData() {
             } else {
                 $("#btn_push").attr("disabled", false);
                 $MB.n_danger(r.msg);
+                setTimeout(function () {
+                    window.location.href = "/page/daily";
+                }, 5000);
             }
         });
     });

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -158,11 +159,11 @@ public class DailyController {
      */
     private void updateSmsPushMethod(String headId, String method, String period) {
         String pushOrderPeriod = "";
-        if("IMME".equalsIgnoreCase(method)) {
+        if ("IMME".equalsIgnoreCase(method)) {
             pushOrderPeriod = String.valueOf(LocalTime.now().plusMinutes(10).getHour());
         }
 
-        if("FIXED".equalsIgnoreCase(method)) {
+        if ("FIXED".equalsIgnoreCase(method)) {
             pushOrderPeriod = String.valueOf(LocalTime.parse(period, DateTimeFormatter.ofPattern("HH:mm")).getHour());
         }
         // 默认是AI
@@ -171,6 +172,7 @@ public class DailyController {
 
     /**
      * 发送之前校验短信内容
+     *
      * @param headId
      * @return
      */
@@ -183,14 +185,19 @@ public class DailyController {
         List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).contains("$"))
                 .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
         if (0 != lengthIds.size()) {
-
-            return "短信长度超出限制，对应ID为[" + String.join(",", lengthIds) + "]";
+            String msg = String.join(",", lengthIds);
+            return "短信长度超出限制，对应ID为[" + (msg.length() > 30 ? msg.substring(0, 30) + "..." : msg) + "]";
         }
         if (0 != invalidIds.size()) {
-
-            return "短信含未被替换的模板变量，对应ID为[" + String.join(",", invalidIds) + "]";
+            String msg = String.join(",", invalidIds);
+            return "短信含未被替换的模板变量，对应ID为[" + (msg.length() > 30 ? msg.substring(0, 30) + "..." : msg) + "]";
         }
         return null;
+    }
+
+    public static void main(String[] args) {
+        String a = "123";
+        System.out.println(a.substring(0, 30));
     }
 
     /**
@@ -307,6 +314,7 @@ public class DailyController {
 
     /**
      * 获取默认推送方式和定时推送时间
+     *
      * @return
      */
     @GetMapping("/getPushInfo")
