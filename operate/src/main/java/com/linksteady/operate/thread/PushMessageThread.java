@@ -2,6 +2,7 @@ package com.linksteady.operate.thread;
 
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.DailyPushInfo;
+import com.linksteady.operate.push.impl.PushMessageServiceImpl;
 import com.linksteady.operate.service.impl.DailyPushServiceImpl;
 import com.linksteady.operate.util.SpringContextUtils;
 import lombok.SneakyThrows;
@@ -33,6 +34,7 @@ public class PushMessageThread {
             public void run() {
                 DailyPushServiceImpl dailyPushService=(DailyPushServiceImpl) SpringContextUtils.getBean("dailyPushServiceImpl");
                 DailyProperties dailyProperties=(DailyProperties)SpringContextUtils.getBean("dailyProperties");
+                PushMessageServiceImpl pushMessageService=(PushMessageServiceImpl)SpringContextUtils.getBean("pushMessageServiceImpl");
 
                 int size=100;
                 log.info("---------对待发送的推送列表进行监控----------------");
@@ -69,7 +71,7 @@ public class PushMessageThread {
                     {
                         //获取推送列表
                         list=dailyPushService.getPrePushUserList(dailyDetailId,1,count);
-                        dailyPushService.push(list);
+                        pushMessageService.push(list);
                     }else
                     {
                         //分页
@@ -77,7 +79,7 @@ public class PushMessageThread {
                         for(int i=0;i<pageSize;i++)
                         {
                             list=dailyPushService.getPrePushUserList(dailyDetailId,i*size+1,(i+1)*size);
-                            dailyPushService.push(list);
+                            pushMessageService.push(list);
                         }
                     }
 
@@ -95,7 +97,7 @@ public class PushMessageThread {
             }
         });
 
-        pushSmsThread.setName("sendSmsTheread");
+        pushSmsThread.setName("sendMessageTheread");
         pushSmsThread.setDaemon(true);
         pushSmsThread.start();
     }

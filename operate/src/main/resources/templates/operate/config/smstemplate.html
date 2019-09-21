@@ -60,6 +60,9 @@
                                     <a class="btn btn-danger" id="btn_delete" onclick="del()">
                                         <i class="fa fa-close"></i> 删除
                                     </a>
+                                    <a class="btn btn-cyan" id="btn_send" onclick="testSend()">
+                                        <i class="mdi mdi-test-tube"></i> 测试
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -95,7 +98,8 @@
                     <div class="form-group mg-stop">
                         <label class="col-md-4 control-label" for="smsContent">模板内容：</label>
                         <div class="col-md-7 input-group">
-                            <input class="form-control" type="text" id="smsContent" name="smsContent"/>
+                            <textarea class="form-control" id="smsContent" name="example-textarea-input" rows="6" placeholder="模板内容.."></textarea>
+                            <span class="wordwrap"><var id="word">0</var>个字</span>
                         </div>
                     </div>
                 </form>
@@ -108,10 +112,53 @@
     </div>
 </div>
 
+<!--测试-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="send_modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="myLargeModalLabel4">测试发送</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label" for="smsCode1">模板编码：</label>
+                        <div class="col-md-7 input-group">
+                            <input class="form-control" type="text" id="smsCode1" name="smsCode1" readonly/>
+                        </div>
+                    </div>
+
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label" for="phoneNum">手机号：</label>
+                        <div class="col-md-7 input-group">
+                            <input class="form-control" type="text" id="phoneNum" name="phoneNum"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label" for="smsContent1">模板内容：</label>
+                        <div class="col-md-7 input-group">
+                            <textarea class="form-control" id="smsContent1" name="example-textarea-input" rows="6"></textarea>
+                            <span class="wordwrap"><var id="word1">0</var>个字</span>
+                            <small class="help-block" style="color:red">测试发送前请将消息体中的变量替换为实际值，并注意内容长度！</small>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="sendMessage()">测试发送</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 <input id="headerId" type="hidden">
 <script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
 <script data-th-src="@{/js/common/lightyear.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
 <script data-th-src="@{/js/app/operate/config/smsTemplate.js}"></script>
+
 </body>
 </html>

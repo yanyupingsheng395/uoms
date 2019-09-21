@@ -19,4 +19,6 @@ public interface SmsTemplateService {
     int refrenceCount(String smsCode);
 
     void deleteSmsTemplate(String smsCode);
+
+    SmsTemplate getSmsTemplate(String smsCode);
 }

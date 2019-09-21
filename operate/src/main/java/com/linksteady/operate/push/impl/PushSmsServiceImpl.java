@@ -120,4 +120,23 @@ public class PushSmsServiceImpl implements PushMessageService {
 
 
     }
+
+    @Override
+    public int push(String uid, String messageContent) {
+        int result=0;
+        //发送类
+        SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
+        //短信接口
+        Message  message=new Message();
+        message.setMobile(uid);
+        message.setContent(messageContent);
+        //result=sendSms.singleSend(message);
+
+        if(result!=0)
+        {
+            result=-1;
+        }
+
+        return result;
+    }
 }

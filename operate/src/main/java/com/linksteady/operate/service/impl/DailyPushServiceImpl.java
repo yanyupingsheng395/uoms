@@ -37,17 +37,6 @@ public class DailyPushServiceImpl implements DailyPushService {
     @Autowired
     ShortUrlService shortUrlService;
 
-    @Autowired
-    DailyProperties dailyProperties;
-
-    @Autowired
-    PushDefaultServiceImpl pushDefaultService;
-
-    @Autowired
-    PushSmsServiceImpl pushSmsService;
-
-    @Autowired
-    PushWxMessageServiceImpl pushWxMessageService;
 
     /**
      * 生成推送名单列表
@@ -131,18 +120,18 @@ public class DailyPushServiceImpl implements DailyPushService {
                 {
                     longUrl=dailyPushQuery.getCouponUrl();
                     String shortUrl=shortUrlService.produceShortUrl("1",dailyPushQuery.getUserId(),longUrl);
-                    smsContent=smsContent.replace("{CONPON_URL}",shortUrl);
-                    smsContent=smsContent.replace("{CONPON_NAME}",dailyPushQuery.getCouponName());
+                    smsContent=smsContent.replace("${CONPON_URL}",shortUrl);
+                    smsContent=smsContent.replace("${CONPON_NAME}",dailyPushQuery.getCouponName());
 
-                    smsContent=smsContent.replace("{PROD}",dailyPushQuery.getRecProdName());
-                    smsContent=smsContent.replace("{PROD_URL}",shortUrl);
+                    smsContent=smsContent.replace("${PROD}",dailyPushQuery.getRecProdName());
+                    smsContent=smsContent.replace("${PROD_URL}",shortUrl);
                 }
             }else
             {
                 longUrl=dailyPushQuery.getRecLastLongurl();
                 String shortUrl=shortUrlService.produceShortUrl("1",dailyPushQuery.getUserId(),longUrl);
-                smsContent=smsContent.replace("{PROD}",dailyPushQuery.getRecProdName());
-                smsContent=smsContent.replace("{PROD_URL}",shortUrl);
+                smsContent=smsContent.replace("${PROD}",dailyPushQuery.getRecProdName());
+                smsContent=smsContent.replace("${PROD_URL}",shortUrl);
             }
 
             dailyPushInfo.setDailyDetailId(dailyPushQuery.getDailyDetailId());
@@ -226,22 +215,4 @@ public class DailyPushServiceImpl implements DailyPushService {
         dailyPushMapper.updatePushStatInfo();
     }
 
-    @Override
-    public void push(List<DailyPushInfo> list) {
-
-        log.info("当前选择的触达方式为{}，本批次触达人数:{}",dailyProperties.getPushType(),list.size());
-        if("SMS".equals(dailyProperties.getPushType()))
-        {
-            //短信触达
-            pushSmsService.push(list);
-        }else if("WX".equals(dailyProperties.getPushType()))
-        {
-            //微信消息
-            pushWxMessageService.push(list);
-        }else if("NONE".equals(dailyProperties.getPushType()))
-        {
-            //测试，打印
-            pushDefaultService.push(list);
-        }
-    }
 }

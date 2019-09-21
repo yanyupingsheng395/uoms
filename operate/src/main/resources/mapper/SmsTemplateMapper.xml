@@ -16,7 +16,7 @@
          SMS_CODE, SMS_CONTENT
     FROM UO_OP_SMS_TEMPLATE WHERE 1=1
     <if test="smsCode != null and smsCode != ''">
-      SMS_CODE=#{smsCode}
+      AND SMS_CODE=#{smsCode}
     </if>
     ) A  WHERE ROWNUM &lt;=#{endRow}
     ) WHERE RN &gt;=#{startRow}
@@ -34,10 +34,16 @@
   </insert>
 
   <select id="refrenceCount" resultType="int">
-     SELECT COUNT(*) FROM UO_OP_DAILY_TEMPLATE_CONFIG WHERE SMS_CODE=#{smsCode} or PROD_SMS_CDOE=#{smsCode}
+     SELECT COUNT(*) FROM UO_OP_DAILY_TEMPLATE_CONFIG WHERE SMS_CODE=#{smsCode}
   </select>
 
   <delete id="deleteSmsTemplate">
     delete from UO_OP_SMS_TEMPLATE where SMS_CODE=#{smsCode}
   </delete>
+
+  <select id="getSmsTemplate" resultMap="BaseResultMap">
+    SELECT
+        SMS_CODE, SMS_CONTENT
+        FROM UO_OP_SMS_TEMPLATE WHERE SMS_CODE=#{smsCode}
+  </select>
 </mapper>

@@ -32,20 +32,119 @@ $(function () {
         $('#smsTemplateTable').bootstrapTable('refresh');
     });
 
+    statInputNum($("#smsContent"),$("#word"));
+    statInputNum($("#smsContent1"),$("#word1"));
 });
 
-function del() {
-    var smsCode = $("#smsTemplateTable").bootstrapTable('getSelections')[0]["smsCode"];
+/**
+ * 字数统计
+ * @param textArea
+ * @param numItem
+ */
+function statInputNum(textArea,numItem) {
+    curLength = textArea.val().length;
+    numItem.text(curLength);
+    textArea.on('input propertychange', function () {
+        var _value = $(this).val().replace(/\n/gi,"");
+        numItem.text(_value.length);
+    });
+}
 
-    if(null==smsCode||''==smsCode)
+
+/**
+ * 测试推送
+ * @param smsCode
+ */
+function testSend()
+{
+    var selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
+    if(null==selectRows||selectRows.length==0)
     {
         lightyear.loading('hide');
         $MB.n_warning('请选择要删除的模板！');
         return;
     }
 
-    //遮罩层打开
+    var smsCode =selectRows[0]["smsCode"];
+
+    //根据获取到的数据查询
+    $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
+        if (resp.code === 200){
+            //更新测试面板
+            $("#smsCode1").val(resp.data.smsCode);
+            $("#smsContent1").val(resp.data.smsContent);
+
+            var _value = $("#smsContent1").val().replace(/\n/gi,"");
+            $("#word1").text(_value.length);
+
+            $('#send_modal').modal('show');
+        }
+    })
+
+}
+
+function sendMessage()
+{
+    //验证
+    var phoneNum=$('#phoneNum').val();
+    var smsContent= $('#smsContent1').val();
+
+    if(null==phoneNum||phoneNum=='')
+    {
+        $MB.n_warning("手机号不能为空！");
+        return;
+    }
+
+    if(null==smsContent||smsContent=='')
+    {
+        $MB.n_warning("模板内容不能为空！");
+        return;
+    }
+
+    //判断是否含有变量
+    if(smsContent.indexOf("$") >= 0 ) {
+        $MB.n_warning("模板内容的变量请替换为实际值！");
+        return;
+    }
+
+    //提交后端进行发送
     lightyear.loading('show');
+
+    var param = new Object();
+    param.phoneNum=phoneNum;
+    param.smsContent=smsContent;
+
+    $.ajax({
+        url: "/smsTemplate/testSend",
+        data: JSON.stringify(param),
+        type: 'POST',
+        contentType: "application/json;charset=utf-8",
+        success: function (r) {
+            lightyear.loading('hide');
+            if(r.code==200)
+            {
+                $MB.n_success(r.msg);
+            }else
+            {
+                $MB.n_danger(r.msg);
+            }
+
+        }
+    });
+
+
+}
+
+function del() {
+    var selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
+    if(null==selectRows||selectRows.length==0)
+    {
+        lightyear.loading('hide');
+        $MB.n_warning('请选择要删除的模板！');
+        return;
+    }
+
+    var smsCode =selectRows[0]["smsCode"];
 
     //进行删除提示
         $.confirm({
@@ -58,8 +157,8 @@ function del() {
                     action: function(){
                              $.getJSON("/smsTemplate/deleteSmsTemplate?smsCode="+smsCode,function (resp) {
                                     if (resp.code === 200){
-                                        lightyear.loading('hide');
                                         //提示成功
+                                        $MB.n_success('删除成功！');
                                         //刷新表格
                                         $('#smsTemplateTable').bootstrapTable('refresh');
                                     }

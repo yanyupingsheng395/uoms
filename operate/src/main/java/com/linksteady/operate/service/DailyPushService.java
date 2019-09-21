@@ -53,8 +53,4 @@ public interface DailyPushService {
      */
     void updatePushStatInfo();
 
-    /**
-     * 消息推送
-     */
-    void push(List<DailyPushInfo> list);
 }

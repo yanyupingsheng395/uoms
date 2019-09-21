@@ -55,22 +55,29 @@ public class DailyProperties {
  private String couponMthod;
 
  /**
-  * 领券方式 FIX表示固定领券地址 PERSONAL表示个性化领券
-  */
- private String couponUrlType;
-
- /**
   * 券是否需要处理成短链接
   */
+ private String couponUrlToShort;
 
  /**
   * 短信是否包含产品明细页链接
   */
+ private String includeProdUrl;
+
+ /**
+  * 产品明细页是否需要处理成短链接
+  */
+ private String prodUrlToShort;
 
  /**
   * 短信内容的长度限制
   */
  private int smsLengthLimit=66;
+
+ /**
+  * 当前修改用户
+  */
+ private String currentUser;
 
 
 

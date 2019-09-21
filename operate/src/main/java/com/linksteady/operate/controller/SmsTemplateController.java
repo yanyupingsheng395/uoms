@@ -4,6 +4,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.SmsTemplate;
+import com.linksteady.operate.push.impl.PushMessageServiceImpl;
 import com.linksteady.operate.service.SmsTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class SmsTemplateController extends BaseController {
     @Autowired
     SmsTemplateService smsTemplateService;
 
+    @Autowired
+    PushMessageServiceImpl pushMessageService;
+
     /**
      * 获取短信模板
      * @param
@@ -44,7 +48,7 @@ public class SmsTemplateController extends BaseController {
      * 增加短信模板
      */
     @RequestMapping("/addSmsTemplate")
-    public ResponseBo getSpuFilterList(@RequestBody SmsTemplate smsTemplate) {
+    public ResponseBo addSmsTemplate(@RequestBody SmsTemplate smsTemplate) {
            //添加
         try {
             smsTemplateService.saveSmsTemplate(smsTemplate.getSmsCode(),smsTemplate.getSmsContent());
@@ -70,16 +74,30 @@ public class SmsTemplateController extends BaseController {
         return ResponseBo.ok();
     }
 
+    /**
+     * 获取短信模板
+     */
+    @RequestMapping("/getSmsTemplate")
+    public ResponseBo getSmsTemplate(HttpServletRequest request) {
+        String smsCode=request.getParameter("smsCode");
+        return ResponseBo.okWithData("",smsTemplateService.getSmsTemplate(smsCode));
+    }
 
-//    /**
-//     * 删除短信模板
-//     */
-//    @RequestMapping("/test")
-//    public ResponseBo test(HttpServletRequest request) {
-//      //  PushListThread.generatePushList("13");
-//
-//        return ResponseBo.ok(opDailyProperties);
-//    }
+    /**
+     * 发送测试
+     */
+    @RequestMapping("/testSend")
+    public ResponseBo testSend(String phoneNum,String smsContent) {
+        int result=pushMessageService.push(phoneNum,smsContent);
+
+        if (result == 0)
+        {
+            return ResponseBo.ok("测试发送成功！");
+        }else
+        {
+            return ResponseBo.error("测试发送失败！");
+        }
+    }
 
 }
 

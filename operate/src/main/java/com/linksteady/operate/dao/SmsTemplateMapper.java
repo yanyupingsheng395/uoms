@@ -18,4 +18,6 @@ public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
     int refrenceCount(@Param("smsCode") String smsCode);
 
     void deleteSmsTemplate(@Param("smsCode") String smsCode);
+
+    SmsTemplate getSmsTemplate(@Param("smsCode") String smsCode);
 }

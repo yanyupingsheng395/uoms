@@ -37,6 +37,7 @@
                             </div>
                         </div>
                         <form class="form-horizontal" id="config-form" action="" onsubmit="return false;">
+                            <div class="divider text-uppercase">推送设置</div>
                             <div class="form-group">
                                 <label class="col-md-3 control-label">开启推送</label>
                                 <div class="col-md-4">
@@ -68,14 +69,6 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="statsDays">效果统计的天数</label>
-                                <div class="col-md-4">
-                                    <input class="form-control" id="statsDays" name="statsDays">
-                                    <small class="help-block">进行效果统计的有效天数！</small>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
                                 <label class="col-md-3 control-label">触达方式</label>
                                 <div class="controls-box col-md-4">
                                     <label class="lyear-radio radio-inline radio-primary">
@@ -91,6 +84,28 @@
                             </div>
 
                             <div class="form-group">
+                                <label class="col-md-3 control-label">推送方法</label>
+                                <div class="controls-box col-md-4">
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="pushMethod" value="AI" checked><span>智能推送</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="pushMethod" value="IMME"><span>立即推送</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="divider text-uppercase">效果统计</div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="statsDays">效果统计的天数</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="statsDays" name="statsDays">
+                                    <small class="help-block">进行效果统计的有效天数！</small>
+                                </div>
+                            </div>
+
+                            <div class="divider text-uppercase">推送预警</div>
+                            <div class="form-group">
                                 <label class="col-md-3 control-label">开启推送异常预警</label>
                                 <div class="col-md-4">
                                     <label class="lyear-switch switch-solid switch-primary">
@@ -101,10 +116,67 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="alertPhoneNum">推送异常预警手机号</label>
+                                <label class="col-md-3 control-label" for="alertPhone">推送异常预警手机号</label>
                                 <div class="col-md-4">
-                                    <input class="form-control" id="alertPhoneNum" name="alertPhoneNum">
+                                    <input class="form-control" id="alertPhone" name="alertPhone">
                                     <small class="help-block">多个手机号之间用逗号分隔！</small>
+                                </div>
+                            </div>
+
+                            <div class="divider text-uppercase">优惠券</div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">优惠券领用方式</label>
+                                <div class="controls-box col-md-4">
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="couponMthod" value="MANUAL" checked><span>手动领取</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="couponMthod" value="AUTO"><span>自动打入用户卡包</span>
+                                    </label>
+                                    <small class="help-block">如果是手动领取优惠券方式，则务必要在触达消息中包含领券链接！</small>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">领券链接是否需要处理成短链接</label>
+                                <div class="col-md-4">
+                                    <label class="lyear-switch switch-solid switch-primary">
+                                        <input type="checkbox" checked="" id="couponUrlToShort">
+                                        <span></span>
+                                    </label>
+                                    <small class="help-block">此配置项仅针对手动领券方式有效！</small>
+                                </div>
+                            </div>
+
+                            <div class="divider text-uppercase">消息设置</div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">消息中是否包含产品明细页链接</label>
+                                <div class="col-md-4">
+                                    <label class="lyear-switch switch-solid switch-primary">
+                                        <input type="checkbox" checked="" id="includeProdUrl">
+                                        <span></span>
+                                    </label>
+                                    <small class="help-block">如果消息中包含领券页地址，则不可同时包含产品明细页链接！</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">产品明细链接是否需要处理成短链接</label>
+                                <div class="col-md-4">
+                                    <label class="lyear-switch switch-solid switch-primary">
+                                        <input type="checkbox" checked="" id="prodUrlToShort">
+                                        <span></span>
+                                    </label>
+                                    <small class="help-block">此项仅诊断消息中包含产品明细页链接有效！</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="smsLengthLimit">消息长度限制(单位:字)</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" id="smsLengthLimit" name="smsLengthLimit">
+                                    <small class="help-block"></small>
                                 </div>
                             </div>
 

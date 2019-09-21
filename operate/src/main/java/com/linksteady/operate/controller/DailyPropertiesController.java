@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.service.DailyPropertiesService;
@@ -16,7 +17,7 @@ import java.time.DayOfWeek;
  */
 @RestController
 @RequestMapping("/dailyConfig")
-public class DailyPropertiesController {
+public class DailyPropertiesController extends BaseController {
 
     @Autowired
     private DailyPropertiesService dailyPropertiesService;
@@ -49,6 +50,14 @@ public class DailyPropertiesController {
         dailyProperties.setOpenAlert(dp.getOpenAlert());
         dailyProperties.setAlertPhone(dp.getAlertPhone());
 
+        dailyProperties.setPushMethod(dp.getPushMethod());
+        dailyProperties.setCouponMthod(dp.getCouponMthod());
+        dailyProperties.setCouponUrlToShort(dp.getCouponUrlToShort());
+        dailyProperties.setIncludeProdUrl(dp.getIncludeProdUrl());
+        dailyProperties.setProdUrlToShort(dp.getProdUrlToShort());
+        dailyProperties.setSmsLengthLimit(dp.getSmsLengthLimit());
+
+        dailyProperties.setCurrentUser(getCurrentUser().getUsername());
         //更新属性
         dailyPropertiesService.updateProperties(dailyProperties);
 

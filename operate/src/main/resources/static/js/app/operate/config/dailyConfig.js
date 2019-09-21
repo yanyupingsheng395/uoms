@@ -5,7 +5,7 @@ $.validator.addMethod("validateAlertPhone",function(value,element){
 
     if($("#openAlert").prop("checked")==true)
     {
-        if(null==$("#alertPhoneNum").val()||$("#alertPhoneNum").val()=='')
+        if(null==$("#alertPhone").val()||$("#alertPhone").val()=='')
         {
                return false;
         }
@@ -56,12 +56,49 @@ $(function () {
             }
 
             //推送手机号
-            $("#alertPhoneNum").val(data.alertPhoneNum);
+            $("#alertPhone").val(data.alertPhone);
 
             //推送方式
             $("input[name='pushType']").removeProp("checked");
             $("input[name='pushType'][value='"+data.pushType+"']").prop("checked",true);
 
+            //推送方法
+            $("input[name='pushMethod']").removeProp("checked");
+            $("input[name='pushMethod'][value='"+data.pushMethod+"']").prop("checked",true);
+
+            //优惠券领用方式
+            $("input[name='couponMthod']").removeProp("checked");
+            $("input[name='couponMthod'][value='"+data.couponMthod+"']").prop("checked",true);
+
+            //领券链接是否需要处理成短链接
+            if("Y"==data.couponUrlToShort)
+            {
+                $("#couponUrlToShort").prop("checked",true);
+            }else
+            {
+                $("#couponUrlToShort").prop("checked",false);
+            }
+
+            //短信是否包含产品明细页链接
+            if("Y"==data.includeProdUrl)
+            {
+                $("#includeProdUrl").prop("checked",true);
+            }else
+            {
+                $("#includeProdUrl").prop("checked",false);
+            }
+
+            //产品明细链接是否需要处理成短链接
+            if("Y"==data.prodUrlToShort)
+            {
+                $("#prodUrlToShort").prop("checked",true);
+            }else
+            {
+                $("#prodUrlToShort").prop("checked",false);
+            }
+
+            //短信内容的长度限制
+            $("#smsLengthLimit").val(data.smsLengthLimit);
         }
     });
 
@@ -89,6 +126,24 @@ $(function () {
                 v_openAlert='Y';
             }
 
+            var v_couponUrlToShort="N";
+            if($("#couponUrlToShort").prop("checked")==true)
+            {
+                v_couponUrlToShort='Y';
+            }
+
+            var v_includeProdUrl="N";
+            if($("#includeProdUrl").prop("checked")==true)
+            {
+                v_includeProdUrl='Y';
+            }
+
+            var v_prodUrlToShort="N";
+            if($("#prodUrlToShort").prop("checked")==true)
+            {
+                v_prodUrlToShort='Y';
+            }
+
 
             var datas={
                 pushFlag: v_pushFlag,
@@ -96,8 +151,14 @@ $(function () {
                 repeatPushDays:$("#repeatPushDays").val(),
                 statsDays:$("#statsDays").val(),
                 openAlert: v_openAlert,
-                alertPhoneNum:$("#alertPhoneNum").val(),
-                pushType:$("input[name='pushType']:checked").prop("value")
+                alertPhone:$("#alertPhone").val(),
+                pushType:$("input[name='pushType']:checked").prop("value"),
+                pushMethod:$("input[name='pushMethod']:checked").prop("value"),
+                couponMthod:$("input[name='couponMthod']:checked").prop("value"),
+                couponUrlToShort:v_couponUrlToShort,
+                includeProdUrl:v_includeProdUrl,
+                prodUrlToShort:v_prodUrlToShort,
+                smsLengthLimit:$("#smsLengthLimit").val()
             };
 
             $.ajax({
@@ -134,7 +195,11 @@ function validateRule() {
                 required: true,
                 digits:true
             },
-            alertPhoneNum: "validateAlertPhone"
+            alertPhone: "validateAlertPhone",
+            smsLengthLimit: {
+                required: true,
+                digits:true
+            },
         },
         errorPlacement: function (error, element) {
             if (element.is(":checkbox") || element.is(":radio")) {
@@ -151,6 +216,10 @@ function validateRule() {
             statsDays: {
                 required: icon + "效果统计天数不能为空",
                 digits: icon + "效果统计天数必须是数字"
+            },
+            smsLengthLimit: {
+                required: icon + "消息长度限制不能为空",
+                digits: icon + "消息长度限制必须是数字"
             }
         }
     });

@@ -33,4 +33,9 @@ public class PushWxMessageServiceImpl implements PushMessageService {
     public void push(List<DailyPushInfo> list) {
 
     }
+
+    @Override
+    public int push(String uid, String messageContent) {
+        return 0;
+    }
 }
