@@ -8,7 +8,8 @@ function initTable() {
         pagination: true,
         singleSelect: false,
         sidePagination: "server",
-        pageList: [10, 25, 50, 100],
+        pageSize: 25,
+        pageList: [25, 50, 100],
         sortable: true,
         sortOrder: "asc",
         queryParams: function (params) {
