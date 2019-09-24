@@ -26,12 +26,10 @@ let step = steps({
 
 function getTipInfo() {
     $.get("/daily/getTipInfo", {headId: headId}, function (r) {
-        var data = r.data;
+        let data = r.data;
         if(data != null) {
-            var actual = data['ACTUAL'] == null ? data['TOTAL'] : data['ACTUAL'];
             $("#touchDt").html('').append(data['TOUCHDT']);
-            $("#totalNum").html('').append(data['TOTAL']);
-            // $("#optNum").html('').append(actual);
+            $("#totalNum").html('').append(data['TOTAL'] == null ? "0" : data['TOTAL']);
         }
     });
 }

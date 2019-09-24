@@ -7,7 +7,11 @@ String.prototype.endWith=function(str){
         return false;
     return true;
 };
+$(function () {
+    // 获取初始化条件的值
+    getTotalData();
 
+});
 init();
 function init() {
     // 起止日期初始化
@@ -25,6 +29,7 @@ function init() {
     getBrand();
 }
 
+// 获取品牌数据
 function getBrand() {
     var code = "";
     $.get("/useroperator/getBrand", {}, function (r) {
@@ -35,6 +40,7 @@ function getBrand() {
     });
 }
 
+// 获取渠道数据
 function getSource() {
     var code = "<option value=''>所有</option>";
     $.get("/useroperator/getSource", {}, function (r) {
@@ -45,8 +51,9 @@ function getSource() {
     });
 }
 
-load_jsmind();
-function load_jsmind(){
+// 获取概览页的数据
+function getTotalData(){
+    $MB.loadingDesc('show', "正在计算数据中，请稍后...");
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
@@ -64,6 +71,7 @@ function load_jsmind(){
             $("#KPI_JOINRATE").html("").html(resp.data.joinrate);
             $("#KPI_PCNT").html("").html(resp.data.pcnt+"笔");
         }
+        $MB.loadingDesc('hide');
     });
 }
 
@@ -101,11 +109,10 @@ function searchKpiInfo() {
         return;
     }
 
-    lightyear.loading('show');
     var href = $("#navTabs1").find('a[data-toggle="tab"][aria-expanded="true"]').attr("href");
     switch (href) {
         case "#overview":
-            load_jsmind();
+            getTotalData();
             break;
         case "#retention":
             getData();
@@ -156,12 +163,9 @@ function searchKpiInfo() {
             getKpiInfo(kpiType, unit);
             getKpiCalInfo(kpiType);
     }
-    lightyear.loading('hide');
 }
 
 $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-
-    lightyear.loading('show');
     var startDt = $("#startDt").val();
     if(startDt == "") {
         $MB.n_warning("请选择时间！");
@@ -227,13 +231,13 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             $("#selectCondition2").show();
         }
     }
-    lightyear.loading('hide');
 });
 
 /**
  * 获取指标实际值，同环比，去年同期，上一周期值
  */
 function getKpiInfo(kpiType, unit) {
+    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
@@ -262,11 +266,14 @@ function getKpiInfo(kpiType, unit) {
             }
         }
         $("#lastPeriod").text(r.data["lastKpiVal"] == "--" || r.data['lastKpiVal'] == undefined ? '--' : r.data["lastKpiVal"] + unit);
+        $MB.loadingDesc('hide');
     });
 }
 
 
 function kpiChart(kpiType) {
+    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
+
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
@@ -315,10 +322,13 @@ function kpiChart(kpiType) {
         option.grid = {left:'12%'};
         var c = echarts.init(document.getElementById("kpiChart"), 'macarons');
         c.setOption(option);
+
+        $MB.loadingDesc('hide');
     });
 }
 
 function allChart(kpiType) {
+    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
@@ -345,10 +355,12 @@ function allChart(kpiType) {
         option.grid = {left:'12%'};
         var c = echarts.init(document.getElementById("allChart"), 'macarons');
         c.setOption(option);
+        $MB.loadingDesc('hide');
     });
 }
 
 function makeSpAndFpChart(kpiType) {
+    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
@@ -356,6 +368,7 @@ function makeSpAndFpChart(kpiType) {
     $.get("/useroperator/getSpOrFpKpiVal", {kpiType:kpiType,periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
         fpChart(r);
         spChart(r);
+        $MB.loadingDesc('hide');
     });
 }
 
@@ -488,6 +501,7 @@ function spChart(r) {
 }
 
 function getKpiCalInfo(kpiType) {
+    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
@@ -501,6 +515,7 @@ function getKpiCalInfo(kpiType) {
         $("#spContributeRate").html("").html(r.data['spContributeRate']);
         $("#spHb").html("").html(r.data['spHb']);
         $("#spTb").html("").html(r.data['spTb']);
+        $MB.loadingDesc('hide');
     });
 }
 

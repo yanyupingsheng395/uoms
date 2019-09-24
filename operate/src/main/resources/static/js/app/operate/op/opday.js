@@ -36,9 +36,9 @@ $(function () {
         sortOrder: "asc",
         queryParams: function (params) {
             return {
-                pageSize: params.limit,  ////页面大小
+                pageSize: params.limit,
                 pageNum: (params.offset / params.limit) + 1,  //页码
-                sort: params.sort,      //排序列名
+                sort: params.sort,
                 sortOrder: params.order,
                 param: {daywid: $('#touchDate').val(), userActiv: $("#pathActiv").find("option:selected").val(), userValue: $("#userValue").find("option:selected").val()}
             };

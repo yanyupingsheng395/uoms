@@ -1,0 +1,35 @@
+<div class="row" style="margin-top: 12px;">
+    <div class="col-sm-12">
+        <div class="btn-group-sm pull-right" id="toolbar" role="group">
+            <a class="btn btn-primary" id="btn_prev" onclick="step1()">
+                <i class="fa fa-arrow-left"></i> 上一步
+            </a>
+            <button class="btn btn-success" id="btn_push">
+                <i class="fa fa-location-arrow"></i> 启动推送
+            </button>
+            <a class="btn btn-secondary btn-sm" href="/page/member">
+                <i class="fa fa-reply"></i> 返回
+            </a>
+        </div>
+    </div>
+</div>
+<ul id="tabList" class="nav nav-tabs" role="tablist">
+    <li class="active"><a href="#one_n_1_div" id="one_n_1" role="tab" data-toggle="tab">同款满N件送1</a></li>
+    <li><a href="#multi_n_1_div" role="tab" id="multi_n_1" data-toggle="tab">不同款满N件送1</a></li>
+    <li><a href="#one_1_1_div" role="tab" id="one_1_1" data-toggle="tab">同款满1送1</a></li>
+    <li><a href="#single_div" role="tab" id="single" data-toggle="tab">单款满元送赠品</a></li>
+</ul>
+<div id="tabListContent" class="tab-content">
+    <div class="tab-pane fade active in" id="one_n_1_div">
+        <table id="strategyTable1" class="table table-striped text-nowrap"></table>
+    </div>
+    <div class="tab-pane fade" id="multi_n_1_div">
+        <table id="strategyTable2" class="table table-striped text-nowrap"></table>
+    </div>
+    <div class="tab-pane fade" id="one_1_1_div">
+        <table id="strategyTable3" class="table table-striped text-nowrap"></table>
+    </div>
+    <div class="tab-pane fade" id="single_div">
+        <table id="strategyTable4" class="table table-striped text-nowrap"></table>
+    </div>
+</div>

@@ -14,6 +14,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -146,7 +147,7 @@ public class DailyController {
         if (null != validResult) {
             return ResponseBo.error(validResult);
         }
-        // 推送方式 IMME立即推送 AI智能推送
+        // 推送方式 IMME立即推送 AI智能推送 FIXED固定时间推送
         updateSmsPushMethod(headId, pushMethod, pushPeriod);
         status = "done";
         dailyService.updateStatus(headId, status);
@@ -159,14 +160,16 @@ public class DailyController {
      */
     private void updateSmsPushMethod(String headId, String method, String period) {
         String pushOrderPeriod = "";
+        // 立即推送：当前时间往后顺延10分钟
         if ("IMME".equalsIgnoreCase(method)) {
             pushOrderPeriod = String.valueOf(LocalTime.now().plusMinutes(10).getHour());
         }
 
+        // 固定时间推送：参数获取
         if ("FIXED".equalsIgnoreCase(method)) {
             pushOrderPeriod = String.valueOf(LocalTime.parse(period, DateTimeFormatter.ofPattern("HH:mm")).getHour());
         }
-        // 默认是AI
+        // 默认是AI：plan_push_period = order_period
         dailyDetailService.updatePushOrderPeriod(headId, pushOrderPeriod);
     }
 
@@ -264,7 +267,6 @@ public class DailyController {
             e.printStackTrace();
             return ResponseBo.error("策略生成错误，请检查配置！");
         }
-
     }
 
     /**

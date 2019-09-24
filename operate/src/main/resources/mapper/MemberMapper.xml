@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.MemberMapper">
+    <resultMap id="headMap" type="com.linksteady.operate.domain.MemberHead">
+        <result column="HEAD_ID" property="headId" jdbcType="DECIMAL"></result>
+        <result column="USER_COUNT" property="userCount" jdbcType="DECIMAL"></result>
+        <result column="MEMBER_DATE" property="memberDate" jdbcType="DATE"></result>
+        <result column="MEMBER_DATE_STR" property="memberDateStr" jdbcType="VARCHAR"></result>
+        <result column="CONVERT_USER_COUNT" property="convertUserCount" jdbcType="DECIMAL"></result>
+        <result column="CONVERT_RATE" property="convertRate" jdbcType="DECIMAL"></result>
+        <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"></result>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <resultMap id="detailMap" type="com.linksteady.operate.domain.MemberDetail">
+        <result column="DETAIL_ID" jdbcType="DECIMAL" property="detailId"></result>
+        <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"></result>
+        <result column="TARGET_SPU" jdbcType="VARCHAR" property="targetSpu"></result>
+        <result column="SPU_BUY_TIME" jdbcType="VARCHAR" property="spuBuyTime"></result>
+        <result column="TARGET_PRODUCT" jdbcType="VARCHAR" property="targetProduct"></result>
+        <result column="TARGET_PRODUCT_NUM" jdbcType="DECIMAL" property="targetProductNum"></result>
+        <result column="GROWTH_DAY" jdbcType="DECIMAL" property="growthDay"></result>
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
+        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
+        <result column="BRAND_DEEP" jdbcType="VARCHAR" property="brandDeep"></result>
+        <result column="JOIN_RATE" jdbcType="VARCHAR" property="joinRate"></result>
+    </resultMap>
+
+    <resultMap id="strategyMap" type="com.linksteady.operate.domain.MemberStrategy">
+        <result column="HEAD_ID" property="headId" jdbcType="DECIMAL"></result>
+        <result column="PRODUCE_TYPE" property="produceType" jdbcType="VARCHAR"></result>
+        <result column="USER_COUNT" property="userCount" jdbcType="DECIMAL"></result>
+        <result column="SPU_COUNT" property="spuCount" jdbcType="DECIMAL"></result>
+        <result column="PRODUCT_COUNT" property="productCount" jdbcType="DECIMAL"></result>
+        <result column="SMS_CONTENT" property="smsContent" jdbcType="VARCHAR"></result>
+        <result column="GIFT_VALUE" property="giftValue" jdbcType="VARCHAR"></result>
+        <result column="REDUCE_FLAG" property="reduceFlag" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="getHeadListPage" resultMap="headMap">
+        select * from (select ROWNUM rn, A.* from (
+          select HEAD_ID, USER_COUNT, to_char(MEMBER_DATE, 'YYYYMM') MEMBER_DATE_STR, CONVERT_USER_COUNT, CONVERT_RATE, CONVERT_AMOUNT, STATUS from UO_OP_MEMBER_HEAD
+          where 1=1
+          <if test="memberDate != null and memberDate != ''">
+              and to_char(MEMBER_DATE, 'YYYY-MM') = #{memberDate}
+          </if>
+        ) A where ROWNUM &lt;= #{end}) where rn &gt;= #{start}
+    </select>
+
+    <select id="getHeadListCount" resultType="int">
+        select count(1) from UO_OP_MEMBER_HEAD where 1=1
+        <if test="memberDate != null and memberDate != ''">
+            and to_char(MEMBER_DATE, 'YYYY-MM') = #{memberDate}
+        </if>
+    </select>
+
+    <select id="getDetailListPage" resultMap="detailMap">
+        select * from (select ROWNUM rn, A.* from (
+        select DETAIL_ID, HEAD_ID, USER_ID, TARGET_SPU, SPU_BUY_TIME, TARGET_PRODUCT, TARGET_PRODUCT_NUM, GROWTH_DAY, PATH_ACTIVE, USER_VALUE, BRAND_DEEP, JOIN_RATE from UO_OP_MEMBER_DETAIL
+        where HEAD_ID = #{headId}
+        <if test="pathActive != null and pathActive != ''">
+            PATH_ACTIVE = #{pathActive}
+        </if>
+        <if test="userValue != null and userValue != ''">
+            USER_VALUE = #{userValue}
+        </if>
+        <if test="brandDeep != null and brandDeep != ''">
+            BRAND_DEEP = #{brandDeep}
+        </if>
+        <if test="joinRate != null and joinRate != ''">
+            JOIN_RATE = #{joinRate}
+        </if>
+        ) A where ROWNUM &lt;= #{end}) where rn &gt;= #{start}
+    </select>
+
+    <select id="getDetailListCount" resultType="int">
+        select count(1) from UO_OP_MEMBER_DETAIL where HEAD_ID = #{headId}
+        <if test="pathActive != null and pathActive != ''">
+            PATH_ACTIVE = #{pathActive}
+        </if>
+        <if test="userValue != null and userValue != ''">
+            USER_VALUE = #{userValue}
+        </if>
+        <if test="brandDeep != null and brandDeep != ''">
+            BRAND_DEEP = #{brandDeep}
+        </if>
+        <if test="joinRate != null and joinRate != ''">
+            JOIN_RATE = #{joinRate}
+        </if>
+    </select>
+
+    <select id="getTipInfo" resultType="map">
+        select to_char(MEMBER_DATE, 'yyyymm') MEMBER_DATE, USER_COUNT from UO_OP_MEMBER_HEAD where head_id = #{headId}
+    </select>
+
+    <select id="getReduceInfo" resultMap="strategyMap">
+        select head_id, reduce_type, user_count, spu_count, product_count, sms_content, reduce_flag from UO_OP_MEMBER_STRATEGY where HEAD_ID = #{headId}
+        and REDUCE_FLAG = #{reduceFlag}
+    </select>
+</mapper>

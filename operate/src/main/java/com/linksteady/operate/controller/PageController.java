@@ -195,4 +195,25 @@ public class PageController {
     public String userGroup() {
         return "operate/daily/usergroup";
     }
+
+
+    /**
+     * 会员日成长任务列表页
+     * @return
+     */
+    @RequestMapping("/member")
+    public String memberList() {
+        return "operate/member/list";
+    }
+
+
+    /**
+     * 会员日成长任务列表页
+     * @return
+     */
+    @RequestMapping("/member/edit")
+    public String memberEdit(String id, Model model) {
+        model.addAttribute("id", id);
+        return "operate/member/edit";
+    }
 }

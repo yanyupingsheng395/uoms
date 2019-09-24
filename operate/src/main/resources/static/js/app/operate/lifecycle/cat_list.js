@@ -148,7 +148,7 @@ function initTableData() {
                 field: "mdss",
                 title: "操作",
                 formatter: function (value, row, index) {
-                    var val = null;
+                    let val = null;
                     switch (filterType) {
                         case "gmv":
                             val = "gmvCont";

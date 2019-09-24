@@ -53,6 +53,7 @@ function searchData() {
 
 // 获取表格数据
 function getData(idx) {
+    $MB.loadingDesc('show', "正在计算数据中，请稍后...");
     var url = "";
     if(idx == 1) {
         url = "/kpiMonitor/getRetainData";
@@ -79,6 +80,7 @@ function getData(idx) {
         }
         var data = r.data.data;
         initBootstrapTable($table, columns, data, 0, periodType);
+        $MB.loadingDesc('hide');
     });
 }
 
@@ -184,6 +186,7 @@ function getMonthCols(data, percent, type) {
 }
 
 function getData1(idx) {
+    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
     var url = "";
     var type = "";
     if(idx == 1) {
@@ -215,6 +218,7 @@ function getData1(idx) {
         }
         var data = r.data.data;
         initBootstrapTable($table, columns, data, 0, periodType);
+        $MB.loadingDesc('hide');
     });
 }
 

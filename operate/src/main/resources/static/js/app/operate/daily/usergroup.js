@@ -126,7 +126,7 @@ function batchUpdateTemplate() {
         $MB.n_warning('请选择需要编辑模板的组！');
         return;
     }
-    let groupIds = new Array();
+    let groupIds = [];
     selected.forEach((v, k)=>{
         groupIds.push(v.groupId);
     });
