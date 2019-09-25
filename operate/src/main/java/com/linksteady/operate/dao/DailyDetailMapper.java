@@ -1,7 +1,6 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.DailyDetail;
-import com.linksteady.operate.sms.domain.SmsInfo;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
@@ -53,6 +52,7 @@ public interface DailyDetailMapper {
      */
     int getStrategyCount(String headId);
 
+
     List<DailyDetail> getUserEffect(String headId, int start, int end, String whereInfo);
 
     /**
@@ -64,14 +64,6 @@ public interface DailyDetailMapper {
      */
     int getDataListCount(String headId, String whereInfo);
 
-
-    /**
-     * 获取短信列表信息
-     *
-     * @param headId
-     * @return
-     */
-    List<SmsInfo> findSmsInfoByHeadId(String headId);
 
     /**
      * 获取短信列表
@@ -89,5 +81,35 @@ public interface DailyDetailMapper {
      */
     void updatePushOrderPeriod(String headId, String pushOrderPeriod);
 
-//    int findCountByPushStatus(String headId);
+    /**
+     * 将当前每日运营的推送数据复制到推送列表中
+     */
+    void copyToPushList(String headId);
+
+    /**
+     * 获取当前header_id下的用户列表
+     * @param headId
+     * @return
+     */
+    int getUserCount(@Param("headId") String headId);
+
+    /**
+     * 分页获取当header_id下选中的用户名单
+     * @param headId
+     * @param start
+     * @param end
+     * @return
+     */
+    List<DailyDetail> getUserList(@Param("headId") String headId, @Param("start") int start, @Param("end") int end);
+
+    /**
+     * 保存推送的文案信息
+     */
+    void updatePushContent(@Param("list") List<DailyDetail> list);
+
+    /**
+     * 将推送列表中的状态同步回日运营明细表中
+     */
+    void synchPushStatus();
+
 }

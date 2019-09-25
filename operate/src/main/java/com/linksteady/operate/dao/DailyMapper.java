@@ -42,4 +42,14 @@ public interface DailyMapper {
     List<DailyGroupTemplate> getUserGroupListPage(int start, int end);
 
     void setSmsCode(List<String> groupIds, String smsCode);
+
+    /**
+     * 更新日运营头信息状态为 完成 (当前为done执行中 且 明细表中push_status没有为P状态的，将其status更新为finish 结束)
+     */
+    void updateHeaderToFinish();
+
+    /**
+     * 更新头表中推送状态的统计信息
+     */
+    void updateHeaderSendStatis();
 }

@@ -128,4 +128,26 @@
             ${item}
         </foreach>
     </update>
+
+    <update id="updateHeaderToFinish">
+        UPDATE UO_OP_DAILY_HEADER c SET c.STATUS='finished' WHERE c.STATUS='done' AND not exists
+                                                                (
+            select * from UO_OP_DAILY_DETAIL p where p.PUSH_STATUS='P' and p.head_id=c.head_id
+            )
+    </update>
+
+    <update id="updateHeaderSendStatis">
+        update UO_OP_DAILY_HEADER t
+        set (t.plan_num,t.faild_num,t.success_num)=
+            (
+             select
+             SUM(case when c.PUSH_STATUS='P' then 1 else 0 end) plan_num,
+             SUM(case when c.PUSH_STATUS='F' then 1 else 0 end) faild_num,
+             SUM(case when c.PUSH_STATUS='S' then 1 else 0 end) success_num
+             from UO_OP_DAILY_DETAIL c where c.head_id = t.head_id
+            )where
+            trunc(touch_dt)>trunc(sysdate-15) and status in ('done','finished')
+    </update>
+
+
 </mapper>

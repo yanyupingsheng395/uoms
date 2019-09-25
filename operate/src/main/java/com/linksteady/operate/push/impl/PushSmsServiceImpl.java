@@ -1,9 +1,9 @@
 package com.linksteady.operate.push.impl;
 
 import com.google.common.collect.Lists;
-import com.linksteady.operate.dao.DailyPushMapper;
+import com.linksteady.operate.dao.PushListMapper;
 import com.linksteady.operate.domain.DailyProperties;
-import com.linksteady.operate.domain.DailyPushInfo;
+import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.push.PushMessageService;
 import com.linksteady.operate.sms.montnets.config.ConfigManager;
 import com.linksteady.operate.sms.montnets.domain.Message;
@@ -43,12 +43,12 @@ public class PushSmsServiceImpl implements PushMessageService {
     RedisTemplate<String,String> redisTemplate;
 
     @Autowired
-    private DailyPushMapper dailyPushMapper;
+    private PushListMapper pushListMapper;
 
 
 
     @Override
-    public void push(List<DailyPushInfo> list) {
+    public void push(List<PushListInfo> list) {
         //发送类
         SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
         //短信接口
@@ -57,7 +57,7 @@ public class PushSmsServiceImpl implements PushMessageService {
         int result=-1;
 
         //用户的列表
-        List<DailyPushInfo> userlist= Lists.newArrayList();
+        List<PushListInfo> userlist= Lists.newArrayList();
 
         ValueOperations<String,String> operations=redisTemplate.opsForValue();
         //获取防骚扰拦截的时间
@@ -65,21 +65,21 @@ public class PushSmsServiceImpl implements PushMessageService {
 
         boolean repeatFlag=false;
 
-        for(DailyPushInfo dailyPushInfo:list)
+        for(PushListInfo pushListInfo:list)
         {
             repeatFlag=false;
             ////开启了防骚扰拦截
             if("Y".equals(dailyProperties.getRepeatPush()))
             {
-                String value=operations.get("PUSH_"+dailyPushInfo.getUserPhone());
+                String value=operations.get("PUSH_"+pushListInfo.getUserPhone());
                 if(null!=value&&!"".equals(value))
                 {
                     repeatFlag=true;
-                    log.error("用户{}存在被重复触达的风险！！",dailyPushInfo.getUserPhone());
+                    log.error("用户{}存在被重复触达的风险！！",pushListInfo.getUserPhone());
 
-                    dailyPushInfo.setPushStatus("C");
-                    dailyPushInfo.setPushCallbackCode("-1");
-                    dailyPushInfo.setPushDate(new Date());
+                    pushListInfo.setPushStatus("C");
+                    pushListInfo.setCallbackCode("-1");
+                    pushListInfo.setPushDate(new Date());
                 }
             }
 
@@ -87,35 +87,35 @@ public class PushSmsServiceImpl implements PushMessageService {
             {
                 //调用供应商短信接口进行推送
                 message=new Message();
-                message.setMobile(dailyPushInfo.getUserPhone());
-                message.setContent(dailyPushInfo.getSmsContent());
+                message.setMobile(pushListInfo.getUserPhone());
+                message.setContent(pushListInfo.getPushContent());
                 //result=sendSms.singleSend(message);
-                log.info("模拟推送:{}-{}",dailyPushInfo.getUserPhone(),dailyPushInfo.getSmsContent());
+                log.info("模拟推送:{}-{}",pushListInfo.getUserPhone(),pushListInfo.getPushContent());
 
                 if(result==0)
                 {
-                    dailyPushInfo.setPushStatus("S");
+                    pushListInfo.setPushStatus("S");
                 }else
                 {
-                    dailyPushInfo.setPushStatus("F");
+                    pushListInfo.setPushStatus("F");
                 }
-                dailyPushInfo.setPushCallbackCode(String.valueOf(result));
-                dailyPushInfo.setPushDate(new Date());
+                pushListInfo.setCallbackCode(String.valueOf(result));
+                pushListInfo.setPushDate(new Date());
 
                 //如何开启了放骚扰，则需要将推送结果存入redis
                 if("Y".equals(dailyProperties.getRepeatPush()))
                 {
                     //已发送用户存入redis
-                    operations.set("PUSH_"+dailyPushInfo.getUserPhone(),dailyPushInfo.getUserPhone(),timeout);
+                    operations.set("PUSH_"+pushListInfo.getUserPhone(),pushListInfo.getUserPhone(),timeout);
                 }
 
             }
-            userlist.add(dailyPushInfo);
+            userlist.add(pushListInfo);
 
         }
         if(userlist.size()>0)
         {
-            dailyPushMapper.updateSendStatus(userlist);
+            pushListMapper.updateSendStatus(userlist);
         }
 
 

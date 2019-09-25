@@ -15,4 +15,8 @@ public interface DailyEffectMapper {
 
     DailyEffect getKpiStatis(String headId);
 
+    /**
+     * 更新统计表中的触达统计信息
+     */
+    void updatePushStatInfo();
 }
