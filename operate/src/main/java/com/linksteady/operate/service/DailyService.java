@@ -32,7 +32,7 @@ public interface DailyService {
 
     Map<String, Object> getCurrentAndTaskDate(String headId);
 
-    TaskInfo getTaskInfo(String headId);
+  //  TaskInfo getTaskInfo(String headId);
 
     List<DailyGroupTemplate> getUserGroupListPage(int start, int end);
 

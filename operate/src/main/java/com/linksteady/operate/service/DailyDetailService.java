@@ -1,8 +1,6 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.DailyDetail;
-import com.linksteady.operate.sms.domain.TaskInfo;
-import com.linksteady.operate.vo.Echart;
 
 import java.util.List;
 import java.util.Map;
@@ -86,9 +84,21 @@ public interface DailyDetailService {
     void updatePushOrderPeriod(String headId, String pushOrderPeriod);
 
     /**
-     *
+     * copy到推送列表中
      * @param headId
      * @return
      */
-//    int findCountByPushStatus(String headId);
+    void copyToPushList(String headId);
+
+    /**
+     * 生成短信文案
+     * @param headerId
+     */
+    void generatePushList(String headerId);
+
+    /**
+     * 保存文案信息
+     * @param targetList
+     */
+    void updatePushContent( List<DailyDetail> targetList);
 }

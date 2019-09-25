@@ -23,20 +23,23 @@
         <result column="TAR_PRODUCT_NUM" jdbcType="VARCHAR" property="tarProductNum"></result>
         <result column="COUPON_MIN" jdbcType="VARCHAR" property="couponMin"></result>
         <result column="COUPON_DENO" jdbcType="VARCHAR" property="couponDeno"></result>
+        <result column="REC_PROD_ID" jdbcType="VARCHAR" property="recProdId"></result>
         <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"></result>
         <result column="COMPLETE_PURCH" jdbcType="VARCHAR" property="completePurch"></result>
         <result column="TAR_ORDER_PRICE" jdbcType="VARCHAR" property="tarOrderPrice"></result>
+        <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"></result>
+        <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
+        <result column="COUPON_URL" jdbcType="VARCHAR" property="couponUrl"></result>
+        <result column="REC_PROD_LONGURL" jdbcType="VARCHAR" property="recProdLongUrl"></result>
     </resultMap>
 
     <resultMap id="effectResult" type="com.linksteady.operate.domain.DailyDetail">
         <result column="USER_ID" jdbcType="DECIMAL" property="userId"></result>
-        <result column="IS_CHECK" jdbcType="VARCHAR" property="isCheck"></result>
         <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"></result>
         <result column="IS_CONVERSION" jdbcType="VARCHAR" property="isConversion"></result>
         <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
         <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
         <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
-        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="purchProductName"></result>
         <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="piecePrice"></result>
         <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"></result>
         <result column="COUPON_DENOM" jdbcType="VARCHAR" property="couponDenom"></result>
@@ -45,15 +48,6 @@
         <result column="IS_CANCLE" jdbcType="VARCHAR" property="isCancle"></result>
         <result column="TAR_ORDER_PRICE" jdbcType="VARCHAR" property="tarOrderPrice"></result>
         <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"></result>
-    </resultMap>
-
-    <resultMap id="taskInfoMap" type="com.linksteady.operate.sms.domain.SmsInfo">
-        <result column="DAILY_DETAIL_ID" jdbcType="VARCHAR" property="id"></result>
-        <result column="USER_ID" jdbcType="VARCHAR" property="userId"></result>
-        <result column="USER_PHONE" jdbcType="VARCHAR" property="mobile"></result>
-        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="content"></result>
-        <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="touchTime"></result>
-        <result column="PUSH_STATUS" jdbcType="VARCHAR" property="status"></result>
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
@@ -116,10 +110,6 @@
         </if>
     </select>
 
-    <select id="findSmsInfoByHeadId" resultMap="taskInfoMap">
-        select DAILY_DETAIL_ID, USER_ID, USER_PHONE,SMS_CONTENT,ORDER_PERIOD,PUSH_STATUS from UO_OP_DAILY_DETAIL where HEAD_ID = #{headId}
-    </select>
-
     <select id="getContentList" resultType="map">
         select DAILY_DETAIL_ID id, SMS_CONTENT content from UO_OP_DAILY_DETAIL where head_id = #{headId}
     </select>
@@ -132,5 +122,86 @@
             <if test="pushOrderPeriod == ''">
                 set PUSH_ORDER_PERIOD = ORDER_PERIOD
             </if>
+    </update>
+
+    <insert id="copyToPushList">
+        INSERT INTO UO_OP_PUSH_LIST(USER_PHONE,USER_OPENID,PUSH_CONTENT,PUSH_STATUS,SOURCE_CODE,SOURCE_ID,PUSH_PERIOD,IS_PUSH)
+        select USER_PHONE,
+               USER_OPENID,
+               SMS_CONTENT,
+               'P',
+               'D',
+               DAILY_DETAIL_ID,
+               PUSH_ORDER_PERIOD,
+               '0'
+        FROM UO_OP_DAILY_DETAIL C
+        WHERE HEAD_ID = #{headId}
+    </insert>
+
+    <select id="getUserCount" resultType="int">
+        select
+            count(*)
+        FROM  UO_OP_DAILY_HEADER T1,
+              UO_OP_DAILY_DETAIL T2
+        WHERE T1.HEAD_ID=T2.HEAD_ID
+          AND T1.HEAD_ID=#{headId}
+    </select>
+
+    <select id="getUserList" resultMap="baseResult">
+        SELECT *
+        FROM (
+                 select
+                     T1.HEAD_ID,
+                     T2.DAILY_DETAIL_ID,
+                     T2.USER_ID,
+                     T2.USER_PHONE,
+                     T2.USER_OPENID,
+                     SMS.SMS_CONTENT,
+                     T2.REC_PROD_ID,
+                     T2.REC_PROD_NAME,
+                     PT.PROD_LONG_URL REC_LAST_LONGURL,
+                     T2.COUPON_ID,
+                     T2.GROWTH_STRATEGY_ID,
+                     CP.COUPON_NAME,
+                     CP.COUPON_URL,
+                     ROWNUM   RN
+                 FROM UO_OP_DAILY_HEADER T1,
+                      UO_OP_DAILY_DETAIL T2,
+                      UO_OP_DAILY_TEMPLATE_CONFIG T3,
+                      UO_OP_COUPON CP,
+                      UO_OP_SMS_TEMPLATE SMS,
+                      W_PRODUCT PT
+                 WHERE T1.HEAD_ID = T2.HEAD_ID
+                   AND T2.GROUP_ID = T3.GROUP_ID
+                   AND T2.COUPON_ID = CP.COUPON_ID(+)
+                   AND T3.SMS_CODE = SMS.SMS_CODE
+                   AND T2.REC_PROD_ID = PT.PRODUCT_ID
+                   AND T1.HEAD_ID = #{headId}
+                   AND ROWNUM &lt;= #{end}
+             ) WHERE RN &gt;= #{start}
+    </select>
+
+    <update id="updatePushContent">
+        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+            update UO_OP_DAILY_DETAIL
+            <set>
+                SMS_CONTENT=#{item.smsContent}
+            </set>
+            where DAILY_DETAIL_ID=#{item.dailyDetailId}
+        </foreach>
+    </update>
+
+    <update id="synchPushStatus">
+        UPDATE UO_OP_DAILY_DETAIL T
+        SET (T.IS_PUSH, T.PUSH_STATUS, T.PUSH_DATE) =
+            (SELECT T1.IS_PUSH, T1.PUSH_STATUS, T1.PUSH_DATE
+             FROM UO_OP_PUSH_LIST T1
+             WHERE T1.SOURCE_CODE = 'D'
+             AND T1.SOURCE_ID = T.DAILY_DETAIL_ID)
+        WHERE T.HEAD_ID IN (SELECT HEAD_ID
+            FROM UO_OP_DAILY_HEADER
+            WHERE TRUNC(TOUCH_DT) > TRUNC(SYSDATE - 5)
+            AND STATUS IN ('done', 'finished'))
+
     </update>
 </mapper>

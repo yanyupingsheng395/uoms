@@ -1,8 +1,7 @@
 package com.linksteady.operate.thread;
 
-import com.linksteady.operate.domain.DailyPushInfo;
-import com.linksteady.operate.domain.DailyPushQuery;
-import com.linksteady.operate.service.impl.DailyPushServiceImpl;
+import com.linksteady.operate.domain.DailyDetail;
+import com.linksteady.operate.service.impl.DailyDetailServiceImpl;
 import com.linksteady.operate.util.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,17 +30,17 @@ public class TransPushContentThread  implements Callable {
 
     @Override
     public Integer call() {
-        List<DailyPushQuery> list= null;
+        List<DailyDetail> list= null;
         try {
-            DailyPushServiceImpl dailyPushService= (DailyPushServiceImpl) SpringContextUtils.getBean("dailyPushServiceImpl");
+            DailyDetailServiceImpl dailyDetailService= (DailyDetailServiceImpl) SpringContextUtils.getBean("dailyDetailServiceImpl");
             //查询对应的数据，然后进行转换 转换完成后将latch减1
-            list = dailyPushService.getUserList(headerId,start,end);
+            list = dailyDetailService.getUserList(headerId,start,end);
 
             //转换文案
-            List<DailyPushInfo> targetList=dailyPushService.transPushList(list);
+            List<DailyDetail> targetList=dailyDetailService.transPushList(list);
 
             //保存文案
-            dailyPushService.updatePushContent(targetList);
+            dailyDetailService.updatePushContent(targetList);
         } catch (Exception e) {
             //错误日志上报
             log.error("多线程转换日运营文案报错{}",e);

@@ -1,9 +1,9 @@
 package com.linksteady.operate.thread;
 
 import com.linksteady.operate.domain.DailyProperties;
-import com.linksteady.operate.domain.DailyPushInfo;
+import com.linksteady.operate.domain.PushListInfo;
+import com.linksteady.operate.push.impl.PushListServiceImpl;
 import com.linksteady.operate.push.impl.PushMessageServiceImpl;
-import com.linksteady.operate.service.impl.DailyPushServiceImpl;
 import com.linksteady.operate.util.SpringContextUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +32,11 @@ public class PushMessageThread {
         pushSmsThread=new Thread(new Runnable() {
             @Override
             public void run() {
-                DailyPushServiceImpl dailyPushService=(DailyPushServiceImpl) SpringContextUtils.getBean("dailyPushServiceImpl");
+                //获取待推送的消息列表
+                PushListServiceImpl pushListService=(PushListServiceImpl) SpringContextUtils.getBean("pushListServiceImpl");
+                //配置类
                 DailyProperties dailyProperties=(DailyProperties)SpringContextUtils.getBean("dailyProperties");
+                //推送对象
                 PushMessageServiceImpl pushMessageService=(PushMessageServiceImpl)SpringContextUtils.getBean("pushMessageServiceImpl");
 
                 int size=100;
@@ -50,7 +53,6 @@ public class PushMessageThread {
                             e.printStackTrace();
                         }
                         continue;
-
                     }
 
                     //每隔5分钟执行一次
@@ -61,16 +63,16 @@ public class PushMessageThread {
                     }
 
                     log.info("---------开始下一次推送----------------");
-                    //查询 所有头处于doing状态  发送列表处于P 的最大的daily_detail_id (此处是为了防止并发导致的分页不准确)
-                    int dailyDetailId=dailyPushService.getPrePushUserMaxId();
+                    //查询 所有待推送状态 的最大的push_id (此处是为了防止并发导致的分页不准确)
+                    int maxPushId=pushListService.getPendingPushMaxId();
 
-                    //获取所有头处于doing状态  发送列表处于P 且在当前推荐时间段内发送的推送列表 考虑分页
-                    int count=dailyPushService.getPrePushUserCount(dailyDetailId);
-                    List<DailyPushInfo> list=null;
+                    //获取所有当前推荐时间段内发送的推送列表 考虑分页
+                    int count=pushListService.getPendingPushCount(maxPushId);
+                    List<PushListInfo> list=null;
                     if(count<=size)
                     {
                         //获取推送列表
-                        list=dailyPushService.getPrePushUserList(dailyDetailId,1,count);
+                        list=pushListService.getPendingPushList(maxPushId,1,count);
                         pushMessageService.push(list);
                     }else
                     {
@@ -78,20 +80,12 @@ public class PushMessageThread {
                         int pageSize=count%size==0?count/size:(count/size+1);
                         for(int i=0;i<pageSize;i++)
                         {
-                            list=dailyPushService.getPrePushUserList(dailyDetailId,i*size+1,(i+1)*size);
+                            list=pushListService.getPendingPushList(maxPushId,i*size+1,(i+1)*size);
                             pushMessageService.push(list);
                         }
                     }
-
-                    //更新主记录的状态 (对于已全部完成发送的更改头表状态为finish 已结束)
-                    dailyPushService.updateHeaderToFinish();
-
-                    //对最近15日的触达情况进行汇总、更新
-                    dailyPushService.updateHeaderSendStatis();
-
-                    //对最近15日的数据统计触达率、触达人数、损失率
-                    dailyPushService.updatePushStatInfo();
-
+                    //更新这一批数据的IS_PUSH字段
+                    pushListService.updateIsPush(maxPushId);
                     log.info("---------推送结束，持续对待发送的短信列表进行监控----------------");
                 }
             }

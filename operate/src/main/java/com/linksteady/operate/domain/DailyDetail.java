@@ -50,11 +50,6 @@ public class DailyDetail {
     private String joinRate;
 
     /**
-     * 购买品类种数
-     */
-    private String purchTypeNum;
-
-    /**
      * 建议触达时段
      */
     private String orderPeriod;
@@ -65,54 +60,9 @@ public class DailyDetail {
     private String referDeno;
 
     /**
-     * 建议折扣优惠力度
-     */
-    private String discountLevel;
-
-    /**
-     * 购买商品名称
-     */
-    private String purchProductName;
-
-    /**
-     * 购买商品次数
-     */
-    private String purchTimes;
-
-    /**
-     * 订单价
-     */
-    private String orderPrice;
-
-    /**
      * 完成购买
      */
     private String completePurch;
-
-    /**
-     * 紧迫度
-     */
-    private String urgencyLevel;
-
-    /**
-     * 留存推荐商品名称
-     */
-    private String recRetentionName;
-
-    /**
-     * 向上推荐商品名称
-     */
-    private String recUpName;
-
-    /**
-     * 交叉推荐商品名称
-     */
-    private String recCrossName;
-
-    /**
-     * 最终推荐商品
-     */
-    private String recLastName;
 
     /**
      * 优惠券ID
@@ -120,14 +70,19 @@ public class DailyDetail {
     private String couponId;
 
     /**
+     * 优惠券名称
+     */
+    private String couponName;
+
+    /**
+     * 优惠券领取URL
+     */
+    private String couponUrl;
+
+    /**
      * 策略模板
      */
     private Long growthStrategyId;
-
-    /**
-     * 组ID
-     */
-    private Long groupId;
 
     /**
      * 优惠券大小
@@ -135,19 +90,9 @@ public class DailyDetail {
     private String couponDenom;
 
     /**
-     * 推荐类型
-     */
-    private String recType;
-
-    /**
      * 所在群组
      */
     private String groupName;
-
-    /**
-     * 是否选中
-     */
-    private String isCheck;
 
     /**
      * 是否触达
@@ -174,11 +119,6 @@ public class DailyDetail {
      */
     private String isCancle;
 
-    /**
-     * 状态
-     */
-    private String status;
-
     private String pushStatus;
 
     private String smsContent;
@@ -197,5 +137,9 @@ public class DailyDetail {
 
     private String tarOrderPrice;
 
+    private String recProdId;
+
     private String recProdName;
+
+    private String recProdLongUrl;
 }

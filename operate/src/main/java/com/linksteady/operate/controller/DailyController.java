@@ -42,9 +42,6 @@ public class DailyController {
     private DailyExecuteService dailyExecuteService;
 
     @Autowired
-    private DailyPushService dailyPushService;
-
-    @Autowired
     private DailyProperties dailyProperties;
 
     /**
@@ -149,6 +146,10 @@ public class DailyController {
         }
         // 推送方式 IMME立即推送 AI智能推送 FIXED固定时间推送
         updateSmsPushMethod(headId, pushMethod, pushPeriod);
+
+        //复制写入待推送列表
+        dailyDetailService.copyToPushList(headId);
+
         status = "done";
         dailyService.updateStatus(headId, status);
         return ResponseBo.ok();
@@ -261,7 +262,7 @@ public class DailyController {
     @GetMapping("/generatePushList")
     public ResponseBo generatePushList(String headId) {
         try {
-            dailyPushService.generatePushList(headId);
+            dailyDetailService.generatePushList(headId);
             return ResponseBo.ok();
         } catch (Exception e) {
             e.printStackTrace();

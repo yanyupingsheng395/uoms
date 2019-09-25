@@ -1,7 +1,7 @@
 package com.linksteady.operate.push.impl;
 
 import com.linksteady.operate.domain.DailyProperties;
-import com.linksteady.operate.domain.DailyPushInfo;
+import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.push.PushMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,40 +24,44 @@ public class PushMessageServiceImpl implements PushMessageService {
     @Autowired
     PushWxMessageServiceImpl pushWxMessageService;
 
+    //短信
+    private static final String PUSH_TYPE_SMS="SMS";
+    //微信
+    private static final String PUSH_TYPE_WX="WX";
+    //测试 打印
+    private static final String PUSH_TYPE_NONE="NONE";
+
     @Override
-    public void push(List<DailyPushInfo> list) {
+    public void push(List<PushListInfo> list) {
         log.info("当前选择的触达方式为{}，本批次触达人数:{}",dailyProperties.getPushType(),list.size());
-        if("SMS".equals(dailyProperties.getPushType()))
-        {
-            //短信触达
-            pushSmsService.push(list);
-        }else if("WX".equals(dailyProperties.getPushType()))
-        {
-            //微信消息
-            pushWxMessageService.push(list);
-        }else if("NONE".equals(dailyProperties.getPushType()))
-        {
-            //测试，打印
-            pushDefaultService.push(list);
-        }
+        PushMessageService PushMessageService=getPushStrategy();
+        PushMessageService.push(list);
     }
 
     @Override
     public int push(String uid, String messageContent) {
-        int result=0;
-        if("SMS".equals(dailyProperties.getPushType()))
+        PushMessageService PushMessageService=getPushStrategy();
+        int result=PushMessageService.push(uid,messageContent);
+
+        return result;
+    }
+
+    private PushMessageService getPushStrategy()
+    {
+        PushMessageService pushMessageService=null;
+        if(PUSH_TYPE_SMS.equals(dailyProperties.getPushType()))
         {
-            //短信触达
-            result=pushSmsService.push(uid,messageContent);
-        }else if("WX".equals(dailyProperties.getPushType()))
+            pushMessageService=pushSmsService;
+        }else if(PUSH_TYPE_WX.equals(dailyProperties.getPushType()))
         {
             //微信消息
-            result=pushWxMessageService.push(uid,messageContent);
-        }else if("NONE".equals(dailyProperties.getPushType()))
+            pushMessageService=pushWxMessageService;
+        }else if(PUSH_TYPE_NONE.equals(dailyProperties.getPushType()))
         {
             //测试，打印
-            result=pushDefaultService.push(uid,messageContent);
+            pushMessageService=pushDefaultService;
         }
-        return result;
+
+        return pushMessageService;
     }
 }

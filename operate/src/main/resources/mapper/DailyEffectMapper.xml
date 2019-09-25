@@ -42,4 +42,17 @@
         where head_id = #{headId}
     </select>
 
+    <!--更新触达人数、触达率、流失率-->
+    <update id="updatePushStatInfo">
+        UPDATE UO_OP_DAILY_STATIS C SET (C.TOUCH_COUNT,C.TOUCH_RATE,C.LOSS_RATE)=(
+                                         SELECT H.SUCCESS_NUM,
+            (CASE WHEN H.TOTAL_NUM=0 THEN 100 ELSE ROUND(H.SUCCESS_NUM/H.TOTAL_NUM*100) END),
+                                         100-(CASE WHEN H.TOTAL_NUM=0 THEN 100 ELSE ROUND(H.SUCCESS_NUM/H.TOTAL_NUM*100) END )
+                                         FROM UO_OP_DAILY_HEADER H WHERE H.HEAD_ID=C.HEAD_ID
+            ) WHERE C.HEAD_ID IN
+                  (
+            SELECT HEAD_ID FROM UO_OP_DAILY_HEADER where trunc(touch_dt)>trunc(sysdate-15) and status in ('done','finished')
+            )
+    </update>
+
 </mapper>
