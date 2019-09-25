@@ -188,10 +188,10 @@ public class DailyController {
         List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).contains("$"))
                 .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
         if (0 != lengthIds.size()) {
-            return "短信长度超出限制，共：" + totalSize + "条，不合法：" + lengthIds.size() + "条";
+            return "短信长度超出限制，共：" + totalSize + "条，不符合规范：" + lengthIds.size() + "条";
         }
         if (0 != invalidIds.size()) {
-            return "短信含未被替换的模板变量，共：" + totalSize + "条，不合法：" + invalidIds.size() + "条";
+            return "短信含未被替换的模板变量，共：" + totalSize + "条，不符合规范：" + invalidIds.size() + "条";
         }
         return null;
     }
