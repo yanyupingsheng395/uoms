@@ -280,4 +280,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     {
         dailyDetailMapper.updatePushContent(targetList);
     }
+
+
 }

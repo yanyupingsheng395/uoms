@@ -25,6 +25,7 @@
         <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode"></result>
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
         <result column="IS_COUPON" jdbcType="VARCHAR" property="isCoupon"></result>
+        <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
@@ -110,9 +111,14 @@
     <select id="getUserGroupListPage" resultMap="templateResult">
         select * from (
         select t.*, ROWNUM rn from (
-        SELECT GROUP_ID, GROUP_NAME, IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT
-        FROM UO_OP_DAILY_TEMPLATE_CONFIG t1, UO_OP_SMS_TEMPLATE t2
+        SELECT t1.GROUP_ID, GROUP_NAME, IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,
+        LISTAGG(t4.coupon_name, ',') within group (order by t4.coupon_id) coupon_name
+        FROM UO_OP_DAILY_TEMPLATE_CONFIG t1, UO_OP_SMS_TEMPLATE t2,
+        UO_OP_DAILY_GROUP_COUPON t3, UO_OP_COUPON t4
         where t1.SMS_CODE = t2.SMS_CODE(+)
+        and t1.group_id = t3.group_id(+)
+        and t3.coupon_id = t4.coupon_id(+)
+        group by t1.GROUP_ID, GROUP_NAME, IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT
         ORDER BY GROUP_ID asc
         ) t where ROWNUM &lt;= #{end}
         )where rn &gt;= #{start}
@@ -148,6 +154,4 @@
             )where
             trunc(touch_dt)>trunc(sysdate-15) and status in ('done','finished')
     </update>
-
-
 </mapper>

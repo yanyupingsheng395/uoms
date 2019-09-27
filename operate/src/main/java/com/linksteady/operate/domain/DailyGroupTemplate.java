@@ -21,4 +21,14 @@ public class DailyGroupTemplate {
      * 是否包含优惠券
      */
     private String isCoupon;
+
+    /**
+     * N个优惠券的名称
+     */
+    private String couponName;
+
+    /**
+     * N个优惠券的ID
+     */
+    private String couponId;
 }

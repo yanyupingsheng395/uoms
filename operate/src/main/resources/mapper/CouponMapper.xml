@@ -26,4 +26,21 @@
     <select id="getTotalCount" resultType="int">
     select count(1) from UO_OP_COUPON
   </select>
+
+    <select id="getCouponIdsByGroupId" resultType="int">
+        select COUPON_ID from UO_OP_DAILY_GROUP_COUPON where GROUP_ID = #{groupId}
+    </select>
+
+    <delete id="deleteByGroupId">
+        delete from UO_OP_DAILY_GROUP_COUPON where GROUP_ID = #{groupId}
+    </delete>
+
+    <insert id="insertByGroupId">
+        INSERT ALL
+        <foreach item="item" index="index" collection="couponIds">
+            INTO UO_OP_DAILY_GROUP_COUPON (GROUP_ID, COUPON_ID)
+            values(#{groupId}, #{item})
+        </foreach>
+        select 1 from dual
+    </insert>
 </mapper>

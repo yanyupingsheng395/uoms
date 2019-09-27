@@ -9,7 +9,6 @@ import com.linksteady.operate.dao.DailyMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.time.LocalDate;
 
 /**
@@ -47,3 +46,5 @@ public class OpDailyCalculate extends IJobHandler {
         return ResultInfo.success("success");
     }
 }
+
+
