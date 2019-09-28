@@ -12,11 +12,11 @@ $(function () {
         queryParams: function (params) {
             return {
                 pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit )+ 1,  //页码
+                pageNum: (params.offset / params.limit) + 1,  //页码
                 param: {smsCode: $("input[name='smsCode']").val()}
             };
         },
-        columns: [ {
+        columns: [{
             field: 'couponId',
             title: '优惠券编号'
         }, {
@@ -30,12 +30,15 @@ $(function () {
             title: '优惠券名称'
         }, {
             field: 'couponUrl',
-            title: '优惠券领用地址'
+            title: '优惠券领用地址',
+            formatter: function (value, row, index) {
+                return "<a href='" + value + "' style='color: #4d5259;border-bottom: solid 1px #4d5259'>" + value + "</a>";
+            }
         }]
     };
     $MB.initTable('couponTable', settings);
     //为刷新按钮绑定事件
-    $("#btn_refresh").on("click",function () {
+    $("#btn_refresh").on("click", function () {
         $('#couponTable').bootstrapTable('refresh');
     });
 
