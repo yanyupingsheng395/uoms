@@ -29,7 +29,6 @@ public class TransPushContentThread implements Callable {
 
     @Override
     public Integer call() {
-        Long startTime = System.currentTimeMillis();
         List<DailyDetail> list = null;
         try {
             DailyDetailServiceImpl dailyDetailService = (DailyDetailServiceImpl) SpringContextUtils.getBean("dailyDetailServiceImpl");
@@ -47,9 +46,6 @@ public class TransPushContentThread implements Callable {
         } finally {
             latch.countDown();
         }
-        Long endTime = System.currentTimeMillis();
-        log.info(">>>短信文案已生成，耗时：{}", endTime - startTime);
         return list.size();
-
     }
 }

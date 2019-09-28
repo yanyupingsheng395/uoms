@@ -32,6 +32,7 @@ public class PushMessageThread {
         pushSmsThread=new Thread(new Runnable() {
             @Override
             public void run() {
+                Long startTime = System.currentTimeMillis();
                 //获取待推送的消息列表
                 PushListServiceImpl pushListService=(PushListServiceImpl) SpringContextUtils.getBean("pushListServiceImpl");
                 //配置类
@@ -87,6 +88,8 @@ public class PushMessageThread {
                     //更新这一批数据的IS_PUSH字段
                     pushListService.updateIsPush(maxPushId);
                     log.info("---------推送结束，持续对待发送的短信列表进行监控----------------");
+                    Long endTime = System.currentTimeMillis();
+                    log.info(">>>已触达完毕，用户数：{}人，共耗时：{}毫秒", count,endTime-startTime);
                 }
             }
         });

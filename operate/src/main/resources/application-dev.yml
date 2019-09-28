@@ -180,7 +180,7 @@ sys:
     # rememberMe cookie有效时长，默认86400秒，即一天
     cookieTimeout: 86400
     # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-    anonUrl: /api/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo,/login
+    anonUrl: /api/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo,/login,/job/**
     # 登录 url
     loginUrl: http://localhost:9091/login
     # 登录成功后跳转的 url
@@ -195,6 +195,11 @@ sys:
     allowResetPassword: false
     #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
     cookieDomain: localhost
+
+  job:
+    token: LINKSTEADY  #和调度中心通信校验用的token
+    callbackUrl: http://localhost:8084   #回写任务状态的回调地址
+    jobrewriteUrl: http://localhost:8084  #回写任务执行日志的地址
 
 thrift:
   server:

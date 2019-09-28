@@ -161,6 +161,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     @SneakyThrows
     @Transactional(rollbackFor = Exception.class)
     public void generatePushList(String headerId) {
+        Long startTime = System.currentTimeMillis();
         //根据headerID获取当前有多少人需要推送
         int pushUserCount= dailyDetailMapper.getUserCount(headerId);
         int pageSize=100;
@@ -202,8 +203,9 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                 e.printStackTrace();
             }finally {
                 pool.shutdown();
+                Long endTime = System.currentTimeMillis();
+                log.info(">>>短信文案已生成，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
             }
-
         }
     }
 

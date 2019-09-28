@@ -47,7 +47,6 @@ public class PushSmsServiceImpl implements PushMessageService {
 
     @Override
     public void push(List<PushListInfo> list) {
-        Long startTime = System.currentTimeMillis();
         //发送类
         SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
         //短信接口
@@ -116,8 +115,6 @@ public class PushSmsServiceImpl implements PushMessageService {
         {
             pushListMapper.updateSendStatus(userlist);
         }
-        Long endTime = System.currentTimeMillis();
-        log.info(">>>已触达完毕，用户数：{}人，共耗时：{}毫秒", userlist.size(),endTime-startTime);
     }
 
     @Override
