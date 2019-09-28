@@ -161,6 +161,8 @@ function del() {
                                         $MB.n_success('删除成功！');
                                         //刷新表格
                                         $('#smsTemplateTable').bootstrapTable('refresh');
+                                    }else {
+                                        $MB.n_success(resp.msg);
                                     }
                                 })
                     }
