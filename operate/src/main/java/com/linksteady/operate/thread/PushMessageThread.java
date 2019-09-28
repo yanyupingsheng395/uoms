@@ -98,6 +98,4 @@ public class PushMessageThread {
         pushSmsThread.setDaemon(true);
         pushSmsThread.start();
     }
-
-
 }

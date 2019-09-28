@@ -1,5 +1,6 @@
 package com.linksteady.operate.push;
 
+import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.operate.domain.PushListInfo;
 
 import java.util.List;
@@ -28,4 +29,11 @@ public interface PushListService {
      */
     void updateIsPush(int maxPushId);
 
+    /**
+     * 获取分页数据
+     * @return
+     */
+    List<PushListInfo> getPushInfoListPage(int start, int end, String sourceCode, String pushStatus);
+
+    int getTotalCount(String sourceCode, String pushStatus);
 }

@@ -199,10 +199,10 @@
 //        // 由于是阻塞获取结果，导致main线程阻塞，故通过线程池完成提交任务。
 //        threadPool.submit(()->{
 //            if (SEND_TYPE_SINGLE.equalsIgnoreCase(sendType)) {
-//                log.info(">>>正在使用单条推送方式推送短信.");
+//                push.info(">>>正在使用单条推送方式推送短信.");
 //                tmpMap.entrySet().stream().forEach(x -> {
 //                    List<SmsInfo> tmpList = x.getValue();
-//                    log.info(">>>正在推送{}个用户。", tmpList.size());
+//                    push.info(">>>正在推送{}个用户。", tmpList.size());
 //                    final ScheduledFuture<List<SmsInfo>> schedule = scheduledThreadPool.schedule(() -> {
 //                        tmpList.stream().forEach(v -> {
 //                            Message message = new Message();
@@ -215,12 +215,12 @@
 //                    }, getDelay(Integer.valueOf(x.getKey())), TimeUnit.MINUTES);
 //                    try {
 //                        final List<SmsInfo> smsInfoList = schedule.get();
-//                        log.info(">>>推送完毕[{}:00]的用户。", LocalTime.now().format(DateTimeFormatter.ofPattern("HH")));
+//                        push.info(">>>推送完毕[{}:00]的用户。", LocalTime.now().format(DateTimeFormatter.ofPattern("HH")));
 //                        updateSmsInfoStatus(smsInfoList, taskId);
 //                    } catch (InterruptedException e) {
-//                        log.error(">>>推送用户短信发生异常", e);
+//                        push.error(">>>推送用户短信发生异常", e);
 //                    } catch (ExecutionException e) {
-//                        log.error(">>>推送用户短信发生异常", e);
+//                        push.error(">>>推送用户短信发生异常", e);
 //                    }
 //                    // todo future.get() 到list数据进行smsInfo和taskInfo字段的更新
 //                });
@@ -248,7 +248,7 @@
 //            }
 //
 //            if (SEND_TYPE_MULTI.equalsIgnoreCase(sendType)) {
-//                log.info(">>>使用MULTI方式发送短信.");
+//                push.info(">>>使用MULTI方式发送短信.");
 //                tmpMap.entrySet().stream().forEach(x -> {
 //                    List<MultiMt> multiMts = Lists.newArrayList();
 //                    x.getValue().stream().forEach(v -> {
@@ -296,8 +296,8 @@
 //     * @param taskId
 //     */
 //    private void updateSmsInfoStatus(List<SmsInfo> smsInfos, String taskId) {
-//        log.info("正在更新短信发送状态...");
+//        push.info("正在更新短信发送状态...");
 //        dailyPushMapper.updateSendMsgStatus(smsInfos, taskId);
-//        log.info("短信发送状态更新完毕.");
+//        push.info("短信发送状态更新完毕.");
 //    }
 //}

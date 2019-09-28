@@ -29,7 +29,7 @@ public class LogController extends BaseController {
     private LogService logService;
 
     @RequestMapping("log")
-    @RequiresPermissions("log:list")
+    @RequiresPermissions("push:list")
     public String index() {
         return "system/log/log";
     }
@@ -43,7 +43,7 @@ public class LogController extends BaseController {
         return getDataTable(pageInfo);
     }
 
-    @RequiresPermissions("log:delete")
+    @RequiresPermissions("push:delete")
     @RequestMapping("log/delete")
     @ResponseBody
     public ResponseBo deleteLogs(String ids) {

@@ -1,9 +1,9 @@
 var ctx = "/";
 $(function () {
     setUsername();
-    var $logTableForm = $(".log-table-form");
+    var $logTableForm = $(".push-table-form");
     var settings = {
-        url: ctx + "log/list",
+        url: ctx + "push/list",
         pageSize: 10,
         singleSelect: true,
         queryParams: function (params) {
@@ -58,7 +58,7 @@ function searchLog() {
 }
 
 function refreshLog() {
-    $(".log-table-form")[0].reset();
+    $(".push-table-form")[0].reset();
     searchLog();
 }
 
@@ -79,7 +79,7 @@ function deleteLogs() {
         title: "<i class='mdi mdi-alert-circle-outline'></i>提示：",
         content: "确定删除选中的日志？"
     }, function () {
-        $.post(ctx + 'log/delete', {"ids": ids}, function (r) {
+        $.post(ctx + 'push/delete', {"ids": ids}, function (r) {
             if (r.code === 0) {
                 $MB.n_success(r.msg);
                 refreshLog();
@@ -91,7 +91,7 @@ function deleteLogs() {
 }
 
 function exportLogExcel() {
-    $.post(ctx + "log/excel", $(".log-table-form").serialize(), function (r) {
+    $.post(ctx + "push/excel", $(".push-table-form").serialize(), function (r) {
         if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
@@ -101,7 +101,7 @@ function exportLogExcel() {
 }
 
 function exportLogCsv() {
-    $.post(ctx + "log/csv", $(".log-table-form").serialize(), function (r) {
+    $.post(ctx + "push/csv", $(".push-table-form").serialize(), function (r) {
         if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
