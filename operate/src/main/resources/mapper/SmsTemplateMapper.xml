@@ -37,7 +37,7 @@
   </select>
 
   <insert id="saveSmsTemplate">
-     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE,SMS_CONTENT) VALUES(#{smsCode},#{smsContent})
+     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE,SMS_CONTENT, IS_COUPON) VALUES(#{smsCode},#{smsContent},#{isCoupon})
   </insert>
 
   <select id="refrenceCount" resultType="int">

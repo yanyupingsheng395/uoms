@@ -31,8 +31,8 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     }
 
     @Override
-    public void saveSmsTemplate(String smsCode, String smsContent) {
-        smsTemplateapper.saveSmsTemplate(smsCode, smsContent);
+    public void saveSmsTemplate(String smsCode, String smsContent, String isCoupon) {
+        smsTemplateapper.saveSmsTemplate(smsCode, smsContent, isCoupon);
     }
 
     @Override

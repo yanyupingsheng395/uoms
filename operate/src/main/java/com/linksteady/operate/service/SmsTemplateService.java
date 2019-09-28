@@ -14,7 +14,7 @@ public interface SmsTemplateService {
 
     int getTotalCount(String smsCode, String groupId);
 
-    void saveSmsTemplate(String smsCode,String smsContent);
+    void saveSmsTemplate(String smsCode,String smsContent, String isCoupon);
 
     int refrenceCount(String smsCode);
 

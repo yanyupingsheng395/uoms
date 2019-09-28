@@ -52,7 +52,7 @@ public class SmsTemplateController extends BaseController {
     public ResponseBo addSmsTemplate(@RequestBody SmsTemplate smsTemplate) {
            //添加
         try {
-            smsTemplateService.saveSmsTemplate(smsTemplate.getSmsCode(),smsTemplate.getSmsContent());
+            smsTemplateService.saveSmsTemplate(smsTemplate.getSmsCode(),smsTemplate.getSmsContent(), smsTemplate.getIsCoupon());
             return ResponseBo.ok();
         } catch (Exception e) {
             //失败

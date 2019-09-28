@@ -14,7 +14,7 @@ public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
 
     int getTotalCount(@Param("smsCode") String smsCode, @Param("groupId") String groupId);
 
-    void saveSmsTemplate(@Param("smsCode") String smsCode, @Param("smsContent") String smsContent);
+    void saveSmsTemplate(@Param("smsCode") String smsCode, @Param("smsContent") String smsContent, @Param("isCoupon") String isCoupon);
 
     int refrenceCount(@Param("smsCode") String smsCode);
 

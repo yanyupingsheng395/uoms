@@ -73,5 +73,3 @@ function resetPush() {
 $("#btn_query").click(function () {
     $MB.refreshTable("pushInfoTable");
 });
-
-
