@@ -215,50 +215,33 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      * @return
      */
     @SneakyThrows
-    public List<DailyDetail> transPushList(List<DailyDetail> list)
-    {
-        int  hanleCoupon=0;
+    public List<DailyDetail> transPushList(List<DailyDetail> list) {
+        //  int  hanleCoupon=0;
 
-        List<DailyDetail> targetList= Lists.newArrayList();
-        DailyDetail dailyDetailTemp=null;
+        List<DailyDetail> targetList = Lists.newArrayList();
+        DailyDetail dailyDetailTemp = null;
 
-        for(DailyDetail dailyDetail1:list)
-        {
-            dailyDetailTemp=new DailyDetail();
+        for (DailyDetail dailyDetail1 : list) {
+            dailyDetailTemp = new DailyDetail();
             //文案内容
-            String  smsContent=dailyDetail1.getSmsContent();
-            String longUrl="";
+            String smsContent = dailyDetail1.getSmsContent();
+            String couponUrl = "";
+
+            smsContent = smsContent.replace("${PROD_NAME}", dailyDetail1.getRecProdName());
 
             //含券
-            if(null!=dailyDetail1.getCouponId()&&!"-1".equals(dailyDetail1.getCouponId()))
-            {
-                //券需要用户自行领用
-                if(hanleCoupon==0)
-                {
-                    longUrl=dailyDetail1.getCouponUrl();
-                    String shortUrl=shortUrlService.produceShortUrl("1",dailyDetail1.getUserId(),longUrl);
-                    smsContent=smsContent.replace("${CONPON_URL}",shortUrl);
-                    smsContent=smsContent.replace("${CONPON_NAME}",dailyDetail1.getCouponName());
-
-                    smsContent=smsContent.replace("${PROD}",dailyDetail1.getRecProdName());
-                    smsContent=smsContent.replace("${PROD_URL}",shortUrl);
-                }else {
-                    System.out.println(1);
-                }
-            }else
-            {
-                longUrl=dailyDetail1.getRecProdLongUrl();
-                String shortUrl=shortUrlService.produceShortUrl("1",dailyDetail1.getUserId(),longUrl);
-                smsContent=smsContent.replace("${PROD}",dailyDetail1.getRecProdName());
-                smsContent=smsContent.replace("${PROD_URL}",shortUrl);
+            if (null != dailyDetail1.getCouponId() && !"-1".equals(dailyDetail1.getCouponId())) {
+                couponUrl = dailyDetail1.getCouponUrl();
+                smsContent = smsContent.replace("${COUPON_URL}", couponUrl);
+                smsContent = smsContent.replace("${COUPON_NAME}", dailyDetail1.getCouponName());
             }
-
             dailyDetailTemp.setDailyDetailId(dailyDetail1.getDailyDetailId());
             dailyDetailTemp.setSmsContent(smsContent);
 
             targetList.add(dailyDetailTemp);
-        }
 
+
+        }
         return targetList;
     }
 

@@ -69,7 +69,7 @@ public class SmsTemplateController extends BaseController {
         //判断短信模板是否被引用
         if(smsTemplateService.refrenceCount(smsCode)>0)
         {
-            return ResponseBo.error();
+            return ResponseBo.error("此模板已经被成长组引用，无法删除！");
         }
         smsTemplateService.deleteSmsTemplate(smsCode);
         return ResponseBo.ok();
