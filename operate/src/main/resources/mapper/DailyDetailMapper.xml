@@ -162,7 +162,7 @@
                      PT.PROD_LONG_URL REC_LAST_LONGURL,
                      T2.COUPON_ID,
                      T2.GROWTH_STRATEGY_ID,
-                     CP.COUPON_NAME,
+                     CP.COUPON_DISPLAY_NAME COUPON_NAME,
                      CP.COUPON_URL,
                      ROWNUM   RN
                  FROM UO_OP_DAILY_HEADER T1,
