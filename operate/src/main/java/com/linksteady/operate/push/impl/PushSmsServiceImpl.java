@@ -126,7 +126,7 @@ public class PushSmsServiceImpl implements PushMessageService {
         Message  message=new Message();
         message.setMobile(uid);
         message.setContent(messageContent);
-        //result=sendSms.singleSend(message);
+        result=sendSms.singleSend(message);
 
         if(result!=0)
         {
