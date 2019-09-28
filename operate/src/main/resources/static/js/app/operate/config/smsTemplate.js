@@ -24,6 +24,19 @@ $(function () {
         }, {
             field: 'smsContent',
             title: '模板内容'
+        }, {
+            field: 'isCoupon',
+            title: '是否有券',
+            formatter: function (value, row, index) {
+                let res = "-";
+                if(value == '1') {
+                    res = "是";
+                }
+                if(value == '0') {
+                    res = "否";
+                }
+                return res;
+            }
         }]
     };
     $MB.initTable('smsTemplateTable', settings);
@@ -192,6 +205,7 @@ function saveSmsTemplate()
     //验证
     var smsCode= $('#smsCode').val();
     var smsContent= $('#smsContent').val();
+    var isCoupon = $("input[name='isCoupon']:checked").val();
 
     if(null==smsCode||smsCode=='')
     {
@@ -201,6 +215,11 @@ function saveSmsTemplate()
     if(null==smsContent||smsContent=='')
     {
         alert_str+='模板内容不能为空！';
+    }
+
+    if(null==isCoupon||isCoupon=='')
+    {
+        alert_str+='请选择是否包含优惠券！';
     }
 
     if(null!=alert_str&&alert_str!='')
@@ -223,6 +242,7 @@ function saveSmsTemplate()
                         var param = new Object();
                         param.smsCode=smsCode;
                         param.smsContent=smsContent;
+                        param.isCoupon = isCoupon;
 
                         $.ajax({
                             url: "/smsTemplate/addSmsTemplate",

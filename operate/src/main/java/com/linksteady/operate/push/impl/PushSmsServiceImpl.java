@@ -45,8 +45,6 @@ public class PushSmsServiceImpl implements PushMessageService {
     @Autowired
     private PushListMapper pushListMapper;
 
-
-
     @Override
     public void push(List<PushListInfo> list) {
         //发送类
@@ -89,7 +87,7 @@ public class PushSmsServiceImpl implements PushMessageService {
                 message=new Message();
                 message.setMobile(pushListInfo.getUserPhone());
                 message.setContent(pushListInfo.getPushContent());
-                //result=sendSms.singleSend(message);
+                result=sendSms.singleSend(message);
                 log.info("模拟推送:{}-{}",pushListInfo.getUserPhone(),pushListInfo.getPushContent());
 
                 if(result==0)
@@ -117,8 +115,6 @@ public class PushSmsServiceImpl implements PushMessageService {
         {
             pushListMapper.updateSendStatus(userlist);
         }
-
-
     }
 
     @Override

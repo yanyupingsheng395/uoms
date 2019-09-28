@@ -51,7 +51,7 @@
 //			example.setOrderByClause("dept_id");
 //			return this.selectByExample(example);
 //		} catch (Exception e) {
-//			log.error("获取部门列表失败", e);
+//			push.error("获取部门列表失败", e);
 //			return new ArrayList<>();
 //		}
 //

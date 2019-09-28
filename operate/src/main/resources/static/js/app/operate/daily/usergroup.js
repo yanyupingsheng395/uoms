@@ -31,7 +31,18 @@ function initTable() {
             title: '模板ID'
         }, {
             field: 'smsContent',
-            title: '模板内容'
+            title: '模板内容',
+            formatter: function (value, row, index) {
+                if (value != null && value != undefined) {
+                    let temp = value.length > 20 ? value.substring(0, 20) + "..." : value;
+                    return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                } else {
+                    return '-';
+                }
+            }
+        }, {
+            field: 'couponName',
+            title: '券名称'
         }, {
             field: 'isCoupon',
             title: '是否有券',
@@ -42,30 +53,55 @@ function initTable() {
                 if (value == '0') {
                     return '否';
                 }
-                return '';
+                return '-';
             }
         }, {
-            title: '操作',
+            title: '<i class="fa fa-edit"></i>&nbsp;操作',
             formatter: function (value, row, index) {
-                return '<a onclick="editSmsContent(\'' + row['groupId'] + '\', \'' + row['groupName'] + '\')" style="color: #0f0f0f"><i class="fa fa-edit"></i></a>';
+                let code = "-";
+                if(row['isCoupon'] == '1') {
+                    code = "<div class=\"btn-group\">\n" +
+                        "<button class=\"btn  btn-sm btn-secondary\" onclick='editSmsContent("+row['groupId']+", \""+row['groupName']+"\")'><i class=\"fa fa-envelope-o\"></i></button>\n" +
+                        "<button class=\"btn btn-sm btn-secondary\" onclick='editCoupon("+row['groupId']+", \""+row['groupName']+"\")'><i class=\"fa fa-credit-card\"></i></button>\n" +
+                        "</div>";
+                }
+                if(row['isCoupon'] == '0') {
+                    code = "<div class=\"btn-group\">\n" +
+                        "<button class=\"btn  btn-sm btn-secondary\" onclick='editSmsContent("+row['groupId']+", \""+row['groupName']+"\")'><i class=\"fa fa-envelope-o\"></i></button>\n" +
+                        "</div>";
+                }
+                return code;
             }
-        }]
+        }],
+        onLoadSuccess: function () {
+            $("a[data-toggle='tooltip']").tooltip();
+        }
     };
     $MB.initTable('dailyGroupTable', settings);
 }
 
+// 编辑短信内容
 function editSmsContent(groupId, groupName) {
     $("#groupName").show();
     $("#currentGroupName").text(groupName);
     $("#msg_modal").modal('show');
-    smsTemplateTable();
+    smsTemplateTable(groupId);
     $("#currentGroupId").val(groupId);
+}
+
+// 编辑优惠券
+function editCoupon(groupId, groupName) {
+    $("#couponGroupName").show();
+    $("#currentCouponGroupName").text(groupName);
+    $("#coupon_modal").modal('show');
+    couponTable(groupId);
+    $("#currentCouponGroupId").val(groupId);
 }
 
 /**
  * 获取短信模板列表
  */
-function smsTemplateTable() {
+function smsTemplateTable(groupId) {
     var settings = {
         url: "/smsTemplate/list",
         method: 'post',
@@ -78,9 +114,9 @@ function smsTemplateTable() {
         pageList: [10, 25, 50, 100],
         queryParams: function (params) {
             return {
-                pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit) + 1,  //页码
-                param: {smsCode: $("input[name='smsCode']").val()}
+                pageSize: params.limit,
+                pageNum: (params.offset / params.limit) + 1,
+                param: {groupId: groupId}
             };
         },
         columns: [{
@@ -96,6 +132,49 @@ function smsTemplateTable() {
     };
     $("#smsTemplateTable").bootstrapTable('destroy');
     $MB.initTable('smsTemplateTable', settings);
+}
+
+/**
+ * 获取短信模板列表
+ */
+function couponTable(groupId) {
+    var settings = {
+        url: "/coupon/list",
+        method: 'post',
+        cache: false,
+        pagination: true,
+        singleSelect: false,
+        sidePagination: "server",
+        pageNumber: 1,            //初始化加载第一页，默认第一页
+        pageSize: 25,            //每页的记录行数（*）
+        pageList: [25, 50, 100],
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,
+                pageNum: (params.offset / params.limit) + 1
+            };
+        },
+        columns: [{
+            checkbox: true
+        }, {
+            field: 'couponId',
+            title: 'ID'
+        },{
+            field: 'couponName',
+            title: '优惠券名称'
+        }, {
+            field: 'couponUrl',
+            title: '优惠券URL'
+        }],
+        onLoadSuccess: function () {
+            $.get("/coupon/getCouponIdsByGroupId", {groupId: groupId}, function (r) {
+                let data = r.data;
+                $('#couponTable').bootstrapTable("checkBy",{field: 'couponId', values:data});
+            });
+        }
+    };
+    $("#couponTable").bootstrapTable('destroy');
+    $MB.initTable('couponTable', settings);
 }
 
 function setSmsCode() {
@@ -126,11 +205,46 @@ function batchUpdateTemplate() {
         $MB.n_warning('请选择需要编辑模板的组！');
         return;
     }
+    let isCoupons = [];
     let groupIds = [];
-    selected.forEach((v, k)=>{
+    selected.forEach((v, k) => {
         groupIds.push(v.groupId);
+        isCoupons.push(v.isCoupon);
     });
+
+    if(isCoupons.indexOf('1') > -1 && isCoupons.indexOf('0') > -1) { // 有券
+        $MB.n_warning("同时包含有券无券模板，无法批量操作！");
+        return;
+    }
     $("#currentGroupId").val(groupIds.join(","));
     $("#msg_modal").modal('show');
-    smsTemplateTable();
+    smsTemplateTable(groupIds[0]);
+}
+
+/**
+ * 根据groupId更新优惠券
+ */
+function updateCouponId() {
+    var selected = $("#couponTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择优惠券！');
+        return;
+    }
+
+    let couponId = [];
+    selected.forEach((v, k)=>{
+        couponId.push(v['couponId']);
+    });
+
+    let groupId = $("#currentCouponGroupId").val();
+    $.get('/coupon/updateCouponId', {groupId: groupId, couponId: couponId.join(",")}, function (r) {
+        if (r.code === 200) {
+            $MB.n_success("更改优惠券成功！");
+        } else {
+            $MB.n_danger("更改优惠券失败！发生未知异常！");
+        }
+        $("#coupon_modal").modal('hide');
+        $MB.refreshTable('dailyGroupTable');
+    });
 }

@@ -39,5 +39,15 @@ public class PushListServiceImpl implements PushListService {
         pushListMapper.updateIsPush(maxPushId);
     }
 
+    @Override
+    public List<PushListInfo> getPushInfoListPage(int start, int end, String sourceCode, String pushStatus) {
+        return pushListMapper.getPushInfoListPage(start, end, sourceCode, pushStatus);
+    }
+
+    @Override
+    public int getTotalCount(String sourceCode, String pushStatus) {
+        return pushListMapper.getTotalCount(sourceCode, pushStatus);
+    }
+
 
 }

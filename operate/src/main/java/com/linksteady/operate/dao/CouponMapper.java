@@ -13,4 +13,9 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
 
     int getTotalCount();
 
+    List<Integer> getCouponIdsByGroupId(String groupId);
+
+    void deleteByGroupId(String groupId);
+
+    void insertByGroupId(String groupId, List<String> couponIds);
 }

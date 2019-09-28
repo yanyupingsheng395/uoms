@@ -9,12 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -170,7 +168,7 @@ public class DailyController {
         if ("FIXED".equalsIgnoreCase(method)) {
             pushOrderPeriod = String.valueOf(LocalTime.parse(period, DateTimeFormatter.ofPattern("HH:mm")).getHour());
         }
-        // 默认是AI：plan_push_period = order_period
+        // 默认是AI：plan_push_period = order_period 此时，pushOrderPeriod = ""
         dailyDetailService.updatePushOrderPeriod(headId, pushOrderPeriod);
     }
 
@@ -182,6 +180,7 @@ public class DailyController {
      */
     private String smsContentValid(String headId) {
         List<Map<String, Object>> smsContentList = dailyDetailService.getContentList(headId);
+        int totalSize = smsContentList.size();
         // 短信长度超出限制
         List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).length() > dailyProperties.getSmsLengthLimit())
                 .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
@@ -189,12 +188,10 @@ public class DailyController {
         List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).contains("$"))
                 .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
         if (0 != lengthIds.size()) {
-            String msg = String.join(",", lengthIds);
-            return "短信长度超出限制，对应ID为[" + (msg.length() > 30 ? msg.substring(0, 30) + "..." : msg) + "]";
+            return "短信长度超出限制，共：" + totalSize + "条，不符合规范：" + lengthIds.size() + "条";
         }
         if (0 != invalidIds.size()) {
-            String msg = String.join(",", invalidIds);
-            return "短信含未被替换的模板变量，对应ID为[" + (msg.length() > 30 ? msg.substring(0, 30) + "..." : msg) + "]";
+            return "短信含未被替换的模板变量，共：" + totalSize + "条，不符合规范：" + invalidIds.size() + "条";
         }
         return null;
     }
@@ -304,6 +301,7 @@ public class DailyController {
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
+    @Deprecated
     @GetMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam String groupId, @RequestParam String smsCode) {
         dailyService.setSmsCode(groupId, smsCode);

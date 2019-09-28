@@ -1,11 +1,6 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.DailyProperties;
-import com.linksteady.operate.domain.DailyPushInfo;
-import com.linksteady.operate.domain.DailyPushQuery;
-import io.lettuce.core.dynamic.annotation.Param;
-
-import java.util.List;
 
 public interface DailyPropertiesMapper {
 

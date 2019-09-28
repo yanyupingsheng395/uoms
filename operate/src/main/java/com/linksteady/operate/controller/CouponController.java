@@ -36,5 +36,27 @@ public class CouponController extends BaseController {
         return  ResponseBo.okOverPaging("",totalCount,result);
     }
 
+    /**
+     * 获取某个groupId下的couponIds
+     * @param groupId
+     * @return
+     */
+    @RequestMapping("/getCouponIdsByGroupId")
+    public ResponseBo getCouponIdsByGroupId(String groupId) {
+        List<Integer> ids = couponService.getCouponIdsByGroupId(groupId);
+        return ResponseBo.okWithData(null, ids);
+    }
+
+    /**
+     * 根据组ID更新couponId
+     * @param groupId
+     * @param couponId
+     * @return
+     */
+    @RequestMapping("/updateCouponId")
+    public ResponseBo updateCouponId(String groupId, String couponId) {
+        couponService.updateCouponId(groupId, couponId);
+        return ResponseBo.ok();
+    }
 }
 

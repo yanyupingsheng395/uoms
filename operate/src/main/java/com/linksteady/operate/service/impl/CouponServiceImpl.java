@@ -6,6 +6,7 @@ import com.linksteady.operate.service.CouPonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,4 +28,15 @@ public class CouponServiceImpl implements CouPonService {
         return couponMapper.getTotalCount();
     }
 
+    @Override
+    public List<Integer> getCouponIdsByGroupId(String groupId) {
+        return couponMapper.getCouponIdsByGroupId(groupId);
+    }
+
+    @Override
+    public void updateCouponId(String groupId, String couponId) {
+        couponMapper.deleteByGroupId(groupId);
+        List<String> couponIds = Arrays.asList(couponId.split(","));
+        couponMapper.insertByGroupId(groupId, couponIds);
+    }
 }

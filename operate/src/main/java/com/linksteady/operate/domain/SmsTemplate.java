@@ -19,4 +19,10 @@ public class SmsTemplate {
      */
     @Column(name = "SMS_CONTENT")
     private String smsContent;
+
+    /**
+     * 是否有券
+     */
+    @Column(name = "IS_COUPON")
+    private String isCoupon;
 }

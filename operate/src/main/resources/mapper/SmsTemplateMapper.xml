@@ -7,16 +7,20 @@
     -->
     <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode" />
     <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent" />
+    <result column="IS_COUPON" jdbcType="VARCHAR" property="isCoupon" />
   </resultMap>
 
   <select id="getSmsTemplateList" resultMap="BaseResultMap">
     SELECT * FROM(
     SELECT A.*,ROWNUM RN FROM
       (SELECT
-         SMS_CODE, SMS_CONTENT
+         SMS_CODE, SMS_CONTENT, IS_COUPON
     FROM UO_OP_SMS_TEMPLATE WHERE 1=1
     <if test="smsCode != null and smsCode != ''">
       AND SMS_CODE=#{smsCode}
+    </if>
+    <if test="groupId != null and groupId != ''">
+      AND IS_COUPON = (select IS_COUPON from UO_OP_DAILY_TEMPLATE_CONFIG where group_id = #{groupId})
     </if>
     ) A  WHERE ROWNUM &lt;=#{endRow}
     ) WHERE RN &gt;=#{startRow}
@@ -24,13 +28,16 @@
 
   <select id="getTotalCount" resultType="int">
     select count(1) from UO_OP_SMS_TEMPLATE where 1=1
-    <if test="_parameter != null and _parameter != ''">
-      SMS_CODE=#{_parameter,jdbcType=VARCHAR}
+    <if test="smsCode != null and smsCode != ''">
+      and SMS_CODE=#{smsCode}
+    </if>
+    <if test="groupId != null and groupId != ''">
+      AND IS_COUPON = (select IS_COUPON from UO_OP_DAILY_TEMPLATE_CONFIG where group_id = #{groupId})
     </if>
   </select>
 
   <insert id="saveSmsTemplate">
-     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE,SMS_CONTENT) VALUES(#{smsCode},#{smsContent})
+     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE,SMS_CONTENT, IS_COUPON) VALUES(#{smsCode},#{smsContent},#{isCoupon})
   </insert>
 
   <select id="refrenceCount" resultType="int">

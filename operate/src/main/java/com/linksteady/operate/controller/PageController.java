@@ -216,4 +216,13 @@ public class PageController {
         model.addAttribute("id", id);
         return "operate/member/edit";
     }
+
+    /**
+     * 短信推送列表页
+     * @return
+     */
+    @RequestMapping("/push")
+    public String push() {
+        return "operate/push/list";
+    }
 }

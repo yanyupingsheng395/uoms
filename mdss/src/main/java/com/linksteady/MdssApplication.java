@@ -25,9 +25,7 @@ import java.time.LocalTime;
 public class MdssApplication {
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(MdssApplication.class);
-        app.addListeners(new ApplicationPidFileWriter());
-        ConfigurableApplicationContext context = app.run(args);
+        SpringApplication.run(MdssApplication.class, args);
         log.info("mdss started up successfully at {} {}", LocalDate.now(), LocalTime.now());
     }
 }
