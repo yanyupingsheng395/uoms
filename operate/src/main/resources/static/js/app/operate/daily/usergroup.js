@@ -85,7 +85,7 @@ function editSmsContent(groupId, groupName) {
     $("#groupName").show();
     $("#currentGroupName").text(groupName);
     $("#msg_modal").modal('show');
-    smsTemplateTable();
+    smsTemplateTable(groupId);
     $("#currentGroupId").val(groupId);
 }
 
@@ -101,7 +101,7 @@ function editCoupon(groupId, groupName) {
 /**
  * 获取短信模板列表
  */
-function smsTemplateTable() {
+function smsTemplateTable(groupId) {
     var settings = {
         url: "/smsTemplate/list",
         method: 'post',
@@ -114,9 +114,9 @@ function smsTemplateTable() {
         pageList: [10, 25, 50, 100],
         queryParams: function (params) {
             return {
-                pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit) + 1,  //页码
-                param: {smsCode: $("input[name='smsCode']").val()}
+                pageSize: params.limit,
+                pageNum: (params.offset / params.limit) + 1,
+                param: {groupId: groupId}
             };
         },
         columns: [{
@@ -205,13 +205,20 @@ function batchUpdateTemplate() {
         $MB.n_warning('请选择需要编辑模板的组！');
         return;
     }
+    let isCoupons = [];
     let groupIds = [];
     selected.forEach((v, k) => {
         groupIds.push(v.groupId);
+        isCoupons.push(v.isCoupon);
     });
+
+    if(isCoupons.indexOf('1') > -1 && isCoupons.indexOf('0') > -1) { // 有券
+        $MB.n_warning("同时包含有券无券模板，无法批量操作！");
+        return;
+    }
     $("#currentGroupId").val(groupIds.join(","));
     $("#msg_modal").modal('show');
-    smsTemplateTable();
+    smsTemplateTable(groupIds[0]);
 }
 
 /**

@@ -21,13 +21,13 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     private SmsTemplateMapper smsTemplateapper;
 
     @Override
-    public List<SmsTemplate> getSmsTemplateList(int startRow, int endRow,String smsCode) {
-        return smsTemplateapper.getSmsTemplateList(startRow, endRow,smsCode);
+    public List<SmsTemplate> getSmsTemplateList(int startRow, int endRow,String smsCode, String groupId) {
+        return smsTemplateapper.getSmsTemplateList(startRow, endRow,smsCode, groupId);
     }
 
     @Override
-    public int getTotalCount(String smsCode) {
-        return smsTemplateapper.getTotalCount(smsCode);
+    public int getTotalCount(String smsCode, String groupId) {
+        return smsTemplateapper.getTotalCount(smsCode,groupId);
     }
 
     @Override

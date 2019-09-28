@@ -9,9 +9,10 @@ import java.util.List;
 
 public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
 
-    List<SmsTemplate> getSmsTemplateList(@Param("startRow") int startRow, @Param("endRow") int endRow,@Param("smsCode") String smsCode);
+    List<SmsTemplate> getSmsTemplateList(@Param("startRow") int startRow, @Param("endRow") int endRow,
+                                         @Param("smsCode") String smsCode, @Param("groupId") String groupId);
 
-    int getTotalCount(@Param("smsCode") String smsCode);
+    int getTotalCount(@Param("smsCode") String smsCode, @Param("groupId") String groupId);
 
     void saveSmsTemplate(@Param("smsCode") String smsCode, @Param("smsContent") String smsContent);
 

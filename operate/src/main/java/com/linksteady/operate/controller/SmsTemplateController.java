@@ -38,8 +38,9 @@ public class SmsTemplateController extends BaseController {
     @RequestMapping("/list")
     public ResponseBo smsTemplateList(@RequestBody QueryRequest request) {
         String smsCode = request.getParam().get("smsCode");
-        List<SmsTemplate> result=smsTemplateService.getSmsTemplateList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(),smsCode);
-        int totalCount= smsTemplateService.getTotalCount(smsCode);
+        String groupId = request.getParam().get("groupId");
+        List<SmsTemplate> result=smsTemplateService.getSmsTemplateList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(),smsCode, groupId);
+        int totalCount= smsTemplateService.getTotalCount(smsCode, groupId);
         return  ResponseBo.okOverPaging("",totalCount,result);
     }
 

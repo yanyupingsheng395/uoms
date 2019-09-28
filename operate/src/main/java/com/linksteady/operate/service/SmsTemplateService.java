@@ -10,9 +10,9 @@ import java.util.List;
  */
 public interface SmsTemplateService {
 
-    List<SmsTemplate> getSmsTemplateList(int startRow, int endRow,String smsCode);
+    List<SmsTemplate> getSmsTemplateList(int startRow, int endRow,String smsCode, String groupId);
 
-    int getTotalCount(String smsCode);
+    int getTotalCount(String smsCode, String groupId);
 
     void saveSmsTemplate(String smsCode,String smsContent);
 

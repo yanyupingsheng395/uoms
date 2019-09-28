@@ -24,6 +24,19 @@ $(function () {
         }, {
             field: 'smsContent',
             title: '模板内容'
+        }, {
+            field: 'isCoupon',
+            title: '是否有券',
+            formatter: function (value, row, index) {
+                let res = "-";
+                if(value == '1') {
+                    res = "是";
+                }
+                if(value == '0') {
+                    res = "否";
+                }
+                return res;
+            }
         }]
     };
     $MB.initTable('smsTemplateTable', settings);
