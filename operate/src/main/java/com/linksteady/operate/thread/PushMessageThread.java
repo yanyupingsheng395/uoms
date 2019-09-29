@@ -32,7 +32,7 @@ public class PushMessageThread {
         pushSmsThread=new Thread(new Runnable() {
             @Override
             public void run() {
-                Long startTime = System.currentTimeMillis();
+
                 //获取待推送的消息列表
                 PushListServiceImpl pushListService=(PushListServiceImpl) SpringContextUtils.getBean("pushListServiceImpl");
                 //配置类
@@ -44,6 +44,7 @@ public class PushMessageThread {
                 log.info("---------对待发送的推送列表进行监控----------------");
                 while(true)
                 {
+                    Long startTime = System.currentTimeMillis();
                     if(null!=dailyProperties&&"N".equals(dailyProperties.getPushFlag()))
                     {
                         log.info("----------------推送服务已通过配置停止---------------");
