@@ -123,15 +123,14 @@ function sendMessage()
     //提交后端进行发送
     lightyear.loading('show');
 
-    var param = new Object();
+    let param = new Object();
     param.phoneNum=phoneNum;
     param.smsContent=smsContent;
 
     $.ajax({
         url: "/smsTemplate/testSend",
-        data: JSON.stringify(param),
+        data: param,
         type: 'POST',
-        contentType: "application/json;charset=utf-8",
         success: function (r) {
             lightyear.loading('hide');
             if(r.code==200)
@@ -141,7 +140,6 @@ function sendMessage()
             {
                 $MB.n_danger(r.msg);
             }
-
         }
     });
 
