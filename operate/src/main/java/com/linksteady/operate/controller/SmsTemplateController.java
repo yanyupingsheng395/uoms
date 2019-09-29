@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,7 +89,7 @@ public class SmsTemplateController extends BaseController {
      * 发送测试
      */
     @RequestMapping("/testSend")
-    public ResponseBo testSend(String phoneNum,String smsContent) {
+    public ResponseBo testSend(String phoneNum, String smsContent) {
         int result=pushMessageService.push(phoneNum,smsContent);
 
         if (result == 0)
