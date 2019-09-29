@@ -40,6 +40,8 @@ public class TransPushContentThread implements Callable {
 
             //保存文案
             dailyDetailService.updatePushContent(targetList);
+
+            log.info("{}的第{}-{}调记录处理完成",headerId,start,end);
         } catch (Exception e) {
             //错误日志上报
             log.error("多线程转换日运营文案报错{}", e);

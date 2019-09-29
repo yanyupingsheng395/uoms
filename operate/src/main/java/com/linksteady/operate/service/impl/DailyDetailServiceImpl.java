@@ -193,6 +193,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                     taskList.add(new TransPushContentThread(headerId,i*pageSize+1,(i+1)*pageSize,latch));
                 }
 
+                log.info("转换文案一共需要{}个线程来处理",taskList.size());
                 //放入线程池中
                 pool.invokeAll(taskList);
 
