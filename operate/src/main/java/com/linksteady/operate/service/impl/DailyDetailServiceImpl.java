@@ -164,7 +164,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         Long startTime = System.currentTimeMillis();
         //根据headerID获取当前有多少人需要推送
         int pushUserCount= dailyDetailMapper.getUserCount(headerId);
-        int pageSize=100;
+        int pageSize=200;
         //判断如果条数大于100 则进行分页
         if(pushUserCount<=pageSize)
         {
@@ -179,7 +179,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             ExecutorService pool = null;
             try {
                 //生成线程池 (线程数量为4)
-                pool = new ThreadPoolExecutor(4, 4, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());;
+                pool = new ThreadPoolExecutor(8, 8, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());;
 
                 //分页多线程处理
 
