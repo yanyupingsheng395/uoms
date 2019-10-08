@@ -100,6 +100,5 @@ public class SmsTemplateController extends BaseController {
             return ResponseBo.error("测试发送失败！");
         }
     }
-
 }
 

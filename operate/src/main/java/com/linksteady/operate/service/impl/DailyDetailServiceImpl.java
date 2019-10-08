@@ -240,8 +240,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             dailyDetailTemp.setSmsContent(smsContent);
 
             targetList.add(dailyDetailTemp);
-
-
         }
         return targetList;
     }
@@ -266,6 +264,4 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     {
         dailyDetailMapper.updatePushContent(targetList);
     }
-
-
 }

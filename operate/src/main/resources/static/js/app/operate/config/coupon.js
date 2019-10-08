@@ -32,15 +32,15 @@ $(function () {
             field: 'couponUrl',
             title: '优惠券领用地址',
             formatter: function (value, row, index) {
-                return "<a href='" + value + "' style='color: #4d5259;border-bottom: solid 1px #4d5259'>" + value + "</a>";
+                return "<a href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
             }
         }]
     };
+
     $MB.initTable('couponTable', settings);
     //为刷新按钮绑定事件
     $("#btn_refresh").on("click", function () {
         $('#couponTable').bootstrapTable('refresh');
     });
-
 });
 

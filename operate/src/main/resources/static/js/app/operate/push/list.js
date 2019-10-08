@@ -70,6 +70,11 @@ function resetPush() {
     $MB.refreshTable("pushInfoTable");
 }
 
+/**
+ * 如果使用refresh会导致查询时页码不重置
+ */
 $("#btn_query").click(function () {
-    $MB.refreshTable("pushInfoTable");
+    $("#pushInfoTable").bootstrapTable("destroy");
+    // $MB.refreshTable("pushInfoTable");
+    initTable();
 });

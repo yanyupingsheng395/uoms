@@ -70,7 +70,7 @@ function statInputNum(textArea,numItem) {
  */
 function testSend()
 {
-    var selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
+    let selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
     if(null==selectRows||selectRows.length==0)
     {
         lightyear.loading('hide');
@@ -93,7 +93,6 @@ function testSend()
             $('#send_modal').modal('show');
         }
     })
-
 }
 
 function sendMessage()
@@ -185,9 +184,6 @@ function del() {
         });
 
 }
-
-
-
 
 function add() {
     $('#smsCode').val("");

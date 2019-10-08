@@ -77,7 +77,7 @@
         FROM UO_OP_PUSH_LIST T
         WHERE 1=1
         <if test="pushStatus != null and pushStatus != ''">
-            and T.IS_PUSH = #{pushStatus}
+            and T.PUSH_STATUS = #{pushStatus}
         </if>
         <if test="sourceCode != null and sourceCode != ''">
             and T.SOURCE_CODE = #{sourceCode}
