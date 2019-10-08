@@ -165,7 +165,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         //根据headerID获取当前有多少人需要推送
         int pushUserCount= dailyDetailMapper.getUserCount(headerId);
         int pageSize=200;
-        //判断如果条数大于100 则进行分页
+        //判断如果条数大于200 则进行分页
         if(pushUserCount<=pageSize)
         {
             List<DailyDetail> list = getUserList(headerId,1,pushUserCount);
