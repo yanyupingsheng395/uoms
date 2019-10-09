@@ -33,7 +33,6 @@ public class PushMessageServiceImpl implements PushMessageService {
 
     @Override
     public void push(List<PushListInfo> list) {
-        log.info("当前选择的触达方式为{}，本批次触达人数:{}",dailyProperties.getPushType(),list.size());
         PushMessageService PushMessageService=getPushStrategy();
         PushMessageService.push(list);
     }

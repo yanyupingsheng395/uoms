@@ -153,15 +153,19 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         dailyDetailMapper.copyToPushList(headId);
     }
 
+
     /**
      * 生成推送名单列表
      * @param headerId
+     * @return 1表示生成成功 0表示生成失败
      */
     @Override
     @SneakyThrows
     @Transactional(rollbackFor = Exception.class)
-    public void generatePushList(String headerId) {
+    public String generatePushList(String headerId) {
+        String result="1";
         Long startTime = System.currentTimeMillis();
+
         //根据headerID获取当前有多少人需要推送
         int pushUserCount= dailyDetailMapper.getUserCount(headerId);
         int pageSize=200;
@@ -172,8 +176,10 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             //填充模板 生成文案
             List<DailyDetail> targetList=transPushList(list);
             //保存要推送的文案
-            updatePushContent(targetList);
+            insertPushContentTemp(targetList);
 
+            //用临时表更新 每日运营明细表
+            dailyDetailMapper.updatePushContentFromTemp(headerId);
         }else
         {
             ExecutorService pool = null;
@@ -202,12 +208,17 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             } catch (Exception e) {
                 //错误日志上报
                 e.printStackTrace();
+                result="0";
             }finally {
                 pool.shutdown();
+
+                //用临时表更新 每日运营明细表
+                dailyDetailMapper.updatePushContentFromTemp(headerId);
                 Long endTime = System.currentTimeMillis();
                 log.info(">>>短信文案已生成，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
             }
         }
+        return result;
     }
 
     /**
@@ -217,8 +228,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      */
     @SneakyThrows
     public List<DailyDetail> transPushList(List<DailyDetail> list) {
-        //  int  hanleCoupon=0;
-
         List<DailyDetail> targetList = Lists.newArrayList();
         DailyDetail dailyDetailTemp = null;
 
@@ -238,6 +247,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             }
             dailyDetailTemp.setDailyDetailId(dailyDetail1.getDailyDetailId());
             dailyDetailTemp.setSmsContent(smsContent);
+            dailyDetailTemp.setHeadId(dailyDetail1.getHeadId());
 
             targetList.add(dailyDetailTemp);
         }
@@ -260,8 +270,18 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      * @param targetList
      */
     @Override
-    public void updatePushContent( List<DailyDetail> targetList)
+    public void insertPushContentTemp( List<DailyDetail> targetList)
     {
-        dailyDetailMapper.updatePushContent(targetList);
+        dailyDetailMapper.insertPushContentTemp(targetList);
+    }
+
+    /**
+     * 清空保存文案的临时表
+     */
+    @Override
+    public void deletePushContentTemp(String headerId)
+    {
+        //清空保存文案的临时表
+        dailyDetailMapper.deletePushContentTemp(headerId);
     }
 }

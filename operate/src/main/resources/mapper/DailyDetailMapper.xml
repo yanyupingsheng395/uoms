@@ -181,14 +181,20 @@
              ) WHERE RN &gt;= #{start}
     </select>
 
-    <update id="updatePushContent">
-        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
-            update UO_OP_DAILY_DETAIL
-            <set>
-                SMS_CONTENT=#{item.smsContent}
-            </set>
-            where DAILY_DETAIL_ID=#{item.dailyDetailId}
+    <update id="insertPushContentTemp">
+        insert into UO_OP_DAILY_CONTENT_TMP(daily_detail_id,head_id,sms_content)
+        SELECT A.*
+        FROM(
+        <foreach collection="list" item="item" index="index"
+                 separator="UNION ALL">
+            SELECT
+            #{item.dailyDetailId} dailyDetailId,
+            #{item.headId} headId,
+            #{item.smsContent} smsContent
+            FROM
+            dual
         </foreach>
+        )A
     </update>
 
     <update id="synchPushStatus">
@@ -203,5 +209,18 @@
             WHERE TRUNC(TOUCH_DT) > TRUNC(SYSDATE - 5)
             AND STATUS IN ('done', 'finished'))
 
+    </update>
+
+    <delete id="deletePushContentTemp">
+        delete from UO_OP_DAILY_CONTENT_TMP where head_id=#{headId}
+    </delete>
+
+    <update id="updatePushContentFromTemp">
+        update UO_OP_DAILY_DETAIL set SMS_CONTENT =
+            (select sms_content from UO_OP_DAILY_CONTENT_TMP where UO_OP_DAILY_CONTENT_TMP.daily_detail_id = UO_OP_DAILY_DETAIL.daily_detail_id)
+        where exists
+            (
+                select 1 from UO_OP_DAILY_CONTENT_TMP where UO_OP_DAILY_DETAIL.daily_detail_id = UO_OP_DAILY_CONTENT_TMP.daily_detail_id
+            )
     </update>
 </mapper>

@@ -52,7 +52,7 @@ public class PushSmsServiceImpl implements PushMessageService {
         //短信接口
         Message message=null;
         //触达结果
-        int result=-1;
+        int result;
 
         //用户的列表
         List<PushListInfo> userlist= Lists.newArrayList();
@@ -61,7 +61,7 @@ public class PushSmsServiceImpl implements PushMessageService {
         //获取防骚扰拦截的时间
         int timeout=dailyProperties.getRepeatPushDays()*86400;
 
-        boolean repeatFlag=false;
+        boolean repeatFlag;
 
         for(PushListInfo pushListInfo:list)
         {
@@ -87,8 +87,15 @@ public class PushSmsServiceImpl implements PushMessageService {
                 message=new Message();
                 message.setMobile(pushListInfo.getUserPhone());
                 message.setContent(pushListInfo.getPushContent());
-                result=sendSms.singleSend(message);
-                log.info("模拟推送:{}-{}",pushListInfo.getUserPhone(),pushListInfo.getPushContent());
+                try {
+                    result=sendSms.singleSend(message);
+                    log.info("通道推送:{}-{}:返回状态码:{}",pushListInfo.getUserPhone(),pushListInfo.getPushContent(),result);
+                } catch (Exception e) {
+                   //此处进行错误上报
+                    result=-1;
+                    log.info("通道推送:{}-{}:返回状态码:{}",pushListInfo.getUserPhone(),pushListInfo.getPushContent(),result);
+                }
+
 
                 if(result==0)
                 {
@@ -119,19 +126,14 @@ public class PushSmsServiceImpl implements PushMessageService {
 
     @Override
     public int push(String uid, String messageContent) {
-        int result=0;
+
         //发送类
         SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
         //短信接口
         Message  message=new Message();
         message.setMobile(uid);
         message.setContent(messageContent);
-        result=sendSms.singleSend(message);
-
-        if(result!=0)
-        {
-            result=-1;
-        }
+        int result=sendSms.singleSend(message);
 
         return result;
     }

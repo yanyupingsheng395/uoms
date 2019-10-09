@@ -22,7 +22,7 @@
         FROM UO_OP_PUSH_LIST C
         WHERE
                C.IS_PUSH = '0'
-          AND TO_NUMBER(PUSH_PERIOD)&lt;= to_char(sysdate,'hh24')
+          AND TO_NUMBER(PUSH_PERIOD)&lt;= #{currHour}
     </select>
 
     <select id="getPendingPushCount" resultType="int">
@@ -30,7 +30,7 @@
         FROM UO_OP_PUSH_LIST C
         WHERE C.IS_PUSH = '0'
           AND C.PUSH_ID&lt;=#{maxPushId}
-        --  AND TO_NUMBER(PUSH_PERIOD)&lt;= to_char(sysdate,'hh24')
+          AND TO_NUMBER(PUSH_PERIOD)&lt;= #{currHour}
     </select>
 
     <select id="getPendingPushList" resultMap="baseResult">
@@ -51,7 +51,7 @@
                  FROM UO_OP_PUSH_LIST T
                  WHERE T.IS_PUSH = '0'
                    AND T.PUSH_ID&lt;=#{maxPushId}
-              --     AND TO_NUMBER(PUSH_PERIOD)&lt;= to_char(sysdate,'hh24')
+                   AND TO_NUMBER(PUSH_PERIOD)&lt;= #{currHour}
                    AND ROWNUM &lt;= #{end}
              ) WHERE RN &gt;= #{start}
     </select>
@@ -69,7 +69,7 @@
     </update>
 
     <update id="updateIsPush">
-        update UO_OP_PUSH_LIST SET  IS_PUSH='1'  where PUSH_ID&lt;=#{maxPushId}
+        update UO_OP_PUSH_LIST SET  IS_PUSH='1'  where PUSH_ID&lt;=#{maxPushId} AND TO_NUMBER(PUSH_PERIOD)&lt;= #{currHour}
     </update>
 
     <select id="getTotalCount" resultType="int">

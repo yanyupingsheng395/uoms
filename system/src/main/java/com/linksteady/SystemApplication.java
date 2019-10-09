@@ -20,6 +20,7 @@ import java.time.LocalTime;
 @MapperScan("com.linksteady.*.dao")
 @EnableConfigurationProperties({SystemProperties.class})
 @EnableCaching
+
 @EnableAsync
 @EnableExceptionNotice
 @Slf4j

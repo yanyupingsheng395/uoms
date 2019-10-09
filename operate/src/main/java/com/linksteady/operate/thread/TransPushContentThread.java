@@ -38,8 +38,8 @@ public class TransPushContentThread implements Callable {
             //转换文案
             List<DailyDetail> targetList = dailyDetailService.transPushList(list);
 
-            //保存文案
-            dailyDetailService.updatePushContent(targetList);
+            //保存文案 改为insert
+            dailyDetailService.insertPushContentTemp(targetList);
 
             log.info("{}的第{}-{}调记录处理完成",headerId,start,end);
         } catch (Exception e) {
