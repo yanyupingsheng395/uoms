@@ -1,4 +1,4 @@
-package com.linksteady.mdss.config;
+package com.linksteady.operate.config;
 
 import com.linksteady.common.constant.CommonConstant;
 import com.linksteady.common.service.OpenApiService;

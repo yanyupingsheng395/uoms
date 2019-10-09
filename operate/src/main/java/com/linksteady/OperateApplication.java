@@ -1,4 +1,4 @@
-package com.linksteady.operate;
+package com.linksteady;
 
 import com.linksteady.lognotice.annotation.EnableExceptionNotice;
 import com.linksteady.operate.config.SystemProperties;

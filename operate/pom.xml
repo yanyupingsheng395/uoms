@@ -8,7 +8,6 @@
 		<version>1.08</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-
 	<artifactId>operate</artifactId>
 
 	<dependencies>
@@ -21,7 +20,7 @@
 		<dependency>
 			<groupId>com.linksteady</groupId>
 			<artifactId>spring-boot-job-starter</artifactId>
-			<version>1.03</version>
+			<version>1.04</version>
 		</dependency>
 
 		<dependency>
