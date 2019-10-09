@@ -11,17 +11,17 @@ app:
 #    name: operate
 #  cloud:
 #    config:
-#      uri: http://config.dev.growth-master.com
+#      uri: http://172.26.61.28:9060
 #      username: admin
 #      password: linksteady123
 #
 #  profiles:
 #    active: prod
-#
+
 ## 配置加密的秘钥
-#jasypt:
-#  encryptor:
-#    password: linksteady123
+jasypt:
+  encryptor:
+    password: linksteady123
 #仅用于测试环境使用，勿提交
 spring:
   profiles:
@@ -29,6 +29,6 @@ spring:
 
 sms:
   montnets:
-    userid: E109EI
-    pwd: mIjExT
-    masterIpAddress: api01.monyun.cn:7901
+    userid: JS4895
+    pwd: 812316111111
+    masterIpAddress: 61.145.229.28:7902

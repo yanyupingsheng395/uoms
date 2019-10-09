@@ -2,11 +2,10 @@
  * 启动群组推送
  */
 function submitData() {
-    $("#btn_push").attr("disabled", true);
-    $MB.confirm({
-        title: "<i class='mdi mdi-alert-outline'></i>提示：",
-        content: "确定启动推送群组?"
-    }, function () {
+    let flag = $("#push_ok").is(':checked');
+    if (flag) {
+        $("#btn_push").attr("disabled", true);
+        $("#push_msg_modal").modal('hide');
         $.get("/daily/submitData", {
             headId: headId, pushMethod: $("input[name='pushMethod']:checked").val(),
             pushPeriod: $("#pushPeriod").find("option:selected").val()
@@ -21,7 +20,7 @@ function submitData() {
                 $MB.n_danger(r.msg);
             }
         });
-    });
+    }
 }
 
 function step1() {
@@ -106,9 +105,19 @@ $("#push_msg_modal").on('shown.bs.modal', function () {
 });
 
 $('input[name="pushMethod"]').click(function () {
-    if($(this).val() == "FIXED") {
+    if ($(this).val() == "FIXED") {
         $("#pushPeriodDiv").show();
-    }else {
+    } else {
         $("#pushPeriodDiv").hide();
     }
+});
+
+$("#push_ok").change(function () {
+    let flag = $(this).is(':checked');
+    if(flag) {
+        $("#pushMsgBtn").removeAttr("disabled");
+    }else {
+        $("#pushMsgBtn").attr("disabled", true);
+    }
+
 });
