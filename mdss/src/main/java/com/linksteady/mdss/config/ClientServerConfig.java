@@ -36,7 +36,7 @@ public class ClientServerConfig {
      * @throws Exception
      */
     @Bean
-    public HttpInvokerProxyFactoryBean service() throws Exception{
+    public HttpInvokerProxyFactoryBean service() {
         HttpInvokerProxyFactoryBean httpInvokerProxyFactoryBean = new HttpInvokerProxyFactoryBean();
         Map<String, Object> sysInfoMap = (Map<String, Object>)redisTemplate.opsForValue().get("sysInfoMap");
         String url = ((SysInfo)sysInfoMap.get(serviceDomain)).getDomain() + "/" + serverServiceUrl;
