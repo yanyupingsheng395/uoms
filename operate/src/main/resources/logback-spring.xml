@@ -17,9 +17,9 @@
 
     <!--输出到文件-->
     <appender name="file_info" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.path}/mdss_info.log</file>
+        <file>${log.path}/op_info.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/info/mdss_info.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.path}/info/op_info.%d{yyyy-MM-dd}.log</fileNamePattern>
             <MaxHistory>${log.maxHistory}</MaxHistory>
         </rollingPolicy>
         <encoder>
@@ -33,9 +33,9 @@
     </appender>
 
     <appender name="file_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.path}/mdss_error.log</file>
+        <file>${log.path}/op_error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/error/mdss_error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.path}/error/op_error.%d{yyyy-MM-dd}.log</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>

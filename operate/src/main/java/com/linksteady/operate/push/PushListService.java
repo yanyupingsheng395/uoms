@@ -10,24 +10,24 @@ public interface PushListService {
     /**
      * 获取待推送的最大pushId
      */
-    int getPendingPushMaxId();
+    int getPendingPushMaxId(int currHour);
 
 
     /**
      * 获取当前批次待推送的数量
      */
-    int getPendingPushCount(int maxPushId);
+    int getPendingPushCount(int maxPushId,int currHour);
 
     /**
      * 获取当前页待推送列表
      * @return
      */
-    List<PushListInfo> getPendingPushList(int maxPushId, int start, int end);
+    List<PushListInfo> getPendingPushList(int maxPushId, int start, int end,int currHour);
 
     /**
      * 更新当前批次的IS_PUSH字段
      */
-    void updateIsPush(int maxPushId);
+    void updateIsPush(int maxPushId,int currHour);
 
     /**
      * 获取分页数据

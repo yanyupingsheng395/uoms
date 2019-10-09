@@ -103,13 +103,23 @@ public interface DailyDetailMapper {
     List<DailyDetail> getUserList(@Param("headId") String headId, @Param("start") int start, @Param("end") int end);
 
     /**
-     * 保存推送的文案信息
+     * 保存推送的文案信息到临时表
      */
-    void updatePushContent(@Param("list") List<DailyDetail> list);
+    void insertPushContentTemp(@Param("list") List<DailyDetail> list);
 
     /**
      * 将推送列表中的状态同步回日运营明细表中
      */
     void synchPushStatus();
+
+    /**
+     * 删除文案临时表中的数据
+     */
+    void deletePushContentTemp(@Param("headId") String headId);
+
+    /**
+     * 将文案内容从临时表更新到每日运营明细表
+     */
+    void updatePushContentFromTemp(@Param("headId") String headId);
 
 }

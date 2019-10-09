@@ -258,9 +258,20 @@ public class DailyController {
      */
     @GetMapping("/generatePushList")
     public ResponseBo generatePushList(String headId) {
+        String result;
         try {
-            dailyDetailService.generatePushList(headId);
-            return ResponseBo.ok();
+            dailyDetailService.deletePushContentTemp(headId);
+            //1表示生成成功 0表示生成失败
+             result=dailyDetailService.generatePushList(headId);
+
+             if("1".equals(result))
+             {
+                 return ResponseBo.ok();
+             }else
+             {
+                 return ResponseBo.error("生成文案错误，请联系系统运维人员！");
+             }
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseBo.error("策略生成错误，请检查配置！");
