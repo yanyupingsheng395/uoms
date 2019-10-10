@@ -19,16 +19,77 @@ function initTable() {
             };
         },
         columns: [{
-            checkbox: true
-        }, {
             field: 'groupId',
             title: '组ID',
+            visible: false
         }, {
-            field: 'groupName',
-            title: '组名称'
+            field: 'userValue',
+            title: '用户价值',
+            align: 'center',
+            valign: "middle",
+            formatter: function (value, row, index) {
+                var res = "";
+                switch (value) {
+                    case "ULC_01":
+                        res = "重要";
+                        break;
+                    case "ULC_02":
+                        res = "主要";
+                        break;
+                    case "ULC_03":
+                        res = "普通";
+                        break;
+                    case "ULC_04":
+                        res = "长尾";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
+            }
         }, {
-            field: 'smsCode',
-            title: '模板ID'
+            field: 'lifecycle',
+            title: '生命周期',
+            align: 'center',
+            valign: "middle",
+            formatter: function (value, row, index) {
+                if (value == "1") {
+                    return "老客";
+                }
+                if (value == "0") {
+                    return "新客";
+                }
+                return "";
+            }
+        }, {
+            field: 'pathActive',
+            title: '活跃度',
+            formatter: function (value, row, index) {
+                var res = "";
+                switch (value) {
+                    case "UAC_01":
+                        res = "高度活跃";
+                        break;
+                    case "UAC_02":
+                        res = "中度活跃";
+                        break;
+                    case "UAC_03":
+                        res = "流失预警";
+                        break;
+                    case "UAC_04":
+                        res = "弱流失";
+                        break;
+                    case "UAC_05":
+                        res = "强流失";
+                        break;
+                    case "UAC_06":
+                        res = "沉睡";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
+            }
         }, {
             field: 'smsContent',
             title: '模板内容',
@@ -59,15 +120,15 @@ function initTable() {
             title: '<i class="fa fa-edit"></i>&nbsp;操作',
             formatter: function (value, row, index) {
                 let code = "-";
-                if(row['isCoupon'] == '1') {
+                if (row['isCoupon'] == '1') {
                     code = "<div class=\"btn-group\">\n" +
-                        "<button class=\"btn  btn-sm btn-secondary\" onclick='editSmsContent("+row['groupId']+", \""+row['groupName']+"\")'><i class=\"fa fa-envelope-o\"></i></button>\n" +
-                        "<button class=\"btn btn-sm btn-secondary\" onclick='editCoupon("+row['groupId']+", \""+row['groupName']+"\")'><i class=\"fa fa-credit-card\"></i></button>\n" +
+                        "<button class=\"btn  btn-sm btn-secondary\" onclick='editSmsContent(" + row['groupId'] + ", \"" + row['groupName'] + "\")'><i class=\"fa fa-envelope-o\"></i></button>\n" +
+                        "<button class=\"btn btn-sm btn-secondary\" onclick='editCoupon(" + row['groupId'] + ", \"" + row['groupName'] + "\")'><i class=\"fa fa-credit-card\"></i></button>\n" +
                         "</div>";
                 }
-                if(row['isCoupon'] == '0') {
+                if (row['isCoupon'] == '0') {
                     code = "<div class=\"btn-group\">\n" +
-                        "<button class=\"btn  btn-sm btn-secondary\" onclick='editSmsContent("+row['groupId']+", \""+row['groupName']+"\")'><i class=\"fa fa-envelope-o\"></i></button>\n" +
+                        "<button class=\"btn  btn-sm btn-secondary\" onclick='editSmsContent(" + row['groupId'] + ", \"" + row['groupName'] + "\")'><i class=\"fa fa-envelope-o\"></i></button>\n" +
                         "</div>";
                 }
                 return code;
@@ -75,9 +136,49 @@ function initTable() {
         }],
         onLoadSuccess: function () {
             $("a[data-toggle='tooltip']").tooltip();
+
+            // 合并单元格
+            let data = $('#dailyGroupTable').bootstrapTable('getData', true);
+            mergeCells(data, "userValue", 1, $('#dailyGroupTable'));
+            for (let i = 0; i <= 8; i++) {
+                $("#dailyGroupTable").bootstrapTable('mergeCells', {
+                    index: i * 3,
+                    field: "lifecycle",
+                    colspan: 1,
+                    rowspan: 3
+                });
+            }
         }
     };
     $MB.initTable('dailyGroupTable', settings);
+}
+
+// 合并单元格
+function mergeCells(data, fieldName, colspan, target) {
+    //声明一个map计算相同属性值在data对象出现的次数和
+    var sortMap = {};
+    for (var i = 0; i < data.length; i++) {
+        for (var prop in data[i]) {
+            if (prop == fieldName) {
+                var key = data[i][prop]
+                if (sortMap.hasOwnProperty(key)) {
+                    sortMap[key] = sortMap[key] * 1 + 1;
+                } else {
+                    sortMap[key] = 1;
+                }
+                break;
+            }
+        }
+    }
+    for (var prop in sortMap) {
+        console.log(prop, sortMap[prop])
+    }
+    var index = 0;
+    for (var prop in sortMap) {
+        var count = sortMap[prop] * 1;
+        $(target).bootstrapTable('mergeCells', {index: index, field: fieldName, colspan: colspan, rowspan: count});
+        index += count;
+    }
 }
 
 // 编辑短信内容
@@ -159,7 +260,7 @@ function couponTable(groupId) {
         }, {
             field: 'couponId',
             title: 'ID'
-        },{
+        }, {
             field: 'couponName',
             title: '优惠券名称'
         }, {
@@ -169,7 +270,7 @@ function couponTable(groupId) {
         onLoadSuccess: function () {
             $.get("/coupon/getCouponIdsByGroupId", {groupId: groupId}, function (r) {
                 let data = r.data;
-                $('#couponTable').bootstrapTable("checkBy",{field: 'couponId', values:data});
+                $('#couponTable').bootstrapTable("checkBy", {field: 'couponId', values: data});
             });
         }
     };
@@ -212,7 +313,7 @@ function batchUpdateTemplate() {
         isCoupons.push(v.isCoupon);
     });
 
-    if(isCoupons.indexOf('1') > -1 && isCoupons.indexOf('0') > -1) { // 有券
+    if (isCoupons.indexOf('1') > -1 && isCoupons.indexOf('0') > -1) { // 有券
         $MB.n_warning("同时包含有券无券模板，无法批量操作！");
         return;
     }
@@ -233,7 +334,7 @@ function updateCouponId() {
     }
 
     let couponId = [];
-    selected.forEach((v, k)=>{
+    selected.forEach((v, k) => {
         couponId.push(v['couponId']);
     });
 
