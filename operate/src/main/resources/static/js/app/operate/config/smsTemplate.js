@@ -7,8 +7,8 @@ $(function () {
         singleSelect: true,
         sidePagination: "server",
         pageNumber: 1,            //初始化加载第一页，默认第一页
-        pageSize: 10,            //每页的记录行数（*）
-        pageList: [10, 25, 50, 100],
+        pageSize: 25,            //每页的记录行数（*）
+        pageList: [25, 50, 100],
         queryParams: function (params) {
             return {
                 pageSize: params.limit,  ////页面大小
