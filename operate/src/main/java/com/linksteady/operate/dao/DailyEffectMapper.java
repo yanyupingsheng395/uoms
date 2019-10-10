@@ -19,4 +19,9 @@ public interface DailyEffectMapper {
      * 更新统计表中的触达统计信息
      */
     void updatePushStatInfo();
+
+    /**
+     * 更新转化数据
+     */
+    void updateConversion();
 }

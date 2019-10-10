@@ -55,4 +55,8 @@
             )
     </update>
 
+    <select id="updateConversion" statementType="CALLABLE">
+        {call UPDATE_OP_DAILY_CONVERSION}
+    </select>
+
 </mapper>
