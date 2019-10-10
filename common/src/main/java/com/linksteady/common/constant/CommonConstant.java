@@ -8,16 +8,16 @@ public class CommonConstant {
     /**
      * 系统管理编码
      */
-    public static final String SYS_CODE = "SYS";
+    public static final String SYS_CODE = "system";
 
     /**
      * 运营系统编码
      */
-    public static final String OP_CODE = "OP";
+    public static final String OP_CODE = "operate";
 
     /**
      * 诊断系统编码
      */
-    public static final String DIAG_CODE = "DIAG";
+    public static final String DIAG_CODE = "mdss";
 
 }

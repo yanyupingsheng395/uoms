@@ -31,4 +31,10 @@ public class DailyGroupTemplate {
      * N个优惠券的ID
      */
     private String couponId;
+
+    private String userValue;
+
+    private String pathActive;
+
+    private String lifecycle;
 }

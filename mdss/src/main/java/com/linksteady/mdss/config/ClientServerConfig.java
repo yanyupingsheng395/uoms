@@ -1,6 +1,7 @@
 package com.linksteady.mdss.config;
 
 import com.linksteady.common.constant.CommonConstant;
+import com.linksteady.common.domain.SysInfo;
 import com.linksteady.common.service.OpenApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -35,10 +36,10 @@ public class ClientServerConfig {
      * @throws Exception
      */
     @Bean
-    public HttpInvokerProxyFactoryBean service() throws Exception{
+    public HttpInvokerProxyFactoryBean service() {
         HttpInvokerProxyFactoryBean httpInvokerProxyFactoryBean = new HttpInvokerProxyFactoryBean();
-        Map<String, String> sysInfoMap = (Map<String, String>)redisTemplate.opsForValue().get("sysInfoMap");
-        String url = sysInfoMap.get(serviceDomain) + "/" + serverServiceUrl;
+        Map<String, Object> sysInfoMap = (Map<String, Object>)redisTemplate.opsForValue().get("sysInfoMap");
+        String url = ((SysInfo)sysInfoMap.get(serviceDomain)).getDomain() + "/" + serverServiceUrl;
         httpInvokerProxyFactoryBean.setServiceUrl(url);
         httpInvokerProxyFactoryBean.setServiceInterface(OpenApiService.class);
         return httpInvokerProxyFactoryBean;

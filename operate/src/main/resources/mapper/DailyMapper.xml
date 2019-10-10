@@ -26,12 +26,16 @@
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
         <result column="IS_COUPON" jdbcType="VARCHAR" property="isCoupon"></result>
         <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
+        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
+        <result column="LIFECYCLE" jdbcType="VARCHAR" property="lifecycle"></result>
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM rn from (
-        SELECT T1.HEAD_ID, T1.TOUCH_DT, T1.TOTAL_NUM, T2.EXECUTE_RATE, T2.TOUCH_COUNT, T2.TOUCH_RATE, T2.CONVERT_COUNT,T2.CONVERT_RATE, T2.CONVERT_AMOUNT, T1.STATUS
+        SELECT T1.HEAD_ID, T1.TOUCH_DT, T1.TOTAL_NUM, T2.EXECUTE_RATE, T2.TOUCH_COUNT, T2.TOUCH_RATE,
+        T2.CONVERT_COUNT,T2.CONVERT_RATE, T2.CONVERT_AMOUNT, T1.STATUS
         FROM UO_OP_DAILY_HEADER T1, UO_OP_DAILY_STATIS T2 where T1.HEAD_ID = T2.HEAD_ID(+)
         <if test="touchDt != '' and touchDt != null">
             and to_char(t1.touch_dt, 'yyyy-mm-dd') = #{touchDt}
@@ -111,15 +115,17 @@
     <select id="getUserGroupListPage" resultMap="templateResult">
         select * from (
         select t.*, ROWNUM rn from (
-        SELECT t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,
-        LISTAGG(t4.coupon_name, ',') within group (order by t4.coupon_id) coupon_name
+        SELECT t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE,
+               t1.PATH_ACTIVE, t1.LIFECYLE LIFECYCLE,
+               LISTAGG(t4.coupon_name, ',') within group (order by t4.coupon_id) coupon_name
         FROM UO_OP_DAILY_TEMPLATE_CONFIG t1, UO_OP_SMS_TEMPLATE t2,
-        UO_OP_DAILY_GROUP_COUPON t3, UO_OP_COUPON t4
+             UO_OP_DAILY_GROUP_COUPON t3, UO_OP_COUPON t4
         where t1.SMS_CODE = t2.SMS_CODE(+)
-        and t1.group_id = t3.group_id(+)
-        and t3.coupon_id = t4.coupon_id(+)
-        group by t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT
-        ORDER BY GROUP_ID asc
+          and t1.group_id = t3.group_id(+)
+          and t3.coupon_id = t4.coupon_id(+)
+        group by t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE,
+                 t1.PATH_ACTIVE, t1.LIFECYLE
+        ORDER BY USER_VALUE asc, LIFECYLE desc
         ) t where ROWNUM &lt;= #{end}
         )where rn &gt;= #{start}
     </select>
