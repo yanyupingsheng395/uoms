@@ -190,3 +190,16 @@ $("#btn_delete").click(function () {
     });
 });
 
+/**
+ * 获取短链
+ */
+function getShortUrl() {
+    $.get("/coupon/getShortUrl", {url: $("#couponInfo2").val()}, function(r) {
+        if(r.code === 200) {
+            $("#couponUrl").val(r.data);
+        }else {
+            $MB.n_danger(r.msg);
+        }
+    });
+}
+
