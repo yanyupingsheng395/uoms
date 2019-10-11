@@ -27,4 +27,6 @@ public interface CouPonService {
     int isCouponUsed(String couponId);
 
     void updateStatus(String couponId);
+
+    void deleteCoupon(List<String> ids);
 }

@@ -28,4 +28,6 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
     int isCouponUsed(String couponId);
 
     void updateStatus(String couponId);
+
+    void deleteCoupon(List<String> ids);
 }

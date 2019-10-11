@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -130,6 +131,22 @@ public class CouponController extends BaseController {
             return ResponseBo.error("长链地址不合法！");
         }
         return ResponseBo.okWithData(null, shortUrl);
+    }
+
+    /**
+     * 删除组-券关系
+     * @param id
+     * @return
+     */
+    @RequestMapping("/deleteCoupon")
+    public ResponseBo deleteCoupon(String id) {
+        if(StringUtils.isNotEmpty(id)) {
+            List<String> ids = Arrays.asList(id.split(","));
+            couponService.deleteCoupon(ids);
+        }else {
+            return ResponseBo.error();
+        }
+        return ResponseBo.ok();
     }
 }
 

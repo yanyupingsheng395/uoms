@@ -64,4 +64,9 @@ public class CouponServiceImpl implements CouPonService {
     public void updateStatus(String couponId) {
         couponMapper.updateStatus(couponId);
     }
+
+    @Override
+    public void deleteCoupon(List<String> ids) {
+        couponMapper.deleteCoupon(ids);
+    }
 }

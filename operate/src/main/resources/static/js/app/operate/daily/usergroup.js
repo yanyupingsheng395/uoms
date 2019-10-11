@@ -19,6 +19,8 @@ function initTable() {
             };
         },
         columns: [{
+            checkbox: true
+        }, {
             field: 'groupId',
             title: '组ID',
             visible: false
@@ -347,5 +349,37 @@ function updateCouponId() {
         }
         $("#coupon_modal").modal('hide');
         $MB.refreshTable('dailyGroupTable');
+    });
+}
+
+// 删除券关系
+function deleteCoupon() {
+
+    var selected = $("#dailyGroupTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要删除券的组！');
+        return;
+    }
+    let groupIds = [];
+    selected.forEach((v, k) => {
+        groupIds.push(v.groupId);
+    });
+
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认删除所有券关系？'
+    }, function () {
+        $.getJSON("/coupon/deleteCoupon?id="+groupIds,function (resp) {
+            if (resp.code === 200){
+                lightyear.loading('hide');
+                //提示成功
+                $MB.n_success('删除成功!');
+                //刷新表格
+                $('#dailyGroupTable').bootstrapTable('refresh');
+            }else {
+                $MB.n_danger("未知异常！");
+            }
+        })
     });
 }

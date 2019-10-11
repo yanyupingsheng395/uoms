@@ -70,4 +70,14 @@
     <update id="updateStatus">
         update UO_OP_COUPON set VALID_STATUS = 'N' where COUPON_ID = #{couponId}
     </update>
+
+    <delete id="deleteCoupon" parameterType="list">
+        delete from UO_OP_DAILY_GROUP_COUPON where 1=1
+        <if test="list != null">
+            and GROUP_ID in
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
 </mapper>
