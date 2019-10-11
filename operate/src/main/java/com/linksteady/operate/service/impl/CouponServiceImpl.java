@@ -39,4 +39,29 @@ public class CouponServiceImpl implements CouPonService {
         List<String> couponIds = Arrays.asList(couponId.split(","));
         couponMapper.insertByGroupId(groupId, couponIds);
     }
+
+    @Override
+    public void save(CouponInfo couponInfo) {
+        couponMapper.save(couponInfo);
+    }
+
+    @Override
+    public void update(CouponInfo couponInfo) {
+        couponMapper.update(couponInfo);
+    }
+
+    @Override
+    public CouponInfo getByCouponId(String couponId) {
+        return couponMapper.getByCouponId(couponId);
+    }
+
+    @Override
+    public int isCouponUsed(String couponId) {
+        return couponMapper.isCouponUsed(couponId);
+    }
+
+    @Override
+    public void updateStatus(String couponId) {
+        couponMapper.updateStatus(couponId);
+    }
 }

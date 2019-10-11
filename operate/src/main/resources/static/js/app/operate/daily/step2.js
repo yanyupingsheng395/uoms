@@ -119,5 +119,4 @@ $("#push_ok").change(function () {
     }else {
         $("#pushMsgBtn").attr("disabled", true);
     }
-
 });

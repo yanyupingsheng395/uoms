@@ -37,4 +37,20 @@ public class CouponInfo {
      */
     @Column(name = "COUPON_URL")
     private String couponUrl;
+
+    private String couponDesc;
+
+    private  String couponType;
+
+    private String couponNum;
+
+    private String couponInfo1;
+
+    private String couponInfo2;
+
+    private String couponDisplayName;
+
+    private String validStatus;
+
+    private String validEnd;
 }

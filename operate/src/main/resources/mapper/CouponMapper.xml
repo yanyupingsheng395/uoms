@@ -7,10 +7,14 @@
         -->
         <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"/>
         <result column="COUPON_DENOM" jdbcType="DECIMAL" property="couponDenom"/>
-
         <result column="COUPON_THRESHOLD" jdbcType="DECIMAL" property="couponThreshold"/>
         <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"/>
         <result column="COUPON_URL" jdbcType="VARCHAR" property="couponUrl"/>
+        <result column="COUPON_NUM" jdbcType="VARCHAR" property="couponNum"/>
+        <result column="COUPON_INFO2" jdbcType="VARCHAR" property="couponInfo2"/>
+        <result column="VALID_STATUS" jdbcType="VARCHAR" property="validStatus"/>
+        <result column="VALID_END" jdbcType="VARCHAR" property="validEnd"/>
+        <result column="COUPON_DISPLAY_NAME" jdbcType="VARCHAR" property="couponDisplayName"/>
     </resultMap>
 
     <select id="getList" resultMap="BaseResultMap">
@@ -18,7 +22,7 @@
     SELECT A.*,ROWNUM RN FROM
       (SELECT
          COUPON_ID, COUPON_DENOM,COUPON_THRESHOLD,COUPON_NAME,COUPON_URL
-    FROM UO_OP_COUPON
+    FROM UO_OP_COUPON where VALID_STATUS = 'Y'
     ) A  WHERE ROWNUM &lt;=#{endRow}
     ) WHERE RN &gt;=#{startRow}
   </select>
@@ -43,4 +47,27 @@
         </foreach>
         select 1 from dual
     </insert>
+
+    <insert id="save" parameterType="com.linksteady.operate.domain.CouponInfo">
+        insert into UO_OP_COUPON(COUPON_ID, COUPON_DENOM, COUPON_THRESHOLD, COUPON_NAME, COUPON_URL, COUPON_DESC, COUPON_TYPE, COUPON_NUM, COUPON_INFO1, COUPON_INFO2, COUPON_DISPLAY_NAME, VALID_STATUS, VALID_END) VALUES
+        (UO_OP_COUPON_SEQ.nextval, #{couponDenom}, #{couponThreshold}, #{couponName}, #{couponUrl}, #{couponDesc}, #{couponType}, #{couponNum}, #{couponInfo1}, #{couponInfo2}, #{couponDisplayName}, 'Y', to_date(#{validEnd}, 'yyyymmdd'))
+    </insert>
+
+    <update id="update" parameterType="com.linksteady.operate.domain.CouponInfo">
+        update UO_OP_COUPON set COUPON_DENOM = #{couponDenom},COUPON_THRESHOLD = #{couponThreshold},COUPON_NAME = #{couponName},COUPON_URL = #{couponUrl},COUPON_DESC = #{couponDesc},COUPON_TYPE = #{couponType},COUPON_NUM = #{couponNum},COUPON_INFO1 = #{couponInfo1},COUPON_INFO2 = #{couponInfo2},COUPON_DISPLAY_NAME = #{couponDisplayName},VALID_STATUS = #{validStatus}
+        where COUPON_ID = #{couponId}
+    </update>
+
+    <select id="getByCouponId" resultMap="BaseResultMap">
+        select COUPON_ID, COUPON_DENOM, COUPON_THRESHOLD, COUPON_NAME, COUPON_URL,COUPON_NUM,COUPON_INFO2,VALID_STATUS, to_char(VALID_END, 'yyyymmdd') VALID_END, COUPON_DISPLAY_NAME from UO_OP_COUPON
+        where COUPON_ID = #{couponId}
+    </select>
+
+    <select id="isCouponUsed" resultType="int">
+        select count(1) from UO_OP_DAILY_GROUP_COUPON where COUPON_ID = #{couponId}
+    </select>
+
+    <update id="updateStatus">
+        update UO_OP_COUPON set VALID_STATUS = 'N' where COUPON_ID = #{couponId}
+    </update>
 </mapper>

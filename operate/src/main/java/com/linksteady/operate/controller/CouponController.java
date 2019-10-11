@@ -58,5 +58,42 @@ public class CouponController extends BaseController {
         couponService.updateCouponId(groupId, couponId);
         return ResponseBo.ok();
     }
+
+    @RequestMapping("/save")
+    public ResponseBo save(CouponInfo couponInfo) {
+        couponService.save(couponInfo);
+        return ResponseBo.ok();
+    }
+
+    @RequestMapping("/update")
+    public ResponseBo update(CouponInfo couponInfo) {
+        couponService.update(couponInfo);
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 根据couponId获取记录
+     * @param couponId
+     * @return
+     */
+    @RequestMapping("/getByCouponId")
+    public ResponseBo getByCouponId(String couponId) {
+        int count = couponService.isCouponUsed(couponId);
+        if(count != 0) {
+            return ResponseBo.error("该优惠券正在使用，无法修改！");
+        }
+        CouponInfo couponInfo = couponService.getByCouponId(couponId);
+        return ResponseBo.okWithData(null, couponInfo);
+    }
+
+    @RequestMapping("/deleteByCouponId")
+    public ResponseBo deleteByCouponId(String couponId) {
+        int count = couponService.isCouponUsed(couponId);
+        if(count != 0) {
+            return ResponseBo.error("该优惠券正在使用，无法删除！");
+        }
+        couponService.updateStatus(couponId);
+        return ResponseBo.ok();
+    }
 }
 

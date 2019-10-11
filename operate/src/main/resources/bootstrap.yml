@@ -30,5 +30,5 @@ spring:
 sms:
   montnets:
     userid: JS4895
-    pwd: 812316111111
+    pwd: 812316
     masterIpAddress: 61.145.229.28:7902
