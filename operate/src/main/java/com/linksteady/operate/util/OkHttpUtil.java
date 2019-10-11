@@ -18,6 +18,11 @@ public class OkHttpUtil {
         okHttpClient = client;
     }
 
+    public static OkHttpClient getOkHttpClient()
+    {
+        return okHttpClient;
+    }
+
     /**
      * 调用一次get请求
      * @param url
@@ -49,7 +54,7 @@ public class OkHttpUtil {
                 .post(RequestBody.create(MediaType.parse("text/plain"), value.getBytes()))
                 .build();
 
-        Call call = buildOkHttpClient().newCall(request);
+        Call call = okHttpClient.newCall(request);
         Response response = call.execute();
         ResponseBody responseBody = response.body();
         return responseBody.string();
@@ -68,7 +73,7 @@ public class OkHttpUtil {
                 .addHeader("Authorization", Credentials.basic(username, password))
                 .build();
 
-        Call call = buildOkHttpClient().newCall(request);
+        Call call = okHttpClient.newCall(request);
         Response response = call.execute();
         ResponseBody responseBody = response.body();
         return responseBody.string();
@@ -88,18 +93,10 @@ public class OkHttpUtil {
                 .post(RequestBody.create(MediaType.parse("text/plain"), value.getBytes()))
                 .build();
 
-        Call call = buildOkHttpClient().newCall(request);
+        Call call = okHttpClient.newCall(request);
         Response response = call.execute();
         ResponseBody responseBody = response.body();
         return responseBody.string();
     }
 
-    public static OkHttpClient buildOkHttpClient() {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(1, TimeUnit.SECONDS)
-                .writeTimeout(2, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .build();
-        return client;
-    }
 }
