@@ -368,7 +368,7 @@ function deleteCoupon() {
 
     $MB.confirm({
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认删除所有券关系？'
+        content: '确认删除选中的券关系？'
     }, function () {
         $.getJSON("/coupon/deleteCoupon?id="+groupIds,function (resp) {
             if (resp.code === 200){
