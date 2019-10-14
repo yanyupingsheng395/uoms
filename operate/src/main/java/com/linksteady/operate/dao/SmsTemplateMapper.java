@@ -21,4 +21,6 @@ public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
     void deleteSmsTemplate(@Param("smsCode") String smsCode);
 
     SmsTemplate getSmsTemplate(@Param("smsCode") String smsCode);
+
+    void update(@Param("smsTemplate") SmsTemplate smsTemplate);
 }

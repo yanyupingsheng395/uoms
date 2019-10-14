@@ -21,4 +21,6 @@ public interface SmsTemplateService {
     void deleteSmsTemplate(String smsCode);
 
     SmsTemplate getSmsTemplate(String smsCode);
+
+    void update(SmsTemplate smsTemplate);
 }

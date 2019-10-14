@@ -74,7 +74,7 @@ function testSend()
     if(null==selectRows||selectRows.length==0)
     {
         lightyear.loading('hide');
-        $MB.n_warning('请选择要删除的模板！');
+        $MB.n_warning('请选择需要测试的模板！');
         return;
     }
 
@@ -186,14 +186,17 @@ function del() {
 }
 
 function add() {
-    $('#smsCode').val("");
+    $('#smsCode').val("").removeAttr("readOnly");
     $('#smsContent').val("");
+    $("input[name='isCoupon']:radio").removeAttr("checked");
+    $("#word").text("0");
+    $("#myLargeModalLabel3").text("新增模板");
+    $("#btn_save").attr("name", "save");
     $('#add_modal').modal('show');
-
 }
 
-function saveSmsTemplate()
-{
+// 新增&修改
+$("#btn_save").click(function () {
     var alert_str="";
 
     //验证
@@ -222,42 +225,59 @@ function saveSmsTemplate()
         return;
     }
 
+    var url = "";
+    var success_msg = "";
+    var sure_msg = "";
+    if($(this).attr("name") == "save") {
+        url = "/smsTemplate/addSmsTemplate";
+        success_msg = "新增成功！";
+        sure_msg = "确定要保存数据？";
+    }else {
+        url = "/smsTemplate/updateSmsTemplate";
+        success_msg = "修改成功！";
+        sure_msg = "确定要修改数据？";
+    }
+
     //提示是否要保存
-        $.confirm({
-            title: '确认',
-            content: '确定要保存数据？',
-            theme: 'bootstrap',
-            type: 'orange',
-            buttons: {
-                confirm: {
-                    text: '确认',
-                    btnClass: 'btn-blue',
-                    action: function(){
-                        var param = new Object();
-                        param.smsCode=smsCode;
-                        param.smsContent=smsContent;
-                        param.isCoupon = isCoupon;
+    $.confirm({
+        title: '确认',
+        content: sure_msg,
+        theme: 'bootstrap',
+        type: 'orange',
+        buttons: {
+            confirm: {
+                text: '确认',
+                btnClass: 'btn-blue',
+                action: function(){
+                    var param = new Object();
+                    param.smsCode=smsCode;
+                    param.smsContent=smsContent;
+                    param.isCoupon = isCoupon;
 
-                        $.ajax({
-                            url: "/smsTemplate/addSmsTemplate",
-                            data: JSON.stringify(param),
-                            type: 'POST',
-                            contentType: "application/json;charset=utf-8",
-                            success: function (r) {
-                                $('#add_modal').modal('hide');
-                                $MB.n_success("保存成功!");
-                                $('#smsTemplateTable').bootstrapTable('refresh');
+                    $.ajax({
+                        url: url,
+                        data: JSON.stringify(param),
+                        type: 'POST',
+                        contentType: "application/json;charset=utf-8",
+                        success: function (r) {
+                            if(r.code === 200) {
+                                $MB.n_success(success_msg);
+                            }else {
+                                $MB.n_danger("未知错误发生，请检查！");
                             }
-                        });
+                            $('#add_modal').modal('hide');
+                            $('#smsTemplateTable').bootstrapTable('refresh');
+                        }
+                    });
 
-                    }
-                },
-                cancel: {
-                    text: '取消'
                 }
+            },
+            cancel: {
+                text: '取消'
             }
-        });
-}
+        }
+    });
+});
 
 $("#add_modal").on('hidden.bs.modal', function () {
     $('#smsCode').val("");
@@ -273,3 +293,27 @@ function resetSmsTemplate() {
     $("input[name='smsCode']").val("");
     $MB.refreshTable('smsTemplateTable')
 }
+
+$("#btn_edit").click(function () {
+    var selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
+    if(null==selectRows||selectRows.length==0)
+    {
+        lightyear.loading('hide');
+        $MB.n_warning('请选择要修改的模板！');
+        return;
+    }
+
+    var smsCode =selectRows[0]["smsCode"];
+    $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
+        if (resp.code === 200){
+            var data = resp.data;
+            $("#smsCode").val(data.smsCode).attr("readOnly", true);
+            $("#smsContent").val(data.smsContent);
+            statInputNum($("#smsContent"),$("#word"));
+            $("input[name='isCoupon']:radio[value='" + data.isCoupon + "']").prop("checked", true);
+            $("#myLargeModalLabel3").text("修改模板");
+            $("#btn_save").attr("name", "update");
+            $("#add_modal").modal('show');
+        }
+    });
+});

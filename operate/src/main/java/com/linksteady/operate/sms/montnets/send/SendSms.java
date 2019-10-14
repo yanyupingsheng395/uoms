@@ -35,6 +35,17 @@ public class SendSms {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("MMddHHmmss");
 
+    public SendSms(String userid, String pwd, boolean isEncryptPwd, String masterIpAddress) {
+        this.userid = userid;
+        this.pwd = pwd;
+        this.isEncryptPwd = isEncryptPwd;
+        this.masterIpAddress = masterIpAddress;
+        this.ipAddress1 = null;
+        this.ipAddress2 = null;
+        this.ipAddress3 = null;
+        ConfigManager.setIpInfo(masterIpAddress, null, null, null);
+    }
+
     public SendSms(String userid, String pwd, boolean isEncryptPwd, String masterIpAddress, String ipAddress1, String ipAddress2, String ipAddress3) {
         this.userid = userid;
         this.pwd = pwd;

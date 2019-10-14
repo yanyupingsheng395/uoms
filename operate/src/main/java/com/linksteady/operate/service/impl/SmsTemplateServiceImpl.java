@@ -49,4 +49,9 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     public SmsTemplate getSmsTemplate(String smsCode) {
         return  smsTemplateapper.getSmsTemplate(smsCode);
     }
+
+    @Override
+    public void update(SmsTemplate smsTemplate) {
+        smsTemplateapper.update(smsTemplate);
+    }
 }

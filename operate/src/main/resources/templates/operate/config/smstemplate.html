@@ -62,6 +62,9 @@
                                     <a class="btn btn-success" id="btn_add" onclick="add()">
                                         <i class="fa fa-plus"></i> 新增模板
                                     </a>
+                                    <a class="btn btn-primary" id="btn_edit">
+                                        <i class="fa fa-edit"></i> 修改模板
+                                    </a>
                                     <a class="btn btn-cyan" id="btn_send" onclick="testSend()">
                                         <i class="fa fa-puzzle-piece"></i> 测试
                                     </a>
@@ -89,7 +92,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h4 class="modal-title" id="myLargeModalLabel3">新增模板</h4>
+                <h5 class="modal-title" id="myLargeModalLabel3">新增模板</h5>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal">
@@ -122,7 +125,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="saveSmsTemplate()">保存</button>
+                <button type="button" class="btn btn-primary" name="save" id="btn_save">确定</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>

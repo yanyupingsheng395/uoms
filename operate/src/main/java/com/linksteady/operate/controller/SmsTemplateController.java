@@ -100,5 +100,16 @@ public class SmsTemplateController extends BaseController {
             return ResponseBo.error("测试发送失败！");
         }
     }
+
+    /**
+     * 修改短信模板
+     * @param smsTemplate
+     * @return
+     */
+    @RequestMapping("/updateSmsTemplate")
+    public ResponseBo updateSmsTemplate(@RequestBody SmsTemplate smsTemplate) {
+        smsTemplateService.update(smsTemplate);
+        return ResponseBo.ok();
+    }
 }
 

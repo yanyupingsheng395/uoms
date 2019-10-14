@@ -9,10 +9,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -262,15 +267,13 @@ public class DailyController {
         try {
             dailyDetailService.deletePushContentTemp(headId);
             //1表示生成成功 0表示生成失败
-             result=dailyDetailService.generatePushList(headId);
+            result = dailyDetailService.generatePushList(headId);
 
-             if("1".equals(result))
-             {
-                 return ResponseBo.ok();
-             }else
-             {
-                 return ResponseBo.error("生成文案错误，请联系系统运维人员！");
-             }
+            if ("1".equals(result)) {
+                return ResponseBo.ok();
+            } else {
+                return ResponseBo.error("生成文案错误，请联系系统运维人员！");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -337,5 +340,14 @@ public class DailyController {
         }).collect(Collectors.toList());
         result.put("timeList", timeList);
         return ResponseBo.okWithData(null, result);
+    }
+
+    public void test() {
+        LockSupport.park();
+    }
+
+    public static void main(String[] args) {
+        DailyController dailyController = new DailyController();
+        dailyController.test();
     }
 }
