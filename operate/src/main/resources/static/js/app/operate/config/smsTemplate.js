@@ -172,7 +172,7 @@ function del() {
                                         //刷新表格
                                         $('#smsTemplateTable').bootstrapTable('refresh');
                                     }else {
-                                        $MB.n_success(resp.msg);
+                                        $MB.n_danger(resp.msg);
                                     }
                                 })
                     }
