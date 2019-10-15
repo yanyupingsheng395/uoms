@@ -108,6 +108,7 @@
             and T.SOURCE_CODE = #{sourceCode}
         </if>
         AND ROWNUM &lt;= #{end}
+        order by T.PUSH_ID desc
         ) WHERE RN &gt;= #{start}
     </select>
 </mapper>
