@@ -91,10 +91,10 @@ public class CouponController extends BaseController {
      */
     @RequestMapping("/getByCouponId")
     public ResponseBo getByCouponId(String couponId) {
-        int count = couponService.isCouponUsed(couponId);
-        if (count != 0) {
-            return ResponseBo.error("该优惠券正在使用，无法修改！");
-        }
+//        int count = couponService.isCouponUsed(couponId);
+//        if (count != 0) {
+//            return ResponseBo.error("该优惠券正在使用，无法修改！");
+//        }
         CouponInfo couponInfo = couponService.getByCouponId(couponId);
         return ResponseBo.okWithData(null, couponInfo);
     }

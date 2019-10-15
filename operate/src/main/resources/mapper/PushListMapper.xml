@@ -15,6 +15,7 @@
         <result column="USER_OPENID" jdbcType="VARCHAR" property="userOpenId"></result>
         <result column="SOURCE_ID" jdbcType="DECIMAL" property="sourceId"></result>
         <result column="PUSH_DATE" jdbcType="DATE" property="pushDate"></result>
+        <result column="PUSH_DATE_STR" jdbcType="VARCHAR" property="pushDateStr"></result>
     </resultMap>
 
     <select id="getPendingPushMaxId" resultType="int">
@@ -98,6 +99,7 @@
         T.USER_PHONE,
         T.USER_OPENID,
         T.SOURCE_ID,
+        to_char(PUSH_DATE, 'yyyymmdd') PUSH_DATE_STR,
         ROWNUM   RN
         FROM UO_OP_PUSH_LIST T
         WHERE 1=1

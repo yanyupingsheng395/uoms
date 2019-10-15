@@ -26,7 +26,14 @@ $(function () {
             checkbox: true
         }, {
             field: 'couponId',
-            title: '优惠券编号'
+            title: '优惠券编号',
+            visible: false
+        }, {
+            field: 'couponName',
+            title: '优惠券名称'
+        }, {
+            field: 'couponDisplayName',
+            title: '短信引用名'
         }, {
             field: 'couponDenom',
             title: '优惠券面额'
@@ -34,14 +41,14 @@ $(function () {
             field: 'couponThreshold',
             title: '优惠券门槛'
         }, {
-            field: 'couponName',
-            title: '优惠券名称'
-        }, {
             field: 'couponUrl',
-            title: '优惠券领用地址',
+            title: '优惠券地址',
             formatter: function (value, row, index) {
                 return "<a href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
             }
+        }, {
+            field: 'validEnd',
+            title: '截止日期'
         }]
     };
 
@@ -80,16 +87,20 @@ $("#btn_save").click(function () {
 
 function closeModal() {
     var $form = $('#coupon_edit');
-    $form.find("input[name='couponName']").val("");
-    $form.find("input[name='couponDenom']").val("");
-    $form.find("input[name='couponThreshold']").val("");
-    $form.find("input[name='couponInfo2']").val("");
-    $form.find("input[name='couponUrl']").val("");
-    $form.find("input[name='couponNum']").val("");
-    $form.find("input[name='couponDisplayName']").val("");
-    $form.find("input[name='validEnd']").val("");
+    $form.find("input[name='couponName']").val("").removeAttr("readOnly");
+    $form.find("input[name='couponDenom']").val("").removeAttr("readOnly");
+    $form.find("input[name='couponThreshold']").val("").removeAttr("readOnly");
+    $form.find("input[name='couponInfo2']").val("").removeAttr("readOnly");
+    $form.find("input[name='couponUrl']").val("").removeAttr("readOnly");
+    $form.find("input[name='couponNum']").val("").removeAttr("readOnly");
+    $form.find("input[name='couponDisplayName']").val("").removeAttr("readOnly");
+    $form.find("input[name='validEnd']").val("").removeAttr("readOnly");
     $MB.closeAndRestModal("add_modal");
 }
+
+$("#add_modal").on('hidden.bs.modal', function () {
+    closeModal();
+});
 
 function updateCoupon() {
     var selected = $("#couponTable").bootstrapTable('getSelections');

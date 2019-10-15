@@ -37,4 +37,6 @@ public class PushListInfo {
 
     //发送时间
     private Date pushDate;
+
+    private String pushDateStr;
 }

@@ -59,6 +59,9 @@ function initTable() {
                 }
                 return code;
             }
+        },{
+            field: 'pushDateStr',
+            title: '推送日期'
         }]
     };
     $MB.initTable('pushInfoTable', settings);
