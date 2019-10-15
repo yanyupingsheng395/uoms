@@ -28,7 +28,7 @@
   </select>
 
     <select id="getTotalCount" resultType="int">
-    select count(1) from UO_OP_COUPON
+    select count(1) from UO_OP_COUPON where VALID_STATUS = 'Y'
   </select>
 
     <select id="getCouponIdsByGroupId" resultType="int">

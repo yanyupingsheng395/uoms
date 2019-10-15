@@ -116,7 +116,7 @@ function updateCoupon() {
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             $("#btn_save").attr("name", "update");
         } else {
-            $MB.n_danger(r.msg);
+            $MB.n_danger(r['msg']);
         }
     });
 }
@@ -171,7 +171,6 @@ function validateRule() {
     });
 }
 
-
 $("#btn_delete").click(function () {
     var selected = $("#couponTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
@@ -204,7 +203,7 @@ function getShortUrl() {
         if(r.code === 200) {
             $("#couponUrl").val(r.data);
         }else {
-            $MB.n_danger(r.msg);
+            $MB.n_danger(r['msg']);
         }
     });
 }
