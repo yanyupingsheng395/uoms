@@ -56,10 +56,10 @@ function initTable() {
             valign: "middle",
             formatter: function (value, row, index) {
                 if (value == "1") {
-                    return "老客";
+                    return "新客";
                 }
                 if (value == "0") {
-                    return "新客";
+                    return "老客";
                 }
                 return "";
             }

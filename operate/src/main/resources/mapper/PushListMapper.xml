@@ -86,31 +86,30 @@
     </select>
 
     <select id="getPushInfoListPage" resultMap="baseResult">
-        SELECT *
-        FROM (
-        select T.PUSH_ID,
-        T.PUSH_CONTENT,
-        T.PUSH_PERIOD,
-        T.PUSH_STATUS,
-        T.CALLBACK_ID,
-        T.CALLBACK_CODE,
-        T.CALLBACK_DESC,
-        T.SOURCE_CODE,
-        T.USER_PHONE,
-        T.USER_OPENID,
-        T.SOURCE_ID,
-        to_char(PUSH_DATE, 'yyyymmdd') PUSH_DATE_STR,
-        ROWNUM   RN
-        FROM UO_OP_PUSH_LIST T
+        select * from (
+        select t.*, ROWNUM rn from (
+        select PUSH_ID,
+        PUSH_CONTENT,
+        PUSH_PERIOD,
+        PUSH_STATUS,
+        CALLBACK_ID,
+        CALLBACK_CODE,
+        CALLBACK_DESC,
+        SOURCE_CODE,
+        USER_PHONE,
+        USER_OPENID,
+        SOURCE_ID,
+        to_char(PUSH_DATE, 'yyyymmdd') PUSH_DATE_STR
+        FROM UO_OP_PUSH_LIST
         WHERE 1=1
         <if test="pushStatus != null and pushStatus != ''">
-            and T.PUSH_STATUS = #{pushStatus}
+            and PUSH_STATUS = #{pushStatus}
         </if>
         <if test="sourceCode != null and sourceCode != ''">
-            and T.SOURCE_CODE = #{sourceCode}
+            and SOURCE_CODE = #{sourceCode}
         </if>
-        AND ROWNUM &lt;= #{end}
-        order by T.PUSH_ID desc
-        ) WHERE RN &gt;= #{start}
+        order by PUSH_ID desc
+        ) t where ROWNUM &lt;= #{end}
+        )where rn &gt;= #{start}
     </select>
 </mapper>
