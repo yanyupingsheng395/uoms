@@ -110,7 +110,7 @@ function updateCoupon() {
             $form.find("input[name='couponDenom']").val(coupon.couponDenom).attr("readonly", true);
             $form.find("input[name='couponThreshold']").val(coupon.couponThreshold).attr("readonly", true);
             $form.find("input[name='couponInfo2']").val(coupon.couponInfo2);
-            $form.find("input[name='couponUrl']").val(coupon.couponUrl).attr("readonly", true);;
+            $form.find("input[name='couponUrl']").val(coupon.couponUrl);
             $form.find("input[name='couponNum']").val(coupon.couponNum);
             $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName);
             $form.find("input[name='validEnd']").val(coupon.validEnd);
@@ -180,13 +180,19 @@ $("#btn_delete").click(function () {
         return;
     }
     var couponId = selected[0].couponId;
-    $.post("/coupon/deleteByCouponId", {"couponId": couponId}, function (r) {
-        if(r.code == 200) {
-            $MB.n_success("删除成功！");
-        }else {
-            $MB.n_danger(r.msg);
-        }
-        $MB.refreshTable("couponTable");
+
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认删除优惠券？'
+    }, function () {
+        $.post("/coupon/deleteByCouponId", {"couponId": couponId}, function (r) {
+            if(r.code == 200) {
+                $MB.n_success("删除成功！");
+            }else {
+                $MB.n_danger(r.msg);
+            }
+            $MB.refreshTable("couponTable");
+        });
     });
 });
 
