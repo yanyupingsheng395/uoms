@@ -33,7 +33,7 @@ public interface PushListService {
      * 获取分页数据
      * @return
      */
-    List<PushListInfo> getPushInfoListPage(int start, int end, String sourceCode, String pushStatus);
+    List<PushListInfo> getPushInfoListPage(int start, int end, String sourceCode, String pushStatus, String pushDateStr);
 
-    int getTotalCount(String sourceCode, String pushStatus);
+    int getTotalCount(String sourceCode, String pushStatus, String pushDateStr);
 }

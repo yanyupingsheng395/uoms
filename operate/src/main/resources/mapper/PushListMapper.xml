@@ -75,13 +75,16 @@
 
     <select id="getTotalCount" resultType="int">
         select count(1)
-        FROM UO_OP_PUSH_LIST T
+        FROM UO_OP_PUSH_LIST
         WHERE 1=1
         <if test="pushStatus != null and pushStatus != ''">
-            and T.PUSH_STATUS = #{pushStatus}
+            and PUSH_STATUS = #{pushStatus}
         </if>
         <if test="sourceCode != null and sourceCode != ''">
-            and T.SOURCE_CODE = #{sourceCode}
+            and SOURCE_CODE = #{sourceCode}
+        </if>
+        <if test="pushDateStr != null and pushDateStr != ''">
+            and trunc(PUSH_DATE, 'dd') = to_date(#{pushDateStr}, 'yyyymmdd')
         </if>
     </select>
 
@@ -107,6 +110,9 @@
         </if>
         <if test="sourceCode != null and sourceCode != ''">
             and SOURCE_CODE = #{sourceCode}
+        </if>
+        <if test="pushDateStr != null and pushDateStr != ''">
+            and trunc(PUSH_DATE, 'dd') = to_date(#{pushDateStr}, 'yyyymmdd')
         </if>
         order by PUSH_ID desc
         ) t where ROWNUM &lt;= #{end}

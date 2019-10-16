@@ -214,7 +214,7 @@ $("#btn_save").click(function () {
         alert_str+='模板内容不能为空！';
     }
 
-    if(null==isCoupon||isCoupon=='')
+    if(null==isCoupon||isCoupon==' ')
     {
         alert_str+='请选择是否包含优惠券！';
     }

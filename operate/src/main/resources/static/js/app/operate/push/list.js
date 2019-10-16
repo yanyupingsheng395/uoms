@@ -1,3 +1,5 @@
+init_date('pushDateStr', 'yyyymmdd',0,2,0);
+$("#pushDateStr").datepicker('setEndDate', new Date());
 $(function () {
     initTable();
 });
@@ -16,7 +18,8 @@ function initTable() {
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
                     sourceCode: $("#sourceCode").find("option:selected").val(),
-                    pushStatus: $("#pushStatus").find("option:selected").val()
+                    pushStatus: $("#pushStatus").find("option:selected").val(),
+                    pushDateStr: $("#pushDateStr").val()
                 }
             };
         },

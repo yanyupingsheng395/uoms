@@ -28,8 +28,9 @@ public class PushController {
         int end = request.getEnd();
         String sourceCode = request.getParam().get("sourceCode");
         String pushStatus = request.getParam().get("pushStatus");
-        List<PushListInfo> dataList = pushListService.getPushInfoListPage(start, end, sourceCode, pushStatus);
-        int count = pushListService.getTotalCount(sourceCode, pushStatus);
+        String pushDateStr = request.getParam().get("pushDateStr");
+        List<PushListInfo> dataList = pushListService.getPushInfoListPage(start, end, sourceCode, pushStatus, pushDateStr);
+        int count = pushListService.getTotalCount(sourceCode, pushStatus, pushDateStr);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 }

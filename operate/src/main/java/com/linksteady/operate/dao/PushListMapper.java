@@ -35,7 +35,7 @@ public interface PushListMapper {
      */
     void updateIsPush(int maxPushId,int currHour);
 
-    int getTotalCount(String sourceCode, String pushStatus);
+    int getTotalCount(String sourceCode, String pushStatus, String pushDateStr);
 
-    List<PushListInfo> getPushInfoListPage(int start, int end, String sourceCode, String pushStatus);
+    List<PushListInfo> getPushInfoListPage(int start, int end, String sourceCode, String pushStatus, String pushDateStr);
 }

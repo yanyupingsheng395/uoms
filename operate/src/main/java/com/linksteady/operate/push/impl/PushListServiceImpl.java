@@ -40,13 +40,13 @@ public class PushListServiceImpl implements PushListService {
     }
 
     @Override
-    public List<PushListInfo> getPushInfoListPage(int start, int end, String sourceCode, String pushStatus) {
-        return pushListMapper.getPushInfoListPage(start, end, sourceCode, pushStatus);
+    public List<PushListInfo> getPushInfoListPage(int start, int end, String sourceCode, String pushStatus, String pushDateStr) {
+        return pushListMapper.getPushInfoListPage(start, end, sourceCode, pushStatus, pushDateStr);
     }
 
     @Override
-    public int getTotalCount(String sourceCode, String pushStatus) {
-        return pushListMapper.getTotalCount(sourceCode, pushStatus);
+    public int getTotalCount(String sourceCode, String pushStatus, String pushDateStr) {
+        return pushListMapper.getTotalCount(sourceCode, pushStatus, pushDateStr);
     }
 
 
