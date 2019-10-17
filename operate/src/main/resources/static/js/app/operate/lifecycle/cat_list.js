@@ -273,7 +273,7 @@ $("#endDt").val(getCurrentDate());
 function getCurrentDate() {
     var d = new Date();
     var year = d.getFullYear();
-    var month = d.getMonth() < 10 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1;
+    var month = d.getMonth() < 9 ? "0" + (d.getMonth() + 1) : d.getMonth() + 1;
     var day = d.getDate() < 10 ? "0" + d.getDate() : d.getDate();
     return year + "-" + month + "-" + day;
 }
