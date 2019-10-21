@@ -29,7 +29,7 @@ public class LogController extends BaseController {
     private LogService logService;
 
     @RequestMapping("log")
-    @RequiresPermissions("push:list")
+    @RequiresPermissions("log:list")
     public String index() {
         return "system/log/log";
     }
