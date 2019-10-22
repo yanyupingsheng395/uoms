@@ -39,4 +39,6 @@ public interface DailyService {
     int getUserGroupCount();
 
     void setSmsCode(String groupId, String smsCode);
+
+    boolean validUserGroup();
 }

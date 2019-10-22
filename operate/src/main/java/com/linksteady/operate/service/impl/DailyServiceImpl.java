@@ -113,4 +113,14 @@ public class DailyServiceImpl implements DailyService {
             dailyMapper.setSmsCode(groupIds, smsCode);
         }
     }
+
+    @Override
+    public boolean validUserGroup() {
+        // 获取短信内容为空的情况
+        int notValidCount = dailyMapper.validUserGroup();
+        if(notValidCount > 0) {
+            return false;
+        }
+        return true;
+    }
 }

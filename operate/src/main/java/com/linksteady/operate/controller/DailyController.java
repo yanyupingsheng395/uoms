@@ -342,12 +342,12 @@ public class DailyController {
         return ResponseBo.okWithData(null, result);
     }
 
-    public void test() {
-        LockSupport.park();
-    }
-
-    public static void main(String[] args) {
-        DailyController dailyController = new DailyController();
-        dailyController.test();
+    /**
+     * 触达用户之前进行用户群组的验证
+     * @return
+     */
+    @GetMapping("/validUserGroup")
+    public ResponseBo validUserGroup() {
+        return ResponseBo.okWithData(null, dailyService.validUserGroup());
     }
 }

@@ -52,4 +52,6 @@ public interface DailyMapper {
      * 更新头表中推送状态的统计信息
      */
     void updateHeaderSendStatis();
+
+    int validUserGroup();
 }

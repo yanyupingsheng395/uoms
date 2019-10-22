@@ -1,8 +1,9 @@
 $(function () {
-    init_date('touchDt', 'yyyy-mm-dd', 0,2,0);
-    $("#touchDt").datepicker('setEndDate',new Date());
+    init_date('touchDt', 'yyyy-mm-dd', 0, 2, 0);
+    $("#touchDt").datepicker('setEndDate', new Date());
     initTable();
 });
+
 function initTable() {
     var settings = {
         url: '/daily/getPageList',
@@ -21,26 +22,26 @@ function initTable() {
         },
         columns: [{
             checkbox: true
-        },{
+        }, {
             field: 'headId',
             title: 'ID',
             visible: false
-        },{
+        }, {
             field: 'touchDt',
             title: '日期'
-        },{
+        }, {
             field: 'totalNum',
             title: '建议推送人数（人）'
-        },{
+        }, {
             field: 'convertCount',
             title: '任务转化人数（人）'
-        },{
+        }, {
             field: 'convertRate',
             title: '转化率（%）'
-        },{
+        }, {
             field: 'convertAmount',
             title: '转化金额（元）'
-        },{
+        }, {
             field: 'status',
             title: '状态',
             formatter: function (value, row, indx) {
@@ -76,6 +77,7 @@ $("#btn_query").click(function () {
 });
 
 $("#btn_edit").click(function () {
+
     var selected = $("#dailyTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
@@ -83,12 +85,16 @@ $("#btn_edit").click(function () {
         return;
     }
     var status = selected[0].status;
-    if(status != "todo") {
+    if (status != "todo") {
         $MB.n_warning('当前记录已被执行，请选择待执行状态的记录！');
         return;
     }
+
     var headId = selected[0].headId;
-    window.location.href = "/page/daily/edit?id=" + headId;
+    if (validUserGroup()) {
+        window.location.href = "/page/daily/edit?id=" + headId;
+
+    }
 });
 
 
@@ -100,10 +106,26 @@ $("#btn_catch").click(function () {
         return;
     }
     var status = selected[0].status;
-    if(status != 'done' && status != 'finished') {
+    if (status != 'done' && status != 'finished') {
         $MB.n_warning("只有已执行，已结束状态可查看任务效果！");
         return;
     }
     var headId = selected[0].headId;
     window.location.href = "/page/daily/effect?id=" + headId;
 });
+
+// 验证用户群组配置是否合法
+function validUserGroup() {
+    $.get("/daily/validUserGroup", {}, function (r) {
+        if (r.code == 200) {
+            if (!r.data) {
+                $MB.n_warning("成长组配置短信内容或券信息配置有误！");
+                return false;
+            }
+            return true;
+        } else {
+            $MB.n_danger("未知异常！");
+            return false;
+        }
+    });
+}
