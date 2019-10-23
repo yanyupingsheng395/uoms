@@ -14,17 +14,6 @@ $(function () {
 });
 init();
 function init() {
-    // 起止日期初始化
-    init_date_begin("startDt", "endDt", "yyyy-mm",1,2 ,1);
-    init_date_end("startDt", "endDt", "yyyy-mm",1,2 ,1);
-    $('#startDt').datepicker("setEndDate", new Date());
-    $('#endDt').datepicker("setEndDate", new Date());
-    var currentYear = new Date().getFullYear();
-    var currentMonth = new Date().getMonth() + 1;
-    $("#startDt").val(currentYear + "-01");
-    $("#endDt").val(currentYear + "-" + (currentMonth < 10 ? "0" + currentMonth : currentMonth));
-
-    // 获取渠道和品牌
     getSource();
     getBrand();
 }
