@@ -93,7 +93,6 @@ $("#btn_edit").click(function () {
     var headId = selected[0].headId;
     if (validUserGroup()) {
         window.location.href = "/page/daily/edit?id=" + headId;
-
     }
 });
 
@@ -122,10 +121,10 @@ function validUserGroup() {
                 $MB.n_warning("成长组配置短信内容或券信息配置有误！");
                 return false;
             }
-            return true;
         } else {
             $MB.n_danger("未知异常！");
             return false;
         }
     });
+    return true;
 }
