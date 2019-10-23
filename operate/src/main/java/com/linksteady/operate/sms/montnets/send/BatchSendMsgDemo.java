@@ -15,11 +15,11 @@ import java.util.stream.IntStream;
  */
 public class BatchSendMsgDemo {
 
-    private static String userid = "H12713";
+    private static String userid = "JS4895";
 
     private static String pwd = "812316";
 
-    private static String masterIpAddress = "61.145.229.29:7791";
+    private static String masterIpAddress = "61.145.229.28:7902";
 
     public static void main(String[] args) throws InterruptedException {
         batchMsg();
