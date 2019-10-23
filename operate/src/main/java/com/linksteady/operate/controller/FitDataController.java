@@ -4,10 +4,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.service.FitDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +22,7 @@ public class FitDataController {
     @Autowired
     private FitDataService fitDataService;
 
-    @GetMapping("/generateFittingData")
+    @PostMapping("/generateFittingData")
     public ResponseBo generateFittingData(String spuId, String purchCount, @RequestParam  String type) {
         if(!"".equals(purchCount)) {
             List<Integer> purchTimes = Arrays.asList(purchCount.split(",")).stream().map(x->Integer.valueOf(x)).collect(Collectors.toList());
