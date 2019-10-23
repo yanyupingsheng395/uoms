@@ -5,6 +5,7 @@ import com.linksteady.operate.dao.PushListMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.push.PushMessageService;
+import com.linksteady.operate.sms.montnets.domain.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -82,6 +83,12 @@ public class PushDefaultServiceImpl implements PushMessageService {
     @Override
     public int push(String uid, String messageContent) {
         //print
+        return 0;
+    }
+
+    @Override
+    public int batchPush(Message message) {
+        log.info("当前手机号：{}", message.getMobile());
         return 0;
     }
 }

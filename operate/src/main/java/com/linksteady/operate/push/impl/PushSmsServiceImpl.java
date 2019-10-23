@@ -137,4 +137,10 @@ public class PushSmsServiceImpl implements PushMessageService {
 
         return result;
     }
+
+    @Override
+    public int batchPush(Message message) {
+        SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
+        return sendSms.batchSend(message);
+    }
 }
