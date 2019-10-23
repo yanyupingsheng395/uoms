@@ -67,6 +67,7 @@ function getRetentionByMethod(purchTimes, type) {
     var data = null;
     $.ajax({
         url: "/fitdata/generateFittingData",
+        type: 'post',
         data:{spuId: selectId, purchCount: purchTimes, type: type},
         async: false,
         success: function (r) {
