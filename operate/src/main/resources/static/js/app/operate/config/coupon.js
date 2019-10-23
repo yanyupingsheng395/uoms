@@ -147,10 +147,10 @@ function validateRule() {
                 required: true
             },
             couponInfo2: {
-                required: true
+                required: false
             },
             couponUrl: {
-                required: true
+                required: false
             },
             couponDisplayName: {
                 required: true
@@ -210,7 +210,12 @@ $("#btn_delete").click(function () {
  * 获取短链
  */
 function getShortUrl() {
-    $.get("/coupon/getShortUrl", {url: $("#couponInfo2").val()}, function(r) {
+    var url = $("#couponInfo2").val();
+    if(url.trim() == "") {
+        $MB.n_warning("长链不能为空！");
+        return;
+    }
+    $.get("/coupon/getShortUrl", {url: url}, function(r) {
         if(r.code === 200) {
             $("#couponUrl").val(r.data);
         }else {
