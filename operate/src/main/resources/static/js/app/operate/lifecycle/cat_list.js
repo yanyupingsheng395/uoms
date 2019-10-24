@@ -114,6 +114,7 @@ function periodTypeOption() {
 
 
 function initTableData() {
+    $MB.loadingDesc('show', '加载数据中,请稍后...');
     stats = new Object();
     var startDt =  $("#startDt").val();
     var endDt = $("#endDt").val();
@@ -183,6 +184,8 @@ function initTableData() {
                 search: false
             };
             $('#catListTable').bootstrapTable('destroy').bootstrapTable(option);
+            $MB.loadingDesc('hide');
+            $("#catListTableDiv").attr("style", "display:block;");
         }
     });
 }
