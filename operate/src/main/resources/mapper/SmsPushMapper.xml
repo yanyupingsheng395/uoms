@@ -19,20 +19,29 @@
     </resultMap>
 
     <select id="getPushListCount" resultType="int">
-        select count(1) from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        select count(1) from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0'
+        and PUSH_SCHEDULING_DATE &lt; to_char(sysdate, 'yyyymmdd') or (
+            PUSH_SCHEDULING_DATE = to_char(sysdate, 'yyyymmdd') and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        )
     </select>
 
     <select id="getPushList" resultMap="base">
         SELECT *
         FROM ( select ROWNUM rn, t.* from (
-        select SOURCE_ID, USER_PHONE from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        select SOURCE_ID, USER_PHONE from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0'
+        and PUSH_SCHEDULING_DATE &lt; to_char(sysdate, 'yyyymmdd') or (
+            PUSH_SCHEDULING_DATE = to_char(sysdate, 'yyyymmdd') and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        )
         and PUSH_CONTENT = #{sms} order by PUSH_ID desc) t
         where ROWNUM &lt;= #{end}
         ) WHERE RN &gt;= #{start}
     </select>
 
     <select id="getSmsContent" resultType="string">
-        select PUSH_CONTENT from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        select PUSH_CONTENT from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0'
+        and PUSH_SCHEDULING_DATE &lt; to_char(sysdate, 'yyyymmdd') or (
+            PUSH_SCHEDULING_DATE = to_char(sysdate, 'yyyymmdd') and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        )
         group by PUSH_CONTENT
     </select>
 
@@ -48,11 +57,17 @@
     </update>
 
     <select id="getPushListCountBySms" resultType="int">
-        select count(1) from UO_OP_PUSH_LIST_LARGE where is_push = '0' and  to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        select count(1) from UO_OP_PUSH_LIST_LARGE where is_push = '0'
+        and PUSH_SCHEDULING_DATE &lt; to_char(sysdate, 'yyyymmdd') or (
+            PUSH_SCHEDULING_DATE = to_char(sysdate, 'yyyymmdd') and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        )
         and PUSH_CONTENT = #{sms}
     </select>
 
     <select id="getMaxPushId" resultType="long">
-        select max(PUSH_ID) from UO_OP_PUSH_LIST_LARGE where is_push = '0' and  to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        select max(PUSH_ID) from UO_OP_PUSH_LIST_LARGE where is_push = '0' and
+        PUSH_SCHEDULING_DATE &lt; to_char(sysdate, 'yyyymmdd') or (
+            PUSH_SCHEDULING_DATE = to_char(sysdate, 'yyyymmdd') and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        )
     </select>
 </mapper>

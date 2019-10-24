@@ -49,6 +49,7 @@ public class BatchPushMessageThread extends Thread {
             if (count == 0) {
                 log.info(">>>当前时间没有可推送的名单");
             } else {
+                log.info(">>>当前时间获取到共{}条短信内容待推送", count);
                 Long startTime = System.currentTimeMillis();
                 Long maxPushId = smsPushService.getMaxPushId(currentHour);
                 List<String> smsContent = smsPushService.getSmsContent(currentHour);
