@@ -1,19 +1,18 @@
-String.prototype.endWith=function(str){
-    if(str==null||str==""||this.length==0||str.length>this.length)
+String.prototype.endWith = function (str) {
+    if (str == null || str == "" || this.length == 0 || str.length > this.length)
         return false;
-    if(this.substring(this.length-str.length)==str)
+    if (this.substring(this.length - str.length) == str)
         return true;
     else
         return false;
     return true;
 };
 $(function () {
-    // 获取初始化条件的值
-    getTotalData();
-
+    init();
 });
-init();
+
 function init() {
+    getTotalData();
     getSource();
     getBrand();
 }
@@ -23,7 +22,7 @@ function getBrand() {
     var code = "";
     $.get("/useroperator/getBrand", {}, function (r) {
         $.each(r.data, function (k, v) {
-            code += "<option value='"+v["BRAND_ID"]+"'>" + v["BRAND_NAME"] + " </option>";
+            code += "<option value='" + v["BRAND_ID"] + "'>" + v["BRAND_NAME"] + " </option>";
         });
         $("#brand").html("").html(code);
     });
@@ -34,31 +33,35 @@ function getSource() {
     var code = "<option value=''>所有</option>";
     $.get("/useroperator/getSource", {}, function (r) {
         $.each(r.data, function (k, v) {
-            code += "<option value='"+v["SOURCE_ID"]+"'>" + v["SOURCE_NAME"] + " </option>";
+            code += "<option value='" + v["SOURCE_ID"] + "'>" + v["SOURCE_NAME"] + " </option>";
         });
         $("#source").html("").html(code);
     });
 }
 
 // 获取概览页的数据
-function getTotalData(){
+function getTotalData() {
     $MB.loadingDesc('show', "正在计算数据中，请稍后...");
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
     var source = $("#source").find("option:selected").val();
-    $.get("/useroperator/getOrgChartData",{ periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (resp) {
-        if(null!=resp.data.gmv||resp.data.gmv!='null')
-        {
+    $.get("/useroperator/getOrgChartData", {
+        periodType: periodType,
+        startDt: startDt,
+        endDt: endDt,
+        source: source
+    }, function (resp) {
+        if (null != resp.data.gmv || resp.data.gmv != 'null') {
             var price = resp.data.price == null ? "0" : resp.data.price;
             var sprice = resp.data.sprice == null ? "0" : resp.data.sprice;
-            $("#KPI_GMV").html("").html(accounting.formatNumber(resp.data.gmv)+"元");
-            $("#KPI_UCNT").html("").html(resp.data.ucnt+"人");
-            $("#KPI_UPRICE").html("").html(resp.data.uprice+"元");
-            $("#KPI_PRICE").html("").html(price+"元");
-            $("#KPI_SPRICE").html("").html(sprice+"元");
+            $("#KPI_GMV").html("").html(accounting.formatNumber(resp.data.gmv) + "元");
+            $("#KPI_UCNT").html("").html(resp.data.ucnt + "人");
+            $("#KPI_UPRICE").html("").html(resp.data.uprice + "元");
+            $("#KPI_PRICE").html("").html(price + "元");
+            $("#KPI_SPRICE").html("").html(sprice + "元");
             $("#KPI_JOINRATE").html("").html(resp.data.joinrate);
-            $("#KPI_PCNT").html("").html(resp.data.pcnt+"笔");
+            $("#KPI_PCNT").html("").html(resp.data.pcnt + "笔");
         }
         $MB.loadingDesc('hide');
     });
@@ -71,17 +74,17 @@ $("#period").change(function () {
     $("#startDt").datepicker('destroy');
     $("#endDt").datepicker('destroy');
     var period = $(this).find("option:selected").val();
-    if(period == 'Y') {
-        init_date_begin("startDt", "endDt", "yyyy",2,2 ,2);
-        init_date_end("startDt", "endDt", "yyyy",2,2 ,2);
+    if (period == 'Y') {
+        init_date_begin("startDt", "endDt", "yyyy", 2, 2, 2);
+        init_date_end("startDt", "endDt", "yyyy", 2, 2, 2);
     }
-    if(period == "M") {
-        init_date_begin("startDt", "endDt", "yyyy-mm",1,2 ,1);
-        init_date_end("startDt", "endDt", "yyyy-mm",1,2 ,1);
+    if (period == "M") {
+        init_date_begin("startDt", "endDt", "yyyy-mm", 1, 2, 1);
+        init_date_end("startDt", "endDt", "yyyy-mm", 1, 2, 1);
     }
-    if(period == "D") {
-        init_date_begin("startDt", "endDt", "yyyy-mm-dd",0,2 ,0);
-        init_date_end("startDt", "endDt", "yyyy-mm-dd",0,2 ,0);
+    if (period == "D") {
+        init_date_begin("startDt", "endDt", "yyyy-mm-dd", 0, 2, 0);
+        init_date_end("startDt", "endDt", "yyyy-mm-dd", 0, 2, 0);
     }
     $('#startDt').datepicker("setEndDate", new Date());
     $('#endDt').datepicker("setEndDate", new Date());
@@ -89,11 +92,11 @@ $("#period").change(function () {
 
 function searchKpiInfo() {
     var period = $("#period").find("option:selected").val();
-    if($("#startDt").val() == "") {
+    if ($("#startDt").val() == "") {
         $MB.n_warning("请选择开始时间！");
         return;
     }
-    if($("#endDt").val() == "") {
+    if ($("#endDt").val() == "") {
         $MB.n_warning("请选择结束时间！");
         return;
     }
@@ -115,32 +118,32 @@ function searchKpiInfo() {
                 unit = "元";
                 $("#kpiName").html("").html("GMV");
             }
-            if(href.endWith("#user-num")) {
+            if (href.endWith("#user-num")) {
                 kpiType = "userCnt";
                 unit = "人";
                 $("#kpiName").html("").html("用户数");
             }
-            if(href.endWith("#customer-unit-price")) {
+            if (href.endWith("#customer-unit-price")) {
                 kpiType = "userPrice";
                 unit = "元";
                 $("#kpiName").html("").html("客单价");
             }
-            if(href.endWith("#order-num")) {
+            if (href.endWith("#order-num")) {
                 kpiType = "orderCnt";
                 unit = "个";
                 $("#kpiName").html("").html("订单数");
             }
-            if(href.endWith("#order-price")) {
+            if (href.endWith("#order-price")) {
                 kpiType = "orderPrice";
                 unit = "元";
                 $("#kpiName").html("").html("订单价");
             }
-            if(href.endWith("#joint-rate")) {
+            if (href.endWith("#joint-rate")) {
                 kpiType = "jointRate";
                 unit = "";
                 $("#kpiName").html("").html("连带率");
             }
-            if(href.endWith("#unit-price")) {
+            if (href.endWith("#unit-price")) {
                 kpiType = "unitPrice";
                 unit = "元";
                 $("#kpiName").html("").html("件单价");
@@ -156,10 +159,10 @@ function searchKpiInfo() {
 
 $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var startDt = $("#startDt").val();
-    if(startDt == "") {
+    if (startDt == "") {
         $MB.n_warning("请选择时间！");
-    }else {
-        if(!e.target.href.endWith("#overview") && !e.target.href.endWith("#retention")) {
+    } else {
+        if (!e.target.href.endWith("#overview") && !e.target.href.endWith("#retention")) {
             $("#selectCondition1").show();
             $("#selectCondition2").hide();
             // 给当前DIV赋值模板
@@ -175,32 +178,32 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 unit = "元";
                 $("#kpiName").html("").html("GMV");
             }
-            if(e.target.href.endWith("#user-num")) {
+            if (e.target.href.endWith("#user-num")) {
                 kpiType = "userCnt";
                 unit = "人";
                 $("#kpiName").html("").html("用户数");
             }
-            if(e.target.href.endWith("#customer-unit-price")) {
+            if (e.target.href.endWith("#customer-unit-price")) {
                 kpiType = "userPrice";
                 unit = "元";
                 $("#kpiName").html("").html("客单价");
             }
-            if(e.target.href.endWith("#order-num")) {
+            if (e.target.href.endWith("#order-num")) {
                 kpiType = "orderCnt";
                 unit = "个";
                 $("#kpiName").html("").html("订单数");
             }
-            if(e.target.href.endWith("#order-price")) {
+            if (e.target.href.endWith("#order-price")) {
                 kpiType = "orderPrice";
                 unit = "元";
                 $("#kpiName").html("").html("订单价");
             }
-            if(e.target.href.endWith("#joint-rate")) {
+            if (e.target.href.endWith("#joint-rate")) {
                 kpiType = "jointRate";
                 unit = "";
                 $("#kpiName").html("").html("连带率");
             }
-            if(e.target.href.endWith("#unit-price")) {
+            if (e.target.href.endWith("#unit-price")) {
                 kpiType = "unitPrice";
                 unit = "元";
                 $("#kpiName").html("").html("件单价");
@@ -210,11 +213,11 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             makeSpAndFpChart(kpiType);
             getKpiInfo(kpiType, unit);
             getKpiCalInfo(kpiType);
-        }else if(e.target.href.endWith("#overview")) {
+        } else if (e.target.href.endWith("#overview")) {
             $("#selectCondition1").show();
             $("#selectCondition2").hide();
             load_jsmind();
-        }else if(e.target.href.endWith("#retention")) { // 留存率变化
+        } else if (e.target.href.endWith("#retention")) { // 留存率变化
             // todo 初始化日期
             $("#selectCondition1").hide();
             $("#selectCondition2").show();
@@ -231,27 +234,33 @@ function getKpiInfo(kpiType, unit) {
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
     var source = $("#source").find("option:selected").val();
-    $.get("/useroperator/getKpiInfo", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
+    $.get("/useroperator/getKpiInfo", {
+        kpiType: kpiType,
+        periodType: periodType,
+        startDt: startDt,
+        endDt: endDt,
+        source: source
+    }, function (r) {
         var yny = r.data["yny"];
         var yoy = r.data["yoy"];
-        $("#actualVal").html("").html(r.data["kpiVal"] + "<span class='h5'>"+unit+"</span>");
+        $("#actualVal").html("").html(r.data["kpiVal"] + "<span class='h5'>" + unit + "</span>");
         $("#lastYearPeriod").text(r.data["lastYearKpiVal"] == "--" ? r.data["lastYearKpiVal"] : r.data["lastYearKpiVal"] + unit);
-        if(yny == "--") {
+        if (yny == "--") {
             $("#lastYearOnYear").html("").html(yny);
-        }else {
-            if(yny.indexOf("-") > -1) {
-                $("#lastYearOnYear").html("").html("<span style=\"color:red;\"><i class=\"mdi mdi-menu-down mdi-18px\"></i>"+yny+"</span>");
-            }else {
-                $("#lastYearOnYear").html("").html("<span style=\"color:green;\"><i class=\"mdi mdi-menu-up mdi-18px\"></i>"+yny+"</span>");
+        } else {
+            if (yny.indexOf("-") > -1) {
+                $("#lastYearOnYear").html("").html("<span style=\"color:red;\"><i class=\"mdi mdi-menu-down mdi-18px\"></i>" + yny + "</span>");
+            } else {
+                $("#lastYearOnYear").html("").html("<span style=\"color:green;\"><i class=\"mdi mdi-menu-up mdi-18px\"></i>" + yny + "</span>");
             }
         }
-        if(yoy == "--" || yoy == undefined) {
+        if (yoy == "--" || yoy == undefined) {
             $("#lastPeriodYearOnYear").html("").html("--");
-        }else {
-            if(yny.indexOf("-") > -1) {
-                $("#lastPeriodYearOnYear").html("").html("<span style=\"color:red;\"><i class=\"mdi mdi-menu-down mdi-18px\"></i>"+yoy+"</span>");
-            }else {
-                $("#lastPeriodYearOnYear").html("").html("<span style=\"color:green;\"><i class=\"mdi mdi-menu-up mdi-18px\"></i>"+yoy+"</span>");
+        } else {
+            if (yny.indexOf("-") > -1) {
+                $("#lastPeriodYearOnYear").html("").html("<span style=\"color:red;\"><i class=\"mdi mdi-menu-down mdi-18px\"></i>" + yoy + "</span>");
+            } else {
+                $("#lastPeriodYearOnYear").html("").html("<span style=\"color:green;\"><i class=\"mdi mdi-menu-up mdi-18px\"></i>" + yoy + "</span>");
             }
         }
         $("#lastPeriod").text(r.data["lastKpiVal"] == "--" || r.data['lastKpiVal'] == undefined ? '--' : r.data["lastKpiVal"] + unit);
@@ -267,7 +276,13 @@ function kpiChart(kpiType) {
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
     var source = $("#source").find("option:selected").val();
-    $.get("/useroperator/getKpiChart", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
+    $.get("/useroperator/getKpiChart", {
+        kpiType: kpiType,
+        periodType: periodType,
+        startDt: startDt,
+        endDt: endDt,
+        source: source
+    }, function (r) {
         var seriesData = [];
         var o1 = new Object();
         o1.name = "本周期指标";
@@ -285,10 +300,10 @@ function kpiChart(kpiType) {
         o3.type = 'line';
         o3.smooth = false;
         o3.itemStyle = {
-            normal:{
-                lineStyle:{
-                    width:2,
-                    type:'dotted'  //'dotted'虚线 'solid'实线
+            normal: {
+                lineStyle: {
+                    width: 2,
+                    type: 'dotted'  //'dotted'虚线 'solid'实线
                 }
             }
         };
@@ -299,16 +314,16 @@ function kpiChart(kpiType) {
         o4.type = 'line';
         o4.smooth = false;
         o4.itemStyle = {
-            normal:{
-                lineStyle:{
-                    width:2,
-                    type:'dotted'  //'dotted'虚线 'solid'实线
+            normal: {
+                lineStyle: {
+                    width: 2,
+                    type: 'dotted'  //'dotted'虚线 'solid'实线
                 }
             }
         };
         seriesData.push(o4);
-        var option = getOption(["本周期指标", "去年同期指标", "本周期均线", "去年同期均线"], r.data['xData'], "日期", "指标值",seriesData);
-        option.grid = {left:'12%'};
+        var option = getOption(["本周期指标", "去年同期指标", "本周期均线", "去年同期均线"], r.data['xData'], "日期", "指标值", seriesData);
+        option.grid = {left: '12%'};
         var c = echarts.init(document.getElementById("kpiChart"), 'macarons');
         c.setOption(option);
 
@@ -322,7 +337,13 @@ function allChart(kpiType) {
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
     var source = $("#source").find("option:selected").val();
-    $.get("/useroperator/getSpAndFpKpi", {kpiType: kpiType, periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
+    $.get("/useroperator/getSpAndFpKpi", {
+        kpiType: kpiType,
+        periodType: periodType,
+        startDt: startDt,
+        endDt: endDt,
+        source: source
+    }, function (r) {
         var seriesData = [];
         var o1 = new Object();
         o1.name = "总体";
@@ -340,8 +361,8 @@ function allChart(kpiType) {
         o3.data = r.data['spKpiVal'];
         o3.type = 'line';
         seriesData.push(o3);
-        var option = getOption(["总体", "首购用户", "非首购用户"], r.data['xData'], "日期", "指标值",seriesData);
-        option.grid = {left:'12%'};
+        var option = getOption(["总体", "首购用户", "非首购用户"], r.data['xData'], "日期", "指标值", seriesData);
+        option.grid = {left: '12%'};
         var c = echarts.init(document.getElementById("allChart"), 'macarons');
         c.setOption(option);
         $MB.loadingDesc('hide');
@@ -354,7 +375,13 @@ function makeSpAndFpChart(kpiType) {
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
     var source = $("#source").find("option:selected").val();
-    $.get("/useroperator/getSpOrFpKpiVal", {kpiType:kpiType,periodType: periodType, startDt: startDt, endDt: endDt, source: source}, function (r) {
+    $.get("/useroperator/getSpOrFpKpiVal", {
+        kpiType: kpiType,
+        periodType: periodType,
+        startDt: startDt,
+        endDt: endDt,
+        source: source
+    }, function (r) {
         fpChart(r);
         spChart(r);
         $MB.loadingDesc('hide');
@@ -380,10 +407,10 @@ function fpChart(r) {
     o3.type = 'line';
     o3.smooth = false;
     o3.itemStyle = {
-        normal:{
-            lineStyle:{
-                width:2,
-                type:'dotted'  //'dotted'虚线 'solid'实线
+        normal: {
+            lineStyle: {
+                width: 2,
+                type: 'dotted'  //'dotted'虚线 'solid'实线
             }
         }
     };
@@ -394,33 +421,33 @@ function fpChart(r) {
     o4.type = 'line';
     o4.smooth = false;
     o4.itemStyle = {
-        normal:{
-            lineStyle:{
-                width:2,
-                type:'dotted'  //'dotted'虚线 'solid'实线
+        normal: {
+            lineStyle: {
+                width: 2,
+                type: 'dotted'  //'dotted'虚线 'solid'实线
             }
         }
     };
     seriesData.push(o4);
-    var option = getOption(["本周期指标", "去年同期指标", "本周期均值", "去年同期均值"], r.data['xData'], "日期", "指标值",seriesData);
+    var option = getOption(["本周期指标", "去年同期指标", "本周期均值", "去年同期均值"], r.data['xData'], "日期", "指标值", seriesData);
     option.title = {
         text: '新客指标报告期变化趋势图',
-        x:'center',
+        x: 'center',
         y: 'bottom',
-        textStyle:{
+        textStyle: {
             //文字颜色
-            color:'#000',
+            color: '#000',
             //字体风格,'normal','italic','oblique'
-            fontStyle:'normal',
+            fontStyle: 'normal',
             //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-            fontWeight:'normal',
+            fontWeight: 'normal',
             //字体系列
-            fontFamily:'sans-serif',
+            fontFamily: 'sans-serif',
             //字体大小
-            fontSize:12
+            fontSize: 12
         }
     };
-    option.grid = {left:'12%'};
+    option.grid = {left: '12%'};
     var c = echarts.init(document.getElementById("fpChart"), 'macarons');
     c.setOption(option);
 }
@@ -444,10 +471,10 @@ function spChart(r) {
     o3.type = 'line';
     o3.smooth = false;
     o3.itemStyle = {
-        normal:{
-            lineStyle:{
-                width:2,
-                type:'dotted'  //'dotted'虚线 'solid'实线
+        normal: {
+            lineStyle: {
+                width: 2,
+                type: 'dotted'  //'dotted'虚线 'solid'实线
             }
         }
     };
@@ -458,33 +485,33 @@ function spChart(r) {
     o4.type = 'line';
     o4.smooth = false;
     o4.itemStyle = {
-        normal:{
-            lineStyle:{
-                width:2,
-                type:'dotted'  //'dotted'虚线 'solid'实线
+        normal: {
+            lineStyle: {
+                width: 2,
+                type: 'dotted'  //'dotted'虚线 'solid'实线
             }
         }
     };
     seriesData.push(o4);
-    var option = getOption(["本周期指标", "去年同期指标", "本周期均值", "去年同期均值"], r.data['xData'], "日期", "指标值",seriesData);
+    var option = getOption(["本周期指标", "去年同期指标", "本周期均值", "去年同期均值"], r.data['xData'], "日期", "指标值", seriesData);
     option.title = {
         text: '老客指标报告期变化趋势图',
-        x:'center',
+        x: 'center',
         y: 'bottom',
-        textStyle:{
+        textStyle: {
             //文字颜色
-            color:'#000',
+            color: '#000',
             //字体风格,'normal','italic','oblique'
-            fontStyle:'normal',
+            fontStyle: 'normal',
             //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-            fontWeight:'normal',
+            fontWeight: 'normal',
             //字体系列
-            fontFamily:'sans-serif',
+            fontFamily: 'sans-serif',
             //字体大小
-            fontSize:12
+            fontSize: 12
         }
     };
-    option.grid = {left:'12%'};
+    option.grid = {left: '12%'};
     var c = echarts.init(document.getElementById("spChart"), 'macarons');
     c.setOption(option);
 }
@@ -495,7 +522,14 @@ function getKpiCalInfo(kpiType) {
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
     var source = $("#source").find("option:selected").val();
-    $.get("/useroperator/getKpiCalInfo", {kpiType:kpiType, isFp: 'N',periodType: periodType, startDt: startDt, endDt: endDt, source:source}, function (r) {
+    $.get("/useroperator/getKpiCalInfo", {
+        kpiType: kpiType,
+        isFp: 'N',
+        periodType: periodType,
+        startDt: startDt,
+        endDt: endDt,
+        source: source
+    }, function (r) {
         $("#fpAbs").html("").html(r.data['fpAbs']);
         $("#fpContributeRate").html("").html(r.data['fpContributeRate']);
         $("#fpHb").html("").html(r.data['fpHb']);
