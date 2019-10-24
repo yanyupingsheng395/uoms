@@ -91,9 +91,7 @@ $("#btn_edit").click(function () {
     }
 
     var headId = selected[0].headId;
-    if (validUserGroup()) {
-        window.location.href = "/page/daily/edit?id=" + headId;
-    }
+    window.location.href = "/page/daily/edit?id=" + headId;
 });
 
 
@@ -112,19 +110,3 @@ $("#btn_catch").click(function () {
     var headId = selected[0].headId;
     window.location.href = "/page/daily/effect?id=" + headId;
 });
-
-// 验证用户群组配置是否合法
-function validUserGroup() {
-    $.get("/daily/validUserGroup", {}, function (r) {
-        if (r.code == 200) {
-            if (!r.data) {
-                $MB.n_warning("成长组配置短信内容或券信息配置有误！");
-                return false;
-            }
-        } else {
-            $MB.n_danger("未知异常！");
-            return false;
-        }
-    });
-    return true;
-}
