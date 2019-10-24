@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.SmsPushMapper">
+    <resultMap id="base" type="com.linksteady.operate.domain.PushListLager">
+        <result column="PUSH_CONTENT" property="pushContent" jdbcType="VARCHAR"></result>
+        <result column="PUSH_PERIOD" property="pushPeriod" jdbcType="VARCHAR"></result>
+        <result column="PUSH_STATUS" property="pushStatus" jdbcType="VARCHAR"></result>
+        <result column="CALLBACK_CODE" property="callbackCode" jdbcType="VARCHAR"></result>
+        <result column="CALLBACK_DESC" property="callbackDesc" jdbcType="VARCHAR"></result>
+        <result column="SOURCE_CODE" property="sourceCode" jdbcType="VARCHAR"></result>
+        <result column="SOURCE_ID" property="sourceId" jdbcType="DECIMAL"></result>
+        <result column="MSGID" property="msgid" jdbcType="VARCHAR"></result>
+        <result column="PUSH_DATE" property="pushDate" jdbcType="DATE"></result>
+        <result column="USER_PHONE" property="userPhone" jdbcType="VARCHAR"></result>
+        <result column="USER_OPENID" property="userOpenid" jdbcType="VARCHAR"></result>
+        <result column="IS_PUSH" property="isPush" jdbcType="VARCHAR"></result>
+        <result column="PUSH_SCHEDULING_DATE" property="pushSchedulingDate" jdbcType="DECIMAL"></result>
+        <result column="PUSH_ID" property="pushId" jdbcType="DECIMAL"></result>
+    </resultMap>
+
+    <select id="getPushListCount" resultType="int">
+        select count(1) from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+    </select>
+
+    <select id="getPushList" resultMap="base">
+        SELECT *
+        FROM ( select ROWNUM rn, t.* from (
+        select SOURCE_ID, USER_PHONE from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        and PUSH_CONTENT = #{sms} order by PUSH_ID desc) t
+        where ROWNUM &lt;= #{end}
+        ) WHERE RN &gt;= #{start}
+    </select>
+
+    <select id="getSmsContent" resultType="string">
+        select PUSH_CONTENT from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        group by PUSH_CONTENT
+    </select>
+
+    <update id="updatePushState">
+        update UO_OP_PUSH_LIST_LARGE set IS_PUSH = '1', PUSH_DATE = sysdate
+        <where>
+            PUSH_CONTENT in
+            <foreach collection="smsContent" open="(" close=")" separator="," item="item">
+              #{item}
+            </foreach>
+            and PUSH_ID &lt;= #{maxPushId} and IS_PUSH = '0'
+        </where>
+    </update>
+
+    <select id="getPushListCountBySms" resultType="int">
+        select count(1) from UO_OP_PUSH_LIST_LARGE where is_push = '0' and  to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        and PUSH_CONTENT = #{sms}
+    </select>
+
+    <select id="getMaxPushId" resultType="long">
+        select max(PUSH_ID) from UO_OP_PUSH_LIST_LARGE where is_push = '0' and  to_number(PUSH_PERIOD) &lt;= #{currentHour}
+    </select>
+</mapper>

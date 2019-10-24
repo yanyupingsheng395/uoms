@@ -272,4 +272,8 @@ public class ActivityController {
             log.error("文件下载失败", e);
         }
     }
+
+    public static void main(String[] args) {
+        System.out.println(Byte.parseByte("1001"));
+    }
 }

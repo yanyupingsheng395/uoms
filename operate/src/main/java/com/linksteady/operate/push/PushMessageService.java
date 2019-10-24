@@ -1,6 +1,7 @@
 package com.linksteady.operate.push;
 
 import com.linksteady.operate.domain.PushListInfo;
+import com.linksteady.operate.sms.montnets.domain.Message;
 
 import java.util.List;
 
@@ -15,4 +16,10 @@ public interface PushMessageService {
      * @return
      */
     int push(String uid,String messageContent);
+
+    /**
+     * 批量发送接口
+     * @param message
+     */
+    int batchPush(Message message);
 }

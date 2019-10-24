@@ -48,6 +48,4 @@ public class PushListServiceImpl implements PushListService {
     public int getTotalCount(String sourceCode, String pushStatus, String pushDateStr) {
         return pushListMapper.getTotalCount(sourceCode, pushStatus, pushDateStr);
     }
-
-
 }

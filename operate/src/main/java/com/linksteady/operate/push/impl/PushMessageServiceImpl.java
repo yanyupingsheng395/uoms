@@ -3,6 +3,7 @@ package com.linksteady.operate.push.impl;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.push.PushMessageService;
+import com.linksteady.operate.sms.montnets.domain.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,13 @@ public class PushMessageServiceImpl implements PushMessageService {
     public int push(String uid, String messageContent) {
         PushMessageService PushMessageService=getPushStrategy();
         int result=PushMessageService.push(uid,messageContent);
+        return result;
+    }
 
+    @Override
+    public int batchPush(Message message) {
+        PushMessageService pushMessageService=getPushStrategy();
+        int result=pushMessageService.batchPush(message);
         return result;
     }
 

@@ -15,14 +15,14 @@ import java.util.stream.IntStream;
  */
 public class BatchSendMsgDemo {
 
-    private static String userid = "H12713";
+    private static String userid = "JS4895";
 
     private static String pwd = "812316";
 
-    private static String masterIpAddress = "61.145.229.29:7791";
+    private static String masterIpAddress = "61.145.229.28:7902";
 
     public static void main(String[] args) throws InterruptedException {
-        batchMsg();
+        //batchMsg();
     }
 
     /**
@@ -40,7 +40,7 @@ public class BatchSendMsgDemo {
             String mobiles = String.join(",", tmp);
             Message message = new Message();
             message.setMobile(mobiles);
-            String content = "亲，双11预售，你喜欢的乳糖酸精华最低64.5元可带走，记得关注定金尾款哦；另有镇店之宝烟酰胺面膜大放价，低至2.2元，别忘了哦！回T退";
+            String content = "轻轻提醒你，卸妆水 https://dwz.cn/8uARXjgj 预售，付定金最低29.5元带走，记得双11付尾款立减还有拍立得抢！回T退";
             message.setContent(content);
 
             SendSms sendSms = new SendSms(userid, pwd, true, masterIpAddress);
@@ -62,9 +62,8 @@ public class BatchSendMsgDemo {
             String sql = "SELECT td.user_phone\n" +
                     "       FROM UO_OP_DAILY_DETAIL_11 TD\n" +
                     "       WHERE TD.push_status = 'P'\n" +
-                    "         and td.touch_dt = '20191022'\n" +
-                    "         and td.sms_content in ('亲，双11预售，你喜欢的乳糖酸精华最低64.5元可带走，记得关注定金尾款哦；另有镇店之宝烟酰胺面膜大放价，低至2.2元，别忘了哦！回T退')\n" +
-                    "\n" +
+                    "         and td.touch_dt = '20191023' and td.order_period=12 \n" +
+                    "         and td.sms_content in ('轻轻提醒你，卸妆水 https://dwz.cn/8uARXjgj 预售，付定金最低29.5元带走，记得双11付尾款立减还有拍立得抢！回T退')\n" +
                     "       group by user_phone";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -108,4 +107,6 @@ public class BatchSendMsgDemo {
 //        //线程获取 启动获取状态报告的线程
 //        recvRptThread.start();
 //    }
+
+
 }
