@@ -71,7 +71,7 @@ public class BatchPushMessageThread extends Thread {
                         message.setContent(sms);
                         message.setMobile(mobile);
                         pushMessageService.batchPush(message);
-                        log.info(">>>短信内容：{}, 当前推送第{}页名单", sms, i);
+                        log.info(">>>当前推送第{}页名单", sms, i);
                     }
                     log.info(">>>短信内容：{}推送完毕", sms);
                 }
