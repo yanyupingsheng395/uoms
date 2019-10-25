@@ -9,7 +9,7 @@ import java.util.List;
  * @author hxcao
  * @date 2019-10-23
  */
-public interface SmsPushService {
+public interface PushLargeListService {
     /**
      * 获取待推送的名单数量
      * @param currentHour
@@ -34,7 +34,7 @@ public interface SmsPushService {
      * 更新数据状态
      * @param smsContent
      */
-    void updatePushState(List<String> smsContent, Long maxPushId);
+    void updatePushState(List<String> smsContent, Long maxPushId,int currentHour);
 
     int getPushListCountBySms(int currentHour, String sms);
 

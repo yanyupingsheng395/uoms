@@ -2,7 +2,7 @@ package com.linksteady.operate.thread;
 
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
-import com.linksteady.operate.push.impl.PushListServiceImpl;
+import com.linksteady.operate.service.impl.PushListServiceImpl;
 import com.linksteady.operate.push.impl.PushMessageServiceImpl;
 import com.linksteady.operate.util.SpringContextUtils;
 import lombok.SneakyThrows;

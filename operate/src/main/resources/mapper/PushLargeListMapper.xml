@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.linksteady.operate.dao.SmsPushMapper">
+<mapper namespace="com.linksteady.operate.dao.PushLargeListMapper">
     <resultMap id="base" type="com.linksteady.operate.domain.PushListLager">
         <result column="PUSH_CONTENT" property="pushContent" jdbcType="VARCHAR"></result>
         <result column="PUSH_PERIOD" property="pushPeriod" jdbcType="VARCHAR"></result>
@@ -43,7 +43,7 @@
             <foreach collection="smsContent" open="(" close=")" separator="," item="item">
                 #{item}
             </foreach>
-            and PUSH_ID &lt;= #{maxPushId} and IS_PUSH = '0'
+            and PUSH_ID &lt;= #{maxPushId} and IS_PUSH = '0' and  to_number(PUSH_PERIOD) &lt;= #{currentHour}
         </where>
     </update>
 

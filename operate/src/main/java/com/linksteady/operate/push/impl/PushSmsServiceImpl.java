@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.linksteady.operate.dao.PushListMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
+import com.linksteady.operate.domain.PushListLager;
 import com.linksteady.operate.push.PushMessageService;
 import com.linksteady.operate.sms.montnets.config.ConfigManager;
 import com.linksteady.operate.sms.montnets.domain.Message;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 推送消息 短信实现
@@ -62,23 +64,23 @@ public class PushSmsServiceImpl implements PushMessageService {
         int timeout=dailyProperties.getRepeatPushDays()*86400;
 
         boolean repeatFlag;
+        int repeatUserCount=0;
 
         for(PushListInfo pushListInfo:list)
         {
             repeatFlag=false;
-            ////开启了防骚扰拦截
-            if("Y".equals(dailyProperties.getRepeatPush()))
-            {
-                String value=operations.get("PUSH_"+pushListInfo.getUserPhone());
-                if(null!=value&&!"".equals(value))
-                {
-                    repeatFlag=true;
-                    log.error("用户{}存在被重复触达的风险！！",pushListInfo.getUserPhone());
 
-                    pushListInfo.setPushStatus("C");
-                    pushListInfo.setCallbackCode("-1");
-                    pushListInfo.setPushDate(new Date());
-                }
+            //判断是否会存在骚扰拦截
+            String value=operations.get("PUSH_"+pushListInfo.getUserPhone());
+            if(null!=value&&!"".equals(value))
+            {
+                repeatFlag=true;
+                repeatUserCount+=1;
+                log.error("用户{}存在被重复触达的风险！！",pushListInfo.getUserPhone());
+
+                pushListInfo.setPushStatus("C");
+                pushListInfo.setCallbackCode("-1");
+                pushListInfo.setPushDate(new Date());
             }
 
             if(!repeatFlag)
@@ -93,7 +95,7 @@ public class PushSmsServiceImpl implements PushMessageService {
                 } catch (Exception e) {
                    //此处进行错误上报
                     result=-1;
-                    log.info("通道推送:{}-{}:返回状态码:{}",pushListInfo.getUserPhone(),pushListInfo.getPushContent(),result);
+                    log.error("通道推送:{}-{}:返回状态码:{}",pushListInfo.getUserPhone(),pushListInfo.getPushContent(),result);
                 }
 
 
@@ -107,17 +109,16 @@ public class PushSmsServiceImpl implements PushMessageService {
                 pushListInfo.setCallbackCode(String.valueOf(result));
                 pushListInfo.setPushDate(new Date());
 
-                //如何开启了放骚扰，则需要将推送结果存入redis
-                if("Y".equals(dailyProperties.getRepeatPush()))
-                {
-                    //已发送用户存入redis
-                    operations.set("PUSH_"+pushListInfo.getUserPhone(),pushListInfo.getUserPhone(),timeout);
-                }
+                //已发送用户存入redis
+                operations.set("PUSH_"+pushListInfo.getUserPhone(),pushListInfo.getUserPhone(),timeout);
 
             }
             userlist.add(pushListInfo);
 
         }
+
+        //输出到推送日志通道
+
         if(userlist.size()>0)
         {
             pushListMapper.updateSendStatus(userlist);
@@ -139,8 +140,41 @@ public class PushSmsServiceImpl implements PushMessageService {
     }
 
     @Override
-    public int batchPush(Message message) {
+    public int batchPush(String messageContent, List<PushListLager> pushList) {
         SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
+        //要进行推送的目标人群
+        List<String> targetMobileList=Lists.newArrayList();
+
+        //进行防骚扰验证
+        List<String> mobileList=pushList.stream().map(p->p.getUserPhone()).collect(Collectors.toList());
+
+        ValueOperations<String,String> operations=redisTemplate.opsForValue();
+        //获取防骚扰拦截的时间
+        int timeout=dailyProperties.getRepeatPushDays()*86400;
+
+        String value="";
+        int repeatUserCount=0;
+        for(String mobile:mobileList)
+        {
+            //判断是否会存在骚扰拦截
+            value=operations.get("PUSH_"+mobile);
+            if(null!=value&&!"".equals(value))
+            {
+                repeatUserCount+=1;
+                log.error("用户{}存在被重复触达的风险！！",mobile);
+            }else
+            {
+                targetMobileList.add(mobile);
+                //加入到redis中去
+                operations.set("PUSH_"+mobile,mobile,timeout);
+            }
+        }
+
+        //输出到日志通道
+
+        Message message=new Message();
+        message.setContent(messageContent);
+        message.setMobile(targetMobileList.stream().collect(Collectors.joining(",")));
         return sendSms.batchSend(message);
     }
 }

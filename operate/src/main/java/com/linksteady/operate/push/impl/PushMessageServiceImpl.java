@@ -2,6 +2,7 @@ package com.linksteady.operate.push.impl;
 
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
+import com.linksteady.operate.domain.PushListLager;
 import com.linksteady.operate.push.PushMessageService;
 import com.linksteady.operate.sms.montnets.domain.Message;
 import lombok.extern.slf4j.Slf4j;
@@ -46,9 +47,9 @@ public class PushMessageServiceImpl implements PushMessageService {
     }
 
     @Override
-    public int batchPush(Message message) {
+    public int batchPush(String messageContent, List<PushListLager> pushList) {
         PushMessageService pushMessageService=getPushStrategy();
-        int result=pushMessageService.batchPush(message);
+        int result=pushMessageService.batchPush(messageContent,pushList);
         return result;
     }
 

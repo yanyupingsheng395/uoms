@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.PushLogMapper">
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.PushLog">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="LOG_DATE" jdbcType="DECIMAL" property="logDate"/>
+        <result column="LOG_CONTENT" jdbcType="DECIMAL" property="logContent"/>
+        <result column="LOG_TYPE" jdbcType="DECIMAL" property="logType"/>
+    </resultMap>
+
+    <select id="getList" resultMap="BaseResultMap">
+       select LOG_DATE,LOG_CONTENT,LOG_TYPE from UO_OP_PUSHLOG where TRUNC(LOG_DATE)-TRUNC(SYSDATE)>=#{day} order by LOG_DATE desc
+  </select>
+
+    <insert id="insertPushLog">
+        INSERT INTO UO_OP_PUSHLOG (LOG_DATE, LOG_CONTENT,LOG_TYPE) values(#{logDate}, #{logContent}, #{logType})
+    </insert>
+</mapper>

@@ -9,7 +9,7 @@ import java.util.List;
  * @author hxcao
  * @date 2019-10-23
  */
-public interface SmsPushMapper {
+public interface PushLargeListMapper {
     /**
      * 获取待推送的名单数
      * @return
@@ -32,7 +32,7 @@ public interface SmsPushMapper {
     /**
      * 通过最大推送id和短信内容更新数据状态
      */
-    void updatePushState(@Param("smsContent") List<String> smsContent, @Param("maxPushId") Long maxPushId);
+    void updatePushState(@Param("smsContent") List<String> smsContent, @Param("maxPushId") Long maxPushId,int currentHour);
 
     /**
      *  通过当前时间和短信内容获取待推送的人数

@@ -1,4 +1,4 @@
-package com.linksteady.operate.push;
+package com.linksteady.operate.service;
 
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.operate.domain.PushListInfo;

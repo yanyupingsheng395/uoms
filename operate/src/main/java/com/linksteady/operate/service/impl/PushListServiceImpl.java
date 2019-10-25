@@ -1,8 +1,8 @@
-package com.linksteady.operate.push.impl;
+package com.linksteady.operate.service.impl;
 
 import com.linksteady.operate.dao.PushListMapper;
 import com.linksteady.operate.domain.PushListInfo;
-import com.linksteady.operate.push.PushListService;
+import com.linksteady.operate.service.PushListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

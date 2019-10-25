@@ -1,8 +1,8 @@
 package com.linksteady.operate.service.impl;
 
-import com.linksteady.operate.dao.SmsPushMapper;
+import com.linksteady.operate.dao.PushLargeListMapper;
 import com.linksteady.operate.domain.PushListLager;
-import com.linksteady.operate.service.SmsPushService;
+import com.linksteady.operate.service.PushLargeListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -14,38 +14,38 @@ import java.util.List;
  * @date 2019-10-23
  */
 @Service
-public class SmsPushServiceImpl implements SmsPushService {
+public class PushLargeListServiceImpl implements PushLargeListService {
 
     @Autowired
-    private SmsPushMapper smsPushMapper;
+    private PushLargeListMapper pushLargeListMapper;
 
     @Override
     public int getPushListCount(int currentHour) {
-        return smsPushMapper.getPushListCount(currentHour);
+        return pushLargeListMapper.getPushListCount(currentHour);
     }
 
     @Override
     public List<PushListLager> getPushList(int currentHour, String sms, int start, int end) {
-        return smsPushMapper.getPushList(currentHour, sms, start, end);
+        return pushLargeListMapper.getPushList(currentHour, sms, start, end);
     }
 
     @Override
     public List<String> getSmsContent(int currentHour) {
-        return smsPushMapper.getSmsContent(currentHour);
+        return pushLargeListMapper.getSmsContent(currentHour);
     }
 
     @Override
-    public void updatePushState(List<String> smsContent, Long maxPushId) {
-        smsPushMapper.updatePushState(smsContent, maxPushId);
+    public void updatePushState(List<String> smsContent, Long maxPushId,int currentHour) {
+        pushLargeListMapper.updatePushState(smsContent, maxPushId,currentHour);
     }
 
     @Override
     public int getPushListCountBySms(int currentHour, String sms) {
-        return smsPushMapper.getPushListCountBySms(currentHour, sms);
+        return pushLargeListMapper.getPushListCountBySms(currentHour, sms);
     }
 
     @Override
     public Long getMaxPushId(int currentHour) {
-        return smsPushMapper.getMaxPushId(currentHour);
+        return pushLargeListMapper.getMaxPushId(currentHour);
     }
 }

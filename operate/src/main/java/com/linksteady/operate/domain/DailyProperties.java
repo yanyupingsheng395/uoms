@@ -10,9 +10,9 @@ import lombok.Data;
 public class DailyProperties {
 
     /**
-     * 是否开启避免重复推送
+     * 是否开启避免重复推送 默认全部开启
      */
-   private String repeatPush="N";
+   //private String repeatPush="N";
 
     /**
      * 避免重复推送的天数
@@ -78,8 +78,4 @@ public class DailyProperties {
   * 当前修改用户
   */
  private String currentUser;
-
-
-
-
 }
