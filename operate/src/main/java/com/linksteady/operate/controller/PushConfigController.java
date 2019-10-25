@@ -97,16 +97,5 @@ public class PushConfigController extends BaseController {
         return ResponseBo.okWithData("",map);
     }
 
-    /**
-     * 关闭推送服务
-     * @param
-     * @return
-     */
-    @GetMapping("/stop")
-    public ResponseBo stop() {
-        //判断当前状态
-
-        return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
-    }
 
 }
