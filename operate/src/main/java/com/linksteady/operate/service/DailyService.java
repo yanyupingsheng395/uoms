@@ -1,10 +1,6 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyHead;
-import com.linksteady.operate.domain.DailyInfo;
-import com.linksteady.operate.sms.domain.TaskInfo;
-import com.linksteady.operate.vo.Echart;
 
 import java.util.List;
 import java.util.Map;

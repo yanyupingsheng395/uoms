@@ -1,10 +1,6 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.DailyInfo;
 import com.linksteady.operate.domain.DailyProperties;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author hxcao

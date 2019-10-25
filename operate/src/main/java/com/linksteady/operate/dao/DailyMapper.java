@@ -2,7 +2,6 @@ package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyHead;
-import com.linksteady.operate.domain.DailyInfo;
 import com.linksteady.operate.domain.DailyStatis;
 import org.apache.ibatis.annotations.Param;
 
@@ -31,13 +30,10 @@ public interface DailyMapper {
 
     String getStatusById(String headId);
 
-    DailyInfo getKpiVal(String headId);
 
     String getTouchDt(String headId);
 
     Map<String, Object> getTotalNum(String headId);
-
-    DailyInfo findById(String headId);
 
     int getUserGroupCount();
 
