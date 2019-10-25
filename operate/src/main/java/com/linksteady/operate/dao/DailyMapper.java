@@ -1,7 +1,9 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.DailyGroupTemplate;
+import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.domain.DailyInfo;
+import com.linksteady.operate.domain.DailyStatis;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -13,9 +15,9 @@ import java.util.Map;
  */
 public interface DailyMapper {
 
-    List<DailyInfo> getPageList(int start, int end, String touchDt);
+    List<DailyHead> getPageList(int start, int end, String touchDt);
 
-    List<DailyInfo> getTouchPageList(int start, int end, String touchDt);
+    List<DailyHead> getTouchPageList(int start, int end, String touchDt);
 
     int getTotalCount(@Param("touchDt") String touchDt);
 
@@ -54,4 +56,13 @@ public interface DailyMapper {
     void updateHeaderSendStatis();
 
     int validUserGroup();
+
+    DailyHead getEffectById(String id);
+
+    /**
+     * 获取推送结果数据图
+     * @param headId
+     * @return
+     */
+    List<DailyStatis> getDailyStatisList(String headId);
 }

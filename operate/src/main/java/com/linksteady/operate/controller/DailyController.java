@@ -1,6 +1,4 @@
 package com.linksteady.operate.controller;
-
-import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.*;
@@ -9,17 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * 每日运营
@@ -39,49 +32,21 @@ public class DailyController {
     private DailyDetailService dailyDetailService;
 
     @Autowired
-    private DailyEffectService dailyEffectService;
-
-    @Autowired
-    private DailyExecuteService dailyExecuteService;
-
-    @Autowired
     private DailyProperties dailyProperties;
 
     /**
-     * 获取任务列表信息
+     * 获取每日成长任务分页列表
      *
      * @param request
      * @return
      */
     @GetMapping("/getPageList")
     public ResponseBo getPageList(QueryRequest request) {
-
         int start = request.getStart();
         int end = request.getEnd();
         String touchDt = request.getParam().get("touchDt");
-
         int count = dailyService.getTotalCount(touchDt);
-        List<DailyInfo> dailyInfos = dailyService.getPageList(start, end, touchDt);
-
-        return ResponseBo.okOverPaging(null, count, dailyInfos);
-    }
-
-    /**
-     * 触达记录
-     *
-     * @param request
-     * @return
-     */
-    @GetMapping("/getTouchPageList")
-    public ResponseBo getTouchPageList(QueryRequest request) {
-
-        int start = request.getStart();
-        int end = request.getEnd();
-        String touchDt = request.getParam().get("touchDt");
-
-        int count = dailyService.getTouchTotalCount(touchDt);
-        List<DailyInfo> dailyInfos = dailyService.getTouchPageList(start, end, touchDt);
-
+        List<DailyHead> dailyInfos = dailyService.getPageList(start, end, touchDt);
         return ResponseBo.okOverPaging(null, count, dailyInfos);
     }
 
@@ -104,6 +69,42 @@ public class DailyController {
     }
 
     /**
+     * 获取编辑页xxx，共x人，选择y人
+     *
+     * @param headId
+     * @return
+     */
+    @GetMapping("/getTipInfo")
+    public ResponseBo getTipInfo(@RequestParam String headId) {
+        return ResponseBo.okWithData(null, dailyService.getTipInfo(headId));
+    }
+
+    /**
+     * 生成待推送的短信文案
+     *
+     * @return
+     */
+    @GetMapping("/generatePushList")
+    public ResponseBo generatePushList(String headId) {
+        String result;
+        try {
+            dailyDetailService.deletePushContentTemp(headId);
+            //1表示生成成功 0表示生成失败
+            result = dailyDetailService.generatePushList(headId);
+
+            if ("1".equals(result)) {
+                return ResponseBo.ok();
+            } else {
+                return ResponseBo.error("生成文案错误，请联系系统运维人员！");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBo.error("策略生成错误，请检查配置！");
+        }
+    }
+
+    /**
      * 获取用户成长策略表（第二步）
      *
      * @return
@@ -116,17 +117,6 @@ public class DailyController {
         List<DailyDetail> dataList = dailyDetailService.getStrategyPageList(start, end, headId);
         int count = dailyDetailService.getStrategyCount(headId);
         return ResponseBo.okOverPaging(null, count, dataList);
-    }
-
-    /**
-     * 获取编辑页xxx，共x人，选择y人
-     *
-     * @param headId
-     * @return
-     */
-    @GetMapping("/getTipInfo")
-    public ResponseBo getTipInfo(@RequestParam String headId) {
-        return ResponseBo.okWithData(null, dailyService.getTipInfo(headId));
     }
 
     /**
@@ -213,39 +203,6 @@ public class DailyController {
     }
 
     /**
-     * 获取当前时间的指标值
-     *
-     * @param headId
-     * @return
-     */
-    @GetMapping("/getKpiVal")
-    public ResponseBo getKpiVal(@RequestParam String headId) {
-        return ResponseBo.okWithData(null, dailyService.getKpiVal(headId));
-    }
-
-    /**
-     * 获取效果统计
-     *
-     * @param headId
-     * @return
-     */
-    @GetMapping("/getKpiStatis")
-    public ResponseBo getKpiStatis(@RequestParam String headId) {
-        return ResponseBo.okWithData(null, dailyEffectService.getKpiStatis(headId));
-    }
-
-    /**
-     * 效果评估页获取指标趋势
-     *
-     * @param headId
-     * @return
-     */
-    @GetMapping("/getKpiTrend")
-    public ResponseBo getKpiTrend(@RequestParam String headId) {
-        return ResponseBo.okWithData(null, dailyExecuteService.getKpiTrend(headId));
-    }
-
-    /**
      * 获取当前日期和任务日期
      *
      * @param headId
@@ -257,97 +214,11 @@ public class DailyController {
     }
 
     /**
-     * 生成待推送的名单
-     *
+     * 获取推送数据
      * @return
      */
-    @GetMapping("/generatePushList")
-    public ResponseBo generatePushList(String headId) {
-        String result;
-        try {
-            dailyDetailService.deletePushContentTemp(headId);
-            //1表示生成成功 0表示生成失败
-            result = dailyDetailService.generatePushList(headId);
-
-            if ("1".equals(result)) {
-                return ResponseBo.ok();
-            } else {
-                return ResponseBo.error("生成文案错误，请联系系统运维人员！");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBo.error("策略生成错误，请检查配置！");
-        }
-    }
-
-    /**
-     * 获取检查评估个体效果数据
-     *
-     * @return
-     */
-    @GetMapping("/getUserEffect")
-    public ResponseBo getUserEffect(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
-        String headId = request.getParam().get("headId");
-        String userValue = request.getParam().get("userValue");
-        String pathActive = request.getParam().get("pathActive");
-        String status = request.getParam().get("status");
-
-        List<DailyDetail> dataList = dailyDetailService.getUserEffect(headId, start, end, userValue, pathActive, status);
-        int count = dailyDetailService.getDataListCount(headId, userValue, pathActive, status);
-        return ResponseBo.okOverPaging(null, count, dataList);
-    }
-
-    /**
-     * 获取用户组配置分页数据
-     *
-     * @param request
-     * @return
-     */
-    @GetMapping("/userGroupListPage")
-    public ResponseBo userGroupListPage(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
-        List<DailyGroupTemplate> dataList = dailyService.getUserGroupListPage(start, end);
-        int count = dailyService.getUserGroupCount();
-        return ResponseBo.okOverPaging(null, count, dataList);
-    }
-
-    @Deprecated
-    @GetMapping("/setSmsCode")
-    public ResponseBo setSmsCode(@RequestParam String groupId, @RequestParam String smsCode) {
-        dailyService.setSmsCode(groupId, smsCode);
-        return ResponseBo.ok();
-    }
-
-    /**
-     * 获取默认推送方式和定时推送时间
-     *
-     * @return
-     */
-    @GetMapping("/getPushInfo")
-    public ResponseBo getPushInfo() {
-        Map<String, Object> result = Maps.newHashMap();
-        result.put("method", dailyProperties.getPushMethod());
-        int hour = LocalTime.now().getHour();
-        final List<String> timeList = IntStream.rangeClosed(8, 22).filter(x -> x > hour).boxed().map(y -> {
-            if (y < 10) {
-                return "0" + y + ":00";
-            }
-            return y + ":00";
-        }).collect(Collectors.toList());
-        result.put("timeList", timeList);
-        return ResponseBo.okWithData(null, result);
-    }
-
-    /**
-     * 触达用户之前进行用户群组的验证
-     * @return
-     */
-    @GetMapping("/validUserGroup")
-    public ResponseBo validUserGroup() {
-        return ResponseBo.okWithData(null, dailyService.validUserGroup());
+    @GetMapping("/getPushData")
+    public ResponseBo getPushData(@RequestParam("headId") String headId) {
+        return ResponseBo.okWithData(null, dailyService.getPushData(headId));
     }
 }

@@ -14,6 +14,22 @@ import java.util.Date;
 @Data
 public class DailyInfo {
 
+//    HEAD_ID            NUMBER,
+//    TOTAL_NUM          NUMBER,
+//    DESCR              VARCHAR2(512),
+//    INSERT_DT          DATE,
+//    UPDATE_DT          DATE,
+//    TOUCH_DT           DATE,
+//    STATUS             VARCHAR2(16),
+//    SUCCESS_NUM        NUMBER default 0,
+//    CONVERT_NUM        NUMBER,
+//    CONVERT_AMOUNT     NUMBER,
+//    CONVERT_SPU_NUM    NUMBER,
+//    CONVERT_SPU_AMOUNT NUMBER,
+//    CONVERT_RATE       NUMBER,
+//    CONVERT_SPU_RATE   NUMBER,
+//    STAT_DATE          DATE
+
     /**
      * 头ID
      */

@@ -2,6 +2,7 @@ package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.operate.domain.ActivityHead;
+import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.DailyService;
 import org.apache.commons.lang3.StringUtils;
@@ -124,16 +125,6 @@ public class PageController {
         return "operate/config/dailyConfig";
     }
 
-    @RequestMapping("/effect")
-    public String effect() {
-        return "operate/daily/effect";
-    }
-
-    @RequestMapping("/touch")
-    public String touch() {
-        return "operate/daily/touch";
-    }
-
     /**
      * 步骤图
      * @return
@@ -153,6 +144,12 @@ public class PageController {
         if(StringUtils.isNotEmpty(status)) {
             if(status.equals("done") || status.equals("finished") || status.equals("doing")) {
                 model.addAttribute("headId", headId);
+                DailyHead dailyHead = dailyService.getEffectById(headId);
+                if(dailyHead != null) {
+                    model.addAttribute("dailyHead", dailyHead);
+                }else {
+                    return "redirect:/page/daily";
+                }
                 return "operate/daily/effect";
             }
         }

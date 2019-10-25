@@ -1,308 +1,108 @@
 $(function () {
     getTaskDt();
-    getKpiVal();
-    getKpiStatis();
-    getKpiTrend();
+    makePushChart();
 });
-// 获取日期
+
+// 获取页面头的当前日期和任务日期
 function getTaskDt() {
     $.get("/daily/getCurrentAndTaskDate", {headId:headId}, function (r) {
-        var data = r.data;
+        let data = r.data;
         $("#taskDt").html('').append('<i class="mdi mdi-alert-circle-outline"></i>当前日期：'+data['currentDt']+'，任务：'+data['taskDt']+'');
     });
 }
 
-// 获取指标值
-function getKpiVal() {
-    $.get("/daily/getKpiVal", {headId:headId}, function (r) {
-        var data = r.data;
-        var data1 = new Array();
-        data1.push({value: data['totalNum'] == null ? '-' : data['totalNum'], name: '建议推送人数'});
-        // data1.push({value: data['optNum']== null ? '-' : data['optNum'], name: '实际选择人数'});
-        data1.push({value: data['successNum']== null ? '-' : data['successNum'], name: '成功触达人数'});
-        data1.push({value: data['convertCount']== null ? '-' : data['convertCount'], name: '任务转化人数'});
-        var data2 = "触达率 " + (data['touchRate'] == null ? '-' : data['touchRate']) + "%";
-        var data3 = "转化率 " + (data['convertRate'] == null ? '-' : data['convertRate']) + "%";
-        createFunnelChart('chart1', data1, data2, data3);
+/**
+ * 获取推送结果变化图
+ */
+function makePushChart() {
+    $.get("/daily/getPushData", {headId: headId}, function (r) {
+        let data = r.data;
+        let xdata = data['xdata'];
+        let ydata1 = data['ydata1'];
+        let ydata2 = data['ydata2'];
+        let ydata3 = data['ydata3'];
+        let ydata4 = data['ydata4'];
+        let option1 = getChartOption(xdata, ydata1, ydata2, "转化人数(人)", "转化率(%)", '推送转化人数，推送转化率随时间变化图');
+        let option2 = getChartOption(xdata, ydata3, ydata4, "转化人数(人)", "转化率(%)", '推送且购买推荐SPU转化人数，推送且购买推荐SPU转化率随时间变化图');
+        let chart1 = echarts.init(document.getElementById("chart1"), 'macarons');
+        chart1.setOption(option1);
+        let chart2 = echarts.init(document.getElementById("chart2"), 'macarons');
+        chart2.setOption(option2);
     });
 }
 
-function createFunnelChart(chartId, data1, data2, data3) {
-    var colors=['#f36119','#ff9921','#20c8ff','#2cb7ff','#1785ef'];
-    var option = {
-        backgroundColor:'#ffffff',
-        color:colors,
-        "tooltip": {
-            "trigger": "axis",
-            "axisPointer": {
-                "type": "cross",
-                "label": {
-                    "backgroundColor": "red"
-                },
-                "lineStyle": {
-                    "color": "#9eb2cb"
+function getChartOption(xdata, yData1, yData2, yName1, yName2, title) {
+    return {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
                 }
             }
         },
-        grid: {
-            top: 20,
-            left: "2%",
-            right: 20,
-            bottom: 30,
-            containLabel: true,
-            borderWidth: 0.5
+        grid: {top:'10%'},
+        title:{
+            text: title,
+            x: 'center',
+            y: 'bottom',
+            textStyle: {
+                //文字颜色
+                color: '#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle: 'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight: 'normal',
+                //字体系列
+                fontFamily: 'sans-serif',
+                //字体大小
+                fontSize: 12
+            }
         },
-
+        xAxis: [
+            {
+                type: 'category',
+                data: xdata,
+                axisPointer: {
+                    type: 'shadow'
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: yName1,
+                min: 0,
+                max: 250,
+                interval: 50,
+                splitLine: {show: false},
+                axisTick:  {show: false},
+                splitArea: {show: false},
+            },
+            {
+                type: 'value',
+                name: yName2,
+                min: 0,
+                max: 25,
+                interval: 5,
+                splitLine: {show: false},
+                axisTick:  {show: false},
+                splitArea: {show: false}
+            }
+        ],
         series: [
             {
-                top:0,
-                type: 'funnel',
-                left: '10%',
-                width: '80%',
-                gap: 16,
-                minSize: 150,
-                maxSize: 410,
-                label: {
-                    show: true,
-                    position: 'inside',
-                    formatter: '{b}  ({c}人)'
-                },
-                data:data1
+                name:yName1,
+                type:'line',
+                data:yData1
             },
-
             {
-                top: 0,
-                type: 'funnel',
-                left: '10%',
-                width: '80%',
-                gap: 100,
-                z:1,
-                minSize: 150,
-                maxSize: 150,
-                label: {
-                    normal: {
-                        color: '#000000',
-                        position: 'right',
-                        backgroundColor:'#f6f7fc',
-                        borderColor:'green',
-                        borderWidth :1,
-                        borderRadius :4,
-                        padding :[11,25],
-                        width:100
-                    }
-                },
-                //右侧的百分比显示的地方
-                labelLine: {
-                    show:true,
-                    normal: {
-                        length: 200,
-                        position: 'center',
-                        lineStyle: {
-                            width: 1,
-                            color:'green',
-                            type:'solid'
-
-                        }
-                    }
-                },
-                //主体是透明的
-                itemStyle: {
-                    normal: {
-                        color: 'transparent',
-                        borderWidth:4,
-                        opacity: 1
-                    }
-                },
-                data: [
-                    {value: 100, name: '',labelLine:{show:false},label:{show:false}},
-                    {value: 80, name: data2},
-                    {value: 60, name: data3},
-                    {value: 60, name: '',labelLine:{show:false},label:{show:false}}
-                ]
+                name:yName2,
+                type:'line',
+                yAxisIndex: 1,
+                data:yData2
             }
         ]
     };
-    var chart = echarts.init(document.getElementById(chartId), 'macarons');
-    chart.setOption(option);
-}
-
-function getKpiStatis() {
-    $.get("/daily/getKpiStatis", {headId:headId}, function (r) {
-        var data = r.data;
-        var code = "";
-        if(data != null) {
-            var convertAmout = data['convertAmount']==null?'-':data['convertAmount'];
-            var subsidyAmount = data['subsidyAmount']==null?'-':data['subsidyAmount'];
-            var subsidyPerUnit = data['subsidyPerUnit']==null?'-':data['subsidyPerUnit'];
-            var subsidyCount = data['subsidyCount']==null?'-':data['subsidyCount'];
-            var cancleCount = data['cancleCount']==null?'-':data['cancleCount'];
-            var cancleRate = data['cancleRate']==null?'-':data['cancleRate'];
-
-            var convertAmout = data['convertAmount']==null?'-':data['convertAmount'];
-            code += "<tr class='text-center'><td>任务转化金额（元）</td><td>"+convertAmout+"</td><td>补贴发放数（个）</td><td>"+subsidyCount+"</td></tr>";
-            code += "<tr class='text-center'><td>任务补贴金额（元）</td><td>"+subsidyAmount+"</td><td>补贴核销数（个）</td><td>"+cancleCount+"</td></tr>";
-            code += "<tr class='text-center'><td>每元补贴创收（元）</td><td>"+subsidyPerUnit+"</td><td>核销率（%）</td><td>"+cancleRate+"</td></tr>";
-            $("#statisData").html('').append(code);
-        }
-    });
-}
-
-function getKpiTrend() {
-    $.get("/daily/getKpiTrend", {headId:headId}, function (r) {
-        var data = r.data;
-        createTrendChart('chart4', data['convertAmount']);
-        createTrendChart('chart5', data['convertCnt']);
-        createTrendChart('chart6', data['sellCnt']);
-    });
-}
-
-function createTrendChart(chartId, data) {
-    var xAxisData = data['xAxisData'];
-    var xAxisName = data['xAxisName'];
-    var yAxisName = data['yAxisName'];
-    var yAxisData = data['yAxisData'];
-    var seriesData = [{type: 'line', data:yAxisData}];
-    var option = getOption(null,xAxisData,xAxisName,yAxisName,seriesData);
-    option.grid = {
-        left: '16%',
-        right: '14%',
-        top:'15%',
-        bottom: '2%',
-        containLabel: true
-    };
-    var chart = echarts.init(document.getElementById(chartId), 'macarons');
-    chart.setOption(option);
-}
-
-/**
- * 获取个体效果
- */
-getUserEffect();
-function getUserEffect() {
-    var settings = {
-        url: '/daily/getUserEffect',
-        pagination: true,
-        sidePagination: "server",
-        pageList: [10, 25, 50, 100],
-        sortable: true,
-        sortOrder: "asc",
-        queryParams: function (params) {
-            return {
-                pageSize: params.limit,  //页面大小
-                pageNum: (params.offset / params.limit) + 1,
-                param: {
-                    headId: headId,
-                    userValue: $("select[name='userValue']").find("option:selected").val(),
-                    pathActive: $("select[name='pathActive']").find("option:selected").val(),
-                    status: $("select[name='status']").find("option:selected").val()
-                }
-            };
-        },
-        columns: [[{
-            field: 'userId',
-            title: '用户ID',
-            rowspan: 2,
-            valign: "middle"
-        }, {
-            title: '当日用户状态',
-            colspan: 2
-        }, {
-            title: '推送结果',
-            colspan: 4
-        }], [{
-            field: 'userValue',
-            title: '价值',
-            formatter: function (value, row, index) {
-                var res = "";
-                switch (value) {
-                    case "ULC_01":
-                        res = "重要";
-                        break;
-                    case "ULC_02":
-                        res = "主要";
-                        break;
-                    case "ULC_03":
-                        res = "普通";
-                        break;
-                    case "ULC_04":
-                        res = "长尾";
-                        break;
-                    default:
-                        res = "-";
-                }
-                return res;
-            }
-        }, {
-            field: 'pathActive',
-            title: '活跃度',
-            formatter: function (value, row, index) {
-                var res = "";
-                switch (value) {
-                    case "UAC_01":
-                        res = "高度活跃";
-                        break;
-                    case "UAC_02":
-                        res = "中度活跃";
-                        break;
-                    case "UAC_03":
-                        res = "流失预警";
-                        break;
-                    case "UAC_04":
-                        res = "弱流失";
-                        break;
-                    case "UAC_05":
-                        res = "强流失";
-                        break;
-                    case "UAC_06":
-                        res = "沉睡";
-                        break;
-                    default:
-                        res = "-";
-                }
-                return res;
-            }
-        }, {
-            field: 'isPush',
-            title: '是否触达',
-            formatter: function (value, row, index) {
-                if(value == '1') {
-                    return "已触达";
-                }
-                if(value == '0') {
-                    return "未触达";
-                }
-                return "-";
-            }
-        }, {
-            field: 'isConvertion',
-            title: '是否转化',
-            formatter: function (value, row, index) {
-                if(value == '1') {
-                    return "已转化";
-                }
-                if(value == '0') {
-                    return "未转化";
-                }
-                return "-";
-            }
-        }, {
-            field: 'recOrderPrice',
-            title: '目标订单价（元/单）'
-        }, {
-            field: 'actOrderPrice',
-            title: '实际订单价（元/单）'
-        }]]
-    };
-    $MB.initTable('userTable', settings);
-}
-
-function searchUser() {
-    $MB.refreshTable('userTable');
-}
-
-function refreshUser() {
-    $("select[name='userValue']").find("option:selected").removeAttr("selected");
-    $("select[name='pathActive']").find("option:selected").removeAttr("selected");
-    $("select[name='status']").find("option:selected").removeAttr("selected");
-    $MB.refreshTable('userTable');
 }

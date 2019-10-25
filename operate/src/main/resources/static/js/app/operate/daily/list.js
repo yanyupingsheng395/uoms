@@ -27,13 +27,13 @@ function initTable() {
             title: 'ID',
             visible: false
         }, {
-            field: 'touchDt',
+            field: 'touchDtStr',
             title: '日期'
         }, {
             field: 'totalNum',
             title: '建议推送人数（人）'
         }, {
-            field: 'convertCount',
+            field: 'convertNum',
             title: '任务转化人数（人）'
         }, {
             field: 'convertRate',
