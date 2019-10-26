@@ -18,6 +18,6 @@
   </select>
 
     <insert id="insertPushLog">
-        INSERT INTO UO_OP_PUSHLOG (LOG_DATE, LOG_CONTENT,LOG_TYPE) values(#{logDate}, #{logContent}, #{logType})
+        INSERT INTO UO_OP_PUSHLOG (LOG_DATE, LOG_CONTENT,LOG_TYPE, USER_COUNT) values(#{logDate}, #{logContent}, #{logType}, #{userCount})
     </insert>
 </mapper>
