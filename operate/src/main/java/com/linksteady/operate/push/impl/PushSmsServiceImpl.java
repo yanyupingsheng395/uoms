@@ -191,12 +191,14 @@ public class PushSmsServiceImpl implements PushMessageService {
         message.setMobile(targetMobileList.stream().collect(Collectors.joining(",")));
 
         //写入到触达日志中
-        PushLog repeatLog = new PushLog();
-        repeatLog.setLogType("0");
-        repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
-        repeatLog.setUserCount((long) repeatUserCount);
-        repeatLog.setLogDate(new Date());
-        pushLogMapper.insertPushLog(repeatLog);
+        if(repeatUserCount != 0) {
+            PushLog repeatLog = new PushLog();
+            repeatLog.setLogType("0");
+            repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
+            repeatLog.setUserCount((long) repeatUserCount);
+            repeatLog.setLogDate(new Date());
+            pushLogMapper.insertPushLog(repeatLog);
+        }
         return sendSms.batchSend(message);
     }
 }

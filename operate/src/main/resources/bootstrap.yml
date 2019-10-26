@@ -18,14 +18,27 @@ app:
 #  profiles:
 #    active: prod
 
+# dev
+spring:
+  application:
+    name: operate
+  cloud:
+    config:
+      uri: http://config.dev.growth-master.com
+      username: admin
+      password: linksteady123
+
+  profiles:
+    active: prod
+
 ## 配置加密的秘钥
 jasypt:
   encryptor:
     password: linksteady123
 #仅用于测试环境使用，勿提交
-spring:
-  profiles:
-    active: dev
+#spring:
+#  profiles:
+#    active: dev
 
 sms:
   montnets:

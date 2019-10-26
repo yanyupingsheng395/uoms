@@ -132,12 +132,15 @@ public class PushDefaultServiceImpl implements PushMessageService {
 
         log.info("当前手机号：{},要推送的用户{}",messageContent,targetMobileList.stream().collect(Collectors.joining(",")));
 
-        PushLog repeatLog = new PushLog();
-        repeatLog.setLogType("0");
-        repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
-        repeatLog.setUserCount((long) repeatUserCount);
-        repeatLog.setLogDate(new Date());
-        pushLogMapper.insertPushLog(repeatLog);
+        //写入到触达日志中
+        if(repeatUserCount != 0) {
+            PushLog repeatLog = new PushLog();
+            repeatLog.setLogType("0");
+            repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
+            repeatLog.setUserCount((long) repeatUserCount);
+            repeatLog.setLogDate(new Date());
+            pushLogMapper.insertPushLog(repeatLog);
+        }
         return 0;
     }
 }
