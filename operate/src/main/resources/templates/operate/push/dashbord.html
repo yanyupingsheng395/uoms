@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <style>
+        #pushTable thead {
+            background-color: #eff3f8;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content" style="padding-top: 0px; padding-left: 0px;">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row" style="margin-top: 12px;">
+                            <div class="col-md-12">
+                                <p class="h4" id="status"></p>
+                                <div class="btn-group-sm" role="group">
+                                    <a class="btn btn-success btn-edit" onclick="start()">
+                                        <i class="fa fa-play"></i> 启动推送
+                                    </a>
+                                    <a class="btn btn-danger btn-view" onclick="stop()">
+                                        <i class="fa fa-stop"></i> 停止推送
+                                    </a>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-default" onclick="getPushLog(1)"><i class="mdi mdi-plus"></i></button>
+                                        <button class="btn btn-default" onclick="getPushLog(-1)"><i class="mdi mdi-minus"></i></button>
+                                    </div>
+                                </div>
+                                <p class="h5" id="dateStr" style="margin-top: 12px;">日志日期：<span id="logDate"></span></p>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top: 12px;">
+                            <div class="col-sm-12">
+
+                                <table class="table  table-striped table-bordered text-nowrap">
+                                    <thead>
+                                    <tr>
+                                        <th>推送时间</th>
+                                        <th>备注</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="pushTableData"></tbody>
+                                </table>
+                                <table class="table  table-striped table-bordered text-nowrap">
+                                    <thead>
+                                    <tr>
+                                        <th>推送时间</th>
+                                        <th>备注</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="repeatTableData"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script>
+    window.onload = function () {
+        status();
+        getPushLog();
+    };
+    // 启动服务
+    function start() {
+        $.get("/push/start", {}, function (r) {
+            if (r.code === 200) {
+                $MB.n_success("已开启服务！");
+                status();
+            }
+        });
+    }
+
+    // 停止服务
+    function stop() {
+        $.get("/push/stop", {}, function (r) {
+            if (r.code === 200) {
+                $MB.n_success("已停止服务！");
+                status();
+            }
+        });
+    }
+
+    function status() {
+        $.get("/push/status", {}, function (r) {
+            let status = r.data;
+            let code = "";
+            if(status == 'Y') {
+                code = "当前推送状态：<span style=\"color: #00B83F\">已启动</span>";
+            }
+            if(status == 'N') {
+                code = "当前推送状态：<span style=\"color: #f96868\">已停止</span>";
+            }
+            if(status != 'Y' && status != "N") {
+                code = "当前推送状态：<span>未知状态</span>";
+            }
+            $("#status").html('').append(code);
+        });
+    }
+
+    let day = 0;
+    // 获取推送日志
+    function getPushLog(flag) {
+        if (flag != undefined) {
+            day = day + flag >0 ? 0 : day + flag;
+        }
+        $.get("/dailyConfig/getPushLog", {day: Math.abs(day)}, function (r) {
+            let data = r.data;
+            let push = data.push;
+            let repeat = data.repeat;
+            setTableData('pushTableData', push);
+            setTableData('repeatTableData', repeat);
+        });
+
+        $.get("/dailyConfig/getDateByDay", {day: Math.abs(day)}, function (r) {
+            $("#logDate").text(r.data);
+        });
+    }
+
+    function setTableData(id, data) {
+        let code = "";
+        data.forEach(function(value, index, array) {
+            code += "<tr><td>"+value['logDateStr']+"</td><td>"+value['logContent']+"</td></tr>";
+        });
+        if(code == "") {
+            code += "<tr class='text-center'><td colspan='2'>没有记录！</td></tr>";
+        }
+        $("#" + id).html('').append(code);
+    }
+</script>
+</body>
+</html>

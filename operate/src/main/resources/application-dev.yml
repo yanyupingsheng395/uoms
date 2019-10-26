@@ -180,7 +180,7 @@ sys:
     # rememberMe cookie有效时长，默认86400秒，即一天
     cookieTimeout: 86400
     # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-    anonUrl: /api/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo,/login,/job/**
+    anonUrl: /api/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo,/login,/job/**,/push,/push/**,/dailyConfig/**
     # 登录 url
     loginUrl: http://localhost:9091/login
     # 登录成功后跳转的 url

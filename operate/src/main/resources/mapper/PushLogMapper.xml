@@ -5,13 +5,16 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <result column="LOG_DATE" jdbcType="DECIMAL" property="logDate"/>
+        <result column="LOG_DATE" jdbcType="DATE" property="logDate"/>
         <result column="LOG_CONTENT" jdbcType="DECIMAL" property="logContent"/>
         <result column="LOG_TYPE" jdbcType="DECIMAL" property="logType"/>
+        <result column="LOG_DATE_STR" jdbcType="VARCHAR" property="logDateStr"/>
     </resultMap>
 
     <select id="getList" resultMap="BaseResultMap">
-       select LOG_DATE,LOG_CONTENT,LOG_TYPE from UO_OP_PUSHLOG where TRUNC(LOG_DATE)-TRUNC(SYSDATE)>=#{day} order by LOG_DATE desc
+       select to_char(LOG_DATE, 'mm-dd hh24:mi') LOG_DATE_STR,LOG_CONTENT,LOG_TYPE from UO_OP_PUSHLOG where TRUNC(LOG_DATE)-TRUNC(SYSDATE)>=#{day}
+       and USER_COUNT != 0
+       order by LOG_DATE desc
   </select>
 
     <insert id="insertPushLog">

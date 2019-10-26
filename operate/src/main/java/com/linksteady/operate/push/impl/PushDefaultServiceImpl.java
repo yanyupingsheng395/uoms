@@ -2,9 +2,11 @@ package com.linksteady.operate.push.impl;
 
 import com.google.common.collect.Lists;
 import com.linksteady.operate.dao.PushListMapper;
+import com.linksteady.operate.dao.PushLogMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.domain.PushListLager;
+import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.push.PushMessageService;
 import com.linksteady.operate.sms.montnets.domain.Message;
 import com.linksteady.operate.sms.montnets.send.SendSms;
@@ -33,6 +35,9 @@ public class PushDefaultServiceImpl implements PushMessageService {
 
     @Autowired
     private PushListMapper pushListMapper;
+
+    @Autowired
+    private PushLogMapper pushLogMapper;
 
     @Override
     public void push(List<PushListInfo> list) {
@@ -75,12 +80,18 @@ public class PushDefaultServiceImpl implements PushMessageService {
             userlist.add(pushListInfo);
         }
 
-        //写入到触达日志中
-
-        if (userlist.size() > 0) {
+        int userSize = userlist.size();
+        if (userSize > 0) {
             //更新推送状态
             pushListMapper.updateSendStatus(userlist);
         }
+
+        PushLog repeatLog = new PushLog();
+        repeatLog.setLogType("0");
+        repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
+        repeatLog.setUserCount((long) repeatUserCount);
+        repeatLog.setLogDate(new Date());
+        pushLogMapper.insertPushLog(repeatLog);
     }
 
     @Override
@@ -119,9 +130,14 @@ public class PushDefaultServiceImpl implements PushMessageService {
             }
         }
 
-        //写入到触达日志中
-
         log.info("当前手机号：{},要推送的用户{}",messageContent,targetMobileList.stream().collect(Collectors.joining(",")));
+
+        PushLog repeatLog = new PushLog();
+        repeatLog.setLogType("0");
+        repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
+        repeatLog.setUserCount((long) repeatUserCount);
+        repeatLog.setLogDate(new Date());
+        pushLogMapper.insertPushLog(repeatLog);
         return 0;
     }
 }

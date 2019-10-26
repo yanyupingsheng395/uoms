@@ -1,7 +1,9 @@
 package com.linksteady.operate.thread;
 
+import com.linksteady.operate.dao.PushLogMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
+import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.service.impl.PushListServiceImpl;
 import com.linksteady.operate.push.impl.PushMessageServiceImpl;
 import com.linksteady.operate.util.SpringContextUtils;
@@ -9,6 +11,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -40,6 +43,8 @@ public class PushMessageThread {
                 DailyProperties dailyProperties=(DailyProperties)SpringContextUtils.getBean("dailyProperties");
                 //推送对象
                 PushMessageServiceImpl pushMessageService=(PushMessageServiceImpl)SpringContextUtils.getBean("pushMessageServiceImpl");
+                //写日志对象
+                PushLogMapper pushLogMapper = (PushLogMapper) SpringContextUtils.getBean("pushLogMapper");
 
                 int size=100;
                 log.info("---------对待发送的推送列表进行监控----------------");
@@ -92,6 +97,17 @@ public class PushMessageThread {
                     }
                     //更新这一批数据的IS_PUSH字段
                     pushListService.updateIsPush(maxPushId,currHour);
+
+                    // 写日志
+                    //写入到触达日志中
+                    PushLog pushLog = new PushLog();
+                    pushLog.setLogType("1");
+                    pushLog.setLogContent("成功触达" + count + "人");
+                    pushLog.setUserCount((long) count);
+                    pushLog.setLogDate(new Date());
+                    pushLogMapper.insertPushLog(pushLog);
+                    log.info(">>>结果已写入日志表");
+
                     log.info("---------推送结束，持续对待发送的短信列表进行监控----------------");
                     Long endTime = System.currentTimeMillis();
                     log.info(">>>已触达完毕，用户数：{}人，共耗时：{}毫秒", count,endTime-startTime);

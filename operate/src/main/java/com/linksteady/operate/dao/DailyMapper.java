@@ -30,7 +30,6 @@ public interface DailyMapper {
 
     String getStatusById(String headId);
 
-
     String getTouchDt(String headId);
 
     Map<String, Object> getTotalNum(String headId);

@@ -1,13 +1,16 @@
 package com.linksteady.operate.thread;
 
+import com.linksteady.operate.dao.PushLogMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListLager;
+import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.push.PushMessageService;
 import com.linksteady.operate.service.PushLargeListService;
 import com.linksteady.operate.util.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +34,9 @@ public class BatchPushMessageThread extends Thread {
         PushMessageService pushMessageService = (PushMessageService) SpringContextUtils.getBean("pushMessageServiceImpl");
         //推送对象
         DailyProperties dailyProperties = (DailyProperties) SpringContextUtils.getBean("dailyProperties");
+
+        PushLogMapper pushLogMapper = (PushLogMapper) SpringContextUtils.getBean("pushLogMapper");
+
         log.info(">>>[batch]批量通道-待发送的推送列表进行监控");
         while (true) {
             if (null != dailyProperties && "N".equals(dailyProperties.getPushFlag())) {
@@ -75,6 +81,13 @@ public class BatchPushMessageThread extends Thread {
                 Long endTime = System.currentTimeMillis();
                 log.info(">>>[batch]本次推送完毕，耗时{}秒", (endTime - startTime)/1000);
 
+                PushLog pushLog = new PushLog();
+                pushLog.setLogType("1");
+                pushLog.setLogContent("成功触达" + count + "人");
+                pushLog.setUserCount((long) count);
+                pushLog.setLogDate(new Date());
+                pushLogMapper.insertPushLog(pushLog);
+                log.info(">>>[batch]结果已写入日志表");
             }
             //每隔5分钟执行一次
             try {

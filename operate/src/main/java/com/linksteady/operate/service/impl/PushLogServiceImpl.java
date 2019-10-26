@@ -71,6 +71,4 @@ public class PushLogServiceImpl implements PushLogService, InitializingBean {
     public List<PushLog> getPushLogList(int day) {
         return pushLogMapper.getList(day);
     }
-
-
 }

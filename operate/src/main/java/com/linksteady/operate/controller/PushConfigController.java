@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -78,24 +80,21 @@ public class PushConfigController extends BaseController {
      * @return
      */
     @GetMapping("/getPushLog")
-    public ResponseBo getPushLog(int day) {
-        if(day==0)
-        {
-            day=1;
-        }
+    public ResponseBo getPushLog(@RequestParam("day") int day) {
         List<PushLog> list=pushLogService.getPushLogList(day);
-
         //分成两部分
         List<PushLog> pushLogList= list.stream().filter(p->"1".equals(p.getLogType())).collect(Collectors.toList());
-
-        List<PushLog> repeatLogList= list.stream().filter(p->"2".equals(p.getLogType())).collect(Collectors.toList());
-
+        List<PushLog> repeatLogList= list.stream().filter(p->"0".equals(p.getLogType())).collect(Collectors.toList());
         Map<String,List<PushLog>> map= Maps.newHashMap();
         map.put("push",pushLogList);
         map.put("repeat",repeatLogList);
-
         return ResponseBo.okWithData("",map);
     }
 
-
+    @GetMapping("/getDateByDay")
+    public ResponseBo getDateByDay(@RequestParam("day") int day) {
+        LocalDate localDate = LocalDate.now();
+        LocalDate newDate = localDate.minusDays(day);
+        return ResponseBo.okWithData(null, newDate.format(DateTimeFormatter.ofPattern("MM-dd")));
+    }
 }

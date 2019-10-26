@@ -100,21 +100,12 @@
         SELECT STATUS FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}
     </select>
 
-    <select id="getKpiVal" resultMap="baseResult">
-        select TOTAL_NUM, SUCCESS_NUM, CONVERT_COUNT,EXECUTE_RATE, TOUCH_RATE, CONVERT_RATE
-        from UO_OP_DAILY_HEADER t1, UO_OP_DAILY_STATIS t2 where t1.head_id = #{headId} and t1.head_id = t2.head_id(+)
-    </select>
-
     <select id="getTouchDt" resultType="string">
         select to_char(TOUCH_DT, 'yyyymmdd') from UO_OP_DAILY_HEADER where head_id = #{headId}
     </select>
 
     <select id="getTotalNum" resultType="map">
         select total_num total, OPT_NUM opt from UO_OP_DAILY_HEADER where head_id = #{headId}
-    </select>
-
-    <select id="findById" resultMap="baseResult">
-        select head_id, total_num, descr, insert_dt, update_dt, touch_dt, status, plan_num, faild_num, success_num from UO_OP_DAILY_HEADER where HEAD_ID = #{headId}
     </select>
 
     <select id="getUserGroupCount" resultType="int">
@@ -199,7 +190,7 @@
     </select>
 
     <select id="getDailyStatisList" resultMap="statisResult">
-        select CONVERT_SPU_RATE, CONVERT_SPU_RATE, CONVERT_SPU_NUM, CONVERT_NUM, to_char(TOUCH_DATE, 'yyyymmdd') TOUCH_DATE_STR
+        select CONVERT_SPU_RATE, CONVERT_RATE, CONVERT_SPU_NUM, CONVERT_NUM, to_char(TOUCH_DATE, 'yyyymmdd') TOUCH_DATE_STR
         from UO_OP_DAILY_STATIS
         where HEAD_ID = #{headId} order by TOUCH_DATE asc
     </select>

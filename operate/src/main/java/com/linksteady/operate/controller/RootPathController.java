@@ -5,6 +5,8 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.*;
 import com.linksteady.common.util.MD5Utils;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
+import com.linksteady.operate.domain.DailyProperties;
+import com.linksteady.operate.service.DailyPropertiesService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -15,7 +17,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,9 @@ public class RootPathController extends BaseController {
 
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
+
+    @Autowired
+    private DailyPropertiesService dailyPropertiesService;
 
     @Value("${app.name}")
     private String appname;
@@ -140,5 +144,20 @@ public class RootPathController extends BaseController {
         String encrypt = MD5Utils.encrypt(user.getUsername().toLowerCase(), password);
         return user.getPassword().equals(encrypt);
     }
-}
 
+    /**
+     * 推送控制页
+     * @return
+     */
+    @RequestMapping("/push")
+    public String push(Model model) {
+        DailyProperties dailyProperties = dailyPropertiesService.getDailyProperties();
+        if(dailyProperties != null) {
+            String status = dailyProperties.getPushFlag();
+            if(StringUtils.isNotEmpty(status)) {
+                model.addAttribute("status", status);
+            }
+        }
+        return "operate/push/dashbord";
+    }
+}

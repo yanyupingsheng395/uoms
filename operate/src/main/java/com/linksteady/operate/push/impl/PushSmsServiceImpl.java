@@ -2,9 +2,11 @@ package com.linksteady.operate.push.impl;
 
 import com.google.common.collect.Lists;
 import com.linksteady.operate.dao.PushListMapper;
+import com.linksteady.operate.dao.PushLogMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.domain.PushListLager;
+import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.push.PushMessageService;
 import com.linksteady.operate.sms.montnets.config.ConfigManager;
 import com.linksteady.operate.sms.montnets.domain.Message;
@@ -46,6 +48,10 @@ public class PushSmsServiceImpl implements PushMessageService {
 
     @Autowired
     private PushListMapper pushListMapper;
+
+    @Autowired
+    private PushLogMapper pushLogMapper;
+
 
     @Override
     public void push(List<PushListInfo> list) {
@@ -123,6 +129,15 @@ public class PushSmsServiceImpl implements PushMessageService {
         {
             pushListMapper.updateSendStatus(userlist);
         }
+
+        //写入到触达日志中
+
+        PushLog repeatLog = new PushLog();
+        repeatLog.setLogType("0");
+        repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
+        repeatLog.setUserCount((long) repeatUserCount);
+        repeatLog.setLogDate(new Date());
+        pushLogMapper.insertPushLog(repeatLog);
     }
 
     @Override
@@ -171,10 +186,17 @@ public class PushSmsServiceImpl implements PushMessageService {
         }
 
         //输出到日志通道
-
         Message message=new Message();
         message.setContent(messageContent);
         message.setMobile(targetMobileList.stream().collect(Collectors.joining(",")));
+
+        //写入到触达日志中
+        PushLog repeatLog = new PushLog();
+        repeatLog.setLogType("0");
+        repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
+        repeatLog.setUserCount((long) repeatUserCount);
+        repeatLog.setLogDate(new Date());
+        pushLogMapper.insertPushLog(repeatLog);
         return sendSms.batchSend(message);
     }
 }
