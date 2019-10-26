@@ -221,4 +221,26 @@ public class DailyController {
     public ResponseBo getPushData(@RequestParam("headId") String headId) {
         return ResponseBo.okWithData(null, dailyService.getPushData(headId));
     }
+
+    /**
+     * 获取用户组配置分页数据
+     *
+     * @param request
+     * @return
+     */
+    @GetMapping("/userGroupListPage")
+    public ResponseBo userGroupListPage(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        List<DailyGroupTemplate> dataList = dailyService.getUserGroupListPage(start, end);
+        int count = dailyService.getUserGroupCount();
+        return ResponseBo.okOverPaging(null, count, dataList);
+    }
+
+    @Deprecated
+    @GetMapping("/setSmsCode")
+    public ResponseBo setSmsCode(@RequestParam String groupId, @RequestParam String smsCode) {
+        dailyService.setSmsCode(groupId, smsCode);
+        return ResponseBo.ok();
+    }
 }

@@ -3,15 +3,18 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.DailyMapper;
+import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.domain.DailyStatis;
 import com.linksteady.operate.service.DailyService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -111,10 +114,10 @@ public class DailyServiceImpl implements DailyService {
         }
 
         List<DailyStatis> dataList = dailyMapper.getDailyStatisList(headId);
-        Map<String, Long> convertNumMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getTouchDateStr, DailyStatis::getConvertNum));
-        Map<String, Double> convertRateMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getTouchDateStr, DailyStatis::getConvertRate));
-        Map<String, Long> convertSpuNumMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getTouchDateStr, DailyStatis::getConvertSpuNum));
-        Map<String, Double> convertSpuRateMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getTouchDateStr, DailyStatis::getConvertSpuRate));
+        Map<String, Long> convertNumMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getConversionDateStr, DailyStatis::getConvertNum));
+        Map<String, Double> convertRateMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getConversionDateStr, DailyStatis::getConvertRate));
+        Map<String, Long> convertSpuNumMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getConversionDateStr, DailyStatis::getConvertSpuNum));
+        Map<String, Double> convertSpuRateMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getConversionDateStr, DailyStatis::getConvertSpuRate));
 
         xdatas.forEach(x->{
             convertNumMap.putIfAbsent(x, 0L);
@@ -129,5 +132,23 @@ public class DailyServiceImpl implements DailyService {
         result.put("ydata3", new ArrayList<>(convertSpuNumMap.values()));
         result.put("ydata4", new ArrayList<>(convertSpuRateMap.values()));
         return result;
+    }
+
+    @Override
+    public List<DailyGroupTemplate> getUserGroupListPage(int start, int end) {
+        return dailyMapper.getUserGroupListPage(start, end);
+    }
+
+    @Override
+    public int getUserGroupCount() {
+        return dailyMapper.getUserGroupCount();
+    }
+
+    @Override
+    public void setSmsCode(String groupId, String smsCode) {
+        if(StringUtils.isNotEmpty(groupId)) {
+            List<String> groupIds = Arrays.asList(groupId.split(","));
+            dailyMapper.setSmsCode(groupIds, smsCode);
+        }
     }
 }

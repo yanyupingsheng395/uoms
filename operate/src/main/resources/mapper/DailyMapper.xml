@@ -37,8 +37,9 @@
         <result column="CONVERT_RATE" jdbcType="DECIMAL" property="convertRate"></result>
         <result column="CONVERT_SPU_NUM" jdbcType="DECIMAL" property="convertSpuNum"></result>
         <result column="CONVERT_NUM" jdbcType="DECIMAL" property="convertNum"></result>
-        <result column="TOUCH_DATE" jdbcType="DATE" property="touchDate"></result>
-        <result column="TOUCH_DATE_STR" jdbcType="VARCHAR" property="touchDateStr"></result>
+        <result column="TOUCH_DATE" jdbcType="DECIMAL" property="touchDate"></result>
+        <result column="CONVERSION_DATE" jdbcType="DATE" property="conversionDate"></result>
+        <result column="CONVERSION_DATE_STR" jdbcType="VARCHAR" property="conversionDateStr"></result>
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
@@ -190,7 +191,7 @@
     </select>
 
     <select id="getDailyStatisList" resultMap="statisResult">
-        select CONVERT_SPU_RATE, CONVERT_RATE, CONVERT_SPU_NUM, CONVERT_NUM, to_char(TOUCH_DATE, 'yyyymmdd') TOUCH_DATE_STR
+        select CONVERT_SPU_RATE, CONVERT_RATE, CONVERT_SPU_NUM, CONVERT_NUM, to_char(CONVERSION_DATE, 'yyyymmdd') CONVERSION_DATE_STR
         from UO_OP_DAILY_STATIS
         where HEAD_ID = #{headId} order by TOUCH_DATE asc
     </select>

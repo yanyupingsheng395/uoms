@@ -5,6 +5,7 @@ import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListLager;
 import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.push.PushMessageService;
+import com.linksteady.operate.service.DailyPropertiesService;
 import com.linksteady.operate.service.PushLargeListService;
 import com.linksteady.operate.util.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +33,11 @@ public class BatchPushMessageThread extends Thread {
     public void run() {
         PushLargeListService pushLargeListService = (PushLargeListService) SpringContextUtils.getBean(PushLargeListService.class);
         PushMessageService pushMessageService = (PushMessageService) SpringContextUtils.getBean("pushMessageServiceImpl");
-        //推送对象
-        DailyProperties dailyProperties = (DailyProperties) SpringContextUtils.getBean("dailyProperties");
-
+        DailyPropertiesService dailyPropertiesService=(DailyPropertiesService) SpringContextUtils.getBean("dailyPropertiesServiceImpl");
         PushLogMapper pushLogMapper = (PushLogMapper) SpringContextUtils.getBean("pushLogMapper");
-
         log.info(">>>[batch]批量通道-待发送的推送列表进行监控");
         while (true) {
+            DailyProperties dailyProperties= dailyPropertiesService.getDailyProperties();
             if (null != dailyProperties && "N".equals(dailyProperties.getPushFlag())) {
                 log.info(">>>[batch]批量通道-推送服务已通过配置停止");
                 try {

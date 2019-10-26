@@ -4,6 +4,7 @@ import com.linksteady.operate.dao.PushLogMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.domain.PushLog;
+import com.linksteady.operate.service.DailyPropertiesService;
 import com.linksteady.operate.service.impl.PushListServiceImpl;
 import com.linksteady.operate.push.impl.PushMessageServiceImpl;
 import com.linksteady.operate.util.SpringContextUtils;
@@ -39,8 +40,7 @@ public class PushMessageThread {
 
                 //获取待推送的消息列表
                 PushListServiceImpl pushListService=(PushListServiceImpl) SpringContextUtils.getBean("pushListServiceImpl");
-                //配置类
-                DailyProperties dailyProperties=(DailyProperties)SpringContextUtils.getBean("dailyProperties");
+                DailyPropertiesService dailyPropertiesService=(DailyPropertiesService) SpringContextUtils.getBean("dailyPropertiesServiceImpl");
                 //推送对象
                 PushMessageServiceImpl pushMessageService=(PushMessageServiceImpl)SpringContextUtils.getBean("pushMessageServiceImpl");
                 //写日志对象
@@ -50,6 +50,7 @@ public class PushMessageThread {
                 log.info("---------对待发送的推送列表进行监控----------------");
                 while(true)
                 {
+                    DailyProperties dailyProperties= dailyPropertiesService.getDailyProperties();
                     if(null!=dailyProperties&&"N".equals(dailyProperties.getPushFlag()))
                     {
                         log.info("----------------推送服务已通过配置停止---------------");

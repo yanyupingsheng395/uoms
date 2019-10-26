@@ -1,5 +1,6 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyHead;
 
 import java.util.List;
@@ -40,4 +41,10 @@ public interface DailyService {
      * @return
      */
     Map<String, Object> getPushData(String headId);
+
+    List<DailyGroupTemplate> getUserGroupListPage(int start, int end);
+
+    int getUserGroupCount();
+
+    void setSmsCode(String groupId, String smsCode);
 }

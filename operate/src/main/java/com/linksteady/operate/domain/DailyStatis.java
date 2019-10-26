@@ -15,7 +15,7 @@ public class DailyStatis {
 
     private Double convertRate;
 
-    private Date touchDate;
+    private Long touchDate;
 
     private Long convertNum;
 
@@ -25,5 +25,7 @@ public class DailyStatis {
 
     private Date insertDt;
 
-    private String touchDateStr;
+    private Date conversionDate;
+
+    private String conversionDateStr;
 }
