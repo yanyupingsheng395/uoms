@@ -4,11 +4,11 @@ import com.linksteady.jobclient.annotation.JobHandler;
 import com.linksteady.jobclient.domain.ResultInfo;
 import com.linksteady.jobclient.service.IJobHandler;
 import com.linksteady.operate.dao.DailyDetailMapper;
-import com.linksteady.operate.dao.DailyEffectMapper;
 import com.linksteady.operate.dao.DailyMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.time.LocalDate;
 
 /**
@@ -26,8 +26,6 @@ public class OpDailyCalculate extends IJobHandler {
     @Autowired
     private DailyDetailMapper dailyDetailMapper;
 
-    @Autowired
-    DailyEffectMapper dailyEffectMapper;
 
     @Override
     public ResultInfo execute(String param) {
@@ -39,11 +37,9 @@ public class OpDailyCalculate extends IJobHandler {
         dailyMapper.updateHeaderToFinish();
         //更新头表的推送数据状态
         dailyMapper.updateHeaderSendStatis();
-        //更新推送统计状态
-        dailyEffectMapper.updatePushStatInfo();
 
         //更新转化数据
-        dailyEffectMapper.updateConversion();
+        dailyMapper.updateConversion();
 
         log.info("每日运营的统计数据，结束的时间为:{}, 线程名称：{}", LocalDate.now(), Thread.currentThread().getName());
         return ResultInfo.success("success");

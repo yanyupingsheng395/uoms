@@ -60,4 +60,9 @@ public interface DailyMapper {
      * @return
      */
     List<DailyStatis> getDailyStatisList(String headId);
+
+    /**
+     * 更新转化数据
+     */
+    void updateConversion();
 }
