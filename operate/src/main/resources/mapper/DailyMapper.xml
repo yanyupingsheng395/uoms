@@ -211,7 +211,11 @@
     <select id="getDailyStatisList" resultMap="statisResult">
         select CONVERT_SPU_RATE, CONVERT_RATE, CONVERT_SPU_NUM, CONVERT_NUM, to_char(CONVERSION_DATE, 'yyyymmdd') CONVERSION_DATE_STR
         from UO_OP_DAILY_STATIS
-        where HEAD_ID = #{headId} order by TOUCH_DATE asc
+        where HEAD_ID = #{headId} order by CONVERSION_DATE asc
+    </select>
+
+    <select id="updateConversion" statementType="CALLABLE">
+        {call UPDATE_OP_DAILY_CONVERSION}
     </select>
 
     <select id="getDailyPersonalEffect" resultMap="personalResult">

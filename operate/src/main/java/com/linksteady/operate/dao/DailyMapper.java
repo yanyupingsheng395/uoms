@@ -66,4 +66,9 @@ public interface DailyMapper {
     List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int start, int end, String headId);
 
     int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
+
+    /**
+     * 更新转化数据
+     */
+    void updateConversion();
 }
