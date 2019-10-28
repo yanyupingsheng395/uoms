@@ -52,7 +52,6 @@ public class PushSmsServiceImpl implements PushMessageService {
     @Autowired
     private PushLogMapper pushLogMapper;
 
-
     @Override
     public void push(List<PushListInfo> list) {
         //发送类

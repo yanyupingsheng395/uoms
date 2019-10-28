@@ -2,6 +2,8 @@ package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyHead;
+import com.linksteady.operate.domain.DailyPersonal;
+import com.linksteady.operate.vo.DailyPersonalVo;
 
 import java.util.List;
 import java.util.Map;
@@ -47,4 +49,8 @@ public interface DailyService {
     int getUserGroupCount();
 
     void setSmsCode(String groupId, String smsCode);
+
+    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int start, int end, String headId);
+
+    int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
 }

@@ -5,8 +5,10 @@ import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyHead;
+import com.linksteady.operate.domain.DailyPersonal;
 import com.linksteady.operate.domain.DailyStatis;
 import com.linksteady.operate.service.DailyService;
+import com.linksteady.operate.vo.DailyPersonalVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -150,5 +152,15 @@ public class DailyServiceImpl implements DailyService {
             List<String> groupIds = Arrays.asList(groupId.split(","));
             dailyMapper.setSmsCode(groupIds, smsCode);
         }
+    }
+
+    @Override
+    public List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int start, int end, String headId) {
+        return dailyMapper.getDailyPersonalEffect(dailyPersonalVo, start, end, headId);
+    }
+
+    @Override
+    public int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId) {
+        return dailyMapper.getDailyPersonalEffectCount(dailyPersonalVo, headId);
     }
 }

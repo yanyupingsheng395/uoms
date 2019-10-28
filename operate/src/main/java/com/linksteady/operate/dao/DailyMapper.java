@@ -2,7 +2,9 @@ package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyHead;
+import com.linksteady.operate.domain.DailyPersonal;
 import com.linksteady.operate.domain.DailyStatis;
+import com.linksteady.operate.vo.DailyPersonalVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -60,4 +62,8 @@ public interface DailyMapper {
      * @return
      */
     List<DailyStatis> getDailyStatisList(String headId);
+
+    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int start, int end, String headId);
+
+    int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
 }

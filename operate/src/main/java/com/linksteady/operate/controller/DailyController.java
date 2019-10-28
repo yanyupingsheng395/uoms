@@ -3,6 +3,7 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
+import com.linksteady.operate.vo.DailyPersonalVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -237,10 +238,29 @@ public class DailyController {
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
-    @Deprecated
+    /**
+     * 每日成长任务用户群组设置短信内容
+     * @param groupId
+     * @param smsCode
+     * @return
+     */
     @GetMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam String groupId, @RequestParam String smsCode) {
         dailyService.setSmsCode(groupId, smsCode);
         return ResponseBo.ok();
+    }
+
+    /**
+     * 每日运营-个体效果
+     * @return
+     */
+    @GetMapping("/getDailyPersonalEffect")
+    public ResponseBo getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        String headId = request.getParam().get("headId");
+        List<DailyPersonal> personals = dailyService.getDailyPersonalEffect(dailyPersonalVo, start, end, headId);
+        int count = dailyService.getDailyPersonalEffectCount(dailyPersonalVo, headId);
+        return ResponseBo.okOverPaging(null, count, personals);
     }
 }

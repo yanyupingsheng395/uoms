@@ -6,6 +6,7 @@ app:
   build:
     time: @timestamp@
 
+# hanhoo
 #spring:
 #  application:
 #    name: system
@@ -18,6 +19,16 @@ app:
 #  profiles:
 #    active: prod
 
+# dev
+spring:
+  application:
+    name: system
+  cloud:
+    config:
+      uri: http://config.dev.growth-master.com
+      username: admin
+      password: linksteady123
+
 # 配置加密的秘钥
 jasypt:
   encryptor:
@@ -25,6 +36,6 @@ jasypt:
 
 
 # 仅用于测试环境使用，勿提交
-spring:
-  profiles:
-    active: dev
+#spring:
+#  profiles:
+#    active: dev

@@ -42,6 +42,24 @@
         <result column="CONVERSION_DATE_STR" jdbcType="VARCHAR" property="conversionDateStr"></result>
     </resultMap>
 
+    <!--每日运营个体效果-->
+    <resultMap id="personalResult" type="com.linksteady.operate.domain.DailyPersonal">
+        <result property="userId" jdbcType="VARCHAR" column="USER_ID"></result>
+        <result property="isConvert" jdbcType="VARCHAR" column="IS_CONVERT"></result>
+        <result property="pushPeriod" jdbcType="VARCHAR" column="PUSH_PERIOD"></result>
+        <result property="convertPeriod" jdbcType="VARCHAR" column="CONVERT_PERIOD"></result>
+        <result property="convertInterval" jdbcType="VARCHAR" column="CONVERT_INTERVAL"></result>
+        <result property="pushSpu" jdbcType="VARCHAR" column="PUSH_SPU"></result>
+        <result property="convertSpu" jdbcType="VARCHAR" column="CONVERT_SPU"></result>
+        <result property="spuIsConvert" jdbcType="VARCHAR" column="SPU_IS_CONVERT"></result>
+        <result property="userValue" jdbcType="VARCHAR" column="USER_VALUE"></result>
+        <result property="pathActive" jdbcType="VARCHAR" column="PATH_ACTIVE"></result>
+        <result property="userName" jdbcType="VARCHAR" column="USER_NAME"></result>
+        <result property="mobile" jdbcType="VARCHAR" column="MOBILE"></result>
+        <result property="pushDate" jdbcType="VARCHAR" column="PUSH_DATE"></result>
+        <result property="convertDate" jdbcType="VARCHAR" column="CONVERT_DATE"></result>
+    </resultMap>
+
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM rn from (
@@ -194,5 +212,31 @@
         select CONVERT_SPU_RATE, CONVERT_RATE, CONVERT_SPU_NUM, CONVERT_NUM, to_char(CONVERSION_DATE, 'yyyymmdd') CONVERSION_DATE_STR
         from UO_OP_DAILY_STATIS
         where HEAD_ID = #{headId} order by TOUCH_DATE asc
+    </select>
+
+    <select id="getDailyPersonalEffect" resultMap="personalResult">
+        select
+           t.user_id, --用户ID
+           u.login_name user_name,  --用户名
+           u.mobile, --手机号
+           t.path_active, --活跃度
+           t.user_value,  --用户价值
+           t.push_period,  --推送时段
+           t.conversion_period CONVERT_PERIOD,  --转化时段
+           t.push_date,  --推送日期
+           t.conversion_date convert_date, --转化日期
+           trunc((t.conversion_date-t.push_date),1) CONVERT_INTERVAL, --转换间隔
+           t.spu_consistent, --推荐SPU与购买SPU是否一致 Y表示是 N表示否
+           t.rec_spu_name  --推荐SPU名称
+           --转化的SPU名称
+          from HANHOO_CONVERT_DETAIL t, w_users u
+         where t.user_id = u.id
+           and t.is_conversion=1
+           and t.daily_header_id=#{headId}
+        <if test=""></if>
+    </select>
+
+    <select id="getDailyPersonalEffectCount" resultType="int">
+        select count(1) from HANHOO_CONVERT_DETAIL where DAILY_HEADER_ID = #{headId}
     </select>
 </mapper>
