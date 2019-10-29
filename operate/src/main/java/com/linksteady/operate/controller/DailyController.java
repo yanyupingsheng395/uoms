@@ -1,6 +1,8 @@
 package com.linksteady.operate.controller;
+import com.google.common.collect.Lists;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.DailyPersonalVo;
@@ -12,6 +14,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
@@ -255,12 +258,65 @@ public class DailyController {
      * @return
      */
     @GetMapping("/getDailyPersonalEffect")
-    public ResponseBo getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, QueryRequest request) {
+    public ResponseBo getDailyPersonalEffect(QueryRequest request) {
         int start = request.getStart();
         int end = request.getEnd();
         String headId = request.getParam().get("headId");
+        String isConvert = request.getParam().get("isConvert");
+        String spuIsConvert = request.getParam().get("spuIsConvert");
+//        String convertSpu = request.getParam().get("convertSpu");
+        String userValue = request.getParam().get("userValue");
+        String pathActive = request.getParam().get("pathActive");
+        DailyPersonalVo dailyPersonalVo = new DailyPersonalVo();
+        dailyPersonalVo.setIsConvert(isConvert);
+        dailyPersonalVo.setSpuIsConvert(spuIsConvert);
+//        dailyPersonalVo.setConvertSpu(convertSpu);
+        dailyPersonalVo.setUserValue(userValue);
+        dailyPersonalVo.setPathActive(pathActive);
+
         List<DailyPersonal> personals = dailyService.getDailyPersonalEffect(dailyPersonalVo, start, end, headId);
         int count = dailyService.getDailyPersonalEffectCount(dailyPersonalVo, headId);
         return ResponseBo.okOverPaging(null, count, personals);
+    }
+
+    /**
+     * 导出每日运营个体结果表
+     * @param headId
+     * @return
+     * @throws InterruptedException
+     */
+    @PostMapping("/downloadExcel")
+    public ResponseBo excel(@RequestParam("headId") String headId) throws InterruptedException {
+        List<DailyPersonal> list = Lists.newLinkedList();
+        List<Callable<List<DailyPersonal>>> tmp = Lists.newLinkedList();
+        int count = dailyService.getDailyPersonalEffectCount(new DailyPersonalVo(), headId);
+        ExecutorService service = Executors.newFixedThreadPool(10);
+        int pageSize = 1000;
+        int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize) + 1;
+        for (int i = 0; i < pageNum; i++) {
+            int idx = i;
+            tmp.add(() -> {
+                int start = idx * pageSize + 1;
+                int end = (idx + 1) * pageSize;
+                return dailyService.getDailyPersonalEffect(new DailyPersonalVo(), start, end, headId);
+            });
+        }
+
+        List<Future<List<DailyPersonal>>> futures = service.invokeAll(tmp);
+        futures.stream().forEach(x-> {
+            try {
+                list.addAll(x.get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+        try {
+            return FileUtils.createExcelByPOIKit("每日运营个体结果表", list, DailyPersonal.class);
+        } catch (Exception e) {
+            log.error("导出每日运营个体结果表失败", e);
+            return ResponseBo.error("导出每日运营个体结果表失败，请联系网站管理员！");
+        }
     }
 }

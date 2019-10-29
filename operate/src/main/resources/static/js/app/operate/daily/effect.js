@@ -1,13 +1,14 @@
 $(function () {
     getTaskDt();
     makePushChart();
+    getEffectPersonalPage();
 });
 
 // 获取页面头的当前日期和任务日期
 function getTaskDt() {
-    $.get("/daily/getCurrentAndTaskDate", {headId:headId}, function (r) {
+    $.get("/daily/getCurrentAndTaskDate", {headId: headId}, function (r) {
         let data = r.data;
-        $("#taskDt").html('').append('<i class="mdi mdi-alert-circle-outline"></i>当前日期：'+data['currentDt']+'，任务：'+data['taskDt']+'');
+        $("#taskDt").html('').append('<i class="mdi mdi-alert-circle-outline"></i>当前日期：' + data['currentDt'] + '，任务：' + data['taskDt'] + '');
     });
 }
 
@@ -31,6 +32,7 @@ function makePushChart() {
     });
 }
 
+// 获取echart数据
 function getChartOption(xdata, yData1, yData2, yName1, yName2, title) {
     return {
         tooltip: {
@@ -42,8 +44,8 @@ function getChartOption(xdata, yData1, yData2, yName1, yName2, title) {
                 }
             }
         },
-        grid: {top:'10%'},
-        title:{
+        grid: {top: '10%'},
+        title: {
             text: title,
             x: 'center',
             y: 'bottom',
@@ -77,7 +79,7 @@ function getChartOption(xdata, yData1, yData2, yName1, yName2, title) {
                 max: 250,
                 interval: 50,
                 splitLine: {show: false},
-                axisTick:  {show: false},
+                axisTick: {show: false},
                 splitArea: {show: false},
             },
             {
@@ -87,22 +89,191 @@ function getChartOption(xdata, yData1, yData2, yName1, yName2, title) {
                 max: 25,
                 interval: 5,
                 splitLine: {show: false},
-                axisTick:  {show: false},
+                axisTick: {show: false},
                 splitArea: {show: false}
             }
         ],
         series: [
             {
-                name:yName1,
-                type:'line',
-                data:yData1
+                name: yName1,
+                type: 'line',
+                data: yData1
             },
             {
-                name:yName2,
-                type:'line',
+                name: yName2,
+                type: 'line',
                 yAxisIndex: 1,
-                data:yData2
+                data: yData2
             }
         ]
     };
 }
+
+// 获取个体效果分页数据
+function getEffectPersonalPage() {
+    var settings = {
+        url: '/daily/getDailyPersonalEffect',
+        pagination: true,
+        singleSelect: true,
+        sidePagination: "server",
+        pageList: [10, 25, 50, 100],
+        sortable: true,
+        sortOrder: "asc",
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,  ////页面大小
+                pageNum: (params.offset / params.limit) + 1,
+                param: {
+                    headId: headId,
+                    isConvert: $("#isConvert").val(),
+                    spuIsConvert: $("#spuIsConvert").val(),
+                    // convertSpu: $("#convertSpu").val(),
+                    userValue: $("#userValue").val(),
+                    pathActive: $("#pathActive").val()
+                }
+            };
+        },
+        columns: [[
+            {
+                field: 'userId',
+                title: '用户ID',
+                align: "center",
+                valign: "middle",
+                rowspan: 2
+            },
+            {
+                title: "推送与结果",
+                align: "center",
+                colspan: 7
+            },
+            {
+                title: "推送时用户状态",
+                align: "center",
+                colspan: 2
+            }
+        ], [{
+            field: 'isConvert',
+            title: '是否转化',
+            formatter: function (value, row, index) {
+                let res = "-";
+                if(value == '1') {
+                    res = '是';
+                }
+                if(value == '0') {
+                    res = '否';
+                }
+                return res;
+            }
+        }, {
+            field: 'pushPeriod',
+            title: '推送时段'
+        }, {
+            field: 'convertPeriod',
+            title: '转化时段'
+        }, {
+            field: 'convertInterval',
+            title: '转化间隔（天）'
+        }, {
+            field: 'pushSpu',
+            title: '推送SPU'
+        }, {
+            field: "spuIsConvert",
+            title: "推送SPU是否转化",
+            formatter: function (value, row, index) {
+                let res = "-";
+                if(value == 'Y') {
+                    res = '是';
+                }
+                if(value == 'N') {
+                    res = '否';
+                }
+                return res;
+            }
+        }, {
+            field: "userValue",
+            title: "用户价值",
+            formatter: function (value, row, index) {
+                var res = "";
+                switch (value) {
+                    case "ULC_01":
+                        res = "重要";
+                        break;
+                    case "ULC_02":
+                        res = "主要";
+                        break;
+                    case "ULC_03":
+                        res = "普通";
+                        break;
+                    case "ULC_04":
+                        res = "长尾";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
+            }
+        }, {
+            field: "pathActive",
+            title: "用户活跃度",
+            formatter: function (value, row, index) {
+                let res = "";
+                switch (value) {
+                    case "UAC_01":
+                        res = "高度活跃";
+                        break;
+                    case "UAC_02":
+                        res = "中度活跃";
+                        break;
+                    case "UAC_03":
+                        res = "流失预警";
+                        break;
+                    case "UAC_04":
+                        res = "弱流失";
+                        break;
+                    case "UAC_05":
+                        res = "强流失";
+                        break;
+                    case "UAC_06":
+                        res = "沉睡";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
+            }
+        }]]
+    };
+    $MB.initTable('effectPersonalTable', settings);
+}
+
+// 导出个体结果
+$("#btn_download").click(function () {
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定导出记录?"
+    }, function () {
+        $("#btn_download").text("下载中...").attr("disabled", true);
+        $.post("/daily/downloadExcel", {headId: headId}, function (r) {
+            if (r.code === 200) {
+                window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
+            } else {
+                $MB.n_warning(r.msg);
+            }
+            $("#btn_download").html("").append("<i class=\"fa fa-download\"></i> 导出").removeAttr("disabled");
+        });
+    });
+});
+
+// 查询个体结果
+$("#btn_query").click(function () {
+    $MB.refreshTable('effectPersonalTable');
+});
+
+// 重置表单
+$("#btn_reset").click(function () {
+    $("#isConvert").find("option:selected").removeAttr("selected");
+    $("#spuIsConvert").find("option:selected").removeAttr("selected");
+    $("#userValue").find("option:selected").removeAttr("selected");
+    $("#pathActive").find("option:selected").removeAttr("selected");
+    $MB.refreshTable('effectPersonalTable');
+});

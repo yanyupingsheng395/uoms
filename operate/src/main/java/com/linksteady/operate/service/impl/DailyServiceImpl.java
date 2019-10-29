@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -116,11 +113,35 @@ public class DailyServiceImpl implements DailyService {
         }
 
         List<DailyStatis> dataList = dailyMapper.getDailyStatisList(headId);
-        Map<String, Long> convertNumMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getConversionDateStr, DailyStatis::getConvertNum));
-        Map<String, Double> convertRateMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getConversionDateStr, DailyStatis::getConvertRate));
-        Map<String, Long> convertSpuNumMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getConversionDateStr, DailyStatis::getConvertSpuNum));
-        Map<String, Double> convertSpuRateMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getConversionDateStr, DailyStatis::getConvertSpuRate));
+        Map<String, Long> convertNumMap = dataList.stream().collect(
+                Collectors.toMap(
+                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
+                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertNum).orElse(0L),
+                        (k1,k2)->k2
+                )
+        );
+        Map<String, Double> convertRateMap = dataList.stream().collect(
+                Collectors.toMap(
+                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
+                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertRate).orElse(0D),
+                        (k1,k2)->k2
+                )
+        );
+        Map<String, Long> convertSpuNumMap = dataList.stream().collect(
 
+                Collectors.toMap(
+                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
+                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertSpuNum).orElse(0L),
+                        (k1,k2)->k2
+                )
+        );
+        Map<String, Double> convertSpuRateMap = dataList.stream().collect(
+                Collectors.toMap(
+                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
+                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertSpuRate).orElse(0D),
+                        (k1,k2)->k2
+                )
+        );
         xdatas.forEach(x->{
             convertNumMap.putIfAbsent(x, 0L);
             convertRateMap.putIfAbsent(x, 0D);

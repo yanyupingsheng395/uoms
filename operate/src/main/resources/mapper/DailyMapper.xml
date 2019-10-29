@@ -218,29 +218,64 @@
         {call UPDATE_OP_DAILY_CONVERSION}
     </select>
 
-    <select id="getDailyPersonalEffect" resultMap="personalResult">
+    <select id="getDailyPersonalEffect" resultMap="personalResult" parameterType="com.linksteady.operate.vo.DailyPersonalVo">
+        select * from (
+          select tt.*, ROWNUM RN from (
         select
-           t.user_id, --用户ID
-           u.login_name user_name,  --用户名
-           u.mobile, --手机号
-           t.path_active, --活跃度
-           t.user_value,  --用户价值
-           t.push_period,  --推送时段
-           t.conversion_period CONVERT_PERIOD,  --转化时段
-           t.push_date,  --推送日期
-           t.conversion_date convert_date, --转化日期
-           trunc((t.conversion_date-t.push_date),1) CONVERT_INTERVAL, --转换间隔
-           t.spu_consistent, --推荐SPU与购买SPU是否一致 Y表示是 N表示否
-           t.rec_spu_name  --推荐SPU名称
-           --转化的SPU名称
-          from HANHOO_CONVERT_DETAIL t, w_users u
-         where t.user_id = u.id
-           and t.is_conversion=1
-           and t.daily_header_id=#{headId}
-        <if test=""></if>
+        t.user_id, --用户ID
+        u.login_name user_name,  --用户名
+        u.mobile, --手机号
+        t.path_active, --活跃度
+        t.user_value,  --用户价值
+        t.push_period,  --推送时段
+        t.conversion_period CONVERT_PERIOD,  --转化时段
+        t.push_date,  --推送日期
+        t.conversion_date convert_date, --转化日期
+        trunc((t.conversion_date-t.push_date),1) CONVERT_INTERVAL, --转换间隔
+        t.spu_consistent, --推荐SPU与购买SPU是否一致 Y表示是 N表示否
+        t.rec_spu_name PUSH_SPU,  --推荐SPU名称
+        t.IS_CONVERSION IS_CONVERT,
+        t.SPU_CONSISTENT SPU_IS_CONVERT
+        --转化的SPU名称
+        from HANHOO_CONVERT_DETAIL t, w_users u
+        where t.user_id = u.id
+        and t.is_conversion=1
+        and t.daily_header_id=#{headId}
+        <if test="dailyPersonalVo.isConvert != null and dailyPersonalVo.isConvert != ''">
+            and IS_CONVERSION = #{dailyPersonalVo.isConvert}
+        </if>
+        <if test="dailyPersonalVo.spuIsConvert != null and dailyPersonalVo.spuIsConvert != ''">
+            and SPU_CONSISTENT = #{dailyPersonalVo.spuIsConvert}
+        </if>
+        <!--<if test="dailyPersonalVo.convertSpu != null and dailyPersonalVo.convertSpu != ''">-->
+            <!--and 1=1-->
+        <!--</if>-->
+        <if test="dailyPersonalVo.userValue != null and dailyPersonalVo.userValue != ''">
+            and USER_VALUE = #{dailyPersonalVo.userValue}
+        </if>
+        <if test="dailyPersonalVo.pathActive != null and dailyPersonalVo.pathActive != ''">
+            and PATH_ACTIVE = #{dailyPersonalVo.pathActive}
+        </if>
+          ) tt where ROWNUM &lt;= #{end}
+        ) where RN &gt;= #{start}
     </select>
 
-    <select id="getDailyPersonalEffectCount" resultType="int">
+    <select id="getDailyPersonalEffectCount" resultType="int" parameterType="com.linksteady.operate.vo.DailyPersonalVo">
         select count(1) from HANHOO_CONVERT_DETAIL where DAILY_HEADER_ID = #{headId}
+        <if test="dailyPersonalVo.isConvert != null and dailyPersonalVo.isConvert != ''">
+            and IS_CONVERSION = #{dailyPersonalVo.isConvert}
+        </if>
+        <if test="dailyPersonalVo.spuIsConvert != null and dailyPersonalVo.spuIsConvert != ''">
+            and SPU_CONSISTENT = #{dailyPersonalVo.spuIsConvert}
+        </if>
+        <!--<if test="dailyPersonalVo.convertSpu != null and dailyPersonalVo.convertSpu != ''">-->
+            <!--and 1=1-->
+        <!--</if>-->
+        <if test="dailyPersonalVo.userValue != null and dailyPersonalVo.userValue != ''">
+            and USER_VALUE = #{dailyPersonalVo.userValue}
+        </if>
+        <if test="dailyPersonalVo.pathActive != null and dailyPersonalVo.pathActive != ''">
+            and PATH_ACTIVE = #{dailyPersonalVo.pathActive}
+        </if>
     </select>
 </mapper>

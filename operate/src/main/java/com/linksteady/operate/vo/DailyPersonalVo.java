@@ -23,7 +23,7 @@ public class DailyPersonalVo {
     /**
      * 转化SPU
      */
-    private String convertSpuId;
+    private String convertSpu;
 
     /**
      * 用户价值
