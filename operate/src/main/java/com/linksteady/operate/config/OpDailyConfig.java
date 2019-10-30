@@ -49,6 +49,9 @@ public class OpDailyConfig implements CommandLineRunner {
         PushMessageThread.getInstance().start();
 
         log.info(">>>开启批量推送短信的线程的执行");
-        new BatchPushMessageThread().start();
+        BatchPushMessageThread batchPushMessageThread = new BatchPushMessageThread();
+        batchPushMessageThread.setName("batch_sms_send_thread");
+        batchPushMessageThread.setDaemon(true);
+        batchPushMessageThread.start();
     }
 }
