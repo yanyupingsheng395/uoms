@@ -53,7 +53,7 @@ public class PushSmsServiceImpl implements PushMessageService {
     private PushLogMapper pushLogMapper;
 
     @Override
-    public void push(List<PushListInfo> list) {
+    public int push(List<PushListInfo> list) {
         //发送类
         SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
         //短信接口
@@ -122,22 +122,12 @@ public class PushSmsServiceImpl implements PushMessageService {
             userlist.add(pushListInfo);
 
         }
-
         //输出到推送日志通道
-
         if(userlist.size()>0)
         {
             pushListMapper.updateSendStatus(userlist);
         }
-
-        //写入到触达日志中
-
-        PushLog repeatLog = new PushLog();
-        repeatLog.setLogType("0");
-        repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
-        repeatLog.setUserCount((long) repeatUserCount);
-        repeatLog.setLogDate(new Date());
-        pushLogMapper.insertPushLog(repeatLog);
+        return repeatUserCount;
     }
 
     @Override

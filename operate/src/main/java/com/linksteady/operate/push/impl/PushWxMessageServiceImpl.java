@@ -27,8 +27,8 @@ public class PushWxMessageServiceImpl implements PushMessageService {
 
 
     @Override
-    public void push(List<PushListInfo> list) {
-
+    public int push(List<PushListInfo> list) {
+        return 0;
     }
 
     @Override

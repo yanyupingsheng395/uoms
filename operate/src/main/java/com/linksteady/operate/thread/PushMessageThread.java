@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 获取到待推送的列表 进行消息推送的线程类
@@ -35,6 +37,7 @@ public class PushMessageThread {
     @SneakyThrows
     public void start() {
         pushSmsThread = new Thread(() -> {
+            AtomicInteger atomicInteger = new AtomicInteger();
             // 推送的数据表service
             PushListServiceImpl pushListService = (PushListServiceImpl) SpringContextUtils.getBean("pushListServiceImpl");
             // 推送配置service
@@ -80,7 +83,8 @@ public class PushMessageThread {
                 if (count <= size) {
                     //获取推送列表
                     list = pushListService.getPendingPushList(maxPushId, 1, count, currHour);
-                    pushMessageService.push(list);
+                    int repeatUserCount = pushMessageService.push(list);
+                    atomicInteger.addAndGet(repeatUserCount);
                 } else {
                     //分页
                     int pageSize = count % size == 0 ? count / size : (count / size + 1);
@@ -92,16 +96,26 @@ public class PushMessageThread {
                 //更新这一批数据的IS_PUSH字段
                 pushListService.updateIsPush(maxPushId, currHour);
 
-                // 写日志
-                //写入到触达日志中
-                PushLog pushLog = new PushLog();
-                pushLog.setLogType("1");
-                pushLog.setLogContent("成功触达" + count + "人");
-                pushLog.setUserCount((long) count);
-                pushLog.setLogDate(new Date());
-                pushLogMapper.insertPushLog(pushLog);
-                log.info(">>>[每日运营]结果已写入日志表");
+                if (count != 0) {
+                    //写入到触达日志中
+                    int repeatUserCount = atomicInteger.get();
+                    int successNum = count - repeatUserCount;
+                    PushLog pushLog = new PushLog();
+                    pushLog.setLogType("1");
+                    pushLog.setLogContent("成功触达" + successNum + "人");
+                    pushLog.setUserCount((long) successNum);
+                    pushLog.setLogDate(new Date());
+                    pushLogMapper.insertPushLog(pushLog);
 
+                    //写入到重复推送日志中
+                    PushLog repeatLog = new PushLog();
+                    repeatLog.setLogType("0");
+                    repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
+                    repeatLog.setUserCount((long) repeatUserCount);
+                    repeatLog.setLogDate(new Date());
+                    pushLogMapper.insertPushLog(repeatLog);
+                    log.info(">>>[每日运营]结果已写入日志表");
+                }
                 log.info("[每日运营]推送结束，持续对待发送的短信列表进行监控");
                 Long endTime = System.currentTimeMillis();
                 log.info(">>>[每日运营]已触达完毕，用户数：{}人，共耗时：{}毫秒", count, endTime - startTime);

@@ -34,9 +34,9 @@ public class PushMessageServiceImpl implements PushMessageService {
     private static final String PUSH_TYPE_NONE="NONE";
 
     @Override
-    public void push(List<PushListInfo> list) {
+    public int push(List<PushListInfo> list) {
         PushMessageService PushMessageService=getPushStrategy();
-        PushMessageService.push(list);
+        return PushMessageService.push(list);
     }
 
     @Override

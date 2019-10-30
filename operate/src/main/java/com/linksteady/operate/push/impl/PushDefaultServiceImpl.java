@@ -40,7 +40,7 @@ public class PushDefaultServiceImpl implements PushMessageService {
     private PushLogMapper pushLogMapper;
 
     @Override
-    public void push(List<PushListInfo> list) {
+    public int push(List<PushListInfo> list) {
         int result = -1;
 
         //推送的列表
@@ -86,12 +86,7 @@ public class PushDefaultServiceImpl implements PushMessageService {
             pushListMapper.updateSendStatus(userlist);
         }
 
-        PushLog repeatLog = new PushLog();
-        repeatLog.setLogType("0");
-        repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
-        repeatLog.setUserCount((long) repeatUserCount);
-        repeatLog.setLogDate(new Date());
-        pushLogMapper.insertPushLog(repeatLog);
+        return repeatUserCount;
     }
 
     @Override
@@ -131,16 +126,6 @@ public class PushDefaultServiceImpl implements PushMessageService {
         }
 
         log.info("当前手机号：{},要推送的用户{}",messageContent,targetMobileList.stream().collect(Collectors.joining(",")));
-
-        //写入到触达日志中
-        if(repeatUserCount != 0) {
-            PushLog repeatLog = new PushLog();
-            repeatLog.setLogType("0");
-            repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
-            repeatLog.setUserCount((long) repeatUserCount);
-            repeatLog.setLogDate(new Date());
-            pushLogMapper.insertPushLog(repeatLog);
-        }
-        return 0;
+        return repeatUserCount;
     }
 }

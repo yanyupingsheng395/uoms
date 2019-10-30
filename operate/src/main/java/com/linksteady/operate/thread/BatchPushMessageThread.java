@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 双11活动批量发
@@ -53,6 +54,7 @@ public class BatchPushMessageThread extends Thread {
             if (count == 0) {
                 log.info(">>>[batch]当前时间没有可推送的名单");
             } else {
+                AtomicInteger atomicInteger = new AtomicInteger();
                 log.info(">>>[batch]当前时间获取到共{}条短信内容待推送", count);
                 Long startTime = System.currentTimeMillis();
                 Long maxPushId = pushLargeListService.getMaxPushId(currentHour);
@@ -70,7 +72,8 @@ public class BatchPushMessageThread extends Thread {
                         int end = (i + 1) * pageSize - 1;
                         end = end > total ? total : end;
                         List<PushListLager> pushList = pushLargeListService.getPushList(currentHour, sms, start, end);
-                        pushMessageService.batchPush(sms,pushList);
+                        int pushCount = pushMessageService.batchPush(sms, pushList);
+                        atomicInteger.addAndGet(pushCount);
                         log.info(">>>[batch]当前推送第{}页名单", i);
                     }
                 }
@@ -80,12 +83,24 @@ public class BatchPushMessageThread extends Thread {
                 Long endTime = System.currentTimeMillis();
                 log.info(">>>[batch]本次推送完毕，耗时{}秒", (endTime - startTime)/1000);
 
+                int repeatUserCount = atomicInteger.get();
+                int successNum = count - repeatUserCount;
+
                 PushLog pushLog = new PushLog();
                 pushLog.setLogType("1");
-                pushLog.setLogContent("成功触达" + count + "人");
-                pushLog.setUserCount((long) count);
+                pushLog.setLogContent("成功触达" + successNum + "人");
+                pushLog.setUserCount((long) successNum);
                 pushLog.setLogDate(new Date());
                 pushLogMapper.insertPushLog(pushLog);
+
+                //写入到重复推送日志中
+                PushLog repeatLog = new PushLog();
+                repeatLog.setLogType("0");
+                repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
+                repeatLog.setUserCount((long) repeatUserCount);
+                repeatLog.setLogDate(new Date());
+                pushLogMapper.insertPushLog(repeatLog);
+
                 log.info(">>>[batch]结果已写入日志表");
             }
             //每隔5分钟执行一次
