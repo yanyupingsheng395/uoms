@@ -95,7 +95,8 @@ public class PushSmsServiceImpl implements PushMessageService {
                 message.setMobile(pushListInfo.getUserPhone());
                 message.setContent(pushListInfo.getPushContent());
                 try {
-                    result=sendSms.singleSend(message);
+//                    result=sendSms.singleSend(message);
+                    result = 0;
                     log.info("通道推送:{}-{}:返回状态码:{}",pushListInfo.getUserPhone(),pushListInfo.getPushContent(),result);
                 } catch (Exception e) {
                    //此处进行错误上报
@@ -148,7 +149,8 @@ public class PushSmsServiceImpl implements PushMessageService {
         Message  message=new Message();
         message.setMobile(uid);
         message.setContent(messageContent);
-        int result=sendSms.singleSend(message);
+//        int result=sendSms.singleSend(message);
+        int result=0;
 
         return result;
     }
@@ -198,6 +200,7 @@ public class PushSmsServiceImpl implements PushMessageService {
             repeatLog.setLogDate(new Date());
             pushLogMapper.insertPushLog(repeatLog);
         }
-        return sendSms.batchSend(message);
+//        return sendSms.batchSend(message);
+        return 0;
     }
 }

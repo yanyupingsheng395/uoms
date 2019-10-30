@@ -8,7 +8,7 @@ $(function () {
 function getTaskDt() {
     $.get("/daily/getCurrentAndTaskDate", {headId: headId}, function (r) {
         let data = r.data;
-        $("#taskDt").html('').append('<i class="mdi mdi-alert-circle-outline"></i>当前日期：' + data['currentDt'] + '，任务：' + data['taskDt'] + '');
+        $("#taskDt").html('').append('<i class="mdi mdi-alert-circle-outline"></i>任务日期：' + data["taskDt"] + '，成功触达：'+data['successNum']+'人');
     });
 }
 
@@ -125,9 +125,7 @@ function getEffectPersonalPage() {
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
                     headId: headId,
-                    isConvert: $("#isConvert").val(),
                     spuIsConvert: $("#spuIsConvert").val(),
-                    // convertSpu: $("#convertSpu").val(),
                     userValue: $("#userValue").val(),
                     pathActive: $("#pathActive").val()
                 }
@@ -144,7 +142,7 @@ function getEffectPersonalPage() {
             {
                 title: "推送与结果",
                 align: "center",
-                colspan: 7
+                colspan: 5
             },
             {
                 title: "推送时用户状态",
@@ -152,19 +150,6 @@ function getEffectPersonalPage() {
                 colspan: 2
             }
         ], [{
-            field: 'isConvert',
-            title: '是否转化',
-            formatter: function (value, row, index) {
-                let res = "-";
-                if(value == '1') {
-                    res = '是';
-                }
-                if(value == '0') {
-                    res = '否';
-                }
-                return res;
-            }
-        }, {
             field: 'pushPeriod',
             title: '推送时段'
         }, {

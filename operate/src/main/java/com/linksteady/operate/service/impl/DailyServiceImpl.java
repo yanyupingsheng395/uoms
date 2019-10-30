@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -76,9 +78,11 @@ public class DailyServiceImpl implements DailyService {
     @Override
     public Map<String, Object> getCurrentAndTaskDate(String headId) {
         Map<String, Object> result = Maps.newHashMap();
-        String touchDt = dailyMapper.getTouchDt(headId);
+        Map<String, Object> taskInfo = dailyMapper.getTaskInfo(headId);
+        String touchDt = (String) taskInfo.get("TOUCH_DT");
+        BigDecimal successNum = (BigDecimal) taskInfo.get("SUCCESS_NUM");
         result.put("taskDt", touchDt);
-        result.put("currentDt", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+        result.put("successNum", successNum);
         return result;
     }
 

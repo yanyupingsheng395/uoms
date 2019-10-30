@@ -123,6 +123,10 @@
         select to_char(TOUCH_DT, 'yyyymmdd') from UO_OP_DAILY_HEADER where head_id = #{headId}
     </select>
 
+    <select id="getTaskInfo" resultType="map">
+        select to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT, SUCCESS_NUM from UO_OP_DAILY_HEADER where head_id = #{headId}
+    </select>
+
     <select id="getTotalNum" resultType="map">
         select total_num total, OPT_NUM opt from UO_OP_DAILY_HEADER where head_id = #{headId}
     </select>
@@ -241,15 +245,9 @@
         where t.user_id = u.id
         and t.is_conversion=1
         and t.daily_header_id=#{headId}
-        <if test="dailyPersonalVo.isConvert != null and dailyPersonalVo.isConvert != ''">
-            and IS_CONVERSION = #{dailyPersonalVo.isConvert}
-        </if>
         <if test="dailyPersonalVo.spuIsConvert != null and dailyPersonalVo.spuIsConvert != ''">
             and SPU_CONSISTENT = #{dailyPersonalVo.spuIsConvert}
         </if>
-        <!--<if test="dailyPersonalVo.convertSpu != null and dailyPersonalVo.convertSpu != ''">-->
-            <!--and 1=1-->
-        <!--</if>-->
         <if test="dailyPersonalVo.userValue != null and dailyPersonalVo.userValue != ''">
             and USER_VALUE = #{dailyPersonalVo.userValue}
         </if>
@@ -262,15 +260,9 @@
 
     <select id="getDailyPersonalEffectCount" resultType="int" parameterType="com.linksteady.operate.vo.DailyPersonalVo">
         select count(1) from UO_OP_DAILY_CONVERT_DETAIL where DAILY_HEADER_ID = #{headId}
-        <if test="dailyPersonalVo.isConvert != null and dailyPersonalVo.isConvert != ''">
-            and IS_CONVERSION = #{dailyPersonalVo.isConvert}
-        </if>
         <if test="dailyPersonalVo.spuIsConvert != null and dailyPersonalVo.spuIsConvert != ''">
             and SPU_CONSISTENT = #{dailyPersonalVo.spuIsConvert}
         </if>
-        <!--<if test="dailyPersonalVo.convertSpu != null and dailyPersonalVo.convertSpu != ''">-->
-            <!--and 1=1-->
-        <!--</if>-->
         <if test="dailyPersonalVo.userValue != null and dailyPersonalVo.userValue != ''">
             and USER_VALUE = #{dailyPersonalVo.userValue}
         </if>

@@ -262,15 +262,11 @@ public class DailyController {
         int start = request.getStart();
         int end = request.getEnd();
         String headId = request.getParam().get("headId");
-        String isConvert = request.getParam().get("isConvert");
         String spuIsConvert = request.getParam().get("spuIsConvert");
-//        String convertSpu = request.getParam().get("convertSpu");
         String userValue = request.getParam().get("userValue");
         String pathActive = request.getParam().get("pathActive");
         DailyPersonalVo dailyPersonalVo = new DailyPersonalVo();
-        dailyPersonalVo.setIsConvert(isConvert);
         dailyPersonalVo.setSpuIsConvert(spuIsConvert);
-//        dailyPersonalVo.setConvertSpu(convertSpu);
         dailyPersonalVo.setUserValue(userValue);
         dailyPersonalVo.setPathActive(pathActive);
 

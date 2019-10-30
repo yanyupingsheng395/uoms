@@ -243,6 +243,9 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             if (null != dailyDetail1.getCouponId() && !"-1".equals(dailyDetail1.getCouponId())) {
                 couponUrl = dailyDetail1.getCouponUrl();
                 smsContent = smsContent.replace("${COUPON_URL}", couponUrl);
+                if(StringUtils.isBlank(dailyDetail1.getCouponName())) {
+                    log.error("券名称不能为空！");
+                }
                 smsContent = smsContent.replace("${COUPON_NAME}", dailyDetail1.getCouponName());
             }
             dailyDetailTemp.setDailyDetailId(dailyDetail1.getDailyDetailId());

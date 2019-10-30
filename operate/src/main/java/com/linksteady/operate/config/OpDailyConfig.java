@@ -48,7 +48,7 @@ public class OpDailyConfig implements CommandLineRunner {
         log.info(">>>开启日推送短信的线程的执行");
         PushMessageThread.getInstance().start();
 
-        log.info(">>>开启双11短信的线程的执行");
+        log.info(">>>开启批量推送短信的线程的执行");
         new BatchPushMessageThread().start();
     }
 }

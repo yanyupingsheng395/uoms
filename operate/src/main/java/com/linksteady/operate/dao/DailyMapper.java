@@ -34,6 +34,8 @@ public interface DailyMapper {
 
     String getTouchDt(String headId);
 
+    Map<String, Object> getTaskInfo(String headId);
+
     Map<String, Object> getTotalNum(String headId);
 
     int getUserGroupCount();
