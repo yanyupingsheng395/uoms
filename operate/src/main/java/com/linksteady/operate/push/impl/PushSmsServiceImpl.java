@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
@@ -64,22 +65,24 @@ public class PushSmsServiceImpl implements PushMessageService {
         //用户的列表
         List<PushListInfo> userlist= Lists.newArrayList();
 
-        ValueOperations<String,String> operations=redisTemplate.opsForValue();
+        SetOperations<String,String> operations=redisTemplate.opsForSet();
+        //ValueOperations<String,String> operations=redisTemplate.opsForValue();
         //获取防骚扰拦截的时间
-        int timeout=dailyProperties.getRepeatPushDays()*86400;
+        //int timeout=dailyProperties.getRepeatPushDays()*86400;
 
         boolean repeatFlag;
         int repeatUserCount=0;
 
         for(PushListInfo pushListInfo:list)
         {
-            repeatFlag=false;
+          //  repeatFlag=false;
 
             //判断是否会存在骚扰拦截
-            String value=operations.get("PUSH_"+pushListInfo.getUserPhone());
-            if(null!=value&&!"".equals(value))
+            repeatFlag=operations.isMember("phoneList",pushListInfo.getUserPhone());
+            //String value=operations.get("PUSH_"+pushListInfo.getUserPhone());
+            if(repeatFlag)
             {
-                repeatFlag=true;
+              //  repeatFlag=true;
                 repeatUserCount+=1;
                 log.error("用户{}存在被重复触达的风险！！",pushListInfo.getUserPhone());
 
@@ -116,7 +119,8 @@ public class PushSmsServiceImpl implements PushMessageService {
                 pushListInfo.setPushDate(new Date());
 
                 //已发送用户存入redis
-                operations.set("PUSH_"+pushListInfo.getUserPhone(),pushListInfo.getUserPhone(),timeout);
+                operations.add("phoneList",pushListInfo.getUserPhone());
+              //  operations.set("PUSH_"+pushListInfo.getUserPhone(),pushListInfo.getUserPhone(),timeout);
 
             }
             userlist.add(pushListInfo);
@@ -154,17 +158,20 @@ public class PushSmsServiceImpl implements PushMessageService {
         //进行防骚扰验证
         List<String> mobileList=pushList.stream().map(p->p.getUserPhone()).collect(Collectors.toList());
 
-        ValueOperations<String,String> operations=redisTemplate.opsForValue();
+        SetOperations<String,String> operations=redisTemplate.opsForSet();
+        //ValueOperations<String,String> operations=redisTemplate.opsForValue();
         //获取防骚扰拦截的时间
         int timeout=dailyProperties.getRepeatPushDays()*86400;
 
         String value="";
         int repeatUserCount=0;
+        boolean repeatFlag;
         for(String mobile:mobileList)
         {
             //判断是否会存在骚扰拦截
-            value=operations.get("PUSH_"+mobile);
-            if(null!=value&&!"".equals(value))
+            repeatFlag=operations.isMember("phoneList",mobile);
+          //  value=operations.get("PUSH_"+mobile);
+            if(repeatFlag)
             {
                 repeatUserCount+=1;
                 log.error("用户{}存在被重复触达的风险！！",mobile);
@@ -172,7 +179,8 @@ public class PushSmsServiceImpl implements PushMessageService {
             {
                 targetMobileList.add(mobile);
                 //加入到redis中去
-                operations.set("PUSH_"+mobile,mobile,timeout);
+                operations.add("phoneList",mobile);
+              //  operations.set("PUSH_"+mobile,mobile,timeout);
             }
         }
 
