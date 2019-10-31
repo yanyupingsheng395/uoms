@@ -15,17 +15,4 @@ public interface ActivityProductService {
 
     List<ActivityProduct> getActivityProductListPage(int start, int end, String headId);
 
-    void saveActivityProduct(String startDate, String endDate, String headId);
-
-    void saveActivityProductBySql(String startDate, String endDate, String headId);
-
-    /**
-     * 用户数在优惠券上的分布图
-     * @param productId
-     * @param startDate
-     * @param endDate
-     * @return
-     */
-    Map<String, Object> getCouponBoxData(String productId, String startDate, String endDate);
-
 }

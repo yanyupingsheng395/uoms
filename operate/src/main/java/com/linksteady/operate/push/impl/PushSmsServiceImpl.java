@@ -6,7 +6,6 @@ import com.linksteady.operate.dao.PushLogMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.domain.PushListLager;
-import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.push.PushMessageService;
 import com.linksteady.operate.sms.montnets.config.ConfigManager;
 import com.linksteady.operate.sms.montnets.domain.Message;
@@ -16,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;

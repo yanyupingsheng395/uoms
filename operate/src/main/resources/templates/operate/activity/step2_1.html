@@ -1,0 +1,67 @@
+<div class="row" style="margin-top: 12px;">
+    <div class="col-md-12">
+        <p class="h5">活动期间在售商品列表</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <hr class="hr" style="margin-top: 10px;margin-bottom: 0px;"/>
+    </div>
+</div>
+<div class="row" style="margin-top: 12px;">
+    <div class="col-md-12">
+        <form id="activity-form">
+            <div class="select-list">
+                <ul>
+                    <li>
+                        商品ID：
+                        <input type="text" name="actName"/>
+                    </li>
+                    <li>
+                        商品名称：<input type="text" name="actName"/>
+                    </li>
+                    <li>
+                        活动属性：
+                        <select>
+                            <option value="">主推</option>
+                            <option value="">参活</option>
+                            <option value="">正常</option>
+                        </select>
+                    </li>
+                    <li class="pull-right">
+                        <a class="btn btn-primary btn-rounded btn-sm"
+                           onclick="searchActivity()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetActivity()"><i
+                                class="fa fa-refresh"></i>&nbsp;重置</a>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <hr class="hr" style="margin-top: 10px;margin-bottom: 0px;"/>
+    </div>
+</div>
+<div class="row" style="padding-top: 12px;">
+    <div class="col-sm-12">
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" id="btn_add_shop">
+                <i class="fa fa-edit"></i> 添加商品
+            </a>
+            <a class="btn btn-primary" id="btn_edit_shop">
+                <i class="fa fa-edit"></i> 修改商品
+            </a>
+            <a class="btn btn-info" id="btn_upload">
+                <i class="fa fa-upload"></i> 批量上传
+            </a>
+            <button class="btn btn-secondary" id="btn_download_template">
+                <i class="fa fa-download"></i> 下载模板
+            </button>
+        </div>
+    </div>
+    <div class="col-md-12 table-striped" style="margin-top: 12px">
+        <table id="activityUserTable" class="table table-bordered table-striped text-nowrap"></table>
+    </div>
+</div>

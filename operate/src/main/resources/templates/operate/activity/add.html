@@ -68,16 +68,23 @@
                             </div>
                             <div class="row">
                                 <!--步骤条-->
-                                <div class="col-md-4 col-md-offset-8">
+                                <div class="col-md-3 col-md-offset-9">
                                     <div id="step" style="height: 80px;" class=""></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 select-table">
-                        <div id="step1" data-th-include="operate/activity/step1"></div>
-                        <div id="step2" data-th-include="operate/activity/step2" style="display: none;"></div>
-                        <div id="step3" data-th-include="operate/activity/step3" style="display: none;"></div>
+                    <div class="col-md-12 select-table" id="step1">
+                        <div data-th-include="operate/activity/step1"></div>
+                    </div>
+
+                    <div id="step2" style="display: none;">
+                        <div class="col-md-12 select-table">
+                            <div data-th-include="operate/activity/step2_1"></div>
+                        </div>
+                        <div class="col-md-12 select-table">
+                            <div data-th-include="operate/activity/step2_2"></div>
+                        </div>
                     </div>
                 </div>
             </div>

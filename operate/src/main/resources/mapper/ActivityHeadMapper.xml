@@ -4,23 +4,19 @@
     <resultMap id="baseResult" type="com.linksteady.operate.domain.ActivityHead">
         <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"></result>
         <result property="activityName" jdbcType="VARCHAR" column="ACTIVITY_NAME"></result>
-        <result property="activityType" jdbcType="VARCHAR" column="ACTIVITY_TYPE"></result>
-        <result property="startDate" jdbcType="VARCHAR" column="START_DATE"></result>
-        <result property="endDate" jdbcType="VARCHAR" column="END_DATE"></result>
-        <result property="beforeDate" jdbcType="VARCHAR" column="BEFORE_DATE"></result>
-        <result property="afterDate" jdbcType="VARCHAR" column="AFTER_DATE"></result>
-        <result property="coverNum" jdbcType="DECIMAL" column="COVER_NUM"></result>
-        <result property="convertNum" jdbcType="DECIMAL" column="CONVERT_NUM"></result>
-        <result property="numYearPercent" jdbcType="DECIMAL" column="NUM_YEAR_PERCENT"></result>
-        <result property="convertAmount" jdbcType="DECIMAL" column="CONVERT_AMOUNT"></result>
-        <result property="amountYearPercent" jdbcType="DECIMAL" column="AMOUNT_YEAR_PERCENT"></result>
-        <result property="status" jdbcType="VARCHAR" column="STATUS"></result>
+        <result property="activityStage" jdbcType="VARCHAR" column="ACTIVITY_STAGE"></result>
+        <result property="preheatStatus" jdbcType="VARCHAR" column="PREHEAT_STATUS"></result>
+        <result property="preheatStartDt" jdbcType="VARCHAR" column="PREHEAT_START_DT"></result>
+        <result property="preheatEndDt" jdbcType="VARCHAR" column="PREHEAT_END_DT"></result>
+        <result property="formalStatus" jdbcType="VARCHAR" column="FORMAL_STATUS"></result>
+        <result property="formalStartDt" jdbcType="VARCHAR" column="FORMAL_START_DT"></result>
+        <result property="formalEndDt" jdbcType="VARCHAR" column="FORMAL_END_DT"></result>
     </resultMap>
 
     <select id="getDataListOfPage" resultMap="baseResult">
         select * from (
           select t.*, ROWNUM rn from (
-            select HEAD_ID, ACTIVITY_NAME, ACTIVITY_TYPE, to_char(START_DATE, 'yyyymmdd') START_DATE, to_char(END_DATE, 'yyyymmdd') END_DATE, COVER_NUM, CONVERT_NUM, NUM_YEAR_PERCENT, CONVERT_AMOUNT, AMOUNT_YEAR_PERCENT,STATUS, to_char(BEFORE_DATE, 'yyyymmdd') BEFORE_DATE, to_char(AFTER_DATE, 'yyyymmdd') AFTER_DATE
+            select HEAD_ID, ACTIVITY_NAME, ACTIVITY_STAGE, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyymmdd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyymmdd') PREHEAT_END_DT, FORMAL_STATUS, to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT
             from UO_OP_ACTIVITY_HEADER where 1=1
             <if test="name != '' and name != null">
                 and ACTIVITY_NAME = #{name}

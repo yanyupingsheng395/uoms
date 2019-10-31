@@ -1,129 +1,111 @@
-let fromVal = 0;
-let headId;
+let validator;
+let $activityAddForm = $("#activity-add-form");
 
-$("#activityType").change(function () {
-    let val = $(this).find("option:selected").val();
-
-    $("#startDate").val("");
-    $("#endDate").val("");
-    $("#activityName").val("");
-    $("#beforeDate").val("");
-    $("#afterDate").val("");
-    $("#chart_own").attr("style", "display:none;");
-    $("#chart_plat").attr("style", "display:none;");
-
-    if (val != "") {
-        $.get("/activity/getActivityConfigByType", {type: val}, function (r) {
-            var data = r.data;
-            var code = "<option value=''>请选择</option>";
-            data.forEach(e => {
-                code += "<option value='" + e['ID'] + "'>" + e['NAME'] + "</option>";
-            });
-            $("#activityId").html('').append(code);
-        });
-    }
+$(function () {
+    validateRule();
 });
 
-// echart图特殊点位标记
-$("#activityId").change(function () {
-    let id = $(this).find("option:selected").val();
-    if (id != "") {
-        $("#activityName").val($(this).find("option:selected").text());
-        $.get("/activity/getActivityConfigById", {id: id}, function (r) {
-            var data = r.data;
-            $("#startDate").val(data['startDate']);
-            $("#endDate").val(data['endDate']);
-            $("#beforeDate").val(data['beforeDate']);
-            $("#afterDate").val(data['afterDate']);
-
-            if ($("#activityType").find("option:selected").val() == 'own') {
-                $("#chart_own").attr("style", "display:block");
-                $("#chart_plat").attr("style", "display:none");
-                getUserDataCount(data['beforeDate'], data['afterDate'], 'chart3', 0);
-            } else {
-                $("#chart_own").attr("style", "display:none");
-                $("#chart_plat").attr("style", "display:block");
-                getUserDataCount(data['beforeDate'], data['afterDate'], 'chart1', 0);
-                getWeightIdx(data['beforeDate'], data['afterDate'], 'chart2', 0);
-            }
-        });
-    }
-});
-
-var step = steps({
+let step = steps({
     el: "#step",
     data: [
-        {title: "设置活动时间", description: ""},
-        {title: "成长用户分析", description: ""},
-        {title: "成长用户策略", description: ""}
+        {title: "设置活动", description: ""},
+        {title: "活动策略", description: ""}
     ],
-    space: 120,
+    space: 140,
     center: true,
     active: 0,
     dataOrder: ["line", "title", "description"]
 });
 
-function addData(actName, actType, startDt, endDt, dateRange) {
-    $.get("/activity/addData", {
-        actName: actName,
-        actType: actType,
-        startDt: startDt,
-        endDt: endDt,
-        dateRange: dateRange
-    }, function (r) {
-        if (r.code != 200) {
-            $MB.n_danger("保存失败，未知异常！");
-        } else {
-            $MB.n_success("保存成功！");
+
+// 验证创建活动的表单
+function validateRule() {
+    let icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i> ";
+    validator = $activityAddForm.validate({
+        rules: {
+            activityName: {
+                required: true
+            },
+            preheatStartDt: {
+                required: true
+            },
+            preheatEndDt: {
+                required: true
+            },
+            formalStartDt: {
+                required: true
+            },
+            formalEndDt: {
+                required: true
+            },
+            activityStage: {
+                required: true
+            }
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":checkbox") || element.is(":radio")) {
+                error.appendTo(element.parent().parent());
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        messages: {
+            activityName: {
+                required: icon + "请输入活动名称"
+            },
+            preheatStartDt: {
+                required: icon + "请输入预热开始日期"
+            },
+            preheatEndDt: {
+                required: icon + "请输入预热结束日期"
+            },
+            formalStartDt: {
+                required: icon + "请输入正式开始日期"
+            },
+            formalEndDt: {
+                required: icon + "请输入正式结束日期"
+            },
+            activityStage: {
+                required: icon + "请选择活动阶段"
+            }
         }
     });
 }
 
 // 下一步
 function nextStep(i) {
-    step.setActive(i);
+    let validator = $activityAddForm.validate();
+    let flag = validator.form();
+    if (flag) {
+        step.setActive(i);
 
-    if (i == 1) {
-        var activityType = $("#activityType").find("option:selected").val();
-        var activityId = $("#activityId").find("option:selected").val();
-        if (activityType == '' || activityId == '') {
-            $MB.n_warning("请选择活动类型或活动名称！");
-            return;
+        // if (i == 1) {
+        //     var activityType = $("#activityType").find("option:selected").val();
+        //     var activityId = $("#activityId").find("option:selected").val();
+        //     if (activityType == '' || activityId == '') {
+        //         $MB.n_warning("请选择活动类型或活动名称！");
+        //         return;
+        //     }
+        //
+        //     $MB.confirm({
+        //         title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        //         content: "确认提交当前活动?"
+        //     }, function () {
+        //         saveActivity();
+        //         step2Init();
+        //         $("#step1").attr("style", "display: none;");
+        //         $("#step2").attr("style", "display: block;");
+        //     });
+        // }
+
+        step2Init();
+        $("#step1").attr("style", "display: none;");
+        $("#step2").attr("style", "display: block;");
+        if (i == 2) {
+            step3Init();
         }
-
-        $MB.confirm({
-            title: "<i class='mdi mdi-alert-outline'></i>提示：",
-            content: "确认提交当前活动?"
-        }, function () {
-            saveActivity();
-            step2Init();
-            $("#step1").attr("style", "display: none;");
-            $("#step2").attr("style", "display: block;");
-        });
     }
 
-    if (i == 2) {
-        step3Init();
-    }
-}
-
-// 保存活动数据
-function saveActivity() {
-    var activityType = $("#activityType").find("option:selected").val();
-    var activityId = $("#activityId").find("option:selected").val();
-
-    if (activityType == '' || activityId == '') {
-        $MB.n_warning("请选择活动类型或活动名称！");
-        return;
-    }
-    $.get("/activity/addData", $("#activity-add-form").serialize(), function (r) {
-        if (r.code == 200) {
-            $MB.n_success("新增活动成功！");
-            headId = r.data;
-        } else {
-            $MB.n_danger("保存失败，未知异常！");
-        }
-    });
 }
 
 // 第二步获取用户数据
@@ -141,50 +123,121 @@ function step2Init() {
             };
         },
         columns: [
-            [{
-                field: 'userId',
-                title: '用户ID',
-                rowspan: 2,
-                valign: "middle"
+            {
+                checkbox: true
+            },
+            {
+                field: 'spuName',
+                title: '商品ID'
             }, {
-                title: '当日用户目标',
-                colspan: 3
+                field: 'planPurch',
+                title: '名称'
             }, {
-                title: '当日成长策略',
-                colspan: 6
-            }], [
-                {
-                    field: 'spuName',
-                    title: '成长SPU'
-                }, {
-                    field: 'planPurch',
-                    title: '应该买第几次'
-                }, {
-                    field: 'recPiecePrice',
-                    title: '件单价（元/件）'
-                }, {
-                    field: 'recRetentionName',
-                    title: '留存推荐商品'
-                }, {
-                    field: 'recUpName',
-                    title: '向上推荐商品'
-                }, {
-                    field: 'recCrossName',
-                    title: '交叉推荐商品'
-                }, {
-                    field: 'discountLevel',
-                    title: '建议折扣力度'
-                }, {
-                    field: 'referDeno',
-                    title: '建议优惠面额'
-                }, {
-                    field: 'orderPeriod',
-                    title: '建议触达时段'
-                }
-            ]
-        ]
+                field: 'recPiecePrice',
+                title: '活动期间最低价（元）'
+            }, {
+                field: 'recRetentionName',
+                title: '非活动日常单价（元）'
+            }, {
+                field: 'recUpName',
+                title: '活动力度（%）'
+            }, {
+                field: 'recCrossName',
+                title: '活动属性'
+            }, {
+                field: 'discountLevel',
+                title: '商品链接'
+            }]
     };
     $MB.initTable('activityUserTable', settings);
+
+    getUserGroupTable();
+    getUserTable();
+}
+
+// 获取用户群组列表
+function getUserGroupTable() {
+    var settings = {
+        url: '/activity/getActivityUserListPage',
+        pagination: true,
+        sidePagination: "server",
+        pageList: [10, 25, 50, 100],
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,  ////页面大小
+                pageNum: (params.offset / params.limit) + 1,
+                param: {startDate: $("#beforeDate").val(), endDate: $("#afterDate").val()}
+            };
+        },
+        columns: [
+            {
+                checkbox: true
+            },
+            {
+                field: 'spuName',
+                title: '用户与商品关系'
+            }, {
+                field: 'planPurch',
+                title: '人数（人）'
+            }, {
+                field: 'recPiecePrice',
+                title: '成长节点与活动期'
+            }, {
+                field: 'recRetentionName',
+                title: '人数（人）'
+            }, {
+                field: 'recUpName',
+                title: '活跃度'
+            }, {
+                field: 'recCrossName',
+                title: '人数（人）'
+            }, {
+                field: 'discountLevel',
+                title: '选择模板'
+            }]
+    };
+    $MB.initTable('userGroupTable', settings);
+}
+
+// 获取用户列表
+function getUserTable() {
+    var settings = {
+        url: '/activity/getActivityUserListPage',
+        pagination: true,
+        sidePagination: "server",
+        pageList: [10, 25, 50, 100],
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,  ////页面大小
+                pageNum: (params.offset / params.limit) + 1,
+                param: {startDate: $("#beforeDate").val(), endDate: $("#afterDate").val()}
+            };
+        },
+        columns: [
+            {
+                checkbox: true
+            },
+            {
+                field: 'spuName',
+                title: '用户ID'
+            }, {
+                field: 'planPurch',
+                title: '成长节点与活动期'
+            }, {
+                field: 'recPiecePrice',
+                title: '用户与商品关系'
+            }, {
+                field: 'recRetentionName',
+                title: '活跃度'
+            }, {
+                field: 'recUpName',
+                title: '价值'
+            }, {
+                field: 'recCrossName',
+                title: '推送内容'
+            }]
+    };
+    $MB.initTable('userTable', settings);
 }
 
 function getActivityProductTable() {

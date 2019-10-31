@@ -11,7 +11,6 @@ import java.util.Date;
  */
 @Data
 public class ActivityHead {
-
     /**
      * 活动ID
      */
@@ -23,63 +22,37 @@ public class ActivityHead {
     private String activityName;
 
     /**
-     * 活动类型
+     * 活动阶段 预热，正式
      */
-    private String activityType;
+    private String activityStage;
 
     /**
-     * 活动开始时间
+     * 预热状态
      */
-    private String startDate;
+    private String preheatStatus;
 
     /**
-     * 活动结束时间
+     * 预热开始时间
      */
-    private String endDate;
+    private String preheatStartDt;
 
     /**
-     * 预计覆盖人数
+     * 预热结束时间
      */
-    private Long coverNum;
+    private String preheatEndDt;
 
     /**
-     * 活动转化人数
+     * 正式状态
      */
-    private Long convertNum;
+    private String formalStatus;
 
     /**
-     * （转化人数）年同比
+     * 正式开始时间
      */
-    private Double numYearPercent;
+    private String formalStartDt;
 
     /**
-     * 转化金额
+     * 正式结束时间
      */
-    private Double convertAmount;
-
-    /**
-     * （转化金额）年同比
-     */
-    private Double amountYearPercent;
-
-    /**
-     * 状态
-     */
-    private String status;
-
-    /**
-     * 活动影响开始日期
-     */
-    private String beforeDate;
-
-    /**
-     * 活动影响结束日期
-     */
-    private String afterDate;
-
-    /**
-     * 创建日期
-     */
-    private String createDt;
-
+    private String formalEndDt;
 }

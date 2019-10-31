@@ -37,29 +37,28 @@
                             <div class="row">
                                 <hr class="hr"/>
                             </div>
-                        </div>
-                        <div class="row">
-                            <hr style="background-color: rgba(77,82,89,0.05);"/>
-                        </div>
-                        <div class="col-md-12">
-                            <div id="calendar" style="padding: 18px;"></div>
-                        </div>
-                        <div class="btn-group-sm text-center" role="group">
-                            <a class="btn btn-primary" onclick="$('#activity-add').modal('show')">
-                                <i class="fa fa-plus"></i> 新增活动
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 search-collapse">
-                        <div class="row" style="margin-top: 12px;">
-                            <div class="col-md-12">
-                                <form id="user-form">
+                            <div class="row">
+                                <form id="activity-form">
                                     <div class="select-list">
                                         <ul>
+                                            <li>
+                                                日期：
+                                                <input type="text" name="actName"/>
+                                            </li>
                                             <li>
                                                 活动名称：<input type="text" name="actName"/>
                                             </li>
                                             <li>
+                                                活动状态：
+                                                <select>
+                                                    <option value="">所有</option>
+                                                    <option value="">待计划</option>
+                                                    <option value="">待执行</option>
+                                                    <option value="">执行中</option>
+                                                    <option value="">已完成</option>
+                                                </select>
+                                            </li>
+                                            <li class="pull-right">
                                                 <a class="btn btn-primary btn-rounded btn-sm"
                                                    onclick="searchActivity()"><i class="fa fa-search"></i>&nbsp;搜索</a>
                                                 <a class="btn btn-warning btn-rounded btn-sm" onclick="resetActivity()"><i
@@ -76,13 +75,13 @@
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
                                     <a class="btn btn-success btn-edit" id="btn_add">
-                                        <i class="fa fa-edit"></i> 编辑活动
+                                        <i class="fa fa-edit"></i> 创建计划
                                     </a>
                                     <a class="btn btn-primary btn-edit" id="btn_view">
-                                        <i class="fa fa-edit"></i> 查看活动
+                                        <i class="fa fa-check-square-o"></i> 执行计划
                                     </a>
                                     <button class="btn btn-info btn-view" id="btn_catch">
-                                        <i class="fa fa-check-square-o"></i> 效果评估
+                                        <i class="fa fa-send-o"></i> 效果评估
                                     </button>
                                 </div>
                             </div>

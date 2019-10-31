@@ -13,17 +13,15 @@ public class ActivityProduct {
 
     private String productId;
 
-    private Long userCount;
+    private String productName;
 
-    private String preferType;
+    private double minPrice;
 
-    private String preferValue;
+    private double formalPrice;
 
-    private Double minPrice15;
+    private double activityIntensity;
 
-    private Double minPrice30;
+    private String productUrl;
 
-    private Double productPrice;
-
-    private Double productActPrice;
+    private String productAttr;
 }

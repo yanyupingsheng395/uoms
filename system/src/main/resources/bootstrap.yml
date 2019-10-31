@@ -40,3 +40,6 @@ jasypt:
 spring:
   profiles:
     active: dev
+  cloud:
+    config:
+      enabled: false
