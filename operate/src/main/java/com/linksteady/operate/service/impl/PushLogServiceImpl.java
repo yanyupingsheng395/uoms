@@ -19,12 +19,12 @@ public class PushLogServiceImpl implements PushLogService, InitializingBean {
     @Autowired
     PushLogMapper pushLogMapper;
 
-    private static final int queen_capacity=100000;
+    private static final int queen_capacity=1000000;
 
     private BlockingDeque<PushLog> queue=new LinkedBlockingDeque<>(queen_capacity);
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
           consumeLog();
     }
 
@@ -32,7 +32,7 @@ public class PushLogServiceImpl implements PushLogService, InitializingBean {
      * 消息的保存
      */
     @Override
-    public void saveMessage(PushLog pushLog) {
+    public void insertPushLog(PushLog pushLog) {
         //add 非阻塞 如果队列已满 抛异常
         queue.add(pushLog);
     }

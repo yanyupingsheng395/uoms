@@ -40,7 +40,7 @@ public class RootPathController extends BaseController {
     ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Autowired
-    private DailyPropertiesService dailyPropertiesService;
+    private DailyProperties dailyProperties;
 
     @Value("${app.name}")
     private String appname;
@@ -151,7 +151,6 @@ public class RootPathController extends BaseController {
      */
     @RequestMapping("/push")
     public String push(Model model) {
-        DailyProperties dailyProperties = dailyPropertiesService.getDailyProperties();
         if(dailyProperties != null) {
             String status = dailyProperties.getPushFlag();
             if(StringUtils.isNotEmpty(status)) {

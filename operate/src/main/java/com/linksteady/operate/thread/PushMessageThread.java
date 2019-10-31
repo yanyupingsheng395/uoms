@@ -1,12 +1,12 @@
 package com.linksteady.operate.thread;
 
-import com.linksteady.operate.dao.PushLogMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.domain.PushLog;
-import com.linksteady.operate.service.DailyPropertiesService;
-import com.linksteady.operate.service.impl.PushListServiceImpl;
 import com.linksteady.operate.push.impl.PushMessageServiceImpl;
+import com.linksteady.operate.service.PushLogService;
+import com.linksteady.operate.service.impl.PushListServiceImpl;
+import com.linksteady.operate.service.impl.PushLogServiceImpl;
 import com.linksteady.operate.util.SpringContextUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 获取到待推送的列表 进行消息推送的线程类
@@ -40,17 +39,20 @@ public class PushMessageThread {
             AtomicInteger atomicInteger = new AtomicInteger();
             // 推送的数据表service
             PushListServiceImpl pushListService = (PushListServiceImpl) SpringContextUtils.getBean("pushListServiceImpl");
-            // 推送配置service
-            DailyPropertiesService dailyPropertiesService = (DailyPropertiesService) SpringContextUtils.getBean("dailyPropertiesServiceImpl");
+            // 推送配置
+            DailyProperties dailyProperties=(DailyProperties) SpringContextUtils.getBean("dailyProperties");
+
             // 推送通道service
             PushMessageServiceImpl pushMessageService = (PushMessageServiceImpl) SpringContextUtils.getBean("pushMessageServiceImpl");
             // 写日志service
-            PushLogMapper pushLogMapper = (PushLogMapper) SpringContextUtils.getBean("pushLogMapper");
+            PushLogService pushLogService=(PushLogServiceImpl) SpringContextUtils.getBean("pushLogServiceImpl");
+
 
             int size = 100;
             log.info("[每日运营]对待发送的推送列表进行监控");
             while (true) {
-                DailyProperties dailyProperties = dailyPropertiesService.getDailyProperties();
+                MonitorThread.getInstance().setLastPushDate(LocalDateTime.now());
+
                 if (null != dailyProperties && "N".equals(dailyProperties.getPushFlag())) {
                     log.info("[每日运营]推送服务已通过配置停止");
                     try {
@@ -70,6 +72,7 @@ public class PushMessageThread {
                 }
 
                 log.info("[每日运营]开始下一次推送");
+                atomicInteger.set(0);
                 Long startTime = System.currentTimeMillis();
                 //获取当前所在的小时
                 int currHour = LocalDateTime.now().getHour();
@@ -79,18 +82,20 @@ public class PushMessageThread {
                 //获取所有当前推荐时间段内发送的推送列表 考虑分页
                 int count = pushListService.getPendingPushCount(maxPushId, currHour);
                 log.info("当前时段{},当前选择的触达方式为{}，本批次触达人数:{}", currHour, dailyProperties.getPushType(), count);
+                int repeatUserCount =0;
                 List<PushListInfo> list;
                 if (count <= size) {
                     //获取推送列表
                     list = pushListService.getPendingPushList(maxPushId, 1, count, currHour);
-                    int repeatUserCount = pushMessageService.push(list);
+                    repeatUserCount = pushMessageService.push(list);
                     atomicInteger.addAndGet(repeatUserCount);
                 } else {
                     //分页
                     int pageSize = count % size == 0 ? count / size : (count / size + 1);
                     for (int i = 0; i < pageSize; i++) {
                         list = pushListService.getPendingPushList(maxPushId, i * size + 1, (i + 1) * size, currHour);
-                        pushMessageService.push(list);
+                        repeatUserCount =pushMessageService.push(list);
+                        atomicInteger.addAndGet(repeatUserCount);
                     }
                 }
                 //更新这一批数据的IS_PUSH字段
@@ -98,14 +103,14 @@ public class PushMessageThread {
 
                 if (count != 0) {
                     //写入到触达日志中
-                    int repeatUserCount = atomicInteger.get();
+                    repeatUserCount = atomicInteger.get();
                     int successNum = count - repeatUserCount;
                     PushLog pushLog = new PushLog();
                     pushLog.setLogType("1");
                     pushLog.setLogContent("成功触达" + successNum + "人");
                     pushLog.setUserCount((long) successNum);
                     pushLog.setLogDate(new Date());
-                    pushLogMapper.insertPushLog(pushLog);
+                    pushLogService.insertPushLog(pushLog);
 
                     //写入到重复推送日志中
                     PushLog repeatLog = new PushLog();
@@ -113,12 +118,13 @@ public class PushMessageThread {
                     repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
                     repeatLog.setUserCount((long) repeatUserCount);
                     repeatLog.setLogDate(new Date());
-                    pushLogMapper.insertPushLog(repeatLog);
+                    pushLogService.insertPushLog(repeatLog);
                     log.info(">>>[每日运营]结果已写入日志表");
                 }
                 log.info("[每日运营]推送结束，持续对待发送的短信列表进行监控");
                 Long endTime = System.currentTimeMillis();
                 log.info(">>>[每日运营]已触达完毕，用户数：{}人，共耗时：{}毫秒", count, endTime - startTime);
+
             }
         });
 

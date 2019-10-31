@@ -39,10 +39,7 @@
     <update id="updatePushState">
         update UO_OP_PUSH_LIST_LARGE set IS_PUSH = '1', PUSH_DATE = sysdate
         <where>
-            PUSH_CONTENT in
-            <foreach collection="smsContent" open="(" close=")" separator="," item="item">
-                #{item}
-            </foreach>
+            PUSH_CONTENT= #{smsContent}
             and PUSH_ID &lt;= #{maxPushId} and IS_PUSH = '0' and  to_number(PUSH_PERIOD) &lt;= #{currentHour}
         </where>
     </update>
