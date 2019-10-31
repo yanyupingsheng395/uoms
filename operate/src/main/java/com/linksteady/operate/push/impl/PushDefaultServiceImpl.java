@@ -36,9 +36,6 @@ public class PushDefaultServiceImpl implements PushMessageService {
     @Autowired
     private PushListMapper pushListMapper;
 
-    @Autowired
-    private PushLogMapper pushLogMapper;
-
     @Override
     public int push(List<PushListInfo> list) {
         int result = -1;
@@ -107,7 +104,7 @@ public class PushDefaultServiceImpl implements PushMessageService {
         //获取防骚扰拦截的时间
         int timeout=dailyProperties.getRepeatPushDays()*86400;
 
-        String value="";
+        String value;
         int repeatUserCount=0;
         for(String mobile:mobileList)
         {
