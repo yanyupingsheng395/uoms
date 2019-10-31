@@ -34,7 +34,7 @@ public interface PushLargeListService {
      * 更新数据状态
      * @param smsContent
      */
-    void updatePushState(List<String> smsContent, Long maxPushId,int currentHour);
+    void updatePushState(String smsContent, Long maxPushId,int currentHour);
 
     int getPushListCountBySms(int currentHour, String sms);
 

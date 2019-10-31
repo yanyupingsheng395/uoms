@@ -43,6 +43,10 @@
                                         <button class="btn btn-default" onclick="getPushLog(-1)"><i class="mdi mdi-minus"></i></button>
                                     </div>
                                 </div>
+                                <p class="h5" style="margin-top: 12px;">最后一次推送响应时间：<span id="lastPushDate"></span></p>
+                                <p class="h5" style="margin-top: 12px;">最后一次批量推送响应时间：<span id="lastBatchPushDate"></span></p>
+                                <p class="h5" style="margin-top: 12px;">最后一次清理拦截库日期：<span id="lastPurgeDate"></span></p>
+
                                 <p class="h5" id="dateStr" style="margin-top: 12px;">日志日期：<span id="logDate"></span></p>
                             </div>
                         </div>
@@ -51,6 +55,7 @@
                             <div class="col-sm-12">
 
                                 <table class="table  table-striped table-bordered text-nowrap">
+                                    <caption>推送记录</caption>
                                     <thead>
                                     <tr>
                                         <th>推送时间</th>
@@ -60,13 +65,25 @@
                                     <tbody id="pushTableData"></tbody>
                                 </table>
                                 <table class="table  table-striped table-bordered text-nowrap">
+                                    <caption>批量推送记录</caption>
                                     <thead>
                                     <tr>
-                                        <th>推送时间</th>
+                                        <th>批量推送时间</th>
                                         <th>备注</th>
                                     </tr>
                                     </thead>
                                     <tbody id="repeatTableData"></tbody>
+                                </table>
+
+                                <table class="table  table-striped table-bordered text-nowrap">
+                                    <caption>拦截库失效运行记录</caption>
+                                    <thead>
+                                    <tr>
+                                        <th>失效拦截库时间</th>
+                                        <th>备注</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="purgeTableData"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -124,16 +141,21 @@
         if (flag != undefined) {
             day = day + flag >0 ? 0 : day + flag;
         }
-        $.get("/dailyConfig/getPushLog", {day: Math.abs(day)}, function (r) {
+        $.get("/push/getPushLog", {day: Math.abs(day)}, function (r) {
             let data = r.data;
             let push = data.push;
             let repeat = data.repeat;
+            let purge = data.purge;
+
+            $("#logDate").text(data.logDate);
+            $("#lastPushDate").text(data.lastPushDate);
+            $("#lastBatchPushDate").text(data.lastBatchPushDate);
+            $("#lastPurgeDate").text(data.lastPurgeDate);
+
             setTableData('pushTableData', push);
             setTableData('repeatTableData', repeat);
-        });
+            setTableData('purgeTableData', purge);
 
-        $.get("/dailyConfig/getDateByDay", {day: Math.abs(day)}, function (r) {
-            $("#logDate").text(r.data);
         });
     }
 

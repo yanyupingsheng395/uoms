@@ -7,6 +7,8 @@ import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.push.PushMessageService;
 import com.linksteady.operate.service.DailyPropertiesService;
 import com.linksteady.operate.service.PushLargeListService;
+import com.linksteady.operate.service.PushLogService;
+import com.linksteady.operate.service.impl.PushLogServiceImpl;
 import com.linksteady.operate.util.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,11 +36,13 @@ public class BatchPushMessageThread extends Thread {
     public void run() {
         PushLargeListService pushLargeListService = (PushLargeListService) SpringContextUtils.getBean(PushLargeListService.class);
         PushMessageService pushMessageService = (PushMessageService) SpringContextUtils.getBean("pushMessageServiceImpl");
-        DailyPropertiesService dailyPropertiesService=(DailyPropertiesService) SpringContextUtils.getBean("dailyPropertiesServiceImpl");
-        PushLogMapper pushLogMapper = (PushLogMapper) SpringContextUtils.getBean("pushLogMapper");
+        DailyProperties dailyProperties=(DailyProperties) SpringContextUtils.getBean("dailyProperties");
+        PushLogService pushLogService=(PushLogServiceImpl) SpringContextUtils.getBean("pushLogServiceImpl");
+        AtomicInteger atomicInteger = new AtomicInteger();
         log.info(">>>[batch]批量通道-待发送的推送列表进行监控");
         while (true) {
-            DailyProperties dailyProperties= dailyPropertiesService.getDailyProperties();
+            MonitorThread.getInstance().setLastBatchPushDate(LocalDateTime.now());
+
             if (null != dailyProperties && "N".equals(dailyProperties.getPushFlag())) {
                 log.info(">>>[batch]批量通道-推送服务已通过配置停止");
                 try {
@@ -54,7 +58,7 @@ public class BatchPushMessageThread extends Thread {
             if (count == 0) {
                 log.info(">>>[batch]当前时间没有可推送的名单");
             } else {
-                AtomicInteger atomicInteger = new AtomicInteger();
+                atomicInteger.set(0);
                 log.info(">>>[batch]当前时间获取到共{}条短信内容待推送", count);
                 Long startTime = System.currentTimeMillis();
                 Long maxPushId = pushLargeListService.getMaxPushId(currentHour);
@@ -64,9 +68,9 @@ public class BatchPushMessageThread extends Thread {
                 for (String sms : smsContent) {
                     // 根据短信内容和当前时间获取数据总量
                     int total = pushLargeListService.getPushListCountBySms(currentHour, sms);
-                    log.info(">>>[batch]短信内容：{},推送用户数：{}", sms, total);
                     int pageSize = PAGE_SIZE;
                     int pageNum = total % pageSize == 0 ? total / pageSize : (total / pageSize) + 1;
+                    log.info(">>>[batch]短信内容：{},推送用户数：{},页数：{}", sms, total,pageNum);
                     for (int i = 0; i < pageNum; i++) {
                         int start = i * pageSize;
                         int end = (i + 1) * pageSize - 1;
@@ -74,12 +78,10 @@ public class BatchPushMessageThread extends Thread {
                         List<PushListLager> pushList = pushLargeListService.getPushList(currentHour, sms, start, end);
                         int pushCount = pushMessageService.batchPush(sms, pushList);
                         atomicInteger.addAndGet(pushCount);
-                        log.info(">>>[batch]当前推送第{}页名单", i);
                     }
+                    //更新状态
+                    pushLargeListService.updatePushState(sms, maxPushId,currentHour);
                 }
-
-                pushLargeListService.updatePushState(smsContent, maxPushId,currentHour);
-                log.info(">>>[batch]结束更新推送状态");
                 Long endTime = System.currentTimeMillis();
                 log.info(">>>[batch]本次推送完毕，耗时{}秒", (endTime - startTime)/1000);
 
@@ -91,7 +93,7 @@ public class BatchPushMessageThread extends Thread {
                 pushLog.setLogContent("成功触达" + successNum + "人");
                 pushLog.setUserCount((long) successNum);
                 pushLog.setLogDate(new Date());
-                pushLogMapper.insertPushLog(pushLog);
+                pushLogService.insertPushLog(pushLog);
 
                 //写入到重复推送日志中
                 PushLog repeatLog = new PushLog();
@@ -99,7 +101,7 @@ public class BatchPushMessageThread extends Thread {
                 repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
                 repeatLog.setUserCount((long) repeatUserCount);
                 repeatLog.setLogDate(new Date());
-                pushLogMapper.insertPushLog(repeatLog);
+                pushLogService.insertPushLog(repeatLog);
 
                 log.info(">>>[batch]结果已写入日志表");
             }

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PushLogService {
 
-    void saveMessage(PushLog pushLog);
+    void insertPushLog(PushLog pushLog);
 
     void consumeLog();
 

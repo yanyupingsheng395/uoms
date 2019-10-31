@@ -7,7 +7,9 @@ import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.service.DailyPropertiesService;
 import com.linksteady.operate.service.PushLogService;
+import com.linksteady.operate.thread.MonitorThread;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +34,6 @@ public class PushConfigController extends BaseController {
 
     @Autowired
     private DailyProperties dailyProperties;
-
-    @Autowired
-    private PushLogService pushLogService;
 
 
     /**
@@ -74,27 +73,4 @@ public class PushConfigController extends BaseController {
         return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
     }
 
-    /**
-     * 获取推送的日志
-     * @param
-     * @return
-     */
-    @GetMapping("/getPushLog")
-    public ResponseBo getPushLog(@RequestParam("day") int day) {
-        List<PushLog> list=pushLogService.getPushLogList(day);
-        //分成两部分
-        List<PushLog> pushLogList= list.stream().filter(p->"1".equals(p.getLogType())).collect(Collectors.toList());
-        List<PushLog> repeatLogList= list.stream().filter(p->"0".equals(p.getLogType())).collect(Collectors.toList());
-        Map<String,List<PushLog>> map= Maps.newHashMap();
-        map.put("push",pushLogList);
-        map.put("repeat",repeatLogList);
-        return ResponseBo.okWithData("",map);
-    }
-
-    @GetMapping("/getDateByDay")
-    public ResponseBo getDateByDay(@RequestParam("day") int day) {
-        LocalDate localDate = LocalDate.now();
-        LocalDate newDate = localDate.minusDays(day);
-        return ResponseBo.okWithData(null, newDate.format(DateTimeFormatter.ofPattern("MM-dd")));
-    }
 }

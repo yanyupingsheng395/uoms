@@ -19,6 +19,8 @@ import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,9 +52,6 @@ public class PushSmsServiceImpl implements PushMessageService {
     @Autowired
     private PushListMapper pushListMapper;
 
-    @Autowired
-    private PushLogMapper pushLogMapper;
-
     @Override
     public int push(List<PushListInfo> list) {
         //发送类
@@ -64,22 +63,16 @@ public class PushSmsServiceImpl implements PushMessageService {
 
         //用户的列表
         List<PushListInfo> userlist= Lists.newArrayList();
-
         SetOperations<String,String> operations=redisTemplate.opsForSet();
-        //ValueOperations<String,String> operations=redisTemplate.opsForValue();
-        //获取防骚扰拦截的时间
-        //int timeout=dailyProperties.getRepeatPushDays()*86400;
+        String currDay= LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         boolean repeatFlag;
         int repeatUserCount=0;
 
         for(PushListInfo pushListInfo:list)
         {
-          //  repeatFlag=false;
-
             //判断是否会存在骚扰拦截
-            repeatFlag=operations.isMember("phoneList",pushListInfo.getUserPhone());
-            //String value=operations.get("PUSH_"+pushListInfo.getUserPhone());
+            repeatFlag=operations.isMember("pushList",pushListInfo.getUserPhone());
             if(repeatFlag)
             {
               //  repeatFlag=true;
@@ -89,9 +82,7 @@ public class PushSmsServiceImpl implements PushMessageService {
                 pushListInfo.setPushStatus("C");
                 pushListInfo.setCallbackCode("-1");
                 pushListInfo.setPushDate(new Date());
-            }
-
-            if(!repeatFlag)
+            }else
             {
                 //调用供应商短信接口进行推送
                 message=new Message();
@@ -102,7 +93,7 @@ public class PushSmsServiceImpl implements PushMessageService {
                     result = 0;
                     log.info("通道推送:{}-{}:返回状态码:{}",pushListInfo.getUserPhone(),pushListInfo.getPushContent(),result);
                 } catch (Exception e) {
-                   //此处进行错误上报
+                    //此处进行错误上报
                     result=-1;
                     log.error("通道推送:{}-{}:返回状态码:{}",pushListInfo.getUserPhone(),pushListInfo.getPushContent(),result);
                 }
@@ -119,14 +110,14 @@ public class PushSmsServiceImpl implements PushMessageService {
                 pushListInfo.setPushDate(new Date());
 
                 //已发送用户存入redis
-                operations.add("phoneList",pushListInfo.getUserPhone());
-              //  operations.set("PUSH_"+pushListInfo.getUserPhone(),pushListInfo.getUserPhone(),timeout);
-
+                operations.add("pushList",pushListInfo.getUserPhone());
+                operations.add("pushList"+currDay,pushListInfo.getUserPhone());
             }
+
             userlist.add(pushListInfo);
 
         }
-        //输出到推送日志通道
+
         if(userlist.size()>0)
         {
             pushListMapper.updateSendStatus(userlist);
@@ -159,18 +150,14 @@ public class PushSmsServiceImpl implements PushMessageService {
         List<String> mobileList=pushList.stream().map(p->p.getUserPhone()).collect(Collectors.toList());
 
         SetOperations<String,String> operations=redisTemplate.opsForSet();
-        //ValueOperations<String,String> operations=redisTemplate.opsForValue();
-        //获取防骚扰拦截的时间
-        int timeout=dailyProperties.getRepeatPushDays()*86400;
+        String currDay= LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        String value="";
         int repeatUserCount=0;
         boolean repeatFlag;
         for(String mobile:mobileList)
         {
             //判断是否会存在骚扰拦截
-            repeatFlag=operations.isMember("phoneList",mobile);
-          //  value=operations.get("PUSH_"+mobile);
+            repeatFlag=operations.isMember("pushList",mobile);
             if(repeatFlag)
             {
                 repeatUserCount+=1;
@@ -179,12 +166,11 @@ public class PushSmsServiceImpl implements PushMessageService {
             {
                 targetMobileList.add(mobile);
                 //加入到redis中去
-                operations.add("phoneList",mobile);
-              //  operations.set("PUSH_"+mobile,mobile,timeout);
+                operations.add("pushList",mobile);
+                operations.add("pushList"+currDay,mobile);
             }
         }
 
-        //输出到日志通道
         Message message=new Message();
         message.setContent(messageContent);
         message.setMobile(targetMobileList.stream().collect(Collectors.joining(",")));

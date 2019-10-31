@@ -35,7 +35,7 @@ public class PushLargeListServiceImpl implements PushLargeListService {
     }
 
     @Override
-    public void updatePushState(List<String> smsContent, Long maxPushId,int currentHour) {
+    public void updatePushState(String smsContent, Long maxPushId,int currentHour) {
         pushLargeListMapper.updatePushState(smsContent, maxPushId,currentHour);
     }
 
