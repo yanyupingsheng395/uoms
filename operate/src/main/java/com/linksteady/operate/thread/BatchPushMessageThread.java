@@ -98,7 +98,7 @@ public class BatchPushMessageThread extends Thread {
                 //写入到重复推送日志中
                 PushLog repeatLog = new PushLog();
                 repeatLog.setLogType("0");
-                repeatLog.setLogContent("重复推送" + repeatUserCount + "人");
+                repeatLog.setLogContent("防重复推送拦截" + repeatUserCount + "人");
                 repeatLog.setUserCount((long) repeatUserCount);
                 repeatLog.setLogDate(new Date());
                 pushLogService.insertPushLog(repeatLog);

@@ -12,7 +12,7 @@
     </resultMap>
 
     <select id="getList" resultMap="BaseResultMap">
-       select to_char(LOG_DATE, 'mm-dd hh24:mi') LOG_DATE_STR,LOG_CONTENT,LOG_TYPE from UO_OP_PUSHLOG where TRUNC(LOG_DATE)-TRUNC(SYSDATE)>=#{day}
+       select to_char(LOG_DATE, 'mm-dd hh24:mi') LOG_DATE_STR,LOG_CONTENT,LOG_TYPE,USER_COUNT from UO_OP_PUSHLOG where TRUNC(LOG_DATE)-TRUNC(SYSDATE)>=#{day}
        order by LOG_DATE desc
   </select>
 
