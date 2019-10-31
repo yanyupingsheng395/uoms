@@ -9,6 +9,7 @@
         <result column="LOG_CONTENT" jdbcType="DECIMAL" property="logContent"/>
         <result column="LOG_TYPE" jdbcType="DECIMAL" property="logType"/>
         <result column="LOG_DATE_STR" jdbcType="VARCHAR" property="logDateStr"/>
+        <result column="USER_COUNT" jdbcType="DECIMAL" property="userCount"/>
     </resultMap>
 
     <select id="getList" resultMap="BaseResultMap">

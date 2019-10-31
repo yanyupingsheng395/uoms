@@ -56,6 +56,7 @@ public class PurgeThread {
             }
             while (true)
             {
+                log.info("释放推送名单");
                 MonitorThread.getInstance().setLastPurgeDate(LocalDateTime.now());
 
                 //获取防重复的日期
@@ -69,11 +70,15 @@ public class PurgeThread {
                 //开始循环 (固定向前推5天)
                 Long expireCount=Stream.iterate(begin,d->d.minusDays(1)).limit(5).mapToLong(f->{
                     String key="pushList"+f.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+
                     //判断当前key在redis中是否存在
                     boolean isExist=redisTemplate.hasKey(key);
 
+                    log.info("释放第{}天的名单,此key在库中的状态为{}",key,isExist);
                     if(isExist)
                     {
+                        log.info("已经存在，进行处理");
                         Long expireSize=operations.size(key);
                         Long beforeExpireSize=operations.size("pushList");
 
