@@ -221,6 +221,9 @@ function step2(stage) {
         saveDailyHead();
         // 获取商品数据
         getProductInfo(stage);
+
+        // 获取用户群组
+        getUserGroupTable(stage);
     }
 }
 
@@ -255,6 +258,7 @@ function getProductInfo(stage) {
     var settings = {
         url: '/activity/getActivityProductPage',
         pagination: true,
+        singleSelect: true,
         sidePagination: "server",
         pageList: [10, 25, 50, 100],
         queryParams: function (params) {
@@ -314,7 +318,7 @@ function resetActivityProduct() {
 }
 
 // 获取用户群组列表
-function getUserGroupTable() {
+function getUserGroupTable(stage) {
     var settings = {
         url: '/activity/getActivityUserListPage',
         pagination: true,
@@ -324,7 +328,10 @@ function getUserGroupTable() {
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,
-                param: {startDate: $("#beforeDate").val(), endDate: $("#afterDate").val()}
+                param: {
+                    headId: $("#headId").val(),
+                    stage: stage
+                }
             };
         },
         columns: [
@@ -332,25 +339,25 @@ function getUserGroupTable() {
                 checkbox: true
             },
             {
-                field: 'spuName',
+                field: 'groupName',
                 title: '用户与商品关系'
             }, {
-                field: 'planPurch',
+                field: 'groupUserCnt',
                 title: '人数（人）'
             }, {
-                field: 'recPiecePrice',
+                field: 'isGrowthPath',
                 title: '成长节点与活动期'
             }, {
-                field: 'recRetentionName',
+                field: 'growthUserCnt',
                 title: '人数（人）'
             }, {
-                field: 'recUpName',
+                field: 'activeLevel',
                 title: '活跃度'
             }, {
-                field: 'recCrossName',
+                field: 'activeUserCnt',
                 title: '人数（人）'
             }, {
-                field: 'discountLevel',
+                field: 'smsTemplateCode',
                 title: '选择模板'
             }]
     };
@@ -543,16 +550,31 @@ $("#saveActivityProduct").click(function () {
     let validator = $activityProductAddForm.validate();
     let flag = validator.form();
     if(flag) {
-        $.post("/activity/saveActivityProduct", $("#add-product-form").serialize() + "&headId=" +
-            $("#headId").val() + "&activityStage=" + $("#activity_stage").val() , function (r) {
-            if(r.code === 200) {
-                $MB.n_success("保存成功！");
-                $MB.closeAndRestModal("addProductModal");
-                $MB.refreshTable('activityProductTable');
-            }else {
-                $MB.n_danger("保存失败！");
-            }
-        });
+        let operate = $("#saveActivityProduct").attr("name");
+        if(operate === "save") {
+            $.post("/activity/saveActivityProduct", $("#add-product-form").serialize() + "&headId=" +
+                $("#headId").val() + "&activityStage=" + $("#activity_stage").val() , function (r) {
+                if(r.code === 200) {
+                    $MB.n_success("添加商品成功！");
+                    $MB.closeAndRestModal("addProductModal");
+                    $MB.refreshTable('activityProductTable');
+                }else {
+                    $MB.n_danger("添加商品失败！");
+                }
+            });
+        }
+        if(operate === 'update') {
+            $.post("/activity/updateActivityProduct", $("#add-product-form").serialize() + "&headId=" +
+                $("#headId").val() + "&activityStage=" + $("#activity_stage").val() , function (r) {
+                if(r.code === 200) {
+                    $MB.n_success("更新商品成功！");
+                    $MB.closeAndRestModal("addProductModal");
+                    $MB.refreshTable('activityProductTable');
+                }else {
+                    $MB.n_danger("更新商品失败！");
+                }
+            });
+        }
     }
 });
 
@@ -564,4 +586,37 @@ $("#addProductModal").on("hidden.bs.modal", function () {
     $("input[name='activityIntensity']").val("");
     $("select[name='productAttr']").find("option:selected").removeAttr("selected");
     $("input[name='productUrl']").val("");
+});
+
+// 修改商品信息
+$("#btn_edit_shop").click(function () {
+    $("#saveActivityProduct").attr("name", "update");
+    let selected = $("#activityProductTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要编辑的商品！');
+        return;
+    }
+    let id = selected[0].id;
+    $.get("/activity/getProductById", {id:id}, function (r) {
+        if(r.code === 200) {
+            let data = r.data;
+            $("input[name='id']").val(data['id']);
+            $("input[name='productId']").val(data['productId']);
+            $("input[name='productName']").val(data['productName']);
+            $("input[name='minPrice']").val(data['minPrice']);
+            $("input[name='formalPrice']").val(data['formalPrice']);
+            $("input[name='activityIntensity']").val(data['activityIntensity']);
+            $("select[name='productAttr']").val(data['productAttr']);
+            $("input[name='productUrl']").val(data['productUrl']);
+            $("#addProductModal").modal('show');
+        }else {
+            $MB.n_danger("获取信息失败！");
+        }
+    });
+});
+
+$("#btn_add_shop").click(function () {
+    $("#saveActivityProduct").attr("name", "save");
+    $('#addProductModal').modal('show');
 });

@@ -44,4 +44,14 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     public void saveActivityProduct(ActivityProduct activityProduct) {
         activityProductMapper.saveActivityProduct(activityProduct);
     }
+
+    @Override
+    public ActivityProduct getProductById(String id) {
+        return activityProductMapper.getProductById(id);
+    }
+
+    @Override
+    public void updateActivityProduct(ActivityProduct activityProduct) {
+        activityProductMapper.updateActivityProduct(activityProduct);
+    }
 }

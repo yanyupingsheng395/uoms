@@ -3,6 +3,7 @@
 <mapper namespace="com.linksteady.operate.dao.ActivityProductMapper">
 
     <resultMap id="base" type="com.linksteady.operate.domain.ActivityProduct">
+        <result property="id" jdbcType="DECIMAL" column="ID"></result>
         <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"></result>
         <result property="productId" jdbcType="DECIMAL" column="PRODUCT_ID"></result>
         <result property="minPrice" jdbcType="DECIMAL" column="MIN_PRICE"></result>
@@ -17,7 +18,7 @@
     <select id="getActivityProductListPage" resultMap="base">
         select * from (
         select t.*, ROWNUM rn from (
-          select HEAD_ID, PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR from UO_OP_ACTIVITY_PRODUCT
+          select ID, HEAD_ID, PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR from UO_OP_ACTIVITY_PRODUCT
           where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
         <if test="productId != null and productId != ''">
             and product_id = #{productId}
@@ -100,7 +101,20 @@
     </delete>
 
     <insert id="saveActivityProduct">
-        insert into UO_OP_ACTIVITY_PRODUCT(HEAD_ID, PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE)
-        values (#{headId}, #{productId}, #{productName}, #{minPrice}, #{formalPrice}, #{activityIntensity}, #{productUrl}, #{productAttr}, #{activityStage})
+        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE)
+        values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{headId}, #{productId}, #{productName}, #{minPrice}, #{formalPrice}, #{activityIntensity}, #{productUrl}, #{productAttr}, #{activityStage})
     </insert>
+
+    <select id="getProductById" resultMap="base">
+        select HEAD_ID, PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE, ID from UO_OP_ACTIVITY_PRODUCT
+        where ID = #{id}
+    </select>
+
+    <update id="updateActivityProduct">
+        update UO_OP_ACTIVITY_PRODUCT
+        set
+        PRODUCT_ID = #{productId},
+        PRODUCT_NAME = #{productName}, MIN_PRICE = #{minPrice}, FORMAL_PRICE = #{formalPrice}, ACTIVITY_INTENSITY = #{activityIntensity}, PRODUCT_URL = #{productUrl}, PRODUCT_ATTR = #{productAttr}, ACTIVITY_STAGE = #{activityStage}
+        where ID = #{id}
+    </update>
 </mapper>

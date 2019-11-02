@@ -16,4 +16,8 @@ public interface ActivityProductService {
     List<ActivityProduct> getActivityProductListPage(int start, int end, String headId, String productId, String productName, String productAttr, String stage);
 
     void saveActivityProduct(ActivityProduct activityProduct);
+
+    ActivityProduct getProductById(String id);
+
+    void updateActivityProduct(ActivityProduct activityProduct);
 }

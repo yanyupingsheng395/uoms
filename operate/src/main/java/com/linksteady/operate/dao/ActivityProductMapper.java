@@ -22,4 +22,8 @@ public interface ActivityProductMapper {
     void deleteByHeadId(String headId);
 
     void saveActivityProduct(ActivityProduct activityProduct);
+
+    ActivityProduct getProductById(String id);
+
+    void updateActivityProduct(ActivityProduct activityProduct);
 }
