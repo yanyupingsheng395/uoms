@@ -1,3 +1,4 @@
+<input type="hidden" id="activity_stage"/>
 <div class="row" style="margin-top: 12px;">
     <div class="col-md-12">
         <p class="h5">活动期间在售商品列表</p>
@@ -15,23 +16,24 @@
                 <ul>
                     <li>
                         商品ID：
-                        <input type="text" name="actName"/>
+                        <input type="text" id="productId"/>
                     </li>
                     <li>
-                        商品名称：<input type="text" name="actName"/>
+                        商品名称：<input type="text" id="productName"/>
                     </li>
                     <li>
                         活动属性：
-                        <select>
-                            <option value="">主推</option>
-                            <option value="">参活</option>
-                            <option value="">正常</option>
+                        <select id="productAttr">
+                            <option value="">所有</option>
+                            <option value="0">主推</option>
+                            <option value="1">参活</option>
+                            <option value="2">正常</option>
                         </select>
                     </li>
                     <li class="pull-right">
                         <a class="btn btn-primary btn-rounded btn-sm"
-                           onclick="searchActivity()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetActivity()"><i
+                           onclick="searchActivityProduct()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetActivityProduct()"><i
                                 class="fa fa-refresh"></i>&nbsp;重置</a>
                     </li>
                 </ul>
@@ -47,7 +49,7 @@
 <div class="row" style="padding-top: 12px;">
     <div class="col-sm-12">
         <div class="btn-group-sm" id="toolbar" role="group">
-            <a class="btn btn-success" id="btn_add_shop">
+            <a class="btn btn-success" id="btn_add_shop" onclick="$('#addProductModal').modal('show')">
                 <i class="fa fa-edit"></i> 添加商品
             </a>
             <a class="btn btn-primary" id="btn_edit_shop">
@@ -62,6 +64,72 @@
         </div>
     </div>
     <div class="col-md-12 table-striped" style="margin-top: 12px">
-        <table id="activityUserTable" class="table table-bordered table-striped text-nowrap"></table>
+        <table id="activityProductTable" class="table table-bordered table-striped text-nowrap"></table>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="addProductModal" aria-labelledby="modalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title" id="modalLabel">添加商品</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="add-product-form">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">商品ID</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="text" name="productId">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">商品名称</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="text" name="productName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">活动期间最低价（元）</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="text" name="minPrice">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">非活动日常单价（元）</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="text" name="formalPrice">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">活动力度</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="text" name="activityIntensity">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">活动属性</label>
+                        <div class="col-md-7">
+                            <select name="productAttr" class="form-control">
+                                <option value="">请选择</option>
+                                <option value="0">主推</option>
+                                <option value="1">参活</option>
+                                <option value="2">正常</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">商品链接</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="text" name="productUrl">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="saveActivityProduct">保存</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" id="closeEditProduct">关闭</button>
+            </div>
+        </div>
     </div>
 </div>

@@ -24,4 +24,6 @@ public class ActivityProduct {
     private String productUrl;
 
     private String productAttr;
+
+    private String activityStage;
 }

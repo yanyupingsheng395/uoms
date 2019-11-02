@@ -31,12 +31,17 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     private ActivityProductMapper activityProductMapper;
 
     @Override
-    public int getCount(String headId) {
-        return activityProductMapper.getCount(headId);
+    public int getCount(String headId,String productId, String productName, String productAttr, String stage) {
+        return activityProductMapper.getCount(headId, productId, productName, productAttr, stage);
     }
 
     @Override
-    public List<ActivityProduct> getActivityProductListPage(int start, int end, String headId) {
-        return activityProductMapper.getActivityProductListPage(start, end, headId);
+    public List<ActivityProduct> getActivityProductListPage(int start, int end, String headId,String productId, String productName, String productAttr, String stage) {
+        return activityProductMapper.getActivityProductListPage(start, end, headId, productId, productName, productAttr, stage);
+    }
+
+    @Override
+    public void saveActivityProduct(ActivityProduct activityProduct) {
+        activityProductMapper.saveActivityProduct(activityProduct);
     }
 }

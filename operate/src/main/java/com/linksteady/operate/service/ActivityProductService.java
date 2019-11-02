@@ -11,8 +11,9 @@ import java.util.Map;
  */
 public interface ActivityProductService {
 
-    int getCount(String headId);
+    int getCount(String headId, String productId, String productName, String productAttr, String stage);
 
-    List<ActivityProduct> getActivityProductListPage(int start, int end, String headId);
+    List<ActivityProduct> getActivityProductListPage(int start, int end, String headId, String productId, String productName, String productAttr, String stage);
 
+    void saveActivityProduct(ActivityProduct activityProduct);
 }

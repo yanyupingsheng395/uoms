@@ -4,10 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.ActivityConfig;
-import com.linksteady.operate.domain.ActivityHead;
-import com.linksteady.operate.domain.ActivityProduct;
-import com.linksteady.operate.domain.ActivityUser;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -48,6 +45,9 @@ public class ActivityController {
 
     @Autowired
     private ActivityHeadService activityHeadService;
+
+    @Autowired
+    private ActivityProductService activityProductService;
 
     /**
      * 获取头表的分页数据
@@ -93,5 +93,51 @@ public class ActivityController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 保存活动基本信息
+     * @param activityHead
+     * @return
+     */
+    @PostMapping("/saveActivityHead")
+    public ResponseBo saveActivityHead(ActivityHead activityHead) {
+        int headId = activityHeadService.saveActivityHead(activityHead);
+        if(activityHead.getHeadId() == null) {
+            return ResponseBo.okWithData("活动信息保存成功！", headId);
+        }else {
+            return ResponseBo.okWithData("活动信息更新成功！", headId);
+        }
+    }
+
+    /**
+     * 获取活动商品页
+     * @return
+     */
+    @GetMapping("/getActivityProductPage")
+    public ResponseBo getActivityProductPage(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        String headId = request.getParam().get("headId");
+        String productId = request.getParam().get("productId");
+        String productName = request.getParam().get("productName");
+        String productAttr = request.getParam().get("productAttr");
+        String stage = request.getParam().get("stage");
+        int count = activityProductService.getCount(headId, productId, productName, productAttr, stage);
+        List<ActivityProduct> productList = activityProductService.getActivityProductListPage(start, end, headId, productId, productName, productAttr, stage);
+        return ResponseBo.okOverPaging(null, count, productList);
+    }
+
+    /**
+     * 保存商品信息
+     * @param activityProduct
+     * @param headId
+     * @return
+     */
+    @PostMapping("/saveActivityProduct")
+    public ResponseBo saveActivityProduct(ActivityProduct activityProduct, String headId) {
+        activityProduct.setHeadId(Long.valueOf(headId));
+        activityProductService.saveActivityProduct(activityProduct);
+        return ResponseBo.ok();
     }
 }

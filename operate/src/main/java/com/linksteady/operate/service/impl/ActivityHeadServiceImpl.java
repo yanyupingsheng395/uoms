@@ -21,9 +21,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     @Autowired
     private ActivityHeadMapper activityHeadMapper;
 
-    @Autowired
-    private ActivityUserMapper activityUserMapper;
-
     @Override
     public List<ActivityHead> getDataListOfPage(int start, int end, String name) {
         return activityHeadMapper.getDataListOfPage(start, end ,name);
@@ -36,20 +33,18 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateData(String headId, String startDt, String endDt, String dateRange, String type) {
-        activityHeadMapper.updateData(headId, startDt, endDt, dateRange, type);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Long addData(ActivityHead activityHead) {
-        activityHeadMapper.addData(activityHead);
-        return activityHead.getHeadId();
-    }
-
-    @Override
-    public Map<String, Object> getDataById(String headId) {
-        return activityHeadMapper.getDataById(headId);
+    public int saveActivityHead(ActivityHead activityHead) {
+        Long headId = activityHead.getHeadId();
+        activityHead.setFormalStatus("edit");
+        if("1".equalsIgnoreCase(activityHead.getActivityStage())) {
+            activityHead.setPreheatStatus("edit");
+        }
+        if(headId == null) {
+            activityHeadMapper.saveActivityHead(activityHead);
+        }else {
+            activityHeadMapper.updateActiveHead(activityHead);
+        }
+        return activityHead.getHeadId().intValue();
     }
 
     @Override

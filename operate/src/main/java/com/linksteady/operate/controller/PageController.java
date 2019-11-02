@@ -165,23 +165,11 @@ public class PageController {
         return "operate/activity/list";
     }
 
-    @RequestMapping("/activity/edit")
-    public String activityEdit(Model model, String id) {
-        model.addAttribute("headId", id);
-        return "operate/activity/edit";
-    }
-
     @RequestMapping("/activity/add")
-    public String activityAdd() {
+    public String activityAdd(Model model)
+    {
+        model.addAttribute("operateType", "save");
         return "operate/activity/add";
-    }
-
-    @RequestMapping("/activity/view")
-    public String activityView(@RequestParam("id") String id, Model model) {
-        ActivityHead activityHead = activityHeadService.findById(id);
-        model.addAttribute("id", id);
-        model.addAttribute("activityHead", activityHead);
-        return "operate/activity/view";
     }
 
     /**
@@ -221,5 +209,13 @@ public class PageController {
     @RequestMapping("/push")
     public String push() {
         return "operate/push/list";
+    }
+
+    @RequestMapping("/activity/edit")
+    public String activityEdit(@RequestParam("headId") String headId, Model model) {
+        ActivityHead activityHead = activityHeadService.findById(headId);
+        model.addAttribute("activityHead", activityHead);
+        model.addAttribute("operateType", "update");
+        return "operate/activity/add";
     }
 }
