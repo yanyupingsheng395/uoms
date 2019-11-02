@@ -16,13 +16,9 @@ public interface ActivityHeadMapper {
 
     int getDataCount(@Param("name") String name);
 
-    void updateData(String headId, String startDt, String endDt, String dateRange, String actType);
+    void saveActivityHead(ActivityHead activityHead);
 
-    void addData(ActivityHead activityHead);
-
-    Map<String, Object> getDataById(String headId);
+    void updateActiveHead(ActivityHead activityHead);
 
     ActivityHead findById(String headId);
-
-    void updateCoverUserCnt(String headId, Long userCnt);
 }

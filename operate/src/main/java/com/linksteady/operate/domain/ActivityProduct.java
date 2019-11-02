@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class ActivityProduct {
 
+    private Long id;
+
     private Long headId;
 
     private String productId;
@@ -24,4 +26,6 @@ public class ActivityProduct {
     private String productUrl;
 
     private String productAttr;
+
+    private String activityStage;
 }

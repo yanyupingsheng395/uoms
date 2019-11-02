@@ -27,21 +27,16 @@ public interface ActivityHeadService {
     int getDataCount(String name);
 
     /**
-     * 更新活动数据
-     * @param headId
-     * @param startDt
-     * @param endDt
-     * @param dateRange
+     * 插入头表
+     * @param activityHead
+     * @return
      */
-    void updateData(String headId, String startDt, String endDt, String dateRange, String type);
-
-    Map<String, Object> getDataById(String headId);
+    int saveActivityHead(ActivityHead activityHead);
 
     /**
-     * 活动头表新增数据
-     * @param activityHead
+     * 根据ID获取
+     * @param headId
+     * @return
      */
-    Long addData(ActivityHead activityHead);
-
     ActivityHead findById(String headId);
 }

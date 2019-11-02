@@ -3,29 +3,48 @@
 <mapper namespace="com.linksteady.operate.dao.ActivityProductMapper">
 
     <resultMap id="base" type="com.linksteady.operate.domain.ActivityProduct">
+        <result property="id" jdbcType="DECIMAL" column="ID"></result>
         <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"></result>
         <result property="productId" jdbcType="DECIMAL" column="PRODUCT_ID"></result>
-        <result property="userCount" jdbcType="DECIMAL" column="USER_COUNT"></result>
-        <result property="productPrice" jdbcType="DECIMAL" column="PRODUCT_PRICE"></result>
-        <result property="preferType" jdbcType="VARCHAR" column="PREFER_TYPE"></result>
-        <result property="preferValue" jdbcType="VARCHAR" column="PREFER_VALUE"></result>
-        <result property="minPrice15" jdbcType="DECIMAL" column="MIN_PRICE15"></result>
-        <result property="minPrice30" jdbcType="DECIMAL" column="MIN_PRICE30"></result>
-        <result property="productActPrice" jdbcType="DECIMAL" column="PRODUCT_ACT_PRICE"></result>
+        <result property="minPrice" jdbcType="DECIMAL" column="MIN_PRICE"></result>
+        <result property="productName" jdbcType="VARCHAR" column="PRODUCT_NAME"></result>
+        <result property="formalPrice" jdbcType="DECIMAL" column="FORMAL_PRICE"></result>
+        <result property="activityIntensity" jdbcType="DECIMAL" column="ACTIVITY_INTENSITY"></result>
+        <result property="productUrl" jdbcType="VARCHAR" column="PRODUCT_URL"></result>
+        <result property="productAttr" jdbcType="VARCHAR" column="PRODUCT_ATTR"></result>
+        <result property="activityStage" jdbcType="VARCHAR" column="ACTIVITY_STAGE"></result>
     </resultMap>
 
     <select id="getActivityProductListPage" resultMap="base">
         select * from (
         select t.*, ROWNUM rn from (
-          select head_id, product_id, user_count, product_price, prefer_type, prefer_value, min_price15, min_price30, PRODUCT_ACT_PRICE from UO_OP_ACTIVITY_PRODUCT
-          where HEAD_ID = #{headId}
-        order by user_count desc
+          select ID, HEAD_ID, PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR from UO_OP_ACTIVITY_PRODUCT
+          where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+        <if test="productId != null and productId != ''">
+            and product_id = #{productId}
+        </if>
+        <if test="productName != null and productName != ''">
+            and product_name like concat('%', concat(#{productName}, '%'))
+        </if>
+        <if test="productAttr != null and productAttr != ''">
+            and product_attr = #{productAttr}
+        </if>
+        order by HEAD_ID desc
         ) t where ROWNUM &lt;=#{end}
         ) where RN &gt;= #{start}
     </select>
 
     <select id="getCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}
+        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+        <if test="productId != null and productId != ''">
+            and product_id = #{productId}
+        </if>
+        <if test="productName != null and productName != ''">
+            and product_name like concat('%', concat(#{productName}, '%'))
+        </if>
+        <if test="productAttr != null and productAttr != ''">
+            and product_attr = #{productAttr}
+        </if>
     </select>
 
     <insert id="saveDataList">
@@ -80,4 +99,22 @@
     <delete id="deleteByHeadId">
         delete from UO_OP_ACTIVITY_PRODUCT where head_id = #{headId}
     </delete>
+
+    <insert id="saveActivityProduct">
+        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE)
+        values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{headId}, #{productId}, #{productName}, #{minPrice}, #{formalPrice}, #{activityIntensity}, #{productUrl}, #{productAttr}, #{activityStage})
+    </insert>
+
+    <select id="getProductById" resultMap="base">
+        select HEAD_ID, PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE, ID from UO_OP_ACTIVITY_PRODUCT
+        where ID = #{id}
+    </select>
+
+    <update id="updateActivityProduct">
+        update UO_OP_ACTIVITY_PRODUCT
+        set
+        PRODUCT_ID = #{productId},
+        PRODUCT_NAME = #{productName}, MIN_PRICE = #{minPrice}, FORMAL_PRICE = #{formalPrice}, ACTIVITY_INTENSITY = #{activityIntensity}, PRODUCT_URL = #{productUrl}, PRODUCT_ATTR = #{productAttr}, ACTIVITY_STAGE = #{activityStage}
+        where ID = #{id}
+    </update>
 </mapper>

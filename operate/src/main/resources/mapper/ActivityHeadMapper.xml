@@ -33,31 +33,28 @@
         </if>
     </select>
 
-    <update id="updateData">
-        update UO_OP_ACTIVITY_HEADER set START_DATE = to_date(#{startDt}, 'yyyy-mm-dd'), END_DT = to_date(#{endDt}, 'yyyy-mm-dd'), ACTIVITY_TYPE = #{actType}
-        <if test="dateRange != '' and dateRange != null">
-            , DATE_RANGE = #{dateRange}
-        </if>
-        where HEAD_ID = #{headId}
-    </update>
+    <select id="findById" resultMap="baseResult">
+        select HEAD_ID, ACTIVITY_NAME, ACTIVITY_STAGE, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyy-mm-dd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyy-mm-dd') PREHEAT_END_DT, FORMAL_STATUS, to_char(FORMAL_START_DT, 'yyyy-mm-dd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyy-mm-dd') FORMAL_END_DT from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
+    </select>
 
-    <insert id="addData">
+    <insert id="saveActivityHead">
         <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="headId">
             select seq_activity_head_id.nextval from dual
         </selectKey>
-        insert into UO_OP_ACTIVITY_HEADER(HEAD_ID, ACTIVITY_NAME, ACTIVITY_TYPE, START_DATE, END_DATE, BEFORE_DATE, AFTER_DATE, STATUS)
-        values (#{headId}, #{activityName}, #{activityType}, to_date(#{startDate}, 'yyyy-mm-dd'), to_date(#{endDate}, 'yyyy-mm-dd'), to_date(#{beforeDate}, 'yyyy-mm-dd'), to_date(#{afterDate}, 'yyyy-mm-dd'), 'todo')
+        insert into UO_OP_ACTIVITY_HEADER(HEAD_ID, ACTIVITY_NAME, ACTIVITY_STAGE, PREHEAT_STATUS, PREHEAT_START_DT, PREHEAT_END_DT, FORMAL_STATUS, FORMAL_START_DT, FORMAL_END_DT)
+        values (#{headId},#{activityName}, #{activityStage}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'))
     </insert>
 
-    <select id="getDataById" resultType="map">
-        select HEAD_ID, ACTIVITY_TYPE, to_char(START_DATE, 'yyyy-mm-dd') BEGIN_DT, to_char(END_DT, 'yyyy-mm-dd') END_DT, COVER_NUM, CONVERT_NUM, NUM_YEAR_PERCENT, CONVERT_AMOUNT, AMOUNT_YEAR_PERCENT, STATUS from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
-    </select>
-
-    <select id="findById" resultMap="baseResult">
-        select HEAD_ID, ACTIVITY_NAME, ACTIVITY_TYPE, to_char(START_DATE, 'yyyy-mm-dd') START_DATE, to_char(END_DATE, 'yyyy-mm-dd') END_DATE, COVER_NUM, CONVERT_NUM, NUM_YEAR_PERCENT, CONVERT_AMOUNT, AMOUNT_YEAR_PERCENT, STATUS, to_char(BEFORE_DATE, 'yyyy-mm-dd') BEFORE_DATE, to_char(AFTER_DATE, 'yyyy-mm-dd') AFTER_DATE  from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
-    </select>
-
-    <update id="updateCoverUserCnt">
-        update UO_OP_ACTIVITY_HEADER set COVER_NUM = #{userCnt} where head_id = #{headId}
+    <update id="updateActiveHead">
+        update UO_OP_ACTIVITY_HEADER set
+        ACTIVITY_NAME = #{activityName},
+        ACTIVITY_STAGE = #{activityStage},
+        PREHEAT_STATUS = #{preheatStatus},
+        PREHEAT_START_DT = to_date(#{preheatStartDt}, 'yyyy-mm-dd'),
+        PREHEAT_END_DT = to_date(#{preheatEndDt}, 'yyyy-mm-dd'),
+        FORMAL_STATUS = #{formalStatus},
+        FORMAL_START_DT = to_date(#{formalStartDt}, 'yyyy-mm-dd'),
+        FORMAL_END_DT = to_date(#{formalEndDt}, 'yyyy-mm-dd')
+        where HEAD_ID = #{headId}
     </update>
 </mapper>

@@ -24,4 +24,8 @@ public class ActivityGroup {
     private Long growthUserCnt;
 
     private Long activeUserCnt;
+
+    private String activityStage;
+
+    private String smsTemplateCode;
 }

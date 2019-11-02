@@ -17,6 +17,11 @@ $(function () {
         },
         columns: [[
             {
+                checkbox: true,
+                valign: "middle",
+                rowspan: 2
+            },
+            {
                 field: 'activityName',
                 title: '活动名称',
                 align: "center",
@@ -46,16 +51,16 @@ $(function () {
                 let res = "-";
                 switch (value) {
                     case "edit":
-                        res = "待计划";
+                        res = "<span class=\"badge bg-info\">待计划</span>";
                         break;
                     case "todo":
-                        res = "待执行";
+                        res = "<span class=\"badge bg-color-default\">待执行</span>";
                         break;
                     case "doing":
-                        res = "执行中";
+                        res = "<span class=\"badge bg-warning\">执行中</span>";
                         break;
                     case "done":
-                        res = "执行完";
+                        res = "<span class=\"badge bg-success\">执行完</span>";
                         break;
                 }
                 return res;
@@ -73,16 +78,16 @@ $(function () {
                 let res = "-";
                 switch (value) {
                     case "edit":
-                        res = "待计划";
+                        res = "<span class=\"badge bg-info\">待计划</span>";
                         break;
                     case "todo":
-                        res = "待执行";
+                        res = "<span class=\"badge bg-color-default\">待执行</span>";
                         break;
                     case "doing":
-                        res = "执行中";
+                        res = "<span class=\"badge bg-warning\">执行中</span>";
                         break;
                     case "done":
-                        res = "执行完";
+                        res = "<span class=\"badge bg-success\">执行完</span>";
                         break;
                 }
                 return res;
@@ -106,4 +111,15 @@ function resetActivity() {
 // 创建计划
 $("#btn_add").click(function () {
     window.location.href = "/page/activity/add";
+});
+
+$("#btn_edit").click(function () {
+    let selected = $("#activityTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要编辑的活动！');
+        return;
+    }
+    let headId = selected[0].headId;
+    window.location.href = "/page/activity/edit?headId=" + headId;
 });

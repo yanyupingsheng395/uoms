@@ -2,16 +2,14 @@ package com.linksteady.operate.controller;
 
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.service.DailyPropertiesService;
 import com.linksteady.operate.service.PushLogService;
 import com.linksteady.operate.thread.MonitorThread;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
