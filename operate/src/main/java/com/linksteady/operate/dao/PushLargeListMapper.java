@@ -10,29 +10,30 @@ import java.util.List;
  * @date 2019-10-23
  */
 public interface PushLargeListMapper {
+
     /**
      * 获取待推送的名单数
      * @return
      */
-    int getPushListCount(int currentHour);
+    int getPushLargeListCount(int currentHour);
 
     /**
      * 分页获取待推送的名单
      * @return
      */
-    List<PushListLager> getPushList(int currentHour, String sms, int start, int end);
+    List<PushListLager> getPushLargeList(int currentHour, String sms, int start, int end);
 
     /**
      * 通过当前时间获取待推送的所有短信内容
      * @param currentHour
      * @return
      */
-    List<String> getSmsContent(int currentHour);
+    List<String> getSmsContentList(int currentHour);
 
     /**
-     * 通过最大推送id和短信内容更新数据状态
+     * 更新推送状态 pushIdList为push_id的列表；status为状态
      */
-    void updatePushState(@Param("smsContent") String smsContent, @Param("maxPushId") Long maxPushId,int currentHour);
+    void updatePushState( List<Long> pushIdList,String status);
 
     /**
      *  通过当前时间和短信内容获取待推送的人数
@@ -42,10 +43,4 @@ public interface PushLargeListMapper {
      */
     int getPushListCountBySms(int currentHour, String sms);
 
-    /**
-     * 获取最大的推送ID，根据推送ID条件，后期更新数据状态，以免发生数据漏发
-     * @param currentHour
-     * @return
-     */
-    Long getMaxPushId(int currentHour);
 }

@@ -1,6 +1,7 @@
 package com.linksteady.operate.push.impl;
 
 import com.google.common.collect.Lists;
+import com.linksteady.operate.dao.PushLargeListMapper;
 import com.linksteady.operate.dao.PushListMapper;
 import com.linksteady.operate.dao.PushLogMapper;
 import com.linksteady.operate.domain.DailyProperties;
@@ -51,6 +52,9 @@ public class PushSmsServiceImpl implements PushMessageService {
 
     @Autowired
     private PushListMapper pushListMapper;
+
+    @Autowired
+    private PushLargeListMapper pushLargeListMapper;
 
     @Override
     public int push(List<PushListInfo> list) {
@@ -134,7 +138,7 @@ public class PushSmsServiceImpl implements PushMessageService {
         Message  message=new Message();
         message.setMobile(uid);
         message.setContent(messageContent);
-//        int result=sendSms.singleSend(message);
+        //int result=sendSms.singleSend(message);
         int result=0;
 
         return result;
@@ -142,39 +146,60 @@ public class PushSmsServiceImpl implements PushMessageService {
 
     @Override
     public int batchPush(String messageContent, List<PushListLager> pushList) {
+        log.info("短信内容:{},本页内处理的数量{}",messageContent,pushList.size());
         SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
         //要进行推送的目标人群
         List<String> targetMobileList=Lists.newArrayList();
-
-        //进行防骚扰验证
-        List<String> mobileList=pushList.stream().map(p->p.getUserPhone()).collect(Collectors.toList());
+        // 需要更新状态为骚扰拦截的用户ID
+        List<Long> repeatList=Lists.newArrayList();
+        //标记为成功状态的用户ID
+        List<Long> successList=Lists.newArrayList();
 
         SetOperations<String,String> operations=redisTemplate.opsForSet();
         String currDay= LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         int repeatUserCount=0;
         boolean repeatFlag;
-        for(String mobile:mobileList)
+        for(PushListLager pushListLager:pushList)
         {
             //判断是否会存在骚扰拦截
-            repeatFlag=operations.isMember("pushList",mobile);
+            repeatFlag=operations.isMember("pushList",pushListLager.getUserPhone());
             if(repeatFlag)
             {
                 repeatUserCount+=1;
-                log.error("用户{}存在被重复触达的风险！！",mobile);
+                repeatList.add(pushListLager.getPushId());
             }else
             {
-                targetMobileList.add(mobile);
+                successList.add(pushListLager.getPushId());
+                targetMobileList.add(pushListLager.getUserPhone());
                 //加入到redis中去
-                operations.add("pushList",mobile);
-                operations.add("pushList"+currDay,mobile);
+                operations.add("pushList",pushListLager.getUserPhone());
+                operations.add("pushList"+currDay,pushListLager.getUserPhone());
             }
         }
 
-        Message message=new Message();
-        message.setContent(messageContent);
-        message.setMobile(targetMobileList.stream().collect(Collectors.joining(",")));
-//        return sendSms.batchSend(message);
+        if(targetMobileList.size()>0)
+        {
+            Message message=new Message();
+            message.setContent(messageContent);
+            message.setMobile(targetMobileList.stream().collect(Collectors.joining(",")));
+            //sendSms.batchSend(message);
+        }
+
+
+        log.debug("被拦截的记录数{}",repeatList.size());
+        log.debug("成功的记录数{}",successList.size());
+        //更新拦截记录的状态
+        for (int limit = 100, skip = 0; skip < repeatList.size(); skip = skip + limit) {
+                        log.debug("拦截ID:{}",repeatList.stream().skip(skip).limit(limit).map(p->String.valueOf(p)).collect(Collectors.joining(",")));
+            pushLargeListMapper.updatePushState(repeatList.stream().skip(skip).limit(limit).collect(Collectors.toList()),"C");
+        }
+
+        //更新成功记录的状态
+        for (int limit = 100, skip = 0; skip < successList.size(); skip = skip + limit) {
+            pushLargeListMapper.updatePushState(successList.stream().skip(skip).limit(limit).collect(Collectors.toList()),"S");
+        }
+
         return repeatUserCount;
     }
 }

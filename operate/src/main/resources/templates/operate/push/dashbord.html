@@ -45,7 +45,7 @@
                                 </div>
                                 <p class="h5" style="margin-top: 12px;">最后一次推送响应时间：<span id="lastPushDate"></span></p>
                                 <p class="h5" style="margin-top: 12px;">最后一次批量推送响应时间：<span id="lastBatchPushDate"></span></p>
-                                <p class="h5" style="margin-top: 12px;">最后一次清理拦截库日期：<span id="lastPurgeDate"></span></p>
+                                <p class="h5" style="margin-top: 12px;">最后一次清理拦截库时间：<span id="lastPurgeDate"></span></p>
 
                                 <p class="h5" id="dateStr" style="margin-top: 12px;">日志日期：<span id="logDate"></span></p>
                             </div>
@@ -60,6 +60,7 @@
                                     <tr>
                                         <th>推送时间</th>
                                         <th>备注</th>
+                                        <th>人数</th>
                                     </tr>
                                     </thead>
                                     <tbody id="pushTableData"></tbody>
@@ -70,6 +71,7 @@
                                     <tr>
                                         <th>批量推送时间</th>
                                         <th>备注</th>
+                                        <th>人数</th>
                                     </tr>
                                     </thead>
                                     <tbody id="repeatTableData"></tbody>
@@ -81,7 +83,8 @@
                                     <tr>
                                         <th>失效拦截库时间</th>
                                         <th>备注</th>
-                                    </tr>
+                                        <th>人数</th>
+                                     </tr>
                                     </thead>
                                     <tbody id="purgeTableData"></tbody>
                                 </table>
@@ -162,10 +165,10 @@
     function setTableData(id, data) {
         let code = "";
         data.forEach(function(value, index, array) {
-            code += "<tr><td>"+value['logDateStr']+"</td><td>"+value['logContent']+"</td></tr>";
+            code += "<tr><td>"+value['logDateStr']+"</td><td>"+value['logContent']+"</td><td>"+value['userCount']+"</td></tr>";
         });
         if(code == "") {
-            code += "<tr class='text-center'><td colspan='2'>没有记录！</td></tr>";
+            code += "<tr class='text-center'><td colspan='3'>没有记录！</td></tr>";
         }
         $("#" + id).html('').append(code);
     }

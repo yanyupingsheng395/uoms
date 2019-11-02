@@ -18,25 +18,14 @@
         <result column="PUSH_DATE_STR" jdbcType="VARCHAR" property="pushDateStr"></result>
     </resultMap>
 
-    <select id="getPendingPushMaxId" resultType="int">
-        select nvl(max(PUSH_ID),-1)
-        FROM UO_OP_PUSH_LIST C
-        WHERE
-               C.IS_PUSH = '0'
-          AND TO_NUMBER(PUSH_PERIOD)&lt;= #{currHour}
-    </select>
-
     <select id="getPendingPushCount" resultType="int">
         select count(*)
         FROM UO_OP_PUSH_LIST C
         WHERE C.IS_PUSH = '0'
-          AND C.PUSH_ID&lt;=#{maxPushId}
           AND TO_NUMBER(PUSH_PERIOD)&lt;= #{currHour}
     </select>
 
     <select id="getPendingPushList" resultMap="baseResult">
-        SELECT *
-        FROM (
                  select T.PUSH_ID,
                         T.PUSH_CONTENT,
                         T.PUSH_PERIOD,
@@ -51,10 +40,8 @@
                         ROWNUM   RN
                  FROM UO_OP_PUSH_LIST T
                  WHERE T.IS_PUSH = '0'
-                   AND T.PUSH_ID&lt;=#{maxPushId}
                    AND TO_NUMBER(PUSH_PERIOD)&lt;= #{currHour}
-                   AND ROWNUM &lt;= #{end}
-             ) WHERE RN &gt;= #{start}
+                   AND ROWNUM &lt;= #{limit}
     </select>
 
     <update id="updateSendStatus">
@@ -63,14 +50,11 @@
             <set>
                 PUSH_STATUS=#{item.pushStatus},
                 CALLBACK_CODE=#{item.callbackCode},
-                PUSH_DATE=#{item.pushDate}
+                PUSH_DATE=#{item.pushDate},
+                IS_PUSH='1'
             </set>
             where PUSH_ID=#{item.pushId}
         </foreach>
-    </update>
-
-    <update id="updateIsPush">
-        update UO_OP_PUSH_LIST SET  IS_PUSH='1'  where PUSH_ID&lt;=#{maxPushId} AND TO_NUMBER(PUSH_PERIOD)&lt;= #{currHour}
     </update>
 
     <select id="getTotalCount" resultType="int">

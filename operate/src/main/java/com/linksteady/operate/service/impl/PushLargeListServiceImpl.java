@@ -20,23 +20,18 @@ public class PushLargeListServiceImpl implements PushLargeListService {
     private PushLargeListMapper pushLargeListMapper;
 
     @Override
-    public int getPushListCount(int currentHour) {
-        return pushLargeListMapper.getPushListCount(currentHour);
+    public int getPushLargeListCount(int currentHour) {
+        return pushLargeListMapper.getPushLargeListCount(currentHour);
     }
 
     @Override
-    public List<PushListLager> getPushList(int currentHour, String sms, int start, int end) {
-        return pushLargeListMapper.getPushList(currentHour, sms, start, end);
+    public List<PushListLager> getPushLargeList(int currentHour, String sms, int start, int end) {
+        return pushLargeListMapper.getPushLargeList(currentHour, sms, start, end);
     }
 
     @Override
-    public List<String> getSmsContent(int currentHour) {
-        return pushLargeListMapper.getSmsContent(currentHour);
-    }
-
-    @Override
-    public void updatePushState(String smsContent, Long maxPushId,int currentHour) {
-        pushLargeListMapper.updatePushState(smsContent, maxPushId,currentHour);
+    public List<String> getSmsContentList(int currentHour) {
+        return pushLargeListMapper.getSmsContentList(currentHour);
     }
 
     @Override
@@ -44,8 +39,4 @@ public class PushLargeListServiceImpl implements PushLargeListService {
         return pushLargeListMapper.getPushListCountBySms(currentHour, sms);
     }
 
-    @Override
-    public Long getMaxPushId(int currentHour) {
-        return pushLargeListMapper.getMaxPushId(currentHour);
-    }
 }

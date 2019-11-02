@@ -14,29 +14,23 @@ public interface PushLargeListService {
      * 获取待推送的名单数量
      * @param currentHour
       */
-    int getPushListCount(int currentHour);
+    int getPushLargeListCount(int currentHour);
 
     /**
      * 获取待推送的名单
      * @param currentHour
      * @return
      */
-    List<PushListLager> getPushList(int currentHour, String sms, int start, int end);
+    List<PushListLager> getPushLargeList(int currentHour, String sms, int start, int end);
 
     /**
      * 获取所有不同的短信
      * @param currentHour
      * @return
      */
-    List<String> getSmsContent(int currentHour);
+    List<String> getSmsContentList(int currentHour);
 
-    /**
-     * 更新数据状态
-     * @param smsContent
-     */
-    void updatePushState(String smsContent, Long maxPushId,int currentHour);
 
     int getPushListCountBySms(int currentHour, String sms);
 
-    Long getMaxPushId(int currentHour);
 }
