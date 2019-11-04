@@ -36,7 +36,8 @@ public class PushMessageThread {
     @SneakyThrows
     public void start() {
         pushSmsThread = new Thread(() -> {
-            AtomicInteger atomicInteger = new AtomicInteger();
+            AtomicInteger actualCount = new AtomicInteger();
+            AtomicInteger repeatCount = new AtomicInteger();
             // 推送的数据表service
             PushListServiceImpl pushListService = (PushListServiceImpl) SpringContextUtils.getBean("pushListServiceImpl");
             // 推送配置
@@ -53,17 +54,6 @@ public class PushMessageThread {
             while (true) {
                 MonitorThread.getInstance().setLastPushDate(LocalDateTime.now());
 
-                if (null != dailyProperties && "N".equals(dailyProperties.getPushFlag())) {
-                    log.info("[每日运营]推送服务已通过配置停止");
-                    try {
-                        //每隔1分钟执行一次
-                        TimeUnit.MINUTES.sleep(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    continue;
-                }
-
                 //每隔5分钟执行一次
                 try {
                     TimeUnit.MINUTES.sleep(5);
@@ -72,42 +62,56 @@ public class PushMessageThread {
                 }
 
                 log.info("[每日运营]开始下一次推送");
-                atomicInteger.set(0);
+                repeatCount.set(0);
+                actualCount.set(0);
                 Long startTime = System.currentTimeMillis();
                 //获取当前所在的小时
                 int currHour = LocalDateTime.now().getHour();
-                //查询 所有待推送状态 的最大的push_id (此处是为了防止并发导致的分页不准确)
-                int maxPushId = pushListService.getPendingPushMaxId(currHour);
 
-                //获取所有当前推荐时间段内发送的推送列表 考虑分页
-                int count = pushListService.getPendingPushCount(maxPushId, currHour);
+                //获取所有当前推荐时间段内发送的推送列表
+                int count = pushListService.getPendingPushCount(currHour);
                 log.info("当前时段{},当前选择的触达方式为{}，本批次触达人数:{}", currHour, dailyProperties.getPushType(), count);
-                int repeatUserCount =0;
+                //被拦截人数
+                int repeatUserCount;
+
                 List<PushListInfo> list;
                 if (count <= size) {
                     //获取推送列表
-                    list = pushListService.getPendingPushList(maxPushId, 1, count, currHour);
-                    repeatUserCount = pushMessageService.push(list);
-                    atomicInteger.addAndGet(repeatUserCount);
+                    list = pushListService.getPendingPushList(count, currHour);
+                    if (null != dailyProperties && "N".equals(dailyProperties.getPushFlag())) {
+                        log.info("[每日运营]推送服务已通过配置停止");
+                    }else
+                    {
+                        repeatUserCount = pushMessageService.push(list);
+                        repeatCount.addAndGet(repeatUserCount);
+                        actualCount.addAndGet(list.size());
+                    }
                 } else {
                     //分页
-                    int pageSize = count % size == 0 ? count / size : (count / size + 1);
-                    for (int i = 0; i < pageSize; i++) {
-                        list = pushListService.getPendingPushList(maxPushId, i * size + 1, (i + 1) * size, currHour);
-                        repeatUserCount =pushMessageService.push(list);
-                        atomicInteger.addAndGet(repeatUserCount);
+                    int pageNum = count % size == 0 ? count / size : (count / size + 1);
+                    for (int i = 0; i < pageNum; i++) {
+
+                        //非常规的分页，每次都从头拿size数量的记录，因为在push方法中对数据的状态做了修改
+                        list = pushListService.getPendingPushList(size, currHour);
+
+                        if (null != dailyProperties && "N".equals(dailyProperties.getPushFlag())) {
+                            log.info("[每日运营]推送服务已通过配置停止");
+                            break;
+                        }else
+                        {
+                            repeatUserCount =pushMessageService.push(list);
+                            repeatCount.addAndGet(repeatUserCount);
+                            actualCount.addAndGet(list.size());
+                        }
                     }
                 }
-                //更新这一批数据的IS_PUSH字段
-                pushListService.updateIsPush(maxPushId, currHour);
 
-                if (count != 0) {
+                if (actualCount.intValue() != 0) {
                     //写入到触达日志中
-                    repeatUserCount = atomicInteger.get();
-                    int successNum = count - repeatUserCount;
+                    int successNum = actualCount.intValue() - repeatCount.get();
                     PushLog pushLog = new PushLog();
                     pushLog.setLogType("1");
-                    pushLog.setLogContent("成功触达" + successNum + "人");
+                    pushLog.setLogContent("[daily]成功触达" + successNum + "人");
                     pushLog.setUserCount((long) successNum);
                     pushLog.setLogDate(new Date());
                     pushLogService.insertPushLog(pushLog);
@@ -115,15 +119,16 @@ public class PushMessageThread {
                     //写入到重复推送日志中
                     PushLog repeatLog = new PushLog();
                     repeatLog.setLogType("0");
-                    repeatLog.setLogContent("防重复推送拦截" + repeatUserCount + "人");
-                    repeatLog.setUserCount((long) repeatUserCount);
+                    repeatLog.setLogContent("[daily]防重复推送拦截" + repeatCount.intValue() + "人");
+                    repeatLog.setUserCount(repeatCount.longValue());
                     repeatLog.setLogDate(new Date());
                     pushLogService.insertPushLog(repeatLog);
                     log.info(">>>[每日运营]结果已写入日志表");
                 }
-                log.info("[每日运营]推送结束，持续对待发送的短信列表进行监控");
+
                 Long endTime = System.currentTimeMillis();
-                log.info(">>>[每日运营]已触达完毕，用户数：{}人，共耗时：{}毫秒", count, endTime - startTime);
+                log.info("[每日运营]推送结束，持续对待发送的短信列表进行监控");
+                log.info(">>>[每日运营]已触达完毕，应推送用户数：{}人，实际推送{}人,拦截{}人，共耗时：{}毫秒", count,actualCount.intValue(),repeatCount.intValue(), endTime - startTime);
 
             }
         });

@@ -18,29 +18,29 @@
         <result column="PUSH_ID" property="pushId" jdbcType="DECIMAL"></result>
     </resultMap>
 
-    <select id="getPushListCount" resultType="int">
+    <select id="getPushLargeListCount" resultType="int">
         select count(1) from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
     </select>
 
-    <select id="getPushList" resultMap="base">
-        SELECT *
-        FROM ( select ROWNUM rn, t.* from (
-        select SOURCE_ID, USER_PHONE from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+    <select id="getPushLargeList" resultMap="base">
+        select ROWNUM rn, t.* from (
+        select PUSH_ID,SOURCE_ID, USER_PHONE from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
         and PUSH_CONTENT = #{sms} order by PUSH_ID desc) t
         where ROWNUM &lt;= #{end}
-        ) WHERE RN &gt;= #{start}
     </select>
 
-    <select id="getSmsContent" resultType="string">
+    <select id="getSmsContentList" resultType="string">
         select PUSH_CONTENT from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
         group by PUSH_CONTENT
     </select>
 
     <update id="updatePushState">
-        update UO_OP_PUSH_LIST_LARGE set IS_PUSH = '1', PUSH_DATE = sysdate
+        update UO_OP_PUSH_LIST_LARGE set IS_PUSH = '1', PUSH_DATE = sysdate,push_status=#{status}
         <where>
-            PUSH_CONTENT= #{smsContent}
-            and PUSH_ID &lt;= #{maxPushId} and IS_PUSH = '0' and  to_number(PUSH_PERIOD) &lt;= #{currentHour}
+            PUSH_ID in
+            <foreach collection="pushIdList" open="(" close=")" separator="," item="item">
+                #{item}
+            </foreach>
         </where>
     </update>
 
@@ -49,7 +49,4 @@
         and PUSH_CONTENT = #{sms}
     </select>
 
-    <select id="getMaxPushId" resultType="long">
-        select max(PUSH_ID) from UO_OP_PUSH_LIST_LARGE where is_push = '0' and  to_number(PUSH_PERIOD) &lt;= #{currentHour}
-    </select>
 </mapper>

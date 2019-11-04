@@ -16,27 +16,15 @@ public class PushListServiceImpl implements PushListService {
     @Autowired
     private PushListMapper pushListMapper;
 
+
     @Override
-    public int getPendingPushMaxId(int currHour) {
-        return pushListMapper.getPendingPushMaxId(currHour);
+    public int getPendingPushCount(int currHour) {
+        return pushListMapper.getPendingPushCount(currHour);
     }
 
     @Override
-    public int getPendingPushCount(int maxPushId,int currHour) {
-        return pushListMapper.getPendingPushCount(maxPushId,currHour);
-    }
-
-    @Override
-    public List<PushListInfo> getPendingPushList(int maxPushId, int start, int end,int currHour) {
-        return pushListMapper.getPendingPushList(maxPushId,start,end,currHour);
-    }
-
-    /**
-     * 更新当前批次的IS_PUSH字段
-     */
-    @Override
-    public void updateIsPush(int maxPushId,int currHour) {
-        pushListMapper.updateIsPush(maxPushId,currHour);
+    public List<PushListInfo> getPendingPushList(int limit,int currHour) {
+        return pushListMapper.getPendingPushList(limit,currHour);
     }
 
     @Override

@@ -78,11 +78,10 @@ public class PurgeThread {
                     log.info("释放第{}天的名单,此key在库中的状态为{}",key,isExist);
                     if(isExist)
                     {
-                        log.info("已经存在，进行处理");
                         Long expireSize=operations.size(key);
                         Long beforeExpireSize=operations.size("pushList");
 
-                        Long afterExpireSize=operations.differenceAndStore("pushList","pushList",key);
+                        Long afterExpireSize=operations.differenceAndStore("pushList",key,"pushList");
 
                         redisTemplate.delete(key);
                         log.info("已推送对象失效处理：对key={}中的{}个用户进行失效处理，失效前共有{}，失效后存在{}个。",key,expireSize,beforeExpireSize,afterExpireSize);
