@@ -28,4 +28,9 @@
           ) t where ROWNUM &lt; = #{end}
         ) where RN &gt;= #{start}
     </select>
+
+    <select id="getUserGroupList" resultMap="base">
+        select GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, SMS_TEMPLATE_CODE, GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE from UO_OP_ACTIVITY_GROUP
+            where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+    </select>
 </mapper>

@@ -13,4 +13,6 @@ public interface ActivityUserGroupMapper {
     int getCount(String headId, String stage);
 
     List<ActivityGroup> getUserGroupPage(String headId, String stage, int start, int end);
+
+    List<ActivityGroup> getUserGroupList(String headId, String stage);
 }

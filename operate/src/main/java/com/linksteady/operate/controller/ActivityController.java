@@ -220,6 +220,11 @@ public class ActivityController {
         return ResponseBo.ok();
     }
 
+    /**
+     * 用户群组的分页数据
+     * @param request
+     * @return
+     */
     @GetMapping("/getActivityUserGroupPage")
     public ResponseBo getActivityUserGroupPage(QueryRequest request) {
         int start = request.getStart();
@@ -231,4 +236,15 @@ public class ActivityController {
         return ResponseBo.okOverPaging(null, count, activityGroups);
     }
 
+    /**
+     * 不分页的数据
+     * @param headId
+     * @param stage
+     * @return
+     */
+    @GetMapping("/getActivityUserGroupList")
+    public List<ActivityGroup> getActivityUserGroupPage(@RequestParam String headId, @RequestParam String stage) {
+        List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupList(headId, stage);
+        return activityGroups;
+    }
 }

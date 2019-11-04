@@ -25,6 +25,11 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     }
 
     @Override
+    public List<ActivityGroup> getUserGroupList(String headId, String stage) {
+        return activityUserGroupMapper.getUserGroupList(headId, stage);
+    }
+
+    @Override
     public int getCount(String headId, String stage) {
         return activityUserGroupMapper.getCount(headId, stage);
     }

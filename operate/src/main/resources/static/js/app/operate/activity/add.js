@@ -2,6 +2,7 @@ let validator;
 let validatorProduct;
 let $activityAddForm = $( "#activity-add-form" );
 let $activityProductAddForm = $( "#add-product-form" );
+let product_id;
 
 init_date_begin( 'preheatStartDt', 'preheatEndDt', 'yyyy-mm-dd', 0, 2, 0 );
 init_date_end( 'preheatStartDt', 'preheatEndDt', 'yyyy-mm-dd', 0, 2, 0 );
@@ -223,6 +224,9 @@ function step2(stage) {
 
         // 获取用户群组
         getUserGroupTable( stage );
+
+        // 获取用户信息
+        getUserTable(stage);
     }
 }
 
@@ -334,20 +338,6 @@ function resetActivityProduct() {
 // 获取用户群组列表
 function getUserGroupTable(stage) {
     var settings = {
-        url: '/activity/getActivityUserGroupPage',
-        pagination: true,
-        sidePagination: "server",
-        pageList: [10, 25, 50, 100],
-        queryParams: function (params) {
-            return {
-                pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit) + 1,
-                param: {
-                    headId: $( "#headId" ).val(),
-                    stage: stage
-                }
-            };
-        },
         columns: [
             {
                 checkbox: true
@@ -375,13 +365,16 @@ function getUserGroupTable(stage) {
                 title: '选择模板'
             }]
     };
-    $MB.initTable( 'userGroupTable', settings );
+    $("#userGroupTable").bootstrapTable(settings);
+    $.get("/activity/getActivityUserGroupList", {headId: $( "#headId" ).val(), stage: stage},function (r) {
+        console.log(r);
+    });
 }
 
 // 获取用户列表
-function getUserTable() {
+function getUserTable(stage) {
     var settings = {
-        url: '/activity/getActivityUserListPage',
+        url: '',
         pagination: true,
         sidePagination: "server",
         pageList: [10, 25, 50, 100],
@@ -389,7 +382,10 @@ function getUserTable() {
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,
-                param: {startDate: $( "#beforeDate" ).val(), endDate: $( "#afterDate" ).val()}
+                param: {
+                    headId: $( "#headId" ).val(),
+                    stage: stage
+                }
             };
         },
         columns: [
@@ -397,32 +393,21 @@ function getUserTable() {
                 checkbox: true
             },
             {
-                field: 'spuName',
-                title: '用户ID'
-            }, {
-                field: 'planPurch',
-                title: '成长节点与活动期'
-            }, {
-                field: 'recPiecePrice',
+                field: 'groupName',
                 title: '用户与商品关系'
             }, {
-                field: 'recRetentionName',
+                field: 'isGrowthPath',
+                title: '成长节点与活动期'
+            }, {
+                field: 'activeLevel',
                 title: '活跃度'
             }, {
-                field: 'recUpName',
-                title: '价值'
-            }, {
-                field: 'recCrossName',
-                title: '推送内容'
+                field: 'smsTemplateCode',
+                title: '模板示例'
             }]
     };
     $MB.initTable( 'userTable', settings );
 }
-
-
-let head_id;
-let product_id;
-
 
 $( "#userMapModal" ).on( 'shown.bs.modal', function () {
     $.get( "/activity/getCouponBoxData", {

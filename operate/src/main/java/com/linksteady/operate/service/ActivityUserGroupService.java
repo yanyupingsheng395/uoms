@@ -12,5 +12,7 @@ public interface ActivityUserGroupService {
 
     List<ActivityGroup> getUserGroupPage(String headId, String stage, int start, int end);
 
+    List<ActivityGroup> getUserGroupList(String headId, String stage);
+
     int getCount(String headId, String stage);
 }
