@@ -14,10 +14,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.shiro.util.CollectionUtils;
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +33,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalField;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -72,49 +75,72 @@ public class ActivityController {
      *
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     @PostMapping("/uploadExcel")
-    public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file) {
+    public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId, @RequestParam String stage) {
+        List<ActivityProduct> productList = Lists.newArrayList();
         String originalFilename = file.getOriginalFilename();
         String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
-        InputStream is;
-        Workbook wb = null;
-        try{
-            is = file.getInputStream();
-            if(fileType.equalsIgnoreCase(".xls")) {
-                wb = new HSSFWorkbook(is);
-            } else if(fileType.equalsIgnoreCase(".xlsx")) {
-                wb = new XSSFWorkbook(is);
-            }
-            Sheet sheet = wb.getSheetAt(0);
-            for(Row row:sheet) {
-                int rowNum = row.getRowNum();
-                if(rowNum > 0) {
-                    System.out.println(row.getCell(0));
+        if (fileType.equalsIgnoreCase(".xlsx") || fileType.equalsIgnoreCase(".xls")) {
+            InputStream is;
+            Workbook wb = null;
+            try {
+                is = file.getInputStream();
+                if (fileType.equalsIgnoreCase(".xls")) {
+                    wb = new HSSFWorkbook(is);
+                } else if (fileType.equalsIgnoreCase(".xlsx")) {
+                    wb = new XSSFWorkbook(is);
                 }
+                Sheet sheet = wb.getSheetAt(0);
+                for (Row row : sheet) {
+                    row.cellIterator().next();
+                    if(row.getCell(0).getRowIndex() == 0) {
+                        continue;
+                    }
+                    ActivityProduct activityProduct = new ActivityProduct();
+                    activityProduct.setHeadId(Long.valueOf(headId));
+                    activityProduct.setActivityStage(stage);
+                    activityProduct.setProductId(row.getCell(0).getStringCellValue());
+                    activityProduct.setProductName(row.getCell(2).getStringCellValue());
+                    activityProduct.setMinPrice(row.getCell(3).getNumericCellValue());
+                    activityProduct.setFormalPrice(row.getCell(4).getNumericCellValue());
+                    activityProduct.setActivityIntensity(row.getCell(5).getNumericCellValue());
+                    activityProduct.setProductAttr(row.getCell(6).getStringCellValue());
+                    productList.add(activityProduct);
+                }
+                if(productList.size() != 0) {
+                    activityProductService.saveActivityProductList(productList);
+                }else {
+                    return ResponseBo.error("上传的数据为空！");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            return ResponseBo.error("只支持.xls,.xlsx后缀的文件！");
         }
-        return null;
+        return ResponseBo.ok("文件上传成功！");
     }
 
     /**
      * 保存活动基本信息
+     *
      * @param activityHead
      * @return
      */
     @PostMapping("/saveActivityHead")
     public ResponseBo saveActivityHead(ActivityHead activityHead) {
         int headId = activityHeadService.saveActivityHead(activityHead);
-        if(activityHead.getHeadId() == null) {
+        if (activityHead.getHeadId() == null) {
             return ResponseBo.okWithData("活动信息保存成功！", headId);
-        }else {
+        } else {
             return ResponseBo.okWithData("活动信息更新成功！", headId);
         }
     }
 
     /**
      * 获取活动商品页
+     *
      * @return
      */
     @GetMapping("/getActivityProductPage")
@@ -133,6 +159,7 @@ public class ActivityController {
 
     /**
      * 保存商品信息
+     *
      * @param activityProduct
      * @param headId
      * @return
@@ -146,6 +173,7 @@ public class ActivityController {
 
     /**
      * 活动商品表模板下载
+     *
      * @param response
      * @throws IOException
      */
@@ -171,6 +199,7 @@ public class ActivityController {
 
     /**
      * 获取产品信息
+     *
      * @param id
      * @return
      */
@@ -181,6 +210,7 @@ public class ActivityController {
 
     /**
      * 更新产品信息
+     *
      * @param activityProduct
      * @return
      */
@@ -190,8 +220,8 @@ public class ActivityController {
         return ResponseBo.ok();
     }
 
-    @GetMapping("/getActivityUserListPage")
-    public ResponseBo getActivityUserListPage(QueryRequest request) {
+    @GetMapping("/getActivityUserGroupPage")
+    public ResponseBo getActivityUserGroupPage(QueryRequest request) {
         int start = request.getStart();
         int end = request.getEnd();
         String stage = request.getParam().get("stage");
@@ -200,4 +230,5 @@ public class ActivityController {
         List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupPage(headId, stage, start, end);
         return ResponseBo.okOverPaging(null, count, activityGroups);
     }
+
 }

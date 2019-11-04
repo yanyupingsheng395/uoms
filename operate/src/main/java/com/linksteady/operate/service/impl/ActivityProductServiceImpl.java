@@ -54,4 +54,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     public void updateActivityProduct(ActivityProduct activityProduct) {
         activityProductMapper.updateActivityProduct(activityProduct);
     }
+
+    @Override
+    public void saveActivityProductList(List<ActivityProduct> productList) {
+        activityProductMapper.saveActivityProductList(productList);
+    }
 }

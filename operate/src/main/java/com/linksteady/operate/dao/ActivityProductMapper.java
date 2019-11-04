@@ -26,4 +26,6 @@ public interface ActivityProductMapper {
     ActivityProduct getProductById(String id);
 
     void updateActivityProduct(ActivityProduct activityProduct);
+
+    void saveActivityProductList(List<ActivityProduct> productList);
 }

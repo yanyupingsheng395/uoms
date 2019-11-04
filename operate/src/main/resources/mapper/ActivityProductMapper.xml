@@ -117,4 +117,13 @@
         PRODUCT_NAME = #{productName}, MIN_PRICE = #{minPrice}, FORMAL_PRICE = #{formalPrice}, ACTIVITY_INTENSITY = #{activityIntensity}, PRODUCT_URL = #{productUrl}, PRODUCT_ATTR = #{productAttr}, ACTIVITY_STAGE = #{activityStage}
         where ID = #{id}
     </update>
+
+    <insert id="saveActivityProductList">
+        insert all
+        <foreach collection="list" item="item">
+            into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_ATTR, ACTIVITY_STAGE)
+            values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{item.headId}, #{item.productId}, #{item.productName}, #{item.minPrice}, #{item.formalPrice}, #{item.activityIntensity}, #{item.productAttr}, #{item.activityStage})
+        </foreach>
+        select 1 from dual
+    </insert>
 </mapper>

@@ -20,4 +20,6 @@ public interface ActivityProductService {
     ActivityProduct getProductById(String id);
 
     void updateActivityProduct(ActivityProduct activityProduct);
+
+    void saveActivityProductList(List<ActivityProduct> productList);
 }

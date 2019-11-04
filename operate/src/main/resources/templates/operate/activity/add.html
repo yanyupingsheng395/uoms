@@ -60,7 +60,8 @@
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="pull-left">
-                                    <h5 class="modal-title pull-left" style="margin-top: 20px;">新增活动</h5>
+                                    <h5 class="modal-title pull-left" style="margin-top: 20px;" th:if="${operateType} eq 'save'">创建计划</h5>
+                                    <h5 class="modal-title pull-left" style="margin-top: 20px;" th:if="${operateType} eq 'update'">修改计划</h5>
                                 </div>
                             </div>
                             <div class="row">
@@ -126,8 +127,6 @@
 <script data-th-src="@{/js/app/operate/activity/add.js}"></script>
 <script data-th-src="@{/js/app/operate/activity/step1.js}"></script>
 <script data-th-src="@{/js/app/operate/activity/step2.js}"></script>
-<!--<script data-th-src="@{/js/app/operate/activity/step3.js}"></script>-->
-<!--<script data-th-src="@{/js/app/operate/activity/step4.js}"></script>-->
 <script data-th-src="@{/plugins/loading/js/loading.js}"></script>
 </body>
 </html>
