@@ -22,9 +22,9 @@ public class ActivityHead {
     private String activityName;
 
     /**
-     * 活动阶段 预热，正式
+     * 包含预售
      */
-    private String activityStage;
+    private String hasPreheat;
 
     /**
      * 预热状态

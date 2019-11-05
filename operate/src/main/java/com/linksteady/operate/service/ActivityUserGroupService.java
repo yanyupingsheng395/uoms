@@ -15,4 +15,6 @@ public interface ActivityUserGroupService {
     List<ActivityGroup> getUserGroupList(String headId, String stage);
 
     int getCount(String headId, String stage);
+
+    void updateGroupTemplate(String groupId, String code);
 }

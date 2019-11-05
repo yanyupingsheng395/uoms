@@ -1,6 +1,7 @@
 package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.service.ActivityHeadService;
@@ -218,4 +219,16 @@ public class PageController {
         model.addAttribute("operateType", "update");
         return "operate/activity/add";
     }
+
+    @RequestMapping("/activity/plan")
+    public String activityPlan(Model model, @RequestParam String id)
+    {
+        int count = activityHeadService.getActivityStatus(id);
+        if(count == 0) {
+            return "redirect:/page/activity";
+        }
+        model.addAttribute("headId", id);
+        return "operate/activity/plan";
+    }
+
 }

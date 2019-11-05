@@ -4,7 +4,7 @@
     <resultMap id="baseResult" type="com.linksteady.operate.domain.ActivityHead">
         <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"></result>
         <result property="activityName" jdbcType="VARCHAR" column="ACTIVITY_NAME"></result>
-        <result property="activityStage" jdbcType="VARCHAR" column="ACTIVITY_STAGE"></result>
+        <result property="hasPreheat" jdbcType="VARCHAR" column="HAS_PREHEAT"></result>
         <result property="preheatStatus" jdbcType="VARCHAR" column="PREHEAT_STATUS"></result>
         <result property="preheatStartDt" jdbcType="VARCHAR" column="PREHEAT_START_DT"></result>
         <result property="preheatEndDt" jdbcType="VARCHAR" column="PREHEAT_END_DT"></result>
@@ -13,10 +13,26 @@
         <result property="formalEndDt" jdbcType="VARCHAR" column="FORMAL_END_DT"></result>
     </resultMap>
 
+    <resultMap id="templateMap" type="com.linksteady.operate.domain.ActivityTemplate">
+        <result property="code" jdbcType="VARCHAR" column="TMP_CODE"></result>
+        <result property="content" jdbcType="VARCHAR" column="TMP_CONTENT"></result>
+        <result property="remark" jdbcType="VARCHAR" column="REMARK"></result>
+    </resultMap>
+
+    <resultMap id="planMap" type="com.linksteady.operate.domain.ActivityPlan">
+        <result property="headId" column="HEAD_ID" jdbcType="DECIMAL"></result>
+        <result property="userCnt" column="USER_CNT" jdbcType="DECIMAL"></result>
+        <result property="planDate" column="PLAN_DATE" jdbcType="DATE"></result>
+        <result property="planStatus" column="PLAN_STATUS" jdbcType="VARCHAR"></result>
+        <result property="planDateStr" column="PLAN_DATE_STR" jdbcType="VARCHAR"></result>
+        <result property="activityName" column="ACTIVITY_NAME" jdbcType="VARCHAR"></result>
+        <result property="stage" column="ACTIVITY_STAGE" jdbcType="VARCHAR"></result>
+    </resultMap>
+
     <select id="getDataListOfPage" resultMap="baseResult">
         select * from (
           select t.*, ROWNUM rn from (
-            select HEAD_ID, ACTIVITY_NAME, ACTIVITY_STAGE, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyymmdd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyymmdd') PREHEAT_END_DT, FORMAL_STATUS, to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT
+            select HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyymmdd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyymmdd') PREHEAT_END_DT, FORMAL_STATUS, to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT
             from UO_OP_ACTIVITY_HEADER where 1=1
             <if test="name != '' and name != null">
                 and ACTIVITY_NAME = #{name}
@@ -34,21 +50,21 @@
     </select>
 
     <select id="findById" resultMap="baseResult">
-        select HEAD_ID, ACTIVITY_NAME, ACTIVITY_STAGE, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyy-mm-dd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyy-mm-dd') PREHEAT_END_DT, FORMAL_STATUS, to_char(FORMAL_START_DT, 'yyyy-mm-dd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyy-mm-dd') FORMAL_END_DT from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
+        select HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyy-mm-dd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyy-mm-dd') PREHEAT_END_DT, FORMAL_STATUS, to_char(FORMAL_START_DT, 'yyyy-mm-dd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyy-mm-dd') FORMAL_END_DT from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
     </select>
 
     <insert id="saveActivityHead">
         <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="headId">
             select seq_activity_head_id.nextval from dual
         </selectKey>
-        insert into UO_OP_ACTIVITY_HEADER(HEAD_ID, ACTIVITY_NAME, ACTIVITY_STAGE, PREHEAT_STATUS, PREHEAT_START_DT, PREHEAT_END_DT, FORMAL_STATUS, FORMAL_START_DT, FORMAL_END_DT)
-        values (#{headId},#{activityName}, #{activityStage}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'))
+        insert into UO_OP_ACTIVITY_HEADER(HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, PREHEAT_START_DT, PREHEAT_END_DT, FORMAL_STATUS, FORMAL_START_DT, FORMAL_END_DT)
+        values (#{headId},#{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'))
     </insert>
 
     <update id="updateActiveHead">
         update UO_OP_ACTIVITY_HEADER set
         ACTIVITY_NAME = #{activityName},
-        ACTIVITY_STAGE = #{activityStage},
+        HAS_PREHEAT = #{activityStage},
         PREHEAT_STATUS = #{preheatStatus},
         PREHEAT_START_DT = to_date(#{preheatStartDt}, 'yyyy-mm-dd'),
         PREHEAT_END_DT = to_date(#{preheatEndDt}, 'yyyy-mm-dd'),
@@ -56,5 +72,29 @@
         FORMAL_START_DT = to_date(#{formalStartDt}, 'yyyy-mm-dd'),
         FORMAL_END_DT = to_date(#{formalEndDt}, 'yyyy-mm-dd')
         where HEAD_ID = #{headId}
+    </update>
+
+
+    <select id="getTemplateTableData" resultMap="templateMap">
+        select TMP_CODE, TMP_CONTENT, REMARK from UO_OP_ACTIVITY_TEMPLATE
+    </select>
+
+    <select id="getPlanList" resultMap="planMap">
+        select ACTIVITY_NAME, UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE, USER_CNT,to_char(PLAN_DATE, 'yyyymmdd') PLAN_DATE_STR,PLAN_STATUS from UO_OP_ACTIVITY_PLAN
+        left join UO_OP_ACTIVITY_HEADER on UO_OP_ACTIVITY_PLAN.HEAD_ID = UO_OP_ACTIVITY_HEADER.HEAD_ID
+        where UO_OP_ACTIVITY_PLAN.HEAD_ID = #{headId} order by PLAN_DATE asc
+    </select>
+
+    <select id="getActivityName" resultType="string">
+        select ACTIVITY_NAME from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
+    </select>
+
+    <select id="getActivityStatus" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_HEADER
+        where head_id = #{id} and (PREHEAT_STATUS in ('todo', 'doing') or FORMAL_STATUS in ('todo', 'doing'))
+    </select>
+
+    <update id="submitActivity">
+        ${sql}
     </update>
 </mapper>

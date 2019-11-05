@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" type="text/css"
+          data-th-href="@{/plugins/bootstrap-year-calendar/css/bootstrap-year-calendar.min.css}">
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">执行计划</h5>
+                            </div>
+                            <div class="row">
+                                <hr class="hr"/>
+                            </div>
+                            <div class="row">
+                                <div class="pull-left">
+                                    <p class="h5">活动名称：<span id="activityName"></span></p>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="/page/activity" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;返回</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row" style="margin-top: 12px;">
+                            <div class="col-sm-12">
+                                <h5>预热计划：</h5>
+                            </div>
+                            <div class="col-sm-12 table-striped">
+                                <table id="preheatPlanTable" class="table table-striped text-nowrap"></table>
+                            </div>
+                            <div class="col-sm-12">
+                                <hr class="hr"/>
+                            </div>
+                            <div class="col-sm-12">
+                                <h5>正式计划：</h5>
+                            </div>
+                            <div class="col-sm-12 table-striped">
+                                <table id="formalPlanTable" class="table table-striped text-nowrap"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script>
+    const headId = [[${headId}]];
+</script>
+<!-- 日历插件 -->
+<script type="text/javascript" data-th-src="@{/plugins/bootstrap-year-calendar/js/bootstrap-year-calendar.js}"></script>
+<script type="text/javascript"
+        data-th-src="@{/plugins/bootstrap-year-calendar/js/languages/bootstrap-year-calendar.zh-CN.js}"></script>
+<script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
+<script data-th-src="@{/js/common/lightyear.js}"></script>
+<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<script data-th-src="@{/js/app/operate/activity/plan.js}"></script>
+</body>
+</html>

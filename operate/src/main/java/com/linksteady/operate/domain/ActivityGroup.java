@@ -15,7 +15,7 @@ public class ActivityGroup {
 
     private String groupName;
 
-    private String isGrowthPath;
+    private String inGrowthPath;
 
     private String activeLevel;
 
@@ -28,4 +28,5 @@ public class ActivityGroup {
     private String activityStage;
 
     private String smsTemplateCode;
+    private String smsTemplateContent;
 }

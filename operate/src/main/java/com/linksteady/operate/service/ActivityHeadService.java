@@ -1,6 +1,9 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityHead;
+import com.linksteady.operate.domain.ActivityPlan;
+import com.linksteady.operate.domain.ActivityTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -39,4 +42,14 @@ public interface ActivityHeadService {
      * @return
      */
     ActivityHead findById(String headId);
+
+    List<ActivityTemplate> getTemplateTableData();
+
+    List<ActivityPlan> getPlanList(String headId);
+
+    String getActivityName(String headId);
+
+    int getActivityStatus(String id);
+
+    void submitActivity(String headId, String stage);
 }

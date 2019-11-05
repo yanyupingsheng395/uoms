@@ -123,3 +123,21 @@ $("#btn_edit").click(function () {
     let headId = selected[0].headId;
     window.location.href = "/page/activity/edit?headId=" + headId;
 });
+
+$("#btn_plan").click(function () {
+    let selected = $("#activityTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要编辑的活动！');
+        return;
+    }
+    let headId = selected[0].headId;
+    let preheatStatus = selected[0]['preheatStatus'];
+    let formalStatus = selected[0]['formalStatus'];
+    let flag = preheatStatus === 'todo' || preheatStatus === 'doing' || formalStatus === 'todo' || formalStatus === 'doing';
+    if(flag) {
+        window.location.href = "/page/activity/plan?id=" + headId;
+    }else {
+        $MB.n_warning("该活动的当前状态不允许执行计划！");
+    }
+});

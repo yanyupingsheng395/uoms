@@ -36,6 +36,7 @@ import java.time.temporal.TemporalField;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author hxcao
@@ -246,5 +247,43 @@ public class ActivityController {
     public List<ActivityGroup> getActivityUserGroupPage(@RequestParam String headId, @RequestParam String stage) {
         List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupList(headId, stage);
         return activityGroups;
+    }
+
+    /**
+     * 获取模板消息数据
+     * @return
+     */
+    @GetMapping("/getTemplateTableData")
+    public ResponseBo getTemplateTableData() {
+        return ResponseBo.okWithData(null, activityHeadService.getTemplateTableData());
+    }
+
+    @GetMapping("/updateGroupTemplate")
+    public ResponseBo updateGroupTemplate(@RequestParam String groupId, @RequestParam String code) {
+        activityUserGroupService.updateGroupTemplate(groupId, code);
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 获取任务计划
+     * @param headId
+     * @return
+     */
+    @RequestMapping("/getPlanList")
+    public ResponseBo getPlanList(@RequestParam String headId) {
+        List<ActivityPlan> planList = activityHeadService.getPlanList(headId);
+        Map<String, List<ActivityPlan>> result = planList.stream().collect(Collectors.groupingBy(ActivityPlan::getStage));
+        return ResponseBo.okWithData(null, result);
+    }
+
+    @GetMapping("/getActivityName")
+    public ResponseBo getActivityName(@RequestParam String headId) {
+        return ResponseBo.okWithData(null, activityHeadService.getActivityName(headId));
+    }
+
+    @PostMapping("/submitActivity")
+    public ResponseBo submitActivity(@RequestParam String headId, @RequestParam String stage) {
+        activityHeadService.submitActivity(headId, stage);
+        return ResponseBo.ok();
     }
 }

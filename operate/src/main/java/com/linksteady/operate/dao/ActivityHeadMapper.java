@@ -1,6 +1,9 @@
 package com.linksteady.operate.dao;
 
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityHead;
+import com.linksteady.operate.domain.ActivityPlan;
+import com.linksteady.operate.domain.ActivityTemplate;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -21,4 +24,14 @@ public interface ActivityHeadMapper {
     void updateActiveHead(ActivityHead activityHead);
 
     ActivityHead findById(String headId);
+
+    List<ActivityTemplate> getTemplateTableData();
+
+    List<ActivityPlan> getPlanList(String headId);
+
+    String getActivityName(String headId);
+
+    int getActivityStatus(String id);
+
+    void submitActivity(@Param("sql") String sql);
 }

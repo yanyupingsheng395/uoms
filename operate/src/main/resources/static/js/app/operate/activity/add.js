@@ -349,7 +349,7 @@ function getUserGroupTable(stage) {
                 field: 'groupUserCnt',
                 title: '人数（人）'
             }, {
-                field: 'isGrowthPath',
+                field: 'inGrowthPath',
                 title: '成长节点与活动期'
             }, {
                 field: 'growthUserCnt',
@@ -361,13 +361,23 @@ function getUserGroupTable(stage) {
                 field: 'activeUserCnt',
                 title: '人数（人）'
             }, {
-                field: 'smsTemplateCode',
-                title: '选择模板'
+                field: 'smsTemplateContent',
+                title: '选择模板',
+                align: "center",
+                formatter: function(value, row, index) {
+                    // 没有配置模板信息是图标，否则是短信内容的截取串
+                    if(value === '' || value === null) {
+                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center"><i class="fa fa-envelope"></i></a>';
+                    }else {
+                        let content = value.length > 20 ? value.substring(0, 20) + "..." : value;
+                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center">'+content+'</a>';
+                    }
+                }
             }]
     };
     $("#userGroupTable").bootstrapTable(settings);
     $.get("/activity/getActivityUserGroupList", {headId: $( "#headId" ).val(), stage: stage},function (r) {
-        console.log(r);
+        $("#userGroupTable").bootstrapTable('load', r);
     });
 }
 
@@ -396,7 +406,7 @@ function getUserTable(stage) {
                 field: 'groupName',
                 title: '用户与商品关系'
             }, {
-                field: 'isGrowthPath',
+                field: 'inGrowthPath',
                 title: '成长节点与活动期'
             }, {
                 field: 'activeLevel',
@@ -407,129 +417,6 @@ function getUserTable(stage) {
             }]
     };
     $MB.initTable( 'userTable', settings );
-}
-
-$( "#userMapModal" ).on( 'shown.bs.modal', function () {
-    $.get( "/activity/getCouponBoxData", {
-        productId: product_id,
-        startDate: $( "#beforeDate" ).val(),
-        endDate: $( "#afterDate" ).val()
-    }, function (r) {
-        let data = r.data;
-        let xdata = [data['min'], data['q1'], data['q2'], data['q3'], data['max'], data['avg']];
-        let option = gearsOption( '优惠值', xdata, product_id );
-        let chart = echarts.init( document.getElementById( 'userMapChart' ), 'macarons' );
-        chart.setOption( option );
-    } );
-} );
-
-
-function gearsOption(yName, data, id) {
-    var option = {
-        title: {
-            text: '商品ID[' + id + ']的优惠面额箱线图',
-            x: 'center',
-            y: 'bottom',
-            textStyle: {
-                //文字颜色
-                color: '#000',
-                //字体风格,'normal','italic','oblique'
-                fontStyle: 'normal',
-                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-                fontWeight: 'normal',
-                //字体系列
-                fontFamily: 'sans-serif',
-                //字体大小
-                fontSize: 12
-            }
-        },
-        tooltip: {
-            trigger: 'item',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        // grid: [{
-        //     height: '50%',
-        //     left: '10%',
-        //     right: '20%',
-        // }],
-        yAxis: [{
-            type: 'category',
-            data: [''],
-            nameTextStyle: {
-                color: '#3259B8',
-                fontSize: 16,
-            },
-
-            axisTick: {
-                show: false,
-            }
-        }],
-        xAxis: [{
-            name: yName,
-            type: 'value',
-            axisTick: {
-                show: false,
-            },
-            splitArea: {
-                show: false
-            }
-        }],
-        series: [{
-            name: 'XXX',
-            type: 'boxplot',
-            data: [data],
-            itemStyle: {
-                normal: {
-                    borderColor: {
-                        type: 'linear',
-                        x: 1,
-                        y: 0,
-                        x2: 0,
-                        y2: 0,
-                        colorStops: [{
-                            offset: 0,
-                            color: '#3EACE5' // 0% 处的颜色
-                        }, {
-                            offset: 1,
-                            color: '#956FD4' // 100% 处的颜色
-                        }],
-                        globalCoord: false // 缺省为 false
-                    },
-                    borderWidth: 2,
-                    color: {
-                        type: 'linear',
-                        x: 1,
-                        y: 0,
-                        x2: 0,
-                        y2: 0,
-                        colorStops: [{
-                            offset: 0,
-                            color: 'rgba(62,172,299,0.7)'  // 0% 处的颜色
-                        }, {
-                            offset: 1,
-                            color: 'rgba(149,111,212,0.7)'  // 100% 处的颜色
-                        }],
-                        globalCoord: false // 缺省为 false
-                    },
-                }
-            },
-            tooltip: {
-                formatter: function (param) {
-                    return [
-                        '平均值:' + param.data[6],
-                        '最大值: ' + param.data[5],
-                        '第三个中位数: ' + param.data[4],
-                        '中位数: ' + param.data[3],
-                        '第一个中位数: ' + param.data[2],
-                        '最小值: ' + param.data[1]
-                    ].join( '<br/>' )
-                }
-            }
-        }]
-    };
-    return option;
 }
 
 $( "#btn_download" ).click( function () {
@@ -655,3 +542,74 @@ $('#btn_upload').click(function () {
         }
     });
 });
+
+// 获取消息模板列表
+function getTemplateTable(groupId) {
+    var settings = {
+        singleSelect: true,
+        columns: [
+            {
+                checkbox: true
+            },
+            {
+                field: 'code',
+                title: '模板编码'
+            }, {
+                field: 'content',
+                title: '模板内容'
+            }, {
+                field: 'remark',
+                title: '备注'
+            }]
+    };
+    $("#templateDataTable").bootstrapTable(settings);
+    $.get("/activity/getTemplateTableData", {},function (r) {
+        if(r.code === 200) {
+            $("#selectGroupId").val(groupId);
+            $("#templateDataTable").bootstrapTable('load', r.data);
+            $("#smsTemplateModal").modal('show');
+        }else {
+            $MB.n_danger("获取模板数据异常！");
+        }
+    });
+}
+$("#smsTemplateModal").on('hidden.bs.modal', function () {
+    $("#selectGroupId").val('');
+});
+
+
+$("#template-add-btn").click(function () {
+    let groupId = $("#selectGroupId").val();
+    var selected = $("#templateDataTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择消息模板！');
+        return;
+    }
+    var templateCode = selected[0].code;
+    $.get("/activity/updateGroupTemplate", {groupId: groupId, code: templateCode}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("更新消息模板成功！");
+            $MB.refreshTable('userGroupTable');
+            $MB.closeAndRestModal('smsTemplateModal');
+        }else {
+            $MB.n_danger("未知错误！");
+        }
+    });
+});
+
+// 提交计划
+function submitActivity() {
+    let headId = $("#headId").val();
+    let stage = $("#activity_stage").val();
+    $.post("/activity/submitActivity", {headId: headId, stage: stage}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("提交计划成功！");
+            setTimeout(function () {
+                window.location.href = "/page/activity";
+            },2400);
+        }else {
+            $MB.n_danger("提交计划失败！");
+        }
+    });
+}

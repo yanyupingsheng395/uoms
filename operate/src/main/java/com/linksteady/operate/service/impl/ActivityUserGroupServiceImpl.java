@@ -33,4 +33,9 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     public int getCount(String headId, String stage) {
         return activityUserGroupMapper.getCount(headId, stage);
     }
+
+    @Override
+    public void updateGroupTemplate(String groupId, String code) {
+        activityUserGroupMapper.updateGroupTemplate(groupId, code);
+    }
 }

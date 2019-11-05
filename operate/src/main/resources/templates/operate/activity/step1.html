@@ -21,16 +21,16 @@
                         <label class="col-md-3 control-label">是否预售</label>
                         <div class="col-md-9" style="margin-top: 8px;">
                             <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;" th:if="${operateType eq 'save'}">
-                                <input type="radio" name="activityStage" value="1"><span>是</span>
+                                <input type="radio" name="hasPreheat" value="1"><span>是</span>
                             </label>
                             <label class="lyear-radio radio-grey radio-inline radio-primary" style="padding-top: 0px;" th:if="${operateType eq 'update'}">
-                                <input type="radio" name="activityStage" value="1" th:checked="${activityHead.activityStage eq '1'}" disabled><span>是</span>
+                                <input type="radio" name="hasPreheat" value="1" th:checked="${activityHead.hasPreheat eq '1'}" disabled><span>是</span>
                             </label>
                             <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;" th:if="${operateType eq 'save'}">
-                                <input type="radio" name="activityStage" value="0"><span>否</span>
+                                <input type="radio" name="hasPreheat" value="0"><span>否</span>
                             </label>
                             <label class="lyear-radio radio-grey radio-inline radio-primary" style="padding-top: 0px;" th:if="${operateType eq 'update'}">
-                                <input type="radio" name="activityStage" value="0" th:checked="${activityHead.activityStage eq '0'}" disabled><span>否</span>
+                                <input type="radio" name="hasPreheat" value="0" th:checked="${activityHead.hasPreheat eq '0'}" disabled><span>否</span>
                             </label>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <div class="row" id="preheatDiv" th:if="${operateType eq 'update'} and ${activityHead.activityStage == '1'}">
+            <div class="row" id="preheatDiv" th:if="${operateType eq 'update'} and ${activityHead.hasPreheat == '1'}">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="col-md-3 control-label">预热开始时间</label>
@@ -130,7 +130,7 @@
     </div>
 </div>
 <div class="text-right" style="margin-top: 15px;">
-    <a class="btn btn-secondary btn-sm" onclick="nextStep('preheat')" id="btn_preheat" th:if="${operateType eq 'update'} and ${activityHead.activityStage == '1'}">
+    <a class="btn btn-secondary btn-sm" onclick="nextStep('preheat')" id="btn_preheat" th:if="${operateType eq 'update'} and ${activityHead.hasPreheat == '1'}">
         <i class="fa fa-arrow-right"></i> 编辑预热计划
     </a>
     <a class="btn btn-secondary btn-sm" onclick="nextStep('preheat')" id="btn_preheat" th:if="${operateType eq 'save'}">
