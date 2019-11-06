@@ -49,6 +49,10 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         if ("1".equalsIgnoreCase(activityHead.getHasPreheat())) {
             activityHead.setPreheatStatus("edit");
         }
+        if("0".equalsIgnoreCase(activityHead.getHasPreheat())) {
+            activityHead.setPreheatStartDt(null);
+            activityHead.setPreheatEndDt(null);
+        }
         if (headId == null) {
             activityHeadMapper.saveActivityHead(activityHead);
             // 保存群组的初始化信息

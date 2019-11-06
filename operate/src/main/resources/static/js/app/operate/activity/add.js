@@ -142,7 +142,7 @@ function validateProductRule() {
 }
 
 // 是否有预售选中事件
-$( "input[name='activityStage']" ).click( function () {
+$( "input[name='hasPreheat']" ).click( function () {
     let stage = $( this ).val();
     if (stage == 1) { // 是
         $( "#preheatDiv" ).attr( "style", "display:block;" );

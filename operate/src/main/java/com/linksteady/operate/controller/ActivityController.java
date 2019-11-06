@@ -285,8 +285,14 @@ public class ActivityController {
      */
     @RequestMapping("/getPlanList")
     public ResponseBo getPlanList(@RequestParam String headId) {
+        ActivityHead activityHead = activityHeadService.findById(headId);
         List<ActivityPlan> planList = activityHeadService.getPlanList(headId);
-        Map<String, List<ActivityPlan>> result = planList.stream().collect(Collectors.groupingBy(ActivityPlan::getStage));
+        Map<String, List<ActivityPlan>> result = Maps.newHashMap();
+        if("1".equalsIgnoreCase(activityHead.getHasPreheat())) {
+            result = planList.stream().collect(Collectors.groupingBy(ActivityPlan::getStage));
+        }else {
+            result.put("formal", planList);
+        }
         return ResponseBo.okWithData(null, result);
     }
 

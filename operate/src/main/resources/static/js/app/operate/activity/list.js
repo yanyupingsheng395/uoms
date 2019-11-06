@@ -55,7 +55,7 @@ $(function () {
                         res = "<span class=\"badge bg-info\">待计划</span>";
                         break;
                     case "todo":
-                        res = "<span class=\"badge bg-color-default\">待执行</span>";
+                        res = "<span class=\"badge bg-primary\">待执行</span>";
                         break;
                     case "doing":
                         res = "<span class=\"badge bg-warning\">执行中</span>";
@@ -82,7 +82,7 @@ $(function () {
                         res = "<span class=\"badge bg-info\">待计划</span>";
                         break;
                     case "todo":
-                        res = "<span class=\"badge bg-color-default\">待执行</span>";
+                        res = "<span class=\"badge bg-primary\">待执行</span>";
                         break;
                     case "doing":
                         res = "<span class=\"badge bg-warning\">执行中</span>";

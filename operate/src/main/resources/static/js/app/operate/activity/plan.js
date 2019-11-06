@@ -35,6 +35,9 @@ function getPlanTable() {
     $("#formalPlanTable").bootstrapTable(settings);
     $.get("/activity/getPlanList", {headId: headId},function (r) {
         if(r.code === 200) {
+            if(r.data['preheat'] !== undefined || Object.keys(r.data).length === 0) {
+                $("#preheatDiv").attr("style", "display:block");
+            }
             $("#preheatPlanTable").bootstrapTable('load', r.data['preheat']);
             $("#formalPlanTable").bootstrapTable('load', r.data['formal']);
         }else {
