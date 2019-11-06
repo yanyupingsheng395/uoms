@@ -6,6 +6,7 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
+import com.linksteady.operate.thrift.ActivityThriftClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +16,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.util.CollectionUtils;
+import org.apache.thrift.TException;
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -55,6 +57,9 @@ public class ActivityController {
 
     @Autowired
     private ActivityUserGroupService activityUserGroupService;
+
+    @Autowired
+    ActivityThriftClient activityThriftClient;
 
     /**
      * 获取头表的分页数据
@@ -304,6 +309,24 @@ public class ActivityController {
     @PostMapping("/submitActivity")
     public ResponseBo submitActivity(@RequestParam String headId, @RequestParam String stage) {
         activityHeadService.submitActivity(headId, stage);
+        return ResponseBo.ok();
+    }
+
+
+    @RequestMapping("/test")
+    public ResponseBo test() {
+
+        try {
+            activityThriftClient.open();
+           Map<Integer,String> predictCnt=activityThriftClient.getActivityService().getPredictCnt(1,"0");
+
+            System.out.println(predictCnt);
+        } catch (TException e) {
+           //进行异常上报
+            log.error("获取活动预估人数异常,",e);
+        }finally {
+            activityThriftClient.close();
+        }
         return ResponseBo.ok();
     }
 }
