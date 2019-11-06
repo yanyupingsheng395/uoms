@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2019-10-31
  */
 @Data
-public class ActivityGroup {
+public class ActivityGroup implements Cloneable{
 
     private Long groupId;
 
@@ -28,5 +28,11 @@ public class ActivityGroup {
     private String activityStage;
 
     private String smsTemplateCode;
+
     private String smsTemplateContent;
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

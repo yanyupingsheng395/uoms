@@ -43,19 +43,19 @@
                                         <ul>
                                             <li>
                                                 日期：
-                                                <input type="text" name="actName"/>
+                                                <input type="text" name="activityDate" id="date"/>
                                             </li>
                                             <li>
-                                                活动名称：<input type="text" name="actName"/>
+                                                活动名称：<input type="text" name="activityName" id="name"/>
                                             </li>
                                             <li>
                                                 活动状态：
-                                                <select>
+                                                <select id="status" name="activityStatus">
                                                     <option value="">所有</option>
-                                                    <option value="">待计划</option>
-                                                    <option value="">待执行</option>
-                                                    <option value="">执行中</option>
-                                                    <option value="">已完成</option>
+                                                    <option value="edit">待计划</option>
+                                                    <option value="todo">待执行</option>
+                                                    <option value="doing">执行中</option>
+                                                    <option value="done">已完成</option>
                                                 </select>
                                             </li>
                                             <li class="pull-right">

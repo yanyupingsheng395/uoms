@@ -37,6 +37,13 @@
             <if test="name != '' and name != null">
                 and ACTIVITY_NAME = #{name}
             </if>
+        <if test="date != '' and date != null">
+            and ((trunc(PREHEAT_START_DT, 'dd') &lt;= to_date(#{date}, 'yyyy-mm-dd') and trunc(PREHEAT_END_DT, 'dd') &gt;= to_date(#{date}, 'yyyy-mm-dd'))
+             or (trunc(FORMAL_START_DT, 'dd') &lt;= to_date(#{date}, 'yyyy-mm-dd') and trunc(FORMAL_END_DT, 'dd') &gt;= to_date(#{date}, 'yyyy-mm-dd')))
+        </if>
+        <if test="status != '' and status != null">
+            and (PREHEAT_STATUS = #{status} or FORMAL_STATUS = #{status})
+        </if>
             order by HEAD_ID desc
           ) t where ROWNUM &lt;=#{end}
         ) where RN &gt;= #{start}
@@ -97,4 +104,8 @@
     <update id="submitActivity">
         ${sql}
     </update>
+
+    <select id="getPreheatStatus" resultType="string">
+        select PREHEAT_STATUS from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
+    </select>
 </mapper>

@@ -5,7 +5,7 @@
     <resultMap id="base" type="com.linksteady.operate.domain.ActivityProduct">
         <result property="id" jdbcType="DECIMAL" column="ID"></result>
         <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"></result>
-        <result property="productId" jdbcType="DECIMAL" column="PRODUCT_ID"></result>
+        <result property="productId" jdbcType="DECIMAL" column="EPB_PRODUCT_ID"></result>
         <result property="minPrice" jdbcType="DECIMAL" column="MIN_PRICE"></result>
         <result property="productName" jdbcType="VARCHAR" column="PRODUCT_NAME"></result>
         <result property="formalPrice" jdbcType="DECIMAL" column="FORMAL_PRICE"></result>
@@ -121,7 +121,7 @@
     <insert id="saveActivityProductList">
         insert all
         <foreach collection="list" item="item">
-            into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_ATTR, ACTIVITY_STAGE)
+            into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_ATTR, ACTIVITY_STAGE)
             values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{item.headId}, #{item.productId}, #{item.productName}, #{item.minPrice}, #{item.formalPrice}, #{item.activityIntensity}, #{item.productAttr}, #{item.activityStage})
         </foreach>
         select 1 from dual

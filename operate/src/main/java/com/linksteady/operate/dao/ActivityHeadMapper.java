@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public interface ActivityHeadMapper {
 
-    List<ActivityHead> getDataListOfPage(int start, int end, String name);
+    List<ActivityHead> getDataListOfPage(int start, int end, String name, String date, String status);
 
     int getDataCount(@Param("name") String name);
 
@@ -34,4 +34,6 @@ public interface ActivityHeadMapper {
     int getActivityStatus(String id);
 
     void submitActivity(@Param("sql") String sql);
+
+    String getPreheatStatus(String headId);
 }

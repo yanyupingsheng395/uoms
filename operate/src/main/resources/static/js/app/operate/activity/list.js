@@ -1,3 +1,4 @@
+init_date('date', 'yyyy-mm-dd', 0,2,0)
 $(function () {
     let settings = {
         url: "/activity/gePageOfHead",
@@ -12,7 +13,7 @@ $(function () {
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,  //页码
-                param: {name: $("input[name='actName']").val()}
+                param: {name: $("#name").val(), date: $("#date").val(), status: $("#status").val()}
             };
         },
         columns: [[
@@ -104,7 +105,9 @@ function searchActivity() {
 
 // 重置查询条件
 function resetActivity() {
-    $("input[name='actName']").val('');
+    $("#date").val('');
+    $("#name").val('');
+    $("#status").find('option:selected').removeAttr('selected');
     $MB.refreshTable('activityTable');
 }
 

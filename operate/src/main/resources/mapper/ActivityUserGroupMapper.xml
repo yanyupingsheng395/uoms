@@ -34,11 +34,20 @@
     <select id="getUserGroupList" resultMap="base">
         select GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, TMP_CONTENT, GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE from UO_OP_ACTIVITY_GROUP
             left join UO_OP_ACTIVITY_TEMPLATE on SMS_TEMPLATE_CODE = TMP_CODE(+)
-            where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+            where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} order by group_id asc
     </select>
 
     <update id="updateGroupTemplate">
         update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{code}
         where GROUP_ID = #{groupId}
     </update>
+
+    <insert id="saveGroupData">
+        insert all
+        <foreach collection="list" item="item">
+            into UO_OP_ACTIVITY_GROUP(GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE)
+            values (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.inGrowthPath, jdbcType = VARCHAR}, #{item.activeLevel, jdbcType=VARCHAR}, #{item.groupUserCnt, jdbcType = DECIMAL}, #{item.growthUserCnt, jdbcType = DECIMAL}, #{item.activeUserCnt, jdbcType = DECIMAL}, #{item.activityStage})
+        </foreach>
+        select 1 from dual
+    </insert>
 </mapper>

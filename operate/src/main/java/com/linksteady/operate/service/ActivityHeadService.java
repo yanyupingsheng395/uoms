@@ -21,7 +21,7 @@ public interface ActivityHeadService {
      * @param name
      * @return
      */
-    List<ActivityHead> getDataListOfPage(int start, int end, String name);
+    List<ActivityHead> getDataListOfPage(int start, int end, String name, String date, String status);
     /**
      * 获取数据记录总数
      * @param name
@@ -43,13 +43,37 @@ public interface ActivityHeadService {
      */
     ActivityHead findById(String headId);
 
+    /**
+     * 获取模板数据
+     * @return
+     */
     List<ActivityTemplate> getTemplateTableData();
 
+    /**
+     * 获取执行计划数据
+     * @param headId
+     * @return
+     */
     List<ActivityPlan> getPlanList(String headId);
 
+    /**
+     * 通过headId获取活动名称
+     * @param headId
+     * @return
+     */
     String getActivityName(String headId);
 
+    /**
+     * 通过状态判断是否可以执行计划
+     * @param id
+     * @return
+     */
     int getActivityStatus(String id);
 
+    /**
+     * 提交计划，更改活动阶段的状态
+     * @param headId
+     * @param stage
+     */
     void submitActivity(String headId, String stage);
 }

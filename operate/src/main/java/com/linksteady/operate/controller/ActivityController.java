@@ -64,8 +64,10 @@ public class ActivityController {
         int start = request.getStart();
         int end = request.getEnd();
         String name = request.getParam().get("name");
+        String date = request.getParam().get("date");
+        String status = request.getParam().get("status");
 
-        List<ActivityHead> dataList = activityHeadService.getDataListOfPage(start, end, name);
+        List<ActivityHead> dataList = activityHeadService.getDataListOfPage(start, end, name, date, status);
         int count = activityHeadService.getDataCount(name);
 
         return ResponseBo.okOverPaging(null, count, dataList);
@@ -246,6 +248,18 @@ public class ActivityController {
     @GetMapping("/getActivityUserGroupList")
     public List<ActivityGroup> getActivityUserGroupPage(@RequestParam String headId, @RequestParam String stage) {
         List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupList(headId, stage);
+        return activityGroups;
+    }
+
+    /**
+     * 获取短信模板示例
+     * @param headId
+     * @param stage
+     * @return
+     */
+    @GetMapping("/getActivityUserList")
+    public List<ActivityGroup> getActivityUserList(@RequestParam String headId, @RequestParam String stage) {
+        List<ActivityGroup> activityGroups = activityUserGroupService.getActivityUserList(headId, stage);
         return activityGroups;
     }
 

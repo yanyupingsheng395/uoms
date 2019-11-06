@@ -12,7 +12,7 @@
     <div class="col-md-12">
         <ul id="myTabs" class="nav nav-tabs" role="tablist">
             <li class="active"><a href="#home" id="home-tab" role="tab" data-toggle="tab">用户推送设置</a></li>
-            <li><a href="#profile" role="tab" id="profile-tab" data-toggle="tab">用户推送预览</a></li>
+            <li><a href="#profile" role="tab" id="profile-tab" data-toggle="tab" onclick="getUserTable()">用户推送预览</a></li>
         </ul>
 
         <div id="myTabContent" class="tab-content">
@@ -28,7 +28,7 @@
 
 <div class="text-right" style="margin-top: 15px;">
     <a class="btn btn-primary btn-sm" onclick="submitActivity()">
-        <i class="fa fa-save"></i> 提交计划
+        <i class="fa fa-save"></i> 确认并生成计划
     </a>
     <a class="btn btn-secondary btn-sm" onclick="prevStep()">
         <i class="fa fa-arrow-left"></i> 上一步
