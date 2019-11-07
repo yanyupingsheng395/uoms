@@ -1,6 +1,7 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.ActivityProduct;
+import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -28,4 +29,6 @@ public interface ActivityProductMapper {
     void updateActivityProduct(ActivityProduct activityProduct);
 
     void saveActivityProductList(List<ActivityProduct> productList);
+
+    void deleteProduct(@Param("headId") String headId, @Param("stage") String stage, @Param("productList") List<String> productList);
 }

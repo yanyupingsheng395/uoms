@@ -26,8 +26,17 @@
     </div>
 </div>
 
+<div class="form-group" style="margin-top: 30px;">
+    <div class="alert" role="alert" style="background-color: #fcf8e3;padding: 13px 24px;">
+        请确认您已查看"用户推送预览"
+        <label class="lyear-checkbox m-t-10 checkbox-warning">
+            <input type="checkbox" id="push_ok">
+            <span>确定推送</span>
+        </label>
+    </div>
+</div>
 <div class="text-right" style="margin-top: 15px;">
-    <a class="btn btn-primary btn-sm" onclick="submitActivity()">
+    <a class="btn btn-primary btn-sm" onclick="submitActivity()" disabled="disabled" id="submitBtn">
         <i class="fa fa-save"></i> 确认并生成计划
     </a>
     <a class="btn btn-secondary btn-sm" onclick="prevStep()">

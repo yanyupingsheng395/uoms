@@ -59,4 +59,9 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
         });
         return userGroupList;
     }
+
+    @Override
+    public int validGroupTemplate(String headId, String stage) {
+        return activityUserGroupMapper.validGroupTemplate(headId, stage);
+    }
 }

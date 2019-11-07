@@ -126,4 +126,11 @@
         </foreach>
         select 1 from dual
     </insert>
+
+    <delete id="deleteProduct">
+        delete from UO_OP_ACTIVITY_PRODUCT where head_id = #{headId} and activity_stage = #{stage} and EPB_PRODUCT_ID in
+        <foreach collection="productList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>

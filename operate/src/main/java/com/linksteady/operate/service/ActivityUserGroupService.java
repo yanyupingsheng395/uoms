@@ -19,4 +19,6 @@ public interface ActivityUserGroupService {
     void updateGroupTemplate(String groupId, String code);
 
     List<ActivityGroup> getActivityUserList(String headId, String stage);
+
+    int validGroupTemplate(String headId, String stage);
 }

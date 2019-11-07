@@ -306,4 +306,23 @@ public class ActivityController {
         activityHeadService.submitActivity(headId, stage);
         return ResponseBo.ok();
     }
+
+    @PostMapping("/deleteProduct")
+    public ResponseBo deleteProduct(@RequestParam String headId, @RequestParam String stage, @RequestParam String productIds) {
+        System.out.println(headId);
+        System.out.println(stage);
+        System.out.println(productIds);
+        activityProductService.deleteProduct(headId, stage, productIds);
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 验证所有群组是否配置消息模板
+     * @return
+     */
+    @PostMapping("/validGroupTemplate")
+    public ResponseBo validGroupTemplate(@RequestParam String headId, @RequestParam String stage) {
+        int count = activityUserGroupService.validGroupTemplate(headId, stage);
+        return ResponseBo.okWithData(null, count);
+    }
 }

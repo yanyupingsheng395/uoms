@@ -59,4 +59,18 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     public void saveActivityProductList(List<ActivityProduct> productList) {
         activityProductMapper.saveActivityProductList(productList);
     }
+
+    /**
+     * todo 更新状态
+     * 删除商品，删除完更新head表的数据状态
+     * @param headId
+     * @param stage
+     * @param productIds
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteProduct(String headId, String stage, String productIds) {
+        List<String> productList = Arrays.asList(productIds.split(","));
+        activityProductMapper.deleteProduct(headId, stage, productList);
+    }
 }

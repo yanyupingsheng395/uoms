@@ -515,7 +515,7 @@ $( "#btn_add_shop" ).click( function () {
 } );
 
 $( "#uploadFile" ).change( function () {
-    $( '#filename' ).text( "文件名:" + $( this ).val() );
+    $( '#filename' ).text( "文件名:" + $( this ).val() ).attr( "style", "display:inline-block;" );
     $( "#btn_upload" ).attr( "style", "display:inline-block;" );
 } );
 
@@ -541,6 +541,8 @@ $('#btn_upload').click(function () {
             }else {
                 $MB.n_danger(res['msg']);
             }
+
+            $("#uploadFile").val('');
         },
         error: function (err) {
             $MB.n_danger("未知错误发生！");
@@ -608,15 +610,35 @@ $("#template-add-btn").click(function () {
 function submitActivity() {
     let headId = $("#headId").val();
     let stage = $("#activity_stage").val();
-    $.post("/activity/submitActivity", {headId: headId, stage: stage}, function (r) {
-        if(r.code === 200) {
-            $MB.n_success("提交计划成功！");
-            setTimeout(function () {
-                window.location.href = "/page/activity";
-            },2400);
-        }else {
-            $MB.n_danger("提交计划失败！");
+    let flag = validGroupTemplate();
+    if(flag) {
+        $MB.confirm({
+            title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+            content: '确认提交计划？'
+        }, function () {
+            $.post("/activity/submitActivity", {headId: headId, stage: stage}, function (r) {
+                if(r.code === 200) {
+                    $MB.n_success("提交计划成功！");
+                    setTimeout(function () {
+                        window.location.href = "/page/activity";
+                    },1500);
+                }else {
+                    $MB.n_danger("提交计划失败！");
+                }
+            });
+        });
+    }else {
+        $MB.n_warning("存在尚未配置消息模板的群组！");
+    }
+}
+
+// 验证短信模板是否已经配置
+function validGroupTemplate() {
+    $.get("/activity/validGroupTemplate", {headId: $("#headId").val(), stage: $("#activity_stage").val()}, function (r) {
+        if(r.code === 200 && r.data === 0) {
+            return true;
         }
+        return false;
     });
 }
 
@@ -678,4 +700,43 @@ $("#btn_view_shop").click(function () {
 
         $("#viewUserGroupModal").modal('show');
     });
+});
+
+// 删除商品，同时更改头表数据状态
+$("#btn_delete_shop").click(function () {
+    var selected = $("#activityProductTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要删除的商品记录！');
+        return;
+    }
+    var headId = $("#headId").val();
+    var stage = $("#activity_stage").val();
+    var productIds = [];
+    selected.forEach((v, k)=>{
+        productIds.push(v['productId']);
+    });
+
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认删除选中的商品记录？'
+    }, function () {
+        $.post("/activity/deleteProduct", {headId:headId, stage: stage, productIds: productIds.join(",")}, function (r) {
+            if(r.code === 200) {
+                $MB.n_success("删除成功！");
+                $MB.refreshTable('activityProductTable');
+            }else {
+                $MB.n_danger("删除失败！");
+            }
+        });
+    });
+});
+
+$("#push_ok").change(function () {
+    let flag = $(this).is(':checked');
+    if(flag) {
+        $("#submitBtn").removeAttr("disabled");
+    }else {
+        $("#submitBtn").attr("disabled", true);
+    }
 });
