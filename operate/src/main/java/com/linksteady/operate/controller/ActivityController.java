@@ -131,6 +131,11 @@ public class ActivityController {
                     return ResponseBo.error("检测到数据与模板格式不符，请检查后重新上传！");
                 }
                 if(productList.size() != 0) {
+                    // 获取相同productId的商品个数
+                    int count = activityProductService.getSameProductCount(productList, headId, stage);
+                    if(count > 0) {
+                        return ResponseBo.error("当前Excel中共有" + count + "条记录与已有记录重复，请检查后重新上传！");
+                    }
                     activityProductService.saveActivityProductList(productList);
                 }else {
                     return ResponseBo.error("上传的数据为空！");

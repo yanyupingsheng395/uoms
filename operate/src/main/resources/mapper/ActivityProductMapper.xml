@@ -139,4 +139,12 @@
         where
         HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
     </select>
+
+    <select id="getSameProductCount" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_PRODUCT
+        where head_id = #{headId} and activity_stage = #{stage} and EPB_PRODUCT_ID in
+        <foreach collection="productList" separator="," open="(" close=")" item="item">
+            #{item.productId}
+        </foreach>
+    </select>
 </mapper>

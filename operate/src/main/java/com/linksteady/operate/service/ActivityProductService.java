@@ -26,4 +26,6 @@ public interface ActivityProductService {
     void deleteProduct(String headId, String stage, String productIds);
 
     int validProductNum(String headId, String stage);
+
+    int getSameProductCount(List<ActivityProduct> productList, String headId, String stage);
 }
