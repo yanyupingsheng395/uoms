@@ -8,36 +8,23 @@ import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.thrift.ActivityThriftClient;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.shiro.util.CollectionUtils;
 import org.apache.thrift.TException;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.TemporalField;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -86,6 +73,8 @@ public class ActivityController {
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/uploadExcel")
     public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId, @RequestParam String stage) {
+        List<String> headers = Arrays.asList("商品ID", "ERP货号", "名称", "最低单价（元/件）", "非活动售价（元/件）", "活动力度（%）", "活动属性【主推，参活，正常】");
+        AtomicBoolean flag = new AtomicBoolean(true);
         List<ActivityProduct> productList = Lists.newArrayList();
         String originalFilename = file.getOriginalFilename();
         String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
@@ -101,9 +90,18 @@ public class ActivityController {
                 }
                 Sheet sheet = wb.getSheetAt(0);
                 for (Row row : sheet) {
-                    row.cellIterator().next();
                     if(row.getCell(0).getRowIndex() == 0) {
-                        continue;
+                        Iterator<Cell> cellIterator = row.cellIterator();
+                        cellIterator.forEachRemaining(x->{
+                            if(headers.indexOf(x.getStringCellValue()) == -1) {
+                                flag.set(false);
+                            }
+                        });
+                        if(!flag.get()) {
+                            break;
+                        }else {
+                            continue;
+                        }
                     }
                     ActivityProduct activityProduct = new ActivityProduct();
                     activityProduct.setHeadId(Long.valueOf(headId));
@@ -113,8 +111,24 @@ public class ActivityController {
                     activityProduct.setMinPrice(row.getCell(3).getNumericCellValue());
                     activityProduct.setFormalPrice(row.getCell(4).getNumericCellValue());
                     activityProduct.setActivityIntensity(row.getCell(5).getNumericCellValue());
-                    activityProduct.setProductAttr(row.getCell(6).getStringCellValue());
+                    String attr = row.getCell(6).getStringCellValue();
+                    switch (attr) {
+                        case "主推":
+                            attr = "0";
+                            break;
+                        case "参活":
+                            attr = "1";
+                            break;
+                        case "正常":
+                            attr = "2";
+                            break;
+                            default: attr = "";
+                    }
+                    activityProduct.setProductAttr(attr);
                     productList.add(activityProduct);
+                }
+                if(!flag.get()) {
+                    return ResponseBo.error("检测到数据与模板格式不符，请检查后重新上传！");
                 }
                 if(productList.size() != 0) {
                     activityProductService.saveActivityProductList(productList);
