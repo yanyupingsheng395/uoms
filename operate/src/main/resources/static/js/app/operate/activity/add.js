@@ -385,8 +385,13 @@ function getUserGroupTable(stage) {
     $.get("/activity/getActivityUserGroupList", {headId: $( "#headId" ).val(), stage: stage},function (r) {
         $("#userGroupTable").bootstrapTable('load', r);
         $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupName', rowspan: 4});
+        $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'groupName', rowspan: 4});
         $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupUserCnt', rowspan: 4});
+        $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'groupUserCnt', rowspan: 4});
         $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'inGrowthPath', rowspan: 3});
+        $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'inGrowthPath', rowspan: 3});
+        $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'growthUserCnt', rowspan: 3});
+        $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'growthUserCnt', rowspan: 3});
         $("a[data-toggle='tooltip']").tooltip();
     });
 }
@@ -420,7 +425,11 @@ function getUserTable() {
     $.get("/activity/getActivityUserList", {headId: $( "#headId" ).val(), stage: stage},function (r) {
         $("#userTable").bootstrapTable('load', r);
         $("#userTable").bootstrapTable('mergeCells', {index: 0, field: 'groupName', rowspan: 4});
+        $("#userTable").bootstrapTable('mergeCells', {index: 4, field: 'groupName', rowspan: 4});
+        $("#userTable").bootstrapTable('mergeCells', {index: 0, field: 'groupUserCnt', rowspan: 4});
+        $("#userTable").bootstrapTable('mergeCells', {index: 4, field: 'groupUserCnt', rowspan: 4});
         $("#userTable").bootstrapTable('mergeCells', {index: 0, field: 'inGrowthPath', rowspan: 3});
+        $("#userTable").bootstrapTable('mergeCells', {index: 4, field: 'inGrowthPath', rowspan: 3});
     });
 }
 
@@ -610,35 +619,27 @@ $("#template-add-btn").click(function () {
 function submitActivity() {
     let headId = $("#headId").val();
     let stage = $("#activity_stage").val();
-    let flag = validGroupTemplate();
-    if(flag) {
-        $MB.confirm({
-            title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-            content: '确认提交计划？'
-        }, function () {
-            $.post("/activity/submitActivity", {headId: headId, stage: stage}, function (r) {
-                if(r.code === 200) {
-                    $MB.n_success("提交计划成功！");
-                    setTimeout(function () {
-                        window.location.href = "/page/activity";
-                    },1500);
-                }else {
-                    $MB.n_danger("提交计划失败！");
-                }
-            });
-        });
-    }else {
-        $MB.n_warning("存在尚未配置消息模板的群组！");
-    }
-}
 
-// 验证短信模板是否已经配置
-function validGroupTemplate() {
-    $.get("/activity/validGroupTemplate", {headId: $("#headId").val(), stage: $("#activity_stage").val()}, function (r) {
-        if(r.code === 200 && r.data === 0) {
-            return true;
+    // 验证短信模板是否已经配置
+    $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: $("#activity_stage").val()}, function (r) {
+        if(r.code === 200 && r.data) {
+            $MB.confirm({
+                title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+                content: '确认提交计划？'
+            }, function () {
+                $.post("/activity/submitActivity", {headId: headId, stage: stage}, function (r) {
+                    if(r.code === 200) {
+                        $MB.n_success("提交计划成功！");
+                        setTimeout(function () {
+                            window.location.href = "/page/activity";
+                        },1500);
+                    }else {
+                        $MB.n_danger("提交计划失败！");
+                    }
+                });
+            });
         }
-        return false;
+        $MB.n_warning("存在没有配置消息模板的群组或请至少上传一条商品信息！");
     });
 }
 
@@ -694,10 +695,14 @@ $("#btn_view_shop").click(function () {
     $.get("/activity/getActivityUserGroupList", {headId: $( "#headId" ).val(), stage: stage},function (r) {
         $("#viewUserGroupTable").bootstrapTable('load', r);
         $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupName', rowspan: 4});
+        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'groupName', rowspan: 4});
         $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupUserCnt', rowspan: 4});
+        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'groupUserCnt', rowspan: 4});
         $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'inGrowthPath', rowspan: 3});
+        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'inGrowthPath', rowspan: 3});
+        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'growthUserCnt', rowspan: 3});
+        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'growthUserCnt', rowspan: 3});
         $("a[data-toggle='tooltip']").tooltip();
-
         $("#viewUserGroupModal").modal('show');
     });
 });

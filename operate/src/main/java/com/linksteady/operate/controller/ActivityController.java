@@ -253,6 +253,10 @@ public class ActivityController {
     @GetMapping("/getActivityUserGroupList")
     public List<ActivityGroup> getActivityUserGroupPage(@RequestParam String headId, @RequestParam String stage) {
         List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupList(headId, stage);
+        ActivityGroup activityGroup = new ActivityGroup();
+        activityGroup.setGroupName("总计");
+        activityGroup.setGroupUserCnt(0L);
+        activityGroups.add(activityGroup);
         return activityGroups;
     }
 
@@ -332,20 +336,25 @@ public class ActivityController {
 
     @PostMapping("/deleteProduct")
     public ResponseBo deleteProduct(@RequestParam String headId, @RequestParam String stage, @RequestParam String productIds) {
-        System.out.println(headId);
-        System.out.println(stage);
-        System.out.println(productIds);
         activityProductService.deleteProduct(headId, stage, productIds);
         return ResponseBo.ok();
     }
 
     /**
-     * 验证所有群组是否配置消息模板
+     * 提交计划之前验证条件是否满足
+     * 1.验证所有群组是否配置消息模板
+     * 2.验证商品是否为空
      * @return
      */
-    @PostMapping("/validGroupTemplate")
-    public ResponseBo validGroupTemplate(@RequestParam String headId, @RequestParam String stage) {
-        int count = activityUserGroupService.validGroupTemplate(headId, stage);
-        return ResponseBo.okWithData(null, count);
+    @GetMapping("/validSubmit")
+    public ResponseBo validSubmit(@RequestParam String headId, @RequestParam String stage) {
+        // 验证所有群组是否配置消息模板 0：合法，非0不合法
+        int templateIsNullCount = activityUserGroupService.validGroupTemplate(headId, stage);
+        // 验证商品数，大于0合法，为0不合法
+        int productNum = activityProductService.validProductNum(headId, stage);
+        if(templateIsNullCount == 0 && productNum > 0) {
+            return ResponseBo.okWithData(null, true);
+        }
+        return ResponseBo.okWithData(null, false);
     }
 }

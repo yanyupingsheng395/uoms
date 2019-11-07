@@ -24,4 +24,6 @@ public interface ActivityProductService {
     void saveActivityProductList(List<ActivityProduct> productList);
 
     void deleteProduct(String headId, String stage, String productIds);
+
+    int validProductNum(String headId, String stage);
 }

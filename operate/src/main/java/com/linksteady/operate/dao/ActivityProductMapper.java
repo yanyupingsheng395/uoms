@@ -31,4 +31,6 @@ public interface ActivityProductMapper {
     void saveActivityProductList(List<ActivityProduct> productList);
 
     void deleteProduct(@Param("headId") String headId, @Param("stage") String stage, @Param("productList") List<String> productList);
+
+    int validProductNum(String headId, String stage);
 }

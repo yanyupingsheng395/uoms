@@ -73,4 +73,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         List<String> productList = Arrays.asList(productIds.split(","));
         activityProductMapper.deleteProduct(headId, stage, productList);
     }
+
+    @Override
+    public int validProductNum(String headId, String stage) {
+        return activityProductMapper.validProductNum(headId, stage);
+    }
 }

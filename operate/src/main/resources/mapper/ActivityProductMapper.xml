@@ -133,4 +133,10 @@
             #{item}
         </foreach>
     </delete>
+
+    <select id="validProductNum" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_PRODUCT
+        where
+        HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+    </select>
 </mapper>
