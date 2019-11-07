@@ -55,6 +55,10 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         }
         if (headId == null) {
             activityHeadMapper.saveActivityHead(activityHead);
+
+            //更新当前活动是大型活动还是小型活动的标记
+            activityHeadMapper.updateActivityFlag(activityHead.getHeadId().toString());
+
             // 保存群组的初始化信息
             saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
         } else {
@@ -115,56 +119,21 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     @Transactional(rollbackFor = Exception.class)
     void saveGroupData(String headId, String hasPreheat) {
         List<ActivityGroup> dataList = Lists.newArrayList();
-        ActivityGroup activityGroup = new ActivityGroup();
-        activityGroup.setHeadId(Long.valueOf(headId));
-        activityGroup.setGroupName("成长用户");
-        activityGroup.setGroupId(1L);
-        activityGroup.setInGrowthPath("在");
-        activityGroup.setActiveLevel("活跃");
-        activityGroup.setGroupUserCnt(0L);
-        activityGroup.setActiveUserCnt(0L);
-        activityGroup.setGrowthUserCnt(0L);
-        dataList.add(activityGroup);
 
-        activityGroup = new ActivityGroup();
-        activityGroup.setHeadId(Long.valueOf(headId));
-        activityGroup.setGroupName("成长用户");
-        activityGroup.setGroupId(2L);
-        activityGroup.setInGrowthPath("在");
-        activityGroup.setActiveLevel("留存");
-        activityGroup.setGroupUserCnt(0L);
-        activityGroup.setActiveUserCnt(0L);
-        activityGroup.setGrowthUserCnt(0L);
-        dataList.add(activityGroup);
+        dataList.add(new ActivityGroup(1L,Long.valueOf(headId),"成长用户","在","活跃"));
+        dataList.add(new ActivityGroup(2L,Long.valueOf(headId),"成长用户","在","留存"));
+        dataList.add(new ActivityGroup(3L,Long.valueOf(headId),"成长用户","在","流失预警"));
+        dataList.add(new ActivityGroup(4L,Long.valueOf(headId),"成长用户","不在",""));
 
-        activityGroup = new ActivityGroup();
-        activityGroup.setHeadId(Long.valueOf(headId));
-        activityGroup.setGroupName("成长用户");
-        activityGroup.setGroupId(3L);
-        activityGroup.setInGrowthPath("在");
-        activityGroup.setActiveLevel("流失预警");
-        activityGroup.setGroupUserCnt(0L);
-        activityGroup.setActiveUserCnt(0L);
-        activityGroup.setGrowthUserCnt(0L);
-        dataList.add(activityGroup);
+        dataList.add(new ActivityGroup(5L,Long.valueOf(headId),"潜在用户","在","活跃"));
+        dataList.add(new ActivityGroup(6L,Long.valueOf(headId),"潜在用户","在","留存"));
+        dataList.add(new ActivityGroup(7L,Long.valueOf(headId),"潜在用户","在","流失预警"));
 
-        activityGroup = new ActivityGroup();
-        activityGroup.setHeadId(Long.valueOf(headId));
-        activityGroup.setGroupName("成长用户");
-        activityGroup.setGroupId(4L);
-        activityGroup.setInGrowthPath("不在");
-        activityGroup.setGroupUserCnt(0L);
-        activityGroup.setGrowthUserCnt(0L);
-        dataList.add(activityGroup);
+        dataList.add(new ActivityGroup(8L,Long.valueOf(headId),"潜在用户","不在",""));
 
-        activityGroup = new ActivityGroup();
-        activityGroup.setHeadId(Long.valueOf(headId));
-        activityGroup.setGroupName("潜在用户");
-        activityGroup.setGroupId(5L);
-        activityGroup.setGroupUserCnt(0L);
-        dataList.add(activityGroup);
-
+        //预售
         List<ActivityGroup> preheatList = Lists.newArrayList();
+        //正式
         List<ActivityGroup> formalList = Lists.newArrayList();
         dataList.stream().forEach(x->{
             try {
@@ -174,9 +143,11 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
                 e.printStackTrace();
             }
         });
+        //正式 设置阶段标记
         formalList.stream().forEach(x->{
             x.setActivityStage("formal");
         });
+        //如果包含预售 再写一份预售的数据
         if("1".equalsIgnoreCase(hasPreheat)) {
             preheatList.stream().forEach(x->{
                 x.setActivityStage("preheat");

@@ -36,4 +36,10 @@ public interface ActivityHeadMapper {
     void submitActivity(@Param("sql") String sql);
 
     String getPreheatStatus(String headId);
+
+    /**
+     * 更新活动为大型活动 or 小型活动的 标记字段
+     * @param headId
+     */
+    void updateActivityFlag(String headId);
 }

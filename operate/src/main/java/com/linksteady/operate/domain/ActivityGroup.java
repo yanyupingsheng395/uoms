@@ -31,6 +31,17 @@ public class ActivityGroup implements Cloneable{
 
     private String smsTemplateContent;
 
+    public ActivityGroup() {
+    }
+
+    public ActivityGroup(Long groupId, Long headId, String groupName, String inGrowthPath, String activeLevel) {
+        this.groupId = groupId;
+        this.headId = headId;
+        this.groupName = groupName;
+        this.inGrowthPath = inGrowthPath;
+        this.activeLevel = activeLevel;
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
