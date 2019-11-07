@@ -45,8 +45,8 @@
     <insert id="saveGroupData">
         insert all
         <foreach collection="list" item="item">
-            into UO_OP_ACTIVITY_GROUP(GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE)
-            values (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.inGrowthPath, jdbcType = VARCHAR}, #{item.activeLevel, jdbcType=VARCHAR}, #{item.groupUserCnt, jdbcType = DECIMAL}, #{item.growthUserCnt, jdbcType = DECIMAL}, #{item.activeUserCnt, jdbcType = DECIMAL}, #{item.activityStage})
+            into UO_OP_ACTIVITY_GROUP(GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, ACTIVITY_STAGE)
+            values (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.inGrowthPath, jdbcType = VARCHAR}, #{item.activeLevel, jdbcType=VARCHAR}, #{item.activityStage})
         </foreach>
         select 1 from dual
     </insert>

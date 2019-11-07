@@ -108,4 +108,16 @@
     <select id="getPreheatStatus" resultType="string">
         select PREHEAT_STATUS from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
     </select>
+
+    <update id="updateActivityFlag">
+        UPDATE UO_OP_ACTIVITY_HEADER T SET T.ACTIVITYFLAG='B' where t.head_id=#{headId} and exists (
+            select head_id from (
+            select head_id,trunc(case when c.has_preheat='1' then c.preheat_start_dt else c.formal_start_dt end) activity_start_dt,
+            trunc(c.formal_end_dt) activity_end_dt
+            from uo_op_activity_header c where head_id=#{headId} ) tc where exists (
+            select big_activity_date from uo_op_activity_big_config
+            where to_date(big_activity_date,'MMDD') &gt;=activity_start_dt and to_date(big_activity_date,'MMDD') &lt;=activity_end_dt
+        )
+        )
+    </update>
 </mapper>
