@@ -281,10 +281,10 @@ public class ActivityController {
     @GetMapping("/getActivityUserGroupList")
     public List<ActivityGroup> getActivityUserGroupPage(@RequestParam String headId, @RequestParam String stage) {
         List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupList(headId, stage);
-        ActivityGroup activityGroup = new ActivityGroup();
-        activityGroup.setGroupName("总计");
-        activityGroup.setGroupUserCnt(0L);
-        activityGroups.add(activityGroup);
+//        ActivityGroup activityGroup = new ActivityGroup();
+//        activityGroup.setGroupName("总计");
+//        activityGroup.setGroupUserCnt(0L);
+//        activityGroups.add(activityGroup);
         return activityGroups;
     }
 
@@ -380,12 +380,12 @@ public class ActivityController {
         // 验证商品数，大于0合法，为0不合法
         int productNum = activityProductService.validProductNum(headId, stage);
 
-        if(templateIsNullCount != 0) {
-            return ResponseBo.error("部分群组模板消息未配置！");
+        if(productNum == 0) {
+            return ResponseBo.error("商品数不能为零！");
         }
 
-        if(productNum == productNum) {
-            return ResponseBo.error("商品数不能为零！");
+        if(templateIsNullCount != 0) {
+            return ResponseBo.error("部分群组模板消息未配置！");
         }
         return ResponseBo.ok();
     }

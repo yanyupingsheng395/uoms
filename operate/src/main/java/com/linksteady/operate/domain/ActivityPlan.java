@@ -24,4 +24,14 @@ public class ActivityPlan {
     private String activityName;
 
     private String stage;
+
+    public ActivityPlan() {}
+
+    public ActivityPlan(Long headId, Long userCnt,Date planDate,String planStatus,String stage) {
+        this.headId = headId;
+        this.userCnt = userCnt;
+        this.planDate = planDate;
+        this.planStatus = planStatus;
+        this.stage = stage;
+    }
 }

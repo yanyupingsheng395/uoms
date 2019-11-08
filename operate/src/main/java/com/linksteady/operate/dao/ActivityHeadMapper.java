@@ -6,6 +6,7 @@ import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.ActivityTemplate;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -46,4 +47,8 @@ public interface ActivityHeadMapper {
     void updateGroupChanged(String time, String headId, String stage, String changedStatus);
 
     Map<String, String> getDataChangedStatus(String headId, String stage);
+
+    Map<String, Date> getStageDate(String headId);
+
+    void savePlanList(List<ActivityPlan> planList);
 }
