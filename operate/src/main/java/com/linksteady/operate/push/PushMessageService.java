@@ -1,8 +1,7 @@
 package com.linksteady.operate.push;
 
 import com.linksteady.operate.domain.PushListInfo;
-import com.linksteady.operate.domain.PushListLager;
-import com.linksteady.operate.sms.montnets.domain.Message;
+import com.linksteady.operate.domain.PushListLarge;
 
 import java.util.List;
 
@@ -23,5 +22,5 @@ public interface PushMessageService {
      * @param messageContent 消息内容
      * @param pushList 推送列表
      */
-    int batchPush(String messageContent, List<PushListLager> pushList);
+    int batchPush(String messageContent, List<PushListLarge> pushList);
 }

@@ -6,7 +6,7 @@ import com.linksteady.operate.dao.PushListMapper;
 import com.linksteady.operate.dao.PushLogMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
-import com.linksteady.operate.domain.PushListLager;
+import com.linksteady.operate.domain.PushListLarge;
 import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.push.PushMessageService;
 import com.linksteady.operate.sms.montnets.config.ConfigManager;
@@ -145,7 +145,7 @@ public class PushSmsServiceImpl implements PushMessageService {
     }
 
     @Override
-    public int batchPush(String messageContent, List<PushListLager> pushList) {
+    public int batchPush(String messageContent, List<PushListLarge> pushList) {
         log.info("短信内容:{},本页内处理的数量{}",messageContent,pushList.size());
         SendSms sendSms = new SendSms(userid, pwd, isEncryptPwd, masterIpAddress,null,null,null);
         //要进行推送的目标人群
@@ -160,21 +160,21 @@ public class PushSmsServiceImpl implements PushMessageService {
 
         int repeatUserCount=0;
         boolean repeatFlag;
-        for(PushListLager pushListLager:pushList)
+        for(PushListLarge pushListLarge:pushList)
         {
             //判断是否会存在骚扰拦截
-            repeatFlag=operations.isMember("pushList",pushListLager.getUserPhone());
+            repeatFlag=operations.isMember("pushList",pushListLarge.getUserPhone());
             if(repeatFlag)
             {
                 repeatUserCount+=1;
-                repeatList.add(pushListLager.getPushId());
+                repeatList.add(pushListLarge.getPushId());
             }else
             {
-                successList.add(pushListLager.getPushId());
-                targetMobileList.add(pushListLager.getUserPhone());
+                successList.add(pushListLarge.getPushId());
+                targetMobileList.add(pushListLarge.getUserPhone());
                 //加入到redis中去
-                operations.add("pushList",pushListLager.getUserPhone());
-                operations.add("pushList"+currDay,pushListLager.getUserPhone());
+                operations.add("pushList",pushListLarge.getUserPhone());
+                operations.add("pushList"+currDay,pushListLarge.getUserPhone());
             }
         }
 

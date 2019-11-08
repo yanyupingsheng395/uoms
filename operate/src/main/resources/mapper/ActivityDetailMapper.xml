@@ -2,18 +2,4 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.ActivityDetailMapper">
 
-    <!--成长用户数量分布图-->
-    <select id="getUserCountData" resultType="map">
-        select user_count, to_char(ACTIV_DT, 'yyyymmdd') dt from (
-        select distinct count(USER_ID) user_count, ACTIV_DT from UO_OP_ACTIVITY_USER
-        where 1=1
-        <if test="startDt != '' and startDt != null">
-            and ACTIV_DT &gt;= to_date(#{startDt}, 'yyyy-mm-dd')
-        </if>
-        <if test="endDt != '' and endDt != null">
-            and ACTIV_DT &lt;= to_date(#{endDt}, 'yyyy-mm-dd')
-        </if>
-        group by ACTIV_DT order by ACTIV_DT asc
-        )
-    </select>
 </mapper>

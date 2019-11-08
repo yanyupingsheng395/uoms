@@ -1,23 +1,15 @@
 package com.linksteady.operate.service.impl;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.linksteady.common.util.DataStatisticsUtils;
-import com.linksteady.common.util.DateUtil;
-import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.dao.ActivityProductMapper;
-import com.linksteady.operate.dao.ActivityUserMapper;
 import com.linksteady.operate.domain.ActivityProduct;
-import com.linksteady.operate.domain.ActivityUser;
 import com.linksteady.operate.service.ActivityProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author hxcao
@@ -26,6 +18,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class ActivityProductServiceImpl implements ActivityProductService {
+
+    @Autowired
+    private ShortUrlServiceImpl shortUrlService;
 
     @Autowired
     private ActivityProductMapper activityProductMapper;
@@ -77,6 +72,16 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     @Override
     public int validProductNum(String headId, String stage) {
         return activityProductMapper.validProductNum(headId, stage);
+    }
+
+    /**
+     * 根据传入的productId 返回去对应的商品明细页短链接
+     * @param productId
+     * @return
+     */
+    @Override
+    public String generateProductShortUrl(String productId) {
+        return "t.cn/"+productId;
     }
 
     @Override

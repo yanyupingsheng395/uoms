@@ -1,8 +1,6 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.PushListLager;
 import com.linksteady.operate.domain.PushLog;
-import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
 

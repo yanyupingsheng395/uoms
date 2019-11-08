@@ -376,4 +376,23 @@ public class ActivityController {
         }
         return ResponseBo.okWithData(null, false);
     }
+
+    /**
+     * 调用后端接口，刷新群组的人数
+     * @return
+     */
+    @GetMapping("/refreshGroupInfo")
+    public ResponseBo refreshGroupInfo(@RequestParam String headId, @RequestParam String stage,@RequestParam String timestamp) {
+
+        //传入的参数 head_id,阶段、时间戳
+
+        //如果时间戳和数据库的一致
+        return ResponseBo.okWithData("",activityUserGroupService.getActivityUserList(headId,stage));
+
+        //如果时间戳发生了变化
+       // return ResponseBo.error("当前活动数据已被其他用户修改，请重新进入！");
+
+        //如果发生了异常
+        //return ResponseBo.error("刷新数据出错，请反馈系统运维人员！");
+    }
 }

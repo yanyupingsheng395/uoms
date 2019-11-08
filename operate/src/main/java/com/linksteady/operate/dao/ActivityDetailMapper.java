@@ -8,5 +8,5 @@ import java.util.Map;
  */
 public interface ActivityDetailMapper {
 
-    List<Map<String, Object>> getUserCountData(String startDt, String endDt);
+
 }

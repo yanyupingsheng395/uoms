@@ -9,7 +9,7 @@ import java.util.Date;
  * @date 2019-10-23
  */
 @Data
-public class PushListLager {
+public class PushListLarge {
 
     private String pushContent;
     private String pushPeriod;
