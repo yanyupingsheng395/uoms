@@ -143,4 +143,17 @@
         </if>
         from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
     </select>
+
+    <select id="getStageDate" resultType="map">
+        select FORMAL_START_DT,FORMAL_END_DT,PREHEAT_START_DT,PREHEAT_END_DT from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
+    </select>
+
+    <insert id="savePlanList">
+        insert all
+        <foreach collection="list" separator="" open="" close="" item="item">
+            into UO_OP_ACTIVITY_PLAN(HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE)
+            values (#{item.headId}, #{item.userCnt}, #{item.planDate}, #{item.planStatus}, #{item.stage})
+        </foreach>
+        select 1 from dual
+    </insert>
 </mapper>

@@ -35,4 +35,6 @@ public interface ActivityProductMapper {
     int validProductNum(String headId, String stage);
 
     int getSameProductCount(List<ActivityProduct> productList, String headId, String stage);
+
+    void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage);
 }

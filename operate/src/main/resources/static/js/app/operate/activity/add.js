@@ -9,6 +9,10 @@ init_date_end( 'preheatStartDt', 'preheatEndDt', 'yyyy-mm-dd', 0, 2, 0 );
 init_date_begin( 'formalStartDt', 'formalEndDt', 'yyyy-mm-dd', 0, 2, 0 );
 init_date_end( 'formalStartDt', 'formalEndDt', 'yyyy-mm-dd', 0, 2, 0 );
 
+var date = new Date();
+date.setDate(date.getDate() + 1);
+$("#preheatStartDt").datepicker('setStartDate', date);
+$("#formalStartDt").datepicker('setStartDate', date);
 
 $( function () {
     validateRule();
@@ -47,7 +51,7 @@ function validateRule() {
             formalEndDt: {
                 required: true
             },
-            activityStage: {
+            hasPreheat: {
                 required: true
             }
         },
@@ -74,7 +78,7 @@ function validateRule() {
             formalEndDt: {
                 required: icon + "请输入正式结束日期"
             },
-            activityStage: {
+            hasPreheat: {
                 required: icon + "请选择是否预售"
             }
         }
@@ -251,7 +255,6 @@ function nextStep(stage) {
     }
     if (flag) {
         step2( stage );
-        setDataChanged();
     }
 }
 
@@ -344,18 +347,8 @@ function getUserGroupTable(stage) {
                 valign: "middle",
                 align: 'center'
             }, {
-                field: 'groupUserCnt',
-                title: '人数（人）',
-                valign: "middle",
-                align: 'center'
-            }, {
                 field: 'inGrowthPath',
                 title: '成长节点与活动期',
-                valign: "middle",
-                align: 'center'
-            }, {
-                field: 'growthUserCnt',
-                title: '人数（人）',
                 valign: "middle",
                 align: 'center'
             }, {
@@ -364,23 +357,15 @@ function getUserGroupTable(stage) {
                 valign: "middle",
                 align: 'center'
             }, {
-                field: 'activeUserCnt',
-                title: '人数（人）',
-                valign: "middle",
-                align: 'center'
-            }, {
                 field: 'smsTemplateContent',
                 title: '选择模板',
                 align: "center",
                 formatter: function(value, row, index) {
-                    if(row['groupName'] === '总计') {
-                        return "-";
-                    }
                     // 没有配置模板信息是图标，否则是短信内容的截取串
                     if(value === '' || value === null) {
-                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="尚未配置消息模板！"><i class="fa fa-envelope"></i></a>';
+                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="尚未配置消息模板！" style="color:grey;"><i class="fa fa-envelope"></i></a>';
                     }else {
-                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="'+value+'"><i class="fa fa-envelope"></i></a>';
+                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="'+value+'" style="color: #409eff;"><i class="fa fa-envelope"></i></a>';
                     }
                 }
             }]
@@ -390,12 +375,8 @@ function getUserGroupTable(stage) {
         $("#userGroupTable").bootstrapTable('load', r);
         $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupName', rowspan: 4});
         $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'groupName', rowspan: 4});
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupUserCnt', rowspan: 4});
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'groupUserCnt', rowspan: 4});
         $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'inGrowthPath', rowspan: 3});
         $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'inGrowthPath', rowspan: 3});
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'growthUserCnt', rowspan: 3});
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'growthUserCnt', rowspan: 3});
         $("a[data-toggle='tooltip']").tooltip();
     });
 }
@@ -462,7 +443,6 @@ $( "#saveActivityProduct" ).click( function () {
                     $MB.n_success( "添加商品成功！" );
                     $MB.closeAndRestModal( "addProductModal" );
                     $MB.refreshTable( 'activityProductTable' );
-                    setDataChanged();
                 } else {
                     $MB.n_danger( "添加商品失败！" );
                 }
@@ -549,10 +529,9 @@ $('#btn_upload').click(function () {
         success: function (res) {
             if(res.code === 200) {
                 $MB.refreshTable('activityProductTable');
-                $MB.n_success("文件上传成功！");
+                $MB.n_success(res.msg);
                 $("#btn_upload").attr("style", "display:none;");
                 $("#filename").html('').attr("style", "display:none;");
-                setDataChanged();
             }else {
                 $MB.n_danger(res['msg']);
             }
@@ -628,7 +607,7 @@ function submitActivity() {
 
     // 验证短信模板是否已经配置
     $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: $("#activity_stage").val()}, function (r) {
-        if(r.code === 200 && r.data) {
+        if(r.code === 200) {
             $MB.confirm({
                 title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
                 content: '确认提交计划？'
@@ -644,74 +623,11 @@ function submitActivity() {
                     }
                 });
             });
+        }else {
+            $MB.n_warning(r.msg);
         }
-        $MB.n_warning("存在没有配置消息模板的群组或请至少上传一条商品信息！");
     });
 }
-
-// 预览推送
-$("#btn_view_shop").click(function () {
-    let stage = $("#activity_stage").val();
-    var selected = $("#activityProductTable").bootstrapTable('getSelections');
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请选择需要预览的商品！');
-        return;
-    }
-    var code = "<span style='float: left;'>当前选中商品：</span>";
-    selected.forEach((v, k) => {
-        code += "<span class='tag'><span>"+v['productName']+"</span></span>";
-    });
-    $("#productTag").html('').append(code);
-    var settings = {
-        columns: [
-            {
-                field: 'groupName',
-                title: '用户与商品关系',
-                valign: "middle",
-                align: 'center'
-            }, {
-                field: 'groupUserCnt',
-                title: '人数（人）',
-                valign: "middle",
-                align: 'center'
-            }, {
-                field: 'inGrowthPath',
-                title: '成长节点与活动期',
-                valign: "middle",
-                align: 'center'
-            }, {
-                field: 'growthUserCnt',
-                title: '人数（人）',
-                valign: "middle",
-                align: 'center'
-            }, {
-                field: 'activeLevel',
-                title: '活跃度',
-                valign: "middle",
-                align: 'center'
-            }, {
-                field: 'activeUserCnt',
-                title: '人数（人）',
-                valign: "middle",
-                align: 'center'
-            }]
-    };
-    $("#viewUserGroupTable").bootstrapTable(settings);
-    $.get("/activity/getActivityUserGroupList", {headId: $( "#headId" ).val(), stage: stage},function (r) {
-        $("#viewUserGroupTable").bootstrapTable('load', r);
-        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupName', rowspan: 4});
-        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'groupName', rowspan: 4});
-        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupUserCnt', rowspan: 4});
-        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'groupUserCnt', rowspan: 4});
-        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'inGrowthPath', rowspan: 3});
-        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'inGrowthPath', rowspan: 3});
-        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'growthUserCnt', rowspan: 3});
-        $("#viewUserGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'growthUserCnt', rowspan: 3});
-        $("a[data-toggle='tooltip']").tooltip();
-        $("#viewUserGroupModal").modal('show');
-    });
-});
 
 // 删除商品，同时更改头表数据状态
 $("#btn_delete_shop").click(function () {
@@ -736,7 +652,6 @@ $("#btn_delete_shop").click(function () {
             if(r.code === 200) {
                 $MB.n_success("删除成功！");
                 $MB.refreshTable('activityProductTable');
-                setDataChanged();
             }else {
                 $MB.n_danger("删除失败！");
             }
@@ -750,31 +665,5 @@ $("#push_ok").change(function () {
         $("#submitBtn").removeAttr("disabled");
     }else {
         $("#submitBtn").attr("disabled", true);
-    }
-});
-
-// 数据更改
-function setDataChanged() {
-    let stage = $('#activity_stage').val();
-    $.get("/activity/getDataChangedStatus", {headId: $("#headId").val(), stage: stage}, function (r) {
-        if(r.code === 200) {
-            let data = r.data;
-            $('#changed').val(data['STATUS']);
-            $('#changedTime').val(data['SYSTIME']);
-        }else {
-            $MB.n_danger("未知错误！");
-        }
-    });
-}
-
-$("#refresh_group").click(function (r) {
-    let status = $("#changed").val();
-    if(status == '0') {
-        $("#tipInfo").html("").append('<i class="mdi mdi-alert-circle-outline"></i>&nbsp;<span>已是最新数据。</span>');
-        $("#tipInfo").children().fadeOut(2000);
-    }
-    if(status == '1') {
-        $("#tipInfo").html("").append('<i class="mdi mdi-alert-circle-outline"></i>&nbsp;<span>已是最新数据。</span>');
-        $("#tipInfo").children().fadeOut(2000);
     }
 });

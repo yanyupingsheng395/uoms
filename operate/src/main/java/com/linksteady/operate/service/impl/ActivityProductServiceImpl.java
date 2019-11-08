@@ -102,4 +102,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     public int getSameProductCount(List<ActivityProduct> productList, String headId, String stage) {
         return activityProductMapper.getSameProductCount(productList, headId, stage);
     }
+
+    @Override
+    public void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage) {
+        activityProductMapper.deleteRepeatData(productList, headId, stage);
+    }
 }

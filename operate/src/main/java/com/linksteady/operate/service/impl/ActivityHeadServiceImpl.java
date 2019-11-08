@@ -8,9 +8,16 @@ import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.ActivityTemplate;
 import com.linksteady.operate.service.ActivityHeadService;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -161,5 +168,54 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
             formalList.addAll(preheatList);
         }
         activityUserGroupMapper.saveGroupData(formalList);
+        savePlanList(headId, hasPreheat);
+    }
+
+    /**
+     * 生成plan数据
+     * @param headId
+     * @param hasPreheat
+     */
+    @Transactional(rollbackFor = Exception.class)
+    void savePlanList(String headId, String hasPreheat) {
+        List<ActivityPlan> planList = Lists.newArrayList();
+        Map<String, Date> dateMap = activityHeadMapper.getStageDate(headId);
+        Date formalStartDt = dateMap.get("FORMAL_START_DT");
+        Date formalEndDt = dateMap.get("FORMAL_END_DT");
+        Date preheatStartDt = dateMap.get("PREHEAT_START_DT");
+        Date preheatEndDt = dateMap.get("PREHEAT_END_DT");
+        // 不包含预热
+
+        LocalDate formalStart = dateToLocalDate(formalStartDt);
+        LocalDate formalEnd = dateToLocalDate(formalEndDt);
+        while(formalStart.isBefore(formalEnd)) {
+            planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(formalStart), "todo", "formal"));
+            formalStart = formalStart.plusDays(1);
+        }
+        planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(formalEnd), "todo", "formal"));
+
+        // 包含预热
+        if("1".equalsIgnoreCase(hasPreheat)) {
+            LocalDate start = dateToLocalDate(preheatStartDt);
+            LocalDate end = dateToLocalDate(preheatEndDt);
+            while(start.isBefore(end)) {
+                planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(start), "todo", "preheat"));
+                start = start.plusDays(1);
+            }
+            planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(end), "todo", "preheat"));
+        }
+        activityHeadMapper.savePlanList(planList);
+    }
+
+    private LocalDate dateToLocalDate(Date date){
+        Instant instant = date.toInstant();
+        ZoneId zone = ZoneId.systemDefault();
+        return LocalDateTime.ofInstant(instant, zone).toLocalDate();
+    }
+
+    private Date localDateToDate(LocalDate date){
+        ZoneId zone = ZoneId.systemDefault();
+        Instant instant = date.atStartOfDay().atZone(zone).toInstant();
+        return Date.from(instant);
     }
 }

@@ -30,4 +30,6 @@ public interface ActivityProductService {
     String generateProductShortUrl(String productId);
 
     int getSameProductCount(List<ActivityProduct> productList, String headId, String stage);
+
+    void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage);
 }
