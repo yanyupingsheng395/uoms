@@ -19,16 +19,6 @@
         <result property="remark" jdbcType="VARCHAR" column="REMARK"></result>
     </resultMap>
 
-    <resultMap id="planMap" type="com.linksteady.operate.domain.ActivityPlan">
-        <result property="headId" column="HEAD_ID" jdbcType="DECIMAL"></result>
-        <result property="userCnt" column="USER_CNT" jdbcType="DECIMAL"></result>
-        <result property="planDate" column="PLAN_DATE" jdbcType="DATE"></result>
-        <result property="planStatus" column="PLAN_STATUS" jdbcType="VARCHAR"></result>
-        <result property="planDateStr" column="PLAN_DATE_STR" jdbcType="VARCHAR"></result>
-        <result property="activityName" column="ACTIVITY_NAME" jdbcType="VARCHAR"></result>
-        <result property="stage" column="ACTIVITY_STAGE" jdbcType="VARCHAR"></result>
-    </resultMap>
-
     <select id="getDataListOfPage" resultMap="baseResult">
         select * from (
           select t.*, ROWNUM rn from (
@@ -84,12 +74,6 @@
 
     <select id="getTemplateTableData" resultMap="templateMap">
         select TMP_CODE, TMP_CONTENT, REMARK from UO_OP_ACTIVITY_TEMPLATE
-    </select>
-
-    <select id="getPlanList" resultMap="planMap">
-        select ACTIVITY_NAME, UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE, USER_CNT,to_char(PLAN_DATE, 'yyyymmdd') PLAN_DATE_STR,PLAN_STATUS from UO_OP_ACTIVITY_PLAN
-        left join UO_OP_ACTIVITY_HEADER on UO_OP_ACTIVITY_PLAN.HEAD_ID = UO_OP_ACTIVITY_HEADER.HEAD_ID
-        where UO_OP_ACTIVITY_PLAN.HEAD_ID = #{headId} order by PLAN_DATE asc
     </select>
 
     <select id="getActivityName" resultType="string">
@@ -148,12 +132,4 @@
         select FORMAL_START_DT,FORMAL_END_DT,PREHEAT_START_DT,PREHEAT_END_DT from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
     </select>
 
-    <insert id="savePlanList">
-        insert all
-        <foreach collection="list" separator="" open="" close="" item="item">
-            into UO_OP_ACTIVITY_PLAN(HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE)
-            values (#{item.headId}, #{item.userCnt}, #{item.planDate}, #{item.planStatus}, #{item.stage})
-        </foreach>
-        select 1 from dual
-    </insert>
 </mapper>

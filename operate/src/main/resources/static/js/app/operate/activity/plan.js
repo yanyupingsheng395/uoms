@@ -19,7 +19,7 @@ function getPlanTable() {
                 checkbox: true
             },
             {
-                field: 'planDateStr',
+                field: 'planDateWid',
                 title: '日期'
             }, {
                 field: 'userCnt',
