@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.dao.ActivityProductMapper;
 import com.linksteady.operate.domain.ActivityProduct;
 import com.linksteady.operate.service.ActivityProductService;
