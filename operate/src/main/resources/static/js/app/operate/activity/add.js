@@ -251,6 +251,7 @@ function nextStep(stage) {
     }
     if (flag) {
         step2( stage );
+        setDataChanged();
     }
 }
 
@@ -372,6 +373,9 @@ function getUserGroupTable(stage) {
                 title: '选择模板',
                 align: "center",
                 formatter: function(value, row, index) {
+                    if(row['groupName'] === '总计') {
+                        return "-";
+                    }
                     // 没有配置模板信息是图标，否则是短信内容的截取串
                     if(value === '' || value === null) {
                         return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="尚未配置消息模板！"><i class="fa fa-envelope"></i></a>';
@@ -458,6 +462,7 @@ $( "#saveActivityProduct" ).click( function () {
                     $MB.n_success( "添加商品成功！" );
                     $MB.closeAndRestModal( "addProductModal" );
                     $MB.refreshTable( 'activityProductTable' );
+                    setDataChanged();
                 } else {
                     $MB.n_danger( "添加商品失败！" );
                 }
@@ -547,6 +552,7 @@ $('#btn_upload').click(function () {
                 $MB.n_success("文件上传成功！");
                 $("#btn_upload").attr("style", "display:none;");
                 $("#filename").html('').attr("style", "display:none;");
+                setDataChanged();
             }else {
                 $MB.n_danger(res['msg']);
             }
@@ -730,6 +736,7 @@ $("#btn_delete_shop").click(function () {
             if(r.code === 200) {
                 $MB.n_success("删除成功！");
                 $MB.refreshTable('activityProductTable');
+                setDataChanged();
             }else {
                 $MB.n_danger("删除失败！");
             }
@@ -743,5 +750,31 @@ $("#push_ok").change(function () {
         $("#submitBtn").removeAttr("disabled");
     }else {
         $("#submitBtn").attr("disabled", true);
+    }
+});
+
+// 数据更改
+function setDataChanged() {
+    let stage = $('#activity_stage').val();
+    $.get("/activity/getDataChangedStatus", {headId: $("#headId").val(), stage: stage}, function (r) {
+        if(r.code === 200) {
+            let data = r.data;
+            $('#changed').val(data['STATUS']);
+            $('#changedTime').val(data['SYSTIME']);
+        }else {
+            $MB.n_danger("未知错误！");
+        }
+    });
+}
+
+$("#refresh_group").click(function (r) {
+    let status = $("#changed").val();
+    if(status == '0') {
+        $("#tipInfo").html("").append('<i class="mdi mdi-alert-circle-outline"></i>&nbsp;<span>已是最新数据。</span>');
+        $("#tipInfo").children().fadeOut(2000);
+    }
+    if(status == '1') {
+        $("#tipInfo").html("").append('<i class="mdi mdi-alert-circle-outline"></i>&nbsp;<span>已是最新数据。</span>');
+        $("#tipInfo").children().fadeOut(2000);
     }
 });

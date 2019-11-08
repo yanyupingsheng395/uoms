@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -109,6 +110,11 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         }
         sb.append(" where head_id = '" + headId + "'");
         activityHeadMapper.submitActivity(sb.toString());
+    }
+
+    @Override
+    public Map<String, String> getDataChangedStatus(String headId, String stage) {
+        return activityHeadMapper.getDataChangedStatus(headId, stage);
     }
 
     /**

@@ -338,7 +338,6 @@ public class ActivityController {
 
     @RequestMapping("/test")
     public ResponseBo test() {
-
         try {
             activityThriftClient.open();
            Map<Integer,String> predictCnt=activityThriftClient.getActivityService().getPredictCnt(1,"0");
@@ -375,5 +374,16 @@ public class ActivityController {
             return ResponseBo.okWithData(null, true);
         }
         return ResponseBo.okWithData(null, false);
+    }
+
+    /**
+     * 获取数据更改状态
+     * @param headId
+     * @param stage
+     * @return
+     */
+    @GetMapping("/getDataChangedStatus")
+    public ResponseBo getDataChangedStatus(@RequestParam String headId, @RequestParam String stage) {
+        return ResponseBo.okWithData(null, activityHeadService.getDataChangedStatus(headId, stage));
     }
 }

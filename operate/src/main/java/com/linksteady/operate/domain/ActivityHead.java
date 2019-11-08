@@ -55,4 +55,24 @@ public class ActivityHead {
      * 正式结束时间
      */
     private String formalEndDt;
+
+    /**
+     * 预热数据是否失效
+     */
+    private String preheatChanged;
+
+    /**
+     * 正式数据是否失效
+     */
+    private String formalChanged;
+
+    /**
+     * 预热数据更改时间戳
+     */
+    private String preheatChangedTime;
+
+    /**
+     * 正式数据更改时间戳
+     */
+    private String formalChangedTime;
 }

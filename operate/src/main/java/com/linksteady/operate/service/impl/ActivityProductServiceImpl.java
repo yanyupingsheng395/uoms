@@ -30,6 +30,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     @Autowired
     private ActivityProductMapper activityProductMapper;
 
+    @Autowired
+    private ActivityHeadMapper activityHeadMapper;
+
     @Override
     public int getCount(String headId,String productId, String productName, String productAttr, String stage) {
         return activityProductMapper.getCount(headId, productId, productName, productAttr, stage);
@@ -41,7 +44,11 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void saveActivityProduct(ActivityProduct activityProduct) {
+        String time = String.valueOf(System.currentTimeMillis());
+        // 添加商品更改数据状态
+        activityHeadMapper.updateGroupChanged(time, activityProduct.getHeadId().toString(), activityProduct.getActivityStage(), "1");
         activityProductMapper.saveActivityProduct(activityProduct);
     }
 
@@ -56,7 +63,11 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void saveActivityProductList(List<ActivityProduct> productList) {
+        ActivityProduct activityProduct = productList.get(0);
+        String time = String.valueOf(System.currentTimeMillis());
+        activityHeadMapper.updateGroupChanged(time, activityProduct.getHeadId().toString(), activityProduct.getActivityStage(), "1");
         activityProductMapper.saveActivityProductList(productList);
     }
 
@@ -71,6 +82,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteProduct(String headId, String stage, String productIds) {
         List<String> productList = Arrays.asList(productIds.split(","));
+        String time = String.valueOf(System.currentTimeMillis());
+        activityHeadMapper.updateGroupChanged(time, headId, stage, "1");
         activityProductMapper.deleteProduct(headId, stage, productList);
     }
 

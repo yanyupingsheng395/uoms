@@ -42,4 +42,8 @@ public interface ActivityHeadMapper {
      * @param headId
      */
     void updateActivityFlag(String headId);
+
+    void updateGroupChanged(String time, String headId, String stage, String changedStatus);
+
+    Map<String, String> getDataChangedStatus(String headId, String stage);
 }
