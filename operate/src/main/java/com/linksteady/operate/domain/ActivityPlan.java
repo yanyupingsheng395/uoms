@@ -17,7 +17,7 @@ public class ActivityPlan {
 
     private Date planDate;
 
-    private String planDateStr;
+    private Long planDateWid;
 
     private String planStatus;
 
@@ -27,11 +27,12 @@ public class ActivityPlan {
 
     public ActivityPlan() {}
 
-    public ActivityPlan(Long headId, Long userCnt,Date planDate,String planStatus,String stage) {
+    public ActivityPlan(Long headId, Long userCnt,Date planDate,String planStatus,String stage,Long planDateWid) {
         this.headId = headId;
         this.userCnt = userCnt;
         this.planDate = planDate;
         this.planStatus = planStatus;
         this.stage = stage;
+        this.planDateWid=planDateWid;
     }
 }

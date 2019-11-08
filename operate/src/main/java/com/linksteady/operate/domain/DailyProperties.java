@@ -10,11 +10,6 @@ import lombok.Data;
 public class DailyProperties {
 
     /**
-     * 是否开启避免重复推送 默认全部开启
-     */
-   //private String repeatPush="N";
-
-    /**
      * 避免重复推送的天数
      */
     private int repeatPushDays=7;
@@ -30,52 +25,62 @@ public class DailyProperties {
     private int statsDays=20;
 
     /**
-     * 推送方式
+     * 推送方式  (不考虑页面维护)
      */
     private String pushType="SMS";
 
     /**
-     * 开启预警
+     * 开启预警 (不考虑页面维护)
      */
     private String openAlert="Y";
 
- /**
-  * 预警手机号码 (暂时不启用)
-  */
- private String alertPhone;
+     /**
+      * 预警手机号码 (不考虑页面维护)
+      */
+     private String alertPhone;
 
- /**
-  * 推送方式 IMME:IMME立即推送 AI:AI智能推送
-  */
- private String pushMethod;
+     /**
+      * 推送方式 IMME:IMME立即推送 AI:AI智能推送
+      */
+     private String pushMethod;
 
- /**
-  * 优惠券领用方式 MANUAL 表示需要手动领取 AUTO表示会自动打入用户账号
-  */
- private String couponMthod;
+     /**
+      * 短信内容的长度限制
+      */
+     private int smsLengthLimit=66;
 
- /**
-  * 券是否需要处理成短链接
-  */
- private String couponUrlToShort;
+    /**
+     * 商品详情页的组装格式 (不考虑页面维护)
+     */
+    private String productUrl="https://detail.tmall.com/item.htm?id=$PRODUCT_ID";
 
- /**
-  * 短信是否包含产品明细页链接
-  */
- private String includeProdUrl;
+    /**
+     * 包装短链是否需要包装成可唤醒淘宝APP (不考虑页面维护) Y表示是 N表示否
+     */
+    private String isAliApp = "Y";
 
- /**
-  * 产品明细页是否需要处理成短链接
-  */
- private String prodUrlToShort;
+    /**
+     * 短链是否返回模拟链接 （测试环境适用）
+     */
+    private String isTestEnv="Y";
 
- /**
-  * 短信内容的长度限制
-  */
- private int smsLengthLimit=66;
+    /**
+     * 模拟短链接的样例链接 (天猫首页)
+     */
+    private String demoShortUrl="https://dwz.cn/H91X4EMK";
 
- /**
-  * 当前修改用户
-  */
- private String currentUser;
+    /**
+     * 短链的长度
+     */
+    private int shortUrlLen;
+
+    /**
+     * 产品名称的最大长度
+     */
+    private int prodNameLen;
+
+    /**
+      * 当前修改用户
+      */
+     private String currentUser;
 }

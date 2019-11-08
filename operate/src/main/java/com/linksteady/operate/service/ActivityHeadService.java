@@ -50,13 +50,6 @@ public interface ActivityHeadService {
     List<ActivityTemplate> getTemplateTableData();
 
     /**
-     * 获取执行计划数据
-     * @param headId
-     * @return
-     */
-    List<ActivityPlan> getPlanList(String headId);
-
-    /**
      * 通过headId获取活动名称
      * @param headId
      * @return

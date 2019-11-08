@@ -42,7 +42,7 @@ public class PushConfigController extends BaseController {
      * @return
      */
     @GetMapping("/getDailyProperties")
-    public ResponseBo getPageList() {
+    public ResponseBo getDailyProperties() {
         return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
     }
 
@@ -53,22 +53,37 @@ public class PushConfigController extends BaseController {
     @SneakyThrows
     public ResponseBo updateDailyProperties(@RequestBody DailyProperties dp) {
         dailyProperties.setPushFlag(dp.getPushFlag());
-        dailyProperties.setRepeatPushDays(dp.getRepeatPushDays());
-        dailyProperties.setStatsDays(dp.getStatsDays());
-        dailyProperties.setPushType(dp.getPushType());
-        dailyProperties.setOpenAlert(dp.getOpenAlert());
         dailyProperties.setAlertPhone(dp.getAlertPhone());
-
-        dailyProperties.setPushMethod(dp.getPushMethod());
-        dailyProperties.setCouponMthod(dp.getCouponMthod());
-        dailyProperties.setCouponUrlToShort(dp.getCouponUrlToShort());
-        dailyProperties.setIncludeProdUrl(dp.getIncludeProdUrl());
-        dailyProperties.setProdUrlToShort(dp.getProdUrlToShort());
-        dailyProperties.setSmsLengthLimit(dp.getSmsLengthLimit());
-
         dailyProperties.setCurrentUser(getCurrentUser().getUsername());
-        //更新属性
+        //更新到数据库中
         dailyPropertiesService.updateProperties(dailyProperties);
+
+        return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
+    }
+
+    /**
+     * 刷新每日运营配置信息 (将数据库中的信息同步到内存的对象中)
+     * @param
+     * @return
+     */
+    @GetMapping("/refreshDailyProperties")
+    public ResponseBo refreshDailyProperties() {
+        DailyProperties temp=dailyPropertiesService.getDailyProperties();
+
+        dailyProperties.setPushFlag(temp.getPushFlag());
+        dailyProperties.setRepeatPushDays(temp.getRepeatPushDays());
+        dailyProperties.setStatsDays(temp.getStatsDays());
+        dailyProperties.setPushType(temp.getPushType());
+        dailyProperties.setOpenAlert(temp.getOpenAlert());
+        dailyProperties.setAlertPhone(temp.getAlertPhone());
+        dailyProperties.setPushMethod(temp.getPushMethod());
+        dailyProperties.setSmsLengthLimit(temp.getSmsLengthLimit());
+        dailyProperties.setProductUrl(temp.getProductUrl());
+        dailyProperties.setIsAliApp(temp.getIsAliApp());
+        dailyProperties.setIsTestEnv(temp.getIsTestEnv());
+        dailyProperties.setDemoShortUrl(temp.getDemoShortUrl());
+        dailyProperties.setProdNameLen(temp.getProdNameLen());
+        dailyProperties.setShortUrlLen(temp.getShortUrlLen());
 
         return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
     }

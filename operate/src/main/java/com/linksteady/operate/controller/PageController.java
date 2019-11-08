@@ -116,14 +116,25 @@ public class PageController {
     }
 
     /**
-     * 每日用户成长任务配置
+     * 运营配置
      * @param
      * @return
      */
-    @Log("每日用户成长任务配置")
+    @Log("运营配置")
     @RequestMapping("/cfg/dailyConfig")
     public String dailyConfig() {
         return "operate/config/dailyConfig";
+    }
+
+    /**
+     * 运营配置预览
+     * @param
+     * @return
+     */
+    @Log("运营配置预览")
+    @RequestMapping("/cfg/dailyConfigView")
+    public String dailyConfigView() {
+        return "operate/config/dailyConfigView";
     }
 
     /**

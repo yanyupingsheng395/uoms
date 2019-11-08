@@ -33,7 +33,7 @@ $(function () {
             title: '优惠券名称'
         }, {
             field: 'couponDisplayName',
-            title: '短信引用名'
+            title: '文案中引用名'
         }, {
             field: 'couponDenom',
             title: '优惠券面额'

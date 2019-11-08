@@ -28,7 +28,7 @@ public interface ActivityHeadMapper {
 
     List<ActivityTemplate> getTemplateTableData();
 
-    List<ActivityPlan> getPlanList(String headId);
+
 
     String getActivityName(String headId);
 
@@ -50,5 +50,4 @@ public interface ActivityHeadMapper {
 
     Map<String, Date> getStageDate(String headId);
 
-    void savePlanList(List<ActivityPlan> planList);
 }
