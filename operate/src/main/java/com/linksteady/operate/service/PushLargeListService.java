@@ -1,6 +1,6 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.PushListLager;
+import com.linksteady.operate.domain.PushListLarge;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public interface PushLargeListService {
      * @param currentHour
      * @return
      */
-    List<PushListLager> getPushLargeList(int currentHour, String sms, int start, int end);
+    List<PushListLarge> getPushLargeList(int currentHour, String sms, int start, int end);
 
     /**
      * 获取所有不同的短信

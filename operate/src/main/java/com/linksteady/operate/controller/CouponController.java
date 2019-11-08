@@ -91,10 +91,6 @@ public class CouponController extends BaseController {
      */
     @RequestMapping("/getByCouponId")
     public ResponseBo getByCouponId(String couponId) {
-//        int count = couponService.isCouponUsed(couponId);
-//        if (count != 0) {
-//            return ResponseBo.error("该优惠券正在使用，无法修改！");
-//        }
         CouponInfo couponInfo = couponService.getByCouponId(couponId);
         return ResponseBo.okWithData(null, couponInfo);
     }
@@ -123,7 +119,7 @@ public class CouponController extends BaseController {
     public ResponseBo getShortUrl(String url) {
         String shortUrl;
         if (StringUtils.isNotEmpty(url)) {
-            shortUrl = shortUrlService.produceShortUrlByBaidu(url);
+            shortUrl = shortUrlService.genConponShortUrl(url);
             if("".equalsIgnoreCase(shortUrl)) {
                 return ResponseBo.error("长链地址不合法！");
             }

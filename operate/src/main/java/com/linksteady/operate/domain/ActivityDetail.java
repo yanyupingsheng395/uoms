@@ -10,13 +10,6 @@ import java.util.Date;
  */
 @Data
 public class ActivityDetail {
-    /**
-     * 用户ID
-     */
-    private String userId;
 
-    /**
-     * 达成目标的一般时间
-     */
-    private Date activDt;
+
 }

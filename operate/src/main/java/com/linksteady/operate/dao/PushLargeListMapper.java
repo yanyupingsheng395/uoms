@@ -1,7 +1,6 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.PushListLager;
-import io.lettuce.core.dynamic.annotation.Param;
+import com.linksteady.operate.domain.PushListLarge;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ public interface PushLargeListMapper {
      * 分页获取待推送的名单
      * @return
      */
-    List<PushListLager> getPushLargeList(int currentHour, String sms, int start, int end);
+    List<PushListLarge> getPushLargeList(int currentHour, String sms, int start, int end);
 
     /**
      * 通过当前时间获取待推送的所有短信内容

@@ -27,5 +27,7 @@ public interface ActivityProductService {
 
     int validProductNum(String headId, String stage);
 
+    String generateProductShortUrl(String productId);
+
     int getSameProductCount(List<ActivityProduct> productList, String headId, String stage);
 }

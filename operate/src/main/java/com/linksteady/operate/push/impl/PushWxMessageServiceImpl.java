@@ -2,9 +2,8 @@ package com.linksteady.operate.push.impl;
 
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
-import com.linksteady.operate.domain.PushListLager;
+import com.linksteady.operate.domain.PushListLarge;
 import com.linksteady.operate.push.PushMessageService;
-import com.linksteady.operate.sms.montnets.domain.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,7 +36,7 @@ public class PushWxMessageServiceImpl implements PushMessageService {
     }
 
     @Override
-    public int batchPush(String messageContent, List<PushListLager> pushList) {
+    public int batchPush(String messageContent, List<PushListLarge> pushList) {
         return 0;
     }
 }

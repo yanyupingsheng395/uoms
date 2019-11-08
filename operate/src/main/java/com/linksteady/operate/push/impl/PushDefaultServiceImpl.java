@@ -5,7 +5,7 @@ import com.linksteady.operate.dao.PushLargeListMapper;
 import com.linksteady.operate.dao.PushListMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.PushListInfo;
-import com.linksteady.operate.domain.PushListLager;
+import com.linksteady.operate.domain.PushListLarge;
 import com.linksteady.operate.push.PushMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +92,7 @@ public class PushDefaultServiceImpl implements PushMessageService {
     }
 
     @Override
-    public int batchPush(String messageContent, List<PushListLager> pushList) {
+    public int batchPush(String messageContent, List<PushListLarge> pushList) {
         //要进行推送的目标人群
         List<String> targetMobileList=Lists.newArrayList();
         // 需要更新状态为骚扰拦截的用户ID
@@ -105,21 +105,21 @@ public class PushDefaultServiceImpl implements PushMessageService {
 
         int repeatUserCount=0;
         boolean repeatFlag;
-        for(PushListLager pushListLager:pushList)
+        for(PushListLarge pushListLarge:pushList)
         {
             //判断是否会存在骚扰拦截
-            repeatFlag=operations.isMember("pushList",pushListLager.getUserPhone());
+            repeatFlag=operations.isMember("pushList",pushListLarge.getUserPhone());
             if(repeatFlag)
             {
                 repeatUserCount+=1;
-                repeatList.add(pushListLager.getPushId());
+                repeatList.add(pushListLarge.getPushId());
             }else
             {
-                successList.add(pushListLager.getPushId());
-                targetMobileList.add(pushListLager.getUserPhone());
+                successList.add(pushListLarge.getPushId());
+                targetMobileList.add(pushListLarge.getUserPhone());
                 //加入到redis中去
-                operations.add("pushList",pushListLager.getUserPhone());
-                operations.add("pushList"+currDay,pushListLager.getUserPhone());
+                operations.add("pushList",pushListLarge.getUserPhone());
+                operations.add("pushList"+currDay,pushListLarge.getUserPhone());
             }
         }
 

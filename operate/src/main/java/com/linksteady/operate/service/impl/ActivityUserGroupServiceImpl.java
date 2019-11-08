@@ -1,19 +1,12 @@
 package com.linksteady.operate.service.impl;
 
-import com.google.common.collect.Lists;
 import com.linksteady.operate.dao.ActivityUserGroupMapper;
-import com.linksteady.operate.dao.ActivityUserMapper;
 import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.service.ActivityUserGroupService;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**

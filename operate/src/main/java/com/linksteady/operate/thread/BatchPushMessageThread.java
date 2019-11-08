@@ -1,7 +1,7 @@
 package com.linksteady.operate.thread;
 
 import com.linksteady.operate.domain.DailyProperties;
-import com.linksteady.operate.domain.PushListLager;
+import com.linksteady.operate.domain.PushListLarge;
 import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.push.PushMessageService;
 import com.linksteady.operate.service.PushLargeListService;
@@ -79,7 +79,7 @@ public class BatchPushMessageThread extends Thread {
                         log.info(">>>[batch]短信内容：{},推送用户数：{},页数：{}", sms, total,pageNum);
                         for (int i = 0; i < pageNum; i++) {
                             //不是常规的分页，因为batchPush方法中将数据的状态进行了修改，因此每次都从头去拿
-                            List<PushListLager> pushList = pushLargeListService.getPushLargeList(currentHour, sms, 0, PAGE_SIZE);
+                            List<PushListLarge> pushList = pushLargeListService.getPushLargeList(currentHour, sms, 0, PAGE_SIZE);
                             int pushCount = pushMessageService.batchPush(sms, pushList);
                             repeatCount.addAndGet(pushCount);
                             actualCount.addAndGet(pushList.size());
