@@ -378,9 +378,9 @@ function getUserGroupTable(stage) {
                     }
                     // 没有配置模板信息是图标，否则是短信内容的截取串
                     if(value === '' || value === null) {
-                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="尚未配置消息模板！"><i class="fa fa-envelope"></i></a>';
+                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="尚未配置消息模板！" style="color:grey;"><i class="fa fa-envelope"></i></a>';
                     }else {
-                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="'+value+'"><i class="fa fa-envelope"></i></a>';
+                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="'+value+'" style="color: #409eff;"><i class="fa fa-envelope"></i></a>';
                     }
                 }
             }]
@@ -549,7 +549,7 @@ $('#btn_upload').click(function () {
         success: function (res) {
             if(res.code === 200) {
                 $MB.refreshTable('activityProductTable');
-                $MB.n_success("文件上传成功！");
+                $MB.n_success(res.msg);
                 $("#btn_upload").attr("style", "display:none;");
                 $("#filename").html('').attr("style", "display:none;");
                 setDataChanged();
@@ -628,7 +628,7 @@ function submitActivity() {
 
     // 验证短信模板是否已经配置
     $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: $("#activity_stage").val()}, function (r) {
-        if(r.code === 200 && r.data) {
+        if(r.code === 200) {
             $MB.confirm({
                 title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
                 content: '确认提交计划？'
@@ -644,8 +644,9 @@ function submitActivity() {
                     }
                 });
             });
+        }else {
+            $MB.n_warning(r.msg);
         }
-        $MB.n_warning("存在没有配置消息模板的群组或请至少上传一条商品信息！");
     });
 }
 
@@ -761,20 +762,38 @@ function setDataChanged() {
             let data = r.data;
             $('#changed').val(data['STATUS']);
             $('#changedTime').val(data['SYSTIME']);
+            if(data['STATUS'] == '1') {
+                $("#tipInfo").html("").append('<i class="mdi mdi-alert-circle-outline"></i>&nbsp;<span>数据已失效，请刷新查看。</span>');
+            }
         }else {
             $MB.n_danger("未知错误！");
         }
     });
 }
 
+// 刷新数据
 $("#refresh_group").click(function (r) {
     let status = $("#changed").val();
+    let stage = $("#activity_stage").val();
+    var rows = $('#activityProductTable').bootstrapTable('getData');
+    if(rows.length === 0) {
+        $MB.n_warning("当前商品数为0，无法刷新数据。请先添加商品！");
+        return;
+    }
     if(status == '0') {
+        getUserGroupTable(stage);
         $("#tipInfo").html("").append('<i class="mdi mdi-alert-circle-outline"></i>&nbsp;<span>已是最新数据。</span>');
         $("#tipInfo").children().fadeOut(2000);
     }
     if(status == '1') {
-        $("#tipInfo").html("").append('<i class="mdi mdi-alert-circle-outline"></i>&nbsp;<span>已是最新数据。</span>');
-        $("#tipInfo").children().fadeOut(2000);
+        $.get("/activity/refreshGroupInfo", {headId: $("#headId").val(), stage: stage, timestamp:$("#changedTime").val()}, function (r) {
+            if(r.code === 200) {
+                $MB.loadingDesc('show', '正在计算数据中...');
+                getUserGroupTable(stage);
+                $MB.loadingDesc('hide');
+            }else {
+                $MB.n_danger(r.msg);
+            }
+        });
     }
 });

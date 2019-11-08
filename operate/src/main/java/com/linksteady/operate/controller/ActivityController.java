@@ -73,7 +73,7 @@ public class ActivityController {
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/uploadExcel")
     public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId, @RequestParam String stage) {
-        List<String> headers = Arrays.asList("商品ID", "ERP货号", "名称", "最低单价（元/件）", "非活动售价（元/件）", "活动力度（%）", "活动属性【主推，参活，正常】");
+        List<String> headers = Arrays.asList("商品ID", "ERP货号", "名称", "最低单价（元/件）", "非活动售价（元/件）", "活动属性【主推，参活，正常】");
         AtomicBoolean flag = new AtomicBoolean(true);
         List<ActivityProduct> productList = Lists.newArrayList();
         String originalFilename = file.getOriginalFilename();
@@ -108,10 +108,14 @@ public class ActivityController {
                     activityProduct.setActivityStage(stage);
                     activityProduct.setProductId(row.getCell(0).getStringCellValue());
                     activityProduct.setProductName(row.getCell(2).getStringCellValue());
-                    activityProduct.setMinPrice(row.getCell(3).getNumericCellValue());
-                    activityProduct.setFormalPrice(row.getCell(4).getNumericCellValue());
-                    activityProduct.setActivityIntensity(row.getCell(5).getNumericCellValue());
-                    String attr = row.getCell(6).getStringCellValue();
+                    double minPrice = row.getCell(3).getNumericCellValue();
+                    double formalPrice = row.getCell(4).getNumericCellValue();
+                    double activityIntensity = minPrice/formalPrice * 100;
+                    activityIntensity = Double.valueOf(String.format("%.2f", activityIntensity));
+                    activityProduct.setMinPrice(minPrice);
+                    activityProduct.setFormalPrice(formalPrice);
+                    activityProduct.setActivityIntensity(activityIntensity);
+                    String attr = row.getCell(5).getStringCellValue();
                     switch (attr) {
                         case "主推":
                             attr = "0";
@@ -125,6 +129,7 @@ public class ActivityController {
                             default: attr = "";
                     }
                     activityProduct.setProductAttr(attr);
+                    activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId()));
                     productList.add(activityProduct);
                 }
                 if(!flag.get()) {
@@ -134,9 +139,12 @@ public class ActivityController {
                     // 获取相同productId的商品个数
                     int count = activityProductService.getSameProductCount(productList, headId, stage);
                     if(count > 0) {
-                        return ResponseBo.error("当前Excel中共有" + count + "条记录与已有记录重复，请检查后重新上传！");
+                        activityProductService.deleteRepeatData(productList, headId, stage);
+                        activityProductService.saveActivityProductList(productList);
+                        return ResponseBo.ok("当前Excel中共有" + count + "条记录与已有记录重复，旧记录已覆盖！");
                     }
                     activityProductService.saveActivityProductList(productList);
+                    return ResponseBo.ok("文件上传成功！");
                 }else {
                     return ResponseBo.error("上传的数据为空！");
                 }
@@ -194,6 +202,7 @@ public class ActivityController {
     @PostMapping("/saveActivityProduct")
     public ResponseBo saveActivityProduct(ActivityProduct activityProduct, String headId) {
         activityProduct.setHeadId(Long.valueOf(headId));
+        activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId()));
         activityProductService.saveActivityProduct(activityProduct);
         return ResponseBo.ok();
     }
@@ -370,10 +379,15 @@ public class ActivityController {
         int templateIsNullCount = activityUserGroupService.validGroupTemplate(headId, stage);
         // 验证商品数，大于0合法，为0不合法
         int productNum = activityProductService.validProductNum(headId, stage);
-        if(templateIsNullCount == 0 && productNum > 0) {
-            return ResponseBo.okWithData(null, true);
+
+        if(templateIsNullCount != 0) {
+            return ResponseBo.error("部分群组模板消息未配置！");
         }
-        return ResponseBo.okWithData(null, false);
+
+        if(productNum == productNum) {
+            return ResponseBo.error("商品数不能为零！");
+        }
+        return ResponseBo.ok();
     }
 
     /**

@@ -121,8 +121,8 @@
     <insert id="saveActivityProductList">
         insert all
         <foreach collection="list" item="item">
-            into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_ATTR, ACTIVITY_STAGE)
-            values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{item.headId}, #{item.productId}, #{item.productName}, #{item.minPrice}, #{item.formalPrice}, #{item.activityIntensity}, #{item.productAttr}, #{item.activityStage})
+            into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_ATTR, ACTIVITY_STAGE, PRODUCT_URL)
+            values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{item.headId}, #{item.productId}, #{item.productName}, #{item.minPrice}, #{item.formalPrice}, #{item.activityIntensity}, #{item.productAttr}, #{item.activityStage}, #{item.productUrl})
         </foreach>
         select 1 from dual
     </insert>
@@ -147,4 +147,11 @@
             #{item.productId}
         </foreach>
     </select>
+
+    <delete id="deleteRepeatData">
+        delete from UO_OP_ACTIVITY_PRODUCT where EPB_PRODUCT_ID in
+        <foreach collection="productList" item="item" open="(" close=")" separator=",">
+            #{item.productId}
+        </foreach>
+    </delete>
 </mapper>
