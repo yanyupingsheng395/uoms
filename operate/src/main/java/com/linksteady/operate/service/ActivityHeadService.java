@@ -76,4 +76,6 @@ public interface ActivityHeadService {
      * @param stage
      */
     void submitActivity(String headId, String stage);
+
+    Map<String, String> getDataChangedStatus(String headId, String stage);
 }

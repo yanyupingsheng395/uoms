@@ -338,7 +338,6 @@ public class ActivityController {
 
     @RequestMapping("/test")
     public ResponseBo test() {
-
         try {
             activityThriftClient.open();
            Map<Integer,String> predictCnt=activityThriftClient.getActivityService().getPredictCnt(1,"0");
@@ -378,6 +377,17 @@ public class ActivityController {
     }
 
     /**
+     * 获取数据更改状态
+     * @param headId
+     * @param stage
+     * @return
+     */
+    @GetMapping("/getDataChangedStatus")
+    public ResponseBo getDataChangedStatus(@RequestParam String headId, @RequestParam String stage) {
+        return ResponseBo.okWithData(null, activityHeadService.getDataChangedStatus(headId, stage));
+    }
+
+    /**
      * 调用后端接口，刷新群组的人数
      * @return
      */
@@ -390,7 +400,7 @@ public class ActivityController {
         return ResponseBo.okWithData("",activityUserGroupService.getActivityUserList(headId,stage));
 
         //如果时间戳发生了变化
-       // return ResponseBo.error("当前活动数据已被其他用户修改，请重新进入！");
+        // return ResponseBo.error("当前活动数据已被其他用户修改，请重新进入！");
 
         //如果发生了异常
         //return ResponseBo.error("刷新数据出错，请反馈系统运维人员！");

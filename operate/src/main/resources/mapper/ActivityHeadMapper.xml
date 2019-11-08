@@ -120,4 +120,27 @@
         )
         )
     </update>
+
+    <update id="updateGroupChanged">
+        update UO_OP_ACTIVITY_HEADER
+        <set>
+            <if test="stage == 'preheat'">
+                PREHEAT_CHANGED = #{changedStatus}, PREHEAT_CHANGED_TIME = #{time}
+            </if>
+            <if test="stage == 'formal'">
+                FORMAL_CHANGED = #{changedStatus}, FORMAL_CHANGED_TIME = #{time}
+            </if>
+        </set>
+    </update>
+
+    <select id="getDataChangedStatus" resultType="map">
+        select
+        <if test="stage == 'preheat'">
+            PREHEAT_CHANGED status, PREHEAT_CHANGED_TIME systime
+        </if>
+        <if test="stage == 'formal'">
+            FORMAL_CHANGED status, FORMAL_CHANGED_TIME systime
+        </if>
+        from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
+    </select>
 </mapper>
