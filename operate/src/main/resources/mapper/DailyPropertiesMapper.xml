@@ -11,11 +11,6 @@
 
         <result column="ALERT_PHONE" jdbcType="VARCHAR" property="alertPhone"></result>
         <result column="PUSH_METHOD" jdbcType="VARCHAR" property="pushMethod"></result>
-        <result column="CONPON_METHOD" jdbcType="VARCHAR" property="couponMthod"></result>
-        <result column="COUPON_URL_TOSHORT" jdbcType="VARCHAR" property="couponUrlToShort"></result>
-
-        <result column="INCLUDE_PROD_URL" jdbcType="VARCHAR" property="includeProdUrl"></result>
-        <result column="PROD_URL_TOSHORT" jdbcType="VARCHAR" property="prodUrlToShort"></result>
         <result column="SMS_LENGTH_LIMIT" jdbcType="DECIMAL" property="smsLengthLimit"></result>
     </resultMap>
 
@@ -28,10 +23,6 @@
             open_elart,
             alert_phone,
             push_method,
-            conpon_method,
-            coupon_url_toshort,
-            include_prod_url,
-            prod_url_toshort,
             sms_length_limit
         from uo_op_daily_config where rownum=1
     </select>
@@ -47,10 +38,6 @@
 
             alert_phone=#{alertPhone},
             push_method=#{pushMethod},
-            conpon_method=#{couponMthod},
-            coupon_url_toshort=#{couponUrlToShort},
-            include_prod_url=#{includeProdUrl},
-            prod_url_toshort=#{prodUrlToShort},
             sms_length_limit=#{smsLengthLimit},
             last_update_by=#{currentUser},
             last_update_date=sysdate
