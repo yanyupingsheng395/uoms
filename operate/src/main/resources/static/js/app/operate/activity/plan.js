@@ -26,9 +26,42 @@ function getPlanTable() {
                 title: '计划人数'
             }, {
                 field: 'planStatus',
-                title: '状态'
+                title: '状态',
+                formatter: function (value, row, index) {
+                    let res = "";
+                    switch (value) {
+                        case "todo":
+                            res = "<span class=\"badge bg-primary\">待执行</span>";
+                            break;
+                        case "doing":
+                            res = "<span class=\"badge bg-primary\">执行中</span>";
+                            break;
+                        case "done":
+                            res = "<span class=\"badge bg-primary\">已执行</span>";
+                            break;
+
+                    }
+                    return res;
+                }
             }, {
-                title: '操作'
+                title: '操作',
+                formatter: function (value, row, index) {
+                    let res = "";
+                    switch (value) {
+                        case "todo":
+                            res = ""+"<a class='btn btn-sm btn-success'>开始执行</a>" +
+                                "<a class='btn btn-sm btn-success'>停止执行</a>";
+                            break;
+                        case "doing":
+                            res = "<span class=\"badge bg-primary\">执行中</span>";
+                            break;
+                        case "done":
+                            res = "<span class=\"badge bg-primary\">已执行</span>";
+                            break;
+
+                    }
+                    return res;
+                }
             }]
     };
     $("#preheatPlanTable").bootstrapTable(settings);

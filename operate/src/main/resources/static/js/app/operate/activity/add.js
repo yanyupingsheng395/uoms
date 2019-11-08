@@ -190,8 +190,6 @@ function saveDailyHead(stage) {
     let msg = "";
     if (operateType === "save") {
         msg = "执行下一步会保存活动信息?";
-    } else {
-        msg = "执行下一步会更新活动信息?";
     }
     if (operate_type === 'save') {
         $MB.confirm( {
@@ -255,6 +253,13 @@ function nextStep(stage) {
     }
     if (flag) {
         step2( stage );
+    }
+
+    if(stage === 'preheat') {
+        $("#stageName").html('').append("编辑预热阶段");
+    }
+    if(stage === 'formal') {
+        $("#stageName").html('').append("编辑正式阶段");
     }
 }
 
@@ -424,7 +429,14 @@ $( "#btn_download" ).click( function () {
 
 // 上一步
 function prevStep() {
-    $( "#operateType" ).val( "update" );
+    let operateType = $( "#operateType" ).val();
+    if (operateType == 'save') {
+        $( "#operateType" ).val( "update" );
+        $("#stageName").html('').append("创建计划");
+    }
+    if (operateType == 'update') {
+        $("#stageName").html('').append("修改计划");
+    }
     step.setActive( 0 );
     $( "#step1" ).attr( "style", "display: block;" );
     $( "#step2" ).attr( "style", "display: none;" );

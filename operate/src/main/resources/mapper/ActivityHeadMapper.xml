@@ -71,7 +71,7 @@
     <update id="updateActiveHead">
         update UO_OP_ACTIVITY_HEADER set
         ACTIVITY_NAME = #{activityName},
-        HAS_PREHEAT = #{activityStage},
+        HAS_PREHEAT = #{hasPreheat},
         PREHEAT_STATUS = #{preheatStatus},
         PREHEAT_START_DT = to_date(#{preheatStartDt}, 'yyyy-mm-dd'),
         PREHEAT_END_DT = to_date(#{preheatEndDt}, 'yyyy-mm-dd'),
