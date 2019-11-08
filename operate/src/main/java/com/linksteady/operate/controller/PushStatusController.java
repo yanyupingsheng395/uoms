@@ -1,11 +1,14 @@
 package com.linksteady.operate.controller;
 
 import com.google.common.collect.Maps;
+import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.domain.DailyProperties;
+import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.service.DailyPropertiesService;
+import com.linksteady.operate.service.PushListService;
 import com.linksteady.operate.service.PushLogService;
 import com.linksteady.operate.thread.MonitorThread;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,9 @@ public class PushStatusController {
 
     @Autowired
     private PushLogService pushLogService;
+
+    @Autowired
+    private PushListService pushListService;
 
     /**
      * 关闭推送服务
@@ -109,5 +115,17 @@ public class PushStatusController {
         map.put("lastPurgeDate",null==monitorThread.getLastPurgeDate()?"":monitorThread.getLastPurgeDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         return ResponseBo.okWithData("",map);
+    }
+
+    @GetMapping("/getPushInfoListPage")
+    public ResponseBo getPushInfoListPage(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        String sourceCode = request.getParam().get("sourceCode");
+        String pushStatus = request.getParam().get("pushStatus");
+        String pushDateStr = request.getParam().get("pushDateStr");
+        List<PushListInfo> dataList = pushListService.getPushInfoListPage(start, end, sourceCode, pushStatus, pushDateStr);
+        int count = pushListService.getTotalCount(sourceCode, pushStatus, pushDateStr);
+        return ResponseBo.okOverPaging(null, count, dataList);
     }
 }

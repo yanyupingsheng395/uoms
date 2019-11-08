@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet"  data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <style>
+        .form-horizontal .radio-inline {
+            padding-top:0px; !important;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<!--<div data-th-include="common/common"></div>-->
+<!--<div class="lyear-layout-web">-->
+    <!--<div class="lyear-layout-container">-->
+        <!--&lt;!&ndash; 左侧导航 &ndash;&gt;-->
+        <!--<div data-th-include="common/aside"></div>-->
+        <!--&lt;!&ndash; 头部信息 &ndash;&gt;-->
+        <!--<div data-th-include="common/header"></div>-->
+        <!--&lt;!&ndash; 页面主要内容 &ndash;&gt;-->
+        <!---->
+    <!--</div>-->
+<!--</div>-->
+
+<main class="lyear-layout-content">
+    <div class="container-div ui-layout-center">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <div class="col-md-12">
+                    <div class="row">
+                        <h5 class="modal-title pull-left" style="margin-top: 20px;">配置概览</h5>
+                    </div>
+                    <div class="row">
+                        <hr class="hr"/>
+                    </div>
+                </div>
+
+                <form class="form-horizontal" id="config-form" action="" onsubmit="return false;">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">是否开启了推送</label>
+                        <div class="col-md-4">
+                            <label class="lyear-switch switch-solid switch-primary">
+                                <input type="checkbox" checked="" id="pushFlag" name="pushFlag" disabled="true">
+                                <span></span>
+                            </label>
+                            <small class="help-block"></small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">开启推送异常预警</label>
+                        <div class="col-md-4">
+                            <label class="lyear-switch switch-solid switch-primary">
+                                <input type="checkbox" checked="" id="openAlert" disabled="true">
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="alertPhone">推送异常预警手机号</label>
+                        <div class="col-md-4">
+                            <input class="form-control" id="alertPhone" name="alertPhone" readonly>
+                            <small class="help-block">多个手机号之间用逗号分隔！</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="repeatPushDays">已设置的避免重复推送的天数</label>
+                        <div class="col-md-4">
+                            <input class="form-control" id="repeatPushDays" name="repeatPushDays" readonly>
+                            <small class="help-block">此配置在开启防重复推送后生效，在设置的天数内，对同一用户的重复推送将会被忽略！</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">当前使用的触达方式</label>
+                        <div class="controls-box col-md-4">
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="pushType" value="SMS" checked disabled><span>短信</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="pushType" value="WX" disabled><span>公众号消息</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="pushType" value="NONE" disabled><span>自行触达</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">当前使用的推送方法</label>
+                        <div class="controls-box col-md-4">
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="pushMethod" value="AI" checked disabled><span>智能推送</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="pushMethod" value="IMME" disabled><span>立即推送</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="statsDays">效果统计的天数</label>
+                        <div class="col-md-4">
+                            <input class="form-control" id="statsDays" name="statsDays" readonly>
+                            <small class="help-block">进行效果统计的有效天数！</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="smsLengthLimit">短信长度限制(单位:字)</label>
+                        <div class="col-md-4">
+                            <input class="form-control" id="smsLengthLimit" name="smsLengthLimit" readonly>
+                            <small class="help-block"></small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="productUrl">商品明细页链接格式</label>
+                        <div class="col-md-4">
+                            <input class="form-control" id="productUrl" name="productUrl" readonly>
+                            <small class="help-block"></small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">短链是否进行唤醒转跳</label>
+                        <div class="col-md-4">
+                            <label class="lyear-switch switch-solid switch-primary">
+                                <input type="checkbox" checked="" id="isAliApp" disabled>
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">短链是否使用样例链接(测试)</label>
+                        <div class="col-md-4">
+                            <label class="lyear-switch switch-solid switch-primary">
+                                <input type="checkbox" checked="" id="isTestEnv" disabled>
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="smsLengthLimit">样例短链</label>
+                        <div class="col-md-4">
+                            <input class="form-control" id="demoShortUrl" name="demoShortUrl" readonly>
+                            <small class="help-block"></small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="smsLengthLimit">商品短名称最大长度</label>
+                        <div class="col-md-4">
+                            <input class="form-control" id="prodNameLen" name="prodNameLen" readonly>
+                            <small class="help-block"></small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="smsLengthLimit">短链长度</label>
+                        <div class="col-md-4">
+                            <input class="form-control" id="shortUrlLen" name="shortUrlLen" readonly>
+                            <small class="help-block"></small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-9 col-md-offset-3">
+                            <button class="btn btn-primary" type="submit" id="refresh">刷新</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<script data-th-src="@{/js/common/jquery.min.js}"></script>
+<script data-th-src="@{/js/common/bootstrap.min.js}"></script>
+<script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
+<script data-th-src="@{/js/common/lightyear.js}"></script>
+<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<script data-th-src="@{/js/app/operate/config/dailyConfigView.js}"></script>
+</body>
+</html>

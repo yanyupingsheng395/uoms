@@ -12,6 +12,13 @@
         <result column="ALERT_PHONE" jdbcType="VARCHAR" property="alertPhone"></result>
         <result column="PUSH_METHOD" jdbcType="VARCHAR" property="pushMethod"></result>
         <result column="SMS_LENGTH_LIMIT" jdbcType="DECIMAL" property="smsLengthLimit"></result>
+
+        <result column="PRODUCTURL" jdbcType="VARCHAR" property="productUrl"></result>
+        <result column="ISALIAPP" jdbcType="VARCHAR" property="isAliApp"></result>
+        <result column="ISTESTENV" jdbcType="VARCHAR" property="isTestEnv"></result>
+        <result column="DEMOSHORTURL" jdbcType="VARCHAR" property="demoShortUrl"></result>
+        <result column="PROD_NAME_LEN" jdbcType="DECIMAL" property="prodNameLen"></result>
+        <result column="SHORT_URL_LEN" jdbcType="DECIMAL" property="shortUrlLen"></result>
     </resultMap>
 
     <select id="getDailyProperties" resultMap="baseResult">
@@ -23,22 +30,21 @@
             open_elart,
             alert_phone,
             push_method,
-            sms_length_limit
+            sms_length_limit,
+            PRODUCTURL,
+            ISALIAPP,
+            ISTESTENV,
+            DEMOSHORTURL,
+            PROD_NAME_LEN,
+            SHORT_URL_LEN
         from uo_op_daily_config where rownum=1
     </select>
-
+    <!--只允许更新2个字段 -->
     <update id="updateProperties">
         update uo_op_daily_config
         set
-            repeatpushdays=#{repeatPushDays},
             push_flag=#{pushFlag},
-            statsdays=#{statsDays},
-            push_type=#{pushType},
-            open_elart=#{openAlert},
-
             alert_phone=#{alertPhone},
-            push_method=#{pushMethod},
-            sms_length_limit=#{smsLengthLimit},
             last_update_by=#{currentUser},
             last_update_date=sysdate
     </update>

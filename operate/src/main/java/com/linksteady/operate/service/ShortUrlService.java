@@ -1,5 +1,8 @@
 package com.linksteady.operate.service;
 
+/**
+ * 生成短链接的服务
+ */
 public interface ShortUrlService {
 
     /**
