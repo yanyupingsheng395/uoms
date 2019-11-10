@@ -126,9 +126,6 @@ public class ActivityController {
                         case "参活":
                             attr = "1";
                             break;
-                        case "正常":
-                            attr = "2";
-                            break;
                             default: attr = "";
                     }
                     activityProduct.setProductAttr(attr);
@@ -205,6 +202,11 @@ public class ActivityController {
     @PostMapping("/saveActivityProduct")
     public ResponseBo saveActivityProduct(ActivityProduct activityProduct, String headId) {
         activityProduct.setHeadId(Long.valueOf(headId));
+        double minPrice = activityProduct.getMinPrice();
+        double formalPrice = activityProduct.getFormalPrice();
+        double activityIntensity = minPrice/formalPrice * 100;
+        activityIntensity = Double.valueOf(String.format("%.2f", activityIntensity));
+        activityProduct.setActivityIntensity(activityIntensity);
         activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId()));
         activityProductService.saveActivityProduct(activityProduct);
         return ResponseBo.ok();

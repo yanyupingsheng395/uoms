@@ -12,7 +12,9 @@ init_date_end( 'formalStartDt', 'formalEndDt', 'yyyy-mm-dd', 0, 2, 0 );
 var date = new Date();
 date.setDate(date.getDate() + 1);
 $("#preheatStartDt").datepicker('setStartDate', date);
+$("#preheatEndDt").datepicker('setStartDate', date);
 $("#formalStartDt").datepicker('setStartDate', date);
+$("#formalEndDt").datepicker('setStartDate', date);
 
 $( function () {
     validateRule();
@@ -191,7 +193,7 @@ function saveDailyHead(stage) {
     if (operateType === "save") {
         msg = "执行下一步会保存活动信息?";
     }
-    if (operate_type === 'save') {
+    if (operateType === 'save') {
         $MB.confirm( {
             title: "<i class='mdi mdi-alert-circle-outline'></i>提示：",
             content: msg
@@ -323,10 +325,13 @@ function getProductInfo(stage) {
                 }
             }, {
                 field: 'productUrl',
-                title: '商品链接'
+                title: '商品链接',
+                formatter: function (value, row, index) {
+                    return "<a style='color: #409eff;cursor:pointer;text-decoration: underline;' href='"+value+"' target='_blank'>"+value+"</a>";
+                }
             }]
     };
-    $MB.initTable( 'activityProductTable', settings );
+    $("#activityProductTable").bootstrapTable('destroy').bootstrapTable(settings);
 }
 
 // 查询商品信息
@@ -375,7 +380,7 @@ function getUserGroupTable(stage) {
                 }
             }]
     };
-    $("#userGroupTable").bootstrapTable(settings);
+    $("#userGroupTable").bootstrapTable('destroy').bootstrapTable(settings);
     $.get("/activity/getActivityUserGroupList", {headId: $( "#headId" ).val(), stage: stage},function (r) {
         $("#userGroupTable").bootstrapTable('load', r);
         $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupName', rowspan: 4});
@@ -411,7 +416,7 @@ function getUserTable() {
                 title: '模板示例'
             }]
     };
-    $("#userTable").bootstrapTable(settings);
+    $("#userTable").bootstrapTable('destroy').bootstrapTable(settings);
     $.get("/activity/getActivityUserList", {headId: $( "#headId" ).val(), stage: stage},function (r) {
         $("#userTable").bootstrapTable('load', r);
         $("#userTable").bootstrapTable('mergeCells', {index: 0, field: 'groupName', rowspan: 4});
@@ -431,11 +436,21 @@ $( "#btn_download" ).click( function () {
 function prevStep() {
     let operateType = $( "#operateType" ).val();
     if (operateType == 'save') {
-        $( "#operateType" ).val( "update" );
+        $( "#operateType" ).val( "saveAndUpdate" );
         $("#stageName").html('').append("创建计划");
+        // 表单禁用
+        $("input[name='activityName']").attr("disabled", "disabled");
+        $("input[name='hasPreheat']").attr("disabled", "disabled");
+        $("input[name='preheatStartDt']").attr("disabled", "disabled");
+        $("input[name='preheatEndDt']").attr("disabled", "disabled");
+        $("input[name='formalStartDt']").attr("disabled", "disabled");
+        $("input[name='formalEndDt']").attr("disabled", "disabled");
     }
     if (operateType == 'update') {
         $("#stageName").html('').append("修改计划");
+    }
+    if (operateType == 'saveAndUpdate') {
+        $("#stageName").html('').append("创建计划");
     }
     step.setActive( 0 );
     $( "#step1" ).attr( "style", "display: block;" );
@@ -500,7 +515,7 @@ $( "#btn_edit_shop" ).click( function () {
         if (r.code === 200) {
             let data = r.data;
             $( "input[name='id']" ).val( data['id'] );
-            $( "input[name='productId']" ).val( data['productId'] );
+            $( "input[name='productId']" ).val( data['productId'] ).attr("disabled", "disabled");
             $( "input[name='productName']" ).val( data['productName'] );
             $( "input[name='minPrice']" ).val( data['minPrice'] );
             $( "input[name='formalPrice']" ).val( data['formalPrice'] );
@@ -614,6 +629,10 @@ $("#template-add-btn").click(function () {
 
 // 提交计划
 function submitActivity() {
+    if(!$("#push_ok").is(":checked")) {
+        $MB.n_warning("请在\"推送预览\"面板对待推送的样例文案先进行预览确认。");
+        return;
+    }
     let headId = $("#headId").val();
     let stage = $("#activity_stage").val();
 
@@ -669,13 +688,4 @@ $("#btn_delete_shop").click(function () {
             }
         });
     });
-});
-
-$("#push_ok").change(function () {
-    let flag = $(this).is(':checked');
-    if(flag) {
-        $("#submitBtn").removeAttr("disabled");
-    }else {
-        $("#submitBtn").attr("disabled", true);
-    }
 });
