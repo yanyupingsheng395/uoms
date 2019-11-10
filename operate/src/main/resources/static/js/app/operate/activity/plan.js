@@ -61,7 +61,7 @@ function getPlanTable() {
                     let status = row['planStatus'];
                     switch (status) {
                         case "0":
-                            res = "<a class='btn btn-sm btn-info' onclick='getUserGroupTable(\""+row['planDateWid']+"\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
+                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
                                 "&nbsp;<a class='btn btn-sm btn-success'><i class='fa fa-play'></i>&nbsp;开始执行</a>" +
                                 "&nbsp;<a class='btn btn-sm btn-danger'><i class='fa fa-stop'></i>&nbsp;停止执行</a>";
                             break;
@@ -105,6 +105,13 @@ function getPlanTable() {
         }
     });
 }
+
+// 推送预览
+function viewPush(planDtWid) {
+    getUserGroupTable(planDtWid);
+    getUserDetail(planDtWid);
+    $("#view_push_modal").modal('show');
+}
 // 获取用户群组列表
 function getUserGroupTable(planDtWid) {
     var settings = {
@@ -139,25 +146,10 @@ function getUserGroupTable(planDtWid) {
                 title: '人数（人）',
                 valign: "middle",
                 align: 'center'
-            }, {
-                field: 'smsTemplateContent',
-                title: '选择模板',
-                align: "center",
-                formatter: function(value, row, index) {
-                    if(row['groupName'] === '总计') {
-                        return "-";
-                    }
-                    // 没有配置模板信息是图标，否则是短信内容的截取串
-                    if(value === '' || value === null) {
-                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="尚未配置消息模板！" style="color:grey;"><i class="fa fa-envelope"></i></a>';
-                    }else {
-                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="'+value+'" style="color: #409eff;"><i class="fa fa-envelope"></i></a>';
-                    }
-                }
             }]
     };
     $("#userGroupTable").bootstrapTable(settings);
-    $.get("/activity/getActivityUserGroupList", {headId: $( "#headId" ).val(), planDtWid: planDtWid},function (r) {
+    $.get("/activity/getUserGroupList", {headId: headId, planDtWid: planDtWid},function (r) {
         $("#userGroupTable").bootstrapTable('load', r);
         $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupName', rowspan: 4});
         $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'groupName', rowspan: 4});
@@ -169,5 +161,50 @@ function getUserGroupTable(planDtWid) {
         $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'growthUserCnt', rowspan: 3});
         $("a[data-toggle='tooltip']").tooltip();
     });
-    $("#view_push_modal").modal('show');
+}
+
+function getUserDetail(planDtWid){
+    let settings = {
+        url: "",
+        cache: false,
+        pagination: true,
+        singleSelect: true,
+        sidePagination: "server",
+        pageNumber: 1,            //初始化加载第一页，默认第一页
+        pageSize: 10,            //每页的记录行数（*）
+        pageList: [10, 25, 50, 100],
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,  ////页面大小
+                pageNum: (params.offset / params.limit) + 1,  //页码
+                param: {name: $("#name").val(), date: $("#date").val(), status: $("#status").val()}
+            };
+        },
+        columns: [{
+            field: 'preheatStartDt',
+            title: '商品名称'
+        }, {
+            field: 'preheatEndDt',
+            title: '商品ID'
+        },{
+            field: 'formalStartDt',
+            title: '用户ID'
+        }, {
+            field: 'formalEndDt',
+            title: '成长节点与活动期'
+        }, {
+            field: 'formalEndDt',
+            title: '用户与商品关系'
+        }, {
+            field: 'formalEndDt',
+            title: '活跃度'
+        }, {
+            field: 'formalEndDt',
+            title: '用户价值'
+        }, {
+            field: 'formalEndDt',
+            title: '推送内容'
+        }]
+    };
+    $MB.initTable('userDetailTable', settings);
 }

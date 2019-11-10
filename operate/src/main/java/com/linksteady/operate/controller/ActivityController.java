@@ -410,8 +410,8 @@ public class ActivityController {
         return ResponseBo.okWithData(null, activityHeadService.getDataChangedStatus(headId, stage));
     }
 
-    @GetMapping("/getActivityUserGroupList")
-    public List<ActivitySummary> getActivitySummary(@RequestParam String headId, @RequestParam String planDtWid) {
+    @GetMapping("/getUserGroupList")
+    public List<ActivitySummary> getUserGroupList(@RequestParam String headId, @RequestParam String planDtWid) {
         List<ActivitySummary> activitySummaryList = activitySummaryService.getUserGroupList(headId, planDtWid);
         ActivitySummary activitySummary = new ActivitySummary();
         activitySummary.setGroupName("总计");
