@@ -20,24 +20,36 @@ function getPlanTable() {
             },
             {
                 field: 'planDateWid',
-                title: '日期'
+                title: '日期',
+                align: 'center',
+                valign: 'middle'
             }, {
                 field: 'userCnt',
-                title: '计划人数'
+                title: '计划人数',
+                align: 'center',
+                valign: 'middle'
             }, {
                 field: 'planStatus',
                 title: '状态',
+                align: 'center',
+                valign: 'middle',
                 formatter: function (value, row, index) {
                     let res = "";
                     switch (value) {
-                        case "todo":
-                            res = "<span class=\"badge bg-primary\">待执行</span>";
+                        case "0":
+                            res = "<span class=\"badge bg-primary\">尚未计算</span>";
                             break;
-                        case "doing":
-                            res = "<span class=\"badge bg-primary\">执行中</span>";
+                        case "1":
+                            res = "<span class=\"badge bg-success\">待执行</span>";
                             break;
-                        case "done":
-                            res = "<span class=\"badge bg-primary\">已执行</span>";
+                        case "2":
+                            res = "<span class=\"badge bg-warning\">执行中</span>";
+                            break;
+                        case "3":
+                            res = "<span class=\"badge bg-info\">执行完</span>";
+                            break;
+                        case "4":
+                            res = "<span class=\"badge bg-danger\">已停止</span>";
                             break;
 
                     }
@@ -45,18 +57,36 @@ function getPlanTable() {
                 }
             }, {
                 title: '操作',
+                align: 'center',
+                valign: 'middle',
                 formatter: function (value, row, index) {
-                    let res = "";
-                    switch (value) {
-                        case "todo":
-                            res = ""+"<a class='btn btn-sm btn-success'>开始执行</a>" +
+                    let res = "-";
+                    let status = row['planStatus'];
+                    switch (status) {
+                        case "0":
+                            res = "<a class='btn btn-sm btn-info'>查看推送</a>" +
+                                "&nbsp;<a class='btn btn-sm btn-success'>开始执行</a>" +
+                                "&nbsp;<a class='btn btn-sm btn-danger'>停止执行</a>";
+                            break;
+                        case "1":
+                            res = "<a class='btn btn-sm btn-success'>查看推送</a>" +
+                                "<a class='btn btn-sm btn-success'>开始执行</a>" +
                                 "<a class='btn btn-sm btn-success'>停止执行</a>";
                             break;
-                        case "doing":
-                            res = "<span class=\"badge bg-primary\">执行中</span>";
+                        case "2":
+                            res = "<a class='btn btn-sm btn-success'>查看推送</a>" +
+                                "<a class='btn btn-sm btn-success'>开始执行</a>" +
+                                "<a class='btn btn-sm btn-success'>停止执行</a>";
                             break;
-                        case "done":
-                            res = "<span class=\"badge bg-primary\">已执行</span>";
+                        case "3":
+                            res = "<a class='btn btn-sm btn-success'>查看推送</a>" +
+                                "<a class='btn btn-sm btn-success'>开始执行</a>" +
+                                "<a class='btn btn-sm btn-success'>停止执行</a>";
+                            break;
+                        case "4":
+                            res = "<a class='btn btn-sm btn-success'>查看推送</a>" +
+                                "<a class='btn btn-sm btn-success'>开始执行</a>" +
+                                "<a class='btn btn-sm btn-success'>停止执行</a>";
                             break;
 
                     }

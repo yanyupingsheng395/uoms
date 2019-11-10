@@ -56,20 +56,20 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         LocalDate formalStart = dateToLocalDate(formalStartDt);
         LocalDate formalEnd = dateToLocalDate(formalEndDt);
         while(formalStart.isBefore(formalEnd)) {
-            planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(formalStart), "todo", "formal",Long.parseLong(formatters.format(formalStart))));
+            planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(formalStart), "0", "formal",Long.parseLong(formatters.format(formalStart))));
             formalStart = formalStart.plusDays(1);
         }
-        planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(formalEnd), "todo", "formal",Long.parseLong(formatters.format(formalEnd))));
+        planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(formalEnd), "0", "formal",Long.parseLong(formatters.format(formalEnd))));
 
         // 包含预热
         if("1".equalsIgnoreCase(hasPreheat)) {
             LocalDate start = dateToLocalDate(preheatStartDt);
             LocalDate end = dateToLocalDate(preheatEndDt);
             while(start.isBefore(end)) {
-                planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(start), "todo", "preheat",Long.parseLong(formatters.format(start))));
+                planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(start), "0", "preheat",Long.parseLong(formatters.format(start))));
                 start = start.plusDays(1);
             }
-            planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(end), "todo", "preheat",Long.parseLong(formatters.format(end))));
+            planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(end), "0", "preheat",Long.parseLong(formatters.format(end))));
         }
         activityPlanMapper.savePlanList(planList);
     }
