@@ -51,6 +51,10 @@ public class ActivityController {
     @Autowired
     ActivityThriftClient activityThriftClient;
 
+    @Autowired
+    ActivitySummaryService activitySummaryService;
+
+
     /**
      * 获取头表的分页数据
      */
@@ -406,4 +410,13 @@ public class ActivityController {
         return ResponseBo.okWithData(null, activityHeadService.getDataChangedStatus(headId, stage));
     }
 
+    @GetMapping("/getActivityUserGroupList")
+    public List<ActivitySummary> getActivitySummary(@RequestParam String headId, @RequestParam String planDtWid) {
+        List<ActivitySummary> activitySummaryList = activitySummaryService.getUserGroupList(headId, planDtWid);
+        ActivitySummary activitySummary = new ActivitySummary();
+        activitySummary.setGroupName("总计");
+        activitySummary.setGroupUserCnt(0L);
+        activitySummaryList.add(activitySummary);
+        return activitySummaryList;
+    }
 }

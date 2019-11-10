@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.ActivityPlanMapper">
     <resultMap id="planMap" type="com.linksteady.operate.domain.ActivityPlan">
+        <result property="planId" column="PLAN_ID" jdbcType="DECIMAL"></result>
         <result property="headId" column="HEAD_ID" jdbcType="DECIMAL"></result>
         <result property="userCnt" column="USER_CNT" jdbcType="DECIMAL"></result>
         <result property="planDate" column="PLAN_DATE" jdbcType="DATE"></result>
@@ -14,14 +15,14 @@
     <insert id="savePlanList">
         insert all
         <foreach collection="list" separator="" open="" close="" item="item">
-            into UO_OP_ACTIVITY_PLAN(HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID)
-            values (#{item.headId}, #{item.userCnt}, #{item.planDate}, #{item.planStatus}, #{item.stage}, #{item.planDateWid})
+            into UO_OP_ACTIVITY_PLAN(PLAN_ID, HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID)
+            values (SEQ_ACTIVITY_PLAN_ID.nextval,#{item.headId}, #{item.userCnt}, #{item.planDate}, #{item.planStatus}, #{item.stage}, #{item.planDateWid})
         </foreach>
         select 1 from dual
     </insert>
 
     <select id="getPlanList" resultMap="planMap">
-        select ACTIVITY_NAME, UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_STATUS from UO_OP_ACTIVITY_PLAN
+        select PLAN_ID, ACTIVITY_NAME, UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_STATUS from UO_OP_ACTIVITY_PLAN
                                                                                                                                              left join UO_OP_ACTIVITY_HEADER on UO_OP_ACTIVITY_PLAN.HEAD_ID = UO_OP_ACTIVITY_HEADER.HEAD_ID
         where UO_OP_ACTIVITY_PLAN.HEAD_ID = #{headId} order by PLAN_DATE asc
     </select>

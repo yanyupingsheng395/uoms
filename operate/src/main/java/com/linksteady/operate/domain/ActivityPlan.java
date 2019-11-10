@@ -11,6 +11,8 @@ import java.util.Date;
 @Data
 public class ActivityPlan {
 
+    private Long planId;
+
     private Long headId;
 
     private Long userCnt;
