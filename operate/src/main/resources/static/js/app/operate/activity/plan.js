@@ -60,32 +60,23 @@ function getPlanTable() {
                     let res = "-";
                     let status = row['planStatus'];
                     switch (status) {
-                        case "0":
+                        case "0":// 尚未计算
+                            res = "-";
+                            break;
+                        case "1": // 待执行
                             res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-success'><i class='fa fa-play'></i>&nbsp;开始执行</a>" +
+                                "&nbsp;<a class='btn btn-sm btn-success'><i class='fa fa-play'></i>&nbsp;开始执行</a>";
+                            break;
+                        case "2":// 执行中
+                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\"><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
                                 "&nbsp;<a class='btn btn-sm btn-danger'><i class='fa fa-stop'></i>&nbsp;停止执行</a>";
                             break;
-                        case "1":
-                            res = "<a class='btn btn-sm btn-info'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-success'><i class='fa fa-play'></i>&nbsp;开始执行</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-danger'><i class='fa fa-stop'></i>&nbsp;停止执行</a>";
+                        case "3":// 执行完
+                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\"><i class='fa fa-eye'></i>&nbsp;预览推送</a>";
                             break;
-                        case "2":
-                            res = "<a class='btn btn-sm btn-info'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-success'><i class='fa fa-play'></i>&nbsp;开始执行</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-danger'><i class='fa fa-stop'></i>&nbsp;停止执行</a>";
+                        case "4":// 已停止
+                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\"><i class='fa fa-eye'></i>&nbsp;预览推送</a>";
                             break;
-                        case "3":
-                            res = "<a class='btn btn-sm btn-info'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-success'><i class='fa fa-play'></i>&nbsp;开始执行</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-danger'><i class='fa fa-stop'></i>&nbsp;停止执行</a>";
-                            break;
-                        case "4":
-                            res = "<a class='btn btn-sm btn-info'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-success'><i class='fa fa-play'></i>&nbsp;开始执行</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-danger'><i class='fa fa-stop'></i>&nbsp;停止执行</a>";
-                            break;
-
                     }
                     return res;
                 }
