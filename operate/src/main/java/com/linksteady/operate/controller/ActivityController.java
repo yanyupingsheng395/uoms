@@ -293,10 +293,6 @@ public class ActivityController {
     @GetMapping("/getActivityUserGroupList")
     public List<ActivityGroup> getActivityUserGroupPage(@RequestParam String headId, @RequestParam String stage) {
         List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupList(headId, stage);
-//        ActivityGroup activityGroup = new ActivityGroup();
-//        activityGroup.setGroupName("总计");
-//        activityGroup.setGroupUserCnt(0L);
-//        activityGroups.add(activityGroup);
         return activityGroups;
     }
 
@@ -322,8 +318,8 @@ public class ActivityController {
     }
 
     @GetMapping("/updateGroupTemplate")
-    public ResponseBo updateGroupTemplate(@RequestParam String groupId, @RequestParam String code) {
-        activityUserGroupService.updateGroupTemplate(groupId, code);
+    public ResponseBo updateGroupTemplate(@RequestParam String headId,@RequestParam String groupId, @RequestParam String code, @RequestParam String stage) {
+        activityUserGroupService.updateGroupTemplate(headId, groupId, code, stage);
         return ResponseBo.ok();
     }
 

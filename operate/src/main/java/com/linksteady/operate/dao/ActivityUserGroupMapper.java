@@ -16,7 +16,7 @@ public interface ActivityUserGroupMapper {
 
     List<ActivityGroup> getUserGroupList(String headId, String stage);
 
-    void updateGroupTemplate(String groupId, String code);
+    void updateGroupTemplate(String headId, String groupId, String code, String stage);
 
     void saveGroupData(List<ActivityGroup> dataList);
 

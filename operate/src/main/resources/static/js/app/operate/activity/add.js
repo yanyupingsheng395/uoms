@@ -615,10 +615,12 @@ $("#template-add-btn").click(function () {
         return;
     }
     var templateCode = selected[0].code;
-    $.get("/activity/updateGroupTemplate", {groupId: groupId, code: templateCode}, function (r) {
+    $.get("/activity/updateGroupTemplate", {
+            groupId: groupId, code: templateCode, headId: $("#headId").val(), stage: $("#activity_stage").val()
+        }, function (r) {
         if(r.code === 200) {
             $MB.n_success("更新消息模板成功！");
-            $("#userGroupTable").bootstrapTable('destroy');
+            // $("#userGroupTable").bootstrapTable('destroy');
             getUserGroupTable($('#activity_stage').val());
             $MB.closeAndRestModal('smsTemplateModal');
         }else {

@@ -39,7 +39,7 @@
 
     <update id="updateGroupTemplate">
         update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{code}
-        where GROUP_ID = #{groupId}
+        where head_id = #{headId} and GROUP_ID = #{groupId} and ACTIVITY_STAGE = #{stage}
     </update>
 
     <insert id="saveGroupData">

@@ -37,8 +37,8 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     }
 
     @Override
-    public void updateGroupTemplate(String groupId, String code) {
-        activityUserGroupMapper.updateGroupTemplate(groupId, code);
+    public void updateGroupTemplate(String headId, String groupId, String code, String stage) {
+        activityUserGroupMapper.updateGroupTemplate(headId, groupId, code, stage);
     }
 
     @Override
