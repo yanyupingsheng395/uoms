@@ -259,7 +259,7 @@
     </select>
 
     <select id="getDailyPersonalEffectCount" resultType="int" parameterType="com.linksteady.operate.vo.DailyPersonalVo">
-        select count(1) from UO_OP_DAILY_CONVERT_DETAIL where DAILY_HEADER_ID = #{headId}
+        select count(1) from UO_OP_DAILY_CONVERT_DETAIL where DAILY_HEADER_ID = #{headId} and is_conversion = 1
         <if test="dailyPersonalVo.spuIsConvert != null and dailyPersonalVo.spuIsConvert != ''">
             and SPU_CONSISTENT = #{dailyPersonalVo.spuIsConvert}
         </if>
