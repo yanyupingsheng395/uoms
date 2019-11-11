@@ -89,8 +89,8 @@ function getPlanTable() {
             if(r.data['preheat'] !== undefined || Object.keys(r.data).length === 0) {
                 $("#preheatDiv").attr("style", "display:block");
             }
-            $("#preheatPlanTable").bootstrapTable('load', r.data['preheat']);
             $("#formalPlanTable").bootstrapTable('load', r.data['formal']);
+            // $("#preheatPlanTable").bootstrapTable('load', r.data['preheat']);
         }else {
             $MB.n_danger("获取计划数据异常！");
         }

@@ -44,7 +44,11 @@ function getChartOption(xdata, yData1, yData2, yName1, yName2, title) {
                 }
             }
         },
-        grid: {top: '10%'},
+        legend: {
+            data: ['转化人数(人)', '转化率(%)'],
+            align: 'right',
+            right: 10
+        },
         title: {
             text: title,
             x: 'center',
@@ -75,9 +79,6 @@ function getChartOption(xdata, yData1, yData2, yName1, yName2, title) {
             {
                 type: 'value',
                 name: yName1,
-                min: 0,
-                max: 250,
-                interval: 50,
                 splitLine: {show: false},
                 axisTick: {show: false},
                 splitArea: {show: false},
@@ -85,9 +86,6 @@ function getChartOption(xdata, yData1, yData2, yName1, yName2, title) {
             {
                 type: 'value',
                 name: yName2,
-                min: 0,
-                max: 25,
-                interval: 5,
                 splitLine: {show: false},
                 axisTick: {show: false},
                 splitArea: {show: false}
