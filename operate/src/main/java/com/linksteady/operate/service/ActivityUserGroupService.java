@@ -21,4 +21,6 @@ public interface ActivityUserGroupService {
     List<ActivityGroup> getActivityUserList(String headId, String stage);
 
     int validGroupTemplate(String headId, String stage);
+
+    void saveGroupData(String toString, String hasPreheat);
 }

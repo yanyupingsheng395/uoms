@@ -1,11 +1,14 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
+import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.dao.ActivityPlanMapper;
+import com.linksteady.operate.dao.ActivitySummaryMapper;
 import com.linksteady.operate.dao.ActivityUserGroupMapper;
 import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.domain.ActivityPlan;
+import com.linksteady.operate.domain.ActivitySummary;
 import com.linksteady.operate.service.ActivityPlanService;
 import com.linksteady.operate.service.ActivityUserGroupService;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author hxcao
@@ -53,38 +57,25 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         // 不包含预热
 
         DateTimeFormatter formatters = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate formalStart = dateToLocalDate(formalStartDt);
-        LocalDate formalEnd = dateToLocalDate(formalEndDt);
+        LocalDate formalStart = DateUtil.dateToLocalDate(formalStartDt);
+        LocalDate formalEnd = DateUtil.dateToLocalDate(formalEndDt);
         while(formalStart.isBefore(formalEnd)) {
-            planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(formalStart), "0", "formal",Long.parseLong(formatters.format(formalStart))));
+            planList.add(new ActivityPlan(Long.valueOf(headId), 0L, DateUtil.localDateToDate(formalStart), "0", "formal",Long.parseLong(formatters.format(formalStart))));
             formalStart = formalStart.plusDays(1);
         }
-        planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(formalEnd), "0", "formal",Long.parseLong(formatters.format(formalEnd))));
+        planList.add(new ActivityPlan(Long.valueOf(headId), 0L, DateUtil.localDateToDate(formalEnd), "0", "formal",Long.parseLong(formatters.format(formalEnd))));
 
         // 包含预热
         if("1".equalsIgnoreCase(hasPreheat)) {
-            LocalDate start = dateToLocalDate(preheatStartDt);
-            LocalDate end = dateToLocalDate(preheatEndDt);
+            LocalDate start = DateUtil.dateToLocalDate(preheatStartDt);
+            LocalDate end = DateUtil.dateToLocalDate(preheatEndDt);
             while(start.isBefore(end)) {
-                planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(start), "0", "preheat",Long.parseLong(formatters.format(start))));
+                planList.add(new ActivityPlan(Long.valueOf(headId), 0L, DateUtil.localDateToDate(start), "0", "preheat",Long.parseLong(formatters.format(start))));
                 start = start.plusDays(1);
             }
-            planList.add(new ActivityPlan(Long.valueOf(headId), 0L, localDateToDate(end), "0", "preheat",Long.parseLong(formatters.format(end))));
+            planList.add(new ActivityPlan(Long.valueOf(headId), 0L, DateUtil.localDateToDate(end), "0", "preheat",Long.parseLong(formatters.format(end))));
         }
         activityPlanMapper.savePlanList(planList);
-    }
-
-
-    private LocalDate dateToLocalDate(Date date){
-        Instant instant = date.toInstant();
-        ZoneId zone = ZoneId.systemDefault();
-        return LocalDateTime.ofInstant(instant, zone).toLocalDate();
-    }
-
-    private Date localDateToDate(LocalDate date){
-        ZoneId zone = ZoneId.systemDefault();
-        Instant instant = date.atStartOfDay().atZone(zone).toInstant();
-        return Date.from(instant);
     }
 
     @Override

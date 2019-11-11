@@ -8,9 +8,7 @@ import javax.swing.text.DateFormatter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.YearMonth;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -488,5 +486,17 @@ public class DateUtil {
     public static String getDateFormat(Date date, String dateFormatType) {
         SimpleDateFormat simformat = new SimpleDateFormat(dateFormatType);
         return simformat.format(date);
+    }
+
+    public static LocalDate dateToLocalDate(Date date){
+        Instant instant = date.toInstant();
+        ZoneId zone = ZoneId.systemDefault();
+        return LocalDateTime.ofInstant(instant, zone).toLocalDate();
+    }
+
+    public static Date localDateToDate(LocalDate date){
+        ZoneId zone = ZoneId.systemDefault();
+        Instant instant = date.atStartOfDay().atZone(zone).toInstant();
+        return Date.from(instant);
     }
 }

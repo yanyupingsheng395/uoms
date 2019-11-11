@@ -2,5 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.ActivityDetailMapper">
 
+    <resultMap id="base" type="com.linksteady.operate.domain.ActivityDetail">
+        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"></result>
+        <result column="REC_PROD_ID" jdbcType="DECIMAL" property="recProdId"></result>
+        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
+        <result column="IN_GROWTH_PATH" jdbcType="DECIMAL" property="inGrowthPath"></result>
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
+        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"></result>
+        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
+    </resultMap>
+    <select id="getPageList" resultMap="base">
+        select * from (
+            select t.*, ROWNUM rn from (
+                select REC_PROD_NAME, USER_VALUE, REC_PROD_ID, USER_ID, GROUP_ID, IN_GROWTH_PATH, PATH_ACTIVE, SMS_CONTENT from UO_OP_ACTIVITY_DETAIL where HEAD_ID = #{headId} and PLAN_DT = #{planDtWid}
+            ) t where ROWNUM &lt;= #{end}
+        ) where RN &gt;= #{start}
+    </select>
 
+    <select id="getDataCount" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_DETAIL where HEAD_ID = #{headId} and PLAN_DT = #{planDtWid}
+    </select>
 </mapper>

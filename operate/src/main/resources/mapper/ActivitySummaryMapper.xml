@@ -21,4 +21,13 @@
         select GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE from UO_OP_ACTIVITY_SUMMARY
             where HEAD_ID = #{headId} and PLAN_DT_WID = #{planDtWid} order by group_id asc
     </select>
+
+    <insert id="saveActivitySummaryList">
+        insert all
+        <foreach collection="list" item="item">
+            into UO_OP_ACTIVITY_SUMMARY(GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, ACTIVITY_STAGE, PLAN_DT_WID)
+            values (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.inGrowthPath, jdbcType = VARCHAR}, #{item.activeLevel, jdbcType=VARCHAR}, #{item.activityStage}, #{item.planDtWid})
+        </foreach>
+        select 1 from dual
+    </insert>
 </mapper>

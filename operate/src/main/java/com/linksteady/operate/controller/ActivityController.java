@@ -54,6 +54,9 @@ public class ActivityController {
     @Autowired
     ActivitySummaryService activitySummaryService;
 
+    @Autowired
+    private ActivityDetailService activityDetailService;
+
 
     /**
      * 获取头表的分页数据
@@ -418,5 +421,16 @@ public class ActivityController {
         activitySummary.setGroupUserCnt(0L);
         activitySummaryList.add(activitySummary);
         return activitySummaryList;
+    }
+
+    @GetMapping("/getDetailPage")
+    public ResponseBo getDetailPage(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        String headId = request.getParam().get("headId");
+        String planDtWid = request.getParam().get("planDtWid");
+        int count = activityDetailService.getDataCount(start, end, headId, planDtWid);
+        List<ActivityDetail>  dataList = activityDetailService.getPageList(start, end, headId, planDtWid);
+        return ResponseBo.okOverPaging(null, count, dataList);
     }
 }

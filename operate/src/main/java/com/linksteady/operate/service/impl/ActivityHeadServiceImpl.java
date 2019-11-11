@@ -1,23 +1,15 @@
 package com.linksteady.operate.service.impl;
 
-import com.google.common.collect.Lists;
 import com.linksteady.operate.dao.ActivityHeadMapper;
-import com.linksteady.operate.dao.ActivityUserGroupMapper;
-import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.domain.ActivityHead;
-import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.ActivityTemplate;
 import com.linksteady.operate.service.ActivityHeadService;
-import org.apache.tomcat.jni.Local;
+import com.linksteady.operate.service.ActivitySummaryService;
+import com.linksteady.operate.service.ActivityUserGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,10 +29,13 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     private ActivityHeadMapper activityHeadMapper;
 
     @Autowired
-    private ActivityUserGroupMapper activityUserGroupMapper;
+    ActivityPlanServiceImpl activityPlanService;
 
     @Autowired
-    ActivityPlanServiceImpl activityPlanService;
+    private ActivityUserGroupService activityUserGroupService;
+
+    @Autowired
+    private ActivitySummaryService activitySummaryService;
 
     @Override
     public List<ActivityHead> getDataListOfPage(int start, int end, String name, String date, String status) {
@@ -60,7 +55,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         if ("1".equalsIgnoreCase(activityHead.getHasPreheat())) {
             activityHead.setPreheatStatus("edit");
         }
-        if("0".equalsIgnoreCase(activityHead.getHasPreheat())) {
+        if ("0".equalsIgnoreCase(activityHead.getHasPreheat())) {
             activityHead.setPreheatStartDt(null);
             activityHead.setPreheatEndDt(null);
         }
@@ -71,10 +66,10 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
             activityHeadMapper.updateActivityFlag(activityHead.getHeadId().toString());
 
             // 保存群组的初始化信息
-            saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
+            activityUserGroupService.saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
 
             // 写入summary群组表
-            // saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
+            activitySummaryService.saveSummaryList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
 
             //写入计划信息
             activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
@@ -93,7 +88,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     public List<ActivityTemplate> getTemplateTableData() {
         return activityHeadMapper.getTemplateTableData();
     }
-
 
 
     @Override
@@ -129,52 +123,4 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     public Map<String, String> getDataChangedStatus(String headId, String stage) {
         return activityHeadMapper.getDataChangedStatus(headId, stage);
     }
-
-    /**
-     * 保存群组的初始化信息
-     * @param headId
-     * @param hasPreheat
-     */
-    @Transactional(rollbackFor = Exception.class)
-    void saveGroupData(String headId, String hasPreheat) {
-        List<ActivityGroup> dataList = Lists.newArrayList();
-
-        dataList.add(new ActivityGroup(1L,Long.valueOf(headId),"成长用户","在","活跃"));
-        dataList.add(new ActivityGroup(2L,Long.valueOf(headId),"成长用户","在","留存"));
-        dataList.add(new ActivityGroup(3L,Long.valueOf(headId),"成长用户","在","流失预警"));
-        dataList.add(new ActivityGroup(4L,Long.valueOf(headId),"成长用户","不在",""));
-
-        dataList.add(new ActivityGroup(5L,Long.valueOf(headId),"潜在用户","在","活跃"));
-        dataList.add(new ActivityGroup(6L,Long.valueOf(headId),"潜在用户","在","留存"));
-        dataList.add(new ActivityGroup(7L,Long.valueOf(headId),"潜在用户","在","流失预警"));
-
-        dataList.add(new ActivityGroup(8L,Long.valueOf(headId),"潜在用户","不在",""));
-
-        //预售
-        List<ActivityGroup> preheatList = Lists.newArrayList();
-        //正式
-        List<ActivityGroup> formalList = Lists.newArrayList();
-        dataList.stream().forEach(x->{
-            try {
-                preheatList.add((ActivityGroup) x.clone());
-                formalList.add((ActivityGroup) x.clone());
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
-        });
-        //正式 设置阶段标记
-        formalList.stream().forEach(x->{
-            x.setActivityStage("formal");
-        });
-        //如果包含预售 再写一份预售的数据
-        if("1".equalsIgnoreCase(hasPreheat)) {
-            preheatList.stream().forEach(x->{
-                x.setActivityStage("preheat");
-            });
-            formalList.addAll(preheatList);
-        }
-        activityUserGroupMapper.saveGroupData(formalList);
-    }
-
-
 }

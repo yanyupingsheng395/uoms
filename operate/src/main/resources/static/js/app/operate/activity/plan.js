@@ -165,7 +165,7 @@ function getUserGroupTable(planDtWid) {
 
 function getUserDetail(planDtWid){
     let settings = {
-        url: "",
+        url: "/activity/getDetailPage",
         cache: false,
         pagination: true,
         singleSelect: true,
@@ -177,32 +177,32 @@ function getUserDetail(planDtWid){
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,  //页码
-                param: {name: $("#name").val(), date: $("#date").val(), status: $("#status").val()}
+                param: {headId: headId, planDtWid: planDtWid}
             };
         },
         columns: [{
-            field: 'preheatStartDt',
+            field: 'recProdName',
             title: '商品名称'
         }, {
-            field: 'preheatEndDt',
+            field: 'recProdId',
             title: '商品ID'
         },{
-            field: 'formalStartDt',
+            field: 'userId',
             title: '用户ID'
         }, {
-            field: 'formalEndDt',
+            field: 'inGrowthPath',
             title: '成长节点与活动期'
         }, {
-            field: 'formalEndDt',
+            field: 'groupId',
             title: '用户与商品关系'
         }, {
-            field: 'formalEndDt',
+            field: 'pathActive',
             title: '活跃度'
         }, {
-            field: 'formalEndDt',
+            field: 'userValue',
             title: '用户价值'
         }, {
-            field: 'formalEndDt',
+            field: 'smsContent',
             title: '推送内容'
         }]
     };
