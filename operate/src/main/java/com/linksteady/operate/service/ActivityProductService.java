@@ -15,14 +15,28 @@ public interface ActivityProductService {
 
     List<ActivityProduct> getActivityProductListPage(int start, int end, String headId, String productId, String productName, String productAttr, String stage);
 
+    /**
+     * 保存活动商品
+     * @param activityProduct
+     */
     void saveActivityProduct(ActivityProduct activityProduct);
 
     ActivityProduct getProductById(String id);
 
     void updateActivityProduct(ActivityProduct activityProduct);
 
+    /**
+     * 保存活动商品列表
+     * @param productList
+     */
     void saveActivityProductList(List<ActivityProduct> productList);
 
+    /**
+     * 删除活动商品
+     * @param headId
+     * @param stage
+     * @param productIds
+     */
     void deleteProduct(String headId, String stage, String productIds);
 
     int validProductNum(String headId, String stage);
@@ -31,6 +45,12 @@ public interface ActivityProductService {
 
     int getSameProductCount(List<ActivityProduct> productList, String headId, String stage);
 
+    /**
+     * 删除重复的活动商品
+     * @param productList
+     * @param headId
+     * @param stage
+     */
     void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage);
 
     /**
@@ -38,4 +58,13 @@ public interface ActivityProductService {
      * @return
      */
     ActivityProduct geFirstProductInfo(String headId, String stage);
+
+    /**
+     * 更新活动映射信息表
+     */
+    void insertActivityProdMapping(String headId, String stage);
+    /**
+     * 删除活动映射信息表
+     */
+    void deleteActivityProdMapping(String headId, String stage);
 }
