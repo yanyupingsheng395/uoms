@@ -70,7 +70,7 @@ public class PushMessageThread {
 
                 //获取所有当前推荐时间段内发送的推送列表
                 int count = pushListService.getPendingPushCount(currHour);
-                log.info("当前时段{},当前选择的触达方式为{}，本批次触达人数:{}", currHour, dailyProperties.getPushType(), count);
+                log.info("当前时段{},当前选择的触达方式为{}，本批次应触达人数:{}", currHour, dailyProperties.getPushType(), count);
                 //被拦截人数
                 int repeatUserCount;
 
