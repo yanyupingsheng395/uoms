@@ -67,7 +67,7 @@ public class DailyProperties {
     /**
      * 模拟短链接的样例链接 (天猫首页)
      */
-    private String demoShortUrl="https://dwz.cn/H91X4EMK";
+    private String demoShortUrl="https://tb.cn.hn/t8n";
 
     /**
      * 短链的长度
