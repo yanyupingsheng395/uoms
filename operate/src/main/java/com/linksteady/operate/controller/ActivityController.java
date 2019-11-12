@@ -121,6 +121,8 @@ public class ActivityController {
                     activityProduct.setActivityStage(stage);
                     activityProduct.setProductId(row.getCell(0).getStringCellValue());
                     activityProduct.setSkuCode(row.getCell(1).getStringCellValue());
+                    //todo 验证产品名称不超过最大长度
+
                     activityProduct.setProductName(row.getCell(2).getStringCellValue());
                     double minPrice = row.getCell(3).getNumericCellValue();
                     double formalPrice = row.getCell(4).getNumericCellValue();
