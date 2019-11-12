@@ -294,6 +294,7 @@ public class DailyController {
             tmp.add(() -> {
                 int start = idx * pageSize + 1;
                 int end = (idx + 1) * pageSize;
+                end = end > count ? count : end;
                 return dailyService.getDailyPersonalEffect(new DailyPersonalVo(), start, end, headId);
             });
         }

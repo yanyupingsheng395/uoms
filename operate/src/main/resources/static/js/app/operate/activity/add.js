@@ -580,16 +580,17 @@ $('#btn_upload').click(function () {
             if(res.code === 200) {
                 $MB.refreshTable('activityProductTable');
                 $MB.n_success(res.msg);
-                $("#btn_upload").attr("style", "display:none;");
-                $("#filename").html('').attr("style", "display:none;");
             }else {
                 $MB.n_danger(res['msg']);
             }
-
             $("#uploadFile").val('');
+            $("#btn_upload").attr("style", "display:none;");
+            $("#filename").html('').attr("style", "display:none;");
         },
         error: function (err) {
             $MB.n_danger("未知错误发生！");
+            $("#btn_upload").attr("style", "display:none;");
+            $("#filename").html('').attr("style", "display:none;");
         }
     });
 });

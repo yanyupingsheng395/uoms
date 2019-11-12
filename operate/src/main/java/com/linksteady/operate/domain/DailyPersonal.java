@@ -17,7 +17,10 @@ public class DailyPersonal implements Serializable {
     @ExportConfig(value = "用户ID")
     private String userId;
 
-    // 是否转化
+    /**
+     * 是否转化
+     * 需要设置默认值：否
+      */
     @ExportConfig(value = "是否转化", convert = "s:1=是,0=否")
     private String isConvert;
 
