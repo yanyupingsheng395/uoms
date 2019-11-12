@@ -2,13 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.ActivityPlanMapper">
     <resultMap id="planMap" type="com.linksteady.operate.domain.ActivityPlan">
-        <result property="headId" column="HEAD_ID" jdbcType="DECIMAL"></result>
-        <result property="userCnt" column="USER_CNT" jdbcType="DECIMAL"></result>
-        <result property="planDate" column="PLAN_DATE" jdbcType="DATE"></result>
-        <result property="planStatus" column="PLAN_STATUS" jdbcType="VARCHAR"></result>
-        <result property="planDateWid" column="PLAN_DATE_WID" jdbcType="DECIMAL"></result>
-        <result property="activityName" column="ACTIVITY_NAME" jdbcType="VARCHAR"></result>
-        <result property="stage" column="ACTIVITY_STAGE" jdbcType="VARCHAR"></result>
+        <result property="headId" column="HEAD_ID" jdbcType="DECIMAL"/>
+        <result property="userCnt" column="USER_CNT" jdbcType="DECIMAL"/>
+        <result property="planDate" column="PLAN_DATE" jdbcType="DATE"/>
+        <result property="planStatus" column="PLAN_STATUS" jdbcType="VARCHAR"/>
+        <result property="planDateWid" column="PLAN_DATE_WID" jdbcType="DECIMAL"/>
+        <result property="activityName" column="ACTIVITY_NAME" jdbcType="VARCHAR"/>
+        <result property="stage" column="ACTIVITY_STAGE" jdbcType="VARCHAR"/>
     </resultMap>
 
     <insert id="savePlanList">

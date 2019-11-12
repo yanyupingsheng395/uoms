@@ -3,14 +3,14 @@
 <mapper namespace="com.linksteady.operate.dao.ActivityDetailMapper">
 
     <resultMap id="base" type="com.linksteady.operate.domain.ActivityDetail">
-        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"></result>
-        <result column="REC_PROD_ID" jdbcType="DECIMAL" property="recProdId"></result>
-        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
-        <result column="IN_GROWTH_PATH" jdbcType="DECIMAL" property="inGrowthPath"></result>
-        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
-        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
-        <result column="USER_ID" jdbcType="DECIMAL" property="userId"></result>
-        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
+        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"/>
+        <result column="REC_PROD_ID" jdbcType="DECIMAL" property="recProdId"/>
+        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"/>
+        <result column="IN_GROWTH_PATH" jdbcType="DECIMAL" property="inGrowthPath"/>
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"/>
+        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"/>
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"/>
+        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"/>
     </resultMap>
     <select id="getPageList" resultMap="base">
         select * from (

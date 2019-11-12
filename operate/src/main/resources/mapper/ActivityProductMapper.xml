@@ -3,17 +3,17 @@
 <mapper namespace="com.linksteady.operate.dao.ActivityProductMapper">
 
     <resultMap id="base" type="com.linksteady.operate.domain.ActivityProduct">
-        <result property="id" jdbcType="DECIMAL" column="ID"></result>
-        <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"></result>
-        <result property="productId" jdbcType="DECIMAL" column="EPB_PRODUCT_ID"></result>
-        <result property="minPrice" jdbcType="DECIMAL" column="MIN_PRICE"></result>
-        <result property="productName" jdbcType="VARCHAR" column="PRODUCT_NAME"></result>
-        <result property="formalPrice" jdbcType="DECIMAL" column="FORMAL_PRICE"></result>
-        <result property="activityIntensity" jdbcType="DECIMAL" column="ACTIVITY_INTENSITY"></result>
-        <result property="productUrl" jdbcType="VARCHAR" column="PRODUCT_URL"></result>
-        <result property="productAttr" jdbcType="VARCHAR" column="PRODUCT_ATTR"></result>
-        <result property="activityStage" jdbcType="VARCHAR" column="ACTIVITY_STAGE"></result>
-        <result property="skuCode" jdbcType="VARCHAR" column="SKU_CODE"></result>
+        <result property="id" jdbcType="DECIMAL" column="ID"/>
+        <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"/>
+        <result property="productId" jdbcType="DECIMAL" column="EPB_PRODUCT_ID"/>
+        <result property="minPrice" jdbcType="DECIMAL" column="MIN_PRICE"/>
+        <result property="productName" jdbcType="VARCHAR" column="PRODUCT_NAME"/>
+        <result property="formalPrice" jdbcType="DECIMAL" column="FORMAL_PRICE"/>
+        <result property="activityIntensity" jdbcType="DECIMAL" column="ACTIVITY_INTENSITY"/>
+        <result property="productUrl" jdbcType="VARCHAR" column="PRODUCT_URL"/>
+        <result property="productAttr" jdbcType="VARCHAR" column="PRODUCT_ATTR"/>
+        <result property="activityStage" jdbcType="VARCHAR" column="ACTIVITY_STAGE"/>
+        <result property="skuCode" jdbcType="VARCHAR" column="SKU_CODE"/>
     </resultMap>
 
     <select id="getActivityProductListPage" resultMap="base">
