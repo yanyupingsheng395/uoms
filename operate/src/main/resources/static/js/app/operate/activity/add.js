@@ -2,7 +2,6 @@ let validator;
 let validatorProduct;
 let $activityAddForm = $( "#activity-add-form" );
 let $activityProductAddForm = $( "#add-product-form" );
-let product_id;
 
 init_date_begin( 'preheatStartDt', 'preheatEndDt', 'yyyy-mm-dd', 0, 2, 0 );
 init_date_end( 'preheatStartDt', 'preheatEndDt', 'yyyy-mm-dd', 0, 2, 0 );
@@ -50,10 +49,26 @@ $( function () {
                         align: 'center'
                     }, {
                         field: 'content',
-                        title: '活动推送内容示例'
+                        title: '活动推送内容示例',
+                        formatter: function(value, row, index) {
+                            if(value != null) {
+                                let temp = value.substring(0, 20) + "&nbsp;...";
+                                return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                            }else {
+                                return '-';
+                            }
+                        }
                     }, {
                         field: 'contentNormal',
-                        title: '常规推送内容示例'
+                        title: '常规推送内容示例',
+                        formatter: function(value, row, index) {
+                            if(value != null) {
+                                let temp = value.substring(0, 20) + "&nbsp;...";
+                                return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                            }else {
+                                return '-';
+                            }
+                        }
                     }]
             };
             $("#userTable").bootstrapTable('destroy').bootstrapTable(settings);
@@ -68,15 +83,14 @@ $( function () {
                     $("#userTable").bootstrapTable('mergeCells', {index: 4, field: 'groupUserCnt', rowspan: 4});
                     $("#userTable").bootstrapTable('mergeCells', {index: 0, field: 'inGrowthPath', rowspan: 3});
                     $("#userTable").bootstrapTable('mergeCells', {index: 4, field: 'inGrowthPath', rowspan: 3});
+                    $("a[data-toggle='tooltip']").tooltip();
                 }else
                 {
                     ex.preventDefault();
                     $MB.loadingDesc('hide');
                     //提示
                     $MB.n_warning(r.msg);
-
                 }
-
             });
         }
     });
@@ -428,6 +442,28 @@ function getUserGroupTable(stage) {
                 align: 'center'
             }, {
                 field: 'smsTemplateContent',
+                title: '活动推送内容',
+                formatter: function (value, row, index) {
+                    if(value != null) {
+                        let temp = value.substring(0, 20) + "&nbsp;...";
+                        return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                    }else {
+                        return '-';
+                    }
+                }
+            }, {
+                field: 'smsTemplateContentNormal',
+                title: '常规推送内容',
+                formatter: function (value, row, index) {
+                    if(value != null) {
+                        let temp = value.substring(0, 20) + "&nbsp;...";
+                        return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                    }else {
+                        return '-';
+                    }
+                }
+            },{
+                field: 'smsTemplateContent',
                 title: '选择模板',
                 align: "center",
                 formatter: function(value, row, index) {
@@ -435,7 +471,7 @@ function getUserGroupTable(stage) {
                     if(value === '' || value === null) {
                         return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="尚未配置消息模板！" style="color:grey;"><i class="fa fa-envelope"></i></a>';
                     }else {
-                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" data-toggle="tooltip" data-html="true" data-original-title="'+value+'" style="color: #409eff;"><i class="fa fa-envelope"></i></a>';
+                        return '<a onclick="getTemplateTable('+row.groupId+')" class="text-center" style="color: #409eff;"><i class="fa fa-envelope"></i></a>';
                     }
                 }
             }]
@@ -608,10 +644,18 @@ function getTemplateTable(groupId) {
                 title: '模板编码'
             }, {
                 field: 'content',
-                title: '活动推送内容模板'
+                title: '活动推送内容模板',
+                formatter: function (value, row, index) {
+                    let temp = value.substring(0, 20) + "&nbsp;...";
+                    return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                }
             }, {
                 field: 'contentNormal',
-                title: '常规推送内容模板'
+                title: '常规推送内容模板',
+                formatter: function (value, row, index) {
+                    let temp = value.substring(0, 20) + "&nbsp;...";
+                    return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                }
             }, {
                 field: 'remark',
                 title: '备注'
@@ -622,6 +666,7 @@ function getTemplateTable(groupId) {
         if(r.code === 200) {
             $("#selectGroupId").val(groupId);
             $("#templateDataTable").bootstrapTable('load', r.data);
+            $("a[data-toggle='tooltip']").tooltip();
             $("#smsTemplateModal").modal('show');
         }else {
             $MB.n_danger("获取模板数据异常！");
