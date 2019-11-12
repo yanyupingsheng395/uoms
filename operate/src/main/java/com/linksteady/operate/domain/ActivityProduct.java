@@ -28,4 +28,6 @@ public class ActivityProduct {
     private String productAttr;
 
     private String activityStage;
+
+    private String skuCode;
 }

@@ -89,8 +89,12 @@ function getPlanTable() {
             if(r.data['preheat'] !== undefined || Object.keys(r.data).length === 0) {
                 $("#preheatDiv").attr("style", "display:block");
             }
-            $("#formalPlanTable").bootstrapTable('load', r.data['formal']);
-            // $("#preheatPlanTable").bootstrapTable('load', r.data['preheat']);
+            if(r.data['formal'] != undefined) {
+                $("#formalPlanTable").bootstrapTable('load', r.data['formal']);
+            }
+            if(r.data['preheat'] != undefined) {
+                $("#preheatPlanTable").bootstrapTable('load', r.data['preheat']);
+            }
         }else {
             $MB.n_danger("获取计划数据异常！");
         }

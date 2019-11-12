@@ -117,6 +117,7 @@ public class ActivityController {
                     activityProduct.setHeadId(Long.valueOf(headId));
                     activityProduct.setActivityStage(stage);
                     activityProduct.setProductId(row.getCell(0).getStringCellValue());
+                    activityProduct.setSkuCode(row.getCell(1).getStringCellValue());
                     activityProduct.setProductName(row.getCell(2).getStringCellValue());
                     double minPrice = row.getCell(3).getNumericCellValue();
                     double formalPrice = row.getCell(4).getNumericCellValue();
@@ -156,12 +157,15 @@ public class ActivityController {
                     return ResponseBo.error("上传的数据为空！");
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("上传excel失败", e);
+                return ResponseBo.error("上传excel失败，请检查");
+            } catch (IllegalStateException ex) {
+                log.error("解析excel失败", ex);
+                return ResponseBo.error("解析excel失败，请检查。最低单价，非活动售价为数值型，其余为字符型。");
             }
         } else {
             return ResponseBo.error("只支持.xls,.xlsx后缀的文件！");
         }
-        return ResponseBo.ok("文件上传成功！");
     }
 
     /**

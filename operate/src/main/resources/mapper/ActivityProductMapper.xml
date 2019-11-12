@@ -13,6 +13,7 @@
         <result property="productUrl" jdbcType="VARCHAR" column="PRODUCT_URL"></result>
         <result property="productAttr" jdbcType="VARCHAR" column="PRODUCT_ATTR"></result>
         <result property="activityStage" jdbcType="VARCHAR" column="ACTIVITY_STAGE"></result>
+        <result property="skuCode" jdbcType="VARCHAR" column="SKU_CODE"></result>
     </resultMap>
 
     <select id="getActivityProductListPage" resultMap="base">
@@ -121,8 +122,8 @@
     <insert id="saveActivityProductList">
         insert all
         <foreach collection="list" item="item">
-            into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_ATTR, ACTIVITY_STAGE, PRODUCT_URL)
-            values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{item.headId}, #{item.productId}, #{item.productName}, #{item.minPrice}, #{item.formalPrice}, #{item.activityIntensity}, #{item.productAttr}, #{item.activityStage}, #{item.productUrl})
+            into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_ATTR, ACTIVITY_STAGE, PRODUCT_URL, SKU_CODE)
+            values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{item.headId}, #{item.productId}, #{item.productName}, #{item.minPrice}, #{item.formalPrice}, #{item.activityIntensity}, #{item.productAttr}, #{item.activityStage}, #{item.productUrl}, #{item.skuCode})
         </foreach>
         select 1 from dual
     </insert>
