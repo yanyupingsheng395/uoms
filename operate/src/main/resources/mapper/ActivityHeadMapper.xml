@@ -74,7 +74,7 @@
 
 
     <select id="getTemplateTableData" resultMap="templateMap">
-        select TMP_CODE, TMP_CONTENT,TMP_CONTENT_NORMAL REMARK from UO_OP_ACTIVITY_TEMPLATE
+        select TMP_CODE, TMP_CONTENT,TMP_CONTENT_NORMAL,REMARK from UO_OP_ACTIVITY_TEMPLATE
     </select>
 
     <select id="getActivityName" resultType="string">

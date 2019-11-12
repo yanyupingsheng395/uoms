@@ -332,11 +332,11 @@ public class ActivityController {
                 vo.setInGrowthPath(group.getInGrowthPath());
                 vo.setActiveLevel(group.getActiveLevel());
 
-                //可替换的变量有 ${PROD_NAME} ${PROD_PRICE} ${PROD_URL}
+                //可替换的变量有 ${PROD_NAME} ${PRICE} ${PROD_URL}
                 if(!StringUtils.isEmpty(group.getSmsTemplateContent()))
                 {
                     String content=group.getSmsTemplateContent().replace("${PROD_NAME}",activityProduct.getProductName())
-                    .replace("${PROD_PRICE}",String.valueOf(activityProduct.getMinPrice()))
+                    .replace("${PRICE}",String.valueOf(activityProduct.getMinPrice()))
                     .replace("${PROD_URL}",activityProduct.getProductUrl());
 
                     vo.setContent(content);
