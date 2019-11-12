@@ -29,7 +29,15 @@ public class ActivityGroup implements Cloneable{
 
     private String smsTemplateCode;
 
+    /**
+     * 活动推送内容
+     */
     private String smsTemplateContent;
+
+    /**
+     * 非活动推送内容
+     */
+    private String smsTemplateContentNormal;
 
     public ActivityGroup() {
     }

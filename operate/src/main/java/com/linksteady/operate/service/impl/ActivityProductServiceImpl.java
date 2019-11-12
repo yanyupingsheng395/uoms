@@ -107,4 +107,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     public void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage) {
         activityProductMapper.deleteRepeatData(productList, headId, stage);
     }
+
+    @Override
+    public ActivityProduct geFirstProductInfo(String headId, String stage) {
+        return activityProductMapper.geFirstProductInfo(headId,stage);
+    }
 }

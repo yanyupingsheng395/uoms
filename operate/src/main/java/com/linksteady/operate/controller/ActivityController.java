@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
@@ -7,6 +8,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.thrift.ActivityThriftClient;
+import com.linksteady.operate.vo.ActivityGroupVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -18,6 +20,7 @@ import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -303,9 +306,57 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/getActivityUserList")
-    public List<ActivityGroup> getActivityUserList(@RequestParam String headId, @RequestParam String stage) {
-        List<ActivityGroup> activityGroups = activityUserGroupService.getActivityUserList(headId, stage);
-        return activityGroups;
+    public ResponseBo getActivityUserList(@RequestParam String headId, @RequestParam String stage) {
+
+        //获取第一个商品信息
+        ActivityProduct activityProduct=activityProductService.geFirstProductInfo(headId,stage);
+
+        if(null==activityProduct)
+        {
+            //返回提示信息
+            return ResponseBo.error("请上传至少一个活动商品,才能预览推送内容示例！");
+        }else {
+            List<ActivityGroupVO> result=Lists.newArrayList();
+            ActivityGroupVO vo;
+
+            //模板填充
+            List<ActivityGroup> activityGroups = activityUserGroupService.getActivityUserList(headId, stage);
+            for(ActivityGroup group:activityGroups)
+            {
+                vo=new ActivityGroupVO();
+                vo.setGroupName(group.getGroupName());
+                vo.setInGrowthPath(group.getInGrowthPath());
+                vo.setActiveLevel(group.getActiveLevel());
+
+                //可替换的变量有 ${PROD_NAME} ${PROD_PRICE} ${PROD_URL}
+                if(!StringUtils.isEmpty(group.getSmsTemplateContent()))
+                {
+                    String content=group.getSmsTemplateContent().replace("${PROD_NAME}",activityProduct.getProductName())
+                    .replace("${PROD_PRICE}",String.valueOf(activityProduct.getMinPrice()))
+                    .replace("${PROD_URL}",activityProduct.getProductUrl());
+
+                    vo.setContent(content);
+                }else
+                {
+                    vo.setContent("");
+                }
+
+                //可替换的变量有 ${PROD_NAME}
+                if(!StringUtils.isEmpty(group.getSmsTemplateContentNormal()))
+                {
+                    String content=group.getSmsTemplateContentNormal().replace("${PROD_NAME}",activityProduct.getProductName());
+                    vo.setContentNormal(content);
+
+                }else
+                {
+                    vo.setContentNormal("");
+                }
+
+                result.add(vo);
+            }
+
+            return ResponseBo.okWithData("",result);
+        }
     }
 
     /**

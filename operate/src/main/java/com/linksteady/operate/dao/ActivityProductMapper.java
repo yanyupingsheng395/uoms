@@ -18,8 +18,6 @@ public interface ActivityProductMapper {
 
     void saveDataList(List<ActivityProduct> productList);
 
-    void insertProductList(String startDate, String endDate, String headId, Long dayPeriod);
-
     void deleteByHeadId(String headId);
 
     void saveActivityProduct(ActivityProduct activityProduct);
@@ -37,4 +35,6 @@ public interface ActivityProductMapper {
     int getSameProductCount(List<ActivityProduct> productList, String headId, String stage);
 
     void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage);
+
+    ActivityProduct geFirstProductInfo(String headId, String stage);
 }

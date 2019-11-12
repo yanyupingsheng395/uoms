@@ -13,5 +13,7 @@ public class ActivityTemplate {
 
     private String content;
 
+    private String contentNormal;
+
     private String remark;
 }

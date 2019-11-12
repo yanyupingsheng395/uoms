@@ -44,14 +44,6 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     @Override
     public List<ActivityGroup> getActivityUserList(String headId, String stage) {
         List<ActivityGroup> userGroupList = activityUserGroupMapper.getUserGroupList(headId, stage);
-        userGroupList.stream().filter(x-> StringUtils.isNotEmpty(x.getSmsTemplateContent())).forEach(x->{
-            // 在你看不到的地方想你！${COUPON_NAME} ${COUPON_URL} 送你，约吗？来自【${PROD_NAME}】的告白 回T退	3
-            String smsContent = x.getSmsTemplateContent();
-            smsContent = smsContent.replace("${COUPON_NAME}", "|优惠券名称|");
-            smsContent = smsContent.replace("${COUPON_URL}", "|优惠券短链|");
-            smsContent = smsContent.replace("${PROD_NAME}", "|推荐的商品名|");
-            x.setSmsTemplateContent(smsContent);
-        });
         return userGroupList;
     }
 

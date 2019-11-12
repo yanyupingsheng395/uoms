@@ -57,45 +57,6 @@
         </foreach>
     </insert>
 
-    <insert id="insertProductList">
-        insert into UO_OP_ACTIVITY_PRODUCT(head_id, EPB_PRODUCT_ID, user_count, product_price, prefer_value,
-                                   product_act_price, min_price15, min_price30, prefer_type)
-        select head_id,
-               product_id,
-               user_count,
-               product_price,
-               prefer_value,
-               product_act_price,
-               min_price15,
-               min_price30,
-               prefer_type
-        from (select
-                #{headId} head_id,
-                REC_PROD_ID product_id,
-                count(1) user_count,
-                max(o.price) product_price,
-                TRUNC(avg(refer_deno), 2) prefer_value,
-                (max(o.price) - TRUNC(avg(refer_deno), 2)) product_act_price,
-                w.FIFTEEN_LOWERST_PRICE min_price15,
-                w.THIRTY_LOWERST_PRICE min_price30,
-                case
-                when (max(o.price) - TRUNC(avg(refer_deno), 2)) &lt;= 100 then
-                'promote'
-                else (case
-                when max(o.price) &lt;= 370 then
-                'discount'
-                when max(o.PRICE) &gt; 370 then
-                'reduce' end) end prefer_type
-                from UO_OP_ACTIVITY_OPTION o,
-                W_PRODUCT w
-                where ((TOUCH_DT &lt;= to_date(#{startDate}, 'yyyy-mm-dd') and
-                TOUCH_DT &lt;= to_date(#{endDate}, 'yyyy-mm-dd')) or (
-                data_type = '2' and REMAIN_TIME &lt;= #{dayPeriod} + 90
-                ))
-                and o.rec_prod_id = w.product_id(+)
-                group by rec_prod_id, w.FIFTEEN_LOWERST_PRICE, w.THIRTY_LOWERST_PRICE)
-    </insert>
-
     <delete id="deleteByHeadId">
         delete from UO_OP_ACTIVITY_PRODUCT where head_id = #{headId}
     </delete>
@@ -154,4 +115,10 @@
             #{item.productId}
         </foreach>
     </delete>
+
+
+    <select id="geFirstProductInfo"  resultMap="base">
+        select HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE, ID from UO_OP_ACTIVITY_PRODUCT
+        where HEAD_ID = #{headId} and ACTIVITY_STAGE=#{stage} AND rownum=1
+    </select>
 </mapper>

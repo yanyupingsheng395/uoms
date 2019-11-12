@@ -15,6 +15,7 @@
         <result column="ACTIVITY_STAGE" jdbcType="VARCHAR" property="activityStage"></result>
         <result column="SMS_TEMPLATE_CODE" jdbcType="VARCHAR" property="smsTemplateCode"></result>
         <result column="TMP_CONTENT" jdbcType="VARCHAR" property="smsTemplateContent"></result>
+        <result column="TMP_CONTENT_NORMAL" jdbcType="VARCHAR" property="smsTemplateContentNormal"></result>
     </resultMap>
 
     <select id="getCount" resultType="int">
@@ -24,7 +25,7 @@
     <select id="getUserGroupPage" resultMap="base">
         select * from (
           select ROWNUM rn, t.* from (
-            select GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, TMP_CONTENT, GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE from UO_OP_ACTIVITY_GROUP
+            select GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, TMP_CONTENT, TMP_CONTENT_NORMAL,GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE from UO_OP_ACTIVITY_GROUP
             left join UO_OP_ACTIVITY_TEMPLATE on SMS_TEMPLATE_CODE = TMP_CODE(+)
             where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
           ) t where ROWNUM &lt; = #{end}
@@ -32,7 +33,7 @@
     </select>
 
     <select id="getUserGroupList" resultMap="base">
-        select GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, TMP_CONTENT, GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE from UO_OP_ACTIVITY_GROUP
+        select GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, TMP_CONTENT,TMP_CONTENT_NORMAL, GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE from UO_OP_ACTIVITY_GROUP
             left join UO_OP_ACTIVITY_TEMPLATE on SMS_TEMPLATE_CODE = TMP_CODE(+)
             where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} order by group_id asc
     </select>

@@ -32,4 +32,10 @@ public interface ActivityProductService {
     int getSameProductCount(List<ActivityProduct> productList, String headId, String stage);
 
     void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage);
+
+    /**
+     * 获取第一条商品的信息
+     * @return
+     */
+    ActivityProduct geFirstProductInfo(String headId, String stage);
 }

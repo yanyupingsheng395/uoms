@@ -19,6 +19,68 @@ $("#formalEndDt").datepicker('setStartDate', date);
 $( function () {
     validateRule();
     validateProductRule();
+
+    //为用户推送预览tab增加事件
+    //为tab页增加事件
+    $("a[data-toggle='tab']").on('shown.bs.tab', function (ex) {
+        // 获取已激活的标签页的名称
+        var activeTab = $(ex.target).attr("href");
+
+        //如果是推送预览界面
+        if(activeTab=='#profile')
+        {
+            $MB.loadingDesc('show', '生成中，请稍后...');
+            let stage = $("#activity_stage").val();
+            var settings = {
+                columns: [
+                    {
+                        field: 'groupName',
+                        title: '用户与商品关系',
+                        valign: 'middle',
+                        align: 'center'
+                    }, {
+                        field: 'inGrowthPath',
+                        title: '成长节点与活动期',
+                        valign: 'middle',
+                        align: 'center'
+                    }, {
+                        field: 'activeLevel',
+                        title: '活跃度',
+                        valign: 'middle',
+                        align: 'center'
+                    }, {
+                        field: 'content',
+                        title: '活动推送内容示例'
+                    }, {
+                        field: 'contentNormal',
+                        title: '常规推送内容示例'
+                    }]
+            };
+            $("#userTable").bootstrapTable('destroy').bootstrapTable(settings);
+            $.get("/activity/getActivityUserList", {headId: $( "#headId" ).val(), stage: stage},function (r) {
+                if(r.code==200)
+                {
+                    $MB.loadingDesc('hide');
+                    $("#userTable").bootstrapTable('load', r.data);
+                    $("#userTable").bootstrapTable('mergeCells', {index: 0, field: 'groupName', rowspan: 4});
+                    $("#userTable").bootstrapTable('mergeCells', {index: 4, field: 'groupName', rowspan: 4});
+                    $("#userTable").bootstrapTable('mergeCells', {index: 0, field: 'groupUserCnt', rowspan: 4});
+                    $("#userTable").bootstrapTable('mergeCells', {index: 4, field: 'groupUserCnt', rowspan: 4});
+                    $("#userTable").bootstrapTable('mergeCells', {index: 0, field: 'inGrowthPath', rowspan: 3});
+                    $("#userTable").bootstrapTable('mergeCells', {index: 4, field: 'inGrowthPath', rowspan: 3});
+                }else
+                {
+                    ex.preventDefault();
+                    $MB.loadingDesc('hide');
+                    //提示
+                    $MB.n_warning(r.msg);
+
+                }
+
+            });
+        }
+    });
+
 } );
 
 let step = steps( {
@@ -191,7 +253,7 @@ function saveDailyHead(stage) {
     let operateType = $( "#operateType" ).val();
     let msg = "";
     if (operateType === "save") {
-        msg = "执行下一步会保存活动信息?";
+        msg = "确认保存活动主信息，执行下一步么?";
     }
     if (operateType === 'save') {
         $MB.confirm( {
@@ -227,8 +289,6 @@ function step2(stage) {
         saveDailyHead(stage);
         // 获取商品数据
         getProductInfo( stage );
-        // 获取用户信息
-        getUserTable();
     }
 }
 
@@ -391,43 +451,6 @@ function getUserGroupTable(stage) {
     });
 }
 
-// 获取用户列表
-function getUserTable() {
-    let stage = $("#activity_stage").val();
-    var settings = {
-        columns: [
-            {
-                field: 'groupName',
-                title: '用户与商品关系',
-                valign: 'middle',
-                align: 'center'
-            }, {
-                field: 'inGrowthPath',
-                title: '成长节点与活动期',
-                valign: 'middle',
-                align: 'center'
-            }, {
-                field: 'activeLevel',
-                title: '活跃度',
-                valign: 'middle',
-                align: 'center'
-            }, {
-                field: 'smsTemplateContent',
-                title: '模板示例'
-            }]
-    };
-    $("#userTable").bootstrapTable('destroy').bootstrapTable(settings);
-    $.get("/activity/getActivityUserList", {headId: $( "#headId" ).val(), stage: stage},function (r) {
-        $("#userTable").bootstrapTable('load', r);
-        $("#userTable").bootstrapTable('mergeCells', {index: 0, field: 'groupName', rowspan: 4});
-        $("#userTable").bootstrapTable('mergeCells', {index: 4, field: 'groupName', rowspan: 4});
-        $("#userTable").bootstrapTable('mergeCells', {index: 0, field: 'groupUserCnt', rowspan: 4});
-        $("#userTable").bootstrapTable('mergeCells', {index: 4, field: 'groupUserCnt', rowspan: 4});
-        $("#userTable").bootstrapTable('mergeCells', {index: 0, field: 'inGrowthPath', rowspan: 3});
-        $("#userTable").bootstrapTable('mergeCells', {index: 4, field: 'inGrowthPath', rowspan: 3});
-    });
-}
-
 $( "#btn_download" ).click( function () {
     window.location.href = "/activity/downloadFile";
 } );
@@ -584,7 +607,10 @@ function getTemplateTable(groupId) {
                 title: '模板编码'
             }, {
                 field: 'content',
-                title: '模板内容'
+                title: '活动推送内容模板'
+            }, {
+                field: 'contentNormal',
+                title: '常规推送内容模板'
             }, {
                 field: 'remark',
                 title: '备注'

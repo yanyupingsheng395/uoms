@@ -16,6 +16,7 @@
     <resultMap id="templateMap" type="com.linksteady.operate.domain.ActivityTemplate">
         <result property="code" jdbcType="VARCHAR" column="TMP_CODE"></result>
         <result property="content" jdbcType="VARCHAR" column="TMP_CONTENT"></result>
+        <result property="contentNormal" jdbcType="VARCHAR" column="TMP_CONTENT_NORMAL"></result>
         <result property="remark" jdbcType="VARCHAR" column="REMARK"></result>
     </resultMap>
 
@@ -73,7 +74,7 @@
 
 
     <select id="getTemplateTableData" resultMap="templateMap">
-        select TMP_CODE, TMP_CONTENT, REMARK from UO_OP_ACTIVITY_TEMPLATE
+        select TMP_CODE, TMP_CONTENT,TMP_CONTENT_NORMAL REMARK from UO_OP_ACTIVITY_TEMPLATE
     </select>
 
     <select id="getActivityName" resultType="string">
