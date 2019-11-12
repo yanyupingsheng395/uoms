@@ -68,9 +68,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
             // 保存群组的初始化信息
             activityUserGroupService.saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
 
-            // 写入summary群组表
-            activitySummaryService.saveSummaryList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
-
             //写入计划信息
             activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
         } else {

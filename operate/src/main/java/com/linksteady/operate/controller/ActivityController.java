@@ -26,9 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author hxcao
@@ -469,7 +471,12 @@ public class ActivityController {
         List<ActivitySummary> activitySummaryList = activitySummaryService.getUserGroupList(headId, planDtWid);
         ActivitySummary activitySummary = new ActivitySummary();
         activitySummary.setGroupName("总计");
-        activitySummary.setGroupUserCnt(0L);
+        if(activitySummaryList.size() == 0) {
+            activitySummary.setGroupUserCnt(0L);
+        }else {
+            Long sum = activitySummaryList.stream().map(ActivitySummary::getGroupUserCnt).distinct().reduce(Long::sum).get();
+            activitySummary.setGroupUserCnt(sum);
+        }
         activitySummaryList.add(activitySummary);
         return activitySummaryList;
     }
