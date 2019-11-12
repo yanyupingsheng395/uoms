@@ -2,7 +2,6 @@ let validator;
 let validatorProduct;
 let $activityAddForm = $( "#activity-add-form" );
 let $activityProductAddForm = $( "#add-product-form" );
-let product_id;
 
 init_date_begin( 'preheatStartDt', 'preheatEndDt', 'yyyy-mm-dd', 0, 2, 0 );
 init_date_end( 'preheatStartDt', 'preheatEndDt', 'yyyy-mm-dd', 0, 2, 0 );
