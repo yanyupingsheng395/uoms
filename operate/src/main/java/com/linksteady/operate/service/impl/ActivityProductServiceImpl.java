@@ -130,6 +130,12 @@ public class ActivityProductServiceImpl implements ActivityProductService {
          activityProductMapper.deleteActivityProdMapping(headId,stage);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteData(String headId) {
+        activityProductMapper.deleteData(headId);
+    }
+
     /**
      * 生成映射数据
      * @param headId

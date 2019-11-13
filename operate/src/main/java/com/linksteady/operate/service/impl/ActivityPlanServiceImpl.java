@@ -93,4 +93,9 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     public void updateStatus(String headId, String planDateWid, String status) {
         activityPlanMapper.updateStatus(headId, planDateWid, status);
     }
+
+    @Override
+    public void deleteData(String headId) {
+        activityPlanMapper.deleteData(headId);
+    }
 }

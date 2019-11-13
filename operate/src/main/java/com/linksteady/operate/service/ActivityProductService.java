@@ -67,4 +67,6 @@ public interface ActivityProductService {
      * 删除活动映射信息表
      */
     void deleteActivityProdMapping(String headId, String stage);
+
+    void deleteData(String headId);
 }

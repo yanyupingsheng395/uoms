@@ -120,4 +120,15 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     public Map<String, String> getDataChangedStatus(String headId, String stage) {
         return activityHeadMapper.getDataChangedStatus(headId, stage);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteData(String headId) {
+        activityHeadMapper.deleteActivity(headId);
+    }
+
+    @Override
+    public int getDeleteCount(String headId) {
+        return activityHeadMapper.getDeleteCount(headId);
+    }
 }

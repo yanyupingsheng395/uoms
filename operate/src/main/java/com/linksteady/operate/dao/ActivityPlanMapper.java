@@ -22,4 +22,6 @@ public interface ActivityPlanMapper {
     String getStatus(String headId, String planDateWid);
 
     void updateStatus(String headId, String planDateWid, String status);
+
+    void deleteData(String headId);
 }

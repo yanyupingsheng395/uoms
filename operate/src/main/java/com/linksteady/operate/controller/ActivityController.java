@@ -568,4 +568,18 @@ public class ActivityController {
         activityPlanService.updateStatus(headId, planDateWid, stoppedStatus);
         return ResponseBo.ok();
     }
+
+    @PostMapping("/deleteActivity")
+    public ResponseBo deleteActivity(@RequestParam String headId) {
+        int count = activityHeadService.getDeleteCount(headId);
+        if(count == 1) {
+            activityHeadService.deleteData(headId);
+            activityProductService.deleteData(headId);
+            activityPlanService.deleteData(headId);
+            activityUserGroupService.deleteData(headId);
+        }else {
+            return ResponseBo.error("该计划当前状态不支持删除操作！");
+        }
+        return ResponseBo.ok();
+    }
 }

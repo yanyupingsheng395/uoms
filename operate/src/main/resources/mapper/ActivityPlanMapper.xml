@@ -34,4 +34,8 @@
         update UO_OP_ACTIVITY_PLAN set PLAN_STATUS = #{status}
         where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid}
     </update>
+
+    <delete id="deleteData">
+        delete from UO_OP_ACTIVITY_PLAN where head_id = #{headId}
+    </delete>
 </mapper>

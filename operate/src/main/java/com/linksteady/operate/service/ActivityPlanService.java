@@ -39,4 +39,6 @@ public interface ActivityPlanService {
      * @param planDateWid
      */
     void updateStatus(String headId, String planDateWid, String status);
+
+    void deleteData(String headId);
 }

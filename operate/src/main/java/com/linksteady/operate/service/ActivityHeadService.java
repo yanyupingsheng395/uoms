@@ -71,4 +71,8 @@ public interface ActivityHeadService {
     void submitActivity(String headId, String stage);
 
     Map<String, String> getDataChangedStatus(String headId, String stage);
+
+    void deleteData(String headId);
+
+    int getDeleteCount(String headId);
 }

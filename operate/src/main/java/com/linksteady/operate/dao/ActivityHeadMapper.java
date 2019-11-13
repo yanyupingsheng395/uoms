@@ -50,4 +50,7 @@ public interface ActivityHeadMapper {
 
     Map<String, Date> getStageDate(String headId);
 
+    void deleteActivity(String headId);
+
+    int getDeleteCount(String headId);
 }

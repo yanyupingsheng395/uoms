@@ -134,4 +134,8 @@
     <delete id="deleteActivityProdMapping">
        delete  from UO_OP_ACTIVITY_PROD_MAPPING WHERE HEAD_ID=#{headId} AND ACTIVITY_STAGE=#{stage}
     </delete>
+
+    <delete id="deleteData">
+        delete from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
+    </delete>
 </mapper>

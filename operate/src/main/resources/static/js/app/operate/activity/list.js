@@ -144,3 +144,34 @@ $("#btn_plan").click(function () {
         $MB.n_warning("该活动的当前状态不允许执行计划！");
     }
 });
+
+$("#btn_delete").click(function () {
+    let selected = $("#activityTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要删除的活动计划！');
+        return;
+    }
+    let headId = selected[0].headId;
+    let preheatStatus = selected[0].preheatStatus;
+    let formalStatus = selected[0].formalStatus;
+    let hasPreheat = selected[0].hasPreheat;
+
+    if(!((hasPreheat === '1' && preheatStatus === 'edit' && formalStatus === 'edit') || (hasPreheat === '0' && formalStatus === 'edit'))) {
+        $MB.n_warning("只有待计划的活动才可以被删除！");
+        return;
+    }
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认删除选中活动计划？'
+    }, function () {
+        $.post("/activity/deleteActivity", {headId: headId}, function (r) {
+            if(r.code === 200) {
+                $MB.n_success("删除成功！");
+                $MB.refreshTable('activityTable');
+            }else {
+                $MB.n_danger("删除失败！");
+            }
+        });
+    });
+});

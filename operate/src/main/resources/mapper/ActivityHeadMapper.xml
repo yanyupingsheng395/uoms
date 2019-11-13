@@ -133,4 +133,12 @@
         select FORMAL_START_DT,FORMAL_END_DT,PREHEAT_START_DT,PREHEAT_END_DT from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
     </select>
 
+    <delete id="deleteActivity">
+        delete from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
+    </delete>
+
+    <select id="getDeleteCount" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId} and ((HAS_PREHEAT = '1' and FORMAL_STATUS = 'edit' and PREHEAT_STATUS = 'edit') or (HAS_PREHEAT = '0' and FORMAL_STATUS = 'edit'))
+    </select>
+
 </mapper>
