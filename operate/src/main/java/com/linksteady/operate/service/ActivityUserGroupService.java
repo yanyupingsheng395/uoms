@@ -23,4 +23,6 @@ public interface ActivityUserGroupService {
     int validGroupTemplate(String headId, String stage);
 
     void saveGroupData(String toString, String hasPreheat);
+
+    int refrenceCount(String code);
 }

@@ -93,6 +93,17 @@ public class PageController {
     }
 
     /**
+     * 活动短信模板配置
+     * @param
+     * @return
+     */
+    @Log("活动短信模板列表")
+    @RequestMapping("/cfg/activitySmsTemplate")
+    public String activitySmsTemplate() {
+        return "operate/config/activitySmsTemplate";
+    }
+
+    /**
      * 短信模板配置
      * @param
      * @return
@@ -241,5 +252,4 @@ public class PageController {
         model.addAttribute("headId", id);
         return "operate/activity/plan";
     }
-
 }

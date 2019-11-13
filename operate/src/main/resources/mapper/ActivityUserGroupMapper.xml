@@ -56,4 +56,8 @@
         select count(1) from UO_OP_ACTIVITY_GROUP
         where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and SMS_TEMPLATE_CODE is null
     </select>
+
+    <select id="refrenceCount" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_GROUP where SMS_TEMPLATE_CODE = #{code}
+    </select>
 </mapper>

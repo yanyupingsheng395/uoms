@@ -21,4 +21,6 @@ public interface ActivityUserGroupMapper {
     void saveGroupData(List<ActivityGroup> dataList);
 
     int validGroupTemplate(String headId, String stage);
+
+    int refrenceCount(String code);
 }

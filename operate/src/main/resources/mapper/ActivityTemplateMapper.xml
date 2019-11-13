@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.ActivityTemplateMapper">
+
+    <resultMap id="base" type="com.linksteady.operate.domain.ActivityTemplate">
+        <result column="TMP_CODE" jdbcType="VARCHAR" property="code"/>
+        <result column="TMP_CONTENT" jdbcType="VARCHAR" property="content"/>
+        <result column="TMP_CONTENT_NORMAL" jdbcType="VARCHAR" property="contentNormal"/>
+    </resultMap>
+
+    <insert id="saveTemplate">
+        insert into UO_OP_ACTIVITY_TEMPLATE(TMP_CODE, TMP_CONTENT, TMP_CONTENT_NORMAL)
+        values (#{code}, #{content}, #{contentNormal})
+    </insert>
+
+    <delete id="deleteTemplate">
+        delete from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}
+    </delete>
+
+    <select id="getTemplate" resultMap="base">
+        select TMP_CODE, TMP_CONTENT, REMARK, INSERT_DT, INSERT_BY, UPDATE_DT, UPDATE_BY, LABEL, TMP_CONTENT_NORMAL from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}
+    </select>
+
+    <update id="update" parameterType="com.linksteady.operate.domain.ActivityTemplate">
+        update UO_OP_ACTIVITY_TEMPLATE set TMP_CONTENT = #{content}, TMP_CONTENT_NORMAL = #{contentNormal}
+        where TMP_CODE = #{code}
+    </update>
+
+    <select id="getTemplateList" resultMap="base">
+        select * from (
+          select ROWNUM rn, t.* from (
+            select TMP_CODE, TMP_CONTENT, TMP_CONTENT_NORMAL from UO_OP_ACTIVITY_TEMPLATE
+            <if test="code != null and code != ''">
+                <where>
+                    TMP_CODE = #{code}
+                </where>
+            </if>
+          ) t where ROWNUM &lt;= #{end}
+        ) where rn &gt;= #{start}
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_TEMPLATE
+        <if test="code != null and code != ''">
+            <where>
+                TMP_CODE = #{code}
+            </where>
+        </if>
+    </select>
+</mapper>

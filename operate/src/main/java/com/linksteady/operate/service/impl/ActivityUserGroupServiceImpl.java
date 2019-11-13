@@ -93,4 +93,9 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
         }
         activityUserGroupMapper.saveGroupData(formalList);
     }
+
+    @Override
+    public int refrenceCount(String code) {
+        return activityUserGroupMapper.refrenceCount(code);
+    }
 }
