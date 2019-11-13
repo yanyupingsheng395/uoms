@@ -82,4 +82,15 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     public List<ActivityPlan> getPlanList(String headId) {
         return activityPlanMapper.getPlanList(headId);
     }
+
+    @Override
+    public String getStatus(String headId, String planDateWid) {
+        return activityPlanMapper.getStatus(headId, planDateWid);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStatus(String headId, String planDateWid, String status) {
+        activityPlanMapper.updateStatus(headId, planDateWid, status);
+    }
 }

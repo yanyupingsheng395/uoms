@@ -24,4 +24,19 @@ public interface ActivityPlanService {
      * @return
      */
     List<ActivityPlan> getPlanList(String headId);
+
+    /**
+     * 获取计划的状态
+     * @param headId
+     * @param planDateWid
+     * @return
+     */
+    String getStatus(String headId, String planDateWid);
+
+    /**
+     * 更新状态
+     * @param headId
+     * @param planDateWid
+     */
+    void updateStatus(String headId, String planDateWid, String status);
 }

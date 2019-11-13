@@ -18,4 +18,8 @@ public interface ActivityPlanMapper {
     void savePlanList(List<ActivityPlan> planList);
 
     List<ActivityPlan> getPlanList(String headId);
+
+    String getStatus(String headId, String planDateWid);
+
+    void updateStatus(String headId, String planDateWid, String status);
 }

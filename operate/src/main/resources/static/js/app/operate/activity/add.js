@@ -320,7 +320,7 @@ function nextStep(stage) {
     $( "#activity_stage" ).val( stage );
     let validator = $activityAddForm.validate();
     let flag = validator.form();
-    if ($( "input[name='activityStage']:checked" ).val() == '1') {
+    if ($( "input[name='hasPreheat']:checked" ).val() == '1') {
         let dateFlag = validPreheatAndFormalDate();
         if (!dateFlag) {
             $MB.n_warning( "正式阶段的开始时间必须大于预热阶段的结束时间！" );

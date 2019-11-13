@@ -25,4 +25,13 @@
         left join UO_OP_ACTIVITY_HEADER on UO_OP_ACTIVITY_PLAN.HEAD_ID = UO_OP_ACTIVITY_HEADER.HEAD_ID
         where UO_OP_ACTIVITY_PLAN.HEAD_ID = #{headId} order by PLAN_DATE asc
     </select>
+
+    <select id="getStatus" resultType="string">
+        select PLAN_STATUS from UO_OP_ACTIVITY_PLAN where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid}
+    </select>
+
+    <update id="updateStatus">
+        update UO_OP_ACTIVITY_PLAN set PLAN_STATUS = #{status}
+        where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid}
+    </update>
 </mapper>

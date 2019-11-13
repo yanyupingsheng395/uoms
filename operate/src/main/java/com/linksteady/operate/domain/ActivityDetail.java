@@ -40,7 +40,8 @@ public class ActivityDetail {
     private String tarOrderPrice;
     private String tarProductNum;
     private String pushCallbackCode;
-    private java.sql.Date pushDate;
+    private Date pushDate;
+    private String pushDateStr;
     private String pushOrderPeriod;
     private String groupId;
     private String epbProductId;

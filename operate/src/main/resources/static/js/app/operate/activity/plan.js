@@ -64,18 +64,18 @@ function getPlanTable() {
                             res = "-";
                             break;
                         case "1": // 待执行
-                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-success'><i class='fa fa-play'></i>&nbsp;开始执行</a>";
+                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\", \"0\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
+                                "&nbsp;<a class='btn btn-sm btn-success' onclick='startPush(\""+row['planDateWid']+"\", \""+row['stage']+"\")'><i class='fa fa-play'></i>&nbsp;开始执行</a>";
                             break;
                         case "2":// 执行中
-                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\"><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-danger'><i class='fa fa-stop'></i>&nbsp;停止执行</a>";
+                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\", \"0\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
+                                "&nbsp;<a class='btn btn-sm btn-danger' onclick='stopPush(\""+row['planDateWid']+"\", \""+row['stage']+"\")'><i class='fa fa-stop'></i>&nbsp;停止执行</a>";
                             break;
                         case "3":// 执行完
-                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\"><i class='fa fa-eye'></i>&nbsp;预览推送</a>";
+                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\",\"1\")'><i class='fa fa-eye'></i>&nbsp;预览推送</a>";
                             break;
                         case "4":// 已停止
-                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\"><i class='fa fa-eye'></i>&nbsp;预览推送</a>";
+                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\", \"1\")'><i class='fa fa-eye'></i>&nbsp;预览推送</a>";
                             break;
                     }
                     return res;
@@ -101,9 +101,9 @@ function getPlanTable() {
     });
 }
 // 推送预览
-function viewPush(planDtWid) {
+function viewPush(planDtWid, flag) {
     getUserGroupTable(planDtWid);
-    getUserDetail(planDtWid);
+    getUserDetail(planDtWid, flag);
     $("#planDtWid").val(planDtWid);
     $("#view_push_modal").modal('show');
 }
@@ -163,7 +163,13 @@ function getUserGroupTable(planDtWid) {
     });
 }
 
-function getUserDetail(planDtWid){
+/**
+ * flag:0 查看推送
+ * flag:1 预览推送
+ * @param planDtWid
+ * @param flag
+ */
+function getUserDetail(planDtWid, flag){
     let settings = {
         url: "/activity/getDetailPage",
         cache: false,
@@ -282,7 +288,35 @@ function getUserDetail(planDtWid){
             title: '推送内容'
         }]
     };
-    $MB.initTable('userDetailTable', settings);
+
+    if(flag === '1') {
+        settings.columns.push(
+            {
+                field: 'isPush',
+                title: '是否推送',
+                formatter: function (value, row, index) {
+                    let res = "-";
+                    switch (value) {
+                        case "0":
+                            res = "否";
+                            break;
+                        case "1":
+                            res = "是";
+                            break;
+                    }
+                    return res;
+                }
+            }
+        );
+
+        settings.columns.push(
+            {
+                field: 'pushDateStr',
+                title: '推送时间'
+            }
+        );
+    }
+    $("#userDetailTable").bootstrapTable('destroy').bootstrapTable(settings);
 }
 
 $("#btn_download").click(function() {
@@ -301,3 +335,39 @@ $("#btn_download").click(function() {
         });
     });
 });
+
+function startPush(planDateWid, stage) {
+    $.post("/activity/startPush", {headId: headId, planDateWid:planDateWid}, function (r) {
+        if(r.code === 200) {
+            if(stage === 'preheat') {
+                $('#preheatPlanTable').bootstrapTable('destroy');
+                getPlanTable();
+            }
+            if(stage === 'formal') {
+                $('#formalPlanTable').bootstrapTable('destroy');
+                getPlanTable();
+            }
+            $MB.n_success("计划已开始执行！");
+        }else {
+            $MB.n_danger(r.msg);
+        }
+    });
+}
+
+function stopPush(planDateWid, stage) {
+    $.post("/activity/stopPush", {headId: headId, planDateWid:planDateWid}, function (r) {
+        if(r.code === 200) {
+            if(stage === 'preheat') {
+                $('#preheatPlanTable').bootstrapTable('destroy');
+                getPlanTable();
+            }
+            if(stage === 'formal') {
+                $('#formalPlanTable').bootstrapTable('destroy');
+                getPlanTable();
+            }
+            $MB.n_success("计划已停止执行！");
+        }else {
+            $MB.n_danger(r.msg);
+        }
+    });
+}

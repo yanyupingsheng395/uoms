@@ -536,4 +536,36 @@ public class ActivityController {
             return ResponseBo.error("导出活动运营个体结果表失败，请联系网站管理员！");
         }
     }
+
+    /**
+     * 开始执行计划
+     * @return
+     */
+    @PostMapping("/startPush")
+    public ResponseBo startPush(@RequestParam String headId, @RequestParam String planDateWid) {
+        String todoStatus = "1";
+        String doingStatus = "2";
+        String status = activityPlanService.getStatus(headId, planDateWid);
+        if(!todoStatus.equalsIgnoreCase(status)) {
+            return ResponseBo.error("当前计划的状态不支持该操作！");
+        }
+        activityPlanService.updateStatus(headId, planDateWid, doingStatus);
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 停止执行计划
+     * @return
+     */
+    @PostMapping("/stopPush")
+    public ResponseBo stopPush(@RequestParam String headId, @RequestParam String planDateWid) {
+        String doingStatus = "2";
+        String stoppedStatus = "4";
+        String status = activityPlanService.getStatus(headId, planDateWid);
+        if(!doingStatus.equalsIgnoreCase(status)) {
+            return ResponseBo.error("当前计划的状态不支持该操作！");
+        }
+        activityPlanService.updateStatus(headId, planDateWid, stoppedStatus);
+        return ResponseBo.ok();
+    }
 }
