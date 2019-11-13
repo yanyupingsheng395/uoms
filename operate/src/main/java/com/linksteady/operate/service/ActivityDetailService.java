@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ActivityDetailService {
 
-    int getDataCount(int start, int end, String headId, String planDtWid);
+    int getDataCount(String headId, String planDtWid);
 
     List<ActivityDetail> getPageList(int start, int end, String headId, String planDtWid);
 }

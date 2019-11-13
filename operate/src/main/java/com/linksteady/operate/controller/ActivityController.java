@@ -5,10 +5,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.thrift.ActivityThriftClient;
 import com.linksteady.operate.vo.ActivityGroupVO;
+import com.linksteady.operate.vo.DailyPersonalVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -489,8 +492,48 @@ public class ActivityController {
         int end = request.getEnd();
         String headId = request.getParam().get("headId");
         String planDtWid = request.getParam().get("planDtWid");
-        int count = activityDetailService.getDataCount(start, end, headId, planDtWid);
+        int count = activityDetailService.getDataCount(headId, planDtWid);
         List<ActivityDetail>  dataList = activityDetailService.getPageList(start, end, headId, planDtWid);
         return ResponseBo.okOverPaging(null, count, dataList);
+    }
+
+    /**
+     * 导出名单
+     * @param headId
+     * @return
+     * @throws InterruptedException
+     */
+    @PostMapping("/downloadDetail")
+    public ResponseBo downloadDetail(@RequestParam("headId") String headId, @RequestParam("planDtWid") String planDtWid) throws InterruptedException {
+        List<ActivityDetail> list = Lists.newLinkedList();
+        List<Callable<List<ActivityDetail>>> tmp = Lists.newLinkedList();
+        int count = activityDetailService.getDataCount(headId, planDtWid);
+        ExecutorService service = Executors.newFixedThreadPool(10);
+        int pageSize = 1000;
+        int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize) + 1;
+        for (int i = 0; i < pageNum; i++) {
+            int idx = i;
+            tmp.add(() -> {
+                int start = idx * pageSize + 1;
+                int end = (idx + 1) * pageSize;
+                end = end > count ? count : end;
+                return activityDetailService.getPageList(start, end, headId, planDtWid);
+            });
+        }
+
+        List<Future<List<ActivityDetail>>> futures = service.invokeAll(tmp);
+        futures.stream().forEach(x-> {
+            try {
+                list.addAll(x.get());
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("活动运营获取结果失败", e);
+            }
+        });
+        try {
+            return FileUtils.createExcelByPOIKit(planDtWid + "_运营名单表", list, ActivityDetail.class);
+        } catch (Exception e) {
+            log.error("导出活动运营个体结果表失败", e);
+            return ResponseBo.error("导出活动运营个体结果表失败，请联系网站管理员！");
+        }
     }
 }

@@ -18,7 +18,7 @@ public class ActivityDetailServiceImpl implements ActivityDetailService {
     private ActivityDetailMapper activityDetailMapper;
 
     @Override
-    public int getDataCount(int start, int end, String headId, String planDtWid) {
+    public int getDataCount(String headId, String planDtWid) {
         return activityDetailMapper.getDataCount(headId, Long.valueOf(planDtWid));
     }
 

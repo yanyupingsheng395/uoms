@@ -100,13 +100,18 @@ function getPlanTable() {
         }
     });
 }
-
 // 推送预览
 function viewPush(planDtWid) {
     getUserGroupTable(planDtWid);
     getUserDetail(planDtWid);
+    $("#planDtWid").val(planDtWid);
     $("#view_push_modal").modal('show');
 }
+
+$("#view_push_modal").on("hidden.bs.modal", function () {
+    $("#planDtWid").val('');
+});
+
 // 获取用户群组列表
 function getUserGroupTable(planDtWid) {
     var settings = {
@@ -279,3 +284,20 @@ function getUserDetail(planDtWid){
     };
     $MB.initTable('userDetailTable', settings);
 }
+
+$("#btn_download").click(function() {
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定导出记录?"
+    }, function () {
+        $("#btn_download").text("下载中...").attr("disabled", true);
+        $.post("/activity/downloadDetail", {headId: headId, planDtWid:$("#planDtWid").val()}, function (r) {
+            if (r.code === 200) {
+                window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
+            } else {
+                $MB.n_warning(r.msg);
+            }
+            $("#btn_download").html("").append("<i class=\"fa fa-download\"></i> 导出").removeAttr("disabled");
+        });
+    });
+});
