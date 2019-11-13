@@ -186,16 +186,92 @@ function getUserDetail(planDtWid){
             title: '用户ID'
         }, {
             field: 'inGrowthPath',
-            title: '成长节点与活动期'
+            title: '成长节点与活动期',
+            formatter: function (value, row, index) {
+                let res = "-";
+                switch (value) {
+                    case "0":
+                        res = "不在";
+                        break;
+                    case "1":
+                        res = "在";
+                        break;
+                }
+                return res;
+            }
         }, {
             field: 'groupId',
-            title: '用户与商品关系'
+            title: '用户与商品关系',
+            formatter: function (value, row, index) {
+                let res = "-";
+                switch (value) {
+                    case "1":
+                    case "2":
+                    case "3":
+                    case "4":
+                        res = "成长用户";
+                        break;
+                    case "5":
+                    case "6":
+                    case "7":
+                    case "8":
+                        res = "潜在用户";
+                        break;
+                }
+                return res;
+            }
         }, {
             field: 'pathActive',
-            title: '活跃度'
+            title: '活跃度',
+            formatter: function (value, row, index) {
+                var res = "";
+                switch (value) {
+                    case "UAC_01":
+                        res = "高度活跃";
+                        break;
+                    case "UAC_02":
+                        res = "中度活跃";
+                        break;
+                    case "UAC_03":
+                        res = "流失预警";
+                        break;
+                    case "UAC_04":
+                        res = "弱流失";
+                        break;
+                    case "UAC_05":
+                        res = "强流失";
+                        break;
+                    case "UAC_06":
+                        res = "沉睡";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
+            }
         }, {
             field: 'userValue',
-            title: '用户价值'
+            title: '用户价值',
+            formatter: function (value, row, index) {
+                var res = "";
+                switch (value) {
+                    case "ULC_01":
+                        res = "重要";
+                        break;
+                    case "ULC_02":
+                        res = "主要";
+                        break;
+                    case "ULC_03":
+                        res = "普通";
+                        break;
+                    case "ULC_04":
+                        res = "长尾";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
+            }
         }, {
             field: 'smsContent',
             title: '推送内容'
