@@ -3,8 +3,8 @@
 <mapper namespace="com.linksteady.operate.dao.ActivityDetailMapper">
 
     <resultMap id="base" type="com.linksteady.operate.domain.ActivityDetail">
-        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"/>
-        <result column="REC_PROD_ID" jdbcType="DECIMAL" property="recProdId"/>
+        <result column="EPB_PRODUCT_NAME" jdbcType="VARCHAR" property="epbProductName"/>
+        <result column="EPB_PRODUCT_ID" jdbcType="DECIMAL" property="epbProductId"/>
         <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"/>
         <result column="IN_GROWTH_PATH" jdbcType="DECIMAL" property="inGrowthPath"/>
         <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"/>
@@ -15,7 +15,7 @@
     <select id="getPageList" resultMap="base">
         select * from (
             select t.*, ROWNUM rn from (
-                select REC_PROD_NAME, USER_VALUE, REC_PROD_ID, USER_ID, GROUP_ID, IN_GROWTH_PATH, PATH_ACTIVE, SMS_CONTENT from UO_OP_ACTIVITY_DETAIL where HEAD_ID = #{headId} and PLAN_DT = #{planDtWid}
+                select EPB_PRODUCT_NAME, USER_VALUE, EPB_PRODUCT_ID, USER_ID, GROUP_ID, IN_GROWTH_PATH, PATH_ACTIVE, SMS_CONTENT from UO_OP_ACTIVITY_DETAIL where HEAD_ID = #{headId} and PLAN_DT = #{planDtWid}
             ) t where ROWNUM &lt;= #{end}
         ) where RN &gt;= #{start}
     </select>
