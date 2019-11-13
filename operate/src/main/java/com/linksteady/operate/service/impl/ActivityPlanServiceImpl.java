@@ -95,6 +95,11 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     }
 
     @Override
+    public void deleteData(String headId) {
+        activityPlanMapper.deleteData(headId);
+    }
+
+    @Override
     public void insertToPushListLarge(String headId, String planDateWid) {
         activityPlanMapper.insertToPushListLarge(headId,planDateWid);
     }

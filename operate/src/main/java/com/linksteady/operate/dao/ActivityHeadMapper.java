@@ -54,4 +54,7 @@ public interface ActivityHeadMapper {
 
     void updateFormalHeadToDoing(String headId);
 
+    void deleteActivity(String headId);
+
+    int getDeleteCount(String headId);
 }

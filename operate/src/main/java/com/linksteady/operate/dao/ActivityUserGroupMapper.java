@@ -23,4 +23,6 @@ public interface ActivityUserGroupMapper {
     int validGroupTemplate(String headId, String stage);
 
     int refrenceCount(String code);
+
+    void deleteData(String headId);
 }

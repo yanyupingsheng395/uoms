@@ -35,6 +35,10 @@
         where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid}
     </update>
 
+    <delete id="deleteData">
+        delete from UO_OP_ACTIVITY_PLAN where head_id = #{headId}
+    </delete>
+
     <insert id="insertToPushListLarge">
         INSERT INTO uo_op_push_list_large(
             PUSH_CONTENT,

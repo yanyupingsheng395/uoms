@@ -98,4 +98,9 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     public int refrenceCount(String code) {
         return activityUserGroupMapper.refrenceCount(code);
     }
+
+    @Override
+    public void deleteData(String headId) {
+        activityUserGroupMapper.deleteData(headId);
+    }
 }

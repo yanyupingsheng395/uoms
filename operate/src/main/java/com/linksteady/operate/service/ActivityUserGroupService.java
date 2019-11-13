@@ -25,4 +25,6 @@ public interface ActivityUserGroupService {
     void saveGroupData(String toString, String hasPreheat);
 
     int refrenceCount(String code);
+
+    void deleteData(String headId);
 }

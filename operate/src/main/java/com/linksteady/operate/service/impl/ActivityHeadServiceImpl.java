@@ -122,6 +122,17 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteData(String headId) {
+        activityHeadMapper.deleteActivity(headId);
+    }
+
+    @Override
+    public int getDeleteCount(String headId) {
+        return activityHeadMapper.getDeleteCount(headId);
+    }
+
+    @Override
     public void updatePreheatHeadToDoing(String headId) {
         activityHeadMapper.updatePreheatHeadToDoing(headId);
     }

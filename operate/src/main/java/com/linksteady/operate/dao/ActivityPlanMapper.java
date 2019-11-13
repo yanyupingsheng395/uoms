@@ -23,6 +23,8 @@ public interface ActivityPlanMapper {
 
     void updateStatus(String headId, String planDateWid, String status);
 
+    void deleteData(String headId);
+
     /**
      * 将活动的推送数据写入到推送通道表中
      * @param headId

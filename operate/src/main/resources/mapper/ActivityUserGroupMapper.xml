@@ -60,4 +60,8 @@
     <select id="refrenceCount" resultType="int">
         select count(1) from UO_OP_ACTIVITY_GROUP where SMS_TEMPLATE_CODE = #{code}
     </select>
+
+    <delete id="deleteData">
+        delete from UO_OP_ACTIVITY_GROUP where head_id = #{headId}
+    </delete>
 </mapper>
