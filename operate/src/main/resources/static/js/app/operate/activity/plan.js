@@ -337,7 +337,7 @@ $("#btn_download").click(function() {
 });
 
 function startPush(planDateWid, stage) {
-    $.post("/activity/startPush", {headId: headId, planDateWid:planDateWid}, function (r) {
+    $.post("/activity/startPush", {headId: headId, planDateWid:planDateWid, stage: stage}, function (r) {
         if(r.code === 200) {
             if(stage === 'preheat') {
                 $('#preheatPlanTable').bootstrapTable('destroy');
