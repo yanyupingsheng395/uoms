@@ -181,12 +181,12 @@ function getUserDetail(planDtWid){
             };
         },
         columns: [{
-            field: 'recProdName',
-            title: '商品名称'
-        }, {
-            field: 'recProdId',
+            field: 'epbProductId',
             title: '商品ID'
         },{
+            field: 'epbProductName',
+            title: '商品名称'
+        }, {
             field: 'userId',
             title: '用户ID'
         }, {
