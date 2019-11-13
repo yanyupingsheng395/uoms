@@ -81,7 +81,7 @@
     </update>
 
     <insert id="saveActivityProductList">
-        insert into into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_ATTR, ACTIVITY_STAGE, PRODUCT_URL, SKU_CODE)
+        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_ATTR, ACTIVITY_STAGE, PRODUCT_URL, SKU_CODE)
         select SEQ_ACTIVITY_PRODUCT_ID.nextval,A.* FROM (
         <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
            SELECT

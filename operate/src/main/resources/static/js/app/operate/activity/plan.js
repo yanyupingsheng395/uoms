@@ -315,6 +315,28 @@ function getUserDetail(planDtWid, flag){
                 title: '推送时间'
             }
         );
+
+        settings.columns.push(
+            {
+                field: 'pushStatus',
+                title: '推送状态',
+                formatter: function (value, row, index) {
+                    let res = "-";
+                    switch (value) {
+                        case "P":
+                            res = "计划中";
+                            break;
+                        case "F":
+                            res = "成功";
+                            break;
+                        case "S":
+                            res = "失败";
+                            break;
+                    }
+                    return res;
+                }
+            }
+        );
     }
     $("#userDetailTable").bootstrapTable('destroy').bootstrapTable(settings);
 }
