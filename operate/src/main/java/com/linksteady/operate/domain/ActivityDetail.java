@@ -1,7 +1,9 @@
 package com.linksteady.operate.domain;
 
+import com.linksteady.common.config.ExportConfig;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -9,11 +11,14 @@ import java.util.Date;
  * @date 2019-08-13
  */
 @Data
-public class ActivityDetail {
+public class ActivityDetail implements Serializable {
     private String activityDetailId;
     private String headId;
+    @ExportConfig(value = "用户ID")
     private String userId;
+    @ExportConfig(value = "活跃度")
     private String pathActive;
+    @ExportConfig(value = "用户价值")
     private String userValue;
     private String spuName;
     private String recPiecePrice;
@@ -33,7 +38,6 @@ public class ActivityDetail {
     private String isPush;
     private String isConversion;
     private String pushStatus;
-    private String smsContent;
     private String smsTemplateContent;
     private String userPhone;
     private String userOpenid;
@@ -43,10 +47,14 @@ public class ActivityDetail {
     private Date pushDate;
     private String pushDateStr;
     private String pushOrderPeriod;
+    @ExportConfig(value = "用户与商品关系")
     private String groupId;
+    @ExportConfig(value = "商品ID")
     private String epbProductId;
+    @ExportConfig(value = "商品名称")
     private String epbProductName;
     private String planDt;
+    @ExportConfig(value = "成长节点与活动期")
     private String inGrowthPath;
     private String spuContribute;
     private String spuContributeNormal;
@@ -68,4 +76,6 @@ public class ActivityDetail {
     private String actualJoint;
     private Date insertDt;
     private String activityStage;
+    @ExportConfig(value = "推送内容")
+    private String smsContent;
 }

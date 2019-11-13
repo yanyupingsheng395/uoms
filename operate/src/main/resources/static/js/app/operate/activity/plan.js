@@ -331,7 +331,7 @@ $("#btn_download").click(function() {
             } else {
                 $MB.n_warning(r.msg);
             }
-            $("#btn_download").html("").append("<i class=\"fa fa-download\"></i> 导出").removeAttr("disabled");
+            $("#btn_download").html("").append("<i class=\"fa fa-download\"></i> 导出名单").removeAttr("disabled");
         });
     });
 });
