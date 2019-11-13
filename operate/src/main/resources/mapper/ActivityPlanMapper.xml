@@ -34,4 +34,35 @@
         update UO_OP_ACTIVITY_PLAN set PLAN_STATUS = #{status}
         where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid}
     </update>
+
+    <insert id="insertToPushListLarge">
+        INSERT INTO uo_op_push_list_large(
+            PUSH_CONTENT,
+            PUSH_PERIOD,
+            PUSH_STATUS,
+            SOURCE_CODE,
+            SOURCE_ID,
+            USER_PHONE,
+            IS_PUSH,
+            PUSH_SCHEDULING_DATE,
+            PUSH_ID
+        )
+        SELECT T.SMS_CONTENT,
+               T.ORDER_PERIOD,
+               'P',
+               'ACTIVITY',
+               T.ACTIVITY_DETAIL_ID,
+               T.USER_PHONE,
+               '0',
+               T.PLAN_DT,
+               SEQ_UO_OP_PUSH_LIST_LARGE.NEXTVAL
+        FROM UO_OP_ACTIVITY_DETAIL T where  head_id = #{headId} and plan_dt = #{planDateWid}
+    </insert>
+
+    <update id="updatePushListLargeToFaild">
+        update uo_op_push_list_large c set c.push_status='F',c.IS_PUSH='1' where c.source_code='ACTIVITY'
+            and exists (
+            select t1.activity_detail_id from  uo_op_activity_detail t1 where t1.activity_detail_id=c.source_id
+            )
+    </update>
 </mapper>

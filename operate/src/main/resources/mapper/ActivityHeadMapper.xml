@@ -133,4 +133,12 @@
         select FORMAL_START_DT,FORMAL_END_DT,PREHEAT_START_DT,PREHEAT_END_DT from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
     </select>
 
+    <update id="updatePreheatHeadToDoing">
+        UPDATE UO_OP_ACTIVITY_HEADER H SET H.PREHEAT_STATUS='doing' where h.head_id=#{headId}
+    </update>
+
+    <update id="updateFormalHeadToDoing">
+        UPDATE UO_OP_ACTIVITY_HEADER H SET H.FORMAL_STATUS='doing' where h.head_id=#{headId}
+    </update>
+
 </mapper>

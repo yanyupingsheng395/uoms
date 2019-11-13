@@ -50,4 +50,8 @@ public interface ActivityHeadMapper {
 
     Map<String, Date> getStageDate(String headId);
 
+    void updatePreheatHeadToDoing(String headId);
+
+    void updateFormalHeadToDoing(String headId);
+
 }

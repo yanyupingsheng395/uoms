@@ -22,4 +22,18 @@ public interface ActivityPlanMapper {
     String getStatus(String headId, String planDateWid);
 
     void updateStatus(String headId, String planDateWid, String status);
+
+    /**
+     * 将活动的推送数据写入到推送通道表中
+     * @param headId
+     * @param planDateWid
+     */
+    void insertToPushListLarge(String headId, String planDateWid);
+
+    /**
+     * 将活动的推送数据标记为失败(停止)
+     * @param headId
+     * @param planDateWid
+     */
+    void updatePushListLargeToFaild(String headId,String planDateWid);
 }

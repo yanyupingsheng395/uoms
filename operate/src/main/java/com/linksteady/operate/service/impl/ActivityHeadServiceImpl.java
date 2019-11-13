@@ -120,4 +120,14 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     public Map<String, String> getDataChangedStatus(String headId, String stage) {
         return activityHeadMapper.getDataChangedStatus(headId, stage);
     }
+
+    @Override
+    public void updatePreheatHeadToDoing(String headId) {
+        activityHeadMapper.updatePreheatHeadToDoing(headId);
+    }
+
+    @Override
+    public void updateFormalHeadToDoing(String headId) {
+        activityHeadMapper.updateFormalHeadToDoing(headId);
+    }
 }

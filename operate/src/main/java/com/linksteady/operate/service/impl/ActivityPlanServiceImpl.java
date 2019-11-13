@@ -93,4 +93,14 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     public void updateStatus(String headId, String planDateWid, String status) {
         activityPlanMapper.updateStatus(headId, planDateWid, status);
     }
+
+    @Override
+    public void insertToPushListLarge(String headId, String planDateWid) {
+        activityPlanMapper.insertToPushListLarge(headId,planDateWid);
+    }
+
+    @Override
+    public void updatePushListLargeToFaild(String headId, String planDateWid) {
+        activityPlanMapper.updatePushListLargeToFaild(headId,planDateWid);
+    }
 }

@@ -71,4 +71,16 @@ public interface ActivityHeadService {
     void submitActivity(String headId, String stage);
 
     Map<String, String> getDataChangedStatus(String headId, String stage);
+
+    /**
+     * 更新头表预售状态为执行中(plan表中有一条为执行)
+     * @param headId
+     */
+    void updatePreheatHeadToDoing(String headId);
+
+    /**
+     * 更新头表正式状态为执行中(plan表中有一条为执行)
+     * @param headId
+     */
+    void updateFormalHeadToDoing(String headId);
 }

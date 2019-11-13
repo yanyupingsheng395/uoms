@@ -542,14 +542,28 @@ public class ActivityController {
      * @return
      */
     @PostMapping("/startPush")
-    public ResponseBo startPush(@RequestParam String headId, @RequestParam String planDateWid) {
+    public ResponseBo startPush(@RequestParam String headId, @RequestParam String planDateWid, @RequestParam String stage) {
         String todoStatus = "1";
         String doingStatus = "2";
         String status = activityPlanService.getStatus(headId, planDateWid);
         if(!todoStatus.equalsIgnoreCase(status)) {
             return ResponseBo.error("当前计划的状态不支持该操作！");
         }
+
+        //写入推送表
+        activityPlanService.insertToPushListLarge(headId, planDateWid);
+
         activityPlanService.updateStatus(headId, planDateWid, doingStatus);
+
+        //更新头表的状态为执行中
+        if(!StringUtils.isEmpty(stage)&&"preheat".equals(stage))
+        {
+            activityHeadService.updatePreheatHeadToDoing(headId);
+        }else if(!StringUtils.isEmpty(stage)&&"formal".equals(stage))
+        {
+            activityHeadService.updateFormalHeadToDoing(headId);
+        }
+
         return ResponseBo.ok();
     }
 
@@ -565,6 +579,9 @@ public class ActivityController {
         if(!doingStatus.equalsIgnoreCase(status)) {
             return ResponseBo.error("当前计划的状态不支持该操作！");
         }
+        //停止 修改push_list_large表中对应记录的状态为F (失败)
+        activityPlanService.updatePushListLargeToFaild(headId, planDateWid);
+
         activityPlanService.updateStatus(headId, planDateWid, stoppedStatus);
         return ResponseBo.ok();
     }
