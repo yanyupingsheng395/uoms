@@ -65,6 +65,9 @@ public class ActivityController {
     @Autowired
     private ActivityDetailService activityDetailService;
 
+    @Autowired
+    private DailyProperties dailyProperties;
+
 
     /**
      * 获取头表的分页数据
@@ -124,7 +127,10 @@ public class ActivityController {
                     ActivityProduct activityProduct = new ActivityProduct();
                     activityProduct.setHeadId(Long.valueOf(headId));
                     activityProduct.setActivityStage(stage);
-                    activityProduct.setProductId(row.getCell(0).getStringCellValue());
+                    // skuCode非必填
+                    if(null != row.getCell(1)) {
+                        activityProduct.setProductId(row.getCell(0).getStringCellValue());
+                    }
                     activityProduct.setSkuCode(row.getCell(1).getStringCellValue());
                     //todo 验证产品名称不超过最大长度
 
