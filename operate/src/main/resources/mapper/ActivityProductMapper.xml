@@ -143,10 +143,14 @@
     </insert>
 
     <delete id="deleteActivityProdMapping">
-       delete  from UO_OP_ACTIVITY_PROD_MAPPING WHERE HEAD_ID=#{headId} AND ACTIVITY_STAGE=#{stage}
+       delete  from UO_OP_ACTIVITY_PROD_MAPPING WHERE HEAD_ID=#{headId}
+        <if test="stage != null and stage != ''">
+            AND ACTIVITY_STAGE=#{stage}
+        </if>
     </delete>
 
     <delete id="deleteData">
         delete from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
     </delete>
+
 </mapper>

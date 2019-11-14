@@ -134,6 +134,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteData(String headId) {
         activityProductMapper.deleteData(headId);
+        //删除映射数据
+        activityProductMapper.deleteActivityProdMapping(headId,"");
     }
 
     /**

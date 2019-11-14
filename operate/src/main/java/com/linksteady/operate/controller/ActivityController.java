@@ -175,7 +175,7 @@ public class ActivityController {
             } catch (IOException e) {
                 log.error("上传excel失败", e);
                 return ResponseBo.error("上传excel失败，请检查");
-            } catch (IllegalStateException ex) {
+            } catch (Exception ex) {
                 log.error("解析excel失败", ex);
                 return ResponseBo.error("解析excel失败，请检查。最低单价，非活动售价为数值型，其余为字符型。");
             }

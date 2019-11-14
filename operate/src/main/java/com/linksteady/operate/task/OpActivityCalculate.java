@@ -33,7 +33,6 @@ public class OpActivityCalculate extends IJobHandler {
         activityDetailMapper.synchPushStatus();
         //更新plan表的完成状态
         activityDetailMapper.updatePlanToFinish();
-        //todo 目前是更新所有的头表数据 因为insert_DT目前是空的
         //更新头表的推送数据状态(预售)
         activityDetailMapper.updatePreheatHeaderToDone();
         //更新头表的推送数据状态(正式)
