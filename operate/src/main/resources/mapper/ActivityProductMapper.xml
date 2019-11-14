@@ -63,12 +63,12 @@
     </delete>
 
     <insert id="saveActivityProduct">
-        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE)
-        values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{headId}, #{productId}, #{productName}, #{minPrice}, #{formalPrice}, #{activityIntensity}, #{productUrl}, #{productAttr}, #{activityStage})
+        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, SKU_CODE, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE)
+        values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{headId}, #{productId}, #{productName}, #{skuCode}, #{minPrice}, #{formalPrice}, #{activityIntensity}, #{productUrl}, #{productAttr}, #{activityStage})
     </insert>
 
     <select id="getProductById" resultMap="base">
-        select HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE, ID from UO_OP_ACTIVITY_PRODUCT
+        select HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, SKU_CODE, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE, ID from UO_OP_ACTIVITY_PRODUCT
         where ID = #{id}
     </select>
 
@@ -116,8 +116,8 @@
     <select id="getSameProductCount" resultType="int">
         select count(1) from UO_OP_ACTIVITY_PRODUCT
         where head_id = #{headId} and activity_stage = #{stage} and EPB_PRODUCT_ID in
-        <foreach collection="productList" separator="," open="(" close=")" item="item">
-            #{item.productId}
+        <foreach collection="productIdList" separator="," open="(" close=")" item="item">
+            #{item}
         </foreach>
     </select>
 

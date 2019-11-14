@@ -175,13 +175,12 @@ function validateProductRule() {
                 required: true
             },
             minPrice: {
-                required: true
+                required: true,
+                number: true
             },
             formalPrice: {
-                required: true
-            },
-            activityIntensity: {
-                required: true
+                required: true,
+                number: true
             },
             productAttr: {
                 required: true
@@ -209,9 +208,6 @@ function validateProductRule() {
             },
             formalPrice: {
                 required: icon + "请输入非活动正常价"
-            },
-            activityIntensity: {
-                required: icon + "请输入活动力度"
             },
             productAttr: {
                 required: icon + "请选择活动属性"
@@ -252,6 +248,10 @@ $( "input[name='hasPreheat']" ).click( function () {
         }
         init_date_begin( 'preheatStartDt', 'preheatEndDt', 'yyyy-mm-dd', 0, 2, 0 );
         init_date_end( 'preheatStartDt', 'preheatEndDt', 'yyyy-mm-dd', 0, 2, 0 );
+        var date = new Date();
+        date.setDate(date.getDate() + 1);
+        $("#preheatStartDt").datepicker('setStartDate', date);
+        $("#preheatEndDt").datepicker('setStartDate', date);
     }
     if (stage == 0) { // 否
         $( "#preheatDiv" ).attr( "style", "display:none;" );
@@ -530,7 +530,7 @@ $( "#saveActivityProduct" ).click( function () {
                     $MB.closeAndRestModal( "addProductModal" );
                     $MB.refreshTable( 'activityProductTable' );
                 } else {
-                    $MB.n_danger( "添加商品失败！" );
+                    $MB.n_danger( r.msg );
                 }
             } );
         }
@@ -550,13 +550,15 @@ $( "#saveActivityProduct" ).click( function () {
 } );
 
 $( "#addProductModal" ).on( "hidden.bs.modal", function () {
-    $( "input[name='productId']" ).val( "" );
+    $( "input[name='productId']" ).val( "" ).removeAttr("disabled");
     $( "input[name='productName']" ).val( "" );
     $( "input[name='minPrice']" ).val( "" );
     $( "input[name='formalPrice']" ).val( "" );
     $( "input[name='activityIntensity']" ).val( "" );
     $( "select[name='productAttr']" ).find( "option:selected" ).removeAttr( "selected" );
     $( "input[name='productUrl']" ).val( "" );
+    $( "input[name='skuCode']" ).val( "" );
+    $activityProductAddForm.validate().resetForm();
 } );
 
 // 修改商品信息
@@ -576,6 +578,7 @@ $( "#btn_edit_shop" ).click( function () {
             $( "input[name='id']" ).val( data['id'] );
             $( "input[name='productId']" ).val( data['productId'] ).attr("disabled", "disabled");
             $( "input[name='productName']" ).val( data['productName'] );
+            $( "input[name='skuCode']" ).val( data['skuCode'] );
             $( "input[name='minPrice']" ).val( data['minPrice'] );
             $( "input[name='formalPrice']" ).val( data['formalPrice'] );
             $( "input[name='activityIntensity']" ).val( data['activityIntensity'] );

@@ -43,7 +43,7 @@ public interface ActivityProductService {
 
     String generateProductShortUrl(String productId);
 
-    int getSameProductCount(List<ActivityProduct> productList, String headId, String stage);
+    int getSameProductCount(List<String> productIdList, String headId, String stage);
 
     /**
      * 删除重复的活动商品

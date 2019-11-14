@@ -1,6 +1,4 @@
 package com.linksteady.operate.controller;
-
-import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
@@ -10,7 +8,6 @@ import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.thrift.ActivityThriftClient;
 import com.linksteady.operate.vo.ActivityGroupVO;
-import com.linksteady.operate.vo.DailyPersonalVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -22,6 +19,7 @@ import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.NumberUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -127,13 +127,15 @@ public class ActivityController {
                     ActivityProduct activityProduct = new ActivityProduct();
                     activityProduct.setHeadId(Long.valueOf(headId));
                     activityProduct.setActivityStage(stage);
+                    activityProduct.setProductId(row.getCell(0).getStringCellValue());
                     // skuCode非必填
                     if(null != row.getCell(1)) {
-                        activityProduct.setProductId(row.getCell(0).getStringCellValue());
+                        activityProduct.setSkuCode(row.getCell(1).getStringCellValue());
                     }
-                    activityProduct.setSkuCode(row.getCell(1).getStringCellValue());
-                    //todo 验证产品名称不超过最大长度
-
+                    // 验证产品名称不超过最大长度
+                    if(row.getCell(2).getStringCellValue().length() > dailyProperties.getProdNameLen()) {
+                        throw new Exception("商品名称超过系统设置！");
+                    }
                     activityProduct.setProductName(row.getCell(2).getStringCellValue());
                     double minPrice = row.getCell(3).getNumericCellValue();
                     double formalPrice = row.getCell(4).getNumericCellValue();
@@ -160,8 +162,9 @@ public class ActivityController {
                     return ResponseBo.error("检测到数据与模板格式不符，请检查后重新上传！");
                 }
                 if(productList.size() != 0) {
+                    List<String> productIdList = productList.stream().map(ActivityProduct::getProductId).collect(Collectors.toList());
                     // 获取相同productId的商品个数
-                    int count = activityProductService.getSameProductCount(productList, headId, stage);
+                    int count = activityProductService.getSameProductCount(productIdList, headId, stage);
                     if(count > 0) {
                         activityProductService.deleteRepeatData(productList, headId, stage);
                         activityProductService.saveActivityProductList(productList);
@@ -235,6 +238,12 @@ public class ActivityController {
         activityIntensity = Double.valueOf(String.format("%.2f", activityIntensity));
         activityProduct.setActivityIntensity(activityIntensity);
         activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId()));
+
+        List<String> productIdList = Collections.singletonList(activityProduct.getProductId());
+        int count = activityProductService.getSameProductCount(productIdList, headId, activityProduct.getActivityStage());
+        if(count > 0) {
+            return ResponseBo.error("已有相同商品ID！");
+        }
         activityProductService.saveActivityProduct(activityProduct);
         return ResponseBo.ok();
     }
@@ -324,7 +333,7 @@ public class ActivityController {
      */
     @GetMapping("/getActivityUserList")
     public ResponseBo getActivityUserList(@RequestParam String headId, @RequestParam String stage) {
-
+        DecimalFormat df = new DecimalFormat("#.##");
         //获取第一个商品信息
         ActivityProduct activityProduct=activityProductService.geFirstProductInfo(headId,stage);
 
@@ -349,7 +358,7 @@ public class ActivityController {
                 if(!StringUtils.isEmpty(group.getSmsTemplateContent()))
                 {
                     String content=group.getSmsTemplateContent().replace("${PROD_NAME}",activityProduct.getProductName())
-                    .replace("${PRICE}",String.valueOf(activityProduct.getMinPrice()))
+                    .replace("${PRICE}", df.format(activityProduct.getMinPrice()))
                     .replace("${PROD_URL}",activityProduct.getProductUrl());
 
                     vo.setContent(content);
@@ -604,5 +613,10 @@ public class ActivityController {
             return ResponseBo.error("该计划当前状态不支持删除操作！");
         }
         return ResponseBo.ok();
+    }
+
+    public static void main(String[] args) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        System.out.println(df.format(1.223D));
     }
 }

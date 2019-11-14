@@ -257,7 +257,8 @@ public class ExcelUtils {
                         return cp[1];
                     }
                 }
-
+                // 如果没有匹配到就返回空字符串
+                return "";
             }
             if ("c".equalsIgnoreCase(protocol)) {
 

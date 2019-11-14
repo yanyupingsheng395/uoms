@@ -14,11 +14,17 @@ import java.util.Date;
 public class ActivityDetail implements Serializable {
     private String activityDetailId;
     private String headId;
+    @ExportConfig(value = "商品ID")
+    private String epbProductId;
+    @ExportConfig(value = "商品名称")
+    private String epbProductName;
     @ExportConfig(value = "用户ID")
     private String userId;
-    @ExportConfig(value = "活跃度")
+    @ExportConfig(value = "用户与商品关系", convert = "s:1=成长用户,2=成长用户,3=成长用户,4=成长用户,5=潜在用户,6=潜在用户,7=潜在用户,8=潜在用户")
+    private String groupId;
+    @ExportConfig(value = "活跃度", convert = "s:UAC_01=高度活跃,UAC_02=中度活跃,UAC_03=流失预警,UAC_04=弱流失,UAC_05=强流失,UAC_06=沉睡")
     private String pathActive;
-    @ExportConfig(value = "用户价值")
+    @ExportConfig(value = "用户价值", convert = "s:ULC_01=重要,ULC_02=主要,ULC_03=普通,ULC_04=长尾")
     private String userValue;
     private String spuName;
     private String recPiecePrice;
@@ -47,14 +53,6 @@ public class ActivityDetail implements Serializable {
     private Date pushDate;
     private String pushDateStr;
     private String pushOrderPeriod;
-    @ExportConfig(value = "用户与商品关系")
-    private String groupId;
-    @ExportConfig(value = "商品ID")
-    private String epbProductId;
-    @ExportConfig(value = "商品名称")
-    private String epbProductName;
-    private String planDt;
-    @ExportConfig(value = "成长节点与活动期")
     private String inGrowthPath;
     private String spuContribute;
     private String spuContributeNormal;
