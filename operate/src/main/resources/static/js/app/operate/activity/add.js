@@ -344,7 +344,7 @@ function getProductInfo(stage) {
     var settings = {
         url: '/activity/getActivityProductPage',
         pagination: true,
-        singleSelect: false,
+        singleSelect: true,
         sidePagination: "server",
         pageList: [10, 25, 50, 100],
         queryParams: function (params) {
@@ -537,7 +537,7 @@ $( "#saveActivityProduct" ).click( function () {
         }
         if (operate === 'update') {
             $.post( "/activity/updateActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" +
-                $( "#headId" ).val() + "&activityStage=" + $( "#activity_stage" ).val(), function (r) {
+                $( "#headId" ).val() + "&activityStage=" + $( "#activity_stage" ).val() + "&operateType=" + operateType, function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "更新商品成功！" );
                     $MB.closeAndRestModal( "addProductModal" );
@@ -609,6 +609,7 @@ $('#btn_upload').click(function () {
     formData.append("file", file);
     formData.append("headId", $("#headId").val());
     formData.append("stage", $("#activity_stage").val());
+    formData.append("operateType", $("#operateType").val());
     $.ajax({
         url: "/activity/uploadExcel",
         type: "post",
@@ -692,7 +693,7 @@ $("#template-add-btn").click(function () {
     }
     var templateCode = selected[0].code;
     $.get("/activity/updateGroupTemplate", {
-            groupId: groupId, code: templateCode, headId: $("#headId").val(), stage: $("#activity_stage").val()
+            groupId: groupId, code: templateCode, headId: $("#headId").val(), stage: $("#activity_stage").val(), operateType: $("#operateType").val()
         }, function (r) {
         if(r.code === 200) {
             $MB.n_success("更新消息模板成功！");
@@ -721,7 +722,7 @@ function submitActivity() {
                 title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
                 content: '确认提交计划？'
             }, function () {
-                $.post("/activity/submitActivity", {headId: headId, stage: stage}, function (r) {
+                $.post("/activity/submitActivity", {headId: headId, stage: stage, operateType: $("#operateType").val()}, function (r) {
                     if(r.code === 200) {
                         $MB.n_success("提交计划成功！");
                         setTimeout(function () {
@@ -757,7 +758,7 @@ $("#btn_delete_shop").click(function () {
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
         content: '确认删除选中的商品记录？'
     }, function () {
-        $.post("/activity/deleteProduct", {headId:headId, stage: stage, productIds: productIds.join(",")}, function (r) {
+        $.post("/activity/deleteProduct", {headId:headId, stage: stage, productIds: productIds.join(","), operateType: $("#operateType").val()}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("删除成功！");
                 $MB.refreshTable('activityProductTable');

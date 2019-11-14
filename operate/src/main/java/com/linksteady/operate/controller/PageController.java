@@ -237,8 +237,12 @@ public class PageController {
     @RequestMapping("/activity/edit")
     public String activityEdit(@RequestParam("headId") String headId, Model model) {
         ActivityHead activityHead = activityHeadService.findById(headId);
+        String preheatStatus = activityHeadService.getStatus(headId, "preheat");
+        String formalStatus = activityHeadService.getStatus(headId, "formal");
         model.addAttribute("activityHead", activityHead);
         model.addAttribute("operateType", "update");
+        model.addAttribute("preheatStatus", preheatStatus);
+        model.addAttribute("formalStatus", formalStatus);
         return "operate/activity/add";
     }
 

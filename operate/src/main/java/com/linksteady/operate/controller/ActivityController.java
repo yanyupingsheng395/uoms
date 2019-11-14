@@ -98,7 +98,7 @@ public class ActivityController {
      */
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/uploadExcel")
-    public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId, @RequestParam String stage) {
+    public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId, @RequestParam String stage, @RequestParam String operateType) {
         List<String> headers = Arrays.asList("商品ID", "ERP货号", "名称", "最低单价（元/件）", "非活动售价（元/件）", "活动属性【主推，参活，正常】");
         AtomicBoolean flag = new AtomicBoolean(true);
         List<ActivityProduct> productList = Lists.newArrayList();
@@ -173,7 +173,17 @@ public class ActivityController {
                     if(count > 0) {
                         activityProductService.deleteRepeatData(productList, headId, stage);
                         activityProductService.saveActivityProductList(productList);
+
+                        if("update".equalsIgnoreCase(operateType)) {
+                            changeAndUpdateStatus(headId, stage);
+                            log.info("更新短信模板,headId:{}的状态发生变更。");
+                        }
+
                         return ResponseBo.ok("当前Excel中共有" + count + "条记录与已有记录重复，旧记录已覆盖！");
+                    }
+                    if("update".equalsIgnoreCase(operateType)) {
+                        changeAndUpdateStatus(headId, stage);
+                        log.info("更新短信模板,headId:{}的状态发生变更。");
                     }
                     activityProductService.saveActivityProductList(productList);
                     return ResponseBo.ok("文件上传成功！");
@@ -306,8 +316,12 @@ public class ActivityController {
      * @return
      */
     @PostMapping("/updateActivityProduct")
-    public ResponseBo updateActivityProduct(ActivityProduct activityProduct) {
+    public ResponseBo updateActivityProduct(ActivityProduct activityProduct, String operateType) {
         activityProductService.updateActivityProduct(activityProduct);
+        if("update".equalsIgnoreCase(operateType)) {
+            changeAndUpdateStatus(activityProduct.getHeadId().toString(), activityProduct.getActivityStage());
+            log.info("修改商品,headId:{}的状态发生变更。");
+        }
         return ResponseBo.ok();
     }
 
@@ -409,8 +423,12 @@ public class ActivityController {
     }
 
     @GetMapping("/updateGroupTemplate")
-    public ResponseBo updateGroupTemplate(@RequestParam String headId,@RequestParam String groupId, @RequestParam String code, @RequestParam String stage) {
+    public ResponseBo updateGroupTemplate(@RequestParam String headId,@RequestParam String groupId, @RequestParam String code, @RequestParam String stage, @RequestParam String operateType) {
         activityUserGroupService.updateGroupTemplate(headId, groupId, code, stage);
+        if("update".equalsIgnoreCase(operateType)) {
+            changeAndUpdateStatus(headId, stage);
+            log.info("更新短信模板,headId:{}的状态发生变更。");
+        }
         return ResponseBo.ok();
     }
 
@@ -438,8 +456,12 @@ public class ActivityController {
     }
 
     @PostMapping("/submitActivity")
-    public ResponseBo submitActivity(@RequestParam String headId, @RequestParam String stage) {
-        activityHeadService.submitActivity(headId, stage);
+    public ResponseBo submitActivity(@RequestParam String headId, @RequestParam String stage, @RequestParam String operateType) {
+        if("update".equalsIgnoreCase(operateType)) {
+            submitAndUpdateStatus(headId, stage);
+        }else {
+            activityHeadService.submitActivity(headId, stage);
+        }
         return ResponseBo.ok();
     }
 
@@ -461,8 +483,12 @@ public class ActivityController {
     }
 
     @PostMapping("/deleteProduct")
-    public ResponseBo deleteProduct(@RequestParam String headId, @RequestParam String stage, @RequestParam String productIds) {
+    public ResponseBo deleteProduct(@RequestParam String headId, @RequestParam String stage, @RequestParam String operateType, @RequestParam String productIds) {
         activityProductService.deleteProduct(headId, stage, productIds);
+        if("update".equalsIgnoreCase(operateType)) {
+            changeAndUpdateStatus(headId, stage);
+            log.info("删除商品,headId:{}的状态发生变更。");
+        }
         return ResponseBo.ok();
     }
 
@@ -629,7 +655,12 @@ public class ActivityController {
         return ResponseBo.ok();
     }
 
-    // 获取头表状态
+    /**
+     * 获取头表状态
+     * @param headId
+     * @param stage
+     * @return
+     */
     private String getHeadStatus(String headId, String stage) {
         String status = "";
         if(STAGE_PREHEAT.equalsIgnoreCase(stage)) {
@@ -641,7 +672,11 @@ public class ActivityController {
         return status;
     }
 
-    // 如果是待执行，执行中，修改了产品、文案，则变更状态为待计划；
+    /**
+     * 如果是待执行，执行中，修改了产品、文案，则变更状态为待计划；
+     * @param headId
+     * @param stage
+     */
     private void changeAndUpdateStatus(String headId, String stage) {
         String status = getHeadStatus(headId, stage);
         if(status.equalsIgnoreCase("todo") || stage.equalsIgnoreCase("doing")) {
@@ -649,7 +684,9 @@ public class ActivityController {
         }
     }
 
-    // 提交计划，判断是否有执行中2、执行完3 已停止4的plan,如果存在，变更状态为执行中，否则变更状态为待执行；
+    /**
+     *  提交计划，判断是否有执行中2、执行完3 已停止4的plan,如果存在，变更状态为执行中，否则变更状态为待执行；
+      */
     private void submitAndUpdateStatus(String headId, String stage) {
         int count = activityPlanService.getStatusCount(headId, stage, Arrays.asList("2", "3", "4"));
         String status;

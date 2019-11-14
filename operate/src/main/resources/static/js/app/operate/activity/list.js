@@ -124,7 +124,14 @@ $("#btn_edit").click(function () {
         return;
     }
     let headId = selected[0].headId;
-    window.location.href = "/page/activity/edit?headId=" + headId;
+    let preheatStatus = selected[0]['preheatStatus'];
+    let formalStatus = selected[0]['formalStatus'];
+    let flag = preheatStatus === 'done' && formalStatus === 'done';
+    if(!flag) {
+        window.location.href = "/page/activity/edit?headId=" + headId;
+    }else {
+        $MB.n_warning("该活动的当前状态不允许修改计划！");
+    }
 });
 
 $("#btn_plan").click(function () {

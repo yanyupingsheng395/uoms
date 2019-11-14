@@ -130,13 +130,16 @@
     </div>
 </div>
 <div class="text-right" style="margin-top: 15px;">
-    <a class="btn btn-secondary btn-sm" onclick="nextStep('preheat')" id="btn_preheat" th:if="${operateType eq 'update'} and ${activityHead.hasPreheat == '1'}">
+    <a class="btn btn-secondary btn-sm" onclick="nextStep('preheat')" id="btn_preheat" th:if="${operateType eq 'update'} and ${activityHead.hasPreheat == '1'} and ${preheatStatus != 'done'}">
         <i class="fa fa-arrow-right"></i> 编辑预热计划
     </a>
     <a class="btn btn-secondary btn-sm" onclick="nextStep('preheat')" id="btn_preheat" th:if="${operateType eq 'save'}">
         <i class="fa fa-arrow-right"></i> 编辑预热计划
     </a>
-    <a class="btn btn-secondary btn-sm" onclick="nextStep('formal')" id="btn_formal">
+    <a class="btn btn-secondary btn-sm" onclick="nextStep('formal')" id="btn_formal" th:if="${operateType eq 'update'} and ${formalStatus != 'done'}">
+        <i class="fa fa-arrow-right"></i> 编辑正式计划
+    </a>
+    <a class="btn btn-secondary btn-sm" onclick="nextStep('formal')" id="btn_formal" th:if="${operateType eq 'save'}">
         <i class="fa fa-arrow-right"></i> 编辑正式计划
     </a>
     <a class="btn btn-secondary btn-sm" href="/page/activity">
