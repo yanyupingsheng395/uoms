@@ -208,8 +208,6 @@ public class DataStatisticsUtils {
          * @return
          */
         public static double getStandardDevition(double[] arr) {
-
-            //todo 此处是否需要做判断空呢?
             double sum = 0;
             double mean = getMean(arr);
             for (int i = 0; i < arr.length; i++) {

@@ -43,4 +43,5 @@ public interface ActivityProductMapper {
     void deleteActivityProdMapping(String headId, String stage);
 
     void deleteData(String headId);
+
 }
