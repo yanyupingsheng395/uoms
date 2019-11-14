@@ -55,4 +55,13 @@ public interface ActivityPlanService {
      * @param planDateWid
      */
     void updatePushListLargeToFaild(String headId,String planDateWid);
+
+    /**
+     * 根据状态获取条数
+     * @param headId
+     * @param stage
+     * @param asList
+     * @return
+     */
+    int getStatusCount(String headId, String stage, List<String> asList);
 }

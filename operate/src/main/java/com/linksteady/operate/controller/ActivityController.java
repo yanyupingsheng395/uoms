@@ -68,6 +68,11 @@ public class ActivityController {
     @Autowired
     private DailyProperties dailyProperties;
 
+    // 活动阶段：预热
+    private final String STAGE_PREHEAT = "preheat";
+    // 活动阶段：正式
+    private final String STAGE_FORMAL = "formal";
+
 
     /**
      * 获取头表的分页数据
@@ -230,21 +235,30 @@ public class ActivityController {
      * @return
      */
     @PostMapping("/saveActivityProduct")
-    public ResponseBo saveActivityProduct(ActivityProduct activityProduct, String headId) {
-        activityProduct.setHeadId(Long.valueOf(headId));
-        double minPrice = activityProduct.getMinPrice();
-        double formalPrice = activityProduct.getFormalPrice();
-        double activityIntensity = minPrice/formalPrice * 100;
-        activityIntensity = Double.valueOf(String.format("%.2f", activityIntensity));
-        activityProduct.setActivityIntensity(activityIntensity);
-        activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId()));
+    public ResponseBo saveActivityProduct(ActivityProduct activityProduct, String headId, String operateType) {
+        try {
+            activityProduct.setHeadId(Long.valueOf(headId));
+            double minPrice = activityProduct.getMinPrice();
+            double formalPrice = activityProduct.getFormalPrice();
+            double activityIntensity = minPrice/formalPrice * 100;
+            activityIntensity = Double.valueOf(String.format("%.2f", activityIntensity));
+            activityProduct.setActivityIntensity(activityIntensity);
+            activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId()));
 
-        List<String> productIdList = Collections.singletonList(activityProduct.getProductId());
-        int count = activityProductService.getSameProductCount(productIdList, headId, activityProduct.getActivityStage());
-        if(count > 0) {
-            return ResponseBo.error("已有相同商品ID！");
+            List<String> productIdList = Collections.singletonList(activityProduct.getProductId());
+            int count = activityProductService.getSameProductCount(productIdList, headId, activityProduct.getActivityStage());
+            if(count > 0) {
+                return ResponseBo.error("已有相同商品ID！");
+            }
+            activityProductService.saveActivityProduct(activityProduct);
+            if("update".equalsIgnoreCase(operateType)) {
+                changeAndUpdateStatus(headId, activityProduct.getActivityStage());
+                log.info("新增商品,headId:{}的状态发生变更。");
+            }
+        }catch (Exception ex) {
+            log.error("新增商品失败", ex);
+            return ResponseBo.error();
         }
-        activityProductService.saveActivityProduct(activityProduct);
         return ResponseBo.ok();
     }
 
@@ -615,8 +629,35 @@ public class ActivityController {
         return ResponseBo.ok();
     }
 
-    public static void main(String[] args) {
-        DecimalFormat df = new DecimalFormat("#.##");
-        System.out.println(df.format(1.223D));
+    // 获取头表状态
+    private String getHeadStatus(String headId, String stage) {
+        String status = "";
+        if(STAGE_PREHEAT.equalsIgnoreCase(stage)) {
+            status = activityHeadService.getStatus(headId, stage);
+        }
+        if(STAGE_FORMAL.equalsIgnoreCase(stage)) {
+            status = activityHeadService.getStatus(headId, stage);
+        }
+        return status;
+    }
+
+    // 如果是待执行，执行中，修改了产品、文案，则变更状态为待计划；
+    private void changeAndUpdateStatus(String headId, String stage) {
+        String status = getHeadStatus(headId, stage);
+        if(status.equalsIgnoreCase("todo") || stage.equalsIgnoreCase("doing")) {
+            activityHeadService.updateStatus(headId, stage, "edit");
+        }
+    }
+
+    // 提交计划，判断是否有执行中2、执行完3 已停止4的plan,如果存在，变更状态为执行中，否则变更状态为待执行；
+    private void submitAndUpdateStatus(String headId, String stage) {
+        int count = activityPlanService.getStatusCount(headId, stage, Arrays.asList("2", "3", "4"));
+        String status;
+        if(count > 0) {
+            status = "doing";
+        }else {
+            status = "todo";
+        }
+        activityHeadService.updateStatus(headId, stage, status);
     }
 }

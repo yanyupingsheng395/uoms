@@ -104,16 +104,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void submitActivity(String headId, String stage) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("update UO_OP_ACTIVITY_HEADER set ");
-        if (stage.equalsIgnoreCase(STAGE_PREHEAT)) {
-            sb.append("PREHEAT_STATUS = 'todo'");
-        }
-        if (stage.equalsIgnoreCase(STAGE_FORMAL)) {
-            sb.append("FORMAL_STATUS = 'todo'");
-        }
-        sb.append(" where head_id = '" + headId + "'");
-        activityHeadMapper.submitActivity(sb.toString());
+        updateStatus(headId, stage, "todo");
     }
 
     @Override
@@ -140,5 +131,31 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     @Override
     public void updateFormalHeadToDoing(String headId) {
         activityHeadMapper.updateFormalHeadToDoing(headId);
+    }
+
+    @Override
+    public String getStatus(String headId, String stage) {
+        String sql = "";
+        if (STAGE_PREHEAT.equalsIgnoreCase(stage)) {
+            sql = "select preheat_status from UO_OP_ACTIVITY_HEADER where head_id = '" + headId + "'";
+        }
+        if (STAGE_FORMAL.equalsIgnoreCase(stage)) {
+            sql = "select formal_status from UO_OP_ACTIVITY_HEADER where head_id = '" + headId + "'";
+        }
+        return activityHeadMapper.getStatus(sql);
+    }
+
+    @Override
+    public void updateStatus(String headId, String stage, String status) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("update UO_OP_ACTIVITY_HEADER set ");
+        if (stage.equalsIgnoreCase(STAGE_PREHEAT)) {
+            sb.append("PREHEAT_STATUS = '"+status+"'");
+        }
+        if (stage.equalsIgnoreCase(STAGE_FORMAL)) {
+            sb.append("FORMAL_STATUS = '"+status+"'");
+        }
+        sb.append(" where head_id = '" + headId + "'");
+        activityHeadMapper.updateStatus(sb.toString());
     }
 }

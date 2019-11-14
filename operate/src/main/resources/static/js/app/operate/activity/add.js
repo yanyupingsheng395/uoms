@@ -518,13 +518,14 @@ function prevStep() {
 
 // 添加活动商品
 $( "#saveActivityProduct" ).click( function () {
+    let operateType = $("#operateType").val();
     let validator = $activityProductAddForm.validate();
     let flag = validator.form();
     if (flag) {
         let operate = $( "#saveActivityProduct" ).attr( "name" );
         if (operate === "save") {
             $.post( "/activity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" +
-                $( "#headId" ).val() + "&activityStage=" + $( "#activity_stage" ).val(), function (r) {
+                $( "#headId" ).val() + "&activityStage=" + $( "#activity_stage" ).val() + "&operateType=" + operateType,  function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "添加商品成功！" );
                     $MB.closeAndRestModal( "addProductModal" );

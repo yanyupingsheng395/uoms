@@ -34,7 +34,7 @@ public interface ActivityHeadMapper {
 
     int getActivityStatus(String id);
 
-    void submitActivity(@Param("sql") String sql);
+    void updateStatus(@Param("sql") String sql);
 
     String getPreheatStatus(String headId);
 
@@ -57,4 +57,6 @@ public interface ActivityHeadMapper {
     void deleteActivity(String headId);
 
     int getDeleteCount(String headId);
+
+    String getStatus(@Param("sql") String sql);
 }

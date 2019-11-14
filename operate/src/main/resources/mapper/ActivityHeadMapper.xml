@@ -86,7 +86,7 @@
         where head_id = #{id} and (PREHEAT_STATUS in ('todo', 'doing') or FORMAL_STATUS in ('todo', 'doing'))
     </select>
 
-    <update id="submitActivity">
+    <update id="updateStatus">
         ${sql}
     </update>
 
@@ -148,5 +148,9 @@
     <update id="updateFormalHeadToDoing">
         UPDATE UO_OP_ACTIVITY_HEADER H SET H.FORMAL_STATUS='doing' where h.head_id=#{headId}
     </update>
+
+    <select id="getStatus" resultType="string">
+        ${sql}
+    </select>
 
 </mapper>

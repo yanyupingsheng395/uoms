@@ -87,4 +87,14 @@ public interface ActivityHeadService {
      * @param headId
      */
     void updateFormalHeadToDoing(String headId);
+
+    /**
+     * 根据headId和stage获取计划的状态
+     * @param headId
+     * @param stage
+     * @return
+     */
+    String getStatus(String headId, String stage);
+
+    void updateStatus(String headId, String stage, String status);
 }

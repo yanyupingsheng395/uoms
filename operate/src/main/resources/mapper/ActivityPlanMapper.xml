@@ -69,4 +69,12 @@
             select t1.activity_detail_id from  uo_op_activity_detail t1 where t1.activity_detail_id=c.source_id
             )
     </update>
+
+    <select id="getStatusCount" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_PLAN where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+        and PLAN_STATUS in
+        <foreach collection="asList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

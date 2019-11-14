@@ -38,4 +38,6 @@ public interface ActivityPlanMapper {
      * @param planDateWid
      */
     void updatePushListLargeToFaild(String headId,String planDateWid);
+
+    int getStatusCount(String headId, String stage, List<String> asList);
 }

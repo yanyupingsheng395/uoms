@@ -108,4 +108,9 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     public void updatePushListLargeToFaild(String headId, String planDateWid) {
         activityPlanMapper.updatePushListLargeToFaild(headId,planDateWid);
     }
+
+    @Override
+    public int getStatusCount(String headId, String stage, List<String> asList) {
+        return activityPlanMapper.getStatusCount(headId, stage, asList);
+    }
 }
