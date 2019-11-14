@@ -137,7 +137,7 @@ function sendMessage()
 }
 
 function del() {
-    var selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
+    var selectRows=$("#templateTable").bootstrapTable('getSelections');
     if(null==selectRows||selectRows.length==0)
     {
         lightyear.loading('hide');
@@ -145,7 +145,7 @@ function del() {
         return;
     }
 
-    var smsCode =selectRows[0]["smsCode"];
+    var code =selectRows[0]["code"];
 
     //进行删除提示
     $.confirm({
@@ -156,12 +156,12 @@ function del() {
                 text: '确认',
                 btnClass: 'btn-blue',
                 action: function(){
-                    $.getJSON("/smsTemplate/deleteSmsTemplate?smsCode="+smsCode,function (resp) {
+                    $.getJSON("/activityTemplate/deleteTemplate?code="+code,function (resp) {
                         if (resp.code === 200){
                             //提示成功
                             $MB.n_success('删除成功！');
                             //刷新表格
-                            $('#smsTemplateTable').bootstrapTable('refresh');
+                            $('#templateTable').bootstrapTable('refresh');
                         }else {
                             $MB.n_danger(resp.msg);
                         }

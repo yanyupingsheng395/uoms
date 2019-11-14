@@ -1,7 +1,6 @@
 package com.linksteady.operate.domain;
 
 import com.linksteady.common.config.ExportConfig;
-import com.linksteady.operate.config.ActivityDetailExportConvert;
 import lombok.Data;
 
 import java.io.Serializable;
