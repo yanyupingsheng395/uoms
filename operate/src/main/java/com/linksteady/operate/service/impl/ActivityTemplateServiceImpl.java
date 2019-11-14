@@ -24,6 +24,11 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     }
 
     @Override
+    public int checkCode(String code) {
+        return activityTemplateMapper.checkCode(code);
+    }
+
+    @Override
     public int getTotalCount(String code) {
         return activityTemplateMapper.getTotalCount(code);
     }

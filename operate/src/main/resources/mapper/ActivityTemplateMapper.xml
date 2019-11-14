@@ -47,4 +47,8 @@
             </where>
         </if>
     </select>
+
+    <select id="checkCode" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}
+    </select>
 </mapper>

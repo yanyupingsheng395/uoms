@@ -22,4 +22,6 @@ public interface ActivityTemplateMapper {
     int getTotalCount(@Param("code") String code);
 
     List<ActivityTemplate> getTemplateList(int start, int end, String code);
+
+    int checkCode(String code);
 }

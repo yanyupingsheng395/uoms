@@ -220,7 +220,22 @@ $("#btn_save").click(function () {
     var url = "";
     var success_msg = "";
     var sure_msg = "";
+    var flag = false;
     if($(this).attr("name") == "save") {
+        $.ajax({
+            url:"/activityTemplate/checkCode",
+            data:{code: code},
+            async: false,
+            success: function (r) {
+                if(r.code === 200) {
+                    if(r.data != '0') {
+                        $MB.n_warning("模板编码已存在！");
+                        flag = true;
+                    }
+                }
+            }
+        });
+        if(flag) return;
         url = "/activityTemplate/addTemplate";
         success_msg = "新增成功！";
         sure_msg = "确定要保存数据？";
@@ -302,6 +317,7 @@ $("#btn_edit").click(function () {
             var data = resp.data;
             $("#code").val(data.code).attr("readOnly", true);
             $("#content").val(data.content);
+            $("#contentNormal").val(data.contentNormal);
             statInputNum($("#content"),$("#word_activity"));
             statInputNum($("#contentNormal"),$("#word_normal"));
             $("#myLargeModalLabel3").text("修改模板");

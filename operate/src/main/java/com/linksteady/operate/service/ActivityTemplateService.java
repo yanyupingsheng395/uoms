@@ -23,4 +23,6 @@ public interface ActivityTemplateService {
     void update(ActivityTemplate activityTemplate);
 
     List<ActivityTemplate> getTemplateList(int start, int end, String code);
+
+    int checkCode(String code);
 }
