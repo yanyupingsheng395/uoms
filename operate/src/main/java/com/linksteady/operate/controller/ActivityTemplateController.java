@@ -96,8 +96,8 @@ public class ActivityTemplateController extends BaseController {
      * @param activityTemplate
      * @return
      */
-    @RequestMapping("/updateSmsTemplate")
-    public ResponseBo updateSmsTemplate(@RequestBody ActivityTemplate activityTemplate) {
+    @RequestMapping("/updateTemplate")
+    public ResponseBo updateTemplate(@RequestBody ActivityTemplate activityTemplate) {
         activityTemplateService.update(activityTemplate);
         return ResponseBo.ok();
     }
