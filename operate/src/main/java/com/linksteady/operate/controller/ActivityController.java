@@ -5,6 +5,7 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.*;
+import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.thrift.ActivityThriftClient;
 import com.linksteady.operate.vo.ActivityGroupVO;
@@ -19,21 +20,16 @@ import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.NumberUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author hxcao
@@ -139,7 +135,7 @@ public class ActivityController {
                     }
                     // 验证产品名称不超过最大长度
                     if(row.getCell(2).getStringCellValue().length() > dailyProperties.getProdNameLen()) {
-                        throw new Exception("商品名称超过系统设置！");
+                        throw new LinkSteadyException("商品名称长度超过系统设置！");
                     }
                     activityProduct.setProductName(row.getCell(2).getStringCellValue());
                     double minPrice = row.getCell(3).getNumericCellValue();
@@ -164,7 +160,7 @@ public class ActivityController {
                     productList.add(activityProduct);
                 }
                 if(!flag.get()) {
-                    return ResponseBo.error("检测到数据与模板格式不符，请检查后重新上传！");
+                    throw new LinkSteadyException("检测到上传数据与模板格式不符，请检查后重新上传！");
                 }
                 if(productList.size() != 0) {
                     List<String> productIdList = productList.stream().map(ActivityProduct::getProductId).collect(Collectors.toList());
@@ -173,12 +169,10 @@ public class ActivityController {
                     if(count > 0) {
                         activityProductService.deleteRepeatData(productList, headId, stage);
                         activityProductService.saveActivityProductList(productList);
-
                         if("update".equalsIgnoreCase(operateType)) {
                             changeAndUpdateStatus(headId, stage);
                             log.info("更新短信模板,headId:{}的状态发生变更。");
                         }
-
                         return ResponseBo.ok("当前Excel中共有" + count + "条记录与已有记录重复，旧记录已覆盖！");
                     }
                     if("update".equalsIgnoreCase(operateType)) {
@@ -188,14 +182,19 @@ public class ActivityController {
                     activityProductService.saveActivityProductList(productList);
                     return ResponseBo.ok("文件上传成功！");
                 }else {
-                    return ResponseBo.error("上传的数据为空！");
+                    throw new LinkSteadyException("上传的数据为空！");
                 }
             } catch (IOException e) {
                 log.error("上传excel失败", e);
-                return ResponseBo.error("上传excel失败，请检查");
+                return ResponseBo.error("上传excel失败，请检查。");
+            } catch (LinkSteadyException e) {
+                log.error("解析excel失败", e);
+                return ResponseBo.error(e.getMessage());
+            } catch (IllegalArgumentException e) {
+                return ResponseBo.error("最低单价，非活动售价为数值型，其余为字符型。");
             } catch (Exception ex) {
                 log.error("解析excel失败", ex);
-                return ResponseBo.error("解析excel失败，请检查。最低单价，非活动售价为数值型，其余为字符型。");
+                return ResponseBo.error("解析excel失败，请检查。");
             }
         } else {
             return ResponseBo.error("只支持.xls,.xlsx后缀的文件！");
