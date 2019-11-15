@@ -241,6 +241,7 @@ public class PageController {
         String formalStatus = activityHeadService.getStatus(headId, "formal");
         model.addAttribute("activityHead", activityHead);
         model.addAttribute("operateType", "update");
+        // 当处于done状态的时候，按钮不显示
         model.addAttribute("preheatStatus", preheatStatus);
         model.addAttribute("formalStatus", formalStatus);
         return "operate/activity/add";

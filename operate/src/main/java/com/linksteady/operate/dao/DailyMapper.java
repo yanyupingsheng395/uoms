@@ -65,8 +65,22 @@ public interface DailyMapper {
      */
     List<DailyStatis> getDailyStatisList(String headId);
 
+    /**
+     * 个体结果只获取已经转化的结果
+     * @param dailyPersonalVo
+     * @param start
+     * @param end
+     * @param headId
+     * @return
+     */
     List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int start, int end, String headId);
 
+    /**
+     * 个体结果只获取已经转化的结果
+     * @param dailyPersonalVo
+     * @param headId
+     * @return
+     */
     int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
 
     /**

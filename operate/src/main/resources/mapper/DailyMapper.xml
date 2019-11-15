@@ -242,7 +242,7 @@
         t.SPU_CONSISTENT SPU_IS_CONVERT
         --转化的SPU名称
         from UO_OP_DAILY_CONVERT_DETAIL t, w_users u
-        where t.user_id = u.id
+        where t.user_id = u.id and IS_CONVERSION = '1'
         and t.daily_header_id=#{headId}
         <if test="dailyPersonalVo.spuIsConvert != null and dailyPersonalVo.spuIsConvert != ''">
             and SPU_CONSISTENT = #{dailyPersonalVo.spuIsConvert}
@@ -258,7 +258,7 @@
     </select>
 
     <select id="getDailyPersonalEffectCount" resultType="int" parameterType="com.linksteady.operate.vo.DailyPersonalVo">
-        select count(1) from UO_OP_DAILY_CONVERT_DETAIL where DAILY_HEADER_ID = #{headId}
+        select count(1) from UO_OP_DAILY_CONVERT_DETAIL where DAILY_HEADER_ID = #{headId} and IS_CONVERSION = '1'
         <if test="dailyPersonalVo.spuIsConvert != null and dailyPersonalVo.spuIsConvert != ''">
             and SPU_CONSISTENT = #{dailyPersonalVo.spuIsConvert}
         </if>
