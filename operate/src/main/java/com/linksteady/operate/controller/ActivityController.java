@@ -171,13 +171,13 @@ public class ActivityController {
                         activityProductService.saveActivityProductList(productList);
                         if("update".equalsIgnoreCase(operateType)) {
                             changeAndUpdateStatus(headId, stage);
-                            log.info("更新短信模板,headId:{}的状态发生变更。");
+                            log.info("更新短信模板,headId:{}的状态发生变更。", headId);
                         }
                         return ResponseBo.ok("当前Excel中共有" + count + "条记录与已有记录重复，旧记录已覆盖！");
                     }
                     if("update".equalsIgnoreCase(operateType)) {
                         changeAndUpdateStatus(headId, stage);
-                        log.info("更新短信模板,headId:{}的状态发生变更。");
+                        log.info("更新短信模板,headId:{}的状态发生变更。", headId);
                     }
                     activityProductService.saveActivityProductList(productList);
                     return ResponseBo.ok("文件上传成功！");
@@ -264,7 +264,7 @@ public class ActivityController {
             activityProductService.saveActivityProduct(activityProduct);
             if("update".equalsIgnoreCase(operateType)) {
                 changeAndUpdateStatus(headId, activityProduct.getActivityStage());
-                log.info("新增商品,headId:{}的状态发生变更。");
+                log.info("新增商品,headId:{}的状态发生变更。", headId);
             }
         }catch (Exception ex) {
             log.error("新增商品失败", ex);
@@ -321,7 +321,7 @@ public class ActivityController {
         activityProductService.updateActivityProduct(activityProduct);
         if("update".equalsIgnoreCase(operateType)) {
             changeAndUpdateStatus(activityProduct.getHeadId().toString(), activityProduct.getActivityStage());
-            log.info("修改商品,headId:{}的状态发生变更。");
+            log.info("修改商品,headId:{}的状态发生变更。", activityProduct.getHeadId());
         }
         return ResponseBo.ok();
     }
@@ -428,7 +428,7 @@ public class ActivityController {
         activityUserGroupService.updateGroupTemplate(headId, groupId, code, stage);
         if("update".equalsIgnoreCase(operateType)) {
             changeAndUpdateStatus(headId, stage);
-            log.info("更新短信模板,headId:{}的状态发生变更。");
+            log.info("更新短信模板,headId:{}的状态发生变更。", headId);
         }
         return ResponseBo.ok();
     }
@@ -488,7 +488,7 @@ public class ActivityController {
         activityProductService.deleteProduct(headId, stage, productIds);
         if("update".equalsIgnoreCase(operateType)) {
             changeAndUpdateStatus(headId, stage);
-            log.info("删除商品,headId:{}的状态发生变更。");
+            log.info("删除商品,headId:{}的状态发生变更。", headId);
         }
         return ResponseBo.ok();
     }
