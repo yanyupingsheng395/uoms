@@ -192,7 +192,9 @@ public class ActivityController {
                 return ResponseBo.error(e.getMessage());
             } catch (IllegalArgumentException e) {
                 return ResponseBo.error("最低单价，非活动售价为数值型，其余为字符型。");
-            } catch (Exception ex) {
+            } catch (NullPointerException e) {
+                return ResponseBo.error("解析excel失败，除ERP货号外，其余列的值必填！");
+            }catch (Exception ex) {
                 log.error("解析excel失败", ex);
                 return ResponseBo.error("解析excel失败，请检查。");
             }
