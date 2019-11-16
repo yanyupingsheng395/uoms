@@ -15,11 +15,13 @@ public class LinkSteadyException extends Throwable {
     }
 
     public LinkSteadyException(String code, String message) {
+        super(message);
         this.code = code;
         this.message = message;
     }
 
     public LinkSteadyException(String message) {
+        super(message);
         this.message = message;
     }
 }
