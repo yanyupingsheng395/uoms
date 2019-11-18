@@ -421,7 +421,6 @@ public class ActivityController {
 
                 result.add(vo);
             }
-
             return ResponseBo.okWithData("",result);
         }
     }
