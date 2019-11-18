@@ -543,7 +543,7 @@ $( "#saveActivityProduct" ).click( function () {
                     $MB.closeAndRestModal( "addProductModal" );
                     $MB.refreshTable( 'activityProductTable' );
                 } else {
-                    $MB.n_danger( "更新商品失败！" );
+                    $MB.n_danger(r.msg);
                 }
             } );
         }

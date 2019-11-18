@@ -6,30 +6,30 @@ app:
   build:
     time: @timestamp@
 
-#spring:
-#  application:
-#    name: operate
-#  cloud:
-#    config:
-#      uri: http://172.26.61.28:9060
-#      username: admin
-#      password: linksteady123
-#
-#  profiles:
-#    active: prod
-
-# dev
 spring:
   application:
     name: operate
   cloud:
     config:
-      uri: http://config.dev.growth-master.com
+      uri: http://172.26.61.28:9060
       username: admin
       password: linksteady123
 
   profiles:
     active: prod
+
+# dev
+#spring:
+#  application:
+#    name: operate
+#  cloud:
+#    config:
+#      uri: http://config.dev.growth-master.com
+#      username: admin
+#      password: linksteady123
+#
+#  profiles:
+#    active: prod
 
 ## 配置加密的秘钥
 jasypt:

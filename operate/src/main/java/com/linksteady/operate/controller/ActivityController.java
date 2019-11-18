@@ -261,14 +261,19 @@ public class ActivityController {
             if(count > 0) {
                 return ResponseBo.error("已有相同商品ID！");
             }
+            if(activityProduct.getProductName().length() > dailyProperties.getProdNameLen()) {
+                throw new LinkSteadyException("商品名称超过系统设置！");
+            }
             activityProductService.saveActivityProduct(activityProduct);
             if("update".equalsIgnoreCase(operateType)) {
                 changeAndUpdateStatus(headId, activityProduct.getActivityStage());
                 log.info("新增商品,headId:{}的状态发生变更。", headId);
             }
+        } catch (LinkSteadyException ex){
+            return ResponseBo.error(ex.getMessage());
         }catch (Exception ex) {
             log.error("新增商品失败", ex);
-            return ResponseBo.error();
+            return ResponseBo.error("新增商品失败");
         }
         return ResponseBo.ok();
     }
@@ -318,12 +323,19 @@ public class ActivityController {
      */
     @PostMapping("/updateActivityProduct")
     public ResponseBo updateActivityProduct(ActivityProduct activityProduct, String operateType) {
-        activityProductService.updateActivityProduct(activityProduct);
-        if("update".equalsIgnoreCase(operateType)) {
-            changeAndUpdateStatus(activityProduct.getHeadId().toString(), activityProduct.getActivityStage());
-            log.info("修改商品,headId:{}的状态发生变更。", activityProduct.getHeadId());
+        try {
+            if(activityProduct.getProductName().length() > dailyProperties.getProdNameLen()) {
+                throw new LinkSteadyException("商品名称超过系统设置！");
+            }
+            activityProductService.updateActivityProduct(activityProduct);
+            if("update".equalsIgnoreCase(operateType)) {
+                changeAndUpdateStatus(activityProduct.getHeadId().toString(), activityProduct.getActivityStage());
+                log.info("修改商品,headId:{}的状态发生变更。", activityProduct.getHeadId());
+            }
+            return ResponseBo.ok();
+        } catch (LinkSteadyException e) {
+            return ResponseBo.error(e.getMessage());
         }
-        return ResponseBo.ok();
     }
 
     /**
