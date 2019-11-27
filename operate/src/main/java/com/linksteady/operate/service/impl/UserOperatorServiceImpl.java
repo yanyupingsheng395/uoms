@@ -2,6 +2,7 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.util.DatePeriodUtil;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -133,7 +136,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         List<Double> currentList = fixData(currentDataMap, dateList);
         String lastStart = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("start"));
         String lastEnd = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("end"));
-        List<String> lastYearDateList = getDateList(periodType, lastStart, lastEnd);
+        List<String> lastYearDateList = DateUtil.getPeriodDate(periodType, lastStart, lastEnd);
         List<KpiInfoVo> lastDataList = getDatePeriodData(kpiType, lastStart, lastEnd, periodType, source);
         Map<String, Object> lastDataMap = lastDataList.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getKpiVal));
         List<Double> lastList = fixData(lastDataMap, lastYearDateList);
@@ -163,13 +166,6 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         String peroidName=buildPeriodName(periodType);
         UserOperaterMapper mapperTemplate = mapperFactory.getMapperTemplate(kpiType);
         return mapperTemplate.getDatePeriodData(peroidName,templateResult.getJoinInfo(), templateResult.getFilterInfo());
-    }
-
-    private List<String> getDateList(String periodType, String startDt, String endDt) {
-        if("D".equals(periodType)) {
-            startDt = startDt + "~" + endDt;
-        }
-        return DatePeriodUtil.getPeriodDate(periodType, startDt, false);
     }
 
     /**
@@ -224,7 +220,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         //获取去年同期的值
         String lastStart = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("start"));
         String lastEnd = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("end"));
-        List<String> lastDateList = getDateList(periodType, lastStart, lastEnd);
+        List<String> lastDateList = DateUtil.getPeriodDate(periodType, lastStart, lastEnd);
         List<KpiInfoVo> lastKpiInfoVos = getSpOrFpKpiValDetail(kpiType, lastStart, lastEnd, periodType, source);
 
         Map<String, Object> fpKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getFpKpiVal));
