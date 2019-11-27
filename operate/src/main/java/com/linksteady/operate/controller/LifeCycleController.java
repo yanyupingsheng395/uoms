@@ -71,25 +71,25 @@ public class LifeCycleController extends BaseController {
         temp.put("spuWid","spuWid");
         columns.add(temp);
 
-        temp=Maps.newHashMap();
-        temp.put("stockNum","库存数量");
-        columns.add(temp);
+//        temp=Maps.newHashMap();
+//        temp.put("stockNum","库存数量");
+//        columns.add(temp);
 
-        temp=Maps.newHashMap();
-        temp.put("stockbysales","库销比");
-        columns.add(temp);
+//        temp=Maps.newHashMap();
+//        temp.put("stockbysales","库销比");
+//        columns.add(temp);
 
-        temp=Maps.newHashMap();
-        temp.put("timeToMarket","上市日期");
-        columns.add(temp);
+//        temp=Maps.newHashMap();
+//        temp.put("timeToMarket","上市日期");
+//        columns.add(temp);
+//
+//        temp=Maps.newHashMap();
+//        temp.put("onsaleDuration","在售时长(天）");
+//        columns.add(temp);
 
-        temp=Maps.newHashMap();
-        temp.put("onsaleDuration","在售时长(天）");
-        columns.add(temp);
-
-        temp=Maps.newHashMap();
-        temp.put("salesDt","适销时间");
-        columns.add(temp);
+//        temp=Maps.newHashMap();
+//        temp.put("salesDt","适销时间");
+//        columns.add(temp);
 
         temp=Maps.newHashMap();
         temp.put("orderNo","名次");

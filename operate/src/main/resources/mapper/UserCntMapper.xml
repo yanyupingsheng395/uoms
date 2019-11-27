@@ -18,7 +18,7 @@
         </if>
     </select>
 
-    <!--查询起止时间段内的连带率值-->
+    <!--查询起止时间段内按周期分组的用户数值-->
     <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVo">
         SELECT
         COUNT(DISTINCT W_ORDER_DETAILS.USER_ID)  kpiVal,
@@ -36,7 +36,7 @@
         ORDER BY  ${period_name} ASC
     </select>
 
-    <!--获取首购和复购的连带率汇总值-->
+    <!--获取首购和复购的用户数汇总值-->
     <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
         WITH G1 AS
         (
