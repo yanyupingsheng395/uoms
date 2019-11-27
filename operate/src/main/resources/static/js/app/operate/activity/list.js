@@ -182,3 +182,22 @@ $("#btn_delete").click(function () {
         });
     });
 });
+
+// 查看效果
+$("#btn_effect").click(function () {
+    let selected = $("#activityTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要编辑的活动！');
+        return;
+    }
+    let headId = selected[0].headId;
+    let preheatStatus = selected[0]['preheatStatus'];
+    let formalStatus = selected[0]['formalStatus'];
+    let flag = preheatStatus === 'done' || preheatStatus === 'doing' || formalStatus === 'done' || formalStatus === 'doing';
+    if(flag) {
+        window.location.href = "/page/activity/effect?headId=" + headId;
+    }else {
+        $MB.n_warning("该活动的当前状态不允许查看效果！");
+    }
+});

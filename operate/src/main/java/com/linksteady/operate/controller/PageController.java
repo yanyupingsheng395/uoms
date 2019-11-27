@@ -257,4 +257,14 @@ public class PageController {
         model.addAttribute("headId", id);
         return "operate/activity/plan";
     }
+
+    /**
+     * 活动运营-效果统计页
+     * @return
+     */
+    @RequestMapping("/activity/effect")
+    public String activityEffect(@RequestParam("headId") String headId, Model model) {
+        model.addAttribute("headId", headId);
+        return "operate/activity/effect";
+    }
 }
