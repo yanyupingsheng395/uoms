@@ -40,7 +40,7 @@
         )
         select * from (select rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,kpi_name, kpi_val from temp
                        where HEAD_ID = #{headId} and PUSH_KPI = #{pushKpi}
-        ) pivot(max(kpi_val) for ACTIVITY_STAGE in ('all' ALL_STAGE, 'preheat' as PREHEAT_STAGE, 'normal' NORMAL_STAGE))
+        ) pivot(max(kpi_val) for ACTIVITY_STAGE in ('all' ALL_STAGE, 'preheat' as PREHEAT_STAGE, 'formal' NORMAL_STAGE))
         order by rn asc
     </select>
 
@@ -65,7 +65,7 @@
         )
         select * from (select rn, main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,kpi_name, kpi_val from temp
                        where HEAD_ID = #{headId} and PUSH_KPI = #{pushKpi}
-                      ) pivot(max(kpi_val) for ACTIVITY_STAGE in ('all' ALL_STAGE, 'preheat' as PREHEAT_STAGE, 'normal' NORMAL_STAGE))
+                      ) pivot(max(kpi_val) for ACTIVITY_STAGE in ('all' ALL_STAGE, 'preheat' as PREHEAT_STAGE, 'formal' NORMAL_STAGE))
         order by rn asc
     </select>
 </mapper>
