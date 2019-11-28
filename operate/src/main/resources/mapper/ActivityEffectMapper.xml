@@ -33,7 +33,7 @@
 
     <select id="getEffectMainKpi" resultMap="base">
         with temp as (
-          select 1 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI, '推送人数（人）' kpi_name, PUSH_UCNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
+          select 1 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI, '推送人次' kpi_name, PUSH_UCNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
           select 2 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI, '推送转化人数（人）' kpi_name, CONVERT_UCNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
           select 3 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送转化率（%）' kpi_name, CONVERT_RATE kpi_val from UO_OP_ACTIVITY_EFFECT union all
           select 4 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送ROI' kpi_name, PUSH_ROI kpi_val from UO_OP_ACTIVITY_EFFECT
@@ -46,7 +46,7 @@
 
     <select id="getEffectInfo" resultMap="base">
         select effect_dt, push_ucnt, convert_ucnt, convert_rate, push_roi from UO_OP_ACTIVITY_EFFECT
-        where HEAD_ID = #{headId} and push_kpi = '2'
+        where HEAD_ID = #{headId} and push_kpi = '0' and activity_stage = 'all'
     </select>
 
     <select id="getEffectAllKpi" resultMap="base">

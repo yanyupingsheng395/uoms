@@ -64,7 +64,14 @@ function init_table2() {
                 field: 'kpiName',
                 title: '辅助指标',
                 valign:"middle",
-                rowspan: 2
+                rowspan: 2,
+                formatter: function (value, row, index) {
+                    if(value === '推送转化金额（元）' || value === '推送转化人数（人）') {
+                        return "-";
+                    }else {
+                        return value;
+                    }
+                }
             },
             {
                 title: "数值（截止前日累计）",
@@ -109,7 +116,7 @@ function init_header() {
             var pushUcnt = data['pushUcnt'];
             var pushRoi = data['pushRoi'];
             var convertRate = data['convertRate'];
-            var code = "截止到"+subEffectDt(effectDt, 0 ,4)+"年"+subEffectDt(effectDt, 4 ,6)+"月"+subEffectDt(effectDt, 6 ,8)+"日，总计对"+pushUcnt+"个用户进行了推送培养，推送转化率为"+convertRate+"%，推送ROI为每条推送信息带来"+pushRoi+"元转化金额。";
+            var code = "截止到"+subEffectDt(effectDt, 0 ,4)+"年"+subEffectDt(effectDt, 4 ,6)+"月"+subEffectDt(effectDt, 6 ,8)+"日，总计对"+pushUcnt+"人次进行了推送培养，推送转化率为"+convertRate+"%，推送ROI为每条推送信息带来"+pushRoi+"元转化金额。";
             $("#effectInfo").html('').append(code);
         }else {
             $MB.n_danger("获取数据异常！");

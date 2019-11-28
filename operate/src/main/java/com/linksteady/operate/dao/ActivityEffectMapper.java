@@ -19,7 +19,7 @@ public interface ActivityEffectMapper {
     List<ActivityEffect> getEffectMainKpi(String headId, String pushKpi);
 
     /**
-     * 获取头部信息
+     * 获取效果头部信息，pus_kpi 为2
      * @param headId
      * @return
      */
