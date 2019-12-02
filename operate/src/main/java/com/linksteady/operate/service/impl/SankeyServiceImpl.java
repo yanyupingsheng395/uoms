@@ -66,6 +66,7 @@ public class SankeyServiceImpl implements SankeyService {
         nodeNames.stream().forEach(x->{
             Map<String, Object> nodeNameObject = Maps.newHashMap();
             nodeNameObject.put("name", x);
+            nodeNameObject.put("IDX", "-1");
             nodeNameArray.add(nodeNameObject);
         });
         data.put("nodes", nodeNameArray);
@@ -77,7 +78,7 @@ public class SankeyServiceImpl implements SankeyService {
             linkObject.put("source", nodeNames.indexOf(x.get("SOURCE_NAME").toString()));
             linkObject.put("target", nodeNames.indexOf(x.get("TARGET_NAME").toString()));
             linkObject.put("value", ((BigDecimal)x.get("T_CNT")).longValue());
-            linkObject.put("id", spuList.indexOf(x));
+            linkObject.put("id", ((BigDecimal)x.get("ID")).longValue());
             linkArray.add(linkObject);
         });
         data.put("links", linkArray);

@@ -122,19 +122,25 @@ export default function define(runtime, observer) {
             gradientLinks.attr("stroke-opactiy", 0)
                 .each(setDash);
 
-
-            var ids=[1,3,5,7,9,13]
-            let links = svg.selectAll("path.gradient-link")
-                .filter((link) => {
-                    return ids.indexOf(link.id) !== -1;
+            $.get("/sankey/getSunIdList", {id: 26}, function (r) {
+                var ids=[];
+                $.each(r, function (k, v) {
+                    ids.push(parseInt(v));
                 });
-            console.log(typeof links);
-            console.log(links);
-            links.attr("stroke-opacity", 0.5)
-                .transition()
-                .duration(duration)
-                .ease(d3.easeLinear)
-                .attr("stroke-dashoffset", 0);
+                // ids.push()
+                let links = svg.selectAll("path.gradient-link")
+                    .filter((link) => {
+                        return ids.indexOf(link.id) !== -1;
+                    });
+                console.log(typeof links);
+                console.log(links);
+                links.attr("stroke-opacity", 0.5)
+                    .transition()
+                    .duration(duration)
+                    .ease(d3.easeLinear)
+                    .attr("stroke-dashoffset", 0);
+            });
+
         }
 
 
@@ -160,8 +166,7 @@ export default function define(runtime, observer) {
             // nodes.on( "mouseover", test)
             //     .on( "mouseout", branchClear);
 
-            nodes.on( "click", branchAnimate2)
-                .on( "mouseout", branchClear);
+            nodes.on( "click", branchAnimate2);
 
             return svg.node();
         }

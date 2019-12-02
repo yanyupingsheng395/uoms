@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,6 +26,11 @@ public class SankeyController {
     @RequestMapping("/getSpuSnakey")
     public Map<String, Object> getSpuSnakey() {
         return sankeyService.getSpuList();
+    }
+
+    @RequestMapping("/getSunIdList")
+    public List<String> getSunIdList(String id) {
+        return sankeyService.getSunIdList(id);
     }
 
     public static void main(String[] args) {
