@@ -10,6 +10,4 @@ import java.util.Map;
 public interface SankeyService {
 
     Map<String, Object> getSpuList();
-
-    List<String> getSunIdList(String id);
 }

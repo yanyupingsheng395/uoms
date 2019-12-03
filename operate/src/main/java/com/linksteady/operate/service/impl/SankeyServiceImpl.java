@@ -20,38 +20,6 @@ public class SankeyServiceImpl implements SankeyService {
     @Autowired
     private SankeyMapper sankeyMapper;
 
-//    @Override
-//    public Map<String, Object> getSpuList() {
-//        JSONObject data = new JSONObject();
-//        List<Map<String, Object>> spuList = sankeyMapper.getSpuList();
-//
-//        // 获取node节点数据
-//        List<String> sourceNames = spuList.stream().map(x->x.get("SOURCE_NAME").toString()).collect(Collectors.toList());
-//        List<String> targetNames = spuList.stream().map(x->x.get("TARGET_NAME").toString()).collect(Collectors.toList());
-//        sourceNames.addAll(targetNames);
-//        List<String> nodeNames = sourceNames.stream().distinct().collect(Collectors.toList());
-//        JSONArray nodeNameArray = new JSONArray();
-//        nodeNames.stream().forEach(x->{
-//            JSONObject nodeNameObject = new JSONObject();
-//            nodeNameObject.put("name", x);
-//            nodeNameArray.add(nodeNameObject);
-//        });
-//        data.put("nodes", nodeNameArray);
-//
-//        // 获取link节点数据
-//        JSONArray linkArray = new JSONArray();
-//        spuList.stream().forEach(x->{
-//            JSONObject linkObject = new JSONObject();
-//            linkObject.put("source", nodeNames.indexOf(x.get("SOURCE_NAME").toString()));
-//            linkObject.put("target", nodeNames.indexOf(x.get("TARGET_NAME").toString()));
-//            linkObject.put("value", ((BigDecimal)x.get("T_CNT")).longValue());
-//
-//            linkArray.add(linkObject);
-//        });
-//        data.put("links", linkArray);
-//        return data;
-//    }
-
     @Override
     public Map<String, Object> getSpuList() {
         Map<String, Object> data = new HashMap<>();
@@ -66,7 +34,6 @@ public class SankeyServiceImpl implements SankeyService {
         nodeNames.stream().forEach(x->{
             Map<String, Object> nodeNameObject = Maps.newHashMap();
             nodeNameObject.put("name", x);
-            nodeNameObject.put("IDX", "-1");
             nodeNameArray.add(nodeNameObject);
         });
         data.put("nodes", nodeNameArray);
@@ -78,15 +45,9 @@ public class SankeyServiceImpl implements SankeyService {
             linkObject.put("source", nodeNames.indexOf(x.get("SOURCE_NAME").toString()));
             linkObject.put("target", nodeNames.indexOf(x.get("TARGET_NAME").toString()));
             linkObject.put("value", ((BigDecimal)x.get("T_CNT")).longValue());
-            linkObject.put("id", ((BigDecimal)x.get("ID")).longValue());
             linkArray.add(linkObject);
         });
         data.put("links", linkArray);
         return data;
-    }
-
-    @Override
-    public List<String> getSunIdList(String id) {
-        return sankeyMapper.getSunIdList(id);
     }
 }

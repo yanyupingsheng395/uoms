@@ -8,8 +8,5 @@ import java.util.Map;
  * @date 2019-12-02
  */
 public interface SankeyMapper {
-
     List<Map<String, Object>> getSpuList();
-
-    List<String> getSunIdList(String id);
 }
