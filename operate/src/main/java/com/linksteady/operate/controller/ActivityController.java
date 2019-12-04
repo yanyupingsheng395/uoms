@@ -72,7 +72,6 @@ public class ActivityController {
     // 活动阶段：正式
     private final String STAGE_FORMAL = "formal";
 
-
     /**
      * 获取头表的分页数据
      */
