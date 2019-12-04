@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">活动效果</h5>
+                            </div>
+                            <div class="row">
+                                <hr class="hr"/>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <p class="h5" id="effectInfo"></p>
+                                </div>
+                                <div class="col-md-3 text-right">
+                                    <a class="btn btn-secondary btn-sm" href="/page/activity">
+                                        <i class="fa fa-reply"></i> 返回
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="col-md-12">
+                                <p class="h5">主指标推送累计结果</p>
+                                <hr class="hr" style="margin-top: 15px;margin-bottom: 15px;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form>
+                                    <div class="select-list">
+                                        <ul>
+                                            <li>
+                                                指标：
+                                                <select name="" id="pushKpi1">
+                                                    <option value="0">推送并转化</option>
+                                                    <option value="1">推送并转化并成长</option>
+                                                </select>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <table class="table table-striped table-bordered" id="effectTable1"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="col-md-12">
+                                <p class="h5">全部指标推送累计结果</p>
+                                <hr class="hr" style="margin-top: 15px;margin-bottom: 15px;">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <form>
+                                <div class="select-list">
+                                    <ul>
+                                        <li>
+                                            指标：
+                                            <select name="" id="pushKpi2">
+                                                <option value="0">推送并转化</option>
+                                                <option value="1">推送并转化并成长</option>
+                                            </select>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-striped table-bordered" id="effectTable2"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script>
+    var headId = "[[${headId}]]";
+</script>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/js/app/operate/common/template.js}"></script>
+<script data-th-src="@{/js/app/operate/activity/effect.js}"></script>
+</body>
+</html>

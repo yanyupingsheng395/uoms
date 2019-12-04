@@ -1,0 +1,646 @@
+Index: operate/src/main/resources/templates/operate/activity/effect.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/resources/templates/operate/activity/effect.html	(date 1574845742000)
++++ operate/src/main/resources/templates/operate/activity/effect.html	(date 1574845742000)
+@@ -0,0 +1,82 @@
++<!DOCTYPE html>
++<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
++
++<head>
++    <meta charset="utf-8">
++    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
++    <meta http-equiv="X-UA-Compatible" content="edge" />
++    <title>用户成长系统</title>
++    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
++    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
++    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
++    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
++    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
++</head>
++
++<body>
++<!-- 公共组件 -->
++<div data-th-include="common/common"></div>
++<div class="lyear-layout-web">
++    <div class="lyear-layout-container">
++        <!-- 左侧导航 -->
++        <div data-th-include="common/aside"></div>
++        <!-- 头部信息 -->
++        <div data-th-include="common/header"></div>
++        <!-- 页面主要内容 -->
++        <main class="lyear-layout-content">
++            <div class="container-div ui-layout-center">
++                <div class="row">
++                    <div class="col-sm-12 search-collapse">
++                        <div class="col-md-12">
++                            <div class="row">
++                                <h5 class="modal-title pull-left" style="margin-top: 20px;">活动效果</h5>
++                            </div>
++                            <div class="row">
++                                <hr class="hr"/>
++                            </div>
++                            <div class="row">
++                                <div class="col-md-9">
++                                    <p class="h5">截止到X年X月X日，总计对X个用户进行了推送培养，推送转化率为X%，推送ROI为每条推送信息带来X元转化金额。</p>
++                                </div>
++                                <div class="col-md-3 text-right">
++                                    <a class="btn btn-secondary btn-sm" href="/page/activity">
++                                        <i class="fa fa-reply"></i> 返回
++                                    </a>
++                                </div>
++                            </div>
++                        </div>
++                    </div>
++                    <div class="col-md-12 select-table table-striped">
++                        <div class="row">
++                            <div class="col-md-4">
++                                <select name="" id="" class="form-control">
++                                    <option value="0">推送并转化</option>
++                                    <option value="1">推送并转化并成长</option>
++                                </select>
++                            </div>
++                        </div>
++                        <div class="row">
++                            <div class="col-md-8">
++                                <table class="table table-striped table-bordered" id="effectTable1"></table>
++                            </div>
++                        </div>
++                        <div class="row">
++                            <div class="col-md-12">
++                                <table class="table table-striped table-bordered" id="effectTable2"></table>
++                            </div>
++                        </div>
++                    </div>
++                </div>
++            </div>
++        </main>
++    </div>
++</div>
++<script>
++    var headId = "[[${headId}]]";
++</script>
++<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
++<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
++<script data-th-src="@{/js/app/operate/common/template.js}"></script>
++<script data-th-src="@{/js/app/operate/activity/effect.js}"></script>
++</body>
++</html>
+\ No newline at end of file
+Index: operate/src/main/java/com/linksteady/operate/controller/ActivityController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/java/com/linksteady/operate/controller/ActivityController.java	(revision 7d4fd5dbc9d6695d98da9aa263dac532d2a626e2)
++++ operate/src/main/java/com/linksteady/operate/controller/ActivityController.java	(date 1574843767000)
+@@ -64,6 +64,9 @@
+     @Autowired
+     private DailyProperties dailyProperties;
+ 
++    @Autowired
++    private ActivityEffectService activityEffectService;
++
+     // 活动阶段：预热
+     private final String STAGE_PREHEAT = "preheat";
+     // 活动阶段：正式
+@@ -709,4 +712,38 @@
+         }
+         activityHeadService.updateStatus(headId, stage, status);
+     }
++
++    /**
++     * 获取主要指标
++     * @param headId
++     * @param pushKpi
++     * @param effectDt
++     * @return
++     */
++    @GetMapping("/getEffectMainKpi")
++    public ResponseBo getEffectMainKpi(@RequestParam("headId") String headId, @RequestParam("pushKpi") String pushKpi, @RequestParam("effectDt") String effectDt) {
++        return ResponseBo.okWithData(null, activityEffectService.getEffectMainKpi(headId, pushKpi, effectDt));
++    }
++
++    /**
++     * 获取头部信息
++     * @param headId
++     * @return
++     */
++    @GetMapping("/getEffectInfo")
++    public ResponseBo getEffectInfo(@RequestParam("headId") String headId) {
++        return ResponseBo.okWithData(null, activityEffectService.getEffectInfo(headId));
++    }
++
++    /**
++     * 获取全部指标
++     * @param headId
++     * @param pushKpi
++     * @param effectDt
++     * @return
++     */
++    @GetMapping("/getEffectAllKpi")
++    public ResponseBo getEffectAllKpi(@RequestParam("headId") String headId, @RequestParam("pushKpi") String pushKpi, @RequestParam("effectDt") String effectDt) {
++        return ResponseBo.okWithData(null, activityEffectService.getEffectAllKpi(headId, pushKpi, effectDt));
++    }
+ }
+Index: operate/src/main/resources/mapper/ActivityEffectMapper.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/resources/mapper/ActivityEffectMapper.xml	(date 1574845468000)
++++ operate/src/main/resources/mapper/ActivityEffectMapper.xml	(date 1574845468000)
+@@ -0,0 +1,71 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
++<mapper namespace="com.linksteady.operate.dao.ActivityEffectMapper">
++
++    <resultMap id="base" type="com.linksteady.operate.domain.ActivityEffect">
++        <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"/>
++        <result property="effectDt" jdbcType="DECIMAL" column="EFFECT_DT"/>
++        <result property="pushUcnt" jdbcType="DECIMAL" column="PUSH_UCNT"/>
++        <result property="convertUcnt" jdbcType="DECIMAL" column="CONVERT_UCNT"/>
++        <result property="convertRate" jdbcType="DECIMAL" column="CONVERT_RATE"/>
++        <result property="pushRoi" jdbcType="DECIMAL" column="PUSH_ROI"/>
++        <result property="convertAmount" jdbcType="DECIMAL" column="CONVERT_AMOUNT"/>
++        <result property="convertAmountCspp" jdbcType="DECIMAL" column="CONVERT_AMOUNT_CSPP"/>
++        <result property="ocConvertAmount" jdbcType="DECIMAL" column="OC_CONVERT_AMOUNT"/>
++        <result property="ocConvertAmountCssp" jdbcType="DECIMAL" column="OC_CONVERT_AMOUNT_CSSP"/>
++        <result property="amountOcCspp" jdbcType="DECIMAL" column="AMOUNT_OC_CSPP"/>
++        <result property="convertUcntCspp" jdbcType="DECIMAL" column="CONVERT_UCNT_CSPP"/>
++        <result property="ocConvertUcnt" jdbcType="DECIMAL" column="OC_CONVERT_UCNT"/>
++        <result property="ocConvertUcntCssp" jdbcType="DECIMAL" column="OC_CONVERT_UCNT_CSSP"/>
++        <result property="ucntOcCspp" jdbcType="DECIMAL" column="UCNT_OC_CSPP"/>
++        <result property="activityStage" jdbcType="DECIMAL" column="ACTIVITY_STAGE"/>
++        <result property="pushKpi" jdbcType="DECIMAL" column="PUSH_KPI"/>
++
++        <!--虚拟列，非数据库真实列-->
++        <result property="kpiVal" jdbcType="VARCHAR" column="KPI_VAL"/>
++        <result property="kpiName" jdbcType="VARCHAR" column="KPI_NAME"/>
++        <result property="allStage" jdbcType="VARCHAR" column="ALL_STAGE"/>
++        <result property="activityStage" jdbcType="VARCHAR" column="ACTIVITY_STAGE"/>
++        <result property="preheatStage" jdbcType="VARCHAR" column="PREHEAT_STAGE"/>
++        <result property="normalStage" jdbcType="VARCHAR" column="NORMAL_STAGE"/>
++        <result property="mainKpi" jdbcType="VARCHAR" column="MAIN_KPI"/>
++    </resultMap>
++
++    <select id="getEffectMainKpi" resultMap="base">
++        with temp as (
++          select 1 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI, '推送人数（人）' kpi_name, PUSH_UCNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
++          select 2 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI, '推送转化人数（人）' kpi_name, CONVERT_UCNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
++          select 3 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送转化率（%）' kpi_name, CONVERT_RATE kpi_val from UO_OP_ACTIVITY_EFFECT union all
++          select 4 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送ROI' kpi_name, PUSH_ROI kpi_val from UO_OP_ACTIVITY_EFFECT
++        )
++        select * from (select rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,kpi_name, kpi_val from temp
++                       where HEAD_ID = #{headId} and PUSH_KPI = #{pushKpi} and EFFECT_DT = #{effectDt}
++        ) pivot(max(kpi_val) for ACTIVITY_STAGE in ('all' ALL_STAGE, 'preheat' as PREHEAT_STAGE, 'normal' NORMAL_STAGE))
++        order by rn asc
++    </select>
++
++    <select id="getEffectInfo" resultMap="base">
++        select effect_dt, push_ucnt, convert_ucnt, convert_rate, push_roi from UO_OP_ACTIVITY_EFFECT
++        where HEAD_ID = #{headId} and activity_stage = 'all'
++    </select>
++
++    <select id="getEffectAllKpi" resultMap="base">
++        with temp as (
++          select 1 rn, '推送转化金额（元）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI, '推送转化金额（元）' kpi_name, CONVERT_AMOUNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
++          select 2 rn, '推送转化金额（元）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI, '推送转化金额同比去年（%）' kpi_name, CONVERT_AMOUNT_CSPP kpi_val from UO_OP_ACTIVITY_EFFECT union all
++          select 3 rn, '推送转化金额（元）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'同期老客转化金额（元）' kpi_name, OC_CONVERT_AMOUNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
++          select 4 rn, '推送转化金额（元）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'同期老客转化金额同比去年（%）' kpi_name, OC_CONVERT_AMOUNT_CSSP kpi_val from UO_OP_ACTIVITY_EFFECT union all
++          select 5 rn, '推送转化金额（元）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送转化金额占比同期老客转化金额（%）' kpi_name, AMOUNT_OC_CSPP kpi_val from UO_OP_ACTIVITY_EFFECT union all
++
++          select 6 rn, '推送转化人数（人）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送转化人数（人）' kpi_name, CONVERT_UCNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
++          select 7 rn, '推送转化人数（人）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送转化人数同比去年（%）' kpi_name, CONVERT_UCNT_CSPP kpi_val from UO_OP_ACTIVITY_EFFECT union all
++          select 8 rn, '推送转化人数（人）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'同期老客转化人数（人）' kpi_name, OC_CONVERT_UCNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
++          select 9 rn, '推送转化人数（人）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'同期老客转化人数同比去年（%）' kpi_name, OC_CONVERT_UCNT_CSSP kpi_val from UO_OP_ACTIVITY_EFFECT union all
++          select 10 rn, '推送转化人数（人）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送转化人数占比同期老客转化人数（%）' kpi_name, UCNT_OC_CSPP kpi_val from UO_OP_ACTIVITY_EFFECT
++        )
++        select * from (select rn, main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,kpi_name, kpi_val from temp
++                       where HEAD_ID = #{headId} and PUSH_KPI = #{pushKpi} and EFFECT_DT = #{effectDt}
++                      ) pivot(max(kpi_val) for ACTIVITY_STAGE in ('all' ALL_STAGE, 'preheat' as PREHEAT_STAGE, 'normal' NORMAL_STAGE))
++        order by rn asc
++    </select>
++</mapper>
+\ No newline at end of file
+Index: operate/src/main/java/com/linksteady/operate/dao/ActivityEffectMapper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/java/com/linksteady/operate/dao/ActivityEffectMapper.java	(date 1574843586000)
++++ operate/src/main/java/com/linksteady/operate/dao/ActivityEffectMapper.java	(date 1574843586000)
+@@ -0,0 +1,35 @@
++package com.linksteady.operate.dao;
++
++import com.linksteady.operate.domain.ActivityEffect;
++
++import java.util.List;
++
++/**
++ * @author hxcao
++ * @date 2019-11-27
++ */
++public interface ActivityEffectMapper {
++
++    /**
++     * 获取主要指标
++     * @param headId
++     * @param pushKpi
++     * @return
++     */
++    List<ActivityEffect> getEffectMainKpi(String headId, String pushKpi, String effectDt);
++
++    /**
++     * 获取头部信息
++     * @param headId
++     * @return
++     */
++    ActivityEffect getEffectInfo(String headId);
++
++    /**
++     * 获取全部指标
++     * @param headId
++     * @param pushKpi
++     * @return
++     */
++    List<ActivityEffect> getEffectAllKpi(String headId, String pushKpi, String effectDt);
++}
+Index: operate/src/main/resources/static/js/app/operate/activity/list.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/resources/static/js/app/operate/activity/list.js	(revision 7d4fd5dbc9d6695d98da9aa263dac532d2a626e2)
++++ operate/src/main/resources/static/js/app/operate/activity/list.js	(date 1574825108000)
+@@ -181,4 +181,23 @@
+             }
+         });
+     });
++});
++
++// 查看效果
++$("#btn_effect").click(function () {
++    let selected = $("#activityTable").bootstrapTable('getSelections');
++    let selected_length = selected.length;
++    if (!selected_length) {
++        $MB.n_warning('请选择需要编辑的活动！');
++        return;
++    }
++    let headId = selected[0].headId;
++    let preheatStatus = selected[0]['preheatStatus'];
++    let formalStatus = selected[0]['formalStatus'];
++    let flag = preheatStatus === 'done' || preheatStatus === 'doing' || formalStatus === 'done' || formalStatus === 'doing';
++    if(flag) {
++        window.location.href = "/page/activity/effect?headId=" + headId;
++    }else {
++        $MB.n_warning("该活动的当前状态不允许查看效果！");
++    }
+ });
+\ No newline at end of file
+Index: operate/src/main/resources/static/js/app/operate/activity/effect.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/resources/static/js/app/operate/activity/effect.js	(date 1574846646000)
++++ operate/src/main/resources/static/js/app/operate/activity/effect.js	(date 1574846646000)
+@@ -0,0 +1,121 @@
++$(function () {
++    init_header();
++    init_table1();
++    init_table2();
++});
++
++// 初始化表格1
++function init_table1() {
++    var settings = {
++        singleSelect: true,
++        columns: [[
++            {
++                field: 'kpiName',
++                title: '指标',
++                rowspan: 2
++            },
++            {
++                title: "数值（截止前日累计）",
++                align:"center",
++                colspan: 3
++            }],
++            [
++                {
++                    field: 'allStage',
++                    title: '整体活动',
++                    align: 'center',
++                    valign: 'middle'
++                }, {
++                    field: 'preheatStage',
++                    title: '预热阶段',
++                    align: 'center',
++                    valign: 'middle'
++                }, {
++                    field: 'normalStage',
++                    title: '正式阶段',
++                    align: 'center',
++                    valign: 'middle'
++                }
++            ]]
++    };
++    $("#effectTable1").bootstrapTable(settings);
++    $.get("/activity/getEffectMainKpi", {headId: 1, effectDt: '20191011', pushKpi: '17'},function (r) {
++        if(r.code === 200) {
++            $("#effectTable1").bootstrapTable('load', r.data);
++        }else {
++            $MB.n_danger("获取数据异常！");
++        }
++    });
++}
++// 初始化表格2
++function init_table2() {
++    var settings = {
++        singleSelect: true,
++        columns: [[
++            {
++                field: 'mainKpi',
++                title: '指标',
++                align:"center",
++                valign:"middle",
++                rowspan: 2
++            },
++            {
++                field: 'kpiName',
++                title: '辅助指标',
++                valign:"middle",
++                rowspan: 2
++            },
++            {
++                title: "数值（截止前日累计）",
++                align:"center",
++                colspan: 3
++            }],
++            [
++                {
++                    field: 'allStage',
++                    title: '整体活动',
++                    align: 'center',
++                    valign: 'middle'
++                }, {
++                field: 'preheatStage',
++                title: '预热阶段',
++                align: 'center',
++                valign: 'middle'
++            }, {
++                field: 'normalStage',
++                title: '正式阶段',
++                align: 'center',
++                valign: 'middle'
++            }
++            ]]
++    };
++    $("#effectTable2").bootstrapTable(settings);
++    $.get("/activity/getEffectAllKpi", {headId: 1, effectDt: '20191011', pushKpi: '17'},function (r) {
++        if(r.code === 200) {
++            $("#effectTable2").bootstrapTable('load', r.data);
++            $("#effectTable2").bootstrapTable('mergeCells', {index: 0, field: 'mainKpi', rowspan: 5});
++            $("#effectTable2").bootstrapTable('mergeCells', {index: 5, field: 'mainKpi', rowspan: 5});
++        }else {
++            $MB.n_danger("获取数据异常！");
++        }
++    });
++}
++
++function init_header() {
++    $.get("/activity/getEffectInfo", {headId: 1},function (r) {
++        if(r.code === 200) {
++            var data = r.data;
++            var effectDt = data['effectDt'];
++            var effectDt = data['push_ucnt'];
++            var effectDt = data['convert_ucnt'];
++            var code = "截止到"+subEffectDt(effectDt, 0 ,4)+"年"+subEffectDt(effectDt, 4 ,6)+"月"+subEffectDt(effectDt, 6 ,8)+"日，总计对X个用户进行了推送培养，推送转化率为X%，推送ROI为每条推送信息带来X元转化金额。";
++
++        }else {
++            $MB.n_danger("获取数据异常！");
++        }
++    });
++}
++
++function subEffectDt(effectDt, start, end) {
++    return effectDt.substring(start, end);
++}
+\ No newline at end of file
+Index: operate/src/main/java/com/linksteady/operate/controller/PageController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/java/com/linksteady/operate/controller/PageController.java	(revision 7d4fd5dbc9d6695d98da9aa263dac532d2a626e2)
++++ operate/src/main/java/com/linksteady/operate/controller/PageController.java	(date 1574825226000)
+@@ -257,4 +257,14 @@
+         model.addAttribute("headId", id);
+         return "operate/activity/plan";
+     }
++
++    /**
++     * 活动运营-效果统计页
++     * @return
++     */
++    @RequestMapping("/activity/effect")
++    public String activityEffect(@RequestParam("headId") String headId, Model model) {
++        model.addAttribute("headId", headId);
++        return "operate/activity/effect";
++    }
+ }
+\ No newline at end of file
+Index: operate/src/main/java/com/linksteady/operate/domain/ActivityEffect.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/java/com/linksteady/operate/domain/ActivityEffect.java	(date 1574843510000)
++++ operate/src/main/java/com/linksteady/operate/domain/ActivityEffect.java	(date 1574843510000)
+@@ -0,0 +1,36 @@
++package com.linksteady.operate.domain;
++
++import lombok.Data;
++
++/**
++ * @author hxcao
++ * @date 2019-11-27
++ */
++@Data
++public class ActivityEffect {
++
++    private long headId;
++    private long effectDt;
++    private long pushUcnt;
++    private long convertUcnt;
++    private double convertRate;
++    private double pushRoi;
++    private double convertAmount;
++    private double convertAmountCspp;
++    private double ocConvertAmount;
++    private double ocConvertAmountCssp;
++    private double amountOcCspp;
++    private double convertUcntCspp;
++    private long ocConvertUcnt;
++    private double ocConvertUcntCssp;
++    private double ucntOcCspp;
++    private String activityStage;
++    private String pushKpi;
++
++    private String kpiName;
++    private String kpiVal;
++    private String allStage;
++    private String preheatStage;
++    private String normalStage;
++    private String mainKpi;
++}
+Index: operate/src/main/resources/bootstrap.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/resources/bootstrap.yml	(revision 7d4fd5dbc9d6695d98da9aa263dac532d2a626e2)
++++ operate/src/main/resources/bootstrap.yml	(date 1574154287000)
+@@ -6,17 +6,17 @@
+   build:
+     time: @timestamp@
+ 
+-spring:
+-  application:
+-    name: operate
+-  cloud:
+-    config:
+-      uri: http://172.26.61.28:9060
+-      username: admin
+-      password: linksteady123
+-
+-  profiles:
+-    active: prod
++#spring:
++#  application:
++#    name: operate
++#  cloud:
++#    config:
++#      uri: http://172.26.61.28:9060
++#      username: admin
++#      password: linksteady123
++#
++#  profiles:
++#    active: prod
+ 
+ # dev
+ #spring:
+@@ -37,15 +37,17 @@
+     password: linksteady123
+ 
+ #仅用于测试环境使用，勿提交
+-#spring:
+-#  profiles:
+-#    active: dev
+-#  cloud:
+-#    config:
+-#      enabled: false
++spring:
++  profiles:
++    active: dev
++  cloud:
++    config:
++      enabled: false
++  aop:
++    proxy-target-class: true
+ 
+ sms:
+   montnets:
+     userid: '**'
+     pwd: '**'
+-    masterIpAddress: 0.0.0.0
+\ No newline at end of file
++    masterIpAddress: 0.0.0.0
+Index: operate/src/main/resources/templates/operate/activity/list.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/resources/templates/operate/activity/list.html	(revision 7d4fd5dbc9d6695d98da9aa263dac532d2a626e2)
++++ operate/src/main/resources/templates/operate/activity/list.html	(date 1574824858000)
+@@ -86,6 +86,9 @@
+                                     <button class="btn btn-danger btn-view" id="btn_delete">
+                                         <i class="fa fa-trash"></i> 删除计划
+                                     </button>
++                                    <button class="btn btn-info" id="btn_effect">
++                                        <i class="fa fa-check-square-o"></i> 查看效果
++                                    </button>
+                                 </div>
+                             </div>
+                         </div>
+Index: operate/src/main/java/com/linksteady/operate/service/impl/ActivityEffectServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/java/com/linksteady/operate/service/impl/ActivityEffectServiceImpl.java	(date 1574843672000)
++++ operate/src/main/java/com/linksteady/operate/service/impl/ActivityEffectServiceImpl.java	(date 1574843672000)
+@@ -0,0 +1,36 @@
++package com.linksteady.operate.service.impl;
++
++import com.linksteady.operate.dao.ActivityEffectMapper;
++import com.linksteady.operate.domain.ActivityEffect;
++import com.linksteady.operate.service.ActivityEffectService;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Service;
++
++import java.util.List;
++
++/**
++ * @author hxcao
++ * @date 2019-11-27
++ */
++@Service
++public class ActivityEffectServiceImpl implements ActivityEffectService {
++
++    @Autowired
++    private ActivityEffectMapper activityEffectMapper;
++
++    @Override
++    public List<ActivityEffect> getEffectMainKpi(String headId, String pushKpi, String effectDt) {
++        List<ActivityEffect> activityEffectList = activityEffectMapper.getEffectMainKpi(headId, pushKpi, effectDt);
++        return activityEffectList;
++    }
++
++    @Override
++    public List<ActivityEffect> getEffectAllKpi(String headId, String pushKpi, String effectDt) {
++        return activityEffectMapper.getEffectAllKpi(headId, pushKpi, effectDt);
++    }
++
++    @Override
++    public ActivityEffect getEffectInfo(String headId) {
++        return activityEffectMapper.getEffectInfo(headId);
++    }
++}
+Index: operate/src/main/java/com/linksteady/operate/service/ActivityEffectService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- operate/src/main/java/com/linksteady/operate/service/ActivityEffectService.java	(date 1574843623000)
++++ operate/src/main/java/com/linksteady/operate/service/ActivityEffectService.java	(date 1574843623000)
+@@ -0,0 +1,16 @@
++package com.linksteady.operate.service;
++
++import com.linksteady.operate.domain.ActivityEffect;
++
++import java.util.List;
++
++/**
++ * @author hxcao
++ * @date 2019-11-27
++ */
++public interface ActivityEffectService {
++
++    List<ActivityEffect> getEffectMainKpi(String headId, String pushKpi, String effectDt);
++    List<ActivityEffect> getEffectAllKpi(String headId, String pushKpi, String effectDt);
++    ActivityEffect getEffectInfo(String headId);
++}

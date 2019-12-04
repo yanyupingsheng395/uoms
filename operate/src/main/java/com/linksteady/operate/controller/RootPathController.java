@@ -159,4 +159,18 @@ public class RootPathController extends BaseController {
         }
         return "operate/push/dashbord";
     }
+
+    /**
+     * 桑基图
+     * @return
+     */
+    @RequestMapping("/chart")
+    public String chart() {
+        return "operate/activity/chart";
+    }
+
+    @RequestMapping("/chart2")
+    public String chart2() {
+        return "operate/activity/chart2";
+    }
 }

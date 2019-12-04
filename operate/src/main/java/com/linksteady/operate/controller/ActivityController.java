@@ -64,11 +64,13 @@ public class ActivityController {
     @Autowired
     private DailyProperties dailyProperties;
 
+    @Autowired
+    private ActivityEffectService activityEffectService;
+
     // 活动阶段：预热
     private final String STAGE_PREHEAT = "preheat";
     // 活动阶段：正式
     private final String STAGE_FORMAL = "formal";
-
 
     /**
      * 获取头表的分页数据
@@ -708,5 +710,37 @@ public class ActivityController {
             status = "todo";
         }
         activityHeadService.updateStatus(headId, stage, status);
+    }
+
+    /**
+     * 获取主要指标
+     * @param headId
+     * @param pushKpi
+     * @return
+     */
+    @GetMapping("/getEffectMainKpi")
+    public ResponseBo getEffectMainKpi(@RequestParam("headId") String headId, @RequestParam("pushKpi") String pushKpi) {
+        return ResponseBo.okWithData(null, activityEffectService.getEffectMainKpi(headId, pushKpi));
+    }
+
+    /**
+     * 获取头部信息
+     * @param headId
+     * @return
+     */
+    @GetMapping("/getEffectInfo")
+    public ResponseBo getEffectInfo(@RequestParam("headId") String headId) {
+        return ResponseBo.okWithData(null, activityEffectService.getEffectInfo(headId));
+    }
+
+    /**
+     * 获取全部指标
+     * @param headId
+     * @param pushKpi
+     * @return
+     */
+    @GetMapping("/getEffectAllKpi")
+    public ResponseBo getEffectAllKpi(@RequestParam("headId") String headId, @RequestParam("pushKpi") String pushKpi) {
+        return ResponseBo.okWithData(null, activityEffectService.getEffectAllKpi(headId, pushKpi));
     }
 }
