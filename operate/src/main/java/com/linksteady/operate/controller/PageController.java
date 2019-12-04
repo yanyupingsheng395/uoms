@@ -267,4 +267,13 @@ public class PageController {
         model.addAttribute("headId", headId);
         return "operate/activity/effect";
     }
+
+    /**
+     * 用户成长洞察页
+     * @return
+     */
+    @RequestMapping("/insight")
+    public String insight() {
+        return "operate/insight/insight";
+    }
 }
