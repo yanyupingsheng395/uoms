@@ -28,7 +28,7 @@ public class TransPushContentThread implements Callable {
     }
 
     @Override
-    public Integer call() {
+    public Integer call() throws Exception{
         List<DailyDetail> list = null;
         try {
             DailyDetailServiceImpl dailyDetailService = (DailyDetailServiceImpl) SpringContextUtils.getBean("dailyDetailServiceImpl");
@@ -39,12 +39,17 @@ public class TransPushContentThread implements Callable {
             List<DailyDetail> targetList = dailyDetailService.transPushList(list);
 
             //保存文案 改为insert
-            dailyDetailService.insertPushContentTemp(targetList);
+            if(null!=targetList&&targetList.size()>0)
+            {
+                dailyDetailService.insertPushContentTemp(targetList);
+            }
+
 
             log.info("{}的第{}-{}调记录处理完成",headerId,start,end);
         } catch (Exception e) {
             //错误日志上报
             log.error("多线程转换日运营文案报错{}", e);
+            throw e;
         } finally {
             latch.countDown();
         }

@@ -176,7 +176,10 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             //填充模板 生成文案
             List<DailyDetail> targetList=transPushList(list);
             //保存要推送的文案
-            insertPushContentTemp(targetList);
+            if(null!=targetList&&targetList.size()>0)
+            {
+                insertPushContentTemp(targetList);
+            }
 
             //用临时表更新 每日运营明细表
             dailyDetailMapper.updatePushContentFromTemp(headerId);
