@@ -86,6 +86,7 @@ public class LoginController extends BaseController {
         return "login";
     }
 
+    @Log("登录系统")
     @PostMapping("/login")
     @ResponseBody
     public ResponseBo login(String username, String password, String code) {
@@ -116,9 +117,6 @@ public class LoginController extends BaseController {
             super.login(token);
             this.userService.updateLoginTime(username);
 
-            //记录日志
-            loginToLog();
-
             //判断用户是否首次登陆 如果是强制跳到修改密码界面
             String firstLogin=userService.findByName(username).getFirstLogin();
             if(systemProperties.getShiro().isAllowResetPassword()&&"Y".equals(firstLogin))
@@ -137,11 +135,6 @@ public class LoginController extends BaseController {
         } catch (AuthenticationException e) {
             return ResponseBo.error("认证失败！");
         }
-    }
-
-    @Log("登录系统")
-    private void loginToLog() {
-
     }
 
     @RequestMapping("/")
