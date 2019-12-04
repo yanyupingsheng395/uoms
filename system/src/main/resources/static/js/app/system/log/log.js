@@ -3,16 +3,16 @@ $(function () {
     setUsername();
     var $logTableForm = $(".push-table-form");
     var settings = {
-        url: ctx + "push/list",
+        url: ctx + "log/list",
         pageSize: 10,
         singleSelect: true,
         queryParams: function (params) {
             return {
                 pageSize: params.limit,
                 pageNum: params.offset / params.limit + 1,
-                timeField: $logTableForm.find("input[name='timeField']").val().trim(),
+                timeField: $logTableForm.find("input[name='timeField']").val(),
                 username: $logTableForm.find("select[name='username']").find("option:selected").val(),
-                operation: $logTableForm.find("input[name='operation']").val().trim()
+                operation: $logTableForm.find("input[name='operation']").val()
             };
         },
         columns: [{
@@ -91,7 +91,7 @@ function deleteLogs() {
 }
 
 function exportLogExcel() {
-    $.post(ctx + "push/excel", $(".push-table-form").serialize(), function (r) {
+    $.post(ctx + "log/excel", $(".push-table-form").serialize(), function (r) {
         if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
@@ -101,7 +101,7 @@ function exportLogExcel() {
 }
 
 function exportLogCsv() {
-    $.post(ctx + "push/csv", $(".push-table-form").serialize(), function (r) {
+    $.post(ctx + "log/csv", $(".push-table-form").serialize(), function (r) {
         if (r.code === 200) {
             window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
         } else {
