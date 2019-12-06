@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.InsightImportSpuMapper">
+    <resultMap id="base" type="com.linksteady.operate.domain.InsightImportSpu">
+        <result property="spuId" jdbcType="VARCHAR" column="SPU_ID"/>
+        <result property="spuName" jdbcType="VARCHAR" column="SPU_NAME"/>
+        <result property="purchOrder" jdbcType="VARCHAR" column="PURCH_ORDER"/>
+        <result property="contributeRate" jdbcType="VARCHAR" column="CONTRIBUTE_RATE"/>
+        <result property="nextPurchProbal" jdbcType="VARCHAR" column="NEXT_PURCH_PROBAL"/>
+        <result property="sameSpuProbal" jdbcType="VARCHAR" column="SAME_SPU_PROBAL"/>
+        <result property="otherSpuProbal" jdbcType="VARCHAR" column="OTHER_SPU_PROBAL"/>
+    </resultMap>
+
+    <select id="findImportSpuList" resultMap="base">
+        select * from (
+          select t.*, rownum rn from (
+          select SPU_ID, SPU_NAME, PURCH_ORDER, CONTRIBUTE_RATE,NEXT_PURCH_PROBAL,SAME_SPU_PROBAL,OTHER_SPU_PROBAL from UO_INSIGHT_IMPORT_SPU
+            <where>
+                <if test="spuName != null and spuName != '' ">
+                    SPU_NAME = #{spuName}
+                </if>
+                <if test="purchOrder != null and purchOrder != ''">
+                    purch_order = #{purchOrder}
+                </if>
+            </where>
+          ) t
+          where rownum &lt;= #{end}
+        ) where rn &gt;= #{start}
+    </select>
+
+    <select id="findImportSpuListCount" resultType="int">
+        select count(1) from UO_INSIGHT_IMPORT_SPU
+        <where>
+            <if test="spuName != null and spuName != '' ">
+                SPU_NAME = #{spuName}
+            </if>
+            <if test="purchOrder != null and purchOrder != ''">
+                purch_order = #{purchOrder}
+            </if>
+        </where>
+    </select>
+</mapper>

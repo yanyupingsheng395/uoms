@@ -4,6 +4,7 @@ import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class QueryRequest implements Serializable {
 
@@ -16,6 +17,8 @@ public class QueryRequest implements Serializable {
 	private String sort;
 
 	private String sortOrder;
+
+	private String order;
 
 	private Map<String,String> param;
 
@@ -69,5 +72,13 @@ public class QueryRequest implements Serializable {
 
 	public int getEnd() {
 		return pageNum * pageSize;
+	}
+
+	public String getOrder() {
+		return order;
+	}
+
+	public void setOrder(String order) {
+		this.order = order;
 	}
 }

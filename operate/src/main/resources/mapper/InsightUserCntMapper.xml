@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.InsightUserCntMapper">
+
+    <resultMap id="base" type="com.linksteady.operate.domain.InsightUserCnt">
+        <result column="purch_type" jdbcType="VARCHAR" property="purchType"></result>
+        <result column="purch_order" jdbcType="VARCHAR" property="purchOrder"></result>
+        <result column="purch1" jdbcType="VARCHAR" property="purch1"></result>
+        <result column="purch2" jdbcType="VARCHAR" property="purch2"></result>
+        <result column="purch3" jdbcType="VARCHAR" property="purch3"></result>
+        <result column="purch4" jdbcType="VARCHAR" property="purch4"></result>
+        <result column="purch5" jdbcType="VARCHAR" property="purch5"></result>
+        <result column="purch6" jdbcType="VARCHAR" property="purch6"></result>
+        <result column="purch7" jdbcType="VARCHAR" property="purch7"></result>
+        <result column="purch8" jdbcType="VARCHAR" property="purch8"></result>
+    </resultMap>
+
+    <select id="findUserCntList" resultMap="base">
+        with temp as (
+          select '当前用户数（人）' purch_type, purch_order, current_user_cnt user_cnt from UO_INSIGHT_USER_CNT where date_range = #{dateRange} union all
+          select '30天前用户数（人）' purch_type, purch_order, before30_user_cnt user_cnt from UO_INSIGHT_USER_CNT where date_range = #{dateRange}
+        )
+        select * from (select purch_type, purch_order, user_cnt from temp) pivot ( max(user_cnt) for purch_order in
+        (1 as purch1,2 as purch2,3 as purch3, 4 as purch4, 5 as purch5, 6 as purch6, 7 as purch7, 8 as purch8))
+    </select>
+</mapper>

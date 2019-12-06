@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -164,13 +165,9 @@ public class RootPathController extends BaseController {
      * 桑基图
      * @return
      */
-    @RequestMapping("/chart")
-    public String chart() {
-        return "operate/activity/chart";
-    }
-
-    @RequestMapping("/chart2")
-    public String chart2() {
-        return "operate/activity/chart2";
+    @RequestMapping("/sankey")
+    public String sankeyChart(@RequestParam("dateRange") String dateRange, Model model) {
+        model.addAttribute("dateRange", dateRange);
+        return "operate/insight/sankey";
     }
 }

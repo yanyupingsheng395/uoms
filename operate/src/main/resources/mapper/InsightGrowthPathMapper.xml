@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.InsightGrowthPathMapper">
+
+    <resultMap id="base" type="com.linksteady.operate.domain.InsightGrowthPath">
+        <result property="copsValue" jdbcType="VARCHAR" column="COPS_VALUE"/>
+        <result property="incomeValue" jdbcType="VARCHAR" column="INCOME_VALUE"/>
+        <result property="stepValue" jdbcType="VARCHAR" column="STEP_VALUE"/>
+        <result property="universValue" jdbcType="VARCHAR" column="UNIVERS_VALUE"/>
+        <result property="purch1SpuName" jdbcType="VARCHAR" column="PURCH1_SPU_NAME"/>
+        <result property="purch2SpuName" jdbcType="VARCHAR" column="PURCH2_SPU_NAME"/>
+        <result property="purch3SpuName" jdbcType="VARCHAR" column="PURCH3_SPU_NAME"/>
+        <result property="purch4SpuName" jdbcType="VARCHAR" column="PURCH4_SPU_NAME"/>
+        <result property="purch5SpuName" jdbcType="VARCHAR" column="PURCH5_SPU_NAME"/>
+        <result property="purch6SpuName" jdbcType="VARCHAR" column="PURCH6_SPU_NAME"/>
+        <result property="purch7SpuName" jdbcType="VARCHAR" column="PURCH7_SPU_NAME"/>
+        <result property="purch8SpuName" jdbcType="VARCHAR" column="PURCH8_SPU_NAME"/>
+        <result property="purch9SpuName" jdbcType="VARCHAR" column="PURCH9_SPU_NAME"/>
+        <result property="purch10SpuName" jdbcType="VARCHAR" column="PURCH10_SPU_NAME"/>
+        <result property="growthNumber" jdbcType="VARCHAR" column="GROWTH_NUMBER"/>
+    </resultMap>
+
+    <select id="findGrowthPathList" resultMap="base">
+        select * from (
+          select t.*, ROWNUM GROWTH_NUMBER from (
+            select COPS_VALUE, INCOME_VALUE, STEP_VALUE, UNIVERS_VALUE,
+            PURCH1_SPU_NAME,PURCH2_SPU_NAME,PURCH3_SPU_NAME,PURCH4_SPU_NAME,PURCH5_SPU_NAME,PURCH6_SPU_NAME,PURCH7_SPU_NAME,PURCH8_SPU_NAME,PURCH9_SPU_NAME,PURCH10_SPU_NAME
+            from UO_INSIGHT_GROWTH_PATH
+            <if test="orderSql != null and orderSql != ''">
+                ${orderSql}
+            </if>
+          ) t where ROWNUM &lt;= #{end}
+        ) where GROWTH_NUMBER &gt;= #{start}
+    </select>
+
+    <select id="findGrowthPathListCount" resultType="int">
+        select count(1) from UO_INSIGHT_GROWTH_PATH
+    </select>
+
+    <select id="getGrowthPathAvgValue" resultMap="base">
+        select '平均' GROWTH_NUMBER, avg(COPS_VALUE) COPS_VALUE, avg(INCOME_VALUE) INCOME_VALUE, avg(STEP_VALUE) STEP_VALUE, avg(UNIVERS_VALUE) UNIVERS_VALUE from UO_INSIGHT_GROWTH_PATH
+    </select>
+</mapper>

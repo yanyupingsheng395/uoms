@@ -3,7 +3,6 @@ export default function define(runtime, observer) {
     const main = runtime.module();
     main.variable( observer( "svg" ) ).define( "svg", ["d3", "DOM", "width", "height", "graph", "margin", "format", "sankey", "arrow", "duration"], function (d3, DOM, width, height, graph, margin, format, sankey, arrow, duration) {
             const svg = d3.select( DOM.svg( width, height ) );
-
             const defs = svg.append( "defs" );
 
             // Add definitions for all of the linear gradients.
@@ -33,7 +32,7 @@ export default function define(runtime, observer) {
                 .attr( "opacity", 0.9 );
 
             // Add titles for node hover effects.
-            nodes.append( "title" ).text( d => `${d.name}\n${format( d.value)}` );
+            nodes.append( "title" ).text( d => `${d.name}\n${format( d.value )}` );
 
             // Add text labels.
             view.selectAll( "text.node" )
@@ -46,8 +45,8 @@ export default function define(runtime, observer) {
                 .attr( "dy", "0.35em" )
                 .attr( "fill", "black" )
                 .attr( "text-anchor", "start" )
-                .attr( "font-size", 12)
-                .attr( "font-family", "Arial, sans-serif")
+                .attr( "font-size", 12 )
+                .attr( "font-family", "Arial, sans-serif" )
                 .text( d => d.name )
                 .filter( d => d.x1 > width / 2 )
                 .attr( "x", d => d.x0 )
@@ -73,7 +72,7 @@ export default function define(runtime, observer) {
                 let el = view.select( `#${link.path.id}` );
                 let length = el.node().getTotalLength();
                 el.attr( "stroke-dasharray", `${length} ${length}` )
-                    .attr( "stroke-dashoffset", length);
+                    .attr( "stroke-dashoffset", length );
             }
 
             const gradientLinks = view.selectAll( "path.gradient-link" )
@@ -104,7 +103,7 @@ export default function define(runtime, observer) {
                     let links = view.selectAll( "path.gradient-link" )
                         .filter( (link) => {
                             return n.sourceLinks.indexOf( link ) !== -1;
-                        });
+                        } );
                     // links.attr( "stroke-opacity", 0.5).transition().duration( duration ).ease( d3.easeLinear ).attr( "stroke-dashoffset", 0 );
                     links.attr( "stroke-opacity", 0.3 ).attr( "stroke-dashoffset", 0 );
                 } );
@@ -115,7 +114,7 @@ export default function define(runtime, observer) {
                     .filter( (link) => {
                         return node.sourceLinks.indexOf( link ) !== -1;
                     } );
-                console.log(links);
+                console.log( links );
                 let nextNodes = [];
                 links.each( (link) => {
                     nextNodes.push( link.target );
@@ -130,8 +129,8 @@ export default function define(runtime, observer) {
                     .each( setDash );
             }
 
-            nodes.on( "mouseover", branchAnimate_over).on( "mouseout", branchClear );
-            nodes.on('click', branchAnimate_click).on( "mouseout", branchClear );
+            nodes.on( "mouseover", branchAnimate_over ).on( "mouseout", branchClear );
+            nodes.on( 'click', branchAnimate_click ).on( "mouseout", branchClear );
             return svg.node();
         }
     );
@@ -152,7 +151,7 @@ export default function define(runtime, observer) {
             sankey.sankey()
                 .size( size )
                 .nodePadding( nodePadding )
-                .nodeWidth(nodeWidth)
+                .nodeWidth( nodeWidth )
         )
     } );
     main.variable().define( "format", ["d3"], function (d3) {
@@ -173,7 +172,7 @@ export default function define(runtime, observer) {
     main.variable().define( "energy", function () {
         $MB.loadingDesc( "show", "正在加载数据..." );
         return (
-            $.get( "/sankey/getSpuSnakey", {}, function (r) {
+            $.get( "/insight/getSpuSnakey", {dateRange: dateRange}, function () {
                 $MB.loadingDesc( "hide" );
                 $( "#chart" ).show();
             } )
@@ -187,7 +186,7 @@ export default function define(runtime, observer) {
     } );
     main.variable().define( "height", function () {
         return (
-            800
+            600
         )
     } );
 

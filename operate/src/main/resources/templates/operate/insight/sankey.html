@@ -4,10 +4,14 @@
 <link rel="stylesheet" type="text/css" href="/plugins/snakey/inspector.css">
 <body>
 <div data-th-include="common/common"></div>
+<script>
+    var dateRange = "[[${dateRange}]]";
+</script>
 <script type="module">
     import define from "/plugins/snakey/index.js";
     import {Runtime, Library, Inspector} from "/plugins/snakey/runtime.js";
-
     const runtime = new Runtime();
     const main = runtime.module(define, Inspector.into(document.body));
 </script>
+</body>
+</html>

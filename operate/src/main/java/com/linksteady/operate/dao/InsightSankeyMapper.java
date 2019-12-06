@@ -7,7 +7,7 @@ import java.util.Map;
  * @author hxcao
  * @date 2019-12-02
  */
-public interface SankeyMapper {
+public interface InsightSankeyMapper {
 
-    List<Map<String, Object>> getSpuList();
+    List<Map<String, Object>> getSpuList(String dateRange);
 }

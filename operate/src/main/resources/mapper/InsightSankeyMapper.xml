@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.linksteady.operate.dao.SankeyMapper">
+<mapper namespace="com.linksteady.operate.dao.InsightSankeyMapper">
 
     <select id="getSpuList" resultType="map">
-        select source_name,target_name, t_cnt from hanhoogrowth_dev.SANKEY_DATA t where s_rn &lt;=7
+        select source_name,target_name, user_cnt from UO_INSIGHT_SANKEY t where s_rn &lt;=7 and DATE_RANGE = #{dateRange}
     </select>
 </mapper>
