@@ -1,8 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
-<title>Sankey With Animated Gradients</title>
-<link rel="stylesheet" type="text/css" href="/plugins/snakey/inspector.css">
-<body>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
+    <title>桑基图</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" type="text/css"
+          data-th-href="@{/plugins/bootstrap-year-calendar/css/bootstrap-year-calendar.min.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/ztree/zTreeStyle.css}"/>
+    <link rel="stylesheet" type="text/css" href="/plugins/snakey/inspector.css">
+</head>
+<body style="background-color: #ffffff">
 <div data-th-include="common/common"></div>
 <script>
     var dateRange = "[[${dateRange}]]";
