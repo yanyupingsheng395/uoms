@@ -91,4 +91,13 @@ public interface InsightService {
      * @return
      */
     Map<String, Object> periodInPurchaseTimes(String type, String id, String period);
+
+    /**
+     * 留存率变化率随购买次数变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    Map<String, Object> retentionChangeRateInPurchaseTimes(String type, String id, String period);
 }

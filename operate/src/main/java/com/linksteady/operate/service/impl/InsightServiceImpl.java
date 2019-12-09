@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,6 +173,39 @@ public class InsightServiceImpl implements InsightService {
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("LEAVE_RATE") == null ? "0" : x.get("LEAVE_RATE"))).collect(Collectors.toList());
         result.put("xdata", xdata);
         result.put("ydata", ydata);
+        return result;
+    }
+
+    /**
+     * 留存率变化率随购买次数变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    @Override
+    public Map<String, Object> retentionChangeRateInPurchaseTimes(String type, String id, String period) {
+        Map<String, Object> result = Maps.newHashMap();
+        DecimalFormat df = new DecimalFormat("#.##");
+        List<Map<String, Object>> dataList = insightMapper.retentionInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
+        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("SPU_RN"))).collect(Collectors.toList());
+        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("LEAVE_RATE") == null ? "0" : x.get("LEAVE_RATE"))).collect(Collectors.toList());
+        List<String> newXdata = Lists.newArrayList();
+        List<String> newYdata = Lists.newArrayList();
+        if(ydata.size() > 1) {
+            for (int i = 0; i < ydata.size() - 1; i++) {
+                String changeRate;
+                if(ydata.get(i).equalsIgnoreCase("0")) {
+                    changeRate = "";
+                }else {
+                    changeRate = df.format((Double.valueOf(ydata.get(i+1)) - Double.valueOf(ydata.get(i)))/Double.valueOf(ydata.get(i)));
+                }
+                newYdata.add(changeRate);
+                newXdata.add(xdata.get(i+1));
+            }
+        }
+        result.put("xdata", newXdata);
+        result.put("ydata", newYdata);
         return result;
     }
 

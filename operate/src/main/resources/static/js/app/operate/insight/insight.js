@@ -390,6 +390,17 @@ function periodInPurchaseTimes() {
     });
 }
 
+/**
+ * 留存率变化率随购买次数变化
+ */
+function retentionChangeRateInPurchaseTimes() {
+    $.get("/insight/retentionChangeRateInPurchaseTimes", {id: $("#id").val(), type: $("#type").val(), period: $("#period").val()}, function (r) {
+        var option = getOption(r.data, "留存率变化率");
+        var chart = echarts.init(document.getElementById("chart2"), 'macarons');
+        chart.setOption(option);
+    });
+}
+
 function getOption(data, name) {
     return option = {
         xAxis: {
@@ -442,6 +453,7 @@ function searchRetention() {
     joinRateInPurchaseTimes();
     categoryInPurchaseTimes();
     periodInPurchaseTimes();
+    retentionChangeRateInPurchaseTimes();
 }
 
 // 重置留存率的条件

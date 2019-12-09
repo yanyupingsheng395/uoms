@@ -148,4 +148,18 @@ public class InsightController {
     public ResponseBo periodInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
         return ResponseBo.okWithData(null, insightService.periodInPurchaseTimes(type, id, period));
     }
+
+    /**
+     * 留存率变化率随购买次数变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    @GetMapping("/retentionChangeRateInPurchaseTimes")
+    public ResponseBo retentionChangeRateInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+        return ResponseBo.okWithData(null, insightService.retentionChangeRateInPurchaseTimes(type, id, period));
+    }
+
+
 }
