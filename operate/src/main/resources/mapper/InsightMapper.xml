@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.InsightMapper">
+
+    <resultMap id="base" type="com.linksteady.common.domain.Ztree">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="p_id" jdbcType="VARCHAR" property="pId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="open" jdbcType="BOOLEAN" property="open"/>
+    </resultMap>
+
+    <select id="getSpuTree" resultMap="base">
+        select SPU_WID id, SPU_NAME name from W_PRODUCT_SPU where VALID_STATUS = '1'
+    </select>
+
+    <select id="getProductTree" resultMap="base">
+        select PRODUCT_ID id, PRODUCT_NAME name from W_PRODUCT where UP_FLAG = '1' and SPU_WID = #{spuWid}
+    </select>
+
+    <select id="retentionInPurchaseTimes" resultType="map">
+        --留存率随购买次数的变化
+        WITH t1 AS (
+        SELECT v1.USER_ID, v1.ORDER_DT, v1.ORDER_ID, v2.SPU_WID
+        FROM W_ORDER_DETAILS v1
+        LEFT JOIN W_PRODUCT v2
+        ON v1.PRODUCT_ID = v2.PRODUCT_ID
+        where v1.VALID_STATUS = 1
+        <if test="type == 'product'">
+            and v2.product_id = #{id}
+        </if>
+        <if test="type == 'spu'">
+            and v2.SPU_WID = #{id}
+        </if>
+        and v1.ORDER_DT_WID >= to_char(ADD_MONTHS(SYSDATE, #{period}), 'yyyymmdd') --如果是过去12个月则 为-12
+        GROUP BY v1.USER_ID, v1.ORDER_DT, v1.ORDER_ID, v2.SPU_WID
+        ),
+
+        t2 as
+        (
+        SELECT
+        t1.USER_ID,
+        t1.SPU_WID,
+        DENSE_RANK () OVER (PARTITION BY t1.USER_ID,t1.SPU_WID
+        ORDER BY t1.ORDER_DT,t1.ORDER_ID) spu_rn --用户在spu上的购买次数
+        FROM t1
+        ),
+        t3 as (
+        --查询当前SPU在每个购买次数上的留存率
+        SELECT t2.SPU_WID, t2.SPU_RN,COUNT (1) leave_pearson FROM t2 GROUP BY t2.SPU_WID,t2.SPU_RN ORDER BY
+        t2.SPU_WID,t2.SPU_RN
+        )
+        --spu wid,spu购买次数、留存率
+        SELECT t3.SPU_WID,t3.SPU_RN,trunc(t3.leave_pearson/lag(t3.LEAVE_PEARSON,1,null) over(order by t3.SPU_RN),4)*100
+        leave_rate FROM t3
+    </select>
+
+    <select id="unitPriceInPurchaseTimes" resultType="map">
+      WITH SPU_PURCH AS (
+      SELECT SPU_WID,
+             USER_ID,
+             ROW_NUMBER() OVER (PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC)     PURCH_TIMES,
+             LAG(ORDER_DT, 1) OVER (PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC) PREV_PUR_DT,
+             ORDER_DT,
+             SPU_ORDER_FEE                                                               PURCH_FEE,
+             QUANTITY,
+             ORDER_ID
+      FROM (
+             SELECT t2.SPU_WID,
+                    t1.USER_ID,
+                    ORDER_ID,
+                    ORDER_DT,
+                    SUM(t1.PRICE * t1.QUANTITY) SPU_ORDER_FEE, SUM(QUANTITY) QUANTITY
+             FROM W_ORDER_DETAILS t1, W_PRODUCT t2
+               WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
+                <if test="type == 'product'">
+                    and t2.product_id = #{id}
+                </if>
+                <if test="type == 'spu'">
+                    and t2.SPU_WID = #{id}
+                </if>
+               AND t1.VALID_STATUS = 1
+               AND t1.PRICE > 0
+               and t1.ORDER_DT_WID >= to_char(ADD_MONTHS(SYSDATE, #{period}), 'yyyymmdd') --如果是过去12个月则 为-12
+               GROUP BY t2.SPU_WID, t1.USER_ID, ORDER_ID, ORDER_DT
+           ) u
+    ),
+         PURCH_CATE_NUM AS (
+           SELECT ORDER_ID, COUNT(DISTINCT SPU_WID) CATE_NUM
+           FROM SPU_PURCH
+             GROUP BY ORDER_ID
+         )
+    SELECT SPU_WID, PURCH_TIMES, UPRICE
+    FROM (
+           SELECT SPU_WID,
+                  PURCH_TIMES,
+                  TRUNC(SUM(PURCH_FEE) / SUM(QUANTITY), 2) UPRICE
+           FROM SPU_PURCH v1,
+                PURCH_CATE_NUM v2
+             WHERE
+                v1.ORDER_ID = v2.ORDER_ID
+             GROUP BY
+                SPU_WID,
+                PURCH_TIMES
+         )
+    </select>
+
+    <select id="joinRateInPurchaseTimes" resultType="map">
+        WITH SPU_PURCH AS (
+          SELECT SPU_WID,
+                 USER_ID,
+                 ROW_NUMBER() OVER (PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC)     PURCH_TIMES,
+                 LAG(ORDER_DT, 1) OVER (PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC) PREV_PUR_DT,
+                 ORDER_DT,
+                 SPU_ORDER_FEE                                                               PURCH_FEE,
+                 QUANTITY,
+                 ORDER_ID
+          FROM (
+                 SELECT t2.SPU_WID,
+                        t1.USER_ID,
+                        ORDER_ID,
+                        ORDER_DT,
+                        SUM(t1.PRICE * t1.QUANTITY) SPU_ORDER_FEE，SUM(QUANTITY) QUANTITY
+                 FROM W_ORDER_DETAILS t1, W_PRODUCT t2
+                   WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
+                    <if test="type == 'product'">
+                        and t2.product_id = #{id}
+                    </if>
+                    <if test="type == 'spu'">
+                        and t2.SPU_WID = #{id}
+                    </if>
+                   AND t1.VALID_STATUS = 1
+                   AND t1.PRICE > 0
+                   and t1.ORDER_DT_WID >= to_char(ADD_MONTHS(SYSDATE, #{period}), 'yyyymmdd') --如果是过去12个月则 为-12
+        GROUP BY t2.SPU_WID, t1.USER_ID, ORDER_ID, ORDER_DT
+               )
+        ),
+             PURCH_CATE_NUM AS (
+               SELECT ORDER_ID, COUNT(DISTINCT SPU_WID) CATE_NUM
+               FROM SPU_PURCH
+                 GROUP BY ORDER_ID
+             )
+        SELECT SPU_WID, PURCH_TIMES, JOINT
+        FROM (
+               SELECT SPU_WID,
+                      PURCH_TIMES,
+                      TRUNC(SUM(QUANTITY) / COUNT(*), 2) JOINT
+               FROM SPU_PURCH v1
+                 GROUP BY
+                    SPU_WID,
+                    PURCH_TIMES
+             )
+    </select>
+
+    <select id="categoryInPurchaseTimes" resultType="map">
+        WITH SPU_PURCH AS(
+         SELECT SPU_WID,
+               USER_ID,
+               ROW_NUMBER() OVER(PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC) PURCH_TIMES,
+               LAG(ORDER_DT, 1) OVER(PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC) PREV_PUR_DT,
+               ORDER_DT,
+               SPU_ORDER_FEE  PURCH_FEE,
+               QUANTITY,
+               ORDER_ID
+           FROM (
+              SELECT
+                t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT,SUM(t1.PRICE * t1.QUANTITY) SPU_ORDER_FEE，SUM(QUANTITY) QUANTITY
+            FROM W_ORDER_DETAILS t1, W_PRODUCT t2
+           WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
+            <if test="type == 'product'">
+                and t2.product_id = #{id}
+            </if>
+            <if test="type == 'spu'">
+                and t2.SPU_WID = #{id}
+            </if>
+             AND t1.VALID_STATUS = 1
+             AND t1.PRICE > 0
+        and t1.ORDER_DT_WID >= to_char(ADD_MONTHS(SYSDATE, #{period}), 'yyyymmdd') --如果是过去12个月则 为-12
+        GROUP BY t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT
+           )
+        ),
+        PURCH_CATE_NUM AS(
+          SELECT ORDER_ID, COUNT(DISTINCT SPU_WID) CATE_NUM
+            FROM SPU_PURCH
+           GROUP BY ORDER_ID
+        )
+        SELECT SPU_WID, PURCH_TIMES,AVG_CATE_NUM
+        FROM (
+        SELECT SPU_WID,
+               PURCH_TIMES,
+                TRUNC(SUM(v2.CATE_NUM)/COUNT(*),2) AVG_CATE_NUM
+          FROM SPU_PURCH v1,PURCH_CATE_NUM v2
+          WHERE v1.ORDER_ID = v2.ORDER_ID
+         GROUP BY SPU_WID,PURCH_TIMES
+         )
+    </select>
+
+    <select id="periodInPurchaseTimes" resultType="map">
+        WITH SPU_PURCH AS(
+        SELECT SPU_WID,
+        USER_ID,
+        ROW_NUMBER() OVER(PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC) PURCH_TIMES,
+        LAG(ORDER_DT, 1) OVER(PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC) PREV_PUR_DT,
+        ORDER_DT,
+        SPU_ORDER_FEE  PURCH_FEE,
+        QUANTITY,
+        ORDER_ID
+        FROM (
+        SELECT
+        t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT,SUM(t1.PRICE * t1.QUANTITY) SPU_ORDER_FEE,SUM(QUANTITY) QUANTITY
+        FROM W_ORDER_DETAILS t1, W_PRODUCT t2
+        WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
+        <if test="type == 'product'">
+            and t2.product_id = #{id}
+        </if>
+        <if test="type == 'spu'">
+            and t2.SPU_WID = #{id}
+        </if>
+        AND t1.VALID_STATUS = 1
+        AND t1.PRICE > 0
+        and t1.ORDER_DT_WID >= to_char(ADD_MONTHS(SYSDATE, #{period}), 'yyyymmdd') --如果是过去12个月则 为-12
+        GROUP BY t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT
+        )
+        )
+        ,
+        PUR_GAP_RN AS(
+        SELECT SPU_WID,
+        PURCH_TIMES,
+        USER_ID,
+        TRUNC(ORDER_DT) - TRUNC(PREV_PUR_DT) PUR_GAP,
+        ROW_NUMBER() OVER(PARTITION BY SPU_WID, PURCH_TIMES ORDER BY TRUNC(ORDER_DT) - TRUNC(PREV_PUR_DT) ASC) RN
+        FROM SPU_PURCH
+        WHERE TRUNC(ORDER_DT) - TRUNC(PREV_PUR_DT) > 0
+        )
+
+        SELECT v1.SPU_WID, v1.PURCH_TIMES,TRUNC(AVG(v2.PUR_GAP),2) AVG_PUR_GAP FROM(
+        SELECT  SPU_WID,PURCH_TIMES,COUNT(*) TTL_NUM FROM PUR_GAP_RN GROUP BY  SPU_WID,PURCH_TIMES
+
+        ) v1,PUR_GAP_RN v2
+        WHERE v1.SPU_WID = v2.SPU_WID
+        AND v1.PURCH_TIMES = v2.PURCH_TIMES
+        AND v2.RN &lt;=  CEIL(v1.TTL_NUM * 0.8)
+        GROUP BY v1.SPU_WID,v1.PURCH_TIMES
+    </select>
+</mapper>

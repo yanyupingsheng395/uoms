@@ -170,4 +170,9 @@ public class RootPathController extends BaseController {
         model.addAttribute("dateRange", dateRange);
         return "operate/insight/sankey";
     }
+
+    @RequestMapping("/fullScreen")
+    public String fullScreen() {
+        return "operate/insight/fullscreen";
+    }
 }

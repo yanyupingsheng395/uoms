@@ -114,7 +114,6 @@ export default function define(runtime, observer) {
                     .filter( (link) => {
                         return node.sourceLinks.indexOf( link ) !== -1;
                     } );
-                console.log( links );
                 let nextNodes = [];
                 links.each( (link) => {
                     nextNodes.push( link.target );

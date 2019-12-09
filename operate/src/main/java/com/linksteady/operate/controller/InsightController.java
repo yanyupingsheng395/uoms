@@ -2,6 +2,7 @@ package com.linksteady.operate.controller;
 
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.service.InsightService;
@@ -74,5 +75,77 @@ public class InsightController {
     @RequestMapping("/getSpuSnakey")
     public Map<String, Object> getSpuSnakey(String dateRange) {
         return insightService.getSpuList(dateRange);
+    }
+
+    /**
+     * 获取所有有效的spu
+     * @return
+     */
+    @RequestMapping("/getSpuTree")
+    public ResponseBo getSpuTree() {
+        return ResponseBo.okWithData(null,insightService.getSpuTree());
+    }
+
+    @RequestMapping("/getProductTree")
+    public List<Ztree> getProductTree(@RequestParam("spuWid") String spuWid) {
+        return insightService.getProductTree(spuWid);
+    }
+
+    /**
+     * type:spu / product
+     * 留存率随购买次数的变化图
+     * @return
+     */
+    @GetMapping("/retentionInPurchaseTimes")
+    public ResponseBo retentionInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+        return ResponseBo.okWithData(null, insightService.retentionInPurchaseTimes(type, id, period));
+    }
+
+    /**
+     * 件单价随购买次数变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    @GetMapping("/unitPriceInPurchaseTimes")
+    public ResponseBo unitPriceInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+        return ResponseBo.okWithData(null, insightService.unitPriceInPurchaseTimes(type, id, period));
+    }
+
+    /**
+     * 连带率随购买次数变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    @GetMapping("/joinRateInPurchaseTimes")
+    public ResponseBo joinRateInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+        return ResponseBo.okWithData(null, insightService.joinRateInPurchaseTimes(type, id, period));
+    }
+
+    /**
+     * 品类种数随购买次数变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    @GetMapping("/categoryInPurchaseTimes")
+    public ResponseBo categoryInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+        return ResponseBo.okWithData(null, insightService.categoryInPurchaseTimes(type, id, period));
+    }
+
+    /**
+     * 时间间隔随购买次数变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    @GetMapping("/periodInPurchaseTimes")
+    public ResponseBo periodInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+        return ResponseBo.okWithData(null, insightService.periodInPurchaseTimes(type, id, period));
     }
 }

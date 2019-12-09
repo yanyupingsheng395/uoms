@@ -23,7 +23,7 @@
     <select id="findGrowthPathList" resultMap="base">
         select * from (
           select t.*, ROWNUM GROWTH_NUMBER from (
-            select COPS_VALUE, INCOME_VALUE, STEP_VALUE, UNIVERS_VALUE,
+            select trunc(COPS_VALUE,4) COPS_VALUE, trunc(INCOME_VALUE,4) INCOME_VALUE, trunc(STEP_VALUE,4) STEP_VALUE, trunc(UNIVERS_VALUE,4) UNIVERS_VALUE,
             PURCH1_SPU_NAME,PURCH2_SPU_NAME,PURCH3_SPU_NAME,PURCH4_SPU_NAME,PURCH5_SPU_NAME,PURCH6_SPU_NAME,PURCH7_SPU_NAME,PURCH8_SPU_NAME,PURCH9_SPU_NAME,PURCH10_SPU_NAME
             from UO_INSIGHT_GROWTH_PATH
             <if test="orderSql != null and orderSql != ''">
@@ -38,6 +38,6 @@
     </select>
 
     <select id="getGrowthPathAvgValue" resultMap="base">
-        select '平均' GROWTH_NUMBER, avg(COPS_VALUE) COPS_VALUE, avg(INCOME_VALUE) INCOME_VALUE, avg(STEP_VALUE) STEP_VALUE, avg(UNIVERS_VALUE) UNIVERS_VALUE from UO_INSIGHT_GROWTH_PATH
+        select '平均' GROWTH_NUMBER, trunc(avg(COPS_VALUE),4) COPS_VALUE, trunc(avg(INCOME_VALUE),4) INCOME_VALUE, trunc(avg(STEP_VALUE),4) STEP_VALUE, trunc(avg(UNIVERS_VALUE),4) UNIVERS_VALUE from UO_INSIGHT_GROWTH_PATH
     </select>
 </mapper>

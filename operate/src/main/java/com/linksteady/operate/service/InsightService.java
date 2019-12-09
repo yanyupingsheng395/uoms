@@ -1,5 +1,7 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.domain.InsightUserCnt;
@@ -31,4 +33,62 @@ public interface InsightService {
     InsightGrowthPath getGrowthPathAvgValue();
 
     Map<String, Object> getSpuList(String dateRange);
+
+    /**
+     * 获取所有有效的spu
+     * @return
+     */
+    List<Ztree> getSpuTree();
+
+    /**
+     * 获取所有上架的商品
+     * @param spuWid
+     * @return
+     */
+    List<Ztree> getProductTree(String spuWid);
+
+    /**
+     * 留存率随购买次数的变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    Map<String, Object> retentionInPurchaseTimes(String type, String id, String period);
+
+    /**
+     * 件单价随购买次数的变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    Map<String, Object> unitPriceInPurchaseTimes(String type, String id, String period);
+
+    /**
+     * 连带率随购买次数变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    Map<String, Object> joinRateInPurchaseTimes(String type, String id, String period);
+
+    /**
+     * 品类种数随购买次数变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    Map<String, Object> categoryInPurchaseTimes(String type, String id, String period);
+
+    /**
+     * 时间间隔随购买次数变化
+     * @param type
+     * @param id
+     * @param period
+     * @return
+     */
+    Map<String, Object> periodInPurchaseTimes(String type, String id, String period);
 }
