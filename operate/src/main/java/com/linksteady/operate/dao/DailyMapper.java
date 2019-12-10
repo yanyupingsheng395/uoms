@@ -83,8 +83,4 @@ public interface DailyMapper {
      */
     int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
 
-    /**
-     * 更新转化数据
-     */
-    void updateConversion();
 }

@@ -38,9 +38,6 @@ public class OpDailyCalculate extends IJobHandler {
         //更新头表的推送数据状态
         dailyMapper.updateHeaderSendStatis();
 
-        //更新转化数据
-        dailyMapper.updateConversion();
-
         log.info("每日运营的统计数据，结束的时间为:{}, 线程名称：{}", LocalDate.now(), Thread.currentThread().getName());
         return ResultInfo.success("success");
     }
