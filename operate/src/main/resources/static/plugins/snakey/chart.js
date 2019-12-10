@@ -158,7 +158,10 @@ export default function define(runtime, observer) {
             (value) => {
                 let f = d3.format( ",.0f" );
                 var result = "购买人次：" + f( value );
-                result += "<br/>首次购买用户的用户数量（人）:300";
+                result += "\n当日首购用户中本SPU的用户数量（人）:300";
+                result += "\n当日首购用户中本SPU的用户占比（%）:32";
+                result += "\n前30日首购用户中本SPU的用户数量（人）:300";
+                result += "\n前30日首购用户中本SPU的用户占比（%）:40";
                 return result;
             }
         )
