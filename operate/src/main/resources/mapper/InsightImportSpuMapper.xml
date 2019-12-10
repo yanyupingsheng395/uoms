@@ -14,7 +14,7 @@
     <select id="findImportSpuList" resultMap="base">
         select * from (
           select t.*, rownum rn from (
-          select SPU_ID, SPU_NAME, PURCH_ORDER, CONTRIBUTE_RATE,NEXT_PURCH_PROBAL,SAME_SPU_PROBAL,OTHER_SPU_PROBAL from UO_INSIGHT_IMPORT_SPU
+          select SPU_ID, SPU_NAME, PURCH_ORDER, trunc(CONTRIBUTE_RATE, 2) CONTRIBUTE_RATE,trunc(NEXT_PURCH_PROBAL, 2) NEXT_PURCH_PROBAL,trunc(SAME_SPU_PROBAL, 2) SAME_SPU_PROBAL,trunc(OTHER_SPU_PROBAL, 2) OTHER_SPU_PROBAL from UO_INSIGHT_IMPORT_SPU
             <where>
                 <if test="spuName != null and spuName != '' ">
                     SPU_NAME = #{spuName}

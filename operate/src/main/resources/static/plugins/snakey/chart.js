@@ -157,7 +157,9 @@ export default function define(runtime, observer) {
         return (
             (value) => {
                 let f = d3.format( ",.0f" );
-                return "购买人次：" + f( value );
+                var result = "购买人次：" + f( value );
+                result += "<br/>首次购买用户的用户数量（人）:300";
+                return result;
             }
         )
     } );

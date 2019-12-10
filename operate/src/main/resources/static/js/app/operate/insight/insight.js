@@ -177,23 +177,19 @@ function findImportSpu() {
         columns: [
             {
                 field: 'spuName',
-                title: 'SPU名称',
-                align: 'center'
+                title: 'SPU名称'
             }, {
                 field: 'contributeRate',
-                title: '本次购买的用户贡献率（%）',
-                align: 'center'
+                title: '本次购买的用户贡献率（%）'
             },{
                 field: 'nextPurchProbal',
-                title: '本购SPU后再购概率（%）',
-                align: 'center'
+                title: '本购SPU后再购概率（%）'
             }, {
                 field: 'sameSpuProbal',
                 title: '本购SPU后再购同SPU概率（%）'
             }, {
                 field: 'otherSpuProbal',
-                title: '本购SPU后购其他SPU概率（%）',
-                align: 'center'
+                title: '本购SPU后购其他SPU概率（%）'
             }]
     };
     $( "#importSpu" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );

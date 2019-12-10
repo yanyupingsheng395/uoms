@@ -10,15 +10,12 @@ import com.linksteady.operate.domain.InsightUserCnt;
 import com.linksteady.operate.service.InsightService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * @author hxcao
