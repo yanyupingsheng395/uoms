@@ -218,10 +218,6 @@
         where HEAD_ID = #{headId} order by CONVERSION_DATE asc
     </select>
 
-    <select id="updateConversion" statementType="CALLABLE">
-        {call UPDATE_OP_DAILY_CONVERSION}
-    </select>
-
     <select id="getDailyPersonalEffect" resultMap="personalResult" parameterType="com.linksteady.operate.vo.DailyPersonalVo">
         select * from (
           select tt.*, ROWNUM RN from (
