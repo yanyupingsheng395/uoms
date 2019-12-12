@@ -10,15 +10,12 @@ import com.linksteady.operate.domain.InsightUserCnt;
 import com.linksteady.operate.service.InsightService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * @author hxcao
@@ -102,13 +99,46 @@ public class InsightServiceImpl implements InsightService {
      *
      * @return
      */
+    public Map<String, Object> getSpuList2(String dateRange) {
+        if (dateRange.isEmpty()) {
+            dateRange = "1";
+        }
+        Map<String, Object> data = new HashMap<>();
+        List<Map<String, Object>> nodeList = sankeyMapper.getNodeInfo(dateRange);
+        // 获取node节点基本数据
+        List<Map<String, Object>> nodeNameArray = Lists.newArrayList();
+        List<String> nodeNames = nodeList.stream().map(x->x.get("SOURCE_NAME").toString()).collect(Collectors.toList());
+        nodeList.stream().forEach(x->{
+            Map<String, Object> node = Maps.newHashMap();
+            node.put("name", x.get("SOURCE_NAME"));
+//            node.put("cUserCnt", "1"); // 当日用户数量
+//            node.put("bUserCnt", "2"); // 30日用户数量
+//            node.put("cUserPercent", "3"); // 当日用户数量占比
+//            node.put("bUserPercent", "4"); // 30日用户数量占比
+            nodeNameArray.add(node);
+        });
+        data.put("nodes", nodeNameArray);
+        // 获取link节点数据
+        List<Map<String, Object>> linkList = sankeyMapper.getLinkInfo(dateRange);
+        List<Map<String, Object>> linkArray = Lists.newArrayList();
+        linkList.stream().forEach(x -> {
+            Map<String, Object> linkObject = Maps.newHashMap();
+            linkObject.put("source", x.get("SOURCE_NAME").toString());
+            linkObject.put("target", x.get("TARGET_NAME").toString());
+            linkObject.put("value", ((BigDecimal) x.get("USER_CNT")).longValue());
+            linkArray.add(linkObject);
+        });
+        data.put("links", linkArray);
+        return data;
+    }
+
     @Override
     public Map<String, Object> getSpuList(String dateRange) {
         if (dateRange.isEmpty()) {
             dateRange = "1";
         }
         Map<String, Object> data = new HashMap<>();
-        List<Map<String, Object>> spuList = sankeyMapper.getSpuList(dateRange);
+        List<Map<String, Object>> spuList = sankeyMapper.getLinkInfo(dateRange);
 
         // 获取node节点数据
         List<String> sourceNames = spuList.stream().map(x -> x.get("SOURCE_NAME").toString()).collect(Collectors.toList());
@@ -121,6 +151,7 @@ public class InsightServiceImpl implements InsightService {
             nodeNameObject.put("name", x);
             nodeNameArray.add(nodeNameObject);
         });
+        List<Map<String, Object>> nodeList = sankeyMapper.getNodeInfo(dateRange);
         data.put("nodes", nodeNameArray);
 
         // 获取link节点数据
@@ -198,7 +229,7 @@ public class InsightServiceImpl implements InsightService {
                 if(ydata.get(i).equalsIgnoreCase("0")) {
                     changeRate = "";
                 }else {
-                    changeRate = df.format((Double.valueOf(ydata.get(i+1)) - Double.valueOf(ydata.get(i)))/Double.valueOf(ydata.get(i)));
+                    changeRate = df.format(((Double.valueOf(ydata.get(i+1)) - Double.valueOf(ydata.get(i)))/Double.valueOf(ydata.get(i))) * 100);
                 }
                 newYdata.add(changeRate);
                 newXdata.add(xdata.get(i+1));

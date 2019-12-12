@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.FileUtils;
@@ -12,11 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 每日运营
@@ -315,5 +318,25 @@ public class DailyController {
             log.error("导出每日运营个体结果表失败", e);
             return ResponseBo.error("导出每日运营个体结果表失败，请联系网站管理员！");
         }
+    }
+
+    /**
+     * 获取默认推送方式和定时推送时间
+     *
+     * @return
+     */
+    @GetMapping("/getPushInfo")
+    public ResponseBo getPushInfo() {
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("method", dailyProperties.getPushMethod());
+        int hour = LocalTime.now().getHour();
+        final List<String> timeList = IntStream.rangeClosed(8, 22).filter(x -> x > hour).boxed().map(y -> {
+            if (y < 10) {
+                return "0" + y + ":00";
+            }
+            return y + ":00";
+        }).collect(Collectors.toList());
+        result.put("timeList", timeList);
+        return ResponseBo.okWithData(null, result);
     }
 }

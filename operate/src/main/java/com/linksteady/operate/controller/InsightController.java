@@ -1,16 +1,29 @@
 package com.linksteady.operate.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.service.InsightService;
+import com.linksteady.operate.thrift.InsightThriftClient;
+import com.linksteady.operate.thrift.ProdInsightService;
+import com.linksteady.operate.thrift.RetentionData;
+import org.apache.thrift.TException;
+import org.apache.thrift.transport.TTransportException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 用户成长洞察controller
@@ -24,6 +37,9 @@ public class InsightController {
 
     @Autowired
     private InsightService insightService;
+
+    @Autowired
+    private InsightThriftClient insightThriftClient;
 
     /**
      * 获取用户数随购买次数变化数据
@@ -161,5 +177,115 @@ public class InsightController {
         return ResponseBo.okWithData(null, insightService.retentionChangeRateInPurchaseTimes(type, id, period));
     }
 
+    /**
+     * 获取留存率/变化率的拟合值
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/getRetentionFitData")
+    public ResponseBo getRetentionFitData(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) throws Exception {
+        DecimalFormat df = new DecimalFormat("#.##");
+        int spu = -1;
+        int product = -1;
+        if(type.equalsIgnoreCase("spu")) {
+            spu = Integer.valueOf(id);
+        }
+        if(type.equalsIgnoreCase("product")) {
+            product = Integer.valueOf(id);
+        }
 
+        RetentionData retentionFitData;
+        final List<String> retentionFitList;
+        try {
+            insightThriftClient.open();
+            retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
+            List<Double> retentionFit = retentionFitData.getRetentionFit();
+            retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
+        } finally {
+            insightThriftClient.close();
+        }
+        return ResponseBo.okWithData(null, retentionFitList);
+    }
+
+    @GetMapping("/getRetentionChangeFitData")
+    public ResponseBo getRetentionChangeFitData(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) throws Exception {
+        DecimalFormat df = new DecimalFormat("#.##");
+        int spu = -1;
+        int product = -1;
+        if(type.equalsIgnoreCase("spu")) {
+            spu = Integer.valueOf(id);
+        }
+        if(type.equalsIgnoreCase("product")) {
+            product = Integer.valueOf(id);
+        }
+        RetentionData retentionFitData;
+        final List<String> retentionFitList;
+        try {
+            insightThriftClient.open();
+            retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
+            List<Double> retentionFit = retentionFitData.getRetentionFit();
+            retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
+        } finally {
+            insightThriftClient.close();
+        }
+        return ResponseBo.okWithData(null, retentionFitList);
+    }
+
+    public static void main(String[] args) {
+        test();
+    }
+
+    public static void test1() {
+        Map<String, Object> result = Maps.newHashMap();
+        JSONArray jsonArray = new JSONArray();
+        IntStream.range(0,300).forEach(x->{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name", x);
+            jsonArray.add(jsonObject);
+        });
+        System.out.println(jsonArray);
+    }
+
+    public static void test2() {
+        Map<String, Object> result = Maps.newHashMap();
+        JSONArray jsonArray = new JSONArray();
+        IntStream.range(0,299).forEach(x->{
+            JSONObject jsonObject = new JSONObject();
+            if(x%2 == 0) {
+                jsonObject.put("source", x);
+                jsonObject.put("target", x+1);
+            }
+            if(x%2 == 1) {
+                jsonObject.put("source", x);
+                jsonObject.put("target", x+2);
+            }
+            jsonArray.add(jsonObject);
+        });
+        System.out.println(jsonArray);
+    }
+
+    public static void test() {
+        Map<String, Object> result = Maps.newHashMap();
+        JSONArray jsonArray = new JSONArray();
+        IntStream.range(0,300).forEach(x->{
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", x);
+            jsonObject.put("name", x);
+            jsonObject.put("symbolSize", new Random().nextInt(100));
+            jsonObject.put("category", x);
+            jsonObject.put("draggable", true);
+            jsonObject.put("value", 10);
+            jsonArray.add(jsonObject);
+        });
+        System.out.println(jsonArray);
+
+//        {
+//            "id": 9,
+//                "name": "综合评估法",
+//                "symbolSize": 45,
+//                "category": "评标办法",
+//                "draggable": "true",
+//                "value": 10
+//        }
+    }
 }

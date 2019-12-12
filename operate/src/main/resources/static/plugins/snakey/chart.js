@@ -32,7 +32,7 @@ export default function define(runtime, observer) {
                 .attr( "opacity", 0.9 );
 
             // Add titles for node hover effects.
-            nodes.append( "title" ).text( d => `${d.name}\n${format( d.value )}` );
+            nodes.append( "title" ).text( d => `${d.name}\n${format( d.value, d )}` );
 
             // Add text labels.
             view.selectAll( "text.node" )
@@ -65,7 +65,7 @@ export default function define(runtime, observer) {
                 .attr( "fill", "none" );
 
             // Add <title> hover effect on links.
-            links.append( "title" ).text( d => `${d.source.name} ${arrow} ${d.target.name}\n${format( d.value )}` );
+            links.append( "title" ).text( d => `${d.source.name} ${arrow} ${d.target.name}\n${format( d.value, null )}` );
 
             // Define the default dash behavior for colored gradients.
             function setDash(link) {
@@ -115,6 +115,8 @@ export default function define(runtime, observer) {
                         return node.sourceLinks.indexOf( link ) !== -1;
                     } );
                 let nextNodes = [];
+
+                console.log(links.length)
                 links.each( (link) => {
                     nextNodes.push( link.target );
                 } );
@@ -153,14 +155,23 @@ export default function define(runtime, observer) {
                 .nodeWidth( nodeWidth )
         )
     } );
+
     main.variable().define( "format", ["d3"], function (d3) {
         return (
-            (value) => {
+            (value, d) => {
                 let f = d3.format( ",.0f" );
-                return "购买人次：" + f( value );
+                var result = "购买人次：" + f( value );
+                if(d != null) {
+                    result += "\n当日当次购买中本SPU的用户数量（人）:" + d['cUserCnt'];
+                    result += "\n当日当次购买中本SPU的用户占比（%）:" + d['cUserPercent'];
+                    result += "\n前30日当次购买中本SPU的用户数量（人）:" + d['bUserCnt'];
+                    result += "\n前30日当次购买中本SPU的用户占比（%）:" + d['bUserPercent'];
+                }
+                return result;
             }
         )
     } );
+
     main.variable().define( "color", ["d3"], function (d3) {
         return (
             (value) => {
