@@ -183,12 +183,12 @@
                                     <div class="select-list">
                                         <ul>
                                             <li>
-                                                SPU/商品：<input type="text" id="spuOrProductName"/>
-                                                <div id="menuContent" hidden style="z-index: 100;position: absolute;">
-                                                    <ul id="spuTree" class="ztree"></ul>
+                                                SPU/商品：<input type="text" id="spuProductName1"/>
+                                                <div id="ztreeContent1" hidden style="z-index: 100;position: absolute;">
+                                                    <ul id="ztree1" class="ztree"></ul>
                                                 </div>
-                                                <input type="hidden" id="type"/>
-                                                <input type="hidden" id="id"/>
+                                                <input type="hidden" id="spuProductType1"/>
+                                                <input type="hidden" id="spuProductId1"/>
                                             </li>
                                             <li>
                                                 周期（月）：
@@ -261,6 +261,59 @@
                             </div>
                         </div>
                     </div>
+
+                    <!--spu的用户成长洞察-->
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">SPU的用户成长洞察</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr" style="margin-top: 5px;margin-bottom: 5px;"/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form>
+                                    <div class="select-list">
+                                        <ul>
+                                            <li>
+                                                SPU/商品：<input type="text" id="spuProductName2"/>
+                                                <div id="ztreeContent2" hidden style="z-index: 100;position: absolute;">
+                                                    <ul id="ztree2" class="ztree"></ul>
+                                                </div>
+                                                <input type="hidden" id="spuProductType2"/>
+                                                <input type="hidden" id="spuProductId2"/>
+                                            </li>
+                                            <li>
+                                                购买次序：
+                                                <select name="purchOrder">
+                                                    <option value="">请选择</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                    <option value="6">6</option>
+                                                    <option value="7">7</option>
+                                                    <option value="8">8</option>
+                                                </select>
+                                            </li>
+                                            <li class="pull-right">
+                                                <a class="btn btn-primary btn-rounded btn-sm"
+                                                   onclick="searchRetention()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                <a class="btn btn-warning btn-rounded btn-sm" onclick="resetRetention()"><i
+                                                        class="fa fa-refresh"></i>&nbsp;重置</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -275,8 +328,9 @@
 <script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
 <script data-th-src="@{/js/common/lightyear.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
-<script data-th-src="@{/js/app/operate/insight/insight.js}"></script>
 <script data-th-src="@{/plugins/ztree/jquery.ztree.core.js}"></script>
 <script data-th-src="@{/plugins/ztree/jquery.ztree.excheck.js}"></script>
+<script data-th-src="@{/js/app/operate/insight/insight.js}"></script>
+<script data-th-src="@{/js/app/operate/insight/tree.js}"></script>
 </body>
 </html>

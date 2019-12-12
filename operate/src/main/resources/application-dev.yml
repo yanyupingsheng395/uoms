@@ -200,5 +200,5 @@ sys:
 
 thrift:
   server:
-    host: 39.98.78.201
+    host: 39.100.145.35
     port: 7777

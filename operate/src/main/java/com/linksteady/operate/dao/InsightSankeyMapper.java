@@ -9,5 +9,17 @@ import java.util.Map;
  */
 public interface InsightSankeyMapper {
 
-    List<Map<String, Object>> getSpuList(String dateRange);
+    /**
+     * 获取桑基图的链接信息
+     * @param dateRange
+     * @return
+     */
+    List<Map<String, Object>> getLinkInfo(String dateRange);
+
+    /**
+     * 获取source或者target的基本信息，name，id，rn
+     * @param dateRange
+     * @return
+     */
+    List<Map<String, Object>> getNodeInfo(String dateRange);
 }
