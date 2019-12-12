@@ -207,7 +207,7 @@
     </select>
 
     <select id="getEffectById" resultMap="baseResult">
-        select TOTAL_NUM, CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, CONVERT_SPU_NUM, CONVERT_SPU_RATE, CONVERT_SPU_AMOUNT
+        select TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, CONVERT_SPU_NUM, CONVERT_SPU_RATE, CONVERT_SPU_AMOUNT
         from UO_OP_DAILY_HEADER
         where HEAD_ID = #{id} and status &lt;&gt; 'todo'
     </select>
