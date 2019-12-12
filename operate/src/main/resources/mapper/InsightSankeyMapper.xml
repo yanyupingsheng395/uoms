@@ -7,11 +7,54 @@
     </select>
 
     <select id="getNodeInfo" resultType="map">
-        SELECT v1.S_RN, v1.SOURCE_SPU_ID, v1.SOURCE_NAME, v2.B_USER_CNT, v2.C_USER_CNT, B_RATE, C_RATE
+        SELECT v1.T_RN, v1.TARGET_SPU_ID, v1.TARGET_NAME, v2.B_USER_CNT, v2.C_USER_CNT, trunc(B_RATE, 2) B_RATE, trunc(C_RATE, 2) C_RATE
+        FROM (
+        SELECT DISTINCT TARGET_NAME, T_RN, TARGET_SPU_ID
+        FROM UO_INSIGHT_SANKEY T
+        WHERE S_RN &lt;= 7
+        AND DATA_TYPE = 'C'
+        AND DATE_RANGE = #{dateRange}
+        ) v1,
+        (
+        SELECT v1.T_RN,
+        TARGET_SPU_ID,
+        v1.B_USER_CNT,
+        v1.C_USER_CNT,
+        (CASE WHEN v2.B_USER_CNT = 0 THEN 1 ELSE v1.B_USER_CNT / v2.B_USER_CNT END) * 100 B_RATE,
+        (CASE WHEN v2.C_USER_CNT = 0 THEN 1 ELSE v1.C_USER_CNT / v2.C_USER_CNT END) * 100 C_RATE
+        FROM (
+        -- 当前次序下SPU，当前SPU的人数
+        SELECT T_RN,
+        TARGET_SPU_ID,
+        SUM(CASE WHEN DATA_TYPE = 'B' THEN USER_CNT ELSE 0 END) B_USER_CNT,
+        SUM(CASE WHEN DATA_TYPE = 'C' THEN USER_CNT ELSE 0 END) C_USER_CNT
+        FROM UO_INSIGHT_SANKEY
+        WHERE DATE_RANGE = #{dateRange}
+        GROUP BY T_RN, TARGET_SPU_ID order by t_rn asc
+        ) v1,
+        (
+        -- 当前次序下总人数
+        SELECT T_RN,
+        SUM(CASE WHEN DATA_TYPE = 'B' THEN USER_CNT ELSE 0 END) B_USER_CNT,
+        SUM(CASE WHEN DATA_TYPE = 'C' THEN USER_CNT ELSE 0 END) C_USER_CNT
+        FROM UO_INSIGHT_SANKEY
+        WHERE DATE_RANGE = #{dateRange}
+        GROUP BY T_RN
+        ) v2
+        WHERE v1.T_RN = v2.T_RN
+        ORDER BY v1.T_RN, TARGET_SPU_ID
+        ) v2
+        WHERE v1.T_RN = v2.T_RN
+        AND v1.TARGET_SPU_ID = v2.TARGET_SPU_ID
+
+        union
+
+        (
+        SELECT v1.S_RN, v1.SOURCE_SPU_ID, v1.SOURCE_NAME, v2.B_USER_CNT, v2.C_USER_CNT, trunc(B_RATE, 2) B_RATE, trunc(C_RATE, 2) C_RATE
         FROM (
         SELECT DISTINCT SOURCE_NAME, S_RN, SOURCE_SPU_ID
         FROM UO_INSIGHT_SANKEY T
-        WHERE S_RN &lt;= 7
+        WHERE S_RN = 1
         AND DATA_TYPE = 'C'
         AND DATE_RANGE = #{dateRange}
         ) v1,
@@ -46,5 +89,6 @@
         ) v2
         WHERE v1.S_RN = v2.S_RN
         AND v1.SOURCE_SPU_ID = v2.SOURCE_SPU_ID
+        )
     </select>
 </mapper>

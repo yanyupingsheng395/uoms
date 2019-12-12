@@ -114,12 +114,6 @@ export default function define(runtime, observer) {
                     .filter( (link) => {
                         return node.sourceLinks.indexOf( link ) !== -1;
                     } );
-                let nextNodes = [];
-
-                console.log(links.length)
-                links.each( (link) => {
-                    nextNodes.push( link.target );
-                } );
                 links.attr( "stroke-opacity", 0.3 )
                     .attr( "stroke-dashoffset", 0 );
             }

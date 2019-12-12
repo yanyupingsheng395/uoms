@@ -99,7 +99,8 @@ public class InsightServiceImpl implements InsightService {
      *
      * @return
      */
-    public Map<String, Object> getSpuList2(String dateRange) {
+    @Override
+    public Map<String, Object> getSpuList(String dateRange) {
         if (dateRange.isEmpty()) {
             dateRange = "1";
         }
@@ -107,14 +108,15 @@ public class InsightServiceImpl implements InsightService {
         List<Map<String, Object>> nodeList = sankeyMapper.getNodeInfo(dateRange);
         // 获取node节点基本数据
         List<Map<String, Object>> nodeNameArray = Lists.newArrayList();
-        List<String> nodeNames = nodeList.stream().map(x->x.get("SOURCE_NAME").toString()).collect(Collectors.toList());
+        List<String> nameLists = nodeList.stream().map(x->x.get("TARGET_NAME").toString()).collect(Collectors.toList());
         nodeList.stream().forEach(x->{
             Map<String, Object> node = Maps.newHashMap();
-            node.put("name", x.get("SOURCE_NAME"));
-//            node.put("cUserCnt", "1"); // 当日用户数量
-//            node.put("bUserCnt", "2"); // 30日用户数量
-//            node.put("cUserPercent", "3"); // 当日用户数量占比
-//            node.put("bUserPercent", "4"); // 30日用户数量占比
+            node.put("id", String.valueOf(nodeList.indexOf(x)));
+            node.put("name", x.get("TARGET_NAME"));
+            node.put("cUserCnt", x.get("C_USER_CNT").toString()); // 当日用户数量
+            node.put("bUserCnt", x.get("B_USER_CNT").toString()); // 30日用户数量
+            node.put("cUserPercent", x.get("C_RATE").toString()); // 当日用户数量占比
+            node.put("bUserPercent", x.get("B_RATE").toString()); // 30日用户数量占比
             nodeNameArray.add(node);
         });
         data.put("nodes", nodeNameArray);
@@ -123,43 +125,8 @@ public class InsightServiceImpl implements InsightService {
         List<Map<String, Object>> linkArray = Lists.newArrayList();
         linkList.stream().forEach(x -> {
             Map<String, Object> linkObject = Maps.newHashMap();
-            linkObject.put("source", x.get("SOURCE_NAME").toString());
-            linkObject.put("target", x.get("TARGET_NAME").toString());
-            linkObject.put("value", ((BigDecimal) x.get("USER_CNT")).longValue());
-            linkArray.add(linkObject);
-        });
-        data.put("links", linkArray);
-        return data;
-    }
-
-    @Override
-    public Map<String, Object> getSpuList(String dateRange) {
-        if (dateRange.isEmpty()) {
-            dateRange = "1";
-        }
-        Map<String, Object> data = new HashMap<>();
-        List<Map<String, Object>> spuList = sankeyMapper.getLinkInfo(dateRange);
-
-        // 获取node节点数据
-        List<String> sourceNames = spuList.stream().map(x -> x.get("SOURCE_NAME").toString()).collect(Collectors.toList());
-        List<String> targetNames = spuList.stream().map(x -> x.get("TARGET_NAME").toString()).collect(Collectors.toList());
-        sourceNames.addAll(targetNames);
-        List<String> nodeNames = sourceNames.stream().distinct().collect(Collectors.toList());
-        List<Map<String, Object>> nodeNameArray = Lists.newArrayList();
-        nodeNames.stream().forEach(x -> {
-            Map<String, Object> nodeNameObject = Maps.newHashMap();
-            nodeNameObject.put("name", x);
-            nodeNameArray.add(nodeNameObject);
-        });
-        List<Map<String, Object>> nodeList = sankeyMapper.getNodeInfo(dateRange);
-        data.put("nodes", nodeNameArray);
-
-        // 获取link节点数据
-        List<Map<String, Object>> linkArray = Lists.newArrayList();
-        spuList.stream().forEach(x -> {
-            Map<String, Object> linkObject = Maps.newHashMap();
-            linkObject.put("source", nodeNames.indexOf(x.get("SOURCE_NAME").toString()));
-            linkObject.put("target", nodeNames.indexOf(x.get("TARGET_NAME").toString()));
+            linkObject.put("source", nameLists.indexOf(x.get("SOURCE_NAME").toString()));
+            linkObject.put("target", nameLists.indexOf(x.get("TARGET_NAME").toString()));
             linkObject.put("value", ((BigDecimal) x.get("USER_CNT")).longValue());
             linkArray.add(linkObject);
         });

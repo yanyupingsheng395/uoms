@@ -481,3 +481,18 @@ function resetRetention() {
     $("#spuProductType1").val("");
     $("#period").find("option:selected").removeAttr("selected");
 }
+
+// 获取下一个product转化概率的大小
+function searchConvertRate() {
+    var id = $("#spuProductId2").val();
+    var type = $("#spuProductType2").val();
+    var purchOrder =$("#purchOrder").val();
+}
+
+// 获取下一个product转化概率的大小
+function resetConvertRate() {
+    $("#spuProductName2").val("");
+    $("#spuProductId2").val("");
+    $("#spuProductType2").val("");
+    $("#purchOrder").find("option:selected").removeAttr("selected");
+}
