@@ -68,10 +68,10 @@
                                             </thead>
                                             <tbody>
                                             <tr>
-                                                <td>推送人数（人）</td>
+                                                <td>计划推送人数（人）</td>
                                                 <td data-th-text="${dailyHead.totalNum}"></td>
-                                                <td>-</td>
-                                                <td>-</td>
+                                                <td>实际成功推送人数（人）</td>
+                                                <td data-th-text="${dailyHead.successNum}"></td>
                                             </tr>
                                             <tr>
                                                 <td>推送转化人数（人）</td>
@@ -93,6 +93,7 @@
                                             </tr>
                                             </tbody>
                                         </table>
+                                        <small class="help-block">** 计划推送人数（人） 和 实际成功推送人数（人）之间的差主要由两部分引起：1.在系统设置的防重复推送日期之内重复推送被拦截；2.推送通道的损耗；</small>
                                     </div>
                                 </div>
 
