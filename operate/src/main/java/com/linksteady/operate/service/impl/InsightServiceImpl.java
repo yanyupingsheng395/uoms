@@ -226,14 +226,12 @@ public class InsightServiceImpl implements InsightService {
                 dataMap.put("name", x.get("TARGET"));
                 dataMap.put("symbolSize", 30);
                 dataMap.put("category", x.get("SOURCE"));
-                dataMap.put("draggable", true);
                 dataMap.put("value", x.get("VALUE"));
                 data.add(dataMap);
             });
             Map<String, Object> dataMap = Maps.newHashMap();
             dataMap.put("name", dataList.get(0).get("SOURCE"));
             dataMap.put("symbolSize", 50);
-            dataMap.put("draggable", false);
             Map<String, Object> label = Maps.newHashMap();
             label.put("show", true);
             dataMap.put("label", label);
@@ -272,14 +270,12 @@ public class InsightServiceImpl implements InsightService {
                     dataMap.put("name", x.get("TARGET"));
                     dataMap.put("symbolSize", 30);
                     dataMap.put("category", x.get("SOURCE"));
-                    dataMap.put("draggable", true);
                     dataMap.put("value", x.get("VALUE"));
                     data.add(dataMap);
                 });
                 Map<String, Object> dataMap = Maps.newHashMap();
                 dataMap.put("name", node.getKey());
                 dataMap.put("symbolSize", 50);
-                dataMap.put("draggable", false);
                 dataMap.put("category", node.getKey());
                 data.add(dataMap);
 
