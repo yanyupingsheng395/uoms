@@ -565,7 +565,6 @@ function relationChart(data) {
     let option = {
         tooltip: {
             formatter: function(params) {
-                console.log(params)
                 return params.name + (params.value ? ' : ' + params.value : '')
             }
         },
