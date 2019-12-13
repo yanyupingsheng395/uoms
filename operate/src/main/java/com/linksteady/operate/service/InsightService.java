@@ -100,4 +100,10 @@ public interface InsightService {
      * @return
      */
     Map<String, Object> retentionChangeRateInPurchaseTimes(String type, String id, String period);
+
+    /**
+     * 获取spu下商品转化关系网
+     * @return
+     */
+    Map<String, Object> getSpuConvertRateNodes(String id, String type, String purchOrder);
 }

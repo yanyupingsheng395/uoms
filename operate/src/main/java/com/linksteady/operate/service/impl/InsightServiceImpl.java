@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -206,6 +204,108 @@ public class InsightServiceImpl implements InsightService {
         result.put("ydata", newYdata);
         return result;
     }
+
+    /**
+     * 获取下次转化商品的转化率的top3
+     * @param purchOrder
+     * @return
+     */
+    @Override
+    public Map<String, Object> getSpuConvertRateNodes(String id, String type, String purchOrder) {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        List<Map<String, Object>> dataList = insightMapper.getSpuConvertRateProducts(id, type, purchOrder);
+        if(dataList.size() == 0 ) {
+            return null;
+        }
+        // 如果是spu 则需要手动将节点去重
+        if("product".equalsIgnoreCase(type)) {
+            // 封装data
+            List<Map<String, Object>> data = Lists.newArrayList();
+            dataList.forEach(x->{
+                Map<String, Object> dataMap = Maps.newHashMap();
+                dataMap.put("name", x.get("TARGET"));
+                dataMap.put("symbolSize", 30);
+                dataMap.put("category", x.get("SOURCE"));
+                dataMap.put("draggable", true);
+                dataMap.put("value", x.get("VALUE"));
+                data.add(dataMap);
+            });
+            Map<String, Object> dataMap = Maps.newHashMap();
+            dataMap.put("name", dataList.get(0).get("SOURCE"));
+            dataMap.put("symbolSize", 50);
+            dataMap.put("draggable", false);
+            Map<String, Object> label = Maps.newHashMap();
+            label.put("show", true);
+            dataMap.put("label", label);
+            data.add(dataMap);
+
+            resultMap.put("data", data);
+            resultMap.put("name", dataList.get(0).get("SOURCE"));
+
+            // 封装links
+            List<Map<String, Object>> links = Lists.newArrayList();
+            dataList.forEach(x->{
+                Map<String, Object> linkMap = Maps.newHashMap();
+                linkMap.put("source", x.get("SOURCE"));
+                linkMap.put("target", x.get("TARGET"));
+                links.add(linkMap);
+            });
+
+            resultMap.put("links", links);
+
+            // 封装categories
+            List<Map<String, Object>> categories = Lists.newArrayList();
+            Map<String, Object> categoriesMap = Maps.newHashMap();
+            categoriesMap.put("name", dataList.get(0).get("SOURCE"));
+            categories.add(categoriesMap);
+            resultMap.put("categories", categories);
+        }
+        if("spu".equalsIgnoreCase(type)) {
+            final Map<Object, List<Map<String, Object>>> nodeList = dataList.stream().collect(Collectors.groupingBy(x -> x.get("SOURCE")));
+            List<Map<String, Object>> categories = Lists.newArrayList();
+            List<Map<String, Object>> links = Lists.newArrayList();
+            List<Map<String, Object>> data = Lists.newArrayList();
+            nodeList.entrySet().forEach(node->{
+                List<Map<String, Object>> eachListMap = node.getValue();
+                eachListMap.forEach(x->{
+                    Map<String, Object> dataMap = Maps.newHashMap();
+                    dataMap.put("name", x.get("TARGET"));
+                    dataMap.put("symbolSize", 30);
+                    dataMap.put("category", x.get("SOURCE"));
+                    dataMap.put("draggable", true);
+                    dataMap.put("value", x.get("VALUE"));
+                    data.add(dataMap);
+                });
+                Map<String, Object> dataMap = Maps.newHashMap();
+                dataMap.put("name", node.getKey());
+                dataMap.put("symbolSize", 50);
+                dataMap.put("draggable", false);
+                dataMap.put("category", node.getKey());
+                data.add(dataMap);
+
+                resultMap.put("data", data);
+
+                // 封装links
+                eachListMap.forEach(x->{
+                    Map<String, Object> linkMap = Maps.newHashMap();
+                    linkMap.put("source", x.get("SOURCE"));
+                    linkMap.put("target", x.get("TARGET"));
+                    links.add(linkMap);
+                });
+                resultMap.put("links", links);
+
+                // 封装categories
+                Map<String, Object> categoriesMap = Maps.newHashMap();
+                categoriesMap.put("name", node.getKey());
+                categories.add(categoriesMap);
+
+            });
+            resultMap.put("categories", categories);
+        }
+        return resultMap;
+    }
+
+
 
     /**
      * 件单价随购买次数变化

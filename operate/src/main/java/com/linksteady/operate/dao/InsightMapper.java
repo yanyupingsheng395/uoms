@@ -30,4 +30,6 @@ public interface InsightMapper {
     List<Map<String, Object>> categoryInPurchaseTimes(String type, String id, String period);
 
     List<Map<String, Object>> periodInPurchaseTimes(String type, String id, String period);
+
+    List<Map<String, Object>> getSpuConvertRateProducts(String id, String type, String purchOrder);
 }

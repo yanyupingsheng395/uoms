@@ -484,15 +484,153 @@ function resetRetention() {
 
 // 获取下一个product转化概率的大小
 function searchConvertRate() {
+    $("#mask1").hide();
+    $("#relationChartRow").show();
     var id = $("#spuProductId2").val();
     var type = $("#spuProductType2").val();
     var purchOrder =$("#purchOrder").val();
+
+    if(id === '' || purchOrder === '') {
+        $MB.n_warning("请选择查询条件！");
+        return false;
+    }
+    var chart = echarts.init(document.getElementById("chart_relation"), 'macarons');
+    chart.showLoading({
+        text : '加载数据中...'
+    });
+    $.get("/insight/getSpuConvertRate", {id:id, type:type, purchOrder:purchOrder}, function (r) {
+        var data = r.data;
+        if(data == null) {
+            chart.hideLoading();
+            $("#mask1").show();
+            $("#relationChartRow").hide();
+            $MB.n_warning("查询到的数据为空！");
+            return;
+        }
+        var option = relationChart(data);
+        chart.hideLoading();
+        chart.setOption(option);
+    });
+}
+
+function getSeries(data) {
+    var getSeries = [];
+    data.forEach((v, k)=>{
+        getSeries.push(
+            {
+                name: v['name'],
+                type: 'graph',
+                layout: 'force',
+                force: {
+                    repulsion: 300
+                },
+                data: v['data'],
+                links: v['links'],
+                categories: v['categories'],
+                focusNodeAdjacency: true,
+                roam: true,
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'top',
+                    }
+                },
+                lineStyle: {
+                    normal: {
+                        color: 'source',
+                        curveness: 0,
+                        type: "solid"
+                    }
+                }
+            }
+        );
+    });
+
+    return getSeries;
 }
 
 // 获取下一个product转化概率的大小
 function resetConvertRate() {
+    $("#mask1").show();
+    $("#relationChartRow").hide();
     $("#spuProductName2").val("");
     $("#spuProductId2").val("");
     $("#spuProductType2").val("");
     $("#purchOrder").find("option:selected").removeAttr("selected");
+}
+
+
+function relationChart(data) {
+    let categories = data.categories;
+    let option = {
+        tooltip: {
+            formatter: function(params) {
+                console.log(params)
+                return params.name + (params.value ? ' : ' + params.value : '')
+            }
+        },
+        animationDurationUpdate: 1500,
+        animationEasingUpdate: "quinticInOut",
+
+        toolbox: {
+            feature: {
+                restore: {}
+            }
+        },
+        legend: {
+            show: true,
+            data: categories,
+            selected: legendSeleted(categories)
+        },
+        series: [{
+            type: "graph",
+            layout: "force",
+            roam: true,
+            hoverAnimation: true,
+            focusNodeAdjacency: true,
+            draggable: true,
+            symbolSize: 33,
+            force: {
+                repulsion: 200,
+                edgeLength: 100
+            },
+            itemStyle: {
+                normal: {
+                    borderColor: "#fff",
+                    borderWidth: 1,
+                    shadowBlur: 10,
+                    shadowColor: "rgba(0, 0, 0, 0.3)"
+                }
+            },
+            lineStyle: {
+                width: 0.5,
+                curveness: 0.3,
+                opacity: 0.8
+            },
+            label: {
+                emphasis: {
+                    position: 'right',
+                    show: true
+                }
+            },
+
+            data: data.data,
+            links: data.links,
+            categories: categories
+        }]
+    }
+    return option;
+}
+
+function legendSeleted(data) {
+    var res = {};
+    data.forEach((v, k)=>{
+        var name = v['name'];
+        if(k < 3) {
+            res[name] = true;
+        }else {
+            res[name] = false;
+        }
+    });
+    return res;
 }

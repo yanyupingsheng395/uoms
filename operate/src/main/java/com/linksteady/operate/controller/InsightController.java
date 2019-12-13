@@ -43,6 +43,7 @@ public class InsightController {
 
     /**
      * 获取用户数随购买次数变化数据
+     *
      * @param dateRange
      * @return
      */
@@ -53,6 +54,7 @@ public class InsightController {
 
     /**
      * 成长旅程价值呈现
+     *
      * @return
      */
     @GetMapping("/findSpuValueList")
@@ -70,6 +72,7 @@ public class InsightController {
 
     /**
      * 获取重要SPU指标值
+     *
      * @param request
      * @return
      */
@@ -86,6 +89,7 @@ public class InsightController {
 
     /**
      * 获取spu的桑基图
+     *
      * @return
      */
     @RequestMapping("/getSpuSnakey")
@@ -95,11 +99,12 @@ public class InsightController {
 
     /**
      * 获取所有有效的spu
+     *
      * @return
      */
     @RequestMapping("/getSpuTree")
     public ResponseBo getSpuTree() {
-        return ResponseBo.okWithData(null,insightService.getSpuTree());
+        return ResponseBo.okWithData(null, insightService.getSpuTree());
     }
 
     @RequestMapping("/getProductTree")
@@ -110,87 +115,94 @@ public class InsightController {
     /**
      * type:spu / product
      * 留存率随购买次数的变化图
+     *
      * @return
      */
     @GetMapping("/retentionInPurchaseTimes")
-    public ResponseBo retentionInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+    public ResponseBo retentionInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
         return ResponseBo.okWithData(null, insightService.retentionInPurchaseTimes(type, id, period));
     }
 
     /**
      * 件单价随购买次数变化
+     *
      * @param type
      * @param id
      * @param period
      * @return
      */
     @GetMapping("/unitPriceInPurchaseTimes")
-    public ResponseBo unitPriceInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+    public ResponseBo unitPriceInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
         return ResponseBo.okWithData(null, insightService.unitPriceInPurchaseTimes(type, id, period));
     }
 
     /**
      * 连带率随购买次数变化
+     *
      * @param type
      * @param id
      * @param period
      * @return
      */
     @GetMapping("/joinRateInPurchaseTimes")
-    public ResponseBo joinRateInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+    public ResponseBo joinRateInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
         return ResponseBo.okWithData(null, insightService.joinRateInPurchaseTimes(type, id, period));
     }
 
     /**
      * 品类种数随购买次数变化
+     *
      * @param type
      * @param id
      * @param period
      * @return
      */
     @GetMapping("/categoryInPurchaseTimes")
-    public ResponseBo categoryInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+    public ResponseBo categoryInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
         return ResponseBo.okWithData(null, insightService.categoryInPurchaseTimes(type, id, period));
     }
 
     /**
      * 时间间隔随购买次数变化
+     *
      * @param type
      * @param id
      * @param period
      * @return
      */
     @GetMapping("/periodInPurchaseTimes")
-    public ResponseBo periodInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+    public ResponseBo periodInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
         return ResponseBo.okWithData(null, insightService.periodInPurchaseTimes(type, id, period));
     }
 
     /**
      * 留存率变化率随购买次数变化
+     *
      * @param type
      * @param id
      * @param period
      * @return
      */
     @GetMapping("/retentionChangeRateInPurchaseTimes")
-    public ResponseBo retentionChangeRateInPurchaseTimes(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) {
+    public ResponseBo retentionChangeRateInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
         return ResponseBo.okWithData(null, insightService.retentionChangeRateInPurchaseTimes(type, id, period));
     }
 
     /**
      * 获取留存率/变化率的拟合值
+     *
      * @return
      * @throws Exception
      */
     @GetMapping("/getRetentionFitData")
-    public ResponseBo getRetentionFitData(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) throws Exception {
+    public ResponseBo getRetentionFitData(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) throws Exception {
         DecimalFormat df = new DecimalFormat("#.##");
         int spu = -1;
         int product = -1;
-        if(type.equalsIgnoreCase("spu")) {
+        if (type.equalsIgnoreCase("spu")) {
             spu = Integer.valueOf(id);
         }
-        if(type.equalsIgnoreCase("product")) {
+        if (type.equalsIgnoreCase("product")) {
             product = Integer.valueOf(id);
         }
 
@@ -208,14 +220,14 @@ public class InsightController {
     }
 
     @GetMapping("/getRetentionChangeFitData")
-    public ResponseBo getRetentionChangeFitData(@RequestParam("type") String type,@RequestParam("id") String id, @RequestParam("period") String period) throws Exception {
+    public ResponseBo getRetentionChangeFitData(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) throws Exception {
         DecimalFormat df = new DecimalFormat("#.##");
         int spu = -1;
         int product = -1;
-        if(type.equalsIgnoreCase("spu")) {
+        if (type.equalsIgnoreCase("spu")) {
             spu = Integer.valueOf(id);
         }
-        if(type.equalsIgnoreCase("product")) {
+        if (type.equalsIgnoreCase("product")) {
             product = Integer.valueOf(id);
         }
         RetentionData retentionFitData;
@@ -231,61 +243,13 @@ public class InsightController {
         return ResponseBo.okWithData(null, retentionFitList);
     }
 
-    public static void main(String[] args) {
-        test();
-    }
-
-    public static void test1() {
-        Map<String, Object> result = Maps.newHashMap();
-        JSONArray jsonArray = new JSONArray();
-        IntStream.range(0,300).forEach(x->{
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("name", x);
-            jsonArray.add(jsonObject);
-        });
-        System.out.println(jsonArray);
-    }
-
-    public static void test2() {
-        Map<String, Object> result = Maps.newHashMap();
-        JSONArray jsonArray = new JSONArray();
-        IntStream.range(0,299).forEach(x->{
-            JSONObject jsonObject = new JSONObject();
-            if(x%2 == 0) {
-                jsonObject.put("source", x);
-                jsonObject.put("target", x+1);
-            }
-            if(x%2 == 1) {
-                jsonObject.put("source", x);
-                jsonObject.put("target", x+2);
-            }
-            jsonArray.add(jsonObject);
-        });
-        System.out.println(jsonArray);
-    }
-
-    public static void test() {
-        Map<String, Object> result = Maps.newHashMap();
-        JSONArray jsonArray = new JSONArray();
-        IntStream.range(0,300).forEach(x->{
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", x);
-            jsonObject.put("name", x);
-            jsonObject.put("symbolSize", new Random().nextInt(100));
-            jsonObject.put("category", x);
-            jsonObject.put("draggable", true);
-            jsonObject.put("value", 10);
-            jsonArray.add(jsonObject);
-        });
-        System.out.println(jsonArray);
-
-//        {
-//            "id": 9,
-//                "name": "综合评估法",
-//                "symbolSize": 45,
-//                "category": "评标办法",
-//                "draggable": "true",
-//                "value": 10
-//        }
+    /**
+     * 获取spu下所有商品下次购买转化的概率的top3的商品->商品关系图
+     *
+     * @return
+     */
+    @GetMapping("/getSpuConvertRate")
+    public ResponseBo getSpuConvertRateNodes(@RequestParam("id") String id, @RequestParam("type") String type, @RequestParam("purchOrder") String purchOrder) {
+        return ResponseBo.okWithData(null, insightService.getSpuConvertRateNodes(id, type, purchOrder));
     }
 }

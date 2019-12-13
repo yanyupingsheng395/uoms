@@ -76,7 +76,7 @@ class ztree {
                 v += nodes[i].name + ",";
             }
             if (v.length > 0 ) v = v.substring(0, v.length-1);
-            $(ops.spu_product_name).attr("value", v);
+            $(ops.spu_product_name).val(v);
             $(ops.spu_product_id).val(nodes[0].id);
             $(ops.tree_content).toggle();
             if(treeNode.isParent) {
