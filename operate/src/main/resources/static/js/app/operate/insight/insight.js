@@ -623,7 +623,7 @@ function relationChart(data) {
             links: data.links,
             categories: categories
         }]
-    }
+    };
     return option;
 }
 
@@ -631,7 +631,7 @@ function legendSeleted(data) {
     var res = {};
     data.forEach((v, k)=>{
         var name = v['name'];
-        if(k < 3) {
+        if(k < 10) {
             res[name] = true;
         }else {
             res[name] = false;
