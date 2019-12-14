@@ -33,6 +33,9 @@ function initTable() {
             field: 'totalNum',
             title: '建议推送人数（人）'
         }, {
+            field: 'successNum',
+            title: '实际成功推送人数（人）'
+        }, {
             field: 'convertNum',
             title: '任务转化人数（人）'
         }, {

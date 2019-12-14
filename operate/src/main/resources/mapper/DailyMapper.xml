@@ -63,7 +63,7 @@
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM rn from (
-        SELECT HEAD_ID, to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS
+        SELECT HEAD_ID, to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS
         FROM UO_OP_DAILY_HEADER t
         <if test="touchDt != null and touchDt != ''">
             and to_char(touch_dt, 'yyyy-mm-dd') = #{touchDt}

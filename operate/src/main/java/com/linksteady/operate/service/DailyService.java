@@ -16,11 +16,8 @@ public interface DailyService {
 
     List<DailyHead> getPageList(int start, int end, String touchDt);
 
-//    List<DailyInfo> getTouchPageList(int start, int end, String touchDt);
-
     int getTotalCount(String touchDt);
 
-    int getTouchTotalCount(String touchDt);
 
     Map<String, Object> getTipInfo(String headId);
 
