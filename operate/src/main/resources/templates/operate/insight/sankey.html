@@ -17,7 +17,14 @@
     <link rel="stylesheet" data-th-href="@{/plugins/ztree/zTreeStyle.css}"/>
     <link rel="stylesheet" type="text/css" href="/plugins/snakey/inspector.css">
 </head>
-<body style="background-color: #ffffff">
+<body style="background-color: #ffffff;margin: 0px;padding: 0px;">
+<div class="row" id="sankey_mask" hidden>
+    <div class="col-md-12">
+        <div style="opacity:0.6;width: 100%;height: 400px;line-height:400px!important;background-color: #ddd;color: #383838;" class="text-center center-block">
+            暂无相关数据！
+        </div>
+    </div>
+</div>
 <div data-th-include="common/common"></div>
 <script>
     var dateRange = "[[${dateRange}]]";
@@ -32,8 +39,9 @@
         $MB.loadingDesc( "show", "正在加载数据..." );
         $.get( "/insight/getSpuSnakey", {dateRange: dateRange}, function (r) {
             if(r.nodes.length === 0 || r.links.length === 0) {
-                $MB.n_warning("没有获取到相关数据！");
+                $("#sankey_mask").show();
             }else {
+                $("#sankey_mask").hide();
                 data = r;
                 runtime.module(define, Inspector.into(document.body), r);
             }
