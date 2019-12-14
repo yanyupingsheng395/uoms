@@ -39,9 +39,6 @@ public class InsightServiceImpl implements InsightService {
 
     @Override
     public List<InsightUserCnt> findUserCntList(String dateRange) {
-        if (dateRange.isEmpty()) {
-            dateRange = "1";
-        }
         return insightUserCntMapper.findUserCntList(dateRange);
     }
 
@@ -99,9 +96,6 @@ public class InsightServiceImpl implements InsightService {
      */
     @Override
     public Map<String, Object> getSpuList(String dateRange) {
-        if (dateRange.isEmpty()) {
-            dateRange = "1";
-        }
         Map<String, Object> data = new HashMap<>();
         List<Map<String, Object>> nodeList = sankeyMapper.getNodeInfo(dateRange);
         // 获取node节点基本数据

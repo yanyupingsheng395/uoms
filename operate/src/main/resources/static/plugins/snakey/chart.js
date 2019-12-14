@@ -174,13 +174,7 @@ export default function define(runtime, observer) {
         )
     } );
     main.variable().define( "energy", function () {
-        $MB.loadingDesc( "show", "正在加载数据..." );
-        return (
-            $.get( "/insight/getSpuSnakey", {dateRange: dateRange}, function () {
-                $MB.loadingDesc( "hide" );
-                $( "#chart" ).show();
-            } )
-        )
+        return (data)
     } );
 
     main.variable().define( "size", ["width", "margin", "height"], function (width, margin, height) {

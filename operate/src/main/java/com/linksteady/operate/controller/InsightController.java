@@ -1,9 +1,4 @@
 package com.linksteady.operate.controller;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Ztree;
@@ -11,19 +6,16 @@ import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.service.InsightService;
 import com.linksteady.operate.thrift.InsightThriftClient;
-import com.linksteady.operate.thrift.ProdInsightService;
 import com.linksteady.operate.thrift.RetentionData;
-import org.apache.thrift.TException;
-import org.apache.thrift.transport.TTransportException;
+import com.linksteady.operate.util.OkHttpUtil;
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * 用户成长洞察controller
