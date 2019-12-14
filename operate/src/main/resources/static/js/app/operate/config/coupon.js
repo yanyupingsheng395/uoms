@@ -44,7 +44,11 @@ $(function () {
             field: 'couponUrl',
             title: '优惠券地址',
             formatter: function (value, row, index) {
-                return "<a href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
+                if(value !== undefined && value !== null) {
+                    return "<a href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
+                }else {
+                    return "-";
+                }
             }
         }, {
             field: 'validEnd',
@@ -61,6 +65,7 @@ $(function () {
 
 $("#btn_save").click(function () {
     var name = $(this).attr("name");
+    alert(name);
     var validator = $couponForm.validate();
     var flag = validator.form();
     if (flag) {
@@ -96,6 +101,7 @@ function closeModal() {
     $form.find("input[name='couponDisplayName']").val("").removeAttr("readOnly");
     $form.find("input[name='validEnd']").val("").removeAttr("readOnly");
     $MB.closeAndRestModal("add_modal");
+    $("#btn_save").attr("name", "save");
 }
 
 $("#add_modal").on('hidden.bs.modal', function () {
