@@ -177,7 +177,7 @@ public class InsightServiceImpl implements InsightService {
     public Map<String, Object> retentionChangeRateInPurchaseTimes(String type, String id, String period) {
         Map<String, Object> result = Maps.newHashMap();
         DecimalFormat df = new DecimalFormat("#.##");
-        List<Map<String, Object>> dataList = insightMapper.retentionInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
+        List<Map<String, Object>> dataList = insightMapper.retentionInPurchaseTimes(type, id, 0 - Integer.parseInt(period));
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("SPU_RN"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("LEAVE_RATE") == null ? "0" : x.get("LEAVE_RATE"))).collect(Collectors.toList());
         List<String> newXdata = Lists.newArrayList();
@@ -188,7 +188,7 @@ public class InsightServiceImpl implements InsightService {
                 if(ydata.get(i).equalsIgnoreCase("0")) {
                     changeRate = "";
                 }else {
-                    changeRate = df.format(((Double.valueOf(ydata.get(i+1)) - Double.valueOf(ydata.get(i)))/Double.valueOf(ydata.get(i))) * 100);
+                    changeRate = df.format(((Double.parseDouble(ydata.get(i+1)) - Double.parseDouble(ydata.get(i)))/Double.parseDouble(ydata.get(i))) * 100);
                 }
                 newYdata.add(changeRate);
                 newXdata.add(xdata.get(i+1));
