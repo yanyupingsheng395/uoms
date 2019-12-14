@@ -245,7 +245,7 @@
     <select id="getSpuConvertRateProducts" resultType="map">
         with g1 as (
         select t1.ebp_product_id,t1.trans_rn,t2.ebp_product_id target_epb_product_id,count(*) cnt
-        from TMP_PROD_TRANSFORM_ALL t1, TMP_PROD_TRANSFORM_ALL t2
+        from WP_INSIGHT_TRANS t1, WP_INSIGHT_TRANS t2
         where t1.user_id = t2.user_id
         and t1.trans_rn=t2.trans_rn-1
         <if test="type == 'spu'">
