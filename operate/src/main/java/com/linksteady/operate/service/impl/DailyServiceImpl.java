@@ -182,4 +182,9 @@ public class DailyServiceImpl implements DailyService {
     public int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId) {
         return dailyMapper.getDailyPersonalEffectCount(dailyPersonalVo, headId);
     }
+
+    @Override
+    public int validUserGroup() {
+        return dailyMapper.validUserGroup();
+    }
 }

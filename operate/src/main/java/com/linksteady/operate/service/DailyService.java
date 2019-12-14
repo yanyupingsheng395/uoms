@@ -50,4 +50,6 @@ public interface DailyService {
     List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int start, int end, String headId);
 
     int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
+
+    int validUserGroup();
 }

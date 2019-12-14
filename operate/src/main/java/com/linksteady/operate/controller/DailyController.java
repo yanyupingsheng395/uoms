@@ -339,4 +339,14 @@ public class DailyController {
         result.put("timeList", timeList);
         return ResponseBo.okWithData(null, result);
     }
+
+    /**
+     * 触达用户之前进行用户群组的验证
+     *
+     * @return
+     */
+    @GetMapping("/validUserGroup")
+    public ResponseBo validUserGroup() {
+        return ResponseBo.okWithData(null, dailyService.validUserGroup());
+    }
 }
