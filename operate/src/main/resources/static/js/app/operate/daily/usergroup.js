@@ -172,9 +172,6 @@ function mergeCells(data, fieldName, colspan, target) {
             }
         }
     }
-    for (var prop in sortMap) {
-        console.log(prop, sortMap[prop])
-    }
     var index = 0;
     for (var prop in sortMap) {
         var count = sortMap[prop] * 1;
