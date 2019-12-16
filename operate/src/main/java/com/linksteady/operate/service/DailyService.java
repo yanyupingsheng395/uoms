@@ -51,5 +51,5 @@ public interface DailyService {
 
     int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
 
-    int validUserGroup();
+    boolean validUserGroup();
 }

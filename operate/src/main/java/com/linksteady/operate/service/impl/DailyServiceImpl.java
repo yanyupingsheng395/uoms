@@ -184,7 +184,12 @@ public class DailyServiceImpl implements DailyService {
     }
 
     @Override
-    public int validUserGroup() {
-        return dailyMapper.validUserGroup();
+    public boolean validUserGroup() {
+        // 获取短信内容为空的情况
+        int notValidCount = dailyMapper.validUserGroup();
+        if(notValidCount > 0) {
+            return false;
+        }
+        return true;
     }
 }

@@ -94,9 +94,20 @@ $("#btn_edit").click(function () {
     }
 
     var headId = selected[0].headId;
-    window.location.href = "/page/daily/edit?id=" + headId;
-});
 
+    $.get("/daily/validUserGroup", {}, function(r) {
+        if(r.code == 200) {
+            if(!r.data) {
+                $MB.n_warning("成长组配置短信内容或券信息配置有误！");
+                return false;
+            }
+            window.location.href = "/page/daily/edit?id=" + headId;
+        }else {
+            $MB.n_danger("未知异常！");
+            return false;
+        }
+    });
+});
 
 $("#btn_catch").click(function () {
     var selected = $("#dailyTable").bootstrapTable('getSelections');

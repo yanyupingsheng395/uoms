@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.LinkException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -248,6 +249,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                 smsContent = smsContent.replace("${COUPON_URL}", couponUrl);
                 if(StringUtils.isBlank(dailyDetail1.getCouponName())) {
                     log.error("券名称不能为空！");
+                    throw new LinkException("券名称不能为空");
                 }
                 smsContent = smsContent.replace("${COUPON_NAME}", dailyDetail1.getCouponName());
             }
