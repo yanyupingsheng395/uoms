@@ -1,4 +1,5 @@
 package com.linksteady.operate.controller;
+
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Ztree;
@@ -9,8 +10,12 @@ import com.linksteady.operate.thrift.InsightThriftClient;
 import com.linksteady.operate.thrift.RetentionData;
 import com.linksteady.operate.util.OkHttpUtil;
 import okhttp3.*;
+import org.apache.thrift.transport.TTransportException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -32,6 +37,18 @@ public class InsightController {
 
     @Autowired
     private InsightThriftClient insightThriftClient;
+
+    @PostConstruct
+    public void init() throws TTransportException {
+        insightThriftClient.open();
+    }
+
+    @PreDestroy
+    public void destroy() throws TTransportException {
+        if (insightThriftClient.isOpend()) {
+            insightThriftClient.close();
+        }
+    }
 
     /**
      * 获取用户数随购买次数变化数据
@@ -197,17 +214,10 @@ public class InsightController {
         if (type.equalsIgnoreCase("product")) {
             product = Integer.valueOf(id);
         }
+        RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
+        List<Double> retentionFit = retentionFitData.getRetentionFit();
+        final List<String> retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
 
-        RetentionData retentionFitData;
-        final List<String> retentionFitList;
-        try {
-            insightThriftClient.open();
-            retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
-            List<Double> retentionFit = retentionFitData.getRetentionFit();
-            retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
-        } finally {
-            insightThriftClient.close();
-        }
         return ResponseBo.okWithData(null, retentionFitList);
     }
 
@@ -222,16 +232,9 @@ public class InsightController {
         if (type.equalsIgnoreCase("product")) {
             product = Integer.valueOf(id);
         }
-        RetentionData retentionFitData;
-        final List<String> retentionFitList;
-        try {
-            insightThriftClient.open();
-            retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
-            List<Double> retentionFit = retentionFitData.getRetentionFit();
-            retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
-        } finally {
-            insightThriftClient.close();
-        }
+        RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
+        List<Double> retentionFit = retentionFitData.getRetentionFit();
+        final List<String> retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
         return ResponseBo.okWithData(null, retentionFitList);
     }
 
