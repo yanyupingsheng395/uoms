@@ -62,7 +62,7 @@
         <if test="userValue != '' and userValue != null">
             and USER_VALUE = #{userValue}
         </if>
-        order by PATH_ACTIVE, USER_VALUE asc
+        order by PATH_ACTIVE, USER_VALUE, DAILY_DETAIL_ID asc
         ) t where ROWNUM &lt;=#{end}
         ) where RN &gt;=#{start}
     </select>
@@ -82,7 +82,7 @@
         select t.*, ROWNUM RN from (
         select USER_ID, TAR_ORDER_PRICE, REC_PROD_NAME, REFER_DENO, ORDER_PERIOD, COUPON_MIN, COUPON_DENO, SMS_CONTENT
         from UO_OP_DAILY_DETAIL where head_id = #{headId}
-        order by PATH_ACTIVE, USER_VALUE asc
+        order by PATH_ACTIVE, USER_VALUE, DAILY_DETAIL_ID asc
         ) t where ROWNUM &lt;=#{end}
         ) where RN &gt;=#{start}
     </select>
