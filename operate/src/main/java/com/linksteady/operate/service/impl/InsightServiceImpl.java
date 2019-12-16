@@ -307,7 +307,7 @@ public class InsightServiceImpl implements InsightService {
     @Override
     public Map<String, Object> unitPriceInPurchaseTimes(String type, String id, String period) {
         Map<String, Object> result = Maps.newHashMap();
-        List<Map<String, Object>> dataList = insightMapper.unitPriceInPurchaseTimes(type, id, period);
+        List<Map<String, Object>> dataList = insightMapper.unitPriceInPurchaseTimes(type, id, 0-Integer.valueOf(period));
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("PURCH_TIMES"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("UPRICE") == null ? "0" : x.get("UPRICE"))).collect(Collectors.toList());
         result.put("xdata", xdata);
@@ -325,7 +325,7 @@ public class InsightServiceImpl implements InsightService {
     @Override
     public Map<String, Object> joinRateInPurchaseTimes(String type, String id, String period) {
         Map<String, Object> result = Maps.newHashMap();
-        List<Map<String, Object>> dataList = insightMapper.joinRateInPurchaseTimes(type, id, period);
+        List<Map<String, Object>> dataList = insightMapper.joinRateInPurchaseTimes(type, id, 0-Integer.valueOf(period));
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("PURCH_TIMES"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("JOINT") == null ? "0" : x.get("JOINT"))).collect(Collectors.toList());
         result.put("xdata", xdata);
@@ -343,7 +343,7 @@ public class InsightServiceImpl implements InsightService {
     @Override
     public Map<String, Object> categoryInPurchaseTimes(String type, String id, String period) {
         Map<String, Object> result = Maps.newHashMap();
-        List<Map<String, Object>> dataList = insightMapper.categoryInPurchaseTimes(type, id, period);
+        List<Map<String, Object>> dataList = insightMapper.categoryInPurchaseTimes(type, id, 0-Integer.valueOf(period));
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("PURCH_TIMES"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("AVG_CATE_NUM") == null ? "0" : x.get("AVG_CATE_NUM"))).collect(Collectors.toList());
         result.put("xdata", xdata);
@@ -361,7 +361,7 @@ public class InsightServiceImpl implements InsightService {
     @Override
     public Map<String, Object> periodInPurchaseTimes(String type, String id, String period) {
         Map<String, Object> result = Maps.newHashMap();
-        List<Map<String, Object>> dataList = insightMapper.periodInPurchaseTimes(type, id, period);
+        List<Map<String, Object>> dataList = insightMapper.periodInPurchaseTimes(type, id, 0-Integer.valueOf(period));
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("PURCH_TIMES"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("AVG_PUR_GAP") == null ? "0" : x.get("AVG_PUR_GAP"))).collect(Collectors.toList());
         result.put("xdata", xdata);
