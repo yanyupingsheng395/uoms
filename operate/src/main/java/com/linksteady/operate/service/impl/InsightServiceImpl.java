@@ -253,7 +253,7 @@ public class InsightServiceImpl implements InsightService {
             resultMap.put("categories", categories);
         }
         if("spu".equalsIgnoreCase(type)) {
-            final Map<Object, List<Map<String, Object>>> nodeList = dataList.stream().collect(Collectors.groupingBy(x -> x.get("SOURCE")));
+            final Map<Object, List<Map<String, Object>>> nodeList = dataList.stream().collect(Collectors.groupingBy(x -> Objects.requireNonNull(x.get("SOURCE"))));
             List<Map<String, Object>> categories = Lists.newArrayList();
             List<Map<String, Object>> links = Lists.newArrayList();
             List<Map<String, Object>> data = Lists.newArrayList();
@@ -294,8 +294,6 @@ public class InsightServiceImpl implements InsightService {
         }
         return resultMap;
     }
-
-
 
     /**
      * 件单价随购买次数变化
