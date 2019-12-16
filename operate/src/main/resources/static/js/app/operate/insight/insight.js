@@ -240,7 +240,7 @@ function retentionInPurchaseTimes() {
                     chart.showLoading({
                         text : '正在加载数据'
                     });
-                    $.get("/insight/getRetentionFitData", {id: id, type: type, period: period}, function (r) {
+                    $.get("/insight/getRetentionFitData", {id: $("#spuProductId1").val(), type: $("#spuProductType1").val(), period:  $("#period").val()}, function (r) {
                         data.fdata = r.data;
                         option = getOptionWithFit(data, "留存率（%）", "留存率");
                         option.legend.selected = {
@@ -268,25 +268,25 @@ function retentionChangeRateInPurchaseTimes() {
         var data = r.data;
         data.fdata = [];
         var option = getOptionWithFit(data, "留存率变化率（%）", "留存率变化率");
-        var chart = echarts.init(document.getElementById("chart2"), 'macarons');
-        chart.setOption(option);
+        var chart1 = echarts.init(document.getElementById("chart2"), 'macarons');
+        chart1.setOption(option);
         if(retention_change_fit_flag === undefined) {
-            chart.on('legendselectchanged', function(obj) {
+            chart1.on('legendselectchanged', function(obj) {
                 retention_change_fit_flag = true;
                 var legend = obj.name;
                 if(legend === '拟合值' && !retention_change_fit) {
-                    chart.showLoading({
+                    chart1.showLoading({
                         text : '正在加载数据'
                     });
-                    $.get("/insight/getRetentionChangeFitData", {id: id, type: type, period: period}, function (r) {
+                    $.get("/insight/getRetentionChangeFitData", {id: $("#spuProductId1").val(), type: $("#spuProductType1").val(), period: $("#period").val()}, function (r) {
                         data.fdata = r.data;
                         option = getOptionWithFit(data, "留存率变化率（%）", "留存率变化率");
                         option.legend.selected = {
                             '实际值':true,
                             '拟合值':true
                         };
-                        chart.setOption(option);
-                        chart.hideLoading();
+                        chart1.setOption(option);
+                        chart1.hideLoading();
                         retention_change_fit = true;
                     });
                 }
