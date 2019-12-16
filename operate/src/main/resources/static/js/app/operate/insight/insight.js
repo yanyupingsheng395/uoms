@@ -220,6 +220,8 @@ var retention_change_fit = false;
 /**
  * 留存率随购买次数的变化图
  */
+let retention_fit_flag;
+let retention_change_fit_flag;
 function retentionInPurchaseTimes() {
     var id = $("#spuProductId1").val();
     var type = $("#spuProductType1").val();
@@ -230,25 +232,28 @@ function retentionInPurchaseTimes() {
         var option = getOptionWithFit(data, "留存率（%）", "留存率");
         var chart = echarts.init(document.getElementById("chart1"), 'macarons');
         chart.setOption(option);
-        chart.on('legendselectchanged', function(obj) {
-            var legend = obj.name;
-            if(legend === '拟合值' && !retention_fit) {
-                chart.showLoading({
-                    text : '正在加载数据'
-                });
-                $.get("/insight/getRetentionFitData", {id: id, type: type, period: period}, function (r) {
-                    data.fdata = r.data;
-                    option = getOptionWithFit(data, "留存率（%）", "留存率");
-                    option.legend.selected = {
-                        '实际值':true,
-                        '拟合值':true
-                    };
-                    chart.setOption(option);
-                    chart.hideLoading();
-                    retention_fit = true;
-                });
-            }
-        });
+        if(retention_fit_flag == undefined) {
+            chart.on('legendselectchanged', function(obj) {
+                retention_fit_flag = true;
+                var legend = obj.name;
+                if(legend === '拟合值' && !retention_fit) {
+                    chart.showLoading({
+                        text : '正在加载数据'
+                    });
+                    $.get("/insight/getRetentionFitData", {id: id, type: type, period: period}, function (r) {
+                        data.fdata = r.data;
+                        option = getOptionWithFit(data, "留存率（%）", "留存率");
+                        option.legend.selected = {
+                            '实际值':true,
+                            '拟合值':true
+                        };
+                        chart.setOption(option);
+                        chart.hideLoading();
+                        retention_fit = true;
+                    });
+                }
+            });
+        }
     });
 }
 
@@ -265,26 +270,28 @@ function retentionChangeRateInPurchaseTimes() {
         var option = getOptionWithFit(data, "留存率变化率（%）", "留存率变化率");
         var chart = echarts.init(document.getElementById("chart2"), 'macarons');
         chart.setOption(option);
-
-        chart.on('legendselectchanged', function(obj) {
-            var legend = obj.name;
-            if(legend === '拟合值' && !retention_change_fit) {
-                chart.showLoading({
-                    text : '正在加载数据'
-                });
-                $.get("/insight/getRetentionChangeFitData", {id: id, type: type, period: period}, function (r) {
-                    data.fdata = r.data;
-                    option = getOptionWithFit(data, "留存率变化率（%）", "留存率变化率");
-                    option.legend.selected = {
-                        '实际值':true,
-                        '拟合值':true
-                    };
-                    chart.setOption(option);
-                    chart.hideLoading();
-                    retention_change_fit = true;
-                });
-            }
-        });
+        if(retention_change_fit_flag === undefined) {
+            chart.on('legendselectchanged', function(obj) {
+                retention_change_fit_flag = true;
+                var legend = obj.name;
+                if(legend === '拟合值' && !retention_change_fit) {
+                    chart.showLoading({
+                        text : '正在加载数据'
+                    });
+                    $.get("/insight/getRetentionChangeFitData", {id: id, type: type, period: period}, function (r) {
+                        data.fdata = r.data;
+                        option = getOptionWithFit(data, "留存率变化率（%）", "留存率变化率");
+                        option.legend.selected = {
+                            '实际值':true,
+                            '拟合值':true
+                        };
+                        chart.setOption(option);
+                        chart.hideLoading();
+                        retention_change_fit = true;
+                    });
+                }
+            });
+        }
     });
 }
 
