@@ -458,6 +458,8 @@ function getOptionWithFit(data, name, titleName) {
 }
 
 function searchRetention() {
+    retention_fit = false;
+    retention_change_fit = false;
     if($("#spuProductId1").val() === '' || $("#period").val() === '') {
         $MB.n_warning("请选择商品/SPU，查询时间周期。");
         return false;
@@ -474,6 +476,8 @@ function searchRetention() {
 
 // 重置留存率的条件
 function resetRetention() {
+    retention_fit = false;
+    retention_change_fit = false;
     $("#mask").show();
     $("#charts").hide();
     $("#spuProductName1").val("");
