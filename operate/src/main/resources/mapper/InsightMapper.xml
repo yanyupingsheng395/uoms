@@ -316,6 +316,7 @@
                  order by product_cnt desc
              )
         GROUP BY SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME,spu_cnt
+        order by PRODUCT_CNT desc
     </select>
 
     <select id="getProductConvertRate" resultType="map">
@@ -396,15 +397,15 @@
     </select>
 
     <select id="getPathSpu" resultType="map">
-        select distinct WP_USER_PATH.SPU_WID, HANHOOGROWTH_DEV.W_PRODUCT_SPU.SPU_NAME
+        select distinct WP_USER_PATH.SPU_WID, W_PRODUCT_SPU.SPU_NAME
         from WP_USER_PATH,
-        HANHOOGROWTH_DEV.W_PRODUCT_SPU
-        where WP_USER_PATH.SPU_WID = HANHOOGROWTH_DEV.W_PRODUCT_SPU.SPU_WID(+)
+        W_PRODUCT_SPU
+        where WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID(+)
     </select>
 
     <select id="getPathPurchOrder" resultType="string">
         WITH tt AS (SELECT SPU_WID, rn
-        FROM HANHOOGROWTH_DEV.WP_PATH_RN_ACTIVE
+        FROM WP_PATH_RN_ACTIVE
         WHERE is_spu = 1
         GROUP BY SPU_WID, rn
         ORDER BY SPU_WID, rn)

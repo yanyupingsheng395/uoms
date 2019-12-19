@@ -10,6 +10,9 @@ function searchInsight() {
     findUserCntList();
     $("#sankeyFrame").attr("src", "/sankey?dateRange=" + dateRange);
     $("#breakBtn").attr("href", "/sankey?dateRange=" + dateRange);
+
+    findSpuValueList();
+    findImportSpu();
 }
 
 function resetInsight() {
@@ -152,7 +155,7 @@ function findSpuValueList() {
             tableId.rows[tableId.rows.length - 1].setAttribute("style", "background-color:#E7EAEC;");
         }
     };
-    $MB.initTable('spuValueTable', settings);
+    $("#spuValueTable").bootstrapTable('destroy').bootstrapTable(settings);
 }
 
 // 重要spu
@@ -246,12 +249,12 @@ function retentionInPurchaseTimes() {
         var data = r.data;
         data.fdata = [];
         var option = getOptionWithFit(data, "再次购买spu概率（%）", "再次购买spu概率");
-        option.grid = {left: '15%', right:'15%',bottom: '8%'};
+        option.grid = {left: '15%', right:'15%'};
         var chart = echarts.init(document.getElementById("chart1"), 'macarons');
         chart.setOption(option);
         if(retention_fit_flag == undefined) {
+            retention_fit_flag = true;
             chart.on('legendselectchanged', function(obj) {
-                retention_fit_flag = true;
                 var legend = obj.name;
                 if(legend === '拟合值' && !retention_fit) {
                     chart.showLoading({
@@ -289,8 +292,8 @@ function retentionChangeRateInPurchaseTimes() {
         var chart1 = echarts.init(document.getElementById("chart1"), 'macarons');
         chart1.setOption(option);
         if(retention_change_fit_flag === undefined) {
+            retention_change_fit_flag = true;
             chart1.on('legendselectchanged', function(obj) {
-                retention_change_fit_flag = true;
                 var legend = obj.name;
                 if(legend === '拟合值' && !retention_change_fit) {
                     chart1.showLoading({
@@ -396,7 +399,7 @@ function getOption(data, name, titleName) {
             data: data.ydata,
             type: 'line'
         }],
-        grid: {right:'15%',bottom: '8%'},
+        grid: {right:'15%'},
         title: {
             text: titleName + '随购买次数变化',
             x: 'center',
@@ -461,7 +464,7 @@ function getOptionWithFit(data, name, titleName) {
             data: data.ydata,
             type: 'line'
         }],
-        grid: {bottom: '8%',right:'15%'},
+        grid: {right:'15%'},
         title: {
             text: titleName + '随购买次数变化',
             x: 'center',
@@ -592,7 +595,7 @@ function getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId) {
             title: '成长节点'
         }]
     };
-    $MB.initTable('growthUserTable', settings);
+    $("#growthUserTable").bootstrapTable('destroy').bootstrapTable(settings);
 }
 
 function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId) {
@@ -644,7 +647,7 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId) {
                 data: data.ydata,
                 type: 'line'
             }],
-            grid: {left: '8%',right:'19%', bottom: '8%'},
+            grid: {left: '8%',right:'19%'},
             title: {
                 text: '购买间隔随购买概率变化图',
                 x: 'center',
@@ -690,7 +693,6 @@ function getProductOption(xdata, ydata) {
         grid: {
             left: '8%',
             right: '19%',
-            bottom: '8%',
             containLabel: true
         },
         xAxis : [
@@ -774,7 +776,6 @@ function getSpuChartOption(data) {
         grid: {
             left: '8%',
             right: '19%',
-            bottom: '8%',
             containLabel: true
         },
         xAxis : [

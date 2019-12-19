@@ -21,6 +21,7 @@ class ztree {
                 if(r.code === 200) {
                     $(ops.spu_product_name).val(r.data[0].name);
                     $(ops.spu_product_id).val(r.data[0].id);
+                    $(ops.spu_product_type).val("spu");
                     searchRetention();
                     resolve(r);
                 } else {
