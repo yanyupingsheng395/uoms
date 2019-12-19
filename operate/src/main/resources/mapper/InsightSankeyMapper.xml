@@ -3,7 +3,7 @@
 <mapper namespace="com.linksteady.operate.dao.InsightSankeyMapper">
 
     <select id="getLinkInfo" resultType="map">
-        select source_name,target_name, user_cnt, S_RN, SOURCE_SPU_ID from UO_INSIGHT_SANKEY t where s_rn &lt;=7 and DATE_RANGE = #{dateRange} and data_type = 'C'
+        select source_name,target_name, user_cnt, S_RN, SOURCE_SPU_ID from UO_INSIGHT_SANKEY t where s_rn &lt;=7 and DATE_RANGE = #{dateRange} and data_type = 'C'   ORDER BY S_RN ASC,SOURCE_SPU_ID ASC
     </select>
 
     <select id="getNodeInfo" resultType="map">
@@ -90,5 +90,6 @@
         WHERE v1.S_RN = v2.S_RN
         AND v1.SOURCE_SPU_ID = v2.SOURCE_SPU_ID
         )
+        order by T_RN ASC,TARGET_SPU_ID ASC
     </select>
 </mapper>

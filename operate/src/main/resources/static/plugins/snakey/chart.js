@@ -145,6 +145,8 @@ export default function define(runtime, observer) {
         return (
             sankey.sankey()
                 .size( size )
+                .nodeSort(null)
+                .linkSort(null)
                 .nodePadding( nodePadding )
                 .nodeWidth( nodeWidth )
         )
