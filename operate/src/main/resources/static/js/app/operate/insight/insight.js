@@ -246,7 +246,7 @@ function retentionInPurchaseTimes() {
         var data = r.data;
         data.fdata = [];
         var option = getOptionWithFit(data, "再次购买spu概率（%）", "再次购买spu概率");
-        option.grid = {left: '15%', right:'15%'};
+        option.grid = {left: '15%', right:'15%',bottom: '8%'};
         var chart = echarts.init(document.getElementById("chart1"), 'macarons');
         chart.setOption(option);
         if(retention_fit_flag == undefined) {
@@ -396,7 +396,7 @@ function getOption(data, name, titleName) {
             data: data.ydata,
             type: 'line'
         }],
-        grid: {right:'15%'},
+        grid: {right:'15%',bottom: '8%'},
         title: {
             text: titleName + '随购买次数变化',
             x: 'center',
@@ -461,7 +461,7 @@ function getOptionWithFit(data, name, titleName) {
             data: data.ydata,
             type: 'line'
         }],
-        grid: {right:'15%'},
+        grid: {bottom: '8%',right:'15%'},
         title: {
             text: titleName + '随购买次数变化',
             x: 'center',
@@ -617,14 +617,14 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId) {
                 }
             },
             xAxis: {
-                name: '购买次数',
+                name: '购买间隔（天）',
                 type: 'category',
                 data: data.xdata,
                 splitLine:{show: false},
                 splitArea : {show : false}
             },
             yAxis: {
-                name: name,
+                name: "购买概率",
                 type: 'value',
                 splitLine:{show: false},
                 splitArea : {show : false}
@@ -644,7 +644,7 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId) {
                 data: data.ydata,
                 type: 'line'
             }],
-            grid: {right:'15%'},
+            grid: {left: '8%',right:'19%', bottom: '8%'},
             title: {
                 text: '购买间隔随购买概率变化图',
                 x: 'center',
@@ -679,8 +679,6 @@ function getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId) {
 }
 
 function getProductOption(xdata, ydata) {
-    console.log(xdata)
-    console.log(ydata)
     var option = {
         color: ['#3398DB'],
         tooltip : {
@@ -690,13 +688,14 @@ function getProductOption(xdata, ydata) {
             }
         },
         grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
+            left: '8%',
+            right: '19%',
+            bottom: '8%',
             containLabel: true
         },
         xAxis : [
             {
+                name: '下次转化的商品',
                 type : 'category',
                 data : xdata,
                 axisTick: {
@@ -706,8 +705,10 @@ function getProductOption(xdata, ydata) {
         ],
         yAxis : [
             {
+                name: '转化概率（%）',
                 type : 'value',
-                splitArea: {show: false}
+                splitArea: {show: false},
+                splitLine: {show: false}
             },
 
         ],
@@ -717,7 +718,24 @@ function getProductOption(xdata, ydata) {
                 barWidth: '60%',
                 data:ydata
             }
-        ]
+        ],
+        title: {
+            text: '下次转化商品图',
+            x: 'center',
+            y: 'bottom',
+            textStyle: {
+                //文字颜色
+                color: '#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle: 'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight: 'normal',
+                //字体系列
+                fontFamily: 'sans-serif',
+                //字体大小
+                fontSize: 12
+            }
+        }
     };
     return option;
 }
@@ -725,6 +743,23 @@ function getProductOption(xdata, ydata) {
 function getSpuChartOption(data) {
     let option = {
         color: ['#CD2626'],
+        title: {
+            text: '购买间隔随购买概率变化图',
+            x: 'center',
+            y: 'bottom',
+            textStyle: {
+                //文字颜色
+                color: '#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle: 'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight: 'normal',
+                //字体系列
+                fontFamily: 'sans-serif',
+                //字体大小
+                fontSize: 12
+            }
+        },
         tooltip : {
             trigger: 'axis',
             axisPointer : {            // 坐标轴指示器，坐标轴触发有效
@@ -737,13 +772,14 @@ function getSpuChartOption(data) {
             }
         },
         grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
+            left: '8%',
+            right: '19%',
+            bottom: '8%',
             containLabel: true
         },
         xAxis : [
             {
+                name: "spu/商品",
                 type : 'category',
                 data : data.xdata1,
                 axisTick: {
@@ -753,8 +789,10 @@ function getSpuChartOption(data) {
         ],
         yAxis : [
             {
+                name: '用户数',
                 type : 'value',
-                splitArea: {show: false}
+                splitArea: {show: false},
+                splitLine: {show: false}
             }
         ],
         series : [

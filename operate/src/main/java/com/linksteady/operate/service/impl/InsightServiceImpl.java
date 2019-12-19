@@ -446,7 +446,11 @@ public class InsightServiceImpl implements InsightService {
 
     @Override
     public List<String> getPathPurchOrder(String spuId) {
-        return insightMapper.getPathPurchOrder(spuId);
+        List<String> pathPurchOrder = insightMapper.getPathPurchOrder(spuId);
+        if(!pathPurchOrder.isEmpty()) {
+            pathPurchOrder.remove(pathPurchOrder.size()-1);
+        }
+        return pathPurchOrder;
     }
 
     /**
