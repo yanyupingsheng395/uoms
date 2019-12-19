@@ -16,7 +16,7 @@ public interface InsightImportSpuMapper {
      * @param purchOrder
      * @return
      */
-    int findImportSpuListCount(String spuName, String purchOrder);
+    int findImportSpuListCount(String spuName, String purchOrder, String dateRange);
 
     /**
      * 获取重要SPU的记录
@@ -26,5 +26,5 @@ public interface InsightImportSpuMapper {
      * @param purchOrder
      * @return
      */
-    List<InsightImportSpu> findImportSpuList(int start, int end, String spuName, String purchOrder);
+    List<InsightImportSpu> findImportSpuList(int start, int end, String spuName, String purchOrder, String dateRange, String orderSql);
 }

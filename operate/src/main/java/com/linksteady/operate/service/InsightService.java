@@ -1,6 +1,5 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
@@ -18,13 +17,13 @@ public interface InsightService {
 
     List<InsightUserCnt> findUserCntList(String dateRange);
 
-    List<InsightGrowthPath> findGrowthPathList(int start, int end, String sortColumn, String sortOrder);
+    List<InsightGrowthPath> findGrowthPathList(int start, int end, String sortColumn, String sortOrder, String dateRange);
 
-    int findGrowthPathListCount();
+    int findGrowthPathListCount(String dateRange);
 
-    int findImportSpuListCount(String spuName, String purchOrder);
+    int findImportSpuListCount(String spuName, String purchOrder, String dateRange);
 
-    List<InsightImportSpu> findImportSpuList(int start, int end, String spuName, String purchOrder);
+    List<InsightImportSpu> findImportSpuList(int start, int end, String spuName, String purchOrder, String dateRange, String sortColumn, String sortOrder);
 
     /**
      * 获取四价值的平均值
@@ -106,4 +105,31 @@ public interface InsightService {
      * @return
      */
     Map<String, Object> getSpuConvertRateNodes(String id, String type, String purchOrder);
+
+    /**
+     * 获取购买次序下的spu
+     * @param purchOrder
+     * @return
+     */
+    List<Map<String, Object>> findSpuByPurchOrder(String purchOrder);
+
+    /**
+     * 获取spu关系柱状图
+     * @param spu
+     * @param purchOrder
+     * @return
+     */
+    Map<String, Object> getSpuRelation(String spuId, String purchOrder);
+
+    Map<String, Object> getProductConvertRate(String productId, String spuId, String purchOrder);
+
+    List<Map<String, Object>> getUserGrowthPath(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
+
+    List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int start, int end);
+
+    int getGrowthUserCount(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
+
+    List<Map<String, Object>> getPathSpu();
+
+    List<String> getPathPurchOrder(String spuId);
 }

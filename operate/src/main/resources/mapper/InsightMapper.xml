@@ -9,12 +9,12 @@
     </resultMap>
 
     <select id="getSpuTree" resultMap="base">
-        select SPU_WID id, SPU_NAME name from W_PRODUCT_SPU where VALID_STATUS = '1'
+        select SPU_WID id, SPU_NAME name from W_PRODUCT_SPU
     </select>
 
     <select id="getProductTree" resultMap="base">
         select distinct ebp_product_id id, EBP_PRODUCT_NAME name from w_product
-        where UP_FLAG = '1' and SPU_WID = #{spuWid}
+        where SPU_WID = #{spuWid}
     </select>
 
     <select id="retentionInPurchaseTimes" resultType="map">
@@ -275,5 +275,142 @@
         and g11.target_epb_product_id=e2.ebp_product_id
         and trans_rn = #{purchOrder}  --购买次序
         and rn &lt;= 3
+    </select>
+
+    <select id="findSpuByPurchOrder" resultType="map">
+        select SPU_WID id, SPU_NAME name from W_PRODUCT_SPU
+    </select>
+
+    <select id="getSpuRelation" resultType="map">
+        SELECT SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME, SUM(PRODUCT_CNT) PRODUCT_CNT, spu_cnt
+        FROM (
+                 select t.SPU_WID,
+                        (CASE WHEN PRODUCT_CNT > SPU_CNT * 0.05 THEN EBP_PRODUCT_ID ELSE '-1' END)   EBP_PRODUCT_ID,
+                        PRODUCT_CNT,
+                        SPU_CNT,
+                        SPU_NAME,
+                        (CASE WHEN PRODUCT_CNT > SPU_CNT * 0.05 THEN EBP_PRODUCT_NAME ELSE '其他' END) EBP_PRODUCT_NAME
+                 from (
+                          SELECT v1.SPU_WID,
+                                 v1.EBP_PRODUCT_ID,
+                                 v1.cnt                                       product_cnt,
+                                 sum(v1.cnt) over ( partition BY v1.spu_wid ) spu_cnt,
+                                 v2.spu_name                                  spu_name,
+                                 (CASE
+                                      WHEN EBP_PRODUCT_NAME IS NULL THEN v1.EBP_PRODUCT_ID
+                                      ELSE EBP_PRODUCT_NAME END)              EBP_PRODUCT_NAME
+                          FROM (
+                                   SELECT spu_wid,
+                                          EBP_PRODUCT_ID,
+                                          count(1) cnt
+                                   FROM WP_USER_PATH
+                                   WHERE SPU_WID = #{spuId}
+                                     AND rn = #{purchOrder}
+                                   GROUP BY spu_wid, EBP_PRODUCT_ID
+                               ) v1,
+                               w_product_spu v2,
+                               W_PRODUCT_EBP v3
+                          where v1.SPU_WID = v2.SPU_WID(+)
+                            and v1.EBP_PRODUCT_ID = v3.EBP_PRODUCT_ID(+)
+                      ) t
+                 order by product_cnt desc
+             )
+        GROUP BY SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME,spu_cnt
+    </select>
+
+    <select id="getProductConvertRate" resultType="map">
+        with g1 as (
+            SELECT spu_wid,
+                   count(1) next_product_cnt,
+                   NEXT_EBP_PRODUCT_ID
+            FROM WP_USER_PATH
+            WHERE SPU_WID = #{spuId}
+              AND rn = #{purchOrder}
+              and EBP_PRODUCT_ID = #{productId}
+            GROUP BY spu_wid,
+                     NEXT_EBP_PRODUCT_ID
+        ),
+             g2 as (
+                 SELECT count(1) product_cnt
+                 FROM WP_USER_PATH
+                 WHERE SPU_WID = #{spuId}
+                   AND rn = #{purchOrder}
+                   and EBP_PRODUCT_ID = #{productId}
+             ),
+             g3 as (
+                 select NEXT_EBP_PRODUCT_ID,
+                        next_product_cnt,
+                        product_cnt,
+                        trunc((next_product_cnt / product_cnt) * 100, 2) convert_rate
+                 from g1,
+                      g2
+                 where NEXT_EBP_PRODUCT_ID is not null
+                 order by next_product_cnt desc
+             )
+        SELECT NEXT_EBP_PRODUCT_ID, EBP_PRODUCT_NAME, SUM(next_product_cnt), SUM(convert_rate) convert_rate
+        FROM (
+                 SELECT (CASE WHEN EBP_PRODUCT_NAME IS NULL THEN NEXT_EBP_PRODUCT_ID ELSE '-1' END)             NEXT_EBP_PRODUCT_ID,
+                        (CASE
+                             WHEN EBP_PRODUCT_NAME IS NULL THEN NEXT_EBP_PRODUCT_ID
+                             ELSE EBP_PRODUCT_NAME END)                                                         EBP_PRODUCT_NAME,
+                        next_product_cnt,
+                        convert_rate
+                 FROM (
+                          select (CASE WHEN convert_rate >= 5 THEN NEXT_EBP_PRODUCT_ID ELSE '-1' END) NEXT_EBP_PRODUCT_ID,
+                                 (CASE WHEN convert_rate >= 5 THEN EBP_PRODUCT_NAME ELSE '其他' END)    EBP_PRODUCT_NAME,
+                                 next_product_cnt,
+                                 convert_rate
+                          from g3,
+                               W_PRODUCT_EBP t1
+                          where g3.NEXT_EBP_PRODUCT_ID = t1.EBP_PRODUCT_ID(+)
+                      )
+             )
+        GROUP BY NEXT_EBP_PRODUCT_ID, EBP_PRODUCT_NAME
+        order by convert_rate desc
+    </select>
+
+    <select id="getUserGrowthPathWithSpu" resultType="map">
+        select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB, 2) PROB, BEGIN, END from WP_PURCHASE_PROB
+        where SPU_WID = #{spuId} and rn = #{purchOrder} and is_spu = '1'
+        order by ACTIVE_DUAL asc
+    </select>
+
+    <select id="getUserGrowthPathWithProduct" resultType="map">
+        select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB, 2) PROB, BEGIN, END from WP_PURCHASE_PROB
+        where SPU_WID = #{spuId} and rn = #{purchOrder} and EBP_PRODUCT_ID = #{ebpProductId} and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId} and is_spu = '1' order by ACTIVE_DUAL asc
+    </select>
+
+    <select id="getGrowthUser" resultType="map">
+        select * from (
+            select t.*, ROWNUM r_num from (select USER_ID, W_PRODUCT_SPU.SPU_NAME, EBP_PRODUCT_NAME, TO_NOW_DAYS, rn, ACTIVE_LEVEL, GROWTH_NODE_DATE from WP_USER_PATH, W_PRODUCT_SPU, W_PRODUCT_EBP
+            where WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID(+)
+            and  WP_USER_PATH.EBP_PRODUCT_ID = W_PRODUCT_EBP.EBP_PRODUCT_ID(+)
+            and WP_USER_PATH.SPU_WID = #{spuId} and WP_USER_PATH.EBP_PRODUCT_ID = #{ebpProductId} and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId} and rn = #{purchOrder}) t
+            where ROWNUM &lt;= #{end}
+        ) where r_num &gt;= #{start}
+    </select>
+
+    <select id="getGrowthUserCount" resultType="int">
+        select count(1) from WP_USER_PATH
+        where SPU_WID = #{spuId} and EBP_PRODUCT_ID = #{ebpProductId} and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId} and rn = #{purchOrder}
+    </select>
+
+    <select id="getPathSpu" resultType="map">
+        select distinct WP_USER_PATH.SPU_WID, HANHOOGROWTH_DEV.W_PRODUCT_SPU.SPU_NAME
+        from WP_USER_PATH,
+        HANHOOGROWTH_DEV.W_PRODUCT_SPU
+        where WP_USER_PATH.SPU_WID = HANHOOGROWTH_DEV.W_PRODUCT_SPU.SPU_WID(+)
+    </select>
+
+    <select id="getPathPurchOrder" resultType="string">
+        WITH tt AS (SELECT SPU_WID, rn
+        FROM HANHOOGROWTH_DEV.WP_PATH_RN_ACTIVE
+        WHERE is_spu = 1
+        GROUP BY SPU_WID, rn
+        ORDER BY SPU_WID, rn)
+        SELECT t1.RN
+        FROM tt t1
+        LEFT JOIN (SELECT v1.SPU_WID, max(v1.rn) max_rn FROM tt v1 GROUP BY v1.SPU_WID) t2 ON t1.SPU_WID = t2.SPU_WID
+        WHERE t1.rn &lt; t2.MAX_RN and t1.SPU_WID = #{spuId}
     </select>
 </mapper>

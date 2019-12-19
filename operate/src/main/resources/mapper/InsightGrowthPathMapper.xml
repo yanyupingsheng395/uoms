@@ -26,6 +26,7 @@
             select trunc(COPS_VALUE,4) COPS_VALUE, trunc(INCOME_VALUE,4) INCOME_VALUE, trunc(STEP_VALUE,4) STEP_VALUE, trunc(UNIVERS_VALUE,4) UNIVERS_VALUE,
             PURCH1_SPU_NAME,PURCH2_SPU_NAME,PURCH3_SPU_NAME,PURCH4_SPU_NAME,PURCH5_SPU_NAME,PURCH6_SPU_NAME,PURCH7_SPU_NAME,PURCH8_SPU_NAME,PURCH9_SPU_NAME,PURCH10_SPU_NAME
             from UO_INSIGHT_GROWTH_PATH
+            where date_range = #{dateRange}
             <if test="orderSql != null and orderSql != ''">
                 ${orderSql}
             </if>
@@ -35,6 +36,7 @@
 
     <select id="findGrowthPathListCount" resultType="int">
         select count(1) from UO_INSIGHT_GROWTH_PATH
+        where date_range = #{dateRange}
     </select>
 
     <select id="getGrowthPathAvgValue" resultMap="base">

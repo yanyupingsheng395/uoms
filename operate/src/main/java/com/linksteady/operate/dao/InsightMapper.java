@@ -32,4 +32,22 @@ public interface InsightMapper {
     List<Map<String, Object>> periodInPurchaseTimes(String type, String id, int period);
 
     List<Map<String, Object>> getSpuConvertRateProducts(String id, String type, String purchOrder);
+
+    List<Map<String, Object>> findSpuByPurchOrder(String purchOrder);
+
+    List<Map<String, Object>> getSpuRelation(String spuId, String purchOrder);
+
+    List<Map<String, Object>> getProductConvertRate(String productId, String spuId, String purchOrder);
+
+    List<Map<String, Object>> getUserGrowthPathWithProduct(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
+
+    List<Map<String, Object>> getUserGrowthPathWithSpu(String spuId, String purchOrder);
+
+    List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int start, int end);
+
+    int getGrowthUserCount(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
+
+    List<Map<String, Object>> getPathSpu();
+
+    List<String> getPathPurchOrder(String spuId);
 }

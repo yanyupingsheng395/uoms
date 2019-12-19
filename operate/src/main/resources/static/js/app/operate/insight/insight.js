@@ -21,38 +21,38 @@ function findUserCntList() {
         columns: [
             {
                 field: 'purchType',
-                title: '购买次序',
+                title: '用户在品牌的购买次序',
                 align: 'center'
             }, {
                 field: 'purch1',
-                title: '1购',
+                title: '第1次',
                 align: 'center'
             }, {
                 field: 'purch2',
-                title: '2购',
+                title: '第2次',
                 align: 'center'
             }, {
                 field: 'purch3',
-                title: '3购',
+                title: '第3次',
                 align: 'center'
             }, {
                 field: 'purch4',
-                title: '4购'
+                title: '第4次'
             }, {
                 field: 'purch5',
-                title: '5购',
+                title: '第5次',
                 align: 'center'
             }, {
                 field: 'purch6',
-                title: '6购',
+                title: '第6次',
                 align: 'center'
             }, {
                 field: 'purch7',
-                title: '7购',
+                title: '第7次',
                 align: 'center'
             }, {
                 field: 'purch8',
-                title: '8购',
+                title: '第8次',
                 align: 'center'
             }]
     };
@@ -70,7 +70,8 @@ function findSpuValueList() {
         pagination: true,
         singleSelect: true,
         sidePagination: "server",
-        pageList: [10, 25, 50, 100],
+        pageSize: 5,
+        pageList: [5, 15, 25, 50],
         sortable: true,
         sortOrder: "asc",
         queryParams: function (params) {
@@ -78,7 +79,8 @@ function findSpuValueList() {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,
                 sort: params.sort,
-                order: params.order
+                order: params.order,
+                param: {dateRange: $("#dateRange").val()}
             };
         },
         columns: [
@@ -91,13 +93,13 @@ function findSpuValueList() {
                     rowspan: 2
                 },{
                 field: '',
-                title: '旅程价值',
+                title: '用户成长旅程的价值',
                 align:"center",
                 valign:"middle",
                 colspan: 4
             }, {
                 field: '',
-                title: '购买次序',
+                title: '用户在品牌的购买次序',
                 align:"center",
                 valign:"middle",
                 colspan: 8
@@ -121,28 +123,28 @@ function findSpuValueList() {
                     sortable : true
                 }, {
                     field: 'purch1SpuName',
-                    title: '1购'
+                    title: '第1次'
                 }, {
                     field: 'purch2SpuName',
-                    title: '2购'
+                    title: '第2次'
                 }, {
                     field: 'purch3SpuName',
-                    title: '3购'
+                    title: '第3次'
                 }, {
                     field: 'purch4SpuName',
-                    title: '4购'
+                    title: '第4次'
                 }, {
                     field: 'purch5SpuName',
-                    title: '5购'
+                    title: '第5次'
                 }, {
                     field: 'purch6SpuName',
-                    title: '6购'
+                    title: '第6次'
                 }, {
                     field: 'purch7SpuName',
-                    title: '7购'
+                    title: '第7次'
                 }, {
                     field: 'purch8SpuName',
-                    title: '8购'
+                    title: '第8次'
                 }
             ]
         ],onLoadSuccess: function() {
@@ -160,7 +162,8 @@ function findImportSpu() {
         pagination: true,
         singleSelect: true,
         sidePagination: "server",
-        pageList: [10, 25, 50, 100],
+        pageSize: 5,
+        pageList: [5, 15, 25, 50],
         sortable: true,
         sortOrder: "asc",
         queryParams: function (params) {
@@ -168,8 +171,9 @@ function findImportSpu() {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
-                    spuName: $("input[name='spuName']").val(),
-                    purchOrder: $("select[name='purchOrder']").val()
+                    spuName: $("#spuName").val(),
+                    purchOrder: $("purchOrder1").val(),
+                    dateRange: $("#dateRange").val()
                 }
             };
         },
@@ -179,28 +183,40 @@ function findImportSpu() {
                 title: 'SPU名称'
             }, {
                 field: 'contributeRate',
-                title: '本次购买的用户贡献率（%）'
+                title: '本次购买的用户贡献率（%）',
+                sortable : true
             },{
                 field: 'nextPurchProbal',
-                title: '本购SPU后再购概率（%）'
+                title: '本购SPU后再购概率（%）',
+                sortable : true
             }, {
                 field: 'sameSpuProbal',
-                title: '本购SPU后再购同SPU概率（%）'
+                title: '本购SPU后再购同SPU概率（%）',
+                sortable : true
             }, {
                 field: 'otherSpuProbal',
-                title: '本购SPU后购其他SPU概率（%）'
+                title: '本购SPU后购其他SPU概率（%）',
+                sortable : true
             }]
     };
     $( "#importSpu" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 
 function searchImportSpu() {
+    if($("#spuName").val() === '') {
+        $MB.n_warning("请选择购买次序！");
+        return false;
+    }
+    if($("#purchOrder1").val() === '') {
+        $MB.n_warning("请选择SPU名称！");
+        return false;
+    }
     findImportSpu();
 }
-
+// 重置筛选条件
 function resetImportSpu() {
-    $("input[name='spuName']").val("");
-    $("select[name='purchOrder']").find("option:selected").removeAttr("selected");
+    $("#spuName").html('').append("<option value=''>请选择</option>");
+    $("#purchOrder1").find("option:selected").removeAttr("selected");
 }
 
 $("#spuProductName1").click(
@@ -229,7 +245,8 @@ function retentionInPurchaseTimes() {
     $.get("/insight/retentionInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
         var data = r.data;
         data.fdata = [];
-        var option = getOptionWithFit(data, "留存率（%）", "留存率");
+        var option = getOptionWithFit(data, "再次购买spu概率（%）", "再次购买spu概率");
+        option.grid = {left: '15%', right:'15%'};
         var chart = echarts.init(document.getElementById("chart1"), 'macarons');
         chart.setOption(option);
         if(retention_fit_flag == undefined) {
@@ -242,7 +259,7 @@ function retentionInPurchaseTimes() {
                     });
                     $.get("/insight/getRetentionFitData", {id: $("#spuProductId1").val(), type: $("#spuProductType1").val(), period:  $("#period").val()}, function (r) {
                         data.fdata = r.data;
-                        option = getOptionWithFit(data, "留存率（%）", "留存率");
+                        option = getOptionWithFit(data, "再次购买spu概率（%）", "再次购买spu概率");
                         option.legend.selected = {
                             '实际值':true,
                             '拟合值':true
@@ -267,8 +284,9 @@ function retentionChangeRateInPurchaseTimes() {
     $.get("/insight/retentionChangeRateInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
         var data = r.data;
         data.fdata = [];
-        var option = getOptionWithFit(data, "留存率变化率（%）", "留存率变化率");
-        var chart1 = echarts.init(document.getElementById("chart2"), 'macarons');
+        var option = getOptionWithFit(data, "再次购买spu概率的变化率（%）", "再次购买spu概率的变化率");
+        option.grid = {left: '18%', right:'15%'};
+        var chart1 = echarts.init(document.getElementById("chart1"), 'macarons');
         chart1.setOption(option);
         if(retention_change_fit_flag === undefined) {
             chart1.on('legendselectchanged', function(obj) {
@@ -280,7 +298,7 @@ function retentionChangeRateInPurchaseTimes() {
                     });
                     $.get("/insight/getRetentionChangeFitData", {id: $("#spuProductId1").val(), type: $("#spuProductType1").val(), period: $("#period").val()}, function (r) {
                         data.fdata = r.data;
-                        option = getOptionWithFit(data, "留存率变化率（%）", "留存率变化率");
+                        option = getOptionWithFit(data, "再次购买spu概率的变化率（%）", "再次购买spu概率的变化率");
                         option.legend.selected = {
                             '实际值':true,
                             '拟合值':true
@@ -303,8 +321,8 @@ function unitPriceInPurchaseTimes() {
     var type = $("#spuProductType1").val();
     var period = $("#period").val();
     $.get("/insight/unitPriceInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
-        var option = getOption(r.data, "件单价", "件单价");
-        var chart = echarts.init(document.getElementById("chart3"), 'macarons');
+        var option = getOption(r.data, "平均件单价", "平均件单价");
+        var chart = echarts.init(document.getElementById("chart2"), 'macarons');
         chart.setOption(option);
     });
 }
@@ -318,8 +336,8 @@ function joinRateInPurchaseTimes() {
     var period = $("#period").val();
 
     $.get("/insight/joinRateInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
-        var option = getOption(r.data, "连带率", "连带率");
-        var chart = echarts.init(document.getElementById("chart4"), 'macarons');
+        var option = getOption(r.data, "平均连带率", "平均连带率");
+        var chart = echarts.init(document.getElementById("chart2"), 'macarons');
         chart.setOption(option);
     });
 }
@@ -332,8 +350,8 @@ function categoryInPurchaseTimes() {
     var type = $("#spuProductType1").val();
     var period = $("#period").val();
     $.get("/insight/categoryInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
-        var option = getOption(r.data, "品类种数", "品类种数");
-        var chart = echarts.init(document.getElementById("chart5"), 'macarons');
+        var option = getOption(r.data, "平均购买spu种类数", "平均购买spu种类数");
+        var chart = echarts.init(document.getElementById("chart2"), 'macarons');
         chart.setOption(option);
     });
 }
@@ -346,8 +364,8 @@ function periodInPurchaseTimes() {
     var type = $("#spuProductType1").val();
     var period = $("#period").val();
     $.get("/insight/periodInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
-        var option = getOption(r.data, "时间间隔", "时间间隔");
-        var chart = echarts.init(document.getElementById("chart6"), 'macarons');
+        var option = getOption(r.data, "平均购买间隔", "平均购买间隔");
+        var chart = echarts.init(document.getElementById("chart2"), 'macarons');
         chart.setOption(option);
     });
 }
@@ -471,22 +489,28 @@ function searchRetention() {
         $MB.n_warning("请选择商品/SPU，查询时间周期。");
         return false;
     }
-    $("#mask").hide();
-    $("#charts").show();
-    retentionInPurchaseTimes();
-    unitPriceInPurchaseTimes();
-    joinRateInPurchaseTimes();
-    categoryInPurchaseTimes();
-    periodInPurchaseTimes();
-    retentionChangeRateInPurchaseTimes();
+    let kpi1 = $("#kpi1").val();
+    let kpi2 = $("#kpi2").val();
+    if(kpi1 === "1") {
+        retentionInPurchaseTimes();
+    }else {
+        retentionChangeRateInPurchaseTimes();
+    }
+    if(kpi2 === "1") {
+        unitPriceInPurchaseTimes();
+    }else if(kpi2 === "2"){
+        periodInPurchaseTimes();
+    }else if(kpi2 === "3"){
+        joinRateInPurchaseTimes();
+    }else if(kpi2 === "4"){
+        categoryInPurchaseTimes();
+    }
 }
 
 // 重置留存率的条件
 function resetRetention() {
     retention_fit = false;
     retention_change_fit = false;
-    $("#mask").show();
-    $("#charts").hide();
     $("#spuProductName1").val("");
     $("#spuProductId1").val("");
     $("#spuProductType1").val("");
@@ -494,33 +518,362 @@ function resetRetention() {
 }
 
 // 获取下一个product转化概率的大小
-function searchConvertRate() {
-    $("#mask1").hide();
-    $("#relationChartRow").show();
-    var id = $("#spuProductId2").val();
-    var type = $("#spuProductType2").val();
-    var purchOrder =$("#purchOrder").val();
 
-    if(id === '' || purchOrder === '') {
-        $MB.n_warning("请选择查询条件！");
-        return false;
-    }
-    var chart = echarts.init(document.getElementById("chart_relation"), 'macarons');
+function searchConvertRate() {
+    let spuId = $("#convertSpu").val();
+    let purchOrder = $("#purchOrder").val();
+    // 获取柱状图
+    getSpuRelation(spuId, purchOrder);
+}
+
+function getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId) {
+    let settings = {
+        url: "/insight/getGrowthUser",
+        cache: false,
+        pagination: true,
+        singleSelect: true,
+        sidePagination: "server",
+        pageNumber: 1,            //初始化加载第一页，默认第一页
+        pageSize: 10,            //每页的记录行数（*）
+        pageList: [10, 25, 50, 100],
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,  ////页面大小
+                pageNum: (params.offset / params.limit) + 1,  //页码
+                param: {spuId: spuId, purchOrder:purchOrder, ebpProductId:ebpProductId, nextEbpProductId:nextProductId}
+            };
+        },
+        columns: [{
+            field: 'USER_ID',
+            title: 'ID'
+        }, {
+            field: 'SPU_NAME',
+            title: 'SPU'
+        },{
+            field: 'EBP_PRODUCT_NAME',
+            title: '上次购买商品'
+        }, {
+            field: 'TO_NOW_DAYS',
+            title: '间隔'
+        }, {
+            field: 'RN',
+            title: '次序'
+        }, {
+            field: 'ACTIVE_LEVEL',
+            title: '活跃度',
+            formatter: function (value, row, index) {
+                var res = "";
+                switch (value) {
+                    case "UAC_01":
+                        res = "高度活跃";
+                        break;
+                    case "UAC_02":
+                        res = "中度活跃";
+                        break;
+                    case "UAC_03":
+                        res = "流失预警";
+                        break;
+                    case "UAC_04":
+                        res = "弱流失";
+                        break;
+                    case "UAC_05":
+                        res = "强流失";
+                        break;
+                    case "UAC_06":
+                        res = "沉睡";
+                        break;
+                    default:
+                        res = "-";
+                }
+                return res;
+            }
+        }, {
+            field: 'GROWTH_NODE_DATE',
+            title: '成长节点'
+        }]
+    };
+    $MB.initTable('growthUserTable', settings);
+}
+
+function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId) {
+    var chart = echarts.init(document.getElementById("convert_chart"), 'macarons');
     chart.showLoading({
         text : '加载数据中...'
     });
-    $.get("/insight/getSpuConvertRate", {id:id, type:type, purchOrder:purchOrder}, function (r) {
+    $.get("/insight/getConvertRateChart", {spuId:spuId, purchOrder:purchOrder, ebpProductId:ebpProductId, nextEbpProductId:nextProductId}, function (r) {
         var data = r.data;
-        if(data == null) {
-            chart.hideLoading();
-            $("#mask1").show();
-            $("#relationChartRow").hide();
-            $MB.n_warning("查询到的数据为空！");
-            return;
-        }
-        var option = relationChart(data);
+        let option = {
+            legend: {
+                data: ['实际值', '拟合值'],
+                align: 'right',
+                right: 10,
+                selected: {'实际值': true, '拟合值': false}
+            },
+            tooltip: {
+                trigger: 'axis',
+                padding: [15, 20],
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            xAxis: {
+                name: '购买次数',
+                type: 'category',
+                data: data.xdata,
+                splitLine:{show: false},
+                splitArea : {show : false}
+            },
+            yAxis: {
+                name: name,
+                type: 'value',
+                splitLine:{show: false},
+                splitArea : {show : false}
+            },
+            series: [{
+                name: '拟合值',
+                data: data.zdata,
+                type: 'line',
+                itemStyle: {
+                    normal: {
+                        color: '#AAF487',
+                        borderColor: "#AAF487"
+                    }
+                }
+            }, {
+                name: '实际值',
+                data: data.ydata,
+                type: 'line'
+            }],
+            grid: {right:'15%'},
+            title: {
+                text: '购买间隔随购买概率变化图',
+                x: 'center',
+                y: 'bottom',
+                textStyle: {
+                    //文字颜色
+                    color: '#000',
+                    //字体风格,'normal','italic','oblique'
+                    fontStyle: 'normal',
+                    //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                    fontWeight: 'normal',
+                    //字体系列
+                    fontFamily: 'sans-serif',
+                    //字体大小
+                    fontSize: 12
+                }
+            }
+        };
         chart.hideLoading();
         chart.setOption(option);
+    });
+}
+// 获取成长节点的表格
+function getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId) {
+    $.get("/insight/getUserGrowthPath", {spuId:spuId, purchOrder:purchOrder, ebpProductId:ebpProductId, nextEbpProductId:nextProductId}, function (r) {
+        let code = "";
+        r.data.forEach((v,k)=>{
+            code += "<tr><td>"+v['ACTIVE_TYPE']+"</td><td>"+v['ACTIVE_DUAL']+"</td><td>"+v['PROB']+"</td><td>"+v['BEGIN']+"</td><td>"+v['END']+"</td></tr>";
+        });
+        $("#growthTableData").html('').append(code);
+    });
+}
+
+function getProductOption(xdata, ydata) {
+    console.log(xdata)
+    console.log(ydata)
+    var option = {
+        color: ['#3398DB'],
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis : [
+            {
+                type : 'category',
+                data : xdata,
+                axisTick: {
+                    alignWithLabel: true
+                }
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                splitArea: {show: false}
+            },
+
+        ],
+        series : [
+            {
+                type:'bar',
+                barWidth: '60%',
+                data:ydata
+            }
+        ]
+    };
+    return option;
+}
+
+function getSpuChartOption(data) {
+    let option = {
+        color: ['#CD2626'],
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            },
+            formatter: function (params) {
+                var tar = params[1];
+                // return tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
+                return tar.name + ":"  + tar.value;
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis : [
+            {
+                type : 'category',
+                data : data.xdata1,
+                axisTick: {
+                    alignWithLabel: true
+                }
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                splitArea: {show: false}
+            }
+        ],
+        series : [
+            {
+                name: '辅助',
+                type: 'bar',
+                stack:  '总量',
+                itemStyle: {
+                    normal: {
+                        barBorderColor: 'rgba(0,0,0,0)',
+                        color: 'rgba(0,0,0,0)'
+                    },
+                    emphasis: {
+                        barBorderColor: 'rgba(0,0,0,0)',
+                        color: 'rgba(0,0,0,0)'
+                    }
+                },
+                data: data.ydataReduce
+            },
+            {
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'inside'
+                    }
+                },
+                data:data.ydataActual
+            }
+        ]
+    };
+
+    return option;
+}
+
+// 初始化的数据
+// 关系柱状图1 + 关系柱状图2
+let spu_relation_chart_flag = false;
+let ebpProductIdArray;
+let nextProductIdArray;
+function getSpuRelation(spuId, purchOrder) {
+    var chart1 = echarts.init(document.getElementById("chart_relation_1"), 'macarons');
+    chart1.showLoading({
+        text : '加载数据中...'
+    });
+    var chart2 = echarts.init(document.getElementById("chart_relation_2"), 'macarons');
+    chart2.showLoading({
+        text : '加载数据中...'
+    });
+    $.get("/insight/getSpuRelation", {spuId:spuId, purchOrder:purchOrder}, function (r) {
+        ebpProductIdArray = r.data.productId;
+        nextProductIdArray = r.data.nextProductId;
+        var option1 = getSpuChartOption(r.data);
+        chart1.hideLoading();
+        chart1.setOption(option1);
+
+        if(!spu_relation_chart_flag) {
+            spu_relation_chart_flag = true;
+            chart1.on('click', function(params) {
+                if(params.dataIndex !== 0 && params.name !== '其他') {
+                    let spuId = $("#convertSpu").val();
+                    let purchOrder = $("#purchOrder").val();
+                    let ebpProductId = ebpProductIdArray[params.dataIndex];
+                    getProductRelation(ebpProductId, spuId, purchOrder);
+                }
+            });
+        }
+        var option2 = getProductOption(r.data.xdata2, r.data.ydata2);
+        chart2.hideLoading();
+        chart2.setOption(option2);
+
+        let ebpProductId = ebpProductIdArray[1];
+        let nextProductId = (nextProductIdArray === undefined ? "":nextProductIdArray[0]);
+        // 获取表格
+        getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId);
+        // 获取转化概率
+        getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId);
+        // 获取用户表格
+        getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId);
+    });
+}
+
+// 下一次转化商品
+let product_relation_chart_flag = false;
+function getProductRelation(ebpProductId, spuId, purchOrder) {
+    var chart = echarts.init(document.getElementById("chart_relation_2"), 'macarons');
+    chart.showLoading({
+        text : '加载数据中...'
+    });
+    $.get("/insight/getProductConvertRate", {spuId:spuId, purchOrder:purchOrder, productId:ebpProductId}, function (r) {
+        nextProductIdArray = r.data['nextProductId'];
+
+        if(!product_relation_chart_flag) {
+            chart.on('click', function(params) {
+                product_relation_chart_flag = true;
+                if(params.name !== '其他') {
+                    let nextProductId = nextProductIdArray[params.dataIndex];
+                    let spuId = $("#convertSpu").val();
+                    let purchOrder = $("#purchOrder").val();
+                    // 获取表格
+                    getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId);
+                    // 获取转化概率
+                    getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId);
+                    // 获取用户表格
+                    getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId);
+                }
+            });
+        }
+        var option = getProductOption(r.data.xdata, r.data.ydata);
+        chart.hideLoading();
+        chart.setOption(option);
+        let nextProductId = nextProductIdArray === undefined ? "":nextProductIdArray[0];
+        // 获取表格
+        getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId);
+        // 获取转化概率
+        getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId);
+        // 获取用户表格
+        getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId);
     });
 }
 
@@ -562,15 +915,13 @@ function getSeries(data) {
 
 // 获取下一个product转化概率的大小
 function resetConvertRate() {
-    $("#mask1").show();
-    $("#relationChartRow").hide();
     $("#spuProductName2").val("");
     $("#spuProductId2").val("");
     $("#spuProductType2").val("");
     $("#purchOrder").find("option:selected").removeAttr("selected");
 }
 
-
+// 关系柱状图
 function relationChart(data) {
     let categories = data.categories;
     let option = {
@@ -648,4 +999,71 @@ function legendSeleted(data) {
         }
     });
     return res;
+}
+
+$("#purchOrder1").change(function () {
+    getSpuName();
+});
+
+getSpuName();
+function getSpuName() {
+    let purchOrder = $("#purchOrder1").val();
+    $.get("/insight/findSpuByPurchOrder", {purchOrder: purchOrder}, function (r) {
+        let code = "";
+        r.data.forEach((v,k)=>{
+            code += "<option value='"+v['ID']+"'>"+v['NAME']+"</option>";
+        });
+        $("#spuName").html('').append(code);
+
+        $('#spuName').select2({
+            placeholder: '请选择'
+        });
+    });
+}
+
+$("#dateRange").change(function () {
+    $("#dateRange1").val($(this).find("option:selected").text());
+    $("#dateRange2").val($(this).find("option:selected").text());
+});
+
+// 获取路径上的spu
+getPathSpu();
+function getPathSpu() {
+    $.get("/insight/getPathSpu", {}, function (r) {
+        let code = "";
+        r.data.forEach((v,k)=> {
+            code += "<option value='"+v['SPU_WID']+"'>" + v['SPU_NAME'] + "</option>";
+        });
+        $("#convertSpu").html('').append(code);
+        $("#convertSpu").select2({
+            placeholder: '请选择'
+        });
+        // 获取spu下的购买次序
+        getPurchOrder($("#convertSpu").val());
+    });
+}
+
+$("#convertSpu").change(function () {
+    var spuId = $(this).val();
+    if(spuId !== '') {
+        getPurchOrder(spuId);
+    }
+});
+
+// 获取路径上的购买次序
+var search_flag = false;
+function getPurchOrder(spuId) {
+    $.get("/insight/getPathPurchOrder", {spuId: spuId}, function (r) {
+        let code = "";
+        r.data.forEach((v,k)=> {
+            code += "<option value='"+v+"'>" + v + "</option>";
+        });
+        $("#purchOrder").html('').append(code);
+        $("#purchOrder").select2();
+
+        if(!search_flag) {
+            search_flag = true;
+            searchConvertRate();
+        }
+    });
 }

@@ -1,15 +1,20 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.service.InsightService;
+import com.linksteady.operate.thrift.ConversionData;
 import com.linksteady.operate.thrift.InsightThriftClient;
 import com.linksteady.operate.thrift.RetentionData;
 import com.linksteady.operate.util.OkHttpUtil;
 import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransportException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -70,10 +75,11 @@ public class InsightController {
     public ResponseBo findSpuValueList(QueryRequest request) {
         int start = request.getStart();
         int end = request.getEnd();
-        int count = insightService.findGrowthPathListCount();
+        String dateRange = request.getParam().get("dateRange");
         String sortColumn = request.getSort();
         String sortOrder = request.getOrder();
-        List<InsightGrowthPath> dataList = insightService.findGrowthPathList(start, end, sortColumn, sortOrder);
+        int count = insightService.findGrowthPathListCount(dateRange);
+        List<InsightGrowthPath> dataList = insightService.findGrowthPathList(start, end, sortColumn, sortOrder, dateRange);
         InsightGrowthPath avgValue = insightService.getGrowthPathAvgValue();
         dataList.add(avgValue);
         return ResponseBo.okOverPaging(null, count, dataList);
@@ -91,8 +97,12 @@ public class InsightController {
         int end = request.getEnd();
         String spuName = request.getParam().get("spuName");
         String purchOrder = request.getParam().get("purchOrder");
-        int count = insightService.findImportSpuListCount(spuName, purchOrder);
-        List<InsightImportSpu> dataList = insightService.findImportSpuList(start, end, spuName, purchOrder);
+        String dateRange = request.getParam().get("dateRange");
+        String sortColumn = request.getSort();
+        String sortOrder = request.getOrder();
+
+        int count = insightService.findImportSpuListCount(spuName, purchOrder, dateRange);
+        List<InsightImportSpu> dataList = insightService.findImportSpuList(start, end, spuName, purchOrder, dateRange, sortColumn, sortOrder);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -246,5 +256,99 @@ public class InsightController {
     @GetMapping("/getSpuConvertRate")
     public ResponseBo getSpuConvertRateNodes(@RequestParam("id") String id, @RequestParam("type") String type, @RequestParam("purchOrder") String purchOrder) {
         return ResponseBo.okWithData(null, insightService.getSpuConvertRateNodes(id, type, purchOrder));
+    }
+
+    /**
+     * 通过购买次序获取spu
+     * @return
+     */
+    @GetMapping("/findSpuByPurchOrder")
+    public ResponseBo findSpuByPurchOrder(@RequestParam("purchOrder") String purchOrder) {
+        return ResponseBo.okWithData(null, insightService.findSpuByPurchOrder(purchOrder));
+    }
+
+    /**
+     * 获取关系柱状图
+     * spu:选择要观测的spu
+     * purchOrder:购买的次序
+     * @return
+     */
+    @GetMapping("/getSpuRelation")
+    public ResponseBo getSpuRelation(@RequestParam("spuId") String spuId, @RequestParam("purchOrder") String purchOrder) {
+        return ResponseBo.okWithData(null, insightService.getSpuRelation(spuId, purchOrder));
+    }
+
+    /**
+     * 获取第一个用户数大的product的转化商品
+     * @return
+     */
+    @GetMapping("/getProductConvertRate")
+    public ResponseBo getProductConvertRate(@RequestParam("productId") String productId, @RequestParam("spuId") String spuId, @RequestParam("purchOrder") String purchOrder) {
+        return ResponseBo.okWithData(null, insightService.getProductConvertRate(productId, spuId, purchOrder));
+    }
+
+    /**
+     * 获取spu第n-1～第n次购买，用户成长节点
+     * @param spuId
+     * @param purchOrder
+     * @return
+     */
+    @GetMapping("/getUserGrowthPath")
+    public ResponseBo getUserGrowthPath(@RequestParam("spuId") String spuId, @RequestParam("purchOrder") String purchOrder, String ebpProductId, String nextEbpProductId) {
+        return ResponseBo.okWithData(null, insightService.getUserGrowthPath(spuId, purchOrder, ebpProductId, nextEbpProductId));
+    }
+
+    /**
+     * 获取成长用户
+     * @return
+     */
+    @GetMapping("/getGrowthUser")
+    public ResponseBo getGrowthUser(QueryRequest request) {
+        String spuId = request.getParam().get("spuId");
+        String purchOrder = request.getParam().get("purchOrder");
+        String ebpProductId = request.getParam().get("ebpProductId");
+        String nextEbpProductId = request.getParam().get("nextEbpProductId");
+        int start = request.getStart();
+        int end = request.getEnd();
+        List<Map<String, Object>> dataList = insightService.getGrowthUser(spuId, purchOrder, ebpProductId, nextEbpProductId, start, end);
+        int count = insightService.getGrowthUserCount(spuId, purchOrder, ebpProductId, nextEbpProductId);
+        return ResponseBo.okOverPaging(null, count, dataList);
+    }
+
+    /**
+     * 获取转换概率
+     * @return
+     */
+    @GetMapping("/getConvertRateChart")
+    public ResponseBo getConvertRateChart(@RequestParam("spuId") String spuId, @RequestParam("purchOrder") String purchOrder,String ebpProductId, String nextEbpProductId) throws TException {
+        Map<String, Object> result = Maps.newHashMap();
+        if(StringUtils.isNotBlank(ebpProductId) && StringUtils.isNotBlank(nextEbpProductId)) {
+            ConversionData conversionData = insightThriftClient.getInsightService().getConversionData(Long.parseLong(spuId), Long.parseLong(purchOrder), Long.parseLong(ebpProductId), Long.parseLong(nextEbpProductId));
+            result.put("xdata", conversionData.xdata);
+            result.put("ydata", conversionData.ydata);
+            result.put("zdata", conversionData.zdata);
+        }else {
+            result.put("xdata", Lists.newArrayList());
+            result.put("ydata", Lists.newArrayList());
+            result.put("zdata", Lists.newArrayList());
+        }
+
+        return ResponseBo.okWithData(null, result);
+    }
+
+//    // todo 购买次序：去掉最大值，最大值的下次购买不存在
+
+    /**
+     * 获取路径上的所有spu
+     * @return
+     */
+    @GetMapping("/getPathSpu")
+    public ResponseBo getPathSpu() {
+        return ResponseBo.okWithData(null, insightService.getPathSpu());
+    }
+
+    @GetMapping("/getPathPurchOrder")
+    public ResponseBo getPathPurchOrder(@RequestParam("spuId") String spuId) {
+        return ResponseBo.okWithData(null, insightService.getPathPurchOrder(spuId));
     }
 }

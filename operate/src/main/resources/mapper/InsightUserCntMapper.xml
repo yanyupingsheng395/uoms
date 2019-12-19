@@ -17,8 +17,8 @@
 
     <select id="findUserCntList" resultMap="base">
         with temp as (
-          select '当前用户数（人）' purch_type, purch_order, current_user_cnt user_cnt from UO_INSIGHT_USER_CNT where date_range = #{dateRange} union all
-          select '30天前用户数（人）' purch_type, purch_order, before30_user_cnt user_cnt from UO_INSIGHT_USER_CNT where date_range = #{dateRange}
+          select '观测期用户数（人）' purch_type, purch_order, current_user_cnt user_cnt from UO_INSIGHT_USER_CNT where date_range = #{dateRange} union all
+          select '观测期30天前用户数（人）' purch_type, purch_order, before30_user_cnt user_cnt from UO_INSIGHT_USER_CNT where date_range = #{dateRange}
         )
         select * from (select purch_type, purch_order, user_cnt from temp) pivot ( max(user_cnt) for purch_order in
         (1 as purch1,2 as purch2,3 as purch3, 4 as purch4, 5 as purch5, 6 as purch6, 7 as purch7, 8 as purch8))

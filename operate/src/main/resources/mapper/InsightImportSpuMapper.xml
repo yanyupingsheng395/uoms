@@ -13,30 +13,35 @@
 
     <select id="findImportSpuList" resultMap="base">
         select * from (
-          select t.*, rownum rn from (
-          select SPU_ID, SPU_NAME, PURCH_ORDER, trunc(CONTRIBUTE_RATE, 2) CONTRIBUTE_RATE,trunc(NEXT_PURCH_PROBAL, 2) NEXT_PURCH_PROBAL,trunc(SAME_SPU_PROBAL, 2) SAME_SPU_PROBAL,trunc(OTHER_SPU_PROBAL, 2) OTHER_SPU_PROBAL from UO_INSIGHT_IMPORT_SPU
-            <where>
-                <if test="spuName != null and spuName != '' ">
-                    SPU_NAME = #{spuName}
-                </if>
-                <if test="purchOrder != null and purchOrder != ''">
-                    purch_order = #{purchOrder}
-                </if>
-            </where>
-          ) t
-          where rownum &lt;= #{end}
+        select t.*, rownum rn from (
+        select SPU_ID, SPU_NAME, PURCH_ORDER, trunc(CONTRIBUTE_RATE, 2) CONTRIBUTE_RATE,trunc(NEXT_PURCH_PROBAL, 2)
+        NEXT_PURCH_PROBAL,trunc(SAME_SPU_PROBAL, 2) SAME_SPU_PROBAL,trunc(OTHER_SPU_PROBAL, 2) OTHER_SPU_PROBAL from
+        UO_INSIGHT_IMPORT_SPU
+        where
+        date_range = #{dateRange}
+        <if test="spuName != null and spuName != '' ">
+            and SPU_NAME = #{spuName}
+        </if>
+        <if test="purchOrder != null and purchOrder != ''">
+            and purch_order = #{purchOrder}
+        </if>
+        <if test="orderSql != null and orderSql != ''">
+            ${orderSql}
+        </if>
+        ) t
+        where rownum &lt;= #{end}
         ) where rn &gt;= #{start}
     </select>
 
     <select id="findImportSpuListCount" resultType="int">
         select count(1) from UO_INSIGHT_IMPORT_SPU
-        <where>
-            <if test="spuName != null and spuName != '' ">
-                SPU_NAME = #{spuName}
-            </if>
-            <if test="purchOrder != null and purchOrder != ''">
-                purch_order = #{purchOrder}
-            </if>
-        </where>
+        where
+        date_range = #{dateRange}
+        <if test="spuName != null and spuName != '' ">
+            and SPU_NAME = #{spuName}
+        </if>
+        <if test="purchOrder != null and purchOrder != ''">
+            and purch_order = #{purchOrder}
+        </if>
     </select>
 </mapper>

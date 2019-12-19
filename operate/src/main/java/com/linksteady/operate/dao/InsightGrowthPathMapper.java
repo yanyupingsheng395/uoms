@@ -13,13 +13,13 @@ public interface InsightGrowthPathMapper {
      * 成长旅程价值呈现数据
      * @return
      */
-    List<InsightGrowthPath> findGrowthPathList(int start, int end, String orderSql);
+    List<InsightGrowthPath> findGrowthPathList(int start, int end, String orderSql, String dateRange);
 
     /**
      * 成长旅程价值呈现数据大小
      * @return
      */
-    int findGrowthPathListCount();
+    int findGrowthPathListCount(String dateRange);
 
     /**
      * 获取成长旅程四价值平均值

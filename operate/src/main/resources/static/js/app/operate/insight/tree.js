@@ -19,6 +19,9 @@ class ztree {
         const promise = new Promise(function (resolve, reject) {
             $.get("/insight/getSpuTree", {}, function (r){
                 if(r.code === 200) {
+                    $(ops.spu_product_name).val(r.data[0].name);
+                    $(ops.spu_product_id).val(r.data[0].id);
+                    searchRetention();
                     resolve(r);
                 } else {
                     reject(r);
@@ -140,12 +143,4 @@ new ztree({
     spu_product_id: "#spuProductId1",
     spu_product_name: "#spuProductName1",
     tree_content: "#ztreeContent1"
-}).initZtree();
-
-new ztree({
-    tree_id: "#ztree2",
-    spu_product_type: "#spuProductType2",
-    spu_product_id: "#spuProductId2",
-    spu_product_name: "#spuProductName2",
-    tree_content: "#ztreeContent2"
 }).initZtree();
