@@ -306,6 +306,7 @@
                                    FROM WP_USER_PATH
                                    WHERE SPU_WID = #{spuId}
                                      AND rn = #{purchOrder}
+                                     and next_ebp_product_id is not null
                                    GROUP BY spu_wid, EBP_PRODUCT_ID
                                ) v1,
                                w_product_spu v2,
@@ -350,14 +351,14 @@
              )
         SELECT NEXT_EBP_PRODUCT_ID, EBP_PRODUCT_NAME, SUM(next_product_cnt), SUM(convert_rate) convert_rate
         FROM (
-                 SELECT (CASE WHEN EBP_PRODUCT_NAME IS NULL THEN NEXT_EBP_PRODUCT_ID ELSE '-1' END)             NEXT_EBP_PRODUCT_ID,
+                 SELECT (CASE WHEN EBP_PRODUCT_NAME &lt;&gt; '其他' THEN NEXT_EBP_PRODUCT_ID ELSE '-1' END) NEXT_EBP_PRODUCT_ID,
                         (CASE
                              WHEN EBP_PRODUCT_NAME IS NULL THEN NEXT_EBP_PRODUCT_ID
                              ELSE EBP_PRODUCT_NAME END)                                                         EBP_PRODUCT_NAME,
                         next_product_cnt,
                         convert_rate
                  FROM (
-                          select (CASE WHEN convert_rate >= 5 THEN NEXT_EBP_PRODUCT_ID ELSE '-1' END) NEXT_EBP_PRODUCT_ID,
+                          select NEXT_EBP_PRODUCT_ID,
                                  (CASE WHEN convert_rate >= 5 THEN EBP_PRODUCT_NAME ELSE '其他' END)    EBP_PRODUCT_NAME,
                                  next_product_cnt,
                                  convert_rate
@@ -383,10 +384,12 @@
 
     <select id="getGrowthUser" resultType="map">
         select * from (
-            select t.*, ROWNUM r_num from (select USER_ID, W_PRODUCT_SPU.SPU_NAME, EBP_PRODUCT_NAME, TO_NOW_DAYS, rn, ACTIVE_LEVEL, GROWTH_NODE_DATE from WP_USER_PATH, W_PRODUCT_SPU, W_PRODUCT_EBP
+            select t.*, ROWNUM r_num from (select USER_ID, W_PRODUCT_SPU.SPU_NAME, EBP_PRODUCT_NAME, TO_NOW_DAYS, rn, ACTIVE_LEVEL, to_char(GROWTH_NODE_DATE, 'yyyy-mm-dd') GROWTH_NODE_DATE from WP_USER_PATH, W_PRODUCT_SPU, W_PRODUCT_EBP
             where WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID(+)
             and  WP_USER_PATH.EBP_PRODUCT_ID = W_PRODUCT_EBP.EBP_PRODUCT_ID(+)
-            and WP_USER_PATH.SPU_WID = #{spuId} and WP_USER_PATH.EBP_PRODUCT_ID = #{ebpProductId} and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId} and rn = #{purchOrder}) t
+            and WP_USER_PATH.SPU_WID = #{spuId} and WP_USER_PATH.EBP_PRODUCT_ID = #{ebpProductId}
+            and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId}
+            and rn = #{purchOrder} order by WP_USER_PATH.ACTIVE_LEVEL,WP_USER_PATH.USER_ID,WP_USER_PATH.EBP_PRODUCT_ID,WP_USER_PATH.SPU_WID asc) t
             where ROWNUM &lt;= #{end}
         ) where r_num &gt;= #{start}
     </select>

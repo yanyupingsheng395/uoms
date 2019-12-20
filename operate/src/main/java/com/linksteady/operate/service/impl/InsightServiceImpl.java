@@ -50,23 +50,23 @@ public class InsightServiceImpl implements InsightService {
         if (null != sortColumn) {
             switch (sortColumn) {
                 case "copsValue":
-                    orderSql.append("order by cops_value, spu_path " + sortOrder);
+                    orderSql.append("order by cops_value desc, spu_path " + sortOrder);
                     break;
                 case "incomeValue":
-                    orderSql.append("order by income_value, spu_path " + sortOrder);
+                    orderSql.append("order by income_value desc, spu_path " + sortOrder);
                     break;
                 case "stepValue":
-                    orderSql.append("order by step_value, spu_path " + sortOrder);
+                    orderSql.append("order by step_value desc, spu_path " + sortOrder);
                     break;
                 case "universValue":
-                    orderSql.append("order by univers_value, spu_path " + sortOrder);
+                    orderSql.append("order by univers_value desc, spu_path " + sortOrder);
                     break;
                 default:
-                    orderSql.append("order by cops_value, spu_path desc");
+                    orderSql.append("order by cops_value desc, spu_path desc");
                     break;
             }
         } else {
-            orderSql.append("order by cops_value, spu_path desc");
+            orderSql.append("order by cops_value desc, spu_path desc");
         }
         return insightGrowthPathMapper.findGrowthPathList(start, end, orderSql.toString(), dateRange);
     }

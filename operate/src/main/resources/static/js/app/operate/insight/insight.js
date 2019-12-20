@@ -1,7 +1,6 @@
 $(function () {
     findUserCntList();
     findSpuValueList();
-    findImportSpu();
 });
 
 // 按时间范围查询
@@ -174,8 +173,8 @@ function findImportSpu() {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
-                    spuName: $("#spuName").val(),
-                    purchOrder: $("purchOrder1").val(),
+                    spuName: $("#spuName").find("option:selected").text(),
+                    purchOrder: $("#purchOrder1").val(),
                     dateRange: $("#dateRange").val()
                 }
             };
@@ -251,6 +250,7 @@ function retentionInPurchaseTimes() {
         var option = getOptionWithFit(data, "再次购买spu概率（%）", "再次购买spu概率");
         option.grid = {left: '15%', right:'15%'};
         var chart = echarts.init(document.getElementById("chart1"), 'macarons');
+        chart.clear();
         chart.setOption(option);
         if(retention_fit_flag == undefined) {
             retention_fit_flag = true;
@@ -289,7 +289,8 @@ function retentionChangeRateInPurchaseTimes() {
         data.fdata = [];
         var option = getOptionWithFit(data, "再次购买spu概率的变化率（%）", "再次购买spu概率的变化率");
         option.grid = {left: '18%', right:'15%'};
-        var chart1 = echarts.init(document.getElementById("chart1"), 'macarons');
+
+        var chart1 = echarts.init(document.getElementById("chart11"), 'macarons');
         chart1.setOption(option);
         if(retention_change_fit_flag === undefined) {
             retention_change_fit_flag = true;
@@ -495,9 +496,17 @@ function searchRetention() {
     let kpi1 = $("#kpi1").val();
     let kpi2 = $("#kpi2").val();
     if(kpi1 === "1") {
-        retentionInPurchaseTimes();
+        $("#chart1").show();
+        $("#chart11").hide();
+        setTimeout(function() {
+            retentionInPurchaseTimes();
+        },500);
     }else {
-        retentionChangeRateInPurchaseTimes();
+        $("#chart11").show();
+        $("#chart1").hide();
+        setTimeout(function() {
+            retentionChangeRateInPurchaseTimes();
+        },500);
     }
     if(kpi2 === "1") {
         unitPriceInPurchaseTimes();
@@ -1057,6 +1066,8 @@ function getSpuName() {
         $('#spuName').select2({
             placeholder: '请选择'
         });
+
+        findImportSpu();
     });
 }
 
