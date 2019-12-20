@@ -50,16 +50,16 @@ public class InsightServiceImpl implements InsightService {
         if (null != sortColumn) {
             switch (sortColumn) {
                 case "copsValue":
-                    orderSql.append("order by cops_value desc, spu_path " + sortOrder);
+                    orderSql.append("order by cops_value " + sortOrder + ", spu_path " + sortOrder);
                     break;
                 case "incomeValue":
-                    orderSql.append("order by income_value desc, spu_path " + sortOrder);
+                    orderSql.append("order by income_value " + sortOrder + ", spu_path " + sortOrder);
                     break;
                 case "stepValue":
-                    orderSql.append("order by step_value desc, spu_path " + sortOrder);
+                    orderSql.append("order by step_value " + sortOrder + ", spu_path " + sortOrder);
                     break;
                 case "universValue":
-                    orderSql.append("order by univers_value desc, spu_path " + sortOrder);
+                    orderSql.append("order by univers_value " + sortOrder + ", spu_path " + sortOrder);
                     break;
                 default:
                     orderSql.append("order by cops_value desc, spu_path desc");
@@ -87,16 +87,16 @@ public class InsightServiceImpl implements InsightService {
         if (null != sortColumn) {
             switch (sortColumn) {
                 case "contributeRate":
-                    orderSql.append("order by CONTRIBUTE_RATE, SPU_ID " + sortOrder);
+                    orderSql.append("order by CONTRIBUTE_RATE " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 case "nextPurchProbal":
-                    orderSql.append("order by NEXT_PURCH_PROBAL, SPU_ID " + sortOrder);
+                    orderSql.append("order by NEXT_PURCH_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 case "sameSpuProbal":
-                    orderSql.append("order by SAME_SPU_PROBAL, SPU_ID " + sortOrder);
+                    orderSql.append("order by SAME_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 case "otherSpuProbal":
-                    orderSql.append("order by OTHER_SPU_PROBAL, SPU_ID " + sortOrder);
+                    orderSql.append("order by OTHER_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
             }
         }
@@ -346,10 +346,10 @@ public class InsightServiceImpl implements InsightService {
             });
             for (int i = 0; i < ydataActual.size(); i++) {
                 int tmp = 0;
-                if(i <= 1) {
+                if (i <= 1) {
                     tmp = spuUserCnt - ydataActual.get(i);
-                }else {
-                    tmp = ydataReduce.get(i-1) - ydataActual.get(i);
+                } else {
+                    tmp = ydataReduce.get(i - 1) - ydataActual.get(i);
                 }
                 ydataReduce.add(tmp);
             }
@@ -387,18 +387,19 @@ public class InsightServiceImpl implements InsightService {
 
     /**
      * 获取第一个用户数大的product的转化商品
+     *
      * @return
      */
     @Override
     public Map<String, Object> getProductConvertRate(String productId, String spuId, String purchOrder) {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> productConvertRate = insightMapper.getProductConvertRate(productId, spuId, purchOrder);
-        List<String> xdata = productConvertRate.stream().map(x->x.get("EBP_PRODUCT_NAME").toString()).collect(Collectors.toList());
-        List<String> nextEbpProductIdList = productConvertRate.stream().map(x->x.get("NEXT_EBP_PRODUCT_ID").toString()).collect(Collectors.toList());
-        List<String> ydata = productConvertRate.stream().map(x->x.get("CONVERT_RATE").toString()).collect(Collectors.toList());
+        List<String> xdata = productConvertRate.stream().map(x -> x.get("EBP_PRODUCT_NAME").toString()).collect(Collectors.toList());
+        List<String> nextEbpProductIdList = productConvertRate.stream().map(x -> x.get("NEXT_EBP_PRODUCT_ID").toString()).collect(Collectors.toList());
+        List<String> ydata = productConvertRate.stream().map(x -> x.get("CONVERT_RATE").toString()).collect(Collectors.toList());
 
         final int i = xdata.indexOf("其他");
-        if(i > -1) {
+        if (i > -1) {
             final String tmp1 = xdata.get(i);
             xdata.remove(i);
             xdata.add(tmp1);
@@ -420,10 +421,10 @@ public class InsightServiceImpl implements InsightService {
     @Override
     public List<Map<String, Object>> getUserGrowthPath(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId) {
         List<Map<String, Object>> dataList = Lists.newArrayList();
-        if(StringUtils.isNotBlank("ebpProductId") && StringUtils.isNotBlank("nextEbpProductId")) {
+        if (StringUtils.isNotBlank("ebpProductId") && StringUtils.isNotBlank("nextEbpProductId")) {
             dataList = insightMapper.getUserGrowthPathWithProduct(spuId, purchOrder, ebpProductId, nextEbpProductId);
         }
-        if(dataList.isEmpty()) {
+        if (dataList.isEmpty()) {
             dataList = insightMapper.getUserGrowthPathWithSpu(spuId, purchOrder);
         }
         return dataList;
@@ -447,8 +448,8 @@ public class InsightServiceImpl implements InsightService {
     @Override
     public List<String> getPathPurchOrder(String spuId) {
         List<String> pathPurchOrder = insightMapper.getPathPurchOrder(spuId);
-        if(!pathPurchOrder.isEmpty()) {
-            pathPurchOrder.remove(pathPurchOrder.size()-1);
+        if (!pathPurchOrder.isEmpty()) {
+            pathPurchOrder.remove(pathPurchOrder.size() - 1);
         }
         return pathPurchOrder;
     }

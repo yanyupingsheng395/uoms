@@ -1,7 +1,56 @@
+let retention_fit = false;
+let retention_change_fit = false;
+// 图表初始化
+var chart_retention = echarts.init(document.getElementById("chart1"), 'macarons');
+const chart_retention_change = echarts.init(document.getElementById("chart11"), 'macarons');
+
 $(function () {
+    initChart();
     findUserCntList();
     findSpuValueList();
 });
+
+function initChart() {
+    chart_retention_change.on('legendselectchanged', function(obj) {
+        var legend = obj.name;
+        if(legend === '拟合值' && !retention_change_fit) {
+            chart_retention_change.showLoading({
+                text : '正在加载数据'
+            });
+            $.get("/insight/getRetentionChangeFitData", {id: $("#spuProductId1").val(), type: $("#spuProductType1").val(), period: $("#period").val()}, function (r) {
+                data.fdata = r.data;
+                var option = getOptionWithFit(data, "再次购买spu概率的变化率（%）", "再次购买spu概率的变化率");
+                option.legend.selected = {
+                    '实际值':true,
+                    '拟合值':true
+                };
+                chart_retention_change.hideLoading();
+                chart_retention_change.setOption(option);
+                retention_change_fit = true;
+            });
+        }
+    });
+
+    chart_retention.on('legendselectchanged', function(obj) {
+        var legend = obj.name;
+        if(legend === '拟合值' && !retention_fit) {
+            chart_retention.showLoading({
+                text : '正在加载数据'
+            });
+            $.get("/insight/getRetentionFitData", {id: $("#spuProductId1").val(), type: $("#spuProductType1").val(), period:  $("#period").val()}, function (r) {
+                data.fdata = r.data;
+                var option = getOptionWithFit(data, "再次购买spu概率（%）", "再次购买spu概率");
+                option.legend.selected = {
+                    '实际值':true,
+                    '拟合值':true
+                };
+                chart_retention.hideLoading();
+                chart_retention.setOption(option);
+                retention_fit = true;
+            });
+        }
+    });
+}
 
 // 按时间范围查询
 function searchInsight() {
@@ -232,48 +281,23 @@ $("#spuProductName2").click(
         $("#ztreeContent2").toggle();
     }
 );
-
-var retention_fit = false;
-var retention_change_fit = false;
 /**
  * 留存率随购买次数的变化图
  */
-let retention_fit_flag;
-let retention_change_fit_flag;
 function retentionInPurchaseTimes() {
     var id = $("#spuProductId1").val();
     var type = $("#spuProductType1").val();
     var period = $("#period").val();
+    chart_retention.showLoading({
+        text : '正在加载数据'
+    });
     $.get("/insight/retentionInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
         var data = r.data;
         data.fdata = [];
         var option = getOptionWithFit(data, "再次购买spu概率（%）", "再次购买spu概率");
         option.grid = {left: '15%', right:'15%'};
-        var chart = echarts.init(document.getElementById("chart1"), 'macarons');
-        chart.clear();
-        chart.setOption(option);
-        if(retention_fit_flag == undefined) {
-            retention_fit_flag = true;
-            chart.on('legendselectchanged', function(obj) {
-                var legend = obj.name;
-                if(legend === '拟合值' && !retention_fit) {
-                    chart.showLoading({
-                        text : '正在加载数据'
-                    });
-                    $.get("/insight/getRetentionFitData", {id: $("#spuProductId1").val(), type: $("#spuProductType1").val(), period:  $("#period").val()}, function (r) {
-                        data.fdata = r.data;
-                        option = getOptionWithFit(data, "再次购买spu概率（%）", "再次购买spu概率");
-                        option.legend.selected = {
-                            '实际值':true,
-                            '拟合值':true
-                        };
-                        chart.setOption(option);
-                        chart.hideLoading();
-                        retention_fit = true;
-                    });
-                }
-            });
-        }
+        chart_retention.hideLoading();
+        chart_retention.setOption(option);
     });
 }
 
@@ -289,31 +313,8 @@ function retentionChangeRateInPurchaseTimes() {
         data.fdata = [];
         var option = getOptionWithFit(data, "再次购买spu概率的变化率（%）", "再次购买spu概率的变化率");
         option.grid = {left: '18%', right:'15%'};
-
-        var chart1 = echarts.init(document.getElementById("chart11"), 'macarons');
-        chart1.setOption(option);
-        if(retention_change_fit_flag === undefined) {
-            retention_change_fit_flag = true;
-            chart1.on('legendselectchanged', function(obj) {
-                var legend = obj.name;
-                if(legend === '拟合值' && !retention_change_fit) {
-                    chart1.showLoading({
-                        text : '正在加载数据'
-                    });
-                    $.get("/insight/getRetentionChangeFitData", {id: $("#spuProductId1").val(), type: $("#spuProductType1").val(), period: $("#period").val()}, function (r) {
-                        data.fdata = r.data;
-                        option = getOptionWithFit(data, "再次购买spu概率的变化率（%）", "再次购买spu概率的变化率");
-                        option.legend.selected = {
-                            '实际值':true,
-                            '拟合值':true
-                        };
-                        chart1.setOption(option);
-                        chart1.hideLoading();
-                        retention_change_fit = true;
-                    });
-                }
-            });
-        }
+        chart_retention_change.hideLoading();
+        chart_retention_change.setOption(option);
     });
 }
 
@@ -375,7 +376,7 @@ function periodInPurchaseTimes() {
 }
 
 function getOption(data, name, titleName) {
-    return option = {
+    return {
         tooltip: {
             trigger: 'axis',
             padding: [15, 20],
@@ -423,7 +424,7 @@ function getOption(data, name, titleName) {
 
 // 带拟合值
 function getOptionWithFit(data, name, titleName) {
-    return option = {
+    return  {
         legend: {
             data: ['实际值', '拟合值'],
             align: 'right',

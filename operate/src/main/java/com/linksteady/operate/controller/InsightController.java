@@ -332,11 +332,8 @@ public class InsightController {
             result.put("ydata", Lists.newArrayList());
             result.put("zdata", Lists.newArrayList());
         }
-
         return ResponseBo.okWithData(null, result);
     }
-
-//    // todo 购买次序：去掉最大值，最大值的下次购买不存在
 
     /**
      * 获取路径上的所有spu
