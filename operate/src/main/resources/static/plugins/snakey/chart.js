@@ -123,9 +123,10 @@ export default function define(runtime, observer) {
                 gradientLinks.attr( "stroke-opactiy", 0 )
                     .each( setDash );
             }
-
-            nodes.on( "mouseover", branchAnimate_over ).on( "mouseout", branchClear );
-            nodes.on( 'click', branchAnimate_click ).on( "mouseout", branchClear );
+            nodes.on( "click", branchAnimate_over );
+            $("#btn_clear").on('click', branchClear);
+            // nodes.on( "mouseover", branchAnimate_over ).on( "mouseout", branchClear );
+            // nodes.on( 'click', branchAnimate_click ).on( "mouseout", branchClear );
             return svg.node();
         }
     );

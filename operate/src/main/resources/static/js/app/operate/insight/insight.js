@@ -1,3 +1,4 @@
+// 留存率和留存率变化率的标识符，只能注册一次click事件，反复注册会出错
 let retention_fit = false;
 let retention_change_fit = false;
 // 图表初始化
@@ -5,7 +6,10 @@ var chart_retention = echarts.init(document.getElementById("chart1"), 'macarons'
 const chart_retention_change = echarts.init(document.getElementById("chart11"), 'macarons');
 
 $(function () {
+    // echart 注册legend点击事件
     initChart();
+
+    // 获取桑基图的用户数表
     findUserCntList();
     findSpuValueList();
 });
@@ -57,8 +61,7 @@ function searchInsight() {
     var dateRange = $("#dateRange").val();
     findUserCntList();
     $("#sankeyFrame").attr("src", "/sankey?dateRange=" + dateRange);
-    $("#breakBtn").attr("href", "/sankey?dateRange=" + dateRange);
-
+    window.frames["ifm"].document.getElementById("breakBtn").href = "/sankey?dateRange=" + dateRange;
     findSpuValueList();
     findImportSpu();
 }
@@ -563,15 +566,15 @@ function getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId) {
             field: 'SPU_NAME',
             title: 'SPU'
         },{
+            field: 'RN',
+            title: 'SPU购买次序'
+        },{
             field: 'EBP_PRODUCT_NAME',
             title: '上次购买商品'
         }, {
-            field: 'TO_NOW_DAYS',
-            title: '间隔'
-        }, {
-            field: 'RN',
-            title: '次序'
-        }, {
+            field: 'NEXT_EBP_PRODUCT_NAME',
+            title: '下次转化商品'
+        },  {
             field: 'ACTIVE_LEVEL',
             title: '活跃度',
             formatter: function (value, row, index) {
@@ -600,6 +603,9 @@ function getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId) {
                 }
                 return res;
             }
+        }, {
+            field: 'TO_NOW_DAYS',
+            title: '距离上次购买间隔'
         }, {
             field: 'GROWTH_NODE_DATE',
             title: '成长节点'
@@ -659,7 +665,7 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId) {
             }],
             grid: {left: '8%',right:'19%'},
             title: {
-                text: '购买间隔随购买概率变化图',
+                text: '指定转化轨迹下，间隔与购买概率的关系',
                 x: 'center',
                 y: 'bottom',
                 textStyle: {
@@ -732,7 +738,7 @@ function getProductOption(xdata, ydata) {
             }
         ],
         title: {
-            text: '下次转化商品图',
+            text: '指定商品下次转化商品概率分布',
             x: 'center',
             y: 'bottom',
             textStyle: {
@@ -756,7 +762,7 @@ function getSpuChartOption(data) {
     let option = {
         color: ['#CD2626'],
         title: {
-            text: '购买间隔随购买概率变化图',
+            text: '指定spu购买次序下的商品构成',
             x: 'center',
             y: 'bottom',
             textStyle: {
@@ -1107,7 +1113,7 @@ function getPurchOrder(spuId) {
     $.get("/insight/getPathPurchOrder", {spuId: spuId}, function (r) {
         let code = "";
         r.data.forEach((v,k)=> {
-            code += "<option value='"+v+"'>" + v + "</option>";
+            code += "<option value='"+v+"'>" + parseInt(v) + "~" + (parseInt(v) + 1) + "</option>";
         });
         $("#purchOrder").html('').append(code);
         $("#purchOrder").select2();

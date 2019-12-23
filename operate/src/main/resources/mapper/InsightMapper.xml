@@ -384,9 +384,10 @@
 
     <select id="getGrowthUser" resultType="map">
         select * from (
-            select t.*, ROWNUM r_num from (select USER_ID, W_PRODUCT_SPU.SPU_NAME, EBP_PRODUCT_NAME, TO_NOW_DAYS, rn, ACTIVE_LEVEL, to_char(GROWTH_NODE_DATE, 'yyyy-mm-dd') GROWTH_NODE_DATE from WP_USER_PATH, W_PRODUCT_SPU, W_PRODUCT_EBP
+            select t.*, ROWNUM r_num from (select USER_ID, W_PRODUCT_SPU.SPU_NAME, W_PRODUCT_EBP.EBP_PRODUCT_NAME, t2.EBP_PRODUCT_NAME NEXT_EBP_PRODUCT_NAME, TO_NOW_DAYS, rn, ACTIVE_LEVEL, to_char(GROWTH_NODE_DATE, 'yyyy-mm-dd') GROWTH_NODE_DATE from WP_USER_PATH, W_PRODUCT_SPU, W_PRODUCT_EBP,W_PRODUCT_EBP t2
             where WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID(+)
             and  WP_USER_PATH.EBP_PRODUCT_ID = W_PRODUCT_EBP.EBP_PRODUCT_ID(+)
+            and WP_USER_PATH.NEXT_EBP_PRODUCT_ID = t2.EBP_PRODUCT_ID(+)
             and WP_USER_PATH.SPU_WID = #{spuId} and WP_USER_PATH.EBP_PRODUCT_ID = #{ebpProductId}
             and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId}
             and rn = #{purchOrder} order by WP_USER_PATH.ACTIVE_LEVEL,WP_USER_PATH.USER_ID,WP_USER_PATH.EBP_PRODUCT_ID,WP_USER_PATH.SPU_WID asc) t

@@ -104,20 +104,20 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12" style="margin-top:5px;margin-bottom:8px;">
-                                        <div class="select-list">
-                                            <div class="pull-left">
-                                                <a id="breakBtn" href="/sankey?dateRange=12" target="_blank" style="color: #48b0f7"><i class="fa fa-search-plus" aria-hidden="true"></i></a>
-                                            </div>
-                                            <div class="text-center" style="font-size: 10px;">
-                                                图例：1.列：用户的购买次序&nbsp;&nbsp;
-                                                2.列中的条形：本次序下用户购买的spu种类&nbsp;&nbsp;
-                                                3.条形的高度：本次序下购买这个spu用户数
-                                            </div>
-                                        </div>
-                                    </div>
+<!--                                    <div class="col-md-12" style="margin-top:5px;margin-bottom:8px;">-->
+<!--                                        <div class="select-list">-->
+<!--                                            <div class="pull-left">-->
+<!--                                                <a id="breakBtn" href="/sankey?dateRange=12" target="_blank" style="color: #48b0f7"><i class="fa fa-search-plus" aria-hidden="true"></i></a>-->
+<!--                                            </div>-->
+<!--                                            <div class="text-center" style="font-size: 10px;">-->
+<!--                                                图例：1.列：用户的购买次序&nbsp;&nbsp;-->
+<!--                                                2.列中的条形：本次序下用户购买的spu种类&nbsp;&nbsp;-->
+<!--                                                3.条形的高度：本次序下购买这个spu用户数-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
                                     <div class="col-md-12">
-                                        <iframe src="/sankey?dateRange=12" width="100%" height="400px" frameborder="0" id="sankeyFrame"></iframe>
+                                        <iframe name='ifm' src="/sankey?dateRange=12" width="100%" height="400px" frameborder="0" id="sankeyFrame"></iframe>
                                     </div>
                                 </div>
                             </div>
@@ -232,7 +232,7 @@
                             <div class="col-md-12">
                                 <hr class="hr" style="margin-top: 5px;margin-bottom: 5px;"/>
                             </div>
-                        </div>成长旅程中的spu洞察
+                        </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <form>
@@ -310,7 +310,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <h5 class="modal-title pull-left" style="margin-top: 20px;">用户在spu/商品的成长节点&nbsp;
-                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="左图可以发现随着持续购买，用户在spu上的成长规律如何变化；右图体现随持续购买，用户成长的多种指标变化规律；" data-trigger="click">
+                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="从spu的指定购买次序观察用户在商品层级的流转关系；" data-trigger="click">
                                         <i class="fa fa-question-circle"></i>
                                     </a>
                                 </h5>
@@ -327,10 +327,10 @@
                                     <div class="select-list">
                                         <ul>
                                             <li>
-                                                SPU：<select id="convertSpu" class="select2"></select>
+                                                选择要观测的spu：<select id="convertSpu" class="select2"></select>
                                             </li>
                                             <li>
-                                                购买次序：
+                                                选择要观测的spu购买次序：
                                                 <select name="purchOrder" id="purchOrder" class="select2"></select>
                                             </li>
                                             <li class="pull-right">
@@ -361,6 +361,7 @@
                                     <div id="convert_chart" style="width: 100%;height: 300px;"></div>
                                 </div>
                                 <div class="col-md-6 table-responsive">
+                                    <h6>指定转化轨迹下用户成长节点与阶段一览</h6>
                                     <table id="growthTable" class="table table-bordered text-nowrap">
                                         <thead>
                                         <tr>
@@ -382,6 +383,7 @@
                         </div>
                         <div class="row" style="margin-top: 12px;">
                             <div class="col-md-12 table-responsive">
+                                <h6>指定转化轨迹下用户成长节点与阶段一览</h6>
                                 <table id="growthUserTable" class="table table-bordered text-nowrap"></table>
                             </div>
                         </div>

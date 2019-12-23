@@ -18,6 +18,25 @@
     <link rel="stylesheet" type="text/css" href="/plugins/snakey/inspector.css">
 </head>
 <body style="background-color: #ffffff;margin: 0px;padding: 0px;">
+<div class="row">
+    <div class="col-md-12" style="margin-top:5px;margin-bottom:8px;">
+        <div class="select-list">
+            <div class="pull-left">
+                <div class="btn-group-sm" id="toolbar" role="group">
+                    <a class="btn btn-secondary" id="breakBtn" target="_blank" style="color: #48b0f7"><i class="fa fa-search-plus" aria-hidden="true"></i></a>
+                    <a class="btn btn-secondary" id="btn_clear">
+                        <i class="fa fa-refresh"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="text-center">
+                图例：1.列：用户的购买次序&nbsp;&nbsp;
+                2.列中的条形：本次序下用户购买的spu种类&nbsp;&nbsp;
+                3.条形的高度：本次序下购买这个spu用户数
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row" id="sankey_mask" hidden>
     <div class="col-md-12">
         <div style="opacity:0.6;width: 100%;height: 400px;line-height:400px!important;background-color: #ddd;color: #383838;" class="text-center center-block">
@@ -28,6 +47,7 @@
 <div data-th-include="common/common"></div>
 <script>
     var dateRange = "[[${dateRange}]]";
+    $("#breakBtn").attr("href", "/sankey?dateRange=" + dateRange);
     let data;
 </script>
 <script type="module">
