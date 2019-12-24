@@ -556,7 +556,7 @@ function getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId) {
             }
         }, {
             field: 'TO_NOW_DAYS',
-            title: '距离上次购买间隔'
+            title: '距离上次购买间隔（天）'
         }, {
             field: 'GROWTH_NODE_DATE',
             title: '成长节点'

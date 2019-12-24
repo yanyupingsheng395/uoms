@@ -50,7 +50,7 @@ public class InsightServiceImpl implements InsightService {
 
     /**
      * 由于thrift 中 seqid资源是线程不安全的，所以需要通过加锁的方式来同步调用资源。
-     * 否则会报msg.seqid 为 badseqid的异常信息。
+     * 否则会报msg.seqid ！= seqid  => badseqid exception的异常信息。
      */
     private ReentrantLock lock = new ReentrantLock();
 
@@ -385,6 +385,8 @@ public class InsightServiceImpl implements InsightService {
             result.put("ydata2", convertMap.get("ydata"));
             result.put("nextProductId", convertMap.get("nextProductId"));
         }
+
+        // 将其他选项放到最后
 //        final int i = xdata.indexOf("其他");
 //        if(i > -1) {
 //            final String tmp1 = xdata.get(i);
