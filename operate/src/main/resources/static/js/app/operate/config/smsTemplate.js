@@ -195,6 +195,53 @@ function add() {
     $('#add_modal').modal('show');
 }
 
+// 字数统计
+$("#btn_cal").click(function () {
+    let smsContent = $('#smsContent').val();
+    if(!validCouponSendType()) {
+        return;
+    }
+    $.get("/smsTemplate/calFontNum", {smsContent: smsContent}, function (r) {
+        $("#fontNumDiv").show();
+        $("#fontNum").val(r.data + "个字");
+    })
+});
+
+function validCouponSendType() {
+    let couponSendType = getCouponSendType();
+    let smsContent = $('#smsContent').val();
+    if(smsContent === '') {
+        $MB.n_warning("短信内容不能为空！");
+        return false;
+    }
+    if(couponSendType === 'A') { // 包含${COUPON_URL}
+        if(smsContent.indexOf("${COUPON_URL}") === -1) {
+            $MB.n_warning("优惠券发放方式为自行领取，短信模板未发现${COUPON_URL}");
+            return false;
+        }
+    }
+    if(couponSendType === 'B') { // 不包含${COUPON_URL}
+        if(smsContent.indexOf("${COUPON_URL}") > -1) {
+            $MB.n_warning("优惠券发放方式为系统发送，短信模板发现${COUPON_URL}");
+            return false;
+        }
+    }
+}
+
+// 获取优惠券发送方式
+function getCouponSendType() {
+    var res;
+    $.ajax({
+        url: "/smsTemplate/getCouponSendType",
+        method: "get",
+        async: false,
+        success: function (r) {
+            res = r.data;
+        }
+    });
+    return res;
+}
+
 // 新增&修改
 $("#btn_save").click(function () {
     var alert_str="";
@@ -219,12 +266,17 @@ $("#btn_save").click(function () {
         alert_str+='请选择是否包含优惠券！';
     }
 
+    if(isCoupon == "1") {
+        if(!validCouponSendType()) {
+            return;
+        }
+    }
+
     if(null!=alert_str&&alert_str!='')
     {
         $MB.n_warning(alert_str);
         return;
     }
-
     var url = "";
     var success_msg = "";
     var sure_msg = "";
@@ -282,6 +334,7 @@ $("#btn_save").click(function () {
 $("#add_modal").on('hidden.bs.modal', function () {
     $('#smsCode').val("");
     $('#smsContent').val("");
+    $("input[name='isCoupon']").removeAttr("disabled");
 });
 
 
@@ -311,6 +364,7 @@ $("#btn_edit").click(function () {
             $("#smsContent").val(data.smsContent);
             statInputNum($("#smsContent"),$("#word"));
             $("input[name='isCoupon']:radio[value='" + data.isCoupon + "']").prop("checked", true);
+            $("input[name='isCoupon']").attr("disabled", "disabled");
             $("#myLargeModalLabel3").text("修改模板");
             $("#btn_save").attr("name", "update");
             $("#add_modal").modal('show');

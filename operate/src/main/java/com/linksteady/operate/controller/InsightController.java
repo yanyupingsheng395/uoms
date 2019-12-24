@@ -1,35 +1,18 @@
 package com.linksteady.operate.controller;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.service.InsightService;
-import com.linksteady.operate.thrift.ConversionData;
-import com.linksteady.operate.thrift.InsightThriftClient;
-import com.linksteady.operate.thrift.RetentionData;
-import com.linksteady.operate.util.OkHttpUtil;
-import okhttp3.*;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.thrift.TException;
-import org.apache.thrift.transport.TTransportException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 /**
- * 用户成长洞察controller
+ * 用户成长洞察
  *
  * @author hxcao
  * @date 2019-12-04

@@ -19,6 +19,8 @@
         <result column="DEMOSHORTURL" jdbcType="VARCHAR" property="demoShortUrl"></result>
         <result column="PROD_NAME_LEN" jdbcType="DECIMAL" property="prodNameLen"></result>
         <result column="SHORT_URL_LEN" jdbcType="DECIMAL" property="shortUrlLen"></result>
+        <result column="COUPON_SEND_TYPE" jdbcType="VARCHAR" property="couponSendType"></result>
+        <result column="COUPON_NAME_LEN" jdbcType="DECIMAL" property="couponNameLen"></result>
     </resultMap>
 
     <select id="getDailyProperties" resultMap="baseResult">
@@ -36,7 +38,9 @@
             ISTESTENV,
             DEMOSHORTURL,
             PROD_NAME_LEN,
-            SHORT_URL_LEN
+            SHORT_URL_LEN,
+            COUPON_SEND_TYPE,
+            COUPON_NAME_LEN
         from uo_op_daily_config where rownum=1
     </select>
     <!--只允许更新2个字段 -->

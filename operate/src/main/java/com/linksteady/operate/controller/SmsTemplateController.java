@@ -3,6 +3,7 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.push.impl.PushMessageServiceImpl;
 import com.linksteady.operate.service.SmsTemplateService;
@@ -31,6 +32,9 @@ public class SmsTemplateController extends BaseController {
 
     @Autowired
     PushMessageServiceImpl pushMessageService;
+
+    @Autowired
+    private DailyProperties dailyProperties;
 
     /**
      * 获取短信模板
@@ -111,6 +115,37 @@ public class SmsTemplateController extends BaseController {
     public ResponseBo updateSmsTemplate(@RequestBody SmsTemplate smsTemplate) {
         smsTemplateService.update(smsTemplate);
         return ResponseBo.ok();
+    }
+
+    /**
+     * 获取优惠券发送方式
+     * @return
+     */
+    @RequestMapping("/getCouponSendType")
+    public ResponseBo getCouponSendType() {
+        return ResponseBo.okWithData(null, dailyProperties.getCouponSendType());
+    }
+
+    /**
+     * 获取优惠券发送方式
+     * @return
+     */
+    @RequestMapping("/calFontNum")
+    public ResponseBo calFontNum(String smsContent) {
+        int templateCount = smsContent.length();
+        if(smsContent.indexOf("${COUPON_URL}") > -1) {
+            templateCount = templateCount - "${COUPON_URL}".length() + dailyProperties.getShortUrlLen();
+        }
+        if(smsContent.indexOf("${COUPON_NAME}") > -1) {
+            templateCount = templateCount - "${COUPON_NAME}".length() + dailyProperties.getCouponNameLen();
+        }
+        if(smsContent.indexOf("${PROD_NAME}") > -1) {
+            templateCount = templateCount - "${PROD_NAME}".length() + dailyProperties.getProdNameLen();
+        }
+        if(smsContent.indexOf("${PROD_URL}") > -1) {
+            templateCount = templateCount - "${PROD_URL}".length() + dailyProperties.getShortUrlLen();
+        }
+        return ResponseBo.okWithData(null, templateCount);
     }
 }
 
