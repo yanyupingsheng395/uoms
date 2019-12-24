@@ -200,9 +200,7 @@ $("#btn_cal").click(function () {
     if(!validCouponSendType()) {
         return;
     }
-    alert(123);
     var data = getSmsContentFontCount();
-    $("#fontNumDiv").show();
     $("#fontNum").val(data.count + "个字");
 });
 

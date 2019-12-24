@@ -4,6 +4,7 @@ import com.linksteady.common.annotation.Log;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.DailyHead;
+import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.DailyService;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,9 @@ public class PageController {
 
     @Autowired
     private ActivityHeadService activityHeadService;
+
+    @Autowired
+    private DailyProperties dailyProperties;
 
     @Log("用户运营监控")
     @RequestMapping("/operator/user")
@@ -110,7 +114,10 @@ public class PageController {
      */
     @Log("短信模板列表")
     @RequestMapping("/cfg/smsTemplate")
-    public String smsTemplateList() {
+    public String smsTemplateList(Model model) {
+        model.addAttribute("shortUrlLen", dailyProperties.getShortUrlLen());
+        model.addAttribute("couponNameLen", dailyProperties.getCouponNameLen());
+        model.addAttribute("prodNameLen", dailyProperties.getProdNameLen());
         return "operate/config/smstemplate";
     }
 
