@@ -19,9 +19,6 @@
         UO_INSIGHT_IMPORT_SPU
         where
         date_range = #{dateRange}
-        <if test="spuName != null and spuName != '' ">
-            and SPU_NAME = #{spuName}
-        </if>
         <if test="purchOrder != null and purchOrder != ''">
             and purch_order = #{purchOrder}
         </if>
@@ -37,9 +34,16 @@
         select count(1) from UO_INSIGHT_IMPORT_SPU
         where
         date_range = #{dateRange}
-        <if test="spuName != null and spuName != '' ">
-            and SPU_NAME = #{spuName}
+        <if test="purchOrder != null and purchOrder != ''">
+            and purch_order = #{purchOrder}
         </if>
+    </select>
+
+    <select id="findAvgImportSpu" resultMap="base">
+        select '平均' SPU_NAME, trunc(avg(CONTRIBUTE_RATE), 2) CONTRIBUTE_RATE,trunc(avg(NEXT_PURCH_PROBAL), 2)
+        NEXT_PURCH_PROBAL,trunc(avg(SAME_SPU_PROBAL), 2) SAME_SPU_PROBAL,trunc(avg(OTHER_SPU_PROBAL), 2) OTHER_SPU_PROBAL from
+        UO_INSIGHT_IMPORT_SPU
+        where date_range = #{dateRange}
         <if test="purchOrder != null and purchOrder != ''">
             and purch_order = #{purchOrder}
         </if>

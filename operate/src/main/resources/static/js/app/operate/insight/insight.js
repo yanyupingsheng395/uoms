@@ -1,60 +1,8 @@
-// 留存率和留存率变化率的标识符，只能注册一次click事件，反复注册会出错
-let retention_fit = false;
-let retention_change_fit = false;
-// 图表初始化
-var chart_retention = echarts.init(document.getElementById("chart1"), 'macarons');
-const chart_retention_change = echarts.init(document.getElementById("chart11"), 'macarons');
-
 $(function () {
-    // echart 注册legend点击事件
-    initChart();
-
     // 获取桑基图的用户数表
     findUserCntList();
     findSpuValueList();
 });
-
-function initChart() {
-    chart_retention_change.on('legendselectchanged', function(obj) {
-        var legend = obj.name;
-        if(legend === '拟合值' && !retention_change_fit) {
-            chart_retention_change.showLoading({
-                text : '正在加载数据'
-            });
-            $.get("/insight/getRetentionChangeFitData", {id: $("#spuProductId1").val(), type: $("#spuProductType1").val(), period: $("#period").val()}, function (r) {
-                data.fdata = r.data;
-                var option = getOptionWithFit(data, "再次购买spu概率的变化率（%）", "再次购买spu概率的变化率");
-                option.legend.selected = {
-                    '实际值':true,
-                    '拟合值':true
-                };
-                chart_retention_change.hideLoading();
-                chart_retention_change.setOption(option);
-                retention_change_fit = true;
-            });
-        }
-    });
-
-    chart_retention.on('legendselectchanged', function(obj) {
-        var legend = obj.name;
-        if(legend === '拟合值' && !retention_fit) {
-            chart_retention.showLoading({
-                text : '正在加载数据'
-            });
-            $.get("/insight/getRetentionFitData", {id: $("#spuProductId1").val(), type: $("#spuProductType1").val(), period:  $("#period").val()}, function (r) {
-                data.fdata = r.data;
-                var option = getOptionWithFit(data, "再次购买spu概率（%）", "再次购买spu概率");
-                option.legend.selected = {
-                    '实际值':true,
-                    '拟合值':true
-                };
-                chart_retention.hideLoading();
-                chart_retention.setOption(option);
-                retention_fit = true;
-            });
-        }
-    });
-}
 
 // 按时间范围查询
 function searchInsight() {
@@ -224,6 +172,8 @@ function findImportSpu() {
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,
+                sort: params.sort,
+                order: params.order,
                 param: {
                     spuName: $("#spuName").find("option:selected").text(),
                     purchOrder: $("#purchOrder1").val(),
@@ -251,7 +201,10 @@ function findImportSpu() {
                 field: 'otherSpuProbal',
                 title: '本购SPU后购其他SPU概率（%）',
                 sortable : true
-            }]
+            }],onLoadSuccess: function() {
+            var tableId = document.getElementById('importSpu');
+            tableId.rows[tableId.rows.length - 1].setAttribute("style", "background-color:#E7EAEC;");
+        }
     };
     $( "#importSpu" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
@@ -271,6 +224,7 @@ function searchImportSpu() {
 function resetImportSpu() {
     $("#spuName").html('').append("<option value=''>请选择</option>");
     $("#purchOrder1").find("option:selected").removeAttr("selected");
+    getSpuName();
 }
 
 $("#spuProductName1").click(
@@ -288,6 +242,7 @@ $("#spuProductName2").click(
  * 留存率随购买次数的变化图
  */
 function retentionInPurchaseTimes() {
+    var chart_retention = echarts.init(document.getElementById("chart1"), 'macarons');
     var id = $("#spuProductId1").val();
     var type = $("#spuProductType1").val();
     var period = $("#period").val();
@@ -296,7 +251,6 @@ function retentionInPurchaseTimes() {
     });
     $.get("/insight/retentionInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
         var data = r.data;
-        data.fdata = [];
         var option = getOptionWithFit(data, "再次购买spu概率（%）", "再次购买spu概率");
         option.grid = {left: '15%', right:'15%'};
         chart_retention.hideLoading();
@@ -308,12 +262,12 @@ function retentionInPurchaseTimes() {
  * 留存率变化率随购买次数变化
  */
 function retentionChangeRateInPurchaseTimes() {
+    const chart_retention_change = echarts.init(document.getElementById("chart11"), 'macarons');
     var id = $("#spuProductId1").val();
     var type = $("#spuProductType1").val();
     var period = $("#period").val();
     $.get("/insight/retentionChangeRateInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
         var data = r.data;
-        data.fdata = [];
         var option = getOptionWithFit(data, "再次购买spu概率的变化率（%）", "再次购买spu概率的变化率");
         option.grid = {left: '18%', right:'15%'};
         chart_retention_change.hideLoading();
@@ -491,8 +445,6 @@ function getOptionWithFit(data, name, titleName) {
 }
 
 function searchRetention() {
-    retention_fit = false;
-    retention_change_fit = false;
     if($("#spuProductId1").val() === '' || $("#period").val() === '') {
         $MB.n_warning("请选择商品/SPU，查询时间周期。");
         return false;
@@ -525,12 +477,11 @@ function searchRetention() {
 
 // 重置留存率的条件
 function resetRetention() {
-    retention_fit = false;
-    retention_change_fit = false;
     $("#spuProductName1").val("");
     $("#spuProductId1").val("");
     $("#spuProductType1").val("");
     $("#period").find("option:selected").removeAttr("selected");
+    $("#period").find("option[value='12']").prop("selected", true);
 }
 
 // 获取下一个product转化概率的大小
@@ -718,6 +669,11 @@ function getProductOption(xdata, ydata) {
                 data : xdata,
                 axisTick: {
                     alignWithLabel: true
+                },
+                axisLabel: {
+                    show: true,
+                    interval:0,
+                    rotate:45
                 }
             }
         ],
@@ -801,6 +757,11 @@ function getSpuChartOption(data) {
                 data : data.xdata1,
                 axisTick: {
                     alignWithLabel: true
+                },
+                axisLabel: {
+                    show: true,
+                    interval:0,
+                    rotate:45
                 }
             }
         ],

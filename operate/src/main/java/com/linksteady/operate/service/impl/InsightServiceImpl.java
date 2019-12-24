@@ -8,19 +8,25 @@ import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.domain.InsightUserCnt;
 import com.linksteady.operate.service.InsightService;
+import com.linksteady.operate.thrift.ConversionData;
+import com.linksteady.operate.thrift.InsightThriftClient;
+import com.linksteady.operate.thrift.RetentionData;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.thrift.transport.TTransportException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
  * @author hxcao
  * @date 2019-12-04
  */
+@Slf4j
 @Service
 public class InsightServiceImpl implements InsightService {
 
@@ -38,6 +44,15 @@ public class InsightServiceImpl implements InsightService {
 
     @Autowired
     private InsightMapper insightMapper;
+
+    @Autowired
+    private InsightThriftClient insightThriftClient;
+
+    /**
+     * 由于thrift 中 seqid资源是线程不安全的，所以需要通过加锁的方式来同步调用资源。
+     * 否则会报msg.seqid 为 badseqid的异常信息。
+     */
+    private ReentrantLock lock = new ReentrantLock();
 
     @Override
     public List<InsightUserCnt> findUserCntList(String dateRange) {
@@ -98,9 +113,19 @@ public class InsightServiceImpl implements InsightService {
                 case "otherSpuProbal":
                     orderSql.append("order by OTHER_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
+                default:
+                    break;
             }
         }
-        return insightImportSpuMapper.findImportSpuList(start, end, spuName, purchOrder, dateRange, orderSql.toString());
+        final List<InsightImportSpu> importSpuList = insightImportSpuMapper.findImportSpuList(start, end, purchOrder, dateRange, orderSql.toString());
+        Optional<InsightImportSpu> insightImportSpu = importSpuList.stream().filter(x -> x.getSpuName().equals(spuName)).findFirst();
+        if(insightImportSpu.isPresent()) {
+            importSpuList.remove(insightImportSpu.get());
+            importSpuList.add(0, insightImportSpu.get());
+        }
+        InsightImportSpu avg = insightImportSpuMapper.findAvgImportSpu(purchOrder, dateRange);
+        importSpuList.add(avg);
+        return importSpuList;
     }
 
     @Override
@@ -176,13 +201,14 @@ public class InsightServiceImpl implements InsightService {
      * @return
      */
     @Override
-    public Map<String, Object> retentionInPurchaseTimes(String type, String id, String period) {
+    public Map<String, Object> retentionInPurchaseTimes(String type, String id, String period) throws TTransportException {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> dataList = insightMapper.retentionInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("SPU_RN"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("LEAVE_RATE") == null ? "0" : x.get("LEAVE_RATE"))).collect(Collectors.toList());
         result.put("xdata", xdata);
         result.put("ydata", ydata);
+        result.put("fdata", getRetentionFitData(type, id, period));
         return result;
     }
 
@@ -217,6 +243,7 @@ public class InsightServiceImpl implements InsightService {
         }
         result.put("xdata", newXdata);
         result.put("ydata", newYdata);
+        result.put("fdata", getRetentionChangeFitData(type, id, period));
         return result;
     }
 
@@ -452,6 +479,94 @@ public class InsightServiceImpl implements InsightService {
             pathPurchOrder.remove(pathPurchOrder.size() - 1);
         }
         return pathPurchOrder;
+    }
+
+    @Override
+    public List<String> getRetentionFitData(String type, String id, String period) throws TTransportException {
+        List<String> retentionFitList = Lists.newArrayList();
+        lock.lock();
+        try {
+            DecimalFormat df = new DecimalFormat("#.##");
+            int spu = -1;
+            int product = -1;
+
+            if(!insightThriftClient.isOpend()) {
+                insightThriftClient.open();
+            }
+
+            if (type.equalsIgnoreCase("spu")) {
+                spu = Integer.valueOf(id);
+            }
+            if (type.equalsIgnoreCase("product")) {
+                product = Integer.valueOf(id);
+            }
+            RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
+            List<Double> retentionFit = retentionFitData.getRetentionFit();
+            retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
+        }catch (Exception e) {
+            log.error("获取拟合值数据异常", e);
+            insightThriftClient.close();
+        }finally {
+            lock.unlock();
+        }
+        return retentionFitList;
+    }
+
+    @Override
+    public List<String> getRetentionChangeFitData(String type, String id, String period) {
+        List<String> retentionFitList = Lists.newArrayList();
+        lock.lock();
+        try {
+            DecimalFormat df = new DecimalFormat("#.##");
+            int spu = -1;
+            int product = -1;
+
+            if(!insightThriftClient.isOpend()) {
+                insightThriftClient.open();
+            }
+
+            if (type.equalsIgnoreCase("spu")) {
+                spu = Integer.valueOf(id);
+            }
+            if (type.equalsIgnoreCase("product")) {
+                product = Integer.valueOf(id);
+            }
+            RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
+            List<Double> retentionFit = retentionFitData.getRetentionFit();
+            retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
+        }catch (Exception e) {
+            log.error("获取拟合值数据异常", e);
+            insightThriftClient.close();
+        }finally {
+            lock.unlock();
+        }
+        return retentionFitList;
+    }
+
+    @Override
+    public Map<String, Object> getConvertRateChart(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId) {
+        Map<String, Object> result = Maps.newHashMap();
+        lock.lock();
+        try {
+            if(!insightThriftClient.isOpend()) {
+                insightThriftClient.open();
+            }
+            if(StringUtils.isNotBlank(ebpProductId) && StringUtils.isNotBlank(nextEbpProductId)) {
+                ConversionData conversionData = insightThriftClient.getInsightService().getConversionData(Long.parseLong(spuId), Long.parseLong(purchOrder), Long.parseLong(ebpProductId), Long.parseLong(nextEbpProductId));
+                result.put("xdata", conversionData.xdata);
+                result.put("ydata", conversionData.ydata);
+                result.put("zdata", conversionData.zdata);
+            }else {
+                result.put("xdata", Lists.newArrayList());
+                result.put("ydata", Lists.newArrayList());
+                result.put("zdata", Lists.newArrayList());
+            }
+        } catch (Exception e) {
+            log.error("获取商品转化率曲线失败", e);
+        }finally {
+            lock.unlock();
+        }
+        return result;
     }
 
     /**

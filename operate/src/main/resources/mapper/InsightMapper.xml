@@ -281,92 +281,87 @@
         select SPU_WID id, SPU_NAME name from W_PRODUCT_SPU
     </select>
 
+    <!--获取top5人数的商品与spu关系图-->
     <select id="getSpuRelation" resultType="map">
-        SELECT SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME, SUM(PRODUCT_CNT) PRODUCT_CNT, spu_cnt
-        FROM (
-                 select t.SPU_WID,
-                        (CASE WHEN PRODUCT_CNT > SPU_CNT * 0.05 THEN EBP_PRODUCT_ID ELSE '-1' END)   EBP_PRODUCT_ID,
-                        PRODUCT_CNT,
-                        SPU_CNT,
-                        SPU_NAME,
-                        (CASE WHEN PRODUCT_CNT > SPU_CNT * 0.05 THEN EBP_PRODUCT_NAME ELSE '其他' END) EBP_PRODUCT_NAME
-                 from (
-                          SELECT v1.SPU_WID,
-                                 v1.EBP_PRODUCT_ID,
-                                 v1.cnt                                       product_cnt,
-                                 sum(v1.cnt) over ( partition BY v1.spu_wid ) spu_cnt,
-                                 v2.spu_name                                  spu_name,
-                                 (CASE
-                                      WHEN EBP_PRODUCT_NAME IS NULL THEN v1.EBP_PRODUCT_ID
-                                      ELSE EBP_PRODUCT_NAME END)              EBP_PRODUCT_NAME
-                          FROM (
-                                   SELECT spu_wid,
-                                          EBP_PRODUCT_ID,
-                                          count(1) cnt
-                                   FROM WP_USER_PATH
-                                   WHERE SPU_WID = #{spuId}
-                                     AND rn = #{purchOrder}
-                                     and next_ebp_product_id is not null
-                                   GROUP BY spu_wid, EBP_PRODUCT_ID
-                               ) v1,
-                               w_product_spu v2,
-                               W_PRODUCT_EBP v3
-                          where v1.SPU_WID = v2.SPU_WID(+)
-                            and v1.EBP_PRODUCT_ID = v3.EBP_PRODUCT_ID(+)
-                      ) t
-                 order by product_cnt desc
-             )
-        GROUP BY SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME,spu_cnt
+        with v1 as (
+        SELECT spu_wid,
+        EBP_PRODUCT_ID,
+        count(1) cnt
+        FROM WP_USER_PATH
+        WHERE SPU_WID = #{spuId}
+        AND rn = #{purchOrder}
+        and next_ebp_product_id is not null
+        GROUP BY spu_wid, EBP_PRODUCT_ID
+        order by cnt desc
+        ),
+        v2 as (
+        SELECT rownum row_num, v1.SPU_WID,
+        v1.EBP_PRODUCT_ID,
+        v1.cnt                                                                                product_cnt,
+        sum(v1.cnt) over ( partition BY v1.spu_wid )                                          spu_cnt,
+        t2.spu_name                                                                           spu_name,
+        (CASE WHEN EBP_PRODUCT_NAME IS NULL THEN v1.EBP_PRODUCT_ID ELSE EBP_PRODUCT_NAME END) EBP_PRODUCT_NAME
+        FROM v1,
+        w_product_spu t2,
+        W_PRODUCT_EBP t3
+        where v1.SPU_WID = t2.SPU_WID(+)
+        and v1.EBP_PRODUCT_ID = t3.EBP_PRODUCT_ID(+)
+        order by v1.cnt desc
+        ),
+        v3 as (
+        select SPU_WID, row_num,
+        (CASE WHEN row_num &lt;= 5 THEN EBP_PRODUCT_ID ELSE '-1' END)   EBP_PRODUCT_ID,
+        PRODUCT_CNT,
+        SPU_CNT,
+        SPU_NAME,
+        (CASE WHEN row_num &lt;= 5 THEN EBP_PRODUCT_NAME ELSE '其他' END) EBP_PRODUCT_NAME
+        from v2
+        )
+        select SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME, SUM(PRODUCT_CNT) PRODUCT_CNT, spu_cnt
+        from v3 GROUP BY SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME,spu_cnt
         order by PRODUCT_CNT desc
     </select>
 
     <select id="getProductConvertRate" resultType="map">
         with g1 as (
-            SELECT spu_wid,
-                   count(1) next_product_cnt,
-                   NEXT_EBP_PRODUCT_ID
-            FROM WP_USER_PATH
-            WHERE SPU_WID = #{spuId}
-              AND rn = #{purchOrder}
-              and EBP_PRODUCT_ID = #{productId}
-            GROUP BY spu_wid,
-                     NEXT_EBP_PRODUCT_ID
+        SELECT spu_wid, count(1) next_product_cnt, NEXT_EBP_PRODUCT_ID
+        FROM WP_USER_PATH
+        WHERE SPU_WID = #{spuId}
+        AND rn = #{purchOrder}
+        and EBP_PRODUCT_ID = #{productId}
+        GROUP BY spu_wid,
+        NEXT_EBP_PRODUCT_ID
         ),
-             g2 as (
-                 SELECT count(1) product_cnt
-                 FROM WP_USER_PATH
-                 WHERE SPU_WID = #{spuId}
-                   AND rn = #{purchOrder}
-                   and EBP_PRODUCT_ID = #{productId}
-             ),
-             g3 as (
-                 select NEXT_EBP_PRODUCT_ID,
-                        next_product_cnt,
-                        product_cnt,
-                        trunc((next_product_cnt / product_cnt) * 100, 2) convert_rate
-                 from g1,
-                      g2
-                 where NEXT_EBP_PRODUCT_ID is not null
-                 order by next_product_cnt desc
-             )
+        g2 as (
+        SELECT spu_wid, next_product_cnt, NEXT_EBP_PRODUCT_ID, sum(next_product_cnt) over ( partition BY g1.spu_wid) product_cnt
+        FROM g1
+        ),
+        g3 as (
+        select NEXT_EBP_PRODUCT_ID,
+        next_product_cnt,
+        product_cnt,
+        trunc((next_product_cnt / product_cnt) * 100, 2) convert_rate
+        from g2
+        where NEXT_EBP_PRODUCT_ID is not null
+        order by next_product_cnt desc
+        )
+
         SELECT NEXT_EBP_PRODUCT_ID, EBP_PRODUCT_NAME, SUM(next_product_cnt), SUM(convert_rate) convert_rate
         FROM (
-                 SELECT (CASE WHEN EBP_PRODUCT_NAME &lt;&gt; '其他' THEN NEXT_EBP_PRODUCT_ID ELSE '-1' END) NEXT_EBP_PRODUCT_ID,
-                        (CASE
-                             WHEN EBP_PRODUCT_NAME IS NULL THEN NEXT_EBP_PRODUCT_ID
-                             ELSE EBP_PRODUCT_NAME END)                                                         EBP_PRODUCT_NAME,
-                        next_product_cnt,
-                        convert_rate
-                 FROM (
-                          select NEXT_EBP_PRODUCT_ID,
-                                 (CASE WHEN convert_rate >= 5 THEN EBP_PRODUCT_NAME ELSE '其他' END)    EBP_PRODUCT_NAME,
-                                 next_product_cnt,
-                                 convert_rate
-                          from g3,
-                               W_PRODUCT_EBP t1
-                          where g3.NEXT_EBP_PRODUCT_ID = t1.EBP_PRODUCT_ID(+)
-                      )
-             )
+        SELECT (CASE WHEN EBP_PRODUCT_NAME &lt;&gt; '其他' THEN NEXT_EBP_PRODUCT_ID ELSE '-1' END) NEXT_EBP_PRODUCT_ID,
+        (CASE
+        WHEN EBP_PRODUCT_NAME IS NULL THEN NEXT_EBP_PRODUCT_ID
+        ELSE EBP_PRODUCT_NAME END)                                             EBP_PRODUCT_NAME,
+        next_product_cnt,
+        convert_rate
+        FROM (
+        select NEXT_EBP_PRODUCT_ID, rownum row_num,
+        (CASE WHEN rownum &lt;= 5 THEN EBP_PRODUCT_NAME ELSE '其他' END) EBP_PRODUCT_NAME,
+        next_product_cnt,
+        convert_rate
+        from g3,
+        W_PRODUCT_EBP t1
+        where g3.NEXT_EBP_PRODUCT_ID = t1.EBP_PRODUCT_ID(+)))
         GROUP BY NEXT_EBP_PRODUCT_ID, EBP_PRODUCT_NAME
         order by convert_rate desc
     </select>

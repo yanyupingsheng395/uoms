@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -39,21 +40,6 @@ public class InsightController {
 
     @Autowired
     private InsightService insightService;
-
-    @Autowired
-    private InsightThriftClient insightThriftClient;
-
-    @PostConstruct
-    public void init() throws TTransportException {
-        insightThriftClient.open();
-    }
-
-    @PreDestroy
-    public void destroy() throws TTransportException {
-        if (insightThriftClient.isOpend()) {
-            insightThriftClient.close();
-        }
-    }
 
     /**
      * 获取用户数随购买次数变化数据
@@ -138,8 +124,9 @@ public class InsightController {
      * @return
      */
     @GetMapping("/retentionInPurchaseTimes")
-    public ResponseBo retentionInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
-        return ResponseBo.okWithData(null, insightService.retentionInPurchaseTimes(type, id, period));
+    public ResponseBo retentionInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) throws Exception{
+        Map<String, Object> stringObjectMap = insightService.retentionInPurchaseTimes(type, id, period);
+        return ResponseBo.okWithData(null, stringObjectMap);
     }
 
     /**
@@ -215,37 +202,12 @@ public class InsightController {
      */
     @GetMapping("/getRetentionFitData")
     public ResponseBo getRetentionFitData(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) throws Exception {
-        DecimalFormat df = new DecimalFormat("#.##");
-        int spu = -1;
-        int product = -1;
-        if (type.equalsIgnoreCase("spu")) {
-            spu = Integer.valueOf(id);
-        }
-        if (type.equalsIgnoreCase("product")) {
-            product = Integer.valueOf(id);
-        }
-        RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
-        List<Double> retentionFit = retentionFitData.getRetentionFit();
-        final List<String> retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
-
-        return ResponseBo.okWithData(null, retentionFitList);
+        return ResponseBo.okWithData(null, insightService.getRetentionFitData(type, id, period));
     }
 
     @GetMapping("/getRetentionChangeFitData")
     public ResponseBo getRetentionChangeFitData(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) throws Exception {
-        DecimalFormat df = new DecimalFormat("#.##");
-        int spu = -1;
-        int product = -1;
-        if (type.equalsIgnoreCase("spu")) {
-            spu = Integer.valueOf(id);
-        }
-        if (type.equalsIgnoreCase("product")) {
-            product = Integer.valueOf(id);
-        }
-        RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
-        List<Double> retentionFit = retentionFitData.getRetentionFit();
-        final List<String> retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
-        return ResponseBo.okWithData(null, retentionFitList);
+        return ResponseBo.okWithData(null, insightService.getRetentionChangeFitData(type, id, period));
     }
 
     /**
@@ -321,18 +283,7 @@ public class InsightController {
      */
     @GetMapping("/getConvertRateChart")
     public ResponseBo getConvertRateChart(@RequestParam("spuId") String spuId, @RequestParam("purchOrder") String purchOrder,String ebpProductId, String nextEbpProductId) throws TException {
-        Map<String, Object> result = Maps.newHashMap();
-        if(StringUtils.isNotBlank(ebpProductId) && StringUtils.isNotBlank(nextEbpProductId)) {
-            ConversionData conversionData = insightThriftClient.getInsightService().getConversionData(Long.parseLong(spuId), Long.parseLong(purchOrder), Long.parseLong(ebpProductId), Long.parseLong(nextEbpProductId));
-            result.put("xdata", conversionData.xdata);
-            result.put("ydata", conversionData.ydata);
-            result.put("zdata", conversionData.zdata);
-        }else {
-            result.put("xdata", Lists.newArrayList());
-            result.put("ydata", Lists.newArrayList());
-            result.put("zdata", Lists.newArrayList());
-        }
-        return ResponseBo.okWithData(null, result);
+        return ResponseBo.okWithData(null, insightService.getConvertRateChart(spuId, purchOrder, ebpProductId, nextEbpProductId));
     }
 
     /**

@@ -4,6 +4,7 @@ import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.domain.InsightUserCnt;
+import org.apache.thrift.transport.TTransportException;
 
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ public interface InsightService {
      * @param period
      * @return
      */
-    Map<String, Object> retentionInPurchaseTimes(String type, String id, String period);
+    Map<String, Object> retentionInPurchaseTimes(String type, String id, String period) throws Exception;
 
     /**
      * 件单价随购买次数的变化
@@ -132,4 +133,10 @@ public interface InsightService {
     List<Map<String, Object>> getPathSpu();
 
     List<String> getPathPurchOrder(String spuId);
+
+    List<String> getRetentionFitData(String type, String id, String period) throws TTransportException;
+
+    List<String> getRetentionChangeFitData(String type, String id, String period);
+
+    Map<String, Object> getConvertRateChart(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
 }

@@ -249,27 +249,24 @@
                                             <li>
                                                 选择要观测周期：
                                                 <select name="period" id="period">
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                    <option value="4">4</option>
-                                                    <option value="5">5</option>
-                                                    <option value="6">6</option>
-                                                    <option value="7">7</option>
-                                                    <option value="8">8</option>
-                                                    <option value="9">9</option>
-                                                    <option value="10">10</option>
-                                                    <option value="11">11</option>
-                                                    <option value="12">12</option>
+                                                    <option value="1">1个月</option>
+                                                    <option value="2">2个月</option>
+                                                    <option value="3">3个月</option>
+                                                    <option value="4">4个月</option>
+                                                    <option value="5">5个月</option>
+                                                    <option value="6">6个月</option>
+                                                    <option value="7">7个月</option>
+                                                    <option value="8">8个月</option>
+                                                    <option value="9">9个月</option>
+                                                    <option value="10">10个月</option>
+                                                    <option value="11">11个月</option>
+                                                    <option value="12" selected>12个月</option>
                                                 </select>
                                             </li>
-                                            <li>
-                                                选择要观测指标：
-                                                <select id="kpi1">
-                                                    <option value="1">再次购买spu概率</option>
-                                                    <option value="2">再次购买spu概率的变化率</option>
-                                                </select>
-                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="select-list">
+                                        <ul>
                                             <li>
                                                 选择要观测指标：
                                                 <select id="kpi2">
@@ -277,6 +274,13 @@
                                                     <option value="2">平均购买间隔</option>
                                                     <option value="3">平均连带率</option>
                                                     <option value="4">平均购买spu种类数</option>
+                                                </select>
+                                            </li>
+                                            <li>
+                                                选择要观测指标：
+                                                <select id="kpi1">
+                                                    <option value="1">再次购买spu概率</option>
+                                                    <option value="2">再次购买spu概率的变化率</option>
                                                 </select>
                                             </li>
                                             <li class="pull-right">
@@ -362,7 +366,7 @@
                                 </div>
                                 <div class="col-md-6 table-responsive">
                                     <h6>指定转化轨迹下用户成长节点与阶段一览</h6>
-                                    <table id="growthTable" class="table table-bordered text-nowrap">
+                                    <table id="growthTable" class="table table-bordered">
                                         <thead>
                                         <tr>
                                             <th>活跃状态</th>
