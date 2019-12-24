@@ -210,18 +210,18 @@ function validCouponSendType() {
     let couponSendType = getCouponSendType();
     let smsContent = $('#smsContent').val();
     if(smsContent === '') {
-        $MB.n_warning("短信内容不能为空！");
+        $MB.n_warning("模板内容不能为空！");
         return false;
     }
     if(couponSendType === 'A') { // 包含${COUPON_URL}
         if(smsContent.indexOf("${COUPON_URL}") === -1) {
-            $MB.n_warning("优惠券发放方式为自行领取，短信模板未发现${COUPON_URL}");
+            $MB.n_warning("优惠券发放方式为自行领取，模板内容未发现${COUPON_URL}");
             return false;
         }
     }
     if(couponSendType === 'B') { // 不包含${COUPON_URL}
         if(smsContent.indexOf("${COUPON_URL}") > -1) {
-            $MB.n_warning("优惠券发放方式为系统发送，短信模板发现${COUPON_URL}");
+            $MB.n_warning("优惠券发放方式为系统发送，模板内容发现${COUPON_URL}");
             return false;
         }
     }
