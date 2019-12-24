@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * 短信相关的controller
+ *
  * @author huang
  */
 @RestController
@@ -40,6 +41,7 @@ public class SmsTemplateController extends BaseController {
 
     /**
      * 获取短信模板
+     *
      * @param
      * @return
      */
@@ -47,9 +49,9 @@ public class SmsTemplateController extends BaseController {
     public ResponseBo smsTemplateList(@RequestBody QueryRequest request) {
         String smsCode = request.getParam().get("smsCode");
         String groupId = request.getParam().get("groupId");
-        List<SmsTemplate> result=smsTemplateService.getSmsTemplateList((request.getPageNum()-1)*request.getPageSize()+1, request.getPageNum()*request.getPageSize(),smsCode, groupId);
-        int totalCount= smsTemplateService.getTotalCount(smsCode, groupId);
-        return  ResponseBo.okOverPaging("",totalCount,result);
+        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize(), smsCode, groupId);
+        int totalCount = smsTemplateService.getTotalCount(smsCode, groupId);
+        return ResponseBo.okOverPaging("", totalCount, result);
     }
 
 
@@ -58,9 +60,9 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/addSmsTemplate")
     public ResponseBo addSmsTemplate(@RequestBody SmsTemplate smsTemplate) {
-           //添加
+        //添加
         try {
-            smsTemplateService.saveSmsTemplate(smsTemplate.getSmsCode(),smsTemplate.getSmsContent(), smsTemplate.getIsCoupon());
+            smsTemplateService.saveSmsTemplate(smsTemplate.getSmsCode(), smsTemplate.getSmsContent(), smsTemplate.getIsCoupon());
             return ResponseBo.ok();
         } catch (Exception e) {
             //失败
@@ -73,10 +75,9 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/deleteSmsTemplate")
     public ResponseBo deleteSmsTemplate(HttpServletRequest request) {
-        String smsCode=request.getParameter("smsCode");
+        String smsCode = request.getParameter("smsCode");
         //判断短信模板是否被引用
-        if(smsTemplateService.refrenceCount(smsCode)>0)
-        {
+        if (smsTemplateService.refrenceCount(smsCode) > 0) {
             return ResponseBo.error("此模板已经被成长组引用，无法删除！");
         }
         smsTemplateService.deleteSmsTemplate(smsCode);
@@ -88,8 +89,8 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/getSmsTemplate")
     public ResponseBo getSmsTemplate(HttpServletRequest request) {
-        String smsCode=request.getParameter("smsCode");
-        return ResponseBo.okWithData("",smsTemplateService.getSmsTemplate(smsCode));
+        String smsCode = request.getParameter("smsCode");
+        return ResponseBo.okWithData("", smsTemplateService.getSmsTemplate(smsCode));
     }
 
     /**
@@ -97,19 +98,18 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/testSend")
     public ResponseBo testSend(String phoneNum, String smsContent) {
-        int result=pushMessageService.push(phoneNum,smsContent);
+        int result = pushMessageService.push(phoneNum, smsContent);
 
-        if (result == 0)
-        {
+        if (result == 0) {
             return ResponseBo.ok("测试发送成功！");
-        }else
-        {
+        } else {
             return ResponseBo.error("测试发送失败！");
         }
     }
 
     /**
      * 修改短信模板
+     *
      * @param smsTemplate
      * @return
      */
@@ -121,6 +121,7 @@ public class SmsTemplateController extends BaseController {
 
     /**
      * 获取优惠券发送方式
+     *
      * @return
      */
     @RequestMapping("/getCouponSendType")
@@ -130,23 +131,28 @@ public class SmsTemplateController extends BaseController {
 
     /**
      * 获取优惠券发送方式
+     *
      * @return
      */
     @RequestMapping("/calFontNum")
     public ResponseBo calFontNum(String smsContent) {
         Map<String, Object> result = Maps.newHashMap();
+        String couponUrl = "${COUPON_URL}";
+        String couponName = "${COUPON_NAME}";
+        String prodName = "${PROD_NAME}";
+        String prodUrl = "${PROD_URL}";
         int templateCount = smsContent.length();
-        if(smsContent.indexOf("${COUPON_URL}") > -1) {
-            templateCount = templateCount - "${COUPON_URL}".length() + dailyProperties.getShortUrlLen();
+        if (smsContent.contains(couponUrl)) {
+            templateCount = templateCount - couponUrl.length() + dailyProperties.getShortUrlLen();
         }
-        if(smsContent.indexOf("${COUPON_NAME}") > -1) {
-            templateCount = templateCount - "${COUPON_NAME}".length() + dailyProperties.getCouponNameLen();
+        if (smsContent.contains(couponName)) {
+            templateCount = templateCount - couponName.length() + dailyProperties.getCouponNameLen();
         }
-        if(smsContent.indexOf("${PROD_NAME}") > -1) {
-            templateCount = templateCount - "${PROD_NAME}".length() + dailyProperties.getProdNameLen();
+        if (smsContent.contains(prodName)) {
+            templateCount = templateCount - prodName.length() + dailyProperties.getProdNameLen();
         }
-        if(smsContent.indexOf("${PROD_URL}") > -1) {
-            templateCount = templateCount - "${PROD_URL}".length() + dailyProperties.getShortUrlLen();
+        if (smsContent.contains(prodUrl)) {
+            templateCount = templateCount - prodUrl.length() + dailyProperties.getShortUrlLen();
         }
         result.put("count", templateCount);
         result.put("valid", templateCount <= dailyProperties.getSmsLengthLimit());
