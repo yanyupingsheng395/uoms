@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -132,6 +134,7 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/calFontNum")
     public ResponseBo calFontNum(String smsContent) {
+        Map<String, Object> result = Maps.newHashMap();
         int templateCount = smsContent.length();
         if(smsContent.indexOf("${COUPON_URL}") > -1) {
             templateCount = templateCount - "${COUPON_URL}".length() + dailyProperties.getShortUrlLen();
@@ -145,7 +148,9 @@ public class SmsTemplateController extends BaseController {
         if(smsContent.indexOf("${PROD_URL}") > -1) {
             templateCount = templateCount - "${PROD_URL}".length() + dailyProperties.getShortUrlLen();
         }
-        return ResponseBo.okWithData(null, templateCount);
+        result.put("count", templateCount);
+        result.put("valid", templateCount <= dailyProperties.getSmsLengthLimit());
+        return ResponseBo.okWithData(null, result);
     }
 }
 

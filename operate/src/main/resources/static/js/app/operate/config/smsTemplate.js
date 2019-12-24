@@ -197,14 +197,13 @@ function add() {
 
 // 字数统计
 $("#btn_cal").click(function () {
-    let smsContent = $('#smsContent').val();
     if(!validCouponSendType()) {
         return;
     }
-    $.get("/smsTemplate/calFontNum", {smsContent: smsContent}, function (r) {
-        $("#fontNumDiv").show();
-        $("#fontNum").val(r.data + "个字");
-    })
+    alert(123);
+    var data = getSmsContentFontCount();
+    $("#fontNumDiv").show();
+    $("#fontNum").val(data.count + "个字");
 });
 
 function validCouponSendType() {
@@ -226,6 +225,7 @@ function validCouponSendType() {
             return false;
         }
     }
+    return true;
 }
 
 // 获取优惠券发送方式
@@ -233,6 +233,21 @@ function getCouponSendType() {
     var res;
     $.ajax({
         url: "/smsTemplate/getCouponSendType",
+        method: "get",
+        async: false,
+        success: function (r) {
+            res = r.data;
+        }
+    });
+    return res;
+}
+
+function getSmsContentFontCount() {
+    let smsContent = $('#smsContent').val();
+    var res;
+    $.ajax({
+        url: "/smsTemplate/calFontNum",
+        data: {smsContent: smsContent},
         method: "get",
         async: false,
         success: function (r) {
@@ -270,6 +285,11 @@ $("#btn_save").click(function () {
         if(!validCouponSendType()) {
             return;
         }
+    }
+
+    var data = getSmsContentFontCount();
+    if(!data.valid) {
+        alert_str+='短信模板字数超出最大限制！';
     }
 
     if(null!=alert_str&&alert_str!='')
@@ -336,7 +356,6 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $('#smsContent').val("");
     $("input[name='isCoupon']").removeAttr("disabled");
 });
-
 
 function searchSmsTemplate() {
     $MB.refreshTable('smsTemplateTable');
