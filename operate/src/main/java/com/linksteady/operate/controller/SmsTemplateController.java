@@ -54,7 +54,6 @@ public class SmsTemplateController extends BaseController {
         return ResponseBo.okOverPaging("", totalCount, result);
     }
 
-
     /**
      * 增加短信模板
      */
@@ -131,7 +130,7 @@ public class SmsTemplateController extends BaseController {
 
     /**
      * 获取优惠券发送方式
-     *
+     *0
      * @return
      */
     @RequestMapping("/calFontNum")
