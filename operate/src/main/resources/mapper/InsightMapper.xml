@@ -366,6 +366,7 @@
         WHERE SPU_WID = #{spuId}
         AND rn = #{purchOrder}
         and EBP_PRODUCT_ID = #{productId}
+        and NEXT_EBP_PRODUCT_ID is not null
         GROUP BY spu_wid,
         NEXT_EBP_PRODUCT_ID
         ),
@@ -379,10 +380,8 @@
         product_cnt,
         trunc((next_product_cnt / product_cnt) * 100, 2) convert_rate
         from g2
-        where NEXT_EBP_PRODUCT_ID is not null
         order by next_product_cnt desc
         )
-
         SELECT NEXT_EBP_PRODUCT_ID, EBP_PRODUCT_NAME, SUM(next_product_cnt), SUM(convert_rate) convert_rate
         FROM (
         SELECT (CASE WHEN EBP_PRODUCT_NAME &lt;&gt; '其他' THEN NEXT_EBP_PRODUCT_ID ELSE '-1' END) NEXT_EBP_PRODUCT_ID,
@@ -405,7 +404,7 @@
 
     <select id="getUserGrowthPathWithSpu" resultType="map">
         select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB * 100, 2) PROB, BEGIN, END from WP_PURCHASE_PROB
-        where SPU_WID = #{spuId} and rn = #{purchOrder} and is_spu = '1'
+        where SPU_WID = #{spuId} and rn = #{purchOrder} and is_spu = '0'
         order by ACTIVE_DUAL asc
     </select>
 
