@@ -56,7 +56,7 @@
                T.ACTIVITY_DETAIL_ID,
                T.USER_PHONE,
                '0',
-               concat(concat(T.PLAN_DT, T.ORDER_PERIOD), '00'),
+               concat(concat(T.PLAN_DT, lpad(T.ORDER_PERIOD,'2','0')), '00'),
                SEQ_UO_OP_PUSH_LIST_LARGE.NEXTVAL
         FROM UO_OP_ACTIVITY_DETAIL T where  head_id = #{headId} and plan_dt = #{planDateWid}
     </insert>
