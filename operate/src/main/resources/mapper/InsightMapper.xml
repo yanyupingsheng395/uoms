@@ -404,13 +404,13 @@
 
     <select id="getUserGrowthPathWithSpu" resultType="map">
         select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB * 100, 2) PROB, BEGIN, END from WP_PURCHASE_PROB
-        where SPU_WID = #{spuId} and rn = #{purchOrder} and is_spu = '0'
+        where SPU_WID = #{spuId} and rn = #{purchOrder} and is_spu = '1'
         order by ACTIVE_DUAL asc
     </select>
 
     <select id="getUserGrowthPathWithProduct" resultType="map">
         select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB * 100, 2) PROB, BEGIN, END from WP_PURCHASE_PROB
-        where SPU_WID = #{spuId} and rn = #{purchOrder} and EBP_PRODUCT_ID = #{ebpProductId} and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId} and is_spu = '1' order by ACTIVE_DUAL asc
+        where SPU_WID = #{spuId} and rn = #{purchOrder} and EBP_PRODUCT_ID = #{ebpProductId} and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId} and is_spu = '0' order by ACTIVE_DUAL asc
     </select>
 
     <select id="getGrowthUser" resultType="map">

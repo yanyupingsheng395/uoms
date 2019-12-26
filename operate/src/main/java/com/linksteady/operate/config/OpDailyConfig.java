@@ -30,15 +30,13 @@ public class OpDailyConfig implements CommandLineRunner {
     @Bean(name="dailyProperties")
     public DailyProperties dailyProperties()
     {
-//        DailyProperties dailyProperties=dailyPropertiesService.getDailyProperties();
-//
-//        if(null==dailyProperties)
-//        {
-//            dailyProperties=new DailyProperties();
-//        }
-//
-//        return dailyProperties;
-        return new DailyProperties();
+        DailyProperties dailyProperties=dailyPropertiesService.getDailyProperties();
+
+        if(null==dailyProperties)
+        {
+            dailyProperties=new DailyProperties();
+        }
+        return dailyProperties;
     }
 
     /**

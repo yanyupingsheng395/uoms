@@ -42,7 +42,6 @@
     <insert id="insertToPushListLarge">
         INSERT INTO uo_op_push_list_large(
             PUSH_CONTENT,
-            PUSH_PERIOD,
             PUSH_STATUS,
             SOURCE_CODE,
             SOURCE_ID,
@@ -52,13 +51,12 @@
             PUSH_ID
         )
         SELECT T.SMS_CONTENT,
-               T.ORDER_PERIOD,
                'P',
                'ACTIVITY',
                T.ACTIVITY_DETAIL_ID,
                T.USER_PHONE,
                '0',
-               T.PLAN_DT,
+               concat(concat(T.PLAN_DT, T.ORDER_PERIOD), '00'),
                SEQ_UO_OP_PUSH_LIST_LARGE.NEXTVAL
         FROM UO_OP_ACTIVITY_DETAIL T where  head_id = #{headId} and plan_dt = #{planDateWid}
     </insert>
