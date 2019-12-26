@@ -12,7 +12,6 @@ import java.util.Date;
 public class PushListLarge {
 
     private String pushContent;
-    private String pushPeriod;
     private String pushStatus;
     private String callbackCode;
     private String callbackDesc;

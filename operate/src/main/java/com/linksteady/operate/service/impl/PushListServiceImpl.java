@@ -18,16 +18,6 @@ public class PushListServiceImpl implements PushListService {
 
 
     @Override
-    public int getPendingPushCount(int currHour) {
-        return pushListMapper.getPendingPushCount(currHour);
-    }
-
-    @Override
-    public List<PushListInfo> getPendingPushList(int limit,int currHour) {
-        return pushListMapper.getPendingPushList(limit,currHour);
-    }
-
-    @Override
     public List<PushListInfo> getPushInfoListPage(int start, int end, String sourceCode, String pushStatus, String pushDateStr) {
         return pushListMapper.getPushInfoListPage(start, end, sourceCode, pushStatus, pushDateStr);
     }

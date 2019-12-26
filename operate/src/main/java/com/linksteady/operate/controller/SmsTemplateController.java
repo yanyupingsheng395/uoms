@@ -6,7 +6,6 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.SmsTemplate;
-import com.linksteady.operate.push.impl.PushMessageServiceImpl;
 import com.linksteady.operate.service.SmsTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * 短信相关的controller
@@ -29,9 +27,6 @@ public class SmsTemplateController extends BaseController {
 
     @Autowired
     SmsTemplateService smsTemplateService;
-
-    @Autowired
-    PushMessageServiceImpl pushMessageService;
 
     @Autowired
     private DailyProperties dailyProperties;
@@ -94,8 +89,10 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/testSend")
     public ResponseBo testSend(String phoneNum, String smsContent) {
-        int result = pushMessageService.push(phoneNum, smsContent);
 
+        //todo 调用短信发送相关的服务
+
+        int result=0;
         if (result == 0) {
             return ResponseBo.ok("测试发送成功！");
         } else {
@@ -126,7 +123,7 @@ public class SmsTemplateController extends BaseController {
     }
 
     /**
-     * 获取优惠券发送方式
+     * 计算字数
      *0
      * @return
      */

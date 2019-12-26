@@ -6,10 +6,6 @@ import java.util.List;
 
 public interface PushLogService {
 
-    void insertPushLog(PushLog pushLog);
-
-    void consumeLog();
-
     /**
      * 获取最近的日志
      */

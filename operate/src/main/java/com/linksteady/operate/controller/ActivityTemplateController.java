@@ -4,11 +4,8 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityTemplate;
-import com.linksteady.operate.domain.SmsTemplate;
-import com.linksteady.operate.push.impl.PushMessageServiceImpl;
 import com.linksteady.operate.service.ActivityTemplateService;
 import com.linksteady.operate.service.ActivityUserGroupService;
-import com.linksteady.operate.service.SmsTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,9 +27,6 @@ public class ActivityTemplateController extends BaseController {
 
     @Autowired
     private ActivityTemplateService activityTemplateService;
-
-    @Autowired
-    PushMessageServiceImpl pushMessageService;
 
     @Autowired
     private ActivityUserGroupService activityUserGroupService;

@@ -77,9 +77,9 @@
                             <label class="lyear-radio radio-inline radio-primary">
                                 <input type="radio" name="pushType" value="SMS" checked disabled><span>短信</span>
                             </label>
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="pushType" value="WX" disabled><span>公众号消息</span>
-                            </label>
+                            <!--<label class="lyear-radio radio-inline radio-primary">-->
+                                <!--<input type="radio" name="pushType" value="WX" disabled><span>公众号消息</span>-->
+                            <!--</label>-->
                             <label class="lyear-radio radio-inline radio-primary">
                                 <input type="radio" name="pushType" value="NONE" disabled><span>自行触达</span>
                             </label>
@@ -87,7 +87,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-3 control-label">当前使用的推送方法</label>
+                        <label class="col-md-3 control-label">默认的推送方法</label>
                         <div class="controls-box col-md-4">
                             <label class="lyear-radio radio-inline radio-primary">
                                 <input type="radio" name="pushMethod" value="AI" checked disabled><span>智能推送</span>
@@ -159,10 +159,30 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-3 control-label" for="smsLengthLimit">短链长度</label>
+                        <label class="col-md-3 control-label" for="smsLengthLimit">短链最大长度</label>
                         <div class="col-md-4">
                             <input class="form-control" id="shortUrlLen" name="shortUrlLen" readonly>
                             <small class="help-block"></small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="smsLengthLimit">优惠券名称最大长度</label>
+                        <div class="col-md-4">
+                            <input class="form-control" id="couponNameLen" name="couponNameLen" readonly>
+                            <small class="help-block"></small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">优惠券发放方式</label>
+                        <div class="controls-box col-md-4">
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="couponSendType" value="A" checked disabled><span>自行领取</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="couponSendType" value="B" disabled><span>系统发送</span>
+                            </label>
                         </div>
                     </div>
 

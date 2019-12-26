@@ -8,6 +8,7 @@ import java.util.Date;
 @Data
 public class PushLog {
 
+    private Long logId;
     /**
      * 涉及的用户数
      */
