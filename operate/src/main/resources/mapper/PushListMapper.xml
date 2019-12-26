@@ -18,32 +18,6 @@
         <result column="PUSH_DATE_STR" jdbcType="VARCHAR" property="pushDateStr"></result>
     </resultMap>
 
-    <select id="getPendingPushCount" resultType="int">
-        select count(*)
-        FROM UO_OP_PUSH_LIST C
-        WHERE C.IS_PUSH = '0'
-          AND TO_NUMBER(PUSH_PERIOD)&lt;= #{currHour}
-    </select>
-
-    <select id="getPendingPushList" resultMap="baseResult">
-                 select T.PUSH_ID,
-                        T.PUSH_CONTENT,
-                        T.PUSH_PERIOD,
-                        T.PUSH_STATUS,
-                        T.CALLBACK_ID,
-                        T.CALLBACK_CODE,
-                        T.CALLBACK_DESC,
-                        T.SOURCE_CODE,
-                        T.USER_PHONE,
-                        T.USER_OPENID,
-                        T.SOURCE_ID,
-                        ROWNUM   RN
-                 FROM UO_OP_PUSH_LIST T
-                 WHERE T.IS_PUSH = '0'
-                   AND TO_NUMBER(PUSH_PERIOD)&lt;= #{currHour}
-                   AND ROWNUM &lt;= #{limit}
-    </select>
-
     <update id="updateSendStatus">
         <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
             update UO_OP_PUSH_LIST

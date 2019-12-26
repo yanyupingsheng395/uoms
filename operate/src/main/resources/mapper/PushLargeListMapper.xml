@@ -3,7 +3,6 @@
 <mapper namespace="com.linksteady.operate.dao.PushLargeListMapper">
     <resultMap id="base" type="com.linksteady.operate.domain.PushListLarge">
         <result column="PUSH_CONTENT" property="pushContent" jdbcType="VARCHAR"></result>
-        <result column="PUSH_PERIOD" property="pushPeriod" jdbcType="VARCHAR"></result>
         <result column="PUSH_STATUS" property="pushStatus" jdbcType="VARCHAR"></result>
         <result column="CALLBACK_CODE" property="callbackCode" jdbcType="VARCHAR"></result>
         <result column="CALLBACK_DESC" property="callbackDesc" jdbcType="VARCHAR"></result>
@@ -19,34 +18,13 @@
     </resultMap>
 
     <select id="getPushLargeListCount" resultType="int">
-        select count(1) from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
+        select count(1) from UO_OP_PUSH_LIST_LARGE
     </select>
 
     <select id="getPushLargeList" resultMap="base">
         select ROWNUM rn, t.* from (
-        select PUSH_ID,SOURCE_ID, USER_PHONE from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
-        and PUSH_CONTENT = #{sms} order by PUSH_ID desc) t
+        select PUSH_ID,SOURCE_ID, USER_PHONE from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0'  order by PUSH_ID desc) t
         where ROWNUM &lt;= #{end}
-    </select>
-
-    <select id="getSmsContentList" resultType="string">
-        select PUSH_CONTENT from UO_OP_PUSH_LIST_LARGE where IS_PUSH = '0' and to_number(PUSH_PERIOD) &lt;= #{currentHour}
-        group by PUSH_CONTENT
-    </select>
-
-    <update id="updatePushState">
-        update UO_OP_PUSH_LIST_LARGE set IS_PUSH = '1', PUSH_DATE = sysdate,push_status=#{status}
-        <where>
-            PUSH_ID in
-            <foreach collection="pushIdList" open="(" close=")" separator="," item="item">
-                #{item}
-            </foreach>
-        </where>
-    </update>
-
-    <select id="getPushListCountBySms" resultType="int">
-        select count(1) from UO_OP_PUSH_LIST_LARGE where is_push = '0' and  to_number(PUSH_PERIOD) &lt;= #{currentHour}
-        and PUSH_CONTENT = #{sms}
     </select>
 
     <insert id="insertLargeDataByManual">

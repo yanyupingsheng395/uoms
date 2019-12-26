@@ -49,10 +49,6 @@ function refresh()
             $("input[name='pushMethod']").removeProp("checked");
             $("input[name='pushMethod'][value='"+data.pushMethod+"']").prop("checked",true);
 
-            //优惠券领用方式
-            $("input[name='couponMthod']").removeProp("checked");
-            $("input[name='couponMthod'][value='"+data.couponMthod+"']").prop("checked",true);
-
             //商品明细页链接模板
             $("#productUrl").val(data.productUrl);
 
@@ -82,8 +78,15 @@ function refresh()
             //短链接的长度
             $("#shortUrlLen").val(data.shortUrlLen);
 
+
+            $("#couponNameLen").val(data.couponNameLen);
+
             //短信内容的长度限制
             $("#smsLengthLimit").val(data.smsLengthLimit);
+
+            //优惠券领用方式
+            $("input[name='couponSendType']").removeProp("checked");
+            $("input[name='couponSendType'][value='"+data.couponSendType+"']").prop("checked",true);
         }
     });
 }

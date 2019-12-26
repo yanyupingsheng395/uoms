@@ -5,6 +5,7 @@
         <!--
           WARNING - @mbg.generated
         -->
+        <result column="LOG_ID" jdbcType="DATE" property="logId"/>
         <result column="LOG_DATE" jdbcType="DATE" property="logDate"/>
         <result column="LOG_CONTENT" jdbcType="DECIMAL" property="logContent"/>
         <result column="LOG_TYPE" jdbcType="DECIMAL" property="logType"/>
@@ -13,11 +14,8 @@
     </resultMap>
 
     <select id="getList" resultMap="BaseResultMap">
-       select to_char(LOG_DATE, 'mm-dd hh24:mi') LOG_DATE_STR,LOG_CONTENT,LOG_TYPE,USER_COUNT from UO_OP_PUSHLOG where TRUNC(SYSDATE)-TRUNC(LOG_DATE)=#{day}
+       select LOG_ID,to_char(LOG_DATE, 'mm-dd hh24:mi') LOG_DATE_STR,LOG_CONTENT,LOG_TYPE,USER_COUNT from UO_OP_PUSHLOG where TRUNC(SYSDATE)-TRUNC(LOG_DATE)=#{day}
        order by LOG_DATE desc
   </select>
 
-    <insert id="insertPushLog">
-        INSERT INTO UO_OP_PUSHLOG (LOG_DATE, LOG_CONTENT,LOG_TYPE, USER_COUNT) values(#{logDate}, #{logContent}, #{logType}, #{userCount})
-    </insert>
 </mapper>
