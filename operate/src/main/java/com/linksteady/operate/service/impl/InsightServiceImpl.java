@@ -620,7 +620,13 @@ public class InsightServiceImpl implements InsightService {
     @Override
     public Map<String, Object> categoryInPurchaseTimes(String type, String id, String period) {
         Map<String, Object> result = Maps.newHashMap();
-        List<Map<String, Object>> dataList = insightMapper.categoryInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
+        List<Map<String, Object>> dataList = Lists.newArrayList();
+        if(type.equalsIgnoreCase("spu")) {
+            dataList = insightMapper.spuCategoryInPurchaseTimes(type, id, 0 - Integer.parseInt(period));
+        }else if(type.equalsIgnoreCase("product")){
+            dataList = insightMapper.productCategoryInPurchaseTimes(type, id, 0 - Integer.parseInt(period));
+        }
+
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("PURCH_TIMES"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("AVG_CATE_NUM") == null ? "0" : x.get("AVG_CATE_NUM"))).collect(Collectors.toList());
         result.put("xdata", xdata);

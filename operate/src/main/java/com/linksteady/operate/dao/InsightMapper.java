@@ -27,7 +27,9 @@ public interface InsightMapper {
 
     List<Map<String, Object>> joinRateInPurchaseTimes(String type, String id, int period);
 
-    List<Map<String, Object>> categoryInPurchaseTimes(String type, String id, int period);
+    List<Map<String, Object>> spuCategoryInPurchaseTimes(String type, String id, int period);
+
+    List<Map<String, Object>> productCategoryInPurchaseTimes(String type, String id, int period);
 
     List<Map<String, Object>> periodInPurchaseTimes(String type, String id, int period);
 

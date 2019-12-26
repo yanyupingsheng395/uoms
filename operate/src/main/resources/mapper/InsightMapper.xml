@@ -151,48 +151,84 @@
              ) order by PURCH_TIMES asc
     </select>
 
-    <select id="categoryInPurchaseTimes" resultType="map">
+    <select id="spuCategoryInPurchaseTimes" resultType="map">
         WITH SPU_PURCH AS(
-         SELECT SPU_WID,
-               USER_ID,
-               ROW_NUMBER() OVER(PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC) PURCH_TIMES,
-               LAG(ORDER_DT, 1) OVER(PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC) PREV_PUR_DT,
-               ORDER_DT,
-               SPU_ORDER_FEE  PURCH_FEE,
-               QUANTITY,
-               ORDER_ID
-           FROM (
-              SELECT
-                t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT,SUM(t1.PRICE * t1.QUANTITY) SPU_ORDER_FEE，SUM(QUANTITY) QUANTITY
-            FROM W_ORDER_DETAILS t1, W_PRODUCT t2
-           WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
-            <if test="type == 'product'">
-                and t2.ebp_product_id = #{id}
-            </if>
-            <if test="type == 'spu'">
-                and t2.SPU_WID = #{id}
-            </if>
-             AND t1.VALID_STATUS = 1
-             AND t1.PRICE > 0
+        SELECT SPU_WID,
+        USER_ID,
+        ROW_NUMBER() OVER(PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC) PURCH_TIMES,
+        LAG(ORDER_DT, 1) OVER(PARTITION BY SPU_WID, USER_ID ORDER BY ORDER_DT ASC) PREV_PUR_DT,
+        ORDER_DT,
+        SPU_ORDER_FEE  PURCH_FEE,
+        QUANTITY,
+        ORDER_ID
+        FROM (
+        SELECT
+        t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT,SUM(t1.PRICE * t1.QUANTITY) SPU_ORDER_FEE, SUM(QUANTITY) QUANTITY
+        FROM W_ORDER_DETAILS t1, W_PRODUCT t2
+        WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
+        AND t1.VALID_STATUS = 1
+        AND t1.PRICE > 0
         and t1.ORDER_DT_WID >= to_char(ADD_MONTHS(SYSDATE, #{period}), 'yyyymmdd') --如果是过去12个月则 为-12
         GROUP BY t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT
-           )
+        )
         ),
         PURCH_CATE_NUM AS(
-          SELECT ORDER_ID, COUNT(DISTINCT SPU_WID) CATE_NUM
-            FROM SPU_PURCH
-           GROUP BY ORDER_ID
+        SELECT ORDER_ID, COUNT(DISTINCT SPU_WID) CATE_NUM
+        FROM SPU_PURCH
+        GROUP BY ORDER_ID
         )
         SELECT SPU_WID, PURCH_TIMES,AVG_CATE_NUM
         FROM (
         SELECT SPU_WID,
-               PURCH_TIMES,
-                TRUNC(SUM(v2.CATE_NUM)/COUNT(*),2) AVG_CATE_NUM
-          FROM SPU_PURCH v1,PURCH_CATE_NUM v2
-          WHERE v1.ORDER_ID = v2.ORDER_ID
-         GROUP BY SPU_WID,PURCH_TIMES
-         ) order by PURCH_TIMES asc
+        PURCH_TIMES,
+        TRUNC(SUM(v2.CATE_NUM)/COUNT(*),2) AVG_CATE_NUM
+        FROM SPU_PURCH v1,PURCH_CATE_NUM v2
+        WHERE v1.ORDER_ID = v2.ORDER_ID
+        and SPU_WID = #{id}
+        GROUP BY SPU_WID,PURCH_TIMES
+        ) order by PURCH_TIMES asc
     </select>
+
+
+    <select id="productCategoryInPurchaseTimes" resultType="map">
+        WITH SPU_PURCH AS(
+        SELECT EBP_PRODUCT_ID,
+        USER_ID,
+        ROW_NUMBER() OVER(PARTITION BY EBP_PRODUCT_ID, USER_ID ORDER BY ORDER_DT ASC) PURCH_TIMES,
+        LAG(ORDER_DT, 1) OVER(PARTITION BY EBP_PRODUCT_ID, USER_ID ORDER BY ORDER_DT ASC) PREV_PUR_DT,
+        ORDER_DT,
+        SPU_ORDER_FEE  PURCH_FEE,
+        QUANTITY,
+        ORDER_ID
+        FROM (
+        SELECT
+        t2.EBP_PRODUCT_ID,t1.USER_ID,ORDER_ID,ORDER_DT,SUM(t1.PRICE * t1.QUANTITY) SPU_ORDER_FEE, SUM(QUANTITY) QUANTITY
+        FROM W_ORDER_DETAILS t1, W_PRODUCT t2
+        WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
+        AND t1.VALID_STATUS = 1
+        AND t1.PRICE > 0
+        and t1.ORDER_DT_WID >= to_char(ADD_MONTHS(SYSDATE, #{period}), 'yyyymmdd') --如果是过去12个月则 为-12
+        GROUP BY t2.EBP_PRODUCT_ID,t1.USER_ID,ORDER_ID,ORDER_DT
+        )
+        ),
+        PURCH_CATE_NUM AS(
+        SELECT ORDER_ID, COUNT(DISTINCT EBP_PRODUCT_ID) CATE_NUM
+        FROM SPU_PURCH
+        GROUP BY ORDER_ID
+        )
+        SELECT EBP_PRODUCT_ID, PURCH_TIMES,AVG_CATE_NUM
+        FROM (
+        SELECT EBP_PRODUCT_ID,
+        PURCH_TIMES,
+        TRUNC(SUM(v2.CATE_NUM)/COUNT(*),2) AVG_CATE_NUM,
+        FROM SPU_PURCH v1,PURCH_CATE_NUM v2
+        WHERE v1.ORDER_ID = v2.ORDER_ID
+        and EBP_PRODUCT_ID = #{id}
+        GROUP BY EBP_PRODUCT_ID,PURCH_TIMES
+        ) order by PURCH_TIMES asc
+    </select>
+
+
 
     <select id="periodInPurchaseTimes" resultType="map">
         WITH SPU_PURCH AS(
