@@ -293,14 +293,18 @@ function unitPriceInPurchaseTimes() {
  * 连带率随购买次数变化
  */
 function joinRateInPurchaseTimes() {
+    var chart = echarts.init(document.getElementById("chart2"), 'macarons');
+    chart.showLoading({
+        text : '加载数据中...'
+    });
     var id = $("#spuProductId1").val();
     var type = $("#spuProductType1").val();
     var period = $("#period").val();
 
     $.get("/insight/joinRateInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
         var option = getOption(r.data, "平均连带率", "平均连带率");
-        var chart = echarts.init(document.getElementById("chart2"), 'macarons');
         chart.setOption(option);
+        chart.hideLoading();
     });
 }
 
@@ -308,13 +312,17 @@ function joinRateInPurchaseTimes() {
  * 品类种数随购买次数变化
  */
 function categoryInPurchaseTimes() {
+    var chart = echarts.init(document.getElementById("chart2"), 'macarons');
+    chart.showLoading({
+        text : '加载数据中...'
+    });
     var id = $("#spuProductId1").val();
     var type = $("#spuProductType1").val();
     var period = $("#period").val();
     $.get("/insight/categoryInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
         var option = getOption(r.data, "平均购买spu种类数", "平均购买spu种类数");
-        var chart = echarts.init(document.getElementById("chart2"), 'macarons');
         chart.setOption(option);
+        chart.hideLoading();
     });
 }
 
@@ -322,13 +330,17 @@ function categoryInPurchaseTimes() {
  * 时间间隔随购买次数变化
  */
 function periodInPurchaseTimes() {
+    var chart = echarts.init(document.getElementById("chart2"), 'macarons');
+    chart.showLoading({
+        text : '加载数据中...'
+    });
     var id = $("#spuProductId1").val();
     var type = $("#spuProductType1").val();
     var period = $("#period").val();
     $.get("/insight/periodInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
         var option = getOption(r.data, "平均购买间隔", "平均购买间隔");
-        var chart = echarts.init(document.getElementById("chart2"), 'macarons');
         chart.setOption(option);
+        chart.hideLoading();
     });
 }
 
@@ -845,11 +857,9 @@ let spu_relation_chart_flag = false;
 let ebpProductIdArray;
 let nextProductIdArray;
 function getSpuRelation(spuId, purchOrder) {
-    // var chart1 = echarts.init(document.getElementById("chart_relation_1"), 'macarons');
     spu_relation_chart.showLoading({
         text : '加载数据中...'
     });
-    // var chart2 = echarts.init(document.getElementById("chart_relation_2"), 'macarons');
     product_relation_chart.showLoading({
         text : '加载数据中...'
     });
@@ -859,18 +869,6 @@ function getSpuRelation(spuId, purchOrder) {
         var option1 = getSpuChartOption(r.data);
         spu_relation_chart.hideLoading();
         spu_relation_chart.setOption(option1);
-
-        // if(!spu_relation_chart_flag) {
-        //     spu_relation_chart_flag = true;
-        //     chart1.on('click', function(params) {
-        //         if(params.dataIndex !== 0 && params.name !== '其他') {
-        //             let spuId = $("#convertSpu").val();
-        //             let purchOrder = $("#purchOrder").val();
-        //             let ebpProductId = ebpProductIdArray[params.dataIndex];
-        //             getProductRelation(ebpProductId, spuId, purchOrder);
-        //         }
-        //     });
-        // }
         var option2 = getProductOption(r.data.xdata2, r.data.ydata2);
         product_relation_chart.hideLoading();
         product_relation_chart.setOption(option2);
@@ -889,29 +887,11 @@ function getSpuRelation(spuId, purchOrder) {
 // 下一次转化商品
 let product_relation_chart_flag = false;
 function getProductRelation(ebpProductId, spuId, purchOrder) {
-    // var chart = echarts.init(document.getElementById("chart_relation_2"), 'macarons');
     product_relation_chart.showLoading({
         text : '加载数据中...'
     });
     $.get("/insight/getProductConvertRate", {spuId:spuId, purchOrder:purchOrder, productId:ebpProductId}, function (r) {
         nextProductIdArray = r.data['nextProductId'];
-
-        // if(!product_relation_chart_flag) {
-        //     chart.on('click', function(params) {
-        //         product_relation_chart_flag = true;
-        //         if(params.name !== '其他') {
-        //             let nextProductId = nextProductIdArray[params.dataIndex];
-        //             let spuId = $("#convertSpu").val();
-        //             let purchOrder = $("#purchOrder").val();
-        //             // 获取表格
-        //             getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId);
-        //             // 获取转化概率
-        //             getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId);
-        //             // 获取用户表格
-        //             getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId);
-        //         }
-        //     });
-        // }
         var option = getProductOption(r.data.xdata, r.data.ydata);
         product_relation_chart.hideLoading();
         product_relation_chart.setOption(option);
