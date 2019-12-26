@@ -159,10 +159,10 @@ export default function define(runtime, observer) {
                 let f = d3.format( ",.0f" );
                 var result = "购买人次：" + f( value );
                 if(d != null) {
-                    result += "\n当日当次购买中本SPU的用户数量（人）:" + d['cUserCnt'];
-                    result += "\n当日当次购买中本SPU的用户占比（%）:" + d['cUserPercent'];
-                    result += "\n前30日当次购买中本SPU的用户数量（人）:" + d['bUserCnt'];
-                    result += "\n前30日当次购买中本SPU的用户占比（%）:" + d['bUserPercent'];
+                    result += "\n观测期内本SPU的用户数量（人）:" + d['cUserCnt'];
+                    result += "\n观测期内本SPU的用户占比（%）:" + d['cUserPercent'];
+                    result += "\n观测期前30天本SPU的用户数量（人）:" + d['bUserCnt'];
+                    result += "\n观测期前30天本SPU的用户占比（%）:" + d['bUserPercent'];
                 }
                 return result;
             }

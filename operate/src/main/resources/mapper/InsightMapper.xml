@@ -101,7 +101,7 @@
              GROUP BY
                 SPU_WID,
                 PURCH_TIMES
-         )
+         ) order by PURCH_TIMES asc
     </select>
 
     <select id="joinRateInPurchaseTimes" resultType="map">
@@ -148,7 +148,7 @@
                  GROUP BY
                     SPU_WID,
                     PURCH_TIMES
-             )
+             ) order by PURCH_TIMES asc
     </select>
 
     <select id="categoryInPurchaseTimes" resultType="map">
@@ -191,7 +191,7 @@
           FROM SPU_PURCH v1,PURCH_CATE_NUM v2
           WHERE v1.ORDER_ID = v2.ORDER_ID
          GROUP BY SPU_WID,PURCH_TIMES
-         )
+         ) order by PURCH_TIMES asc
     </select>
 
     <select id="periodInPurchaseTimes" resultType="map">
@@ -228,7 +228,7 @@
         FROM SPU_PURCH
         WHERE TRUNC(ORDER_DT) - TRUNC(PREV_PUR_DT) > 0
         )
-
+        select * from (
         SELECT v1.SPU_WID, v1.PURCH_TIMES,TRUNC(AVG(v2.PUR_GAP),2) AVG_PUR_GAP FROM(
         SELECT  SPU_WID,PURCH_TIMES,COUNT(*) TTL_NUM FROM PUR_GAP_RN GROUP BY  SPU_WID,PURCH_TIMES
 
@@ -237,6 +237,7 @@
         AND v1.PURCH_TIMES = v2.PURCH_TIMES
         AND v2.RN &lt;=  CEIL(v1.TTL_NUM * 0.8)
         GROUP BY v1.SPU_WID,v1.PURCH_TIMES
+        ) order by PURCH_TIMES asc
     </select>
 
     <select id="getSpuConvertRateProducts" resultType="map">

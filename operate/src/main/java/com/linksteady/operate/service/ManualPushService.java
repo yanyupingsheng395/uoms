@@ -12,9 +12,9 @@ import java.util.Map;
  * @date 2019/12/25
  */
 public interface ManualPushService {
-    int getHeaderListCount();
+    int getHeaderListCount(String scheduleDate);
 
-    List<ManualHeader> getHeaderListData(int start, int end);
+    List<ManualHeader> getHeaderListData(int start, int end, String scheduleDate);
 
     void pushMessage(String headId, String pushType);
 

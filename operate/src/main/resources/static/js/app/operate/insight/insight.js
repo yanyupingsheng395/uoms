@@ -807,41 +807,73 @@ function getSpuChartOption(data) {
     return option;
 }
 
+let spu_relation_chart;
+let product_relation_chart;
+init_chart_event();
+function init_chart_event() {
+    let ebpProductId;
+    spu_relation_chart = echarts.init(document.getElementById("chart_relation_1"), 'macarons');
+    product_relation_chart = echarts.init(document.getElementById("chart_relation_2"), 'macarons');
+    spu_relation_chart.on('click', function(params) {
+        if(params.dataIndex !== 0 && params.name !== '其他') {
+            let spuId = $("#convertSpu").val();
+            let purchOrder = $("#purchOrder").val();
+            ebpProductId = ebpProductIdArray[params.dataIndex];
+            getProductRelation(ebpProductId, spuId, purchOrder);
+        }
+    });
+
+    product_relation_chart.on('click', function(params) {
+        product_relation_chart_flag = true;
+        if(params.name !== '其他') {
+            let nextProductId = nextProductIdArray[params.dataIndex];
+            let spuId = $("#convertSpu").val();
+            let purchOrder = $("#purchOrder").val();
+            // 获取表格
+            getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId);
+            // 获取转化概率
+            getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId);
+            // 获取用户表格
+            getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId);
+        }
+    });
+}
+
 // 初始化的数据
 // 关系柱状图1 + 关系柱状图2
 let spu_relation_chart_flag = false;
 let ebpProductIdArray;
 let nextProductIdArray;
 function getSpuRelation(spuId, purchOrder) {
-    var chart1 = echarts.init(document.getElementById("chart_relation_1"), 'macarons');
-    chart1.showLoading({
+    // var chart1 = echarts.init(document.getElementById("chart_relation_1"), 'macarons');
+    spu_relation_chart.showLoading({
         text : '加载数据中...'
     });
-    var chart2 = echarts.init(document.getElementById("chart_relation_2"), 'macarons');
-    chart2.showLoading({
+    // var chart2 = echarts.init(document.getElementById("chart_relation_2"), 'macarons');
+    product_relation_chart.showLoading({
         text : '加载数据中...'
     });
     $.get("/insight/getSpuRelation", {spuId:spuId, purchOrder:purchOrder}, function (r) {
         ebpProductIdArray = r.data.productId;
         nextProductIdArray = r.data.nextProductId;
         var option1 = getSpuChartOption(r.data);
-        chart1.hideLoading();
-        chart1.setOption(option1);
+        spu_relation_chart.hideLoading();
+        spu_relation_chart.setOption(option1);
 
-        if(!spu_relation_chart_flag) {
-            spu_relation_chart_flag = true;
-            chart1.on('click', function(params) {
-                if(params.dataIndex !== 0 && params.name !== '其他') {
-                    let spuId = $("#convertSpu").val();
-                    let purchOrder = $("#purchOrder").val();
-                    let ebpProductId = ebpProductIdArray[params.dataIndex];
-                    getProductRelation(ebpProductId, spuId, purchOrder);
-                }
-            });
-        }
+        // if(!spu_relation_chart_flag) {
+        //     spu_relation_chart_flag = true;
+        //     chart1.on('click', function(params) {
+        //         if(params.dataIndex !== 0 && params.name !== '其他') {
+        //             let spuId = $("#convertSpu").val();
+        //             let purchOrder = $("#purchOrder").val();
+        //             let ebpProductId = ebpProductIdArray[params.dataIndex];
+        //             getProductRelation(ebpProductId, spuId, purchOrder);
+        //         }
+        //     });
+        // }
         var option2 = getProductOption(r.data.xdata2, r.data.ydata2);
-        chart2.hideLoading();
-        chart2.setOption(option2);
+        product_relation_chart.hideLoading();
+        product_relation_chart.setOption(option2);
 
         let ebpProductId = ebpProductIdArray[1];
         let nextProductId = (nextProductIdArray === undefined ? "":nextProductIdArray[0]);
@@ -857,32 +889,32 @@ function getSpuRelation(spuId, purchOrder) {
 // 下一次转化商品
 let product_relation_chart_flag = false;
 function getProductRelation(ebpProductId, spuId, purchOrder) {
-    var chart = echarts.init(document.getElementById("chart_relation_2"), 'macarons');
-    chart.showLoading({
+    // var chart = echarts.init(document.getElementById("chart_relation_2"), 'macarons');
+    product_relation_chart.showLoading({
         text : '加载数据中...'
     });
     $.get("/insight/getProductConvertRate", {spuId:spuId, purchOrder:purchOrder, productId:ebpProductId}, function (r) {
         nextProductIdArray = r.data['nextProductId'];
 
-        if(!product_relation_chart_flag) {
-            chart.on('click', function(params) {
-                product_relation_chart_flag = true;
-                if(params.name !== '其他') {
-                    let nextProductId = nextProductIdArray[params.dataIndex];
-                    let spuId = $("#convertSpu").val();
-                    let purchOrder = $("#purchOrder").val();
-                    // 获取表格
-                    getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId);
-                    // 获取转化概率
-                    getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId);
-                    // 获取用户表格
-                    getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId);
-                }
-            });
-        }
+        // if(!product_relation_chart_flag) {
+        //     chart.on('click', function(params) {
+        //         product_relation_chart_flag = true;
+        //         if(params.name !== '其他') {
+        //             let nextProductId = nextProductIdArray[params.dataIndex];
+        //             let spuId = $("#convertSpu").val();
+        //             let purchOrder = $("#purchOrder").val();
+        //             // 获取表格
+        //             getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId);
+        //             // 获取转化概率
+        //             getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId);
+        //             // 获取用户表格
+        //             getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId);
+        //         }
+        //     });
+        // }
         var option = getProductOption(r.data.xdata, r.data.ydata);
-        chart.hideLoading();
-        chart.setOption(option);
+        product_relation_chart.hideLoading();
+        product_relation_chart.setOption(option);
         let nextProductId = nextProductIdArray === undefined ? "":nextProductIdArray[0];
         // 获取表格
         getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId);

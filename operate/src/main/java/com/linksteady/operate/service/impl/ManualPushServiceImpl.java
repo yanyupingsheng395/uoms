@@ -47,13 +47,13 @@ public class ManualPushServiceImpl implements ManualPushService {
     private PushLargeListMapper pushLargeListMapper;
 
     @Override
-    public int getHeaderListCount() {
-        return manualHeaderMapper.getHeaderListCount();
+    public int getHeaderListCount(String scheduleDate) {
+        return manualHeaderMapper.getHeaderListCount(scheduleDate);
     }
 
     @Override
-    public List<ManualHeader> getHeaderListData(int start, int end) {
-        return manualHeaderMapper.getHeaderListData(start, end);
+    public List<ManualHeader> getHeaderListData(int start, int end, String scheduleDate) {
+        return manualHeaderMapper.getHeaderListData(start, end, scheduleDate);
     }
 
     @Override

@@ -34,8 +34,9 @@ public class ManualPushController {
     public ResponseBo getHeaderListPage(QueryRequest request) {
         int start = request.getStart();
         int end = request.getEnd();
-        int count = manualPushService.getHeaderListCount();
-        List<ManualHeader> dataList = manualPushService.getHeaderListData(start, end);
+        String scheduleDate = request.getParam().get("scheduleDate");
+        int count = manualPushService.getHeaderListCount(scheduleDate);
+        List<ManualHeader> dataList = manualPushService.getHeaderListData(start, end, scheduleDate);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -56,7 +57,7 @@ public class ManualPushController {
     @PostMapping("/pushMessage")
     public synchronized ResponseBo pushMessage(@RequestParam("headId") String headId, @RequestParam("pushType") String pushType) {
         String status = manualPushService.getHeadStatus(headId);
-        // 已上传，待推送
+        // 判读当前状态为已上传，待推送，则可以继续执行
         if(status.equalsIgnoreCase("0")) {
             manualPushService.pushMessage(headId, pushType);
         }else {

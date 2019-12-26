@@ -1,6 +1,7 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.ManualHeader;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -10,9 +11,9 @@ import java.util.Map;
  * @date 2019/12/25
  */
 public interface ManualHeaderMapper {
-    int getHeaderListCount();
+    int getHeaderListCount(@Param("scheduleDate") String scheduleDate);
 
-    List<ManualHeader> getHeaderListData(int start, int end);
+    List<ManualHeader> getHeaderListData(int start, int end, String scheduleDate);
 
     void saveHeader(ManualHeader manualHeader);
 

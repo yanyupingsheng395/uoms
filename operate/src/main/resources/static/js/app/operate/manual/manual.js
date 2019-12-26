@@ -12,7 +12,7 @@ function initTable() {
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,
-                param: {touchDt: $("#touchDt").val()}
+                param: {scheduleDate: $("#scheduleDate").val()}
             };
         },
         columns: [{
@@ -209,3 +209,12 @@ function getPushInfo(headId) {
         }
     });
 }
+
+$("#btn_query").click(function () {
+    $MB.refreshTable('dataTable');
+});
+
+$("#btn_reset").click(function () {
+    $("#scheduleDate").val('');
+    $MB.refreshTable('dataTable');
+});

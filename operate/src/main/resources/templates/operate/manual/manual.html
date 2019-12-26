@@ -47,11 +47,11 @@
                             <div class="select-list">
                                 <ul>
                                     <li>
-                                        日期：<input type="text" name="touchDt" id="touchDt" class="js-datepicker" data-date-format="yyyy-mm-dd"/>
+                                        计划推送日期：<input type="text" name="scheduleDate" id="scheduleDate" class="js-datepicker" data-date-format="yyyy-mm-dd"/>
                                     </li>
                                     <li>
                                         <a class="btn btn-primary btn-rounded btn-sm" id="btn_query"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetDaily()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" id="btn_reset"><i class="fa fa-refresh"></i>&nbsp;重置</a>
                                     </li>
                                 </ul>
                             </div>
@@ -135,6 +135,7 @@
     $("#pushDate").datetimepicker({
         locale: 'zh-CN',
         format: 'YYYY-MM-DD HH:mm:SS',
+        minDate: new Date(),
         inline: false,
         sideBySide: true,
         icons: {
