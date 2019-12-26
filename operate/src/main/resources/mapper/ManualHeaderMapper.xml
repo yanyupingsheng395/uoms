@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.ManualHeaderMapper">
+
+    <resultMap id="base" type="com.linksteady.operate.domain.ManualHeader">
+        <result column="head_id" jdbcType="DECIMAL" property="headId"></result>
+        <result column="file_name" jdbcType="VARCHAR" property="fileName"></result>
+        <result column="all_num" jdbcType="DECIMAL" property="allNum"></result>
+        <result column="valid_num" jdbcType="DECIMAL" property="validNum"></result>
+        <result column="unvalid_num" jdbcType="DECIMAL" property="unvalidNum"></result>
+        <result column="success_num" jdbcType="DECIMAL" property="successNum"></result>
+        <result column="faild_num" jdbcType="DECIMAL" property="faildNum"></result>
+        <result column="intercept_num" jdbcType="DECIMAL" property="interceptNum"></result>
+        <result column="status" jdbcType="VARCHAR" property="status"></result>
+        <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt"></result>
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt"></result>
+        <result column="insert_by" jdbcType="VARCHAR" property="insertBy"></result>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"></result>
+        <result column="sms_content" jdbcType="VARCHAR" property="smsContent"></result>
+        <result column="push_type" jdbcType="VARCHAR" property="pushType"></result>
+        <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"></result>
+        <result column="actual_push_date" jdbcType="TIMESTAMP" property="actualPushDate"></result>
+    </resultMap>
+
+    <select id="getHeaderListCount" resultType="int">
+        select count(1) from UO_OP_MANUAL_HEADER
+    </select>
+
+    <select id="getHeaderListData" resultMap="base">
+        select * from (
+            select t.*, rownum rn from (
+                select head_id, file_name, all_num, valid_num, unvalid_num, success_num, faild_num, intercept_num, status, insert_dt, update_dt, insert_by, update_by, sms_content, push_type, schedule_date, actual_push_date
+                from UO_OP_MANUAL_HEADER order by head_id desc
+            ) t where ROWNUM &lt;= #{end}
+        ) where rn &gt;= #{start}
+    </select>
+
+    <insert id="saveHeader">
+        <selectKey resultType="long" keyColumn="head_id" keyProperty="headId" order="BEFORE">
+            select UO_OP_MANUAL_HEADER_SEQ.nextval from dual
+        </selectKey>
+        insert into UO_OP_MANUAL_HEADER(head_id, file_name, all_num, valid_num, unvalid_num, status, insert_dt, insert_by, sms_content, push_type, schedule_date)
+        values (#{headId}, #{fileName}, #{allNum}, #{validNum}, #{unvalidNum}, #{status}, #{insertDt}, #{insertBy}, #{smsContent}, #{pushType}, #{scheduleDate})
+    </insert>
+
+    <select id="getPushInfo" resultType="map">
+        select PUSH_TYPE, to_char(SCHEDULE_DATE, 'yyyy-mm-dd hh24:mi:ss') SCHEDULE_DATE from UO_OP_MANUAL_HEADER
+        where HEAD_ID = #{headId}
+    </select>
+
+    <select id="getHeadStatus" resultType="string">
+        select STATUS from UO_OP_MANUAL_HEADER where HEAD_ID = #{headId}
+    </select>
+
+    <update id="updateScheduleDate">
+        update UO_OP_MANUAL_HEADER set SCHEDULE_DATE = #{scheduleDate}
+        where head_id = #{headId}
+    </update>
+
+    <update id="updateStatus">
+        update UO_OP_MANUAL_HEADER set STATUS = #{status}
+        where head_id = #{headId}
+    </update>
+</mapper>

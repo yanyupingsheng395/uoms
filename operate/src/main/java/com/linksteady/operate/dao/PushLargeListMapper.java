@@ -42,4 +42,10 @@ public interface PushLargeListMapper {
      */
     int getPushListCountBySms(int currentHour, String sms);
 
+    /**
+     * 手动导入短信
+     * @param headId
+     */
+    void insertLargeDataByManual(String headId);
+
 }

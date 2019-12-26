@@ -283,4 +283,13 @@ public class PageController {
     public String insight() {
         return "operate/insight/insight";
     }
+
+    /**
+     * 手动短信推送
+     * @return
+     */
+    @RequestMapping("/manual")
+    public String manual() {
+        return "operate/manual/manual";
+    }
 }

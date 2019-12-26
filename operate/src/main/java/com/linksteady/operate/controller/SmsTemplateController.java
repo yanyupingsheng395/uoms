@@ -10,10 +10,7 @@ import com.linksteady.operate.push.impl.PushMessageServiceImpl;
 import com.linksteady.operate.service.SmsTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -156,6 +153,11 @@ public class SmsTemplateController extends BaseController {
         result.put("count", templateCount);
         result.put("valid", templateCount <= dailyProperties.getSmsLengthLimit());
         return ResponseBo.okWithData(null, result);
+    }
+
+    @GetMapping("/validSmsContentLength")
+    public ResponseBo validSmsContentLength(@RequestParam("smsContent") String smsContent) {
+        return ResponseBo.okWithData(null, smsContent.length() <= dailyProperties.getSmsLengthLimit());
     }
 }
 

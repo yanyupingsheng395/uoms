@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.ManualDetailMapper">
+
+    <insert id="saveDetailList">
+        insert into UO_OP_MANUAL_DETAIL(detail_id, head_id, phone_num, push_status)
+        select UO_OP_MANUAL_DETAIL_SEQ.nextval, t.* from
+        <foreach collection="list" separator="union all" item="item" open="(" close=")">
+            select #{item.headId}, #{item.phoneNum}, #{item.pushStatus} from dual
+        </foreach> t
+    </insert>
+</mapper>
