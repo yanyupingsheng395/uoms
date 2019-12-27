@@ -1,6 +1,6 @@
 $(function () {
     //获取系统的默认值,并初始化表单
-    $.get("/dailyConfig/getDailyProperties", function (r) {
+    $.get("/push/getDailyProperties", function (r) {
         if(r.code===200)
         {
           var data=r.data;
@@ -33,7 +33,7 @@ $(function () {
 
             $.ajax({
                 type: "post",
-                url: "/dailyConfig/updateDailyProperties",
+                url: "/push/updateDailyProperties",
                 data: JSON.stringify(datas),
                 dataType: "json",
                 headers: {
