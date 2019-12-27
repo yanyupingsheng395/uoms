@@ -143,8 +143,13 @@ function submitData() {
 
 // 表单验证
 function beforeSubmit() {
+    let file = document.getElementById('file').files;
     if(document.getElementById('file').files.length === 0) {
         $MB.n_warning("请上传文件！");
+        return false;
+    }
+    if(file[0].size > 10485760) {
+        $MB.n_warning("上传文件不能超过10M的文件！");
         return false;
     }
     let smsContent = $("textarea[name='smsContent']").val();
