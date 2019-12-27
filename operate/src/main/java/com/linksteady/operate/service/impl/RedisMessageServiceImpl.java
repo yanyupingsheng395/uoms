@@ -2,13 +2,16 @@ package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
+import com.linksteady.operate.dao.PushListMapper;
 import com.linksteady.operate.domain.HeartBeatInfo;
+import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.service.RedisMessageService;
 import com.linksteady.operate.thread.MonitorThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.Map;
 
 @Service
@@ -17,6 +20,9 @@ public class RedisMessageServiceImpl implements RedisMessageService {
     private static final String PUSH_TEST_SMS_CHANNEL="testsmschannel";
     @Autowired
     StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    PushListMapper pushListMapper;
 
     /**
      * 接收推送心跳信息
@@ -53,6 +59,15 @@ public class RedisMessageServiceImpl implements RedisMessageService {
     @Override
     public void sendPhoneMessage(String phoneNum,String smsContent) {
         Map<String,String> temp= Maps.newHashMap();
+
+        //写入uo_op_push_list
+        PushListInfo pushListInfo=new PushListInfo();
+        pushListInfo.setUserPhone(phoneNum);
+        pushListInfo.setPushContent(smsContent);
+        pushListInfo.setPushPeriod(String.valueOf(LocalTime.now().getHour()));
+
+        pushListMapper.insertTestMsg(pushListInfo);
+        temp.put("pushId",String.valueOf(pushListInfo.getPushId()));
         temp.put("phoneNum",phoneNum);
         temp.put("smsContent",smsContent);
         stringRedisTemplate.convertAndSend(PUSH_TEST_SMS_CHANNEL,temp);
