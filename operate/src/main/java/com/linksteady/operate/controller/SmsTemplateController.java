@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
@@ -7,6 +8,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.service.SmsTemplateService;
+import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,9 @@ public class SmsTemplateController extends BaseController {
 
     @Autowired
     private DailyProperties dailyProperties;
+
+    @Autowired
+    RedisMessageServiceImpl redisMessageService;
 
     /**
      * 获取短信模板
@@ -91,11 +96,15 @@ public class SmsTemplateController extends BaseController {
     public ResponseBo testSend(String phoneNum, String smsContent) {
 
         //todo 调用短信发送相关的服务
+        List<String> phoneNumList=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(phoneNum);
 
-        int result=0;
-        if (result == 0) {
+        try {
+            for(String num:phoneNumList)
+            {
+                redisMessageService.sendPhoneMessage(num,smsContent);
+            }
             return ResponseBo.ok("测试发送成功！");
-        } else {
+        } catch (Exception e) {
             return ResponseBo.error("测试发送失败！");
         }
     }

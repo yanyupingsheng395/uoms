@@ -1,6 +1,7 @@
 package com.linksteady.operate.controller;
 
 import com.google.common.collect.Maps;
+import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.DailyHead;
@@ -11,6 +12,7 @@ import com.linksteady.operate.service.DailyPropertiesService;
 import com.linksteady.operate.service.PushListService;
 import com.linksteady.operate.service.PushLogService;
 import com.linksteady.operate.thread.MonitorThread;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/push")
-public class PushStatusController {
+public class PushStatusController extends BaseController {
 
     @Autowired
     private DailyProperties dailyProperties;
@@ -39,6 +41,7 @@ public class PushStatusController {
 
     @Autowired
     private PushListService pushListService;
+
 
     /**
      * 关闭推送服务
@@ -127,5 +130,57 @@ public class PushStatusController {
         List<PushListInfo> dataList = pushListService.getPushInfoListPage(start, end, sourceCode, pushStatus, pushDateStr);
         int count = pushListService.getTotalCount(sourceCode, pushStatus, pushDateStr);
         return ResponseBo.okOverPaging(null, count, dataList);
+    }
+
+    /**
+     * 获取每日运营配置信息
+     * @param
+     * @return
+     */
+    @GetMapping("/getDailyProperties")
+    public ResponseBo getDailyProperties() {
+        return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
+    }
+
+    /**
+     * 更新每日运营配置信息  属性值目前只支持String和int两种类型
+     */
+    @PostMapping("/updateDailyProperties")
+    @SneakyThrows
+    public ResponseBo updateDailyProperties(@RequestBody DailyProperties dp) {
+        dailyProperties.setPushFlag(dp.getPushFlag());
+        dailyProperties.setAlertPhone(dp.getAlertPhone());
+        dailyProperties.setCurrentUser(getCurrentUser().getUsername());
+        //更新到数据库中
+        dailyPropertiesService.updateProperties(dailyProperties);
+
+        return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
+    }
+
+    /**
+     * 刷新每日运营配置信息 (将数据库中的信息同步到内存的对象中)
+     * @param
+     * @return
+     */
+    @GetMapping("/refreshDailyProperties")
+    public ResponseBo refreshDailyProperties() {
+        DailyProperties temp=dailyPropertiesService.getDailyProperties();
+
+        dailyProperties.setPushFlag(temp.getPushFlag());
+        dailyProperties.setRepeatPushDays(temp.getRepeatPushDays());
+        dailyProperties.setStatsDays(temp.getStatsDays());
+        dailyProperties.setPushType(temp.getPushType());
+        dailyProperties.setOpenAlert(temp.getOpenAlert());
+        dailyProperties.setAlertPhone(temp.getAlertPhone());
+        dailyProperties.setPushMethod(temp.getPushMethod());
+        dailyProperties.setSmsLengthLimit(temp.getSmsLengthLimit());
+        dailyProperties.setProductUrl(temp.getProductUrl());
+        dailyProperties.setIsAliApp(temp.getIsAliApp());
+        dailyProperties.setIsTestEnv(temp.getIsTestEnv());
+        dailyProperties.setDemoShortUrl(temp.getDemoShortUrl());
+        dailyProperties.setProdNameLen(temp.getProdNameLen());
+        dailyProperties.setShortUrlLen(temp.getShortUrlLen());
+
+        return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
     }
 }

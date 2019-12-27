@@ -38,10 +38,10 @@ public class OpDailyConfig implements CommandLineRunner {
     }
 
     /**
-     * 开启线程
+     * 开启监控线程
      */
     private void startThread()
     {
-        //TODO
+        //TODO 待monitor完成后在此处开启线程
     }
 }

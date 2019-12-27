@@ -147,33 +147,21 @@ function del() {
 
     var code =selectRows[0]["code"];
 
-    //进行删除提示
-    $.confirm({
-        title: '提示：',
-        content: '是否删除数据？',
-        buttons: {
-            confirm: {
-                text: '确认',
-                btnClass: 'btn-blue',
-                action: function(){
-                    $.getJSON("/activityTemplate/deleteTemplate?code="+code,function (resp) {
-                        if (resp.code === 200){
-                            //提示成功
-                            $MB.n_success('删除成功！');
-                            //刷新表格
-                            $('#templateTable').bootstrapTable('refresh');
-                        }else {
-                            $MB.n_danger(resp.msg);
-                        }
-                    })
-                }
-            },
-            cancel: {
-                text: '取消'
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认删除短信模板？'
+    }, function () {
+        $.getJSON("/activityTemplate/deleteTemplate?code="+code,function (resp) {
+            if (resp.code === 200){
+                //提示成功
+                $MB.n_success('删除成功！');
+                //刷新表格
+                $('#templateTable').bootstrapTable('refresh');
+            }else {
+                $MB.n_danger(resp.msg);
             }
-        }
+        })
     });
-
 }
 
 function add() {
@@ -246,44 +234,32 @@ $("#btn_save").click(function () {
     }
 
     //提示是否要保存
-    $.confirm({
-        title: '确认',
-        content: sure_msg,
-        theme: 'bootstrap',
-        type: 'orange',
-        buttons: {
-            confirm: {
-                text: '确认',
-                btnClass: 'btn-blue',
-                action: function(){
-                    var param = new Object();
-                    param.code=code;
-                    param.content=content;
-                    param.contentNormal = contentNormal;
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认？'
+    }, function () {
+        var param = new Object();
+        param.code=code;
+        param.content=content;
+        param.contentNormal = contentNormal;
 
-                    $.ajax({
-                        url: url,
-                        data: JSON.stringify(param),
-                        type: 'POST',
-                        contentType: "application/json;charset=utf-8",
-                        success: function (r) {
-                            if(r.code === 200) {
-                                $MB.n_success(success_msg);
-                            }else {
-                                $MB.n_danger("未知错误发生，请检查！");
-                            }
-                            $('#add_modal').modal('hide');
-                            $('#templateTable').bootstrapTable('refresh');
-                        }
-                    });
-
+        $.ajax({
+            url: url,
+            data: JSON.stringify(param),
+            type: 'POST',
+            contentType: "application/json;charset=utf-8",
+            success: function (r) {
+                if(r.code === 200) {
+                    $MB.n_success(success_msg);
+                }else {
+                    $MB.n_danger("未知错误发生，请检查！");
                 }
-            },
-            cancel: {
-                text: '取消'
+                $('#add_modal').modal('hide');
+                $('#templateTable').bootstrapTable('refresh');
             }
-        }
+        });
     });
+
 });
 
 $("#add_modal").on('hidden.bs.modal', function () {

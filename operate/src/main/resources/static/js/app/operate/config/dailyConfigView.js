@@ -9,7 +9,7 @@ $(function () {
 function refresh()
 {
     //获取系统的默认值,并初始化表单
-    $.get("/dailyConfig/refreshDailyProperties", function (r) {
+    $.get("/push/refreshDailyProperties", function (r) {
         if(r.code===200)
         {
             var data=r.data;
@@ -29,17 +29,17 @@ function refresh()
             //效果统计的天数
             $("#statsDays").val(data.statsDays);
 
-            //是否开启预警
-            if("Y"==data.openAlert)
-            {
-                $("#openAlert").prop("checked",true);
-            }else
-            {
-                $("#openAlert").prop("checked",false);
-            }
+            // //是否开启预警
+            // if("Y"==data.openAlert)
+            // {
+            //     $("#openAlert").prop("checked",true);
+            // }else
+            // {
+            //     $("#openAlert").prop("checked",false);
+            // }
 
             //推送手机号
-            $("#alertPhone").val(data.alertPhone);
+            // $("#alertPhone").val(data.alertPhone);
 
             //推送方式
             $("input[name='pushType']").removeProp("checked");

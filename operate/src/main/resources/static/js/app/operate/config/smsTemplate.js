@@ -156,33 +156,21 @@ function del() {
 
     var smsCode =selectRows[0]["smsCode"];
 
-    //进行删除提示
-        $.confirm({
-            title: '提示：',
-            content: '是否删除数据？',
-            buttons: {
-                confirm: {
-                    text: '确认',
-                    btnClass: 'btn-blue',
-                    action: function(){
-                             $.getJSON("/smsTemplate/deleteSmsTemplate?smsCode="+smsCode,function (resp) {
-                                    if (resp.code === 200){
-                                        //提示成功
-                                        $MB.n_success('删除成功！');
-                                        //刷新表格
-                                        $('#smsTemplateTable').bootstrapTable('refresh');
-                                    }else {
-                                        $MB.n_danger(resp.msg);
-                                    }
-                                })
-                    }
-                },
-                cancel: {
-                    text: '取消'
-                }
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认删除短信模板？'
+    }, function () {
+        $.getJSON("/smsTemplate/deleteSmsTemplate?smsCode="+smsCode,function (resp) {
+            if (resp.code === 200){
+                //提示成功
+                $MB.n_success('删除成功！');
+                //刷新表格
+                $('#smsTemplateTable').bootstrapTable('refresh');
+            }else {
+                $MB.n_danger(resp.msg);
             }
-        });
-
+        })
+    });
 }
 
 function add() {
@@ -308,45 +296,34 @@ $("#btn_save").click(function () {
         sure_msg = "确定要修改数据？";
     }
 
+
     //提示是否要保存
-    $.confirm({
-        title: '确认',
-        content: sure_msg,
-        theme: 'bootstrap',
-        type: 'orange',
-        buttons: {
-            confirm: {
-                text: '确认',
-                btnClass: 'btn-blue',
-                action: function(){
-                    var param = new Object();
-                    param.smsCode=smsCode;
-                    param.smsContent=smsContent;
-                    param.isCoupon = isCoupon;
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认？'
+    }, function () {
+        var param = new Object();
+        param.smsCode=smsCode;
+        param.smsContent=smsContent;
+        param.isCoupon = isCoupon;
 
-                    $.ajax({
-                        url: url,
-                        data: JSON.stringify(param),
-                        type: 'POST',
-                        contentType: "application/json;charset=utf-8",
-                        success: function (r) {
-                            if(r.code === 200) {
-                                $MB.n_success(success_msg);
-                            }else {
-                                $MB.n_danger("未知错误发生，请检查！");
-                            }
-                            $('#add_modal').modal('hide');
-                            $('#smsTemplateTable').bootstrapTable('refresh');
-                        }
-                    });
-
+        $.ajax({
+            url: url,
+            data: JSON.stringify(param),
+            type: 'POST',
+            contentType: "application/json;charset=utf-8",
+            success: function (r) {
+                if(r.code === 200) {
+                    $MB.n_success(success_msg);
+                }else {
+                    $MB.n_danger("未知错误发生，请检查！");
                 }
-            },
-            cancel: {
-                text: '取消'
+                $('#add_modal').modal('hide');
+                $('#smsTemplateTable').bootstrapTable('refresh');
             }
-        }
+        });
     });
+
 });
 
 $("#add_modal").on('hidden.bs.modal', function () {
