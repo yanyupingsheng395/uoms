@@ -23,4 +23,6 @@ public interface ManualPushService {
     Map<String, Object> getPushInfo(String headId);
 
     String getHeadStatus(String headId);
+
+    void deleteData(String headId);
 }

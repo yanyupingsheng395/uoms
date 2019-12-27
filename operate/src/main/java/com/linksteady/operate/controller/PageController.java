@@ -289,7 +289,8 @@ public class PageController {
      * @return
      */
     @RequestMapping("/manual")
-    public String manual() {
+    public String manual(Model model) {
+        model.addAttribute("fontNum", dailyProperties.getSmsLengthLimit());
         return "operate/manual/manual";
     }
 }

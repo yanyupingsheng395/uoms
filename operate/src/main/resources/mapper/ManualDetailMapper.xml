@@ -9,4 +9,8 @@
             select #{item.headId}, #{item.phoneNum}, #{item.pushStatus} from dual
         </foreach> t
     </insert>
+
+    <delete id="deleteData">
+        delete from UO_OP_MANUAL_DETAIL where HEAD_ID = #{headId}
+    </delete>
 </mapper>

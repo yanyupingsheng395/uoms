@@ -4,12 +4,17 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ManualHeader;
 import com.linksteady.operate.service.ManualPushService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * 短信手动推送 controller
@@ -17,6 +22,7 @@ import java.util.List;
  * @author hxcao
  * @date 2019/12/25
  */
+@Slf4j
 @RestController
 @RequestMapping("/manual")
 public class ManualPushController {
@@ -69,5 +75,45 @@ public class ManualPushController {
     @GetMapping("/getPushInfo")
     public ResponseBo getPushInfo(@RequestParam("headId") String headId) {
         return ResponseBo.okWithData(null, manualPushService.getPushInfo(headId));
+    }
+
+    @GetMapping("/deleteData")
+    public ResponseBo deleteData(@RequestParam("headId") String headId) {
+        manualPushService.deleteData(headId);
+        return ResponseBo.ok();
+    }
+
+    @RequestMapping("/download")
+    public void fileDownload(HttpServletResponse response) throws IOException {
+        String fileName = "manual_template.txt";
+        String realFileName = System.currentTimeMillis() + "_" + fileName.substring(fileName.indexOf('_') + 1);
+        ClassPathResource classPathResource = new ClassPathResource("excel/" + fileName);
+        InputStream in = classPathResource.getInputStream();
+        response.setHeader("Content-Disposition", "inline;fileName=" + java.net.URLEncoder.encode(realFileName, "utf-8"));
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        try (InputStream inputStream = in; OutputStream os = response.getOutputStream()) {
+            byte[] b = new byte[2048];
+            int length;
+            while ((length = inputStream.read(b)) > 0) {
+                os.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            log.error("文件下载失败", e);
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        File file = new File("/Users/guojiayu/Desktop/333.txt");
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        IntStream.rangeClosed(0, 1000_000).forEach(x->{
+            try {
+                fileOutputStream.write("13263311348\n".getBytes("utf-8"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        fileOutputStream.close();
+        System.out.println("over");
     }
 }

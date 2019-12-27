@@ -61,17 +61,18 @@ public class ManualPushServiceImpl implements ManualPushService {
     public void pushMessage(String headId, String pushType) {
         synchronized (this) {
             // 立刻发送，更新当前schedule_date
-            if(pushType.equalsIgnoreCase("1")) {
+            if (pushType.equalsIgnoreCase("1")) {
                 ManualHeader manualHeader = new ManualHeader();
                 manualHeader.setScheduleDate(new Date());
                 manualHeader.setHeadId(Long.parseLong(headId));
                 manualHeaderMapper.updateScheduleDate(manualHeader);
             }
+            // 写入large表
+            pushLargeListMapper.insertLargeDataByManual(headId);
             // head status的update 已提交，计划中
             String status = "1";
             manualHeaderMapper.updateStatus(status, headId);
-            // 写入large表
-            pushLargeListMapper.insertLargeDataByManual(headId);
+
         }
     }
 
@@ -81,24 +82,24 @@ public class ManualPushServiceImpl implements ManualPushService {
         // 保存header
         ManualHeader manualHeader = new ManualHeader();
         manualHeader.setFileName(file.getOriginalFilename());
-        manualHeader.setInsertBy(((User)SecurityUtils.getSubject().getPrincipal()).getUsername());
+        manualHeader.setInsertBy(((User) SecurityUtils.getSubject().getPrincipal()).getUsername());
         manualHeader.setInsertDt(new Date());
         manualHeader.setPushType(sendType);
         manualHeader.setStatus("0");
         manualHeader.setSmsContent(smsContent);
 
-        if(sendType.equalsIgnoreCase("0")) {
+        if (sendType.equalsIgnoreCase("0")) {
             manualHeader.setScheduleDate(
-                    Date.from(LocalDateTime.parse(pushDate, DateTimeFormatter.ofPattern("yyy-MM-dd HH:mm:ss")).atZone(ZoneId.systemDefault()).toInstant())
+                    Date.from(LocalDateTime.parse(pushDate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).atZone(ZoneId.systemDefault()).toInstant())
             );
-        }else {
+        } else {
             manualHeader.setScheduleDate(new Date());
         }
         // 解析file
         List<String> mobiles = Lists.newArrayList();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(file.getInputStream()));
         String line;
-        while((line = bufferedReader.readLine()) != null) {
+        while ((line = bufferedReader.readLine()) != null) {
             mobiles.add(line);
         }
         bufferedReader.close();
@@ -112,15 +113,32 @@ public class ManualPushServiceImpl implements ManualPushService {
         // 保存detail
         long headId = manualHeader.getHeadId();
         List<ManualDetail> manualDetails = Lists.newArrayList();
-        mobiles.stream().filter(m -> (m.length() == 11) && Pattern.matches("\\d+", m)).forEach(x->{
+        mobiles.stream().filter(m -> (m.length() == 11) && Pattern.matches("\\d+", m)).forEach(x -> {
             ManualDetail manualDetail = new ManualDetail();
             manualDetail.setHeadId(headId);
             manualDetail.setPhoneNum(x);
             manualDetail.setPushStatus("0");
             manualDetails.add(manualDetail);
         });
+        int totalSize = manualDetails.size();
+        int pageSize = 10_000;
+        int pageNum =  totalSize/ pageSize == 0 ? totalSize / pageSize : (totalSize / pageSize) + 1;
+        if(totalSize > pageSize) {
+            for (int i = 0; i < pageNum; i++) {
+                int start = i * pageSize + 1;
+                int end = (i + 1) * pageSize;
+                end = Math.min(end, totalSize);
+                System.out.println(start + ":" + end);
+                manualDetailMapper.saveDetailList(manualDetails.subList(start - 1, end));
+            }
+        }else {
+            manualDetailMapper.saveDetailList(manualDetails);
+        }
+    }
 
-        manualDetailMapper.saveDetailList(manualDetails);
+    public static void main(String[] args) {
+        List<Integer> list = Arrays.asList(1,2,3,5,6,7,8,9);
+        System.out.println(list.subList(0,1));
     }
 
     @Override
@@ -131,5 +149,12 @@ public class ManualPushServiceImpl implements ManualPushService {
     @Override
     public String getHeadStatus(String headId) {
         return manualHeaderMapper.getHeadStatus(headId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteData(String headId) {
+        manualHeaderMapper.deleteData(headId);
+        manualDetailMapper.deleteData(headId);
     }
 }

@@ -72,4 +72,8 @@
         update UO_OP_MANUAL_HEADER set STATUS = #{status}
         where head_id = #{headId}
     </update>
+
+    <delete id="deleteData">
+        delete from UO_OP_MANUAL_HEADER where HEAD_ID = #{headId}
+    </delete>
 </mapper>

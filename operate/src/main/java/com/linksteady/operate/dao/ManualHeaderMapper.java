@@ -24,4 +24,6 @@ public interface ManualHeaderMapper {
     void updateScheduleDate(ManualHeader manualHeader);
 
     void updateStatus(String status, String headId);
+
+    void deleteData(String headId);
 }
