@@ -44,7 +44,7 @@ function initTable() {
             title: '短信内容',
             formatter: function (value, row, index) {
                 if(value.length > 20) {
-                    return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"click\">\n" +
+                    return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
                         value.substring(0, 20) + "..." +
                         "</a>";
                 }
@@ -280,7 +280,6 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $("#word").text('0');
 });
 statInputNum($("#smsContent"),$("#word"));
-statInputNum($("#smsContent1"),$("#word1"));
 function statInputNum(textArea,numItem) {
     let curLength = textArea.val().length;
     numItem.text(curLength);
@@ -290,20 +289,35 @@ function statInputNum(textArea,numItem) {
     });
 }
 
+function testSend() {
+    let selected = $("#dataTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要测试的记录！');
+        return;
+    }
+    let content = selected[0].smsContent;
+    $('#smsContent1').val(content);
+    $('#smsContent1').attr("readOnly", "readOnly");
+    statInputNum($("#smsContent1"),$("#word1"));
+    $('#send_modal').modal('show');
+}
+
+$("#send_modal").on('hidden.bs.modal', function () {
+    $('#phoneNum').val("");
+});
+
 function sendMessage()
 {
     //验证
     var phoneNum=$('#phoneNum').val();
-    var smsContent= $('#smsContent1').val();
+    var smsContent = $('#smsContent1').val();
 
-    if(null==phoneNum||phoneNum=='')
-    {
+    if(null==phoneNum||phoneNum=='') {
         $MB.n_warning("手机号不能为空！");
         return;
     }
-
-    if(null==smsContent||smsContent=='')
-    {
+    if(null==smsContent||smsContent=='') {
         $MB.n_warning("消息内容不能为空！");
         return;
     }
