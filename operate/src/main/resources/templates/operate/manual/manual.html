@@ -76,7 +76,7 @@
                                     <a class="btn btn-info btn-view" id="btn_push" onclick="pushMessage()">
                                         <i class="fa fa-check-square-o"></i> 推送
                                     </a>
-                                    <a class="btn btn-success btn-view" id="btn_test" onclick="$('#send_modal').modal('show')">
+                                    <a class="btn btn-success btn-view" id="btn_test" onclick="testSend()">
                                         <i class="fa fa-puzzle-piece"></i> 测试
                                     </a>
                                     <a class="btn btn-danger btn-view" id="btn_delete">
@@ -115,7 +115,7 @@
                             <button class="btn btn-secondary btn-sm" type="button" onclick="window.location.href = '/manual/download'">下载模板</button>
                             <div>
                                 <font class="h6" style="color: #7c7c7c;">
-                                    *文件大小 <1MB
+                                    *文件大小 <10MB
                                 </font>
                                 <br/>
                                 <font class="h6" style="color: #7c7c7c;">
@@ -180,6 +180,11 @@
                         <label class="col-md-4 control-label" for="phoneNum">手机号：</label>
                         <div class="col-md-7 input-group">
                             <input class="form-control" type="text" id="phoneNum" name="phoneNum"/>
+                            <div>
+                                <font class="h6" style="color: #7c7c7c;">
+                                    *多个手机号之间逗号","分割
+                                </font>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group mg-stop">

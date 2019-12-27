@@ -120,6 +120,8 @@ public class ManualPushServiceImpl implements ManualPushService {
             manualDetail.setPushStatus("0");
             manualDetails.add(manualDetail);
         });
+
+        // 分批存储
         int totalSize = manualDetails.size();
         int pageSize = 10_000;
         int pageNum =  totalSize/ pageSize == 0 ? totalSize / pageSize : (totalSize / pageSize) + 1;
@@ -128,17 +130,11 @@ public class ManualPushServiceImpl implements ManualPushService {
                 int start = i * pageSize + 1;
                 int end = (i + 1) * pageSize;
                 end = Math.min(end, totalSize);
-                System.out.println(start + ":" + end);
                 manualDetailMapper.saveDetailList(manualDetails.subList(start - 1, end));
             }
         }else {
             manualDetailMapper.saveDetailList(manualDetails);
         }
-    }
-
-    public static void main(String[] args) {
-        List<Integer> list = Arrays.asList(1,2,3,5,6,7,8,9);
-        System.out.println(list.subList(0,1));
     }
 
     @Override

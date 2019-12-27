@@ -17,6 +17,12 @@ app:
 #
 #  profiles:
 #    active: prod
+#  aop:
+#    proxy-target-class: true
+#  servlet:
+#    multipart:
+#      max-file-size: 10MB
+#      max-request-size: 50MB
 
 # dev
 #spring:
@@ -27,9 +33,12 @@ app:
 #      uri: http://config.dev.growth-master.com
 #      username: admin
 #      password: linksteady123
-#
 #  profiles:
 #    active: prod
+#  servlet:
+#    multipart:
+#      max-file-size: 10MB
+#      max-request-size: 50MB
 
 ## 配置加密的秘钥
 jasypt:
@@ -47,8 +56,8 @@ spring:
     proxy-target-class: true
   servlet:
     multipart:
-      max-file-size: 20MB
-      max-request-size: 100MB
+      max-file-size: 10MB
+      max-request-size: 50MB
 
 sms:
   montnets:
