@@ -39,4 +39,13 @@ public class RedisListenerConfig {
         return new MessageListenerAdapter(redisMessageService, "receivePushHeartBeat");
     }
 
+    /**
+     * 发送心跳
+     * @param redisMessageService
+     * @return
+     */
+    @Bean
+    MessageListenerAdapter listenerAdapterSend(RedisMessageService redisMessageService){
+        return new MessageListenerAdapter(redisMessageService, "sendPushHeartBeat");
+    }
 }

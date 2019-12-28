@@ -26,4 +26,8 @@ public class HeartBeatInfo implements Serializable {
      */
     private LocalDateTime lastPurgeDate;
 
+    /**
+     * 推送启动或停止  value:start,stop
+     */
+    private String startOrStop;
 }

@@ -19,6 +19,11 @@ import java.util.Map;
 public class RedisMessageServiceImpl implements RedisMessageService {
 
     private static final String PUSH_TEST_SMS_CHANNEL="testsmschannel";
+
+    private static final String PUSH_HEART_BEAT_CHANNEL="pushHeartbeat";
+
+    private static final String START_STOP_CHANNEL="startorstopchannel";
+
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
@@ -74,5 +79,11 @@ public class RedisMessageServiceImpl implements RedisMessageService {
         temp.put("smsContent",smsContent);
 
         stringRedisTemplate.convertAndSend(PUSH_TEST_SMS_CHANNEL,JSON.toJSONString(temp));
+    }
+
+    @Override
+    public void sendPushHeartBeat(HeartBeatInfo heartBeatInfo) {
+        //发送推送的心跳
+        stringRedisTemplate.convertAndSend(START_STOP_CHANNEL,JSON.toJSONString(heartBeatInfo));
     }
 }
