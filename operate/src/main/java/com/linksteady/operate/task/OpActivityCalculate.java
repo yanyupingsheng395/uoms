@@ -3,9 +3,9 @@ package com.linksteady.operate.task;
 import com.linksteady.jobclient.annotation.JobHandler;
 import com.linksteady.jobclient.domain.ResultInfo;
 import com.linksteady.jobclient.service.IJobHandler;
-import com.linksteady.operate.dao.ActivityDetailMapper;
-import com.linksteady.operate.dao.DailyDetailMapper;
-import com.linksteady.operate.dao.DailyMapper;
+import com.linksteady.operate.dao.*;
+import com.linksteady.operate.domain.ManualDetail;
+import com.linksteady.operate.domain.ManualHeader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +24,11 @@ public class OpActivityCalculate extends IJobHandler {
     @Autowired
     private ActivityDetailMapper activityDetailMapper;
 
+    @Autowired
+    private ManualHeaderMapper manualHeaderMapper;
+
+    @Autowired
+    private ManualDetailMapper manualDetailMapper;
 
     @Override
     public ResultInfo execute(String param) {
@@ -39,6 +44,17 @@ public class OpActivityCalculate extends IJobHandler {
         activityDetailMapper.updatePreheatHeaderToDone();
 
         log.info("活动运营的统计数据，结束的时间为:{}, 线程名称：{}", LocalDate.now(), Thread.currentThread().getName());
+
+        // 手动推送短信
+        // 更新人数
+        manualHeaderMapper.updateSendNum();
+        // 更新状态
+        manualHeaderMapper.updateSendStatus();
+        // 更新推送日期
+        manualHeaderMapper.updateSendPushDate();
+        // 更新行表的状态和时间
+        manualDetailMapper.updateSendStatusAnDate();
+
         return ResultInfo.success("success");
     }
 }

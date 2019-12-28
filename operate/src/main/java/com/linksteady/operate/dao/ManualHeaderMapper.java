@@ -26,4 +26,19 @@ public interface ManualHeaderMapper {
     void updateStatus(String status, String headId);
 
     void deleteData(String headId);
+
+    /**
+     * 更新推送的头表的状态
+     */
+    void updateSendStatus();
+
+    /**
+     * 更新发送人数
+     */
+    void updateSendNum();
+
+    /**
+     * 更新头表的实际推送时间
+     */
+    void updateSendPushDate();
 }
