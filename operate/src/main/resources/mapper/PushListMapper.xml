@@ -84,7 +84,7 @@
 
         INSERT INTO UO_OP_PUSH_LIST(PUSH_ID,USER_PHONE,USER_OPENID,PUSH_CONTENT,PUSH_STATUS,SOURCE_CODE,SOURCE_ID,PUSH_PERIOD,IS_PUSH)
         values(
-            #{pushId}
+            #{pushId},
             #{userPhone},
             NULL,
             #{pushContent},

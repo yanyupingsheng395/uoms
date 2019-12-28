@@ -95,7 +95,6 @@ public class SmsTemplateController extends BaseController {
     @RequestMapping("/testSend")
     public ResponseBo testSend(String phoneNum, String smsContent) {
 
-        //todo 调用短信发送相关的服务
         List<String> phoneNumList=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(phoneNum);
 
         try {
@@ -105,6 +104,7 @@ public class SmsTemplateController extends BaseController {
             }
             return ResponseBo.ok("测试发送成功！");
         } catch (Exception e) {
+            log.info("发送测试短信错误，错误原因:{}",e);
             return ResponseBo.error("测试发送失败！");
         }
     }
