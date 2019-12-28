@@ -10,6 +10,7 @@ import com.linksteady.operate.thread.MonitorThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.Map;
@@ -57,6 +58,7 @@ public class RedisMessageServiceImpl implements RedisMessageService {
      * @param smsContent
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void sendPhoneMessage(String phoneNum,String smsContent) {
         Map<String,String> temp= Maps.newHashMap();
 
@@ -70,6 +72,7 @@ public class RedisMessageServiceImpl implements RedisMessageService {
         temp.put("pushId",String.valueOf(pushListInfo.getPushId()));
         temp.put("phoneNum",phoneNum);
         temp.put("smsContent",smsContent);
-        stringRedisTemplate.convertAndSend(PUSH_TEST_SMS_CHANNEL,temp);
+
+        stringRedisTemplate.convertAndSend(PUSH_TEST_SMS_CHANNEL,JSON.toJSONString(temp));
     }
 }
