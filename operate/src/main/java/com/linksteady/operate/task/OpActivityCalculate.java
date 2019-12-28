@@ -53,7 +53,7 @@ public class OpActivityCalculate extends IJobHandler {
         // 更新推送日期
         manualHeaderMapper.updateSendPushDate();
         // 更新行表的状态和时间
-        manualDetailMapper.updateSendStatus();
+        manualDetailMapper.updateSendStatusAnDate();
 
         return ResultInfo.success("success");
     }

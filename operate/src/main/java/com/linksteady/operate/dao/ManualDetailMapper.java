@@ -15,5 +15,5 @@ public interface ManualDetailMapper {
 
     void deleteData(@Param("headId") String headId);
 
-    void updateSendStatus();
+    void updateSendStatusAnDate();
 }

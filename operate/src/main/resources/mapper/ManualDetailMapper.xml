@@ -15,7 +15,7 @@
     </delete>
 
     <!--更新行表的推送时间和推送状态-->
-    <update id="updateSendStatus">
+    <update id="updateSendStatusAnDate">
         merge into uo_op_manual_detail t1
             using  uo_op_push_list_large t2
             on (t1.detail_id = t2.source_id and t2.source_code='M' and t1.head_id in (
