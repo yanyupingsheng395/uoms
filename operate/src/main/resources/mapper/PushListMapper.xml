@@ -90,7 +90,7 @@
             #{pushContent},
             'S',
             'T',
-            -100,
+            #{pushId},
             #{pushPeriod},
             '1')
     </insert>
