@@ -67,7 +67,7 @@ public class ManualPushController {
         if(status.equalsIgnoreCase("0")) {
             manualPushService.pushMessage(headId, pushType);
         }else {
-            return ResponseBo.error("该记录当前状态不支持推送操作！");
+            return ResponseBo.error("记录已被另一用户操作，请重新进行！");
         }
         return ResponseBo.ok();
     }
@@ -101,19 +101,5 @@ public class ManualPushController {
         } catch (Exception e) {
             log.error("文件下载失败", e);
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        File file = new File("/Users/guojiayu/Desktop/333.txt");
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
-        IntStream.rangeClosed(0, 1000_000).forEach(x->{
-            try {
-                fileOutputStream.write("13263311348\n".getBytes("utf-8"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        fileOutputStream.close();
-        System.out.println("over");
     }
 }
