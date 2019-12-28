@@ -90,7 +90,7 @@ public class ManualPushServiceImpl implements ManualPushService {
 
         if (sendType.equalsIgnoreCase("0")) {
             manualHeader.setScheduleDate(
-                    Date.from(LocalDateTime.parse(pushDate, DateTimeFormatter.ofPattern("yyyy-MM-ddyyyy-MM-dd HH:mm")).atZone(ZoneId.systemDefault()).toInstant())
+                    Date.from(LocalDateTime.parse(pushDate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")).atZone(ZoneId.systemDefault()).toInstant())
             );
         } else {
             manualHeader.setScheduleDate(new Date());
