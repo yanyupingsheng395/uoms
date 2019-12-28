@@ -46,14 +46,14 @@ public class OpActivityCalculate extends IJobHandler {
         log.info("活动运营的统计数据，结束的时间为:{}, 线程名称：{}", LocalDate.now(), Thread.currentThread().getName());
 
         // 手动推送短信
+        // 更新行表的状态和时间
+        manualDetailMapper.updateSendStatusAnDate();
         // 更新人数
         manualHeaderMapper.updateSendNum();
         // 更新状态
         manualHeaderMapper.updateSendStatus();
         // 更新推送日期
         manualHeaderMapper.updateSendPushDate();
-        // 更新行表的状态和时间
-        manualDetailMapper.updateSendStatusAnDate();
 
         return ResultInfo.success("success");
     }
