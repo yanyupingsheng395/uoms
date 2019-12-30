@@ -442,8 +442,7 @@
 
     <select id="getPathPurchOrder" resultType="string">
         WITH tt AS (SELECT SPU_WID, rn
-        FROM WP_PATH_RN_ACTIVE
-        WHERE is_spu = 1
+        FROM WP_USER_PATH
         GROUP BY SPU_WID, rn
         ORDER BY SPU_WID, rn)
         SELECT t1.RN

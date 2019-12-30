@@ -656,6 +656,9 @@ function getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId) {
         r.data.forEach((v,k)=>{
             code += "<tr><td>"+v['ACTIVE_TYPE']+"</td><td>"+v['ACTIVE_DUAL']+"</td><td>"+v['PROB']+"</td><td>"+v['BEGIN']+"</td><td>"+v['END']+"</td></tr>";
         });
+        if(code === "") {
+            code = "<tr class='text-center'><td colspan='5'>没有找到匹配的记录</td></tr>";
+        }
         $("#growthTableData").html('').append(code);
     });
 }
