@@ -386,26 +386,6 @@ public class InsightServiceImpl implements InsightService {
             result.put("nextProductId", convertMap.get("nextProductId"));
         }
 
-        // 将其他选项放到最后
-        final int i = xdata.indexOf("其他");
-        if(i > -1) {
-            final String tmp1 = xdata.get(i);
-            xdata.remove(i);
-            xdata.add(tmp1);
-
-            final Integer tmp2 = ydataActual.get(i);
-            ydataActual.remove(i);
-            ydataActual.add(tmp2);
-
-            final Integer tmp3 = ydataReduce.get(i);
-            ydataReduce.remove(i);
-            ydataReduce.add(tmp3);
-
-            final String tmp4 = ebpProductIdList.get(i);
-            ebpProductIdList.remove(i);
-            ebpProductIdList.add(tmp4);
-        }
-
         result.put("xdata1", xdata);
         result.put("ydataActual", ydataActual);
         result.put("ydataReduce", ydataReduce);

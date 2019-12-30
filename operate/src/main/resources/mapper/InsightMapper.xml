@@ -354,9 +354,11 @@
         (CASE WHEN row_num &lt;= 5 THEN EBP_PRODUCT_NAME ELSE '其他' END) EBP_PRODUCT_NAME
         from v2
         )
-        select SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME, SUM(PRODUCT_CNT) PRODUCT_CNT, spu_cnt
-        from v3 GROUP BY SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME,spu_cnt
-        order by PRODUCT_CNT desc
+        select t.*, case when EBP_PRODUCT_NAME = '其他' then 10 else ROWNUM end order_col
+        from (select SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME, SUM(PRODUCT_CNT) PRODUCT_CNT, spu_cnt
+        from v3
+        GROUP BY SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME, spu_cnt
+        order by PRODUCT_CNT desc) t order by order_col asc
     </select>
 
     <select id="getProductConvertRate" resultType="map">
