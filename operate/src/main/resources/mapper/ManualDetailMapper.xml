@@ -19,7 +19,7 @@
         merge into uo_op_manual_detail t1
             using  uo_op_push_list_large t2
             on (t1.detail_id = t2.source_id and t2.source_code='M' and t1.head_id in (
-                select h.head_id from uo_op_manual_header h where h.status in ('2','3') and trunc(h.SCHEDULE_DATE)&gt;=trunc(sysdate-3)
+                select h.head_id from uo_op_manual_header h where h.status in ('1','2') and trunc(h.SCHEDULE_DATE)&gt;=trunc(sysdate-3)
         ) )
         when matched then
         update set t1.push_status=t2.push_status,t1.push_date=t2.push_date
