@@ -40,7 +40,7 @@
         --对于最近5天 状态为执行中 如果在明细表中不存在未推送的记录，则将其状态更新为完成
         UPDATE UO_OP_ACTIVITY_PLAN T SET T.PLAN_STATUS='3' WHERE T.PLAN_DATE_WID>=TO_NUMBER(TO_CHAR(SYSDATE-5,'yyyymmdd')) AND T.PLAN_STATUS='2' AND
             NOT EXISTS (
-            SELECT FROM uo_op_activity_detail AP1 WHERE AP1.HEAD_ID=T.HEAD_ID AND AP1.PLAN_DT=T.PLAN_DATE_WID AND AP1.IS_PUSH='0')
+            SELECT 1 FROM uo_op_activity_detail AP1 WHERE AP1.HEAD_ID=T.HEAD_ID AND AP1.PLAN_DT=T.PLAN_DATE_WID AND AP1.IS_PUSH='0')
     </update>
 
     <update id="updatePreheatHeaderToDone">
