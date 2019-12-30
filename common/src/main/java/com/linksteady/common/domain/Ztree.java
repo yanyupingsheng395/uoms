@@ -2,12 +2,14 @@ package com.linksteady.common.domain;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author hxcao
  * @date 2019-12-07
  */
 @Data
-public class Ztree {
+public class Ztree implements Serializable {
 
     private String id;
 

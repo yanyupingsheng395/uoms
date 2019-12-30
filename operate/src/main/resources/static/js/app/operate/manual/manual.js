@@ -40,6 +40,9 @@ function initTable() {
             field: 'faildNum',
             title: '推送失败数量'
         }, {
+            field: 'interceptNum',
+            title: '拦截手机号数量'
+        }, {
             field: 'smsContent',
             title: '短信内容',
             formatter: function (value, row, index) {
