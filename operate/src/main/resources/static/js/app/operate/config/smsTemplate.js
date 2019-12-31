@@ -185,14 +185,11 @@ function add() {
 
 // 字数统计
 $("#btn_cal").click(function () {
-    if(!validCouponSendType()) {
-        return;
-    }
     var data = getSmsContentFontCount();
     $("#fontNum").val(data.count + "个字");
 });
 
-function validCouponSendType() {
+function validCouponSendType(isCoupon) {
     let couponSendType = getCouponSendType();
     let smsContent = $('#smsContent').val();
     if(smsContent === '') {
@@ -200,9 +197,20 @@ function validCouponSendType() {
         return false;
     }
     if(couponSendType === 'A') { // 包含${COUPON_URL}
-        if(smsContent.indexOf("${COUPON_URL}") === -1) {
-            $MB.n_warning("优惠券发放方式为自行领取，模板内容未发现${COUPON_URL}");
-            return false;
+        // 不能包含url
+        if(isCoupon === '0') {
+            if(smsContent.indexOf("${COUPON_URL}") > -1) {
+                $MB.n_warning("选择不包含券，模板内容不能出现${COUPON_URL}");
+                return false;
+            }
+        }
+
+        // 不能包含url
+        if(isCoupon === '1') {
+            if(smsContent.indexOf("${COUPON_URL}") === -1) {
+                $MB.n_warning("优惠券发放方式为自行领取，模板内容未发现${COUPON_URL}");
+                return false;
+            }
         }
     }
     if(couponSendType === 'B') { // 不包含${COUPON_URL}
@@ -267,10 +275,8 @@ $("#btn_save").click(function () {
         alert_str+='请选择是否包含优惠券！';
     }
 
-    if(isCoupon == "1") {
-        if(!validCouponSendType()) {
-            return;
-        }
+    if(!validCouponSendType(isCoupon)) {
+        return;
     }
 
     var data = getSmsContentFontCount();
@@ -300,7 +306,7 @@ $("#btn_save").click(function () {
     //提示是否要保存
     $MB.confirm({
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认？'
+        content: '确认提交数据？'
     }, function () {
         var param = new Object();
         param.smsCode=smsCode;

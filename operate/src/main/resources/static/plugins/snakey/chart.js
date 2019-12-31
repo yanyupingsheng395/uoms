@@ -187,7 +187,7 @@ export default function define(runtime, observer) {
     } );
     main.variable().define( "height", function () {
         return (
-            600
+            750
         )
     } );
 
