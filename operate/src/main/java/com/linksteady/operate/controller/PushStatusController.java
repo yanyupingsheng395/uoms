@@ -42,7 +42,6 @@ public class PushStatusController extends BaseController {
     @Autowired
     private PushListService pushListService;
 
-
     /**
      * 关闭推送服务
      * @param
@@ -116,7 +115,6 @@ public class PushStatusController extends BaseController {
         map.put("lastPushDate", null==monitorThread.getLastPushDate()?"":monitorThread.getLastPushDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         map.put("lastBatchPushDate",null==monitorThread.getLastBatchPushDate()?"":monitorThread.getLastBatchPushDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         map.put("lastPurgeDate",null==monitorThread.getLastPurgeDate()?"":monitorThread.getLastPurgeDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-
         return ResponseBo.okWithData("",map);
     }
 
@@ -153,7 +151,6 @@ public class PushStatusController extends BaseController {
         dailyProperties.setCurrentUser(getCurrentUser().getUsername());
         //更新到数据库中
         dailyPropertiesService.updateProperties(dailyProperties);
-
         return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
     }
 
