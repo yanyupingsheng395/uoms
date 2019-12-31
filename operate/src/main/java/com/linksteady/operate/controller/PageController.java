@@ -129,7 +129,8 @@ public class PageController {
      */
     @Log("短信模板列表")
     @RequestMapping("/cfg/coupon")
-    public String couponList() {
+    public String couponList(Model model) {
+        model.addAttribute("validUrl", dailyProperties.getCouponSendType());
         return "operate/config/coupon";
     }
 

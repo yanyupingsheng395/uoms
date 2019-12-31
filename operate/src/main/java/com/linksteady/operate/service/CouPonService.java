@@ -10,9 +10,9 @@ import java.util.List;
  */
 public interface CouPonService {
 
-    List<CouponInfo> getList(int startRow, int endRow);
+    List<CouponInfo> getList(int startRow, int endRow, String validStatus);
 
-    int getTotalCount();
+    int getTotalCount(String validStatus);
 
     List<Integer> getCouponIdsByGroupId(String groupId);
 

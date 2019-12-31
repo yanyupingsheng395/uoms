@@ -19,13 +19,13 @@ public class CouponServiceImpl implements CouPonService {
     private CouponMapper couponMapper;
 
     @Override
-    public List<CouponInfo> getList(int startRow, int endRow) {
-        return couponMapper.getList(startRow, endRow);
+    public List<CouponInfo> getList(int startRow, int endRow, String validStatus) {
+        return couponMapper.getList(startRow, endRow, validStatus);
     }
 
     @Override
-    public int getTotalCount() {
-        return couponMapper.getTotalCount();
+    public int getTotalCount(String validStatus) {
+        return couponMapper.getTotalCount(validStatus);
     }
 
     @Override

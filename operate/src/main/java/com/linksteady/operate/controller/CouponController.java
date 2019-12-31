@@ -4,6 +4,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.CouponInfo;
+import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.service.impl.CouponServiceImpl;
 import com.linksteady.operate.service.impl.ShortUrlServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,9 @@ public class CouponController extends BaseController {
     @Autowired
     ShortUrlServiceImpl shortUrlService;
 
+    @Autowired
+    private DailyProperties dailyProperties;
+
     /**
      * 获取短信模板
      *
@@ -41,8 +45,9 @@ public class CouponController extends BaseController {
      */
     @RequestMapping("/list")
     public ResponseBo smsTemplateList(@RequestBody QueryRequest request) {
-        List<CouponInfo> result = couponService.getList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize());
-        int totalCount = couponService.getTotalCount();
+        String validStatus = request.getParam().get("validStatus");
+        List<CouponInfo> result = couponService.getList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize(), validStatus);
+        int totalCount = couponService.getTotalCount(validStatus);
         return ResponseBo.okOverPaging("", totalCount, result);
     }
 

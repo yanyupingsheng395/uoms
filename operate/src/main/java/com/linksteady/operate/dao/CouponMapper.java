@@ -2,16 +2,15 @@ package com.linksteady.operate.dao;
 
 import com.linksteady.operate.config.MyMapper;
 import com.linksteady.operate.domain.CouponInfo;
-import com.linksteady.operate.domain.SmsTemplate;
-import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface CouponMapper extends MyMapper<CouponInfo> {
 
-    List<CouponInfo> getList(@Param("startRow") int startRow, @Param("endRow") int endRow);
+    List<CouponInfo> getList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("validStatus") String validStatus);
 
-    int getTotalCount();
+    int getTotalCount(@Param("validStatus") String validStatus);
 
     List<Integer> getCouponIdsByGroupId(String groupId);
 

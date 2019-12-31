@@ -41,6 +41,28 @@
                             <div class="row">
                                 <hr class="hr"/>
                             </div>
+                            <div class="row">
+                                <form id="activity-form">
+                                    <div class="select-list">
+                                        <ul>
+                                            <li>
+                                                是否有效：
+                                                <select id="validStatus" name="validStatus">
+                                                    <option value="">所有</option>
+                                                    <option value="Y" selected>有效</option>
+                                                    <option value="N">失效</option>
+                                                </select>
+                                            </li>
+                                            <li class="pull-right">
+                                                <a class="btn btn-primary btn-rounded btn-sm"
+                                                   onclick="searchCoupon()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                                <a class="btn btn-warning btn-rounded btn-sm" onclick="resetCoupon()"><i
+                                                        class="fa fa-refresh"></i>&nbsp;重置</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div class="col-sm-12 select-table table-striped">
@@ -70,7 +92,8 @@
         </main>
     </div>
 </div>
-
+<input id="headerId" type="hidden"/>
+<input id="validUrl" type="hidden" th:value="${validUrl}"/>
 <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -139,6 +162,17 @@
                             <input class="form-control" type="text" id="validEnd" name="validEnd"/>
                         </div>
                     </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">券是否有效：</label>
+                        <div class="col-md-7 input-group">
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="validStatus" value="Y" checked><span>是</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="validStatus" value="N"><span>否</span>
+                            </label>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -148,8 +182,6 @@
         </div>
     </div>
 </div>
-
-<input id="headerId" type="hidden">
 <script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
 <script data-th-src="@{/js/common/lightyear.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>

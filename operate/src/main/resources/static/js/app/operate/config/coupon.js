@@ -19,7 +19,7 @@ $(function () {
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,  //页码
-                param: {smsCode: $("input[name='smsCode']").val()}
+                param: {validStatus: $("select[name='validStatus']").val()}
             };
         },
         columns: [{
@@ -53,6 +53,17 @@ $(function () {
         }, {
             field: 'validEnd',
             title: '截止日期'
+        }, {
+            field: 'validStatus',
+            title: '券是否有效',
+            formatter: function (value, row, index) {
+                if(value === 'Y') {
+                    return "是";
+                }else if(value === 'N'){
+                    return "否";
+                }
+                return "";
+            }
         }]
     };
 
@@ -63,9 +74,17 @@ $(function () {
     });
 });
 
+function searchCoupon() {
+    $MB.refreshTable('couponTable');
+}
+
+function resetCoupon() {
+    $("#validStatus").find("option:selected").removeAttrs("selected");
+    $MB.refreshTable('couponTable');
+}
+
 $("#btn_save").click(function () {
     var name = $(this).attr("name");
-    alert(name);
     var validator = $couponForm.validate();
     var flag = validator.form();
     if (flag) {
@@ -100,6 +119,7 @@ function closeModal() {
     $form.find("input[name='couponNum']").val("").removeAttr("readOnly");
     $form.find("input[name='couponDisplayName']").val("").removeAttr("readOnly");
     $form.find("input[name='validEnd']").val("").removeAttr("readOnly");
+    $("input[name='validStatus']:radio[value='Y']").prop("checked", true);
     $MB.closeAndRestModal("add_modal");
     $("#btn_save").attr("name", "save");
 }
@@ -131,6 +151,7 @@ function updateCoupon() {
             $form.find("input[name='couponNum']").val(coupon.couponNum);
             $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName);
             $form.find("input[name='validEnd']").val(coupon.validEnd);
+            $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);
             $("#btn_save").attr("name", "update");
         } else {
             $MB.n_danger(r['msg']);
@@ -153,10 +174,10 @@ function validateRule() {
                 required: true
             },
             couponInfo2: {
-                required: false
+                required: $("#validUrl").val() === 'B'
             },
             couponUrl: {
-                required: false
+                required: $("#validUrl").val() === 'B'
             },
             couponDisplayName: {
                 required: true
