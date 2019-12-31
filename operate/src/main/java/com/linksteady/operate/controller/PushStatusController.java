@@ -180,7 +180,8 @@ public class PushStatusController extends BaseController {
         dailyProperties.setDemoShortUrl(temp.getDemoShortUrl());
         dailyProperties.setProdNameLen(temp.getProdNameLen());
         dailyProperties.setShortUrlLen(temp.getShortUrlLen());
-
+        dailyProperties.setCouponSendType(temp.getCouponSendType());
+        dailyProperties.setCouponNameLen(temp.getCouponNameLen());
         return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
     }
 }

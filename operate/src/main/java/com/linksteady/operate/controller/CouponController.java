@@ -34,9 +34,6 @@ public class CouponController extends BaseController {
     @Autowired
     ShortUrlServiceImpl shortUrlService;
 
-    @Autowired
-    private DailyProperties dailyProperties;
-
     /**
      * 获取短信模板
      *
@@ -149,5 +146,20 @@ public class CouponController extends BaseController {
         }
         return ResponseBo.ok();
     }
+
+    public static void main(String[] args) {
+        Node node = new Node();
+        node.seq = 1;
+
+    }
+}
+
+class Node {
+    Node next;
+    String s;
+    String f;
+    String sValue;
+    String fValue;
+    int seq;
 }
 
