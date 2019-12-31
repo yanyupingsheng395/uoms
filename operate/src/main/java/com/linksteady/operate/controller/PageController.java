@@ -186,7 +186,6 @@ public class PageController {
         }
         return "redirect:/page/daily";
     }
-
     /**
      * 活动运营
      * @return

@@ -56,7 +56,7 @@
 
     <insert id="save" parameterType="com.linksteady.operate.domain.CouponInfo">
         insert into UO_OP_COUPON(COUPON_ID, COUPON_DENOM, COUPON_THRESHOLD, COUPON_NAME, COUPON_URL, COUPON_DESC, COUPON_TYPE, COUPON_NUM, COUPON_INFO1, COUPON_INFO2, COUPON_DISPLAY_NAME, VALID_STATUS, VALID_END) VALUES
-        (UO_OP_COUPON_SEQ.nextval, #{couponDenom}, #{couponThreshold}, #{couponName}, #{couponUrl}, #{couponDesc}, #{couponType}, #{couponNum}, #{couponInfo1}, #{couponInfo2}, #{couponDisplayName}, #{validStatus}, to_date(#{validEnd}, 'yyyymmdd'))
+        (UO_OP_COUPON_SEQ.nextval, #{couponDenom}, #{couponThreshold}, #{couponName}, #{couponUrl}, #{couponDesc}, #{couponType}, #{couponNum}, #{couponInfo1}, #{couponInfo2}, #{couponDisplayName}, 'Y', to_date(#{validEnd}, 'yyyymmdd'))
     </insert>
 
     <update id="update" parameterType="com.linksteady.operate.domain.CouponInfo">

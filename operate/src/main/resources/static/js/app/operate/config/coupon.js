@@ -122,6 +122,8 @@ function closeModal() {
     $("input[name='validStatus']:radio[value='Y']").prop("checked", true);
     $MB.closeAndRestModal("add_modal");
     $("#btn_save").attr("name", "save");
+    $("#couponValid").hide();
+    $("#coupon_edit").validate().resetForm();
 }
 
 $("#add_modal").on('hidden.bs.modal', function () {
@@ -136,6 +138,7 @@ function updateCoupon() {
         return;
     }
     var couponId = selected[0].couponId;
+    $("#couponValid").show();
     $.post("/coupon/getByCouponId", {"couponId": couponId}, function (r) {
         if (r.code === 200) {
             var $form = $('#coupon_edit');
