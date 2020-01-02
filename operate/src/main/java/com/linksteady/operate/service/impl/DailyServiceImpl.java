@@ -2,6 +2,7 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.operate.config.BinTree;
 import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyHead;
@@ -99,13 +100,13 @@ public class DailyServiceImpl implements DailyService {
         // 判断当前时间与最后时间
         boolean after = LocalDate.now().isAfter(taskDtDate.plusDays(MAX_TASK_DAY + 1));
         String endDate;
-        if(after) {
+        if (after) {
             endDate = maxDate.format(DateTimeFormatter.ofPattern(dateFormat));
-        }else {
+        } else {
             endDate = LocalDate.now().format(DateTimeFormatter.ofPattern(dateFormat));
         }
         LocalDate end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern(dateFormat));
-        while(taskDtDate.isBefore(end.plusDays(1))) {
+        while (taskDtDate.isBefore(end.plusDays(1))) {
             xdatas.add(taskDtDate.format(DateTimeFormatter.ofPattern(dateFormat)));
             taskDtDate = taskDtDate.plusDays(1);
         }
@@ -115,14 +116,14 @@ public class DailyServiceImpl implements DailyService {
                 Collectors.toMap(
                         dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
                         dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertNum).orElse(0L),
-                        (k1,k2)->k2
+                        (k1, k2) -> k2
                 )
         );
         Map<String, Double> convertRateMap = dataList.stream().collect(
                 Collectors.toMap(
                         dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
                         dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertRate).orElse(0D),
-                        (k1,k2)->k2
+                        (k1, k2) -> k2
                 )
         );
         Map<String, Long> convertSpuNumMap = dataList.stream().collect(
@@ -130,17 +131,17 @@ public class DailyServiceImpl implements DailyService {
                 Collectors.toMap(
                         dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
                         dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertSpuNum).orElse(0L),
-                        (k1,k2)->k2
+                        (k1, k2) -> k2
                 )
         );
         Map<String, Double> convertSpuRateMap = dataList.stream().collect(
                 Collectors.toMap(
                         dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
                         dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertSpuRate).orElse(0D),
-                        (k1,k2)->k2
+                        (k1, k2) -> k2
                 )
         );
-        xdatas.forEach(x->{
+        xdatas.forEach(x -> {
             convertNumMap.putIfAbsent(x, 0L);
             convertRateMap.putIfAbsent(x, 0D);
             convertSpuNumMap.putIfAbsent(x, 0L);
@@ -167,7 +168,7 @@ public class DailyServiceImpl implements DailyService {
 
     @Override
     public void setSmsCode(String groupId, String smsCode) {
-        if(StringUtils.isNotEmpty(groupId)) {
+        if (StringUtils.isNotEmpty(groupId)) {
             List<String> groupIds = Arrays.asList(groupId.split(","));
             dailyMapper.setSmsCode(groupIds, smsCode);
         }
@@ -183,13 +184,49 @@ public class DailyServiceImpl implements DailyService {
         return dailyMapper.getDailyPersonalEffectCount(dailyPersonalVo, headId);
     }
 
+    /**
+     * 验证用户群组：
+     * 1. 含券：券名称为空
+     * 2. 不含券：券名称不为空
+     * 3. 短信：不为空
+     * 4. 验证券有效期是否合法，系统不对失效的券进行更新，由用户自行更新
+     * 5. 获取其他groupId, check_flag = 'Y'的设置CHECK_COMMENTS 为null
+     *
+     * @return
+     */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean validUserGroup() {
         // 获取短信内容为空的情况
-        int notValidCount = dailyMapper.validUserGroup();
-        if(notValidCount > 0) {
-            return false;
-        }
-        return true;
+        // 含券：券名称为空
+        String whereInfo = " and t1.IS_COUPON = 1 AND t4.COUPON_NAME IS NULL";
+        int count1 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "群组含券，券信息不能为空");
+
+        // 不含券：券名称不为空
+        whereInfo = " and t1.IS_COUPON = 0 and t4.coupon_name is not null";
+        int count2 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "群组不含券，券信息不能出现");
+
+        // 短信：不为空
+        whereInfo = " and t2.SMS_CONTENT IS NULL";
+        int count3 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "消息模板不能为空");
+
+        // 验证券的有效期
+        whereInfo = " and to_number(to_char(t4.VALID_END, 'YYYYMMDD')) < to_number(to_char(sysdate, 'YYYYMMDD'))";
+        int count4 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "券有效期已过期");
+
+        whereInfo = " and t4.VALID_STATUS = 'N'";
+        int count5 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "券已失效");
+
+        // 其他群组的校验字段更新为'Y'
+        whereInfo = " and (" +
+                "(t1.IS_COUPON = 1 AND t4.COUPON_NAME IS NULL)" +
+                " or (t1.IS_COUPON = 0 and t4.coupon_name is not null)" +
+                " or (t2.SMS_CONTENT IS NULL)" +
+                " or (to_number(to_char(t4.VALID_END, 'YYYYMMDD')) < to_number(to_char(sysdate, 'YYYYMMDD')))" +
+                " or t4.VALID_STATUS = 'N'" +
+                ")";
+        dailyMapper.updateCheckFlagY(whereInfo);
+        int result = count1 + count2 + count3 + count4 + count5;
+        return result > 0;
     }
 }

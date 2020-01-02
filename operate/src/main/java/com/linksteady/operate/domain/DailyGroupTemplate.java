@@ -37,4 +37,8 @@ public class DailyGroupTemplate {
     private String pathActive;
 
     private String lifecycle;
+
+    private String checkFlag;
+
+    private String checkComments;
 }

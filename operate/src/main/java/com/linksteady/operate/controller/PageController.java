@@ -131,6 +131,7 @@ public class PageController {
     @RequestMapping("/cfg/coupon")
     public String couponList(Model model) {
         model.addAttribute("validUrl", dailyProperties.getCouponSendType());
+        model.addAttribute("couponNameLen", dailyProperties.getCouponNameLen());
         return "operate/config/coupon";
     }
 

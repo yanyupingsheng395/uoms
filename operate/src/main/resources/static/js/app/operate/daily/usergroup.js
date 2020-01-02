@@ -119,6 +119,22 @@ function initTable() {
                 return '-';
             }
         }, {
+            field: 'checkFlag',
+            title: '合法性',
+            align: 'center',
+            formatter: function (value, row, index) {
+                if(value === 'Y') {
+                    return "<font color='green'><i class='fa fa-check'></i></font>";
+                }
+                if(value === 'N') {
+                    return "<font color='red'><i class='fa fa-close'></i></font>";
+                }
+                return "-";
+            }
+        }, {
+            field: 'checkComments',
+            title: '校验备注'
+        }, {
             title: '<i class="fa fa-edit"></i>&nbsp;操作',
             formatter: function (value, row, index) {
                 let code = "-";
@@ -251,7 +267,8 @@ function couponTable(groupId) {
         queryParams: function (params) {
             return {
                 pageSize: params.limit,
-                pageNum: (params.offset / params.limit) + 1
+                pageNum: (params.offset / params.limit) + 1,
+                param: {validStatus: "Y"}
             };
         },
         columns: [{
@@ -378,5 +395,17 @@ function deleteCoupon() {
                 $MB.n_danger("未知异常！");
             }
         })
+    });
+}
+
+// 验证群组信息, 没有验证通过则会阻止进入编辑页
+function validUserGroup() {
+    $.get("/daily/validUserGroup", {}, function (r) {
+        if(r.code === 200) {
+            $MB.refreshTable('dailyGroupTable');
+            $MB.n_success("群组信息已全部验证完毕！");
+        }else {
+            $MB.n_warning("未知错误！");
+        }
     });
 }

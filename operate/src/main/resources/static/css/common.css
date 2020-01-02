@@ -302,7 +302,7 @@ label.error {
 
 .input-group label.error {
     z-index:99;
-    right: 42px
+    /*right: 42px*/
 }
 
 .Validform_error,input.error,select.error {

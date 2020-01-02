@@ -97,8 +97,8 @@ $("#btn_edit").click(function () {
 
     $.get("/daily/validUserGroup", {}, function(r) {
         if(r.code == 200) {
-            if(!r.data) {
-                $MB.n_warning("成长组配置短信内容或券信息配置有误！");
+            if(r.data) {
+                $MB.n_warning("成长组配置验证未通过！");
                 return false;
             }
             window.location.href = "/page/daily/edit?id=" + headId;

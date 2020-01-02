@@ -29,6 +29,8 @@
         <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
         <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
         <result column="LIFECYCLE" jdbcType="VARCHAR" property="lifecycle"></result>
+        <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"></result>
+        <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"></result>
     </resultMap>
 
     <resultMap id="statisResult" type="com.linksteady.operate.domain.DailyStatis">
@@ -140,14 +142,13 @@
         select t.*, ROWNUM rn from (
         SELECT t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE,
                t1.PATH_ACTIVE, t1.LIFECYLE LIFECYCLE,
-               LISTAGG(t4.coupon_name, ',') within group (order by t4.coupon_id) coupon_name
+               LISTAGG(t4.coupon_name, ',') within group (order by t4.coupon_id) coupon_name, CHECK_FLAG, CHECK_COMMENTS
         FROM UO_OP_DAILY_TEMPLATE_CONFIG t1, UO_OP_SMS_TEMPLATE t2,
              UO_OP_DAILY_GROUP_COUPON t3, UO_OP_COUPON t4
         where t1.SMS_CODE = t2.SMS_CODE(+)
           and t1.group_id = t3.group_id(+)
           and t3.coupon_id = t4.coupon_id(+)
-        group by t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE,
-                 t1.PATH_ACTIVE, t1.LIFECYLE
+        group by t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE, CHECK_FLAG, t1.PATH_ACTIVE, t1.LIFECYLE, CHECK_COMMENTS
         ORDER BY USER_VALUE asc, LIFECYLE desc
         ) t where ROWNUM &lt;= #{end}
         )where rn &gt;= #{start}
@@ -265,4 +266,41 @@
             and PATH_ACTIVE = #{dailyPersonalVo.pathActive}
         </if>
     </select>
+
+    <update id="updateGroupCheckFlagByCouponId">
+        update UO_OP_DAILY_TEMPLATE_CONFIG set CHECK_FLAG = #{checkFlag}, CHECK_COMMENTS = '券已失效'
+        where GROUP_ID in (
+            select distinct GROUP_ID from UO_OP_DAILY_GROUP_COUPON where COUPON_ID = #{couponId}
+        )
+    </update>
+
+    <update id="updateCheckFlagAndRemark">
+        update UO_OP_DAILY_TEMPLATE_CONFIG set CHECK_FLAG = 'N', CHECK_COMMENTS = #{remark}
+        where GROUP_ID in (
+            SELECT t1.GROUP_ID
+            FROM UO_OP_DAILY_TEMPLATE_CONFIG t1,
+                  UO_OP_SMS_TEMPLATE t2,
+                  UO_OP_DAILY_GROUP_COUPON t3,
+                  UO_OP_COUPON t4
+             where t1.SMS_CODE = t2.SMS_CODE(+)
+               and t1.group_id = t3.group_id(+)
+               and t3.coupon_id = t4.coupon_id(+)
+               ${whereInfo}
+        )
+    </update>
+
+    <update id="updateCheckFlagY">
+        update UO_OP_DAILY_TEMPLATE_CONFIG set CHECK_FLAG = 'Y', CHECK_COMMENTS = ''
+        where GROUP_ID not in (
+            SELECT t1.GROUP_ID
+            FROM UO_OP_DAILY_TEMPLATE_CONFIG t1,
+                  UO_OP_SMS_TEMPLATE t2,
+                  UO_OP_DAILY_GROUP_COUPON t3,
+                  UO_OP_COUPON t4
+             where t1.SMS_CODE = t2.SMS_CODE(+)
+               and t1.group_id = t3.group_id(+)
+               and t3.coupon_id = t4.coupon_id(+)
+               ${whereInfo}
+        )
+    </update>
 </mapper>

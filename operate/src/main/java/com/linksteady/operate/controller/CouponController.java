@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
@@ -30,9 +31,11 @@ public class CouponController extends BaseController {
     @Autowired
     CouponServiceImpl couponService;
 
-
     @Autowired
     ShortUrlServiceImpl shortUrlService;
+
+    @Autowired
+    private DailyProperties dailyProperties;
 
     /**
      * 获取短信模板
@@ -42,7 +45,10 @@ public class CouponController extends BaseController {
      */
     @RequestMapping("/list")
     public ResponseBo smsTemplateList(@RequestBody QueryRequest request) {
-        String validStatus = request.getParam().get("validStatus");
+        String validStatus = new String();
+        if(null != request.getParam()) {
+            validStatus = request.getParam().get("validStatus");
+        }
         List<CouponInfo> result = couponService.getList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize(), validStatus);
         int totalCount = couponService.getTotalCount(validStatus);
         return ResponseBo.okOverPaging("", totalCount, result);
@@ -147,19 +153,13 @@ public class CouponController extends BaseController {
         return ResponseBo.ok();
     }
 
-    public static void main(String[] args) {
-        Node node = new Node();
-        node.seq = 1;
-
+    /**
+     * 获取券引用名的长度限制
+     * @return
+     */
+    @RequestMapping("/validCouponNameLen")
+    public boolean validCouponNameLen(@RequestParam("couponName") String couponName) {
+        return dailyProperties.getCouponNameLen() >= couponName.length();
     }
-}
-
-class Node {
-    Node next;
-    String s;
-    String f;
-    String sValue;
-    String fValue;
-    int seq;
 }
 

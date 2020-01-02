@@ -52,7 +52,7 @@ $(function () {
             }
         }, {
             field: 'validEnd',
-            title: '截止日期'
+            title: '有效截止日期'
         }, {
             field: 'validStatus',
             title: '券是否有效',
@@ -98,6 +98,10 @@ $("#btn_save").click(function () {
             });
         }
         if (name === "update") {
+            if(!validCoupon()) {
+                $MB.n_warning("当前日期大于有效截止日期，'券是否有效'的更改无效！");
+                return;
+            }
             $.post("/coupon/update", $("#coupon_edit").serialize(), function (r) {
                 if (r.code === 200) {
                     closeModal();
@@ -109,6 +113,17 @@ $("#btn_save").click(function () {
     }
 });
 
+// 验证券是否有效
+function validCoupon() {
+    let validStatus = $("input[name='validStatus']:checked").val();
+    if(validStatus === 'Y') {
+        let validEnd = $("#validEnd").val();
+        let date = new Date();
+        let now = String(date.getFullYear()) + (date.getMonth()+1).toString().padStart(2,'0') + (date.getDate().toString().padStart(2,'0'));
+        return Number(now) <= Number(validEnd);
+    }
+    return true;
+}
 function closeModal() {
     var $form = $('#coupon_edit');
     $form.find("input[name='couponName']").val("").removeAttr("readOnly");
@@ -183,7 +198,17 @@ function validateRule() {
                 required: $("#validUrl").val() === 'B'
             },
             couponDisplayName: {
-                required: true
+                required: true,
+                remote: {
+                    url: "/coupon/validCouponNameLen",
+                    type: "get",
+                    dataType: "json",
+                    data: {
+                        couponName: function () {
+                            return $("#couponDisplayName").val();
+                        }
+                    }
+                }
             },
             validEnd: {
                 required: true
@@ -205,7 +230,10 @@ function validateRule() {
             couponThreshold: icon + "请输入门槛",
             couponInfo2: icon + "请输入长链",
             couponUrl: icon + "请输入短链",
-            couponDisplayName: icon + "请输入引用名",
+            couponDisplayName: {
+                required: icon + "请输入引用名",
+                remote: icon + "长度不能超过"+couponNameLen+"个字符"
+            },
             validEnd: icon + "请输入截止日期",
             couponNum: icon + "请输入数量"
         }
@@ -252,4 +280,13 @@ function getShortUrl() {
             $MB.n_danger(r['msg']);
         }
     });
+}
+
+// 去除日期的验证
+function removeValid() {
+    var validEnd = $("#validEnd").val();
+    if(validEnd !== '') {
+        $("#validEnd").removeClass('error');
+        $("#validEnd-error").remove();
+    }
 }
