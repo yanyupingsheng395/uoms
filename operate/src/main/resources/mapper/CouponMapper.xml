@@ -60,8 +60,9 @@
     </insert>
 
     <update id="update" parameterType="com.linksteady.operate.domain.CouponInfo">
-        update UO_OP_COUPON set COUPON_DENOM = #{couponDenom},COUPON_THRESHOLD = #{couponThreshold},COUPON_NAME = #{couponName},COUPON_URL = #{couponUrl},COUPON_DESC = #{couponDesc},COUPON_TYPE = #{couponType},COUPON_NUM = #{couponNum},COUPON_INFO1 = #{couponInfo1},COUPON_INFO2 = #{couponInfo2},COUPON_DISPLAY_NAME = #{couponDisplayName},
-        VALID_STATUS = #{validStatus}
+        update UO_OP_COUPON
+        set COUPON_DENOM = #{couponDenom},COUPON_THRESHOLD = #{couponThreshold},COUPON_NAME = #{couponName},COUPON_URL = #{couponUrl},COUPON_DESC = #{couponDesc},COUPON_TYPE = #{couponType},COUPON_NUM = #{couponNum},COUPON_INFO1 = #{couponInfo1},COUPON_INFO2 = #{couponInfo2},COUPON_DISPLAY_NAME = #{couponDisplayName},
+        VALID_STATUS = #{validStatus}, VALID_END = to_date(#{validEnd}, 'yyyymmdd')
         where COUPON_ID = #{couponId}
     </update>
 

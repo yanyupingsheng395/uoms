@@ -488,8 +488,6 @@ public class ActivityController {
         try {
             activityThriftClient.open();
            Map<Integer,String> predictCnt=activityThriftClient.getActivityService().getPredictCnt(1,"0");
-
-            System.out.println(predictCnt);
         } catch (TException e) {
            //进行异常上报
             log.error("获取活动预估人数异常,",e);

@@ -2,7 +2,6 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.linksteady.operate.config.BinTree;
 import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyHead;

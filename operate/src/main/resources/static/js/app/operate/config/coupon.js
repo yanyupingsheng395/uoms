@@ -186,10 +186,12 @@ function validateRule() {
                 required: true
             },
             couponDenom: {
-                required: true
+                required: true,
+                digits: true
             },
             couponThreshold: {
-                required: true
+                required: true,
+                digits: true
             },
             couponInfo2: {
                 required: $("#validUrl").val() === 'B'
@@ -214,7 +216,8 @@ function validateRule() {
                 required: true
             },
             couponNum: {
-                required: true
+                required: true,
+                digits: true
             }
         },
         errorPlacement: function (error, element) {
@@ -226,8 +229,14 @@ function validateRule() {
         },
         messages: {
             couponName: icon + "请输入名称",
-            couponDenom: icon + "请输入面额",
-            couponThreshold: icon + "请输入门槛",
+            couponDenom: {
+                required: icon + "请输入面额",
+                digits: icon + "只能是整数"
+            },
+            couponThreshold: {
+                required: icon + "请输入门槛",
+                digits: icon + "只能是整数"
+            },
             couponInfo2: icon + "请输入长链",
             couponUrl: icon + "请输入短链",
             couponDisplayName: {
@@ -235,7 +244,10 @@ function validateRule() {
                 remote: icon + "长度不能超过"+couponNameLen+"个字符"
             },
             validEnd: icon + "请输入截止日期",
-            couponNum: icon + "请输入数量"
+            couponNum: {
+                required: icon + "请输入数量",
+                digits: icon + "只能是整数"
+            }
         }
     });
 }
