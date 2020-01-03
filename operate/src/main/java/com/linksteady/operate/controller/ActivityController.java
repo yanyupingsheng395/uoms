@@ -117,8 +117,11 @@ public class ActivityController {
                     if(row.getCell(0).getRowIndex() == 0) {
                         Iterator<Cell> cellIterator = row.cellIterator();
                         cellIterator.forEachRemaining(x->{
-                            if(headers.indexOf(x.getStringCellValue()) == -1) {
-                                flag.set(false);
+                            // 可能会出现空列的情况
+                            if(!x.getStringCellValue().equalsIgnoreCase("")) {
+                                if(headers.indexOf(x.getStringCellValue()) == -1) {
+                                    flag.set(false);
+                                }
                             }
                         });
                         if(!flag.get()) {
@@ -136,9 +139,9 @@ public class ActivityController {
                         activityProduct.setSkuCode(row.getCell(1).getStringCellValue());
                     }
                     // 验证产品名称不超过最大长度
-                    if(row.getCell(2).getStringCellValue().length() > dailyProperties.getProdNameLen()) {
-                        throw new LinkSteadyException("商品名称长度超过系统设置！");
-                    }
+//                    if(row.getCell(2).getStringCellValue().length() > dailyProperties.getProdNameLen()) {
+//                        throw new LinkSteadyException("商品名称长度超过系统设置！");
+//                    }
                     activityProduct.setProductName(row.getCell(2).getStringCellValue());
                     double minPrice = row.getCell(3).getNumericCellValue();
                     double formalPrice = row.getCell(4).getNumericCellValue();
