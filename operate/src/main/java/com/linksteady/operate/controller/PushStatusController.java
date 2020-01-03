@@ -4,13 +4,11 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.DailyHead;
-import com.linksteady.operate.domain.DailyProperties;
-import com.linksteady.operate.domain.PushListInfo;
-import com.linksteady.operate.domain.PushLog;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.DailyPropertiesService;
 import com.linksteady.operate.service.PushListService;
 import com.linksteady.operate.service.PushLogService;
+import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
 import com.linksteady.operate.thread.MonitorThread;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +40,9 @@ public class PushStatusController extends BaseController {
     @Autowired
     private PushListService pushListService;
 
+    @Autowired
+    private RedisMessageServiceImpl redisMessageService;
+
     /**
      * 关闭推送服务
      * @param
@@ -54,6 +55,7 @@ public class PushStatusController extends BaseController {
         if(null != dailyProperties && dailyProperties.getPushFlag().equalsIgnoreCase("Y")) {
             dailyProperties.setPushFlag("N");
             dailyPropertiesService.updateProperties(dailyProperties);
+            dailyPropertiesService.sendPushSignal("stop");
             flag = true;
         }
         if(flag) {
@@ -74,6 +76,7 @@ public class PushStatusController extends BaseController {
         if(null != dailyProperties && dailyProperties.getPushFlag().equalsIgnoreCase("N")) {
             dailyProperties.setPushFlag("Y");
             dailyPropertiesService.updateProperties(dailyProperties);
+            dailyPropertiesService.sendPushSignal("start");
             flag = true;
         }
         if(flag) {
@@ -179,6 +182,12 @@ public class PushStatusController extends BaseController {
         dailyProperties.setShortUrlLen(temp.getShortUrlLen());
         dailyProperties.setCouponSendType(temp.getCouponSendType());
         dailyProperties.setCouponNameLen(temp.getCouponNameLen());
+
+        //通过redis消息通知pushserver
+        HeartBeatInfo heartBeatInfo = new HeartBeatInfo();
+        heartBeatInfo.setStartOrStop("refresh");
+        redisMessageService.sendPushSingal(heartBeatInfo);
+
         return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
     }
 }

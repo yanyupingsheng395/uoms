@@ -20,4 +20,10 @@ public interface DailyPropertiesService {
      */
     void updateProperties(DailyProperties dailyProperties);
 
+
+    /**
+     * 发送启动/停止 信号
+     */
+    void sendPushSignal(String signal);
+
 }

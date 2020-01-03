@@ -15,7 +15,7 @@ public interface RedisMessageService {
     void  sendPhoneMessage(String phoneNum,String smsContent);
 
     /**
-     * 发送心跳
+     * 发送 启动/停止/刷新配置 通知
      */
-    void sendPushHeartBeat(HeartBeatInfo heartBeatInfo);
+    void sendPushSingal(HeartBeatInfo heartBeatInfo);
 }

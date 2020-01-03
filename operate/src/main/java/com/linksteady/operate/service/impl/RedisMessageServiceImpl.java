@@ -20,8 +20,6 @@ public class RedisMessageServiceImpl implements RedisMessageService {
 
     private static final String PUSH_TEST_SMS_CHANNEL="testsmschannel";
 
-    private static final String PUSH_HEART_BEAT_CHANNEL="pushHeartbeat";
-
     private static final String START_STOP_CHANNEL="startorstopchannel";
 
     @Autowired
@@ -82,7 +80,7 @@ public class RedisMessageServiceImpl implements RedisMessageService {
     }
 
     @Override
-    public void sendPushHeartBeat(HeartBeatInfo heartBeatInfo) {
+    public void sendPushSingal(HeartBeatInfo heartBeatInfo) {
         //发送推送的心跳
         stringRedisTemplate.convertAndSend(START_STOP_CHANNEL,JSON.toJSONString(heartBeatInfo));
     }

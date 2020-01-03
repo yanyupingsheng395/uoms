@@ -30,22 +30,12 @@ public class RedisListenerConfig {
     }
 
     /**
-     * 消息监听器适配器，绑定消息处理器，利用反射技术调用消息处理器的业务方法
+     * 消息监听器适配器，绑定消息处理器，利用反射技术调用消息处理器的业务方法  接收心跳
      * @param redisMessageService
      * @return
      */
     @Bean
     MessageListenerAdapter listenerAdapter(RedisMessageService redisMessageService){
         return new MessageListenerAdapter(redisMessageService, "receivePushHeartBeat");
-    }
-
-    /**
-     * 发送心跳
-     * @param redisMessageService
-     * @return
-     */
-    @Bean
-    MessageListenerAdapter listenerAdapterSend(RedisMessageService redisMessageService){
-        return new MessageListenerAdapter(redisMessageService, "sendPushHeartBeat");
     }
 }

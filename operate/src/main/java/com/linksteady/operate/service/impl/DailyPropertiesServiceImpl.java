@@ -26,15 +26,14 @@ public class DailyPropertiesServiceImpl implements DailyPropertiesService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public synchronized void updateProperties(DailyProperties dailyProperties) {
-        if("Y".equalsIgnoreCase(dailyProperties.getPushFlag())) {
-            HeartBeatInfo heartBeatInfo = new HeartBeatInfo();
-            heartBeatInfo.setStartOrStop("start");
-            redisMessageService.sendPushHeartBeat(heartBeatInfo);
-        }else if("N".equalsIgnoreCase(dailyProperties.getPushFlag())){
-            HeartBeatInfo heartBeatInfo = new HeartBeatInfo();
-            heartBeatInfo.setStartOrStop("stop");
-            redisMessageService.sendPushHeartBeat(heartBeatInfo);
-        }
         dailyPropertiesMapper.updateProperties(dailyProperties);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public synchronized void sendPushSignal(String signal) {
+        HeartBeatInfo heartBeatInfo = new HeartBeatInfo();
+        heartBeatInfo.setStartOrStop(signal);
+        redisMessageService.sendPushSingal(heartBeatInfo);
     }
 }

@@ -37,8 +37,6 @@ public class UserController extends BaseController {
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
 
-    private static final String ON = "on";
-
     @RequestMapping("user")
     @RequiresPermissions("user:list")
     public String index(Model model) {
@@ -71,7 +69,6 @@ public class UserController extends BaseController {
         }
     }
 
-//    @Log("获取用户信息")
     @RequestMapping("user/list")
     @RequiresPermissions("user:list")
     @ResponseBody

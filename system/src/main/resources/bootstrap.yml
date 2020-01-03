@@ -25,11 +25,11 @@ app:
 #    name: system
 #  cloud:
 #    config:
-#      uri: http://config.dev.growth-master.com
+#      uri: http://localhost:9060
 #      username: admin
 #      password: linksteady123
 #  profiles:
-#    active: prod
+#    active: common,prod
 
 # 配置加密的秘钥
 jasypt:
