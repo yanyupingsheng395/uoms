@@ -14,7 +14,6 @@
         <result column="SMS_LENGTH_LIMIT" jdbcType="DECIMAL" property="smsLengthLimit"></result>
 
         <result column="PRODUCTURL" jdbcType="VARCHAR" property="productUrl"></result>
-        <result column="ISALIAPP" jdbcType="VARCHAR" property="isAliApp"></result>
         <result column="ISTESTENV" jdbcType="VARCHAR" property="isTestEnv"></result>
         <result column="DEMOSHORTURL" jdbcType="VARCHAR" property="demoShortUrl"></result>
         <result column="PROD_NAME_LEN" jdbcType="DECIMAL" property="prodNameLen"></result>
@@ -34,7 +33,6 @@
             push_method,
             sms_length_limit,
             PRODUCTURL,
-            ISALIAPP,
             ISTESTENV,
             DEMOSHORTURL,
             PROD_NAME_LEN,

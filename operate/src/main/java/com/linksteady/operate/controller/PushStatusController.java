@@ -175,7 +175,6 @@ public class PushStatusController extends BaseController {
         dailyProperties.setPushMethod(temp.getPushMethod());
         dailyProperties.setSmsLengthLimit(temp.getSmsLengthLimit());
         dailyProperties.setProductUrl(temp.getProductUrl());
-        dailyProperties.setIsAliApp(temp.getIsAliApp());
         dailyProperties.setIsTestEnv(temp.getIsTestEnv());
         dailyProperties.setDemoShortUrl(temp.getDemoShortUrl());
         dailyProperties.setProdNameLen(temp.getProdNameLen());

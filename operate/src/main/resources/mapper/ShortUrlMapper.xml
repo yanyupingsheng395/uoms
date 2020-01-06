@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.ShortUrlMapper">
+
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.ShortUrlInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="ID" jdbcType="DECIMAL" property="id"/>
+        <result column="LONG_URL" jdbcType="VARCHAR" property="longUrl"/>
+        <result column="SHORT_URL" jdbcType="VARCHAR" property="shortUrl"/>
+        <result column="VALIDATE_DATE" jdbcType="DATE" property="validateDate"/>
+        <result column="INSERT_DT" jdbcType="DATE" property="insertDt"/>
+        <result column="INSERT_BY" jdbcType="VARCHAR" property="insertBy"/>
+        <result column="SOURCE_TYPE" jdbcType="VARCHAR" property="sourceType"/>
+        <result column="VALID_FLAG" jdbcType="VARCHAR" property="validFlag"/>
+    </resultMap>
+
+    <select id="getList" resultMap="BaseResultMap">
+        SELECT * FROM(
+           SELECT A.*,ROWNUM RN FROM(
+               SELECT ID,LONG_URL,SHORT_URL,VALIDATE_DATE,INSERT_DT,INSERT_BY,SOURCE_TYPE FROM T_SHORT_URL,VALID_FLAG order by INSERT_DT desc
+           ) A  WHERE ROWNUM &lt;=#{endRow}
+        ) WHERE RN &gt;=#{startRow}
+  </select>
+
+  <update id="InsertShortUrl">
+      insert into T_SHORT_URL(ID,LONG_URL,SHORT_URL,VALIDATE_DATE,INSERT_DT,INSERT_BY,SOURCE_TYPE,VALID_FLAG)
+      values(SEQ_T_SHORT_URL.NEXTVAL, #{id}, #{longUrl}, #{shortUrl}, #{validateDate}, #{insertDt}, #{insertBy}, #{sourceType}, #{validFlag});
+  </update>
+
+    <select id="selectShortUrlByLongUrl" resultType="string">
+        select shortUrl from T_SHORT_URL where LONG_URL=#{longUrl} and VALID_FLAG='Y'
+    </select>
+
+</mapper>

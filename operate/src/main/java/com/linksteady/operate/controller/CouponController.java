@@ -161,5 +161,6 @@ public class CouponController extends BaseController {
     public boolean validCouponNameLen(@RequestParam("couponName") String couponName) {
         return dailyProperties.getCouponNameLen() >= couponName.length();
     }
+
 }
 

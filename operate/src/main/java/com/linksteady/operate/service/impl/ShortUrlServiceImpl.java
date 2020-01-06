@@ -2,6 +2,8 @@ package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
+import com.linksteady.operate.dao.ShortUrlMapper;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.util.OkHttpUtil;
@@ -9,13 +11,13 @@ import com.linksteady.operate.util.UrlUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.stream.IntStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 根据长链接生成短链接的服务
@@ -26,6 +28,12 @@ public class ShortUrlServiceImpl implements ShortUrlService {
 
     @Autowired
     DailyProperties dailyProperties;
+
+    @Autowired
+    ShortUrlMapper shortUrlMapper;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     private static final String TOKEN="181cb047026eef2735bdec65a81293f7";
     final static String CREATE_API = "https://dwz.cn/admin/v2/create";
@@ -48,8 +56,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         }else
         {
             String newLongUrl="";
-            //判断是否需要进行转跳 唤醒淘宝APP
-            if("Y".equals(dailyProperties.getIsAliApp()))
+            //判断是否需要进行转跳 唤醒淘宝APP  如果长链接中包含 taobao.com tmall.com 则进行包裹
+            if(longUrl.indexOf("taobao.com")!=-1 || longUrl.indexOf("tmall.com")!=-1)
             {
                //进行一层转跳
                 newLongUrl=jumpUrl+ UrlUtil.getURLEncoderString(longUrl);
@@ -95,7 +103,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         {
             String newLongUrl=dailyProperties.getProductUrl().replace("$PRODUCT_ID",productId);
             //判断是否需要进行转跳 唤醒淘宝APP
-            if("Y".equals(dailyProperties.getIsAliApp()))
+            if(newLongUrl.indexOf("taobao.com")!=-1 || newLongUrl.indexOf("tmall.com")!=-1)
             {
                 //进行一层转跳
                 newLongUrl=jumpUrl+ UrlUtil.getURLEncoderString(newLongUrl);
@@ -118,7 +126,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         }else
         {
             //判断是否需要进行转跳 唤醒淘宝APP
-            if("Y".equals(dailyProperties.getIsAliApp()))
+            if(couponUrl.indexOf("taobao.com")!=-1 || couponUrl.indexOf("tmall.com")!=-1)
             {
                 //进行一层转跳
                 return produceShortUrl(jumpUrl+ UrlUtil.getURLEncoderString(couponUrl));
@@ -151,45 +159,54 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     private String produceShortUrl(String longUrl)
     {
         //todo 此处应该进行一次查找 如果找不到，再调用API进行生成
+        String shortUrl=shortUrlMapper.selectShortUrlByLongUrl(longUrl);
 
-        OkHttpClient client=OkHttpUtil.getOkHttpClient();
-        //termOfValidity 有效期：默认值为long-term  "1-year"：1年
-        String termOfValidity="1-year";
+        if(!StringUtils.isEmpty(shortUrl))
+        {
+            return shortUrl;
+        }else
+        {
+            OkHttpClient client=OkHttpUtil.getOkHttpClient();
+            //termOfValidity 有效期：默认值为long-term  "1-year"：1年
+            String termOfValidity="1-year";
 
-        String params = "{\"Url\":\""+ longUrl + "\",\"TermOfValidity\":\""+ termOfValidity + "\"}";
+            String params = "{\"Url\":\""+ longUrl + "\",\"TermOfValidity\":\""+ termOfValidity + "\"}";
 
-        String shortUrl= null;
-        String errMsg="";
-        Integer errCode=null;
-        try {
-            Request request = new Request.Builder()
-                    .url(CREATE_API)
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("Token",TOKEN)
-                    .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), params))
-                    .build();
+            String errMsg="";
+            Integer errCode=null;
+            try {
+                Request request = new Request.Builder()
+                        .url(CREATE_API)
+                        .addHeader("Content-Type", "application/json")
+                        .addHeader("Token",TOKEN)
+                        .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), params))
+                        .build();
 
-            ResponseBody responseBody=client.newCall(request).execute().body();
+                ResponseBody responseBody=client.newCall(request).execute().body();
 
-            JSONObject jsonObject = JSON.parseObject(responseBody.string());
-            shortUrl = jsonObject.getString("ShortUrl");
-            errCode=jsonObject.getInteger("Code");
-            errMsg=jsonObject.getString("ErrMsg");
+                JSONObject jsonObject = JSON.parseObject(responseBody.string());
+                shortUrl = jsonObject.getString("ShortUrl");
+                errCode=jsonObject.getInteger("Code");
+                errMsg=jsonObject.getString("ErrMsg");
 
-            if(null==errCode||errCode!=0)
-            {
-                shortUrl="";
+                if(null==errCode||errCode!=0)
+                {
+                    shortUrl="error";
+                    //进行异常日志的上报
+                    exceptionNoticeHandler.exceptionNotice("生成短链错误");
+                    log.error("长链 {} 生成短链错误,错误原因为{},错误代码为{}",longUrl,errMsg,errCode);
+                }
+            } catch (Exception e) {
+                shortUrl="error";
                 //todo 错误上报
+                //进行异常日志的上报
+                exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
 
-                log.error("长链 {} 生成短链错误,错误原因为{},错误代码为{}",longUrl,errMsg,errCode);
+                log.error("长链 {} 生成短链错误",longUrl,e);
             }
-        } catch (Exception e) {
-            shortUrl="";
-            //todo 错误上报
-
-            log.error("长链 {} 生成短链错误",longUrl,e);
+            return shortUrl;
         }
-        return shortUrl;
     }
+
 
 }
