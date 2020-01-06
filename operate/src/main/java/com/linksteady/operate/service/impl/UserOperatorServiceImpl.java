@@ -183,8 +183,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         List<String> dateList = DateUtil.getPeriodDate(periodType, startDt, endDt);
         List<KpiInfoVo> kpiInfoVos = getSpAndFpKpiDetail(kpiType, startDt, endDt, periodType, source);
         Map<String, Object> kpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getKpiVal));
-        Map<String, Object> fpKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getSpKpiVal));
-        Map<String, Object> spKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getFpKpiVal));
+        Map<String, Object> fpKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getFpKpiVal));
+        Map<String, Object> spKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getSpKpiVal));
         List<Double> kpiValList = fixData(kpiValMap, dateList);
         List<Double> spKpiValList = fixData(spKpiValMap, dateList);
         List<Double> fpKpiValList = fixData(fpKpiValMap, dateList);
