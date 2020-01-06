@@ -359,37 +359,47 @@ $("#btn_download").click(function() {
 });
 
 function startPush(planDateWid, stage) {
-    $.post("/activity/startPush", {headId: headId, planDateWid:planDateWid, stage: stage}, function (r) {
-        if(r.code === 200) {
-            if(stage === 'preheat') {
-                $('#preheatPlanTable').bootstrapTable('destroy');
-                getPlanTable();
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认开始执行当前计划？'
+    }, function () {
+        $.post("/activity/startPush", {headId: headId, planDateWid:planDateWid, stage: stage}, function (r) {
+            if(r.code === 200) {
+                if(stage === 'preheat') {
+                    $('#preheatPlanTable').bootstrapTable('destroy');
+                    getPlanTable();
+                }
+                if(stage === 'formal') {
+                    $('#formalPlanTable').bootstrapTable('destroy');
+                    getPlanTable();
+                }
+                $MB.n_success("计划已开始执行！");
+            }else {
+                $MB.n_danger(r.msg);
             }
-            if(stage === 'formal') {
-                $('#formalPlanTable').bootstrapTable('destroy');
-                getPlanTable();
-            }
-            $MB.n_success("计划已开始执行！");
-        }else {
-            $MB.n_danger(r.msg);
-        }
+        });
     });
 }
 
 function stopPush(planDateWid, stage) {
-    $.post("/activity/stopPush", {headId: headId, planDateWid:planDateWid}, function (r) {
-        if(r.code === 200) {
-            if(stage === 'preheat') {
-                $('#preheatPlanTable').bootstrapTable('destroy');
-                getPlanTable();
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认停止执行当前计划？'
+    }, function () {
+        $.post("/activity/stopPush", {headId: headId, planDateWid:planDateWid}, function (r) {
+            if(r.code === 200) {
+                if(stage === 'preheat') {
+                    $('#preheatPlanTable').bootstrapTable('destroy');
+                    getPlanTable();
+                }
+                if(stage === 'formal') {
+                    $('#formalPlanTable').bootstrapTable('destroy');
+                    getPlanTable();
+                }
+                $MB.n_success("计划已停止执行！");
+            }else {
+                $MB.n_danger(r.msg);
             }
-            if(stage === 'formal') {
-                $('#formalPlanTable').bootstrapTable('destroy');
-                getPlanTable();
-            }
-            $MB.n_success("计划已停止执行！");
-        }else {
-            $MB.n_danger(r.msg);
-        }
+        });
     });
 }

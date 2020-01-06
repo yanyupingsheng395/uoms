@@ -612,7 +612,7 @@ public class ActivityController {
      * @return
      */
     @PostMapping("/startPush")
-    public ResponseBo startPush(@RequestParam String headId, @RequestParam String planDateWid, @RequestParam String stage) {
+    public synchronized ResponseBo startPush(@RequestParam String headId, @RequestParam String planDateWid, @RequestParam String stage) {
         String todoStatus = "1";
         String doingStatus = "2";
         String status = activityPlanService.getStatus(headId, planDateWid);
