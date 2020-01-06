@@ -68,8 +68,9 @@ function getPlanTable() {
                                 "&nbsp;<a class='btn btn-sm btn-success' onclick='startPush(\""+row['planDateWid']+"\", \""+row['stage']+"\")'><i class='fa fa-play'></i>&nbsp;开始执行</a>";
                             break;
                         case "2":// 执行中
-                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\", \"0\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-danger' onclick='stopPush(\""+row['planDateWid']+"\", \""+row['stage']+"\")'><i class='fa fa-stop'></i>&nbsp;停止执行</a>";
+                            // res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\", \"0\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
+                            //     "&nbsp;<a class='btn btn-sm btn-danger' onclick='stopPush(\""+row['planDateWid']+"\", \""+row['stage']+"\")'><i class='fa fa-stop'></i>&nbsp;停止执行</a>";
+                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\", \"0\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>";
                             break;
                         case "3":// 执行完
                             res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\",\"1\")'><i class='fa fa-eye'></i>&nbsp;预览推送</a>";

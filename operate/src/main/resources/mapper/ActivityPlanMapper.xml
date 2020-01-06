@@ -64,8 +64,9 @@
     <update id="updatePushListLargeToFaild">
         update uo_op_push_list_large c set c.push_status='F',c.IS_PUSH='1' where c.source_code='ACTIVITY'
             and exists (
-            select t1.activity_detail_id from  uo_op_activity_detail t1 where t1.activity_detail_id=c.source_id
-            )
+            select t1.activity_detail_id from uo_op_activity_detail t1, UO_OP_ACTIVITY_HEADER t2
+            where t1.HEAD_ID = t2.HEAD_ID and t1.activity_detail_id = source_id and t1.HEAD_ID = #{headId}
+        )
     </update>
 
     <select id="getStatusCount" resultType="int">
