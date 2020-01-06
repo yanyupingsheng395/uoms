@@ -58,7 +58,7 @@ public class DailyProperties {
     /**
      * 包装短链是否需要包装成可唤醒淘宝APP (不考虑页面维护) Y表示是 N表示否
      */
-    private String isAliApp = "Y";
+   // private String isAliApp = "Y";
 
     /**
      * 短链是否返回模拟链接 （测试环境适用）
