@@ -36,7 +36,7 @@
                     <div class="col-sm-12 search-collapse">
                         <div class="col-md-12">
                             <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">短信模板</h5>
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">每日运营文案库</h5>
                             </div>
                             <div class="row">
                                 <hr class="hr"/>
@@ -46,7 +46,31 @@
                             <div class="select-list">
                                 <ul>
                                     <li>
-                                        模板编码：<input type="text" name="smsCode"/>
+                                        价值：<select id="userValue">
+                                        <option value="">所有</option>
+                                        <option value="ULC_01">重要</option>
+                                        <option value="ULC_02">主要</option>
+                                        <option value="ULC_03">普通</option>
+                                        <option value="ULC_04">长尾</option>
+                                    </select>
+                                    </li>
+                                    <li>
+                                        周期：<select id="userLifeCycle">
+                                        <option value="">所有</option>
+                                        <option value="0">新客</option>
+                                        <option value="1">老客</option>
+                                    </select>
+                                    </li>
+                                    <li>
+                                        活跃度：<select id="activePath">
+                                        <option value="">所有</option>
+                                        <option value="UAC_01">高度活跃</option>
+                                        <option value="UAC_02">中度活跃</option>
+                                        <option value="UAC_03">流失预警</option>
+                                        <option value="UAC_04">弱流失</option>
+                                        <option value="UAC_05">强流失</option>
+                                        <option value="UAC_06">沉睡</option>
+                                    </select>
                                     </li>
                                     <li>
                                         <a class="btn btn-primary btn-rounded btn-sm" onclick="searchSmsTemplate()"><i
@@ -63,16 +87,16 @@
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
                                     <a class="btn btn-success" id="btn_add" onclick="add()">
-                                        <i class="fa fa-plus"></i> 新增模板
+                                        <i class="fa fa-plus"></i> 新增文案
                                     </a>
                                     <a class="btn btn-primary" id="btn_edit">
-                                        <i class="fa fa-edit"></i> 修改模板
+                                        <i class="fa fa-edit"></i> 编辑文案
+                                    </a>
+                                    <a class="btn btn-danger" id="btn_delete" onclick="del()">
+                                        <i class="fa fa-close"></i> 删除文案
                                     </a>
                                     <a class="btn btn-cyan" id="btn_send" onclick="testSend()">
                                         <i class="fa fa-puzzle-piece"></i> 测试
-                                    </a>
-                                    <a class="btn btn-danger" id="btn_delete" onclick="del()">
-                                        <i class="fa fa-close"></i> 删除
                                     </a>
                                 </div>
                             </div>
@@ -89,35 +113,45 @@
     </div>
 </div>
 
-<!--新增活动-->
+<!--新增文案-->
 <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">×</span></button>
-                <h5 class="modal-title" id="myLargeModalLabel3">新增模板</h5>
+                <h5 class="modal-title" id="myLargeModalLabel3">新增文案</h5>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal">
+                <form class="form-horizontal" id="smsTemplateAddForm">
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label" for="smsCode">模板编码：</label>
+                        <label class="col-md-4 control-label">文案名称：</label>
                         <div class="col-md-7 input-group">
-                            <input class="form-control" type="text" id="smsCode" name="smsCode"/>
+                            <input class="form-control" type="hidden" id="smsCode" name="smsCode"/>
+                            <input class="form-control" type="text" id="smsName" name="smsName"/>
                         </div>
                     </div>
 
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label" for="smsContent">模板内容：</label>
+                        <label class="col-md-4 control-label" for="smsContent">文案内容：</label>
                         <div class="col-md-7 input-group">
-                            <textarea class="form-control" id="smsContent" name="example-textarea-input" rows="6"
-                                      placeholder="模板内容.."></textarea>
+                            <textarea class="form-control" id="smsContent" name="smsContent" rows="6" oninput="smsContentValid()"></textarea>
+                            <input type="hidden" id="smsContentInput" name="smsContentInput"/>
                             <span class="wordwrap"><var id="word">0</var>个字</span>
                         </div>
                     </div>
 
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label" for="smsCode">是否有券：</label>
+                        <label class="col-md-4 control-label">适用人群：</label>
+                        <div class="col-md-7 input-group">
+                            <div>价值:主要</div>
+                            <div>周期:老客</div>
+                            <div>活跃度:弱流失</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">体现补贴链接与名称：</label>
                         <div class="col-md-7 input-group">
                             <label class="lyear-radio radio-inline radio-primary">
                                 <input type="radio" name="isCoupon" value="1"><span>是</span>
@@ -129,7 +163,31 @@
                     </div>
 
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label" for="smsCode">统计字数：</label>
+                        <label class="col-md-4 control-label">体现推荐商品名称：</label>
+                        <div class="col-md-7 input-group">
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isProductName" value="1"><span>是</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isProductName" value="0"><span>否</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">体现推荐商品的详情页：</label>
+                        <div class="col-md-7 input-group">
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isProductUrl" value="1"><span>是</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isProductUrl" value="0"><span>否</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">统计字数：</label>
                         <div class="col-md-7 input-group">
                             <div class="input-group">
                                 <input type="text" class="form-control" id="fontNum" disabled readonly>
@@ -137,6 +195,13 @@
                                     <button class="btn btn-default" type="button" id="btn_cal">统计</button>
                                 </span>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">其他说明：</label>
+                        <div class="col-md-7 input-group">
+                            <input type="text" class="form-control" id="remark" name="remark"/>
                         </div>
                     </div>
                     <hr/>
@@ -173,9 +238,9 @@
             <div class="modal-body">
                 <form class="form-horizontal">
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label" for="smsCode1">模板编码：</label>
+                        <label class="col-md-4 control-label">文案名称：</label>
                         <div class="col-md-7 input-group">
-                            <input class="form-control" type="text" id="smsCode1" name="smsCode1" readonly/>
+                            <input class="form-control" type="text" id="smsName1" name="smsName1" readonly/>
                         </div>
                     </div>
 
@@ -187,7 +252,7 @@
                     </div>
 
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label" for="smsContent1">模板内容：</label>
+                        <label class="col-md-4 control-label" for="smsContent1">文案内容：</label>
                         <div class="col-md-7 input-group">
                             <textarea class="form-control" id="smsContent1" name="example-textarea-input"
                                       rows="6"></textarea>

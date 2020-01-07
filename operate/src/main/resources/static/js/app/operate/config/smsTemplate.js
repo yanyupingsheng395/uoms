@@ -1,4 +1,17 @@
+let validator;
 $(function () {
+    validate();
+    initTable();
+    statInputNum($("#smsContent"),$("#word"));
+    statInputNum($("#smsContent1"),$("#word1"));
+});
+
+//为刷新按钮绑定事件
+$("#btn_refresh").on("click",function () {
+    $('#smsTemplateTable').bootstrapTable('refresh');
+});
+
+function initTable() {
     var settings = {
         url: "/smsTemplate/list",
         method: 'post',
@@ -12,42 +25,51 @@ $(function () {
         queryParams: function (params) {
             return {
                 pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit )+ 1,  //页码
-                param: {smsCode: $("input[name='smsCode']").val()}
+                pageNum: (params.offset / params.limit )+ 1  //页码
             };
         },
-        columns: [{
-            checkbox: true
+        columns: [[{
+            checkbox: true,
+            rowspan: 2
         }, {
-            field: 'smsCode',
-            title: '模板编码'
+            field: 'smsName',
+            title: '文案名称',
+            rowspan: 2,
+            valign: "middle"
         }, {
+            title: '适用人群',
+            colspan: 4
+        },  {
             field: 'smsContent',
-            title: '模板内容'
+            title: '文案内容',
+            rowspan: 2,
+            valign: "middle"
+        }], [{
+            field: 'userValue',
+            title: '用户在类目的价值',
+        }, {
+            field: 'userLifeCycle',
+            title: '用户在类目上的生命周期阶段',
+        }, {
+            field: 'userValue',
+            title: '用户在类目特定购买次序的活跃度',
         }, {
             field: 'isCoupon',
-            title: '是否有券',
+            title: '有无补贴',
             formatter: function (value, row, index) {
                 let res = "-";
                 if(value == '1') {
-                    res = "是";
+                    res = "有";
                 }
                 if(value == '0') {
-                    res = "否";
+                    res = "无";
                 }
                 return res;
             }
-        }]
+        }]]
     };
     $MB.initTable('smsTemplateTable', settings);
-    //为刷新按钮绑定事件
-    $("#btn_refresh").on("click",function () {
-        $('#smsTemplateTable').bootstrapTable('refresh');
-    });
-
-    statInputNum($("#smsContent"),$("#word"));
-    statInputNum($("#smsContent1"),$("#word1"));
-});
+}
 
 /**
  * 字数统计
@@ -84,7 +106,7 @@ function testSend()
     $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
             //更新测试面板
-            $("#smsCode1").val(resp.data.smsCode);
+            $("#smsName1").val(resp.data.smsName);
             $("#smsContent1").val(resp.data.smsContent);
 
             var _value = $("#smsContent1").val().replace(/\n/gi,"");
@@ -150,7 +172,7 @@ function del() {
     if(null==selectRows||selectRows.length==0)
     {
         lightyear.loading('hide');
-        $MB.n_warning('请选择要删除的模板！');
+        $MB.n_warning('请选择要删除的文案！');
         return;
     }
 
@@ -158,7 +180,7 @@ function del() {
 
     $MB.confirm({
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认删除短信模板？'
+        content: '确认删除当前文案？'
     }, function () {
         $.getJSON("/smsTemplate/deleteSmsTemplate?smsCode="+smsCode,function (resp) {
             if (resp.code === 200){
@@ -174,13 +196,19 @@ function del() {
 }
 
 function add() {
-    $('#smsCode').val("").removeAttr("readOnly");
+    $('#smsCode').val("");
     $('#smsContent').val("");
+    $('#smsName').val("");
+    $('#remark').val("");
     $("input[name='isCoupon']:radio").removeAttr("checked");
+    $("input[name='isProductName']:radio").removeAttr("checked");
+    $("input[name='isProductUrl']:radio").removeAttr("checked");
     $("#word").text("0");
-    $("#myLargeModalLabel3").text("新增模板");
+    $("#fontNum").val('');
+    $("#myLargeModalLabel3").text("新增文案");
     $("#btn_save").attr("name", "save");
     $('#add_modal').modal('show');
+    $("#smsTemplateAddForm").validate().resetForm();
 }
 
 // 字数统计
@@ -253,72 +281,45 @@ function getSmsContentFontCount() {
 
 // 新增&修改
 $("#btn_save").click(function () {
-    var alert_str="";
+    let flag = validator.form();
+    if(flag) {
+        var alert_str;
+        var isCoupon = $("input[name='isCoupon']:checked").val();
+        if(!validCouponSendType(isCoupon)) {
+            return;
+        }
 
-    //验证
-    var smsCode= $('#smsCode').val();
-    var smsContent= $('#smsContent').val();
-    var isCoupon = $("input[name='isCoupon']:checked").val();
+        var data = getSmsContentFontCount();
+        if(!data.valid) {
+            alert_str+='文案字数超出最大限制！';
+        }
 
-    if(null==smsCode||smsCode=='')
-    {
-        alert_str+='模板编码不能为空！';
-    }
-
-    if(null==smsContent||smsContent=='')
-    {
-        alert_str+='模板内容不能为空！';
-    }
-
-    if(null==isCoupon||isCoupon==' ')
-    {
-        alert_str+='请选择是否包含优惠券！';
-    }
-
-    if(!validCouponSendType(isCoupon)) {
-        return;
-    }
-
-    var data = getSmsContentFontCount();
-    if(!data.valid) {
-        alert_str+='短信模板字数超出最大限制！';
-    }
-
-    if(null!=alert_str&&alert_str!='')
-    {
-        $MB.n_warning(alert_str);
-        return;
-    }
-    var url = "";
-    var success_msg = "";
-    var sure_msg = "";
-    if($(this).attr("name") == "save") {
-        url = "/smsTemplate/addSmsTemplate";
-        success_msg = "新增成功！";
-        sure_msg = "确定要保存数据？";
-    }else {
-        url = "/smsTemplate/updateSmsTemplate";
-        success_msg = "修改成功！";
-        sure_msg = "确定要修改数据？";
-    }
+        if(null!=alert_str&&alert_str!='')
+        {
+            $MB.n_warning(alert_str);
+            return;
+        }
+        var url = "";
+        var success_msg = "";
+        var sure_msg = "";
+        if($(this).attr("name") == "save") {
+            url = "/smsTemplate/addSmsTemplate";
+            success_msg = "新增成功！";
+            sure_msg = "确定要保存数据？";
+        }else {
+            url = "/smsTemplate/updateSmsTemplate";
+            success_msg = "修改成功！";
+            sure_msg = "确定要修改数据？";
+        }
 
 
-    //提示是否要保存
-    $MB.confirm({
-        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认提交数据？'
-    }, function () {
-        var param = new Object();
-        param.smsCode=smsCode;
-        param.smsContent=smsContent;
-        param.isCoupon = isCoupon;
+        //提示是否要保存
+        $MB.confirm({
+            title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+            content: '确认提交数据？'
+        }, function () {
 
-        $.ajax({
-            url: url,
-            data: JSON.stringify(param),
-            type: 'POST',
-            contentType: "application/json;charset=utf-8",
-            success: function (r) {
+            $.post(url, $("#smsTemplateAddForm").serialize(), function (r) {
                 if(r.code === 200) {
                     $MB.n_success(success_msg);
                 }else {
@@ -326,11 +327,67 @@ $("#btn_save").click(function () {
                 }
                 $('#add_modal').modal('hide');
                 $('#smsTemplateTable').bootstrapTable('refresh');
-            }
+            });
         });
-    });
-
+    }
 });
+// 表单验证
+function validate() {
+    let icon = "<i class='fa fa-close'></i> ";
+    let rule = {
+        rules: {
+            smsName: {
+                required: true
+            },
+            smsContentInput: {
+                required: true
+            },
+            isCoupon: {
+                required: true
+            },
+            isProductName: {
+                required: true
+            },
+            isProductUrl: {
+                required: true
+            }
+        },
+        errorPlacement: function (error, element) {
+            if (element.is(":checkbox") || element.is(":radio")) {
+                error.appendTo(element.parent().parent());
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        messages: {
+            smsName: {
+                required: icon + "请输入文案名称"
+            },
+            smsContentInput: {
+                required: icon + "请输入文案内容"
+            },
+            isCoupon: {
+                required: icon + "请选择"
+            },
+            isProductName: {
+                required: icon + "请选择"
+            },
+            isProductUrl: {
+                required: icon + "请选择"
+            }
+        }
+    };
+    validator = $("#smsTemplateAddForm").validate(rule);
+}
+
+//
+function smsContentValid() {
+    $('#smsContentInput').val($('#smsContent').val());
+    if($('#smsContentInput').val() !== '') {
+        $('#smsContentInput').removeClass('error');
+        $("#smsContentInput-error").remove();
+    }
+}
 
 $("#add_modal").on('hidden.bs.modal', function () {
     $('#smsCode').val("");
@@ -338,6 +395,7 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $("input[name='isCoupon']").removeAttr("disabled");
 });
 
+// 文案检索
 function searchSmsTemplate() {
     $MB.refreshTable('smsTemplateTable');
 }
@@ -352,7 +410,7 @@ $("#btn_edit").click(function () {
     if(null==selectRows||selectRows.length==0)
     {
         lightyear.loading('hide');
-        $MB.n_warning('请选择要修改的模板！');
+        $MB.n_warning('请选择要修改的文案！');
         return;
     }
 
@@ -360,12 +418,18 @@ $("#btn_edit").click(function () {
     $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
             var data = resp.data;
-            $("#smsCode").val(data.smsCode).attr("readOnly", true);
+            $("#smsCode").val(data.smsCode);
+            $("#smsName").val(data.smsName);
             $("#smsContent").val(data.smsContent);
             statInputNum($("#smsContent"),$("#word"));
             $("input[name='isCoupon']:radio[value='" + data.isCoupon + "']").prop("checked", true);
             $("input[name='isCoupon']").attr("disabled", "disabled");
-            $("#myLargeModalLabel3").text("修改模板");
+            $("input[name='isProductName']:radio[value='" + data.isProductName + "']").prop("checked", true);
+            $("input[name='isProductName']").attr("disabled", "disabled");
+            $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true);
+            $("input[name='isProductUrl']").attr("disabled", "disabled");
+            $("#remark").val(data.remark);
+            $("#myLargeModalLabel3").text("修改文案");
             $("#btn_save").attr("name", "update");
             $("#add_modal").modal('show');
         }

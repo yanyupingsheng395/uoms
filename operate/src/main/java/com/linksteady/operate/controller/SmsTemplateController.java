@@ -44,10 +44,8 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/list")
     public ResponseBo smsTemplateList(@RequestBody QueryRequest request) {
-        String smsCode = request.getParam().get("smsCode");
-        String groupId = request.getParam().get("groupId");
-        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize(), smsCode, groupId);
-        int totalCount = smsTemplateService.getTotalCount(smsCode, groupId);
+        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize());
+        int totalCount = smsTemplateService.getTotalCount();
         return ResponseBo.okOverPaging("", totalCount, result);
     }
 
@@ -55,10 +53,10 @@ public class SmsTemplateController extends BaseController {
      * 增加短信模板
      */
     @RequestMapping("/addSmsTemplate")
-    public ResponseBo addSmsTemplate(@RequestBody SmsTemplate smsTemplate) {
+    public ResponseBo addSmsTemplate(SmsTemplate smsTemplate) {
         //添加
         try {
-            smsTemplateService.saveSmsTemplate(smsTemplate.getSmsCode(), smsTemplate.getSmsContent(), smsTemplate.getIsCoupon());
+            smsTemplateService.saveSmsTemplate(smsTemplate);
             return ResponseBo.ok();
         } catch (Exception e) {
             //失败
@@ -116,7 +114,7 @@ public class SmsTemplateController extends BaseController {
      * @return
      */
     @RequestMapping("/updateSmsTemplate")
-    public ResponseBo updateSmsTemplate(@RequestBody SmsTemplate smsTemplate) {
+    public ResponseBo updateSmsTemplate(SmsTemplate smsTemplate) {
         smsTemplateService.update(smsTemplate);
         return ResponseBo.ok();
     }

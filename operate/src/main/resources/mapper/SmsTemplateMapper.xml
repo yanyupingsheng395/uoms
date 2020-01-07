@@ -8,36 +8,29 @@
         <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode" />
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent" />
         <result column="IS_COUPON" jdbcType="VARCHAR" property="isCoupon" />
+        <result column="SMS_NAME" jdbcType="VARCHAR" property="smsName" />
+        <result column="IS_PRODUCT_NAME" jdbcType="VARCHAR" property="isProductName" />
+        <result column="IS_PRODUCT_URL" jdbcType="VARCHAR" property="isProductUrl" />
+        <result column="REMARK" jdbcType="VARCHAR" property="remark" />
     </resultMap>
 
     <select id="getSmsTemplateList" resultMap="BaseResultMap">
         SELECT * FROM(
         SELECT A.*,ROWNUM RN FROM
         (SELECT
-        SMS_CODE, SMS_CONTENT, IS_COUPON
-        FROM UO_OP_SMS_TEMPLATE WHERE 1=1
-        <if test="smsCode != null and smsCode != ''">
-            AND SMS_CODE=#{smsCode}
-        </if>
-        <if test="groupId != null and groupId != ''">
-            AND IS_COUPON = (select IS_COUPON from UO_OP_DAILY_TEMPLATE_CONFIG where group_id = #{groupId})
-        </if>
+        SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK
+        FROM UO_OP_SMS_TEMPLATE
         ) A  WHERE ROWNUM &lt;=#{endRow}
         ) WHERE RN &gt;=#{startRow}
     </select>
 
     <select id="getTotalCount" resultType="int">
-        select count(1) from UO_OP_SMS_TEMPLATE where 1=1
-        <if test="smsCode != null and smsCode != ''">
-            and SMS_CODE=#{smsCode}
-        </if>
-        <if test="groupId != null and groupId != ''">
-            AND IS_COUPON = (select IS_COUPON from UO_OP_DAILY_TEMPLATE_CONFIG where group_id = #{groupId})
-        </if>
+        select count(1) from UO_OP_SMS_TEMPLATE
     </select>
 
     <insert id="saveSmsTemplate">
-     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE,SMS_CONTENT, IS_COUPON) VALUES(#{smsCode},#{smsContent},#{isCoupon})
+     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK)
+     VALUES(SEQ_SMS_TEMPLATE_CODE.nextval,#{smsContent},#{isCoupon}, #{smsName}, #{isProductName}, #{isProductUrl}, #{remark})
   </insert>
 
     <select id="refrenceCount" resultType="int">
@@ -50,12 +43,13 @@
 
     <select id="getSmsTemplate" resultMap="BaseResultMap">
     SELECT
-        SMS_CODE, SMS_CONTENT, IS_COUPON
+        SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK
         FROM UO_OP_SMS_TEMPLATE WHERE SMS_CODE=#{smsCode}
   </select>
 
     <update id="update" parameterType="com.linksteady.operate.domain.SmsTemplate">
-      update UO_OP_SMS_TEMPLATE set SMS_CONTENT = #{smsContent}, IS_COUPON = #{isCoupon}
+      update UO_OP_SMS_TEMPLATE
+      set SMS_CONTENT = #{smsContent}, IS_COUPON = #{isCoupon}, SMS_NAME = #{smsName}, IS_PRODUCT_NAME = #{isProductName}, IS_PRODUCT_URL = #{isProductUrl}, REMARK = #{remark}
       where SMS_CODE = #{smsCode}
     </update>
 
