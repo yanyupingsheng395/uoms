@@ -12,25 +12,49 @@
         <result column="IS_PRODUCT_NAME" jdbcType="VARCHAR" property="isProductName" />
         <result column="IS_PRODUCT_URL" jdbcType="VARCHAR" property="isProductUrl" />
         <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue" />
+        <result column="LIFE_CYCLE" jdbcType="VARCHAR" property="lifeCycle" />
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive" />
     </resultMap>
 
     <select id="getSmsTemplateList" resultMap="BaseResultMap">
         SELECT * FROM(
         SELECT A.*,ROWNUM RN FROM
         (SELECT
-        SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK
+        SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE
         FROM UO_OP_SMS_TEMPLATE
+        where 1=1
+        <if test="smsTemplate.userValue != null and smsTemplate.userValue != ''">
+            and USER_VALUE like concat('%', concat(#{smsTemplate.userValue}, '%'))
+        </if>
+        <if test="smsTemplate.lifeCycle != null and smsTemplate.lifeCycle != ''">
+            and LIFE_CYCLE like concat('%', concat(#{smsTemplate.lifeCycle}, '%'))
+        </if>
+        <if test="smsTemplate.pathActive != null and smsTemplate.pathActive != ''">
+            and PATH_ACTIVE like concat('%', concat(#{smsTemplate.pathActive}, '%'))
+        </if>
+        order by to_number(SMS_CODE) desc
         ) A  WHERE ROWNUM &lt;=#{endRow}
         ) WHERE RN &gt;=#{startRow}
     </select>
 
     <select id="getTotalCount" resultType="int">
         select count(1) from UO_OP_SMS_TEMPLATE
+        where 1=1
+        <if test="smsTemplate.userValue != null and smsTemplate.userValue != ''">
+            and USER_VALUE like concat('%', concat(#{smsTemplate.userValue}, '%'))
+        </if>
+        <if test="smsTemplate.lifeCycle != null and smsTemplate.lifeCycle != ''">
+            and LIFE_CYCLE like concat('%', concat(#{smsTemplate.lifeCycle}, '%'))
+        </if>
+        <if test="smsTemplate.pathActive != null and smsTemplate.pathActive != ''">
+            and PATH_ACTIVE like concat('%', concat(#{smsTemplate.pathActive}, '%'))
+        </if>
     </select>
 
     <insert id="saveSmsTemplate">
-     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK)
-     VALUES(SEQ_SMS_TEMPLATE_CODE.nextval,#{smsContent},#{isCoupon}, #{smsName}, #{isProductName}, #{isProductUrl}, #{remark})
+     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE)
+     VALUES(SEQ_SMS_TEMPLATE_CODE.nextval,#{smsContent},#{isCoupon}, #{smsName}, #{isProductName}, #{isProductUrl}, #{remark}, #{userValue}, #{lifeCycle}, #{pathActive})
   </insert>
 
     <select id="refrenceCount" resultType="int">
@@ -43,14 +67,23 @@
 
     <select id="getSmsTemplate" resultMap="BaseResultMap">
     SELECT
-        SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK
+        SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE
         FROM UO_OP_SMS_TEMPLATE WHERE SMS_CODE=#{smsCode}
   </select>
 
     <update id="update" parameterType="com.linksteady.operate.domain.SmsTemplate">
       update UO_OP_SMS_TEMPLATE
-      set SMS_CONTENT = #{smsContent}, IS_COUPON = #{isCoupon}, SMS_NAME = #{smsName}, IS_PRODUCT_NAME = #{isProductName}, IS_PRODUCT_URL = #{isProductUrl}, REMARK = #{remark}
+      set SMS_CONTENT = #{smsContent}, IS_COUPON = #{isCoupon}, SMS_NAME = #{smsName}, IS_PRODUCT_NAME = #{isProductName}, IS_PRODUCT_URL = #{isProductUrl}, REMARK = #{remark},
+      USER_VALUE = #{userValue}, LIFE_CYCLE = #{lifeCycle}, PATH_ACTIVE = #{pathActive}
       where SMS_CODE = #{smsCode}
     </update>
 
+    <select id="getTemplateByGroupId" resultMap="BaseResultMap">
+        select distinct t1.* from UO_OP_SMS_TEMPLATE t1, UO_OP_DAILY_TEMPLATE_CONFIG t2
+        where (t1.USER_VALUE like concat('%', concat(t2.USER_VALUE, '%'))
+         or t1.LIFE_CYCLE like concat('%', concat(t2.LIFECYLE, '%'))
+         or t1.PATH_ACTIVE like concat('%', concat(t2.PATH_ACTIVE, '%')))
+         and t2.GROUP_ID = #{groupId}
+         order by to_number(t1.sms_code) desc
+    </select>
 </mapper>

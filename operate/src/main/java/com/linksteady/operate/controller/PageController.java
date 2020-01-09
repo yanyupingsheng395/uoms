@@ -77,6 +77,15 @@ public class PageController {
         return "operate/daily/list";
     }
 
+    @RequestMapping("/daily/config")
+    public String dailyGroupConfig(Model model) {
+        model.addAttribute("shortUrlLen", dailyProperties.getShortUrlLen());
+        model.addAttribute("couponNameLen", dailyProperties.getCouponNameLen());
+        model.addAttribute("prodNameLen", dailyProperties.getProdNameLen());
+        model.addAttribute("couponSendType", dailyProperties.getCouponSendType());
+        return "operate/daily/config";
+    }
+
 
     @RequestMapping("/daily/edit")
     public String dailyEdit(Model model, @RequestParam("id") String headId) {

@@ -1,0 +1,35 @@
+<div class="row" style="margin-top: 10px;">
+    <div class="col-sm-12">
+        <div class="col-md-12">
+            <div class="row">
+                <hr class="hr" style="margin: 0px;"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12 table-striped">
+        <div class="row" style="margin-top: 12px;">
+            <div class="col-sm-12">
+                <div class="btn-group-sm" id="toolbar" role="group">
+                    <a class="btn btn-success" id="btn_add" onclick="add()">
+                        <i class="fa fa-plus"></i> 新增文案
+                    </a>
+                    <a class="btn btn-primary" id="btn_edit">
+                        <i class="fa fa-edit"></i> 编辑文案
+                    </a>
+                    <a class="btn btn-danger" id="btn_delete" onclick="del()">
+                        <i class="fa fa-close"></i> 删除文案
+                    </a>
+                    <a class="btn btn-cyan" id="btn_send" onclick="testSend()">
+                        <i class="fa fa-puzzle-piece"></i> 测试
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 12px;">
+            <div class="col-sm-12 ">
+                <table id="smsTemplateTable" class="table table-striped table-bordered"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<input id="headerId" type="hidden">

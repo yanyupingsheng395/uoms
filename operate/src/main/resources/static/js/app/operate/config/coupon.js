@@ -22,49 +22,79 @@ $(function () {
                 param: {validStatus: $("select[name='validStatus']").val()}
             };
         },
-        columns: [{
-            checkbox: true
-        }, {
-            field: 'couponId',
-            title: '优惠券编号',
-            visible: false
-        }, {
-            field: 'couponName',
-            title: '优惠券名称'
-        }, {
-            field: 'couponDisplayName',
-            title: '文案中引用名'
-        }, {
-            field: 'couponDenom',
-            title: '优惠券面额'
-        }, {
-            field: 'couponThreshold',
-            title: '优惠券门槛'
-        }, {
-            field: 'couponUrl',
-            title: '优惠券地址',
-            formatter: function (value, row, index) {
-                if(value !== undefined && value !== null) {
-                    return "<a href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
-                }else {
-                    return "-";
-                }
+        columns: [[
+            {
+                checkbox: true,
+                rowspan: 2
+            },
+            {
+                title: '补贴基本信息',
+                colspan: 4
+            },
+            {
+                title: '适用人群',
+                colspan: 3
+            },
+            {
+                title: '补贴主要信息',
+                colspan: 4
             }
-        }, {
-            field: 'validEnd',
-            title: '有效截止日期'
-        }, {
-            field: 'validStatus',
-            title: '券是否有效',
-            formatter: function (value, row, index) {
-                if(value === 'Y') {
-                    return "是";
-                }else if(value === 'N'){
-                    return "否";
+        ],
+            [{
+                field: 'couponName',
+                title: '补贴名称'
+            }, {
+                field: 'couponThreshold',
+                title: '门槛'
+            },{
+                field: 'couponDenom',
+                title: '面额'
+            }, {
+                filed: 'couponSource',
+                title: '类型',
+                formatter: function (value, row, index) {
+                    var res = '';
+                    if(value === '0') {
+                        res = "智能";
+                    }
+                    if(value === '1') {
+                        res = "手动";
+                    }
+                    return res;
                 }
-                return "";
-            }
-        }]
+            }, {
+                title: '用户在类目的价值'
+            },{
+                title: '用户在类目上的生命周期阶段'
+            },{
+                title: '用户在类目特定购买次序的活跃度'
+            },{
+                title: '文案中名称'
+            },{
+                field: 'couponUrl',
+                title: '领取地址',
+                formatter: function (value, row, index) {
+                    if(value !== undefined && value !== null) {
+                        return "<a href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
+                    }else {
+                        return "-";
+                    }
+                }
+            }, {
+                field: 'validEnd',
+                title: '有效期至'
+            }, {
+                field: 'validStatus',
+                title: '是否有效',
+                formatter: function (value, row, index) {
+                    if(value === 'Y') {
+                        return "是";
+                    }else if(value === 'N'){
+                        return "否";
+                    }
+                    return "";
+                }
+            }]]
     };
 
     $MB.initTable('couponTable', settings);

@@ -21,13 +21,13 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     private SmsTemplateMapper smsTemplateapper;
 
     @Override
-    public List<SmsTemplate> getSmsTemplateList(int startRow, int endRow) {
-        return smsTemplateapper.getSmsTemplateList(startRow, endRow);
+    public List<SmsTemplate> getSmsTemplateList(int startRow, int endRow,SmsTemplate smsTemplate) {
+        return smsTemplateapper.getSmsTemplateList(startRow, endRow, smsTemplate);
     }
 
     @Override
-    public int getTotalCount() {
-        return smsTemplateapper.getTotalCount();
+    public int getTotalCount(SmsTemplate smsTemplate) {
+        return smsTemplateapper.getTotalCount(smsTemplate);
     }
 
     @Override
@@ -53,5 +53,10 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     @Override
     public void update(SmsTemplate smsTemplate) {
         smsTemplateapper.update(smsTemplate);
+    }
+
+    @Override
+    public List<SmsTemplate> getTemplateByGroupId(String groupId) {
+        return smsTemplateapper.getTemplateByGroupId(groupId);
     }
 }

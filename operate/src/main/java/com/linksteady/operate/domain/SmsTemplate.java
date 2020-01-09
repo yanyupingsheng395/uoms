@@ -43,4 +43,8 @@ public class SmsTemplate {
      * 备注
      */
     private String remark;
+
+    private String userValue;
+    private String lifeCycle;
+    private String pathActive;
 }

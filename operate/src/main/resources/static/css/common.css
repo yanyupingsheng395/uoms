@@ -863,3 +863,7 @@ label {
 table > thead > tr > th {
     text-align: center;
 }
+
+.fixed-table-container{
+    border: 0 !important;
+}

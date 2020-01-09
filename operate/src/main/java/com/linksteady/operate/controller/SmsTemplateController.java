@@ -44,8 +44,12 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/list")
     public ResponseBo smsTemplateList(@RequestBody QueryRequest request) {
-        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize());
-        int totalCount = smsTemplateService.getTotalCount();
+        SmsTemplate smsTemplate = new SmsTemplate();
+        smsTemplate.setUserValue(request.getParam().get("userValue"));
+        smsTemplate.setLifeCycle(request.getParam().get("lifeCycle"));
+        smsTemplate.setPathActive(request.getParam().get("pathActive"));
+        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize(), smsTemplate);
+        int totalCount = smsTemplateService.getTotalCount(smsTemplate);
         return ResponseBo.okOverPaging("", totalCount, result);
     }
 
@@ -72,7 +76,7 @@ public class SmsTemplateController extends BaseController {
         String smsCode = request.getParameter("smsCode");
         //判断短信模板是否被引用
         if (smsTemplateService.refrenceCount(smsCode) > 0) {
-            return ResponseBo.error("此模板已经被成长组引用，无法删除！");
+            return ResponseBo.error("此文案已经被成长组引用，无法删除！");
         }
         smsTemplateService.deleteSmsTemplate(smsCode);
         return ResponseBo.ok();
@@ -84,6 +88,10 @@ public class SmsTemplateController extends BaseController {
     @RequestMapping("/getSmsTemplate")
     public ResponseBo getSmsTemplate(HttpServletRequest request) {
         String smsCode = request.getParameter("smsCode");
+        //判断短信模板是否被引用
+        if (smsTemplateService.refrenceCount(smsCode) > 0) {
+            return ResponseBo.error("此文案已经被成长组引用，无法编辑！");
+        }
         return ResponseBo.okWithData("", smsTemplateService.getSmsTemplate(smsCode));
     }
 
@@ -162,6 +170,11 @@ public class SmsTemplateController extends BaseController {
     @GetMapping("/validSmsContentLength")
     public ResponseBo validSmsContentLength(@RequestParam("smsContent") String smsContent) {
         return ResponseBo.okWithData(null, smsContent.length() <= dailyProperties.getSmsLengthLimit());
+    }
+
+    @RequestMapping("/getTemplateByGroupId")
+    public ResponseBo getTemplateByGroupId(@RequestParam("groupId") String groupId) {
+        return ResponseBo.okWithData(null, smsTemplateService.getTemplateByGroupId(groupId));
     }
 }
 

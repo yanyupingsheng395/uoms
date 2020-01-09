@@ -3,15 +3,15 @@ package com.linksteady.operate.dao;
 import com.linksteady.operate.config.MyMapper;
 import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.domain.SpuCycle;
-import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
 
-    List<SmsTemplate> getSmsTemplateList(@Param("startRow") int startRow, @Param("endRow") int endRow);
+    List<SmsTemplate> getSmsTemplateList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("smsTemplate") SmsTemplate smsTemplate);
 
-    int getTotalCount();
+    int getTotalCount(@Param("smsTemplate") SmsTemplate smsTemplate);
 
     void saveSmsTemplate(SmsTemplate smsTemplate);
 
@@ -22,4 +22,6 @@ public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
     SmsTemplate getSmsTemplate(@Param("smsCode") String smsCode);
 
     void update(@Param("smsTemplate") SmsTemplate smsTemplate);
+
+    List<SmsTemplate> getTemplateByGroupId(String groupId);
 }
