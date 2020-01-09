@@ -73,9 +73,9 @@
 
     <update id="update" parameterType="com.linksteady.operate.domain.SmsTemplate">
       update UO_OP_SMS_TEMPLATE
-      set SMS_CONTENT = #{smsContent}, IS_COUPON = #{isCoupon}, SMS_NAME = #{smsName}, IS_PRODUCT_NAME = #{isProductName}, IS_PRODUCT_URL = #{isProductUrl}, REMARK = #{remark},
-      USER_VALUE = #{userValue}, LIFE_CYCLE = #{lifeCycle}, PATH_ACTIVE = #{pathActive}
-      where SMS_CODE = #{smsCode}
+      set SMS_CONTENT = #{smsTemplate.smsContent}, IS_COUPON = #{smsTemplate.isCoupon}, SMS_NAME = #{smsTemplate.smsName}, IS_PRODUCT_NAME = #{smsTemplate.isProductName}, IS_PRODUCT_URL = #{smsTemplate.isProductUrl}, REMARK = #{smsTemplate.remark},
+      USER_VALUE = #{smsTemplate.userValue}, LIFE_CYCLE = #{smsTemplate.lifeCycle}, PATH_ACTIVE = #{smsTemplate.pathActive}
+      where SMS_CODE = #{smsTemplate.smsCode}
     </update>
 
     <select id="getTemplateByGroupId" resultMap="BaseResultMap">

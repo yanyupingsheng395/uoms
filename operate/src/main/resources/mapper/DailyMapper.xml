@@ -133,13 +133,7 @@
         select total_num total, OPT_NUM opt from UO_OP_DAILY_HEADER where head_id = #{headId}
     </select>
 
-    <select id="getUserGroupCount" resultType="int">
-        select count(1) from UO_OP_DAILY_TEMPLATE_CONFIG
-    </select>
-
-    <select id="getUserGroupListPage" resultMap="templateResult">
-        select * from (
-        select t.*, ROWNUM rn from (
+    <select id="getUserGroupList" resultMap="templateResult">
         SELECT t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE,
                t1.PATH_ACTIVE, t1.LIFECYLE LIFECYCLE,
                LISTAGG(t4.coupon_name, ',') within group (order by t4.coupon_id) coupon_name, CHECK_FLAG, CHECK_COMMENTS
@@ -149,16 +143,14 @@
           and t1.group_id = t3.group_id(+)
           and t3.coupon_id = t4.coupon_id(+)
         group by t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE, CHECK_FLAG, t1.PATH_ACTIVE, t1.LIFECYLE, CHECK_COMMENTS
-        ORDER BY USER_VALUE asc, LIFECYLE desc
-        ) t where ROWNUM &lt;= #{end}
-        )where rn &gt;= #{start}
+        ORDER BY USER_VALUE asc, LIFECYLE desc, t1.PATH_ACTIVE asc
     </select>
 
     <update id="setSmsCode">
         update UO_OP_DAILY_TEMPLATE_CONFIG
-        <set>
-            SMS_CODE = #{smsCode}
-        </set>
+        set SMS_CODE = #{smsCode}, is_coupon = (
+            select IS_COUPON from UO_OP_SMS_TEMPLATE where SMS_CODE = #{smsCode}
+        )
         where 1=1 and group_id in
         <foreach collection="groupIds" open="(" close=")" separator="," item="item">
             ${item}

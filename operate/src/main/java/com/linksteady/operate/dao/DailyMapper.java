@@ -38,9 +38,7 @@ public interface DailyMapper {
 
     Map<String, Object> getTotalNum(String headId);
 
-    int getUserGroupCount();
-
-    List<DailyGroupTemplate> getUserGroupListPage(int start, int end);
+    List<DailyGroupTemplate> getUserGroupList();
 
     void setSmsCode(List<String> groupIds, String smsCode);
 

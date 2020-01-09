@@ -235,13 +235,10 @@ public class DailyController {
      * @param request
      * @return
      */
-    @GetMapping("/userGroupListPage")
-    public ResponseBo userGroupListPage(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
-        List<DailyGroupTemplate> dataList = dailyService.getUserGroupListPage(start, end);
-        int count = dailyService.getUserGroupCount();
-        return ResponseBo.okOverPaging(null, count, dataList);
+    @GetMapping("/userGroupList")
+    public ResponseBo userGroupList() {
+        List<DailyGroupTemplate> dataList = dailyService.getUserGroupList();
+        return ResponseBo.okWithData(null, dataList);
     }
 
     /**

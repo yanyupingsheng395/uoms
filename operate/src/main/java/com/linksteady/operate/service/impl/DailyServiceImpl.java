@@ -156,13 +156,8 @@ public class DailyServiceImpl implements DailyService {
     }
 
     @Override
-    public List<DailyGroupTemplate> getUserGroupListPage(int start, int end) {
-        return dailyMapper.getUserGroupListPage(start, end);
-    }
-
-    @Override
-    public int getUserGroupCount() {
-        return dailyMapper.getUserGroupCount();
+    public List<DailyGroupTemplate> getUserGroupList() {
+        return dailyMapper.getUserGroupList();
     }
 
     @Override

@@ -7,20 +7,8 @@ $(function () {
 
 function initTable() {
     var settings = {
-        url: '/daily/userGroupListPage',
-        pagination: true,
+        pagination: false,
         singleSelect: false,
-        sidePagination: "server",
-        pageSize: 25,
-        pageList: [25, 50, 100],
-        sortable: true,
-        sortOrder: "asc",
-        queryParams: function (params) {
-            return {
-                pageSize: params.limit,
-                pageNum: (params.offset / params.limit) + 1
-            };
-        },
         columns: [[
             {
                 checkbox: true,
@@ -115,10 +103,18 @@ function initTable() {
                 return "<a onclick='editSmsContent(\""+row['groupId']+"\", \"" + groupInfo + "\")' style='color: #333;'><i class=\"fa fa-envelope-o\"></i></a>";
             }
         },{
+            field: 'isCoupon',
             title: '补贴',
             align: 'center',
             formatter: function (value, row, index) {
-                return "<a class='coupon' onclick='editCoupon()' disabled='disabled' style='pointer-events:none;color: #ccc;'><i class=\"fa fa-credit-card\"></i></a>";
+                var res = '-';
+                if(value === '0') {
+                    res = "<a class='coupon' onclick='editCoupon()' disabled='disabled' style='pointer-events:none;color: #ccc;'><i class=\"fa fa-credit-card\"></i></a>";
+                }
+                if(value === '1') {
+                    res = "<a class='coupon' onclick='editCoupon()' style='color: #333;'><i class=\"fa fa-credit-card\"></i></a>";
+                }
+                return res;
             }
         },{
             field: 'timeAndShop',
@@ -156,30 +152,30 @@ function initTable() {
         }, {
             field: 'couponName',
             title: '预览补贴'
-        }]],
-        onLoadSuccess: function () {
-            $("a[data-toggle='tooltip']").tooltip();
-
-            // 合并单元格
-            let data = $('#dailyGroupTable').bootstrapTable('getData', true);
-            mergeCells(data, "userValue", 1, $('#dailyGroupTable'));
-            for (let i = 0; i <= 8; i++) {
-                $("#dailyGroupTable").bootstrapTable('mergeCells', {
-                    index: i * 3,
-                    field: "lifecycle",
-                    colspan: 1,
-                    rowspan: 3
-                });
-            }
+        }]]
+    };
+    $("#dailyGroupTable").bootstrapTable('destroy').bootstrapTable(settings);
+    $.get("/daily/userGroupList", {}, function (r) {
+        $("#dailyGroupTable").bootstrapTable('load', r.data);
+        $("a[data-toggle='tooltip']").tooltip();
+        // 合并单元格
+        let data = $('#dailyGroupTable').bootstrapTable('getData', true);
+        mergeCells(data, "userValue", 1, $('#dailyGroupTable'));
+        for (let i = 0; i <= 8; i++) {
             $("#dailyGroupTable").bootstrapTable('mergeCells', {
-                index: 0,
-                field: "timeAndShop",
+                index: i * 3,
+                field: "lifecycle",
                 colspan: 1,
-                rowspan: 24
+                rowspan: 3
             });
         }
-    };
-    $MB.initTable('dailyGroupTable', settings);
+        $("#dailyGroupTable").bootstrapTable('mergeCells', {
+            index: 0,
+            field: "timeAndShop",
+            colspan: 1,
+            rowspan: 24
+        });
+    });
 }
 
 // 合并单元格
@@ -445,7 +441,8 @@ function setSmsCode() {
             $MB.n_danger("更改文案失败！发生未知异常！");
         }
         $("#msg_modal").modal('hide');
-        $MB.refreshTable('dailyGroupTable');
+        // $MB.refreshTable('dailyGroupTable');
+        initTable();
     });
 }
 

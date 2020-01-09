@@ -41,9 +41,7 @@ public interface DailyService {
      */
     Map<String, Object> getPushData(String headId);
 
-    List<DailyGroupTemplate> getUserGroupListPage(int start, int end);
-
-    int getUserGroupCount();
+    List<DailyGroupTemplate> getUserGroupList();
 
     void setSmsCode(String groupId, String smsCode);
 
