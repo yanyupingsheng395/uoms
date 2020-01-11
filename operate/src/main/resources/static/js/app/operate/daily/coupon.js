@@ -23,6 +23,12 @@ function closeModal() {
     $form.find("input[name='couponDisplayName']").val("").removeAttr("readOnly");
     $form.find("input[name='validEnd']").val("").removeAttr("readOnly");
     $("input[name='validStatus']:radio[value='Y']").prop("checked", true);
+    $("input[name='userValue']").removeAttr("disabled");
+    $("input[name='userValue']:checked").removeAttr("checked");
+    $("input[name='lifeCycle']").removeAttr("disabled");
+    $("input[name='lifeCycle']:checked").removeAttr("checked");
+    $("input[name='pathActive']").removeAttr("disabled");
+    $("input[name='pathActive']:checked").removeAttr("checked");
     $MB.closeAndRestModal("coupon_add_modal");
     $("#btn_save_coupon").attr("name", "save");
     $("#couponValid").hide();
@@ -193,6 +199,16 @@ function updateCoupon() {
             $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName);
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);
+
+            coupon.userValue.split(',').forEach((v,k)=>{
+                $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true);
+            });
+            coupon.lifeCycle.split(',').forEach((v,k)=>{
+                $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true);
+            });
+            coupon.pathActive.split(',').forEach((v,k)=>{
+                $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
+            });
             $("#btn_save_coupon").attr("name", "update");
         } else {
             $MB.n_danger(r['msg']);
@@ -226,7 +242,7 @@ $("#btn_delete_coupon").click(function () {
 
     $MB.confirm({
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认删除选中的优惠券？'
+        content: '确认删除选中的补贴？'
     }, function () {
         $.post("/coupon/deleteCoupon", {"couponId": couponId.join(",")}, function (r) {
             if(r.code == 200) {

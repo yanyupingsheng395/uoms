@@ -393,8 +393,6 @@ function smsTemplateTable(groupId) {
  */
 function couponTable(groupId) {
     var settings = {
-        url: "/coupon/list",
-        method: 'post',
         cache: false,
         pagination: false,
         singleSelect: false,

@@ -25,13 +25,11 @@
     <select id="getList" resultMap="BaseResultMap">
         SELECT * FROM(
         SELECT A.*,ROWNUM RN FROM
-        (SELECT
-        COUPON_ID, COUPON_DENOM,COUPON_THRESHOLD,COUPON_URL,COUPON_DISPLAY_NAME, to_char(VALID_END, 'yyyymmdd')
-        VALID_END, VALID_STATUS
-        FROM UO_OP_COUPON order by COUPON_ID desc
+        (SELECT * FROM UO_OP_COUPON
         <if test="validStatus != null and validStatus != ''">
             where VALID_STATUS = #{validStatus}
         </if>
+        order by COUPON_ID desc
         ) A WHERE ROWNUM &lt;=#{endRow}
         ) WHERE RN &gt;=#{startRow}
     </select>
@@ -73,7 +71,7 @@
     </update>
 
     <select id="getByCouponId" resultMap="BaseResultMap">
-        select COUPON_ID, COUPON_DENOM, COUPON_THRESHOLD, COUPON_URL,COUPON_NUM,COUPON_INFO2,VALID_STATUS, to_char(VALID_END, 'yyyymmdd') VALID_END, COUPON_DISPLAY_NAME from UO_OP_COUPON
+        select COUPON_ID, COUPON_DENOM, COUPON_THRESHOLD, COUPON_NAME, COUPON_URL, COUPON_DESC, COUPON_TYPE, COUPON_NUM, VALID_START, to_char(VALID_END, 'yyyymmdd') VALID_END, COUPON_INFO1, COUPON_INFO2, COUPON_DISPLAY_NAME, VALID_STATUS, COUPON_SOURCE, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE, DISCOUNT_LEVEL, CHECK_FLAG, CHECK_COMMENTS from UO_OP_COUPON
         where COUPON_ID = #{couponId}
     </select>
 
