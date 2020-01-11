@@ -109,3 +109,10 @@ alter table UO_OP_DAILY_HEADER
 
 comment on column UO_OP_DAILY_HEADER.VALID_STATUS is '配置校验状态'
 /
+
+alter table UO_OP_DAILY_TEMPLATE_CONFIG
+    add GROUP_INFO VARCHAR2(256)
+/
+
+comment on column UO_OP_DAILY_TEMPLATE_CONFIG.GROUP_INFO is '群组理解'
+/

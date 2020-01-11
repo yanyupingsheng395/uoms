@@ -41,4 +41,6 @@ public class DailyGroupTemplate {
     private String checkFlag;
 
     private String checkComments;
+
+    private String groupInfo;
 }

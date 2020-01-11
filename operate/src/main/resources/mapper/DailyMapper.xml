@@ -32,6 +32,7 @@
         <result column="LIFECYCLE" jdbcType="VARCHAR" property="lifecycle"></result>
         <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"></result>
         <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"></result>
+        <result column="GROUP_INFO" jdbcType="VARCHAR" property="groupInfo"></result>
     </resultMap>
 
     <resultMap id="statisResult" type="com.linksteady.operate.domain.DailyStatis">
@@ -139,13 +140,14 @@
     <select id="getUserGroupList" resultMap="templateResult">
         SELECT t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE,
                t1.PATH_ACTIVE, t1.LIFECYLE LIFECYCLE,
-               LISTAGG(t4.COUPON_DISPLAY_NAME, ',') within group (order by t4.coupon_id) coupon_name, t1.CHECK_FLAG, t1.CHECK_COMMENTS
+               LISTAGG(t4.COUPON_DISPLAY_NAME, ',') within group (order by t4.coupon_id) coupon_name, t1.CHECK_FLAG, t1.CHECK_COMMENTS,
+               t1.GROUP_INFO
         FROM UO_OP_DAILY_TEMPLATE_CONFIG t1, UO_OP_SMS_TEMPLATE t2,
              UO_OP_DAILY_GROUP_COUPON t3, UO_OP_COUPON t4
         where t1.SMS_CODE = t2.SMS_CODE(+)
           and t1.group_id = t3.group_id(+)
           and t3.coupon_id = t4.coupon_id(+)
-        group by t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE, t1.CHECK_FLAG, t1.PATH_ACTIVE, t1.LIFECYLE, t1.CHECK_COMMENTS
+        group by t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE, t1.CHECK_FLAG, t1.PATH_ACTIVE, t1.LIFECYLE, t1.CHECK_COMMENTS, t1.GROUP_INFO
         ORDER BY USER_VALUE asc, LIFECYLE desc, t1.PATH_ACTIVE asc
     </select>
 

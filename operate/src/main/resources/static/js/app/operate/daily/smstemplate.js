@@ -77,7 +77,7 @@ function testSend()
     var smsCode =selectRows[0]["smsCode"];
 
     //根据获取到的数据查询
-    $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
+    $.getJSON("/smsTemplate/getSmsTemplateNotValid?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
             //更新测试面板
             $("#smsName1").val(resp.data.smsName);

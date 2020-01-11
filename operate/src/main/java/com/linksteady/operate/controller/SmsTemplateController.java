@@ -95,14 +95,18 @@ public class SmsTemplateController extends BaseController {
         return ResponseBo.okWithData("", smsTemplateService.getSmsTemplate(smsCode));
     }
 
+    @RequestMapping("/getSmsTemplateNotValid")
+    public ResponseBo getSmsTemplateNotValid(HttpServletRequest request) {
+        String smsCode = request.getParameter("smsCode");
+        return ResponseBo.okWithData("", smsTemplateService.getSmsTemplate(smsCode));
+    }
+
     /**
      * 发送测试
      */
     @RequestMapping("/testSend")
     public ResponseBo testSend(String phoneNum, String smsContent) {
-
         List<String> phoneNumList=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(phoneNum);
-
         try {
             for(String num:phoneNumList)
             {
