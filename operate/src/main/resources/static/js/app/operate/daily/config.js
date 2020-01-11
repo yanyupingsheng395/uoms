@@ -579,12 +579,11 @@ function setSmsCode() {
     }
     $.get('/daily/setSmsCode', {groupId: groupId, smsCode: smsCode}, function (r) {
         if (r.code === 200) {
-            $MB.n_success("更改文案成功！");
+            $MB.n_success("设置文案成功！");
         } else {
-            $MB.n_danger("更改文案失败！发生未知异常！");
+            $MB.n_danger("设置文案失败！发生未知异常！");
         }
         $("#msg_modal").modal('hide');
-        // $MB.refreshTable('dailyGroupTable');
         initTable();
     });
 }

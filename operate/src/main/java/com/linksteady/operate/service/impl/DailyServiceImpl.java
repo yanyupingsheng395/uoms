@@ -193,11 +193,11 @@ public class DailyServiceImpl implements DailyService {
     public boolean validUserGroup() {
         // 获取短信内容为空的情况
         // 含券：券名称为空
-        String whereInfo = " and t1.IS_COUPON = 1 AND t4.COUPON_NAME IS NULL";
+        String whereInfo = " and t1.IS_COUPON = 1 AND t4.COUPON_DISPLAY_NAME IS NULL";
         int count1 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "群组含券，券信息不能为空");
 
         // 不含券：券名称不为空
-        whereInfo = " and t1.IS_COUPON = 0 and t4.coupon_name is not null";
+        whereInfo = " and t1.IS_COUPON = 0 and t4.COUPON_DISPLAY_NAME is not null";
         int count2 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "群组不含券，券信息不能出现");
 
         // 短信：不为空
@@ -213,7 +213,7 @@ public class DailyServiceImpl implements DailyService {
 
         // 其他群组的校验字段更新为'Y'
         whereInfo = " and (" +
-                "(t1.IS_COUPON = 1 AND t4.COUPON_NAME IS NULL)" +
+                "(t1.IS_COUPON = 1 AND t4.COUPON_DISPLAY_NAME IS NULL)" +
                 " or (t1.IS_COUPON = 0 and t4.coupon_name is not null)" +
                 " or (t2.SMS_CONTENT IS NULL)" +
                 " or (to_number(to_char(t4.VALID_END, 'YYYYMMDD')) < to_number(to_char(sysdate, 'YYYYMMDD')))" +
