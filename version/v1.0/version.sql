@@ -1,3 +1,4 @@
+--date:2020.1.11
 alter table UO_OP_SMS_TEMPLATE
     add SMS_NAME VARCHAR2(64)
 /
