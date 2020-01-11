@@ -60,8 +60,9 @@ function validateRule() {
             },
             couponDisplayName: {
                 required: true,
+                maxlength: couponNameLen,
                 remote: {
-                    url: "/coupon/validCouponNameLen",
+                    url: "/coupon/checkCouponName",
                     type: "get",
                     dataType: "json",
                     data: {
@@ -87,7 +88,11 @@ function validateRule() {
             }
         },
         messages: {
-            couponName: icon + "请输入名称",
+            couponName: {
+                required: icon + "请输入名称",
+                remote: icon + "补贴名称已存在"
+            },
+
             couponDenom: {
                 required: icon + "请输入面额",
                 digits: icon + "只能是整数"
@@ -100,7 +105,8 @@ function validateRule() {
             couponUrl: icon + "请输入短链",
             couponDisplayName: {
                 required: icon + "请输入引用名",
-                remote: icon + "长度不能超过"+couponNameLen+"个字符"
+                maxlength: icon + "最大长度不能超过"+couponNameLen+"个字符",
+                remote: icon + "补贴名称已存在"
             },
             validEnd: icon + "请输入截止日期",
             couponNum: {

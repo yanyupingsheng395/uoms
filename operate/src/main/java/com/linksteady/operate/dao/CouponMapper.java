@@ -35,4 +35,6 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
     void insertCalculatedCoupon();
 
     void deleteCouponGroup(@Param("groupIds") List<String> groupIds);
+
+    int checkCouponName(@Param("couponName") String couponName);
 }

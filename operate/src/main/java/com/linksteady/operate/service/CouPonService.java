@@ -35,4 +35,6 @@ public interface CouPonService {
     void getCalculatedCoupon();
 
     void deleteCouponGroup(String groupId);
+
+    int checkCouponName(String couponName);
 }

@@ -103,4 +103,9 @@ public class CouponServiceImpl implements CouPonService {
     public void deleteCouponGroup(String groupId) {
         couponMapper.deleteCouponGroup(Arrays.asList(groupId.split(",")));
     }
+
+    @Override
+    public int checkCouponName(String couponName) {
+        return couponMapper.checkCouponName(couponName);
+    }
 }

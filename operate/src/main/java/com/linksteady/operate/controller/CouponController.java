@@ -197,15 +197,6 @@ public class CouponController extends BaseController {
     }
 
     /**
-     * 获取券引用名的长度限制
-     * @return
-     */
-    @RequestMapping("/validCouponNameLen")
-    public boolean validCouponNameLen(@RequestParam("couponName") String couponName) {
-        return dailyProperties.getCouponNameLen() >= couponName.length();
-    }
-
-    /**
      * 同步系统计算的券
      * @return
      */
@@ -213,5 +204,14 @@ public class CouponController extends BaseController {
     public ResponseBo getCalculatedCoupon() {
         couponService.getCalculatedCoupon();
         return ResponseBo.ok();
+    }
+
+    /**
+     * 验证券名称是否相同
+     * @return
+     */
+    @RequestMapping("/checkCouponName")
+    public boolean checkCouponName(@RequestParam("couponName") String couponName) {
+        return couponService.checkCouponName(couponName) == 0;
     }
 }

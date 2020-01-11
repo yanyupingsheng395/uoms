@@ -72,7 +72,7 @@ public class PageController {
         return "operate/op/opperiod";
     }
 
-    @RequestMapping("/daily")
+    @RequestMapping("/daily/task")
     public String daily() {
         return "operate/daily/list";
     }
