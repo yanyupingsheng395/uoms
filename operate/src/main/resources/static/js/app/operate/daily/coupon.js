@@ -186,6 +186,10 @@ function updateCoupon() {
         $MB.n_warning('请勾选需要修改的补贴！');
         return;
     }
+    if(selected_length > 1) {
+        $MB.n_warning("一次只能编辑一条记录！");
+        return;
+    }
     var couponId = selected[0].couponId;
     $("#couponValid").show();
     $.post("/coupon/getByCouponId", {"couponId": couponId}, function (r) {
@@ -206,15 +210,21 @@ function updateCoupon() {
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);
 
-            coupon.userValue.split(',').forEach((v,k)=>{
-                $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true);
-            });
-            coupon.lifeCycle.split(',').forEach((v,k)=>{
-                $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true);
-            });
-            coupon.pathActive.split(',').forEach((v,k)=>{
-                $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
-            });
+            if(coupon.userValue !== null) {
+                coupon.userValue.split(',').forEach((v,k)=>{
+                    $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true);
+                });
+            }
+            if(coupon.lifeCycle !== null) {
+                coupon.lifeCycle.split(',').forEach((v,k)=>{
+                    $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true);
+                });
+            }
+            if(coupon.pathActive !== null) {
+                coupon.pathActive.split(',').forEach((v,k)=>{
+                    $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
+                });
+            }
             $("#btn_save_coupon").attr("name", "update");
         } else {
             $MB.n_danger(r['msg']);

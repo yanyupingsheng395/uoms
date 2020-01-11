@@ -216,8 +216,8 @@ function validCouponSendType(isCoupon) {
                 $MB.n_warning("补贴发放方式为自行领取，模板内容未发现${COUPON_URL}");
                 return false;
             }
-            if(smsContent.indexOf("${COUPON_URL}") === -1) {
-                $MB.n_warning("补贴发放方式为自行领取，模板内容未发现${COUPON_URL}");
+            if(smsContent.indexOf("${COUPON_NAME}") === -1) {
+                $MB.n_warning("补贴发放方式为自行领取，模板内容未发现${COUPON_NAME}");
                 return false;
             }
         }
@@ -459,15 +459,21 @@ $("#btn_edit").click(function () {
             $("#btn_save_sms").attr("name", "update");
             $("#add_modal").modal('show');
 
-            data.userValue.split(',').forEach((v,k)=>{
-                $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true);
-            });
-            data.lifeCycle.split(',').forEach((v,k)=>{
-                $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true);
-            });
-            data.pathActive.split(',').forEach((v,k)=>{
-                $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
-            });
+            if(data.userValue !== null) {
+                data.userValue.split(',').forEach((v,k)=>{
+                    $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true);
+                });
+            }
+            if(data.lifeCycle !== null) {
+                data.lifeCycle.split(',').forEach((v,k)=>{
+                    $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true);
+                });
+            }
+            if(data.pathActive !== null) {
+                data.pathActive.split(',').forEach((v,k)=>{
+                    $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
+                });
+            }
 
             var groupInfo = $("#currentGroupInfo").val();
             var groupInfoArr = groupInfo.split("|");
