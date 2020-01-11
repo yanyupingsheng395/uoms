@@ -109,10 +109,11 @@ function initTable() {
             formatter: function (value, row, index) {
                 var res = '-';
                 if(value === '0') {
-                    res = "<a class='coupon' onclick='editCoupon()' disabled='disabled' style='pointer-events:none;color: #ccc;'><i class=\"fa fa-credit-card\"></i></a>";
+                    res = "<a class='coupon' disabled='disabled' style='pointer-events:none;color: #ccc;'><i class=\"fa fa-credit-card\"></i></a>";
                 }
                 if(value === '1') {
-                    res = "<a class='coupon' onclick='editCoupon()' style='color: #333;'><i class=\"fa fa-credit-card\"></i></a>";
+                    let groupInfo = row['userValue'] + "|" + row['lifecycle'] + "|" + row['pathActive'] + "|" + row['groupInfo'];
+                    res = "<a class='coupon' onclick='editCoupon(\""+row['groupId']+"\", \"" + groupInfo + "\")' style='color: #333;'><i class=\"fa fa-credit-card\"></i></a>";
                 }
                 return res;
             }
@@ -207,7 +208,16 @@ function mergeCells(data, fieldName, colspan, target) {
 function editSmsContent(groupId, groupInfo) {
     $("#currentGroupId").val(groupId);
     $("#currentGroupInfo").val(groupInfo);
+    getSelectedGroupInfo('selectedGroupInfo1');
     $("#msg_modal").modal('show');
+}
+
+// 编辑优惠券
+function editCoupon(groupId, groupInfo) {
+    $("#currentGroupId").val(groupId);
+    $("#currentGroupInfo").val(groupInfo);
+    setUserGroupChecked();
+    $("#coupon_modal").modal('show');
 }
 
 $("#msg_modal").on('hide.bs.modal', function () {
@@ -218,7 +228,16 @@ $("#msg_modal").on('hide.bs.modal', function () {
 $("#msg_modal").on('shown.bs.modal', function () {
     var groupId = $("#currentGroupId").val();
     smsTemplateTable(groupId);
+});
 
+$("#coupon_modal").on('shown.bs.modal', function () {
+    var groupId = $("#currentGroupId").val();
+    couponTable(groupId);
+    getSelectedGroupInfo('selectedGroupInfo2');
+});
+
+// 获取弹窗群组信息
+function getSelectedGroupInfo(tableId) {
     var groupInfo = $("#currentGroupInfo").val();
     var code = "<tr>";
     var groupInfoArr = groupInfo.split("|");
@@ -239,17 +258,10 @@ $("#msg_modal").on('shown.bs.modal', function () {
         code += "</td>";
     });
     code += "</tr>";
-    $("#selectedGroupInfo").html('').append(code);
-});
-
-// 编辑优惠券
-function editCoupon(groupId, groupName) {
-    $("#couponGroupName").show();
-    $("#currentCouponGroupName").text(groupName);
-    $("#coupon_modal").modal('show');
-    couponTable(groupId);
-    $("#currentCouponGroupId").val(groupId);
+    $("#" + tableId).html('').append(code);
 }
+
+
 
 /**
  * 获取短信模板列表
@@ -384,40 +396,173 @@ function couponTable(groupId) {
         url: "/coupon/list",
         method: 'post',
         cache: false,
-        pagination: true,
+        pagination: false,
         singleSelect: false,
-        sidePagination: "server",
-        pageNumber: 1,            //初始化加载第一页，默认第一页
-        pageSize: 25,            //每页的记录行数（*）
-        pageList: [25, 50, 100],
-        queryParams: function (params) {
-            return {
-                pageSize: params.limit,
-                pageNum: (params.offset / params.limit) + 1,
-                param: {validStatus: "Y"}
-            };
-        },
-        columns: [{
-            checkbox: true
-        }, {
-            field: 'couponId',
-            title: 'ID'
-        }, {
-            field: 'couponName',
-            title: '优惠券名称'
-        }, {
-            field: 'couponUrl',
-            title: '优惠券URL'
-        }],
-        onLoadSuccess: function () {
-            $.get("/coupon/getCouponIdsByGroupId", {groupId: groupId}, function (r) {
-                let data = r.data;
-                $('#couponTable').bootstrapTable("checkBy", {field: 'couponId', values: data});
-            });
-        }
+        columns: [[
+            {
+                checkbox: true,
+                rowspan: 2
+            },
+            {
+                title: '补贴适合用户群组',
+                colspan: 3
+            },
+            {
+                title: '补贴信息设置',
+                colspan: 3
+            },
+            {
+                title: '3方平台建立补贴并录入',
+                colspan: 4
+            },
+            {
+                title: '补贴检验',
+                colspan: 4
+            }
+        ],
+            [{
+                field: 'userValue',
+                title: '用户在类目的价值',
+                formatter:function (value, row, index) {
+                    var res = [];
+                    if(value !== undefined && value !== ''&& value !== null) {
+                        value.split(",").forEach((v,k)=>{
+                            switch (v) {
+                                case "ULC_01":
+                                    res.push("重要");
+                                    break;
+                                case "ULC_02":
+                                    res.push("主要");
+                                    break;
+                                case "ULC_03":
+                                    res.push("普通");
+                                    break;
+                                case "ULC_04":
+                                    res.push("长尾");
+                                    break;
+                            }
+                        });
+                    }
+                    return res.length === 0 ? '-' : res.join(",");
+                }
+            }, {
+                field: 'lifeCycle',
+                title: '用户在类目上的生命周期阶段',
+                formatter:function (value, row, index) {
+                    var res = [];
+                    if(value !== undefined && value !== ''&& value !== null) {
+                        value.split(",").forEach((v,k)=>{
+                            switch (v) {
+                                case "0":
+                                    res.push("老客");
+                                    break;
+                                case "1":
+                                    res.push("新客");
+                                    break;
+                            }
+                        });
+                    }
+                    return res.length === 0 ? '-' : res.join(",");
+                }
+            }, {
+                field: 'pathActive',
+                title: '用户在类目特定购买次序的活跃度',
+                formatter:function (value, row, index) {
+                    var res = [];
+                    if(value !== undefined && value !== ''&& value !== null) {
+                        value.split(",").forEach((v,k)=>{
+                            switch (v) {
+                                case "UAC_01":
+                                    res.push("高度活跃");
+                                    break;
+                                case "UAC_02":
+                                    res.push("中度活跃");
+                                    break;
+                                case "UAC_03":
+                                    res.push("流失预警");
+                                    break;
+                                case "UAC_04":
+                                    res.push("弱流失");
+                                    break;
+                                case "UAC_05":
+                                    res.push("强流失");
+                                    break;
+                                case "UAC_06":
+                                    res.push("沉睡");
+                            }
+                        });
+                    }
+                    return res.length === 0 ? '-' : res.join(",");
+                }
+            },{
+                field: 'couponSource',
+                title: '补贴类型',
+                formatter: function (value, row, index) {
+                    var res = '-';
+                    if(value === '0') {
+                        res = "智能";
+                    }
+                    if(value === '1') {
+                        res = "手动";
+                    }
+                    return res;
+                }
+            },{
+                field: 'couponDisplayName',
+                title: '补贴名称(文案中体现)'
+            }, {
+                field: 'couponThreshold',
+                title: '补贴门槛(元)'
+            },{
+                field: 'couponDenom',
+                title: '补贴面额(元)'
+            }, {
+                field: 'couponUrl',
+                title: '补贴短链接',
+                formatter: function (value, row, index) {
+                    if(value !== undefined && value !== null) {
+                        return "<a href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
+                    }else {
+                        return "-";
+                    }
+                }
+            }, {
+                field: 'validEnd',
+                title: '有效截止期至'
+            }, {
+                field: 'validStatus',
+                title: '是否有效',
+                formatter: function (value, row, index) {
+                    if(value === 'Y') {
+                        return "是";
+                    }else if(value === 'N'){
+                        return "否";
+                    }
+                    return "";
+                }
+            }, {
+                field: 'checkFlag',
+                title: '校验结果',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if(value === '1') {
+                        return "<font color='green'><i class='fa fa-check'></i></font>";
+                    }
+                    if(value === '0') {
+                        return "<font color='red'><i class='fa fa-close'></i></font>";
+                    }
+                    return "-";
+                }
+            }, {
+                field: 'checkComments',
+                title: '失败原因'
+            }]]
     };
-    $("#couponTable").bootstrapTable('destroy');
-    $MB.initTable('couponTable', settings);
+    $('#couponTable').bootstrapTable('destroy').bootstrapTable(settings);
+    //为刷新按钮绑定事件
+    $.get("/coupon/getCouponList", {groupId: groupId}, function (r) {
+        $('#couponTable').bootstrapTable('load', r.data);
+    });
 }
 
 function setSmsCode() {
@@ -446,56 +591,72 @@ function setSmsCode() {
     });
 }
 
+// 批量设置群组文案
 function batchUpdateTemplate() {
-    $("#groupName").hide();
     var selected = $("#dailyGroupTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请选择需要编辑模板的组！');
+        $MB.n_warning('请选择需要设置文案的用户群组！');
         return;
     }
-    let isCoupons = [];
+
+    var code = "";
     let groupIds = [];
     selected.forEach((v, k) => {
         groupIds.push(v.groupId);
-        isCoupons.push(v.isCoupon);
+        code += "<tr><td>"+USER_VALUE[v['userValue']]+"</td><td>"+USER_LIFE_CYCLE[v['lifecycle']]+"</td><td>"+PATH_ACTIVE[v['pathActive']]+"</td><td>"+(v['groupInfo']===undefined? '-':+v['groupInfo'])+"</td></tr>";
     });
-
-    if (isCoupons.indexOf('1') > -1 && isCoupons.indexOf('0') > -1) { // 有券
-        $MB.n_warning("同时包含有券无券模板，无法批量操作！");
-        return;
-    }
+    $("#selectedGroupInfo1").html('').append(code);
     $("#currentGroupId").val(groupIds.join(","));
     $("#msg_modal").modal('show');
-    smsTemplateTable(groupIds[0]);
 }
 
 /**
  * 根据groupId更新优惠券
  */
 function updateCouponId() {
+    var groupId = $("#currentGroupId").val();
     var selected = $("#couponTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请选择优惠券！');
+        $MB.n_warning('请选择补贴！');
         return;
     }
 
     let couponId = [];
+    var i = 0;
+    var j = 0;
     selected.forEach((v, k) => {
-        couponId.push(v['couponId']);
+        if(v.checkFlag === '0') {
+            i++;
+        }else {
+            j++;
+            couponId.push(v['couponId']);
+        }
+    });
+    var title = '确认设置选中的补贴？';
+    if(j === 0) {
+        $MB.n_warning("请选择校验通过的补贴！");
+        return;
+    }
+    if(i!==0) {
+        title = "当前所选的补贴中存在" + i + "条记录验证不通过，'确认'只会设置校验通过的补贴？";
+    }
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: title
+    }, function () {
+        $.get('/coupon/updateCouponId', {groupId: groupId, couponId: couponId.join(",")}, function (r) {
+            if (r.code === 200) {
+                $MB.n_success("设置补贴成功！");
+            } else {
+                $MB.n_danger("设置补贴失败！发生未知异常！");
+            }
+            $("#coupon_modal").modal('hide');
+            initTable();
+        });
     });
 
-    let groupId = $("#currentCouponGroupId").val();
-    $.get('/coupon/updateCouponId', {groupId: groupId, couponId: couponId.join(",")}, function (r) {
-        if (r.code === 200) {
-            $MB.n_success("更改优惠券成功！");
-        } else {
-            $MB.n_danger("更改优惠券失败！发生未知异常！");
-        }
-        $("#coupon_modal").modal('hide');
-        $MB.refreshTable('dailyGroupTable');
-    });
 }
 
 // 删除券关系
@@ -514,15 +675,15 @@ function deleteCoupon() {
 
     $MB.confirm({
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认删除选中的券关系？'
+        content: '确认重置选中的补贴？'
     }, function () {
-        $.getJSON("/coupon/deleteCoupon?id="+groupIds,function (resp) {
+        $.getJSON("/coupon/deleteCouponGroup?groupId="+groupIds.join(","),function (resp) {
             if (resp.code === 200){
                 lightyear.loading('hide');
                 //提示成功
-                $MB.n_success('删除成功!');
+                $MB.n_success('重置补贴成功!');
                 //刷新表格
-                $('#dailyGroupTable').bootstrapTable('refresh');
+                initTable();
             }else {
                 $MB.n_danger("未知异常！");
             }
@@ -534,10 +695,21 @@ function deleteCoupon() {
 function validUserGroup() {
     $.get("/daily/validUserGroup", {}, function (r) {
         if(r.code === 200) {
-            $MB.refreshTable('dailyGroupTable');
+            initTable();
             $MB.n_success("群组信息已全部验证完毕！");
         }else {
             $MB.n_warning("未知错误！");
         }
     });
 }
+
+// 智能补贴
+$("#btn_intel").click(function () {
+    $.get("/coupon/getCalculatedCoupon", {}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("智能补贴获取成功。");
+            couponTable($("#currentGroupId").val());
+        }
+    });
+});
+

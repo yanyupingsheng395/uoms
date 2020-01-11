@@ -1,4 +1,4 @@
-var validator;
+var sms_validator;
 $(function () {
     validate();
     statInputNum($("#smsContent"),$("#word"));
@@ -18,7 +18,7 @@ function add() {
     $("#word").text("0");
     $("#fontNum").val('');
     $("#myLargeModalLabel3").text("新增文案");
-    $("#btn_save").attr("name", "save");
+    $("#btn_save_sms").attr("name", "save");
     $('#add_modal').modal('show');
     $("#smsTemplateAddForm").validate().resetForm();
 }
@@ -294,8 +294,8 @@ function getSmsContentFontCount() {
 }
 
 // 新增&修改
-$("#btn_save").click(function () {
-    let flag = validator.form();
+$("#btn_save_sms").click(function () {
+    let flag = sms_validator.form();
     if(flag) {
         var alert_str;
         var isCoupon = $("input[name='isCoupon']:checked").val();
@@ -393,7 +393,7 @@ function validate() {
             }
         }
     };
-    validator = $("#smsTemplateAddForm").validate(rule);
+    sms_validator = $("#smsTemplateAddForm").validate(rule);
 }
 
 //
@@ -456,7 +456,7 @@ $("#btn_edit").click(function () {
             $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true);
             $("#remark").val(data.remark);
             $("#myLargeModalLabel3").text("修改文案");
-            $("#btn_save").attr("name", "update");
+            $("#btn_save_sms").attr("name", "update");
             $("#add_modal").modal('show');
 
             data.userValue.split(',').forEach((v,k)=>{

@@ -9,6 +9,7 @@ import com.linksteady.operate.service.SpuCycleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -57,6 +58,7 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
 
     @Override
     public List<SmsTemplate> getTemplateByGroupId(String groupId) {
-        return smsTemplateapper.getTemplateByGroupId(groupId);
+        List<String> groupIdList = Arrays.asList(groupId.split(","));
+        return smsTemplateapper.getTemplateByGroupId(groupIdList);
     }
 }

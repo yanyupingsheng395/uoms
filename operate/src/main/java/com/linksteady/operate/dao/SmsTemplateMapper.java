@@ -23,5 +23,5 @@ public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
 
     void update(@Param("smsTemplate") SmsTemplate smsTemplate);
 
-    List<SmsTemplate> getTemplateByGroupId(String groupId);
+    List<SmsTemplate> getTemplateByGroupId(@Param("groupIdList") List<String> groupIdList);
 }

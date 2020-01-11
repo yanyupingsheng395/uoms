@@ -83,7 +83,10 @@
         where (t1.USER_VALUE like concat('%', concat(t2.USER_VALUE, '%'))
          or t1.LIFE_CYCLE like concat('%', concat(t2.LIFECYLE, '%'))
          or t1.PATH_ACTIVE like concat('%', concat(t2.PATH_ACTIVE, '%')))
-         and t2.GROUP_ID = #{groupId}
+         and t2.GROUP_ID in
+         <foreach collection="groupIdList" open="(" close=")" item="item" separator=",">
+             #{item}
+         </foreach>
          order by to_number(t1.sms_code) desc
     </select>
 </mapper>

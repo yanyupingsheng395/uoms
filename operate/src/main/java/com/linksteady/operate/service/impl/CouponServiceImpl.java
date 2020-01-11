@@ -39,6 +39,7 @@ public class CouponServiceImpl implements CouPonService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateCouponId(String groupId, String couponId) {
         couponMapper.deleteByGroupId(groupId);
         List<String> couponIds = Arrays.asList(couponId.split(","));
@@ -72,17 +73,34 @@ public class CouponServiceImpl implements CouPonService {
     }
 
     @Override
-    public int isCouponUsed(String couponId) {
-        return couponMapper.isCouponUsed(couponId);
+    public List<String> isCouponUsed(List<String> couponIds){
+        return couponMapper.isCouponUsed(couponIds);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateStatus(String couponId) {
         couponMapper.updateStatus(couponId);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteCoupon(List<String> ids) {
         couponMapper.deleteCoupon(ids);
+    }
+
+    @Override
+    public List<CouponInfo> getCouponList(String groupId) {
+        return couponMapper.getCouponList(groupId);
+    }
+
+    @Override
+    public void getCalculatedCoupon() {
+        couponMapper.insertCalculatedCoupon();
+    }
+
+    @Override
+    public void deleteCouponGroup(String groupId) {
+        couponMapper.deleteCouponGroup(Arrays.asList(groupId.split(",")));
     }
 }

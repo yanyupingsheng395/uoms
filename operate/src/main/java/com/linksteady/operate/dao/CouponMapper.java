@@ -24,9 +24,15 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
 
     CouponInfo getByCouponId(String couponId);
 
-    int isCouponUsed(String couponId);
+    List<String> isCouponUsed(@Param("couponIds") List<String> couponIds);
 
     void updateStatus(String couponId);
 
-    void deleteCoupon(List<String> ids);
+    void deleteCoupon(@Param("ids") List<String> ids);
+
+    List<CouponInfo> getCouponList(String groupId);
+
+    void insertCalculatedCoupon();
+
+    void deleteCouponGroup(@Param("groupIds") List<String> groupIds);
 }
