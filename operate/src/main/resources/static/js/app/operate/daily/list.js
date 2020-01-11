@@ -37,16 +37,29 @@ function initTable() {
             title: '实际成功推送人数（人）'
         }, {
             field: 'convertNum',
-            title: '任务转化人数（人）'
+            title: '推送转化人数（人）'
         }, {
             field: 'convertRate',
-            title: '转化率（%）'
+            title: '推送转化率（%）'
         }, {
             field: 'convertAmount',
-            title: '转化金额（元）'
+            title: '推送转化金额（元）'
         }, {
+            field: 'validStatus',
+            title: '配置校验状态',
+            formatter: function (value, row, indx) {
+                var res = "-";
+                if(value === '1') {
+                    res = "通过";
+                }
+                if(value === '0') {
+                    res = "<a onclick='gotoConfig()' style='color: #48b0f7;text-decoration: underline;cursor: pointer;'>不通过</a>";
+                }
+                return res;
+            }
+        },{
             field: 'status',
-            title: '状态',
+            title: '任务执行状态',
             formatter: function (value, row, indx) {
                 var res;
                 switch (value) {
@@ -124,3 +137,12 @@ $("#btn_catch").click(function () {
     var headId = selected[0].headId;
     window.location.href = "/page/daily/effect?id=" + headId;
 });
+
+function gotoConfig() {
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: "去完成配置？"
+    }, function () {
+        location.href = "/page/daily/config";
+    });
+}

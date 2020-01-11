@@ -17,6 +17,7 @@
         <result column="CONVERT_SPU_NUM" property="convertSpuNum" jdbcType="DECIMAL"></result>
         <result column="CONVERT_SPU_RATE" property="convertSpuRate" jdbcType="DECIMAL"></result>
         <result column="STATUS" property="status" jdbcType="VARCHAR"></result>
+        <result column="VALID_STATUS" property="validStatus" jdbcType="VARCHAR"></result>
     </resultMap>
 
     <resultMap id="templateResult" type="com.linksteady.operate.domain.DailyGroupTemplate">
@@ -65,11 +66,13 @@
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM rn from (
-        SELECT HEAD_ID, to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS
+        SELECT HEAD_ID, to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS, VALID_STATUS
         FROM UO_OP_DAILY_HEADER t
-        <if test="touchDt != null and touchDt != ''">
-            and to_char(touch_dt, 'yyyy-mm-dd') = #{touchDt}
-        </if>
+        <where>
+            <if test="touchDt != null and touchDt != ''">
+                to_char(touch_dt, 'yyyy-mm-dd') = #{touchDt}
+            </if>
+        </where>
         ORDER BY HEAD_ID desc
         ) t where ROWNUM &lt;= #{end}
         )where rn &gt;= #{start}
@@ -294,5 +297,17 @@
                and t3.coupon_id = t4.coupon_id(+)
                ${whereInfo}
         )
+    </update>
+
+    <update id="updateValidStatus">
+        merge into UO_OP_DAILY_HEADER t1
+        using (select case when cnt = 0 then '1' when cnt > 0 then '0' end status
+               from (
+                        select count(1) cnt from UO_OP_DAILY_TEMPLATE_CONFIG where CHECK_FLAG = 'N'
+                    )) t2
+        on (t1.STATUS = 'todo')
+        when matched then
+            update
+            set VALID_STATUS = t2.status
     </update>
 </mapper>

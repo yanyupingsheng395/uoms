@@ -221,6 +221,9 @@ public class DailyServiceImpl implements DailyService {
                 ")";
         dailyMapper.updateCheckFlagY(whereInfo);
         int result = count1 + count2 + count3 + count4 + count5;
+
+        // 更新头表的有效状态
+        dailyMapper.updateValidStatus();
         return result > 0;
     }
 }

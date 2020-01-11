@@ -63,4 +63,6 @@ public class DailyHead {
      * 最后计算日期
      */
     private Date statDate;
+
+    private String validStatus;
 }

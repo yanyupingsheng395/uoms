@@ -102,4 +102,5 @@ public interface DailyMapper {
      */
     int updateCheckFlagY(@Param("whereInfo") String whereInfo);
 
+    void updateValidStatus();
 }

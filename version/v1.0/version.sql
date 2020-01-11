@@ -102,4 +102,9 @@ alter table UO_OP_COUPON
 comment on column UO_OP_COUPON.CHECK_COMMENTS is '校验备注'
 /
 
+alter table UO_OP_DAILY_HEADER
+    add VALID_STATUS VARCHAR2(2)
+/
 
+comment on column UO_OP_DAILY_HEADER.VALID_STATUS is '配置校验状态'
+/
