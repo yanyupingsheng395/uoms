@@ -116,3 +116,5 @@ alter table UO_OP_DAILY_TEMPLATE_CONFIG
 
 comment on column UO_OP_DAILY_TEMPLATE_CONFIG.GROUP_INFO is '群组理解'
 /
+
+update UO_OP_SMS_TEMPLATE set SMS_CODE = SEQ_SMS_TEMPLATE_CODE.nextval;
