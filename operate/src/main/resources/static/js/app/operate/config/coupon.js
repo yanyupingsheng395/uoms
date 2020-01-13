@@ -97,10 +97,10 @@ $(function () {
                         value.split(",").forEach((v,k)=>{
                             switch (v) {
                                 case "UAC_01":
-                                    res.push("高度活跃");
+                                    res.push("活跃");
                                     break;
                                 case "UAC_02":
-                                    res.push("中度活跃");
+                                    res.push("留存");
                                     break;
                                 case "UAC_03":
                                     res.push("流失预警");
@@ -108,11 +108,6 @@ $(function () {
                                 case "UAC_04":
                                     res.push("弱流失");
                                     break;
-                                case "UAC_05":
-                                    res.push("强流失");
-                                    break;
-                                case "UAC_06":
-                                    res.push("沉睡");
                             }
                         });
                     }

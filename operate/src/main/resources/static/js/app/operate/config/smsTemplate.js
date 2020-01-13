@@ -173,14 +173,14 @@ function testSend()
     if(null==selectRows||selectRows.length==0)
     {
         lightyear.loading('hide');
-        $MB.n_warning('请选择需要测试的模板！');
+        $MB.n_warning('请选择需要测试的文案！');
         return;
     }
 
     var smsCode =selectRows[0]["smsCode"];
 
     //根据获取到的数据查询
-    $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
+    $.getJSON("/smsTemplate/getSmsTemplateNotValid?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
             //更新测试面板
             $("#smsName1").val(resp.data.smsName);
@@ -413,7 +413,7 @@ function getSmsContentFontCount() {
 $("#btn_save").click(function () {
     let flag = validator.form();
     if(flag) {
-        var alert_str;
+        var alert_str = "";
         var isCoupon = $("input[name='isCoupon']:checked").val();
         if(!validCouponSendType(isCoupon)) {
             return;

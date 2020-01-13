@@ -85,8 +85,6 @@ function testSend()
 
             var _value = $("#smsContent1").val().replace(/\n/gi,"");
             $("#word1").text(_value.length);
-
-            $('#msg_modal').modal('hide');
             $('#send_modal').modal('show');
         }
     })
@@ -297,7 +295,7 @@ function getSmsContentFontCount() {
 $("#btn_save_sms").click(function () {
     let flag = sms_validator.form();
     if(flag) {
-        var alert_str;
+        var alert_str = "";
         var isCoupon = $("input[name='isCoupon']:checked").val();
         if(!validCouponSendType(isCoupon)) {
             return;

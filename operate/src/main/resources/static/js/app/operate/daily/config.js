@@ -1,6 +1,6 @@
 let USER_VALUE = {ULC_01: '重要',ULC_02: '主要',ULC_03: '普通',ULC_04: '长尾'};
 let USER_LIFE_CYCLE = {0: '老客',1: '新客'};
-let PATH_ACTIVE = {UAC_01: '高度活跃', UAC_02: '中度活跃', UAC_03: '流失预警', UAC_04: '弱流失', UAC_05: '强流失', UAC_06: '沉睡'};
+let PATH_ACTIVE = {UAC_01: '活跃', UAC_02: '留存', UAC_03: '流失预警', UAC_04: '弱流失'};
 $(function () {
     initTable();
 });
@@ -69,22 +69,16 @@ function initTable() {
                 var res = "";
                 switch (value) {
                     case "UAC_01":
-                        res = "高度活跃";
+                        res = "活跃";
                         break;
                     case "UAC_02":
-                        res = "中度活跃";
+                        res = "留存";
                         break;
                     case "UAC_03":
                         res = "流失预警";
                         break;
                     case "UAC_04":
                         res = "弱流失";
-                        break;
-                    case "UAC_05":
-                        res = "强流失";
-                        break;
-                    case "UAC_06":
-                        res = "沉睡";
                         break;
                     default:
                         res = "-";
@@ -164,17 +158,17 @@ function initTable() {
         mergeCells(data, "userValue", 1, $('#dailyGroupTable'));
         for (let i = 0; i <= 8; i++) {
             $("#dailyGroupTable").bootstrapTable('mergeCells', {
-                index: i * 3,
+                index: i * 4,
                 field: "lifecycle",
                 colspan: 1,
-                rowspan: 3
+                rowspan: 4
             });
         }
         $("#dailyGroupTable").bootstrapTable('mergeCells', {
             index: 0,
             field: "timeAndShop",
             colspan: 1,
-            rowspan: 24
+            rowspan: 32
         });
     });
 }
@@ -244,16 +238,16 @@ function getSelectedGroupInfo(tableId) {
     groupInfoArr.forEach((v,k)=>{
         code += "<td>";
         if(k === 0) {
-            code += v === 'undefined' ? '-': USER_VALUE[v];
+            code += (v === 'undefined' || v === 'null') ? '-': USER_VALUE[v];
         }
         if(k === 1) {
-            code += v === 'undefined' ? '-':USER_LIFE_CYCLE[v];
+            code += (v === 'undefined' || v === 'null') ? '-':USER_LIFE_CYCLE[v];
         }
         if(k === 2) {
-            code += v === 'undefined' ? '-':PATH_ACTIVE[v];
+            code += (v === 'undefined' || v === 'null') ? '-':PATH_ACTIVE[v];
         }
         if(k === 3) {
-            code += v === 'undefined' ? '-':v;
+            code += (v === 'undefined' || v === 'null') ? '-':v;
         }
         code += "</td>";
     });
@@ -343,10 +337,10 @@ function smsTemplateTable(groupId) {
                             value.split(",").forEach((v,k)=>{
                                 switch (v) {
                                     case "UAC_01":
-                                        res.push("高度活跃");
+                                        res.push("活跃");
                                         break;
                                     case "UAC_02":
-                                        res.push("中度活跃");
+                                        res.push("留存");
                                         break;
                                     case "UAC_03":
                                         res.push("流失预警");
@@ -354,11 +348,6 @@ function smsTemplateTable(groupId) {
                                     case "UAC_04":
                                         res.push("弱流失");
                                         break;
-                                    case "UAC_05":
-                                        res.push("强流失");
-                                        break;
-                                    case "UAC_06":
-                                        res.push("沉睡");
                                 }
                             });
                         }
@@ -601,7 +590,7 @@ function batchUpdateTemplate() {
     let groupIds = [];
     selected.forEach((v, k) => {
         groupIds.push(v.groupId);
-        code += "<tr><td>"+USER_VALUE[v['userValue']]+"</td><td>"+USER_LIFE_CYCLE[v['lifecycle']]+"</td><td>"+PATH_ACTIVE[v['pathActive']]+"</td><td>"+(v['groupInfo']===undefined? '-':+v['groupInfo'])+"</td></tr>";
+        code += "<tr><td>"+USER_VALUE[v['userValue']]+"</td><td>"+USER_LIFE_CYCLE[v['lifecycle']]+"</td><td>"+PATH_ACTIVE[v['pathActive']]+"</td><td>"+((v['groupInfo']===undefined || v['groupInfo']===null)? '-':+v['groupInfo'])+"</td></tr>";
     });
     $("#selectedGroupInfo1").html('').append(code);
     $("#currentGroupId").val(groupIds.join(","));
