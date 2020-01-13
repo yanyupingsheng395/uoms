@@ -161,7 +161,7 @@ public class ActivityController {
                             default: attr = "";
                     }
                     activityProduct.setProductAttr(attr);
-                    activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId()));
+                    activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
                     productList.add(activityProduct);
                 }
                 if(!flag.get()) {
@@ -259,7 +259,7 @@ public class ActivityController {
             double activityIntensity = minPrice/formalPrice * 100;
             activityIntensity = Double.valueOf(String.format("%.2f", activityIntensity));
             activityProduct.setActivityIntensity(activityIntensity);
-            activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId()));
+            activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
 
             List<String> productIdList = Collections.singletonList(activityProduct.getProductId());
             int count = activityProductService.getSameProductCount(productIdList, headId, activityProduct.getActivityStage());

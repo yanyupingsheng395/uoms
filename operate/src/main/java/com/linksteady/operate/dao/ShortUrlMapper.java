@@ -3,6 +3,7 @@ package com.linksteady.operate.dao;
 import com.linksteady.operate.domain.ShortUrlInfo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,4 +29,11 @@ public interface ShortUrlMapper {
      * @return
      */
     String selectShortUrlByLongUrl(@Param("longUrl") String longUrl);
+
+    int selectCountByLongUrl(@Param("longUrl") String longUrl);
+
+    /**
+     * 更新validateDate
+     */
+    void updateShortUrlValidateDate(@Param("validateDate")Date validateDate);
 }

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.dao.ShortUrlMapper;
 import com.linksteady.operate.domain.DailyProperties;
+import com.linksteady.operate.domain.ShortUrlInfo;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.util.OkHttpUtil;
 import com.linksteady.operate.util.UrlUtil;
@@ -16,6 +17,11 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +53,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      */
     @Override
     @SneakyThrows
-    public String genProdShortUrl(String longUrl) {
+    public String genProdShortUrl(String longUrl,String sourceType) {
 
         //判断是否是测试环节生成模拟短链接
         if("Y".equals(dailyProperties.getIsTestEnv()))
@@ -67,7 +73,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             }
 
             //生成短链
-            return produceShortUrl(newLongUrl);
+            return produceShortUrl(newLongUrl,sourceType);
 
         }
     }
@@ -78,13 +84,13 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      * @return
      */
     @Override
-    public String genProdShortUrlDirect(String longUrl) {
+    public String genProdShortUrlDirect(String longUrl,String sourceType) {
         if("Y".equals(dailyProperties.getIsTestEnv()))
         {
             return dailyProperties.getDemoShortUrl();
         }else
         {
-            return produceShortUrl(longUrl);
+            return produceShortUrl(longUrl,sourceType);
         }
     }
 
@@ -94,7 +100,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      * @return
      */
     @Override
-    public String genProdShortUrlByProdId(String productId) {
+    public String genProdShortUrlByProdId(String productId,String sourceType) {
         //判断是否是测试环节生成模拟短链接
         if("Y".equals(dailyProperties.getIsTestEnv()))
         {
@@ -110,7 +116,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             }
 
             //生成短链
-            return produceShortUrl(newLongUrl);
+            return produceShortUrl(newLongUrl,sourceType);
         }
     }
 
@@ -118,7 +124,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      * 根据优惠券的链接生成长链接(会考虑是否包裹一层唤醒淘宝APP的转跳)
      */
     @Override
-    public String genConponShortUrl(String couponUrl) {
+    public String genConponShortUrl(String couponUrl,String sourceType) {
         //判断是否是测试环节生成模拟短链接
         if("Y".equals(dailyProperties.getIsTestEnv()))
         {
@@ -129,10 +135,10 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             if(couponUrl.indexOf("taobao.com")!=-1 || couponUrl.indexOf("tmall.com")!=-1)
             {
                 //进行一层转跳
-                return produceShortUrl(jumpUrl+ UrlUtil.getURLEncoderString(couponUrl));
+                return produceShortUrl(jumpUrl+ UrlUtil.getURLEncoderString(couponUrl),sourceType);
             }else
             {
-                return produceShortUrl(couponUrl);
+                return produceShortUrl(couponUrl,sourceType);
             }
         }
     }
@@ -141,13 +147,13 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      * 根据优惠券的链接生成长链接（直接生成）
      */
     @Override
-    public String genConponShortUrlDirect(String couponUrl) {
+    public String genConponShortUrlDirect(String couponUrl,String sourceType) {
         if("Y".equals(dailyProperties.getIsTestEnv()))
         {
             return dailyProperties.getDemoShortUrl();
         }else
         {
-            return produceShortUrl(couponUrl);
+            return produceShortUrl(couponUrl,sourceType);
         }
     }
 
@@ -156,9 +162,9 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      * @param longUrl
      * @return
      */
-    private String produceShortUrl(String longUrl)
+    private String produceShortUrl(String longUrl,String sourceType)
     {
-        //todo 此处应该进行一次查找 如果找不到，再调用API进行生成
+        //进行一次查找 如果找不到，再调用API进行生成
         String shortUrl=shortUrlMapper.selectShortUrlByLongUrl(longUrl);
 
         if(!StringUtils.isEmpty(shortUrl))
@@ -182,6 +188,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
                         .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), params))
                         .build();
 
+                log.info("调用api为长链接:{},生成短链",longUrl);
                 ResponseBody responseBody=client.newCall(request).execute().body();
 
                 JSONObject jsonObject = JSON.parseObject(responseBody.string());
@@ -198,11 +205,29 @@ public class ShortUrlServiceImpl implements ShortUrlService {
                 }
             } catch (Exception e) {
                 shortUrl="error";
-                //todo 错误上报
                 //进行异常日志的上报
                 exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
-
                 log.error("长链 {} 生成短链错误",longUrl,e);
+            }
+            if(!"error".equals(shortUrl))
+            {
+                //短链的失效时间
+                LocalDate validateDate=LocalDate.now().plus(1, ChronoUnit.YEARS);
+                ZoneId zone = ZoneId.systemDefault();
+                Instant instant = validateDate.atStartOfDay().atZone(zone).toInstant();
+                Date validateDate2 = Date.from(instant);
+
+                //写入短链生成记录
+                ShortUrlInfo shortUrlInfo=new ShortUrlInfo(longUrl,shortUrl,validateDate2,sourceType);
+                //判断长链是否存在，不存在则insert 存在则更新update_dt
+                if(shortUrlMapper.selectCountByLongUrl(longUrl)>0)
+                {
+                    shortUrlMapper.updateShortUrlValidateDate(validateDate2);
+                }else
+                {
+                    shortUrlMapper.InsertShortUrl(shortUrlInfo);
+                }
+
             }
             return shortUrl;
         }

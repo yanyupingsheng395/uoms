@@ -127,7 +127,7 @@ public class CouponController extends BaseController {
     public ResponseBo getShortUrl(String url) {
         String shortUrl;
         if (StringUtils.isNotEmpty(url)) {
-            shortUrl = shortUrlService.genConponShortUrl(url);
+            shortUrl = shortUrlService.genConponShortUrl(url,"S");
             if("".equalsIgnoreCase(shortUrl)) {
                 return ResponseBo.error("长链地址不合法！");
             }

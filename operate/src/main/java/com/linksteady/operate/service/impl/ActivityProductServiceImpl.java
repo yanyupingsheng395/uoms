@@ -100,8 +100,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      * @return
      */
     @Override
-    public String generateProductShortUrl(String productId) {
-        return shortUrlService.genProdShortUrlByProdId(productId);
+    public String generateProductShortUrl(String productId,String sourceType) {
+        return shortUrlService.genProdShortUrlByProdId(productId,sourceType);
     }
 
     @Override
