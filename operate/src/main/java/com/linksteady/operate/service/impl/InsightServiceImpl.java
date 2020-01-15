@@ -12,12 +12,17 @@ import com.linksteady.operate.thrift.ConversionData;
 import com.linksteady.operate.thrift.InsightThriftClient;
 import com.linksteady.operate.thrift.RetentionData;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.thrift.transport.TTransportException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -47,6 +52,9 @@ public class InsightServiceImpl implements InsightService {
 
     @Autowired
     private InsightThriftClient insightThriftClient;
+
+    @Autowired
+    private DailyMapper dailyMapper;
 
     /**
      * 由于thrift 中 seqid资源是线程不安全的，所以需要通过加锁的方式来同步调用资源。
@@ -119,7 +127,7 @@ public class InsightServiceImpl implements InsightService {
         }
         final List<InsightImportSpu> importSpuList = insightImportSpuMapper.findImportSpuList(start, end, purchOrder, dateRange, orderSql.toString());
         Optional<InsightImportSpu> insightImportSpu = importSpuList.stream().filter(x -> x.getSpuName().equals(spuName)).findFirst();
-        if(insightImportSpu.isPresent()) {
+        if (insightImportSpu.isPresent()) {
             importSpuList.remove(insightImportSpu.get());
             importSpuList.add(0, insightImportSpu.get());
         }
@@ -472,7 +480,7 @@ public class InsightServiceImpl implements InsightService {
             int spu = -1;
             int product = -1;
 
-            if(!insightThriftClient.isOpend()) {
+            if (!insightThriftClient.isOpend()) {
                 insightThriftClient.open();
             }
 
@@ -485,10 +493,10 @@ public class InsightServiceImpl implements InsightService {
             RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
             List<Double> retentionFit = retentionFitData.getRetentionFit();
             retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("获取拟合值数据异常", e);
             insightThriftClient.close();
-        }finally {
+        } finally {
             lock.unlock();
         }
         return retentionFitList;
@@ -503,7 +511,7 @@ public class InsightServiceImpl implements InsightService {
             int spu = -1;
             int product = -1;
 
-            if(!insightThriftClient.isOpend()) {
+            if (!insightThriftClient.isOpend()) {
                 insightThriftClient.open();
             }
 
@@ -516,10 +524,10 @@ public class InsightServiceImpl implements InsightService {
             RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
             List<Double> retentionFit = retentionFitData.getRetentionFit();
             retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("获取拟合值数据异常", e);
             insightThriftClient.close();
-        }finally {
+        } finally {
             lock.unlock();
         }
         return retentionFitList;
@@ -530,25 +538,38 @@ public class InsightServiceImpl implements InsightService {
         Map<String, Object> result = Maps.newHashMap();
         lock.lock();
         try {
-            if(!insightThriftClient.isOpend()) {
+            if (!insightThriftClient.isOpend()) {
                 insightThriftClient.open();
             }
-            if(StringUtils.isNotBlank(ebpProductId) && StringUtils.isNotBlank(nextEbpProductId)) {
+            if (StringUtils.isNotBlank(ebpProductId)) {
+                if (StringUtils.isEmpty(nextEbpProductId)) {
+                    nextEbpProductId = "-1";
+                }
                 ConversionData conversionData = insightThriftClient.getInsightService().getConversionData(Long.parseLong(spuId), Long.parseLong(purchOrder), Long.parseLong(ebpProductId), Long.parseLong(nextEbpProductId));
                 result.put("xdata", conversionData.xdata);
                 result.put("ydata", conversionData.ydata);
                 result.put("zdata", conversionData.zdata);
-            }else {
+            } else {
                 result.put("xdata", Lists.newArrayList());
                 result.put("ydata", Lists.newArrayList());
                 result.put("zdata", Lists.newArrayList());
             }
         } catch (Exception e) {
             log.error("获取商品转化率曲线失败", e);
-        }finally {
+        } finally {
             lock.unlock();
         }
         return result;
+    }
+
+    @Override
+    public List<Map<String, Object>> getUserSpu(String userId) {
+        return insightMapper.getUserSpu(userId);
+    }
+
+    @Override
+    public String getUserBuyOrder(String userId, String spuId) {
+        return insightMapper.getUserBuyOrder(userId, spuId);
     }
 
     /**
@@ -601,9 +622,9 @@ public class InsightServiceImpl implements InsightService {
     public Map<String, Object> categoryInPurchaseTimes(String type, String id, String period) {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> dataList = Lists.newArrayList();
-        if(type.equalsIgnoreCase("spu")) {
+        if (type.equalsIgnoreCase("spu")) {
             dataList = insightMapper.spuCategoryInPurchaseTimes(type, id, 0 - Integer.parseInt(period));
-        }else if(type.equalsIgnoreCase("product")){
+        } else if (type.equalsIgnoreCase("product")) {
             dataList = insightMapper.productCategoryInPurchaseTimes(type, id, 0 - Integer.parseInt(period));
         }
 
@@ -630,6 +651,130 @@ public class InsightServiceImpl implements InsightService {
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("AVG_PUR_GAP") == null ? "0" : x.get("AVG_PUR_GAP"))).collect(Collectors.toList());
         result.put("xdata", xdata);
         result.put("ydata", ydata);
+        return result;
+    }
+
+
+    @Override
+    public Map<String, Object> getUserSpuRelation(String userId, String spuId, String buyOrder) {
+        Map<String, Object> result = Maps.newHashMap();
+        List<String> xdata = Lists.newArrayList();
+        List<String> ebpProductIdList = Lists.newArrayList();
+        // 实际数据
+        List<Integer> ydataActual = Lists.newArrayList();
+        // 辅助数据
+        List<Integer> ydataReduce = Lists.newArrayList();
+        List<Map<String, Object>> mapList = insightMapper.getSpuRelation(spuId, buyOrder);
+        if (!mapList.isEmpty()) {
+            String spuWid = (mapList.stream().findFirst().get().get("SPU_WID")).toString();
+            String spuName = (mapList.stream().findFirst().get().get("SPU_NAME")).toString();
+            Integer spuUserCnt = ((BigDecimal) mapList.stream().findFirst().get().get("SPU_CNT")).intValue();
+            xdata.add(spuName);
+            ebpProductIdList.add(spuWid);
+            ydataActual.add(spuUserCnt);
+            mapList.stream().forEach(x -> {
+                xdata.add(x.get("EBP_PRODUCT_NAME").toString());
+                ebpProductIdList.add(x.get("EBP_PRODUCT_ID").toString());
+                ydataActual.add(Integer.parseInt(x.get("PRODUCT_CNT").toString()));
+            });
+            for (int i = 0; i < ydataActual.size(); i++) {
+                int tmp = 0;
+                if (i <= 1) {
+                    tmp = spuUserCnt - ydataActual.get(i);
+                } else {
+                    tmp = ydataReduce.get(i - 1) - ydataActual.get(i);
+                }
+                ydataReduce.add(tmp);
+            }
+
+            // 根据用户Id获取ebpProductId
+            Map<String, String> ebpProductMap = insightMapper.getEbpProductIdByUserId(userId, spuId, buyOrder);
+            String ebpProductId = ebpProductMap.get("EBP_PRODUCT_ID");
+            Map<String, Object> convertMap = getProductConvertRate(ebpProductId, spuId, buyOrder);
+            result.put("xdata2", convertMap.get("xdata"));
+            result.put("ydata2", convertMap.get("ydata"));
+            result.put("nextProductId", convertMap.get("nextProductId"));
+            result.put("ebpProductMap", ebpProductMap);
+        }
+
+        result.put("xdata1", xdata);
+        result.put("ydataActual", ydataActual);
+        result.put("ydataReduce", ydataReduce);
+        // 获取productId 和 nextProductId
+        result.put("productId", ebpProductIdList);
+        return result;
+    }
+
+    /**
+     * 获取每日运营的日期距离最后一次购买的间隔
+     *
+     * @param headId
+     * @param spuId
+     * @param userId
+     * @return
+     */
+    @Override
+    public long getUserBuyDual(String headId, String spuId, String userId) {
+        String dateFormat = "yyyyMMdd";
+        String lastBuyDt = insightMapper.getLastBuyDt(spuId, userId);
+        String dailyDt = dailyMapper.getTouchDt(headId);
+        LocalDate lastDt = LocalDate.parse(lastBuyDt, DateTimeFormatter.ofPattern(dateFormat));
+        LocalDate currentDt = LocalDate.parse(dailyDt, DateTimeFormatter.ofPattern(dateFormat));
+        long until = lastDt.until(currentDt, ChronoUnit.DAYS);
+        return until;
+    }
+
+    /**
+     * 获取用户成长节点
+     *
+     * @return
+     */
+    @Override
+    public List<Map<String, String>> getUserGrowthPathPoint(String userId, String spuId) {
+        String dateFormat = "yyyyMMdd";
+        List<Map<String, String>> userGrowthPathPointWithSpu = insightMapper.getUserGrowthPathPointWithSpu(userId, spuId);
+        String lastBuyDt = insightMapper.getLastBuyDt(spuId, userId);
+        LocalDate lastDt = LocalDate.parse(lastBuyDt, DateTimeFormatter.ofPattern(dateFormat));
+        for (Map<String, String> x : userGrowthPathPointWithSpu) {
+            x.put("LAST_BUY_DT", lastBuyDt);
+            LocalDate active_dual = lastDt.plusDays(Long.parseLong(String.valueOf(x.get("ACTIVE_DUAL"))));
+            x.put("GROWTH_DT", active_dual.format(DateTimeFormatter.ofPattern(dateFormat)));
+        }
+        return userGrowthPathPointWithSpu;
+    }
+
+    @Override
+    public Map<String, Object> getUserValueWithSpu(String userId, String spuId) {
+        int limit = 8000;
+        int total = insightMapper.getUserValueWithSpuCount(spuId);
+        int pageNum = (total % limit == 0) ? total / limit : (total / limit + 1);
+        Map<String, Object> result = Maps.newHashMap();
+        List<Map<String, String>> dataList = new LinkedList<>();
+        for (int i = 0; i < pageNum; i++) {
+            int start = i * limit + 1;
+            int end = (i + 1) * limit;
+            end = Math.min(end, total);
+            LinkedList<Map<String, String>> tmp = insightMapper.getUserValueWithSpu(spuId, start, end);
+            dataList.addAll(tmp);
+        }
+
+        Optional<Map<String, String>> user_id = dataList.stream().filter(x -> String.valueOf(x.get("USER_ID")).equalsIgnoreCase(userId)).findFirst();
+        if (user_id.isPresent()) {
+            Map<String, String> current = user_id.get();
+            result.put("current", convertList(Arrays.asList(user_id.get())));
+            dataList.remove(current);
+        }
+        result.put("others", convertList(dataList));
+        return result;
+    }
+
+    private List<List<String>> convertList(List<Map<String, String>> dataList) {
+        List<List<String>> result = new LinkedList<>();
+        for (Map<String, String> x : dataList) {
+            x.remove("RN");
+            x.remove("USER_ID");
+            result.add(new LinkedList<>(x.values()));
+        }
         return result;
     }
 }
