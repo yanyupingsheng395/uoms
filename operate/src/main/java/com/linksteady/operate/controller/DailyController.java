@@ -211,7 +211,7 @@ public class DailyController {
             //获取用户在SPU上top 10
             List<DailyUserStats> spuList=dailyService.getUserStatsBySpu(headId,dailyUserStats1.getUserValue(),dailyUserStats1.getPathActivity(),dailyUserStats1.getLifecycle());
             result.put("spuList",spuList);
-            result.put("groupName",dailyUserStats1.getUserValueLabel()+","+dailyUserStats1.getGetPathActivityLabel()+","+dailyUserStats1.getLifecycleLabel()+"群组");
+            result.put("groupName",dailyUserStats1.getUserValueLabel()+"-"+dailyUserStats1.getGetPathActivityLabel()+"-"+dailyUserStats1.getLifecycleLabel()+"群组");
             result.put("userValue",dailyUserStats1.getUserValue());
             result.put("pathActive",dailyUserStats1.getPathActivity());
             result.put("lifecycle",dailyUserStats1.getLifecycle());
@@ -223,7 +223,7 @@ public class DailyController {
             {
                 List<DailyUserStats> prodList=dailyService.getUserStatsByProd(headId,dailyUserStats1.getUserValue(),dailyUserStats1.getPathActivity(),dailyUserStats1.getLifecycle(),dailyUserStats2.getSpuName());
                 result.put("prodList",prodList);
-                result.put("prodGroupName",dailyUserStats1.getUserValueLabel()+","+dailyUserStats1.getGetPathActivityLabel()+","+dailyUserStats1.getLifecycleLabel()+"群组"+dailyUserStats2.getSpuName()+"类目");
+                result.put("prodGroupName",dailyUserStats1.getUserValueLabel()+"-"+dailyUserStats1.getGetPathActivityLabel()+"-"+dailyUserStats1.getLifecycleLabel()+"群组,"+dailyUserStats2.getSpuName()+"类目");
                 result.put("spuName",dailyUserStats2.getSpuName());
             }else
             {
@@ -265,7 +265,7 @@ public class DailyController {
         {
             List<DailyUserStats> prodList=dailyService.getUserStatsByProd(headId,userValue,pathActive,lifecycle,dailyUserStats2.getSpuName());
             result.put("prodList",prodList);
-            result.put("prodGroupName",userValueMap.get(userValue)+","+pathActiveMap.get(pathActive)+","+lifeCycleMap.get(lifecycle)+"群组"+dailyUserStats2.getSpuName()+"类目");
+            result.put("prodGroupName",userValueMap.get(userValue)+"-"+pathActiveMap.get(pathActive)+"-"+lifeCycleMap.get(lifecycle)+"群组,"+dailyUserStats2.getSpuName()+"类目");
             result.put("spuName",dailyUserStats2.getSpuName());
         }else
         {
