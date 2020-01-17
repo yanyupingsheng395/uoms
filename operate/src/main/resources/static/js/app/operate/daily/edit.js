@@ -114,7 +114,7 @@ function submitData() {
             if (r.code === 200) {
                 $MB.n_success("启动推送成功！");
                 setTimeout(function () {
-                    window.location.href = "/page/daily";
+                    window.location.href = "/page/daily/task";
                 }, 1000);
             } else {
                 $("#btn_push").attr("disabled", false);
