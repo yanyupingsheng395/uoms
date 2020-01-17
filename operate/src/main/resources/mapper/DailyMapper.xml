@@ -17,7 +17,7 @@
         <result column="CONVERT_SPU_NUM" property="convertSpuNum" jdbcType="DECIMAL"></result>
         <result column="CONVERT_SPU_RATE" property="convertSpuRate" jdbcType="DECIMAL"></result>
         <result column="STATUS" property="status" jdbcType="VARCHAR"></result>
-        <result column="VALID_STATUS" property="validStatus" jdbcType="VARCHAR"></result>
+        <result column="OP_CHANGED_TIME" property="opChangeDate" jdbcType="DECIMAL"></result>
     </resultMap>
 
     <resultMap id="templateResult" type="com.linksteady.operate.domain.DailyGroupTemplate">
@@ -64,10 +64,20 @@
         <result property="convertDate" jdbcType="VARCHAR" column="CONVERT_DATE"></result>
     </resultMap>
 
+    <resultMap id="DailyUserStatsResult" type="com.linksteady.operate.domain.DailyUserStats">
+        <result property="userValue" jdbcType="VARCHAR" column="USER_VALUE"></result>
+        <result property="pathActivity" jdbcType="VARCHAR" column="PATH_ACTIVE"></result>
+        <result property="lifecycle" jdbcType="VARCHAR" column="LIFECYCLE"></result>
+        <result property="ucnt" jdbcType="DECIMAL" column="UCNT"></result>
+        <result property="pct" jdbcType="DECIMAL" column="PCT"></result>
+        <result property="spuName" jdbcType="VARCHAR" column="SPU_NAME"></result>
+        <result property="prodName" jdbcType="VARCHAR" column="REC_PROD_NAME"></result>
+    </resultMap>
+
     <select id="getPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM rn from (
-        SELECT HEAD_ID, to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS, VALID_STATUS
+        SELECT HEAD_ID, to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS
         FROM UO_OP_DAILY_HEADER t
         <where>
             <if test="touchDt != null and touchDt != ''">
@@ -109,10 +119,6 @@
         </if>
     </select>
 
-    <select id="getTipInfo" resultType="map">
-        select to_char(touch_dt, 'YYYY-MM-DD') touchDt, TOTAL_NUM total from UO_OP_DAILY_HEADER where head_id = #{headId}
-    </select>
-
     <update id="updateStatus">
         update UO_OP_DAILY_HEADER set status = #{status} where head_id = #{headId}
     </update>
@@ -121,8 +127,9 @@
         update UO_OP_DAILY_HEADER set OPT_NUM = #{num} where head_id = #{headId}
     </update>
 
-    <select id="getStatusById" resultType="string">
-        SELECT STATUS FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}
+    <select id="getDailyHeadById" resultMap="baseResult">
+        SELECT HEAD_ID, to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,op_changed_time
+         FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}
     </select>
 
     <select id="getTouchDt" resultType="string">
@@ -301,15 +308,61 @@
         )
     </update>
 
-    <update id="updateValidStatus">
-        merge into UO_OP_DAILY_HEADER t1
-        using (select case when cnt = 0 then '1' when cnt > 0 then '0' end status
-               from (
-                        select count(1) cnt from UO_OP_DAILY_TEMPLATE_CONFIG where CHECK_FLAG = 'N'
-                    )) t2
-        on (t1.STATUS = 'todo')
-        when matched then
-            update
-            set VALID_STATUS = t2.status
+    <update id="updateHeaderOpChangeDate">
+        update UO_OP_DAILY_HEADER set op_changed_time = #{opChangeDate} where head_id = #{headId}
     </update>
+
+    <select id="validateOpChangeTime" resultType="int">
+       select count(*) from UO_OP_DAILY_HEADER where head_id = #{headId} and op_changed_time = #{opChangeDate}
+    </select>
+
+    <select id="getUserStats" resultMap="DailyUserStatsResult">
+        SELECT USER_VALUE,
+               PATH_ACTIVE,
+               LIFECYCLE,
+               UCNT,
+               ROUND(UCNT / SUM(UCNT) OVER(PARTITION BY NULL), 4) * 100 PCT
+        FROM (SELECT T.USER_VALUE,
+                     T.PATH_ACTIVE,
+                     (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END) LIFECYCLE,
+                     COUNT(*) UCNT
+              FROM UO_OP_DAILY_DETAIL T
+              WHERE T.HEAD_ID = #{headId}
+              GROUP BY T.USER_VALUE,
+                       T.PATH_ACTIVE,
+                  (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)
+        ORDER BY UCNT DESC)
+    </select>
+
+    <select id="getUserStatsBySpu" resultMap="DailyUserStatsResult">
+        SELECT
+               SPU_NAME,
+                UCNT
+        FROM (SELECT T.SPU_NAME,
+        COUNT(*) UCNT
+        FROM UO_OP_DAILY_DETAIL T
+        WHERE T.HEAD_ID = #{headId}
+        AND T.PATH_ACTIVE= #{pathActive}
+        AND T.USER_VALUE= #{userValue}
+        AND (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)= #{lifecycle}
+        GROUP BY T.SPU_NAME
+        ORDER BY UCNT DESC) WHERE ROWNUM &lt;=10
+    </select>
+
+    <select id="getUserStatsByProd" resultMap="DailyUserStatsResult">
+        SELECT      REC_PROD_NAME,
+        UCNT
+        FROM (SELECT T.REC_PROD_NAME,
+        COUNT(*) UCNT
+        FROM UO_OP_DAILY_DETAIL T
+        WHERE T.HEAD_ID = #{headId}
+        AND T.PATH_ACTIVE=#{pathActive}
+        AND T.USER_VALUE= #{userValue}
+        AND (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)= #{lifecycle}
+        AND T.SPU_NAME= #{spuName}
+        GROUP BY T.REC_PROD_NAME
+        ORDER BY UCNT DESC) WHERE ROWNUM &lt;=10
+    </select>
+
+
 </mapper>

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /**
  * @author hxcao
  * @date 2019-07-19
@@ -87,22 +90,94 @@ public class PageController {
     }
 
 
+    /**
+     * 每日运营-任务提交
+     * @param model
+     * @param headId
+     * @return
+     */
     @RequestMapping("/daily/edit")
     public String dailyEdit(Model model, @RequestParam("id") String headId) {
-        String status = dailyService.getStatusById(headId);
-        if(StringUtils.isNotEmpty(status)) {
-            if(status.equals("todo")) {
-                model.addAttribute("headId", headId);
-                return "operate/daily/edit";
+
+        //校验
+        if(StringUtils.isEmpty(headId))
+        {
+            model.addAttribute("errormsg","非法请求，请通过界面进行操作!");
+            return "redirect:/page/daily/task";
+        }else
+        {
+            DailyHead dailyHead=dailyService.getDailyHeadById(headId);
+
+            if(null==dailyHead)
+            {
+                model.addAttribute("errormsg","不存在的任务,请通过界面进行操作!");
+                return "redirect:/page/daily/task";
             }
+
+            String currDay=LocalDate.now().format(DateTimeFormatter.ofPattern("YYYYMMDD"));
+
+            if(!"todo".equals(dailyHead.getStatus()))
+            {
+                model.addAttribute("errormsg","只有待执行状态的任务才能提交执行!");
+                return "redirect:/page/daily/task";
+            }
+
+            if(!currDay.equals(dailyHead.getTouchDtStr()))
+            {
+                model.addAttribute("errormsg","只有当天的任务才能被执行!");
+                return "redirect:/page/daily/task";
+            }
+
+            //验证成长组是否通过
+            if(dailyService.validUserGroup())
+            {
+                model.addAttribute("errormsg","成长组配置验证未通过!");
+                return "redirect:/page/daily/task";
+            }
+
+            model.addAttribute("headId", headId);
+            model.addAttribute("touchDt", dailyHead.getTouchDtStr());
+            model.addAttribute("userNum", dailyHead.getTotalNum());
+            return "operate/daily/edit";
         }
-        return "redirect:/page/daily";
     }
 
-    @RequestMapping("/daily/view")
-    public String dailyView(Model model, @RequestParam("id") String headId) {
-        model.addAttribute("headId", headId);
-        return "operate/daily/view";
+    /**
+     * 每日运营-用户预览
+     * @param model
+     * @param headId
+     * @return
+     */
+    @RequestMapping("/daily/userStats")
+    public String userStats(Model model, @RequestParam("id") String headId) {
+        //校验
+        if(StringUtils.isEmpty(headId))
+        {
+            model.addAttribute("errormsg","非法请求，请通过界面进行操作!");
+            return "redirect:/page/daily/task";
+        }else
+        {
+            DailyHead dailyHead=dailyService.getDailyHeadById(headId);
+
+            if(null==dailyHead)
+            {
+                model.addAttribute("errormsg","不存在的任务,请通过界面进行操作!");
+                return "redirect:/page/daily/task";
+            }
+
+            String currDay=LocalDate.now().format(DateTimeFormatter.ofPattern("YYYYMMDD"));
+
+            if(!currDay.equals(dailyHead.getTouchDtStr()))
+            {
+                model.addAttribute("errormsg","只有当天的任务才能被执行!");
+                return "redirect:/page/daily/task";
+            }
+
+            model.addAttribute("headId", headId);
+            model.addAttribute("touchDt", dailyHead.getTouchDtStr());
+            model.addAttribute("userNum", dailyHead.getTotalNum());
+            return "operate/daily/userStats";
+        }
     }
 
     /**
@@ -166,14 +241,6 @@ public class PageController {
         return "operate/config/dailyConfigView";
     }
 
-    /**
-     * 步骤图
-     * @return
-     */
-    @RequestMapping("/daily/step")
-    public String step(@RequestParam String headId) {
-        return "step2";
-    }
 
     /**
      * 日运营-效果跟踪
@@ -181,7 +248,7 @@ public class PageController {
      */
     @RequestMapping("daily/effect")
     public String effectTrack(Model model, @RequestParam("id") String headId) {
-        String status = dailyService.getStatusById(headId);
+        String status = dailyService.getDailyHeadById(headId).getStatus();
         if(StringUtils.isNotEmpty(status)) {
             if(status.equals("done") || status.equals("finished") || status.equals("doing")) {
                 model.addAttribute("headId", headId);
@@ -189,12 +256,12 @@ public class PageController {
                 if(dailyHead != null) {
                     model.addAttribute("dailyHead", dailyHead);
                 }else {
-                    return "redirect:/page/daily";
+                    return "redirect:/page/daily/task";
                 }
                 return "operate/daily/effect";
             }
         }
-        return "redirect:/page/daily";
+        return "redirect:/page/daily/task";
     }
     /**
      * 活动运营
