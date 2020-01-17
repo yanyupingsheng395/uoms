@@ -37,4 +37,6 @@ public interface CouPonService {
     void deleteCouponGroup(String groupId);
 
     int checkCouponName(String couponName);
+
+    void validCoupon();
 }

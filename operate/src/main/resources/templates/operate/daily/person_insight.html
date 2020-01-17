@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/select2/css/select2.css}"/>
+    <style>
+        #dailyGroupTable tbody td:last-child {
+            text-align: center;
+            cursor: pointer;
+        }
+        #smsTemplateTable thead, #couponTable thead {
+            background-color: #eff3f8;
+        }
+        .form-horizontal .checkbox, .form-horizontal .checkbox-inline, .form-horizontal .radio, .form-horizontal .radio-inline {
+            padding-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">个性化推送</h5>
+                            </div>
+                            <div class="row">
+                                <hr class="hr" style="margin-top: 10px;margin-bottom: 10px;"/>
+                            </div>
+                        </div>
+                        <form id="user-form">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        选择用户成长所处类目：<select id="spuId" name="spuId" class="select2"></select>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="btn_query"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetDaily()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row" style="margin-top: 12px;">
+                            <div class="col-sm-12">
+                                <p class="h5">用户在类目成长的节点与商品选择</p>
+                                <hr class="hr" style="margin-top: 10px;margin-bottom: 10px;"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form>
+                                    <div class="select-list">
+                                        <ul>
+                                            <li>
+                                                用户在类目成长的次序：<input type="text" id="buyOrder" readonly style="background-color: #eee;opacity: 1;border: 1px solid #ddd;border-radius: 4px;color:#8b95a5;"/>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!--第N次到第M次的商品分布图-->
+                        <div class="row">
+                            <div class="col-md-6" id="chart_relation_1" style="height:400px;"></div>
+                            <div class="col-md-6" id="chart_relation_2" style="height:400px;"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6" id="convert_chart" style="height: 380px"></div>
+                            <div class="col-md-6" style="margin-top: 45px;">
+                                <table id="growthTable" class="table table-bordered table-condensed table-hover"></table>
+                                <p class="h6 text-center">用户在成长旅程中的成长节点与此用户今日所处的成长节点</p>
+                            </div>
+                        </div>
+                    </div>
+<!--                    用户在类目成长的价值-->
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row" style="margin-top: 12px;">
+                            <div class="col-sm-12">
+                                <p class="h5">用户在类目成长的价值</p>
+                                <hr class="hr" style="margin-top: 10px;margin-bottom: 10px;"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div id="userValueChart" style="width: 100%;height: 400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row" style="margin-top: 12px;">
+                            <div class="col-sm-12">
+                                <p class="h5">用户在个性化推送培养转化的时段特征</p>
+                                <hr class="hr" style="margin-top: 10px;margin-bottom: 10px;"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div id="chart1" style="width: 100%;height: 380px;"></div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div id="chart2" style="width: 100%;height: 380px;"></div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div id="chart3" style="width: 100%;height: 380px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<script>
+    // let userId = [[${userId}]];
+    let userId = 532;
+    // 每日运营活动头表ID
+    let headId = 243;
+</script>
+<script data-th-src="@{/plugins/select2/js/select2.js}"></script>
+<script data-th-src="@{/plugins/select2/js/i18n/zh-CN.js}"></script>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/js/app/operate/daily/person_insight.js}"></script>
+</body>
+</html>

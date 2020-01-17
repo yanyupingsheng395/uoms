@@ -303,4 +303,13 @@ public class PageController {
         model.addAttribute("fontNum", dailyProperties.getSmsLengthLimit());
         return "operate/manual/manual";
     }
+
+    /**
+     * 单一用户的成长洞察
+     */
+    @RequestMapping("/personInsight")
+    public String personInsight(@RequestParam("userId") String userId, Model model) {
+        model.addAttribute("userId", userId);
+        return "operate/daily/person_insight";
+    }
 }

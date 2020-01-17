@@ -214,4 +214,14 @@ public class CouponController extends BaseController {
     public boolean checkCouponName(@RequestParam("couponName") String couponName) {
         return couponService.checkCouponName(couponName) == 0;
     }
+
+    /**
+     * 验证券信息
+     * @return
+     */
+    @RequestMapping("/validCoupon")
+    public ResponseBo validCoupon() {
+        couponService.validCoupon();
+        return ResponseBo.ok();
+    }
 }

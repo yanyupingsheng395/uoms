@@ -1,6 +1,6 @@
 let USER_VALUE = {ULC_01: '重要',ULC_02: '主要',ULC_03: '普通',ULC_04: '长尾'};
-let USER_LIFE_CYCLE = {0: '老客',1: '新客'};
-let PATH_ACTIVE = {UAC_01: '活跃', UAC_02: '留存', UAC_03: '流失预警', UAC_04: '弱流失'};
+let USER_LIFE_CYCLE = {0: '复购用户',1: '新用户'};
+let PATH_ACTIVE = {UAC_01: '活跃', UAC_02: '留存', UAC_03: '流失预警', UAC_04: '弱流失', UAC_05: '强流失'};
 $(function () {
     initTable();
 });
@@ -15,17 +15,17 @@ function initTable() {
                 rowspan: 2
             }, {
                 title: '用户在类目上成长的相关特征',
-                colspan: 4
+                colspan: 3
             }, {
                 title: '为个性化推送配置要素',
-                colspan: 3
+                colspan: 4
             }, {
                 title: '配置后的预览与校验',
                 colspan: 4
             }
         ], [{
             field: 'userValue',
-            title: '用户在类目的价值',
+            title: '价值',
             align: 'center',
             valign: "middle",
             formatter: function (value, row, index) {
@@ -50,21 +50,21 @@ function initTable() {
             }
         }, {
             field: 'lifecycle',
-            title: '用户在类目上的生命周期阶段',
+            title: '生命周期阶段',
             align: 'center',
             valign: "middle",
             formatter: function (value, row, index) {
                 if (value == "1") {
-                    return "新客";
+                    return "新用户";
                 }
                 if (value == "0") {
-                    return "老客";
+                    return "复购用户";
                 }
                 return "";
             }
         }, {
             field: 'pathActive',
-            title: '用户在类目特定购买次序的活跃度',
+            title: '下步成长旅程活跃度',
             formatter: function (value, row, index) {
                 var res = "";
                 switch (value) {
@@ -87,7 +87,11 @@ function initTable() {
             }
         }, {
             field: 'groupInfo',
-            title: '理解用户'
+            title: '理解用户',
+            align: 'center',
+            formatter: function (value, row, index) {
+                return "<a><i class='mdi mdi-account mdi-14px'></i></a>";
+            }
         },{
             title: '文案',
             align: 'center',
@@ -225,10 +229,21 @@ $("#msg_modal").on('shown.bs.modal', function () {
 });
 
 $("#coupon_modal").on('shown.bs.modal', function () {
-    var groupId = $("#currentGroupId").val();
-    couponTable(groupId);
-    getSelectedGroupInfo('selectedGroupInfo2');
+    validCoupon();
 });
+
+// 验证券信息是否合法
+function validCoupon() {
+    $.get("/coupon/validCoupon", {}, function(r) {
+        if(r.code === 200) {
+            var groupId = $("#currentGroupId").val();
+            couponTable(groupId);
+            getSelectedGroupInfo('selectedGroupInfo2');
+        }else {
+            $MB.n_danger("系统错误!");
+        }
+    });
+}
 
 // 获取弹窗群组信息
 function getSelectedGroupInfo(tableId) {
@@ -276,7 +291,7 @@ function smsTemplateTable(groupId) {
                 clickToSelect: true
             }, {
                 title: '适用人群',
-                colspan: 4
+                colspan: 3
             }, {
                 field: 'smsContent',
                 title: '文案内容',
@@ -286,7 +301,7 @@ function smsTemplateTable(groupId) {
             ], [
                 {
                     field: 'userValue',
-                    title: '用户在类目的价值',
+                    title: '价值',
                     formatter:function (value, row, index) {
                         var res = [];
                         if(value !== undefined && value !== ''&& value !== null) {
@@ -311,17 +326,17 @@ function smsTemplateTable(groupId) {
                     }
                 }, {
                     field: 'lifeCycle',
-                    title: '用户在类目上的生命周期阶段',
+                    title: '生命周期阶段',
                     formatter:function (value, row, index) {
                         var res = [];
                         if(value !== undefined && value !== ''&& value !== null) {
                             value.split(",").forEach((v,k)=>{
                                 switch (v) {
                                     case "0":
-                                        res.push("老客");
+                                        res.push("复购用户");
                                         break;
                                     case "1":
-                                        res.push("新客");
+                                        res.push("新用户");
                                         break;
                                 }
                             });
@@ -330,7 +345,7 @@ function smsTemplateTable(groupId) {
                     }
                 }, {
                     field: 'pathActive',
-                    title: '用户在类目特定购买次序的活跃度',
+                    title: '下步成长旅程活跃度',
                     formatter:function (value, row, index) {
                         var res = [];
                         if(value !== undefined && value !== ''&& value !== null) {
@@ -352,19 +367,6 @@ function smsTemplateTable(groupId) {
                             });
                         }
                         return res.length === 0 ? '-' : res.join(",");
-                    }
-                }, {
-                    field: 'isCoupon',
-                    title: '有无补贴',
-                    formatter: function (value, row, index) {
-                        let res = "-";
-                        if (value === '1') {
-                            res = "有";
-                        }
-                        if (value === '0') {
-                            res = "无";
-                        }
-                        return res;
                     }
                 }
             ]
@@ -391,25 +393,25 @@ function couponTable(groupId) {
                 rowspan: 2
             },
             {
-                title: '补贴适合用户群组',
+                title: '补贴适用用户群组',
                 colspan: 3
             },
             {
                 title: '补贴信息设置',
-                colspan: 3
+                colspan: 4
             },
             {
                 title: '3方平台建立补贴并录入',
-                colspan: 4
+                colspan: 2
             },
             {
                 title: '补贴检验',
-                colspan: 4
+                colspan: 2
             }
         ],
             [{
                 field: 'userValue',
-                title: '用户在类目的价值',
+                title: '价值',
                 formatter:function (value, row, index) {
                     var res = [];
                     if(value !== undefined && value !== ''&& value !== null) {
@@ -434,17 +436,17 @@ function couponTable(groupId) {
                 }
             }, {
                 field: 'lifeCycle',
-                title: '用户在类目上的生命周期阶段',
+                title: '生命周期阶段',
                 formatter:function (value, row, index) {
                     var res = [];
                     if(value !== undefined && value !== ''&& value !== null) {
                         value.split(",").forEach((v,k)=>{
                             switch (v) {
                                 case "0":
-                                    res.push("老客");
+                                    res.push("复购用户");
                                     break;
                                 case "1":
-                                    res.push("新客");
+                                    res.push("新用户");
                                     break;
                             }
                         });
@@ -453,17 +455,17 @@ function couponTable(groupId) {
                 }
             }, {
                 field: 'pathActive',
-                title: '用户在类目特定购买次序的活跃度',
+                title: '下步成长旅程活跃度',
                 formatter:function (value, row, index) {
                     var res = [];
                     if(value !== undefined && value !== ''&& value !== null) {
                         value.split(",").forEach((v,k)=>{
                             switch (v) {
                                 case "UAC_01":
-                                    res.push("高度活跃");
+                                    res.push("活跃");
                                     break;
                                 case "UAC_02":
-                                    res.push("中度活跃");
+                                    res.push("留存");
                                     break;
                                 case "UAC_03":
                                     res.push("流失预警");
@@ -474,8 +476,6 @@ function couponTable(groupId) {
                                 case "UAC_05":
                                     res.push("强流失");
                                     break;
-                                case "UAC_06":
-                                    res.push("沉睡");
                             }
                         });
                     }
@@ -515,18 +515,7 @@ function couponTable(groupId) {
                 }
             }, {
                 field: 'validEnd',
-                title: '有效截止期至'
-            }, {
-                field: 'validStatus',
-                title: '是否有效',
-                formatter: function (value, row, index) {
-                    if(value === 'Y') {
-                        return "是";
-                    }else if(value === 'N'){
-                        return "否";
-                    }
-                    return "";
-                }
+                title: '有效截止期'
             }, {
                 field: 'checkFlag',
                 title: '校验结果',

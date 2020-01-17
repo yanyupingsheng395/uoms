@@ -76,7 +76,7 @@
     </select>
 
     <select id="isCouponUsed" resultType="string">
-        select COUPON_ID from UO_OP_DAILY_GROUP_COUPON
+        select distinct COUPON_ID from UO_OP_DAILY_GROUP_COUPON
         <where>
             COUPON_ID in
             <foreach collection="couponIds" open="(" close=")" item="item" separator=",">
@@ -174,4 +174,23 @@
     <select id="checkCouponName" resultType="int">
         select count(1) from UO_OP_COUPON where COUPON_DISPLAY_NAME = #{couponName}
     </select>
+
+    <update id="validEndDateNull">
+        update UO_OP_COUPON set CHECK_FLAG = '0' and CHECK_COMMENTS = '补贴有效截止日期未配置'
+        where VALID_END is null;
+    </update>
+
+    <update id="validEndDateNotNull">
+        update UO_OP_COUPON set CHECK_FLAG = '0' and CHECK_COMMENTS = '补贴已失效'
+        where VALID_END is not null and trunc(VALID_END, 'dd') &lt; trunc(sysdate, 'dd')
+    </update>
+
+    <update id="validCouponUrl">
+        update UO_OP_COUPON set CHECK_FLAG = '0' and CHECK_COMMENTS = '当前补贴方式为自行领取，补贴链接未配置'
+        where COUPON_URL is null
+    </update>
+
+    <update id="validCouponPass">
+        update UO_OP_COUPON set CHECK_FLAG = '1' and CHECK_COMMENTS = ''
+    </update>
 </mapper>

@@ -15,7 +15,7 @@ alter table UO_OP_SMS_TEMPLATE
     add REMARK VARCHAR2(128)
 /
 
-comment on column UO_OP_SMS_TEMPLATE.IS_COUPON is '体现补贴链接与名称(1:是，0:否)'
+comment on column UO_OP_SMS_TEMPLATE.IS_COUPON_NAME is '体现补贴链接与名称(1:是，0:否)'
 /
 
 comment on column UO_OP_SMS_TEMPLATE.SMS_NAME is '文案名称'
@@ -118,3 +118,20 @@ comment on column UO_OP_DAILY_TEMPLATE_CONFIG.GROUP_INFO is '群组理解'
 /
 
 update UO_OP_SMS_TEMPLATE set SMS_CODE = SEQ_SMS_TEMPLATE_CODE.nextval;
+
+--2020.1.16
+alter table UO_OP_SMS_TEMPLATE rename column IS_COUPON to IS_COUPON_NAME
+/
+
+comment on column UO_OP_SMS_TEMPLATE.IS_COUPON_NAME is '体现补贴名称(1:是，0:否)'
+/
+
+alter table UO_OP_SMS_TEMPLATE modify IS_COUPON_NAME VARCHAR2(2)
+/
+
+alter table UO_OP_SMS_TEMPLATE
+    add IS_COUPON_URL VARCHAR2(2)
+/
+
+comment on column UO_OP_SMS_TEMPLATE.IS_COUPON_URL is '体现补贴链接(1:是，0:否)'
+/

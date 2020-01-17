@@ -7,7 +7,8 @@
         -->
         <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode" />
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent" />
-        <result column="IS_COUPON" jdbcType="VARCHAR" property="isCoupon" />
+        <result column="IS_COUPON_URL" jdbcType="VARCHAR" property="isCouponUrl" />
+        <result column="IS_COUPON_NAME" jdbcType="VARCHAR" property="isCouponName" />
         <result column="SMS_NAME" jdbcType="VARCHAR" property="smsName" />
         <result column="IS_PRODUCT_NAME" jdbcType="VARCHAR" property="isProductName" />
         <result column="IS_PRODUCT_URL" jdbcType="VARCHAR" property="isProductUrl" />
@@ -21,7 +22,7 @@
         SELECT * FROM(
         SELECT A.*,ROWNUM RN FROM
         (SELECT
-        SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE
+        SMS_CODE, SMS_CONTENT, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE
         FROM UO_OP_SMS_TEMPLATE
         where 1=1
         <if test="smsTemplate.userValue != null and smsTemplate.userValue != ''">
@@ -53,8 +54,8 @@
     </select>
 
     <insert id="saveSmsTemplate">
-     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE)
-     VALUES(SEQ_SMS_TEMPLATE_CODE.nextval,#{smsContent},#{isCoupon}, #{smsName}, #{isProductName}, #{isProductUrl}, #{remark}, #{userValue}, #{lifeCycle}, #{pathActive})
+     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE, SMS_CONTENT, IS_COUPON_URL, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE)
+     VALUES(SEQ_SMS_TEMPLATE_CODE.nextval,#{smsContent},#{isCouponUrl},#{isCouponName}, #{smsName}, #{isProductName}, #{isProductUrl}, #{remark}, #{userValue}, #{lifeCycle}, #{pathActive})
   </insert>
 
     <select id="refrenceCount" resultType="int">
@@ -67,13 +68,13 @@
 
     <select id="getSmsTemplate" resultMap="BaseResultMap">
     SELECT
-        SMS_CODE, SMS_CONTENT, IS_COUPON, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE
+        SMS_CODE, SMS_CONTENT, IS_COUPON_URL, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE
         FROM UO_OP_SMS_TEMPLATE WHERE SMS_CODE=#{smsCode}
   </select>
 
     <update id="update" parameterType="com.linksteady.operate.domain.SmsTemplate">
       update UO_OP_SMS_TEMPLATE
-      set SMS_CONTENT = #{smsTemplate.smsContent}, IS_COUPON = #{smsTemplate.isCoupon}, SMS_NAME = #{smsTemplate.smsName}, IS_PRODUCT_NAME = #{smsTemplate.isProductName}, IS_PRODUCT_URL = #{smsTemplate.isProductUrl}, REMARK = #{smsTemplate.remark},
+      set SMS_CONTENT = #{smsTemplate.smsContent}, IS_COUPON_URL = #{smsTemplate.isCouponUrl}, IS_COUPON_NAME = #{smsTemplate.isCouponName}, SMS_NAME = #{smsTemplate.smsName}, IS_PRODUCT_NAME = #{smsTemplate.isProductName}, IS_PRODUCT_URL = #{smsTemplate.isProductUrl}, REMARK = #{smsTemplate.remark},
       USER_VALUE = #{smsTemplate.userValue}, LIFE_CYCLE = #{smsTemplate.lifeCycle}, PATH_ACTIVE = #{smsTemplate.pathActive}
       where SMS_CODE = #{smsTemplate.smsCode}
     </update>

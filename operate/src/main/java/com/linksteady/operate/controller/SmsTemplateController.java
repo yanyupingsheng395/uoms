@@ -141,36 +141,6 @@ public class SmsTemplateController extends BaseController {
         return ResponseBo.okWithData(null, dailyProperties.getCouponSendType());
     }
 
-    /**
-     * 计算字数
-     *0
-     * @return
-     */
-    @RequestMapping("/calFontNum")
-    public ResponseBo calFontNum(String smsContent) {
-        Map<String, Object> result = Maps.newHashMap();
-        String couponUrl = "${COUPON_URL}";
-        String couponName = "${COUPON_NAME}";
-        String prodName = "${PROD_NAME}";
-        String prodUrl = "${PROD_URL}";
-        int templateCount = smsContent.length();
-        if (smsContent.contains(couponUrl)) {
-            templateCount = templateCount - couponUrl.length() + dailyProperties.getShortUrlLen();
-        }
-        if (smsContent.contains(couponName)) {
-            templateCount = templateCount - couponName.length() + dailyProperties.getCouponNameLen();
-        }
-        if (smsContent.contains(prodName)) {
-            templateCount = templateCount - prodName.length() + dailyProperties.getProdNameLen();
-        }
-        if (smsContent.contains(prodUrl)) {
-            templateCount = templateCount - prodUrl.length() + dailyProperties.getShortUrlLen();
-        }
-        result.put("count", templateCount);
-        result.put("valid", templateCount <= dailyProperties.getSmsLengthLimit());
-        return ResponseBo.okWithData(null, result);
-    }
-
     @GetMapping("/validSmsContentLength")
     public ResponseBo validSmsContentLength(@RequestParam("smsContent") String smsContent) {
         return ResponseBo.okWithData(null, smsContent.length() <= dailyProperties.getSmsLengthLimit());

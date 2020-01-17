@@ -745,36 +745,37 @@ public class InsightServiceImpl implements InsightService {
 
     @Override
     public Map<String, Object> getUserValueWithSpu(String userId, String spuId) {
-        int limit = 8000;
-        int total = insightMapper.getUserValueWithSpuCount(spuId);
-        int pageNum = (total % limit == 0) ? total / limit : (total / limit + 1);
         Map<String, Object> result = Maps.newHashMap();
-        List<Map<String, String>> dataList = new LinkedList<>();
-        for (int i = 0; i < pageNum; i++) {
-            int start = i * limit + 1;
-            int end = (i + 1) * limit;
-            end = Math.min(end, total);
-            LinkedList<Map<String, String>> tmp = insightMapper.getUserValueWithSpu(spuId, start, end);
-            dataList.addAll(tmp);
+        Map<String, String> data = insightMapper.getUserValueWithSpu(spuId, userId);
+        if(!data.isEmpty()) {
+            result.put("current", new LinkedList<>(data.values()));
+        }else {
+            result.put("current", new LinkedList<>());
         }
-
-        Optional<Map<String, String>> user_id = dataList.stream().filter(x -> String.valueOf(x.get("USER_ID")).equalsIgnoreCase(userId)).findFirst();
-        if (user_id.isPresent()) {
-            Map<String, String> current = user_id.get();
-            result.put("current", convertList(Arrays.asList(user_id.get())));
-            dataList.remove(current);
-        }
-        result.put("others", convertList(dataList));
         return result;
     }
 
-    private List<List<String>> convertList(List<Map<String, String>> dataList) {
-        List<List<String>> result = new LinkedList<>();
-        for (Map<String, String> x : dataList) {
-            x.remove("RN");
-            x.remove("USER_ID");
-            result.add(new LinkedList<>(x.values()));
-        }
+    @Override
+    public Map<String, Object> getUserConvert(String userId) {
+        Map<String, Object> result = Maps.newHashMap();
+        List<Map<String, Object>> data1 = insightMapper.getConvertDate(userId);
+        List<Map<String, Object>> data2 = insightMapper.getPushDate(userId);
+        List<Map<String, Object>> data3 = insightMapper.getPushAndConvertDate(userId);
+        List<LinkedList<Object>> data1List = data1.stream().map(x-> new LinkedList<>(x.values())).collect(Collectors.toList());
+        List<LinkedList<Object>> data2List = data2.stream().map(x-> new LinkedList<>(x.values())).collect(Collectors.toList());
+        List<LinkedList<Object>> data3List = data3.stream().map(x-> new LinkedList<>(x.values())).collect(Collectors.toList());
+        result.put("data1", data1List);
+        result.put("data2", data2List);
+        result.put("data3", data3List);
+
+        List<Integer> cnt1 = data1List.stream().map(x -> Integer.valueOf(String.valueOf(x.get(2)))).collect(Collectors.toList());
+        List<Integer> cnt2 = data2List.stream().map(x -> Integer.valueOf(String.valueOf(x.get(2)))).collect(Collectors.toList());
+        List<Integer> cnt3 = data3List.stream().map(x -> Integer.valueOf(String.valueOf(x.get(2)))).collect(Collectors.toList());
         return result;
+    }
+
+    public static void main(String[] args) {
+        int a = 666;
+
     }
 }

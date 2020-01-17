@@ -41,7 +41,7 @@
                     <div class="col-sm-12 search-collapse">
                         <div class="col-md-12">
                             <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">成长组消息模板配置</h5>
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">为用户群组配置推送</h5>
                             </div>
                             <div class="row">
                                 <hr class="hr"/>
@@ -55,12 +55,12 @@
                                     <a class="btn btn-info" onclick="validUserGroup()">
                                         <i class="fa fa-check"></i> 校验配置
                                     </a>
-                                    <a class="btn btn-primary btn-edit" onclick="batchUpdateTemplate()">
-                                        <i class="fa fa-edit"></i> 填充文案
-                                    </a>
                                     <a class="btn btn-warning" onclick="deleteCoupon()">
                                         <i class="fa fa-refresh"></i> 重置补贴
                                     </a>
+<!--                                    <a class="btn btn-primary btn-edit" onclick="batchUpdateTemplate()">-->
+<!--                                        <i class="fa fa-edit"></i> 填充文案-->
+<!--                                    </a>-->
                                 </div>
                             </div>
                         </div>
@@ -76,12 +76,12 @@
     </div>
 </div>
 <!--文案列表页-->
-<div class="modal" tabindex="-1" role="dialog" aria-labelledby="msg_modal" id="msg_modal">
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="msg_modal" id="msg_modal" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document" style="width: 75%">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h5 class="modal-title">选择文案</h5>
+                <h5 class="modal-title">文案适用用户群组</h5>
             </div>
             <div class="modal-body">
                 <div class="table-striped">
@@ -110,7 +110,7 @@
     </div>
 </div>
 <!--优惠券列表页面-->
-<div class="modal" tabindex="-1" role="dialog" aria-labelledby="coupon_modal" id="coupon_modal">
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="coupon_modal" id="coupon_modal" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document" style="width: 75%">
         <div class="modal-content">
             <div class="modal-header">
@@ -162,8 +162,8 @@
 </div>
 
 <!--新增文案-->
-<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal">
-    <div class="modal-dialog" role="document" style="width: 70%;">
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 80%;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -171,136 +171,155 @@
                 <h5 class="modal-title" id="myLargeModalLabel3">新增文案</h5>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal" id="smsTemplateAddForm">
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">文案名称：</label>
-                        <div class="col-md-7 input-group">
-                            <input class="form-control" type="hidden" id="smsCode" name="smsCode"/>
-                            <input class="form-control" type="text" id="smsName" name="smsName"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label" for="smsContent">文案内容：</label>
-                        <div class="col-md-7 input-group">
-                            <textarea class="form-control" id="smsContent" name="smsContent" rows="6" oninput="smsContentValid()"></textarea>
-                            <input type="hidden" id="smsContentInput" name="smsContentInput"/>
-                            <span class="wordwrap"><var id="word">0</var>个字</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">适用人群：</label>
-                        <div class="col-md-7 input-group" style="border: solid 1px #ebebeb;padding: 8px;">
-                            <div class="example-box" style="margin-left:10px;">
-                                <label class="control-label">价&nbsp;&nbsp;&nbsp;&nbsp;值：</label>
-                                <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="userValue" value="ULC_01"><span>重要</span>
-                                </label>
-                                <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="userValue" value="ULC_02"><span>主要</span>
-                                </label>
-                                <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="userValue" value="ULC_03"><span>普通</span>
-                                </label>
-                                <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="userValue" value="ULC_04"><span>长尾</span>
-                                </label>
+                <form class="form-horizontal" id="smsTemplateAddForm" novalidate="novalidate">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="margin-top: 45px;">文案适用用户群组</label>
+                                <div class="col-md-9">
+                                    <div style="border: solid 1px #ebebeb;padding: 8px; float: left;" id="user-box">
+                                        <div class="example-box" style="margin-left:10px;">
+                                            <label class="control-label">价&nbsp;&nbsp;&nbsp;&nbsp;值：</label>
+                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                <input type="checkbox" name="userValue" value="ULC_01"><span>重要</span>
+                                            </label>
+                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                <input type="checkbox" name="userValue" value="ULC_02"><span>主要</span>
+                                            </label>
+                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                <input type="checkbox" name="userValue" value="ULC_03"><span>普通</span>
+                                            </label>
+                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                <input type="checkbox" name="userValue" value="ULC_04"><span>长尾</span>
+                                            </label>
+                                        </div>
+                                        <div class="example-box" style="margin-left:10px;">
+                                            <label class="control-label">周&nbsp;&nbsp;&nbsp;&nbsp;期：</label>
+                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                <input type="checkbox" name="lifeCycle" value="1"><span>新用户</span>
+                                            </label>
+                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                <input type="checkbox" name="lifeCycle" value="0"><span>复购用户</span>
+                                            </label>
+                                        </div>
+                                        <div class="example-box" style="margin-left:10px;">
+                                            <label class="control-label">活跃度：</label>
+                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                <input type="checkbox" name="pathActive" value="UAC_01"><span>活跃</span>
+                                            </label>
+                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                <input type="checkbox" name="pathActive" value="UAC_02"><span>留存</span>
+                                            </label>
+                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                <input type="checkbox" name="pathActive" value="UAC_03"><span>流失预警</span>
+                                            </label>
+                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                <input type="checkbox" name="pathActive" value="UAC_04" disabled readonly><span>弱流失</span>
+                                            </label>
+                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                <input type="checkbox" name="pathActive" value="UAC_05" disabled readonly><span>强流失</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="example-box" style="margin-left:10px;">
-                                <label class="control-label">周&nbsp;&nbsp;&nbsp;&nbsp;期：</label>
-                                <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="lifeCycle" value="1"><span>新客</span>
-                                </label>
-                                <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="lifeCycle" value="0"><span>老客</span>
-                                </label>
-                            </div>
-                            <div class="example-box" style="margin-left:10px;">
-                                <label class="control-label">活跃度：</label>
-                                <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="pathActive" value="UAC_01"><span>高度活跃</span>
-                                </label>
-                                <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="pathActive" value="UAC_02"><span>中度活跃</span>
-                                </label>
-                                <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="pathActive" value="UAC_03"><span>流失预警</span>
-                                </label>
-                                <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="pathActive" value="UAC_04"><span>强流失</span>
-                                </label>
-                                <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="pathActive" value="UAC_05"><span>沉睡</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">体现补贴链接与名称：</label>
-                        <div class="col-md-7 input-group">
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="isCoupon" value="1"><span>是</span>
-                            </label>
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="isCoupon" value="0"><span>否</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">体现推荐商品名称：</label>
-                        <div class="col-md-7 input-group">
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="isProductName" value="1"><span>是</span>
-                            </label>
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="isProductName" value="0"><span>否</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">体现推荐商品的详情页：</label>
-                        <div class="col-md-7 input-group">
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="isProductUrl" value="1"><span>是</span>
-                            </label>
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="isProductUrl" value="0"><span>否</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">统计字数：</label>
-                        <div class="col-md-7 input-group">
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="fontNum" disabled readonly>
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" id="btn_cal">统计</button>
-                                </span>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="margin-top: 45px;">文案体现的个性化要素</label>
+                                <div class="col-md-9">
+                                    <div style="border: solid 1px #ebebeb;padding: 8px; float: left;" id="config-box">
+                                        <div class="example-box" style="margin-left:10px;">
+                                            <label class="control-label">补贴短链接：</label>
+                                            <label class="lyear-radio radio-inline radio-primary">
+                                                <input type="radio" name="isCouponUrl" value="1" onchange="$('#isCouponUrl-error').show()"><span>是</span>
+                                            </label>
+                                            <label class="lyear-radio radio-inline radio-primary">
+                                                <input type="radio" name="isCouponUrl" value="0" onchange="$('#isCouponUrl-error').hide()"><span>否</span>
+                                            </label>
+                                            <div>
+                                                <label class="h6" id="isCouponUrl-error" style="color: #48b0f7;" hidden><i class="fa fa-info-circle"></i>
+                                                    将${COUPON_URL}粘贴到文案中希望的位置上，系统会在位置中自动填充。
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="example-box" style="margin-left:10px;">
+                                            <label class="control-label">补贴名称：</label>
+                                            <label class="lyear-radio radio-inline radio-primary">
+                                                <input type="radio" name="isCouponName" onchange="$('#isCouponName-error').show()" value="1"><span>是</span>
+                                            </label>
+                                            <label class="lyear-radio radio-inline radio-primary">
+                                                <input type="radio" name="isCouponName" value="0" onchange="$('#isCouponName-error').hide()"><span>否</span>
+                                            </label>
+                                            <div>
+                                                <label class="h6" id="isCouponName-error" style="color: #48b0f7;" hidden><i class="fa fa-info-circle"></i>
+                                                    将${COUPON_NAME}粘贴到文案中希望的位置上，系统会在位置中自动填充。
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="example-box" style="margin-left:10px;">
+                                            <label class="control-label">推荐商品名称：</label>
+                                            <label class="lyear-radio radio-inline radio-primary">
+                                                <input type="radio" name="isProductName" value="1" onchange="$('#isProductName-error').show()"><span>是</span>
+                                            </label>
+                                            <label class="lyear-radio radio-inline radio-primary">
+                                                <input type="radio" name="isProductName" value="0" onchange="$('#isProductName-error').hide()"><span>否</span>
+                                            </label>
+                                            <div>
+                                                <label class="h6" hidden id="isProductName-error" style="color: #48b0f7;"><i class="fa fa-info-circle"></i>
+                                                    将${PROD_NAME}粘贴到文案中希望的位置上，系统会在位置中自动填充。
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="example-box" style="margin-left:10px;">
+                                            <label class="control-label">推荐商品短链接：</label>
+                                            <label class="lyear-radio radio-inline radio-primary">
+                                                <input type="radio" name="isProductUrl" value="1" onchange="$('#isProductUrl-error').show()"><span>是</span>
+                                            </label>
+                                            <label class="lyear-radio radio-inline radio-primary">
+                                                <input type="radio" name="isProductUrl" value="0" onchange="$('#isProductUrl-error').hide()"><span>否</span>
+                                            </label>
+                                            <div>
+                                                <label class="h6" hidden  id="isProductUrl-error" style="color: #48b0f7;"><i class="fa fa-info-circle"></i>
+                                                    将${PROD_URL}粘贴到文案中希望的位置上，系统会在位置中自动填充。
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">其他说明：</label>
-                        <div class="col-md-7 input-group">
-                            <input type="text" class="form-control" id="remark" name="remark"/>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">文案名称</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="hidden" id="smsCode" name="smsCode"/>
+                                    <input class="form-control" type="text" id="smsName" name="smsName"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="margin-top: 50px;">文案内容</label>
+                                <div class="col-md-9">
+                                    <textarea class="form-control" id="smsContent" name="smsContent" rows="6" oninput="smsContentValid()"></textarea>
+                                    <input type="hidden" id="smsContentInput" name="smsContentInput"/>
+                                    <span class="wordwrap"><var id="word"></var></span>
+                                    <p class="h6" id="numRemark" style="color: #7c7c7c"></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <hr/>
-                    <div class="form-group mg-stop">
-                        <div class="col-md-12 control-label" style="text-align: left;">
-                            <p class="small">
-                                短信中支持的变量如下：<br/>
-                                <strong>${COUPON_URL}</strong>：<br/>表示优惠券领券短地址，当优惠券发放方式为消费者自行领用时，此变量可用，优惠券发放方式为系统直接打入消费者账号时候，此变量不可用。此变量占用长度为<font color="red">&nbsp;[[${shortUrlLen}]]</font>&nbsp;个字。<br/>
-                                <strong>${COUPON_NAME}</strong>：表示优惠券名称，占用长度为&nbsp;<font color="red">[[${couponNameLen}]]</font>&nbsp;个字。<br/>
-                                <strong>${PROD_NAME}</strong>：商品表中的商品短名称，占用长度为&nbsp;<font color="red">[[${prodNameLen}]]</font>&nbsp;个字。<br/>
-                                <strong>${PROD_URL}</strong>：表示商品详情页的短地址，占用长度为&nbsp;<font color="red">[[${shortUrlLen}]]</font>&nbsp;个字。
-                            </p>
+                    <hr class="hr"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mg-stop">
+                                <div class="col-md-12 control-label" style="text-align: left;">
+                                    <p class="small">
+                                        短信中支持的变量如下：<br/>
+                                        <strong>${COUPON_URL}</strong>：表示优惠券领券短地址，当优惠券发放方式为消费者自行领用时，此变量可用，优惠券发放方式为系统直接打入消费者账号时候，此变量不可用。此变量占用长度为<font color="red">&nbsp;[[${shortUrlLen}]]</font>&nbsp;个字。<br/>
+                                        <strong>${COUPON_NAME}</strong>：表示优惠券名称，占用长度为&nbsp;<font color="red">[[${couponNameLen}]]</font>&nbsp;个字。<br/>
+                                        <strong>${PROD_NAME}</strong>：商品表中的商品短名称，占用长度为&nbsp;<font color="red">[[${prodNameLen}]]</font>&nbsp;个字。<br/>
+                                        <strong>${PROD_URL}</strong>：表示商品详情页的短地址，占用长度为&nbsp;<font color="red">[[${shortUrlLen}]]</font>&nbsp;个字。
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -314,7 +333,7 @@
 </div>
 
 <!--测试-->
-<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="send_modal">
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="send_modal" data-backdrop="static">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -370,7 +389,7 @@
 </div>
 
 <!--新增补贴-->
-<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="coupon_add_modal">
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="coupon_add_modal" data-backdrop="static">
     <div class="modal-dialog" role="document" style="width: 70%;">
         <div class="modal-content">
             <div class="modal-header">
@@ -384,7 +403,7 @@
                     <div class="form-group mg-stop">
                         <label class="col-md-4 control-label">补贴名称：</label>
                         <div class="col-md-7 input-group">
-                            <input class="form-control" type="text" id="couponDisplayName" name="couponDisplayName"/>
+                            <input class="form-control" type="text" id="couponDisplayName" name="couponDisplayName" placeholder="xx元"/>
                         </div>
                     </div>
                     <div class="form-group mg-stop">
@@ -408,28 +427,28 @@
                             <div class="example-box" style="margin-left:10px;">
                                 <label class="control-label">周&nbsp;&nbsp;&nbsp;&nbsp;期：</label>
                                 <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="lifeCycle" value="1"><span>新客</span>
+                                    <input type="checkbox" name="lifeCycle" value="1"><span>新用户</span>
                                 </label>
                                 <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="lifeCycle" value="0"><span>老客</span>
+                                    <input type="checkbox" name="lifeCycle" value="0"><span>复购用户</span>
                                 </label>
                             </div>
                             <div class="example-box" style="margin-left:10px;">
                                 <label class="control-label">活跃度：</label>
                                 <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="pathActive" value="UAC_01"><span>高度活跃</span>
+                                    <input type="checkbox" name="pathActive" value="UAC_01"><span>活跃</span>
                                 </label>
                                 <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="pathActive" value="UAC_02"><span>中度活跃</span>
+                                    <input type="checkbox" name="pathActive" value="UAC_02"><span>留存</span>
                                 </label>
                                 <label class="lyear-checkbox checkbox-inline checkbox-primary">
                                     <input type="checkbox" name="pathActive" value="UAC_03"><span>流失预警</span>
                                 </label>
                                 <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="pathActive" value="UAC_04"><span>强流失</span>
+                                    <input type="checkbox" name="pathActive" value="UAC_04" disabled readonly><span>弱流失</span>
                                 </label>
                                 <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                    <input type="checkbox" name="pathActive" value="UAC_05"><span>沉睡</span>
+                                    <input type="checkbox" name="pathActive" value="UAC_05" disabled readonly><span>强流失</span>
                                 </label>
                             </div>
                         </div>
@@ -501,6 +520,9 @@
 <input type="hidden" id="currentGroupInfo"/>
 <script>
     let couponNameLen = [[${couponNameLen}]];
+    let smsLengthLimit = [[${smsLengthLimit}]];
+    let shortUrlLen = [[${shortUrlLen}]];
+    let prodNameLen = [[${prodNameLen}]];
 </script>
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>

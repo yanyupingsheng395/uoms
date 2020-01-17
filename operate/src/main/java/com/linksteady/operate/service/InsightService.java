@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * 用户成长洞察
+ *
  * @author hxcao
  * @date 2019-12-04
  */
@@ -28,6 +29,7 @@ public interface InsightService {
 
     /**
      * 获取四价值的平均值
+     *
      * @return
      */
     InsightGrowthPath getGrowthPathAvgValue();
@@ -36,12 +38,14 @@ public interface InsightService {
 
     /**
      * 获取所有有效的spu
+     *
      * @return
      */
     List<Ztree> getSpuTree();
 
     /**
      * 获取所有上架的商品
+     *
      * @param spuWid
      * @return
      */
@@ -49,6 +53,7 @@ public interface InsightService {
 
     /**
      * 留存率随购买次数的变化
+     *
      * @param type
      * @param id
      * @param period
@@ -58,6 +63,7 @@ public interface InsightService {
 
     /**
      * 件单价随购买次数的变化
+     *
      * @param type
      * @param id
      * @param period
@@ -67,6 +73,7 @@ public interface InsightService {
 
     /**
      * 连带率随购买次数变化
+     *
      * @param type
      * @param id
      * @param period
@@ -76,6 +83,7 @@ public interface InsightService {
 
     /**
      * 品类种数随购买次数变化
+     *
      * @param type
      * @param id
      * @param period
@@ -85,6 +93,7 @@ public interface InsightService {
 
     /**
      * 时间间隔随购买次数变化
+     *
      * @param type
      * @param id
      * @param period
@@ -94,6 +103,7 @@ public interface InsightService {
 
     /**
      * 留存率变化率随购买次数变化
+     *
      * @param type
      * @param id
      * @param period
@@ -103,12 +113,14 @@ public interface InsightService {
 
     /**
      * 获取spu下商品转化关系网
+     *
      * @return
      */
     Map<String, Object> getSpuConvertRateNodes(String id, String type, String purchOrder);
 
     /**
      * 获取购买次序下的spu
+     *
      * @param purchOrder
      * @return
      */
@@ -116,6 +128,7 @@ public interface InsightService {
 
     /**
      * 获取spu关系柱状图
+     *
      * @param spu
      * @param purchOrder
      * @return
@@ -139,4 +152,18 @@ public interface InsightService {
     List<String> getRetentionChangeFitData(String type, String id, String period);
 
     Map<String, Object> getConvertRateChart(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
+
+    List<Map<String, Object>> getUserSpu(String userId);
+
+    String getUserBuyOrder(String userId, String spuId);
+
+    Map<String, Object> getUserSpuRelation(String userId, String spuId, String buyOrder);
+
+    long getUserBuyDual(String headId, String spuId, String userId);
+
+    List<Map<String, String>> getUserGrowthPathPoint(String userId, String spuId);
+
+    Map<String, Object> getUserValueWithSpu(String userId, String spuId);
+
+    Map<String, Object> getUserConvert(String spuId);
 }

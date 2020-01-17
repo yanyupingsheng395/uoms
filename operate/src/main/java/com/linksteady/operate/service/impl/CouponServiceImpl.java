@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.CouponInfo;
+import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.service.CouPonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class CouponServiceImpl implements CouPonService {
 
     @Autowired
     private DailyMapper dailyMapper;
+
+    @Autowired
+    private DailyProperties dailyProperties;
 
     @Override
     public List<CouponInfo> getList(int startRow, int endRow, String validStatus) {
@@ -107,5 +111,21 @@ public class CouponServiceImpl implements CouPonService {
     @Override
     public int checkCouponName(String couponName) {
         return couponMapper.checkCouponName(couponName);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void validCoupon() {
+        String couponSendType = dailyProperties.getCouponSendType();
+        if(couponSendType == null) {
+            throw new RuntimeException("系统发送补贴的方式未在配置表中配置！");
+        }
+        couponMapper.validCouponPass();
+        // 只需要验证有效期
+        couponMapper.validEndDateNull();
+        couponMapper.validEndDateNotNull();
+        if("B".equalsIgnoreCase(couponSendType)) {
+            couponMapper.validCouponUrl();
+        }
     }
 }

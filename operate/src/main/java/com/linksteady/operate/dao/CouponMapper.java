@@ -37,4 +37,24 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
     void deleteCouponGroup(@Param("groupIds") List<String> groupIds);
 
     int checkCouponName(@Param("couponName") String couponName);
+
+    /**
+     * 验证日期为空
+     */
+    void validEndDateNull();
+
+    /**
+     * 验证日期失效
+     */
+    void validEndDateNotNull();
+
+    /**
+     * 验证链接是否配置
+     */
+    void validCouponUrl();
+
+    /**
+     * 验证通过
+     */
+    void validCouponPass();
 }

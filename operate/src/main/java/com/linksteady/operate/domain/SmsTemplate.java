@@ -24,10 +24,16 @@ public class SmsTemplate {
     private String smsContent;
 
     /**
-     * 体现补贴链接与名称
+     * 补贴链接
      */
-    @Column(name = "IS_COUPON")
-    private String isCoupon;
+    @Column(name = "IS_COUPON_URL")
+    private String isCouponUrl;
+
+    /**
+     * 补贴名称
+     */
+    @Column(name = "IS_COUPON_NAME")
+    private String isCouponName;
 
     /**
      * 是否包含商品名

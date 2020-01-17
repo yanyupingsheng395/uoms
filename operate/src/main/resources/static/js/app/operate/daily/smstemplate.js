@@ -1,8 +1,5 @@
-var sms_validator;
 $(function () {
-    validate();
-    statInputNum($("#smsContent"),$("#word"));
-    statInputNum($("#smsContent1"),$("#word1"));
+    statInputNum();
 });
 // 新增文案
 function add() {
@@ -12,7 +9,8 @@ function add() {
     $('#smsContent').val("");
     $('#smsName').val("");
     $('#remark').val("");
-    $("input[name='isCoupon']:radio").removeAttr("checked").removeAttr("disabled");
+    $("input[name='isCouponUrl']:radio").removeAttr("checked").removeAttr("disabled");
+    $("input[name='isCouponName']:radio").removeAttr("checked").removeAttr("disabled");
     $("input[name='isProductName']:radio").removeAttr("checked").removeAttr("disabled");
     $("input[name='isProductUrl']:radio").removeAttr("checked").removeAttr("disabled");
     $("#word").text("0");
@@ -20,7 +18,6 @@ function add() {
     $("#myLargeModalLabel3").text("新增文案");
     $("#btn_save_sms").attr("name", "save");
     $('#add_modal').modal('show');
-    $("#smsTemplateAddForm").validate().resetForm();
 }
 
 // 新增文案的时候，给群组信息设置默认选中和只读
@@ -50,12 +47,34 @@ function clearUserGroupDisabled() {
  * @param textArea
  * @param numItem
  */
-function statInputNum(textArea,numItem) {
-    curLength = textArea.val().length;
-    numItem.text(curLength);
-    textArea.on('input propertychange', function () {
-        var _value = $(this).val().replace(/\n/gi,"");
-        numItem.text(_value.length);
+let total_num;
+function statInputNum() {
+    $("#smsContent").on('input propertychange', function () {
+        let smsContent = $('#smsContent').val();
+        let y = smsContent.length;
+        let m = smsContent.length;
+        let n = smsContent.length;
+        if(smsContent.indexOf('${COUPON_URL}') > -1) {
+            y = y - '${COUPON_URL}'.length + shortUrlLen;
+            m = m - '${COUPON_URL}'.length;
+        }
+        if(smsContent.indexOf('${COUPON_NAME}') > -1) {
+            y = y - '${COUPON_NAME}'.length + couponNameLen;
+            m = m - '${COUPON_NAME}'.length;
+        }
+        if(smsContent.indexOf('${PROD_NAME}') > -1) {
+            y = y - '${PROD_NAME}'.length + prodNameLen;
+            m = m - '${PROD_NAME}'.length;
+        }
+        if(smsContent.indexOf('${PROD_URL}') > -1) {
+            y = y - '${PROD_URL}'.length + shortUrlLen;
+            m = m - '${PROD_URL}'.length;
+        }
+        total_num = y;
+        var code = "";
+        code += n + ":当前文案的字数<br/>" + m + ":除去模板变量当前文案可输入字数<br/>" + y + ":替换模板变量为系统预设最大值后当前文案字数";
+        $("#numRemark").html('').append(code);
+        $("#word").text(n + "/" + m + "/" + y);
     });
 }
 
@@ -180,82 +199,118 @@ function del() {
     });
 }
 
-// 字数统计
-$("#btn_cal").click(function () {
-    var data = getSmsContentFontCount();
-    $("#fontNum").val(data.count + "个字");
-});
-
-function validCouponSendType(isCoupon) {
+// 验证补贴
+function validCouponSendType() {
     let couponSendType = getCouponSendType();
+    let smsName = $('#smsName').val();
     let smsContent = $('#smsContent').val();
+    let isCouponUrl = $("input[name='isCouponUrl']:checked").val();
+    let isCouponName = $("input[name='isCouponName']:checked").val();
     let isProductUrl = $("input[name='isProductUrl']:checked").val();
     let isProductName = $("input[name='isProductName']:checked").val();
+
+    if(isCouponUrl === undefined) {
+        $MB.n_warning("请选择补贴短链接！");
+        return false;
+    }
+    if(isCouponName === undefined) {
+        $MB.n_warning("请选择补贴名称！");
+        return false;
+    }
+    if(isProductUrl === undefined) {
+        $MB.n_warning("请选择推荐商品名称！");
+        return false;
+    }
+    if(isProductName === undefined) {
+        $MB.n_warning("请选择推荐商品短链接！");
+        return false;
+    }
+    if(smsName === '') {
+        $MB.n_warning("文案名称不能为空！");
+        return false;
+    }
     if(smsContent === '') {
         $MB.n_warning("文案内容不能为空！");
         return false;
     }
     if(couponSendType === 'A') { // 包含${COUPON_URL}
         // 不能包含url
-        if(isCoupon === '0') {
+        if(isCouponUrl === '0') {
             if(smsContent.indexOf("${COUPON_URL}") > -1) {
-                $MB.n_warning("选择'不体现补贴链接与商品'，文案内容不能出现${COUPON_URL}");
+                $MB.n_warning("选择'补贴链接:否'，文案内容不能出现${COUPON_URL}");
                 return false;
             }
-            if(smsContent.indexOf("${COUPON_NAME}") > -1) {
-                $MB.n_warning("选择'不体现补贴链接与商品'，文案内容不能出现${COUPON_NAME}");
+        }
+        if(isCouponName === '0') {
+            if(smsContent.indexOf("${COUPON_URL}") > -1) {
+                $MB.n_warning("选择'补贴名称:否'，文案内容不能出现${COUPON_NAME}");
                 return false;
             }
         }
 
         // 不能包含url
-        if(isCoupon === '1') {
+        if(isCouponUrl === '1') {
             if(smsContent.indexOf("${COUPON_URL}") === -1) {
-                $MB.n_warning("补贴发放方式为自行领取，模板内容未发现${COUPON_URL}");
+                $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴链接：是'，模板内容未发现${COUPON_URL}");
                 return false;
             }
+        }
+        if(isCouponName === '1') {
             if(smsContent.indexOf("${COUPON_NAME}") === -1) {
-                $MB.n_warning("补贴发放方式为自行领取，模板内容未发现${COUPON_NAME}");
+                $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴名称：是'，模板内容未发现${COUPON_NAME}");
                 return false;
             }
+        }
+
+        if(isCouponName === '1' && isCouponUrl === '0') {
+            $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴名称：是'，'补贴链接'不能选否！");
+            return false;
         }
     }
     if(couponSendType === 'B') { // 不包含${COUPON_URL}
         if(smsContent.indexOf("${COUPON_URL}") > -1) {
-            $MB.n_warning("补贴发放方式为系统发送，模板内容不能出现${COUPON_URL}");
+            $MB.n_warning("补贴发放方式为系统发送，文案内容不能出现${COUPON_URL}！");
             return false;
         }
-        if(smsContent.indexOf("${COUPON_NAME}") > -1) {
-            $MB.n_warning("补贴发放方式为系统发送，模板内容不能出现${COUPON_NAME}");
+        if(isCouponUrl === '1') {
+            $MB.n_warning("补贴发放方式为系统发送，补贴链接不能选是！");
             return false;
         }
-        if(isCoupon === '1') {
-            $MB.n_warning("补贴发放方式为系统发送，'体现补贴链接与名称'不能为'是'");
-            return;
+
+        if(isCouponName === '1') {
+            if(smsContent.indexOf("${COUPON_NAME}") === -1) {
+                $MB.n_warning("补贴发放方式为系统发送且选择了'补贴名称：是'，文案内容没有发现${COUPON_NAME}！");
+                return false;
+            }
+        }else {
+            if(smsContent.indexOf("${COUPON_NAME}") > -1) {
+                $MB.n_warning("'补贴名称：否'，文案内容不能出现${COUPON_NAME}！");
+                return false;
+            }
         }
     }
 
     if(isProductUrl === '1') {
         if(smsContent.indexOf("${PROD_URL}") === -1) {
-            $MB.n_warning("选择'体现推荐商品的详情页'，文案内容未发现${PROD_URL}");
+            $MB.n_warning("选择'推荐商品链接：是'，文案内容未发现${PROD_URL}");
             return false;
         }
     }
     if(isProductUrl === '0') {
         if(smsContent.indexOf("${PROD_URL}") > -1) {
-            $MB.n_warning("选择'不体现推荐商品的详情页'，文案内容不能出现${PROD_URL}");
+            $MB.n_warning("选择'推荐商品链接：否'，文案内容不能出现${PROD_URL}");
             return false;
         }
     }
     if(isProductName === '1') {
         if(smsContent.indexOf("${PROD_NAME}") === -1) {
-            $MB.n_warning("选择'体现推荐商品名称'，文案内容未发现${PROD_NAME}");
+            $MB.n_warning("选择'推荐商品名称：是'，文案内容未发现${PROD_NAME}");
             return false;
         }
     }
     if(isProductName === '0') {
         if(smsContent.indexOf("${PROD_NAME}") > -1) {
-            $MB.n_warning("选择'不体现推荐商品名称'，文案内容不能出现${PROD_NAME}");
+            $MB.n_warning("选择'推荐商品名称：否'，文案内容不能出现${PROD_NAME}");
             return false;
         }
     }
@@ -276,54 +331,21 @@ function getCouponSendType() {
     return res;
 }
 
-function getSmsContentFontCount() {
-    let smsContent = $('#smsContent').val();
-    var res;
-    $.ajax({
-        url: "/smsTemplate/calFontNum",
-        data: {smsContent: smsContent},
-        method: "get",
-        async: false,
-        success: function (r) {
-            res = r.data;
-        }
-    });
-    return res;
-}
-
 // 新增&修改
 $("#btn_save_sms").click(function () {
-    let flag = sms_validator.form();
-    if(flag) {
-        var alert_str = "";
-        var isCoupon = $("input[name='isCoupon']:checked").val();
-        if(!validCouponSendType(isCoupon)) {
-            return;
-        }
-
-        var data = getSmsContentFontCount();
-        if(!data.valid) {
-            alert_str+='文案字数超出最大限制！';
-        }
-
-        if(null!=alert_str&&alert_str!='')
-        {
-            $MB.n_warning(alert_str);
-            return;
-        }
-        var url = "";
-        var success_msg = "";
-        var sure_msg = "";
-        if($(this).attr("name") == "save") {
-            url = "/smsTemplate/addSmsTemplate";
-            success_msg = "新增成功！";
-            sure_msg = "确定要保存数据？";
-        }else {
-            url = "/smsTemplate/updateSmsTemplate";
-            success_msg = "修改成功！";
-            sure_msg = "确定要修改数据？";
-        }
-
+    var url = "";
+    var success_msg = "";
+    var sure_msg = "";
+    if($(this).attr("name") == "save") {
+        url = "/smsTemplate/addSmsTemplate";
+        success_msg = "新增成功！";
+        sure_msg = "确定要保存数据？";
+    }else {
+        url = "/smsTemplate/updateSmsTemplate";
+        success_msg = "修改成功！";
+        sure_msg = "确定要修改数据？";
+    }
+    if(validate()) {
         //提示是否要保存
         $MB.confirm({
             title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
@@ -347,51 +369,14 @@ $("#btn_save_sms").click(function () {
 });
 // 表单验证
 function validate() {
-    let icon = "<i class='fa fa-times-circle'></i> ";
-    let rule = {
-        rules: {
-            smsName: {
-                required: true
-            },
-            smsContentInput: {
-                required: true
-            },
-            isCoupon: {
-                required: true
-            },
-            isProductName: {
-                required: true
-            },
-            isProductUrl: {
-                required: true
-            }
-        },
-        errorPlacement: function (error, element) {
-            if (element.is(":checkbox") || element.is(":radio")) {
-                error.appendTo(element.parent().parent());
-            } else {
-                error.insertAfter(element);
-            }
-        },
-        messages: {
-            smsName: {
-                required: icon + "请输入文案名称"
-            },
-            smsContentInput: {
-                required: icon + "请输入文案内容"
-            },
-            isCoupon: {
-                required: icon + "请选择"
-            },
-            isProductName: {
-                required: icon + "请选择"
-            },
-            isProductUrl: {
-                required: icon + "请选择"
-            }
-        }
-    };
-    sms_validator = $("#smsTemplateAddForm").validate(rule);
+    if(!validCouponSendType()) {
+        return false;
+    }
+    if(total_num > smsLengthLimit) {
+        $MB.n_warning('文案字数超出最大限制！');
+        return false;
+    }
+    return true;
 }
 
 //
@@ -402,6 +387,10 @@ function smsContentValid() {
         $("#smsContentInput-error").remove();
     }
 }
+$("#add_modal").on('shown.bs.modal', function () {
+    var userBox = document.getElementById('user-box');
+    $("#config-box").attr("style", "border: solid 1px #ebebeb;padding: 8px; float: left;width:" + userBox.clientWidth + "px;");
+});
 
 $("#add_modal").on('hidden.bs.modal', function () {
     $('#smsCode').val("");
@@ -416,7 +405,6 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $("#word").val('0');
     $("#fontNum").val('');
     $("#remark").val('');
-    $("#smsTemplateAddForm").validate().resetForm();
     $("#msg_modal").modal('show');
 });
 
@@ -448,8 +436,8 @@ $("#btn_edit").click(function () {
             $("#smsName").val(data.smsName);
             $("#smsContent").val(data.smsContent);
             $("#smsContentInput").val(data.smsContent);
-            statInputNum($("#smsContent"),$("#word"));
-            $("input[name='isCoupon']:radio[value='" + data.isCoupon + "']").prop("checked", true);
+            $("input[name='isCouponUrl']:radio[value='" + data.isCouponUrl + "']").prop("checked", true);
+            $("input[name='isCouponName']:radio[value='" + data.isCouponName + "']").prop("checked", true);
             $("input[name='isProductName']:radio[value='" + data.isProductName + "']").prop("checked", true);
             $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true);
             $("#remark").val(data.remark);
