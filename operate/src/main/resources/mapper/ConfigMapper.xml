@@ -17,4 +17,8 @@
     <select id="selectCommonConfig" resultType="map">
         select T.NAME,T.VALUE FROM T_CONFIG T
     </select>
+
+    <update id="updatePathActive">
+        update T_CONFIG set value = #{active} where name = 'op.daily.pathactive.list'
+    </update>
 </mapper>

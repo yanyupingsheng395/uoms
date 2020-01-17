@@ -4,6 +4,8 @@ package com.linksteady.operate.dao;
  * Created by hxcao on 2019-06-03
  */
 
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 import java.util.Map;
 
@@ -23,4 +25,5 @@ public interface ConfigMapper {
      */
     List<Map<String, String>> selectCommonConfig();
 
+    void updatePathActive(@Param("active") String active);
 }

@@ -52,6 +52,9 @@
                         <div class="row" style="margin-top: 12px;">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
+                                    <a class="btn btn-primary" onclick="$('#config_modal').modal('show')">
+                                        <i class="fa fa-gears"></i> 定义成长组
+                                    </a>
                                     <a class="btn btn-info" onclick="validUserGroup()">
                                         <i class="fa fa-check"></i> 校验配置
                                     </a>
@@ -87,11 +90,77 @@
                 <div class="table-striped">
                     <div class="table-responsive">
                         <p class="h6">所选成长组：</p>
-                        <table class="table text-nowrap table-bordered h6">
-                            <thead>
-                            <tr><th>用户在类目的价值</th><th>用户在类目上的生命周期阶段</th><th>用户在类目特定购买次序的活跃度</th><th>理解用户</th></tr>
-                            </thead>
-                            <tbody id="selectedGroupInfo1"></tbody>
+                        <table class="table text-nowrap table-bordered h6" id="selectedGroupInfo1" style="width: 70%;">
+                            <tbody>
+                                <tr>
+                                    <td>价值</td>
+                                    <td style="background-color: rgb(254,117,0)">重要</td>
+                                    <td>在类目消费很多，未来购买力强，价格不敏感</td>
+                                    <td>加强情感关怀，防止用户流失，通常无需补贴</td>
+                                </tr>
+                                <tr>
+                                    <td>价值</td>
+                                    <td style="background-color: rgb(254,117,0)">主要</td>
+                                    <td>在类目消费较多，未来购买力强，价格较敏感</td>
+                                    <td>加强情感关怀，关注用户成长，补贴重点培养</td>
+                                </tr>
+                                <tr>
+                                    <td>价值</td>
+                                    <td style="background-color: rgb(254,117,0)">普通</td>
+                                    <td>在类目消费一般，购买力不确定，价格较敏感</td>
+                                    <td>无需情感关怀，加强用户留存，补贴适度刺激</td>
+                                </tr>
+                                <tr>
+                                    <td>价值</td>
+                                    <td style="background-color: rgb(254,117,0)">长尾</td>
+                                    <td>在类目消费较少，未来购买力弱，价格很敏感</td>
+                                    <td>无需情感关怀，减少补贴投入</td>
+                                </tr>
+
+                                <tr>
+                                    <td>活跃度</td>
+                                    <td style="background-color: rgb(76,152,216)">活跃</td>
+                                    <td>当前到达下一次购买类目的最早合理时间</td>
+                                    <td>处在引导提升购买频率有效时机</td>
+                                </tr>
+                                <tr>
+                                    <td>活跃度</td>
+                                    <td style="background-color: rgb(76,152,216)">留存</td>
+                                    <td>到达下一次购买类目成功率最高的时间点</td>
+                                    <td>处在借势培养用户购买最佳时机</td>
+                                </tr>
+                                <tr>
+                                    <td>活跃度</td>
+                                    <td style="background-color: rgb(76,152,216)">流失预警</td>
+                                    <td>经过当前时间没有购买，后续再购买较难</td>
+                                    <td>处在流失之前刺激购买最后时机</td>
+                                </tr>
+                                <tr>
+                                    <td>活跃度</td>
+                                    <td style="background-color: rgb(76,152,216)">弱流失</td>
+                                    <td>流失后，再购买概率相对较高的时间节点</td>
+                                    <td>处在流失后尝试挽回的可行时机</td>
+                                </tr>
+                                <tr>
+                                    <td>活跃度</td>
+                                    <td style="background-color: rgb(76,152,216)">强流失</td>
+                                    <td>经过当前时间没有购买，后续不会再购买</td>
+                                    <td>处在沉睡之前唤醒用户可行时机</td>
+                                </tr>
+
+                                <tr>
+                                    <td>生命周期</td>
+                                    <td style="background-color: rgb(80, 181, 70)">新用户</td>
+                                    <td>对类目没有形成忠诚度</td>
+                                    <td>降低门槛刺激复购</td>
+                                </tr>
+                                <tr>
+                                    <td>生命周期</td>
+                                    <td style="background-color: rgb(80, 181, 70)">复购用户</td>
+                                    <td>对类目忠诚度开始提升</td>
+                                    <td>递减补贴培养多购</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -121,11 +190,77 @@
                 <div class="table-striped">
                     <div class="table-responsive">
                         <p class="h6">所选成长组：</p>
-                        <table class="table text-nowrap table-bordered h6">
-                            <thead>
-                            <tr><th>用户在类目的价值</th><th>用户在类目上的生命周期阶段</th><th>用户在类目特定购买次序的活跃度</th><th>理解用户</th></tr>
-                            </thead>
-                            <tbody id="selectedGroupInfo2"></tbody>
+                        <table class="table text-nowrap table-bordered h6" id="selectedGroupInfo2" style="width: 70%;">
+                            <tbody>
+                            <tr>
+                                <td>价值</td>
+                                <td style="background-color: rgb(254,117,0)">重要</td>
+                                <td>在类目消费很多，未来购买力强，价格不敏感</td>
+                                <td>加强情感关怀，防止用户流失，通常无需补贴</td>
+                            </tr>
+                            <tr>
+                                <td>价值</td>
+                                <td style="background-color: rgb(254,117,0)">主要</td>
+                                <td>在类目消费较多，未来购买力强，价格较敏感</td>
+                                <td>加强情感关怀，关注用户成长，补贴重点培养</td>
+                            </tr>
+                            <tr>
+                                <td>价值</td>
+                                <td style="background-color: rgb(254,117,0)">普通</td>
+                                <td>在类目消费一般，购买力不确定，价格较敏感</td>
+                                <td>无需情感关怀，加强用户留存，补贴适度刺激</td>
+                            </tr>
+                            <tr>
+                                <td>价值</td>
+                                <td style="background-color: rgb(254,117,0)">长尾</td>
+                                <td>在类目消费较少，未来购买力弱，价格很敏感</td>
+                                <td>无需情感关怀，减少补贴投入</td>
+                            </tr>
+
+                            <tr>
+                                <td>活跃度</td>
+                                <td style="background-color: rgb(76,152,216)">活跃</td>
+                                <td>当前到达下一次购买类目的最早合理时间</td>
+                                <td>处在引导提升购买频率有效时机</td>
+                            </tr>
+                            <tr>
+                                <td>活跃度</td>
+                                <td style="background-color: rgb(76,152,216)">留存</td>
+                                <td>到达下一次购买类目成功率最高的时间点</td>
+                                <td>处在借势培养用户购买最佳时机</td>
+                            </tr>
+                            <tr>
+                                <td>活跃度</td>
+                                <td style="background-color: rgb(76,152,216)">流失预警</td>
+                                <td>经过当前时间没有购买，后续再购买较难</td>
+                                <td>处在流失之前刺激购买最后时机</td>
+                            </tr>
+                            <tr>
+                                <td>活跃度</td>
+                                <td style="background-color: rgb(76,152,216)">弱流失</td>
+                                <td>流失后，再购买概率相对较高的时间节点</td>
+                                <td>处在流失后尝试挽回的可行时机</td>
+                            </tr>
+                            <tr>
+                                <td>活跃度</td>
+                                <td style="background-color: rgb(76,152,216)">强流失</td>
+                                <td>经过当前时间没有购买，后续不会再购买</td>
+                                <td>处在沉睡之前唤醒用户可行时机</td>
+                            </tr>
+
+                            <tr>
+                                <td>生命周期</td>
+                                <td style="background-color: rgb(80, 181, 70)">新用户</td>
+                                <td>对类目没有形成忠诚度</td>
+                                <td>降低门槛刺激复购</td>
+                            </tr>
+                            <tr>
+                                <td>生命周期</td>
+                                <td style="background-color: rgb(80, 181, 70)">复购用户</td>
+                                <td>对类目忠诚度开始提升</td>
+                                <td>递减补贴培养多购</td>
+                            </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -510,6 +645,41 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary btn-sm" id="btn_save_coupon" name="save">确定</button>
                 <button type="button" class="btn btn-default btn-sm" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--配置活跃度-->
+<div class="modal" tabindex="-1" role="dialog" id="config_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">成长组配置</h5>
+            </div>
+            <div class="modal-body">
+                <form id="groupConfigForm">
+                    <div class="example-box" style="margin-left:10px;">
+                        <label class="control-label">活跃度：</label>
+                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                            <input type="checkbox" name="pathActive" value="UAC_01"><span>活跃</span>
+                        </label>
+                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                            <input type="checkbox" name="pathActive" value="UAC_02"><span>留存</span>
+                        </label>
+                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                            <input type="checkbox" name="pathActive" value="UAC_03"><span>流失预警</span>
+                        </label>
+                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                            <input type="checkbox" name="pathActive" value="UAC_04"><span>弱流失</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="configGroup()">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>

@@ -203,6 +203,8 @@ public class PageController {
         model.addAttribute("shortUrlLen", dailyProperties.getShortUrlLen());
         model.addAttribute("couponNameLen", dailyProperties.getCouponNameLen());
         model.addAttribute("prodNameLen", dailyProperties.getProdNameLen());
+        model.addAttribute("couponSendType", dailyProperties.getCouponSendType());
+        model.addAttribute("smsLengthLimit", dailyProperties.getSmsLengthLimit());
         return "operate/config/smstemplate";
     }
 

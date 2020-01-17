@@ -20,4 +20,6 @@ public interface ConfigService {
      * 加载其它通用配置
      */
     List<Map<String, String>> selectCommonConfig();
+
+    void updatePathActive(String active);
 }

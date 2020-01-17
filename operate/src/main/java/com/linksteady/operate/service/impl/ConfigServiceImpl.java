@@ -6,6 +6,7 @@ import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.CouPonService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,5 +42,13 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public List<Map<String, String>> selectCommonConfig() {
         return configMapper.selectCommonConfig();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updatePathActive(String active) {
+        if(StringUtils.isNotEmpty(active)) {
+            configMapper.updatePathActive(active);
+        }
     }
 }

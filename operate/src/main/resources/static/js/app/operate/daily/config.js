@@ -118,6 +118,8 @@ function initTable() {
         },{
             field: 'timeAndShop',
             title: '时间与商品',
+            align: 'center',
+            valign: 'top',
             formatter: function (value, row, index) {
                 return "<a href='/page/insight' style='color: #48b0f7;text-decoration: underline;'>系统配置</a>";
             }
@@ -155,24 +157,27 @@ function initTable() {
     };
     $("#dailyGroupTable").bootstrapTable('destroy').bootstrapTable(settings);
     $.get("/daily/userGroupList", {}, function (r) {
-        $("#dailyGroupTable").bootstrapTable('load', r.data);
+        var dataList = r.data;
+        var total = dataList.length;
+        var limit = total/8;
+        $("#dailyGroupTable").bootstrapTable('load', dataList);
         $("a[data-toggle='tooltip']").tooltip();
         // 合并单元格
         let data = $('#dailyGroupTable').bootstrapTable('getData', true);
         mergeCells(data, "userValue", 1, $('#dailyGroupTable'));
         for (let i = 0; i <= 8; i++) {
             $("#dailyGroupTable").bootstrapTable('mergeCells', {
-                index: i * 4,
+                index: i * limit,
                 field: "lifecycle",
                 colspan: 1,
-                rowspan: 4
+                rowspan: limit
             });
         }
         $("#dailyGroupTable").bootstrapTable('mergeCells', {
             index: 0,
             field: "timeAndShop",
             colspan: 1,
-            rowspan: 32
+            rowspan: total
         });
     });
 }
@@ -231,30 +236,36 @@ $("#msg_modal").on('shown.bs.modal', function () {
 
 // 获取弹窗群组信息
 function getSelectedGroupInfo(tableId) {
+    $('#' + tableId).find('tbody tr').each(function (i, tr) {
+        $(tr).hide();
+    });
     var groupInfo = $("#currentGroupInfo").val();
-    var code = "<tr>";
     var groupInfoArr = groupInfo.split("|");
     groupInfoArr.forEach((v,k)=>{
-        code += "<td>";
         if(k === 0) {
-            code += (v === 'undefined' || v === 'null') ? '-': USER_VALUE[v];
+            var tmp = String((v === 'undefined' || v === 'null') ? '-': USER_VALUE[v]);
+            $('#' + tableId).find('td').each(function (i, td) {
+                if($(td).text() === tmp) {
+                    $(td).parent().show();
+                }
+            });
         }
         if(k === 1) {
-            code += (v === 'undefined' || v === 'null') ? '-':USER_LIFE_CYCLE[v];
+            $('#' + tableId).find('td').each(function (i, td) {
+                if($(td).text() === ((v === 'undefined' || v === 'null') ? '-': USER_LIFE_CYCLE[v])) {
+                    $(td).parent().show();
+                }
+            });
         }
         if(k === 2) {
-            code += (v === 'undefined' || v === 'null') ? '-':PATH_ACTIVE[v];
+            $('#' + tableId).find('td').each(function (i, td) {
+                if($(td).text() === ((v === 'undefined' || v === 'null') ? '-': PATH_ACTIVE[v])) {
+                    $(td).parent().show();
+                }
+            });
         }
-        if(k === 3) {
-            code += (v === 'undefined' || v === 'null') ? '-':v;
-        }
-        code += "</td>";
     });
-    code += "</tr>";
-    $("#" + tableId).html('').append(code);
 }
-
-
 
 /**
  * 获取短信模板列表
@@ -672,3 +683,39 @@ $("#btn_intel").click(function () {
     });
 });
 
+// 配置群组
+$("#config_modal").on('shown.bs.modal', function () {
+    $.get("/daily/getDefaultGroup", {}, function (r) {
+        if(r.code === 200) {
+            var data =r.data;
+            if(data !== '' && data !== null) {
+                data.split(",").forEach((v, k) => {
+                    $("#groupConfigForm").find("input[name='pathActive']:checkbox[value='"+v+"']").prop("checked", true);
+                });
+            }
+        }
+    });
+});
+
+function configGroup() {
+    var codeArr = [];
+    $("#groupConfigForm").find("input[name='pathActive']:checked").each(function () {
+        codeArr.push($(this).val());
+    });
+    if(codeArr.length === 0) {
+        $MB.n_warning("请配置活跃度！");
+        return;
+    }
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认提交当前选择？'
+    }, function () {
+        $.get("/daily/setDefaultGroup", {active: codeArr.join(",")}, function (r) {
+            if(r.code === 200) {
+                $MB.n_success("提交数据成功！");
+            }
+            $("#config_modal").modal('hide');
+            initTable();
+        });
+    });
+}

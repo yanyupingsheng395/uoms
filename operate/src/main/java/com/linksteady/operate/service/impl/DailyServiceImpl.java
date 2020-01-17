@@ -2,6 +2,8 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.operate.config.ConfigCacheManager;
+import com.linksteady.operate.dao.ConfigMapper;
 import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.DailyService;
@@ -31,6 +33,9 @@ public class DailyServiceImpl implements DailyService {
 
     @Autowired
     private DailyMapper dailyMapper;
+    
+    @Autowired
+    private ConfigMapper configMapper;
 
 
     @Autowired
@@ -156,7 +161,14 @@ public class DailyServiceImpl implements DailyService {
 
     @Override
     public List<DailyGroupTemplate> getUserGroupList() {
-        return dailyMapper.getUserGroupList();
+        ConfigCacheManager cacheManager = ConfigCacheManager.getInstance();
+        String active = cacheManager.getConfigMap().get("op.daily.pathactive.list");
+        List<String> activeList = null;
+        if(StringUtils.isNotEmpty(active)){
+            activeList = Arrays.asList(active.split(","));
+        }
+        return dailyMapper.getUserGroupList(activeList);
+
     }
 
     @Override

@@ -28,25 +28,25 @@ $(function () {
                 rowspan: 2
             },
             {
-                title: '补贴适合用户群组',
+                title: '补贴适用用户群组',
                 colspan: 3
             },
             {
                 title: '补贴信息设置',
-                colspan: 3
+                colspan: 4
             },
             {
                 title: '3方平台建立补贴并录入',
-                colspan: 4
+                colspan: 2
             },
             {
                 title: '补贴检验',
-                colspan: 4
+                colspan: 2
             }
         ],
             [{
                 field: 'userValue',
-                title: '用户在类目的价值',
+                title: '价值',
                 formatter:function (value, row, index) {
                     var res = [];
                     if(value !== undefined && value !== ''&& value !== null) {
@@ -71,17 +71,17 @@ $(function () {
                 }
             }, {
                 field: 'lifeCycle',
-                title: '用户在类目上的生命周期阶段',
+                title: '生命周期阶段',
                 formatter:function (value, row, index) {
                     var res = [];
                     if(value !== undefined && value !== ''&& value !== null) {
                         value.split(",").forEach((v,k)=>{
                             switch (v) {
                                 case "0":
-                                    res.push("老客");
+                                    res.push("复购用户");
                                     break;
                                 case "1":
-                                    res.push("新客");
+                                    res.push("新用户");
                                     break;
                             }
                         });
@@ -90,7 +90,7 @@ $(function () {
                 }
             }, {
                 field: 'pathActive',
-                title: '用户在类目特定购买次序的活跃度',
+                title: '下步成长旅程活跃度',
                 formatter:function (value, row, index) {
                     var res = [];
                     if(value !== undefined && value !== ''&& value !== null) {
@@ -107,6 +107,9 @@ $(function () {
                                     break;
                                 case "UAC_04":
                                     res.push("弱流失");
+                                    break;
+                                case "UAC_05":
+                                    res.push("强流失");
                                     break;
                             }
                         });
@@ -147,18 +150,7 @@ $(function () {
                 }
             }, {
                 field: 'validEnd',
-                title: '有效截止期至'
-            }, {
-                field: 'validStatus',
-                title: '是否有效',
-                formatter: function (value, row, index) {
-                    if(value === 'Y') {
-                        return "是";
-                    }else if(value === 'N'){
-                        return "否";
-                    }
-                    return "";
-                }
+                title: '有效截止期'
             }, {
                 field: 'checkFlag',
                 title: '校验结果',

@@ -145,6 +145,7 @@
     </select>
 
     <select id="getUserGroupList" resultMap="templateResult">
+        select * from (
         SELECT t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE,
                t1.PATH_ACTIVE, t1.LIFECYLE LIFECYCLE,
                LISTAGG(t4.COUPON_DISPLAY_NAME, ',') within group (order by t4.coupon_id) coupon_name, t1.CHECK_FLAG, t1.CHECK_COMMENTS,
@@ -156,6 +157,13 @@
           and t3.coupon_id = t4.coupon_id(+)
         group by t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE, t1.CHECK_FLAG, t1.PATH_ACTIVE, t1.LIFECYLE, t1.CHECK_COMMENTS, t1.GROUP_INFO
         ORDER BY USER_VALUE asc, LIFECYLE desc, t1.PATH_ACTIVE asc
+        )
+        <if test="activeList != null">
+            where PATH_ACTIVE in
+            <foreach collection="activeList" separator="," item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
     </select>
 
     <update id="setSmsCode">

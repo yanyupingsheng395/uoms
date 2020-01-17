@@ -1,9 +1,7 @@
 var validator;
 $(function () {
-    validate();
     initTable();
-    statInputNum($("#smsContent"),$("#word"));
-    statInputNum($("#smsContent1"),$("#word1"));
+    statInputNum();
 });
 
 //为刷新按钮绑定事件
@@ -46,7 +44,7 @@ function initTable() {
                 clickToSelect: true
             }, {
                 title: '适用人群',
-                colspan: 4
+                colspan: 3
             }, {
                 field: 'smsContent',
                 title: '文案内容',
@@ -56,7 +54,7 @@ function initTable() {
             ], [
                 {
                     field: 'userValue',
-                    title: '用户在类目的价值',
+                    title: '价值',
                     formatter:function (value, row, index) {
                         var res = [];
                         if(value !== undefined && value !== ''&& value !== null) {
@@ -81,17 +79,17 @@ function initTable() {
                     }
                 }, {
                     field: 'lifeCycle',
-                    title: '用户在类目上的生命周期阶段',
+                    title: '生命周期阶段',
                     formatter:function (value, row, index) {
                         var res = [];
-                        if(value !== undefined && value !== '' && value !== null) {
+                        if(value !== undefined && value !== ''&& value !== null) {
                             value.split(",").forEach((v,k)=>{
                                 switch (v) {
                                     case "0":
-                                        res.push("老客");
+                                        res.push("复购用户");
                                         break;
                                     case "1":
-                                        res.push("新客");
+                                        res.push("新用户");
                                         break;
                                 }
                             });
@@ -100,17 +98,17 @@ function initTable() {
                     }
                 }, {
                     field: 'pathActive',
-                    title: '用户在类目特定购买次序的活跃度',
+                    title: '下步成长旅程活跃度',
                     formatter:function (value, row, index) {
                         var res = [];
                         if(value !== undefined && value !== ''&& value !== null) {
                             value.split(",").forEach((v,k)=>{
                                 switch (v) {
                                     case "UAC_01":
-                                        res.push("高度活跃");
+                                        res.push("活跃");
                                         break;
                                     case "UAC_02":
-                                        res.push("中度活跃");
+                                        res.push("留存");
                                         break;
                                     case "UAC_03":
                                         res.push("流失预警");
@@ -118,28 +116,10 @@ function initTable() {
                                     case "UAC_04":
                                         res.push("弱流失");
                                         break;
-                                    case "UAC_05":
-                                        res.push("强流失");
-                                        break;
-                                    case "UAC_06":
-                                        res.push("沉睡");
                                 }
                             });
                         }
                         return res.length === 0 ? '-' : res.join(",");
-                    }
-                }, {
-                    field: 'isCoupon',
-                    title: '有无补贴',
-                    formatter: function (value, row, index) {
-                        let res = "-";
-                        if (value === '1') {
-                            res = "有";
-                        }
-                        if (value === '0') {
-                            res = "无";
-                        }
-                        return res;
                     }
                 }
             ]
@@ -410,50 +390,32 @@ function getSmsContentFontCount() {
 }
 
 // 新增&修改
-$("#btn_save").click(function () {
-    let flag = validator.form();
-    if(flag) {
-        var alert_str = "";
-        var isCoupon = $("input[name='isCoupon']:checked").val();
-        if(!validCouponSendType(isCoupon)) {
-            return;
-        }
-
-        var data = getSmsContentFontCount();
-        if(!data.valid) {
-            alert_str+='文案字数超出最大限制！';
-        }
-
-        if(null!=alert_str&&alert_str!='')
-        {
-            $MB.n_warning(alert_str);
-            return;
-        }
-        var url = "";
-        var success_msg = "";
-        var sure_msg = "";
-        if($(this).attr("name") == "save") {
-            url = "/smsTemplate/addSmsTemplate";
-            success_msg = "新增成功！";
-            sure_msg = "确定要保存数据？";
-        }else {
-            url = "/smsTemplate/updateSmsTemplate";
-            success_msg = "修改成功！";
-            sure_msg = "确定要修改数据？";
-        }
-
-
+// 新增&修改
+$("#btn_save_sms").click(function () {
+    var url = "";
+    var success_msg = "";
+    var sure_msg = "";
+    if($(this).attr("name") == "save") {
+        url = "/smsTemplate/addSmsTemplate";
+        success_msg = "新增成功！";
+        sure_msg = "确定要保存数据？";
+    }else {
+        url = "/smsTemplate/updateSmsTemplate";
+        success_msg = "修改成功！";
+        sure_msg = "确定要修改数据？";
+    }
+    if(validate()) {
         //提示是否要保存
         $MB.confirm({
             title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-            content: '确认提交数据？'
+            content: sure_msg
         }, function () {
-
-            $.post(url, $("#smsTemplateAddForm").serialize(), function (r) {
+            var data = $("#smsTemplateAddForm").serialize();
+            $.post(url, data, function (r) {
                 if(r.code === 200) {
                     $MB.n_success(success_msg);
                 }else {
-                    $MB.n_danger("未知错误发生，请检查！");
+                    $MB.n_danger(r.msg);
                 }
                 $('#add_modal').modal('hide');
                 $('#smsTemplateTable').bootstrapTable('refresh');
@@ -462,52 +424,134 @@ $("#btn_save").click(function () {
     }
 });
 // 表单验证
+// 表单验证
 function validate() {
-    let icon = "<i class='fa fa-times-circle'></i> ";
-    let rule = {
-        rules: {
-            smsName: {
-                required: true
-            },
-            smsContentInput: {
-                required: true
-            },
-            isCoupon: {
-                required: true
-            },
-            isProductName: {
-                required: true
-            },
-            isProductUrl: {
-                required: true
-            }
-        },
-        errorPlacement: function (error, element) {
-            if (element.is(":checkbox") || element.is(":radio")) {
-                error.appendTo(element.parent().parent());
-            } else {
-                error.insertAfter(element);
-            }
-        },
-        messages: {
-            smsName: {
-                required: icon + "请输入文案名称"
-            },
-            smsContentInput: {
-                required: icon + "请输入文案内容"
-            },
-            isCoupon: {
-                required: icon + "请选择"
-            },
-            isProductName: {
-                required: icon + "请选择"
-            },
-            isProductUrl: {
-                required: icon + "请选择"
+    if(!validCouponSendType()) {
+        return false;
+    }
+    if(total_num > smsLengthLimit) {
+        $MB.n_warning('文案字数超出最大限制！');
+        return false;
+    }
+    return true;
+}
+
+// 验证补贴
+function validCouponSendType() {
+    let couponSendType = getCouponSendType();
+    let smsName = $('#smsName').val();
+    let smsContent = $('#smsContent').val();
+    let isCouponUrl = $("input[name='isCouponUrl']:checked").val();
+    let isCouponName = $("input[name='isCouponName']:checked").val();
+    let isProductUrl = $("input[name='isProductUrl']:checked").val();
+    let isProductName = $("input[name='isProductName']:checked").val();
+
+    if(isCouponUrl === undefined) {
+        $MB.n_warning("请选择补贴短链接！");
+        return false;
+    }
+    if(isCouponName === undefined) {
+        $MB.n_warning("请选择补贴名称！");
+        return false;
+    }
+    if(isProductUrl === undefined) {
+        $MB.n_warning("请选择推荐商品名称！");
+        return false;
+    }
+    if(isProductName === undefined) {
+        $MB.n_warning("请选择推荐商品短链接！");
+        return false;
+    }
+    if(smsName === '') {
+        $MB.n_warning("文案名称不能为空！");
+        return false;
+    }
+    if(smsContent === '') {
+        $MB.n_warning("文案内容不能为空！");
+        return false;
+    }
+    if(couponSendType === 'A') { // 包含${COUPON_URL}
+        // 不能包含url
+        if(isCouponUrl === '0') {
+            if(smsContent.indexOf("${COUPON_URL}") > -1) {
+                $MB.n_warning("选择'补贴链接:否'，文案内容不能出现${COUPON_URL}");
+                return false;
             }
         }
-    };
-    validator = $("#smsTemplateAddForm").validate(rule);
+        if(isCouponName === '0') {
+            if(smsContent.indexOf("${COUPON_URL}") > -1) {
+                $MB.n_warning("选择'补贴名称:否'，文案内容不能出现${COUPON_NAME}");
+                return false;
+            }
+        }
+
+        // 不能包含url
+        if(isCouponUrl === '1') {
+            if(smsContent.indexOf("${COUPON_URL}") === -1) {
+                $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴链接：是'，模板内容未发现${COUPON_URL}");
+                return false;
+            }
+        }
+        if(isCouponName === '1') {
+            if(smsContent.indexOf("${COUPON_NAME}") === -1) {
+                $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴名称：是'，模板内容未发现${COUPON_NAME}");
+                return false;
+            }
+        }
+
+        if(isCouponName === '1' && isCouponUrl === '0') {
+            $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴名称：是'，'补贴链接'不能选否！");
+            return false;
+        }
+    }
+    if(couponSendType === 'B') { // 不包含${COUPON_URL}
+        if(smsContent.indexOf("${COUPON_URL}") > -1) {
+            $MB.n_warning("补贴发放方式为系统发送，文案内容不能出现${COUPON_URL}！");
+            return false;
+        }
+        if(isCouponUrl === '1') {
+            $MB.n_warning("补贴发放方式为系统发送，补贴链接不能选是！");
+            return false;
+        }
+
+        if(isCouponName === '1') {
+            if(smsContent.indexOf("${COUPON_NAME}") === -1) {
+                $MB.n_warning("补贴发放方式为系统发送且选择了'补贴名称：是'，文案内容没有发现${COUPON_NAME}！");
+                return false;
+            }
+        }else {
+            if(smsContent.indexOf("${COUPON_NAME}") > -1) {
+                $MB.n_warning("'补贴名称：否'，文案内容不能出现${COUPON_NAME}！");
+                return false;
+            }
+        }
+    }
+
+    if(isProductUrl === '1') {
+        if(smsContent.indexOf("${PROD_URL}") === -1) {
+            $MB.n_warning("选择'推荐商品链接：是'，文案内容未发现${PROD_URL}");
+            return false;
+        }
+    }
+    if(isProductUrl === '0') {
+        if(smsContent.indexOf("${PROD_URL}") > -1) {
+            $MB.n_warning("选择'推荐商品链接：否'，文案内容不能出现${PROD_URL}");
+            return false;
+        }
+    }
+    if(isProductName === '1') {
+        if(smsContent.indexOf("${PROD_NAME}") === -1) {
+            $MB.n_warning("选择'推荐商品名称：是'，文案内容未发现${PROD_NAME}");
+            return false;
+        }
+    }
+    if(isProductName === '0') {
+        if(smsContent.indexOf("${PROD_NAME}") > -1) {
+            $MB.n_warning("选择'推荐商品名称：否'，文案内容不能出现${PROD_NAME}");
+            return false;
+        }
+    }
+    return true;
 }
 
 //
@@ -590,3 +634,39 @@ $("#btn_edit").click(function () {
         }
     });
 });
+
+/**
+ * 字数统计
+ * @param textArea
+ * @param numItem
+ */
+let total_num;
+function statInputNum() {
+    $("#smsContent").on('input propertychange', function () {
+        let smsContent = $('#smsContent').val();
+        let y = smsContent.length;
+        let m = smsContent.length;
+        let n = smsContent.length;
+        if(smsContent.indexOf('${COUPON_URL}') > -1) {
+            y = y - '${COUPON_URL}'.length + shortUrlLen;
+            m = m - '${COUPON_URL}'.length;
+        }
+        if(smsContent.indexOf('${COUPON_NAME}') > -1) {
+            y = y - '${COUPON_NAME}'.length + couponNameLen;
+            m = m - '${COUPON_NAME}'.length;
+        }
+        if(smsContent.indexOf('${PROD_NAME}') > -1) {
+            y = y - '${PROD_NAME}'.length + prodNameLen;
+            m = m - '${PROD_NAME}'.length;
+        }
+        if(smsContent.indexOf('${PROD_URL}') > -1) {
+            y = y - '${PROD_URL}'.length + shortUrlLen;
+            m = m - '${PROD_URL}'.length;
+        }
+        total_num = y;
+        var code = "";
+        code += n + ":当前文案的字数<br/>" + m + ":除去模板变量当前文案可输入字数<br/>" + y + ":替换模板变量为系统预设最大值后当前文案字数";
+        $("#numRemark").html('').append(code);
+        $("#word").text(n + "/" + m + "/" + y);
+    });
+}

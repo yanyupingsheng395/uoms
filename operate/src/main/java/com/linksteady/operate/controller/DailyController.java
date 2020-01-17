@@ -44,6 +44,9 @@ public class DailyController {
     @Autowired
     private DailyProperties dailyProperties;
 
+    @Autowired
+    private ConfigService configService;
+
     /**
      * 获取每日成长任务分页列表
      *
@@ -530,5 +533,19 @@ public class DailyController {
     @GetMapping("/validUserGroup")
     public ResponseBo validUserGroup() {
         return ResponseBo.okWithData(null, dailyService.validUserGroup());
+    }
+
+    @GetMapping("/getDefaultGroup")
+    public ResponseBo getDefaultGroup() {
+        ConfigCacheManager cacheManager = ConfigCacheManager.getInstance();
+        return ResponseBo.okWithData(null, cacheManager.getConfigMap().get("op.daily.pathactive.list"));
+    }
+
+    @GetMapping("/setDefaultGroup")
+    public ResponseBo setDefaultGroup(@RequestParam("active") String active) {
+        ConfigCacheManager cacheManager = ConfigCacheManager.getInstance();
+        configService.updatePathActive(active);
+        cacheManager.setConfigMap(configService.selectCommonConfig());
+        return ResponseBo.ok();
     }
 }
