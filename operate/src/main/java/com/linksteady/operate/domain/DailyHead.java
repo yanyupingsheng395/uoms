@@ -64,5 +64,13 @@ public class DailyHead {
      */
     private Date statDate;
 
-    private String validStatus;
+    /**
+     * 操作的时间戳
+     */
+    private Long opChangeDate;
+
+    /**
+     * 验证标记
+     */
+    private String validateLabel;
 }

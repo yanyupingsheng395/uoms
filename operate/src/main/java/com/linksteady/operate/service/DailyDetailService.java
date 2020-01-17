@@ -1,6 +1,7 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.DailyDetail;
+import com.linksteady.operate.domain.DailyUserStats;
 
 import java.util.List;
 import java.util.Map;
@@ -106,4 +107,5 @@ public interface DailyDetailService {
      * 清空保存文案的临时表
      */
     void deletePushContentTemp(String headerId);
+
 }

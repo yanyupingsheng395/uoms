@@ -11,20 +11,10 @@
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/steps/steps.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/loading/css/loading.css}">
-
-    <style>
-        #userListTable thead {
-            background-color: #eff3f8;
-        }
-        .step-icon-number {
-            cursor: pointer;
-        }
-    </style>
 </head>
 
-<body>
+<body class="gray-bg">
 <!-- 公共组件 -->
 <div data-th-include="common/common"></div>
 <div class="lyear-layout-web">
@@ -38,48 +28,101 @@
             <div class="container-div ui-layout-center">
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
-                        <div class="col-md-12">
                             <div class="row">
-                                <div class="pull-left">
-                                    <h5 class="modal-title pull-left" style="margin-top: 20px;">成长任务执行</h5>
+                                <div>
+                                    <!--<h5>任务执行</h5>-->
+                                    <span class="navbar-page-title">任务执行</span>
                                 </div>
                             </div>
                             <div class="row">
                                 <hr class="hr"/>
                             </div>
                             <div class="row">
-                                <div class="col-md-9 pull-left" style="margin-top: 24px;">
+                                <div class="col-md-9">
                                     <p class="h5" id="tipContent">
-                                        <i class="mdi mdi-alert-circle-outline"></i><span id="touchDt"></span>:有&nbsp;<span id="totalNum"></span>&nbsp;个用户需要完成成长目标。
-                                        <!--您实际选择&nbsp;<span id="optNum"></span>&nbsp;个用户进行成长管理；-->
+                                        <i class="mdi mdi-alert-circle-outline">今天是<span th:text="${touchDt}"></span>,根据用户成长引擎的计算,有<span th:text="${userNum}"></span>个用户到达成长的节点，需要个性化推送培养。</i>
                                     </p>
                                 </div>
-                                <!--步骤条-->
-                                <div class="pull-right col-md-3">
-                                    <div id="step" style="height: 80px;"></div>
+
+                                <!-- push button -->
+                                <div class="col-sm-12">
+                                    <div class="btn-group-sm pull-right" id="toolbar" role="group">
+                                        <button class="btn btn-success" id="btn_push" onclick="$('#push_msg_modal').modal('show')">
+                                            <i class="fa fa-location-arrow"></i> 启动推送
+                                        </button>
+                                        <a class="btn btn-secondary btn-sm" href="/page/daily/task">
+                                            <i class="fa fa-reply"></i> 返回
+                                        </a>
+                                    </div>
                                 </div>
+
                             </div>
-                        </div>
                     </div>
-                    <div class="col-md-12 select-table table-striped" id="stepContent">
-                        <div data-th-include="operate/daily/step1" id="step1"></div>
-                        <div data-th-include="operate/daily/step2" style="display: none;" id="step2"></div>
+                    <div class="col-md-12 select-table table-striped table-bordered">
+                        <table id="userStrategyListTable"></table>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="push_modal" id="push_msg_modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title">推送设置</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">推送方式</label>
+                        <div class="col-md-7">
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="pushMethod" value="AI"><span>智能推送</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="pushMethod" value="IMME"><span>立刻推送</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="pushMethod" value="FIXED"><span>定时推送</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" id="pushPeriodDiv" hidden>
+                        <label class="col-md-3 control-label">推送时间</label>
+                        <div class="col-md-7">
+                            <select name="" id="pushPeriod" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 30px;">
+                        <div class="col-md-12">
+                            <div class="alert" role="alert" style="background-color: #fcf8e3;padding: 13px 24px;">
+                                确定推送，将会发送短信给每日成长用户。
+                                <label class="lyear-checkbox m-t-10 checkbox-warning">
+                                    <input type="checkbox" id="push_ok">
+                                    <span>确定推送</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary btn-sm" disabled onclick="submitData()" id="pushMsgBtn">确定推送</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<input id="timestamp"  type="hidden" />
 <script>
     var headId = "[[${headId}]]";
+
 </script>
-<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
-<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
 <script data-th-src="@{/js/app/operate/common/template.js}"></script>
-<script data-th-src="@{/plugins/steps/steps.js}"></script>
 <script data-th-src="@{/js/app/operate/daily/edit.js}"></script>
-<script data-th-src="@{/js/app/operate/daily/step1.js}"></script>
-<script data-th-src="@{/js/app/operate/daily/step2.js}"></script>
 <script data-th-src="@{/plugins/loading/js/loading.js}"></script>
 </body>
 </html>

@@ -34,7 +34,7 @@
                     <div class="col-sm-12 search-collapse">
                         <div class="col-md-12">
                             <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">每日用户成长任务</h5>
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">每日运营任务</h5>
                             </div>
                             <div class="row">
                                 <hr class="hr"/>
@@ -58,6 +58,10 @@
                         <div class="row" style="margin-top: 12px;">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
+                                    <a class="btn btn-primary btn-edit" id="btn_insight">
+                                        <i class="fa fa-street-view"></i> 预览用户
+                                    </a>
+
                                     <a class="btn btn-primary btn-edit" id="btn_edit">
                                         <i class="fa fa-edit"></i> 任务执行
                                     </a>
@@ -78,24 +82,7 @@
         </main>
     </div>
 </div>
-<div class="modal" tabindex="-1" role="dialog" aria-labelledby="user_modal" id="push_modal">
-    <div class="modal-dialog modal-lg" role="document" style="width: 75%">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h5 class="modal-title">推送名单</h5>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table id="pushTable" class="table table-striped text-nowrap"></table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-            </div>
-        </div>
-    </div>
-</div>
+<input id="errormsg"  type="hidden"  th:value="${errormsg}" />
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
 <script data-th-src="@{/js/app/operate/common/template.js}"></script>

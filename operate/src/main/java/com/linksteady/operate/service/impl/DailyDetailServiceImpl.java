@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.domain.DailyDetail;
+import com.linksteady.operate.domain.DailyUserStats;
 import com.linksteady.operate.service.DailyDetailService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransPushContentThread;
@@ -292,4 +293,5 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         //清空保存文案的临时表
         dailyDetailMapper.deletePushContentTemp(headerId);
     }
+
 }
