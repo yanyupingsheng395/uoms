@@ -140,7 +140,7 @@ function getChart1Option(data)
         yAxis: {
             type: 'category',
             name: '活跃度',
-            data: ['活跃','留存','流失预警','弱流失','强流失']
+            data: data.ylabel
         },
         visualMap: [
             {

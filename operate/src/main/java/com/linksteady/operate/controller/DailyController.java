@@ -1,4 +1,5 @@
 package com.linksteady.operate.controller;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.alibaba.fastjson.JSONArray;
@@ -204,8 +205,19 @@ public class DailyController {
         }
 
         Map<String,Object> result=Maps.newHashMap();
+        //首购用户数据
         result.put("fpUser",fparray);
+        //复购用户数据
         result.put("rpUser",rparray);
+        List<String> yLabelList=Lists.newArrayList();
+        //要传到前台的活跃度列表
+        String activeCode=ConfigCacheManager.getInstance().getConfigMap().get("op.daily.pathactive.list");
+        List<String> activeCodeList=Splitter.on(',').trimResults().omitEmptyStrings().splitToList(activeCode);
+        for(String code:activeCodeList)
+        {
+            yLabelList.add(ConfigCacheManager.getInstance().getPathActiveMap().get(code));
+        }
+        result.put("ylabel",yLabelList);
 
         //获取排名第一的群组 获取其类目信息
         DailyUserStats dailyUserStats1=dailyUserStats.get(0);

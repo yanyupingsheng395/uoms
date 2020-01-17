@@ -11,14 +11,9 @@
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
-    <style>
-        #pushTable thead {
-            background-color: #eff3f8;
-        }
-    </style>
 </head>
 
-<body>
+<body class="gray-bg">
 <!-- 公共组件 -->
 <div data-th-include="common/common"></div>
 <div class="lyear-layout-web">
@@ -32,14 +27,12 @@
             <div class="container-div ui-layout-center">
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
-                        <div class="col-md-12">
                             <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">每日运营任务</h5>
+                                <h5 class="navbar-page-title">每日运营任务</h5>
                             </div>
                             <div class="row">
                                 <hr class="hr"/>
                             </div>
-                        </div>
                         <form id="user-form">
                             <div class="select-list">
                                 <ul>
@@ -55,7 +48,7 @@
                         </form>
                     </div>
                     <div class="col-md-12 select-table table-striped">
-                        <div class="row" style="margin-top: 12px;">
+                        <div class="row">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
                                     <a class="btn btn-primary btn-edit" id="btn_insight">
