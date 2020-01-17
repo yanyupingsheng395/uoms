@@ -218,32 +218,16 @@ function editCoupon(groupId, groupInfo) {
     $("#coupon_modal").modal('show');
 }
 
-$("#msg_modal").on('hide.bs.modal', function () {
-    // $("#currentGroupId").val("");
-    // $("#currentGroupInfo").val("");
+$("#coupon_modal").on('shown.bs.modal', function () {
+    var groupId = $("#currentGroupId").val();
+    couponTable(groupId);
+    getSelectedGroupInfo('selectedGroupInfo2');
 });
 
 $("#msg_modal").on('shown.bs.modal', function () {
     var groupId = $("#currentGroupId").val();
     smsTemplateTable(groupId);
 });
-
-$("#coupon_modal").on('shown.bs.modal', function () {
-    validCoupon();
-});
-
-// 验证券信息是否合法
-function validCoupon() {
-    $.get("/coupon/validCoupon", {}, function(r) {
-        if(r.code === 200) {
-            var groupId = $("#currentGroupId").val();
-            couponTable(groupId);
-            getSelectedGroupInfo('selectedGroupInfo2');
-        }else {
-            $MB.n_danger("系统错误!");
-        }
-    });
-}
 
 // 获取弹窗群组信息
 function getSelectedGroupInfo(tableId) {

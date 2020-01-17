@@ -45,7 +45,6 @@ public class ConfigCacheManager  {
         return configCacheManager;
     }
 
-
     public Map<String, String> getPathActiveMap() {
         return pathActiveMap;
     }

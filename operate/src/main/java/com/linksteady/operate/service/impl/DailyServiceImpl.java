@@ -193,22 +193,22 @@ public class DailyServiceImpl implements DailyService {
         // 获取短信内容为空的情况
         // 含券：券名称为空
         String whereInfo = " and t1.IS_COUPON = 1 AND t4.COUPON_DISPLAY_NAME IS NULL";
-        int count1 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "群组含券，券信息不能为空");
+        int count1 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "群组含补贴，补贴信息不能为空");
 
         // 不含券：券名称不为空
         whereInfo = " and t1.IS_COUPON = 0 and t4.COUPON_DISPLAY_NAME is not null";
-        int count2 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "群组不含券，券信息不能出现");
+        int count2 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "群组不含补贴，补贴信息不能出现");
 
         // 短信：不为空
         whereInfo = " and t2.SMS_CONTENT IS NULL";
-        int count3 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "消息模板不能为空");
+        int count3 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "尚未为群组配置文案");
 
         // 验证券的有效期
         whereInfo = " and to_number(to_char(t4.VALID_END, 'YYYYMMDD')) < to_number(to_char(sysdate, 'YYYYMMDD'))";
-        int count4 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "券有效期已过期");
+        int count4 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "补贴有效期已过期");
 
         whereInfo = " and t4.VALID_STATUS = 'N'";
-        int count5 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "券已失效");
+        int count5 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "补贴已失效");
 
         // 其他群组的校验字段更新为'Y'
         whereInfo = " and (" +
@@ -236,7 +236,6 @@ public class DailyServiceImpl implements DailyService {
         boolean flag=valueOperations.setIfAbsent("daily_trans_lock",headId);
         //key的失效时间60秒 此处有bug 通过升级api可以解决
         redisTemplate.expire("daily_trans_lock",60, TimeUnit.SECONDS);
-
         return flag;
     }
 

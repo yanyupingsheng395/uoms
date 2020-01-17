@@ -81,7 +81,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h5 class="modal-title">文案适用用户群组</h5>
+                <h5 class="modal-title">为群组配置文案</h5>
             </div>
             <div class="modal-body">
                 <div class="table-striped">
@@ -115,7 +115,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h5 class="modal-title">选择优惠券</h5>
+                <h5 class="modal-title">为群组选择补贴</h5>
             </div>
             <div class="modal-body">
                 <div class="table-striped">
@@ -136,7 +136,7 @@
                                 <i class="fa fa-refresh"></i> 智能补贴
                             </a>
                             <a class="btn btn-success" id="btn_add" onclick="couponAdd()">
-                                <i class="fa fa-plus"></i> 新增补贴
+                                <i class="fa fa-plus"></i> 新建补贴
                             </a>
                             <a class="btn btn-primary" id="btn_update" onclick="updateCoupon()">
                                 <i class="fa fa-edit"></i> 编辑补贴
@@ -154,7 +154,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-sm" onclick="updateCouponId()">提交优惠券</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="updateCouponId()">确定</button>
                 <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
             </div>
         </div>
@@ -372,9 +372,8 @@
                         <label class="col-md-4 control-label" for="smsContent1">文案内容：</label>
                         <div class="col-md-7 input-group">
                             <textarea class="form-control" id="smsContent1" name="example-textarea-input"
-                                      rows="6"></textarea>
+                                      rows="6" readonly></textarea>
                             <span class="wordwrap"><var id="word1">0</var>个字</span>
-                            <small class="help-block" style="color:red">测试发送前请将消息体中的变量替换为实际值，并注意内容长度！</small>
                         </div>
 
                     </div>
@@ -390,24 +389,24 @@
 
 <!--新增补贴-->
 <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="coupon_add_modal" data-backdrop="static">
-    <div class="modal-dialog" role="document" style="width: 70%;">
+    <div class="modal-dialog" role="document" style="width: 60%;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">×</span></button>
-                <h5 class="modal-title" id="myLargeModalLabel">新增补贴</h5>
+                <h5 class="modal-title" id="myLargeModalLabel">新建补贴</h5>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal" id="coupon_edit">
                     <input type="hidden" id="couponId" name="couponId"/>
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">补贴名称：</label>
+                        <label class="col-md-3 control-label">补贴名称(文案中体现)：</label>
                         <div class="col-md-7 input-group">
                             <input class="form-control" type="text" id="couponDisplayName" name="couponDisplayName" placeholder="xx元"/>
                         </div>
                     </div>
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">适用人群：</label>
+                        <label class="col-md-3 control-label">适用人群：</label>
                         <div class="col-md-7 input-group" style="border: solid 1px #ebebeb;padding: 8px;">
                             <div class="example-box" style="margin-left:10px;">
                                 <label class="control-label">价&nbsp;&nbsp;&nbsp;&nbsp;值：</label>
@@ -454,19 +453,19 @@
                         </div>
                     </div>
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">补贴门槛(元)：</label>
+                        <label class="col-md-3 control-label">补贴门槛(元)：</label>
                         <div class="col-md-7 input-group">
                             <input class="form-control" type="text" id="couponThreshold" name="couponThreshold"/>
                         </div>
                     </div>
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">补贴面额(元)：</label>
+                        <label class="col-md-3 control-label">补贴面额(元)：</label>
                         <div class="col-md-7 input-group">
                             <input class="form-control" type="text" id="couponDenom" name="couponDenom"/>
                         </div>
                     </div>
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">补贴原链接：</label>
+                        <label class="col-md-3 control-label">补贴原链接：</label>
                         <div class="col-md-7 input-group">
                             <input type="text" class="form-control" name="couponInfo2" id="couponInfo2">
                             <div class="input-group-btn">
@@ -477,36 +476,35 @@
                     </div>
 
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">补贴短链接：</label>
+                        <label class="col-md-3 control-label">补贴短链接：</label>
                         <div class="col-md-7 input-group">
                             <input class="form-control" type="text" id="couponUrl" name="couponUrl"/>
                         </div>
                     </div>
+<!--                    <div class="form-group mg-stop">-->
+<!--                        <label class="col-md-4 control-label">补贴数量(个)：</label>-->
+<!--                        <div class="col-md-7 input-group">-->
+<!--                            <input class="form-control" type="text" id="couponNum" name="couponNum"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">补贴数量(个)：</label>
-                        <div class="col-md-7 input-group">
-                            <input class="form-control" type="text" id="couponNum" name="couponNum"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">有效截止日期：</label>
+                        <label class="col-md-3 control-label">有效截止期：</label>
                         <div class="col-md-7 input-group">
                             <input class="form-control" type="text" id="validEnd" name="validEnd" onchange="removeValid()"/>
                         </div>
                     </div>
-                    <div class="form-group mg-stop" id="couponValid" hidden>
-                        <label class="col-md-4 control-label">券是否有效：</label>
-                        <div class="col-md-7 input-group">
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="validStatus" value="Y" checked><span>是</span>
-                            </label>
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="validStatus" value="N"><span>否</span>
-                            </label>
-                        </div>
-                    </div>
+<!--                    <div class="form-group mg-stop" id="couponValid" hidden>-->
+<!--                        <label class="col-md-4 control-label">券是否有效：</label>-->
+<!--                        <div class="col-md-7 input-group">-->
+<!--                            <label class="lyear-radio radio-inline radio-primary">-->
+<!--                                <input type="radio" name="validStatus" value="Y" checked><span>是</span>-->
+<!--                            </label>-->
+<!--                            <label class="lyear-radio radio-inline radio-primary">-->
+<!--                                <input type="radio" name="validStatus" value="N"><span>否</span>-->
+<!--                            </label>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </form>
             </div>
             <div class="modal-footer">

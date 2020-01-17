@@ -98,6 +98,7 @@ function testSend()
     //根据获取到的数据查询
     $.getJSON("/smsTemplate/getSmsTemplateNotValid?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
+            $("#msg_modal").modal('hide');
             //更新测试面板
             $("#smsName1").val(resp.data.smsName);
             $("#smsContent1").val(resp.data.smsContent);
