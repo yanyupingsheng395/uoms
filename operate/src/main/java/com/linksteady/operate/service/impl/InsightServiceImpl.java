@@ -747,7 +747,7 @@ public class InsightServiceImpl implements InsightService {
     public Map<String, Object> getUserValueWithSpu(String userId, String spuId) {
         Map<String, Object> result = Maps.newHashMap();
         Map<String, String> data = insightMapper.getUserValueWithSpu(spuId, userId);
-        if(!data.isEmpty()) {
+        if(null != data && !data.isEmpty()) {
             result.put("current", new LinkedList<>(data.values()));
         }else {
             result.put("current", new LinkedList<>());

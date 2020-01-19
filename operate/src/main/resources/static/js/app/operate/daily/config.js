@@ -90,7 +90,7 @@ function initTable() {
             title: '理解用户',
             align: 'center',
             formatter: function (value, row, index) {
-                return "<a><i class='mdi mdi-account mdi-14px'></i></a>";
+                return "<a style='color: #333;' href='/page/daily/usergroupdesc?userValue="+row['userValue']+"&pathActive="+row['pathActive']+"&lifecycle="+row['lifecycle']+"' target='_blank'><i class='mdi mdi-account mdi-14px'></i></a>";
             }
         },{
             title: '文案',

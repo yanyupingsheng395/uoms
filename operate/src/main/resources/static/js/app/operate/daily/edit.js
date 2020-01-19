@@ -88,7 +88,7 @@ function getUserStrategyList() {
                 width: 80,
                 formatter: function (value, row, idx)
                 {
-                    return '<a href="www.link-steady.com">成长洞察</a>'
+                    return '<a href="/page/personInsight?userId='+row['userId']+'&headId='+headId+'" target="_blank">成长洞察</a>'
                 }
             }],
         onLoadSuccess: function () {

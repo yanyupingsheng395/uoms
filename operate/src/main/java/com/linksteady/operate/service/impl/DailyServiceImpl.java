@@ -168,7 +168,6 @@ public class DailyServiceImpl implements DailyService {
             activeList = Arrays.asList(active.split(","));
         }
         return dailyMapper.getUserGroupList(activeList);
-
     }
 
     @Override
@@ -202,6 +201,7 @@ public class DailyServiceImpl implements DailyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean validUserGroup() {
+        dailyMapper.updateCheckFlagY();
         // 获取短信内容为空的情况
         // 含券：券名称为空
         String whereInfo = " and t1.IS_COUPON = 1 AND t4.COUPON_DISPLAY_NAME IS NULL";
@@ -222,17 +222,18 @@ public class DailyServiceImpl implements DailyService {
         whereInfo = " and t4.VALID_STATUS = 'N'";
         int count5 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "补贴已失效");
 
-        // 其他群组的校验字段更新为'Y'
-        whereInfo = " and (" +
-                "(t1.IS_COUPON = 1 AND t4.COUPON_DISPLAY_NAME IS NULL)" +
-                " or (t1.IS_COUPON = 0 and t4.coupon_name is not null)" +
-                " or (t2.SMS_CONTENT IS NULL)" +
-                " or (to_number(to_char(t4.VALID_END, 'YYYYMMDD')) < to_number(to_char(sysdate, 'YYYYMMDD')))" +
-                " or t4.VALID_STATUS = 'N'" +
-                ")";
-        dailyMapper.updateCheckFlagY(whereInfo);
-        int result = count1 + count2 + count3 + count4 + count5;
-
+        ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
+        Map<String, String> configMap = configCacheManager.getConfigMap();
+        String active = configMap.get("op.daily.pathactive.list");
+        int result = 0;
+        if(StringUtils.isNotEmpty(active)) {
+            List<String> activeList = Arrays.asList(active.split(","));
+            if(activeList.size() > 0) {
+                result = dailyMapper.validCheckedUserGroup(Arrays.asList(active.split(",")));
+            }
+        }else {
+            throw new RuntimeException("活跃度数据表配置有误！");
+        }
         return result > 0;
     }
 

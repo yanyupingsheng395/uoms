@@ -92,10 +92,9 @@ public interface DailyMapper {
 
     /**
      * 更新check_flag 为 'Y'
-     * @param whereInfo
      * @return
      */
-    int updateCheckFlagY(@Param("whereInfo") String whereInfo);
+    int updateCheckFlagY();
 
     /**
      * 更新头表的操作时间戳
@@ -117,4 +116,6 @@ public interface DailyMapper {
     List<DailyUserStats> getUserStatsBySpu(@Param("headId") String headId, @Param("userValue") String userValue, @Param("pathActive") String pathActive, @Param("lifecycle") String lifecycle);
 
     List<DailyUserStats> getUserStatsByProd(@Param("headId") String headId, @Param("userValue") String userValue, @Param("pathActive") String pathActive, @Param("lifecycle") String lifecycle, @Param("spuName") String spuName);
+
+    int validCheckedUserGroup(@Param("activeList") List<String> activeList);
 }

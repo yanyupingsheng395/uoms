@@ -526,8 +526,9 @@ public class PageController {
      * 单一用户的成长洞察
      */
     @RequestMapping("/personInsight")
-    public String personInsight(@RequestParam("userId") String userId, Model model) {
+    public String personInsight(@RequestParam("userId") String userId, @RequestParam("headId") String headId, Model model) {
         model.addAttribute("userId", userId);
+        model.addAttribute("headId", headId);
         return "operate/daily/person_insight";
     }
 }

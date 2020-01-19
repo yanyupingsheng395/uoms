@@ -169,7 +169,8 @@
     <update id="setSmsCode">
         update UO_OP_DAILY_TEMPLATE_CONFIG
         set SMS_CODE = #{smsCode}, is_coupon = (
-            select IS_COUPON from UO_OP_SMS_TEMPLATE where SMS_CODE = #{smsCode}
+        select count(1) from UO_OP_SMS_TEMPLATE
+        where (IS_COUPON_NAME = '1' or IS_COUPON_URL = '1') and SMS_CODE = #{smsCode}
         )
         where 1=1 and group_id in
         <foreach collection="groupIds" open="(" close=")" separator="," item="item">
@@ -303,17 +304,6 @@
 
     <update id="updateCheckFlagY">
         update UO_OP_DAILY_TEMPLATE_CONFIG set CHECK_FLAG = 'Y', CHECK_COMMENTS = ''
-        where GROUP_ID not in (
-            SELECT t1.GROUP_ID
-            FROM UO_OP_DAILY_TEMPLATE_CONFIG t1,
-                  UO_OP_SMS_TEMPLATE t2,
-                  UO_OP_DAILY_GROUP_COUPON t3,
-                  UO_OP_COUPON t4
-             where t1.SMS_CODE = t2.SMS_CODE(+)
-               and t1.group_id = t3.group_id(+)
-               and t3.coupon_id = t4.coupon_id(+)
-               ${whereInfo}
-        )
     </update>
 
     <update id="updateHeaderOpChangeDate">
@@ -372,5 +362,10 @@
         ORDER BY UCNT DESC) WHERE ROWNUM &lt;=10
     </select>
 
-
+    <select id="validCheckedUserGroup" resultType="int">
+        select count(1) from UO_OP_DAILY_TEMPLATE_CONFIG where CHECK_FLAG = 'N' and PATH_ACTIVE in
+        <foreach collection="activeList" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </select>
 </mapper>
