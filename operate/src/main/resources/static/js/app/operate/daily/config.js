@@ -90,7 +90,7 @@ function initTable() {
             title: '理解用户',
             align: 'center',
             formatter: function (value, row, index) {
-                return "<a style='color: #333;' href='/page/daily/usergroupdesc?userValue="+row['userValue']+"&pathActive="+row['pathActive']+"&lifecycle="+row['lifecycle']+"' target='_blank'><i class='mdi mdi-account mdi-14px'></i></a>";
+                return "<a style='color: #333;cursor:pointer;' onclick='userInsight(\""+row['userValue']+"\",\""+ row['pathActive']+"\",\""+ row['lifecycle']+"\")'><i class='mdi mdi-account mdi-14px'></i></a>";
             }
         },{
             title: '文案',
@@ -718,4 +718,62 @@ function configGroup() {
             initTable();
         });
     });
+}
+
+function userInsight(userValue,pathActive,lifecycle)
+{
+    //记载数据
+    $.get("/daily/usergroupdesc", {userValue: userValue,pathActive:pathActive,lifecycle:lifecycle}, function (r) {
+        if(r.code === 200) {
+           let data=r.data;
+            $("#valueDesc").text(data.valueDesc);
+            $("#valuePolicy").text(data.valuePolicy);
+
+            $("#activeDesc").text(data.activeDesc);
+            $("#activePolicy").text(data.activePolicy);
+
+            $("#lifecyleDesc").text(data.lifecyleDesc);
+            $("#lifecyclePolicy").text(data.lifecyclePolicy);
+
+            let code = "";
+            $.each(data.activeResult,function(index,value){
+                if(value.flag=='1')
+                {
+                    code +="<button class='btn btn-round btn-sm btn-info'>"+value.name+"</button>&nbsp;"
+                }else
+                {
+                    code +="<button class='btn btn-round btn-sm btn-secondary'>"+value.name+"</button>&nbsp;"
+                }
+            });
+            $("#activeBtns").html('').append(code);
+
+            code = "";
+            $.each(data.userValueResult,function(index,value){
+                if(value.flag=='1')
+                {
+                    code +="<button class='btn btn-round btn-sm btn-warning'>"+value.name+"</button>&nbsp;"
+                }else
+                {
+                    code +="<button class='btn btn-round btn-sm btn-secondary'>"+value.name+"</button>&nbsp;"
+                }
+            });
+            $("#valueBtns").html('').append(code);
+
+            code = "";
+            $.each(data.lifecycleResult,function(index,value){
+                if(value.flag=='1')
+                {
+                    code +="<button class='btn btn-round btn-sm btn-primary'>"+value.name+"</button>&nbsp;"
+                }else
+                {
+                    code +="<button class='btn btn-round btn-sm btn-secondary'>"+value.name+"</button>&nbsp;"
+                }
+            });
+            $("#lifecycleBtns").html('').append(code);
+
+            $("#userInsight_modal").modal('show');
+        }
+
+    });
+
 }
