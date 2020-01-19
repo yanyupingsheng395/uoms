@@ -64,21 +64,24 @@ function initTable() {
             }
         }, {
             field: 'pathActive',
-            title: '下步成长旅程活跃度',
+            title: '下步成长节点',
             formatter: function (value, row, index) {
                 var res = "";
                 switch (value) {
                     case "UAC_01":
-                        res = "活跃";
+                        res = "促活节点";
                         break;
                     case "UAC_02":
-                        res = "留存";
+                        res = "留存节点";
                         break;
                     case "UAC_03":
-                        res = "流失预警";
+                        res = "弱流失预警";
                         break;
                     case "UAC_04":
-                        res = "弱流失";
+                        res = "强流失预警";
+                        break;
+                    case "UAC_05":
+                        res = "沉睡预警";
                         break;
                     default:
                         res = "-";
@@ -285,7 +288,7 @@ function smsTemplateTable(groupId) {
                 valign: "middle",
                 clickToSelect: true
             }, {
-                title: '适用人群',
+                title: '文案适用用户群组',
                 colspan: 3
             }, {
                 field: 'smsContent',
@@ -340,23 +343,26 @@ function smsTemplateTable(groupId) {
                     }
                 }, {
                     field: 'pathActive',
-                    title: '下步成长旅程活跃度',
+                    title: '下步成长节点',
                     formatter:function (value, row, index) {
                         var res = [];
                         if(value !== undefined && value !== ''&& value !== null) {
                             value.split(",").forEach((v,k)=>{
                                 switch (v) {
                                     case "UAC_01":
-                                        res.push("活跃");
+                                        res.push("促活节点");
                                         break;
                                     case "UAC_02":
-                                        res.push("留存");
+                                        res.push("留存节点");
                                         break;
                                     case "UAC_03":
-                                        res.push("流失预警");
+                                        res.push("弱流失预警");
                                         break;
                                     case "UAC_04":
-                                        res.push("弱流失");
+                                        res.push("强流失预警");
+                                        break;
+                                    case "UAC_05":
+                                        res.push("沉睡预警");
                                         break;
                                 }
                             });
@@ -610,7 +616,7 @@ function updateCouponId() {
         return;
     }
     if(i!==0) {
-        title = "当前所选的补贴中存在" + i + "条记录验证不通过，'确认'只会设置校验通过的补贴？";
+        title = "当前所选的补贴中存在" + i + "条记录验证不通过，点击'确认'只会设置校验通过的补贴？";
     }
     $MB.confirm({
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
@@ -717,17 +723,5 @@ function configGroup() {
             $("#config_modal").modal('hide');
             initTable();
         });
-    });
-}
-
-// 验证当前配置是否可更改。对于未执行的记录，需要先执行完毕，方可更改。
-function validUserGroupfChanged() {
-    $.ajax({
-        url: "/daily/validUserGroupChanged",
-        async: false,
-        data: {},
-        success: function (r) {
-
-        }
     });
 }

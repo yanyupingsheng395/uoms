@@ -50,9 +50,9 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
-                                    <a class="btn btn-primary" onclick="$('#config_modal').modal('show')">
-                                        <i class="fa fa-gears"></i> 定义成长组
-                                    </a>
+<!--                                    <a class="btn btn-primary" onclick="$('#config_modal').modal('show')">-->
+<!--                                        <i class="fa fa-gears"></i> 定义成长组-->
+<!--                                    </a>-->
                                     <a class="btn btn-info" onclick="validUserGroup()">
                                         <i class="fa fa-check"></i> 校验配置
                                     </a>
@@ -87,7 +87,7 @@
             <div class="modal-body">
                 <div class="table-striped">
                     <div class="table-responsive">
-                        <p class="h6">所选成长组：</p>
+                        <p class="h6">理解所选用户群组：</p>
                         <table class="table text-nowrap table-bordered h6" id="selectedGroupInfo1" style="width: 70%;">
                             <tbody>
                                 <tr>
@@ -308,51 +308,59 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="col-md-3 control-label" style="margin-top: 45px;">文案适用用户群组</label>
+                                <div><label class="col-md-3 control-label" style="margin-top: 45px;">文案适用用户群组</label></div>
                                 <div class="col-md-9">
                                     <div style="border: solid 1px #ebebeb;padding: 8px; float: left;" id="user-box">
-                                        <div class="example-box" style="margin-left:10px;">
-                                            <label class="control-label">价&nbsp;&nbsp;&nbsp;&nbsp;值：</label>
-                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                                <input type="checkbox" name="userValue" value="ULC_01"><span>重要</span>
-                                            </label>
-                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                                <input type="checkbox" name="userValue" value="ULC_02"><span>主要</span>
-                                            </label>
-                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                                <input type="checkbox" name="userValue" value="ULC_03"><span>普通</span>
-                                            </label>
-                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                                <input type="checkbox" name="userValue" value="ULC_04"><span>长尾</span>
-                                            </label>
-                                        </div>
-                                        <div class="example-box" style="margin-left:10px;">
-                                            <label class="control-label">周&nbsp;&nbsp;&nbsp;&nbsp;期：</label>
-                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                                <input type="checkbox" name="lifeCycle" value="1"><span>新用户</span>
-                                            </label>
-                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                                <input type="checkbox" name="lifeCycle" value="0"><span>复购用户</span>
-                                            </label>
-                                        </div>
-                                        <div class="example-box" style="margin-left:10px;">
-                                            <label class="control-label">活跃度：</label>
-                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                                <input type="checkbox" name="pathActive" value="UAC_01"><span>活跃</span>
-                                            </label>
-                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                                <input type="checkbox" name="pathActive" value="UAC_02"><span>留存</span>
-                                            </label>
-                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                                <input type="checkbox" name="pathActive" value="UAC_03"><span>流失预警</span>
-                                            </label>
-                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                                <input type="checkbox" name="pathActive" value="UAC_04" disabled readonly><span>弱流失</span>
-                                            </label>
-                                            <label class="lyear-checkbox checkbox-inline checkbox-primary">
-                                                <input type="checkbox" name="pathActive" value="UAC_05" disabled readonly><span>强流失</span>
-                                            </label>
-                                        </div>
+                                        <table>
+                                            <tr>
+                                                <td style="width: 56px;">价　值:</td>
+                                                <td>
+                                                    <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                        <input type="checkbox" name="userValue" value="ULC_01"><span>重要</span>
+                                                    </label>
+                                                    <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                        <input type="checkbox" name="userValue" value="ULC_02"><span>主要</span>
+                                                    </label>
+                                                    <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                        <input type="checkbox" name="userValue" value="ULC_03"><span>普通</span>
+                                                    </label>
+                                                    <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                        <input type="checkbox" name="userValue" value="ULC_04"><span>长尾</span>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>周　期:</td>
+                                                <td>
+                                                    <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                        <input type="checkbox" name="lifeCycle" value="1"><span>新用户</span>
+                                                    </label>
+                                                    <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                        <input type="checkbox" name="lifeCycle" value="0"><span>复购用户</span>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>活跃度:</td>
+                                                <td>
+                                                    <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                        <input type="checkbox" name="pathActive" value="UAC_01"><span>活跃</span>
+                                                    </label>
+                                                    <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                        <input type="checkbox" name="pathActive" value="UAC_02"><span>留存</span>
+                                                    </label>
+                                                    <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                        <input type="checkbox" name="pathActive" value="UAC_03"><span>流失预警</span>
+                                                    </label>
+                                                    <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                        <input type="checkbox" name="pathActive" value="UAC_04" disabled readonly><span>弱流失</span>
+                                                    </label>
+                                                    <label class="lyear-checkbox checkbox-inline checkbox-primary" style="margin-left: 0px;">
+                                                        <input type="checkbox" name="pathActive" value="UAC_05" disabled readonly><span>强流失</span>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             </div>

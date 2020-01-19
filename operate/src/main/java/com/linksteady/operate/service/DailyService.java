@@ -80,5 +80,4 @@ public interface DailyService {
     List<DailyUserStats> getUserStatsBySpu(String headerId,String userValue,String pathActive,String lifecycle);
 
     List<DailyUserStats> getUserStatsByProd(String headerId,String userValue,String pathActive,String lifecycle,String spuName);
-
 }

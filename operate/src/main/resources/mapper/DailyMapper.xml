@@ -368,4 +368,8 @@
             #{item}
         </foreach>
     </select>
+
+    <select id="getTodayStatus" resultType="string">
+        select STATUS from UO_OP_DAILY_HEADER where to_char(TOUCH_DT, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd')
+    </select>
 </mapper>
