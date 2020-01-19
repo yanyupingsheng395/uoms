@@ -90,8 +90,14 @@
                     <div class="row desc_content uvalue" >
                         <div class="col-md-1 desc_content_col_title"><span>价&nbsp;&nbsp;值</span></div>
                         <div class="col-md-3">
-                            <button th:each="rt:${userValueResult}" class="btn btn-round btn-sm btn-warning" th:text="${rt.name}">
-                            </button>
+                            <span th:each="rt:${userValueResult}">
+                               <span th:if="${rt.flag=='1'}">
+                                      <button class="btn btn-round btn-sm btn-warning" th:text="${rt.name}"></button>
+                               </span>
+                                <span th:if="${rt.flag=='0'}">
+                                       <button class="btn btn-round btn-sm btn-secondary" th:text="${rt.name}"></button>
+                                </span>
+                            </span>
                         </div>
                         <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#FAA64B;font-size: 40px;"></i></div>
                         <div class="col-md-2"><span th:text="${valueDesc}"></span></div>
@@ -106,11 +112,14 @@
                     <div class="row desc_content pactive" >
                         <div class="col-md-1 desc_content_col_title"><span>活跃度</span></div>
                         <div class="col-md-3">
-                            <button class="btn btn-round btn-sm btn-info">活跃</button>
-                            <button class="btn btn-round btn-sm btn-secondary">留存</button>
-                            <button class="btn btn-round btn-sm btn-secondary">流失预警</button>
-                            <button class="btn btn-round btn-sm btn-secondary">弱流失</button>
-                            <button class="btn btn-round btn-sm btn-secondary">强流失</button>
+                            <span th:each="rt:${activeResult}">
+                               <span th:if="${rt.flag=='1'}">
+                                      <button class="btn btn-round btn-sm btn-info" th:text="${rt.name}"></button>
+                               </span>
+                                <span th:if="${rt.flag=='0'}">
+                                       <button class="btn btn-round btn-sm btn-secondary" th:text="${rt.name}"></button>
+                                </span>
+                            </span>
                         </div>
                         <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#48B0F7;font-size: 40px;"></i></div>
                         <div class="col-md-2"><span th:text="${activeDesc}"></span></div>
@@ -125,8 +134,14 @@
                     <div class="row desc_content ulifecycle" >
                         <div class="col-md-1 desc_content_col_title"><span>生命周</br>期阶段</span></div>
                         <div class="col-md-3">
-                            <button class="btn btn-round btn-sm btn-primary">新用户</button>
-                            <button class="btn btn-round btn-sm btn-secondary">复购用户</button>
+                            <span th:each="rt:${lifecycleResult}">
+                               <span th:if="${rt.flag=='1'}">
+                                      <button class="btn btn-round btn-sm btn-primary" th:text="${rt.name}"></button>
+                               </span>
+                                <span th:if="${rt.flag=='0'}">
+                                       <button class="btn btn-round btn-sm btn-secondary" th:text="${rt.name}"></button>
+                                </span>
+                            </span>
                         </div>
                         <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#33CABB;font-size: 40px;"></i></div>
                         <div class="col-md-2"><span th:text="${lifecyleDesc}"></span></div>
