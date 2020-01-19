@@ -1,81 +1,12 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="X-UA-Compatible" content="edge" />
-    <title>用户成长系统</title>
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
-    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/common.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/iconfont.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/font-awesome-4.7.0/css/font-awesome.css}"/>
-</head>
-<style>
-    .desc_title {
-        margin-left: 15px;
-        margin-right: 15px;
-        margin-top: 10px;
-        background-color:rgba(66,139,202,0.5);
-        border-radius: 6px;
-        font-weight: bold;
-        opacity: 0.7;
-    }
-
-    .desc_title_col {
-        margin-top: 5px;
-        margin-bottom: 5px;
-        text-align: center;
-    }
-
-    .desc_content {
-        padding: 40px 15px 40px 15px;
-        vertical-align: middle;
-        margin-left: 15px;
-        margin-right: 15px;
-    }
-
-    .desc_content_col_title {
-        margin-left: 15px;
-        margin-right: 15px;
-        vertical-align: middle;
-        margin-top: 5px;
-    }
-
-    .uvalue{
-        background-color:rgba(250,166,75,0.1);
-    }
-
-    .pactive{
-        background-color:rgba(72,176,247,0.1);
-    }
-
-    .ulifecycle {
-        background-color:rgba(51,202,187,0.1);
-    }
-
-    .hr {margin-top: 1px;
-        margin-bottom: 1px;
-    }
-</style>
-
-<body class="gray-bg">
-    <div class="container-div">
-        <div class="row">
-            <div class="col-sm-12 search-collapse">
-                <div class="row">
-                    <div>
-                        <span class="navbar-page-title">理解用户群组</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <hr class="hr"/>
-                </div>
-
+<div class="modal" tabindex="-1" role="dialog" id="userInsight_modal"  aria-labelledby="myLargeModalLabel4" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">理解用户群组</h5>
+            </div>
+            <div class="modal-body">
                 <div class="row">
                     <!-- 标题-->
                     <div class="row desc_title" >
@@ -89,74 +20,46 @@
                     <!-- 当前所选标签 -->
                     <div class="row desc_content uvalue" >
                         <div class="col-md-1 desc_content_col_title"><span>价&nbsp;&nbsp;值</span></div>
-                        <div class="col-md-3">
-                            <span th:each="rt:${userValueResult}">
-                               <span th:if="${rt.flag=='1'}">
-                                      <button class="btn btn-round btn-sm btn-warning" th:text="${rt.name}"></button>
-                               </span>
-                                <span th:if="${rt.flag=='0'}">
-                                       <button class="btn btn-round btn-sm btn-secondary" th:text="${rt.name}"></button>
-                                </span>
-                            </span>
+                        <div class="col-md-3" id="valueBtns">
                         </div>
                         <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#FAA64B;font-size: 40px;"></i></div>
-                        <div class="col-md-2"><span th:text="${valueDesc}"></span></div>
+                        <div class="col-md-2"><span id="valueDesc"></span></div>
                         <div class="col-md-1"><i class="mdi mdi-arrow-right-bold"  style="color:#FAA64B;font-size: 40px;"></i></div>
-                        <div class="col-md-3"><span th:text="${valuePolicy}"></span></div>
+                        <div class="col-md-3"><span id="valuePolicy"></span></div>
                     </div>
 
                     <div class="row">
-                        <hr class="hr"/>
+                        <hr class="hr1"/>
                     </div>
 
                     <div class="row desc_content pactive" >
-                        <div class="col-md-1 desc_content_col_title"><span>活跃度</span></div>
-                        <div class="col-md-3">
-                            <span th:each="rt:${activeResult}">
-                               <span th:if="${rt.flag=='1'}">
-                                      <button class="btn btn-round btn-sm btn-info" th:text="${rt.name}"></button>
-                               </span>
-                                <span th:if="${rt.flag=='0'}">
-                                       <button class="btn btn-round btn-sm btn-secondary" th:text="${rt.name}"></button>
-                                </span>
-                            </span>
+                        <div class="col-md-1 desc_content_col_title"><span>下步成</br>长节点</span></div>
+                        <div class="col-md-3" id="activeBtns">
                         </div>
                         <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#48B0F7;font-size: 40px;"></i></div>
-                        <div class="col-md-2"><span th:text="${activeDesc}"></span></div>
+                        <div class="col-md-2"><span id="activeDesc"></span></div>
                         <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#48B0F7;font-size: 40px;"></i></div>
-                        <div class="col-md-3"><span th:text="${activePolicy}"></span></div>
+                        <div class="col-md-3"><span id="activePolicy"></span></div>
                     </div>
 
                     <div class="row">
-                        <hr class="hr"/>
+                        <hr class="hr1"/>
                     </div>
 
                     <div class="row desc_content ulifecycle" >
                         <div class="col-md-1 desc_content_col_title"><span>生命周</br>期阶段</span></div>
-                        <div class="col-md-3">
-                            <span th:each="rt:${lifecycleResult}">
-                               <span th:if="${rt.flag=='1'}">
-                                      <button class="btn btn-round btn-sm btn-primary" th:text="${rt.name}"></button>
-                               </span>
-                                <span th:if="${rt.flag=='0'}">
-                                       <button class="btn btn-round btn-sm btn-secondary" th:text="${rt.name}"></button>
-                                </span>
-                            </span>
+                        <div class="col-md-3" id="lifecycleBtns">
                         </div>
                         <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#33CABB;font-size: 40px;"></i></div>
-                        <div class="col-md-2"><span th:text="${lifecyleDesc}"></span></div>
+                        <div class="col-md-2"><span id="lifecyleDesc"></span></div>
                         <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#33CABB;font-size: 40px;"></i></div>
-                        <div class="col-md-3"><span></span><span th:text="${lifecyclePolicy}"></span></div>
+                        <div class="col-md-3"><span></span><span id="lifecyclePolicy"></span></div>
                     </div>
                 </div>
-            </div >
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
         </div>
     </div>
-<input id="userValue"  type="hidden" />
-<input id="pathActive"  type="hidden" />
-<input id="lifecycle"  type="hidden" />
-<script>
-</script>
-<!--<script data-th-src="@{/js/app/operate/daily/usergroupdesc.js}"></script>-->
-</body>
-</html>
+</div>

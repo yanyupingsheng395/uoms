@@ -22,6 +22,53 @@
         .form-horizontal .checkbox, .form-horizontal .checkbox-inline, .form-horizontal .radio, .form-horizontal .radio-inline {
             padding-top: 0;
         }
+
+        .desc_title {
+            margin-left: 15px;
+            margin-right: 15px;
+            margin-top: 10px;
+            margin-bottom: 1px;
+            background-color:rgba(66,139,202,0.5);
+            border-radius: 6px;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+
+        .desc_title_col {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .desc_content {
+            padding: 40px 15px 40px 15px;
+            vertical-align: middle;
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+
+        .desc_content_col_title {
+
+            margin-right: 15px;
+            vertical-align: middle;
+            margin-top: 5px;
+        }
+
+        .uvalue{
+            background-color:rgba(250,166,75,0.1);
+        }
+
+        .pactive{
+            background-color:rgba(72,176,247,0.1);
+        }
+
+        .ulifecycle {
+            background-color:rgba(51,202,187,0.1);
+        }
+
+        .hr1 {margin-top: 1px;
+            margin-bottom: 1px;
+        }
     </style>
 </head>
 
@@ -690,6 +737,8 @@
         </div>
     </div>
 </div>
+
+<div th:include="operate/daily/usergroupdesc"></div>
 <input type="hidden" id="currentGroupId"/>
 <input type="hidden" id="currentGroupInfo"/>
 <script>
