@@ -719,3 +719,15 @@ function configGroup() {
         });
     });
 }
+
+// 验证当前配置是否可更改。对于未执行的记录，需要先执行完毕，方可更改。
+function validUserGroupfChanged() {
+    $.ajax({
+        url: "/daily/validUserGroupChanged",
+        async: false,
+        data: {},
+        success: function (r) {
+
+        }
+    });
+}

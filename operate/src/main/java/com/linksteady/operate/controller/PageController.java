@@ -527,8 +527,10 @@ public class PageController {
      */
     @RequestMapping("/personInsight")
     public String personInsight(@RequestParam("userId") String userId, @RequestParam("headId") String headId, Model model) {
+        ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
         model.addAttribute("userId", userId);
         model.addAttribute("headId", headId);
+        model.addAttribute("pathActive", configCacheManager.getConfigMap().get("op.daily.pathactive.list"));
         return "operate/daily/person_insight";
     }
 }

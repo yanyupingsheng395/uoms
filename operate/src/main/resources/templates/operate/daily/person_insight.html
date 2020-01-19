@@ -31,12 +31,8 @@
 <div data-th-include="common/common"></div>
 <div class="lyear-layout-web">
     <div class="lyear-layout-container">
-        <!-- 左侧导航 -->
-        <div data-th-include="common/aside"></div>
-        <!-- 头部信息 -->
-        <div data-th-include="common/header"></div>
         <!-- 页面主要内容 -->
-        <main class="lyear-layout-content">
+        <main class="">
             <div class="container-div ui-layout-center">
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
@@ -137,6 +133,7 @@
 <script>
     let userId = [[${userId}]];
     let headId = [[${headId}]];
+    let pathActive = [[${pathActive}]];
 </script>
 <script data-th-src="@{/plugins/select2/js/select2.js}"></script>
 <script data-th-src="@{/plugins/select2/js/i18n/zh-CN.js}"></script>

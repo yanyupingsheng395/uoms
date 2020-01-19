@@ -306,8 +306,8 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId, ebp
             }],
             grid: {left: '8%',right:'19%'},
             title: {
-                text: '在'+spuName+'类目中，第'+buyOrder.split('-')[0]+'次购买'+ebpProductName+'，第'+buyOrder.split('-')[1]+'次购买'+convert_product+'时，\n购买间隔与购买的概率分布',
-                x: 'left',
+                text: '在'+spuName+'类目中，第'+buyOrder.split('-')[0]+'次购买'+ebpProductName+'，第'+buyOrder.split('-')[1]+'次购买'+convert_product+'时，购买间隔与购买的概率分布',
+                x: 'center',
                 y: 'bottom',
                 textStyle: {
                     //文字颜色
