@@ -72,9 +72,8 @@ function statInputNum() {
         }
         total_num = y;
         var code = "";
-        code += n + ":当前文案的字数<br/>" + m + ":除去模板变量当前文案可输入字数<br/>" + y + ":替换模板变量为系统预设最大值后当前文案字数";
-        $("#numRemark").html('').append(code);
-        $("#word").text(n + "/" + m + "/" + y);
+        code += n + ":编写内容字符数 / " + m + ":填充变量最大字符数 / " + y + ":文案总字符数";
+        $("#word").text(code);
     });
 }
 
@@ -243,7 +242,7 @@ function validCouponSendType() {
             }
         }
         if(isCouponName === '0') {
-            if(smsContent.indexOf("${COUPON_URL}") > -1) {
+            if(smsContent.indexOf("${COUPON_NAME}") > -1) {
                 $MB.n_warning("选择'补贴名称:否'，文案内容不能出现${COUPON_NAME}");
                 return false;
             }
@@ -481,3 +480,52 @@ $("#btn_edit").click(function () {
         }
     });
 });
+
+// 补贴链接选是，补贴名称自动选是、商品链接自动选否；
+function isCouponUrlTrueClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponName"]:radio[value="1"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isCouponName"]').attr("disabled", "disabled");
+
+    $("#smsTemplateAddForm").find('input[name="isProductUrl"]:radio[value="0"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isProductUrl"]').attr("disabled", "disabled");
+
+    $('#isCouponUrl-error').show();
+    $('#isCouponName-error').show();
+    $('#isProductUrl-error').hide();
+}
+
+// 补贴链接选否，补贴名称自动选否、商品链接可选；
+function isCouponUrlFalseClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponName"]:radio[value="0"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isProductUrl"]').removeAttr("disabled");
+
+    $('#isCouponUrl-error').hide();
+    $('#isCouponName-error').hide();
+}
+
+// 补贴名称选是，补贴链接自动选是；
+function isCouponNameTrueClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="1"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    $('#isCouponName-error').show();
+    $('#isCouponUrl-error').show();
+}
+// 补贴名称选否，补贴链接自动选否；
+function isCouponNameFalseClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="0"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    $('#isCouponName-error').hide();
+    $('#isCouponUrl-error').hide();
+}
+// 商品链接选是，补贴链接自动选否；
+function isProdUrlTrueClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="0"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    $('#isProductUrl-error').show();
+    $('#isCouponUrl-error').hide();
+}
+// 商品链接选否，补贴链接可选；
+function isProdUrlFalseClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').removeAttr("disabled");
+    $('#isProductUrl-error').hide();
+}

@@ -535,6 +535,7 @@ public class InsightServiceImpl implements InsightService {
 
     @Override
     public Map<String, Object> getConvertRateChart(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId) {
+        DecimalFormat df = new DecimalFormat("#.##");
         Map<String, Object> result = Maps.newHashMap();
         lock.lock();
         try {
@@ -546,9 +547,10 @@ public class InsightServiceImpl implements InsightService {
                     nextEbpProductId = "-1";
                 }
                 ConversionData conversionData = insightThriftClient.getInsightService().getConversionData(Long.parseLong(spuId), Long.parseLong(purchOrder), Long.parseLong(ebpProductId), Long.parseLong(nextEbpProductId));
+//                ;
                 result.put("xdata", conversionData.xdata);
-                result.put("ydata", conversionData.ydata);
-                result.put("zdata", conversionData.zdata);
+                result.put("ydata", conversionData.ydata.stream().map(x->df.format(x * 100)).collect(Collectors.toList()));
+                result.put("zdata", conversionData.zdata.stream().map(x->df.format(x * 100)).collect(Collectors.toList()));
             } else {
                 result.put("xdata", Lists.newArrayList());
                 result.put("ydata", Lists.newArrayList());
@@ -772,10 +774,5 @@ public class InsightServiceImpl implements InsightService {
         List<Integer> cnt2 = data2List.stream().map(x -> Integer.valueOf(String.valueOf(x.get(2)))).collect(Collectors.toList());
         List<Integer> cnt3 = data3List.stream().map(x -> Integer.valueOf(String.valueOf(x.get(2)))).collect(Collectors.toList());
         return result;
-    }
-
-    public static void main(String[] args) {
-        int a = 666;
-
     }
 }

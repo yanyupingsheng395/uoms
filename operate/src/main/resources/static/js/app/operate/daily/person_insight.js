@@ -78,12 +78,12 @@ function getProductOption(xdata, ydata, spuName, purchOrder, data) {
         },
         grid: {
             left: '8%',
-            right: '19%',
+            right: '20%',
             containLabel: true
         },
         xAxis : [
             {
-                name: '下次转化的商品',
+                name: '下次有可能购买的商品',
                 type : 'category',
                 data : xdata,
                 axisTick: {
@@ -98,7 +98,7 @@ function getProductOption(xdata, ydata, spuName, purchOrder, data) {
         ],
         yAxis : [
             {
-                name: '转化概率（%）',
+                name: '购买概率(%)',
                 type : 'value',
                 splitArea: {show: false},
                 splitLine: {show: false}
@@ -126,7 +126,7 @@ function getProductOption(xdata, ydata, spuName, purchOrder, data) {
         title: {
             text: '在'+spuName+'类目第'+purchOrder+'次购买'+data['ebpProductMap']['EBP_PRODUCT_NAME']+'的用户，第'+(parseInt(purchOrder) + 1)+'次购买商品的概率分布',
             x: 'center',
-            y: 'bottom',
+            y: 'top',
             textStyle: {
                 //文字颜色
                 color: '#000',
@@ -150,7 +150,7 @@ function getSpuChartOption(data, spuName, purchOrder) {
         title: {
             text: '用户在' + spuName + '类目第' + purchOrder + '次购买的商品分布',
             x: 'center',
-            y: 'bottom',
+            y: 'top',
             textStyle: {
                 //文字颜色
                 color: '#000',
@@ -182,7 +182,7 @@ function getSpuChartOption(data, spuName, purchOrder) {
         },
         xAxis : [
             {
-                name: "spu/商品",
+                name: "购买类目/商品",
                 type : 'category',
                 data : data.xdata1,
                 axisTick: {
@@ -197,7 +197,7 @@ function getSpuChartOption(data, spuName, purchOrder) {
         ],
         yAxis : [
             {
-                name: '用户数',
+                name: '用户数(人)',
                 type : 'value',
                 splitArea: {show: false},
                 splitLine: {show: false}
@@ -235,12 +235,12 @@ function getSpuChartOption(data, spuName, purchOrder) {
                         color: function (d) {
                             if(d.name === data['ebpProductMap']['EBP_PRODUCT_NAME']) {
                                 flag = true;
-                                return "red";
+                                return "#CD2626";
                             }else {
                                 if(!flag && d.name === '其他') {
-                                    return 'red';
+                                    return '#CD2626';
                                 }
-                                return "#CD2626";
+                                return "rgba(205,38,38,0.4)";
                             }
                         }
                     }
@@ -264,10 +264,9 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId, ebp
         var data = r.data;
         let option = {
             legend: {
-                data: ['实际值', '拟合值'],
-                align: 'right',
-                right: 10,
-                selected: {'实际值': true, '拟合值': false}
+                data: ['实际值', '拟合值', '距今购买间隔'],
+                selected: {'实际值': false, '拟合值': true, '距今购买间隔': true},
+                top: '25'
             },
             tooltip: {
                 trigger: 'axis',
@@ -277,14 +276,14 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId, ebp
                 }
             },
             xAxis: {
-                name: '购买间隔（天）',
+                name: '购买间隔(天)',
                 type: 'category',
                 data: data.xdata,
                 splitLine:{show: false},
                 splitArea : {show : false}
             },
             yAxis: {
-                name: "购买概率",
+                name: "购买概率(%)",
                 type: 'value',
                 splitLine:{show: false},
                 splitArea : {show : false}
@@ -303,12 +302,45 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId, ebp
                 name: '实际值',
                 data: data.ydata,
                 type: 'line'
+            }, {
+                name: '距今购买间隔',
+                type: 'line',
+                markLine :{
+                    symbol: ['none', 'none'],//去掉箭头
+                    itemStyle: {
+                        normal: {
+                            yAxisIndex: 0,
+                            lineStyle: {
+                                type: 'dotted',
+                                color:{//设置渐变
+                                    type: 'linear',
+
+                                    colorStops: [{
+                                        offset: 0, color: 'red '// 0% 处的颜色
+                                    }, {
+                                        offset: 1, color: 'red' // 100% 处的颜色
+                                    }],
+                                    global: false // 缺省为 false
+                                }
+                            },
+                            label: {
+                                show: true,
+                                position:'middle',
+                                color: 'red',
+                                formatter:'{c} 天'
+                            }
+                        }
+                    },
+                    data: [{
+                        xAxis : getUserLastBuyDual(spuId)
+                    }]
+                }
             }],
             grid: {left: '8%',right:'19%'},
             title: {
                 text: '在'+spuName+'类目中，第'+buyOrder.split('-')[0]+'次购买'+ebpProductName+'，第'+buyOrder.split('-')[1]+'次购买'+convert_product+'时，购买间隔与购买的概率分布',
                 x: 'center',
-                y: 'bottom',
+                y: 'top',
                 textStyle: {
                     //文字颜色
                     color: '#000',
@@ -323,46 +355,23 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId, ebp
                 }
             }
         };
-        getUserLastBuyDual(spuId, option, chart);
+        chart.hideLoading();
+        chart.setOption(option);
     });
 }
 
 // 获取用户上一次购买距离每日运营的天数
-function getUserLastBuyDual(spuId, option, chart) {
-    $.get("/insight/getUserBuyDual", {headId: headId, userId: userId, spuId:spuId}, function (r) {
-        option.series[1].markLine = {
-            symbol: ['none', 'none'],//去掉箭头
-            itemStyle: {
-                normal: {
-                    yAxisIndex: 0,
-                    lineStyle: {
-                        type: 'dotted',
-                        color:{//设置渐变
-                            type: 'linear',
-
-                            colorStops: [{
-                                offset: 0, color: 'red '// 0% 处的颜色
-                            }, {
-                                offset: 1, color: 'red' // 100% 处的颜色
-                            }],
-                            global: false // 缺省为 false
-                        }
-                    },
-                    label: {
-                        show: true,
-                        position:'middle',
-                        color: 'red',
-                        formatter:'{c} 天'
-                    }
-                }
-            },
-            data: [{
-                xAxis : r.data
-            }]
-        };
-        chart.hideLoading();
-        chart.setOption(option);
+function getUserLastBuyDual(spuId) {
+    var data = '';
+    $.ajax({
+        url:"/insight/getUserBuyDual",
+        async: false,
+        data:{headId: headId, userId: userId, spuId:spuId},
+        success: function (r) {
+            data = r.data;
+        }
     });
+    return data;
 }
 
 function getGrowthUserTable(spuId) {
@@ -370,7 +379,8 @@ function getGrowthUserTable(spuId) {
        var dual = res.data;
        var flag = false;
         $.get("/insight/getUserGrowthPathPoint", {userId:userId, spuId:spuId}, function (r) {
-            let code = "<thead><tr><th>活跃状态</th><th>距上次购买第天（天）</th><th>再次购买概率（%）</th><th>用户上次购买时间</th><th>用户成长节点日期</th></tr></thead>";
+            let code = "<thead><tr><th>下一步成长节点</th><th>距上次购买第天（天）</th><th>再次购买概率（%）</th><th>用户上次购买时间</th><th>用户成长节点日期</th></tr></thead>";
+            code += "<tbody>";
             r.data.forEach((v,k)=>{
                 if(k < 3) {
                     if(!flag && v['ACTIVE_DUAL'] > dual) {
@@ -383,12 +393,36 @@ function getGrowthUserTable(spuId) {
                     code += "<tr style='background-color: #ccc'><td>"+v['ACTIVE_TYPE']+"</td><td>"+v['ACTIVE_DUAL']+"</td><td>"+v['PROB']+"</td><td>"+v['LAST_BUY_DT']+"</td><td>"+v['GROWTH_DT']+"</td></tr>";
                 }
             });
+            code += "</tbody>";
             if(code === "") {
                 code = "<tr class='text-center'><td colspan='5'>没有找到匹配的记录</td></tr>";
             }
             $("#growthTable").html('').append(code);
+            mergeCell('growthTable', 0, 6, 3);
         });
     });
+}
+
+function mergeCell(table1, startRow, endRow, col) {
+    var tb = document.getElementById(table1);
+    if(!tb || !tb.rows || tb.rows.length <= 0) {
+        return;
+    }
+    if(col >= tb.rows[0].cells.length || (startRow >= endRow && endRow != 0)) {
+        return;
+    }
+    if(endRow == 0) {
+        endRow = tb.rows.length - 1;
+    }
+    for(var i = startRow; i < endRow; i++) {
+        if(tb.rows[startRow].cells[col].innerHTML == tb.rows[i + 1].cells[col].innerHTML) { //如果相等就合并单元格,合并之后跳过下一行
+            tb.rows[i + 1].removeChild(tb.rows[i + 1].cells[col]);
+            tb.rows[startRow].cells[col].rowSpan = (tb.rows[startRow].cells[col].rowSpan) + 1;
+        } else {
+            mergeCell(table1, i + 1, endRow, col);
+            break;
+        }
+    }
 }
 // 获取用户在类目的成长价值
 function getUserValue() {
@@ -498,7 +532,7 @@ function getDateChartOption(chartId, data, title) {
         title: {
             text: title + '时间',
             x: 'center',
-            y: 'bottom',
+            y: 'top',
             textStyle: {
                 //文字颜色
                 color: '#000',

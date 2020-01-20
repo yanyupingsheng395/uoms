@@ -1,6 +1,6 @@
 let USER_VALUE = {ULC_01: '重要',ULC_02: '主要',ULC_03: '普通',ULC_04: '长尾'};
 let USER_LIFE_CYCLE = {0: '复购用户',1: '新用户'};
-let PATH_ACTIVE = {UAC_01: '活跃', UAC_02: '留存', UAC_03: '流失预警', UAC_04: '弱流失', UAC_05: '强流失'};
+let PATH_ACTIVE = {UAC_01: '促活节点', UAC_02: '留存节点', UAC_03: '弱流失预警', UAC_04: '强流失预警', UAC_05: '沉睡预警'};
 $(function () {
     initTable();
 });
@@ -93,7 +93,7 @@ function initTable() {
             title: '理解用户',
             align: 'center',
             formatter: function (value, row, index) {
-                return "<a style='color: #333;' href='/page/daily/usergroupdesc?userValue="+row['userValue']+"&pathActive="+row['pathActive']+"&lifecycle="+row['lifecycle']+"' target='_blank'><i class='mdi mdi-account mdi-14px'></i></a>";
+                return "<a style='color: #333;cursor:pointer;' onclick='userInsight(\""+row['userValue']+"\",\""+ row['pathActive']+"\",\""+ row['lifecycle']+"\")'><i class='mdi mdi-account mdi-14px'></i></a>";
             }
         },{
             title: '文案',
@@ -130,12 +130,20 @@ function initTable() {
             field: 'checkFlag',
             title: '校验结果',
             align: 'center',
+            cellStyle:function(value,row,index){
+                if (value === "Y"){
+                    return {css:{"background-color":"rgba(0,255,0,0.2)"}}
+                }
+                if (value === "N"){
+                    return {css:{"background-color":"rgba(250,0,0,0.2)"}}
+                }
+            },
             formatter: function (value, row, index) {
                 if(value === 'Y') {
-                    return "<font color='green'><i class='fa fa-check'></i></font>";
+                    return "通过";
                 }
                 if(value === 'N') {
-                    return "<font color='red'><i class='fa fa-close'></i></font>";
+                    return "未通过";
                 }
                 return "-";
             }
@@ -456,26 +464,26 @@ function couponTable(groupId) {
                 }
             }, {
                 field: 'pathActive',
-                title: '下步成长旅程活跃度',
+                title: '下步成长节点',
                 formatter:function (value, row, index) {
                     var res = [];
                     if(value !== undefined && value !== ''&& value !== null) {
                         value.split(",").forEach((v,k)=>{
                             switch (v) {
                                 case "UAC_01":
-                                    res.push("活跃");
+                                    res.push("促活节点");
                                     break;
                                 case "UAC_02":
-                                    res.push("留存");
+                                    res.push("留存节点");
                                     break;
                                 case "UAC_03":
-                                    res.push("流失预警");
+                                    res.push("弱流失预警");
                                     break;
                                 case "UAC_04":
-                                    res.push("弱流失");
+                                    res.push("强流失预警");
                                     break;
                                 case "UAC_05":
-                                    res.push("强流失");
+                                    res.push("沉睡预警");
                                     break;
                             }
                         });
@@ -521,12 +529,20 @@ function couponTable(groupId) {
                 field: 'checkFlag',
                 title: '校验结果',
                 align: 'center',
+                cellStyle:function(value,row,index){
+                    if (value === "1"){
+                        return {css:{"background-color":"rgba(0,255,0,0.2)"}}
+                    }
+                    if (value === "0"){
+                        return {css:{"background-color":"rgba(250,0,0,0.2)"}}
+                    }
+                },
                 formatter: function (value, row, index) {
                     if(value === '1') {
-                        return "<font color='green'><i class='fa fa-check'></i></font>";
+                        return "通过";
                     }
                     if(value === '0') {
-                        return "<font color='red'><i class='fa fa-close'></i></font>";
+                        return "未通过";
                     }
                     return "-";
                 }
@@ -724,4 +740,62 @@ function configGroup() {
             initTable();
         });
     });
+}
+
+function userInsight(userValue,pathActive,lifecycle)
+{
+    //记载数据
+    $.get("/daily/usergroupdesc", {userValue: userValue,pathActive:pathActive,lifecycle:lifecycle}, function (r) {
+        if(r.code === 200) {
+            let data=r.data;
+            $("#valueDesc").text(data.valueDesc);
+            $("#valuePolicy").text(data.valuePolicy);
+
+            $("#activeDesc").text(data.activeDesc);
+            $("#activePolicy").text(data.activePolicy);
+
+            $("#lifecyleDesc").text(data.lifecyleDesc);
+            $("#lifecyclePolicy").text(data.lifecyclePolicy);
+
+            let code = "";
+            $.each(data.activeResult,function(index,value){
+                if(value.flag=='1')
+                {
+                    code +="<button class='btn btn-round btn-sm btn-info'>"+value.name+"</button>&nbsp;"
+                }else
+                {
+                    code +="<button class='btn btn-round btn-sm btn-secondary'>"+value.name+"</button>&nbsp;"
+                }
+            });
+            $("#activeBtns").html('').append(code);
+
+            code = "";
+            $.each(data.userValueResult,function(index,value){
+                if(value.flag=='1')
+                {
+                    code +="<button class='btn btn-round btn-sm btn-warning'>"+value.name+"</button>&nbsp;"
+                }else
+                {
+                    code +="<button class='btn btn-round btn-sm btn-secondary'>"+value.name+"</button>&nbsp;"
+                }
+            });
+            $("#valueBtns").html('').append(code);
+
+            code = "";
+            $.each(data.lifecycleResult,function(index,value){
+                if(value.flag=='1')
+                {
+                    code +="<button class='btn btn-round btn-sm btn-primary'>"+value.name+"</button>&nbsp;"
+                }else
+                {
+                    code +="<button class='btn btn-round btn-sm btn-secondary'>"+value.name+"</button>&nbsp;"
+                }
+            });
+            $("#lifecycleBtns").html('').append(code);
+
+            $("#userInsight_modal").modal('show');
+        }
+
+    });
+
 }
