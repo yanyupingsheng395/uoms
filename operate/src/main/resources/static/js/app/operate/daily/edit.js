@@ -57,7 +57,7 @@ function getUserStrategyList() {
                         return "无";
                     }else
                     {
-                        return  "满"+row.couponMin+"减"+row.couponDeno;
+                        return  row.couponDeno+"元";
                     }
                 }
 
@@ -74,7 +74,7 @@ function getUserStrategyList() {
                     let content=value;
                     if(content.length>=30)
                     {
-                        let temp = content.substring(0, 40) + "...";
+                        let temp = content.substring(0, 30) + "...";
                         return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + content + '">' + temp + '</a>';
                     }else
                     {
@@ -88,7 +88,7 @@ function getUserStrategyList() {
                 width: 80,
                 formatter: function (value, row, idx)
                 {
-                    return '<a href="/page/personInsight?userId='+row['userId']+'&headId='+headId+'" target="_blank">成长洞察</a>'
+                    return "<button class='btn btn-primary btn-xs' onclick='growthInsight(\""+row['userId']+"\",\""+ headId+"\")'>know how</button>";
                 }
             }],
         onLoadSuccess: function () {
@@ -96,6 +96,16 @@ function getUserStrategyList() {
         }
     };
     $MB.initTable('userStrategyListTable', settings);
+}
+
+/**
+ * 成长洞察页
+ * @param userId
+ * @param headId
+ */
+function growthInsight(userId,headId)
+{
+    //todo
 }
 
 /**

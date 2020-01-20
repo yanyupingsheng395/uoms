@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -144,47 +145,7 @@ public class PageController {
             }
 
             model.addAttribute("headId", headId);
-            model.addAttribute("touchDt", dailyHead.getTouchDtStr());
-            model.addAttribute("userNum", dailyHead.getTotalNum());
             return "operate/daily/edit";
-        }
-    }
-
-    /**
-     * 每日运营-用户预览
-     * @param model
-     * @param headId
-     * @return
-     */
-    @RequestMapping("/daily/userStats")
-    public String userStats(Model model, @RequestParam("id") String headId) {
-        //校验
-        if(StringUtils.isEmpty(headId))
-        {
-            model.addAttribute("errormsg","非法请求，请通过界面进行操作!");
-            return "redirect:/page/daily/task";
-        }else
-        {
-            DailyHead dailyHead=dailyService.getDailyHeadById(headId);
-
-            if(null==dailyHead)
-            {
-                model.addAttribute("errormsg","不存在的任务,请通过界面进行操作!");
-                return "redirect:/page/daily/task";
-            }
-
-            String currDay=LocalDate.now().format(DateTimeFormatter.ofPattern("YYYYMMDD"));
-
-            if(!currDay.equals(dailyHead.getTouchDtStr()))
-            {
-                model.addAttribute("errormsg","只有当天的任务才能被执行!");
-                return "redirect:/page/daily/task";
-            }
-
-            model.addAttribute("headId", headId);
-            model.addAttribute("touchDt", dailyHead.getTouchDtStr());
-            model.addAttribute("userNum", dailyHead.getTotalNum());
-            return "operate/daily/userStats";
         }
     }
 

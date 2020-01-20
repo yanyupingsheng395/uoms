@@ -18,10 +18,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -64,7 +66,7 @@ public class DailyController {
         List<DailyHead> dailyInfos = dailyService.getPageList(start, end, touchDt);
 
         //设置当前天记录的 校验状态
-        String validateLabel=dailyService.validUserGroup()?"未通过":"通过";
+       String validateLabel=dailyService.validUserGroup()?"未通过":"通过";
 
         dailyInfos.stream().forEach(p->{
            p.setValidateLabel(validateLabel);
@@ -154,6 +156,7 @@ public class DailyController {
         //获取人群分布
         List<DailyUserStats> dailyUserStats=dailyService.getUserStats(headId);
 
+        //设置标签的显示值
        dailyUserStats.stream().forEach(p->{
            p.setUserValueLabel(userValueMap.get(p.getUserValue()));
            p.setGetPathActivityLabel(pathActiveMap.get(p.getPathActivity()));
@@ -175,6 +178,7 @@ public class DailyController {
              */
             fpTemp.add(d1.getGetPathActivityLabel());
 
+            //价值的大小
             int formatSize=0;
             if("ULC_01".equals(d1.getUserValue()))
             {
@@ -210,13 +214,14 @@ public class DailyController {
         result.put("fpUser",fparray);
         //复购用户数据
         result.put("rpUser",rparray);
+
         List<String> yLabelList=Lists.newArrayList();
-        //要传到前台的活跃度列表
-        String activeCode=ConfigCacheManager.getInstance().getConfigMap().get("op.daily.pathactive.list");
-        List<String> activeCodeList=Splitter.on(',').trimResults().omitEmptyStrings().splitToList(activeCode);
-        for(String code:activeCodeList)
-        {
-            yLabelList.add(ConfigCacheManager.getInstance().getPathActiveMap().get(code));
+        Set<String> activeSet=dailyUserStats.stream().map(DailyUserStats::getPathActivity).collect(Collectors.toSet());
+        for (Map.Entry<String, String> entry : pathActiveMap.entrySet()) {
+             if(activeSet.contains(entry.getKey()))
+             {
+                 yLabelList.add(entry.getValue());
+             }
         }
         result.put("ylabel",yLabelList);
 
@@ -256,6 +261,11 @@ public class DailyController {
             result.put("pathActive","");
             result.put("lifecycle","");
         }
+
+        //获取当前运营头表
+        DailyHead dailyHead=dailyService.getDailyHeadById(headId);
+        result.put("touchDt",new SimpleDateFormat("yyyy年MM月dd日" ).format(dailyHead.getTouchDt()));
+        result.put("userNum",dailyHead.getTotalNum());
         return ResponseBo.okWithData("",result);
     }
 
