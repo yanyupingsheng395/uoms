@@ -9,16 +9,10 @@ function allExceptionCatch() {
     $.ajaxSetup({
         statusCode: {
             404: function() {
-                $MB.confirm({
-                    title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-                    content: '请求的资源不存在，请联系系统维护人员！'
-                });
+                $MB.n_danger('请求的资源不存在，请联系系统维护人员！');
             },
             403: function() {
-                $MB.confirm({
-                    title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-                    content: '无权限的访问请求，请联系系统管理员获取授权！'
-                });
+                $MB.n_danger('无权限的访问请求，请联系系统管理员获取授权！');
             },
             401: function() {
                 $MB.confirm({
@@ -30,10 +24,7 @@ function allExceptionCatch() {
                 });
             },
             500: function() {
-                $MB.confirm({
-                    title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-                    content: '操作失败，服务出现异常了，快反馈给系统运维人员吧！'
-                });
+                $MB.n_danger('操作失败，服务出现异常了，快反馈给系统运维人员吧！');
 
                 //不管有没有出现loading 组件，都进行一次隐藏操作
                 lightyear.loading('hide');

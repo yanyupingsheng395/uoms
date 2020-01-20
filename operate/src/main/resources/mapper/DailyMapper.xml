@@ -128,7 +128,7 @@
     </update>
 
     <select id="getDailyHeadById" resultMap="baseResult">
-        SELECT HEAD_ID, to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,op_changed_time
+        SELECT HEAD_ID, TOUCH_DT,to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,op_changed_time
          FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}
     </select>
 

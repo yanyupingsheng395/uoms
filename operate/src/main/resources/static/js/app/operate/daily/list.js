@@ -56,10 +56,27 @@ function initTable() {
             formatter: function (value, row, indx) {
                 var currDate=getNowFormatDate();
                 var res = "-";
-                if(row.touchDtStr ===currDate) {
+                if(row.touchDtStr ===currDate&&"通过"===row.validateLabel) {
+                    res = "<a style='text-decoration: none;cursor: pointer;pointer-events: none;'>"+row.validateLabel+"</a>";
+                }else if(row.touchDtStr ===currDate&&"未通过"===row.validateLabel)
+                {
                     res = "<a onclick='gotoConfig()' style='color: #48b0f7;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a>";
+                }else
+                {
+                    res='';
                 }
                 return res;
+            },
+            cellStyle:function(value,row,index){
+                var currDate=getNowFormatDate();
+                if (row.touchDtStr ===currDate&&"通过"===row.validateLabel){
+                    return {css:{"background-color":"rgba(0,255,0,0.2)"}}
+                } else if (row.touchDtStr ===currDate&&"未通过"===row.validateLabel){
+                    return {css:{"background-color":"rgba(250,0,0,0.2)"}}
+                }else
+                {
+                    return {css:{"background-color":"transparent"}}
+                }
             }
         },{
             field: 'status',
@@ -150,25 +167,8 @@ $("#btn_catch").click(function () {
  * 预览用户
  */
 $("#btn_insight").click(function () {
-    var selected = $("#dailyTable").bootstrapTable('getSelections');
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请勾选需要查看的任务！');
-        return;
-    }
-
-    var headId = selected[0].headId;
-    var touchDtStr=selected[0].touchDtStr;
-
-    var currDay =getNowFormatDate();
-    if(touchDtStr!=currDay)
-    {
-        $MB.n_warning('只有当天的任务能预览用户！');
-        return;
-    }
-    window.location.href = "/page/daily/userStats?id=" + headId;
+    getUserStatsData();
 });
-
 
 function gotoConfig() {
     $MB.confirm({

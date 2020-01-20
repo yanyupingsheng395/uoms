@@ -1,129 +1,58 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="X-UA-Compatible" content="edge" />
-    <title>用户成长系统</title>
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
-    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/loading/css/loading.css}">
-</head>
-
-<body class="gray-bg">
-<!-- 公共组件 -->
-<div data-th-include="common/common"></div>
-<div class="lyear-layout-web">
-    <div class="lyear-layout-container">
-        <!-- 左侧导航 -->
-        <div data-th-include="common/aside"></div>
-        <!-- 头部信息 -->
-        <div data-th-include="common/header"></div>
-        <!-- 页面主要内容 -->
-        <main class="lyear-layout-content">
-            <div class="container-div ui-layout-center">
+<div class="modal" tabindex="-1" role="dialog" id="userStats_modal"  aria-labelledby="myLargeModalLabel4" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">预览用户</h5>
+            </div>
+            <div class="modal-body">
                 <div class="row">
-                    <div class="col-sm-12 search-collapse">
-                            <div class="row">
-                                <div>
-                                    <span class="navbar-page-title">用户预览</span>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <hr class="hr"/>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-9">
-                                    <p class="h5" id="tipContent">
-                                        <i class="mdi mdi-alert-circle-outline">今天是<span th:text="${touchDt}"></span>,根据用户成长引擎的计算,有<span th:text="${userNum}"></span>个用户到达成长的节点，需要个性化推送培养。</i>
-                                    </p>
-                                </div>
+                    <div id="chart1" style="width: 100%;height: 480px;"></div>
+                </div>
 
-                                <!-- push button -->
-                                <div class="col-sm-12">
-                                    <div class="btn-group-sm pull-right" id="toolbar" role="group">
-                                        <a class="btn btn-secondary btn-sm" href="/page/daily/task">
-                                            <i class="fa fa-reply"></i> 返回
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                    </div >
+                <div class="row m-l-5">
+                    <span><h6>备注：气泡大小代表用户价值，可通过滤镜调整显示。</h6></span>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12 select-table">
-                        <div class="row">
-                             <span class="navbar-page-title">用户分布预览&nbsp;
-                                <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="这里是注释信息；" data-trigger="click">
-                                    <i class="fa fa-question-circle"></i>
-                                </a>
-                            </span>
-                        </div>
-
-                        <div class="row">
-                            <hr class="hr"/>
-                        </div>
-
-                        <div class="row">
-                            <div id="chart1" style="width: 100%;height: 480px;"></div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 table-responsive table-striped">
-                                <h6><span id="spuTitle"></span>用户在成长类目上的分布top10</h6>
-                                <table id="spuTable" class="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th>类目</th>
-                                        <th>用户数（人）</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="spuTableData">
-                                    <tr><td colspan="2" class="text-center">没有查询到相应的记录</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="col-md-6 table-responsive table-striped">
-                                <h6><span id="prodTitle"></span>用户在成长商品上的分布top10</h6>
-                                    <table id="prodTable" class="table table-bordered">
-                                        <thead>
-                                        <tr>
-                                            <th>商品</th>
-                                            <th>用户数（人）</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="prodTableData">
-                                        <tr><td colspan="2" class="text-center">没有查询到相应的记录</td></tr>
-                                        </tbody>
-                                    </table>
-                            </div>
-                        </div>
-
+                    <hr class="hr"/>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 table-responsive table-striped">
+                        <h6><span id="spuTitle"></span>用户在成长类目上的分布top10</h6>
+                        <table id="spuTable" class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>类目</th>
+                                <th>用户数（人）</th>
+                            </tr>
+                            </thead>
+                            <tbody id="spuTableData">
+                            <tr><td colspan="2" class="text-center">没有查询到相应的记录</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6 table-responsive table-striped">
+                        <h6><span id="prodTitle"></span>用户在成长商品上的分布top10</h6>
+                        <table id="prodTable" class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>商品</th>
+                                <th>用户数（人）</th>
+                            </tr>
+                            </thead>
+                            <tbody id="prodTableData">
+                            <tr><td colspan="2" class="text-center">没有查询到相应的记录</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
             </div>
-        </main>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
     </div>
 </div>
-<input id="userValue"  type="hidden" />
-<input id="pathActive"  type="hidden" />
-<input id="lifecycle"  type="hidden" />
-<input id="spuName"  type="hidden" />
-<script>
-    var headId = "[[${headId}]]";
 
-</script>
-<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
-<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
-<script data-th-src="@{/js/app/operate/common/template.js}"></script>
-<script data-th-src="@{/js/app/operate/daily/userStats.js}"></script>
-<script data-th-src="@{/plugins/loading/js/loading.js}"></script>
-</body>
-</html>

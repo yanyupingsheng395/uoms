@@ -1,15 +1,26 @@
-$(function () {
-    getUserStatsData();
-});
-
 /**
  * 获取数据
  */
+
+var chart1;
 function getUserStatsData() {
+    var selected = $("#dailyTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请勾选需要查看的任务！');
+        return;
+    };
+
+    var headId = selected[0].headId;
+    $("#headId").val(headId);
     $.get("/daily/getUserStatsData", {headId: headId}, function (r) {
         if(r.code == 200) {
-            const chart1 = echarts.init(document.getElementById("chart1"), 'macarons');
-            var option = getChart1Option(r.data);
+            $("#touchDt").val();
+            $("#userNum").val();
+
+            var chartTitle="今天是"+r.data.touchDt+",根据用户成长引擎的计算,有"+r.data.userNum+"个用户到达成长的节点，需要个性化推送培养。";
+            chart1 = echarts.init(document.getElementById("chart1"), 'macarons');
+            var option = getChart1Option(r.data,chartTitle);
             chart1.setOption( option );
 
             chart1.on('click', function (params) {
@@ -19,12 +30,11 @@ function getUserStatsData() {
 
                 //刷新SPU表格和PROD表格
                 $.get("/daily/refreshUserStatData", {
-                    headId: headId,
+                    headId: $("#headId").val(),
                     userValue: params.value[5],
                     pathActive: params.value[6],
                     lifecycle: params.value[7]
                 }, function (r) {
-                    //刷新标题 表格
                     //加载标题
                     $("#spuTitle").text(r.data.groupName);
                     $("#prodTitle").text(r.data.prodGroupName);
@@ -49,11 +59,8 @@ function getUserStatsData() {
                         code = "<tr class='text-center'><td colspan='2'>没有查询到相应的记录</td></tr>";
                     }
                     $("#prodTableData").html('').append(code);
-
                 });
-
             });
-
 
             //加载标题
             $("#spuTitle").text(r.data.groupName);
@@ -83,6 +90,9 @@ function getUserStatsData() {
                 code = "<tr class='text-center'><td colspan='2'>没有查询到相应的记录</td></tr>";
             }
             $("#prodTableData").html('').append(code);
+
+            //打开modal
+            $("#userStats_modal").modal('show');
         }else {
             //提示错误信息
             $MB.n_danger(r.msg);
@@ -98,14 +108,13 @@ function clickSpuName(spuName)
 {
     //刷新SPU表格和PROD表格
     $.get("/daily/refreshUserStatData2", {
-        headId: headId,
+        headId: $("#headId").val(),
         userValue:  $("#userValue").val(),
         pathActive:  $("#pathActive").val(),
         lifecycle: $("#lifecycle").val(),
         spuName: spuName
     }, function (r) {
         //刷新标题 表格
-        //加载标题
         $("#prodTitle").text(r.data.prodGroupName);
 
         let code = "";
@@ -120,16 +129,34 @@ function clickSpuName(spuName)
     });
 }
 
-function getChart1Option(data)
+function getChart1Option(data,chartTitle)
 {
     var option = {
+        title: {
+            text: chartTitle,
+            x: 'center',
+            y: 'top',
+            textStyle: {
+                //文字颜色
+                color: '#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle: 'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight: 'normal',
+                //字体系列
+                fontFamily: 'sans-serif',
+                //字体大小
+                fontSize: 12
+            }
+        },
         legend: {
-            right: 10,
+            top: 25,
+            left: '50%',
             data: ['新用户', '复购用户']
         },
         xAxis: {
             type: 'value',
-            name: '人数',
+            name: '用户数（人）',
             splitLine: {
                 lineStyle: {
                     type: 'dashed'
@@ -139,15 +166,17 @@ function getChart1Option(data)
         },
         yAxis: {
             type: 'category',
-            name: '活跃度',
+            name: '下步成长节点',
             data: data.ylabel
         },
         visualMap: [
             {
                 type: 'piecewise',
                 show: true,
-                right: '15',
-                top: '10%',
+                left: 15,
+                bottom: 0,
+                orient: 'horizontal',
+                inverse: true,
                 dimension: 2,
                 align: 'right',
                 pieces: [
@@ -211,6 +240,10 @@ function getChart1Option(data)
     };
     return option;
 }
+
+$('#userStats_modal').on('shown.bs.modal',function(){
+    chart1.resize()
+})
 
 
 
