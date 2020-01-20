@@ -153,41 +153,42 @@ alter table t_config drop column module_type;
 
 truncate table T_DICT;
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
 values ('15', '1', '新用户', 'LIFECYCLE', '用户生命周期', '1');
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
 values ('14', '0', '复购用户', 'LIFECYCLE', '用户生命周期', '2');
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
-values ('1', 'UAC_01', '活跃', 'PATH_ACTIVE', '用户活跃度', '0');
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('1', 'UAC_01', '促活节点', 'PATH_ACTIVE', '用户活跃度', '0');
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
-values ('2', 'UAC_02', '留存', 'PATH_ACTIVE', '用户活跃度', '1');
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('2', 'UAC_02', '留存节点', 'PATH_ACTIVE', '用户活跃度', '1');
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
-values ('3', 'UAC_03', '流失预警', 'PATH_ACTIVE', '用户活跃度', '2');
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('3', 'UAC_03', '弱流失预警', 'PATH_ACTIVE', '用户活跃度', '2');
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
-values ('4', 'UAC_04', '弱流失', 'PATH_ACTIVE', '用户活跃度', '3');
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('4', 'UAC_04', '强流失预警', 'PATH_ACTIVE', '用户活跃度', '3');
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
-values ('5', 'UAC_05', '强流失', 'PATH_ACTIVE', '用户活跃度', '4');
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('5', 'UAC_05', '沉睡预警', 'PATH_ACTIVE', '用户活跃度', '4');
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
 values ('6', 'UAC_06', '沉睡', 'USER_ACTIVE', '用户活跃度', '5');
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
 values ('10', 'ULC_01', '重要', 'USER_VALUE', '用户价值', '0');
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
 values ('11', 'ULC_02', '主要', 'USER_VALUE', '用户价值', '1');
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
 values ('12', 'ULC_03', '普通', 'USER_VALUE', '用户价值', '2');
 
-insert into T_DICT (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
 values ('13', 'ULC_04', '长尾', 'USER_VALUE', '用户价值', '3');
+
 
 truncate table T_CONFIG;
 
