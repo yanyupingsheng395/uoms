@@ -1,6 +1,5 @@
-getUserSpu();
 //
-function getUserSpu() {
+function getUserSpu(userId, headId) {
     $.get("/insight/getUserSpu", {userId: userId}, function (r) {
         let code = "";
         r.data.forEach((v,k)=> {
@@ -11,12 +10,12 @@ function getUserSpu() {
             placeholder: '请选择'
         });
         // 获取spu下的购买次序
-        getUserBuyOrder();
+        getUserBuyOrder(userId, headId);
     });
 }
 
 // 获取某个用户在某个spu下的购买次序
-function getUserBuyOrder() {
+function getUserBuyOrder(userId, headId) {
     var spuId = $("#spuId").val();
     var spuName = $("#spuId").find("option:selected").text();
     $.get("/insight/getUserBuyOrder", {spuId: spuId, userId: userId}, function (r) {
@@ -24,7 +23,7 @@ function getUserBuyOrder() {
             var n = parseInt(r.data);
             var m = parseInt(r.data) + 1;
             $("#buyOrder").val(n + "-" + m);
-            getSpuRelation(spuId, n, spuName);
+            getSpuRelation(userId, headId, spuId, n, spuName);
         }else {
             $MB.n_danger("未知错误！");
         }
@@ -32,7 +31,7 @@ function getUserBuyOrder() {
 }
 
 // 获取spu下商品分布图
-function getSpuRelation(spuId, buyOrder, spuName) {
+function getSpuRelation(userId, headId, spuId, buyOrder, spuName) {
     var spu_relation_chart = echarts.init(document.getElementById("chart_relation_1"), 'macarons');
     var product_relation_chart = echarts.init(document.getElementById("chart_relation_2"), 'macarons');
     spu_relation_chart.showLoading({
@@ -58,10 +57,10 @@ function getSpuRelation(spuId, buyOrder, spuName) {
         // 获取转化概率
         getConvertRateChart(spuId, buyOrder, ebpProductId, nextEbpProductId, ebpProductName);
         // 获取用户表格
-        getGrowthUserTable(spuId);
+        getGrowthUserTable(userId, headId, spuId);
 
         // 获取用户在类目的成长价值
-        getUserValue();
+        getUserValue(userId);
     });
 }
 
@@ -78,7 +77,7 @@ function getProductOption(xdata, ydata, spuName, purchOrder, data) {
         },
         grid: {
             left: '8%',
-            right: '20%',
+            right: '22%',
             containLabel: true
         },
         xAxis : [
@@ -114,9 +113,9 @@ function getProductOption(xdata, ydata, spuName, purchOrder, data) {
                     normal: {
                         color: function (d) {
                             if(d.dataIndex === 0) {
-                                return "blue";
-                            }else {
                                 return "#3398DB";
+                            }else {
+                                return "rgba(51,152,219,0.4)";
                             }
                         }
                     }
@@ -374,7 +373,7 @@ function getUserLastBuyDual(spuId) {
     return data;
 }
 
-function getGrowthUserTable(spuId) {
+function getGrowthUserTable(userId, headId, spuId) {
     $.get("/insight/getUserBuyDual", {headId: headId, userId: userId, spuId:spuId}, function (res) {
        var dual = res.data;
        var flag = false;
@@ -425,7 +424,7 @@ function mergeCell(table1, startRow, endRow, col) {
     }
 }
 // 获取用户在类目的成长价值
-function getUserValue() {
+function getUserValue(userId) {
     var spuId = $("#spuId").val();
     $.get("/insight/getUserValueWithSpu", {userId: userId, spuId:spuId}, function (r) {
         var option = getUserValueOption(r.data);
@@ -514,9 +513,9 @@ function getUserValueOption(data) {
         }]
     };
 }
-getDateChart();
+
 // 转化时间
-function getDateChart() {
+function getDateChart(userId) {
     $.get("/insight/getUserConvert", {userId: userId}, function (r) {
         getDateChartOption('chart1', r.data['data1'], '转化');
         getDateChartOption('chart2', r.data['data2'], '推送');
@@ -584,7 +583,7 @@ function getDateChartOption(chartId, data, title) {
             type: 'scatter',
             coordinateSystem: 'polar',
             symbolSize: function (val) {
-                return val[2] * 10;
+                return val[2] * 3;
             },
             data: data,
             animationDelay: function (idx) {

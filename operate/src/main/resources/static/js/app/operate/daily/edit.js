@@ -103,10 +103,19 @@ function getUserStrategyList() {
  * @param userId
  * @param headId
  */
-function growthInsight(userId,headId)
+var userId;
+var headId;
+function growthInsight(user_id,head_id)
 {
-    //todo
+    userId = user_id;
+    headId = head_id;
+    $("#personal_insight_modal").modal('show');
 }
+
+$("#personal_insight_modal").on('shown.bs.modal', function () {
+    getUserSpu(userId, headId);
+    getDateChart(userId);
+});
 
 /**
  * 启动群组推送
