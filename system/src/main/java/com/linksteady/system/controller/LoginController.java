@@ -4,6 +4,7 @@ import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.MD5Utils;
+import com.linksteady.system.config.ConfigCacheManager;
 import com.linksteady.system.config.SystemProperties;
 import com.linksteady.system.util.code.img.ImageCode;
 import com.linksteady.system.util.code.img.ImageCodeGenerator;
@@ -15,6 +16,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,7 +73,7 @@ public class LoginController extends BaseController {
     private String buildTime;
 
     @GetMapping("/login")
-    public String login(HttpServletRequest request, HttpServletResponse response) {
+    public String login(Model model,HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies=request.getCookies();
         /**
          * 如果本地没有cookies缓存则不需要清除
@@ -83,6 +85,11 @@ public class LoginController extends BaseController {
                 response.addCookie(cookie);
             }
         }
+
+        //当前系统的名称
+        String systemName=ConfigCacheManager.getInstance().getConfigMap().get("system.name");
+        model.addAttribute("systemName",systemName);
+
         return "login";
     }
 
