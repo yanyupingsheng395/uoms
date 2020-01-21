@@ -270,7 +270,7 @@ function add() {
     $("input[name='isCoupon']:radio").removeAttr("checked").removeAttr("disabled");
     $("input[name='isProductName']:radio").removeAttr("checked").removeAttr("disabled");
     $("input[name='isProductUrl']:radio").removeAttr("checked").removeAttr("disabled");
-    $("#word").text("0");
+    $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
     $("#fontNum").val('');
     $("#myLargeModalLabel3").text("新增文案");
     $("#btn_save").attr("name", "save");
@@ -573,7 +573,7 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $("input[name='lifeCycle']:checked").removeAttr("checked");
     $("input[name='pathActive']").removeAttr("disabled");
     $("input[name='pathActive']:checked").removeAttr("checked");
-    $("#word").val('0');
+    $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
     $("#fontNum").val('');
     $("#remark").val('');
     $("#smsTemplateAddForm").validate().resetForm();
@@ -665,7 +665,7 @@ function statInputNum() {
         }
         total_num = y;
         var code = "";
-        code += n + ":编写内容字符数 / " + m + ":填充变量最大字符数 / " + y + ":文案总字符数";
+        code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + smsLengthLimit + ":文案总字符数";
         $("#word").text(code);
     });
 }

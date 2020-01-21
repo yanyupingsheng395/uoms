@@ -62,7 +62,7 @@
                                     <div class="col-md-12">
                                         <h5 class="modal-title pull-left" style="margin-top: 20px;">
                                             用户成长旅程总览&nbsp;
-                                            <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="在观测的时间范围里，用户从首次购买到第n次购买在spu层级的流转规律；" data-trigger="click">
+                                            <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="在观测的时间范围里，用户从首次购买到第n次购买在类目层级的流转规律；" data-trigger="click">
                                                 <i class="fa fa-question-circle"></i>
                                             </a>
                                         </h5>
@@ -161,7 +161,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <h5 class="modal-title pull-left" style="margin-top: 20px;">
-                                    成长旅程中的spu洞察&nbsp;
+                                    成长旅程中的类目洞察&nbsp;
                                     <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="在旅程洞察的基础上，选择一个用户购买次序来观察SPU承前启后的作用；" data-trigger="click">
                                         <i class="fa fa-question-circle"></i>
                                     </a>
@@ -196,7 +196,7 @@
                                                 </select>
                                             </li>
                                             <li>
-                                                SPU名称：
+                                                类目名称：
                                                 <select name="spuName" id="spuName" class="select2"></select>
                                             </li>
                                             <li class="pull-right">
@@ -221,8 +221,8 @@
                     <div class="col-md-12 select-table table-striped">
                         <div class="row">
                             <div class="col-md-12">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">用户在spu/商品的成长模式&nbsp;
-                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="左图可以发现随着持续购买，用户在spu上的成长规律如何变化；右图体现随持续购买，用户成长的多种指标变化规律；" data-trigger="click">
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">用户在类目/商品的成长模式&nbsp;
+                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="左图可以发现随着持续购买，用户在类目上的成长规律如何变化；右图体现随持续购买，用户成长的多种指标变化规律；" data-trigger="click">
                                         <i class="fa fa-question-circle"></i>
                                     </a>
                                 </h5>
@@ -239,7 +239,7 @@
                                     <div class="select-list">
                                         <ul>
                                             <li>
-                                                选择要观测的spu及其商品：<input type="text" id="spuProductName1"/>
+                                                选择要观测的类目及其商品：<input type="text" id="spuProductName1"/>
                                                 <div id="ztreeContent1" hidden style="z-index: 100;position: absolute;">
                                                     <ul id="ztree1" class="ztree"></ul>
                                                 </div>
@@ -273,14 +273,14 @@
                                                     <option value="1">平均件单价</option>
                                                     <option value="2">平均购买间隔</option>
                                                     <option value="3">平均连带率</option>
-                                                    <option value="4">平均购买spu种类数</option>
+                                                    <option value="4">平均购买类目种类数</option>
                                                 </select>
                                             </li>
                                             <li>
                                                 选择要观测指标：
                                                 <select id="kpi1">
-                                                    <option value="1">再次购买spu概率</option>
-                                                    <option value="2">再次购买spu概率的变化率</option>
+                                                    <option value="1">再次购买类目概率</option>
+                                                    <option value="2">再次购买类目概率的变化率</option>
                                                 </select>
                                             </li>
                                             <li class="pull-right">
@@ -313,8 +313,8 @@
                     <div class="col-md-12 select-table table-striped">
                         <div class="row">
                             <div class="col-md-12">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">用户在spu/商品的成长节点&nbsp;
-                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="从spu的指定购买次序观察用户在商品层级的流转关系；" data-trigger="click">
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">用户在类目/商品的成长节点&nbsp;
+                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="从类目的指定购买次序观察用户在商品层级的流转关系；" data-trigger="click">
                                         <i class="fa fa-question-circle"></i>
                                     </a>
                                 </h5>
@@ -331,10 +331,10 @@
                                     <div class="select-list">
                                         <ul>
                                             <li>
-                                                选择要观测的spu：<select id="convertSpu" class="select2"></select>
+                                                选择要观测的类目：<select id="convertSpu" class="select2"></select>
                                             </li>
                                             <li>
-                                                选择要观测的spu购买次序：
+                                                选择要观测的类目购买次序：
                                                 <select name="purchOrder" id="purchOrder" class="select2"></select>
                                             </li>
                                             <li class="pull-right">
