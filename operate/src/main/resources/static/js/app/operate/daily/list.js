@@ -57,10 +57,10 @@ function initTable() {
                 var currDate=getNowFormatDate();
                 var res = "-";
                 if(row.touchDtStr ===currDate&&"通过"===row.validateLabel) {
-                    res = "<a style='text-decoration: none;cursor: pointer;pointer-events: none;'>"+row.validateLabel+"</a>";
+                    res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
                 }else if(row.touchDtStr ===currDate&&"未通过"===row.validateLabel)
                 {
-                    res = "<a onclick='gotoConfig()' style='color: #48b0f7;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a>";
+                    res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
                 }else
                 {
                     res='';

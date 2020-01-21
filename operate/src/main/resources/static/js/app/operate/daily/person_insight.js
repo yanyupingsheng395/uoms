@@ -396,7 +396,7 @@ function getGrowthUserTable(userId, headId, spuId) {
             if(code === "") {
                 code = "<tr class='text-center'><td colspan='5'>没有找到匹配的记录</td></tr>";
             }
-            $("#growthTable").html('').append(code);
+            $("#growthTable").html('').append(code).find("tbody td:eq(3)").attr("style", "background-color:#fff;");
             mergeCell('growthTable', 0, 6, 3);
         });
     });
@@ -583,7 +583,7 @@ function getDateChartOption(chartId, data, title) {
             type: 'scatter',
             coordinateSystem: 'polar',
             symbolSize: function (val) {
-                return val[2] * 3;
+                return val[2] * 10;
             },
             data: data,
             animationDelay: function (idx) {

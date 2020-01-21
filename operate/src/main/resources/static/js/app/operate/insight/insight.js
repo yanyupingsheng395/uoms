@@ -544,22 +544,19 @@ function getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId) {
                 var res = "";
                 switch (value) {
                     case "UAC_01":
-                        res = "高度活跃";
+                        res = "促活节点";
                         break;
                     case "UAC_02":
-                        res = "中度活跃";
+                        res = "留存节点";
                         break;
                     case "UAC_03":
-                        res = "流失预警";
+                        res = "弱流失预警";
                         break;
                     case "UAC_04":
-                        res = "弱流失";
+                        res = "强流失预警";
                         break;
                     case "UAC_05":
-                        res = "强流失";
-                        break;
-                    case "UAC_06":
-                        res = "沉睡";
+                        res = "沉睡预警";
                         break;
                     default:
                         res = "-";

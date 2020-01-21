@@ -130,20 +130,12 @@ function initTable() {
             field: 'checkFlag',
             title: '校验结果',
             align: 'center',
-            cellStyle:function(value,row,index){
-                if (value === "Y"){
-                    return {css:{"background-color":"rgba(0,255,0,0.2)"}}
-                }
-                if (value === "N"){
-                    return {css:{"background-color":"rgba(250,0,0,0.2)"}}
-                }
-            },
             formatter: function (value, row, index) {
                 if(value === 'Y') {
-                    return "通过";
+                    return "<span class=\"badge bg-success\">通过</span>";
                 }
                 if(value === 'N') {
-                    return "未通过";
+                    return "<span class=\"badge bg-danger\">未通过</span>";
                 }
                 return "-";
             }
@@ -529,20 +521,12 @@ function couponTable(groupId) {
                 field: 'checkFlag',
                 title: '校验结果',
                 align: 'center',
-                cellStyle:function(value,row,index){
-                    if (value === "1"){
-                        return {css:{"background-color":"rgba(0,255,0,0.2)"}}
-                    }
-                    if (value === "0"){
-                        return {css:{"background-color":"rgba(250,0,0,0.2)"}}
-                    }
-                },
                 formatter: function (value, row, index) {
                     if(value === '1') {
-                        return "通过";
+                        return "<span class=\"badge bg-success\">通过</span>";
                     }
                     if(value === '0') {
-                        return "未通过";
+                        return "<span class=\"badge bg-danger\">未通过</span>";
                     }
                     return "-";
                 }
