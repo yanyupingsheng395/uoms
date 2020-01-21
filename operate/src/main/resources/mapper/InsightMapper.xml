@@ -454,8 +454,10 @@
     <select id="getUserSpu" resultType="map">
         select distinct WP_USER_PATH.SPU_WID, W_PRODUCT_SPU.SPU_NAME
         from WP_USER_PATH,
-        W_PRODUCT_SPU
-        where WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID and USER_ID = #{userId}
+             W_PRODUCT_SPU,
+             W_PRODUCT
+        where
+        WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID and W_PRODUCT.SPU_WID = WP_USER_PATH.SPU_WID and USER_ID = #{userId}
     </select>
 
     <select id="getUserBuyOrder" resultType="string">

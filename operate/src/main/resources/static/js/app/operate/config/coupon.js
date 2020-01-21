@@ -157,10 +157,10 @@ $(function () {
                 align: 'center',
                 formatter: function (value, row, index) {
                     if(value === '1') {
-                        return "<font color='green'><i class='fa fa-check'></i></font>";
+                        return "<span class=\"badge bg-success\">通过</span>";
                     }
                     if(value === '0') {
-                        return "<font color='red'><i class='fa fa-close'></i></font>";
+                        return "<span class=\"badge bg-danger\">未通过</span>";
                     }
                     return "-";
                 }

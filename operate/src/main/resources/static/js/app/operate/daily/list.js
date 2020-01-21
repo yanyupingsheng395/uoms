@@ -53,34 +53,25 @@ function initTable() {
             title: '推送转化金额（元）'
         }, {
             title: '配置校验状态',
+            align: 'center',
             formatter: function (value, row, indx) {
                 var currDate=getNowFormatDate();
                 var res = "-";
                 if(row.touchDtStr ===currDate&&"通过"===row.validateLabel) {
-                    res = "<a style='text-decoration: none;cursor: pointer;pointer-events: none;'>"+row.validateLabel+"</a>";
+                    res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
                 }else if(row.touchDtStr ===currDate&&"未通过"===row.validateLabel)
                 {
-                    res = "<a onclick='gotoConfig()' style='color: #48b0f7;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a>";
+                    res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
                 }else
                 {
                     res='';
                 }
                 return res;
-            },
-            cellStyle:function(value,row,index){
-                var currDate=getNowFormatDate();
-                if (row.touchDtStr ===currDate&&"通过"===row.validateLabel){
-                    return {css:{"background-color":"rgba(0,255,0,0.2)"}}
-                } else if (row.touchDtStr ===currDate&&"未通过"===row.validateLabel){
-                    return {css:{"background-color":"rgba(250,0,0,0.2)"}}
-                }else
-                {
-                    return {css:{"background-color":"transparent"}}
-                }
             }
         },{
             field: 'status',
             title: '任务执行状态',
+            align: 'center',
             formatter: function (value, row, indx) {
                 var res;
                 switch (value) {

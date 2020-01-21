@@ -23,6 +23,16 @@
         .form-horizontal .checkbox, .form-horizontal .checkbox-inline, .form-horizontal .radio, .form-horizontal .radio-inline {
             padding-top: 0;
         }
+        .tooltip-inner{
+            background-color: #fff;
+            border:solid 1px #48b0f7;
+            color:#000000;
+            text-align: left;
+        }
+        .tooltip.top .tooltip-arrow{
+            border-top-color:#48b0f7;
+        }
+
     </style>
 </head>
 
@@ -38,7 +48,7 @@
                     <div class="col-sm-12 search-collapse">
                         <div class="col-md-12">
                             <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">个性化推送</h5>
+                                <h5 class="modal-title pull-left" style="margin-top: 20px;">理解用户成长目标与个性化推送策略</h5>
                             </div>
                             <div class="row">
                                 <hr class="hr" style="margin-top: 10px;margin-bottom: 10px;"/>
@@ -48,7 +58,11 @@
                             <div class="select-list">
                                 <ul>
                                     <li>
-                                        选择用户成长所处类目：<select id="spuId" name="spuId" class="select2"></select>
+                                        选择用户成长所处类目
+                                        <a style="color: #48b0f7;font-size: 16px;" data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="用户在品牌有可能购买多个类目，即成长的类目" data-trigger="click">
+                                            <i class="fa fa-question-circle "></i>
+                                        </a>
+                                        ：<select id="spuId" name="spuId" class="select2"></select>
                                     </li>
                                     <li>
                                         <a class="btn btn-primary btn-rounded btn-sm" id="btn_query"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -86,8 +100,8 @@
                         <div class="row">
                             <div class="col-md-6" id="convert_chart" style="height: 380px"></div>
                             <div class="col-md-6" style="margin-top: 45px;">
+                                <p class="h6">用户在成长旅程中的成长节点与此用户今日所处的成长节点</p>
                                 <table id="growthTable" class="table table-bordered table-condensed table-hover"></table>
-                                <p class="h6 text-center">用户在成长旅程中的成长节点与此用户今日所处的成长节点</p>
                             </div>
                         </div>
                     </div>
@@ -133,7 +147,6 @@
 <script>
     let userId = [[${userId}]];
     let headId = [[${headId}]];
-    let pathActive = [[${pathActive}]];
 </script>
 <script data-th-src="@{/plugins/select2/js/select2.js}"></script>
 <script data-th-src="@{/plugins/select2/js/i18n/zh-CN.js}"></script>
