@@ -751,10 +751,10 @@ function userInsight(userValue,pathActive,lifecycle)
             $.each(data.activeResult,function(index,value){
                 if(value.flag=='1')
                 {
-                    code +="<button class='btn btn-round btn-sm btn-info'>"+value.name+"</button>&nbsp;"
+                    code +="<button class='btn btn-round btn-sm btn-info m-t-5'>"+value.name+"</button>&nbsp;"
                 }else
                 {
-                    code +="<button class='btn btn-round btn-sm btn-secondary'>"+value.name+"</button>&nbsp;"
+                    code +="<button class='btn btn-round btn-sm btn-secondary m-t-5'>"+value.name+"</button>&nbsp;"
                 }
             });
             $("#activeBtns").html('').append(code);
@@ -763,10 +763,10 @@ function userInsight(userValue,pathActive,lifecycle)
             $.each(data.userValueResult,function(index,value){
                 if(value.flag=='1')
                 {
-                    code +="<button class='btn btn-round btn-sm btn-warning'>"+value.name+"</button>&nbsp;"
+                    code +="<button class='btn btn-round btn-sm btn-warning m-t-5'>"+value.name+"</button>&nbsp;"
                 }else
                 {
-                    code +="<button class='btn btn-round btn-sm btn-secondary'>"+value.name+"</button>&nbsp;"
+                    code +="<button class='btn btn-round btn-sm btn-secondary m-t-5'>"+value.name+"</button>&nbsp;"
                 }
             });
             $("#valueBtns").html('').append(code);
@@ -775,10 +775,10 @@ function userInsight(userValue,pathActive,lifecycle)
             $.each(data.lifecycleResult,function(index,value){
                 if(value.flag=='1')
                 {
-                    code +="<button class='btn btn-round btn-sm btn-primary'>"+value.name+"</button>&nbsp;"
+                    code +="<button class='btn btn-round btn-sm btn-primary m-t-5'>"+value.name+"</button>&nbsp;"
                 }else
                 {
-                    code +="<button class='btn btn-round btn-sm btn-secondary'>"+value.name+"</button>&nbsp;"
+                    code +="<button class='btn btn-round btn-sm btn-secondary m-t-5'>"+value.name+"</button>&nbsp;"
                 }
             });
             $("#lifecycleBtns").html('').append(code);

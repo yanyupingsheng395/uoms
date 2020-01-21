@@ -17,10 +17,6 @@
     <link rel="stylesheet" data-th-href="@{/plugins/loading/css/loading.css}">
 
     <style>
-        #userListTable thead {
-            background-color: #eff3f8;
-        }
-
         .step-icon-number {
             cursor: pointer;
         }
@@ -74,18 +70,16 @@
             <div class="container-div ui-layout-center">
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
-                        <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-3 pull-left">
-                                    <h5 id='stageName' class="modal-title" style="margin-top: 20px;" th:if="${operateType} eq 'update'">修改计划</h5>
-                                    <h5 id='stageName' class="modal-title" style="margin-top: 20px;" th:if="${operateType} eq 'save'">创建计划</h5>
+                                    <h5 id='stageName' class="modal-title" style="margin-top: 5px;" th:if="${operateType} eq 'update'">修改计划</h5>
+                                    <h5 id='stageName' class="modal-title" style="margin-top: 5px;" th:if="${operateType} eq 'save'">创建计划</h5>
                                 </div>
                                 <!--步骤条-->
                                 <div class="col-md-3 pull-right">
                                     <div id="step" style="height: 70px;" class=""></div>
                                 </div>
                             </div>
-                        </div>
                     </div>
                     <div class="col-md-12 select-table" id="step1">
                         <div data-th-include="operate/activity/step1"></div>

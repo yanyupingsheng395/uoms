@@ -16,7 +16,7 @@ spring:
       password: linksteady123
 
   profiles:
-    active: prod
+    active: dev
   aop:
     proxy-target-class: true
   servlet:
