@@ -108,6 +108,18 @@ function growthInsight(user_id,head_id)
     $("#personal_insight_modal").modal('show');
 }
 
+function searchPersonalInsight() {
+    getUserBuyOrder(userId, headId);
+    getDateChart(userId);
+}
+
+function resetPersonInsight() {
+    var val = $("#spuId").find("option:eq(0)").val();
+    $("#spuId").val(val).select2();
+    getUserBuyOrder(userId, headId);
+    getDateChart(userId);
+}
+
 $("#personal_insight_modal").on('shown.bs.modal', function () {
     getUserSpu(userId, headId);
     getDateChart(userId);

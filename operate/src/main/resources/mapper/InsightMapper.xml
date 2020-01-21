@@ -466,7 +466,7 @@
 
     <select id="getEbpProductIdByUserId" resultType="map">
         select t0.EBP_PRODUCT_ID, NEXT_EBP_PRODUCT_ID, t1.EBP_PRODUCT_NAME EBP_PRODUCT_NAME, t2.EBP_PRODUCT_NAME NEXT_EBP_PRODUCT_NAME from WP_USER_PATH t0, W_PRODUCT_EBP t1, W_PRODUCT_EBP t2
-        where t0.EBP_PRODUCT_ID = t1.EBP_PRODUCT_ID(+) and t0.NEXT_EBP_PRODUCT_ID = t2.EBP_PRODUCT_ID(+) and USER_ID = #{userId} and RN = #{buyOrder} and spu_wid = #{spuId}
+        where t0.EBP_PRODUCT_ID = t1.EBP_PRODUCT_ID(+) and t0.NEXT_EBP_PRODUCT_ID = t2.EBP_PRODUCT_ID(+) and USER_ID = #{userId} and RN = #{buyOrder} and t0.spu_wid = #{spuId}
     </select>
 
     <select id="getLastBuyDt" resultType="string">
