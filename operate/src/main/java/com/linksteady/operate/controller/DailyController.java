@@ -482,17 +482,22 @@ public class DailyController {
             String isCoupon = validMap.get("IS_COUPON").toString();
             int count1 = dailyService.getSmsIsCoupon(smsCode, isCoupon);
             int count2 = dailyService.getValidDailyHead();
-            if((count1 > 0) && (count2 == 0)) {
+            if(count1 > 0) {// 所选的与之前一致
                 dailyService.setSmsCode(groupId, smsCode);
                 return ResponseBo.ok();
             }else {
-                String msg = "";
-                if("1".equalsIgnoreCase(isCoupon)) {
-                    msg = "不允许将含券文案修改为不含券文案。";
+                if(count2 == 0) { // 不存在待运营的每日运营
+                    dailyService.setSmsCode(groupId, smsCode);
+                    return ResponseBo.ok();
                 }else {
-                    msg = "不允许将不含券文案修改为含券文案。";
+                    String msg = "";
+                    if("1".equalsIgnoreCase(isCoupon)) {
+                        msg = "不允许将含券文案修改为不含券文案。";
+                    }else {
+                        msg = "不允许将不含券文案修改为含券文案。";
+                    }
+                    return ResponseBo.error("今天每日运营尚未完成推送，" + msg);
                 }
-                return ResponseBo.error("今天每日运营尚未完成推送，" + msg);
             }
         }
     }

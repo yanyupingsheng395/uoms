@@ -378,7 +378,7 @@
     </select>
 
     <select id="getSmsIsCoupon" resultType="int">
-        select count(1) from UO_OP_SMS_TEMPLATE where IS_COUPON_NAME = #{isCoupon} or IS_COUPON_URL = #{isCoupon}
+        select count(1) from UO_OP_SMS_TEMPLATE where (IS_COUPON_NAME = #{isCoupon} or IS_COUPON_URL = #{isCoupon}) and sms_code = #{smsCode}
     </select>
 
     <select id="getValidDailyHead" resultType="int">
