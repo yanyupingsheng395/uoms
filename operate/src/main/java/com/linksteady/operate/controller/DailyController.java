@@ -1,23 +1,24 @@
 package com.linksteady.operate.controller;
+
+import com.alibaba.fastjson.JSONArray;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.config.ConfigCacheManager;
 import com.linksteady.operate.domain.*;
-import com.linksteady.operate.service.*;
+import com.linksteady.operate.service.ConfigService;
+import com.linksteady.operate.service.DailyDetailService;
+import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.vo.DailyPersonalVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -394,6 +395,14 @@ public class DailyController {
     private String smsContentValid(String headId) {
         List<Map<String, Object>> smsContentList = dailyDetailService.getContentList(headId);
         int totalSize = smsContentList.size();
+
+        //判断是否有短信内容为空
+        long nullContentSize=smsContentList.stream().filter(x-> StringUtils.isEmpty(x.get("CONTENT"))).count();
+        if(nullContentSize>0)
+        {
+            return "短信内容为空，合计：" + totalSize + "条，内容为空：" + nullContentSize + "条";
+        }
+
         // 短信长度超出限制
         List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).length() > dailyProperties.getSmsLengthLimit())
                 .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
@@ -401,10 +410,10 @@ public class DailyController {
         List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).contains("$"))
                 .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
         if (0 != lengthIds.size()) {
-            return "短信长度超出限制，共：" + totalSize + "条，不符合规范：" + lengthIds.size() + "条";
+            return "短信长度超出限制，合计：" + totalSize + "条，不符合规范：" + lengthIds.size() + "条";
         }
         if (0 != invalidIds.size()) {
-            return "短信含未被替换的模板变量，共：" + totalSize + "条，不符合规范：" + invalidIds.size() + "条";
+            return "短信含未被替换的模板变量，合计：" + totalSize + "条，不符合规范：" + invalidIds.size() + "条";
         }
         return null;
     }

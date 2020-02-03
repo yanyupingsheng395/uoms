@@ -2251,6 +2251,9 @@ dd, dt {
 .m-l-5 {
     margin-left: 5px!important;
 }
+.m-lr-5 {
+    margin: 0px 5px!important;
+}
 .m-10 {
     margin: 10px!important;
 }

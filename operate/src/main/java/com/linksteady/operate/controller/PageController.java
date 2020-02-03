@@ -112,7 +112,7 @@ public class PageController {
         if(StringUtils.isEmpty(headId))
         {
             model.addAttribute("errormsg","非法请求，请通过界面进行操作!");
-            return "redirect:/page/daily/task";
+            return "operate/daily/list";
         }else
         {
             DailyHead dailyHead=dailyService.getDailyHeadById(headId);
@@ -120,28 +120,28 @@ public class PageController {
             if(null==dailyHead)
             {
                 model.addAttribute("errormsg","不存在的任务,请通过界面进行操作!");
-                return "redirect:/page/daily/task";
+                return "operate/daily/list";
             }
 
-            String currDay=LocalDate.now().format(DateTimeFormatter.ofPattern("YYYYMMDD"));
+            String currDay=LocalDate.now().format(DateTimeFormatter.ofPattern("YYYYMMdd"));
 
             if(!"todo".equals(dailyHead.getStatus()))
             {
                 model.addAttribute("errormsg","只有待执行状态的任务才能提交执行!");
-                return "redirect:/page/daily/task";
+                return "operate/daily/list";
             }
 
             if(!currDay.equals(dailyHead.getTouchDtStr()))
             {
                 model.addAttribute("errormsg","只有当天的任务才能被执行!");
-                return "redirect:/page/daily/task";
+                return "operate/daily/list";
             }
 
             //验证成长组是否通过
             if(dailyService.validUserGroup())
             {
                 model.addAttribute("errormsg","成长组配置验证未通过!");
-                return "redirect:/page/daily/task";
+                return "operate/daily/list";
             }
 
             model.addAttribute("headId", headId);

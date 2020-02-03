@@ -240,20 +240,27 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             dailyDetailTemp = new DailyDetail();
             //文案内容
             String smsContent = dailyDetail1.getSmsContent();
-            String couponUrl = "";
 
-            smsContent = smsContent.replace("${PROD_NAME}", dailyDetail1.getRecProdName());
+            smsContent = smsContent.replace("${PROD_NAME}", convertNullToEmpty(dailyDetail1.getRecProdName()));
 
             //含券
             if (null != dailyDetail1.getCouponId() && !"-1".equals(dailyDetail1.getCouponId())) {
-                couponUrl = dailyDetail1.getCouponUrl();
-                smsContent = smsContent.replace("${COUPON_URL}", couponUrl);
-                if(StringUtils.isBlank(dailyDetail1.getCouponName())) {
-                    log.error("券名称不能为空！");
-                    throw new LinkException("券名称不能为空");
-                }
-                smsContent = smsContent.replace("${COUPON_NAME}", dailyDetail1.getCouponName());
+                String couponUrl = dailyDetail1.getCouponUrl();
+                smsContent = smsContent.replace("${COUPON_URL}", convertNullToEmpty(couponUrl));
+                smsContent = smsContent.replace("${COUPON_NAME}", convertNullToEmpty(dailyDetail1.getCouponName()));
             }
+            //判断是否含有产品详情页链接
+            if(null!=smsContent&&smsContent.indexOf("${PROD_URL}")!=-1)
+            {
+                //获取商品的短链
+                String prodLongUrl=shortUrlService.genProdShortUrlByProdId(dailyDetail1.getRecProdId());
+                //如果短链生成错误，则不再进行替换
+                if(!"error".equals(prodLongUrl))
+                {
+                    smsContent.replace("${PROD_URL}",prodLongUrl);
+                }
+            }
+
             dailyDetailTemp.setDailyDetailId(dailyDetail1.getDailyDetailId());
             dailyDetailTemp.setSmsContent(smsContent);
             dailyDetailTemp.setHeadId(dailyDetail1.getHeadId());
@@ -261,6 +268,23 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             targetList.add(dailyDetailTemp);
         }
         return targetList;
+    }
+
+    /**
+     * 如果传入的字符串为null，则返回空字符串
+     * @param obj
+     * @return
+     */
+    private String convertNullToEmpty(String obj)
+    {
+        if(null==obj)
+        {
+            return "";
+        }else
+        {
+            return obj;
+        }
+
     }
 
     /**

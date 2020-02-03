@@ -154,8 +154,8 @@ public class CouponController extends BaseController {
         String shortUrl;
         if (StringUtils.isNotEmpty(url)) {
             shortUrl = shortUrlService.genConponShortUrl(url);
-            if("".equalsIgnoreCase(shortUrl)) {
-                return ResponseBo.error("长链地址不合法！");
+            if("error".equalsIgnoreCase(shortUrl)) {
+                return ResponseBo.error("生成短链错误！");
             }
         }else {
             return ResponseBo.error("长链地址不合法！");
