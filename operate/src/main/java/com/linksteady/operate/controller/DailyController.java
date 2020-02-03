@@ -12,6 +12,7 @@ import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.DailyDetailService;
 import com.linksteady.operate.service.DailyService;
+import com.linksteady.operate.service.UserOperatorService;
 import com.linksteady.operate.vo.DailyPersonalVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -470,8 +471,30 @@ public class DailyController {
      */
     @GetMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam String groupId, @RequestParam String smsCode) {
-        dailyService.setSmsCode(groupId, smsCode);
-        return ResponseBo.ok();
+        // 判断该群组是否已经设置了文案，且是否有券这个标记与待设置文案的一致。
+
+        // 判断是否设置了文案
+        Map<String, Object> validMap = dailyService.getSelectedUserGroup(groupId);
+        if(StringUtils.isEmpty(validMap.get("SMS_CODE").toString())) {
+            dailyService.setSmsCode(groupId, smsCode);
+            return ResponseBo.ok();
+        }else {
+            String isCoupon = validMap.get("IS_COUPON").toString();
+            int count1 = dailyService.getSmsIsCoupon(smsCode, isCoupon);
+            int count2 = dailyService.getValidDailyHead();
+            if((count1 > 0) && (count2 == 0)) {
+                dailyService.setSmsCode(groupId, smsCode);
+                return ResponseBo.ok();
+            }else {
+                String msg = "";
+                if("1".equalsIgnoreCase(isCoupon)) {
+                    msg = "不允许将含券文案修改为不含券文案。";
+                }else {
+                    msg = "不允许将不含券文案修改为含券文案。";
+                }
+                return ResponseBo.error("今天每日运营尚未完成推送，" + msg);
+            }
+        }
     }
 
     /**

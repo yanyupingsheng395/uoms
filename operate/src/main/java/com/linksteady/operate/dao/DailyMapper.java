@@ -120,4 +120,10 @@ public interface DailyMapper {
     int validCheckedUserGroup(@Param("activeList") List<String> activeList);
 
     String getTodayStatus();
+
+    Map<String, Object> getSelectedUserGroup(String groupId);
+
+    int getSmsIsCoupon(String smsCode, String isCoupon);
+
+    int getValidDailyHead();
 }

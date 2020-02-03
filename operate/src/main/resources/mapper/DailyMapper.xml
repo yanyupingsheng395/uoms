@@ -372,4 +372,16 @@
     <select id="getTodayStatus" resultType="string">
         select STATUS from UO_OP_DAILY_HEADER where to_char(TOUCH_DT, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd')
     </select>
+
+    <select id="getSelectedUserGroup" resultType="map">
+        select IS_COUPON, SMS_CODE from UO_OP_DAILY_TEMPLATE_CONFIG where GROUP_ID = #{groupId}
+    </select>
+
+    <select id="getSmsIsCoupon" resultType="int">
+        select count(1) from UO_OP_SMS_TEMPLATE where IS_COUPON_NAME = #{isCoupon} or IS_COUPON_URL = #{isCoupon}
+    </select>
+
+    <select id="getValidDailyHead" resultType="int">
+        select count(1) from UO_OP_DAILY_HEADER where to_char(TOUCH_DT, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd') and STATUS = 'todo'
+    </select>
 </mapper>

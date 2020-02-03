@@ -276,4 +276,19 @@ public class DailyServiceImpl implements DailyService {
     public List<DailyUserStats> getUserStatsByProd(String headerId, String userValue, String pathActive, String lifecycle, String spuName) {
         return dailyMapper.getUserStatsByProd(headerId,userValue,pathActive,lifecycle,spuName);
     }
+
+    @Override
+    public Map<String, Object> getSelectedUserGroup(String groupId) {
+        return dailyMapper.getSelectedUserGroup(groupId);
+    }
+
+    @Override
+    public int getSmsIsCoupon(String smsCode, String isCoupon) {
+        return dailyMapper.getSmsIsCoupon(smsCode, isCoupon);
+    }
+
+    @Override
+    public int getValidDailyHead() {
+        return dailyMapper.getValidDailyHead();
+    }
 }

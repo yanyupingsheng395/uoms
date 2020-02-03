@@ -560,7 +560,7 @@ function setSmsCode() {
         if (r.code === 200) {
             $MB.n_success("设置文案成功！");
         } else {
-            $MB.n_danger("设置文案失败！发生未知异常！");
+            $MB.n_danger(r.msg);
         }
         $("#msg_modal").modal('hide');
         initTable();
