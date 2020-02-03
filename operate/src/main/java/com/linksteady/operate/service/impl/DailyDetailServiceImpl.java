@@ -257,7 +257,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                 //如果短链生成错误，则不再进行替换
                 if(!"error".equals(prodLongUrl))
                 {
-                    smsContent.replace("${PROD_URL}",prodLongUrl);
+                    smsContent = smsContent.replace("${PROD_URL}",prodLongUrl);
                 }
             }
 
