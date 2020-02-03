@@ -108,7 +108,7 @@ $("#btn_edit").click(function () {
     var selected = $("#dailyTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请勾选需要编辑的任务！');
+        $MB.n_warning('请勾选需要执行的任务！');
         return;
     }
     var status = selected[0].status;
@@ -142,7 +142,7 @@ $("#btn_catch").click(function () {
     var selected = $("#dailyTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请勾选需要查看的任务！');
+        $MB.n_warning('请勾选需要预览用户的任务！');
         return;
     }
     var status = selected[0].status;

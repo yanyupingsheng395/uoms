@@ -141,5 +141,4 @@ public class DailyDetail {
 
     private String recProdName;
 
-    private String recProdLongUrl;
 }

@@ -72,21 +72,6 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         }
     }
 
-    /**
-     * 根据商品的长链接直接生成短链接(直接生成)
-     * @param longUrl
-     * @return
-     */
-    @Override
-    public String genProdShortUrlDirect(String longUrl) {
-        if("Y".equals(dailyProperties.getIsTestEnv()))
-        {
-            return dailyProperties.getDemoShortUrl();
-        }else
-        {
-            return produceShortUrl(longUrl);
-        }
-    }
 
     /**
      * 根据商品ID 生成商品明细页的短链接((会考虑是否包裹一层唤醒淘宝APP的转跳))
@@ -137,19 +122,6 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         }
     }
 
-    /**
-     * 根据优惠券的链接生成长链接（直接生成）
-     */
-    @Override
-    public String genConponShortUrlDirect(String couponUrl) {
-        if("Y".equals(dailyProperties.getIsTestEnv()))
-        {
-            return dailyProperties.getDemoShortUrl();
-        }else
-        {
-            return produceShortUrl(couponUrl);
-        }
-    }
 
     /**
      * 根据传入的长链接 生成短链接
@@ -158,7 +130,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      */
     private String produceShortUrl(String longUrl)
     {
-        //todo 此处应该进行一次查找 如果找不到，再调用API进行生成
+        //根据长链接进行一次查找 如果找不到，再调用API进行生成
         String shortUrl=shortUrlMapper.selectShortUrlByLongUrl(longUrl);
 
         if(!StringUtils.isEmpty(shortUrl))
@@ -198,7 +170,6 @@ public class ShortUrlServiceImpl implements ShortUrlService {
                 }
             } catch (Exception e) {
                 shortUrl="error";
-                //todo 错误上报
                 //进行异常日志的上报
                 exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
 
