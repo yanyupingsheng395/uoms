@@ -482,7 +482,7 @@
                                                 </label>
                                                 <div>
                                                     <label class="h6" hidden  id="isProductUrl-error" style="color: #48b0f7;"><i class="fa fa-info-circle"></i>
-                                                        请将${PROD_NAME}粘贴到文案中希望位置，系统会自动填充名称，用户可知被推荐商品；
+                                                        请将${PROD_URL}粘贴到文案中希望位置，系统会自动填充名称，用户可知被推荐商品；
                                                         <br/>&nbsp;&nbsp;&nbsp;&nbsp;1条文案中仅能填充一个链接；
                                                     </label>
                                                 </div>
@@ -607,7 +607,7 @@
         </div>
     </div>
 </div>
-
+<input id="validUrl" type="hidden" th:value="${validUrl}"/>
 <!--新增补贴-->
 <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="coupon_add_modal" data-backdrop="static">
     <div class="modal-dialog" role="document" style="width: 60%;">

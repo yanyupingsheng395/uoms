@@ -95,6 +95,7 @@ public class PageController {
         model.addAttribute("prodNameLen", dailyProperties.getProdNameLen());
         model.addAttribute("couponSendType", dailyProperties.getCouponSendType());
         model.addAttribute("smsLengthLimit", dailyProperties.getSmsLengthLimit());
+        model.addAttribute("validUrl", dailyProperties.getCouponSendType());
         return "operate/daily/config";
     }
 

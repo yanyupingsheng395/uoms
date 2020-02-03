@@ -55,10 +55,10 @@ function validateRule() {
                 digits: true
             },
             couponInfo2: {
-                required: $("#validUrl").val() === 'B'
+                required: $("#validUrl").val() === 'A'
             },
             couponUrl: {
-                required: $("#validUrl").val() === 'B'
+                required: $("#validUrl").val() === 'A'
             },
             couponDisplayName: {
                 required: true,
