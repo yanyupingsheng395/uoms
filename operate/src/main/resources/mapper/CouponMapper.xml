@@ -25,7 +25,7 @@
     <select id="getList" resultMap="BaseResultMap">
         SELECT * FROM(
         SELECT A.*,ROWNUM RN FROM
-        (SELECT * FROM UO_OP_COUPON
+        (select coupon_id, coupon_denom, coupon_threshold, coupon_name, coupon_url, coupon_desc, coupon_type, coupon_num, to_char(valid_end, 'yyyy-mm-dd') valid_end, coupon_info1, coupon_info2, coupon_display_name, valid_status, coupon_source, user_value, life_cycle, path_active, discount_level, check_flag, check_comments from UO_OP_COUPON
         <if test="validStatus != null and validStatus != ''">
             where VALID_STATUS = #{validStatus}
         </if>
@@ -60,18 +60,18 @@
 
     <insert id="save" parameterType="com.linksteady.operate.domain.CouponInfo">
         insert into UO_OP_COUPON(COUPON_ID, COUPON_DENOM, COUPON_THRESHOLD, COUPON_URL, COUPON_DESC, COUPON_TYPE, COUPON_NUM, COUPON_INFO1, COUPON_INFO2, COUPON_DISPLAY_NAME, VALID_STATUS, VALID_END, USER_VALUE, PATH_ACTIVE, LIFE_CYCLE, COUPON_SOURCE, CHECK_FLAG, CHECK_COMMENTS) VALUES
-        (UO_OP_COUPON_SEQ.nextval, #{couponDenom}, #{couponThreshold}, #{couponUrl}, #{couponDesc}, #{couponType}, #{couponNum}, #{couponInfo1}, #{couponInfo2}, #{couponDisplayName}, 'Y', to_date(#{validEnd}, 'yyyymmdd'), #{userValue}, #{pathActive}, #{lifeCycle}, #{couponSource}, #{checkFlag}, #{checkComments})
+        (UO_OP_COUPON_SEQ.nextval, #{couponDenom}, #{couponThreshold}, #{couponUrl}, #{couponDesc}, #{couponType}, #{couponNum}, #{couponInfo1}, #{couponInfo2}, #{couponDisplayName}, 'Y', to_date(#{validEnd}, 'yyyy-mm-dd'), #{userValue}, #{pathActive}, #{lifeCycle}, #{couponSource}, #{checkFlag}, #{checkComments})
     </insert>
 
     <update id="update" parameterType="com.linksteady.operate.domain.CouponInfo">
         update UO_OP_COUPON
         set COUPON_DENOM = #{couponDenom},COUPON_THRESHOLD = #{couponThreshold},COUPON_URL = #{couponUrl},COUPON_DESC = #{couponDesc},COUPON_TYPE = #{couponType},COUPON_NUM = #{couponNum},COUPON_INFO1 = #{couponInfo1},COUPON_INFO2 = #{couponInfo2},COUPON_DISPLAY_NAME = #{couponDisplayName},
-        VALID_STATUS = #{validStatus}, VALID_END = to_date(#{validEnd}, 'yyyymmdd'), USER_VALUE = #{userValue}, LIFE_CYCLE = #{lifeCycle}, path_active = #{pathActive}
+        VALID_STATUS = #{validStatus}, VALID_END = to_date(#{validEnd}, 'yyyy-mm-dd'), USER_VALUE = #{userValue}, LIFE_CYCLE = #{lifeCycle}, path_active = #{pathActive}
         where COUPON_ID = #{couponId}
     </update>
 
     <select id="getByCouponId" resultMap="BaseResultMap">
-        select COUPON_ID, COUPON_DENOM, COUPON_THRESHOLD, COUPON_NAME, COUPON_URL, COUPON_DESC, COUPON_TYPE, COUPON_NUM, VALID_START, to_char(VALID_END, 'yyyymmdd') VALID_END, COUPON_INFO1, COUPON_INFO2, COUPON_DISPLAY_NAME, VALID_STATUS, COUPON_SOURCE, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE, DISCOUNT_LEVEL, CHECK_FLAG, CHECK_COMMENTS from UO_OP_COUPON
+        select COUPON_ID, COUPON_DENOM, COUPON_THRESHOLD, COUPON_NAME, COUPON_URL, COUPON_DESC, COUPON_TYPE, COUPON_NUM, VALID_START, to_char(VALID_END, 'yyyy-mm-dd') VALID_END, COUPON_INFO1, COUPON_INFO2, COUPON_DISPLAY_NAME, VALID_STATUS, COUPON_SOURCE, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE, DISCOUNT_LEVEL, CHECK_FLAG, CHECK_COMMENTS from UO_OP_COUPON
         where COUPON_ID = #{couponId}
     </select>
 

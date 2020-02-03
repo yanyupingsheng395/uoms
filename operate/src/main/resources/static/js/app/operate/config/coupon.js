@@ -1,7 +1,6 @@
 var validator;
 var $couponForm = $("#coupon_edit");
-
-init_date('validEnd', 'yyyymmdd', 0,2,0);
+init_date('validEnd', 'yyyy-mm-dd', 0,2,0);
 $("#validEnd").datepicker('setStartDate', new Date());
 $(function () {
     validateRule();
@@ -201,10 +200,6 @@ $("#btn_save").click(function () {
             });
         }
         if (name === "update") {
-            if(!validCoupon()) {
-                $MB.n_warning("当前日期大于有效截止日期，'券是否有效'的更改无效！");
-                return;
-            }
             $.post("/coupon/update", $("#coupon_edit").serialize(), function (r) {
                 if (r.code === 200) {
                     closeModal();
@@ -216,17 +211,6 @@ $("#btn_save").click(function () {
     }
 });
 
-// 验证券是否有效
-function validCoupon() {
-    let validStatus = $("input[name='validStatus']:checked").val();
-    if(validStatus === 'Y') {
-        let validEnd = $("#validEnd").val();
-        let date = new Date();
-        let now = String(date.getFullYear()) + (date.getMonth()+1).toString().padStart(2,'0') + (date.getDate().toString().padStart(2,'0'));
-        return Number(now) <= Number(validEnd);
-    }
-    return true;
-}
 function closeModal() {
     var $form = $('#coupon_edit');
     $form.find("input[name='couponName']").val("").removeAttr("readOnly");
@@ -271,13 +255,12 @@ function updateCoupon() {
             var coupon = r.data;
             $("#myLargeModalLabel").html('修改补贴');
             $form.find("input[name='couponId']").val(coupon.couponId);
-            $form.find("input[name='couponName']").val(coupon.couponName).attr("readonly", true);
             $form.find("input[name='couponDenom']").val(coupon.couponDenom).attr("readonly", true);
             $form.find("input[name='couponThreshold']").val(coupon.couponThreshold).attr("readonly", true);
             $form.find("input[name='couponInfo2']").val(coupon.couponInfo2);
             $form.find("input[name='couponUrl']").val(coupon.couponUrl);
             $form.find("input[name='couponNum']").val(coupon.couponNum);
-            $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName);
+            $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName).attr("readonly", true);
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);
 
@@ -333,8 +316,11 @@ function validateRule() {
                     type: "get",
                     dataType: "json",
                     data: {
-                        couponName: function () {
+                        couponDisplayName: function () {
                             return $("#couponDisplayName").val();
+                        },
+                        operate: function () {
+                            return $("#btn_save").attr("name");
                         }
                     }
                 }

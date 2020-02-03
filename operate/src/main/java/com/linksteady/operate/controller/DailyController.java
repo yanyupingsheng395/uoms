@@ -448,6 +448,7 @@ public class DailyController {
      */
     @GetMapping("/userGroupList")
     public ResponseBo userGroupList() {
+        dailyService.validUserGroup();
         List<DailyGroupTemplate> dataList = dailyService.getUserGroupList();
         return ResponseBo.okWithData(null, dataList);
     }

@@ -1,6 +1,6 @@
 var validator;
 var $couponForm = $("#coupon_edit");
-init_date('validEnd', 'yyyymmdd', 0,2,0);
+init_date('validEnd', 'yyyy-mm-dd', 0,2,0);
 $("#validEnd").datepicker('setStartDate', new Date());
 $(function () {
     validateRule();
@@ -10,6 +10,10 @@ function couponAdd() {
     $('#coupon_modal').modal('hide');
     $('#coupon_add_modal').modal('show');
 }
+
+$("#coupon_add_modal").on('hidden.bs.modal', function () {
+    closeModal();
+});
 
 // 关闭新增补贴
 function closeModal() {
@@ -30,20 +34,18 @@ function closeModal() {
     $("input[name='pathActive']").removeAttr("disabled");
     $("input[name='pathActive']:checked").removeAttr("checked");
     $MB.closeAndRestModal("coupon_add_modal");
-    $("#btn_save_coupon").attr("name", "save");
     $("#couponValid").hide();
     $("#coupon_edit").validate().resetForm();
     $("#coupon_modal").modal('show');
+    $("#btn_save_coupon").attr('name', 'save');
 }
 
 // 表单验证规则
 function validateRule() {
+    // 编辑补贴：不进行补贴名称的验证
     var icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i> ";
     validator = $couponForm.validate({
         rules: {
-            couponName: {
-                required: true
-            },
             couponDenom: {
                 required: true,
                 digits: true
@@ -66,8 +68,11 @@ function validateRule() {
                     type: "get",
                     dataType: "json",
                     data: {
-                        couponName: function () {
+                        couponDisplayName: function () {
                             return $("#couponDisplayName").val();
+                        },
+                        operate: function () {
+                            return $("#btn_save_coupon").attr("name");
                         }
                     }
                 }
@@ -88,11 +93,6 @@ function validateRule() {
             }
         },
         messages: {
-            couponName: {
-                required: icon + "请输入名称",
-                remote: icon + "补贴名称已存在"
-            },
-
             couponDenom: {
                 required: icon + "请输入面额",
                 digits: icon + "只能是整数"
@@ -180,6 +180,7 @@ function removeValid() {
 
 // 编辑补贴
 function updateCoupon() {
+    $("#btn_save_coupon").attr("name", "update");
     var selected = $("#couponTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
@@ -200,13 +201,12 @@ function updateCoupon() {
             var coupon = r.data;
             $("#myLargeModalLabel").html('修改补贴');
             $form.find("input[name='couponId']").val(coupon.couponId);
-            $form.find("input[name='couponName']").val(coupon.couponName).attr("readonly", true);
             $form.find("input[name='couponDenom']").val(coupon.couponDenom).attr("readonly", true);
             $form.find("input[name='couponThreshold']").val(coupon.couponThreshold).attr("readonly", true);
             $form.find("input[name='couponInfo2']").val(coupon.couponInfo2);
             $form.find("input[name='couponUrl']").val(coupon.couponUrl);
             $form.find("input[name='couponNum']").val(coupon.couponNum);
-            $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName);
+            $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName).attr("readonly", true);
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);
 
@@ -225,7 +225,6 @@ function updateCoupon() {
                     $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
                 });
             }
-            $("#btn_save_coupon").attr("name", "update");
         } else {
             $MB.n_danger(r['msg']);
         }

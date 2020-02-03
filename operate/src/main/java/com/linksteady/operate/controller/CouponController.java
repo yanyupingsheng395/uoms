@@ -211,8 +211,12 @@ public class CouponController extends BaseController {
      * @return
      */
     @RequestMapping("/checkCouponName")
-    public boolean checkCouponName(@RequestParam("couponName") String couponName) {
-        return couponService.checkCouponName(couponName) == 0;
+    public boolean checkCouponName(@RequestParam("couponDisplayName") String couponDisplayName, @RequestParam("operate") String operate) {
+        if("update".equalsIgnoreCase(operate)) {
+            return true;
+        }else {
+            return couponService.checkCouponName(couponDisplayName) == 0;
+        }
     }
 
     /**
