@@ -262,6 +262,7 @@ function updateCoupon() {
             $form.find("input[name='couponNum']").val(coupon.couponNum);
             $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName).attr("readonly", true);
             $form.find("input[name='validEnd']").val(coupon.validEnd);
+            VALID_END = coupon.validEnd;
             $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);
 
             if(coupon.userValue !== null) {
@@ -437,3 +438,13 @@ $("#btn_intel").click(function () {
         $MB.refreshTable('couponTable');
     });
 });
+
+
+// 用来解决编辑情况下，日期插件的值会清空的问题
+var VALID_END;
+function resetValidEndVal() {
+    if(VALID_END !== undefined && VALID_END !== '') {
+        $("#validEnd").val(VALID_END);
+        VALID_END = "";
+    }
+}
