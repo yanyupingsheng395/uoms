@@ -472,10 +472,9 @@ public class DailyController {
     @GetMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam String groupId, @RequestParam String smsCode) {
         // 判断该群组是否已经设置了文案，且是否有券这个标记与待设置文案的一致。
-
         // 判断是否设置了文案
         Map<String, Object> validMap = dailyService.getSelectedUserGroup(groupId);
-        if(StringUtils.isEmpty(validMap.get("SMS_CODE").toString())) {
+        if((null == validMap.get("SMS_CODE")) || StringUtils.isEmpty(validMap.get("SMS_CODE").toString())) {
             dailyService.setSmsCode(groupId, smsCode);
             return ResponseBo.ok();
         }else {
