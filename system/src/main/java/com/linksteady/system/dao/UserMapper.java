@@ -20,4 +20,6 @@ public interface UserMapper extends MyMapper<User> {
 	void resetPassword(String userId,String password,String modifyName);
 
 	List<Map<String, Object>> findAllUser();
+
+    String getDefaultPwd();
 }

@@ -212,3 +212,6 @@ values ('op.daily.sms.prodname', '测试商品', '每日运营短信测试默认
 
 insert into T_CONFIG (NAME, VALUE, COMMENTS, ORDER_NUM)
 values ('op.daily.sms.produrl', 'https://tb.cn.hn/t8n', '每日运营短信测试默认填充的商品链接', '0');
+
+--2020.02.04
+INSERT INTO T_CONFIG (NAME, VALUE, COMMENTS, ORDER_NUM) VALUES ('system.default.password', 'a123456', '系统管理用户默认密码', 0);

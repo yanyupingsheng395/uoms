@@ -48,4 +48,6 @@ public interface UserService extends IService<User> {
     void resetPassword(String userId);
 
     List<Map<String, Object>> findAllUser();
+
+    String getDefaultPwd();
 }

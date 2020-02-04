@@ -224,12 +224,18 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         //获取用户名
         User user=this.selectByKey(userId);
 
-        String password=MD5Utils.encrypt(user.getUsername(),user.getUsername()+"123");
+        String defaultPwd = userMapper.getDefaultPwd();
+        String password=MD5Utils.encrypt(user.getUsername(),defaultPwd);
         this.userMapper.resetPassword(userId,password,currentUser.getUsername());
     }
 
     @Override
     public List<Map<String, Object>> findAllUser() {
         return this.userMapper.findAllUser();
+    }
+
+    @Override
+    public String getDefaultPwd() {
+        return userMapper.getDefaultPwd();
     }
 }
