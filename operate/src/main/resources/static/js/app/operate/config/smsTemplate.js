@@ -410,7 +410,9 @@ $("#btn_save_sms").click(function () {
             title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
             content: sure_msg
         }, function () {
+            clearDisabled();
             var data = $("#smsTemplateAddForm").serialize();
+            setDisabled();
             $.post(url, data, function (r) {
                 if(r.code === 200) {
                     $MB.n_success(success_msg);
@@ -423,6 +425,30 @@ $("#btn_save_sms").click(function () {
         });
     }
 });
+
+function clearDisabled() {
+    if(IS_COUPON_NAME_DISABLED !== undefined && IS_COUPON_NAME_DISABLED) {
+        $("input[name='isCouponName']").removeAttr("disabled");
+    }
+    if(IS_COUPON_URL_DISABLED !== undefined && IS_COUPON_URL_DISABLED) {
+        $("input[name='isCouponUrl']").removeAttr("disabled");
+    }
+    if(IS_PROD_URL_DISABLED !== undefined && IS_PROD_URL_DISABLED) {
+        $("input[name='isProdUrl']").removeAttr("disabled");
+    }
+}
+
+function setDisabled() {
+    if(IS_COUPON_NAME_DISABLED !== undefined && IS_COUPON_NAME_DISABLED) {
+        $("input[name='isCouponName']").attr('disabled', 'disabled');
+    }
+    if(IS_COUPON_URL_DISABLED !== undefined && IS_COUPON_URL_DISABLED) {
+        $("input[name='isCouponUrl']").attr('disabled', 'disabled');
+    }
+    if(IS_PROD_URL_DISABLED !== undefined && IS_PROD_URL_DISABLED) {
+        $("input[name='isProdUrl']").attr('disabled', 'disabled');
+    }
+}
 // 表单验证
 // 表单验证
 function validate() {
@@ -675,14 +701,18 @@ $("#add_modal").on('shown.bs.modal', function () {
     $("#config-box").attr("style", "border: solid 1px #ebebeb;padding: 8px; float: left;width:" + userBox.clientWidth + "px;");
 });
 
-
+var IS_COUPON_NAME_DISABLED;
+var IS_COUPON_URL_DISABLED;
+var IS_PROD_URL_DISABLED;
 // 补贴链接选是，补贴名称自动选是、商品链接自动选否；
 function isCouponUrlTrueClick() {
     $("#smsTemplateAddForm").find('input[name="isCouponName"]:radio[value="1"]').prop("checked", true);
     $("#smsTemplateAddForm").find('input[name="isCouponName"]').attr("disabled", "disabled");
+    IS_COUPON_NAME_DISABLED = true;
 
     $("#smsTemplateAddForm").find('input[name="isProductUrl"]:radio[value="0"]').prop("checked", true);
     $("#smsTemplateAddForm").find('input[name="isProductUrl"]').attr("disabled", "disabled");
+    IS_PROD_URL_DISABLED = true;
 
     $('#isCouponUrl-error').show();
     $('#isCouponName-error').show();
@@ -693,7 +723,7 @@ function isCouponUrlTrueClick() {
 function isCouponUrlFalseClick() {
     $("#smsTemplateAddForm").find('input[name="isCouponName"]:radio[value="0"]').prop("checked", true);
     $("#smsTemplateAddForm").find('input[name="isProductUrl"]').removeAttr("disabled");
-
+    IS_PROD_URL_DISABLED = false;
     $('#isCouponUrl-error').hide();
     $('#isCouponName-error').hide();
 }
@@ -702,6 +732,7 @@ function isCouponUrlFalseClick() {
 function isCouponNameTrueClick() {
     $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="1"]').prop("checked", true);
     $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    IS_COUPON_URL_DISABLED = true;
     $('#isCouponName-error').show();
     $('#isCouponUrl-error').show();
 }
@@ -709,6 +740,7 @@ function isCouponNameTrueClick() {
 function isCouponNameFalseClick() {
     $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="0"]').prop("checked", true);
     $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    IS_COUPON_URL_DISABLED = true;
     $('#isCouponName-error').hide();
     $('#isCouponUrl-error').hide();
 }
@@ -716,11 +748,13 @@ function isCouponNameFalseClick() {
 function isProdUrlTrueClick() {
     $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="0"]').prop("checked", true);
     $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    IS_COUPON_URL_DISABLED = true;
     $('#isProductUrl-error').show();
     $('#isCouponUrl-error').hide();
 }
 // 商品链接选否，补贴链接可选；
 function isProdUrlFalseClick() {
     $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').removeAttr("disabled");
+    IS_COUPON_URL_DISABLED = false;
     $('#isProductUrl-error').hide();
 }

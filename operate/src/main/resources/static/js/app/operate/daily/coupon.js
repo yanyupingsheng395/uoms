@@ -297,6 +297,16 @@ function setUserGroupChecked() {
             $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
         }
     });
+
+    if(IS_COUPON_NAME_DISABLED !== undefined && IS_COUPON_NAME_DISABLED) {
+        $("input[name='isCouponName']").attr('disabled', 'disabled');
+    }
+    if(IS_COUPON_URL_DISABLED !== undefined && IS_COUPON_URL_DISABLED) {
+        $("input[name='isCouponUrl']").attr('disabled', 'disabled');
+    }
+    if(IS_PROD_URL_DISABLED !== undefined && IS_PROD_URL_DISABLED) {
+        $("input[name='isProdUrl']").attr('disabled', 'disabled');
+    }
 }
 
 // 保存或更新之前取消disabled效果
@@ -304,4 +314,15 @@ function clearUserGroupDisabled() {
     $("input[name='userValue']").removeAttr("disabled");
     $("input[name='lifeCycle']").removeAttr("disabled");
     $("input[name='pathActive']").removeAttr("disabled");
+    $("input[name='pathActive']").removeAttr("disabled");
+
+    if(IS_COUPON_NAME_DISABLED !== undefined && IS_COUPON_NAME_DISABLED) {
+        $("input[name='isCouponName']").removeAttr("disabled");
+    }
+    if(IS_COUPON_URL_DISABLED !== undefined && IS_COUPON_URL_DISABLED) {
+        $("input[name='isCouponUrl']").removeAttr("disabled");
+    }
+    if(IS_PROD_URL_DISABLED !== undefined && IS_PROD_URL_DISABLED) {
+        $("input[name='isProdUrl']").removeAttr("disabled");
+    }
 }
