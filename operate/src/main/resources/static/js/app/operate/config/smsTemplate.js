@@ -98,23 +98,23 @@ function initTable() {
                     }
                 }, {
                     field: 'pathActive',
-                    title: '下步成长旅程活跃度',
+                    title: '下步成长节点',
                     formatter:function (value, row, index) {
                         var res = [];
                         if(value !== undefined && value !== ''&& value !== null) {
                             value.split(",").forEach((v,k)=>{
                                 switch (v) {
                                     case "UAC_01":
-                                        res.push("活跃");
+                                        res.push("促活节点");
                                         break;
                                     case "UAC_02":
-                                        res.push("留存");
+                                        res.push("留存节点");
                                         break;
                                     case "UAC_03":
-                                        res.push("流失预警");
+                                        res.push("弱流失预警");
                                         break;
                                     case "UAC_04":
-                                        res.push("弱流失");
+                                        res.push("强流失预警");
                                         break;
                                 }
                             });
