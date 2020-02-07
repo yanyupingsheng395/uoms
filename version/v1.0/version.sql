@@ -215,3 +215,15 @@ values ('op.daily.sms.produrl', 'https://tb.cn.hn/t8n', '每日运营短信测�
 
 --2020.02.04
 INSERT INTO T_CONFIG (NAME, VALUE, COMMENTS, ORDER_NUM) VALUES ('system.default.password', 'a123456', '系统管理用户默认密码', 0);
+
+--2020.02.05 每日运营优惠券调整到java中匹配
+ALTER TABLE UO_OP_DAILY_CONTENT_TMP ADD (COUPON_ID NUMBER,COUPON_DENO NUMBER,COUPON_MIN NUMBER);
+
+comment ON COLUMN UO_OP_DAILY_CONTENT_TMP.COUPON_ID IS '优惠券ID';
+comment ON COLUMN UO_OP_DAILY_CONTENT_TMP.COUPON_MIN IS '优惠券门槛';
+comment ON COLUMN UO_OP_DAILY_CONTENT_TMP.COUPON_DENO IS '优惠券面额';
+
+alter table t_config add (type_code1 varchar2(32),type_code2 varchar2(32));
+
+comment on column t_config.type_code1 is '参数分类1 MODEL表示模型，APPS表示应用 ETL表示etl的参数';
+comment on column t_config.type_code2 is '参数分类2';
