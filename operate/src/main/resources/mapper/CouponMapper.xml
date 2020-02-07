@@ -193,4 +193,19 @@
     <update id="validCouponPass">
         update UO_OP_COUPON set CHECK_FLAG = '1', CHECK_COMMENTS = ''
     </update>
+
+    <select id="selectGroupCouponInfo" resultType="map">
+        select
+            t1.group_id,
+            t3.coupon_id,
+            t3.coupon_display_name,
+            t3.coupon_denom,
+            t3.coupon_threshold,
+            t3.coupon_url
+        from uo_op_daily_template_config t1,
+             uo_op_daily_group_coupon    t2,
+             uo_op_coupon                t3
+        where t1.group_id=t2.group_id
+          and t3.coupon_id=t2.coupon_id
+    </select>
 </mapper>

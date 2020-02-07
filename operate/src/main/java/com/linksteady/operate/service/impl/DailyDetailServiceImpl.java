@@ -1,12 +1,14 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
+import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.domain.DailyDetail;
 import com.linksteady.operate.domain.DailyUserStats;
 import com.linksteady.operate.service.DailyDetailService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransPushContentThread;
+import com.linksteady.operate.vo.GroupCouponVO;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +20,7 @@ import javax.naming.LinkException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * 群组用户
@@ -33,6 +36,9 @@ public class DailyDetailServiceImpl implements DailyDetailService {
 
     @Autowired
     ShortUrlService shortUrlService;
+
+    @Autowired
+    private CouponMapper couponMapper;
 
     /**
      * 每日运营用户列表分页
@@ -166,6 +172,11 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     @Transactional(rollbackFor = Exception.class)
     public String generatePushList(String headerId) {
         String result="1";
+
+        //获取group上配置的所有优惠券信息
+        List<Map<String,Object>> groupCouponInfo=couponMapper.selectGroupCouponInfo();
+        Map<String,List<GroupCouponVO>> groupCouponList=groupingCouponByGroupId(groupCouponInfo);
+
         Long startTime = System.currentTimeMillis();
 
         //根据headerID获取当前有多少人需要推送
@@ -176,7 +187,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         {
             List<DailyDetail> list = getUserList(headerId,1,pushUserCount);
             //填充模板 生成文案
-            List<DailyDetail> targetList=transPushList(list);
+            List<DailyDetail> targetList=transPushList(list,groupCouponList);
             //保存要推送的文案
             if(null!=targetList&&targetList.size()>0)
             {
@@ -201,7 +212,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                 //生成线程对象列表
                 for(int i=0;i<page;i++)
                 {
-                    taskList.add(new TransPushContentThread(headerId,i*pageSize+1,(i+1)*pageSize,latch));
+                    taskList.add(new TransPushContentThread(headerId,i*pageSize+1,(i+1)*pageSize,latch,groupCouponList));
                 }
 
                 log.info("转换文案一共需要{}个线程来处理",taskList.size());
@@ -227,28 +238,127 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     }
 
     /**
+     * 对配在组上的优惠券按照GROUP_ID进行分组
+     * @param groupCouponInfo
+     * @return
+     */
+    private   Map<String,List<GroupCouponVO>> groupingCouponByGroupId(List<Map<String,Object>> groupCouponInfo)
+    {
+        List<GroupCouponVO> list=groupCouponInfo.stream().map(p->{
+              return new GroupCouponVO(
+                      p.get("GROUP_ID").toString(),
+                      p.get("COUPON_ID").toString(),
+                      (String)p.get("COUPON_DISPLAY_NAME"),
+                      Double.parseDouble(p.get("COUPON_DENOM").toString()),
+                      Double.parseDouble(p.get("COUPON_THRESHOLD").toString()),
+                      (String)p.get("COUPON_URL")
+              );
+        }).collect(Collectors.toList());
+
+        Map<String,List<GroupCouponVO>> result=list.stream().collect(Collectors.groupingBy(GroupCouponVO::getGroupId));
+       return result;
+    }
+
+    /**
      * 根据查询到的用户及其推荐信息，结合模板，生成用户的最终推送信息列表
      * @param list
      * @return
      */
     @SneakyThrows
-    public List<DailyDetail> transPushList(List<DailyDetail> list) {
+    public List<DailyDetail> transPushList(List<DailyDetail> list,Map<String,List<GroupCouponVO>> groupCouponList) {
         List<DailyDetail> targetList = Lists.newArrayList();
         DailyDetail dailyDetailTemp = null;
 
         for (DailyDetail dailyDetail1 : list) {
             dailyDetailTemp = new DailyDetail();
+
             //文案内容
             String smsContent = dailyDetail1.getSmsContent();
 
             smsContent = smsContent.replace("${PROD_NAME}", convertNullToEmpty(dailyDetail1.getRecProdName()));
 
-            //含券
-            if (null != dailyDetail1.getCouponId() && !"-1".equals(dailyDetail1.getCouponId())) {
-                String couponUrl = dailyDetail1.getCouponUrl();
-                smsContent = smsContent.replace("${COUPON_URL}", convertNullToEmpty(couponUrl));
-                smsContent = smsContent.replace("${COUPON_NAME}", convertNullToEmpty(dailyDetail1.getCouponName()));
+            //判断当前组是否含券 1表示含券，匹配优惠券信息
+            if(1==dailyDetail1.getIsCoupon())
+            {
+                //匹配优惠券信息
+                //获取推荐件单价 Rec_Piece_Price
+                double recpiecePrice=dailyDetail1.getPiecePrice();
+
+                //最佳优惠券的对象
+                GroupCouponVO couponTemp=null;
+                //推荐件单价和优惠券门槛之间的差额  (差额最小的那个优惠券就是推荐的优惠券)
+                double distanceTemp=0d;
+                //门槛最小的优惠券
+                GroupCouponVO minCoupon=null;
+                int count=0;
+
+
+                //根据当前的group_id获取当前组上配的优惠券列表
+                List<GroupCouponVO> couponList=groupCouponList.get(dailyDetail1.getGroupId());
+                if(null!=couponList&&couponList.size()>0)
+                {
+                    for(GroupCouponVO groupCouponVO:couponList)
+                    {
+                        //计算推荐单价和优惠券门槛的差额 (取低于推荐单价 且 最接近最低单价的门槛)
+                        double temp=recpiecePrice-groupCouponVO.getCouponThreshold();
+                        if(temp>0)
+                        {
+                            //首次
+                            if(count==0)
+                            {
+                                distanceTemp=temp;
+                                couponTemp=groupCouponVO;
+                                count+=1;
+                            }else
+                            {
+                                //以后每次 如果获取到最接近的，则更新
+                                if(temp<distanceTemp)
+                                {
+                                    distanceTemp=temp;
+                                    couponTemp=groupCouponVO;
+                                }
+                            }
+
+                        }
+
+                        if(minCoupon==null)
+                        {
+                            minCoupon=groupCouponVO;
+                        }else
+                        {
+                            if(groupCouponVO.getCouponThreshold()<minCoupon.getCouponThreshold())
+                            {
+                                //替换门槛最小的优惠券为当前优惠券
+                                minCoupon=groupCouponVO;
+                            }
+                        }
+                    }
+                }
+
+                //如果找低于推荐价格且最接近的优惠券 找不到，则取门槛最小的那个优惠券
+                if(couponTemp==null)
+                {
+                    couponTemp=minCoupon;
+                }
+                if(null!=couponTemp)
+                {
+                    smsContent = smsContent.replace("${COUPON_URL}", convertNullToEmpty(couponTemp.getCouponUrl()));
+                    smsContent = smsContent.replace("${COUPON_NAME}", convertNullToEmpty(couponTemp.getCouponDisplayName()));
+
+                    dailyDetailTemp.setCouponId(couponTemp.getCouponId());
+                    dailyDetailTemp.setCouponDeno(String.valueOf(couponTemp.getCouponDenom()));
+                    //优惠券门槛
+                    dailyDetailTemp.setCouponMin(String.valueOf(couponTemp.getCouponThreshold()));
+                }else
+                {
+                    dailyDetailTemp.setCouponId("-1");
+                }
+
+            }else
+            {
+                dailyDetailTemp.setCouponId("-1");
             }
+
             //判断是否含有产品详情页链接
             if(null!=smsContent&&smsContent.indexOf("${PROD_URL}")!=-1)
             {

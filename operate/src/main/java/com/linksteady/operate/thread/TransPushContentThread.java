@@ -3,9 +3,11 @@ package com.linksteady.operate.thread;
 import com.linksteady.operate.domain.DailyDetail;
 import com.linksteady.operate.service.impl.DailyDetailServiceImpl;
 import com.linksteady.operate.util.SpringContextUtils;
+import com.linksteady.operate.vo.GroupCouponVO;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
@@ -19,12 +21,14 @@ public class TransPushContentThread implements Callable {
     CountDownLatch latch;
 
     String headerId;
+    Map<String,List<GroupCouponVO>> groupCouponList;
 
-    public TransPushContentThread(String headerId, int start, int end, CountDownLatch latch) {
+    public TransPushContentThread(String headerId, int start, int end, CountDownLatch latch, Map<String,List<GroupCouponVO>> groupCouponList) {
         this.headerId = headerId;
         this.start = start;
         this.end = end;
         this.latch = latch;
+        this.groupCouponList=groupCouponList;
     }
 
     @Override
@@ -36,7 +40,7 @@ public class TransPushContentThread implements Callable {
             list = dailyDetailService.getUserList(headerId, start, end);
 
             //转换文案
-            List<DailyDetail> targetList = dailyDetailService.transPushList(list);
+            List<DailyDetail> targetList = dailyDetailService.transPushList(list,groupCouponList);
 
             //保存文案 改为insert
             if(null!=targetList&&targetList.size()>0)

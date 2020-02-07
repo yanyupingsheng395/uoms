@@ -5,6 +5,7 @@ import com.linksteady.operate.domain.CouponInfo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CouponMapper extends MyMapper<CouponInfo> {
 
@@ -57,4 +58,9 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
      * 验证通过
      */
     void validCouponPass();
+
+    /**
+     * 获取配置到成长组中的所有优惠券信息
+     */
+    List<Map<String,Object>> selectGroupCouponInfo();
 }

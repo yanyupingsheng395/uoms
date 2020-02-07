@@ -752,4 +752,5 @@ public class DailyController {
 
         return ResponseBo.okWithData("",result);
     }
+
 }

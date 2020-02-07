@@ -12,7 +12,6 @@
         <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="piecePrice"></result>
         <result column="JOIN_RATE" jdbcType="VARCHAR" property="joinRate"></result>
         <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"></result>
-        <result column="REFER_DENO" jdbcType="VARCHAR" property="referDeno"></result>
         <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"></result>
         <result column="IS_CONVERSION" jdbcType="VARCHAR" property="isConversion"></result>
         <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"></result>
@@ -30,6 +29,8 @@
         <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"></result>
         <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
         <result column="COUPON_URL" jdbcType="VARCHAR" property="couponUrl"></result>
+        <result column="IS_COUPON" jdbcType="DECIMAL" property="isCoupon"></result>
+        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
     </resultMap>
 
     <resultMap id="effectResult" type="com.linksteady.operate.domain.DailyDetail">
@@ -41,7 +42,6 @@
         <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
         <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="piecePrice"></result>
         <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"></result>
-        <result column="COUPON_DENOM" jdbcType="VARCHAR" property="couponDenom"></result>
         <result column="ACT_PROD_NAME" jdbcType="VARCHAR" property="actProdName"></result>
         <result column="ACT_PIECE_PERICE" jdbcType="VARCHAR" property="actPiecePrice"></result>
         <result column="IS_CANCLE" jdbcType="VARCHAR" property="isCancle"></result>
@@ -79,7 +79,7 @@
     <select id="getStrategyPageList" resultMap="baseResult">
         select * from (
         select t.*, ROWNUM RN from (
-        select USER_ID, TAR_ORDER_PRICE, REC_PROD_NAME, REFER_DENO, ORDER_PERIOD, COUPON_MIN, COUPON_DENO, SMS_CONTENT
+        select USER_ID, TAR_ORDER_PRICE, REC_PROD_NAME, ORDER_PERIOD, COUPON_MIN, COUPON_DENO, SMS_CONTENT
         from UO_OP_DAILY_DETAIL where head_id = #{headId}
         order by PATH_ACTIVE, USER_VALUE, DAILY_DETAIL_ID asc
         ) t where ROWNUM &lt;=#{end}
@@ -162,17 +162,16 @@
                      T2.REC_PROD_NAME,
                      T2.COUPON_ID,
                      T2.GROWTH_STRATEGY_ID,
-                     CP.COUPON_DISPLAY_NAME COUPON_NAME,
-                     CP.COUPON_URL,
+                     T3.IS_COUPON,
+                     T2.REC_PIECE_PRICE,
+                     T2.GROUP_ID,
                      ROWNUM   RN
                  FROM UO_OP_DAILY_HEADER T1,
                       UO_OP_DAILY_DETAIL T2,
                       UO_OP_DAILY_TEMPLATE_CONFIG T3,
-                      UO_OP_COUPON CP,
                       UO_OP_SMS_TEMPLATE SMS
                  WHERE T1.HEAD_ID = T2.HEAD_ID
                    AND T2.GROUP_ID = T3.GROUP_ID
-                   AND T2.COUPON_ID = CP.COUPON_ID(+)
                    AND T3.SMS_CODE = SMS.SMS_CODE
                    AND T1.HEAD_ID = #{headId}
                    AND ROWNUM &lt;= #{end}
@@ -180,7 +179,7 @@
     </select>
 
     <update id="insertPushContentTemp">
-        insert into UO_OP_DAILY_CONTENT_TMP(daily_detail_id,head_id,sms_content)
+        insert into UO_OP_DAILY_CONTENT_TMP(daily_detail_id,head_id,sms_content,coupon_id,coupon_min,coupon_deno)
         SELECT A.*
         FROM(
         <foreach collection="list" item="item" index="index"
@@ -188,7 +187,10 @@
             SELECT
             #{item.dailyDetailId} dailyDetailId,
             #{item.headId} headId,
-            #{item.smsContent} smsContent
+            #{item.smsContent} smsContent,
+            #{item.couponId},
+            #{item.couponMin},
+            #{item.couponDeno}
             FROM
             dual
         </foreach>
@@ -214,11 +216,8 @@
     </delete>
 
     <update id="updatePushContentFromTemp">
-        update UO_OP_DAILY_DETAIL set SMS_CONTENT =
-            (select sms_content from UO_OP_DAILY_CONTENT_TMP where UO_OP_DAILY_CONTENT_TMP.daily_detail_id = UO_OP_DAILY_DETAIL.daily_detail_id)
-        where exists
-            (
-                select 1 from UO_OP_DAILY_CONTENT_TMP where UO_OP_DAILY_DETAIL.daily_detail_id = UO_OP_DAILY_CONTENT_TMP.daily_detail_id
-            )
+        update UO_OP_DAILY_DETAIL set (sms_content,coupon_id,coupon_min,coupon_deno) =
+            (select sms_content,coupon_id,coupon_min,coupon_deno from UO_OP_DAILY_CONTENT_TMP where UO_OP_DAILY_CONTENT_TMP.daily_detail_id = UO_OP_DAILY_DETAIL.daily_detail_id)
+        where head_id=#{headId}
     </update>
 </mapper>
