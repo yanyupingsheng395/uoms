@@ -100,12 +100,12 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public int findImportSpuListCount(String spuName, String purchOrder, String dateRange) {
-        return insightImportSpuMapper.findImportSpuListCount(spuName, purchOrder, dateRange);
+    public int findImportSpuListCount(String purchOrder, String dateRange) {
+        return insightImportSpuMapper.findImportSpuListCount(purchOrder, dateRange);
     }
 
     @Override
-    public List<InsightImportSpu> findImportSpuList(int start, int end, String spuName, String purchOrder, String dateRange, String sortColumn, String sortOrder) {
+    public List<InsightImportSpu> findImportSpuList(int start, int end, String spuId, String purchOrder, String dateRange, String sortColumn, String sortOrder) {
         StringBuilder orderSql = new StringBuilder();
         if (null != sortColumn) {
             switch (sortColumn) {
@@ -122,11 +122,14 @@ public class InsightServiceImpl implements InsightService {
                     orderSql.append("order by OTHER_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 default:
+                    orderSql.append("order by CONTRIBUTE_RATE " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
             }
+        }else {
+            orderSql.append("order by CONTRIBUTE_RATE " + sortOrder + ", SPU_ID " + sortOrder);
         }
         final List<InsightImportSpu> importSpuList = insightImportSpuMapper.findImportSpuList(start, end, purchOrder, dateRange, orderSql.toString());
-        Optional<InsightImportSpu> insightImportSpu = importSpuList.stream().filter(x -> x.getSpuName().equals(spuName)).findFirst();
+        Optional<InsightImportSpu> insightImportSpu = importSpuList.stream().filter(x -> x.getSpuId().equals(spuId)).findFirst();
         if (insightImportSpu.isPresent()) {
             importSpuList.remove(insightImportSpu.get());
             importSpuList.add(0, insightImportSpu.get());

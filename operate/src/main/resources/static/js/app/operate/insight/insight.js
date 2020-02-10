@@ -175,7 +175,7 @@ function findImportSpu() {
                 sort: params.sort,
                 order: params.order,
                 param: {
-                    spuName: $("#spuName").find("option:selected").text(),
+                    spuId: $("#spuName").find("option:selected").val(),
                     purchOrder: $("#purchOrder1").val(),
                     dateRange: $("#dateRange").val()
                 }
@@ -603,7 +603,7 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId) {
                 splitArea : {show : false}
             },
             yAxis: {
-                name: "购买概率",
+                name: "购买概率（%）",
                 type: 'value',
                 splitLine:{show: false},
                 splitArea : {show : false}
@@ -730,7 +730,7 @@ function getSpuChartOption(data) {
     let option = {
         color: ['#CD2626'],
         title: {
-            text: '指定spu购买次序下的商品构成',
+            text: '指定类目购买次序下的商品构成',
             x: 'center',
             y: 'bottom',
             textStyle: {

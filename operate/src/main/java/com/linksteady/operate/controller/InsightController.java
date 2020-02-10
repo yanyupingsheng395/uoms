@@ -65,14 +65,14 @@ public class InsightController {
     public ResponseBo findImportSpuList(QueryRequest request) {
         int start = request.getStart();
         int end = request.getEnd();
-        String spuName = request.getParam().get("spuName");
+        String spuId = request.getParam().get("spuId");
         String purchOrder = request.getParam().get("purchOrder");
         String dateRange = request.getParam().get("dateRange");
         String sortColumn = request.getSort();
         String sortOrder = request.getOrder();
 
-        int count = insightService.findImportSpuListCount(spuName, purchOrder, dateRange);
-        List<InsightImportSpu> dataList = insightService.findImportSpuList(start, end, spuName, purchOrder, dateRange, sortColumn, sortOrder);
+        int count = insightService.findImportSpuListCount(purchOrder, dateRange);
+        List<InsightImportSpu> dataList = insightService.findImportSpuList(start, end, spuId, purchOrder, dateRange, sortColumn, sortOrder);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 

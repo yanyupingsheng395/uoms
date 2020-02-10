@@ -23,9 +23,9 @@ public interface InsightService {
 
     int findGrowthPathListCount(String dateRange);
 
-    int findImportSpuListCount(String spuName, String purchOrder, String dateRange);
+    int findImportSpuListCount(String purchOrder, String dateRange);
 
-    List<InsightImportSpu> findImportSpuList(int start, int end, String spuName, String purchOrder, String dateRange, String sortColumn, String sortOrder);
+    List<InsightImportSpu> findImportSpuList(int start, int end, String spuId, String purchOrder, String dateRange, String sortColumn, String sortOrder);
 
     /**
      * 获取四价值的平均值

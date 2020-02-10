@@ -114,7 +114,7 @@ public class LoginController extends BaseController {
             return ResponseBo.error("验证码错误！");
         }
 
-        password = MD5Utils.encrypt(username.toLowerCase(), password);
+        password = MD5Utils.encrypt(username, password);
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         try {
             Subject subject = getSubject();
