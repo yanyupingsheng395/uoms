@@ -101,64 +101,65 @@
 
     <select id="getCouponList" resultMap="BaseResultMap">
         select distinct t1.coupon_id, t1.coupon_denom, t1.coupon_threshold, t1.coupon_name, t1.coupon_url, t1.coupon_desc, t1.coupon_type, t1.coupon_num, t1.valid_start, to_char(t1.valid_end, 'yyyy-mm-dd') valid_end, t1.coupon_info1, t1.coupon_info2, t1.coupon_display_name, t1.valid_status, t1.coupon_source, t1.user_value, t1.life_cycle, t1.path_active, t1.discount_level, t1.check_flag, t1.check_comments from UO_OP_COUPON t1, UO_OP_DAILY_TEMPLATE_CONFIG t2
-        where (t1.USER_VALUE like concat('%', concat(t2.USER_VALUE, '%'))
-         or t1.LIFE_CYCLE like concat('%', concat(t2.LIFECYLE, '%'))
-         or t1.PATH_ACTIVE like concat('%', concat(t2.PATH_ACTIVE, '%')))
-         and t2.GROUP_ID = #{groupId}
-         order by to_number(t1.COUPON_ID) desc
+                where ((t1.USER_VALUE like concat('%', concat(t2.USER_VALUE, '%'))
+            and t1.LIFE_CYCLE like concat('%', concat(t2.LIFECYLE, '%'))
+            and t1.PATH_ACTIVE like concat('%', concat(t2.PATH_ACTIVE, '%')))
+            and t2.GROUP_ID =  #{groupId} and t1.DISCOUNT_LEVEL is null) or (t1.DISCOUNT_LEVEL = t2.DISCOUNT_LEVEL and t2.GROUP_ID = #{groupId} and t1.DISCOUNT_LEVEL is not null )
+        order by to_number(t1.coupon_threshold) asc,to_number(t1.coupon_denom) asc
     </select>
 
     <insert id="insertCalculatedCoupon">
         merge into UO_OP_COUPON tt1
         using (
             select distinct
-                   COUPON_DENOM,
-                   COUPON_THRESHOLD,
-                   COUPON_NAME,
-                   '0'            COUPON_SOURCE,
-                   v1.USER_VALUE  USER_VALUE,
-                   v2.LIFECYLE    LIFE_CYCLE,
-                   v3.PATH_ACTIVE PATH_ACTIVE,
-                   '0' CHECK_FLAG,
-                   '补贴链接没有配置' CHECK_COMMENTS,
-                   'N' VALID_STATUS
-            from PP_COUPON,
-                 (select COUPON_DENOM||'-'||COUPON_THRESHOLD discount_name, listagg(USER_VALUE, ',') within group ( order by USER_VALUE) USER_VALUE
-                  from (
-                           select distinct T1.COUPON_DENOM,T1.COUPON_THRESHOLD, t2.USER_VALUE
-                           from PP_COUPON t1,
-                                UO_OP_DAILY_TEMPLATE_CONFIG t2
-                           where t1.DISCOUNT_LEVEL = t2.DISCOUNT_LEVEL
-                       )
-                  group by COUPON_DENOM||'-'||COUPON_THRESHOLD) v1,
+        COUPON_DENOM,
+        v0.DISCOUNT_LEVEL DISCOUNT_LEVEL,
+        COUPON_THRESHOLD,
+        COUPON_NAME,
+        '0'            COUPON_SOURCE,
+        v1.USER_VALUE  USER_VALUE,
+        v2.LIFECYLE    LIFE_CYCLE,
+        v3.PATH_ACTIVE PATH_ACTIVE,
+        '0' CHECK_FLAG,
+        '补贴链接没有配置' CHECK_COMMENTS,
+        'N' VALID_STATUS
+    from PP_COUPON v0,
+         (select DISCOUNT_LEVEL, listagg(USER_VALUE, ',') within group ( order by USER_VALUE) USER_VALUE
+          from (
+                   select distinct T1.DISCOUNT_LEVEL, t2.USER_VALUE
+                   from PP_COUPON t1,
+                        UO_OP_DAILY_TEMPLATE_CONFIG t2
+                   where t1.DISCOUNT_LEVEL = t2.DISCOUNT_LEVEL
+               )
+          group by DISCOUNT_LEVEL) v1,
 
-                 (select COUPON_DENOM||'-'||COUPON_THRESHOLD discount_name, listagg(LIFECYLE, ',') within group ( order by LIFECYLE) LIFECYLE
-                  from (
-                           select distinct T1.COUPON_DENOM,T1.COUPON_THRESHOLD, t2.LIFECYLE
-                           from PP_COUPON t1,
-                                UO_OP_DAILY_TEMPLATE_CONFIG t2
-                           where t1.DISCOUNT_LEVEL = t2.DISCOUNT_LEVEL
-                       )
-                  group by COUPON_DENOM||'-'||COUPON_THRESHOLD ) v2,
-                 (select COUPON_DENOM||'-'||COUPON_THRESHOLD discount_name, listagg(PATH_ACTIVE, ',') within group ( order by PATH_ACTIVE) PATH_ACTIVE
-                  from (
-                           select distinct T1.COUPON_DENOM,T1.COUPON_THRESHOLD, t2.PATH_ACTIVE
-                           from PP_COUPON t1,
-                                UO_OP_DAILY_TEMPLATE_CONFIG t2
-                           where t1.DISCOUNT_LEVEL = t2.DISCOUNT_LEVEL
-                       )
-                  group by COUPON_DENOM||'-'||COUPON_THRESHOLD) v3
-            where (PP_COUPON.COUPON_DENOM||'-'||PP_COUPON.COUPON_THRESHOLD) = v1.discount_name
-              and (PP_COUPON.COUPON_DENOM||'-'||PP_COUPON.COUPON_THRESHOLD) = v2.discount_name
-              and (PP_COUPON.COUPON_DENOM||'-'||PP_COUPON.COUPON_THRESHOLD) = v3.discount_name
+         (select DISCOUNT_LEVEL, listagg(LIFECYLE, ',') within group ( order by LIFECYLE) LIFECYLE
+          from (
+                   select distinct T1.DISCOUNT_LEVEL, t2.LIFECYLE
+                   from PP_COUPON t1,
+                        UO_OP_DAILY_TEMPLATE_CONFIG t2
+                   where t1.DISCOUNT_LEVEL = t2.DISCOUNT_LEVEL
+               )
+          group by DISCOUNT_LEVEL) v2,
+         (select DISCOUNT_LEVEL, listagg(PATH_ACTIVE, ',') within group ( order by PATH_ACTIVE) PATH_ACTIVE
+          from (
+                   select distinct T1.DISCOUNT_LEVEL, t2.PATH_ACTIVE
+                   from PP_COUPON t1,
+                        UO_OP_DAILY_TEMPLATE_CONFIG t2
+                   where t1.DISCOUNT_LEVEL = t2.DISCOUNT_LEVEL
+               )
+          group by DISCOUNT_LEVEL) v3
+    where v0.DISCOUNT_LEVEL like concat('%', concat(v1.DISCOUNT_LEVEL, '%'))
+      and v0.DISCOUNT_LEVEL like concat('%', concat(v2.DISCOUNT_LEVEL, '%'))
+      and v0.DISCOUNT_LEVEL like concat('%', concat(v3.DISCOUNT_LEVEL, '%'))
         ) tt2
         on (tt1.COUPON_THRESHOLD = tt2.COUPON_THRESHOLD and tt1.COUPON_DENOM = tt2.COUPON_DENOM)
         when not matched then
             insert (COUPON_ID, COUPON_DENOM, COUPON_THRESHOLD, COUPON_DISPLAY_NAME, COUPON_SOURCE, USER_VALUE,
-                    LIFE_CYCLE, PATH_ACTIVE, CHECK_FLAG, CHECK_COMMENTS, VALID_STATUS)
+                    LIFE_CYCLE, PATH_ACTIVE, CHECK_FLAG, CHECK_COMMENTS, VALID_STATUS,DISCOUNT_LEVEL)
             values (UO_OP_COUPON_SEQ.nextval, tt2.COUPON_DENOM, tt2.COUPON_THRESHOLD, tt2.COUPON_NAME, tt2.COUPON_SOURCE,
                     tt2.USER_VALUE, tt2.LIFE_CYCLE, tt2.PATH_ACTIVE,
-                    tt2.CHECK_FLAG, tt2.CHECK_COMMENTS, tt2.VALID_STATUS)
+                    tt2.CHECK_FLAG, tt2.CHECK_COMMENTS, tt2.VALID_STATUS, tt2.DISCOUNT_LEVEL)
     </insert>
 
     <delete id="deleteCouponGroup">
