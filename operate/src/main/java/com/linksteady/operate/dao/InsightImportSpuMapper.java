@@ -26,7 +26,7 @@ public interface InsightImportSpuMapper {
      * @param purchOrder
      * @return
      */
-    List<InsightImportSpu> findImportSpuList(int start, int end, String purchOrder, String dateRange, String orderSql);
+    List<InsightImportSpu> findImportSpuList(int start, int end, String purchOrder, String dateRange, String orderSql, String spuId);
 
     InsightImportSpu findAvgImportSpu(String purchOrder, String dateRange);
 }

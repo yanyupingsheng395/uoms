@@ -16,6 +16,9 @@ function searchInsight() {
 
 function resetInsight() {
     $("#dateRange").find("option:selected").removeAttr("selected");
+    $("#dateRange1").val($("#dateRange").find("option:selected").text());
+    $("#dateRange2").val($("#dateRange").find("option:selected").text());
+    searchInsight();
 }
 
 function findUserCntList() {
@@ -660,7 +663,7 @@ function getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId) {
     });
 }
 
-function getProductOption(xdata, ydata) {
+function getProductOption(xdata, ydata,productName) {
     var option = {
         color: ['#3398DB'],
         tooltip : {
@@ -706,7 +709,7 @@ function getProductOption(xdata, ydata) {
             }
         ],
         title: {
-            text: '指定商品下次转化商品概率分布',
+            text: '指定商品['+productName+']下次转化商品概率分布',
             x: 'center',
             y: 'bottom',
             textStyle: {
@@ -831,7 +834,7 @@ function init_chart_event() {
             let spuId = $("#convertSpu").val();
             let purchOrder = $("#purchOrder").val();
             ebpProductId = ebpProductIdArray[params.dataIndex];
-            getProductRelation(ebpProductId, spuId, purchOrder);
+            getProductRelation(ebpProductId, spuId, purchOrder, params.name);
         }
     });
 
@@ -869,7 +872,7 @@ function getSpuRelation(spuId, purchOrder) {
         var option1 = getSpuChartOption(r.data);
         spu_relation_chart.hideLoading();
         spu_relation_chart.setOption(option1);
-        var option2 = getProductOption(r.data.xdata2, r.data.ydata2);
+        var option2 = getProductOption(r.data.xdata2, r.data.ydata2, r.data.xdata1[1]);
         product_relation_chart.hideLoading();
         product_relation_chart.setOption(option2);
 
@@ -886,13 +889,13 @@ function getSpuRelation(spuId, purchOrder) {
 
 // 下一次转化商品
 let product_relation_chart_flag = false;
-function getProductRelation(ebpProductId, spuId, purchOrder) {
+function getProductRelation(ebpProductId, spuId, purchOrder, productName) {
     product_relation_chart.showLoading({
         text : '加载数据中...'
     });
     $.get("/insight/getProductConvertRate", {spuId:spuId, purchOrder:purchOrder, productId:ebpProductId}, function (r) {
         nextProductIdArray = r.data['nextProductId'];
-        var option = getProductOption(r.data.xdata, r.data.ydata);
+        var option = getProductOption(r.data.xdata, r.data.ydata,productName);
         product_relation_chart.hideLoading();
         product_relation_chart.setOption(option);
         let nextProductId = nextProductIdArray === undefined ? "":nextProductIdArray[0];

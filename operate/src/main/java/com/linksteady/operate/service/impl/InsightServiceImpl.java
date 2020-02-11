@@ -110,30 +110,25 @@ public class InsightServiceImpl implements InsightService {
         if (null != sortColumn) {
             switch (sortColumn) {
                 case "contributeRate":
-                    orderSql.append("order by CONTRIBUTE_RATE " + sortOrder + ", SPU_ID " + sortOrder);
+                    orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, CONTRIBUTE_RATE " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 case "nextPurchProbal":
-                    orderSql.append("order by NEXT_PURCH_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
+                    orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, NEXT_PURCH_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 case "sameSpuProbal":
-                    orderSql.append("order by SAME_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
+                    orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, SAME_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 case "otherSpuProbal":
-                    orderSql.append("order by OTHER_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
+                    orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, OTHER_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 default:
-                    orderSql.append("order by CONTRIBUTE_RATE " + sortOrder + ", SPU_ID " + sortOrder);
+                    orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, CONTRIBUTE_RATE desc, SPU_ID asc");
                     break;
             }
-        }else {
-            orderSql.append("order by CONTRIBUTE_RATE " + sortOrder + ", SPU_ID " + sortOrder);
+        } else {
+            orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, CONTRIBUTE_RATE desc, SPU_ID asc");
         }
-        final List<InsightImportSpu> importSpuList = insightImportSpuMapper.findImportSpuList(start, end, purchOrder, dateRange, orderSql.toString());
-        Optional<InsightImportSpu> insightImportSpu = importSpuList.stream().filter(x -> x.getSpuId().equals(spuId)).findFirst();
-        if (insightImportSpu.isPresent()) {
-            importSpuList.remove(insightImportSpu.get());
-            importSpuList.add(0, insightImportSpu.get());
-        }
+        final List<InsightImportSpu> importSpuList = insightImportSpuMapper.findImportSpuList(start, end, purchOrder, dateRange, orderSql.toString(), spuId);
         InsightImportSpu avg = insightImportSpuMapper.findAvgImportSpu(purchOrder, dateRange);
         importSpuList.add(avg);
         return importSpuList;
@@ -552,8 +547,8 @@ public class InsightServiceImpl implements InsightService {
                 ConversionData conversionData = insightThriftClient.getInsightService().getConversionData(Long.parseLong(spuId), Long.parseLong(purchOrder), Long.parseLong(ebpProductId), Long.parseLong(nextEbpProductId));
 //                ;
                 result.put("xdata", conversionData.xdata);
-                result.put("ydata", conversionData.ydata.stream().map(x->df.format(x * 100)).collect(Collectors.toList()));
-                result.put("zdata", conversionData.zdata.stream().map(x->df.format(x * 100)).collect(Collectors.toList()));
+                result.put("ydata", conversionData.ydata.stream().map(x -> df.format(x * 100)).collect(Collectors.toList()));
+                result.put("zdata", conversionData.zdata.stream().map(x -> df.format(x * 100)).collect(Collectors.toList()));
             } else {
                 result.put("xdata", Lists.newArrayList());
                 result.put("ydata", Lists.newArrayList());
@@ -752,9 +747,9 @@ public class InsightServiceImpl implements InsightService {
     public Map<String, Object> getUserValueWithSpu(String userId, String spuId) {
         Map<String, Object> result = Maps.newHashMap();
         Map<String, String> data = insightMapper.getUserValueWithSpu(spuId, userId);
-        if(null != data && !data.isEmpty()) {
+        if (null != data && !data.isEmpty()) {
             result.put("current", new LinkedList<>(data.values()));
-        }else {
+        } else {
             result.put("current", new LinkedList<>());
         }
         return result;
@@ -766,9 +761,9 @@ public class InsightServiceImpl implements InsightService {
         List<Map<String, Object>> data1 = insightMapper.getConvertDate(userId);
         List<Map<String, Object>> data2 = insightMapper.getPushDate(userId);
         List<Map<String, Object>> data3 = insightMapper.getPushAndConvertDate(userId);
-        List<LinkedList<Object>> data1List = data1.stream().map(x-> new LinkedList<>(x.values())).collect(Collectors.toList());
-        List<LinkedList<Object>> data2List = data2.stream().map(x-> new LinkedList<>(x.values())).collect(Collectors.toList());
-        List<LinkedList<Object>> data3List = data3.stream().map(x-> new LinkedList<>(x.values())).collect(Collectors.toList());
+        List<LinkedList<Object>> data1List = data1.stream().map(x -> new LinkedList<>(x.values())).collect(Collectors.toList());
+        List<LinkedList<Object>> data2List = data2.stream().map(x -> new LinkedList<>(x.values())).collect(Collectors.toList());
+        List<LinkedList<Object>> data3List = data3.stream().map(x -> new LinkedList<>(x.values())).collect(Collectors.toList());
         result.put("data1", data1List);
         result.put("data2", data2List);
         result.put("data3", data3List);
