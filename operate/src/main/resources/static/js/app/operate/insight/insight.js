@@ -42,7 +42,8 @@ function findUserCntList() {
                 align: 'center'
             }, {
                 field: 'purch4',
-                title: '第4次'
+                title: '第4次',
+                align: 'center'
             }, {
                 field: 'purch5',
                 title: '第5次',
