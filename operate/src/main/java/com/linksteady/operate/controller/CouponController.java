@@ -1,6 +1,5 @@
 package com.linksteady.operate.controller;
 
-import com.google.common.collect.Lists;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -153,7 +152,7 @@ public class CouponController extends BaseController {
     public ResponseBo getShortUrl(String url) {
         String shortUrl;
         if (StringUtils.isNotEmpty(url)) {
-            shortUrl = shortUrlService.genConponShortUrl(url);
+            shortUrl = shortUrlService.genConponShortUrl(url,"S");
             if("error".equalsIgnoreCase(shortUrl)) {
                 return ResponseBo.error("生成短链错误！");
             }

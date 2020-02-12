@@ -363,7 +363,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             if(null!=smsContent&&smsContent.indexOf("${PROD_URL}")!=-1)
             {
                 //获取商品的短链
-                String prodLongUrl=shortUrlService.genProdShortUrlByProdId(dailyDetail1.getRecProdId());
+                String prodLongUrl=shortUrlService.genProdShortUrlByProdId(dailyDetail1.getRecProdId(),"S");
                 //如果短链生成错误，则不再进行替换
                 if(!"error".equals(prodLongUrl))
                 {
