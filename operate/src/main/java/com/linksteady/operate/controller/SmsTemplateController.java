@@ -7,6 +7,7 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.domain.SmsTemplate;
+import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.service.SmsTemplateService;
 import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,9 @@ public class SmsTemplateController extends BaseController {
 
     @Autowired
     RedisMessageServiceImpl redisMessageService;
+
+    @Autowired
+    private DailyService dailyService;
 
     /**
      * 获取短信模板
@@ -72,14 +76,23 @@ public class SmsTemplateController extends BaseController {
      * 删除短信模板
      */
     @RequestMapping("/deleteSmsTemplate")
-    public ResponseBo deleteSmsTemplate(HttpServletRequest request) {
-        String smsCode = request.getParameter("smsCode");
+    public ResponseBo deleteSmsTemplate(@RequestParam("smsCode") String smsCode) {
         //判断短信模板是否被引用
         if (smsTemplateService.refrenceCount(smsCode) > 0) {
-            return ResponseBo.error("此文案已经被成长组引用，无法删除！");
+            // 删除文案关系
+            dailyService.updateSmsCodeNull(smsCode);
         }
         smsTemplateService.deleteSmsTemplate(smsCode);
         return ResponseBo.ok();
+    }
+
+    @RequestMapping("/smsIsUsed")
+    public boolean smsIsUsed(@RequestParam("smsCode") String smsCode) {
+        boolean result = false;
+        if (smsTemplateService.refrenceCount(smsCode) > 0) {
+            result = true;
+        }
+        return result;
     }
 
     /**

@@ -86,4 +86,6 @@ public interface DailyService {
     int getSmsIsCoupon(String smsCode, String is_coupon);
 
     int getValidDailyHead();
+
+    void updateSmsCodeNull(String smsCode);
 }

@@ -126,4 +126,6 @@ public interface DailyMapper {
     int getSmsIsCoupon(String smsCode, String isCoupon);
 
     int getValidDailyHead();
+
+    void updateSmsCodeNull(String smsCode);
 }

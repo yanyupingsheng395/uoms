@@ -33,17 +33,6 @@ function setUserGroupChecked() {
     $("input[name='isProductUrl']").attr("disabled", "disabled");
 }
 
-function clearUserGroupDisabled() {
-    $("input[name='userValue']").removeAttr("disabled");
-    $("input[name='lifeCycle']").removeAttr("disabled");
-    $("input[name='pathActive']").removeAttr("disabled");
-    $("#smsCode").removeAttr("disabled");
-    $("#smsName").removeAttr("disabled");
-    $("input[name='isCouponUrl']").removeAttr("disabled");
-    $("input[name='isCouponName']").removeAttr("disabled");
-    $("input[name='isProductName']").removeAttr("disabled");
-    $("input[name='isProductUrl']").removeAttr("disabled");
-}
 /**
  * 字数统计
  * @param textArea
@@ -77,6 +66,33 @@ function statInputNum() {
         code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + smsLengthLimit + ":文案总字符数";
         $("#word").text(code);
     });
+}
+
+function initGetInputNum() {
+    let smsContent = $('#smsContent').val();
+    let y = smsContent.length;
+    let m = smsContent.length;
+    let n = smsContent.length;
+    if(smsContent.indexOf('${COUPON_URL}') > -1) {
+        y = y - '${COUPON_URL}'.length + shortUrlLen;
+        m = m - '${COUPON_URL}'.length;
+    }
+    if(smsContent.indexOf('${COUPON_NAME}') > -1) {
+        y = y - '${COUPON_NAME}'.length + couponNameLen;
+        m = m - '${COUPON_NAME}'.length;
+    }
+    if(smsContent.indexOf('${PROD_NAME}') > -1) {
+        y = y - '${PROD_NAME}'.length + prodNameLen;
+        m = m - '${PROD_NAME}'.length;
+    }
+    if(smsContent.indexOf('${PROD_URL}') > -1) {
+        y = y - '${PROD_URL}'.length + shortUrlLen;
+        m = m - '${PROD_URL}'.length;
+    }
+    total_num = y;
+    var code = "";
+    code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + smsLengthLimit + ":文案总字符数";
+    $("#word").text(code);
 }
 
 
@@ -187,18 +203,35 @@ function del() {
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
         content: '确认删除当前文案？'
     }, function () {
-        $.getJSON("/smsTemplate/deleteSmsTemplate?smsCode="+smsCode,function (resp) {
-            if (resp.code === 200){
-                //提示成功
-                $MB.n_success('删除成功！');
-                //刷新表格
-                var groupId = $("#currentGroupId").val();
-                smsTemplateTable(groupId);
+
+        $.get("/smsTemplate/smsIsUsed", {smsCode:smsCode}, function (resp) {
+            if(resp) {
+                $MB.confirm({
+                    title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+                    content: '当前文案已被成长组引用，确认要删除？'
+                },function () {
+                    deleteSmsTemplate(smsCode);
+                });
             }else {
-                $MB.n_danger(resp.msg);
+                deleteSmsTemplate(smsCode);
             }
-        })
+        });
     });
+}
+
+// 删除文案
+function deleteSmsTemplate(smsCode) {
+    $.getJSON("/smsTemplate/deleteSmsTemplate",{smsCode:smsCode}, function (resp) {
+        if (resp.code === 200){
+            //提示成功
+            $MB.n_success('删除成功！');
+            //刷新表格
+            var groupId = $("#currentGroupId").val();
+            smsTemplateTable(groupId);
+        }else {
+            $MB.n_danger(resp.msg);
+        }
+    })
 }
 
 // 验证补贴
@@ -353,7 +386,17 @@ $("#btn_save_sms").click(function () {
             title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
             content: sure_msg
         }, function () {
-            clearUserGroupDisabled();
+
+            $("input[name='userValue']").removeAttr("disabled");
+            $("input[name='lifeCycle']").removeAttr("disabled");
+            $("input[name='pathActive']").removeAttr("disabled");
+            $("#smsCode").removeAttr("disabled");
+            $("#smsName").removeAttr("disabled");
+            $("input[name='isCouponUrl']").removeAttr("disabled");
+            $("input[name='isCouponName']").removeAttr("disabled");
+            $("input[name='isProductName']").removeAttr("disabled");
+            $("input[name='isProductUrl']").removeAttr("disabled");
+
             var data = $("#smsTemplateAddForm").serialize();
             setUserGroupChecked();
             $.post(url, data, function (r) {
@@ -465,6 +508,7 @@ $("#btn_edit").click(function () {
             $("input[name='userValue']").attr('disabled', 'disabled');
             $("input[name='lifeCycle']").attr('disabled', 'disabled');
             $("input[name='pathActive']").attr('disabled', 'disabled');
+            initGetInputNum();
         }else {
             $MB.n_danger(resp.msg);
         }

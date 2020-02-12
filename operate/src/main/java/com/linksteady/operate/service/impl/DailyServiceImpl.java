@@ -291,4 +291,10 @@ public class DailyServiceImpl implements DailyService {
     public int getValidDailyHead() {
         return dailyMapper.getValidDailyHead();
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateSmsCodeNull(String smsCode) {
+        dailyMapper.updateSmsCodeNull(smsCode);
+    }
 }

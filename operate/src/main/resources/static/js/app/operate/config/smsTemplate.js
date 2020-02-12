@@ -249,19 +249,34 @@ function del() {
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
         content: '确认删除当前文案？'
     }, function () {
-        $.getJSON("/smsTemplate/deleteSmsTemplate?smsCode="+smsCode,function (resp) {
-            if (resp.code === 200){
-                //提示成功
-                $MB.n_success('删除成功！');
-                //刷新表格
-                $('#smsTemplateTable').bootstrapTable('refresh');
+        $.get("/smsTemplate/smsIsUsed", {smsCode:smsCode}, function (resp) {
+            if(resp) {
+                $MB.confirm({
+                    title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+                    content: '当前文案已被成长组引用，确认要删除？'
+                },function () {
+                    deleteSmsTemplate(smsCode);
+                });
             }else {
-                $MB.n_danger(resp.msg);
+                deleteSmsTemplate(smsCode);
             }
-        })
+        });
     });
 }
-
+// 删除文案
+function deleteSmsTemplate(smsCode) {
+    $.getJSON("/smsTemplate/deleteSmsTemplate",{smsCode:smsCode}, function (resp) {
+        if (resp.code === 200){
+            //提示成功
+            $MB.n_success('删除成功！');
+            //刷新表格
+            var groupId = $("#currentGroupId").val();
+            smsTemplateTable(groupId);
+        }else {
+            $MB.n_danger(resp.msg);
+        }
+    })
+}
 function add() {
     $('#smsCode').val("");
     $('#smsContent').val("");
@@ -273,7 +288,7 @@ function add() {
     $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
     $("#fontNum").val('');
     $("#myLargeModalLabel3").text("新增文案");
-    $("#btn_save").attr("name", "save");
+    $("#btn_save_sms").attr("name", "save");
     $('#add_modal').modal('show');
     $("#smsTemplateAddForm").validate().resetForm();
 }
@@ -390,7 +405,6 @@ function getSmsContentFontCount() {
 }
 
 // 新增&修改
-// 新增&修改
 $("#btn_save_sms").click(function () {
     var url = "";
     var success_msg = "";
@@ -410,7 +424,15 @@ $("#btn_save_sms").click(function () {
             title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
             content: sure_msg
         }, function () {
-            clearDisabled();
+            $("input[name='userValue']").removeAttr("disabled");
+            $("input[name='lifeCycle']").removeAttr("disabled");
+            $("input[name='pathActive']").removeAttr("disabled");
+            $("#smsCode").removeAttr("disabled");
+            $("#smsName").removeAttr("disabled");
+            $("input[name='isCouponUrl']").removeAttr("disabled");
+            $("input[name='isCouponName']").removeAttr("disabled");
+            $("input[name='isProductName']").removeAttr("disabled");
+            $("input[name='isProductUrl']").removeAttr("disabled");
             var data = $("#smsTemplateAddForm").serialize();
             setDisabled();
             $.post(url, data, function (r) {
@@ -448,7 +470,6 @@ function clearDisabled() {
     $("input[name='isProductName']").removeAttr("disabled");
     $("input[name='isProductUrl']").removeAttr("disabled");
 }
-// 表单验证
 // 表单验证
 function validate() {
     if(!validCouponSendType()) {
@@ -656,8 +677,9 @@ $("#btn_edit").click(function () {
             $("input[name='lifeCycle']").attr('disabled', 'disabled');
             $("input[name='pathActive']").attr('disabled', 'disabled');
             $("#myLargeModalLabel3").text("修改文案");
-            $("#btn_save").attr("name", "update");
+            $("#btn_save_sms").attr("name", "update");
             $("#add_modal").modal('show');
+            initGetInputNum();
         }else {
             $MB.n_danger(resp.msg);
         }
@@ -760,4 +782,31 @@ function isProdUrlFalseClick() {
     $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').removeAttr("disabled");
     IS_COUPON_URL_DISABLED = false;
     $('#isProductUrl-error').hide();
+}
+
+function initGetInputNum() {
+    let smsContent = $('#smsContent').val();
+    let y = smsContent.length;
+    let m = smsContent.length;
+    let n = smsContent.length;
+    if(smsContent.indexOf('${COUPON_URL}') > -1) {
+        y = y - '${COUPON_URL}'.length + shortUrlLen;
+        m = m - '${COUPON_URL}'.length;
+    }
+    if(smsContent.indexOf('${COUPON_NAME}') > -1) {
+        y = y - '${COUPON_NAME}'.length + couponNameLen;
+        m = m - '${COUPON_NAME}'.length;
+    }
+    if(smsContent.indexOf('${PROD_NAME}') > -1) {
+        y = y - '${PROD_NAME}'.length + prodNameLen;
+        m = m - '${PROD_NAME}'.length;
+    }
+    if(smsContent.indexOf('${PROD_URL}') > -1) {
+        y = y - '${PROD_URL}'.length + shortUrlLen;
+        m = m - '${PROD_URL}'.length;
+    }
+    total_num = y;
+    var code = "";
+    code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + smsLengthLimit + ":文案总字符数";
+    $("#word").text(code);
 }

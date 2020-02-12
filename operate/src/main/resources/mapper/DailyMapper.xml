@@ -384,4 +384,8 @@
     <select id="getValidDailyHead" resultType="int">
         select count(1) from UO_OP_DAILY_HEADER where to_char(TOUCH_DT, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd') and STATUS = 'todo'
     </select>
+
+    <update id="updateSmsCodeNull">
+        update UO_OP_DAILY_TEMPLATE_CONFIG set SMS_CODE = null where SMS_CODE = #{smsCode}
+    </update>
 </mapper>
