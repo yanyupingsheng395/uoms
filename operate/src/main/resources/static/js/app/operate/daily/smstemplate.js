@@ -22,25 +22,27 @@ function add() {
 
 // 新增文案的时候，给群组信息设置默认选中和只读
 function setUserGroupChecked() {
-    var groupInfo = $("#currentGroupInfo").val();
-    var groupInfoArr = groupInfo.split("|");
-    groupInfoArr.forEach((v,k)=>{
-        if(k===0) {
-            $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-        }
-        if(k===1) {
-            $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-        }
-        if(k===2) {
-            $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-        }
-    });
+    $("input[name='userValue']").attr("disabled", "disabled");
+    $("input[name='lifeCycle']").attr("disabled", "disabled");
+    $("input[name='pathActive']").attr("disabled", "disabled");
+    $("#smsCode").attr("disabled", "disabled");
+    $("#smsName").attr("disabled", "disabled");
+    $("input[name='isCouponUrl']").attr("disabled", "disabled");
+    $("input[name='isCouponName']").attr("disabled", "disabled");
+    $("input[name='isProductName']").attr("disabled", "disabled");
+    $("input[name='isProductUrl']").attr("disabled", "disabled");
 }
 
 function clearUserGroupDisabled() {
     $("input[name='userValue']").removeAttr("disabled");
     $("input[name='lifeCycle']").removeAttr("disabled");
     $("input[name='pathActive']").removeAttr("disabled");
+    $("#smsCode").removeAttr("disabled");
+    $("#smsName").removeAttr("disabled");
+    $("input[name='isCouponUrl']").removeAttr("disabled");
+    $("input[name='isCouponName']").removeAttr("disabled");
+    $("input[name='isProductName']").removeAttr("disabled");
+    $("input[name='isProductUrl']").removeAttr("disabled");
 }
 /**
  * 字数统计
@@ -428,18 +430,18 @@ $("#btn_edit").click(function () {
     }
 
     var smsCode =selectRows[0]["smsCode"];
-    $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
+    $.getJSON("/smsTemplate/getSmsTemplateNotValid?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
             $("#msg_modal").modal('hide');
             var data = resp.data;
-            $("#smsCode").val(data.smsCode);
-            $("#smsName").val(data.smsName);
+            $("#smsCode").val(data.smsCode).attr('disabled', 'disabled');
+            $("#smsName").val(data.smsName).attr('disabled', 'disabled');
             $("#smsContent").val(data.smsContent);
             $("#smsContentInput").val(data.smsContent);
-            $("input[name='isCouponUrl']:radio[value='" + data.isCouponUrl + "']").prop("checked", true);
-            $("input[name='isCouponName']:radio[value='" + data.isCouponName + "']").prop("checked", true);
-            $("input[name='isProductName']:radio[value='" + data.isProductName + "']").prop("checked", true);
-            $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true);
+            $("input[name='isCouponUrl']:radio[value='" + data.isCouponUrl + "']").prop("checked", true).attr('disabled', 'disabled');
+            $("input[name='isCouponName']:radio[value='" + data.isCouponName + "']").prop("checked", true).attr('disabled', 'disabled');
+            $("input[name='isProductName']:radio[value='" + data.isProductName + "']").prop("checked", true).attr('disabled', 'disabled');
+            $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true).attr('disabled', 'disabled');
             $("#remark").val(data.remark);
             $("#myLargeModalLabel3").text("修改文案");
             $("#btn_save_sms").attr("name", "update");
@@ -460,21 +462,9 @@ $("#btn_edit").click(function () {
                     $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
                 });
             }
-
-            var groupInfo = $("#currentGroupInfo").val();
-            var groupInfoArr = groupInfo.split("|");
-            groupInfoArr.forEach((v,k)=>{
-                if(k===0) {
-                    $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-                }
-                if(k===1) {
-                    $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-                }
-                if(k===2) {
-                    $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-                }
-            });
-
+            $("input[name='userValue']").attr('disabled', 'disabled');
+            $("input[name='lifeCycle']").attr('disabled', 'disabled');
+            $("input[name='pathActive']").attr('disabled', 'disabled');
         }else {
             $MB.n_danger(resp.msg);
         }
