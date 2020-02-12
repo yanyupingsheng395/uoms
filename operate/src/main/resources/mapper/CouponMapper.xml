@@ -29,7 +29,7 @@
         <if test="validStatus != null and validStatus != ''">
             where VALID_STATUS = #{validStatus}
         </if>
-        order by COUPON_ID desc
+        order by coupon_threshold asc, coupon_denom desc
         ) A WHERE ROWNUM &lt;=#{endRow}
         ) WHERE RN &gt;=#{startRow}
     </select>
