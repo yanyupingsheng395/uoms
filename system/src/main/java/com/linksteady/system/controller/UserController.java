@@ -41,7 +41,9 @@ public class UserController extends BaseController {
     @RequiresPermissions("user:list")
     public String index(Model model) {
         User user = super.getCurrentUser();
+        String defaultPwd = userService.getDefaultPwd();
         model.addAttribute("user", user);
+        model.addAttribute("defaultPwd", defaultPwd);
         return "system/user/user";
     }
 

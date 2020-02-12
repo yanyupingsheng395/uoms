@@ -450,4 +450,140 @@
         LEFT JOIN (SELECT v1.SPU_WID, max(v1.rn) max_rn FROM tt v1 GROUP BY v1.SPU_WID) t2 ON t1.SPU_WID = t2.SPU_WID
         WHERE t1.rn &lt; t2.MAX_RN and t1.SPU_WID = #{spuId}
     </select>
+
+    <select id="getUserSpu" resultType="map">
+        select distinct WP_USER_PATH.SPU_WID, W_PRODUCT_SPU.SPU_NAME
+        from WP_USER_PATH,
+             W_PRODUCT_SPU,
+             W_PRODUCT
+        where
+        WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID and W_PRODUCT.SPU_WID = WP_USER_PATH.SPU_WID and USER_ID = #{userId}
+    </select>
+
+    <select id="getUserBuyOrder" resultType="string">
+        select max(rn) from WP_USER_PATH where USER_ID = #{userId} and SPU_WID = #{spuId}
+    </select>
+
+    <select id="getEbpProductIdByUserId" resultType="map">
+        select t0.EBP_PRODUCT_ID, NEXT_EBP_PRODUCT_ID, t1.EBP_PRODUCT_NAME EBP_PRODUCT_NAME, t2.EBP_PRODUCT_NAME NEXT_EBP_PRODUCT_NAME from WP_USER_PATH t0, W_PRODUCT_EBP t1, W_PRODUCT_EBP t2
+        where t0.EBP_PRODUCT_ID = t1.EBP_PRODUCT_ID(+) and t0.NEXT_EBP_PRODUCT_ID = t2.EBP_PRODUCT_ID(+) and USER_ID = #{userId} and RN = #{buyOrder} and t0.spu_wid = #{spuId}
+    </select>
+
+    <select id="getLastBuyDt" resultType="string">
+        select ORDER_DT_WID from WP_USER_PATH t0,
+        (select max(rn) max_rn from WP_USER_PATH where USER_ID = #{userId} and SPU_WID = #{spuId}) t1
+        where USER_ID = #{userId} and SPU_WID = #{spuId} and t0.rn = t1.max_rn
+    </select>
+
+    <select id="getUserGrowthPathPointWithSpu" resultType="map">
+        with v1 as (
+            select t1.rn, t1.spu_Wid
+            from WP_USER_PATH t1, (select max(rn) rn from WP_USER_PATH where  SPU_WID = #{spuId} and USER_ID = #{userId}) t2
+            where SPU_WID = #{spuId} and USER_ID = #{userId} and t1.rn = t2.rn
+        )
+        select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB * 100, 2) PROB, BEGIN, END,v1.rn from WP_PURCHASE_PROB t1,v1
+        where t1.SPU_WID = v1.spu_Wid and t1.rn = v1.rn and is_spu = '1'
+        order by ACTIVE_DUAL asc
+    </select>
+
+    <select id="getUserGrowthPathPointWithProduct" resultType="map">
+        with v1 as (
+            select EBP_PRODUCT_ID, NEXT_EBP_PRODUCT_ID, t1.rn, t1.spu_Wid
+            from WP_USER_PATH t1, (select max(rn) rn from WP_USER_PATH where  SPU_WID = '4' and USER_ID = #{userId}) t2
+            where SPU_WID = #{spuId} and USER_ID = #{userId} and t1.rn = t2.rn
+        )
+        select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB * 100, 2) PROB, BEGIN, END from WP_PURCHASE_PROB t1, v1
+        where t1.SPU_WID = v1.spu_Wid and t1.rn = v1.rn and t1.EBP_PRODUCT_ID = v1.EBP_PRODUCT_ID and t1.NEXT_EBP_PRODUCT_ID = v1.NEXT_EBP_PRODUCT_ID and is_spu = '0' order by ACTIVE_DUAL asc
+    </select>
+
+    <select id="getUserValueWithSpu" resultType="java.util.LinkedHashMap">
+        select CONTRIBUTE_LEVEL, VALUE_POTENTIAL_LEVEL, PRICE_SENSE_LEVEL, case when USER_LEVEL = 'ULC_01' then '重要'
+        when USER_LEVEL = 'ULC_02' then '主要' when USER_LEVEL = 'ULC_03' then '普通' when USER_LEVEL = 'ULC_04' then '长尾' end USER_LEVEL
+        from PP_USER_SPU_VALUE where SPU_WID = #{spuId} and user_id = #{userId}
+    </select>
+
+    <select id="getUserValueWithSpuCount" resultType="int">
+        select count(1) from PP_USER_SPU_VALUE where SPU_WID = #{spuId}
+    </select>
+
+    <select id="getConvertDate" resultType="java.util.LinkedHashMap">
+        -- 第一个图
+        SELECT
+          -- 星期
+         v2.weekday_name,
+         --转化小时
+         to_char( v1.order_dt, 'hh24' ) converion_hour,
+         count( 1 ) cnt
+        FROM
+          --订单表
+         w_order_details v1 --日期维表
+         LEFT JOIN w_date v2 ON v1.order_dt_wid = v2.row_wid
+         --商品表
+         LEFT JOIN ( SELECT PRODUCT_ID, spu_wid FROM w_product ) v3 ON v1.product_id = v3.product_id
+        WHERE
+         v1.valid_status = 1
+          --限制spu
+         and v1.USER_ID = #{userId}
+        GROUP BY
+         v2.weekday_name,
+         to_char( v1.order_dt, 'hh24' )
+    </select>
+
+    <select id="getPushDate" resultType="java.util.LinkedHashMap">
+        -- 推送小时
+        SELECT
+        --星期
+        v2.weekday_name,
+        -- 推送小时
+        to_char( v1.push_date, 'hh24' ) push_hour,
+        --次数
+        count( 1 ) cnt
+        FROM
+        -- 日推送转化表
+        uo_op_daily_convert_detail v1
+        --日期维表
+        LEFT JOIN w_date v2
+        ON to_char( v1.push_date, 'yyyymmdd' ) = v2.row_wid
+        left JOIN
+        (select PRODUCT_ID,spu_wid from w_product) v3
+        on v1.rec_prod_id = v3.product_id
+        WHERE
+        --限制spu
+        v1.USER_ID = #{userId}
+        GROUP BY
+        v2.weekday_name,
+        to_char( v1.push_date, 'hh24' ),
+        v3.spu_wid
+        ORDER BY v3.SPU_WID
+    </select>
+
+    <select id="getPushAndConvertDate" resultType="java.util.LinkedHashMap">
+        -- 推送小时
+        SELECT
+         --星期
+         v2.weekday_name,
+          -- 推送小时
+         to_char( v1.push_date, 'hh24' ) push_hour,
+          --次数
+         count( 1 ) cnt
+        FROM
+          -- 日推送转化表
+         uo_op_daily_convert_detail v1
+          --日期维表
+         LEFT JOIN w_date v2
+         ON to_char( v1.push_date, 'yyyymmdd' ) = v2.row_wid
+         left JOIN
+         (select PRODUCT_ID,spu_wid from w_product) v3
+         on v1.rec_prod_id = v3.product_id
+        WHERE
+           --限制spu
+          v1.USER_ID = #{userId}
+           -- 是否转化
+          and v1.is_conversion = 1
+        GROUP BY
+         v2.weekday_name,
+         to_char( v1.push_date, 'hh24' ),
+         v3.spu_wid
+        ORDER BY v3.SPU_WID
+    </select>
 </mapper>

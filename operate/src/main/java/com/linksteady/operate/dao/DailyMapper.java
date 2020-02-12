@@ -1,9 +1,6 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.DailyGroupTemplate;
-import com.linksteady.operate.domain.DailyHead;
-import com.linksteady.operate.domain.DailyPersonal;
-import com.linksteady.operate.domain.DailyStatis;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.vo.DailyPersonalVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -24,13 +21,11 @@ public interface DailyMapper {
 
     int getTouchTotalCount(@Param("touchDt") String touchDt);
 
-    Map<String, Object> getTipInfo(@Param("headId") String headId);
-
     void updateStatus(@Param("headId") String headId, @Param("status") String status);
 
     void updateActualNum(String headId, int num);
 
-    String getStatusById(String headId);
+    DailyHead getDailyHeadById(String headId);
 
     String getTouchDt(String headId);
 
@@ -38,9 +33,7 @@ public interface DailyMapper {
 
     Map<String, Object> getTotalNum(String headId);
 
-    int getUserGroupCount();
-
-    List<DailyGroupTemplate> getUserGroupListPage(int start, int end);
+    List<DailyGroupTemplate> getUserGroupList(@Param("activeList") List<String> activeList);
 
     void setSmsCode(List<String> groupIds, String smsCode);
 
@@ -99,9 +92,38 @@ public interface DailyMapper {
 
     /**
      * 更新check_flag 为 'Y'
-     * @param whereInfo
      * @return
      */
-    int updateCheckFlagY(@Param("whereInfo") String whereInfo);
+    int updateCheckFlagY();
 
+    /**
+     * 更新头表的操作时间戳
+     * @param headId
+     * @param opChangeDate
+     */
+    void updateHeaderOpChangeDate(@Param("headId") String headId, @Param("opChangeDate") Long opChangeDate);
+
+    /**
+     * 验证操作时间戳
+     */
+    int validateOpChangeTime(@Param("headId") String headId, @Param("opChangeDate") Long opChangeDate);
+
+    /**
+     * 获取预览用户统计数据
+     */
+    List<DailyUserStats> getUserStats(@Param("headId") String headId);
+
+    List<DailyUserStats> getUserStatsBySpu(@Param("headId") String headId, @Param("userValue") String userValue, @Param("pathActive") String pathActive, @Param("lifecycle") String lifecycle);
+
+    List<DailyUserStats> getUserStatsByProd(@Param("headId") String headId, @Param("userValue") String userValue, @Param("pathActive") String pathActive, @Param("lifecycle") String lifecycle, @Param("spuName") String spuName);
+
+    int validCheckedUserGroup(@Param("activeList") List<String> activeList);
+
+    String getTodayStatus();
+
+    Map<String, Object> getSelectedUserGroup(String groupId);
+
+    int getSmsIsCoupon(String smsCode, String isCoupon);
+
+    int getValidDailyHead();
 }

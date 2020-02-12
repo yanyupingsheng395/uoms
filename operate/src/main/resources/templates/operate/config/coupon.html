@@ -13,14 +13,13 @@
     <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <style>
-        .form-horizontal .radio-inline {
-            padding-top: 0px;
-        !important;
+        .form-horizontal .checkbox, .form-horizontal .checkbox-inline, .form-horizontal .radio, .form-horizontal .radio-inline {
+            padding-top: 0;
         }
     </style>
 </head>
 
-<body>
+<body class="gray-bg">
 <!-- 公共组件 -->
 <div data-th-include="common/common"></div>
 <div class="lyear-layout-web">
@@ -34,14 +33,13 @@
             <div class="container-div ui-layout-center">
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
-                        <div class="col-md-12">
                             <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">优惠券列表</h5>
+                                <span class="navbar-page-title">每日运营补贴</span>
                             </div>
-                            <div class="row">
+                            <div class="row m-lr-5">
                                 <hr class="hr"/>
                             </div>
-                            <div class="row">
+                            <div class="row m-lr-5">
                                 <form id="activity-form">
                                     <div class="select-list">
                                         <ul>
@@ -49,7 +47,7 @@
                                                 是否有效：
                                                 <select id="validStatus" name="validStatus">
                                                     <option value="">所有</option>
-                                                    <option value="Y" selected>有效</option>
+                                                    <option value="Y">有效</option>
                                                     <option value="N">失效</option>
                                                 </select>
                                             </li>
@@ -63,27 +61,29 @@
                                     </div>
                                 </form>
                             </div>
-                        </div>
                     </div>
                     <div class="col-sm-12 select-table table-striped">
-                        <div class="row" style="margin-top: 12px;">
+                        <div class="row">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
+                                    <a class="btn btn-info" id="btn_intel">
+                                        <i class="fa fa-refresh"></i> 智能补贴
+                                    </a>
                                     <a class="btn btn-success" id="btn_add" onclick="$('#add_modal').modal('show')">
-                                        <i class="fa fa-plus"></i> 新增
+                                        <i class="fa fa-plus"></i> 新增补贴
                                     </a>
                                     <a class="btn btn-primary" id="btn_update" onclick="updateCoupon()">
-                                        <i class="fa fa-edit"></i> 修改
+                                        <i class="fa fa-edit"></i> 编辑补贴
                                     </a>
                                     <a class="btn btn-danger" id="btn_delete">
-                                        <i class="fa fa-close"></i> 删除
+                                        <i class="fa fa-close"></i> 删除补贴
                                     </a>
                                 </div>
                             </div>
                         </div>
-                        <div class="row" style="margin-top: 12px;">
-                            <div class="col-sm-12">
-                                <table id="couponTable" class="table  table-striped table-bordered"></table>
+                        <div class="row m-t-10">
+                            <div class="col-sm-12 text-nowrap">
+                                <table id="couponTable" class="table table-striped table-bordered"></table>
                             </div>
                         </div>
                     </div>
@@ -94,39 +94,93 @@
 </div>
 <input id="headerId" type="hidden"/>
 <input id="validUrl" type="hidden" th:value="${validUrl}"/>
-<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal">
-    <div class="modal-dialog" role="document">
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 60%;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">×</span></button>
-                <h5 class="modal-title" id="myLargeModalLabel">新增优惠券</h5>
+                <h5 class="modal-title" id="myLargeModalLabel">新建补贴</h5>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal" id="coupon_edit">
                     <input type="hidden" id="couponId" name="couponId"/>
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">名称：</label>
-                        <div class="col-md-7 input-group">
-                            <input class="form-control" type="text" id="couponName" name="couponName"/>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">补贴名称(文案体现)</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="couponDisplayName" name="couponDisplayName" placeholder="xx元"/>
                         </div>
                     </div>
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">面额：</label>
-                        <div class="col-md-7 input-group">
+                        <label class="col-md-3 control-label">补贴适用用户群组</label>
+                        <div class="col-md-8 input-group" style="border: solid 1px #ebebeb;padding: 8px;">
+                            <table>
+                                <tr>
+                                    <td style="width: 95px;">　　　　价值:</td>
+                                    <td>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="userValue" value="ULC_01"><span>重要　　</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="userValue" value="ULC_02"><span>主要　　</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="userValue" value="ULC_03"><span>普通　　　</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="userValue" value="ULC_04"><span>长尾　　　</span>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>　　　　周期:</td>
+                                    <td>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="lifeCycle" value="1"><span>新用户　</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="lifeCycle" value="0"><span>复购用户</span>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>下步成长节点:</td>
+                                    <td>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="pathActive" value="UAC_01"><span>促活节点</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="pathActive" value="UAC_02"><span>留存节点</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="pathActive" value="UAC_03"><span>弱流失预警</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="pathActive" value="UAC_04" disabled readonly><span>强流失预警</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary" style="margin-left: 0px;">
+                                            <input type="checkbox" name="pathActive" value="UAC_05" disabled readonly><span>沉睡预警</span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">补贴门槛(元)</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="couponThreshold" name="couponThreshold"/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">补贴面额(元)</label>
+                        <div class="col-md-8 input-group">
                             <input class="form-control" type="text" id="couponDenom" name="couponDenom"/>
                         </div>
                     </div>
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">门槛：</label>
-                        <div class="col-md-7 input-group">
-                            <input class="form-control" type="text" id="couponThreshold" name="couponThreshold"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">长链：</label>
-                        <div class="col-md-7 input-group">
+                        <label class="col-md-3 control-label">补贴原链接</label>
+                        <div class="col-md-8 input-group">
                             <input type="text" class="form-control" name="couponInfo2" id="couponInfo2">
                             <div class="input-group-btn">
                                 <button type="button" class="btn btn-default" onclick="getShortUrl()"><i
@@ -136,47 +190,40 @@
                     </div>
 
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">短链：</label>
-                        <div class="col-md-7 input-group">
+                        <label class="col-md-3 control-label">补贴短链接</label>
+                        <div class="col-md-8 input-group">
                             <input class="form-control" type="text" id="couponUrl" name="couponUrl"/>
                         </div>
                     </div>
+                    <!--                    <div class="form-group mg-stop">-->
+                    <!--                        <label class="col-md-4 control-label">补贴数量(个)：</label>-->
+                    <!--                        <div class="col-md-7 input-group">-->
+                    <!--                            <input class="form-control" type="text" id="couponNum" name="couponNum"/>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
 
                     <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">数量：</label>
-                        <div class="col-md-7 input-group">
-                            <input class="form-control" type="text" id="couponNum" name="couponNum"/>
+                        <label class="col-md-3 control-label">有效截止期</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="validEnd" name="validEnd" onchange="removeValid()" onblur="resetValidEndVal()"/>
                         </div>
                     </div>
-
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">券引用名：</label>
-                        <div class="col-md-7 input-group">
-                            <input class="form-control" type="text" id="couponDisplayName" name="couponDisplayName"/>
-                        </div>
-                    </div>
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">有效截止日期：</label>
-                        <div class="col-md-7 input-group">
-                            <input class="form-control" type="text" id="validEnd" name="validEnd" onchange="removeValid()"/>
-                        </div>
-                    </div>
-                    <div class="form-group mg-stop" id="couponValid" hidden>
-                        <label class="col-md-4 control-label">券是否有效：</label>
-                        <div class="col-md-7 input-group">
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="validStatus" value="Y" checked><span>是</span>
-                            </label>
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="validStatus" value="N"><span>否</span>
-                            </label>
-                        </div>
-                    </div>
+                    <!--                    <div class="form-group mg-stop" id="couponValid" hidden>-->
+                    <!--                        <label class="col-md-4 control-label">券是否有效：</label>-->
+                    <!--                        <div class="col-md-7 input-group">-->
+                    <!--                            <label class="lyear-radio radio-inline radio-primary">-->
+                    <!--                                <input type="radio" name="validStatus" value="Y" checked><span>是</span>-->
+                    <!--                            </label>-->
+                    <!--                            <label class="lyear-radio radio-inline radio-primary">-->
+                    <!--                                <input type="radio" name="validStatus" value="N"><span>否</span>-->
+                    <!--                            </label>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary btn-sm" id="btn_save" name="save">确定</button>
-                <button type="button" class="btn btn-default btn-sm" onclick="closeModal()">关闭</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>

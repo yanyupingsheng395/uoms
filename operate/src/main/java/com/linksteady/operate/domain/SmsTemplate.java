@@ -8,6 +8,9 @@ import javax.persistence.Table;
 @Data
 @Table(name = "UO_OP_SMS_TEMPLATE")
 public class SmsTemplate {
+
+    private String smsName;
+
     /**
      * 短信模板编号
      */
@@ -21,8 +24,33 @@ public class SmsTemplate {
     private String smsContent;
 
     /**
-     * 是否有券
+     * 补贴链接
      */
-    @Column(name = "IS_COUPON")
-    private String isCoupon;
+    @Column(name = "IS_COUPON_URL")
+    private String isCouponUrl;
+
+    /**
+     * 补贴名称
+     */
+    @Column(name = "IS_COUPON_NAME")
+    private String isCouponName;
+
+    /**
+     * 是否包含商品名
+     */
+    private String isProductName;
+
+    /**
+     * 是否包含商品详情页
+     */
+    private String isProductUrl;
+
+    /**
+     * 备注
+     */
+    private String remark;
+
+    private String userValue;
+    private String lifeCycle;
+    private String pathActive;
 }

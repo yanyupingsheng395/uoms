@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="edge" />
-    <title>系统管理</title>
+    <title>日志查询</title>
     <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
@@ -14,7 +14,7 @@
     <link rel="stylesheet" data-th-href="@{/css/common.css}">
 </head>
 
-<body>
+<body class="gray-bg">
 <!-- 公共组件 -->
 <div data-th-include="common/common"></div>
 <div class="lyear-layout-web">
@@ -28,14 +28,13 @@
             <div class="container-div ui-layout-center">
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">操作日志</h5>
-                            </div>
-                            <div class="row">
-                                <hr class="hr"/>
-                            </div>
+                        <div class="row">
+                            <h5 class="navbar-page-title">操作日志</h5>
                         </div>
+                        <div class="row">
+                            <hr class="hr"/>
+                        </div>
+
                         <form class="log-table-form">
                             <input type="hidden" id="deptId" name="deptId">
                             <input type="hidden" id="parentId" name="parentId">
@@ -63,7 +62,7 @@
                     </div>
 
                     <div class="col-sm-12 select-table table-striped">
-                        <div class="row" style="margin-top: 12px;">
+                        <div class="row">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
                                     <a class="btn btn-danger btn-del" onclick="deleteLogs()" shiro:hasPermission="log:delete">
@@ -72,7 +71,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row" style="margin-top: 12px;">
+                        <div class="row" style="margin-top: 10px;">
                             <div class="col-sm-12 table-responsive">
                                 <table id="logTable" class="table table-bordered text-nowrap"></table>
                             </div>

@@ -1,4 +1,11 @@
 $(function () {
+
+    var errmsg=$("#errormsg").val();
+
+    if(null!=errmsg&&errmsg!='')
+    {
+        $MB.n_warning(errmsg);
+    }
     init_date('touchDt', 'yyyy-mm-dd', 0, 2, 0);
     $("#touchDt").datepicker('setEndDate', new Date());
     initTable();
@@ -37,16 +44,34 @@ function initTable() {
             title: '实际成功推送人数（人）'
         }, {
             field: 'convertNum',
-            title: '任务转化人数（人）'
+            title: '推送转化人数（人）'
         }, {
             field: 'convertRate',
-            title: '转化率（%）'
+            title: '推送转化率（%）'
         }, {
             field: 'convertAmount',
-            title: '转化金额（元）'
+            title: '推送转化金额（元）'
         }, {
+            title: '配置校验状态',
+            align: 'center',
+            formatter: function (value, row, indx) {
+                var currDate=getNowFormatDate();
+                var res = "-";
+                if(row.touchDtStr ===currDate&&"通过"===row.validateLabel) {
+                    res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
+                }else if(row.touchDtStr ===currDate&&"未通过"===row.validateLabel)
+                {
+                    res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
+                }else
+                {
+                    res='';
+                }
+                return res;
+            }
+        },{
             field: 'status',
-            title: '状态',
+            title: '任务执行状态',
+            align: 'center',
             formatter: function (value, row, indx) {
                 var res;
                 switch (value) {
@@ -80,20 +105,27 @@ $("#btn_query").click(function () {
 });
 
 $("#btn_edit").click(function () {
-
     var selected = $("#dailyTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请勾选需要编辑的任务！');
+        $MB.n_warning('请勾选需要执行的任务！');
         return;
     }
     var status = selected[0].status;
     if (status != "todo") {
-        $MB.n_warning('当前记录已被执行，请选择待执行状态的记录！');
+        $MB.n_warning('只有待执行状态的任务才能提交执行！');
         return;
     }
 
     var headId = selected[0].headId;
+    var touchDtStr=selected[0].touchDtStr;
+
+    var currDay =getNowFormatDate();
+    if(touchDtStr!=currDay)
+    {
+        $MB.n_warning('只有当天的任务才能被执行！');
+        return;
+    }
 
     $.get("/daily/validUserGroup", {}, function(r) {
         if(r.code == 200) {
@@ -102,9 +134,6 @@ $("#btn_edit").click(function () {
                 return false;
             }
             window.location.href = "/page/daily/edit?id=" + headId;
-        }else {
-            $MB.n_danger("未知异常！");
-            return false;
         }
     });
 });
@@ -113,7 +142,7 @@ $("#btn_catch").click(function () {
     var selected = $("#dailyTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请勾选需要查看的任务！');
+        $MB.n_warning('请勾选需要预览用户的任务！');
         return;
     }
     var status = selected[0].status;
@@ -124,3 +153,34 @@ $("#btn_catch").click(function () {
     var headId = selected[0].headId;
     window.location.href = "/page/daily/effect?id=" + headId;
 });
+
+/**
+ * 预览用户
+ */
+$("#btn_insight").click(function () {
+    getUserStatsData();
+});
+
+function gotoConfig() {
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: "去完成配置？"
+    }, function () {
+        location.href = "/page/daily/config";
+    });
+}
+
+function getNowFormatDate() {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = year  + month  + strDate;
+    return currentdate;
+}

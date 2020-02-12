@@ -31,7 +31,7 @@
     </style>
 </head>
 
-<body>
+<body class="gray-bg">
 <!-- 公共组件 -->
 <div data-th-include="common/common"></div>
 <div class="lyear-layout-web">
@@ -45,13 +45,11 @@
             <div class="container-div ui-layout-center">
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">用户成长洞察</h5>
-                            </div>
-                            <div class="row">
-                                <hr class="hr"/>
-                            </div>
+                        <div class="row">
+                            <span class="navbar-page-title">用户成长洞察</span>
+                        </div>
+                        <div class="row">
+                            <hr class="hr"/>
                         </div>
                     </div>
                     <div class="col-md-12 select-table table-striped">
@@ -60,9 +58,9 @@
                                 <!--桑基图-->
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 class="modal-title pull-left" style="margin-top: 20px;">
+                                        <h5 class="modal-title pull-left">
                                             用户成长旅程总览&nbsp;
-                                            <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="在观测的时间范围里，用户从首次购买到第n次购买在spu层级的流转规律；" data-trigger="click">
+                                            <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="在观测的时间范围里，用户从首次购买到第n次购买在类目层级的流转规律；" data-trigger="click">
                                                 <i class="fa fa-question-circle"></i>
                                             </a>
                                         </h5>
@@ -126,7 +124,7 @@
                     <div class="col-md-12 select-table table-striped">
                         <div class="row">
                             <div class="col-md-12">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">
+                                <h5 class="modal-title pull-left">
                                     成长旅程价值洞察&nbsp;
                                     <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="用户成长旅程的价值用综合价值指标衡量，综合价值指标融合考虑3方面：旅程对品牌收入的作用、对用户留存时长的作用以及对用户的适用范围，分别用收入价值、步长价值、普适性价值来衡量；" data-trigger="click">
                                         <i class="fa fa-question-circle "></i>
@@ -136,7 +134,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <hr class="hr" style="margin-top: 5px;margin-bottom: 5px;"/>
+                                <hr class="hr"/>
                             </div>
                         </div>
                         <div class="row">
@@ -160,8 +158,8 @@
                     <div class="col-md-12 select-table table-striped">
                         <div class="row">
                             <div class="col-md-12">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">
-                                    成长旅程中的spu洞察&nbsp;
+                                <h5 class="modal-title pull-left">
+                                    成长旅程中的类目洞察&nbsp;
                                     <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="在旅程洞察的基础上，选择一个用户购买次序来观察SPU承前启后的作用；" data-trigger="click">
                                         <i class="fa fa-question-circle"></i>
                                     </a>
@@ -170,7 +168,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <hr class="hr" style="margin-top: 5px;margin-bottom: 5px;"/>
+                                <hr class="hr"/>
                             </div>
                         </div>
                         <div class="row">
@@ -196,7 +194,7 @@
                                                 </select>
                                             </li>
                                             <li>
-                                                SPU名称：
+                                                类目名称：
                                                 <select name="spuName" id="spuName" class="select2"></select>
                                             </li>
                                             <li class="pull-right">
@@ -221,8 +219,8 @@
                     <div class="col-md-12 select-table table-striped">
                         <div class="row">
                             <div class="col-md-12">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">用户在spu/商品的成长模式&nbsp;
-                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="左图可以发现随着持续购买，用户在spu上的成长规律如何变化；右图体现随持续购买，用户成长的多种指标变化规律；" data-trigger="click">
+                                <h5 class="modal-title pull-left">用户在类目/商品的成长模式&nbsp;
+                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="左图可以发现随着持续购买，用户在类目上的成长规律如何变化；右图体现随持续购买，用户成长的多种指标变化规律；" data-trigger="click">
                                         <i class="fa fa-question-circle"></i>
                                     </a>
                                 </h5>
@@ -230,7 +228,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <hr class="hr" style="margin-top: 5px;margin-bottom: 5px;"/>
+                                <hr class="hr"/>
                             </div>
                         </div>
                         <div class="row">
@@ -239,7 +237,7 @@
                                     <div class="select-list">
                                         <ul>
                                             <li>
-                                                选择要观测的spu及其商品：<input type="text" id="spuProductName1"/>
+                                                选择要观测的类目及其商品：<input type="text" id="spuProductName1"/>
                                                 <div id="ztreeContent1" hidden style="z-index: 100;position: absolute;">
                                                     <ul id="ztree1" class="ztree"></ul>
                                                 </div>
@@ -273,14 +271,14 @@
                                                     <option value="1">平均件单价</option>
                                                     <option value="2">平均购买间隔</option>
                                                     <option value="3">平均连带率</option>
-                                                    <option value="4">平均购买spu种类数</option>
+                                                    <option value="4">平均购买类目种类数</option>
                                                 </select>
                                             </li>
                                             <li>
                                                 选择要观测指标：
                                                 <select id="kpi1">
-                                                    <option value="1">再次购买spu概率</option>
-                                                    <option value="2">再次购买spu概率的变化率</option>
+                                                    <option value="1">再次购买类目概率</option>
+                                                    <option value="2">再次购买类目概率的变化率</option>
                                                 </select>
                                             </li>
                                             <li class="pull-right">
@@ -313,8 +311,8 @@
                     <div class="col-md-12 select-table table-striped">
                         <div class="row">
                             <div class="col-md-12">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">用户在spu/商品的成长节点&nbsp;
-                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="从spu的指定购买次序观察用户在商品层级的流转关系；" data-trigger="click">
+                                <h5 class="modal-title pull-left">用户在类目/商品的成长节点&nbsp;
+                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="从类目的指定购买次序观察用户在商品层级的流转关系；" data-trigger="click">
                                         <i class="fa fa-question-circle"></i>
                                     </a>
                                 </h5>
@@ -331,10 +329,10 @@
                                     <div class="select-list">
                                         <ul>
                                             <li>
-                                                选择要观测的spu：<select id="convertSpu" class="select2"></select>
+                                                选择要观测的类目：<select id="convertSpu" class="select2"></select>
                                             </li>
                                             <li>
-                                                选择要观测的spu购买次序：
+                                                选择要观测的类目购买次序：
                                                 <select name="purchOrder" id="purchOrder" class="select2"></select>
                                             </li>
                                             <li class="pull-right">
@@ -369,7 +367,7 @@
                                     <table id="growthTable" class="table table-bordered">
                                         <thead>
                                         <tr>
-                                            <th>活跃状态</th>
+                                            <th>下一步成长节点</th>
                                             <th>距上次购买第n天（天）</th>
                                             <th>再次购买概率（%）</th>
                                             <th colspan="2">活跃状态对应阶段（第n天～第n+m天）</th>
@@ -385,7 +383,7 @@
                         <div class="col-md-12">
                             <hr class="hr"/>
                         </div>
-                        <div class="row" style="margin-top: 12px;">
+                        <div class="row m-t-10">
                             <div class="col-md-12 table-responsive">
                                 <h6>指定转化轨迹下用户成长节点与阶段一览</h6>
                                 <table id="growthUserTable" class="table table-bordered text-nowrap"></table>

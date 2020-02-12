@@ -27,7 +27,7 @@ public class LoadDataRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         ValueOperations op=redisTemplate.opsForValue();
         /**
-         * 缓存所有的业务系统信息 code:sysInfo
+         * 缓存所有的业务系统信息 code:sysInfo 缓存到redis
          */
         Map<String, SysInfo> sysInfoMap=systemService.findAllSystem().stream().collect(Collectors.toMap(SysInfo::getCode, sysInfo -> sysInfo));
         op.set("sysInfoMap",sysInfoMap);

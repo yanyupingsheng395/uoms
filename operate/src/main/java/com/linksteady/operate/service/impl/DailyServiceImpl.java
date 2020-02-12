@@ -2,15 +2,16 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.operate.config.ConfigCacheManager;
+import com.linksteady.operate.dao.ConfigMapper;
 import com.linksteady.operate.dao.DailyMapper;
-import com.linksteady.operate.domain.DailyGroupTemplate;
-import com.linksteady.operate.domain.DailyHead;
-import com.linksteady.operate.domain.DailyPersonal;
-import com.linksteady.operate.domain.DailyStatis;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.vo.DailyPersonalVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +33,13 @@ public class DailyServiceImpl implements DailyService {
 
     @Autowired
     private DailyMapper dailyMapper;
+    
+    @Autowired
+    private ConfigMapper configMapper;
+
+
+    @Autowired
+    RedisTemplate<String,String> redisTemplate;
 
     /**
      * 效果统计最大时间长度
@@ -48,11 +57,6 @@ public class DailyServiceImpl implements DailyService {
     }
 
     @Override
-    public Map<String, Object> getTipInfo(String headId) {
-        return dailyMapper.getTipInfo(headId);
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateStatus(String headId, String status) {
         dailyMapper.updateStatus(headId, status);
@@ -60,8 +64,8 @@ public class DailyServiceImpl implements DailyService {
 
 
     @Override
-    public String getStatusById(String headId) {
-        return dailyMapper.getStatusById(headId);
+    public DailyHead getDailyHeadById(String headId) {
+        return dailyMapper.getDailyHeadById(headId);
     }
 
     @Override
@@ -156,13 +160,14 @@ public class DailyServiceImpl implements DailyService {
     }
 
     @Override
-    public List<DailyGroupTemplate> getUserGroupListPage(int start, int end) {
-        return dailyMapper.getUserGroupListPage(start, end);
-    }
-
-    @Override
-    public int getUserGroupCount() {
-        return dailyMapper.getUserGroupCount();
+    public List<DailyGroupTemplate> getUserGroupList() {
+        ConfigCacheManager cacheManager = ConfigCacheManager.getInstance();
+        String active = cacheManager.getConfigMap().get("op.daily.pathactive.list");
+        List<String> activeList = null;
+        if(StringUtils.isNotEmpty(active)){
+            activeList = Arrays.asList(active.split(","));
+        }
+        return dailyMapper.getUserGroupList(activeList);
     }
 
     @Override
@@ -184,7 +189,7 @@ public class DailyServiceImpl implements DailyService {
     }
 
     /**
-     * 验证用户群组：
+     * 验证用户群组：先进行一遍验证，更新配置表的CHECK_FLAG 然后再返回校验的状态
      * 1. 含券：券名称为空
      * 2. 不含券：券名称不为空
      * 3. 短信：不为空
@@ -196,36 +201,94 @@ public class DailyServiceImpl implements DailyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean validUserGroup() {
+        dailyMapper.updateCheckFlagY();
         // 获取短信内容为空的情况
         // 含券：券名称为空
-        String whereInfo = " and t1.IS_COUPON = 1 AND t4.COUPON_NAME IS NULL";
-        int count1 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "群组含券，券信息不能为空");
+        String whereInfo = " and t1.IS_COUPON = 1 AND t4.COUPON_DISPLAY_NAME IS NULL";
+        dailyMapper.updateCheckFlagAndRemark(whereInfo, "文案含补贴，补贴信息不能为空");
 
         // 不含券：券名称不为空
-        whereInfo = " and t1.IS_COUPON = 0 and t4.coupon_name is not null";
-        int count2 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "群组不含券，券信息不能出现");
+        whereInfo = " and t1.IS_COUPON = 0 and t4.COUPON_DISPLAY_NAME is not null";
+        dailyMapper.updateCheckFlagAndRemark(whereInfo, "文案不含补贴，补贴信息不能出现");
 
         // 短信：不为空
         whereInfo = " and t2.SMS_CONTENT IS NULL";
-        int count3 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "消息模板不能为空");
+        dailyMapper.updateCheckFlagAndRemark(whereInfo, "尚未为群组配置文案");
 
         // 验证券的有效期
         whereInfo = " and to_number(to_char(t4.VALID_END, 'YYYYMMDD')) < to_number(to_char(sysdate, 'YYYYMMDD'))";
-        int count4 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "券有效期已过期");
+        dailyMapper.updateCheckFlagAndRemark(whereInfo, "补贴有效期已过期");
 
-        whereInfo = " and t4.VALID_STATUS = 'N'";
-        int count5 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "券已失效");
+//        whereInfo = " and t4.VALID_STATUS = 'N'";
+//        int count5 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "补贴已失效");
 
-        // 其他群组的校验字段更新为'Y'
-        whereInfo = " and (" +
-                "(t1.IS_COUPON = 1 AND t4.COUPON_NAME IS NULL)" +
-                " or (t1.IS_COUPON = 0 and t4.coupon_name is not null)" +
-                " or (t2.SMS_CONTENT IS NULL)" +
-                " or (to_number(to_char(t4.VALID_END, 'YYYYMMDD')) < to_number(to_char(sysdate, 'YYYYMMDD')))" +
-                " or t4.VALID_STATUS = 'N'" +
-                ")";
-        dailyMapper.updateCheckFlagY(whereInfo);
-        int result = count1 + count2 + count3 + count4 + count5;
+        ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
+        Map<String, String> configMap = configCacheManager.getConfigMap();
+        String active = configMap.get("op.daily.pathactive.list");
+        int result = 0;
+        if(StringUtils.isNotEmpty(active)) {
+            List<String> activeList = Arrays.asList(active.split(","));
+            if(activeList.size() > 0) {
+                result = dailyMapper.validCheckedUserGroup(Arrays.asList(active.split(",")));
+            }
+        }else {
+            throw new RuntimeException("活跃度数据表配置有误！");
+        }
         return result > 0;
+    }
+
+    @Override
+    public void updateHeaderOpChangeDate(String headId, Long opChangeDate) {
+        dailyMapper.updateHeaderOpChangeDate(headId,opChangeDate);
+    }
+
+    @Override
+    public boolean getTransContentLock(String headId) {
+        ValueOperations valueOperations=redisTemplate.opsForValue();
+        //key 已经存在，则不做任何动作 否则将 key 的值设为 value 设置成功，返回true 否则返回false
+        boolean flag=valueOperations.setIfAbsent("daily_trans_lock",headId);
+        //key的失效时间60秒 此处有bug 通过升级api可以解决
+        redisTemplate.expire("daily_trans_lock",60, TimeUnit.SECONDS);
+        return flag;
+    }
+
+    @Override
+    public void delTransLock() {
+        redisTemplate.delete("daily_trans_lock");
+    }
+
+    @Override
+    public int validateOpChangeTime(String headId, Long opChangeDate) {
+        return dailyMapper.validateOpChangeTime(headId,opChangeDate);
+    }
+
+    @Override
+    public List<DailyUserStats> getUserStats(String headerId) {
+        return dailyMapper.getUserStats(headerId);
+    }
+
+    @Override
+    public List<DailyUserStats> getUserStatsBySpu(String headerId, String userValue, String pathActive, String lifecycle) {
+        return dailyMapper.getUserStatsBySpu(headerId,userValue,pathActive,lifecycle);
+    }
+
+    @Override
+    public List<DailyUserStats> getUserStatsByProd(String headerId, String userValue, String pathActive, String lifecycle, String spuName) {
+        return dailyMapper.getUserStatsByProd(headerId,userValue,pathActive,lifecycle,spuName);
+    }
+
+    @Override
+    public Map<String, Object> getSelectedUserGroup(String groupId) {
+        return dailyMapper.getSelectedUserGroup(groupId);
+    }
+
+    @Override
+    public int getSmsIsCoupon(String smsCode, String isCoupon) {
+        return dailyMapper.getSmsIsCoupon(smsCode, isCoupon);
+    }
+
+    @Override
+    public int getValidDailyHead() {
+        return dailyMapper.getValidDailyHead();
     }
 }

@@ -10,11 +10,11 @@ import java.util.List;
  */
 public interface SmsTemplateService {
 
-    List<SmsTemplate> getSmsTemplateList(int startRow, int endRow,String smsCode, String groupId);
+    List<SmsTemplate> getSmsTemplateList(int startRow, int endRow, SmsTemplate smsTemplate);
 
-    int getTotalCount(String smsCode, String groupId);
+    int getTotalCount(SmsTemplate smsTemplate);
 
-    void saveSmsTemplate(String smsCode,String smsContent, String isCoupon);
+    void saveSmsTemplate(SmsTemplate smsTemplate);
 
     int refrenceCount(String smsCode);
 
@@ -23,4 +23,6 @@ public interface SmsTemplateService {
     SmsTemplate getSmsTemplate(String smsCode);
 
     void update(SmsTemplate smsTemplate);
+
+    List<SmsTemplate> getTemplateByGroupId(String groupId);
 }

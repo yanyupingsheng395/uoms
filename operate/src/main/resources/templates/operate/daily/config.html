@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <style>
+        #dailyGroupTable tbody td:last-child {
+            text-align: center;
+            cursor: pointer;
+        }
+        #smsTemplateTable thead, #couponTable thead {
+            background-color: #eff3f8;
+        }
+        .form-horizontal .checkbox, .form-horizontal .checkbox-inline, .form-horizontal .radio, .form-horizontal .radio-inline {
+            padding-top: 0;
+        }
+
+        .desc_title {
+            margin-left: 15px;
+            margin-right: 15px;
+            margin-top: 10px;
+            margin-bottom: 1px;
+            background-color:rgba(66,139,202,0.5);
+            border-radius: 6px;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+
+        .desc_title_col {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .desc_content {
+            padding: 40px 15px 40px 15px;
+            vertical-align: middle;
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+
+        .desc_content_col_title {
+
+            margin-right: 15px;
+            vertical-align: middle;
+            margin-top: 5px;
+        }
+
+        .uvalue{
+            background-color:rgba(250,166,75,0.1);
+        }
+
+        .pactive{
+            background-color:rgba(72,176,247,0.1);
+        }
+
+        .ulifecycle {
+            background-color:rgba(51,202,187,0.1);
+        }
+
+        .hr1 {margin-top: 1px;
+            margin-bottom: 1px;
+        }
+        .tooltip-inner{
+            background-color: #fff;
+            border:solid 1px #48b0f7;
+            color:#000000;
+            text-align: left;
+        }
+        .tooltip.top .tooltip-arrow{
+            border-top-color:#48b0f7;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+<!-- 公共组件 -->
+<div data-th-include="common/common"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <h5 class="navbar-page-title">为用户群组配置推送</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="btn-group-sm" id="toolbar" role="group">
+<!--                                    <a class="btn btn-primary" onclick="$('#config_modal').modal('show')">-->
+<!--                                        <i class="fa fa-gears"></i> 定义成长组-->
+<!--                                    </a>-->
+                                    <a class="btn btn-info" onclick="validUserGroup()">
+                                        <i class="fa fa-check"></i> 校验配置
+                                    </a>
+                                    <a class="btn btn-warning" onclick="deleteCoupon()">
+                                        <i class="fa fa-refresh"></i> 重置补贴
+                                    </a>
+<!--                                    <a class="btn btn-primary btn-edit" onclick="batchUpdateTemplate()">-->
+<!--                                        <i class="fa fa-edit"></i> 填充文案-->
+<!--                                    </a>-->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-10">
+                            <div class="col-sm-12 table-responsive text-nowrap">
+                                <table id="dailyGroupTable" class="table  table-striped table-bordered"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<!--文案列表页-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="msg_modal" id="msg_modal" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document" style="width: 75%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title">为群组配置文案</h5>
+            </div>
+            <div class="modal-body">
+                <div class="table-striped">
+                    <div class="table-responsive">
+                        <p class="h6">理解所选用户群组：</p>
+                        <table class="table text-nowrap table-bordered h6" id="selectedGroupInfo1" style="width: 70%;">
+                            <tbody>
+                                <tr>
+                                    <td>价值</td>
+                                    <td style="background-color: rgb(254,117,0)">重要</td>
+                                    <td>在类目消费很多，未来购买力强，价格不敏感</td>
+                                    <td>加强情感关怀，防止用户流失，通常无需补贴</td>
+                                </tr>
+                                <tr>
+                                    <td>价值</td>
+                                    <td style="background-color: rgb(254,117,0)">主要</td>
+                                    <td>在类目消费较多，未来购买力强，价格较敏感</td>
+                                    <td>加强情感关怀，关注用户成长，补贴重点培养</td>
+                                </tr>
+                                <tr>
+                                    <td>价值</td>
+                                    <td style="background-color: rgb(254,117,0)">普通</td>
+                                    <td>在类目消费一般，购买力不确定，价格较敏感</td>
+                                    <td>无需情感关怀，加强用户留存，补贴适度刺激</td>
+                                </tr>
+                                <tr>
+                                    <td>价值</td>
+                                    <td style="background-color: rgb(254,117,0)">长尾</td>
+                                    <td>在类目消费较少，未来购买力弱，价格很敏感</td>
+                                    <td>无需情感关怀，减少补贴投入</td>
+                                </tr>
+
+                                <tr>
+                                    <td>下步成长节点</td>
+                                    <td style="background-color: rgb(76,152,216)">促活节点</td>
+                                    <td>当前到达下一次购买类目的最早合理时间</td>
+                                    <td>处在引导提升购买频率有效时机</td>
+                                </tr>
+                                <tr>
+                                    <td>下步成长节点</td>
+                                    <td style="background-color: rgb(76,152,216)">留存节点</td>
+                                    <td>到达下一次购买类目成功率最高的时间点</td>
+                                    <td>处在借势培养用户购买最佳时机</td>
+                                </tr>
+                                <tr>
+                                    <td>下步成长节点</td>
+                                    <td style="background-color: rgb(76,152,216)">弱流失预警</td>
+                                    <td>经过当前时间没有购买，后续再购买较难</td>
+                                    <td>处在流失之前刺激购买最后时机</td>
+                                </tr>
+                                <tr>
+                                    <td>下步成长节点</td>
+                                    <td style="background-color: rgb(76,152,216)">强流失预警</td>
+                                    <td>流失后，再购买概率相对较高的时间节点</td>
+                                    <td>处在流失后尝试挽回的可行时机</td>
+                                </tr>
+                                <tr>
+                                    <td>下步成长节点</td>
+                                    <td style="background-color: rgb(76,152,216)">沉睡预警</td>
+                                    <td>经过当前时间没有购买，后续不会再购买</td>
+                                    <td>处在沉睡之前唤醒用户可行时机</td>
+                                </tr>
+
+                                <tr>
+                                    <td>生命周期</td>
+                                    <td style="background-color: rgb(80, 181, 70)">新用户</td>
+                                    <td>对类目没有形成忠诚度</td>
+                                    <td>降低门槛刺激复购</td>
+                                </tr>
+                                <tr>
+                                    <td>生命周期</td>
+                                    <td style="background-color: rgb(80, 181, 70)">复购用户</td>
+                                    <td>对类目忠诚度开始提升</td>
+                                    <td>递减补贴培养多购</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <!--每日运营-->
+                        <div data-th-include="operate/daily/smstemplate"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="setSmsCode()">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--优惠券列表页面-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="coupon_modal" id="coupon_modal" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document" style="width: 75%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title">为群组选择补贴</h5>
+            </div>
+            <div class="modal-body">
+                <div class="table-striped">
+                    <div class="table-responsive">
+                        <p class="h6">理解所选用户群组：</p>
+                        <table class="table text-nowrap table-bordered h6" id="selectedGroupInfo2" style="width: 70%;">
+                            <tbody>
+                            <tr>
+                                <td>价值</td>
+                                <td style="background-color: rgb(254,117,0)">重要</td>
+                                <td>在类目消费很多，未来购买力强，价格不敏感</td>
+                                <td>加强情感关怀，防止用户流失，通常无需补贴</td>
+                            </tr>
+                            <tr>
+                                <td>价值</td>
+                                <td style="background-color: rgb(254,117,0)">主要</td>
+                                <td>在类目消费较多，未来购买力强，价格较敏感</td>
+                                <td>加强情感关怀，关注用户成长，补贴重点培养</td>
+                            </tr>
+                            <tr>
+                                <td>价值</td>
+                                <td style="background-color: rgb(254,117,0)">普通</td>
+                                <td>在类目消费一般，购买力不确定，价格较敏感</td>
+                                <td>无需情感关怀，加强用户留存，补贴适度刺激</td>
+                            </tr>
+                            <tr>
+                                <td>价值</td>
+                                <td style="background-color: rgb(254,117,0)">长尾</td>
+                                <td>在类目消费较少，未来购买力弱，价格很敏感</td>
+                                <td>无需情感关怀，减少补贴投入</td>
+                            </tr>
+
+                            <tr>
+                                <td>下步成长节点</td>
+                                <td style="background-color: rgb(76,152,216)">促活节点</td>
+                                <td>当前到达下一次购买类目的最早合理时间</td>
+                                <td>处在引导提升购买频率有效时机</td>
+                            </tr>
+                            <tr>
+                                <td>下步成长节点</td>
+                                <td style="background-color: rgb(76,152,216)">留存节点</td>
+                                <td>到达下一次购买类目成功率最高的时间点</td>
+                                <td>处在借势培养用户购买最佳时机</td>
+                            </tr>
+                            <tr>
+                                <td>下步成长节点</td>
+                                <td style="background-color: rgb(76,152,216)">弱流失预警</td>
+                                <td>经过当前时间没有购买，后续再购买较难</td>
+                                <td>处在流失之前刺激购买最后时机</td>
+                            </tr>
+                            <tr>
+                                <td>下步成长节点</td>
+                                <td style="background-color: rgb(76,152,216)">强流失预警</td>
+                                <td>流失后，再购买概率相对较高的时间节点</td>
+                                <td>处在流失后尝试挽回的可行时机</td>
+                            </tr>
+                            <tr>
+                                <td>下步成长节点</td>
+                                <td style="background-color: rgb(76,152,216)">沉睡预警</td>
+                                <td>经过当前时间没有购买，后续不会再购买</td>
+                                <td>处在沉睡之前唤醒用户可行时机</td>
+                            </tr>
+
+                            <tr>
+                                <td>生命周期</td>
+                                <td style="background-color: rgb(80, 181, 70)">新用户</td>
+                                <td>对类目没有形成忠诚度</td>
+                                <td>降低门槛刺激复购</td>
+                            </tr>
+                            <tr>
+                                <td>生命周期</td>
+                                <td style="background-color: rgb(80, 181, 70)">复购用户</td>
+                                <td>对类目忠诚度开始提升</td>
+                                <td>递减补贴培养多购</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row m-t-10">
+                    <div class="col-sm-12">
+                        <div class="btn-group-sm" role="group">
+                            <a class="btn btn-info" id="btn_intel">
+                                <i class="fa fa-refresh"></i> 智能补贴
+                            </a>
+                            <a class="btn btn-success" id="btn_add" onclick="couponAdd()">
+                                <i class="fa fa-plus"></i> 新建补贴
+                            </a>
+                            <a class="btn btn-primary" id="btn_update" onclick="updateCoupon()">
+                                <i class="fa fa-edit"></i> 编辑补贴
+                            </a>
+                            <a class="btn btn-danger" id="btn_delete_coupon">
+                                <i class="fa fa-close"></i> 删除补贴
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row m-t-10">
+                    <div class="col-sm-12 table-striped text-nowrap">
+                        <table id="couponTable" class="table table-striped table-bordered"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="updateCouponId()">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--新增文案-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title" id="myLargeModalLabel3">新增文案</h5>
+            </div>
+            <div class="modal-body" style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
+                <form class="form-horizontal" id="smsTemplateAddForm" novalidate="novalidate">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <div><label class="control-label">文案适用用户群组</label></div>
+                                    <div class="">
+                                        <div style="border: solid 1px #ebebeb;padding: 8px; float: left;" id="user-box">
+                                            <table>
+                                                <tr>
+                                                    <td style="width: 95px;">　　　　价值:</td>
+                                                    <td>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" name="userValue" value="ULC_01"><span>重要　　</span>
+                                                        </label>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" name="userValue" value="ULC_02"><span>主要　　</span>
+                                                        </label>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" name="userValue" value="ULC_03"><span>普通　　　</span>
+                                                        </label>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" name="userValue" value="ULC_04"><span>长尾　　　</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>　　　　周期:</td>
+                                                    <td>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" name="lifeCycle" value="1"><span>新用户　</span>
+                                                        </label>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" name="lifeCycle" value="0"><span>复购用户</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>下步成长节点:</td>
+                                                    <td>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" name="pathActive" value="UAC_01"><span>促活节点</span>
+                                                        </label>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" name="pathActive" value="UAC_02"><span>留存节点</span>
+                                                        </label>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" name="pathActive" value="UAC_03"><span>弱流失预警</span>
+                                                        </label>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                                            <input type="checkbox" name="pathActive" value="UAC_04" disabled readonly><span>强流失预警</span>
+                                                        </label>
+                                                        <label class="lyear-checkbox checkbox-inline checkbox-primary" style="margin-left: 0px;">
+                                                            <input type="checkbox" name="pathActive" value="UAC_05" disabled readonly><span>沉睡预警</span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label">文案体现的个性化要素</label>
+                                    </div>
+                                    <div>
+                                        <div style="border: solid 1px #ebebeb;padding: 8px; float: left;" id="config-box">
+                                            <div class="example-box">
+                                                <label class="control-label">　　补贴短链接：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponUrl" value="1" onchange="isCouponUrlTrueClick()"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponUrl" value="0" onchange="isCouponUrlFalseClick()"><span>否</span>
+                                                </label>
+                                                <div>
+                                                    <label class="h6" id="isCouponUrl-error" style="color: #48b0f7;" hidden><i class="fa fa-info-circle"></i>
+                                                        请将${COUPON_URL}粘贴到文案中希望位置，系统会自动填充链接，用户点链接可跳转领券页；
+                                                        <br/>&nbsp;&nbsp;&nbsp;&nbsp;1条文案中仅能填充一个链接；
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">　　　补贴名称：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponName" onchange="isCouponNameTrueClick()" value="1"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponName" value="0" onchange="isCouponNameFalseClick()"><span>否</span>
+                                                </label>
+                                                <div>
+                                                    <label class="h6" id="isCouponName-error" style="color: #48b0f7;" hidden><i class="fa fa-info-circle"></i>
+                                                        请将${COUPON_NAME}粘贴到文案中希望位置，系统会自动填充名称，用户可知领券面额；
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">　推荐商品名称：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductName" value="1" onchange="$('#isProductName-error').show()"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductName" value="0" onchange="$('#isProductName-error').hide()"><span>否</span>
+                                                </label>
+                                                <div>
+                                                    <label class="h6" hidden id="isProductName-error" style="color: #48b0f7;"><i class="fa fa-info-circle"></i>
+                                                        请将${PROD_NAME}粘贴到文案中希望位置，系统会自动填充名称，用户可知被推荐商品；
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">推荐商品短链接：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductUrl" value="1" onchange="isProdUrlTrueClick()"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductUrl" value="0" onchange="isProdUrlFalseClick()"><span>否</span>
+                                                </label>
+                                                <div>
+                                                    <label class="h6" hidden  id="isProductUrl-error" style="color: #48b0f7;"><i class="fa fa-info-circle"></i>
+                                                        请将${PROD_URL}粘贴到文案中希望位置，系统会自动填充名称，用户可知被推荐商品；
+                                                        <br/>&nbsp;&nbsp;&nbsp;&nbsp;1条文案中仅能填充一个链接；
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label">文案名称</label>
+                                    </div>
+                                    <div class="">
+                                        <input class="form-control" type="hidden" id="smsCode" name="smsCode"/>
+                                        <input class="form-control" type="text" id="smsName" name="smsName"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label" style="margin-top: 44px;">文案内容</label>
+                                    </div>
+                                    <div>
+                                        <textarea class="form-control" id="smsContent" name="smsContent" style="height: 102px;" oninput="smsContentValid()"></textarea>
+                                        <input type="hidden" id="smsContentInput" name="smsContentInput"/>
+                                        <span class="wordwrap"><var id="word"></var></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="hr"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mg-stop">
+                                <div class="col-md-12 control-label" style="text-align: left;">
+                                    <p class="small">
+                                        文案中填充变量说明：<br/>
+                                        1.一条文案通常允许的总字符数为[[${smsLengthLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；<br/>
+                                        2.个性化推送文案中，包括运营者编写的内容，字符数以N表示；还包括系统填充的变量，字符数以M表示；Y=N+M；<br/>
+                                        3.由于系统填充变量也会占用字符，所以在此列出4种变量的占用字符情况<br/>
+                                        &nbsp;&nbsp;&nbsp;${COUPON_URL}：领券页短链接，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${COUPON_NAME}：补贴名称，占<font color="red">[[${couponNameLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${PROD_NAME}：商品短名称，占<font color="red">[[${prodNameLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${PROD_URL}：商品购买详情页短链接，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
+                                        4.鉴于上述情况，建议一条文案中对变量的选用采取两种方式<br/>
+                                        &nbsp;&nbsp;&nbsp;编写内容+领券页短链接+补贴名称+商品短名称
+                                        &nbsp;&nbsp;&nbsp;编写内容+商品短名称+商品购买详情页短链接
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" name="save" id="btn_save_sms">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--测试-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="send_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title" id="myLargeModalLabel4">屏蔽测试</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">文案名称：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" id="smsName1" name="smsName1" readonly/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label" for="smsContent1">文案内容：</label>
+                        <div class="col-md-6 input-group">
+                            <textarea class="form-control" id="smsContent1" name="example-textarea-input"
+                                      rows="6" readonly></textarea>
+                            <span class="wordwrap h6" style="color: #7c7c7c">*上述内容中系统填充变量并非真实，而是选择变量字符最大值示例进行填充</span>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">测试建议：</label>
+                        <div class="col-md-6 input-group">
+                            <h5 style="color: #7c7c7c;">建议不同的手机号体现不同的机型与操作系统，根据短信的收取情况判断是否有屏蔽，以便于调整文案内容；</h5>
+<!--                            <input class="form-control" type="text" readonly value=""/>-->
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 col-md-offset-1 control-label">手机号1：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" name="phoneNum"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">手机号2：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" name="phoneNum"/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">手机号3：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" name="phoneNum"/>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="sendMessage()">测试推送</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input id="validUrl" type="hidden" th:value="${validUrl}"/>
+<!--新增补贴-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="coupon_add_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 60%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title" id="myLargeModalLabel">新建补贴</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="coupon_edit">
+                    <input type="hidden" id="couponId" name="couponId"/>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">补贴名称(文案体现)：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="couponDisplayName" name="couponDisplayName" placeholder="xx元"/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">补贴适用用户群组：</label>
+                        <div class="col-md-8 input-group" style="border: solid 1px #ebebeb;padding: 8px;">
+                            <table>
+                                <tr>
+                                    <td style="width: 95px;">　　　　价值:</td>
+                                    <td>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="userValue" value="ULC_01"><span>重要　　</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="userValue" value="ULC_02"><span>主要　　</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="userValue" value="ULC_03"><span>普通　　　</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="userValue" value="ULC_04"><span>长尾　　　</span>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>　　　　周期:</td>
+                                    <td>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="lifeCycle" value="1"><span>新用户　</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="lifeCycle" value="0"><span>复购用户</span>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>下步成长节点:</td>
+                                    <td>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="pathActive" value="UAC_01"><span>促活节点</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="pathActive" value="UAC_02"><span>留存节点</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="pathActive" value="UAC_03"><span>弱流失预警</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                                            <input type="checkbox" name="pathActive" value="UAC_04" disabled readonly><span>强流失预警</span>
+                                        </label>
+                                        <label class="lyear-checkbox checkbox-inline checkbox-primary" style="margin-left: 0px;">
+                                            <input type="checkbox" name="pathActive" value="UAC_05" disabled readonly><span>沉睡预警</span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">补贴门槛(元)：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="couponThreshold" name="couponThreshold"/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">补贴面额(元)：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="couponDenom" name="couponDenom"/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">补贴原链接：</label>
+                        <div class="col-md-8 input-group">
+                            <input type="text" class="form-control" name="couponInfo2" id="couponInfo2">
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-default" onclick="getShortUrl()"><i
+                                        class="fa fa-link"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">补贴短链接：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="couponUrl" name="couponUrl"/>
+                        </div>
+                    </div>
+<!--                    <div class="form-group mg-stop">-->
+<!--                        <label class="col-md-4 control-label">补贴数量(个)：</label>-->
+<!--                        <div class="col-md-7 input-group">-->
+<!--                            <input class="form-control" type="text" id="couponNum" name="couponNum"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">有效截止期：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="validEnd" name="validEnd" onchange="removeValid()" onblur="resetValidEndVal()"/>
+                        </div>
+                    </div>
+<!--                    <div class="form-group mg-stop" id="couponValid" hidden>-->
+<!--                        <label class="col-md-4 control-label">券是否有效：</label>-->
+<!--                        <div class="col-md-7 input-group">-->
+<!--                            <label class="lyear-radio radio-inline radio-primary">-->
+<!--                                <input type="radio" name="validStatus" value="Y" checked><span>是</span>-->
+<!--                            </label>-->
+<!--                            <label class="lyear-radio radio-inline radio-primary">-->
+<!--                                <input type="radio" name="validStatus" value="N"><span>否</span>-->
+<!--                            </label>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="btn_save_coupon" name="save">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--配置活跃度-->
+<div class="modal" tabindex="-1" role="dialog" id="config_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">成长组配置</h5>
+            </div>
+            <div class="modal-body">
+                <form id="groupConfigForm">
+                    <div class="example-box" style="margin-left:10px;">
+                        <label class="control-label">活跃度：</label>
+                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                            <input type="checkbox" name="pathActive" value="UAC_01"><span>活跃</span>
+                        </label>
+                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                            <input type="checkbox" name="pathActive" value="UAC_02"><span>留存</span>
+                        </label>
+                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                            <input type="checkbox" name="pathActive" value="UAC_03"><span>流失预警</span>
+                        </label>
+                        <label class="lyear-checkbox checkbox-inline checkbox-primary">
+                            <input type="checkbox" name="pathActive" value="UAC_04"><span>弱流失</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="configGroup()">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:include="operate/daily/usergroupdesc"></div>
+<input type="hidden" id="currentGroupId"/>
+<input type="hidden" id="currentGroupInfo"/>
+<script>
+    let couponNameLen = [[${couponNameLen}]];
+    let smsLengthLimit = [[${smsLengthLimit}]];
+    let shortUrlLen = [[${shortUrlLen}]];
+    let prodNameLen = [[${prodNameLen}]];
+</script>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/js/app/operate/daily/config.js}"></script>
+<script data-th-src="@{/js/app/operate/daily/smstemplate.js}"></script>
+<script data-th-src="@{/js/app/operate/daily/coupon.js}"></script>
+</body>
+</html>

@@ -24,9 +24,19 @@ public interface CouPonService {
 
     CouponInfo getByCouponId(String couponId);
 
-    int isCouponUsed(String couponId);
+    List<String> isCouponUsed(List<String> couponIds);
 
     void updateStatus(String couponId);
 
     void deleteCoupon(List<String> ids);
+
+    List<CouponInfo> getCouponList(String groupId);
+
+    void getCalculatedCoupon();
+
+    void deleteCouponGroup(String groupId);
+
+    int checkCouponName(String couponName);
+
+    void validCoupon();
 }

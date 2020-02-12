@@ -1,0 +1,58 @@
+<div class="modal" tabindex="-1" role="dialog" id="userStats_modal"  aria-labelledby="myLargeModalLabel4" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">预览用户</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div id="chart1" style="width: 100%;height: 480px;"></div>
+                </div>
+
+                <div class="row m-l-5">
+                    <span><h6>备注：气泡大小代表用户价值，可通过滤镜调整显示。</h6></span>
+                </div>
+
+                <div class="row">
+                    <hr class="hr"/>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 table-responsive table-striped">
+                        <h6><span id="spuTitle"></span>用户在成长类目上的分布top10</h6>
+                        <table id="spuTable" class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>类目</th>
+                                <th>用户数（人）</th>
+                            </tr>
+                            </thead>
+                            <tbody id="spuTableData">
+                            <tr><td colspan="2" class="text-center">没有查询到相应的记录</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6 table-responsive table-striped">
+                        <h6><span id="prodTitle"></span>用户在成长商品上的分布top10</h6>
+                        <table id="prodTable" class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>商品</th>
+                                <th>用户数（人）</th>
+                            </tr>
+                            </thead>
+                            <tbody id="prodTableData">
+                            <tr><td colspan="2" class="text-center">没有查询到相应的记录</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+

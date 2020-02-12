@@ -14,7 +14,7 @@
     <link rel="stylesheet" data-th-href="@{/css/common.css}">
 </head>
 
-<body>
+<body class="gray-bg">
 <!-- 公共组件 -->
 <div data-th-include="common/common"></div>
 
@@ -29,13 +29,11 @@
             <div class="container-div ui-layout-center">
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">角色管理</h5>
-                            </div>
-                            <div class="row">
-                                <hr class="hr"/>
-                            </div>
+                        <div class="row">
+                            <h5 class="navbar-page-title">角色管理</h5>
+                        </div>
+                        <div class="row">
+                            <hr class="hr"/>
                         </div>
                         <form class="role-table-form">
                             <input type="hidden" id="deptId" name="deptId">
@@ -55,7 +53,7 @@
                     </div>
 
                     <div class="col-sm-12 select-table table-striped">
-                        <div class="row" style="margin-top: 12px;">
+                        <div class="row">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
                                     <a class="btn btn-success" data-toggle="modal" data-target="#role-add" shiro:hasPermission="role:add">
@@ -73,7 +71,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row" style="margin-top: 12px;">
+                        <div class="row" style="margin-top: 10px;">
                             <div class="col-sm-12">
                                 <table id="roleTable" class="table table-bordered"></table>
                             </div>

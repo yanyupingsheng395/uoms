@@ -16,6 +16,9 @@ function searchInsight() {
 
 function resetInsight() {
     $("#dateRange").find("option:selected").removeAttr("selected");
+    $("#dateRange1").val($("#dateRange").find("option:selected").text());
+    $("#dateRange2").val($("#dateRange").find("option:selected").text());
+    searchInsight();
 }
 
 function findUserCntList() {
@@ -39,7 +42,8 @@ function findUserCntList() {
                 align: 'center'
             }, {
                 field: 'purch4',
-                title: '第4次'
+                title: '第4次',
+                align: 'center'
             }, {
                 field: 'purch5',
                 title: '第5次',
@@ -175,7 +179,7 @@ function findImportSpu() {
                 sort: params.sort,
                 order: params.order,
                 param: {
-                    spuName: $("#spuName").find("option:selected").text(),
+                    spuId: $("#spuName").find("option:selected").val(),
                     purchOrder: $("#purchOrder1").val(),
                     dateRange: $("#dateRange").val()
                 }
@@ -184,22 +188,22 @@ function findImportSpu() {
         columns: [
             {
                 field: 'spuName',
-                title: 'SPU名称'
+                title: '类目名称'
             }, {
                 field: 'contributeRate',
                 title: '本次购买的用户贡献率（%）',
                 sortable : true
             },{
                 field: 'nextPurchProbal',
-                title: '本购SPU后再购概率（%）',
+                title: '本购类目后再购概率（%）',
                 sortable : true
             }, {
                 field: 'sameSpuProbal',
-                title: '本购SPU后再购同SPU概率（%）',
+                title: '本购类目后再购同类目概率（%）',
                 sortable : true
             }, {
                 field: 'otherSpuProbal',
-                title: '本购SPU后购其他SPU概率（%）',
+                title: '本购类目后购其他类目概率（%）',
                 sortable : true
             }],onLoadSuccess: function() {
             var tableId = document.getElementById('importSpu');
@@ -215,7 +219,7 @@ function searchImportSpu() {
         return false;
     }
     if($("#purchOrder1").val() === '') {
-        $MB.n_warning("请选择SPU名称！");
+        $MB.n_warning("请选择类目名称！");
         return false;
     }
     findImportSpu();
@@ -251,7 +255,7 @@ function retentionInPurchaseTimes() {
     });
     $.get("/insight/retentionInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
         var data = r.data;
-        var option = getOptionWithFit(data, "再次购买spu概率（%）", "再次购买spu概率");
+        var option = getOptionWithFit(data, "再次购买类目概率（%）", "再次购买类目概率");
         option.grid = {left: '15%', right:'15%'};
         chart_retention.hideLoading();
         chart_retention.setOption(option);
@@ -268,7 +272,7 @@ function retentionChangeRateInPurchaseTimes() {
     var period = $("#period").val();
     $.get("/insight/retentionChangeRateInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
         var data = r.data;
-        var option = getOptionWithFit(data, "再次购买spu概率的变化率（%）", "再次购买spu概率的变化率");
+        var option = getOptionWithFit(data, "再次购买类目概率的变化率（%）", "再次购买类目概率的变化率");
         option.grid = {left: '18%', right:'15%'};
         chart_retention_change.hideLoading();
         chart_retention_change.setOption(option);
@@ -320,7 +324,7 @@ function categoryInPurchaseTimes() {
     var type = $("#spuProductType1").val();
     var period = $("#period").val();
     $.get("/insight/categoryInPurchaseTimes", {id: id, type: type, period: period}, function (r) {
-        var option = getOption(r.data, "平均购买spu种类数", "平均购买spu种类数");
+        var option = getOption(r.data, "平均购买类目种类数", "平均购买类目种类数");
         chart.setOption(option);
         chart.hideLoading();
     });
@@ -458,7 +462,7 @@ function getOptionWithFit(data, name, titleName) {
 
 function searchRetention() {
     if($("#spuProductId1").val() === '' || $("#period").val() === '') {
-        $MB.n_warning("请选择商品/SPU，查询时间周期。");
+        $MB.n_warning("请选择商品/类目，查询时间周期。");
         return false;
     }
     let kpi1 = $("#kpi1").val();
@@ -527,10 +531,10 @@ function getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId) {
             title: 'ID'
         }, {
             field: 'SPU_NAME',
-            title: 'SPU'
+            title: '类目'
         },{
             field: 'RN',
-            title: 'SPU购买次序'
+            title: '类目购买次序'
         },{
             field: 'EBP_PRODUCT_NAME',
             title: '上次购买商品'
@@ -539,27 +543,24 @@ function getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId) {
             title: '下次转化商品'
         },  {
             field: 'ACTIVE_LEVEL',
-            title: '活跃度',
+            title: '下一步成长节点',
             formatter: function (value, row, index) {
                 var res = "";
                 switch (value) {
                     case "UAC_01":
-                        res = "高度活跃";
+                        res = "促活节点";
                         break;
                     case "UAC_02":
-                        res = "中度活跃";
+                        res = "留存节点";
                         break;
                     case "UAC_03":
-                        res = "流失预警";
+                        res = "弱流失预警";
                         break;
                     case "UAC_04":
-                        res = "弱流失";
+                        res = "强流失预警";
                         break;
                     case "UAC_05":
-                        res = "强流失";
-                        break;
-                    case "UAC_06":
-                        res = "沉睡";
+                        res = "沉睡预警";
                         break;
                     default:
                         res = "-";
@@ -606,7 +607,7 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId) {
                 splitArea : {show : false}
             },
             yAxis: {
-                name: "购买概率",
+                name: "购买概率（%）",
                 type: 'value',
                 splitLine:{show: false},
                 splitArea : {show : false}
@@ -663,7 +664,7 @@ function getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId) {
     });
 }
 
-function getProductOption(xdata, ydata) {
+function getProductOption(xdata, ydata,productName) {
     var option = {
         color: ['#3398DB'],
         tooltip : {
@@ -709,7 +710,7 @@ function getProductOption(xdata, ydata) {
             }
         ],
         title: {
-            text: '指定商品下次转化商品概率分布',
+            text: '指定商品['+productName+']下次转化商品概率分布',
             x: 'center',
             y: 'bottom',
             textStyle: {
@@ -733,7 +734,7 @@ function getSpuChartOption(data) {
     let option = {
         color: ['#CD2626'],
         title: {
-            text: '指定spu购买次序下的商品构成',
+            text: '指定类目购买次序下的商品构成',
             x: 'center',
             y: 'bottom',
             textStyle: {
@@ -767,7 +768,7 @@ function getSpuChartOption(data) {
         },
         xAxis : [
             {
-                name: "spu/商品",
+                name: "类目/商品",
                 type : 'category',
                 data : data.xdata1,
                 axisTick: {
@@ -834,7 +835,7 @@ function init_chart_event() {
             let spuId = $("#convertSpu").val();
             let purchOrder = $("#purchOrder").val();
             ebpProductId = ebpProductIdArray[params.dataIndex];
-            getProductRelation(ebpProductId, spuId, purchOrder);
+            getProductRelation(ebpProductId, spuId, purchOrder, params.name);
         }
     });
 
@@ -872,7 +873,7 @@ function getSpuRelation(spuId, purchOrder) {
         var option1 = getSpuChartOption(r.data);
         spu_relation_chart.hideLoading();
         spu_relation_chart.setOption(option1);
-        var option2 = getProductOption(r.data.xdata2, r.data.ydata2);
+        var option2 = getProductOption(r.data.xdata2, r.data.ydata2, r.data.xdata1[1]);
         product_relation_chart.hideLoading();
         product_relation_chart.setOption(option2);
 
@@ -889,13 +890,13 @@ function getSpuRelation(spuId, purchOrder) {
 
 // 下一次转化商品
 let product_relation_chart_flag = false;
-function getProductRelation(ebpProductId, spuId, purchOrder) {
+function getProductRelation(ebpProductId, spuId, purchOrder, productName) {
     product_relation_chart.showLoading({
         text : '加载数据中...'
     });
     $.get("/insight/getProductConvertRate", {spuId:spuId, purchOrder:purchOrder, productId:ebpProductId}, function (r) {
         nextProductIdArray = r.data['nextProductId'];
-        var option = getProductOption(r.data.xdata, r.data.ydata);
+        var option = getProductOption(r.data.xdata, r.data.ydata,productName);
         product_relation_chart.hideLoading();
         product_relation_chart.setOption(option);
         let nextProductId = nextProductIdArray === undefined ? "":nextProductIdArray[0];

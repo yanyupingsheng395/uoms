@@ -91,4 +91,8 @@
 	<select id="findAllUser" resultType="map">
  		SELECT USER_ID USERID, USERNAME FROM T_USER
  	</select>
+
+	<select id="getDefaultPwd" resultType="string">
+		select value from T_CONFIG where NAME = 'system.default.password'
+	</select>
 </mapper>

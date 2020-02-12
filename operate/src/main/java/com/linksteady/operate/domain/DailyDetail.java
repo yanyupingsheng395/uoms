@@ -42,7 +42,7 @@ public class DailyDetail {
     /**
      * 件单价
      */
-    private String piecePrice;
+    private double piecePrice;
 
     /**
      * 连带率
@@ -53,11 +53,6 @@ public class DailyDetail {
      * 建议触达时段
      */
     private String orderPeriod;
-
-    /**
-     * 建议优惠面额
-     */
-    private String referDeno;
 
     /**
      * 完成购买
@@ -83,11 +78,6 @@ public class DailyDetail {
      * 策略模板
      */
     private Long growthStrategyId;
-
-    /**
-     * 优惠券大小
-     */
-    private String couponDenom;
 
     /**
      * 所在群组
@@ -131,8 +121,14 @@ public class DailyDetail {
 
     private String tarProductNum;
 
+    /**
+     * 优惠券门槛
+     */
     private String couponMin;
 
+    /**
+     * 优惠券面额
+     */
     private String couponDeno;
 
     private String tarOrderPrice;
@@ -141,5 +137,8 @@ public class DailyDetail {
 
     private String recProdName;
 
-    private String recProdLongUrl;
+    private int isCoupon;
+
+    private String groupId;
+
 }

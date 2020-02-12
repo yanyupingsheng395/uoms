@@ -1,0 +1,540 @@
+$(function () {
+    statInputNum();
+});
+// 新增文案
+function add() {
+    $("#msg_modal").modal('hide');
+    setUserGroupChecked();
+    $('#smsCode').val("");
+    $('#smsContent').val("");
+    $('#smsName').val("");
+    $('#remark').val("");
+    $("input[name='isCouponUrl']:radio").removeAttr("checked").removeAttr("disabled");
+    $("input[name='isCouponName']:radio").removeAttr("checked").removeAttr("disabled");
+    $("input[name='isProductName']:radio").removeAttr("checked").removeAttr("disabled");
+    $("input[name='isProductUrl']:radio").removeAttr("checked").removeAttr("disabled");
+    $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
+    $("#fontNum").val('');
+    $("#myLargeModalLabel3").text("新增文案");
+    $("#btn_save_sms").attr("name", "save");
+    $('#add_modal').modal('show');
+}
+
+// 新增文案的时候，给群组信息设置默认选中和只读
+function setUserGroupChecked() {
+    var groupInfo = $("#currentGroupInfo").val();
+    var groupInfoArr = groupInfo.split("|");
+    groupInfoArr.forEach((v,k)=>{
+        if(k===0) {
+            $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
+        }
+        if(k===1) {
+            $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
+        }
+        if(k===2) {
+            $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
+        }
+    });
+}
+
+function clearUserGroupDisabled() {
+    $("input[name='userValue']").removeAttr("disabled");
+    $("input[name='lifeCycle']").removeAttr("disabled");
+    $("input[name='pathActive']").removeAttr("disabled");
+}
+/**
+ * 字数统计
+ * @param textArea
+ * @param numItem
+ */
+let total_num;
+function statInputNum() {
+    $("#smsContent").on('input propertychange', function () {
+        let smsContent = $('#smsContent').val();
+        let y = smsContent.length;
+        let m = smsContent.length;
+        let n = smsContent.length;
+        if(smsContent.indexOf('${COUPON_URL}') > -1) {
+            y = y - '${COUPON_URL}'.length + shortUrlLen;
+            m = m - '${COUPON_URL}'.length;
+        }
+        if(smsContent.indexOf('${COUPON_NAME}') > -1) {
+            y = y - '${COUPON_NAME}'.length + couponNameLen;
+            m = m - '${COUPON_NAME}'.length;
+        }
+        if(smsContent.indexOf('${PROD_NAME}') > -1) {
+            y = y - '${PROD_NAME}'.length + prodNameLen;
+            m = m - '${PROD_NAME}'.length;
+        }
+        if(smsContent.indexOf('${PROD_URL}') > -1) {
+            y = y - '${PROD_URL}'.length + shortUrlLen;
+            m = m - '${PROD_URL}'.length;
+        }
+        total_num = y;
+        var code = "";
+        code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + smsLengthLimit + ":文案总字符数";
+        $("#word").text(code);
+    });
+}
+
+
+/**
+ * 测试推送
+ * @param smsCode
+ */
+function testSend()
+{
+    let selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
+    if(null==selectRows||selectRows.length==0)
+    {
+        lightyear.loading('hide');
+        $MB.n_warning('请选择需要测试的文案！');
+        return;
+    }
+
+    var smsCode =selectRows[0]["smsCode"];
+
+    //根据获取到的数据查询
+    $.getJSON("/smsTemplate/getSmsTemplateNotValid?smsCode="+smsCode,function (resp) {
+        if (resp.code === 200){
+            $("#msg_modal").modal('hide');
+            //更新测试面板
+            $("#smsName1").val(resp.data.smsName);
+            $("#smsContent1").val(resp.data.smsContent);
+
+            var _value = $("#smsContent1").val().replace(/\n/gi,"");
+            $("#word1").text(_value.length);
+            $('#send_modal').modal('show');
+        }
+    })
+}
+
+$("#send_modal").on('hidden.bs.modal', function () {
+    $('#msg_modal').modal('show');
+});
+
+function sendMessage()
+{
+    //验证
+    var smsContent= $('#smsContent1').val();
+
+    if($('input[name="phoneNum"]').eq(0).val() === '' && $('input[name="phoneNum"]').eq(1).val() === ''&& $('input[name="phoneNum"]').eq(2).val()=== '')
+    {
+        $MB.n_warning("手机号不能为空！");
+        return;
+    }
+    var phoneNum=[];
+    if($('input[name="phoneNum"]').eq(0).val() !== '') {
+        phoneNum.push($('input[name="phoneNum"]').eq(0).val());
+    }
+    if($('input[name="phoneNum"]').eq(1).val() !== '') {
+        phoneNum.push($('input[name="phoneNum"]').eq(1).val());
+    }
+    if($('input[name="phoneNum"]').eq(2).val() !== '') {
+        phoneNum.push($('input[name="phoneNum"]').eq(2).val());
+    }
+    phoneNum = phoneNum.join(',');
+    if(null==smsContent||smsContent=='')
+    {
+        $MB.n_warning("模板内容不能为空！");
+        return;
+    }
+
+    //判断是否含有变量
+    if(smsContent.indexOf("$") >= 0 ) {
+        $MB.n_warning("模板内容的变量请替换为实际值！");
+        return;
+    }
+
+    //提交后端进行发送
+    lightyear.loading('show');
+
+    let param = new Object();
+    param.phoneNum=phoneNum;
+    param.smsContent=smsContent;
+
+    $.ajax({
+        url: "/smsTemplate/testSend",
+        data: param,
+        type: 'POST',
+        success: function (r) {
+            lightyear.loading('hide');
+            if(r.code==200)
+            {
+                $MB.n_success(r.msg);
+            }else
+            {
+                $MB.n_danger(r.msg);
+            }
+        }
+    });
+
+
+}
+
+function del() {
+    var selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
+    if(null==selectRows||selectRows.length==0)
+    {
+        lightyear.loading('hide');
+        $MB.n_warning('请选择要删除的文案！');
+        return;
+    }
+    var smsCode =selectRows[0]["smsCode"];
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认删除当前文案？'
+    }, function () {
+        $.getJSON("/smsTemplate/deleteSmsTemplate?smsCode="+smsCode,function (resp) {
+            if (resp.code === 200){
+                //提示成功
+                $MB.n_success('删除成功！');
+                //刷新表格
+                var groupId = $("#currentGroupId").val();
+                smsTemplateTable(groupId);
+            }else {
+                $MB.n_danger(resp.msg);
+            }
+        })
+    });
+}
+
+// 验证补贴
+function validCouponSendType() {
+    let couponSendType = getCouponSendType();
+    let smsName = $('#smsName').val();
+    let smsContent = $('#smsContent').val();
+    let isCouponUrl = $("input[name='isCouponUrl']:checked").val();
+    let isCouponName = $("input[name='isCouponName']:checked").val();
+    let isProductUrl = $("input[name='isProductUrl']:checked").val();
+    let isProductName = $("input[name='isProductName']:checked").val();
+
+    if(isCouponUrl === undefined) {
+        $MB.n_warning("请选择补贴短链接！");
+        return false;
+    }
+    if(isCouponName === undefined) {
+        $MB.n_warning("请选择补贴名称！");
+        return false;
+    }
+    if(isProductUrl === undefined) {
+        $MB.n_warning("请选择推荐商品名称！");
+        return false;
+    }
+    if(isProductName === undefined) {
+        $MB.n_warning("请选择推荐商品短链接！");
+        return false;
+    }
+    if(smsName === '') {
+        $MB.n_warning("文案名称不能为空！");
+        return false;
+    }
+    if(smsContent === '') {
+        $MB.n_warning("文案内容不能为空！");
+        return false;
+    }
+    if(couponSendType === 'A') { // 包含${COUPON_URL}
+        // 不能包含url
+        if(isCouponUrl === '0') {
+            if(smsContent.indexOf("${COUPON_URL}") > -1) {
+                $MB.n_warning("选择'补贴链接:否'，文案内容不能出现${COUPON_URL}");
+                return false;
+            }
+        }
+        if(isCouponName === '0') {
+            if(smsContent.indexOf("${COUPON_NAME}") > -1) {
+                $MB.n_warning("选择'补贴名称:否'，文案内容不能出现${COUPON_NAME}");
+                return false;
+            }
+        }
+
+        // 不能包含url
+        if(isCouponUrl === '1') {
+            if(smsContent.indexOf("${COUPON_URL}") === -1) {
+                $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴链接：是'，模板内容未发现${COUPON_URL}");
+                return false;
+            }
+        }
+        if(isCouponName === '1') {
+            if(smsContent.indexOf("${COUPON_NAME}") === -1) {
+                $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴名称：是'，模板内容未发现${COUPON_NAME}");
+                return false;
+            }
+        }
+
+        if(isCouponName === '1' && isCouponUrl === '0') {
+            $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴名称：是'，'补贴链接'不能选否！");
+            return false;
+        }
+    }
+    if(couponSendType === 'B') { // 不包含${COUPON_URL}
+        if(smsContent.indexOf("${COUPON_URL}") > -1) {
+            $MB.n_warning("补贴发放方式为系统发送，文案内容不能出现${COUPON_URL}！");
+            return false;
+        }
+        if(isCouponUrl === '1') {
+            $MB.n_warning("补贴发放方式为系统发送，补贴链接不能选是！");
+            return false;
+        }
+
+        if(isCouponName === '1') {
+            if(smsContent.indexOf("${COUPON_NAME}") === -1) {
+                $MB.n_warning("补贴发放方式为系统发送且选择了'补贴名称：是'，文案内容没有发现${COUPON_NAME}！");
+                return false;
+            }
+        }else {
+            if(smsContent.indexOf("${COUPON_NAME}") > -1) {
+                $MB.n_warning("'补贴名称：否'，文案内容不能出现${COUPON_NAME}！");
+                return false;
+            }
+        }
+    }
+
+    if(isProductUrl === '1') {
+        if(smsContent.indexOf("${PROD_URL}") === -1) {
+            $MB.n_warning("选择'推荐商品链接：是'，文案内容未发现${PROD_URL}");
+            return false;
+        }
+    }
+    if(isProductUrl === '0') {
+        if(smsContent.indexOf("${PROD_URL}") > -1) {
+            $MB.n_warning("选择'推荐商品链接：否'，文案内容不能出现${PROD_URL}");
+            return false;
+        }
+    }
+    if(isProductName === '1') {
+        if(smsContent.indexOf("${PROD_NAME}") === -1) {
+            $MB.n_warning("选择'推荐商品名称：是'，文案内容未发现${PROD_NAME}");
+            return false;
+        }
+    }
+    if(isProductName === '0') {
+        if(smsContent.indexOf("${PROD_NAME}") > -1) {
+            $MB.n_warning("选择'推荐商品名称：否'，文案内容不能出现${PROD_NAME}");
+            return false;
+        }
+    }
+    return true;
+}
+
+// 获取优惠券发送方式
+function getCouponSendType() {
+    var res;
+    $.ajax({
+        url: "/smsTemplate/getCouponSendType",
+        method: "get",
+        async: false,
+        success: function (r) {
+            res = r.data;
+        }
+    });
+    return res;
+}
+
+// 新增&修改
+$("#btn_save_sms").click(function () {
+    var url = "";
+    var success_msg = "";
+    var sure_msg = "";
+    if($(this).attr("name") == "save") {
+        url = "/smsTemplate/addSmsTemplate";
+        success_msg = "新增成功！";
+        sure_msg = "确定要保存数据？";
+    }else {
+        url = "/smsTemplate/updateSmsTemplate";
+        success_msg = "修改成功！";
+        sure_msg = "确定要修改数据？";
+    }
+    if(validate()) {
+        //提示是否要保存
+        $MB.confirm({
+            title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+            content: sure_msg
+        }, function () {
+            clearUserGroupDisabled();
+            var data = $("#smsTemplateAddForm").serialize();
+            setUserGroupChecked();
+            $.post(url, data, function (r) {
+                if(r.code === 200) {
+                    $MB.n_success(success_msg);
+                }else {
+                    $MB.n_danger(r.msg);
+                }
+                $('#add_modal').modal('hide');
+                $('#smsTemplateTable').bootstrapTable('refresh');
+                $("#msg_modal").modal('show');
+            });
+        });
+    }
+});
+// 表单验证
+function validate() {
+    if(!validCouponSendType()) {
+        return false;
+    }
+    if(total_num > smsLengthLimit) {
+        $MB.n_warning('文案字数超出最大限制！');
+        return false;
+    }
+    return true;
+}
+
+//
+function smsContentValid() {
+    $('#smsContentInput').val($('#smsContent').val());
+    if($('#smsContentInput').val() !== '') {
+        $('#smsContentInput').removeClass('error');
+        $("#smsContentInput-error").remove();
+    }
+}
+$("#add_modal").on('shown.bs.modal', function () {
+    var userBox = document.getElementById('user-box');
+    $("#config-box").attr("style", "border: solid 1px #ebebeb;padding: 8px; float: left;width:" + userBox.clientWidth + "px;");
+});
+
+$("#add_modal").on('hidden.bs.modal', function () {
+    $('#smsCode').val("");
+    $('#smsContent').val("");
+    $('#smsContentInput').val("");
+    $("input[name='userValue']").removeAttr("disabled");
+    $("input[name='userValue']:checked").removeAttr("checked");
+    $("input[name='lifeCycle']").removeAttr("disabled");
+    $("input[name='lifeCycle']:checked").removeAttr("checked");
+    $("input[name='pathActive']").removeAttr("disabled");
+    $("input[name='pathActive']:checked").removeAttr("checked");
+    $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
+    $("#fontNum").val('');
+    $("#remark").val('');
+    $("#msg_modal").modal('show');
+});
+
+// 文案检索
+function searchSmsTemplate() {
+    $MB.refreshTable('smsTemplateTable');
+}
+
+function resetSmsTemplate() {
+    $("input[name='smsCode']").val("");
+    $MB.refreshTable('smsTemplateTable')
+}
+
+$("#btn_edit").click(function () {
+    var selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
+    if(null==selectRows||selectRows.length==0)
+    {
+        lightyear.loading('hide');
+        $MB.n_warning('请选择需要编辑的文案！');
+        return;
+    }
+
+    var smsCode =selectRows[0]["smsCode"];
+    $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
+        if (resp.code === 200){
+            $("#msg_modal").modal('hide');
+            var data = resp.data;
+            $("#smsCode").val(data.smsCode);
+            $("#smsName").val(data.smsName);
+            $("#smsContent").val(data.smsContent);
+            $("#smsContentInput").val(data.smsContent);
+            $("input[name='isCouponUrl']:radio[value='" + data.isCouponUrl + "']").prop("checked", true);
+            $("input[name='isCouponName']:radio[value='" + data.isCouponName + "']").prop("checked", true);
+            $("input[name='isProductName']:radio[value='" + data.isProductName + "']").prop("checked", true);
+            $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true);
+            $("#remark").val(data.remark);
+            $("#myLargeModalLabel3").text("修改文案");
+            $("#btn_save_sms").attr("name", "update");
+            $("#add_modal").modal('show');
+
+            if(data.userValue !== null) {
+                data.userValue.split(',').forEach((v,k)=>{
+                    $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true);
+                });
+            }
+            if(data.lifeCycle !== null) {
+                data.lifeCycle.split(',').forEach((v,k)=>{
+                    $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true);
+                });
+            }
+            if(data.pathActive !== null) {
+                data.pathActive.split(',').forEach((v,k)=>{
+                    $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
+                });
+            }
+
+            var groupInfo = $("#currentGroupInfo").val();
+            var groupInfoArr = groupInfo.split("|");
+            groupInfoArr.forEach((v,k)=>{
+                if(k===0) {
+                    $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
+                }
+                if(k===1) {
+                    $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
+                }
+                if(k===2) {
+                    $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
+                }
+            });
+
+        }else {
+            $MB.n_danger(resp.msg);
+        }
+    });
+});
+
+var IS_COUPON_NAME_DISABLED;
+var IS_COUPON_URL_DISABLED;
+var IS_PROD_URL_DISABLED;
+// 补贴链接选是，补贴名称自动选是、商品链接自动选否；
+function isCouponUrlTrueClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponName"]:radio[value="1"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isCouponName"]').attr("disabled", "disabled");
+    IS_COUPON_NAME_DISABLED = true;
+
+    $("#smsTemplateAddForm").find('input[name="isProductUrl"]:radio[value="0"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isProductUrl"]').attr("disabled", "disabled");
+    IS_PROD_URL_DISABLED = true;
+
+    $('#isCouponUrl-error').show();
+    $('#isCouponName-error').show();
+    $('#isProductUrl-error').hide();
+}
+
+// 补贴链接选否，补贴名称自动选否、商品链接可选；
+function isCouponUrlFalseClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponName"]:radio[value="0"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isProductUrl"]').removeAttr("disabled");
+    IS_PROD_URL_DISABLED = false;
+    $('#isCouponUrl-error').hide();
+    $('#isCouponName-error').hide();
+}
+
+// 补贴名称选是，补贴链接自动选是；
+function isCouponNameTrueClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="1"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    IS_COUPON_URL_DISABLED = true;
+    $('#isCouponName-error').show();
+    $('#isCouponUrl-error').show();
+}
+// 补贴名称选否，补贴链接自动选否；
+function isCouponNameFalseClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="0"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    IS_COUPON_URL_DISABLED = true;
+    $('#isCouponName-error').hide();
+    $('#isCouponUrl-error').hide();
+}
+// 商品链接选是，补贴链接自动选否；
+function isProdUrlTrueClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="0"]').prop("checked", true);
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    IS_COUPON_URL_DISABLED = true;
+    $('#isProductUrl-error').show();
+    $('#isCouponUrl-error').hide();
+}
+// 商品链接选否，补贴链接可选；
+function isProdUrlFalseClick() {
+    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').removeAttr("disabled");
+    IS_COUPON_URL_DISABLED = false;
+    $('#isProductUrl-error').hide();
+}

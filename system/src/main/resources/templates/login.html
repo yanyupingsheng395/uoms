@@ -11,14 +11,12 @@
     <link rel="stylesheet" th:href="@{/css/login.css}" type="text/css">
     <link rel="stylesheet" data-th-href="@{/css/common.css}">
 </head>
-<body>
+<body class="gray-bg">
 <div class="limiter">
     <div class="container-login100">
         <div class="wrap-login100">
             <div class="login100-form-title" style="background-image: url(/images/bg-01.jpg);">
-					<span class="login100-form-title-1">
-						hanhoo用户成长系统
-					</span>
+					<span class="login100-form-title-1" th:text="${systemName}"></span>
             </div>
 
             <form class="login100-form validate-form" id="loginform">
@@ -44,14 +42,12 @@
                         <img id="validateCodeImg" data-th-src="@{gifCode}" onclick="reloadCode()" style="vertical-align:middle;display:inline-block" />
                     </div>
                 </div>
-
-                <div class="flex-sb-m w-full p-b-30">
-                    <div>
-                        <a href="#" class="txt1"  data-container="body" data-toggle="popover" data-placement="top"
-                           data-content="" title="请发邮件至  service@link-steady.com  寻求帮助!">忘记密码?</a>
-                    </div>
-                </div>
-
+                <!--<div class="flex-sb-m w-full p-b-30">-->
+                    <!--<div>-->
+                        <!--<a href="#" class="txt1"  data-container="body" data-toggle="popover" data-placement="top"-->
+                           <!--data-content="" title="请发邮件至  service@link-steady.com  寻求帮助!">忘记密码?</a>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <div class="container-login100-form-btn">
                     <button class="login100-form-btn" id="loginButton" type="button">登录</button>
                 </div>

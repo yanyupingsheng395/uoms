@@ -65,14 +65,14 @@ public class InsightController {
     public ResponseBo findImportSpuList(QueryRequest request) {
         int start = request.getStart();
         int end = request.getEnd();
-        String spuName = request.getParam().get("spuName");
+        String spuId = request.getParam().get("spuId");
         String purchOrder = request.getParam().get("purchOrder");
         String dateRange = request.getParam().get("dateRange");
         String sortColumn = request.getSort();
         String sortOrder = request.getOrder();
 
-        int count = insightService.findImportSpuListCount(spuName, purchOrder, dateRange);
-        List<InsightImportSpu> dataList = insightService.findImportSpuList(start, end, spuName, purchOrder, dateRange, sortColumn, sortOrder);
+        int count = insightService.findImportSpuListCount(purchOrder, dateRange);
+        List<InsightImportSpu> dataList = insightService.findImportSpuList(start, end, spuId, purchOrder, dateRange, sortColumn, sortOrder);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -282,5 +282,76 @@ public class InsightController {
     @GetMapping("/getPathPurchOrder")
     public ResponseBo getPathPurchOrder(@RequestParam("spuId") String spuId) {
         return ResponseBo.okWithData(null, insightService.getPathPurchOrder(spuId));
+    }
+
+    // 单个用户成长洞察
+
+    /**
+     * 获取用户的成长SPU
+     * @param userId
+     * @return
+     */
+    @GetMapping("/getUserSpu")
+    public ResponseBo getUserSpu(@RequestParam("userId") String userId) {
+        return ResponseBo.okWithData(null, insightService.getUserSpu(userId));
+    }
+
+    /**
+     * 获取用户某个spu下的购买次序
+     * @param userId
+     * @param spuId
+     * @return
+     */
+    @GetMapping("/getUserBuyOrder")
+    public ResponseBo getUserBuyOrder(@RequestParam("userId") String userId, @RequestParam("spuId") String spuId) {
+        return ResponseBo.okWithData(null, insightService.getUserBuyOrder(userId, spuId));
+    }
+
+    /**
+     * 获取用户
+     * @param userId
+     * @param spuId
+     * @param buyOrder
+     * @return
+     */
+    @GetMapping("/getUserSpuRelation")
+    public ResponseBo getUserSpuRelation(@RequestParam("userId") String userId, @RequestParam("spuId") String spuId, @RequestParam("buyOrder") String buyOrder) {
+        return ResponseBo.okWithData(null, insightService.getUserSpuRelation(userId, spuId, buyOrder));
+    }
+
+    /**
+     * 获取用户距每日运营的时间间隔
+     * @return
+     */
+    @RequestMapping("/getUserBuyDual")
+    public ResponseBo getUserBuyDual(@RequestParam("headId") String headId, @RequestParam("spuId") String spuId, @RequestParam("userId") String userId) {
+        return ResponseBo.okWithData(null, insightService.getUserBuyDual(headId, spuId, userId));
+    }
+
+    /**
+     * 获取用户成长节点
+     * 1.rn是最后一次
+     * 2.获取RN下的购买时间
+     * 3.计算成长节点日期
+     */
+    @RequestMapping("/getUserGrowthPathPoint")
+    public ResponseBo getUserGrowthPathPoint(@RequestParam("userId") String userId, @RequestParam("spuId") String spuId) {
+        return ResponseBo.okWithData(null, insightService.getUserGrowthPathPoint(userId, spuId));
+    }
+
+    /**
+     * 用户在成长类目的价值
+     * @param userId
+     * @param spuId
+     * @return
+     */
+    @RequestMapping("/getUserValueWithSpu")
+    public ResponseBo getUserValueWithSpu(@RequestParam("userId") String userId, @RequestParam("spuId") String spuId) {
+        return ResponseBo.okWithData(null, insightService.getUserValueWithSpu(userId, spuId));
+    }
+
+    @RequestMapping("/getUserConvert")
+    public ResponseBo getUserConvert(@RequestParam("userId") String userId) {
+        return ResponseBo.okWithData(null, insightService.getUserConvert(userId));
     }
 }

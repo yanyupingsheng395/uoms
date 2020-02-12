@@ -1,0 +1,65 @@
+<div class="modal" tabindex="-1" role="dialog" id="userInsight_modal"  aria-labelledby="myLargeModalLabel4" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">理解用户群组</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- 标题-->
+                    <div class="row desc_title" >
+                        <div class="col-md-1 desc_title_col">转化相关特征</div>
+                        <div class="col-md-3 desc_title_col">群组特征取值</div>
+                        <div class="col-md-1 desc_title_col"></div>
+                        <div class="col-md-2 desc_title_col">特征业务理解</div>
+                        <div class="col-md-1 desc_title_col"></div>
+                        <div class="col-md-3 desc_title_col">群组推送策略</div>
+                    </div>
+                    <!-- 当前所选标签 -->
+                    <div class="row desc_content uvalue" >
+                        <div class="col-md-1 desc_content_col_title"><span>价&nbsp;&nbsp;值</span></div>
+                        <div class="col-md-3" id="valueBtns">
+                        </div>
+                        <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#FAA64B;font-size: 40px;"></i></div>
+                        <div class="col-md-2"><span id="valueDesc"></span></div>
+                        <div class="col-md-1"><i class="mdi mdi-arrow-right-bold"  style="color:#FAA64B;font-size: 40px;"></i></div>
+                        <div class="col-md-3"><span id="valuePolicy"></span></div>
+                    </div>
+
+                    <div class="row">
+                        <hr class="hr1"/>
+                    </div>
+
+                    <div class="row desc_content pactive" >
+                        <div class="col-md-1 desc_content_col_title"><span>下步成</br>长节点</span></div>
+                        <div class="col-md-3" id="activeBtns">
+                        </div>
+                        <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#48B0F7;font-size: 40px;"></i></div>
+                        <div class="col-md-2"><span id="activeDesc"></span></div>
+                        <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#48B0F7;font-size: 40px;"></i></div>
+                        <div class="col-md-3"><span id="activePolicy"></span></div>
+                    </div>
+
+                    <div class="row">
+                        <hr class="hr1"/>
+                    </div>
+
+                    <div class="row desc_content ulifecycle" >
+                        <div class="col-md-1 desc_content_col_title"><span>生命周</br>期阶段</span></div>
+                        <div class="col-md-3" id="lifecycleBtns">
+                        </div>
+                        <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#33CABB;font-size: 40px;"></i></div>
+                        <div class="col-md-2"><span id="lifecyleDesc"></span></div>
+                        <div class="col-md-1"><i class="mdi mdi-arrow-right-bold" style="color:#33CABB;font-size: 40px;"></i></div>
+                        <div class="col-md-3"><span></span><span id="lifecyclePolicy"></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

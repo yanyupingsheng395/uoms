@@ -8,27 +8,27 @@
                     <span class="lyear-toggler-bar"></span>
                     <span class="lyear-toggler-bar"></span>
                 </div>
-                <span class="navbar-page-title" id="pageTitle"></h5> </span>
             </div>
 
             <ul class="topbar-right">
                 <li class="dropdown dropdown-profile">
                     <a href="javascript:void(0)" data-toggle="dropdown">
-                        <img class="img-avatar img-avatar-48 m-r-10" data-th-src="@{/images/avatar/20180414165840.jpg}" alt="hanhoo用户成长系统" />
+                        <img   class="img-avatar-27 m-r-10" th:src="@{/images/avatar/20180414165840.jpg}">
                         <span id="loginUser"><span class="caret"></span></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <!--<li> <a href="profile.html"><i class="mdi mdi-account"></i> 个人信息</a> </li>-->
-                        <li> <a data-toggle="modal" data-target="#update-password"><i class="mdi mdi-lock-outline"></i> 修改密码</a> </li>
+                        <li> <a data-toggle="modal" data-target="#update-password" style="cursor:pointer"><i class="mdi mdi-lock-outline"></i> 修改密码</a> </li>
                         <li> <a href="/logout"><i class="mdi mdi-logout-variant"></i> 退出登录</a> </li>
                     </ul>
                 </li>
                 <li id="selectSys">
-                    <a id="navigatorUrl" href=""><i class="mdi mdi-login"></i>返回系统导航页</a>
+                    <a id="navigatorUrl" class="m-t-5" href=""><i class="mdi mdi-login"></i>系统导航</a>
                 </li>
             </ul>
         </div>
     </nav>
 </header>
+<!--End 头部信息-->
 <div data-th-include="@{system/user/updatePassword}"></div>
 <!--End 头部信息-->

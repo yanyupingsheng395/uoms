@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.operate.config.ConfigCacheManager;
 import com.linksteady.operate.dao.SmsTemplateMapper;
 import com.linksteady.operate.dao.SpuCycleMapper;
 import com.linksteady.operate.domain.SmsTemplate;
@@ -9,6 +10,7 @@ import com.linksteady.operate.service.SpuCycleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,18 +23,18 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     private SmsTemplateMapper smsTemplateapper;
 
     @Override
-    public List<SmsTemplate> getSmsTemplateList(int startRow, int endRow,String smsCode, String groupId) {
-        return smsTemplateapper.getSmsTemplateList(startRow, endRow,smsCode, groupId);
+    public List<SmsTemplate> getSmsTemplateList(int startRow, int endRow,SmsTemplate smsTemplate) {
+        return smsTemplateapper.getSmsTemplateList(startRow, endRow, smsTemplate);
     }
 
     @Override
-    public int getTotalCount(String smsCode, String groupId) {
-        return smsTemplateapper.getTotalCount(smsCode,groupId);
+    public int getTotalCount(SmsTemplate smsTemplate) {
+        return smsTemplateapper.getTotalCount(smsTemplate);
     }
 
     @Override
-    public void saveSmsTemplate(String smsCode, String smsContent, String isCoupon) {
-        smsTemplateapper.saveSmsTemplate(smsCode, smsContent, isCoupon);
+    public void saveSmsTemplate(SmsTemplate smsTemplate) {
+        smsTemplateapper.saveSmsTemplate(smsTemplate);
     }
 
     @Override
@@ -47,11 +49,41 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
 
     @Override
     public SmsTemplate getSmsTemplate(String smsCode) {
-        return  smsTemplateapper.getSmsTemplate(smsCode);
+        ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
+        SmsTemplate smsTemplate = smsTemplateapper.getSmsTemplate(smsCode);
+        String isCouponUrl = smsTemplate.getIsCouponUrl();
+        String isCouponName = smsTemplate.getIsCouponName();
+        String isProductUrl = smsTemplate.getIsProductUrl();
+        String isProductName = smsTemplate.getIsProductName();
+        String couponUrl = "${COUPON_URL}";
+        String couponName = "${COUPON_NAME}";
+        String prodName = "${PROD_NAME}";
+        String prodUrl = "${PROD_URL}";
+        String smsContent = smsTemplate.getSmsContent();
+        if (isCouponUrl.equalsIgnoreCase("1")) {
+            smsContent = smsContent.replace(couponUrl, configCacheManager.getConfigMap().get("op.daily.sms.cunponurl"));
+        }
+        if (isCouponName.equalsIgnoreCase("1")) {
+            smsContent = smsContent.replace(couponName, configCacheManager.getConfigMap().get("op.daily.sms.couponname"));
+        }
+        if (isProductUrl.equalsIgnoreCase("1")) {
+            smsContent = smsContent.replace(prodName, configCacheManager.getConfigMap().get("op.daily.sms.produrl"));
+        }
+        if (isProductName.equalsIgnoreCase("1")) {
+            smsContent = smsContent.replace(prodUrl, configCacheManager.getConfigMap().get("op.daily.sms.prodname"));
+        }
+        smsTemplate.setSmsContent(smsContent);
+        return  smsTemplate;
     }
 
     @Override
     public void update(SmsTemplate smsTemplate) {
         smsTemplateapper.update(smsTemplate);
+    }
+
+    @Override
+    public List<SmsTemplate> getTemplateByGroupId(String groupId) {
+        List<String> groupIdList = Arrays.asList(groupId.split(","));
+        return smsTemplateapper.getTemplateByGroupId(groupIdList);
     }
 }

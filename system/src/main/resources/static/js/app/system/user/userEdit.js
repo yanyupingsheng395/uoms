@@ -1,3 +1,4 @@
+var EXPIRE;
 function updateUser() {
     var selected = $("#userTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
@@ -23,6 +24,7 @@ function updateUser() {
             $form.find("input[name='email']").val(user.email);
             $form.find("input[name='mobile']").val(user.mobile);
             $form.find("input[name='expire']").val(user.expire);
+            EXPIRE = user.expire;
             $form.find("textarea[name='description']").text(user.description);
             init_date("expire", "yyyy-mm-dd", 0, 2, 0, new Date(), "");
             var roleArr = [];
@@ -38,4 +40,11 @@ function updateUser() {
             $MB.n_danger(r.msg);
         }
     });
+}
+
+function resetExpireVal() {
+    if(EXPIRE !== undefined && EXPIRE != '') {
+        $('#expire').val(EXPIRE);
+        EXPIRE = '';
+    }
 }

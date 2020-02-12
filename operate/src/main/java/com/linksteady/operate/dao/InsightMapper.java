@@ -3,6 +3,7 @@ package com.linksteady.operate.dao;
 import com.linksteady.common.domain.Ztree;
 import io.lettuce.core.dynamic.annotation.Param;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,4 +53,33 @@ public interface InsightMapper {
     List<Map<String, Object>> getPathSpu();
 
     List<String> getPathPurchOrder(String spuId);
+
+    List<Map<String, Object>> getUserSpu(String userId);
+
+    String getUserBuyOrder(String userId, String spuId);
+
+    /**
+     * 获取用户ebpProduct 和 nextEbpProduct
+     * @param userId
+     * @param spuId
+     * @param buyOrder
+     * @return
+     */
+    Map<String, String> getEbpProductIdByUserId(String userId, String spuId, String buyOrder);
+
+    String getLastBuyDt(String spuId, String userId);
+
+    List<Map<String, String>> getUserGrowthPathPointWithSpu(String userId, String spuId);
+
+    List<Map<String, Object>> getUserGrowthPathPointWithProduct(String userId, String spuId);
+
+    Map<String, String> getUserValueWithSpu(String spuId, String userId);
+
+    int getUserValueWithSpuCount(String spuId);
+
+    List<Map<String, Object>> getConvertDate(String userId);
+
+    List<Map<String, Object>> getPushDate(String userId);
+
+    List<Map<String, Object>> getPushAndConvertDate(String userId);
 }

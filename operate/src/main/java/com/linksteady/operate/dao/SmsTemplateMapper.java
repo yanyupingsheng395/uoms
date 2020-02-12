@@ -3,18 +3,17 @@ package com.linksteady.operate.dao;
 import com.linksteady.operate.config.MyMapper;
 import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.domain.SpuCycle;
-import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
 
-    List<SmsTemplate> getSmsTemplateList(@Param("startRow") int startRow, @Param("endRow") int endRow,
-                                         @Param("smsCode") String smsCode, @Param("groupId") String groupId);
+    List<SmsTemplate> getSmsTemplateList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("smsTemplate") SmsTemplate smsTemplate);
 
-    int getTotalCount(@Param("smsCode") String smsCode, @Param("groupId") String groupId);
+    int getTotalCount(@Param("smsTemplate") SmsTemplate smsTemplate);
 
-    void saveSmsTemplate(@Param("smsCode") String smsCode, @Param("smsContent") String smsContent, @Param("isCoupon") String isCoupon);
+    void saveSmsTemplate(SmsTemplate smsTemplate);
 
     int refrenceCount(@Param("smsCode") String smsCode);
 
@@ -23,4 +22,6 @@ public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
     SmsTemplate getSmsTemplate(@Param("smsCode") String smsCode);
 
     void update(@Param("smsTemplate") SmsTemplate smsTemplate);
+
+    List<SmsTemplate> getTemplateByGroupId(@Param("groupIdList") List<String> groupIdList);
 }

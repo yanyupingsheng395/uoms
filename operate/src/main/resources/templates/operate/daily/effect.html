@@ -13,7 +13,7 @@
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
 </head>
 
-<body>
+<body class="gray-bg">
 <!-- 公共组件 -->
 <div data-th-include="common/common"></div>
 <div class="lyear-layout-web">
@@ -27,24 +27,26 @@
             <div class="container-div ui-layout-center">
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
-                        <div class="col-md-12">
                             <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">任务效果</h5>
+                                <div>
+                                    <span class="navbar-page-title">任务效果</span>
+                                </div>
                             </div>
                             <div class="row">
-                                <hr class="hr"/>
+                                <div class="col-md-12">
+                                    <hr class="hr"/>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <p class="h5" id="taskDt"></p>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <a class="btn btn-secondary btn-sm" href="/page/daily">
+                                    <a class="btn btn-secondary btn-sm" href="/page/daily/task">
                                         <i class="fa fa-reply"></i> 返回
                                     </a>
                                 </div>
                             </div>
-                        </div>
                     </div>
                     <div class="col-md-12 select-table table-striped">
                         <ul id="effectTabs" class="nav nav-tabs" role="tablist">
@@ -76,24 +78,24 @@
                                             <tr>
                                                 <td>推送转化人数（人）</td>
                                                 <td data-th-text="${dailyHead.convertNum}"></td>
-                                                <td>推送且购买推荐SPU转化人数</td>
+                                                <td>推送且购买推荐类目转化人数</td>
                                                 <td data-th-text="${dailyHead.convertSpuNum}"></td>
                                             </tr>
                                             <tr>
                                                 <td>推送转化率（%）</td>
                                                 <td data-th-text="${dailyHead.convertRate}"></td>
-                                                <td>推送且购买推荐SPU转化率（%）</td>
+                                                <td>推送且购买推荐类目转化率（%）</td>
                                                 <td data-th-text="${dailyHead.convertSpuRate}"></td>
                                             </tr>
                                             <tr>
                                                 <td>推送转化金额（元）</td>
                                                 <td data-th-text="${dailyHead.convertAmount}"></td>
-                                                <td>推送且购买推荐SPU转化金额（元）</td>
+                                                <td>推送且购买推荐类目转化金额（元）</td>
                                                 <td data-th-text="${dailyHead.convertSpuAmount}"></td>
                                             </tr>
                                             </tbody>
                                         </table>
-                                        <small class="help-block">** 计划推送人数（人） 和 实际成功推送人数（人）之间的差主要由两部分引起：1.在系统设置的防重复推送日期之内重复推送被拦截；2.推送通道的损耗；</small>
+                                        <small class="help-block">计划推送人数（人） 和 实际成功推送人数（人）之间的差主要由两部分引起：1.在系统设置的防重复推送日期之内重复推送被拦截；2.推送通道的损耗；</small>
                                     </div>
                                 </div>
 
@@ -122,7 +124,7 @@
                                             <div class="select-list">
                                                 <ul>
                                                     <li>
-                                                        推送SPU是否转化：<select id="spuIsConvert" name="spuIsConvert">
+                                                        推送类目是否转化：<select id="spuIsConvert" name="spuIsConvert">
                                                         <option value="">所有</option>
                                                         <option value="Y">是</option>
                                                         <option value="N">否</option>
@@ -160,7 +162,7 @@
                                         </form>
                                     </div>
                                     <div class="col-md-12">
-                                        <div class="row" style="margin-top: 12px;">
+                                        <div class="row m-t-10">
                                             <div class="col-sm-12">
                                                 <table id="effectPersonalTable" class="table  table-striped table-bordered text-nowrap"></table>
                                             </div>

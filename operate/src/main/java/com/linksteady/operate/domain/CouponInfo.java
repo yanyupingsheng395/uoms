@@ -1,5 +1,6 @@
 package com.linksteady.operate.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -53,4 +54,16 @@ public class CouponInfo {
     private String validStatus;
 
     private String validEnd;
+
+    /**
+     * 优惠券来源：0： 智能，1：手动
+     */
+    private String couponSource;
+
+    private String userValue;
+    private String pathActive;
+    private String lifeCycle;
+
+    private String checkFlag;
+    private String checkComments;
 }

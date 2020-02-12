@@ -44,10 +44,12 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/list")
     public ResponseBo smsTemplateList(@RequestBody QueryRequest request) {
-        String smsCode = request.getParam().get("smsCode");
-        String groupId = request.getParam().get("groupId");
-        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize(), smsCode, groupId);
-        int totalCount = smsTemplateService.getTotalCount(smsCode, groupId);
+        SmsTemplate smsTemplate = new SmsTemplate();
+        smsTemplate.setUserValue(request.getParam().get("userValue"));
+        smsTemplate.setLifeCycle(request.getParam().get("lifeCycle"));
+        smsTemplate.setPathActive(request.getParam().get("pathActive"));
+        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize(), smsTemplate);
+        int totalCount = smsTemplateService.getTotalCount(smsTemplate);
         return ResponseBo.okOverPaging("", totalCount, result);
     }
 
@@ -55,10 +57,10 @@ public class SmsTemplateController extends BaseController {
      * 增加短信模板
      */
     @RequestMapping("/addSmsTemplate")
-    public ResponseBo addSmsTemplate(@RequestBody SmsTemplate smsTemplate) {
+    public ResponseBo addSmsTemplate(SmsTemplate smsTemplate) {
         //添加
         try {
-            smsTemplateService.saveSmsTemplate(smsTemplate.getSmsCode(), smsTemplate.getSmsContent(), smsTemplate.getIsCoupon());
+            smsTemplateService.saveSmsTemplate(smsTemplate);
             return ResponseBo.ok();
         } catch (Exception e) {
             //失败
@@ -74,7 +76,7 @@ public class SmsTemplateController extends BaseController {
         String smsCode = request.getParameter("smsCode");
         //判断短信模板是否被引用
         if (smsTemplateService.refrenceCount(smsCode) > 0) {
-            return ResponseBo.error("此模板已经被成长组引用，无法删除！");
+            return ResponseBo.error("此文案已经被成长组引用，无法删除！");
         }
         smsTemplateService.deleteSmsTemplate(smsCode);
         return ResponseBo.ok();
@@ -86,6 +88,16 @@ public class SmsTemplateController extends BaseController {
     @RequestMapping("/getSmsTemplate")
     public ResponseBo getSmsTemplate(HttpServletRequest request) {
         String smsCode = request.getParameter("smsCode");
+        //判断短信模板是否被引用
+        if (smsTemplateService.refrenceCount(smsCode) > 0) {
+            return ResponseBo.error("此文案已经被成长组引用，无法编辑！");
+        }
+        return ResponseBo.okWithData("", smsTemplateService.getSmsTemplate(smsCode));
+    }
+
+    @RequestMapping("/getSmsTemplateNotValid")
+    public ResponseBo getSmsTemplateNotValid(HttpServletRequest request) {
+        String smsCode = request.getParameter("smsCode");
         return ResponseBo.okWithData("", smsTemplateService.getSmsTemplate(smsCode));
     }
 
@@ -94,9 +106,7 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/testSend")
     public ResponseBo testSend(String phoneNum, String smsContent) {
-
         List<String> phoneNumList=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(phoneNum);
-
         try {
             for(String num:phoneNumList)
             {
@@ -116,7 +126,7 @@ public class SmsTemplateController extends BaseController {
      * @return
      */
     @RequestMapping("/updateSmsTemplate")
-    public ResponseBo updateSmsTemplate(@RequestBody SmsTemplate smsTemplate) {
+    public ResponseBo updateSmsTemplate(SmsTemplate smsTemplate) {
         smsTemplateService.update(smsTemplate);
         return ResponseBo.ok();
     }
@@ -131,39 +141,14 @@ public class SmsTemplateController extends BaseController {
         return ResponseBo.okWithData(null, dailyProperties.getCouponSendType());
     }
 
-    /**
-     * 计算字数
-     *0
-     * @return
-     */
-    @RequestMapping("/calFontNum")
-    public ResponseBo calFontNum(String smsContent) {
-        Map<String, Object> result = Maps.newHashMap();
-        String couponUrl = "${COUPON_URL}";
-        String couponName = "${COUPON_NAME}";
-        String prodName = "${PROD_NAME}";
-        String prodUrl = "${PROD_URL}";
-        int templateCount = smsContent.length();
-        if (smsContent.contains(couponUrl)) {
-            templateCount = templateCount - couponUrl.length() + dailyProperties.getShortUrlLen();
-        }
-        if (smsContent.contains(couponName)) {
-            templateCount = templateCount - couponName.length() + dailyProperties.getCouponNameLen();
-        }
-        if (smsContent.contains(prodName)) {
-            templateCount = templateCount - prodName.length() + dailyProperties.getProdNameLen();
-        }
-        if (smsContent.contains(prodUrl)) {
-            templateCount = templateCount - prodUrl.length() + dailyProperties.getShortUrlLen();
-        }
-        result.put("count", templateCount);
-        result.put("valid", templateCount <= dailyProperties.getSmsLengthLimit());
-        return ResponseBo.okWithData(null, result);
-    }
-
     @GetMapping("/validSmsContentLength")
     public ResponseBo validSmsContentLength(@RequestParam("smsContent") String smsContent) {
         return ResponseBo.okWithData(null, smsContent.length() <= dailyProperties.getSmsLengthLimit());
+    }
+
+    @RequestMapping("/getTemplateByGroupId")
+    public ResponseBo getTemplateByGroupId(@RequestParam("groupId") String groupId) {
+        return ResponseBo.okWithData(null, smsTemplateService.getTemplateByGroupId(groupId));
     }
 }
 

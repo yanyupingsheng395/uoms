@@ -15,7 +15,7 @@
     <link rel="stylesheet" data-th-href="@{/css/common.css}">
 </head>
 
-<body>
+<body class="gray-bg">
 <!-- 公共组件 -->
 <div data-th-include="common/common"></div>
 
@@ -30,13 +30,11 @@
             <div class="container-div ui-layout-center">
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <h5 class="modal-title pull-left" style="margin-top: 20px;">用户管理</h5>
-                            </div>
-                            <div class="row">
-                                <hr class="hr"/>
-                            </div>
+                        <div class="row">
+                            <h5 class="navbar-page-title">用户管理</h5>
+                        </div>
+                        <div class="row">
+                            <hr class="hr"/>
                         </div>
                         <form id="user-form">
                             <input type="hidden" id="deptId" name="deptId">
@@ -71,7 +69,7 @@
                     </div>
 
                     <div class="col-sm-12 select-table table-striped">
-                        <div class="row" style="margin-top: 12px;">
+                        <div class="row">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
                                     <a class="btn btn-success" data-toggle="modal" data-target="#user-add" shiro:hasPermission="user:add">
@@ -80,8 +78,8 @@
                                     <a class="btn btn-primary btn-edit" onclick="updateUser()" shiro:hasPermission="user:update">
                                         <i class="fa fa-edit"></i> 修改
                                     </a>
-                                    <a class="btn btn-primary btn-del" onclick="restPassword()" shiro:hasPermission="user:resetPassword">
-                                        <i class="fa fa-remove"></i> 重置密码
+                                    <a class="btn btn-warning btn-del" onclick="restPassword()" shiro:hasPermission="user:resetPassword">
+                                        <i class="fa fa-refresh"></i> 重置密码
                                     </a>
                                     <a class="btn btn-danger btn-del" onclick="deleteUsers()" shiro:hasPermission="user:delete">
                                         <i class="fa fa-remove"></i> 删除
@@ -89,7 +87,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row" style="margin-top: 12px;">
+                        <div class="row" style="margin-top: 10px;">
                             <div class="col-sm-12 table-responsive">
                                 <table id="userTable" class="table  table-striped table-bordered"></table>
                             </div>

@@ -486,7 +486,7 @@ label {
 }
 
 .container-div {
-    padding: 10px 35px;
+    padding: 0px 25px;
     height: 100%;
 }
 
@@ -499,8 +499,7 @@ label {
     background: #fff;
     border-radius: 6px;
     margin-top: 10px;
-    padding-top: 5px;
-    padding-bottom: 13px;
+    padding: 10px;
     box-shadow: 1px 1px 3px rgba(0,0,0,.2);
 }
 
@@ -610,10 +609,18 @@ label {
     border: 0px!important;
 }
 
-.table-striped .table, .fixed-table-container, table, .table-striped .table, .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
-    /*border-bottom: 1px solid #e7eaec!important;*/
-    background-color: transparent!important;
-    /*border: 0px !important;*/
+.table-striped .table, .table-striped .table, .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+    border-bottom: 1px solid #e7eaec!important;
+    background-color: transparent;
+    border: 0px;
+}
+
+.fixed-table-footer {
+    border-top: 0px solid #ddd;
+}
+
+.fixed-table-container {
+    border: 0px solid #ddd;
 }
 
 .table-striped .table>thead>tr>th, .table-striped .table>tbody>tr>th {
@@ -637,13 +644,34 @@ label {
     display: inline-block
 }
 
+.editable-input .input-sm {
+    height: 32px!important;
+}
+
 /** 表格冻结列样式 **/
-.left-fixed-table-columns{
+.left-fixed-table-columns, .left-fixed-body-columns {
     position: absolute;
     background-color: #fff;
     display: none;
-    border-right:1px solid #ddd;
+    box-sizing: border-box;
     overflow: hidden;
+}
+
+.left-fixed-table-columns .table, .left-fixed-body-columns .table {
+    border-right: 1px solid #ddd;
+}
+
+.left-fixed-table-columns .table.table-no-bordered, .left-fixed-body-columns .table.table-no-bordered {
+    border-right: 1px solid transparent;
+}
+
+.left-fixed-body-columns table {
+    position: absolute;
+    animation: none;
+}
+
+.bootstrap-table .table-hover > tbody > tr.hover > td {
+    background-color: #f5f5f5;
 }
 
 .right-fixed-table-columns{
@@ -659,17 +687,17 @@ label {
 .bootstrap-tree-table .treetable-expander {width:16px; height: 16px; display: inline-block; position: relative; cursor: pointer;}
 .bootstrap-tree-table .treetable-selected{background: #f5f5f5 !important;}
 .bootstrap-tree-table .treetable-table{border:0 !important;margin-bottom:0}
-.bootstrap-tree-table .treetable-table tbody {display:block;height:auto;}
+.bootstrap-tree-table .treetable-table tbody {display:block;height:auto;overflow-y:auto;}
 .bootstrap-tree-table .treetable-table thead, .treetable-table tbody tr {display:table;width:100%;table-layout:fixed;}
 .bootstrap-tree-table .treetable-thead th{line-height:24px;border: 0 !important;border-radius: 4px;border-left:0px solid #e7eaec !important;border-bottom:1px solid #ccc!important;text-align: left;}
 .bootstrap-tree-table .treetable-thead tr :first-child{border-left:0 !important}
-.bootstrap-tree-table .treetable-tbody td{border: 0 !important;border-left:0px solid #e7eaec !important;border-bottom:1px solid #e7eaec!important;white-space: nowrap; text-overflow: ellipsis;}
+.bootstrap-tree-table .treetable-tbody td{overflow:hidden;border: 0 !important;border-left:0px solid #e7eaec !important;border-bottom:1px solid #e7eaec!important;white-space: nowrap; text-overflow: ellipsis;}
 .bootstrap-tree-table .treetable-tbody tr :first-child{border-left:0 !important}
 .bootstrap-tree-table .treetable-bars .tool-left, .bootstrap-tree-table .treetable-bars .tool-right{margin-top: 10px; margin-bottom: 10px;}
 .bootstrap-tree-table .treetable-bars .tool-left{float: left;}
 .bootstrap-tree-table .treetable-bars .tool-right{float: right;}
 .bootstrap-tree-table .treetable-bars .columns li label{display: block;padding: 3px 20px;clear: both;font-weight: 400;line-height: 1.428571429;max-width: 100%;margin-bottom: 5px;cursor:pointer;}
-
+.bootstrap-tree-table .table{border-bottom: 0px solid #e7eaec!important;}
 
 /** 首页样式 **/
 .ax_close_max {
@@ -853,7 +881,9 @@ label {
 }
 .fixed {position:absolute;left:0;bottom:0;}
 
-.hr {margin-top: 20px;}
+.hr {margin-top: 10px;
+     margin-bottom: 10px;
+}
 
 .th-inner {
     font-weight: normal;
@@ -862,4 +892,8 @@ label {
 
 table > thead > tr > th {
     text-align: center;
+}
+
+.fixed-table-container{
+    border: 0 !important;
 }
