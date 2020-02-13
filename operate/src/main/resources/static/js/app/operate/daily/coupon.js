@@ -66,28 +66,28 @@ function validateRule() {
             },
             couponDisplayName: {
                 required: true,
-                maxlength: couponNameLen,
-                remote: {
-                    url: "/coupon/checkCouponName",
-                    type: "get",
-                    dataType: "json",
-                    data: {
-                        couponDisplayName: function () {
-                            return $("#couponDisplayName").val();
-                        },
-                        operate: function () {
-                            return $("#btn_save_coupon").attr("name");
-                        }
-                    }
-                }
+                maxlength: couponNameLen
+                // remote: {
+                //     url: "/coupon/checkCouponName",
+                //     type: "get",
+                //     dataType: "json",
+                //     data: {
+                //         couponDisplayName: function () {
+                //             return $("#couponDisplayName").val();
+                //         },
+                //         operate: function () {
+                //             return $("#btn_save_coupon").attr("name");
+                //         }
+                //     }
+                // }
             },
             validEnd: {
                 required: true
-            },
-            couponNum: {
-                required: true,
-                digits: true
             }
+            // couponNum: {
+            //     required: true,
+            //     digits: true
+            // }
         },
         errorPlacement: function (error, element) {
             if (element.is(":checkbox") || element.is(":radio")) {
@@ -98,25 +98,25 @@ function validateRule() {
         },
         messages: {
             couponDenom: {
-                required: icon + "请输入面额",
+                required: icon + "请输入补贴面额",
                 digits: icon + "只能是整数"
             },
             couponThreshold: {
-                required: icon + "请输入门槛",
+                required: icon + "请输入补贴门槛",
                 digits: icon + "只能是整数"
             },
-            couponInfo2: icon + "请输入长链",
-            couponUrl: icon + "请输入短链",
+            couponInfo2: icon + "请输入原链接",
+            couponUrl: icon + "请输入短链接",
             couponDisplayName: {
-                required: icon + "请输入引用名",
-                maxlength: icon + "最大长度不能超过"+couponNameLen+"个字符",
-                remote: icon + "补贴名称已存在"
+                required: icon + "请输入补贴名称",
+                maxlength: icon + "最大长度不能超过"+couponNameLen+"个字符"
+                // remote: icon + "补贴名称已存在"
             },
-            validEnd: icon + "请输入截止日期",
-            couponNum: {
-                required: icon + "请输入数量",
-                digits: icon + "只能是整数"
-            }
+            validEnd: icon + "请输入有效截止日期"
+            // couponNum: {
+            //     required: icon + "请输入数量",
+            //     digits: icon + "只能是整数"
+            // }
         }
     });
 }
