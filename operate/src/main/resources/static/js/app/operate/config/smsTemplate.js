@@ -267,11 +267,8 @@ function del() {
 function deleteSmsTemplate(smsCode) {
     $.getJSON("/smsTemplate/deleteSmsTemplate",{smsCode:smsCode}, function (resp) {
         if (resp.code === 200){
-            //提示成功
             $MB.n_success('删除成功！');
-            //刷新表格
-            var groupId = $("#currentGroupId").val();
-            smsTemplateTable(groupId);
+            $MB.refreshTable('smsTemplateTable');
         }else {
             $MB.n_danger(resp.msg);
         }
@@ -613,16 +610,27 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $('#smsCode').val("");
     $('#smsContent').val("");
     $('#smsContentInput').val("");
+    $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
+    $("#fontNum").val('');
+    $("#remark").val('');
+    $("#smsTemplateAddForm").validate().resetForm();
+
     $("input[name='userValue']").removeAttr("disabled");
     $("input[name='userValue']:checked").removeAttr("checked");
     $("input[name='lifeCycle']").removeAttr("disabled");
     $("input[name='lifeCycle']:checked").removeAttr("checked");
     $("input[name='pathActive']").removeAttr("disabled");
     $("input[name='pathActive']:checked").removeAttr("checked");
-    $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
-    $("#fontNum").val('');
-    $("#remark").val('');
-    $("#smsTemplateAddForm").validate().resetForm();
+    $("#smsCode").removeAttr("disabled");
+    $("#smsName").removeAttr("disabled");
+    $("input[name='isCouponUrl']").removeAttr("disabled");
+    $("input[name='isCouponUrl']:checked").removeAttr("checked");
+    $("input[name='isCouponName']").removeAttr("disabled");
+    $("input[name='isCouponName']:checked").removeAttr("checked");
+    $("input[name='isProductName']").removeAttr("disabled");
+    $("input[name='isProductName']:checked").removeAttr("checked");
+    $("input[name='isProductUrl']").removeAttr("disabled");
+    $("input[name='isProductUrl']:checked").removeAttr("checked");
 });
 
 // 文案检索
@@ -645,7 +653,7 @@ $("#btn_edit").click(function () {
     }
 
     var smsCode =selectRows[0]["smsCode"];
-    $.getJSON("/smsTemplate/getSmsTemplateNotValid?smsCode="+smsCode,function (resp) {
+    $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
             var data = resp.data;
             $("#smsCode").val(data.smsCode).attr('disabled', 'disabled');

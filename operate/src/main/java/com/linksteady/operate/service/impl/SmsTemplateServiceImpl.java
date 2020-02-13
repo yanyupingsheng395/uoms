@@ -7,6 +7,7 @@ import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.domain.SpuCycle;
 import com.linksteady.operate.service.SmsTemplateService;
 import com.linksteady.operate.service.SpuCycleService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,20 +61,25 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         String prodName = "${PROD_NAME}";
         String prodUrl = "${PROD_URL}";
         String smsContent = smsTemplate.getSmsContent();
-        if (isCouponUrl.equalsIgnoreCase("1")) {
+        if (StringUtils.isNotEmpty(isCouponUrl) && isCouponUrl.equalsIgnoreCase("1")) {
             smsContent = smsContent.replace(couponUrl, configCacheManager.getConfigMap().get("op.daily.sms.cunponurl"));
         }
-        if (isCouponName.equalsIgnoreCase("1")) {
+        if (StringUtils.isNotEmpty(isCouponName) && isCouponName.equalsIgnoreCase("1")) {
             smsContent = smsContent.replace(couponName, configCacheManager.getConfigMap().get("op.daily.sms.couponname"));
         }
-        if (isProductUrl.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(prodName, configCacheManager.getConfigMap().get("op.daily.sms.produrl"));
+        if (StringUtils.isNotEmpty(isProductUrl) && isProductUrl.equalsIgnoreCase("1")) {
+            smsContent = smsContent.replace(prodUrl, configCacheManager.getConfigMap().get("op.daily.sms.produrl"));
         }
-        if (isProductName.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(prodUrl, configCacheManager.getConfigMap().get("op.daily.sms.prodname"));
+        if (StringUtils.isNotEmpty(isProductName) && isProductName.equalsIgnoreCase("1")) {
+            smsContent = smsContent.replace(prodName, configCacheManager.getConfigMap().get("op.daily.sms.prodname"));
         }
         smsTemplate.setSmsContent(smsContent);
         return  smsTemplate;
+    }
+
+    @Override
+    public SmsTemplate getSmsTemplateBySmsCode(String smsCode) {
+        return  smsTemplateapper.getSmsTemplate(smsCode);
     }
 
     @Override
@@ -85,5 +91,10 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     public List<SmsTemplate> getTemplateByGroupId(String groupId) {
         List<String> groupIdList = Arrays.asList(groupId.split(","));
         return smsTemplateapper.getTemplateByGroupId(groupIdList);
+    }
+
+    @Override
+    public List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle) {
+        return smsTemplateapper.getTemplate(userValue, pathActive, lifeCycle);
     }
 }

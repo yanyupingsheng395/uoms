@@ -126,4 +126,9 @@ public class CouponServiceImpl implements CouPonService {
             couponMapper.validCouponUrl();
         }
     }
+
+    @Override
+    public List<String> getSelectedSmsCode(String groupId) {
+        return couponMapper.getSelectedSmsCode(groupId);
+    }
 }

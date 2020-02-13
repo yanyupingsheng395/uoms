@@ -227,4 +227,14 @@ public class CouponController extends BaseController {
         couponService.validCoupon();
         return ResponseBo.ok();
     }
+
+    /**
+     * 根据组获取优惠券
+     * @param groupId
+     * @return
+     */
+    @RequestMapping("/getSelectedSmsCode")
+    public ResponseBo getSelectedSmsCode(@RequestParam("groupId") String groupId) {
+        return ResponseBo.okWithData(null, couponService.getSelectedSmsCode(groupId));
+    }
 }

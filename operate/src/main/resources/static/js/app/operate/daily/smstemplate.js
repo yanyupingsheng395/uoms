@@ -9,10 +9,6 @@ function add() {
     $('#smsContent').val("");
     $('#smsName').val("");
     $('#remark').val("");
-    $("input[name='isCouponUrl']:radio").removeAttr("checked").removeAttr("disabled");
-    $("input[name='isCouponName']:radio").removeAttr("checked").removeAttr("disabled");
-    $("input[name='isProductName']:radio").removeAttr("checked").removeAttr("disabled");
-    $("input[name='isProductUrl']:radio").removeAttr("checked").removeAttr("disabled");
     $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
     $("#fontNum").val('');
     $("#myLargeModalLabel3").text("新增文案");
@@ -130,6 +126,7 @@ function testSend()
 $("#send_modal").on('hidden.bs.modal', function () {
     $('#msg_modal').modal('show');
 });
+
 
 function sendMessage()
 {
@@ -450,6 +447,22 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
     $("#fontNum").val('');
     $("#remark").val('');
+    $("input[name='userValue']").removeAttr("disabled");
+    $("input[name='userValue']:checked").removeAttr("checked");
+    $("input[name='lifeCycle']").removeAttr("disabled");
+    $("input[name='lifeCycle']:checked").removeAttr("checked");
+    $("input[name='pathActive']").removeAttr("disabled");
+    $("input[name='pathActive']:checked").removeAttr("checked");
+    $("#smsCode").removeAttr("disabled");
+    $("#smsName").removeAttr("disabled");
+    $("input[name='isCouponUrl']").removeAttr("disabled");
+    $("input[name='isCouponUrl']:checked").removeAttr("checked");
+    $("input[name='isCouponName']").removeAttr("disabled");
+    $("input[name='isCouponName']:checked").removeAttr("checked");
+    $("input[name='isProductName']").removeAttr("disabled");
+    $("input[name='isProductName']:checked").removeAttr("checked");
+    $("input[name='isProductUrl']").removeAttr("disabled");
+    $("input[name='isProductUrl']:checked").removeAttr("checked");
     $("#msg_modal").modal('show');
 });
 
@@ -473,7 +486,7 @@ $("#btn_edit").click(function () {
     }
 
     var smsCode =selectRows[0]["smsCode"];
-    $.getJSON("/smsTemplate/getSmsTemplateNotValid?smsCode="+smsCode,function (resp) {
+    $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
             $("#msg_modal").modal('hide');
             var data = resp.data;

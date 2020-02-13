@@ -22,7 +22,11 @@ public interface SmsTemplateService {
 
     SmsTemplate getSmsTemplate(String smsCode);
 
+    SmsTemplate getSmsTemplateBySmsCode(String smsCode);
+
     void update(SmsTemplate smsTemplate);
 
     List<SmsTemplate> getTemplateByGroupId(String groupId);
+
+    List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle);
 }

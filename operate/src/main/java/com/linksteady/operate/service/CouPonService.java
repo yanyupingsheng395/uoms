@@ -39,4 +39,6 @@ public interface CouPonService {
     int checkCouponName(String couponName);
 
     void validCoupon();
+
+    List<String> getSelectedSmsCode(String groupId);
 }

@@ -101,11 +101,7 @@ public class SmsTemplateController extends BaseController {
     @RequestMapping("/getSmsTemplate")
     public ResponseBo getSmsTemplate(HttpServletRequest request) {
         String smsCode = request.getParameter("smsCode");
-        //判断短信模板是否被引用
-        if (smsTemplateService.refrenceCount(smsCode) > 0) {
-            return ResponseBo.error("此文案已经被成长组引用，无法编辑！");
-        }
-        return ResponseBo.okWithData("", smsTemplateService.getSmsTemplate(smsCode));
+        return ResponseBo.okWithData("", smsTemplateService.getSmsTemplateBySmsCode(smsCode));
     }
 
     @RequestMapping("/getSmsTemplateNotValid")
@@ -162,6 +158,15 @@ public class SmsTemplateController extends BaseController {
     @RequestMapping("/getTemplateByGroupId")
     public ResponseBo getTemplateByGroupId(@RequestParam("groupId") String groupId) {
         return ResponseBo.okWithData(null, smsTemplateService.getTemplateByGroupId(groupId));
+    }
+
+    /**
+     * 通过三个维度筛选文案
+     * @return
+     */
+    @RequestMapping("/getTemplate")
+    public ResponseBo getTemplate(@RequestParam("userValue") String userValue, @RequestParam("pathActive") String pathActive, @RequestParam("lifeCycle") String lifeCycle) {
+        return ResponseBo.okWithData(null, smsTemplateService.getTemplate(userValue, pathActive, lifeCycle));
     }
 }
 

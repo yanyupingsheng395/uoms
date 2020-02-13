@@ -63,4 +63,6 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
      * 获取配置到成长组中的所有优惠券信息
      */
     List<Map<String,Object>> selectGroupCouponInfo();
+
+    List<String> getSelectedSmsCode(String groupId);
 }

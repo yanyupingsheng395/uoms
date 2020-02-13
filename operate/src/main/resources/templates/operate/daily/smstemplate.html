@@ -6,6 +6,45 @@
             </div>
         </div>
     </div>
+    <div class="col-md-12">
+        <form id="sms-form">
+            <div class="select-list">
+                <ul>
+                    <li>
+                        价值：<select name="userValue">
+                        <option value="">所有</option>
+                        <option value="ULC_01">重要</option>
+                        <option value="ULC_02">主要</option>
+                        <option value="ULC_03">普通</option>
+                        <option value="ULC_04">长尾</option>
+                    </select>
+                    </li>
+                    <li>
+                        生命周期阶段：<select name="lifeCycle">
+                        <option value="">所有</option>
+                        <option value="1">新用户</option>
+                        <option value="0">复购用户</option>
+                    </select>
+                    </li>
+                    <li>
+                        下步成长节点：<select name="pathActive">
+                        <option value="">所有</option>
+                        <option value="UAC_01">促活节点</option>
+                        <option value="UAC_02">留存节点</option>
+                        <option value="UAC_03">弱流失预警</option>
+                        <option value="UAC_04">强流失预警</option>
+                    </select>
+                    </li>
+                    <li>
+                        <a class="btn btn-primary btn-rounded btn-sm" onclick="searchSms()"><i
+                                class="fa fa-search"></i>&nbsp;搜索</a>
+                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetSms()"><i
+                                class="fa fa-refresh"></i>&nbsp;重置</a>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>
     <div class="col-sm-12 table-striped">
         <div class="row m-t-10">
             <div class="col-sm-12">

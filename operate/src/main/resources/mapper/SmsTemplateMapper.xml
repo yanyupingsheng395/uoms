@@ -90,4 +90,18 @@
          </foreach>
          order by to_number(t1.sms_code) desc
     </select>
+
+    <select id="getTemplate" resultMap="BaseResultMap">
+        select * from UO_OP_SMS_TEMPLATE where 1=1
+        <if test="userValue != null and userValue != ''">
+            and USER_VALUE like concat('%', concat(#{userValue}, '%'))
+        </if>
+        <if test="pathActive != null and pathActive != ''">
+            and PATH_ACTIVE like concat('%', concat(#{pathActive}, '%'))
+        </if>
+        <if test="lifeCycle != null and lifeCycle != ''">
+            and LIFE_CYCLE like concat('%', concat(#{lifeCycle}, '%'))
+        </if>
+        order by sms_code desc
+    </select>
 </mapper>

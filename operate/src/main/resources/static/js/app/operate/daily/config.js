@@ -101,7 +101,7 @@ function initTable() {
             formatter: function (value, row, index) {
                 // 获取群组信息
                 let groupInfo = row['userValue'] + "|" + row['lifecycle'] + "|" + row['pathActive'] + "|" + row['groupInfo'];
-                return "<a onclick='editSmsContent(\""+row['groupId']+"\", \"" + groupInfo + "\")' style='color: #333;'><i class=\"fa fa-envelope-o\"></i></a>";
+                return "<a onclick='editSmsContent(\""+row['groupId']+"\", \"" + groupInfo + "\",  \"" + row.smsCode + "\")' style='color: #333;'><i class=\"fa fa-envelope-o\"></i></a>";
             }
         },{
             field: 'isCoupon',
@@ -210,22 +210,26 @@ function mergeCells(data, fieldName, colspan, target) {
     }
 }
 
+let SMS_CODE;
 // 编辑短信内容
-function editSmsContent(groupId, groupInfo) {
+function editSmsContent(groupId, groupInfo, smsCode) {
+    SMS_CODE = smsCode;
     $("#currentGroupId").val(groupId);
     $("#currentGroupInfo").val(groupInfo);
     getSelectedGroupInfo('selectedGroupInfo1');
     $("#msg_modal").modal('show');
 }
 
+
 // 编辑优惠券
-function editCoupon(groupId, groupInfo) {
+function editCoupon(groupId, groupInfo, smsCode) {
     $("#currentGroupId").val(groupId);
     $("#currentGroupInfo").val(groupInfo);
     setUserGroupChecked();
     $("#coupon_modal").modal('show');
 }
 
+let COUPON_IDS;
 $("#coupon_modal").on('shown.bs.modal', function () {
     var groupId = $("#currentGroupId").val();
     couponTable(groupId);
@@ -233,8 +237,11 @@ $("#coupon_modal").on('shown.bs.modal', function () {
 });
 
 $("#msg_modal").on('shown.bs.modal', function () {
-    var groupId = $("#currentGroupId").val();
-    smsTemplateTable(groupId);
+    smsTemplateTable();
+});
+
+$("#msg_modal").on('hidden.bs.modal', function () {
+    resetSms();
 });
 
 // 获取弹窗群组信息
@@ -270,23 +277,39 @@ function getSelectedGroupInfo(tableId) {
     });
 }
 
+function smsRowStyle(row, index) {
+    if(SMS_CODE != undefined && SMS_CODE != null && row.smsCode === SMS_CODE) {
+        return {
+            classes: 'success'
+        };
+    }
+    return {};
+}
 /**
  * 获取短信模板列表
  */
-function smsTemplateTable(groupId) {
+function smsTemplateTable() {
     var settings = {
+        clickToSelect: true,
+        rowStyle: smsRowStyle,
         singleSelect: true,
         columns: [
             [
                 {
                     checkbox: true,
-                    rowspan: 2
+                    rowspan: 2,
+                    formatter: function (value, row, index) {
+                        if(SMS_CODE != undefined && SMS_CODE != null && row.smsCode === SMS_CODE) {
+                            return {
+                                checked : true//设置选中
+                            };
+                        }
+                    }
                 }, {
                 field: 'smsName',
                 title: '文案名称',
                 rowspan: 2,
-                valign: "middle",
-                clickToSelect: true
+                valign: "middle"
             }, {
                 title: '文案适用用户群组',
                 colspan: 3
@@ -373,11 +396,25 @@ function smsTemplateTable(groupId) {
             ]
         ]
     };
-    var url = "/smsTemplate/getTemplateByGroupId";
+    var url = "/smsTemplate/getTemplate";
     $("#smsTemplateTable").bootstrapTable(settings);
-    $.get(url, {groupId: groupId}, function (r) {
+    var userValue = $("#sms-form").find("select[name='userValue']").find("option:selected").val();
+    var pathActive = $("#sms-form").find("select[name='pathActive']").find("option:selected").val();
+    var lifeCycle = $("#sms-form").find("select[name='lifeCycle']").find("option:selected").val();
+    $.get(url, {userValue:userValue, pathActive: pathActive, lifeCycle: lifeCycle}, function (r) {
         $("#smsTemplateTable").bootstrapTable('load', r.data);
     });
+}
+
+function searchSms() {
+    smsTemplateTable();
+}
+
+function resetSms() {
+    $("#sms-form").find("select[name='userValue']").find("option:selected").removeAttr('selected');
+    $("#sms-form").find("select[name='pathActive']").find("option:selected").removeAttr('selected');
+    $("#sms-form").find("select[name='lifeCycle']").find("option:selected").removeAttr('selected');
+    smsTemplateTable();
 }
 
 /**
@@ -388,10 +425,13 @@ function couponTable(groupId) {
         cache: false,
         pagination: false,
         singleSelect: false,
+        rowStyle: rowStyle,
+        clickToSelect:true,
         columns: [[
             {
                 checkbox: true,
-                rowspan: 2
+                rowspan: 2,
+                formatter : stateFormatter
             },
             {
                 title: '补贴适用用户群组',
@@ -540,6 +580,26 @@ function couponTable(groupId) {
     $.get("/coupon/getCouponList", {groupId: groupId}, function (r) {
         $('#couponTable').bootstrapTable('load', r.data);
     });
+}
+
+// 给行设置颜色
+function rowStyle(row, index) {
+    if(row.isSelected === '1') {
+        return {
+            classes: 'success'
+        };
+    }
+    return {};
+}
+
+// 给行设置选中
+function stateFormatter(value, row, index) {
+    if(row.isSelected === '1') {
+        return {
+            checked : true//设置选中
+        };
+    }
+    return value;
 }
 
 function setSmsCode() {
