@@ -104,4 +104,12 @@
         </if>
         order by sms_code desc
     </select>
+
+    <select id="getSmsUsedGroupInfo" resultType="string">
+        select t2.USER_VALUE || ',' || t2.LIFECYLE || ',' || t2.PATH_ACTIVE
+        from UO_OP_SMS_TEMPLATE t1,
+             UO_OP_DAILY_TEMPLATE_CONFIG t2
+        where t1.SMS_CODE = t2.SMS_CODE
+        and t1.SMS_CODE = #{smsCode}
+    </select>
 </mapper>

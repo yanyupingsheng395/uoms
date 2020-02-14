@@ -86,6 +86,11 @@ public class SmsTemplateController extends BaseController {
         return ResponseBo.ok();
     }
 
+    /**
+     * 查询文案是否被引用
+     * @param smsCode
+     * @return
+     */
     @RequestMapping("/smsIsUsed")
     public boolean smsIsUsed(@RequestParam("smsCode") String smsCode) {
         boolean result = false;
@@ -167,6 +172,17 @@ public class SmsTemplateController extends BaseController {
     @RequestMapping("/getTemplate")
     public ResponseBo getTemplate(@RequestParam("userValue") String userValue, @RequestParam("pathActive") String pathActive, @RequestParam("lifeCycle") String lifeCycle) {
         return ResponseBo.okWithData(null, smsTemplateService.getTemplate(userValue, pathActive, lifeCycle));
+    }
+
+    @RequestMapping("/getSmsUsedGroupInfo")
+    public ResponseBo getSmsUsedGroupInfo(@RequestParam("smsCode") String smsCode) {
+        return ResponseBo.okWithData(null,smsTemplateService.getSmsUsedGroupInfo(smsCode));
+    }
+
+    @RequestMapping("/updateSmsCodeNull")
+    public ResponseBo updateSmsCodeNull(@RequestParam("smsCode") String smsCode) {
+        dailyService.updateSmsCodeNull(smsCode);
+        return ResponseBo.ok();
     }
 }
 

@@ -15,7 +15,6 @@ app:
 #      uri: http://172.16.99.42:9001
 #      username: admin
 #      password: linksteady123
-#
 #  profiles:
 #    active: prod
 #  aop:

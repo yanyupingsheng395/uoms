@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by hxcao on 2019-04-29
@@ -96,5 +97,23 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     @Override
     public List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle) {
         return smsTemplateapper.getTemplate(userValue, pathActive, lifeCycle);
+    }
+
+    @Override
+    public List<String> getSmsUsedGroupInfo(String smsCode) {
+        ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
+        configCacheManager.getLifeCycleMap().get("");
+        List<String> data = smsTemplateapper.getSmsUsedGroupInfo(smsCode);
+        List<String> result = data.stream().map(x -> {
+            String[] tmpArray = x.split(",");
+            StringBuilder tmp = new StringBuilder();
+            tmp.append(configCacheManager.getUserValueMap().get(tmpArray[0]));
+            tmp.append(",");
+            tmp.append(configCacheManager.getLifeCycleMap().get(tmpArray[1]));
+            tmp.append(",");
+            tmp.append(configCacheManager.getPathActiveMap().get(tmpArray[2]));
+            return tmp.toString();
+        }).collect(Collectors.toList());
+        return result;
     }
 }

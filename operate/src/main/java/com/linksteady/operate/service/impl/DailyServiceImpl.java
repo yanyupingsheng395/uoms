@@ -210,17 +210,13 @@ public class DailyServiceImpl implements DailyService {
         // 不含券：券名称不为空
         whereInfo = " and t1.IS_COUPON = 0 and t4.COUPON_DISPLAY_NAME is not null";
         dailyMapper.updateCheckFlagAndRemark(whereInfo, "文案不含补贴，补贴信息不能出现");
-
-        // 短信：不为空
-        whereInfo = " and t2.SMS_CONTENT IS NULL";
-        dailyMapper.updateCheckFlagAndRemark(whereInfo, "尚未为群组配置文案");
-
         // 验证券的有效期
         whereInfo = " and to_number(to_char(t4.VALID_END, 'YYYYMMDD')) < to_number(to_char(sysdate, 'YYYYMMDD'))";
         dailyMapper.updateCheckFlagAndRemark(whereInfo, "补贴有效期已过期");
 
-//        whereInfo = " and t4.VALID_STATUS = 'N'";
-//        int count5 = dailyMapper.updateCheckFlagAndRemark(whereInfo, "补贴已失效");
+        // 短信：不为空
+        whereInfo = " and t2.SMS_CONTENT IS NULL";
+        dailyMapper.updateCheckFlagAndRemark(whereInfo, "尚未为群组配置文案");
 
         ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
         Map<String, String> configMap = configCacheManager.getConfigMap();

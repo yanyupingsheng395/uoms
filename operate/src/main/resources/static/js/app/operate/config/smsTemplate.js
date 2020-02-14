@@ -608,6 +608,7 @@ function smsContentValid() {
 
 $("#add_modal").on('hidden.bs.modal', function () {
     $('#smsCode').val("");
+    $('#smsName').val("");
     $('#smsContent').val("");
     $('#smsContentInput').val("");
     $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
@@ -631,6 +632,11 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $("input[name='isProductName']:checked").removeAttr("checked");
     $("input[name='isProductUrl']").removeAttr("disabled");
     $("input[name='isProductUrl']:checked").removeAttr("checked");
+
+    $('#isCouponUrl-error').hide();
+    $('#isCouponName-error').hide();
+    $('#isProductUrl-error').hide();
+    $('#isProductName-error').hide();
 });
 
 // 文案检索
@@ -653,43 +659,61 @@ $("#btn_edit").click(function () {
     }
 
     var smsCode =selectRows[0]["smsCode"];
-    $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
-        if (resp.code === 200){
-            var data = resp.data;
-            $("#smsCode").val(data.smsCode).attr('disabled', 'disabled');
-            $("#smsName").val(data.smsName).attr('disabled', 'disabled');
-            $("#smsContent").val(data.smsContent);
-            $("#smsContentInput").val(data.smsContent);
-            statInputNum($("#smsContent"),$("#word"));
-            $("input[name='isCouponUrl']:radio[value='" + data.isCouponUrl + "']").prop("checked", true).attr('disabled', 'disabled');
-            $("input[name='isCouponName']:radio[value='" + data.isCouponName + "']").prop("checked", true).attr('disabled', 'disabled');
-            $("input[name='isProductName']:radio[value='" + data.isProductName + "']").prop("checked", true).attr('disabled', 'disabled');
-            $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true).attr('disabled', 'disabled');
-            $("#remark").val(data.remark);
-            if(data.userValue !== null) {
-                data.userValue.split(',').forEach((v,k)=>{
-                    $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true);
-                });
-            }
-            if(data.lifeCycle !== null) {
-                data.lifeCycle.split(',').forEach((v,k)=>{
-                    $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true);
-                });
-            }
-            if(data.pathActive !== null) {
-                data.pathActive.split(',').forEach((v,k)=>{
-                    $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
-                });
-            }
-            $("input[name='userValue']").attr('disabled', 'disabled');
-            $("input[name='lifeCycle']").attr('disabled', 'disabled');
-            $("input[name='pathActive']").attr('disabled', 'disabled');
-            $("#myLargeModalLabel3").text("修改文案");
-            $("#btn_save_sms").attr("name", "update");
-            $("#add_modal").modal('show');
-            initGetInputNum();
+    $.get("/smsTemplate/smsIsUsed", {smsCode:smsCode}, function (r) {
+        if(r) {// 被引用
+            $MB.n_warning("当前文案已被群组引用，请先解除引用再修改！");
         }else {
-            $MB.n_danger(resp.msg);
+            $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
+                if (resp.code === 200){
+                    $("#msg_modal").modal('hide');
+                    var data = resp.data;
+                    $("#smsCode").val(data.smsCode);
+                    $("#smsName").val(data.smsName);
+                    $("#smsContent").val(data.smsContent);
+                    $("#smsContentInput").val(data.smsContent);
+                    $("input[name='isCouponUrl']:radio[value='" + data.isCouponUrl + "']").prop("checked", true);
+                    $("input[name='isCouponName']:radio[value='" + data.isCouponName + "']").prop("checked", true);
+                    $("input[name='isProductName']:radio[value='" + data.isProductName + "']").prop("checked", true);
+                    $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true);
+                    $("#remark").val(data.remark);
+                    $("#myLargeModalLabel3").text("修改文案");
+                    $("#btn_save_sms").attr("name", "update");
+                    $("#add_modal").modal('show');
+
+                    if(data.userValue !== null) {
+                        data.userValue.split(',').forEach((v,k)=>{
+                            $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true);
+                        });
+                    }
+                    if(data.lifeCycle !== null) {
+                        data.lifeCycle.split(',').forEach((v,k)=>{
+                            $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true);
+                        });
+                    }
+                    if(data.pathActive !== null) {
+                        data.pathActive.split(',').forEach((v,k)=>{
+                            $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
+                        });
+                    }
+                    // 设置当前群组信息被选中
+                    var groupInfo = $("#currentGroupInfo").val();
+                    var groupInfoArr = groupInfo.split("|");
+                    groupInfoArr.forEach((v,k)=>{
+                        if(k===0) {
+                            $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
+                        }
+                        if(k===1) {
+                            $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
+                        }
+                        if(k===2) {
+                            $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
+                        }
+                    });
+                    initGetInputNum();
+                }else {
+                    $MB.n_danger(resp.msg);
+                }
+            });
         }
     });
 });
@@ -818,3 +842,32 @@ function initGetInputNum() {
     code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + smsLengthLimit + ":文案总字符数";
     $("#word").text(code);
 }
+
+$("#btn_refresh").click(function () {
+    var selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
+    if(null==selectRows||selectRows.length==0)
+    {
+        lightyear.loading('hide');
+        $MB.n_warning('请选择需要解除引用的文案！');
+        return;
+    }
+    var smsCode =selectRows[0]["smsCode"];
+    $.get("/smsTemplate/smsIsUsed", {smsCode:smsCode}, function (r) {
+        if (r) {// 被引用
+            $.get("/smsTemplate/getSmsUsedGroupInfo", {smsCode:smsCode}, function (r1) {
+                $MB.confirm({
+                    content: "文案被以下群组引用："+r1.data.join("|")+"，确定要解除引用？",
+                    title: "提示："
+                }, function () {
+                    $.post("/smsTemplate/updateSmsCodeNull", {smsCode:smsCode}, function (r2) {
+                        if(r2.code === 200) {
+                            $MB.n_success("当前文案已解除引用。");
+                        }
+                    });
+                });
+            });
+        }else {
+            $MB.n_warning("当前文案未被引用，无需解除引用。");
+        }
+    });
+});

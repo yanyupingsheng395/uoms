@@ -26,4 +26,6 @@ public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
     List<SmsTemplate> getTemplateByGroupId(@Param("groupIdList") List<String> groupIdList);
 
     List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle);
+
+    List<String> getSmsUsedGroupInfo(String smsCode);
 }
