@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.google.common.collect.Lists;
 import com.linksteady.operate.config.ConfigCacheManager;
 import com.linksteady.operate.dao.SmsTemplateMapper;
 import com.linksteady.operate.dao.SpuCycleMapper;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -96,7 +98,40 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
 
     @Override
     public List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle) {
-        return smsTemplateapper.getTemplate(userValue, pathActive, lifeCycle);
+        List<SmsTemplate> template = smsTemplateapper.getTemplate(userValue, pathActive, lifeCycle);
+        List<Map<String,Object>> groupData = smsTemplateapper.getGroupValue();
+        template.stream().forEach(x->{
+            final StringBuffer userValueTmp = new StringBuffer(x.getUserValue());
+            final StringBuffer pathActiveTmp = new StringBuffer(x.getPathActive());
+            final StringBuffer lifeCycleTmp = new StringBuffer(x.getLifeCycle());
+            String smsCode = x.getSmsCode();
+            groupData.stream().filter(v->v.get("SMS_CODE").equals(smsCode)).forEach(v1->{
+                userValueTmp.append(v1.get("USER_VALUE"));
+                pathActiveTmp.append(v1.get("PATH_ACTIVE"));
+                lifeCycleTmp.append(v1.get("LIFECYLE"));
+            });
+            if(userValueTmp.length() > 0) {
+                x.setUserValue(Arrays.stream(userValueTmp.toString().split(",")).distinct().sorted(StringUtils::compare).collect(Collectors.joining(",")));
+                x.setPathActive(Arrays.stream(pathActiveTmp.toString().split(",")).distinct().sorted(StringUtils::compare).collect(Collectors.joining(",")));
+                x.setLifeCycle(Arrays.stream(lifeCycleTmp.toString().split(",")).distinct().sorted(StringUtils::compare).collect(Collectors.joining(",")));
+            }
+        });
+        List<SmsTemplate> collect = template.stream().filter(x -> (StringUtils.isNotEmpty(x.getUserValue()) && x.getUserValue().contains(userValue))
+                && (StringUtils.isNotEmpty(x.getLifeCycle()) && x.getLifeCycle().contains(lifeCycle))
+                && (StringUtils.isNotEmpty(x.getPathActive()) && x.getPathActive().contains(pathActive))
+        ).collect(Collectors.toList());
+        return collect;
+    }
+
+    public static void main(String[] args) {
+        List<String> l = Lists.newArrayList();
+        l.add("ULC_01");
+        l.add("ULC_03");
+        l.add("ULC_02");
+        l.add("ULC_02");
+        List<String> collect = l.stream().distinct().sorted(StringUtils::compare).collect(Collectors.toList());
+        String join = String.join(",",collect);
+        System.out.println(join);
     }
 
     @Override

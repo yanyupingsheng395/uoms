@@ -92,17 +92,7 @@
     </select>
 
     <select id="getTemplate" resultMap="BaseResultMap">
-        select * from UO_OP_SMS_TEMPLATE where 1=1
-        <if test="userValue != null and userValue != ''">
-            and USER_VALUE like concat('%', concat(#{userValue}, '%'))
-        </if>
-        <if test="pathActive != null and pathActive != ''">
-            and PATH_ACTIVE like concat('%', concat(#{pathActive}, '%'))
-        </if>
-        <if test="lifeCycle != null and lifeCycle != ''">
-            and LIFE_CYCLE like concat('%', concat(#{lifeCycle}, '%'))
-        </if>
-        order by sms_code desc
+        select * from UO_OP_SMS_TEMPLATE order by sms_code desc
     </select>
 
     <select id="getSmsUsedGroupInfo" resultType="string">
@@ -111,5 +101,12 @@
              UO_OP_DAILY_TEMPLATE_CONFIG t2
         where t1.SMS_CODE = t2.SMS_CODE
         and t1.SMS_CODE = #{smsCode}
+    </select>
+
+    <select id="getGroupValue" resultType="map">
+        select listagg(t2.USER_VALUE, ',') within group (order by t1.SMS_CODE) USER_VALUE,listagg(t2.PATH_ACTIVE, ',') within group (order by t1.SMS_CODE) PATH_ACTIVE,listagg(t2.LIFECYLE, ',') within group (order by t1.SMS_CODE) LIFECYLE,t1.SMS_CODE
+        from UO_OP_SMS_TEMPLATE t1,
+             UO_OP_DAILY_TEMPLATE_CONFIG t2
+        where t1.SMS_CODE = t2.SMS_CODE group by t1.SMS_CODE
     </select>
 </mapper>

@@ -6,6 +6,7 @@ import com.linksteady.operate.domain.SpuCycle;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
 
@@ -28,4 +29,6 @@ public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
     List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle);
 
     List<String> getSmsUsedGroupInfo(String smsCode);
+
+    List<Map<String,Object>> getGroupValue();
 }
