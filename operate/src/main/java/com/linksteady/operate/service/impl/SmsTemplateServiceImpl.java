@@ -101,9 +101,9 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         List<SmsTemplate> template = smsTemplateapper.getTemplate(userValue, pathActive, lifeCycle);
         List<Map<String,Object>> groupData = smsTemplateapper.getGroupValue();
         template.stream().forEach(x->{
-            final StringBuffer userValueTmp = new StringBuffer(x.getUserValue());
-            final StringBuffer pathActiveTmp = new StringBuffer(x.getPathActive());
-            final StringBuffer lifeCycleTmp = new StringBuffer(x.getLifeCycle());
+            final StringBuffer userValueTmp = new StringBuffer(null == x.getUserValue() ? "" : x.getUserValue());
+            final StringBuffer pathActiveTmp = new StringBuffer(null == x.getPathActive() ? "" : x.getPathActive());
+            final StringBuffer lifeCycleTmp = new StringBuffer(null == x.getLifeCycle() ? "" : x.getLifeCycle());
             String smsCode = x.getSmsCode();
             groupData.stream().filter(v->v.get("SMS_CODE").equals(smsCode)).forEach(v1->{
                 userValueTmp.append(",");
@@ -130,16 +130,7 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         return collect;
     }
 
-    public static void main(String[] args) {
-        List<String> l = Lists.newArrayList();
-        l.add("ULC_01");
-        l.add("ULC_03");
-        l.add("ULC_02");
-        l.add("ULC_02");
-        List<String> collect = l.stream().distinct().sorted(StringUtils::compare).collect(Collectors.toList());
-        String join = String.join(",",collect);
-        System.out.println(join);
-    }
+
 
     @Override
     public List<String> getSmsUsedGroupInfo(String smsCode) {
@@ -157,5 +148,9 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
             return tmp.toString();
         }).collect(Collectors.toList());
         return result;
+    }
+
+    public static void main(String[] args) {
+        new StringBuffer(null);
     }
 }
