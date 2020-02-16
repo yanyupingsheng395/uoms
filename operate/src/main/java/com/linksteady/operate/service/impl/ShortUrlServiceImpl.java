@@ -162,7 +162,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      * @param longUrl
      * @return
      */
-    private String produceShortUrl(String longUrl,String sourceType)
+    private synchronized String produceShortUrl(String longUrl,String sourceType)
     {
         //进行一次查找 如果找不到，再调用API进行生成
         String shortUrl=shortUrlMapper.selectShortUrlByLongUrl(longUrl);

@@ -7,19 +7,19 @@ app:
     time: 2020-01-21 08:38:52
 
 # dapu
-#spring:
-#  application:
-#    name: system
-#  cloud:
-#    config:
-#      uri: http://172.16.99.42:9001
-#      username: admin
-#      password: linksteady123
-#
-#  profiles:
-#    active: prod
-#  aop:
-#    proxy-target-class: true
+spring:
+  application:
+    name: system
+  cloud:
+    config:
+      uri: http://172.16.99.42:9001
+      username: admin
+      password: linksteady123
+
+  profiles:
+    active: prod
+  aop:
+    proxy-target-class: true
 
 # hanhoo
 #spring:
@@ -52,9 +52,9 @@ jasypt:
     password: linksteady123
 
 # 仅用于测试环境使用，勿提交
-spring:
-  profiles:
-    active: dev
-  cloud:
-    config:
-      enabled: false
+#spring:
+#  profiles:
+#    active: dev
+#  cloud:
+#    config:
+#      enabled: false
