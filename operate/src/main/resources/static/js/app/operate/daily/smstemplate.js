@@ -484,10 +484,14 @@ $("#btn_edit").click(function () {
     }
 
     var smsCode =selectRows[0]["smsCode"];
-    $.get("/smsTemplate/smsIsUsed", {smsCode:smsCode}, function (r) {
-        if(r) {// 被引用
-            $MB.n_warning("当前文案已被群组引用，请先解除引用再修改！");
-        }else {
+    $.get("/smsTemplate/getSmsUsedGroupInfo", {smsCode:smsCode}, function (r) {
+        var data = r.data;
+        var len = data.length;
+        var code = "";
+        data.forEach((v, k)=>{
+            code += "<br/>" + v + "；";
+        });
+        if(len === 0) {
             $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
                 if (resp.code === 200){
                     $("#msg_modal").modal('hide');
@@ -537,6 +541,22 @@ $("#btn_edit").click(function () {
                     initGetInputNum();
                 }else {
                     $MB.n_danger(resp.msg);
+                }
+            });
+        }else {
+            $.confirm({
+                title: "提示：",
+                content: "您选择的文案正在被以下" + len + "个群组引用，不可变更文案内容；可先解除文案与群组的引用关系；" +
+                    "<br/>----------------------------------------------------------------------" + code,
+                type: 'red',
+                typeAnimated: true,
+                buttons: {
+                    close: {
+                        text: '取消',
+                        action: function () {
+                            $MB.loading('hide');
+                        }
+                    }
                 }
             });
         }
@@ -610,22 +630,28 @@ $("#btn_refresh").click(function () {
         return;
     }
     var smsCode =selectRows[0]["smsCode"];
-    $.get("/smsTemplate/smsIsUsed", {smsCode:smsCode}, function (r) {
-        if (r) {// 被引用
-            $.get("/smsTemplate/getSmsUsedGroupInfo", {smsCode:smsCode}, function (r1) {
-                $MB.confirm({
-                    content: "文案被以下群组引用："+r1.data.join("|")+"，确定要解除引用？",
-                    title: "提示："
-                }, function () {
-                    $.post("/smsTemplate/updateSmsCodeNull", {smsCode:smsCode}, function (r2) {
-                        if(r2.code === 200) {
-                            $MB.n_success("当前文案已解除引用。");
-                        }
-                    });
+    $.get("/smsTemplate/getSmsUsedGroupInfo", {smsCode:smsCode}, function (res) {
+        var data = res.data;
+        var len = data.length;
+        var code = "";
+        data.forEach((v, k)=>{
+            code += "<br/>" + v + "；";
+        });
+        if(len === 0) {
+            $MB.n_warning("当前文案未被引用，无需解除引用。");
+        }else {
+            $MB.confirm({
+                content: "您选择的文案正在被以下" + len + "个群组引用，解除文案会影响到其他群组的文案引用关系，确定要解除吗？" +
+                    "<br/>----------------------------------------------------------------------" + code,
+                title: "提示："
+            }, function () {
+                $.post("/smsTemplate/updateSmsCodeNull", {smsCode:smsCode}, function (r2) {
+                    if(r2.code === 200) {
+                        $MB.n_success("当前文案已解除引用。");
+                    }
                 });
             });
-        }else {
-            $MB.n_warning("当前文案未被引用，无需解除引用。");
         }
+
     });
 });

@@ -130,8 +130,6 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         return collect;
     }
 
-
-
     @Override
     public List<String> getSmsUsedGroupInfo(String smsCode) {
         ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
@@ -148,9 +146,5 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
             return tmp.toString();
         }).collect(Collectors.toList());
         return result;
-    }
-
-    public static void main(String[] args) {
-        new StringBuffer(null);
     }
 }
