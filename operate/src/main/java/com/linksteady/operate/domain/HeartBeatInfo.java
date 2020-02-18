@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 public class HeartBeatInfo implements Serializable {
 
-    /**
+       /**
      * 每日运营最后一次响应时间
      */
     private LocalDateTime lastPushDate;
@@ -27,7 +27,19 @@ public class HeartBeatInfo implements Serializable {
     private LocalDateTime lastPurgeDate;
 
     /**
-     * 推送启动或停止  value:start,stop
+     * start表示启动推送服务 stop表示停止推送服务 refresh表示刷新推送服务
      */
     private String startOrStop;
+
+    /**
+     * 获取状态报告 最后响应时间
+     */
+    private LocalDateTime lastRptDate;
+
+    /**
+     * 获取上行消息最后响应时间
+     */
+    private LocalDateTime lastMoDate;
+
+
 }

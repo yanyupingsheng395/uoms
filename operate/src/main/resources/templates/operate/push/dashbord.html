@@ -47,6 +47,8 @@
                                 <p class="h5 m-t-10">最后一次批量推送响应时间：<span id="lastBatchPushDate"></span></p>
                                 <p class="h5 m-t-10">最后一次清理拦截库时间：<span id="lastPurgeDate"></span></p>
 
+                                <p class="h5 m-t-10">最后一次获取状态报告时间：<span id="lastRptDate"></span></p>
+                                <p class="h5 m-t-10">最后一次获取上行消息时间：<span id="lastMoDate"></span></p>
                                 <p class="h5 m-t-10" id="dateStr">日志日期：<span id="logDate"></span></p>
                             </div>
                         </div>
@@ -154,6 +156,8 @@
             $("#lastPushDate").text(data.lastPushDate);
             $("#lastBatchPushDate").text(data.lastBatchPushDate);
             $("#lastPurgeDate").text(data.lastPurgeDate);
+            $("#lastRptDate").text(data.lastRptDate);
+            $("#lastMoDate").text(data.lastMoDate);
 
             setTableData('pushTableData', push);
             setTableData('repeatTableData', repeat);
