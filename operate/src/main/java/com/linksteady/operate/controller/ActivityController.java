@@ -98,7 +98,7 @@ public class ActivityController {
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/uploadExcel")
     public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId, @RequestParam String stage, @RequestParam String operateType) {
-        List<String> headers = Arrays.asList("商品ID", "ERP货号", "名称", "最低单价（元/件）", "非活动售价（元/件）", "活动属性【主推，参活，正常】");
+        List<String> headers = Arrays.asList("商品ID[数据类型：文本型]", "ERP货号[数据类型：文本型]", "名称[数据类型：文本型]", "最低单价（元/件）[数据类型：数值型]", "非活动售价（元/件）[数据类型：数值型]", "活动属性[主推，参活，正常][数据类型：文本型]");
         AtomicBoolean flag = new AtomicBoolean(true);
         List<ActivityProduct> productList = Lists.newArrayList();
         String originalFilename = file.getOriginalFilename();
@@ -134,7 +134,11 @@ public class ActivityController {
                     ActivityProduct activityProduct = new ActivityProduct();
                     activityProduct.setHeadId(Long.valueOf(headId));
                     activityProduct.setActivityStage(stage);
-                    activityProduct.setProductId(row.getCell(0).getStringCellValue());
+                    try {
+                        activityProduct.setProductId(row.getCell(0).getStringCellValue());
+                    }catch (IllegalStateException e) {
+                        throw new LinkSteadyException("\"商品ID\"数据类型与模板不一致，应改为文本型！");
+                    }
                     // skuCode非必填
                     if(null != row.getCell(1)) {
                         activityProduct.setSkuCode(row.getCell(1).getStringCellValue());
