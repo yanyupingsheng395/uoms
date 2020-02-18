@@ -141,21 +141,44 @@ public class ActivityController {
                     }
                     // skuCode非必填
                     if(null != row.getCell(1)) {
-                        activityProduct.setSkuCode(row.getCell(1).getStringCellValue());
+                        try {
+                            activityProduct.setSkuCode(row.getCell(1).getStringCellValue());
+                        }catch (IllegalStateException e) {
+                            throw new LinkSteadyException("\"ERP货号\"数据类型与模板不一致，应改为文本型！");
+                        }
                     }
                     // 验证产品名称不超过最大长度
 //                    if(row.getCell(2).getStringCellValue().length() > dailyProperties.getProdNameLen()) {
 //                        throw new LinkSteadyException("商品名称长度超过系统设置！");
 //                    }
-                    activityProduct.setProductName(row.getCell(2).getStringCellValue());
-                    double minPrice = row.getCell(3).getNumericCellValue();
-                    double formalPrice = row.getCell(4).getNumericCellValue();
+                    try {
+                        activityProduct.setProductName(row.getCell(2).getStringCellValue());
+                    }catch (IllegalStateException e) {
+                        throw new LinkSteadyException("\"名称\"数据类型与模板不一致，应改为文本型！");
+                    }
+                    double minPrice;
+                    try {
+                        minPrice = row.getCell(3).getNumericCellValue();
+                    }catch (IllegalStateException e) {
+                        throw new LinkSteadyException("\"最低单价\"数据类型与模板不一致，应改为数值型！");
+                    }
+                    double formalPrice;
+                    try {
+                        formalPrice = row.getCell(4).getNumericCellValue();
+                    }catch (IllegalStateException e) {
+                        throw new LinkSteadyException("\"非活动售价\"数据类型与模板不一致，应改为数值型！");
+                    }
+                    String attr = "";
+                    try {
+                        attr = row.getCell(5).getStringCellValue();
+                    }catch (IllegalStateException e) {
+                        throw new LinkSteadyException("\"活动属性\"数据类型与模板不一致，应改为文本型！");
+                    }
                     double activityIntensity = minPrice/formalPrice * 100;
                     activityIntensity = Double.valueOf(String.format("%.2f", activityIntensity));
                     activityProduct.setMinPrice(minPrice);
                     activityProduct.setFormalPrice(formalPrice);
                     activityProduct.setActivityIntensity(activityIntensity);
-                    String attr = row.getCell(5).getStringCellValue();
                     switch (attr) {
                         case "主推":
                             attr = "0";
