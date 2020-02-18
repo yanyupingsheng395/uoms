@@ -97,8 +97,8 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     }
 
     @Override
-    public List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle) {
-        List<SmsTemplate> template = smsTemplateapper.getTemplate(userValue, pathActive, lifeCycle);
+    public List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle, String groupSmsCode) {
+        List<SmsTemplate> template = smsTemplateapper.getTemplate(userValue, pathActive, lifeCycle, groupSmsCode);
         List<Map<String,Object>> groupData = smsTemplateapper.getGroupValue();
         template.stream().forEach(x->{
             final StringBuffer userValueTmp = new StringBuffer(null == x.getUserValue() ? "" : x.getUserValue());
@@ -127,6 +127,7 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
                 && (StringUtils.isNotEmpty(x.getLifeCycle()) && x.getLifeCycle().contains(lifeCycle))
                 && (StringUtils.isNotEmpty(x.getPathActive()) && x.getPathActive().contains(pathActive))
         ).collect(Collectors.toList());
+        collect.stream().sorted();
         return collect;
     }
 

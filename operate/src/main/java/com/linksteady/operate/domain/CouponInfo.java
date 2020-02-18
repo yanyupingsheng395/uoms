@@ -66,10 +66,10 @@ public class CouponInfo {
 
     private String checkFlag;
     private String checkComments;
-
-    /**
+    /**0
      * 1:选中
      * 0:未选中
      */
     private String isSelected;
+    private String isRec;
 }

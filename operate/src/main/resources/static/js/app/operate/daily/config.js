@@ -401,7 +401,7 @@ function smsTemplateTable() {
     var userValue = $("#sms-form").find("select[name='userValue']").find("option:selected").val();
     var pathActive = $("#sms-form").find("select[name='pathActive']").find("option:selected").val();
     var lifeCycle = $("#sms-form").find("select[name='lifeCycle']").find("option:selected").val();
-    $.get(url, {userValue:userValue, pathActive: pathActive, lifeCycle: lifeCycle}, function (r) {
+    $.get(url, {userValue:userValue, pathActive: pathActive, lifeCycle: lifeCycle, smsCode:SMS_CODE}, function (r) {
         $("#smsTemplateTable").bootstrapTable('load', r.data);
     });
 }
@@ -439,7 +439,7 @@ function couponTable(groupId) {
             },
             {
                 title: '补贴信息设置',
-                colspan: 4
+                colspan: 5
             },
             {
                 title: '3方平台建立补贴并录入',
@@ -535,6 +535,16 @@ function couponTable(groupId) {
                     }
                     return res;
                 }
+            }, {
+                field: 'isRec',
+                title: '是否推荐',
+                formatter: function (value, row, index) {
+                    var res = '-';
+                    if(value === '1') {
+                        res = "是";
+                    }
+                    return res;
+                }
             },{
                 field: 'couponDisplayName',
                 title: '补贴名称(文案中体现)'
@@ -594,7 +604,7 @@ function rowStyle(row, index) {
 
 // 给行设置选中
 function stateFormatter(value, row, index) {
-    if(row.isSelected === '1') {
+    if(row.isSelected === '1' || row.isRec === '1') {
         return {
             checked : true//设置选中
         };
@@ -646,11 +656,11 @@ function batchUpdateTemplate() {
     $("#currentGroupId").val(groupIds.join(","));
     $("#msg_modal").modal('show');
 }
-
 /**
  * 根据groupId更新优惠券
  */
 function updateCouponId() {
+    var data= $('#couponTable').bootstrapTable('getData',true);
     var groupId = $("#currentGroupId").val();
     var selected = $("#couponTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
@@ -678,21 +688,81 @@ function updateCouponId() {
     if(i!==0) {
         title = "当前所选的补贴中存在" + i + "条记录验证不通过，点击'确认'只会设置校验通过的补贴？";
     }
-    $MB.confirm({
-        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: title
-    }, function () {
-        $.get('/coupon/updateCouponId', {groupId: groupId, couponId: couponId.join(",")}, function (r) {
-            if (r.code === 200) {
-                $MB.n_success("设置补贴成功！");
-            } else {
-                $MB.n_danger("设置补贴失败！发生未知异常！");
-            }
-            $("#coupon_modal").modal('hide');
-            initTable();
-        });
-    });
 
+    var count1 = 0;
+    var count2 = 0;
+    var count3 = 0;
+    var count4 = 0;
+    var count5 = 0;
+    data.forEach((v, k) => {
+        if(v['isRec'] === '1') {
+            count1++;
+        }
+        if(v['checkFlag'] === '1' && v['isRec'] === '1') {
+            count2++;
+        }
+        if(v['checkFlag'] === '0' && v['isRec'] === '0' && v['couponSource'] === '0') {
+            count5++;
+        }
+    });
+    selected.forEach((v, k) => {
+        if(v['checkFlag'] === '1' && v['isRec'] === '1') {
+            count3++;
+        }
+        if(v['isRec'] === '1') {
+            count4++;
+        }
+    });
+    var msg = "";
+    // 本群组建议优惠券创建但是漏选
+    if(count3 < count1 && (count1 === count2)) {
+        msg = msg + "本群组建议优惠券创建但是漏选；<br/>";
+    }
+    // 本群组建议优惠券主观没有创建
+    if(count2 < count1) {
+        msg = msg + "本群组建议优惠券主观没有创建；<br/>";
+    }
+    // 本群组建议优惠券配了，但是其他的没有配
+    if(count5 > 0 && (count1 === count2)) {
+        msg = msg + "本群组建议优惠券配了，但是其他的没有配；<br/>";
+    }
+
+    if(msg !== "") {
+        $MB.confirm({
+            title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+            content: title
+        }, function () {
+            $MB.confirm({
+                title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+                content: msg
+            }, function () {
+                $.get('/coupon/updateCouponId', {groupId: groupId, couponId: couponId.join(",")}, function (r) {
+                    if (r.code === 200) {
+                        $MB.n_success("设置补贴成功！");
+                    } else {
+                        $MB.n_danger("设置补贴失败！发生未知异常！");
+                    }
+                    $("#coupon_modal").modal('hide');
+                    initTable();
+                });
+            });
+        });
+    }else {
+        $MB.confirm({
+            title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+            content: title
+        }, function () {
+            $.get('/coupon/updateCouponId', {groupId: groupId, couponId: couponId.join(",")}, function (r) {
+                if (r.code === 200) {
+                    $MB.n_success("设置补贴成功！");
+                } else {
+                    $MB.n_danger("设置补贴失败！发生未知异常！");
+                }
+                $("#coupon_modal").modal('hide');
+                initTable();
+            });
+        });
+    }
 }
 
 // 删除券关系

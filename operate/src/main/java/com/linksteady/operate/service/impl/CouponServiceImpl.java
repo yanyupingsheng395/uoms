@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by hxcao on 2019-04-29
@@ -96,9 +97,21 @@ public class CouponServiceImpl implements CouPonService {
         return couponMapper.getCouponList(groupId);
     }
 
+    /**
+     * 获取智能补贴
+     */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void getCalculatedCoupon() {
-        couponMapper.insertCalculatedCoupon();
+        List<CouponInfo> sysData = couponMapper.getSysCoupon();
+        List<CouponInfo> couponInfoList = couponMapper.getIntelCoupon();
+        List<CouponInfo> insertData = sysData.stream().filter(s -> {
+            long count = couponInfoList.stream().filter(c -> c.getCouponDenom().equals(s.getCouponDenom()) && c.getCouponThreshold().equals(s.getCouponThreshold())).count();
+            return count == 0;
+        }).collect(Collectors.toList());
+        if(insertData.size() > 0) {
+            couponMapper.insertCalculatedCoupon(insertData);
+        }
     }
 
     @Override

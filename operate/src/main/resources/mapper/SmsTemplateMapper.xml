@@ -92,7 +92,22 @@
     </select>
 
     <select id="getTemplate" resultMap="BaseResultMap">
-        select * from UO_OP_SMS_TEMPLATE order by sms_code desc
+        select *
+        from (
+                 select case when SMS_CODE = #{groupSmsCode} then 1 else 0 end tmp,
+                        SMS_CODE,
+                        SMS_CONTENT,
+                        IS_COUPON_NAME,
+                        SMS_NAME,
+                        IS_PRODUCT_NAME,
+                        IS_PRODUCT_URL,
+                        REMARK,
+                        USER_VALUE,
+                        LIFE_CYCLE,
+                        PATH_ACTIVE,
+                        IS_COUPON_URL
+                 from UO_OP_SMS_TEMPLATE
+        ) order by tmp desc, SMS_CODE desc
     </select>
 
     <select id="getSmsUsedGroupInfo" resultType="string">

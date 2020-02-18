@@ -33,7 +33,7 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
 
     List<CouponInfo> getCouponList(String groupId);
 
-    void insertCalculatedCoupon();
+    void insertCalculatedCoupon(List<CouponInfo> couponInfoList);
 
     void deleteCouponGroup(@Param("groupIds") List<String> groupIds);
 
@@ -65,4 +65,16 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
     List<Map<String,Object>> selectGroupCouponInfo();
 
     List<String> getSelectedSmsCode(String groupId);
+
+    /**
+     * 获取系统中所有智能券
+     * @return
+     */
+    List<CouponInfo> getSysCoupon();
+
+    /**
+     * 获取智能券
+     * @return
+     */
+    List<CouponInfo> getIntelCoupon();
 }

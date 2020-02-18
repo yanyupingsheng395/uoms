@@ -170,8 +170,9 @@ public class SmsTemplateController extends BaseController {
      * @return
      */
     @RequestMapping("/getTemplate")
-    public ResponseBo getTemplate(@RequestParam("userValue") String userValue, @RequestParam("pathActive") String pathActive, @RequestParam("lifeCycle") String lifeCycle) {
-        return ResponseBo.okWithData(null, smsTemplateService.getTemplate(userValue, pathActive, lifeCycle));
+    public ResponseBo getTemplate(@RequestParam("userValue") String userValue, @RequestParam("pathActive") String pathActive,
+                                  @RequestParam("lifeCycle") String lifeCycle, @RequestParam("smsCode") String smsCode) {
+        return ResponseBo.okWithData(null, smsTemplateService.getTemplate(userValue, pathActive, lifeCycle, smsCode));
     }
 
     @RequestMapping("/getSmsUsedGroupInfo")

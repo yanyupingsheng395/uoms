@@ -28,7 +28,7 @@ public interface SmsTemplateService {
 
     List<SmsTemplate> getTemplateByGroupId(String groupId);
 
-    List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle);
+    List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle, String smsCode);
 
     List<String> getSmsUsedGroupInfo(String smsCode);
 }
