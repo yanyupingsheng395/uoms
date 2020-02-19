@@ -48,8 +48,6 @@ public interface DailyService {
 
     int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
 
-    boolean validUserGroup();
-
     /**
      * 更新头表的操作时间戳
      * @param headId
@@ -88,4 +86,6 @@ public interface DailyService {
     int getValidDailyHead();
 
     void updateSmsCodeNull(String smsCode);
+
+    Map<String, Object> getUserStatsData(String headId);
 }

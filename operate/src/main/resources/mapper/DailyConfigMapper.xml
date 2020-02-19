@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.DailyConfigMapper">
+    <update id="updateCheckFlagY">
+        update UO_OP_DAILY_TEMPLATE_CONFIG set CHECK_FLAG = 'Y', CHECK_COMMENTS = ''
+    </update>
+
+    <update id="updateCheckFlagAndRemark">
+        update UO_OP_DAILY_TEMPLATE_CONFIG set CHECK_FLAG = 'N', CHECK_COMMENTS = #{remark}
+        where GROUP_ID in (
+            SELECT t1.GROUP_ID
+            FROM UO_OP_DAILY_TEMPLATE_CONFIG t1,
+                  UO_OP_SMS_TEMPLATE t2,
+                  UO_OP_DAILY_GROUP_COUPON t3,
+                  UO_OP_COUPON t4
+             where t1.SMS_CODE = t2.SMS_CODE(+)
+               and t1.group_id = t3.group_id(+)
+               and t3.coupon_id = t4.coupon_id(+)
+               ${whereInfo}
+        )
+    </update>
+
+    <select id="validCheckedUserGroup" resultType="int">
+        select count(1) from UO_OP_DAILY_TEMPLATE_CONFIG where CHECK_FLAG = 'N' and PATH_ACTIVE in
+        <foreach collection="activeList" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

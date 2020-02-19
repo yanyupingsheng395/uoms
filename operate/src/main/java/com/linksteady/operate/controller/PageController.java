@@ -10,6 +10,7 @@ import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.service.ActivityHeadService;
+import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.service.DailyService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class PageController {
 
     @Autowired
     private DailyService dailyService;
+
+    @Autowired
+    private DailyConfigService dailyConfigService;
 
     @Autowired
     private ActivityHeadService activityHeadService;
@@ -139,7 +143,7 @@ public class PageController {
             }
 
             //验证成长组是否通过
-            if(dailyService.validUserGroup())
+            if(dailyConfigService.validUserGroup())
             {
                 model.addAttribute("errormsg","成长组配置验证未通过!");
                 return "operate/daily/list";

@@ -82,19 +82,9 @@ public interface DailyMapper {
      */
     void updateGroupCheckFlagByCouponId(@Param("couponId") String couponId, @Param("checkFlag") String checkFlag);
 
-    /**
-     * 更新群组表的验证信息和备注信息
-     * @param whereInfo
-     * @param remark
-     * @return
-     */
-    int updateCheckFlagAndRemark(@Param("whereInfo") String whereInfo, @Param("remark") String remark);
 
-    /**
-     * 更新check_flag 为 'Y'
-     * @return
-     */
-    int updateCheckFlagY();
+
+
 
     /**
      * 更新头表的操作时间戳
@@ -117,7 +107,7 @@ public interface DailyMapper {
 
     List<DailyUserStats> getUserStatsByProd(@Param("headId") String headId, @Param("userValue") String userValue, @Param("pathActive") String pathActive, @Param("lifecycle") String lifecycle, @Param("spuName") String spuName);
 
-    int validCheckedUserGroup(@Param("activeList") List<String> activeList);
+
 
     String getTodayStatus();
 
