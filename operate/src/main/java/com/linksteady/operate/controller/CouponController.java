@@ -4,7 +4,6 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.CouponInfo;
-import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.service.impl.CouponServiceImpl;
 import com.linksteady.operate.service.impl.ShortUrlServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +31,6 @@ public class CouponController extends BaseController {
     @Autowired
     ShortUrlServiceImpl shortUrlService;
 
-    @Autowired
-    private DailyProperties dailyProperties;
-
     /**
      * 获取券list
      *
@@ -43,12 +39,8 @@ public class CouponController extends BaseController {
      */
     @RequestMapping("/list")
     public ResponseBo smsTemplateList(@RequestBody QueryRequest request) {
-        String validStatus = new String();
-        if(null != request.getParam()) {
-            validStatus = request.getParam().get("validStatus");
-        }
-        List<CouponInfo> result = couponService.getList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize(), validStatus);
-        int totalCount = couponService.getTotalCount(validStatus);
+        List<CouponInfo> result = couponService.getList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize());
+        int totalCount = couponService.getTotalCount();
         return ResponseBo.okOverPaging("", totalCount, result);
     }
 
@@ -127,7 +119,9 @@ public class CouponController extends BaseController {
 
     @RequestMapping("/update")
     public ResponseBo update(CouponInfo couponInfo) {
+        //对券进行校验
         couponInfo = getCheckInfo(couponInfo);
+        //保存
         couponService.update(couponInfo);
         return ResponseBo.ok();
     }
@@ -164,7 +158,7 @@ public class CouponController extends BaseController {
 
     /**
      * 删除组-券关系
-     * @param id
+     * @param
      * @return
      */
     @RequestMapping("/deleteCoupon")
@@ -172,21 +166,34 @@ public class CouponController extends BaseController {
         String msg = "";
         if(StringUtils.isNotEmpty(couponId)) {
             List<String> ids = Arrays.asList(couponId.split(","));
+            //已被引用的券IDs
             List<String> couponIds = couponService.isCouponUsed(ids);
+            //未被引用的券IDs
             List<String> others = ids.stream().filter(x->!couponIds.contains(x)).collect(Collectors.toList());
             if(others.size() != 0) {
+                //判断是否被历史引用过，如果是则删除，否则打上失效标记
                 couponService.deleteCoupon(others);
             }
-            msg = "删除成功，共删除" + others.size() + "条记录";
-            if(couponIds.size()>0) {
-                msg += "，"+couponIds.size()+"条记录被引用，无法删除。";
-            }else {
-                msg += "。";
+
+            //有可被删除的券
+            if(others.size()>0)
+            {
+                if(couponIds.size()>0) {
+
+                    return ResponseBo.ok("部分删除成功！"+couponIds.size()+"条记录被引用，无法删除。");
+                }else {
+                    return ResponseBo.ok("删除成功！");
+                }
+            }else
+            {
+                //未被引用的券为空
+                return ResponseBo.error(couponIds.size()+"条记录被引用，无法删除！");
             }
+
         }else {
             return ResponseBo.error();
         }
-        return ResponseBo.ok(msg);
+
     }
 
     @RequestMapping("/deleteCouponGroup")
@@ -228,13 +235,4 @@ public class CouponController extends BaseController {
         return ResponseBo.ok();
     }
 
-    /**
-     * 根据组获取优惠券
-     * @param groupId
-     * @return
-     */
-    @RequestMapping("/getSelectedSmsCode")
-    public ResponseBo getSelectedSmsCode(@RequestParam("groupId") String groupId) {
-        return ResponseBo.okWithData(null, couponService.getSelectedSmsCode(groupId));
-    }
 }

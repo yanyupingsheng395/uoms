@@ -29,19 +29,14 @@
         SELECT * FROM(
         SELECT A.*,ROWNUM RN FROM
         (select coupon_id, coupon_denom, coupon_threshold, coupon_name, coupon_url, coupon_desc, coupon_type, coupon_num, to_char(valid_end, 'yyyy-mm-dd') valid_end, coupon_info1, coupon_info2, coupon_display_name, valid_status, coupon_source, user_value, life_cycle, path_active, discount_level, check_flag, check_comments from UO_OP_COUPON
-        <if test="validStatus != null and validStatus != ''">
-            where VALID_STATUS = #{validStatus}
-        </if>
-        order by coupon_threshold asc, coupon_denom desc
+            where VALID_STATUS = 'Y'
+        order by coupon_threshold asc, coupon_denom asc
         ) A WHERE ROWNUM &lt;=#{endRow}
         ) WHERE RN &gt;=#{startRow}
     </select>
 
     <select id="getTotalCount" resultType="int">
-        select count(1) from UO_OP_COUPON
-        <if test="validStatus != null and validStatus != ''">
-            where VALID_STATUS = #{validStatus}
-        </if>
+        select count(1) from UO_OP_COUPON where VALID_STATUS = 'Y'
     </select>
 
     <select id="getCouponIdsByGroupId" resultType="int">
@@ -88,31 +83,43 @@
         </where>
     </select>
 
-    <update id="updateStatus">
-        update UO_OP_COUPON set VALID_STATUS = 'N' where COUPON_ID = #{couponId}
-    </update>
-
-    <delete id="deleteCoupon" parameterType="list">
-        delete from UO_OP_COUPON where 1=1
-        <if test="ids != null">
-            and COUPON_ID in
-            <foreach collection="ids" item="item" separator="," open="(" close=")">
-                #{item}
-            </foreach>
-        </if>
+    <delete id="deleteCoupon">
+        delete from UO_OP_COUPON where COUPON_ID=#{couponId}
     </delete>
 
+    <update id="updateCouponInvalid">
+        UPDATE UO_OP_COUPON SET VALID_STATUS='N' where COUPON_ID=#{couponId}
+    </update>
+
+    <select id="isUsedHistory" resultType="int">
+        select count(*) from  uo_op_daily_detail c where c.coupon_id=#{couponId}
+    </select>
+
     <select id="getCouponList" resultMap="BaseResultMap">
-        select case
-           when t4.COUPON_ID = v1.COUPON_ID then
-               '1'
-           else
-               '0'
-           end                                                    IS_SELECTED,
+        select (case  when t4.COUPON_ID = v1.COUPON_ID then '1' else '0'  end ) IS_SELECTED,
                --1.是否推荐  1推荐 0 不推荐
                (case when t5.coupon_id is not null then '1' else '0' end) is_rec,
-               v1.*
-        from (select * from UO_OP_COUPON) v1 --优惠券列表
+               v1.coupon_id,
+               v1.coupon_denom,
+               v1.coupon_threshold,
+               v1.coupon_name,
+               v1.coupon_url,
+               v1.coupon_desc,
+               v1.coupon_type,
+               v1.coupon_num,
+               to_char(v1.valid_end, 'yyyy-mm-dd') valid_end,
+               v1.coupon_info1,
+               v1.coupon_info2,
+               v1.coupon_display_name,
+               v1.valid_status,
+               v1.coupon_source,
+               v1.user_value,
+               v1.life_cycle,
+               v1.path_active,
+               v1.discount_level,
+               v1.check_flag,
+               v1.check_comments
+        from  (select * from UO_OP_COUPON where valid_status='Y') v1 --优惠券列表                                                                                                                                                                                                                                                                                                                   from (select * from UO_OP_COUPON where valid_status='Y') v1 --优惠券列表
                  left join UO_OP_DAILY_GROUP_COUPON t4 --已选,
                            on v1.COUPON_ID = t4.COUPON_ID
                                and t4.GROUP_ID = #{groupId}
@@ -188,10 +195,6 @@
           and t3.coupon_id=t2.coupon_id
     </select>
 
-    <select id="getSelectedSmsCode" resultType="string">
-        select COUPON_ID from UO_OP_DAILY_GROUP_COUPON where GROUP_ID = #{groupId}
-    </select>
-
     <select id="getSysCoupon" resultMap="BaseResultMap">
         with g1 as (
             select *
@@ -246,6 +249,6 @@
     </select>
 
     <select id="getIntelCoupon" resultMap="BaseResultMap">
-        select COUPON_DENOM,coupon_threshold from UO_OP_COUPON where COUPON_SOURCE = '0'
+        select COUPON_DENOM,coupon_threshold from UO_OP_COUPON where VALID_STATUS='Y'
     </select>
 </mapper>

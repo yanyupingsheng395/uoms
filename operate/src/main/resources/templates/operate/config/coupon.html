@@ -40,26 +40,26 @@
                                 <hr class="hr"/>
                             </div>
                             <div class="row m-lr-5">
-                                <form id="activity-form">
-                                    <div class="select-list">
-                                        <ul>
-                                            <li>
-                                                是否有效：
-                                                <select id="validStatus" name="validStatus">
-                                                    <option value="">所有</option>
-                                                    <option value="Y">有效</option>
-                                                    <option value="N">失效</option>
-                                                </select>
-                                            </li>
-                                            <li class="pull-right">
-                                                <a class="btn btn-primary btn-rounded btn-sm"
-                                                   onclick="searchCoupon()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                                <a class="btn btn-warning btn-rounded btn-sm" onclick="resetCoupon()"><i
-                                                        class="fa fa-refresh"></i>&nbsp;重置</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </form>
+                                <!--<form id="activity-form">-->
+                                    <!--<div class="select-list">-->
+                                        <!--<ul>-->
+                                            <!--<li>-->
+                                                <!--是否有效：-->
+                                                <!--<select id="validStatus" name="validStatus">-->
+                                                    <!--<option value="">所有</option>-->
+                                                    <!--<option value="Y">有效</option>-->
+                                                    <!--<option value="N">失效</option>-->
+                                                <!--</select>-->
+                                            <!--</li>-->
+                                            <!--<li class="pull-right">-->
+                                                <!--<a class="btn btn-primary btn-rounded btn-sm"-->
+                                                   <!--onclick="searchCoupon()"><i class="fa fa-search"></i>&nbsp;搜索</a>-->
+                                                <!--<a class="btn btn-warning btn-rounded btn-sm" onclick="resetCoupon()"><i-->
+                                                        <!--class="fa fa-refresh"></i>&nbsp;重置</a>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                <!--</form>-->
                             </div>
                     </div>
                     <div class="col-sm-12 select-table table-striped">
@@ -105,6 +105,7 @@
             <div class="modal-body">
                 <form class="form-horizontal" id="coupon_edit">
                     <input type="hidden" id="couponId" name="couponId"/>
+                    <input type="hidden" id="validStatus" name="validStatus"/>
                     <div class="form-group">
                         <label class="col-md-3 control-label">补贴名称(文案体现)</label>
                         <div class="col-md-8 input-group">
@@ -195,12 +196,6 @@
                             <input class="form-control" type="text" id="couponUrl" name="couponUrl"/>
                         </div>
                     </div>
-                    <!--                    <div class="form-group mg-stop">-->
-                    <!--                        <label class="col-md-4 control-label">补贴数量(个)：</label>-->
-                    <!--                        <div class="col-md-7 input-group">-->
-                    <!--                            <input class="form-control" type="text" id="couponNum" name="couponNum"/>-->
-                    <!--                        </div>-->
-                    <!--                    </div>-->
 
                     <div class="form-group mg-stop">
                         <label class="col-md-3 control-label">有效截止期</label>
@@ -208,17 +203,6 @@
                             <input class="form-control" type="text" id="validEnd" name="validEnd" onchange="removeValid()" onblur="resetValidEndVal()"/>
                         </div>
                     </div>
-                    <!--                    <div class="form-group mg-stop" id="couponValid" hidden>-->
-                    <!--                        <label class="col-md-4 control-label">券是否有效：</label>-->
-                    <!--                        <div class="col-md-7 input-group">-->
-                    <!--                            <label class="lyear-radio radio-inline radio-primary">-->
-                    <!--                                <input type="radio" name="validStatus" value="Y" checked><span>是</span>-->
-                    <!--                            </label>-->
-                    <!--                            <label class="lyear-radio radio-inline radio-primary">-->
-                    <!--                                <input type="radio" name="validStatus" value="N"><span>否</span>-->
-                    <!--                            </label>-->
-                    <!--                        </div>-->
-                    <!--                    </div>-->
                 </form>
             </div>
             <div class="modal-footer">

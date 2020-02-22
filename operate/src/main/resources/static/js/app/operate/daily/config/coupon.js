@@ -167,6 +167,7 @@ function getShortUrl() {
     $.get("/coupon/getShortUrl", {url: url}, function(r) {
         if(r.code === 200) {
             $("#couponUrl").val(r.data);
+            $MB.n_success("生成短链成功!");
         }else {
             $MB.n_danger(r['msg']);
         }
@@ -213,6 +214,7 @@ function updateCoupon() {
             var coupon = r.data;
             $("#myLargeModalLabel").html('修改补贴');
             $form.find("input[name='couponId']").val(coupon.couponId);
+            $form.find("input[name='validStatus']").val(coupon.validStatus);
             $form.find("input[name='couponDenom']").val(coupon.couponDenom).attr("readonly", true);
             $form.find("input[name='couponThreshold']").val(coupon.couponThreshold).attr("readonly", true);
             $form.find("input[name='couponInfo2']").val(coupon.couponInfo2);

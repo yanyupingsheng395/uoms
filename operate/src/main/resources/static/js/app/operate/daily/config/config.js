@@ -225,6 +225,7 @@ function editSmsContent(groupId, groupInfo, smsCode) {
 function editCoupon(groupId, groupInfo, smsCode) {
     $("#currentGroupId").val(groupId);
     $("#currentGroupInfo").val(groupInfo);
+    //设置默认选中
     setUserGroupChecked();
     $("#coupon_modal").modal('show');
 }
@@ -418,7 +419,7 @@ function resetSms() {
 }
 
 /**
- * 获取短信模板列表
+ * 获取优惠券列表
  */
 function couponTable(groupId) {
     var settings = {
@@ -430,8 +431,8 @@ function couponTable(groupId) {
         columns: [[
             {
                 checkbox: true,
-                rowspan: 2,
-                formatter : stateFormatter
+                rowspan: 2
+         //       formatter : stateFormatter
             },
             {
                 title: '补贴适用用户群组',
@@ -559,7 +560,7 @@ function couponTable(groupId) {
                 title: '补贴短链接',
                 formatter: function (value, row, index) {
                     if(value !== undefined && value !== null) {
-                        return "<a href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
+                        return "<a target='_blank' href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
                     }else {
                         return "-";
                     }
@@ -592,7 +593,7 @@ function couponTable(groupId) {
     });
 }
 
-// 给行设置颜色
+// 给行设置颜色(选中的行给背景颜色)
 function rowStyle(row, index) {
     if(row.isSelected === '1') {
         return {
@@ -603,14 +604,14 @@ function rowStyle(row, index) {
 }
 
 // 给行设置选中
-function stateFormatter(value, row, index) {
-    if(row.isSelected === '1' || row.isRec === '1') {
-        return {
-            checked : true//设置选中
-        };
-    }
-    return value;
-}
+// function stateFormatter(value, row, index) {
+//     if(row.isSelected === '1' || row.isRec === '1') {
+//         return {
+//             checked : true//设置选中
+//         };
+//     }
+//     return value;
+// }
 
 function setSmsCode() {
     var selected = $("#smsTemplateTable").bootstrapTable('getSelections');
