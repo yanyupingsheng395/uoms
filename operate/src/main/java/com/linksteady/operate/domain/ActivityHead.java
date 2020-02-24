@@ -90,4 +90,8 @@ public class ActivityHead {
      * 正式提醒日期
      */
     private String formalNotifyDt;
+
+    private Date insertDt;
+
+    private String insertBy;
 }

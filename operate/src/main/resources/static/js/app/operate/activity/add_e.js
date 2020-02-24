@@ -135,13 +135,19 @@ function validBasic() {
                 required: true
             },
             preheatNotifyDt: {
-                required: true
+                required: function () {
+                    return $("input[name='hasPreheat']:checked").val() === '1';
+                }
             },
             preheatStartDt: {
-                required: true
+                required: function () {
+                    return $("input[name='hasPreheat']:checked").val() === '1';
+                }
             },
             preheatEndDt: {
-                required: true
+                required: function () {
+                    return $("input[name='hasPreheat']:checked").val() === '1';
+                }
             },
             formalNotifyDt: {
                 required: true
@@ -236,8 +242,32 @@ function saveActivityHead() {
         if (r.code === 200) {
             $MB.n_success( r.msg );
             $( "#headId" ).val( r.data );
+            $("#basic-add-form").find('input').attr("disabled", "disabled");
+            $('#btn_basic').attr("disabled", "disabled");
         } else {
             $MB.n_danger( "有错误发生！" )
         }
     });
 }
+
+// 添加商品
+$( "#btn_add_shop" ).click( function () {
+    var headId = $("#headId").val();
+    if(headId === '') {
+        $MB.n_warning("请先保存基本信息，再添加商品！");
+    }else {
+        $( "#saveActivityProduct" ).attr( "name", "save" );
+        $( '#addProductModal' ).modal( 'show' );
+        $("#modalLabel").html('').append('添加商品');
+    }
+});
+
+// 批量添加商品
+$("#btn_batch_upload").click(function () {
+    var headId = $("#headId").val();
+    if(headId === '') {
+        $MB.n_warning("请先保存基本信息，再添加商品！");
+    }else {
+        $('#uploadFile').click();
+    }
+});

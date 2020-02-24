@@ -11,6 +11,9 @@
         <result property="formalStatus" jdbcType="VARCHAR" column="FORMAL_STATUS"></result>
         <result property="formalStartDt" jdbcType="VARCHAR" column="FORMAL_START_DT"></result>
         <result property="formalEndDt" jdbcType="VARCHAR" column="FORMAL_END_DT"></result>
+        <result property="activityflag" jdbcType="VARCHAR" column="ACTIVITYFLAG"></result>
+        <result property="preheatNotifyDt" jdbcType="VARCHAR" column="PREHEAT_NOTIFY_DT"></result>
+        <result property="formalNotifyDt" jdbcType="VARCHAR" column="FORMAL_NOTIFY_DT"></result>
     </resultMap>
 
     <resultMap id="templateMap" type="com.linksteady.operate.domain.ActivityTemplate">
@@ -48,15 +51,44 @@
     </select>
 
     <select id="findById" resultMap="baseResult">
-        select HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyy-mm-dd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyy-mm-dd') PREHEAT_END_DT, FORMAL_STATUS, to_char(FORMAL_START_DT, 'yyyy-mm-dd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyy-mm-dd') FORMAL_END_DT from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
+        select
+           HEAD_ID,
+           ACTIVITY_NAME,
+           HAS_PREHEAT,
+           PREHEAT_STATUS,
+           to_char(PREHEAT_START_DT, 'yyyy-mm-dd') PREHEAT_START_DT,
+           to_char(PREHEAT_END_DT, 'yyyy-mm-dd') PREHEAT_END_DT,
+           FORMAL_STATUS,
+           to_char(FORMAL_START_DT, 'yyyy-mm-dd') FORMAL_START_DT,
+           to_char(FORMAL_END_DT, 'yyyy-mm-dd') FORMAL_END_DT,
+           ACTIVITYFLAG,
+           to_char(PREHEAT_NOTIFY_DT, 'yyyy-mm-dd') PREHEAT_NOTIFY_DT,
+           to_char(FORMAL_NOTIFY_DT, 'yyyy-mm-dd') FORMAL_NOTIFY_DT
+        from UO_OP_ACTIVITY_HEADER
+        where HEAD_ID = #{headId}
     </select>
 
     <insert id="saveActivityHead">
         <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="headId">
             select seq_activity_head_id.nextval from dual
         </selectKey>
-        insert into UO_OP_ACTIVITY_HEADER(HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, PREHEAT_START_DT, PREHEAT_END_DT, FORMAL_STATUS, FORMAL_START_DT, FORMAL_END_DT)
-        values (#{headId},#{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'))
+        insert into UO_OP_ACTIVITY_HEADER(
+            HEAD_ID,
+            ACTIVITY_NAME,
+            HAS_PREHEAT,
+            PREHEAT_STATUS,
+            PREHEAT_START_DT,
+            PREHEAT_END_DT,
+            FORMAL_STATUS,
+            FORMAL_START_DT,
+            FORMAL_END_DT,
+            INSERT_DT,
+            INSERT_BY,
+            PREHEAT_NOTIFY_DT,
+            FORMAL_NOTIFY_DT,
+            ACTIVITYFLAG)
+        values (#{headId},#{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
+        #{insertDt}, #{insertBy}, to_date(#{preheatNotifyDt}, 'yyyy-mm-dd'), to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{activityflag})
     </insert>
 
     <update id="updateActiveHead">

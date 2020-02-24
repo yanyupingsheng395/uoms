@@ -25,6 +25,7 @@ function init_date_begin(beginId, endId, format, startView, maxViewMode, minView
         }else{
             $("#" + endId).datepicker('setStartDate', date);
         }
+        $('#' + beginId).trigger('blur');
     });
 }
 
@@ -53,6 +54,7 @@ function init_date_end(beginId, endId, format, startView, maxViewMode, minViewMo
         }else{
             $("#" + beginId).datepicker('setEndDate',null);
         }
+        $('#' + endId).trigger('blur');
     });
 }
 
@@ -74,9 +76,10 @@ function init_date(id, format, startView, maxViewMode, minViewMode) {
         startView: startView,
         maxViewMode: maxViewMode,
         minViewMode: minViewMode
+    }).on('changeDate', function () {
+        $('#' + id).trigger('blur');
     });
 }
-
 
 var $MB = (function () {
     var bootstrapTable_default = {

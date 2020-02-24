@@ -1,15 +1,18 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.common.domain.User;
 import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.ActivityTemplate;
 import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivitySummaryService;
 import com.linksteady.operate.service.ActivityUserGroupService;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -59,13 +62,15 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
             activityHead.setPreheatEndDt(null);
             activityHead.setPreheatNotifyDt(null);
         }
+        activityHead.setInsertDt(new Date());
+        activityHead.setInsertBy(((User)SecurityUtils.getSubject().getPrincipal()).getUsername());
         activityHeadMapper.saveActivityHead(activityHead);
-        //更新当前活动是大型活动还是小型活动的标记
-        activityHeadMapper.updateActivityFlag(activityHead.getHeadId().toString());
-        // 保存群组的初始化信息
-        activityUserGroupService.saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
-        //写入计划信息
-        activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
+//        //更新当前活动是大型活动还是小型活动的标记
+//        activityHeadMapper.updateActivityFlag(activityHead.getHeadId().toString());
+//        // 保存群组的初始化信息
+//        activityUserGroupService.saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
+//        //写入计划信息
+//        activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
         return activityHead.getHeadId().intValue();
     }
 

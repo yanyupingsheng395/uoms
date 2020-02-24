@@ -28,8 +28,6 @@ public interface ActivityHeadMapper {
 
     List<ActivityTemplate> getTemplateTableData();
 
-
-
     String getActivityName(String headId);
 
     int getActivityStatus(String id);

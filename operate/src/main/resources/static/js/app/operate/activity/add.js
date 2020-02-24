@@ -600,11 +600,7 @@ $( "#btn_edit_shop" ).click( function () {
     } );
 } );
 
-$( "#btn_add_shop" ).click( function () {
-    $( "#saveActivityProduct" ).attr( "name", "save" );
-    $( '#addProductModal' ).modal( 'show' );
-    $("#modalLabel").html('').append('添加商品');
-} );
+
 
 $( "#uploadFile" ).change( function () {
     $( '#filename' ).text( "文件名:" + $( this ).val() ).attr( "style", "display:inline-block;" );
