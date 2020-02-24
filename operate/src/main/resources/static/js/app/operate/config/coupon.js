@@ -9,7 +9,7 @@ $(function () {
         method: 'post',
         cache: false,
         pagination: true,
-        singleSelect: false,
+        singleSelect: true,
         sidePagination: "server",
         pageNumber: 1,            //初始化加载第一页，默认第一页
         pageSize: 10,            //每页的记录行数（*）
@@ -142,7 +142,7 @@ $(function () {
                 title: '补贴短链接',
                 formatter: function (value, row, index) {
                     if(value !== undefined && value !== null) {
-                        return "<a href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
+                        return "<a target='_blank' href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
                     }else {
                         return "-";
                     }
@@ -176,14 +176,6 @@ $(function () {
     });
 });
 
-function searchCoupon() {
-    $MB.refreshTable('couponTable');
-}
-
-function resetCoupon() {
-    $("#validStatus").find("option:selected").removeAttrs("selected");
-    $MB.refreshTable('couponTable');
-}
 
 $("#btn_save").click(function () {
     var name = $(this).attr("name");
@@ -255,6 +247,7 @@ function updateCoupon() {
             var coupon = r.data;
             $("#myLargeModalLabel").html('修改补贴');
             $form.find("input[name='couponId']").val(coupon.couponId);
+            $form.find("input[name='validStatus']").val(coupon.validStatus);
             $form.find("input[name='couponDenom']").val(coupon.couponDenom).attr("readonly", true);
             $form.find("input[name='couponThreshold']").val(coupon.couponThreshold).attr("readonly", true);
             $form.find("input[name='couponInfo2']").val(coupon.couponInfo2);
@@ -263,7 +256,6 @@ function updateCoupon() {
             $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName).attr("readonly", true);
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             VALID_END = coupon.validEnd;
-            $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);
 
             if(coupon.userValue !== null) {
                 coupon.userValue.split(',').forEach((v,k)=>{
@@ -409,6 +401,8 @@ function getShortUrl() {
     $.get("/coupon/getShortUrl", {url: url}, function(r) {
         if(r.code === 200) {
             $("#couponUrl").val(r.data);
+            //给出提示
+            $MB.n_success("生成短链成功!");
         }else {
             $MB.n_danger(r['msg']);
         }

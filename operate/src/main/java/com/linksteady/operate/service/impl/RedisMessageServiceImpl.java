@@ -51,6 +51,14 @@ public class RedisMessageServiceImpl implements RedisMessageService {
             {
                 monitorThread.setLastPurgeDate(heartBeatInfo.getLastPurgeDate());
             }
+            if(null!=heartBeatInfo.getLastRptDate())
+            {
+                monitorThread.setLastRptDate(heartBeatInfo.getLastRptDate());
+            }
+            if(null!=heartBeatInfo.getLastMoDate())
+            {
+                monitorThread.setLastMoDate(heartBeatInfo.getLastMoDate());
+            }
         }
 
     }

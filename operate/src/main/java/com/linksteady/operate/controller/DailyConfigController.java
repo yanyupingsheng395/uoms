@@ -1,16 +1,15 @@
 package com.linksteady.operate.controller;
+
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.DailyGroupTemplate;
-import com.linksteady.operate.domain.DailyProperties;
-import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.DailyConfigService;
-import com.linksteady.operate.service.DailyDetailService;
 import com.linksteady.operate.service.DailyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
 @Slf4j
@@ -20,15 +19,6 @@ public class DailyConfigController {
 
     @Autowired
     private DailyService dailyService;
-
-    @Autowired
-    private DailyDetailService dailyDetailService;
-
-    @Autowired
-    private DailyProperties dailyProperties;
-
-    @Autowired
-    private ConfigService configService;
 
     @Autowired
     private DailyConfigService dailyConfigService;

@@ -10,9 +10,9 @@ import java.util.List;
  */
 public interface CouPonService {
 
-    List<CouponInfo> getList(int startRow, int endRow, String validStatus);
+    List<CouponInfo> getList(int startRow, int endRow);
 
-    int getTotalCount(String validStatus);
+    int getTotalCount();
 
     List<Integer> getCouponIdsByGroupId(String groupId);
 
@@ -24,9 +24,12 @@ public interface CouPonService {
 
     CouponInfo getByCouponId(String couponId);
 
+    /**
+     * 判断优惠券是否被成长组引用
+     * @param couponIds
+     * @return
+     */
     List<String> isCouponUsed(List<String> couponIds);
-
-    void updateStatus(String couponId);
 
     void deleteCoupon(List<String> ids);
 
@@ -39,6 +42,4 @@ public interface CouPonService {
     int checkCouponName(String couponName);
 
     void validCoupon();
-
-    List<String> getSelectedSmsCode(String groupId);
 }

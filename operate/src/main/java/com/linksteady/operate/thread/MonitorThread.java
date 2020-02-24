@@ -18,6 +18,10 @@ public class MonitorThread {
 
     private LocalDateTime lastPurgeDate;
 
+    private LocalDateTime lastRptDate;
+
+    private LocalDateTime lastMoDate;
+
     private static MonitorThread instance = new MonitorThread();
 
     public static MonitorThread getInstance() {
@@ -46,6 +50,22 @@ public class MonitorThread {
 
     public void setLastPurgeDate(LocalDateTime lastPurgeDate) {
         getInstance().lastPurgeDate = lastPurgeDate;
+    }
+
+    public LocalDateTime getLastRptDate() {
+        return lastRptDate;
+    }
+
+    public void setLastRptDate(LocalDateTime lastRptDate) {
+        this.lastRptDate = lastRptDate;
+    }
+
+    public LocalDateTime getLastMoDate() {
+        return lastMoDate;
+    }
+
+    public void setLastMoDate(LocalDateTime lastMoDate) {
+        this.lastMoDate = lastMoDate;
     }
 
     /**

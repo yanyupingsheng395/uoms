@@ -148,7 +148,7 @@
         select * from (
         SELECT t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE,
                t1.PATH_ACTIVE, t1.LIFECYLE LIFECYCLE,
-               LISTAGG(t4.COUPON_DISPLAY_NAME, ',') within group (order by t4.coupon_id) coupon_name, t1.CHECK_FLAG, t1.CHECK_COMMENTS,
+        LISTAGG(t4.coupon_threshold||'-'||t4.coupon_denom, ',') within group (order by t4.coupon_threshold asc,t4.coupon_denom asc ) coupon_name, t1.CHECK_FLAG, t1.CHECK_COMMENTS,
                t1.GROUP_INFO
         FROM UO_OP_DAILY_TEMPLATE_CONFIG t1, UO_OP_SMS_TEMPLATE t2,
              UO_OP_DAILY_GROUP_COUPON t3, UO_OP_COUPON t4
@@ -180,7 +180,7 @@
 
     <update id="updateHeaderToFinish">
         UPDATE UO_OP_DAILY_HEADER c SET c.STATUS='finished' WHERE c.STATUS='done' AND not exists
-                                                                (
+            (
             select * from UO_OP_DAILY_DETAIL p where p.PUSH_STATUS='P' and p.head_id=c.head_id
             )
     </update>

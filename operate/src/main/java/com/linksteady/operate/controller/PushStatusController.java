@@ -118,6 +118,8 @@ public class PushStatusController extends BaseController {
         map.put("lastPushDate", null==monitorThread.getLastPushDate()?"":monitorThread.getLastPushDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         map.put("lastBatchPushDate",null==monitorThread.getLastBatchPushDate()?"":monitorThread.getLastBatchPushDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         map.put("lastPurgeDate",null==monitorThread.getLastPurgeDate()?"":monitorThread.getLastPurgeDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        map.put("lastRptDate",null==monitorThread.getLastRptDate()?"":monitorThread.getLastRptDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        map.put("lastMoDate",null==monitorThread.getLastMoDate()?"":monitorThread.getLastMoDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         return ResponseBo.okWithData("",map);
     }
 

@@ -9,9 +9,9 @@ import java.util.Map;
 
 public interface CouponMapper extends MyMapper<CouponInfo> {
 
-    List<CouponInfo> getList(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("validStatus") String validStatus);
+    List<CouponInfo> getList(@Param("startRow") int startRow, @Param("endRow") int endRow);
 
-    int getTotalCount(@Param("validStatus") String validStatus);
+    int getTotalCount();
 
     List<Integer> getCouponIdsByGroupId(String groupId);
 
@@ -27,9 +27,11 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
 
     List<String> isCouponUsed(@Param("couponIds") List<String> couponIds);
 
-    void updateStatus(String couponId);
+    void deleteCoupon(@Param("couponId") String couponId);
 
-    void deleteCoupon(@Param("ids") List<String> ids);
+    void updateCouponInvalid(@Param("couponId") String couponId);
+
+    int isUsedHistory(@Param("couponId") String couponId);
 
     List<CouponInfo> getCouponList(String groupId);
 
@@ -64,8 +66,6 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
      */
     List<Map<String,Object>> selectGroupCouponInfo();
 
-    List<String> getSelectedSmsCode(String groupId);
-
     /**
      * 获取系统中所有智能券
      * @return
@@ -73,7 +73,7 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
     List<CouponInfo> getSysCoupon();
 
     /**
-     * 获取智能券
+     * 获取所有优惠券的列表(有效)
      * @return
      */
     List<CouponInfo> getIntelCoupon();

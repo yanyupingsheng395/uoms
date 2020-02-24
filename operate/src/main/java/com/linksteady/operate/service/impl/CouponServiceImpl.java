@@ -23,19 +23,16 @@ public class CouponServiceImpl implements CouPonService {
     private CouponMapper couponMapper;
 
     @Autowired
-    private DailyMapper dailyMapper;
-
-    @Autowired
     private DailyProperties dailyProperties;
 
     @Override
-    public List<CouponInfo> getList(int startRow, int endRow, String validStatus) {
-        return couponMapper.getList(startRow, endRow, validStatus);
+    public List<CouponInfo> getList(int startRow, int endRow) {
+        return couponMapper.getList(startRow, endRow);
     }
 
     @Override
-    public int getTotalCount(String validStatus) {
-        return couponMapper.getTotalCount(validStatus);
+    public int getTotalCount() {
+        return couponMapper.getTotalCount();
     }
 
     @Override
@@ -81,14 +78,19 @@ public class CouponServiceImpl implements CouPonService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateStatus(String couponId) {
-        couponMapper.updateStatus(couponId);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
     public void deleteCoupon(List<String> ids) {
-        couponMapper.deleteCoupon(ids);
+        for(String couponId:ids)
+        {
+            //判断券是否曾被历史引用过
+            if(couponMapper.isUsedHistory(couponId)>0)
+            {
+                couponMapper.updateCouponInvalid(couponId);
+            }else
+            {
+                couponMapper.deleteCoupon(couponId);
+            }
+        }
+
     }
 
     @Override
@@ -103,8 +105,11 @@ public class CouponServiceImpl implements CouPonService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void getCalculatedCoupon() {
+        //获取系统计算出的优惠券列表
         List<CouponInfo> sysData = couponMapper.getSysCoupon();
+        //获取所有有效的优惠券列表
         List<CouponInfo> couponInfoList = couponMapper.getIntelCoupon();
+        //待插入的数据 如果有同一面额、同一门槛的已经存在，则忽略
         List<CouponInfo> insertData = sysData.stream().filter(s -> {
             long count = couponInfoList.stream().filter(c -> c.getCouponDenom().equals(s.getCouponDenom()) && c.getCouponThreshold().equals(s.getCouponThreshold())).count();
             return count == 0;
@@ -140,8 +145,4 @@ public class CouponServiceImpl implements CouPonService {
         }
     }
 
-    @Override
-    public List<String> getSelectedSmsCode(String groupId) {
-        return couponMapper.getSelectedSmsCode(groupId);
-    }
 }
