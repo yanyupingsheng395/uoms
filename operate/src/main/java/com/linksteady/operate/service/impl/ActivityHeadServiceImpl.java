@@ -50,7 +50,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int saveActivityHead(ActivityHead activityHead) {
-        Long headId = activityHead.getHeadId();
         activityHead.setFormalStatus("edit");
         if ("1".equalsIgnoreCase(activityHead.getHasPreheat())) {
             activityHead.setPreheatStatus("edit");
@@ -58,21 +57,15 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         if ("0".equalsIgnoreCase(activityHead.getHasPreheat())) {
             activityHead.setPreheatStartDt(null);
             activityHead.setPreheatEndDt(null);
+            activityHead.setPreheatNotifyDt(null);
         }
-        if (headId == null) {
-            activityHeadMapper.saveActivityHead(activityHead);
-
-            //更新当前活动是大型活动还是小型活动的标记
-            activityHeadMapper.updateActivityFlag(activityHead.getHeadId().toString());
-
-            // 保存群组的初始化信息
-            activityUserGroupService.saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
-
-            //写入计划信息
-            activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
-        } else {
-            activityHeadMapper.updateActiveHead(activityHead);
-        }
+        activityHeadMapper.saveActivityHead(activityHead);
+        //更新当前活动是大型活动还是小型活动的标记
+        activityHeadMapper.updateActivityFlag(activityHead.getHeadId().toString());
+        // 保存群组的初始化信息
+        activityUserGroupService.saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
+        //写入计划信息
+        activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
         return activityHead.getHeadId().intValue();
     }
 
@@ -150,10 +143,10 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         StringBuffer sb = new StringBuffer();
         sb.append("update UO_OP_ACTIVITY_HEADER set ");
         if (stage.equalsIgnoreCase(STAGE_PREHEAT)) {
-            sb.append("PREHEAT_STATUS = '"+status+"'");
+            sb.append("PREHEAT_STATUS = '" + status + "'");
         }
         if (stage.equalsIgnoreCase(STAGE_FORMAL)) {
-            sb.append("FORMAL_STATUS = '"+status+"'");
+            sb.append("FORMAL_STATUS = '" + status + "'");
         }
         sb.append(" where head_id = '" + headId + "'");
         activityHeadMapper.updateStatus(sb.toString());

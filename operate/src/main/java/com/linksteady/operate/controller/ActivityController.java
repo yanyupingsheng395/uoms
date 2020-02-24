@@ -245,11 +245,7 @@ public class ActivityController {
     @PostMapping("/saveActivityHead")
     public ResponseBo saveActivityHead(ActivityHead activityHead) {
         int headId = activityHeadService.saveActivityHead(activityHead);
-        if (activityHead.getHeadId() == null) {
-            return ResponseBo.okWithData("活动信息保存成功！", headId);
-        } else {
-            return ResponseBo.okWithData("活动信息更新成功！", headId);
-        }
+        return ResponseBo.okWithData("活动信息保存成功！", headId);
     }
 
     /**

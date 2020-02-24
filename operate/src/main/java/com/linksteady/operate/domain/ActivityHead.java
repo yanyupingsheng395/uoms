@@ -75,4 +75,19 @@ public class ActivityHead {
      * 正式数据更改时间戳
      */
     private String formalChangedTime;
+
+    /**
+     * 活动类型 S：普通活动，B：大促活动
+     */
+    private String activityflag;
+
+    /**
+     * 预售提醒日期
+     */
+    private String preheatNotifyDt;
+
+    /**
+     * 正式提醒日期
+     */
+    private String formalNotifyDt;
 }

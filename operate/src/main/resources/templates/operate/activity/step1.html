@@ -1,18 +1,34 @@
 <div class="row">
+    <span class="navbar-page-title">设置活动信息</span>
+    <hr/>
+</div>
+<div class="row">
     <div class="col-sm-12">
-        <form class="form-horizontal" method="post" id="activity-add-form">
+        <form class="form-horizontal" method="post" id="basic-add-form">
+            <input type="hidden" id="headId"/>
             <div class="row">
-                <input type="hidden" id="headId" name="headId" th:if="${operateType eq 'save'}"/>
-                <input type="hidden" id="headId" name="headId" th:if="${operateType eq 'update'}" th:value="${activityHead.headId}"/>
-                <input type="hidden" id="operateType" th:value="${operateType}"/>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">活动类型</label>
+                        <div class="col-md-9">
+                            <div class="col-md-9" style="margin-top: 8px;">
+                                <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                    <input type="radio" name="activityflag" value="S"><span>普通</span>
+                                </label>
+                                <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                    <input type="radio" name="activityflag" value="B"><span>大促</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label class="col-md-3 control-label">活动名称</label>
                         <div class="col-md-9">
-                            <input type="text" class="form-control" name="activityName"
-                                   th:if="${operateType eq 'update'}"
-                                   th:value="${activityHead.activityName}" readonly disabled>
-                            <input type="text" class="form-control" name="activityName" th:if="${operateType eq 'save'}"/>
+                            <input type="text" class="form-control" name="activityName"/>
                         </div>
                     </div>
                 </div>
@@ -20,92 +36,73 @@
                     <div class="form-group">
                         <label class="col-md-3 control-label">是否预售</label>
                         <div class="col-md-9" style="margin-top: 8px;">
-                            <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;" th:if="${operateType eq 'save'}">
+                            <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
                                 <input type="radio" name="hasPreheat" value="1"><span>是</span>
                             </label>
-                            <label class="lyear-radio radio-grey radio-inline radio-primary" style="padding-top: 0px;" th:if="${operateType eq 'update'}">
-                                <input type="radio" name="hasPreheat" value="1" th:checked="${activityHead.hasPreheat eq '1'}" disabled><span>是</span>
-                            </label>
-                            <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;" th:if="${operateType eq 'save'}">
+                            <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
                                 <input type="radio" name="hasPreheat" value="0"><span>否</span>
                             </label>
-                            <label class="lyear-radio radio-grey radio-inline radio-primary" style="padding-top: 0px;" th:if="${operateType eq 'update'}">
-                                <input type="radio" name="hasPreheat" value="0" th:checked="${activityHead.hasPreheat eq '0'}" disabled><span>否</span>
-                            </label>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row" id="preheatDiv" th:if="${operateType eq 'save'}">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">预热开始时间</label>
-                        <div class="col-md-9">
-                            <input type="text" name="preheatStartDt" id="preheatStartDt" class="form-control"/>
+            <div id="preheatDiv">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">预售提醒时间</label>
+                            <div class="col-md-9">
+                                <input type="text" name="preheatNotifyDt" id="preheatNotifyDt" class="form-control"/>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">预热结束日期</label>
-                        <div class="col-md-9">
-                            <input class="form-control" id="preheatEndDt" name="preheatEndDt"/>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">预售开始时间</label>
+                            <div class="col-md-9">
+                                <input type="text" name="preheatStartDt" id="preheatStartDt" class="form-control"/>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="row" id="preheatDiv" th:if="${operateType eq 'update'} and ${activityHead.hasPreheat == '1'}">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">预热开始时间</label>
-                        <div class="col-md-9">
-                            <input type="text" disabled name="preheatStartDt" id="preheatStartDt" class="form-control" th:value="${activityHead.preheatStartDt}"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">预热结束日期</label>
-                        <div class="col-md-9">
-                            <input class="form-control" disabled id="preheatEndDt" name="preheatEndDt" th:value="${activityHead.preheatEndDt}"/>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">预售结束日期</label>
+                            <div class="col-md-9">
+                                <input class="form-control" id="preheatEndDt" name="preheatEndDt"/>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- 只有平台活动才会有 -->
-            <div class="row" th:if="${operateType eq 'save'}">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">正式开始日期</label>
-                        <div class="col-md-9">
-                            <input class="form-control" id="formalStartDt" name="formalStartDt"/>
+            <div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">正式提醒时间</label>
+                            <div class="col-md-9">
+                                <input type="text" name="formalNotifyDt" id="formalNotifyDt" class="form-control"/>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">正式结束日期</label>
-                        <div class="col-md-9">
-                            <input class="form-control" id="formalEndDt" name="formalEndDt"/>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">正式开始时间</label>
+                            <div class="col-md-9">
+                                <input class="form-control" id="formalStartDt" name="formalStartDt"/>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="row" th:if="${operateType eq 'update'}">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">正式开始日期</label>
-                        <div class="col-md-9">
-                            <input class="form-control" id="formalStartDt" name="formalStartDt" th:value="${activityHead.formalStartDt}" disabled/>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">正式结束日期</label>
-                        <div class="col-md-9">
-                            <input class="form-control" id="formalEndDt" name="formalEndDt" th:value="${activityHead.formalEndDt}" disabled/>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">正式结束时间</label>
+                            <div class="col-md-9">
+                                <input class="form-control" id="formalEndDt" name="formalEndDt"/>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -113,36 +110,8 @@
         </form>
     </div>
 </div>
-<div class="col-sm-12">
-    <hr class="hr"/>
-</div>
-<div class="row" id="chart_plat" style="display: none;">
-    <div class="col-md-6">
-        <div id="chart1" style="width: 100%;height: 300px;"></div>
+<div class="row">
+    <div class="col-md-12 text-center">
+        <a class="btn btn-primary btn-sm" id="btn_basic"><i class="fa fa-file-text-o"></i>保存信息</a>
     </div>
-    <div class="col-md-6">
-        <div id="chart2" style="width: 100%;height: 300px;"></div>
-    </div>
-</div>
-<div class="row" id="chart_own" style="display: none;">
-    <div class="col-md-12">
-        <div id="chart3" style="width: 100%;height: 300px;"></div>
-    </div>
-</div>
-<div class="text-right" style="margin-top: 15px;">
-    <a class="btn btn-secondary btn-sm" onclick="nextStep('preheat')" id="btn_preheat" th:if="${operateType eq 'update'} and ${activityHead.hasPreheat == '1'} and ${preheatStatus != 'done'}">
-        <i class="fa fa-arrow-right"></i> 编辑预热计划
-    </a>
-    <a class="btn btn-secondary btn-sm" onclick="nextStep('preheat')" id="btn_preheat" th:if="${operateType eq 'save'}">
-        <i class="fa fa-arrow-right"></i> 编辑预热计划
-    </a>
-    <a class="btn btn-secondary btn-sm" onclick="nextStep('formal')" id="btn_formal" th:if="${operateType eq 'update'} and ${formalStatus != 'done'}">
-        <i class="fa fa-arrow-right"></i> 编辑正式计划
-    </a>
-    <a class="btn btn-secondary btn-sm" onclick="nextStep('formal')" id="btn_formal" th:if="${operateType eq 'save'}">
-        <i class="fa fa-arrow-right"></i> 编辑正式计划
-    </a>
-    <a class="btn btn-secondary btn-sm" href="/page/activity">
-        <i class="fa fa-reply"></i> 返回
-    </a>
 </div>
