@@ -118,25 +118,9 @@
         where head_id = #{id} and (PREHEAT_STATUS in ('todo', 'doing') or FORMAL_STATUS in ('todo', 'doing'))
     </select>
 
-    <update id="updateStatus">
-        ${sql}
-    </update>
-
     <select id="getPreheatStatus" resultType="string">
         select PREHEAT_STATUS from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
     </select>
-
-    <update id="updateActivityFlag">
-        UPDATE UO_OP_ACTIVITY_HEADER T SET T.ACTIVITYFLAG='B' where t.head_id=#{headId} and exists (
-            select head_id from (
-            select head_id,trunc(case when c.has_preheat='1' then c.preheat_start_dt else c.formal_start_dt end) activity_start_dt,
-            trunc(c.formal_end_dt) activity_end_dt
-            from uo_op_activity_header c where head_id=#{headId} ) tc where exists (
-            select big_activity_date from uo_op_activity_big_config
-            where to_date(big_activity_date,'MMDD') &gt;=activity_start_dt and to_date(big_activity_date,'MMDD') &lt;=activity_end_dt
-        )
-        )
-    </update>
 
     <update id="updateGroupChanged">
         update UO_OP_ACTIVITY_HEADER
@@ -173,12 +157,12 @@
         select count(1) from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId} and ((HAS_PREHEAT = '1' and FORMAL_STATUS = 'edit' and PREHEAT_STATUS = 'edit') or (HAS_PREHEAT = '0' and FORMAL_STATUS = 'edit'))
     </select>
 
-    <update id="updatePreheatHeadToDoing">
-        UPDATE UO_OP_ACTIVITY_HEADER H SET H.PREHEAT_STATUS='doing' where h.head_id=#{headId}
+    <update id="updatePreheatStatusHead">
+        UPDATE UO_OP_ACTIVITY_HEADER H SET H.PREHEAT_STATUS=#{status} where h.head_id=#{headId}
     </update>
 
-    <update id="updateFormalHeadToDoing">
-        UPDATE UO_OP_ACTIVITY_HEADER H SET H.FORMAL_STATUS='doing' where h.head_id=#{headId}
+    <update id="updateFormalStatusHead">
+        UPDATE UO_OP_ACTIVITY_HEADER H SET H.FORMAL_STATUS=#{status} where h.head_id=#{headId}
     </update>
 
     <select id="getStatus" resultType="string">

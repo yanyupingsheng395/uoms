@@ -32,15 +32,7 @@ public interface ActivityHeadMapper {
 
     int getActivityStatus(String id);
 
-    void updateStatus(@Param("sql") String sql);
-
     String getPreheatStatus(String headId);
-
-    /**
-     * 更新活动为大型活动 or 小型活动的 标记字段
-     * @param headId
-     */
-    void updateActivityFlag(String headId);
 
     void updateGroupChanged(String time, String headId, String stage, String changedStatus);
 
@@ -48,9 +40,17 @@ public interface ActivityHeadMapper {
 
     Map<String, Date> getStageDate(String headId);
 
-    void updatePreheatHeadToDoing(String headId);
+    /**
+     * 更新头表预售状态
+     * @param headId
+     */
+    void updatePreheatStatusHead(String headId,String status);
 
-    void updateFormalHeadToDoing(String headId);
+    /**
+     * 更新头表正式状态
+     * @param headId
+     */
+    void updateFormalStatusHead(String headId,String status);
 
     void deleteActivity(String headId);
 

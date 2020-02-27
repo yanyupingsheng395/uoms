@@ -177,6 +177,7 @@ $("#push_msg_modal").on('shown.bs.modal', function () {
         $("#pushPeriod").html('').append(code);
         $('input[name="pushMethod"]').removeAttr("checked");
         $('input[name="pushMethod"][value="' + r.data.method + '"]').prop("checked", true);
+        $("#pushPeriodDiv").hide();
     });
 });
 

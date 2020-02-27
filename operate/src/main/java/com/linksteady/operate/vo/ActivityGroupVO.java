@@ -20,4 +20,8 @@ public class ActivityGroupVO {
      * 非活动推送内容
      */
     private String contentNormal;
+
+    private int userNum;
+
+    private String groupId;
 }

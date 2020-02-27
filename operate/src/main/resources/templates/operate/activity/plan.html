@@ -14,6 +14,17 @@
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <link rel="stylesheet" type="text/css"
           data-th-href="@{/plugins/bootstrap-year-calendar/css/bootstrap-year-calendar.min.css}">
+    <style>
+        .tooltip-inner{
+            background-color: #fff;
+            border:solid 1px #48b0f7;
+            color:#000000;
+            text-align: left;
+        }
+        .tooltip.top .tooltip-arrow{
+            border-top-color:#48b0f7;
+        }
+    </style>
 </head>
 
 <body class="gray-bg">
@@ -42,6 +53,7 @@
                                     <p class="h5">活动名称：<span id="activityName"></span></p>
                                 </div>
                                 <div class="pull-right" style="margin-right: 15px;">
+                                    <a href="#" style="cursor: pointer;" onclick="refreshPage()" class="btn btn-primary btn-sm"><i class="fa fa-refresh"></i>&nbsp;刷新</a>
                                     <a href="/page/activity" class="btn btn-secondary btn-sm"><i class="fa fa-reply"></i>&nbsp;返回</a>
                                 </div>
                             </div>
@@ -51,7 +63,7 @@
                         <div class="row" >
                             <div style="display: none;" id="preheatDiv">
                                 <div class="col-sm-12">
-                                    <h5>预热计划：</h5>
+                                    <h5>预售计划：</h5>
                                 </div>
                                 <div class="col-sm-12 table-striped">
                                     <table id="preheatPlanTable" class="table table-striped text-nowrap"></table>
@@ -73,6 +85,8 @@
         </main>
     </div>
 </div>
+
+<!--预览并推送 -->
 <div class="modal fade" id="view_push_modal" data-keyboard="false" data-backdrop="static" tabindex="-1">
     <div class="modal-dialog modal-lg" style="width: 80%;">
         <div class="modal-content">
@@ -101,16 +115,111 @@
                     <div class="col-md-12">
                         <input type="hidden" id="planDtWid">
                         <p class="h5 pull-left">用户群体：</p>
-                        <button class="btn btn-info btn-sm pull-right" id="btn_download"><i class="fa fa-download"></i>&nbsp;导出名单</button>
                     </div>
-                <!--<div class="col-md-12">-->
-                    <!--<input type="hidden" id="planDtWid">-->
-                    <!--<p class="h5 pull-left">用户群体：</p>-->
-                <!--</div>-->
                 </div>
                 <div class="row" style="margin-top: 10px;">
                     <div class="col-md-12 table-striped">
                         <table class="table table-bordered table-striped" id="userDetailTable"></table>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr class="hr"/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="h5 pull-left">推送设置：</p>
+                    </div>
+                </div>
+
+                <!-- 推送设置 -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">推送方式</label>
+                                    <div class="col-md-7 mt7">
+                                        <label class="lyear-radio radio-inline radio-primary">
+                                            <input type="radio" name="pushMethod" value="AI"><span>智能推送</span>
+                                        </label>
+                                        <label class="lyear-radio radio-inline radio-primary">
+                                            <input type="radio" name="pushMethod" value="IMME"><span>立刻推送</span>
+                                        </label>
+                                        <label class="lyear-radio radio-inline radio-primary">
+                                            <input type="radio" name="pushMethod" value="FIXED"><span>定时推送</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="pushPeriodDiv" hidden>
+                                    <label class="col-md-3 control-label">推送时间</label>
+                                    <div class="col-md-3">
+                                        <select name="" id="pushPeriod" class="form-control"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" style="margin-top: 30px;">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-6">
+                                        <div class="alert" role="alert" style="background-color: #fcf8e3;padding: 13px 24px;">
+                                            确定推送，将会发送文案给活动用户。
+                                            <label class="lyear-checkbox m-t-10 checkbox-warning">
+                                                <input type="checkbox" id="push_ok">
+                                                <span>我确定要推送</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" disabled onclick="submitData()" id="pushMsgBtn">确定推送</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--预览 -->
+<div class="modal fade" id="view_list_modal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-lg" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">查看推送</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="h5">用户群组：</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <table class="table table-bordered table-striped" id="userGroupTable2"></table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr class="hr"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="hidden" id="planDtWid2">
+                        <p class="h5 pull-left">用户群体：</p>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-md-12 table-striped">
+                        <table class="table table-bordered table-striped" id="userDetailTable2"></table>
                     </div>
                 </div>
             </div>

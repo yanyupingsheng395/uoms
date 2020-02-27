@@ -77,18 +77,6 @@ public interface ActivityHeadService {
     int getDeleteCount(String headId);
 
     /**
-     * 更新头表预售状态为执行中(plan表中有一条为执行)
-     * @param headId
-     */
-    void updatePreheatHeadToDoing(String headId);
-
-    /**
-     * 更新头表正式状态为执行中(plan表中有一条为执行)
-     * @param headId
-     */
-    void updateFormalHeadToDoing(String headId);
-
-    /**
      * 根据headId和stage获取计划的状态
      * @param headId
      * @param stage

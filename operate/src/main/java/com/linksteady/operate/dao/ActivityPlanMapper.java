@@ -19,9 +19,17 @@ public interface ActivityPlanMapper {
 
     List<ActivityPlan> getPlanList(String headId);
 
-    String getStatus(String headId, String planDateWid);
+    ActivityPlan getPlanInfo(String headId, String planDateWid);
 
-    void updateStatus(String headId, String planDateWid, String status);
+    /**
+     * 更新状态
+     * @param headId
+     * @param planDateWid
+     * @param status
+     * @param version
+     * @return  返回受影响的记录的条数
+     */
+    int updateStatus(String headId, String planDateWid, String status,int version);
 
     void deleteData(String headId);
 
@@ -40,4 +48,23 @@ public interface ActivityPlanMapper {
     void updatePushListLargeToFaild(String headId,String planDateWid);
 
     int getStatusCount(String headId, String stage, List<String> asList);
+
+
+    /**
+     * 获取群组的统计信息
+     * @param headId
+     * @param planDtWid
+     * @return
+     */
+    List<Map<String,Object>> getUserGroupList(String headId, String planDtWid);
+
+    /**
+     * 获取活动上配置的所有模板
+     */
+    List<Map<String,String>> getAllTemplate(String headId);
+
+    /**
+     * 更新推送方式和推送时段
+     */
+    void updatePushMethod(String headId,String planDateWid,String pushMethod,String pushPeriod);
 }

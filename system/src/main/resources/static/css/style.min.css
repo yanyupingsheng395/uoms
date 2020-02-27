@@ -2991,6 +2991,10 @@ dd, dt {
     padding-top: 7px;
 }
 
+.mt7 {
+    margin-top: 7px;
+}
+
 .nav .logo {
     background-color: #fff;
     /*color: #fff;*/

@@ -4,8 +4,9 @@ import com.linksteady.common.domain.User;
 import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.ActivityTemplate;
+import com.linksteady.operate.domain.enums.ActivityStageEnum;
+import com.linksteady.operate.domain.enums.ActivityStatusEnum;
 import com.linksteady.operate.service.ActivityHeadService;
-import com.linksteady.operate.service.ActivitySummaryService;
 import com.linksteady.operate.service.ActivityUserGroupService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,6 @@ import java.util.Map;
 @Service
 public class ActivityHeadServiceImpl implements ActivityHeadService {
 
-    // 活动阶段：预热
-    private final String STAGE_PREHEAT = "preheat";
-    // 活动阶段：正式
-    private final String STAGE_FORMAL = "formal";
-
     @Autowired
     private ActivityHeadMapper activityHeadMapper;
 
@@ -36,9 +32,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 
     @Autowired
     private ActivityUserGroupService activityUserGroupService;
-
-    @Autowired
-    private ActivitySummaryService activitySummaryService;
 
     @Override
     public List<ActivityHead> getDataListOfPage(int start, int end, String name, String date, String status) {
@@ -53,9 +46,10 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int saveActivityHead(ActivityHead activityHead) {
-        activityHead.setFormalStatus("edit");
+        Long headId = activityHead.getHeadId();
+        activityHead.setFormalStatus(ActivityStatusEnum.EDIT.getStatusCode());
         if ("1".equalsIgnoreCase(activityHead.getHasPreheat())) {
-            activityHead.setPreheatStatus("edit");
+            activityHead.setPreheatStatus(ActivityStatusEnum.EDIT.getStatusCode());
         }
         if ("0".equalsIgnoreCase(activityHead.getHasPreheat())) {
             activityHead.setPreheatStartDt(null);
@@ -65,12 +59,21 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         activityHead.setInsertDt(new Date());
         activityHead.setInsertBy(((User)SecurityUtils.getSubject().getPrincipal()).getUsername());
         activityHeadMapper.saveActivityHead(activityHead);
-//        //更新当前活动是大型活动还是小型活动的标记
-//        activityHeadMapper.updateActivityFlag(activityHead.getHeadId().toString());
 //        // 保存群组的初始化信息
 //        activityUserGroupService.saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
-//        //写入计划信息
-//        activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
+         //写入计划信息
+         activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
+        if (headId == null) {
+            activityHeadMapper.saveActivityHead(activityHead);
+
+            // 保存群组的初始化信息
+            activityUserGroupService.saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
+
+            //写入计划信息
+            activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
+        } else {
+            activityHeadMapper.updateActiveHead(activityHead);
+        }
         return activityHead.getHeadId().intValue();
     }
 
@@ -122,22 +125,12 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     }
 
     @Override
-    public void updatePreheatHeadToDoing(String headId) {
-        activityHeadMapper.updatePreheatHeadToDoing(headId);
-    }
-
-    @Override
-    public void updateFormalHeadToDoing(String headId) {
-        activityHeadMapper.updateFormalHeadToDoing(headId);
-    }
-
-    @Override
     public String getStatus(String headId, String stage) {
         String sql = "";
-        if (STAGE_PREHEAT.equalsIgnoreCase(stage)) {
+        if (ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
             sql = "select preheat_status from UO_OP_ACTIVITY_HEADER where head_id = '" + headId + "'";
         }
-        if (STAGE_FORMAL.equalsIgnoreCase(stage)) {
+        if (ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
             sql = "select formal_status from UO_OP_ACTIVITY_HEADER where head_id = '" + headId + "'";
         }
         return activityHeadMapper.getStatus(sql);
@@ -145,15 +138,10 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 
     @Override
     public void updateStatus(String headId, String stage, String status) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("update UO_OP_ACTIVITY_HEADER set ");
-        if (stage.equalsIgnoreCase(STAGE_PREHEAT)) {
-            sb.append("PREHEAT_STATUS = '" + status + "'");
+        if (ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
+            activityHeadMapper.updatePreheatStatusHead(headId,status);
+        }else if(ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
+            activityHeadMapper.updateFormalStatusHead(headId,status);
         }
-        if (stage.equalsIgnoreCase(STAGE_FORMAL)) {
-            sb.append("FORMAL_STATUS = '" + status + "'");
-        }
-        sb.append(" where head_id = '" + headId + "'");
-        activityHeadMapper.updateStatus(sb.toString());
     }
 }

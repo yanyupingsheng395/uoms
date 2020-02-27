@@ -5,6 +5,7 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.*;
+import com.linksteady.operate.domain.enums.ActivityGroupEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.thrift.ActivityThriftClient;
@@ -52,15 +53,6 @@ public class ActivityController {
 
     @Autowired
     private ActivityPlanService activityPlanService;
-
-    @Autowired
-    ActivityThriftClient activityThriftClient;
-
-    @Autowired
-    ActivitySummaryService activitySummaryService;
-
-    @Autowired
-    private ActivityDetailService activityDetailService;
 
     @Autowired
     private DailyProperties dailyProperties;
@@ -473,29 +465,18 @@ public class ActivityController {
         return ResponseBo.ok();
     }
 
-    /**
-     * 获取任务计划
-     * @param headId
-     * @return
-     */
-    @RequestMapping("/getPlanList")
-    public ResponseBo getPlanList(@RequestParam String headId) {
-        ActivityHead activityHead = activityHeadService.findById(headId);
-        List<ActivityPlan> planList = activityPlanService.getPlanList(headId);
-        Map<String, List<ActivityPlan>> result = Maps.newHashMap();
-        if("1".equalsIgnoreCase(activityHead.getHasPreheat())) {
-            result = planList.stream().collect(Collectors.groupingBy(ActivityPlan::getStage));
-        }else {
-            result.put("formal", planList);
-        }
-        return ResponseBo.okWithData(null, result);
-    }
-
     @GetMapping("/getActivityName")
     public ResponseBo getActivityName(@RequestParam String headId) {
         return ResponseBo.okWithData(null, activityHeadService.getActivityName(headId));
     }
 
+    /**
+     * 提交计划
+     * @param headId
+     * @param stage
+     * @param operateType
+     * @return
+     */
     @PostMapping("/submitActivity")
     public ResponseBo submitActivity(@RequestParam String headId, @RequestParam String stage, @RequestParam String operateType) {
         if("update".equalsIgnoreCase(operateType)) {
@@ -506,19 +487,18 @@ public class ActivityController {
         return ResponseBo.ok();
     }
 
-
-    @RequestMapping("/test")
-    public ResponseBo test() {
-        try {
-            activityThriftClient.open();
-           Map<Integer,String> predictCnt=activityThriftClient.getActivityService().getPredictCnt(1,"0");
-        } catch (TException e) {
-           //进行异常上报
-            log.error("获取活动预估人数异常,",e);
-        }finally {
-            activityThriftClient.close();
+    /**
+     *  提交计划，判断是否有执行中2、执行完3 已停止4的plan,如果存在，变更状态为执行中，否则变更状态为待执行；
+     */
+    private void submitAndUpdateStatus(String headId, String stage) {
+        int count = activityPlanService.getStatusCount(headId, stage, Arrays.asList("2", "3", "4"));
+        String status;
+        if(count > 0) {
+            status = "doing";
+        }else {
+            status = "todo";
         }
-        return ResponseBo.ok();
+        activityHeadService.updateStatus(headId, stage, status);
     }
 
     @PostMapping("/deleteProduct")
@@ -565,121 +545,6 @@ public class ActivityController {
         return ResponseBo.okWithData(null, activityHeadService.getDataChangedStatus(headId, stage));
     }
 
-    @GetMapping("/getUserGroupList")
-    public List<ActivitySummary> getUserGroupList(@RequestParam String headId, @RequestParam String planDtWid) {
-        List<ActivitySummary> activitySummaryList = activitySummaryService.getUserGroupList(headId, planDtWid);
-        ActivitySummary activitySummary = new ActivitySummary();
-        activitySummary.setGroupName("总计");
-        if(activitySummaryList.size() == 0) {
-            activitySummary.setGroupUserCnt(0L);
-        }else {
-            Long sum = activitySummaryList.stream().map(ActivitySummary::getGroupUserCnt).distinct().reduce(Long::sum).get();
-            activitySummary.setGroupUserCnt(sum);
-        }
-        activitySummaryList.add(activitySummary);
-        return activitySummaryList;
-    }
-
-    @GetMapping("/getDetailPage")
-    public ResponseBo getDetailPage(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
-        String headId = request.getParam().get("headId");
-        String planDtWid = request.getParam().get("planDtWid");
-        int count = activityDetailService.getDataCount(headId, planDtWid);
-        List<ActivityDetail>  dataList = activityDetailService.getPageList(start, end, headId, planDtWid);
-        return ResponseBo.okOverPaging(null, count, dataList);
-    }
-
-    /**
-     * 导出名单
-     * @param headId
-     * @return
-     * @throws InterruptedException
-     */
-    @PostMapping("/downloadDetail")
-    public ResponseBo downloadDetail(@RequestParam("headId") String headId, @RequestParam("planDtWid") String planDtWid) throws InterruptedException {
-        List<ActivityDetail> list = Lists.newLinkedList();
-        List<Callable<List<ActivityDetail>>> tmp = Lists.newLinkedList();
-        int count = activityDetailService.getDataCount(headId, planDtWid);
-        ExecutorService service = Executors.newFixedThreadPool(10);
-        int pageSize = 1000;
-        int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize) + 1;
-        for (int i = 0; i < pageNum; i++) {
-            int idx = i;
-            tmp.add(() -> {
-                int start = idx * pageSize + 1;
-                int end = (idx + 1) * pageSize;
-                end = end > count ? count : end;
-                return activityDetailService.getPageList(start, end, headId, planDtWid);
-            });
-        }
-
-        List<Future<List<ActivityDetail>>> futures = service.invokeAll(tmp);
-        futures.stream().forEach(x-> {
-            try {
-                list.addAll(x.get());
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("活动运营获取结果失败", e);
-            }
-        });
-        try {
-            return FileUtils.createExcelByPOIKit(planDtWid + "_运营名单表", list, ActivityDetail.class);
-        } catch (Exception e) {
-            log.error("导出活动运营个体结果表失败", e);
-            return ResponseBo.error("导出活动运营个体结果表失败，请联系网站管理员！");
-        }
-    }
-
-    /**
-     * 开始执行计划
-     * @return
-     */
-    @PostMapping("/startPush")
-    public synchronized ResponseBo startPush(@RequestParam String headId, @RequestParam String planDateWid, @RequestParam String stage) {
-        String todoStatus = "1";
-        String doingStatus = "2";
-        String status = activityPlanService.getStatus(headId, planDateWid);
-        if(!todoStatus.equalsIgnoreCase(status)) {
-            return ResponseBo.error("当前计划的状态不支持该操作！");
-        }
-
-        //写入推送表
-        activityPlanService.insertToPushListLarge(headId, planDateWid);
-
-        activityPlanService.updateStatus(headId, planDateWid, doingStatus);
-
-        //更新头表的状态为执行中
-        if(!StringUtils.isEmpty(stage)&&"preheat".equals(stage))
-        {
-            activityHeadService.updatePreheatHeadToDoing(headId);
-        }else if(!StringUtils.isEmpty(stage)&&"formal".equals(stage))
-        {
-            activityHeadService.updateFormalHeadToDoing(headId);
-        }
-
-        return ResponseBo.ok();
-    }
-
-    /**
-     * 停止执行计划
-     * @return
-     */
-    @PostMapping("/stopPush")
-    public ResponseBo stopPush(@RequestParam String headId, @RequestParam String planDateWid) {
-        String doingStatus = "2";
-        String stoppedStatus = "4";
-        String status = activityPlanService.getStatus(headId, planDateWid);
-        if(!doingStatus.equalsIgnoreCase(status)) {
-            return ResponseBo.error("当前计划的状态不支持该操作！");
-        }
-        //停止 修改push_list_large表中对应记录的状态为F (失败)
-        activityPlanService.updatePushListLargeToFaild(headId, planDateWid);
-
-        activityPlanService.updateStatus(headId, planDateWid, stoppedStatus);
-        return ResponseBo.ok();
-    }
-
     @PostMapping("/deleteActivity")
     public ResponseBo deleteActivity(@RequestParam String headId) {
         int count = activityHeadService.getDeleteCount(headId);
@@ -723,19 +588,6 @@ public class ActivityController {
         }
     }
 
-    /**
-     *  提交计划，判断是否有执行中2、执行完3 已停止4的plan,如果存在，变更状态为执行中，否则变更状态为待执行；
-      */
-    private void submitAndUpdateStatus(String headId, String stage) {
-        int count = activityPlanService.getStatusCount(headId, stage, Arrays.asList("2", "3", "4"));
-        String status;
-        if(count > 0) {
-            status = "doing";
-        }else {
-            status = "todo";
-        }
-        activityHeadService.updateStatus(headId, stage, status);
-    }
 
     /**
      * 获取主要指标

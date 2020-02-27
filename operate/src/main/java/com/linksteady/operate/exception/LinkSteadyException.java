@@ -4,7 +4,7 @@ package com.linksteady.operate.exception;
  * @author hxcao
  * @date 2019-11-15
  */
-public class LinkSteadyException extends Throwable {
+public class LinkSteadyException extends Exception {
 
     private String code;
 

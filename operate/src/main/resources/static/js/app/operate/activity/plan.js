@@ -25,7 +25,12 @@ function getPlanTable() {
                 title: '计划人数',
                 align: 'center',
                 valign: 'middle'
-            }, {
+            },  {
+                field: 'successNum',
+                title: '成功推送人数',
+                align: 'center',
+                valign: 'middle'
+            },{
                 field: 'planStatus',
                 title: '状态',
                 align: 'center',
@@ -46,7 +51,7 @@ function getPlanTable() {
                             res = "<span class=\"badge bg-info\">执行完</span>";
                             break;
                         case "4":
-                            res = "<span class=\"badge bg-danger\">已停止</span>";
+                            res = "<span class=\"badge bg-danger\">过期未推送</span>";
                             break;
 
                     }
@@ -64,19 +69,16 @@ function getPlanTable() {
                             res = "-";
                             break;
                         case "1": // 待执行
-                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\", \"0\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
-                                "&nbsp;<a class='btn btn-sm btn-success' onclick='startPush(\""+row['planDateWid']+"\", \""+row['stage']+"\")'><i class='fa fa-play'></i>&nbsp;开始执行</a>";
+                            res = "<a class='btn btn-sm btn-info' onclick='viewAndPush("+row['planDateWid']+")'><i class='fa fa-eye'></i>&nbsp;预览并推送</a>";
                             break;
                         case "2":// 执行中
-                            // res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\", \"0\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>" +
-                            //     "&nbsp;<a class='btn btn-sm btn-danger' onclick='stopPush(\""+row['planDateWid']+"\", \""+row['stage']+"\")'><i class='fa fa-stop'></i>&nbsp;停止执行</a>";
-                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\", \"0\")'><i class='fa fa-eye'></i>&nbsp;查看推送</a>";
+                            res = "<a class='btn btn-sm btn-success' onclick='viewList("+row['planDateWid']+")'><i class='fa fa-street-view'></i>&nbsp;查看</a>";
                             break;
                         case "3":// 执行完
-                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\",\"1\")'><i class='fa fa-eye'></i>&nbsp;预览推送</a>";
+                            res = "<a class='btn btn-sm btn-success' onclick='viewList("+row['planDateWid']+")'><i class='fa fa-street-view'></i>&nbsp;查看</a>";
                             break;
                         case "4":// 已停止
-                            res = "<a class='btn btn-sm btn-info' onclick='viewPush(\""+row['planDateWid']+"\", \"1\")'><i class='fa fa-eye'></i>&nbsp;预览推送</a>";
+                            res = "<a class='btn btn-sm btn-success' onclick='viewList("+row['planDateWid']+")'><i class='fa fa-street-view'></i>&nbsp;查看</a>";
                             break;
                     }
                     return res;
@@ -85,7 +87,7 @@ function getPlanTable() {
     };
     $("#preheatPlanTable").bootstrapTable(settings);
     $("#formalPlanTable").bootstrapTable(settings);
-    $.get("/activity/getPlanList", {headId: headId},function (r) {
+    $.get("/activityPlan/getPlanList", {headId: headId},function (r) {
         if(r.code === 200) {
             if(r.data['preheat'] !== undefined || Object.keys(r.data).length === 0) {
                 $("#preheatDiv").attr("style", "display:block");
@@ -101,12 +103,23 @@ function getPlanTable() {
         }
     });
 }
-// 推送预览
-function viewPush(planDtWid, flag) {
-    getUserGroupTable(planDtWid);
-    getUserDetail(planDtWid, flag);
-    $("#planDtWid").val(planDtWid);
-    $("#view_push_modal").modal('show');
+// 预览并推送
+function viewAndPush(planDtWid) {
+    //生成文案
+    $MB.loadingDesc('show', '转化文案中，请稍后...');
+    $.get("/activityPlan/transActivityDetail", {headId: headId,planDtWid:planDtWid}, function (r) {
+        if(r.code == 200) {
+            //如果生成成功，加载数据
+            getUserGroupTable(planDtWid);
+            getUserDetail(planDtWid,"-1");
+            $("#planDtWid").val(planDtWid);
+            $("#view_push_modal").modal('show');
+        }else {
+            //提示错误信息
+            $MB.n_danger(r.msg);
+        }
+        $MB.loadingDesc('hide');
+    });
 }
 
 $("#view_push_modal").on("hidden.bs.modal", function () {
@@ -120,59 +133,30 @@ function getUserGroupTable(planDtWid) {
             {
                 field: 'groupName',
                 title: '用户与商品关系',
-                valign: "middle",
-                align: 'center'
+                valign: "middle"
             }, {
-                field: 'groupUserCnt',
+                field: 'userNum',
                 title: '人数（人）',
                 valign: "middle",
-                align: 'center'
-            }, {
-                field: 'inGrowthPath',
-                title: '成长节点与活动期',
-                valign: "middle",
-                align: 'center'
-            }, {
-                field: 'growthUserCnt',
-                title: '人数（人）',
-                valign: "middle",
-                align: 'center'
-            }, {
-                field: 'activeLevel',
-                title: '活跃度',
-                valign: "middle",
-                align: 'center'
-            }, {
-                field: 'activeUserCnt',
-                title: '人数（人）',
-                valign: "middle",
-                align: 'center'
+                align: 'center',
+                formatter: function (value, row, index) {
+                    return "<a style='cursor: pointer;' onclick='clickUserGroup(\""+row.groupId+"\")'>" + value + "</a>";
+                }
             }]
     };
     $("#userGroupTable").bootstrapTable(settings);
-    $.get("/activity/getUserGroupList", {headId: headId, planDtWid: planDtWid},function (r) {
+    $.get("/activityPlan/getUserGroupList", {headId: headId, planDtWid: planDtWid},function (r) {
         $("#userGroupTable").bootstrapTable('load', r);
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupName', rowspan: 4});
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'groupName', rowspan: 4});
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'groupUserCnt', rowspan: 4});
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'groupUserCnt', rowspan: 4});
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'inGrowthPath', rowspan: 3});
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'inGrowthPath', rowspan: 3});
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 0, field: 'growthUserCnt', rowspan: 3});
-        $("#userGroupTable").bootstrapTable('mergeCells', {index: 4, field: 'growthUserCnt', rowspan: 3});
         $("a[data-toggle='tooltip']").tooltip();
     });
 }
 
 /**
- * flag:0 查看推送
- * flag:1 预览推送
  * @param planDtWid
- * @param flag
  */
-function getUserDetail(planDtWid, flag){
+function getUserDetail(planDtWid,groupId){
     let settings = {
-        url: "/activity/getDetailPage",
+        url: "/activityPlan/getDetailPage",
         cache: false,
         pagination: true,
         singleSelect: true,
@@ -184,7 +168,7 @@ function getUserDetail(planDtWid, flag){
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,  //页码
-                param: {headId: headId, planDtWid: planDtWid}
+                param: {headId: headId, planDtWid: planDtWid,groupId:groupId}
             };
         },
         columns: [{
@@ -197,210 +181,249 @@ function getUserDetail(planDtWid, flag){
             field: 'userId',
             title: '用户ID'
         }, {
-            field: 'inGrowthPath',
-            title: '成长节点与活动期',
+            field: 'groupName',
+            title: '用户与商品关系',
+            formatter: function (value, row, index) {
+                if (value != null && value != undefined) {
+                    let temp = value.length > 20 ? value.substring(0, 20) + "..." : value;
+                    return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                } else {
+                    return '-';
+                }
+            }
+        }, {
+            field: 'smsContent',
+            title: '推送内容',
+            formatter: function (value, row, index) {
+                if (value != null && value != undefined) {
+                    let temp = value.length > 20 ? value.substring(0, 20) + "..." : value;
+                    return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                } else {
+                    return '-';
+                }
+            }
+        }],
+        onLoadSuccess: function () {
+            $("a[data-toggle='tooltip']").tooltip();
+        }
+    };
+    $("#userDetailTable").bootstrapTable('destroy').bootstrapTable(settings);
+}
+
+
+/**
+ * 点击用户群组的用户数刷新明细表格
+ * @param groupId
+ */
+function clickUserGroup(groupId)
+{
+     //刷新表格
+    getUserDetail( $("#planDtWid").val(),groupId);
+}
+
+$('input[name="pushMethod"]').click(function () {
+    if ($(this).val() == "FIXED") {
+        $("#pushPeriodDiv").show();
+    } else {
+        $("#pushPeriodDiv").hide();
+    }
+});
+
+$("#push_ok").change(function () {
+    let flag = $(this).is(':checked');
+    if(flag) {
+        $("#pushMsgBtn").removeAttr("disabled");
+    }else {
+        $("#pushMsgBtn").attr("disabled", true);
+    }
+});
+
+$("#view_push_modal").on('shown.bs.modal', function () {
+    $.get("/activityPlan/getDefaultPushInfo", {}, function (r) {
+        let code = "";
+        r.data['timeList'].forEach((v, k) => {
+            code += "<option value='" + v + "'>" + v + "</option>";
+        });
+        $("#pushPeriod").html('').append(code);
+        $('input[name="pushMethod"]').removeAttr("checked");
+        $('input[name="pushMethod"][value="' + r.data.method + '"]').prop("checked", true);
+        //去掉确认按钮的勾选状态
+        $("#push_ok").removeAttr("checked");
+        $("#pushPeriodDiv").hide();
+    });
+});
+
+////////////////////////////////////////////////预览////////////////////////////////////////////////
+// 预览
+function viewList(planDtWid) {
+    getUserGroupTable2(planDtWid);
+    getUserDetail2(planDtWid,"-1");
+    $("#planDtWid2").val(planDtWid);
+    $("#view_list_modal").modal('show');
+}
+
+
+$("#view_list_modal").on("hidden.bs.modal", function () {
+    $("#planDtWid2").val('');
+});
+
+
+// 获取用户群组列表
+function getUserGroupTable2(planDtWid) {
+    var settings = {
+        columns: [
+            {
+                field: 'groupName',
+                title: '用户与商品关系',
+                valign: "middle"
+            }, {
+                field: 'userNum',
+                title: '人数（人）',
+                valign: "middle",
+                align: 'center',
+                formatter: function (value, row, index) {
+                    return "<a style='cursor: pointer;' onclick='clickUserGroup2(\""+row.groupId+"\")'>" + value + "</a>";
+                }
+            }]
+    };
+    $("#userGroupTable2").bootstrapTable(settings);
+    $.get("/activityPlan/getUserGroupList", {headId: headId, planDtWid: planDtWid},function (r) {
+        $("#userGroupTable2").bootstrapTable('load', r);
+        $("a[data-toggle='tooltip']").tooltip();
+    });
+}
+
+function getUserDetail2(planDtWid,groupId){
+    let settings = {
+        url: "/activityPlan/getDetailPage",
+        cache: false,
+        pagination: true,
+        singleSelect: true,
+        sidePagination: "server",
+        pageNumber: 1,            //初始化加载第一页，默认第一页
+        pageSize: 10,            //每页的记录行数（*）
+        pageList: [10, 25, 50, 100],
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,  ////页面大小
+                pageNum: (params.offset / params.limit) + 1,  //页码
+                param: {headId: headId, planDtWid: planDtWid,groupId:groupId}
+            };
+        },
+        columns: [{
+            field: 'epbProductId',
+            title: '商品ID'
+        },{
+            field: 'epbProductName',
+            title: '商品名称'
+        }, {
+            field: 'userId',
+            title: '用户ID'
+        }, {
+            field: 'groupName',
+            title: '用户与商品关系',
+            formatter: function (value, row, index) {
+                if (value != null && value != undefined) {
+                    let temp = value.length > 20 ? value.substring(0, 20) + "..." : value;
+                    return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                } else {
+                    return '-';
+                }
+            }
+        }, {
+            field: 'smsContent',
+            title: '推送内容',
+            formatter: function (value, row, index) {
+                if (value != null && value != undefined) {
+                    let temp = value.length > 20 ? value.substring(0, 20) + "..." : value;
+                    return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                } else {
+                    return '-';
+                }
+            }
+        },{
+            field: 'isPush',
+            title: '是否推送',
             formatter: function (value, row, index) {
                 let res = "-";
                 switch (value) {
                     case "0":
-                        res = "不在";
+                        res = "否";
                         break;
                     case "1":
-                        res = "在";
+                        res = "是";
                         break;
                 }
                 return res;
             }
-        }, {
-            field: 'groupId',
-            title: '用户与商品关系',
-            formatter: function (value, row, index) {
-                let res = "-";
-                switch (value) {
-                    case "1":
-                    case "2":
-                    case "3":
-                    case "4":
-                        res = "成长用户";
-                        break;
-                    case "5":
-                    case "6":
-                    case "7":
-                    case "8":
-                        res = "潜在用户";
-                        break;
-                }
-                return res;
-            }
-        }, {
-            field: 'pathActive',
-            title: '活跃度',
-            formatter: function (value, row, index) {
-                var res = "";
-                switch (value) {
-                    case "UAC_01":
-                        res = "高度活跃";
-                        break;
-                    case "UAC_02":
-                        res = "中度活跃";
-                        break;
-                    case "UAC_03":
-                        res = "流失预警";
-                        break;
-                    case "UAC_04":
-                        res = "弱流失";
-                        break;
-                    case "UAC_05":
-                        res = "强流失";
-                        break;
-                    case "UAC_06":
-                        res = "沉睡";
-                        break;
-                    default:
-                        res = "-";
-                }
-                return res;
-            }
-        }, {
-            field: 'userValue',
-            title: '用户价值',
-            formatter: function (value, row, index) {
-                var res = "";
-                switch (value) {
-                    case "ULC_01":
-                        res = "重要";
-                        break;
-                    case "ULC_02":
-                        res = "主要";
-                        break;
-                    case "ULC_03":
-                        res = "普通";
-                        break;
-                    case "ULC_04":
-                        res = "长尾";
-                        break;
-                    default:
-                        res = "-";
-                }
-                return res;
-            }
-        }, {
-            field: 'smsContent',
-            title: '推送内容'
-        }]
+        },{
+            field: 'pushDateStr',
+            title: '推送时间'
+        }],
+        onLoadSuccess: function () {
+            $("a[data-toggle='tooltip']").tooltip();
+        }
     };
-
-    if(flag === '1') {
-        settings.columns.push(
-            {
-                field: 'isPush',
-                title: '是否推送',
-                formatter: function (value, row, index) {
-                    let res = "-";
-                    switch (value) {
-                        case "0":
-                            res = "否";
-                            break;
-                        case "1":
-                            res = "是";
-                            break;
-                    }
-                    return res;
-                }
-            }
-        );
-
-        settings.columns.push(
-            {
-                field: 'pushDateStr',
-                title: '推送时间'
-            }
-        );
-
-        settings.columns.push(
-            {
-                field: 'pushStatus',
-                title: '推送状态',
-                formatter: function (value, row, index) {
-                    let res = "-";
-                    switch (value) {
-                        case "P":
-                            res = "计划中";
-                            break;
-                        case "F":
-                            res = "成功";
-                            break;
-                        case "S":
-                            res = "失败";
-                            break;
-                    }
-                    return res;
-                }
-            }
-        );
-    }
-    $("#userDetailTable").bootstrapTable('destroy').bootstrapTable(settings);
+    $("#userDetailTable2").bootstrapTable('destroy').bootstrapTable(settings);
 }
 
-$("#btn_download").click(function() {
-    $MB.confirm({
-        title: "<i class='mdi mdi-alert-outline'></i>提示：",
-        content: "确定导出记录?"
-    }, function () {
-        $("#btn_download").text("下载中...").attr("disabled", true);
-        $.post("/activity/downloadDetail", {headId: headId, planDtWid:$("#planDtWid").val()}, function (r) {
-            if (r.code === 200) {
-                window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
-            } else {
-                $MB.n_warning(r.msg);
-            }
-            $("#btn_download").html("").append("<i class=\"fa fa-download\"></i> 导出名单").removeAttr("disabled");
-        });
-    });
-});
+function clickUserGroup2(groupId)
+{
+    //刷新表格
+    getUserDetail2( $("#planDtWid2").val(),groupId);
+}
 
-function startPush(planDateWid, stage) {
-    $MB.confirm({
-        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认开始执行当前计划？'
-    }, function () {
-        $.post("/activity/startPush", {headId: headId, planDateWid:planDateWid, stage: stage}, function (r) {
-            if(r.code === 200) {
-                if(stage === 'preheat') {
-                    $('#preheatPlanTable').bootstrapTable('destroy');
-                    getPlanTable();
-                }
-                if(stage === 'formal') {
-                    $('#formalPlanTable').bootstrapTable('destroy');
-                    getPlanTable();
-                }
-                $MB.n_success("计划已开始执行！");
-            }else {
-                $MB.n_danger(r.msg);
-            }
-        });
+// $("#btn_download").click(function() {
+//     $MB.confirm({
+//         title: "<i class='mdi mdi-alert-outline'></i>提示：",
+//         content: "确定导出记录?"
+//     }, function () {
+//         $("#btn_download").text("下载中...").attr("disabled", true);
+//         $.post("/activity/downloadDetail", {headId: headId, planDtWid:$("#planDtWid").val()}, function (r) {
+//             if (r.code === 200) {
+//                 window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
+//             } else {
+//                 $MB.n_warning(r.msg);
+//             }
+//             $("#btn_download").html("").append("<i class=\"fa fa-download\"></i> 导出名单").removeAttr("disabled");
+//         });
+//     });
+// });
+
+function submitData() {
+    //禁用推送按钮
+    $("#pushMsgBtn").attr("disabled", true);
+
+    $MB.loadingDesc('show', '启动推送...');
+
+    //获取planDateWid
+    var planDateWid= $("#planDtWid").val();
+    var pushMethod=$("input[name='pushMethod']:checked").val();
+    var pushPeriod=$("#pushPeriod").find("option:selected").val();
+
+    $.post("/activityPlan/startPush", {headId: headId, planDateWid:planDateWid,pushMethod:pushMethod,pushPeriod:pushPeriod}, function (r) {
+        if(r.code === 200) {
+            //关闭loading
+            $MB.loadingDesc('hide');
+            //提示
+            $MB.n_success("推送成功！");
+            $("#pushMsgBtn").attr("disabled", true);
+            //关闭弹出面板
+            $("#view_push_modal").modal('hide');
+
+            $('#preheatPlanTable').bootstrapTable('destroy');
+            $('#formalPlanTable').bootstrapTable('destroy');
+            getPlanTable();
+        }else {
+            $MB.loadingDesc('hide');
+            $MB.n_danger(r.msg);
+            //释放推送按钮
+            $("#pushMsgBtn").removeAttr("disabled");
+        }
     });
 }
 
-function stopPush(planDateWid, stage) {
-    $MB.confirm({
-        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认停止执行当前计划？'
-    }, function () {
-        $.post("/activity/stopPush", {headId: headId, planDateWid:planDateWid}, function (r) {
-            if(r.code === 200) {
-                if(stage === 'preheat') {
-                    $('#preheatPlanTable').bootstrapTable('destroy');
-                    getPlanTable();
-                }
-                if(stage === 'formal') {
-                    $('#formalPlanTable').bootstrapTable('destroy');
-                    getPlanTable();
-                }
-                $MB.n_success("计划已停止执行！");
-            }else {
-                $MB.n_danger(r.msg);
-            }
-        });
-    });
+function refreshPage()
+{
+    getPlanTable();
 }
