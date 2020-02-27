@@ -1,8 +1,10 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.operate.config.ConfigCacheManager;
 import com.linksteady.operate.dao.ActivityTemplateMapper;
 import com.linksteady.operate.domain.ActivityTemplate;
 import com.linksteady.operate.service.ActivityTemplateService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,30 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     @Override
     public int checkCode(String code) {
         return activityTemplateMapper.checkCode(code);
+    }
+
+    @Override
+    public ActivityTemplate getReplacedTmp(String code) {
+        ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
+        ActivityTemplate activityTemplate = activityTemplateMapper.getTemplate(code);
+        String isProdUrl = activityTemplate.getIsProdUrl();
+        String isProdName = activityTemplate.getIsProdName();
+        String isPrice = activityTemplate.getIsPrice();
+        String prodUrl = "${PROD_URL}";
+        String prodName = "${PROD_URL}";
+        String price = "${PRICE}";
+        String content = activityTemplate.getContent();
+        if (StringUtils.isNotEmpty(isProdUrl) && isProdUrl.equalsIgnoreCase("1")) {
+            content = content.replace(prodUrl, configCacheManager.getConfigMap().get("op.activity.sms.prodUrl"));
+        }
+        if (StringUtils.isNotEmpty(isProdName) && isProdName.equalsIgnoreCase("1")) {
+            content = content.replace(prodName, configCacheManager.getConfigMap().get("op.activity.sms.prodName"));
+        }
+        if (StringUtils.isNotEmpty(isPrice) && isPrice.equalsIgnoreCase("1")) {
+            content = content.replace(price, configCacheManager.getConfigMap().get("op.activity.sms.price"));
+        }
+        activityTemplate.setContent(content);
+        return activityTemplate;
     }
 
     @Override

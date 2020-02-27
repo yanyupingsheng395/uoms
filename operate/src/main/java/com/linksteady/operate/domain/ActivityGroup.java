@@ -2,6 +2,8 @@ package com.linksteady.operate.domain;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author hxcao
  * @date 2019-10-31
@@ -15,43 +17,32 @@ public class ActivityGroup implements Cloneable{
 
     private String groupName;
 
-    private String inGrowthPath;
-
-    private String activeLevel;
-
-    private Long groupUserCnt;
-
-    private Long growthUserCnt;
-
-    private Long activeUserCnt;
-
     private String activityStage;
 
+    private Long userNum;
+
     private String smsTemplateCode;
+
+    private String activityType;
 
     /**
      * 活动推送内容
      */
     private String smsTemplateContent;
 
-    /**
-     * 非活动推送内容
-     */
-    private String smsTemplateContentNormal;
+    private String insertBy;
 
-    public ActivityGroup() {
-    }
+    private Date insertDt;
 
-    public ActivityGroup(Long groupId, Long headId, String groupName, String inGrowthPath, String activeLevel) {
+    public ActivityGroup() {};
+
+    public ActivityGroup(Long groupId, Long headId, String groupName, String activityStage, String activityType, String insertBy, Date insertDt) {
         this.groupId = groupId;
         this.headId = headId;
         this.groupName = groupName;
-        this.inGrowthPath = inGrowthPath;
-        this.activeLevel = activeLevel;
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+        this.activityStage = activityStage;
+        this.activityType = activityType;
+        this.insertBy = insertBy;
+        this.insertDt = insertDt;
     }
 }

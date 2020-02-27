@@ -25,4 +25,6 @@ public interface ActivityTemplateService {
     List<ActivityTemplate> getTemplateList(int start, int end, String code);
 
     int checkCode(String code);
+
+    ActivityTemplate getReplacedTmp(String code);
 }

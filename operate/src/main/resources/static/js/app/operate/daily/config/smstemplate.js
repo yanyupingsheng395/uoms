@@ -183,8 +183,6 @@ function sendMessage()
             }
         }
     });
-
-
 }
 
 function del() {

@@ -69,7 +69,8 @@ $(function () {
             },{
                 field: 'createDt',
                 title: '创建时间'
-            }],onLoadSuccess: function(data){
+            }],
+        onLoadSuccess: function(data){
             $("a[data-toggle='tooltip']").tooltip();
         }
     };

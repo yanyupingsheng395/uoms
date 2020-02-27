@@ -4,8 +4,11 @@
 
     <resultMap id="base" type="com.linksteady.operate.domain.ActivityTemplate">
         <result column="TMP_CODE" jdbcType="VARCHAR" property="code"/>
+        <result column="TMP_NAME" jdbcType="VARCHAR" property="name"/>
         <result column="TMP_CONTENT" jdbcType="VARCHAR" property="content"/>
-        <result column="TMP_CONTENT_NORMAL" jdbcType="VARCHAR" property="contentNormal"/>
+        <result column="IS_PROD_URL" jdbcType="VARCHAR" property="isProdUrl"/>
+        <result column="IS_PROD_NAME" jdbcType="VARCHAR" property="isProdName"/>
+        <result column="IS_PRICE" jdbcType="VARCHAR" property="isPrice"/>
     </resultMap>
 
     <insert id="saveTemplate">
@@ -18,11 +21,12 @@
     </delete>
 
     <select id="getTemplate" resultMap="base">
-        select TMP_CODE, TMP_CONTENT, REMARK, INSERT_DT, INSERT_BY, UPDATE_DT, UPDATE_BY, LABEL, TMP_CONTENT_NORMAL from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}
+        select TMP_CONTENT, REMARK, INSERT_DT, INSERT_BY, UPDATE_DT, UPDATE_BY, TMP_CODE, IS_PERSONAL, RELATION, TMP_NAME, SCENE, IS_PROD_NAME, IS_PROD_URL, IS_PRICE from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}
     </select>
 
     <update id="update" parameterType="com.linksteady.operate.domain.ActivityTemplate">
-        update UO_OP_ACTIVITY_TEMPLATE set TMP_CONTENT = #{content}, TMP_CONTENT_NORMAL = #{contentNormal}
+        update UO_OP_ACTIVITY_TEMPLATE set TMP_CONTENT = #{content}, TMP_NAME = #{name}, IS_PROD_URL = #{isProdUrl},
+        IS_PROD_NAME = #{isProdName}, IS_PRICE = #{isPrice}
         where TMP_CODE = #{code}
     </update>
 

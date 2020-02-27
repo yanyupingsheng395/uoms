@@ -1,12 +1,20 @@
 package com.linksteady.operate.service.impl;
 
+import com.google.common.collect.Lists;
 import com.linksteady.common.domain.User;
+import com.linksteady.operate.dao.ActivityCovMapper;
 import com.linksteady.operate.dao.ActivityHeadMapper;
+import com.linksteady.operate.dao.ActivityTemplateMapper;
+import com.linksteady.operate.dao.ActivityUserGroupMapper;
+import com.linksteady.operate.domain.ActivityCovInfo;
+import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.ActivityTemplate;
+import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivitySummaryService;
 import com.linksteady.operate.service.ActivityUserGroupService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author hxcao
@@ -40,6 +49,12 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     @Autowired
     private ActivitySummaryService activitySummaryService;
 
+    @Autowired
+    private ActivityUserGroupMapper activityUserGroupMapper;
+
+    @Autowired
+    private ActivityCovMapper activityCovMapper;
+
     @Override
     public List<ActivityHead> getDataListOfPage(int start, int end, String name, String date, String status) {
         return activityHeadMapper.getDataListOfPage(start, end, name, date, status);
@@ -53,11 +68,14 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int saveActivityHead(ActivityHead activityHead) {
+        final String HAS_PREHEAT = "1";
+        final String NO_PREHEAT = "0";
+        String hasPreheat = activityHead.getHasPreheat();
         activityHead.setFormalStatus("edit");
-        if ("1".equalsIgnoreCase(activityHead.getHasPreheat())) {
+        if (HAS_PREHEAT.equalsIgnoreCase(hasPreheat)) {
             activityHead.setPreheatStatus("edit");
         }
-        if ("0".equalsIgnoreCase(activityHead.getHasPreheat())) {
+        if (NO_PREHEAT.equalsIgnoreCase(hasPreheat)) {
             activityHead.setPreheatStartDt(null);
             activityHead.setPreheatEndDt(null);
             activityHead.setPreheatNotifyDt(null);
@@ -71,17 +89,55 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 //        activityUserGroupService.saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
 //        //写入计划信息
 //        activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
+
+        if(HAS_PREHEAT.equals(hasPreheat)) {
+            // 保存群组信息
+            saveGroupInfo(activityHead.getHeadId().toString(), ActivityStageEnum.preheat.getStageCode());
+            saveGroupInfo(activityHead.getHeadId().toString(), ActivityStageEnum.formal.getStageCode());
+
+            // 保存转化率信息
+            saveCovInfo(activityHead.getHeadId().toString(), ActivityStageEnum.preheat.getStageCode());
+            saveCovInfo(activityHead.getHeadId().toString(), ActivityStageEnum.formal.getStageCode());
+        }else {
+            // 保存群组信息
+            saveGroupInfo(activityHead.getHeadId().toString(), ActivityStageEnum.formal.getStageCode());
+
+            // 保存转化率信息
+            saveCovInfo(activityHead.getHeadId().toString(), ActivityStageEnum.formal.getStageCode());
+        }
         return activityHead.getHeadId().intValue();
+    }
+
+    /**
+     * 保存群组信息
+     * @param headId
+     */
+    private void saveGroupInfo(String headId, String activityStage) {
+        //类型 NOTIFY 通知 DURING 期间
+        List<ActivityGroup> activityGroups = Lists.newArrayList();
+        activityGroups.add(new ActivityGroup(
+                1L, Long.parseLong(headId), "用户成长旅程的商品参与本次活动", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+        ));
+        activityGroups.add(new ActivityGroup(
+                2L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+        ));
+        activityGroups.add(new ActivityGroup(
+                3L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动，但有可能成为活动商品潜在用户", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+        ));
+
+        activityGroups.add(new ActivityGroup(
+                1L, Long.parseLong(headId), "用户成长旅程的商品参与本次活动", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+        ));
+        activityGroups.add(new ActivityGroup(
+                2L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+        ));
+
+        activityUserGroupMapper.saveGroupData(activityGroups);
     }
 
     @Override
     public ActivityHead findById(String headId) {
         return activityHeadMapper.findById(headId);
-    }
-
-    @Override
-    public List<ActivityTemplate> getTemplateTableData() {
-        return activityHeadMapper.getTemplateTableData();
     }
 
 
@@ -155,5 +211,53 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         }
         sb.append(" where head_id = '" + headId + "'");
         activityHeadMapper.updateStatus(sb.toString());
+    }
+
+    @Override
+    public void saveSmsTemplate(ActivityTemplate activityTemplate) {
+        activityTemplate.setInsertBy((((User)SecurityUtils.getSubject().getPrincipal()).getUsername()));
+        activityTemplate.setInsertDt(new Date());
+        if("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice())) {
+            activityTemplate.setIsPersonal("0");
+        }else {
+            activityTemplate.setIsPersonal("1");
+        }
+        activityHeadMapper.saveSmsTemplate(activityTemplate);
+    }
+
+    @Override
+    public List<ActivityTemplate> getSmsTemplateList(ActivityTemplate activityTemplate) {
+        List<ActivityTemplate> templateTableData = activityHeadMapper.getTemplateTableData(activityTemplate);
+        templateTableData.stream().map(x->{
+            String relation = x.getRelation();
+            if(StringUtils.isNotEmpty(relation)) {
+                relation = relation.replace("GROWTH", "成长").replace("LATENT", "潜在");
+            }
+            String scene = x.getScene();
+            if(StringUtils.isNotEmpty(scene)) {
+                scene = scene.replace("DURING", "活动期间").replace("NOTIFY", "活动通知");
+            }
+            x.setRelation(relation);
+            x.setScene(scene);
+            return x;
+        }).collect(Collectors.toList());
+        return templateTableData;
+    }
+
+    /**
+     * 保存cov_info表
+     * 如果已有记录直接update，否则insert
+     */
+    private void saveCovInfo(String headId, String stage) {
+        String covId = activityCovMapper.getCovId(headId, stage);
+        if(StringUtils.isEmpty(covId)) {
+            covId = activityCovMapper.getCovList("Y").get(0).getCovListId();
+        }
+        if(ActivityStageEnum.preheat.getStageCode().equals(stage)) {
+            activityCovMapper.updateFormalCovInfo(headId, covId);
+        }
+        if(ActivityStageEnum.formal.getStageCode().equals(stage)) {
+            activityCovMapper.updateFormalCovInfo(headId, covId);
+        }
     }
 }

@@ -74,18 +74,28 @@
     </div>
 </div>
 <div class="text-right m-t-10">
-    <button class="btn btn-secondary btn-sm" onclick="createActivity('preheat')">
-        <i class="fa fa-arrow-right"></i> 创建预售推送计划
-    </button>
-    <button class="btn btn-secondary btn-sm" onclick="createActivity('formal')">
-        <i class="fa fa-arrow-right"></i> 创建正式推送计划
-    </button>
-<!--    <a class="btn btn-secondary btn-sm" onclick="prevStep()">-->
-<!--        <i class="fa fa-arrow-left"></i> 上一步-->
-<!--    </a>-->
-    <a class="btn btn-secondary btn-sm" href="/page/activity">
-        <i class="fa fa-reply"></i> 返回
-    </a>
+    <div th:if="${operateType eq 'update'}">
+        <button id="btn_create_preheat" class="btn btn-secondary btn-sm" th:if="${activityHead.hasPreheat eq '1'}">
+            <i class="fa fa-arrow-right"></i> 修改预售推送计划
+        </button>
+        <button id="btn_create_formal" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-right"></i> 修改正式推送计划
+        </button>
+        <a class="btn btn-secondary btn-sm" href="/page/activity">
+            <i class="fa fa-reply"></i> 返回
+        </a>
+    </div>
+    <div th:if="${operateType eq 'save'}">
+        <button id="btn_create_preheat" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-right"></i> 创建预售推送计划
+        </button>
+        <button id="btn_create_formal" class="btn btn-secondary btn-sm">
+            <i class="fa fa-arrow-right"></i> 创建正式推送计划
+        </button>
+        <a class="btn btn-secondary btn-sm" href="/page/activity">
+            <i class="fa fa-reply"></i> 返回
+        </a>
+    </div>
 </div>
 
 <div class="modal fade" tabindex="-1" role="dialog" id="addProductModal" aria-labelledby="modalLabel">

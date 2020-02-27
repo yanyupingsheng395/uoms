@@ -25,4 +25,6 @@ public interface ActivityUserGroupMapper {
     int refrenceCount(String code);
 
     void deleteData(String headId);
+
+    void setSmsCode(String groupId, String tmpCode, String headId, String type, String stage);
 }

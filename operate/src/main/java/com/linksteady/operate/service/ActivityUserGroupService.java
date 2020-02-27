@@ -12,7 +12,7 @@ public interface ActivityUserGroupService {
 
     List<ActivityGroup> getUserGroupPage(String headId, String stage, int start, int end);
 
-    List<ActivityGroup> getUserGroupList(String headId, String stage);
+    List<ActivityGroup> getUserGroupList(String headId, String stage, String type);
 
     int getCount(String headId, String stage);
 
@@ -22,9 +22,9 @@ public interface ActivityUserGroupService {
 
     int validGroupTemplate(String headId, String stage);
 
-    void saveGroupData(String toString, String hasPreheat);
-
     int refrenceCount(String code);
 
     void deleteData(String headId);
+
+    void setSmsCode(String groupId, String tmpCode, String headId, String type, String stage);
 }

@@ -68,6 +68,12 @@ public class ActivityController {
     @Autowired
     private ActivityEffectService activityEffectService;
 
+    @Autowired
+    private ActivityTemplateService activityTemplateService;
+
+    @Autowired
+    private ActivityCovService activityCovService;
+
     // 活动阶段：预热
     private final String STAGE_PREHEAT = "preheat";
     // 活动阶段：正式
@@ -383,86 +389,6 @@ public class ActivityController {
         return ResponseBo.okOverPaging(null, count, activityGroups);
     }
 
-    /**
-     * 不分页的数据
-     * @param headId
-     * @param stage
-     * @return
-     */
-    @GetMapping("/getActivityUserGroupList")
-    public List<ActivityGroup> getActivityUserGroupPage(@RequestParam String headId, @RequestParam String stage) {
-        List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupList(headId, stage);
-        return activityGroups;
-    }
-
-    /**
-     * 获取短信模板示例
-     * @param headId
-     * @param stage
-     * @return
-     */
-    @GetMapping("/getActivityUserList")
-    public ResponseBo getActivityUserList(@RequestParam String headId, @RequestParam String stage) {
-        DecimalFormat df = new DecimalFormat("#.##");
-        //获取第一个商品信息
-        ActivityProduct activityProduct=activityProductService.geFirstProductInfo(headId,stage);
-
-        if(null==activityProduct)
-        {
-            //返回提示信息
-            return ResponseBo.error("请上传至少一个活动商品,才能预览推送内容示例！");
-        }else {
-            List<ActivityGroupVO> result=Lists.newArrayList();
-            ActivityGroupVO vo;
-
-            //模板填充
-            List<ActivityGroup> activityGroups = activityUserGroupService.getActivityUserList(headId, stage);
-            for(ActivityGroup group:activityGroups)
-            {
-                vo=new ActivityGroupVO();
-                vo.setGroupName(group.getGroupName());
-                vo.setInGrowthPath(group.getInGrowthPath());
-                vo.setActiveLevel(group.getActiveLevel());
-
-                //可替换的变量有 ${PROD_NAME} ${PRICE} ${PROD_URL}
-                if(!StringUtils.isEmpty(group.getSmsTemplateContent()))
-                {
-                    String content=group.getSmsTemplateContent().replace("${PROD_NAME}",activityProduct.getProductName())
-                    .replace("${PRICE}", df.format(activityProduct.getMinPrice()))
-                    .replace("${PROD_URL}",activityProduct.getProductUrl());
-
-                    vo.setContent(content);
-                }else
-                {
-                    vo.setContent("");
-                }
-
-                //可替换的变量有 ${PROD_NAME}
-                if(!StringUtils.isEmpty(group.getSmsTemplateContentNormal()))
-                {
-                    String content=group.getSmsTemplateContentNormal().replace("${PROD_NAME}",activityProduct.getProductName());
-                    vo.setContentNormal(content);
-
-                }else
-                {
-                    vo.setContentNormal("");
-                }
-
-                result.add(vo);
-            }
-            return ResponseBo.okWithData("",result);
-        }
-    }
-
-    /**
-     * 获取模板消息数据
-     * @return
-     */
-    @GetMapping("/getTemplateTableData")
-    public ResponseBo getTemplateTableData() {
-        return ResponseBo.okWithData(null, activityHeadService.getTemplateTableData());
-    }
-
     @GetMapping("/updateGroupTemplate")
     public ResponseBo updateGroupTemplate(@RequestParam String headId,@RequestParam String groupId, @RequestParam String code, @RequestParam String stage, @RequestParam String operateType) {
         activityUserGroupService.updateGroupTemplate(headId, groupId, code, stage);
@@ -767,5 +693,111 @@ public class ActivityController {
     @GetMapping("/getEffectAllKpi")
     public ResponseBo getEffectAllKpi(@RequestParam("headId") String headId, @RequestParam("pushKpi") String pushKpi) {
         return ResponseBo.okWithData(null, activityEffectService.getEffectAllKpi(headId, pushKpi));
+    }
+
+    /**
+     * 获取用户群组信息
+     * @param headId
+     * @param stage
+     * @param type
+     * @return
+     */
+    @GetMapping("/getGroupList")
+    public List<ActivityGroup> getGroupList(@RequestParam("headId") String headId, @RequestParam("stage") String stage, @RequestParam("type") String type) {
+        return activityUserGroupService.getUserGroupList(headId, stage, type);
+    }
+
+    // 保存文案信息
+    @PostMapping("/saveSmsTemplate")
+    public ResponseBo saveSmsTemplate(ActivityTemplate activityTemplate) {
+        activityHeadService.saveSmsTemplate(activityTemplate);
+        return ResponseBo.ok();
+    }
+
+    @GetMapping("/getSmsTemplateList")
+    public ResponseBo getSmsTemplateList(ActivityTemplate activityTemplate) {
+        return ResponseBo.okWithData(null, activityHeadService.getSmsTemplateList(activityTemplate));
+    }
+
+    /**
+     * 为群组设置文案
+     * @return
+     */
+    @PostMapping("/setSmsCode")
+    public ResponseBo setSmsCode(@RequestParam("groupId") String groupId, @RequestParam("tmpCode") String tmpCode,
+                                 @RequestParam("headId") String headId, @RequestParam("type") String type, @RequestParam("stage") String stage) {
+        activityUserGroupService.setSmsCode(groupId, tmpCode, headId, type, stage);
+        return ResponseBo.ok();
+    }
+
+    @GetMapping("/getTemplate")
+    public ResponseBo getTemplate(@RequestParam("code") String code) {
+        return ResponseBo.okWithData(null, activityTemplateService.getTemplate(code));
+    }
+
+    @PostMapping("/updateSmsTemplate")
+    public ResponseBo updateSmsTemplate(ActivityTemplate activityTemplate) {
+        activityTemplateService.update(activityTemplate);
+        return ResponseBo.ok();
+    }
+
+    @PostMapping("/deleteTmp")
+    public ResponseBo deleteTmp(@RequestParam("code") String code) {
+        activityTemplateService.deleteTemplate(code);
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 屏蔽测试-短信模板
+     * @return
+     */
+    @GetMapping("/getReplacedTmp")
+    public ResponseBo getReplacedTmp(@RequestParam("code") String code) {
+        return ResponseBo.okWithData(null, activityTemplateService.getReplacedTmp(code));
+    }
+
+    /**
+     * 获取默认转化率的数据
+     * 如果COV_INFO表中没有数据，则获取COV_LIST中的数据
+     *
+     * @return
+     */
+    @GetMapping("/geConvertInfo")
+    public ResponseBo geConvertInfo(@RequestParam("headId") String headId, @RequestParam("stage") String stage) {
+        return ResponseBo.okWithData(null, activityCovService.geConvertInfo(headId, stage));
+    }
+
+    @GetMapping("/getCovList")
+    public ResponseBo getCovList() {
+        return ResponseBo.okWithData(null, activityCovService.getCovList());
+    }
+
+    /**
+     * 存入
+     * @param headId
+     * @param covListId
+     * @param stage
+     * @return
+     */
+    @PostMapping("/insertCovInfo")
+    public ResponseBo insertCovInfo(@RequestParam("headId") String headId, @RequestParam("covListId") String covListId, @RequestParam("stage") String stage) {
+        activityCovService.insertCovInfo(headId, covListId, stage);
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 测算转化率
+     * @return
+     */
+    @GetMapping("/calculateCov")
+    public ResponseBo calculateCov(@RequestParam("headId") String headId, @RequestParam("stage") String stage, @RequestParam("changedCovId") String changedCovId,
+                                   @RequestParam("defaultCovId") String defaultCovId) {
+        return ResponseBo.okWithData(null, activityCovService.calculateCov(headId, stage, changedCovId, defaultCovId));
+    }
+
+    @PostMapping("/updateCovInfo")
+    public ResponseBo updateCovInfo(@RequestParam("headId") String headId, @RequestParam("stage") String stage, @RequestParam("covId") String covId) {
+        activityCovService.updateCovInfo(headId, stage, covId);
+        return ResponseBo.ok();
     }
 }

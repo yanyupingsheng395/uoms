@@ -26,7 +26,7 @@ public interface ActivityHeadMapper {
 
     ActivityHead findById(String headId);
 
-    List<ActivityTemplate> getTemplateTableData();
+    List<ActivityTemplate> getTemplateTableData(@Param("activityTemplate") ActivityTemplate activityTemplate);
 
     String getActivityName(String headId);
 
@@ -57,4 +57,6 @@ public interface ActivityHeadMapper {
     int getDeleteCount(String headId);
 
     String getStatus(@Param("sql") String sql);
+
+    void saveSmsTemplate(ActivityTemplate activityTemplate);
 }

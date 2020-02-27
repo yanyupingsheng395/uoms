@@ -4,6 +4,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.ActivityTemplate;
+import com.sun.corba.se.spi.ior.ObjectKey;
 
 import java.util.List;
 import java.util.Map;
@@ -42,12 +43,6 @@ public interface ActivityHeadService {
      * @return
      */
     ActivityHead findById(String headId);
-
-    /**
-     * 获取模板数据
-     * @return
-     */
-    List<ActivityTemplate> getTemplateTableData();
 
     /**
      * 通过headId获取活动名称
@@ -97,4 +92,8 @@ public interface ActivityHeadService {
     String getStatus(String headId, String stage);
 
     void updateStatus(String headId, String stage, String status);
+
+    void saveSmsTemplate(ActivityTemplate activityTemplate);
+
+    List<ActivityTemplate> getSmsTemplateList(ActivityTemplate activityTemplate);
 }
