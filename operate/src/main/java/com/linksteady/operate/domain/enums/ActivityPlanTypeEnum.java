@@ -2,7 +2,7 @@ package com.linksteady.operate.domain.enums;
 
 public enum ActivityPlanTypeEnum {
 
-    Notify("提醒","NOTIFY"),During("期间","DURING");
+    Notify("NOTIFY","活动提醒"),During("DURING","活动期间");
 
     private String planTypeCode;
 
