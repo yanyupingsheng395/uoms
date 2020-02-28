@@ -289,7 +289,7 @@ $( "#btn_download" ).click( function () {
 
 // 上一步
 function prevStep() {
-    let operateType = $( "#operateType" ).val();
+    let operateType = operate_type;
     if (operateType == 'save') {
         $( "#operateType" ).val( "saveAndUpdate" );
         $("#stageName").html('').append("创建计划");
@@ -314,14 +314,14 @@ function prevStep() {
 
 // 添加活动商品
 $( "#saveActivityProduct" ).click( function () {
-    let operateType = $("#operateType").val();
+    let operateType = $("#activity_stage").val();
     let validator = $activityProductAddForm.validate();
     let flag = validator.form();
     if (flag) {
         let operate = $( "#saveActivityProduct" ).attr( "name" );
         if (operate === "save") {
             $.post( "/activity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" +
-                $( "#headId" ).val() + "&activityStage=" + $( "#activity_stage" ).val() + "&operateType=" + operateType,  function (r) {
+                $( "#headId" ).val() + "&activityStage=" + CURRENT_ACTIVITY_STAGE + "&operateType=" + operateType,  function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "添加商品成功！" );
                     $MB.closeAndRestModal( "addProductModal" );
@@ -333,7 +333,7 @@ $( "#saveActivityProduct" ).click( function () {
         }
         if (operate === 'update') {
             $.post( "/activity/updateActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" +
-                $( "#headId" ).val() + "&activityStage=" + $( "#activity_stage" ).val() + "&operateType=" + operateType, function (r) {
+                $( "#headId" ).val() + "&activityStage=" + $( "#activity_stage" ).val() + "&operateType=" + operateType + "&productId=" + $("#product_id").val(), function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "更新商品成功！" );
                     $MB.closeAndRestModal( "addProductModal" );
@@ -401,7 +401,7 @@ $('#btn_upload').click(function () {
     formData.append("file", file);
     formData.append("headId", $("#headId").val());
     formData.append("stage", $("#activity_stage").val());
-    formData.append("operateType", $("#operateType").val());
+    formData.append("operateType", operate_type);
     $.ajax({
         url: "/activity/uploadExcel",
         type: "post",
@@ -485,7 +485,7 @@ $("#template-add-btn").click(function () {
     }
     var templateCode = selected[0].code;
     $.get("/activity/updateGroupTemplate", {
-            groupId: groupId, code: templateCode, headId: $("#headId").val(), stage: $("#activity_stage").val(), operateType: $("#operateType").val()
+            groupId: groupId, code: templateCode, headId: $("#headId").val(), stage: $("#activity_stage").val(), operateType: operate_type
         }, function (r) {
         if(r.code === 200) {
             $MB.n_success("更新消息模板成功！");
@@ -500,21 +500,14 @@ $("#template-add-btn").click(function () {
 
 // 提交计划
 function submitActivity() {
-    if(!$("#push_ok").is(":checked")) {
-        $MB.n_warning("请在\"推送预览\"面板对待推送的样例文案先进行预览确认。");
-        return;
-    }
     let headId = $("#headId").val();
-    let stage = $("#activity_stage").val();
-
-    // 验证短信模板是否已经配置
     $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: $("#activity_stage").val()}, function (r) {
         if(r.code === 200) {
             $MB.confirm({
                 title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
                 content: '确认提交计划？'
             }, function () {
-                $.post("/activity/submitActivity", {headId: headId, stage: stage, operateType: $("#operateType").val()}, function (r) {
+                $.post("/activity/submitActivity", {headId: headId, operateType: operate_type, stage: CURRENT_ACTIVITY_STAGE}, function (r) {
                     if(r.code === 200) {
                         $MB.n_success("提交计划成功！");
                         setTimeout(function () {
@@ -550,7 +543,7 @@ $("#btn_delete_shop").click(function () {
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
         content: '确认删除选中的商品记录？'
     }, function () {
-        $.post("/activity/deleteProduct", {headId:headId, stage: stage, productIds: productIds.join(","), operateType: $("#operateType").val()}, function (r) {
+        $.post("/activity/deleteProduct", {headId:headId, stage: stage, productIds: productIds.join(","), operateType: operate_type}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("删除成功！");
                 $MB.refreshTable('activityProductTable');

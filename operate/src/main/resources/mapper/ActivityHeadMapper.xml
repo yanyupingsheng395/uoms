@@ -163,16 +163,21 @@
         select PREHEAT_STATUS from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
     </select>
 
+<!--    <update id="updateGroupChanged">-->
+<!--        update UO_OP_ACTIVITY_HEADER-->
+<!--        <set>-->
+<!--            <if test="stage == 'preheat'">-->
+<!--                PREHEAT_CHANGED = #{changedStatus}, PREHEAT_CHANGED_TIME = #{time}-->
+<!--            </if>-->
+<!--            <if test="stage == 'formal'">-->
+<!--                FORMAL_CHANGED = #{changedStatus}, FORMAL_CHANGED_TIME = #{time}-->
+<!--            </if>-->
+<!--        </set>-->
+<!--    </update>-->
     <update id="updateGroupChanged">
-        update UO_OP_ACTIVITY_HEADER
-        <set>
-            <if test="stage == 'preheat'">
-                PREHEAT_CHANGED = #{changedStatus}, PREHEAT_CHANGED_TIME = #{time}
-            </if>
-            <if test="stage == 'formal'">
-                FORMAL_CHANGED = #{changedStatus}, FORMAL_CHANGED_TIME = #{time}
-            </if>
-        </set>
+        update UO_OP_ACTIVITY_HEADER set
+            PREHEAT_CHANGED = #{changedStatus}, PREHEAT_CHANGED_TIME = #{time},
+            FORMAL_CHANGED = #{changedStatus}, FORMAL_CHANGED_TIME = #{time}
     </update>
 
     <select id="getDataChangedStatus" resultType="map">
@@ -187,7 +192,7 @@
     </select>
 
     <select id="getStageDate" resultType="map">
-        select FORMAL_START_DT,FORMAL_END_DT,PREHEAT_START_DT,PREHEAT_END_DT from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
+        select FORMAL_START_DT,FORMAL_END_DT,PREHEAT_START_DT,PREHEAT_END_DT, PREHEAT_NOTIFY_DT, FORMAL_NOTIFY_DT from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
     </select>
 
     <delete id="deleteActivity">

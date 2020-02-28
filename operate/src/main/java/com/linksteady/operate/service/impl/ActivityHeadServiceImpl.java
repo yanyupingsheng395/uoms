@@ -1,21 +1,15 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Lists;
 import com.linksteady.common.domain.User;
 import com.linksteady.operate.dao.ActivityCovMapper;
 import com.linksteady.operate.dao.ActivityHeadMapper;
-import com.linksteady.operate.dao.ActivityTemplateMapper;
 import com.linksteady.operate.dao.ActivityUserGroupMapper;
-import com.linksteady.operate.domain.ActivityCovInfo;
-import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.ActivityTemplate;
 import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.domain.enums.ActivityStatusEnum;
-import com.linksteady.operate.domain.enums.ActivityStageEnum;
-import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivityUserGroupService;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +17,6 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,11 +29,6 @@ import java.util.stream.Collectors;
 @Service
 public class ActivityHeadServiceImpl implements ActivityHeadService {
 
-    // 活动阶段：预热
-    private final String STAGE_PREHEAT = "preheat";
-    // 活动阶段：正式
-    private final String STAGE_FORMAL = "formal";
-
     @Autowired
     private ActivityHeadMapper activityHeadMapper;
 
@@ -49,9 +37,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 
     @Autowired
     private ActivityUserGroupService activityUserGroupService;
-
-    @Autowired
-    private ActivitySummaryService activitySummaryService;
 
     @Autowired
     private ActivityUserGroupMapper activityUserGroupMapper;
@@ -89,12 +74,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         activityHead.setInsertDt(new Date());
         activityHead.setInsertBy(((User)SecurityUtils.getSubject().getPrincipal()).getUsername());
         activityHeadMapper.saveActivityHead(activityHead);
-//        //更新当前活动是大型活动还是小型活动的标记
-//        activityHeadMapper.updateActivityFlag(activityHead.getHeadId().toString());
-//        // 保存群组的初始化信息
-//        activityUserGroupService.saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
-//        //写入计划信息
-        activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
         if(HAS_PREHEAT.equals(hasPreheat)) {
             // 保存群组信息
             saveGroupInfo(activityHead.getHeadId().toString(), ActivityStageEnum.preheat.getStageCode());
@@ -119,12 +98,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     }
 
     @Override
-    public List<ActivityTemplate> getTemplateTableData() {
-        return activityHeadMapper.getTemplateTableData();
-    }
-
-
-    @Override
     public String getActivityName(String headId) {
         return activityHeadMapper.getActivityName(headId);
     }
@@ -141,6 +114,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void submitActivity(String headId, String stage) {
+        activityPlanService.savePlanList(headId, stage);
         updateStatus(headId, stage, "todo");
     }
 
@@ -222,7 +196,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
             covId = activityCovMapper.getCovList("Y").get(0).getCovListId();
         }
         if(ActivityStageEnum.preheat.getStageCode().equals(stage)) {
-            activityCovMapper.updateFormalCovInfo(headId, covId);
+            activityCovMapper.updatePreheatCovInfo(headId, covId);
         }
         if(ActivityStageEnum.formal.getStageCode().equals(stage)) {
             activityCovMapper.updateFormalCovInfo(headId, covId);

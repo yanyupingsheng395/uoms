@@ -6,6 +6,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.domain.enums.ActivityGroupEnum;
+import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.thrift.ActivityThriftClient;
@@ -65,11 +66,6 @@ public class ActivityController {
 
     @Autowired
     private ActivityCovService activityCovService;
-
-    // 活动阶段：预热
-    private final String STAGE_PREHEAT = "preheat";
-    // 活动阶段：正式
-    private final String STAGE_FORMAL = "formal";
 
     /**
      * 获取头表的分页数据
@@ -405,11 +401,13 @@ public class ActivityController {
      */
     @PostMapping("/submitActivity")
     public ResponseBo submitActivity(@RequestParam String headId, @RequestParam String stage, @RequestParam String operateType) {
-        if("update".equalsIgnoreCase(operateType)) {
-            submitAndUpdateStatus(headId, stage);
-        }else {
-            activityHeadService.submitActivity(headId, stage);
-        }
+//        if("update".equalsIgnoreCase(operateType)) {
+//            submitAndUpdateStatus(headId, stage);
+//        }else {
+//            activityHeadService.submitActivity(headId, stage);
+//        }
+
+        activityHeadService.submitActivity(headId, stage);
         return ResponseBo.ok();
     }
 
@@ -451,7 +449,7 @@ public class ActivityController {
         int productNum = activityProductService.validProductNum(headId, stage);
 
         if(productNum == 0) {
-            return ResponseBo.error("商品数不能为零！");
+            return ResponseBo.error("至少需要一条商品信息！");
         }
 
         if(templateIsNullCount != 0) {
@@ -493,10 +491,10 @@ public class ActivityController {
      */
     private String getHeadStatus(String headId, String stage) {
         String status = "";
-        if(STAGE_PREHEAT.equalsIgnoreCase(stage)) {
+        if(ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
             status = activityHeadService.getStatus(headId, stage);
         }
-        if(STAGE_FORMAL.equalsIgnoreCase(stage)) {
+        if(ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
             status = activityHeadService.getStatus(headId, stage);
         }
         return status;

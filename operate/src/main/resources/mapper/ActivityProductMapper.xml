@@ -20,7 +20,7 @@
         select * from (
         select t.*, ROWNUM rn from (
           select ID, HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR from UO_OP_ACTIVITY_PRODUCT
-          where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+          where HEAD_ID = #{headId}
         <if test="productId != null and productId != ''">
             and EPB_PRODUCT_ID = #{productId}
         </if>
@@ -36,7 +36,7 @@
     </select>
 
     <select id="getCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}
         <if test="productId != null and productId != ''">
             and EPB_PRODUCT_ID = #{productId}
         </if>
@@ -75,8 +75,8 @@
     <update id="updateActivityProduct">
         update UO_OP_ACTIVITY_PRODUCT
         set
-        EPB_PRODUCT_ID = #{productId},
-        PRODUCT_NAME = #{productName}, MIN_PRICE = #{minPrice}, FORMAL_PRICE = #{formalPrice}, ACTIVITY_INTENSITY = #{activityIntensity}, PRODUCT_URL = #{productUrl}, PRODUCT_ATTR = #{productAttr}, ACTIVITY_STAGE = #{activityStage}
+        EPB_PRODUCT_ID = #{productId}, SKU_CODE = #{skuCode},
+        PRODUCT_NAME = #{productName}, MIN_PRICE = #{minPrice}, FORMAL_PRICE = #{formalPrice}, PRODUCT_ATTR = #{productAttr}
         where ID = #{id}
     </update>
 
@@ -101,7 +101,7 @@
     </insert>
 
     <delete id="deleteProduct">
-        delete from UO_OP_ACTIVITY_PRODUCT where head_id = #{headId} and activity_stage = #{stage} and EPB_PRODUCT_ID in
+        delete from UO_OP_ACTIVITY_PRODUCT where head_id = #{headId} and EPB_PRODUCT_ID in
         <foreach collection="productList" item="item" separator="," open="(" close=")">
             #{item}
         </foreach>
@@ -109,8 +109,7 @@
 
     <select id="validProductNum" resultType="int">
         select count(1) from UO_OP_ACTIVITY_PRODUCT
-        where
-        HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+        where HEAD_ID = #{headId}
     </select>
 
     <select id="getSameProductCount" resultType="int">

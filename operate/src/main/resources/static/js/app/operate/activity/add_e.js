@@ -85,6 +85,7 @@ function createActivity(stage) {
     $( "#step4" ).attr( "style", "display:block;" );
 
     CURRENT_ACTIVITY_STAGE = stage;
+    $("#activity_stage").val(stage);
     getGroupList( stage, 'NOTIFY', 'table1');
     getGroupList( stage, 'DURING', 'table5');
 
@@ -303,22 +304,34 @@ $( "#btn_batch_upload" ).click( function () {
 } );
 
 $( "#btn_create_preheat" ).click( function () {
+    var num = $('#activityProductTable').bootstrapTable('getOptions').totalRows;
     var headId = $( "#headId" ).val();
     if (headId === '') {
-        $MB.n_warning( "请先保存基本信息，再添加商品！" );
+        $MB.n_warning( "请先保存基本信息！" );
+        return;
     } else {
-        createActivity( 'preheat' );
+        if(num === 0) {
+            $MB.n_warning( "至少需要1条商品信息！" );
+            return;
+        }
     }
+    createActivity( 'preheat' );
 } );
 
 // 检测是否上传商品
 $( "#btn_create_formal" ).click( function () {
+    var num = $('#activityProductTable').bootstrapTable('getOptions').totalRows;
     var headId = $( "#headId" ).val();
     if (headId === '') {
-        $MB.n_warning( "请先保存基本信息，再添加商品！" );
+        $MB.n_warning( "请先保存基本信息！" );
+        return;
     } else {
-        createActivity( 'formal' );
+        if(num === 0) {
+            $MB.n_warning( "至少需要1条商品信息！" );
+            return;
+        }
     }
+    createActivity( 'formal' );
 } );
 
 // 获取群组列表信息
