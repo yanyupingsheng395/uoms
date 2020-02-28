@@ -250,6 +250,10 @@ public class PageController {
     public String activityAdd(Model model)
     {
         model.addAttribute("operateType", "save");
+        model.addAttribute("prodNameLen", 10);
+        model.addAttribute("priceLen", 5);
+        model.addAttribute("prodUrlLen", 23);
+        model.addAttribute("smsLenLimit", 61);
         return "operate/activity/add";
     }
 
@@ -303,6 +307,11 @@ public class PageController {
         // 当处于done状态的时候，按钮不显示
         model.addAttribute("preheatStatus", preheatStatus);
         model.addAttribute("formalStatus", formalStatus);
+
+        model.addAttribute("prodNameLen", 10);
+        model.addAttribute("priceLen", 5);
+        model.addAttribute("prodUrlLen", 23);
+        model.addAttribute("smsLenLimit", 61);
         return "operate/activity/add";
     }
 

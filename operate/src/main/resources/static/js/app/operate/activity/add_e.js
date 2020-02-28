@@ -485,6 +485,44 @@ function validTmp() {
         $MB.n_warning( "文案内容不能为空" );
         return false;
     }
+
+    // 验证短信内容是否合法
+    if(isProdName === '1') {
+        if(contet.indexOf("${PROD_NAME}") === -1) {
+            $MB.n_warning("'推荐商品名称：是'，文案内容未发现${PROD_NAME}");
+            return false;
+        }
+    }else {
+        if(contet.indexOf("${PROD_NAME}") !== -1) {
+            $MB.n_warning("'推荐商品名称：否'，文案内容却发现${PROD_NAME}");
+            return false;
+        }
+    }
+
+    if(isProdUrl === '1') {
+        if(contet.indexOf("${PROD_URL}") === -1) {
+            $MB.n_warning("'推荐商品短链接：是'，文案内容未发现${PROD_URL}");
+            return false;
+        }
+    }else {
+        if(contet.indexOf("${PROD_URL}") !== -1) {
+            $MB.n_warning("'推荐商品短链接：否'，文案内容却发现${PROD_URL}");
+            return false;
+        }
+    }
+
+    if(isPrice === '1') {
+        if(contet.indexOf("${PRICE}") === -1) {
+            $MB.n_warning("'推荐商品活动期间最低单价：是'，文案内容未发现${PRICE}");
+            return false;
+        }
+    }else {
+        if(contet.indexOf("${PRICE}") !== -1) {
+            $MB.n_warning("'推荐商品活动期间最低单价：否'，文案内容却发现${PRICE}");
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -571,6 +609,7 @@ $( "#sms_add_modal" ).on( 'hidden.bs.modal', function () {
     $( "input[name='isPrice']" ).removeAttr( "checked" );
     $( "#smstemplate_modal" ).modal( 'show' );
     $( "#btn_save_sms" ).attr( 'name', 'save' );
+    $("#word").text('');
 } );
 
 // 删除文案
@@ -819,5 +858,32 @@ function updateCovInfo() {
             geConvertInfo();
             $("#plan_change_modal").modal('hide');
         });
+    });
+}
+
+// 统计短信内容的字数
+statTmpContentNum();
+function statTmpContentNum() {
+    $("#content").on('input propertychange', function () {
+        let smsContent = $('#content').val();
+        let y = smsContent.length;
+        let m = smsContent.length;
+        let n = smsContent.length;
+        if(smsContent.indexOf('${PROD_URL}') > -1) {
+            y = y - '${PROD_URL}'.length + parseInt(PROD_URL_LEN);
+            m = m - '${PROD_URL}'.length;
+        }
+        if(smsContent.indexOf('${PROD_NAME}') > -1) {
+            y = y - '${PROD_NAME}'.length + parseInt(PROD_NAME_LEN);
+            m = m - '${PROD_NAME}'.length;
+        }
+        if(smsContent.indexOf('${PRICE}') > -1) {
+            y = y - '${PRICE}'.length + parseInt(PRICE_LEN);
+            m = m - '${PRICE}'.length;
+        }
+        total_num = y;
+        var code = "";
+        code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
+        $("#word").text(code);
     });
 }

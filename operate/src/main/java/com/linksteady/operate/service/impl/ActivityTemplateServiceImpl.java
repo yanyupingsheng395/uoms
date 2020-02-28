@@ -38,7 +38,7 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         String isProdName = activityTemplate.getIsProdName();
         String isPrice = activityTemplate.getIsPrice();
         String prodUrl = "${PROD_URL}";
-        String prodName = "${PROD_URL}";
+        String prodName = "${PROD_NAME}";
         String price = "${PRICE}";
         String content = activityTemplate.getContent();
         if (StringUtils.isNotEmpty(isProdUrl) && isProdUrl.equalsIgnoreCase("1")) {

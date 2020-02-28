@@ -235,7 +235,7 @@
                                         <label class="control-label">文案内容</label>
                                     </div>
                                     <div>
-                                        <textarea class="form-control" id="content" name="content" style="height: 102px;" oninput="smsContentValid()"></textarea>
+                                        <textarea class="form-control" id="content" name="content" style="height: 102px;"></textarea>
                                         <input type="hidden" id="smsContentInput" name="smsContentInput"/>
                                         <span class="wordwrap"><var id="word"></var></span>
                                     </div>
@@ -250,12 +250,12 @@
                                 <div class="col-md-12 control-label" style="text-align: left;">
                                     <p class="small">
                                         文案中填充变量说明：<br/>
-                                        1.一条文案通常允许的总字符数为[[${smsLengthLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；<br/>
+                                        1.一条文案通常允许的总字符数为[[${smsLenLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；<br/>
                                         2.个性化推送文案中，包括运营者编写的内容，字符数以N表示；还包括系统填充的变量，字符数以M表示；Y=N+M；<br/>
                                         3.由于系统填充变量也会占用字符，所以在此列出3种变量的占用字符情况<br/>
                                         &nbsp;&nbsp;&nbsp;${PROD_NAME}：商品短名称，占<font color="red">[[${prodNameLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${PROD_URL}：商品购买详情页短链接，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${PRICE}：商品在活动期间的最低单价，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${PROD_URL}：商品购买详情页短链接，占<font color="red">[[${prodUrlLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${PRICE}：商品在活动期间的最低单价，占<font color="red">[[${priceLen}]]</font>个字符；<br/>
                                     </p>
                                 </div>
                             </div>
