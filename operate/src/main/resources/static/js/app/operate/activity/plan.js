@@ -30,6 +30,21 @@ function getPlanTable() {
                 title: '成功推送人数',
                 align: 'center',
                 valign: 'middle'
+            },
+             {
+                field: 'planType',
+                title: '计划类型',
+                align: 'center',
+                valign: 'middle',
+                formatter: function (value, row, index) {
+                    if (value === 'NOTIFY')
+                    {
+                        return '<span class="badge bg-success">活动提醒</span>';
+                    }else
+                    {
+                        return '<span class="badge bg-success">活动期间</span>';
+                    }
+                }
             },{
                 field: 'planStatus',
                 title: '状态',
