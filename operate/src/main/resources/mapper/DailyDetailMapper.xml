@@ -81,32 +81,13 @@
         select t.*, ROWNUM RN from (
         select USER_ID, TAR_ORDER_PRICE, REC_PROD_NAME, ORDER_PERIOD, COUPON_MIN, COUPON_DENO, SMS_CONTENT
         from UO_OP_DAILY_DETAIL where head_id = #{headId}
-        order by PATH_ACTIVE, USER_VALUE, DAILY_DETAIL_ID asc
+        order by COUPON_DENO,COUPON_MIN, DAILY_DETAIL_ID asc
         ) t where ROWNUM &lt;=#{end}
         ) where RN &gt;=#{start}
     </select>
 
     <select id="getStrategyCount" resultType="int">
         select count(1) from UO_OP_DAILY_DETAIL where head_id = #{headId}
-    </select>
-
-    <select id="getUserEffect" resultMap="effectResult">
-        select * from (
-        select t.*, ROWNUM RN from (
-        select USER_ID, PATH_ACTIVE,IS_PUSH,IS_CONVERSION, USER_VALUE,REC_PROD_NAME, TAR_ORDER_PRICE,ACT_ORDER_PRICE
-        from UO_OP_DAILY_DETAIL where head_id = #{headId}
-        <if test="whereInfo != ''">
-            ${whereInfo}
-        </if>
-        ) t where ROWNUM &lt;=#{end}
-        ) where RN &gt;=#{start}
-    </select>
-
-    <select id="getDataListCount" resultType="int">
-        select count(1) from UO_OP_DAILY_DETAIL t1 where head_id = #{headId}
-        <if test="whereInfo != ''">
-            ${whereInfo}
-        </if>
     </select>
 
     <select id="getContentList" resultType="map">

@@ -102,6 +102,8 @@ spring:
         content:
           enabled: true
           paths: /js/app/**, /css/**
+  main:
+    allow-bean-definition-overriding: true
 
 management:
   endpoints:

@@ -1,6 +1,7 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.ActivityDetail;
+import com.linksteady.operate.vo.ActivityContentVO;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public interface ActivityDetailService {
 
-    int getDataCount(String headId, String planDtWid);
+    int getDataCount(String headId, String planDtWid,String groupId);
 
-    List<ActivityDetail> getPageList(int start, int end, String headId, String planDtWid);
+    List<ActivityDetail> getPageList(int start, int end, String headId, String planDtWid,String groupId);
 }

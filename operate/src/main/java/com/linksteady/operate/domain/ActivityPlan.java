@@ -1,7 +1,9 @@
 package com.linksteady.operate.domain;
 
+import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import lombok.Data;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -10,8 +12,6 @@ import java.util.Date;
  */
 @Data
 public class ActivityPlan {
-
-    private Long planId;
 
     private Long headId;
 
@@ -27,14 +27,22 @@ public class ActivityPlan {
 
     private String stage;
 
+    private String planType;
+
+    private int successNum;
+
+    private int version;
+
     public ActivityPlan() {}
 
-    public ActivityPlan(Long headId, Long userCnt,Date planDate,String planStatus,String stage,Long planDateWid) {
+    public ActivityPlan(Long headId,Date planDate,String stage,String planType) {
         this.headId = headId;
-        this.userCnt = userCnt;
         this.planDate = planDate;
-        this.planStatus = planStatus;
+        this.userCnt=0L;
+        this.planStatus = ActivityPlanStatusEnum.NOT_CALCUATE.getStatusCode();
         this.stage = stage;
-        this.planDateWid=planDateWid;
+        this.planDateWid=Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(planDate));
+        this.planType=planType;
+        this.successNum=0;
     }
 }

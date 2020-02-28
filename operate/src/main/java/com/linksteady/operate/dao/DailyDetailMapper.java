@@ -52,19 +52,6 @@ public interface DailyDetailMapper {
      */
     int getStrategyCount(String headId);
 
-
-    List<DailyDetail> getUserEffect(String headId, int start, int end, String whereInfo);
-
-    /**
-     * 根据条件获取每日运营明细的记录数
-     *
-     * @param headId
-     * @param whereInfo
-     * @return
-     */
-    int getDataListCount(String headId, String whereInfo);
-
-
     /**
      * 获取短信列表
      *

@@ -1,10 +1,11 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.ActivityGroup;
+import com.linksteady.operate.domain.ActivityDetail;
 import com.linksteady.operate.domain.ActivityPlan;
-import org.springframework.transaction.annotation.Transactional;
+import com.linksteady.operate.vo.ActivityContentVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -26,19 +27,11 @@ public interface ActivityPlanService {
     List<ActivityPlan> getPlanList(String headId);
 
     /**
-     * 获取计划的状态
-     * @param headId
-     * @param planDateWid
-     * @return
-     */
-    String getStatus(String headId, String planDateWid);
-
-    /**
      * 更新状态
      * @param headId
      * @param planDateWid
      */
-    void updateStatus(String headId, String planDateWid, String status);
+    int updateStatus(String headId, String planDateWid, String status,int version);
 
     void deleteData(String headId);
 
@@ -50,13 +43,6 @@ public interface ActivityPlanService {
     void insertToPushListLarge(String headId, String planDateWid);
 
     /**
-     * 将活动的推送数据标记为失败(停止)
-     * @param headId
-     * @param planDateWid
-     */
-    void updatePushListLargeToFaild(String headId,String planDateWid);
-
-    /**
      * 根据状态获取条数
      * @param headId
      * @param stage
@@ -64,4 +50,33 @@ public interface ActivityPlanService {
      * @return
      */
     int getStatusCount(String headId, String stage, List<String> asList);
+
+    /**
+     * 获取群组的统计信息
+     * @param headId
+     * @param planDtWid
+     * @return
+     */
+    List<Map<String,Object>> getUserGroupList(String headId, String planDtWid);
+
+    /**
+     * 获取执行计划
+     * @param headId
+     * @return
+     */
+    ActivityPlan getPlanInfo(String headId,String planDtWid);
+
+    /**
+     * 对活动运营的文案进行转换
+     */
+    String transActivityDetail(String headId,String planDtWid);
+
+    /**
+     * 对变量进行替换
+     * @param list
+     * @return
+     */
+    List<ActivityContentVO> processVariable(List<ActivityDetail> list, Map<String,String> templateMap);
+
+    void pushActivity(String headId, String planDateWid,String pushMethod,String pushPeriod, ActivityPlan activityPlan) throws Exception;
 }

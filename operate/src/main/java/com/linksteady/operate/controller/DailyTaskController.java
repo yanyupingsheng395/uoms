@@ -104,7 +104,6 @@ public class DailyTaskController {
      */
     @GetMapping("/generatePushList")
     public ResponseBo generatePushList(String headId) {
-
         //首先获取锁
         if (dailyService.getTransContentLock(headId)) {
             //调用文案生成逻辑
@@ -273,7 +272,7 @@ public class DailyTaskController {
         //判断是否有短信内容为空
         long nullContentSize = smsContentList.stream().filter(x -> StringUtils.isEmpty(x.get("CONTENT"))).count();
         if (nullContentSize > 0) {
-            return "短信内容为空，合计：" + totalSize + "条，内容为空：" + nullContentSize + "条";
+            return "文案内容为空，合计：" + totalSize + "条，内容为空：" + nullContentSize + "条";
         }
 
         // 短信长度超出限制
@@ -283,10 +282,10 @@ public class DailyTaskController {
         List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).contains("$"))
                 .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
         if (0 != lengthIds.size()) {
-            return "短信长度超出限制，合计：" + totalSize + "条，不符合规范：" + lengthIds.size() + "条";
+            return "文案长度超出限制，合计：" + totalSize + "条，不符合规范：" + lengthIds.size() + "条";
         }
         if (0 != invalidIds.size()) {
-            return "短信含未被替换的模板变量，合计：" + totalSize + "条，不符合规范：" + invalidIds.size() + "条";
+            return "文案含未不符合规范的字符，合计：" + totalSize + "条，不符合规范：" + invalidIds.size() + "条";
         }
         return null;
     }

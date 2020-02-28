@@ -9,30 +9,35 @@
         <result property="planDateWid" column="PLAN_DATE_WID" jdbcType="DECIMAL"/>
         <result property="activityName" column="ACTIVITY_NAME" jdbcType="VARCHAR"/>
         <result property="stage" column="ACTIVITY_STAGE" jdbcType="VARCHAR"/>
+
+        <result property="planType" column="PLAN_TYPE" jdbcType="VARCHAR"/>
+        <result property="successNum" column="SUCCESS_NUM" jdbcType="DECIMAL"/>
+        <result property="version" column="VERSION" jdbcType="DECIMAL"/>
     </resultMap>
 
     <insert id="savePlanList">
         insert all
         <foreach collection="list" separator="" open="" close="" item="item">
-            into UO_OP_ACTIVITY_PLAN(HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID)
-            values (#{item.headId}, #{item.userCnt}, #{item.planDate}, #{item.planStatus}, #{item.stage}, #{item.planDateWid})
+            into UO_OP_ACTIVITY_PLAN(HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID,PLAN_TYPE,SUCCESS_NUM)
+            values (#{item.headId}, #{item.userCnt}, #{item.planDate}, #{item.planStatus}, #{item.stage}, #{item.planDateWid}, #{item.planType}, #{item.successNum})
         </foreach>
         select 1 from dual
     </insert>
 
     <select id="getPlanList" resultMap="planMap">
-        select ACTIVITY_NAME, UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_STATUS from UO_OP_ACTIVITY_PLAN
+        select ACTIVITY_NAME, UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM from UO_OP_ACTIVITY_PLAN
         left join UO_OP_ACTIVITY_HEADER on UO_OP_ACTIVITY_PLAN.HEAD_ID = UO_OP_ACTIVITY_HEADER.HEAD_ID
         where UO_OP_ACTIVITY_PLAN.HEAD_ID = #{headId} order by PLAN_DATE asc
     </select>
 
-    <select id="getStatus" resultType="string">
-        select PLAN_STATUS from UO_OP_ACTIVITY_PLAN where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid}
+    <select id="getPlanInfo" resultMap="planMap">
+        select  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM,VERSION from UO_OP_ACTIVITY_PLAN
+         where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid}
     </select>
 
     <update id="updateStatus">
-        update UO_OP_ACTIVITY_PLAN set PLAN_STATUS = #{status}
-        where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid}
+        update UO_OP_ACTIVITY_PLAN set PLAN_STATUS = #{status},VERSION=VERSION+1
+        where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid} AND VERSION=#{version}
     </update>
 
     <delete id="deleteData">
@@ -56,7 +61,7 @@
                T.ACTIVITY_DETAIL_ID,
                T.USER_PHONE,
                '0',
-               concat(concat(T.PLAN_DT, lpad(T.ORDER_PERIOD,'2','0')), '00'),
+               PUSH_SCHEDULING_DATE,
                SEQ_UO_OP_PUSH_LIST_LARGE.NEXTVAL
         FROM UO_OP_ACTIVITY_DETAIL T where  head_id = #{headId} and plan_dt = #{planDateWid}
     </insert>
@@ -76,4 +81,31 @@
             #{item}
         </foreach>
     </select>
+
+    <select id="getUserGroupList" resultType="map">
+        SELECT T2.CODE,T2.VALUE,NVL(T1.USER_NUM,0) USER_NUM FROM (
+             SELECT T.GROUP_ID, COUNT(*) USER_NUM
+             FROM UO_OP_ACTIVITY_DETAIL T
+             WHERE T.HEAD_ID =  #{headId}
+               AND T.PLAN_DT =  #{planDtWid}
+             GROUP BY T.GROUP_ID ) T1,
+         (SELECT CODE,VALUE FROM T_DICT C WHERE C.TYPE_CODE='ACTIVITY_GROUP') T2
+        WHERE T1.GROUP_ID(+)=T2.CODE
+        ORDER BY T2.CODE ASC
+    </select>
+
+    <select id="getAllTemplate"  resultType="map">
+        SELECT
+                UO_OP_ACTIVITY_GROUP.GROUP_ID||'_'||UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE||'_'||UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE GROUPNAME,
+                UO_OP_ACTIVITY_TEMPLATE.TMP_CONTENT
+        FROM UO_OP_ACTIVITY_GROUP, UO_OP_ACTIVITY_TEMPLATE
+        WHERE UO_OP_ACTIVITY_GROUP.SMS_TEMPLATE_CODE =UO_OP_ACTIVITY_TEMPLATE.TMP_CODE(+)
+          AND UO_OP_ACTIVITY_GROUP.HEAD_ID=#{headId}
+    </select>
+
+    <update id="updatePushMethod">
+        update UO_OP_ACTIVITY_PLAN set
+                      PUSH_METHOD = #{pushMethod},PUSH_PERIOD=#{pushPeriod}
+        where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid}
+    </update>
 </mapper>

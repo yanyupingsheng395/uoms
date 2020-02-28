@@ -1,6 +1,7 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 import com.linksteady.common.domain.User;
 import com.linksteady.operate.dao.ActivityCovMapper;
 import com.linksteady.operate.dao.ActivityHeadMapper;
@@ -8,11 +9,14 @@ import com.linksteady.operate.dao.ActivityTemplateMapper;
 import com.linksteady.operate.dao.ActivityUserGroupMapper;
 import com.linksteady.operate.domain.ActivityCovInfo;
 import com.linksteady.operate.domain.ActivityGroup;
+import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.ActivityTemplate;
 import com.linksteady.operate.domain.enums.ActivityStageEnum;
+import com.linksteady.operate.domain.enums.ActivityStatusEnum;
+import com.linksteady.operate.domain.enums.ActivityStageEnum;
+import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.service.ActivityHeadService;
-import com.linksteady.operate.service.ActivitySummaryService;
 import com.linksteady.operate.service.ActivityUserGroupService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -72,8 +76,10 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         final String NO_PREHEAT = "0";
         String hasPreheat = activityHead.getHasPreheat();
         activityHead.setFormalStatus("edit");
-        if (HAS_PREHEAT.equalsIgnoreCase(hasPreheat)) {
-            activityHead.setPreheatStatus("edit");
+        Long headId = activityHead.getHeadId();
+        activityHead.setFormalStatus(ActivityStatusEnum.EDIT.getStatusCode());
+        if (HAS_PREHEAT.equalsIgnoreCase(activityHead.getHasPreheat())) {
+            activityHead.setPreheatStatus(ActivityStatusEnum.EDIT.getStatusCode());
         }
         if (NO_PREHEAT.equalsIgnoreCase(hasPreheat)) {
             activityHead.setPreheatStartDt(null);
@@ -88,8 +94,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 //        // 保存群组的初始化信息
 //        activityUserGroupService.saveGroupData(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
 //        //写入计划信息
-//        activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
-
+        activityPlanService.savePlanList(activityHead.getHeadId().toString(), activityHead.getHasPreheat());
         if(HAS_PREHEAT.equals(hasPreheat)) {
             // 保存群组信息
             saveGroupInfo(activityHead.getHeadId().toString(), ActivityStageEnum.preheat.getStageCode());
@@ -108,36 +113,14 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         return activityHead.getHeadId().intValue();
     }
 
-    /**
-     * 保存群组信息
-     * @param headId
-     */
-    private void saveGroupInfo(String headId, String activityStage) {
-        //类型 NOTIFY 通知 DURING 期间
-        List<ActivityGroup> activityGroups = Lists.newArrayList();
-        activityGroups.add(new ActivityGroup(
-                1L, Long.parseLong(headId), "用户成长旅程的商品参与本次活动", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
-        ));
-        activityGroups.add(new ActivityGroup(
-                2L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
-        ));
-        activityGroups.add(new ActivityGroup(
-                3L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动，但有可能成为活动商品潜在用户", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
-        ));
-
-        activityGroups.add(new ActivityGroup(
-                1L, Long.parseLong(headId), "用户成长旅程的商品参与本次活动", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
-        ));
-        activityGroups.add(new ActivityGroup(
-                2L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
-        ));
-
-        activityUserGroupMapper.saveGroupData(activityGroups);
-    }
-
     @Override
     public ActivityHead findById(String headId) {
         return activityHeadMapper.findById(headId);
+    }
+
+    @Override
+    public List<ActivityTemplate> getTemplateTableData() {
+        return activityHeadMapper.getTemplateTableData();
     }
 
 
@@ -178,22 +161,12 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     }
 
     @Override
-    public void updatePreheatHeadToDoing(String headId) {
-        activityHeadMapper.updatePreheatHeadToDoing(headId);
-    }
-
-    @Override
-    public void updateFormalHeadToDoing(String headId) {
-        activityHeadMapper.updateFormalHeadToDoing(headId);
-    }
-
-    @Override
     public String getStatus(String headId, String stage) {
         String sql = "";
-        if (STAGE_PREHEAT.equalsIgnoreCase(stage)) {
+        if (ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
             sql = "select preheat_status from UO_OP_ACTIVITY_HEADER where head_id = '" + headId + "'";
         }
-        if (STAGE_FORMAL.equalsIgnoreCase(stage)) {
+        if (ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
             sql = "select formal_status from UO_OP_ACTIVITY_HEADER where head_id = '" + headId + "'";
         }
         return activityHeadMapper.getStatus(sql);
@@ -201,16 +174,11 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 
     @Override
     public void updateStatus(String headId, String stage, String status) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("update UO_OP_ACTIVITY_HEADER set ");
-        if (stage.equalsIgnoreCase(STAGE_PREHEAT)) {
-            sb.append("PREHEAT_STATUS = '" + status + "'");
+        if (ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
+            activityHeadMapper.updatePreheatStatusHead(headId,status);
+        }else if(ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
+            activityHeadMapper.updateFormalStatusHead(headId,status);
         }
-        if (stage.equalsIgnoreCase(STAGE_FORMAL)) {
-            sb.append("FORMAL_STATUS = '" + status + "'");
-        }
-        sb.append(" where head_id = '" + headId + "'");
-        activityHeadMapper.updateStatus(sb.toString());
     }
 
     @Override
@@ -259,5 +227,32 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         if(ActivityStageEnum.formal.getStageCode().equals(stage)) {
             activityCovMapper.updateFormalCovInfo(headId, covId);
         }
+    }
+
+    /**
+     * 保存群组信息
+     * @param headId
+     */
+    private void saveGroupInfo(String headId, String activityStage) {
+        //类型 NOTIFY 通知 DURING 期间
+        List<ActivityGroup> activityGroups = Lists.newArrayList();
+        activityGroups.add(new ActivityGroup(
+                1L, Long.parseLong(headId), "用户成长旅程的商品参与本次活动", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+        ));
+        activityGroups.add(new ActivityGroup(
+                2L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+        ));
+        activityGroups.add(new ActivityGroup(
+                3L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动，但有可能成为活动商品潜在用户", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+        ));
+
+        activityGroups.add(new ActivityGroup(
+                1L, Long.parseLong(headId), "用户成长旅程的商品参与本次活动", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+        ));
+        activityGroups.add(new ActivityGroup(
+                2L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+        ));
+
+        activityUserGroupMapper.saveGroupData(activityGroups);
     }
 }

@@ -48,27 +48,6 @@ public interface DailyDetailService {
      */
     int getStrategyCount(String headId);
 
-    /**
-     * 效果评估-个体效果分页
-     * @param headId
-     * @param start
-     * @param end
-     * @param userValue
-     * @param pathActive
-     * @param status
-     * @return
-     */
-    List<DailyDetail> getUserEffect(String headId, int start, int end, String userValue, String pathActive, String status);
-
-    /**
-     * 效果评估记录数
-     * @param headId
-     * @param userValue
-     * @param pathActive
-     * @param status
-     * @return
-     */
-    int getDataListCount(String headId, String userValue, String pathActive, String status);
 
     /**
      * 获取短信内容列表

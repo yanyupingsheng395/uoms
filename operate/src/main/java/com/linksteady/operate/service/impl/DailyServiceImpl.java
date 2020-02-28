@@ -194,10 +194,8 @@ public class DailyServiceImpl implements DailyService {
     @Override
     public boolean getTransContentLock(String headId) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
-        //key 已经存在，则不做任何动作 否则将 key 的值设为 value 设置成功，返回true 否则返回false
-        boolean flag = valueOperations.setIfAbsent("daily_trans_lock", headId);
-        //key的失效时间60秒 此处有bug 通过升级api可以解决
-        redisTemplate.expire("daily_trans_lock", 60, TimeUnit.SECONDS);
+        //如果key不存在，则将key的值设置为value，同时返回true. 如果key不存在，则什么也不做，返回false.
+        boolean flag = valueOperations.setIfAbsent("daily_trans_lock", headId,60, TimeUnit.SECONDS);
         return flag;
     }
 

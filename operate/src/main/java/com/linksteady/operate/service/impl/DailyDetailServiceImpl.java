@@ -4,10 +4,10 @@ import com.google.common.collect.Lists;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.domain.DailyDetail;
-import com.linksteady.operate.domain.DailyUserStats;
 import com.linksteady.operate.service.DailyDetailService;
 import com.linksteady.operate.service.ShortUrlService;
-import com.linksteady.operate.thread.TransPushContentThread;
+import com.linksteady.operate.thread.TransDailyContentThread;
+import com.linksteady.operate.vo.ActivityContentVO;
 import com.linksteady.operate.vo.GroupCouponVO;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.LinkException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -110,37 +109,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     }
 
     /**
-     * 效果评估-个体效果分页
-     * @param headId
-     * @param start
-     * @param end
-     * @param userValue
-     * @param pathActive
-     * @param status
-     * @return
-     */
-    @Override
-    public List<DailyDetail> getUserEffect(String headId, int start, int end, String userValue, String pathActive, String status) {
-        String whereInfo = getWhereInfo(userValue, pathActive, status);
-        List<DailyDetail> dataList = dailyDetailMapper.getUserEffect(headId, start, end, whereInfo);
-        return dataList;
-    }
-
-    /**
-     * 效果评估记录数
-     * @param headId
-     * @param userValue
-     * @param pathActive
-     * @param status
-     * @return
-     */
-    @Override
-    public int getDataListCount(String headId, String userValue, String pathActive, String status) {
-        String whereInfo = getWhereInfo(userValue, pathActive, status);
-        return dailyDetailMapper.getDataListCount(headId, whereInfo);
-    }
-
-    /**
      * 获取headId对应的短信内容列表
      * @param headId
      * @return
@@ -193,9 +161,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             {
                 insertPushContentTemp(targetList);
             }
-
-            //用临时表更新 每日运营明细表
-            dailyDetailMapper.updatePushContentFromTemp(headerId);
         }else
         {
             ExecutorService pool = null;
@@ -207,33 +172,49 @@ public class DailyDetailServiceImpl implements DailyDetailService {
 
                 int page=pushUserCount%pageSize==0?pushUserCount/pageSize:(pushUserCount/pageSize+1);
 
-                CountDownLatch latch = new CountDownLatch(page);
                 List taskList= Lists.newArrayList();
                 //生成线程对象列表
                 for(int i=0;i<page;i++)
                 {
-                    taskList.add(new TransPushContentThread(headerId,i*pageSize+1,(i+1)*pageSize,latch,groupCouponList));
+                    taskList.add(new TransDailyContentThread(headerId,i*pageSize+1,(i+1)*pageSize,groupCouponList));
                 }
 
                 log.info("转换文案一共需要{}个线程来处理",taskList.size());
                 //放入线程池中
-                pool.invokeAll(taskList);
-
-                //等待执行结束
-                latch.await();
+                List<Future<List<DailyDetail>>> threadResult=pool.invokeAll(taskList);
+                for(Future<List<DailyDetail>> future:threadResult)
+                {
+                    if(null!=future.get()&&future.get().size()>0)
+                    {
+                        insertPushContentTemp(future.get());
+                    }else
+                    {
+                        //存在错误
+                        result="0";
+                        break;
+                    }
+                }
             } catch (Exception e) {
                 //错误日志上报
-                e.printStackTrace();
+                log.error("每日运营转化文案错误，错误堆栈为{}",e);
                 result="0";
             }finally {
                 pool.shutdown();
-
-                //用临时表更新 每日运营明细表
-                dailyDetailMapper.updatePushContentFromTemp(headerId);
-                Long endTime = System.currentTimeMillis();
-                log.info(">>>短信文案已生成，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
             }
         }
+
+        if(result=="1")
+        {
+            //用临时表更新 每日运营明细表
+            dailyDetailMapper.updatePushContentFromTemp(headerId);
+            Long endTime = System.currentTimeMillis();
+            log.info(">>>短信文案已生成，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
+        }else
+        {
+            Long endTime = System.currentTimeMillis();
+            log.info(">>>活动文案转化失败，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
+        }
+
         return result;
     }
 
