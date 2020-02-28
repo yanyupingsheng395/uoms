@@ -16,14 +16,6 @@
         <result property="formalNotifyDt" jdbcType="VARCHAR" column="FORMAL_NOTIFY_DT"></result>
     </resultMap>
 
-    <resultMap id="templateMap" type="com.linksteady.operate.domain.ActivityTemplate">
-        <result property="code" jdbcType="VARCHAR" column="TMP_CODE"></result>
-        <result property="name" jdbcType="VARCHAR" column="TMP_NAME"></result>
-        <result property="content" jdbcType="VARCHAR" column="TMP_CONTENT"></result>
-        <result property="remark" jdbcType="VARCHAR" column="REMARK"></result>
-        <result property="isPersonal" jdbcType="VARCHAR" column="IS_PERSONAL"></result>
-    </resultMap>
-
     <select id="getDataListOfPage" resultMap="baseResult">
         select * from (
           select t.*, ROWNUM rn from (
@@ -105,51 +97,6 @@
         where HEAD_ID = #{headId}
     </update>
 
-
-    <select id="getTemplateTableData" resultMap="templateMap">
-        select * from (
-        with v1 as (select TMP_CODE, listagg(ACTIVITY_TYPE, ',') within group ( order by SMS_TEMPLATE_CODE ) SCENE
-        from (
-        select TMP_CODE, t2.ACTIVITY_TYPE, t2.SMS_TEMPLATE_CODE
-        from UO_OP_ACTIVITY_TEMPLATE t1,
-        UO_OP_ACTIVITY_GROUP t2
-        where t1.TMP_CODE = t2.SMS_TEMPLATE_CODE(+)
-        group by TMP_CODE, ACTIVITY_TYPE, SMS_TEMPLATE_CODE
-        )
-        group by TMP_CODE),
-        v2 as (
-        select TMP_CODE, listagg(GROUP_ID, ',') within group ( order by SMS_TEMPLATE_CODE asc) relation
-        from (
-        select TMP_CODE, t2.GROUP_ID, t2.SMS_TEMPLATE_CODE
-        from UO_OP_ACTIVITY_TEMPLATE t1,
-        UO_OP_ACTIVITY_GROUP t2
-        where t1.TMP_CODE = t2.SMS_TEMPLATE_CODE(+)
-        group by TMP_CODE, GROUP_ID, SMS_TEMPLATE_CODE
-        )
-        group by TMP_CODE
-        )
-        select t.TMP_CODE, t.TMP_NAME, t.TMP_CONTENT, t.IS_PERSONAL, v1.SCENE,
-        case when v2.relation in ('1', '1,2', '2') then 'GROWTH' when v2.relation = '3' then 'LATENT'
-        when v2.relation in ('1,3', '1,2,3', '2,3') then 'GROWTH,LATENT' end relation
-        from UO_OP_ACTIVITY_TEMPLATE t, v1, v2
-        where t.TMP_CODE = v1.TMP_CODE and t.TMP_CODE = v2.TMP_CODE
-        order by TMP_CODE desc
-        )
-        where 1=1
-        <if test="activityTemplate.name != null and activityTemplate.name != ''">
-            and TMP_NAME like concat('%', concat(#{activityTemplate.name} ,'%'))
-        </if>
-        <if test="activityTemplate.isPersonal != null and activityTemplate.isPersonal != ''">
-            and IS_PERSONAL = #{activityTemplate.isPersonal}
-        </if>
-        <if test="activityTemplate.relation != null and activityTemplate.relation != ''">
-            and relation like concat('%', concat(#{activityTemplate.relation} ,'%'))
-        </if>
-        <if test="activityTemplate.scene != null and activityTemplate.scene != ''">
-            and scene like concat('%', concat(#{activityTemplate.scene} ,'%'))
-        </if>
-    </select>
-
     <select id="getActivityName" resultType="string">
         select ACTIVITY_NAME from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
     </select>
@@ -214,10 +161,4 @@
     <select id="getStatus" resultType="string">
         ${sql}
     </select>
-
-    <insert id="saveSmsTemplate">
-        insert into UO_OP_ACTIVITY_TEMPLATE(
-            TMP_CONTENT, INSERT_DT, INSERT_BY, TMP_CODE, IS_PERSONAL, TMP_NAME, IS_PROD_NAME, IS_PROD_URL, IS_PRICE
-        ) values (#{content}, #{insertDt}, #{insertBy}, SEQ_UO_OP_ACTIVITY_TEMPLATE.nextval, #{isPersonal}, #{name}, #{isProdName}, #{isProdUrl}, #{isPrice})
-    </insert>
 </mapper>

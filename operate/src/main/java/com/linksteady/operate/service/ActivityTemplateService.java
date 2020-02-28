@@ -27,4 +27,6 @@ public interface ActivityTemplateService {
     int checkCode(String code);
 
     ActivityTemplate getReplacedTmp(String code);
+
+    List<ActivityTemplate> getSmsTemplateList(ActivityTemplate activityTemplate);
 }

@@ -24,4 +24,6 @@ public interface ActivityTemplateMapper {
     List<ActivityTemplate> getTemplateList(int start, int end, String code);
 
     int checkCode(String code);
+
+    List<ActivityTemplate> getTemplateTableData(@Param("activityTemplate") ActivityTemplate activityTemplate);
 }

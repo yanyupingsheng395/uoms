@@ -81,7 +81,5 @@ public interface ActivityHeadService {
 
     void updateStatus(String headId, String stage, String status);
 
-    void saveSmsTemplate(ActivityTemplate activityTemplate);
-
-    List<ActivityTemplate> getSmsTemplateList(ActivityTemplate activityTemplate);
+    void changeAndUpdateStatus(String headId, String stage);
 }

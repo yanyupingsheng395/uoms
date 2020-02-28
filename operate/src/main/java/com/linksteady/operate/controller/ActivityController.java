@@ -92,142 +92,7 @@ public class ActivityController {
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/uploadExcel")
     public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId, @RequestParam String stage, @RequestParam String operateType) {
-        List<String> headers = Arrays.asList("商品ID[数据类型：文本型]", "ERP货号[数据类型：文本型]", "名称[数据类型：文本型]", "最低单价（元/件）[数据类型：数值型]", "非活动售价（元/件）[数据类型：数值型]", "活动属性[主推，参活，正常][数据类型：文本型]");
-        AtomicBoolean flag = new AtomicBoolean(true);
-        List<ActivityProduct> productList = Lists.newArrayList();
-        String originalFilename = file.getOriginalFilename();
-        String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
-        if (fileType.equalsIgnoreCase(".xlsx") || fileType.equalsIgnoreCase(".xls")) {
-            InputStream is;
-            Workbook wb = null;
-            try {
-                is = file.getInputStream();
-                if (fileType.equalsIgnoreCase(".xls")) {
-                    wb = new HSSFWorkbook(is);
-                } else if (fileType.equalsIgnoreCase(".xlsx")) {
-                    wb = new XSSFWorkbook(is);
-                }
-                Sheet sheet = wb.getSheetAt(0);
-                for (Row row : sheet) {
-                    if(row.getCell(0).getRowIndex() == 0) {
-                        Iterator<Cell> cellIterator = row.cellIterator();
-                        cellIterator.forEachRemaining(x->{
-                            // 可能会出现空列的情况
-                            if(!x.getStringCellValue().equalsIgnoreCase("")) {
-                                if(headers.indexOf(x.getStringCellValue()) == -1) {
-                                    flag.set(false);
-                                }
-                            }
-                        });
-                        if(!flag.get()) {
-                            break;
-                        }else {
-                            continue;
-                        }
-                    }
-                    ActivityProduct activityProduct = new ActivityProduct();
-                    activityProduct.setHeadId(Long.valueOf(headId));
-                    activityProduct.setActivityStage(stage);
-                    try {
-                        activityProduct.setProductId(row.getCell(0).getStringCellValue());
-                    }catch (IllegalStateException e) {
-                        throw new LinkSteadyException("\"商品ID\"数据类型与模板不一致，应改为文本型！");
-                    }
-                    // skuCode非必填
-                    if(null != row.getCell(1)) {
-                        try {
-                            activityProduct.setSkuCode(row.getCell(1).getStringCellValue());
-                        }catch (IllegalStateException e) {
-                            throw new LinkSteadyException("\"ERP货号\"数据类型与模板不一致，应改为文本型！");
-                        }
-                    }
-                    // 验证产品名称不超过最大长度
-//                    if(row.getCell(2).getStringCellValue().length() > dailyProperties.getProdNameLen()) {
-//                        throw new LinkSteadyException("商品名称长度超过系统设置！");
-//                    }
-                    try {
-                        activityProduct.setProductName(row.getCell(2).getStringCellValue());
-                    }catch (IllegalStateException e) {
-                        throw new LinkSteadyException("\"名称\"数据类型与模板不一致，应改为文本型！");
-                    }
-                    double minPrice;
-                    try {
-                        minPrice = row.getCell(3).getNumericCellValue();
-                    }catch (IllegalStateException e) {
-                        throw new LinkSteadyException("\"最低单价\"数据类型与模板不一致，应改为数值型！");
-                    }
-                    double formalPrice;
-                    try {
-                        formalPrice = row.getCell(4).getNumericCellValue();
-                    }catch (IllegalStateException e) {
-                        throw new LinkSteadyException("\"非活动售价\"数据类型与模板不一致，应改为数值型！");
-                    }
-                    String attr = "";
-                    try {
-                        attr = row.getCell(5).getStringCellValue();
-                    }catch (IllegalStateException e) {
-                        throw new LinkSteadyException("\"活动属性\"数据类型与模板不一致，应改为文本型！");
-                    }
-                    double activityIntensity = minPrice/formalPrice * 100;
-                    activityIntensity = Double.valueOf(String.format("%.2f", activityIntensity));
-                    activityProduct.setMinPrice(minPrice);
-                    activityProduct.setFormalPrice(formalPrice);
-                    activityProduct.setActivityIntensity(activityIntensity);
-                    switch (attr) {
-                        case "主推":
-                            attr = "0";
-                            break;
-                        case "参活":
-                            attr = "1";
-                            break;
-                            default: attr = "";
-                    }
-                    activityProduct.setProductAttr(attr);
-                    activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
-                    productList.add(activityProduct);
-                }
-                if(!flag.get()) {
-                    throw new LinkSteadyException("检测到上传数据与模板格式不符，请检查后重新上传！");
-                }
-                if(productList.size() != 0) {
-                    List<String> productIdList = productList.stream().map(ActivityProduct::getProductId).collect(Collectors.toList());
-                    // 获取相同productId的商品个数
-                    int count = activityProductService.getSameProductCount(productIdList, headId, stage);
-                    if(count > 0) {
-                        activityProductService.deleteRepeatData(productList, headId, stage);
-                        activityProductService.saveActivityProductList(productList);
-                        if("update".equalsIgnoreCase(operateType)) {
-                            changeAndUpdateStatus(headId, stage);
-                            log.info("更新短信模板,headId:{}的状态发生变更。", headId);
-                        }
-                        return ResponseBo.ok("当前Excel中共有" + count + "条记录与已有记录重复，旧记录已覆盖！");
-                    }
-                    if("update".equalsIgnoreCase(operateType)) {
-                        changeAndUpdateStatus(headId, stage);
-                        log.info("更新短信模板,headId:{}的状态发生变更。", headId);
-                    }
-                    activityProductService.saveActivityProductList(productList);
-                    return ResponseBo.ok("文件上传成功！");
-                }else {
-                    throw new LinkSteadyException("上传的数据为空！");
-                }
-            } catch (IOException e) {
-                log.error("上传excel失败", e);
-                return ResponseBo.error("上传excel失败，请检查。");
-            } catch (LinkSteadyException e) {
-                log.error("解析excel失败", e);
-                return ResponseBo.error(e.getMessage());
-            } catch (IllegalArgumentException e) {
-                return ResponseBo.error("最低单价，非活动售价为数值型，其余为字符型。");
-            } catch (NullPointerException e) {
-                return ResponseBo.error("解析excel失败，除ERP货号外，其余列的值必填！");
-            }catch (Exception ex) {
-                log.error("解析excel失败", ex);
-                return ResponseBo.error("解析excel失败，请检查。");
-            }
-        } else {
-            return ResponseBo.error("只支持.xls,.xlsx后缀的文件！");
-        }
+        return activityProductService.uploadExcel(file, headId, stage, operateType);
     }
 
     /**
@@ -289,7 +154,7 @@ public class ActivityController {
             }
             activityProductService.saveActivityProduct(activityProduct);
             if("update".equalsIgnoreCase(operateType)) {
-                changeAndUpdateStatus(headId, activityProduct.getActivityStage());
+                activityHeadService.changeAndUpdateStatus(headId, activityProduct.getActivityStage());
                 log.info("新增商品,headId:{}的状态发生变更。", headId);
             }
         } catch (LinkSteadyException ex){
@@ -352,7 +217,7 @@ public class ActivityController {
             }
             activityProductService.updateActivityProduct(activityProduct);
             if("update".equalsIgnoreCase(operateType)) {
-                changeAndUpdateStatus(activityProduct.getHeadId().toString(), activityProduct.getActivityStage());
+                activityHeadService.changeAndUpdateStatus(activityProduct.getHeadId().toString(), activityProduct.getActivityStage());
                 log.info("修改商品,headId:{}的状态发生变更。", activityProduct.getHeadId());
             }
             return ResponseBo.ok();
@@ -381,7 +246,7 @@ public class ActivityController {
     public ResponseBo updateGroupTemplate(@RequestParam String headId,@RequestParam String groupId, @RequestParam String code, @RequestParam String stage, @RequestParam String operateType) {
         activityUserGroupService.updateGroupTemplate(headId, groupId, code, stage);
         if("update".equalsIgnoreCase(operateType)) {
-            changeAndUpdateStatus(headId, stage);
+            activityHeadService.changeAndUpdateStatus(headId, stage);
             log.info("更新短信模板,headId:{}的状态发生变更。", headId);
         }
         return ResponseBo.ok();
@@ -429,7 +294,7 @@ public class ActivityController {
     public ResponseBo deleteProduct(@RequestParam String headId, @RequestParam String stage, @RequestParam String operateType, @RequestParam String productIds) {
         activityProductService.deleteProduct(headId, stage, productIds);
         if("update".equalsIgnoreCase(operateType)) {
-            changeAndUpdateStatus(headId, stage);
+            activityHeadService.changeAndUpdateStatus(headId, stage);
             log.info("删除商品,headId:{}的状态发生变更。", headId);
         }
         return ResponseBo.ok();
@@ -483,35 +348,6 @@ public class ActivityController {
         return ResponseBo.ok();
     }
 
-    /**
-     * 获取头表状态
-     * @param headId
-     * @param stage
-     * @return
-     */
-    private String getHeadStatus(String headId, String stage) {
-        String status = "";
-        if(ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
-            status = activityHeadService.getStatus(headId, stage);
-        }
-        if(ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
-            status = activityHeadService.getStatus(headId, stage);
-        }
-        return status;
-    }
-
-    /**
-     * 如果是待执行，执行中，修改了产品、文案，则变更状态为待计划；
-     * @param headId
-     * @param stage
-     */
-    private void changeAndUpdateStatus(String headId, String stage) {
-        String status = getHeadStatus(headId, stage);
-        if(status.equalsIgnoreCase("todo") || stage.equalsIgnoreCase("doing")) {
-            activityHeadService.updateStatus(headId, stage, "edit");
-        }
-    }
-
 
     /**
      * 获取主要指标
@@ -560,13 +396,13 @@ public class ActivityController {
     // 保存文案信息
     @PostMapping("/saveSmsTemplate")
     public ResponseBo saveSmsTemplate(ActivityTemplate activityTemplate) {
-        activityHeadService.saveSmsTemplate(activityTemplate);
+        activityTemplateService.saveTemplate(activityTemplate);
         return ResponseBo.ok();
     }
 
     @GetMapping("/getSmsTemplateList")
     public ResponseBo getSmsTemplateList(ActivityTemplate activityTemplate) {
-        return ResponseBo.okWithData(null, activityHeadService.getSmsTemplateList(activityTemplate));
+        return ResponseBo.okWithData(null, activityTemplateService.getSmsTemplateList(activityTemplate));
     }
 
     /**
