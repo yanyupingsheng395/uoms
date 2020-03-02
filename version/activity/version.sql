@@ -181,3 +181,192 @@ DROP TABLE UO_OP_ACTIVITY_SUMMARY;
 DROP TABLE UO_OP_ACTIVITY_PREDICT;
 DROP TABLE UO_OP_ACTIVITY_BIG_CONFIG;
 
+/**
+  * 修复每日运营，增加效果天数字段
+ */
+
+alter table UO_OP_DAILY_HEADER add(effect_days number default 5);
+comment on column UO_OP_DAILY_HEADER.effect_days is '效果累计天数';
+
+alter table UO_OP_DAILY_HEADER add(push_method varchar2(32),push_period varchar2(32));
+comment on column UO_OP_DAILY_HEADER.push_method is '推送方式';
+comment on column UO_OP_DAILY_HEADER.push_period is '推送时段';
+
+alter table uo_op_daily_detail add(insert_dt date default sysdate);
+comment on column uo_op_daily_detail.insert_dt is '插入时间';
+
+-- Create table
+create table UO_OP_EXEC_STEPS
+(
+  key_name    VARCHAR2(32),
+  is_valid    VARCHAR2(2),
+  step_type   VARCHAR2(32),
+  sql_content VARCHAR2(512),
+  bean_name   VARCHAR2(512),
+  method_name VARCHAR2(256),
+  step_name   VARCHAR2(256),
+  order_no    NUMBER,
+  sql_type    VARCHAR2(32),
+  comments    VARCHAR2(512)
+);
+-- Add comments to the table
+comment on table UO_OP_EXEC_STEPS
+is '计算效果的步骤及每一步的操作';
+-- Add comments to the columns
+comment on column UO_OP_EXEC_STEPS.key_name
+is '业务关键字  daily 每日运营  activity活动运营 manual 手工推送';
+comment on column UO_OP_EXEC_STEPS.is_valid
+is '是否有效 Y 有效 N无效';
+comment on column UO_OP_EXEC_STEPS.step_type
+is '业务单元类型  SQL 表示执行SQL  BEAN表示调用方法';
+comment on column UO_OP_EXEC_STEPS.sql_content
+is '要执行的SQL片段';
+comment on column UO_OP_EXEC_STEPS.bean_name
+is '要执行的spring bean名称';
+comment on column UO_OP_EXEC_STEPS.method_name
+is '要执行的java方法名称（和bean名称配合使用）';
+comment on column UO_OP_EXEC_STEPS.step_name
+is '步骤名称';
+comment on column UO_OP_EXEC_STEPS.order_no
+is '排序号';
+comment on column UO_OP_EXEC_STEPS.sql_type
+is 'SQL语句的类型  分别有DELETE  UPDATE INSERT';
+comment on column UO_OP_EXEC_STEPS.comments
+is '描述';
+
+prompt Importing table UO_OP_EXEC_STEPS...
+set feedback off
+set define off
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('activity', 'Y', 'SQL', 'MERGE INTO UO_OP_PUSH_LIST_LARGE C USING
+(SELECT T.PUSH_ID,
+       ROW_NUMBER()OVER(PARTITION BY T.MSGID ORDER BY T.PUSH_ID DESC) RN
+ FROM UO_OP_PUSH_LIST_LARGE T WHERE T.IS_PUSH=''1'' AND T.PUSH_STATUS!=''C'' AND T.MSGID IS NOT NULL) T1
+ON (C.PUSH_ID=T1.PUSH_ID AND TRUNC(C.PUSH_DATE)>=TRUNC(SYSDATE-5))
+WHEN MATCHED THEN
+   UPDATE SET C.FINAL_MSG_ID=C.MSGID+(RN-1) ', null, null, '修复PUSH_LARGE中的FINAL_MSG_ID', '1', 'UPDATE', '修复PUSH_LARGE中的FINAL_MSG_ID(梦网已测试)');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('activity', 'Y', 'SQL', 'merge into uo_op_push_list_large t1
+            using  uo_op_push_rpt t2
+            on (t1.final_msg_id = t2.msgid and trunc(t1.push_date)=trunc(sysdate-3))
+        when matched then
+        update set t1.push_status=t2.status', null, null, '更新PUSH_LARGE中的推送状态', '2', 'UPDATE', '根据运营商返回的状态报告，更新PUSH_LARGE中的推送状态');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('activity', 'Y', 'SQL', 'MERGE INTO UO_OP_PUSH_LIST_LARGE C USING
+(SELECT T.PUSH_ID,
+       ROW_NUMBER()OVER(PARTITION BY T.MSGID ORDER BY T.PUSH_ID DESC) RN
+ FROM UO_OP_PUSH_LIST_LARGE T WHERE T.IS_PUSH=''1'' AND T.PUSH_STATUS!=''C'' AND T.MSGID IS NOT NULL) T1
+ON (C.PUSH_ID=T1.PUSH_ID AND TRUNC(C.PUSH_DATE)>=TRUNC(SYSDATE-5))
+WHEN MATCHED THEN
+   UPDATE SET C.FINAL_MSG_ID=C.MSGID+(RN-1) ', null, null, '更新活动运营明细表的推送状态/推送日期', '3', 'UPDATE', '将PUSH_LIST_LARGE的推送状态/推送日期/是否推送同步回ACTIVITY_DETAIL');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('activity', 'Y', 'SQL', 'UPDATE UO_OP_ACTIVITY_PLAN T SET T.PLAN_STATUS=''3'' WHERE T.PLAN_DATE_WID>=TO_NUMBER(TO_CHAR(SYSDATE-5,''yyyymmdd'')) AND T.PLAN_STATUS=''2'' AND
+            NOT EXISTS (
+            SELECT 1 FROM uo_op_activity_detail AP1 WHERE AP1.HEAD_ID=T.HEAD_ID AND AP1.PLAN_DT=T.PLAN_DATE_WID AND AP1.IS_PUSH=''0'')', null, null, '更新活动计划表中已推送为已完成', '4', 'UPDATE', '更新活动计划表中已推送为已完成(对于最近5天 状态为执行中 如果在明细表中不存在未推送的记录，则将其状态更新为完成)');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('activity', 'Y', 'SQL', 'UPDATE uo_op_activity_header T
+        SET T.PREHEAT_STATUS = ''done''
+        where t.preheat_status = ''doing''
+            and t.has_preheat=''1''
+            and  trunc(sysdate) >t.preheat_end_dt
+            and  exists (
+            select p.head_id from uo_op_activity_plan p where p.head_id=t.head_id and p.plan_status in(''3'') and p.activity_stage=''preheat''
+            )', null, null, '更新活动头表预售状态由已执行更新为完成', '5', 'UPDATE', '更新活动头表预售状态由已执行更新为完成(活动结束后有一条计划为完成)');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('activity', 'Y', 'SQL', ' UPDATE uo_op_activity_header T
+        SET T.FORMAL_STATUS = ''done''
+        where t.FORMAL_STATUS = ''doing'' and t.has_preheat=''0''
+            and  trunc(sysdate) >t.Formal_End_Dt
+            and  exists (
+            select p.head_id from uo_op_activity_plan p where p.head_id=t.head_id and p.plan_status in(''3'') and p.activity_stage=''formal''
+            )', null, null, '更新活动头表正式状态由已执行更新为完成', '6', 'UPDATE', '更新活动头表正式状态由已执行更新为完成(活动结束后有一条计划为完成)');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('daily', 'Y', 'SQL', 'merge into uo_op_push_list t1
+            using  uo_op_push_rpt t2
+            on (t1.msgid = t2.msgid and trunc(t1.push_date)=trunc(sysdate-3))
+        when matched then
+        update set t1.push_status=t2.status', null, null, '更新推送状态', '1', 'UPDATE', '根据运营商返回的状态报告，将短信推送状态更新到PUSH_LIST');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('daily', 'Y', 'SQL', 'merge into uo_op_daily_detail t3
+using uo_op_push_list t4
+on (t3.daily_detail_id = t4.source_id and t4.source_code = ''D'' and trunc(t3.insert_dt)>trunc(sysdate-3))
+when matched then
+  update
+     set t3.push_status = t4.push_status,
+         t3.push_date   = t4.push_date,
+         t3.is_push     = t4.is_push', null, null, '更新每日运营明细表的推送状态/推送日期', '2', 'UPDATE', '将PUSH_LIST的推送状态/推送日期/是否推送同步回DAILY_DETAIL');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('daily', 'Y', 'SQL', ' UPDATE UO_OP_DAILY_HEADER c SET c.STATUS=''finished'' WHERE c.STATUS=''done'' AND not exists
+(
+select * from UO_OP_DAILY_DETAIL p where p.PUSH_STATUS=''P'' and p.head_id=c.head_id
+) AND TRUNC(C.INSERT_DT)>TRUNC(SYSDATE-3) ', null, null, '将每日运营头表由已执行更新为已结束', '3', 'UPDATE', '将每日运营头表由已执行更新为已结束');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('daily', 'Y', 'SQL', 'update UO_OP_DAILY_HEADER t
+        set (t.plan_num,t.faild_num,t.success_num)=
+            (
+             select
+             SUM(case when c.PUSH_STATUS=''P'' then 1 else 0 end) plan_num,
+             SUM(case when c.PUSH_STATUS=''F'' then 1 else 0 end) faild_num,
+             SUM(case when c.PUSH_STATUS=''S'' then 1 else 0 end) success_num
+             from UO_OP_DAILY_DETAIL c where c.head_id = t.head_id
+            )where
+            trunc(touch_dt)>trunc(sysdate-3) and status in (''done'',''finished'')', null, null, '更新每日运营头表的推送统计数字', '4', 'UPDATE', '更新每日运营头表的推送统计数字');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('manual', 'N', 'SQL', 'MERGE INTO UO_OP_PUSH_LIST_LARGE C USING
+(SELECT T.PUSH_ID,
+       ROW_NUMBER()OVER(PARTITION BY T.MSGID ORDER BY T.PUSH_ID DESC) RN
+ FROM UO_OP_PUSH_LIST_LARGE T WHERE T.IS_PUSH=''1'' AND T.PUSH_STATUS!=''C'' AND T.MSGID IS NOT NULL) T1
+ON (C.PUSH_ID=T1.PUSH_ID AND TRUNC(C.PUSH_DATE)>=TRUNC(SYSDATE-5))
+WHEN MATCHED THEN
+   UPDATE SET C.FINAL_MSG_ID=C.MSGID+(RN-1) ', null, null, '修复PUSH_LARGE中的FINAL_MSG_ID', '1', 'UPDATE', '修复PUSH_LARGE中的FINAL_MSG_ID(梦网已测试)  活动运营中也存在');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('manual', 'N', 'SQL', 'merge into uo_op_push_list_large t1
+            using  uo_op_push_rpt t2
+            on (t1.final_msg_id = t2.msgid and trunc(t1.push_date)=trunc(sysdate-3))
+        when matched then
+        update set t1.push_status=t2.status', null, null, '更新PUSH_LARGE中的推送状态', '2', 'UPDATE', '根据运营商返回的状态报告，更新PUSH_LARGE中的推送状态');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('manual', 'Y', 'SQL', ' update uo_op_manual_header c set (c.success_num,c.faild_num,c.intercept_num)=(
+            select
+                sum(case when d.push_status=''S'' then 1 else 0 end)  success_num,
+                sum(case when d.push_status=''F'' then 1 else 0 end)  faild_num,
+                sum(case when d.push_status=''C'' then 1 else 0 end) intercept_num
+            from uo_op_manual_detail d where d.head_id=c.head_id
+        ) where trunc(c.SCHEDULE_DATE) >=trunc(sysdate-3)', null, null, '更新手工推送头表的推送统计字段', '3', 'UPDATE', '更新手工推送头表的推送统计字段');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('manual', 'Y', 'SQL', ' merge into uo_op_manual_detail t1
+            using  uo_op_push_list_large t2
+            on (t1.detail_id = t2.source_id and t2.source_code=''M'' and t1.head_id in (
+                select h.head_id from uo_op_manual_header h where h.status in (''1'',''2'') and trunc(h.SCHEDULE_DATE)>=trunc(sysdate-3)
+        ) )
+        when matched then
+        update set t1.push_status=t2.push_status,t1.push_date=t2.push_date', null, null, '更新手工推送明细的推送状态/推送时间', '4', 'UPDATE', '更新手工推送明细的推送状态/推送时间');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('manual', 'Y', 'SQL', ' update uo_op_manual_header c set c.status=''2'' where trunc(c.SCHEDULE_DATE) >= trunc(sysdate-3) and c.status=''1''
+            and not exists (
+        select 1 from uo_op_manual_detail d where d.head_id=c.head_id and d.push_status=''P'')', null, null, '更新手工推送头表由计划中待完成到推送完成', '5', 'UPDATE', '更新手工推送头表由计划中待完成到推送完成');
+
+insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('manual', 'Y', 'SQL', 'update uo_op_manual_header c set c.actual_push_date=(
+            select
+                max(d.push_date)
+            from uo_op_manual_detail d where d.head_id=c.head_id
+        ) where trunc(c.SCHEDULE_DATE) >= trunc(sysdate-3) and c.status=''2''', null, null, '更新手工推送表的实际推送时间', '6', 'UPDATE', '更新手工推送表的实际推送时间');
+
+prompt Done.
+
+
