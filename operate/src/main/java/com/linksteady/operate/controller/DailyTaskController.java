@@ -206,10 +206,26 @@ public class DailyTaskController {
      */
     @GetMapping("/submitData")
     @Transactional(rollbackFor = Exception.class)
-    public synchronized ResponseBo submitData(String headId, String pushMethod, String pushPeriod, Long timestamp) {
+    public synchronized ResponseBo submitData(String headId, String pushMethod, String pushPeriod, Long timestamp,Long effectDays) {
+        //对参数进行校验
+        if(StringUtils.isEmpty(headId)||StringUtils.isEmpty(pushMethod)||StringUtils.isEmpty(timestamp))
+        {
+            return ResponseBo.error("参数错误，请通过系统界面进行操作！");
+        }
+
+        if(null==effectDays||effectDays<1||effectDays>10)
+        {
+            return ResponseBo.error("参数错误，请通过系统界面进行操作！");
+        }
+
+        if("FIXED".equals(pushMethod)&&StringUtils.isEmpty(pushPeriod))
+        {
+            return ResponseBo.error("参数错误，请通过系统界面进行操作！");
+        }
+
         //进行一次状态的判断
-        String status = dailyService.getDailyHeadById(headId).getStatus();
-        if (!status.equalsIgnoreCase("todo")) {
+        DailyHead dailyHead = dailyService.getDailyHeadById(headId);
+        if (null==dailyHead||!dailyHead.getStatus().equalsIgnoreCase("todo")) {
             return ResponseBo.error("当前数据状态不支持该操作！");
         }
 
@@ -219,45 +235,17 @@ public class DailyTaskController {
             return ResponseBo.error(validResult);
         }
 
-        //判断时间戳
+        //判断时间戳(页面传来的时间戳和数据库不一致)
         int count = dailyService.validateOpChangeTime(headId, timestamp);
         if (count == 0) {
             return ResponseBo.error("数据已被其他用户操作，请返回列表界面重新尝试！");
         } else {
-            //更新时间戳
-            long timestampNew = System.currentTimeMillis();
-            //更新时间戳到头表
-            dailyService.updateHeaderOpChangeDate(headId, timestampNew);
-
-            // 推送方式 IMME立即推送 AI智能推送 FIXED固定时间推送
-            updateSmsPushMethod(headId, pushMethod, pushPeriod);
-
-            //复制写入待推送列表
-            dailyDetailService.copyToPushList(headId);
-
-            status = "done";
-            dailyService.updateStatus(headId, status);
+            //推送
+            dailyService.pushContent(headId,pushMethod,pushPeriod,timestamp,effectDays);
             return ResponseBo.ok();
         }
     }
 
-    /**
-     * 根据推送方式更新短信推送时间
-     */
-    private void updateSmsPushMethod(String headId, String method, String period) {
-        String pushOrderPeriod = "";
-        // 立即推送：当前时间往后顺延10分钟
-        if ("IMME".equalsIgnoreCase(method)) {
-            pushOrderPeriod = String.valueOf(LocalTime.now().plusMinutes(10).getHour());
-        }
-
-        // 固定时间推送：参数获取
-        if ("FIXED".equalsIgnoreCase(method)) {
-            pushOrderPeriod = String.valueOf(LocalTime.parse(period, DateTimeFormatter.ofPattern("HH:mm")).getHour());
-        }
-        // 默认是AI：plan_push_period = order_period 此时，pushOrderPeriod = ""
-        dailyDetailService.updatePushOrderPeriod(headId, pushOrderPeriod);
-    }
 
     /**
      * 发送之前校验短信内容
@@ -302,14 +290,14 @@ public class DailyTaskController {
     }
 
     /**
-     * 获取当前日期和任务日期
+     * 获取当前日期和任务日期、任务天数
      *
      * @param headId
      * @return
      */
     @GetMapping("/getCurrentAndTaskDate")
     public ResponseBo getCurrentAndTaskDate(@RequestParam String headId) {
-        return ResponseBo.okWithData(null, dailyService.getCurrentAndTaskDate(headId));
+        return ResponseBo.okWithData(null, dailyService.getDailyHeadById(headId));
     }
 
     /**

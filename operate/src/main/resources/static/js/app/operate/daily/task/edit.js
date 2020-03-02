@@ -1,5 +1,11 @@
 $(function () {
      generateStragegy();
+    $("#effectDays").ionRangeSlider({
+        min: 1,
+        max: 10,
+        from: 5,
+        skin: "modern"
+    });
 });
 
 /**
@@ -136,7 +142,8 @@ function submitData() {
         $.get("/daily/submitData", {
             headId: headId, pushMethod: $("input[name='pushMethod']:checked").val(),
             pushPeriod: $("#pushPeriod").find("option:selected").val(),
-            timestamp: $("#timestamp").val()
+            timestamp: $("#timestamp").val(),
+            effectDays: $("#effectDays").val()
         }, function (r) {
             if (r.code === 200) {
                 $MB.n_success("启动推送成功！");
@@ -169,6 +176,7 @@ $("#push_ok").change(function () {
 });
 
 $("#push_msg_modal").on('shown.bs.modal', function () {
+    let effectRange = $("#effectDays").data("ionRangeSlider");
     $.get("/daily/getPushInfo", {}, function (r) {
         let code = "";
         r.data['timeList'].forEach((v, k) => {
@@ -178,6 +186,9 @@ $("#push_msg_modal").on('shown.bs.modal', function () {
         $('input[name="pushMethod"]').removeAttr("checked");
         $('input[name="pushMethod"][value="' + r.data.method + '"]').prop("checked", true);
         $("#pushPeriodDiv").hide();
+        //有效天数滑块设置为默认值
+        effectRange.reset();
+
     });
 });
 

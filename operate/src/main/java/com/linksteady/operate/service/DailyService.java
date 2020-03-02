@@ -20,8 +20,6 @@ public interface DailyService {
 
     int getTotalCount(String touchDt);
 
-    void updateStatus(String headId, String status);
-
     DailyHead getDailyHeadById(String headId);
 
     /**
@@ -30,8 +28,6 @@ public interface DailyService {
      * @return
      */
     DailyHead getEffectById(String id);
-
-    Map<String, Object> getCurrentAndTaskDate(String headId);
 
     /**
      * 获取推送数据
@@ -88,4 +84,6 @@ public interface DailyService {
     void updateSmsCodeNull(String smsCode);
 
     Map<String, Object> getUserStatsData(String headId);
+
+    void pushContent(String headId,String pushMethod,String pushPeriod,Long timestamp,Long effectDays);
 }

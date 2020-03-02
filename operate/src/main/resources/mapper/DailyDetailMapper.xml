@@ -94,31 +94,29 @@
         select DAILY_DETAIL_ID id, SMS_CONTENT content from UO_OP_DAILY_DETAIL where head_id = #{headId}
     </select>
 
-    <update id="updatePushOrderPeriod">
-        update UO_OP_DAILY_DETAIL
-            <if test="pushOrderPeriod != ''">
-                set PUSH_ORDER_PERIOD = #{pushOrderPeriod}
-            </if>
-            <if test="pushOrderPeriod == ''">
-                set PUSH_ORDER_PERIOD = ORDER_PERIOD
-            </if>
-    </update>
-
     <insert id="copyToPushList">
         INSERT INTO UO_OP_PUSH_LIST(PUSH_ID,USER_PHONE,USER_OPENID,PUSH_CONTENT,PUSH_STATUS,SOURCE_CODE,SOURCE_ID,PUSH_PERIOD,IS_PUSH)
         select
                UO_OP_PUSH_LIST_SEQ.NEXTVAL,
-               USER_PHONE,
-               USER_OPENID,
-               SMS_CONTENT,
+               C.USER_PHONE,
+               C.USER_OPENID,
+               C.SMS_CONTENT,
                'P',
                'D',
-               DAILY_DETAIL_ID,
-               PUSH_ORDER_PERIOD,
+               C.DAILY_DETAIL_ID,
+               C.PUSH_ORDER_PERIOD,
                '0'
         FROM UO_OP_DAILY_DETAIL C
-        WHERE HEAD_ID = #{headId}
+        WHERE C.HEAD_ID = #{headId}
     </insert>
+
+    <update id="updatePushOrderPeriod">
+        update UO_OP_DAILY_DETAIL D set D.PUSH_ORDER_PERIOD=(
+             SELECT
+                   (CASE WHEN H.PUSH_METHOD IN('IMME','FIXED') THEN H.PUSH_PERIOD ELSE D.ORDER_PERIOD END) PUSH_ORDER_PERIOD
+              FROM UO_OP_DAILY_HEADER H WHERE H.HEAD_ID=D.HEAD_ID
+        ) WHERE D.HEAD_ID=#{headId}
+    </update>
 
     <select id="getUserCount" resultType="int">
         select
@@ -176,20 +174,6 @@
             dual
         </foreach>
         )A
-    </update>
-
-    <update id="synchPushStatus">
-        UPDATE UO_OP_DAILY_DETAIL T
-        SET (T.IS_PUSH, T.PUSH_STATUS, T.PUSH_DATE) =
-            (SELECT T1.IS_PUSH, T1.PUSH_STATUS, T1.PUSH_DATE
-             FROM UO_OP_PUSH_LIST T1
-             WHERE T1.SOURCE_CODE = 'D'
-             AND T1.SOURCE_ID = T.DAILY_DETAIL_ID)
-        WHERE T.HEAD_ID IN (SELECT HEAD_ID
-            FROM UO_OP_DAILY_HEADER
-            WHERE TRUNC(TOUCH_DT) > TRUNC(SYSDATE - 5)
-            AND STATUS IN ('done', 'finished'))
-
     </update>
 
     <delete id="deletePushContentTemp">

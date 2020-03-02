@@ -121,42 +121,4 @@
         where HEAD_ID=#{headId} AND PLAN_DT=#{planDateWid} AND  PUSH_SCHEDULING_DATE IS NULL
     </select>
 
-    <update id="synchPushStatus">
-        --对计划日期在最近5天，且存在状态为 执行中 执行完 停止 的 推送明细的 推送状态，推送日期进行更新
-        UPDATE uo_op_activity_detail T2 SET (T2.PUSH_STATUS,T2.PUSH_DATE,T2.IS_PUSH)=(
-                                             SELECT P.PUSH_STATUS,P.PUSH_DATE,P.IS_PUSH FROM uo_op_push_list_large P WHERE P.IS_PUSH='1' AND P.SOURCE_CODE='ACTIVITY' AND P.SOURCE_ID=T2.ACTIVITY_DETAIL_ID
-            ) WHERE T2.PLAN_DT>=TO_NUMBER(TO_CHAR(SYSDATE-5,'yyyymmdd')) AND EXISTS (
-            SELECT AP.HEAD_ID FROM UO_OP_ACTIVITY_PLAN AP WHERE AP.PLAN_STATUS NOT IN ('0','1') AND AP.HEAD_ID=T2.HEAD_ID
-            )
-    </update>
-
-    <update id="updatePlanToFinish">
-        --对于最近5天 状态为执行中 如果在明细表中不存在未推送的记录，则将其状态更新为完成
-        UPDATE UO_OP_ACTIVITY_PLAN T SET T.PLAN_STATUS='3' WHERE T.PLAN_DATE_WID>=TO_NUMBER(TO_CHAR(SYSDATE-5,'yyyymmdd')) AND T.PLAN_STATUS='2' AND
-            NOT EXISTS (
-            SELECT 1 FROM uo_op_activity_detail AP1 WHERE AP1.HEAD_ID=T.HEAD_ID AND AP1.PLAN_DT=T.PLAN_DATE_WID AND AP1.IS_PUSH='0')
-    </update>
-
-    <update id="updatePreheatHeaderToDone">
-        UPDATE uo_op_activity_header T
-        SET T.PREHEAT_STATUS = 'done'
-        where t.preheat_status = 'doing'
-            and t.has_preheat='1'
-            and  trunc(sysdate) >t.preheat_end_dt
-            --至少有一条状态为执行完成 或停止
-            and  exists (
-            select p.head_id from uo_op_activity_plan p where p.head_id=t.head_id and p.plan_status in('3','4') and p.activity_stage='preheat'
-            )
-    </update>
-
-    <update id="updateFormalHeaderToDone">
-        UPDATE uo_op_activity_header T
-        SET T.FORMAL_STATUS = 'done'
-        where t.FORMAL_STATUS = 'doing' and t.has_preheat='0'
-            and  trunc(sysdate) >t.Formal_End_Dt
-            --至少有一条状态为执行完成 或停止
-            and  exists (
-            select p.head_id from uo_op_activity_plan p where p.head_id=t.head_id and p.plan_status in('3','4') and p.activity_stage='formal'
-            )
-    </update>
 </mapper>

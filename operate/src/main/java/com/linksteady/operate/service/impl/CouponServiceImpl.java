@@ -61,8 +61,6 @@ public class CouponServiceImpl implements CouPonService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(CouponInfo couponInfo) {
-        // 验证信息
-        validCoupon();
         couponMapper.update(couponInfo);
     }
 
@@ -95,7 +93,6 @@ public class CouponServiceImpl implements CouPonService {
 
     @Override
     public List<CouponInfo> getCouponList(String groupId) {
-        validCoupon();
         return couponMapper.getCouponList(groupId);
     }
 
@@ -136,11 +133,14 @@ public class CouponServiceImpl implements CouPonService {
         if(couponSendType == null) {
             throw new RuntimeException("系统发送补贴的方式未在配置表中配置！");
         }
+        //设置所有券为验证通过
         couponMapper.validCouponPass();
-        // 只需要验证有效期
+        // 补贴有效截止日期未配置为空
         couponMapper.validEndDateNull();
+        //补贴有效日期已失效
         couponMapper.validEndDateNotNull();
         if("B".equalsIgnoreCase(couponSendType)) {
+            //补贴链接为空
             couponMapper.validCouponUrl();
         }
     }

@@ -10,6 +10,7 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/ion-rangeslider/ion.rangeSlider.min.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/loading/css/loading.css}">
     <link rel="stylesheet" data-th-href="@{/plugins/select2/css/select2.css}"/>
@@ -106,6 +107,14 @@
                             <select name="" id="pushPeriod" class="form-control"></select>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">效果计算天数</label>
+                        <div class="col-md-7">
+                            <input id="effectDays">
+                        </div>
+                    </div>
+
                     <div class="form-group" style="margin-top: 30px;">
                         <div class="col-md-3"></div>
                         <div class="col-md-8">
@@ -233,6 +242,7 @@
     var headId = "[[${headId}]]";
 
 </script>
+<script data-th-src="@{/plugins/ion-rangeslider/ion.rangeSlider.min.js}"></script>
 <script data-th-src="@{/plugins/select2/js/select2.js}"></script>
 <script data-th-src="@{/plugins/select2/js/i18n/zh-CN.js}"></script>
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>

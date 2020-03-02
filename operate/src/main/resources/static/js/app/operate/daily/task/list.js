@@ -52,6 +52,9 @@ function initTable() {
             field: 'convertAmount',
             title: '推送转化金额（元）'
         }, {
+            field: 'effectDays',
+            title: '效果观察天数（元）'
+        }, {
             title: '配置校验状态',
             align: 'center',
             formatter: function (value, row, indx) {

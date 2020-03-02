@@ -40,7 +40,6 @@ comment on column uo_op_activity_group.ACTIVITY_TYPE is '类型 NOTIFY 通知 DU
 comment on column uo_op_activity_group.user_num is '人数';
 
 comment on column uo_op_activity_template.tmp_code is '短信模板ID 来自序列';
-comment on column uo_op_activity_template.group_id is '使用场景 存储GROUP_ID';
 comment on column uo_op_activity_template.is_personal is '个性化	Y表示是  N表示否 ';
 comment on column uo_op_activity_template.relation is '用户与商品关系	GROWTH 成长  LATENT 潜在 多个值用逗号分割';
 
@@ -168,6 +167,12 @@ values ('17', '2', '用户成长旅程的商品没有参与本次活动', 'ACTIV
 insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
 values ('18', '3', '用户成长旅程的商品没有参与本次活动，但有可能成为活动商品潜在用户', 'ACTIVITY_GROUP', '活动运营用户组', '3');
 
+INSERT INTO T_CONFIG (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2) VALUES ('op.activity.sms.prodUrl', 'https://tb.cn.hn/t8n', '活动运营短信测试默认填充的商品链接', 199, null, null);
+INSERT INTO T_CONFIG (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2) VALUES ('op.activity.sms.price', '10元', '活动运营短信测试默认填充的商品单价', 199, null, null);
+INSERT INTO T_CONFIG (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2) VALUES ('op.activity.sms.prodName', '测试商品', '活动运营短信测试默认填充的商品名称', 199, null, null);
+
+alter table UO_OP_ACTIVITY_GROUP modify GROUP_NAME VARCHAR2(256);
+  /
 
 /**
 * 要删除的表

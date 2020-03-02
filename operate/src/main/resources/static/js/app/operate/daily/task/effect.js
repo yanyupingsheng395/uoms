@@ -8,7 +8,7 @@ $(function () {
 function getTaskDt() {
     $.get("/daily/getCurrentAndTaskDate", {headId: headId}, function (r) {
         let data = r.data;
-        $("#taskDt").html('').append('<i class="mdi mdi-alert-circle-outline"></i>任务日期：' + data["taskDt"] + '，成功触达：'+data['successNum']+'人');
+        $("#taskDt").html('').append('<i class="mdi mdi-alert-circle-outline"></i>任务日期：' + data["taskDt"] + '，成功触达：'+data['successNum']+'人，效果累计天数：'+data['effectDays']);
     });
 }
 

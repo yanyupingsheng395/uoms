@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.ExecStepsMapper">
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.ExecSteps">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="KEY_NAME" jdbcType="VARCHAR" property="keyName"/>
+        <result column="IS_VALID" jdbcType="VARCHAR" property="isValid"/>
+        <result column="STEP_TYPE" jdbcType="VARCHAR" property="stepType"/>
+        <result column="SQL_CONTENT" jdbcType="VARCHAR" property="sqlContent"/>
+        <result column="BEAN_NAME" jdbcType="VARCHAR" property="beanName"/>
+        <result column="METHOD_NAME" jdbcType="VARCHAR" property="methodName"/>
+        <result column="STEP_NAME" jdbcType="VARCHAR" property="stepName"/>
+        <result column="ORDER_NO" jdbcType="DECIMAL" property="orderNo"/>
+        <result column="SQL_TYPE" jdbcType="VARCHAR" property="sqlType"/>
+        <result column="COMMENTS" jdbcType="VARCHAR" property="comments"/>
+    </resultMap>
+
+    <select id="selctStepList" resultMap="BaseResultMap">
+       select KEY_NAME,IS_VALID,STEP_TYPE,SQL_CONTENT,BEAN_NAME,METHOD_NAME,STEP_NAME,SQL_TYPE FROM UO_OP_EXEC_STEPS
+       where IS_VALID='Y' and KEY_NAME=#{keyName} order by ORDER_NO ASC
+  </select>
+
+    <update id="execCommonUpdateSqls">
+        ${sql}
+    </update>
+
+    <delete id="execCommonDeleteSqls">
+        ${sql}
+    </delete>
+
+    <insert id="execCommonInsertSqls">
+        ${sql}
+    </insert>
+
+</mapper>

@@ -57,20 +57,6 @@ public interface DailyDetailService {
     List<Map<String, Object>> getContentList(String headId);
 
     /**
-     * 更新短信推送时段
-     * @param headId
-     * @param pushOrderPeriod
-     */
-    void updatePushOrderPeriod(String headId, String pushOrderPeriod);
-
-    /**
-     * copy到推送列表中
-     * @param headId
-     * @return
-     */
-    void copyToPushList(String headId);
-
-    /**
      * 生成短信文案
      * @param headerId
      */
@@ -86,5 +72,7 @@ public interface DailyDetailService {
      * 清空保存文案的临时表
      */
     void deletePushContentTemp(String headerId);
+
+
 
 }

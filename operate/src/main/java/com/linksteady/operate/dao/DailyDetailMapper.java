@@ -61,17 +61,11 @@ public interface DailyDetailMapper {
     List<Map<String, Object>> getContentList(String headId);
 
     /**
-     * 更新短信推送时段
-     *
-     * @param headId
-     * @param pushOrderPeriod
-     */
-    void updatePushOrderPeriod(String headId, String pushOrderPeriod);
-
-    /**
      * 将当前每日运营的推送数据复制到推送列表中
      */
     void copyToPushList(String headId);
+
+    void updatePushOrderPeriod(String headId);
 
     /**
      * 获取当前header_id下的用户列表
@@ -93,11 +87,6 @@ public interface DailyDetailMapper {
      * 保存推送的文案信息到临时表
      */
     void insertPushContentTemp(@Param("list") List<DailyDetail> list);
-
-    /**
-     * 将推送列表中的状态同步回日运营明细表中
-     */
-    void synchPushStatus();
 
     /**
      * 删除文案临时表中的数据
