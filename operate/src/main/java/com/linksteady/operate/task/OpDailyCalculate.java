@@ -83,7 +83,7 @@ public class OpDailyCalculate extends IJobHandler {
 
         ExecSteps execSteps=null;
         //遍历
-        for(int i=0;i<=execStepsList.size();i++)
+        for(int i=0;i<execStepsList.size();i++)
         {
             try{
                 execSteps=execStepsList.get(i);

@@ -2,9 +2,9 @@ package com.linksteady.operate.dao;
 
 
 import com.linksteady.operate.domain.ExecSteps;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author huang
@@ -14,9 +14,9 @@ public interface ExecStepsMapper {
 
    List<ExecSteps> selctStepList(String keyName);
 
-   int execCommonUpdateSqls(String sqls);
+   int execCommonUpdateSqls(@Param("sql")  String sql);
 
-   int execCommonDeleteSqls(String sqls);
+   int execCommonDeleteSqls(@Param("sql") String sql);
 
-   void  execCommonInsertSqls(String sqls);
+   void  execCommonInsertSqls(@Param("sql") String sql);
 }
