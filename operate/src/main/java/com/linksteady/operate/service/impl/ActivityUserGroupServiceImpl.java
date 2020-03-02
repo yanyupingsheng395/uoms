@@ -1,14 +1,10 @@
 package com.linksteady.operate.service.impl;
 
-import com.google.common.collect.Lists;
 import com.linksteady.operate.dao.ActivityUserGroupMapper;
 import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.service.ActivityUserGroupService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,5 +64,10 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     @Override
     public void setSmsCode(String groupId, String tmpCode, String headId, String type, String stage) {
         activityUserGroupMapper.setSmsCode(groupId, tmpCode, headId, type, stage);
+    }
+
+    @Override
+    public boolean checkTmpIsUsed(String tmpCode) {
+        return activityUserGroupMapper.checkTmpIsUsed(tmpCode) > 0;
     }
 }

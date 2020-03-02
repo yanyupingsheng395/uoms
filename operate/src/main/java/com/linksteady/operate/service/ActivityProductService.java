@@ -1,6 +1,8 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityProduct;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -69,4 +71,9 @@ public interface ActivityProductService {
     void deleteActivityProdMapping(String headId, String stage);
 
     void deleteData(String headId);
+
+    /**
+     * 上传商品
+     */
+    ResponseBo uploadExcel(MultipartFile file, String headId, String stage, String operateType);
 }

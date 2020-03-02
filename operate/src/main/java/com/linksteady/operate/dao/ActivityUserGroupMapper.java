@@ -27,4 +27,6 @@ public interface ActivityUserGroupMapper {
     void deleteData(String headId);
 
     void setSmsCode(String groupId, String tmpCode, String headId, String type, String stage);
+
+    int checkTmpIsUsed(String tmpCode);
 }

@@ -1,10 +1,6 @@
 package com.linksteady.operate.controller;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.linksteady.common.annotation.Log;
-import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.config.ConfigCacheManager;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.DailyHead;
@@ -16,17 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
-
 /**
  * @author hxcao
  * @date 2019-07-19
@@ -250,6 +239,10 @@ public class PageController {
     public String activityAdd(Model model)
     {
         model.addAttribute("operateType", "save");
+        model.addAttribute("prodNameLen", 10);
+        model.addAttribute("priceLen", 5);
+        model.addAttribute("prodUrlLen", 23);
+        model.addAttribute("smsLenLimit", 61);
         return "operate/activity/add";
     }
 
@@ -303,6 +296,11 @@ public class PageController {
         // 当处于done状态的时候，按钮不显示
         model.addAttribute("preheatStatus", preheatStatus);
         model.addAttribute("formalStatus", formalStatus);
+
+        model.addAttribute("prodNameLen", 10);
+        model.addAttribute("priceLen", 5);
+        model.addAttribute("prodUrlLen", 23);
+        model.addAttribute("smsLenLimit", 61);
         return "operate/activity/add";
     }
 

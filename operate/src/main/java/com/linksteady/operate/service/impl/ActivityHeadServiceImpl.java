@@ -155,37 +155,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         }
     }
 
-    @Override
-    public void saveSmsTemplate(ActivityTemplate activityTemplate) {
-        activityTemplate.setInsertBy((((User)SecurityUtils.getSubject().getPrincipal()).getUsername()));
-        activityTemplate.setInsertDt(new Date());
-        if("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice())) {
-            activityTemplate.setIsPersonal("0");
-        }else {
-            activityTemplate.setIsPersonal("1");
-        }
-        activityHeadMapper.saveSmsTemplate(activityTemplate);
-    }
-
-    @Override
-    public List<ActivityTemplate> getSmsTemplateList(ActivityTemplate activityTemplate) {
-        List<ActivityTemplate> templateTableData = activityHeadMapper.getTemplateTableData(activityTemplate);
-        templateTableData.stream().map(x->{
-            String relation = x.getRelation();
-            if(StringUtils.isNotEmpty(relation)) {
-                relation = relation.replace("GROWTH", "成长").replace("LATENT", "潜在");
-            }
-            String scene = x.getScene();
-            if(StringUtils.isNotEmpty(scene)) {
-                scene = scene.replace("DURING", "活动期间").replace("NOTIFY", "活动通知");
-            }
-            x.setRelation(relation);
-            x.setScene(scene);
-            return x;
-        }).collect(Collectors.toList());
-        return templateTableData;
-    }
-
     /**
      * 保存cov_info表
      * 如果已有记录直接update，否则insert
@@ -228,5 +197,35 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         ));
 
         activityUserGroupMapper.saveGroupData(activityGroups);
+    }
+
+    /**
+     * 如果是待执行，执行中，修改了产品、文案，则变更状态为待计划；
+     * @param headId
+     * @param stage
+     */
+    @Override
+    public void changeAndUpdateStatus(String headId, String stage) {
+        String status = getHeadStatus(headId, stage);
+        if(status.equalsIgnoreCase("todo") || stage.equalsIgnoreCase("doing")) {
+            updateStatus(headId, stage, "edit");
+        }
+    }
+
+    /**
+     * 获取头表状态
+     * @param headId
+     * @param stage
+     * @return
+     */
+    private String getHeadStatus(String headId, String stage) {
+        String status = "";
+        if(ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
+            status = getStatus(headId, stage);
+        }
+        if(ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
+            status = getStatus(headId, stage);
+        }
+        return status;
     }
 }
