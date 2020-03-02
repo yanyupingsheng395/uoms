@@ -65,4 +65,9 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     public void setSmsCode(String groupId, String tmpCode, String headId, String type, String stage) {
         activityUserGroupMapper.setSmsCode(groupId, tmpCode, headId, type, stage);
     }
+
+    @Override
+    public boolean checkTmpIsUsed(String tmpCode) {
+        return activityUserGroupMapper.checkTmpIsUsed(tmpCode) > 0;
+    }
 }

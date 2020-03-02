@@ -334,6 +334,11 @@ public class ActivityController {
         return ResponseBo.okWithData(null, activityHeadService.getDataChangedStatus(headId, stage));
     }
 
+    /**
+     * 删除活动运营
+     * @param headId
+     * @return
+     */
     @PostMapping("/deleteActivity")
     public ResponseBo deleteActivity(@RequestParam String headId) {
         int count = activityHeadService.getDeleteCount(headId);
@@ -485,5 +490,14 @@ public class ActivityController {
     public ResponseBo updateCovInfo(@RequestParam("headId") String headId, @RequestParam("stage") String stage, @RequestParam("covId") String covId) {
         activityCovService.updateCovInfo(headId, stage, covId);
         return ResponseBo.ok();
+    }
+
+    /**
+     * 校验当前短信模板是否被引用
+     * @return
+     */
+    @GetMapping("/checkTmpIsUsed")
+    public ResponseBo checkTmpIsUsed(@RequestParam("tmpCode") String tmpCode) {
+        return ResponseBo.okWithData(null, activityUserGroupService.checkTmpIsUsed(tmpCode));
     }
 }

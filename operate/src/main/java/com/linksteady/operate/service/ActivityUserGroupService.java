@@ -27,4 +27,6 @@ public interface ActivityUserGroupService {
     void deleteData(String headId);
 
     void setSmsCode(String groupId, String tmpCode, String headId, String type, String stage);
+
+    boolean checkTmpIsUsed(String tmpCode);
 }

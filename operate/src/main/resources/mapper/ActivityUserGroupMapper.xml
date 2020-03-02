@@ -71,4 +71,9 @@
         update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{tmpCode} where GROUP_ID = #{groupId} and HEAD_ID = #{headId}
         and ACTIVITY_TYPE = #{type} and ACTIVITY_STAGE = #{stage}
     </update>
+
+    <select id="checkTmpIsUsed" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_GROUP t1, UO_OP_ACTIVITY_HEADER t2
+        where t1.HEAD_ID = t2.HEAD_ID and (t2.PREHEAT_STATUS &lt;&gt; 'done' and t2.FORMAL_STATUS &lt;&gt; 'done') and t1.SMS_TEMPLATE_CODE = #{tmpCode}
+    </select>
 </mapper>

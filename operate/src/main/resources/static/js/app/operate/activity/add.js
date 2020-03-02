@@ -834,18 +834,26 @@ function editTmp() {
         return;
     }
     var code = selected[0].code;
-    $.get( "/activity/getTemplate", {code: code}, function (r) {
-        $( "#sms_add_title" ).text( "编辑文案" );
-        var data = r.data;
-        $( "#code" ).val( data.code );
-        $( "#name" ).val( data.name );
-        $( "#content" ).val( data.content );
-        $( "input[name='isProdName']:radio[value='" + data.isProdName + "']" ).prop( "checked", true );
-        $( "input[name='isProdUrl']:radio[value='" + data.isProdUrl + "']" ).prop( "checked", true );
-        $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
-        $( "#smstemplate_modal" ).modal( 'hide' );
-        $( "#sms_add_modal" ).modal( 'show' );
-    } );
+    $.get("/activity/checkTmpIsUsed", {tmpCode: code}, function (r) {
+        if(r.code === 200) {
+            if(r.data) {
+                $MB.n_warning("当前文案已被引用无法修改！");
+            }else {
+                $.get( "/activity/getTemplate", {code: code}, function (r) {
+                    $( "#sms_add_title" ).text( "编辑文案" );
+                    var data = r.data;
+                    $( "#code" ).val( data.code );
+                    $( "#name" ).val( data.name );
+                    $( "#content" ).val( data.content );
+                    $( "input[name='isProdName']:radio[value='" + data.isProdName + "']" ).prop( "checked", true );
+                    $( "input[name='isProdUrl']:radio[value='" + data.isProdUrl + "']" ).prop( "checked", true );
+                    $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
+                    $( "#smstemplate_modal" ).modal( 'hide' );
+                    $( "#sms_add_modal" ).modal( 'show' );
+                } );
+            }
+        }
+    });
 }
 
 $( "#sms_add_modal" ).on( 'hidden.bs.modal', function () {
@@ -870,17 +878,26 @@ function deleteTmp() {
         return;
     }
     var code = selected[0].code;
-    $MB.confirm( {
-        title: '提示：',
-        content: '确认删除选中的文案？'
-    }, function () {
-        $.post( "/activity/deleteTmp", {code: code}, function (r) {
-            if (r.code === 200) {
-                $MB.n_success( "删除成功！" );
+
+    $.get("/activity/checkTmpIsUsed", {tmpCode: code}, function (r) {
+        if(r.code === 200) {
+            if(r.data) {
+                $MB.n_warning("当前文案已被引用无法删除！");
+            }else {
+                $MB.confirm( {
+                    title: '提示：',
+                    content: '确认删除选中的文案？'
+                }, function () {
+                    $.post( "/activity/deleteTmp", {code: code}, function (r) {
+                        if (r.code === 200) {
+                            $MB.n_success( "删除成功！" );
+                        }
+                        getTmpTableData();
+                    } );
+                } );
             }
-            getTmpTableData();
-        } );
-    } );
+        }
+    });
 }
 
 // 屏蔽测试
