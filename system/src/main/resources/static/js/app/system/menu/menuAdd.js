@@ -150,7 +150,6 @@ function validateRule() {
                 }
             },
             system: {required: true},
-            appName: {required: true},
             orderNum: {required: true, digits: true}
         },
         messages: {
@@ -161,9 +160,6 @@ function validateRule() {
             },
             system: {
                 required: icon + "请选择业务系统"
-            },
-            appName: {
-                required: icon + "请选择应用"
             },
             orderNum: {required: icon + "请输入显示排序", digits: icon + "只能输入0或正整数"}
         }
@@ -176,11 +172,6 @@ $('#sysId').on('changed.bs.select',function(e){
     $MB.loading('show');
     $.jstree.destroy();
     createMenuTree(sysId);
-});
-
-$('#appId').on('changed.bs.select',function(e){
-    var appId = $(this).val();
-    $("input[name='appName']").val(appId);
 });
 
 function createMenuTree(sysId) {

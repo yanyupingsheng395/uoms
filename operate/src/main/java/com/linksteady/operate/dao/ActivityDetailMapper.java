@@ -62,25 +62,4 @@ public interface ActivityDetailMapper {
      * 查询出所有推送时间格式不正确的记录的条数
      */
     int selectPushScheduleInvalid(@Param("headId")  String headId,@Param("planDateWid")  String planDateWid);
-
-
-    /**
-     * 同步推送状态
-     */
-    void synchPushStatus();
-
-    /**
-     * 更新plan表的完成状态
-     */
-    void updatePlanToFinish();
-
-    /**
-     * 更新头表为完成状态(预售)
-     */
-    void updatePreheatHeaderToDone();
-
-    /**
-     * 更新头表为完成状态(正式)
-     */
-    void updateFormalHeaderToDone();
 }

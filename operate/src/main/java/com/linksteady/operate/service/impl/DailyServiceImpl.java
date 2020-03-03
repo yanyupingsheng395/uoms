@@ -5,8 +5,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.operate.config.ConfigCacheManager;
 import com.linksteady.operate.dao.ConfigMapper;
+import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.*;
+import com.linksteady.operate.service.DailyDetailService;
 import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.vo.DailyPersonalVo;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +38,9 @@ public class DailyServiceImpl implements DailyService {
 
     @Autowired
     private DailyMapper dailyMapper;
+
+    @Autowired
+    private DailyDetailMapper dailyDetailMapper;
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
@@ -55,13 +61,6 @@ public class DailyServiceImpl implements DailyService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateStatus(String headId, String status) {
-        dailyMapper.updateStatus(headId, status);
-    }
-
-
-    @Override
     public DailyHead getDailyHeadById(String headId) {
         return dailyMapper.getDailyHeadById(headId);
     }
@@ -69,17 +68,6 @@ public class DailyServiceImpl implements DailyService {
     @Override
     public DailyHead getEffectById(String id) {
         return dailyMapper.getEffectById(id);
-    }
-
-    @Override
-    public Map<String, Object> getCurrentAndTaskDate(String headId) {
-        Map<String, Object> result = Maps.newHashMap();
-        Map<String, Object> taskInfo = dailyMapper.getTaskInfo(headId);
-        String touchDt = (String) taskInfo.get("TOUCH_DT");
-        BigDecimal successNum = (BigDecimal) taskInfo.get("SUCCESS_NUM");
-        result.put("taskDt", touchDt);
-        result.put("successNum", successNum);
-        return result;
     }
 
     /**
@@ -91,10 +79,11 @@ public class DailyServiceImpl implements DailyService {
     @Override
     public Map<String, Object> getPushData(String headId) {
         Map<String, Object> result = Maps.newHashMap();
-        String dateFormat = "yyyyMMdd";
+        String dateFormat = "yyyy-MM-dd";
         List<String> xdatas = Lists.newLinkedList();
+
         // 提交任务日期
-        String taskDt = dailyMapper.getTouchDt(headId);
+        String taskDt = dailyMapper.getDailyHeadById(headId).getTouchDtStr();
         LocalDate taskDtDate = LocalDate.parse(taskDt, DateTimeFormatter.ofPattern(dateFormat));
         // 任务期最后时间
         LocalDate maxDate = taskDtDate.plusDays(MAX_TASK_DAY + 1);
@@ -349,5 +338,45 @@ public class DailyServiceImpl implements DailyService {
         result.put("touchDt", new SimpleDateFormat("yyyy年MM月dd日").format(dailyHead.getTouchDt()));
         result.put("userNum", dailyHead.getTotalNum());
         return result;
+    }
+
+    /**
+     * 对每日运营进行推送
+     * @param headId
+     * @param pushMethod
+     * @param pushPeriod
+     * @param timestamp
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void pushContent(String headId, String pushMethod, String pushPeriod, Long timestamp,Long effectDays) {
+        //更新时间戳
+        long timestampNew = System.currentTimeMillis();
+
+        // 推送方式 IMME立即推送 AI智能推送 FIXED固定时间推送
+        String pushOrderPeriod = "";
+        // 立即推送：当前时间往后顺延10分钟
+        if ("IMME".equalsIgnoreCase(pushMethod)) {
+            pushOrderPeriod = String.valueOf(LocalTime.now().plusMinutes(10).getHour());
+        }
+
+        // 固定时间推送：参数获取
+        if ("FIXED".equalsIgnoreCase(pushMethod)) {
+            pushOrderPeriod = String.valueOf(LocalTime.parse(pushPeriod, DateTimeFormatter.ofPattern("HH:mm")).getHour());
+        }
+        // 默认是AI：plan_push_period = order_period 此时，pushOrderPeriod = ""
+
+        //更新时间戳、推送方式、推送时段到头表
+        dailyMapper.updateHeaderPushInfo(headId, timestampNew,pushMethod,pushOrderPeriod,effectDays);
+
+        //更新行上的push_order_period
+        dailyDetailMapper.updatePushOrderPeriod(headId);
+
+        //复制写入待推送列表
+        dailyDetailMapper.copyToPushList(headId);
+
+        //更新状态为已执行
+        dailyMapper.updateStatus(headId, "done");
+
     }
 }

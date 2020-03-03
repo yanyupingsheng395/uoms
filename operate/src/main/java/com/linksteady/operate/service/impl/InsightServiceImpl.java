@@ -715,9 +715,9 @@ public class InsightServiceImpl implements InsightService {
      */
     @Override
     public long getUserBuyDual(String headId, String spuId, String userId) {
-        String dateFormat = "yyyyMMdd";
+        String dateFormat = "yyyy-MM-dd";
         String lastBuyDt = insightMapper.getLastBuyDt(spuId, userId);
-        String dailyDt = dailyMapper.getTouchDt(headId);
+        String dailyDt = dailyMapper.getDailyHeadById(headId).getTouchDtStr();
         LocalDate lastDt = LocalDate.parse(lastBuyDt, DateTimeFormatter.ofPattern(dateFormat));
         LocalDate currentDt = LocalDate.parse(dailyDt, DateTimeFormatter.ofPattern(dateFormat));
         long until = lastDt.until(currentDt, ChronoUnit.DAYS);

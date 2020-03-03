@@ -27,25 +27,9 @@ public interface DailyMapper {
 
     DailyHead getDailyHeadById(String headId);
 
-    String getTouchDt(String headId);
-
-    Map<String, Object> getTaskInfo(String headId);
-
-    Map<String, Object> getTotalNum(String headId);
-
     List<DailyGroupTemplate> getUserGroupList(@Param("activeList") List<String> activeList);
 
     void setSmsCode(List<String> groupIds, String smsCode);
-
-    /**
-     * 更新日运营头信息状态为 完成 (当前为done执行中 且 明细表中push_status没有为P状态的，将其status更新为finish 结束)
-     */
-    void updateHeaderToFinish();
-
-    /**
-     * 更新头表中推送状态的统计信息
-     */
-    void updateHeaderSendStatis();
 
     int validUserGroup();
 
@@ -82,9 +66,16 @@ public interface DailyMapper {
      */
     void updateGroupCheckFlagByCouponId(@Param("couponId") String couponId, @Param("checkFlag") String checkFlag);
 
-
-
-
+    /**
+     * 更新头表的操作时间戳、推送时段、推送方式
+     * @param headId
+     * @param opChangeDate
+     */
+    void updateHeaderPushInfo(@Param("headId") String headId,
+                              @Param("opChangeDate") Long opChangeDate,
+                              @Param("pushMethod") String pushMethod,
+                              @Param("pushPeriod") String pushPeriod,
+                              @Param("effectDays") Long effectDays);
 
     /**
      * 更新头表的操作时间戳
@@ -106,8 +97,6 @@ public interface DailyMapper {
     List<DailyUserStats> getUserStatsBySpu(@Param("headId") String headId, @Param("userValue") String userValue, @Param("pathActive") String pathActive, @Param("lifecycle") String lifecycle);
 
     List<DailyUserStats> getUserStatsByProd(@Param("headId") String headId, @Param("userValue") String userValue, @Param("pathActive") String pathActive, @Param("lifecycle") String lifecycle, @Param("spuName") String spuName);
-
-
 
     String getTodayStatus();
 

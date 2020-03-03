@@ -6,6 +6,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.service.impl.CouponServiceImpl;
 import com.linksteady.operate.service.impl.ShortUrlServiceImpl;
+import com.linksteady.operate.task.OpDailyCalculate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,6 +127,8 @@ public class CouponController extends BaseController {
         couponInfo = getCheckInfo(couponInfo);
         //保存
         couponService.update(couponInfo);
+        //保存完后对所有优惠券做个校验
+
         return ResponseBo.ok();
     }
 

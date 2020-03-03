@@ -73,4 +73,9 @@ public class DailyHead {
      * 验证标记
      */
     private String validateLabel;
+
+    /**
+     * 效果统计天数
+     */
+    private Long effectDays;
 }

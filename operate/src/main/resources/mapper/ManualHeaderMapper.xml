@@ -76,28 +76,4 @@
     <delete id="deleteData">
         delete from UO_OP_MANUAL_HEADER where HEAD_ID = #{headId}
     </delete>
-
-    <update id="updateSendStatus">
-        update uo_op_manual_header c set c.status='2' where trunc(c.SCHEDULE_DATE) &gt;= trunc(sysdate-3)
-            and not exists (
-        select 1 from uo_op_manual_detail d where d.head_id=c.head_id and d.push_status='P')
-    </update>
-
-    <update id="updateSendNum">
-        update uo_op_manual_header c set (c.success_num,c.faild_num,c.intercept_num)=(
-            select
-                sum(case when d.push_status='S' then 1 else 0 end)  success_num,
-                sum(case when d.push_status='F' then 1 else 0 end)  faild_num,
-                sum(case when d.push_status='C' then 1 else 0 end) intercept_num
-            from uo_op_manual_detail d where d.head_id=c.head_id
-        ) where trunc(c.SCHEDULE_DATE) &gt;=trunc(sysdate-3)
-    </update>
-
-    <update id="updateSendPushDate">
-        update uo_op_manual_header c set c.actual_push_date=(
-            select
-                max(d.push_date)
-            from uo_op_manual_detail d where d.head_id=c.head_id
-        ) where trunc(c.SCHEDULE_DATE) &gt;= trunc(sysdate-3)
-    </update>
 </mapper>

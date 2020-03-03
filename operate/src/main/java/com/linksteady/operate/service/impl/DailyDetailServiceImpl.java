@@ -65,25 +65,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         return dailyDetailMapper.getDataCount(headId, userValue, pathActive);
     }
 
-    /**
-     * 根据选择的状态拼接SQL where条件
-     * @param userValue
-     * @param pathActive
-     * @return
-     */
-    private String getWhereInfo(String userValue, String pathActive, String isConvert) {
-        StringBuffer sb = new StringBuffer();
-        if(StringUtils.isNotEmpty(isConvert)) {
-            sb.append(" and is_conversion = '" + isConvert + "'");
-        }
-        if(StringUtils.isNotEmpty(userValue)) {
-            sb.append(" and user_value = '" + userValue + "'");
-        }
-        if(StringUtils.isNotEmpty(pathActive)) {
-            sb.append(" and path_active = '" + pathActive + "'");
-        }
-        return sb.toString();
-    }
 
 
     /**
@@ -117,18 +98,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     public List<Map<String, Object>> getContentList(String headId) {
         return dailyDetailMapper.getContentList(headId);
     }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updatePushOrderPeriod(String headId, String pushOrderPeriod) {
-        dailyDetailMapper.updatePushOrderPeriod(headId, pushOrderPeriod);
-    }
-
-    @Override
-    public void copyToPushList(String headId) {
-        dailyDetailMapper.copyToPushList(headId);
-    }
-
 
     /**
      * 生成推送名单列表
