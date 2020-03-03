@@ -991,7 +991,7 @@ function geConvertInfo() {
     $.get("/activity/geConvertInfo", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
         var data = r.data;
         $("#covListId").val(data['covListId']);
-        $("#covRate").val(parseInt(data['covRate']) * 100);
+        $("#covRate").val(parseFloat(data['covRate']) * 100);
         $("#expectPushNum").val(data['expectPushNum']);
         $("#expectCovNum").val(data['expectCovNum']);
     });
@@ -1064,8 +1064,8 @@ function table3() {
                 field: 'covRate',
                 title: '推送的期望转化率（%）',
                 formatter: function (value, row, index) {
-                    if(value !== '' && value !== null) {
-                        return parseInt(value) * 100;
+                    if(value !== '' && value !== null && value !== undefined) {
+                        return parseFloat(value) * 100;
                     }else {
                         return '-';
                     }
@@ -1103,17 +1103,21 @@ function table4(data) {
                 field: 'val',
                 title: '改变绝对值',
                 formatter: function (value, row, index) {
-                    if(index === 0) {
-                        return parseInt(value) * 100;
+                    if(value !== null && value !== '' && value !== undefined) {
+                        if(index === 0) {
+                            return parseFloat(value) * 100;
+                        }else {
+                            return value;
+                        }
                     }
-                    return value;
+                    return '-';
                 }
             }, {
                 field: 'per',
                 title: '改变幅度（%）',
                 formatter: function (value, row, index) {
-                    if(value !== null && value !== '') {
-                        return parseInt(value) * 100;
+                    if(value !== null && value !== '' && value !== undefined) {
+                        return parseFloat(value) * 100;
                     }
                     return "-";
                 }
