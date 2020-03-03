@@ -5,6 +5,7 @@ import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.service.CouPonService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,9 +95,19 @@ public class CouponServiceImpl implements CouPonService {
     }
 
     @Override
-    public List<CouponInfo> getCouponList(String groupId) {
+    public List<CouponInfo> getCouponList(String groupId, String userValue, String lifeCycle, String pathActive) {
         validCoupon();
-        return couponMapper.getCouponList(groupId);
+        List<CouponInfo> couponList = couponMapper.getCouponList(groupId);
+        if(StringUtils.isNotEmpty(userValue)) {
+            couponList = couponList.stream().filter(x->x.getUserValue().contains(userValue)).collect(Collectors.toList());
+        }
+        if(StringUtils.isNotEmpty(lifeCycle)) {
+            couponList = couponList.stream().filter(x->x.getLifeCycle().contains(lifeCycle)).collect(Collectors.toList());
+        }
+        if(StringUtils.isNotEmpty(pathActive)) {
+            couponList = couponList.stream().filter(x->x.getPathActive().contains(pathActive)).collect(Collectors.toList());
+        }
+        return couponList;
     }
 
     /**

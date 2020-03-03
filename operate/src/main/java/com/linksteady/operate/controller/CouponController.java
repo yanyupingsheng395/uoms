@@ -49,8 +49,11 @@ public class CouponController extends BaseController {
      * @return
      */
     @GetMapping("/getCouponList")
-    public ResponseBo getCouponList(@RequestParam("groupId") String groupId) {
-        return ResponseBo.okWithData(null, couponService.getCouponList(groupId));
+    public ResponseBo getCouponList(@RequestParam("groupId") String groupId,
+                                    @RequestParam("userValue") String userValue,
+                                    @RequestParam("lifeCycle") String lifeCycle,
+                                    @RequestParam("pathActive") String pathActive) {
+        return ResponseBo.okWithData(null, couponService.getCouponList(groupId,userValue,lifeCycle, pathActive));
     }
 
     /**

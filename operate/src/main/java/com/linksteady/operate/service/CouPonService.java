@@ -33,7 +33,7 @@ public interface CouPonService {
 
     void deleteCoupon(List<String> ids);
 
-    List<CouponInfo> getCouponList(String groupId);
+    List<CouponInfo> getCouponList(String groupId, String userValue, String lifeCycle, String pathActive);
 
     void getCalculatedCoupon();
 
