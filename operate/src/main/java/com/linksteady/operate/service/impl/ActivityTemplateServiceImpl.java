@@ -1,10 +1,10 @@
 package com.linksteady.operate.service.impl;
 
 import com.linksteady.common.domain.User;
-import com.linksteady.operate.config.ConfigCacheManager;
 import com.linksteady.operate.dao.ActivityTemplateMapper;
 import com.linksteady.operate.domain.ActivityTemplate;
 import com.linksteady.operate.service.ActivityTemplateService;
+import com.linksteady.operate.service.ConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,9 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     @Autowired
     private ActivityTemplateMapper activityTemplateMapper;
 
+    @Autowired
+    private ConfigService configService;
+
     @Override
     public List<ActivityTemplate> getTemplateList(int startRow, int endRow, String code) {
         return activityTemplateMapper.getTemplateList(startRow, endRow, code);
@@ -36,7 +39,6 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
 
     @Override
     public ActivityTemplate getReplacedTmp(String code) {
-        ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
         ActivityTemplate activityTemplate = activityTemplateMapper.getTemplate(code);
         String isProdUrl = activityTemplate.getIsProdUrl();
         String isProdName = activityTemplate.getIsProdName();
@@ -46,13 +48,13 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         String price = "${PRICE}";
         String content = activityTemplate.getContent();
         if (StringUtils.isNotEmpty(isProdUrl) && isProdUrl.equalsIgnoreCase("1")) {
-            content = content.replace(prodUrl, configCacheManager.getConfigMap().get("op.activity.sms.prodUrl"));
+            content = content.replace(prodUrl, configService.getValueByName("op.activity.sms.prodUrl"));
         }
         if (StringUtils.isNotEmpty(isProdName) && isProdName.equalsIgnoreCase("1")) {
-            content = content.replace(prodName, configCacheManager.getConfigMap().get("op.activity.sms.prodName"));
+            content = content.replace(prodName, configService.getValueByName("op.activity.sms.prodName"));
         }
         if (StringUtils.isNotEmpty(isPrice) && isPrice.equalsIgnoreCase("1")) {
-            content = content.replace(price, configCacheManager.getConfigMap().get("op.activity.sms.price"));
+            content = content.replace(price, configService.getValueByName("op.activity.sms.price"));
         }
         activityTemplate.setContent(content);
         return activityTemplate;

@@ -4,26 +4,20 @@ package com.linksteady.operate.dao;
  * Created by hxcao on 2019-06-03
  */
 
+import com.linksteady.common.domain.Dict;
+import com.linksteady.common.domain.Tconfig;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * 品牌表
+ * 通用配置表
  */
 public interface ConfigMapper {
 
-    List<Map<String, String>> selectPathActive();
+    List<Dict> selectDictByTypeCode(String typeCode);
 
-    List<Map<String, String>> selectUserValue();
+    int updateConfig(@Param("name") String name,@Param("value") String value);
 
-    List<Map<String, String>> selectLifeCycle();
-
-    /**
-     * 加载其它通用配置
-     */
-    List<Map<String, String>> selectCommonConfig();
-
-    void updatePathActive(@Param("active") String active);
+    Tconfig getTconfigByName(String name);
 }

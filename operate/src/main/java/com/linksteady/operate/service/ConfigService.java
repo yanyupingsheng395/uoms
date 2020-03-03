@@ -1,6 +1,6 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.CouponInfo;
+import com.linksteady.common.domain.Dict;
 
 import java.util.List;
 import java.util.Map;
@@ -10,16 +10,28 @@ import java.util.Map;
  */
 public interface ConfigService {
 
-    List<Map<String, String>> selectPathActive();
+    /**
+     * 根据typeCode加载对应的字典内容
+     * @param typeCode
+     * @return
+     */
+    Map<String,String> selectDictByTypeCode(String typeCode);
 
-    List<Map<String, String>> selectUserValue();
-
-    List<Map<String, String>> selectLifeCycle();
 
     /**
-     * 加载其它通用配置
+     * 更新配置
+     * @param name
+     * @param value
      */
-    List<Map<String, String>> selectCommonConfig();
+    void updateConfig(String name,  String value);
 
-    void updatePathActive(String active);
+    /**
+     * 根据name获取value的值
+     */
+    String getValueByName(String name);
+
+    /**
+     * 判断KEY是否存在
+     */
+    boolean configExists();
 }

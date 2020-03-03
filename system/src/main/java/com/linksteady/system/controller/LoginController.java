@@ -4,8 +4,8 @@ import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.MD5Utils;
-import com.linksteady.system.config.ConfigCacheManager;
 import com.linksteady.system.config.SystemProperties;
+import com.linksteady.system.service.ConfigService;
 import com.linksteady.system.util.code.img.ImageCode;
 import com.linksteady.system.util.code.img.ImageCodeGenerator;
 import com.linksteady.system.service.UserService;
@@ -41,6 +41,9 @@ public class LoginController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ConfigService configService;
 
     /**
      * 当前系统简称
@@ -87,7 +90,7 @@ public class LoginController extends BaseController {
         }
 
         //当前系统的名称
-        String systemName=ConfigCacheManager.getInstance().getConfigMap().get("system.name");
+        String systemName= configService.getValueByName("system.name");
         model.addAttribute("systemName",systemName);
 
         return "login";
