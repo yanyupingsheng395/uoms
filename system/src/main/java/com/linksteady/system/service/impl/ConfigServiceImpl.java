@@ -58,6 +58,4 @@ public class ConfigServiceImpl implements ConfigService {
         List<Tconfig> tconfigList=hashOperations.values(CONFIG_KEY_NAME);
         return tconfigList;
     }
-
-
 }
