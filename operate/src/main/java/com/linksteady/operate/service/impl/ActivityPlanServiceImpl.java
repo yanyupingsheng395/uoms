@@ -60,8 +60,6 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     @Autowired
     RedisTemplate<String, String> redisTemplate;
 
-    private static final String HAS_PREHEAT="1";
-
     /**
      * 生成plan数据
      * @param headId

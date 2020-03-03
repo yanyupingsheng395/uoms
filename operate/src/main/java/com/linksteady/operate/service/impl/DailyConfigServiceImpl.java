@@ -3,10 +3,9 @@ package com.linksteady.operate.service.impl;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.linksteady.operate.config.ConfigCacheManager;
 import com.linksteady.operate.dao.DailyConfigMapper;
+import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.DailyConfigService;
-import com.linksteady.operate.service.DailyService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +20,11 @@ public class DailyConfigServiceImpl implements DailyConfigService {
 
     @Autowired
     private DailyConfigMapper dailyConfigMapper;
+
+    @Autowired
+    private ConfigService configService;
+
+
     /**
      * 理解用户
      *
@@ -32,14 +36,19 @@ public class DailyConfigServiceImpl implements DailyConfigService {
     @Override
     public Map<String, Object> usergroupdesc(String userValue, String pathActive, String lifecycle) {
         //根据活跃度，设置活跃度按钮
-        String activeCode = ConfigCacheManager.getInstance().getConfigMap().get("op.daily.pathactive.list");
+        String activeCode =configService.getValueByName("op.daily.pathactive.list");
+
+        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
+        Map<String, String> userValueMap =configService.selectDictByTypeCode("USER_VALUE");
+        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
+
         List<String> activeCodeList = Splitter.on(',').trimResults().omitEmptyStrings().splitToList(activeCode);
 
         List<Map<String, String>> activeResult = Lists.newArrayList();
         Map<String, String> temp;
         for (String code : activeCodeList) {
             temp = Maps.newHashMap();
-            temp.put("name", ConfigCacheManager.getInstance().getPathActiveMap().get(code));
+            temp.put("name", pathActiveMap.get(code));
 
             if (pathActive.equals(code)) {
                 temp.put("flag", "1");
@@ -51,8 +60,7 @@ public class DailyConfigServiceImpl implements DailyConfigService {
 
         List<Map<String, String>> userValueResult = Lists.newArrayList();
         //根据用户价值，设置用户价值按钮
-        Map<String, String> userValues = ConfigCacheManager.getInstance().getUserValueMap();
-        for (Map.Entry<String, String> entry : userValues.entrySet()) {
+        for (Map.Entry<String, String> entry : userValueMap.entrySet()) {
             temp = Maps.newHashMap();
             temp.put("name", entry.getValue());
 
@@ -66,8 +74,7 @@ public class DailyConfigServiceImpl implements DailyConfigService {
 
         //根据生命周期，设置生命周期按钮
         List<Map<String, String>> lifecycleResult = Lists.newArrayList();
-        Map<String, String> lifecycles = ConfigCacheManager.getInstance().getLifeCycleMap();
-        for (Map.Entry<String, String> entry : lifecycles.entrySet()) {
+        for (Map.Entry<String, String> entry : lifeCycleMap.entrySet()) {
             temp = Maps.newHashMap();
             temp.put("name", entry.getValue());
 
@@ -184,9 +191,7 @@ public class DailyConfigServiceImpl implements DailyConfigService {
         whereInfo = " and t2.SMS_CONTENT IS NULL";
         dailyConfigMapper.updateCheckFlagAndRemark(whereInfo, "尚未为群组配置文案");
 
-        ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
-        Map<String, String> configMap = configCacheManager.getConfigMap();
-        String active = configMap.get("op.daily.pathactive.list");
+        String active =configService.getValueByName("op.daily.pathactive.list");
         int result = 0;
         if(StringUtils.isNotEmpty(active)) {
             List<String> activeList = Arrays.asList(active.split(","));

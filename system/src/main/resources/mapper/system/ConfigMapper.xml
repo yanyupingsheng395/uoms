@@ -2,8 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.system.dao.ConfigMapper">
 
-    <select id="selectCommonConfig" resultType="map">
-        select T.NAME,T.VALUE FROM T_CONFIG T
+    <resultMap id="BaseResultMap" type="com.linksteady.common.domain.Tconfig">
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="VALUE" jdbcType="VARCHAR" property="value"/>
+        <result column="COMMENTS" jdbcType="VARCHAR" property="comments"/>
+        <result column="ORDER_NUM" jdbcType="DECIMAL" property="orderNum"/>
+        <result column="TYPE_CODE1" jdbcType="VARCHAR" property="typeCode1"/>
+        <result column="TYPE_CODE2" jdbcType="VARCHAR" property="typeCode2"/>
+    </resultMap>
+
+    <select id="selectCommonConfig" resultMap="BaseResultMap">
+        select T.NAME,T.VALUE,COMMENTS,ORDER_NUM,TYPE_CODE1,TYPE_CODE2 FROM T_CONFIG T
     </select>
 
 </mapper>

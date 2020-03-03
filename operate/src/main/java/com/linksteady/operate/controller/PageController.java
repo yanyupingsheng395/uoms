@@ -1,11 +1,11 @@
 package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
-import com.linksteady.operate.config.ConfigCacheManager;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.domain.DailyProperties;
 import com.linksteady.operate.service.ActivityHeadService;
+import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.service.DailyService;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 /**
@@ -35,6 +36,9 @@ public class PageController {
 
     @Autowired
     private DailyProperties dailyProperties;
+
+    @Autowired
+    private ConfigService configService;
 
     @Log("用户运营监控")
     @RequestMapping("/operator/user")
@@ -349,10 +353,9 @@ public class PageController {
      */
     @RequestMapping("/personInsight")
     public String personInsight(@RequestParam("userId") String userId, @RequestParam("headId") String headId, Model model) {
-        ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
         model.addAttribute("userId", userId);
         model.addAttribute("headId", headId);
-        model.addAttribute("pathActive", configCacheManager.getConfigMap().get("op.daily.pathactive.list"));
+        model.addAttribute("pathActive", configService.getValueByName("op.daily.pathactive.list"));
         return "operate/daily/person_insight";
     }
 }

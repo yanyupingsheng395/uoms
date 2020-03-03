@@ -1,13 +1,9 @@
 package com.linksteady.operate.service.impl;
 
-import com.google.common.collect.Lists;
-import com.linksteady.operate.config.ConfigCacheManager;
 import com.linksteady.operate.dao.SmsTemplateMapper;
-import com.linksteady.operate.dao.SpuCycleMapper;
 import com.linksteady.operate.domain.SmsTemplate;
-import com.linksteady.operate.domain.SpuCycle;
+import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.SmsTemplateService;
-import com.linksteady.operate.service.SpuCycleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +21,9 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
 
     @Autowired
     private SmsTemplateMapper smsTemplateapper;
+
+    @Autowired
+    private ConfigService configService;
 
     @Override
     public List<SmsTemplate> getSmsTemplateList(int startRow, int endRow,SmsTemplate smsTemplate) {
@@ -53,7 +52,6 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
 
     @Override
     public SmsTemplate getSmsTemplate(String smsCode) {
-        ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
         SmsTemplate smsTemplate = smsTemplateapper.getSmsTemplate(smsCode);
         String isCouponUrl = smsTemplate.getIsCouponUrl();
         String isCouponName = smsTemplate.getIsCouponName();
@@ -65,16 +63,16 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         String prodUrl = "${PROD_URL}";
         String smsContent = smsTemplate.getSmsContent();
         if (StringUtils.isNotEmpty(isCouponUrl) && isCouponUrl.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(couponUrl, configCacheManager.getConfigMap().get("op.daily.sms.cunponurl"));
+            smsContent = smsContent.replace(couponUrl, configService.getValueByName("op.daily.sms.cunponurl"));
         }
         if (StringUtils.isNotEmpty(isCouponName) && isCouponName.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(couponName, configCacheManager.getConfigMap().get("op.daily.sms.couponname"));
+            smsContent = smsContent.replace(couponName, configService.getValueByName("op.daily.sms.couponname"));
         }
         if (StringUtils.isNotEmpty(isProductUrl) && isProductUrl.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(prodUrl, configCacheManager.getConfigMap().get("op.daily.sms.produrl"));
+            smsContent = smsContent.replace(prodUrl, configService.getValueByName("op.daily.sms.produrl"));
         }
         if (StringUtils.isNotEmpty(isProductName) && isProductName.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(prodName, configCacheManager.getConfigMap().get("op.daily.sms.prodname"));
+            smsContent = smsContent.replace(prodName, configService.getValueByName("op.daily.sms.prodname"));
         }
         smsTemplate.setSmsContent(smsContent);
         return  smsTemplate;
@@ -133,17 +131,19 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
 
     @Override
     public List<String> getSmsUsedGroupInfo(String smsCode) {
-        ConfigCacheManager configCacheManager = ConfigCacheManager.getInstance();
-        configCacheManager.getLifeCycleMap().get("");
+        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
+        Map<String, String> userValueMap =configService.selectDictByTypeCode("USER_VALUE");
+        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
+
         List<String> data = smsTemplateapper.getSmsUsedGroupInfo(smsCode);
         List<String> result = data.stream().map(x -> {
             String[] tmpArray = x.split(",");
             StringBuilder tmp = new StringBuilder();
-            tmp.append(configCacheManager.getUserValueMap().get(tmpArray[0]));
+            tmp.append(userValueMap.get(tmpArray[0]));
             tmp.append(",");
-            tmp.append(configCacheManager.getLifeCycleMap().get(tmpArray[1]));
+            tmp.append(lifeCycleMap.get(tmpArray[1]));
             tmp.append(",");
-            tmp.append(configCacheManager.getPathActiveMap().get(tmpArray[2]));
+            tmp.append(pathActiveMap.get(tmpArray[2]));
             return tmp.toString();
         }).collect(Collectors.toList());
         return result;

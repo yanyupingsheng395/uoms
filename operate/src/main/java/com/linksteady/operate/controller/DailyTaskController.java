@@ -1,16 +1,15 @@
 package com.linksteady.operate.controller;
 
-import com.alibaba.fastjson.JSONArray;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.FileUtils;
-import com.linksteady.operate.config.ConfigCacheManager;
-import com.linksteady.operate.dao.DailyConfigMapper;
 import com.linksteady.operate.domain.*;
-import com.linksteady.operate.service.*;
+import com.linksteady.operate.service.ConfigService;
+import com.linksteady.operate.service.DailyConfigService;
+import com.linksteady.operate.service.DailyDetailService;
+import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.vo.DailyPersonalVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -157,9 +153,9 @@ public class DailyTaskController {
      */
     @GetMapping("/refreshUserStatData")
     public ResponseBo refreshUserStatData(String headId, String userValue, String pathActive, String lifecycle) {
-        Map<String, String> pathActiveMap = ConfigCacheManager.getInstance().getPathActiveMap();
-        Map<String, String> userValueMap = ConfigCacheManager.getInstance().getUserValueMap();
-        Map<String, String> lifeCycleMap = ConfigCacheManager.getInstance().getLifeCycleMap();
+        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
+        Map<String, String> userValueMap =configService.selectDictByTypeCode("USER_VALUE");
+        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
 
         Map<String, Object> result = Maps.newHashMap();
 
@@ -188,9 +184,9 @@ public class DailyTaskController {
      */
     @GetMapping("/refreshUserStatData2")
     public ResponseBo refreshUserStatData2(String headId, String userValue, String pathActive, String lifecycle, String spuName) {
-        Map<String, String> pathActiveMap = ConfigCacheManager.getInstance().getPathActiveMap();
-        Map<String, String> userValueMap = ConfigCacheManager.getInstance().getUserValueMap();
-        Map<String, String> lifeCycleMap = ConfigCacheManager.getInstance().getLifeCycleMap();
+        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
+        Map<String, String> userValueMap =configService.selectDictByTypeCode("USER_VALUE");
+        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
         Map<String, Object> result = Maps.newHashMap();
         List<DailyUserStats> prodList = dailyService.getUserStatsByProd(headId, userValue, pathActive, lifecycle, spuName);
         result.put("prodList", prodList);
@@ -439,15 +435,13 @@ public class DailyTaskController {
 
     @GetMapping("/getDefaultGroup")
     public ResponseBo getDefaultGroup() {
-        ConfigCacheManager cacheManager = ConfigCacheManager.getInstance();
-        return ResponseBo.okWithData(null, cacheManager.getConfigMap().get("op.daily.pathactive.list"));
+        return ResponseBo.okWithData(null, configService.getValueByName("op.daily.pathactive.list"));
     }
 
     @GetMapping("/setDefaultGroup")
     public ResponseBo setDefaultGroup(@RequestParam("active") String active) {
-        ConfigCacheManager cacheManager = ConfigCacheManager.getInstance();
-        configService.updatePathActive(active);
-        cacheManager.setConfigMap(configService.selectCommonConfig());
+        //设置默认活跃度 第一个参数为key 第二个参数为value
+        configService.updateConfig("op.daily.pathactive.list",active);
         return ResponseBo.ok();
     }
 }

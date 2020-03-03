@@ -13,7 +13,7 @@ public class LoadConfigCache implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        //加载配置
-        ConfigCacheManager.getInstance().setConfigMap(configService.selectCommonConfig());
+        //加载配置 从数据库加载配置到redis中
+        configService.loadConfigToRedis();
     }
 }

@@ -3,12 +3,10 @@ package com.linksteady.operate.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.linksteady.operate.config.ConfigCacheManager;
-import com.linksteady.operate.dao.ConfigMapper;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.*;
-import com.linksteady.operate.service.DailyDetailService;
+import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.vo.DailyPersonalVo;
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +16,6 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -44,6 +41,9 @@ public class DailyServiceImpl implements DailyService {
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
+
+    @Autowired
+    ConfigService configService;
 
     /**
      * 效果统计最大时间长度
@@ -148,8 +148,7 @@ public class DailyServiceImpl implements DailyService {
 
     @Override
     public List<DailyGroupTemplate> getUserGroupList() {
-        ConfigCacheManager cacheManager = ConfigCacheManager.getInstance();
-        String active = cacheManager.getConfigMap().get("op.daily.pathactive.list");
+        String active = configService.getValueByName("op.daily.pathactive.list");
         List<String> activeList = null;
         if (StringUtils.isNotEmpty(active)) {
             activeList = Arrays.asList(active.split(","));
@@ -237,9 +236,9 @@ public class DailyServiceImpl implements DailyService {
     @Override
     public Map<String, Object> getUserStatsData(String headId) {
         Map<String, Object> result = Maps.newHashMap();
-        Map<String, String> pathActiveMap = ConfigCacheManager.getInstance().getPathActiveMap();
-        Map<String, String> userValueMap = ConfigCacheManager.getInstance().getUserValueMap();
-        Map<String, String> lifeCycleMap = ConfigCacheManager.getInstance().getLifeCycleMap();
+        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
+        Map<String, String> userValueMap =configService.selectDictByTypeCode("USER_VALUE");
+        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
         //获取人群分布
         List<DailyUserStats> dailyUserStats = getUserStats(headId);
         //设置标签的显示值
