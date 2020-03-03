@@ -367,6 +367,8 @@ values ('manual', 'Y', 'SQL', 'update uo_op_manual_header c set c.actual_push_da
             from uo_op_manual_detail d where d.head_id=c.head_id
         ) where trunc(c.SCHEDULE_DATE) >= trunc(sysdate-3) and c.status=''2''', null, null, '更新手工推送表的实际推送时间', '6', 'UPDATE', '更新手工推送表的实际推送时间');
 
-prompt Done.
+
+insert into t_config (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2)
+values ('op.daily.default.effectDays', '3', '每日运营效果统计默认天数', '0', 'APPS', null);
 
 

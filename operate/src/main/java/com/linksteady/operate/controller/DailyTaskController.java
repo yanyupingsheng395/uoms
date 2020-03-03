@@ -429,6 +429,8 @@ public class DailyTaskController {
             return y + ":00";
         }).collect(Collectors.toList());
         result.put("timeList", timeList);
+
+        result.put("effectDays",configService.getValueByName("op.daily.default.effectDays"));
         return ResponseBo.okWithData(null, result);
     }
 

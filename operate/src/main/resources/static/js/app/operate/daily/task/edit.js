@@ -186,8 +186,14 @@ $("#push_msg_modal").on('shown.bs.modal', function () {
         $('input[name="pushMethod"]').removeAttr("checked");
         $('input[name="pushMethod"][value="' + r.data.method + '"]').prop("checked", true);
         $("#pushPeriodDiv").hide();
+
         //有效天数滑块设置为默认值
-        effectRange.reset();
+        effectRange.update({
+            min: 1,
+            max: 10,
+            from: r.data.effectDays,
+            skin: "modern"
+        });
 
     });
 });
