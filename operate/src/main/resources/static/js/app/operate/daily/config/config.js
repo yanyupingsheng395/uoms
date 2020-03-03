@@ -588,7 +588,10 @@ function couponTable(groupId) {
     };
     $('#couponTable').bootstrapTable('destroy').bootstrapTable(settings);
     //为刷新按钮绑定事件
-    $.get("/coupon/getCouponList", {groupId: groupId}, function (r) {
+    var userValue = $("#coupon-form").find("select[name='userValue']").val();
+    var lifeCycle = $("#coupon-form").find("select[name='lifeCycle']").val();
+    var pathActive = $("#coupon-form").find("select[name='pathActive']").val();
+    $.get("/coupon/getCouponList", {groupId: groupId, userValue: userValue, lifeCycle: lifeCycle, pathActive: pathActive}, function (r) {
         $('#couponTable').bootstrapTable('load', r.data);
     });
 }

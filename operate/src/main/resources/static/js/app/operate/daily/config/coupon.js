@@ -328,3 +328,16 @@ function clearUserGroupDisabled() {
         $("input[name='isProdUrl']").removeAttr("disabled");
     }
 }
+
+// 检索条件
+function searchCoupon() {
+    couponTable($("#currentGroupId").val());
+}
+
+// 重置搜索条件
+function resetCoupon() {
+    $("#coupon-form").find("select[name='userValue']").find("option:selected").removeAttr('selected');
+    $("#coupon-form").find("select[name='pathActive']").find("option:selected").removeAttr('selected');
+    $("#coupon-form").find("select[name='lifeCycle']").find("option:selected").removeAttr('selected');
+    searchCoupon();
+}

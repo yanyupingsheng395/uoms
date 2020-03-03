@@ -50,10 +50,11 @@ public class CouponController extends BaseController {
      * @return
      */
     @GetMapping("/getCouponList")
-    public ResponseBo getCouponList(@RequestParam("groupId") String groupId) {
-        //先对券进行整个校验
-        couponService.validCoupon();
-        return ResponseBo.okWithData(null, couponService.getCouponList(groupId));
+    public ResponseBo getCouponList(@RequestParam("groupId") String groupId,
+                                    @RequestParam("userValue") String userValue,
+                                    @RequestParam("lifeCycle") String lifeCycle,
+                                    @RequestParam("pathActive") String pathActive) {
+        return ResponseBo.okWithData(null, couponService.getCouponList(groupId,userValue,lifeCycle, pathActive));
     }
 
     /**
@@ -228,6 +229,16 @@ public class CouponController extends BaseController {
         }else {
             return couponService.checkCouponName(couponDisplayName) == 0;
         }
+    }
+
+    /**
+     * 验证券信息
+     * @return
+     */
+    @RequestMapping("/validCoupon")
+    public ResponseBo validCoupon() {
+        couponService.validCoupon();
+        return ResponseBo.ok();
     }
 
 }

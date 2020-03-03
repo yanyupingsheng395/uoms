@@ -991,7 +991,7 @@ function geConvertInfo() {
     $.get("/activity/geConvertInfo", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
         var data = r.data;
         $("#covListId").val(data['covListId']);
-        $("#covRate").val(data['covRate']);
+        $("#covRate").val(parseInt(data['covRate']) * 100);
         $("#expectPushNum").val(data['expectPushNum']);
         $("#expectCovNum").val(data['expectCovNum']);
     });
@@ -1062,7 +1062,14 @@ function table3() {
                 }
             }, {
                 field: 'covRate',
-                title: '推送的期望转化率（%）'
+                title: '推送的期望转化率（%）',
+                formatter: function (value, row, index) {
+                    if(value !== '' && value !== null) {
+                        return parseInt(value) * 100;
+                    }else {
+                        return '-';
+                    }
+                }
             }, {
                 field: 'expectPushNum',
                 title: '达成期望转化率<br/>对应的推送用户数（人）'
@@ -1094,10 +1101,22 @@ function table4(data) {
                 title: ''
             }, {
                 field: 'val',
-                title: '改变绝对值'
+                title: '改变绝对值',
+                formatter: function (value, row, index) {
+                    if(index === 0) {
+                        return parseInt(value) * 100;
+                    }
+                    return value;
+                }
             }, {
                 field: 'per',
-                title: '改变幅度（%）'
+                title: '改变幅度（%）',
+                formatter: function (value, row, index) {
+                    if(value !== null && value !== '') {
+                        return parseInt(value) * 100;
+                    }
+                    return "-";
+                }
             }
         ]
     };
