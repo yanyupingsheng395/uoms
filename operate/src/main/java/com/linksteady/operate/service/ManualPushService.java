@@ -1,6 +1,7 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.ManualHeader;
+import com.linksteady.operate.exception.LinkSteadyException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ public interface ManualPushService {
 
     void pushMessage(String headId, String pushType);
 
-    void saveManualData(String smsContent, MultipartFile file, String sendType, String pushDate) throws IOException;
+    void saveManualData(String smsContent, MultipartFile file, String sendType, String pushDate) throws IOException, LinkSteadyException;
 
     Map<String, Object> getPushInfo(String headId);
 

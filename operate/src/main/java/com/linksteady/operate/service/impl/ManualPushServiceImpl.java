@@ -2,12 +2,14 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.linksteady.common.domain.User;
+import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.dao.ManualDetailMapper;
 import com.linksteady.operate.dao.ManualHeaderMapper;
 import com.linksteady.operate.dao.PushLargeListMapper;
 import com.linksteady.operate.domain.ManualDetail;
 import com.linksteady.operate.domain.ManualHeader;
 import com.linksteady.operate.domain.PushListLarge;
+import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.ManualPushService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author hxcao
@@ -78,7 +81,7 @@ public class ManualPushServiceImpl implements ManualPushService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveManualData(String smsContent, MultipartFile file, String sendType, String pushDate) throws IOException {
+    public void saveManualData(String smsContent, MultipartFile file, String sendType, String pushDate) throws IOException, LinkSteadyException {
         // 保存header
         ManualHeader manualHeader = new ManualHeader();
         manualHeader.setFileName(file.getOriginalFilename());
@@ -97,7 +100,12 @@ public class ManualPushServiceImpl implements ManualPushService {
         }
         // 解析file
         List<String> mobiles = Lists.newArrayList();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+        BufferedReader bufferedReader;
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(file.getInputStream(), FileUtils.getCharSet(FileUtils.multipartFileToFile(file))));
+        }catch (Exception e) {
+            throw new LinkSteadyException("文件解析异常！");
+        }
         String line;
         while ((line = bufferedReader.readLine()) != null) {
             mobiles.add(line);
@@ -123,18 +131,36 @@ public class ManualPushServiceImpl implements ManualPushService {
 
         // 分批存储
         int totalSize = manualDetails.size();
-        int pageSize = 10_000;
+        int pageSize = 1000;
         int pageNum =  totalSize/ pageSize == 0 ? totalSize / pageSize : (totalSize / pageSize) + 1;
+        int a = 0;
         if(totalSize > pageSize) {
             for (int i = 0; i < pageNum; i++) {
-                int start = i * pageSize + 1;
-                int end = (i + 1) * pageSize;
+                int start = i * pageSize;
+                int end = (i + 1) * pageSize - 1;
                 end = Math.min(end, totalSize);
-                manualDetailMapper.saveDetailList(manualDetails.subList(start - 1, end));
+                List<ManualDetail> tmpList;
+                if(end == totalSize) {
+                    tmpList = manualDetails.subList(start, end);
+                }else {
+                    tmpList = manualDetails.subList(start, end + 1);
+                }
+                if(tmpList.size() > 0) {
+                    a += tmpList.size();
+                    manualDetailMapper.saveDetailList(tmpList);
+                }else {
+                    throw new LinkSteadyException("数据解析异常，获取到的数据为空！");
+                }
             }
         }else {
-            manualDetailMapper.saveDetailList(manualDetails);
+            if(manualDetails.size() > 0) {
+                manualDetailMapper.saveDetailList(manualDetails);
+            }else {
+                throw new LinkSteadyException("数据解析异常，获取到的数据为空！");
+            }
         }
+        System.out.println(a);
+
     }
 
     @Override
