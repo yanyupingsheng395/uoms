@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -30,7 +31,8 @@ public class OpDailyCalculate extends IJobHandler {
 
     @Override
     public ResultInfo execute(String param) {
-        log.info("开始运营效果的计算，开始的时间为:{}", LocalDateTime.now());
+        DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        log.info("开始运营效果的计算，开始的时间为:{}", dtf2.format(LocalDateTime.now()));
         log.info("接收到的参数值为:{}",param);
 
         try {
@@ -62,7 +64,7 @@ public class OpDailyCalculate extends IJobHandler {
                 throw new LinkSteadyException("无效的任务参数");
             }
 
-            log.info("完成运营效果的计算，完成的时间为:{}", LocalDateTime.now());
+            log.info("完成运营效果的计算，完成的时间为:{}", dtf2.format(LocalDateTime.now()));
             return ResultInfo.success("执行任务成功!");
         } catch (Exception e) {
             log.error("执行任务失败，失败的原因:{}",e);
@@ -77,9 +79,10 @@ public class OpDailyCalculate extends IJobHandler {
      * @return
      */
     private void executeSteps(String keyName) throws Exception{
+        DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<ExecSteps> execStepsList=execStepsMapper.selctStepList(keyName);
 
-        log.info("###############开始计算 {} ,合计步骤: ###############",EffectExecType.EFFECT_ACTIVITY_KEY.getDescByKey(keyName),execStepsList.size());
+        log.info("###############开始计算 {} ,合计步骤:{} 步 ###############",EffectExecType.EFFECT_ACTIVITY_KEY.getDescByKey(keyName),execStepsList.size());
 
         ExecSteps execSteps=null;
         //遍历
@@ -88,7 +91,7 @@ public class OpDailyCalculate extends IJobHandler {
             try{
                 execSteps=execStepsList.get(i);
 
-                log.info("    ####开始执行第{}步，名称为{},类型为{},开始时间:{}",i,execSteps.getStepName(),execSteps.getStepType(),LocalDateTime.now());
+                log.info("    ####开始执行第{}步，名称为{},类型为{},开始时间:{}",i,execSteps.getStepName(),execSteps.getStepType(),dtf2.format(LocalDateTime.now()));
 
                 //SQL类型
                 if("SQL".equals(execSteps.getStepType()))
@@ -114,15 +117,16 @@ public class OpDailyCalculate extends IJobHandler {
                 {
                     throw new LinkSteadyException("无效的步骤类型");
                 }
-                log.info("    ####执行第{}步成功,完成时间:{}",i,LocalDateTime.now());
+                log.info("    ####成功执行第{}步,完成时间:{}",i,dtf2.format(LocalDateTime.now()));
             }catch (Exception e)
             {
-                log.error("    ####执行第{}步失败，异常堆栈为{}",e);
+                log.error("    ####失败执行第{}步，异常堆栈为{}",e);
                 throw e;
             }
 
         }
-        log.info("###############计算 {}完成 ，完成的时间为{}",LocalDateTime.now());
+
+        log.info("###############完成计算 {} ,完成的时间为{} ###############",EffectExecType.EFFECT_ACTIVITY_KEY.getDescByKey(keyName),dtf2.format(LocalDateTime.now()));
 
     }
 }
@@ -130,7 +134,7 @@ public class OpDailyCalculate extends IJobHandler {
 enum EffectExecType{
     EFFECT_DAILY_KEY("daily","每日运营效果计算"),
     EFFECT_ACTIVITY_KEY("activity","活动运营效果计算"),
-    EFFECT_MANUAL_KEY("manual","活动运营效果计算");
+    EFFECT_MANUAL_KEY("manual","手工推送效果计算");
 
     private String key;
     private String desc;
