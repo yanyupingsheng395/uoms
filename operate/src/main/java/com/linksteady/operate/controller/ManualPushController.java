@@ -3,6 +3,7 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ManualHeader;
+import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.ManualPushService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +52,15 @@ public class ManualPushController {
      * @return
      */
     @PostMapping("/saveManualData")
-    public synchronized ResponseBo saveManualData(@RequestParam("smsContent") String smsContent, @RequestParam("file") MultipartFile file, @RequestParam("sendType")  String sendType, String pushDate) throws IOException {
-        manualPushService.saveManualData(smsContent, file, sendType, pushDate);
+    public synchronized ResponseBo saveManualData(@RequestParam("smsContent") String smsContent, @RequestParam("file") MultipartFile file, @RequestParam("sendType")  String sendType, String pushDate) {
+        try {
+            manualPushService.saveManualData(smsContent, file, sendType, pushDate);
+        } catch (IOException e) {
+            e.printStackTrace();
+            ResponseBo.error("文件解析异常！");
+        } catch (LinkSteadyException e) {
+            ResponseBo.error(e.getMessage());
+        }
         return ResponseBo.ok();
     }
 

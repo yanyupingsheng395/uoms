@@ -18,6 +18,7 @@
     <link rel="stylesheet" type="text/css" href="/plugins/snakey/inspector.css">
 </head>
 <body style="background-color: #ffffff;margin: 0px;padding: 0px;">
+<div data-th-include="common/commonCSS"></div>
 <div class="row">
     <div class="col-md-12" style="margin-top:5px;margin-bottom:8px;">
         <div class="select-list">
@@ -46,7 +47,7 @@
         </div>
     </div>
 </div>
-<div data-th-include="common/common"></div>
+<div data-th-include="common/commonJS"></div>
 <script>
     var dateRange = "[[${dateRange}]]";
     $("#breakBtn").attr("href", "/sankey?dateRange=" + dateRange);

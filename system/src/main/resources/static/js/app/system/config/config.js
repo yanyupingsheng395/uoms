@@ -2,7 +2,6 @@ $(function () {
     getTableData();
 });
 function getTableData() {
-    var $configTableForm = $("#config-form");
     var settings = {
         url: "/config/getList",
         sortable: true,

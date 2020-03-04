@@ -21,7 +21,7 @@
 
 <body class="gray-bg">
 <!-- 公共组件 -->
-<div data-th-include="common/common"></div>
+<div data-th-include="common/commonCSS"></div>
 <div class="lyear-layout-web">
     <div class="lyear-layout-container">
         <!-- 左侧导航 -->
@@ -215,6 +215,7 @@
 <script>
     let couponNameLen = [[${couponNameLen}]];
 </script>
+<div data-th-include="common/commonJS"></div>
 <script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
 <script data-th-src="@{/js/common/lightyear.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>

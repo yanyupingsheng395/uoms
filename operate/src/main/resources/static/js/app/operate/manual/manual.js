@@ -134,11 +134,14 @@ function submitData() {
                 if(data.code === 200){
                     $MB.n_success("数据提交成功！");
                 }else {
-                    $MB.n_success("数据提交失败！");
+                    $MB.n_success(data.msg);
                 }
                 $MB.loadingDesc('hide');
                 $("#add_modal").modal('hide');
                 $MB.refreshTable('dataTable');
+            },
+            error: function (data) {
+                $MB.n_danger(data.msg);
             }
         });
     }
