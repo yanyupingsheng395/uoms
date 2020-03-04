@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -129,9 +130,8 @@ public class FileUtils {
         if (file.equals("") || file.getSize() <= 0) {
             file = null;
         } else {
-            InputStream ins = null;
-            ins = file.getInputStream();
-            toFile = new File(file.getOriginalFilename());
+            InputStream ins = file.getInputStream();
+            toFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
             inputStreamToFile(ins, toFile);
             ins.close();
         }

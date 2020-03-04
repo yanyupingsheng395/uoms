@@ -17,19 +17,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -102,7 +96,12 @@ public class ManualPushServiceImpl implements ManualPushService {
         List<String> mobiles = Lists.newArrayList();
         BufferedReader bufferedReader;
         try {
-            bufferedReader = new BufferedReader(new InputStreamReader(file.getInputStream(), FileUtils.getCharSet(FileUtils.multipartFileToFile(file))));
+            File tmpFile = FileUtils.multipartFileToFile(file);
+            if(tmpFile == null) {
+                throw new RuntimeException("上传的文件为空！");
+            }
+            bufferedReader = new BufferedReader(new InputStreamReader(file.getInputStream(), Objects.requireNonNull(FileUtils.getCharSet(tmpFile))));
+            FileUtils.delteTempFile(tmpFile);
         }catch (Exception e) {
             throw new LinkSteadyException("文件解析异常！");
         }
@@ -133,7 +132,6 @@ public class ManualPushServiceImpl implements ManualPushService {
         int totalSize = manualDetails.size();
         int pageSize = 1000;
         int pageNum =  totalSize/ pageSize == 0 ? totalSize / pageSize : (totalSize / pageSize) + 1;
-        int a = 0;
         if(totalSize > pageSize) {
             for (int i = 0; i < pageNum; i++) {
                 int start = i * pageSize;
@@ -146,7 +144,6 @@ public class ManualPushServiceImpl implements ManualPushService {
                     tmpList = manualDetails.subList(start, end + 1);
                 }
                 if(tmpList.size() > 0) {
-                    a += tmpList.size();
                     manualDetailMapper.saveDetailList(tmpList);
                 }else {
                     throw new LinkSteadyException("数据解析异常，获取到的数据为空！");
@@ -159,8 +156,6 @@ public class ManualPushServiceImpl implements ManualPushService {
                 throw new LinkSteadyException("数据解析异常，获取到的数据为空！");
             }
         }
-        System.out.println(a);
-
     }
 
     @Override
