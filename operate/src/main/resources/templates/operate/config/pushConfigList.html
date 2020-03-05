@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet"  data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+</head>
+
+<body class="gray-bg">
+<!-- 公共组件 -->
+<div data-th-include="common/commonCSS"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+
+                        <div class="row">
+                            <span class="navbar-page-title">推送配置参数列表</span>
+                        </div>
+                        <div class="row">
+                            <hr class="hr"/>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="configTable" class="table table-striped table-bordered"></table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<div data-th-include="common/commonJS"></div>
+<script data-th-src="@{/js/app/operate/config/pushConfigList.js}"></script>
+</body>
+</html>

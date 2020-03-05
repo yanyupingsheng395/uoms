@@ -333,7 +333,7 @@ WHEN MATCHED THEN
 insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
 values ('manual', 'N', 'SQL', 'merge into uo_op_push_list_large t1
             using  uo_op_push_rpt t2
-            on (t1.final_msg_id = t2.msgid and trunc(t1.push_date)=trunc(sysdate-3))
+            on (t1.final_msg_id = t2.msgid and trunc(t1.push_date)>trunc(sysdate-3))
         when matched then
         update set t1.push_status=t2.status', null, null, '更新PUSH_LARGE中的推送状态', '2', 'UPDATE', '根据运营商返回的状态报告，更新PUSH_LARGE中的推送状态');
 
@@ -344,7 +344,7 @@ values ('manual', 'Y', 'SQL', ' update uo_op_manual_header c set (c.success_num,
                 sum(case when d.push_status=''F'' then 1 else 0 end)  faild_num,
                 sum(case when d.push_status=''C'' then 1 else 0 end) intercept_num
             from uo_op_manual_detail d where d.head_id=c.head_id
-        ) where trunc(c.SCHEDULE_DATE) >=trunc(sysdate-3)', null, null, '更新手工推送头表的推送统计字段', '3', 'UPDATE', '更新手工推送头表的推送统计字段');
+        ) where trunc(c.SCHEDULE_DATE) >=trunc(sysdate-3)', null, null, '更新手工推送头表的推送统计字段', '4', 'UPDATE', '更新手工推送头表的推送统计字段');
 
 insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
 values ('manual', 'Y', 'SQL', ' merge into uo_op_manual_detail t1
@@ -353,7 +353,7 @@ values ('manual', 'Y', 'SQL', ' merge into uo_op_manual_detail t1
                 select h.head_id from uo_op_manual_header h where h.status in (''1'',''2'') and trunc(h.SCHEDULE_DATE)>=trunc(sysdate-3)
         ) )
         when matched then
-        update set t1.push_status=t2.push_status,t1.push_date=t2.push_date', null, null, '更新手工推送明细的推送状态/推送时间', '4', 'UPDATE', '更新手工推送明细的推送状态/推送时间');
+        update set t1.push_status=t2.push_status,t1.push_date=t2.push_date', null, null, '更新手工推送明细的推送状态/推送时间', '3', 'UPDATE', '更新手工推送明细的推送状态/推送时间');
 
 insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
 values ('manual', 'Y', 'SQL', ' update uo_op_manual_header c set c.status=''2'' where trunc(c.SCHEDULE_DATE) >= trunc(sysdate-3) and c.status=''1''
@@ -367,8 +367,13 @@ values ('manual', 'Y', 'SQL', 'update uo_op_manual_header c set c.actual_push_da
             from uo_op_manual_detail d where d.head_id=c.head_id
         ) where trunc(c.SCHEDULE_DATE) >= trunc(sysdate-3) and c.status=''2''', null, null, '更新手工推送表的实际推送时间', '6', 'UPDATE', '更新手工推送表的实际推送时间');
 
+prompt Done.
+
 
 insert into t_config (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2)
 values ('op.daily.default.effectDays', '3', '每日运营效果统计默认天数', '0', 'APPS', null);
+
+ALTER TABLE t_config MODIFY type_code1 not  NULL;
+alter table t_config modify value VARCHAR2(256);
 
 

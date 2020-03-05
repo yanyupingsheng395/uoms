@@ -5,8 +5,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.*;
 import com.linksteady.common.util.MD5Utils;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
-import com.linksteady.operate.domain.DailyProperties;
-import com.linksteady.operate.service.DailyPropertiesService;
+import com.linksteady.operate.domain.PushProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -41,7 +40,7 @@ public class RootPathController extends BaseController {
     ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Autowired
-    private DailyProperties dailyProperties;
+    private PushProperties pushProperties;
 
     @Value("${app.name}")
     private String appname;
@@ -152,8 +151,8 @@ public class RootPathController extends BaseController {
      */
     @RequestMapping("/push")
     public String push(Model model) {
-        if(dailyProperties != null) {
-            String status = dailyProperties.getPushFlag();
+        if(pushProperties != null) {
+            String status = pushProperties.getPushFlag();
             if(StringUtils.isNotEmpty(status)) {
                 model.addAttribute("status", status);
             }

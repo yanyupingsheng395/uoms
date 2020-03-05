@@ -20,4 +20,9 @@ public interface ConfigMapper {
     int updateConfig(@Param("name") String name,@Param("value") String value);
 
     Tconfig getTconfigByName(String name);
+
+    /**
+     * 加载通用配置
+     */
+    List<Tconfig> selectCommonConfig();
 }

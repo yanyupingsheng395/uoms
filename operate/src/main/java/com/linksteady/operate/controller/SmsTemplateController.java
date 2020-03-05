@@ -1,11 +1,10 @@
 package com.linksteady.operate.controller;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.DailyProperties;
+import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.service.SmsTemplateService;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 短信相关的controller
@@ -32,7 +30,7 @@ public class SmsTemplateController extends BaseController {
     SmsTemplateService smsTemplateService;
 
     @Autowired
-    private DailyProperties dailyProperties;
+    private PushProperties pushProperties;
 
     @Autowired
     RedisMessageServiceImpl redisMessageService;
@@ -152,12 +150,12 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/getCouponSendType")
     public ResponseBo getCouponSendType() {
-        return ResponseBo.okWithData(null, dailyProperties.getCouponSendType());
+        return ResponseBo.okWithData(null, pushProperties.getCouponSendType());
     }
 
     @GetMapping("/validSmsContentLength")
     public ResponseBo validSmsContentLength(@RequestParam("smsContent") String smsContent) {
-        return ResponseBo.okWithData(null, smsContent.length() <= dailyProperties.getSmsLengthLimit());
+        return ResponseBo.okWithData(null, smsContent.length() <= pushProperties.getSmsLengthLimit());
     }
 
     @RequestMapping("/getTemplateByGroupId")

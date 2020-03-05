@@ -3,7 +3,7 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.annotation.Log;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.DailyHead;
-import com.linksteady.operate.domain.DailyProperties;
+import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.DailyConfigService;
@@ -35,7 +35,7 @@ public class PageController {
     private ActivityHeadService activityHeadService;
 
     @Autowired
-    private DailyProperties dailyProperties;
+    private PushProperties pushProperties;
 
     @Autowired
     private ConfigService configService;
@@ -87,12 +87,12 @@ public class PageController {
 
     @RequestMapping("/daily/config")
     public String dailyGroupConfig(Model model) {
-        model.addAttribute("shortUrlLen", dailyProperties.getShortUrlLen());
-        model.addAttribute("couponNameLen", dailyProperties.getCouponNameLen());
-        model.addAttribute("prodNameLen", dailyProperties.getProdNameLen());
-        model.addAttribute("couponSendType", dailyProperties.getCouponSendType());
-        model.addAttribute("smsLengthLimit", dailyProperties.getSmsLengthLimit());
-        model.addAttribute("validUrl", dailyProperties.getCouponSendType());
+        model.addAttribute("shortUrlLen", pushProperties.getShortUrlLen());
+        model.addAttribute("couponNameLen", pushProperties.getCouponNameLen());
+        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
+        model.addAttribute("couponSendType", pushProperties.getCouponSendType());
+        model.addAttribute("smsLengthLimit", pushProperties.getSmsLengthLimit());
+        model.addAttribute("validUrl", pushProperties.getCouponSendType());
         return "operate/daily/config";
     }
 
@@ -165,11 +165,11 @@ public class PageController {
     @Log("短信模板列表")
     @RequestMapping("/cfg/smsTemplate")
     public String smsTemplateList(Model model) {
-        model.addAttribute("shortUrlLen", dailyProperties.getShortUrlLen());
-        model.addAttribute("couponNameLen", dailyProperties.getCouponNameLen());
-        model.addAttribute("prodNameLen", dailyProperties.getProdNameLen());
-        model.addAttribute("couponSendType", dailyProperties.getCouponSendType());
-        model.addAttribute("smsLengthLimit", dailyProperties.getSmsLengthLimit());
+        model.addAttribute("shortUrlLen", pushProperties.getShortUrlLen());
+        model.addAttribute("couponNameLen", pushProperties.getCouponNameLen());
+        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
+        model.addAttribute("couponSendType", pushProperties.getCouponSendType());
+        model.addAttribute("smsLengthLimit", pushProperties.getSmsLengthLimit());
         return "operate/config/smstemplate";
     }
 
@@ -182,8 +182,8 @@ public class PageController {
     @Log("短信模板列表")
     @RequestMapping("/cfg/coupon")
     public String couponList(Model model) {
-        model.addAttribute("validUrl", dailyProperties.getCouponSendType());
-        model.addAttribute("couponNameLen", dailyProperties.getCouponNameLen());
+        model.addAttribute("validUrl", pushProperties.getCouponSendType());
+        model.addAttribute("couponNameLen", pushProperties.getCouponNameLen());
         return "operate/config/coupon";
     }
 
@@ -199,14 +199,14 @@ public class PageController {
     }
 
     /**
-     * 运营配置预览
+     * 推送配置参数列表
      * @param
      * @return
      */
-    @Log("运营配置预览")
-    @RequestMapping("/cfg/dailyConfigView")
-    public String dailyConfigView() {
-        return "operate/config/dailyConfigView";
+    @Log("推送配置参数列表")
+    @RequestMapping("/cfg/pushConfigList")
+    public String pushConfigList() {
+        return "operate/config/pushConfigList";
     }
 
     /**
@@ -243,10 +243,10 @@ public class PageController {
     public String activityAdd(Model model)
     {
         model.addAttribute("operateType", "save");
-        model.addAttribute("prodNameLen", 10);
-        model.addAttribute("priceLen", 5);
-        model.addAttribute("prodUrlLen", 23);
-        model.addAttribute("smsLenLimit", 61);
+        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
+        model.addAttribute("priceLen", pushProperties.getPriceLen());
+        model.addAttribute("prodUrlLen", pushProperties.getShortUrlLen());
+        model.addAttribute("smsLenLimit", pushProperties.getSmsLengthLimit());
         return "operate/activity/add";
     }
 
@@ -344,7 +344,7 @@ public class PageController {
      */
     @RequestMapping("/manual")
     public String manual(Model model) {
-        model.addAttribute("fontNum", dailyProperties.getSmsLengthLimit());
+        model.addAttribute("fontNum", pushProperties.getSmsLengthLimit());
         return "operate/manual/manual";
     }
 
