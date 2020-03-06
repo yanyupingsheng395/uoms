@@ -3,12 +3,12 @@ package com.linksteady.operate.domain;
 import lombok.Data;
 
 /**
- * 每日运营配置信息
+ * 推送配置信息
  *
  * @author
  */
 @Data
-public class DailyProperties {
+public class PushProperties {
 
     /**
      * 避免重复推送的天数
@@ -21,24 +21,9 @@ public class DailyProperties {
     private String pushFlag = "Y";
 
     /**
-     * 效果统计的天数
-     */
-    private int statsDays = 20;
-
-    /**
-     * 推送方式  (不考虑页面维护)
+     * 推送方式
      */
     private String pushType = "SMS";
-
-    /**
-     * 开启预警 (不考虑页面维护)
-     */
-    private String openAlert = "Y";
-
-    /**
-     * 预警手机号码 (不考虑页面维护)
-     */
-    private String alertPhone;
 
     /**
      * 推送方式 IMME:IMME立即推送 AI:AI智能推送
@@ -51,14 +36,9 @@ public class DailyProperties {
     private int smsLengthLimit = 66;
 
     /**
-     * 商品详情页的组装格式 (不考虑页面维护)
+     * 商品详情页的组装格式
      */
     private String productUrl = "https://detail.tmall.com/item.htm?id=$PRODUCT_ID";
-
-    /**
-     * 包装短链是否需要包装成可唤醒淘宝APP (不考虑页面维护) Y表示是 N表示否
-     */
-   // private String isAliApp = "Y";
 
     /**
      * 短链是否返回模拟链接 （测试环境适用）
@@ -81,11 +61,6 @@ public class DailyProperties {
     private int prodNameLen;
 
     /**
-     * 当前修改用户
-     */
-    private String currentUser;
-
-    /**
      * 优惠券发送方式 A自行领取 B系统发送
      */
     private String couponSendType;
@@ -94,4 +69,9 @@ public class DailyProperties {
      * 优惠券名称的长度
      */
     private int couponNameLen;
+
+    /**
+     * 商品价格的最大长度
+     */
+    private int priceLen;
 }

@@ -42,7 +42,7 @@ public class DailyTaskController {
     private DailyDetailService dailyDetailService;
 
     @Autowired
-    private DailyProperties dailyProperties;
+    private PushProperties pushProperties;
 
     @Autowired
     private ConfigService configService;
@@ -260,7 +260,7 @@ public class DailyTaskController {
         }
 
         // 短信长度超出限制
-        List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).length() > dailyProperties.getSmsLengthLimit())
+        List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).length() > pushProperties.getSmsLengthLimit())
                 .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
         // 短信含未被替换的模板变量
         List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).contains("$"))
@@ -420,7 +420,7 @@ public class DailyTaskController {
     @GetMapping("/getPushInfo")
     public ResponseBo getPushInfo() {
         Map<String, Object> result = Maps.newHashMap();
-        result.put("method", dailyProperties.getPushMethod());
+        result.put("method", pushProperties.getPushMethod());
         int hour = LocalTime.now().getHour();
         final List<String> timeList = IntStream.rangeClosed(8, 22).filter(x -> x > hour).boxed().map(y -> {
             if (y < 10) {

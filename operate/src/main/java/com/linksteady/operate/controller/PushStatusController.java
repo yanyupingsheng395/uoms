@@ -4,18 +4,25 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.*;
-import com.linksteady.operate.service.DailyPropertiesService;
+import com.linksteady.common.domain.Tconfig;
+import com.linksteady.operate.domain.PushListInfo;
+import com.linksteady.operate.domain.PushLog;
+import com.linksteady.operate.domain.PushProperties;
+import com.linksteady.operate.domain.enums.PushSignalEnum;
 import com.linksteady.operate.service.PushListService;
 import com.linksteady.operate.service.PushLogService;
-import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
+import com.linksteady.operate.service.PushPropertiesService;
 import com.linksteady.operate.thread.MonitorThread;
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,22 +33,20 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/push")
+@Slf4j
 public class PushStatusController extends BaseController {
 
     @Autowired
-    private DailyProperties dailyProperties;
+    private PushProperties pushProperties;
 
     @Autowired
-    private DailyPropertiesService dailyPropertiesService;
+    private PushPropertiesService pushPropertiesService;
 
     @Autowired
     private PushLogService pushLogService;
 
     @Autowired
     private PushListService pushListService;
-
-    @Autowired
-    private RedisMessageServiceImpl redisMessageService;
 
     /**
      * 关闭推送服务
@@ -50,18 +55,20 @@ public class PushStatusController extends BaseController {
      */
     @GetMapping("/stop")
     public ResponseBo stop() {
-        boolean flag = false;
         //判断当前状态
-        if(null != dailyProperties && dailyProperties.getPushFlag().equalsIgnoreCase("Y")) {
-            dailyProperties.setPushFlag("N");
-            dailyPropertiesService.updateProperties(dailyProperties);
-            dailyPropertiesService.sendPushSignal("stop");
-            flag = true;
+        if(null != pushProperties && pushProperties.getPushFlag().equalsIgnoreCase("Y")) {
+            //关闭服务
+            try {
+                pushPropertiesService.sendPushSignal(PushSignalEnum.SIGNAL_START,getCurrentUser().getUsername());
+                return ResponseBo.ok("关闭服务成功！");
+            } catch (Exception e) {
+                log.error("关闭推送服务异常，异常原因为{}",e);
+                return ResponseBo.error("关闭服务失败！");
+            }
+        }else
+        {
+            return ResponseBo.error("关闭服务失败，服务状态异常！");
         }
-        if(flag) {
-            return ResponseBo.ok("关闭服务成功！");
-        }
-        return ResponseBo.error("关闭服务失败！");
     }
 
     /**
@@ -71,18 +78,21 @@ public class PushStatusController extends BaseController {
      */
     @GetMapping("/start")
     public ResponseBo start() {
-        boolean flag = false;
         //判断当前状态
-        if(null != dailyProperties && dailyProperties.getPushFlag().equalsIgnoreCase("N")) {
-            dailyProperties.setPushFlag("Y");
-            dailyPropertiesService.updateProperties(dailyProperties);
-            dailyPropertiesService.sendPushSignal("start");
-            flag = true;
+        if(null != pushProperties && pushProperties.getPushFlag().equalsIgnoreCase("N")) {
+            //开启服务
+            try {
+                pushPropertiesService.sendPushSignal(PushSignalEnum.SIGNAL_STOP,getCurrentUser().getUsername());
+                return ResponseBo.ok("开启服务成功！");
+            } catch (Exception e) {
+                log.error("开启推送服务异常，异常原因为{}",e);
+                return ResponseBo.error("开启服务失败！");
+            }
+        }else
+        {
+            return ResponseBo.error("开启服务失败,服务状态异常！");
         }
-        if(flag) {
-            return ResponseBo.ok("开启服务成功！");
-        }
-        return ResponseBo.error("开启服务失败！");
+
     }
 
     /**
@@ -92,7 +102,7 @@ public class PushStatusController extends BaseController {
      */
     @GetMapping("/status")
     public ResponseBo status() {
-        return ResponseBo.okWithData(null, dailyProperties.getPushFlag());
+        return ResponseBo.okWithData(null, pushProperties.getPushFlag());
     }
 
     /**
@@ -137,60 +147,67 @@ public class PushStatusController extends BaseController {
     }
 
     /**
-     * 获取每日运营配置信息
+     * 推送推送配置信息 (让推送端到数据库重新加载配置)
      * @param
      * @return
      */
-    @GetMapping("/getDailyProperties")
-    public ResponseBo getDailyProperties() {
-        return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
+    @GetMapping("/refreshPushProperties")
+    public ResponseBo refreshPushProperties() {
+        try {
+            pushPropertiesService.sendPushSignal(PushSignalEnum.SIGNAL_REFRESH,getCurrentUser().getUsername());
+            return ResponseBo.ok("发送刷新信号成功!");
+        } catch (Exception e) {
+            log.error("发送刷新信号异常，异常原因为{}",e);
+            return ResponseBo.error("发送刷新信号失败！");
+        }
+
     }
 
     /**
-     * 更新每日运营配置信息  属性值目前只支持String和int两种类型
-     */
-    @PostMapping("/updateDailyProperties")
-    @SneakyThrows
-    public ResponseBo updateDailyProperties(@RequestBody DailyProperties dp) {
-        dailyProperties.setPushFlag(dp.getPushFlag());
-        dailyProperties.setAlertPhone(dp.getAlertPhone());
-        dailyProperties.setCurrentUser(getCurrentUser().getUsername());
-        //更新到数据库中
-        dailyPropertiesService.updateProperties(dailyProperties);
-        return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
-    }
-
-    /**
-     * 刷新每日运营配置信息 (将数据库中的信息同步到内存的对象中)
+     * 重新加载配置 (数据库加载到redis，然后刷新pushProperties对象)
      * @param
      * @return
      */
-    @GetMapping("/refreshDailyProperties")
-    public ResponseBo refreshDailyProperties() {
-        DailyProperties temp=dailyPropertiesService.getDailyProperties();
+    @GetMapping("/reloadPushProperties")
+    public ResponseBo reloadPushProperties() {
+        try {
+            pushPropertiesService.loadConfigToRedisAndRefreshProperties(getCurrentUser().getUsername());
+            return ResponseBo.ok("重新加载推送配置成功!");
+        } catch (Exception e) {
+            log.error("加载推送配置失败，异常原因为{}",e);
+            return ResponseBo.error("重新加载推送配置失败！");
+        }
+    }
 
-        dailyProperties.setPushFlag(temp.getPushFlag());
-        dailyProperties.setRepeatPushDays(temp.getRepeatPushDays());
-        dailyProperties.setStatsDays(temp.getStatsDays());
-        dailyProperties.setPushType(temp.getPushType());
-        dailyProperties.setOpenAlert(temp.getOpenAlert());
-        dailyProperties.setAlertPhone(temp.getAlertPhone());
-        dailyProperties.setPushMethod(temp.getPushMethod());
-        dailyProperties.setSmsLengthLimit(temp.getSmsLengthLimit());
-        dailyProperties.setProductUrl(temp.getProductUrl());
-        dailyProperties.setIsTestEnv(temp.getIsTestEnv());
-        dailyProperties.setDemoShortUrl(temp.getDemoShortUrl());
-        dailyProperties.setProdNameLen(temp.getProdNameLen());
-        dailyProperties.setShortUrlLen(temp.getShortUrlLen());
-        dailyProperties.setCouponSendType(temp.getCouponSendType());
-        dailyProperties.setCouponNameLen(temp.getCouponNameLen());
 
-        //通过redis消息通知pushserver
-        HeartBeatInfo heartBeatInfo = new HeartBeatInfo();
-        heartBeatInfo.setStartOrStop("refresh");
-        redisMessageService.sendPushSingal(heartBeatInfo);
+    /**
+     * 打印配置信息 (让推送端在控制台打印配置信息)
+     * @param
+     * @return
+     */
+    @GetMapping("/printPushProperties")
+    public ResponseBo printPushProperties() {
+        try {
+            pushPropertiesService.sendPushSignal(PushSignalEnum.SIGNAL_PRINT,getCurrentUser().getUsername());
+            return ResponseBo.ok("打印配置信息成功!");
+        } catch (Exception e) {
+            log.error("打印配置信息失败，异常原因为{}",e);
+            return ResponseBo.error("打印配置信息失败！");
+        }
+    }
 
-        return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
+    /**
+     * 获取推送配置
+     * @param
+     * @return
+     */
+    @GetMapping("/getPushProperties")
+    public ResponseBo getPushProperties() {
+        List<Tconfig> list=pushPropertiesService.selectPushConfigList();
+
+        list = list.stream().sorted(Comparator.comparing(Tconfig::getOrderNum, Comparator.nullsLast(Integer::compareTo)))
+                .collect(Collectors.toList());
+        return ResponseBo.okOverPaging(null, 0, list);
     }
 
     /**

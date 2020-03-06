@@ -1,5 +1,6 @@
 package com.linksteady.operate.domain;
 
+import com.linksteady.operate.domain.enums.PushSignalEnum;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,9 +28,9 @@ public class HeartBeatInfo implements Serializable {
     private LocalDateTime lastPurgeDate;
 
     /**
-     * start表示启动推送服务 stop表示停止推送服务 refresh表示刷新推送服务
+     * singal 信号  start表示启动推送服务 stop表示停止推送服务 refresh表示刷新配置 print 打印配置
      */
-    private String startOrStop;
+    private PushSignalEnum signal;
 
     /**
      * 获取状态报告 最后响应时间

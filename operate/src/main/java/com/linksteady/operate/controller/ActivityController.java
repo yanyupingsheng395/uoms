@@ -56,7 +56,7 @@ public class ActivityController {
     private ActivityPlanService activityPlanService;
 
     @Autowired
-    private DailyProperties dailyProperties;
+    private PushProperties pushProperties;
 
     @Autowired
     private ActivityEffectService activityEffectService;
@@ -149,7 +149,7 @@ public class ActivityController {
             if(count > 0) {
                 return ResponseBo.error("已有相同商品ID！");
             }
-            if(activityProduct.getProductName().length() > dailyProperties.getProdNameLen()) {
+            if(activityProduct.getProductName().length() > pushProperties.getProdNameLen()) {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
             activityProductService.saveActivityProduct(activityProduct);
@@ -212,7 +212,7 @@ public class ActivityController {
     @PostMapping("/updateActivityProduct")
     public ResponseBo updateActivityProduct(ActivityProduct activityProduct, String operateType) {
         try {
-            if(activityProduct.getProductName().length() > dailyProperties.getProdNameLen()) {
+            if(activityProduct.getProductName().length() > pushProperties.getProdNameLen()) {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
             activityProductService.updateActivityProduct(activityProduct);
@@ -274,20 +274,6 @@ public class ActivityController {
 
         activityHeadService.submitActivity(headId, stage);
         return ResponseBo.ok();
-    }
-
-    /**
-     *  提交计划，判断是否有执行中2、执行完3 已停止4的plan,如果存在，变更状态为执行中，否则变更状态为待执行；
-     */
-    private void submitAndUpdateStatus(String headId, String stage) {
-        int count = activityPlanService.getStatusCount(headId, stage, Arrays.asList("2", "3", "4"));
-        String status;
-        if(count > 0) {
-            status = "doing";
-        }else {
-            status = "todo";
-        }
-        activityHeadService.updateStatus(headId, stage, status);
     }
 
     @PostMapping("/deleteProduct")

@@ -8,7 +8,7 @@ import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.dao.ActivityPlanMapper;
 import com.linksteady.operate.domain.ActivityDetail;
 import com.linksteady.operate.domain.ActivityPlan;
-import com.linksteady.operate.domain.DailyProperties;
+import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
 import com.linksteady.operate.domain.enums.ActivityStageEnum;
@@ -55,7 +55,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     ShortUrlService shortUrlService;
 
     @Autowired
-    private DailyProperties dailyProperties;
+    private PushProperties pushProperties;
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
@@ -416,7 +416,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
             return count+"条文案为空，请核对活动配置！";
         }
 
-        count=activityDetailMapper.selectContentLimit(headId,planDateWid,dailyProperties.getSmsLengthLimit());
+        count=activityDetailMapper.selectContentLimit(headId,planDateWid,pushProperties.getSmsLengthLimit());
         //判断文案是否有超字数
         if(count>0)
         {

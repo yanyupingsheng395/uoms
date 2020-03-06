@@ -1,9 +1,8 @@
 package com.linksteady.operate.service.impl;
 
 import com.linksteady.operate.dao.CouponMapper;
-import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.CouponInfo;
-import com.linksteady.operate.domain.DailyProperties;
+import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.service.CouPonService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class CouponServiceImpl implements CouPonService {
     private CouponMapper couponMapper;
 
     @Autowired
-    private DailyProperties dailyProperties;
+    private PushProperties pushProperties;
 
     @Override
     public List<CouponInfo> getList(int startRow, int endRow) {
@@ -143,7 +142,7 @@ public class CouponServiceImpl implements CouPonService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void validCoupon() {
-        String couponSendType = dailyProperties.getCouponSendType();
+        String couponSendType = pushProperties.getCouponSendType();
         if(couponSendType == null) {
             throw new RuntimeException("系统发送补贴的方式未在配置表中配置！");
         }

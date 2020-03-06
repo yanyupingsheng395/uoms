@@ -8,7 +8,7 @@ import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.ActivityDetail;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.ActivityPlan;
-import com.linksteady.operate.domain.DailyProperties;
+import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.enums.ActivityGroupEnum;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
@@ -48,7 +48,7 @@ public class ActivityPlanController {
     private ActivityDetailService activityDetailService;
 
     @Autowired
-    private DailyProperties dailyProperties;
+    private PushProperties pushProperties;
 
     /**
      * 获取任务计划
@@ -256,7 +256,7 @@ public class ActivityPlanController {
     @GetMapping("/getDefaultPushInfo")
     public ResponseBo getPushInfo() {
         Map<String, Object> result = Maps.newHashMap();
-        result.put("method", dailyProperties.getPushMethod());
+        result.put("method", pushProperties.getPushMethod());
         int hour = LocalTime.now().getHour();
         final List<String> timeList = IntStream.rangeClosed(8, 22).filter(x -> x > hour).boxed().map(y -> {
             if (y < 10) {

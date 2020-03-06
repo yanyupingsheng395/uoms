@@ -31,4 +31,8 @@
     <select id="getTconfigByName" resultMap="BaseResultMap">
         select T.NAME,T.VALUE,COMMENTS,ORDER_NUM,TYPE_CODE1,TYPE_CODE2 FROM T_CONFIG T where name = #{name}
     </select>
+
+    <select id="selectCommonConfig" resultMap="BaseResultMap">
+        select T.NAME,T.VALUE,COMMENTS,ORDER_NUM,TYPE_CODE1,TYPE_CODE2 FROM T_CONFIG T
+    </select>
 </mapper>
