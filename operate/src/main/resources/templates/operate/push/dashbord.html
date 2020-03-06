@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
     <title>用户成长系统</title>
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
@@ -14,6 +14,11 @@
     <style>
         #pushTable thead {
             background-color: #eff3f8;
+        }
+
+        hr {
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -24,74 +29,176 @@
 <div class="lyear-layout-web">
     <div class="lyear-layout-container">
         <!-- 页面主要内容 -->
-        <main class="lyear-layout-content" style="padding-top: 0px; padding-left: 0px;">
-            <div class="container-div ui-layout-center">
+        <main class="lyear-layout-content"
+              style="padding-top: 0px; padding-left: 0px;padding-right: 13px;margin-left: 10px;margin-right: 10px;">
+            <div class="container-div ui-layout-center select-table table-striped">
+                <!--推送按钮-->
                 <div class="row">
-                    <div class="col-md-12 select-table table-striped">
-                        <div class="row m-t-10">
-                            <div class="col-md-12">
-                                <p class="h4" id="status"></p>
-                                <div class="btn-group-sm" role="group">
-                                    <a class="btn btn-success btn-edit" onclick="start()">
-                                        <i class="fa fa-play"></i> 启动推送
-                                    </a>
-                                    <a class="btn btn-danger btn-view" onclick="stop()">
-                                        <i class="fa fa-stop"></i> 停止推送
-                                    </a>
-                                    <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-default" onclick="getPushLog(1)"><i class="mdi mdi-plus"></i></button>
-                                        <button class="btn btn-default" onclick="getPushLog(-1)"><i class="mdi mdi-minus"></i></button>
-                                    </div>
+                    <div class="col-sm-4">
+                        <div class="btn-group-sm" role="group">
+                            <a class="btn btn-primary" onclick="start()">
+                                <i class="fa fa-play"></i> 启动推送
+                            </a>
+                            <a class="btn btn-danger" onclick="stop()">
+                                <i class="fa fa-stop"></i> 停止推送
+                            </a>
+                            <a class="btn btn-secondary" onclick="">
+                                <i class="fa fa-envelope"></i> 单条推送测试
+                            </a>
+                            <a class="btn btn-secondary" onclick="">
+                                <i class="fa fa-list-alt"></i> 批量推送测试
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 text-center">
+                        <div class="btn-group-sm" role="group">
+                            <a class="btn btn-info">
+                                <i class="fa fa-info-circle"></i> <span id="status">当前状态：--</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 text-right">
+                        <div class="btn-group-sm" role="group">
+                            <a class="btn btn-secondary" onclick="getPushLog(-1)">
+                                <i class="fa fa-arrow-left"></i> 前一天
+                            </a>
+                            <a class="btn btn-secondary" onclick="getPushLog(1)">
+                                后一天 <i class="fa fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <hr/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="card bg-info">
+                            <div class="card-body clearfix">
+                                <div class="text-center">
+                                    <p class="h6 text-white m-t-0">当前日志日期 </p>
+                                    <p class="h5 text-white m-b-0"><i class="fa fa-clock-o"></i>&nbsp;<span id="logDate">-</span></p>
                                 </div>
-                                <p class="h5 m-t-10">最后一次推送响应时间：<span id="lastPushDate"></span></p>
-                                <p class="h5 m-t-10">最后一次批量推送响应时间：<span id="lastBatchPushDate"></span></p>
-                                <p class="h5 m-t-10">最后一次清理拦截库时间：<span id="lastPurgeDate"></span></p>
-
-                                <p class="h5 m-t-10">最后一次获取状态报告时间：<span id="lastRptDate"></span></p>
-                                <p class="h5 m-t-10">最后一次获取上行消息时间：<span id="lastMoDate"></span></p>
-                                <p class="h5 m-t-10" id="dateStr">日志日期：<span id="logDate"></span></p>
                             </div>
                         </div>
-
-                        <div class="row m-t-10">
-                            <div class="col-sm-12">
-
-                                <table class="table  table-striped table-bordered text-nowrap">
-                                    <caption>推送记录</caption>
-                                    <thead>
-                                    <tr>
-                                        <th>推送时间</th>
-                                        <th>备注</th>
-                                        <th>人数</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="pushTableData"></tbody>
-                                </table>
-                                <table class="table  table-striped table-bordered text-nowrap">
-                                    <caption>防重复拦截记录</caption>
-                                    <thead>
-                                    <tr>
-                                        <th>防重复拦截时间</th>
-                                        <th>备注</th>
-                                        <th>人数</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="repeatTableData"></tbody>
-                                </table>
-
-                                <table class="table  table-striped table-bordered text-nowrap">
-                                    <caption>拦截库失效运行记录</caption>
-                                    <thead>
-                                    <tr>
-                                        <th>失效拦截库时间</th>
-                                        <th>备注</th>
-                                        <th>人数</th>
-                                     </tr>
-                                    </thead>
-                                    <tbody id="purgeTableData"></tbody>
-                                </table>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="card bg-primary">
+                            <div class="card-body clearfix">
+                                <div class="text-center">
+                                    <p class="h6 text-white m-t-0">最后一次推送响应时间</p>
+                                    <p class="h5 text-white m-b-0"><i class="fa fa-clock-o"></i>&nbsp;<span id="lastPushDate">-</span>
+                                    </p>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="card bg-success">
+                            <div class="card-body clearfix">
+                                <div class="text-center">
+                                    <p class="h6 text-white m-t-0">最后一次批量推送响应时间</p>
+                                    <p class="h5 text-white m-b-0"><i class="fa fa-clock-o"></i>&nbsp;<span id="lastBatchPushDate">-</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="card bg-purple">
+                            <div class="card-body clearfix">
+                                <div class="text-center">
+                                    <p class="h6 text-white m-t-0">最后一次清理拦截库时间</p>
+                                    <p class="h5 text-white m-b-0"><i class="fa fa-clock-o"></i>&nbsp;<span id="lastPurgeDate">-</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="card bg-brown">
+                            <div class="card-body clearfix">
+                                <div class="text-center">
+                                    <p class="h6 text-white m-t-0">最后一次获取状态报告时间</p>
+                                    <p class="h5 text-white m-b-0"><i class="fa fa-clock-o"></i>&nbsp;<span id="lastRptDate">-</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="card bg-danger">
+                            <div class="card-body clearfix">
+                                <div class="text-center">
+                                    <p class="h6 text-white m-t-0">最后一次获取上行消息时间</p>
+                                    <p class="h5 text-white m-b-0"><i class="fa fa-clock-o"></i>&nbsp;<span id="lastMoDate">-</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <hr/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="chart1" style="width: 100%;height: 300px;"></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div id="chart2" style="width: 100%;height: 300px;"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <hr/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="alert" role="alert"
+                             style="color: #3c763d;background-color: #dff0d8;border-color: #d6e9c6;">
+                            <p>
+                                获取上行消息：今日：<span id="dayRpt">-</span>条，本月：<span id="monthRpt">-</span>条
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="alert" role="alert"
+                             style="color: #a94442;background-color: #f2dede;border-color: #ebccd1;">
+                            <p>
+                                黑名单：<span id="dayBlack">-</span>条
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <hr/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <caption>推送记录</caption>
+                        <table class="table  table-striped table-bordered text-nowrap" id="table1"></table>
+                    </div>
+                    <div class="col-sm-6">
+                        <caption>拦截记录</caption>
+                        <table class="table  table-striped table-bordered text-nowrap" id="table2"></table>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-sm-6">
+                        <caption>释放拦截记录</caption>
+                        <table class="table  table-striped table-bordered text-nowrap" id="table3"></table>
+                    </div>
+                    <div class="col-sm-6">
+                        <caption>推送日志拦截记录</caption>
+                        <table class="table  table-striped table-bordered text-nowrap" id="table4"></table>
                     </div>
                 </div>
             </div>
@@ -99,83 +206,188 @@
     </div>
 </div>
 <div data-th-include="common/commonJS"></div>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+
 <script>
     window.onload = function () {
         status();
         getPushLog();
     };
+
     // 启动服务
     function start() {
-        $.get("/push/start", {}, function (r) {
+        $.get( "/push/start", {}, function (r) {
             if (r.code === 200) {
-                $MB.n_success("已开启服务！");
+                $MB.n_success( "已开启服务！" );
                 status();
             }
-        });
+        } );
     }
 
     // 停止服务
     function stop() {
-        $.get("/push/stop", {}, function (r) {
+        $.get( "/push/stop", {}, function (r) {
             if (r.code === 200) {
-                $MB.n_success("已停止服务！");
+                $MB.n_success( "已停止服务！" );
                 status();
             }
-        });
+        } );
     }
 
     function status() {
-        $.get("/push/status", {}, function (r) {
+        $.get( "/push/status", {}, function (r) {
             let status = r.data;
             let code = "";
-            if(status == 'Y') {
-                code = "当前推送状态：<span style=\"color: #00B83F\">已启动</span>";
+            if (status == 'Y') {
+                code = "当前推送状态：已启动";
             }
-            if(status == 'N') {
-                code = "当前推送状态：<span style=\"color: #f96868\">已停止</span>";
+            if (status == 'N') {
+                code = "当前推送状态：已停止";
             }
-            if(status != 'Y' && status != "N") {
-                code = "当前推送状态：<span>未知状态</span>";
+            if (status != 'Y' && status != "N") {
+                code = "当前推送状态：未知状态";
             }
-            $("#status").html('').append(code);
-        });
+            $( "#status" ).html( '' ).append( code );
+        } );
     }
 
     let day = 0;
+
     // 获取推送日志
     function getPushLog(flag) {
-        if (flag != undefined) {
-            day = day + flag >0 ? 0 : day + flag;
+        if (flag !== undefined) {
+            day = day + flag > 0 ? 0 : day + flag;
         }
-        $.get("/push/getPushLog", {day: Math.abs(day)}, function (r) {
+        $.get( "/push/getPushLog", {day: Math.abs(day)}, function (r) {
             let data = r.data;
             let push = data.push;
             let repeat = data.repeat;
             let purge = data.purge;
+            let push_intercept = data['push_intercept'];
 
-            $("#logDate").text(data.logDate);
-            $("#lastPushDate").text(data.lastPushDate);
-            $("#lastBatchPushDate").text(data.lastBatchPushDate);
-            $("#lastPurgeDate").text(data.lastPurgeDate);
-            $("#lastRptDate").text(data.lastRptDate);
-            $("#lastMoDate").text(data.lastMoDate);
+            var logDate = data.logDate;
+            var lastPushDate = data.lastPushDate;
+            var lastBatchPushDate = data.lastBatchPushDate;
+            var lastPurgeDate = data.lastPurgeDate;
+            var lastRptDate = data.lastRptDate;
+            var lastMoDate = data.lastMoDate;
+            $( "#logDate" ).text( logDate  === '' ? '-':logDate);
+            $( "#lastPushDate" ).text( lastPushDate  === '' ? '-':lastPushDate);
+            $( "#lastBatchPushDate" ).text( lastBatchPushDate  === '' ? '-':lastBatchPushDate);
+            $( "#lastPurgeDate" ).text( lastPurgeDate  === '' ? '-':lastPurgeDate);
+            $( "#lastRptDate" ).text( lastRptDate  === '' ? '-':lastRptDate);
+            $( "#lastMoDate" ).text( lastMoDate === '' ? '-':lastMoDate);
 
-            setTableData('pushTableData', push);
-            setTableData('repeatTableData', repeat);
-            setTableData('purgeTableData', purge);
+            setTableData( 'table1', push, true);
+            setTableData( 'table2', repeat , true);
+            setTableData( 'table3', purge , true);
+            setTableData( 'table4', push_intercept , false);
 
+            chart();
+            getRptAndBlackData();
+        } );
+    }
+
+    function setTableData(id, data, flag) {
+        var settings = {
+            pagination: true,
+            sidePagination: "client",
+            pageNumber: 1,
+            pageSize: 5,
+            pageList: [5, 10, 25, 50, 100],
+            columns: [{
+                field: 'logDateStr',
+                title: '时间'
+            }, {
+                field: 'logContent',
+                title: '备注'
+            }, {
+                field: 'userCount',
+                title: '人数',
+                visible: flag
+            }]
+        };
+        $("#" + id).bootstrapTable('destroy').bootstrapTable(settings);
+        $("#" + id).bootstrapTable('load', data);
+    }
+
+    function chart() {
+        var data1 = [];
+        var data2 = [];
+        $.get('/push/getPushData', {day: Math.abs(day)}, function (r) {
+            if(r.code === 200) {
+                // ['待推送', '拦截推送', '推送失败', '推送成功', '已推送'],
+                var dayData = r.data['day'];
+                var monthData = r.data['month'];
+                data1 = [dayData['PLAN_CNT'], dayData['INTERCEPT_CNT'], dayData['FAIL_CNT'], dayData['SUCCESS_CNT'], dayData['PUSH_CNT']];
+                data2 = [monthData['PLAN_CNT'], monthData['INTERCEPT_CNT'], monthData['FAIL_CNT'], monthData['SUCCESS_CNT'], monthData['PUSH_CNT']];
+
+                var chart1 = echarts.init( document.getElementById( "chart1" ), 'macarons' );
+                var chart2 = echarts.init( document.getElementById( "chart2" ), 'macarons' );
+                var option1 = getOption( '今日数据', '#48b0f7', data1);
+                var option2 = getOption( '本月数据', '#f96868', data2);
+                chart1.setOption( option1 );
+                chart2.setOption( option2 );
+            }
         });
     }
 
-    function setTableData(id, data) {
-        let code = "";
-        data.forEach(function(value, index, array) {
-            code += "<tr><td>"+value['logDateStr']+"</td><td>"+value['logContent']+"</td><td>"+value['userCount']+"</td></tr>";
+    function getOption(title, color, data) {
+        return {
+            color: color,
+            title: {
+                text: title,
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'value',
+                // boundaryGap: [0, 0.01],
+                splitLine: {show: false},
+                axisTick: {show: false},
+                splitArea: {show: false}
+            },
+            yAxis: {
+                type: 'category',
+                data: ['待推送', '拦截推送', '推送失败', '推送成功', '已推送'],
+                splitLine: {show: false},
+                axisTick: {show: false},
+                splitArea: {show: false}
+            },
+            series: [
+                {
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'right'
+                        }
+                    },
+                    type: 'bar',
+                    data: data
+                }
+            ]
+        };
+    }
+
+    function getRptAndBlackData() {
+        $.get("/push/getRptAndBlackData", {day: Math.abs(day)}, function (r) {
+            if(r.code === 200) {
+                $("#dayRpt").text(r.data['DAY_RPT']);
+                $("#monthRpt").text(r.data['MONTH_RPT']);
+                $("#dayBlack").text(r.data['DAY_BLACK']);
+            }
         });
-        if(code == "") {
-            code += "<tr class='text-center'><td colspan='3'>没有记录！</td></tr>";
-        }
-        $("#" + id).html('').append(code);
     }
 </script>
 </body>

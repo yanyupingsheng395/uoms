@@ -94,4 +94,34 @@
             #{pushPeriod},
             '1')
     </insert>
+
+    <select id="getPushDataOfDay" resultType="map">
+        select
+        count(case when PUSH_STATUS = 'S' then 1 end) success_cnt,
+        count(case when PUSH_STATUS &lt;&gt; 'P' then 1 end) push_cnt,
+        count(case when PUSH_STATUS = 'F' then 1 end) fail_cnt,
+        count(case when PUSH_STATUS = 'C' then 1 end) intercept_cnt,
+        count(case when PUSH_STATUS = 'P' then 1 end) plan_cnt
+        from  UO_OP_PUSH_LIST where trunc(sysdate) - trunc(INSERT_DT) = #{day}
+    </select>
+
+    <select id="getPushDataOfMonth" resultType="map">
+        select
+        count(case when PUSH_STATUS = 'S' then 1 end) success_cnt,
+        count(case when PUSH_STATUS &lt;&gt; 'P' then 1 end) push_cnt,
+        count(case when PUSH_STATUS = 'F' then 1 end) fail_cnt,
+        count(case when PUSH_STATUS = 'C' then 1 end) intercept_cnt,
+        count(case when PUSH_STATUS = 'P' then 1 end) plan_cnt
+        from  UO_OP_PUSH_LIST where to_char(INSERT_DT, 'yyyymmdd') &lt;= #{endDt} and to_char(INSERT_DT, 'yyyymmdd') &gt;= #{startDt}
+    </select>
+
+    <select id="getRptAndBlackData" resultType="map">
+        with v1 as (
+            select count(1) day_rpt from uo_op_push_rpt where trunc(sysdate) - trunc(INSERT_DT) = #{day}
+        ),v2 as (
+            select count(1) month_rpt from uo_op_push_rpt where to_char(INSERT_DT, 'yyyymmdd') &lt;= #{endDt} and to_char(INSERT_DT, 'yyyymmdd') &gt;= #{startDt}
+        ),v3 as (
+            select count(1) day_black from UO_OP_PHONEBLACKLIST where trunc(sysdate) - trunc(INSERT_DT) = #{day}
+        ) select * from v1, v2, v3
+    </select>
 </mapper>

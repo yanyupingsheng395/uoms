@@ -4,6 +4,7 @@ import com.linksteady.operate.domain.PushListInfo;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PushListMapper {
 
@@ -18,4 +19,10 @@ public interface PushListMapper {
     List<PushListInfo> getPushInfoListPage(int start, int end, String sourceCode, String pushStatus, String pushDateStr);
 
     Long insertTestMsg(PushListInfo pushListInfo);
+
+    Map<String, Object> getPushDataOfDay(int day);
+
+    Map<String, Object> getPushDataOfMonth(String startDt, String endDt);
+
+    Map<String, Object> getRptAndBlackData(int day, String startDt, String endDt);
 }

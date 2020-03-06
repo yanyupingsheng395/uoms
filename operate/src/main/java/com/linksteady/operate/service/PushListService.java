@@ -3,6 +3,7 @@ package com.linksteady.operate.service;
 import com.linksteady.operate.domain.PushListInfo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PushListService {
 
@@ -13,4 +14,8 @@ public interface PushListService {
     List<PushListInfo> getPushInfoListPage(int start, int end, String sourceCode, String pushStatus, String pushDateStr);
 
     int getTotalCount(String sourceCode, String pushStatus, String pushDateStr);
+
+    Map<String, Object> getPushData(int day);
+
+    Map<String, Object> getRptAndBlackData(int day);
 }

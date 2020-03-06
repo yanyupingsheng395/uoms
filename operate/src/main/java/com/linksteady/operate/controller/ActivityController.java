@@ -398,7 +398,9 @@ public class ActivityController {
         return activityUserGroupService.getUserGroupList(headId, stage, type);
     }
 
-    // 保存文案信息
+    /**
+     * 保存文案信息
+     */
     @PostMapping("/saveSmsTemplate")
     public ResponseBo saveSmsTemplate(ActivityTemplate activityTemplate) {
         activityTemplateService.saveTemplate(activityTemplate);

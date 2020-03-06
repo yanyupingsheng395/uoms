@@ -108,13 +108,14 @@ public class PushStatusController extends BaseController {
         //分成两部分
         List<PushLog> pushLogList= list.stream().filter(p->"1".equals(p.getLogType())&&p.getUserCount()>0).collect(Collectors.toList());
         List<PushLog> repeatLogList= list.stream().filter(p->"0".equals(p.getLogType())&&p.getUserCount()>0).collect(Collectors.toList());
-
         List<PushLog> purgeLogList= list.stream().filter(p->"2".equals(p.getLogType())).collect(Collectors.toList());
+        List<PushLog> pushIctLogList= list.stream().filter(p->"10".equals(p.getLogType())).collect(Collectors.toList());
         Map<String,Object> map= Maps.newHashMap();
         map.put("push",pushLogList);
         map.put("repeat",repeatLogList);
         map.put("purge",purgeLogList);
-        map.put("logDate", LocalDate.now().minusDays(day).format(DateTimeFormatter.ofPattern("MM-dd")));
+        map.put("push_intercept",pushIctLogList);
+        map.put("logDate", LocalDate.now().minusDays(day).format(DateTimeFormatter.ofPattern("YYYY-MM-dd")));
         map.put("lastPushDate", null==monitorThread.getLastPushDate()?"":monitorThread.getLastPushDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         map.put("lastBatchPushDate",null==monitorThread.getLastBatchPushDate()?"":monitorThread.getLastBatchPushDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         map.put("lastPurgeDate",null==monitorThread.getLastPurgeDate()?"":monitorThread.getLastPurgeDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
@@ -190,5 +191,43 @@ public class PushStatusController extends BaseController {
         redisMessageService.sendPushSingal(heartBeatInfo);
 
         return ResponseBo.okWithData("",dailyPropertiesService.getDailyProperties());
+    }
+
+    /**
+     * 获取推送数据
+     * @param day
+     * @return
+     */
+    @GetMapping("/getPushData")
+    public ResponseBo getPushData(@RequestParam("day") int day) {
+        return ResponseBo.okWithData(null, pushListService.getPushData(day));
+    }
+
+    /**
+     * 获取上行信息和黑名单信息
+     * @param day
+     * @return
+     */
+    @GetMapping("/getRptAndBlackData")
+    public ResponseBo getRptAndBlackData(@RequestParam("day") int day) {
+        return ResponseBo.okWithData(null, pushListService.getRptAndBlackData(day));
+    }
+
+    /**
+     * 单条推送测试
+     * @return
+     */
+    @GetMapping("/singleTest")
+    public ResponseBo singlePushTest() {
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 批量推送测试
+     * @return
+     */
+    @GetMapping("/batchTest")
+    public ResponseBo batchPushTest() {
+        return ResponseBo.ok();
     }
 }
