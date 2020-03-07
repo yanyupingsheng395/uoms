@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public interface ActivityProductService {
 
-    int getCount(String headId, String productId, String productName, String productAttr, String stage);
+    int getCount(String headId, String productId, String productName, String groupId);
 
-    List<ActivityProduct> getActivityProductListPage(int start, int end, String headId, String productId, String productName, String productAttr, String stage);
+    List<ActivityProduct> getActivityProductListPage(int start, int end, String headId, String productId, String productName, String groupId);
 
     /**
      * 保存活动商品
@@ -61,19 +61,11 @@ public interface ActivityProductService {
      */
     ActivityProduct geFirstProductInfo(String headId, String stage);
 
-    /**
-     * 更新活动映射信息表
-     */
-    void insertActivityProdMapping(String headId, String stage);
-    /**
-     * 删除活动映射信息表
-     */
-    void deleteActivityProdMapping(String headId, String stage);
 
     void deleteData(String headId);
 
     /**
      * 上传商品
      */
-    ResponseBo uploadExcel(MultipartFile file, String headId, String stage, String operateType);
+    void uploadExcel(MultipartFile file, String headId, String uploadMethod, String repeatProduct) throws Exception;
 }

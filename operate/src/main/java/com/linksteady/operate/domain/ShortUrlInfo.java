@@ -37,6 +37,10 @@ public class ShortUrlInfo {
      */
     private String sourceType;
 
+    public ShortUrlInfo(){
+
+    }
+
     public ShortUrlInfo(String longUrl, String shortUrl, Date validateDate, String sourceType) {
         this.longUrl = longUrl;
         this.shortUrl = shortUrl;

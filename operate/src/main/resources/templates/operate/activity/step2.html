@@ -20,11 +20,13 @@
                         <input type="text" id="productId"/>
                     </li>
                     <li>
-                        活动属性：
-                        <select id="productAttr">
+                        活动机制：
+                        <select name="groupId">
                             <option value="">所有</option>
-                            <option value="0">主推</option>
-                            <option value="1">参活</option>
+                            <option value="1">活动价</option>
+                            <option value="2">满件打折</option>
+                            <option value="3">满元减钱</option>
+                            <option value="4">特价</option>
                         </select>
                     </li>
                     <li class="pull-right">
@@ -55,18 +57,12 @@
             <a class="btn btn-danger" id="btn_delete_shop">
                 <i class="fa fa-trash"></i> 删除商品
             </a>
-            <button class="btn btn-secondary" id="btn_download_template" onclick="window.location.href='/activity/downloadFile'">
-                <i class="fa fa-download"></i> 批量添加商品（下载模板）
-            </button>
-            <!--文件上传-->
             <a class="btn btn-secondary" id="btn_batch_upload">
-                <i class="fa fa-file-archive-o"></i> 批量添加商品（批量上传）
+                <i class="fa fa-file-archive-o"></i> 批量上传
             </a>
-            <input id="uploadFile" type="file" style="display:none"/>
-            <button class="btn btn-info" id="btn_upload" style="display: none;" type="submit">
-                <i class="fa fa-upload"></i> 确定上传
+            <button class="btn btn-secondary" id="btn_download_template" onclick="window.location.href='/activity/downloadFile'">
+                <i class="fa fa-download"></i>下载模板
             </button>
-            <span id="filename" style="color: #8a6d3b"></span>
         </div>
     </div>
     <div class="col-md-12 table-striped m-t-10">
@@ -121,30 +117,32 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-3 control-label">ERP货号</label>
-                        <div class="col-md-7">
-                            <input class="form-control" type="text" name="skuCode">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">活动期间最低价（元）</label>
-                        <div class="col-md-7">
-                            <input class="form-control" type="text" name="minPrice">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">非活动日常单价（元）</label>
+                        <label class="col-md-3 control-label">非活动日常单价（元/件）</label>
                         <div class="col-md-7">
                             <input class="form-control" type="text" name="formalPrice">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-3 control-label">活动属性</label>
+                        <label class="col-md-3 control-label">活动期间体现最低单价（元/件）</label>
                         <div class="col-md-7">
-                            <select name="productAttr" class="form-control">
+                            <input class="form-control" type="text" name="minPrice">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">活动通知体现最低单价（元/件）</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="text" name="notifyMinPrice">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">活动机制</label>
+                        <div class="col-md-7">
+                            <select name="groupId" class="form-control" onchange="$(this).trigger('blur')">
                                 <option value="">请选择</option>
-                                <option value="0">主推</option>
-                                <option value="1">参活</option>
+                                <option value="1">活动价</option>
+                                <option value="2">满件打折</option>
+                                <option value="3">满元减钱</option>
+                                <option value="4">特价</option>
                             </select>
                         </div>
                     </div>

@@ -86,13 +86,22 @@ public class ActivityController {
 
     /**
      * 商品文件批量上传
-     *
+     * @param headId
+     * @param uploadMethod  上传模式：0追加，1覆盖
+     * @param repeatProduct 重复商品：0忽略，1覆盖
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/uploadExcel")
-    public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId, @RequestParam String stage, @RequestParam String operateType) {
-        return activityProductService.uploadExcel(file, headId, stage, operateType);
+    public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId,
+                                  @RequestParam("uploadMethod") String uploadMethod, @RequestParam("repeatProduct") String repeatProduct) {
+        try {
+            activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct);
+        } catch (Exception e) {
+            log.error("上传商品列表出错", e);
+            return ResponseBo.error(e.getMessage());
+        }
+        return ResponseBo.ok();
     }
 
     /**
@@ -119,50 +128,24 @@ public class ActivityController {
         String headId = request.getParam().get("headId");
         String productId = request.getParam().get("productId");
         String productName = request.getParam().get("productName");
-        String productAttr = request.getParam().get("productAttr");
-        String stage = request.getParam().get("stage");
-        int count = activityProductService.getCount(headId, productId, productName, productAttr, stage);
-        List<ActivityProduct> productList = activityProductService.getActivityProductListPage(start, end, headId, productId, productName, productAttr, stage);
+        String groupId = request.getParam().get("groupId");
+        int count = activityProductService.getCount(headId, productId, productName, groupId);
+        List<ActivityProduct> productList = activityProductService.getActivityProductListPage(start, end, headId, productId, productName, groupId);
         return ResponseBo.okOverPaging(null, count, productList);
     }
 
+    // todo 商品名称不能超过短信预设的，商品ID防重复
     /**
      * 保存商品信息
-     *
      * @param activityProduct
      * @param headId
      * @return
      */
     @PostMapping("/saveActivityProduct")
     public ResponseBo saveActivityProduct(ActivityProduct activityProduct, String headId, String operateType) {
-        try {
-            activityProduct.setHeadId(Long.valueOf(headId));
-            double minPrice = activityProduct.getMinPrice();
-            double formalPrice = activityProduct.getFormalPrice();
-            double activityIntensity = minPrice/formalPrice * 100;
-            activityIntensity = Double.valueOf(String.format("%.2f", activityIntensity));
-            activityProduct.setActivityIntensity(activityIntensity);
-            activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
-
-            List<String> productIdList = Collections.singletonList(activityProduct.getProductId());
-            int count = activityProductService.getSameProductCount(productIdList, headId, activityProduct.getActivityStage());
-            if(count > 0) {
-                return ResponseBo.error("已有相同商品ID！");
-            }
-            if(activityProduct.getProductName().length() > pushProperties.getProdNameLen()) {
-                throw new LinkSteadyException("商品名称超过系统设置！");
-            }
-            activityProductService.saveActivityProduct(activityProduct);
-            if("update".equalsIgnoreCase(operateType)) {
-                activityHeadService.changeAndUpdateStatus(headId, activityProduct.getActivityStage());
-                log.info("新增商品,headId:{}的状态发生变更。", headId);
-            }
-        } catch (LinkSteadyException ex){
-            return ResponseBo.error(ex.getMessage());
-        }catch (Exception ex) {
-            log.error("新增商品失败", ex);
-            return ResponseBo.error("新增商品失败");
-        }
+        activityProduct.setHeadId(Long.valueOf(headId));
+        activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
+        activityProductService.saveActivityProduct(activityProduct);
         return ResponseBo.ok();
     }
 
@@ -216,10 +199,6 @@ public class ActivityController {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
             activityProductService.updateActivityProduct(activityProduct);
-            if("update".equalsIgnoreCase(operateType)) {
-                activityHeadService.changeAndUpdateStatus(activityProduct.getHeadId().toString(), activityProduct.getActivityStage());
-                log.info("修改商品,headId:{}的状态发生变更。", activityProduct.getHeadId());
-            }
             return ResponseBo.ok();
         } catch (LinkSteadyException e) {
             return ResponseBo.error(e.getMessage());

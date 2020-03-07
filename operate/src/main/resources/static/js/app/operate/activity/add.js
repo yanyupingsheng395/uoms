@@ -31,11 +31,12 @@ function validateProductRule() {
                 required: true,
                 number: true
             },
-            productAttr: {
+            groupId: {
                 required: true
             },
-            productUrl: {
-                required: true
+            notifyMinPrice: {
+                required: true,
+                number: true
             }
         },
         errorPlacement: function (error, element) {
@@ -53,16 +54,16 @@ function validateProductRule() {
                 required: icon + "请输入商品名称"
             },
             minPrice: {
-                required: icon + "请输入活动期间最低价"
+                required: icon + "请输入活动期间体现最低单价"
             },
             formalPrice: {
-                required: icon + "请输入非活动正常价"
+                required: icon + "请输入非活动日常单价"
             },
-            productAttr: {
-                required: icon + "请选择活动属性"
+            groupId: {
+                required: icon + "请选择活动机制"
             },
-            productUrl: {
-                required: icon + "请输入商品链接"
+            notifyMinPrice: {
+                required: icon + "请输入活动通知体现最低单价"
             }
         }
     } );
@@ -78,7 +79,7 @@ function searchActivityProduct() {
 function resetActivityProduct() {
     $( "#productId" ).val( "" );
     $( "#productName" ).val( "" );
-    $( "#productAttr" ).find( "option:selected" ).removeAttr( "selected" );
+    $( "#activity-form" ).find( "option:selected" ).removeAttr( "selected" );
     $MB.refreshTable( 'activityProductTable' );
 }
 
@@ -94,8 +95,7 @@ $( "#saveActivityProduct" ).click( function () {
     if (flag) {
         let operate = $( "#saveActivityProduct" ).attr( "name" );
         if (operate === "save") {
-            $.post( "/activity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" +
-                $( "#headId" ).val() + "&activityStage=" + CURRENT_ACTIVITY_STAGE + "&operateType=" + operateType,  function (r) {
+            $.post( "/activity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val(),  function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "添加商品成功！" );
                     $MB.closeAndRestModal( "addProductModal" );
@@ -125,10 +125,8 @@ $( "#addProductModal" ).on( "hidden.bs.modal", function () {
     $( "input[name='productName']" ).val( "" );
     $( "input[name='minPrice']" ).val( "" );
     $( "input[name='formalPrice']" ).val( "" );
-    $( "input[name='activityIntensity']" ).val( "" );
-    $( "select[name='productAttr']" ).find( "option:selected" ).removeAttr( "selected" );
-    $( "input[name='productUrl']" ).val( "" );
-    $( "input[name='skuCode']" ).val( "" );
+    $( "input[name='notifyMinPrice']" ).val( "" );
+    $( "select[name='groupId']" ).find( "option:selected" ).removeAttr( "selected" );
     $activityProductAddForm.validate().resetForm();
 } );
 
@@ -163,40 +161,60 @@ $( "#btn_edit_shop" ).click( function () {
 } );
 
 $( "#uploadFile" ).change( function () {
-    $( '#filename' ).text( "文件名:" + $( this ).val() ).attr( "style", "display:inline-block;" );
+    console.log()
+    $( '#filename' ).text( "文件名:" + $(this)[0].files[0].name).attr( "style", "display:inline-block;" );
     $( "#btn_upload" ).attr( "style", "display:inline-block;" );
 } );
 
 $('#btn_upload').click(function () {
-    let file = $("#uploadFile")[0].files[0];
-    let formData = new FormData();
-    formData.append("file", file);
-    formData.append("headId", $("#headId").val());
-    formData.append("stage", $("#activity_stage").val());
-    formData.append("operateType", operate_type);
-    $.ajax({
-        url: "/activity/uploadExcel",
-        type: "post",
-        data: formData,
-        cache: false,
-        processData: false,
-        contentType: false,
-        success: function (res) {
-            if(res.code === 200) {
-                $MB.refreshTable('activityProductTable');
-                $MB.n_success(res.msg);
-            }else {
-                $MB.n_danger(res['msg']);
+    var repeatProduct = $("input[name='repeatProduct']:checked").val();
+    var uploadMethod = $("input[name='uploadMethod']:checked").val();
+    if($("#uploadFile")[0].files[0] === undefined) {
+        $MB.n_warning("请选择上传的文件！");
+        return;
+    }
+    if(repeatProduct === undefined) {
+        $MB.n_warning("请选择重复商品！");
+        return;
+    }
+    if(uploadMethod === undefined) {
+        $MB.n_warning("请选择上传模式！");
+        return;
+    }
+
+    $MB.confirm({
+        title: "提示",
+        content: "确定上传当前文件？"
+    }, function () {
+        let file = $("#uploadFile")[0].files[0];
+        let formData = new FormData();
+        formData.append("file", file);
+        formData.append("headId", $("#headId").val());
+        formData.append("repeatProduct", repeatProduct);
+        formData.append("uploadMethod", uploadMethod);
+        $.ajax({
+            url: "/activity/uploadExcel",
+            type: "post",
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                if(res.code === 200) {
+                    $MB.refreshTable('activityProductTable');
+                    $MB.n_success(res.msg);
+                }
+                $("#uploadFile").val('');
+                $("#btn_upload").attr("style", "display:none;");
+                $("#filename").html('').attr("style", "display:none;");
+            },
+            error: function (err) {
+                console.log(err)
+                $MB.n_danger(err.msg);
+                $("#btn_upload").attr("style", "display:none;");
+                $("#filename").html('').attr("style", "display:none;");
             }
-            $("#uploadFile").val('');
-            $("#btn_upload").attr("style", "display:none;");
-            $("#filename").html('').attr("style", "display:none;");
-        },
-        error: function (err) {
-            $MB.n_danger("未知错误发生！");
-            $("#btn_upload").attr("style", "display:none;");
-            $("#filename").html('').attr("style", "display:none;");
-        }
+        });
     });
 });
 
@@ -271,8 +289,7 @@ function getProductInfo(stage) {
                     headId: $( "#headId" ).val(),
                     productId: $( "#productId" ).val(),
                     productName: $( "#productName" ).val(),
-                    productAttr: $( "#productAttr" ).val(),
-                    stage: stage
+                    groupId: $("#activity-form").find("select[name='groupId']").val()
                 }
             };
         },
@@ -286,39 +303,58 @@ function getProductInfo(stage) {
             }, {
                 field: 'productName',
                 title: '名称'
-            }, {
-                field: 'minPrice',
-                title: '活动期间最低价（元/件）'
-            }, {
+            },{
                 field: 'formalPrice',
                 title: '非活动日常单价（元/件）'
             }, {
-                field: 'activityIntensity',
-                title: '活动力度（%）'
-            }, {
-                field: 'productAttr',
-                title: '活动属性',
+                field: 'groupId',
+                title: '活动动机制',
                 formatter: function (value, row, index) {
-                    let res = '-';
-                    switch (value) {
-                        case "0":
-                            res = "主推";
-                            break;
-                        case "1":
-                            res = "参活";
-                            break;
-                        case "2":
-                            res = "正常";
-                            break;
+                    var res = "-";
+                    if(value === '1') {
+                        res =  "活动价";
+                    }
+                    if(value === '2') {
+                        res =  "满件打折";
+                    }
+                    if(value === '3') {
+                        res =  "满元减钱";
+                    }
+                    if(value === '4') {
+                        res =  "特价";
                     }
                     return res;
                 }
             }, {
+                field: 'minPrice',
+                title: '活动通知体现最低单价（元/件）'
+            },  {
+                field: 'notifyMinPrice',
+                title: '活动期间体现最低单价（元/件）'
+            },  {
                 field: 'productUrl',
                 title: '商品短链',
                 formatter: function (value, row, index) {
                     return "<a style='color: #409eff;cursor:pointer;text-decoration: underline;' href='" + value + "' target='_blank'>" + value + "</a>";
                 }
+            }, {
+                field: 'checkFlag',
+                title: '校验结果',
+                formatter: function (value, row, index) {
+                    if(value === 'Y') {
+                        return "<span class=\"badge bg-success\">通过</span>";
+                    }
+                    if(value === 'N') {
+                        return "<span class=\"badge bg-danger\">未通过</span>";
+                    }
+                    return "-";
+                }
+            }, {
+                field: 'checkComments',
+                title: '失败原因',
+            }, {
+                field: 'alikeProdId',
+                title: '相似商品ID',
             }]
     };
     $( "#activityProductTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
@@ -548,7 +584,8 @@ $( "#btn_batch_upload" ).click( function () {
     if (headId === '') {
         $MB.n_warning( "请先保存基本信息，再添加商品！" );
     } else {
-        $( '#uploadFile' ).click();
+        //$( '#uploadFile' ).click();
+        $("#uploadProduct").modal('show');
     }
 } );
 
