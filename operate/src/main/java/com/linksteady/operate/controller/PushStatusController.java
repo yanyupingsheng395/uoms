@@ -59,7 +59,7 @@ public class PushStatusController extends BaseController {
         if(null != pushProperties && pushProperties.getPushFlag().equalsIgnoreCase("Y")) {
             //关闭服务
             try {
-                pushPropertiesService.sendPushSignal(PushSignalEnum.SIGNAL_START,getCurrentUser().getUsername());
+                pushPropertiesService.sendPushSignal(pushProperties,PushSignalEnum.SIGNAL_STOP,getCurrentUser().getUsername());
                 return ResponseBo.ok("关闭服务成功！");
             } catch (Exception e) {
                 log.error("关闭推送服务异常，异常原因为{}",e);
@@ -67,7 +67,7 @@ public class PushStatusController extends BaseController {
             }
         }else
         {
-            return ResponseBo.error("关闭服务失败，服务状态异常！");
+            return ResponseBo.error("关闭服务失败，服务已经是关闭状态！");
         }
     }
 
@@ -82,7 +82,7 @@ public class PushStatusController extends BaseController {
         if(null != pushProperties && pushProperties.getPushFlag().equalsIgnoreCase("N")) {
             //开启服务
             try {
-                pushPropertiesService.sendPushSignal(PushSignalEnum.SIGNAL_STOP,getCurrentUser().getUsername());
+                pushPropertiesService.sendPushSignal(pushProperties,PushSignalEnum.SIGNAL_START,getCurrentUser().getUsername());
                 return ResponseBo.ok("开启服务成功！");
             } catch (Exception e) {
                 log.error("开启推送服务异常，异常原因为{}",e);
@@ -90,7 +90,7 @@ public class PushStatusController extends BaseController {
             }
         }else
         {
-            return ResponseBo.error("开启服务失败,服务状态异常！");
+            return ResponseBo.error("开启服务失败,服务已经是开启状态！");
         }
 
     }
@@ -154,7 +154,7 @@ public class PushStatusController extends BaseController {
     @GetMapping("/refreshPushProperties")
     public ResponseBo refreshPushProperties() {
         try {
-            pushPropertiesService.sendPushSignal(PushSignalEnum.SIGNAL_REFRESH,getCurrentUser().getUsername());
+            pushPropertiesService.sendPushSignal(pushProperties,PushSignalEnum.SIGNAL_REFRESH,getCurrentUser().getUsername());
             return ResponseBo.ok("发送刷新信号成功!");
         } catch (Exception e) {
             log.error("发送刷新信号异常，异常原因为{}",e);
@@ -171,7 +171,7 @@ public class PushStatusController extends BaseController {
     @GetMapping("/reloadPushProperties")
     public ResponseBo reloadPushProperties() {
         try {
-            pushPropertiesService.loadConfigToRedisAndRefreshProperties(getCurrentUser().getUsername());
+            pushPropertiesService.loadConfigToRedisAndRefreshProperties(pushProperties,getCurrentUser().getUsername());
             return ResponseBo.ok("重新加载推送配置成功!");
         } catch (Exception e) {
             log.error("加载推送配置失败，异常原因为{}",e);
@@ -188,11 +188,11 @@ public class PushStatusController extends BaseController {
     @GetMapping("/printPushProperties")
     public ResponseBo printPushProperties() {
         try {
-            pushPropertiesService.sendPushSignal(PushSignalEnum.SIGNAL_PRINT,getCurrentUser().getUsername());
-            return ResponseBo.ok("打印配置信息成功!");
+            pushPropertiesService.sendPushSignal(pushProperties,PushSignalEnum.SIGNAL_PRINT,getCurrentUser().getUsername());
+            return ResponseBo.ok("发送打印信号成功!");
         } catch (Exception e) {
-            log.error("打印配置信息失败，异常原因为{}",e);
-            return ResponseBo.error("打印配置信息失败！");
+            log.error("发送刷新信号失败，异常原因为{}",e);
+            return ResponseBo.error("发送刷新信号失败！");
         }
     }
 

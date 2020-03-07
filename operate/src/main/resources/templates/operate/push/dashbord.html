@@ -34,30 +34,37 @@
             <div class="container-div ui-layout-center select-table table-striped">
                 <!--推送按钮-->
                 <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-sm-8">
                         <div class="btn-group-sm" role="group">
-                            <a class="btn btn-primary" onclick="start()">
+                            <a class="btn btn-primary" id="startPush" onclick="start()">
                                 <i class="fa fa-play"></i> 启动推送
                             </a>
-                            <a class="btn btn-danger" onclick="stop()">
+                            <a class="btn btn-danger" id="stopPush" onclick="stop()">
                                 <i class="fa fa-stop"></i> 停止推送
                             </a>
-                            <a class="btn btn-secondary" onclick="">
+                            <a class="btn btn-dark" id="singleTest" onclick="singleTest()">
                                 <i class="fa fa-envelope"></i> 单条推送测试
                             </a>
-                            <a class="btn btn-secondary" onclick="">
+                            <a class="btn btn-dark" id="batchTest" onclick="batchTest()">
                                 <i class="fa fa-list-alt"></i> 批量推送测试
+                            </a>
+
+                            <a class="btn btn-brown" id="noticeRefresh" onclick="noticeRefresh()">
+                                <i class="fa fa-list-alt"></i> 通知推送端重新加载配置
+                            </a>
+                            <a class="btn btn-brown" id="noticePrint" onclick="noticePrint()">
+                                <i class="fa fa-list-alt"></i> 通知推送端打印推送配置
                             </a>
                         </div>
                     </div>
-                    <div class="col-sm-4 text-center">
+                    <div class="col-sm-2 text-center">
                         <div class="btn-group-sm" role="group">
-                            <a class="btn btn-info">
+                            <a class="btn btn-info" id="status_btn">
                                 <i class="fa fa-info-circle"></i> <span id="status">当前状态：--</span>
                             </a>
                         </div>
                     </div>
-                    <div class="col-sm-4 text-right">
+                    <div class="col-sm-2 text-right">
                         <div class="btn-group-sm" role="group">
                             <a class="btn btn-secondary" onclick="getPushLog(-1)">
                                 <i class="fa fa-arrow-left"></i> 前一天
@@ -217,35 +224,147 @@
 
     // 启动服务
     function start() {
+        $("#startPush").attr("disabled",true);
+        $MB.loadingDesc('show', '启动服务中，请稍后...');
         $.get( "/push/start", {}, function (r) {
             if (r.code === 200) {
-                $MB.n_success( "已开启服务！" );
-                status();
+
+                //延迟 显示遮罩层 延迟7s后结束
+                setTimeout(
+                    function()
+                    {
+                        $MB.n_success(r.msg);
+                        status();
+                        $MB.loadingDesc('hide');
+                        $("#startPush").attr("disabled",false);
+                    }
+                    ,7000);
+            }else
+            {
+                $MB.n_warning(r.msg);
+                $MB.loadingDesc('hide');
+                $("#startPush").attr("disabled",false);
             }
         } );
     }
 
     // 停止服务
     function stop() {
+        $("#stopPush").attr("disabled",true);
+        $MB.loadingDesc('show', '停止服务中，请稍后...');
         $.get( "/push/stop", {}, function (r) {
             if (r.code === 200) {
-                $MB.n_success( "已停止服务！" );
-                status();
+                //延迟 显示遮罩层 延迟7s后结束
+                setTimeout(
+                    function()
+                    {
+                        $MB.n_success(r.msg);
+                        status();
+                        $MB.loadingDesc('hide');
+                        $("#stopPush").attr("disabled",false);
+                    }
+                    ,7000);
+            }else {
+                $MB.n_warning(r.msg);
+                $MB.loadingDesc('hide');
+                $("#stopPush").attr("disabled",false);
             }
         } );
     }
+
+    function singleTest()
+    {
+        $("#singleTest").attr("disabled",true);
+        $.get( "/push/singleTest", {}, function (r) {
+            if (r.code === 200) {
+                $MB.n_success( "已发送测试数据！" );
+                $("#singleTest").attr("disabled",false);
+            }else
+            {
+                $MB.n_warning("测试失败!");
+                $("#singleTest").attr("disabled",false);
+            }
+        } );
+    }
+
+    function batchTest()
+    {
+        $("#batchTest").attr("disabled",true);
+        $.get( "/push/batchTest", {}, function (r) {
+            if (r.code === 200) {
+                $MB.n_success( "已发送测试数据！" );
+                $("#batchTest").attr("disabled",false);
+            }else
+            {
+                $MB.n_warning("测试失败!");
+                $("#batchTest").attr("disabled",false);
+            }
+        } );
+    }
+
+
+    function noticeRefresh() {
+        $("#noticeRefresh").attr("disabled",true);
+        $MB.loadingDesc('show', '通知中，请稍后...');
+        $.get( "/push/refreshPushProperties", {}, function (r) {
+            if (r.code === 200) {
+                //延迟 显示遮罩层 延迟7s后结束
+                setTimeout(
+                    function()
+                    {
+                        $MB.n_success(r.msg);
+                        status();
+                        $MB.loadingDesc('hide');
+                        $("#noticeRefresh").attr("disabled",false);
+                    }
+                    ,7000);
+            }else {
+                $MB.n_warning(r.msg);
+                $MB.loadingDesc('hide');
+                $("#noticeRefresh").attr("disabled",false);
+            }
+        } );
+    }
+
+    function noticePrint() {
+        $("#noticePrint").attr("disabled",true);
+        $MB.loadingDesc('show', '通知中，请稍后...');
+        $.get( "/push/printPushProperties", {}, function (r) {
+            if (r.code === 200) {
+                //延迟 显示遮罩层 延迟7s后结束
+                setTimeout(
+                    function()
+                    {
+                        $MB.n_success(r.msg);
+                        status();
+                        $MB.loadingDesc('hide');
+                        $("#noticePrint").attr("disabled",false);
+                    }
+                    ,7000);
+            }else {
+                $MB.n_warning(r.msg);
+                $MB.loadingDesc('hide');
+                $("#noticePrint").attr("disabled",false);
+            }
+        } );
+    }
+
 
     function status() {
         $.get( "/push/status", {}, function (r) {
             let status = r.data;
             let code = "";
             if (status == 'Y') {
+
+                $( "#status_btn").removeClass().addClass('btn btn-info');
                 code = "当前推送状态：已启动";
             }
             if (status == 'N') {
+                $( "#status_btn").removeClass().addClass('btn btn-danger');
                 code = "当前推送状态：已停止";
             }
             if (status != 'Y' && status != "N") {
+                $( "#status_btn").removeClass().addClass('btn btn-warning');
                 code = "当前推送状态：未知状态";
             }
             $( "#status" ).html( '' ).append( code );

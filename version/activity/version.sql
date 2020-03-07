@@ -133,7 +133,7 @@ create unique index UO_OP_ACTIVITY_COVINFO_U1 on UO_OP_ACTIVITY_COVINFO (ACTIVIT
 create table UO_OP_ACTIVITY_CONTENT_TMP
 (
   activity_detail_id NUMBER,
-  head_id         NUMBER,
+  plan_id         NUMBER,
   sms_content     VARCHAR2(512)
 );
 -- Add comments to the table
@@ -142,8 +142,8 @@ is '活动运营生成文案的临时表';
 -- Add comments to the columns
 comment on column UO_OP_ACTIVITY_CONTENT_TMP.activity_detail_id
 is '行表ID';
-comment on column UO_OP_ACTIVITY_CONTENT_TMP.head_id
-is '头表ID';
+comment on column UO_OP_ACTIVITY_CONTENT_TMP.plan_id
+is '计划ID';
 comment on column UO_OP_ACTIVITY_CONTENT_TMP.sms_content
 is '消息内容';
 -- Create/Recreate indexes
@@ -333,7 +333,7 @@ WHEN MATCHED THEN
 insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
 values ('manual', 'N', 'SQL', 'merge into uo_op_push_list_large t1
             using  uo_op_push_rpt t2
-            on (t1.final_msg_id = t2.msgid and trunc(t1.push_date)>trunc(sysdate-3))
+            on (t1.final_msg_id = t2.msgid and trunc(t1.push_date)>=trunc(sysdate-3))
         when matched then
         update set t1.push_status=t2.status', null, null, '更新PUSH_LARGE中的推送状态', '2', 'UPDATE', '根据运营商返回的状态报告，更新PUSH_LARGE中的推送状态');
 
@@ -375,5 +375,103 @@ values ('op.daily.default.effectDays', '3', '每日运营效果统计默认天�
 
 ALTER TABLE t_config MODIFY type_code1 not  NULL;
 alter table t_config modify value VARCHAR2(256);
+
+--0307修改
+alter table UO_OP_ACTIVITY_PRODUCT add (
+  NOTIFY_MIN_PRICE number,
+  check_FLAG VARCHAR2(2) default 'Y',
+  check_comments varchar2(256),
+  alike_prod_id varchar2(32),
+  GROUP_ID number
+  );
+alter table UO_OP_ACTIVITY_PRODUCT drop column ACTIVITY_INTENSITY;
+alter table UO_OP_ACTIVITY_PRODUCT drop column ACTIVITY_STAGE;
+alter table UO_OP_ACTIVITY_PRODUCT drop column SKU_CODE;
+
+alter table UO_OP_ACTIVITY_PRODUCT modify  PRODUCT_ATTR default '1';
+comment on column UO_OP_ACTIVITY_PRODUCT.NOTIFY_MIN_PRICE is '活动通知阶段最低价';
+comment on column UO_OP_ACTIVITY_PRODUCT.MIN_PRICE is '活动期间最低价';
+comment on column UO_OP_ACTIVITY_PRODUCT.PRODUCT_URL is '商品短链地址';
+
+comment on column UO_OP_ACTIVITY_PRODUCT.check_FLAG is '校验结果 Y 是N 否';
+comment on column UO_OP_ACTIVITY_PRODUCT.check_comments is '校验备注';
+comment on column UO_OP_ACTIVITY_PRODUCT.alike_prod_id is '相似商品ID';
+comment on column UO_OP_ACTIVITY_PRODUCT.GROUP_ID is '商品参加活动的组ID 参考t_dict中ACTIVITY_GROUP';
+
+comment on column UO_OP_ACTIVITY_PRODUCT.PRODUCT_ATTR is '产品属性（0：主推，1：参活，2：正常）已废弃字段，保留仅为兼容模型 默认值为1 参活';
+comment on column UO_OP_ACTIVITY_PRODUCT.MIN_PRICE is '活动期间最低价';
+
+alter table UO_OP_ACTIVITY_GROUP add(
+  check_FLAG VARCHAR2(2) default 'N',
+  check_comments varchar2(256),
+  select_flag varchar2(2) default 'Y',
+  prod_activity_prop varchar2(2)
+  );
+
+comment on column UO_OP_ACTIVITY_GROUP.check_FLAG is '校验结果 Y 是N 否';
+comment on column UO_OP_ACTIVITY_GROUP.check_comments is '校验备注';
+comment on column UO_OP_ACTIVITY_GROUP.select_flag is '推送时是否选中 默认为Y';
+comment on column UO_OP_ACTIVITY_GROUP.prod_activity_prop is '成长商品活动属性 Y为是 N为否';
+alter table uo_op_activity_product modify insert_dt default sysdate;
+
+delete from t_dict where type_code='ACTIVITY_GROUP';
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('16', '1', '活动价/成长商品活动属性为是(通知)', 'ACTIVITY_GROUP', '活动运营用户组', '1');
+
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('17', '2', '满件打折/成长商品活动属性为是(通知)', 'ACTIVITY_GROUP', '活动运营用户组', '2');
+
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('18', '3', '满元减钱/成长商品活动属性为是(通知)', 'ACTIVITY_GROUP', '活动运营用户组', '3');
+
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('20', '5', '-/成长商品活动属性为否(通知)', 'ACTIVITY_GROUP', '活动运营用户组', '5');
+
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('19', '4', '特价/成长商品活动属性为是(通知)', 'ACTIVITY_GROUP', '活动运营用户组', '4');
+
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('21', '6', '推荐成长商品/成长商品活动属性为是(正式)', 'ACTIVITY_GROUP', '活动运营用户组', '6');
+
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('22', '7', '推荐潜在商品/成长商品活动属性为是(正式)', 'ACTIVITY_GROUP', '活动运营用户组', '7');
+
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('23', '8', '推荐成长商品/成长商品活动属性为否(正式)', 'ACTIVITY_GROUP', '活动运营用户组', '8');
+
+drop table UO_OP_ACTIVITY_PROD_MAPPING;
+alter table UO_OP_ACTIVITY_HEADER modify HAS_PREHEAT not null;
+alter table UO_OP_ACTIVITY_PLAN modify PLAN_DATE_WID NOT NULL;
+alter table UO_OP_ACTIVITY_PLAN modify PLAN_DATE NOT NULL;
+alter table UO_OP_ACTIVITY_PLAN modify ACTIVITY_STAGE NOT NULL;
+alter table UO_OP_ACTIVITY_PLAN modify PLAN_STATUS NOT NULL;
+alter table UO_OP_ACTIVITY_PLAN modify PLAN_TYPE NOT NULL;
+
+alter table UO_OP_ACTIVITY_DETAIL modify EPB_PRODUCT_ID NOT NULL;
+alter table UO_OP_ACTIVITY_DETAIL modify EPB_PRODUCT_NAME NOT NULL;
+alter table UO_OP_ACTIVITY_DETAIL modify PLAN_DT NOT NULL;
+alter table UO_OP_ACTIVITY_DETAIL modify HEAD_ID NOT NULL;
+alter table UO_OP_ACTIVITY_DETAIL modify USER_ID NOT NULL;
+
+alter table UO_OP_ACTIVITY_DETAIL modify USER_PHONE NOT NULL;
+alter table UO_OP_ACTIVITY_DETAIL modify GROUP_ID NOT NULL;
+alter table UO_OP_ACTIVITY_DETAIL modify ACTIVITY_STAGE NOT NULL;
+
+drop table uo_op_daily_config;
+
+alter table uo_op_activity_plan add(plan_id number);
+comment on column uo_op_activity_plan.plan_id is '计划ID';
+-- Create sequence
+create sequence UO_OP_ACTIVITY_PLAN_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 1
+increment by 1;
+
+update uo_op_activity_plan p set p.plan_id=uo_op_activity_plan_seq.nextval where p.plan_id is null ;
+
+alter table UO_OP_ACTIVITY_DETAIL add(plan_id number);
+comment on column UO_OP_ACTIVITY_DETAIL.plan_id is '计划ID';
+
 
 

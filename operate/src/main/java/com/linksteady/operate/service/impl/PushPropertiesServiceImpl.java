@@ -21,6 +21,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,8 +34,6 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
     @Autowired
     private ConfigMapper configMapper;
 
-    @Autowired
-    private PushProperties pushProperties;
 
     private static final String CONFIG_KEY_NAME="TCONFIG";
 
@@ -43,7 +42,7 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public synchronized void sendPushSignal(PushSignalEnum signal,String currentUser) throws Exception{
+    public synchronized void sendPushSignal(PushProperties prop,PushSignalEnum signal,String currentUser) throws Exception{
         HeartBeatInfo heartBeatInfo = new HeartBeatInfo();
         //启动
         if(signal.getSignalCode().equals(PushSignalEnum.SIGNAL_START.getSignalCode()))
@@ -51,7 +50,7 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
             //更新数据库
             configMapper.updateConfig(PushPropertiesEnum.pushFlag.getKeyCode(),"Y");
             //重新加载到redis并刷新pushProperties
-            loadConfigToRedisAndRefreshProperties(currentUser);
+            loadConfigToRedisAndRefreshProperties(prop,currentUser);
             //发送命令到远端
             heartBeatInfo.setSignal(signal);
             redisMessageService.sendPushSingal(heartBeatInfo);
@@ -61,7 +60,7 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
             //更新数据库
             configMapper.updateConfig(PushPropertiesEnum.pushFlag.getKeyCode(),"N");
             //重新加载到redis并刷新pushProperties
-            loadConfigToRedisAndRefreshProperties(currentUser);
+            loadConfigToRedisAndRefreshProperties(prop,currentUser);
             //发送命令到远端
             heartBeatInfo.setSignal(signal);
             redisMessageService.sendPushSingal(heartBeatInfo);
@@ -75,7 +74,7 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
         {
             //刷新
             //重新加载到redis
-            loadConfigToRedisAndRefreshProperties(currentUser);
+            loadConfigToRedisAndRefreshProperties(prop,currentUser);
         }else
         {
             //什么也不做
@@ -83,12 +82,14 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
     }
 
     @Override
-    public  void loadConfigToRedisAndRefreshProperties(String currentUser) throws Exception
+    public  void loadConfigToRedisAndRefreshProperties(PushProperties prop,String currentUser) throws Exception
     {
-        log.info("{} 重新加载了推送配置",currentUser);
+        log.info("{} 加载了推送配置",currentUser);
 
         //数据库加载到redis
         List<Tconfig> tconfigList=configMapper.selectCommonConfig();
+
+        Map<String,String> configMap=tconfigList.stream().collect(Collectors.toMap(Tconfig::getName,Tconfig::getValue));
         HashOperations<String, String, Tconfig> hashOperations= redisTemplate.opsForHash();
 
         //删除
@@ -99,25 +100,10 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
             hashOperations.put(CONFIG_KEY_NAME,tconfig.getName(),tconfig);
         }
 
-        //使用redis 更新pushProperties
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.repeatPushDays);
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.pushFlag);
-        //推送方式
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.pushType);
-        //默认推送方法
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.pushMethod);
-
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.smsLengthLimit);
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.productUrl);
-
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.isTestEnv);
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.demoShortUrl);
-
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.shortUrlLen);
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.productUrl);
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.couponSendType);
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.couponNameLen);
-        setPropertiesByKeyCode(pushProperties,PushPropertiesEnum.priceLen);
+        for(PushPropertiesEnum pushPropertiesEnum:PushPropertiesEnum.values())
+        {
+            setPropertiesByKeyCode(prop,pushPropertiesEnum,configMap);
+        }
     }
 
     @Override
@@ -128,26 +114,23 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
         return tconfigList.stream().filter(p->"push".equals(p.getTypeCode2())).collect(Collectors.toList());
     }
 
-    private void  setPropertiesByKeyCode(PushProperties pushProperties, PushPropertiesEnum pushPropertiesEnum) throws Exception
+    private void  setPropertiesByKeyCode(PushProperties pushProperties, PushPropertiesEnum pushPropertiesEnum, Map<String,String> configMap) throws Exception
     {
         Object targetValue=null;
         //获取keycode获取对应的值
-        Tconfig tconfig=configMapper.getTconfigByName(pushPropertiesEnum.getKeyCode());
+        String value=configMap.get(pushPropertiesEnum.getKeyCode());
 
-        if(null==tconfig||StringUtils.isEmpty(tconfig.getValue()))
+        if(StringUtils.isEmpty(value))
         {
             throw new LinkSteadyException("初始化PushProperties,"+pushPropertiesEnum.getFieldName()+"对应的code+:"+pushPropertiesEnum.getKeyCode()+"未配置值！");
         }
 
-        String value=tconfig.getValue();
         Field field = null;
 
         //根据属性名调用对象
         PropertyDescriptor descriptor = null;
         try {
-            pushProperties.getClass().getDeclaredField(pushPropertiesEnum.getFieldName());
-
-            field.getGenericType();
+            field=pushProperties.getClass().getDeclaredField(pushPropertiesEnum.getFieldName());
 
             //整形
             if (field.getGenericType().toString().equals("int")||field.getGenericType().toString().equals("class java.lang.Integer")){

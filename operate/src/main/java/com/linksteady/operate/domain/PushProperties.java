@@ -21,11 +21,6 @@ public class PushProperties {
     private String pushFlag = "Y";
 
     /**
-     * 推送方式
-     */
-    private String pushType = "SMS";
-
-    /**
      * 推送方式 IMME:IMME立即推送 AI:AI智能推送
      */
     private String pushMethod;
@@ -74,4 +69,38 @@ public class PushProperties {
      * 商品价格的最大长度
      */
     private int priceLen;
+
+    /**
+     * 短信供应商
+     */
+    private String pushVendor;
+
+    /**
+     * 休眠
+     */
+    private String openNightSleep;
+    private int nightStart;
+    private int nightEnd;
+
+
+    /**
+     * 是否开启状态报告和上行消息获取
+     */
+    private String OpenCallback;
+
+    /**
+     * 创蓝需要的参数
+     */
+    private String clAccount;
+    private String clPassword;
+    private String clRequestServerUrl;
+    private String clPullMoUrl;
+    private String clReportRequestUrl;
+
+    /**
+     * 梦网需要的参数
+     */
+    private String montnetsAccount;
+    private String montnetsPassword;
+    private String montnetsMasterIpAddress;
 }
