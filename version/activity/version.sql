@@ -333,7 +333,7 @@ WHEN MATCHED THEN
 insert into UO_OP_EXEC_STEPS (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
 values ('manual', 'N', 'SQL', 'merge into uo_op_push_list_large t1
             using  uo_op_push_rpt t2
-            on (t1.final_msg_id = t2.msgid and trunc(t1.push_date)>trunc(sysdate-3))
+            on (t1.final_msg_id = t2.msgid and trunc(t1.push_date)>=trunc(sysdate-3))
         when matched then
         update set t1.push_status=t2.status', null, null, '更新PUSH_LARGE中的推送状态', '2', 'UPDATE', '根据运营商返回的状态报告，更新PUSH_LARGE中的推送状态');
 
@@ -375,5 +375,58 @@ values ('op.daily.default.effectDays', '3', '每日运营效果统计默认天�
 
 ALTER TABLE t_config MODIFY type_code1 not  NULL;
 alter table t_config modify value VARCHAR2(256);
+
+--0307修改
+alter table UO_OP_ACTIVITY_PRODUCT add (
+  NOTIFY_MIN_PRICE number,
+  check_FLAG VARCHAR2(2) default 'Y',
+  check_comments varchar2(256),
+  alike_prod_id varchar2(32),
+  GOURP_ID number
+  );
+alter table UO_OP_ACTIVITY_PRODUCT drop column ACTIVITY_INTENSITY;
+alter table UO_OP_ACTIVITY_PRODUCT drop column ACTIVITY_STAGE;
+alter table UO_OP_ACTIVITY_PRODUCT drop column SKU_CODE;
+
+alter table UO_OP_ACTIVITY_PRODUCT modify  PRODUCT_ATTR default '1';
+comment on column UO_OP_ACTIVITY_PRODUCT.NOTIFY_MIN_PRICE is '活动通知阶段最低价';
+comment on column UO_OP_ACTIVITY_PRODUCT.MIN_PRICE is '活动期间最低价';
+comment on column UO_OP_ACTIVITY_PRODUCT.PRODUCT_URL is '商品短链地址';
+
+comment on column UO_OP_ACTIVITY_PRODUCT.check_FLAG is '校验结果 Y 是N 否';
+comment on column UO_OP_ACTIVITY_PRODUCT.check_comments is '校验备注';
+comment on column UO_OP_ACTIVITY_PRODUCT.alike_prod_id is '相似商品ID';
+comment on column UO_OP_ACTIVITY_PRODUCT.GOURP_ID is '商品参加活动的组ID 参考t_dict中ACTIVITY_GROUP';
+
+comment on column UO_OP_ACTIVITY_PRODUCT.PRODUCT_ATTR is '产品属性（0：主推，1：参活，2：正常）已废弃字段，保留仅为兼容模型 默认值为1 参活';
+comment on column UO_OP_ACTIVITY_PRODUCT.MIN_PRICE is '活动期间最低价';
+
+alter table UO_OP_ACTIVITY_GROUP add(
+  check_FLAG VARCHAR2(2) default 'N',
+  check_comments varchar2(256),
+  select_flag varchar2(2) default 'Y'
+  );
+
+comment on column UO_OP_ACTIVITY_GROUP.check_FLAG is '校验结果 Y 是N 否';
+comment on column UO_OP_ACTIVITY_GROUP.check_comments is '校验备注';
+comment on column UO_OP_ACTIVITY_GROUP.select_flag is '推送时是否选中 默认为Y';
+alter table uo_op_activity_product modify insert_dt default sysdate;
+
+delete from t_dict where type_code='ACTIVITY_GROUP';
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('16', '1', '商品是活动商品且活动价', 'ACTIVITY_GROUP', '活动运营用户组', '1');
+
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('17', '2', '商品是活动商品且满件打折', 'ACTIVITY_GROUP', '活动运营用户组', '2');
+
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('18', '3', '商品是活动商品且满元减钱', 'ACTIVITY_GROUP', '活动运营用户组', '3');
+
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('20', '5', '商品不参加活动', 'ACTIVITY_GROUP', '活动运营用户组', '5');
+
+insert into t_dict (DICT_ID, CODE, VALUE, TYPE_CODE, TYPE_NAME, ORDER_NO)
+values ('19', '4', '商品是活动商品且特价', 'ACTIVITY_GROUP', '活动运营用户组', '4');
+
 
 

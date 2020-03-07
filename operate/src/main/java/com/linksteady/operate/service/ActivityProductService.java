@@ -55,20 +55,6 @@ public interface ActivityProductService {
      */
     void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage);
 
-    /**
-     * 获取第一条商品的信息
-     * @return
-     */
-    ActivityProduct geFirstProductInfo(String headId, String stage);
-
-    /**
-     * 更新活动映射信息表
-     */
-    void insertActivityProdMapping(String headId, String stage);
-    /**
-     * 删除活动映射信息表
-     */
-    void deleteActivityProdMapping(String headId, String stage);
 
     void deleteData(String headId);
 

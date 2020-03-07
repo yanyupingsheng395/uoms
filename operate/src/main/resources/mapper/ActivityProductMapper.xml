@@ -127,27 +127,6 @@
         </foreach>
     </delete>
 
-
-    <select id="geFirstProductInfo"  resultMap="base">
-        select HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE, ID from UO_OP_ACTIVITY_PRODUCT
-        where HEAD_ID = #{headId} and ACTIVITY_STAGE=#{stage} AND rownum=1
-    </select>
-
-    <insert id="insertActivityProdMapping">
-        insert into UO_OP_ACTIVITY_PROD_MAPPING(
-            HEAD_ID,ACTIVITY_STAGE,PRESALE_PRODUCT_ID,PRESALE_PRODUCT_NAME,PRODUCT_ID,PRODUCT_NAME,INSERT_DT
-        )SELECT
-             P.HEAD_ID,P.ACTIVITY_STAGE,P.EPB_PRODUCT_ID,P.PRODUCT_NAME,P.EPB_PRODUCT_ID,P.PRODUCT_NAME,SYSDATE
-        FROM UO_OP_ACTIVITY_PRODUCT P WHERE P.HEAD_ID=#{headId} AND P.ACTIVITY_STAGE=#{stage}
-    </insert>
-
-    <delete id="deleteActivityProdMapping">
-       delete  from UO_OP_ACTIVITY_PROD_MAPPING WHERE HEAD_ID=#{headId}
-        <if test="stage != null and stage != ''">
-            AND ACTIVITY_STAGE=#{stage}
-        </if>
-    </delete>
-
     <delete id="deleteData">
         delete from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
     </delete>

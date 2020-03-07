@@ -67,8 +67,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         // 添加商品更改数据状态
         activityHeadMapper.updateGroupChanged(time, activityProduct.getHeadId().toString(), activityProduct.getActivityStage(), "1");
         activityProductMapper.saveActivityProduct(activityProduct);
-
-        generateProdMapping(String.valueOf(activityProduct.getHeadId()),activityProduct.getActivityStage());
     }
 
     @Override
@@ -88,8 +86,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         String time = String.valueOf(System.currentTimeMillis());
         activityHeadMapper.updateGroupChanged(time, activityProduct.getHeadId().toString(), activityProduct.getActivityStage(), "1");
         activityProductMapper.saveActivityProductList(productList);
-
-        generateProdMapping(String.valueOf(activityProduct.getHeadId()),activityProduct.getActivityStage());
     }
 
     /**
@@ -106,8 +102,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         String time = String.valueOf(System.currentTimeMillis());
         activityHeadMapper.updateGroupChanged(time, headId, stage, "1");
         activityProductMapper.deleteProduct(headId, stage, productList);
-
-        generateProdMapping(headId,stage);
     }
 
     @Override
@@ -133,30 +127,12 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     @Override
     public void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage) {
         activityProductMapper.deleteRepeatData(productList, headId, stage);
-        generateProdMapping(headId,stage);
-    }
-
-    @Override
-    public ActivityProduct geFirstProductInfo(String headId, String stage) {
-        return activityProductMapper.geFirstProductInfo(headId,stage);
-    }
-
-    @Override
-    public void insertActivityProdMapping(String headId, String stage) {
-         activityProductMapper.insertActivityProdMapping(headId,stage);
-    }
-
-    @Override
-    public void deleteActivityProdMapping(String headId, String stage) {
-         activityProductMapper.deleteActivityProdMapping(headId,stage);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteData(String headId) {
         activityProductMapper.deleteData(headId);
-        //删除映射数据
-        activityProductMapper.deleteActivityProdMapping(headId,"");
     }
 
     @Override
@@ -297,16 +273,5 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         } else {
             return ResponseBo.error("只支持.xls,.xlsx后缀的文件！");
         }
-    }
-
-    /**
-     * 生成映射数据
-     * @param headId
-     * @param stage
-     */
-    private void generateProdMapping(String headId, String stage)
-    {
-        deleteActivityProdMapping(headId,stage);
-        insertActivityProdMapping(headId,stage);
     }
 }
