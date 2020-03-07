@@ -21,6 +21,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,10 +84,12 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
     @Override
     public  void loadConfigToRedisAndRefreshProperties(PushProperties prop,String currentUser) throws Exception
     {
-        log.info("{} 重新加载了推送配置",currentUser);
+        log.info("{} 加载了推送配置",currentUser);
 
         //数据库加载到redis
         List<Tconfig> tconfigList=configMapper.selectCommonConfig();
+
+        Map<String,String> configMap=tconfigList.stream().collect(Collectors.toMap(Tconfig::getName,Tconfig::getValue));
         HashOperations<String, String, Tconfig> hashOperations= redisTemplate.opsForHash();
 
         //删除
@@ -97,25 +100,10 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
             hashOperations.put(CONFIG_KEY_NAME,tconfig.getName(),tconfig);
         }
 
-        //使用redis 更新pushProperties
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.repeatPushDays);
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.pushFlag);
-        //推送方式
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.pushType);
-        //默认推送方法
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.pushMethod);
-
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.smsLengthLimit);
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.productUrl);
-
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.isTestEnv);
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.demoShortUrl);
-
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.shortUrlLen);
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.productUrl);
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.couponSendType);
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.couponNameLen);
-        setPropertiesByKeyCode(prop,PushPropertiesEnum.priceLen);
+        for(PushPropertiesEnum pushPropertiesEnum:PushPropertiesEnum.values())
+        {
+            setPropertiesByKeyCode(prop,pushPropertiesEnum,configMap);
+        }
     }
 
     @Override
@@ -126,18 +114,17 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
         return tconfigList.stream().filter(p->"push".equals(p.getTypeCode2())).collect(Collectors.toList());
     }
 
-    private void  setPropertiesByKeyCode(PushProperties pushProperties, PushPropertiesEnum pushPropertiesEnum) throws Exception
+    private void  setPropertiesByKeyCode(PushProperties pushProperties, PushPropertiesEnum pushPropertiesEnum, Map<String,String> configMap) throws Exception
     {
         Object targetValue=null;
         //获取keycode获取对应的值
-        Tconfig tconfig=configMapper.getTconfigByName(pushPropertiesEnum.getKeyCode());
+        String value=configMap.get(pushPropertiesEnum.getKeyCode());
 
-        if(null==tconfig||StringUtils.isEmpty(tconfig.getValue()))
+        if(StringUtils.isEmpty(value))
         {
             throw new LinkSteadyException("初始化PushProperties,"+pushPropertiesEnum.getFieldName()+"对应的code+:"+pushPropertiesEnum.getKeyCode()+"未配置值！");
         }
 
-        String value=tconfig.getValue();
         Field field = null;
 
         //根据属性名调用对象

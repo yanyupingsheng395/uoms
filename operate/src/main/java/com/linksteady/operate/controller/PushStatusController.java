@@ -189,10 +189,10 @@ public class PushStatusController extends BaseController {
     public ResponseBo printPushProperties() {
         try {
             pushPropertiesService.sendPushSignal(pushProperties,PushSignalEnum.SIGNAL_PRINT,getCurrentUser().getUsername());
-            return ResponseBo.ok("打印配置信息成功!");
+            return ResponseBo.ok("发送打印信号成功!");
         } catch (Exception e) {
-            log.error("打印配置信息失败，异常原因为{}",e);
-            return ResponseBo.error("打印配置信息失败！");
+            log.error("发送刷新信号失败，异常原因为{}",e);
+            return ResponseBo.error("发送刷新信号失败！");
         }
     }
 
