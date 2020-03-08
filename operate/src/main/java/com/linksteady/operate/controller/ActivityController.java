@@ -86,13 +86,24 @@ public class ActivityController {
 
     /**
      * 商品文件批量上传
-     *
+     * @param headId
+     * @param uploadMethod  上传模式：0追加，1覆盖
+     * @param repeatProduct 重复商品：0忽略，1覆盖
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/uploadExcel")
-    public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam Long headId, @RequestParam String stage, @RequestParam String operateType) {
-        return activityProductService.uploadExcel(file, headId, stage, operateType);
+    public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId,
+                                  @RequestParam("uploadMethod") String uploadMethod, @RequestParam("repeatProduct") String repeatProduct) {
+        try {
+            activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct);
+        } catch (LinkSteadyException e){
+            return ResponseBo.error(e.getMessage());
+        }catch (Exception e) {
+            log.error("上传商品列表出错", e);
+            return ResponseBo.error(e.getMessage());
+        }
+        return ResponseBo.ok();
     }
 
     /**
@@ -119,50 +130,24 @@ public class ActivityController {
         String headId = request.getParam().get("headId");
         String productId = request.getParam().get("productId");
         String productName = request.getParam().get("productName");
-        String productAttr = request.getParam().get("productAttr");
-        String stage = request.getParam().get("stage");
-        int count = activityProductService.getCount(headId, productId, productName, productAttr, stage);
-        List<ActivityProduct> productList = activityProductService.getActivityProductListPage(start, end, headId, productId, productName, productAttr, stage);
+        String groupId = request.getParam().get("groupId");
+        int count = activityProductService.getCount(headId, productId, productName, groupId);
+        List<ActivityProduct> productList = activityProductService.getActivityProductListPage(start, end, headId, productId, productName, groupId);
         return ResponseBo.okOverPaging(null, count, productList);
     }
 
+    // todo 商品名称不能超过短信预设的，商品ID防重复
     /**
      * 保存商品信息
-     *
      * @param activityProduct
      * @param headId
      * @return
      */
     @PostMapping("/saveActivityProduct")
-    public ResponseBo saveActivityProduct(ActivityProduct activityProduct, Long headId, String operateType) {
-        try {
-            activityProduct.setHeadId(Long.valueOf(headId));
-            double minPrice = activityProduct.getMinPrice();
-            double formalPrice = activityProduct.getFormalPrice();
-            double activityIntensity = minPrice/formalPrice * 100;
-            activityIntensity = Double.valueOf(String.format("%.2f", activityIntensity));
-            activityProduct.setActivityIntensity(activityIntensity);
-            activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
-
-            List<String> productIdList = Collections.singletonList(activityProduct.getProductId());
-            int count = activityProductService.getSameProductCount(productIdList, headId, activityProduct.getActivityStage());
-            if(count > 0) {
-                return ResponseBo.error("已有相同商品ID！");
-            }
-            if(activityProduct.getProductName().length() > pushProperties.getProdNameLen()) {
-                throw new LinkSteadyException("商品名称超过系统设置！");
-            }
-            activityProductService.saveActivityProduct(activityProduct);
-            if("update".equalsIgnoreCase(operateType)) {
-                activityHeadService.changeAndUpdateStatus(headId, activityProduct.getActivityStage());
-                log.info("新增商品,headId:{}的状态发生变更。", headId);
-            }
-        } catch (LinkSteadyException ex){
-            return ResponseBo.error(ex.getMessage());
-        }catch (Exception ex) {
-            log.error("新增商品失败", ex);
-            return ResponseBo.error("新增商品失败");
-        }
+    public ResponseBo saveActivityProduct(ActivityProduct activityProduct, String headId, String operateType) {
+        activityProduct.setHeadId(Long.valueOf(headId));
+        activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
+        activityProductService.saveActivityProduct(activityProduct);
         return ResponseBo.ok();
     }
 
@@ -216,10 +201,6 @@ public class ActivityController {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
             activityProductService.updateActivityProduct(activityProduct);
-            if("update".equalsIgnoreCase(operateType)) {
-                activityHeadService.changeAndUpdateStatus(activityProduct.getHeadId(), activityProduct.getActivityStage());
-                log.info("修改商品,headId:{}的状态发生变更。", activityProduct.getHeadId());
-            }
             return ResponseBo.ok();
         } catch (LinkSteadyException e) {
             return ResponseBo.error(e.getMessage());
@@ -236,14 +217,14 @@ public class ActivityController {
         int start = request.getStart();
         int end = request.getEnd();
         String stage = request.getParam().get("stage");
-        Long headId = Long.parseLong(request.getParam().get("headId"));
+        String headId = request.getParam().get("headId");
         int count = activityUserGroupService.getCount(headId, stage);
         List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupPage(headId, stage, start, end);
         return ResponseBo.okOverPaging(null, count, activityGroups);
     }
 
     @GetMapping("/updateGroupTemplate")
-    public ResponseBo updateGroupTemplate(@RequestParam Long headId,@RequestParam String groupId, @RequestParam String code, @RequestParam String stage, @RequestParam String operateType) {
+    public ResponseBo updateGroupTemplate(@RequestParam String headId,@RequestParam String groupId, @RequestParam String code, @RequestParam String stage, @RequestParam String operateType) {
         activityUserGroupService.updateGroupTemplate(headId, groupId, code, stage);
         if("update".equalsIgnoreCase(operateType)) {
             activityHeadService.changeAndUpdateStatus(headId, stage);
@@ -265,7 +246,7 @@ public class ActivityController {
      * @return
      */
     @PostMapping("/submitActivity")
-    public ResponseBo submitActivity(@RequestParam Long headId, @RequestParam String stage, @RequestParam String operateType) {
+    public ResponseBo submitActivity(@RequestParam String headId, @RequestParam String stage, @RequestParam String operateType) {
 //        if("update".equalsIgnoreCase(operateType)) {
 //            submitAndUpdateStatus(headId, stage);
 //        }else {
@@ -277,7 +258,7 @@ public class ActivityController {
     }
 
     @PostMapping("/deleteProduct")
-    public ResponseBo deleteProduct(@RequestParam Long headId, @RequestParam String stage, @RequestParam String operateType, @RequestParam String productIds) {
+    public ResponseBo deleteProduct(@RequestParam String headId, @RequestParam String stage, @RequestParam String operateType, @RequestParam String productIds) {
         activityProductService.deleteProduct(headId, stage, productIds);
         if("update".equalsIgnoreCase(operateType)) {
             activityHeadService.changeAndUpdateStatus(headId, stage);
@@ -293,7 +274,7 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/validSubmit")
-    public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String stage) {
+    public ResponseBo validSubmit(@RequestParam String headId, @RequestParam String stage) {
         // 验证所有群组是否配置消息模板 0：合法，非0不合法
         int templateIsNullCount = activityUserGroupService.validGroupTemplate(headId, stage);
         // 验证商品数，大于0合法，为0不合法
@@ -316,7 +297,7 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/getDataChangedStatus")
-    public ResponseBo getDataChangedStatus(@RequestParam Long headId, @RequestParam String stage) {
+    public ResponseBo getDataChangedStatus(@RequestParam String headId, @RequestParam String stage) {
         return ResponseBo.okWithData(null, activityHeadService.getDataChangedStatus(headId, stage));
     }
 
@@ -326,7 +307,7 @@ public class ActivityController {
      * @return
      */
     @PostMapping("/deleteActivity")
-    public ResponseBo deleteActivity(@RequestParam Long headId) {
+    public ResponseBo deleteActivity(@RequestParam String headId) {
         int count = activityHeadService.getDeleteCount(headId);
         if(count == 1) {
             activityHeadService.deleteData(headId);
@@ -380,7 +361,7 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/getGroupList")
-    public List<ActivityGroup> getGroupList(@RequestParam("headId") Long headId, @RequestParam("stage") String stage, @RequestParam("type") String type) {
+    public List<ActivityGroup> getGroupList(@RequestParam("headId") String headId, @RequestParam("stage") String stage, @RequestParam("type") String type) {
         return activityUserGroupService.getUserGroupList(headId, stage, type);
     }
 
@@ -404,7 +385,7 @@ public class ActivityController {
      */
     @PostMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam("groupId") String groupId, @RequestParam("tmpCode") String tmpCode,
-                                 @RequestParam("headId") Long headId, @RequestParam("type") String type, @RequestParam("stage") String stage) {
+                                 @RequestParam("headId") String headId, @RequestParam("type") String type, @RequestParam("stage") String stage) {
         activityUserGroupService.setSmsCode(groupId, tmpCode, headId, type, stage);
         return ResponseBo.ok();
     }

@@ -180,22 +180,30 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         //类型 NOTIFY 通知 DURING 期间
         List<ActivityGroup> activityGroups = Lists.newArrayList();
         activityGroups.add(new ActivityGroup(
-                1L, Long.parseLong(headId), "用户成长旅程的商品参与本次活动", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+                1L, Long.parseLong(headId), "活动价", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                2L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+                2L, Long.parseLong(headId), "满件打折", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                3L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动，但有可能成为活动商品潜在用户", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+                3L, Long.parseLong(headId), "满元减钱", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+        ));
+        activityGroups.add(new ActivityGroup(
+                4L, Long.parseLong(headId), "特价", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+        ));
+        activityGroups.add(new ActivityGroup(
+                5L, Long.parseLong(headId), "不参加活动为——", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
         ));
 
         activityGroups.add(new ActivityGroup(
-                1L, Long.parseLong(headId), "用户成长旅程的商品参与本次活动", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+                6L, Long.parseLong(headId), "推荐成长商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                2L, Long.parseLong(headId), "用户成长旅程的商品没有参与本次活动", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date()
+                7L, Long.parseLong(headId), "推荐潜在商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
-
+        activityGroups.add(new ActivityGroup(
+                8L, Long.parseLong(headId), "推荐成长商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
+        ));
         activityUserGroupMapper.saveGroupData(activityGroups);
     }
 

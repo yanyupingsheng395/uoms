@@ -40,4 +40,8 @@
         update T_SHORT_URL set VALIDATE_DATE=#{validateDate}
     </update>
 
+    <select id="getDataList" resultMap="BaseResultMap">
+        select ID,LONG_URL,SHORT_URL,VALIDATE_DATE,INSERT_DT,INSERT_BY,SOURCE_TYPE from T_SHORT_URL where trunc(validate_date)-TRUNC(sysdate) &gt;=0
+    </select>
+
 </mapper>

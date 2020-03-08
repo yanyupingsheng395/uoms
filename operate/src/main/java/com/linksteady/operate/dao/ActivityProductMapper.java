@@ -1,20 +1,18 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.ActivityProduct;
-import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
-
 /**
  * @author hxcao
  * @date 2019-09-07
  */
 public interface ActivityProductMapper {
 
-    int getCount(String headId, String productId, String productName, String productAttr, String stage);
+    int getCount(String headId, String productId, String productName, String groupId);
 
-    List<ActivityProduct> getActivityProductListPage(int start, int end, String headId, String productId, String productName, String productAttr, String stage);
+    List<ActivityProduct> getActivityProductListPage(int start, int end, String headId, String productId, String productName, String groupId);
 
     void saveDataList(List<ActivityProduct> productList);
 
@@ -37,5 +35,11 @@ public interface ActivityProductMapper {
     void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage);
 
     void deleteData(Long headId);
+    ActivityProduct geFirstProductInfo(String headId, String stage);
 
+    void deleteData(String headId);
+
+    List<String> getProductIdByHeadId(String headId);
+
+    void deleteDataList(@Param("headId") String headId, @Param("productIdList") List<String> productIdList);
 }

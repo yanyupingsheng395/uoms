@@ -21,13 +21,19 @@ public class ActivityProduct {
 
     private double formalPrice;
 
-    private double activityIntensity;
-
     private String productUrl;
 
     private String productAttr;
 
-    private String activityStage;
-
     private String skuCode;
+
+    private double notifyMinPrice;
+
+    private String checkFlag;
+
+    private String checkComments;
+
+    private String alikeProdId;
+
+    private String groupId;
 }

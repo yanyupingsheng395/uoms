@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public interface ActivityProductService {
 
-    int getCount(String headId, String productId, String productName, String productAttr, String stage);
+    int getCount(String headId, String productId, String productName, String groupId);
 
-    List<ActivityProduct> getActivityProductListPage(int start, int end, String headId, String productId, String productName, String productAttr, String stage);
+    List<ActivityProduct> getActivityProductListPage(int start, int end, String headId, String productId, String productName, String groupId);
 
     /**
      * 保存活动商品
@@ -39,13 +39,13 @@ public interface ActivityProductService {
      * @param stage
      * @param productIds
      */
-    void deleteProduct(Long headId, String stage, String productIds);
+    void deleteProduct(String headId, String stage, String productIds);
 
-    int validProductNum(Long headId, String stage);
+    int validProductNum(String headId, String stage);
 
     String generateProductShortUrl(String productId,String sourceType);
 
-    int getSameProductCount(List<String> productIdList, Long headId, String stage);
+    int getSameProductCount(List<String> productIdList, String headId, String stage);
 
     /**
      * 删除重复的活动商品
@@ -53,13 +53,19 @@ public interface ActivityProductService {
      * @param headId
      * @param stage
      */
-    void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage);
+    void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage);
+
+    /**
+     * 获取第一条商品的信息
+     * @return
+     */
+    ActivityProduct geFirstProductInfo(String headId, String stage);
 
 
-    void deleteData(Long headId);
+    void deleteData(String headId);
 
     /**
      * 上传商品
      */
-    ResponseBo uploadExcel(MultipartFile file, Long headId, String stage, String operateType);
+    void uploadExcel(MultipartFile file, String headId, String uploadMethod, String repeatProduct) throws Exception;
 }

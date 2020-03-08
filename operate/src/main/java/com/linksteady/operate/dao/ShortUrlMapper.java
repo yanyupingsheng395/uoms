@@ -36,4 +36,6 @@ public interface ShortUrlMapper {
      * 更新validateDate
      */
     void updateShortUrlValidateDate(@Param("validateDate")Date validateDate);
+
+    List<ShortUrlInfo> getDataList();
 }

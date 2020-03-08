@@ -9,17 +9,19 @@
         <result property="minPrice" jdbcType="DECIMAL" column="MIN_PRICE"/>
         <result property="productName" jdbcType="VARCHAR" column="PRODUCT_NAME"/>
         <result property="formalPrice" jdbcType="DECIMAL" column="FORMAL_PRICE"/>
-        <result property="activityIntensity" jdbcType="DECIMAL" column="ACTIVITY_INTENSITY"/>
         <result property="productUrl" jdbcType="VARCHAR" column="PRODUCT_URL"/>
-        <result property="productAttr" jdbcType="VARCHAR" column="PRODUCT_ATTR"/>
-        <result property="activityStage" jdbcType="VARCHAR" column="ACTIVITY_STAGE"/>
-        <result property="skuCode" jdbcType="VARCHAR" column="SKU_CODE"/>
+        <result property="notifyMinPrice" jdbcType="DECIMAL" column="NOTIFY_MIN_PRICE"/>
+        <result property="checkFlag" jdbcType="VARCHAR" column="CHECK_FLAG"/>
+        <result property="checkComments" jdbcType="VARCHAR" column="CHECK_COMMENTS"/>
+        <result property="alikeProdId" jdbcType="VARCHAR" column="ALIKE_PROD_ID"/>
+        <result property="groupId" jdbcType="VARCHAR" column="GROUP_ID"/>
     </resultMap>
 
     <select id="getActivityProductListPage" resultMap="base">
         select * from (
         select t.*, ROWNUM rn from (
-          select ID, HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR from UO_OP_ACTIVITY_PRODUCT
+          select ID, HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,NOTIFY_MIN_PRICE,CHECK_FLAG,
+            CHECK_COMMENTS, ALIKE_PROD_ID, GROUP_ID from UO_OP_ACTIVITY_PRODUCT
           where HEAD_ID = #{headId}
         <if test="productId != null and productId != ''">
             and EPB_PRODUCT_ID = #{productId}
@@ -27,10 +29,10 @@
         <if test="productName != null and productName != ''">
             and product_name like concat('%', concat(#{productName}, '%'))
         </if>
-        <if test="productAttr != null and productAttr != ''">
-            and product_attr = #{productAttr}
+        <if test="groupId != null and groupId != ''">
+            and group_id = #{groupId}
         </if>
-        order by HEAD_ID desc
+        order by insert_dt desc
         ) t where ROWNUM &lt;=#{end}
         ) where RN &gt;= #{start}
     </select>
@@ -43,8 +45,8 @@
         <if test="productName != null and productName != ''">
             and product_name like concat('%', concat(#{productName}, '%'))
         </if>
-        <if test="productAttr != null and productAttr != ''">
-            and product_attr = #{productAttr}
+        <if test="groupId != null and groupId != ''">
+            and group_id = #{groupId}
         </if>
     </select>
 
@@ -63,13 +65,14 @@
     </delete>
 
     <insert id="saveActivityProduct">
-        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, SKU_CODE, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE)
-        values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{headId}, #{productId}, #{productName}, #{skuCode}, #{minPrice}, #{formalPrice}, #{activityIntensity}, #{productUrl}, #{productAttr}, #{activityStage})
+        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,
+        GROUP_ID, NOTIFY_MIN_PRICE)
+        values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{headId}, #{productId}, #{productName}, #{minPrice}, #{formalPrice}, #{productUrl},
+        #{groupId}, #{notifyMinPrice})
     </insert>
 
     <select id="getProductById" resultMap="base">
-        select HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, SKU_CODE, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE, ID from UO_OP_ACTIVITY_PRODUCT
-        where ID = #{id}
+        select ID, HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,NOTIFY_MIN_PRICE,CHECK_FLAG, CHECK_COMMENTS, ALIKE_PROD_ID, GROUP_ID from UO_OP_ACTIVITY_PRODUCT where ID = #{id}
     </select>
 
     <update id="updateActivityProduct">
@@ -81,7 +84,7 @@
     </update>
 
     <insert id="saveActivityProductList">
-        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_ATTR, ACTIVITY_STAGE, PRODUCT_URL, SKU_CODE)
+        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL, NOTIFY_MIN_PRICE, GROUP_ID)
         select SEQ_ACTIVITY_PRODUCT_ID.nextval,A.* FROM (
         <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
            SELECT
@@ -94,7 +97,9 @@
                   #{item.productAttr},
                   #{item.activityStage},
                   #{item.productUrl},
-                  #{item.skuCode}
+                  #{item.skuCode},
+                  #{item.notifyMinPrice},
+                  #{item.groupId}
            FROM DUAL
         </foreach>
         ) A
@@ -127,8 +132,24 @@
         </foreach>
     </delete>
 
+
+    <select id="geFirstProductInfo"  resultMap="base">
+        select HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE, ID from UO_OP_ACTIVITY_PRODUCT
+        where HEAD_ID = #{headId} and ACTIVITY_STAGE=#{stage} AND rownum=1
+    </select>
+
     <delete id="deleteData">
         delete from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
     </delete>
 
+    <select id="getProductIdByHeadId" resultType="string">
+        select EPB_PRODUCT_ID from UO_OP_ACTIVITY_PRODUCT
+    </select>
+
+    <delete id="deleteDataList">
+        delete from UO_OP_ACTIVITY_PRODUCT where head_id = #{headId} and EPB_PRODUCT_ID in
+        <foreach collection="productIdList" separator="," item="item" open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>
