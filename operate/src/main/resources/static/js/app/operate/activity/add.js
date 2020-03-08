@@ -203,19 +203,26 @@ $('#btn_upload').click(function () {
                 if(res.code === 200) {
                     $MB.refreshTable('activityProductTable');
                     $MB.n_success(res.msg);
+                    $("#uploadProduct").modal('hide');
+                }else {
+                    $MB.n_warning(res.msg);
                 }
-                $("#uploadFile").val('');
-                $("#btn_upload").attr("style", "display:none;");
-                $("#filename").html('').attr("style", "display:none;");
             },
             error: function (err) {
-                console.log(err)
-                $MB.n_danger(err.msg);
-                $("#btn_upload").attr("style", "display:none;");
+                $MB.n_danger(err);
+                $("#uploadProduct").modal('hide');
+                $("#uploadFile").val('');
                 $("#filename").html('').attr("style", "display:none;");
             }
         });
     });
+});
+
+$("#uploadProduct").on('hidden.bs.modal', function () {
+    $("input[name='uploadMethod']").prop('checked', false);
+    $("input[name='repeatProduct']").prop('checked', false);
+    $("#uploadFile").val('');
+    $("#filename").html('').attr("style", "display:none;");
 });
 
 // 提交计划

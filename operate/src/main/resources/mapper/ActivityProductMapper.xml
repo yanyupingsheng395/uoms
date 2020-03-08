@@ -93,11 +93,7 @@
                   #{item.productName},
                   #{item.minPrice},
                   #{item.formalPrice},
-                  #{item.activityIntensity},
-                  #{item.productAttr},
-                  #{item.activityStage},
                   #{item.productUrl},
-                  #{item.skuCode},
                   #{item.notifyMinPrice},
                   #{item.groupId}
            FROM DUAL
@@ -143,7 +139,7 @@
     </delete>
 
     <select id="getProductIdByHeadId" resultType="string">
-        select EPB_PRODUCT_ID from UO_OP_ACTIVITY_PRODUCT
+        select EPB_PRODUCT_ID from UO_OP_ACTIVITY_PRODUCT where head_id = #{headId}
     </select>
 
     <delete id="deleteDataList">

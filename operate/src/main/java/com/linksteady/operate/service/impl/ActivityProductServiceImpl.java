@@ -20,6 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.UnexpectedRollbackException;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -141,7 +142,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      * @param repeatProduct 0忽略 1覆盖
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void uploadExcel(MultipartFile file, String headId, String uploadMethod, String repeatProduct) throws Exception {
         String xlsSuffix = ".xls";
         String xlsxSuffix = ".xlsx";
@@ -226,12 +227,12 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         throw new LinkSteadyException("\"活动机制\"数据类型与模板不一致，应改为数值型！");
                     }
                     try {
-                        activityProduct.setNotifyMinPrice(row.getCell(3).getNumericCellValue());
+                        activityProduct.setNotifyMinPrice(row.getCell(4).getNumericCellValue());
                     } catch (IllegalStateException e) {
                         throw new LinkSteadyException("\"活动通知体现最低单价\"数据类型与模板不一致，应改为数值型！");
                     }
                     try {
-                        activityProduct.setMinPrice(row.getCell(4).getNumericCellValue());
+                        activityProduct.setMinPrice(row.getCell(5).getNumericCellValue());
                     } catch (IllegalStateException e) {
                         throw new LinkSteadyException("\"活动期间体现最低单价\"数据类型与模板不一致，应改为数值型！");
                     }
@@ -242,11 +243,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     throw new LinkSteadyException("检测到上传数据与模板格式不符，请检查后重新上传！");
                 }
                 if (productList.size() != 0) {
-                    boolean unexpectedRollback = saveUploadProductData(headId, productList, uploadMethod, repeatProduct);
-                    if (unexpectedRollback) {
-                        throw new UnexpectedRollbackException(
-                                "Transaction rolled back because it has been marked as rollback-only");
-                    }
+                    saveUploadProductData(headId, productList, uploadMethod, repeatProduct);
                 } else {
                     throw new LinkSteadyException("上传的数据为空！");
                 }
@@ -285,11 +282,12 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         } else if (uploadMethod.equalsIgnoreCase(uploadMethod1)) {
             // 忽略
             if (repeatProduct.equalsIgnoreCase(repeatProduct0)) {
-                productList = removeRepeat(productList, true);
+                productList = removeRepeat(productList, false);
                 insertList = productList.stream().filter(x -> !oldProductList.contains(x.getProductId())).collect(Collectors.toList());
+                deleteList = productList.stream().filter(x -> oldProductList.contains(x.getProductId())).collect(Collectors.toList());
             } else if (repeatProduct.equalsIgnoreCase(repeatProduct1)) {
                 // 覆盖
-                insertList = removeRepeat(productList, false);
+                insertList = removeRepeat(productList, true);
                 deleteList = productList.stream().filter(x -> oldProductList.contains(x.getProductId())).collect(Collectors.toList());
             }
         }
@@ -302,6 +300,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 activityProductMapper.saveActivityProductList(insertList);
             }
         }catch (Exception e) {
+            log.error("上传商品数据发生DB错误:",e);
             return false;
         }
         return true;
