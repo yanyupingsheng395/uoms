@@ -17,59 +17,41 @@ public interface ActivityPlanService {
      * @param headId
      * @param hasPreheat
      */
-    void savePlanList(String headId, String hasPreheat);
+    void savePlanList(Long headId, String hasPreheat);
 
     /**
      * 获取执行计划数据
      * @param headId
      * @return
      */
-    List<ActivityPlan> getPlanList(String headId);
+    List<ActivityPlan> getPlanList(Long headId);
 
-    /**
-     * 更新状态
-     * @param headId
-     * @param planDateWid
-     */
-    int updateStatus(String headId, String planDateWid, String status,int version);
-
-    void deleteData(String headId);
+    void deleteData(Long headId);
 
     /**
      * 将活动的推送数据写入到推送通道表中
-     * @param headId
-     * @param planDateWid
+     * @param planId
      */
-    void insertToPushListLarge(String headId, String planDateWid);
-
-    /**
-     * 根据状态获取条数
-     * @param headId
-     * @param stage
-     * @param asList
-     * @return
-     */
-    int getStatusCount(String headId, String stage, List<String> asList);
+    void insertToPushListLarge(Long planId);
 
     /**
      * 获取群组的统计信息
-     * @param headId
-     * @param planDtWid
+     * @param planId
      * @return
      */
-    List<Map<String,Object>> getUserGroupList(String headId, String planDtWid);
+    List<Map<String,Object>> getUserGroupList(Long planId);
 
     /**
      * 获取执行计划
-     * @param headId
+     * @param planId
      * @return
      */
-    ActivityPlan getPlanInfo(String headId,String planDtWid);
+    ActivityPlan getPlanInfo(Long planId);
 
     /**
      * 对活动运营的文案进行转换
      */
-    String transActivityDetail(String headId,String planDtWid);
+    String transActivityDetail( ActivityPlan activityPlan);
 
     /**
      * 对变量进行替换
@@ -78,5 +60,5 @@ public interface ActivityPlanService {
      */
     List<ActivityContentVO> processVariable(List<ActivityDetail> list, Map<String,String> templateMap);
 
-    void pushActivity(String headId, String planDateWid,String pushMethod,String pushPeriod, ActivityPlan activityPlan) throws Exception;
+    void pushActivity(String pushMethod,String pushPeriod, ActivityPlan activityPlan) throws Exception;
 }

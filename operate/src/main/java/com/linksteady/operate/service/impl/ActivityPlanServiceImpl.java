@@ -66,7 +66,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void savePlanList(String headId, String stage) {
+    public void savePlanList(Long headId, String stage) {
         List<ActivityPlan> planList = Lists.newArrayList();
         Map<String, Date> dateMap = activityHeadMapper.getStageDate(headId);
         //正式开始时间
@@ -134,55 +134,43 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     }
 
     @Override
-    public List<ActivityPlan> getPlanList(String headId) {
+    public List<ActivityPlan> getPlanList(Long headId) {
         return activityPlanMapper.getPlanList(headId);
     }
 
     @Override
-    public int updateStatus(String headId, String planDateWid, String status,int version) {
-        return  activityPlanMapper.updateStatus(headId, planDateWid, status,version);
-    }
-
-    @Override
-    public void deleteData(String headId) {
+    public void deleteData(Long headId) {
         activityPlanMapper.deleteData(headId);
     }
 
     @Override
-    public void insertToPushListLarge(String headId, String planDateWid) {
-        activityPlanMapper.insertToPushListLarge(headId,planDateWid);
+    public void insertToPushListLarge(Long planId) {
+        activityPlanMapper.insertToPushListLarge(planId);
     }
 
     @Override
-    public int getStatusCount(String headId, String stage, List<String> asList) {
-        return activityPlanMapper.getStatusCount(headId, stage, asList);
+    public List<Map<String,Object>> getUserGroupList(Long planId) {
+        return activityPlanMapper.getUserGroupList(planId);
     }
 
     @Override
-    public List<Map<String,Object>> getUserGroupList(String headId, String planDtWid) {
-        return activityPlanMapper.getUserGroupList(headId, planDtWid);
-    }
-
-    @Override
-    public ActivityPlan getPlanInfo(String headId, String planDtWid) {
-        return activityPlanMapper.getPlanInfo(headId,planDtWid);
+    public ActivityPlan getPlanInfo(Long planId) {
+        return activityPlanMapper.getPlanInfo(planId);
     }
 
     /**
      * 对活动推送文案进行转换 0 失败 1 成功 2其它用户操作
-     * @param headId
-     * @param planDtWid
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String transActivityDetail(String headId, String planDtWid) {
+    public String transActivityDetail( ActivityPlan activityPlan) {
         //获取锁
-        if(getTransActivityContentLock(headId,planDtWid))
+        if(getTransActivityContentLock(activityPlan.getHeadId()))
         {
             //删除临时表中的文案
-            activityDetailMapper.deleteContentTmp(headId);
-             String result=transContent(headId,planDtWid);
+            activityDetailMapper.deleteContentTmp(activityPlan.getPlanId());
+             String result=transContent(activityPlan.getHeadId(),activityPlan.getPlanId(),activityPlan.getStage(),activityPlan.getPlanType());
              //释放锁
             delTransLock();
             //返回结果
@@ -194,12 +182,12 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         }
     }
 
-    private boolean getTransActivityContentLock(String headId,String planDtWid) {
+    private boolean getTransActivityContentLock(Long headId) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
         //key 已经存在，则不做任何动作 否则将 key 的值设为 value 设置成功，返回true 否则返回false
         //以headId为key，同一个活动不允许多个计划同时生成文案
         //key的失效时间60秒
-        boolean flag = valueOperations.setIfAbsent("activity_trans_lock", headId,60, TimeUnit.SECONDS);
+        boolean flag = valueOperations.setIfAbsent("activity_trans_lock", String.valueOf(headId),60, TimeUnit.SECONDS);
         return flag;
     }
 
@@ -209,31 +197,30 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
     /**
      * 实际进行文案转化的类
-     * @param headId
-     * @param planDtWid
+     * @param planId
      * @return 1表示生成成功 0表示生成失败
      */
-    private String transContent(String headId, String planDtWid)
+    private String transContent(Long headId,Long planId,String activityStage,String activityType)
     {
         String result="1";
         Long startTime = System.currentTimeMillis();
         //获取此活动上配置的所有模板
-        List<Map<String,String>> templateList=activityPlanMapper.getAllTemplate(headId);
+        List<Map<String,String>> templateList=activityPlanMapper.getAllTemplate(headId,activityStage,activityType);
 
         Map<String,String> templateMap= Maps.newHashMap();
         for(Map<String,String> template:templateList)
         {
-            //以GROUP_ID+"_"+ACTIVITY_STAGE+"_"+ACTIVITY_TYPE为key，内容模板作为value
-            templateMap.put(template.get("GROUPNAME"),template.get("TMP_CONTENT"));
+            //以GROUP_ID为key，内容模板作为value
+            templateMap.put(String.valueOf(template.get("GROUP_ID")),template.get("TMP_CONTENT"));
         }
 
-        //根据headerID获取当前有多少人需要推送
-        int pushUserCount= activityDetailMapper.getDataCount(headId,Long.parseLong(planDtWid),"-1");
+        //根据planId获取当前有多少人需要推送
+        int pushUserCount= activityDetailMapper.getDataCount(planId,"-1");
         int pageSize=200;
         //判断如果条数大于200 则进行分页
         if(pushUserCount<=pageSize)
         {
-            List<ActivityDetail> list = activityDetailMapper.getPageList(1,pushUserCount,headId,Long.parseLong(planDtWid),"-1");
+            List<ActivityDetail> list = activityDetailMapper.getPageList(1,pushUserCount,planId,"-1");
             //填充模板 生成文案
             List<ActivityContentVO> targetList= null;
             try {
@@ -259,7 +246,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 //生成线程对象列表
                 for(int i=0;i<page;i++)
                 {
-                    taskList.add(new TransActivityContentThread(planDtWid,headId,i*pageSize+1,(i+1)*pageSize,templateMap));
+                    taskList.add(new TransActivityContentThread(planId,i*pageSize+1,(i+1)*pageSize,templateMap));
                 }
 
                 log.info("活动运营转换文案一共需要{}个线程来处理",taskList.size());
@@ -292,7 +279,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         if(result=="1")
         {
             //用临时表更新 活动运营明细表
-            activityDetailMapper.updatePushContentFromTemp(headId);
+            activityDetailMapper.updatePushContentFromTemp(planId);
             Long endTime = System.currentTimeMillis();
             log.info(">>>活动文案转化成功，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
         }else
@@ -317,7 +304,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         for(ActivityDetail activityDetail:list)
         {
             //获取文案内容
-            smsContent=templateMap.get(activityDetail.getGroupId()+"_"+activityDetail.getActivityStage()+"_"+activityDetail.getPlanType());
+            smsContent=templateMap.get(activityDetail.getGroupId());
 
             if(null==smsContent)
             {
@@ -344,7 +331,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
             //构造对象
             activityContentVO=new ActivityContentVO();
             activityContentVO.setSmsContent(smsContent);
-            activityContentVO.setHeadId(activityDetail.getHeadId());
+            activityContentVO.setPlanId(activityDetail.getPlanId());
             activityContentVO.setActivityDetailId(activityDetail.getActivityDetailId());
 
             targetList.add(activityContentVO);
@@ -354,9 +341,9 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void pushActivity(String headId, String planDateWid, String pushMethod, String pushPeriod, ActivityPlan activityPlan) throws Exception{
+    public void pushActivity(String pushMethod, String pushPeriod, ActivityPlan activityPlan) throws Exception{
         //根据锁去更新状态 更新为执行中
-        int count=updateStatus(headId, planDateWid, ActivityPlanStatusEnum.EXEC.getStatusCode(),activityPlan.getVersion());
+        int count= activityPlanMapper.updateStatus(activityPlan.getPlanId(),ActivityPlanStatusEnum.EXEC.getStatusCode(),activityPlan.getVersion());
 
         if(count==0)
         {
@@ -379,25 +366,25 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 newPushPeriod = DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
             }
             //将推送方式 和推送时段更新到PLAN表
-            activityPlanMapper.updatePushMethod(headId,planDateWid,pushMethod,newPushPeriod);
+            activityPlanMapper.updatePushMethod(activityPlan.getPlanId(),pushMethod,newPushPeriod);
             //更新detail表
-            activityDetailMapper.updatePushScheduleDate(headId,planDateWid);
+            activityDetailMapper.updatePushScheduleDate(activityPlan.getPlanId());
 
             //此处对活动明细表进行短信文案和推送时间的校验
-            String validateResult=validateActivityDetail(headId,planDateWid);
+            String validateResult=validateActivityDetail(activityPlan.getPlanId());
             if("SUCCESS".equals(validateResult))
             {
-                insertToPushListLarge(headId, planDateWid);
+                insertToPushListLarge(activityPlan.getPlanId());
 
                 //预售
                 if(ActivityStageEnum.preheat.getStageCode().equals(activityPlan.getStage()))
                 {
                     //更新预售的状态为 执行中
-                    activityHeadMapper.updatePreheatStatusHead(headId, ActivityStatusEnum.DOING.getStatusCode());
+                    activityHeadMapper.updatePreheatStatusHead(activityPlan.getHeadId(), ActivityStatusEnum.DOING.getStatusCode());
                 }else
                 {
                     //更新正式状态为 执行中
-                    activityHeadMapper.updateFormalStatusHead(headId,ActivityStatusEnum.DOING.getStatusCode());
+                    activityHeadMapper.updateFormalStatusHead(activityPlan.getHeadId(),ActivityStatusEnum.DOING.getStatusCode());
                 }
             }else
             {
@@ -407,16 +394,16 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         }
     }
 
-    private String validateActivityDetail(String headId,String planDateWid)
+    private String validateActivityDetail(Long planId)
     {
         //判断文案是否有空
-        int count=activityDetailMapper.selectContentNulls(headId,planDateWid);
+        int count=activityDetailMapper.selectContentNulls(planId);
         if(count>0)
         {
             return count+"条文案为空，请核对活动配置！";
         }
 
-        count=activityDetailMapper.selectContentLimit(headId,planDateWid,pushProperties.getSmsLengthLimit());
+        count=activityDetailMapper.selectContentLimit(planId,pushProperties.getSmsLengthLimit());
         //判断文案是否有超字数
         if(count>0)
         {
@@ -424,7 +411,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         }
 
         //判断文案是否存在非法变量
-        count=activityDetailMapper.selectContentVariable(headId,planDateWid);
+        count=activityDetailMapper.selectContentVariable(planId);
         //判断文案是否有超字数
         if(count>0)
         {
@@ -432,7 +419,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         }
 
         //判断推送时间是否有空
-        count=activityDetailMapper.selectPushScheduleNulls(headId,planDateWid);
+        count=activityDetailMapper.selectPushScheduleNulls(planId);
 
         if(count>0)
         {
@@ -440,7 +427,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         }
 
         //判断推送时间格式不正确
-        count=activityDetailMapper.selectPushScheduleInvalid(headId,planDateWid);
+        count=activityDetailMapper.selectPushScheduleInvalid(planId);
         if(count>0)
         {
             return count+"条推送时间不正确，请联系系统运维人员！";

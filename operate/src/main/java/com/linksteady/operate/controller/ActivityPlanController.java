@@ -4,16 +4,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.ActivityDetail;
-import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.enums.ActivityGroupEnum;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.ActivityDetailService;
-import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivityPlanService;
 import com.linksteady.operate.vo.ActivityGroupVO;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +22,6 @@ import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -37,9 +33,6 @@ import java.util.stream.IntStream;
 @RestController
 @RequestMapping("/activityPlan")
 public class ActivityPlanController {
-
-    @Autowired
-    private ActivityHeadService activityHeadService;
 
     @Autowired
     private ActivityPlanService activityPlanService;
@@ -56,37 +49,37 @@ public class ActivityPlanController {
      * @return
      */
     @RequestMapping("/getPlanList")
-    public ResponseBo getPlanList(@RequestParam String headId) {
-        ActivityHead activityHead = activityHeadService.findById(headId);
+    public ResponseBo getPlanList(@RequestParam Long headId) {
         List<ActivityPlan> planList = activityPlanService.getPlanList(headId);
-        Map<String, List<ActivityPlan>> result = Maps.newHashMap();
-        if("1".equalsIgnoreCase(activityHead.getHasPreheat())) {
-            result = planList.stream().collect(Collectors.groupingBy(ActivityPlan::getStage));
-        }else {
-            result.put("formal", planList);
-        }
-        return ResponseBo.okWithData(null, result);
+        return ResponseBo.okWithData(null, planList);
     }
 
     /**
      * 获取给定日期的群组统计信息
-     * @param headId
-     * @param planDtWid
+     * @param planId
      * @return
      */
     @GetMapping("/getUserGroupList")
-    public List<ActivityGroupVO> getUserGroupList(@RequestParam String headId, @RequestParam String planDtWid) {
-        List<Map<String,Object>> activitySummaryList = activityPlanService.getUserGroupList(headId, planDtWid);
-
+    public List<ActivityGroupVO> getUserGroupList(@RequestParam Long planId) {
         ActivityGroupVO vo=null;
         List<ActivityGroupVO> result=Lists.newArrayList();
         int sum=0;
 
+        ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
+
+        if(null==activityPlan)
+        {
+           return result;
+        }
+        List<Map<String,Object>> activitySummaryList = activityPlanService.getUserGroupList(planId);
+
         for(Map<String,Object> temp:activitySummaryList)
         {
             vo=new ActivityGroupVO();
-            vo.setGroupId((String)temp.get("CODE"));
-            vo.setGroupName((String)temp.get("VALUE"));
+            vo.setGroupId((String)temp.get("GROUP_ID"));
+            vo.setGroupName((String)temp.get("GROUP_NAME"));
+            vo.setProdActivityProp((String)temp.get("PROD_ACTIVITY_PROP"));
+            vo.setPlanId(String.valueOf(temp.get("PLAN_ID")));
             sum+=((BigDecimal)temp.get("USER_NUM")).intValue();
             vo.setUserNum(((BigDecimal)temp.get("USER_NUM")).intValue());
 
@@ -111,11 +104,10 @@ public class ActivityPlanController {
     public ResponseBo getDetailPage(QueryRequest request) {
         int start = request.getStart();
         int end = request.getEnd();
-        String headId = request.getParam().get("headId");
-        String planDtWid = request.getParam().get("planDtWid");
+        String planId = request.getParam().get("planId");
         String groupId=request.getParam().get("groupId");
-        int count = activityDetailService.getDataCount(headId, planDtWid,groupId);
-        List<ActivityDetail>  dataList = activityDetailService.getPageList(start, end, headId, planDtWid,groupId);
+        int count = activityDetailService.getDataCount(Long.parseLong(planId),groupId);
+        List<ActivityDetail>  dataList = activityDetailService.getPageList(start, end, Long.parseLong(planId),groupId);
 
         for(ActivityDetail activityDetail:dataList)
         {
@@ -125,57 +117,17 @@ public class ActivityPlanController {
     }
 
     /**
-     * 导出名单
-     * @param headId
-     * @return
-     * @throws InterruptedException
-     */
-    @PostMapping("/downloadDetail")
-    public ResponseBo downloadDetail(@RequestParam("headId") String headId, @RequestParam("planDtWid") String planDtWid) throws InterruptedException {
-        List<ActivityDetail> list = Lists.newLinkedList();
-        List<Callable<List<ActivityDetail>>> tmp = Lists.newLinkedList();
-        int count = activityDetailService.getDataCount(headId, planDtWid,"-1");
-        ExecutorService service = Executors.newFixedThreadPool(10);
-        int pageSize = 1000;
-        int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize) + 1;
-        for (int i = 0; i < pageNum; i++) {
-            int idx = i;
-            tmp.add(() -> {
-                int start = idx * pageSize + 1;
-                int end = (idx + 1) * pageSize;
-                end = end > count ? count : end;
-                return activityDetailService.getPageList(start, end, headId, planDtWid,"-1");
-            });
-        }
-
-        List<Future<List<ActivityDetail>>> futures = service.invokeAll(tmp);
-        futures.stream().forEach(x-> {
-            try {
-                list.addAll(x.get());
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("活动运营获取结果失败", e);
-            }
-        });
-        try {
-            return FileUtils.createExcelByPOIKit(planDtWid + "_运营名单表", list, ActivityDetail.class);
-        } catch (Exception e) {
-            log.error("导出活动运营个体结果表失败", e);
-            return ResponseBo.error("导出活动运营个体结果表失败，请联系网站管理员！");
-        }
-    }
-
-    /**
      * 开始执行计划
      * @return
      */
     @PostMapping("/startPush")
-    public  ResponseBo startPush(@RequestParam String headId, @RequestParam String planDateWid,@RequestParam String pushMethod, @RequestParam String pushPeriod) {
-        if(StringUtils.isEmpty(headId)||StringUtils.isEmpty(planDateWid)||StringUtils.isEmpty(pushMethod))
+    public  ResponseBo startPush(@RequestParam Long planId,@RequestParam String pushMethod, @RequestParam String pushPeriod) {
+        if(StringUtils.isEmpty(planId)||StringUtils.isEmpty(pushMethod))
         {
             return ResponseBo.error("非法参数，请通过系统界面进行操作！");
         }
 
-        ActivityPlan activityPlan = activityPlanService.getPlanInfo(headId, planDateWid);
+        ActivityPlan activityPlan = activityPlanService.getPlanInfo(planId);
 
         if(null==activityPlan)
         {
@@ -188,7 +140,7 @@ public class ActivityPlanController {
         }
         //进行推送的操作
         try {
-             activityPlanService.pushActivity(headId, planDateWid,pushMethod,pushPeriod, activityPlan);
+             activityPlanService.pushActivity(pushMethod,pushPeriod, activityPlan);
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("活动运营推送失败，异常堆栈为{}",e);
@@ -204,21 +156,20 @@ public class ActivityPlanController {
 
     /**
      * 转化推送明细表的文案
-     * @param headId
-     * @param planDtWid
+     * @param planId
      * @return
      */
     @GetMapping("/transActivityDetail")
-    public ResponseBo transActivityDetail(@RequestParam String headId, @RequestParam String planDtWid) {
+    public ResponseBo transActivityDetail(@RequestParam Long planId) {
         String msg="";
         //校验
-        if(StringUtils.isEmpty(headId)||StringUtils.isEmpty(planDtWid))
+        if(StringUtils.isEmpty(planId))
         {
             msg="非法请求，请通过界面进行操作!";
             return ResponseBo.error(msg);
         }else
         {
-            ActivityPlan activityPlan=activityPlanService.getPlanInfo(headId,planDtWid);
+            ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
 
             if(null==activityPlan)
             {
@@ -232,7 +183,7 @@ public class ActivityPlanController {
                 return ResponseBo.error(msg);
             }
 
-            String result=activityPlanService.transActivityDetail(headId,planDtWid);
+            String result=activityPlanService.transActivityDetail(activityPlan);
 
             if("1".equals(result))
             {
@@ -267,6 +218,4 @@ public class ActivityPlanController {
         result.put("timeList", timeList);
         return ResponseBo.okWithData(null, result);
     }
-
-
 }

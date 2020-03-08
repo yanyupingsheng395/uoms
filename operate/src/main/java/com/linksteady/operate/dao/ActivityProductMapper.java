@@ -26,15 +26,16 @@ public interface ActivityProductMapper {
 
     void saveActivityProductList(List<ActivityProduct> productList);
 
-    void deleteProduct(@Param("headId") String headId, @Param("stage") String stage, @Param("productList") List<String> productList);
+    void deleteProduct(@Param("headId") Long headId, @Param("stage") String stage, @Param("productList") List<String> productList);
 
-    int validProductNum(String headId, String stage);
+    int validProductNum(Long headId, String stage);
 
-    int getSameProductCount(List<String> productIdList, String headId, String stage);
+    int getSameProductCount(List<String> productIdList, Long headId, String stage);
 
-    void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage);
+    void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage);
 
-    ActivityProduct geFirstProductInfo(String headId, String stage);
+    void deleteData(Long headId);
+    ActivityProduct geFirstProductInfo(Long headId, String stage);
 
     void deleteData(String headId);
 

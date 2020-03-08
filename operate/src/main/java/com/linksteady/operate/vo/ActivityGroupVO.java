@@ -7,21 +7,11 @@ public class ActivityGroupVO {
 
     private String groupName;
 
-    private String inGrowthPath;
-
-    private String activeLevel;
-
-    /**
-     * 活动推送内容
-     */
-    private String content;
-
-    /**
-     * 非活动推送内容
-     */
-    private String contentNormal;
-
     private int userNum;
 
     private String groupId;
+
+    private String prodActivityProp;
+
+    private String planId;
 }

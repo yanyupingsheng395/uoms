@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.ActivityPlanMapper">
     <resultMap id="planMap" type="com.linksteady.operate.domain.ActivityPlan">
+        <result property="planId" column="PLAN_ID" jdbcType="DECIMAL"/>
         <result property="headId" column="HEAD_ID" jdbcType="DECIMAL"/>
         <result property="userCnt" column="USER_CNT" jdbcType="DECIMAL"/>
         <result property="planDate" column="PLAN_DATE" jdbcType="DATE"/>
@@ -16,28 +17,37 @@
     </resultMap>
 
     <insert id="savePlanList">
-        insert all
-        <foreach collection="list" separator="" open="" close="" item="item">
-            into UO_OP_ACTIVITY_PLAN(HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID,PLAN_TYPE,SUCCESS_NUM)
-            values (#{item.headId}, #{item.userCnt}, #{item.planDate}, #{item.planStatus}, #{item.stage}, #{item.planDateWid}, #{item.planType}, #{item.successNum})
+        insert into UO_OP_ACTIVITY_PLAN(PLAN_ID,HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID,PLAN_TYPE,SUCCESS_NUM)
+        select UO_OP_ACTIVITY_PLAN_SEQ.NEXTVAL,p.* from(
+        <foreach collection="list" item="item" index="index" separator="union all">
+              select
+                     #{item.headId},
+                     #{item.userCnt},
+                     #{item.planDate},
+                     #{item.planStatus},
+                     #{item.stage},
+                     #{item.planDateWid},
+                     #{item.planType},
+                     #{item.successNum}
+              from dual
         </foreach>
-        select 1 from dual
+        ) p
     </insert>
 
     <select id="getPlanList" resultMap="planMap">
-        select ACTIVITY_NAME, UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM from UO_OP_ACTIVITY_PLAN
+        select UO_OP_ACTIVITY_PLAN.PLAN_ID,UO_OP_ACTIVITY_PLAN.HEAD_ID,ACTIVITY_NAME, UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM from UO_OP_ACTIVITY_PLAN
         left join UO_OP_ACTIVITY_HEADER on UO_OP_ACTIVITY_PLAN.HEAD_ID = UO_OP_ACTIVITY_HEADER.HEAD_ID
         where UO_OP_ACTIVITY_PLAN.HEAD_ID = #{headId} order by PLAN_DATE asc
     </select>
 
     <select id="getPlanInfo" resultMap="planMap">
-        select  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM,VERSION from UO_OP_ACTIVITY_PLAN
-         where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid}
+        select  PLAN_ID,HEAD_ID,ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM,VERSION from UO_OP_ACTIVITY_PLAN
+         where plan_id = #{planId}
     </select>
 
     <update id="updateStatus">
         update UO_OP_ACTIVITY_PLAN set PLAN_STATUS = #{status},VERSION=VERSION+1
-        where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid} AND VERSION=#{version}
+        where PLAN_ID = #{planId}  AND VERSION=#{version}
     </update>
 
     <delete id="deleteData">
@@ -63,49 +73,36 @@
                '0',
                PUSH_SCHEDULING_DATE,
                SEQ_UO_OP_PUSH_LIST_LARGE.NEXTVAL
-        FROM UO_OP_ACTIVITY_DETAIL T where  head_id = #{headId} and plan_dt = #{planDateWid}
+        FROM UO_OP_ACTIVITY_DETAIL T where  plan_id = #{planId}
     </insert>
 
-    <update id="updatePushListLargeToFaild">
-        update uo_op_push_list_large c set c.push_status='F',c.IS_PUSH='1' where c.source_code='ACTIVITY'
-            and exists (
-            select t1.activity_detail_id from uo_op_activity_detail t1, UO_OP_ACTIVITY_HEADER t2
-            where t1.HEAD_ID = t2.HEAD_ID and t1.activity_detail_id = source_id and t1.HEAD_ID = #{headId}
-        )
-    </update>
-
-    <select id="getStatusCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_PLAN where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
-        and PLAN_STATUS in
-        <foreach collection="asList" item="item" open="(" close=")" separator=",">
-            #{item}
-        </foreach>
-    </select>
-
     <select id="getUserGroupList" resultType="map">
-        SELECT T2.CODE,T2.VALUE,NVL(T1.USER_NUM,0) USER_NUM FROM (
-             SELECT T.GROUP_ID, COUNT(*) USER_NUM
-             FROM UO_OP_ACTIVITY_DETAIL T
-             WHERE T.HEAD_ID =  #{headId}
-               AND T.PLAN_DT =  #{planDtWid}
-             GROUP BY T.GROUP_ID ) T1,
-         (SELECT CODE,VALUE FROM T_DICT C WHERE C.TYPE_CODE='ACTIVITY_GROUP') T2
-        WHERE T1.GROUP_ID(+)=T2.CODE
-        ORDER BY T2.CODE ASC
+        SELECT T.PLAN_ID,T.GROUP_ID,G.GROUP_NAME,G.PROD_ACTIVITY_PROP, COUNT(*) USER_NUM
+        FROM UO_OP_ACTIVITY_DETAIL T,UO_OP_ACTIVITY_GROUP G,UO_OP_ACTIVITY_PLAN P
+        WHERE T.PLAN_ID=P.PLAN_ID
+          AND   T.GROUP_ID=G.GROUP_ID
+          AND   P.HEAD_ID=G.HEAD_ID
+          AND   P.ACTIVITY_STAGE=G.ACTIVITY_STAGE
+          AND   P.PLAN_TYPE=G.ACTIVITY_TYPE
+          AND T.PLAN_ID =#{planId}
+        GROUP BY T.GROUP_ID,G.GROUP_NAME,G.PROD_ACTIVITY_PROP,T.PLAN_ID
+        ORDER BY T.GROUP_ID ASC
     </select>
 
     <select id="getAllTemplate"  resultType="map">
         SELECT
-                UO_OP_ACTIVITY_GROUP.GROUP_ID||'_'||UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE||'_'||UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE GROUPNAME,
+                UO_OP_ACTIVITY_GROUP.GROUP_ID,
                 UO_OP_ACTIVITY_TEMPLATE.TMP_CONTENT
         FROM UO_OP_ACTIVITY_GROUP, UO_OP_ACTIVITY_TEMPLATE
         WHERE UO_OP_ACTIVITY_GROUP.SMS_TEMPLATE_CODE =UO_OP_ACTIVITY_TEMPLATE.TMP_CODE(+)
           AND UO_OP_ACTIVITY_GROUP.HEAD_ID=#{headId}
+          AND UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE=#{activityStage}
+           AND  UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE=#{activityType}
     </select>
 
     <update id="updatePushMethod">
         update UO_OP_ACTIVITY_PLAN set
                       PUSH_METHOD = #{pushMethod},PUSH_PERIOD=#{pushPeriod}
-        where head_id = #{headId} and PLAN_DATE_WID = #{planDateWid}
+        where plan_id = #{planId}
     </update>
 </mapper>

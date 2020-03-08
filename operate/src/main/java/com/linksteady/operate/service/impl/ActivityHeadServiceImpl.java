@@ -93,7 +93,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     }
 
     @Override
-    public ActivityHead findById(String headId) {
+    public ActivityHead findById(Long headId) {
         return activityHeadMapper.findById(headId);
     }
 
@@ -113,29 +113,29 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void submitActivity(String headId, String stage) {
+    public void submitActivity(Long headId, String stage) {
         activityPlanService.savePlanList(headId, stage);
         updateStatus(headId, stage, "todo");
     }
 
     @Override
-    public Map<String, String> getDataChangedStatus(String headId, String stage) {
+    public Map<String, String> getDataChangedStatus(Long headId, String stage) {
         return activityHeadMapper.getDataChangedStatus(headId, stage);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteData(String headId) {
+    public void deleteData(Long headId) {
         activityHeadMapper.deleteActivity(headId);
     }
 
     @Override
-    public int getDeleteCount(String headId) {
+    public int getDeleteCount(Long headId) {
         return activityHeadMapper.getDeleteCount(headId);
     }
 
     @Override
-    public String getStatus(String headId, String stage) {
+    public String getStatus(Long headId, String stage) {
         String sql = "";
         if (ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
             sql = "select preheat_status from UO_OP_ACTIVITY_HEADER where head_id = '" + headId + "'";
@@ -147,7 +147,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     }
 
     @Override
-    public void updateStatus(String headId, String stage, String status) {
+    public void updateStatus(Long headId, String stage, String status) {
         if (ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
             activityHeadMapper.updatePreheatStatusHead(headId,status);
         }else if(ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
@@ -213,7 +213,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
      * @param stage
      */
     @Override
-    public void changeAndUpdateStatus(String headId, String stage) {
+    public void changeAndUpdateStatus(Long headId, String stage) {
         String status = getHeadStatus(headId, stage);
         if(status.equalsIgnoreCase("todo") || stage.equalsIgnoreCase("doing")) {
             updateStatus(headId, stage, "edit");
@@ -226,7 +226,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
      * @param stage
      * @return
      */
-    private String getHeadStatus(String headId, String stage) {
+    private String getHeadStatus(Long headId, String stage) {
         String status = "";
         if(ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
             status = getStatus(headId, stage);

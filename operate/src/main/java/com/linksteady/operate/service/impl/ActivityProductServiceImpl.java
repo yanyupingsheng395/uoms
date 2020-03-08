@@ -89,15 +89,15 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteProduct(String headId, String stage, String productIds) {
+    public void deleteProduct(Long headId, String stage, String productIds) {
         List<String> productList = Arrays.asList(productIds.split(","));
-        String time = String.valueOf(System.currentTimeMillis());
+        long time = System.currentTimeMillis();
         activityHeadMapper.updateGroupChanged(time, headId, stage, "1");
         activityProductMapper.deleteProduct(headId, stage, productList);
     }
 
     @Override
-    public int validProductNum(String headId, String stage) {
+    public int validProductNum(Long headId, String stage) {
         return activityProductMapper.validProductNum(headId, stage);
     }
 
@@ -113,23 +113,23 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 
     @Override
-    public int getSameProductCount(List<String> productIdList, String headId, String stage) {
+    public int getSameProductCount(List<String> productIdList, Long headId, String stage) {
         return activityProductMapper.getSameProductCount(productIdList, headId, stage);
     }
 
     @Override
-    public void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage) {
+    public void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage) {
         activityProductMapper.deleteRepeatData(productList, headId, stage);
     }
 
     @Override
-    public ActivityProduct geFirstProductInfo(String headId, String stage) {
+    public ActivityProduct geFirstProductInfo(Long headId, String stage) {
         return activityProductMapper.geFirstProductInfo(headId, stage);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteData(String headId) {
+    public void deleteData(Long headId) {
         activityProductMapper.deleteData(headId);
     }
 
