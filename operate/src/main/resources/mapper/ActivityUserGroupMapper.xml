@@ -47,9 +47,10 @@
             ACTIVITY_STAGE,
             INSERT_DT,
             INSERT_BY,
-            ACTIVITY_TYPE
+            ACTIVITY_TYPE,
+            PROD_ACTIVITY_PROP
             )
-            values (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.activityStage}, #{item.insertDt}, #{item.insertBy}, #{item.activityType})
+            values (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.activityStage}, #{item.insertDt}, #{item.insertBy}, #{item.activityType}, #{item.prodActivityProp})
         </foreach>
         select 1 from dual
     </insert>
