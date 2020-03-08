@@ -35,7 +35,7 @@ public interface ActivityProductMapper {
     void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage);
 
     void deleteData(Long headId);
-    ActivityProduct geFirstProductInfo(String headId, String stage);
+    ActivityProduct geFirstProductInfo(Long headId, String stage);
 
     void deleteData(String headId);
 

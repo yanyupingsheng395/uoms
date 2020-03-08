@@ -217,14 +217,14 @@ public class ActivityController {
         int start = request.getStart();
         int end = request.getEnd();
         String stage = request.getParam().get("stage");
-        String headId = request.getParam().get("headId");
+        Long headId = Long.parseLong(request.getParam().get("headId"));
         int count = activityUserGroupService.getCount(headId, stage);
         List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupPage(headId, stage, start, end);
         return ResponseBo.okOverPaging(null, count, activityGroups);
     }
 
     @GetMapping("/updateGroupTemplate")
-    public ResponseBo updateGroupTemplate(@RequestParam String headId,@RequestParam String groupId, @RequestParam String code, @RequestParam String stage, @RequestParam String operateType) {
+    public ResponseBo updateGroupTemplate(@RequestParam Long headId,@RequestParam String groupId, @RequestParam String code, @RequestParam String stage, @RequestParam String operateType) {
         activityUserGroupService.updateGroupTemplate(headId, groupId, code, stage);
         if("update".equalsIgnoreCase(operateType)) {
             activityHeadService.changeAndUpdateStatus(headId, stage);
@@ -246,7 +246,7 @@ public class ActivityController {
      * @return
      */
     @PostMapping("/submitActivity")
-    public ResponseBo submitActivity(@RequestParam String headId, @RequestParam String stage, @RequestParam String operateType) {
+    public ResponseBo submitActivity(@RequestParam Long headId, @RequestParam String stage, @RequestParam String operateType) {
 //        if("update".equalsIgnoreCase(operateType)) {
 //            submitAndUpdateStatus(headId, stage);
 //        }else {
@@ -258,7 +258,7 @@ public class ActivityController {
     }
 
     @PostMapping("/deleteProduct")
-    public ResponseBo deleteProduct(@RequestParam String headId, @RequestParam String stage, @RequestParam String operateType, @RequestParam String productIds) {
+    public ResponseBo deleteProduct(@RequestParam Long headId, @RequestParam String stage, @RequestParam String operateType, @RequestParam String productIds) {
         activityProductService.deleteProduct(headId, stage, productIds);
         if("update".equalsIgnoreCase(operateType)) {
             activityHeadService.changeAndUpdateStatus(headId, stage);
@@ -274,7 +274,7 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/validSubmit")
-    public ResponseBo validSubmit(@RequestParam String headId, @RequestParam String stage) {
+    public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String stage) {
         // 验证所有群组是否配置消息模板 0：合法，非0不合法
         int templateIsNullCount = activityUserGroupService.validGroupTemplate(headId, stage);
         // 验证商品数，大于0合法，为0不合法
@@ -297,7 +297,7 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/getDataChangedStatus")
-    public ResponseBo getDataChangedStatus(@RequestParam String headId, @RequestParam String stage) {
+    public ResponseBo getDataChangedStatus(@RequestParam Long headId, @RequestParam String stage) {
         return ResponseBo.okWithData(null, activityHeadService.getDataChangedStatus(headId, stage));
     }
 
@@ -307,7 +307,7 @@ public class ActivityController {
      * @return
      */
     @PostMapping("/deleteActivity")
-    public ResponseBo deleteActivity(@RequestParam String headId) {
+    public ResponseBo deleteActivity(@RequestParam Long headId) {
         int count = activityHeadService.getDeleteCount(headId);
         if(count == 1) {
             activityHeadService.deleteData(headId);
@@ -361,7 +361,7 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/getGroupList")
-    public List<ActivityGroup> getGroupList(@RequestParam("headId") String headId, @RequestParam("stage") String stage, @RequestParam("type") String type) {
+    public List<ActivityGroup> getGroupList(@RequestParam("headId") Long headId, @RequestParam("stage") String stage, @RequestParam("type") String type) {
         return activityUserGroupService.getUserGroupList(headId, stage, type);
     }
 
@@ -385,7 +385,7 @@ public class ActivityController {
      */
     @PostMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam("groupId") String groupId, @RequestParam("tmpCode") String tmpCode,
-                                 @RequestParam("headId") String headId, @RequestParam("type") String type, @RequestParam("stage") String stage) {
+                                 @RequestParam("headId") Long headId, @RequestParam("type") String type, @RequestParam("stage") String stage) {
         activityUserGroupService.setSmsCode(groupId, tmpCode, headId, type, stage);
         return ResponseBo.ok();
     }

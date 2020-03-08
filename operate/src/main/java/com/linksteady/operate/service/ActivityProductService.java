@@ -39,13 +39,13 @@ public interface ActivityProductService {
      * @param stage
      * @param productIds
      */
-    void deleteProduct(String headId, String stage, String productIds);
+    void deleteProduct(Long headId, String stage, String productIds);
 
-    int validProductNum(String headId, String stage);
+    int validProductNum(Long headId, String stage);
 
     String generateProductShortUrl(String productId,String sourceType);
 
-    int getSameProductCount(List<String> productIdList, String headId, String stage);
+    int getSameProductCount(List<String> productIdList, Long headId, String stage);
 
     /**
      * 删除重复的活动商品
@@ -53,16 +53,16 @@ public interface ActivityProductService {
      * @param headId
      * @param stage
      */
-    void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage);
+    void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage);
 
     /**
      * 获取第一条商品的信息
      * @return
      */
-    ActivityProduct geFirstProductInfo(String headId, String stage);
+    ActivityProduct geFirstProductInfo(Long headId, String stage);
 
 
-    void deleteData(String headId);
+    void deleteData(Long headId);
 
     /**
      * 上传商品
