@@ -180,6 +180,9 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      */
     private synchronized String produceShortUrl(String longUrl, String sourceType) {
         //进行一次查找 如果找不到，再调用API进行生成
+        if(!redisTemplate.hasKey(redisDataKey)) {
+            setShortUrlToRedis();
+        }
         String shortUrl = (String) redisTemplate.opsForHash().get(redisDataKey, longUrl);
         if (StringUtils.isEmpty(shortUrl)) {
             shortUrl = shortUrlMapper.selectShortUrlByLongUrl(longUrl);
