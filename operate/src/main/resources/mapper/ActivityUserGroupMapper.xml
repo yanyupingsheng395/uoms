@@ -9,8 +9,10 @@
         <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
         <result column="SMS_TEMPLATE_CODE" jdbcType="VARCHAR" property="smsTemplateCode"></result>
         <result column="TMP_CONTENT" jdbcType="VARCHAR" property="smsTemplateContent"></result>
-        <result column="TMP_CONTENT" jdbcType="VARCHAR" property="smsTemplateContent"></result>
         <result column="ACTIVITY_TYPE" jdbcType="VARCHAR" property="activityType"></result>
+        <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"></result>
+        <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"></result>
+        <result column="PROD_ACTIVITY_PROP" jdbcType="VARCHAR" property="prodActivityProp"></result>
     </resultMap>
 
     <select id="getCount" resultType="int">
@@ -28,7 +30,8 @@
     </select>
 
     <select id="getUserGroupList" resultMap="base">
-        select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE from UO_OP_ACTIVITY_GROUP, UO_OP_ACTIVITY_TEMPLATE
+        select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE,CHECK_FLAG,CHECK_COMMENTS,PROD_ACTIVITY_PROP
+        from UO_OP_ACTIVITY_GROUP, UO_OP_ACTIVITY_TEMPLATE
         where SMS_TEMPLATE_CODE = TMP_CODE(+) and HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} order by group_id asc
     </select>
 

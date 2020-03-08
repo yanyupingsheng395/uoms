@@ -643,17 +643,45 @@ function getGroupList(stage, type, tableId) {
         },
         columns: [
             {
+                field: 'prodActivityProp',
+                title: '成长商品活动属性',
+                formatter: function (value, row, index) {
+                    if(value === 'Y') {
+                        return "是";
+                    }
+                    if(value === 'N') {
+                        return "否";
+                    }
+                    return "-";
+                }
+            },
+            {
                 field: 'groupName',
-                title: '用户与商品关系'
+                title: '成长商品活动机制'
             }, {
-                title: '选择文案',
+                title: '文案',
                 align: 'center',
                 formatter: function (value, row, index) {
                     return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
                 }
             }, {
                 field: 'smsTemplateContent',
-                title: '文案内容'
+                title: '预览推送'
+            }, {
+                field: 'checkFlag',
+                title: '校验结果',
+                formatter: function (value, row, index) {
+                    if(value === 'Y') {
+                        return "<span class=\"badge bg-success\">通过</span>";
+                    }
+                    if(value === 'N') {
+                        return "<span class=\"badge bg-danger\">未通过</span>";
+                    }
+                    return "-";
+                }
+            },{
+                field: 'checkComments',
+                title: '失败原因'
             }]
     };
     $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
