@@ -1,10 +1,6 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityHead;
-import com.linksteady.operate.domain.ActivityPlan;
-import com.linksteady.operate.domain.ActivityTemplate;
-import com.sun.corba.se.spi.ior.ObjectKey;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +38,7 @@ public interface ActivityHeadService {
      * @param headId
      * @return
      */
-    ActivityHead findById(String headId);
+    ActivityHead findById(Long headId);
 
     /**
      * 通过headId获取活动名称
@@ -63,13 +59,13 @@ public interface ActivityHeadService {
      * @param headId
      * @param stage
      */
-    void submitActivity(String headId, String stage);
+    void submitActivity(Long headId, String stage);
 
-    Map<String, String> getDataChangedStatus(String headId, String stage);
+    Map<String, String> getDataChangedStatus(Long headId, String stage);
 
-    void deleteData(String headId);
+    void deleteData(Long headId);
 
-    int getDeleteCount(String headId);
+    int getDeleteCount(Long headId);
 
     /**
      * 根据headId和stage获取计划的状态
@@ -77,9 +73,9 @@ public interface ActivityHeadService {
      * @param stage
      * @return
      */
-    String getStatus(String headId, String stage);
+    String getStatus(Long headId, String stage);
 
-    void updateStatus(String headId, String stage, String status);
+    void updateStatus(Long headId, String stage, String status);
 
-    void changeAndUpdateStatus(String headId, String stage);
+    void changeAndUpdateStatus(Long headId, String stage);
 }

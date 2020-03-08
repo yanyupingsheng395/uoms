@@ -19,35 +19,35 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     private ActivityUserGroupMapper activityUserGroupMapper;
 
     @Override
-    public List<ActivityGroup> getUserGroupPage(String headId, String stage, int start, int end) {
+    public List<ActivityGroup> getUserGroupPage(Long headId, String stage, int start, int end) {
         return activityUserGroupMapper.getUserGroupPage(headId, stage, start, end);
     }
 
     @Override
-    public List<ActivityGroup> getUserGroupList(String headId, String stage, String type) {
+    public List<ActivityGroup> getUserGroupList(Long headId, String stage, String type) {
         List<ActivityGroup> userGroupList = activityUserGroupMapper.getUserGroupList(headId, stage);
         List<ActivityGroup> result = userGroupList.stream().filter(x -> type.equals(x.getActivityType())).collect(Collectors.toList());
         return result;
     }
 
     @Override
-    public int getCount(String headId, String stage) {
+    public int getCount(Long headId, String stage) {
         return activityUserGroupMapper.getCount(headId, stage);
     }
 
     @Override
-    public void updateGroupTemplate(String headId, String groupId, String code, String stage) {
+    public void updateGroupTemplate(Long headId, String groupId, String code, String stage) {
         activityUserGroupMapper.updateGroupTemplate(headId, groupId, code, stage);
     }
 
     @Override
-    public List<ActivityGroup> getActivityUserList(String headId, String stage) {
+    public List<ActivityGroup> getActivityUserList(Long headId, String stage) {
         List<ActivityGroup> userGroupList = activityUserGroupMapper.getUserGroupList(headId, stage);
         return userGroupList;
     }
 
     @Override
-    public int validGroupTemplate(String headId, String stage) {
+    public int validGroupTemplate(Long headId, String stage) {
         return activityUserGroupMapper.validGroupTemplate(headId, stage);
     }
 
@@ -57,12 +57,12 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     }
 
     @Override
-    public void deleteData(String headId) {
+    public void deleteData(Long headId) {
         activityUserGroupMapper.deleteData(headId);
     }
 
     @Override
-    public void setSmsCode(String groupId, String tmpCode, String headId, String type, String stage) {
+    public void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage) {
         activityUserGroupMapper.setSmsCode(groupId, tmpCode, headId, type, stage);
     }
 

@@ -65,7 +65,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     public void saveActivityProduct(ActivityProduct activityProduct) {
         String time = String.valueOf(System.currentTimeMillis());
         // 添加商品更改数据状态
-        activityHeadMapper.updateGroupChanged(time, activityProduct.getHeadId().toString(), activityProduct.getActivityStage(), "1");
+        activityHeadMapper.updateGroupChanged(time, activityProduct.getHeadId(), activityProduct.getActivityStage(), "1");
         activityProductMapper.saveActivityProduct(activityProduct);
     }
 
@@ -84,7 +84,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     public void saveActivityProductList(List<ActivityProduct> productList) {
         ActivityProduct activityProduct = productList.get(0);
         String time = String.valueOf(System.currentTimeMillis());
-        activityHeadMapper.updateGroupChanged(time, activityProduct.getHeadId().toString(), activityProduct.getActivityStage(), "1");
+        activityHeadMapper.updateGroupChanged(time, activityProduct.getHeadId(), activityProduct.getActivityStage(), "1");
         activityProductMapper.saveActivityProductList(productList);
     }
 
@@ -97,7 +97,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteProduct(String headId, String stage, String productIds) {
+    public void deleteProduct(Long headId, String stage, String productIds) {
         List<String> productList = Arrays.asList(productIds.split(","));
         String time = String.valueOf(System.currentTimeMillis());
         activityHeadMapper.updateGroupChanged(time, headId, stage, "1");
@@ -105,7 +105,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 
     @Override
-    public int validProductNum(String headId, String stage) {
+    public int validProductNum(Long headId, String stage) {
         return activityProductMapper.validProductNum(headId, stage);
     }
 
@@ -120,23 +120,23 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 
     @Override
-    public int getSameProductCount(List<String> productIdList, String headId, String stage) {
+    public int getSameProductCount(List<String> productIdList, Long headId, String stage) {
         return activityProductMapper.getSameProductCount(productIdList, headId, stage);
     }
 
     @Override
-    public void deleteRepeatData(List<ActivityProduct> productList, String headId, String stage) {
+    public void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage) {
         activityProductMapper.deleteRepeatData(productList, headId, stage);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteData(String headId) {
+    public void deleteData(Long headId) {
         activityProductMapper.deleteData(headId);
     }
 
     @Override
-    public ResponseBo uploadExcel(MultipartFile file, String headId, String stage, String operateType) {
+    public ResponseBo uploadExcel(MultipartFile file, Long headId, String stage, String operateType) {
         List<String> headers = Arrays.asList("商品ID[数据类型：文本型]", "ERP货号[数据类型：文本型]", "名称[数据类型：文本型]", "最低单价（元/件）[数据类型：数值型]", "非活动售价（元/件）[数据类型：数值型]", "活动属性[主推，参活，正常][数据类型：文本型]");
         AtomicBoolean flag = new AtomicBoolean(true);
         List<ActivityProduct> productList = Lists.newArrayList();

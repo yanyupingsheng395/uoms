@@ -17,13 +17,11 @@ public class TransActivityContentThread  implements Callable {
     int start;
     int end;
 
-    String headId;
-    String planDtWid;
+    Long planId;
     Map<String,String> templateMap;
 
-    public TransActivityContentThread(String planDtWid,String headId, int start, int end,Map<String,String> templateMap) {
-        this.planDtWid=planDtWid;
-        this.headId = headId;
+    public TransActivityContentThread(Long planId, int start, int end,Map<String,String> templateMap) {
+        this.planId=planId;
         this.start = start;
         this.end = end;
         this.templateMap=templateMap;
@@ -37,11 +35,11 @@ public class TransActivityContentThread  implements Callable {
             ActivityDetailServiceImpl activityDetailService=(ActivityDetailServiceImpl) SpringContextUtils.getBean("activityDetailServiceImpl");
             ActivityPlanServiceImpl activityPlanService = (ActivityPlanServiceImpl) SpringContextUtils.getBean("activityPlanServiceImpl");
 
-            list = activityDetailService.getPageList(start, end,headId,planDtWid,"-1");
+            list = activityDetailService.getPageList(start, end,planId,"-1");
 
             //转换文案
             List<ActivityContentVO> targetList = activityPlanService.processVariable(list,templateMap);
-            log.info("{}的第{}-{}调记录处理完成",headId,start,end);
+            log.info("{}的第{}-{}调记录处理完成",planId,start,end);
             return targetList;
         } catch (Exception e) {
             //错误日志上报

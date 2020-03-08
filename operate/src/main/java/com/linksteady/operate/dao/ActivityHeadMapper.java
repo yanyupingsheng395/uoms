@@ -24,7 +24,7 @@ public interface ActivityHeadMapper {
 
     void updateActiveHead(ActivityHead activityHead);
 
-    ActivityHead findById(String headId);
+    ActivityHead findById(Long headId);
 
     String getActivityName(String headId);
 
@@ -32,27 +32,27 @@ public interface ActivityHeadMapper {
 
     String getPreheatStatus(String headId);
 
-    void updateGroupChanged(String time, String headId, String stage, String changedStatus);
+    void updateGroupChanged(String time, Long headId, String stage, String changedStatus);
 
-    Map<String, String> getDataChangedStatus(String headId, String stage);
+    Map<String, String> getDataChangedStatus(Long headId, String stage);
 
-    Map<String, Date> getStageDate(String headId);
+    Map<String, Date> getStageDate(Long headId);
 
     /**
      * 更新头表预售状态
      * @param headId
      */
-    void updatePreheatStatusHead(String headId,String status);
+    void updatePreheatStatusHead(Long headId,String status);
 
     /**
      * 更新头表正式状态
      * @param headId
      */
-    void updateFormalStatusHead(String headId,String status);
+    void updateFormalStatusHead(Long headId,String status);
 
-    void deleteActivity(String headId);
+    void deleteActivity(Long headId);
 
-    int getDeleteCount(String headId);
+    int getDeleteCount(Long headId);
 
     String getStatus(@Param("sql") String sql);
 }

@@ -291,7 +291,7 @@ public class PageController {
     }
 
     @RequestMapping("/activity/edit")
-    public String activityEdit(@RequestParam("headId") String headId, Model model) {
+    public String activityEdit(@RequestParam("headId") Long headId, Model model) {
         ActivityHead activityHead = activityHeadService.findById(headId);
         String preheatStatus = activityHeadService.getStatus(headId, "preheat");
         String formalStatus = activityHeadService.getStatus(headId, "formal");

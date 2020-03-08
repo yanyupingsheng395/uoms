@@ -76,5 +76,7 @@ public class ActivityDetail implements Serializable {
     private String smsTemplateContent;
 
     private String planType;
+    private Long planId;
+    private String activityType;
 
 }

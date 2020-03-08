@@ -10,23 +10,23 @@ import java.util.List;
  */
 public interface ActivityUserGroupMapper {
 
-    int getCount(String headId, String stage);
+    int getCount(Long headId, String stage);
 
-    List<ActivityGroup> getUserGroupPage(String headId, String stage, int start, int end);
+    List<ActivityGroup> getUserGroupPage(Long headId, String stage, int start, int end);
 
-    List<ActivityGroup> getUserGroupList(String headId, String stage);
+    List<ActivityGroup> getUserGroupList(Long headId, String stage);
 
-    void updateGroupTemplate(String headId, String groupId, String code, String stage);
+    void updateGroupTemplate(Long headId, String groupId, String code, String stage);
 
     void saveGroupData(List<ActivityGroup> dataList);
 
-    int validGroupTemplate(String headId, String stage);
+    int validGroupTemplate(Long headId, String stage);
 
     int refrenceCount(String code);
 
-    void deleteData(String headId);
+    void deleteData(Long headId);
 
-    void setSmsCode(String groupId, String tmpCode, String headId, String type, String stage);
+    void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage);
 
     int checkTmpIsUsed(String tmpCode);
 }

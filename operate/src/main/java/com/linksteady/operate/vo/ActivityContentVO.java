@@ -7,7 +7,7 @@ public class ActivityContentVO {
 
     private String activityDetailId;
 
-    private String headId;
+    private Long planId;
 
     private String smsContent;
 }
