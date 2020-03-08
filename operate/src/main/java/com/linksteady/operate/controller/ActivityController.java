@@ -97,7 +97,9 @@ public class ActivityController {
                                   @RequestParam("uploadMethod") String uploadMethod, @RequestParam("repeatProduct") String repeatProduct) {
         try {
             activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct);
-        } catch (Exception e) {
+        } catch (LinkSteadyException e){
+            return ResponseBo.error(e.getMessage());
+        }catch (Exception e) {
             log.error("上传商品列表出错", e);
             return ResponseBo.error(e.getMessage());
         }

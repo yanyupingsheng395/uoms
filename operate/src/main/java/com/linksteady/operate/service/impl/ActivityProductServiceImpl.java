@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -241,7 +242,11 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     throw new LinkSteadyException("检测到上传数据与模板格式不符，请检查后重新上传！");
                 }
                 if (productList.size() != 0) {
-                    saveUploadProductData(headId, productList, uploadMethod, repeatProduct);
+                    boolean unexpectedRollback = saveUploadProductData(headId, productList, uploadMethod, repeatProduct);
+                    if (unexpectedRollback) {
+                        throw new UnexpectedRollbackException(
+                                "Transaction rolled back because it has been marked as rollback-only");
+                    }
                 } else {
                     throw new LinkSteadyException("上传的数据为空！");
                 }
@@ -257,7 +262,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     /**
      * 保存上传的数据
      */
-    private void saveUploadProductData(String headId, List<ActivityProduct> productList, String uploadMethod, String repeatProduct) {
+    private boolean saveUploadProductData(String headId, List<ActivityProduct> productList, String uploadMethod, String repeatProduct) throws Exception {
         String uploadMethod0 = "0";
         String repeatProduct0 = "0";
         String repeatProduct1 = "1";
@@ -288,13 +293,18 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 deleteList = productList.stream().filter(x -> oldProductList.contains(x.getProductId())).collect(Collectors.toList());
             }
         }
-        if(deleteList.size() > 0) {
-            List<String> productIdList = deleteList.stream().map(ActivityProduct::getProductId).collect(Collectors.toList());
-            activityProductMapper.deleteDataList(headId, productIdList);
+        try {
+            if(deleteList.size() > 0) {
+                List<String> productIdList = deleteList.stream().map(ActivityProduct::getProductId).collect(Collectors.toList());
+                activityProductMapper.deleteDataList(headId, productIdList);
+            }
+            if(insertList.size() > 0) {
+                activityProductMapper.saveActivityProductList(insertList);
+            }
+        }catch (Exception e) {
+            return false;
         }
-        if(insertList.size() > 0) {
-            activityProductMapper.saveActivityProductList(insertList);
-        }
+        return true;
     }
 
     /**
