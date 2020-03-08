@@ -275,7 +275,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 insertList = productList.stream().filter(x -> !oldProductList.contains(x.getProductId())).collect(Collectors.toList());
             } else if (repeatProduct.equalsIgnoreCase(repeatProduct1)) {
                 // 覆盖
-                insertList = removeRepeat(productList, true);
+                productList = removeRepeat(productList, true);
+                insertList = productList;
                 deleteList = productList.stream().filter(x -> oldProductList.contains(x.getProductId())).collect(Collectors.toList());
             }
             // 覆盖
@@ -283,11 +284,12 @@ public class ActivityProductServiceImpl implements ActivityProductService {
             // 忽略
             if (repeatProduct.equalsIgnoreCase(repeatProduct0)) {
                 productList = removeRepeat(productList, false);
-                insertList = productList.stream().filter(x -> !oldProductList.contains(x.getProductId())).collect(Collectors.toList());
                 deleteList = productList.stream().filter(x -> oldProductList.contains(x.getProductId())).collect(Collectors.toList());
+                insertList = productList;
             } else if (repeatProduct.equalsIgnoreCase(repeatProduct1)) {
                 // 覆盖
-                insertList = removeRepeat(productList, true);
+                productList = removeRepeat(productList, true);
+                insertList = productList;
                 deleteList = productList.stream().filter(x -> oldProductList.contains(x.getProductId())).collect(Collectors.toList());
             }
         }
@@ -314,21 +316,15 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      */
     private List<ActivityProduct> removeRepeat(List<ActivityProduct> dataList, boolean override) {
         List<ActivityProduct> newList = dataList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ActivityProduct :: getProductId))), ArrayList::new));
-        if (dataList.size() == newList.size()) {
-            return dataList;
-        }else {
-            if(override) {
-                newList.forEach(x->{
-                    List<ActivityProduct> tmpList = dataList.stream().filter(y -> y.getProductId().equalsIgnoreCase(x.getProductId())).collect(Collectors.toList());
-                    dataList.remove(tmpList.get(tmpList.size()-1));
-                });
-            }else {
-                newList.forEach(x->{
-                    List<ActivityProduct> tmpList = dataList.stream().filter(y -> y.getProductId().equalsIgnoreCase(x.getProductId())).collect(Collectors.toList());
-                    dataList.remove(tmpList.get(0));
-                });
-            }
-            return dataList;
+        if (dataList.size() != newList.size()) {
+            List<String> repeatProductIds = dataList.stream().filter(x -> !newList.contains(x)).map(ActivityProduct::getProductId).distinct().collect(Collectors.toList());
+            repeatProductIds.forEach(x -> {
+                List<ActivityProduct> tmpList = dataList.stream().filter(y -> x.equalsIgnoreCase(y.getProductId())).collect(Collectors.toList());
+                int skipIdx = override ? tmpList.size() - 1 : 0;
+                tmpList.remove(skipIdx);
+                dataList.removeAll(tmpList);
+            });
         }
+        return dataList;
     }
 }
