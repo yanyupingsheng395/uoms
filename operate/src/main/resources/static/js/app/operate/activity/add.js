@@ -682,7 +682,16 @@ function getGroupList(stage, type, tableId) {
             },{
                 field: 'checkComments',
                 title: '失败原因'
-            }]
+            }],
+        onLoadSuccess: function () {
+            var n = 0;
+            if(tableId === 'table1') {
+                n = 4;
+            }else if(tableId === 'table5') {
+                n = 2;
+            }
+            $( "#" + tableId ).bootstrapTable('mergeCells',{index:0, field:"prodActivityProp", colspan: 1, rowspan: n})
+        }
     };
     $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
