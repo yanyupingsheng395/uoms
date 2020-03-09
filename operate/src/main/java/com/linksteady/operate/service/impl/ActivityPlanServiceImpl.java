@@ -2,13 +2,12 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.ActivityDetailMapper;
 import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.dao.ActivityPlanMapper;
-import com.linksteady.operate.domain.ActivityDetail;
-import com.linksteady.operate.domain.ActivityPlan;
-import com.linksteady.operate.domain.PushProperties;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
 import com.linksteady.operate.domain.enums.ActivityStageEnum;
@@ -25,6 +24,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * @author hxcao
@@ -59,6 +60,8 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
+
+    private final int MAX_TASK_DAY = 7;
 
     /**
      * 生成plan数据
@@ -392,6 +395,95 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 throw new LinkSteadyException(validateResult);
             }
         }
+    }
+
+    @Override
+    public ActivityPlanEffect getPlanEffectById(Long planId) {
+        //获取转化数据
+        ActivityPlanEffect activityPlanEffect=activityPlanMapper.selectPlanEffect();
+        return activityPlanEffect;
+    }
+
+    @Override
+    public Map<String, Object> getPlanEffectTrend(Long planId) {
+        Map<String, Object> result = Maps.newHashMap();
+        String dateFormat = "yyyyMMdd";
+        List<String> xdatas = Lists.newLinkedList();
+
+        // 提交任务日期
+        Long planDt = activityPlanMapper.getPlanInfo(planId).getPlanDateWid();
+        LocalDate taskDtDate = LocalDate.parse(String.valueOf(planDt), DateTimeFormatter.ofPattern(dateFormat)).plusDays(1);
+
+        // 最后时间
+        LocalDate maxDate = taskDtDate.plusDays(MAX_TASK_DAY );
+
+        while (taskDtDate.isBefore(maxDate)) {
+            xdatas.add(taskDtDate.format(DateTimeFormatter.ofPattern(dateFormat)));
+            taskDtDate = taskDtDate.plusDays(1);
+        }
+
+        //获取按天的转化数据
+        List<ActivityPlanEffect> dataList = activityPlanMapper.getPlanEffectStatisList(planId);
+
+        Map<String,ActivityPlanEffect> dataMap=dataList.stream().collect(Collectors.toMap(ActivityPlanEffect::getConversionDate,a->a));
+
+        //转化人数
+        List<Long> covNumList=Lists.newArrayList();
+        //转化且购买推荐类目人数
+        List<Long> covSpuNumList=Lists.newArrayList();
+        //转化率
+        List<Double> covRateList=Lists.newArrayList();
+        //SPU转化率
+        List<Double> covSpuRateList=Lists.newArrayList();
+
+        xdatas.forEach(x -> {
+            if(null!=dataMap.get(x))
+            {
+                ActivityPlanEffect activityPlanEffect=dataMap.get(x);
+                covNumList.add(activityPlanEffect.getCovUserCount());
+                covSpuNumList.add(activityPlanEffect.getSpuUserCount());
+                //计算转化率
+                if(activityPlanEffect.getSuccessCount()==0L)
+                {
+                    covRateList.add(0D);
+                }else
+                {
+                    covSpuRateList.add(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getCovUserCount()/(double)activityPlanEffect.getSuccessCount()*100,2, RoundingMode.DOWN));
+                }
+
+                //计算购买推荐类目转化率
+                if(activityPlanEffect.getSuccessCount()==0L)
+                {
+                    covSpuRateList.add(0D);
+                }else
+                {
+                    covSpuRateList.add(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getSpuUserCount()/(double)activityPlanEffect.getSuccessCount()*100,2, RoundingMode.DOWN));
+                }
+            }else
+            {
+                covNumList.add(0L);
+                covSpuNumList.add(0L);
+                covRateList.add(0D);
+                covSpuRateList.add(0D);
+            }
+        });
+
+        result.put("xdata", xdatas);
+        result.put("ydata1", covNumList);
+        result.put("ydata2", covSpuNumList);
+        result.put("ydata3", covRateList);
+        result.put("ydata4", covSpuRateList);
+        return result;
+    }
+
+    @Override
+    public List<ActivityPersonal> getPersonalPlanEffect(int start, int end, Long planId) {
+        return activityPlanMapper.getPersonalPlanEffect(start,end,planId);
+    }
+
+    @Override
+    public int getDailyPersonalEffectCount(Long planId) {
+        return activityPlanMapper.getDailyPersonalEffectCount(planId);
     }
 
     private String validateActivityDetail(Long planId)

@@ -4,9 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.ActivityDetail;
-import com.linksteady.operate.domain.ActivityPlan;
-import com.linksteady.operate.domain.PushProperties;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.domain.enums.ActivityGroupEnum;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
@@ -19,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +87,7 @@ public class ActivityPlanController {
 
         vo=new ActivityGroupVO();
         vo.setGroupId("-1");
+        vo.setProdActivityProp("-");
         vo.setGroupName("合计");
         vo.setUserNum(sum);
         result.add(vo);
@@ -217,5 +217,49 @@ public class ActivityPlanController {
         }).collect(Collectors.toList());
         result.put("timeList", timeList);
         return ResponseBo.okWithData(null, result);
+    }
+
+    /**
+     * 获取当前计划的汇总信息
+     * @param planId
+     * @return
+     */
+    @GetMapping("/getPlanEffectInfo")
+    public ResponseBo getPlanEffectInfo(@RequestParam Long planId) {
+        ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
+        //获取计划的效果
+        ActivityPlanEffect activitPf = activityPlanService.getPlanEffectById(planId);
+
+        Map<String,Object> result=Maps.newHashMap();
+        result.put("planDt",new SimpleDateFormat("yyyy年MM月dd日").format(activityPlan.getPlanDate()));
+        result.put("userCount",String.valueOf(activityPlan.getUserCnt()));
+        //活动效果
+        result.put("activitPf", activitPf);
+        return ResponseBo.okWithData(null,result);
+    }
+
+    /**
+     * 获取当前计划的趋势信息
+     * @param planId
+     * @return
+     */
+    @GetMapping("/getPlanEffectTrend")
+    public ResponseBo getPlanEffectTrend(@RequestParam Long planId) {
+        return ResponseBo.okWithData(null, activityPlanService.getPlanEffectTrend(planId));
+    }
+
+    /**
+     * 执行计划-个体效果
+     *
+     * @return
+     */
+    @GetMapping("/getPersonalPlanEffect")
+    public ResponseBo getDailyPersonalEffect(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        Long planId = Long.parseLong(request.getParam().get("planId"));
+        List<ActivityPersonal> personals = activityPlanService.getPersonalPlanEffect(start, end, planId);
+        int count = activityPlanService.getDailyPersonalEffectCount(planId);
+        return ResponseBo.okOverPaging(null, count, personals);
     }
 }

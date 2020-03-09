@@ -45,8 +45,7 @@
     </select>
 
     <select id="getEffectInfo" resultMap="base">
-        select effect_dt, push_ucnt, convert_ucnt, convert_rate, push_roi from UO_OP_ACTIVITY_EFFECT
-        where HEAD_ID = #{headId} and push_kpi = '0' and activity_stage = 'all'
+        select sum(case when t.Is_Push='1' then 1 else 0 end) pushUcnt,min(t.plan_dt) kpiVal from uo_op_activity_detail t where t.head_id=#{headId}
     </select>
 
     <select id="getEffectAllKpi" resultMap="base">

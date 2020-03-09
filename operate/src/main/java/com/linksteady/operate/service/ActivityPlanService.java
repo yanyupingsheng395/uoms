@@ -1,7 +1,9 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.ActivityDetail;
+import com.linksteady.operate.domain.ActivityPersonal;
 import com.linksteady.operate.domain.ActivityPlan;
+import com.linksteady.operate.domain.ActivityPlanEffect;
 import com.linksteady.operate.vo.ActivityContentVO;
 
 import java.util.List;
@@ -61,4 +63,15 @@ public interface ActivityPlanService {
     List<ActivityContentVO> processVariable(List<ActivityDetail> list, Map<String,String> templateMap);
 
     void pushActivity(String pushMethod,String pushPeriod, ActivityPlan activityPlan) throws Exception;
+
+    ActivityPlanEffect getPlanEffectById(Long planId);
+
+    /**
+     * 获取执行计划效果的趋势信息
+     */
+    Map<String, Object> getPlanEffectTrend(Long planId);
+
+    List<ActivityPersonal> getPersonalPlanEffect(int start, int end, Long planId);
+
+    int getDailyPersonalEffectCount(Long planId);
 }

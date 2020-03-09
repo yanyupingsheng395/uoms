@@ -208,9 +208,12 @@ function initGroupColumn(planType) {
             if(value==='Y')
             {
                 return '是';
-            }else
+            }else if(value==='N')
             {
                 return '否';
+            }else
+            {
+                return '-';
             }
          }
      });
@@ -282,9 +285,12 @@ function initDetailColumns(planType)
             if(value==='Y')
             {
                 return '是';
-            }else
+            }else if(value==='N')
             {
                 return '否';
+            }else
+            {
+                return '-';
             }
         }
     });
@@ -398,3 +404,23 @@ function refreshPage()
 {
     getPlanTable();
 }
+
+/**
+ * 效果
+ */
+$("#btn_effect").click(function () {
+    let selected = $("#planTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择要查看效果的推送计划！');
+        return;
+    }
+    let planId = selected[0].planId;
+    let status = selected[0].planStatus;
+
+    if (status == '2' || status === '3') {
+        window.location.href = "/page/activity/planEffect?planId=" + planId;
+    } else {
+        $MB.n_warning("只有完成推送以后才能查看效果！");
+    }
+});

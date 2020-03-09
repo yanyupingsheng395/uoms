@@ -32,5 +32,6 @@ public class ActivityEffectServiceImpl implements ActivityEffectService {
     @Override
     public ActivityEffect getEffectInfo(String headId) {
         return activityEffectMapper.getEffectInfo(headId);
+
     }
 }

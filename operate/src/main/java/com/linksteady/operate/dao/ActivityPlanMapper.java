@@ -1,6 +1,8 @@
 package com.linksteady.operate.dao;
 
+import com.linksteady.operate.domain.ActivityPersonal;
 import com.linksteady.operate.domain.ActivityPlan;
+import com.linksteady.operate.domain.ActivityPlanEffect;
 
 import java.util.List;
 import java.util.Map;
@@ -50,4 +52,18 @@ public interface ActivityPlanMapper {
      * 更新推送方式和推送时段
      */
     void updatePushMethod(Long planId,String pushMethod,String pushPeriod);
+
+    /**
+     * 执行计划效果累计数据
+     */
+    ActivityPlanEffect selectPlanEffect();
+
+    /**
+     * 效果的按天数据
+     */
+    List<ActivityPlanEffect> getPlanEffectStatisList(Long planId);
+
+    List<ActivityPersonal> getPersonalPlanEffect(int start, int end, Long planId);
+
+    int getDailyPersonalEffectCount(Long planId);
 }
