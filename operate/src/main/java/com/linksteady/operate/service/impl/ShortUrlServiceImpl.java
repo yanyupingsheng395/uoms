@@ -67,6 +67,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         shortUrlInfos.stream().forEach(x -> {
             hashOperations.putIfAbsent(redisDataKey, x.getLongUrl(), x.getShortUrl());
         });
+        //已最早失效的那个url的失效时间作为整个redisDataKey的失效时间
         ShortUrlInfo shortUrlInfo = shortUrlInfos.stream().min(Comparator.comparing(ShortUrlInfo::getValidateDate)).get();
         redisTemplate.expireAt(redisDataKey, shortUrlInfo.getValidateDate());
         log.info("结束同步短链数据到redis");

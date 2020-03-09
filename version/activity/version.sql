@@ -473,5 +473,13 @@ update uo_op_activity_plan p set p.plan_id=uo_op_activity_plan_seq.nextval where
 alter table UO_OP_ACTIVITY_DETAIL add(plan_id number);
 comment on column UO_OP_ACTIVITY_DETAIL.plan_id is '计划ID';
 
+alter table UO_OP_ACTIVITY_HEADER add (PREHEAT_NOTIFY_STATUS  varchar2(32),FORMAL_NOTIFY_STATUS  varchar2(32));
+
+comment on column UO_OP_ACTIVITY_HEADER.PREHEAT_NOTIFY_STATUS is '预售通知状态 （edit:待计划，todo:待执行，doing:执行中，done:执行完）';
+comment on column UO_OP_ACTIVITY_HEADER.FORMAL_NOTIFY_STATUS is '正式通知状态 （edit:待计划，todo:待执行，doing:执行中，done:执行完）';
+
+COMMENT ON COLUMN uo_op_activity_plan.plan_status is '计划状态  尚未计算0   待执行1   执行中2   执行完3  已过期4  已终止5';
+
+
 
 

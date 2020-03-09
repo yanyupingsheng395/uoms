@@ -16,6 +16,32 @@
         <result property="version" column="VERSION" jdbcType="DECIMAL"/>
     </resultMap>
 
+    <resultMap id="PlanEffectResult" type="com.linksteady.operate.domain.ActivityPlanEffect">
+        <result property="userCount" column="USER_COUNT" jdbcType="DECIMAL"/>
+        <result property="successCount" column="SUCCESS_COUNT" jdbcType="DECIMAL"/>
+        <result property="covUserCount" column="COV_USERCOUNT" jdbcType="DECIMAL"/>
+        <result property="covAmount" column="COV_AMOUNT" jdbcType="DECIMAL"/>
+        <result property="spuUserCount" column="SPU_USERCOUNT" jdbcType="DECIMAL"/>
+        <result property="conversionDate" column="CONVERSION_DATE" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="PersonalPlanEffectResult" type="com.linksteady.operate.domain.ActivityPersonal">
+        <result property="userId" jdbcType="VARCHAR" column="USER_ID"></result>
+        <result property="isConvert" jdbcType="VARCHAR" column="IS_CONVERT"></result>
+        <result property="pushPeriod" jdbcType="VARCHAR" column="PUSH_PERIOD"></result>
+        <result property="convertPeriod" jdbcType="VARCHAR" column="CONVERT_PERIOD"></result>
+        <result property="convertInterval" jdbcType="VARCHAR" column="CONVERT_INTERVAL"></result>
+        <result property="pushSpu" jdbcType="VARCHAR" column="PUSH_SPU"></result>
+        <result property="convertSpu" jdbcType="VARCHAR" column="CONVERT_SPU"></result>
+        <result property="spuIsConvert" jdbcType="VARCHAR" column="SPU_IS_CONVERT"></result>
+        <result property="userValue" jdbcType="VARCHAR" column="USER_VALUE"></result>
+        <result property="pathActive" jdbcType="VARCHAR" column="PATH_ACTIVE"></result>
+        <result property="userName" jdbcType="VARCHAR" column="USER_NAME"></result>
+        <result property="mobile" jdbcType="VARCHAR" column="MOBILE"></result>
+        <result property="pushDate" jdbcType="VARCHAR" column="PUSH_DATE"></result>
+        <result property="convertDate" jdbcType="VARCHAR" column="CONVERT_DATE"></result>
+    </resultMap>
+
     <insert id="savePlanList">
         insert into UO_OP_ACTIVITY_PLAN(PLAN_ID,HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID,PLAN_TYPE,SUCCESS_NUM)
         select UO_OP_ACTIVITY_PLAN_SEQ.NEXTVAL,p.* from(
@@ -41,7 +67,7 @@
     </select>
 
     <select id="getPlanInfo" resultMap="planMap">
-        select  PLAN_ID,HEAD_ID,ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM,VERSION from UO_OP_ACTIVITY_PLAN
+        select  PLAN_ID,HEAD_ID,ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_DATE,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM,VERSION from UO_OP_ACTIVITY_PLAN
          where plan_id = #{planId}
     </select>
 
@@ -105,4 +131,77 @@
                       PUSH_METHOD = #{pushMethod},PUSH_PERIOD=#{pushPeriod}
         where plan_id = #{planId}
     </update>
+
+    <select id="selectPlanEffect" resultMap="PlanEffectResult">
+        SELECT
+            COUNT(ACTIVITY_DETAIL_ID) USER_COUNT,
+            COUNT(CASE WHEN PUSH_STATUS='S' THEN PUSH_STATUS END) SUCCESS_COUNT,
+            SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' THEN 1 ELSE 0 END) COV_USERCOUNT,
+            SUM(NVL(COV_AMOUNT,0)) COV_AMOUNT
+        FROM(
+                SELECT T2.ACTIVITY_DETAIL_ID,
+                       T2.PUSH_STATUS,
+                       T1.ACTIVITY_DETAIL_ID COVERT_DETAIL_ID,
+                       T1.IS_CONVERSION,
+                       T1.COV_AMOUNT
+                FROM UO_OP_ACTIVITY_CONVERT_DETAIL T1, UO_OP_ACTIVITY_DETAIL T2
+                WHERE T1.ACTIVITY_DETAIL_ID(+) = T2.ACTIVITY_DETAIL_ID
+                  AND T2.PLAN_ID = #{planId}) C
+    </select>
+
+    <select id="getPlanEffectStatisList" resultMap="PlanEffectResult">
+        SELECT
+            CONVERSION_DATE,
+            SUM(COUNT(CASE WHEN PUSH_STATUS='S' THEN PUSH_STATUS END))OVER(PARTITION BY NULL) SUCCESS_COUNT,
+            SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' THEN 1 ELSE 0 END) COV_USERCOUNT,
+            SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' AND NVL(SPU_CONSISTENT,'N')='Y' THEN 1 ELSE 0 END) SPU_USERCOUNT
+        FROM(
+                SELECT T2.ACTIVITY_DETAIL_ID,
+                       T2.PUSH_STATUS,
+                       T1.ACTIVITY_DETAIL_ID COVERT_DETAIL_ID,
+                       T1.IS_CONVERSION,
+                       T1.COV_AMOUNT,
+                       T1.SPU_CONSISTENT,
+                       TO_CHAR(T1.CONVERSION_DATE,'YYYYMMDD') CONVERSION_DATE
+                FROM UO_OP_ACTIVITY_CONVERT_DETAIL T1, UO_OP_ACTIVITY_DETAIL T2
+                WHERE T1.ACTIVITY_DETAIL_ID= T2.ACTIVITY_DETAIL_ID
+                  AND T2.PUSH_STATUS='S'
+                  AND T2.PLAN_ID =  #{planId}) C GROUP BY CONVERSION_DATE
+    </select>
+
+    <select id="getPersonalPlanEffect" resultMap="PersonalPlanEffectResult">
+        select * from (
+        select tt.*, ROWNUM RN from (
+                select
+                    t.user_id, --用户ID
+                    u.login_name user_name,  --用户名
+                    u.mobile, --手机号
+                    t.path_active, --活跃度
+                    t.user_value,  --用户价值
+                    t.push_period,  --推送时段
+                    t.conversion_period CONVERT_PERIOD,  --转化时段
+                    t.push_date,  --推送日期
+                    t.conversion_date convert_date, --转化日期
+                    trunc((t.conversion_date-t.push_date),1) CONVERT_INTERVAL, --转换间隔
+                    t.spu_consistent, --推荐SPU与购买SPU是否一致 Y表示是 N表示否
+                    t.rec_spu_name PUSH_SPU,  --推荐SPU名称
+                    t.IS_CONVERSION IS_CONVERT,
+                    t.SPU_CONSISTENT SPU_IS_CONVERT
+                    --转化的SPU名称
+                from UO_OP_ACTIVITY_CONVERT_DETAIL t, w_users u,UO_OP_ACTIVITY_DETAIL t2
+                where t.user_id = u.id and t.IS_CONVERSION = '1'
+                  and t.activity_detail_id=t2.activity_detail_id
+                  and t2.plan_id=#{planId}
+                  ORDER BY t.activity_detail_id ASC
+        ) tt where ROWNUM &lt;= #{end}
+        ) where RN &gt;= #{start}
+    </select>
+
+    <select id="getDailyPersonalEffectCount" resultType="int">
+        select count(1) from  UO_OP_ACTIVITY_CONVERT_DETAIL t,UO_OP_ACTIVITY_DETAIL t2
+        where
+            t.activity_detail_id=t2.activity_detail_id
+        and t.IS_CONVERSION = '1'
+        and t2.plan_id=#{planId}
+    </select>
 </mapper>

@@ -1,39 +1,30 @@
 package com.linksteady.operate.controller;
-import com.google.common.collect.Lists;
+
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.*;
-import com.linksteady.operate.domain.enums.ActivityGroupEnum;
-import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.thrift.ActivityThriftClient;
 import com.linksteady.operate.vo.ActivityGroupVO;
 import com.linksteady.operate.vo.DailyPersonalVo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -342,7 +333,21 @@ public class ActivityController {
      */
     @GetMapping("/getEffectInfo")
     public ResponseBo getEffectInfo(@RequestParam("headId") String headId) {
-        return ResponseBo.okWithData(null, activityEffectService.getEffectInfo(headId));
+        ActivityEffect activityEffect=activityEffectService.getEffectInfo(headId);
+
+        if(null==activityEffect)
+        {
+            return ResponseBo.error("活动效果尚未计算!");
+        }
+        Map<String,Object> result= Maps.newHashMap();
+        try {
+            result.put("beginDt",new SimpleDateFormat("yyyy年MM月dd日").format(new SimpleDateFormat("yyyy-MM-dd").parse(activityEffect.getKpiVal())));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        result.put("userCount",activityEffect.getPushUcnt());
+
+        return ResponseBo.ok(result);
     }
 
     /**

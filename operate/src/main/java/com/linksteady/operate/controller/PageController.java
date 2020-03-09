@@ -1,13 +1,8 @@
 package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
-import com.linksteady.operate.domain.ActivityHead;
-import com.linksteady.operate.domain.DailyHead;
-import com.linksteady.operate.domain.PushProperties;
-import com.linksteady.operate.service.ActivityHeadService;
-import com.linksteady.operate.service.ConfigService;
-import com.linksteady.operate.service.DailyConfigService;
-import com.linksteady.operate.service.DailyService;
+import com.linksteady.operate.domain.*;
+import com.linksteady.operate.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,6 +34,9 @@ public class PageController {
 
     @Autowired
     private ConfigService configService;
+
+    @Autowired
+    private ActivityPlanService activityPlanService;
 
     @Log("用户运营监控")
     @RequestMapping("/operator/user")
@@ -328,6 +326,30 @@ public class PageController {
         model.addAttribute("headId", headId);
         return "operate/activity/effect";
     }
+
+    /**
+     * 活动运营-计划效果
+     * @return
+     */
+    @RequestMapping("/activity/planEffect")
+    public String planEffect(@RequestParam("planId") Long planId, Model model) {
+        //todo 这里对计划的状态进行校验
+
+        model.addAttribute("planId", planId);
+        return "operate/activity/planEffect";
+    }
+
+    /**
+    * 从活动计划效果页返回到 活动计划列表
+     */
+    @RequestMapping("/activity/backToPlanList")
+    public String backToPlanList(Model model, @RequestParam Long planId)
+    {
+        ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
+        model.addAttribute("headId", activityPlan.getHeadId());
+        return "operate/activity/plan";
+    }
+
 
     /**
      * 用户成长洞察页
