@@ -257,6 +257,16 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 
     /**
+     * 验证上传商品信息
+     * @param headId
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void validProductInfo(String headId) {
+        activityProductMapper.updateValidInfo(headId);
+    }
+
+    /**
      * 保存上传的数据
      */
     private boolean saveUploadProductData(String headId, List<ActivityProduct> productList, String uploadMethod, String repeatProduct) throws Exception {

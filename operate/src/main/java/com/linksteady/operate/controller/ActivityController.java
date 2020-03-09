@@ -97,6 +97,7 @@ public class ActivityController {
                                   @RequestParam("uploadMethod") String uploadMethod, @RequestParam("repeatProduct") String repeatProduct) {
         try {
             activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct);
+            validProductInfo(headId);
         } catch (LinkSteadyException e){
             return ResponseBo.error(e.getMessage());
         }catch (Exception e) {
@@ -136,6 +137,17 @@ public class ActivityController {
         return ResponseBo.okOverPaging(null, count, productList);
     }
 
+    /**
+     * 验证商品信息
+     * @param headId
+     * @return
+     */
+    @GetMapping("/validProductInfo")
+    public ResponseBo validProductInfo(@RequestParam("headId") String headId) {
+        activityProductService.validProductInfo(headId);
+        return ResponseBo.ok();
+    }
+
     // todo 商品名称不能超过短信预设的，商品ID防重复
     /**
      * 保存商品信息
@@ -148,6 +160,7 @@ public class ActivityController {
         activityProduct.setHeadId(Long.valueOf(headId));
         activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
         activityProductService.saveActivityProduct(activityProduct);
+        validProductInfo(headId);
         return ResponseBo.ok();
     }
 
@@ -201,6 +214,7 @@ public class ActivityController {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
             activityProductService.updateActivityProduct(activityProduct);
+            validProductInfo(String.valueOf(activityProduct.getHeadId()));
             return ResponseBo.ok();
         } catch (LinkSteadyException e) {
             return ResponseBo.error(e.getMessage());
@@ -247,12 +261,6 @@ public class ActivityController {
      */
     @PostMapping("/submitActivity")
     public ResponseBo submitActivity(@RequestParam Long headId, @RequestParam String stage, @RequestParam String operateType) {
-//        if("update".equalsIgnoreCase(operateType)) {
-//            submitAndUpdateStatus(headId, stage);
-//        }else {
-//            activityHeadService.submitActivity(headId, stage);
-//        }
-
         activityHeadService.submitActivity(headId, stage);
         return ResponseBo.ok();
     }
@@ -260,10 +268,7 @@ public class ActivityController {
     @PostMapping("/deleteProduct")
     public ResponseBo deleteProduct(@RequestParam Long headId, @RequestParam String stage, @RequestParam String operateType, @RequestParam String productIds) {
         activityProductService.deleteProduct(headId, stage, productIds);
-        if("update".equalsIgnoreCase(operateType)) {
-            activityHeadService.changeAndUpdateStatus(headId, stage);
-            log.info("删除商品,headId:{}的状态发生变更。", headId);
-        }
+        validProductInfo(String.valueOf(headId));
         return ResponseBo.ok();
     }
 

@@ -42,4 +42,7 @@ public interface ActivityProductMapper {
     List<String> getProductIdByHeadId(String headId);
 
     void deleteDataList(@Param("headId") String headId, @Param("productIdList") List<String> productIdList);
+
+    void updateValidInfo(String headId);
+
 }

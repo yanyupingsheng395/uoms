@@ -148,4 +148,22 @@
             #{item}
         </foreach>
     </delete>
+
+    <update id="updateValidInfo">
+        update UO_OP_ACTIVITY_PRODUCT set CHECK_FLAG =
+        (case when EPB_PRODUCT_ID in
+            (select EPB_PRODUCT_ID
+              from UO_OP_ACTIVITY_PRODUCT t1,
+                   W_PRODUCT t2
+              where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID
+                and t2.UP_FLAG = '1') then 'Y' else 'N' end),
+        CHECK_COMMENTS = (
+            case when EPB_PRODUCT_ID in
+            (select EPB_PRODUCT_ID
+             from UO_OP_ACTIVITY_PRODUCT t1,
+                  W_PRODUCT t2
+             where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID
+               and t2.UP_FLAG = '1') then '' else '活动商品在在售商品库中不存在' end
+            ) where head_id = #{headId}
+    </update>
 </mapper>

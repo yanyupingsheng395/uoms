@@ -68,4 +68,6 @@ public interface ActivityProductService {
      * 上传商品
      */
     void uploadExcel(MultipartFile file, String headId, String uploadMethod, String repeatProduct) throws Exception;
+
+    void validProductInfo(String headId);
 }
