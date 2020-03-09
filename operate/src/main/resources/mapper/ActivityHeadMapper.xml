@@ -108,24 +108,14 @@
 
     <select id="getActivityStatus" resultType="int">
         select count(1) from UO_OP_ACTIVITY_HEADER
-        where head_id = #{id} and (PREHEAT_STATUS in ('todo', 'doing') or FORMAL_STATUS in ('todo', 'doing'))
+        where head_id = #{id} and (PREHEAT_STATUS in ('todo', 'doing') or FORMAL_STATUS in ('todo', 'doing') or
+        PREHEAT_NOTIFY_STATUS in ('todo', 'doing') or FORMAL_NOTIFY_STATUS in ('todo', 'doing'))
     </select>
 
     <select id="getPreheatStatus" resultType="string">
         select PREHEAT_STATUS from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
     </select>
 
-<!--    <update id="updateGroupChanged">-->
-<!--        update UO_OP_ACTIVITY_HEADER-->
-<!--        <set>-->
-<!--            <if test="stage == 'preheat'">-->
-<!--                PREHEAT_CHANGED = #{changedStatus}, PREHEAT_CHANGED_TIME = #{time}-->
-<!--            </if>-->
-<!--            <if test="stage == 'formal'">-->
-<!--                FORMAL_CHANGED = #{changedStatus}, FORMAL_CHANGED_TIME = #{time}-->
-<!--            </if>-->
-<!--        </set>-->
-<!--    </update>-->
     <update id="updateGroupChanged">
         update UO_OP_ACTIVITY_HEADER set
             PREHEAT_CHANGED = #{changedStatus}, PREHEAT_CHANGED_TIME = #{time},

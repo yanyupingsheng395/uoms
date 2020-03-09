@@ -201,8 +201,11 @@ $("#btn_plan").click(function () {
     }
     let headId = selected[0].headId;
     let preheatStatus = selected[0]['preheatStatus'];
+    let preheatNotifyStatus = selected[0]['preheatNotifyStatus'];
+    let formalNotifyStatus = selected[0]['formalNotifyStatus'];
     let formalStatus = selected[0]['formalStatus'];
-    let flag = preheatStatus === 'todo' || preheatStatus === 'doing' || formalStatus === 'todo' || formalStatus === 'doing';
+    let flag = preheatStatus === 'todo' || preheatStatus === 'doing' || formalStatus === 'todo' || formalStatus === 'doing' ||
+        preheatNotifyStatus === 'todo' || preheatNotifyStatus === 'doing' || formalNotifyStatus === 'todo' || formalNotifyStatus === 'doing';
     if(flag) {
         window.location.href = "/page/activity/plan?id=" + headId;
     }else {
