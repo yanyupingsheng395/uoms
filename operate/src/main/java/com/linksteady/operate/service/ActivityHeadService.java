@@ -54,13 +54,6 @@ public interface ActivityHeadService {
      */
     int getActivityStatus(String id);
 
-    /**
-     * 提交计划，更改活动阶段的状态
-     * @param headId
-     * @param stage
-     */
-    void submitActivity(Long headId, String stage);
-
     Map<String, String> getDataChangedStatus(Long headId, String stage);
 
     void deleteData(Long headId);
@@ -75,7 +68,5 @@ public interface ActivityHeadService {
      */
     String getStatus(Long headId, String stage);
 
-    void updateStatus(Long headId, String stage, String status);
-
-    void changeAndUpdateStatus(Long headId, String stage);
+    void updateStatus(Long headId, String stage, String status, String type);
 }

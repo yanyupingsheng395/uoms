@@ -14,10 +14,8 @@ import java.util.Map;
 public interface ActivityPlanService {
     /**
      * 生成plan数据
-     * @param headId
-     * @param hasPreheat
      */
-    void savePlanList(Long headId, String hasPreheat);
+    void savePlanList(Long headId, String stage, String type);
 
     /**
      * 获取执行计划数据

@@ -70,4 +70,6 @@ public interface ActivityProductService {
     void uploadExcel(MultipartFile file, String headId, String uploadMethod, String repeatProduct) throws Exception;
 
     void validProductInfo(String headId);
+
+    int getCountByHeadId(String headId);
 }

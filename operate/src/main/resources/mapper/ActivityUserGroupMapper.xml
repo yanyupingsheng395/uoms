@@ -58,11 +58,6 @@
         select 1 from dual
     </insert>
 
-    <select id="validGroupTemplate" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_GROUP
-        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and SMS_TEMPLATE_CODE is null
-    </select>
-
     <select id="refrenceCount" resultType="int">
         select count(1) from UO_OP_ACTIVITY_GROUP where SMS_TEMPLATE_CODE = #{code}
     </select>
@@ -79,5 +74,20 @@
     <select id="checkTmpIsUsed" resultType="int">
         select count(1) from UO_OP_ACTIVITY_GROUP t1, UO_OP_ACTIVITY_HEADER t2
         where t1.HEAD_ID = t2.HEAD_ID and (t2.PREHEAT_STATUS &lt;&gt; 'done' and t2.FORMAL_STATUS &lt;&gt; 'done') and t1.SMS_TEMPLATE_CODE = #{tmpCode}
+    </select>
+
+    <update id="validUserGroup">
+        update UO_OP_ACTIVITY_GROUP set CHECK_FLAG = (
+            case when SMS_TEMPLATE_CODE is null then 'N' else 'Y' end
+        ),
+        CHECK_COMMENTS = (
+            case when SMS_TEMPLATE_CODE is null then '群组文案没有配置' else '' end
+        )
+        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+    </update>
+
+    <select id="validGroupTemplate" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_GROUP
+        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{type} and SMS_TEMPLATE_CODE is null
     </select>
 </mapper>

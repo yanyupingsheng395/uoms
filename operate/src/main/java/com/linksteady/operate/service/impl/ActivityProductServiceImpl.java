@@ -263,7 +263,13 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void validProductInfo(String headId) {
+        activityProductMapper.updateAllValidInfo(headId);
         activityProductMapper.updateValidInfo(headId);
+    }
+
+    @Override
+    public int getCountByHeadId(String headId) {
+        return activityProductMapper.getCountByHeadId(headId);
     }
 
     /**

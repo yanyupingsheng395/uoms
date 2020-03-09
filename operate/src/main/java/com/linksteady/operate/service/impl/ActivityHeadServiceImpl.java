@@ -107,16 +107,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         return activityHeadMapper.getActivityStatus(id);
     }
 
-    /**
-     * @param headId
-     * @param stage
-     */
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void submitActivity(Long headId, String stage) {
-        activityPlanService.savePlanList(headId, stage);
-        updateStatus(headId, stage, "todo");
-    }
 
     @Override
     public Map<String, String> getDataChangedStatus(Long headId, String stage) {
@@ -147,11 +137,22 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     }
 
     @Override
-    public void updateStatus(Long headId, String stage, String status) {
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStatus(Long headId, String stage, String status, String type) {
+        String during = "DURING";
+        String notify = "NOTIFY";
         if (ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
-            activityHeadMapper.updatePreheatStatusHead(headId,status);
+            if(notify.equalsIgnoreCase(type)) {
+                activityHeadMapper.updatePreheatNotifyStatusHead(headId,status);
+            } else if(during.equalsIgnoreCase(type)) {
+                activityHeadMapper.updatePreheatStatusHead(headId,status);
+            }
         }else if(ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
-            activityHeadMapper.updateFormalStatusHead(headId,status);
+            if(notify.equalsIgnoreCase(type)) {
+                activityHeadMapper.updateFormalNotifyStatusHead(headId,status);
+            } else if(during.equalsIgnoreCase(type)) {
+                activityHeadMapper.updateFormalStatusHead(headId,status);
+            }
         }
     }
 
@@ -205,19 +206,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
                 8L, Long.parseLong(headId), "推荐成长商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
         ));
         activityUserGroupMapper.saveGroupData(activityGroups);
-    }
-
-    /**
-     * 如果是待执行，执行中，修改了产品、文案，则变更状态为待计划；
-     * @param headId
-     * @param stage
-     */
-    @Override
-    public void changeAndUpdateStatus(Long headId, String stage) {
-        String status = getHeadStatus(headId, stage);
-        if(status.equalsIgnoreCase("todo") || stage.equalsIgnoreCase("doing")) {
-            updateStatus(headId, stage, "edit");
-        }
     }
 
     /**

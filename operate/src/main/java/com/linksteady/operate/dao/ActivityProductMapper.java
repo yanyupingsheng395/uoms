@@ -45,4 +45,7 @@ public interface ActivityProductMapper {
 
     void updateValidInfo(String headId);
 
+    void updateAllValidInfo(String headId);
+
+    int getCountByHeadId(String headId);
 }

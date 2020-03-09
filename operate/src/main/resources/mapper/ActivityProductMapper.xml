@@ -150,20 +150,22 @@
     </delete>
 
     <update id="updateValidInfo">
-        update UO_OP_ACTIVITY_PRODUCT set CHECK_FLAG =
-        (case when EPB_PRODUCT_ID in
-            (select EPB_PRODUCT_ID
-              from UO_OP_ACTIVITY_PRODUCT t1,
-                   W_PRODUCT t2
-              where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID
-                and t2.UP_FLAG = '1') then 'Y' else 'N' end),
-        CHECK_COMMENTS = (
-            case when EPB_PRODUCT_ID in
-            (select EPB_PRODUCT_ID
-             from UO_OP_ACTIVITY_PRODUCT t1,
-                  W_PRODUCT t2
-             where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID
-               and t2.UP_FLAG = '1') then '' else '活动商品在在售商品库中不存在' end
-            ) where head_id = #{headId}
+        update UO_OP_ACTIVITY_PRODUCT
+        set CHECK_FLAG = 'N', CHECK_COMMENTS = '活动商品在在售商品库中不存在' where HEAD_ID = #{headId} and EPB_PRODUCT_ID in (
+        with v1 as ( select EPB_PRODUCT_ID
+                     from UO_OP_ACTIVITY_PRODUCT t1,
+                          (select distinct EBP_PRODUCT_ID from W_PRODUCT where UP_FLAG = '1') t2
+                     where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID and t1.HEAD_ID  = #{headId} )
+        select t3.EPB_PRODUCT_ID from UO_OP_ACTIVITY_PRODUCT t3 left join v1 on t3.EPB_PRODUCT_ID = v1.EPB_PRODUCT_ID
+        where t3.HEAD_ID = #{headId} and v1.EPB_PRODUCT_ID is null)
     </update>
+
+    <update id="updateAllValidInfo">
+        update UO_OP_ACTIVITY_PRODUCT
+        set CHECK_FLAG = 'Y', CHECK_COMMENTS = '' where HEAD_ID = #{headId}
+    </update>
+
+    <select id="getCountByHeadId" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}
+    </select>
 </mapper>

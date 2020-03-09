@@ -66,7 +66,9 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void savePlanList(Long headId, String stage) {
+    public void savePlanList(Long headId, String stage, String type) {
+        String during = "DURING";
+        String notify = "NOTIFY";
         List<ActivityPlan> planList = Lists.newArrayList();
         Map<String, Date> dateMap = activityHeadMapper.getStageDate(headId);
         //正式开始时间
@@ -85,50 +87,54 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
         if(stage.equals(ActivityStageEnum.formal.getStageCode())) {
             //写入正式的提醒记录
-            planList.add(new ActivityPlan(Long.valueOf(headId),
-                    formalNotifyDt,
-                    ActivityStageEnum.formal.getStageCode(),
-                    ActivityPlanTypeEnum.Notify.getPlanTypeCode()));
-
-            LocalDate formalStart = DateUtil.dateToLocalDate(formalStartDt);
-            LocalDate formalEnd = DateUtil.dateToLocalDate(formalEndDt);
-            //写入正式的记录
-            while(formalStart.isBefore(formalEnd)) {
+            if(notify.equalsIgnoreCase(type)) {
                 planList.add(new ActivityPlan(Long.valueOf(headId),
-                        DateUtil.localDateToDate(formalStart),
+                        formalNotifyDt,
+                        ActivityStageEnum.formal.getStageCode(),
+                        ActivityPlanTypeEnum.Notify.getPlanTypeCode()));
+            }else if(during.equalsIgnoreCase(type)) {
+                LocalDate formalStart = DateUtil.dateToLocalDate(formalStartDt);
+                LocalDate formalEnd = DateUtil.dateToLocalDate(formalEndDt);
+                //写入正式的记录
+                while(formalStart.isBefore(formalEnd)) {
+                    planList.add(new ActivityPlan(Long.valueOf(headId),
+                            DateUtil.localDateToDate(formalStart),
+                            ActivityStageEnum.formal.getStageCode(),
+                            ActivityPlanTypeEnum.During.getPlanTypeCode()));
+
+                    formalStart = formalStart.plusDays(1);
+                }
+                planList.add(new ActivityPlan(Long.valueOf(headId),
+                        DateUtil.localDateToDate(formalEnd),
                         ActivityStageEnum.formal.getStageCode(),
                         ActivityPlanTypeEnum.During.getPlanTypeCode()));
-
-                formalStart = formalStart.plusDays(1);
             }
-            planList.add(new ActivityPlan(Long.valueOf(headId),
-                    DateUtil.localDateToDate(formalEnd),
-                    ActivityStageEnum.formal.getStageCode(),
-                    ActivityPlanTypeEnum.During.getPlanTypeCode()));
         }
 
         // 包含预售
         if(stage.equalsIgnoreCase(ActivityStageEnum.preheat.getStageCode())) {
-            //写入预售的提醒记录
-            planList.add(new ActivityPlan(Long.valueOf(headId),
-                    preheatNotifyDt,
-                    ActivityStageEnum.preheat.getStageCode(),
-                    ActivityPlanTypeEnum.Notify.getPlanTypeCode()));
-
-            LocalDate start = DateUtil.dateToLocalDate(preheatStartDt);
-            LocalDate end = DateUtil.dateToLocalDate(preheatEndDt);
-            //写入预售的记录
-            while(start.isBefore(end)) {
+            if(notify.equalsIgnoreCase(type)) {
+                //写入预售的提醒记录
                 planList.add(new ActivityPlan(Long.valueOf(headId),
-                        DateUtil.localDateToDate(start),
+                        preheatNotifyDt,
+                        ActivityStageEnum.preheat.getStageCode(),
+                        ActivityPlanTypeEnum.Notify.getPlanTypeCode()));
+            }else if(during.equalsIgnoreCase(type)) {
+                LocalDate start = DateUtil.dateToLocalDate(preheatStartDt);
+                LocalDate end = DateUtil.dateToLocalDate(preheatEndDt);
+                //写入预售的记录
+                while(start.isBefore(end)) {
+                    planList.add(new ActivityPlan(Long.valueOf(headId),
+                            DateUtil.localDateToDate(start),
+                            ActivityStageEnum.preheat.getStageCode(),
+                            ActivityPlanTypeEnum.During.getPlanTypeCode()));
+                    start = start.plusDays(1);
+                }
+                planList.add(new ActivityPlan(Long.valueOf(headId),
+                        DateUtil.localDateToDate(end),
                         ActivityStageEnum.preheat.getStageCode(),
                         ActivityPlanTypeEnum.During.getPlanTypeCode()));
-                start = start.plusDays(1);
             }
-            planList.add(new ActivityPlan(Long.valueOf(headId),
-                    DateUtil.localDateToDate(end),
-                    ActivityStageEnum.preheat.getStageCode(),
-                    ActivityPlanTypeEnum.During.getPlanTypeCode()));
         }
         activityPlanMapper.savePlanList(planList);
     }

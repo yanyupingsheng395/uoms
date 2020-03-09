@@ -94,4 +94,8 @@ public class ActivityHead {
     private Date insertDt;
 
     private String insertBy;
+
+    private String preheatNotifyStatus;
+
+    private String formalNotifyStatus;
 }

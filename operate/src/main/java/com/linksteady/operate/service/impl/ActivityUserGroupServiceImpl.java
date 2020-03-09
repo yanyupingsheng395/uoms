@@ -5,6 +5,8 @@ import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.service.ActivityUserGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,17 +43,6 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     }
 
     @Override
-    public List<ActivityGroup> getActivityUserList(Long headId, String stage) {
-        List<ActivityGroup> userGroupList = activityUserGroupMapper.getUserGroupList(headId, stage);
-        return userGroupList;
-    }
-
-    @Override
-    public int validGroupTemplate(Long headId, String stage) {
-        return activityUserGroupMapper.validGroupTemplate(headId, stage);
-    }
-
-    @Override
     public int refrenceCount(String code) {
         return activityUserGroupMapper.refrenceCount(code);
     }
@@ -69,5 +60,16 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     @Override
     public boolean checkTmpIsUsed(String tmpCode) {
         return activityUserGroupMapper.checkTmpIsUsed(tmpCode) > 0;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void validUserGroup(String headId, String stage) {
+        activityUserGroupMapper.validUserGroup(headId, stage);
+    }
+
+    @Override
+    public int validGroupTemplate(Long headId, String stage, String type) {
+        return activityUserGroupMapper.validGroupTemplate(headId, stage, type);
     }
 }

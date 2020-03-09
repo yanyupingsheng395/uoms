@@ -14,12 +14,17 @@
         <result property="activityflag" jdbcType="VARCHAR" column="ACTIVITYFLAG"></result>
         <result property="preheatNotifyDt" jdbcType="VARCHAR" column="PREHEAT_NOTIFY_DT"></result>
         <result property="formalNotifyDt" jdbcType="VARCHAR" column="FORMAL_NOTIFY_DT"></result>
+        <result property="formalNotifyStatus" jdbcType="VARCHAR" column="FORMAL_NOTIFY_STATUS"></result>
+        <result property="preheatNotifyStatus" jdbcType="VARCHAR" column="PREHEAT_NOTIFY_STATUS"></result>
     </resultMap>
 
     <select id="getDataListOfPage" resultMap="baseResult">
         select * from (
           select t.*, ROWNUM rn from (
-            select HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyymmdd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyymmdd') PREHEAT_END_DT, FORMAL_STATUS, to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT
+            select HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyymmdd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyymmdd') PREHEAT_END_DT, FORMAL_STATUS,
+            to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT,
+            to_char(PREHEAT_NOTIFY_DT, 'yyyymmdd') PREHEAT_NOTIFY_DT, to_char(FORMAL_NOTIFY_DT, 'yyyymmdd') FORMAL_NOTIFY_DT,
+            FORMAL_NOTIFY_STATUS, PREHEAT_NOTIFY_STATUS
             from UO_OP_ACTIVITY_HEADER where 1=1
             <if test="name != '' and name != null">
                 and ACTIVITY_NAME = #{name}
@@ -156,6 +161,14 @@
 
     <update id="updateFormalStatusHead">
         UPDATE UO_OP_ACTIVITY_HEADER H SET H.FORMAL_STATUS=#{status} where h.head_id=#{headId}
+    </update>
+
+    <update id="updatePreheatNotifyStatusHead">
+        UPDATE UO_OP_ACTIVITY_HEADER H SET H.PREHEAT_NOTIFY_STATUS=#{status} where h.head_id=#{headId}
+    </update>
+
+    <update id="updateFormalNotifyStatusHead">
+        UPDATE UO_OP_ACTIVITY_HEADER H SET H.FORMAL_NOTIFY_STATUS=#{status} where h.head_id=#{headId}
     </update>
 
     <select id="getStatus" resultType="string">

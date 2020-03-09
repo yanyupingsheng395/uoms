@@ -11,6 +11,7 @@ import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.thrift.ActivityThriftClient;
 import com.linksteady.operate.vo.ActivityGroupVO;
+import com.linksteady.operate.vo.DailyPersonalVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -240,10 +241,6 @@ public class ActivityController {
     @GetMapping("/updateGroupTemplate")
     public ResponseBo updateGroupTemplate(@RequestParam Long headId,@RequestParam String groupId, @RequestParam String code, @RequestParam String stage, @RequestParam String operateType) {
         activityUserGroupService.updateGroupTemplate(headId, groupId, code, stage);
-        if("update".equalsIgnoreCase(operateType)) {
-            activityHeadService.changeAndUpdateStatus(headId, stage);
-            log.info("更新短信模板,headId:{}的状态发生变更。", headId);
-        }
         return ResponseBo.ok();
     }
 
@@ -256,12 +253,13 @@ public class ActivityController {
      * 提交计划
      * @param headId
      * @param stage
-     * @param operateType
+     * @param type
      * @return
      */
     @PostMapping("/submitActivity")
-    public ResponseBo submitActivity(@RequestParam Long headId, @RequestParam String stage, @RequestParam String operateType) {
-        activityHeadService.submitActivity(headId, stage);
+    public ResponseBo submitActivity(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
+        activityPlanService.savePlanList(headId, stage, type);
+        activityHeadService.updateStatus(headId, stage, "todo", type);
         return ResponseBo.ok();
     }
 
@@ -279,9 +277,9 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/validSubmit")
-    public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String stage) {
+    public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
         // 验证所有群组是否配置消息模板 0：合法，非0不合法
-        int templateIsNullCount = activityUserGroupService.validGroupTemplate(headId, stage);
+        int templateIsNullCount = activityUserGroupService.validGroupTemplate(headId, stage, type);
         // 验证商品数，大于0合法，为0不合法
         int productNum = activityProductService.validProductNum(headId, stage);
 
@@ -392,6 +390,7 @@ public class ActivityController {
     public ResponseBo setSmsCode(@RequestParam("groupId") String groupId, @RequestParam("tmpCode") String tmpCode,
                                  @RequestParam("headId") Long headId, @RequestParam("type") String type, @RequestParam("stage") String stage) {
         activityUserGroupService.setSmsCode(groupId, tmpCode, headId, type, stage);
+        activityUserGroupService.validUserGroup(headId.toString(), stage);
         return ResponseBo.ok();
     }
 
@@ -473,5 +472,41 @@ public class ActivityController {
     @GetMapping("/checkTmpIsUsed")
     public ResponseBo checkTmpIsUsed(@RequestParam("tmpCode") String tmpCode) {
         return ResponseBo.okWithData(null, activityUserGroupService.checkTmpIsUsed(tmpCode));
+    }
+
+    @PostMapping("/downloadExcel")
+    public ResponseBo excel(@RequestParam("headId") String headId) throws InterruptedException {
+        List<ActivityProduct> list = Lists.newLinkedList();
+        List<Callable<List<ActivityProduct>>> tmp = Lists.newLinkedList();
+        int count = activityProductService.getCountByHeadId(headId);
+        ExecutorService service = Executors.newFixedThreadPool(10);
+        int pageSize = 1000;
+        int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize) + 1;
+        for (int i = 0; i < pageNum; i++) {
+            int idx = i;
+            tmp.add(() -> {
+                int start = idx * pageSize + 1;
+                int end = (idx + 1) * pageSize;
+                end = end > count ? count : end;
+                return activityProductService.getActivityProductListPage(start, end, headId, "", "", "");
+            });
+        }
+
+        List<Future<List<ActivityProduct>>> futures = service.invokeAll(tmp);
+        futures.stream().forEach(x -> {
+            try {
+                list.addAll(x.get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+        try {
+            return FileUtils.createExcelByPOIKit("活动运营商品表", list, ActivityProduct.class);
+        } catch (Exception e) {
+            log.error("导出活动运营商品表失败", e);
+            return ResponseBo.error("导出活动运营商品表失败，请联系网站管理员！");
+        }
     }
 }

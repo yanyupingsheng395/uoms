@@ -32,21 +32,50 @@ $(function () {
             {
                 title: "预热",
                 align: "center",
-                colspan: 3
+                colspan: 5
             },
             {
                 title: "正式",
                 align: "center",
-                colspan: 3
+                colspan: 5
             }
         ], [{
+            field: 'preheatNotifyDt',
+            align: "center",
+            title: '通知时间'
+        },{
+            field: 'preheatNotifyStatus',
+            align: "center",
+            title: '通知状态',
+            formatter: function (value, row, index) {
+                let res = "-";
+                switch (value) {
+                    case "edit":
+                        res = "<span class=\"badge bg-info\">待计划</span>";
+                        break;
+                    case "todo":
+                        res = "<span class=\"badge bg-primary\">待执行</span>";
+                        break;
+                    case "doing":
+                        res = "<span class=\"badge bg-warning\">执行中</span>";
+                        break;
+                    case "done":
+                        res = "<span class=\"badge bg-success\">执行完</span>";
+                        break;
+                }
+                return res;
+            }
+        },{
             field: 'preheatStartDt',
+            align: "center",
             title: '活动开始时间'
         }, {
             field: 'preheatEndDt',
+            align: "center",
             title: '活动结束时间'
         }, {
             field: 'preheatStatus',
+            align: "center",
             title: '活动状态',
             formatter: function (value, row, index) {
                 let res = "-";
@@ -67,13 +96,42 @@ $(function () {
                 return res;
             }
         }, {
+            field: 'formalNotifyDt',
+            align: "center",
+            title: '通知时间'
+        },{
+            field: 'formalNotifyStatus',
+            align: "center",
+            title: '通知状态',
+            formatter: function (value, row, index) {
+                let res = "-";
+                switch (value) {
+                    case "edit":
+                        res = "<span class=\"badge bg-info\">待计划</span>";
+                        break;
+                    case "todo":
+                        res = "<span class=\"badge bg-primary\">待执行</span>";
+                        break;
+                    case "doing":
+                        res = "<span class=\"badge bg-warning\">执行中</span>";
+                        break;
+                    case "done":
+                        res = "<span class=\"badge bg-success\">执行完</span>";
+                        break;
+                }
+                return res;
+            }
+        },{
             field: 'formalStartDt',
+            align: "center",
             title: '活动开始时间'
         }, {
             field: 'formalEndDt',
+            align: "center",
             title: '活动结束时间'
         }, {
             field: 'formalStatus',
+            align: "center",
             title: '活动状态',
             formatter: function (value, row, index) {
                 let res = "-";

@@ -18,10 +18,6 @@ public interface ActivityUserGroupService {
 
     void updateGroupTemplate(Long headId, String groupId, String code, String stage);
 
-    List<ActivityGroup> getActivityUserList(Long headId, String stage);
-
-    int validGroupTemplate(Long headId, String stage);
-
     int refrenceCount(String code);
 
     void deleteData(Long headId);
@@ -29,4 +25,8 @@ public interface ActivityUserGroupService {
     void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage);
 
     boolean checkTmpIsUsed(String tmpCode);
+
+    void validUserGroup(String headId, String stage);
+
+    int validGroupTemplate(Long headId, String stage, String type);
 }

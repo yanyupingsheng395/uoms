@@ -226,22 +226,23 @@ $("#uploadProduct").on('hidden.bs.modal', function () {
 });
 
 // 提交计划
-function submitActivity() {
+// type:NOTIFY 活动通知，DURING 活动期间
+function submitActivity(type) {
     let headId = $("#headId").val();
-    $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: $("#activity_stage").val()}, function (r) {
+    $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: $("#activity_stage").val(), type: type}, function (r) {
         if(r.code === 200) {
             $MB.confirm({
                 title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-                content: '确认提交计划？'
+                content: '确认保存计划？'
             }, function () {
-                $.post("/activity/submitActivity", {headId: headId, operateType: operate_type, stage: CURRENT_ACTIVITY_STAGE}, function (r) {
+                $.post("/activity/submitActivity", {headId: headId, operateType: operate_type, stage: CURRENT_ACTIVITY_STAGE, type: type}, function (r) {
                     if(r.code === 200) {
-                        $MB.n_success("提交计划成功！");
+                        $MB.n_success("保存计划成功！");
                         setTimeout(function () {
                             window.location.href = "/page/activity";
                         },1500);
                     }else {
-                        $MB.n_danger("提交计划失败！");
+                        $MB.n_danger("保存计划失败！");
                     }
                 });
             });
@@ -389,14 +390,12 @@ function createActivity(stage) {
 // 根据当前选择设置标题
 function setTitle(stage) {
     if(stage === 'preheat') {
-        $("#duringTitle").text("预售期间推送计划");
-        $("#notifyTimeTile").text("预计在"+timeRevert($("#preheatNotifyDt").val())+"完成对目标用户的活动通知");
-        $("#duringTimeTile").text("预计从"+timeRevert($("#preheatStartDt").val())+"至"+timeRevert($("#preheatEndDt").val())+"活动期间，对成长节点处在范围内、活动通知后没有购买用户进行推送；");
+        $("#notifyTimeTile").text("预计在"+timeRevert($("#preheatNotifyDt").val())+"完成对目标用户的活动通知；");
+        $("#duringTimeTile").text("预计从"+timeRevert($("#preheatStartDt").val())+"至"+timeRevert($("#preheatEndDt").val())+"，对被活动通知过但是没有产生购买行为的用户进行推送；");
     }
     if(stage === 'formal') {
-        $("#duringTitle").text("正式期间推送计划");
-        $("#notifyTimeTile").text("预计在"+timeRevert($("#formalNotifyDt").val())+"完成对目标用户的活动通知");
-        $("#duringTimeTile").text("预计从"+timeRevert($("#formalStartDt").val())+"至"+timeRevert($("#formalEndDt").val())+"活动期间，对成长节点处在范围内、活动通知后没有购买用户进行推送；");
+        $("#notifyTimeTile").text("预计在"+timeRevert($("#formalNotifyDt").val())+"完成对目标用户的活动通知；");
+        $("#duringTimeTile").text("预计从"+timeRevert($("#formalStartDt").val())+"至"+timeRevert($("#formalEndDt").val())+"，对被活动通知过但是没有产生购买行为的用户进行推送；");
     }
 }
 
@@ -630,6 +629,12 @@ $( "#btn_create_formal" ).click( function () {
 // 获取群组列表信息
 function getGroupList(stage, type, tableId) {
     var headId = $( "#headId" ).val();
+    var groupName = '';
+    if(tableId === 'table1') {
+        groupName = '成长商品活动机制';
+    }else {
+        groupName = '推荐用户商品策略';
+    }
     var settings = {
         url: '/activity/getGroupList',
         pagination: false,
@@ -657,7 +662,7 @@ function getGroupList(stage, type, tableId) {
             },
             {
                 field: 'groupName',
-                title: '成长商品活动机制'
+                title: groupName
             }, {
                 title: '文案',
                 align: 'center',
@@ -1257,3 +1262,30 @@ function statTmpContentNum() {
         $("#word").text(code);
     });
 }
+
+$("#btn_valid_product").click(function () {
+    $.get("/activity/validProductInfo", {headId: $("#headId").val()}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("数据已校验完毕！");
+            $MB.refreshTable('activityProductTable');
+        }
+    });
+});
+
+
+$("#btn_download_data").click(function () {
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定下载商品数据?"
+    }, function () {
+        $("#btn_download_data").text("下载中...").attr("disabled", true);
+        $.post("/activity/downloadExcel", {headId: $("#headId").val()}, function (r) {
+            if (r.code === 200) {
+                window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
+            } else {
+                $MB.n_warning(r.msg);
+            }
+            $("#btn_download_data").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
+        });
+    });
+});

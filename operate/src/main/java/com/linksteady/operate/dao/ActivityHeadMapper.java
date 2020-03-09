@@ -55,4 +55,8 @@ public interface ActivityHeadMapper {
     int getDeleteCount(Long headId);
 
     String getStatus(@Param("sql") String sql);
+
+    void updatePreheatNotifyStatusHead(Long headId, String status);
+
+    void updateFormalNotifyStatusHead(Long headId, String status);
 }

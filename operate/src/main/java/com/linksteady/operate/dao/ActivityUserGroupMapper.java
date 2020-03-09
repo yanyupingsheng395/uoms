@@ -20,8 +20,6 @@ public interface ActivityUserGroupMapper {
 
     void saveGroupData(List<ActivityGroup> dataList);
 
-    int validGroupTemplate(Long headId, String stage);
-
     int refrenceCount(String code);
 
     void deleteData(Long headId);
@@ -29,4 +27,8 @@ public interface ActivityUserGroupMapper {
     void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage);
 
     int checkTmpIsUsed(String tmpCode);
+
+    void validUserGroup(String headId, String stage);
+
+    int validGroupTemplate(Long headId, String stage, String type);
 }
