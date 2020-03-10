@@ -78,5 +78,6 @@ public class ActivityDetail implements Serializable {
     private String planType;
     private Long planId;
     private String activityType;
+    private String prodActivityProp;
 
 }

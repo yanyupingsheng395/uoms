@@ -20,6 +20,7 @@
         <result column="PLAN_ID" jdbcType="DECIMAL" property="planId"/>
         <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"/>
         <result column="ACTIVITY_TYPE" jdbcType="VARCHAR" property="activityType"/>
+        <result column="PROD_ACTIVITY_PROP" jdbcType="VARCHAR" property="prodActivityProp"/>
     </resultMap>
 
     <select id="getDataCount" resultType="int">
@@ -48,6 +49,7 @@
                                        UO_OP_ACTIVITY_DETAIL.ACTIVITY_STAGE,
                                        UO_OP_ACTIVITY_DETAIL.ORDER_PERIOD,
                                        UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE,
+                                       UO_OP_ACTIVITY_GROUP.PROD_ACTIVITY_PROP,
                                        UO_OP_ACTIVITY_DETAIL.PLAN_ID
                                 from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_PLAN,UO_OP_ACTIVITY_GROUP
                                where  UO_OP_ACTIVITY_DETAIL.PLAN_ID=UO_OP_ACTIVITY_PLAN.PLAN_ID

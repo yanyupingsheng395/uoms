@@ -3,68 +3,51 @@
 <mapper namespace="com.linksteady.operate.dao.ActivityEffectMapper">
 
     <resultMap id="base" type="com.linksteady.operate.domain.ActivityEffect">
-        <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"/>
-        <result property="effectDt" jdbcType="DECIMAL" column="EFFECT_DT"/>
-        <result property="pushUcnt" jdbcType="DECIMAL" column="PUSH_UCNT"/>
-        <result property="convertUcnt" jdbcType="DECIMAL" column="CONVERT_UCNT"/>
-        <result property="convertRate" jdbcType="DECIMAL" column="CONVERT_RATE"/>
-        <result property="pushRoi" jdbcType="DECIMAL" column="PUSH_ROI"/>
-        <result property="convertAmount" jdbcType="DECIMAL" column="CONVERT_AMOUNT"/>
-        <result property="convertAmountCspp" jdbcType="DECIMAL" column="CONVERT_AMOUNT_CSPP"/>
-        <result property="ocConvertAmount" jdbcType="DECIMAL" column="OC_CONVERT_AMOUNT"/>
-        <result property="ocConvertAmountCssp" jdbcType="DECIMAL" column="OC_CONVERT_AMOUNT_CSSP"/>
-        <result property="amountOcCspp" jdbcType="DECIMAL" column="AMOUNT_OC_CSPP"/>
-        <result property="convertUcntCspp" jdbcType="DECIMAL" column="CONVERT_UCNT_CSPP"/>
-        <result property="ocConvertUcnt" jdbcType="DECIMAL" column="OC_CONVERT_UCNT"/>
-        <result property="ocConvertUcntCssp" jdbcType="DECIMAL" column="OC_CONVERT_UCNT_CSSP"/>
-        <result property="ucntOcCspp" jdbcType="DECIMAL" column="UCNT_OC_CSPP"/>
-        <result property="activityStage" jdbcType="DECIMAL" column="ACTIVITY_STAGE"/>
-        <result property="pushKpi" jdbcType="DECIMAL" column="PUSH_KPI"/>
-
-        <!--虚拟列，非数据库真实列-->
-        <result property="kpiVal" jdbcType="VARCHAR" column="KPI_VAL"/>
         <result property="kpiName" jdbcType="VARCHAR" column="KPI_NAME"/>
-        <result property="allStage" jdbcType="VARCHAR" column="ALL_STAGE"/>
-        <result property="activityStage" jdbcType="VARCHAR" column="ACTIVITY_STAGE"/>
-        <result property="preheatStage" jdbcType="VARCHAR" column="PREHEAT_STAGE"/>
-        <result property="normalStage" jdbcType="VARCHAR" column="NORMAL_STAGE"/>
-        <result property="mainKpi" jdbcType="VARCHAR" column="MAIN_KPI"/>
+        <result property="allStage" jdbcType="DECIMAL" column="ALLSTAGE"/>
+        <result property="preheatAll" jdbcType="DECIMAL" column="PREHEATALL"/>
+        <result property="preheatNotify" jdbcType="DECIMAL" column="PREHEATNOTIFY"/>
+        <result property="preheatDuring" jdbcType="DECIMAL" column="PREHEATDURING"/>
+        <result property="normalAll" jdbcType="DECIMAL" column="NORMALALL"/>
+        <result property="normalNotify" jdbcType="DECIMAL" column="NORMALNOTIFY"/>
+        <result property="normalDuring" jdbcType="DECIMAL" column="NORMALDURING"/>
+        <result property="successNum" jdbcType="DECIMAL" column="SUCCESS_NUM"/>
+        <result property="pushDate" jdbcType="DATE" column="PUSH_DATE"/>
     </resultMap>
 
     <select id="getEffectMainKpi" resultMap="base">
-        with temp as (
-          select 1 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI, '推送人次' kpi_name, PUSH_UCNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
-          select 2 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI, '推送转化人数（人）' kpi_name, CONVERT_UCNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
-          select 3 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送转化率（%）' kpi_name, CONVERT_RATE kpi_val from UO_OP_ACTIVITY_EFFECT union all
-          select 4 rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送ROI' kpi_name, PUSH_ROI kpi_val from UO_OP_ACTIVITY_EFFECT
-        )
-        select * from (select rn, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,kpi_name, kpi_val from temp
-                       where HEAD_ID = #{headId} and PUSH_KPI = #{pushKpi}
-        ) pivot(max(kpi_val) for ACTIVITY_STAGE in ('all' ALL_STAGE, 'preheat' as PREHEAT_STAGE, 'formal' NORMAL_STAGE))
-        order by rn asc
+        SELECT
+            F3.VALUE KPI_NAME,
+            F2.ALLSTAGE,
+            F2.PREHEATALL,
+            F2.PREHEATNOTIFY,
+            F2.PREHEATDURING,
+            F2.NORMALALL,
+            F2.NORMALNOTIFY,
+            F2.NORMALDURING
+        FROM
+            (
+                SELECT
+                    KPI_ID,
+                    ALLSTAGE,
+                    PREHEATALL,
+                    PREHEATNOTIFY,
+                    PREHEATDURING,
+                    NORMALALL,
+                    NORMALNOTIFY,
+                    NORMALDURING
+                FROM UO_OP_ACTIVITY_EFFECT  WHERE HEAD_ID = #{headId} AND KPI_TYPE = #{kpiType}) F2,
+            (SELECT CODE, VALUE, ORDER_NO
+             FROM T_DICT
+             WHERE TYPE_CODE = 'ACTIVITY_EFFECT_KPI') F3
+        WHERE F2.KPI_ID(+) = F3.CODE
+        ORDER BY F3.ORDER_NO ASC
     </select>
 
     <select id="getEffectInfo" resultMap="base">
-        select sum(case when t.Is_Push='1' then 1 else 0 end) pushUcnt,min(t.plan_dt) kpiVal from uo_op_activity_detail t where t.head_id=#{headId}
+        select sum(t.success_num) SUCCESS_NUM,
+               min(t.plan_date) PUSH_DATE
+        from uo_op_activity_plan t where t.head_id=#{headId} and t.plan_status in (2,3)
     </select>
 
-    <select id="getEffectAllKpi" resultMap="base">
-        with temp as (
-          select 1 rn, '推送转化金额（元）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI, '推送转化金额（元）' kpi_name, CONVERT_AMOUNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
-          select 2 rn, '推送转化金额（元）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI, '推送转化金额同比去年（%）' kpi_name, CONVERT_AMOUNT_CSPP kpi_val from UO_OP_ACTIVITY_EFFECT union all
-          select 3 rn, '推送转化金额（元）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'同期老客转化金额（元）' kpi_name, OC_CONVERT_AMOUNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
-          select 4 rn, '推送转化金额（元）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'同期老客转化金额同比去年（%）' kpi_name, OC_CONVERT_AMOUNT_CSSP kpi_val from UO_OP_ACTIVITY_EFFECT union all
-          select 5 rn, '推送转化金额（元）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送转化金额占比同期老客转化金额（%）' kpi_name, AMOUNT_OC_CSPP kpi_val from UO_OP_ACTIVITY_EFFECT union all
-
-          select 6 rn, '推送转化人数（人）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送转化人数（人）' kpi_name, CONVERT_UCNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
-          select 7 rn, '推送转化人数（人）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送转化人数同比去年（%）' kpi_name, CONVERT_UCNT_CSPP kpi_val from UO_OP_ACTIVITY_EFFECT union all
-          select 8 rn, '推送转化人数（人）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'同期老客转化人数（人）' kpi_name, OC_CONVERT_UCNT kpi_val from UO_OP_ACTIVITY_EFFECT union all
-          select 9 rn, '推送转化人数（人）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'同期老客转化人数同比去年（%）' kpi_name, OC_CONVERT_UCNT_CSSP kpi_val from UO_OP_ACTIVITY_EFFECT union all
-          select 10 rn, '推送转化人数（人）' main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,'推送转化人数占比同期老客转化人数（%）' kpi_name, UCNT_OC_CSPP kpi_val from UO_OP_ACTIVITY_EFFECT
-        )
-        select * from (select rn, main_kpi, HEAD_ID, ACTIVITY_STAGE, EFFECT_DT, PUSH_KPI,kpi_name, kpi_val from temp
-                       where HEAD_ID = #{headId} and PUSH_KPI = #{pushKpi}
-                      ) pivot(max(kpi_val) for ACTIVITY_STAGE in ('all' ALL_STAGE, 'preheat' as PREHEAT_STAGE, 'formal' NORMAL_STAGE))
-        order by rn asc
-    </select>
 </mapper>

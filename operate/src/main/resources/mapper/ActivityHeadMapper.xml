@@ -16,6 +16,7 @@
         <result property="formalNotifyDt" jdbcType="VARCHAR" column="FORMAL_NOTIFY_DT"></result>
         <result property="formalNotifyStatus" jdbcType="VARCHAR" column="FORMAL_NOTIFY_STATUS"></result>
         <result property="preheatNotifyStatus" jdbcType="VARCHAR" column="PREHEAT_NOTIFY_STATUS"></result>
+        <result property="effectFlag" jdbcType="VARCHAR" column="EFFECT_FLAG"></result>
     </resultMap>
 
     <select id="getDataListOfPage" resultMap="baseResult">
@@ -24,7 +25,7 @@
             select HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyymmdd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyymmdd') PREHEAT_END_DT, FORMAL_STATUS,
             to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT,
             to_char(PREHEAT_NOTIFY_DT, 'yyyymmdd') PREHEAT_NOTIFY_DT, to_char(FORMAL_NOTIFY_DT, 'yyyymmdd') FORMAL_NOTIFY_DT,
-            FORMAL_NOTIFY_STATUS, PREHEAT_NOTIFY_STATUS
+            FORMAL_NOTIFY_STATUS, PREHEAT_NOTIFY_STATUS,EFFECT_FLAG
             from UO_OP_ACTIVITY_HEADER where 1=1
             <if test="name != '' and name != null">
                 and ACTIVITY_NAME = #{name}

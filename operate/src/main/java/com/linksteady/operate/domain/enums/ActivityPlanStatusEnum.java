@@ -6,7 +6,8 @@ public enum ActivityPlanStatusEnum {
         WAIT_EXEC("1","待执行"),
         EXEC("2","执行中"),
         EXEC_FINISH("3","执行完"),
-        CANCEL("4","未执行已过期");
+        CANCEL("4","未执行已过期"),
+        STOP("5","终止");
 
         private String statusCode;
 

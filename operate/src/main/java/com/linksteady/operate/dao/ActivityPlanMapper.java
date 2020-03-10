@@ -66,4 +66,6 @@ public interface ActivityPlanMapper {
     List<ActivityPersonal> getPersonalPlanEffect(int start, int end, Long planId);
 
     int getDailyPersonalEffectCount(Long planId);
+
+    void updatePlanStatus(Long planId, String planStatus);
 }

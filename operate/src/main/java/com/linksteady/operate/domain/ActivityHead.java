@@ -98,4 +98,6 @@ public class ActivityHead {
     private String preheatNotifyStatus;
 
     private String formalNotifyStatus;
+
+    private String effectFlag;
 }

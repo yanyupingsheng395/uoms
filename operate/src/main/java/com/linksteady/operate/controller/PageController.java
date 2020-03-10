@@ -334,8 +334,11 @@ public class PageController {
     @RequestMapping("/activity/planEffect")
     public String planEffect(@RequestParam("planId") Long planId, Model model) {
         //todo 这里对计划的状态进行校验
+        ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
 
+        model.addAttribute("planType", activityPlan.getPlanType());
         model.addAttribute("planId", planId);
+
         return "operate/activity/planEffect";
     }
 

@@ -17,6 +17,7 @@ import com.linksteady.operate.service.ActivityPlanService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransActivityContentThread;
 import com.linksteady.operate.vo.ActivityContentVO;
+import com.linksteady.operate.vo.ActivityPlanEffectVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -404,10 +405,71 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     }
 
     @Override
-    public ActivityPlanEffect getPlanEffectById(Long planId) {
+    public ActivityPlanEffectVO getPlanEffectById(Long planId,String kpiType) {
         //获取转化数据
         ActivityPlanEffect activityPlanEffect=activityPlanMapper.selectPlanEffect();
-        return activityPlanEffect;
+        //总人数  成功推送人数 转化人数  转化金额  购买SPU转化人数  购买SPU转化金额
+
+        ActivityPlanEffectVO activityPlanEffectVO=new ActivityPlanEffectVO();
+        activityPlanEffectVO.setUserCount(activityPlanEffect.getUserCount());
+        activityPlanEffectVO.setSuccessCount(activityPlanEffect.getSuccessCount());
+
+        //推送成本
+        activityPlanEffectVO.setPushCost(0.42*activityPlanEffect.getSuccessCount());
+        //推送且购买推荐类目转化人数
+        if("1".equals(kpiType))
+        {
+            //转化人数
+            activityPlanEffectVO.setCovUserCount(activityPlanEffect.getSpuUserCount());
+            //转化金额
+            activityPlanEffectVO.setCovAmount(activityPlanEffect.getSpuAmount());
+
+            //计算转化率
+            if(activityPlanEffect.getSuccessCount()==0L)
+            {
+                activityPlanEffectVO.setCovRate(0D);
+            }else
+            {
+                activityPlanEffectVO.setCovRate(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getSpuUserCount()/(double)activityPlanEffect.getSuccessCount()*100,2, RoundingMode.DOWN));
+            }
+
+            //每推送成本带来收入  收入/成本
+            if(activityPlanEffect.getSuccessCount()==0L)
+            {
+                activityPlanEffectVO.setPushPerIncome(0D);
+            }else
+            {
+                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getSpuAmount()/(double)activityPlanEffect.getSuccessCount()*0.42*100,2, RoundingMode.DOWN));
+            }
+
+        }else
+        {
+            //转化人数
+            activityPlanEffectVO.setCovUserCount(activityPlanEffect.getCovUserCount());
+            //转化金额
+            activityPlanEffectVO.setCovAmount(activityPlanEffect.getCovAmount());
+            //转化率
+            //计算转化率
+            if(activityPlanEffect.getSuccessCount()==0L)
+            {
+                activityPlanEffectVO.setCovRate(0D);
+            }else
+            {
+                activityPlanEffectVO.setCovRate(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getCovUserCount()/(double)activityPlanEffect.getSuccessCount()*100,2, RoundingMode.DOWN));
+            }
+
+            //每推送成本带来收入  收入/成本
+            if(activityPlanEffect.getSuccessCount()==0L)
+            {
+                activityPlanEffectVO.setPushPerIncome(0D);
+            }else
+            {
+                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getCovAmount()/(double)activityPlanEffect.getSuccessCount()*0.42*100,2, RoundingMode.DOWN));
+            }
+
+        }
+
+        return activityPlanEffectVO;
     }
 
     @Override
@@ -418,10 +480,10 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
         // 提交任务日期
         Long planDt = activityPlanMapper.getPlanInfo(planId).getPlanDateWid();
-        LocalDate taskDtDate = LocalDate.parse(String.valueOf(planDt), DateTimeFormatter.ofPattern(dateFormat)).plusDays(1);
+        LocalDate taskDtDate = LocalDate.parse(String.valueOf(planDt), DateTimeFormatter.ofPattern(dateFormat));
 
-        // 最后时间
-        LocalDate maxDate = taskDtDate.plusDays(MAX_TASK_DAY );
+        // 横轴显示的最多天数(活动后+7天)
+        LocalDate maxDate = taskDtDate.plusDays(MAX_TASK_DAY);
 
         while (taskDtDate.isBefore(maxDate)) {
             xdatas.add(taskDtDate.format(DateTimeFormatter.ofPattern(dateFormat)));
@@ -490,6 +552,12 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     @Override
     public int getDailyPersonalEffectCount(Long planId) {
         return activityPlanMapper.getDailyPersonalEffectCount(planId);
+    }
+
+    @Override
+    public void updatePlanStatus(Long planId, String planStatus) {
+        //更新推送计划的状态
+        activityPlanMapper.updatePlanStatus(planId,planStatus);
     }
 
     private String validateActivityDetail(Long planId)

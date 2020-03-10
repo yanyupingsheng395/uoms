@@ -14,6 +14,7 @@
         <result property="planType" column="PLAN_TYPE" jdbcType="VARCHAR"/>
         <result property="successNum" column="SUCCESS_NUM" jdbcType="DECIMAL"/>
         <result property="version" column="VERSION" jdbcType="DECIMAL"/>
+        <result property="effectFlag" column="EFFECT_FLAG" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="PlanEffectResult" type="com.linksteady.operate.domain.ActivityPlanEffect">
@@ -22,6 +23,7 @@
         <result property="covUserCount" column="COV_USERCOUNT" jdbcType="DECIMAL"/>
         <result property="covAmount" column="COV_AMOUNT" jdbcType="DECIMAL"/>
         <result property="spuUserCount" column="SPU_USERCOUNT" jdbcType="DECIMAL"/>
+        <result property="spuAmount" column="SPU_AMOUNT" jdbcType="DECIMAL"/>
         <result property="conversionDate" column="CONVERSION_DATE" jdbcType="VARCHAR"/>
     </resultMap>
 
@@ -67,7 +69,7 @@
     </select>
 
     <select id="getPlanInfo" resultMap="planMap">
-        select  PLAN_ID,HEAD_ID,ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_DATE,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM,VERSION from UO_OP_ACTIVITY_PLAN
+        select  PLAN_ID,HEAD_ID,ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_DATE,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM,VERSION,EFFECT_FLAG from UO_OP_ACTIVITY_PLAN
          where plan_id = #{planId}
     </select>
 
@@ -136,14 +138,18 @@
         SELECT
             COUNT(ACTIVITY_DETAIL_ID) USER_COUNT,
             COUNT(CASE WHEN PUSH_STATUS='S' THEN PUSH_STATUS END) SUCCESS_COUNT,
-            SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' THEN 1 ELSE 0 END) COV_USERCOUNT,
-            SUM(NVL(COV_AMOUNT,0)) COV_AMOUNT
+            NVL(SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' THEN 1 ELSE 0 END),0) COV_USERCOUNT,
+            NVL(SUM(NVL(COV_AMOUNT,0)),0) COV_AMOUNT,
+            NVL(SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' AND NVL(SPU_CONSISTENT,'N')='Y' THEN 1 ELSE 0 END),0) SPU_USERCOUNT,
+            NVL(SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' AND NVL(SPU_CONSISTENT,'N')='Y' THEN NVL(COV_SPU_AMOUNT,0) ELSE 0 END),0) SPU_AMOUNT
         FROM(
                 SELECT T2.ACTIVITY_DETAIL_ID,
                        T2.PUSH_STATUS,
                        T1.ACTIVITY_DETAIL_ID COVERT_DETAIL_ID,
                        T1.IS_CONVERSION,
-                       T1.COV_AMOUNT
+                       T1.COV_AMOUNT,
+                       T1.SPU_CONSISTENT,
+                       T1.COV_SPU_AMOUNT
                 FROM UO_OP_ACTIVITY_CONVERT_DETAIL T1, UO_OP_ACTIVITY_DETAIL T2
                 WHERE T1.ACTIVITY_DETAIL_ID(+) = T2.ACTIVITY_DETAIL_ID
                   AND T2.PLAN_ID = #{planId}) C
@@ -204,4 +210,10 @@
         and t.IS_CONVERSION = '1'
         and t2.plan_id=#{planId}
     </select>
+
+    <update id="updatePlanStatus">
+        update UO_OP_ACTIVITY_PLAN set
+              PLAN_STATUS = #{planStatus}
+        where plan_id = #{planId}
+    </update>
 </mapper>
