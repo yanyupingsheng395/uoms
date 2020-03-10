@@ -34,7 +34,12 @@ public enum  PushPropertiesEnum {
 
     montnetsAccount("montnetsAccount","op.push.montnetsAccount"),
     montnetsPassword("montnetsPassword","op.push.montnetsPassword"),
-    montnetsMasterIpAddress("montnetsMasterIpAddress","op.push.montnetsMasterIpAddress");
+    montnetsMasterIpAddress("montnetsMasterIpAddress","op.push.montnetsMasterIpAddress"),
+
+    dailyPollingMins("dailyPollingMins","op.push.dailyPollingMins"),
+    batchPollingMins("batchPollingMins","op.push.batchPollingMins"),
+    moPollingMins("moPollingMins","op.push.moPollingMins"),
+    rptPollingMins("rptPollingMins","op.push.rptPollingMins");
 
     private String fieldName;
 

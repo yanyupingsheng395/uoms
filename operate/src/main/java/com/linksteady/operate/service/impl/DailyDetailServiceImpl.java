@@ -175,7 +175,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             //用临时表更新 每日运营明细表
             dailyDetailMapper.updatePushContentFromTemp(headerId);
             Long endTime = System.currentTimeMillis();
-            log.info(">>>短信文案已生成，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
+            log.info(">>>每日运营文案已生成，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
         }else
         {
             Long endTime = System.currentTimeMillis();

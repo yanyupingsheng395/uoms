@@ -210,10 +210,4 @@
         and t.IS_CONVERSION = '1'
         and t2.plan_id=#{planId}
     </select>
-
-    <update id="updatePlanStatus">
-        update UO_OP_ACTIVITY_PLAN set
-              PLAN_STATUS = #{planStatus}
-        where plan_id = #{planId}
-    </update>
 </mapper>

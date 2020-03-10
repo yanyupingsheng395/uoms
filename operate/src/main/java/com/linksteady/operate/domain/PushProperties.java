@@ -103,4 +103,12 @@ public class PushProperties {
     private String montnetsAccount;
     private String montnetsPassword;
     private String montnetsMasterIpAddress;
+
+    /**
+     * 线程的轮询时间
+     */
+    private long dailyPollingMins=5;
+    private long batchPollingMins=5;
+    private long moPollingMins=5;
+    private long rptPollingMins=5;
 }

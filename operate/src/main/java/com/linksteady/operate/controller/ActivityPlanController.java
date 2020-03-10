@@ -179,9 +179,14 @@ public class ActivityPlanController {
         if(!ActivityPlanStatusEnum.WAIT_EXEC.getStatusCode().equalsIgnoreCase(activityPlan.getPlanStatus())) {
             return ResponseBo.error("计划状态已改变，请在列表界面刷新后重新操作！");
         }
+
         //更改状态
-        activityPlanService.updatePlanStatus(planId,ActivityPlanStatusEnum.STOP.getStatusCode());
-        return ResponseBo.ok();
+        try {
+            activityPlanService.updatePlanToStop(activityPlan);
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            return ResponseBo.error("终止计划失败，请在列表界面刷新后重新操作");
+        }
     }
 
 

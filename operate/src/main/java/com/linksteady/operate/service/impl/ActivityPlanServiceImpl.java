@@ -226,8 +226,8 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
         //根据planId获取当前有多少人需要推送
         int pushUserCount= activityDetailMapper.getDataCount(planId,"-1");
-        int pageSize=200;
-        //判断如果条数大于200 则进行分页
+        int pageSize=400;
+        //判断如果条数大于400 则进行分页
         if(pushUserCount<=pageSize)
         {
             List<ActivityDetail> list = activityDetailMapper.getPageList(1,pushUserCount,planId,"-1");
@@ -247,7 +247,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         {
             ExecutorService pool = null;
             try {
-                //生成线程池 (线程数量为4)
+                //生成线程池(8个线程)
                 pool = new ThreadPoolExecutor(8, 8, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());;
 
                 //分页多线程处理
@@ -555,9 +555,15 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     }
 
     @Override
-    public void updatePlanStatus(Long planId, String planStatus) {
+    @Transactional(rollbackFor = Exception.class)
+    public void updatePlanToStop(ActivityPlan activityPlan) throws Exception{
         //更新推送计划的状态
-        activityPlanMapper.updatePlanStatus(planId,planStatus);
+        int count= activityPlanMapper.updateStatus(activityPlan.getPlanId(),ActivityPlanStatusEnum.EXEC.getStatusCode(),activityPlan.getVersion());
+
+        if(count==0)
+        {
+            throw new LinkSteadyException("修改活动计划状态为停止违反乐观锁");
+        }
     }
 
     private String validateActivityDetail(Long planId)

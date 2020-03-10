@@ -74,5 +74,5 @@ public interface ActivityPlanService {
 
     int getDailyPersonalEffectCount(Long planId);
 
-    void updatePlanStatus(Long planId,String planStatus);
+    void updatePlanToStop(ActivityPlan activityPlan) throws Exception;
 }
