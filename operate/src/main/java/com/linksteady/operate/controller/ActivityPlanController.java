@@ -4,8 +4,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.*;
-import com.linksteady.operate.domain.enums.ActivityGroupEnum;
+import com.linksteady.operate.domain.ActivityDetail;
+import com.linksteady.operate.domain.ActivityPersonal;
+import com.linksteady.operate.domain.ActivityPlan;
+import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.ActivityDetailService;
@@ -110,10 +112,6 @@ public class ActivityPlanController {
         int count = activityDetailService.getDataCount(Long.parseLong(planId),groupId);
         List<ActivityDetail>  dataList = activityDetailService.getPageList(start, end, Long.parseLong(planId),groupId);
 
-        for(ActivityDetail activityDetail:dataList)
-        {
-            activityDetail.setGroupName(ActivityGroupEnum.getGroupNameById(activityDetail.getGroupId()));
-        }
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 

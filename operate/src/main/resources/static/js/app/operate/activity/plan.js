@@ -147,6 +147,7 @@ $("#btn_process").click(function () {
     let status =selected[0].planStatus;
     let planType=selected[0].planType;
 
+    //待执行状态
     if(status==1)
     {
         //生成文案
