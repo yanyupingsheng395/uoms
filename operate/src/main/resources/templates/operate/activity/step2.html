@@ -21,7 +21,7 @@
                     </li>
                     <li>
                         活动机制：
-                        <select name="groupId">
+                        <select name="groupId" id="groupId">
                             <option value="">所有</option>
                             <option value="1">活动价</option>
                             <option value="2">满件打折</option>
@@ -74,10 +74,10 @@
 </div>
 <div class="text-right m-t-10">
     <div th:if="${operateType eq 'update'}">
-        <button id="btn_create_preheat" class="btn btn-secondary btn-sm" th:if="${activityHead.hasPreheat eq '1' && preheatStatus eq 'edit'}">
+        <button id="btn_create_preheat" class="btn btn-secondary btn-sm" th:if="${activityHead.hasPreheat eq '1' && preheatStatus ne 'done'}">
             <i class="fa fa-arrow-right"></i> 修改预售推送计划
         </button>
-        <button id="btn_create_formal" class="btn btn-secondary btn-sm" th:if="${formalStatus eq 'edit'}">
+        <button id="btn_create_formal" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-right"></i> 修改正式推送计划
         </button>
         <a class="btn btn-secondary btn-sm" href="/page/activity">

@@ -63,13 +63,16 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         activityHead.setFormalStatus("edit");
         Long headId = activityHead.getHeadId();
         activityHead.setFormalStatus(ActivityStatusEnum.EDIT.getStatusCode());
+        activityHead.setFormalNotifyStatus(ActivityStatusEnum.EDIT.getStatusCode());
         if (HAS_PREHEAT.equalsIgnoreCase(activityHead.getHasPreheat())) {
             activityHead.setPreheatStatus(ActivityStatusEnum.EDIT.getStatusCode());
+            activityHead.setPreheatNotifyStatus(ActivityStatusEnum.EDIT.getStatusCode());
         }
         if (NO_PREHEAT.equalsIgnoreCase(hasPreheat)) {
             activityHead.setPreheatStartDt(null);
             activityHead.setPreheatEndDt(null);
             activityHead.setPreheatNotifyDt(null);
+            activityHead.setPreheatNotifyStatus(null);
         }
         activityHead.setInsertDt(new Date());
         activityHead.setInsertBy(((User)SecurityUtils.getSubject().getPrincipal()).getUsername());

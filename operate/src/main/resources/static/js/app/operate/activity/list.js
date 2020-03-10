@@ -184,8 +184,8 @@ $("#btn_edit").click(function () {
     let headId = selected[0].headId;
     let preheatStatus = selected[0]['preheatStatus'];
     let formalStatus = selected[0]['formalStatus'];
-    let flag = preheatStatus === 'edit' || formalStatus === 'edit';
-    if(flag) {
+    let flag = preheatStatus === 'done' && formalStatus === 'done';
+    if(!flag) {
         window.location.href = "/page/activity/edit?headId=" + headId;
     }else {
         $MB.n_warning("活动当前状态不允许修改计划！");

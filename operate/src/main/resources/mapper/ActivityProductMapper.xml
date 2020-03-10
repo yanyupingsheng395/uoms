@@ -32,7 +32,7 @@
         <if test="groupId != null and groupId != ''">
             and group_id = #{groupId}
         </if>
-        order by insert_dt desc
+        order by id desc
         ) t where ROWNUM &lt;=#{end}
         ) where RN &gt;= #{start}
     </select>

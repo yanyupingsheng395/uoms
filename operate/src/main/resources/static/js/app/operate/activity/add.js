@@ -2,7 +2,7 @@ $( function () {
     // 初始化日期控件
     initDt();
     // 初始化上传商品的数据
-    getProductInfo( 'preheat' );
+    getProductInfo(  );
 
     validBasic();
 
@@ -98,8 +98,8 @@ $( "#saveActivityProduct" ).click( function () {
             $.post( "/activity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val(),  function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "添加商品成功！" );
+                    getProductInfo();
                     $MB.closeAndRestModal( "addProductModal" );
-                    $MB.refreshTable( 'activityProductTable' );
                 } else {
                     $MB.n_danger( r.msg );
                 }
@@ -110,8 +110,8 @@ $( "#saveActivityProduct" ).click( function () {
                 $( "#headId" ).val() + "&activityStage=" + $( "#activity_stage" ).val() + "&operateType=" + operateType + "&productId=" + $("#product_id").val(), function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "更新商品成功！" );
+                    getProductInfo();
                     $MB.closeAndRestModal( "addProductModal" );
-                    $MB.refreshTable( 'activityProductTable' );
                 } else {
                     $MB.n_danger(r.msg);
                 }
@@ -144,13 +144,13 @@ $( "#btn_edit_shop" ).click( function () {
     $.get( "/activity/getProductById", {id: id}, function (r) {
         if (r.code === 200) {
             let data = r.data;
-            $( "input[name='id']" ).val( data['id'] );
-            $( "input[name='productId']" ).val( data['productId'] ).attr("disabled", "disabled");
-            $( "input[name='productName']" ).val( data['productName'] );
-            $( "input[name='minPrice']" ).val( data['minPrice'] );
-            $( "input[name='notifyMinPrice']" ).val( data['notifyMinPrice'] );
-            $( "input[name='formalPrice']" ).val( data['formalPrice'] );
-            $("select[name='groupId']").find("option[value='"+data['groupId']+"']").prop("selected", true);
+            $("#add-product-form").find( "input[name='id']" ).val( data['id'] );
+            $("#add-product-form").find( "input[name='productId']" ).val( data['productId'] ).attr("disabled", "disabled");
+            $("#add-product-form").find( "input[name='productName']" ).val( data['productName'] );
+            $("#add-product-form").find( "input[name='minPrice']" ).val( data['minPrice'] );
+            $("#add-product-form").find( "input[name='notifyMinPrice']" ).val( data['notifyMinPrice'] );
+            $("#add-product-form").find( "input[name='formalPrice']" ).val( data['formalPrice'] );
+            $("#add-product-form").find("select[name='groupId']").find("option[value='"+data['groupId']+"']").prop("selected", true);
             $( "#addProductModal" ).modal( 'show' );
         } else {
             $MB.n_danger( "获取信息失败！" );
@@ -159,7 +159,6 @@ $( "#btn_edit_shop" ).click( function () {
 } );
 
 $( "#uploadFile" ).change( function () {
-    console.log()
     $( '#filename' ).text( "文件名:" + $(this)[0].files[0].name).attr( "style", "display:inline-block;" );
     $( "#btn_upload" ).attr( "style", "display:inline-block;" );
 } );
@@ -230,25 +229,69 @@ $("#uploadProduct").on('hidden.bs.modal', function () {
 // type:NOTIFY 活动通知，DURING 活动期间
 function submitActivity(type) {
     let headId = $("#headId").val();
-    $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: $("#activity_stage").val(), type: type}, function (r) {
+    var stage = $("#activity_stage").val();
+    $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: stage, type: type}, function (r) {
         if(r.code === 200) {
             $MB.confirm({
                 title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
                 content: '确认保存计划？'
             }, function () {
-                $.post("/activity/submitActivity", {headId: headId, operateType: operate_type, stage: CURRENT_ACTIVITY_STAGE, type: type}, function (r) {
-                    if(r.code === 200) {
-                        $MB.n_success("保存计划成功！");
-                        setTimeout(function () {
-                            window.location.href = "/page/activity";
-                        },1500);
+                if(type === 'DURING') {
+                    if(stage === 'preheat') {
+                        if(preheatStatus !== 'edit') {
+                            $MB.n_success("保存计划成功！");
+                            setTimeout(function () {
+                                window.location.href = "/page/activity";
+                            },1500);
+                        }else {
+                            submitData(headId, type);
+                        }
                     }else {
-                        $MB.n_danger("保存计划失败！");
+                        if(formalStatus !== 'edit') {
+                            $MB.n_success("保存计划成功！");
+                            setTimeout(function () {
+                                window.location.href = "/page/activity";
+                            },1500);
+                        }else {
+                            submitData(headId, type);
+                        }
                     }
-                });
+                }else {
+                    if(stage === 'preheat') {
+                        if(preheatNotifyStatus !== 'edit') {
+                            $MB.n_success("保存计划成功！");
+                            setTimeout(function () {
+                                window.location.href = "/page/activity";
+                            },1500);
+                        }else {
+                            submitData(headId, type);
+                        }
+                    }else {
+                        if(formalNotifyStatus !== 'edit') {
+                            $MB.n_success("保存计划成功！");
+                            setTimeout(function () {
+                                window.location.href = "/page/activity";
+                            },1500);
+                        }else {
+                            submitData(headId, type);
+                        }
+                    }
+                }
             });
         }else {
             $MB.n_warning(r.msg);
+        }
+    });
+}
+function submitData(headId, type) {
+    $.post("/activity/submitActivity", {headId: headId, operateType: operate_type, stage: CURRENT_ACTIVITY_STAGE, type: type}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("保存计划成功！");
+            setTimeout(function () {
+                window.location.href = "/page/activity";
+            },1500);
+        }else {
+            $MB.n_danger("保存计划失败！");
         }
     });
 }
@@ -283,7 +326,7 @@ $("#btn_delete_shop").click(function () {
     });
 });
 
-function getProductInfo(stage) {
+function getProductInfo() {
     var settings = {
         url: '/activity/getActivityProductPage',
         pagination: true,
@@ -299,7 +342,7 @@ function getProductInfo(stage) {
                     headId: $( "#headId" ).val(),
                     productId: $( "#productId" ).val(),
                     productName: $( "#productName" ).val(),
-                    groupId: $("#activity-form").find("select[name='groupId']").val()
+                    groupId: $("#groupId").find("option:selected").val()
                 }
             };
         },
@@ -693,18 +736,22 @@ function getGroupList(stage, type, tableId) {
                 title: '文案',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    if(stage === 'preheat') {
-                        if(preheatNotifyStatus === 'doing' || preheatNotifyStatus === 'done') {
-                            return "<span style='color: #333'><i class='fa fa-envelope-o'></i></span>";
+                    if(tableId === 'table1') {
+                        if(stage === 'preheat') {
+                            if(preheatNotifyStatus === 'doing' || preheatNotifyStatus === 'done') {
+                                return "<span style='color: #333'><i class='fa fa-envelope-o'></i></span>";
+                            }else {
+                                return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
+                            }
                         }else {
-                            return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
+                            if(formalNotifyStatus === 'doing' || formalNotifyStatus === 'done') {
+                                return "<span style='color: #333'><i class='fa fa-envelope-o'></i></span>";
+                            }else {
+                                return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
+                            }
                         }
                     }else {
-                        if(formalNotifyStatus === 'doing' || formalNotifyStatus === 'done') {
-                            return "<span style='color: #333'><i class='fa fa-envelope-o'></i></span>";
-                        }else {
-                            return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
-                        }
+                        return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
                     }
                 }
             }, {

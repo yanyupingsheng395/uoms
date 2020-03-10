@@ -86,9 +86,11 @@
             INSERT_BY,
             PREHEAT_NOTIFY_DT,
             FORMAL_NOTIFY_DT,
+            FORMAL_NOTIFY_STATUS,
+            PREHEAT_NOTIFY_STATUS,
             ACTIVITYFLAG)
         values (#{headId},#{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
-        #{insertDt}, #{insertBy}, to_date(#{preheatNotifyDt}, 'yyyy-mm-dd'), to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{activityflag})
+        #{insertDt}, #{insertBy}, to_date(#{preheatNotifyDt}, 'yyyy-mm-dd'), to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{formalNotifyStatus}, #{preheatNotifyStatus},#{activityflag})
     </insert>
 
     <update id="updateActiveHead">
