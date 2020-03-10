@@ -274,13 +274,6 @@ public class ActivityController {
     public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
         // 验证所有群组是否配置消息模板 0：合法，非0不合法
         int templateIsNullCount = activityUserGroupService.validGroupTemplate(headId, stage, type);
-        // 验证商品数，大于0合法，为0不合法
-        int productNum = activityProductService.validProductNum(headId, stage);
-
-        if(productNum == 0) {
-            return ResponseBo.error("至少需要一条商品信息！");
-        }
-
         if(templateIsNullCount != 0) {
             return ResponseBo.error("部分群组模板消息未配置！");
         }
@@ -516,5 +509,10 @@ public class ActivityController {
             log.error("导出活动运营商品表失败", e);
             return ResponseBo.error("导出活动运营商品表失败，请联系网站管理员！");
         }
+    }
+
+    @GetMapping("/validProduct")
+    public ResponseBo validProduct(@RequestParam String headId) {
+        return ResponseBo.okWithData(null, activityProductService.validProduct(headId));
     }
 }

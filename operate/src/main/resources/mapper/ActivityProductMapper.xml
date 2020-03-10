@@ -77,9 +77,8 @@
 
     <update id="updateActivityProduct">
         update UO_OP_ACTIVITY_PRODUCT
-        set
-        EPB_PRODUCT_ID = #{productId}, SKU_CODE = #{skuCode},
-        PRODUCT_NAME = #{productName}, MIN_PRICE = #{minPrice}, FORMAL_PRICE = #{formalPrice}, PRODUCT_ATTR = #{productAttr}
+        set PRODUCT_NAME = #{productName},
+        MIN_PRICE = #{minPrice}, FORMAL_PRICE = #{formalPrice}, NOTIFY_MIN_PRICE = #{notifyMinPrice}, GROUP_ID = #{groupId}
         where ID = #{id}
     </update>
 
@@ -167,5 +166,9 @@
 
     <select id="getCountByHeadId" resultType="int">
         select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}
+    </select>
+
+    <select id="validProduct" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId} and CHECK_FLAG = 'N'
     </select>
 </mapper>

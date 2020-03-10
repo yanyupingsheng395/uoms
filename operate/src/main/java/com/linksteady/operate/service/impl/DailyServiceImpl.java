@@ -79,7 +79,7 @@ public class DailyServiceImpl implements DailyService {
     @Override
     public Map<String, Object> getPushData(String headId) {
         Map<String, Object> result = Maps.newHashMap();
-        String dateFormat = "yyyy-MM-dd";
+        String dateFormat = "yyyyMMdd";
         List<String> xdatas = Lists.newLinkedList();
 
         // 提交任务日期

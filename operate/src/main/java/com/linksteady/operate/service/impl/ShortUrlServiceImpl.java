@@ -15,9 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -59,7 +63,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
 
     private static final String jumpUrl = "https://h5.m.taobao.com/ecrm/jump-to-app.html?target_url=";
 
-    @PostConstruct
+
     private void setShortUrlToRedis() {
         log.info("开始将短链的数据同步到redis");
         HashOperations hashOperations = redisTemplate.opsForHash();

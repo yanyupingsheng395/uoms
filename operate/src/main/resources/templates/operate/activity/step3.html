@@ -34,7 +34,7 @@
             <hr style="margin-top: 5px;margin-bottom: 5px;"/>
             <div class="form-group">
                 <div class="col-md-offset-5 col-md-7">
-                    <button class="btn btn-primary btn-sm" type="button" onclick="changePlan()"><i class="fa fa-server"></i>调整方案</button>
+                    <button class="btn btn-primary btn-sm" type="button" onclick="changePlan()" id="changePlan"><i class="fa fa-server"></i>调整方案</button>
                 </div>
             </div>
         </form>
@@ -56,7 +56,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="text-right m-t-10">
-            <button class="btn btn-primary btn-sm" onclick="submitActivity('NOTIFY')">
+            <button class="btn btn-primary btn-sm" id="notifySaveBtn" onclick="submitActivity('NOTIFY')">
                 <i class="fa fa-save"></i> 保存计划
             </button>
             <a class="btn btn-secondary btn-sm" href="/page/activity">

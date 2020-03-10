@@ -57,7 +57,7 @@ app:
 #  servlet:
 #    multipart:
 #      max-file-size: 10MB
-#      max-request-size: 50MBmvn
+#      max-request-size: 50MB
 
 ## 配置加密的秘钥
 jasypt:
