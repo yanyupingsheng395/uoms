@@ -558,7 +558,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     @Transactional(rollbackFor = Exception.class)
     public void updatePlanToStop(ActivityPlan activityPlan) throws Exception{
         //更新推送计划的状态
-        int count= activityPlanMapper.updateStatus(activityPlan.getPlanId(),ActivityPlanStatusEnum.EXEC.getStatusCode(),activityPlan.getVersion());
+        int count= activityPlanMapper.updateStatus(activityPlan.getPlanId(),ActivityPlanStatusEnum.STOP.getStatusCode(),activityPlan.getVersion());
 
         if(count==0)
         {

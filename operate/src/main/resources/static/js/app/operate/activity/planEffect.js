@@ -23,7 +23,7 @@ function getPlanEffectInfo(kpiType) {
 
 $("#kpiType").change(function () {
     //判断计划阶段 如果是通知阶段，则不允许切换 否则刷新数据
-    var planType=$("#planType").val();
+    console.log(planType);
 
     if(planType==='NOTIFY')
     {
@@ -47,7 +47,6 @@ function makePushChart() {
         let ydata2 = data['ydata2'];
         let ydata3 = data['ydata3'];
         let ydata4 = data['ydata4'];
-        console.log(ydata1);
         let option1 = getChartOption(xdata, ydata1, ydata2, '转化人数/在推荐类目转化人数随时间变化图');
         let option2 = getRateChartOption(xdata, ydata3, ydata4, '转化率/在推荐类目转化率随时间变化图');
         let chart1 = echarts.init(document.getElementById("chart1"), 'macarons');

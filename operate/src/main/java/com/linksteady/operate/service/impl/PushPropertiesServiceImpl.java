@@ -139,7 +139,11 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
             {
                 //什么也不做
                 targetValue=value;
-            }else
+            }
+            else if (field.getGenericType().toString().equals("long")||field.getGenericType().toString().equals("class java.lang.Long")){
+                    targetValue=Long.parseLong(value);
+            }
+        else
             {
                 throw new LinkSteadyException("初始化PushProperties,暂不支持的数据类型");
             }

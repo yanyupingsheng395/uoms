@@ -1,4 +1,5 @@
 $(function () {
+    $("#pushMsgBtn").hide();
     getPlanTable();
     getActivityName();
 });
@@ -148,7 +149,6 @@ $("#btn_process").click(function () {
 
     if(status==1)
     {
-        console.log("loading");
         //生成文案
         $MB.loadingDesc('show', '转化文案中，请稍后...');
         $.get("/activityPlan/transActivityDetail", {planId: planId}, function (r) {
@@ -196,11 +196,13 @@ function getUserGroupTable(planId,planType) {
                 planId : planId
             }
         },
-        onLoadSuccess:function(){
+        onLoadSuccess:function(data){
+            var n=data.length>2?data.length-2:data.length;
             $("a[data-toggle='tooltip']").tooltip();
+            //合并单元格
+            $( "#userGroupTable" ).bootstrapTable('mergeCells',{index:0, field:"prodActivityProp", colspan: 1, rowspan:n})
         }
     });
-    $('#userGroupTable').bootstrapTable();
 }
 
 
@@ -425,7 +427,6 @@ $("#btn_effect").click(function () {
     let planId = selected[0].planId;
     let status = selected[0].planStatus;
     let effectFlag = selected[0].effectFlag;
-    let kpiType = $("#kpiType").val();
 
     if (status == '2' || status === '3') {
         if(effectFlag=='N')
@@ -455,22 +456,28 @@ $("#btn_stop").click(function () {
     let status = selected[0].planStatus;
 
     if (status == '1') {
-        $MB.loadingDesc('show', '开始终止执行计划');
-        $.post("/activityPlan/sopPlan", {planId: planId}, function (r) {
-            if (r.code === 200) {
-                //关闭loading
-                $MB.loadingDesc('hide');
-                //提示
-                $MB.n_success("终止成功！");
-                $('#planTable').bootstrapTable('destroy');
-                getPlanTable();
-            } else {
-                $MB.loadingDesc('hide');
-                $MB.n_danger(r.msg);
-            }
-        })
+        $MB.confirm({
+            title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+            content: '确定要终止当前执行计划么?'
+        }, function () {
+            $MB.loadingDesc('show', '开始终止执行计划');
+            $.post("/activityPlan/sopPlan", {planId: planId}, function (r) {
+                if (r.code === 200) {
+                    //关闭loading
+                    $MB.loadingDesc('hide');
+                    //提示
+                    $MB.n_success("终止成功！");
+                    $('#planTable').bootstrapTable('destroy');
+                    getPlanTable();
+                } else {
+                    $MB.loadingDesc('hide');
+                    $MB.n_danger(r.msg);
+                }
+            })
+        });
     }
     else {
         $MB.n_warning("只有待执行的计划才能终止！");
     }
 });
+

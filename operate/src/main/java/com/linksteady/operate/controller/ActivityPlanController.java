@@ -76,7 +76,7 @@ public class ActivityPlanController {
         for(Map<String,Object> temp:activitySummaryList)
         {
             vo=new ActivityGroupVO();
-            vo.setGroupId((String)temp.get("GROUP_ID"));
+            vo.setGroupId(String.valueOf(temp.get("GROUP_ID")));
             vo.setGroupName((String)temp.get("GROUP_NAME"));
             vo.setProdActivityProp((String)temp.get("PROD_ACTIVITY_PROP"));
             vo.setPlanId(String.valueOf(temp.get("PLAN_ID")));
