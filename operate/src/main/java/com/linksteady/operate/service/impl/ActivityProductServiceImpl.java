@@ -272,6 +272,11 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         return activityProductMapper.getCountByHeadId(headId);
     }
 
+    @Override
+    public int validProduct(String headId) {
+        return activityProductMapper.validProduct(headId);
+    }
+
     /**
      * 保存上传的数据
      */

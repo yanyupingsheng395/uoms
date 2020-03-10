@@ -147,12 +147,10 @@ $( "#btn_edit_shop" ).click( function () {
             $( "input[name='id']" ).val( data['id'] );
             $( "input[name='productId']" ).val( data['productId'] ).attr("disabled", "disabled");
             $( "input[name='productName']" ).val( data['productName'] );
-            $( "input[name='skuCode']" ).val( data['skuCode'] );
             $( "input[name='minPrice']" ).val( data['minPrice'] );
+            $( "input[name='notifyMinPrice']" ).val( data['notifyMinPrice'] );
             $( "input[name='formalPrice']" ).val( data['formalPrice'] );
-            $( "input[name='activityIntensity']" ).val( data['activityIntensity'] );
-            $( "select[name='productAttr']" ).val( data['productAttr'] );
-            $( "input[name='productUrl']" ).val( data['productUrl'] );
+            $("select[name='groupId']").find("option[value='"+data['groupId']+"']").prop("selected", true);
             $( "#addProductModal" ).modal( 'show' );
         } else {
             $MB.n_danger( "获取信息失败！" );
@@ -186,6 +184,7 @@ $('#btn_upload').click(function () {
         title: "提示",
         content: "确定上传当前文件？"
     }, function () {
+        $MB.loadingDesc('show', "上传中，请稍等...");
         let file = $("#uploadFile")[0].files[0];
         let formData = new FormData();
         formData.append("file", file);
@@ -207,12 +206,14 @@ $('#btn_upload').click(function () {
                 }else {
                     $MB.n_warning(res.msg);
                 }
+                $MB.loadingDesc('hide');
             },
             error: function (err) {
                 $MB.n_danger(err);
                 $("#uploadProduct").modal('hide');
                 $("#uploadFile").val('');
                 $("#filename").html('').attr("style", "display:none;");
+                $MB.loadingDesc('hide');
             }
         });
     });
@@ -288,6 +289,7 @@ function getProductInfo(stage) {
         pagination: true,
         singleSelect: true,
         sidePagination: "server",
+        clickToSelect: true,
         pageList: [10, 25, 50, 100],
         queryParams: function (params) {
             return {
@@ -383,9 +385,29 @@ function createActivity(stage) {
     getGroupList( stage, 'DURING', 'table5');
 
     geConvertInfo();
-
     setTitle(stage);
+
+    // 根据不同的状态禁用相关通知的按钮
+    if(stage === 'preheat') {
+        if(preheatNotifyStatus === 'doing' || preheatNotifyStatus === 'done') {
+            $("#changePlan").attr("disabled", "disabled");
+            $("#notifySaveBtn").attr("disabled", "disabled");
+        }else {
+            $("#changePlan").removeAttr("disabled");
+            $("#notifySaveBtn").removeAttr("disabled");
+        }
+    }else {
+        if(formalNotifyStatus === 'doing' || formalNotifyStatus === 'done') {
+            $("#changePlan").attr("disabled", "disabled");
+            $("#notifySaveBtn").attr("disabled", "disabled");
+        }else {
+            $("#changePlan").removeAttr("disabled");
+            $("#notifySaveBtn").removeAttr("disabled");
+        }
+    }
 }
+
+//preheatNotifyStatus
 
 // 根据当前选择设置标题
 function setTitle(stage) {
@@ -596,19 +618,27 @@ $( "#btn_batch_upload" ).click( function () {
 } );
 
 $( "#btn_create_preheat" ).click( function () {
-    var num = $('#activityProductTable').bootstrapTable('getOptions').totalRows;
     var headId = $( "#headId" ).val();
     if (headId === '') {
         $MB.n_warning( "请先保存基本信息！" );
         return;
     } else {
-        if(num === 0) {
-            $MB.n_warning( "至少需要1条商品信息！" );
-            return;
-        }
+        validProduct('preheat');
     }
-    createActivity( 'preheat' );
 } );
+
+// 验证已有商品是否合法
+function validProduct(stage) {
+    $.get("/activity/validProduct", {headId: $("#headId").val()}, function (r) {
+        if(r.code === 200) {
+            if(r.data > 0) {
+                $MB.n_warning("存在校验不通过的商品！");
+            }else {
+                createActivity( stage );
+            }
+        }
+    });
+}
 
 // 检测是否上传商品
 $( "#btn_create_formal" ).click( function () {
@@ -618,12 +648,8 @@ $( "#btn_create_formal" ).click( function () {
         $MB.n_warning( "请先保存基本信息！" );
         return;
     } else {
-        if(num === 0) {
-            $MB.n_warning( "至少需要1条商品信息！" );
-            return;
-        }
+        validProduct('formal');
     }
-    createActivity( 'formal' );
 } );
 
 // 获取群组列表信息
@@ -642,8 +668,8 @@ function getGroupList(stage, type, tableId) {
         queryParams: function () {
             return {
                 headId: headId,
-                stage: stage,
-                type: type
+                    stage: stage,
+                    type: type
             };
         },
         columns: [
@@ -667,7 +693,19 @@ function getGroupList(stage, type, tableId) {
                 title: '文案',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
+                    if(stage === 'preheat') {
+                        if(preheatNotifyStatus === 'doing' || preheatNotifyStatus === 'done') {
+                            return "<span style='color: #333'><i class='fa fa-envelope-o'></i></span>";
+                        }else {
+                            return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
+                        }
+                    }else {
+                        if(formalNotifyStatus === 'doing' || formalNotifyStatus === 'done') {
+                            return "<span style='color: #333'><i class='fa fa-envelope-o'></i></span>";
+                        }else {
+                            return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
+                        }
+                    }
                 }
             }, {
                 field: 'smsTemplateContent',

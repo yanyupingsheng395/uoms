@@ -48,4 +48,6 @@ public interface ActivityProductMapper {
     void updateAllValidInfo(String headId);
 
     int getCountByHeadId(String headId);
+
+    int validProduct(String headId);
 }

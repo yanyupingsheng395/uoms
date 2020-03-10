@@ -72,4 +72,6 @@ public interface ActivityProductService {
     void validProductInfo(String headId);
 
     int getCountByHeadId(String headId);
+
+    int validProduct(String headId);
 }

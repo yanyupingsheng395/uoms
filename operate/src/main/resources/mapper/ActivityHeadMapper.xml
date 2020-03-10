@@ -62,7 +62,9 @@
            to_char(FORMAL_END_DT, 'yyyy-mm-dd') FORMAL_END_DT,
            ACTIVITYFLAG,
            to_char(PREHEAT_NOTIFY_DT, 'yyyy-mm-dd') PREHEAT_NOTIFY_DT,
-           to_char(FORMAL_NOTIFY_DT, 'yyyy-mm-dd') FORMAL_NOTIFY_DT
+           to_char(FORMAL_NOTIFY_DT, 'yyyy-mm-dd') FORMAL_NOTIFY_DT,
+           FORMAL_NOTIFY_STATUS,
+           PREHEAT_NOTIFY_STATUS
         from UO_OP_ACTIVITY_HEADER
         where HEAD_ID = #{headId}
     </select>

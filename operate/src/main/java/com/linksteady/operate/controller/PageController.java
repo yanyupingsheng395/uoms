@@ -291,13 +291,17 @@ public class PageController {
     @RequestMapping("/activity/edit")
     public String activityEdit(@RequestParam("headId") Long headId, Model model) {
         ActivityHead activityHead = activityHeadService.findById(headId);
-        String preheatStatus = activityHeadService.getStatus(headId, "preheat");
-        String formalStatus = activityHeadService.getStatus(headId, "formal");
+        String preheatStatus = activityHead.getPreheatStatus();
+        String preheatNotifyStatus = activityHead.getPreheatNotifyStatus();
+        String formalStatus = activityHead.getFormalStatus();
+        String formalNotifyStatus = activityHead.getFormalNotifyStatus();
         model.addAttribute("activityHead", activityHead);
         model.addAttribute("operateType", "update");
         // 当处于done状态的时候，按钮不显示
         model.addAttribute("preheatStatus", preheatStatus);
+        model.addAttribute("preheatNotifyStatus", preheatNotifyStatus);
         model.addAttribute("formalStatus", formalStatus);
+        model.addAttribute("formalNotifyStatus", formalNotifyStatus);
 
         model.addAttribute("prodNameLen", 10);
         model.addAttribute("priceLen", 5);
