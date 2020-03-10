@@ -333,8 +333,18 @@ public class PageController {
      */
     @RequestMapping("/activity/planEffect")
     public String planEffect(@RequestParam("planId") Long planId, Model model) {
-        //todo 这里对计划的状态进行校验
         ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
+
+        if(null==activityPlan)
+        {
+            return "redirect:/page/activity";
+        }else if("N".equals(activityPlan.getEffectFlag()))
+        {
+          //转跳到计划列表页
+            model.addAttribute("headId", activityPlan.getHeadId());
+            return "operate/activity/plan";
+
+        }
 
         model.addAttribute("planType", activityPlan.getPlanType());
         model.addAttribute("planId", planId);
