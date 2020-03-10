@@ -69,7 +69,7 @@
                                                 <ul>
                                                     <li>
                                                         指标：
-                                                        <select name="" id="pushKpi1">
+                                                        <select name="" id="kpiType">
                                                             <option value="0">推送并转化</option>
                                                             <option value="1">推送并转化并成长</option>
                                                         </select>
@@ -154,6 +154,7 @@
     </div>
 </div>
 <script>
+    var planType = "[[${planType}]]";
     var planId = "[[${planId}]]";
 </script>
 <div data-th-include="common/commonJS"></div>

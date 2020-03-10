@@ -21,7 +21,7 @@ public class ActivityPlanEffect implements Serializable {
     //推送转化人数
     private long covUserCount;
     //推送转化金额
-    private long covAmount;
+    private Double covAmount;
     //推送转化率
     private long covRate;
     //每推送成本带来收入
@@ -29,6 +29,9 @@ public class ActivityPlanEffect implements Serializable {
 
     //在推荐类目转化人数
     private long spuUserCount;
+
+    //在类目转化金额
+    private Double spuAmount;
 
     //转化天数
     private String conversionDate;

@@ -11,6 +11,7 @@ import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.ActivityDetailService;
 import com.linksteady.operate.service.ActivityPlanService;
 import com.linksteady.operate.vo.ActivityGroupVO;
+import com.linksteady.operate.vo.ActivityPlanEffectVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -155,6 +156,36 @@ public class ActivityPlanController {
     }
 
     /**
+     * 终止执行计划
+     * @return
+     */
+    @PostMapping("/sopPlan")
+    public  ResponseBo sopPlan(@RequestParam Long planId) {
+
+        //todo 此次用乐观锁进行控制
+        if(StringUtils.isEmpty(planId))
+        {
+            return ResponseBo.error("非法参数，请通过系统界面进行操作！");
+        }
+
+        ActivityPlan activityPlan = activityPlanService.getPlanInfo(planId);
+
+        if(null==activityPlan)
+        {
+            return ResponseBo.error("不存在的活动执行计划，请通过系统界面进行操作！");
+        }
+
+        //仅有 待执行状态能进行推送
+        if(!ActivityPlanStatusEnum.WAIT_EXEC.getStatusCode().equalsIgnoreCase(activityPlan.getPlanStatus())) {
+            return ResponseBo.error("计划状态已改变，请在列表界面刷新后重新操作！");
+        }
+        //更改状态
+        activityPlanService.updatePlanStatus(planId,ActivityPlanStatusEnum.STOP.getStatusCode());
+        return ResponseBo.ok();
+    }
+
+
+    /**
      * 转化推送明细表的文案
      * @param planId
      * @return
@@ -225,10 +256,10 @@ public class ActivityPlanController {
      * @return
      */
     @GetMapping("/getPlanEffectInfo")
-    public ResponseBo getPlanEffectInfo(@RequestParam Long planId) {
+    public ResponseBo getPlanEffectInfo(@RequestParam Long planId,@RequestParam String  kpiType) {
         ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
         //获取计划的效果
-        ActivityPlanEffect activitPf = activityPlanService.getPlanEffectById(planId);
+        ActivityPlanEffectVO activitPf = activityPlanService.getPlanEffectById(planId,kpiType);
 
         Map<String,Object> result=Maps.newHashMap();
         result.put("planDt",new SimpleDateFormat("yyyy年MM月dd日").format(activityPlan.getPlanDate()));

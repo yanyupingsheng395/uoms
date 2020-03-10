@@ -35,7 +35,9 @@ public class ActivityPlan {
 
     private int version;
 
-    public ActivityPlan() {}
+     private String effectFlag;
+
+   public ActivityPlan() {}
 
     public ActivityPlan(Long headId,Date planDate,String stage,String planType) {
         this.headId = headId;

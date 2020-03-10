@@ -481,5 +481,10 @@ comment on column UO_OP_ACTIVITY_HEADER.FORMAL_NOTIFY_STATUS is '正式通知状
 COMMENT ON COLUMN uo_op_activity_plan.plan_status is '计划状态  尚未计算0   待执行1   执行中2   执行完3  已过期4  已终止5';
 
 
+update uo_op_activity_detail d set d.plan_id=(
+                                   select p.plan_id from uo_op_activity_plan p where p.head_id=d.head_id and p.plan_date_wid=d.plan_dt
+  )
+
+
 
 

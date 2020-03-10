@@ -13,10 +13,10 @@ public interface ActivityEffectMapper {
     /**
      * 获取主要指标
      * @param headId
-     * @param pushKpi
+     * @param kpiType
      * @return
      */
-    List<ActivityEffect> getEffectMainKpi(String headId, String pushKpi);
+    List<ActivityEffect> getEffectMainKpi(String headId, String kpiType);
 
     /**
      * 获取效果头部信息，pus_kpi 为2
@@ -25,11 +25,4 @@ public interface ActivityEffectMapper {
      */
     ActivityEffect getEffectInfo(String headId);
 
-    /**
-     * 获取全部指标
-     * @param headId
-     * @param pushKpi
-     * @return
-     */
-    List<ActivityEffect> getEffectAllKpi(String headId, String pushKpi);
 }

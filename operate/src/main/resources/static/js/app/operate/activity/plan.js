@@ -25,6 +25,11 @@ function getPlanTable() {
                 visible: false
             },
             {
+                field: 'effectFlag',
+                title: '',
+                visible: false
+            },
+            {
                 field: 'planId',
                 title: '',
                 visible: false
@@ -96,7 +101,9 @@ function getPlanTable() {
                         case "4":
                             res = "<span class=\"badge bg-danger\">过期未推送</span>";
                             break;
-
+                        case "5":
+                            res = "<span class=\"badge bg-danger\">终止</span>";
+                            break;
                     }
                     return res;
                 }
@@ -417,10 +424,53 @@ $("#btn_effect").click(function () {
     }
     let planId = selected[0].planId;
     let status = selected[0].planStatus;
+    let effectFlag = selected[0].effectFlag;
+    let kpiType = $("#kpiType").val();
 
     if (status == '2' || status === '3') {
-        window.location.href = "/page/activity/planEffect?planId=" + planId;
+        if(effectFlag=='N')
+        {
+            $MB.n_warning("效果尚未进行计算，请于推送完成后第二日再来查看！");
+        }else
+        {
+            window.location.href = "/page/activity/planEffect?planId=" + planId;
+        }
     } else {
         $MB.n_warning("只有完成推送以后才能查看效果！");
+    }
+});
+
+
+/**
+* 终止
+ */
+$("#btn_stop").click(function () {
+    let selected = $("#planTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择要中止的推送计划！');
+        return;
+    }
+    let planId = selected[0].planId;
+    let status = selected[0].planStatus;
+
+    if (status == '1') {
+        $MB.loadingDesc('show', '开始终止执行计划');
+        $.post("/activityPlan/sopPlan", {planId: planId}, function (r) {
+            if (r.code === 200) {
+                //关闭loading
+                $MB.loadingDesc('hide');
+                //提示
+                $MB.n_success("终止成功！");
+                $('#planTable').bootstrapTable('destroy');
+                getPlanTable();
+            } else {
+                $MB.loadingDesc('hide');
+                $MB.n_danger(r.msg);
+            }
+        })
+    }
+    else {
+        $MB.n_warning("只有待执行的计划才能终止！");
     }
 });

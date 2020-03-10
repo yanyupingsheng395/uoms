@@ -19,14 +19,9 @@ public class ActivityEffectServiceImpl implements ActivityEffectService {
     private ActivityEffectMapper activityEffectMapper;
 
     @Override
-    public List<ActivityEffect> getEffectMainKpi(String headId, String pushKpi) {
-        List<ActivityEffect> activityEffectList = activityEffectMapper.getEffectMainKpi(headId, pushKpi);
+    public List<ActivityEffect> getEffectMainKpi(String headId, String kpiType) {
+        List<ActivityEffect> activityEffectList = activityEffectMapper.getEffectMainKpi(headId, kpiType);
         return activityEffectList;
-    }
-
-    @Override
-    public List<ActivityEffect> getEffectAllKpi(String headId, String pushKpi) {
-        return activityEffectMapper.getEffectAllKpi(headId, pushKpi);
     }
 
     @Override

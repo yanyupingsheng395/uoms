@@ -1,18 +1,40 @@
 $(function () {
-    getPlanEffectInfo();
+    getPlanEffectInfo(0);
      makePushChart();
     getEffectPersonalPage();
 });
 
 // 获取页面的汇总信息
-function getPlanEffectInfo() {
-    $.get("/activityPlan/getPlanEffectInfo", {planId: planId}, function (r) {
+function getPlanEffectInfo(kpiType) {
+    $.get("/activityPlan/getPlanEffectInfo", {planId: planId,kpiType:kpiType}, function (r) {
         let data = r.data;
         $("#planDt").html('').append('<i class="mdi mdi-alert-circle-outline"></i>' + data["planDt"] + '对'+data['userCount']+'个用户进行个性化推送培养。');
 
         //更新累计数据
+        $("#userCount").text(data.activitPf.userCount);
+        $("#successCount").text(data.activitPf.successCount);
+        $("#pushCost").text(data.activitPf.pushCost);
+        $("#covUserCount").text(data.activitPf.covUserCount);
+        $("#covAmount").text(data.activitPf.covAmount);
+        $("#covRate").text(data.activitPf.covRate);
+        $("#pushPerIncome").text(data.activitPf.pushPerIncome);
     });
 }
+
+$("#kpiType").change(function () {
+    //判断计划阶段 如果是通知阶段，则不允许切换 否则刷新数据
+    var planType=$("#planType").val();
+
+    if(planType==='NOTIFY')
+    {
+        $("#kpiType").val("0");
+        $MB.n_warning("通知阶段无法按推送并转化并成长查看效果！");
+    }else
+    {
+        getPlanEffectInfo($("#kpiType").val());
+    }
+
+});
 
 /**
  * 获取推送结果变化图

@@ -30,6 +30,10 @@ $(function () {
                 rowspan: 2
             },
             {
+                field: 'effectFlag',
+                visible: false
+            },
+            {
                 title: "预热",
                 align: "center",
                 colspan: 5
@@ -253,11 +257,19 @@ $("#btn_effect").click(function () {
         return;
     }
     let headId = selected[0].headId;
+    let effectFlag=selected[0].effectFlag;
     let preheatStatus = selected[0]['preheatStatus'];
     let formalStatus = selected[0]['formalStatus'];
     let flag = preheatStatus === 'done' || preheatStatus === 'doing' || formalStatus === 'done' || formalStatus === 'doing';
     if(flag) {
-        window.location.href = "/page/activity/effect?headId=" + headId;
+        if(effectFlag==='N')
+        {
+            $MB.n_warning("效果尚未进行计算，请于首次推送完成后第二日再来查看！！");
+        }else
+        {
+            window.location.href = "/page/activity/effect?headId=" + headId;
+        }
+
     }else {
         $MB.n_warning("活动当前状态不允许查看效果！");
     }

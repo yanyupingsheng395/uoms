@@ -314,12 +314,12 @@ public class ActivityController {
     /**
      * 获取主要指标
      * @param headId
-     * @param pushKpi
+     * @param kpiType
      * @return
      */
     @GetMapping("/getEffectMainKpi")
-    public ResponseBo getEffectMainKpi(@RequestParam("headId") String headId, @RequestParam("pushKpi") String pushKpi) {
-        return ResponseBo.okWithData(null, activityEffectService.getEffectMainKpi(headId, pushKpi));
+    public ResponseBo getEffectMainKpi(@RequestParam("headId") String headId, @RequestParam("kpiType") String kpiType) {
+        return ResponseBo.okWithData(null, activityEffectService.getEffectMainKpi(headId, kpiType));
     }
 
     /**
@@ -336,25 +336,11 @@ public class ActivityController {
             return ResponseBo.error("活动效果尚未计算!");
         }
         Map<String,Object> result= Maps.newHashMap();
-        try {
-            result.put("beginDt",new SimpleDateFormat("yyyy年MM月dd日").format(new SimpleDateFormat("yyyy-MM-dd").parse(activityEffect.getKpiVal())));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        result.put("userCount",activityEffect.getPushUcnt());
+
+        result.put("beginDt",new SimpleDateFormat("yyyy年MM月dd日").format(activityEffect.getPushDate()));
+        result.put("userCount",activityEffect.getSuccessNum());
 
         return ResponseBo.ok(result);
-    }
-
-    /**
-     * 获取全部指标
-     * @param headId
-     * @param pushKpi
-     * @return
-     */
-    @GetMapping("/getEffectAllKpi")
-    public ResponseBo getEffectAllKpi(@RequestParam("headId") String headId, @RequestParam("pushKpi") String pushKpi) {
-        return ResponseBo.okWithData(null, activityEffectService.getEffectAllKpi(headId, pushKpi));
     }
 
     /**

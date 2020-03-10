@@ -179,7 +179,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         }else
         {
             Long endTime = System.currentTimeMillis();
-            log.info(">>>活动文案转化失败，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
+            log.info(">>>每日运营文案转化失败，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
         }
 
         return result;

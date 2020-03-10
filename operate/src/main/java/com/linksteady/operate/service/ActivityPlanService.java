@@ -5,6 +5,7 @@ import com.linksteady.operate.domain.ActivityPersonal;
 import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.ActivityPlanEffect;
 import com.linksteady.operate.vo.ActivityContentVO;
+import com.linksteady.operate.vo.ActivityPlanEffectVO;
 
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,7 @@ public interface ActivityPlanService {
 
     void pushActivity(String pushMethod,String pushPeriod, ActivityPlan activityPlan) throws Exception;
 
-    ActivityPlanEffect getPlanEffectById(Long planId);
+    ActivityPlanEffectVO getPlanEffectById(Long planId, String kpiType);
 
     /**
      * 获取执行计划效果的趋势信息
@@ -72,4 +73,6 @@ public interface ActivityPlanService {
     List<ActivityPersonal> getPersonalPlanEffect(int start, int end, Long planId);
 
     int getDailyPersonalEffectCount(Long planId);
+
+    void updatePlanStatus(Long planId,String planStatus);
 }
