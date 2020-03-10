@@ -88,8 +88,7 @@
         group by TMP_CODE
         )
         select t.TMP_CODE, t.TMP_NAME, t.TMP_CONTENT, t.IS_PERSONAL, v1.SCENE,
-        case when v2.relation in ('1', '1,2', '2') then 'GROWTH' when v2.relation = '3' then 'LATENT'
-        when v2.relation in ('1,3', '1,2,3', '2,3') then 'GROWTH,LATENT' end relation
+        case when v2.relation in ('5', '8') then 'LATENT' when v2.relation is not null then 'GROWTH,LATENT' end relation
         from UO_OP_ACTIVITY_TEMPLATE t, v1, v2
         where t.TMP_CODE = v1.TMP_CODE and t.TMP_CODE = v2.TMP_CODE
         order by TMP_CODE desc
