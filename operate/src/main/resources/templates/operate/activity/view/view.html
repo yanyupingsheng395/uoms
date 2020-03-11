@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/steps/steps.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/ion-rangeslider/ion.rangeSlider.min.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/loading/css/animate.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/loading/css/loading.css}">
+
+    <style>
+        .step-icon-number {
+            cursor: pointer;
+        }
+
+        .irs--flat .irs-bar {
+            background-color: #33cabb;
+        }
+
+        .irs-single {
+            background-color: #33cabb;
+        }
+
+        .irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before {
+            background-top-color: #33cabb;
+        }
+
+        .irs--flat .irs-from, .irs--flat .irs-to, .irs--flat .irs-single {
+            background-color: #33cabb;
+        }
+
+        .tag {
+            border: none;
+            -moz-border-radius: 2px;
+            -webkit-border-radius: 2px;
+            display: block;
+            float: left;
+            padding: 2px 5px;
+            text-decoration: none;
+            background: #33cabb;
+            color: #fff;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-family: 'Microsoft yahei', Roboto, sans-serif;
+            font-size: 13px;
+            line-height: 18px;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+<!-- 公共组件 -->
+<div data-th-include="common/commonCSS"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <div class="col-md-3 pull-left">
+                                <h5 id='stageName' class="modal-title" style="margin-top: 5px;">查看推送计划</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table" id="step1">
+                        <div data-th-include="operate/activity/view/step1"></div>
+                    </div>
+
+                    <div id="step2">
+                        <div class="col-md-12 select-table">
+                            <div data-th-include="operate/activity/view/step2"></div>
+                        </div>
+                    </div>
+
+                    <div id="step3" style="display: none;">
+                        <div class="col-md-12 select-table">
+                            <ul id="myTabs" class="nav nav-tabs" role="tablist">
+                                <li class="active"><a href="#home" id="home-tab" role="tab" data-toggle="tab"
+                                                      aria-expanded="true">活动通知推送计划</a></li>
+                                <li class=""><a href="#profile" role="tab" id="profile-tab" data-toggle="tab"
+                                                aria-expanded="false">活动期间推送计划</a></li>
+                            </ul>
+                            <div id="myTabContent" class="tab-content">
+                                <div class="tab-pane fade active in" id="home">
+                                    <div data-th-include="operate/activity/view/step3"></div>
+                                </div>
+                                <div class="tab-pane fade" id="profile">
+                                    <div data-th-include="operate/activity/view/step4"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="userMapModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">优惠分析</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="userMapChart" style="width:100%;height: 200px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save" id="activity-add-btn" name="save">保存</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="smsTemplateModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">选择消息模板</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <input type="hidden" id="selectGroupId"/>
+                        <table id="templateDataTable" class="table table-bordered table-striped text-nowrap"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save" id="template-add-btn" name="save">保存</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="uploadProduct" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">活动商品上传</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">上传文件</label>
+                                <div class="col-md-7">
+                                    <button class="btn btn-primary btn-sm" type="button"
+                                            onclick="$('#uploadFile').click()">
+                                        <i class="fa fa-file-excel-o"></i> 选择文件
+                                    </button>
+                                    <input id="uploadFile" type="file" style="display:none"/>
+                                    <span id="filename" style="color: #8a6d3b" class="h6"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">上传模式</label>
+                                <div class="col-md-7">
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="uploadMethod" value="0"><span>追加</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="uploadMethod" value="1"><span>覆盖</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">重复商品</label>
+                                <div class="col-md-7">
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="repeatProduct" value="0"><span>忽略</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="repeatProduct" value="1"><span>覆盖</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <hr style="margin-top: 0px;margin-bottom: 0px;"/>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0px;">
+                                <label class="col-md-4 control-label">模板文件</label>
+                                <div class="col-md-7">
+                                    <button class="btn btn-secondary btn-sm" id="btn_download_template" type="button"
+                                            onclick="window.location.href='/activity/downloadFile'">
+                                        <i class="fa fa-download"></i> 下载模板
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save btn-sm" id="btn_upload" name="save">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="msg_modal" id="smstemplate_modal" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document" style="width: 75%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title">为群组配置文案</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form id="sms-form">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        名称：<input type="text" name="name"/>
+                                    </li>
+                                    <li>
+                                        使用场景：<select name="scene">
+                                        <option value="">所有</option>
+                                        <option value="NOTIFY">活动通知</option>
+                                        <option value="DURING">活动期间</option>
+                                    </select>
+                                    </li>
+                                    <li>
+                                        个性化：<select name="isPersonal">
+                                        <option value="">所有</option>
+                                        <option value="1">是</option>
+                                        <option value="0">否</option>
+                                    </select>
+                                    </li>
+                                    <li>
+                                        用户与商品关系：<select name="relation">
+                                        <option value="">所有</option>
+                                        <option value="GROWTH">成长</option>
+                                        <option value="LATENT">潜在</option>
+                                    </select>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" onclick="getTmpTableData()"><i
+                                                class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetTmpInfo()"><i
+                                                class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 table-striped">
+                        <div class="row m-t-10">
+                            <div class="col-sm-12">
+                                <div class="btn-group-sm" id="toolbar" role="group">
+                                    <a class="btn btn-success" id="btn_add" onclick="add_sms()">
+                                        <i class="fa fa-plus"></i> 新增文案
+                                    </a>
+                                    <a class="btn btn-primary" id="btn_edit" onclick="editTmp()">
+                                        <i class="fa fa-edit"></i> 编辑文案
+                                    </a>
+                                    <a class="btn btn-cyan" id="btn_send" onclick="testSend()">
+                                        <i class="fa fa-puzzle-piece"></i> 屏蔽测试
+                                    </a>
+                                    <a class="btn btn-danger" id="btn_delete" onclick="deleteTmp()">
+                                        <i class="fa fa-close"></i> 删除文案
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-10">
+                            <div class="col-sm-12 ">
+                                <table id="tmpTable" class="table table-striped table-bordered"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="setTmpCode()">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="sms_add_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title" id="sms_add_title">新增文案</h5>
+            </div>
+            <div class="modal-body" style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
+                <form class="form-horizontal" id="tmp_add_form" novalidate="novalidate">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label">文案名称</label>
+                                    </div>
+                                    <div class="">
+                                        <input class="form-control" type="hidden" id="code" name="code"/>
+                                        <input class="form-control" type="text" id="name" name="name" style="width: 340px;"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label">文案体现的个性化要素</label>
+                                    </div>
+                                    <div>
+                                        <div style="border: solid 1px #ebebeb;padding: 8px; float: left;width:340px;" id="config-box">
+                                            <div class="example-box">
+                                                <label class="control-label">　　　　　　推荐商品名称：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProdName" value="1" onclick="$('#isProdName-error').show()"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProdName" value="0" onclick="$('#isProdName-error').hide()"><span>否</span>
+                                                </label>
+                                                <div>
+                                                    <label class="h6" id="isProdName-error" style="color: #48b0f7;" hidden><i class="fa fa-info-circle"></i>
+                                                        请将${PROD_NAME}粘贴到文案中希望位置，系统会自动填充名称，用户可知被推荐商品；
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">　　　　　推荐商品短链接：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProdUrl" onclick="$('#isProdUrl-error').show()" value="1"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProdUrl" value="0" onclick="$('#isProdUrl-error').hide()"><span>否</span>
+                                                </label>
+                                                <div>
+                                                    <label class="h6" id="isProdUrl-error" style="color: #48b0f7;" hidden><i class="fa fa-info-circle"></i>
+                                                        请将${PROD_URL}粘贴到文案中希望位置，系统会自动填充短链，用户可知被推荐商品； 1条文案中仅能填充一个链接；
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">推荐商品活动期间最低单价：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isPrice" value="1" onclick="$('#isPrice-error').show()"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isPrice" value="0" onchange="$('#isPrice-error').hide()"><span>否</span>
+                                                </label>
+                                                <div>
+                                                    <label class="h6" hidden id="isPrice-error" style="color: #48b0f7;"><i class="fa fa-info-circle"></i>
+                                                        请将${PRICE}粘贴到文案中希望位置，系统会自动填充价格，用户可知被推荐商品的活动期间最低单价；
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label">文案内容</label>
+                                    </div>
+                                    <div>
+                                        <textarea class="form-control" id="content" name="content" style="height: 102px;"></textarea>
+                                        <input type="hidden" id="smsContentInput" name="smsContentInput"/>
+                                        <span class="wordwrap"><var id="word"></var></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="hr"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mg-stop">
+                                <div class="col-md-12 control-label" style="text-align: left;">
+                                    <p class="small">
+                                        文案中填充变量说明：<br/>
+                                        1.一条文案通常允许的总字符数为[[${smsLenLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；<br/>
+                                        2.个性化推送文案中，包括运营者编写的内容，字符数以N表示；还包括系统填充的变量，字符数以M表示；Y=N+M；<br/>
+                                        3.由于系统填充变量也会占用字符，所以在此列出3种变量的占用字符情况<br/>
+                                        &nbsp;&nbsp;&nbsp;${PROD_NAME}：商品短名称，占<font color="red">[[${prodNameLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${PROD_URL}：商品购买详情页短链接，占<font color="red">[[${prodUrlLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${PRICE}：商品在活动期间的最低单价，占<font color="red">[[${priceLen}]]</font>个字符；<br/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" name="save" id="btn_save_sms">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="plan_change_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 60%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">调整推送计划</h5>
+            </div>
+            <div class="modal-body" style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
+                <div class="row">
+                    <div class="col-sm-12 table-striped">
+                        <div class="row m-t-10">
+                            <div class="col-sm-7">
+                                <h6>推送计划一览</h6>
+                                <table id="table3" class="table table-striped table-bordered"></table>
+                            </div>
+                            <div class="col-sm-5">
+                                <h6>调整计划测算</h6>
+                                <table id="table4" class="table table-striped table-bordered"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top: 10px;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="updateCovInfo()">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="send_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title" id="myLargeModalLabel4">屏蔽测试</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">文案名称：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" id="smsName1" name="smsName1" readonly/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label" for="smsContent1">文案内容：</label>
+                        <div class="col-md-6 input-group">
+                            <textarea class="form-control" id="smsContent1" name="example-textarea-input"
+                                      rows="6" readonly></textarea>
+                            <span class="wordwrap h6" style="color: #7c7c7c">*上述内容中系统填充变量并非真实，而是选择变量字符最大值示例进行填充</span>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">测试建议：</label>
+                        <div class="col-md-6 input-group">
+                            <h5 style="color: #7c7c7c;">建议不同的手机号体现不同的机型与操作系统，根据短信的收取情况判断是否有屏蔽，以便于调整文案内容；</h5>
+                            <!--                            <input class="form-control" type="text" readonly value=""/>-->
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 col-md-offset-1 control-label">手机号1：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" name="phoneNum"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">手机号2：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" name="phoneNum"/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">手机号3：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" name="phoneNum"/>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="sendMessage()">测试推送</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const operate_type = "[[${operateType}]]";
+    const PROD_NAME_LEN = "[[${priceLen}]]";
+    const PROD_URL_LEN = "[[${prodUrlLen}]]";
+    const PRICE_LEN = "[[${priceLen}]]";
+    const SMS_LEN_LIMIT = "[[${smsLenLimit}]]";
+
+    const preheatStatus = "[[${preheatStatus}]]";
+    const preheatNotifyStatus = "[[${preheatNotifyStatus}]]";
+    const formalStatus = "[[${formalStatus}]]";
+    const formalNotifyStatus = "[[${formalNotifyStatus}]]";
+</script>
+<div data-th-include="common/commonJS"></div>
+<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
+<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<script data-th-src="@{/plugins/echarts/dataTool.min.js}"></script>
+<script data-th-src="@{/js/app/operate/common/template.js}"></script>
+<script data-th-src="@{/plugins/steps/steps.js}"></script>
+<script data-th-src="@{/plugins/ion-rangeslider/ion.rangeSlider.min.js}"></script>
+<script data-th-src="@{/js/app/operate/activity/view.js}"></script>
+<script data-th-src="@{/plugins/loading/js/loading.js}"></script>
+</body>
+</html>

@@ -245,7 +245,7 @@ public class PageController {
         model.addAttribute("priceLen", pushProperties.getPriceLen());
         model.addAttribute("prodUrlLen", pushProperties.getShortUrlLen());
         model.addAttribute("smsLenLimit", pushProperties.getSmsLengthLimit());
-        return "operate/activity/add";
+        return "operate/activity/add/add";
     }
 
     /**
@@ -307,7 +307,29 @@ public class PageController {
         model.addAttribute("priceLen", 5);
         model.addAttribute("prodUrlLen", 23);
         model.addAttribute("smsLenLimit", 61);
-        return "operate/activity/add";
+        return "operate/activity/add/add";
+    }
+
+    @RequestMapping("/activity/view")
+    public String activityView(@RequestParam("headId") Long headId, Model model) {
+        ActivityHead activityHead = activityHeadService.findById(headId);
+        String preheatStatus = activityHead.getPreheatStatus();
+        String preheatNotifyStatus = activityHead.getPreheatNotifyStatus();
+        String formalStatus = activityHead.getFormalStatus();
+        String formalNotifyStatus = activityHead.getFormalNotifyStatus();
+        model.addAttribute("activityHead", activityHead);
+        model.addAttribute("operateType", "view");
+        // 当处于done状态的时候，按钮不显示
+        model.addAttribute("preheatStatus", preheatStatus);
+        model.addAttribute("preheatNotifyStatus", preheatNotifyStatus);
+        model.addAttribute("formalStatus", formalStatus);
+        model.addAttribute("formalNotifyStatus", formalNotifyStatus);
+
+        model.addAttribute("prodNameLen", 10);
+        model.addAttribute("priceLen", 5);
+        model.addAttribute("prodUrlLen", 23);
+        model.addAttribute("smsLenLimit", 61);
+        return "operate/activity/view/view";
     }
 
     @RequestMapping("/activity/plan")
