@@ -9,8 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -30,5 +32,10 @@ public class SystemApplication {
         app.addListeners(new ApplicationPidFileWriter());
         app.run();
         log.info("系统管理模块 started up successfully at {} {}", LocalDate.now(), LocalTime.now());
+    }
+
+    @Bean
+    public ResourceUrlEncodingFilter resourceUrlEncodingFilter() {
+        return new ResourceUrlEncodingFilter();
     }
 }
