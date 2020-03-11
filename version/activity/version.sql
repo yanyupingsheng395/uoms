@@ -371,7 +371,7 @@ prompt Done.
 
 
 insert into t_config (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2)
-values ('op.daily.default.effectDays', '3', '每日运营效果统计默认天数', '0', 'APPS', null);
+values ('op.daily.default.effectDays', '5', '每日运营效果统计默认天数', '0', 'APPS', null);
 
 ALTER TABLE t_config MODIFY type_code1 not  NULL;
 alter table t_config modify value VARCHAR2(256);
@@ -484,6 +484,75 @@ COMMENT ON COLUMN uo_op_activity_plan.plan_status is '计划状态  尚未计算
 update uo_op_activity_detail d set d.plan_id=(
                                    select p.plan_id from uo_op_activity_plan p where p.head_id=d.head_id and p.plan_date_wid=d.plan_dt
   )
+
+alter table UO_OP_ACTIVITY_DETAIL modify plan_id NOT NULL;
+
+alter table UO_OP_ACTIVITY_PLAN add (EFFECT_FLAG varchar2(2) default 'N');
+comment on column UO_OP_ACTIVITY_PLAN.effect_flag is '效果是否计算 Y表示是 N表示否';
+
+alter table UO_OP_ACTIVITY_HEADER add (EFFECT_FLAG varchar2(2) default 'N');
+comment on column UO_OP_ACTIVITY_HEADER.effect_flag is '效果是否计算 Y表示是 N表示否';
+
+
+drop table UO_OP_ACTIVITY_EFFECT;
+
+-- Create table
+create table UO_OP_ACTIVITY_EFFECT
+(
+  head_id       NUMBER,
+  insert_dt     DATE,
+  kpi_id        NUMBER,
+  kpi_name      VARCHAR2(32),
+  allstage      NUMBER,
+  preheatall    NUMBER,
+  preheatnotify NUMBER,
+  preheatduring NUMBER,
+  normalall     NUMBER,
+  normalnotify  NUMBER,
+  normalduring  NUMBER,
+  kpi_type      VARCHAR2(2)
+);
+-- Add comments to the table
+comment on table UO_OP_ACTIVITY_EFFECT
+is '活动运营-效果统计';
+-- Add comments to the columns
+comment on column UO_OP_ACTIVITY_EFFECT.head_id
+is '头表ID';
+comment on column UO_OP_ACTIVITY_EFFECT.insert_dt
+is '写入日期';
+comment on column UO_OP_ACTIVITY_EFFECT.kpi_id
+is '指标ID';
+comment on column UO_OP_ACTIVITY_EFFECT.kpi_name
+is '指标名称';
+comment on column UO_OP_ACTIVITY_EFFECT.allstage
+is '整体活动';
+comment on column UO_OP_ACTIVITY_EFFECT.preheatall
+is '整体预售';
+comment on column UO_OP_ACTIVITY_EFFECT.preheatnotify
+is '预售通知';
+comment on column UO_OP_ACTIVITY_EFFECT.preheatduring
+is '预售期间';
+comment on column UO_OP_ACTIVITY_EFFECT.normalall
+is '整体正式';
+comment on column UO_OP_ACTIVITY_EFFECT.normalnotify
+is '正式通知';
+comment on column UO_OP_ACTIVITY_EFFECT.normalduring
+is '正式期间';
+comment on column UO_OP_ACTIVITY_EFFECT.kpi_type
+is '指标类型 0表示推送并转化  1表示推送并在推荐类目转化';
+-- Create/Recreate indexes
+create unique index UO_OP_ACTIVITY_EFFECT_U1 on UO_OP_ACTIVITY_EFFECT (HEAD_ID, KPI_ID, KPI_TYPE);
+
+
+alter table uo_op_activity_plan add(intercept_num number default 0);
+comment on column uo_op_activity_plan.intercept_num is '拦截人数';
+
+
+alter table uo_op_activity_plan add(cov_rate number,cov_amount number);
+comment on column uo_op_activity_plan.cov_rate is '转化率';
+comment on column uo_op_activity_plan.cov_amount is '转化金额';
+
+
 
 
 
