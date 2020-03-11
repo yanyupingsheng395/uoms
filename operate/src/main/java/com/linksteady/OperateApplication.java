@@ -28,6 +28,10 @@ public class OperateApplication {
 		log.info("用户成长系统启动成功.");
 	}
 
+	/**
+	 * 添加静态资源md5版本控制
+	 * @return
+	 */
 	@Bean
 	public ResourceUrlEncodingFilter resourceUrlEncodingFilter() {
 		return new ResourceUrlEncodingFilter();

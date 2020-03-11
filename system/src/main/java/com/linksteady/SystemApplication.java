@@ -34,6 +34,10 @@ public class SystemApplication {
         log.info("系统管理模块 started up successfully at {} {}", LocalDate.now(), LocalTime.now());
     }
 
+    /**
+     * 添加静态资源md5版本控制
+     * @return
+     */
     @Bean
     public ResourceUrlEncodingFilter resourceUrlEncodingFilter() {
         return new ResourceUrlEncodingFilter();

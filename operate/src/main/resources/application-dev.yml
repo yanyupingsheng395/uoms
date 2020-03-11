@@ -103,7 +103,7 @@ spring:
   cache:
     type:
       redis
-
+  # 添加静态资源md5版本控制
   resources:
     chain:
       strategy:
