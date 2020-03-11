@@ -273,3 +273,14 @@ $("#btn_effect").click(function () {
         $MB.n_warning("活动当前状态不允许查看效果！");
     }
 });
+
+$("#btn_view").click(function () {
+    let selected = $("#activityTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要查看的活动！');
+        return;
+    }
+    let headId = selected[0].headId;
+    window.location.href = "/page/activity/view?headId=" + headId;
+});

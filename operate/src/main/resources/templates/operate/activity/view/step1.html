@@ -1,0 +1,116 @@
+<div class="row">
+    <span class="navbar-page-title">活动基本信息</span>
+    <hr/>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <form class="form-horizontal" method="post" id="basic-add-form">
+            <input type="hidden" id="headId" th:value="${activityHead.headId}"/>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">活动类型</label>
+                        <div class="col-md-9">
+                            <div class="col-md-9" style="margin-top: 8px;">
+                                <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                    <input type="radio" disabled name="activityflag" value="S" th:checked="${activityHead.activityflag eq 'S'} ? true:false"><span>普通</span>
+                                </label>
+                                <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                    <input type="radio" disabled name="activityflag" value="B" th:checked="${activityHead.activityflag eq 'B'} ? true:false"><span>大促</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">活动名称</label>
+                        <div class="col-md-9">
+                            <input type="text" disabled class="form-control" name="activityName" th:value="${activityHead.activityName}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">是否预售</label>
+                        <div class="col-md-9" style="margin-top: 8px;">
+                            <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                <input type="radio" name="hasPreheat" value="1" disabled
+                                       th:checked="${activityHead.hasPreheat eq '1'} ? true:false"
+                                ><span>是</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                <input type="radio" name="hasPreheat" value="0" disabled
+                                       th:checked="${activityHead.hasPreheat eq '0'} ? true:false"
+                                ><span>否</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="preheatDiv" th:if="${activityHead.hasPreheat eq '1'}">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">预售提醒时间</label>
+                            <div class="col-md-9">
+                                <input type="text" name="preheatNotifyDt" id="preheatNotifyDt" class="form-control" th:value="${activityHead.preheatNotifyDt}" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">预售开始时间</label>
+                            <div class="col-md-9">
+                                <input type="text" name="preheatStartDt" id="preheatStartDt" class="form-control" th:value="${activityHead.preheatStartDt}" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">预售结束日期</label>
+                            <div class="col-md-9">
+                                <input class="form-control" id="preheatEndDt" name="preheatEndDt" th:value="${activityHead.preheatEndDt}" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 只有平台活动才会有 -->
+            <div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">正式提醒时间</label>
+                            <div class="col-md-9">
+                                <input type="text" name="formalNotifyDt" id="formalNotifyDt" class="form-control" th:value="${activityHead.formalNotifyDt}" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">正式开始时间</label>
+                            <div class="col-md-9">
+                                <input class="form-control" id="formalStartDt" name="formalStartDt" th:value="${activityHead.formalStartDt}" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">正式结束时间</label>
+                            <div class="col-md-9">
+                                <input class="form-control" id="formalEndDt" name="formalEndDt" th:value="${activityHead.formalEndDt}" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
