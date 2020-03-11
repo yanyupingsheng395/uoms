@@ -227,3 +227,6 @@ alter table t_config add (type_code1 varchar2(32),type_code2 varchar2(32));
 
 comment on column t_config.type_code1 is '参数分类1 MODEL表示模型，APPS表示应用 ETL表示etl的参数';
 comment on column t_config.type_code2 is '参数分类2';
+
+--20200311
+update T_PROPERTIES set value = '/**' where AKEY = 'spring.resources.chain.strategy.content.paths';

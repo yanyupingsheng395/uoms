@@ -103,13 +103,13 @@ spring:
   cache:
     type:
       redis
-
+  # 添加静态资源md5版本控制
   resources:
     chain:
       strategy:
         content:
           enabled: true
-          paths: /js/app/**, /css/**
+          paths: /**
   main:
     allow-bean-definition-overriding: true
 

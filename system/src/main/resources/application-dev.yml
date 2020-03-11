@@ -90,20 +90,21 @@ spring:
   thymeleaf:
     cache: false
 
+
   aop:
     proxy-target-class: true
   cache:
     type:
       redis
-
+  main:
+    allow-bean-definition-overriding: true
+  # 添加静态资源md5版本控制
   resources:
     chain:
       strategy:
         content:
           enabled: true
-          paths: /js/app/**, /css/**
-  main:
-    allow-bean-definition-overriding: true
+          paths: /**
 
 management:
   endpoints:
