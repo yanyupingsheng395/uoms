@@ -543,14 +543,15 @@ is '指标类型 0表示推送并转化  1表示推送并在推荐类目转化';
 -- Create/Recreate indexes
 create unique index UO_OP_ACTIVITY_EFFECT_U1 on UO_OP_ACTIVITY_EFFECT (HEAD_ID, KPI_ID, KPI_TYPE);
 
-
 alter table uo_op_activity_plan add(intercept_num number default 0);
 comment on column uo_op_activity_plan.intercept_num is '拦截人数';
-
 
 alter table uo_op_activity_plan add(cov_rate number,cov_amount number);
 comment on column uo_op_activity_plan.cov_rate is '转化率';
 comment on column uo_op_activity_plan.cov_amount is '转化金额';
+
+alter table uo_op_activity_convert_detail  add (plan_id number);
+comment on column uo_op_activity_convert_detail.plan_id is '计划ID';
 
 
 

@@ -208,7 +208,7 @@ $("#btn_plan").click(function () {
     let preheatNotifyStatus = selected[0]['preheatNotifyStatus'];
     let formalNotifyStatus = selected[0]['formalNotifyStatus'];
     let formalStatus = selected[0]['formalStatus'];
-    let flag = (preheatStatus === 'todo' && preheatNotifyStatus === 'todo' && formalNotifyStatus === 'todo' && formalStatus === 'todo');
+    let flag = (preheatStatus != 'todo' || preheatNotifyStatus != 'todo' || formalNotifyStatus != 'todo' || formalStatus != 'todo');
     if(flag) {
         window.location.href = "/page/activity/plan?id=" + headId;
     }else {
