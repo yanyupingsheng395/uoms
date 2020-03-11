@@ -72,9 +72,11 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
             redisMessageService.sendPushSingal(heartBeatInfo);
         }else if(signal.getSignalCode().equals(PushSignalEnum.SIGNAL_REFRESH.getSignalCode()))
         {
-            //刷新
             //重新加载到redis
             loadConfigToRedisAndRefreshProperties(prop,currentUser);
+            //通知推送端也重新加载配置
+            heartBeatInfo.setSignal(signal);
+            redisMessageService.sendPushSingal(heartBeatInfo);
         }else
         {
             //什么也不做
@@ -148,6 +150,7 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
                 throw new LinkSteadyException("初始化PushProperties,暂不支持的数据类型");
             }
 
+            field.setAccessible(true);
             descriptor = new PropertyDescriptor(pushPropertiesEnum.getFieldName(), pushProperties.getClass());
             Method writeMethod = descriptor.getWriteMethod();
 

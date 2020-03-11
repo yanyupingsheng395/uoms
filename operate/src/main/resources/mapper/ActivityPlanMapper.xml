@@ -15,6 +15,9 @@
         <result property="successNum" column="SUCCESS_NUM" jdbcType="DECIMAL"/>
         <result property="version" column="VERSION" jdbcType="DECIMAL"/>
         <result property="effectFlag" column="EFFECT_FLAG" jdbcType="VARCHAR"/>
+        <result property="covRate" column="COV_RATE" jdbcType="DECIMAL"/>
+        <result property="covAmount" column="COV_AMOUNT" jdbcType="DECIMAL"/>
+
     </resultMap>
 
     <resultMap id="PlanEffectResult" type="com.linksteady.operate.domain.ActivityPlanEffect">
@@ -63,7 +66,18 @@
     </insert>
 
     <select id="getPlanList" resultMap="planMap">
-        select UO_OP_ACTIVITY_PLAN.PLAN_ID,UO_OP_ACTIVITY_PLAN.HEAD_ID,ACTIVITY_NAME, UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM from UO_OP_ACTIVITY_PLAN
+        select UO_OP_ACTIVITY_PLAN.PLAN_ID,
+               UO_OP_ACTIVITY_PLAN.HEAD_ID,
+               ACTIVITY_NAME,
+               UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE,
+               USER_CNT,
+               PLAN_DATE_WID,
+               PLAN_STATUS,
+               PLAN_TYPE,
+               SUCCESS_NUM,
+               UO_OP_ACTIVITY_PLAN.COV_RATE,
+               UO_OP_ACTIVITY_PLAN.COV_AMOUNT
+        from UO_OP_ACTIVITY_PLAN
         left join UO_OP_ACTIVITY_HEADER on UO_OP_ACTIVITY_PLAN.HEAD_ID = UO_OP_ACTIVITY_HEADER.HEAD_ID
         where UO_OP_ACTIVITY_PLAN.HEAD_ID = #{headId} order by PLAN_DATE asc
     </select>

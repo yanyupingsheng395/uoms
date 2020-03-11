@@ -37,6 +37,9 @@ public class ActivityPlan {
 
      private String effectFlag;
 
+     private Double covRate;
+     private Double covAmount;
+
    public ActivityPlan() {}
 
     public ActivityPlan(Long headId,Date planDate,String stage,String planType) {
