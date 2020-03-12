@@ -1192,6 +1192,11 @@ function changePlan() {
     table4(data);
 }
 
+// 调整方案
+$("#changePlan").click(function () {
+    changePlan();
+});
+
 function covRowStyle(row, index) {
     if(row.covListId === $("#covListId").val()) {
         return {
