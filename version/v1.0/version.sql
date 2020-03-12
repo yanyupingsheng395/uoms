@@ -229,4 +229,4 @@ comment on column t_config.type_code1 is '参数分类1 MODEL表示模型，APPS
 comment on column t_config.type_code2 is '参数分类2';
 
 --20200311
-update T_PROPERTIES set value = '/**' where AKEY = 'spring.resources.chain.strategy.content.paths';
+update T_PROPERTIES set avalue = '/**' where AKEY = 'spring.resources.chain.strategy.content.paths';

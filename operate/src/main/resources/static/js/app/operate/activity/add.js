@@ -238,7 +238,7 @@ function submitActivity(type) {
             }, function () {
                 if(type === 'DURING') {
                     if(stage === 'preheat') {
-                        if(preheatStatus !== 'edit') {
+                        if(preheatStatus !== 'edit' && preheatStatus !== '' && preheatStatus !== null && preheatStatus !== undefined) {
                             $MB.n_success("保存计划成功！");
                             setTimeout(function () {
                                 window.location.href = "/page/activity";
@@ -247,7 +247,7 @@ function submitActivity(type) {
                             submitData(headId, type);
                         }
                     }else {
-                        if(formalStatus !== 'edit') {
+                        if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
                             $MB.n_success("保存计划成功！");
                             setTimeout(function () {
                                 window.location.href = "/page/activity";
@@ -258,7 +258,7 @@ function submitActivity(type) {
                     }
                 }else {
                     if(stage === 'preheat') {
-                        if(preheatNotifyStatus !== 'edit') {
+                        if(preheatNotifyStatus !== 'edit' && preheatNotifyStatus !== '' && preheatNotifyStatus !== null && preheatNotifyStatus !== undefined) {
                             $MB.n_success("保存计划成功！");
                             setTimeout(function () {
                                 window.location.href = "/page/activity";
@@ -267,7 +267,7 @@ function submitActivity(type) {
                             submitData(headId, type);
                         }
                     }else {
-                        if(formalNotifyStatus !== 'edit') {
+                        if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
                             $MB.n_success("保存计划成功！");
                             setTimeout(function () {
                                 window.location.href = "/page/activity";
@@ -467,7 +467,10 @@ function setTitle(stage) {
 // 时间转换
 function timeRevert(dateStr) {
     var dateArr = dateStr.split("-");
-    return dateArr[0] + "年" + dateArr[1] + "月" + dateArr[2] + "日";
+    var year = (dateArr[0] !== undefined && dateArr[0] !== '' && dateArr[0] !== null) ? dateArr[0] : '-';
+    var month = (dateArr[1] !== undefined && dateArr[1] !== '' && dateArr[1] !== null) ? dateArr[1] : '-';
+    var day = (dateArr[2] !== undefined && dateArr[2] !== '' && dateArr[2] !== null) ? dateArr[2] : '-';
+    return year + "年" + month + "月" + day + "日";
 }
 
 // 初始化日期控件
@@ -1161,8 +1164,10 @@ function resetTmpInfo() {
 function geConvertInfo() {
     $.get("/activity/geConvertInfo", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
         var data = r.data;
+        var covRate = data['covRate'];
+        covRate = (covRate !== null && covRate !== '' && covRate !== undefined) ? parseFloat(data['covRate']) * 100 : '';
         $("#covListId").val(data['covListId']);
-        $("#covRate").val(parseFloat(data['covRate']) * 100);
+        $("#covRate").val(covRate);
         $("#expectPushNum").val(data['expectPushNum']);
         $("#expectCovNum").val(data['expectCovNum']);
     });
@@ -1186,6 +1191,11 @@ function changePlan() {
     }];
     table4(data);
 }
+
+// 调整方案
+$("#changePlan").click(function () {
+    changePlan();
+});
 
 function covRowStyle(row, index) {
     if(row.covListId === $("#covListId").val()) {
