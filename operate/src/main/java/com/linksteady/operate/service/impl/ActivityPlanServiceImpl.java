@@ -407,7 +407,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     @Override
     public ActivityPlanEffectVO getPlanEffectById(Long planId,String kpiType) {
         //获取转化数据
-        ActivityPlanEffect activityPlanEffect=activityPlanMapper.selectPlanEffect();
+        ActivityPlanEffect activityPlanEffect=activityPlanMapper.selectPlanEffect(planId);
         //总人数  成功推送人数 转化人数  转化金额  购买SPU转化人数  购买SPU转化金额
 
         ActivityPlanEffectVO activityPlanEffectVO=new ActivityPlanEffectVO();
@@ -439,7 +439,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 activityPlanEffectVO.setPushPerIncome(0D);
             }else
             {
-                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getSpuAmount()/(double)activityPlanEffect.getSuccessCount()*0.42*100,2, RoundingMode.DOWN));
+                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getSpuAmount()/((double)activityPlanEffect.getSuccessCount()*0.42),2, RoundingMode.DOWN));
             }
 
         }else
@@ -464,7 +464,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 activityPlanEffectVO.setPushPerIncome(0D);
             }else
             {
-                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getCovAmount()/(double)activityPlanEffect.getSuccessCount()*0.42*100,2, RoundingMode.DOWN));
+                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getCovAmount()/((double)activityPlanEffect.getSuccessCount()*0.42),2, RoundingMode.DOWN));
             }
 
         }

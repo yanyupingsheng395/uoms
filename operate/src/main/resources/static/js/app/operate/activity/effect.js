@@ -98,7 +98,7 @@ function init_header() {
     $.get("/activity/getEffectInfo", {headId: headId},function (r) {
         if(r.code === 200) {
             var data = r.msg;
-            $("#effectInfo").html('').append('<i class="mdi mdi-alert-circle-outline"></i>从' + data["planDt"] + '开始对'+data['userCount']+'个用户进行个性化推送培养。');
+            $("#effectInfo").html('').append('<i class="mdi mdi-alert-circle-outline"></i>从' + data["beginDt"] + '开始对'+data['userCount']+'个用户进行个性化推送培养。');
         }else {
             $MB.n_danger(r.msg);
         }
