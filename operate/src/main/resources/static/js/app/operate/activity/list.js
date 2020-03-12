@@ -208,7 +208,18 @@ $("#btn_plan").click(function () {
     let preheatNotifyStatus = selected[0]['preheatNotifyStatus'];
     let formalNotifyStatus = selected[0]['formalNotifyStatus'];
     let formalStatus = selected[0]['formalStatus'];
-    let flag = (preheatStatus != 'todo' || preheatNotifyStatus != 'todo' || formalNotifyStatus != 'todo' || formalStatus != 'todo');
+
+    preheatNotifyStatus = 'edit' || preheatNotifyStatus == 'doing'
+    let flag = true;
+    if((preheatStatus !== '' && preheatStatus !== null) && (preheatNotifyStatus !== '' && preheatNotifyStatus !== null)) {
+        if(preheatStatus === 'edit' && preheatNotifyStatus === 'edit' && formalNotifyStatus === 'edit' && formalStatus === 'edit') {
+            flag = false;
+        }
+    }else {
+        if(formalNotifyStatus === 'edit' && formalStatus === 'edit') {
+            flag = false;
+        }
+    }
     if(flag) {
         window.location.href = "/page/activity/plan?id=" + headId;
     }else {

@@ -467,7 +467,10 @@ function setTitle(stage) {
 // 时间转换
 function timeRevert(dateStr) {
     var dateArr = dateStr.split("-");
-    return dateArr[0] + "年" + dateArr[1] + "月" + dateArr[2] + "日";
+    var year = (dateArr[0] !== undefined && dateArr[0] !== '' && dateArr[0] !== null) ? dateArr[0] : '-';
+    var month = (dateArr[1] !== undefined && dateArr[1] !== '' && dateArr[1] !== null) ? dateArr[1] : '-';
+    var day = (dateArr[2] !== undefined && dateArr[2] !== '' && dateArr[2] !== null) ? dateArr[2] : '-';
+    return year + "年" + month + "月" + day + "日";
 }
 
 // 初始化日期控件
@@ -1145,8 +1148,10 @@ function resetTmpInfo() {
 function geConvertInfo() {
     $.get("/activity/geConvertInfo", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
         var data = r.data;
+        var covRate = data['covRate'];
+        covRate = (covRate !== null && covRate !== '' && covRate !== undefined) ? parseFloat(data['covRate']) * 100 : '';
         $("#covListId").val(data['covListId']);
-        $("#covRate").val(parseFloat(data['covRate']) * 100);
+        $("#covRate").val(covRate);
         $("#expectPushNum").val(data['expectPushNum']);
         $("#expectCovNum").val(data['expectCovNum']);
     });

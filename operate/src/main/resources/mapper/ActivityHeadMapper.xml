@@ -113,8 +113,8 @@
 
     <select id="getActivityStatus" resultType="int">
         select count(1) from UO_OP_ACTIVITY_HEADER
-        where head_id = #{id} and (PREHEAT_STATUS in ('todo', 'doing') or FORMAL_STATUS in ('todo', 'doing') or
-        PREHEAT_NOTIFY_STATUS in ('todo', 'doing') or FORMAL_NOTIFY_STATUS in ('todo', 'doing'))
+        where head_id = #{id} and (PREHEAT_STATUS in ('todo', 'doing', 'done') or FORMAL_STATUS in ('todo', 'doing', 'done') or
+        PREHEAT_NOTIFY_STATUS in ('todo', 'doing', 'done') or FORMAL_NOTIFY_STATUS in ('todo', 'doing', 'done'))
     </select>
 
     <select id="getPreheatStatus" resultType="string">
