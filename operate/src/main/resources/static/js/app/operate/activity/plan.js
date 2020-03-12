@@ -246,7 +246,14 @@ function initGroupColumn(planType) {
          title: '人数（人）',
          align: 'center',
          formatter: function (value, row, index) {
-             return "<a style='cursor: pointer;' onclick=\"clickUserGroup('"+row.planId+"','"+row.groupId+"','"+planType+"')\">" + value + "</a>";
+             if(value>0)
+             {
+                 return "<a style='cursor: pointer;' onclick=\"clickUserGroup('"+row.planId+"','"+row.groupId+"','"+planType+"')\">" + value + "</a>";
+             }else
+             {
+                 return value;
+             }
+
          }
      });
 

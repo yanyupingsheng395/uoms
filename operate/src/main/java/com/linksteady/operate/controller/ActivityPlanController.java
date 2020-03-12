@@ -93,6 +93,7 @@ public class ActivityPlanController {
         vo.setProdActivityProp("-");
         vo.setGroupName("合计");
         vo.setUserNum(sum);
+        vo.setPlanId(String.valueOf(planId));
         result.add(vo);
 
         return result;

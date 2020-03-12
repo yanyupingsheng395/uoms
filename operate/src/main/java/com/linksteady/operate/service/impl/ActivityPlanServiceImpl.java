@@ -14,11 +14,13 @@ import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.domain.enums.ActivityStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.ActivityPlanService;
+import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransActivityContentThread;
 import com.linksteady.operate.vo.ActivityContentVO;
 import com.linksteady.operate.vo.ActivityPlanEffectVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -52,6 +54,9 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
     @Autowired
     private ActivityDetailMapper activityDetailMapper;
+
+    @Autowired
+    private ConfigService configService;
 
     @Autowired
     ShortUrlService shortUrlService;
@@ -406,6 +411,20 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
     @Override
     public ActivityPlanEffectVO getPlanEffectById(Long planId,String kpiType) {
+
+        //获取单条短信的价格
+        String price=configService.getValueByName("op.push.smsPrice");
+
+        double smsPrice=0d;
+        if(StringUtils.isEmpty(price))
+        {
+            smsPrice=0.042d;
+        }else
+        {
+             smsPrice=Double.parseDouble(price);
+        }
+
+
         //获取转化数据
         ActivityPlanEffect activityPlanEffect=activityPlanMapper.selectPlanEffect(planId);
         //总人数  成功推送人数 转化人数  转化金额  购买SPU转化人数  购买SPU转化金额
@@ -464,7 +483,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 activityPlanEffectVO.setPushPerIncome(0D);
             }else
             {
-                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getCovAmount()/((double)activityPlanEffect.getSuccessCount()*0.42),2, RoundingMode.DOWN));
+                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getCovAmount()/((double)activityPlanEffect.getSuccessCount()*smsPrice),2, RoundingMode.DOWN));
             }
 
         }
