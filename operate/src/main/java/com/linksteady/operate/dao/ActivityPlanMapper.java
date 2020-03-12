@@ -56,7 +56,7 @@ public interface ActivityPlanMapper {
     /**
      * 执行计划效果累计数据
      */
-    ActivityPlanEffect selectPlanEffect();
+    ActivityPlanEffect selectPlanEffect(Long planId);
 
     /**
      * 效果的按天数据

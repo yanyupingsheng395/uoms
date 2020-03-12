@@ -266,7 +266,7 @@ public class ActivityPlanController {
 
         Map<String,Object> result=Maps.newHashMap();
         result.put("planDt",new SimpleDateFormat("yyyy年MM月dd日").format(activityPlan.getPlanDate()));
-        result.put("userCount",String.valueOf(activityPlan.getUserCnt()));
+        result.put("userCount",String.valueOf(activityPlan.getSuccessNum()));
         //活动效果
         result.put("activitPf", activitPf);
         return ResponseBo.okWithData(null,result);
