@@ -238,7 +238,7 @@ function submitActivity(type) {
             }, function () {
                 if(type === 'DURING') {
                     if(stage === 'preheat') {
-                        if(preheatStatus !== 'edit') {
+                        if(preheatStatus !== 'edit' && preheatStatus !== '' && preheatStatus !== null && preheatStatus !== undefined) {
                             $MB.n_success("保存计划成功！");
                             setTimeout(function () {
                                 window.location.href = "/page/activity";
@@ -247,7 +247,7 @@ function submitActivity(type) {
                             submitData(headId, type);
                         }
                     }else {
-                        if(formalStatus !== 'edit') {
+                        if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
                             $MB.n_success("保存计划成功！");
                             setTimeout(function () {
                                 window.location.href = "/page/activity";
@@ -258,7 +258,7 @@ function submitActivity(type) {
                     }
                 }else {
                     if(stage === 'preheat') {
-                        if(preheatNotifyStatus !== 'edit') {
+                        if(preheatNotifyStatus !== 'edit' && preheatNotifyStatus !== '' && preheatNotifyStatus !== null && preheatNotifyStatus !== undefined) {
                             $MB.n_success("保存计划成功！");
                             setTimeout(function () {
                                 window.location.href = "/page/activity";
@@ -267,7 +267,7 @@ function submitActivity(type) {
                             submitData(headId, type);
                         }
                     }else {
-                        if(formalNotifyStatus !== 'edit') {
+                        if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
                             $MB.n_success("保存计划成功！");
                             setTimeout(function () {
                                 window.location.href = "/page/activity";
