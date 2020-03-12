@@ -198,7 +198,7 @@ function getUserGroupTable(planId,planType) {
             }
         },
         onLoadSuccess:function(data){
-            var n=data.length>2?data.length-2:data.length;
+            var n=data.length>2?data.length-1:data.length;
             $("a[data-toggle='tooltip']").tooltip();
             //合并单元格
             $( "#userGroupTable" ).bootstrapTable('mergeCells',{index:0, field:"prodActivityProp", colspan: 1, rowspan:n})
