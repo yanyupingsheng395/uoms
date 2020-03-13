@@ -45,11 +45,6 @@ public class DailyServiceImpl implements DailyService {
     @Autowired
     ConfigService configService;
 
-    /**
-     * 效果统计最大时间长度
-     */
-    private final int MAX_TASK_DAY = 10;
-
     @Override
     public List<DailyHead> getPageList(int start, int end, String touchDt) {
         return dailyMapper.getPageList(start, end, touchDt);
@@ -80,69 +75,72 @@ public class DailyServiceImpl implements DailyService {
     public Map<String, Object> getPushData(String headId) {
         Map<String, Object> result = Maps.newHashMap();
         String dateFormat = "yyyyMMdd";
-        List<String> xdatas = Lists.newLinkedList();
+        List<LocalDate> xdatas = Lists.newLinkedList();
 
+        DailyHead dailyHead=dailyMapper.getDailyHeadById(headId);
         // 提交任务日期
-        String taskDt = dailyMapper.getDailyHeadById(headId).getTouchDtStr();
+        String taskDt =dailyHead.getTouchDtStr();
+
+        //获取任务观察的天数
+        int effectDays=dailyHead.getEffectDays().intValue();
+
+        //任务提交的日期
         LocalDate taskDtDate = LocalDate.parse(taskDt, DateTimeFormatter.ofPattern(dateFormat));
+
         // 任务期最后时间
-        LocalDate maxDate = taskDtDate.plusDays(MAX_TASK_DAY + 1);
-        // 判断当前时间与最后时间
-        boolean after = LocalDate.now().isAfter(taskDtDate.plusDays(MAX_TASK_DAY + 1));
-        String endDate;
-        if (after) {
-            endDate = maxDate.format(DateTimeFormatter.ofPattern(dateFormat));
-        } else {
-            endDate = LocalDate.now().format(DateTimeFormatter.ofPattern(dateFormat));
-        }
-        LocalDate end = LocalDate.parse(endDate, DateTimeFormatter.ofPattern(dateFormat));
-        while (taskDtDate.isBefore(end.plusDays(1))) {
-            xdatas.add(taskDtDate.format(DateTimeFormatter.ofPattern(dateFormat)));
+        LocalDate maxDate = taskDtDate.plusDays(effectDays+1);
+
+        //时间轴的数据
+        while (taskDtDate.isBefore(maxDate)) {
+            xdatas.add(taskDtDate);
             taskDtDate = taskDtDate.plusDays(1);
         }
 
         List<DailyStatis> dataList = dailyMapper.getDailyStatisList(headId);
-        Map<String, Long> convertNumMap = dataList.stream().collect(
-                Collectors.toMap(
-                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
-                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertNum).orElse(0L),
-                        (k1, k2) -> k2
-                )
-        );
-        Map<String, Double> convertRateMap = dataList.stream().collect(
-                Collectors.toMap(
-                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
-                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertRate).orElse(0D),
-                        (k1, k2) -> k2
-                )
-        );
-        Map<String, Long> convertSpuNumMap = dataList.stream().collect(
+        Map<String,DailyStatis> dailyStatisMap=dataList.stream().collect(Collectors.toMap(DailyStatis::getConversionDateStr,a->a));
 
-                Collectors.toMap(
-                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
-                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertSpuNum).orElse(0L),
-                        (k1, k2) -> k2
-                )
-        );
-        Map<String, Double> convertSpuRateMap = dataList.stream().collect(
-                Collectors.toMap(
-                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConversionDateStr).orElse("0"),
-                        dailyStatis -> Optional.ofNullable(dailyStatis).map(DailyStatis::getConvertSpuRate).orElse(0D),
-                        (k1, k2) -> k2
-                )
-        );
-        xdatas.forEach(x -> {
-            convertNumMap.putIfAbsent(x, 0L);
-            convertRateMap.putIfAbsent(x, 0D);
-            convertSpuNumMap.putIfAbsent(x, 0L);
-            convertSpuRateMap.putIfAbsent(x, 0D);
+        //转化人数
+        List<Long> convertNumList=Lists.newArrayList();
+        List<Double> convertRateList =Lists.newArrayList();
+        List<Long> convertSpuNumList=Lists.newArrayList();
+        List<Double> convertSpuRateList=Lists.newArrayList();
+
+        xdatas.forEach(x->{
+             //判断当前是否有数据
+            DailyStatis dailyStatis=dailyStatisMap.get(x.format(DateTimeFormatter.ofPattern(dateFormat)));
+
+            //找不到转化数据
+            if(null==dailyStatis)
+            {
+                if(x.isAfter(LocalDate.now())||x.isEqual(LocalDate.now()))
+                {
+                    //填充空值
+                    convertNumList.add(null);
+                    convertRateList.add(null);
+                    convertSpuNumList.add(null);
+                    convertSpuRateList.add(null);
+                }else
+                {
+                    //填充0
+                    convertNumList.add(0L);
+                    convertRateList.add(0D);
+                    convertSpuNumList.add(0L);
+                    convertSpuRateList.add(0D);
+                }
+            }else
+            {
+                convertNumList.add(dailyStatis.getConvertNum());
+                convertRateList.add(dailyStatis.getConvertRate());
+                convertSpuNumList.add(dailyStatis.getConvertSpuNum());
+                convertSpuRateList.add(dailyStatis.getConvertSpuRate());
+            }
         });
 
-        result.put("xdata", xdatas);
-        result.put("ydata1", new ArrayList<>(convertNumMap.values()));
-        result.put("ydata2", new ArrayList<>(convertRateMap.values()));
-        result.put("ydata3", new ArrayList<>(convertSpuNumMap.values()));
-        result.put("ydata4", new ArrayList<>(convertSpuRateMap.values()));
+        result.put("xdata", xdatas.stream().map(x->x.format(DateTimeFormatter.ofPattern(dateFormat))).collect(Collectors.toList()));
+        result.put("ydata1", convertNumList);
+        result.put("ydata2", convertRateList);
+        result.put("ydata3", convertSpuNumList);
+        result.put("ydata4", convertSpuRateList);
         return result;
     }
 
