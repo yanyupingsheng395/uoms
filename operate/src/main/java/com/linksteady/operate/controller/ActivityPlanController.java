@@ -160,8 +160,6 @@ public class ActivityPlanController {
      */
     @PostMapping("/sopPlan")
     public  ResponseBo sopPlan(@RequestParam Long planId) {
-
-        //todo 此次用乐观锁进行控制
         if(StringUtils.isEmpty(planId))
         {
             return ResponseBo.error("非法参数，请通过系统界面进行操作！");

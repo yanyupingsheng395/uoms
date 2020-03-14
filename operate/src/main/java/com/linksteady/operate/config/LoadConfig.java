@@ -30,8 +30,6 @@ public class LoadConfig implements CommandLineRunner {
         {
             throw new LinkSteadyException("无法正确加载到配置，请检查");
         }
-        //开启监控线程
-        startThread();
     }
 
     /**
@@ -46,15 +44,6 @@ public class LoadConfig implements CommandLineRunner {
         pushPropertiesService.loadConfigToRedisAndRefreshProperties(pushProperties,"init");
 
         return pushProperties;
-    }
-
-
-    /**
-     * 开启监控线程
-     */
-    private void startThread()
-    {
-        //TODO 待monitor完成后在此处开启线程
     }
 
 

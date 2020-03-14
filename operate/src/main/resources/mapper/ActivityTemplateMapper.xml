@@ -39,32 +39,6 @@
         where TMP_CODE = #{code}
     </update>
 
-    <select id="getTemplateList" resultMap="base">
-        select * from (
-          select ROWNUM rn, t.* from (
-            select TMP_CODE, TMP_CONTENT, TMP_CONTENT_NORMAL from UO_OP_ACTIVITY_TEMPLATE
-            <if test="code != null and code != ''">
-                <where>
-                    TMP_CODE = #{code}
-                </where>
-            </if>
-          ) t where ROWNUM &lt;= #{end}
-        ) where rn &gt;= #{start}
-    </select>
-
-    <select id="getTotalCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_TEMPLATE
-        <if test="code != null and code != ''">
-            <where>
-                TMP_CODE = #{code}
-            </where>
-        </if>
-    </select>
-
-    <select id="checkCode" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}
-    </select>
-
     <select id="getTemplateTableData" resultMap="templateMap">
         select * from (
         with v1 as (select TMP_CODE, listagg(ACTIVITY_TYPE, ',') within group ( order by SMS_TEMPLATE_CODE ) SCENE

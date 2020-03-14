@@ -28,16 +28,6 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     private ConfigService configService;
 
     @Override
-    public List<ActivityTemplate> getTemplateList(int startRow, int endRow, String code) {
-        return activityTemplateMapper.getTemplateList(startRow, endRow, code);
-    }
-
-    @Override
-    public int checkCode(String code) {
-        return activityTemplateMapper.checkCode(code);
-    }
-
-    @Override
     public ActivityTemplate getReplacedTmp(String code) {
         ActivityTemplate activityTemplate = activityTemplateMapper.getTemplate(code);
         String isProdUrl = activityTemplate.getIsProdUrl();
@@ -77,11 +67,6 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
             return x;
         }).collect(Collectors.toList());
         return templateTableData;
-    }
-
-    @Override
-    public int getTotalCount(String code) {
-        return activityTemplateMapper.getTotalCount(code);
     }
 
     @Override

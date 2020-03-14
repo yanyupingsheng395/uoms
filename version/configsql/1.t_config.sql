@@ -134,10 +134,10 @@ insert into t_config (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2)
 values ('op.push.OpenCallback', 'Y', '是否开启获取上行消息和状态报告 Y表示是 N表示否', '18', 'APPS', 'push');
 
 insert into t_config (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2)
-values ('op.push.clAccount', '***', '创蓝253账号', '30', 'APPS', 'push');
+values ('op.push.clAccount', '-', '创蓝253账号  -表示为空', '30', 'APPS', 'push');
 
 insert into t_config (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2)
-values ('op.push.clPassword', '***', '创蓝253密码', '31', 'APPS', 'push');
+values ('op.push.clPassword', '-', '创蓝253密码  -表示为空', '31', 'APPS', 'push');
 
 insert into t_config (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2)
 values ('op.push.clRequestServerUrl', 'http://smssh1.253.com/msg/send/json', '创蓝253发送地址', '32', 'APPS', 'push');
@@ -149,10 +149,10 @@ insert into t_config (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2)
 values ('op.push.clReportRequestUrl', 'http://smssh1.253.com/pull/report', '创蓝253获取状态报告地址', '34', 'APPS', 'push');
 
 insert into t_config (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2)
-values ('op.push.montnetsAccount', '***', '梦网云通信账号', '40', 'APPS', 'push');
+values ('op.push.montnetsAccount', '1234', '梦网云通信账号  -表示为空', '40', 'APPS', 'push');
 
 insert into t_config (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2)
-values ('op.push.montnetsPassword', '***', '梦网云通信密码', '41', 'APPS', 'push');
+values ('op.push.montnetsPassword', '1234', '梦网云通信密码  -表示为空', '41', 'APPS', 'push');
 
 insert into t_config (NAME, VALUE, COMMENTS, ORDER_NUM, TYPE_CODE1, TYPE_CODE2)
 values ('op.push.montnetsMasterIpAddress', 'api02.monyun.cn:7901/sms/v2/std/', '梦网云通信发送地址', '42', 'APPS', 'push');

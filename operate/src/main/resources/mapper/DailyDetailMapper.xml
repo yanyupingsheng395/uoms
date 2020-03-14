@@ -128,8 +128,9 @@
     </select>
 
     <select id="getUserList" resultMap="baseResult">
-        SELECT *
-        FROM (
+        SELECT * FROM(
+        select t.*, ROWNUM RN
+        from (
                  select
                      T1.HEAD_ID,
                      T2.DAILY_DETAIL_ID,
@@ -143,8 +144,7 @@
                      T2.GROWTH_STRATEGY_ID,
                      T3.IS_COUPON,
                      T2.REC_PIECE_PRICE,
-                     T2.GROUP_ID,
-                     ROWNUM   RN
+                     T2.GROUP_ID
                  FROM UO_OP_DAILY_HEADER T1,
                       UO_OP_DAILY_DETAIL T2,
                       UO_OP_DAILY_TEMPLATE_CONFIG T3,
@@ -153,8 +153,11 @@
                    AND T2.GROUP_ID = T3.GROUP_ID
                    AND T3.SMS_CODE = SMS.SMS_CODE
                    AND T1.HEAD_ID = #{headId}
-                   AND ROWNUM &lt;= #{end}
-             ) WHERE RN &gt;= #{start}
+                 ORDER BY T2.DAILY_DETAIL_ID DESC
+             ) t
+             WHERE  ROWNUM &lt;=#{end}
+        )
+        WHERE RN &gt;= #{start}
     </select>
 
     <update id="insertPushContentTemp">

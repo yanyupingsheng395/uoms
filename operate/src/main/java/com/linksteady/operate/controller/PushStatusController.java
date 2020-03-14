@@ -92,7 +92,6 @@ public class PushStatusController extends BaseController {
         {
             return ResponseBo.error("开启服务失败,服务已经是开启状态！");
         }
-
     }
 
     /**
@@ -205,9 +204,38 @@ public class PushStatusController extends BaseController {
     public ResponseBo getPushProperties() {
         List<Tconfig> list=pushPropertiesService.selectPushConfigList();
 
+        Map<String,String> result=Maps.newHashMap();
+
+        //对用户名和密码进行处理
+        list.stream().forEach(x->{
+            if(x.getName().indexOf("Account")!=-1||x.getName().indexOf("Password")!=-1)
+            {
+                if(!"-".equals(x.getValue()))
+                {
+                    x.setValue("******");
+                }
+            }
+
+            if("op.push.pushVendor".equals(x.getName()))
+            {
+                if("MONTNETS".equals(x.getValue()))
+                {
+                    result.put("vendorName","梦网云通讯");
+                }else  if("CHUANGLAN".equals(x.getValue()))
+                {
+                    result.put("vendorName","创蓝253");
+                }else if("NONE".equals(x.getValue()))
+                {
+                    result.put("vendorName","无");
+                }
+            }
+
+        });
+
         list = list.stream().sorted(Comparator.comparing(Tconfig::getOrderNum, Comparator.nullsLast(Integer::compareTo)))
                 .collect(Collectors.toList());
-        return ResponseBo.okOverPaging(null, 0, list);
+
+        return ResponseBo.okWithData(result, list);
     }
 
     /**

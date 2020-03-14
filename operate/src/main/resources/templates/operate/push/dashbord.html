@@ -36,23 +36,23 @@
                 <div class="row">
                     <div class="col-sm-8">
                         <div class="btn-group-sm" role="group">
-                            <a class="btn btn-primary" id="startPush" onclick="start()">
+                            <a class="btn btn-primary" id="startPush" onclick="start()" shiro:hasPermission="pushadmin">
                                 <i class="fa fa-play"></i> 启动推送
                             </a>
-                            <a class="btn btn-danger" id="stopPush" onclick="stop()">
+                            <a class="btn btn-danger" id="stopPush" onclick="stop()" shiro:hasPermission="pushadmin">
                                 <i class="fa fa-stop"></i> 停止推送
                             </a>
-                            <a class="btn btn-dark" id="singleTest" onclick="singleTest()">
+                            <a class="btn btn-dark" id="singleTest" onclick="singleTest()" shiro:hasPermission="pushadmin">
                                 <i class="fa fa-envelope"></i> 单条推送测试
                             </a>
-                            <a class="btn btn-dark" id="batchTest" onclick="batchTest()">
+                            <a class="btn btn-dark" id="batchTest" onclick="batchTest()" shiro:hasPermission="pushadmin">
                                 <i class="fa fa-list-alt"></i> 批量推送测试
                             </a>
 
-                            <a class="btn btn-brown" id="noticeRefresh" onclick="noticeRefresh()">
+                            <a class="btn btn-brown" id="noticeRefresh" onclick="noticeRefresh()" shiro:hasPermission="pushadmin">
                                 <i class="fa fa-list-alt"></i> 通知推送端重新加载配置
                             </a>
-                            <a class="btn btn-brown" id="noticePrint" onclick="noticePrint()">
+                            <a class="btn btn-brown" id="noticePrint" onclick="noticePrint()" shiro:hasPermission="pushadmin">
                                 <i class="fa fa-list-alt"></i> 通知推送端打印推送配置
                             </a>
                         </div>

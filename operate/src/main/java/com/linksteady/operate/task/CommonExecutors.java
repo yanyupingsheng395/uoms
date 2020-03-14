@@ -27,7 +27,7 @@ public class CommonExecutors {
         DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<ExecSteps> execStepsList=execStepsMapper.selctStepList(keyName);
 
-        log.info("###############开始计算 {} ,合计步骤:{} 步 ###############",EffectExecType.EFFECT_ACTIVITY_KEY.getDescByKey(keyName),execStepsList.size());
+        log.info("###############开始计算 {} ,合计步骤:{} 步 ###############",ExecType.EFFECT_ACTIVITY_KEY.getDescByKey(keyName),execStepsList.size());
 
         ExecSteps execSteps=null;
         //遍历
@@ -71,7 +71,7 @@ public class CommonExecutors {
 
         }
 
-        log.info("###############完成计算 {} ,完成的时间为{} ###############",EffectExecType.EFFECT_ACTIVITY_KEY.getDescByKey(keyName),dtf2.format(LocalDateTime.now()));
+        log.info("###############完成计算 {} ,完成的时间为{} ###############",ExecType.EFFECT_ACTIVITY_KEY.getDescByKey(keyName),dtf2.format(LocalDateTime.now()));
 
     }
 }
