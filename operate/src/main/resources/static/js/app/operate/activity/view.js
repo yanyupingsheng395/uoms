@@ -361,7 +361,7 @@ function getProductInfo() {
                 title: '非活动日常单价（元/件）'
             }, {
                 field: 'groupId',
-                title: '活动动机制',
+                title: '活动机制',
                 formatter: function (value, row, index) {
                     var res = "-";
                     if(value === '1') {
