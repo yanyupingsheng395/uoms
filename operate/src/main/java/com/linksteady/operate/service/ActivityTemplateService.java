@@ -10,8 +10,6 @@ import java.util.List;
  */
 public interface ActivityTemplateService {
 
-    int getTotalCount(String code);
-
     void saveTemplate(ActivityTemplate activityTemplate);
 
     int refrenceCount(String smsCode);
@@ -21,10 +19,6 @@ public interface ActivityTemplateService {
     ActivityTemplate getTemplate(String tmpCode);
 
     void update(ActivityTemplate activityTemplate);
-
-    List<ActivityTemplate> getTemplateList(int start, int end, String code);
-
-    int checkCode(String code);
 
     ActivityTemplate getReplacedTmp(String code);
 

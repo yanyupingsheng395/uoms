@@ -434,7 +434,6 @@ public class DailyTaskController {
         return ResponseBo.okWithData(null, result);
     }
 
-
     @GetMapping("/getDefaultGroup")
     public ResponseBo getDefaultGroup() {
         return ResponseBo.okWithData(null, configService.getValueByName("op.daily.pathactive.list"));

@@ -23,8 +23,14 @@ function getTableData() {
             title: '备注'
         }]
     };
-    $MB.initTable('configTable', settings);
+    $('#configTable').bootstrapTable('destroy').bootstrapTable(settings);
 }
+
+$.get("/push/getPushProperties", {}, function (r) {
+    var dataList = r.data;
+    $("#vendor").text(r.msg.vendorName);
+    $("#configTable").bootstrapTable('load', dataList);
+});
 
 
 

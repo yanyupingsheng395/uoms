@@ -198,7 +198,7 @@ function getUserGroupTable(planId,planType) {
             }
         },
         onLoadSuccess:function(data){
-            var n=data.length>2?data.length-2:data.length;
+            var n=data.length>2?data.length-1:data.length;
             $("a[data-toggle='tooltip']").tooltip();
             //合并单元格
             $( "#userGroupTable" ).bootstrapTable('mergeCells',{index:0, field:"prodActivityProp", colspan: 1, rowspan:n})
@@ -246,7 +246,14 @@ function initGroupColumn(planType) {
          title: '人数（人）',
          align: 'center',
          formatter: function (value, row, index) {
-             return "<a style='cursor: pointer;' onclick=\"clickUserGroup('"+row.planId+"','"+row.groupId+"','"+planType+"')\">" + value + "</a>";
+             if(value>0)
+             {
+                 return "<a style='cursor: pointer;' onclick=\"clickUserGroup('"+row.planId+"','"+row.groupId+"','"+planType+"')\">" + value + "</a>";
+             }else
+             {
+                 return value;
+             }
+
          }
      });
 

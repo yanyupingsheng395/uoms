@@ -136,7 +136,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                 pool = new ThreadPoolExecutor(8, 8, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());;
 
                 //分页多线程处理
-
                 int page=pushUserCount%pageSize==0?pushUserCount/pageSize:(pushUserCount/pageSize+1);
 
                 List taskList= Lists.newArrayList();
