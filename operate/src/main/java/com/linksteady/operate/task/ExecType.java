@@ -5,20 +5,21 @@ public enum ExecType {
     EFFECT_ACTIVITY_KEY("activity","活动运营效果计算"),
     EFFECT_MANUAL_KEY("manual","手工推送效果计算");
 
-    private String key;
+    private String code;
     private String desc;
 
-    ExecType(String key, String desc) {
-        this.key = key;
+    ExecType(String code, String desc) {
+        this.code = code;
         this.desc = desc;
     }
 
-    public String getKey() {
-        return key;
+
+    public String getCode() {
+        return code;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getDesc() {
@@ -31,13 +32,13 @@ public enum ExecType {
 
     /**
      * 根据获取其注释信息
-     * @param key
+     * @param code
      * @return
      */
-    public String getDescByKey(String key)
+    public String getDescByCode(String code)
     {
         for (ExecType c : ExecType.values()) {
-            if (c.getKey().equals(key)) {
+            if (c.getCode().equals(code)) {
                 return c.getDesc();
             }
         }

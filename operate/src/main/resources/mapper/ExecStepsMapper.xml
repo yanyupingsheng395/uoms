@@ -19,7 +19,11 @@
 
     <select id="selctStepList" resultMap="BaseResultMap">
        select KEY_NAME,IS_VALID,STEP_TYPE,SQL_CONTENT,BEAN_NAME,METHOD_NAME,STEP_NAME,SQL_TYPE FROM UO_OP_EXEC_STEPS
-       where IS_VALID='Y' and KEY_NAME=#{keyName} order by ORDER_NO ASC
+       where IS_VALID='Y' and KEY_NAME IN
+        <foreach collection="list" index="index" item="keyName" open="(" separator="," close=")">
+            #{keyName}
+        </foreach>
+       order by ORDER_NO ASC
   </select>
 
     <update id="execCommonUpdateSqls">

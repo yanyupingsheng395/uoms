@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface ExecStepsMapper {
 
-   List<ExecSteps> selctStepList(String keyName);
+   List<ExecSteps> selctStepList(List<String> list);
 
    int execCommonUpdateSqls(@Param("sql")  String sql);
 

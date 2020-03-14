@@ -36,27 +36,23 @@ public class OpDailyCalculate extends IJobHandler {
             //判断参数类型
             if(StringUtils.isEmpty(param))
             {
-                //每日运营
-                commonExecutors.executeSteps(ExecType.EFFECT_DAILY_KEY.getKey());
-                //活动运营
-                commonExecutors.executeSteps(ExecType.EFFECT_ACTIVITY_KEY.getKey());
-                //手工推送
-                commonExecutors.executeSteps(ExecType.EFFECT_MANUAL_KEY.getKey());
+                //每日运营 活动运营 手工推送
+                commonExecutors.executeSteps(ExecType.EFFECT_DAILY_KEY.getCode(),ExecType.EFFECT_ACTIVITY_KEY.getCode(),ExecType.EFFECT_MANUAL_KEY.getCode());
 
-            }else if(ExecType.EFFECT_DAILY_KEY.getKey().equals(param))
+            }else if(ExecType.EFFECT_DAILY_KEY.getCode().equals(param))
             {
                 //每日运营
-                commonExecutors.executeSteps(ExecType.EFFECT_DAILY_KEY.getKey());
+                commonExecutors.executeSteps(ExecType.EFFECT_DAILY_KEY.getCode());
 
-            }else if(ExecType.EFFECT_ACTIVITY_KEY.getKey().equals(param))
+            }else if(ExecType.EFFECT_ACTIVITY_KEY.getCode().equals(param))
             {
                 //活动运营
-                commonExecutors.executeSteps(ExecType.EFFECT_ACTIVITY_KEY.getKey());
+                commonExecutors.executeSteps(ExecType.EFFECT_ACTIVITY_KEY.getCode());
 
-            }else if(ExecType.EFFECT_MANUAL_KEY.getKey().equals(param))
+            }else if(ExecType.EFFECT_MANUAL_KEY.getCode().equals(param))
             {
                 //手工推送
-                commonExecutors.executeSteps(ExecType.EFFECT_MANUAL_KEY.getKey());
+                commonExecutors.executeSteps(ExecType.EFFECT_MANUAL_KEY.getCode());
             }else {
                 throw new LinkSteadyException("无效的任务参数");
             }
