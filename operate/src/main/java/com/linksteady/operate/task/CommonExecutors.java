@@ -47,7 +47,7 @@ public class CommonExecutors {
         log.info("###############开始计算任务 ,合计步骤:{} 步 ###############",execStepsSet.size());
 
        // ExecSteps execSteps=null;
-        int i=0;
+        int i=1;
         //遍历
         for(ExecSteps execSteps:execStepsSet)
         {
