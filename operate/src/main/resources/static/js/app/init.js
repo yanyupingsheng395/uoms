@@ -2,7 +2,59 @@ var urlstr = "";
 $(document).ready(function () {
     allExceptionCatch();
     getUserMenu();
+    getSysMsg();
 });
+
+$("#dropdownMenu").on('click', function (e) {
+    e.stopPropagation();
+});
+
+/**
+ * 获取系统通知消息
+ */
+function getSysMsg() {
+    $.get("/msg/getMsgList", {}, function (r) {
+        if(r.code === 200) {
+            var data = r.data;
+            var len = data.length;
+            $("#msgCount0").html('').append(len);
+            $("#msgCount1").html('').append(len);
+            if(len === 0) {
+                $("#msgTitle").hide();
+                $("#msgTable").hide();
+                $("#dropdownMenu").attr("style", 'width:200px;');
+            }else {
+                $("#msgTitle").show();
+                $("#msgTable").show();
+                $("#dropdownMenu").attr("style", 'width:400px;');
+            }
+            appendTable(data);
+        }
+    });
+}
+
+function appendTable(data) {
+    var code = '';
+    data.forEach((v, k)=>{
+        code += "<tr>" +
+            "<td>"+v['createDt']+"</td>" +
+            "<td><a style=\"cursor: pointer;color: #333;\" onclick=\"$(this).nextAll().toggle()\">"+v['msgTitle']+"</a>" +
+            "<hr style=\"margin-top: 5px;margin-bottom: 5px;\" hidden/>" +
+            "<p style=\"color: #48b0f7;\" class=\"h6\" hidden>"+v['msgContent']+"</p></td>" +
+            "<td><button type=\"button\" class=\"close\" onclick='removeMsg(this, "+v['msgId']+")'><span aria-hidden=\"true\">×</span></button></td>" +
+            "</tr>";
+    });
+    $("#msgTable").html('').append(code);
+}
+
+// 移除消息列表，设置当前消息为已读信息
+function removeMsg(dom, msgId) {
+    $.get("/msg/updateMsgRead", {msgId: msgId}, function (r) {
+        if(r.code === 200) {
+            getSysMsg();
+        }
+    });
+}
 
 // 全局异常拦截
 function allExceptionCatch() {
@@ -25,7 +77,6 @@ function allExceptionCatch() {
             },
             500: function() {
                 $MB.n_danger('操作失败，服务出现异常了，快反馈给系统运维人员吧！');
-
                 //不管有没有出现loading 组件，都进行一次隐藏操作
                 lightyear.loading('hide');
 

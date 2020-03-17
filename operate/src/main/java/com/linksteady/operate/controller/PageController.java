@@ -419,4 +419,9 @@ public class PageController {
         model.addAttribute("pathActive", configService.getValueByName("op.daily.pathactive.list"));
         return "operate/daily/person_insight";
     }
+
+    @RequestMapping("/msg")
+    public String msgPage() {
+        return "operate/msg/list";
+    }
 }

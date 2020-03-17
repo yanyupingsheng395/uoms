@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.MsgMapper">
+    <resultMap id="base" type="com.linksteady.operate.domain.MsgInfo">
+        <result property="msgId" column="MSG_ID" jdbcType="VARCHAR"></result>
+        <result property="msgTitle" column="MSG_TITLE" jdbcType="VARCHAR"></result>
+        <result property="msgContent" column="MSG_CONTENT" jdbcType="VARCHAR"></result>
+        <result property="createDt" column="CREATE_DT" jdbcType="VARCHAR"></result>
+        <result property="createBy" column="CREATE_BY" jdbcType="VARCHAR"></result>
+        <result property="readFlag" column="READ_FLAG" jdbcType="VARCHAR"></result>
+        <result property="readBy" column="READ_BY" jdbcType="VARCHAR"></result>
+        <result property="readDt" column="READ_DT" jdbcType="VARCHAR"></result>
+        <result property="msgType" column="MSG_TYPE" jdbcType="VARCHAR"></result>
+        <result property="warnFlag" column="WARN_FLAG" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="getMsgList" resultMap="base">
+        select MSG_ID,
+           MSG_TITLE,
+           MSG_CONTENT,
+           to_char(CREATE_DT, 'yyyy/mm/dd') CREATE_DT,
+           CREATE_BY,
+           READ_FLAG,
+           MSG_TYPE,
+           WARN_FLAG
+       from T_MSG_LIST
+       where READ_FLAG = '0'
+       order by MSG_ID desc
+    </select>
+
+    <select id="getDataCount" resultType="int">
+        select count(1) from T_MSG_LIST where 1=1
+        <if test="typeCode != '' and typeCode != null">
+            and MSG_TYPE = #{typeCode}
+        </if>
+        <if test="readFlag != '' and readFlag != null">
+            and READ_FLAG = #{readFlag}
+        </if>
+    </select>
+
+    <select id="getMsgPageList" resultMap="base">
+        select * from (
+        select t.*, ROWNUM rn from (
+        select MSG_ID,
+        MSG_TITLE,
+        MSG_CONTENT,
+        to_char(CREATE_DT, 'yyyy-mm-dd') CREATE_DT,
+        CREATE_BY,
+        READ_FLAG,
+        MSG_TYPE,
+        WARN_FLAG
+        from T_MSG_LIST
+        where 1=1
+        <if test="typeCode != '' and typeCode != null">
+            and MSG_TYPE = #{typeCode}
+        </if>
+        <if test="readFlag != '' and readFlag != null">
+            and READ_FLAG = #{readFlag}
+        </if>
+        ) t where ROWNUM &gt;= #{start}
+        ) where rn &lt; = #{end}
+    </select>
+
+    <update id="updateMsgRead">
+        update T_MSG_LIST set READ_FLAG = '1', READ_BY = #{userName}, READ_DT = sysdate
+        where MSG_ID = #{msgId}
+    </update>
+</mapper>

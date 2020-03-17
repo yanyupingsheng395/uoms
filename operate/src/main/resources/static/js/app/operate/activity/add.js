@@ -1162,7 +1162,7 @@ function geConvertInfo() {
     $.get("/activity/geConvertInfo", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
         var data = r.data;
         var covRate = data['covRate'];
-        covRate = (covRate !== null && covRate !== '' && covRate !== undefined) ? parseFloat(data['covRate']) * 100 : '';
+        covRate = (covRate !== null && covRate !== '' && covRate !== undefined) ? parseFloat((data['covRate'] * 100).toFixed(2)) : '';
         $("#covListId").val(data['covListId']);
         $("#covRate").val(covRate);
         $("#expectPushNum").val(data['expectPushNum']);
@@ -1243,7 +1243,7 @@ function table3() {
                 title: '推送的期望转化率（%）',
                 formatter: function (value, row, index) {
                     if(value !== '' && value !== null && value !== undefined) {
-                        return parseFloat(value) * 100;
+                        return parseFloat((value * 100).toFixed(2));
                     }else {
                         return '-';
                     }
@@ -1283,7 +1283,7 @@ function table4(data) {
                 formatter: function (value, row, index) {
                     if(value !== null && value !== '' && value !== undefined) {
                         if(index === 0) {
-                            return parseFloat(value) * 100;
+                            return parseFloat((value * 100).toFixed(2));
                         }else {
                             return value;
                         }
@@ -1295,7 +1295,7 @@ function table4(data) {
                 title: '改变幅度（%）',
                 formatter: function (value, row, index) {
                     if(value !== null && value !== '' && value !== undefined) {
-                        return parseFloat(value) * 100;
+                        return parseFloat((value * 100).toFixed(2));
                     }
                     return "-";
                 }
