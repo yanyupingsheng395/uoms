@@ -5,7 +5,7 @@ $(document).ready(function () {
     getSysMsg();
 });
 
-$("#dropdownMenu").on('click', function (e) {
+$("#dropdownMenu,#msg_detail_modal").on('click', function (e) {
     e.stopPropagation();
 });
 
@@ -17,14 +17,10 @@ function getSysMsg() {
         if(r.code === 200) {
             var data = r.data;
             var len = data.length;
-            $("#msgCount0").html('').append(len);
-            $("#msgCount1").html('').append(len);
             if(len === 0) {
-                $("#msgTitle").hide();
                 $("#msgTable").hide();
                 $("#dropdownMenu").attr("style", 'width:200px;');
             }else {
-                $("#msgTitle").show();
                 $("#msgTable").show();
                 $("#dropdownMenu").attr("style", 'width:400px;');
             }
@@ -36,24 +32,41 @@ function getSysMsg() {
 function appendTable(data) {
     var code = '';
     data.forEach((v, k)=>{
+        var createDt = v['createDt'];
+        var msgTitle = v['msgTitle'];
+        var content = v['msgContent'];
+        content = content.length > 30 ? content.substr(0, 30) + " ..." : content;
         code += "<tr>" +
-            "<td>"+v['createDt']+"</td>" +
-            "<td><a style=\"cursor: pointer;color: #333;\" onclick=\"$(this).nextAll().toggle()\">"+v['msgTitle']+"</a>" +
+            "<td>"+v['createDt']+"&nbsp;&nbsp;<a style=\"text-decoration:underline dotted;cursor: pointer;color: #333;\" onclick=\"msgTitleClick(this, "+v['msgId']+", "+v['readFlag']+")\">"+msgTitle+"</a>" +
             "<hr style=\"margin-top: 5px;margin-bottom: 5px;\" hidden/>" +
-            "<p style=\"color: #48b0f7;\" class=\"h6\" hidden>"+v['msgContent']+"</p></td>" +
-            "<td><button type=\"button\" class=\"close\" onclick='removeMsg(this, "+v['msgId']+")'><span aria-hidden=\"true\">×</span></button></td>" +
+            "<p class=\"h6\" hidden><a style='color: #48b0f7;cursor: pointer;' onclick='viewDetail(\""+createDt+"\", \""+msgTitle+"\", \""+content+"\")'>"+content+"</a></p></td>" +
+            "<td>"+getIcon(v['readFlag'])+"</td>" +
             "</tr>";
     });
     $("#msgTable").html('').append(code);
 }
 
-// 移除消息列表，设置当前消息为已读信息
-function removeMsg(dom, msgId) {
-    $.get("/msg/updateMsgRead", {msgId: msgId}, function (r) {
-        if(r.code === 200) {
-            getSysMsg();
-        }
-    });
+function getIcon(readFlag) {
+    if (readFlag === '0') {
+        return "<span style='color: #8b95a5'><i class='fa fa-eye-slash'></i></span>";
+    } else {
+        return "<span style='color: #48b0f7'><i class='fa fa-eye'></i></span>";
+    }
+}
+function viewDetail(createDt, msgTitle, content) {
+    $("#msgDetailDiv").html('').append("<p>时间："+createDt+"</p><p>标题："+msgTitle+"</p><p>内容："+content+"</p>");
+    $("#msg_detail_modal").modal('show');
+}
+
+function msgTitleClick(dom, msgId, readFlag) {
+    $(dom).nextAll().toggle();
+    if(readFlag === 0) {
+        $.get("/msg/updateMsgRead", {msgId: msgId}, function (r) {
+            if(r.code === 200) {
+                $(dom).parent().next().html('').append('<span style=\'color: #48b0f7\'><i class=\'fa fa-eye\'></i></span>');
+            }
+        });
+    }
 }
 
 // 全局异常拦截
