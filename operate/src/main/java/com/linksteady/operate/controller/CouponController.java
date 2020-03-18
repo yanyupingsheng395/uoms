@@ -1,5 +1,7 @@
 package com.linksteady.operate.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -213,8 +215,9 @@ public class CouponController extends BaseController {
      * @return
      */
     @GetMapping("/getCalculatedCoupon")
-    public ResponseBo getCalculatedCoupon() {
-        couponService.getCalculatedCoupon();
+    public ResponseBo getCalculatedCoupon(@RequestParam String coupon) {
+        List<CouponInfo> dataList = JSONObject.parseArray(coupon, CouponInfo.class);
+        couponService.getCalculatedCoupon(dataList);
         return ResponseBo.ok();
     }
 

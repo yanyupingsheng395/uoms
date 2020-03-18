@@ -650,6 +650,5 @@ $("#btn_refresh").click(function () {
                 });
             });
         }
-
     });
 });

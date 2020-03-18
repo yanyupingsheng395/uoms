@@ -35,11 +35,13 @@ public interface CouPonService {
 
     List<CouponInfo> getCouponList(String groupId, String userValue, String lifeCycle, String pathActive);
 
-    void getCalculatedCoupon();
+    void getCalculatedCoupon(List<CouponInfo> dataList);
 
     void deleteCouponGroup(String groupId);
 
     int checkCouponName(String couponName);
 
     void validCoupon();
+
+    List<CouponInfo> getIntelCouponList();
 }
