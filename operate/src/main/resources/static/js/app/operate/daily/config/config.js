@@ -224,6 +224,7 @@ function editSmsContent(groupId, groupInfo, smsCode) {
 
 // 编辑优惠券
 function editCoupon(groupId, groupInfo, smsCode) {
+    clearChecked();
     $( "#currentGroupId" ).val( groupId );
     $( "#currentGroupInfo" ).val( groupInfo );
     //设置默认选中
