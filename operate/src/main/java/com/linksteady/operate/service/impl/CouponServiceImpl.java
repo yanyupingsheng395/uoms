@@ -116,6 +116,10 @@ public class CouponServiceImpl implements CouPonService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void getCalculatedCoupon(List<CouponInfo> dataList) {
+        // 清空快照表，插入新的快照数据
+        couponMapper.deleteLaseAisnpData();
+        couponMapper.insertNewData();
+
         //获取系统计算出的优惠券列表
         List<CouponInfo> sysData = couponMapper.getSysCoupon();
         //获取所有有效的优惠券列表

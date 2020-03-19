@@ -79,4 +79,8 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
     List<CouponInfo> getIntelCoupon();
 
     List<CouponInfo> getIntelCouponList();
+
+    void deleteLaseAisnpData();
+
+    void insertNewData();
 }
