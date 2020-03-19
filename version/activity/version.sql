@@ -553,6 +553,29 @@ comment on column uo_op_activity_plan.cov_amount is '转化金额';
 alter table uo_op_activity_convert_detail  add (plan_id number);
 comment on column uo_op_activity_convert_detail.plan_id is '计划ID';
 
+-- Create table
+create table UO_COUPON_AISNP
+(
+  coupon_denom     NUMBER,
+  coupon_threshold NUMBER,
+  coupon_name      VARCHAR2(32),
+  discount_level   NUMBER
+);
+-- Add comments to the table
+comment on table UO_COUPON_AISNP
+is '智能优惠券快照表';
+-- Add comments to the columns
+comment on column UO_COUPON_AISNP.coupon_denom
+is '优惠面额';
+comment on column UO_COUPON_AISNP.coupon_threshold
+is '优惠门槛';
+comment on column UO_COUPON_AISNP.coupon_name
+is '优惠卷名称';
+comment on column UO_COUPON_AISNP.discount_level
+is '折扣等级';
+
+create unique index UO_OP_ACTIVITY_GROUP_U1 on UO_OP_ACTIVITY_GROUP (GROUP_ID, HEAD_ID, ACTIVITY_TYPE, ACTIVITY_STAGE);
+
 
 
 
