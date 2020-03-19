@@ -164,7 +164,7 @@ function sendMessage()
     //提交后端进行发送
     lightyear.loading('show');
 
-    let param = new Object();
+    let param = {};
     param.phoneNum=phoneNum;
     param.smsContent=smsContent;
 
@@ -174,7 +174,7 @@ function sendMessage()
         type: 'POST',
         success: function (r) {
             lightyear.loading('hide');
-            if(r.code==200)
+            if(r.code===200)
             {
                 $MB.n_success(r.msg);
             }else

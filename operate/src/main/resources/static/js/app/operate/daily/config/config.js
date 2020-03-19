@@ -544,7 +544,7 @@ function couponTable(groupId) {
                 title: '是否推荐',
                 formatter: function (value, row, index) {
                     var res = '-';
-                    if (value === 'Y') {
+                    if (value === '1') {
                         res = "是";
                     }
                     return res;
@@ -860,9 +860,9 @@ function saveIntelCoupon() {
         $.get("/coupon/getCalculatedCoupon", {coupon: JSON.stringify(coupon)}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("智能补贴更新成功。");
-                couponTable($("#currentGroupId").val());
-                $( "#coupon_modal" ).modal( 'show' );
                 $( "#intel_coupon_modal" ).modal( 'hide' );
+                $( "#coupon_modal" ).modal( 'show' );
+                couponTable($("#currentGroupId").val());
             }
         });
     });
