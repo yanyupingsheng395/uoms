@@ -20,8 +20,8 @@
         <result column="COUPON_SOURCE" jdbcType="VARCHAR" property="couponSource"/>
         <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"/>
         <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"/>
-        <result column="IS_SELECTED" jdbcType="VARCHAR" property="isSelected"></result>
-        <result column="IS_REC" jdbcType="VARCHAR" property="isRec"></result>
+        <result column="IS_SELECTED" jdbcType="VARCHAR" property="isSelected"/>
+        <result column="IS_REC" jdbcType="VARCHAR" property="isRec"/>
     </resultMap>
 
     <select id="getList" resultMap="BaseResultMap">
