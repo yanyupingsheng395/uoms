@@ -20,9 +20,8 @@
         <result column="COUPON_SOURCE" jdbcType="VARCHAR" property="couponSource"/>
         <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"/>
         <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"/>
-        <result column="IS_SELECTED" jdbcType="VARCHAR" property="isSelected"></result>
-        <result column="IS_SELECTED" jdbcType="VARCHAR" property="isSelected"></result>
-        <result column="IS_REC" jdbcType="VARCHAR" property="isRec"></result>
+        <result column="IS_SELECTED" jdbcType="VARCHAR" property="isSelected"/>
+        <result column="IS_REC" jdbcType="VARCHAR" property="isRec"/>
     </resultMap>
 
     <select id="getList" resultMap="BaseResultMap">
@@ -128,7 +127,7 @@
                  select r4.coupon_id
                  from (
                           select r1.coupon_denom, r1.coupon_threshold, r2.group_id
-                          from PP_COUPON r1,
+                          from UO_COUPON_AISNP r1,
                                UO_OP_DAILY_TEMPLATE_CONFIG r2
                           where r1.DISCOUNT_LEVEL = r2.DISCOUNT_LEVEL) r3,
                       uo_op_coupon r4
@@ -251,4 +250,19 @@
     <select id="getIntelCoupon" resultMap="BaseResultMap">
         select COUPON_DENOM,coupon_threshold from UO_OP_COUPON where VALID_STATUS='Y'
     </select>
+
+    <select id="getIntelCouponList" resultMap="BaseResultMap">
+        select case when t.COUPON_ID is null then '1' else '0' end coupon_id, COUPON_DENOM, COUPON_THRESHOLD from (
+            select t1.COUPON_DENOM, t1.COUPON_THRESHOLD, t2.COUPON_ID
+            from PP_COUPON t1 left join (select * from UO_OP_COUPON where COUPON_SOURCE = '0') t2 on t1.COUPON_THRESHOLD = t2.COUPON_THRESHOLD and t1.COUPON_DENOM = t2.COUPON_DENOM
+        ) t order by coupon_id desc
+    </select>
+
+    <delete id="deleteLaseAisnpData">
+        delete from UO_COUPON_AISNP
+    </delete>
+
+    <insert id="insertNewData">
+        insert into UO_COUPON_AISNP select * from PP_COUPON
+    </insert>
 </mapper>

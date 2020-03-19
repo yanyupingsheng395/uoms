@@ -2,7 +2,72 @@ var urlstr = "";
 $(document).ready(function () {
     allExceptionCatch();
     getUserMenu();
+    getSysMsg();
 });
+
+$("#dropdownMenu,#msg_detail_modal").on('click', function (e) {
+    e.stopPropagation();
+});
+
+/**
+ * 获取系统通知消息
+ */
+function getSysMsg() {
+    $.get("/msg/getMsgList", {}, function (r) {
+        if(r.code === 200) {
+            var data = r.data;
+            var len = data.length;
+            if(len === 0) {
+                $("#msgTable").hide();
+                $("#dropdownMenu").attr("style", 'width:200px;');
+            }else {
+                $("#msgTable").show();
+                $("#dropdownMenu").attr("style", 'width:400px;');
+            }
+            appendTable(data);
+        }
+    });
+}
+
+function appendTable(data) {
+    var code = '';
+    data.forEach((v, k)=>{
+        var createDt = v['createDt'];
+        var msgTitle = v['msgTitle'];
+        var content = v['msgContent'];
+        content = content.length > 30 ? content.substr(0, 30) + " ..." : content;
+        code += "<tr>" +
+            "<td>"+v['createDt']+"&nbsp;&nbsp;<a style=\"text-decoration:underline dotted;cursor: pointer;color: #333;\" onclick=\"msgTitleClick(this, "+v['msgId']+", "+v['readFlag']+")\">"+msgTitle+"</a>" +
+            "<hr style=\"margin-top: 5px;margin-bottom: 5px;\" hidden/>" +
+            "<p class=\"h6\" hidden><a style='color: #48b0f7;cursor: pointer;' onclick='viewDetail(\""+createDt+"\", \""+msgTitle+"\", \""+content+"\")'>"+content+"</a></p></td>" +
+            "<td>"+getIcon(v['readFlag'])+"</td>" +
+            "</tr>";
+    });
+    $("#msgTable").html('').append(code);
+}
+
+function getIcon(readFlag) {
+    if (readFlag === '0') {
+        return "<span style='color: #8b95a5'><i class='fa fa-eye-slash'></i></span>";
+    } else {
+        return "<span style='color: #48b0f7'><i class='fa fa-eye'></i></span>";
+    }
+}
+function viewDetail(createDt, msgTitle, content) {
+    $("#msgDetailDiv").html('').append("<p>时间："+createDt+"</p><p>标题："+msgTitle+"</p><p>内容："+content+"</p>");
+    $("#msg_detail_modal").modal('show');
+}
+
+function msgTitleClick(dom, msgId, readFlag) {
+    $(dom).nextAll().toggle();
+    if(readFlag === 0) {
+        $.get("/msg/updateMsgRead", {msgId: msgId}, function (r) {
+            if(r.code === 200) {
+                $(dom).parent().next().html('').append('<span style=\'color: #48b0f7\'><i class=\'fa fa-eye\'></i></span>');
+            }
+        });
+    }
+}
 
 // 全局异常拦截
 function allExceptionCatch() {
@@ -25,7 +90,6 @@ function allExceptionCatch() {
             },
             500: function() {
                 $MB.n_danger('操作失败，服务出现异常了，快反馈给系统运维人员吧！');
-
                 //不管有没有出现loading 组件，都进行一次隐藏操作
                 lightyear.loading('hide');
 

@@ -89,8 +89,6 @@ spring:
 
   thymeleaf:
     cache: false
-
-
   aop:
     proxy-target-class: true
   cache:

@@ -1,7 +1,9 @@
 package com.linksteady.operate.controller;
 
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.DailyGroupTemplate;
+import com.linksteady.operate.service.CouPonService;
 import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.service.DailyService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,9 @@ public class DailyConfigController {
 
     @Autowired
     private DailyConfigService dailyConfigService;
+
+    @Autowired
+    private CouPonService couPonService;
 
     /**
      * 获取用户群组的数据
@@ -47,5 +52,14 @@ public class DailyConfigController {
     @GetMapping("/validUserGroup")
     public ResponseBo validUserGroup() {
         return ResponseBo.okWithData(null, dailyConfigService.validUserGroup());
+    }
+
+    /**
+     * 获取智能券
+     * @return
+     */
+    @GetMapping("/getIntelCouponList")
+    public List<CouponInfo> getIntelCouponList() {
+        return couPonService.getIntelCouponList();
     }
 }

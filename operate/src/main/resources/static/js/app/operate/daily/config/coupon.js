@@ -15,6 +15,17 @@ $("#coupon_add_modal").on('hidden.bs.modal', function () {
     closeModal();
 });
 
+function clearChecked() {
+    $("input[name='userValue']").removeAttr("disabled");
+    $("input[name='userValue']:checked").removeAttr("checked");
+    $("input[name='lifeCycle']").removeAttr("disabled");
+    $("input[name='lifeCycle']:checked").removeAttr("checked");
+    $("input[name='pathActive']").removeAttr("disabled");
+    $("input[name='pathActive']:checked").removeAttr("checked");
+}
+
+
+
 // 关闭新增补贴
 function closeModal() {
     var $form = $('#coupon_edit');
@@ -27,12 +38,7 @@ function closeModal() {
     $form.find("input[name='couponDisplayName']").val("").removeAttr("readOnly");
     $form.find("input[name='validEnd']").val("").removeAttr("readOnly");
     $("input[name='validStatus']:radio[value='Y']").prop("checked", true);
-    $("input[name='userValue']").removeAttr("disabled");
-    $("input[name='userValue']:checked").removeAttr("checked");
-    $("input[name='lifeCycle']").removeAttr("disabled");
-    $("input[name='lifeCycle']:checked").removeAttr("checked");
-    $("input[name='pathActive']").removeAttr("disabled");
-    $("input[name='pathActive']:checked").removeAttr("checked");
+
     $MB.closeAndRestModal("coupon_add_modal");
     $("#couponValid").hide();
     $("#coupon_edit").validate().resetForm();

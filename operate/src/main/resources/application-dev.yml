@@ -109,7 +109,7 @@ spring:
       strategy:
         content:
           enabled: true
-          paths: /**
+          paths: /js/**, /css/**
   main:
     allow-bean-definition-overriding: true
 

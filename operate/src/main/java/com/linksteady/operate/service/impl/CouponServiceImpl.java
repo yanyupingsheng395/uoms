@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -114,7 +115,11 @@ public class CouponServiceImpl implements CouPonService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void getCalculatedCoupon() {
+    public void getCalculatedCoupon(List<CouponInfo> dataList) {
+        // 清空快照表，插入新的快照数据
+        couponMapper.deleteLaseAisnpData();
+        couponMapper.insertNewData();
+
         //获取系统计算出的优惠券列表
         List<CouponInfo> sysData = couponMapper.getSysCoupon();
         //获取所有有效的优惠券列表
@@ -124,8 +129,19 @@ public class CouponServiceImpl implements CouPonService {
             long count = couponInfoList.stream().filter(c -> c.getCouponDenom().equals(s.getCouponDenom()) && c.getCouponThreshold().equals(s.getCouponThreshold())).count();
             return count == 0;
         }).collect(Collectors.toList());
-        if(insertData.size() > 0) {
-            couponMapper.insertCalculatedCoupon(insertData);
+        if(dataList.size() > 0) {
+            insertData.stream().filter(x->{
+                AtomicBoolean res = new AtomicBoolean(false);
+                dataList.forEach(y->{
+                    if(y.getCouponDenom().equals(x.getCouponDenom()) && y.getCouponThreshold().equals(x.getCouponThreshold())) {
+                        res.set(true);
+                    }
+                });
+                return res.get();
+            }).collect(Collectors.toList());
+            if(insertData.size() > 0) {
+                couponMapper.insertCalculatedCoupon(insertData);
+            }
         }
     }
 
@@ -156,6 +172,11 @@ public class CouponServiceImpl implements CouPonService {
             //补贴链接为空
             couponMapper.validCouponUrl();
         }
+    }
+
+    @Override
+    public List<CouponInfo> getIntelCouponList() {
+        return couponMapper.getIntelCouponList();
     }
 
 }

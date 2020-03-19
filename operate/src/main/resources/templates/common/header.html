@@ -22,11 +22,33 @@
                     </ul>
                 </li>
                 <li id="selectSys">
-                    <a id="navigatorUrl" class="m-t-5" href=""><i class="mdi mdi-login"></i>系统导航</a>
+                    <a id="navigatorUrl" type="button"><i class="mdi mdi-login"></i>系统导航</a>
+                </li>
+                <li class="dropdown">
+                    <a type="button" data-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"><i class="mdi mdi-bell"></i>消息</a>
+                    <div class="dropdown-menu dropdown-menu-right" style="width: 400px;" id="dropdownMenu">
+                        <table class="table table-striped" style="margin: 10px;width: 380px;" id="msgTable"></table>
+                        <a href="/page/msg" style="color: #333;margin-left: 10px;">查看所有通知</a>
+                    </div>
                 </li>
             </ul>
         </div>
     </nav>
 </header>
+<div></div>
 <div data-th-include="@{user/updatePassword}"></div>
+<div class="modal" tabindex="-1" role="dialog" id="msg_detail_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">消息详情</h5>
+            </div>
+            <div class="modal-body">
+                <div id="msgDetailDiv"></div>
+            </div>
+        </div>
+    </div>
+</div>
 <!--End 头部信息-->

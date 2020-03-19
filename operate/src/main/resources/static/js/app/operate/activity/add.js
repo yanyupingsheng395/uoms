@@ -361,7 +361,7 @@ function getProductInfo() {
                 title: '非活动日常单价（元/件）'
             }, {
                 field: 'groupId',
-                title: '活动动机制',
+                title: '活动机制',
                 formatter: function (value, row, index) {
                     var res = "-";
                     if(value === '1') {
@@ -449,8 +449,6 @@ function createActivity(stage) {
         }
     }
 }
-
-//preheatNotifyStatus
 
 // 根据当前选择设置标题
 function setTitle(stage) {
@@ -999,8 +997,6 @@ function setTmpCode() {
 
 // 点击编辑文案按钮
 function editTmp() {
-    $( "#btn_save_sms" ).attr( 'name', 'update' );
-    var groupId = CURRENT_GROUP_ID;
     var selected = $( "#tmpTable" ).bootstrapTable( 'getSelections' );
     var selected_length = selected.length;
     if (!selected_length) {
@@ -1022,6 +1018,7 @@ function editTmp() {
                     $( "input[name='isProdName']:radio[value='" + data.isProdName + "']" ).prop( "checked", true );
                     $( "input[name='isProdUrl']:radio[value='" + data.isProdUrl + "']" ).prop( "checked", true );
                     $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
+                    $( "#btn_save_sms" ).attr( 'name', 'update' );
                     $( "#smstemplate_modal" ).modal( 'hide' );
                     $( "#sms_add_modal" ).modal( 'show' );
                 } );
@@ -1165,7 +1162,7 @@ function geConvertInfo() {
     $.get("/activity/geConvertInfo", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
         var data = r.data;
         var covRate = data['covRate'];
-        covRate = (covRate !== null && covRate !== '' && covRate !== undefined) ? parseFloat(data['covRate']) * 100 : '';
+        covRate = (covRate !== null && covRate !== '' && covRate !== undefined) ? parseFloat((data['covRate'] * 100).toFixed(2)) : '';
         $("#covListId").val(data['covListId']);
         $("#covRate").val(covRate);
         $("#expectPushNum").val(data['expectPushNum']);
@@ -1246,7 +1243,7 @@ function table3() {
                 title: '推送的期望转化率（%）',
                 formatter: function (value, row, index) {
                     if(value !== '' && value !== null && value !== undefined) {
-                        return parseFloat(value) * 100;
+                        return parseFloat((value * 100).toFixed(2));
                     }else {
                         return '-';
                     }
@@ -1286,7 +1283,7 @@ function table4(data) {
                 formatter: function (value, row, index) {
                     if(value !== null && value !== '' && value !== undefined) {
                         if(index === 0) {
-                            return parseFloat(value) * 100;
+                            return parseFloat((value * 100).toFixed(2));
                         }else {
                             return value;
                         }
@@ -1298,7 +1295,7 @@ function table4(data) {
                 title: '改变幅度（%）',
                 formatter: function (value, row, index) {
                     if(value !== null && value !== '' && value !== undefined) {
-                        return parseFloat(value) * 100;
+                        return parseFloat((value * 100).toFixed(2));
                     }
                     return "-";
                 }
