@@ -196,7 +196,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
                 4L, Long.parseLong(headId), "特价", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                5L, Long.parseLong(headId), "不参加活动为——", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
+                5L, Long.parseLong(headId), "——", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
         ));
 
         activityGroups.add(new ActivityGroup(
