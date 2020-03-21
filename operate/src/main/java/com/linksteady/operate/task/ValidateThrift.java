@@ -40,14 +40,11 @@ public class ValidateThrift extends IJobHandler {
 
         lock.lock();
         try {
-            int spu = -1;
-            int product = -1;
-
             if (!insightThriftClient.isOpend()) {
                 insightThriftClient.open();
             }
 
-            RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, 12);
+            RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(-1, 0, 12);
 
             log.info("测试thrift接口，返回的结果为:{}",retentionFitData);
             return ResultInfo.success("测试thrift接口成功!");
