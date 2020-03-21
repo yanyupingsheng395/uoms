@@ -1,20 +1,18 @@
 package com.linksteady.system.aspect;
 
-import com.linksteady.system.config.SystemProperties;
-import com.linksteady.common.util.HttpContextUtils;
-import com.linksteady.common.util.IPUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.linksteady.common.domain.SysLog;
 import com.linksteady.common.domain.User;
-import com.linksteady.system.service.LogService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.linksteady.common.service.LogService;
+import com.linksteady.common.util.HttpContextUtils;
+import com.linksteady.common.util.IPUtils;
+import com.linksteady.system.config.SystemProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

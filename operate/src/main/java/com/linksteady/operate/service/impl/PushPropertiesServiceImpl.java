@@ -1,7 +1,8 @@
 package com.linksteady.operate.service.impl;
 
+import com.google.common.collect.Lists;
 import com.linksteady.common.domain.Tconfig;
-import com.linksteady.operate.dao.ConfigMapper;
+import com.linksteady.common.dao.ConfigMapper;
 import com.linksteady.operate.domain.HeartBeatInfo;
 import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.enums.PushPropertiesEnum;
@@ -50,7 +51,7 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
             //更新数据库
             configMapper.updateConfig(PushPropertiesEnum.pushFlag.getKeyCode(),"Y");
             //重新加载到redis并刷新pushProperties
-            loadConfigToRedisAndRefreshProperties(prop,currentUser);
+            initProperties(prop,currentUser);
             //发送命令到远端
             heartBeatInfo.setSignal(signal);
             redisMessageService.sendPushSingal(heartBeatInfo);
@@ -60,7 +61,7 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
             //更新数据库
             configMapper.updateConfig(PushPropertiesEnum.pushFlag.getKeyCode(),"N");
             //重新加载到redis并刷新pushProperties
-            loadConfigToRedisAndRefreshProperties(prop,currentUser);
+            initProperties(prop,currentUser);
             //发送命令到远端
             heartBeatInfo.setSignal(signal);
             redisMessageService.sendPushSingal(heartBeatInfo);
@@ -73,7 +74,7 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
         }else if(signal.getSignalCode().equals(PushSignalEnum.SIGNAL_REFRESH.getSignalCode()))
         {
             //重新加载到redis
-            loadConfigToRedisAndRefreshProperties(prop,currentUser);
+            initProperties(prop,currentUser);
             //通知推送端也重新加载配置
             heartBeatInfo.setSignal(signal);
             redisMessageService.sendPushSingal(heartBeatInfo);
@@ -84,12 +85,12 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
     }
 
     @Override
-    public  void loadConfigToRedisAndRefreshProperties(PushProperties prop,String currentUser) throws Exception
+    public  void initProperties(PushProperties prop,String currentUser) throws Exception
     {
         log.info("{} 加载了推送配置",currentUser);
 
         //数据库加载到redis
-        List<Tconfig> tconfigList=configMapper.selectCommonConfig();
+        List<Tconfig> tconfigList=configMapper.selectConfigList();
 
         Map<String,String> configMap=tconfigList.stream().collect(Collectors.toMap(Tconfig::getName,Tconfig::getValue));
         HashOperations<String, String, Tconfig> hashOperations= redisTemplate.opsForHash();

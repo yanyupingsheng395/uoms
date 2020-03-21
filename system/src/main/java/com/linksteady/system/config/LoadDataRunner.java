@@ -1,7 +1,7 @@
 package com.linksteady.system.config;
 
 import com.linksteady.common.domain.SysInfo;
-import com.linksteady.system.service.SystemService;
+import com.linksteady.common.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.data.redis.core.RedisTemplate;

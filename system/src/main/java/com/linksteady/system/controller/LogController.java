@@ -3,6 +3,7 @@ package com.linksteady.system.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.linksteady.common.service.LogService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.SysLog;
-import com.linksteady.system.service.LogService;
 
 @Controller
 @Slf4j

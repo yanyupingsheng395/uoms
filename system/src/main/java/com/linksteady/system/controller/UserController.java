@@ -3,6 +3,7 @@ package com.linksteady.system.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.linksteady.common.service.UserService;
 import com.linksteady.common.util.MD5Utils;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,6 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.User;
-import com.linksteady.system.service.UserService;
 
 @Controller
 @Slf4j

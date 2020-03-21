@@ -1,10 +1,10 @@
 package com.linksteady.operate.service.impl;
 
 import com.linksteady.common.domain.User;
+import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.ActivityTemplateMapper;
 import com.linksteady.operate.domain.ActivityTemplate;
 import com.linksteady.operate.service.ActivityTemplateService;
-import com.linksteady.operate.service.ConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;

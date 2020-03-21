@@ -21,7 +21,7 @@ public interface PushPropertiesService {
      * 重新加载配置
      * @param currentUser
      */
-    void loadConfigToRedisAndRefreshProperties(PushProperties prop,String currentUser)  throws Exception;
+    void initProperties(PushProperties prop,String currentUser)  throws Exception;
 
     /**
      * 获取所有的推送配置信息

@@ -7,22 +7,18 @@ import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.domain.Role;
 import com.linksteady.common.domain.SysInfo;
+import com.linksteady.common.service.SystemService;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
-import com.linksteady.system.service.RoleService;
-import com.linksteady.system.service.SystemService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -44,6 +40,8 @@ public class SystemController extends BaseController {
     @RequestMapping("system")
     @RequiresPermissions("system:list")
     public String index() {
+        Subject subject=getSubject();
+        subject.checkRole("系统管理员");
         return "system/system/system";
     }
 

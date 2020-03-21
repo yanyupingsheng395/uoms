@@ -170,7 +170,7 @@ public class PushStatusController extends BaseController {
     @GetMapping("/reloadPushProperties")
     public ResponseBo reloadPushProperties() {
         try {
-            pushPropertiesService.loadConfigToRedisAndRefreshProperties(pushProperties,getCurrentUser().getUsername());
+            pushPropertiesService.initProperties(pushProperties,getCurrentUser().getUsername());
             return ResponseBo.ok("重新加载推送配置成功!");
         } catch (Exception e) {
             log.error("加载推送配置失败，异常原因为{}",e);

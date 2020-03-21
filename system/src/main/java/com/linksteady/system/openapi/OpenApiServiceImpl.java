@@ -1,7 +1,7 @@
 package com.linksteady.system.openapi;
 
 import com.linksteady.common.service.OpenApiService;
-import com.linksteady.system.service.UserService;
+import com.linksteady.common.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

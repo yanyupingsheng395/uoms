@@ -1,7 +1,7 @@
 package com.linksteady.operate.controller;
 
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.service.DictService;
+import com.linksteady.common.service.DictService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

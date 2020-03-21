@@ -19,7 +19,7 @@ import java.time.LocalTime;
 
 @SpringBootApplication
 @EnableTransactionManagement
-@MapperScan("com.linksteady.*.dao")
+@MapperScan("com.linksteady.**.dao")
 @EnableConfigurationProperties({SystemProperties.class})
 @EnableCaching
 @EnableAsync

@@ -1,8 +1,8 @@
 package com.linksteady.operate.config;
 
+import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.exception.LinkSteadyException;
-import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.PushPropertiesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class LoadConfig implements CommandLineRunner {
     {
         //初始化配置对象
         PushProperties pushProperties=new PushProperties();
-        pushPropertiesService.loadConfigToRedisAndRefreshProperties(pushProperties,"init");
+        pushPropertiesService.initProperties(pushProperties,"init");
 
         return pushProperties;
     }

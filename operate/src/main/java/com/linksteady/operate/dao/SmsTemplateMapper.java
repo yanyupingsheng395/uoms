@@ -1,8 +1,7 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.config.MyMapper;
+import com.linksteady.common.config.MyMapper;
 import com.linksteady.operate.domain.SmsTemplate;
-import com.linksteady.operate.domain.SpuCycle;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

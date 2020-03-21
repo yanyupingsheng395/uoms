@@ -1,6 +1,6 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.config.MyMapper;
+import com.linksteady.common.config.MyMapper;
 import com.linksteady.operate.domain.SpuCycle;
 import io.lettuce.core.dynamic.annotation.Param;
 

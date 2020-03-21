@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.common.dao.SystemMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.common.domain.SysInfo">
+    <result column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="CODE" jdbcType="VARCHAR" property="code"/>
+    <result column="ENABLE_FLAG" jdbcType="VARCHAR" property="enableFlag"/>
+    <result column="DOMAIN" jdbcType="VARCHAR" property="domain"/>
+    <result column="LOGO" jdbcType="VARCHAR" property="logo"/>
+    <result column="SORT_NUM" jdbcType="DECIMAL" property="sortNum"/>
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+  </resultMap>
+
+  <select id="getIdFromSeq" resultType="String">
+    select seq_t_system_id.nextval from dual
+  </select>
+
+  <select id="findSystem" resultMap="BaseResultMap">
+    select * from T_SYSTEM where id = #{id}
+  </select>
+
+  <select id="findAll" resultMap="BaseResultMap">
+    select ID, NAME, CODE, DOMAIN from T_SYSTEM where ENABLE_FLAG = '1' order by SORT_NUM ASC
+  </select>
+
+  <select id="getNameById" resultType="String">
+    select name from T_SYSTEM where id = #{id}
+  </select>
+
+  <select id="findUserSystem" resultMap="BaseResultMap">
+    select * from T_SYSTEM where ID in (
+      select m.SYS_ID from t_menu m
+      where m.type &lt;&gt; '1' and m.MENU_ID in
+          (select distinct rm.menu_id from t_role_menu rm
+          left join t_role r on(rm.role_id = r.role_id)
+          left join t_user_role ur on(ur.role_id = r.role_id)
+          left join t_user u on (u.user_id = ur.user_id)
+          where u.username = #{userName})
+    ) and ENABLE_FLAG = '1'
+    ORDER BY SORT_NUM ASC
+  </select>
+</mapper>

@@ -1,8 +1,8 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.SmsTemplateMapper;
 import com.linksteady.operate.domain.SmsTemplate;
-import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.SmsTemplateService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

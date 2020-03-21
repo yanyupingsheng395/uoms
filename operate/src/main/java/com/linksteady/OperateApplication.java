@@ -15,7 +15,7 @@ import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
 @SpringBootApplication
 @EnableTransactionManagement
-@MapperScan("com.linksteady.*.dao")
+@MapperScan("com.linksteady.**.dao")
 @EnableConfigurationProperties({SystemProperties.class})
 @EnableCaching
 @EnableAsync

@@ -1,9 +1,13 @@
 package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
+import com.linksteady.common.controller.BaseController;
+import com.linksteady.common.domain.User;
+import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +22,7 @@ import java.time.format.DateTimeFormatter;
  */
 @Controller
 @RequestMapping("/page")
-public class PageController {
+public class PageController extends BaseController {
 
     @Autowired
     private DailyService dailyService;

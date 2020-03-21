@@ -1,32 +1,30 @@
 package com.linksteady.system.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.linksteady.common.annotation.Log;
 import com.linksteady.common.bo.UserRoleBo;
-import com.linksteady.common.domain.*;
+import com.linksteady.common.controller.BaseController;
+import com.linksteady.common.domain.QueryRequest;
+import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.domain.Role;
+import com.linksteady.common.domain.Tree;
+import com.linksteady.common.service.RoleService;
+import com.linksteady.common.service.UserRoleService;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
-import com.linksteady.system.dao.RoleMapper;
-import com.linksteady.system.service.UserRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-
-import com.linksteady.common.annotation.Log;
-import com.linksteady.common.controller.BaseController;
-import com.linksteady.system.service.RoleService;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j

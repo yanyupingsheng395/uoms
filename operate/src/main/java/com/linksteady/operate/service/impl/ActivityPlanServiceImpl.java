@@ -2,6 +2,7 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.ActivityDetailMapper;
@@ -14,7 +15,6 @@ import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.domain.enums.ActivityStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.ActivityPlanService;
-import com.linksteady.operate.service.ConfigService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransActivityContentThread;
 import com.linksteady.operate.vo.ActivityContentVO;

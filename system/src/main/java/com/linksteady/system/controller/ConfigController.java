@@ -1,22 +1,19 @@
 package com.linksteady.system.controller;
 
 import com.linksteady.common.annotation.Log;
-import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Tconfig;
-import com.linksteady.system.service.ConfigService;
+import com.linksteady.common.service.ConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author hxcao
@@ -46,7 +43,7 @@ public class ConfigController extends BaseController{
         String asc = "asc";
         String sortCol1 = "typeCode2";
         String sortCol2 = "orderNum";
-        List<Tconfig> tconfigs = configService.selectConfigList();
+        List<Tconfig> tconfigs = configService.selectConfigListFromRedis();
         if(StringUtils.isNotEmpty(typeCode1)) {
             tconfigs = tconfigs.stream().filter(x->typeCode1.equalsIgnoreCase(x.getTypeCode1())).collect(Collectors.toList());
         }
