@@ -113,11 +113,6 @@ management:
     health:
       show-details: ALWAYS
 
-# spring boot admin配置结束
-#jasypt:
-#  encryptor:
-#    password: linksteady
-
 mybatis:
   # type-aliases扫描路径
   type-aliases-package: com.linksteady.**.domain
