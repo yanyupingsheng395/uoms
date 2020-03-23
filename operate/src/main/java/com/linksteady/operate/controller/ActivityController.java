@@ -97,7 +97,7 @@ public class ActivityController {
             return ResponseBo.error(e.getMessage());
         }catch (Exception e) {
             log.error("上传商品列表出错", e);
-            return ResponseBo.error(e.getMessage());
+            return ResponseBo.error("上传商品出现未知错误！");
         }
         return ResponseBo.ok();
     }
