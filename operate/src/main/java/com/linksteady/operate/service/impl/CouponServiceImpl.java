@@ -53,6 +53,7 @@ public class CouponServiceImpl implements CouPonService {
     @Transactional(rollbackFor = Exception.class)
     public void save(CouponInfo couponInfo) {
         couponMapper.save(couponInfo);
+        validCoupon();
     }
 
     /**
@@ -62,9 +63,8 @@ public class CouponServiceImpl implements CouPonService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(CouponInfo couponInfo) {
-        // 验证信息
-        validCoupon();
         couponMapper.update(couponInfo);
+        validCoupon();
     }
 
     @Override
@@ -91,12 +91,11 @@ public class CouponServiceImpl implements CouPonService {
                 couponMapper.deleteCoupon(couponId);
             }
         }
-
+        validCoupon();
     }
 
     @Override
     public List<CouponInfo> getCouponList(String groupId, String userValue, String lifeCycle, String pathActive) {
-        validCoupon();
         List<CouponInfo> couponList = couponMapper.getCouponList(groupId);
         if(StringUtils.isNotEmpty(userValue)) {
             couponList = couponList.stream().filter(x->x.getUserValue().contains(userValue)).collect(Collectors.toList());
@@ -107,6 +106,7 @@ public class CouponServiceImpl implements CouPonService {
         if(StringUtils.isNotEmpty(pathActive)) {
             couponList = couponList.stream().filter(x->x.getPathActive().contains(pathActive)).collect(Collectors.toList());
         }
+        validCoupon();
         return couponList;
     }
 
