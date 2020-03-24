@@ -76,7 +76,8 @@
                PLAN_TYPE,
                SUCCESS_NUM,
                UO_OP_ACTIVITY_PLAN.COV_RATE,
-               UO_OP_ACTIVITY_PLAN.COV_AMOUNT
+               UO_OP_ACTIVITY_PLAN.COV_AMOUNT,
+               UO_OP_ACTIVITY_PLAN.EFFECT_FLAG
         from UO_OP_ACTIVITY_PLAN
         left join UO_OP_ACTIVITY_HEADER on UO_OP_ACTIVITY_PLAN.HEAD_ID = UO_OP_ACTIVITY_HEADER.HEAD_ID
         where UO_OP_ACTIVITY_PLAN.HEAD_ID = #{headId} order by PLAN_DATE asc

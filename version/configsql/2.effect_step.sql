@@ -2,6 +2,15 @@ prompt Importing table uo_op_exec_steps...
 set feedback off
 set define off
 insert into uo_op_exec_steps (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('activity', 'Y', 'SQL', 'UPDATE UO_OP_ACTIVITY_PLAN T SET (T.SUCCESS_NUM,T.FAILD_NUM,T.INTERCEPT_NUM)=(
+    SELECT
+         COUNT(CASE WHEN D.PUSH_STATUS=''S'' THEN D.ACTIVITY_DETAIL_ID END) SUCCESS_NUM,
+         COUNT(CASE WHEN D.PUSH_STATUS=''F'' THEN D.ACTIVITY_DETAIL_ID END) FAILD_NUM,
+         COUNT(CASE WHEN D.PUSH_STATUS=''C'' THEN D.ACTIVITY_DETAIL_ID END) INTERCEPT_NUM
+    FROM UO_OP_ACTIVITY_DETAIL D WHERE D.PLAN_ID=T.PLAN_ID
+) WHERE T.PLAN_STATUS IN (''2'',''3'') AND TRUNC(T.PLAN_DATE)>=TRUNC(SYSDATE-3)', null, null, '更新活动计划头表的人数', '25', 'UPDATE', '更新活动计划头表的人数');
+
+insert into uo_op_exec_steps (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
 values ('activity', 'Y', 'SQL', 'MERGE INTO UO_OP_PUSH_LIST_LARGE C USING
 (SELECT T.PUSH_ID,
        ROW_NUMBER()OVER(PARTITION BY T.MSGID ORDER BY T.PUSH_ID DESC) RN
@@ -40,7 +49,7 @@ values ('activity', 'Y', 'SQL', 'UPDATE uo_op_activity_header T
             and  trunc(sysdate) >t.preheat_end_dt
             and  exists (
             select p.head_id from uo_op_activity_plan p where p.head_id=t.head_id and p.plan_status in(''3'') and p.activity_stage=''preheat''
-            )', null, null, '更新活动头表预售状态由已执行更新为完成', '25', 'UPDATE', '更新活动头表预售状态由已执行更新为完成(活动结束后有一条计划为完成)');
+            )', null, null, '更新活动头表预售状态由已执行更新为完成', '26', 'UPDATE', '更新活动头表预售状态由已执行更新为完成(活动结束后有一条计划为完成)');
 
 insert into uo_op_exec_steps (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
 values ('activity', 'Y', 'SQL', ' UPDATE uo_op_activity_header T
@@ -49,7 +58,7 @@ values ('activity', 'Y', 'SQL', ' UPDATE uo_op_activity_header T
             and  trunc(sysdate) >t.Formal_End_Dt
             and  exists (
             select p.head_id from uo_op_activity_plan p where p.head_id=t.head_id and p.plan_status in(''3'') and p.activity_stage=''formal''
-            )', null, null, '更新活动头表正式状态由已执行更新为完成', '26', 'UPDATE', '更新活动头表正式状态由已执行更新为完成(活动结束后有一条计划为完成)');
+            )', null, null, '更新活动头表正式状态由已执行更新为完成', '27', 'UPDATE', '更新活动头表正式状态由已执行更新为完成(活动结束后有一条计划为完成)');
 
 insert into uo_op_exec_steps (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
 values ('daily', 'Y', 'SQL', 'merge into uo_op_push_list t1
@@ -103,15 +112,6 @@ values ('manual', 'Y', 'SQL', 'merge into uo_op_push_list_large t1
         update set t1.push_status=t2.status', null, null, '更新PUSH_LARGE中的推送状态', '32', 'UPDATE', '根据运营商返回的状态报告，更新PUSH_LARGE中的推送状态');
 
 insert into uo_op_exec_steps (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
-values ('manual', 'Y', 'SQL', ' merge into uo_op_manual_detail t1
-            using  uo_op_push_list_large t2
-            on (t1.detail_id = t2.source_id and t2.source_code=''M'' and t1.head_id in (
-                select h.head_id from uo_op_manual_header h where h.status in (''1'',''2'') and trunc(h.SCHEDULE_DATE)>=trunc(sysdate-3)
-        ) )
-        when matched then
-        update set t1.push_status=t2.push_status,t1.push_date=t2.push_date', null, null, '更新手工推送明细的推送状态/推送时间', '33', 'UPDATE', '更新手工推送明细的推送状态/推送时间');
-
-insert into uo_op_exec_steps (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
 values ('manual', 'Y', 'SQL', ' update uo_op_manual_header c set (c.success_num,c.faild_num,c.intercept_num)=(
             select
                 sum(case when d.push_status=''S'' then 1 else 0 end)  success_num,
@@ -119,6 +119,15 @@ values ('manual', 'Y', 'SQL', ' update uo_op_manual_header c set (c.success_num,
                 sum(case when d.push_status=''C'' then 1 else 0 end) intercept_num
             from uo_op_manual_detail d where d.head_id=c.head_id
         ) where trunc(c.SCHEDULE_DATE) >=trunc(sysdate-3)', null, null, '更新手工推送头表的推送统计字段', '34', 'UPDATE', '更新手工推送头表的推送统计字段');
+
+insert into uo_op_exec_steps (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
+values ('manual', 'Y', 'SQL', ' merge into uo_op_manual_detail t1
+            using  uo_op_push_list_large t2
+            on (t1.detail_id = t2.source_id and t2.source_code=''M'' and t1.head_id in (
+                select h.head_id from uo_op_manual_header h where h.status in (''1'',''2'') and trunc(h.SCHEDULE_DATE)>=trunc(sysdate-3)
+        ) )
+        when matched then
+        update set t1.push_status=t2.push_status,t1.push_date=t2.push_date', null, null, '更新手工推送明细的推送状态/推送时间', '33', 'UPDATE', '更新手工推送明细的推送状态/推送时间');
 
 insert into uo_op_exec_steps (KEY_NAME, IS_VALID, STEP_TYPE, SQL_CONTENT, BEAN_NAME, METHOD_NAME, STEP_NAME, ORDER_NO, SQL_TYPE, COMMENTS)
 values ('manual', 'Y', 'SQL', ' update uo_op_manual_header c set c.status=''2'' where trunc(c.SCHEDULE_DATE) >= trunc(sysdate-3) and c.status=''1''

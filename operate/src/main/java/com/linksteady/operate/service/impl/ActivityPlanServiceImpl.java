@@ -449,7 +449,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 activityPlanEffectVO.setCovRate(0D);
             }else
             {
-                activityPlanEffectVO.setCovRate(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getSpuUserCount()/(double)activityPlanEffect.getSuccessCount()*100,2, RoundingMode.DOWN));
+                activityPlanEffectVO.setCovRate(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getSpuUserCount()/(double)activityPlanEffect.getSuccessCount()*100,2, RoundingMode.HALF_UP));
             }
 
             //每推送成本带来收入  收入/成本
@@ -458,7 +458,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 activityPlanEffectVO.setPushPerIncome(0D);
             }else
             {
-                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getSpuAmount()/((double)activityPlanEffect.getSuccessCount()*0.42),2, RoundingMode.DOWN));
+                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getSpuAmount()/((double)activityPlanEffect.getSuccessCount()*0.42),2, RoundingMode.HALF_UP));
             }
 
         }else
@@ -474,7 +474,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 activityPlanEffectVO.setCovRate(0D);
             }else
             {
-                activityPlanEffectVO.setCovRate(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getCovUserCount()/(double)activityPlanEffect.getSuccessCount()*100,2, RoundingMode.DOWN));
+                activityPlanEffectVO.setCovRate(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getCovUserCount()/(double)activityPlanEffect.getSuccessCount()*100,2, RoundingMode.HALF_UP));
             }
 
             //每推送成本带来收入  收入/成本
@@ -483,7 +483,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 activityPlanEffectVO.setPushPerIncome(0D);
             }else
             {
-                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getCovAmount()/((double)activityPlanEffect.getSuccessCount()*smsPrice),2, RoundingMode.DOWN));
+                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getCovAmount()/((double)activityPlanEffect.getSuccessCount()*smsPrice),2, RoundingMode.HALF_UP));
             }
 
         }
