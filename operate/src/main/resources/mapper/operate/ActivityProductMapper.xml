@@ -134,7 +134,7 @@
     </select>
 
     <delete id="deleteData">
-        delete from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
+        delete from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}
     </delete>
 
     <select id="getProductIdByHeadId" resultType="string">
