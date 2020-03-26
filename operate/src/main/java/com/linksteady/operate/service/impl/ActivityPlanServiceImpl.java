@@ -434,7 +434,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         activityPlanEffectVO.setSuccessCount(activityPlanEffect.getSuccessCount());
 
         //推送成本
-        activityPlanEffectVO.setPushCost(0.42*activityPlanEffect.getSuccessCount());
+        activityPlanEffectVO.setPushCost(smsPrice*activityPlanEffect.getSuccessCount());
         //推送且购买推荐类目转化人数
         if("1".equals(kpiType))
         {
@@ -458,7 +458,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 activityPlanEffectVO.setPushPerIncome(0D);
             }else
             {
-                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getSpuAmount()/((double)activityPlanEffect.getSuccessCount()*0.42),2, RoundingMode.HALF_UP));
+                activityPlanEffectVO.setPushPerIncome(ArithUtil.formatDoubleByMode((double)activityPlanEffect.getSpuAmount()/((double)activityPlanEffect.getSuccessCount()*smsPrice),2, RoundingMode.HALF_UP));
             }
 
         }else
