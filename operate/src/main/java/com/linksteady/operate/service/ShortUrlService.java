@@ -33,8 +33,8 @@ public interface ShortUrlService {
     String genConponShortUrl(String couponUrl,String sourceType);
 
     /**
-     * 根据优惠券的链接生成长链接（直接生成）
+     * 根据长链接生成长链接（直接生成）
      */
-    String genConponShortUrlDirect(String couponUrl,String sourceType);
+    String genShortUrlDirect(String longUrl,String sourceType);
 
 }

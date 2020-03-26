@@ -166,14 +166,14 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     }
 
     /**
-     * 根据优惠券的链接生成长链接（直接生成）
+     * 根据长链接生成长链接（直接生成）
      */
     @Override
-    public String genConponShortUrlDirect(String couponUrl, String sourceType) {
+    public String genShortUrlDirect(String longUrl, String sourceType) {
         if ("Y".equals(pushProperties.getIsTestEnv())) {
             return pushProperties.getDemoShortUrl();
         } else {
-            return produceShortUrl(couponUrl, sourceType);
+            return produceShortUrl(longUrl, sourceType);
         }
     }
 
