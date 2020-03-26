@@ -47,6 +47,7 @@ function clearReset() {
     $rolesSelect.selectpicker('refresh');
     $userAddForm.find("input[name='username']").removeAttr("readonly");
     $userAddForm.find("input[name='username']").val("");
+    $userAddForm.find("input[name='password']").val("");
     $userAddForm.find("input[name='email']").val("");
     $userAddForm.find("input[name='mobile']").val("");
     $userAddForm.find("input[name='expire']").val("");
@@ -94,6 +95,9 @@ function validateRule() {
             email: {
                 email: true
             },
+            password: {
+                required: true
+            },
             roles: {
                 required: true
             },
@@ -120,6 +124,7 @@ function validateRule() {
                 minlength: icon + "用户名长度3到30个字符",
                 remote: icon + "用户名已经存在"
             },
+            password: icon + "请输入密码",
             roles: icon + "请选择用户角色",
             email: icon + "邮箱格式不正确",
             status: icon + "请选择状态",
