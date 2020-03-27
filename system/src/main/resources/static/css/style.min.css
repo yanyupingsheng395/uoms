@@ -4,6 +4,29 @@
  * http://www.itshubao.com
  * yinqi<3331653644@qq.com>
  -------------------------------------- */
+ul.ztree {margin-top: 0px;border: 1px solid #ccc;background: #ffffff;width:192px;height:260px;overflow-y:scroll;overflow-x:auto;}
+.tooltip-inner{
+    background-color: #fff;
+    border:solid 1px #48b0f7;
+    color:#000000;
+    text-align: left;
+}
+.tooltip.top .tooltip-arrow{
+    border-top-color:#48b0f7 !important;
+}
+
+.tooltip.bottom .tooltip-arrow{
+    border-bottom-color:#48b0f7 !important;
+}
+
+.tooltip.left .tooltip-arrow{
+    border-left-color:#48b0f7 !important;
+}
+
+.tooltip.right .tooltip-arrow{
+    border-right-color:#48b0f7 !important;
+}
+
 body {
     font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;

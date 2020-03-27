@@ -50,4 +50,6 @@ public interface ActivityProductMapper {
     int getCountByHeadId(String headId);
 
     int validProduct(String headId);
+
+    List<String> getGroupIds(Long headId);
 }

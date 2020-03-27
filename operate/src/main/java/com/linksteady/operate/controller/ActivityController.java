@@ -6,16 +6,18 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.*;
+import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
+import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.thrift.ActivityThriftClient;
 import com.linksteady.operate.vo.ActivityGroupVO;
 import com.linksteady.operate.vo.DailyPersonalVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +27,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -61,6 +65,9 @@ public class ActivityController {
 
     @Autowired
     private ActivityCovService activityCovService;
+
+    @Autowired
+    private ShortUrlService shortUrlService;
 
     /**
      * 获取头表的分页数据
@@ -273,11 +280,25 @@ public class ActivityController {
     @GetMapping("/validSubmit")
     public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
         // 验证所有群组是否配置消息模板 0：合法，非0不合法
-        int templateIsNullCount = activityUserGroupService.validGroupTemplate(headId, stage, type);
-        if(templateIsNullCount != 0) {
-            return ResponseBo.error("部分群组模板消息未配置！");
+        int templateIsNullCount = -1;
+        String data = "";
+        if(type.equalsIgnoreCase(ActivityPlanTypeEnum.During.getPlanTypeCode())) {
+            templateIsNullCount = activityUserGroupService.validGroupTemplate(headId, stage, type);
+            data = "部分群组模板消息未配置！";
+        }else if(type.equalsIgnoreCase(ActivityPlanTypeEnum.Notify.getPlanTypeCode())){
+            List<String> groupIds = activityProductService.getGroupIds(headId);
+            if(groupIds.size() == 0) {
+                groupIds = Collections.singletonList("5");
+                data = "活动商品数为0，且不参加活动群组模板未配置！";
+            }else {
+                data = "上传的商品的与已配置文案的活动群组不符！";
+            }
+            templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, stage, type, groupIds);
         }
-        return ResponseBo.ok();
+        if(templateIsNullCount == 0) {
+            data = "";
+        }
+        return ResponseBo.okWithData(null, data);
     }
 
     /**
@@ -501,4 +522,35 @@ public class ActivityController {
     public ResponseBo validProduct(@RequestParam String headId) {
         return ResponseBo.okWithData(null, activityProductService.validProduct(headId));
     }
+
+    /**
+     * 长链转短链
+     * @param url 长链
+     * @return
+     */
+    @GetMapping("/convertShortUrl")
+    public ResponseBo convertShortUrl(@RequestParam String url) {
+        String shortUrl = "";
+        if(StringUtils.isNotEmpty(url)) {
+            shortUrl = shortUrlService.genShortUrlDirect(url, "M");
+        }
+        return ResponseBo.okWithData(null, shortUrl);
+    }
+
+
+    /**
+     * 移除群组的券关系
+     * @param headId
+     * @param stage
+     * @param smsCode
+     * @param groupId
+     * @return
+     */
+    @PostMapping("/removeSmsSelected")
+    public ResponseBo removeSmsSelected(@RequestParam String headId, @RequestParam String stage, @RequestParam String smsCode, @RequestParam String groupId) {
+        activityUserGroupService.removeSmsSelected(headId, stage, smsCode, groupId);
+        return ResponseBo.ok();
+    }
+
+
 }

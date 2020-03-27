@@ -355,7 +355,9 @@
                                                 </label>
                                                 <div>
                                                     <label class="h6" id="isProdName-error" style="color: #48b0f7;" hidden><i class="fa fa-info-circle"></i>
-                                                        请将${PROD_NAME}粘贴到文案中希望位置，系统会自动填充名称，用户可知被推荐商品；
+                                                        请将${PROD_NAME}粘贴到文案中希望位置，系统会自动填充名称，用户可知被推荐商品；&nbsp;&nbsp;
+                                                        <a style="text-decoration: underline;" onclick="copyString('${PROD_NAME}')">复制</a>
+                                                        <input type="text" id="var1" value="${PROD_NAME}" hidden>
                                                     </label>
                                                 </div>
                                             </div>
@@ -369,7 +371,7 @@
                                                 </label>
                                                 <div>
                                                     <label class="h6" id="isProdUrl-error" style="color: #48b0f7;" hidden><i class="fa fa-info-circle"></i>
-                                                        请将${PROD_URL}粘贴到文案中希望位置，系统会自动填充短链，用户可知被推荐商品； 1条文案中仅能填充一个链接；
+                                                        请将${PROD_URL}粘贴到文案中希望位置，系统会自动填充短链，用户可知被推荐商品； 1条文案中仅能填充一个链接；&nbsp;&nbsp;<label><a style="text-decoration: underline;" onclick="copyString('${PROD_URL}')">复制</a></label>
                                                     </label>
                                                 </div>
                                             </div>
@@ -384,6 +386,7 @@
                                                 <div>
                                                     <label class="h6" hidden id="isPrice-error" style="color: #48b0f7;"><i class="fa fa-info-circle"></i>
                                                         请将${PRICE}粘贴到文案中希望位置，系统会自动填充价格，用户可知被推荐商品的活动期间最低单价；
+                                                        &nbsp;&nbsp;<label><a style="text-decoration: underline;" onclick="copyString('${PRICE}')">复制</a></label>
                                                     </label>
                                                 </div>
                                             </div>
@@ -424,8 +427,19 @@
                         </div>
                     </div>
                 </form>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="input-group">
+                            <input id="longUrl" type="text" class="form-control" aria-label="Text input with multiple buttons" placeholder="长链转短链">
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-default" onclick="convertShortUrl()">转换</button>
+                                <button type="button" class="btn btn-default" onclick="copyShortUrl()">复制</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="margin-top: 10px;">
                 <button type="button" class="btn btn-primary btn-sm" name="save" id="btn_save_sms">确定</button>
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
             </div>
@@ -526,7 +540,7 @@
 </div>
 <script>
     const operate_type = "[[${operateType}]]";
-    const PROD_NAME_LEN = "[[${priceLen}]]";
+    const PROD_NAME_LEN = "[[${prodNameLen}]]";
     const PROD_URL_LEN = "[[${prodUrlLen}]]";
     const PRICE_LEN = "[[${priceLen}]]";
     const SMS_LEN_LIMIT = "[[${smsLenLimit}]]";

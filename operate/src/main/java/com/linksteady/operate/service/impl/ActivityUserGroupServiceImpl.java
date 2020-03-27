@@ -72,4 +72,15 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     public int validGroupTemplate(Long headId, String stage, String type) {
         return activityUserGroupMapper.validGroupTemplate(headId, stage, type);
     }
+
+    @Override
+    public int validGroupTemplateWithGroup(Long headId, String stage, String type, List<String> groupIds) {
+        return activityUserGroupMapper.validGroupTemplateWithGroup(headId, stage, type, groupIds);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void removeSmsSelected(String headId, String stage, String smsCode, String groupId) {
+        activityUserGroupMapper.removeSmsSelected(headId, stage, smsCode, groupId);
+    }
 }

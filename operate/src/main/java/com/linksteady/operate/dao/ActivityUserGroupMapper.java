@@ -31,4 +31,8 @@ public interface ActivityUserGroupMapper {
     void validUserGroup(String headId, String stage);
 
     int validGroupTemplate(Long headId, String stage, String type);
+
+    int validGroupTemplateWithGroup(Long headId, String stage, String type, List<String> groupIds);
+
+    void removeSmsSelected(String headId, String stage, String smsCode, String groupId);
 }

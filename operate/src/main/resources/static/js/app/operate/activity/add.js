@@ -140,6 +140,10 @@ $( "#btn_edit_shop" ).click( function () {
         $MB.n_warning( '请选择需要编辑的商品！' );
         return;
     }
+    if(selected_length > 1) {
+        $MB.n_warning( '一次只能选择一条记录修改！' );
+        return;
+    }
     let id = selected[0].id;
     $.get( "/activity/getProductById", {id: id}, function (r) {
         if (r.code === 200) {
@@ -232,9 +236,14 @@ function submitActivity(type) {
     var stage = $("#activity_stage").val();
     $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: stage, type: type}, function (r) {
         if(r.code === 200) {
+            var data = r.data;
+            if(data !== '') {
+                $MB.n_warning(data);
+                return;
+            }
             $MB.confirm({
                 title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-                content: '确认保存计划？'
+                content: "确认保存计划？"
             }, function () {
                 if(type === 'DURING') {
                     if(stage === 'preheat') {
@@ -330,7 +339,7 @@ function getProductInfo() {
     var settings = {
         url: '/activity/getActivityProductPage',
         pagination: true,
-        singleSelect: true,
+        singleSelect: false,
         sidePagination: "server",
         clickToSelect: true,
         pageList: [10, 25, 50, 100],
@@ -737,27 +746,33 @@ function getGroupList(stage, type, tableId) {
                 title: '文案',
                 align: 'center',
                 formatter: function (value, row, index) {
+                    var res = "";
                     if(tableId === 'table1') {
                         if(stage === 'preheat') {
                             if(preheatNotifyStatus === 'doing' || preheatNotifyStatus === 'done') {
-                                return "<span style='color: #333'><i class='fa fa-envelope-o'></i></span>";
+                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i></span>";
                             }else {
-                                return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
+                                res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
                             }
                         }else {
                             if(formalNotifyStatus === 'doing' || formalNotifyStatus === 'done') {
-                                return "<span style='color: #333'><i class='fa fa-envelope-o'></i></span>";
+                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i></span>";
                             }else {
-                                return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
+                                res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
                             }
                         }
                     }else {
-                        return "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
+                        res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i></a>";
                     }
+                    res += "&nbsp;&nbsp;<a onclick='removeSmsSelected(\""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>";
+                    return res;
                 }
             }, {
                 field: 'smsTemplateContent',
-                title: '预览推送'
+                title: '预览推送',
+                formatter: function (value, row, index) {
+                    return longTextFormat(value, row, index);
+                }
             }, {
                 field: 'checkFlag',
                 title: '校验结果',
@@ -782,6 +797,7 @@ function getGroupList(stage, type, tableId) {
                 n = 2;
             }
             $( "#" + tableId ).bootstrapTable('mergeCells',{index:0, field:"prodActivityProp", colspan: 1, rowspan: n})
+            $("a[data-toggle='tooltip']").tooltip();
         }
     };
     $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
@@ -841,9 +857,14 @@ function getTmpTableData() {
                 title: '用户与商品关系'
             }, {
                 field: 'content',
-                title: '文案内容'
+                title: '文案内容',
+                formatter: function (value, row, index) {
+                    return longTextFormat(value, row, index);
+                }
             }
-        ]
+        ], onLoadSuccess: function () {
+            $("a[data-toggle='tooltip']").tooltip();
+        }
     };
     $( "#tmpTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
@@ -943,7 +964,27 @@ function validTmp() {
             return false;
         }
     }
+    let smsContent = $('#content').val();
+    let y = smsContent.length;
+    let m = smsContent.length;
+    let n = smsContent.length;
+    if(smsContent.indexOf('${PROD_URL}') > -1) {
+        y = y - '${PROD_URL}'.length + parseInt(PROD_URL_LEN);
+        m = m - '${PROD_URL}'.length;
+    }
+    if(smsContent.indexOf('${PROD_NAME}') > -1) {
+        y = y - '${PROD_NAME}'.length + parseInt(PROD_NAME_LEN);
+        m = m - '${PROD_NAME}'.length;
+    }
+    if(smsContent.indexOf('${PRICE}') > -1) {
+        y = y - '${PRICE}'.length + parseInt(PRICE_LEN);
+        m = m - '${PRICE}'.length;
+    }
 
+    if(y > SMS_LEN_LIMIT) {
+        $MB.n_warning("文案字符数超过允许最大长度！");
+        return false;
+    }
     return true;
 }
 
@@ -1381,3 +1422,60 @@ $("#btn_download_data").click(function () {
         });
     });
 });
+
+function convertShortUrl() {
+    var longUrl = $("#longUrl").val();
+    if(longUrl === '' || longUrl.trim() === '') {
+        $MB.n_warning("长链不能为空！");
+        return;
+    }
+    $.get("/activity/convertShortUrl", {url:longUrl}, function (r) {
+        $("#longUrl").val(r.data);
+    });
+}
+
+function copyShortUrl() {
+    $('#longUrl').select();
+    document.execCommand("copy");
+    $MB.n_success("成功复制到粘贴板!");
+}
+
+function copyString(data) {
+    $('#copy_content').val(data);
+    $('#copy_content').select();
+    // 执行浏览器复制命令
+    document.execCommand("copy");
+    $MB.n_success("成功复制到粘贴板!");
+}
+
+function copyString(data){
+    $("#copyContent").text(data);
+    let range = document.createRange();
+    range.selectNodeContents(document.getElementById('copyContent'));
+    let selection = document.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.execCommand('Copy');
+    $MB.n_success("成功复制到粘贴板!");
+}
+
+// 移除组上的短信
+function removeSmsSelected(stage, smsCode, groupId) {
+    if(smsCode === null || smsCode === '' || smsCode === 'null') {
+        $MB.n_warning("当前群组不需要重置文案！");
+        return;
+    }
+    $MB.confirm({
+        title: '提示',
+        content: '确定重置当前群组配置的文案吗？'
+    }, function () {
+        console.log(headId)
+        $.post("/activity/removeSmsSelected", {headId: $("#headId").val(), stage:stage, smsCode: smsCode, groupId: groupId}, function (r) {
+            if(r.code === 200) {
+                $MB.n_success("当前群组配置的文案已重置！");
+                $MB.refreshTable("table1");
+                $MB.refreshTable("table5");
+            }
+        });
+    });
+}

@@ -277,6 +277,11 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         return activityProductMapper.validProduct(headId);
     }
 
+    @Override
+    public List<String> getGroupIds(Long headId) {
+        return activityProductMapper.getGroupIds(headId);
+    }
+
     /**
      * 保存上传的数据
      */

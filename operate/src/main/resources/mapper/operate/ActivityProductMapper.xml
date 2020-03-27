@@ -32,7 +32,7 @@
         <if test="groupId != null and groupId != ''">
             and group_id = #{groupId}
         </if>
-        order by id desc
+        order by CHECK_FLAG asc, id desc
         ) t where ROWNUM &lt;=#{end}
         ) where RN &gt;= #{start}
     </select>
@@ -65,10 +65,8 @@
     </delete>
 
     <insert id="saveActivityProduct">
-        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,
-        GROUP_ID, NOTIFY_MIN_PRICE)
-        values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{headId}, #{productId}, #{productName}, #{minPrice}, #{formalPrice}, #{productUrl},
-        #{groupId}, #{notifyMinPrice})
+        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,GROUP_ID, NOTIFY_MIN_PRICE)
+        values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{headId}, #{productId}, #{productName}, #{minPrice}, #{formalPrice}, #{productUrl},#{groupId}, #{notifyMinPrice})
     </insert>
 
     <select id="getProductById" resultMap="base">
@@ -77,8 +75,7 @@
 
     <update id="updateActivityProduct">
         update UO_OP_ACTIVITY_PRODUCT
-        set PRODUCT_NAME = #{productName},
-        MIN_PRICE = #{minPrice}, FORMAL_PRICE = #{formalPrice}, NOTIFY_MIN_PRICE = #{notifyMinPrice}, GROUP_ID = #{groupId}
+        set PRODUCT_NAME = #{productName},MIN_PRICE = #{minPrice}, FORMAL_PRICE = #{formalPrice}, NOTIFY_MIN_PRICE = #{notifyMinPrice}, GROUP_ID = #{groupId}
         where ID = #{id}
     </update>
 
@@ -170,5 +167,9 @@
 
     <select id="validProduct" resultType="int">
         select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId} and CHECK_FLAG = 'N'
+    </select>
+
+    <select id="getGroupIds" resultType="string">
+        select DISTINCT GROUP_ID from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId} and CHECK_FLAG = 'Y'
     </select>
 </mapper>

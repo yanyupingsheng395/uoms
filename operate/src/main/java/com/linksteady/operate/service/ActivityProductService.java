@@ -74,4 +74,6 @@ public interface ActivityProductService {
     int getCountByHeadId(String headId);
 
     int validProduct(String headId);
+
+    List<String> getGroupIds(Long headId);
 }

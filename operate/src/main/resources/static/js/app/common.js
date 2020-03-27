@@ -517,6 +517,16 @@ function copyToClipboard(obj)
     $MB.n_success("成功复制到粘贴板!");
 }
 
+function copyInputToClipboard(id)
+{
+    var content=$("#" + id).val();
+    $('#copy_content').val(content);
+    $('#copy_content').select();
+    // 执行浏览器复制命令
+    document.execCommand("copy");
+    $MB.n_success("成功复制到粘贴板!");
+}
+
 /**
  * 适用于作为bootstrap table的formatter函数
  * @param value
@@ -525,15 +535,15 @@ function copyToClipboard(obj)
  * @returns {string}
  */
 function longTextFormat(value, row, index) {
-    if(value.length==0)
+    if(value === null || value.length==0)
     {
         return '';
     }else if(value.length <20) {
-        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
+        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"click\">\n" +
             value+ "</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
     }else
     {
-        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
+        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"click\">\n" +
             value.substring(0, 20) + "...</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
     }
 }

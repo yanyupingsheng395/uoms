@@ -90,4 +90,19 @@
         select count(1) from UO_OP_ACTIVITY_GROUP
         where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{type} and SMS_TEMPLATE_CODE is null
     </select>
+
+    <select id="validGroupTemplateWithGroup" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_GROUP
+        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{type}
+        and GROUP_ID IN
+        <foreach collection="groupIds" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+        and SMS_TEMPLATE_CODE is null
+    </select>
+
+    <update id="removeSmsSelected">
+        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = null, CHECK_FLAG = 'N', CHECK_COMMENTS = '群组文案没有配置'
+        where head_id = #{headId} and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId}
+    </update>
 </mapper>
