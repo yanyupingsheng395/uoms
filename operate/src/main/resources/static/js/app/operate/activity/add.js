@@ -388,10 +388,10 @@ function getProductInfo() {
                     return res;
                 }
             }, {
-                field: 'minPrice',
+                field: 'notifyMinPrice',
                 title: '活动通知体现最低单价（元/件）'
             },  {
-                field: 'notifyMinPrice',
+                field: 'minPrice',
                 title: '活动期间体现最低单价（元/件）'
             },  {
                 field: 'productUrl',
@@ -1469,7 +1469,6 @@ function removeSmsSelected(stage, smsCode, groupId) {
         title: '提示',
         content: '确定重置当前群组配置的文案吗？'
     }, function () {
-        console.log(headId)
         $.post("/activity/removeSmsSelected", {headId: $("#headId").val(), stage:stage, smsCode: smsCode, groupId: groupId}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("当前群组配置的文案已重置！");

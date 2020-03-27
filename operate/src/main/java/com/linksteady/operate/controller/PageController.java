@@ -428,4 +428,13 @@ public class PageController extends BaseController {
     public String msgPage() {
         return "operate/msg/list";
     }
+
+    /**
+     * 短链生成页面
+     * @return
+     */
+    @RequestMapping("/shorturl")
+    public String shorturl() {
+        return "operate/shorturl/shorturl";
+    }
 }

@@ -509,11 +509,13 @@ var $MB = (function () {
 function copyToClipboard(obj)
 {
     var content=$(obj).prev().attr('data-original-title');
-
-    $('#copy_content').val(content);
-    $('#copy_content').select();
-    // 执行浏览器复制命令
-    document.execCommand("copy");
+    $("#copyContent").text(content);
+    let range = document.createRange();
+    range.selectNodeContents(document.getElementById('copyContent'));
+    let selection = document.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.execCommand('Copy');
     $MB.n_success("成功复制到粘贴板!");
 }
 

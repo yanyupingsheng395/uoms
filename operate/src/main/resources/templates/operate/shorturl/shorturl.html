@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" type="text/css"
+          data-th-href="@{/plugins/bootstrap-year-calendar/css/bootstrap-year-calendar.min.css}">
+</head>
+
+<body class="gray-bg">
+<!-- 公共组件 -->
+<div data-th-include="common/commonCSS"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <h5 class="navbar-page-title">短链获取</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 search-collapse">
+                        <div class="row">
+                            <span class="navbar-page-title">根据商品ID生成短链</span>
+                        </div>
+                        <div class="row">
+                            <hr class="hr"/>
+                        </div>
+                        <div class="col-md-6 col-md-offset-2">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label text-right">商品ID</label>
+                                    <div class="col-md-7">
+                                        <input class="form-control" id="productId">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-primary" type="button" onclick="convertShortUrl('0', $('#productId').val(), 'copyProductId')">生成短链</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label"></label>
+                                    <div class="col-md-7">
+                                        <input class="form-control" type="text" disabled id="copyProductId"/>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-primary" type="button" onclick="copyInputToClipboard('copyProductId')">复制短链</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 search-collapse">
+                        <div class="row">
+                            <span class="navbar-page-title">根据长链生成短链</span>
+                        </div>
+                        <div class="row">
+                            <hr class="hr"/>
+                        </div>
+                        <div class="col-md-6 col-md-offset-2">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label text-right">长链接</label>
+                                    <div class="col-md-7">
+                                        <input class="form-control" id="longUrl">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-primary" type="button" onclick="convertShortUrl('1', $('#longUrl').val(), 'copyLongUrl')">生成短链</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label"></label>
+                                    <div class="col-md-7">
+                                        <input class="form-control" type="text" disabled id="copyLongUrl"/>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-primary" type="button" onclick="copyInputToClipboard('copyLongUrl')">复制短链</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<div data-th-include="common/commonJS"></div>
+<!-- 日历插件 -->
+<script type="text/javascript" data-th-src="@{/plugins/bootstrap-year-calendar/js/bootstrap-year-calendar.js}"></script>
+<script type="text/javascript"
+        data-th-src="@{/plugins/bootstrap-year-calendar/js/languages/bootstrap-year-calendar.zh-CN.js}"></script>
+<script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
+<script data-th-src="@{/js/common/lightyear.js}"></script>
+<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+
+<script>
+    function convertShortUrl(type, data, id) {
+        if(data === '') {
+            if(type === '0') {
+                $MB.n_warning("请输入商品ID！");
+            }else {
+                $MB.n_warning("请输入商品长链接！");
+            }
+            return;
+        }
+        $.get("/url/getShortUrl", {type: type, data:data}, function (r) {
+            $("#" + id).val(r.data);
+        });
+    }
+</script>
+</body>
+</html>
