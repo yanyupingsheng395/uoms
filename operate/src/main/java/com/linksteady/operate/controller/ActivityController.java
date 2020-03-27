@@ -551,6 +551,4 @@ public class ActivityController {
         activityUserGroupService.removeSmsSelected(headId, stage, smsCode, groupId);
         return ResponseBo.ok();
     }
-
-
 }

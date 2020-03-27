@@ -167,77 +167,80 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 }
                 Sheet sheet = wb.getSheetAt(0);
                 for (Row row : sheet) {
-                    if (row.getCell(0).getRowIndex() == 0) {
-                        Iterator<Cell> cellIterator = row.cellIterator();
-                        cellIterator.forEachRemaining(x -> {
-                            // 可能会出现空列的情况
-                            if (!x.getStringCellValue().equalsIgnoreCase("")) {
-                                if (headers.indexOf(x.getStringCellValue()) == -1) {
-                                    flag.set(false);
+                    Optional<Cell> idCell = Optional.ofNullable(row.getCell(0));
+                    if(idCell.isPresent()) {
+                        if (row.getCell(0).getRowIndex() == 0) {
+                            Iterator<Cell> cellIterator = row.cellIterator();
+                            cellIterator.forEachRemaining(x -> {
+                                // 可能会出现空列的情况
+                                if (!x.getStringCellValue().equalsIgnoreCase("")) {
+                                    if (headers.indexOf(x.getStringCellValue()) == -1) {
+                                        flag.set(false);
+                                    }
                                 }
+                            });
+                            if (!flag.get()) {
+                                break;
+                            } else {
+                                continue;
                             }
-                        });
-                        if (!flag.get()) {
-                            break;
-                        } else {
-                            continue;
                         }
-                    }
-                    ActivityProduct activityProduct = new ActivityProduct();
-                    activityProduct.setHeadId(Long.valueOf(headId));
-                    try {
-                        activityProduct.setProductId(row.getCell(0).getStringCellValue());
-                    } catch (IllegalStateException e) {
-                        throw new LinkSteadyException("\"商品ID\"数据类型与模板不一致，应改为文本型！");
-                    }
-                    try {
-                        activityProduct.setProductName(row.getCell(1).getStringCellValue());
-                    } catch (IllegalStateException e) {
-                        throw new LinkSteadyException("\"名称\"数据类型与模板不一致，应改为文本型！");
-                    }
-                    try {
-                        activityProduct.setFormalPrice(row.getCell(2).getNumericCellValue());
-                    } catch (IllegalStateException e) {
-                        throw new LinkSteadyException("\"非活动日常单价\"数据类型与模板不一致，应改为数值型！");
-                    }
-                    try {
-                        String groupId = "";
-                        String groupName = row.getCell(3).getStringCellValue();
-                        switch (groupName) {
-                            case "活动价":
-                                groupId = "1";
-                                break;
-                            case "满件打折":
-                                groupId = "2";
-                                break;
-                            case "满元减钱":
-                                groupId = "3";
-                                break;
-                            case "特价":
-                                groupId = "4";
-                                break;
-                            default:
-                                break;
+                        ActivityProduct activityProduct = new ActivityProduct();
+                        activityProduct.setHeadId(Long.valueOf(headId));
+                        try {
+                            activityProduct.setProductId(row.getCell(0).getStringCellValue());
+                        } catch (IllegalStateException e) {
+                            throw new LinkSteadyException("\"商品ID\"数据类型与模板不一致，应改为文本型！");
                         }
-                        if (StringUtils.isEmpty(groupId)) {
-                            throw new LinkSteadyException("\"活动机制\"数据应为下拉项中某一项！");
+                        try {
+                            Optional.ofNullable(row.getCell(1)).map(Cell::getStringCellValue).ifPresent(activityProduct::setProductName);
+                        } catch (IllegalStateException e) {
+                            throw new LinkSteadyException("\"名称\"数据类型与模板不一致，应改为文本型！");
                         }
-                        activityProduct.setGroupId(groupId);
-                    } catch (IllegalStateException e) {
-                        throw new LinkSteadyException("\"活动机制\"数据类型与模板不一致，应改为数值型！");
+                        try {
+                            Optional.of(row.getCell(2)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setFormalPrice);
+                        } catch (IllegalStateException e) {
+                            throw new LinkSteadyException("\"非活动日常单价\"数据类型与模板不一致，应改为数值型！");
+                        }
+                        try {
+                            String groupId = null;
+                            String groupName = Optional.of(row.getCell(3)).map(Cell::getStringCellValue).get();
+                            switch (groupName) {
+                                case "活动价":
+                                    groupId = "1";
+                                    break;
+                                case "满件打折":
+                                    groupId = "2";
+                                    break;
+                                case "满元减钱":
+                                    groupId = "3";
+                                    break;
+                                case "特价":
+                                    groupId = "4";
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if (StringUtils.isEmpty(groupId)) {
+                                throw new LinkSteadyException("\"活动机制\"数据应为下拉项中某一项！");
+                            }
+                            activityProduct.setGroupId(groupId);
+                        } catch (IllegalStateException e) {
+                            throw new LinkSteadyException("\"活动机制\"数据类型与模板不一致，应改为数值型！");
+                        }
+                        try {
+                            Optional.of(row.getCell(4)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setNotifyMinPrice);
+                        } catch (IllegalStateException e) {
+                            throw new LinkSteadyException("\"活动通知体现最低单价\"数据类型与模板不一致，应改为数值型！");
+                        }
+                        try {
+                            Optional.of(row.getCell(5)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setMinPrice);
+                        } catch (IllegalStateException e) {
+                            throw new LinkSteadyException("\"活动期间体现最低单价\"数据类型与模板不一致，应改为数值型！");
+                        }
+                        activityProduct.setProductUrl(generateProductShortUrl(activityProduct.getProductId(), "S"));
+                        productList.add(activityProduct);
                     }
-                    try {
-                        activityProduct.setNotifyMinPrice(row.getCell(4).getNumericCellValue());
-                    } catch (IllegalStateException e) {
-                        throw new LinkSteadyException("\"活动通知体现最低单价\"数据类型与模板不一致，应改为数值型！");
-                    }
-                    try {
-                        activityProduct.setMinPrice(row.getCell(5).getNumericCellValue());
-                    } catch (IllegalStateException e) {
-                        throw new LinkSteadyException("\"活动期间体现最低单价\"数据类型与模板不一致，应改为数值型！");
-                    }
-                    activityProduct.setProductUrl(generateProductShortUrl(activityProduct.getProductId(), "S"));
-                    productList.add(activityProduct);
                 }
                 if (!flag.get()) {
                     throw new LinkSteadyException("检测到上传数据与模板格式不符，请检查后重新上传！");
