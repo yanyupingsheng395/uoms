@@ -2,6 +2,7 @@ package com.linksteady.operate.service;
 
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityProduct;
+import com.linksteady.operate.domain.ActivityProductUploadError;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -67,7 +68,7 @@ public interface ActivityProductService {
     /**
      * 上传商品
      */
-    void uploadExcel(MultipartFile file, String headId, String uploadMethod, String repeatProduct) throws Exception;
+    List<ActivityProductUploadError> uploadExcel(MultipartFile file, String headId, String uploadMethod, String repeatProduct) throws Exception;
 
     void validProductInfo(String headId);
 

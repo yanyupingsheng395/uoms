@@ -97,16 +97,15 @@ public class ActivityController {
     @PostMapping("/uploadExcel")
     public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId,
                                   @RequestParam("uploadMethod") String uploadMethod, @RequestParam("repeatProduct") String repeatProduct) {
+        List<ActivityProductUploadError> errorList;
         try {
-            activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct);
+            errorList = activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct);
             validProductInfo(headId);
-        } catch (LinkSteadyException e){
-            return ResponseBo.error(e.getMessage());
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("上传商品列表出错", e);
             return ResponseBo.error("上传商品出现未知错误！");
         }
-        return ResponseBo.ok();
+        return ResponseBo.okWithData(null, errorList);
     }
 
     /**

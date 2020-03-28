@@ -2,6 +2,7 @@ package com.linksteady.operate.domain;
 
 import com.linksteady.common.config.ExportConfig;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author hxcao
@@ -44,4 +45,13 @@ public class ActivityProduct {
     private String checkComments;
 
     private String alikeProdId;
+
+    // 判断当前数据是否合法
+    public boolean productValid() {
+        return StringUtils.isNotEmpty(this.getProductId()) &&
+        StringUtils.isNotEmpty(this.getGroupId()) &&
+        !Double.valueOf(this.getMinPrice()).isNaN() &&
+        !Double.valueOf(this.getFormalPrice()).isNaN() &&
+        !Double.valueOf(this.getNotifyMinPrice()).isNaN();
+    }
 }
