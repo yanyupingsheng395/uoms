@@ -203,8 +203,12 @@ $('#btn_upload').click(function () {
             contentType: false,
             success: function (res) {
                 if(res.code === 200) {
+                    if(res.data.length === 0) {
+                        $MB.n_success("商品上传成功！");
+                    }else {
+                        makeErrorTable(res.data);
+                    }
                     $MB.refreshTable('activityProductTable');
-                    $MB.n_success(res.msg);
                     $("#uploadProduct").modal('hide');
                 }else {
                     $MB.n_warning(res.msg);
@@ -221,6 +225,34 @@ $('#btn_upload').click(function () {
         });
     });
 });
+
+function makeErrorTable(data) {
+    $("#errorDataTable").bootstrapTable({
+        dataType: "json",
+        showHeader:true,
+        columns: [{
+            field: 'errorDesc',
+            title: '指标',
+            align: 'left'
+        }, {
+            field: 'errorRows',
+            title: '出现次数',
+            align: 'center'
+        },{
+            field: 'firstErrorRow',
+            title: '首次出现行数',
+            align: 'center'
+        }]
+    });
+    $("#errorDataTable").bootstrapTable('load', data);
+    $("#upload_error_modal").modal('show');
+}
+
+$("#upload_error_modal").on('hidden.bs.modal', function () {
+    $("#uploadProduct").modal('show');
+});
+
+
 
 $("#uploadProduct").on('hidden.bs.modal', function () {
     $("input[name='uploadMethod']").prop('checked', false);
@@ -1404,7 +1436,6 @@ $("#btn_valid_product").click(function () {
         }
     });
 });
-
 
 $("#btn_download_data").click(function () {
     $MB.confirm({
