@@ -35,6 +35,7 @@ public class TransDailyContentThread implements Callable {
             DailyDetailServiceImpl dailyDetailService = (DailyDetailServiceImpl) SpringContextUtils.getBean("dailyDetailServiceImpl");
             list = dailyDetailService.getUserList(headerId, start, end);
 
+
             //转换文案
             List<DailyDetail> targetList = dailyDetailService.transPushList(list,groupCouponList);
             log.info("{}的第{}-{}调记录处理完成",headerId,start,end);

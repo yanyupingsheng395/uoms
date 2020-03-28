@@ -83,7 +83,7 @@ public class ActivityCovServiceImpl implements ActivityCovService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateCovInfo(String headId, String stage, String covId) {
+    public void updateCovInfo(long headId, String stage, String covId) {
         if (ActivityStageEnum.preheat.getStageCode().equals(stage)) {
             activityCovMapper.updatePreheatCovInfo(headId, covId);
         }

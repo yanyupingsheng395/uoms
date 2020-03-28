@@ -1,15 +1,19 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.domain.DailyDetail;
+import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.DailyDetailService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransDailyContentThread;
 import com.linksteady.operate.vo.GroupCouponVO;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +40,9 @@ public class DailyDetailServiceImpl implements DailyDetailService {
 
     @Autowired
     private CouponMapper couponMapper;
+
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
 
     /**
      * 每日运营用户列表分页
@@ -103,11 +110,9 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      * @return 1表示生成成功 0表示生成失败
      */
     @Override
-    @SneakyThrows
     @Transactional(rollbackFor = Exception.class)
-    public String generatePushList(String headerId) {
-        String result="1";
-
+    public void generatePushList(String headerId) throws Exception{
+        dailyDetailMapper.deletePushContentTemp(headerId);
         //获取group上配置的所有优惠券信息
         List<Map<String,Object>> groupCouponInfo=couponMapper.selectGroupCouponInfo();
         Map<String,List<GroupCouponVO>> groupCouponList=groupingCouponByGroupId(groupCouponInfo);
@@ -155,33 +160,27 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                         insertPushContentTemp(future.get());
                     }else
                     {
-                        //存在错误
-                        result="0";
-                        break;
+                        throw new LinkSteadyException("转化文案失败");
                     }
                 }
             } catch (Exception e) {
                 //错误日志上报
                 log.error("每日运营转化文案错误，错误堆栈为{}",e);
-                result="0";
+
+                //上报
+                exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+
+                //异常向上抛出
+                throw e;
             }finally {
                 pool.shutdown();
             }
         }
 
-        if(result=="1")
-        {
-            //用临时表更新 每日运营明细表
-            dailyDetailMapper.updatePushContentFromTemp(headerId);
-            Long endTime = System.currentTimeMillis();
-            log.info(">>>每日运营文案已生成，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
-        }else
-        {
-            Long endTime = System.currentTimeMillis();
-            log.info(">>>每日运营文案转化失败，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
-        }
-
-        return result;
+        //用临时表更新 每日运营明细表
+        dailyDetailMapper.updatePushContentFromTemp(headerId);
+        Long endTime = System.currentTimeMillis();
+        log.info(">>>每日运营文案已生成，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
     }
 
     /**
@@ -192,7 +191,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     private   Map<String,List<GroupCouponVO>> groupingCouponByGroupId(List<Map<String,Object>> groupCouponInfo)
     {
         List<GroupCouponVO> list=groupCouponInfo.stream().map(p->{
-              return new GroupCouponVO(
+               return new GroupCouponVO(
                       p.get("GROUP_ID").toString(),
                       p.get("COUPON_ID").toString(),
                       (String)p.get("COUPON_DISPLAY_NAME"),
@@ -211,7 +210,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      * @param list
      * @return
      */
-    @SneakyThrows
     public List<DailyDetail> transPushList(List<DailyDetail> list,Map<String,List<GroupCouponVO>> groupCouponList) {
         List<DailyDetail> targetList = Lists.newArrayList();
         DailyDetail dailyDetailTemp = null;
@@ -363,16 +361,6 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     public void insertPushContentTemp( List<DailyDetail> targetList)
     {
         dailyDetailMapper.insertPushContentTemp(targetList);
-    }
-
-    /**
-     * 清空保存文案的临时表
-     */
-    @Override
-    public void deletePushContentTemp(String headerId)
-    {
-        //清空保存文案的临时表
-        dailyDetailMapper.deletePushContentTemp(headerId);
     }
 
 }

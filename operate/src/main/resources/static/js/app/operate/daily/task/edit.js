@@ -12,10 +12,9 @@ $(function () {
  * 生成每日运营策略
  */
 function generateStragegy() {
-    $MB.loadingDesc('show', '策略生成中，请稍后...');
+    $MB.loadingDesc('show', '策略生成中，请稍候...');
     $.get("/daily/generatePushList", {headId: headId}, function (r) {
         if(r.code == 200) {
-            $("#timestamp").val(r.msg);
             //如果生成成功，则加载表格
             getUserStrategyList();
         }else {
@@ -139,10 +138,11 @@ function submitData() {
     if (flag) {
         $("#btn_push").attr("disabled", true);
         $("#push_msg_modal").modal('hide');
+
+        $MB.loadingDesc('show', '推送中，请稍候...');
         $.get("/daily/submitData", {
             headId: headId, pushMethod: $("input[name='pushMethod']:checked").val(),
             pushPeriod: $("#pushPeriod").find("option:selected").val(),
-            timestamp: $("#timestamp").val(),
             effectDays: $("#effectDays").val()
         }, function (r) {
             if (r.code === 200) {
@@ -154,6 +154,7 @@ function submitData() {
                 $("#btn_push").attr("disabled", false);
                 $MB.n_danger(r.msg);
             }
+            $MB.loadingDesc('hide');
         });
     }
 }

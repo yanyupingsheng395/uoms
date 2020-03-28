@@ -17,7 +17,7 @@
         <result column="CONVERT_SPU_NUM" property="convertSpuNum" jdbcType="DECIMAL"></result>
         <result column="CONVERT_SPU_RATE" property="convertSpuRate" jdbcType="DECIMAL"></result>
         <result column="STATUS" property="status" jdbcType="VARCHAR"></result>
-        <result column="OP_CHANGED_TIME" property="opChangeDate" jdbcType="DECIMAL"></result>
+        <result column="VERSION" property="version" jdbcType="DECIMAL"></result>
         <result column="EFFECT_DAYS" property="effectDays" jdbcType="DECIMAL"></result>
     </resultMap>
 
@@ -129,7 +129,7 @@
     </update>
 
     <select id="getDailyHeadById" resultMap="baseResult">
-        SELECT HEAD_ID, TOUCH_DT,to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,op_changed_time,EFFECT_DAYS
+        SELECT HEAD_ID, TOUCH_DT,to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,VERSION,EFFECT_DAYS
          FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}
     </select>
 
@@ -257,19 +257,20 @@
     </update>
 
     <update id="updateHeaderPushInfo">
-        update UO_OP_DAILY_HEADER set op_changed_time = #{opChangeDate},
-               push_method=#{pushMethod},push_period=#{pushPeriod},EFFECT_DAYS=#{effectDays}
+        update UO_OP_DAILY_HEADER
+        <set>
+            <if test="pushMethod!=null and pushMethod!=''">
+                push_method=#{pushMethod},
+            </if>
+            <if test="pushPeriod!=null and pushPeriod!=''">
+                push_period=#{pushPeriod},
+            </if>
+            <if test="effectDays!=null and effectDays!=''">
+                EFFECT_DAYS=#{effectDays},
+            </if>
+        </set>
         where head_id = #{headId}
     </update>
-
-    <update id="updateHeaderOpChangeDate">
-        update UO_OP_DAILY_HEADER set op_changed_time = #{opChangeDate}
-        where head_id = #{headId}
-    </update>
-
-    <select id="validateOpChangeTime" resultType="int">
-       select count(*) from UO_OP_DAILY_HEADER where head_id = #{headId} and op_changed_time = #{opChangeDate}
-    </select>
 
     <select id="getUserStats" resultMap="DailyUserStatsResult">
         SELECT USER_VALUE,

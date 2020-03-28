@@ -60,19 +60,12 @@ public interface DailyDetailService {
      * 生成短信文案
      * @param headerId
      */
-    String generatePushList(String headerId);
+    void generatePushList(String headerId) throws Exception;
 
     /**
      * 保存文案信息到临时表
      * @param targetList
      */
     void insertPushContentTemp( List<DailyDetail> targetList);
-
-    /**
-     * 清空保存文案的临时表
-     */
-    void deletePushContentTemp(String headerId);
-
-
 
 }

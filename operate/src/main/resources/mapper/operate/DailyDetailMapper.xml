@@ -185,7 +185,9 @@
 
     <update id="updatePushContentFromTemp">
         update UO_OP_DAILY_DETAIL set (sms_content,coupon_id,coupon_min,coupon_deno) =
-            (select sms_content,coupon_id,coupon_min,coupon_deno from UO_OP_DAILY_CONTENT_TMP where UO_OP_DAILY_CONTENT_TMP.daily_detail_id = UO_OP_DAILY_DETAIL.daily_detail_id)
+            (select sms_content,coupon_id,coupon_min,coupon_deno from UO_OP_DAILY_CONTENT_TMP where
+            UO_OP_DAILY_CONTENT_TMP.daily_detail_id = UO_OP_DAILY_DETAIL.daily_detail_id
+            and UO_OP_DAILY_CONTENT_TMP.head_id=UO_OP_DAILY_DETAIL.head_id)
         where head_id=#{headId}
     </update>
 </mapper>

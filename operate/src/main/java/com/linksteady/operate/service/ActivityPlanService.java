@@ -52,7 +52,7 @@ public interface ActivityPlanService {
     /**
      * 对活动运营的文案进行转换
      */
-    String transActivityDetail( ActivityPlan activityPlan);
+    void transActivityDetail( ActivityPlan activityPlan) throws Exception;
 
     /**
      * 对变量进行替换
@@ -75,4 +75,9 @@ public interface ActivityPlanService {
     int getDailyPersonalEffectCount(Long planId);
 
     void updatePlanToStop(ActivityPlan activityPlan) throws Exception;
+
+    /**
+     * 对活动文案进行配置
+     */
+    boolean validateNotifySms(ActivityPlan activityPlan);
 }

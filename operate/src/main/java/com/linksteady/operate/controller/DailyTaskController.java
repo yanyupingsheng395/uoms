@@ -7,6 +7,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.*;
+import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.service.DailyDetailService;
 import com.linksteady.operate.service.DailyService;
@@ -100,26 +101,22 @@ public class DailyTaskController {
      */
     @GetMapping("/generatePushList")
     public ResponseBo generatePushList(String headId) {
+
         //首先获取锁
         if (dailyService.getTransContentLock(headId)) {
-            //调用文案生成逻辑
-            dailyDetailService.deletePushContentTemp(headId);
-            //1表示生成成功 0表示生成失败
-            String result = dailyDetailService.generatePushList(headId);
-            if ("1".equals(result)) {
+            try {
+                dailyDetailService.generatePushList(headId);
+                return ResponseBo.ok();
+            } catch (Exception e) {
+                log.error("每日运营转化生成文案错误，异常堆栈为{}",e);
+                return ResponseBo.error("生成文案错误，请联系系统运维人员！");
+            }finally {
                 //释放锁
                 dailyService.delTransLock();
-
-                long timestamp = System.currentTimeMillis();
-                //更新时间戳到头表
-                dailyService.updateHeaderOpChangeDate(headId, timestamp);
-
-                return ResponseBo.ok(timestamp);
-            } else {
-                return ResponseBo.error("生成文案错误，请联系系统运维人员！");
             }
-        } else {
-            return ResponseBo.error("其他用户正在生成文案，请稍后再操作！");
+        }else
+        {
+             return ResponseBo.error("其他用户正在生成文案，请稍后再操作！");
         }
     }
 
@@ -202,9 +199,9 @@ public class DailyTaskController {
      */
     @GetMapping("/submitData")
     @Transactional(rollbackFor = Exception.class)
-    public synchronized ResponseBo submitData(String headId, String pushMethod, String pushPeriod, Long timestamp,Long effectDays) {
+    public synchronized ResponseBo submitData(String headId, String pushMethod, String pushPeriod,Long effectDays) {
         //对参数进行校验
-        if(StringUtils.isEmpty(headId)||StringUtils.isEmpty(pushMethod)||StringUtils.isEmpty(timestamp))
+        if(StringUtils.isEmpty(headId)||StringUtils.isEmpty(pushMethod))
         {
             return ResponseBo.error("参数错误，请通过系统界面进行操作！");
         }
@@ -222,7 +219,7 @@ public class DailyTaskController {
         //进行一次状态的判断
         DailyHead dailyHead = dailyService.getDailyHeadById(headId);
         if (null==dailyHead||!dailyHead.getStatus().equalsIgnoreCase("todo")) {
-            return ResponseBo.error("当前数据状态不支持该操作！");
+            return ResponseBo.error("记录已被其他用户修改，请返回刷新后重试！");
         }
 
         // 短信文案的校验  (是否包含变量，短信长度)
@@ -231,14 +228,18 @@ public class DailyTaskController {
             return ResponseBo.error(validResult);
         }
 
-        //判断时间戳(页面传来的时间戳和数据库不一致)
-        int count = dailyService.validateOpChangeTime(headId, timestamp);
-        if (count == 0) {
-            return ResponseBo.error("数据已被其他用户操作，请返回列表界面重新尝试！");
-        } else {
-            //推送
-            dailyService.pushContent(headId,pushMethod,pushPeriod,timestamp,effectDays);
+        try {
+            dailyService.pushContent(dailyHead,pushMethod,pushPeriod,effectDays);
             return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("每日运营推送错误，错误堆栈为{}",e);
+            if(e instanceof OptimisticLockException)
+            {
+                return ResponseBo.error(e.getMessage());
+            }else
+            {
+                return ResponseBo.error("推送出现未知错误，请联系系统运维人员!");
+            }
         }
     }
 

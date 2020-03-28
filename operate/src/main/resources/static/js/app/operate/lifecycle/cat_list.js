@@ -114,7 +114,7 @@ function periodTypeOption() {
 
 
 function initTableData() {
-    $MB.loadingDesc('show', '加载数据中,请稍后...');
+    $MB.loadingDesc('show', '加载数据中,请稍候...');
     stats = new Object();
     var startDt =  $("#startDt").val();
     var endDt = $("#endDt").val();

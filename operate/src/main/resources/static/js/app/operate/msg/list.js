@@ -25,7 +25,7 @@ function getTableData() {
             {
                 field: 'msgContent',
                 title: '内容',
-                align: "center",
+                align: "left",
             },{
                 field: 'msgType',
                 title: '类型',

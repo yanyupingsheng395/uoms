@@ -87,6 +87,9 @@ function initTable() {
                     case "finished":
                         res = "<span class=\"badge bg-primary\">已结束</span>";
                         break;
+                    case "timeout":
+                        res = "<span class=\"badge bg-gray\">过期未执行</span>";
+                        break;
                     default:
                         res = "-";
                         break;

@@ -65,11 +65,6 @@ public class DailyHead {
     private Date statDate;
 
     /**
-     * 操作的时间戳
-     */
-    private Long opChangeDate;
-
-    /**
      * 验证标记
      */
     private String validateLabel;
@@ -78,4 +73,6 @@ public class DailyHead {
      * 效果统计天数
      */
     private Long effectDays;
+
+    private int version;
 }

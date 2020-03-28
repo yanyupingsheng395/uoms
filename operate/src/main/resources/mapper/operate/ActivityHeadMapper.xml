@@ -138,10 +138,6 @@
         from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
     </select>
 
-    <select id="getStageDate" resultType="map">
-        select FORMAL_START_DT,FORMAL_END_DT,PREHEAT_START_DT,PREHEAT_END_DT, PREHEAT_NOTIFY_DT, FORMAL_NOTIFY_DT from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
-    </select>
-
     <delete id="deleteActivity">
         delete from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
     </delete>
@@ -151,22 +147,29 @@
     </select>
 
     <update id="updatePreheatStatusHead">
-        UPDATE UO_OP_ACTIVITY_HEADER H SET H.PREHEAT_STATUS=#{status} where h.head_id=#{headId}
+        UPDATE UO_OP_ACTIVITY_HEADER H
+        <set>
+            <if test="planType!=null and planType=='NOTIFY'">
+                  H.PREHEAT_NOTIFY_STATUS=#{status},
+            </if>
+            <if test="planType!=null and planType=='DURING'">
+                  H.PREHEAT_STATUS=#{status},
+            </if>
+        </set>
+    where h.head_id=#{headId}
     </update>
 
     <update id="updateFormalStatusHead">
-        UPDATE UO_OP_ACTIVITY_HEADER H SET H.FORMAL_STATUS=#{status} where h.head_id=#{headId}
+        UPDATE UO_OP_ACTIVITY_HEADER H
+        <set>
+            <if test="planType!=null and planType=='NOTIFY'">
+                  H.FORMAL_NOTIFY_STATUS=#{status},
+            </if>
+            <if test="planType!=null and planType=='DURING'">
+                  H.FORMAL_STATUS=#{status},
+            </if>
+        </set>
+        where h.head_id=#{headId}
     </update>
 
-    <update id="updatePreheatNotifyStatusHead">
-        UPDATE UO_OP_ACTIVITY_HEADER H SET H.PREHEAT_NOTIFY_STATUS=#{status} where h.head_id=#{headId}
-    </update>
-
-    <update id="updateFormalNotifyStatusHead">
-        UPDATE UO_OP_ACTIVITY_HEADER H SET H.FORMAL_NOTIFY_STATUS=#{status} where h.head_id=#{headId}
-    </update>
-
-    <select id="getStatus" resultType="string">
-        ${sql}
-    </select>
 </mapper>

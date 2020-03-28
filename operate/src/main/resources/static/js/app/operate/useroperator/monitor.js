@@ -41,7 +41,7 @@ function getSource() {
 
 // 获取概览页的数据
 function getTotalData() {
-    $MB.loadingDesc('show', "正在计算数据中，请稍后...");
+    $MB.loadingDesc('show', "正在计算数据中，请稍候...");
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
@@ -229,7 +229,7 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
  * 获取指标实际值，同环比，去年同期，上一周期值
  */
 function getKpiInfo(kpiType, unit) {
-    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
+    $MB.loadingDesc('show', "正在计算数据中,请稍候...");
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
@@ -270,7 +270,7 @@ function getKpiInfo(kpiType, unit) {
 
 
 function kpiChart(kpiType) {
-    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
+    $MB.loadingDesc('show', "正在计算数据中,请稍候...");
 
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
@@ -332,7 +332,7 @@ function kpiChart(kpiType) {
 }
 
 function allChart(kpiType) {
-    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
+    $MB.loadingDesc('show', "正在计算数据中,请稍候...");
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
@@ -370,7 +370,7 @@ function allChart(kpiType) {
 }
 
 function makeSpAndFpChart(kpiType) {
-    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
+    $MB.loadingDesc('show', "正在计算数据中,请稍候...");
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();
@@ -517,7 +517,7 @@ function spChart(r) {
 }
 
 function getKpiCalInfo(kpiType) {
-    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
+    $MB.loadingDesc('show', "正在计算数据中,请稍候...");
     var periodType = $("#period").find("option:selected").val();
     var startDt = $("#startDt").val();
     var endDt = $("#endDt").val();

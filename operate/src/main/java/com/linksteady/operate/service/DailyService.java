@@ -45,13 +45,6 @@ public interface DailyService {
     int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
 
     /**
-     * 更新头表的操作时间戳
-     * @param headId
-     * @param opChangeDate
-     */
-    void updateHeaderOpChangeDate(String headId, Long opChangeDate);
-
-    /**
      * 获取生成文案的锁  true表示加锁成功 false表示加锁失败
      */
     boolean getTransContentLock(String headId);
@@ -60,11 +53,6 @@ public interface DailyService {
      * 释放生成文案的锁
      */
     void delTransLock();
-
-    /**
-     * 验证操作时间戳
-     */
-    int validateOpChangeTime(String headId,Long opChangeDate);
 
     /**
      * 获取预览用户的统计数据
@@ -85,5 +73,5 @@ public interface DailyService {
 
     Map<String, Object> getUserStatsData(String headId);
 
-    void pushContent(String headId,String pushMethod,String pushPeriod,Long timestamp,Long effectDays);
+    void pushContent(DailyHead dailyHead,String pushMethod,String pushPeriod,Long effectDays) throws Exception;
 }

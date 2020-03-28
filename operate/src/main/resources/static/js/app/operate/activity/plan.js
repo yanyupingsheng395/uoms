@@ -100,7 +100,7 @@ function getPlanTable() {
                             res = "<span class=\"badge bg-info\">执行完</span>";
                             break;
                         case "4":
-                            res = "<span class=\"badge bg-danger\">过期未推送</span>";
+                            res = "<span class=\"badge bg-danger\">过期未执行</span>";
                             break;
                         case "5":
                             res = "<span class=\"badge bg-danger\">终止</span>";
@@ -151,7 +151,7 @@ $("#btn_process").click(function () {
     if(status==1)
     {
         //生成文案
-        $MB.loadingDesc('show', '转化文案中，请稍后...');
+        $MB.loadingDesc('show', '转化文案中，请稍候...');
         $.get("/activityPlan/transActivityDetail", {planId: planId}, function (r) {
             if(r.code == 200) {
                 //如果生成成功，加载数据
@@ -169,7 +169,7 @@ $("#btn_process").click(function () {
         });
     }else
     {
-        $MB.loadingDesc('show', '加载中，请稍后...');
+        $MB.loadingDesc('show', '加载中，请稍候...');
         getUserGroupTable(planId,planType);
         getUserDetail(planId,planType,"-1");
         $("#planId").val(planId);

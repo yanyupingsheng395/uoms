@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
+import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.dao.ActivityDetailMapper;
 import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.dao.ActivityPlanMapper;
@@ -14,6 +15,8 @@ import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
 import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.domain.enums.ActivityStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
+import com.linksteady.operate.exception.OptimisticLockException;
+import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivityPlanService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransActivityContentThread;
@@ -21,6 +24,7 @@ import com.linksteady.operate.vo.ActivityContentVO;
 import com.linksteady.operate.vo.ActivityPlanEffectVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -47,7 +51,7 @@ import java.util.stream.Collectors;
 public class ActivityPlanServiceImpl implements ActivityPlanService {
 
     @Autowired
-    private ActivityHeadMapper activityHeadMapper;
+    private ActivityHeadService activityHeadService;
 
     @Autowired
     private ActivityPlanMapper activityPlanMapper;
@@ -67,6 +71,9 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     @Autowired
     RedisTemplate<String, String> redisTemplate;
 
+    @Autowired
+    ExceptionNoticeHandler exceptionNoticeHandler;
+
     private final int MAX_TASK_DAY = 7;
 
     /**
@@ -76,45 +83,49 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void savePlanList(Long headId, String stage, String type) {
-        String during = "DURING";
-        String notify = "NOTIFY";
+
+        //设置活动状态为待执行
+        activityHeadService.updateStatus(headId, stage, "todo", type);
+
         List<ActivityPlan> planList = Lists.newArrayList();
-        Map<String, Date> dateMap = activityHeadMapper.getStageDate(headId);
+        ActivityHead activityHead =activityHeadService.findById(headId);
+
         //正式开始时间
-        Date formalStartDt = dateMap.get("FORMAL_START_DT");
+        String formalStartDt = activityHead.getFormalStartDt();
+
         //正式结束时间
-        Date formalEndDt = dateMap.get("FORMAL_END_DT");
+        String formalEndDt = activityHead.getFormalEndDt();
         //预热开始时间
-        Date preheatStartDt = dateMap.get("PREHEAT_START_DT");
+        String preheatStartDt = activityHead.getPreheatStartDt();
         //预热结束时间
-        Date preheatEndDt = dateMap.get("PREHEAT_END_DT");
+        String preheatEndDt = activityHead.getPreheatEndDt();
 
         //预热提醒时间
-        Date preheatNotifyDt = dateMap.get("PREHEAT_NOTIFY_DT");
+        String preheatNotifyDt =activityHead.getPreheatNotifyDt();
         //正式提醒时间
-        Date formalNotifyDt = dateMap.get("FORMAL_NOTIFY_DT");
+        String formalNotifyDt = activityHead.getFormalNotifyDt();
 
         if(stage.equals(ActivityStageEnum.formal.getStageCode())) {
             //写入正式的提醒记录
-            if(notify.equalsIgnoreCase(type)) {
+            if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equalsIgnoreCase(type)) {
                 planList.add(new ActivityPlan(Long.valueOf(headId),
-                        formalNotifyDt,
+                        DateUtil.strToLocalDate(formalNotifyDt,"yyyy-MM-dd"),
                         ActivityStageEnum.formal.getStageCode(),
                         ActivityPlanTypeEnum.Notify.getPlanTypeCode()));
-            }else if(during.equalsIgnoreCase(type)) {
-                LocalDate formalStart = DateUtil.dateToLocalDate(formalStartDt);
-                LocalDate formalEnd = DateUtil.dateToLocalDate(formalEndDt);
+            }else if(ActivityPlanTypeEnum.During.getPlanTypeCode().equalsIgnoreCase(type)) {
+                LocalDate formalStart = DateUtil.strToLocalDate(formalStartDt,"yyyy-MM-dd");
+                LocalDate formalEnd = DateUtil.strToLocalDate(formalEndDt,"yyyy-MM-dd");
                 //写入正式的记录
                 while(formalStart.isBefore(formalEnd)) {
                     planList.add(new ActivityPlan(Long.valueOf(headId),
-                            DateUtil.localDateToDate(formalStart),
+                            formalStart,
                             ActivityStageEnum.formal.getStageCode(),
                             ActivityPlanTypeEnum.During.getPlanTypeCode()));
 
                     formalStart = formalStart.plusDays(1);
                 }
                 planList.add(new ActivityPlan(Long.valueOf(headId),
-                        DateUtil.localDateToDate(formalEnd),
+                        formalEnd,
                         ActivityStageEnum.formal.getStageCode(),
                         ActivityPlanTypeEnum.During.getPlanTypeCode()));
             }
@@ -122,25 +133,25 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
         // 包含预售
         if(stage.equalsIgnoreCase(ActivityStageEnum.preheat.getStageCode())) {
-            if(notify.equalsIgnoreCase(type)) {
+            if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equalsIgnoreCase(type)) {
                 //写入预售的提醒记录
                 planList.add(new ActivityPlan(Long.valueOf(headId),
-                        preheatNotifyDt,
+                        DateUtil.strToLocalDate(preheatNotifyDt,"yyyy-MM-dd"),
                         ActivityStageEnum.preheat.getStageCode(),
                         ActivityPlanTypeEnum.Notify.getPlanTypeCode()));
-            }else if(during.equalsIgnoreCase(type)) {
-                LocalDate start = DateUtil.dateToLocalDate(preheatStartDt);
-                LocalDate end = DateUtil.dateToLocalDate(preheatEndDt);
+            }else if(ActivityPlanTypeEnum.During.getPlanTypeCode().equalsIgnoreCase(type)) {
+                LocalDate start = DateUtil.strToLocalDate(preheatStartDt,"yyyy-MM-dd");
+                LocalDate end = DateUtil.strToLocalDate(preheatEndDt,"yyyy-MM-dd");
                 //写入预售的记录
                 while(start.isBefore(end)) {
                     planList.add(new ActivityPlan(Long.valueOf(headId),
-                            DateUtil.localDateToDate(start),
+                            start,
                             ActivityStageEnum.preheat.getStageCode(),
                             ActivityPlanTypeEnum.During.getPlanTypeCode()));
                     start = start.plusDays(1);
                 }
                 planList.add(new ActivityPlan(Long.valueOf(headId),
-                        DateUtil.localDateToDate(end),
+                        end,
                         ActivityStageEnum.preheat.getStageCode(),
                         ActivityPlanTypeEnum.During.getPlanTypeCode()));
             }
@@ -174,26 +185,23 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     }
 
     /**
-     * 对活动推送文案进行转换 0 失败 1 成功 2其它用户操作
+     * 对活动推送文案进行转换
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String transActivityDetail( ActivityPlan activityPlan) {
+    public void transActivityDetail( ActivityPlan activityPlan) throws Exception {
         //获取锁
         if(getTransActivityContentLock(activityPlan.getHeadId()))
         {
             //删除临时表中的文案
             activityDetailMapper.deleteContentTmp(activityPlan.getPlanId());
-             String result=transContent(activityPlan.getHeadId(),activityPlan.getPlanId(),activityPlan.getStage(),activityPlan.getPlanType());
+            transContent(activityPlan.getHeadId(),activityPlan.getPlanId(),activityPlan.getStage(),activityPlan.getPlanType());
              //释放锁
             delTransLock();
-            //返回结果
-            return result;
         }else
         {
-            //其它用户正在操作
-            return "2";
+            throw new OptimisticLockException("其他用户正在操作，请稍后再试!");
         }
     }
 
@@ -205,7 +213,6 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         boolean flag = valueOperations.setIfAbsent("activity_trans_lock", String.valueOf(headId),60, TimeUnit.SECONDS);
         return flag;
     }
-
     private void delTransLock() {
         redisTemplate.delete("activity_trans_lock");
     }
@@ -215,9 +222,8 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
      * @param planId
      * @return 1表示生成成功 0表示生成失败
      */
-    private String transContent(Long headId,Long planId,String activityStage,String activityType)
+    private void transContent(Long headId,Long planId,String activityStage,String activityType) throws Exception
     {
-        String result="1";
         Long startTime = System.currentTimeMillis();
         //获取此活动上配置的所有模板
         List<Map<String,String>> templateList=activityPlanMapper.getAllTemplate(headId,activityStage,activityType);
@@ -241,7 +247,14 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
             try {
                 targetList = processVariable(list,templateMap);
             } catch (Exception e) {
-               result="0";
+                //错误日志上报
+                log.error("活动运营转化文案错误，错误堆栈为{}",e);
+
+                //上报
+                exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+
+                //异常向上抛出
+                throw e;
             }
             //保存要推送的文案
             if(null!=targetList&&targetList.size()>0)
@@ -276,33 +289,29 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                         activityDetailMapper.insertPushContentTemp(future.get());
                     }else
                     {
-                        //存在错误
-                        result="0";
-                        break;
+                        throw new LinkSteadyException("转化文案失败");
                     }
                 }
 
             } catch (Exception e) {
                 //错误日志上报
                 log.error("活动运营转化文案错误，错误堆栈为{}",e);
-                result="0";
+
+                //上报
+                exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+
+                //异常向上抛出
+                throw e;
+
             }finally {
                 pool.shutdown();
             }
         }
 
-        if(result=="1")
-        {
-            //用临时表更新 活动运营明细表
-            activityDetailMapper.updatePushContentFromTemp(planId);
-            Long endTime = System.currentTimeMillis();
-            log.info(">>>活动文案转化成功，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
-        }else
-        {
-            Long endTime = System.currentTimeMillis();
-            log.info(">>>活动文案转化失败，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
-        }
-        return result;
+        //用临时表更新 活动运营明细表
+        activityDetailMapper.updatePushContentFromTemp(planId);
+        Long endTime = System.currentTimeMillis();
+        log.info(">>>活动文案转化成功，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
     }
 
     /**
@@ -391,16 +400,12 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
             {
                 insertToPushListLarge(activityPlan.getPlanId());
 
-                //预售
-                if(ActivityStageEnum.preheat.getStageCode().equals(activityPlan.getStage()))
-                {
-                    //更新预售的状态为 执行中
-                    activityHeadMapper.updatePreheatStatusHead(activityPlan.getHeadId(), ActivityStatusEnum.DOING.getStatusCode());
-                }else
-                {
-                    //更新正式状态为 执行中
-                    activityHeadMapper.updateFormalStatusHead(activityPlan.getHeadId(),ActivityStatusEnum.DOING.getStatusCode());
-                }
+                //更新预售提醒状态为 执行中
+                activityHeadService.updateStatus(activityPlan.getHeadId(),
+                        activityPlan.getStage(),
+                        ActivityStatusEnum.DOING.getStatusCode(),
+                        activityPlan.getPlanType()
+                );
             }else
             {
                 //如果校验失败  抛出异常 数据进行回滚
@@ -581,7 +586,27 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
         if(count==0)
         {
-            throw new LinkSteadyException("修改活动计划状态为停止违反乐观锁");
+            throw new LinkSteadyException("活动已被其他用户修改，请返回刷新后重试！");
+        }
+    }
+
+    /**
+     * 判断当前计划的所有活动机制是否都配置了文案
+     * @param activityPlan
+     * @return
+     */
+    @Override
+    public boolean validateNotifySms(ActivityPlan activityPlan) {
+        //仅对通知阶段进行判断
+        if(activityPlan.getPlanType().equals(ActivityPlanTypeEnum.Notify.getPlanTypeCode()))
+        {
+            int count =activityPlanMapper.validateNotifySms(activityPlan.getHeadId(),activityPlan.getStage(),activityPlan.getPlanType());
+
+            //如果存在，则校验失败
+            return count>0;
+        }else
+        {
+            return false;
         }
     }
 

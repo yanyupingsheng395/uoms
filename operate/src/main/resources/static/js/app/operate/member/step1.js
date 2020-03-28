@@ -111,7 +111,6 @@ function getUserDataList() {
 }
 
 function step2() {
-    // $MB.loadingDesc('show', '策略生成中，请稍后...');
     step.setActive(1);
     $("#step1").attr("style", "display: none;");
     $("#step2").attr("style", "display: block;");

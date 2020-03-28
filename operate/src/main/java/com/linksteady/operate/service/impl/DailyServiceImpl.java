@@ -7,6 +7,7 @@ import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.*;
+import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.vo.DailyPersonalVo;
 import org.apache.commons.lang3.StringUtils;
@@ -173,11 +174,6 @@ public class DailyServiceImpl implements DailyService {
     }
 
     @Override
-    public void updateHeaderOpChangeDate(String headId, Long opChangeDate) {
-        dailyMapper.updateHeaderOpChangeDate(headId, opChangeDate);
-    }
-
-    @Override
     public boolean getTransContentLock(String headId) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
         //如果key不存在，则将key的值设置为value，同时返回true. 如果key不存在，则什么也不做，返回false.
@@ -188,11 +184,6 @@ public class DailyServiceImpl implements DailyService {
     @Override
     public void delTransLock() {
         redisTemplate.delete("daily_trans_lock");
-    }
-
-    @Override
-    public int validateOpChangeTime(String headId, Long opChangeDate) {
-        return dailyMapper.validateOpChangeTime(headId, opChangeDate);
     }
 
     @Override
@@ -339,16 +330,21 @@ public class DailyServiceImpl implements DailyService {
 
     /**
      * 对每日运营进行推送
-     * @param headId
+     * @param dailyHead
      * @param pushMethod
      * @param pushPeriod
-     * @param timestamp
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void pushContent(String headId, String pushMethod, String pushPeriod, Long timestamp,Long effectDays) {
-        //更新时间戳
-        long timestampNew = System.currentTimeMillis();
+    public void pushContent(DailyHead dailyHead, String pushMethod, String pushPeriod,Long effectDays) throws Exception{
+
+        //更新状态为已执行
+        int count=dailyMapper.updateStatus(dailyHead.getHeadId(), "done",dailyHead.getVersion());
+
+        if(count==0)
+        {
+            throw new OptimisticLockException("记录已被其他用户修改，请返回刷新后重试");
+        }
 
         // 推送方式 IMME立即推送 AI智能推送 FIXED固定时间推送
         String pushOrderPeriod = "";
@@ -361,19 +357,17 @@ public class DailyServiceImpl implements DailyService {
         if ("FIXED".equalsIgnoreCase(pushMethod)) {
             pushOrderPeriod = String.valueOf(LocalTime.parse(pushPeriod, DateTimeFormatter.ofPattern("HH:mm")).getHour());
         }
-        // 默认是AI：plan_push_period = order_period 此时，pushOrderPeriod = ""
 
         //更新时间戳、推送方式、推送时段到头表
-        dailyMapper.updateHeaderPushInfo(headId, timestampNew,pushMethod,pushOrderPeriod,effectDays);
+        dailyMapper.updateHeaderPushInfo(dailyHead.getHeadId(),pushMethod,pushOrderPeriod,effectDays);
 
         //更新行上的push_order_period
-        dailyDetailMapper.updatePushOrderPeriod(headId);
+        dailyDetailMapper.updatePushOrderPeriod(dailyHead.getHeadId());
 
         //复制写入待推送列表
-        dailyDetailMapper.copyToPushList(headId);
+        dailyDetailMapper.copyToPushList(dailyHead.getHeadId());
 
-        //更新状态为已执行
-        dailyMapper.updateStatus(headId, "done");
+
 
     }
 }

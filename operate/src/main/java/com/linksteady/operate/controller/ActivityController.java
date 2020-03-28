@@ -118,7 +118,7 @@ public class ActivityController {
     @PostMapping("/saveActivityHead")
     public ResponseBo saveActivityHead(ActivityHead activityHead) {
         int headId = activityHeadService.saveActivityHead(activityHead);
-        return ResponseBo.okWithData("活动信息保存成功！", headId);
+        return ResponseBo.okWithData("活动信息保存成功,接下来请添加活动商品！", headId);
     }
 
     /**
@@ -251,7 +251,7 @@ public class ActivityController {
     }
 
     /**
-     * 提交计划
+     * 保存计划
      * @param headId
      * @param stage
      * @param type
@@ -259,8 +259,8 @@ public class ActivityController {
      */
     @PostMapping("/submitActivity")
     public ResponseBo submitActivity(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
+        //生成计划明细数据
         activityPlanService.savePlanList(headId, stage, type);
-        activityHeadService.updateStatus(headId, stage, "todo", type);
         return ResponseBo.ok();
     }
 
@@ -468,7 +468,7 @@ public class ActivityController {
     }
 
     @PostMapping("/updateCovInfo")
-    public ResponseBo updateCovInfo(@RequestParam("headId") String headId, @RequestParam("stage") String stage, @RequestParam("covId") String covId) {
+    public ResponseBo updateCovInfo(@RequestParam("headId") long headId, @RequestParam("stage") String stage, @RequestParam("covId") String covId) {
         activityCovService.updateCovInfo(headId, stage, covId);
         return ResponseBo.ok();
     }

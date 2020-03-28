@@ -114,7 +114,7 @@ function beforeUpload() {
 // 提交数据
 function submitData() {
     if(beforeSubmit()) {
-        $MB.loadingDesc("show", "正在处理数据中，请稍后...");
+        $MB.loadingDesc("show", "正在处理数据中，请稍候...");
         let formData = new FormData();
         let smsContent = $("textarea[name='smsContent']").val();
         let sendType = $("input[name='sendType']:checked").val();
@@ -226,10 +226,10 @@ function getPushInfo(headId) {
                 title: "提示：",
                 content: content
             }, function () {
-                $MB.loadingDesc("show", "正在处理数据中，请稍后...");
+                $MB.loadingDesc("show", "正在处理数据中，请稍候...");
                 $.post("/manual/pushMessage", {headId: headId, pushType: pushType}, function (res) {
                     if(res.code === 200) {
-                        $MB.n_success("已经触发推送，请稍后...");
+                        $MB.n_success("已经触发推送，请稍候...");
                     }else {
                         $MB.n_danger(res.msg);
                     }

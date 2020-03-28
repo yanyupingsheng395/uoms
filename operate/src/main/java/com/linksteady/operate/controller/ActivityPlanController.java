@@ -10,6 +10,7 @@ import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
+import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.ActivityDetailService;
 import com.linksteady.operate.service.ActivityPlanService;
 import com.linksteady.operate.vo.ActivityGroupVO;
@@ -216,19 +217,26 @@ public class ActivityPlanController {
                 return ResponseBo.error(msg);
             }
 
-            String result=activityPlanService.transActivityDetail(activityPlan);
-
-            if("1".equals(result))
+            //对文案配置情况进行校验
+            if(activityPlanService.validateNotifySms(activityPlan))
             {
-                return ResponseBo.ok("转化文案成功!");
-            }else if("2".equals(result))
-            {
-                return ResponseBo.error("其他用户正在操作，请稍后再试!");
-            }else
-            {  //0失败
-                return ResponseBo.error("转化文案失败，请联系系统运维人员！");
+                msg="部分活动机制有商品参与，但是并未配置文案，请先完成文案的配置!";
+                return ResponseBo.error(msg);
             }
 
+            try {
+                activityPlanService.transActivityDetail(activityPlan);
+                return ResponseBo.ok("转化文案成功!");
+            } catch (Exception e) {
+                log.error("活动运营出现转换文案异常，失败堆栈为{}",e);
+                if(e instanceof OptimisticLockException)
+                {
+                    return ResponseBo.error(e.getMessage());
+                }else
+                {
+                    return ResponseBo.error("转换文案出现未知异常！");
+                }
+            }
         }
     }
 

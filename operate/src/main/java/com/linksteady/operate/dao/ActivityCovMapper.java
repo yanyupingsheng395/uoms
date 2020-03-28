@@ -18,11 +18,11 @@ public interface ActivityCovMapper {
 
     List<ActivityCovInfo> getCovInfo(@Param("sql") String sql);
 
-    String getCovId(String headId, String stage);
+    String getCovId(long headId, String stage);
 
     ActivityCovInfo getCovInfoById(String covId);
 
-    void updatePreheatCovInfo(String headId, String covId);
+    void updatePreheatCovInfo(long headId, String covId);
 
-    void updateFormalCovInfo(String headId, String covId);
+    void updateFormalCovInfo(long headId, String covId);
 }

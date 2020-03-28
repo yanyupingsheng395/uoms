@@ -227,4 +227,12 @@
         and t.IS_CONVERSION = '1'
         and t2.plan_id=#{planId}
     </select>
+
+    <select id="validateNotifySms" resultType="int">
+        select count(*) from uo_op_activity_product p where p.head_id=#{headId} and p.group_id not in (
+            select p2.group_id from uo_op_activity_group p2 where p2.head_id=#{headId}
+             and p2.activity_type=#{activityType}
+             and p2.activity_stage=#{activityStage} and p2.check_flag='Y'
+        )
+    </select>
 </mapper>

@@ -53,7 +53,7 @@ function searchData() {
 
 // 获取表格数据
 function getData(idx) {
-    $MB.loadingDesc('show', "正在计算数据中，请稍后...");
+    $MB.loadingDesc('show', "正在计算数据中，请稍候...");
     var url = "";
     if(idx == 1) {
         url = "/kpiMonitor/getRetainData";
@@ -186,7 +186,7 @@ function getMonthCols(data, percent, type) {
 }
 
 function getData1(idx) {
-    $MB.loadingDesc('show', "正在计算数据中,请稍后...");
+    $MB.loadingDesc('show', "正在计算数据中,请稍候...");
     var url = "";
     var type = "";
     if(idx == 1) {

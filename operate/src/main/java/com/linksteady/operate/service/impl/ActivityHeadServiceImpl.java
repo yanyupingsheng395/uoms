@@ -7,20 +7,19 @@ import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.dao.ActivityUserGroupMapper;
 import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.domain.ActivityHead;
-import com.linksteady.operate.domain.ActivityTemplate;
+import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
 import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.domain.enums.ActivityStatusEnum;
 import com.linksteady.operate.service.ActivityHeadService;
-import com.linksteady.operate.service.ActivityUserGroupService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author hxcao
@@ -31,12 +30,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 
     @Autowired
     private ActivityHeadMapper activityHeadMapper;
-
-    @Autowired
-    ActivityPlanServiceImpl activityPlanService;
-
-    @Autowired
-    private ActivityUserGroupService activityUserGroupService;
 
     @Autowired
     private ActivityUserGroupMapper activityUserGroupMapper;
@@ -79,18 +72,18 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         activityHeadMapper.saveActivityHead(activityHead);
         if(HAS_PREHEAT.equals(hasPreheat)) {
             // 保存群组信息
-            saveGroupInfo(activityHead.getHeadId().toString(), ActivityStageEnum.preheat.getStageCode());
-            saveGroupInfo(activityHead.getHeadId().toString(), ActivityStageEnum.formal.getStageCode());
+            saveGroupInfo(activityHead.getHeadId(), ActivityStageEnum.preheat.getStageCode());
+            saveGroupInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
 
             // 保存转化率信息
-            saveCovInfo(activityHead.getHeadId().toString(), ActivityStageEnum.preheat.getStageCode());
-            saveCovInfo(activityHead.getHeadId().toString(), ActivityStageEnum.formal.getStageCode());
+            saveCovInfo(activityHead.getHeadId(), ActivityStageEnum.preheat.getStageCode());
+            saveCovInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
         }else {
             // 保存群组信息
-            saveGroupInfo(activityHead.getHeadId().toString(), ActivityStageEnum.formal.getStageCode());
+            saveGroupInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
 
             // 保存转化率信息
-            saveCovInfo(activityHead.getHeadId().toString(), ActivityStageEnum.formal.getStageCode());
+            saveCovInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
         }
         return activityHead.getHeadId().intValue();
     }
@@ -127,34 +120,27 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         return activityHeadMapper.getDeleteCount(headId);
     }
 
-    @Override
-    public String getStatus(Long headId, String stage) {
-        String sql = "";
-        if (ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
-            sql = "select preheat_status from UO_OP_ACTIVITY_HEADER where head_id = '" + headId + "'";
-        }
-        if (ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
-            sql = "select formal_status from UO_OP_ACTIVITY_HEADER where head_id = '" + headId + "'";
-        }
-        return activityHeadMapper.getStatus(sql);
-    }
-
+    /**
+     *
+     * @param headId
+     * @param stage  活动阶段
+     * @param status
+     * @param type   计划类型 通知 or 正式
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateStatus(Long headId, String stage, String status, String type) {
-        String during = "DURING";
-        String notify = "NOTIFY";
         if (ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
-            if(notify.equalsIgnoreCase(type)) {
-                activityHeadMapper.updatePreheatNotifyStatusHead(headId,status);
-            } else if(during.equalsIgnoreCase(type)) {
-                activityHeadMapper.updatePreheatStatusHead(headId,status);
+            if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equalsIgnoreCase(type)) {
+                activityHeadMapper.updatePreheatStatusHead(headId,status,ActivityPlanTypeEnum.Notify.getPlanTypeCode());
+            } else if(ActivityPlanTypeEnum.During.getPlanTypeCode().equalsIgnoreCase(type)) {
+                activityHeadMapper.updatePreheatStatusHead(headId,status,ActivityPlanTypeEnum.During.getPlanTypeCode());
             }
         }else if(ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
-            if(notify.equalsIgnoreCase(type)) {
-                activityHeadMapper.updateFormalNotifyStatusHead(headId,status);
-            } else if(during.equalsIgnoreCase(type)) {
-                activityHeadMapper.updateFormalStatusHead(headId,status);
+            if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equalsIgnoreCase(type)) {
+                activityHeadMapper.updateFormalStatusHead(headId,status,ActivityPlanTypeEnum.Notify.getPlanTypeCode());
+            } else if(ActivityPlanTypeEnum.During.getPlanTypeCode().equalsIgnoreCase(type)) {
+                activityHeadMapper.updateFormalStatusHead(headId,status,ActivityPlanTypeEnum.During.getPlanTypeCode());
             }
         }
     }
@@ -163,7 +149,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
      * 保存cov_info表
      * 如果已有记录直接update，否则insert
      */
-    private void saveCovInfo(String headId, String stage) {
+    private void saveCovInfo(long headId, String stage) {
         String covId = activityCovMapper.getCovId(headId, stage);
         if(StringUtils.isEmpty(covId)) {
             covId = activityCovMapper.getCovList("Y").get(0).getCovListId();
@@ -180,51 +166,35 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
      * 保存群组信息
      * @param headId
      */
-    private void saveGroupInfo(String headId, String activityStage) {
+    private void saveGroupInfo(long headId, String activityStage) {
         //类型 NOTIFY 通知 DURING 期间
         List<ActivityGroup> activityGroups = Lists.newArrayList();
         activityGroups.add(new ActivityGroup(
-                1L, Long.parseLong(headId), "活动价", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                1L,headId, "活动价", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                2L, Long.parseLong(headId), "满件打折", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                2L, headId, "满件打折", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                3L, Long.parseLong(headId), "满元减钱", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                3L, headId, "满元减钱", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                4L, Long.parseLong(headId), "特价", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                4L, headId, "特价", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                5L, Long.parseLong(headId), "——", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
+                5L, headId, "——", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
         ));
 
         activityGroups.add(new ActivityGroup(
-                6L, Long.parseLong(headId), "推荐成长商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                6L,headId, "推荐成长商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                7L, Long.parseLong(headId), "推荐潜在商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                7L, headId, "推荐潜在商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                8L, Long.parseLong(headId), "推荐成长商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
+                8L, headId, "推荐成长商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
         ));
         activityUserGroupMapper.saveGroupData(activityGroups);
     }
 
-    /**
-     * 获取头表状态
-     * @param headId
-     * @param stage
-     * @return
-     */
-    private String getHeadStatus(Long headId, String stage) {
-        String status = "";
-        if(ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
-            status = getStatus(headId, stage);
-        }
-        if(ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
-            status = getStatus(headId, stage);
-        }
-        return status;
-    }
 }

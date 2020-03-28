@@ -499,4 +499,8 @@ public class DateUtil {
         Instant instant = date.atStartOfDay().atZone(zone).toInstant();
         return Date.from(instant);
     }
+
+    public static LocalDate strToLocalDate(String dateString,String pattern){
+        return LocalDate.parse(dateString,DateTimeFormatter.ofPattern(pattern));
+    }
 }

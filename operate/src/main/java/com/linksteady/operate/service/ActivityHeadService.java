@@ -61,12 +61,11 @@ public interface ActivityHeadService {
     int getDeleteCount(Long headId);
 
     /**
-     * 根据headId和stage获取计划的状态
+     * 更新头表的状态
      * @param headId
      * @param stage
-     * @return
+     * @param status
+     * @param type
      */
-    String getStatus(Long headId, String stage);
-
     void updateStatus(Long headId, String stage, String status, String type);
 }

@@ -21,7 +21,7 @@ public interface DailyMapper {
 
     int getTouchTotalCount(@Param("touchDt") String touchDt);
 
-    void updateStatus(@Param("headId") String headId, @Param("status") String status);
+    int updateStatus(@Param("headId") long headId, @Param("status") String status,@Param("version") int version);
 
     void updateActualNum(String headId, int num);
 
@@ -69,25 +69,11 @@ public interface DailyMapper {
     /**
      * 更新头表的操作时间戳、推送时段、推送方式
      * @param headId
-     * @param opChangeDate
      */
-    void updateHeaderPushInfo(@Param("headId") String headId,
-                              @Param("opChangeDate") Long opChangeDate,
+    void updateHeaderPushInfo(@Param("headId") long headId,
                               @Param("pushMethod") String pushMethod,
                               @Param("pushPeriod") String pushPeriod,
                               @Param("effectDays") Long effectDays);
-
-    /**
-     * 更新头表的操作时间戳
-     * @param headId
-     * @param opChangeDate
-     */
-    void updateHeaderOpChangeDate(@Param("headId") String headId, @Param("opChangeDate") Long opChangeDate);
-
-    /**
-     * 验证操作时间戳
-     */
-    int validateOpChangeTime(@Param("headId") String headId, @Param("opChangeDate") Long opChangeDate);
 
     /**
      * 获取预览用户统计数据

@@ -36,27 +36,22 @@ public interface ActivityHeadMapper {
 
     Map<String, String> getDataChangedStatus(Long headId, String stage);
 
-    Map<String, Date> getStageDate(Long headId);
-
     /**
      * 更新头表预售状态
      * @param headId
+     * @param planType 计划类型(通知 or 正式)
      */
-    void updatePreheatStatusHead(Long headId,String status);
+    void updatePreheatStatusHead(Long headId,String status,String planType);
 
     /**
      * 更新头表正式状态
      * @param headId
+     * @param planType 计划类型(通知 or 正式)
      */
-    void updateFormalStatusHead(Long headId,String status);
+    void updateFormalStatusHead(Long headId,String status,String planType);
 
     void deleteActivity(Long headId);
 
     int getDeleteCount(Long headId);
 
-    String getStatus(@Param("sql") String sql);
-
-    void updatePreheatNotifyStatusHead(Long headId, String status);
-
-    void updateFormalNotifyStatusHead(Long headId, String status);
 }
