@@ -18,7 +18,7 @@ public class ActivityProductUploadError {
     /**
      * 出现次数
      */
-    private int errorRows;
+    private int errorRows = 1;
 
     /**
      * 首次出现在多少行
@@ -31,10 +31,21 @@ public class ActivityProductUploadError {
     private boolean ignore = false;
 
     public ActivityProductUploadError() {}
-    public ActivityProductUploadError(String errorDesc, int errorRows, int firstErrorRow) {
+    public ActivityProductUploadError(String errorDesc, int firstErrorRow) {
         this.errorDesc = errorDesc;
-        this.errorRows = errorRows;
         this.firstErrorRow = firstErrorRow;
+    }
+
+    public ActivityProductUploadError(String errorDesc, int firstErrorRow, boolean ignore) {
+        this.errorDesc = errorDesc;
+        this.firstErrorRow = firstErrorRow;
+        this.ignore = ignore;
+    }
+
+    public ActivityProductUploadError(String errorDesc, int firstErrorRow, int errorRows) {
+        this.errorDesc = errorDesc;
+        this.firstErrorRow = firstErrorRow;
+        this.errorRows = errorRows;
     }
 
     public ActivityProductUploadError(String errorDesc) {

@@ -1107,6 +1107,9 @@ function editTmp() {
     });
 }
 
+/**
+ * 重置新增文案modal
+ */
 $( "#sms_add_modal" ).on( 'hidden.bs.modal', function () {
     $( "#sms_add_title" ).text( "新增文案" );
     $( "#code" ).val( "" );
