@@ -255,12 +255,6 @@ function makeErrorTable(data) {
     $("#upload_error_modal").modal('show');
 }
 
-$("#upload_error_modal").on('hidden.bs.modal', function () {
-    $("#uploadProduct").modal('show');
-});
-
-
-
 $("#uploadProduct").on('hidden.bs.modal', function () {
     $("input[name='uploadMethod']").prop('checked', false);
     $("input[name='repeatProduct']").prop('checked', false);
@@ -276,56 +270,81 @@ function submitActivity(type) {
     $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: stage, type: type}, function (r) {
         if(r.code === 200) {
             var data = r.data;
-            if(data !== '') {
-                $MB.n_warning(data);
+            if(data['error'] !== null && data['error'] !== undefined) {
+                $MB.n_warning(data['error']);
                 return;
             }
-            $MB.confirm({
-                title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-                content: "确认保存计划？"
-            }, function () {
-                if(type === 'DURING') {
-                    if(stage === 'preheat') {
-                        if(preheatStatus !== 'edit' && preheatStatus !== '' && preheatStatus !== null && preheatStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                            setTimeout(function () {
-                                window.location.href = "/page/activity";
-                            },1500);
+            if(data['warn'] !== null && data['warn'] !== undefined) {
+                $MB.confirm({
+                    title: '提示:',
+                    content: '不参加活动的群组模板未配置，确认保存？'
+                }, function () {
+                    if(type === 'DURING') {
+                        if(stage === 'preheat') {
+                            if(preheatStatus !== 'edit' && preheatStatus !== '' && preheatStatus !== null && preheatStatus !== undefined) {
+                                $MB.n_success("保存计划成功！");
+                            }else {
+                                submitData(headId, type);
+                            }
                         }else {
-                            submitData(headId, type);
+                            if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
+                                $MB.n_success("保存计划成功！");
+                            }else {
+                                submitData(headId, type);
+                            }
                         }
                     }else {
-                        if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                            setTimeout(function () {
-                                window.location.href = "/page/activity";
-                            },1500);
+                        if(stage === 'preheat') {
+                            if(preheatNotifyStatus !== 'edit' && preheatNotifyStatus !== '' && preheatNotifyStatus !== null && preheatNotifyStatus !== undefined) {
+                                $MB.n_success("保存计划成功！");
+                            }else {
+                                submitData(headId, type);
+                            }
                         }else {
-                            submitData(headId, type);
+                            if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
+                                $MB.n_success("保存计划成功！");
+                            }else {
+                                submitData(headId, type);
+                            }
                         }
                     }
-                }else {
-                    if(stage === 'preheat') {
-                        if(preheatNotifyStatus !== 'edit' && preheatNotifyStatus !== '' && preheatNotifyStatus !== null && preheatNotifyStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                            setTimeout(function () {
-                                window.location.href = "/page/activity";
-                            },1500);
+                });
+            }else {
+                $MB.confirm({
+                    title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+                    content: "确认保存计划？"
+                }, function () {
+                    if(type === 'DURING') {
+                        if(stage === 'preheat') {
+                            if(preheatStatus !== 'edit' && preheatStatus !== '' && preheatStatus !== null && preheatStatus !== undefined) {
+                                $MB.n_success("保存计划成功！");
+                            }else {
+                                submitData(headId, type);
+                            }
                         }else {
-                            submitData(headId, type);
+                            if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
+                                $MB.n_success("保存计划成功！");
+                            }else {
+                                submitData(headId, type);
+                            }
                         }
                     }else {
-                        if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                            setTimeout(function () {
-                                window.location.href = "/page/activity";
-                            },1500);
+                        if(stage === 'preheat') {
+                            if(preheatNotifyStatus !== 'edit' && preheatNotifyStatus !== '' && preheatNotifyStatus !== null && preheatNotifyStatus !== undefined) {
+                                $MB.n_success("保存计划成功！");
+                            }else {
+                                submitData(headId, type);
+                            }
                         }else {
-                            submitData(headId, type);
+                            if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
+                                $MB.n_success("保存计划成功！");
+                            }else {
+                                submitData(headId, type);
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         }else {
             $MB.n_warning(r.msg);
         }
@@ -335,9 +354,6 @@ function submitData(headId, type) {
     $.post("/activity/submitActivity", {headId: headId, operateType: operate_type, stage: CURRENT_ACTIVITY_STAGE, type: type}, function (r) {
         if(r.code === 200) {
             $MB.n_success("保存计划成功！");
-            setTimeout(function () {
-                window.location.href = "/page/activity";
-            },1500);
         }else {
             $MB.n_danger("保存计划失败！");
         }
@@ -1107,6 +1123,9 @@ function editTmp() {
     });
 }
 
+/**
+ * 重置新增文案modal
+ */
 $( "#sms_add_modal" ).on( 'hidden.bs.modal', function () {
     $( "#sms_add_title" ).text( "新增文案" );
     $( "#code" ).val( "" );
@@ -1295,13 +1314,8 @@ function table3() {
         onCheck:function(row){
             var covListId = $("#covListId").val();
             if(covListId !== row['covListId']) {
-                $MB.confirm({
-                    title: '提示:',
-                    content: "是否进行测算？"
-                }, function () {
-                    var changedCovId = row['covListId'];
-                    calculateCov(changedCovId);
-                });
+                var changedCovId = row['covListId'];
+                calculateCov(changedCovId);
             }
         },
         queryParams: function() {

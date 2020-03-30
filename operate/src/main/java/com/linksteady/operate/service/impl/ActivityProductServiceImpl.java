@@ -172,9 +172,10 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     errorList.add(new ActivityProductUploadError("系统只解析第一个sheet，当前文件第一个sheet为空"));
                 } else {
                     for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+                        int validCount = 0;
                         Row row = sheet.getRow(i);
                         if (null == row) {
-                            errorList.add(new ActivityProductUploadError("行为空", 1, i + 1));
+                            errorList.add(new ActivityProductUploadError("行为空", i + 1));
                             continue;
                         }
                         // 校验文件第一行与模板是否一致
@@ -196,101 +197,56 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                             }
                         }
                         // 检查>=第二行数据
-                        ActivityProduct activityProduct = new ActivityProduct();
-                        activityProduct.setHeadId(Long.valueOf(headId));
-
                         // 商品ID
-                        ActivityProductUploadError idError = new ActivityProductUploadError();
-                        Optional<Cell> idOptional = Optional.ofNullable(row.getCell(0));
-                        if (idOptional.isPresent()) {
-                            try {
-                                activityProduct.setProductId(row.getCell(0).getStringCellValue());
-                            } catch (IllegalStateException e) {
-                                idError.setErrorDesc("商品ID数据类型与模板不一致，应改为文本型！");
-                                int errorRows = idError.getErrorRows();
-                                idError.setErrorRows(++errorRows);
-                                if (idError.getFirstErrorRow() == 0) {
-                                    idError.setFirstErrorRow(i + 1);
-                                }
-                                errorList.add(idError);
-                            }
+                        String productId = "";
+                        Cell cell0 = row.getCell(0);
+                        if (null == cell0 || cell0.getCellType() == 3) {
+                            validCount++;
+                            errorList.add(new ActivityProductUploadError("商品ID为空", i+1));
                         } else {
-                            idError.setErrorDesc("商品ID为空");
-                            int errorRows = idError.getErrorRows();
-                            idError.setErrorRows(++errorRows);
-                            if (idError.getFirstErrorRow() == 0) {
-                                idError.setFirstErrorRow(i + 1);
+                            if(cell0.getCellType() == 1) {
+                                productId = cell0.getStringCellValue();
+                            }else {
+                                errorList.add(new ActivityProductUploadError("商品ID数据类型有误，应改为文本型", i+1));
                             }
-                            errorList.add(idError);
                         }
 
                         // 商品名称
-                        ActivityProductUploadError nameError = new ActivityProductUploadError();
-                        Optional<Cell> nameOptional = Optional.ofNullable(row.getCell(1));
-                        if (nameOptional.isPresent()) {
-                            try {
-                                Optional.ofNullable(row.getCell(1)).map(Cell::getStringCellValue).ifPresent(activityProduct::setProductName);
-                            } catch (IllegalStateException e) {
-                                nameError.setErrorDesc("名称数据类型与模板不一致，应改为文本型！");
-                                int errorRows = nameError.getErrorRows();
-                                nameError.setErrorRows(++errorRows);
-                                if (nameError.getFirstErrorRow() == 0) {
-                                    nameError.setFirstErrorRow(i + 1);
-                                }
-                                errorList.add(nameError);
-                            }
+                        String productName = "";
+                        Cell cell1 = row.getCell(1);
+                        if (null == cell1 || cell1.getCellType() == 3) {
+                            validCount++;
+                            errorList.add(new ActivityProductUploadError("名称为空", i+1, true));
                         } else {
-                            nameError.setErrorDesc("名称为空");
-                            int errorRows = nameError.getErrorRows();
-                            nameError.setErrorRows(++errorRows);
-                            if (nameError.getFirstErrorRow() == 0) {
-                                nameError.setFirstErrorRow(i + 1);
+                            if(cell1.getCellType() == 1) {
+                                productName = cell1.getStringCellValue();
+                            }else {
+                                errorList.add(new ActivityProductUploadError("名称数据类型有误，应改为文本型", i+1));
                             }
-                            nameError.setIgnore(true);
-                            errorList.add(nameError);
                         }
 
                         // 非活动日常单价
-                        ActivityProductUploadError formalPriceError = new ActivityProductUploadError();
-                        Optional<Cell> formalPriceOptional = Optional.ofNullable(row.getCell(2));
-                        if (formalPriceOptional.isPresent()) {
-                            try {
-                                if (formalPriceOptional.get().getNumericCellValue() == 0D) {
-                                    formalPriceError.setErrorDesc("非活动日常单价数据类型与模板不一致，应改为数值型！");
-                                    int errorRows = formalPriceError.getErrorRows();
-                                    formalPriceError.setErrorRows(++errorRows);
-                                    if (formalPriceError.getFirstErrorRow() == 0) {
-                                        formalPriceError.setFirstErrorRow(i + 1);
-                                    }
-                                    errorList.add(formalPriceError);
-                                } else {
-                                    Optional.of(row.getCell(2)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setFormalPrice);
-                                }
-                            } catch (IllegalStateException e) {
-                                formalPriceError.setErrorDesc("非活动日常单价数据类型与模板不一致，应改为数值型！");
-                                int errorRows = formalPriceError.getErrorRows();
-                                formalPriceError.setErrorRows(++errorRows);
-                                if (formalPriceError.getFirstErrorRow() == 0) {
-                                    formalPriceError.setFirstErrorRow(i + 1);
-                                }
-                                errorList.add(formalPriceError);
+                        Double formalPrice = null;
+                        Cell cell2 = row.getCell(2);
+                        if(null == cell2 || cell2.getCellType() == 3) {
+                            validCount++;
+                            errorList.add(new ActivityProductUploadError("非活动日常单价为空", i+1));
+                        }else {
+                            if (cell2.getCellType() == 0) {
+                                formalPrice = cell2.getNumericCellValue();
+                            }else {
+                                errorList.add(new ActivityProductUploadError("非活动日常单价数据类型有误，应改为数值型", i+1));
                             }
-                        } else {
-                            formalPriceError.setErrorDesc("非活动日常单价为空");
-                            int errorRows = formalPriceError.getErrorRows();
-                            formalPriceError.setErrorRows(++errorRows);
-                            if (formalPriceError.getFirstErrorRow() == 0) {
-                                formalPriceError.setFirstErrorRow(i + 1);
-                            }
-                            errorList.add(formalPriceError);
                         }
 
                         // 活动机制
-                        ActivityProductUploadError groupIdError = new ActivityProductUploadError();
-                        Optional<Cell> groupIdOptional = Optional.ofNullable(row.getCell(3));
-                        if (groupIdOptional.isPresent()) {
-                            try {
-                                String groupId = null;
+                        String groupId = null;
+                        Cell cell3 = row.getCell(3);
+                        if (null == cell3 || cell3.getCellType() == 3) {
+                            validCount++;
+                            errorList.add(new ActivityProductUploadError("活动机制为空", i+1));
+                        } else {
+                            if(cell3.getCellType() == 1) {
                                 String groupName = Optional.of(row.getCell(3)).map(Cell::getStringCellValue).get();
                                 switch (groupName) {
                                     case "活动价":
@@ -309,113 +265,59 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                                         break;
                                 }
                                 if (StringUtils.isEmpty(groupId)) {
-                                    groupIdError.setErrorDesc("活动机制值与模板给定的值不一致");
-                                    int errorRows = formalPriceError.getErrorRows();
-                                    groupIdError.setErrorRows(++errorRows);
-                                    if (groupIdError.getFirstErrorRow() == 0) {
-                                        groupIdError.setFirstErrorRow(i + 1);
-                                    }
-                                    errorList.add(groupIdError);
-                                } else {
-                                    activityProduct.setGroupId(groupId);
+                                    errorList.add(new ActivityProductUploadError("活动机制值与模板给定的值不一致", i+1));
                                 }
-                            } catch (IllegalStateException e) {
-                                groupIdError.setErrorDesc("活动机制数据类型与模板不一致，应改为文本型");
-                                int errorRows = groupIdError.getErrorRows();
-                                groupIdError.setErrorRows(++errorRows);
-                                if (groupIdError.getFirstErrorRow() == 0) {
-                                    groupIdError.setFirstErrorRow(i + 1);
-                                }
-                                errorList.add(groupIdError);
+                            }else {
+                                errorList.add(new ActivityProductUploadError("活动机制值数据类型有误，应改为文本型", i+1));
                             }
-                        } else {
-                            groupIdError.setErrorDesc("活动机制为空");
-                            int errorRows = groupIdError.getErrorRows();
-                            groupIdError.setErrorRows(++errorRows);
-                            if (groupIdError.getFirstErrorRow() == 0) {
-                                groupIdError.setFirstErrorRow(i + 1);
-                            }
-                            errorList.add(groupIdError);
                         }
 
                         // 活动通知体现最低单价
-                        ActivityProductUploadError notifyMinPriceError = new ActivityProductUploadError();
-                        Optional<Cell> notifyMinPriceOptional = Optional.ofNullable(row.getCell(4));
-                        if (notifyMinPriceOptional.isPresent()) {
-                            try {
-                                if (notifyMinPriceOptional.get().getNumericCellValue() == 0D) {
-                                    notifyMinPriceError.setErrorDesc("活动通知体现最低单价数据类型与模板不一致，应改为数值型！");
-                                    int errorRows = notifyMinPriceError.getErrorRows();
-                                    notifyMinPriceError.setErrorRows(++errorRows);
-                                    if (notifyMinPriceError.getFirstErrorRow() == 0) {
-                                        notifyMinPriceError.setFirstErrorRow(i + 1);
-                                    }
-                                    errorList.add(notifyMinPriceError);
-                                } else {
-                                    Optional.of(row.getCell(4)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setNotifyMinPrice);
-                                }
-                            } catch (IllegalStateException e) {
-                                notifyMinPriceError.setErrorDesc("活动通知体现最低单价数据类型与模板不一致，应改为数值型！");
-                                int errorRows = notifyMinPriceError.getErrorRows();
-                                notifyMinPriceError.setErrorRows(++errorRows);
-                                if (notifyMinPriceError.getFirstErrorRow() == 0) {
-                                    notifyMinPriceError.setFirstErrorRow(i + 1);
-                                }
-                                errorList.add(notifyMinPriceError);
+                        Double notifyMinPrice = null;
+                        Cell cell4 = row.getCell(4);
+                        if(null == cell4 || cell4.getCellType() == 3) {
+                            validCount++;
+                            errorList.add(new ActivityProductUploadError("活动通知体现最低单价为空", i+1));
+                        }else {
+                            if (cell4.getCellType() == 0) {
+                                notifyMinPrice = cell4.getNumericCellValue();
+                            }else {
+                                errorList.add(new ActivityProductUploadError("活动通知体现最低单价数据类型有误，应改为数值型", i+1));
                             }
-                        } else {
-                            notifyMinPriceError.setErrorDesc("活动通知体现最低单价为空");
-                            int errorRows = notifyMinPriceError.getErrorRows();
-                            notifyMinPriceError.setErrorRows(++errorRows);
-                            if (notifyMinPriceError.getFirstErrorRow() == 0) {
-                                notifyMinPriceError.setFirstErrorRow(i + 1);
-                            }
-                            errorList.add(notifyMinPriceError);
                         }
 
+
                         // 活动期间体现最低单价
-                        ActivityProductUploadError minPriceError = new ActivityProductUploadError();
-                        Optional<Cell> minPriceOptional = Optional.ofNullable(row.getCell(5));
-                        if (minPriceOptional.isPresent()) {
-                            try {
-                                if (minPriceOptional.get().getNumericCellValue() == 0D) {
-                                    minPriceError.setErrorDesc("活动期间体现最低单价数据类型与模板不一致，应改为数值型！");
-                                    int errorRows = minPriceError.getErrorRows();
-                                    minPriceError.setErrorRows(++errorRows);
-                                    if (minPriceError.getFirstErrorRow() == 0) {
-                                        minPriceError.setFirstErrorRow(i + 1);
-                                    }
-                                    errorList.add(minPriceError);
-                                } else {
-                                    Optional.of(row.getCell(5)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setMinPrice);
-                                }
-                            } catch (IllegalStateException e) {
-                                minPriceError.setErrorDesc("活动期间体现最低单价数据类型与模板不一致，应改为数值型！");
-                                int errorRows = minPriceError.getErrorRows();
-                                minPriceError.setErrorRows(++errorRows);
-                                if (minPriceError.getFirstErrorRow() == 0) {
-                                    minPriceError.setFirstErrorRow(i + 1);
-                                }
-                                errorList.add(minPriceError);
+                        Double minPrice = null;
+                        Cell cell5 = row.getCell(5);
+                        if(null == cell5 || cell5.getCellType() == 3) {
+                            validCount++;
+                            errorList.add(new ActivityProductUploadError("活动期间体现最低单价为空", i+1));
+                        }else {
+                            if (cell5.getCellType() == 0) {
+                                minPrice = cell5.getNumericCellValue();
+                            }else {
+                                errorList.add(new ActivityProductUploadError("活动期间体现最低单价数据类型有误，应改为数值型", i+1));
                             }
-                        } else {
-                            minPriceError.setErrorDesc("活动期间体现最低单价为空");
-                            int errorRows = minPriceError.getErrorRows();
-                            minPriceError.setErrorRows(++errorRows);
-                            if (minPriceError.getFirstErrorRow() == 0) {
-                                minPriceError.setFirstErrorRow(i + 1);
-                            }
-                            errorList.add(minPriceError);
                         }
-                        if (activityProduct.productValid()) {
-                            activityProduct.setProductUrl(generateProductShortUrl(activityProduct.getProductId(), "S"));
+                        if(validCount == 6) {
+                            errorList = errorList.subList(0, errorList.size() - 6);
+                        }
+                        ActivityProduct activityProduct = new ActivityProduct();
+                        activityProduct.setHeadId(Long.valueOf(headId));
+                        activityProduct.setGroupId(groupId);
+                        activityProduct.setProductName(productName);
+                        activityProduct.setMinPrice(minPrice);
+                        activityProduct.setNotifyMinPrice(notifyMinPrice);
+                        activityProduct.setFormalPrice(formalPrice);
+                        activityProduct.setProductId(productId);
+                        if(activityProduct.productValid()) {
+                            activityProduct.setProductUrl(shortUrlService.genProdShortUrlByProdId(productId, "S"));
                             productList.add(activityProduct);
                         }
                     }
                     if (productList.size() != 0) {
-                        if (errorList.stream().filter(x -> !x.isIgnore()).count() != 0) {
-                            saveUploadProductData(headId, productList, uploadMethod, repeatProduct);
-                        }
+                        saveUploadProductData(headId, productList, uploadMethod, repeatProduct);
                     } else {
                         errorList.add(new ActivityProductUploadError("校验通过的记录条数为0"));
                     }
@@ -432,10 +334,10 @@ public class ActivityProductServiceImpl implements ActivityProductService {
             collect.entrySet().stream().forEach(x -> {
                 long rows = x.getValue().stream().map(ActivityProductUploadError::getErrorRows).count();
                 Integer first = x.getValue().stream().map(ActivityProductUploadError::getFirstErrorRow).min(Integer::compare).get();
-                dataList.add(new ActivityProductUploadError(x.getKey(), Long.valueOf(rows).intValue(), first));
+                dataList.add(new ActivityProductUploadError(x.getKey(), first, Long.valueOf(rows).intValue()));
             });
         }
-        return dataList;
+        return dataList.stream().sorted(Comparator.comparing(ActivityProductUploadError::getFirstErrorRow)).collect(Collectors.toList());
     }
 
 
@@ -537,5 +439,21 @@ public class ActivityProductServiceImpl implements ActivityProductService {
             });
         }
         return dataList;
+    }
+
+    private static String getCellTypeName(int typeCode) {
+        if (typeCode == 0) {
+            return "数值型";
+        } else if (typeCode == 1) {
+            return "文本型";
+        } else if (typeCode == 2) {
+            return "公式";
+        } else if (typeCode == 3) {
+            return "空单元格，但有样式";
+        } else if (typeCode == 4) {
+            return "布尔类型";
+        } else {
+            return "错误类型";
+        }
     }
 }
