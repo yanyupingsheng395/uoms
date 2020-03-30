@@ -27,6 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -307,9 +310,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         activityProduct.setHeadId(Long.valueOf(headId));
                         activityProduct.setGroupId(groupId);
                         activityProduct.setProductName(productName);
-                        activityProduct.setMinPrice(minPrice);
-                        activityProduct.setNotifyMinPrice(notifyMinPrice);
-                        activityProduct.setFormalPrice(formalPrice);
+                        activityProduct.setMinPrice(new BigDecimal(minPrice).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                        activityProduct.setNotifyMinPrice(new BigDecimal(notifyMinPrice).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                        activityProduct.setFormalPrice(new BigDecimal(formalPrice).setScale(2, RoundingMode.HALF_UP).doubleValue());
                         activityProduct.setProductId(productId);
                         if(activityProduct.productValid()) {
                             activityProduct.setProductUrl(shortUrlService.genProdShortUrlByProdId(productId, "S"));

@@ -277,7 +277,7 @@ function submitActivity(type) {
             if(data['warn'] !== null && data['warn'] !== undefined) {
                 $MB.confirm({
                     title: '提示:',
-                    content: '不参加活动的群组模板未配置，确认保存？'
+                    content: '成长商品没有活动价格的用户群组尚未配置文案，如未配置，此群组将不进行推送。确认保存？'
                 }, function () {
                     if(type === 'DURING') {
                         if(stage === 'preheat') {
@@ -422,7 +422,8 @@ function getProductInfo() {
                 title: '名称'
             },{
                 field: 'formalPrice',
-                title: '非活动日常单价（元/件）'
+                title: '非活动日常单价（元/件）',
+                align: 'center'
             }, {
                 field: 'groupId',
                 title: '活动机制',
@@ -444,10 +445,12 @@ function getProductInfo() {
                 }
             }, {
                 field: 'notifyMinPrice',
-                title: '活动通知体现最低单价（元/件）'
+                title: '活动通知体现最低单价（元/件）',
+                align: 'center'
             },  {
                 field: 'minPrice',
-                title: '活动期间体现最低单价（元/件）'
+                title: '活动期间体现最低单价（元/件）',
+                align: 'center'
             },  {
                 field: 'productUrl',
                 title: '商品短链',
