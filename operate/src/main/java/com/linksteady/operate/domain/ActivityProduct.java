@@ -22,16 +22,16 @@ public class ActivityProduct {
     private String productName;
 
     @ExportConfig(value = "非活动日常单价（元/件）")
-    private double formalPrice;
+    private Double formalPrice;
 
     @ExportConfig(value = "活动动机制", convert = "s:1=活动价,2=满件打折,3=满元减钱,4=特价")
     private String groupId;
 
     @ExportConfig(value = "活动通知体现最低单价（元/件）")
-    private double notifyMinPrice;
+    private Double notifyMinPrice;
 
     @ExportConfig(value = "活动期间体现最低单价（元/件）")
-    private double minPrice;
+    private Double minPrice;
 
     @ExportConfig(value = "商品短链")
     private String productUrl;
@@ -49,9 +49,9 @@ public class ActivityProduct {
     // 判断当前数据是否合法
     public boolean productValid() {
         return StringUtils.isNotEmpty(this.getProductId()) &&
-        StringUtils.isNotEmpty(this.getGroupId()) &&
-        !Double.valueOf(this.getMinPrice()).isNaN() &&
-        !Double.valueOf(this.getFormalPrice()).isNaN() &&
-        !Double.valueOf(this.getNotifyMinPrice()).isNaN();
+                StringUtils.isNotEmpty(this.getGroupId()) &&
+                null != this.getMinPrice() &&
+                null != this.getFormalPrice() &&
+                null != this.getNotifyMinPrice();
     }
 }
