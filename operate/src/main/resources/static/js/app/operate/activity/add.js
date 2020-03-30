@@ -1289,9 +1289,9 @@ function table3() {
         clickToSelect: true,
         singleSelect: true,
         rowStyle: covRowStyle,
-        onClickRow:function (row,$element) {
+        onCheck:function(row){
             var covListId = $("#covListId").val();
-            if(!row['check'] && covListId !== row['covListId']) {
+            if(covListId !== row['covListId']) {
                 $MB.confirm({
                     title: '提示:',
                     content: "是否进行测算？"
