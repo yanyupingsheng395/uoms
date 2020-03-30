@@ -1118,6 +1118,9 @@ $( "#sms_add_modal" ).on( 'hidden.bs.modal', function () {
     $( "#smstemplate_modal" ).modal( 'show' );
     $( "#btn_save_sms" ).attr( 'name', 'save' );
     $("#word").text('');
+    $("#isProdName-error").attr("style", "display:none;");
+    $("#isProdUrl-error").attr("style", "display:none;");
+    $("#isPrice-error").attr("style", "display:none;");
 } );
 
 // 删除文案
