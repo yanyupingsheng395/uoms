@@ -54,7 +54,7 @@ public class PageController extends BaseController {
         return "main";
     }
 
-    @Log("强制修改密码")
+    @Log("重置密码")
     @RequestMapping("/resetPass")
     public String resetPass(Model model) {
         // 登录成后，即可通过 Subject 获取登录的用户信息

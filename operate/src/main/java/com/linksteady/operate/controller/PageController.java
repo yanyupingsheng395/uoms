@@ -42,7 +42,7 @@ public class PageController extends BaseController {
     @Autowired
     private ActivityPlanService activityPlanService;
 
-    @Log("用户运营监控")
+    @Log(value = "用户成长监控",location = "用户成长系统")
     @RequestMapping("/operator/user")
     public String userOperator() {
         return "operate/useroperator/monitor";
@@ -53,40 +53,42 @@ public class PageController extends BaseController {
      * @param
      * @return
      */
-    @Log("品类运营")
+    @Log(value="品类运营",location = "用户成长系统")
     @RequestMapping("/lifecycle/catlist")
-    public String catlist(Model model) {
+    public String catlist() {
         return "operate/lifecycle/cat_list";
     }
 
 
-    /**
-     * 日运营列表
-     * @param
-     * @return
-     */
-    @Log("每日运营")
-    @RequestMapping("/op/day")
-    public String opDayList() {
-        return "operate/op/opday";
-    }
+//    /**
+//     * 日运营列表
+//     * @param
+//     * @return
+//     */
+//    @Log("每日用户运营")
+//    @RequestMapping("/op/day")
+//    public String opDayList() {
+//        return "operate/op/opday";
+//    }
 
-    /**
-     * 周期运营列表
-     * @param
-     * @return
-     */
-    @Log("周期运营")
-    @RequestMapping("/op/period")
-    public String opPeriodList() {
-        return "operate/op/opperiod";
-    }
+//    /**
+//     * 周期运营列表
+//     * @param
+//     * @return
+//     */
+//    @Log("周期运营")
+//    @RequestMapping("/op/period")
+//    public String opPeriodList() {
+//        return "operate/op/opperiod";
+//    }
 
+    @Log(value = "每日用户运营",location = "用户成长系统")
     @RequestMapping("/daily/task")
     public String daily() {
         return "operate/daily/list";
     }
 
+    @Log(value = "每日运营配置",location = "用户成长系统")
     @RequestMapping("/daily/config")
     public String dailyGroupConfig(Model model) {
         model.addAttribute("shortUrlLen", pushProperties.getShortUrlLen());
@@ -99,11 +101,12 @@ public class PageController extends BaseController {
     }
 
     /**
-     * 每日运营-任务提交
+     * 每日运营-任务执行
      * @param model
      * @param headId
      * @return
      */
+    @Log(value = "每日用户运营-任务执行",location = "用户成长系统")
     @RequestMapping("/daily/edit")
     public String dailyEdit(Model model, @RequestParam("id") String headId) {
 
@@ -148,23 +151,23 @@ public class PageController extends BaseController {
         }
     }
 
-    /**
-     * 活动短信模板配置
-     * @param
-     * @return
-     */
-    @Log("活动短信模板列表")
-    @RequestMapping("/cfg/activitySmsTemplate")
-    public String activitySmsTemplate() {
-        return "operate/config/activitySmsTemplate";
-    }
+//    /**
+//     * 活动短信模板配置
+//     * @param
+//     * @return
+//     */
+//    @Log("活动短信模板列表")
+//    @RequestMapping("/cfg/activitySmsTemplate")
+//    public String activitySmsTemplate() {
+//        return "operate/config/activitySmsTemplate";
+//    }
 
     /**
      * 短信模板配置
      * @param
      * @return
      */
-    @Log("短信模板列表")
+    @Log(value = "每日运营文案",location = "用户成长系统")
     @RequestMapping("/cfg/smsTemplate")
     public String smsTemplateList(Model model) {
         model.addAttribute("shortUrlLen", pushProperties.getShortUrlLen());
@@ -181,7 +184,7 @@ public class PageController extends BaseController {
      * @param
      * @return
      */
-    @Log("短信模板列表")
+    @Log(value = "每日运营优惠券",location = "用户成长系统")
     @RequestMapping("/cfg/coupon")
     public String couponList(Model model) {
         model.addAttribute("validUrl", pushProperties.getCouponSendType());
@@ -189,23 +192,23 @@ public class PageController extends BaseController {
         return "operate/config/coupon";
     }
 
-    /**
-     * 运营配置
-     * @param
-     * @return
-     */
-    @Log("运营配置")
-    @RequestMapping("/cfg/dailyConfig")
-    public String dailyConfig() {
-        return "operate/config/dailyConfig";
-    }
+//    /**
+//     * 运营配置
+//     * @param
+//     * @return
+//     */
+//    @Log("运营配置")
+//    @RequestMapping("/cfg/dailyConfig")
+//    public String dailyConfig() {
+//        return "operate/config/dailyConfig";
+//    }
 
     /**
-     * 推送配置参数列表
+     * 推送设置
      * @param
      * @return
      */
-    @Log("推送配置参数列表")
+    @Log(value = "推送设置",location = "用户成长系统")
     @RequestMapping("/cfg/pushConfigList")
     public String pushConfigList() {
         return "operate/config/pushConfigList";
@@ -215,6 +218,7 @@ public class PageController extends BaseController {
      * 日运营-效果跟踪
      * @return
      */
+    @Log(value = "每日用户运营-任务效果",location = "用户成长系统")
     @RequestMapping("daily/effect")
     public String effectTrack(Model model, @RequestParam("id") String headId) {
         String status = dailyService.getDailyHeadById(headId).getStatus();
@@ -237,11 +241,18 @@ public class PageController extends BaseController {
      * @return
      */
     @RequestMapping("/activity")
+    @Log(value = "活动运营",location = "用户成长系统")
     public String activity() {
         return "operate/activity/list";
     }
 
+    /**
+     * 活动运营新增
+     * @param model
+     * @return
+     */
     @RequestMapping("/activity/add")
+    @Log(value = "活动运营-新增",location = "用户成长系统")
     public String activityAdd(Model model)
     {
         model.addAttribute("operateType", "save");
@@ -252,46 +263,55 @@ public class PageController extends BaseController {
         return "operate/activity/add/add";
     }
 
-    /**
-     * 用户组模板配置表
-     * @return
-     */
-    @RequestMapping("/usergroup")
-    public String userGroup() {
-        return "operate/daily/usergroup";
-    }
+    //todo 此处是否页面也没用了？ 如果是，删除
+//    /**
+//     * 用户组模板配置表
+//     * @return
+//     */
+//    @RequestMapping("/usergroup")
+//    public String userGroup() {
+//        return "operate/daily/usergroup";
+//    }
 
 
-    /**
-     * 会员日成长任务列表页
-     * @return
-     */
-    @RequestMapping("/member")
-    public String memberList() {
-        return "operate/member/list";
-    }
+//    /**
+//     * 会员日成长任务列表页
+//     * @return
+//     */
+//    @RequestMapping("/member")
+//    public String memberList() {
+//        return "operate/member/list";
+//    }
 
 
-    /**
-     * 会员日成长任务列表页
-     *
-     * @return
-     */
-    @RequestMapping("/member/edit")
-    public String memberEdit(String id, Model model) {
-        model.addAttribute("id", id);
-        return "operate/member/edit";
-    }
+//    /**
+//     * 会员日成长任务列表页
+//     *
+//     * @return
+//     */
+//    @RequestMapping("/member/edit")
+//    public String memberEdit(String id, Model model) {
+//        model.addAttribute("id", id);
+//        return "operate/member/edit";
+//    }
 
     /**
      * 短信推送列表页
      * @return
      */
+    @Log(value = "推送记录",location = "用户成长系统")
     @RequestMapping("/push")
     public String push() {
         return "operate/push/list";
     }
 
+    /**
+     * 活动编辑
+     * @param headId
+     * @param model
+     * @return
+     */
+    @Log(value = "活动用户运营-编辑",location = "用户成长系统")
     @RequestMapping("/activity/edit")
     public String activityEdit(@RequestParam("headId") Long headId, Model model) {
         ActivityHead activityHead = activityHeadService.findById(headId);
@@ -314,6 +334,12 @@ public class PageController extends BaseController {
         return "operate/activity/add/add";
     }
 
+    /**
+     * @Log("活动用户运营-查看")
+     * @param headId
+     * @param model
+     * @return
+     */
     @RequestMapping("/activity/view")
     public String activityView(@RequestParam("headId") Long headId, Model model) {
         ActivityHead activityHead = activityHeadService.findById(headId);
@@ -336,6 +362,13 @@ public class PageController extends BaseController {
         return "operate/activity/view/view";
     }
 
+    /**
+     *  活动用户运行 -执行计划
+     * @param model
+     * @param id
+     * @return
+     */
+    @Log(value = "活动用户运营-执行计划",location = "用户成长系统")
     @RequestMapping("/activity/plan")
     public String activityPlan(Model model, @RequestParam String id)
     {
@@ -351,6 +384,7 @@ public class PageController extends BaseController {
      * 活动运营-效果统计页
      * @return
      */
+    @Log(value = "活动用户运营-任务效果",location = "用户成长系统")
     @RequestMapping("/activity/effect")
     public String activityEffect(@RequestParam("headId") String headId, Model model) {
         model.addAttribute("headId", headId);
@@ -361,6 +395,7 @@ public class PageController extends BaseController {
      * 活动运营-计划效果
      * @return
      */
+    @Log(value = "活动用户运营-执行计划效果",location = "用户成长系统")
     @RequestMapping("/activity/planEffect")
     public String planEffect(@RequestParam("planId") Long planId, Model model) {
         ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
@@ -383,7 +418,7 @@ public class PageController extends BaseController {
     }
 
     /**
-    * 从活动计划效果页返回到 活动计划列表
+    * 从活动计划效果页返回到 活动计划列表  (此url不用加log)
      */
     @RequestMapping("/activity/backToPlanList")
     public String backToPlanList(Model model, @RequestParam Long planId)
@@ -398,6 +433,7 @@ public class PageController extends BaseController {
      * 用户成长洞察页
      * @return
      */
+    @Log(value = "用户成长洞察",location = "用户成长系统")
     @RequestMapping("/insight")
     public String insight() {
         return "operate/insight/insight";
@@ -407,6 +443,7 @@ public class PageController extends BaseController {
      * 手动短信推送
      * @return
      */
+    @Log(value = "手工活动推送",location = "用户成长系统")
     @RequestMapping("/manual")
     public String manual(Model model) {
         model.addAttribute("fontNum", pushProperties.getSmsLengthLimit());
@@ -417,6 +454,7 @@ public class PageController extends BaseController {
      * 单一用户的成长洞察
      */
     @RequestMapping("/personInsight")
+    @Log(value = "单一用户成长洞察",location = "用户成长系统")
     public String personInsight(@RequestParam("userId") String userId, @RequestParam("headId") String headId, Model model) {
         model.addAttribute("userId", userId);
         model.addAttribute("headId", headId);
@@ -424,7 +462,12 @@ public class PageController extends BaseController {
         return "operate/daily/person_insight";
     }
 
+    /**
+     * 系统消息
+     * @return
+     */
     @RequestMapping("/msg")
+    @Log(value = "系统消息",location = "用户成长系统")
     public String msgPage() {
         return "operate/msg/list";
     }
@@ -434,6 +477,7 @@ public class PageController extends BaseController {
      * @return
      */
     @RequestMapping("/shorturl")
+    @Log(value = "短链生成",location = "用户成长系统")
     public String shorturl() {
         return "operate/shorturl/shorturl";
     }

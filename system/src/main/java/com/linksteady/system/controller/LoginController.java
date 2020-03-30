@@ -2,14 +2,21 @@ package com.linksteady.system.controller;
 import com.google.common.collect.Maps;
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
+import com.linksteady.common.domain.LogTypeEnum;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.domain.SysLog;
+import com.linksteady.common.domain.User;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.common.service.LogService;
 import com.linksteady.common.service.UserService;
+import com.linksteady.common.util.HttpContextUtils;
+import com.linksteady.common.util.IPUtils;
 import com.linksteady.common.util.MD5Utils;
 import com.linksteady.system.config.SystemProperties;
 import com.linksteady.system.util.code.img.ImageCode;
 import com.linksteady.system.util.code.img.ImageCodeGenerator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -44,6 +51,9 @@ public class LoginController extends BaseController {
 
     @Autowired
     private ConfigService configService;
+
+    @Autowired
+    private LogService logService;
 
     /**
      * 当前系统简称
@@ -96,7 +106,6 @@ public class LoginController extends BaseController {
         return "login";
     }
 
-    @Log("登录系统")
     @PostMapping("/login")
     @ResponseBody
     public ResponseBo login(String username, String password, String code) {
@@ -126,11 +135,15 @@ public class LoginController extends BaseController {
             }
             super.login(token);
             this.userService.updateLoginTime(username);
+            //记录登录事件
+            logLoginEvent(username,"登录成功");
 
             //判断用户是否首次登陆 如果是强制跳到修改密码界面
             String firstLogin=userService.findByName(username).getFirstLogin();
             if(systemProperties.getShiro().isAllowResetPassword()&&"Y".equals(firstLogin))
             {
+                //记录登录事件
+                logLoginEvent(username,"登录成功，首次登陆将强制要求修改密码！");
                 //首次登陆强制要求修改密码
                 return ResponseBo.ok("Y");
             }else
@@ -141,11 +154,41 @@ public class LoginController extends BaseController {
 
 
         } catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e) {
+            //记录登录事件
+            logLoginEvent(username,"登录失败：未知账号、账号锁定或凭证不正确");
             return ResponseBo.error(e.getMessage());
         } catch (AuthenticationException e) {
+            logLoginEvent(username,"登录失败：其它认证失败原因");
             return ResponseBo.error("认证失败！");
         }
     }
+
+    /**
+     * 记录登录事件
+     * @return
+     */
+    private void logLoginEvent(String userName,String operation)
+    {
+        // 获取request
+        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+        // 设置IP地址
+        String ip = IPUtils.getIpAddr(request);
+        long time = 0;
+        if (systemProperties.isOpenAopLog()) {
+            // 保存日志
+            SysLog log = new SysLog();
+            log.setUsername(userName);
+            log.setIp(ip);
+            log.setTime(time);
+            log.setMethod("com.linksteady.system.controller.LoginController.login()");
+            log.setParams(userName);
+            log.setLocation("系统管理");
+            log.setLogType(LogTypeEnum.PAGE);
+            log.setOperation(operation);
+            logService.saveLog(log);
+        }
+    }
+
 
     @RequestMapping("/")
     public String redirectIndex() {
