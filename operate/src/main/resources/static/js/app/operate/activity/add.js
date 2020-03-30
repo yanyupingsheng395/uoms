@@ -232,7 +232,7 @@ function makeErrorTable(data) {
         showHeader:true,
         columns: [{
             field: 'errorDesc',
-            title: '指标',
+            title: '问题描述',
             align: 'left'
         }, {
             field: 'errorRows',
@@ -240,8 +240,15 @@ function makeErrorTable(data) {
             align: 'center'
         },{
             field: 'firstErrorRow',
-            title: '首次出现行数',
-            align: 'center'
+            title: '首次出现位置',
+            align: 'center',
+            formatter: function (value, row, index) {
+                if(value === 0 || value === null) {
+                    return '-';
+                }else {
+                    return "第" + value +  "行"
+                }
+            }
         }]
     });
     $("#errorDataTable").bootstrapTable('load', data);
