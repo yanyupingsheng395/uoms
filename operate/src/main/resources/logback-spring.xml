@@ -47,6 +47,22 @@
         </filter>
     </appender>
 
+    <!--用户操作日志 -->
+    <appender name="handle" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}/opHandler.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/error/opHandler.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
     <root level="debug">
         <appender-ref ref="console" />
     </root>
@@ -55,4 +71,10 @@
         <appender-ref ref="file_info" />
         <appender-ref ref="file_error" />
     </root>
+
+    <!--由于设置了 additivity="false" ，所以输出时不会使用rootLogger的appender-->
+    <logger name="handle" level="info" additivity="false">
+        <appender-ref ref="console" />
+        <appender-ref ref="handle" />
+    </logger>
 </configuration>

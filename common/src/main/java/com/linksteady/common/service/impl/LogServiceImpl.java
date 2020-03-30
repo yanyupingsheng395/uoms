@@ -3,6 +3,7 @@ package com.linksteady.common.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linksteady.common.annotation.Log;
+import com.linksteady.common.domain.LogTypeEnum;
 import com.linksteady.common.domain.SysLog;
 import com.linksteady.common.service.LogService;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
@@ -11,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,11 @@ import java.util.*;
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 @Slf4j
 public class LogServiceImpl extends BaseService<SysLog> implements LogService {
+
+    /**
+     * 打印操作日志，获取单独的日志对象
+     */
+    private static Logger logger = LoggerFactory.getLogger("handle");
 
     @Autowired
     ObjectMapper objectMapper;
@@ -62,14 +70,14 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteLogs(String logIds) {
         List<String> list = Arrays.asList(logIds.split(","));
         this.batchDelete(list, "id", SysLog.class);
     }
 
     @Override
-    public void saveLog(ProceedingJoinPoint joinPoint, SysLog log) throws JsonProcessingException {
+    public void saveLog(ProceedingJoinPoint joinPoint, SysLog sysLog) throws JsonProcessingException {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         Log logAnnotation = method.getAnnotation(Log.class);
@@ -77,29 +85,57 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
             // 注解上的描述
             String loganno = logAnnotation.value();
             loganno = loganno.length() > 1000 ? loganno.substring(0, 1000):loganno;
-            log.setOperation(loganno);
+            sysLog.setOperation(loganno);
+
+            //日志的类型
+            LogTypeEnum logType=logAnnotation.type();
+            sysLog.setLogType(logType);
+
+            //日志的位置
+            sysLog.setLocation(logAnnotation.location());
         }
         // 请求的类名
         String className = joinPoint.getTarget().getClass().getName();
         // 请求的方法名
         String methodName = signature.getName();
+
         String methodParam = className + "." + methodName + "()";
         methodParam = methodParam.length() > 1000?methodParam.substring(0, 1000):methodParam;
-        log.setMethod(methodParam);
+        sysLog.setMethod(methodParam);
+
         // 请求的方法参数值
         Object[] args = joinPoint.getArgs();
         // 请求的方法参数名称
         LocalVariableTableParameterNameDiscoverer u = new LocalVariableTableParameterNameDiscoverer();
         String[] paramNames = u.getParameterNames(method);
+        //对所有的参数进行保存
         if (args != null && paramNames != null) {
             StringBuilder params = new StringBuilder();
             params = handleParams(params, args, Arrays.asList(paramNames));
             params = params.length() > 1000?new StringBuilder(params.substring(0, 1000)):params;
-            log.setParams(params.toString());
+            sysLog.setParams(params.toString());
         }
-        log.setCreateTime(new Date());
+
+        sysLog.setCreateTime(new Date());
+
+        logger.info(sysLog.toString());
         // 保存系统日志
-        save(log);
+        if(LogTypeEnum.PAGE.equals(sysLog.getLogType()))
+        {
+            save(sysLog);
+        }
+
+    }
+
+    @Override
+    public void saveLog(SysLog sysLog) {
+        sysLog.setCreateTime(new Date());
+        logger.info(sysLog.toString());
+        // 保存系统日志
+        if(LogTypeEnum.PAGE.equals(sysLog.getLogType()))
+        {
+            save(sysLog);
+        }
     }
 
     @SuppressWarnings("unchecked")

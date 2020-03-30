@@ -9,10 +9,13 @@ import java.util.List;
 
 public interface LogService extends IService<SysLog> {
 	
-	List<SysLog> findAllLogs(SysLog log);
+	List<SysLog> findAllLogs(SysLog sysLog);
 	
 	void deleteLogs(String logIds);
 
 	@Async
-	void saveLog(ProceedingJoinPoint point, SysLog log) throws JsonProcessingException;
+	void saveLog(ProceedingJoinPoint point, SysLog sysLog) throws JsonProcessingException;
+
+	@Async
+	void saveLog(SysLog sysLog);
 }

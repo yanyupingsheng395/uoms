@@ -1,6 +1,5 @@
 package com.linksteady.operate.controller;
 
-import com.google.common.collect.Table;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.service.KpiMonitorService;
