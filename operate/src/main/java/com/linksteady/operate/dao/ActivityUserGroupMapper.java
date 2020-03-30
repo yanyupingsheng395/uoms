@@ -28,7 +28,9 @@ public interface ActivityUserGroupMapper {
 
     int checkTmpIsUsed(String tmpCode);
 
-    void validUserGroup(String headId, String stage);
+    void validUserGroupNotify(String headId, String stage);
+
+    void validUserGroupDuring(String headId, String stage);
 
     int validGroupTemplate(Long headId, String stage, String type);
 

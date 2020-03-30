@@ -184,27 +184,33 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-md-4 control-label">上传模式</label>
+                                <label class="col-md-4 control-label">文件中商品<br/>重复处理规则</label>
                                 <div class="col-md-7">
                                     <label class="lyear-radio radio-inline radio-primary">
-                                        <input type="radio" name="uploadMethod" value="0"><span>追加</span>
-                                    </label>
-                                    <label class="lyear-radio radio-inline radio-primary">
-                                        <input type="radio" name="uploadMethod" value="1"><span>覆盖</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">重复商品</label>
-                                <div class="col-md-7">
-                                    <label class="lyear-radio radio-inline radio-primary">
-                                        <input type="radio" name="repeatProduct" value="0"><span>忽略</span>
+                                        <input type="radio" name="repeatProduct" value="0" checked><span>忽略</span>
                                     </label>
                                     <label class="lyear-radio radio-inline radio-primary">
                                         <input type="radio" name="repeatProduct" value="1"><span>覆盖</span>
                                     </label>
                                 </div>
                             </div>
+                            <label class="h6" style="color: #7c7c7c; display: inline-block;" hidden=""><i class="fa fa-info-circle"></i>
+                                上传文件中存在重复商品时(商品ID相同界定为重复)，忽略表示以先出现的商品为准，忽略掉后续重复商品；覆盖表示以最后出现的商品为准，忽略掉先出现的。
+                            </label>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">文件中商品与已有商品<br/>重复处理规则</label>
+                                <div class="col-md-7 mt7">
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="uploadMethod" value="0" checked><span>忽略</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="uploadMethod" value="1"><span>覆盖</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <label class="h6" style="color: #7c7c7c; display: inline-block;" hidden=""><i class="fa fa-info-circle"></i>
+                                上传文件中的活动商品和已有的活动商品重复时(商品ID相同界定为重复), 覆盖则会用上传文件中的覆盖掉已经存在的记录，忽略则会忽略掉重复商品，不做处理。
+                            </label>
                             <div class="form-group">
                                 <hr style="margin-top: 0px;margin-bottom: 0px;"/>
                             </div>
@@ -545,7 +551,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">×</span></button>
-                <h5 class="modal-title">活动商品上传验证信息</h5>
+                <h5 class="modal-title">文件校验失败，描述如下</h5>
             </div>
             <div class="modal-body">
                 <div class="row">

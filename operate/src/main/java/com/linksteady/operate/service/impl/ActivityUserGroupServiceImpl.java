@@ -65,7 +65,8 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void validUserGroup(String headId, String stage) {
-        activityUserGroupMapper.validUserGroup(headId, stage);
+        activityUserGroupMapper.validUserGroupNotify(headId, stage);
+        activityUserGroupMapper.validUserGroupDuring(headId, stage);
     }
 
     @Override

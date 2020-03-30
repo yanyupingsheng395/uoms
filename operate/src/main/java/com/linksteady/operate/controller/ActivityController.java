@@ -278,24 +278,27 @@ public class ActivityController {
      */
     @GetMapping("/validSubmit")
     public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
+        Map<String, String> data = Maps.newHashMap();
         // 验证所有群组是否配置消息模板 0：合法，非0不合法
         int templateIsNullCount = -1;
-        String data = "";
         if(type.equalsIgnoreCase(ActivityPlanTypeEnum.During.getPlanTypeCode())) {
             templateIsNullCount = activityUserGroupService.validGroupTemplate(headId, stage, type);
-            data = "部分群组模板消息未配置！";
+            if(templateIsNullCount > 0) {
+                data.put("error", "部分群组模板消息未配置");
+            }
         }else if(type.equalsIgnoreCase(ActivityPlanTypeEnum.Notify.getPlanTypeCode())){
             List<String> groupIds = activityProductService.getGroupIds(headId);
-            if(groupIds.size() == 0) {
-                groupIds = Collections.singletonList("5");
-                data = "活动商品数为0，且不参加活动群组模板未配置！";
-            }else {
-                data = "上传的商品的与已配置文案的活动群组不符！";
+            if(groupIds.size() != 0) {
+                templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, stage, type, groupIds);
+                if(templateIsNullCount > 0) {
+                    data.put("error", "上传的商品的与已配置文案的活动群组不符");
+                }
             }
+            groupIds = Collections.singletonList("5");
             templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, stage, type, groupIds);
-        }
-        if(templateIsNullCount == 0) {
-            data = "";
+            if(templateIsNullCount > 0) {
+                data.put("warn", "不参加活动群组模板未配置");
+            }
         }
         return ResponseBo.okWithData(null, data);
     }
@@ -372,6 +375,7 @@ public class ActivityController {
      */
     @GetMapping("/getGroupList")
     public List<ActivityGroup> getGroupList(@RequestParam("headId") Long headId, @RequestParam("stage") String stage, @RequestParam("type") String type) {
+        activityUserGroupService.validUserGroup(headId.toString(), stage);
         return activityUserGroupService.getUserGroupList(headId, stage, type);
     }
 

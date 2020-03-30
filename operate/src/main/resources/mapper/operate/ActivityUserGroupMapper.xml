@@ -76,14 +76,48 @@
         where t1.HEAD_ID = t2.HEAD_ID and (t2.PREHEAT_STATUS &lt;&gt; 'done' and t2.FORMAL_STATUS &lt;&gt; 'done') and t1.SMS_TEMPLATE_CODE = #{tmpCode}
     </select>
 
-    <update id="validUserGroup">
+    <update id="validUserGroupNotify">
+        update UO_OP_ACTIVITY_GROUP
+        set CHECK_FLAG = (
+            case
+                when
+                    GROUP_ID in (
+                    select distinct GROUP_ID
+                    from UO_OP_ACTIVITY_PRODUCT
+                    where HEAD_ID = #{headId}
+                ) and
+                    SMS_TEMPLATE_CODE is null then 'N'
+                when
+                    GROUP_ID in (
+                    select distinct GROUP_ID
+                    from UO_OP_ACTIVITY_PRODUCT
+                    where HEAD_ID = #{headId}
+                ) and
+                    SMS_TEMPLATE_CODE is not null then 'Y'
+                else 'D' end
+            ),
+            CHECK_COMMENTS = (
+                case
+                    when
+                        GROUP_ID in (
+                        select distinct GROUP_ID
+                        from UO_OP_ACTIVITY_PRODUCT
+                        where HEAD_ID = #{headId}
+                    ) and
+                        SMS_TEMPLATE_CODE is null then '群组文案没有配置'
+            else null end)
+        where HEAD_ID = #{headId}
+          and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = 'NOTIFY'
+    </update>
+
+    <update id="validUserGroupDuring">
         update UO_OP_ACTIVITY_GROUP set CHECK_FLAG = (
             case when SMS_TEMPLATE_CODE is null then 'N' else 'Y' end
         ),
         CHECK_COMMENTS = (
             case when SMS_TEMPLATE_CODE is null then '群组文案没有配置' else '' end
         )
-        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = 'DURING'
     </update>
 
     <select id="validGroupTemplate" resultType="int">
