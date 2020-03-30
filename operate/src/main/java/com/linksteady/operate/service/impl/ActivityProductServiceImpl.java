@@ -171,8 +171,12 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 if(null == sheet) {
                     errorList.add(new ActivityProductUploadError("系统只解析第一个sheet，当前文件第一个sheet为空"));
                 }else {
-                    for (int i=0; i<sheet.getLastRowNum(); i++) {
+                    for (int i=0; i<=sheet.getLastRowNum(); i++) {
                         Row row = sheet.getRow(i);
+                        if(null == row) {
+                            errorList.add(new ActivityProductUploadError("行为空", 1, i+1));
+                            continue;
+                        }
                         // 校验文件第一行与模板是否一致
                         if (i == 0) {
                             Iterator<Cell> cellIterator = row.cellIterator();
@@ -249,9 +253,19 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         // 非活动日常单价
                         ActivityProductUploadError formalPriceError = new ActivityProductUploadError();
                         Optional<Cell> formalPriceOptional = Optional.ofNullable(row.getCell(2));
-                        if(formalPriceOptional.isPresent() && formalPriceOptional.get().getNumericCellValue() != 0D) {
+                        if(formalPriceOptional.isPresent() ) {
                             try {
-                                Optional.of(row.getCell(2)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setFormalPrice);
+                                if(formalPriceOptional.get().getNumericCellValue() == 0D) {
+                                    formalPriceError.setErrorDesc("非活动日常单价数据类型与模板不一致，应改为数值型！");
+                                    int errorRows = formalPriceError.getErrorRows();
+                                    formalPriceError.setErrorRows(++errorRows);
+                                    if(formalPriceError.getFirstErrorRow() == 0) {
+                                        formalPriceError.setFirstErrorRow(i+1);
+                                    }
+                                    errorList.add(formalPriceError);
+                                }else {
+                                    Optional.of(row.getCell(2)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setFormalPrice);
+                                }
                             } catch (IllegalStateException e) {
                                 formalPriceError.setErrorDesc("非活动日常单价数据类型与模板不一致，应改为数值型！");
                                 int errorRows = formalPriceError.getErrorRows();
@@ -327,9 +341,19 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         // 活动通知体现最低单价
                         ActivityProductUploadError notifyMinPriceError = new ActivityProductUploadError();
                         Optional<Cell> notifyMinPriceOptional = Optional.ofNullable(row.getCell(4));
-                        if(notifyMinPriceOptional.isPresent()  && notifyMinPriceOptional.get().getNumericCellValue() != 0D) {
+                        if(notifyMinPriceOptional.isPresent()) {
                             try {
-                                Optional.of(row.getCell(4)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setNotifyMinPrice);
+                                if(notifyMinPriceOptional.get().getNumericCellValue() == 0D) {
+                                    notifyMinPriceError.setErrorDesc("活动通知体现最低单价数据类型与模板不一致，应改为数值型！");
+                                    int errorRows = notifyMinPriceError.getErrorRows();
+                                    notifyMinPriceError.setErrorRows(++errorRows);
+                                    if(notifyMinPriceError.getFirstErrorRow() == 0) {
+                                        notifyMinPriceError.setFirstErrorRow(i+1);
+                                    }
+                                    errorList.add(notifyMinPriceError);
+                                }else {
+                                    Optional.of(row.getCell(4)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setNotifyMinPrice);
+                                }
                             } catch (IllegalStateException e) {
                                 notifyMinPriceError.setErrorDesc("活动通知体现最低单价数据类型与模板不一致，应改为数值型！");
                                 int errorRows = notifyMinPriceError.getErrorRows();
@@ -352,9 +376,19 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         // 活动期间体现最低单价
                         ActivityProductUploadError minPriceError = new ActivityProductUploadError();
                         Optional<Cell> minPriceOptional = Optional.ofNullable(row.getCell(5));
-                        if(minPriceOptional.isPresent() && minPriceOptional.get().getNumericCellValue() != 0D) {
+                        if(minPriceOptional.isPresent()) {
                             try {
-                                Optional.of(row.getCell(5)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setMinPrice);
+                                if(minPriceOptional.get().getNumericCellValue() == 0D) {
+                                    minPriceError.setErrorDesc("活动期间体现最低单价数据类型与模板不一致，应改为数值型！");
+                                    int errorRows = minPriceError.getErrorRows();
+                                    minPriceError.setErrorRows(++errorRows);
+                                    if(minPriceError.getFirstErrorRow() == 0) {
+                                        minPriceError.setFirstErrorRow(i+1);
+                                    }
+                                    errorList.add(minPriceError);
+                                }else {
+                                    Optional.of(row.getCell(5)).map(Cell::getNumericCellValue).ifPresent(activityProduct::setMinPrice);
+                                }
                             } catch (IllegalStateException e) {
                                 minPriceError.setErrorDesc("活动期间体现最低单价数据类型与模板不一致，应改为数值型！");
                                 int errorRows = minPriceError.getErrorRows();
@@ -379,11 +413,11 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         }
                     }
                     if (productList.size() != 0) {
-                        if(errorList.stream().filter(x -> !x.isIgnore()).count() == 0) {
+                        if(errorList.stream().filter(x -> !x.isIgnore()).count() != 0) {
                             saveUploadProductData(headId, productList, uploadMethod, repeatProduct);
                         }
                     } else {
-                        errorList.add(new ActivityProductUploadError("上传的数据为空"));
+                        errorList.add(new ActivityProductUploadError("校验通过的记录条数为0"));
                     }
                 }
             } catch (IOException e) {
