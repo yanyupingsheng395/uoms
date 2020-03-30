@@ -216,7 +216,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
                 ResponseBody responseBody = client.newCall(request).execute().body();
 
                 JSONObject jsonObject = JSON.parseObject(responseBody.string());
-                shortUrl = jsonObject.getString("ShortUrl");
+                shortUrl = subShortUrl(jsonObject.getString("ShortUrl"));
                 errCode = jsonObject.getInteger("Code");
                 errMsg = jsonObject.getString("ErrMsg");
 
@@ -252,5 +252,10 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             return shortUrl;
         }
         return shortUrl;
+    }
+
+    private String subShortUrl(String shortUrl)
+    {
+       return  StringUtils.substring(shortUrl,7);
     }
 }
