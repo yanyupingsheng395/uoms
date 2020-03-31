@@ -329,7 +329,7 @@ public class PageController extends BaseController {
 
         model.addAttribute("prodNameLen", 10);
         model.addAttribute("priceLen", 5);
-        model.addAttribute("prodUrlLen", 23);
+        model.addAttribute("prodUrlLen", 15);
         model.addAttribute("smsLenLimit", 61);
         return "operate/activity/add/add";
     }
@@ -357,7 +357,7 @@ public class PageController extends BaseController {
 
         model.addAttribute("prodNameLen", 10);
         model.addAttribute("priceLen", 5);
-        model.addAttribute("prodUrlLen", 23);
+        model.addAttribute("prodUrlLen", 15);
         model.addAttribute("smsLenLimit", 61);
         return "operate/activity/view/view";
     }
