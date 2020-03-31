@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.BlackMapper">
+
+    <resultMap id="base" type="com.linksteady.operate.domain.BlackInfo">
+        <result column="USER_PHONE" property="userPhone" jdbcType="VARCHAR"/>
+        <result column="EXPIRE_DT" property="expireDate" jdbcType="VARCHAR"/>
+        <result column="SMS_CONTENT" property="smsContent" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getDataList" resultMap="base">
+        select * from (
+            select t.*, ROWNUM rn from (
+                select USER_PHONE,to_char(EXPIRE_DT, 'yyyy-mm-dd') EXPIRE_DT,SMS_CONTENT from UO_OP_PHONEBLACKLIST
+                where 1=1
+                <if test="phone != null and phone != ''">
+                    and USER_PHONE = #{phone}
+                </if>
+            ) t where ROWNUM &gt;= #{start}
+        ) where rn &lt;= #{end}
+    </select>
+
+    <select id="getCount" resultType="int">
+        select count(1) from UO_OP_PHONEBLACKLIST
+        where 1=1
+        <if test="phone != null and phone != ''">
+            and USER_PHONE = #{phone}
+        </if>
+    </select>
+
+    <insert id="insertData">
+        insert into UO_OP_PHONEBLACKLIST(USER_PHONE,EXPIRE_DT,SMS_CONTENT, INSERT_DT)
+        values (#{userPhone}, #{expireDt}, #{smsContent}, sysdate)
+    </insert>
+
+    <delete id="deleteByPhone">
+        delete from UO_OP_PHONEBLACKLIST where USER_PHONE = #{phone}
+    </delete>
+</mapper>

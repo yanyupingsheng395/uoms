@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -270,9 +271,8 @@ public class ActivityPlanController {
         ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
         //获取计划的效果
         ActivityPlanEffectVO activitPf = activityPlanService.getPlanEffectById(planId,kpiType);
-
         Map<String,Object> result=Maps.newHashMap();
-        result.put("planDt",new SimpleDateFormat("yyyy年MM月dd日").format(activityPlan.getPlanDate()));
+        result.put("planDt",activityPlan.getPlanDate().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")));
         result.put("userCount",String.valueOf(activityPlan.getSuccessNum()));
         //活动效果
         result.put("activitPf", activitPf);

@@ -268,7 +268,10 @@ $("#btn_effect").click(function () {
     let effectFlag=selected[0].effectFlag;
     let preheatStatus = selected[0]['preheatStatus'];
     let formalStatus = selected[0]['formalStatus'];
-    let flag = preheatStatus === 'done' || preheatStatus === 'doing' || formalStatus === 'done' || formalStatus === 'doing';
+    let preheatNotifyStatus = selected[0]['preheatNotifyStatus'];
+    let formalNotifyStatus = selected[0]['formalNotifyStatus'];
+    let flag = preheatStatus != 'edit' || formalStatus != 'edit' || preheatNotifyStatus != 'edit' || formalNotifyStatus != 'edit';
+
     if(flag) {
         if(effectFlag==='N')
         {
@@ -277,7 +280,6 @@ $("#btn_effect").click(function () {
         {
             window.location.href = "/page/activity/effect?headId=" + headId;
         }
-
     }else {
         $MB.n_warning("活动当前状态不允许查看效果！");
     }
