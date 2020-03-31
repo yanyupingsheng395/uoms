@@ -1,9 +1,7 @@
 package com.linksteady.operate.config;
 
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.operate.dao.ShortUrlMapper;
 import com.linksteady.operate.domain.PushProperties;
-import com.linksteady.operate.domain.ShortUrlInfo;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.PushPropertiesService;
 import com.linksteady.operate.service.ShortUrlService;
@@ -11,12 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * 判断t_config配置数据是否能从redis中加载到，如果加载不到，则报错

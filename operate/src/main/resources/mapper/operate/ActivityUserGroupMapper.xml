@@ -94,7 +94,7 @@
                     where HEAD_ID = #{headId}
                 ) and
                     SMS_TEMPLATE_CODE is not null then 'Y'
-                else 'D' end
+                else 'NA' end
             ),
             CHECK_COMMENTS = (
                 case
