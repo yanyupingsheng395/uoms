@@ -295,10 +295,10 @@ public class PageController extends BaseController {
         model.addAttribute("formalStatus", formalStatus);
         model.addAttribute("formalNotifyStatus", formalNotifyStatus);
 
-        model.addAttribute("prodNameLen", 10);
-        model.addAttribute("priceLen", 5);
-        model.addAttribute("prodUrlLen", 15);
-        model.addAttribute("smsLenLimit", 61);
+        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
+        model.addAttribute("priceLen", pushProperties.getPriceLen());
+        model.addAttribute("prodUrlLen", pushProperties.getShortUrlLen());
+        model.addAttribute("smsLenLimit", pushProperties.getSmsLengthLimit());
         return "operate/activity/add/add";
     }
 
@@ -323,10 +323,10 @@ public class PageController extends BaseController {
         model.addAttribute("formalStatus", formalStatus);
         model.addAttribute("formalNotifyStatus", formalNotifyStatus);
 
-        model.addAttribute("prodNameLen", 10);
-        model.addAttribute("priceLen", 5);
-        model.addAttribute("prodUrlLen", 15);
-        model.addAttribute("smsLenLimit", 61);
+        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
+        model.addAttribute("priceLen", pushProperties.getPriceLen());
+        model.addAttribute("prodUrlLen", pushProperties.getShortUrlLen());
+        model.addAttribute("smsLenLimit", pushProperties.getSmsLengthLimit());
         return "operate/activity/view/view";
     }
 
