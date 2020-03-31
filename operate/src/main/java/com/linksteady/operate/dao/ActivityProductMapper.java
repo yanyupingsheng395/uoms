@@ -52,4 +52,6 @@ public interface ActivityProductMapper {
     int validProduct(String headId);
 
     List<String> getGroupIds(Long headId);
+
+    List<ActivityProduct> getProductPriceList(long headId,String activityType);
 }

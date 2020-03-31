@@ -9,6 +9,7 @@ import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.dao.ActivityDetailMapper;
 import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.dao.ActivityPlanMapper;
+import com.linksteady.operate.dao.ActivityProductMapper;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
@@ -31,6 +32,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -75,6 +77,9 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     ExceptionNoticeHandler exceptionNoticeHandler;
 
     private final int MAX_TASK_DAY = 7;
+
+    @Autowired
+    ActivityProductMapper activityProductMapper;
 
     /**
      * 生成plan数据
@@ -225,6 +230,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     private void transContent(Long headId,Long planId,String activityStage,String activityType) throws Exception
     {
         Long startTime = System.currentTimeMillis();
+
         //获取此活动上配置的所有模板
         List<Map<String,String>> templateList=activityPlanMapper.getAllTemplate(headId,activityStage,activityType);
 
@@ -234,6 +240,10 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
             //以GROUP_ID为key，内容模板作为value
             templateMap.put(String.valueOf(template.get("GROUP_ID")),template.get("TMP_CONTENT"));
         }
+
+        //获取所有活动商品的价格
+        List<ActivityProduct> productPriceList=activityProductMapper.getProductPriceList(headId,activityType);
+        Map<String,Double> prodPriceMap=productPriceList.stream().collect(Collectors.toMap(ActivityProduct::getProductId,ActivityProduct::getMinPrice,(o1,o2)->o1));
 
         //根据planId获取当前有多少人需要推送
         int pushUserCount= activityDetailMapper.getDataCount(planId,"-1");
@@ -245,7 +255,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
             //填充模板 生成文案
             List<ActivityContentVO> targetList= null;
             try {
-                targetList = processVariable(list,templateMap);
+                targetList = processVariable(list,templateMap,prodPriceMap);
             } catch (Exception e) {
                 //错误日志上报
                 log.error("活动运营转化文案错误，错误堆栈为{}",e);
@@ -274,7 +284,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
                 //生成线程对象列表
                 for(int i=0;i<page;i++)
                 {
-                    taskList.add(new TransActivityContentThread(planId,i*pageSize+1,(i+1)*pageSize,templateMap));
+                    taskList.add(new TransActivityContentThread(planId,i*pageSize+1,(i+1)*pageSize,templateMap,prodPriceMap));
                 }
 
                 log.info("活动运营转换文案一共需要{}个线程来处理",taskList.size());
@@ -320,7 +330,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
      * @return
      */
     @Override
-    public List<ActivityContentVO> processVariable(List<ActivityDetail> list, Map<String,String> templateMap){
+    public List<ActivityContentVO> processVariable(List<ActivityDetail> list, Map<String,String> templateMap,Map<String,Double> prodPriceMap){
         List<ActivityContentVO> targetList = Lists.newArrayList();
         ActivityContentVO activityContentVO = null;
         String smsContent="";
@@ -337,8 +347,21 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
             //判断是否含有变量 如果有则进行替换
             smsContent = smsContent.replace("${PROD_NAME}", convertNullToEmpty(activityDetail.getEpbProductName()));
-            //替换价格
-            smsContent = smsContent.replace("${PRICE}", convertNullToEmpty(activityDetail.getRecPiecePrice()));
+
+            //判断文案中是否含有价格变量
+            if(smsContent.indexOf("${PRICE}")!=-1)
+            {
+                if(prodPriceMap.containsKey(activityDetail.getEpbProductId()))
+                {
+                    //替换价格
+                    smsContent = smsContent.replace("${PRICE}", BigDecimal.valueOf(prodPriceMap.get(activityDetail.getEpbProductId())).stripTrailingZeros().toEngineeringString());
+                }else
+                {
+                    //替换价格
+                    smsContent = smsContent.replace("${PRICE}", convertNullToEmpty(activityDetail.getRecPiecePrice()));
+                }
+            }
+
 
             //判断是否含有商品链接变量
             if(smsContent.indexOf("${PROD_URL}")!=-1)

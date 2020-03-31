@@ -74,7 +74,7 @@
 
     <!--由于设置了 additivity="false" ，所以输出时不会使用rootLogger的appender-->
     <logger name="handle" level="info" additivity="false">
-        <appender-ref ref="console" />
+        <!--<appender-ref ref="console" />-->
         <appender-ref ref="handle" />
     </logger>
 </configuration>

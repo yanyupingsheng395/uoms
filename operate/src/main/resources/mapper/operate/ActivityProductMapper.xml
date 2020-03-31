@@ -172,4 +172,9 @@
     <select id="getGroupIds" resultType="string">
         select DISTINCT GROUP_ID from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId} and CHECK_FLAG = 'Y'
     </select>
+
+    <select id="getProductPriceList"  resultMap="base">
+           SELECT (CASE WHEN #{activityType}='NOTIFY' THEN NOTIFY_MIN_PRICE ELSE MIN_PRICE END) MIN_PRICE,EPB_PRODUCT_ID
+           FROM UO_OP_ACTIVITY_PRODUCT P WHERE HEAD_ID = #{headId} and CHECK_FLAG = 'Y'
+    </select>
 </mapper>

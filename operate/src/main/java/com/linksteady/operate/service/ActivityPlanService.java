@@ -59,7 +59,7 @@ public interface ActivityPlanService {
      * @param list
      * @return
      */
-    List<ActivityContentVO> processVariable(List<ActivityDetail> list, Map<String,String> templateMap);
+    List<ActivityContentVO> processVariable(List<ActivityDetail> list, Map<String,String> templateMap,Map<String,Double> prodPriceMap);
 
     void pushActivity(String pushMethod,String pushPeriod, ActivityPlan activityPlan) throws Exception;
 
