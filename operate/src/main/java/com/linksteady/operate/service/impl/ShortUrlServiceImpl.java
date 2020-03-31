@@ -256,6 +256,6 @@ public class ShortUrlServiceImpl implements ShortUrlService {
 
     private String subShortUrl(String shortUrl)
     {
-       return  StringUtils.substring(shortUrl,7);
+       return  StringUtils.substring(shortUrl,8);
     }
 }
