@@ -37,4 +37,8 @@ public interface ShortUrlService {
      */
     String genShortUrlDirect(String longUrl,String sourceType);
 
+    /**
+     * 同步短链数据到redis
+     */
+    void setShortUrlToRedis();
 }

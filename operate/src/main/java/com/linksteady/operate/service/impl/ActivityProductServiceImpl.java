@@ -229,7 +229,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         }
 
                         // 非活动日常单价
-                        Double formalPrice = null;
+                        Double formalPrice = 0D;
                         Cell cell2 = row.getCell(2);
                         if(null == cell2 || cell2.getCellType() == 3) {
                             validCount++;
@@ -276,7 +276,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         }
 
                         // 活动通知体现最低单价
-                        Double notifyMinPrice = null;
+                        Double notifyMinPrice = 0D;
                         Cell cell4 = row.getCell(4);
                         if(null == cell4 || cell4.getCellType() == 3) {
                             validCount++;
@@ -288,10 +288,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                                 errorList.add(new ActivityProductUploadError("活动通知体现最低单价数据类型有误，应改为数值型", i+1));
                             }
                         }
-
-
                         // 活动期间体现最低单价
-                        Double minPrice = null;
+                        Double minPrice = 0D;
                         Cell cell5 = row.getCell(5);
                         if(null == cell5 || cell5.getCellType() == 3) {
                             validCount++;

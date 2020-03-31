@@ -263,38 +263,6 @@ public class PageController extends BaseController {
         return "operate/activity/add/add";
     }
 
-    //todo 此处是否页面也没用了？ 如果是，删除
-//    /**
-//     * 用户组模板配置表
-//     * @return
-//     */
-//    @RequestMapping("/usergroup")
-//    public String userGroup() {
-//        return "operate/daily/usergroup";
-//    }
-
-
-//    /**
-//     * 会员日成长任务列表页
-//     * @return
-//     */
-//    @RequestMapping("/member")
-//    public String memberList() {
-//        return "operate/member/list";
-//    }
-
-
-//    /**
-//     * 会员日成长任务列表页
-//     *
-//     * @return
-//     */
-//    @RequestMapping("/member/edit")
-//    public String memberEdit(String id, Model model) {
-//        model.addAttribute("id", id);
-//        return "operate/member/edit";
-//    }
-
     /**
      * 短信推送列表页
      * @return
@@ -327,10 +295,10 @@ public class PageController extends BaseController {
         model.addAttribute("formalStatus", formalStatus);
         model.addAttribute("formalNotifyStatus", formalNotifyStatus);
 
-        model.addAttribute("prodNameLen", 10);
-        model.addAttribute("priceLen", 5);
-        model.addAttribute("prodUrlLen", 15);
-        model.addAttribute("smsLenLimit", 61);
+        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
+        model.addAttribute("priceLen", pushProperties.getPriceLen());
+        model.addAttribute("prodUrlLen", pushProperties.getShortUrlLen());
+        model.addAttribute("smsLenLimit", pushProperties.getSmsLengthLimit());
         return "operate/activity/add/add";
     }
 
@@ -355,10 +323,10 @@ public class PageController extends BaseController {
         model.addAttribute("formalStatus", formalStatus);
         model.addAttribute("formalNotifyStatus", formalNotifyStatus);
 
-        model.addAttribute("prodNameLen", 10);
-        model.addAttribute("priceLen", 5);
-        model.addAttribute("prodUrlLen", 15);
-        model.addAttribute("smsLenLimit", 61);
+        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
+        model.addAttribute("priceLen", pushProperties.getPriceLen());
+        model.addAttribute("prodUrlLen", pushProperties.getShortUrlLen());
+        model.addAttribute("smsLenLimit", pushProperties.getSmsLengthLimit());
         return "operate/activity/view/view";
     }
 

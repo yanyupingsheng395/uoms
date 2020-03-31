@@ -736,12 +736,6 @@ function getGroupList(stage, type, tableId) {
                 field: 'groupName',
                 title: groupName
             }, {
-                title: '文案',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    return "<span style='color: #333'><i class='fa fa-envelope-o'></i></span>";
-                }
-            }, {
                 field: 'smsTemplateContent',
                 title: '预览推送'
             }, {

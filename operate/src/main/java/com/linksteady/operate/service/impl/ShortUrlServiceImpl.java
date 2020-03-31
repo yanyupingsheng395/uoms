@@ -64,7 +64,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     private static final String jumpUrl = "https://h5.m.taobao.com/ecrm/jump-to-app.html?target_url=";
 
 
-    private void setShortUrlToRedis() {
+    @Override
+    public void setShortUrlToRedis() {
         log.info("开始将短链的数据同步到redis");
         HashOperations hashOperations = redisTemplate.opsForHash();
         List<ShortUrlInfo> shortUrlInfos = shortUrlMapper.getDataList();

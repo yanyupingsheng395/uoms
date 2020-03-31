@@ -256,8 +256,8 @@ function makeErrorTable(data) {
 }
 
 $("#uploadProduct").on('hidden.bs.modal', function () {
-    $("input[name='uploadMethod']").prop('checked', false);
-    $("input[name='repeatProduct']").prop('checked', false);
+    $("input[name='uploadMethod']").eq(0).prop('checked', true);
+    $("input[name='repeatProduct']").eq(0).prop('checked', true);
     $("#uploadFile").val('');
     $("#filename").html('').attr("style", "display:none;");
 });
