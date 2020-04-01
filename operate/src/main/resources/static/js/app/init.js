@@ -3,11 +3,20 @@ $(document).ready(function () {
     allExceptionCatch();
     getUserMenu();
     getSysMsg();
+    noReadCnt();
 });
 
 $("#dropdownMenu,#msg_detail_modal").on('click', function (e) {
     e.stopPropagation();
 });
+
+function noReadCnt() {
+    $.get("/msg/getNoReadCount", {}, function (r) {
+        if(r.code === 200) {
+            $("#noReadCnt").text(r.data);
+        }
+    })
+}
 
 /**
  * 获取系统通知消息
@@ -35,11 +44,11 @@ function appendTable(data) {
         var createDt = v['createDt'];
         var msgTitle = v['msgTitle'];
         var content = v['msgContent'];
-        content = content.length > 30 ? content.substr(0, 30) + " ..." : content;
+        var newContent = content.length > 30 ? content.substr(0, 30) + " ..." : content;
         code += "<tr>" +
             "<td>"+v['createDt']+"&nbsp;&nbsp;<a style=\"text-decoration:underline dotted;cursor: pointer;color: #333;\" onclick=\"msgTitleClick(this, "+v['msgId']+", "+v['readFlag']+")\">"+msgTitle+"</a>" +
             "<hr style=\"margin-top: 5px;margin-bottom: 5px;\" hidden/>" +
-            "<p class=\"h6\" hidden><a style='color: #48b0f7;cursor: pointer;' onclick='viewDetail(\""+createDt+"\", \""+msgTitle+"\", \""+content+"\")'>"+content+"</a></p></td>" +
+            "<p class=\"h6\" hidden><a style='color: #48b0f7;cursor: pointer;' onclick='viewDetail(\""+createDt+"\", \""+msgTitle+"\", \""+content+"\")'>"+newContent+"</a></p></td>" +
             "<td>"+getIcon(v['readFlag'])+"</td>" +
             "</tr>";
     });
@@ -48,9 +57,9 @@ function appendTable(data) {
 
 function getIcon(readFlag) {
     if (readFlag === '0') {
-        return "<span style='color: #8b95a5'><i class='fa fa-eye-slash'></i></span>";
+        return "<span style='color: #f96868'><i class='fa fa-circle'></i></span>";
     } else {
-        return "<span style='color: #48b0f7'><i class='fa fa-eye'></i></span>";
+        return "";
     }
 }
 function viewDetail(createDt, msgTitle, content) {
@@ -63,7 +72,7 @@ function msgTitleClick(dom, msgId, readFlag) {
     if(readFlag === 0) {
         $.get("/msg/updateMsgRead", {msgId: msgId}, function (r) {
             if(r.code === 200) {
-                $(dom).parent().next().html('').append('<span style=\'color: #48b0f7\'><i class=\'fa fa-eye\'></i></span>');
+                $(dom).parent().next().html('').append('');
             }
         });
     }

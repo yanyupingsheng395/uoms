@@ -44,4 +44,9 @@ public class MsgController {
         msgService.updateMsgRead(msgId);
         return ResponseBo.ok();
     }
+
+    @GetMapping("/getNoReadCount")
+    public ResponseBo getNoReadCount() {
+        return ResponseBo.okWithData(null, msgService.getDataCount("", "0"));
+    }
 }
