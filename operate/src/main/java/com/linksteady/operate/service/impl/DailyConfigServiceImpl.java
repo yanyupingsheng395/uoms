@@ -110,6 +110,9 @@ public class DailyConfigServiceImpl implements DailyConfigService {
                 activeDesc = "经过当前时间没有购买，后续不会再购买;";
                 activePolicy = "处在沉睡之前唤醒用户可行时机;";
                 break;
+            default:
+                activeDesc="";
+                activePolicy="";
         }
 
         //设置用户价值 业务理解 及 运营策略

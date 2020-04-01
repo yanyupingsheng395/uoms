@@ -74,10 +74,7 @@ public class ActivityDetail implements Serializable {
     @ExportConfig(value = "推送内容")
     private String smsContent;
     private String smsTemplateContent;
-
-    private String planType;
     private Long planId;
-    private String activityType;
     private String prodActivityProp;
 
 }

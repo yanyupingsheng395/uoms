@@ -1,5 +1,11 @@
 package com.linksteady.operate.domain.enums;
 
+/**
+ * 活动运营 - 活动类型 （通知 or 正式)的枚举类
+ *
+ * @author huang
+ * @date
+ */
 public enum ActivityPlanTypeEnum {
 
     Notify("NOTIFY","活动提醒"),During("DURING","活动期间");

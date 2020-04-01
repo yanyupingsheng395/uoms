@@ -61,7 +61,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     private static final String TOKEN = "181cb047026eef2735bdec65a81293f7";
     final static String CREATE_API = "https://dwz.cn/admin/v2/create";
 
-    private static final String jumpUrl = "https://h5.m.taobao.com/ecrm/jump-to-app.html?target_url=";
+    private static final String JUMP_URL = "https://h5.m.taobao.com/ecrm/jump-to-app.html?target_url=";
 
 
     @Override
@@ -97,7 +97,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             //判断是否需要进行转跳 唤醒淘宝APP  如果长链接中包含 taobao.com tmall.com 则进行包裹
             if (longUrl.indexOf("taobao.com") != -1 || longUrl.indexOf("tmall.com") != -1) {
                 //进行一层转跳
-                newLongUrl = jumpUrl + UrlUtil.getURLEncoderString(longUrl);
+                newLongUrl = JUMP_URL + UrlUtil.getURLEncoderString(longUrl);
             } else {
                 newLongUrl = longUrl;
             }
@@ -139,7 +139,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             //判断是否需要进行转跳 唤醒淘宝APP
             if (newLongUrl.indexOf("taobao.com") != -1 || newLongUrl.indexOf("tmall.com") != -1) {
                 //进行一层转跳
-                newLongUrl = jumpUrl + UrlUtil.getURLEncoderString(newLongUrl);
+                newLongUrl = JUMP_URL + UrlUtil.getURLEncoderString(newLongUrl);
             }
 
             //生成短链
@@ -159,7 +159,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             //判断是否需要进行转跳 唤醒淘宝APP
             if (couponUrl.indexOf("taobao.com") != -1 || couponUrl.indexOf("tmall.com") != -1) {
                 //进行一层转跳
-                return produceShortUrl(jumpUrl + UrlUtil.getURLEncoderString(couponUrl), sourceType);
+                return produceShortUrl(JUMP_URL + UrlUtil.getURLEncoderString(couponUrl), sourceType);
             } else {
                 return produceShortUrl(couponUrl, sourceType);
             }
@@ -246,7 +246,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
                 if (shortUrlMapper.selectCountByLongUrl(longUrl) > 0) {
                     shortUrlMapper.updateShortUrlValidateDate(validateDate2);
                 } else {
-                    shortUrlMapper.InsertShortUrl(shortUrlInfo);
+                    shortUrlMapper.insertShortUrl(shortUrlInfo);
                 }
                 redisTemplate.opsForHash().putIfAbsent(redisDataKey, longUrl, shortUrl);
             }

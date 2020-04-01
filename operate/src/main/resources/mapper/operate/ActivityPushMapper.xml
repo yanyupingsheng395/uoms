@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.ActivityPushMapper">
+
+    <resultMap id="activityDetailResult" type="com.linksteady.operate.domain.ActivityDetail">
+        <result column="EPB_PRODUCT_NAME" jdbcType="VARCHAR" property="epbProductName"/>
+        <result column="EPB_PRODUCT_ID" jdbcType="DECIMAL" property="epbProductId"/>
+        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"/>
+        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"/>
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"/>
+        <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"/>
+        <result column="PUSH_DATE_STR" jdbcType="VARCHAR" property="pushDateStr"/>
+        <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"/>
+        <result column="HEAD_ID" jdbcType="VARCHAR" property="headId"/>
+        <result column="ACTIVITY_DETAIL_ID" jdbcType="VARCHAR" property="activityDetailId"/>
+        <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="recPiecePrice"/>
+        <result column="ACTIVITY_STAGE" jdbcType="VARCHAR" property="activityStage"/>
+        <result column="PLAN_ID" jdbcType="DECIMAL" property="planId"/>
+        <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"/>
+        <result column="PROD_ACTIVITY_PROP" jdbcType="VARCHAR" property="prodActivityProp"/>
+        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"/>
+    </resultMap>
+
+    <delete id="deleteContentTmp">
+        DELETE FROM UO_OP_ACTIVITY_CONTENT_TMP WHERE PLAN_ID=#{planId}
+    </delete>
+
+    <select id="getAllTemplate"  resultType="map">
+        SELECT
+            UO_OP_ACTIVITY_GROUP.GROUP_ID,
+            UO_OP_ACTIVITY_TEMPLATE.TMP_CONTENT
+        FROM UO_OP_ACTIVITY_GROUP, UO_OP_ACTIVITY_TEMPLATE
+        WHERE UO_OP_ACTIVITY_GROUP.SMS_TEMPLATE_CODE =UO_OP_ACTIVITY_TEMPLATE.TMP_CODE(+)
+          AND UO_OP_ACTIVITY_GROUP.HEAD_ID=#{headId}
+          AND UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE=#{activityStage}
+          AND  UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE=#{activityType}
+    </select>
+
+    <select id="getPushCount" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID = #{planId}
+    </select>
+
+    <select id="getPushList" resultMap="activityDetailResult">
+        select * from (
+                          select t.*, ROWNUM rn
+                          from (select UO_OP_ACTIVITY_DETAIL.IS_PUSH,
+                                       to_char(UO_OP_ACTIVITY_DETAIL.PUSH_DATE, 'yyyy-mm-dd hh24:mi') PUSH_DATE_STR,
+                                       UO_OP_ACTIVITY_DETAIL.PUSH_STATUS,
+                                       UO_OP_ACTIVITY_DETAIL.EPB_PRODUCT_NAME,
+                                       UO_OP_ACTIVITY_DETAIL.EPB_PRODUCT_ID,
+                                       UO_OP_ACTIVITY_DETAIL.USER_ID,
+                                       UO_OP_ACTIVITY_DETAIL.GROUP_ID,
+                                       UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
+                                       UO_OP_ACTIVITY_DETAIL.HEAD_ID,
+                                       UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID,
+                                       UO_OP_ACTIVITY_DETAIL.REC_PIECE_PRICE,
+                                       UO_OP_ACTIVITY_DETAIL.ACTIVITY_STAGE,
+                                       UO_OP_ACTIVITY_DETAIL.ORDER_PERIOD,
+                                       UO_OP_ACTIVITY_PLAN_GROUP.GROUP_NAME,
+                                       UO_OP_ACTIVITY_PLAN_GROUP.PROD_ACTIVITY_PROP,
+                                       UO_OP_ACTIVITY_DETAIL.PLAN_ID
+                                from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_PLAN_GROUP
+                                where
+                                    UO_OP_ACTIVITY_DETAIL.PLAN_ID=UO_OP_ACTIVITY_PLAN_GROUP.PLAN_ID
+                                  AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_PLAN_GROUP.GROUP_ID
+                                  AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+                                  AND  UO_OP_ACTIVITY_PLAN_GROUP.CHECK_FLAG='Y'
+                                ORDER BY UO_OP_ACTIVITY_DETAIL.GROUP_ID ASC,UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID ASC) t
+                          where ROWNUM &lt;= #{end}
+                      ) where RN &gt;= #{start}
+    </select>
+
+    <insert id="insertPushContentTemp">
+        insert into UO_OP_ACTIVITY_CONTENT_TMP(activity_detail_id,plan_id,sms_content)
+        SELECT A.*
+        FROM(
+        <foreach collection="list" item="item" index="index"
+                 separator="UNION ALL">
+            SELECT
+            #{item.activityDetailId} activityDetailId,
+            #{item.planId} planId,
+            #{item.smsContent} smsContent
+            FROM
+            dual
+        </foreach>
+        )A
+    </insert>
+
+    <update id="updatePushContentFromTemp">
+        MERGE INTO UO_OP_ACTIVITY_DETAIL USING
+        UO_OP_ACTIVITY_CONTENT_TMP ON (UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID=UO_OP_ACTIVITY_CONTENT_TMP.ACTIVITY_DETAIL_ID
+        AND UO_OP_ACTIVITY_DETAIL.PLAN_ID=#{planId})
+        WHEN MATCHED THEN
+        UPDATE SET UO_OP_ACTIVITY_DETAIL.SMS_CONTENT=UO_OP_ACTIVITY_CONTENT_TMP.SMS_CONTENT
+    </update>
+
+
+    <update id="updateStatus">
+        update UO_OP_ACTIVITY_PLAN set PLAN_STATUS = #{status},VERSION=VERSION+1
+        where PLAN_ID = #{planId}  AND VERSION=#{version}
+    </update>
+
+    <update id="updatePushScheduleDate">
+        UPDATE UO_OP_ACTIVITY_DETAIL C SET C.PUSH_SCHEDULING_DATE=(
+                                           SELECT
+            (CASE WHEN P.PUSH_METHOD='IMME' OR P.PUSH_METHOD='FIXED' THEN
+                                           P.PUSH_PERIOD
+                                           ELSE
+                                           P.PUSH_PERIOD||C.ORDER_PERIOD||'00' END)
+                                           FROM UO_OP_ACTIVITY_PLAN P WHERE C.PLAN_ID=P.PLAN_ID
+            ) where
+            C.PLAN_ID=#{planId}
+    </update>
+
+    <insert id="insertToPushListLarge">
+        INSERT INTO uo_op_push_list_large(
+            PUSH_CONTENT,
+            PUSH_STATUS,
+            SOURCE_CODE,
+            SOURCE_ID,
+            USER_PHONE,
+            IS_PUSH,
+            PUSH_SCHEDULING_DATE,
+            PUSH_ID
+        )
+        SELECT T.SMS_CONTENT,
+               'P',
+               'ACTIVITY',
+               T.ACTIVITY_DETAIL_ID,
+               T.USER_PHONE,
+               '0',
+               PUSH_SCHEDULING_DATE,
+               SEQ_UO_OP_PUSH_LIST_LARGE.NEXTVAL
+        FROM UO_OP_ACTIVITY_DETAIL T ,UO_OP_ACTIVITY_PLAN_GROUP G
+        where  T.PLAN_ID=G.PLAN_ID AND T.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND T.plan_id = #{planId}
+    </insert>
+
+    <update id="updatePushMethod">
+        update UO_OP_ACTIVITY_PLAN set
+                      PUSH_METHOD = #{pushMethod},PUSH_PERIOD=#{pushPeriod}
+        where plan_id = #{planId}
+    </update>
+
+
+    <select id="validateNotifySms" resultType="int">
+        select count(*) from uo_op_activity_product p where p.head_id=#{headId} and p.group_id not in (
+            select p2.group_id from uo_op_activity_group p2 where p2.head_id=#{headId}
+             and p2.activity_type=#{activityType}
+             and p2.activity_stage=#{activityStage} and p2.check_flag='Y'
+        )
+    </select>
+
+    <delete id="deletePlanGroup">
+        delete from UO_OP_ACTIVITY_PLAN_GROUP where plan_id = #{planId}
+    </delete>
+
+    <insert id="insertActivityPlanGroup">
+        INSERT INTO UO_OP_ACTIVITY_PLAN_GROUP
+        (
+            head_id,
+            plan_id,
+            group_id,
+            group_name,
+            PROD_ACTIVITY_PROP,
+            check_allow,
+            check_flag,
+            group_usernum,
+            check_allow_desc
+        )
+        SELECT
+            HEAD_ID,PLAN_ID,F1.GROUP_ID,GROUP_NAME,PROD_ACTIVITY_PROP,'Y',F1.check_flag,NVL(USER_NUM,0) USER_NUM,''
+        FROM (
+                 SELECT G1.HEAD_ID,PLAN_ID,G1.GROUP_ID,G1.GROUP_NAME,G1.PROD_ACTIVITY_PROP,G1.check_flag
+                 FROM UO_OP_ACTIVITY_GROUP G1, UO_OP_ACTIVITY_PLAN P
+                 WHERE G1.HEAD_ID = P.HEAD_ID
+                   AND G1.ACTIVITY_STAGE = P.ACTIVITY_STAGE
+                   AND G1.ACTIVITY_TYPE = P.PLAN_TYPE
+                   AND P.PLAN_ID=#{planId}) F1,
+             (SELECT GROUP_ID,COUNT(*) USER_NUM FROM UO_OP_ACTIVITY_DETAIL WHERE PLAN_ID=#{planId} GROUP BY GROUP_ID) F2
+        WHERE F1.GROUP_ID=F2.GROUP_ID(+)
+        ORDER BY F1.GROUP_ID ASC
+    </insert>
+
+    <update id="updateActivityPlanGroup">
+        UPDATE UO_OP_ACTIVITY_PLAN_GROUP T SET T.CHECK_ALLOW='N',T.CHECK_ALLOW_DESC='无参加此活动机制的商品' where GROUP_ID NOT IN (
+            SELECT DISTINCT GROUP_ID FROM UO_OP_ACTIVITY_PRODUCT P WHERE P.HEAD_ID=T.HEAD_ID
+            ) AND T.PLAN_ID=#{planId} and PROD_ACTIVITY_PROP='Y'
+    </update>
+
+    <update id="updateActivityPlanGroup2">
+        UPDATE UO_OP_ACTIVITY_PLAN_GROUP T
+        SET T.CHECK_ALLOW = 'N', T.CHECK_ALLOW_DESC = '未配置文案'
+        where EXISTS (SELECT 1
+            FROM UO_OP_ACTIVITY_GROUP P
+            WHERE P.HEAD_ID = T.HEAD_ID
+            AND P.PROD_ACTIVITY_PROP = 'N'
+            AND P.ACTIVITY_TYPE = #{planType}
+            AND P.ACTIVITY_STAGE = #{activityStage})
+            AND T.PLAN_ID = #{planId}
+            AND T.PROD_ACTIVITY_PROP = 'N'
+
+    </update>
+</mapper>

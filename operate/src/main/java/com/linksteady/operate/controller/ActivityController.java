@@ -7,12 +7,8 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
-import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
-import com.linksteady.operate.thrift.ActivityThriftClient;
-import com.linksteady.operate.vo.ActivityGroupVO;
-import com.linksteady.operate.vo.DailyPersonalVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -325,7 +319,7 @@ public class ActivityController {
         if(count == 1) {
             activityHeadService.deleteData(headId);
             activityProductService.deleteData(headId);
-            activityPlanService.deleteData(headId);
+            activityPlanService.deletePlan(headId);
             activityUserGroupService.deleteData(headId);
         }else {
             return ResponseBo.error("该计划当前状态不支持删除操作！");

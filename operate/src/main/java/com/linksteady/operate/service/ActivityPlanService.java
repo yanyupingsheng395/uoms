@@ -1,11 +1,10 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.ActivityDetail;
 import com.linksteady.operate.domain.ActivityPersonal;
 import com.linksteady.operate.domain.ActivityPlan;
-import com.linksteady.operate.domain.ActivityPlanEffect;
-import com.linksteady.operate.vo.ActivityContentVO;
+import com.linksteady.operate.domain.ActivityPlanGroup;
 import com.linksteady.operate.vo.ActivityPlanEffectVO;
+import com.linksteady.operate.vo.SmsStatisVO;
 
 import java.util.List;
 import java.util.Map;
@@ -27,20 +26,28 @@ public interface ActivityPlanService {
      */
     List<ActivityPlan> getPlanList(Long headId);
 
-    void deleteData(Long headId);
-
     /**
-     * 将活动的推送数据写入到推送通道表中
-     * @param planId
+     * 删除某个活动的所有执行计划
+     * @param headId
      */
-    void insertToPushListLarge(Long planId);
+    void deletePlan(Long headId);
 
     /**
      * 获取群组的统计信息
      * @param planId
      * @return
      */
-    List<Map<String,Object>> getUserGroupList(Long planId);
+    List<ActivityPlanGroup> getPlanGroupList(Long planId);
+
+    /**
+     * 获取按消息内容的统计信息的总行数
+     */
+   int getPlanSmsContentListCount(Long planId);
+
+    /**
+     * 获取按消息内容的统计信息
+     */
+    List<SmsStatisVO> getPlanSmsContentList(Long planId, int start, int end);
 
     /**
      * 获取执行计划
@@ -49,19 +56,6 @@ public interface ActivityPlanService {
      */
     ActivityPlan getPlanInfo(Long planId);
 
-    /**
-     * 对活动运营的文案进行转换
-     */
-    void transActivityDetail( ActivityPlan activityPlan) throws Exception;
-
-    /**
-     * 对变量进行替换
-     * @param list
-     * @return
-     */
-    List<ActivityContentVO> processVariable(List<ActivityDetail> list, Map<String,String> templateMap,Map<String,Double> prodPriceMap);
-
-    void pushActivity(String pushMethod,String pushPeriod, ActivityPlan activityPlan) throws Exception;
 
     ActivityPlanEffectVO getPlanEffectById(Long planId, String kpiType);
 
@@ -74,10 +68,4 @@ public interface ActivityPlanService {
 
     int getDailyPersonalEffectCount(Long planId);
 
-    void updatePlanToStop(ActivityPlan activityPlan) throws Exception;
-
-    /**
-     * 对活动文案进行配置
-     */
-    boolean validateNotifySms(ActivityPlan activityPlan);
 }

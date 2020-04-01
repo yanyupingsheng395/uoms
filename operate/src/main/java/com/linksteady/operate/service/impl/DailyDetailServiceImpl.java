@@ -1,6 +1,7 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyDetailMapper;
@@ -137,8 +138,15 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         {
             ExecutorService pool = null;
             try {
+                ThreadFactory dailyThreadFactory = new ThreadFactoryBuilder()
+                        .setNameFormat("daily-content-trans-pool-%d").build();
+
                 //生成线程池 (线程数量为4)
-                pool = new ThreadPoolExecutor(8, 8, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());;
+                pool = new ThreadPoolExecutor(8,
+                        8,
+                        1000,
+                        TimeUnit.MILLISECONDS,
+                        new LinkedBlockingQueue<Runnable>(),dailyThreadFactory);
 
                 //分页多线程处理
                 int page=pushUserCount%pageSize==0?pushUserCount/pageSize:(pushUserCount/pageSize+1);

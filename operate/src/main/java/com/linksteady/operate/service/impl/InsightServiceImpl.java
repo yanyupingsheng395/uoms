@@ -146,7 +146,7 @@ public class InsightServiceImpl implements InsightService {
      */
     @Override
     public Map<String, Object> getSpuList(String dateRange) {
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> data = new HashMap<>(16);
         List<Map<String, Object>> nodeList = sankeyMapper.getNodeInfo(dateRange);
         // 获取node节点基本数据
         List<Map<String, Object>> nodeNameArray = Lists.newArrayList();
@@ -155,10 +155,14 @@ public class InsightServiceImpl implements InsightService {
             Map<String, Object> node = Maps.newHashMap();
             node.put("id", String.valueOf(nodeList.indexOf(x)));
             node.put("name", x.get("TARGET_NAME"));
-            node.put("cUserCnt", x.get("C_USER_CNT").toString()); // 当日用户数量
-            node.put("bUserCnt", x.get("B_USER_CNT").toString()); // 30日用户数量
-            node.put("cUserPercent", x.get("C_RATE").toString()); // 当日用户数量占比
-            node.put("bUserPercent", x.get("B_RATE").toString()); // 30日用户数量占比
+            // 当日用户数量
+            node.put("cUserCnt", x.get("C_USER_CNT").toString());
+            // 30日用户数量
+            node.put("bUserCnt", x.get("B_USER_CNT").toString());
+            // 当日用户数量占比
+            node.put("cUserPercent", x.get("C_RATE").toString());
+            // 30日用户数量占比
+            node.put("bUserPercent", x.get("B_RATE").toString());
             nodeNameArray.add(node);
         });
         data.put("nodes", nodeNameArray);

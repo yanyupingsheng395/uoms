@@ -231,7 +231,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             }
             Set<String> patterns = info.getPatternsCondition().getPatterns();
             for (String url : patterns) {
-                Map<String, String> urlMap = new HashMap<>();
+                Map<String, String> urlMap = new HashMap<>(16);
                 urlMap.put("url", url.replaceFirst("\\/", ""));
                 urlMap.put("perms", perms);
                 urlList.add(urlMap);

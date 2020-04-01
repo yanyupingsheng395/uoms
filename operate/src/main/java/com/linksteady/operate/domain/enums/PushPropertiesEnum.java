@@ -1,5 +1,8 @@
 package com.linksteady.operate.domain.enums;
 
+/**
+ * 推送属性类的属性名及其在T_CONFIG中配置CODE的映射枚举类
+ */
 public enum  PushPropertiesEnum {
     repeatPushDays("repeatPushDays","op.push.repeatPushDays"),
 

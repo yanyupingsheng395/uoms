@@ -10,14 +10,12 @@
         <result property="planDateWid" column="PLAN_DATE_WID" jdbcType="DECIMAL"/>
         <result property="activityName" column="ACTIVITY_NAME" jdbcType="VARCHAR"/>
         <result property="stage" column="ACTIVITY_STAGE" jdbcType="VARCHAR"/>
-
         <result property="planType" column="PLAN_TYPE" jdbcType="VARCHAR"/>
         <result property="successNum" column="SUCCESS_NUM" jdbcType="DECIMAL"/>
         <result property="version" column="VERSION" jdbcType="DECIMAL"/>
         <result property="effectFlag" column="EFFECT_FLAG" jdbcType="VARCHAR"/>
         <result property="covRate" column="COV_RATE" jdbcType="DECIMAL"/>
         <result property="covAmount" column="COV_AMOUNT" jdbcType="DECIMAL"/>
-
     </resultMap>
 
     <resultMap id="PlanEffectResult" type="com.linksteady.operate.domain.ActivityPlanEffect">
@@ -45,6 +43,24 @@
         <result property="mobile" jdbcType="VARCHAR" column="MOBILE"></result>
         <result property="pushDate" jdbcType="VARCHAR" column="PUSH_DATE"></result>
         <result property="convertDate" jdbcType="VARCHAR" column="CONVERT_DATE"></result>
+    </resultMap>
+
+    <resultMap id="planGroupResult" type="com.linksteady.operate.domain.ActivityPlanGroup">
+        <result property="planId" column="PLAN_ID" jdbcType="DECIMAL"/>
+        <result property="headId" column="HEAD_ID" jdbcType="DECIMAL"/>
+        <result property="groupId" column="GROUP_ID" jdbcType="DECIMAL"/>
+        <result property="groupName" column="GROUP_NAME" jdbcType="VARCHAR"/>
+        <result property="prodActivityProp" column="PROD_ACTIVITY_PROP" jdbcType="VARCHAR"/>
+        <result property="checkAllow" column="CHECK_ALLOW" jdbcType="VARCHAR"/>
+        <result property="checkFlag" column="CHECK_FLAG" jdbcType="VARCHAR"/>
+        <result property="groupUserNum" column="GROUP_USERNUM" jdbcType="DECIMAL"/>
+        <result property="checkAllowDesc" column="CHECK_ALLOW_DESC" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="smsStatisResult" type="com.linksteady.operate.vo.SmsStatisVO">
+        <result property="smsContent" column="SMS_CONTENT" jdbcType="VARCHAR"/>
+        <result property="cnt" column="CNT" jdbcType="VARCHAR"/>
+        <result property="smsLength" column="SMSLENGTH" jdbcType="VARCHAR"/>
     </resultMap>
 
     <insert id="savePlanList">
@@ -88,68 +104,50 @@
          where plan_id = #{planId}
     </select>
 
-    <update id="updateStatus">
-        update UO_OP_ACTIVITY_PLAN set PLAN_STATUS = #{status},VERSION=VERSION+1
-        where PLAN_ID = #{planId}  AND VERSION=#{version}
-    </update>
-
-    <delete id="deleteData">
+    <delete id="deletePlan">
         delete from UO_OP_ACTIVITY_PLAN where head_id = #{headId}
     </delete>
 
-    <insert id="insertToPushListLarge">
-        INSERT INTO uo_op_push_list_large(
-            PUSH_CONTENT,
-            PUSH_STATUS,
-            SOURCE_CODE,
-            SOURCE_ID,
-            USER_PHONE,
-            IS_PUSH,
-            PUSH_SCHEDULING_DATE,
-            PUSH_ID
-        )
-        SELECT T.SMS_CONTENT,
-               'P',
-               'ACTIVITY',
-               T.ACTIVITY_DETAIL_ID,
-               T.USER_PHONE,
-               '0',
-               PUSH_SCHEDULING_DATE,
-               SEQ_UO_OP_PUSH_LIST_LARGE.NEXTVAL
-        FROM UO_OP_ACTIVITY_DETAIL T where  plan_id = #{planId}
-    </insert>
+    <delete id="deletePlanGroup">
+        delete from UO_OP_ACTIVITY_PLAN_GROUP where head_id = #{headId}
+    </delete>
 
-    <select id="getUserGroupList" resultType="map">
+    <select id="getPlanGroupList" resultMap="planGroupResult">
         SELECT
-            PLAN_ID,F1.GROUP_ID,GROUP_NAME,PROD_ACTIVITY_PROP,NVL(USER_NUM,0) USER_NUM
-        FROM (
-                 SELECT PLAN_ID,G1.GROUP_ID,G1.GROUP_NAME,G1.PROD_ACTIVITY_PROP
-                 FROM UO_OP_ACTIVITY_GROUP G1, UO_OP_ACTIVITY_PLAN P
-                 WHERE G1.HEAD_ID = P.HEAD_ID
-                   AND G1.ACTIVITY_STAGE = P.ACTIVITY_STAGE
-                   AND G1.ACTIVITY_TYPE = P.PLAN_TYPE
-                   AND P.PLAN_ID=#{headId}) F1,
-             (SELECT GROUP_ID,COUNT(*) USER_NUM FROM UO_OP_ACTIVITY_DETAIL WHERE PLAN_ID=#{headId} GROUP BY GROUP_ID) F2
-        WHERE F1.GROUP_ID=F2.GROUP_ID(+)
-        ORDER BY F1.GROUP_ID ASC
+            HEAD_ID          ,
+            PLAN_ID          ,
+            GROUP_ID         ,
+            GROUP_NAME       ,
+            PROD_ACTIVITY_PROP ,
+            CHECK_ALLOW      ,
+            CHECK_FLAG       ,
+            GROUP_USERNUM    ,
+            INSERT_DT        ,
+            CHECK_ALLOW_DESC
+        FROM UO_OP_ACTIVITY_PLAN_GROUP WHERE PLAN_ID=#{planId} AND CHECK_FLAG='Y'
+        ORDER BY UO_OP_ACTIVITY_PLAN_GROUP.GROUP_ID ASC
     </select>
 
-    <select id="getAllTemplate"  resultType="map">
-        SELECT
-                UO_OP_ACTIVITY_GROUP.GROUP_ID,
-                UO_OP_ACTIVITY_TEMPLATE.TMP_CONTENT
-        FROM UO_OP_ACTIVITY_GROUP, UO_OP_ACTIVITY_TEMPLATE
-        WHERE UO_OP_ACTIVITY_GROUP.SMS_TEMPLATE_CODE =UO_OP_ACTIVITY_TEMPLATE.TMP_CODE(+)
-          AND UO_OP_ACTIVITY_GROUP.HEAD_ID=#{headId}
-          AND UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE=#{activityStage}
-           AND  UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE=#{activityType}
+    <select id="getPlanSmsContentListCount" resultType="int">
+        SELECT count(*) FROM (
+              select T.SMS_CONTENT,COUNT(*) CNT from UO_OP_ACTIVITY_DETAIL T,UO_OP_ACTIVITY_PLAN_GROUP G
+              WHERE T.PLAN_ID=G.PLAN_ID AND T.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND T.PLAN_ID=#{planId} GROUP BY T.SMS_CONTENT)
     </select>
 
-    <update id="updatePushMethod">
-        update UO_OP_ACTIVITY_PLAN set
-                      PUSH_METHOD = #{pushMethod},PUSH_PERIOD=#{pushPeriod}
-        where plan_id = #{planId}
-    </update>
+    <select id="getPlanSmsContentList" resultMap="smsStatisResult">
+        select *
+        from (
+                 select tt.*, ROWNUM RN
+                 from (
+                          SELECT SMS_CONTENT, CNT, LENGTH(SMS_CONTENT) SMSLENGTH
+                          FROM (select T.SMS_CONTENT, COUNT(*) CNT
+                                from UO_OP_ACTIVITY_DETAIL T,UO_OP_ACTIVITY_PLAN_GROUP G
+                                WHERE T.PLAN_ID=G.PLAN_ID AND T.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND T.PLAN_ID=#{planId}
+                                GROUP BY T.SMS_CONTENT)
+                          ORDER BY CNT DESC,SMS_CONTENT ASC
+                      ) tt where ROWNUM &lt;= #{end}
+             )  where RN &gt;= #{start}
+    </select>
 
     <select id="selectPlanEffect" resultMap="PlanEffectResult">
         SELECT
@@ -228,11 +226,4 @@
         and t2.plan_id=#{planId}
     </select>
 
-    <select id="validateNotifySms" resultType="int">
-        select count(*) from uo_op_activity_product p where p.head_id=#{headId} and p.group_id not in (
-            select p2.group_id from uo_op_activity_group p2 where p2.head_id=#{headId}
-             and p2.activity_type=#{activityType}
-             and p2.activity_stage=#{activityStage} and p2.check_flag='Y'
-        )
-    </select>
 </mapper>

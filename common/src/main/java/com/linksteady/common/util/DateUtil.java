@@ -260,8 +260,10 @@ public class DateUtil {
         int year2 = cal2.get(Calendar.YEAR);
         if(year1 != year2) {
             int timeDistance = 0 ;
+            boolean flag;
             for(int i = year1 ; i < year2 ; i ++) {
-                if(i % 4 == 0 && i % 100 != 0 || i % 400==0) {
+                flag=i % 4 == 0 && i % 100 != 0 || i % 400==0;
+                if(flag) {
                     timeDistance += 366;
                 } else {
                     timeDistance += 365;

@@ -25,13 +25,13 @@ public class ActivityDetailServiceImpl implements ActivityDetailService {
 
 
     @Override
-    public int getDataCount(Long planId,String groupId) {
-        return activityDetailMapper.getDataCount(planId,groupId);
+    public int getDataCount(Long planId) {
+        return activityDetailMapper.getDataCount(planId);
     }
 
     @Override
-    public List<ActivityDetail> getPageList(int start, int end, Long planId,String groupId) {
-        return activityDetailMapper.getPageList(start, end, planId,groupId);
+    public List<ActivityDetail> getPageList(int start, int end, Long planId) {
+        return activityDetailMapper.getPageList(start, end, planId);
     }
 
 }

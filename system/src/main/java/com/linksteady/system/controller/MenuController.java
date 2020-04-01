@@ -102,7 +102,7 @@ public class MenuController extends BaseController {
         }
 
         //返回的数据集
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(16);
         User user = super.getCurrentUser();
         String userName = user.getUsername();
         result.put("username", userName);
@@ -214,8 +214,6 @@ public class MenuController extends BaseController {
         }
     }
 
-
-//    @Log("获取系统所有URL")
     @GetMapping("menu/urlList")
     @ResponseBody
     public List<Map<String, String>> getAllUrl() {

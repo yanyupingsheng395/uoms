@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface ActivityDetailService {
 
-    int getDataCount(Long planId,String groupId);
+    int getDataCount(Long planId);
 
-    List<ActivityDetail> getPageList(int start, int end, Long planId,String groupId);
+    List<ActivityDetail> getPageList(int start, int end, Long planId);
 }

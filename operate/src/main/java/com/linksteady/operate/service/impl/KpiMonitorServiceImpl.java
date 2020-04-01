@@ -49,8 +49,8 @@ public class KpiMonitorServiceImpl implements KpiMonitorService {
             list = kpiMonitorMapper.getGMV(startDt, endDt);
         }
 
-        Map<String, Double> fp = new HashMap<>();
-        Map<String, Double> rp = new HashMap<>();
+        Map<String, Double> fp = new HashMap<>(16);
+        Map<String, Double> rp = new HashMap<>(16);
         list.stream().forEach(t-> {
             fp.put((String)t.get("PERIOD_NAME"), ((BigDecimal)t.get("FP_GMV")).doubleValue());
             rp.put((String)t.get("PERIOD_NAME"), ((BigDecimal)t.get("RP_GMV")).doubleValue());

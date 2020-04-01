@@ -1,5 +1,8 @@
 package com.linksteady.operate.task;
 
+/**
+ * 调度 任务代码的枚举类
+ */
 public enum ExecType {
     EFFECT_DAILY_KEY("daily","每日运营效果计算"),
     EFFECT_ACTIVITY_KEY("activity","活动运营效果计算"),

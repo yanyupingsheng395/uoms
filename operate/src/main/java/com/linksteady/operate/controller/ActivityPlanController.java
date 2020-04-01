@@ -4,25 +4,21 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.ActivityDetail;
-import com.linksteady.operate.domain.ActivityPersonal;
-import com.linksteady.operate.domain.ActivityPlan;
-import com.linksteady.operate.domain.PushProperties;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.ActivityDetailService;
 import com.linksteady.operate.service.ActivityPlanService;
-import com.linksteady.operate.vo.ActivityGroupVO;
+import com.linksteady.operate.service.ActivityPushService;
 import com.linksteady.operate.vo.ActivityPlanEffectVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,6 +42,9 @@ public class ActivityPlanController {
     @Autowired
     private PushProperties pushProperties;
 
+    @Autowired
+    private ActivityPushService activityPushService;
+
     /**
      * 获取任务计划
      * @param headId
@@ -58,47 +57,43 @@ public class ActivityPlanController {
     }
 
     /**
-     * 获取给定日期的群组统计信息
-     * @param planId
+     * 获取给定执行计划的群组统计信息
+     * @param
      * @return
      */
     @GetMapping("/getUserGroupList")
-    public List<ActivityGroupVO> getUserGroupList(@RequestParam Long planId) {
-        ActivityGroupVO vo=null;
-        List<ActivityGroupVO> result=Lists.newArrayList();
-        int sum=0;
-
+    public  List<ActivityPlanGroup> getUserGroupList(long planId) {
         ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
-
         if(null==activityPlan)
         {
-           return result;
-        }
-        List<Map<String,Object>> activitySummaryList = activityPlanService.getUserGroupList(planId);
-
-        for(Map<String,Object> temp:activitySummaryList)
-        {
-            vo=new ActivityGroupVO();
-            vo.setGroupId(String.valueOf(temp.get("GROUP_ID")));
-            vo.setGroupName((String)temp.get("GROUP_NAME"));
-            vo.setProdActivityProp((String)temp.get("PROD_ACTIVITY_PROP"));
-            vo.setPlanId(String.valueOf(temp.get("PLAN_ID")));
-            sum+=((BigDecimal)temp.get("USER_NUM")).intValue();
-            vo.setUserNum(((BigDecimal)temp.get("USER_NUM")).intValue());
-
-            result.add(vo);
+            return Lists.newArrayList();
         }
 
-        vo=new ActivityGroupVO();
-        vo.setGroupId("-1");
-        vo.setProdActivityProp("-");
-        vo.setGroupName("合计");
-        vo.setUserNum(sum);
-        vo.setPlanId(String.valueOf(planId));
-        result.add(vo);
-
-        return result;
+        List<ActivityPlanGroup> planGroupInfo=activityPlanService.getPlanGroupList(planId);
+        return planGroupInfo;
     }
+
+    /**
+     * 获取计划的统计信息
+     * @param
+     * @return
+     */
+    @GetMapping("/getPlanSmsStatis")
+    public ResponseBo getPlanSmsStatis(QueryRequest request) {
+        int start = request.getStart();
+        int end = request.getEnd();
+        long planId = Long.parseLong(request.getParam().get("planId"));
+        ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
+        if(null==activityPlan)
+        {
+            return ResponseBo.error();
+        }
+        int count=activityPlanService.getPlanSmsContentListCount(planId);
+        List smsStatis = activityPlanService.getPlanSmsContentList(planId,start,end);
+
+        return  ResponseBo.okOverPaging(null, count, smsStatis);
+    }
+
 
     /**
      * 获取推送的明细数据
@@ -109,10 +104,9 @@ public class ActivityPlanController {
     public ResponseBo getDetailPage(QueryRequest request) {
         int start = request.getStart();
         int end = request.getEnd();
-        String planId = request.getParam().get("planId");
-        String groupId=request.getParam().get("groupId");
-        int count = activityDetailService.getDataCount(Long.parseLong(planId),groupId);
-        List<ActivityDetail>  dataList = activityDetailService.getPageList(start, end, Long.parseLong(planId),groupId);
+        long planId = Long.parseLong(request.getParam().get("planId"));
+        int count = activityDetailService.getDataCount(planId);
+        List<ActivityDetail>  dataList = activityDetailService.getPageList(start, end, planId);
 
         return ResponseBo.okOverPaging(null, count, dataList);
     }
@@ -141,7 +135,7 @@ public class ActivityPlanController {
         }
         //进行推送的操作
         try {
-             activityPlanService.pushActivity(pushMethod,pushPeriod, activityPlan);
+            activityPushService.pushActivity(pushMethod,pushPeriod, activityPlan);
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("活动运营推送失败，异常堆栈为{}",e);
@@ -180,7 +174,7 @@ public class ActivityPlanController {
 
         //更改状态
         try {
-            activityPlanService.updatePlanToStop(activityPlan);
+            activityPushService.updatePlanToStop(activityPlan);
             return ResponseBo.ok();
         } catch (Exception e) {
             return ResponseBo.error("终止计划失败，请在列表界面刷新后重新操作");
@@ -218,14 +212,14 @@ public class ActivityPlanController {
             }
 
             //对文案配置情况进行校验
-            if(activityPlanService.validateNotifySms(activityPlan))
+            if(activityPushService.validateNotifySms(activityPlan))
             {
                 msg="部分活动机制有商品参与，但是并未配置文案，请先完成文案的配置!";
                 return ResponseBo.error(msg);
             }
 
             try {
-                activityPlanService.transActivityDetail(activityPlan);
+                activityPushService.transActivityDetail(activityPlan);
                 return ResponseBo.ok("转化文案成功!");
             } catch (Exception e) {
                 log.error("活动运营出现转换文案异常，失败堆栈为{}",e);
@@ -272,7 +266,7 @@ public class ActivityPlanController {
         ActivityPlanEffectVO activitPf = activityPlanService.getPlanEffectById(planId,kpiType);
 
         Map<String,Object> result=Maps.newHashMap();
-        result.put("planDt",new SimpleDateFormat("yyyy年MM月dd日").format(activityPlan.getPlanDate()));
+        result.put("planDt",activityPlan.getPlanDate().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")));
         result.put("userCount",String.valueOf(activityPlan.getSuccessNum()));
         //活动效果
         result.put("activitPf", activitPf);

@@ -1,5 +1,10 @@
 package com.linksteady.common.domain;
 
+/**
+ * 日志类型
+ * @author huang
+ * @date
+ */
 public enum LogTypeEnum {
     PAGE("页面跳转类型"),AJAX("ajax请求");
 

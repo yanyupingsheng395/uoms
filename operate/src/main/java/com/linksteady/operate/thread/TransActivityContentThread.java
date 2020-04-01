@@ -1,8 +1,10 @@
 package com.linksteady.operate.thread;
 
+import com.linksteady.operate.dao.ActivityPushMapper;
 import com.linksteady.operate.domain.ActivityDetail;
 import com.linksteady.operate.service.impl.ActivityDetailServiceImpl;
 import com.linksteady.operate.service.impl.ActivityPlanServiceImpl;
+import com.linksteady.operate.service.impl.ActivityPushServiceImpl;
 import com.linksteady.operate.util.SpringContextUtils;
 import com.linksteady.operate.vo.ActivityContentVO;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +36,13 @@ public class TransActivityContentThread  implements Callable {
 
         List<ActivityDetail> list = null;
         try {
-            ActivityDetailServiceImpl activityDetailService=(ActivityDetailServiceImpl) SpringContextUtils.getBean("activityDetailServiceImpl");
-            ActivityPlanServiceImpl activityPlanService = (ActivityPlanServiceImpl) SpringContextUtils.getBean("activityPlanServiceImpl");
+            ActivityPushMapper activityPushMapper= (ActivityPushMapper) SpringContextUtils.getBean("activityPushMapper");
+            ActivityPushServiceImpl activityPushService = (ActivityPushServiceImpl) SpringContextUtils.getBean("activityPushServiceImpl");
 
-            list = activityDetailService.getPageList(start, end,planId,"-1");
+            list = activityPushMapper.getPushList(start, end,planId);
 
             //转换文案
-            List<ActivityContentVO> targetList = activityPlanService.processVariable(list,templateMap,prodPriceMap);
+            List<ActivityContentVO> targetList = activityPushService.processVariable(list,templateMap,prodPriceMap);
             log.info("{}的第{}-{}调记录处理完成",planId,start,end);
             return targetList;
         } catch (Exception e) {

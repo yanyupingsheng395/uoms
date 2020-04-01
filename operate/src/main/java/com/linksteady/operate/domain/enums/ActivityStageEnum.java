@@ -1,5 +1,11 @@
 package com.linksteady.operate.domain.enums;
 
+/**
+ * 活动运营 - 阶段的枚举类
+ *
+ * @author huang
+ * @date
+ */
 public enum  ActivityStageEnum {
 
     preheat("preheat","预售"),formal("formal","正式");

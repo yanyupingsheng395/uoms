@@ -1,5 +1,11 @@
 package com.linksteady.operate.domain.enums;
 
+/**
+ * 活动运营 - 活动状态
+ *
+ * @author huang
+ * @date
+ */
 public enum ActivityStatusEnum {
     EDIT("edit","待计划"),TODO("todo","待执行"),DOING("doing","执行中"),DONE("done","执行完");
 

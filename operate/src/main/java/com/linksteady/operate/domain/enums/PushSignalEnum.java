@@ -1,5 +1,10 @@
 package com.linksteady.operate.domain.enums;
 
+/**
+ * 发送给推送端的推送信号枚举类
+ * @author huang
+ * @date
+ */
 public enum  PushSignalEnum {
     SIGNAL_START("start","启动推送服务"),
     SIGNAL_STOP("stop","关闭推送服务"),

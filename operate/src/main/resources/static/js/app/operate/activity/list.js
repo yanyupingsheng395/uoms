@@ -268,7 +268,11 @@ $("#btn_effect").click(function () {
     let effectFlag=selected[0].effectFlag;
     let preheatStatus = selected[0]['preheatStatus'];
     let formalStatus = selected[0]['formalStatus'];
-    let flag = preheatStatus === 'done' || preheatStatus === 'doing' || formalStatus === 'done' || formalStatus === 'doing';
+
+    let preheatNotifyStatus = selected[0]['preheatNotifyStatus'];
+    let formalNotifyStatus = selected[0]['formalNotifyStatus'];
+
+    let flag = preheatStatus != 'edit' || formalStatus != 'edit' || preheatNotifyStatus != 'edit' || formalNotifyStatus != 'edit';
     if(flag) {
         if(effectFlag==='N')
         {

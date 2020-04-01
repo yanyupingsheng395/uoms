@@ -5,7 +5,9 @@ import lombok.Data;
 
 @Data
 public class ActivityPersonal {
-    // 用户ID
+    /**
+     * 用户ID
+     */
     @ExportConfig(value = "用户ID")
     private String userId;
 
@@ -16,7 +18,9 @@ public class ActivityPersonal {
     @ExportConfig(value = "是否转化", convert = "s:1=是,0=否")
     private String isConvert;
 
-    // 推送时段
+    /**
+     * 推送时段
+     */
     @ExportConfig(value = "推送时段")
     private String pushPeriod;
 

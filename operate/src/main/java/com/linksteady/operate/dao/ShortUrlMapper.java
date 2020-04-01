@@ -21,7 +21,7 @@ public interface ShortUrlMapper {
      * 写入短链历史记录
      * @param shorUrlInfo
      */
-    void InsertShortUrl(ShortUrlInfo shorUrlInfo);
+    void insertShortUrl(ShortUrlInfo shorUrlInfo);
 
     /**
      * 根据长链获取短链

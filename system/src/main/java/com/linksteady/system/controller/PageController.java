@@ -90,7 +90,7 @@ public class PageController extends BaseController {
         }
 
         //返回的数据集
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(16);
         String userName = user.getUsername();
         result.put("username", userName);
         result.put("version", version);

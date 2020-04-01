@@ -2,12 +2,16 @@ package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
-import com.linksteady.common.domain.User;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.operate.domain.*;
-import com.linksteady.operate.service.*;
+import com.linksteady.operate.domain.ActivityHead;
+import com.linksteady.operate.domain.ActivityPlan;
+import com.linksteady.operate.domain.DailyHead;
+import com.linksteady.operate.domain.PushProperties;
+import com.linksteady.operate.service.ActivityHeadService;
+import com.linksteady.operate.service.ActivityPlanService;
+import com.linksteady.operate.service.DailyConfigService;
+import com.linksteady.operate.service.DailyService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,29 +62,6 @@ public class PageController extends BaseController {
     public String catlist() {
         return "operate/lifecycle/cat_list";
     }
-
-
-//    /**
-//     * 日运营列表
-//     * @param
-//     * @return
-//     */
-//    @Log("每日用户运营")
-//    @RequestMapping("/op/day")
-//    public String opDayList() {
-//        return "operate/op/opday";
-//    }
-
-//    /**
-//     * 周期运营列表
-//     * @param
-//     * @return
-//     */
-//    @Log("周期运营")
-//    @RequestMapping("/op/period")
-//    public String opPeriodList() {
-//        return "operate/op/opperiod";
-//    }
 
     @Log(value = "每日用户运营",location = "用户成长系统")
     @RequestMapping("/daily/task")
@@ -151,17 +132,6 @@ public class PageController extends BaseController {
         }
     }
 
-//    /**
-//     * 活动短信模板配置
-//     * @param
-//     * @return
-//     */
-//    @Log("活动短信模板列表")
-//    @RequestMapping("/cfg/activitySmsTemplate")
-//    public String activitySmsTemplate() {
-//        return "operate/config/activitySmsTemplate";
-//    }
-
     /**
      * 短信模板配置
      * @param
@@ -191,17 +161,6 @@ public class PageController extends BaseController {
         model.addAttribute("couponNameLen", pushProperties.getCouponNameLen());
         return "operate/config/coupon";
     }
-
-//    /**
-//     * 运营配置
-//     * @param
-//     * @return
-//     */
-//    @Log("运营配置")
-//    @RequestMapping("/cfg/dailyConfig")
-//    public String dailyConfig() {
-//        return "operate/config/dailyConfig";
-//    }
 
     /**
      * 推送设置

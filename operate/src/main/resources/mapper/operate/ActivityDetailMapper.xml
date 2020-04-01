@@ -11,26 +11,19 @@
         <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"/>
         <result column="PUSH_DATE_STR" jdbcType="VARCHAR" property="pushDateStr"/>
         <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"/>
-        <result column="PLAN_TYPE" jdbcType="VARCHAR" property="planType"/>
-
         <result column="HEAD_ID" jdbcType="VARCHAR" property="headId"/>
         <result column="ACTIVITY_DETAIL_ID" jdbcType="VARCHAR" property="activityDetailId"/>
         <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="recPiecePrice"/>
         <result column="ACTIVITY_STAGE" jdbcType="VARCHAR" property="activityStage"/>
         <result column="PLAN_ID" jdbcType="DECIMAL" property="planId"/>
         <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"/>
-        <result column="ACTIVITY_TYPE" jdbcType="VARCHAR" property="activityType"/>
         <result column="PROD_ACTIVITY_PROP" jdbcType="VARCHAR" property="prodActivityProp"/>
         <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"/>
-
     </resultMap>
 
     <select id="getDataCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_DETAIL where
-            PLAN_ID = #{planId}
-        <if test="groupId != null and groupId != '-1'">
-            and GROUP_ID = #{groupId}
-        </if>
+        select count(1) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID = #{planId}
     </select>
 
     <select id="getPageList" resultMap="base">
@@ -44,93 +37,50 @@
                                        UO_OP_ACTIVITY_DETAIL.USER_ID,
                                        UO_OP_ACTIVITY_DETAIL.GROUP_ID,
                                        UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
-                                       UO_OP_ACTIVITY_PLAN.PLAN_TYPE,
                                        UO_OP_ACTIVITY_DETAIL.HEAD_ID,
                                        UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID,
                                        UO_OP_ACTIVITY_DETAIL.REC_PIECE_PRICE,
                                        UO_OP_ACTIVITY_DETAIL.ACTIVITY_STAGE,
                                        UO_OP_ACTIVITY_DETAIL.ORDER_PERIOD,
-                                       UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE,
-                                       UO_OP_ACTIVITY_GROUP.GROUP_NAME,
-                                       UO_OP_ACTIVITY_GROUP.PROD_ACTIVITY_PROP,
+                                       UO_OP_ACTIVITY_PLAN_GROUP.GROUP_NAME,
+                                       UO_OP_ACTIVITY_PLAN_GROUP.PROD_ACTIVITY_PROP,
                                        UO_OP_ACTIVITY_DETAIL.PLAN_ID
-                                from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_PLAN,UO_OP_ACTIVITY_GROUP
-                               where  UO_OP_ACTIVITY_DETAIL.PLAN_ID=UO_OP_ACTIVITY_PLAN.PLAN_ID
-                                AND UO_OP_ACTIVITY_PLAN.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
-                                AND UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
-                                AND UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
-                                AND UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
+                                from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_PLAN_GROUP
+                               where
+                                     UO_OP_ACTIVITY_DETAIL.PLAN_ID=UO_OP_ACTIVITY_PLAN_GROUP.PLAN_ID
+                                AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_PLAN_GROUP.GROUP_ID
                                 AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
-                                <if test="groupId != null and groupId != '-1'">
-                                    and UO_OP_ACTIVITY_DETAIL.GROUP_ID = #{groupId}
-                                </if>
+                                AND  UO_OP_ACTIVITY_PLAN_GROUP.CHECK_FLAG='Y'
                                 ORDER BY UO_OP_ACTIVITY_DETAIL.GROUP_ID ASC,UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID ASC) t
                           where ROWNUM &lt;= #{end}
                       ) where RN &gt;= #{start}
     </select>
 
-    <insert id="insertPushContentTemp">
-        insert into UO_OP_ACTIVITY_CONTENT_TMP(activity_detail_id,plan_id,sms_content)
-        SELECT A.*
-        FROM(
-        <foreach collection="list" item="item" index="index"
-                 separator="UNION ALL">
-            SELECT
-            #{item.activityDetailId} activityDetailId,
-            #{item.planId} planId,
-            #{item.smsContent} smsContent
-            FROM
-            dual
-        </foreach>
-        )A
-    </insert>
-
-    <update id="updatePushContentFromTemp">
-        MERGE INTO UO_OP_ACTIVITY_DETAIL USING
-        UO_OP_ACTIVITY_CONTENT_TMP ON (UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID=UO_OP_ACTIVITY_CONTENT_TMP.ACTIVITY_DETAIL_ID
-        AND UO_OP_ACTIVITY_DETAIL.PLAN_ID=#{planId})
-        WHEN MATCHED THEN
-        UPDATE SET UO_OP_ACTIVITY_DETAIL.SMS_CONTENT=UO_OP_ACTIVITY_CONTENT_TMP.SMS_CONTENT
-    </update>
-
-    <update id="updatePushScheduleDate">
-        UPDATE UO_OP_ACTIVITY_DETAIL C SET C.PUSH_SCHEDULING_DATE=(
-                                           SELECT
-            (CASE WHEN P.PUSH_METHOD='IMME' OR P.PUSH_METHOD='FIXED' THEN
-                                           P.PUSH_PERIOD
-                                           ELSE
-                                           P.PUSH_PERIOD||C.ORDER_PERIOD||'00' END)
-                                           FROM UO_OP_ACTIVITY_PLAN P WHERE C.HEAD_ID=P.HEAD_ID AND C.PLAN_DT=P.PLAN_DATE_WID
-            ) where
-            C.PLAN_ID=#{planId}
-    </update>
-
-    <delete id="deleteContentTmp">
-       DELETE FROM UO_OP_ACTIVITY_CONTENT_TMP WHERE PLAN_ID=#{planId}
-    </delete>
-
     <select id="selectContentNulls" resultType="int">
-        SELECT count(*) from UO_OP_ACTIVITY_DETAIL where PLAN_ID=#{planId} AND SMS_CONTENT IS NULL
+        SELECT count(*) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId} AND D.SMS_CONTENT IS NULL
     </select>
 
     <select id="selectContentLimit" resultType="int">
-        SELECT count(*) from UO_OP_ACTIVITY_DETAIL where
-            PLAN_ID=#{planId} AND LENGTH(SMS_CONTENT)>#{limit}
+        SELECT count(*) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y'  AND D.PLAN_ID=#{planId}  AND LENGTH(SMS_CONTENT)>#{limit}
     </select>
 
     <select id="selectContentVariable" resultType="int">
-        SELECT count(*) from UO_OP_ACTIVITY_DETAIL
-        where PLAN_ID=#{planId} AND  INSTR(SMS_CONTENT,'$')>0
+        SELECT count(*) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId}  AND  INSTR(SMS_CONTENT,'$')>0
     </select>
 
     <select id="selectPushScheduleNulls" resultType="int">
-        SELECT count(*) from UO_OP_ACTIVITY_DETAIL
-        where PLAN_ID=#{planId} AND  LENGTH(PUSH_SCHEDULING_DATE)!=12
+        SELECT count(*) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId}  AND  PUSH_SCHEDULING_DATE IS NULL
     </select>
 
     <select id="selectPushScheduleInvalid" resultType="int">
-        SELECT count(*) from UO_OP_ACTIVITY_DETAIL
-        where PLAN_ID=#{planId} AND  PUSH_SCHEDULING_DATE IS NULL
+        SELECT count(*) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId}  AND  LENGTH(PUSH_SCHEDULING_DATE)!=12
     </select>
+
+
 
 </mapper>

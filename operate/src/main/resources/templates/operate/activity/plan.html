@@ -10,6 +10,7 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/steps/steps.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <link rel="stylesheet" type="text/css"
@@ -106,40 +107,66 @@
                 <h5 class="modal-title pull-left">预览推送</h5>
             </div>
             <div class="modal-body">
-                <div class="row">
+                <div class="row" id="pushSteps"></div>
+                <div class="row" id="overview">
                     <div class="col-sm-12 m-b-0">
                         <h5 class="m-b-0">用户群组预览</h5>
                     </div>
                     <div class="col-sm-12">
                         <hr class="hr"/>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-md-12 table-striped">
                         <table class="table table-bordered table-striped" id="userGroupTable"></table>
                     </div>
-                </div>
 
-                <div class="row m-t-10">
-                    <div class="col-sm-12 m-b-0">
-                        <h5 class="m-b-0">单一用户预览</h5>
+                    <div class="col-md-12 m-b-0 m-t-10">
+                        <h5 class="m-b-0">短信统计预览</h5>
                     </div>
-                    <div class="col-sm-12">
+                    <div class="col-md-12">
                         <hr class="hr"/>
                     </div>
+                    <div class="col-md-12 m-t-10 table-striped">
+                        <table class="table table-bordered table-striped" id="smsStatisTable"></table>
+                    </div>
+
+                    <div class="col-md-12  m-t-10 text-right">
+                        <div>
+                            <button type="button" class="btn btn-primary btn-sm" id="next1Btn">下一步</button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="row" style="margin-top: 10px;">
-                    <div class="col-md-12 table-striped">
-                        <table class="table table-bordered table-striped" id="userDetailTable"></table>
+
+                <div class="row" id="pushdetail" hidden>
+                    <div class="col-md-12 m-t-10">
+                        <div class="col-sm-12 m-b-0">
+                            <h5 class="m-b-0">单一用户预览</h5>
+                        </div>
+                        <div class="col-sm-12">
+                            <hr class="hr"/>
+                        </div>
+                    </div>
+                    <div class="col-md-12"  style="margin-top: 10px;">
+                        <div class="col-md-12 table-striped">
+                            <table class="table table-bordered table-striped" id="userDetailTable"></table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 m-t-10 text-right">
+                        <div>
+                            <button type="button" class="btn btn-primary btn-sm" id="pre2Btn">上一步</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="next2Btn">下一步</button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- 推送设置 -->
-                <div class="row" id="pushDiv" hidden>
-                    <div class="col-sm-12 m-b-0">
+                <div class="row" id="pushSet" hidden>
+                    <div class="col-md-12 m-b-0">
                         <h5 class="m-b-0">推送设置</h5>
                     </div>
-                    <div class="col-sm-12">
+                    <div class="col-md-12">
                         <hr class="hr"/>
                     </div>
 
@@ -182,17 +209,24 @@
 
                         </form>
                     </div>
+
+                    <div class="col-md-12 text-right">
+                        <div>
+                            <button type="button" class="btn btn-primary btn-sm"  id="pre3Btn">上一步</button>
+                            <button type="button" class="btn btn-primary btn-sm" disabled id="pushBtn">确定推送</button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-sm" disabled onclick="submitData()" id="pushMsgBtn">确定推送</button>
-                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
-            </div>
+            <div class="modal-footer" hidden></div>
         </div>
     </div>
 </div>
 
 <input type="hidden" id="planId">
+<input type="hidden" id="planStatus">
+<input type="hidden" id="planType">
 <script>
     const headId = [[${headId}]];
 </script>
@@ -203,6 +237,7 @@
         data-th-src="@{/plugins/bootstrap-year-calendar/js/languages/bootstrap-year-calendar.zh-CN.js}"></script>
 <script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
 <script data-th-src="@{/js/common/lightyear.js}"></script>
+<script data-th-src="@{/plugins/steps/steps.js}"></script>
 <script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
 <script data-th-src="@{/js/app/operate/activity/plan.js}"></script>
 </body>
