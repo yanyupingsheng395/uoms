@@ -188,7 +188,9 @@ $("#btn_edit").click(function () {
     let headId = selected[0].headId;
     let preheatStatus = selected[0]['preheatStatus'];
     let formalStatus = selected[0]['formalStatus'];
-    let flag = preheatStatus === 'done' && formalStatus === 'done';
+    let preheatNotifyStatus = selected[0]['preheatNotifyStatus'];
+    let formalNotifyStatus = selected[0]['formalNotifyStatus'];
+    let flag = preheatStatus === 'done' && formalStatus === 'done' && preheatNotifyStatus === 'done' && formalNotifyStatus === 'done';
     if(!flag) {
         window.location.href = "/page/activity/edit?headId=" + headId;
     }else {
