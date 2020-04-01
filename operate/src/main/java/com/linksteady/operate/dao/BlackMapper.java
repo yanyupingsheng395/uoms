@@ -15,7 +15,9 @@ public interface BlackMapper {
 
     int getCount(@Param("phone") String phone);
 
-    void deleteByPhone(@Param("phone") String phone);
+    void deleteByPhone(@Param("phoneList") List<String> phoneList);
 
     void insertData(BlackInfo blackInfo);
+
+    int checkPhone(String phone);
 }

@@ -17,4 +17,6 @@ public interface BlackService {
     void deleteByPhone(String phone);
 
     void insertData(BlackInfo blackInfo);
+
+    boolean checkPhone(String phone);
 }

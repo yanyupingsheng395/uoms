@@ -30,10 +30,17 @@
 
     <insert id="insertData">
         insert into UO_OP_PHONEBLACKLIST(USER_PHONE,EXPIRE_DT,SMS_CONTENT, INSERT_DT)
-        values (#{userPhone}, #{expireDt}, #{smsContent}, sysdate)
+        values (#{userPhone}, to_date(#{expireDate}, 'yyyy-mm-dd'), #{smsContent}, sysdate)
     </insert>
 
     <delete id="deleteByPhone">
-        delete from UO_OP_PHONEBLACKLIST where USER_PHONE = #{phone}
+        delete from UO_OP_PHONEBLACKLIST where USER_PHONE in
+        <foreach collection="phoneList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
     </delete>
+
+    <select id="checkPhone" resultType="int">
+        select count(1) from UO_OP_PHONEBLACKLIST where USER_PHONE = #{phone}
+    </select>
 </mapper>

@@ -5,9 +5,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.BlackInfo;
 import com.linksteady.operate.service.BlackService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,13 +31,20 @@ public class BlackController {
         return ResponseBo.okOverPaging(null, count, blackInfos);
     }
 
-    @GetMapping("/deleteByPhone")
-    public void deleteByPhone(String phone) {
+    @PostMapping("/deleteData")
+    public ResponseBo deleteData(String phone) {
         blackService.deleteByPhone(phone);
+        return ResponseBo.ok();
     }
 
-    @GetMapping("/insertData")
-    public void insertData(BlackInfo blackInfo) {
+    @PostMapping("/insertData")
+    public ResponseBo insertData(BlackInfo blackInfo) {
         blackService.insertData(blackInfo);
+        return ResponseBo.ok();
+    }
+
+    @GetMapping("/checkPhone")
+    public boolean checkPhone(@RequestParam("userPhone") String userPhone) {
+        return blackService.checkPhone(userPhone);
     }
 }
