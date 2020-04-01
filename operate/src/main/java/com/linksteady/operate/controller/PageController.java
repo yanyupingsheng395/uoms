@@ -148,7 +148,6 @@ public class PageController extends BaseController {
         return "operate/config/smstemplate";
     }
 
-
     /**
      * 优惠券配置
      * @param
@@ -407,5 +406,11 @@ public class PageController extends BaseController {
     @Log(value = "短链生成",location = "用户成长系统")
     public String shorturl() {
         return "operate/shorturl/shorturl";
+    }
+
+    @Log(value = "黑名单", location = "用户成长系统")
+    @RequestMapping("/black")
+    public String black() {
+        return "operate/black/list";
     }
 }

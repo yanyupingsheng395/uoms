@@ -96,23 +96,39 @@
     </insert>
 
     <select id="getPushDataOfDay" resultType="map">
-        select
+        with v1 as ( select
         count(case when PUSH_STATUS = 'S' then 1 end) success_cnt,
         count(case when PUSH_STATUS &lt;&gt; 'P' then 1 end) push_cnt,
         count(case when PUSH_STATUS = 'F' then 1 end) fail_cnt,
         count(case when PUSH_STATUS = 'C' then 1 end) intercept_cnt,
         count(case when PUSH_STATUS = 'P' then 1 end) plan_cnt
-        from  UO_OP_PUSH_LIST where trunc(sysdate) - trunc(INSERT_DT) = #{day}
+        from  UO_OP_PUSH_LIST where trunc(sysdate) - trunc(INSERT_DT) = #{day}),
+        v2 as(select
+        count(case when PUSH_STATUS = 'S' then 1 end) success_cnt,
+        count(case when PUSH_STATUS &lt;&gt; 'P' then 1 end) push_cnt,
+        count(case when PUSH_STATUS = 'F' then 1 end) fail_cnt,
+        count(case when PUSH_STATUS = 'C' then 1 end) intercept_cnt,
+        count(case when PUSH_STATUS = 'P' then 1 end) plan_cnt
+        from  UO_OP_PUSH_LIST_LARGE where trunc(sysdate) - trunc(INSERT_DT) = #{day})
+        select v1.success_cnt+v2.success_cnt success_cnt, v1.push_cnt+v2.push_cnt push_cnt, v1.fail_cnt+v2.fail_cnt fail_cnt,v1.intercept_cnt+v2.intercept_cnt intercept_cnt, v1.plan_cnt+v2.plan_cnt plan_cnt from v1, v2
     </select>
 
     <select id="getPushDataOfMonth" resultType="map">
-        select
+        with v1 as ( select
         count(case when PUSH_STATUS = 'S' then 1 end) success_cnt,
         count(case when PUSH_STATUS &lt;&gt; 'P' then 1 end) push_cnt,
         count(case when PUSH_STATUS = 'F' then 1 end) fail_cnt,
         count(case when PUSH_STATUS = 'C' then 1 end) intercept_cnt,
         count(case when PUSH_STATUS = 'P' then 1 end) plan_cnt
-        from  UO_OP_PUSH_LIST where to_char(INSERT_DT, 'yyyymmdd') &lt;= #{endDt} and to_char(INSERT_DT, 'yyyymmdd') &gt;= #{startDt}
+        from  UO_OP_PUSH_LIST where to_char(INSERT_DT, 'yyyymmdd') &lt;= #{endDt} and to_char(INSERT_DT, 'yyyymmdd') &gt;= #{startDt}),
+        v2 as(select
+        count(case when PUSH_STATUS = 'S' then 1 end) success_cnt,
+        count(case when PUSH_STATUS &lt;&gt; 'P' then 1 end) push_cnt,
+        count(case when PUSH_STATUS = 'F' then 1 end) fail_cnt,
+        count(case when PUSH_STATUS = 'C' then 1 end) intercept_cnt,
+        count(case when PUSH_STATUS = 'P' then 1 end) plan_cnt
+        from  UO_OP_PUSH_LIST_LARGE where to_char(INSERT_DT, 'yyyymmdd') &lt;= #{endDt} and to_char(INSERT_DT, 'yyyymmdd') &gt;= #{startDt})
+        select v1.success_cnt+v2.success_cnt success_cnt, v1.push_cnt+v2.push_cnt push_cnt, v1.fail_cnt+v2.fail_cnt fail_cnt,v1.intercept_cnt+v2.intercept_cnt intercept_cnt, v1.plan_cnt+v2.plan_cnt plan_cnt from v1, v2
     </select>
 
     <select id="getRptAndBlackData" resultType="map">
@@ -121,7 +137,7 @@
         ),v2 as (
             select count(1) month_rpt from uo_op_push_rpt where to_char(INSERT_DT, 'yyyymmdd') &lt;= #{endDt} and to_char(INSERT_DT, 'yyyymmdd') &gt;= #{startDt}
         ),v3 as (
-            select count(1) day_black from UO_OP_PHONEBLACKLIST where trunc(sysdate) - trunc(INSERT_DT) = #{day}
+            select count(1) day_black from UO_OP_PHONEBLACKLIST where trunc(EXPIRE_DT) &gt;= trunc(to_date(#{endDt}, 'yyyymmdd'))
         ) select * from v1, v2, v3
     </select>
 </mapper>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <!--<link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>-->
+    <link rel="stylesheet"  data-th-href="@{/css//bootstrap.min.css}">
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/common.css}">
+</head>
+
+<body class="gray-bg">
+<!-- 公共组件 -->
+<div data-th-include="common/commonCSS"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <h5 class="navbar-page-title">黑名单</h5>
+                        </div>
+                        <div class="row">
+                            <hr class="hr"/>
+                        </div>
+                        <form id="user-form">
+                            <input type="hidden" id="deptId" name="deptId">
+                            <input type="hidden" id="parentId" name="parentId">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        手机号：<input type="text" id="phone"/>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" onclick="searchBlank()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetBlank()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-sm-12 select-table table-striped">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="btn-group-sm" id="toolbar" role="group">
+                                    <a class="btn btn-success" data-toggle="modal" data-target="#black-add">
+                                        <i class="fa fa-plus"></i> 新增
+                                    </a>
+                                    <a class="btn btn-danger btn-del" onclick="deleteData()">
+                                        <i class="fa fa-remove"></i> 删除
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col-sm-12 table-responsive">
+                                <table id="blackTable" class="table  table-striped table-bordered"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="black-add" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">新增黑名单</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form class="form-horizontal" method="post" id="black-add-form">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">手机号</label>
+                                <div class="col-md-7">
+                                    <input type="text" name="userPhone" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">过期日期</label>
+                                <div class="col-md-7">
+                                    <input class="form-control" name="expireDate" id="expireDate"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save btn-sm" onclick="saveData()" name="save">保存</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div data-th-include="common/commonJS"></div>
+<script>
+    $addForm = $("#black-add-form");
+    validateRule();
+    init_date('expireDate', 'yyyy-mm-dd', 0,2,0);
+    $("#expireDate").datepicker('setStartDate', new Date());
+    getData();
+    function getData() {
+        var settings = {
+            url: "/black/getDataList",
+            method: 'get',
+            singleSelect: false,
+            cache: false,
+            pagination: true,
+            sidePagination: "server",
+            pageNumber: 1,            //初始化加载第一页，默认第一页
+            pageSize: 10,            //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],
+            queryParams: function (params) {
+                return {
+                    pageSize: params.limit,  ////页面大小
+                    pageNum: (params.offset / params.limit )+ 1,  //页码
+                    param: {phone: $("#phone").val()}
+                };
+            },
+            columns: [
+            {
+                checkbox: true
+            },{
+                field: 'userPhone',
+                title: '手机号',
+                align: 'center'
+            },  {
+                field: 'expireDate',
+                title: '过期日期',
+                align: 'center'
+            },{
+                field: 'smsContent',
+                title: '回复文案'
+            }]
+        };
+        $MB.initTable('blackTable',settings);
+    }
+
+    function saveData() {
+        var validator = $addForm.validate();
+        var flag = validator.form();
+        if(flag) {
+            $.post("/black/insertData", $("#black-add-form").serialize(), function (r) {
+                console.log(r);
+                if(r.code === 200) {
+                    $MB.n_success("新增成功！");
+                    $("#black-add").modal('hide');
+                    $MB.refreshTable('blackTable');
+                }
+            });
+        }
+    }
+    var validator;
+    function validateRule() {
+        var icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i> ";
+        validator = $addForm.validate({
+            rules: {
+                userPhone: {
+                    required: true,
+                    checkPhone: true,
+                    remote: {
+                        url: "/black/checkPhone",
+                        type: "get",
+                        dataType: "json"
+                    }
+                },
+                expireDate: {
+                    required: true
+                }
+            },
+            errorPlacement: function (error, element) {
+                if (element.is(":checkbox") || element.is(":radio")) {
+                    error.appendTo(element.parent().parent());
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            messages: {
+                userPhone: {
+                    required: icon + "请输入手机号",
+                    remote: icon + "手机号已存在",
+                    checkPhone: icon + "手机号不合法"
+                },
+                expireDate: icon + "请输入过期日期"
+            }
+        });
+    }
+    
+    function deleteData() {
+        let selected = $("#blackTable").bootstrapTable('getSelections');
+        let selected_length = selected.length;
+        if (!selected_length) {
+            $MB.n_warning('请选择需要删除的记录！');
+            return;
+        }
+        var phoneArray = [];
+        selected.forEach((v, k) => {
+            phoneArray.push(v['userPhone']);
+        });
+        $MB.confirm({
+            title: '提示',
+            content: '确认删除所选记录？'
+        }, function () {
+            $.post("/black/deleteData", {phone: JSON.stringify(phoneArray)}, function (r) {
+                if(r.code === 200) {
+                    $MB.n_success("删除成功！");
+                    $MB.refreshTable('blackTable');
+                }
+            })
+        });
+    }
+
+    function searchBlank() {
+        $MB.refreshTable('blackTable');
+    }
+
+    function resetBlank() {
+        $("#phone").val('');
+        $MB.refreshTable('blackTable');
+    }
+
+    $("#black-add").on('hidden.bs.modal', function () {
+        $("input[name='userPhone']").val('');
+        $("input[name='expireDate']").val('');
+        validator.resetForm();
+    });
+</script>
+</body>
+</html>

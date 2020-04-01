@@ -264,7 +264,6 @@ public class ActivityPlanController {
         ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
         //获取计划的效果
         ActivityPlanEffectVO activitPf = activityPlanService.getPlanEffectById(planId,kpiType);
-
         Map<String,Object> result=Maps.newHashMap();
         result.put("planDt",activityPlan.getPlanDate().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")));
         result.put("userCount",String.valueOf(activityPlan.getSuccessNum()));

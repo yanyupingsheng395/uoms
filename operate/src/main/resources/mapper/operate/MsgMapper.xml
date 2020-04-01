@@ -48,18 +48,18 @@
         to_char(CREATE_DT, 'yyyy-mm-dd') CREATE_DT,
         CREATE_BY,
         READ_FLAG,
-        MSG_TYPE,
+        TYPE_NAME MSG_TYPE,
         WARN_FLAG
-        from T_MSG_LIST
-        where 1=1
+        from T_MSG_LIST t1, T_MSG_TYPE t2
+        where t1.MSG_TYPE = t2.TYPE_CODE(+)
         <if test="typeCode != '' and typeCode != null">
-            and MSG_TYPE = #{typeCode}
+            and t1.MSG_TYPE = #{typeCode}
         </if>
         <if test="readFlag != '' and readFlag != null">
             and READ_FLAG = #{readFlag}
         </if>
-        ) t where ROWNUM &gt;= #{start}
-        ) where rn &lt; = #{end}
+        ) t where ROWNUM &lt; = #{end}
+        ) where rn &gt;= #{start}
     </select>
 
     <update id="updateMsgRead">
