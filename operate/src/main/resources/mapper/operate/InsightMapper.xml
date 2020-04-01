@@ -332,7 +332,7 @@
         order by cnt desc
         ),
         v2 as (
-        SELECT rownum row_num, v1.SPU_WID,
+        SELECT row_number() over (partition by v1.spu_wid ORDER BY v1.cnt DESC) row_num, v1.SPU_WID,
         v1.EBP_PRODUCT_ID,
         v1.cnt                                                                                product_cnt,
         sum(v1.cnt) over ( partition BY v1.spu_wid )                                          spu_cnt,
