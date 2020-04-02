@@ -31,6 +31,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>operate</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
