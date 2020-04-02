@@ -16,26 +16,27 @@
 
     <select id="getMsgList" resultMap="base">
         select t.*, ROWNUM from (
-            select MSG_ID,
-           MSG_TITLE,
-           MSG_CONTENT,
-           to_char(CREATE_DT, 'yyyymmdd hh:mm') CREATE_DT,
-           CREATE_BY,
-           READ_FLAG,
-           MSG_TYPE,
-           WARN_FLAG
-           from T_MSG_LIST
-           order by MSG_ID desc
+            select
+                t1.MSG_ID,
+                t1.MSG_TITLE,
+                t1.MSG_CONTENT,
+                to_char(t1.CREATE_DT, 'yyyy-mm-dd hh:mm') CREATE_DT,
+                t1.CREATE_BY,
+                t1.READ_FLAG,
+                t1.MSG_TYPE,
+                t1.WARN_FLAG
+           from T_MSG_LIST t1, T_MSG_TYPE t2 where t1.MSG_TYPE = t2.TYPE_CODE(+) AND t2.module_name='operate'
+           order by t1.MSG_ID desc
         ) t where ROWNUM &lt;= 10
     </select>
 
     <select id="getDataCount" resultType="int">
-        select count(1) from T_MSG_LIST where 1=1
+        select count(1) from T_MSG_LIST t1, T_MSG_TYPE t2 where t1.MSG_TYPE = t2.TYPE_CODE(+) AND t2.module_name='operate'
         <if test="typeCode != '' and typeCode != null">
-            and MSG_TYPE = #{typeCode}
+            and t1.MSG_TYPE = #{typeCode}
         </if>
         <if test="readFlag != '' and readFlag != null">
-            and READ_FLAG = #{readFlag}
+            and t1.READ_FLAG = #{readFlag}
         </if>
     </select>
 
@@ -52,6 +53,7 @@
         WARN_FLAG
         from T_MSG_LIST t1, T_MSG_TYPE t2
         where t1.MSG_TYPE = t2.TYPE_CODE(+)
+        AND t2.module_name='operate'
         <if test="typeCode != '' and typeCode != null">
             and t1.MSG_TYPE = #{typeCode}
         </if>
@@ -65,5 +67,12 @@
     <update id="updateMsgRead">
         update T_MSG_LIST set READ_FLAG = '1', READ_BY = #{userName}, READ_DT = sysdate
         where MSG_ID = #{msgId}
+    </update>
+
+    <update id="updateAllMsgRead">
+        update T_MSG_LIST set READ_FLAG = '1', READ_BY = #{userName}, READ_DT = sysdate
+        where READ_FLAG='0' AND MSG_TYPE IN (
+              SELECT MSG_TYPE FROM T_MSG_TYPE WHERE module_name='operate'
+            )
     </update>
 </mapper>

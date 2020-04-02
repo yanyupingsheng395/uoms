@@ -9,7 +9,7 @@
                     <span class="lyear-toggler-bar"></span>
                 </div>
             </div>
-            <!--<div class="text-right"><h6 style="color:red">本环境数据非真实数据！</h6></div>-->
+
             <ul class="topbar-right">
                 <li class="dropdown dropdown-profile">
                     <a href="javascript:void(0)" data-toggle="dropdown">
@@ -26,11 +26,12 @@
                 </li>
                 <li class="dropdown">
                     <a type="button" data-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"><i class="mdi mdi-bell"></i>
-                        消息<span class="badge bg-primary" id="noReadCnt">0</span>
+                        消&nbsp;&nbsp;&nbsp;&nbsp;息&nbsp;<span class="badge bg-danger" id="noReadCnt">0</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" style="width: 400px;" id="dropdownMenu">
                         <table class="table table-striped" style="margin: 10px;width: 380px;" id="msgTable"></table>
-                        <a href="/page/msg" style="color: #333;margin-left: 10px;">查看所有通知</a>
+                        <a href="/page/msg" style="color: #333;margin-left: 10px;"><small>查看所有通知</small></a>
+                        <a href="#" onclick="readAll()" style="color: #333;margin-left: 10px;"><small>全部标为已读</small></a>
                     </div>
                 </li>
             </ul>
@@ -55,4 +56,4 @@
 </div>
 <!--End 头部信息-->
 <input id="copy_content" type="text" value=""  style="position: absolute;top: 0;left: 0;opacity: 0;z-index: -10;"/>
-<section id="copyContent" style="position: absolute;top: 0;left: 0;opacity: 0;z-index: -10;">111</section>
+<section id="copyContent" style="position: absolute;top: 0;left: 0;opacity: 0;z-index: -10;"></section>

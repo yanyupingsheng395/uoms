@@ -90,15 +90,16 @@
                     <div class="col-md-12">
                         <form class="form-horizontal" method="post" id="black-add-form">
                             <div class="form-group">
-                                <label class="col-md-3 control-label">手机号</label>
+                                <label class="col-md-3 control-label">手机号：</label>
                                 <div class="col-md-7">
                                     <input type="text" name="userPhone" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-md-3 control-label">过期日期</label>
+                                <label class="col-md-3 control-label">失效日期：</label>
                                 <div class="col-md-7">
                                     <input class="form-control" name="expireDate" id="expireDate"/>
+                                    <small><code>备注：新加入黑名单的手机号将从第二日开始生效，在失效日期之前将不会再触达。</code></small>
                                 </div>
                             </div>
                         </form>
@@ -119,6 +120,7 @@
     validateRule();
     init_date('expireDate', 'yyyy-mm-dd', 0,2,0);
     $("#expireDate").datepicker('setStartDate', new Date());
+
     getData();
     function getData() {
         var settings = {
@@ -147,11 +149,42 @@
                 align: 'center'
             },  {
                 field: 'expireDate',
-                title: '过期日期',
+                title: '失效日期',
                 align: 'center'
-            },{
+            },
+            {
+                field: 'insertBy',
+                title: '增加人',
+                align: 'center'
+            },
+            {
+                field: 'insertDate',
+                title: '增加时间',
+                align: 'center'
+            },
+            {
+                field: 'insertType',
+                title: '增加方式',
+                formatter: function (value, row, indx) {
+                   if(value==='1')
+                   {
+                       return '上行退订自动写入';
+                   } else  if(value==='2')
+                   {
+                       return '手工录入';
+                   }else  if(value==='3')
+                   {
+                       return '多次触达失败自动写入';
+                   }else
+                   {
+                       return '';
+                   }
+
+                }
+            },
+            {
                 field: 'smsContent',
-                title: '回复文案'
+                title: '上行消息内容'
             }]
         };
         $MB.initTable('blackTable',settings);

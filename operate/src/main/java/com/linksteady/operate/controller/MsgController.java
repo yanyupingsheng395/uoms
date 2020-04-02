@@ -1,9 +1,11 @@
 package com.linksteady.operate.controller;
 
+import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.MsgInfo;
 import com.linksteady.operate.service.MsgService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +20,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/msg")
-public class MsgController {
+public class MsgController extends BaseController {
 
     @Autowired
     private MsgService msgService;
@@ -40,8 +42,20 @@ public class MsgController {
     }
 
     @GetMapping("/updateMsgRead")
-    public ResponseBo updateMsgRead(@RequestParam String msgId) {
-        msgService.updateMsgRead(msgId);
+    public ResponseBo updateMsgRead(String msgId) {
+        if(StringUtils.isEmpty(msgId))
+        {
+            msgService.updateAllMsgRead();
+        }else
+        {
+            msgService.updateMsgRead(msgId);
+        }
+        return ResponseBo.ok();
+    }
+
+    @GetMapping("/updateMsgAllRead")
+    public ResponseBo updateMsgAllRead() {
+        msgService.updateMsgRead(getCurrentUser().getUsername());
         return ResponseBo.ok();
     }
 

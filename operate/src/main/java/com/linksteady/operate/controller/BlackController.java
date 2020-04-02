@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.BlackInfo;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/black")
-public class BlackController {
+public class BlackController extends BaseController {
 
     @Autowired
     private BlackService blackService;
@@ -39,6 +40,9 @@ public class BlackController {
 
     @PostMapping("/insertData")
     public ResponseBo insertData(BlackInfo blackInfo) {
+        blackInfo.setInsertBy(getCurrentUser().getUsername());
+        //2表示手工新增
+        blackInfo.setInsertType("2");
         blackService.insertData(blackInfo);
         return ResponseBo.ok();
     }

@@ -40,4 +40,10 @@ public class MsgServiceImpl implements MsgService {
         String userName = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
         msgMapper.updateMsgRead(msgId, userName);
     }
+
+    @Override
+    public void updateAllMsgRead() {
+        String userName = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
+        msgMapper.updateAllMsgRead(userName);
+    }
 }

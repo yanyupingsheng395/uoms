@@ -17,4 +17,7 @@ public interface MsgService {
     int getDataCount(String typeCode, String readFlag);
 
     void updateMsgRead(String msgId);
+
+    void updateAllMsgRead();
+
 }
