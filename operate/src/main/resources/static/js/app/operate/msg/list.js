@@ -13,7 +13,7 @@ function getTableData() {
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,  //页码
-                param: {typeCode: $("#typeCode").val(), readFlag: $("#readFlag").val()}
+                param: {msgLevel: $("#msgLevel").val(), readFlag: $("#readFlag").val()}
             };
         },
         columns: [
@@ -27,9 +27,27 @@ function getTableData() {
                 title: '内容',
                 align: "left",
             },{
-                field: 'msgType',
+                field: 'typeName',
                 title: '类型',
                 align: "center",
+            },
+            {
+                field: 'msgLevelDesc',
+                title: '消息等级',
+                align: "center",
+                formatter: function (value, row, index) {
+                    if(value === '一般') {
+                        return "<span class='badge btn-info'>"+value+"</span>";
+                    }
+                    if(value === '警告') {
+                        return "<span class='badge btn-warning'>"+value+"</span>";
+                    }else if(value === '严重') {
+                        return "<span class='badge btn-danger'>"+value+"</span>";
+                    }else
+                    {
+                        return '';
+                    }
+                }
             },{
                 field: 'readFlag',
                 title: '是否已读',
@@ -58,7 +76,7 @@ function searchMsg() {
 }
 
 function resetMsg() {
-    $("#typeCode").find("option[value='']").attr("selected", "selected");
+    $("#msgLevel").find("option[value='']").attr("selected", "selected");
     $("#readFlag").find("option[value='']").attr("selected", "selected");
     getTableData();
 }

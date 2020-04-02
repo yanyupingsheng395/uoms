@@ -21,11 +21,13 @@ public class MsgInfo {
 
     private String readDt;
 
-    private String msgType;
+    private String typeName;
 
     private String warnFlag;
 
     private String createDt;
 
     private String createBy;
+
+    private String msgLevelDesc;
 }

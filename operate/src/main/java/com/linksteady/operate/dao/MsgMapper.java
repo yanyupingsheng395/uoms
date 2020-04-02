@@ -12,9 +12,9 @@ public interface MsgMapper {
 
     List<MsgInfo> getMsgList();
 
-    int getDataCount(String typeCode, String readFlag);
+    int getDataCount(String msgLevel, String readFlag);
 
-    List<MsgInfo> getMsgPageList(String typeCode, String readFlag, int start, int end);
+    List<MsgInfo> getMsgPageList(String msgLevel, String readFlag, int start, int end);
 
     void updateMsgRead(String msgId, String userName);
 

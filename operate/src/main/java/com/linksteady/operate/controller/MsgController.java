@@ -34,10 +34,10 @@ public class MsgController extends BaseController {
     public ResponseBo getMsgPageList(QueryRequest request) {
         int start = request.getStart();
         int end = request.getEnd();
-        String typeCode = request.getParam().get("typeCode");
+        String msgLevel = request.getParam().get("msgLevel");
         String readFlag = request.getParam().get("readFlag");
-        List<MsgInfo> msgInfos = msgService.getMsgPageList(typeCode, readFlag, start, end);
-        int count = msgService.getDataCount(typeCode, readFlag);
+        List<MsgInfo> msgInfos = msgService.getMsgPageList(msgLevel, readFlag, start, end);
+        int count = msgService.getDataCount(msgLevel, readFlag);
         return ResponseBo.okOverPaging(null, count, msgInfos);
     }
 

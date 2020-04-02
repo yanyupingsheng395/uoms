@@ -26,13 +26,13 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public List<MsgInfo> getMsgPageList(String typeCode, String readFlag, int start, int end) {
-        return msgMapper.getMsgPageList(typeCode, readFlag, start, end);
+    public List<MsgInfo> getMsgPageList(String msgLevel, String readFlag, int start, int end) {
+        return msgMapper.getMsgPageList(msgLevel, readFlag, start, end);
     }
 
     @Override
-    public int getDataCount(String typeCode, String readFlag) {
-        return msgMapper.getDataCount(typeCode, readFlag);
+    public int getDataCount(String msgLevel, String readFlag) {
+        return msgMapper.getDataCount(msgLevel, readFlag);
     }
 
     @Override

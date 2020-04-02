@@ -12,9 +12,9 @@ public interface MsgService {
 
     List<MsgInfo> getMsgList();
 
-    List<MsgInfo> getMsgPageList(String typeCode, String readFlag, int start, int end);
+    List<MsgInfo> getMsgPageList(String msgLevel, String readFlag, int start, int end);
 
-    int getDataCount(String typeCode, String readFlag);
+    int getDataCount(String msgLevel, String readFlag);
 
     void updateMsgRead(String msgId);
 

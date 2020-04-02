@@ -10,8 +10,9 @@
         <result property="readFlag" column="READ_FLAG" jdbcType="VARCHAR"></result>
         <result property="readBy" column="READ_BY" jdbcType="VARCHAR"></result>
         <result property="readDt" column="READ_DT" jdbcType="VARCHAR"></result>
-        <result property="msgType" column="MSG_TYPE" jdbcType="VARCHAR"></result>
+        <result property="typeName" column="TYPE_NAME" jdbcType="VARCHAR"></result>
         <result property="warnFlag" column="WARN_FLAG" jdbcType="VARCHAR"></result>
+        <result property="msgLevelDesc" column="MSG_LEVEL_DESC" jdbcType="VARCHAR"></result>
     </resultMap>
 
     <select id="getMsgList" resultMap="base">
@@ -23,8 +24,9 @@
                 to_char(t1.CREATE_DT, 'yyyy-mm-dd hh:mm') CREATE_DT,
                 t1.CREATE_BY,
                 t1.READ_FLAG,
-                t1.MSG_TYPE,
-                t1.WARN_FLAG
+                t2.TYPE_NAME,
+                t1.WARN_FLAG,
+                DECODE(t1.MSG_LEVEL,1,'一般',2,'警告',3,'严重','') MSG_LEVEL_DESC
            from T_MSG_LIST t1, T_MSG_TYPE t2 where t1.MSG_TYPE = t2.TYPE_CODE(+) AND t2.module_name='operate'
            order by t1.MSG_ID desc
         ) t where ROWNUM &lt;= 10
@@ -32,8 +34,8 @@
 
     <select id="getDataCount" resultType="int">
         select count(1) from T_MSG_LIST t1, T_MSG_TYPE t2 where t1.MSG_TYPE = t2.TYPE_CODE(+) AND t2.module_name='operate'
-        <if test="typeCode != '' and typeCode != null">
-            and t1.MSG_TYPE = #{typeCode}
+        <if test="msgLevel != '' and msgLevel != null">
+            and t1.MSG_LEVEL = #{msgLevel}
         </if>
         <if test="readFlag != '' and readFlag != null">
             and t1.READ_FLAG = #{readFlag}
@@ -49,13 +51,14 @@
         to_char(CREATE_DT, 'yyyy-mm-dd') CREATE_DT,
         CREATE_BY,
         READ_FLAG,
-        TYPE_NAME MSG_TYPE,
-        WARN_FLAG
+        TYPE_NAME,
+        WARN_FLAG,
+        DECODE(t1.MSG_LEVEL,1,'一般',2,'警告',3,'严重','') MSG_LEVEL_DESC
         from T_MSG_LIST t1, T_MSG_TYPE t2
         where t1.MSG_TYPE = t2.TYPE_CODE(+)
         AND t2.module_name='operate'
-        <if test="typeCode != '' and typeCode != null">
-            and t1.MSG_TYPE = #{typeCode}
+        <if test="msgLevel != '' and msgLevel != null">
+            and t1.MSG_LEVEL = #{msgLevel}
         </if>
         <if test="readFlag != '' and readFlag != null">
             and READ_FLAG = #{readFlag}

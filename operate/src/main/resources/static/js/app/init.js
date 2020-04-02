@@ -44,11 +44,12 @@ function appendTable(data) {
         var createDt = v['createDt'];
         var msgTitle = v['msgTitle'];
         var content = v['msgContent'];
+        var msgLevelDesc=v['msgLevelDesc'];
         var newContent = content.length > 30 ? content.substr(0, 30) + " ..." : content;
         code += "<tr>" +
             "<td>"+v['createDt']+"&nbsp;&nbsp;<a style=\"text-decoration:underline dotted;cursor: pointer;color: #333;\" onclick=\"msgTitleClick(this, "+v['msgId']+", "+v['readFlag']+")\">"+msgTitle+"</a>" +
             "<hr style=\"margin-top: 5px;margin-bottom: 5px;\" hidden/>" +
-            "<p class=\"h6\" hidden><a style='color: #48b0f7;cursor: pointer;' onclick='viewDetail(\""+createDt+"\", \""+msgTitle+"\", \""+content+"\")'>"+newContent+"</a></p></td>" +
+            "<p class=\"h6\" hidden><a style='color: #48b0f7;cursor: pointer;' onclick='viewDetail(\""+createDt+"\", \""+msgTitle+"\", \""+content+"\",\""+msgLevelDesc+"\")'>"+newContent+"</a></p></td>" +
             "<td>"+getIcon(v['readFlag'])+"</td>" +
             "</tr>";
     });
@@ -62,8 +63,8 @@ function getIcon(readFlag) {
         return "";
     }
 }
-function viewDetail(createDt, msgTitle, content) {
-    $("#msgDetailDiv").html('').append("<p>时间："+createDt+"</p><p>标题："+msgTitle+"</p><p>内容："+content+"</p>");
+function viewDetail(createDt, msgTitle, content,msgLevelDesc) {
+    $("#msgDetailDiv").html('').append("<p>时间："+createDt+"</p><p>等级："+msgLevelDesc+"</p><p>标题："+msgTitle+"</p><p>内容："+content+"</p>");
     $("#msg_detail_modal").modal('show');
 }
 
