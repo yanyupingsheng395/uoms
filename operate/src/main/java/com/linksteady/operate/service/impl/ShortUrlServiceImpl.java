@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 根据长链接生成短链接的服务
@@ -69,12 +70,21 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         log.info("开始将短链的数据同步到redis");
         HashOperations hashOperations = redisTemplate.opsForHash();
         List<ShortUrlInfo> shortUrlInfos = shortUrlMapper.getDataList();
-        shortUrlInfos.stream().forEach(x -> {
-            hashOperations.putIfAbsent(redisDataKey, x.getLongUrl(), x.getShortUrl());
-        });
-        //已最早失效的那个url的失效时间作为整个redisDataKey的失效时间
-        ShortUrlInfo shortUrlInfo = shortUrlInfos.stream().min(Comparator.comparing(ShortUrlInfo::getValidateDate)).get();
-        redisTemplate.expireAt(redisDataKey, shortUrlInfo.getValidateDate());
+
+        if(null==shortUrlInfos||shortUrlInfos.size()==0)
+        {
+             //没有链接 设置key的默认有效期为1天
+            redisTemplate.expire(redisDataKey,1L, TimeUnit.DAYS);
+        }else
+        {
+            shortUrlInfos.stream().forEach(x -> {
+                hashOperations.putIfAbsent(redisDataKey, x.getLongUrl(), x.getShortUrl());
+            });
+            //已最早失效的那个url的失效时间作为整个redisDataKey的失效时间
+            ShortUrlInfo shortUrlInfo = shortUrlInfos.stream().min(Comparator.comparing(ShortUrlInfo::getValidateDate)).get();
+            redisTemplate.expireAt(redisDataKey, shortUrlInfo.getValidateDate());
+
+        }
         log.info("结束同步短链数据到redis");
     }
 

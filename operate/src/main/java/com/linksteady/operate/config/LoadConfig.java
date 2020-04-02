@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -64,12 +65,20 @@ public class LoadConfig implements CommandLineRunner {
         log.info("开始将短链的数据同步到redis");
         HashOperations hashOperations = redisTemplate.opsForHash();
         List<ShortUrlInfo> shortUrlInfos = shortUrlMapper.getDataList();
-        shortUrlInfos.stream().forEach(x -> {
-            hashOperations.putIfAbsent(redisDataKey, x.getLongUrl(), x.getShortUrl());
-        });
-        //已最早失效的那个url的失效时间作为整个redisDataKey的失效时间
-        ShortUrlInfo shortUrlInfo = shortUrlInfos.stream().min(Comparator.comparing(ShortUrlInfo::getValidateDate)).get();
-        redisTemplate.expireAt(redisDataKey, shortUrlInfo.getValidateDate());
+
+        if(null==shortUrlInfos||shortUrlInfos.size()==0)
+        {
+            redisTemplate.expire(redisDataKey,1L, TimeUnit.DAYS);
+        }else
+        {
+            shortUrlInfos.stream().forEach(x -> {
+                hashOperations.putIfAbsent(redisDataKey, x.getLongUrl(), x.getShortUrl());
+            });
+            //已最早失效的那个url的失效时间作为整个redisDataKey的失效时间
+            ShortUrlInfo shortUrlInfo = shortUrlInfos.stream().min(Comparator.comparing(ShortUrlInfo::getValidateDate)).get();
+            redisTemplate.expireAt(redisDataKey, shortUrlInfo.getValidateDate());
+        }
+
         log.info("结束同步短链数据到redis");
     }
 
