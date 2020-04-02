@@ -78,6 +78,17 @@ function msgTitleClick(dom, msgId, readFlag) {
     }
 }
 
+function readAll() {
+    $.get("/msg/updateMsgRead", {}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("标记成功！");
+            //刷新表格
+            getSysMsg();
+        }
+    });
+
+}
+
 // 全局异常拦截
 function allExceptionCatch() {
     $.ajaxSetup({

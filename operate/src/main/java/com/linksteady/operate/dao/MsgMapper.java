@@ -17,4 +17,6 @@ public interface MsgMapper {
     List<MsgInfo> getMsgPageList(String typeCode, String readFlag, int start, int end);
 
     void updateMsgRead(String msgId, String userName);
+
+    void updateAllMsgRead(String userName);
 }

@@ -166,12 +166,14 @@
             check_allow,
             check_flag,
             group_usernum,
-            check_allow_desc
+            check_allow_desc,
+            activity_stage,
+            activity_type
         )
         SELECT
-            HEAD_ID,PLAN_ID,F1.GROUP_ID,GROUP_NAME,PROD_ACTIVITY_PROP,'Y',F1.check_flag,NVL(USER_NUM,0) USER_NUM,''
+            HEAD_ID,PLAN_ID,F1.GROUP_ID,GROUP_NAME,PROD_ACTIVITY_PROP,'Y',F1.check_flag,NVL(USER_NUM,0) USER_NUM,'',activity_stage,activity_type
         FROM (
-                 SELECT G1.HEAD_ID,PLAN_ID,G1.GROUP_ID,G1.GROUP_NAME,G1.PROD_ACTIVITY_PROP,G1.check_flag
+                 SELECT G1.HEAD_ID,PLAN_ID,G1.GROUP_ID,G1.GROUP_NAME,G1.PROD_ACTIVITY_PROP,G1.check_flag,G1.activity_stage,G1.activity_type
                  FROM UO_OP_ACTIVITY_GROUP G1, UO_OP_ACTIVITY_PLAN P
                  WHERE G1.HEAD_ID = P.HEAD_ID
                    AND G1.ACTIVITY_STAGE = P.ACTIVITY_STAGE
@@ -190,15 +192,22 @@
 
     <update id="updateActivityPlanGroup2">
         UPDATE UO_OP_ACTIVITY_PLAN_GROUP T
-        SET T.CHECK_ALLOW = 'N', T.CHECK_ALLOW_DESC = '未配置文案'
+        SET T
+            .
+            CHECK_ALLOW =
+            'N',
+            T
+            .
+            CHECK_ALLOW_DESC =
+            '未配置文案'
         where EXISTS (SELECT 1
             FROM UO_OP_ACTIVITY_GROUP P
             WHERE P.HEAD_ID = T.HEAD_ID
             AND P.PROD_ACTIVITY_PROP = 'N'
-            AND P.ACTIVITY_TYPE = #{planType}
-            AND P.ACTIVITY_STAGE = #{activityStage})
+            AND P.ACTIVITY_TYPE = T.ACTIVITY_STAGE
+            AND P.ACTIVITY_STAGE = T.ACTIVITY_TYPE
             AND T.PLAN_ID = #{planId}
             AND T.PROD_ACTIVITY_PROP = 'N'
-
+            )
     </update>
 </mapper>

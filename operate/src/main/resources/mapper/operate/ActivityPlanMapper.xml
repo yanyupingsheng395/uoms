@@ -100,7 +100,18 @@
     </select>
 
     <select id="getPlanInfo" resultMap="planMap">
-        select  PLAN_ID,HEAD_ID,ACTIVITY_STAGE, USER_CNT,PLAN_DATE_WID,PLAN_DATE,PLAN_STATUS,PLAN_TYPE,SUCCESS_NUM,VERSION,EFFECT_FLAG from UO_OP_ACTIVITY_PLAN
+        select  PLAN_ID,
+               HEAD_ID,
+               ACTIVITY_STAGE,
+               USER_CNT,
+               PLAN_DATE_WID,
+               PLAN_DATE,
+               PLAN_STATUS,
+               PLAN_TYPE,
+               SUCCESS_NUM,
+               VERSION,
+               EFFECT_FLAG
+        from UO_OP_ACTIVITY_PLAN
          where plan_id = #{planId}
     </select>
 

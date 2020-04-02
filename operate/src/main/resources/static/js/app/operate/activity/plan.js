@@ -250,19 +250,46 @@ function initGroupColumn(planType) {
      {
          cols.push({
              field: 'groupName',
-             title: '成长商品活动机制'
+             title: '成长商品活动机制',
+             formatter: function (value, row, index) {
+                 if(row.groupId===-1)
+                 {
+                     return  '<strong>'+value+'</strong>';
+                 }else
+                 {
+                     return value;
+                 }
+             }
          });
      }else
      {
          cols.push({
              field: 'groupName',
-             title: '推荐用户商品策略'
+             title: '推荐用户商品策略',
+             formatter: function (value, row, index) {
+                 if(row.groupId===-1)
+                 {
+                     return  '<strong>'+value+'</strong>';
+                 }else
+                 {
+                     return value;
+                 }
+             }
          });
      }
      cols.push(  {
          field: 'groupUserNum',
          title: '人数（人）',
-         align: 'center'
+         align: 'center',
+         formatter: function (value, row, index) {
+             if(row.groupId===-1)
+             {
+                 return  '<strong>'+value+'</strong>';
+             }else
+             {
+                 return value;
+             }
+         }
      });
      return cols;
 }
@@ -374,8 +401,18 @@ function initDetailColumns(planType)
             }
         }
     });
+
+    // cols.push({
+    //     title: '成长洞察',
+    //     width: 80,
+    //     formatter: function (value, row, idx)
+    //     {
+    //         return "<button class='btn btn-primary btn-xs' onclick='growthInsight(\""+row['userId']+"\",\""+ headId+"\")'>know how</button>";
+    //     }
+    // });
     return cols;
 }
+
 
 /**
  * 如果推送方式是固定时间，则让选择要推送的时间
@@ -603,3 +640,13 @@ $("#btn_stop").click(function () {
         $MB.n_warning("只有待执行的计划才能终止！");
     }
 });
+
+// function growthInsight(user_id,head_id)
+// {
+//     $("#personal_insight_modal").modal('show');
+// }
+//
+// $("#personal_insight_modal").on('shown.bs.modal', function () {
+//     getUserSpu(userId, headId);
+//     getDateChart(userId);
+// });

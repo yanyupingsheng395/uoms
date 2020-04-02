@@ -6,12 +6,16 @@
         <result column="USER_PHONE" property="userPhone" jdbcType="VARCHAR"/>
         <result column="EXPIRE_DT" property="expireDate" jdbcType="VARCHAR"/>
         <result column="SMS_CONTENT" property="smsContent" jdbcType="VARCHAR"/>
+
+        <result column="INSERT_TYPE" property="insertType" jdbcType="VARCHAR"/>
+        <result column="INSERT_BY" property="insertBy" jdbcType="VARCHAR"/>
+        <result column="INSERT_DT" property="insertDate" jdbcType="DATE"/>
     </resultMap>
 
     <select id="getDataList" resultMap="base">
         select * from (
             select t.*, ROWNUM rn from (
-                select USER_PHONE,to_char(EXPIRE_DT, 'yyyy-mm-dd') EXPIRE_DT,SMS_CONTENT from UO_OP_PHONEBLACKLIST
+                select USER_PHONE,to_char(EXPIRE_DT, 'yyyy-mm-dd') EXPIRE_DT,SMS_CONTENT,INSERT_TYPE,INSERT_BY,INSERT_DT from UO_OP_PHONEBLACKLIST
                 where 1=1
                 <if test="phone != null and phone != ''">
                     and USER_PHONE = #{phone}
@@ -29,8 +33,8 @@
     </select>
 
     <insert id="insertData">
-        insert into UO_OP_PHONEBLACKLIST(USER_PHONE,EXPIRE_DT,SMS_CONTENT, INSERT_DT)
-        values (#{userPhone}, to_date(#{expireDate}, 'yyyy-mm-dd'), #{smsContent}, sysdate)
+        insert into UO_OP_PHONEBLACKLIST(USER_PHONE,EXPIRE_DT,SMS_CONTENT, INSERT_DT,INSERT_TYPE,INSERT_BY)
+        values (#{userPhone}, to_date(#{expireDate}, 'yyyy-mm-dd'), #{smsContent}, sysdate, #{insertType}, #{insertBy})
     </insert>
 
     <delete id="deleteByPhone">
