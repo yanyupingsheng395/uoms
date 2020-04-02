@@ -68,8 +68,13 @@ public class ActivityPlanController {
         {
             return Lists.newArrayList();
         }
-
         List<ActivityPlanGroup> planGroupInfo=activityPlanService.getPlanGroupList(planId);
+
+        ActivityPlanGroup activityPlanGroup=new ActivityPlanGroup();
+        activityPlanGroup.setGroupId(-1L);
+        activityPlanGroup.setGroupName("合计");
+        activityPlanGroup.setGroupUserNum(planGroupInfo.stream().mapToLong(ActivityPlanGroup::getGroupUserNum).sum());
+        planGroupInfo.add(activityPlanGroup);
         return planGroupInfo;
     }
 
