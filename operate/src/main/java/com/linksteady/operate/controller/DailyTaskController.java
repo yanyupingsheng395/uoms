@@ -446,4 +446,9 @@ public class DailyTaskController {
         configService.updateConfig("op.daily.pathactive.list",active);
         return ResponseBo.ok();
     }
+
+    @GetMapping("/getTouchDt")
+    public ResponseBo getTouchDt(@RequestParam("headId") String headId) {
+        return ResponseBo.okWithData(null, dailyService.getTouchDt(headId));
+    }
 }

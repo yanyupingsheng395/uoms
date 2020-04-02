@@ -159,7 +159,7 @@ public interface InsightService {
 
     Map<String, Object> getUserSpuRelation(String userId, String spuId, String buyOrder);
 
-    long getUserBuyDual(String headId, String spuId, String userId);
+    long getUserBuyDual(String spuId, String userId, String taskDt);
 
     List<Map<String, String>> getUserGrowthPathPoint(String userId, String spuId);
 

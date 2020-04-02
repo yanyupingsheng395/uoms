@@ -1,5 +1,5 @@
 //
-function getUserSpu(userId, headId) {
+function getUserSpu(userId) {
     $.get("/insight/getUserSpu", {userId: userId}, function (r) {
         let code = "";
         r.data.forEach((v,k)=> {
@@ -10,12 +10,12 @@ function getUserSpu(userId, headId) {
             placeholder: '请选择'
         });
         // 获取spu下的购买次序
-        getUserBuyOrder(userId, headId);
+        getUserBuyOrder(userId);
     });
 }
 
 // 获取某个用户在某个spu下的购买次序
-function getUserBuyOrder(userId, headId) {
+function getUserBuyOrder(userId) {
     var spuId = $("#spuId").val();
     var spuName = $("#spuId").find("option:selected").text();
     $.get("/insight/getUserBuyOrder", {spuId: spuId, userId: userId}, function (r) {
@@ -23,7 +23,7 @@ function getUserBuyOrder(userId, headId) {
             var n = parseInt(r.data);
             var m = parseInt(r.data) + 1;
             $("#buyOrder").val(n + "-" + m);
-            getSpuRelation(userId, headId, spuId, n, spuName);
+            getSpuRelation(userId, spuId, n, spuName);
         }else {
             $MB.n_danger("未知错误！");
         }
@@ -31,7 +31,7 @@ function getUserBuyOrder(userId, headId) {
 }
 
 // 获取spu下商品分布图
-function getSpuRelation(userId, headId, spuId, buyOrder, spuName) {
+function getSpuRelation(userId, spuId, buyOrder, spuName) {
     var spu_relation_chart = echarts.init(document.getElementById("chart_relation_1"), 'macarons');
     var product_relation_chart = echarts.init(document.getElementById("chart_relation_2"), 'macarons');
     spu_relation_chart.showLoading({
@@ -57,7 +57,7 @@ function getSpuRelation(userId, headId, spuId, buyOrder, spuName) {
         // 获取转化概率
         getConvertRateChart(spuId, buyOrder, ebpProductId, nextEbpProductId, ebpProductName);
         // 获取用户表格
-        getGrowthUserTable(userId, headId, spuId);
+        getGrowthUserTable(userId, spuId);
 
         // 获取用户在类目的成长价值
         getUserValue(userId);
@@ -365,7 +365,7 @@ function getUserLastBuyDual(spuId) {
     $.ajax({
         url:"/insight/getUserBuyDual",
         async: false,
-        data:{headId: headId, userId: userId, spuId:spuId},
+        data:{taskDt: task_dt, userId: userId, spuId:spuId},
         success: function (r) {
             data = r.data;
         }
@@ -373,8 +373,8 @@ function getUserLastBuyDual(spuId) {
     return data;
 }
 
-function getGrowthUserTable(userId, headId, spuId) {
-    $.get("/insight/getUserBuyDual", {headId: headId, userId: userId, spuId:spuId}, function (res) {
+function getGrowthUserTable(userId, spuId) {
+    $.get("/insight/getUserBuyDual", {taskDt:task_dt, userId: userId, spuId:spuId}, function (res) {
        var dual = res.data;
        var flag = false;
         $.get("/insight/getUserGrowthPathPoint", {userId:userId, spuId:spuId}, function (r) {

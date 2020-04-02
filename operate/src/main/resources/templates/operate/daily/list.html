@@ -10,6 +10,8 @@
     <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/ion-rangeslider/ion.rangeSlider.min.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/steps/steps.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
 </head>
 
@@ -54,11 +56,7 @@
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
                                     <a class="btn btn-primary btn-edit" id="btn_insight">
-                                        <i class="fa fa-street-view"></i> 预览用户
-                                    </a>
-
-                                    <a class="btn btn-primary btn-edit" id="btn_edit">
-                                        <i class="fa fa-edit"></i> 任务执行
+                                        <i class="fa fa-cog"></i> 预览推送
                                     </a>
                                     <a class="btn btn-info btn-view" id="btn_catch">
                                         <i class="fa fa-check-square-o"></i> 任务效果
@@ -77,17 +75,16 @@
         </main>
     </div>
 </div>
-
 <div th:include="operate/daily/userStats"></div>
-
 <input id="errormsg"  type="hidden"  th:value="${errormsg}" />
-
 <input id="userValue"  type="hidden" />
 <input id="pathActive"  type="hidden" />
 <input id="lifecycle"  type="hidden" />
 <input id="spuName"  type="hidden" />
 <input id="headId"  type="hidden" />
 <div data-th-include="common/commonJS"></div>
+<script data-th-src="@{/plugins/ion-rangeslider/ion.rangeSlider.min.js}"></script>
+<script data-th-src="@{/plugins/steps/steps.js}"></script>
 <script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
 <script data-th-src="@{/plugins/echarts/macarons.js}"></script>
 <script data-th-src="@{/js/app/operate/common/template.js}"></script>

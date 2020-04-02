@@ -290,7 +290,7 @@ public class DailyServiceImpl implements DailyService {
         result.put("ylabel", yLabelList);
 
         //获取排名第一的群组 获取其类目信息
-        DailyUserStats dailyUserStats1 = dailyUserStats.get(0);
+        DailyUserStats dailyUserStats1 = dailyUserStats.size() > 0 ? dailyUserStats.get(0): null;
         if (null != dailyUserStats1) {
             //获取用户在SPU上top 10
             List<DailyUserStats> spuList = getUserStatsBySpu(headId, dailyUserStats1.getUserValue(), dailyUserStats1.getPathActivity(), dailyUserStats1.getLifecycle());
@@ -367,7 +367,10 @@ public class DailyServiceImpl implements DailyService {
         //复制写入待推送列表
         dailyDetailMapper.copyToPushList(dailyHead.getHeadId());
 
+    }
 
-
+    @Override
+    public String getTouchDt(String headId) {
+        return dailyMapper.getDailyHeadById(headId).getTouchDtStr();
     }
 }

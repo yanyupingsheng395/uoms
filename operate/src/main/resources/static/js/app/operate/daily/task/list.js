@@ -110,40 +110,6 @@ $("#btn_query").click(function () {
     $MB.refreshTable("dailyTable");
 });
 
-$("#btn_edit").click(function () {
-    var selected = $("#dailyTable").bootstrapTable('getSelections');
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请勾选需要执行的任务！');
-        return;
-    }
-    var status = selected[0].status;
-    if (status != "todo") {
-        $MB.n_warning('只有待执行状态的任务才能提交执行！');
-        return;
-    }
-
-    var headId = selected[0].headId;
-    var touchDtStr=selected[0].touchDtStr;
-
-    var currDay =getNowFormatDate();
-    if(touchDtStr!=currDay)
-    {
-        $MB.n_warning('只有当天的任务才能被执行！');
-        return;
-    }
-
-    $.get("/daily/validUserGroup", {}, function(r) {
-        if(r.code == 200) {
-            if(r.data) {
-                $MB.n_warning("成长组配置验证未通过！");
-                return false;
-            }
-            window.location.href = "/page/daily/edit?id=" + headId;
-        }
-    });
-});
-
 $("#btn_catch").click(function () {
     var selected = $("#dailyTable").bootstrapTable('getSelections');
     var selected_length = selected.length;

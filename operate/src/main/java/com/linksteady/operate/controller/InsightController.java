@@ -324,8 +324,8 @@ public class InsightController {
      * @return
      */
     @RequestMapping("/getUserBuyDual")
-    public ResponseBo getUserBuyDual(@RequestParam("headId") String headId, @RequestParam("spuId") String spuId, @RequestParam("userId") String userId) {
-        return ResponseBo.okWithData(null, insightService.getUserBuyDual(headId, spuId, userId));
+    public ResponseBo getUserBuyDual(@RequestParam("taskDt") String taskDt, @RequestParam("spuId") String spuId, @RequestParam("userId") String userId) {
+        return ResponseBo.okWithData(null, insightService.getUserBuyDual(spuId, userId, taskDt));
     }
 
     /**

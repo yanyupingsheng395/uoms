@@ -74,4 +74,6 @@ public interface DailyService {
     Map<String, Object> getUserStatsData(String headId);
 
     void pushContent(DailyHead dailyHead,String pushMethod,String pushPeriod,Long effectDays) throws Exception;
+
+    String getTouchDt(String headId);
 }

@@ -114,11 +114,11 @@ public class PageController extends BaseController {
                 return "operate/daily/list";
             }
 
-            if(!currDay.equals(dailyHead.getTouchDtStr()))
-            {
-                model.addAttribute("errormsg","只有当天的任务才能被执行!");
-                return "operate/daily/list";
-            }
+//            if(!currDay.equals(dailyHead.getTouchDtStr()))
+//            {
+//                model.addAttribute("errormsg","只有当天的任务才能被执行!");
+//                return "operate/daily/list";
+//            }
 
             //验证成长组是否通过
             if(dailyConfigService.validUserGroup())
@@ -381,9 +381,9 @@ public class PageController extends BaseController {
      */
     @RequestMapping("/personInsight")
     @Log(value = "单一用户成长洞察",location = "用户成长系统")
-    public String personInsight(@RequestParam("userId") String userId, @RequestParam("headId") String headId, Model model) {
+    public String personInsight(@RequestParam("userId") String userId, @RequestParam("taskDt") String taskDt, Model model) {
         model.addAttribute("userId", userId);
-        model.addAttribute("headId", headId);
+        model.addAttribute("taskDt", taskDt);
         model.addAttribute("pathActive", configService.getValueByName("op.daily.pathactive.list"));
         return "operate/daily/person_insight";
     }

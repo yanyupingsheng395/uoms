@@ -89,7 +89,7 @@ function getUserStrategyList() {
                 width: 80,
                 formatter: function (value, row, idx)
                 {
-                    return "<button class='btn btn-primary btn-xs' onclick='growthInsight(\""+row['userId']+"\",\""+ headId+"\")'>know how</button>";
+                    return "<button class='btn btn-primary btn-xs' onclick='growthInsight(\""+row['userId']+"\",\""+ $("#headId").val() +"\")'>know how</button>";
                 }
             }],
         onLoadSuccess: function () {
@@ -195,7 +195,6 @@ $("#push_msg_modal").on('shown.bs.modal', function () {
             from: r.data.effectDays,
             skin: "modern"
         });
-
     });
 });
 
