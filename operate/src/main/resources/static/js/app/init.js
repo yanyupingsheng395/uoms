@@ -3,20 +3,11 @@ $(document).ready(function () {
     allExceptionCatch();
     getUserMenu();
     getSysMsg();
-    noReadCnt();
 });
 
 $("#dropdownMenu,#msg_detail_modal").on('click', function (e) {
     e.stopPropagation();
 });
-
-function noReadCnt() {
-    $.get("/msg/getNoReadCount", {}, function (r) {
-        if(r.code === 200) {
-            $("#noReadCnt").text(r.data);
-        }
-    })
-}
 
 /**
  * 获取系统通知消息
@@ -33,7 +24,8 @@ function getSysMsg() {
                 $("#msgTable").show();
                 $("#dropdownMenu").attr("style", 'width:400px;');
             }
-            appendTable(data);
+            $("#noReadCnt").text(data['dataCount']);
+            appendTable(data['msgList']);
         }
     });
 }
@@ -85,7 +77,6 @@ function readAll() {
             $MB.n_success("标记成功！");
             //刷新表格
             getSysMsg();
-            noReadCnt();
         }
     });
 }

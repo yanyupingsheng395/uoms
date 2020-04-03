@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.collect.Maps;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -27,7 +29,12 @@ public class MsgController extends BaseController {
 
     @RequestMapping("/getMsgList")
     public ResponseBo getMsgList() {
-        return ResponseBo.okWithData(null, msgService.getMsgList());
+        Map<String, Object> result = Maps.newHashMap();
+        int dataCount = msgService.getDataCount("", "0");
+        final List<MsgInfo> msgList = msgService.getMsgList();
+        result.put("dataCount", dataCount);
+        result.put("msgList", msgList);
+        return ResponseBo.okWithData(null, result);
     }
 
     @RequestMapping("/getMsgPageList")
@@ -57,10 +64,5 @@ public class MsgController extends BaseController {
     public ResponseBo updateMsgAllRead() {
         msgService.updateMsgRead(getCurrentUser().getUsername());
         return ResponseBo.ok();
-    }
-
-    @GetMapping("/getNoReadCount")
-    public ResponseBo getNoReadCount() {
-        return ResponseBo.okWithData(null, msgService.getDataCount("", "0"));
     }
 }

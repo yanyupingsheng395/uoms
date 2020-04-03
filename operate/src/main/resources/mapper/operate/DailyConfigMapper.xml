@@ -26,4 +26,11 @@
             #{item}
         </foreach>
     </select>
+
+    <update id="deleteSmsGroup">
+        update UO_OP_DAILY_TEMPLATE_CONFIG set SMS_CODE = null  where GROUP_ID in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

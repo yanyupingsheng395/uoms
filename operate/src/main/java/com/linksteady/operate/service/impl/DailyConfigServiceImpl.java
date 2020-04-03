@@ -206,4 +206,9 @@ public class DailyConfigServiceImpl implements DailyConfigService {
         }
         return result > 0;
     }
+
+    @Override
+    public void deleteSmsGroup(String groupId) {
+        dailyConfigMapper.deleteSmsGroup(Arrays.asList(groupId.split(",")));
+    }
 }

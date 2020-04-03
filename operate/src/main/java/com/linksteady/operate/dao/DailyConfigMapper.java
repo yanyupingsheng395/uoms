@@ -21,4 +21,6 @@ public interface DailyConfigMapper {
     int updateCheckFlagAndRemark(@Param("whereInfo") String whereInfo, @Param("remark") String remark);
 
     int validCheckedUserGroup(@Param("activeList") List<String> activeList);
+
+    void deleteSmsGroup(List<String> groupIds);
 }
