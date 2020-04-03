@@ -1,5 +1,6 @@
 $(function () {
     getUserSpu(userId);
+    getDateChart(userId);
 });
 function getUserSpu(userId) {
     $.get("/insight/getUserSpu", {userId: userId}, function (r) {
