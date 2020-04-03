@@ -1,4 +1,6 @@
-//
+$(function () {
+    getUserSpu(userId);
+});
 function getUserSpu(userId) {
     $.get("/insight/getUserSpu", {userId: userId}, function (r) {
         let code = "";
