@@ -28,10 +28,8 @@ import java.time.LocalTime;
 public class SystemApplication {
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(SystemApplication.class);
-        app.addListeners(new ApplicationPidFileWriter());
-        app.run();
-        log.info("系统管理模块 started up successfully at {} {}", LocalDate.now(), LocalTime.now());
+        SpringApplication.run(SystemApplication.class, args);
+        log.info("系统管理模块.");
     }
 
     /**
