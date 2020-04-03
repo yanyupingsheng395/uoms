@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -61,5 +62,15 @@ public class DailyConfigController {
     @GetMapping("/getIntelCouponList")
     public List<CouponInfo> getIntelCouponList() {
         return couPonService.getIntelCouponList();
+    }
+
+    /**
+     * 删除用户群组上的文案配置
+     * @return
+     */
+    @GetMapping("/deleteSmsGroup")
+    public ResponseBo deleteSmsGroup(@RequestParam("groupId") String groupId) {
+        dailyConfigService.deleteSmsGroup(groupId);
+        return ResponseBo.ok();
     }
 }

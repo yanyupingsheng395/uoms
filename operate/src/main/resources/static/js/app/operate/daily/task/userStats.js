@@ -259,12 +259,7 @@ function getUserStrategyList() {
                 field: 'smsContent',
                 title: '推送预览',
                 formatter: function (value, row, index) {
-                    if (value != null && value != undefined) {
-                        let temp = value.length > 20 ? value.substring(0, 20) + "..." : value;
-                        return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
-                    } else {
-                        return '-';
-                    }
+                    return longTextFormat(value, row, index);
                 }
             },
             {

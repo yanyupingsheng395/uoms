@@ -124,7 +124,7 @@ function initTable() {
             align: 'center',
             valign: 'top',
             formatter: function (value, row, index) {
-                return "<a href='/page/insight' style='color: #48b0f7;text-decoration: underline;'>系统配置</a>";
+                return "<a href='/page/insight' target='_blank' style='color: #48b0f7;text-decoration: underline;'>系统配置</a>";
             }
         }, {
             field: 'checkFlag',
@@ -146,12 +146,7 @@ function initTable() {
             field: 'smsContent',
             title: '预览文案',
             formatter: function (value, row, index) {
-                if (value != null && value != undefined) {
-                    let temp = value.length > 20 ? value.substring( 0, 20 ) + "..." : value;
-                    return '<a style=\'color: #676a6c;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
-                } else {
-                    return '-';
-                }
+                return longTextFormat(value, row, index);
             }
         }, {
             field: 'couponName',
@@ -794,13 +789,44 @@ function deleteCoupon() {
 
     $MB.confirm( {
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认重置选中的补贴？'
+        content: '确认重置选中用户群组的补贴？'
     }, function () {
         $.getJSON( "/coupon/deleteCouponGroup?groupId=" + groupIds.join( "," ), function (resp) {
             if (resp.code === 200) {
                 lightyear.loading( 'hide' );
                 //提示成功
                 $MB.n_success( '重置补贴成功!' );
+                //刷新表格
+                initTable();
+            } else {
+                $MB.n_danger( "未知异常！" );
+            }
+        } )
+    } );
+}
+
+// 删除文案关系
+function deleteSms() {
+    var selected = $( "#dailyGroupTable" ).bootstrapTable( 'getSelections' );
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning( '请选择需要重置文案的组！' );
+        return;
+    }
+    let groupIds = [];
+    selected.forEach( (v, k) => {
+        groupIds.push( v.groupId );
+    } );
+
+    $MB.confirm( {
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认重置选中用户群组的文案？'
+    }, function () {
+        $.getJSON( "/daily/deleteSmsGroup?groupId=" + groupIds.join( "," ), function (resp) {
+            if (resp.code === 200) {
+                lightyear.loading( 'hide' );
+                //提示成功
+                $MB.n_success( '重置文案成功!' );
                 //刷新表格
                 initTable();
             } else {
