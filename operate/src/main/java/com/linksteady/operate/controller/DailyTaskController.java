@@ -222,6 +222,11 @@ public class DailyTaskController {
             return ResponseBo.error("记录已被其他用户修改，请返回刷新后重试！");
         }
 
+        String validateLabel = dailyConfigService.validUserGroup() ? "未通过" : "通过";
+        if(validateLabel.equalsIgnoreCase("未通过")) {
+            return ResponseBo.error("成长组配置验证未通过！");
+        }
+
         // 短信文案的校验  (是否包含变量，短信长度)
         String validResult = smsContentValid(headId);
         if (null != validResult) {

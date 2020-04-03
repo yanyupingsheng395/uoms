@@ -95,7 +95,6 @@ function changeStep(count) {
     if(current_step < 0) {
         current_step = 0;
     }
-    console.log(current_step)
     if(current_step === 0) {
         $("#prevStepBtn").attr("style", "display:none;");
         $("#nextStepBtn").attr("style", "display:inline-block");
