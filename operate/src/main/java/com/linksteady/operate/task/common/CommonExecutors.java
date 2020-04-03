@@ -1,4 +1,4 @@
-package com.linksteady.operate.task;
+package com.linksteady.operate.task.common;
 
 import com.google.common.collect.Sets;
 import com.linksteady.operate.dao.ExecStepsMapper;

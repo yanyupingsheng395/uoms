@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * 对thrift的运行状态进行监测
  * @author huang
  */
-@Slf4j
+@Slf4j(topic = "jobLog")
 @Component
 @JobHandler(value = "validateThrift")
 public class ValidateThrift extends IJobHandler {

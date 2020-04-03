@@ -3,28 +3,27 @@ package com.linksteady.operate.task;
 import com.linksteady.jobclient.annotation.JobHandler;
 import com.linksteady.jobclient.domain.ResultInfo;
 import com.linksteady.jobclient.service.IJobHandler;
-import com.linksteady.operate.dao.*;
-import com.linksteady.operate.domain.ExecSteps;
 import com.linksteady.operate.exception.LinkSteadyException;
+import com.linksteady.operate.task.common.CommonExecutors;
+import com.linksteady.operate.task.common.ExecType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 /**
  * 对推送效果进行计算
  * @author huang
  */
-@Slf4j
+@Slf4j(topic = "jobLog")
 @Component
 @JobHandler(value = "opDailyCalculate")
 public class OpDailyCalculate extends IJobHandler {
 
    @Autowired
-    CommonExecutors commonExecutors;
+   CommonExecutors commonExecutors;
 
     @Override
     public ResultInfo execute(String param) {

@@ -18,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -218,6 +220,13 @@ public class DailyTaskController {
 
         //进行一次状态的判断
         DailyHead dailyHead = dailyService.getDailyHeadById(headId);
+
+        //进行一次时间的判断 (调度修改状态有一定的延迟)
+        if(DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(dailyHead.getTouchDtStr()))
+        {
+            return ResponseBo.error("已过期的任务无法再执行!");
+        }
+
         if (null==dailyHead||!dailyHead.getStatus().equalsIgnoreCase("todo")) {
             return ResponseBo.error("记录已被其他用户修改，请返回刷新后重试！");
         }

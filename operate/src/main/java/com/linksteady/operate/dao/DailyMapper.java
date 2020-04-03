@@ -93,4 +93,9 @@ public interface DailyMapper {
     int getValidDailyHead();
 
     void updateSmsCodeNull(String smsCode);
+
+    /**
+     * 每日运营任务失效
+     */
+    void expireDailyHead();
 }

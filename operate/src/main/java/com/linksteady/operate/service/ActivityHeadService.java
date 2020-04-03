@@ -68,4 +68,9 @@ public interface ActivityHeadService {
      * @param type
      */
     void updateStatus(Long headId, String stage, String status, String type);
+
+    /**
+     * 活动头表失效
+     */
+    void expireActivityHead();
 }

@@ -237,4 +237,8 @@
         and t2.plan_id=#{planId}
     </select>
 
+    <update id="expireActivityPlan">
+        update uo_op_activity_plan t set t.plan_status='4' where t.plan_status='1' and trunc(sysdate)>trunc(t.plan_date)
+    </update>
+
 </mapper>

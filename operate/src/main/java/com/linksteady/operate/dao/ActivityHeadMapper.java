@@ -54,4 +54,25 @@ public interface ActivityHeadMapper {
 
     int getDeleteCount(Long headId);
 
+    /**
+     * 失效预售通知
+     */
+    void expirePreheatNotify();
+
+    /**
+     * 失效预售正式
+     */
+    void expirePreheatDuring();
+
+    /**
+     * 失效正式通知
+     */
+    void expireFormalNotify();
+
+    /**
+     * 失效正式正式
+     */
+    void expireFormalDuring();
+
+
 }
