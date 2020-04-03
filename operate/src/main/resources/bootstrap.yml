@@ -6,59 +6,6 @@ app:
   build:
     time: @timestamp@
 
-# 大朴生产环境
-#spring:
-#  application:
-#    name: operate
-#  cloud:
-#    config:
-#      uri: http://172.16.99.42:9001
-#      username: admin
-#      password: linksteady123
-#  profiles:
-#    active: prod
-#  aop:
-#    proxy-target-class: true
-#  servlet:
-#    multipart:
-#      max-file-size: 10MB
-#      max-request-size: 50MB
-
-# 韩后生产环境
-#spring:
-#  application:
-#    name: operate
-#  cloud:
-#    config:
-#      uri: http://172.26.61.28:9060
-#      username: admin
-#      password: linksteady123
-#
-#  profiles:
-#    active: prod
-#  aop:
-#    proxy-target-class: true
-#  servlet:
-#    multipart:
-#      max-file-size: 10MB
-#      max-request-size: 50MB
-
-# dev
-#spring:
-#  application:
-#    name: operate
-#  cloud:
-#    config:
-#      uri: http://config.dev.growth-master.com
-#      username: admin
-#      password: linksteady123
-#  profiles:
-#    active: prod
-#  servlet:
-#    multipart:
-#      max-file-size: 10MB
-#      max-request-size: 50MB
-
 ## 配置加密的秘钥
 jasypt:
   encryptor:
@@ -71,9 +18,4 @@ spring:
   cloud:
     config:
       enabled: false
-  aop:
-    proxy-target-class: true
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 50MB
+

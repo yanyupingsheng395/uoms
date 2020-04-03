@@ -96,6 +96,7 @@ spring:
       redis
   main:
     allow-bean-definition-overriding: true
+
   # 添加静态资源md5版本控制
   resources:
     chain:
@@ -103,15 +104,6 @@ spring:
         content:
           enabled: true
           paths: /**
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: ALWAYS
 
 mybatis:
   # type-aliases扫描路径

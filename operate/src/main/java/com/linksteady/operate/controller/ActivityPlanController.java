@@ -141,7 +141,7 @@ public class ActivityPlanController {
         }
 
         //进行一次时间的判断 (调度修改状态有一定的延迟)
-        if(DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(activityPlan.getPlanDateWid()))
+        if(!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(activityPlan.getPlanDateWid()))
         {
             return ResponseBo.error("已过期的计划无法再执行!");
         }

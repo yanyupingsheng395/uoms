@@ -102,16 +102,6 @@ spring:
           enabled: true
           paths: /js/app/**, /css/**
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: ALWAYS
-
-
 mybatis:
   # type-aliases扫描路径
   type-aliases-package: com.linksteady.mdss.domain

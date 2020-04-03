@@ -2,49 +2,9 @@ app:
   name: "UOMS"
   description: "link steady 诊断&运营系统-系统管理模块"
   spring-boot-version: "2.0.4.RELEASE"
-  version: 1.08
+  version: @project.version@
   build:
-    time: 2020-01-21 08:38:52
-
-# dapu
-#spring:
-#  application:
-#    name: system
-#  cloud:
-#    config:
-#      uri: http://172.16.99.42:9001
-#      username: admin
-#      password: linksteady123
-#
-#  profiles:
-#    active: prod
-#  aop:
-#    proxy-target-class: true
-
-# hanhoo
-#spring:
-#  application:
-#    name: system
-#  cloud:
-#    config:
-#      uri: http://172.26.61.28:9060
-#      username: admin
-#      password: linksteady123
-#
-#  profiles:
-#    active: prod
-
-# dev
-#spring:
-#  application:
-#    name: system
-#  cloud:
-#    config:
-#      uri: http://localhost:9060
-#      username: admin
-#      password: linksteady123
-#  profiles:
-#    active: common,prod
+    time: @timestamp@
 
 # 配置加密的秘钥
 jasypt:

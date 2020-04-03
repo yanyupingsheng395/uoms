@@ -10,6 +10,9 @@ server:
   port: 9094
   tomcat:
     uri-encoding: utf-8
+  compression:
+    enabled: true
+    mime-types: application/javascript,text/css,application/json,application/xml,text/html,text/xml,text/plain
 
 spring:
   datasource:
@@ -103,6 +106,12 @@ spring:
   cache:
     type:
       redis
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+
   # 添加静态资源md5版本控制
   resources:
     chain:
@@ -112,15 +121,6 @@ spring:
           paths: /js/**, /css/**
   main:
     allow-bean-definition-overriding: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: ALWAYS
 
 mybatis:
   # type-aliases扫描路径

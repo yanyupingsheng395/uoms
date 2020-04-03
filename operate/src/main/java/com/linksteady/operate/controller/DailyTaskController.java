@@ -222,7 +222,7 @@ public class DailyTaskController {
         DailyHead dailyHead = dailyService.getDailyHeadById(headId);
 
         //进行一次时间的判断 (调度修改状态有一定的延迟)
-        if(DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(dailyHead.getTouchDtStr()))
+        if(!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(dailyHead.getTouchDtStr()))
         {
             return ResponseBo.error("已过期的任务无法再执行!");
         }
