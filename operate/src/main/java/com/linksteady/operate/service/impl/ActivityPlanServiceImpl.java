@@ -358,4 +358,9 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         return activityPlanMapper.getDailyPersonalEffectCount(planId);
     }
 
+    @Override
+    public void expireActivityPlan() {
+        activityPlanMapper.expireActivityPlan();
+    }
+
 }

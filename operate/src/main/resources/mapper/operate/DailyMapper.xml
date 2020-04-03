@@ -340,4 +340,8 @@
         update UO_OP_DAILY_TEMPLATE_CONFIG set SMS_CODE = null where SMS_CODE = #{smsCode}
     </update>
 
+    <update id="expireDailyHead">
+        update uo_op_daily_header h set h.status='timeout' where h.status='todo' and trunc(h.touch_dt)!=trunc(sysdate)
+    </update>
+
 </mapper>

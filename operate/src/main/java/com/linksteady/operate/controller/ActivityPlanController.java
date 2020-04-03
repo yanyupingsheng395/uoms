@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -138,6 +139,13 @@ public class ActivityPlanController {
         if(!ActivityPlanStatusEnum.WAIT_EXEC.getStatusCode().equalsIgnoreCase(activityPlan.getPlanStatus())) {
             return ResponseBo.error("计划状态已改变，请在列表界面刷新后重新操作！");
         }
+
+        //进行一次时间的判断 (调度修改状态有一定的延迟)
+        if(DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(activityPlan.getPlanDateWid()))
+        {
+            return ResponseBo.error("已过期的计划无法再执行!");
+        }
+
         //进行推送的操作
         try {
             activityPushService.pushActivity(pushMethod,pushPeriod, activityPlan);

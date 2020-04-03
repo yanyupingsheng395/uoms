@@ -68,4 +68,9 @@ public interface ActivityPlanService {
 
     int getDailyPersonalEffectCount(Long planId);
 
+    /**
+     * 活动运营 执行计划失效
+     */
+    void expireActivityPlan();
+
 }

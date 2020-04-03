@@ -1,4 +1,4 @@
-package com.linksteady.operate.task;
+package com.linksteady.operate.task.common;
 
 /**
  * 调度 任务代码的枚举类

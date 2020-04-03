@@ -61,5 +61,7 @@ public interface ActivityPlanMapper {
 
     int getDailyPersonalEffectCount(Long planId);
 
+    void expireActivityPlan();
+
 
 }

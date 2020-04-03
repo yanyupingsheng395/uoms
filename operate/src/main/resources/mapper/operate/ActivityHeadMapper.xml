@@ -172,4 +172,34 @@
         where h.head_id=#{headId}
     </update>
 
+    <update id="expirePreheatNotify">
+        update uo_op_activity_header t
+        set t.preheat_notify_status = 'timeout'
+        where t.has_preheat = '1'
+            and t.preheat_notify_status = 'todo'
+            and trunc(sysdate) > trunc(t.preheat_notify_dt)
+    </update>
+
+    <update id="expirePreheatDuring">
+        update uo_op_activity_header t
+        set t.preheat_status = 'timeout'
+        where t.has_preheat = '1'
+            and t.preheat_status = 'todo'
+            and trunc(sysdate) > trunc(t.preheat_end_dt)
+    </update>
+
+    <update id="expireFormalNotify">
+        update uo_op_activity_header t
+        set t.formal_notify_status = 'timeout'
+        where t.formal_notify_status = 'todo'
+          and trunc(sysdate) > trunc(t.formal_notify_dt)
+    </update>
+
+    <update id="expireFormalDuring">
+        update uo_op_activity_header t
+        set t.formal_status = 'timeout'
+        where t.formal_status = 'todo'
+            and trunc(sysdate) > trunc(t.formal_dt)
+    </update>
+
 </mapper>

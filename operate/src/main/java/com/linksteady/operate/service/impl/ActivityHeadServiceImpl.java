@@ -145,6 +145,17 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         }
     }
 
+    @Override
+    public void expireActivityHead() {
+        //失效预售通知
+        activityHeadMapper.expirePreheatNotify();
+        //失效预售正式
+        activityHeadMapper.expirePreheatDuring();
+
+        activityHeadMapper.expireFormalNotify();
+        activityHeadMapper.expireFormalDuring();
+    }
+
     /**
      * 保存cov_info表
      * 如果已有记录直接update，否则insert

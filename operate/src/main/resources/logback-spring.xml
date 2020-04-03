@@ -63,6 +63,22 @@
         </filter>
     </appender>
 
+    <!--用户操作日志 -->
+    <appender name="operateJobLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}/opJob.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/error/opJob.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
     <root level="debug">
         <appender-ref ref="console" />
     </root>
@@ -76,5 +92,10 @@
     <logger name="handle" level="info" additivity="false">
         <!--<appender-ref ref="console" />-->
         <appender-ref ref="handle" />
+    </logger>
+
+    <logger name="jobLog" level="info" additivity="false">
+        <!--<appender-ref ref="console" />-->
+        <appender-ref ref="operateJobLog" />
     </logger>
 </configuration>
