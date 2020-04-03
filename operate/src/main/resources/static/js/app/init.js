@@ -85,9 +85,9 @@ function readAll() {
             $MB.n_success("标记成功！");
             //刷新表格
             getSysMsg();
+            noReadCnt();
         }
     });
-
 }
 
 // 全局异常拦截
