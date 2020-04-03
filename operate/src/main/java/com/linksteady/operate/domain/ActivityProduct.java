@@ -46,7 +46,10 @@ public class ActivityProduct {
 
     private String alikeProdId;
 
-    // 判断当前数据是否合法
+    /**
+     * 判断当前数据是否合法
+     * @return
+     */
     public boolean productValid() {
         return StringUtils.isNotEmpty(this.getProductId()) &&
                 StringUtils.isNotEmpty(this.getGroupId()) &&

@@ -399,7 +399,7 @@ function getGrowthUserTable(userId, spuId) {
                 code = "<tr class='text-center'><td colspan='5'>没有找到匹配的记录</td></tr>";
             }
             $("#growthTable").html('').append(code).find("tbody td:eq(3)").attr("style", "background-color:#fff;");
-            mergeCell('growthTable', 0, 6, 3);
+            mergeCell('growthTable', 0, 5, 3);
         });
     });
 }
