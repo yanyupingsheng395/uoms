@@ -199,7 +199,7 @@
         update uo_op_activity_header t
         set t.formal_status = 'timeout'
         where t.formal_status = 'todo'
-            and trunc(sysdate) > trunc(t.formal_dt)
+            and trunc(sysdate) > trunc(t.formal_end_dt)
     </update>
 
 </mapper>

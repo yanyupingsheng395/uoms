@@ -4,9 +4,9 @@ package com.linksteady.operate.task.common;
  * 调度 任务代码的枚举类
  */
 public enum ExecType {
-    EFFECT_DAILY_KEY("daily","每日运营效果计算"),
-    EFFECT_ACTIVITY_KEY("activity","活动运营效果计算"),
-    EFFECT_MANUAL_KEY("manual","手工推送效果计算");
+    EFFECT_DAILY_KEY("daily","每日运营推送状态更新"),
+    EFFECT_ACTIVITY_KEY("activity","活动运营推送状态更新"),
+    EFFECT_MANUAL_KEY("manual","手工推送状态更新");
 
     private String code;
     private String desc;

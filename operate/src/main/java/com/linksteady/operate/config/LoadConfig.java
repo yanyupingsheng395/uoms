@@ -1,6 +1,5 @@
 package com.linksteady.operate.config;
 
-import com.google.common.collect.Lists;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.ShortUrlMapper;
 import com.linksteady.operate.domain.PushProperties;
@@ -15,14 +14,9 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * 判断t_config配置数据是否能从redis中加载到，如果加载不到，则报错
