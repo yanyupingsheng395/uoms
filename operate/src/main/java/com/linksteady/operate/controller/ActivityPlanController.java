@@ -309,4 +309,13 @@ public class ActivityPlanController {
         int count = activityPlanService.getDailyPersonalEffectCount(planId);
         return ResponseBo.okOverPaging(null, count, personals);
     }
+
+    /**
+     * 获取计划的状态
+     * @return
+     */
+    @GetMapping("/getPlanStatus")
+    public ResponseBo getPlanStatus(@RequestParam String headId, @RequestParam String stage) {
+        return ResponseBo.okWithData(null, activityPlanService.getPlanStatus(headId, stage));
+    }
 }

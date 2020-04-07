@@ -241,4 +241,15 @@
         update uo_op_activity_plan t set t.plan_status='4' where t.plan_status='1' and trunc(sysdate)>trunc(t.plan_date)
     </update>
 
+    <select id="getPlanStatus" resultType="string">
+        select PLAN_STATUS from UO_OP_ACTIVITY_PLAN t1, UO_OP_ACTIVITY_HEADER t2
+        where t1.HEAD_ID = t2.HEAD_ID
+        <if test="stage == 'preheat'">
+            and t1.PLAN_DATE = t2.PREHEAT_NOTIFY_DT
+        </if>
+        <if test="stage == 'formal'">
+            and t1.PLAN_DATE = t2.FORMAL_NOTIFY_DT
+        </if>
+        and t1.HEAD_ID = #{headId}
+    </select>
 </mapper>

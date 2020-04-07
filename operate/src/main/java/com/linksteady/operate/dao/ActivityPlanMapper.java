@@ -63,5 +63,5 @@ public interface ActivityPlanMapper {
 
     void expireActivityPlan();
 
-
+    String getPlanStatus(String headId, String stage);
 }

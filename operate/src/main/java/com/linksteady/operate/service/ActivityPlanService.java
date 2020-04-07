@@ -1,5 +1,6 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityPersonal;
 import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.ActivityPlanGroup;
@@ -73,4 +74,5 @@ public interface ActivityPlanService {
      */
     void expireActivityPlan();
 
+    String getPlanStatus(String headId, String stage);
 }

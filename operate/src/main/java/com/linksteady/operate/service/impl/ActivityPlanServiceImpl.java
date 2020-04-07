@@ -363,4 +363,8 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         activityPlanMapper.expireActivityPlan();
     }
 
+    @Override
+    public String getPlanStatus(String headId, String stage) {
+        return activityPlanMapper.getPlanStatus(headId, stage);
+    }
 }

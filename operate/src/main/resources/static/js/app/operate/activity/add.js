@@ -493,33 +493,41 @@ function createActivity(stage) {
     $("#activity_stage").val(stage);
     getGroupList( stage, 'NOTIFY', 'table1');
     getGroupList( stage, 'DURING', 'table5');
-
     geConvertInfo();
     setTitle(stage);
-
     // 根据不同的状态禁用相关通知的按钮
     if(stage === 'preheat') {
-        if(preheatNotifyStatus === 'done') {
+        if(preheatNotifyStatus === 'done' || preheatNotifyStatus === 'timeout') {
             $("#changePlan").attr("disabled", "disabled");
             $("#notifySaveBtn").attr("disabled", "disabled");
         }else {
-            $("#changePlan").removeAttr("disabled");
-            $("#notifySaveBtn").removeAttr("disabled");
+            var data = getPlanStatus($("#headId").val(), stage);
+            if(data) {
+                $("#notifySaveBtn").removeAttr("disabled");
+                $("#changePlan").removeAttr("disabled");
+            }else {
+                $("#notifySaveBtn").attr("disabled", "disabled");
+                $("#changePlan").attr("disabled", "disabled");
+            }
         }
-
         if(preheatStatus === 'done') {
             $("#duringSaveBtn").attr("disabled", "disabled");
         }else {
             $("#duringSaveBtn").removeAttr("disabled");
         }
-    }
-    else {
-        if(formalNotifyStatus === 'done') {
+    } else {
+        if(formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout') {
             $("#changePlan").attr("disabled", "disabled");
             $("#notifySaveBtn").attr("disabled", "disabled");
         }else {
-            $("#changePlan").removeAttr("disabled");
-            $("#notifySaveBtn").removeAttr("disabled");
+            var data = getPlanStatus($("#headId").val(), stage);
+            if(data) {
+                $("#notifySaveBtn").removeAttr("disabled");
+                $("#changePlan").removeAttr("disabled");
+            }else {
+                $("#notifySaveBtn").attr("disabled", "disabled");
+                $("#changePlan").attr("disabled", "disabled");
+            }
         }
 
         if(formalStatus === 'done') {
@@ -528,6 +536,20 @@ function createActivity(stage) {
             $("#duringSaveBtn").removeAttr("disabled");
         }
     }
+}
+
+// 获取plan的状态
+function getPlanStatus(headId, stage) {
+    var res = $.ajax({
+        url: '/activityPlan/getPlanStatus',
+        data: {headId: headId, stage: stage},
+        async: false
+    });
+    var status = JSON.parse(res.responseText).data;
+    if(status === '0' || status === '' || status === undefined || status === null || status === 'null') {
+        return true;
+    }
+    return false;
 }
 
 // 根据当前选择设置标题
@@ -778,6 +800,7 @@ $( "#btn_create_formal" ).click( function () {
 
 // 获取群组列表信息
 function getGroupList(stage, type, tableId) {
+    var flag = getPlanStatus($("#headId").val(), stage);
     var headId = $( "#headId" ).val();
     var groupName = '';
     if(tableId === 'table1') {
@@ -820,7 +843,7 @@ function getGroupList(stage, type, tableId) {
                     var res = "";
                     if(tableId === 'table1') {
                         if(stage === 'preheat') {
-                            if(preheatNotifyStatus === 'done') {
+                            if(preheatNotifyStatus === 'done' || preheatNotifyStatus === 'timeout' || !flag) {
                                 res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
                             }else {
                                 res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
@@ -828,7 +851,7 @@ function getGroupList(stage, type, tableId) {
                                     "</a>";
                             }
                         }else {
-                            if(formalNotifyStatus === 'done') {
+                            if(formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout' || !flag) {
                                 res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
                             }else {
                                 res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
@@ -838,7 +861,6 @@ function getGroupList(stage, type, tableId) {
                         }
                     }else {
                         if(stage === 'preheat') {
-                            console.log(preheatStatus)
                             if(preheatStatus === 'done') {
                                 res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
                             }else {
