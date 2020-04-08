@@ -2,6 +2,8 @@ package com.linksteady.common.domain;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class Dict{
 
@@ -15,6 +17,14 @@ public class Dict{
 
 	private String typeName;
 
-	private int orderNo;
+	private Long orderNo;
+
+	private Date createDt;
+
+	private Date updateDate;
+
+	private String createBy;
+
+	private String updateBy;
 
 }

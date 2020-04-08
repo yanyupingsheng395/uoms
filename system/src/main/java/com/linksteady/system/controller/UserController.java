@@ -3,15 +3,14 @@ package com.linksteady.system.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.linksteady.common.service.UserService;
+import com.linksteady.common.bo.UserBo;
+import com.linksteady.system.service.UserService;
 import com.linksteady.common.util.MD5Utils;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,9 +39,9 @@ public class UserController extends BaseController {
     @RequestMapping("user")
     @RequiresPermissions("user:list")
     public String index(Model model) {
-        User user = super.getCurrentUser();
+        UserBo userBo = super.getCurrentUser();
         String defaultPwd = userService.getDefaultPwd();
-        model.addAttribute("user", user);
+        model.addAttribute("user", userBo);
         model.addAttribute("defaultPwd", defaultPwd);
         return "system/user/user";
     }
@@ -156,7 +155,7 @@ public class UserController extends BaseController {
     @RequiresPermissions("user:resetPassword")
     @RequestMapping("user/resetPassword")
     @ResponseBody
-    public ResponseBo resetPassword(String userId) {
+    public ResponseBo resetPassword(Long userId) {
         try {
             this.userService.resetPassword(userId);
             return ResponseBo.ok("重置用户密码成功！");
@@ -171,30 +170,17 @@ public class UserController extends BaseController {
     @RequestMapping("user/checkPassword")
     @ResponseBody
     public boolean checkPassword(String password) {
-        User user = getCurrentUser();
-        String encrypt = MD5Utils.encrypt(user.getUsername().toLowerCase(), password);
-        return user.getPassword().equals(encrypt);
-    }
+        UserBo userBo = super.getCurrentUser();
+        User user = this.userService.findUserProfile(userBo.getUserId());
 
-    @RequestMapping("user/updatePassword")
-    @ResponseBody
-    public ResponseBo updatePassword(String newPassword) {
-        try {
-            this.userService.updatePassword(newPassword);
-            getSubject().logout();
-            return ResponseBo.ok("更改密码成功！");
-        } catch (Exception e) {
-            log.error("修改密码失败", e);
-            //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
-            return ResponseBo.error("更改密码失败，请联系管理员！");
-        }
+        String encrypt = MD5Utils.encrypt(userBo.getUsername().toLowerCase(), password);
+        return user.getPassword().equals(encrypt);
     }
 
     @RequestMapping("user/profile")
     public String profileIndex(Model model) {
-        User user = super.getCurrentUser();
-        user = this.userService.findUserProfile(user);
+        UserBo userBo = super.getCurrentUser();
+        User user = this.userService.findUserProfile(userBo.getUserId());
         String ssex = user.getSsex();
         if (User.SEX_MALE.equals(ssex)) {
             user.setSsex("性别：男");
@@ -211,9 +197,7 @@ public class UserController extends BaseController {
     @ResponseBody
     public ResponseBo getUserProfile(Long userId) {
         try {
-            User user = new User();
-            user.setUserId(userId);
-            return ResponseBo.ok(this.userService.findUserProfile(user));
+            return ResponseBo.ok(this.userService.findUserProfile(userId));
         } catch (Exception e) {
             log.error("获取用户信息失败", e);
             //进行异常日志的上报
@@ -242,7 +226,10 @@ public class UserController extends BaseController {
         try {
             String[] img = imgName.split("/");
             String realImgName = img[img.length - 1];
-            User user = getCurrentUser();
+
+            UserBo userBo = super.getCurrentUser();
+            User user = this.userService.findUserProfile(userBo.getUserId());
+
             user.setAvatar(realImgName);
             this.userService.updateNotNull(user);
             return ResponseBo.ok("更新头像成功！");

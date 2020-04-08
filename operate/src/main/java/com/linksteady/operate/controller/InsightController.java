@@ -7,7 +7,6 @@ import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.service.InsightService;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;

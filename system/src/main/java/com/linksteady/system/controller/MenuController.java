@@ -1,9 +1,15 @@
 package com.linksteady.system.controller;
 
 import com.linksteady.common.annotation.Log;
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.*;
-import com.linksteady.common.service.MenuService;
+import com.linksteady.common.domain.Menu;
+import com.linksteady.common.service.CommonFunService;
+import com.linksteady.system.domain.SysInfo;
+import com.linksteady.common.domain.Tree;
+import com.linksteady.common.domain.User;
+import com.linksteady.system.service.MenuService;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.config.SystemProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +35,7 @@ public class MenuController extends BaseController {
     private MenuService menuService;
 
     @Autowired
-    RedisTemplate redisTemplate;
+    CommonFunService commonFunService;
 
     @Autowired
     SystemProperties systemProperties;
@@ -78,7 +84,7 @@ public class MenuController extends BaseController {
 
     @RequestMapping("menu/tree")
     @ResponseBody
-    public ResponseBo getMenuTree(String sysId) {
+    public ResponseBo getMenuTree(Long sysId) {
         try {
             Tree<Menu> tree = this.menuService.getMenuTree(sysId);
             return ResponseBo.ok(tree);
@@ -95,33 +101,25 @@ public class MenuController extends BaseController {
     public ResponseBo getUserMenu(HttpServletRequest request) {
         //获取当前用户的sysId
         String sysId = String.valueOf(request.getSession().getAttribute("sysId"));
-
-        if(null==sysId||"".equals(sysId)||"null".equals(sysId))
+        //获取当前子系统名称
+        SysInfoBo sysInfoBo=commonFunService.getSysInfoById(sysId);
+        if(null==sysInfoBo)
         {
             return ResponseBo.error("");
         }
 
         //返回的数据集
         Map<String, Object> result = new HashMap<>(16);
-        User user = super.getCurrentUser();
-        String userName = user.getUsername();
+        UserBo userBo = super.getCurrentUser();
+        String userName = userBo.getUsername();
         result.put("username", userName);
         result.put("version", version);
-        Map<String,String> appMap=(Map<String, String>)redisTemplate.opsForValue().get("applicationInfoMap");
-        result.put("navigatorUrl",appMap.get("SYS")+"main");
-        result.put("logoutUrl",appMap.get("SYS")+"logout");
-
-
-
-        //获取当前子系统名称
-        Map<String, SysInfo> sysInfoMap=(Map<String, SysInfo>)redisTemplate.opsForValue().get("sysInfoMap");
-        String sysName=null==sysInfoMap.get(sysId)?"":sysInfoMap.get(sysId).getName();
 
         try {
-            Tree<Menu> tree = this.menuService.getUserMenu(userName, sysId);
+            Tree<Menu> tree = this.menuService.getUserMenu(userBo.getUserId(), Long.valueOf(sysId));
             result.put("tree", tree);
 
-            return ResponseBo.okWithData(result,sysName);
+            return ResponseBo.okWithData(result,sysInfoBo.getSysName());
         } catch (Exception e) {
             log.error("获取用户菜单失败", e);
             //进行异常日志的上报

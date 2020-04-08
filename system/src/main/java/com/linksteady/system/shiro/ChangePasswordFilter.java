@@ -1,5 +1,6 @@
 package com.linksteady.system.shiro;
 
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.User;
 import com.linksteady.system.config.SystemProperties;
 import com.linksteady.system.util.SpringContextUtils;
@@ -31,7 +32,6 @@ public class ChangePasswordFilter extends AccessControlFilter {
     @Override
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
         SystemProperties systemProperties=(SystemProperties) SpringContextUtils.getBean("systemProperties");
-        String requestUrl=WebUtils.getPathWithinApplication(WebUtils.toHttp(servletRequest));
         Subject subject = getSubject(servletRequest, servletResponse);
         // 表示没有登录，重定向到登录页面
         if (subject.getPrincipal() == null) {
@@ -39,9 +39,10 @@ public class ChangePasswordFilter extends AccessControlFilter {
             WebUtils.issueRedirect(servletRequest, servletResponse, systemProperties.getShiro().getLoginUrl());
             return false;
         } else {
-            User user = (User) subject.getPrincipal();
+            UserBo userBo = (UserBo) subject.getPrincipal();
+
             // 如果首次登录未修改密码，则跳转到修改密码页面
-            if (systemProperties.getShiro().isAllowResetPassword()&&"Y".equals(user.getFirstLogin())) {
+            if (systemProperties.getShiro().isAllowResetPassword()&&"Y".equals(userBo.getFirstLogin())) {
                 WebUtils.issueRedirect(servletRequest, servletResponse, systemProperties.getShiro().getResetPasswordUrl());
                 return false;
             }

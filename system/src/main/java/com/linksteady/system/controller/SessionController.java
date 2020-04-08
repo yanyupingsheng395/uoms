@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.domain.UserOnline;
+import com.linksteady.system.domain.UserOnline;
 import com.linksteady.system.service.SessionService;
 
 

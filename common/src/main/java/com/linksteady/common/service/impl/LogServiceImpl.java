@@ -26,6 +26,7 @@ import tk.mybatis.mapper.entity.Example.Criteria;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("logService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
@@ -72,7 +73,7 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteLogs(String logIds) {
-        List<String> list = Arrays.asList(logIds.split(","));
+        List<Long> list = Arrays.asList(logIds.split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
         this.batchDelete(list, "id", SysLog.class);
     }
 

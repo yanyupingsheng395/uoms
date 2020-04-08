@@ -2,7 +2,7 @@ package com.linksteady.system.service;
 
 import java.util.List;
 
-import com.linksteady.common.domain.UserOnline;
+import com.linksteady.system.domain.UserOnline;
 
 public interface SessionService {
 

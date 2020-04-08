@@ -1,6 +1,7 @@
 package com.linksteady.system.controller;
 
 import com.linksteady.common.annotation.Log;
+import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Tconfig;
 import com.linksteady.common.service.ConfigService;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  */
 @Controller
 @Slf4j
-public class ConfigController extends BaseController{
+public class ConfigController extends BaseController {
 
     @Autowired
     private ConfigService configService;

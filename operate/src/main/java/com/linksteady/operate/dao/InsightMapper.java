@@ -3,7 +3,6 @@ package com.linksteady.operate.dao;
 import com.linksteady.common.domain.Ztree;
 import io.lettuce.core.dynamic.annotation.Param;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 

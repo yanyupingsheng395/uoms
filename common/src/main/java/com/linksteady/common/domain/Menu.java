@@ -21,7 +21,7 @@ public class Menu implements Serializable {
 	public static final String TYPE_BUTTON = "1";
 
 	@Id
-	@Column(name = "MENU_ID")
+	@Column(name = "MENU_ID",insertable = false)
 	private Long menuId;
 
 	@Column(name = "PARENT_ID")
@@ -46,14 +46,20 @@ public class Menu implements Serializable {
 	private Long orderNum;
 
 	@Column(name = "SYS_ID")
-	private String sysId;
+	private Long sysId;
 
 	@Transient
 	private String sysName;
 
-	@Column(name = "CREATE_TIME")
-	private Date createTime;
+	@Column(name = "CREATE_DT")
+	private Date createDt;
 
-	@Column(name = "MODIFY_TIME")
-	private Date modifyTime;
+	@Column(name = "UPDATE_DT")
+	private Date updateDt;
+
+	@Column(name = "CREATE_BY")
+	private String createBy;
+
+	@Column(name = "UPDATE_BY")
+	private String updateBy;
 }

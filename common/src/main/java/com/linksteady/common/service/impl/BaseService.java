@@ -30,33 +30,33 @@ public abstract class BaseService<T> implements IService<T> {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public int save(T entity) {
 		return mapper.insert(entity);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public int delete(Object key) {
 		return mapper.deleteByPrimaryKey(key);
 	}
 
 	@Override
-	@Transactional
-	public int batchDelete(List<String> list, String property, Class<T> clazz) {
+	@Transactional(rollbackFor = Exception.class)
+	public int batchDelete(List<Long> list, String property, Class<T> clazz) {
 		Example example = new Example(clazz);
 		example.createCriteria().andIn(property, list);
 		return this.mapper.deleteByExample(example);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public int updateAll(T entity) {
 		return mapper.updateByPrimaryKey(entity);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public int updateNotNull(T entity) {
 		return mapper.updateByPrimaryKeySelective(entity);
 	}

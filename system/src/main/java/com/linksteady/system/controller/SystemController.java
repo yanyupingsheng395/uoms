@@ -7,8 +7,8 @@ import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.domain.SysInfo;
-import com.linksteady.common.service.SystemService;
+import com.linksteady.system.domain.SysInfo;
+import com.linksteady.system.service.SystemService;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -83,7 +83,7 @@ public class SystemController extends BaseController {
 
     @RequestMapping("system/getSystem")
     @ResponseBody
-    public ResponseBo getSystem(String id) {
+    public ResponseBo getSystem(Long id) {
         try {
             SysInfo system = this.systemService.findSystem(id);
             return ResponseBo.ok(system);

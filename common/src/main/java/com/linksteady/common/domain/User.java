@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @Table(name = "t_user")
@@ -34,8 +35,7 @@ public class User implements Serializable {
 	public static final String SEX_UNKNOW = "2";
 
 	@Id
-	@GeneratedValue(generator = "JDBC")
-	@Column(name = "USER_ID")
+	@Column(name = "USER_ID",insertable = false)
 	private Long userId;
 
 	@Column(name = "USERNAME")
@@ -53,12 +53,6 @@ public class User implements Serializable {
 
 	@Column(name = "STATUS")
 	private String status = STATUS_VALID;
-
-	@Column(name = "CRATE_TIME")
-	private Date crateTime;
-
-	@Column(name = "MODIFY_TIME")
-	private Date modifyTime;
 
 	@Column(name = "LAST_LOGIN_TIME")
 	private Date lastLoginTime;
@@ -91,6 +85,12 @@ public class User implements Serializable {
 	@Column(name = "UPDATE_BY")
 	private String updateBy;
 
+	@Column(name = "CREATE_DT")
+	private Date createDt;
+
+	@Column(name = "UPDATE_DT")
+	private Date updateDt;
+
 	@Column(name = "FIRSTLOGIN")
 	private String firstLogin ="Y";
 
@@ -98,5 +98,9 @@ public class User implements Serializable {
 	 * 用户所拥有的菜单 key:sysId
 	 */
 	@Transient
-	private Map<String, Tree<Menu>> userMenuTree;
+	private Map<Long, Tree<Menu>> userMenuTree;
+
+	@Transient
+	private Set<String> permissionSet;
+
 }

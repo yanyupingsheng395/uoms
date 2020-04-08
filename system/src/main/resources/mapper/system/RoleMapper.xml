@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.system.dao.RoleMapper">
+  <resultMap id="roleMap" type="com.linksteady.system.domain.Role">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="ROLE_ID" jdbcType="DECIMAL" property="roleId" />
+    <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="MODIFY_DT" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="CREATE_DT" jdbcType="VARCHAR" property="createBy" />
+    <result column="MODIFY_DT" jdbcType="VARCHAR" property="updateBy" />
+  </resultMap>
+  
+  <select id="findUserRole" resultMap="roleMap">
+  	select r.* from t_role r 
+  	left join t_user_role ur on(r.role_id = ur.role_id)
+	where ur.user_id = #{userId}
+  </select>
+  
+  <select id="findById" resultType="com.linksteady.system.domain.RoleWithMenu">
+  	select r.role_id roleId,r.role_name roleName,r.remark,
+  	rm.menu_id menuId from t_role r
+	left join t_role_menu rm on(r.role_id = rm.role_id)
+	where r.role_id = #{roleId}
+  </select>
+
+    <select id="findAll" resultMap="roleMap">
+        select ROLE_ID, ROLE_NAME from T_ROLE order by ROLE_ID ASC
+    </select>
+</mapper>

@@ -2,15 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.common.dao.DictMapper">
     <resultMap id="base" type="com.linksteady.common.domain.Dict">
-        <result jdbcType="VARCHAR" column="dict_id" property="dictId"></result>
+        <result jdbcType="DECIMAL" column="dict_id" property="dictId"></result>
         <result jdbcType="VARCHAR" column="code" property="code"></result>
         <result jdbcType="VARCHAR" column="value" property="value"></result>
         <result jdbcType="VARCHAR" column="type_code" property="typeCode"></result>
         <result jdbcType="VARCHAR" column="type_name" property="typeName"></result>
-        <result jdbcType="VARCHAR" column="order_no" property="orderNo"></result>
+        <result jdbcType="DECIMAL" column="order_no" property="orderNo"></result>
     </resultMap>
 
     <select id="getDataListByTypeCode" resultMap="base">
-        select dict_id, code, value, type_code, type_name, order_no from T_DICT where TYPE_CODE = 'ACTIVITY_GROUP' order by code asc
+        select dict_id, code, value, type_code, type_name, order_no from T_DICT where TYPE_CODE = #{typeCode} order by code asc
     </select>
 </mapper>

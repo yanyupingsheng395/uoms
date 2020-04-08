@@ -1,7 +1,7 @@
 package com.linksteady.system.service.impl;
 
 import com.linksteady.common.domain.User;
-import com.linksteady.common.domain.UserOnline;
+import com.linksteady.system.domain.UserOnline;
 import com.linksteady.system.service.SessionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.shiro.session.Session;

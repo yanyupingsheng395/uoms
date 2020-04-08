@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.system.dao.UserRoleMapper">
+  <resultMap id="BaseResultMap" type="com.linksteady.system.domain.UserRole">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="USER_ID" jdbcType="DECIMAL" property="userId" />
+    <result column="ROLE_ID" jdbcType="DECIMAL" property="roleId" />
+  </resultMap>
+
+  <select id="findUserRole" resultType="com.linksteady.common.bo.UserRoleBo">
+      WITH g1 AS (
+       SELECT
+        U .username,
+        U .user_id,
+        ur.role_id
+       FROM
+        T_USER U
+       LEFT JOIN T_USER_ROLE ur ON ur.user_id = U .user_id
+      ),
+       g2 AS (
+       SELECT
+        (
+         CASE
+         WHEN g1.role_id = #{roleId} THEN
+          1
+         ELSE
+          0
+         END
+        ) flag,
+        g1.username,
+        g1.user_id,
+        g1.role_id
+       FROM
+        g1
+      ) SELECT
+       v1.FLAG hasPermission,
+       v1.ROLE_ID roleId,
+       v1.USERNAME userName,
+       v1.USER_ID userId
+      FROM
+       (
+        SELECT
+         g2.FLAG,
+         g2.ROLE_ID,
+         g2.USERNAME,
+         g2.USER_ID,
+         ROW_NUMBER () OVER (
+          PARTITION BY g2.USER_ID
+          ORDER BY
+           g2.FLAG DESC
+         ) rn
+        FROM
+         g2
+       ) v1
+      WHERE
+       v1.rn = 1
+  </select>
+
+    <insert id="insertDataList">
+        insert all
+        <foreach collection="list" item="o">
+            into t_user_role(USER_ID,ROLE_ID,CREATE_DT,CREATE_BY) values(#{o.userId},#{o.roleId},#{o.createDt},#{o.createBy})
+        </foreach>
+        select 1 from dual
+    </insert>
+</mapper>

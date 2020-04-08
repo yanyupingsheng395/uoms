@@ -12,7 +12,6 @@ import com.linksteady.operate.thrift.ConversionData;
 import com.linksteady.operate.thrift.InsightThriftClient;
 import com.linksteady.operate.thrift.RetentionData;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.thrift.transport.TTransportException;
 import org.springframework.beans.factory.annotation.Autowired;

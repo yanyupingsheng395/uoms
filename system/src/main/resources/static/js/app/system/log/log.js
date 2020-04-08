@@ -47,7 +47,7 @@ function setUsername() {
     var code = "<option value=''>所有</option>";
     $.get("/user/findAllUser", {}, function (r) {
         $.each(r.data, function (k, v) {
-            code += "<option value='" + v["USERNAME"] + "'>" + v["USERNAME"] + "</option>";
+            code += "<option value='" + v["userId"] + "'>" + v["username"] + "</option>";
         });
         $("#username").html("").append(code);
     });

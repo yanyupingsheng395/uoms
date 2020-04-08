@@ -1,19 +1,18 @@
 package com.linksteady.common.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.QueryRequest;
-import com.linksteady.common.domain.User;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
-import com.github.pagehelper.PageInfo;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class BaseController {
 
@@ -28,8 +27,8 @@ public class BaseController {
 		return SecurityUtils.getSubject();
 	}
 
-	protected User getCurrentUser() {
-		return (User) getSubject().getPrincipal();
+	protected UserBo getCurrentUser() {
+		return (UserBo) getSubject().getPrincipal();
 	}
 
 	protected Session getSession() {

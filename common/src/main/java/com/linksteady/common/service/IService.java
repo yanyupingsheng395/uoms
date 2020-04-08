@@ -15,7 +15,7 @@ public interface IService<T> {
 
 	int delete(Object key);
 
-	int batchDelete(List<String> list, String property, Class<T> clazz);
+	int batchDelete(List<Long> list, String property, Class<T> clazz);
 
 	int updateAll(T entity);
 

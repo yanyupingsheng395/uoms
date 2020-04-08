@@ -1,6 +1,7 @@
 package com.linksteady.system.aspect;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.SysLog;
 import com.linksteady.common.domain.User;
 import com.linksteady.common.service.LogService;
@@ -59,9 +60,9 @@ public class LogAspect {
         long time = System.currentTimeMillis() - beginTime;
         if (systemProperties.isOpenAopLog()) {
             // 保存日志
-            User user = (User) SecurityUtils.getSubject().getPrincipal();
+            UserBo userBo = (UserBo) SecurityUtils.getSubject().getPrincipal();
             SysLog log = new SysLog();
-            log.setUsername(null == user ? "":user.getUsername());
+            log.setUsername(null == userBo ? "":userBo.getUsername());
             log.setIp(ip);
             log.setTime(time);
             logService.saveLog(point, log);

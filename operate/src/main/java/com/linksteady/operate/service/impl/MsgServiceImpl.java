@@ -3,7 +3,6 @@ import com.linksteady.common.domain.User;
 import com.linksteady.operate.dao.MsgMapper;
 import com.linksteady.operate.domain.MsgInfo;
 import com.linksteady.operate.service.MsgService;
-import org.apache.catalina.security.SecurityUtil;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

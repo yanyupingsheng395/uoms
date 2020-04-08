@@ -165,7 +165,7 @@ class FastJsonRedisSerializer<T> implements RedisSerializer<T> {
 
     static {
         ParserConfig.getGlobalInstance().addAccept("com.linksteady.mdss.domain.DiagHandleInfo");
-        ParserConfig.getGlobalInstance().addAccept("com.linksteady.common.domain.SysInfo");
+        ParserConfig.getGlobalInstance().addAccept("com.linksteady.system.domain.SysInfo");
         ParserConfig.getGlobalInstance().addAccept("com.linksteady.common.domain.Tconfig");
     }
 

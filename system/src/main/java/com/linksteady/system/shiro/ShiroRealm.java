@@ -1,11 +1,11 @@
 package com.linksteady.system.shiro;
 
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.Menu;
-import com.linksteady.common.domain.Role;
 import com.linksteady.common.domain.User;
-import com.linksteady.common.service.MenuService;
-import com.linksteady.common.service.RoleService;
-import com.linksteady.common.service.UserService;
+import com.linksteady.system.service.MenuService;
+import com.linksteady.system.service.RoleService;
+import com.linksteady.system.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -15,7 +15,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 自定义实现 ShiroRealm，包含认证和授权两大模块
@@ -27,8 +26,6 @@ public class ShiroRealm extends AuthorizingRealm {
     @Autowired
     private UserService userService;
     @Autowired
-    private RoleService roleService;
-    @Autowired
     private MenuService menuService;
 
     /**
@@ -39,25 +36,10 @@ public class ShiroRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
-        User user = (User) SecurityUtils.getSubject().getPrincipal();
-        String userName = user.getUsername();
+        UserBo userBo = (UserBo) SecurityUtils.getSubject().getPrincipal();
 
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-
-        // 获取用户角色集
-        List<Role> roleList = this.roleService.findUserRole(userName);
-        Set<String> roleSet = roleList.stream().map(Role::getRoleName).collect(Collectors.toSet());
-        simpleAuthorizationInfo.setRoles(roleSet);
-
-        // 获取用户权限集
-        List<Menu> permissionList = this.menuService.findUserPermissions(userName);
-        Set<String> permissionSet = new HashSet<>();
-        for (Menu m : permissionList) {
-            // 处理用户多权限 用逗号分隔
-            permissionSet.addAll(Arrays.asList(m.getPerms().split(",")));
-        }
-        simpleAuthorizationInfo.setStringPermissions(permissionSet);
-
+        simpleAuthorizationInfo.setStringPermissions(userBo.getPermission());
         return simpleAuthorizationInfo;
     }
 
@@ -94,8 +76,20 @@ public class ShiroRealm extends AuthorizingRealm {
                 throw new LockedAccountException("账号已过期,请联系管理员！");
             }
         }
+
+        // 获取用户权限集
+        List<Menu> permissionList = this.menuService.findUserPermissions(user.getUserId());
+        Set<String> permissionSet = new HashSet<>();
+        for (Menu m : permissionList) {
+            // 处理用户多权限 用逗号分隔
+            permissionSet.addAll(Arrays.asList(m.getPerms().split(",")));
+        }
+        user.setPermissionSet(permissionSet);
+
         // 登录成功之后获取菜单
-        user.setUserMenuTree(menuService.getUserMenu(userName));
-        return new SimpleAuthenticationInfo(user, password, getName());
+        user.setUserMenuTree(menuService.getUserMenu(user.getUserId()));
+
+        UserBo userBo=new UserBo(user);
+        return new SimpleAuthenticationInfo(userBo, password, getName());
     }
 }

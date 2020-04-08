@@ -1,8 +1,10 @@
 package com.linksteady.operate.controller;
 
 import com.google.common.collect.Maps;
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.*;
+import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.util.MD5Utils;
 import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.domain.PushProperties;
@@ -32,9 +34,8 @@ import java.util.Map;
 @RequestMapping("/")
 public class RootPathController extends BaseController {
 
-
     @Autowired
-    RedisTemplate redisTemplate;
+    CommonFunService commonFunService;
 
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
@@ -77,8 +78,8 @@ public class RootPathController extends BaseController {
     @RequestMapping("/index")
     public String index(Model model) {
         // 登录成后，即可通过 Subject 获取登录的用户信息
-        User user = super.getCurrentUser();
-        model.addAttribute("user", user);
+        UserBo userBo = super.getCurrentUser();
+        model.addAttribute("user", userBo);
         model.addAttribute("version", version);
         return "index";
     }
@@ -86,7 +87,7 @@ public class RootPathController extends BaseController {
     @RequestMapping("/sysinfo")
     @ResponseBody
     public ResponseBo getSysInfo() {
-        String username = ((User) SecurityUtils.getSubject().getPrincipal()).getUsername();
+        String username = ((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername();
         Map result= Maps.newHashMap();
         result.put("appname",appname);
         result.put("version",version);
@@ -103,46 +104,35 @@ public class RootPathController extends BaseController {
      */
     @RequestMapping("/findUserMenu")
     @ResponseBody
-    public ResponseBo getUserMenu(HttpServletRequest request) {
-        Map<String, SysInfo> sysInfoMap=(Map<String, SysInfo>)redisTemplate.opsForValue().get("sysInfoMap");
-        SysInfo sysInfo = sysInfoMap.get("operate");
-        String sysId = sysInfo.getId();
-        User user = super.getCurrentUser();
+    public ResponseBo getUserMenu() {
+        UserBo userBo = super.getCurrentUser();
+        SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode("operate");
 
-        if(null==sysId||"".equals(sysId)||"null".equals(sysId))
+        if(null==sysInfoBo)
         {
             return ResponseBo.error("");
         }
 
         //返回的数据集
         Map<String, Object> result = new HashMap<>(16);
-        String userName = user.getUsername();
+        String userName = userBo.getUsername();
         result.put("username", userName);
         result.put("version", version);
-        String sysDomain = sysInfoMap.get("system").getDomain();
+        String sysDomain = sysInfoBo.getSysDomain();
         result.put("navigatorUrl", sysDomain + "/main");
         result.put("logoutUrl", sysDomain + "/logout");
-        result.put("single", user.getUserMenuTree().keySet().size() == 1);
+        result.put("single", userBo.getUserMenuTree().keySet().size() == 1);
 
-        String sysName=sysInfo.getName();
         try {
-            Tree<Menu> tree = user.getUserMenuTree().get(sysId);
+            Tree<Menu> tree = userBo.getUserMenuTree().get(sysInfoBo.getSysId());
             result.put("tree", tree);
-            return ResponseBo.okWithData(result,sysName);
+            return ResponseBo.okWithData(result,sysInfoBo.getSysName());
         } catch (Exception e) {
             log.error("获取用户菜单失败", e);
             //进行异常日志的上报
             exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
             return ResponseBo.error("获取用户菜单失败！");
         }
-    }
-
-    @RequestMapping("user/checkPassword")
-    @ResponseBody
-    public boolean checkPassword(String password) {
-        User user = getCurrentUser();
-        String encrypt = MD5Utils.encrypt(user.getUsername().toLowerCase(), password);
-        return user.getPassword().equals(encrypt);
     }
 
     /**

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.common.dao.CommonFunMapper">
+
+    <resultMap id="BaseResultMap" type="com.linksteady.common.domain.SysInfoBo">
+        <result column="ID" jdbcType="DECIMAL" property="sysId" />
+        <result column="NAME" jdbcType="VARCHAR" property="sysName" />
+        <result column="DOMAIN" jdbcType="VARCHAR" property="sysDomain"/>
+        <result column="LOGO" jdbcType="VARCHAR" property="logo"/>
+    </resultMap>
+
+    <update id="updatePassword">
+        update t_user t set t.password=#{newPassword} where t.user_id=#{userId}
+    </update>
+
+    <select id="getSysInfoByCode" resultMap="BaseResultMap">
+        select t.id,t.name,t.domain,t.code  from t_system t where code=#{sysName}
+    </select>
+
+    <select id="getSysInfoById" resultMap="BaseResultMap">
+        select t.id,t.name,t.domain,t.code  from t_system t where id=#{sysId}::int4
+    </select>
+
+    <select id="checkPassword" resultType="int">
+        select count(*) from t_user where user_id=#{userId} and password=#{newpass}
+    </select>
+</mapper>
