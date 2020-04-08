@@ -7,6 +7,7 @@
         <result column="NAME" jdbcType="VARCHAR" property="sysName" />
         <result column="DOMAIN" jdbcType="VARCHAR" property="sysDomain"/>
         <result column="LOGO" jdbcType="VARCHAR" property="logo"/>
+        <result column="CODE" jdbcType="VARCHAR" property="sysCode"/>
     </resultMap>
 
     <update id="updatePassword">
@@ -14,11 +15,11 @@
     </update>
 
     <select id="getSysInfoByCode" resultMap="BaseResultMap">
-        select t.id,t.name,t.domain,t.code  from t_system t where code=#{sysName}
+        select t.id,t.name,t.domain,t.code,t.logo  from t_system t where code=#{code}
     </select>
 
     <select id="getSysInfoById" resultMap="BaseResultMap">
-        select t.id,t.name,t.domain,t.code  from t_system t where id=#{sysId}::int4
+        select t.id,t.name,t.domain,t.code,t.logo  from t_system t where id=#{sysId}
     </select>
 
     <select id="checkPassword" resultType="int">

@@ -12,4 +12,6 @@ public class SysInfoBo {
     String sysDomain;
 
     String logo;
+
+    String sysCode;
 }

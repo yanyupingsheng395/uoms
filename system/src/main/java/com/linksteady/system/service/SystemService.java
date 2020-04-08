@@ -17,5 +17,5 @@ public interface SystemService extends IService<SysInfo> {
     SysInfo findSystem(Long id);
     void updateSystem(SysInfo system);
     void deleteSystem(String ids);
-    List<SysInfo> findUserSystem(String username);
+    List<SysInfo> findUserSystem(Long userId);
 }

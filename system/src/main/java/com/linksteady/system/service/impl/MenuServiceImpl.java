@@ -2,13 +2,13 @@ package com.linksteady.system.service.impl;
 
 import com.google.common.collect.Maps;
 import com.linksteady.common.bo.UserBo;
-import com.linksteady.system.dao.MenuMapper;
-import com.linksteady.system.dao.SystemMapper;
 import com.linksteady.common.domain.Menu;
-import com.linksteady.system.domain.SysInfo;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.common.service.impl.BaseService;
 import com.linksteady.common.util.TreeUtils;
+import com.linksteady.system.dao.MenuMapper;
+import com.linksteady.system.dao.SystemMapper;
+import com.linksteady.system.domain.SysInfo;
 import com.linksteady.system.service.MenuService;
 import com.linksteady.system.service.RoleMenuServie;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import tk.mybatis.mapper.entity.Example;
-import tk.mybatis.mapper.entity.Example.Criteria;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -54,8 +53,8 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     }
 
     @Override
-    public List<Menu> findUserMenus(Long userId, Long sysId) {
-        return this.menuMapper.findUserMenus(userId, sysId);
+    public List<Menu> findUserMenus(Long userId, String sysCode) {
+        return this.menuMapper.findUserMenus(userId, sysCode);
     }
 
     @Override
@@ -65,28 +64,8 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
 
     @Override
     public List<Menu> findAllMenus(Menu menu) {
-        try {
-            Example example = new Example(Menu.class);
-            Criteria criteria = example.createCriteria();
-            if (StringUtils.isNotBlank(menu.getMenuName())) {
-                criteria.andCondition("menu_name=", menu.getMenuName());
-            }
-            if (StringUtils.isNotBlank(menu.getType())) {
-                criteria.andCondition("type=", Long.valueOf(menu.getType()));
-            }
-            if (null!=menu.getSysId()) {
-                criteria.andCondition("sys_id=", menu.getSysId());
-            }
-            example.setOrderByClause("order_num");
-            List<Menu> menuList = this.selectByExample(example);
-            for (Menu t: menuList) {
-                t.setSysName(systemMapper.findSystem(t.getSysId()).getName());
-            }
-            return menuList;
-        } catch (NumberFormatException e) {
-            log.error("error", e);
-            return new ArrayList<>();
-        }
+        List<Menu> menuList = menuMapper.findAllMenus(menu);
+        return menuList;
     }
 
     @Override
@@ -99,10 +78,10 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     }
 
     @Override
-    public Tree<Menu> getMenuTree(Long sysId) {
+    public Tree<Menu> getMenuTree(String sysCode) {
         List<Tree<Menu>> trees = new ArrayList<>();
         Example example = new Example(Menu.class);
-        example.createCriteria().andCondition("type =", 0).andCondition("sys_id =", sysId);
+        example.createCriteria().andCondition("type =", 0).andCondition("sys_code =", sysCode);
         example.setOrderByClause("order_num");
         List<Menu> menus = this.selectByExample(example);
         buildTrees(trees, menus);
@@ -129,7 +108,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         menus.forEach(menu -> {
             Tree<Menu> tree = new Tree<>();
             tree.setId(menu.getMenuId().toString());
-            tree.setParentId(menu.getParentId().toString().equals("0") ? NODE_PREFIX + menu.getSysId() : menu.getParentId().toString());
+            tree.setParentId(menu.getParentId().toString().equals("0") ? NODE_PREFIX + menu.getSysCode() : menu.getParentId().toString());
             tree.setText(menu.getMenuName());
             String type = "0";
             if(type.equals(menu.getType())) {
@@ -149,27 +128,27 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         });
     }
 
-    @Override
-    public Tree<Menu> getUserMenu(Long userId, Long sysId) {
-        List<Tree<Menu>> trees = new ArrayList<>();
-        List<Menu> menus = this.findUserMenus(userId, sysId);
-        menus.forEach(menu -> {
-            Tree<Menu> tree = new Tree<>();
-            tree.setId(menu.getMenuId().toString());
-            tree.setParentId(menu.getParentId().toString());
-            tree.setText(menu.getMenuName());
-            tree.setIcon(menu.getIcon());
-            tree.setUrl(menu.getUrl());
-            trees.add(tree);
-        });
-        return TreeUtils.build(trees);
-    }
+//    @Override
+//    public Tree<Menu> getUserMenu(Long userId, String sysCode) {
+//        List<Tree<Menu>> trees = new ArrayList<>();
+//        List<Menu> menus = this.findUserMenus(userId, sysCode);
+//        menus.forEach(menu -> {
+//            Tree<Menu> tree = new Tree<>();
+//            tree.setId(menu.getMenuId().toString());
+//            tree.setParentId(menu.getParentId().toString());
+//            tree.setText(menu.getMenuName());
+//            tree.setIcon(menu.getIcon());
+//            tree.setUrl(menu.getUrl());
+//            trees.add(tree);
+//        });
+//        return TreeUtils.build(trees);
+//    }
 
     @Override
-    public Map<Long, Tree<Menu>> getUserMenu(Long userId) {
+    public Map<String, Tree<Menu>> getUserMenu(Long userId) {
         List<Menu> menus = this.findUserMenus(userId);
-        Map<Long, Tree<Menu>> result = Maps.newHashMap();
-        menus.stream().collect(Collectors.groupingBy(Menu::getSysId)).entrySet().stream().forEach(x->{
+        Map<String, Tree<Menu>> result = Maps.newHashMap();
+        menus.stream().collect(Collectors.groupingBy(Menu::getSysCode)).entrySet().stream().forEach(x->{
             List<Tree<Menu>> trees = new ArrayList<>();
             x.getValue().forEach(menu -> {
                 Tree<Menu> tree = new Tree<>();

@@ -28,7 +28,7 @@ public interface CommonFunMapper {
      * @param sysId
      * @return
      */
-    SysInfoBo getSysInfoById(String sysId);
+    SysInfoBo getSysInfoById(Long sysId);
 
     int checkPassword(Long userId,String newpass);
 }

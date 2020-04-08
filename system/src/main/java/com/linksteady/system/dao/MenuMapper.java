@@ -10,7 +10,7 @@ public interface MenuMapper extends MyMapper<Menu> {
 	
 	List<Menu> findUserPermissions(Long userId);
 	
-	List<Menu> findUserMenus(@Param("userId") Long userId, @Param("sysId") Long sysId);
+	List<Menu> findUserMenus(@Param("userId") Long userId, @Param("sysCode") String sysCode);
 
 	List<Menu> findUserMenusOfAllSys(@Param("userId") Long userId);
 
@@ -18,4 +18,10 @@ public interface MenuMapper extends MyMapper<Menu> {
 	 * 	删除父节点，子节点变成顶级节点（根据实际业务调整）
  	 */
 	void changeToTop(List<Long> menuIds);
+
+	/**
+	 * 查询出所有的菜单
+	 */
+	List<Menu> findAllMenus(Menu menu);
+
 }

@@ -16,8 +16,8 @@ public interface SystemMapper extends MyMapper<SysInfo> {
 
     /**
      * 获取当前用户具有权限的子系统列表
-     * @param username
+     * @param userId
      * @return
      */
-    List<SysInfo> findUserSystem(@Param("username") String username);
+    List<SysInfo> findUserSystem(@Param("userId") Long  userId);
 }

@@ -45,8 +45,8 @@ public class Menu implements Serializable {
 	@Column(name = "ORDER_NUM")
 	private Long orderNum;
 
-	@Column(name = "SYS_ID")
-	private Long sysId;
+	@Column(name = "SYS_CODE")
+	private String sysCode;
 
 	@Transient
 	private String sysName;

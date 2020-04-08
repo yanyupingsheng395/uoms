@@ -21,7 +21,7 @@ public interface CommonFunService {
     SysInfoBo getSysInfoByCode(String code);
 
 
-    SysInfoBo getSysInfoById(String sysId);
+    SysInfoBo getSysInfoById(Long sysId);
 
     boolean checkPassword(Long userId,String newPass);
 }

@@ -94,7 +94,7 @@ public class SystemServiceImpl extends BaseService<SysInfo> implements SystemSer
     }
 
     @Override
-    public List<SysInfo> findUserSystem(String username) {
-          return systemMapper.findUserSystem(username);
+    public List<SysInfo> findUserSystem(Long userId) {
+          return systemMapper.findUserSystem(userId);
     }
 }

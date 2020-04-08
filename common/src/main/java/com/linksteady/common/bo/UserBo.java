@@ -26,7 +26,7 @@ public class UserBo implements Serializable {
     private String firstLogin ="Y";
 
     private Set<String> permission;
-    private Map<Long, Tree<Menu>> userMenuTree;
+    private Map<String, Tree<Menu>> userMenuTree;
 
     public UserBo(User user) {
         this.userId = user.getUserId();

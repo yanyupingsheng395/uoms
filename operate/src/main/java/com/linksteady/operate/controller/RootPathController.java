@@ -124,7 +124,7 @@ public class RootPathController extends BaseController {
         result.put("single", userBo.getUserMenuTree().keySet().size() == 1);
 
         try {
-            Tree<Menu> tree = userBo.getUserMenuTree().get(sysInfoBo.getSysId());
+            Tree<Menu> tree = userBo.getUserMenuTree().get(sysInfoBo.getSysCode());
             result.put("tree", tree);
             return ResponseBo.okWithData(result,sysInfoBo.getSysName());
         } catch (Exception e) {

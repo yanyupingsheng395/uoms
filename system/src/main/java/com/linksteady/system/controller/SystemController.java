@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import com.linksteady.common.annotation.Log;
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -40,8 +41,6 @@ public class SystemController extends BaseController {
     @RequestMapping("system")
     @RequiresPermissions("system:list")
     public String index() {
-        Subject subject=getSubject();
-        subject.checkRole("系统管理员");
         return "system/system/system";
     }
 
@@ -142,10 +141,10 @@ public class SystemController extends BaseController {
     @ResponseBody
     public ResponseBo findUserSystem() {
         Map<String, Object> result = Maps.newHashMap();
-        String username = super.getCurrentUser().getUsername();
-        List<SysInfo> list = this.systemService.findUserSystem(username);
+        UserBo userBo = super.getCurrentUser();
+        List<SysInfo> list = this.systemService.findUserSystem(userBo.getUserId());
         result.put("list", list);
-        result.put("username", username);
+        result.put("username", userBo.getUsername());
         return ResponseBo.ok(result);
     }
 }

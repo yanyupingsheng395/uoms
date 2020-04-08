@@ -29,7 +29,7 @@ public class CommonFunServiceImpl implements CommonFunService {
     }
 
     @Override
-    public SysInfoBo getSysInfoById(String sysId) {
+    public SysInfoBo getSysInfoById(Long sysId) {
         return this.commonFunMapper.getSysInfoById(sysId);
     }
 

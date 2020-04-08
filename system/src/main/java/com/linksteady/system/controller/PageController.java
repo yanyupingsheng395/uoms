@@ -107,7 +107,7 @@ public class PageController extends BaseController {
         result.put("single", userBo.getUserMenuTree().keySet().size() == 1);
         //获取当前子系统名称
         try {
-            Tree<Menu> tree = userBo.getUserMenuTree().get(sysInfoBo.getSysId());
+            Tree<Menu> tree = userBo.getUserMenuTree().get(sysInfoBo.getSysCode());
             result.put("tree", tree);
             return ResponseBo.okWithData(result,sysInfoBo.getSysName());
         } catch (Exception e) {

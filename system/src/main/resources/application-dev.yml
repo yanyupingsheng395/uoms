@@ -126,7 +126,7 @@ mapper:
 
 #pagehelper
 pagehelper:
-  helperDialect: oracle
+  helperDialect: PostgreSQL
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql

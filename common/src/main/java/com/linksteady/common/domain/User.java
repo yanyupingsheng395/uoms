@@ -95,10 +95,10 @@ public class User implements Serializable {
 	private String firstLogin ="Y";
 
 	/**
-	 * 用户所拥有的菜单 key:sysId
+	 * 用户所拥有的菜单 key:sysCode
 	 */
 	@Transient
-	private Map<Long, Tree<Menu>> userMenuTree;
+	private Map<String, Tree<Menu>> userMenuTree;
 
 	@Transient
 	private Set<String> permissionSet;

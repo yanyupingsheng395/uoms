@@ -67,7 +67,7 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
             if (StringUtils.isNotBlank(role.getRoleName())) {
                 example.createCriteria().andCondition("role_name=", role.getRoleName());
             }
-            example.setOrderByClause("create_time");
+            example.setOrderByClause("create_dt");
             return this.selectByExample(example);
         } catch (Exception e) {
             log.error("获取角色信息失败", e);
