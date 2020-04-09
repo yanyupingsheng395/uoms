@@ -26,13 +26,13 @@
         FROM UO_OP_SMS_TEMPLATE
         where 1=1
         <if test="smsTemplate.userValue != null and smsTemplate.userValue != ''">
-            and USER_VALUE like concat('%', concat(#{smsTemplate.userValue}, '%'))
+            and USER_VALUE like concat('%', #{smsTemplate.userValue}, '%')
         </if>
         <if test="smsTemplate.lifeCycle != null and smsTemplate.lifeCycle != ''">
-            and LIFE_CYCLE like concat('%', concat(#{smsTemplate.lifeCycle}, '%'))
+            and LIFE_CYCLE like concat('%', #{smsTemplate.lifeCycle}, '%')
         </if>
         <if test="smsTemplate.pathActive != null and smsTemplate.pathActive != ''">
-            and PATH_ACTIVE like concat('%', concat(#{smsTemplate.pathActive}, '%'))
+            and PATH_ACTIVE like concat('%', #{smsTemplate.pathActive}, '%')
         </if>
         order by to_number(SMS_CODE) desc
         ) A  WHERE ROWNUM &lt;=#{endRow}
@@ -43,19 +43,19 @@
         select count(1) from UO_OP_SMS_TEMPLATE
         where 1=1
         <if test="smsTemplate.userValue != null and smsTemplate.userValue != ''">
-            and USER_VALUE like concat('%', concat(#{smsTemplate.userValue}, '%'))
+            and USER_VALUE like concat('%', #{smsTemplate.userValue}, '%')
         </if>
         <if test="smsTemplate.lifeCycle != null and smsTemplate.lifeCycle != ''">
-            and LIFE_CYCLE like concat('%', concat(#{smsTemplate.lifeCycle}, '%'))
+            and LIFE_CYCLE like concat('%', #{smsTemplate.lifeCycle}, '%')
         </if>
         <if test="smsTemplate.pathActive != null and smsTemplate.pathActive != ''">
-            and PATH_ACTIVE like concat('%', concat(#{smsTemplate.pathActive}, '%'))
+            and PATH_ACTIVE like concat('%', #{smsTemplate.pathActive}, '%')
         </if>
     </select>
 
     <insert id="saveSmsTemplate">
-     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CODE, SMS_CONTENT, IS_COUPON_URL, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE)
-     VALUES(SEQ_SMS_TEMPLATE_CODE.nextval,#{smsContent},#{isCouponUrl},#{isCouponName}, #{smsName}, #{isProductName}, #{isProductUrl}, #{remark}, #{userValue}, #{lifeCycle}, #{pathActive})
+     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CONTENT, IS_COUPON_URL, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE)
+     VALUES(#{smsContent},#{isCouponUrl},#{isCouponName}, #{smsName}, #{isProductName}, #{isProductUrl}, #{remark}, #{userValue}, #{lifeCycle}, #{pathActive})
   </insert>
 
     <select id="refrenceCount" resultType="int">
@@ -81,9 +81,9 @@
 
     <select id="getTemplateByGroupId" resultMap="BaseResultMap">
         select distinct t1.* from UO_OP_SMS_TEMPLATE t1, UO_OP_DAILY_TEMPLATE_CONFIG t2
-        where (t1.USER_VALUE like concat('%', concat(t2.USER_VALUE, '%'))
-         or t1.LIFE_CYCLE like concat('%', concat(t2.LIFECYLE, '%'))
-         or t1.PATH_ACTIVE like concat('%', concat(t2.PATH_ACTIVE, '%')))
+        where (t1.USER_VALUE like concat('%', t2.USER_VALUE, '%')
+         or t1.LIFE_CYCLE like concat('%', t2.LIFECYLE, '%')
+         or t1.PATH_ACTIVE like concat('%', t2.PATH_ACTIVE, '%'))
          and t2.GROUP_ID in
          <foreach collection="groupIdList" open="(" close=")" item="item" separator=",">
              #{item}
@@ -107,7 +107,7 @@
                         PATH_ACTIVE,
                         IS_COUPON_URL
                  from UO_OP_SMS_TEMPLATE
-        ) order by tmp desc, SMS_CODE desc
+        ) t order by tmp desc, SMS_CODE desc
     </select>
 
     <select id="getSmsUsedGroupInfo" resultType="string">
@@ -119,9 +119,13 @@
     </select>
 
     <select id="getGroupValue" resultType="map">
-        select listagg(t2.USER_VALUE, ',') within group (order by t1.SMS_CODE) USER_VALUE,listagg(t2.PATH_ACTIVE, ',') within group (order by t1.SMS_CODE) PATH_ACTIVE,listagg(t2.LIFECYLE, ',') within group (order by t1.SMS_CODE) LIFECYLE,t1.SMS_CODE
-        from UO_OP_SMS_TEMPLATE t1,
-             UO_OP_DAILY_TEMPLATE_CONFIG t2
-        where t1.SMS_CODE = t2.SMS_CODE group by t1.SMS_CODE
+        select string_agg(t2.user_value, ',' order by t1.sms_code)  user_value,
+        string_agg(t2.path_active, ',' order by t1.sms_code) path_active,
+        string_agg(t2.lifecyle, ',' order by t1.sms_code)    lifecyle,
+        t1.sms_code
+        from uo_op_sms_template t1,
+             uo_op_daily_template_config t2
+        where t1.sms_code = t2.sms_code
+        group by t1.sms_code
     </select>
 </mapper>

@@ -78,13 +78,8 @@
     </select>
 
     <insert id="insertTestMsg">
-        <selectKey resultType="java.lang.Long" keyProperty="pushId" order="BEFORE" >
-            SELECT UO_OP_PUSH_LIST_SEQ.NEXTVAL from DUAL
-        </selectKey>
-
-        INSERT INTO UO_OP_PUSH_LIST(PUSH_ID,USER_PHONE,USER_OPENID,PUSH_CONTENT,PUSH_STATUS,SOURCE_CODE,SOURCE_ID,PUSH_PERIOD,IS_PUSH)
+        INSERT INTO UO_OP_PUSH_LIST(USER_PHONE,USER_OPENID,PUSH_CONTENT,PUSH_STATUS,SOURCE_CODE,SOURCE_ID,PUSH_PERIOD,IS_PUSH)
         values(
-            #{pushId},
             #{userPhone},
             NULL,
             #{pushContent},

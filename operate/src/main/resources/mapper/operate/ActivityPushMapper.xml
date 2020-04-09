@@ -121,8 +121,7 @@
             SOURCE_ID,
             USER_PHONE,
             IS_PUSH,
-            PUSH_SCHEDULING_DATE,
-            PUSH_ID
+            PUSH_SCHEDULING_DATE
         )
         SELECT T.SMS_CONTENT,
                'P',
@@ -130,8 +129,7 @@
                T.ACTIVITY_DETAIL_ID,
                T.USER_PHONE,
                '0',
-               PUSH_SCHEDULING_DATE,
-               SEQ_UO_OP_PUSH_LIST_LARGE.NEXTVAL
+               PUSH_SCHEDULING_DATE
         FROM UO_OP_ACTIVITY_DETAIL T ,UO_OP_ACTIVITY_PLAN_GROUP G
         where  T.PLAN_ID=G.PLAN_ID AND T.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND T.plan_id = #{planId}
     </insert>

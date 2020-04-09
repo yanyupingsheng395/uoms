@@ -27,7 +27,7 @@
             and EPB_PRODUCT_ID = #{productId}
         </if>
         <if test="productName != null and productName != ''">
-            and product_name like concat('%', concat(#{productName}, '%'))
+            and product_name like concat('%', #{productName}, '%')
         </if>
         <if test="groupId != null and groupId != ''">
             and group_id = #{groupId}
@@ -43,7 +43,7 @@
             and EPB_PRODUCT_ID = #{productId}
         </if>
         <if test="productName != null and productName != ''">
-            and product_name like concat('%', concat(#{productName}, '%'))
+            and product_name like concat('%', #{productName}, '%')
         </if>
         <if test="groupId != null and groupId != ''">
             and group_id = #{groupId}
@@ -65,8 +65,8 @@
     </delete>
 
     <insert id="saveActivityProduct">
-        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,GROUP_ID, NOTIFY_MIN_PRICE)
-        values (SEQ_ACTIVITY_PRODUCT_ID.nextval, #{headId}, #{productId}, #{productName}, #{minPrice}, #{formalPrice}, #{productUrl},#{groupId}, #{notifyMinPrice})
+        insert into UO_OP_ACTIVITY_PRODUCT(HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,GROUP_ID, NOTIFY_MIN_PRICE)
+        values (#{headId}, #{productId}, #{productName}, #{minPrice}, #{formalPrice}, #{productUrl},#{groupId}, #{notifyMinPrice})
     </insert>
 
     <select id="getProductById" resultMap="base">
@@ -80,8 +80,8 @@
     </update>
 
     <insert id="saveActivityProductList">
-        insert into UO_OP_ACTIVITY_PRODUCT(ID,HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL, NOTIFY_MIN_PRICE, GROUP_ID)
-        select SEQ_ACTIVITY_PRODUCT_ID.nextval,A.* FROM (
+        insert into UO_OP_ACTIVITY_PRODUCT(HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL, NOTIFY_MIN_PRICE, GROUP_ID)
+        select A.* FROM (
         <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
            SELECT
                   #{item.headId},

@@ -3,8 +3,8 @@
 <mapper namespace="com.linksteady.operate.dao.ManualDetailMapper">
 
     <insert id="saveDetailList">
-        insert into UO_OP_MANUAL_DETAIL(detail_id, head_id, phone_num, push_status)
-        select UO_OP_MANUAL_DETAIL_SEQ.nextval, t.* from
+        insert into UO_OP_MANUAL_DETAIL(head_id, phone_num, push_status)
+        select t.* from
         <foreach collection="list" separator="union all" item="item" open="(" close=")">
             select #{item.headId}, #{item.phoneNum}, #{item.pushStatus} from dual
         </foreach> t

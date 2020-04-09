@@ -21,8 +21,8 @@
 
     <insert id="saveTemplate">
         insert into UO_OP_ACTIVITY_TEMPLATE(
-            TMP_CONTENT, INSERT_DT, INSERT_BY, TMP_CODE, IS_PERSONAL, TMP_NAME, IS_PROD_NAME, IS_PROD_URL, IS_PRICE
-        ) values (#{content}, #{insertDt}, #{insertBy}, SEQ_UO_OP_ACTIVITY_TEMPLATE.nextval, #{isPersonal}, #{name}, #{isProdName}, #{isProdUrl}, #{isPrice})
+            TMP_CONTENT, INSERT_DT, INSERT_BY, IS_PERSONAL, TMP_NAME, IS_PROD_NAME, IS_PROD_URL, IS_PRICE
+        ) values (#{content}, #{insertDt}, #{insertBy}, #{isPersonal}, #{name}, #{isProdName}, #{isProdUrl}, #{isPrice})
     </insert>
 
     <delete id="deleteTemplate">
@@ -69,16 +69,16 @@
         )
         where 1=1
         <if test="activityTemplate.name != null and activityTemplate.name != ''">
-            and TMP_NAME like concat('%', concat(#{activityTemplate.name} ,'%'))
+            and TMP_NAME like concat('%', #{activityTemplate.name} ,'%')
         </if>
         <if test="activityTemplate.isPersonal != null and activityTemplate.isPersonal != ''">
             and IS_PERSONAL = #{activityTemplate.isPersonal}
         </if>
         <if test="activityTemplate.relation != null and activityTemplate.relation != ''">
-            and relation like concat('%', concat(#{activityTemplate.relation} ,'%'))
+            and relation like concat('%', #{activityTemplate.relation} ,'%')
         </if>
         <if test="activityTemplate.scene != null and activityTemplate.scene != ''">
-            and scene like concat('%', concat(#{activityTemplate.scene} ,'%'))
+            and scene like concat('%', #{activityTemplate.scene} ,'%')
         </if>
     </select>
 </mapper>

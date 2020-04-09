@@ -14,7 +14,7 @@ public interface MsgMapper {
 
     int getDataCount(String msgLevel, String readFlag);
 
-    List<MsgInfo> getMsgPageList(String msgLevel, String readFlag, int start, int end);
+    List<MsgInfo> getMsgPageList(String msgLevel, String readFlag, int limit, int offset);
 
     void updateMsgRead(String msgId, String userName);
 

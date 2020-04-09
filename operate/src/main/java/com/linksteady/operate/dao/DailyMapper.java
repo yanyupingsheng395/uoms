@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public interface DailyMapper {
 
-    List<DailyHead> getPageList(int start, int end, String touchDt);
+    List<DailyHead> getPageList(int limit, int offset, String touchDt);
 
     List<DailyHead> getTouchPageList(int start, int end, String touchDt);
 

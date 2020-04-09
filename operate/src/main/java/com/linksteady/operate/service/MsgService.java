@@ -12,7 +12,7 @@ public interface MsgService {
 
     List<MsgInfo> getMsgList();
 
-    List<MsgInfo> getMsgPageList(String msgLevel, String readFlag, int start, int end);
+    List<MsgInfo> getMsgPageList(String msgLevel, String readFlag, int limit, int offset);
 
     int getDataCount(String msgLevel, String readFlag);
 

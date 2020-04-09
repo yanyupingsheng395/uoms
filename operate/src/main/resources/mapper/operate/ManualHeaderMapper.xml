@@ -47,11 +47,8 @@
     </select>
 
     <insert id="saveHeader">
-        <selectKey resultType="long" keyColumn="head_id" keyProperty="headId" order="BEFORE">
-            select UO_OP_MANUAL_HEADER_SEQ.nextval from dual
-        </selectKey>
-        insert into UO_OP_MANUAL_HEADER(head_id, file_name, all_num, valid_num, unvalid_num, status, insert_dt, insert_by, sms_content, push_type, schedule_date)
-        values (#{headId}, #{fileName}, #{allNum}, #{validNum}, #{unvalidNum}, #{status}, #{insertDt}, #{insertBy}, #{smsContent}, #{pushType}, #{scheduleDate})
+        insert into UO_OP_MANUAL_HEADER(file_name, all_num, valid_num, unvalid_num, status, insert_dt, insert_by, sms_content, push_type, schedule_date)
+        values (#{fileName}, #{allNum}, #{validNum}, #{unvalidNum}, #{status}, #{insertDt}, #{insertBy}, #{smsContent}, #{pushType}, #{scheduleDate})
     </insert>
 
     <select id="getPushInfo" resultType="map">

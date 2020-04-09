@@ -25,8 +25,8 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public List<MsgInfo> getMsgPageList(String msgLevel, String readFlag, int start, int end) {
-        return msgMapper.getMsgPageList(msgLevel, readFlag, start, end);
+    public List<MsgInfo> getMsgPageList(String msgLevel, String readFlag, int limit, int offset) {
+        return msgMapper.getMsgPageList(msgLevel, readFlag, limit, offset);
     }
 
     @Override

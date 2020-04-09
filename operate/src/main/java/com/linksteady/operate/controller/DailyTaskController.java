@@ -61,11 +61,11 @@ public class DailyTaskController {
      */
     @GetMapping("/getPageList")
     public ResponseBo getPageList(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String touchDt = request.getParam().get("touchDt");
         int count = dailyService.getTotalCount(touchDt);
-        List<DailyHead> dailyInfos = dailyService.getPageList(start, end, touchDt);
+        List<DailyHead> dailyInfos = dailyService.getPageList(limit, offset, touchDt);
 
         //设置当前天记录的 校验状态
         String validateLabel = dailyConfigService.validUserGroup() ? "未通过" : "通过";
@@ -129,10 +129,10 @@ public class DailyTaskController {
      */
     @GetMapping("/getUserStrategyList")
     public ResponseBo getUserStrategyList(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String headId = request.getParam().get("headId");
-        List<DailyDetail> dataList = dailyDetailService.getStrategyPageList(start, end, headId);
+        List<DailyDetail> dataList = dailyDetailService.getStrategyPageList(limit, offset, headId);
         int count = dailyDetailService.getStrategyCount(headId);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
@@ -269,17 +269,17 @@ public class DailyTaskController {
         int totalSize = smsContentList.size();
 
         //判断是否有短信内容为空
-        long nullContentSize = smsContentList.stream().filter(x -> StringUtils.isEmpty(x.get("CONTENT"))).count();
+        long nullContentSize = smsContentList.stream().filter(x -> StringUtils.isEmpty(x.get("content"))).count();
         if (nullContentSize > 0) {
             return "文案内容为空，合计：" + totalSize + "条，内容为空：" + nullContentSize + "条";
         }
 
         // 短信长度超出限制
-        List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).length() > pushProperties.getSmsLengthLimit())
-                .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
+        List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("content")).length() > pushProperties.getSmsLengthLimit())
+                .map(y -> String.valueOf(y.get("id"))).collect(Collectors.toList());
         // 短信含未被替换的模板变量
-        List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("CONTENT")).contains("$"))
-                .map(y -> String.valueOf(y.get("ID"))).collect(Collectors.toList());
+        List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("content")).contains("$"))
+                .map(y -> String.valueOf(y.get("id"))).collect(Collectors.toList());
         if (0 != lengthIds.size()) {
             return "文案长度超出限制，合计：" + totalSize + "条，不符合规范：" + lengthIds.size() + "条";
         }

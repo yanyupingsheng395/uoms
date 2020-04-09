@@ -47,8 +47,8 @@ public class DailyServiceImpl implements DailyService {
     ConfigService configService;
 
     @Override
-    public List<DailyHead> getPageList(int start, int end, String touchDt) {
-        return dailyMapper.getPageList(start, end, touchDt);
+    public List<DailyHead> getPageList(int limit, int offset, String touchDt) {
+        return dailyMapper.getPageList(limit, offset, touchDt);
     }
 
     @Override
@@ -165,7 +165,9 @@ public class DailyServiceImpl implements DailyService {
 
     @Override
     public List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int start, int end, String headId) {
-        return dailyMapper.getDailyPersonalEffect(dailyPersonalVo, start, end, headId);
+        int limit = end - start + 1;
+        int offset = start - 1;
+        return dailyMapper.getDailyPersonalEffect(dailyPersonalVo, limit, offset, headId);
     }
 
     @Override

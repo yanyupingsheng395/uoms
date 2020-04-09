@@ -24,12 +24,12 @@
   </select>
 
   <insert id="insertShortUrl">
-      insert into T_SHORT_URL(ID,LONG_URL,SHORT_URL,VALIDATE_DATE,INSERT_DT,INSERT_BY,SOURCE_TYPE)
-      values(SEQ_T_SHORT_URL.NEXTVAL, #{longUrl}, #{shortUrl}, #{validateDate}, sysdate, #{insertBy}, #{sourceType})
+      insert into T_SHORT_URL(LONG_URL,SHORT_URL,VALIDATE_DATE,INSERT_DT,INSERT_BY,SOURCE_TYPE)
+      values(#{longUrl}, #{shortUrl}, #{validateDate}, sysdate, #{insertBy}, #{sourceType})
   </insert>
 
     <select id="selectShortUrlByLongUrl" resultType="string">
-        select SHORT_URL from T_SHORT_URL where LONG_URL=#{longUrl}  and trunc(validate_date)-TRUNC(sysdate)>=0
+        select SHORT_URL from T_SHORT_URL where LONG_URL=#{longUrl}  and validate_date::timestamp &gt; now()
     </select>
 
     <select id="selectCountByLongUrl" resultType="int">
@@ -41,7 +41,7 @@
     </update>
 
     <select id="getDataList" resultMap="BaseResultMap">
-        select ID,LONG_URL,SHORT_URL,VALIDATE_DATE,INSERT_DT,INSERT_BY,SOURCE_TYPE from T_SHORT_URL where trunc(validate_date)-TRUNC(sysdate) &gt;=0
+        select ID,LONG_URL,SHORT_URL,VALIDATE_DATE,INSERT_DT,INSERT_BY,SOURCE_TYPE from T_SHORT_URL where validate_date::timestamp &gt; now()
     </select>
 
 </mapper>

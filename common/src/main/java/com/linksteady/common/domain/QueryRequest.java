@@ -26,6 +26,10 @@ public class QueryRequest implements Serializable {
 
 	private int end;
 
+	private int limit;
+
+	private int offset;
+
 	public String getSort() {
 		return sort;
 	}
@@ -80,5 +84,21 @@ public class QueryRequest implements Serializable {
 
 	public void setOrder(String order) {
 		this.order = order;
+	}
+
+	public int getLimit() {
+		return pageSize;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	public int getOffset() {
+		return (pageNum-1) * pageSize;
+	}
+
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
 }

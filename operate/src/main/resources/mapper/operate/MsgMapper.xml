@@ -16,55 +16,52 @@
     </resultMap>
 
     <select id="getMsgList" resultMap="base">
-        select t.*, ROWNUM from (
-            select
-                t1.MSG_ID,
-                t1.MSG_TITLE,
-                t1.MSG_CONTENT,
-                to_char(t1.CREATE_DT, 'yyyy-mm-dd hh:mm') CREATE_DT,
-                t1.CREATE_BY,
-                t1.READ_FLAG,
-                t2.TYPE_NAME,
-                t1.WARN_FLAG,
-                DECODE(t1.MSG_LEVEL,1,'一般',2,'警告',3,'严重','') MSG_LEVEL_DESC
-           from T_MSG_LIST t1, T_MSG_TYPE t2 where t1.MSG_TYPE = t2.TYPE_CODE(+) AND t2.module_name='operate'
-           order by t1.MSG_ID desc
-        ) t where ROWNUM &lt;= 10
+        select
+            t1.MSG_ID,
+            t1.MSG_TITLE,
+            t1.MSG_CONTENT,
+            to_char(t1.CREATE_DT, 'yyyy-mm-dd hh:mm') CREATE_DT,
+            t1.CREATE_BY,
+            t1.READ_FLAG,
+            t2.TYPE_NAME,
+            t1.WARN_FLAG,
+            case t1.MSG_LEVEL when 1 then '一般'  when 2 then '警告' when 3 then '严重' else '' end MSG_LEVEL_DESC
+        from T_MSG_LIST t1 , T_MSG_TYPE t2 where t1.MSG_TYPE = t2.TYPE_CODE and module_name='operate'
+        order by t1.MSG_ID desc
     </select>
 
     <select id="getDataCount" resultType="int">
-        select count(1) from T_MSG_LIST t1, T_MSG_TYPE t2 where t1.MSG_TYPE = t2.TYPE_CODE(+) AND t2.module_name='operate'
+        select count(1) from T_MSG_LIST t1 , T_MSG_TYPE t2
+        where t1.MSG_TYPE = t2.TYPE_CODE and module_name='operate'
         <if test="msgLevel != '' and msgLevel != null">
-            and t1.MSG_LEVEL = #{msgLevel}
-        </if>
-        <if test="readFlag != '' and readFlag != null">
-            and t1.READ_FLAG = #{readFlag}
-        </if>
-    </select>
-
-    <select id="getMsgPageList" resultMap="base">
-        select * from (
-        select t.*, ROWNUM rn from (
-        select MSG_ID,
-        MSG_TITLE,
-        MSG_CONTENT,
-        to_char(CREATE_DT, 'yyyy-mm-dd') CREATE_DT,
-        CREATE_BY,
-        READ_FLAG,
-        TYPE_NAME,
-        WARN_FLAG,
-        DECODE(t1.MSG_LEVEL,1,'一般',2,'警告',3,'严重','') MSG_LEVEL_DESC
-        from T_MSG_LIST t1, T_MSG_TYPE t2
-        where t1.MSG_TYPE = t2.TYPE_CODE(+)
-        AND t2.module_name='operate'
-        <if test="msgLevel != '' and msgLevel != null">
-            and t1.MSG_LEVEL = #{msgLevel}
+            and t1.MSG_LEVEL = #{msgLevel}::int4
         </if>
         <if test="readFlag != '' and readFlag != null">
             and READ_FLAG = #{readFlag}
         </if>
-        ) t where ROWNUM &lt; = #{end}
-        ) where rn &gt;= #{start}
+    </select>
+
+    <select id="getMsgPageList" resultMap="base">
+        select
+        t1.MSG_ID,
+        t1.MSG_TITLE,
+        t1.MSG_CONTENT,
+        to_char(t1.CREATE_DT, 'yyyy-mm-dd hh:mm') CREATE_DT,
+        t1.CREATE_BY,
+        t1.READ_FLAG,
+        t2.TYPE_NAME,
+        t1.WARN_FLAG,
+        case t1.MSG_LEVEL when 1 then '一般'  when 2 then '警告' when 3 then '严重' else '' end MSG_LEVEL_DESC
+        from T_MSG_LIST t1 , T_MSG_TYPE t2
+        where t1.MSG_TYPE = t2.TYPE_CODE and module_name='operate'
+        <if test="msgLevel != '' and msgLevel != null">
+            and t1.MSG_LEVEL = #{msgLevel}::int4
+        </if>
+        <if test="readFlag != '' and readFlag != null">
+            and READ_FLAG = #{readFlag}
+        </if>
+        order by t1.MSG_ID desc
+        limit #{limit} offset #{offset}
     </select>
 
     <update id="updateMsgRead">
