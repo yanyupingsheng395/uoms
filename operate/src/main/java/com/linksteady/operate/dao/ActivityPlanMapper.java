@@ -44,7 +44,7 @@ public interface ActivityPlanMapper {
      * @param planId
      * @return
      */
-    List<SmsStatisVO> getPlanSmsContentList(Long planId, int start, int end);
+    List<SmsStatisVO> getPlanSmsContentList(Long planId, int limit, int offset);
 
 
     /**
@@ -57,7 +57,7 @@ public interface ActivityPlanMapper {
      */
     List<ActivityPlanEffect> getPlanEffectStatisList(Long planId);
 
-    List<ActivityPersonal> getPersonalPlanEffect(int start, int end, Long planId);
+    List<ActivityPersonal> getPersonalPlanEffect(int limit, int offset, Long planId);
 
     int getDailyPersonalEffectCount(Long planId);
 

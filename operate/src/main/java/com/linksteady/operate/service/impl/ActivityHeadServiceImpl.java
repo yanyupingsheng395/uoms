@@ -1,6 +1,7 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.User;
 import com.linksteady.operate.dao.ActivityCovMapper;
 import com.linksteady.operate.dao.ActivityHeadMapper;
@@ -38,8 +39,8 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     private ActivityCovMapper activityCovMapper;
 
     @Override
-    public List<ActivityHead> getDataListOfPage(int start, int end, String name, String date, String status) {
-        return activityHeadMapper.getDataListOfPage(start, end, name, date, status);
+    public List<ActivityHead> getDataListOfPage(int limit, int offset, String name, String date, String status) {
+        return activityHeadMapper.getDataListOfPage(limit,offset, name, date, status);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
             activityHead.setPreheatNotifyStatus(null);
         }
         activityHead.setInsertDt(new Date());
-        activityHead.setInsertBy(((User)SecurityUtils.getSubject().getPrincipal()).getUsername());
+        activityHead.setInsertBy(((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername());
         activityHeadMapper.saveActivityHead(activityHead);
         if(HAS_PREHEAT.equals(hasPreheat)) {
             // 保存群组信息
@@ -181,29 +182,29 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         //类型 NOTIFY 通知 DURING 期间
         List<ActivityGroup> activityGroups = Lists.newArrayList();
         activityGroups.add(new ActivityGroup(
-                1L,headId, "活动价", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                1L,headId, "活动价", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                2L, headId, "满件打折", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                2L, headId, "满件打折", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                3L, headId, "满元减钱", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                3L, headId, "满元减钱", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                4L, headId, "特价", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                4L, headId, "特价", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                5L, headId, "——", activityStage, "NOTIFY", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
+                5L, headId, "——", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
         ));
 
         activityGroups.add(new ActivityGroup(
-                6L,headId, "推荐成长商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                6L,headId, "推荐成长商品", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                7L, headId, "推荐潜在商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
+                7L, headId, "推荐潜在商品", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y"
         ));
         activityGroups.add(new ActivityGroup(
-                8L, headId, "推荐成长商品", activityStage, "DURING", ((User)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
+                8L, headId, "推荐成长商品", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "N"
         ));
         activityUserGroupMapper.saveGroupData(activityGroups);
     }

@@ -135,12 +135,12 @@ public class PushStatusController extends BaseController {
 
     @GetMapping("/getPushInfoListPage")
     public ResponseBo getPushInfoListPage(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String sourceCode = request.getParam().get("sourceCode");
         String pushStatus = request.getParam().get("pushStatus");
         String pushDateStr = request.getParam().get("pushDateStr");
-        List<PushListInfo> dataList = pushListService.getPushInfoListPage(start, end, sourceCode, pushStatus, pushDateStr);
+        List<PushListInfo> dataList = pushListService.getPushInfoListPage(limit,offset, sourceCode, pushStatus, pushDateStr);
         int count = pushListService.getTotalCount(sourceCode, pushStatus, pushDateStr);
         return ResponseBo.okOverPaging(null, count, dataList);
     }

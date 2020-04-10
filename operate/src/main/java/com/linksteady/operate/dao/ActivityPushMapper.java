@@ -26,7 +26,7 @@ public interface ActivityPushMapper {
      */
     List<Map<String,String>> getAllTemplate(Long headId,String activityStage,String activityType);
 
-    List<ActivityDetail> getPushList(int start, int end, Long  planId);
+    List<ActivityDetail> getPushList(int limit, int offset, Long  planId);
 
     int getPushCount(Long planId);
 

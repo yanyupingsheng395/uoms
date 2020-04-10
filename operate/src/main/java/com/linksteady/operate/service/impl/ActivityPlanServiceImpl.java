@@ -185,8 +185,8 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     }
 
     @Override
-    public List<SmsStatisVO> getPlanSmsContentList(Long planId, int start, int end) {
-        return activityPlanMapper.getPlanSmsContentList(planId,start,end);
+    public List<SmsStatisVO> getPlanSmsContentList(Long planId, int limit, int offset) {
+        return activityPlanMapper.getPlanSmsContentList(planId,limit,offset);
     }
 
     @Override
@@ -349,8 +349,8 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     }
 
     @Override
-    public List<ActivityPersonal> getPersonalPlanEffect(int start, int end, Long planId) {
-        return activityPlanMapper.getPersonalPlanEffect(start,end,planId);
+    public List<ActivityPersonal> getPersonalPlanEffect(int limit, int offset, Long planId) {
+        return activityPlanMapper.getPersonalPlanEffect(limit,offset,planId);
     }
 
     @Override

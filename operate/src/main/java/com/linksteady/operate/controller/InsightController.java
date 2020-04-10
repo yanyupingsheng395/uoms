@@ -42,13 +42,13 @@ public class InsightController {
      */
     @GetMapping("/findSpuValueList")
     public ResponseBo findSpuValueList(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String dateRange = request.getParam().get("dateRange");
         String sortColumn = request.getSort();
         String sortOrder = request.getOrder();
         int count = insightService.findGrowthPathListCount(dateRange);
-        List<InsightGrowthPath> dataList = insightService.findGrowthPathList(start, end, sortColumn, sortOrder, dateRange);
+        List<InsightGrowthPath> dataList = insightService.findGrowthPathList(limit,offset, sortColumn, sortOrder, dateRange);
         InsightGrowthPath avgValue = insightService.getGrowthPathAvgValue();
         dataList.add(avgValue);
         return ResponseBo.okOverPaging(null, count, dataList);
@@ -62,8 +62,8 @@ public class InsightController {
      */
     @RequestMapping("/findImportSpuList")
     public ResponseBo findImportSpuList(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String spuId = request.getParam().get("spuId");
         String purchOrder = request.getParam().get("purchOrder");
         String dateRange = request.getParam().get("dateRange");
@@ -71,7 +71,7 @@ public class InsightController {
         String sortOrder = request.getOrder();
 
         int count = insightService.findImportSpuListCount(purchOrder, dateRange);
-        List<InsightImportSpu> dataList = insightService.findImportSpuList(start, end, spuId, purchOrder, dateRange, sortColumn, sortOrder);
+        List<InsightImportSpu> dataList = insightService.findImportSpuList(limit,offset, spuId, purchOrder, dateRange, sortColumn, sortOrder);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -253,9 +253,9 @@ public class InsightController {
         String purchOrder = request.getParam().get("purchOrder");
         String ebpProductId = request.getParam().get("ebpProductId");
         String nextEbpProductId = request.getParam().get("nextEbpProductId");
-        int start = request.getStart();
-        int end = request.getEnd();
-        List<Map<String, Object>> dataList = insightService.getGrowthUser(spuId, purchOrder, ebpProductId, nextEbpProductId, start, end);
+        int limit = request.getLimit();
+        int offset = request.getOffset();
+        List<Map<String, Object>> dataList = insightService.getGrowthUser(spuId, purchOrder, ebpProductId, nextEbpProductId, limit,offset);
         int count = insightService.getGrowthUserCount(spuId, purchOrder, ebpProductId, nextEbpProductId);
         return ResponseBo.okOverPaging(null, count, dataList);
     }

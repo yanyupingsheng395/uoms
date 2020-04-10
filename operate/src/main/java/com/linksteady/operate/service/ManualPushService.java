@@ -15,7 +15,7 @@ import java.util.Map;
 public interface ManualPushService {
     int getHeaderListCount(String scheduleDate);
 
-    List<ManualHeader> getHeaderListData(int start, int end, String scheduleDate);
+    List<ManualHeader> getHeaderListData(int limit, int offset, String scheduleDate);
 
     void pushMessage(String headId, String pushType);
 

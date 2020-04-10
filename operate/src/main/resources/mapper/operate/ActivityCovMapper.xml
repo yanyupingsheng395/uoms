@@ -48,48 +48,32 @@
 
     <select id="getCovId" resultType="string">
         <if test="stage == 'preheat'">
-            select PREHEAT_NOTIFY_COVID from UO_OP_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID = #{headId}
+            select PREHEAT_NOTIFY_COVID from UO_OP_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID = #{headId}::int4
         </if>
         <if test="stage == 'formal'">
-            select NORMAL_NOTIFY_COVID from UO_OP_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID = #{headId}
+            select NORMAL_NOTIFY_COVID from UO_OP_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID = #{headId}::int4
         </if>
     </select>
 
     <select id="getCovInfoById" resultMap="listMap">
-        select COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST where COV_LIST_ID = #{covId}
+        select COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST where COV_LIST_ID = #{covId}::int4
     </select>
 
     <update id="updatePreheatCovInfo">
-        merge into UO_OP_ACTIVITY_COVINFO t1 using
-        (select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM
-        from UO_OP_ACTIVITY_COV_LIST where COV_LIST_ID = #{covId}) t2
-            on (t1.ACTIVITY_HEAD_ID = #{headId})
-        when MATCHED then update set PREHEAT_NOTIFY_COVID = t2.COV_LIST_ID,
-        PREHEAT_NOTIFY_COV = t2.COV_RATE,
-        PREHEAT_NOTIFY_PUSHNUM = t2.EXPECT_PUSHNUM,
-        PREHEAT_NOTIFY_COVNUM = t2.EXPECT_COVNUM
-         when not MATCHED then insert (ACTIVITY_HEAD_ID,
-        PREHEAT_NOTIFY_COVID,
-        PREHEAT_NOTIFY_COV,
-        PREHEAT_NOTIFY_PUSHNUM,
-        PREHEAT_NOTIFY_COVNUM) values (#{headId}, t2.COV_LIST_ID, t2.COV_RATE,t2.EXPECT_PUSHNUM,t2.EXPECT_COVNUM)
+        insert into UO_OP_ACTIVITY_COVINFO(ACTIVITY_HEAD_ID,
+                                   PREHEAT_NOTIFY_COVID,
+                                   PREHEAT_NOTIFY_COV,
+                                   PREHEAT_NOTIFY_PUSHNUM,
+                                   PREHEAT_NOTIFY_COVNUM) select #{headId}::int4, COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4
+        on conflict(ACTIVITY_HEAD_ID) do update set (PREHEAT_NOTIFY_COVID, PREHEAT_NOTIFY_COV, PREHEAT_NOTIFY_PUSHNUM, PREHEAT_NOTIFY_COVNUM) = (select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4)
     </update>
 
     <update id="updateFormalCovInfo">
-        merge into UO_OP_ACTIVITY_COVINFO t1 using
-        (select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM
-        from UO_OP_ACTIVITY_COV_LIST where COV_LIST_ID = #{covId}) t2
-            on (t1.ACTIVITY_HEAD_ID = #{headId})
-        when MATCHED then update set
-        NORMAL_NOTIFY_COVID = t2.COV_LIST_ID,
-        NORMAL_NOTIFY_COV = t2.COV_RATE,
-        NORMAL_NOTIFY_PUSHNUM = t2.EXPECT_PUSHNUM,
-        NORMAL_NOTIFY_COVNUM = t2.EXPECT_COVNUM
-        when not MATCHED then insert (ACTIVITY_HEAD_ID,
-        NORMAL_NOTIFY_COVID,
-        NORMAL_NOTIFY_COV,
-        NORMAL_NOTIFY_PUSHNUM,
-        NORMAL_NOTIFY_COVNUM)
-        values (#{headId}, t2.COV_LIST_ID, t2.COV_RATE,t2.EXPECT_PUSHNUM,t2.EXPECT_COVNUM)
+        insert into UO_OP_ACTIVITY_COVINFO(ACTIVITY_HEAD_ID,
+                                   NORMAL_NOTIFY_COVID,
+                                   NORMAL_NOTIFY_COV,
+                                   NORMAL_NOTIFY_PUSHNUM,
+                                   NORMAL_NOTIFY_COVNUM) select #{headId}::int4, COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4
+        on conflict(ACTIVITY_HEAD_ID) do update set (NORMAL_NOTIFY_COVID, NORMAL_NOTIFY_COV, NORMAL_NOTIFY_PUSHNUM, NORMAL_NOTIFY_COVNUM) = (select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4)
     </update>
 </mapper>

@@ -19,13 +19,13 @@ public interface InsightService {
 
     List<InsightUserCnt> findUserCntList(String dateRange);
 
-    List<InsightGrowthPath> findGrowthPathList(int start, int end, String sortColumn, String sortOrder, String dateRange);
+    List<InsightGrowthPath> findGrowthPathList(int limit, int offset, String sortColumn, String sortOrder, String dateRange);
 
     int findGrowthPathListCount(String dateRange);
 
     int findImportSpuListCount(String purchOrder, String dateRange);
 
-    List<InsightImportSpu> findImportSpuList(int start, int end, String spuId, String purchOrder, String dateRange, String sortColumn, String sortOrder);
+    List<InsightImportSpu> findImportSpuList(int limit, int offset, String spuId, String purchOrder, String dateRange, String sortColumn, String sortOrder);
 
     /**
      * 获取四价值的平均值
@@ -139,7 +139,7 @@ public interface InsightService {
 
     List<Map<String, Object>> getUserGrowthPath(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
 
-    List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int start, int end);
+    List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int limit, int offset);
 
     int getGrowthUserCount(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
 

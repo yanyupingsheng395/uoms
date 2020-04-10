@@ -13,5 +13,5 @@ public interface ActivityDetailService {
 
     int getDataCount(Long planId);
 
-    List<ActivityDetail> getPageList(int start, int end, Long planId);
+    List<ActivityDetail> getPageList(int limit, int offset, Long planId);
 }

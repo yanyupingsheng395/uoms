@@ -68,13 +68,13 @@ public class ActivityController {
      */
     @GetMapping("/gePageOfHead")
     public ResponseBo gePageOfHead(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String name = request.getParam().get("name");
         String date = request.getParam().get("date");
         String status = request.getParam().get("status");
 
-        List<ActivityHead> dataList = activityHeadService.getDataListOfPage(start, end, name, date, status);
+        List<ActivityHead> dataList = activityHeadService.getDataListOfPage(limit, offset, name, date, status);
         int count = activityHeadService.getDataCount(name);
 
         return ResponseBo.okOverPaging(null, count, dataList);
@@ -121,14 +121,19 @@ public class ActivityController {
      */
     @GetMapping("/getActivityProductPage")
     public ResponseBo getActivityProductPage(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String headId = request.getParam().get("headId");
         String productId = request.getParam().get("productId");
         String productName = request.getParam().get("productName");
         String groupId = request.getParam().get("groupId");
-        int count = activityProductService.getCount(headId, productId, productName, groupId);
-        List<ActivityProduct> productList = activityProductService.getActivityProductListPage(start, end, headId, productId, productName, groupId);
+
+        List<ActivityProduct> productList = Lists.newArrayList();
+        int count = 0;
+        if(StringUtils.isNotEmpty(headId)) {
+            count = activityProductService.getCount(headId, productId, productName, groupId);
+            productList = activityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId);
+        }
         return ResponseBo.okOverPaging(null, count, productList);
     }
 
@@ -223,12 +228,12 @@ public class ActivityController {
      */
     @GetMapping("/getActivityUserGroupPage")
     public ResponseBo getActivityUserGroupPage(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String stage = request.getParam().get("stage");
         Long headId = Long.parseLong(request.getParam().get("headId"));
         int count = activityUserGroupService.getCount(headId, stage);
-        List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupPage(headId, stage, start, end);
+        List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupPage(headId, stage, limit,offset);
         return ResponseBo.okOverPaging(null, count, activityGroups);
     }
 
@@ -492,8 +497,10 @@ public class ActivityController {
             tmp.add(() -> {
                 int start = idx * pageSize + 1;
                 int end = (idx + 1) * pageSize;
-                end = end > count ? count : end;
-                return activityProductService.getActivityProductListPage(start, end, headId, "", "", "");
+                end = Math.min(end, count);
+                int limit = end - start + 1;
+                int offset = start -1;
+                return activityProductService.getActivityProductListPage(limit,offset, headId, "", "", "");
             });
         }
 

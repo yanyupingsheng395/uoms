@@ -45,7 +45,7 @@ public interface InsightMapper {
 
     List<Map<String, Object>> getUserGrowthPathWithSpu(String spuId, String purchOrder);
 
-    List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int start, int end);
+    List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int limit, int offset);
 
     int getGrowthUserCount(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
 

@@ -13,7 +13,7 @@ import java.util.Map;
 public interface ManualHeaderMapper {
     int getHeaderListCount(@Param("scheduleDate") String scheduleDate);
 
-    List<ManualHeader> getHeaderListData(int start, int end, String scheduleDate);
+    List<ManualHeader> getHeaderListData(int limit, int offset, String scheduleDate);
 
     void saveHeader(ManualHeader manualHeader);
 

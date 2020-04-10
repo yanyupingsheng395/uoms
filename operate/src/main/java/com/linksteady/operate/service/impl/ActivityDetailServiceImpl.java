@@ -30,8 +30,8 @@ public class ActivityDetailServiceImpl implements ActivityDetailService {
     }
 
     @Override
-    public List<ActivityDetail> getPageList(int start, int end, Long planId) {
-        return activityDetailMapper.getPageList(start, end, planId);
+    public List<ActivityDetail> getPageList(int limit, int offset, Long planId) {
+        return activityDetailMapper.getPageList(limit,offset, planId);
     }
 
 }

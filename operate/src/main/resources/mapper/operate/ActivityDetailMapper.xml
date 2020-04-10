@@ -23,64 +23,58 @@
 
     <select id="getDataCount" resultType="int">
         select count(1) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
-        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID = #{planId}
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID = #{planId}::int4
     </select>
 
     <select id="getPageList" resultMap="base">
-        select * from (
-                          select t.*, ROWNUM rn
-                          from (select UO_OP_ACTIVITY_DETAIL.IS_PUSH,
-                                       to_char(UO_OP_ACTIVITY_DETAIL.PUSH_DATE, 'yyyy-mm-dd hh24:mi') PUSH_DATE_STR,
-                                       UO_OP_ACTIVITY_DETAIL.PUSH_STATUS,
-                                       UO_OP_ACTIVITY_DETAIL.EPB_PRODUCT_NAME,
-                                       UO_OP_ACTIVITY_DETAIL.EPB_PRODUCT_ID,
-                                       UO_OP_ACTIVITY_DETAIL.USER_ID,
-                                       UO_OP_ACTIVITY_DETAIL.GROUP_ID,
-                                       UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
-                                       UO_OP_ACTIVITY_DETAIL.HEAD_ID,
-                                       UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID,
-                                       UO_OP_ACTIVITY_DETAIL.REC_PIECE_PRICE,
-                                       UO_OP_ACTIVITY_DETAIL.ACTIVITY_STAGE,
-                                       UO_OP_ACTIVITY_DETAIL.ORDER_PERIOD,
-                                       UO_OP_ACTIVITY_PLAN_GROUP.GROUP_NAME,
-                                       UO_OP_ACTIVITY_PLAN_GROUP.PROD_ACTIVITY_PROP,
-                                       UO_OP_ACTIVITY_DETAIL.PLAN_ID
-                                from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_PLAN_GROUP
-                               where
-                                     UO_OP_ACTIVITY_DETAIL.PLAN_ID=UO_OP_ACTIVITY_PLAN_GROUP.PLAN_ID
-                                AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_PLAN_GROUP.GROUP_ID
-                                AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
-                                AND  UO_OP_ACTIVITY_PLAN_GROUP.CHECK_FLAG='Y'
-                                ORDER BY UO_OP_ACTIVITY_DETAIL.GROUP_ID ASC,UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID ASC) t
-                          where ROWNUM &lt;= #{end}
-                      ) where RN &gt;= #{start}
+        select UO_OP_ACTIVITY_DETAIL.IS_PUSH,
+               to_char(UO_OP_ACTIVITY_DETAIL.PUSH_DATE, 'yyyy-mm-dd hh24:mi') PUSH_DATE_STR,
+               UO_OP_ACTIVITY_DETAIL.PUSH_STATUS,
+               UO_OP_ACTIVITY_DETAIL.EPB_PRODUCT_NAME,
+               UO_OP_ACTIVITY_DETAIL.EPB_PRODUCT_ID,
+               UO_OP_ACTIVITY_DETAIL.USER_ID,
+               UO_OP_ACTIVITY_DETAIL.GROUP_ID,
+               UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
+               UO_OP_ACTIVITY_DETAIL.HEAD_ID,
+               UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID,
+               UO_OP_ACTIVITY_DETAIL.REC_PIECE_PRICE,
+               UO_OP_ACTIVITY_DETAIL.ACTIVITY_STAGE,
+               UO_OP_ACTIVITY_DETAIL.ORDER_PERIOD,
+               UO_OP_ACTIVITY_PLAN_GROUP.GROUP_NAME,
+               UO_OP_ACTIVITY_PLAN_GROUP.PROD_ACTIVITY_PROP,
+               UO_OP_ACTIVITY_DETAIL.PLAN_ID
+        from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_PLAN_GROUP
+        where
+             UO_OP_ACTIVITY_DETAIL.PLAN_ID=UO_OP_ACTIVITY_PLAN_GROUP.PLAN_ID
+        AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_PLAN_GROUP.GROUP_ID
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}::int4
+        AND  UO_OP_ACTIVITY_PLAN_GROUP.CHECK_FLAG='Y'
+        ORDER BY UO_OP_ACTIVITY_DETAIL.GROUP_ID ASC,UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID ASC
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="selectContentNulls" resultType="int">
         SELECT count(*) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
-        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId} AND D.SMS_CONTENT IS NULL
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId}::int4 AND D.SMS_CONTENT IS NULL
     </select>
 
     <select id="selectContentLimit" resultType="int">
         SELECT count(*) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
-        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y'  AND D.PLAN_ID=#{planId}  AND LENGTH(SMS_CONTENT)>#{limit}
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y'  AND D.PLAN_ID=#{planId}::int4  AND LENGTH(SMS_CONTENT)>#{limit}
     </select>
 
     <select id="selectContentVariable" resultType="int">
         SELECT count(*) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
-        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId}  AND  INSTR(SMS_CONTENT,'$')>0
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId}::int4  AND  INSTR(SMS_CONTENT,'$')>0
     </select>
 
     <select id="selectPushScheduleNulls" resultType="int">
         SELECT count(*) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
-        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId}  AND  PUSH_SCHEDULING_DATE IS NULL
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId}::int4  AND  PUSH_SCHEDULING_DATE IS NULL
     </select>
 
     <select id="selectPushScheduleInvalid" resultType="int">
         SELECT count(*) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
-        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId}  AND  LENGTH(PUSH_SCHEDULING_DATE)!=12
+        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID=#{planId}::int4  AND  LENGTH(PUSH_SCHEDULING_DATE)!=12
     </select>
-
-
-
 </mapper>

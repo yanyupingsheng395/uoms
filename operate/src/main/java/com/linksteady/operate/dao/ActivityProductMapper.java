@@ -12,7 +12,7 @@ public interface ActivityProductMapper {
 
     int getCount(String headId, String productId, String productName, String groupId);
 
-    List<ActivityProduct> getActivityProductListPage(int start, int end, String headId, String productId, String productName, String groupId);
+    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId);
 
     void saveDataList(List<ActivityProduct> productList);
 

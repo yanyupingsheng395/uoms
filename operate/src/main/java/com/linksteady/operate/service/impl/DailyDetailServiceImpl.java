@@ -55,8 +55,8 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      * @return
      */
     @Override
-    public List<DailyDetail> getPageList(int start, int end, String headId, String userValue, String pathActive) {
-        return dailyDetailMapper.getPageList(start, end, headId, userValue, pathActive);
+    public List<DailyDetail> getPageList(int limit, int offset, String headId, String userValue, String pathActive) {
+        return dailyDetailMapper.getPageList(limit,offset, headId, userValue, pathActive);
     }
 
     /**

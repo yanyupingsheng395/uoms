@@ -86,8 +86,8 @@ public class ActivityPlanController {
      */
     @GetMapping("/getPlanSmsStatis")
     public ResponseBo getPlanSmsStatis(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         long planId = Long.parseLong(request.getParam().get("planId"));
         ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
         if(null==activityPlan)
@@ -95,8 +95,7 @@ public class ActivityPlanController {
             return ResponseBo.error();
         }
         int count=activityPlanService.getPlanSmsContentListCount(planId);
-        List smsStatis = activityPlanService.getPlanSmsContentList(planId,start,end);
-
+        List smsStatis = activityPlanService.getPlanSmsContentList(planId,limit,offset);
         return  ResponseBo.okOverPaging(null, count, smsStatis);
     }
 
@@ -108,11 +107,11 @@ public class ActivityPlanController {
      */
     @GetMapping("/getDetailPage")
     public ResponseBo getDetailPage(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         long planId = Long.parseLong(request.getParam().get("planId"));
         int count = activityDetailService.getDataCount(planId);
-        List<ActivityDetail>  dataList = activityDetailService.getPageList(start, end, planId);
+        List<ActivityDetail>  dataList = activityDetailService.getPageList(limit,offset, planId);
 
         return ResponseBo.okOverPaging(null, count, dataList);
     }
@@ -302,10 +301,10 @@ public class ActivityPlanController {
      */
     @GetMapping("/getPersonalPlanEffect")
     public ResponseBo getDailyPersonalEffect(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         Long planId = Long.parseLong(request.getParam().get("planId"));
-        List<ActivityPersonal> personals = activityPlanService.getPersonalPlanEffect(start, end, planId);
+        List<ActivityPersonal> personals = activityPlanService.getPersonalPlanEffect(limit,offset, planId);
         int count = activityPlanService.getDailyPersonalEffectCount(planId);
         return ResponseBo.okOverPaging(null, count, personals);
     }

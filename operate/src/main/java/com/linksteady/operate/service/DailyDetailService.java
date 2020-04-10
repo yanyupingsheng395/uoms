@@ -21,7 +21,7 @@ public interface DailyDetailService {
      * @param pathActive
      * @return
      */
-    List<DailyDetail> getPageList(int start, int end, String headId, String userValue, String pathActive);
+    List<DailyDetail> getPageList(int limit, int offset, String headId, String userValue, String pathActive);
 
     /**
      * 每日运营明细记录数
@@ -39,7 +39,7 @@ public interface DailyDetailService {
      * @param headId
      * @return
      */
-    List<DailyDetail> getStrategyPageList(int start, int end, String headId);
+    List<DailyDetail> getStrategyPageList(int limit, int offset, String headId);
 
     /**
      * 策略列表记录数

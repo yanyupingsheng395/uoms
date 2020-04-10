@@ -39,11 +39,11 @@ public class TransActivityContentThread  implements Callable {
             ActivityPushMapper activityPushMapper= (ActivityPushMapper) SpringContextUtils.getBean("activityPushMapper");
             ActivityPushServiceImpl activityPushService = (ActivityPushServiceImpl) SpringContextUtils.getBean("activityPushServiceImpl");
 
-            list = activityPushMapper.getPushList(start, end,planId);
+            list = activityPushMapper.getPushList(end - start + 1,start-1,planId);
 
             //转换文案
             List<ActivityContentVO> targetList = activityPushService.processVariable(list,templateMap,prodPriceMap);
-            log.info("{}的第{}-{}调记录处理完成",planId,start,end);
+            log.info("{}的第{}-{}调记录处理完成",planId,start, end);
             return targetList;
         } catch (Exception e) {
             //错误日志上报

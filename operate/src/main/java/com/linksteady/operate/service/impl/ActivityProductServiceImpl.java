@@ -57,8 +57,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 
     @Override
-    public List<ActivityProduct> getActivityProductListPage(int start, int end, String headId, String productId, String productName, String groupId) {
-        return activityProductMapper.getActivityProductListPage(start, end, headId, productId, productName, groupId);
+    public List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId) {
+        return activityProductMapper.getActivityProductListPage(limit,offset, headId, productId, productName, groupId);
     }
 
     @Override

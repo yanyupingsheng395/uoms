@@ -22,8 +22,8 @@ public class BlackServiceImpl implements BlackService {
     private BlackMapper blackMapper;
 
     @Override
-    public List<BlackInfo> getDataList(String phone, int start, int end) {
-        return blackMapper.getDataList(phone, start, end);
+    public List<BlackInfo> getDataList(String phone, int limit, int offset) {
+        return blackMapper.getDataList(phone, limit,offset);
     }
 
     @Override

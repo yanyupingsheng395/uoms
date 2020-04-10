@@ -45,8 +45,8 @@ public class ManualPushServiceImpl implements ManualPushService {
     }
 
     @Override
-    public List<ManualHeader> getHeaderListData(int start, int end, String scheduleDate) {
-        return manualHeaderMapper.getHeaderListData(start, end, scheduleDate);
+    public List<ManualHeader> getHeaderListData(int limit, int offset, String scheduleDate) {
+        return manualHeaderMapper.getHeaderListData(limit,offset, scheduleDate);
     }
 
     @Override
@@ -133,11 +133,13 @@ public class ManualPushServiceImpl implements ManualPushService {
                 int start = i * pageSize;
                 int end = (i + 1) * pageSize - 1;
                 end = Math.min(end, totalSize);
+                int limit = start;
+                int offset = end - start + 1;
                 List<ManualDetail> tmpList;
                 if(end == totalSize) {
-                    tmpList = manualDetails.subList(start, end);
+                    tmpList = manualDetails.subList(limit,offset);
                 }else {
-                    tmpList = manualDetails.subList(start, end + 1);
+                    tmpList = manualDetails.subList(limit,offset + 1);
                 }
                 if(tmpList.size() > 0) {
                     manualDetailMapper.saveDetailList(tmpList);

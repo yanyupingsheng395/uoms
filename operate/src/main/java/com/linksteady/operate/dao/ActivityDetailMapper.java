@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public interface ActivityDetailMapper {
 
-    List<ActivityDetail> getPageList(int start, int end, Long  planId);
+    List<ActivityDetail> getPageList(int limit, int offset, Long  planId);
 
     int getDataCount(Long planId);
 

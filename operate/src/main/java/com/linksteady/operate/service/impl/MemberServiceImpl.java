@@ -26,13 +26,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberHead> getHeadListPage(int start, int end, String date) {
-        return memberMapper.getHeadListPage(start, end, date) ;
+    public List<MemberHead> getHeadListPage(int limit, int offset, String date) {
+        return memberMapper.getHeadListPage(limit,offset, date) ;
     }
 
     @Override
-    public List<MemberDetail> getDetailListPage(String headId, int start, int end, String userValue, String pathActive, String brandDeep, String joinRate) {
-        return memberMapper.getDetailListPage(headId, start, end, userValue, pathActive, brandDeep, joinRate);
+    public List<MemberDetail> getDetailListPage(String headId, int limit, int offset, String userValue, String pathActive, String brandDeep, String joinRate) {
+        return memberMapper.getDetailListPage(headId, limit,offset, userValue, pathActive, brandDeep, joinRate);
     }
 
     @Override

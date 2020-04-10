@@ -48,7 +48,7 @@ public interface ActivityPlanService {
     /**
      * 获取按消息内容的统计信息
      */
-    List<SmsStatisVO> getPlanSmsContentList(Long planId, int start, int end);
+    List<SmsStatisVO> getPlanSmsContentList(Long planId, int limit, int offset);
 
     /**
      * 获取执行计划
@@ -65,7 +65,7 @@ public interface ActivityPlanService {
      */
     Map<String, Object> getPlanEffectTrend(Long planId);
 
-    List<ActivityPersonal> getPersonalPlanEffect(int start, int end, Long planId);
+    List<ActivityPersonal> getPersonalPlanEffect(int limit, int offset, Long planId);
 
     int getDailyPersonalEffectCount(Long planId);
 

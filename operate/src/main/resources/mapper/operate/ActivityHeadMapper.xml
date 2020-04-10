@@ -20,26 +20,23 @@
     </resultMap>
 
     <select id="getDataListOfPage" resultMap="baseResult">
-        select * from (
-          select t.*, ROWNUM rn from (
-            select HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyymmdd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyymmdd') PREHEAT_END_DT, FORMAL_STATUS,
-            to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT,
-            to_char(PREHEAT_NOTIFY_DT, 'yyyymmdd') PREHEAT_NOTIFY_DT, to_char(FORMAL_NOTIFY_DT, 'yyyymmdd') FORMAL_NOTIFY_DT,
-            FORMAL_NOTIFY_STATUS, PREHEAT_NOTIFY_STATUS,EFFECT_FLAG
-            from UO_OP_ACTIVITY_HEADER where 1=1
-            <if test="name != '' and name != null">
-                and ACTIVITY_NAME = #{name}
-            </if>
+        select HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyymmdd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyymmdd') PREHEAT_END_DT, FORMAL_STATUS,
+        to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT,
+        to_char(PREHEAT_NOTIFY_DT, 'yyyymmdd') PREHEAT_NOTIFY_DT, to_char(FORMAL_NOTIFY_DT, 'yyyymmdd') FORMAL_NOTIFY_DT,
+        FORMAL_NOTIFY_STATUS, PREHEAT_NOTIFY_STATUS,EFFECT_FLAG
+        from UO_OP_ACTIVITY_HEADER where 1=1
+        <if test="name != '' and name != null">
+            and ACTIVITY_NAME = #{name}
+        </if>
         <if test="date != '' and date != null">
-            and ((trunc(PREHEAT_START_DT, 'dd') &lt;= to_date(#{date}, 'yyyy-mm-dd') and trunc(PREHEAT_END_DT, 'dd') &gt;= to_date(#{date}, 'yyyy-mm-dd'))
-             or (trunc(FORMAL_START_DT, 'dd') &lt;= to_date(#{date}, 'yyyy-mm-dd') and trunc(FORMAL_END_DT, 'dd') &gt;= to_date(#{date}, 'yyyy-mm-dd')))
+            and ((date_trunc('day', PREHEAT_START_DT) &lt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')) and date_trunc('day', PREHEAT_END_DT) &gt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')))
+             or (date_trunc('day', FORMAL_START_DT) &lt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')) and date_trunc('day', FORMAL_END_DT) &gt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd'))))
         </if>
         <if test="status != '' and status != null">
             and (PREHEAT_STATUS = #{status} or FORMAL_STATUS = #{status})
         </if>
-            order by HEAD_ID desc
-          ) t where ROWNUM &lt;=#{end}
-        ) where RN &gt;= #{start}
+        order by HEAD_ID desc
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="getDataCount" resultType="int">
@@ -66,27 +63,31 @@
            FORMAL_NOTIFY_STATUS,
            PREHEAT_NOTIFY_STATUS
         from UO_OP_ACTIVITY_HEADER
-        where HEAD_ID = #{headId}
+        where HEAD_ID = #{headId}::int4
     </select>
 
     <insert id="saveActivityHead">
+        <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="headId">
+            select nextval('uo_op_activity_head_id_seq')
+        </selectKey>
         insert into UO_OP_ACTIVITY_HEADER(
-            ACTIVITY_NAME,
-            HAS_PREHEAT,
-            PREHEAT_STATUS,
-            PREHEAT_START_DT,
-            PREHEAT_END_DT,
-            FORMAL_STATUS,
-            FORMAL_START_DT,
-            FORMAL_END_DT,
-            INSERT_DT,
-            INSERT_BY,
-            PREHEAT_NOTIFY_DT,
-            FORMAL_NOTIFY_DT,
-            FORMAL_NOTIFY_STATUS,
-            PREHEAT_NOTIFY_STATUS,
-            ACTIVITYFLAG)
-        values (#{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
+        HEAD_ID,
+        ACTIVITY_NAME,
+        HAS_PREHEAT,
+        PREHEAT_STATUS,
+        PREHEAT_START_DT,
+        PREHEAT_END_DT,
+        FORMAL_STATUS,
+        FORMAL_START_DT,
+        FORMAL_END_DT,
+        INSERT_DT,
+        INSERT_BY,
+        PREHEAT_NOTIFY_DT,
+        FORMAL_NOTIFY_DT,
+        FORMAL_NOTIFY_STATUS,
+        PREHEAT_NOTIFY_STATUS,
+        ACTIVITYFLAG)
+        values (#{headId},#{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
         #{insertDt}, #{insertBy}, to_date(#{preheatNotifyDt}, 'yyyy-mm-dd'), to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{formalNotifyStatus}, #{preheatNotifyStatus},#{activityflag})
     </insert>
 
@@ -100,21 +101,21 @@
         FORMAL_STATUS = #{formalStatus},
         FORMAL_START_DT = to_date(#{formalStartDt}, 'yyyy-mm-dd'),
         FORMAL_END_DT = to_date(#{formalEndDt}, 'yyyy-mm-dd')
-        where HEAD_ID = #{headId}
+        where HEAD_ID = #{headId}::int4
     </update>
 
     <select id="getActivityName" resultType="string">
-        select ACTIVITY_NAME from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
+        select ACTIVITY_NAME from UO_OP_ACTIVITY_HEADER where head_id = #{headId}::int4
     </select>
 
     <select id="getActivityStatus" resultType="int">
         select count(1) from UO_OP_ACTIVITY_HEADER
-        where head_id = #{id} and (PREHEAT_STATUS in ('todo', 'doing', 'done') or FORMAL_STATUS in ('todo', 'doing', 'done') or
+        where head_id = #{id}::int4 and (PREHEAT_STATUS in ('todo', 'doing', 'done') or FORMAL_STATUS in ('todo', 'doing', 'done') or
         PREHEAT_NOTIFY_STATUS in ('todo', 'doing', 'done') or FORMAL_NOTIFY_STATUS in ('todo', 'doing', 'done'))
     </select>
 
     <select id="getPreheatStatus" resultType="string">
-        select PREHEAT_STATUS from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
+        select PREHEAT_STATUS from UO_OP_ACTIVITY_HEADER where head_id = #{headId}::int4
     </select>
 
     <update id="updateGroupChanged">
@@ -131,28 +132,28 @@
         <if test="stage == 'formal'">
             FORMAL_CHANGED status, FORMAL_CHANGED_TIME systime
         </if>
-        from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}
+        from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}::int4
     </select>
 
     <delete id="deleteActivity">
-        delete from UO_OP_ACTIVITY_HEADER where head_id = #{headId}
+        delete from UO_OP_ACTIVITY_HEADER where head_id = #{headId}::int4
     </delete>
 
     <select id="getDeleteCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId} and ((HAS_PREHEAT = '1' and FORMAL_STATUS = 'edit' and PREHEAT_STATUS = 'edit') or (HAS_PREHEAT = '0' and FORMAL_STATUS = 'edit'))
+        select count(1) from UO_OP_ACTIVITY_HEADER where HEAD_ID = #{headId}::int4 and ((HAS_PREHEAT = '1' and FORMAL_STATUS = 'edit' and PREHEAT_STATUS = 'edit') or (HAS_PREHEAT = '0' and FORMAL_STATUS = 'edit'))
     </select>
 
     <update id="updatePreheatStatusHead">
-        UPDATE UO_OP_ACTIVITY_HEADER H
+        UPDATE UO_OP_ACTIVITY_HEADER
         <set>
             <if test="planType!=null and planType=='NOTIFY'">
-                  H.PREHEAT_NOTIFY_STATUS=#{status},
+                  PREHEAT_NOTIFY_STATUS=#{status},
             </if>
             <if test="planType!=null and planType=='DURING'">
-                  H.PREHEAT_STATUS=#{status},
+                  PREHEAT_STATUS=#{status},
             </if>
         </set>
-    where h.head_id=#{headId}
+    where head_id=#{headId}::int4
     </update>
 
     <update id="updateFormalStatusHead">
@@ -165,7 +166,7 @@
                   H.FORMAL_STATUS=#{status},
             </if>
         </set>
-        where h.head_id=#{headId}
+        where h.head_id=#{headId}::int4
     </update>
 
     <update id="expirePreheatNotify">
@@ -173,7 +174,7 @@
         set t.preheat_notify_status = 'timeout'
         where t.has_preheat = '1'
             and t.preheat_notify_status = 'todo'
-            and trunc(sysdate) > trunc(t.preheat_notify_dt)
+            and now() > t.preheat_notify_dt::timestamp
     </update>
 
     <update id="expirePreheatDuring">
@@ -181,21 +182,21 @@
         set t.preheat_status = 'timeout'
         where t.has_preheat = '1'
             and t.preheat_status = 'todo'
-            and trunc(sysdate) > trunc(t.preheat_end_dt)
+            and now() > t.preheat_end_dt::timestamp
     </update>
 
     <update id="expireFormalNotify">
         update uo_op_activity_header t
         set t.formal_notify_status = 'timeout'
         where t.formal_notify_status = 'todo'
-          and trunc(sysdate) > trunc(t.formal_notify_dt)
+          and now() > t.formal_notify_dt::timestamp
     </update>
 
     <update id="expireFormalDuring">
         update uo_op_activity_header t
         set t.formal_status = 'timeout'
         where t.formal_status = 'todo'
-            and trunc(sysdate) > trunc(t.formal_end_dt)
+            and now() > t.formal_end_dt::timestamp
     </update>
 
 </mapper>

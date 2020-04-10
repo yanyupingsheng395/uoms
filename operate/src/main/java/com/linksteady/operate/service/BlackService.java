@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface BlackService {
 
-    List<BlackInfo> getDataList(String phone, int start, int end);
+    List<BlackInfo> getDataList(String phone, int limit, int offset);
 
     int getCount(String phone);
 
