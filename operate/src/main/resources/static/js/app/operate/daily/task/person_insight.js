@@ -6,7 +6,7 @@ function getUserSpu(userId) {
     $.get("/insight/getUserSpu", {userId: userId}, function (r) {
         let code = "";
         r.data.forEach((v,k)=> {
-            code += "<option value='"+v['SPU_WID']+"'>" + v['SPU_NAME'] + "</option>";
+            code += "<option value='"+v['spu_wid']+"'>" + v['spu_name'] + "</option>";
         });
         $("#spuId").html('').append(code);
         $("#spuId").select2({
@@ -385,14 +385,14 @@ function getGrowthUserTable(userId, spuId) {
             code += "<tbody>";
             r.data.forEach((v,k)=>{
                 if(k < 3) {
-                    if(!flag && v['ACTIVE_DUAL'] > dual) {
+                    if(!flag && v['active_dual'] > dual) {
                         flag = true;
-                        code += "<tr style='background-color: #FFEFD5'><td>"+v['ACTIVE_TYPE']+"</td><td>"+v['ACTIVE_DUAL']+"</td><td>"+v['PROB']+"</td><td>"+v['LAST_BUY_DT']+"</td><td>"+v['GROWTH_DT']+"</td></tr>";
+                        code += "<tr style='background-color: #FFEFD5'><td>"+v['active_type']+"</td><td>"+v['active_dual']+"</td><td>"+v['prob']+"</td><td>"+v['last_buy_dt']+"</td><td>"+v['growth_dt']+"</td></tr>";
                     }else {
-                        code += "<tr><td>"+v['ACTIVE_TYPE']+"</td><td>"+v['ACTIVE_DUAL']+"</td><td>"+v['PROB']+"</td><td>"+v['LAST_BUY_DT']+"</td><td>"+v['GROWTH_DT']+"</td></tr>";
+                        code += "<tr><td>"+v['active_type']+"</td><td>"+v['active_dual']+"</td><td>"+v['prob']+"</td><td>"+v['last_buy_dt']+"</td><td>"+v['growth_dt']+"</td></tr>";
                     }
                 }else {
-                    code += "<tr style='background-color: #ccc'><td>"+v['ACTIVE_TYPE']+"</td><td>"+v['ACTIVE_DUAL']+"</td><td>"+v['PROB']+"</td><td>"+v['LAST_BUY_DT']+"</td><td>"+v['GROWTH_DT']+"</td></tr>";
+                    code += "<tr style='background-color: #ccc'><td>"+v['active_type']+"</td><td>"+v['active_dual']+"</td><td>"+v['prob']+"</td><td>"+v['LAST_BUY_DT']+"</td><td>"+v['growth_dt']+"</td></tr>";
                 }
             });
             code += "</tbody>";

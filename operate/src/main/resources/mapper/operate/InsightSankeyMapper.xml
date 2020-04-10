@@ -3,7 +3,7 @@
 <mapper namespace="com.linksteady.operate.dao.InsightSankeyMapper">
 
     <select id="getLinkInfo" resultType="map">
-        select source_name,target_name, user_cnt, S_RN, SOURCE_SPU_ID from UO_INSIGHT_SANKEY t where s_rn &lt;=7 and DATE_RANGE = #{dateRange} and data_type = 'C'   ORDER BY S_RN ASC,SOURCE_SPU_ID ASC
+        select source_name,target_name, user_cnt, S_RN, SOURCE_SPU_ID from UO_INSIGHT_SANKEY t where s_rn &lt;=7 and DATE_RANGE = #{dateRange}::int4 and data_type = 'C'   ORDER BY S_RN ASC,SOURCE_SPU_ID ASC
     </select>
 
     <select id="getNodeInfo" resultType="map">
@@ -13,7 +13,7 @@
         FROM UO_INSIGHT_SANKEY T
         WHERE S_RN &lt;= 7
         AND DATA_TYPE = 'C'
-        AND DATE_RANGE = #{dateRange}
+        AND DATE_RANGE = #{dateRange}::int4
         ) v1,
         (
         SELECT v1.T_RN,
@@ -29,7 +29,7 @@
         SUM(CASE WHEN DATA_TYPE = 'B' THEN USER_CNT ELSE 0 END) B_USER_CNT,
         SUM(CASE WHEN DATA_TYPE = 'C' THEN USER_CNT ELSE 0 END) C_USER_CNT
         FROM UO_INSIGHT_SANKEY
-        WHERE DATE_RANGE = #{dateRange}
+        WHERE DATE_RANGE = #{dateRange}::int4
         GROUP BY T_RN, TARGET_SPU_ID order by t_rn asc
         ) v1,
         (
@@ -38,7 +38,7 @@
         SUM(CASE WHEN DATA_TYPE = 'B' THEN USER_CNT ELSE 0 END) B_USER_CNT,
         SUM(CASE WHEN DATA_TYPE = 'C' THEN USER_CNT ELSE 0 END) C_USER_CNT
         FROM UO_INSIGHT_SANKEY
-        WHERE DATE_RANGE = #{dateRange}
+        WHERE DATE_RANGE = #{dateRange}::int4
         GROUP BY T_RN
         ) v2
         WHERE v1.T_RN = v2.T_RN
@@ -56,7 +56,7 @@
         FROM UO_INSIGHT_SANKEY T
         WHERE S_RN = 1
         AND DATA_TYPE = 'C'
-        AND DATE_RANGE = #{dateRange}
+        AND DATE_RANGE = #{dateRange}::int4
         ) v1,
         (
         SELECT v1.S_RN,
@@ -72,7 +72,7 @@
         SUM(CASE WHEN DATA_TYPE = 'B' THEN USER_CNT ELSE 0 END) B_USER_CNT,
         SUM(CASE WHEN DATA_TYPE = 'C' THEN USER_CNT ELSE 0 END) C_USER_CNT
         FROM UO_INSIGHT_SANKEY
-        WHERE DATE_RANGE = #{dateRange}
+        WHERE DATE_RANGE = #{dateRange}::int4
         GROUP BY S_RN, SOURCE_SPU_ID
         ) v1,
         (
@@ -81,7 +81,7 @@
         SUM(CASE WHEN DATA_TYPE = 'B' THEN USER_CNT ELSE 0 END) B_USER_CNT,
         SUM(CASE WHEN DATA_TYPE = 'C' THEN USER_CNT ELSE 0 END) C_USER_CNT
         FROM UO_INSIGHT_SANKEY
-        WHERE DATE_RANGE = #{dateRange}
+        WHERE DATE_RANGE = #{dateRange}::int4
         GROUP BY S_RN
         ) v2
         WHERE v1.S_RN = v2.S_RN

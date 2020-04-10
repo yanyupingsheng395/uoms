@@ -109,23 +109,23 @@ public class InsightServiceImpl implements InsightService {
         if (null != sortColumn) {
             switch (sortColumn) {
                 case "contributeRate":
-                    orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, CONTRIBUTE_RATE " + sortOrder + ", SPU_ID " + sortOrder);
+                    orderSql.append("order by case when SPU_ID = '" + spuId + "' then 1 else 0 end desc, CONTRIBUTE_RATE " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 case "nextPurchProbal":
-                    orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, NEXT_PURCH_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
+                    orderSql.append("order by case when SPU_ID = '" + spuId + "' then 1 else 0 end desc, NEXT_PURCH_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 case "sameSpuProbal":
-                    orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, SAME_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
+                    orderSql.append("order by case when SPU_ID = '" + spuId + "' then 1 else 0 end desc, SAME_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 case "otherSpuProbal":
-                    orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, OTHER_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
+                    orderSql.append("order by case when SPU_ID = '" + spuId + "' then 1 else 0 end desc, OTHER_SPU_PROBAL " + sortOrder + ", SPU_ID " + sortOrder);
                     break;
                 default:
-                    orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, CONTRIBUTE_RATE desc, SPU_ID asc");
+                    orderSql.append("order by case when SPU_ID = '" + spuId + "' then 1 else 0 end desc, CONTRIBUTE_RATE desc, SPU_ID asc");
                     break;
             }
         } else {
-            orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, CONTRIBUTE_RATE desc, SPU_ID asc");
+            orderSql.append("order by case when SPU_ID = '" + spuId + "' then 1 else 0 end desc, CONTRIBUTE_RATE desc, SPU_ID asc");
         }
         final List<InsightImportSpu> importSpuList = insightImportSpuMapper.findImportSpuList(limit,offset, purchOrder, dateRange, orderSql.toString(), spuId);
         InsightImportSpu avg = insightImportSpuMapper.findAvgImportSpu(purchOrder, dateRange);
@@ -149,19 +149,19 @@ public class InsightServiceImpl implements InsightService {
         List<Map<String, Object>> nodeList = sankeyMapper.getNodeInfo(dateRange);
         // 获取node节点基本数据
         List<Map<String, Object>> nodeNameArray = Lists.newArrayList();
-        List<String> nameLists = nodeList.stream().map(x -> x.get("TARGET_NAME").toString()).collect(Collectors.toList());
+        List<String> nameLists = nodeList.stream().map(x -> x.get("target_name").toString()).collect(Collectors.toList());
         nodeList.stream().forEach(x -> {
             Map<String, Object> node = Maps.newHashMap();
             node.put("id", String.valueOf(nodeList.indexOf(x)));
-            node.put("name", x.get("TARGET_NAME"));
+            node.put("name", x.get("target_name"));
             // 当日用户数量
-            node.put("cUserCnt", x.get("C_USER_CNT").toString());
+            node.put("cUserCnt", x.get("c_user_cnt").toString());
             // 30日用户数量
-            node.put("bUserCnt", x.get("B_USER_CNT").toString());
+            node.put("bUserCnt", x.get("b_user_cnt").toString());
             // 当日用户数量占比
-            node.put("cUserPercent", x.get("C_RATE").toString());
+            node.put("cUserPercent", x.get("c_rate").toString());
             // 30日用户数量占比
-            node.put("bUserPercent", x.get("B_RATE").toString());
+            node.put("bUserPercent", x.get("b_rate").toString());
             nodeNameArray.add(node);
         });
         data.put("nodes", nodeNameArray);
@@ -170,9 +170,9 @@ public class InsightServiceImpl implements InsightService {
         List<Map<String, Object>> linkArray = Lists.newArrayList();
         linkList.stream().forEach(x -> {
             Map<String, Object> linkObject = Maps.newHashMap();
-            linkObject.put("source", nameLists.indexOf(x.get("SOURCE_NAME").toString()));
-            linkObject.put("target", nameLists.indexOf(x.get("TARGET_NAME").toString()));
-            linkObject.put("value", ((BigDecimal) x.get("USER_CNT")).longValue());
+            linkObject.put("source", nameLists.indexOf(x.get("source_name").toString()));
+            linkObject.put("target", nameLists.indexOf(x.get("target_name").toString()));
+            linkObject.put("value", x.get("user_cnt"));
             linkArray.add(linkObject);
         });
         data.put("links", linkArray);
@@ -369,16 +369,16 @@ public class InsightServiceImpl implements InsightService {
         List<Integer> ydataReduce = Lists.newArrayList();
         List<Map<String, Object>> mapList = insightMapper.getSpuRelation(spuId, purchOrder);
         if (!mapList.isEmpty()) {
-            String spuWid = (mapList.stream().findFirst().get().get("SPU_WID")).toString();
-            String spuName = (mapList.stream().findFirst().get().get("SPU_NAME")).toString();
-            Integer spuUserCnt = ((BigDecimal) mapList.stream().findFirst().get().get("SPU_CNT")).intValue();
+            String spuWid = (mapList.stream().findFirst().get().get("spu_wid")).toString();
+            String spuName = (mapList.stream().findFirst().get().get("spu_name")).toString();
+            Integer spuUserCnt = ((BigDecimal) mapList.stream().findFirst().get().get("spu_cnt")).intValue();
             xdata.add(spuName);
             ebpProductIdList.add(spuWid);
             ydataActual.add(spuUserCnt);
             mapList.stream().forEach(x -> {
-                xdata.add(x.get("EBP_PRODUCT_NAME").toString());
-                ebpProductIdList.add(x.get("EBP_PRODUCT_ID").toString());
-                ydataActual.add(Integer.parseInt(x.get("PRODUCT_CNT").toString()));
+                xdata.add(x.get("ebp_product_name").toString());
+                ebpProductIdList.add(x.get("ebp_product_id").toString());
+                ydataActual.add(Integer.parseInt(x.get("product_cnt").toString()));
             });
             for (int i = 0; i < ydataActual.size(); i++) {
                 int tmp = 0;
@@ -389,7 +389,7 @@ public class InsightServiceImpl implements InsightService {
                 }
                 ydataReduce.add(tmp);
             }
-            Map<String, Object> convertMap = getProductConvertRate(mapList.stream().findFirst().get().get("EBP_PRODUCT_ID").toString(), spuId, purchOrder);
+            Map<String, Object> convertMap = getProductConvertRate(mapList.stream().findFirst().get().get("ebp_product_id").toString(), spuId, purchOrder);
             result.put("xdata2", convertMap.get("xdata"));
             result.put("ydata2", convertMap.get("ydata"));
             result.put("nextProductId", convertMap.get("nextProductId"));
@@ -412,9 +412,9 @@ public class InsightServiceImpl implements InsightService {
     public Map<String, Object> getProductConvertRate(String productId, String spuId, String purchOrder) {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> productConvertRate = insightMapper.getProductConvertRate(productId, spuId, purchOrder);
-        List<String> xdata = productConvertRate.stream().map(x -> x.get("EBP_PRODUCT_NAME").toString()).collect(Collectors.toList());
-        List<String> nextEbpProductIdList = productConvertRate.stream().map(x -> x.get("NEXT_EBP_PRODUCT_ID").toString()).collect(Collectors.toList());
-        List<String> ydata = productConvertRate.stream().map(x -> x.get("CONVERT_RATE").toString()).collect(Collectors.toList());
+        List<String> xdata = productConvertRate.stream().map(x -> x.get("ebp_product_name").toString()).collect(Collectors.toList());
+        List<String> nextEbpProductIdList = productConvertRate.stream().map(x -> x.get("next_ebp_product_id").toString()).collect(Collectors.toList());
+        List<String> ydata = productConvertRate.stream().map(x -> x.get("convert_rate").toString()).collect(Collectors.toList());
 
         final int i = xdata.indexOf("其他");
         if (i > -1) {
@@ -669,16 +669,16 @@ public class InsightServiceImpl implements InsightService {
         List<Integer> ydataReduce = Lists.newArrayList();
         List<Map<String, Object>> mapList = insightMapper.getSpuRelation(spuId, buyOrder);
         if (!mapList.isEmpty()) {
-            String spuWid = (mapList.stream().findFirst().get().get("SPU_WID")).toString();
-            String spuName = (mapList.stream().findFirst().get().get("SPU_NAME")).toString();
-            Integer spuUserCnt = ((BigDecimal) mapList.stream().findFirst().get().get("SPU_CNT")).intValue();
+            String spuWid = (mapList.stream().findFirst().get().get("spu_wid")).toString();
+            String spuName = (mapList.stream().findFirst().get().get("spu_name")).toString();
+            Integer spuUserCnt = ((BigDecimal) mapList.stream().findFirst().get().get("spu_cnt")).intValue();
             xdata.add(spuName);
             ebpProductIdList.add(spuWid);
             ydataActual.add(spuUserCnt);
             mapList.stream().forEach(x -> {
-                xdata.add(x.get("EBP_PRODUCT_NAME").toString());
-                ebpProductIdList.add(x.get("EBP_PRODUCT_ID").toString());
-                ydataActual.add(Integer.parseInt(x.get("PRODUCT_CNT").toString()));
+                xdata.add(x.get("ebp_product_name").toString());
+                ebpProductIdList.add(x.get("ebp_product_id").toString());
+                ydataActual.add(Integer.parseInt(x.get("product_cnt").toString()));
             });
             for (int i = 0; i < ydataActual.size(); i++) {
                 int tmp = 0;
@@ -692,7 +692,7 @@ public class InsightServiceImpl implements InsightService {
 
             // 根据用户Id获取ebpProductId
             Map<String, String> ebpProductMap = insightMapper.getEbpProductIdByUserId(userId, spuId, buyOrder);
-            String ebpProductId = ebpProductMap.get("EBP_PRODUCT_ID");
+            String ebpProductId = ebpProductMap.get("ebp_product_id");
             Map<String, Object> convertMap = getProductConvertRate(ebpProductId, spuId, buyOrder);
             result.put("xdata2", convertMap.get("xdata"));
             result.put("ydata2", convertMap.get("ydata"));
@@ -738,9 +738,9 @@ public class InsightServiceImpl implements InsightService {
         String lastBuyDt = insightMapper.getLastBuyDt(spuId, userId);
         LocalDate lastDt = LocalDate.parse(lastBuyDt, DateTimeFormatter.ofPattern(dateFormat));
         for (Map<String, String> x : userGrowthPathPointWithSpu) {
-            x.put("LAST_BUY_DT", lastBuyDt);
-            LocalDate active_dual = lastDt.plusDays(Long.parseLong(String.valueOf(x.get("ACTIVE_DUAL"))));
-            x.put("GROWTH_DT", active_dual.format(DateTimeFormatter.ofPattern(dateFormat)));
+            x.put("last_buy_dt", lastBuyDt);
+            LocalDate active_dual = lastDt.plusDays(Long.parseLong(String.valueOf(x.get("active_dual"))));
+            x.put("growth_dt", active_dual.format(DateTimeFormatter.ofPattern(dateFormat)));
         }
         return userGrowthPathPointWithSpu;
     }

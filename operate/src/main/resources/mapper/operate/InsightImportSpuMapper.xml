@@ -12,30 +12,26 @@
     </resultMap>
 
     <select id="findImportSpuList" resultMap="base">
-        select * from (
-        select t.*, rownum rn from (
         select SPU_ID, SPU_NAME, PURCH_ORDER, trunc(CONTRIBUTE_RATE, 2) CONTRIBUTE_RATE,trunc(NEXT_PURCH_PROBAL, 2)
         NEXT_PURCH_PROBAL,trunc(SAME_SPU_PROBAL, 2) SAME_SPU_PROBAL,trunc(OTHER_SPU_PROBAL, 2) OTHER_SPU_PROBAL from
         UO_INSIGHT_IMPORT_SPU
         where
-        date_range = #{dateRange}
+        date_range = #{dateRange}::int4
         <if test="purchOrder != null and purchOrder != ''">
-            and purch_order = #{purchOrder}
+            and purch_order = #{purchOrder}::int4
         </if>
         <if test="orderSql != null and orderSql != ''">
             ${orderSql}
         </if>
-        ) t
-        where rownum &lt;= #{end}
-        ) where rn &gt;= #{start}
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="findImportSpuListCount" resultType="int">
         select count(1) from UO_INSIGHT_IMPORT_SPU
         where
-        date_range = #{dateRange}
+        date_range = #{dateRange}::int4
         <if test="purchOrder != null and purchOrder != ''">
-            and purch_order = #{purchOrder}
+            and purch_order = #{purchOrder}::int4
         </if>
     </select>
 
@@ -43,9 +39,9 @@
         select '平均' SPU_NAME, trunc(avg(CONTRIBUTE_RATE), 2) CONTRIBUTE_RATE,trunc(avg(NEXT_PURCH_PROBAL), 2)
         NEXT_PURCH_PROBAL,trunc(avg(SAME_SPU_PROBAL), 2) SAME_SPU_PROBAL,trunc(avg(OTHER_SPU_PROBAL), 2) OTHER_SPU_PROBAL from
         UO_INSIGHT_IMPORT_SPU
-        where date_range = #{dateRange}
+        where date_range = #{dateRange}::int4
         <if test="purchOrder != null and purchOrder != ''">
-            and purch_order = #{purchOrder}
+            and purch_order = #{purchOrder}::int4
         </if>
     </select>
 </mapper>

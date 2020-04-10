@@ -82,7 +82,7 @@ function findSpuValueList() {
         sortOrder: "asc",
         queryParams: function (params) {
             return {
-                pageSize: params.limit,  ////页面大小
+                pageSize: params.limit,  // 页面大小
                 pageNum: (params.offset / params.limit) + 1,
                 sort: params.sort,
                 order: params.order,
@@ -655,7 +655,7 @@ function getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId) {
     $.get("/insight/getUserGrowthPath", {spuId:spuId, purchOrder:purchOrder, ebpProductId:ebpProductId, nextEbpProductId:nextProductId}, function (r) {
         let code = "";
         r.data.forEach((v,k)=>{
-            code += "<tr><td>"+v['ACTIVE_TYPE']+"</td><td>"+v['ACTIVE_DUAL']+"</td><td>"+v['PROB']+"</td><td>"+v['BEGIN']+"</td><td>"+v['END']+"</td></tr>";
+            code += "<tr><td>"+v['active_type']+"</td><td>"+v['active_dual']+"</td><td>"+v['prob']+"</td><td>"+v['dual_begin']+"</td><td>"+v['dual_end']+"</td></tr>";
         });
         if(code === "") {
             code = "<tr class='text-center'><td colspan='5'>没有找到匹配的记录</td></tr>";
@@ -1043,7 +1043,7 @@ function getSpuName() {
     $.get("/insight/findSpuByPurchOrder", {purchOrder: purchOrder}, function (r) {
         let code = "";
         r.data.forEach((v,k)=>{
-            code += "<option value='"+v['ID']+"'>"+v['NAME']+"</option>";
+            code += "<option value='"+v['id']+"'>"+v['name']+"</option>";
         });
         $("#spuName").html('').append(code);
 
@@ -1066,7 +1066,7 @@ function getPathSpu() {
     $.get("/insight/getPathSpu", {}, function (r) {
         let code = "";
         r.data.forEach((v,k)=> {
-            code += "<option value='"+v['SPU_WID']+"'>" + v['SPU_NAME'] + "</option>";
+            code += "<option value='"+v['spu_wid']+"'>" + v['spu_name'] + "</option>";
         });
         $("#convertSpu").html('').append(code);
         $("#convertSpu").select2({

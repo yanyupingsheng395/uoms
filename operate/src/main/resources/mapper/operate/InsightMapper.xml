@@ -9,12 +9,12 @@
     </resultMap>
 
     <select id="getSpuTree" resultMap="base">
-        select SPU_WID id, SPU_NAME name from W_PRODUCT_SPU
+        select SPU_WID id, SPU_NAME as name from W_PRODUCT_SPU
     </select>
 
     <select id="getProductTree" resultMap="base">
-        select distinct ebp_product_id id, EBP_PRODUCT_NAME name from w_product
-        where SPU_WID = #{spuWid}
+        select distinct ebp_product_id id, EBP_PRODUCT_NAME as name from w_product
+        where SPU_WID = #{spuWid}::int4
     </select>
 
     <select id="retentionInPurchaseTimes" resultType="map">
@@ -26,12 +26,12 @@
         ON v1.PRODUCT_ID = v2.PRODUCT_ID
         where v1.VALID_STATUS = 1
         <if test="type == 'product'">
-            and v2.ebp_product_id = #{id}
+            and v2.ebp_product_id = #{id}::int4
         </if>
         <if test="type == 'spu'">
-            and v2.SPU_WID = #{id}
+            and v2.SPU_WID = #{id}::int4
         </if>
-        and v1.ORDER_DT_WID >= to_char(ADD_MONTHS(SYSDATE, #{period}), 'yyyymmdd') --如果是过去12个月则 为-12
+        and v1.ORDER_DT_WID >= to_char(now() + '${period}month', 'yyyymmdd')::int4 --如果是过去12个月则 为-12
         GROUP BY v1.USER_ID, v1.ORDER_DT, v1.ORDER_ID, v2.SPU_WID
         ),
 
@@ -76,11 +76,11 @@
                     and t2.ebp_product_id = #{id}
                 </if>
                 <if test="type == 'spu'">
-                    and t2.SPU_WID = #{id}
+                    and t2.SPU_WID = #{id}::int4
                 </if>
                AND t1.VALID_STATUS = 1
                AND t1.PRICE > 0
-               and t1.ORDER_DT_WID >= to_char(ADD_MONTHS(SYSDATE, #{period}), 'yyyymmdd') --如果是过去12个月则 为-12
+               and t1.ORDER_DT_WID >= to_char(now() + '${period}month', 'yyyymmdd')::int4 --如果是过去12个月则 为-12
                GROUP BY t2.SPU_WID, t1.USER_ID, ORDER_ID, ORDER_DT
            ) u
     ),
@@ -101,7 +101,7 @@
              GROUP BY
                 SPU_WID,
                 PURCH_TIMES
-         ) order by PURCH_TIMES asc
+         ) f order by PURCH_TIMES asc
     </select>
 
     <select id="joinRateInPurchaseTimes" resultType="map">
@@ -315,7 +315,7 @@
     </select>
 
     <select id="findSpuByPurchOrder" resultType="map">
-        select SPU_WID id, SPU_NAME name from W_PRODUCT_SPU
+        select SPU_WID id, SPU_NAME as name from W_PRODUCT_SPU
     </select>
 
     <!--获取top5人数的商品与spu关系图-->
@@ -325,28 +325,28 @@
         EBP_PRODUCT_ID,
         count(1) cnt
         FROM WP_USER_PATH
-        WHERE SPU_WID = #{spuId}
-        AND rn = #{purchOrder}
+        WHERE SPU_WID = #{spuId}::int4
+        AND rn = #{purchOrder}::int4
         and next_ebp_product_id is not null
         GROUP BY spu_wid, EBP_PRODUCT_ID
         order by cnt desc
         ),
         v2 as (
-        SELECT row_number() over (partition by v1.spu_wid ORDER BY v1.cnt DESC) row_num, v1.SPU_WID,
+        SELECT row_number() over (partition by v1.spu_wid ORDER BY v1.cnt DESC)                      row_num,
+        v1.SPU_WID,
         v1.EBP_PRODUCT_ID,
         v1.cnt                                                                                product_cnt,
         sum(v1.cnt) over ( partition BY v1.spu_wid )                                          spu_cnt,
         t2.spu_name                                                                           spu_name,
         (CASE WHEN EBP_PRODUCT_NAME IS NULL THEN v1.EBP_PRODUCT_ID ELSE EBP_PRODUCT_NAME END) EBP_PRODUCT_NAME
-        FROM v1,
-        w_product_spu t2,
-        W_PRODUCT_EBP t3
-        where v1.SPU_WID = t2.SPU_WID(+)
-        and v1.EBP_PRODUCT_ID = t3.EBP_PRODUCT_ID(+)
+        FROM v1
+        left join w_product_spu t2 on v1.SPU_WID = t2.SPU_WID
+        left join W_PRODUCT_EBP t3 on v1.EBP_PRODUCT_ID = t3.EBP_PRODUCT_ID::varchar
         order by v1.cnt desc
         ),
         v3 as (
-        select SPU_WID, row_num,
+        select SPU_WID,
+        row_num,
         (CASE WHEN row_num &lt;= 5 THEN EBP_PRODUCT_ID ELSE '-1' END)   EBP_PRODUCT_ID,
         PRODUCT_CNT,
         SPU_CNT,
@@ -354,22 +354,22 @@
         (CASE WHEN row_num &lt;= 5 THEN EBP_PRODUCT_NAME ELSE '其他' END) EBP_PRODUCT_NAME
         from v2
         )
-        select t.*, case when EBP_PRODUCT_NAME = '其他' then 10 else ROWNUM end order_col
+        select t.*
         from (select SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME, SUM(PRODUCT_CNT) PRODUCT_CNT, spu_cnt
         from v3
         GROUP BY SPU_WID, SPU_NAME, EBP_PRODUCT_ID, EBP_PRODUCT_NAME, spu_cnt
-        order by PRODUCT_CNT desc) t order by order_col asc
+        order by PRODUCT_CNT desc) t
     </select>
 
     <select id="getProductConvertRate" resultType="map">
         with g1 as (
-        SELECT spu_wid, count(1) next_product_cnt, NEXT_EBP_PRODUCT_ID
+        SELECT spu_wid, EBP_PRODUCT_ID,count(1) next_product_cnt, NEXT_EBP_PRODUCT_ID
         FROM WP_USER_PATH
-        WHERE SPU_WID = #{spuId}
-        AND rn = #{purchOrder}
+        WHERE SPU_WID = #{spuId}::integer
+        AND rn = #{purchOrder}::integer
         and EBP_PRODUCT_ID = #{productId}
         and NEXT_EBP_PRODUCT_ID is not null
-        GROUP BY spu_wid,
+        GROUP BY spu_wid,EBP_PRODUCT_ID,
         NEXT_EBP_PRODUCT_ID
         ),
         g2 as (
@@ -393,51 +393,49 @@
         next_product_cnt,
         convert_rate
         FROM (
-        select NEXT_EBP_PRODUCT_ID, rownum row_num,
-        (CASE WHEN rownum &lt;= 5 THEN EBP_PRODUCT_NAME ELSE '其他' END) EBP_PRODUCT_NAME,
+        select NEXT_EBP_PRODUCT_ID, row_number() over (order by NEXT_EBP_PRODUCT_ID) as row_num,
+        (CASE WHEN row_number() over (order by NEXT_EBP_PRODUCT_ID)  &lt;= 5 THEN EBP_PRODUCT_NAME ELSE '其他' END) EBP_PRODUCT_NAME,
         next_product_cnt,
         convert_rate
         from g3,
         W_PRODUCT_EBP t1
-        where g3.NEXT_EBP_PRODUCT_ID = t1.EBP_PRODUCT_ID(+)))
+        where g3.NEXT_EBP_PRODUCT_ID = t1.EBP_PRODUCT_ID::varchar) tmp) tmp1
         GROUP BY NEXT_EBP_PRODUCT_ID, EBP_PRODUCT_NAME
         order by convert_rate desc
     </select>
 
     <select id="getUserGrowthPathWithSpu" resultType="map">
-        select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB * 100, 2) PROB, BEGIN, END from WP_PURCHASE_PROB
-        where SPU_WID = #{spuId} and rn = #{purchOrder} and is_spu = '1'
+        select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB * 100, 2) PROB, dual_begin, dual_end from WP_PURCHASE_PROB
+        where SPU_WID = #{spuId}::int4 and rn = #{purchOrder}::int4 and is_spu = 1
         order by ACTIVE_DUAL asc
     </select>
 
     <select id="getUserGrowthPathWithProduct" resultType="map">
-        select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB * 100, 2) PROB, BEGIN, END from WP_PURCHASE_PROB
-        where SPU_WID = #{spuId} and rn = #{purchOrder} and EBP_PRODUCT_ID = #{ebpProductId} and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId} and is_spu = '0' order by ACTIVE_DUAL asc
+        select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB * 100, 2) PROB, dual_begin, dual_end from WP_PURCHASE_PROB
+        where SPU_WID = #{spuId}::int4 and rn = #{purchOrder}::int4 and EBP_PRODUCT_ID = #{ebpProductId} and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId} and is_spu = 0 order by ACTIVE_DUAL asc
     </select>
 
     <select id="getGrowthUser" resultType="map">
-        select * from (
-            select t.*, ROWNUM r_num from (select USER_ID, W_PRODUCT_SPU.SPU_NAME, W_PRODUCT_EBP.EBP_PRODUCT_NAME, t2.EBP_PRODUCT_NAME NEXT_EBP_PRODUCT_NAME, TO_NOW_DAYS, rn, ACTIVE_LEVEL, to_char(GROWTH_NODE_DATE, 'yyyy-mm-dd') GROWTH_NODE_DATE from WP_USER_PATH, W_PRODUCT_SPU, W_PRODUCT_EBP,W_PRODUCT_EBP t2
-            where WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID(+)
-            and  WP_USER_PATH.EBP_PRODUCT_ID = W_PRODUCT_EBP.EBP_PRODUCT_ID(+)
-            and WP_USER_PATH.NEXT_EBP_PRODUCT_ID = t2.EBP_PRODUCT_ID(+)
-            and WP_USER_PATH.SPU_WID = #{spuId} and WP_USER_PATH.EBP_PRODUCT_ID = #{ebpProductId}
-            and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId}
-            and rn = #{purchOrder} order by WP_USER_PATH.ACTIVE_LEVEL,WP_USER_PATH.USER_ID,WP_USER_PATH.EBP_PRODUCT_ID,WP_USER_PATH.SPU_WID asc) t
-            where ROWNUM &lt;= #{end}
-        ) where r_num &gt;= #{start}
+        select USER_ID, W_PRODUCT_SPU.SPU_NAME, W_PRODUCT_EBP.EBP_PRODUCT_NAME, t2.EBP_PRODUCT_NAME NEXT_EBP_PRODUCT_NAME, TO_NOW_DAYS, rn, ACTIVE_LEVEL, to_char(GROWTH_NODE_DATE, 'yyyy-mm-dd') GROWTH_NODE_DATE
+        from WP_USER_PATH
+        left join W_PRODUCT_SPU on WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID
+        left join W_PRODUCT_EBP on WP_USER_PATH.EBP_PRODUCT_ID = W_PRODUCT_EBP.EBP_PRODUCT_ID::varchar
+        left join W_PRODUCT_EBP t2 on WP_USER_PATH.NEXT_EBP_PRODUCT_ID = t2.EBP_PRODUCT_ID::varchar
+        where WP_USER_PATH.SPU_WID = #{spuId}::int4 and WP_USER_PATH.EBP_PRODUCT_ID = #{ebpProductId}
+        and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId}
+        and rn = #{purchOrder}::int4 order by WP_USER_PATH.ACTIVE_LEVEL,WP_USER_PATH.USER_ID,WP_USER_PATH.EBP_PRODUCT_ID,WP_USER_PATH.SPU_WID asc
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="getGrowthUserCount" resultType="int">
         select count(1) from WP_USER_PATH
-        where SPU_WID = #{spuId} and EBP_PRODUCT_ID = #{ebpProductId} and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId} and rn = #{purchOrder}
+        where SPU_WID = #{spuId}::int4 and EBP_PRODUCT_ID = #{ebpProductId} and NEXT_EBP_PRODUCT_ID = #{nextEbpProductId} and rn = #{purchOrder}::int4
     </select>
 
     <select id="getPathSpu" resultType="map">
         select distinct WP_USER_PATH.SPU_WID, W_PRODUCT_SPU.SPU_NAME
-        from WP_USER_PATH,
-        W_PRODUCT_SPU
-        where WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID(+)
+        from WP_USER_PATH left join W_PRODUCT_SPU
+        on WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID
     </select>
 
     <select id="getPathPurchOrder" resultType="string">
@@ -448,7 +446,7 @@
         SELECT t1.RN
         FROM tt t1
         LEFT JOIN (SELECT v1.SPU_WID, max(v1.rn) max_rn FROM tt v1 GROUP BY v1.SPU_WID) t2 ON t1.SPU_WID = t2.SPU_WID
-        WHERE t1.rn &lt; t2.MAX_RN and t1.SPU_WID = #{spuId}
+        WHERE t1.rn &lt; t2.MAX_RN and t1.SPU_WID = #{spuId}::int4
     </select>
 
     <select id="getUserSpu" resultType="map">
@@ -457,31 +455,33 @@
              W_PRODUCT_SPU,
              W_PRODUCT
         where
-        WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID and W_PRODUCT.SPU_WID = WP_USER_PATH.SPU_WID and USER_ID = #{userId}
+        WP_USER_PATH.SPU_WID = W_PRODUCT_SPU.SPU_WID and W_PRODUCT.SPU_WID = WP_USER_PATH.SPU_WID and USER_ID = #{userId}::integer
     </select>
 
     <select id="getUserBuyOrder" resultType="string">
-        select max(rn) from WP_USER_PATH where USER_ID = #{userId} and SPU_WID = #{spuId}
+        select max(rn) from WP_USER_PATH where USER_ID = #{userId}::int4 and SPU_WID = #{spuId}::int4
     </select>
 
     <select id="getEbpProductIdByUserId" resultType="map">
-        select t0.EBP_PRODUCT_ID, NEXT_EBP_PRODUCT_ID, t1.EBP_PRODUCT_NAME EBP_PRODUCT_NAME, t2.EBP_PRODUCT_NAME NEXT_EBP_PRODUCT_NAME from WP_USER_PATH t0, W_PRODUCT_EBP t1, W_PRODUCT_EBP t2
-        where t0.EBP_PRODUCT_ID = t1.EBP_PRODUCT_ID(+) and t0.NEXT_EBP_PRODUCT_ID = t2.EBP_PRODUCT_ID(+) and USER_ID = #{userId} and RN = #{buyOrder} and t0.spu_wid = #{spuId}
+        select t0.EBP_PRODUCT_ID, NEXT_EBP_PRODUCT_ID, t1.EBP_PRODUCT_NAME EBP_PRODUCT_NAME, t2.EBP_PRODUCT_NAME NEXT_EBP_PRODUCT_NAME from WP_USER_PATH t0
+        left join W_PRODUCT_EBP t1 on t0.EBP_PRODUCT_ID = t1.EBP_PRODUCT_ID::varchar
+        left join W_PRODUCT_EBP t2 on t0.NEXT_EBP_PRODUCT_ID = t2.EBP_PRODUCT_ID::varchar
+        where USER_ID = #{userId}::integer and RN = #{buyOrder}::integer and t0.spu_wid = #{spuId}::integer
     </select>
 
     <select id="getLastBuyDt" resultType="string">
         select ORDER_DT_WID from WP_USER_PATH t0,
-        (select max(rn) max_rn from WP_USER_PATH where USER_ID = #{userId} and SPU_WID = #{spuId}) t1
-        where USER_ID = #{userId} and SPU_WID = #{spuId} and t0.rn = t1.max_rn
+        (select max(rn) max_rn from WP_USER_PATH where USER_ID = #{userId}::integer and SPU_WID = #{spuId}::integer) t1
+        where USER_ID = #{userId}::integer and SPU_WID = #{spuId}::integer and t0.rn = t1.max_rn
     </select>
 
     <select id="getUserGrowthPathPointWithSpu" resultType="map">
         with v1 as (
             select t1.rn, t1.spu_Wid
-            from WP_USER_PATH t1, (select max(rn) rn from WP_USER_PATH where  SPU_WID = #{spuId} and USER_ID = #{userId}) t2
-            where SPU_WID = #{spuId} and USER_ID = #{userId} and t1.rn = t2.rn
+            from WP_USER_PATH t1, (select max(rn) rn from WP_USER_PATH where  SPU_WID = #{spuId}::integer and USER_ID = #{userId}::integer) t2
+            where SPU_WID = #{spuId}::integer and USER_ID = #{userId}::integer and t1.rn = t2.rn
         )
-        select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB * 100, 2) PROB, BEGIN, END,v1.rn from WP_PURCHASE_PROB t1,v1
+        select ACTIVE_TYPE, ACTIVE_DUAL, trunc(PROB * 100, 2) PROB, dual_begin, dual_end,v1.rn from WP_PURCHASE_PROB t1,v1
         where t1.SPU_WID = v1.spu_Wid and t1.rn = v1.rn and is_spu = '1'
         order by ACTIVE_DUAL asc
     </select>
@@ -499,11 +499,11 @@
     <select id="getUserValueWithSpu" resultType="java.util.LinkedHashMap">
         select CONTRIBUTE_LEVEL, VALUE_POTENTIAL_LEVEL, PRICE_SENSE_LEVEL, case when USER_LEVEL = 'ULC_01' then '重要'
         when USER_LEVEL = 'ULC_02' then '主要' when USER_LEVEL = 'ULC_03' then '普通' when USER_LEVEL = 'ULC_04' then '长尾' end USER_LEVEL
-        from PP_USER_SPU_VALUE where SPU_WID = #{spuId} and user_id = #{userId}
+        from PP_USER_SPU_VALUE where SPU_WID = #{spuId}::integer and user_id = #{userId}::integer
     </select>
 
     <select id="getUserValueWithSpuCount" resultType="int">
-        select count(1) from PP_USER_SPU_VALUE where SPU_WID = #{spuId}
+        select count(1) from PP_USER_SPU_VALUE where SPU_WID = #{spuId}::integer
     </select>
 
     <select id="getConvertDate" resultType="java.util.LinkedHashMap">
@@ -523,7 +523,7 @@
         WHERE
          v1.valid_status = 1
           --限制spu
-         and v1.USER_ID = #{userId}
+         and v1.USER_ID = #{userId}::int4
         GROUP BY
          v2.weekday_name,
          to_char( v1.order_dt, 'hh24' )
@@ -543,7 +543,7 @@
         uo_op_daily_convert_detail v1
         --日期维表
         LEFT JOIN w_date v2
-        ON to_char( v1.push_date, 'yyyymmdd' ) = v2.row_wid
+        ON to_char( v1.push_date, 'yyyymmdd' ) = v2.row_wid::varchar
         left JOIN
         (select PRODUCT_ID,spu_wid from w_product) v3
         on v1.rec_prod_id = v3.product_id
@@ -571,7 +571,7 @@
          uo_op_daily_convert_detail v1
           --日期维表
          LEFT JOIN w_date v2
-         ON to_char( v1.push_date, 'yyyymmdd' ) = v2.row_wid
+         ON to_char( v1.push_date, 'yyyymmdd' ) = v2.row_wid::varchar
          left JOIN
          (select PRODUCT_ID,spu_wid from w_product) v3
          on v1.rec_prod_id = v3.product_id
@@ -579,7 +579,7 @@
            --限制spu
           v1.USER_ID = #{userId}
            -- 是否转化
-          and v1.is_conversion = 1
+          and v1.is_conversion = '1'
         GROUP BY
          v2.weekday_name,
          to_char( v1.push_date, 'hh24' ),
