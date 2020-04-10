@@ -154,14 +154,6 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
 
-        <!--oracle v11-->
-        <!--<dependency>-->
-            <!--<groupId>com.oracle</groupId>-->
-            <!--<artifactId>ojdbc6</artifactId>-->
-            <!--<version>11.2.0.1.1</version>-->
-        <!--</dependency>-->
-
-        <!--oracle v12-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
