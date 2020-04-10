@@ -1,5 +1,6 @@
 package com.linksteady.system.service.impl;
 
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.system.dao.SystemMapper;
 import com.linksteady.system.domain.SysInfo;
 import com.linksteady.common.service.impl.BaseService;
@@ -9,6 +10,7 @@ import com.linksteady.system.service.SystemService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +39,7 @@ public class SystemServiceImpl extends BaseService<SysInfo> implements SystemSer
     @Transactional(rollbackFor = Exception.class)
     public void addSystem(SysInfo system) {
         system.setCreateDt(new Date());
+        system.setCreateBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
         this.save(system);
     }
 
@@ -49,6 +52,8 @@ public class SystemServiceImpl extends BaseService<SysInfo> implements SystemSer
     @Transactional(rollbackFor = Exception.class)
     public void updateSystem(SysInfo system) {
         try{
+            system.setUpdateDt(new Date());
+            system.setUpdateBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
             this.updateNotNull(system);
         }catch (Exception e) {
             //进行异常日志的上报
@@ -86,9 +91,16 @@ public class SystemServiceImpl extends BaseService<SysInfo> implements SystemSer
     }
 
     @Override
-    public SysInfo findByName(String name) {
-        Example example = new Example(Role.class);
-        example.createCriteria().andCondition("lower(name)=", name.toLowerCase());
+    public SysInfo findByName(String name,Long id) {
+        Example example = new Example(SysInfo.class);
+        Example.Criteria criteria=example.createCriteria();
+
+        criteria.andCondition("lower(name)=", name.toLowerCase());
+
+        if(null!=id)
+        {
+            criteria.andEqualTo("id",id);
+        }
         List<SysInfo> list = this.selectByExample(example);
         return list.isEmpty() ? null : list.get(0);
     }

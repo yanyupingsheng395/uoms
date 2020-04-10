@@ -18,7 +18,7 @@ public interface RoleService extends IService<Role> {
 	
 	RoleWithMenu findRoleWithMenus(Long roleId);
 
-	Role findByName(String roleName);
+	Role findByName(String roleName,Long roleId);
 
 	void addRole(Role role, Long[] menuIds);
 	
@@ -26,5 +26,5 @@ public interface RoleService extends IService<Role> {
 
 	void deleteRoles(String roleIds);
 
-	Tree<UserRoleBo> getUserRoleTree(String roleId);
+	Tree<UserRoleBo> getUserRoleTree(Long roleId);
 }

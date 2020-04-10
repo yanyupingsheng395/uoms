@@ -16,6 +16,8 @@ public interface UserService extends IService<User> {
 
     UserWithRole findById(Long userId);
 
+    User findByName(String userName,Long userId);
+
     User findByName(String userName);
 
     @Cacheable(key = "#p0.toString()+ #p1.toString()")
@@ -25,6 +27,8 @@ public interface UserService extends IService<User> {
 
     @CacheEvict(allEntries = true)
     void addUser(User user, Long[] roles) throws Exception;
+
+    void setUserRoles(User user, Long[] roles,String currUser);
 
     @CacheEvict(key = "#p0", allEntries = true)
     void updateUser(User user, Long[] roles);

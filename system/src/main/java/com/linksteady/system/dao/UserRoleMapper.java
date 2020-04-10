@@ -14,7 +14,7 @@ public interface UserRoleMapper extends MyMapper<UserRole> {
      * @param roleId
      * @return
      */
-    List<UserRoleBo> findUserRole(@Param("roleId") String roleId);
+    List<UserRoleBo> findUserRole(@Param("roleId") Long roleId);
 
     void insertDataList(List<UserRole> userRoles);
 }

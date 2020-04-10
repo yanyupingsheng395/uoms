@@ -11,8 +11,9 @@
         <result column="TYPE" jdbcType="VARCHAR" property="type" />
         <result column="ORDER_NUM" jdbcType="DECIMAL" property="orderNum" />
         <result column="SYS_CODE" jdbcType="VARCHAR" property="sysCode"/>
-        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDt" />
-        <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDt" />
+        <result column="SYS_NAME" jdbcType="VARCHAR" property="sysName"/>
+        <result column="CREATE_DT" jdbcType="TIMESTAMP" property="createDt" />
+        <result column="UPDATE_DT" jdbcType="TIMESTAMP" property="updateDt" />
         <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
         <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
     </resultMap>
@@ -71,18 +72,19 @@
             t_menu.CREATE_DT,
             t_menu.UPDATE_DT,
             t_menu.CREATE_BY,
-            t_menu.UPDATE_BY
+            t_menu.UPDATE_BY,
+            t_system.NAME SYS_NAME
         FROM
             t_menu join t_system on t_menu.sys_code=t_system.code
          WHERE 1=1
         <if test="menuName != null and menuName != ''">
-            and t.MENU_NAME = #{menuName}
+            and MENU_NAME = #{menuName}
         </if>
         <if test="type != null and type != ''">
-            and t.type = #{type}
+            and type = #{type}
         </if>
         <if test="sysCode != null and sysCode != ''">
-            and t.SYS_CODE = #{sysCode}
+            and SYS_CODE = #{sysCode}
         </if>
         ORDER BY
             t_menu.order_num

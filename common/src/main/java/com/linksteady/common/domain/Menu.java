@@ -1,5 +1,6 @@
 package com.linksteady.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -51,9 +52,11 @@ public class Menu implements Serializable {
 	@Transient
 	private String sysName;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
 	@Column(name = "CREATE_DT")
 	private Date createDt;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
 	@Column(name = "UPDATE_DT")
 	private Date updateDt;
 
@@ -62,4 +65,7 @@ public class Menu implements Serializable {
 
 	@Column(name = "UPDATE_BY")
 	private String updateBy;
+
+	@Transient
+	private Long sysId;
 }

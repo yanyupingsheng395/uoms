@@ -54,7 +54,6 @@ function roleEditModalReset() {
     $("#role-add-form")[0].reset();
     $("#sysId").selectpicker('val', '');
     $("input[name='system']").val("");
-
     $("#role-add-button").attr("name", "save");
     $("#role-add-modal-title").html('新增角色');
     validator.resetForm();
@@ -78,8 +77,8 @@ function validateRule() {
                         roleName: function () {
                             return $("input[name='roleName']").val().trim();
                         },
-                        oldRoleName: function () {
-                            return $("input[name='oldRoleName']").val().trim();
+                        roleId: function () {
+                            return $("input[name='roleId']").val().trim();
                         }
                     }
                 }

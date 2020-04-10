@@ -18,7 +18,6 @@ function updateSystem() {
             $("#system-add-modal-title").html('修改系统');
             $form.find("input[name='name']").val(system.name);
             $form.find("input[name='code']").val(system.code);
-            $form.find("input[name='oldName']").val(system.name);
             $form.find("input[name='id']").val(system.id);
             $form.find("input[name='remark']").val(system.remark);
             $form.find("input[name='domain']").val(system.domain);

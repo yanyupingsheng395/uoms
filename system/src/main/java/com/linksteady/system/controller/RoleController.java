@@ -83,11 +83,10 @@ public class RoleController extends BaseController {
 
     @RequestMapping("role/checkRoleName")
     @ResponseBody
-    public boolean checkRoleName(String roleName, String oldRoleName) {
-        if (StringUtils.isNotBlank(oldRoleName) && roleName.equalsIgnoreCase(oldRoleName)) {
-            return true;
-        }
-        Role result = this.roleService.findByName(roleName);
+    public boolean checkRoleName(String roleName, Long roleId) { ;
+        //roleId不为空，表示更新
+        Role result = this.roleService.findByName(roleName,roleId);
+
         return result == null;
     }
 
@@ -141,7 +140,7 @@ public class RoleController extends BaseController {
 
     @RequestMapping("role/getUserRoleTree")
     @ResponseBody
-    public ResponseBo getUserRoleTree(@RequestParam("roleId") String roleId) {
+    public ResponseBo getUserRoleTree(@RequestParam("roleId") Long roleId) {
         Tree<UserRoleBo> res = this.roleService.getUserRoleTree(roleId);
         return ResponseBo.okWithData(null, res);
     }

@@ -15,13 +15,11 @@ function updateMenu() {
     $.post(ctx + "menu/getMenu", {"menuId": menuId}, function (r) {
         if (r.code === 200) {
             var $form = $('#menu-add');
-            var $menuTree = $('#menuTree');
             $form.modal();
             var menu = r.msg;
             $("#menu-add-modal-title").html('修改菜单/按钮');
             $("input:radio[value='" + menu.type + "']").trigger("click");
             $form.find("input[name='menuName']").val(menu.menuName);
-            $form.find("input[name='oldMenuName']").val(menu.menuName);
             $form.find("input[name='menuId']").val(menu.menuId);
             $form.find("input[name='icon']").val(menu.icon);
             $form.find("input[name='url']").val(menu.url);

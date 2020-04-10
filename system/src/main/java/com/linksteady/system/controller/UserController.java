@@ -48,11 +48,12 @@ public class UserController extends BaseController {
 
     @RequestMapping("user/checkUserName")
     @ResponseBody
-    public boolean checkUserName(String username, String oldusername) {
-        if (StringUtils.isNotBlank(oldusername) && username.equalsIgnoreCase(oldusername)) {
+    public boolean checkUserName(String username,Long userId) {
+        //如果不为空，表示为更新，则不做校验 (在保存的时候验证)
+        if (null!=userId) {
             return true;
         }
-        User result = this.userService.findByName(username);
+        User result = this.userService.findByName(username,userId);
         return result == null;
     }
 
@@ -102,7 +103,7 @@ public class UserController extends BaseController {
     public ResponseBo addUser(User user, Long[] roles) {
         try {
             //判断用户是否已经存在
-            User addUser=userService.findByName(user.getUsername());
+            User addUser=userService.findByName(user.getUsername(),null);
 
             if(null!=addUser)
             {

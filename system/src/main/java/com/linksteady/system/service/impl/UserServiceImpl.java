@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -47,9 +48,24 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Override
+    public User findByName(String userName,Long userId) {
+        Example example = new Example(User.class);
+        Example.Criteria criteria=example.createCriteria();
+        criteria.andLike("username","%"+userName.toLowerCase()+"%");
+
+        if(null!=userId)
+        {
+            criteria.andCondition("userId",userId);
+        }
+        List<User> list = this.selectByExample(example);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
     public User findByName(String userName) {
         Example example = new Example(User.class);
-        example.createCriteria().andCondition("lower(username)=", userName.toLowerCase());
+        Example.Criteria criteria=example.createCriteria();
+        criteria.andCondition("username=",userName.toLowerCase());
         List<User> list = this.selectByExample(example);
         return list.isEmpty() ? null : list.get(0);
     }
@@ -77,7 +93,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public void addUser(User user, Long[] roles){
         UserBo userBo = (UserBo) SecurityUtils.getSubject().getPrincipal();
         user.setCreateDt(new Date());
@@ -92,16 +108,22 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             user.setExpireDate(Date.from(LocalDate.parse(user.getExpire(),dtf).atStartOfDay(ZoneId.systemDefault()).toInstant()));
         }
 
+        user.setAvatar("20180414165936.jpg");
+        user.setTheme("cyan");
         user.setCreateBy(userBo.getUsername());
-        this.save(user);
-        setUserRoles(user, roles);
-    }
+        userMapper.saveUser(user);
 
-    private void setUserRoles(User user, Long[] roles) {
+        UserService userService=(UserService)AopContext.currentProxy();
+        userService.setUserRoles(user,roles,userBo.getUsername());
+    }
+    @Override
+    public void setUserRoles(User user, Long[] roles,String currUser) {
         Arrays.stream(roles).forEach(roleId -> {
             UserRole ur = new UserRole();
             ur.setUserId(user.getUserId());
             ur.setRoleId(roleId);
+            ur.setCreateDt(new Date());
+            ur.setCreateBy(currUser);
             this.userRoleMapper.insert(ur);
         });
     }
@@ -109,15 +131,16 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateUser(User user, Long[] roles) {
+        UserBo userBo=(UserBo) SecurityUtils.getSubject().getPrincipal();
         user.setPassword(null);
         user.setUsername(null);
         user.setUpdateDt(new Date());
-        user.setUpdateBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
+        user.setUpdateBy(userBo.getUsername());
         this.updateNotNull(user);
         Example example = new Example(UserRole.class);
         example.createCriteria().andCondition("user_id=", user.getUserId());
         this.userRoleMapper.deleteByExample(example);
-        setUserRoles(user, roles);
+        setUserRoles(user, roles,userBo.getUsername());
     }
 
     @Override

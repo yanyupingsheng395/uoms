@@ -12,7 +12,6 @@ $(function () {
     $icon_drop.hide();
     validateRule();
     createMenuTree();
-    getSystemInfo();
 
     $menuAddForm.find("input[name='type']").change(function () {
         var $value = $menuAddForm.find("input[name='type']:checked").val();
@@ -80,18 +79,6 @@ $(function () {
 
 });
 
-// 获取所有业务系统
-function getSystemInfo() {
-    $.get(ctx + "system/findAllSystem", {}, function (r) {
-        var options = "<option value=''>请选择</option>";
-        $(r.msg).each(function (k, v) {
-            options += "<option value='"+v.id+"'>"+v.name+"</option>";
-        });
-        $("#sysId").html("").html(options);
-        $("#sysId").selectpicker("refresh");
-    });
-}
-
 function closeModal() {
     clearMenuAddForm();
 }
@@ -131,23 +118,23 @@ function validateRule() {
             menuName: {
                 required: true,
                 minlength: 2,
-                maxlength: 10,
-                remote: {
-                    url: "menu/checkMenuName",
-                    type: "get",
-                    dataType: "json",
-                    data: {
-                        menuName: function () {
-                            return $("input[name='menuName']").val().trim();
-                        },
-                        oldMenuName: function () {
-                            return $("input[name='oldMenuName']").val().trim();
-                        },
-                        type: function () {
-                            return $("input[name='type']").val();
-                        }
-                    }
-                }
+                maxlength: 10
+                // remote: {
+                //     url: "menu/checkMenuName",
+                //     type: "get",
+                //     dataType: "json",
+                //     data: {
+                //         menuName: function () {
+                //             return $("input[name='menuName']").val().trim();
+                //         },
+                //         menuId: function () {
+                //             return $("input[name='menuId']").val().trim();
+                //         },
+                //         type: function () {
+                //             return $("input[name='type']").val();
+                //         }
+                //     }
+                // }
             },
             system: {required: true},
             orderNum: {required: true, digits: true}
@@ -155,8 +142,8 @@ function validateRule() {
         messages: {
             menuName: {
                 required: icon + "请输入名称",
-                minlength: icon + "名称长度2到10个字符",
-                remote: icon + "该名称已经存在"
+                minlength: icon + "名称长度2到10个字符"
+                // remote: icon + "该名称已经存在"
             },
             system: {
                 required: icon + "请选择业务系统"

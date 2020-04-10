@@ -1,5 +1,6 @@
 package com.linksteady.system.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -22,9 +23,11 @@ public class Role implements Serializable {
 	@Column(name = "REMARK")
 	private String remark;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
 	@Column(name = "CREATE_DT")
 	private Date createDt;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
 	@Column(name = "UPDATE_DT")
 	private Date updateDt;
 

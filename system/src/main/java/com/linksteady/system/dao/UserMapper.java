@@ -20,4 +20,6 @@ public interface UserMapper extends MyMapper<User> {
 	List<User> findAllUser();
 
     String getDefaultPwd();
+
+    void saveUser(User user);
 }

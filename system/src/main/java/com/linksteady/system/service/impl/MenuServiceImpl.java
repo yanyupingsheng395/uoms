@@ -53,11 +53,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     }
 
     @Override
-    public List<Menu> findUserMenus(Long userId, String sysCode) {
-        return this.menuMapper.findUserMenus(userId, sysCode);
-    }
-
-    @Override
     public List<Menu> findUserMenus(Long userId) {
         return this.menuMapper.findUserMenusOfAllSys(userId);
     }
@@ -81,7 +76,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     public Tree<Menu> getMenuTree(String sysCode) {
         List<Tree<Menu>> trees = new ArrayList<>();
         Example example = new Example(Menu.class);
-        example.createCriteria().andCondition("type =", 0).andCondition("sys_code =", sysCode);
+        example.createCriteria().andCondition("type =", "0").andCondition("sys_code =", sysCode);
         example.setOrderByClause("order_num");
         List<Menu> menus = this.selectByExample(example);
         buildTrees(trees, menus);
@@ -120,7 +115,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         });
         systems.forEach(system -> {
             Tree<Menu> tree = new Tree<>();
-            tree.setId(NODE_PREFIX + system.getId());
+            tree.setId(NODE_PREFIX + system.getCode());
             tree.setParentId("0");
             tree.setText(system.getName());
             tree.setIcon("mdi mdi-database");
@@ -128,21 +123,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
         });
     }
 
-//    @Override
-//    public Tree<Menu> getUserMenu(Long userId, String sysCode) {
-//        List<Tree<Menu>> trees = new ArrayList<>();
-//        List<Menu> menus = this.findUserMenus(userId, sysCode);
-//        menus.forEach(menu -> {
-//            Tree<Menu> tree = new Tree<>();
-//            tree.setId(menu.getMenuId().toString());
-//            tree.setParentId(menu.getParentId().toString());
-//            tree.setText(menu.getMenuName());
-//            tree.setIcon(menu.getIcon());
-//            tree.setUrl(menu.getUrl());
-//            trees.add(tree);
-//        });
-//        return TreeUtils.build(trees);
-//    }
 
     @Override
     public Map<String, Tree<Menu>> getUserMenu(Long userId) {
@@ -165,10 +145,16 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     }
 
     @Override
-    public Menu findByNameAndType(String menuName, String type) {
+    public Menu findByNameAndType(String menuName, String type,Long menuId) {
         Example example = new Example(Menu.class);
-        example.createCriteria().andCondition("lower(menu_name)=", menuName.toLowerCase())
-                .andEqualTo("type", Long.valueOf(type));
+        Example.Criteria criteria=example.createCriteria();
+        criteria.andCondition("lower(menu_name)=", menuName.toLowerCase())
+                .andEqualTo("type",type);
+
+        if(null!=menuId)
+        {
+            criteria.andEqualTo("menuId",menuId);
+        }
         List<Menu> list = this.selectByExample(example);
         return list.isEmpty() ? null : list.get(0);
     }
@@ -185,6 +171,8 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             menu.setUrl(null);
             menu.setIcon(null);
         }
+        //获取sysCode
+        menu.setSysCode( systemMapper.findSystem(menu.getSysId()).getCode());
         this.save(menu);
     }
 
@@ -240,6 +228,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             menu.setUrl(null);
             menu.setIcon(null);
         }
+        menu.setSysCode( systemMapper.findSystem(menu.getSysId()).getCode());
         this.updateNotNull(menu);
     }
 }
