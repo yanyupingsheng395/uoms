@@ -121,7 +121,6 @@ mybatis:
 mapper:
   mappers: com.linksteady.common.config.MyMapper
   not-empty: false
-  identity: oracle
   order: before
 
 #pagehelper

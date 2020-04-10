@@ -32,6 +32,9 @@ import java.util.Map;
 public class RootPathController extends BaseController {
 
     @Autowired
+    CommonFunService commonFunService;
+
+    @Autowired
     RedisTemplate redisTemplate;
 
     @Autowired
@@ -99,8 +102,8 @@ public class RootPathController extends BaseController {
     @RequestMapping("/findUserMenu")
     @ResponseBody
     public ResponseBo getUserMenu(HttpServletRequest request) {
-        Map<String, SysInfo> sysInfoMap=(Map<String, SysInfo>)redisTemplate.opsForValue().get("sysInfoMap");
-        SysInfo sysInfo = sysInfoMap.get("mdss");
+        SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode("mdss");
+
         String sysId = sysInfo.getId();
         User user = super.getCurrentUser();
         if(null==sysId||"".equals(sysId)||"null".equals(sysId))
@@ -113,7 +116,7 @@ public class RootPathController extends BaseController {
         String userName = user.getUsername();
         result.put("username", userName);
         result.put("version", version);
-        String sysDomain = sysInfoMap.get("system").getDomain();
+        String sysDomain = sysInfoBo.getSysDomain();
         result.put("navigatorUrl",sysDomain +"/main");
         result.put("logoutUrl",sysDomain + "/logout");
         result.put("single", user.getUserMenuTree().keySet().size() == 1);

@@ -26,6 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author huang
+ *
+ */
 @Slf4j
 @Controller
 @RequestMapping("/")
@@ -88,7 +92,6 @@ public class PageController extends BaseController {
     @RequestMapping("/findUserMenu")
     @ResponseBody
     public ResponseBo getUserMenu() {
-
         UserBo userBo = super.getCurrentUser();
         SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode("system");
         if(null==sysInfoBo)
