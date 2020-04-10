@@ -103,13 +103,13 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
             final StringBuffer pathActiveTmp = new StringBuffer(null == x.getPathActive() ? "" : x.getPathActive());
             final StringBuffer lifeCycleTmp = new StringBuffer(null == x.getLifeCycle() ? "" : x.getLifeCycle());
             String smsCode = x.getSmsCode();
-            groupData.stream().filter(v->v.get("SMS_CODE").equals(smsCode)).forEach(v1->{
+            groupData.stream().filter(v->v.get("sms_code").equals(smsCode)).forEach(v1->{
                 userValueTmp.append(",");
-                userValueTmp.append(v1.get("USER_VALUE"));
+                userValueTmp.append(v1.get("user_value"));
                 pathActiveTmp.append(",");
-                pathActiveTmp.append(v1.get("PATH_ACTIVE"));
+                pathActiveTmp.append(v1.get("path_active"));
                 lifeCycleTmp.append(",");
-                lifeCycleTmp.append(v1.get("LIFECYLE"));
+                lifeCycleTmp.append(v1.get("lifecyle"));
             });
             if(userValueTmp.length() > 0) {
                 x.setUserValue(Arrays.stream(userValueTmp.toString().split(",")).distinct().sorted(StringUtils::compare).collect(Collectors.joining(",")));

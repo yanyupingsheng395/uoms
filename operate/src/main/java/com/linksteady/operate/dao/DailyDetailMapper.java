@@ -42,7 +42,7 @@ public interface DailyDetailMapper {
      * @param headId
      * @return
      */
-    List<DailyDetail> getStrategyPageList(int start, int end, String headId);
+    List<DailyDetail> getStrategyPageList(int limit, int offset, String headId);
 
     /**
      * 每日运营策略记录数
@@ -81,7 +81,7 @@ public interface DailyDetailMapper {
      * @param end
      * @return
      */
-    List<DailyDetail> getUserList(@Param("headId") String headId, @Param("start") int start, @Param("end") int end);
+    List<DailyDetail> getUserList(@Param("headId") String headId, @Param("limit") int limit, @Param("offset") int offset);
 
     /**
      * 保存推送的文案信息到临时表

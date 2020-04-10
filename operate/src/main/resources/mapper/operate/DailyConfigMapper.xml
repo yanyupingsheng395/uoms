@@ -6,16 +6,14 @@
     </update>
 
     <update id="updateCheckFlagAndRemark">
-        update UO_OP_DAILY_TEMPLATE_CONFIG set CHECK_FLAG = 'N', CHECK_COMMENTS = #{remark}
-        where GROUP_ID in (
-            SELECT t1.GROUP_ID
-            FROM UO_OP_DAILY_TEMPLATE_CONFIG t1,
-                  UO_OP_SMS_TEMPLATE t2,
-                  UO_OP_DAILY_GROUP_COUPON t3,
-                  UO_OP_COUPON t4
-             where t1.SMS_CODE = t2.SMS_CODE(+)
-               and t1.group_id = t3.group_id(+)
-               and t3.coupon_id = t4.coupon_id(+)
+        update uo_op_daily_template_config set check_flag = 'N', check_comments = #{remark}
+        where group_id in (
+            select distinct t1.group_id
+            from uo_op_daily_template_config t1
+                  left join uo_op_sms_template t2 on t1.sms_code = t2.sms_code
+                  left join  uo_op_daily_group_coupon t3 on t1.group_id = t3.group_id
+                  left join uo_op_coupon t4 on t3.coupon_id = t4.coupon_id
+                  where 1=1
                ${whereInfo}
         )
     </update>
@@ -30,7 +28,7 @@
     <update id="deleteSmsGroup">
         update UO_OP_DAILY_TEMPLATE_CONFIG set SMS_CODE = null  where GROUP_ID in
         <foreach collection="list" separator="," open="(" close=")" item="item">
-            #{item}
+            #{item}::int4
         </foreach>
     </update>
 </mapper>

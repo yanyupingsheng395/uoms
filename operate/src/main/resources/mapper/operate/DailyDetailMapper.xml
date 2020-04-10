@@ -77,27 +77,23 @@
     </select>
 
     <select id="getStrategyPageList" resultMap="baseResult">
-        select * from (
-        select t.*, ROWNUM RN from (
         select USER_ID, TAR_ORDER_PRICE, REC_PROD_NAME, ORDER_PERIOD, COUPON_MIN, COUPON_DENO, SMS_CONTENT
-        from UO_OP_DAILY_DETAIL where head_id = #{headId}
+        from UO_OP_DAILY_DETAIL where head_id = #{headId}::int4
         order by COUPON_DENO,COUPON_MIN, DAILY_DETAIL_ID asc
-        ) t where ROWNUM &lt;=#{end}
-        ) where RN &gt;=#{start}
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="getStrategyCount" resultType="int">
-        select count(1) from UO_OP_DAILY_DETAIL where head_id = #{headId}
+        select count(1) from UO_OP_DAILY_DETAIL where head_id = #{headId}::int4
     </select>
 
     <select id="getContentList" resultType="map">
-        select DAILY_DETAIL_ID id, SMS_CONTENT content from UO_OP_DAILY_DETAIL where head_id = #{headId}
+        select DAILY_DETAIL_ID id, SMS_CONTENT as content from UO_OP_DAILY_DETAIL where head_id = #{headId}::int4
     </select>
 
     <insert id="copyToPushList">
-        INSERT INTO UO_OP_PUSH_LIST(PUSH_ID,USER_PHONE,USER_OPENID,PUSH_CONTENT,PUSH_STATUS,SOURCE_CODE,SOURCE_ID,PUSH_PERIOD,IS_PUSH)
+        INSERT INTO UO_OP_PUSH_LIST(USER_PHONE,USER_OPENID,PUSH_CONTENT,PUSH_STATUS,SOURCE_CODE,SOURCE_ID,PUSH_PERIOD,IS_PUSH)
         select
-               UO_OP_PUSH_LIST_SEQ.NEXTVAL,
                C.USER_PHONE,
                C.USER_OPENID,
                C.SMS_CONTENT,
@@ -107,15 +103,15 @@
                C.PUSH_ORDER_PERIOD,
                '0'
         FROM UO_OP_DAILY_DETAIL C
-        WHERE C.HEAD_ID = #{headId}
+        WHERE C.HEAD_ID = #{headId}::int4
     </insert>
 
     <update id="updatePushOrderPeriod">
-        update UO_OP_DAILY_DETAIL D set D.PUSH_ORDER_PERIOD=(
+        update UO_OP_DAILY_DETAIL as D set PUSH_ORDER_PERIOD=(
              SELECT
                    (CASE WHEN H.PUSH_METHOD IN('IMME','FIXED') THEN H.PUSH_PERIOD ELSE D.ORDER_PERIOD END) PUSH_ORDER_PERIOD
               FROM UO_OP_DAILY_HEADER H WHERE H.HEAD_ID=D.HEAD_ID
-        ) WHERE D.HEAD_ID=#{headId}
+        ) WHERE D.HEAD_ID=#{headId}::int4
     </update>
 
     <select id="getUserCount" resultType="int">
@@ -124,63 +120,52 @@
         FROM  UO_OP_DAILY_HEADER T1,
               UO_OP_DAILY_DETAIL T2
         WHERE T1.HEAD_ID=T2.HEAD_ID
-          AND T1.HEAD_ID=#{headId}
+          AND T1.HEAD_ID=#{headId}::int4
     </select>
 
     <select id="getUserList" resultMap="baseResult">
-        SELECT * FROM(
-        select t.*, ROWNUM RN
-        from (
-                 select
-                     T1.HEAD_ID,
-                     T2.DAILY_DETAIL_ID,
-                     T2.USER_ID,
-                     T2.USER_PHONE,
-                     T2.USER_OPENID,
-                     SMS.SMS_CONTENT,
-                     T2.REC_PROD_ID,
-                     T2.REC_PROD_NAME,
-                     T2.COUPON_ID,
-                     T2.GROWTH_STRATEGY_ID,
-                     T3.IS_COUPON,
-                     T2.REC_PIECE_PRICE,
-                     T2.GROUP_ID
-                 FROM UO_OP_DAILY_HEADER T1,
-                      UO_OP_DAILY_DETAIL T2,
-                      UO_OP_DAILY_TEMPLATE_CONFIG T3,
-                      UO_OP_SMS_TEMPLATE SMS
-                 WHERE T1.HEAD_ID = T2.HEAD_ID
-                   AND T2.GROUP_ID = T3.GROUP_ID
-                   AND T3.SMS_CODE = SMS.SMS_CODE
-                   AND T1.HEAD_ID = #{headId}
-                 ORDER BY T2.DAILY_DETAIL_ID DESC
-             ) t
-             WHERE  ROWNUM &lt;=#{end}
-        )
-        WHERE RN &gt;= #{start}
+         select
+             T1.HEAD_ID,
+             T2.DAILY_DETAIL_ID,
+             T2.USER_ID,
+             T2.USER_PHONE,
+             T2.USER_OPENID,
+             SMS.SMS_CONTENT,
+             T2.REC_PROD_ID,
+             T2.REC_PROD_NAME,
+             T2.COUPON_ID,
+             T2.GROWTH_STRATEGY_ID,
+             T3.IS_COUPON,
+             T2.REC_PIECE_PRICE,
+             T2.GROUP_ID
+         FROM UO_OP_DAILY_HEADER T1,
+              UO_OP_DAILY_DETAIL T2,
+              UO_OP_DAILY_TEMPLATE_CONFIG T3,
+              UO_OP_SMS_TEMPLATE SMS
+         WHERE T1.HEAD_ID = T2.HEAD_ID
+           AND T2.GROUP_ID = T3.GROUP_ID
+           AND T3.SMS_CODE = SMS.SMS_CODE
+           AND T1.HEAD_ID = #{headId}::int4
+         ORDER BY T2.DAILY_DETAIL_ID DESC
+         limit #{limit} offset #{offset}
     </select>
 
     <update id="insertPushContentTemp">
         insert into UO_OP_DAILY_CONTENT_TMP(daily_detail_id,head_id,sms_content,coupon_id,coupon_min,coupon_deno)
-        SELECT A.*
-        FROM(
+        values
         <foreach collection="list" item="item" index="index"
-                 separator="UNION ALL">
-            SELECT
-            #{item.dailyDetailId} dailyDetailId,
-            #{item.headId} headId,
-            #{item.smsContent} smsContent,
-            #{item.couponId},
-            #{item.couponMin},
-            #{item.couponDeno}
-            FROM
-            dual
+                 separator=",">
+            (#{item.dailyDetailId},
+            #{item.headId},
+            #{item.smsContent},
+            #{item.couponId}::numeric,
+            #{item.couponMin}::numeric,
+            #{item.couponDeno}::numeric)
         </foreach>
-        )A
     </update>
 
     <delete id="deletePushContentTemp">
-        delete from UO_OP_DAILY_CONTENT_TMP where head_id=#{headId}
+        delete from UO_OP_DAILY_CONTENT_TMP where head_id=#{headId}::int4
     </delete>
 
     <update id="updatePushContentFromTemp">
@@ -188,6 +173,6 @@
             (select sms_content,coupon_id,coupon_min,coupon_deno from UO_OP_DAILY_CONTENT_TMP where
             UO_OP_DAILY_CONTENT_TMP.daily_detail_id = UO_OP_DAILY_DETAIL.daily_detail_id
             and UO_OP_DAILY_CONTENT_TMP.head_id=UO_OP_DAILY_DETAIL.head_id)
-        where head_id=#{headId}
+        where head_id=#{headId}::int4
     </update>
 </mapper>

@@ -81,8 +81,8 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      * @return
      */
     @Override
-    public List<DailyDetail> getStrategyPageList(int start, int end, String headId) {
-        return dailyDetailMapper.getStrategyPageList(start, end, headId);
+    public List<DailyDetail> getStrategyPageList(int limit, int offset, String headId) {
+        return dailyDetailMapper.getStrategyPageList(limit, offset, headId);
     }
 
     /**
@@ -126,7 +126,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
         //判断如果条数大于200 则进行分页
         if(pushUserCount<=pageSize)
         {
-            List<DailyDetail> list = getUserList(headerId,1,pushUserCount);
+            List<DailyDetail> list = getUserList(headerId,pushUserCount, 0);
             //填充模板 生成文案
             List<DailyDetail> targetList=transPushList(list,groupCouponList);
             //保存要推送的文案
@@ -200,12 +200,12 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     {
         List<GroupCouponVO> list=groupCouponInfo.stream().map(p->{
                return new GroupCouponVO(
-                      p.get("GROUP_ID").toString(),
-                      p.get("COUPON_ID").toString(),
-                      (String)p.get("COUPON_DISPLAY_NAME"),
-                      Double.parseDouble(p.get("COUPON_DENOM").toString()),
-                      Double.parseDouble(p.get("COUPON_THRESHOLD").toString()),
-                      (String)p.get("COUPON_URL")
+                      p.get("group_id").toString(),
+                      p.get("coupon_id").toString(),
+                      (String)p.get("coupon_display_name"),
+                      Double.parseDouble(p.get("coupon_denom").toString()),
+                      Double.parseDouble(p.get("coupon_threshold").toString()),
+                      (String)p.get("coupon_url")
               );
         }).collect(Collectors.toList());
 
@@ -357,8 +357,8 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      * @param end
      * @return
      */
-    public List<DailyDetail>  getUserList(String headerId,int start,int end){
-        return dailyDetailMapper.getUserList(headerId,start,end);
+    public List<DailyDetail>  getUserList(String headerId,int limit,int offset){
+        return dailyDetailMapper.getUserList(headerId,limit,offset);
     }
 
     /**

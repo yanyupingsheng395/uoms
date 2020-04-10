@@ -70,11 +70,7 @@
     </select>
 
     <insert id="saveActivityHead">
-        <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="headId">
-            select seq_activity_head_id.nextval from dual
-        </selectKey>
         insert into UO_OP_ACTIVITY_HEADER(
-            HEAD_ID,
             ACTIVITY_NAME,
             HAS_PREHEAT,
             PREHEAT_STATUS,
@@ -90,7 +86,7 @@
             FORMAL_NOTIFY_STATUS,
             PREHEAT_NOTIFY_STATUS,
             ACTIVITYFLAG)
-        values (#{headId},#{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
+        values (#{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
         #{insertDt}, #{insertBy}, to_date(#{preheatNotifyDt}, 'yyyy-mm-dd'), to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{formalNotifyStatus}, #{preheatNotifyStatus},#{activityflag})
     </insert>
 

@@ -64,8 +64,8 @@
     </resultMap>
 
     <insert id="savePlanList">
-        insert into UO_OP_ACTIVITY_PLAN(PLAN_ID,HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID,PLAN_TYPE,SUCCESS_NUM)
-        select UO_OP_ACTIVITY_PLAN_SEQ.NEXTVAL,p.* from(
+        insert into UO_OP_ACTIVITY_PLAN(HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID,PLAN_TYPE,SUCCESS_NUM)
+        select p.* from(
         <foreach collection="list" item="item" index="index" separator="union all">
               select
                      #{item.headId},

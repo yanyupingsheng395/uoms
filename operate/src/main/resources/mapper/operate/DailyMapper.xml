@@ -3,22 +3,22 @@
 <mapper namespace="com.linksteady.operate.dao.DailyMapper">
 
     <resultMap id="baseResult" type="com.linksteady.operate.domain.DailyHead">
-        <result column="HEAD_ID" property="headId" jdbcType="DECIMAL"></result>
-        <result column="TOTAL_NUM" property="totalNum" jdbcType="DECIMAL"></result>
-        <result column="SUCCESS_NUM" property="successNum" jdbcType="DECIMAL"></result>
-        <result column="CONVERT_RATE" property="convertRate" jdbcType="DECIMAL"></result>
-        <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"></result>
-        <result column="TOUCH_DT" property="touchDt" jdbcType="DATE"></result>
-        <result column="TOUCH_DT_STR" property="touchDtStr" jdbcType="VARCHAR"></result>
-        <result column="CONVERT_NUM" property="convertNum" jdbcType="DECIMAL"></result>
-        <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"></result>
-        <result column="CONVERT_RATE" property="convertRate" jdbcType="DECIMAL"></result>
-        <result column="CONVERT_SPU_AMOUNT" property="convertSpuAmount" jdbcType="DECIMAL"></result>
-        <result column="CONVERT_SPU_NUM" property="convertSpuNum" jdbcType="DECIMAL"></result>
-        <result column="CONVERT_SPU_RATE" property="convertSpuRate" jdbcType="DECIMAL"></result>
-        <result column="STATUS" property="status" jdbcType="VARCHAR"></result>
-        <result column="VERSION" property="version" jdbcType="DECIMAL"></result>
-        <result column="EFFECT_DAYS" property="effectDays" jdbcType="DECIMAL"></result>
+        <result column="HEAD_ID" property="headId" jdbcType="DECIMAL"/>
+        <result column="TOTAL_NUM" property="totalNum" jdbcType="DECIMAL"/>
+        <result column="SUCCESS_NUM" property="successNum" jdbcType="DECIMAL"/>
+        <result column="CONVERT_RATE" property="convertRate" jdbcType="DECIMAL"/>
+        <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"/>
+        <result column="TOUCH_DT" property="touchDt" jdbcType="DATE"/>
+        <result column="TOUCH_DT_STR" property="touchDtStr" jdbcType="VARCHAR"/>
+        <result column="CONVERT_NUM" property="convertNum" jdbcType="DECIMAL"/>
+        <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"/>
+        <result column="CONVERT_RATE" property="convertRate" jdbcType="DECIMAL"/>
+        <result column="CONVERT_SPU_AMOUNT" property="convertSpuAmount" jdbcType="DECIMAL"/>
+        <result column="CONVERT_SPU_NUM" property="convertSpuNum" jdbcType="DECIMAL"/>
+        <result column="CONVERT_SPU_RATE" property="convertSpuRate" jdbcType="DECIMAL"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="VERSION" property="version" jdbcType="DECIMAL"/>
+        <result column="EFFECT_DAYS" property="effectDays" jdbcType="DECIMAL"/>
     </resultMap>
 
     <resultMap id="templateResult" type="com.linksteady.operate.domain.DailyGroupTemplate">
@@ -76,8 +76,6 @@
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
-        select * from (
-        select t.*, ROWNUM rn from (
         SELECT HEAD_ID, to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,EFFECT_DAYS
         FROM UO_OP_DAILY_HEADER t
         <where>
@@ -86,8 +84,7 @@
             </if>
         </where>
         ORDER BY HEAD_ID desc
-        ) t where ROWNUM &lt;= #{end}
-        )where rn &gt;= #{start}
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="getTotalCount" resultType="int">
@@ -121,7 +118,7 @@
     </select>
 
     <update id="updateStatus">
-        update UO_OP_DAILY_HEADER set status = #{status} where head_id = #{headId}
+        update UO_OP_DAILY_HEADER set status = #{status} where head_id = #{headId}::int4
     </update>
 
     <update id="updateActualNum">
@@ -130,23 +127,21 @@
 
     <select id="getDailyHeadById" resultMap="baseResult">
         SELECT HEAD_ID, TOUCH_DT,to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,VERSION,EFFECT_DAYS
-         FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}
+         FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}::int4
     </select>
 
     <select id="getUserGroupList" resultMap="templateResult">
         select * from (
-        SELECT t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE,
-               t1.PATH_ACTIVE, t1.LIFECYLE LIFECYCLE,
-        LISTAGG(t4.coupon_threshold||'-'||t4.coupon_denom, ',') within group (order by t4.coupon_threshold asc,t4.coupon_denom asc ) coupon_name, t1.CHECK_FLAG, t1.CHECK_COMMENTS,
-               t1.GROUP_INFO
-        FROM UO_OP_DAILY_TEMPLATE_CONFIG t1, UO_OP_SMS_TEMPLATE t2,
-             UO_OP_DAILY_GROUP_COUPON t3, UO_OP_COUPON t4
-        where t1.SMS_CODE = t2.SMS_CODE(+)
-          and t1.group_id = t3.group_id(+)
-          and t3.coupon_id = t4.coupon_id(+)
-        group by t1.GROUP_ID, GROUP_NAME, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT,t1.USER_VALUE, t1.CHECK_FLAG, t1.PATH_ACTIVE, t1.LIFECYLE, t1.CHECK_COMMENTS, t1.GROUP_INFO
-        ORDER BY USER_VALUE asc, LIFECYLE desc, t1.PATH_ACTIVE asc
-        )
+            select t1.group_id, group_name, t1.is_coupon, t1.sms_code, t2.sms_content,t1.user_value,
+            t1.path_active, t1.lifecyle lifecycle,
+            string_agg(t4.coupon_threshold::varchar||'-'||t4.coupon_denom::varchar, ',' order by t4.coupon_threshold asc,t4.coupon_denom asc) coupon_name, t1.check_flag, t1.check_comments,
+            t1.group_info
+            from uo_op_daily_template_config t1 left join uo_op_sms_template t2 on t1.sms_code = t2.sms_code
+            left join uo_op_daily_group_coupon t3 on t1.group_id = t3.group_id
+            left join uo_op_coupon t4 on t3.coupon_id = t4.coupon_id
+            group by t1.group_id, group_name, t1.is_coupon, t1.sms_code, t2.sms_content,t1.user_value, t1.check_flag, t1.path_active, t1.lifecyle, t1.check_comments, t1.group_info
+            order by user_value asc, lifecyle desc, t1.path_active asc
+        ) t
         <if test="activeList != null">
             where PATH_ACTIVE in
             <foreach collection="activeList" separator="," item="item" open="(" close=")">
@@ -192,18 +187,16 @@
     <select id="getEffectById" resultMap="baseResult">
         select TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, CONVERT_SPU_NUM, CONVERT_SPU_RATE, CONVERT_SPU_AMOUNT
         from UO_OP_DAILY_HEADER
-        where HEAD_ID = #{id} and status &lt;&gt; 'todo'
+        where HEAD_ID = #{id}::int4 and status &lt;&gt; 'todo'
     </select>
 
     <select id="getDailyStatisList" resultMap="statisResult">
         select CONVERT_SPU_RATE, CONVERT_RATE, CONVERT_SPU_NUM, CONVERT_NUM, to_char(CONVERSION_DATE, 'yyyymmdd') CONVERSION_DATE_STR
         from UO_OP_DAILY_STATIS
-        where HEAD_ID = #{headId} order by CONVERSION_DATE asc
+        where HEAD_ID = #{headId}::int4 order by CONVERSION_DATE asc
     </select>
 
     <select id="getDailyPersonalEffect" resultMap="personalResult" parameterType="com.linksteady.operate.vo.DailyPersonalVo">
-        select * from (
-          select tt.*, ROWNUM RN from (
         select
         t.user_id, --用户ID
         u.login_name user_name,  --用户名
@@ -214,15 +207,15 @@
         t.conversion_period CONVERT_PERIOD,  --转化时段
         t.push_date,  --推送日期
         t.conversion_date convert_date, --转化日期
-        trunc((t.conversion_date-t.push_date),1) CONVERT_INTERVAL, --转换间隔
+        round((extract(day from t.conversion_date::timestamp-t.push_date::timestamp) * 24 + extract(hour from t.conversion_date::timestamp-t.push_date::timestamp))::numeric/24::numeric, 1)::varchar CONVERT_INTERVAL, --转换间隔
         t.spu_consistent, --推荐SPU与购买SPU是否一致 Y表示是 N表示否
         t.rec_spu_name PUSH_SPU,  --推荐SPU名称
         t.IS_CONVERSION IS_CONVERT,
         t.SPU_CONSISTENT SPU_IS_CONVERT
         --转化的SPU名称
         from UO_OP_DAILY_CONVERT_DETAIL t, w_users u
-        where t.user_id = u.id and IS_CONVERSION = '1'
-        and t.daily_header_id=#{headId}
+        where t.user_id = u.id::varchar and IS_CONVERSION = '1'
+        and t.daily_header_id=#{headId}::int4
         <if test="dailyPersonalVo.spuIsConvert != null and dailyPersonalVo.spuIsConvert != ''">
             and SPU_CONSISTENT = #{dailyPersonalVo.spuIsConvert}
         </if>
@@ -232,12 +225,11 @@
         <if test="dailyPersonalVo.pathActive != null and dailyPersonalVo.pathActive != ''">
             and PATH_ACTIVE = #{dailyPersonalVo.pathActive}
         </if>
-          ) tt where ROWNUM &lt;= #{end}
-        ) where RN &gt;= #{start}
+        limit #{start} offset #{end}
     </select>
 
     <select id="getDailyPersonalEffectCount" resultType="int" parameterType="com.linksteady.operate.vo.DailyPersonalVo">
-        select count(1) from UO_OP_DAILY_CONVERT_DETAIL where DAILY_HEADER_ID = #{headId} and IS_CONVERSION = '1'
+        select count(1) from UO_OP_DAILY_CONVERT_DETAIL where DAILY_HEADER_ID = #{headId}::int4 and IS_CONVERSION = '1'
         <if test="dailyPersonalVo.spuIsConvert != null and dailyPersonalVo.spuIsConvert != ''">
             and SPU_CONSISTENT = #{dailyPersonalVo.spuIsConvert}
         </if>
@@ -266,10 +258,10 @@
                 push_period=#{pushPeriod},
             </if>
             <if test="effectDays!=null and effectDays!=''">
-                EFFECT_DAYS=#{effectDays},
+                EFFECT_DAYS=#{effectDays}::int4,
             </if>
         </set>
-        where head_id = #{headId}
+        where head_id = #{headId}::int4
     </update>
 
     <select id="getUserStats" resultMap="DailyUserStatsResult">
@@ -283,11 +275,11 @@
                      (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END) LIFECYCLE,
                      COUNT(*) UCNT
               FROM UO_OP_DAILY_DETAIL T
-              WHERE T.HEAD_ID = #{headId}
+              WHERE T.HEAD_ID = #{headId}::int4
               GROUP BY T.USER_VALUE,
                        T.PATH_ACTIVE,
                   (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)
-        ORDER BY UCNT DESC)
+        ORDER BY UCNT DESC) v
     </select>
 
     <select id="getUserStatsBySpu" resultMap="DailyUserStatsResult">
@@ -297,12 +289,12 @@
         FROM (SELECT T.SPU_NAME,
         COUNT(*) UCNT
         FROM UO_OP_DAILY_DETAIL T
-        WHERE T.HEAD_ID = #{headId}
+        WHERE T.HEAD_ID = #{headId}::int4
         AND T.PATH_ACTIVE= #{pathActive}
         AND T.USER_VALUE= #{userValue}
         AND (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)= #{lifecycle}
         GROUP BY T.SPU_NAME
-        ORDER BY UCNT DESC) WHERE ROWNUM &lt;=10
+        ORDER BY UCNT DESC) v limit 10 offset 0
     </select>
 
     <select id="getUserStatsByProd" resultMap="DailyUserStatsResult">
@@ -311,13 +303,13 @@
         FROM (SELECT T.REC_PROD_NAME,
         COUNT(*) UCNT
         FROM UO_OP_DAILY_DETAIL T
-        WHERE T.HEAD_ID = #{headId}
+        WHERE T.HEAD_ID = #{headId}::int4
         AND T.PATH_ACTIVE=#{pathActive}
         AND T.USER_VALUE= #{userValue}
         AND (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)= #{lifecycle}
         AND T.SPU_NAME= #{spuName}
         GROUP BY T.REC_PROD_NAME
-        ORDER BY UCNT DESC) WHERE ROWNUM &lt;=10
+        ORDER BY UCNT DESC) v limit 10 offset 0
     </select>
 
     <select id="getTodayStatus" resultType="string">
@@ -325,7 +317,7 @@
     </select>
 
     <select id="getSelectedUserGroup" resultType="map">
-        select IS_COUPON, SMS_CODE from UO_OP_DAILY_TEMPLATE_CONFIG where GROUP_ID = #{groupId}
+        select IS_COUPON, SMS_CODE from UO_OP_DAILY_TEMPLATE_CONFIG where GROUP_ID = #{groupId}::int4
     </select>
 
     <select id="getSmsIsCoupon" resultType="int">
