@@ -1,3 +1,14 @@
+$.validator.addMethod("passwordValidate",function(value,element,param){
+    var name = $(this).attr("name");
+
+    if(name=='insert'&&value.length==0){
+        return false;
+    }else
+    {
+        return true;
+    }
+},"密码不能为空!");
+
 $(function () {
     var $userTableForm = $("#user-form");
     var settings = {
@@ -50,7 +61,7 @@ $(function () {
             field: 'description',
             title: '备注'
         }, {
-                field: 'crateTime',
+                field: 'createDt',
                 title: '创建时间'
             }
         ]
@@ -130,25 +141,5 @@ function restPassword() {
                 $MB.n_danger(r.msg);
             }
         });
-    });
-}
-
-function exportUserExcel() {
-    $.post(ctx + "user/excel", $(".user-table-form").serialize(), function (r) {
-        if (r.code === 200) {
-            window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
-        } else {
-            $MB.n_warning(r.msg);
-        }
-    });
-}
-
-function exportUserCsv() {
-    $.post(ctx + "user/csv", $(".user-table-form").serialize(), function (r) {
-        if (r.code === 200) {
-            window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
-        } else {
-            $MB.n_warning(r.msg);
-        }
     });
 }

@@ -85,9 +85,11 @@ public class User implements Serializable {
 	@Column(name = "UPDATE_BY")
 	private String updateBy;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
 	@Column(name = "CREATE_DT")
 	private Date createDt;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
 	@Column(name = "UPDATE_DT")
 	private Date updateDt;
 

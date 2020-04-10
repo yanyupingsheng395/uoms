@@ -18,7 +18,6 @@ function updateRole() {
             var role = r.msg;
             $("#role-add-modal-title").html('修改角色');
             $form.find("input[name='roleName']").val(role.roleName);
-            $form.find("input[name='oldRoleName']").val(role.roleName);
             $form.find("input[name='roleId']").val(role.roleId);
             $form.find("input[name='remark']").val(role.remark);
             var menuArr = [];

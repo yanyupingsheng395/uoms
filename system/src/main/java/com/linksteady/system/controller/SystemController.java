@@ -56,11 +56,8 @@ public class SystemController extends BaseController {
 
     @RequestMapping("system/checkSystemName")
     @ResponseBody
-    public boolean checkSystemName(String name, String oldName) {
-        if (StringUtils.isNotBlank(oldName) && name.equalsIgnoreCase(oldName)) {
-            return true;
-        }
-        SysInfo result = this.systemService.findByName(name);
+    public boolean checkSystemName(String name, Long id) {
+        SysInfo result = this.systemService.findByName(name,id);
         return result == null;
     }
 

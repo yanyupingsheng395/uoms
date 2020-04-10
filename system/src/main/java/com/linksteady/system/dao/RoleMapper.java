@@ -13,4 +13,6 @@ public interface RoleMapper extends MyMapper<Role> {
 	List<RoleWithMenu> findById(Long roleId);
 
 	List<Role> findAll();
+
+	void saveRole(Role role);
 }

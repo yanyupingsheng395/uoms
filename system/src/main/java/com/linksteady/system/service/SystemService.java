@@ -12,7 +12,7 @@ import java.util.List;
 public interface SystemService extends IService<SysInfo> {
     List<SysInfo> findAllSystem(SysInfo system);
     List<SysInfo> findAllSystem();
-    SysInfo findByName(String name);
+    SysInfo findByName(String name,Long id);
     void addSystem(SysInfo system);
     SysInfo findSystem(Long id);
     void updateSystem(SysInfo system);

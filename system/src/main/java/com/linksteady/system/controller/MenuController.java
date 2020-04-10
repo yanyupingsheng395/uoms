@@ -6,6 +6,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.*;
 import com.linksteady.common.domain.Menu;
 import com.linksteady.common.service.CommonFunService;
+import com.linksteady.system.domain.Role;
 import com.linksteady.system.domain.SysInfo;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.common.domain.User;
@@ -100,39 +101,6 @@ public class MenuController extends BaseController {
         }
     }
 
-    // todo 找不到在那用这个方法了。
-//    @RequestMapping("menu/getUserMenu")
-//    @ResponseBody
-//    public ResponseBo getUserMenu(HttpServletRequest request) {
-//        //获取当前用户的sysId
-//        String sysId = String.valueOf(request.getSession().getAttribute("sysId"));
-//        //获取当前子系统名称
-//        SysInfoBo sysInfoBo=commonFunService.getSysInfoById(Long.valueOf(sysId));
-//        if(null==sysInfoBo)
-//        {
-//            return ResponseBo.error("");
-//        }
-//
-//        //返回的数据集
-//        Map<String, Object> result = new HashMap<>(16);
-//        UserBo userBo = super.getCurrentUser();
-//        String userName = userBo.getUsername();
-//        result.put("username", userName);
-//        result.put("version", version);
-//
-//        try {
-//            Tree<Menu> tree = this.menuService.getUserMenu(userBo.getUserId(), Long.valueOf(sysId));
-//            result.put("tree", tree);
-//
-//            return ResponseBo.okWithData(result,sysInfoBo.getSysName());
-//        } catch (Exception e) {
-//            log.error("获取用户菜单失败", e);
-//            //进行异常日志的上报
-//            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
-//            return ResponseBo.error("获取用户菜单失败！");
-//        }
-//    }
-
     /**
      * 菜单列表界面
      * @param menu
@@ -152,13 +120,17 @@ public class MenuController extends BaseController {
         }
     }
 
+    /**
+     * 检查菜单名称是否已经存在
+     * @param menuName
+     * @param type
+     * @return
+     */
     @RequestMapping("menu/checkMenuName")
     @ResponseBody
-    public boolean checkMenuName(String menuName, String type, String oldMenuName) {
-        if (StringUtils.isNotBlank(oldMenuName) && menuName.equalsIgnoreCase(oldMenuName)) {
-            return true;
-        }
-        Menu result = this.menuService.findByNameAndType(menuName, type);
+    public boolean checkMenuName(String menuName, String type,Long menuId) {
+        //menuId不为空，表示更新
+        Menu result = this.menuService.findByNameAndType(menuName,type,menuId);
         return result == null;
     }
 

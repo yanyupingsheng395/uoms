@@ -15,7 +15,7 @@ function initTreeTable() {
         expandAll: false,
         expandColumn: "1",
         ajaxParams: {
-            menuName: $menuTableForm.find("input[name='menuName']").val() == null ? null : $menuTableForm.find("input[name='menuName']").val().trim(),
+            menuName: $menuTableForm.find("input[name='qmenuName']").val() == null ? null : $menuTableForm.find("input[name='qmenuName']").val().trim(),
             type: $menuTableForm.find("select[name='type']").find("option:selected").val(),
             sysId: $menuTableForm.find("select[name='systemId']").find("option:selected").val()
         },
@@ -68,7 +68,7 @@ function initTreeTable() {
             },
             {
                 title: '创建时间',
-                field: 'createTime'
+                field: 'createDt'
             }
         ]
     };
@@ -83,6 +83,10 @@ function getSystem() {
             options += "<option value='"+v.id+"'>"+v.name+"</option>";
         });
         $("#systemId").html("").html(options);
+
+        //绑定新增页面的选择列表
+        $("#sysId").html("").html(options);
+        $("#sysId").selectpicker("refresh");
     });
 }
 
@@ -120,25 +124,5 @@ function deleteMenus() {
                 $MB.n_danger(r.msg);
             }
         });
-    });
-}
-
-function exportMenuExcel() {
-    $.post(ctx + "menu/excel", $(".menu-table-form").serialize(), function (r) {
-        if (r.code === 200) {
-            window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
-        } else {
-            $MB.n_warning(r.msg);
-        }
-    });
-}
-
-function exportMenuCsv() {
-    $.post(ctx + "menu/csv", $(".menu-table-form").serialize(), function (r) {
-        if (r.code === 200) {
-            window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
-        } else {
-            $MB.n_warning(r.msg);
-        }
     });
 }

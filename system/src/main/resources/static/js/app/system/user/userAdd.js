@@ -24,6 +24,7 @@ $(function () {
                 });
             }
             if (name === "update") {
+                alert('test');
                 $.post(ctx + "user/update", $userAddForm.serialize(), function (r) {
                     if (r.code === 200) {
                         closeModal();
@@ -51,6 +52,7 @@ function clearReset() {
     $userAddForm.find("input[name='email']").val("");
     $userAddForm.find("input[name='mobile']").val("");
     $userAddForm.find("input[name='expire']").val("");
+    $userAddForm.find("input[name='userId']").val("");
     $userAddForm.find("select[name='rolesSelect']").selectpicker('val', "");
     $userAddForm.find(".user_password").show();
     $userAddForm.find("input[name='status']:checked").removeAttr("checked");
@@ -86,8 +88,8 @@ function validateRule() {
                         username: function () {
                             return $("input[name='username']").val().trim();
                         },
-                        oldusername: function () {
-                            return $("input[name='oldusername']").val().trim();
+                        userId: function () {
+                            return $("input[name='userId']").val().trim();
                         }
                     }
                 }
@@ -96,7 +98,7 @@ function validateRule() {
                 email: true
             },
             password: {
-                required: true
+                passwordValidate: ''
             },
             roles: {
                 required: true

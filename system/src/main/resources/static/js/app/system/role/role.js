@@ -8,7 +8,7 @@ $(function () {
             return {
                 pageSize: params.limit,
                 pageNum: params.offset / params.limit + 1,
-                roleName: $(".role-table-form").find("input[name='roleName']").val() == null ? null: $(".role-table-form").find("input[name='roleName']").val().trim()
+                roleName: $(".role-table-form").find("input[name='qroleName']").val() == null ? null: $(".role-table-form").find("input[name='qroleName']").val().trim()
             };
         },
         columns: [{
@@ -20,7 +20,7 @@ $(function () {
             field: 'remark',
             title: '描述'
         }, {
-            field: 'createTime',
+            field: 'createDt',
             title: '创建时间'
         }]
     };
@@ -62,25 +62,5 @@ function deleteRoles() {
                 $MB.n_danger(r.msg);
             }
         });
-    });
-}
-
-function exportRoleExcel() {
-    $.post(ctx + "role/excel", $(".role-table-form").serialize(), function (r) {
-        if (r.code === 200) {
-            window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
-        } else {
-            $MB.n_warning(r.msg);
-        }
-    });
-}
-
-function exportRoleCsv() {
-    $.post(ctx + "role/csv", $(".role-table-form").serialize(), function (r) {
-        if (r.code === 200) {
-            window.location.href = "common/download?fileName=" + r.msg + "&delete=" + true;
-        } else {
-            $MB.n_warning(r.msg);
-        }
     });
 }

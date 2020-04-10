@@ -65,7 +65,7 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
         try {
             Example example = new Example(Role.class);
             if (StringUtils.isNotBlank(role.getRoleName())) {
-                example.createCriteria().andCondition("role_name=", role.getRoleName());
+                example.createCriteria().andLike("roleName","%"+ role.getRoleName() +"%");
             }
             example.setOrderByClause("create_dt");
             return this.selectByExample(example);
@@ -84,9 +84,16 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
 
 
     @Override
-    public Role findByName(String roleName) {
+    public Role findByName(String roleName,Long roleId) {
         Example example = new Example(Role.class);
-        example.createCriteria().andCondition("lower(role_name)=", roleName.toLowerCase());
+        Example.Criteria criteria=example.createCriteria();
+
+        criteria.andLike("roleName", "%"+ roleName +"%");
+
+        if(null!=roleId)
+        {
+            criteria.andNotEqualTo("roleId",roleId);
+        }
         List<Role> list = this.selectByExample(example);
         return list.isEmpty() ? null : list.get(0);
     }
@@ -96,7 +103,7 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
     public void addRole(Role role, Long[] menuIds) {
         role.setCreateDt(new Date());
         role.setCreateBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
-        this.save(role);
+        roleMapper.saveRole(role);
         setRoleMenus(role, menuIds);
     }
 
@@ -105,7 +112,6 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
             RoleMenu rm = new RoleMenu();
             rm.setMenuId(menuId);
             rm.setRoleId(role.getRoleId());
-
             rm.setCreateDt(new Date());
             rm.setCreateBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
             this.roleMenuMapper.insert(rm);
@@ -151,7 +157,7 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
     }
 
     @Override
-    public Tree<UserRoleBo> getUserRoleTree(String roleId) {
+    public Tree<UserRoleBo> getUserRoleTree(Long roleId) {
         Role role = roleMapper.selectByPrimaryKey(roleId);
         List<Tree<UserRoleBo>> userRoleTree = Lists.newArrayList();
         List<UserRoleBo> userRoleBos = userRoleMapper.findUserRole(roleId);

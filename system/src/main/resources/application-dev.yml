@@ -103,7 +103,7 @@ spring:
       strategy:
         content:
           enabled: true
-          paths: /**
+          paths: /js/**,/css/**
 
 mybatis:
   # type-aliases扫描路径
@@ -146,7 +146,7 @@ sys:
   # 是否开启对thrift接口连通性的检测
   validateThrift: false
   #是否开启错误日志上报
-  openExceptionNotice: true
+  openExceptionNotice: false
   #上报错误日志的地址
   exceptionNoticeUrl: http://logstash.growth-master.com/logNoticeService
   #上报错误日志的当前应用名称

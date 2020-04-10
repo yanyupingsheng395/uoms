@@ -4,7 +4,6 @@ import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.Menu;
 import com.linksteady.common.domain.User;
 import com.linksteady.system.service.MenuService;
-import com.linksteady.system.service.RoleService;
 import com.linksteady.system.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -13,6 +12,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.*;
 
@@ -24,6 +24,7 @@ import java.util.*;
 public class ShiroRealm extends AuthorizingRealm {
 
     @Autowired
+    @Lazy
     private UserService userService;
     @Autowired
     private MenuService menuService;

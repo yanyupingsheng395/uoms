@@ -85,4 +85,9 @@
 	<select id="getDefaultPwd" resultType="string">
 		select value from T_CONFIG where NAME = 'system.default.password'
 	</select>
+
+	<insert id="saveUser" parameterType="com.linksteady.common.domain.User" useGeneratedKeys="true" keyProperty="userId">
+		insert into t_user(username,password,email,mobile,status,create_dt,create_by,ssex,theme,avatar,expire_date,firstlogin) values
+		(#{username},#{password},#{email},#{mobile},#{status},#{createDt},#{createBy},#{ssex},#{theme},#{avatar},#{expireDate},#{firstLogin})
+	</insert>
 </mapper>

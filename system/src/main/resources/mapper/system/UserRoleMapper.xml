@@ -11,51 +11,22 @@
 
   <select id="findUserRole" resultType="com.linksteady.common.bo.UserRoleBo">
       WITH g1 AS (
-       SELECT
-        U .username,
-        U .user_id,
-        ur.role_id
-       FROM
-        T_USER U
-       LEFT JOIN T_USER_ROLE ur ON ur.user_id = U .user_id
-      ),
-       g2 AS (
-       SELECT
-        (
-         CASE
-         WHEN g1.role_id = #{roleId} THEN
-          1
-         ELSE
-          0
-         END
-        ) flag,
-        g1.username,
-        g1.user_id,
-        g1.role_id
-       FROM
-        g1
-      ) SELECT
-       v1.FLAG hasPermission,
-       v1.ROLE_ID roleId,
-       v1.USERNAME userName,
-       v1.USER_ID userId
+      SELECT
+      U.username,
+      U.user_id,
+      ur.role_id
       FROM
-       (
-        SELECT
-         g2.FLAG,
-         g2.ROLE_ID,
-         g2.USERNAME,
-         g2.USER_ID,
-         ROW_NUMBER () OVER (
-          PARTITION BY g2.USER_ID
-          ORDER BY
-           g2.FLAG DESC
-         ) rn
-        FROM
-         g2
-       ) v1
-      WHERE
-       v1.rn = 1
+      T_USER U
+      LEFT JOIN
+      (select * from T_USER_ROLE where role_id=#{role_id}) ur ON ur.user_id = U.user_id
+      )
+      select
+          g1.role_id roleId,
+          g1.user_id userId,
+          g1.username userName,
+          case when COALESCE(user_id,-1)=-1 THEN 1 else 0 end hasPermission
+      from g1
+
   </select>
 
     <insert id="insertDataList">

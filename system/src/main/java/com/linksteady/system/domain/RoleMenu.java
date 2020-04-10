@@ -1,5 +1,6 @@
 package com.linksteady.system.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -19,9 +20,11 @@ public class RoleMenu implements Serializable {
     @Column(name = "MENU_ID")
     private Long menuId;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     @Column(name = "CREATE_DT")
     private Date createDt;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     @Column(name = "CREATE_BY")
     private String createBy;
 
