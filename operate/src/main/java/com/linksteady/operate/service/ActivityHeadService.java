@@ -18,7 +18,7 @@ public interface ActivityHeadService {
      * @param name
      * @return
      */
-    List<ActivityHead> getDataListOfPage(int start, int end, String name, String date, String status);
+    List<ActivityHead> getDataListOfPage(int limit, int offset, String name, String date, String status);
     /**
      * 获取数据记录总数
      * @param name

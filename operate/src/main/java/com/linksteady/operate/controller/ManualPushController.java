@@ -39,11 +39,11 @@ public class ManualPushController {
      */
     @GetMapping("/getHeaderListPage")
     public ResponseBo getHeaderListPage(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String scheduleDate = request.getParam().get("scheduleDate");
         int count = manualPushService.getHeaderListCount(scheduleDate);
-        List<ManualHeader> dataList = manualPushService.getHeaderListData(start, end, scheduleDate);
+        List<ManualHeader> dataList = manualPushService.getHeaderListData(limit,offset, scheduleDate);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 

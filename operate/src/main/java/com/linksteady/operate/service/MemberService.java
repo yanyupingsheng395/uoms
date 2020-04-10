@@ -26,7 +26,7 @@ public interface MemberService {
      * @param date
      * @return
      */
-    List<MemberHead> getHeadListPage(int start, int end, String date);
+    List<MemberHead> getHeadListPage(int limit, int offset, String date);
 
     /**
      * 获取detail的分页数据
@@ -38,7 +38,7 @@ public interface MemberService {
      * @param joinRate
      * @return
      */
-    List<MemberDetail> getDetailListPage(String headId, int start, int end, String userValue, String pathActive, String brandDeep, String joinRate);
+    List<MemberDetail> getDetailListPage(String headId, int limit, int offset, String userValue, String pathActive, String brandDeep, String joinRate);
 
     /**
      * 获取detail的分页数据

@@ -30,10 +30,10 @@ public class MemberController {
      */
     @RequestMapping("/getHeadListPage")
     public ResponseBo getHeadListPage(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String date = request.getParam().get("memberDate");
-        List<MemberHead> dataList = memberService.getHeadListPage(start, end, date);
+        List<MemberHead> dataList = memberService.getHeadListPage(limit,offset, date);
         int count = memberService.getHeadListCount(date);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
@@ -45,14 +45,14 @@ public class MemberController {
      */
     @RequestMapping("/getDetailListPage")
     public ResponseBo getDetailListPage(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String userValue = request.getParam().get("userValue");
         String pathActive = request.getParam().get("pathActive");
         String brandDeep = request.getParam().get("brandDeep");
         String joinRate = request.getParam().get("joinRate");
         String headId = request.getParam().get("headId");
-        List<MemberDetail> memberDetailList = memberService.getDetailListPage(headId, start, end, userValue, pathActive, brandDeep, joinRate);
+        List<MemberDetail> memberDetailList = memberService.getDetailListPage(headId, limit,offset, userValue, pathActive, brandDeep, joinRate);
         int count = memberService.getDetailListCount(headId, userValue, pathActive, brandDeep, joinRate);
         return ResponseBo.okOverPaging(null, count, memberDetailList);
     }

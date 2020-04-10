@@ -225,7 +225,7 @@
         <if test="dailyPersonalVo.pathActive != null and dailyPersonalVo.pathActive != ''">
             and PATH_ACTIVE = #{dailyPersonalVo.pathActive}
         </if>
-        limit #{start} offset #{end}
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="getDailyPersonalEffectCount" resultType="int" parameterType="com.linksteady.operate.vo.DailyPersonalVo">

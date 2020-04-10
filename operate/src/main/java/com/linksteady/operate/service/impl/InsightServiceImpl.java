@@ -67,7 +67,7 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public List<InsightGrowthPath> findGrowthPathList(int start, int end, String sortColumn, String sortOrder, String dateRange) {
+    public List<InsightGrowthPath> findGrowthPathList(int limit, int offset, String sortColumn, String sortOrder, String dateRange) {
         StringBuilder orderSql = new StringBuilder();
         if (null != sortColumn) {
             switch (sortColumn) {
@@ -90,7 +90,7 @@ public class InsightServiceImpl implements InsightService {
         } else {
             orderSql.append("order by cops_value desc, spu_path desc");
         }
-        return insightGrowthPathMapper.findGrowthPathList(start, end, orderSql.toString(), dateRange);
+        return insightGrowthPathMapper.findGrowthPathList(limit,offset, orderSql.toString(), dateRange);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public List<InsightImportSpu> findImportSpuList(int start, int end, String spuId, String purchOrder, String dateRange, String sortColumn, String sortOrder) {
+    public List<InsightImportSpu> findImportSpuList(int limit, int offset, String spuId, String purchOrder, String dateRange, String sortColumn, String sortOrder) {
         StringBuilder orderSql = new StringBuilder();
         if (null != sortColumn) {
             switch (sortColumn) {
@@ -127,7 +127,7 @@ public class InsightServiceImpl implements InsightService {
         } else {
             orderSql.append("order by decode(SPU_ID, " + spuId + ", 1, 0) desc, CONTRIBUTE_RATE desc, SPU_ID asc");
         }
-        final List<InsightImportSpu> importSpuList = insightImportSpuMapper.findImportSpuList(start, end, purchOrder, dateRange, orderSql.toString(), spuId);
+        final List<InsightImportSpu> importSpuList = insightImportSpuMapper.findImportSpuList(limit,offset, purchOrder, dateRange, orderSql.toString(), spuId);
         InsightImportSpu avg = insightImportSpuMapper.findAvgImportSpu(purchOrder, dateRange);
         importSpuList.add(avg);
         return importSpuList;
@@ -449,8 +449,8 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int start, int end) {
-        return insightMapper.getGrowthUser(spuId, purchOrder, ebpProductId, nextEbpProductId, start, end);
+    public List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int limit, int offset) {
+        return insightMapper.getGrowthUser(spuId, purchOrder, ebpProductId, nextEbpProductId, limit,offset);
     }
 
     @Override

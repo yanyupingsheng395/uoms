@@ -16,64 +16,60 @@
     </resultMap>
 
     <select id="getCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_GROUP where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+        select count(1) from UO_OP_ACTIVITY_GROUP where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage}
     </select>
 
     <select id="getUserGroupPage" resultMap="base">
-        select * from (
-          select ROWNUM rn, t.* from (
-            select GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, TMP_CONTENT, TMP_CONTENT_NORMAL,GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE from UO_OP_ACTIVITY_GROUP
-            left join UO_OP_ACTIVITY_TEMPLATE on SMS_TEMPLATE_CODE = TMP_CODE(+)
-            where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
-          ) t where ROWNUM &lt; = #{end}
-        ) where RN &gt;= #{start}
+        select GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, TMP_CONTENT, TMP_CONTENT_NORMAL,GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE from UO_OP_ACTIVITY_GROUP
+            left join UO_OP_ACTIVITY_TEMPLATE on SMS_TEMPLATE_CODE = TMP_CODE
+            where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage}
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="getUserGroupList" resultMap="base">
         select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE,CHECK_FLAG,CHECK_COMMENTS,PROD_ACTIVITY_PROP
-        from UO_OP_ACTIVITY_GROUP, UO_OP_ACTIVITY_TEMPLATE
-        where SMS_TEMPLATE_CODE = TMP_CODE(+) and HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} order by group_id asc
+        from UO_OP_ACTIVITY_GROUP left join UO_OP_ACTIVITY_TEMPLATE
+        on SMS_TEMPLATE_CODE = TMP_CODE where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage} order by group_id asc
     </select>
 
     <update id="updateGroupTemplate">
-        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{code}
-        where head_id = #{headId} and GROUP_ID = #{groupId} and ACTIVITY_STAGE = #{stage}
+        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{code}::int4
+        where head_id = #{headId}::int4 and GROUP_ID = #{groupId}::int4 and ACTIVITY_STAGE = #{stage}
     </update>
 
     <insert id="saveGroupData">
-        insert all
-        <foreach collection="list" item="item">
-            into UO_OP_ACTIVITY_GROUP(
-            GROUP_ID,
-            HEAD_ID,
-            GROUP_NAME,
-            ACTIVITY_STAGE,
-            INSERT_DT,
-            INSERT_BY,
-            ACTIVITY_TYPE,
-            PROD_ACTIVITY_PROP
-            )
-            values (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.activityStage}, #{item.insertDt}, #{item.insertBy}, #{item.activityType}, #{item.prodActivityProp})
+        insert  into UO_OP_ACTIVITY_GROUP(
+        GROUP_ID,
+        HEAD_ID,
+        GROUP_NAME,
+        ACTIVITY_STAGE,
+        INSERT_DT,
+        INSERT_BY,
+        ACTIVITY_TYPE,
+        PROD_ACTIVITY_PROP
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+           (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.activityStage}, #{item.insertDt}, #{item.insertBy}, #{item.activityType}, #{item.prodActivityProp})
         </foreach>
-        select 1 from dual
     </insert>
 
     <select id="refrenceCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_GROUP where SMS_TEMPLATE_CODE = #{code}
+        select count(1) from UO_OP_ACTIVITY_GROUP where SMS_TEMPLATE_CODE = #{code}::int4
     </select>
 
     <delete id="deleteData">
-        delete from UO_OP_ACTIVITY_GROUP where head_id = #{headId}
+        delete from UO_OP_ACTIVITY_GROUP where head_id = #{headId}::int4
     </delete>
 
     <update id="setSmsCode">
-        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{tmpCode} where GROUP_ID = #{groupId} and HEAD_ID = #{headId}
+        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{tmpCode}::int4 where GROUP_ID = #{groupId}::int4 and HEAD_ID = #{headId}::int4
         and ACTIVITY_TYPE = #{type} and ACTIVITY_STAGE = #{stage}
     </update>
 
     <select id="checkTmpIsUsed" resultType="int">
         select count(1) from UO_OP_ACTIVITY_GROUP t1, UO_OP_ACTIVITY_HEADER t2
-        where t1.HEAD_ID = t2.HEAD_ID and (t2.PREHEAT_STATUS &lt;&gt; 'done' and t2.FORMAL_STATUS &lt;&gt; 'done') and t1.SMS_TEMPLATE_CODE = #{tmpCode}
+        where t1.HEAD_ID = t2.HEAD_ID and (t2.PREHEAT_STATUS &lt;&gt; 'done' and t2.FORMAL_STATUS &lt;&gt; 'done') and t1.SMS_TEMPLATE_CODE = #{tmpCode}::int4
     </select>
 
     <update id="validUserGroupNotify">
@@ -84,14 +80,14 @@
                     GROUP_ID in (
                     select distinct GROUP_ID
                     from UO_OP_ACTIVITY_PRODUCT
-                    where HEAD_ID = #{headId}
+                    where HEAD_ID = #{headId}::int4
                 ) and
                     SMS_TEMPLATE_CODE is null then 'N'
                 when
                     GROUP_ID in (
                     select distinct GROUP_ID
                     from UO_OP_ACTIVITY_PRODUCT
-                    where HEAD_ID = #{headId}
+                    where HEAD_ID = #{headId}::int4
                 ) and
                     SMS_TEMPLATE_CODE is not null then 'Y'
                 else 'NA' end
@@ -102,11 +98,11 @@
                         GROUP_ID in (
                         select distinct GROUP_ID
                         from UO_OP_ACTIVITY_PRODUCT
-                        where HEAD_ID = #{headId}
+                        where HEAD_ID = #{headId}::int4
                     ) and
                         SMS_TEMPLATE_CODE is null then '群组文案没有配置'
             else null end)
-        where HEAD_ID = #{headId}
+        where HEAD_ID = #{headId}::int4
           and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = 'NOTIFY'
     </update>
 
@@ -117,26 +113,26 @@
         CHECK_COMMENTS = (
             case when SMS_TEMPLATE_CODE is null then '群组文案没有配置' else '' end
         )
-        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = 'DURING'
+        where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = 'DURING'
     </update>
 
     <select id="validGroupTemplate" resultType="int">
         select count(1) from UO_OP_ACTIVITY_GROUP
-        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{type} and SMS_TEMPLATE_CODE is null
+        where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{type} and SMS_TEMPLATE_CODE is null
     </select>
 
     <select id="validGroupTemplateWithGroup" resultType="int">
         select count(1) from UO_OP_ACTIVITY_GROUP
-        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{type}
+        where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{type}
         and GROUP_ID IN
         <foreach collection="groupIds" open="(" close=")" separator="," item="item">
-            #{item}
+            #{item}::int4
         </foreach>
         and SMS_TEMPLATE_CODE is null
     </select>
 
     <update id="removeSmsSelected">
         update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = null, CHECK_FLAG = 'N', CHECK_COMMENTS = '群组文案没有配置'
-        where head_id = #{headId} and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId}
+        where head_id = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId}::int4
     </update>
 </mapper>

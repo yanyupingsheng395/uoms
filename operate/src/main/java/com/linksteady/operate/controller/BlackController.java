@@ -24,10 +24,10 @@ public class BlackController extends BaseController {
 
     @GetMapping("/getDataList")
     public ResponseBo getDataList(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String phone = request.getParam().get("phone");
-        List<BlackInfo> blackInfos = blackService.getDataList(phone, start, end);
+        List<BlackInfo> blackInfos = blackService.getDataList(phone, limit,offset);
         int count = blackService.getCount(phone);
         return ResponseBo.okOverPaging(null, count, blackInfos);
     }

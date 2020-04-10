@@ -64,21 +64,17 @@
     </resultMap>
 
     <insert id="savePlanList">
-        insert into UO_OP_ACTIVITY_PLAN(HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID,PLAN_TYPE,SUCCESS_NUM)
-        select p.* from(
-        <foreach collection="list" item="item" index="index" separator="union all">
-              select
-                     #{item.headId},
-                     #{item.userCnt},
-                     #{item.planDate},
-                     #{item.planStatus},
-                     #{item.stage},
-                     #{item.planDateWid},
-                     #{item.planType},
-                     #{item.successNum}
-              from dual
+        insert into UO_OP_ACTIVITY_PLAN(HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID,PLAN_TYPE,SUCCESS_NUM) values
+        <foreach collection="list" item="item" index="index" separator=",">
+             (#{item.headId},
+            #{item.userCnt},
+            #{item.planDate},
+            #{item.planStatus},
+            #{item.stage},
+            #{item.planDateWid},
+            #{item.planType},
+            #{item.successNum})
         </foreach>
-        ) p
     </insert>
 
     <select id="getPlanList" resultMap="planMap">
@@ -96,7 +92,7 @@
                UO_OP_ACTIVITY_PLAN.EFFECT_FLAG
         from UO_OP_ACTIVITY_PLAN
         left join UO_OP_ACTIVITY_HEADER on UO_OP_ACTIVITY_PLAN.HEAD_ID = UO_OP_ACTIVITY_HEADER.HEAD_ID
-        where UO_OP_ACTIVITY_PLAN.HEAD_ID = #{headId} order by PLAN_DATE asc
+        where UO_OP_ACTIVITY_PLAN.HEAD_ID = #{headId}::int4 order by PLAN_DATE asc
     </select>
 
     <select id="getPlanInfo" resultMap="planMap">
@@ -112,15 +108,15 @@
                VERSION,
                EFFECT_FLAG
         from UO_OP_ACTIVITY_PLAN
-         where plan_id = #{planId}
+         where plan_id = #{planId}::int4
     </select>
 
     <delete id="deletePlan">
-        delete from UO_OP_ACTIVITY_PLAN where head_id = #{headId}
+        delete from UO_OP_ACTIVITY_PLAN where head_id = #{headId}::int4
     </delete>
 
     <delete id="deletePlanGroup">
-        delete from UO_OP_ACTIVITY_PLAN_GROUP where head_id = #{headId}
+        delete from UO_OP_ACTIVITY_PLAN_GROUP where head_id = #{headId}::int4
     </delete>
 
     <select id="getPlanGroupList" resultMap="planGroupResult">
@@ -135,39 +131,34 @@
             GROUP_USERNUM    ,
             INSERT_DT        ,
             CHECK_ALLOW_DESC
-        FROM UO_OP_ACTIVITY_PLAN_GROUP WHERE PLAN_ID=#{planId} AND CHECK_FLAG='Y'
-        ORDER BY UO_OP_ACTIVITY_PLAN_GROUP.GROUP_ID ASC
+        FROM UO_OP_ACTIVITY_PLAN_GROUP WHERE PLAN_ID=#{planId}::int4 AND CHECK_FLAG='Y'
+        ORDER BY GROUP_ID ASC
     </select>
 
     <select id="getPlanSmsContentListCount" resultType="int">
         SELECT count(*) FROM (
               select T.SMS_CONTENT,COUNT(*) CNT from UO_OP_ACTIVITY_DETAIL T,UO_OP_ACTIVITY_PLAN_GROUP G
-              WHERE T.PLAN_ID=G.PLAN_ID AND T.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND T.PLAN_ID=#{planId} GROUP BY T.SMS_CONTENT)
+              WHERE T.PLAN_ID=G.PLAN_ID AND T.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND T.PLAN_ID=#{planId}::int4 GROUP BY T.SMS_CONTENT) v
     </select>
 
     <select id="getPlanSmsContentList" resultMap="smsStatisResult">
-        select *
-        from (
-                 select tt.*, ROWNUM RN
-                 from (
-                          SELECT SMS_CONTENT, CNT, LENGTH(SMS_CONTENT) SMSLENGTH
-                          FROM (select T.SMS_CONTENT, COUNT(*) CNT
-                                from UO_OP_ACTIVITY_DETAIL T,UO_OP_ACTIVITY_PLAN_GROUP G
-                                WHERE T.PLAN_ID=G.PLAN_ID AND T.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND T.PLAN_ID=#{planId}
-                                GROUP BY T.SMS_CONTENT)
-                          ORDER BY CNT DESC,SMS_CONTENT ASC
-                      ) tt where ROWNUM &lt;= #{end}
-             )  where RN &gt;= #{start}
+      SELECT SMS_CONTENT, CNT, LENGTH(SMS_CONTENT) SMSLENGTH
+      FROM (select T.SMS_CONTENT, COUNT(*) CNT
+            from UO_OP_ACTIVITY_DETAIL T,UO_OP_ACTIVITY_PLAN_GROUP G
+            WHERE T.PLAN_ID=G.PLAN_ID AND T.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND T.PLAN_ID=#{planId}::int4
+            GROUP BY T.SMS_CONTENT) v
+      ORDER BY CNT DESC,SMS_CONTENT ASC
+      limit #{limit} offset #{offset}
     </select>
 
     <select id="selectPlanEffect" resultMap="PlanEffectResult">
         SELECT
             COUNT(ACTIVITY_DETAIL_ID) USER_COUNT,
             COUNT(CASE WHEN PUSH_STATUS='S' THEN PUSH_STATUS END) SUCCESS_COUNT,
-            NVL(SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' THEN 1 ELSE 0 END),0) COV_USERCOUNT,
-            NVL(SUM(NVL(COV_AMOUNT,0)),0) COV_AMOUNT,
-            NVL(SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' AND NVL(SPU_CONSISTENT,'N')='Y' THEN 1 ELSE 0 END),0) SPU_USERCOUNT,
-            NVL(SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' AND NVL(SPU_CONSISTENT,'N')='Y' THEN NVL(COV_SPU_AMOUNT,0) ELSE 0 END),0) SPU_AMOUNT
+            coalesce(SUM(CASE WHEN coalesce(IS_CONVERSION,'X')='1' THEN 1 ELSE 0 END),0) COV_USERCOUNT,
+            coalesce(SUM(coalesce(COV_AMOUNT,0)),0) COV_AMOUNT,
+            coalesce(SUM(CASE WHEN coalesce(IS_CONVERSION,'X')='1' AND coalesce(SPU_CONSISTENT,'N')='Y' THEN 1 ELSE 0 END),0) SPU_USERCOUNT,
+            coalesce(SUM(CASE WHEN coalesce(IS_CONVERSION,'X')='1' AND coalesce(SPU_CONSISTENT,'N')='Y' THEN coalesce(COV_SPU_AMOUNT,0) ELSE 0 END),0) SPU_AMOUNT
         FROM(
                 SELECT T2.ACTIVITY_DETAIL_ID,
                        T2.PUSH_STATUS,
@@ -176,17 +167,17 @@
                        T1.COV_AMOUNT,
                        T1.SPU_CONSISTENT,
                        T1.COV_SPU_AMOUNT
-                FROM UO_OP_ACTIVITY_CONVERT_DETAIL T1, UO_OP_ACTIVITY_DETAIL T2
-                WHERE T1.ACTIVITY_DETAIL_ID(+) = T2.ACTIVITY_DETAIL_ID
-                  AND T2.PLAN_ID = #{planId}) C
+                FROM UO_OP_ACTIVITY_CONVERT_DETAIL T1 right join UO_OP_ACTIVITY_DETAIL T2
+                on T1.ACTIVITY_DETAIL_ID = T2.ACTIVITY_DETAIL_ID
+                  AND T2.PLAN_ID = #{planId}::int4) C
     </select>
 
     <select id="getPlanEffectStatisList" resultMap="PlanEffectResult">
         SELECT
             CONVERSION_DATE,
             SUM(COUNT(CASE WHEN PUSH_STATUS='S' THEN PUSH_STATUS END))OVER(PARTITION BY NULL) SUCCESS_COUNT,
-            SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' THEN 1 ELSE 0 END) COV_USERCOUNT,
-            SUM(CASE WHEN NVL(IS_CONVERSION,'X')='1' AND NVL(SPU_CONSISTENT,'N')='Y' THEN 1 ELSE 0 END) SPU_USERCOUNT
+            SUM(CASE WHEN coalesce(IS_CONVERSION,'X')='1' THEN 1 ELSE 0 END) COV_USERCOUNT,
+            SUM(CASE WHEN coalesce(IS_CONVERSION,'X')='1' AND coalesce(SPU_CONSISTENT,'N')='Y' THEN 1 ELSE 0 END) SPU_USERCOUNT
         FROM(
                 SELECT T2.ACTIVITY_DETAIL_ID,
                        T2.PUSH_STATUS,
@@ -198,35 +189,32 @@
                 FROM UO_OP_ACTIVITY_CONVERT_DETAIL T1, UO_OP_ACTIVITY_DETAIL T2
                 WHERE T1.ACTIVITY_DETAIL_ID= T2.ACTIVITY_DETAIL_ID
                   AND T2.PUSH_STATUS='S'
-                  AND T2.PLAN_ID =  #{planId}) C GROUP BY CONVERSION_DATE
+                  AND T2.PLAN_ID =  #{planId}::int4) as C GROUP BY CONVERSION_DATE
     </select>
 
     <select id="getPersonalPlanEffect" resultMap="PersonalPlanEffectResult">
-        select * from (
-        select tt.*, ROWNUM RN from (
-                select
-                    t.user_id, --用户ID
-                    u.login_name user_name,  --用户名
-                    u.mobile, --手机号
-                    t.path_active, --活跃度
-                    t.user_value,  --用户价值
-                    t.push_period,  --推送时段
-                    t.conversion_period CONVERT_PERIOD,  --转化时段
-                    t.push_date,  --推送日期
-                    t.conversion_date convert_date, --转化日期
-                    trunc((t.conversion_date-t.push_date),1) CONVERT_INTERVAL, --转换间隔
-                    t.spu_consistent, --推荐SPU与购买SPU是否一致 Y表示是 N表示否
-                    t.rec_spu_name PUSH_SPU,  --推荐SPU名称
-                    t.IS_CONVERSION IS_CONVERT,
-                    t.SPU_CONSISTENT SPU_IS_CONVERT
-                    --转化的SPU名称
-                from UO_OP_ACTIVITY_CONVERT_DETAIL t, w_users u,UO_OP_ACTIVITY_DETAIL t2
-                where t.user_id = u.id and t.IS_CONVERSION = '1'
-                  and t.activity_detail_id=t2.activity_detail_id
-                  and t2.plan_id=#{planId}
-                  ORDER BY t.activity_detail_id ASC
-        ) tt where ROWNUM &lt;= #{end}
-        ) where RN &gt;= #{start}
+        select
+            t.user_id, --用户ID
+            u.login_name user_name,  --用户名
+            u.mobile, --手机号
+            t.path_active, --活跃度
+            t.user_value,  --用户价值
+            t.push_period,  --推送时段
+            t.conversion_period CONVERT_PERIOD,  --转化时段
+            t.push_date,  --推送日期
+            t.conversion_date convert_date, --转化日期
+            round((extract(day from t.conversion_date::timestamp-t.push_date::timestamp) * 24 + extract(hour from t.conversion_date::timestamp-t.push_date::timestamp))::numeric/24::numeric, 1)::varchar CONVERT_INTERVAL, --转换间隔
+            t.spu_consistent, --推荐SPU与购买SPU是否一致 Y表示是 N表示否
+            t.rec_spu_name PUSH_SPU,  --推荐SPU名称
+            t.IS_CONVERSION IS_CONVERT,
+            t.SPU_CONSISTENT SPU_IS_CONVERT
+            --转化的SPU名称
+        from UO_OP_ACTIVITY_CONVERT_DETAIL t, w_users u,UO_OP_ACTIVITY_DETAIL t2
+        where t.user_id = u.id::varchar and t.IS_CONVERSION = '1'
+          and t.activity_detail_id=t2.activity_detail_id
+          and t2.plan_id=#{planId}::int4
+          ORDER BY t.activity_detail_id ASC
+          limit #{limit} offset #{offset}
     </select>
 
     <select id="getDailyPersonalEffectCount" resultType="int">
@@ -234,11 +222,11 @@
         where
             t.activity_detail_id=t2.activity_detail_id
         and t.IS_CONVERSION = '1'
-        and t2.plan_id=#{planId}
+        and t2.plan_id=#{planId}::int4
     </select>
 
     <update id="expireActivityPlan">
-        update uo_op_activity_plan t set t.plan_status='4' where t.plan_status='1' and trunc(sysdate)>trunc(t.plan_date)
+        update uo_op_activity_plan t set t.plan_status='4' where t.plan_status='1' and now()>t.plan_date::timestamp
     </update>
 
     <select id="getPlanStatus" resultType="string">
@@ -250,6 +238,6 @@
         <if test="stage == 'formal'">
             and t1.PLAN_DATE = t2.FORMAL_NOTIFY_DT
         </if>
-        and t1.HEAD_ID = #{headId}
+        and t1.HEAD_ID = #{headId}::int4
     </select>
 </mapper>

@@ -15,7 +15,7 @@ public interface DailyMapper {
 
     List<DailyHead> getPageList(int limit, int offset, String touchDt);
 
-    List<DailyHead> getTouchPageList(int start, int end, String touchDt);
+    List<DailyHead> getTouchPageList(int limit, int offset, String touchDt);
 
     int getTotalCount(@Param("touchDt") String touchDt);
 
@@ -50,7 +50,7 @@ public interface DailyMapper {
      * @param headId
      * @return
      */
-    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int start, int end, String headId);
+    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int limit, int offset, String headId);
 
     /**
      * 个体结果只获取已经转化的结果

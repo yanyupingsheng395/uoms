@@ -22,7 +22,7 @@ public interface DailyDetailMapper {
      * @param pathActive
      * @return
      */
-    List<DailyDetail> getPageList(int start, int end, String headId, String userValue, String pathActive);
+    List<DailyDetail> getPageList(int limit, int offset, String headId, String userValue, String pathActive);
 
     /**
      * 根据活跃度和价值获取当前head_ID下符合条件的记录数

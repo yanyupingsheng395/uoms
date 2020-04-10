@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public interface DailyService {
 
-    List<DailyHead> getPageList(int start, int end, String touchDt);
+    List<DailyHead> getPageList(int limit, int offset, String touchDt);
 
     int getTotalCount(String touchDt);
 
@@ -40,7 +40,7 @@ public interface DailyService {
 
     void setSmsCode(String groupId, String smsCode);
 
-    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int start, int end, String headId);
+    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int limit, int offset, String headId);
 
     int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
 

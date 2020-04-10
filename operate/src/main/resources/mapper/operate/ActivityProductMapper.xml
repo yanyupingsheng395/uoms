@@ -18,11 +18,10 @@
     </resultMap>
 
     <select id="getActivityProductListPage" resultMap="base">
-        select * from (
-        select t.*, ROWNUM rn from (
-          select ID, HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,NOTIFY_MIN_PRICE,CHECK_FLAG,
-            CHECK_COMMENTS, ALIKE_PROD_ID, GROUP_ID from UO_OP_ACTIVITY_PRODUCT
-          where HEAD_ID = #{headId}
+        select ID, HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE,
+        PRODUCT_URL,NOTIFY_MIN_PRICE,CHECK_FLAG,
+        CHECK_COMMENTS, ALIKE_PROD_ID, GROUP_ID from UO_OP_ACTIVITY_PRODUCT
+        where HEAD_ID = #{headId}::int4
         <if test="productId != null and productId != ''">
             and EPB_PRODUCT_ID = #{productId}
         </if>
@@ -30,15 +29,14 @@
             and product_name like concat('%', #{productName}, '%')
         </if>
         <if test="groupId != null and groupId != ''">
-            and group_id = #{groupId}
+            and group_id = #{groupId}::int4
         </if>
         order by CHECK_FLAG asc, id desc
-        ) t where ROWNUM &lt;=#{end}
-        ) where RN &gt;= #{start}
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="getCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}
+        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}::int4
         <if test="productId != null and productId != ''">
             and EPB_PRODUCT_ID = #{productId}
         </if>
@@ -46,12 +44,13 @@
             and product_name like concat('%', #{productName}, '%')
         </if>
         <if test="groupId != null and groupId != ''">
-            and group_id = #{groupId}
+            and group_id = #{groupId}::int4
         </if>
     </select>
 
     <insert id="saveDataList">
-        insert into UO_OP_ACTIVITY_PRODUCT(head_id, EPB_PRODUCT_ID, user_count, product_price, prefer_type, prefer_value,
+        insert into UO_OP_ACTIVITY_PRODUCT(head_id, EPB_PRODUCT_ID, user_count, product_price, prefer_type,
+        prefer_value,
         product_act_price, min_price15, min_price30)
         <foreach item="item" collection="list" index="index" separator="union all">
             select #{item.headId},
@@ -66,35 +65,32 @@
 
     <insert id="saveActivityProduct">
         insert into UO_OP_ACTIVITY_PRODUCT(HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,GROUP_ID, NOTIFY_MIN_PRICE)
-        values (#{headId}, #{productId}, #{productName}, #{minPrice}, #{formalPrice}, #{productUrl},#{groupId}, #{notifyMinPrice})
+        values (#{headId}, #{productId}, #{productName}, #{minPrice}, #{formalPrice}, #{productUrl},#{groupId}::int4, #{notifyMinPrice})
     </insert>
 
     <select id="getProductById" resultMap="base">
-        select ID, HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,NOTIFY_MIN_PRICE,CHECK_FLAG, CHECK_COMMENTS, ALIKE_PROD_ID, GROUP_ID from UO_OP_ACTIVITY_PRODUCT where ID = #{id}
+        select ID, HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,NOTIFY_MIN_PRICE,CHECK_FLAG, CHECK_COMMENTS, ALIKE_PROD_ID, GROUP_ID from UO_OP_ACTIVITY_PRODUCT where ID = #{id}::int4
     </select>
 
     <update id="updateActivityProduct">
         update UO_OP_ACTIVITY_PRODUCT
-        set PRODUCT_NAME = #{productName},MIN_PRICE = #{minPrice}, FORMAL_PRICE = #{formalPrice}, NOTIFY_MIN_PRICE = #{notifyMinPrice}, GROUP_ID = #{groupId}
-        where ID = #{id}
+        set PRODUCT_NAME = #{productName},MIN_PRICE = #{minPrice}, FORMAL_PRICE = #{formalPrice}, NOTIFY_MIN_PRICE = #{notifyMinPrice}, GROUP_ID = #{groupId}::int4
+        where ID = #{id}::int4
     </update>
 
     <insert id="saveActivityProductList">
-        insert into UO_OP_ACTIVITY_PRODUCT(HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL, NOTIFY_MIN_PRICE, GROUP_ID)
-        select A.* FROM (
-        <foreach collection="list" item="item" index="index"  close=")" open="(" separator="union">
-           SELECT
-                  #{item.headId},
-                  #{item.productId},
-                  #{item.productName},
-                  #{item.minPrice},
-                  #{item.formalPrice},
-                  #{item.productUrl},
-                  #{item.notifyMinPrice},
-                  #{item.groupId}
-           FROM DUAL
+        insert into UO_OP_ACTIVITY_PRODUCT(HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL,
+        NOTIFY_MIN_PRICE, GROUP_ID) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.headId}::int4,
+            #{item.productId},
+            #{item.productName},
+            #{item.minPrice},
+            #{item.formalPrice},
+            #{item.productUrl},
+            #{item.notifyMinPrice},
+            #{item.groupId}::int4)
         </foreach>
-        ) A
     </insert>
 
     <delete id="deleteProduct">
@@ -106,7 +102,7 @@
 
     <select id="validProductNum" resultType="int">
         select count(1) from UO_OP_ACTIVITY_PRODUCT
-        where HEAD_ID = #{headId}
+        where HEAD_ID = #{headId}::int4
     </select>
 
     <select id="getSameProductCount" resultType="int">
@@ -125,17 +121,17 @@
     </delete>
 
 
-    <select id="geFirstProductInfo"  resultMap="base">
+    <select id="geFirstProductInfo" resultMap="base">
         select HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, ACTIVITY_INTENSITY, PRODUCT_URL, PRODUCT_ATTR, ACTIVITY_STAGE, ID from UO_OP_ACTIVITY_PRODUCT
-        where HEAD_ID = #{headId} and ACTIVITY_STAGE=#{stage} AND rownum=1
+        where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE=#{stage} AND rownum=1
     </select>
 
     <delete id="deleteData">
-        delete from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}
+        delete from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}::int4
     </delete>
 
     <select id="getProductIdByHeadId" resultType="string">
-        select EPB_PRODUCT_ID from UO_OP_ACTIVITY_PRODUCT where head_id = #{headId}
+        select EPB_PRODUCT_ID from UO_OP_ACTIVITY_PRODUCT where head_id = #{headId}::int4
     </select>
 
     <delete id="deleteDataList">
@@ -147,34 +143,34 @@
 
     <update id="updateValidInfo">
         update UO_OP_ACTIVITY_PRODUCT
-        set CHECK_FLAG = 'N', CHECK_COMMENTS = '活动商品在在售商品库中不存在' where HEAD_ID = #{headId} and EPB_PRODUCT_ID in (
+        set CHECK_FLAG = 'N', CHECK_COMMENTS = '活动商品在在售商品库中不存在' where HEAD_ID = #{headId}::int4 and EPB_PRODUCT_ID in (
         with v1 as ( select EPB_PRODUCT_ID
                      from UO_OP_ACTIVITY_PRODUCT t1,
                           (select distinct EBP_PRODUCT_ID from W_PRODUCT where UP_FLAG = '1') t2
-                     where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID and t1.HEAD_ID  = #{headId} )
+                     where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID and t1.HEAD_ID  = #{headId}::int4)
         select t3.EPB_PRODUCT_ID from UO_OP_ACTIVITY_PRODUCT t3 left join v1 on t3.EPB_PRODUCT_ID = v1.EPB_PRODUCT_ID
-        where t3.HEAD_ID = #{headId} and v1.EPB_PRODUCT_ID is null)
+        where t3.HEAD_ID = #{headId}::int4 and v1.EPB_PRODUCT_ID is null)
     </update>
 
     <update id="updateAllValidInfo">
         update UO_OP_ACTIVITY_PRODUCT
-        set CHECK_FLAG = 'Y', CHECK_COMMENTS = '' where HEAD_ID = #{headId}
+        set CHECK_FLAG = 'Y', CHECK_COMMENTS = '' where HEAD_ID = #{headId}::int4
     </update>
 
     <select id="getCountByHeadId" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}
+        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}::int4
     </select>
 
     <select id="validProduct" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId} and CHECK_FLAG = 'N'
+        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}::int4 and CHECK_FLAG = 'N'
     </select>
 
     <select id="getGroupIds" resultType="string">
-        select DISTINCT GROUP_ID from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId} and CHECK_FLAG = 'Y'
+        select DISTINCT GROUP_ID from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}::int4 and CHECK_FLAG = 'Y'
     </select>
 
-    <select id="getProductPriceList"  resultMap="base">
+    <select id="getProductPriceList" resultMap="base">
            SELECT (CASE WHEN #{activityType}='NOTIFY' THEN NOTIFY_MIN_PRICE ELSE MIN_PRICE END) MIN_PRICE,EPB_PRODUCT_ID
-           FROM UO_OP_ACTIVITY_PRODUCT P WHERE HEAD_ID = #{headId} and CHECK_FLAG = 'Y'
+           FROM UO_OP_ACTIVITY_PRODUCT P WHERE HEAD_ID = #{headId}::int4 and CHECK_FLAG = 'Y'
     </select>
 </mapper>

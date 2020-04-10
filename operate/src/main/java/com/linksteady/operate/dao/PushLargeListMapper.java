@@ -20,7 +20,7 @@ public interface PushLargeListMapper {
      * 分页获取待推送的名单
      * @return
      */
-    List<PushListLarge> getPushLargeList(int start, int end);
+    List<PushListLarge> getPushLargeList(int limit, int offset);
 
 
     /**

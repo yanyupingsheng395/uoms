@@ -85,12 +85,12 @@ public class DailyTaskController {
      */
     @GetMapping("/getDetailPageList")
     public ResponseBo getDetailPageList(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String headId = request.getParam().get("headId");
         String userValue = request.getParam().get("userValue");
         String pathActive = request.getParam().get("pathActive");
-        List<DailyDetail> dataList = dailyDetailService.getPageList(start, end, headId, userValue, pathActive);
+        List<DailyDetail> dataList = dailyDetailService.getPageList(limit, offset, headId, userValue, pathActive);
         int count = dailyDetailService.getDataCount(headId, userValue, pathActive);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
@@ -110,15 +110,14 @@ public class DailyTaskController {
                 dailyDetailService.generatePushList(headId);
                 return ResponseBo.ok();
             } catch (Exception e) {
-                log.error("每日运营转化生成文案错误，异常堆栈为{}",e);
+                log.error("每日运营转化生成文案错误，异常堆栈为{}", e);
                 return ResponseBo.error("生成文案错误，请联系系统运维人员！");
-            }finally {
+            } finally {
                 //释放锁
                 dailyService.delTransLock();
             }
-        }else
-        {
-             return ResponseBo.error("其他用户正在生成文案，请稍后再操作！");
+        } else {
+            return ResponseBo.error("其他用户正在生成文案，请稍后再操作！");
         }
     }
 
@@ -152,9 +151,9 @@ public class DailyTaskController {
      */
     @GetMapping("/refreshUserStatData")
     public ResponseBo refreshUserStatData(String headId, String userValue, String pathActive, String lifecycle) {
-        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
-        Map<String, String> userValueMap =configService.selectDictByTypeCode("USER_VALUE");
-        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
+        Map<String, String> pathActiveMap = configService.selectDictByTypeCode("PATH_ACTIVE");
+        Map<String, String> userValueMap = configService.selectDictByTypeCode("USER_VALUE");
+        Map<String, String> lifeCycleMap = configService.selectDictByTypeCode("LIFECYCLE");
 
         Map<String, Object> result = Maps.newHashMap();
 
@@ -183,9 +182,9 @@ public class DailyTaskController {
      */
     @GetMapping("/refreshUserStatData2")
     public ResponseBo refreshUserStatData2(String headId, String userValue, String pathActive, String lifecycle, String spuName) {
-        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
-        Map<String, String> userValueMap =configService.selectDictByTypeCode("USER_VALUE");
-        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
+        Map<String, String> pathActiveMap = configService.selectDictByTypeCode("PATH_ACTIVE");
+        Map<String, String> userValueMap = configService.selectDictByTypeCode("USER_VALUE");
+        Map<String, String> lifeCycleMap = configService.selectDictByTypeCode("LIFECYCLE");
         Map<String, Object> result = Maps.newHashMap();
         List<DailyUserStats> prodList = dailyService.getUserStatsByProd(headId, userValue, pathActive, lifecycle, spuName);
         result.put("prodList", prodList);
@@ -201,20 +200,17 @@ public class DailyTaskController {
      */
     @GetMapping("/submitData")
     @Transactional(rollbackFor = Exception.class)
-    public synchronized ResponseBo submitData(String headId, String pushMethod, String pushPeriod,Long effectDays) {
+    public synchronized ResponseBo submitData(String headId, String pushMethod, String pushPeriod, Long effectDays) {
         //对参数进行校验
-        if(StringUtils.isEmpty(headId)||StringUtils.isEmpty(pushMethod))
-        {
+        if (StringUtils.isEmpty(headId) || StringUtils.isEmpty(pushMethod)) {
             return ResponseBo.error("参数错误，请通过系统界面进行操作！");
         }
 
-        if(null==effectDays||effectDays<1||effectDays>10)
-        {
+        if (null == effectDays || effectDays < 1 || effectDays > 10) {
             return ResponseBo.error("参数错误，请通过系统界面进行操作！");
         }
 
-        if("FIXED".equals(pushMethod)&&StringUtils.isEmpty(pushPeriod))
-        {
+        if ("FIXED".equals(pushMethod) && StringUtils.isEmpty(pushPeriod)) {
             return ResponseBo.error("参数错误，请通过系统界面进行操作！");
         }
 
@@ -222,17 +218,16 @@ public class DailyTaskController {
         DailyHead dailyHead = dailyService.getDailyHeadById(headId);
 
         //进行一次时间的判断 (调度修改状态有一定的延迟)
-        if(!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(dailyHead.getTouchDtStr()))
-        {
+        if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(dailyHead.getTouchDtStr())) {
             return ResponseBo.error("已过期的任务无法再执行!");
         }
 
-        if (null==dailyHead||!dailyHead.getStatus().equalsIgnoreCase("todo")) {
+        if (null == dailyHead || !dailyHead.getStatus().equalsIgnoreCase("todo")) {
             return ResponseBo.error("记录已被其他用户修改，请返回刷新后重试！");
         }
 
         String validateLabel = dailyConfigService.validUserGroup() ? "未通过" : "通过";
-        if(validateLabel.equalsIgnoreCase("未通过")) {
+        if (validateLabel.equalsIgnoreCase("未通过")) {
             return ResponseBo.error("成长组配置验证未通过！");
         }
 
@@ -243,15 +238,13 @@ public class DailyTaskController {
         }
 
         try {
-            dailyService.pushContent(dailyHead,pushMethod,pushPeriod,effectDays);
+            dailyService.pushContent(dailyHead, pushMethod, pushPeriod, effectDays);
             return ResponseBo.ok();
         } catch (Exception e) {
-            log.error("每日运营推送错误，错误堆栈为{}",e);
-            if(e instanceof OptimisticLockException)
-            {
+            log.error("每日运营推送错误，错误堆栈为{}", e);
+            if (e instanceof OptimisticLockException) {
                 return ResponseBo.error(e.getMessage());
-            }else
-            {
+            } else {
                 return ResponseBo.error("推送出现未知错误，请联系系统运维人员!");
             }
         }
@@ -368,8 +361,8 @@ public class DailyTaskController {
      */
     @GetMapping("/getDailyPersonalEffect")
     public ResponseBo getDailyPersonalEffect(QueryRequest request) {
-        int start = request.getStart();
-        int end = request.getEnd();
+        int limit = request.getLimit();
+        int offset = request.getOffset();
         String headId = request.getParam().get("headId");
         String spuIsConvert = request.getParam().get("spuIsConvert");
         String userValue = request.getParam().get("userValue");
@@ -379,7 +372,7 @@ public class DailyTaskController {
         dailyPersonalVo.setUserValue(userValue);
         dailyPersonalVo.setPathActive(pathActive);
 
-        List<DailyPersonal> personals = dailyService.getDailyPersonalEffect(dailyPersonalVo, start, end, headId);
+        List<DailyPersonal> personals = dailyService.getDailyPersonalEffect(dailyPersonalVo, limit, offset, headId);
         int count = dailyService.getDailyPersonalEffectCount(dailyPersonalVo, headId);
         return ResponseBo.okOverPaging(null, count, personals);
     }
@@ -405,7 +398,9 @@ public class DailyTaskController {
                 int start = idx * pageSize + 1;
                 int end = (idx + 1) * pageSize;
                 end = end > count ? count : end;
-                return dailyService.getDailyPersonalEffect(new DailyPersonalVo(), start, end, headId);
+                int limit = start - 1;
+                int offset = end - start + 1;
+                return dailyService.getDailyPersonalEffect(new DailyPersonalVo(), limit, offset, headId);
             });
         }
 
@@ -445,7 +440,7 @@ public class DailyTaskController {
         }).collect(Collectors.toList());
         result.put("timeList", timeList);
 
-        result.put("effectDays",configService.getValueByName("op.daily.default.effectDays"));
+        result.put("effectDays", configService.getValueByName("op.daily.default.effectDays"));
         return ResponseBo.okWithData(null, result);
     }
 
@@ -457,7 +452,7 @@ public class DailyTaskController {
     @GetMapping("/setDefaultGroup")
     public ResponseBo setDefaultGroup(@RequestParam("active") String active) {
         //设置默认活跃度 第一个参数为key 第二个参数为value
-        configService.updateConfig("op.daily.pathactive.list",active);
+        configService.updateConfig("op.daily.pathactive.list", active);
         return ResponseBo.ok();
     }
 

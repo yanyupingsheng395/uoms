@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public interface ActivityHeadMapper {
 
-    List<ActivityHead> getDataListOfPage(int start, int end, String name, String date, String status);
+    List<ActivityHead> getDataListOfPage(int limit, int offset, String name, String date, String status);
 
     int getDataCount(@Param("name") String name);
 

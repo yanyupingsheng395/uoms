@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.User;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.ActivityTemplateMapper;
@@ -71,7 +72,7 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
 
     @Override
     public void saveTemplate(ActivityTemplate activityTemplate) {
-        activityTemplate.setInsertBy((((User) SecurityUtils.getSubject().getPrincipal()).getUsername()));
+        activityTemplate.setInsertBy((((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername()));
         activityTemplate.setInsertDt(new Date());
         if("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice())) {
             activityTemplate.setIsPersonal("0");
