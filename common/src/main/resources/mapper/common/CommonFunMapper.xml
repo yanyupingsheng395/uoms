@@ -17,8 +17,8 @@
     </update>
 
     <select id="getSysInfoByCode" resultMap="BaseResultMap">
-        select t.id, t.name, t.domain, t.code, t.logo
-        from t_system t
+        select id, name, domain, code, logo
+        from t_system
         where code = #{code}
     </select>
 

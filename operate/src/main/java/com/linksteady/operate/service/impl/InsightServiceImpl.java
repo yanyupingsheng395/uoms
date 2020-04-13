@@ -486,10 +486,10 @@ public class InsightServiceImpl implements InsightService {
             }
 
             if (type.equalsIgnoreCase("spu")) {
-                spu = Integer.valueOf(id);
+                spu = Integer.parseInt(id);
             }
             if (type.equalsIgnoreCase("product")) {
-                product = Integer.valueOf(id);
+                product = Integer.parseInt(id);
             }
             RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
             List<Double> retentionFit = retentionFitData.getRetentionFit();

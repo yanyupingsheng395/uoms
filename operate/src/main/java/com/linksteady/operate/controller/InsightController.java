@@ -70,7 +70,6 @@ public class InsightController {
         String dateRange = request.getParam().get("dateRange");
         String sortColumn = request.getSort();
         String sortOrder = request.getOrder();
-
         int count = insightService.findImportSpuListCount(purchOrder, dateRange);
         List<InsightImportSpu> dataList = insightService.findImportSpuList(limit,offset, spuId, purchOrder, dateRange, sortColumn, sortOrder);
         return ResponseBo.okOverPaging(null, count, dataList);
