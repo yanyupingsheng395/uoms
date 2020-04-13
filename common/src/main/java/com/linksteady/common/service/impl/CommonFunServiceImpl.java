@@ -1,8 +1,12 @@
 package com.linksteady.common.service.impl;
 
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.dao.CommonFunMapper;
 import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.service.CommonFunService;
+import com.linksteady.common.util.MD5Utils;
+import org.apache.catalina.security.SecurityUtil;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +24,8 @@ public class CommonFunServiceImpl implements CommonFunService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePassword(long userId, String password) {
-        this.commonFunMapper.updatePassword(userId, password);
+        String newPass = MD5Utils.encrypt(((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), password);
+        this.commonFunMapper.updatePassword(userId, newPass);
     }
 
     @Override

@@ -68,6 +68,6 @@
     </update>
 
     <delete id="deleteData">
-        delete from UO_OP_MANUAL_HEADER where HEAD_ID = #{headId}
+        delete from UO_OP_MANUAL_HEADER where HEAD_ID = #{headId}::integer
     </delete>
 </mapper>

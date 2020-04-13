@@ -50,7 +50,7 @@ public class CommonFunController extends BaseController {
      * @param password
      * @return
      */
-    @RequestMapping("user/checkPassword")
+    @RequestMapping("/user/checkPassword")
     @ResponseBody
     public boolean checkPassword(String password) {
         UserBo userBo = super.getCurrentUser();

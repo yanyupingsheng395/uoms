@@ -31,7 +31,7 @@ function validateUpdatePasswordRule() {
             oldPassword: {
                 required: true,
                 remote: {
-                    url: "/user/checkPassword",
+                    url: "/api/user/checkPassword",
                     type: "get",
                     dataType: "json",
                     data: {

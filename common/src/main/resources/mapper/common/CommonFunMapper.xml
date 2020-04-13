@@ -3,26 +3,35 @@
 <mapper namespace="com.linksteady.common.dao.CommonFunMapper">
 
     <resultMap id="BaseResultMap" type="com.linksteady.common.domain.SysInfoBo">
-        <result column="ID" jdbcType="DECIMAL" property="sysId" />
-        <result column="NAME" jdbcType="VARCHAR" property="sysName" />
+        <result column="ID" jdbcType="DECIMAL" property="sysId"/>
+        <result column="NAME" jdbcType="VARCHAR" property="sysName"/>
         <result column="DOMAIN" jdbcType="VARCHAR" property="sysDomain"/>
         <result column="LOGO" jdbcType="VARCHAR" property="logo"/>
         <result column="CODE" jdbcType="VARCHAR" property="sysCode"/>
     </resultMap>
 
     <update id="updatePassword">
-        update t_user t set t.password=#{newPassword} where t.user_id=#{userId}
+        update t_user
+        set password = #{newPassword}
+        where user_id = #{userId}
     </update>
 
     <select id="getSysInfoByCode" resultMap="BaseResultMap">
-        select t.id,t.name,t.domain,t.code,t.logo  from t_system t where code=#{code}
+        select t.id, t.name, t.domain, t.code, t.logo
+        from t_system t
+        where code = #{code}
     </select>
 
     <select id="getSysInfoById" resultMap="BaseResultMap">
-        select t.id,t.name,t.domain,t.code,t.logo  from t_system t where id=#{sysId}
+        select t.id, t.name, t.domain, t.code, t.logo
+        from t_system t
+        where id = #{sysId}
     </select>
 
     <select id="checkPassword" resultType="int">
-        select count(*) from t_user where user_id=#{userId} and password=#{newpass}
+        select count(*)
+        from t_user
+        where user_id = #{userId}
+          and password = #{newpass}
     </select>
 </mapper>
