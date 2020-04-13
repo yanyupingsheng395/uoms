@@ -40,7 +40,7 @@
         WITH g1 as(
         SELECT
         ${period_name} kpiDate,
-        NVL(W_ORDERS.REAL_FEE,0) FEE,
+        coalesce(W_ORDERS.REAL_FEE,0) FEE,
         W_ORDERS.IS_FP,
         W_ORDERS.USER_ID
         FROM
@@ -77,7 +77,7 @@
     <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
         WITH g1 as(
         SELECT
-        NVL(W_ORDERS.REAL_FEE,0) FEE,
+        coalesce(W_ORDERS.REAL_FEE,0) FEE,
         W_ORDERS.IS_FP,
         W_ORDERS.USER_ID
         FROM

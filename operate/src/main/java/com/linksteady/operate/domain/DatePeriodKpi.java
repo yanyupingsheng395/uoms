@@ -37,6 +37,19 @@ public class DatePeriodKpi {
         this.uprice = uprice.toString();
     }
 
+    public DatePeriodKpi(Integer minPeriod, Integer buyPeriod, BigDecimal uprice, Long kpiValue) {
+        this.minPeriod = minPeriod.toString();
+        this.buyPeriod = buyPeriod.toString();
+        this.kpiValue = kpiValue.toString();
+        this.uprice = uprice.toString();
+    }
+
+    public DatePeriodKpi(Integer minPeriod, Integer buyPeriod, Long kpiValue) {
+        this.minPeriod = minPeriod.toString();
+        this.buyPeriod = buyPeriod.toString();
+        this.kpiValue = kpiValue.toString();
+    }
+
     public String getUprice() {
         return uprice;
     }

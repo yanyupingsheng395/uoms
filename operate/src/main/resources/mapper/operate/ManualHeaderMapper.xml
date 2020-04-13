@@ -32,18 +32,15 @@
     </select>
 
     <select id="getHeaderListData" resultMap="base">
-        select * from (
-            select t.*, rownum rn from (
-                select head_id, file_name, all_num, valid_num, unvalid_num, success_num, faild_num, intercept_num, status, insert_dt, update_dt, insert_by, update_by, sms_content, push_type, schedule_date, actual_push_date
-                from UO_OP_MANUAL_HEADER
-                <if test="scheduleDate != null and scheduleDate != ''">
-                    <where>
-                        to_char(schedule_date, 'yyyy-mm-dd') = #{scheduleDate}
-                    </where>
-                </if>
-                order by head_id desc
-            ) t where ROWNUM &lt;= #{end}
-        ) where rn &gt;= #{start}
+        select head_id, file_name, all_num, valid_num, unvalid_num, success_num, faild_num, intercept_num, status, insert_dt, update_dt, insert_by, update_by, sms_content, push_type, schedule_date, actual_push_date
+        from UO_OP_MANUAL_HEADER
+        <if test="scheduleDate != null and scheduleDate != ''">
+            <where>
+                to_char(schedule_date, 'yyyy-mm-dd') = #{scheduleDate}
+            </where>
+        </if>
+        order by head_id desc
+        limit #{limit} offset #{offset}
     </select>
 
     <insert id="saveHeader">

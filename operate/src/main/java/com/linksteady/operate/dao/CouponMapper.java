@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface CouponMapper extends MyMapper<CouponInfo> {
 
-    List<CouponInfo> getList(@Param("startRow") int startRow, @Param("endRow") int endRow);
+    List<CouponInfo> getList(@Param("limit") int limit, @Param("offset") int offset);
 
     int getTotalCount();
 

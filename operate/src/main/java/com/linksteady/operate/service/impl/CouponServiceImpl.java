@@ -27,8 +27,8 @@ public class CouponServiceImpl implements CouPonService {
     private PushProperties pushProperties;
 
     @Override
-    public List<CouponInfo> getList(int startRow, int endRow) {
-        return couponMapper.getList(startRow, endRow);
+    public List<CouponInfo> getList(int limit, int offset) {
+        return couponMapper.getList(limit, offset);
     }
 
     @Override

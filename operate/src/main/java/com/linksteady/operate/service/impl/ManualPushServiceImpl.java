@@ -1,6 +1,7 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.User;
 import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.dao.ManualDetailMapper;
@@ -75,7 +76,7 @@ public class ManualPushServiceImpl implements ManualPushService {
         // 保存header
         ManualHeader manualHeader = new ManualHeader();
         manualHeader.setFileName(file.getOriginalFilename());
-        manualHeader.setInsertBy(((User) SecurityUtils.getSubject().getPrincipal()).getUsername());
+        manualHeader.setInsertBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
         manualHeader.setInsertDt(new Date());
         manualHeader.setPushType(sendType);
         manualHeader.setStatus("0");

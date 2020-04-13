@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface SmsTemplateService {
 
-    List<SmsTemplate> getSmsTemplateList(int startRow, int endRow, SmsTemplate smsTemplate);
+    List<SmsTemplate> getSmsTemplateList(int limit, int offset, SmsTemplate smsTemplate);
 
     int getTotalCount(SmsTemplate smsTemplate);
 

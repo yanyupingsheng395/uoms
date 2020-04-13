@@ -420,14 +420,111 @@ function removeValid() {
 
 // 智能补贴
 $("#btn_intel").click(function () {
-    $.get("/coupon/getCalculatedCoupon", {}, function (r) {
-        if(r.code === 200) {
-            $MB.n_success("智能补贴获取成功。");
-        }
-        $MB.refreshTable('couponTable');
-    });
+    intelCouponData();
+    $( "#intel_coupon_modal" ).modal( 'show' );
 });
 
+// 获取智能补贴信息
+function intelCouponData() {
+    var settings = {
+        url: '/daily/getIntelCouponList',
+        cache: false,
+        pagination: false,
+        singleSelect: false,
+        clickToSelect: true,
+        rowStyle: couponRowStyle,
+        columns: [{
+            checkbox: true,
+            formatter: function (value, row, index) {
+                var couponId = row['couponId'];
+                if(couponId === 1) {
+                    return {
+                        checked: true//设置选中
+                    };
+                }else {
+                    return {
+                        checked: true,
+                        disabled: true
+                    };
+                }
+            }
+        }, {
+            title: '补贴名称',
+            align: 'center',
+            formatter: function (value, row, index) {
+                if(row['couponDenom'] !== '' && row['couponDenom'] !== null && row['couponDenom'] !== undefined) {
+                    return row['couponDenom'] + '元'
+                }
+            }
+        }, {
+            field: 'couponThreshold',
+            align: 'center',
+            title: '补贴门槛(元)'
+        }, {
+            field: 'couponDenom',
+            align: 'center',
+            title: '补贴面额(元)'
+        }, {
+            title: '是否已经存在',
+            align: 'center',
+            formatter: function (value, row, index) {
+                var couponId = row['couponId'];
+                if(couponId === 1) {
+                    return '否'
+                }else {
+                    return '是'
+                }
+            }
+        }, {
+            title: '处理方式',
+            align: 'center',
+            formatter: function (value, row, index) {
+                var couponId = row['couponId'];
+                if(couponId === 1) {
+                    return '新增'
+                }else {
+                    return '忽略'
+                }
+            }
+        }]
+    };
+    $( '#intelCouponTable' ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+}
+
+function couponRowStyle(row, index) {
+    if (row['couponId'] === 0) {
+        return {
+            classes: 'info'
+        };
+    }
+    return {};
+}
+
+function saveIntelCoupon() {
+    $MB.confirm({
+        title: '提示：',
+        content: '确定执行当前操作？'
+    }, function () {
+        var selected = $("#intelCouponTable").bootstrapTable( 'getSelections' );
+        var coupon = [];
+        selected.forEach((v,k)=>{
+            if(v['couponId'] === 1) {
+                var tmp = {};
+                tmp.couponDenom = v['couponDenom'];
+                tmp.couponThreshold = v['couponThreshold'];
+                coupon.push(tmp);
+            }
+        });
+        $.get("/coupon/getCalculatedCoupon", {coupon: JSON.stringify(coupon)}, function (r) {
+            if(r.code === 200) {
+                $MB.n_success("智能补贴更新成功。");
+                $( "#intel_coupon_modal" ).modal( 'hide' );
+                $( "#coupon_modal" ).modal( 'show' );
+                couponTable($("#currentGroupId").val());
+            }
+        });
+    });
+}
 
 // 用来解决编辑情况下，日期插件的值会清空的问题
 var VALID_END;

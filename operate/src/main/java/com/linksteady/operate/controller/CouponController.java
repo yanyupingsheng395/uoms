@@ -42,7 +42,9 @@ public class CouponController extends BaseController {
      */
     @RequestMapping("/list")
     public ResponseBo smsTemplateList(@RequestBody QueryRequest request) {
-        List<CouponInfo> result = couponService.getList((request.getPageNum() - 1) * request.getPageSize() + 1, request.getPageNum() * request.getPageSize());
+        int limit = request.getLimit();
+        int offset = request.getOffset();
+        List<CouponInfo> result = couponService.getList(limit, offset);
         int totalCount = couponService.getTotalCount();
         return ResponseBo.okOverPaging("", totalCount, result);
     }

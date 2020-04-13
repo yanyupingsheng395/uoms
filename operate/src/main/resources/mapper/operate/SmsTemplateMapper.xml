@@ -19,9 +19,7 @@
     </resultMap>
 
     <select id="getSmsTemplateList" resultMap="BaseResultMap">
-        SELECT * FROM(
-        SELECT A.*,ROWNUM RN FROM
-        (SELECT
+        SELECT
         SMS_CODE, SMS_CONTENT, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE
         FROM UO_OP_SMS_TEMPLATE
         where 1=1
@@ -34,9 +32,8 @@
         <if test="smsTemplate.pathActive != null and smsTemplate.pathActive != ''">
             and PATH_ACTIVE like concat('%', #{smsTemplate.pathActive}, '%')
         </if>
-        order by to_number(SMS_CODE) desc
-        ) A  WHERE ROWNUM &lt;=#{endRow}
-        ) WHERE RN &gt;=#{startRow}
+        order by SMS_CODE::integer desc
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="getTotalCount" resultType="int">

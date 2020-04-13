@@ -82,7 +82,7 @@
                                     <div class="select-list" id="selectCondition2" hidden>
                                         <ul>
                                             <li>
-                                                日期：<input class="js-datepicker" type="text" id="startDateOfRetention" name="startDate" data-date-format="yyyy-mm" value="2019-01"/>
+                                                日期：<input class="js-datepicker" type="text" id="startDateOfRetention" name="startDate" data-date-format="yyyy-mm"/>
                                             </li>
                                             <li>
                                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="searchData()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -178,6 +178,7 @@
     $("#startDt").val(currentYear + "-01");
     $("#endDt").val(currentYear + "-" + (currentMonth < 10 ? "0" + currentMonth : currentMonth));
 
+    $("#startDateOfRetention").val('2020-01');
     init_date("startDateOfRetention", "yyyy-mm", 1,2,1);
     var d = new Date();
     d.setMonth(d.getMonth());

@@ -160,7 +160,7 @@
             activity_type
         )
         SELECT
-            HEAD_ID,PLAN_ID,F1.GROUP_ID,GROUP_NAME,PROD_ACTIVITY_PROP,'Y',F1.check_flag,NVL(USER_NUM,0) USER_NUM,'',activity_stage,activity_type
+            HEAD_ID,PLAN_ID,F1.GROUP_ID,GROUP_NAME,PROD_ACTIVITY_PROP,'Y',F1.check_flag,coalesce(USER_NUM,0) USER_NUM,'',activity_stage,activity_type
         FROM (
                  SELECT G1.HEAD_ID,PLAN_ID,G1.GROUP_ID,G1.GROUP_NAME,G1.PROD_ACTIVITY_PROP,G1.check_flag,G1.activity_stage,G1.activity_type
                  FROM UO_OP_ACTIVITY_GROUP G1, UO_OP_ACTIVITY_PLAN P

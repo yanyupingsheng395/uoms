@@ -47,7 +47,7 @@
                 ONSALE_DURATION,
                 SALE_BEGIN_DT,
                 SALE_END_DT,
-                nvl(REAL_FEE,0) REAL_FEE
+                coalesce(REAL_FEE,0) REAL_FEE
         from UO_LC_SPU_LIST left JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
     </select>
 
@@ -77,8 +77,8 @@
             ONSALE_DURATION,
             SALE_BEGIN_DT,
             SALE_END_DT,
-            nvl(NEWUSER,0) NEWUSER,
-            nvl(OLDUSER,0) OLDUSER
+            coalesce(NEWUSER,0) NEWUSER,
+            coalesce(OLDUSER,0) OLDUSER
         from UO_LC_SPU_LIST left JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
     </select>
 
@@ -107,7 +107,7 @@
             ONSALE_DURATION,
             SALE_BEGIN_DT,
             SALE_END_DT,
-            nvl(POCOUNT,0) POCOUNT
+            coalesce(POCOUNT,0) POCOUNT
         from UO_LC_SPU_LIST left JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
     </select>
 
@@ -137,7 +137,7 @@
             ONSALE_DURATION,
             SALE_BEGIN_DT,
             SALE_END_DT,
-            NVL(JOINRATE,0) JOINRATE
+            coalesce(JOINRATE,0) JOINRATE
         from UO_LC_SPU_LIST left JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
     </select>
 
@@ -166,7 +166,7 @@
             ONSALE_DURATION,
             SALE_BEGIN_DT,
             SALE_END_DT,
-            NVL(SPRICE,0) SPRICE
+            coalesce(SPRICE,0) SPRICE
         from UO_LC_SPU_LIST left JOIN  g1 on  g1.spu_wid=UO_LC_SPU_LIST.spu_wid
     </select>
  </mapper>
