@@ -17,7 +17,7 @@ function initTreeTable() {
         ajaxParams: {
             menuName: $menuTableForm.find("input[name='qmenuName']").val() == null ? null : $menuTableForm.find("input[name='qmenuName']").val().trim(),
             type: $menuTableForm.find("select[name='type']").find("option:selected").val(),
-            sysId: $menuTableForm.find("select[name='systemId']").find("option:selected").val()
+            sysCode: $menuTableForm.find("select[name='systemId']").find("option:selected").val()
         },
         columns: [
             {
