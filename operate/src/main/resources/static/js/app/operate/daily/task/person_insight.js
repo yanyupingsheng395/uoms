@@ -53,10 +53,10 @@ function getSpuRelation(userId, spuId, buyOrder, spuName) {
         product_relation_chart.hideLoading();
         product_relation_chart.setOption(option2);
 
-        let ebpProductId = r.data['ebpProductMap']['EBP_PRODUCT_ID'];
-        let ebpProductName = r.data['ebpProductMap']['EBP_PRODUCT_NAME'];
-        let nextEbpProductId = r.data['ebpProductMap']['NEXT_EBP_PRODUCT_ID'];
-        let nextEbpProductName = r.data['ebpProductMap']['NEXT_EBP_PRODUCT_NAME'];
+        let ebpProductId = r.data['ebpProductMap']['ebp_product_id'];
+        let ebpProductName = r.data['ebpProductMap']['ebp_product_name'];
+        let nextEbpProductId = r.data['ebpProductMap']['next_ebp_product_id'];
+        let nextEbpProductName = r.data['ebpProductMap']['next_ebp_product_name'];
         // 获取转化概率
         getConvertRateChart(spuId, buyOrder, ebpProductId, nextEbpProductId, ebpProductName);
         // 获取用户表格
@@ -126,7 +126,7 @@ function getProductOption(xdata, ydata, spuName, purchOrder, data) {
             }
         ],
         title: {
-            text: '在'+spuName+'类目第'+purchOrder+'次购买'+data['ebpProductMap']['EBP_PRODUCT_NAME']+'的用户，第'+(parseInt(purchOrder) + 1)+'次购买商品的概率分布',
+            text: '在'+spuName+'类目第'+purchOrder+'次购买'+data['ebpProductMap']['ebp_product_name']+'的用户，第'+(parseInt(purchOrder) + 1)+'次购买商品的概率分布',
             x: 'center',
             y: 'top',
             textStyle: {
@@ -235,7 +235,7 @@ function getSpuChartOption(data, spuName, purchOrder) {
                 itemStyle: {
                     normal: {
                         color: function (d) {
-                            if(d.name === data['ebpProductMap']['EBP_PRODUCT_NAME']) {
+                            if(d.name === data['ebpProductMap']['ebp_product_name']) {
                                 flag = true;
                                 return "#CD2626";
                             }else {
@@ -392,7 +392,7 @@ function getGrowthUserTable(userId, spuId) {
                         code += "<tr><td>"+v['active_type']+"</td><td>"+v['active_dual']+"</td><td>"+v['prob']+"</td><td>"+v['last_buy_dt']+"</td><td>"+v['growth_dt']+"</td></tr>";
                     }
                 }else {
-                    code += "<tr style='background-color: #ccc'><td>"+v['active_type']+"</td><td>"+v['active_dual']+"</td><td>"+v['prob']+"</td><td>"+v['LAST_BUY_DT']+"</td><td>"+v['growth_dt']+"</td></tr>";
+                    code += "<tr style='background-color: #ccc'><td>"+v['active_type']+"</td><td>"+v['active_dual']+"</td><td>"+v['prob']+"</td><td>"+v['last_buy_dt']+"</td><td>"+v['growth_dt']+"</td></tr>";
                 }
             });
             code += "</tbody>";

@@ -146,9 +146,9 @@
         set CHECK_FLAG = 'N', CHECK_COMMENTS = '活动商品在在售商品库中不存在' where HEAD_ID = #{headId}::int4 and EPB_PRODUCT_ID in (
         with v1 as ( select EPB_PRODUCT_ID
                      from UO_OP_ACTIVITY_PRODUCT t1,
-                          (select distinct EBP_PRODUCT_ID from W_PRODUCT where UP_FLAG = '1') t2
-                     where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID and t1.HEAD_ID  = #{headId}::int4)
-        select t3.EPB_PRODUCT_ID from UO_OP_ACTIVITY_PRODUCT t3 left join v1 on t3.EPB_PRODUCT_ID = v1.EPB_PRODUCT_ID
+                          (select distinct EBP_PRODUCT_ID from W_PRODUCT where UP_FLAG = 1) t2
+                     where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID::varchar and t1.HEAD_ID  = #{headId}::int4)
+        select t3.EPB_PRODUCT_ID from UO_OP_ACTIVITY_PRODUCT t3 left join v1 on t3.EPB_PRODUCT_ID = v1.EPB_PRODUCT_ID::varchar
         where t3.HEAD_ID = #{headId}::int4 and v1.EPB_PRODUCT_ID is null)
     </update>
 

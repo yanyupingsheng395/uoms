@@ -646,6 +646,9 @@ $("#btn_refresh").click(function () {
                 $.post("/smsTemplate/updateSmsCodeNull", {smsCode:smsCode}, function (r2) {
                     if(r2.code === 200) {
                         $MB.n_success("当前文案已解除引用。");
+                        SMS_CODE = null;
+                        smsTemplateTable();
+                        initTable();
                     }
                 });
             });

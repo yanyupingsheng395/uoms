@@ -240,6 +240,7 @@ function getUserStrategyList() {
                 title: '补贴',
                 width: 100,
                 formatter: function (value, row, idx) {
+                    console.log(row.couponDeno)
                     if(row.couponMin==''||row.couponMin=='null'||row.couponMin==null)
                     {
                         return "无";

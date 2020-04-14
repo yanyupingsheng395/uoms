@@ -396,7 +396,7 @@ function smsTemplateTable() {
         ]
     };
     var url = "/smsTemplate/getTemplate";
-    $( "#smsTemplateTable" ).bootstrapTable( settings );
+    $( "#smsTemplateTable" ).bootstrapTable('destroy').bootstrapTable( settings );
     var userValue = $( "#sms-form" ).find( "select[name='userValue']" ).find( "option:selected" ).val();
     var pathActive = $( "#sms-form" ).find( "select[name='pathActive']" ).find( "option:selected" ).val();
     var lifeCycle = $( "#sms-form" ).find( "select[name='lifeCycle']" ).find( "option:selected" ).val();

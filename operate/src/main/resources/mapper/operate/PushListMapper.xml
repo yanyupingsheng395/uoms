@@ -83,7 +83,7 @@
             'S',
             'T',
             #{pushId},
-            #{pushPeriod},
+            #{pushPeriod}::integer,
             '1')
     </insert>
 
