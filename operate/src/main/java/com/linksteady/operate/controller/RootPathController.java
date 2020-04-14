@@ -107,6 +107,7 @@ public class RootPathController extends BaseController {
     public ResponseBo getUserMenu() {
         UserBo userBo = super.getCurrentUser();
         SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode("operate");
+        SysInfoBo system=commonFunService.getSysInfoByCode("system");
 
         if(null==sysInfoBo)
         {
@@ -118,9 +119,9 @@ public class RootPathController extends BaseController {
         String userName = userBo.getUsername();
         result.put("username", userName);
         result.put("version", version);
-        String sysDomain = sysInfoBo.getSysDomain();
-        result.put("navigatorUrl", sysDomain + "/main");
-        result.put("logoutUrl", sysDomain + "/logout");
+        String systemDomain = system.getSysDomain();
+        result.put("navigatorUrl", systemDomain + "/main");
+        result.put("logoutUrl", systemDomain + "/logout");
         result.put("single", userBo.getUserMenuTree().keySet().size() == 1);
 
         try {

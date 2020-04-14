@@ -161,8 +161,8 @@ $('#sysId').on('changed.bs.select',function(e){
     createMenuTree(sysId);
 });
 
-function createMenuTree(sysId) {
-    $.post(ctx + "menu/tree", {sysId: sysId}, function (r) {
+function createMenuTree(sysCode) {
+    $.post(ctx + "menu/tree", {sysCode: sysCode}, function (r) {
         if (r.code === 200) {
             var data = r.msg;
             $('#menuTree').jstree({

@@ -32,8 +32,7 @@
     </select>
 
     <select id="findGrowthPathListCount" resultType="int">
-        select count(1) from UO_INSIGHT_GROWTH_PATH
-        where date_range = #{dateRange}::int4
+        select count(1) from UO_INSIGHT_GROWTH_PATH where date_range = #{dateRange}::int4
     </select>
 
     <select id="getGrowthPathAvgValue" resultMap="base">

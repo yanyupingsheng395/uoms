@@ -171,8 +171,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             menu.setUrl(null);
             menu.setIcon(null);
         }
-        //获取sysCode
-        menu.setSysCode( systemMapper.findSystem(menu.getSysId()).getCode());
         this.save(menu);
     }
 
@@ -228,7 +226,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             menu.setUrl(null);
             menu.setIcon(null);
         }
-        menu.setSysCode( systemMapper.findSystem(menu.getSysId()).getCode());
         this.updateNotNull(menu);
     }
 }

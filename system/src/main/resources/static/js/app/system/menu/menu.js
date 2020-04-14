@@ -80,7 +80,7 @@ function getSystem() {
     $.get(ctx + "system/findAllSystem", {}, function (r) {
         var options = "<option value=''>所有</option>";
         $(r.msg).each(function (k, v) {
-            options += "<option value='"+v.id+"'>"+v.name+"</option>";
+            options += "<option value='"+v.code+"'>"+v.name+"</option>";
         });
         $("#systemId").html("").html(options);
 

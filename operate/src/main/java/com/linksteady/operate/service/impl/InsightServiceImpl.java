@@ -213,8 +213,8 @@ public class InsightServiceImpl implements InsightService {
     public Map<String, Object> retentionInPurchaseTimes(String type, String id, String period) throws TTransportException {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> dataList = insightMapper.retentionInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
-        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("SPU_RN"))).collect(Collectors.toList());
-        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("LEAVE_RATE") == null ? "0" : x.get("LEAVE_RATE"))).collect(Collectors.toList());
+        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("spu_rn"))).collect(Collectors.toList());
+        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("leave_rate") == null ? "0" : x.get("leave_rate"))).collect(Collectors.toList());
         result.put("xdata", xdata);
         result.put("ydata", ydata);
         result.put("fdata", getRetentionFitData(type, id, period));
@@ -234,8 +234,8 @@ public class InsightServiceImpl implements InsightService {
         Map<String, Object> result = Maps.newHashMap();
         DecimalFormat df = new DecimalFormat("#.##");
         List<Map<String, Object>> dataList = insightMapper.retentionInPurchaseTimes(type, id, 0 - Integer.parseInt(period));
-        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("SPU_RN"))).collect(Collectors.toList());
-        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("LEAVE_RATE") == null ? "0" : x.get("LEAVE_RATE"))).collect(Collectors.toList());
+        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("spu_rn"))).collect(Collectors.toList());
+        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("leave_rate") == null ? "0" : x.get("leave_rate"))).collect(Collectors.toList());
         List<String> newXdata = Lists.newArrayList();
         List<String> newYdata = Lists.newArrayList();
         if (ydata.size() > 1) {
@@ -275,14 +275,14 @@ public class InsightServiceImpl implements InsightService {
             List<Map<String, Object>> data = Lists.newArrayList();
             dataList.forEach(x -> {
                 Map<String, Object> dataMap = Maps.newHashMap();
-                dataMap.put("name", x.get("TARGET"));
+                dataMap.put("name", x.get("target"));
                 dataMap.put("symbolSize", 30);
-                dataMap.put("category", x.get("SOURCE"));
-                dataMap.put("value", x.get("VALUE"));
+                dataMap.put("category", x.get("source"));
+                dataMap.put("value", x.get("value"));
                 data.add(dataMap);
             });
             Map<String, Object> dataMap = Maps.newHashMap();
-            dataMap.put("name", dataList.get(0).get("SOURCE"));
+            dataMap.put("name", dataList.get(0).get("source"));
             dataMap.put("symbolSize", 50);
             Map<String, Object> label = Maps.newHashMap();
             label.put("show", true);
@@ -290,14 +290,14 @@ public class InsightServiceImpl implements InsightService {
             data.add(dataMap);
 
             resultMap.put("data", data);
-            resultMap.put("name", dataList.get(0).get("SOURCE"));
+            resultMap.put("name", dataList.get(0).get("source"));
 
             // 封装links
             List<Map<String, Object>> links = Lists.newArrayList();
             dataList.forEach(x -> {
                 Map<String, Object> linkMap = Maps.newHashMap();
-                linkMap.put("source", x.get("SOURCE"));
-                linkMap.put("target", x.get("TARGET"));
+                linkMap.put("source", x.get("source"));
+                linkMap.put("target", x.get("target"));
                 links.add(linkMap);
             });
 
@@ -306,7 +306,7 @@ public class InsightServiceImpl implements InsightService {
             // 封装categories
             List<Map<String, Object>> categories = Lists.newArrayList();
             Map<String, Object> categoriesMap = Maps.newHashMap();
-            categoriesMap.put("name", dataList.get(0).get("SOURCE"));
+            categoriesMap.put("name", dataList.get(0).get("source"));
             categories.add(categoriesMap);
             resultMap.put("categories", categories);
         }
@@ -319,10 +319,10 @@ public class InsightServiceImpl implements InsightService {
                 List<Map<String, Object>> eachListMap = node.getValue();
                 eachListMap.forEach(x -> {
                     Map<String, Object> dataMap = Maps.newHashMap();
-                    dataMap.put("name", x.get("TARGET"));
+                    dataMap.put("name", x.get("target"));
                     dataMap.put("symbolSize", 30);
-                    dataMap.put("category", x.get("SOURCE"));
-                    dataMap.put("value", x.get("VALUE"));
+                    dataMap.put("category", x.get("source"));
+                    dataMap.put("value", x.get("value"));
                     data.add(dataMap);
                 });
                 Map<String, Object> dataMap = Maps.newHashMap();
@@ -336,8 +336,8 @@ public class InsightServiceImpl implements InsightService {
                 // 封装links
                 eachListMap.forEach(x -> {
                     Map<String, Object> linkMap = Maps.newHashMap();
-                    linkMap.put("source", x.get("SOURCE"));
-                    linkMap.put("target", x.get("TARGET"));
+                    linkMap.put("source", x.get("source"));
+                    linkMap.put("target", x.get("target"));
                     links.add(linkMap);
                 });
                 resultMap.put("links", links);
@@ -587,8 +587,8 @@ public class InsightServiceImpl implements InsightService {
     public Map<String, Object> unitPriceInPurchaseTimes(String type, String id, String period) {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> dataList = insightMapper.unitPriceInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
-        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("PURCH_TIMES"))).collect(Collectors.toList());
-        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("UPRICE") == null ? "0" : x.get("UPRICE"))).collect(Collectors.toList());
+        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("purch_times"))).collect(Collectors.toList());
+        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("uprice") == null ? "0" : x.get("uprice"))).collect(Collectors.toList());
         result.put("xdata", xdata);
         result.put("ydata", ydata);
         return result;
@@ -606,8 +606,8 @@ public class InsightServiceImpl implements InsightService {
     public Map<String, Object> joinRateInPurchaseTimes(String type, String id, String period) {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> dataList = insightMapper.joinRateInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
-        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("PURCH_TIMES"))).collect(Collectors.toList());
-        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("JOINT") == null ? "0" : x.get("JOINT"))).collect(Collectors.toList());
+        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("purch_times"))).collect(Collectors.toList());
+        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("joint") == null ? "0" : x.get("joint"))).collect(Collectors.toList());
         result.put("xdata", xdata);
         result.put("ydata", ydata);
         return result;
@@ -631,8 +631,8 @@ public class InsightServiceImpl implements InsightService {
             dataList = insightMapper.productCategoryInPurchaseTimes(type, id, 0 - Integer.parseInt(period));
         }
 
-        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("PURCH_TIMES"))).collect(Collectors.toList());
-        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("AVG_CATE_NUM") == null ? "0" : x.get("AVG_CATE_NUM"))).collect(Collectors.toList());
+        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("purch_times"))).collect(Collectors.toList());
+        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("avg_cate_num") == null ? "0" : x.get("avg_cate_num"))).collect(Collectors.toList());
         result.put("xdata", xdata);
         result.put("ydata", ydata);
         return result;
@@ -650,8 +650,8 @@ public class InsightServiceImpl implements InsightService {
     public Map<String, Object> periodInPurchaseTimes(String type, String id, String period) {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> dataList = insightMapper.periodInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
-        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("PURCH_TIMES"))).collect(Collectors.toList());
-        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("AVG_PUR_GAP") == null ? "0" : x.get("AVG_PUR_GAP"))).collect(Collectors.toList());
+        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("purch_times"))).collect(Collectors.toList());
+        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("avg_pur_gap") == null ? "0" : x.get("avg_pur_gap"))).collect(Collectors.toList());
         result.put("xdata", xdata);
         result.put("ydata", ydata);
         return result;
@@ -769,10 +769,6 @@ public class InsightServiceImpl implements InsightService {
         result.put("data1", data1List);
         result.put("data2", data2List);
         result.put("data3", data3List);
-
-        List<Integer> cnt1 = data1List.stream().map(x -> Integer.valueOf(String.valueOf(x.get(2)))).collect(Collectors.toList());
-        List<Integer> cnt2 = data2List.stream().map(x -> Integer.valueOf(String.valueOf(x.get(2)))).collect(Collectors.toList());
-        List<Integer> cnt3 = data3List.stream().map(x -> Integer.valueOf(String.valueOf(x.get(2)))).collect(Collectors.toList());
         return result;
     }
 }
