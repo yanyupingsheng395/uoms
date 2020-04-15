@@ -44,7 +44,7 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public synchronized void sendPushSignal(PushProperties prop,PushSignalEnum signal,String currentUser) throws Exception{
-        HeartBeatInfo heartBeatInfo = new HeartBeatInfo();
+        HeartBeatInfo heartBeatInfo =HeartBeatInfo.getInstance();
         //启动
         if(signal.getSignalCode().equals(PushSignalEnum.SIGNAL_START.getSignalCode()))
         {

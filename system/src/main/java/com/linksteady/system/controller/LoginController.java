@@ -1,5 +1,6 @@
 package com.linksteady.system.controller;
 import com.google.common.collect.Maps;
+import com.linksteady.common.config.ShiroProperties;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.LogTypeEnum;
 import com.linksteady.common.domain.ResponseBo;
@@ -39,6 +40,9 @@ import java.util.Map;
 public class LoginController extends BaseController {
 
     private static final String CODE_KEY = "_code";
+
+    @Autowired
+    ShiroProperties shiroProperties;
 
     @Autowired
     SystemProperties systemProperties;
@@ -137,7 +141,7 @@ public class LoginController extends BaseController {
 
             //判断用户是否首次登陆 如果是强制跳到修改密码界面
             String firstLogin=userService.findByName(username).getFirstLogin();
-            if(systemProperties.getShiro().isAllowResetPassword()&&"Y".equals(firstLogin))
+            if(shiroProperties.isAllowResetPassword()&&"Y".equals(firstLogin))
             {
                 //记录登录事件
                 logLoginEvent(username,"登录成功，首次登陆将强制要求修改密码！");

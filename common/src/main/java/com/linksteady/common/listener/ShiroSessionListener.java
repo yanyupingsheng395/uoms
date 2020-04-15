@@ -1,4 +1,4 @@
-package com.linksteady.system.listener;
+package com.linksteady.common.listener;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

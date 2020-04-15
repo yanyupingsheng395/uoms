@@ -1,8 +1,11 @@
 package com.linksteady.system.shiro;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
-import com.linksteady.system.config.SystemProperties;
-import com.linksteady.system.listener.ShiroSessionListener;
+import com.linksteady.common.config.ShiroProperties;
+import com.linksteady.common.shiro.ChangePasswordFilter;
+import com.linksteady.common.shiro.CustomUserFilter;
+import com.linksteady.common.shiro.ShiroSessionManger;
+import com.linksteady.common.listener.ShiroSessionListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
@@ -39,7 +42,7 @@ import java.util.Map;
 public class ShiroConfig {
 
     @Autowired
-    private SystemProperties systemProperties;
+    private ShiroProperties shiroProperties;
 
     @Value("${spring.redis.host}")
     private String host;
@@ -63,8 +66,6 @@ public class ShiroConfig {
      */
     private RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();
-        // 这里设置并没有什么用 源码里面 如果通过sessionDAO传入的值具有最高的优先级，如果传入的值为0（注意如果没传，则默认值为1800m），则才会使用这设置的值
-        //redisManager.setExpire(systemProperties.getShiro().getExpireIn());
         redisManager.setHost(host);
         redisManager.setPort(port);
         redisManager.setDatabase(database);
@@ -78,8 +79,6 @@ public class ShiroConfig {
     private RedisCacheManager cacheManager() {
         RedisCacheManager redisCacheManager = new RedisCacheManager();
         redisCacheManager.setRedisManager(redisManager());
-        //不设置 默认的缓存过期时间为1800m 即半小时
-        //redisCacheManager.setExpire(systemProperties.getShiro().getExpireIn());
         return redisCacheManager;
     }
 
@@ -92,8 +91,8 @@ public class ShiroConfig {
         SimpleCookie cookie = new SimpleCookie();
         cookie.setName("JSESSIONID");
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(systemProperties.getShiro().getCookieTimeout());
-        cookie.setDomain(systemProperties.getShiro().getCookieDomain());
+        cookie.setMaxAge(shiroProperties.getCookieTimeout());
+        cookie.setDomain(shiroProperties.getCookieDomain());
         return cookie;
     }
 
@@ -109,22 +108,22 @@ public class ShiroConfig {
         // 设置 securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         // 登录的 url
-        shiroFilterFactoryBean.setLoginUrl(systemProperties.getShiro().getLoginUrl());
+        shiroFilterFactoryBean.setLoginUrl(shiroProperties.getLoginUrl());
         // 登录成功后跳转的 url
-        shiroFilterFactoryBean.setSuccessUrl(systemProperties.getShiro().getSuccessUrl());
+        shiroFilterFactoryBean.setSuccessUrl(shiroProperties.getSuccessUrl());
         // 未授权 url
-        shiroFilterFactoryBean.setUnauthorizedUrl(systemProperties.getShiro().getUnauthorizedUrl());
+        shiroFilterFactoryBean.setUnauthorizedUrl(shiroProperties.getUnauthorizedUrl());
         LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         // 设置免认证 url
-        String[] anonUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(systemProperties.getShiro().getAnonUrl(), ",");
+        String[] anonUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(shiroProperties.getAnonUrl(), ",");
         for (String url : anonUrls) {
             filterChainDefinitionMap.put(url, "anon");
         }
 
         // 配置退出过滤器，其中具体的退出代码 Shiro已经替我们实现了
-        filterChainDefinitionMap.put(systemProperties.getShiro().getLogoutUrl(), "logout");
+        filterChainDefinitionMap.put(shiroProperties.getLogoutUrl(), "logout");
         //强制修改密码的链接
-        filterChainDefinitionMap.put(systemProperties.getShiro().getResetPasswordUrl(), "user");
+        filterChainDefinitionMap.put(shiroProperties.getResetPasswordUrl(), "user");
         filterChainDefinitionMap.put("/user/updatePassword", "user");
 
         // 剔除main页面的请求
@@ -144,7 +143,7 @@ public class ShiroConfig {
     public SecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         // 配置 SecurityManager，并注入 shiroRealm
-        securityManager.setRealm(shiroRealm());
+        securityManager.setRealm(sysShiroRealm());
         // 配置 rememberMeCookie
         securityManager.setRememberMeManager(rememberMeManager());
         // 配置 缓存管理类 cacheManager
@@ -160,9 +159,9 @@ public class ShiroConfig {
     }
 
     @Bean
-    public ShiroRealm shiroRealm() {
+    public SysShiroRealm sysShiroRealm() {
         // 配置 Realm，需自己实现，见 ShiroRealm
-        return new ShiroRealm();
+        return new SysShiroRealm();
     }
 
     /**
@@ -175,7 +174,7 @@ public class ShiroConfig {
         SimpleCookie cookie = new SimpleCookie("rememberMe");
 //        cookie.setSecure(true);  // 只在 https中有效 注释掉 正常
         // 设置 cookie 的过期时间，单位为秒，这里为一天
-        cookie.setMaxAge(systemProperties.getShiro().getCookieTimeout());
+        cookie.setMaxAge(shiroProperties.getCookieTimeout());
         return cookie;
     }
 
@@ -228,7 +227,7 @@ public class ShiroConfig {
         RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
         redisSessionDAO.setRedisManager(redisManager());
         //redis session对象的过期时间
-        redisSessionDAO.setExpire(systemProperties.getShiro().getExpireIn());
+        redisSessionDAO.setExpire(shiroProperties.getExpireIn());
         return redisSessionDAO;
     }
 
@@ -243,7 +242,7 @@ public class ShiroConfig {
         Collection<SessionListener> listeners = new ArrayList<>();
         listeners.add(new ShiroSessionListener());
         // 设置session超时时间，单位为毫秒
-        sessionManager.setGlobalSessionTimeout(systemProperties.getShiro().getSessionTimeout());
+        sessionManager.setGlobalSessionTimeout(shiroProperties.getSessionTimeout());
         sessionManager.setSessionListeners(listeners);
         sessionManager.setSessionDAO(redisSessionDAO());
 

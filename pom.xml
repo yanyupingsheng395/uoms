@@ -11,6 +11,7 @@
         <module>system</module>
 <!--        <module>mdss</module>-->
         <module>operate</module>
+        <module>wxofficial</module>
     </modules>
     <packaging>pom</packaging>
 

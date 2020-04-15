@@ -152,26 +152,27 @@ sys:
   exceptionNoticeAppName: uoms2-dev-mdss
   #默认的日志预警的模式 (BATCH 批量 IMME 立即)
   exceptionNoticeMode: BATCH
-  shiro:
-    # shiro redis缓存时长，默认1800秒
-    expireIn: 1800
-    # session 超时时间，默认1800000毫秒
-    sessionTimeout: 1800000
-    # rememberMe cookie有效时长，默认86400秒，即一天
-    cookieTimeout: 86400
-    # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-    anonUrl: /api/**,/plugins/**/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/user/regist,/gifCode,/,/actuator/**,/test/**,/sysinfo,/login, /push
-    # 登录 url
-    loginUrl: /login
-    # 登录成功后跳转的 url
-    successUrl: /main
-    # 登出 url
-    logoutUrl: /logout
-    # 未授权跳转 url
-    unauthorizedUrl: /403
-    #强制修改密码的url
-    resetPasswordUrl: /resetPass
-    #首次登陆是否强制要求修改密码
-    allowResetPassword: false
-    #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
-    cookieDomain: localhost
+
+shiro:
+  # shiro redis缓存时长，默认1800秒
+  expireIn: 1800
+  # session 超时时间，默认1800000毫秒
+  sessionTimeout: 1800000
+  # rememberMe cookie有效时长，默认86400秒，即一天
+  cookieTimeout: 86400
+  # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
+  anonUrl: /api/**,/plugins/**/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/user/regist,/gifCode,/,/actuator/**,/test/**,/sysinfo,/login, /push
+  # 登录 url
+  loginUrl: /login
+  # 登录成功后跳转的 url
+  successUrl: /main
+  # 登出 url
+  logoutUrl: /logout
+  # 未授权跳转 url
+  unauthorizedUrl: /403
+  #强制修改密码的url
+  resetPasswordUrl: /resetPass
+  #首次登陆是否强制要求修改密码
+  allowResetPassword: false
+  #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
+  cookieDomain: localhost

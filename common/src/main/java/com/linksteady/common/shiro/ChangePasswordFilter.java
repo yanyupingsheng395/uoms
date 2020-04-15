@@ -1,12 +1,12 @@
-package com.linksteady.system.shiro;
+package com.linksteady.common.shiro;
 
 import com.linksteady.common.bo.UserBo;
-import com.linksteady.common.domain.User;
-import com.linksteady.system.config.SystemProperties;
-import com.linksteady.system.util.SpringContextUtils;
+import com.linksteady.common.config.ShiroProperties;
+import com.linksteady.common.util.SpringContextUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -31,19 +31,21 @@ public class ChangePasswordFilter extends AccessControlFilter {
      */
     @Override
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
-        SystemProperties systemProperties=(SystemProperties) SpringContextUtils.getBean("systemProperties");
+        ShiroProperties shiroProperties= (ShiroProperties) SpringContextUtils.getBean("shiroProperties");
+        //获取是否首次登陆需要强制修改密码
+
+
         Subject subject = getSubject(servletRequest, servletResponse);
         // 表示没有登录，重定向到登录页面
         if (subject.getPrincipal() == null) {
             saveRequest(servletRequest);
-            WebUtils.issueRedirect(servletRequest, servletResponse, systemProperties.getShiro().getLoginUrl());
+            WebUtils.issueRedirect(servletRequest, servletResponse, shiroProperties.getLoginUrl());
             return false;
         } else {
             UserBo userBo = (UserBo) subject.getPrincipal();
-
             // 如果首次登录未修改密码，则跳转到修改密码页面
-            if (systemProperties.getShiro().isAllowResetPassword()&&"Y".equals(userBo.getFirstLogin())) {
-                WebUtils.issueRedirect(servletRequest, servletResponse, systemProperties.getShiro().getResetPasswordUrl());
+            if (shiroProperties.isAllowResetPassword()&&"Y".equals(userBo.getFirstLogin())) {
+                WebUtils.issueRedirect(servletRequest, servletResponse, shiroProperties.getResetPasswordUrl());
                 return false;
             }
             return true;

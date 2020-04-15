@@ -1,4 +1,4 @@
-package com.linksteady.operate.shiro;
+package com.linksteady.common.shiro;
 
 
 import com.linksteady.common.bo.UserBo;
@@ -17,7 +17,7 @@ import org.apache.shiro.subject.PrincipalCollection;
  *
  * @author MrBird
  */
-public class ShiroRealm extends AuthorizingRealm {
+public class UoShiroRealm extends AuthorizingRealm {
     /**
      * 授权模块，获取用户角色和权限
      *

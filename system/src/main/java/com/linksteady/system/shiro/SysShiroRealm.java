@@ -3,6 +3,7 @@ package com.linksteady.system.shiro;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.Menu;
 import com.linksteady.common.domain.User;
+import com.linksteady.common.shiro.UoShiroRealm;
 import com.linksteady.system.service.MenuService;
 import com.linksteady.system.service.UserService;
 import org.apache.shiro.SecurityUtils;
@@ -21,28 +22,13 @@ import java.util.*;
  *
  * @author MrBird
  */
-public class ShiroRealm extends AuthorizingRealm {
+public class SysShiroRealm extends UoShiroRealm {
 
     @Autowired
     @Lazy
     private UserService userService;
     @Autowired
     private MenuService menuService;
-
-    /**
-     * 授权模块，获取用户角色和权限
-     *
-     * @param principal principal
-     * @return AuthorizationInfo 权限信息
-     */
-    @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
-        UserBo userBo = (UserBo) SecurityUtils.getSubject().getPrincipal();
-
-        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        simpleAuthorizationInfo.setStringPermissions(userBo.getPermission());
-        return simpleAuthorizationInfo;
-    }
 
     /**
      * 用户认证

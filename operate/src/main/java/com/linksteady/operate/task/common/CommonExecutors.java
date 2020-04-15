@@ -1,10 +1,10 @@
 package com.linksteady.operate.task.common;
 
 import com.google.common.collect.Sets;
+import com.linksteady.common.util.SpringContextUtils;
 import com.linksteady.operate.dao.ExecStepsMapper;
 import com.linksteady.operate.domain.ExecSteps;
 import com.linksteady.operate.exception.LinkSteadyException;
-import com.linksteady.operate.util.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -74,7 +74,7 @@ public class CommonExecutors {
                 }else if("BEAN".equals(execSteps.getStepType()))
                 {
                     try {
-                        Object obj=SpringContextUtils.getBean(execSteps.getBeanName());
+                        Object obj= SpringContextUtils.getBean(execSteps.getBeanName());
                         Method method= ReflectionUtils.findMethod(obj.getClass(),execSteps.getMethodName());
                         method.setAccessible(true);
                         ReflectionUtils.invokeMethod(method,obj);

@@ -6,7 +6,6 @@ import com.linksteady.operate.dao.PushListMapper;
 import com.linksteady.operate.domain.HeartBeatInfo;
 import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.service.RedisMessageService;
-import com.linksteady.operate.thread.MonitorThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -34,30 +33,30 @@ public class RedisMessageServiceImpl implements RedisMessageService {
      */
     @Override
     public void receivePushHeartBeat(String pushHeartBeatMessage) {
-        HeartBeatInfo heartBeatInfo=JSON.parseObject(pushHeartBeatMessage, HeartBeatInfo.class);
-        MonitorThread monitorThread=MonitorThread.getInstance();
+        HeartBeatInfo temp=JSON.parseObject(pushHeartBeatMessage, HeartBeatInfo.class);
+        HeartBeatInfo heartBeatInfo=HeartBeatInfo.getInstance();
 
-        if(null!=heartBeatInfo)
+        if(null!=temp)
         {
-            if(null!=heartBeatInfo.getLastPushDate())
+            if(null!=temp.getLastPushDate())
             {
-                monitorThread.setLastPushDate(heartBeatInfo.getLastPushDate());
+                heartBeatInfo.setLastPushDate(temp.getLastPushDate());
             }
-            if(null!=heartBeatInfo.getLastBatchPushDate())
+            if(null!=temp.getLastBatchPushDate())
             {
-                monitorThread.setLastBatchPushDate(heartBeatInfo.getLastBatchPushDate());
+                heartBeatInfo.setLastBatchPushDate(temp.getLastBatchPushDate());
             }
-            if(null!=heartBeatInfo.getLastPurgeDate())
+            if(null!=temp.getLastPurgeDate())
             {
-                monitorThread.setLastPurgeDate(heartBeatInfo.getLastPurgeDate());
+                heartBeatInfo.setLastPurgeDate(temp.getLastPurgeDate());
             }
-            if(null!=heartBeatInfo.getLastRptDate())
+            if(null!=temp.getLastRptDate())
             {
-                monitorThread.setLastRptDate(heartBeatInfo.getLastRptDate());
+                heartBeatInfo.setLastRptDate(temp.getLastRptDate());
             }
-            if(null!=heartBeatInfo.getLastMoDate())
+            if(null!=temp.getLastMoDate())
             {
-                monitorThread.setLastMoDate(heartBeatInfo.getLastMoDate());
+                heartBeatInfo.setLastMoDate(temp.getLastMoDate());
             }
         }
 

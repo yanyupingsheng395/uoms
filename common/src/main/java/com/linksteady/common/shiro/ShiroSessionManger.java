@@ -1,4 +1,4 @@
-package com.linksteady.system.shiro;
+package com.linksteady.common.shiro;
 
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DefaultSessionManager;

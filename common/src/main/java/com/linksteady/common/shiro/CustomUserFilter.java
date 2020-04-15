@@ -1,4 +1,4 @@
-package com.linksteady.operate.shiro;
+package com.linksteady.common.shiro;
 
 import com.alibaba.fastjson.JSON;
 import com.linksteady.common.domain.ResponseBo;

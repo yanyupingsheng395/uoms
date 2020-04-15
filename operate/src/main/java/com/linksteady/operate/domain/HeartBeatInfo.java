@@ -42,5 +42,16 @@ public class HeartBeatInfo implements Serializable {
      */
     private LocalDateTime lastMoDate;
 
+    private static HeartBeatInfo instance = new HeartBeatInfo();
+
+    public static HeartBeatInfo getInstance() {
+        return instance;
+    }
+
+    private HeartBeatInfo()
+    {
+    }
+
+
 
 }

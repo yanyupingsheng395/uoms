@@ -1,11 +1,9 @@
 package com.linksteady.operate.thread;
 
+import com.linksteady.common.util.SpringContextUtils;
 import com.linksteady.operate.dao.ActivityPushMapper;
 import com.linksteady.operate.domain.ActivityDetail;
-import com.linksteady.operate.service.impl.ActivityDetailServiceImpl;
-import com.linksteady.operate.service.impl.ActivityPlanServiceImpl;
 import com.linksteady.operate.service.impl.ActivityPushServiceImpl;
-import com.linksteady.operate.util.SpringContextUtils;
 import com.linksteady.operate.vo.ActivityContentVO;
 import lombok.extern.slf4j.Slf4j;
 

@@ -5,6 +5,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Tconfig;
+import com.linksteady.operate.domain.HeartBeatInfo;
 import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.domain.PushLog;
 import com.linksteady.operate.domain.PushProperties;
@@ -12,7 +13,6 @@ import com.linksteady.operate.domain.enums.PushSignalEnum;
 import com.linksteady.operate.service.PushListService;
 import com.linksteady.operate.service.PushLogService;
 import com.linksteady.operate.service.PushPropertiesService;
-import com.linksteady.operate.thread.MonitorThread;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -111,7 +111,7 @@ public class PushStatusController extends BaseController {
      */
     @GetMapping("/getPushLog")
     public ResponseBo getPushLog(@RequestParam("day") int day) {
-        MonitorThread monitorThread=MonitorThread.getInstance();
+        HeartBeatInfo heartBeatInfo=HeartBeatInfo.getInstance();
 
         List<PushLog> list=pushLogService.getPushLogList(day);
         //分成两部分
@@ -125,11 +125,11 @@ public class PushStatusController extends BaseController {
         map.put("purge",purgeLogList);
         map.put("push_intercept",pushIctLogList);
         map.put("logDate", LocalDate.now().minusDays(day).format(DateTimeFormatter.ofPattern("YYYY-MM-dd")));
-        map.put("lastPushDate", null==monitorThread.getLastPushDate()?"":monitorThread.getLastPushDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        map.put("lastBatchPushDate",null==monitorThread.getLastBatchPushDate()?"":monitorThread.getLastBatchPushDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        map.put("lastPurgeDate",null==monitorThread.getLastPurgeDate()?"":monitorThread.getLastPurgeDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        map.put("lastRptDate",null==monitorThread.getLastRptDate()?"":monitorThread.getLastRptDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        map.put("lastMoDate",null==monitorThread.getLastMoDate()?"":monitorThread.getLastMoDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        map.put("lastPushDate", null==heartBeatInfo.getLastPushDate()?"":heartBeatInfo.getLastPushDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        map.put("lastBatchPushDate",null==heartBeatInfo.getLastBatchPushDate()?"":heartBeatInfo.getLastBatchPushDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        map.put("lastPurgeDate",null==heartBeatInfo.getLastPurgeDate()?"":heartBeatInfo.getLastPurgeDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        map.put("lastRptDate",null==heartBeatInfo.getLastRptDate()?"":heartBeatInfo.getLastRptDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        map.put("lastMoDate",null==heartBeatInfo.getLastMoDate()?"":heartBeatInfo.getLastMoDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         return ResponseBo.okWithData("",map);
     }
 
