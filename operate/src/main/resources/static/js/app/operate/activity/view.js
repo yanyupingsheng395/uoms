@@ -388,7 +388,10 @@ function getProductInfo() {
                 field: 'productUrl',
                 title: '商品短链',
                 formatter: function (value, row, index) {
-                    return "<a style='color: #409eff;cursor:pointer;text-decoration: underline;' href='" + value + "' target='_blank'>" + value + "</a>";
+                    if(value !== '' && value !== null && value !== undefined) {
+                        var link = value.indexOf("http://") > -1 ? value : "http://" + value;
+                        return "<a style='color: #409eff;cursor:pointer;text-decoration: underline;' href='" + link + "' target='_blank'>" + value + "</a>";
+                    }
                 }
             }, {
                 field: 'checkFlag',
