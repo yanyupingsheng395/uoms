@@ -1,6 +1,6 @@
 package com.linksteady.wxofficial.service;
 
-import com.linksteady.wxofficial.entity.ImageText;
+import com.linksteady.wxofficial.entity.po.ImageText;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ImageTextService {
 
-    void addImageText(ImageText imageText);
+    void addImageText(ImageText imageText) throws Exception;
 
     int getCount();
 

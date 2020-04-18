@@ -1,7 +1,5 @@
 package com.linksteady.wxofficial.dao;
-
-import com.linksteady.wxofficial.entity.ImageText;
-
+import com.linksteady.wxofficial.entity.po.ImageText;
 import java.util.List;
 
 /**

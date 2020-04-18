@@ -2,8 +2,10 @@ package com.linksteady.common.domain;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Tconfig {
+public class Tconfig implements Serializable {
 
     private String name;
     private String value;

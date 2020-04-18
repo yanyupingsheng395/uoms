@@ -1,4 +1,4 @@
-package com.linksteady.wxofficial.entity;
+package com.linksteady.wxofficial.entity.po;
 
 import lombok.Data;
 

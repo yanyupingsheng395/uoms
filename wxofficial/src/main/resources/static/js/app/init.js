@@ -100,7 +100,6 @@ function getUserMenu() {
                 menu_tree();
                 subMenu();
                 $("#pageTitle").html("").html(r.data);
-                console.log(r.msg);
                 //设置返回导航页
                 $("#navigatorUrl").attr("href",r.msg.navigatorUrl);
 
