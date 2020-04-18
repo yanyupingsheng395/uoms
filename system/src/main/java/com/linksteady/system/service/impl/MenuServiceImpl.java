@@ -162,6 +162,9 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addMenu(Menu menu) {
+        if(StringUtils.isEmpty(menu.getPerms())) {
+            menu.setPerms(null);
+        }
         menu.setCreateDt(new Date());
         menu.setCreateBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
         if (menu.getParentId() == null) {
@@ -217,6 +220,9 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateMenu(Menu menu) {
+        if(StringUtils.isEmpty(menu.getPerms())) {
+            menu.setPerms(null);
+        }
         menu.setUpdateDt(new Date());
         menu.setUpdateBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
         if (menu.getParentId() == null) {

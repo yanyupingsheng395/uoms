@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.wxofficial.common.wechat.entity.MaterialInfo;
 import com.linksteady.wxofficial.common.wechat.service.OperateService;
 import com.linksteady.wxofficial.config.WxProperties;
 import com.linksteady.wxofficial.entity.bo.MaterialBo;
@@ -32,12 +33,19 @@ public class MaterialController {
     public ResponseBo getDataList(QueryRequest request) {
         int limit = request.getLimit();
         int offset = request.getOffset();
+        String type = request.getParam().get("type");
         Map<String, String> data = Maps.newHashMap();
         data.put("appId", wxProperties.getAppId());
         data.put("count", String.valueOf(limit));
         data.put("offset", String.valueOf(offset));
-        data.put("type", "image");
+        data.put("type", type);
         MaterialBo materialBo = operateService.getMaterialList(data);
         return ResponseBo.okOverPaging(null, Integer.parseInt(materialBo.getItemCount()), materialBo.getItems());
+    }
+
+    @RequestMapping("/uploadMaterial")
+    public ResponseBo uploadMaterial(MaterialInfo materialInfo) throws Exception {
+        operateService.uploadMaterial(materialInfo);
+        return ResponseBo.ok();
     }
 }

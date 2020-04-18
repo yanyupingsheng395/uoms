@@ -23,7 +23,7 @@ function fileUpload(data) {
             callback: function() {
                 $('#coverModal').modal('show');
                 $('#imageTextAdd').modal('hide');
-                getImageDataList();
+                getDataList('image', 'imageTable');
             }
         });
     }else {
@@ -34,7 +34,7 @@ function fileUpload(data) {
             callback: function() {
                 $('#coverModal').modal('show');
                 $('#imageTextAdd').modal('hide');
-                getImageDataList();
+                getDataList('image');
             }
         });
     }

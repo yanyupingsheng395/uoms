@@ -1,4 +1,5 @@
 package com.linksteady.wxofficial.common.wechat.service.impl;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -16,7 +17,9 @@ import com.linksteady.wxofficial.entity.bo.MaterialBo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -30,16 +33,25 @@ public class OperateServiceImpl implements OperateService {
     @Autowired
     private WxProperties wxProperties;
 
+    public static void main(String[] args) {
+        String s = "data:image/png;base64,";
+        System.out.println(s.substring("data:image/".length(), s.lastIndexOf(";base64,")));
+    }
+
     @Override
     public Map<String, String> uploadMaterial(MaterialInfo materialInfo) throws Exception {
+        String url = wxProperties.getServiceDomain() + wxProperties.getUploadFileUrl();
         Map<String, String> body = Maps.newHashMap();
         body.put("appId", wxProperties.getAppId());
         body.put("title", materialInfo.getTitle());
         body.put("introduction", materialInfo.getIntroduction());
         body.put("mediaType", materialInfo.getMediaType());
+
+        String fileSuffix = materialInfo.getBase64Code().substring("data:image/".length(), materialInfo.getBase64Code().lastIndexOf(";base64,"));
+        materialInfo.setFileName("tmp." + fileSuffix);
         File file = Base64Img.base64ToFile(materialInfo.getBase64Code(), materialInfo.getFileName());
         file.deleteOnExit();
-        String uploadResultStr = OkHttpUtil.postFileAndData(wxProperties.getUploadFileUrl(), body, file);
+        String uploadResultStr = OkHttpUtil.postFileAndData(url, body, file);
         JSONObject uploadResultObject = JSON.parseObject(uploadResultStr);
 
         Map<String, String> result = Maps.newHashMap();
@@ -75,10 +87,9 @@ public class OperateServiceImpl implements OperateService {
         MaterialBo materialBo = new MaterialBo();
         String url = wxProperties.getServiceDomain() + wxProperties.getMaterialPageUrl();
         JSONObject jsonObject = JSON.parseObject(OkHttpUtil.postFormBody(url, data));
-        if(MediaTypeEnum.NEWS.code.equalsIgnoreCase(data.get("type"))) {
+        if (MediaTypeEnum.NEWS.code.equalsIgnoreCase(data.get("type"))) {
             materialBo = newsConvert(jsonObject);
-        }
-        if(MediaTypeEnum.IMAGE.code.equalsIgnoreCase(data.get("type"))) {
+        } else {
             materialBo = imageConvert(jsonObject);
         }
         return materialBo;
@@ -119,22 +130,23 @@ public class OperateServiceImpl implements OperateService {
 
     /**
      * 图文消息转化
+     *
      * @return
      */
     private MaterialBo newsConvert(JSONObject jsonObject) {
         MaterialBo materialBo = new MaterialBo();
         String code = jsonObject.getString("code");
-        if(ResultCodeEnum.RES_200.code.equalsIgnoreCase(code)) {
+        if (ResultCodeEnum.RES_200.code.equalsIgnoreCase(code)) {
             materialBo = jsonObject.toJavaObject(MaterialBo.class);
             JSONObject msgJSON = JSONObject.parseObject(jsonObject.getString("msg"));
             String itemCount = msgJSON.getString("itemCount");
             String itemsStr = msgJSON.getString("items");
             JSONArray jsonArray = JSONArray.parseArray(itemsStr);
             List<MaterialBo.Article> articleList = Lists.newArrayList();
-            jsonArray.forEach(x->{
-                String mediaId = ((JSONObject)x).getString("mediaId");
-                String content = ((JSONObject)x).getString("content");
-                MaterialBo.Article article = ((JSONObject)JSONArray.parseArray(JSONObject.parseObject(content).getString("articles")).get(0)).toJavaObject(MaterialBo.Article.class);
+            jsonArray.forEach(x -> {
+                String mediaId = ((JSONObject) x).getString("mediaId");
+                String content = ((JSONObject) x).getString("content");
+                MaterialBo.Article article = ((JSONObject) JSONArray.parseArray(JSONObject.parseObject(content).getString("articles")).get(0)).toJavaObject(MaterialBo.Article.class);
                 article.setMediaId(mediaId);
                 articleList.add(article);
             });
@@ -147,12 +159,13 @@ public class OperateServiceImpl implements OperateService {
 
     /**
      * 图片转化
+     *
      * @return
      */
     private MaterialBo imageConvert(JSONObject jsonObject) {
         MaterialBo materialBo = new MaterialBo();
         String code = jsonObject.getString("code");
-        if(ResultCodeEnum.RES_200.code.equalsIgnoreCase(code)) {
+        if (ResultCodeEnum.RES_200.code.equalsIgnoreCase(code)) {
             materialBo = jsonObject.toJavaObject(MaterialBo.class);
             JSONObject msgJSON = JSONObject.parseObject(jsonObject.getString("msg"));
             String itemCount = msgJSON.getString("itemCount");

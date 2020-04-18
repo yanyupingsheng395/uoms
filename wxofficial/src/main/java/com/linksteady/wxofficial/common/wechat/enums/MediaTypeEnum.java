@@ -8,7 +8,7 @@ public enum MediaTypeEnum {
     /**
      * 媒体类型
      */
-    NEWS("图文消息", "news"), IMAGE("图片", "image");
+    NEWS("图文消息", "news"), IMAGE("图片", "image"), VOICE("音频", "voice");
     public String name;
     public String code;
 
