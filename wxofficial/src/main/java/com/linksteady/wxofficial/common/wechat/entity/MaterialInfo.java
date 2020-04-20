@@ -1,6 +1,7 @@
 package com.linksteady.wxofficial.common.wechat.entity;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author hxcao

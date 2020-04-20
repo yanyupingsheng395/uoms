@@ -55,7 +55,9 @@ $("#saveDataBtn").click(function () {
             }
         });
     }else if($(this).attr("name") === 'update') {
-        $.post("/imageText/updateImageText", {title: title, author: author, content: content, wxAbstract:wxAbstract, cover: cover}, function (r) {
+        var selected = $( "#imageTextTable" ).bootstrapTable( 'getSelections' );
+        var mediaId = selected[0].mediaId;
+        $.post("/imageText/updateImageText", {mediaId: mediaId, title: title, author: author, content: content, wxAbstract:wxAbstract, cover: cover}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("更新成功！");
                 $("#imageTextAdd").modal('hide');

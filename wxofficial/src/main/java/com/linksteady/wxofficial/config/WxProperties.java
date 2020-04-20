@@ -49,4 +49,14 @@ public class WxProperties {
      * 编辑素材URL
      */
     private String editMaterialUrl = "/api/editMaterialNews";
+
+    /**
+     * 获取素材直接文件
+     */
+    private String materialOtherUrl = "/api/materialOther";
+
+    /**
+     * 获取视频文件
+     */
+    private String materialVideoUrl = "/api/materialVideo";
 }

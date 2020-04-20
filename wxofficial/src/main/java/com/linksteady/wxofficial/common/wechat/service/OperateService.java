@@ -3,7 +3,9 @@ package com.linksteady.wxofficial.common.wechat.service;
 import com.linksteady.wxofficial.common.wechat.entity.ImageTextInfo;
 import com.linksteady.wxofficial.common.wechat.entity.MaterialInfo;
 import com.linksteady.wxofficial.entity.bo.MaterialBo;
+import okhttp3.ResponseBody;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -17,7 +19,7 @@ public interface OperateService {
      * @param materialInfo: 素材类
      * @return
      */
-    Map<String, String> uploadMaterial(MaterialInfo materialInfo) throws Exception;
+    Map<String, String> uploadMaterial(MaterialInfo materialInfo, File file) throws Exception;
 
     /**
      * 新增图文消息
@@ -47,7 +49,20 @@ public interface OperateService {
      * @param imageTextInfo
      * @return
      */
-    Map<String, String> editMaterial(ImageTextInfo imageTextInfo);
+    Map<String, String> editMaterial(ImageTextInfo imageTextInfo, String mediaId);
 
+    /**
+     * 获取微信直接文件
+     * @param mediaId
+     * @param fileName
+     * @return
+     */
+    ResponseBody getMaterialOther(String mediaId, String fileName);
 
+    /**
+     * 获取微信视频文件
+     * @param mediaId
+     * @return
+     */
+    Map<String, String> getMaterialVideo(String mediaId);
 }

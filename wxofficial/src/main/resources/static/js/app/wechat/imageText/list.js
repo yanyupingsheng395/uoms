@@ -47,7 +47,7 @@ $( "#btn_delete" ).click( function () {
                 $MB.n_warning( "至少选择一条记录！" );
                 return;
             }
-            $.post( "/imageText/deleteImageText", {id: selected[0]['mediaId']}, function (r) {
+            $.post( "/material/deleteMaterial", {id: selected[0]['mediaId']}, function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "删除图文成功！" );
                 } else {

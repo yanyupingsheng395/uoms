@@ -3,7 +3,6 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.wxofficial.common.wechat.entity.ImageTextInfo;
-import com.linksteady.wxofficial.common.wechat.entity.MaterialInfo;
 import com.linksteady.wxofficial.common.wechat.enums.ResultCodeEnum;
 import com.linksteady.wxofficial.common.wechat.service.OperateService;
 import com.linksteady.wxofficial.config.WxProperties;
@@ -73,25 +72,15 @@ public class ImageTextController {
         return ResponseBo.okWithData(null, imageTextService.getImageText(id));
     }
 
-    @RequestMapping("/deleteImageText")
-    public ResponseBo deleteImageText(@RequestParam String id) throws Exception {
-        Map<String, String> result = operateService.deleteMaterial(id);
-        if(ResultCodeEnum.RES_200.code.equalsIgnoreCase(result.get("code"))) {
-            return ResponseBo.ok();
-        }else {
-            return ResponseBo.error();
-        }
-    }
-
     @RequestMapping("/updateImageText")
-    public ResponseBo updateImageText(ImageText imageText) {
+    public ResponseBo updateImageText(ImageText imageText, String mediaId) {
         ImageTextInfo imageTextInfo = new ImageTextInfo();
         imageTextInfo.setAuthor(imageText.getAuthor());
         imageTextInfo.setContent(new String(imageText.getContent(), StandardCharsets.UTF_8));
         imageTextInfo.setDigest(imageText.getWxAbstract());
         imageTextInfo.setTitle(imageText.getTitle());
         imageTextInfo.setThumbMediaId(new String(imageText.getCover(), StandardCharsets.UTF_8));
-        operateService.editMaterial(imageTextInfo);
+        operateService.editMaterial(imageTextInfo, mediaId);
         return ResponseBo.ok();
     }
 }

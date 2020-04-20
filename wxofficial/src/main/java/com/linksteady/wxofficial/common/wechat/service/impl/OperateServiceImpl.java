@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.wxofficial.common.exception.LinkSteadyException;
 import com.linksteady.wxofficial.common.util.Base64Img;
 import com.linksteady.wxofficial.common.util.OkHttpUtil;
 import com.linksteady.wxofficial.common.wechat.entity.ImageTextInfo;
@@ -15,7 +16,9 @@ import com.linksteady.wxofficial.common.wechat.service.OperateService;
 import com.linksteady.wxofficial.config.WxProperties;
 import com.linksteady.wxofficial.entity.bo.MaterialBo;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -39,38 +42,42 @@ public class OperateServiceImpl implements OperateService {
     }
 
     @Override
-    public Map<String, String> uploadMaterial(MaterialInfo materialInfo) throws Exception {
+    public Map<String, String> uploadMaterial(MaterialInfo materialInfo, File file) throws Exception {
         String url = wxProperties.getServiceDomain() + wxProperties.getUploadFileUrl();
+        String mediaType = materialInfo.getMediaType();
         Map<String, String> body = Maps.newHashMap();
         body.put("appId", wxProperties.getAppId());
         body.put("title", materialInfo.getTitle());
         body.put("introduction", materialInfo.getIntroduction());
-        body.put("mediaType", materialInfo.getMediaType());
+        body.put("mediaType", mediaType);
 
-        String fileSuffix = materialInfo.getBase64Code().substring("data:image/".length(), materialInfo.getBase64Code().lastIndexOf(";base64,"));
-        materialInfo.setFileName("tmp." + fileSuffix);
-        File file = Base64Img.base64ToFile(materialInfo.getBase64Code(), materialInfo.getFileName());
-        file.deleteOnExit();
+        if(MediaTypeEnum.IMAGE.code.equalsIgnoreCase(mediaType)) {
+            String fileSuffix = materialInfo.getBase64Code().substring("data:image/".length(), materialInfo.getBase64Code().lastIndexOf(";base64,"));
+            materialInfo.setFileName("tmp." + fileSuffix);
+            file = Base64Img.base64ToFile(materialInfo.getBase64Code(), materialInfo.getFileName());
+        }else {
+            if(null == file) {
+                throw new LinkSteadyException("上传的文件为空！");
+            }
+        }
         String uploadResultStr = OkHttpUtil.postFileAndData(url, body, file);
         JSONObject uploadResultObject = JSON.parseObject(uploadResultStr);
-
         Map<String, String> result = Maps.newHashMap();
         String code = uploadResultObject.getString("code");
         result.put("code", code);
         if (ResultCodeEnum.RES_200.code.equalsIgnoreCase(code)) {
             result.put("mediaId", JSON.parseObject(uploadResultObject.getString("msg")).getString("mediaId"));
         }
+        file.deleteOnExit();
         return result;
     }
 
     @Override
     public Map<String, String> addNews(ImageTextInfo imageTextInfo) {
         String url = wxProperties.getServiceDomain() + wxProperties.getAddNewsUrl();
-        List<ImageTextInfo> list = new ArrayList();
-        list.add(imageTextInfo);
         Map<String, Object> param = Maps.newHashMap();
         param.put("appId", wxProperties.getAppId());
-        param.put("articles", list);
+        param.put("articles", new ArrayList<>().add(imageTextInfo));
         JSONObject jsonResult = JSON.parseObject(OkHttpUtil.postRequestBody(url, JSON.toJSONString(param)));
         log.info("新增图文结果：" + jsonResult.toJSONString());
         Map<String, String> result = Maps.newHashMap();
@@ -84,7 +91,7 @@ public class OperateServiceImpl implements OperateService {
 
     @Override
     public MaterialBo getMaterialList(Map<String, String> data) {
-        MaterialBo materialBo = new MaterialBo();
+        MaterialBo materialBo;
         String url = wxProperties.getServiceDomain() + wxProperties.getMaterialPageUrl();
         JSONObject jsonObject = JSON.parseObject(OkHttpUtil.postFormBody(url, data));
         if (MediaTypeEnum.NEWS.code.equalsIgnoreCase(data.get("type"))) {
@@ -109,22 +116,52 @@ public class OperateServiceImpl implements OperateService {
         return result;
     }
 
+    /**
+     * 更新素材
+     *
+     * @param imageTextInfo
+     * @return
+     */
     @Override
-    public Map<String, String> editMaterial(ImageTextInfo imageTextInfo) {
+    public Map<String, String> editMaterial(ImageTextInfo imageTextInfo, String mediaId) {
         String url = wxProperties.getServiceDomain() + wxProperties.getEditMaterialUrl();
-        List<ImageTextInfo> list = new ArrayList();
+        List<ImageTextInfo> list = Lists.newArrayList();
         list.add(imageTextInfo);
         Map<String, Object> param = Maps.newHashMap();
         param.put("appId", wxProperties.getAppId());
-        param.put("data", imageTextInfo);
+        param.put("mediaId", mediaId);
+        param.put("articles", list);
         JSONObject jsonResult = JSON.parseObject(OkHttpUtil.postRequestBody(url, JSON.toJSONString(param)));
         log.info("编辑素材结果：" + jsonResult.toJSONString());
         Map<String, String> result = Maps.newHashMap();
         String code = jsonResult.getString("code");
         result.put("code", code);
-        if (ResultCodeEnum.RES_200.code.equalsIgnoreCase(code)) {
-            result.put("mediaId", JSON.parseObject(jsonResult.getString("msg")).getString("mediaId"));
-        }
+        return result;
+    }
+
+    @Override
+    public ResponseBody getMaterialOther(String mediaId, String fileName) {
+        String url = wxProperties.getServiceDomain() + wxProperties.getMaterialOtherUrl();
+        Map<String, String> param = Maps.newHashMap();
+        param.put("appId", wxProperties.getAppId());
+        param.put("mediaId", mediaId);
+        param.put("fileName", fileName);
+        return OkHttpUtil.postFormBodyOfResponse(url, param);
+    }
+
+    @Override
+    public Map<String, String> getMaterialVideo(String mediaId) {
+        String url = wxProperties.getServiceDomain() + wxProperties.getMaterialVideoUrl();
+        Map<String, String> param = Maps.newHashMap();
+        param.put("appId", wxProperties.getAppId());
+        param.put("mediaId", mediaId);
+        JSONObject jsonObject = JSON.parseObject(OkHttpUtil.postFormBody(url, param));
+        log.info("获取微信视频直接素材文件：" + jsonObject);
+        Map<String, String> result = Maps.newHashMap();
+        String code = jsonObject.getString("code");
+        String downUrl = JSON.parseObject(jsonObject.getString("msg")).getString("downUrl");
+        result.put("code", code);
+        result.put("downUrl", downUrl);
         return result;
     }
 

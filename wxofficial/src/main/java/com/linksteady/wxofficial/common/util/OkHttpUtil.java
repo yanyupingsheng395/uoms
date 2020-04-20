@@ -77,6 +77,19 @@ public class OkHttpUtil {
         return responseBody.string();
     }
 
+    @SneakyThrows
+    public static ResponseBody postFormBodyOfResponse(String url, Map<String, String> param) {
+        OkHttpClient okHttpClient = new OkHttpClient();
+        FormBody.Builder builder = new FormBody.Builder();
+        param.forEach(builder::add);
+        RequestBody requestBody = builder.build();
+        Request request = new Request.Builder().post(requestBody).url(url)
+                .post(requestBody).build();
+        Call call = okHttpClient.newCall(request);
+        Response response = call.execute();
+        return response.body();
+    }
+
     /**
      * 调用一次get请求，使用basic认证
      *
