@@ -59,4 +59,24 @@ public class WxProperties {
      * 获取视频文件
      */
     private String materialVideoUrl = "/api/materialVideo";
+
+    /**
+     * 获取公众号已创建的标签
+     */
+    private String tagListUrl = "/api/taglist";
+
+    /**
+     * 新增标签
+     */
+    private String addTagUrl = "/api/saveTag";
+
+    /**
+     * 更改标签
+     */
+    private String updateTagUrl = "/api/updateTagById";
+
+    /**
+     * 删除标签
+     */
+    private String deleteTagUrl = "/api/removeTagById";
 }

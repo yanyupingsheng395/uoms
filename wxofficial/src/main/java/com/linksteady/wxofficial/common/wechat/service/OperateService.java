@@ -65,4 +65,28 @@ public interface OperateService {
      * @return
      */
     Map<String, String> getMaterialVideo(String mediaId);
+
+    /**
+     * 获取list的公共接口
+     * @param url
+     * @return
+     */
+    String getDataList(String url);
+
+    /**
+     * 通过ID删除数据的公共接口
+     * @param id
+     * @return
+     */
+    String deleteById(String url, String id);
+
+
+    /**
+     * 新增数据
+     * @param url
+     * @return
+     */
+    String saveData(String url, Map<String, String> data);
+
+    String updateData(String url, Map<String, String> param);
 }

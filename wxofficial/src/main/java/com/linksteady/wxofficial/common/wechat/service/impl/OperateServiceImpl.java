@@ -165,6 +165,43 @@ public class OperateServiceImpl implements OperateService {
         return result;
     }
 
+    @Override
+    public String getDataList(String url) {
+        Map<String, String> param = Maps.newHashMap();
+        param.put("appId", wxProperties.getAppId());
+        String result = OkHttpUtil.postFormBody(url, param);
+        log.info("获取列表数据结果:" + result);
+        return result;
+    }
+
+    @Override
+    public String deleteById(String url, String id) {
+        Map<String, String> param = Maps.newHashMap();
+        param.put("appId", wxProperties.getAppId());
+        param.put("tagId", id);
+        String result = OkHttpUtil.postFormBody(url, param);
+        log.info("删除数据结果:" + result);
+        return result;
+    }
+
+    @Override
+    public String saveData(String url, Map<String, String> data) {
+        Map<String, String> param = data;
+        param.put("appId", wxProperties.getAppId());
+        String result = OkHttpUtil.postRequestBody(url, JSON.toJSONString(param));
+        log.info("新增数据结果:" + result);
+        return result;
+    }
+
+    @Override
+    public String updateData(String url, Map<String, String> data) {
+        Map<String, String> param = data;
+        param.put("appId", wxProperties.getAppId());
+        String result = OkHttpUtil.postRequestBody(url, JSON.toJSONString(param));
+        log.info("更新数据结果:" + result);
+        return result;
+    }
+
     /**
      * 图文消息转化
      *

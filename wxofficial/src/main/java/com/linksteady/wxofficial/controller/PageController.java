@@ -20,4 +20,9 @@ public class PageController {
     public String materialList() {
         return "wechat/material/materialList";
     }
+
+    @RequestMapping("/tag")
+    public String tagList() {
+        return "wechat/tag/list";
+    }
 }
