@@ -28,7 +28,7 @@ public class TagController {
     private WxProperties wxProperties;
 
     @GetMapping("/getDataListPage")
-    public List<WxTagVo> getDataListPage(QueryRequest request) {
+    public List<WxTagVo> getDataListPage() {
         String url = wxProperties.getServiceDomain() + wxProperties.getTagListUrl();
         String result = operateService.getDataList(url);
         List<WxTagVo> dataList = JSON.parseArray(JSON.parseObject(result).getString("msg"), WxTagVo.class);

@@ -100,7 +100,6 @@ $( "#uploadFile" ).change( function () {
 
 // 保存素材
 function saveMaterial() {
-    alert( 1 )
     if (media_type === 'image') {
         $.post( "/material/uploadMaterial", {
             title: $( "#title" ).val(),
@@ -209,3 +208,4 @@ $("#btn_download").click(function () {
         });
     }
 });
+

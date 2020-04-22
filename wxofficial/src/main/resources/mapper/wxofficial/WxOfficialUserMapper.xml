@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.wxofficial.dao.WxOfficialUserMapper">
+    <resultMap id="BaseResultMap" type="com.linksteady.wxofficial.entity.vo.WxOfficialUserVo">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_dt" jdbcType="TIMESTAMP" property="createDt"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="del_flag" jdbcType="CHAR" property="delFlag"/>
+        <result column="app_type" jdbcType="CHAR" property="appType"/>
+        <result column="subscribe" jdbcType="CHAR" property="subscribe"/>
+        <result column="subscribe_scene" jdbcType="VARCHAR" property="subscribeScene"/>
+        <result column="subscribe_time" jdbcType="TIMESTAMP" property="subscribeTime"/>
+        <result column="subscribe_num" jdbcType="INTEGER" property="subscribeNum"/>
+        <result column="cancel_subscribe_time" jdbcType="TIMESTAMP" property="cancelSubscribeTime"/>
+        <result column="open_id" jdbcType="VARCHAR" property="openId"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="sex" jdbcType="CHAR" property="sex"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="country" jdbcType="VARCHAR" property="country"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="language" jdbcType="VARCHAR" property="language"/>
+        <result column="headimg_url" jdbcType="VARCHAR" property="headimgUrl"/>
+        <result column="union_id" jdbcType="VARCHAR" property="unionId"/>
+        <result column="group_id" jdbcType="VARCHAR" property="groupId"/>
+        <result column="tagid_list" jdbcType="VARCHAR" property="tagidList"/>
+        <result column="qr_scene_str" jdbcType="VARCHAR" property="qrSceneStr"/>
+        <result column="latitude" jdbcType="NUMERIC" property="latitude"/>
+        <result column="longitude" jdbcType="NUMERIC" property="longitude"/>
+        <result column="precision" jdbcType="NUMERIC" property="precision"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, create_by, create_dt, update_by, update_dt, remark, del_flag, app_type, subscribe,
+    subscribe_scene, subscribe_time, subscribe_num, cancel_subscribe_time, open_id, nick_name,
+    sex, city, country, province, phone, "language", headimg_url, union_id, group_id,
+    tagid_list, qr_scene_str, latitude, longitude, "precision"
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from wx_official_user
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete
+        from wx_official_user
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.linksteady.wxofficial.entity.vo.WxOfficialUserVo" useGeneratedKeys="true">
+        insert into "wx_official_user" (create_by, create_dt, update_by,
+                                        update_dt, remark, del_flag,
+                                        app_type, subscribe, subscribe_scene,
+                                        subscribe_time, subscribe_num, cancel_subscribe_time,
+                                        open_id, nick_name, sex,
+                                        city, country, province,
+                                        phone, "language", headimg_url,
+                                        union_id, group_id, tagid_list,
+                                        qr_scene_str, latitude, longitude,
+                                        "precision")
+        values (#{createBy,jdbcType=VARCHAR}, #{createDt,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR},
+                #{updateDt,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
+                #{appType,jdbcType=CHAR}, #{subscribe,jdbcType=CHAR}, #{subscribeScene,jdbcType=VARCHAR},
+                #{subscribeTime,jdbcType=TIMESTAMP}, #{subscribeNum,jdbcType=INTEGER},
+                #{cancelSubscribeTime,jdbcType=TIMESTAMP},
+                #{openId,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR},
+                #{city,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR},
+                #{phone,jdbcType=VARCHAR}, #{language,jdbcType=VARCHAR}, #{headimgUrl,jdbcType=VARCHAR},
+                #{unionId,jdbcType=VARCHAR}, #{groupId,jdbcType=VARCHAR}, #{tagidList,jdbcType=VARCHAR},
+                #{qrSceneStr,jdbcType=VARCHAR}, #{latitude,jdbcType=NUMERIC}, #{longitude,jdbcType=NUMERIC},
+                #{precision,jdbcType=NUMERIC})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.linksteady.wxofficial.entity.vo.WxOfficialUserVo"
+            useGeneratedKeys="true">
+        insert into "wx_official_user"
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createDt != null">
+                create_dt,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateDt != null">
+                update_dt,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="delFlag != null">
+                del_flag,
+            </if>
+            <if test="appType != null">
+                app_type,
+            </if>
+            <if test="subscribe != null">
+                subscribe,
+            </if>
+            <if test="subscribeScene != null">
+                subscribe_scene,
+            </if>
+            <if test="subscribeTime != null">
+                subscribe_time,
+            </if>
+            <if test="subscribeNum != null">
+                subscribe_num,
+            </if>
+            <if test="cancelSubscribeTime != null">
+                cancel_subscribe_time,
+            </if>
+            <if test="openId != null">
+                open_id,
+            </if>
+            <if test="nickName != null">
+                nick_name,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="country != null">
+                country,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="language != null">
+                "language",
+            </if>
+            <if test="headimgUrl != null">
+                headimg_url,
+            </if>
+            <if test="unionId != null">
+                union_id,
+            </if>
+            <if test="groupId != null">
+                group_id,
+            </if>
+            <if test="tagidList != null">
+                tagid_list,
+            </if>
+            <if test="qrSceneStr != null">
+                qr_scene_str,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+            <if test="longitude != null">
+                longitude,
+            </if>
+            <if test="precision != null">
+                "precision",
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createDt != null">
+                #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDt != null">
+                #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlag != null">
+                #{delFlag,jdbcType=CHAR},
+            </if>
+            <if test="appType != null">
+                #{appType,jdbcType=CHAR},
+            </if>
+            <if test="subscribe != null">
+                #{subscribe,jdbcType=CHAR},
+            </if>
+            <if test="subscribeScene != null">
+                #{subscribeScene,jdbcType=VARCHAR},
+            </if>
+            <if test="subscribeTime != null">
+                #{subscribeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="subscribeNum != null">
+                #{subscribeNum,jdbcType=INTEGER},
+            </if>
+            <if test="cancelSubscribeTime != null">
+                #{cancelSubscribeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="openId != null">
+                #{openId,jdbcType=VARCHAR},
+            </if>
+            <if test="nickName != null">
+                #{nickName,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=CHAR},
+            </if>
+            <if test="city != null">
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="country != null">
+                #{country,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null">
+                #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="language != null">
+                #{language,jdbcType=VARCHAR},
+            </if>
+            <if test="headimgUrl != null">
+                #{headimgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="unionId != null">
+                #{unionId,jdbcType=VARCHAR},
+            </if>
+            <if test="groupId != null">
+                #{groupId,jdbcType=VARCHAR},
+            </if>
+            <if test="tagidList != null">
+                #{tagidList,jdbcType=VARCHAR},
+            </if>
+            <if test="qrSceneStr != null">
+                #{qrSceneStr,jdbcType=VARCHAR},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=NUMERIC},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=NUMERIC},
+            </if>
+            <if test="precision != null">
+                #{precision,jdbcType=NUMERIC},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.linksteady.wxofficial.entity.vo.WxOfficialUserVo">
+        update wx_official_user
+        <set>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createDt != null">
+                create_dt = #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDt != null">
+                update_dt = #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=CHAR},
+            </if>
+            <if test="appType != null">
+                app_type = #{appType,jdbcType=CHAR},
+            </if>
+            <if test="subscribe != null">
+                subscribe = #{subscribe,jdbcType=CHAR},
+            </if>
+            <if test="subscribeScene != null">
+                subscribe_scene = #{subscribeScene,jdbcType=VARCHAR},
+            </if>
+            <if test="subscribeTime != null">
+                subscribe_time = #{subscribeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="subscribeNum != null">
+                subscribe_num = #{subscribeNum,jdbcType=INTEGER},
+            </if>
+            <if test="cancelSubscribeTime != null">
+                cancel_subscribe_time = #{cancelSubscribeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="openId != null">
+                open_id = #{openId,jdbcType=VARCHAR},
+            </if>
+            <if test="nickName != null">
+                nick_name = #{nickName,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=CHAR},
+            </if>
+            <if test="city != null">
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="country != null">
+                country = #{country,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null">
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="language != null">
+                "language" = #{language,jdbcType=VARCHAR},
+            </if>
+            <if test="headimgUrl != null">
+                headimg_url = #{headimgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="unionId != null">
+                union_id = #{unionId,jdbcType=VARCHAR},
+            </if>
+            <if test="groupId != null">
+                group_id = #{groupId,jdbcType=VARCHAR},
+            </if>
+            <if test="tagidList != null">
+                tagid_list = #{tagidList,jdbcType=VARCHAR},
+            </if>
+            <if test="qrSceneStr != null">
+                qr_scene_str = #{qrSceneStr,jdbcType=VARCHAR},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude,jdbcType=NUMERIC},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude,jdbcType=NUMERIC},
+            </if>
+            <if test="precision != null">
+                "precision" = #{precision,jdbcType=NUMERIC},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.linksteady.wxofficial.entity.vo.WxOfficialUserVo">
+        update wx_official_user
+        set create_by             = #{createBy,jdbcType=VARCHAR},
+            create_dt             = #{createDt,jdbcType=TIMESTAMP},
+            update_by             = #{updateBy,jdbcType=VARCHAR},
+            update_dt             = #{updateDt,jdbcType=TIMESTAMP},
+            remark                = #{remark,jdbcType=VARCHAR},
+            del_flag              = #{delFlag,jdbcType=CHAR},
+            app_type              = #{appType,jdbcType=CHAR},
+            subscribe             = #{subscribe,jdbcType=CHAR},
+            subscribe_scene       = #{subscribeScene,jdbcType=VARCHAR},
+            subscribe_time        = #{subscribeTime,jdbcType=TIMESTAMP},
+            subscribe_num         = #{subscribeNum,jdbcType=INTEGER},
+            cancel_subscribe_time = #{cancelSubscribeTime,jdbcType=TIMESTAMP},
+            open_id               = #{openId,jdbcType=VARCHAR},
+            nick_name             = #{nickName,jdbcType=VARCHAR},
+            sex                   = #{sex,jdbcType=CHAR},
+            city                  = #{city,jdbcType=VARCHAR},
+            country               = #{country,jdbcType=VARCHAR},
+            province              = #{province,jdbcType=VARCHAR},
+            phone                 = #{phone,jdbcType=VARCHAR},
+            "language"            = #{language,jdbcType=VARCHAR},
+            headimg_url           = #{headimgUrl,jdbcType=VARCHAR},
+            union_id              = #{unionId,jdbcType=VARCHAR},
+            group_id              = #{groupId,jdbcType=VARCHAR},
+            tagid_list            = #{tagidList,jdbcType=VARCHAR},
+            qr_scene_str          = #{qrSceneStr,jdbcType=VARCHAR},
+            latitude              = #{latitude,jdbcType=NUMERIC},
+            longitude             = #{longitude,jdbcType=NUMERIC},
+            "precision"           = #{precision,jdbcType=NUMERIC}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <select id="getDataCount" resultType="int">
+        select count(1) from wx_official_user
+    </select>
+
+    <select id="getDataList" resultMap="BaseResultMap">
+        select * from wx_official_user limit #{limit} offset #{offset}
+    </select>
+
+    <update id="updateTagIds">
+        <foreach collection="dataList" separator=";" item="item">
+            update wx_official_user set tagid_list = #{item.tagId} where id = #{item.userId}
+        </foreach>
+    </update>
+
+    <update id="updateRemark">
+        update wx_official_user set remark = #{remark} where id = #{userId}
+    </update>
+</mapper>
