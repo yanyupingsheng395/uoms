@@ -7,6 +7,7 @@ import java.util.List;
  * @date 2020/4/16
  */
 public interface ImageTextMapper {
+
     void addImageText(ImageText imageText);
 
     int getCount();

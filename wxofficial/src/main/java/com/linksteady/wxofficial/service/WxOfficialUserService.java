@@ -20,4 +20,6 @@ public interface WxOfficialUserService {
     void updateRemark(String userId, String remark);
 
     WxOfficialUserVo getUserById(String userId);
+
+    void setSyncUserList(String data) throws Exception;
 }

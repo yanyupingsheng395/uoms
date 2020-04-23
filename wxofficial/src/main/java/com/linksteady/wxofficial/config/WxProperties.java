@@ -79,4 +79,9 @@ public class WxProperties {
      * 删除标签
      */
     private String deleteTagUrl = "/api/removeTagById";
+
+    /**
+     * 同步用户列表
+     */
+    private String syncUserListUrl = "/api/syncUser";
 }

@@ -157,5 +157,11 @@ public class WxOfficialUserVo implements Serializable {
      */
     private Short precision;
 
+    private Long[] tagIds;
+
+    private String sexDesc;
+
+    private String tagNames;
+
     public static final long serialVersionUID = 1L;
 }

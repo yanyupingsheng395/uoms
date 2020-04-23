@@ -1,6 +1,7 @@
 package com.linksteady.wxofficial.dao;
 
 import com.linksteady.wxofficial.entity.bo.UserTagBo;
+import com.linksteady.wxofficial.entity.bo.WxMpUserBo;
 import com.linksteady.wxofficial.entity.vo.WxOfficialUserVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -31,4 +32,6 @@ public interface WxOfficialUserMapper {
     void updateTagIds(@Param("dataList") List<UserTagBo> dataList);
 
     void updateRemark(String userId, String remark);
+
+    void syncDataList(@Param("userList") List<WxOfficialUserVo> userList);
 }

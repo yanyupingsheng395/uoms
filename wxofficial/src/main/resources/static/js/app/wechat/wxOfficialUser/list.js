@@ -24,7 +24,10 @@ function getDataList() {
             {
                 field: 'headimgUrl',
                 align: 'center',
-                title: '头像'
+                title: '头像',
+                formatter: function (value, row, index) {
+                    return "<img src='"+value+"'/>";
+                }
             },
             {
                 field: 'nickName',
@@ -110,9 +113,21 @@ function getDataList() {
                 align: 'center',
                 title: '语言'
             }, {
-                field: 'tagidList',
+                field: 'tagNames',
                 align: 'center',
-                title: '标签'
+                title: '标签',
+                formatter: function (value, row, index) {
+                    var res = "";
+                    if(value !== null && value !== "") {
+                        var arr = value.split(",");
+                        for (let i = 0; i < arr.length; i++) {
+                            res += "<span class=\"badge bg-success\">"+arr[i]+"</span>&nbsp;";
+                        }
+                    }else {
+                        res = "-";
+                    }
+                    return res;
+                }
             }, {
                 title: '操作',
                 align: 'center',
@@ -298,3 +313,12 @@ function viewUser(id) {
     });
     $( "#viewUser" ).modal( 'show' );
 }
+
+// 同步用户数据
+$("#syncUserBtn").click(function () {
+    $.post("/wxOfficialUser/requestSyncWxUser", {}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("开始同步中，请稍后!");
+        }
+    });
+});

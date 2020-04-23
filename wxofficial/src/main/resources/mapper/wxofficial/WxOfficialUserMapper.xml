@@ -388,4 +388,41 @@
     <update id="updateRemark">
         update wx_official_user set remark = #{remark} where id = #{userId}
     </update>
+
+    <insert id="syncDataList">
+        insert into wx_official_user(create_by, create_dt, update_by,
+        update_dt, remark, del_flag,
+        app_type, subscribe, subscribe_scene,
+        subscribe_time, subscribe_num, cancel_subscribe_time,
+        open_id, nick_name, sex,
+        city, country, province,
+        phone, "language", headimg_url,
+        union_id, group_id, tagid_list,
+        qr_scene_str, latitude, longitude,
+        "precision")
+        values
+        <foreach collection="userList" separator="," item="item">
+            (#{item.createBy,jdbcType=VARCHAR}, #{item.createDt,jdbcType=TIMESTAMP}, #{item.updateBy,jdbcType=VARCHAR},
+            #{item.updateDt,jdbcType=TIMESTAMP}, #{item.remark,jdbcType=VARCHAR}, #{item.delFlag,jdbcType=CHAR},
+            #{item.appType,jdbcType=CHAR}, #{item.subscribe,jdbcType=CHAR}, #{item.subscribeScene,jdbcType=VARCHAR},
+            #{item.subscribeTime,jdbcType=TIMESTAMP}, #{item.subscribeNum,jdbcType=INTEGER},
+            #{item.cancelSubscribeTime,jdbcType=TIMESTAMP},
+            #{item.openId,jdbcType=VARCHAR}, #{item.nickName,jdbcType=VARCHAR}, #{item.sex,jdbcType=CHAR},
+            #{item.city,jdbcType=VARCHAR}, #{item.country,jdbcType=VARCHAR}, #{item.province,jdbcType=VARCHAR},
+            #{item.phone,jdbcType=VARCHAR}, #{item.language,jdbcType=VARCHAR}, #{item.headimgUrl,jdbcType=VARCHAR},
+            #{item.unionId,jdbcType=VARCHAR}, #{item.groupId,jdbcType=VARCHAR}, #{item.tagidList,jdbcType=VARCHAR},
+            #{item.qrSceneStr,jdbcType=VARCHAR}, #{item.latitude,jdbcType=NUMERIC}, #{item.longitude,jdbcType=NUMERIC},
+            #{item.precision,jdbcType=NUMERIC})
+        </foreach>
+        on conflict(open_id) do update set update_by = excluded.update_by,
+        update_dt = excluded.update_dt, remark = excluded.remark, del_flag = excluded.del_flag,
+        app_type = excluded.app_type, subscribe = excluded.subscribe, subscribe_scene = excluded.subscribe_scene,
+        subscribe_time = excluded.subscribe_time, subscribe_num = excluded.subscribe_num, cancel_subscribe_time = excluded.cancel_subscribe_time,
+        nick_name = excluded.nick_name, sex = excluded.sex,
+        city = excluded.city, country = excluded.country, province = excluded.province,
+        phone = excluded.phone, language = excluded.language, headimg_url = excluded.headimg_url,
+        union_id = excluded.union_id, group_id = excluded.group_id, tagid_list = excluded.tagid_list,
+        qr_scene_str = excluded.qr_scene_str, latitude = excluded.latitude, longitude = excluded.longitude,
+        precision = excluded.precision
+    </insert>
 </mapper>
