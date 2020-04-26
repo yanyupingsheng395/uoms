@@ -28,6 +28,7 @@
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
                         <div class="row">
+                            <span class="glyphicon glyphicon-ok check-mark"></span>
                             <h5 class="navbar-page-title">关注回复</h5>
                         </div>
                     </div>
@@ -65,14 +66,23 @@
             </div>
             <div class="modal-body">
                 <form class="form-horizontal">
+                    <input type="hidden" id="id"/>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">请求消息类型</label>
+                        <div class="col-md-10">
+                            <select class="form-control" id="reqType">
+                                <option value="text">文本</option>
+                                <option value="image">图片</option>
+                                <option value="news">图文</option>
+                                <option value="voice">音频</option>
+                                <option value="video">视频</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="col-md-2 control-label">人群标签</label>
                         <div class="col-md-10">
-                            <select multiple="multiple" id="tagId" class="form-control">
-                                <option value="1">人群1</option>
-                                <option value="2">人群2</option>
-                                <option value="3">人群3</option>
-                            </select>
+                            <select multiple="multiple" id="tagId" class="selectpicker show-tick form-control"></select>
                         </div>
                     </div>
                     <div class="form-group">
@@ -96,7 +106,7 @@
                                         <div class="tab-pane fade active in" id="text">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <textarea class="form-control" rows="10"></textarea>
+                                                    <textarea class="form-control" rows="10" id="replyContent"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -142,6 +152,6 @@
     <div data-th-include="common/commonJS"></div>
     <script src="/plugins/select2/js/select2.js"></script>
     <script src="/plugins/select2/js/i18n/zh-CN.js"></script>
-    <script src="/js/app/wechat/response/userFollow.js"></script>
+    <script src="/js/app/wechat/response/msgReply.js"></script>
 </body>
 </html>

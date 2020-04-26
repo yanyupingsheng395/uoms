@@ -44,7 +44,7 @@ public class ImageTextController {
         data.put("offset", String.valueOf(offset));
         data.put("type", "news");
         MaterialBo materialBo = operateService.getMaterialList(data);
-        return ResponseBo.okOverPaging(null, Integer.parseInt(materialBo.getItemCount()), materialBo.getArticles());
+        return ResponseBo.okOverPaging(null, null == materialBo.getItemCount() ? 0 : Integer.parseInt(materialBo.getItemCount()), materialBo.getArticles());
     }
 
     /**

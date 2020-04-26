@@ -16,9 +16,11 @@ function getDataList() {
             },
             {
                 field: 'msgType',
-                title: '回复消息类型'
+                title: '回复消息类型',
+                align: 'center'
             },{
                 title: '操作',
+                align: 'center',
                 formatter: function (value, row, index) {
                     return "<a style='cursor: pointer' onclick='editData(\""+row['id']+"\")'><i class='fa fa-edit'></i>编辑</a>&nbsp;&nbsp;<a style='cursor: pointer' onclick='deleteData(\""+row['id']+"\")'><i class='fa fa-trash'></i>删除</a>";
                 }
@@ -131,6 +133,9 @@ function resolvingDate(date) {
 }
 
 var media_type = 'text';
+$( "#text-tab" ).on( "shown.bs.tab", function () {
+    media_type = 'text';
+} );
 $( "#image-tab" ).on( "shown.bs.tab", function () {
     media_type = 'image';
     getMaterialDataList( 'image', 'imageTable' );
