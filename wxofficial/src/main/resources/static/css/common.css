@@ -272,9 +272,8 @@
 
 /** select2 样式修改 **/
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
-    background-color: #1AB394;
-    border-color: #1AB394;
-    padding: 1px 10px;
+    background-color: #15c377;
+    border-color: #15c377;
     color: #fff
 }
 

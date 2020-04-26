@@ -48,4 +48,19 @@ public class PageController {
         model.addAttribute("tagList", dataList);
         return "wechat/wxOfficialUser/list";
     }
+
+    @RequestMapping("/userFollow")
+    public String userFollow() {
+        return "wechat/response/userFollow";
+    }
+
+    @RequestMapping("/msgReply")
+    public String msgReply() {
+        return "wechat/response/msgReply";
+    }
+
+    @RequestMapping("/menuClick")
+    public String menuClick() {
+        return "wechat/response/menuClick";
+    }
 }

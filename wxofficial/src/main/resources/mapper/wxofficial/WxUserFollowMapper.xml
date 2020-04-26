@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.wxofficial.dao.WxUserFollowMapper">
+
+    <resultMap id="base" type="com.linksteady.wxofficial.entity.po.WxFollowReply">
+        <result property="msgType" jdbcType="VARCHAR" column="MSG_TYPE"/>
+        <result property="mediaId" jdbcType="VARCHAR" column="media_id"/>
+        <result property="content" jdbcType="BINARY" column="content"/>
+    </resultMap>
+    <insert id="saveData">
+        insert into wx_follow_reply(msg_type, content, media_id) values (#{msgType}, #{content}, #{mediaId})
+    </insert>
+
+    <select id="getDataList" resultMap="base">
+        select * from wx_follow_reply
+    </select>
+
+    <select id="getDataById" resultMap="base">
+        select * from wx_follow_reply where id = #{id}::integer
+    </select>
+
+    <delete id="deleteById">
+        delete from wx_follow_reply where id = #{id}::integer
+    </delete>
+
+    <update id="updateData">
+        update wx_follow_reply set(msg_type, content, media_id) = (#{msgType}, #{content}, #{mediaId}) where id = #{id}::integer
+    </update>
+</mapper>
