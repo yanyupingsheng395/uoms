@@ -37,7 +37,7 @@ public class TagController {
 
     @PostMapping("/saveData")
     public ResponseBo saveData(String name) {
-        Map<String, String> param = Maps.newHashMap();
+        Map<String, Object> param = Maps.newHashMap();
         param.put("name", name);
         String url = wxProperties.getServiceDomain() + wxProperties.getAddTagUrl();
         operateService.saveData(url, param);

@@ -87,7 +87,7 @@ public class QueryRequest implements Serializable {
 	}
 
 	public int getLimit() {
-		return pageSize;
+		return pageSize == 0 ? limit:pageSize;
 	}
 
 	public void setLimit(int limit) {

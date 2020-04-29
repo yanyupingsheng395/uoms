@@ -185,8 +185,8 @@ public class OperateServiceImpl implements OperateService {
     }
 
     @Override
-    public String saveData(String url, Map<String, String> data) {
-        Map<String, String> param = data;
+    public String saveData(String url, Map<String, Object> data) {
+        Map<String, Object> param = data;
         param.put("appId", wxProperties.getAppId());
         String result = OkHttpUtil.postRequestBody(url, JSON.toJSONString(param));
         log.info("新增数据结果:" + result);

@@ -587,7 +587,8 @@ input[type=radio] {
     width: 18px;
     left: 0;
     top: 1px;
-    border: 2px solid #ebebeb;;
+    border: 2px solid #ebebeb;
+    background: #fff;
     -webkit-transition: all .1s;
     -o-transition: all .1s;
     transition: all .1s;

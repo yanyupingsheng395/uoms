@@ -84,4 +84,14 @@ public class WxProperties {
      * 同步用户列表
      */
     private String syncUserListUrl = "/api/syncUser";
+
+    /**
+     * 获取自定义菜单数据
+     */
+    private String menuListUrl = "/api/getMenu";
+
+    /**
+     * 新增菜单
+     */
+    private String menuAddUrl = "/api/updateMenu";
 }

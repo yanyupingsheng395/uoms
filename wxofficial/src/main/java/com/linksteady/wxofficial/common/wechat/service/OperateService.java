@@ -86,7 +86,7 @@ public interface OperateService {
      * @param url
      * @return
      */
-    String saveData(String url, Map<String, String> data);
+    String saveData(String url, Map<String, Object> data);
 
     String updateData(String url, Map<String, String> param);
 }
