@@ -34,4 +34,6 @@ public interface WxOfficialUserMapper {
     void updateRemark(String userId, String remark);
 
     void syncDataList(@Param("userList") List<WxOfficialUserVo> userList);
+
+    List<String> getUserListByTagId(@Param("tagIds") List<String> tagIds);
 }

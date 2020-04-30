@@ -94,4 +94,9 @@ public class WxProperties {
      * 新增菜单
      */
     private String menuAddUrl = "/api/updateMenu";
+
+    /**
+     * 公众号群推送
+     */
+    private String batchPushUrl = "/api/massPushByOpenIds";
 }

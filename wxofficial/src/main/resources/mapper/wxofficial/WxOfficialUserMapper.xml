@@ -425,4 +425,18 @@
         qr_scene_str = excluded.qr_scene_str, latitude = excluded.latitude, longitude = excluded.longitude,
         precision = excluded.precision
     </insert>
+
+    <select id="getUserListByTagId" resultType="string">
+        select distinct open_id from wx_official_user
+        <if test="tagIds != null and tagIds.size()>0">
+            <foreach collection="tagIds" item="item" index="index">
+                <if test="index == 0">
+                    where string_to_array(tagid_list, ',') @> string_to_array(#{item}, ',')
+                </if>
+                <if test="index != 0">
+                    union all select open_id from wx_official_user where string_to_array(tagid_list, ',') @> string_to_array(#{item}, ',')
+                </if>
+            </foreach>
+        </if>
+    </select>
 </mapper>

@@ -63,4 +63,9 @@ public class PageController {
     public String menuClick() {
         return "wechat/response/menuClick";
     }
+
+    @RequestMapping("/msgPush")
+    public String msgPush() {
+        return "wechat/msgPush/list";
+    }
 }
