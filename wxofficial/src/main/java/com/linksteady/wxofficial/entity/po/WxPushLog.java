@@ -9,7 +9,7 @@ import java.util.Date;
  * @date 2020/4/30
  */
 @Data
-public class WxPushDetail {
+public class WxPushLog {
 
     private int id;
 
@@ -21,5 +21,5 @@ public class WxPushDetail {
 
     private String pushStatus;
 
-    private Date updateDt;
+    private String msgId;
 }

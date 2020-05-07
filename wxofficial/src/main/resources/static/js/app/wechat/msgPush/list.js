@@ -1,6 +1,17 @@
 $( function () {
     getDataList( );
-} );
+    $('#pushPeriod').datetimepicker({
+        language:  'zh-CN',
+        weekStart: 1,
+        todayBtn:  1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        forceParse: 0,
+        showMeridian: 1,
+        startDate: new Date()
+    });
+});
 
 var media_id = "";
 
@@ -43,7 +54,26 @@ function getDataList() {
             },{
                 field: 'msgType',
                 align: 'center',
-                title: '消息类型'
+                title: '消息类型',
+                formatter: function (value, row, index) {
+                    var res = "-";
+                    if(value === 'news') {
+                        res = "图文";
+                    }
+                    if(value === 'text') {
+                        res = "文本";
+                    }
+                    if(value === 'image') {
+                        res = "图片";
+                    }
+                    if(value === 'video') {
+                        res = "视频";
+                    }
+                    if(value === 'voice') {
+                        res = "语音";
+                    }
+                    return res;
+                }
             },{
                 field: 'msgContent',
                 align: 'center',
@@ -51,12 +81,25 @@ function getDataList() {
             },{
                 field: 'status',
                 align: 'center',
-                title: '消息发送状态'
+                title: '消息发送状态',
+                formatter: function (value, row, index) {
+                    var res = "-";
+                    if(value === 'todo') {
+                        res = "<span class=\"badge bg-info\">待推送</span>";
+                    }
+                    if(value === 'doing') {
+                        res = "<span class=\"badge bg-warning\">推送中</span>";
+                    }
+                    if(value === 'done') {
+                        res = "<span class=\"badge bg-success\">推送成功</span>";
+                    }
+                    return res;
+                }
             }, {
                 title: '操作',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    return "<a style='cursor: pointer' onclick='editData(\""+row['id']+"\", \""+row['name']+"\")'><i class='fa fa-eye'></i>查看</a>&nbsp;&nbsp;<a style='cursor: pointer' onclick='deleteData(\""+row['id']+"\")'><i class='fa fa-trash'></i>删除</a>";
+                    return "<a style='cursor: pointer' onclick='viewData(\""+row['id']+"\")'><i class='fa fa-eye'></i>查看</a>&nbsp;&nbsp;<a style='cursor: pointer' onclick='deleteData(\""+row['id']+"\")'><i class='fa fa-trash'></i>删除</a>";
                 }
             }]
     };
@@ -161,16 +204,6 @@ $("#isTotalUser").change(function () {
     }
 });
 
-$("#pushMsgModal").on('shown.bs.modal', function () {
-    $.get("/wxMsgPush/getPushInfo", {}, function (r) {
-        let code = "";
-        r.data.forEach( (v, k) => {
-            code += "<option value='" + v + "'>" + v + "</option>";
-        } );
-        $( "#pushPeriod" ).html( '' ).append( code );
-    });
-});
-
 $('input[name="pushMethod"]').click(function () {
     if ($(this).val() == "FIXED") {
         $("#pushPeriodDiv").show();
@@ -190,5 +223,45 @@ $("#push_ok").change(function () {
 
 // 保存并推送
 function savePushMsg() {
-    
+    var pushMethod = $("input[name='pushMethod']:checked").val();
+    var pushPeriod = $("#pushPeriod").val();
+    var selected = $("#msgPushTable").bootstrapTable('getSelections');
+    if(selected.length == 0) {
+        $MB.n_warning("至少选择一条记录！");
+        return;
+    }
+    var headId = selected[0].id;
+    $.post("/wxMsgPush/pushMsg", {pushMethod: pushMethod, pushPeriod:pushPeriod, headId:headId}, function (r) {
+        if(r.code == 200) {
+            $MB.n_success("任务已经提交，请稍后！");
+            $('#pushMsgModal').modal('hide');
+            $MB.refreshTable("msgPushTable");
+        }
+    });
+}
+
+function prePushPage() {
+    var selected = $("#msgPushTable").bootstrapTable('getSelections');
+    if(selected.length == 0) {
+        $MB.n_warning("至少选择一条记录！");
+        return;
+    }
+    var status = selected[0].status;
+    if(status !== 'todo') {
+        $MB.n_warning("当前状态不支持任务推送！");
+        return;
+    }
+    $('#pushMsgModal').modal('show');
+}
+
+function viewData(id) {
+    $.get("/wxMsgPush/getMsgHeadById", {headId: id}, function (r) {
+        if (r.code === 200) {
+            var data = r.data;
+            for (key in data) {
+                $( "#msgForm" ).find( 'input[name="' + key + '"]' ).val(data[key]);
+            }
+        }
+    });
+    $('#viewPushModal').modal('show');
 }

@@ -17,5 +17,7 @@ public interface WxMsgPushService {
 
     void deleteById(String id);
 
-    void pushMsg();
+    void pushMsg(String pushMethod, String pushPeriod, String headId);
+
+    WxPushHead getMsgHeadById(String headId);
 }

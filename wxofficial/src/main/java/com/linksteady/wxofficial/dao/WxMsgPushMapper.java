@@ -4,6 +4,7 @@ import com.linksteady.wxofficial.entity.po.WxPushDetail;
 import com.linksteady.wxofficial.entity.po.WxPushHead;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,4 +26,12 @@ public interface WxMsgPushMapper {
     void saveDetailData(@Param("wxPushDetails") List<WxPushDetail> wxPushDetails);
 
     List<WxPushDetail> getDetailDataByHeadId(String headId);
+
+    void updateDetailList(@Param("toPushList") List<WxPushDetail> toPushList);
+
+    void updatePushDate(Date date, String headId);
+
+    void updateHeadStatus(String headId, String status);
+
+    List<String> getToPushMsg();
 }

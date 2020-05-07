@@ -99,4 +99,9 @@ public class WxProperties {
      * 公众号群推送
      */
     private String batchPushUrl = "/api/massPushByOpenIds";
+
+    /**
+     * 获取推送状态
+     */
+    private String messageMassGetUrl = "/api/messageMassGet";
 }

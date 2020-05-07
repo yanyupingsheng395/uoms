@@ -202,6 +202,15 @@ public class OperateServiceImpl implements OperateService {
         return result;
     }
 
+    @Override
+    public String callPostBody(String url, Map<String, Object> data) {
+        Map<String, Object> param = data;
+        param.put("appId", wxProperties.getAppId());
+        String result = OkHttpUtil.postRequestBody(url, JSON.toJSONString(param));
+        log.info("post结果:" + result);
+        return result;
+    }
+
     /**
      * 图文消息转化
      *
@@ -251,5 +260,12 @@ public class OperateServiceImpl implements OperateService {
             materialBo.setItems(items);
         }
         return materialBo;
+    }
+
+    @Override
+    public String callPostForm(String url, Map<String, String> param) {
+        param.put("appId", wxProperties.getAppId());
+        String result = OkHttpUtil.postFormBody(url, param);
+        return result;
     }
 }

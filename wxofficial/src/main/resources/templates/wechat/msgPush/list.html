@@ -13,6 +13,7 @@
     <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
     <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/select2/css/select2.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetime/css/bootstrap-datetimepicker.min.css}"/>
 </head>
 <body class="gray-bg">
 <div data-th-include="common/commonCSS"></div>
@@ -39,7 +40,7 @@
                                         <i class="fa fa-pencil"></i> 新增群发
                                     </a>
                                     <a class="btn btn-info" id="btn_schedule"
-                                       onclick="$('#pushMsgModal').modal('show')">
+                                       onclick="prePushPage()">
                                         <i class="fa fa-refresh"></i> 执行任务
                                     </a>
                                 </div>
@@ -168,9 +169,6 @@
                                 <div class="form-group">
                                     <label class="control-label">推送方式：</label>
                                     <label class="lyear-radio radio-inline radio-primary">
-                                        <input type="radio" name="pushMethod" value="AI"><span>智能推送</span>
-                                    </label>
-                                    <label class="lyear-radio radio-inline radio-primary">
                                         <input type="radio" name="pushMethod" value="IMME"><span>立刻推送</span>
                                     </label>
                                     <label class="lyear-radio radio-inline radio-primary">
@@ -183,7 +181,7 @@
                             <div class="col-md-12">
                                 <div class="form-group" id="pushPeriodDiv" style="display: none;">
                                     <span>推送时间：</span>
-                                    <select id="pushPeriod" class="form-control" style="width: 285px;"></select>
+                                    <input class="form-control" id="pushPeriod" data-date-format="yyyy-mm-dd hh:ii" style="width: 185px;"/>
                                 </div>
                             </div>
                         </div>
@@ -210,7 +208,192 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="viewPushModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog" style="width: 60%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">推送查看</h5>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <form class="form-horizontal" id="msgForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">创建时间:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="createDt" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">是否全部用户:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="isTotalUser" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">消息类型:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="msgType" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">内容:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="msgContent" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">mediaID:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="mediaId" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">标题:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="subscribeTime" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">描述:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="sex" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">链接:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="country" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">高质量链接:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="province" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">缩略图的媒体id:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="city" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">缩略图url:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="language" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">图文消息的内容:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="tagidList" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">群发消息后返回的消息id:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="remark" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">消息发送状态:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="status" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">发送的总数:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="unionId" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">过滤后总数:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="subscribeNum" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">发送成功数:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="successTotal" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">发送失败数:</label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" type="text" name="updateDt" disabled="disabled">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer m-t-10">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div data-th-include="common/commonJS"></div>
+<script src="/plugins/bootstrap-datetime/js/bootstrap-datetimepicker.js"></script>
+<script src="/plugins/bootstrap-datetime/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/plugins/select2/js/select2.js"></script>
 <script src="/plugins/select2/js/i18n/zh-CN.js"></script>
 <script src="/js/app/wechat/public/public.js"></script>

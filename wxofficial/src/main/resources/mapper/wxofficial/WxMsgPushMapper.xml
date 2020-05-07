@@ -21,11 +21,17 @@
     </resultMap>
 
     <select id="getDataList" resultMap="head">
-        select * from wx_msg_push_head limit #{limit} offset #{offset}
+        select *
+        from wx_msg_push_head
+        order by create_dt desc
+        limit #{limit}
+        offset
+        #{offset}
     </select>
 
     <select id="getCount" resultType="int">
-        select count(1) from wx_msg_push_head
+        select count(1)
+        from wx_msg_push_head
     </select>
 
     <insert id="saveData" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
@@ -34,11 +40,15 @@
     </insert>
 
     <delete id="deleteById">
-        delete from wx_msg_push_head where id = #{id}::integer
+        delete
+        from wx_msg_push_head
+        where id = #{id}::integer
     </delete>
 
-    <select id="getHeadById">
-        select * from wx_msg_push_head where id = #{id}::integer
+    <select id="getHeadById" resultMap="head">
+        select *
+        from wx_msg_push_head
+        where id = #{id}::integer
     </select>
 
     <insert id="saveDetailData">
@@ -49,6 +59,33 @@
     </insert>
 
     <select id="getDetailDataByHeadId" resultMap="detail">
-        select * from wx_msg_push_detail where head_id = #{headId}::integer and push_status = 'todo'
+        select *
+        from wx_msg_push_detail
+        where head_id = #{headId}::integer
+          and push_status = 'todo'
+    </select>
+
+    <update id="updateDetailList">
+        update wx_msg_push_detail t
+        set push_status = tmp.push_status
+        from (values
+        <foreach collection="toPushList" item="item" separator=",">
+            (#{item.headId}, #{item.openId}, #{item.pushStatus})
+        </foreach>
+        ) as tmp (head_id, open_id, push_status)
+        where t.head_id = tmp.head_id
+        and t.open_id = tmp.open_id
+    </update>
+
+    <update id="updatePushDate">
+        update wx_msg_push_detail t set push_date = #{date} where head_id = #{headId}::integer
+    </update>
+
+    <update id="updateHeadStatus">
+        update wx_msg_push_head set status = #{status} where id = #{headId}::integer
+    </update>
+
+    <select id="getToPushMsg" resultType="string">
+        select id from wx_msg_push_head where status in ('todo', 'doing')
     </select>
 </mapper>

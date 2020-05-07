@@ -89,4 +89,19 @@ public interface OperateService {
     String saveData(String url, Map<String, Object> data);
 
     String updateData(String url, Map<String, String> param);
+
+    /**
+     * 执行post请求
+     * @param url
+     * @return
+     */
+    String callPostBody(String url, Map<String, Object> data);
+
+    /**
+     * 执行post请求
+     * @param url
+     * @param param
+     * @return
+     */
+    String callPostForm(String url, Map<String, String> param);
 }
