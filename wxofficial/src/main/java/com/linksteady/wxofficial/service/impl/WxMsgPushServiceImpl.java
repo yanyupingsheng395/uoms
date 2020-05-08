@@ -173,6 +173,7 @@ public class WxMsgPushServiceImpl implements WxMsgPushService {
                                 Duration.between(LocalTime.now(), LocalDateTime.ofInstant(key.toInstant(), ZoneId.systemDefault())).toMinutes(),
                                 TimeUnit.MINUTES);
                         int finalI = i;
+                        // 单线程获取执行结果的状态，以免阻塞主进程无法继续执行。
                         executorService.submit(() -> {
                             try {
                                 String result = schedule.get();
