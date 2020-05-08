@@ -161,7 +161,7 @@ public class WxMsgPushServiceImpl implements WxMsgPushService {
                     for (int i = 0; i < pagenum; i++) {
                         List<String> newToUsers = toUsers.stream().skip(pagesize * i).limit(pagesize).collect(Collectors.toList());
                         WxMpMassOpenIdsMessage message = new WxMpMassOpenIdsMessage();
-                        message.setToUsers(toUsers);
+                        message.setToUsers(newToUsers);
                         message.setMsgType(wxPushHead.getMsgType());
                         message.setContent(wxPushHead.getMsgContent());
                         message.setMediaId(wxPushHead.getMediaId());
@@ -183,7 +183,7 @@ public class WxMsgPushServiceImpl implements WxMsgPushService {
                                 Map<String, String> param2 = Maps.newHashMap();
                                 param2.put("msgId", msgId);
                                 String statusResult = operateService.callPostForm(getStatusUrl, param2);
-                                finalToPushList.stream().filter(x -> toUsers.indexOf(x.getOpenId()) > -1).forEach(
+                                finalToPushList.stream().filter(x -> newToUsers.indexOf(x.getOpenId()) > -1).forEach(
                                         y ->
                                         {
                                             y.setPushStatus(JSON.parseObject(statusResult).getString("msg"));
