@@ -151,7 +151,9 @@ public class WxMsgPushServiceImpl implements WxMsgPushService {
             int total = dataList.entrySet().size();
             AtomicInteger tmp = new AtomicInteger(0);
             List<WxPushDetail> finalToPushList = toPushList;
-            dataList.forEach((key, value) -> {
+            for (Map.Entry<Date, List<WxPushDetail>> entry : dataList.entrySet()) {
+                Date key = entry.getKey();
+                List<WxPushDetail> value = entry.getValue();
                 tmp.getAndIncrement();
                 // 必须是大于当前日期的
                 List<String> toUsers = value.stream().map(WxPushDetail::getOpenId).collect(Collectors.toList());
@@ -203,7 +205,7 @@ public class WxMsgPushServiceImpl implements WxMsgPushService {
                 } else {
                     log.info("推送人数不足2条，不予推送！");
                 }
-            });
+            }
         }
     }
 }

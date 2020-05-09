@@ -68,4 +68,13 @@ public class PageController {
     public String msgPush() {
         return "wechat/msgPush/list";
     }
+
+    /**
+     * 日常用户运营
+     * @return
+     */
+    @RequestMapping("/daily/config")
+    public String dailyConfig() {
+        return "wechat/daily/config";
+    }
 }
