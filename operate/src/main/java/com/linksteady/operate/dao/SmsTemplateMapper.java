@@ -9,9 +9,9 @@ import java.util.Map;
 
 public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
 
-    List<SmsTemplate> getSmsTemplateList(@Param("limit") int limit, @Param("offset") int offset, @Param("smsTemplate") SmsTemplate smsTemplate);
+    List<SmsTemplate> getSmsTemplateList(@Param("limit") int limit, @Param("offset") int offset);
 
-    int getTotalCount(@Param("smsTemplate") SmsTemplate smsTemplate);
+    int getTotalCount();
 
     void saveSmsTemplate(SmsTemplate smsTemplate);
 
@@ -24,8 +24,6 @@ public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
     void update(@Param("smsTemplate") SmsTemplate smsTemplate);
 
     List<SmsTemplate> getTemplateByGroupId(@Param("groupIdList") List<String> groupIdList);
-
-    List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle, String groupSmsCode);
 
     List<String> getSmsUsedGroupInfo(String smsCode);
 

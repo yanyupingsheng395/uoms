@@ -1,5 +1,4 @@
 package com.linksteady.operate.service.impl;
-
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.PushProperties;
@@ -8,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -178,5 +176,4 @@ public class CouponServiceImpl implements CouPonService {
     public List<CouponInfo> getIntelCouponList() {
         return couponMapper.getIntelCouponList();
     }
-
 }
