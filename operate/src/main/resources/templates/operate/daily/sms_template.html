@@ -1,0 +1,202 @@
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="msg_modal" id="smsTemplateModal" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document" style="width: 1072px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title">为群组配置文案</h5>
+            </div>
+            <div class="modal-body">
+                <div class="table-striped">
+                    <div class="table-responsive">
+                        <p class="h6">理解选定的用户群组</p>
+                        <table class="table text-nowrap table-bordered h6" id="selectedGroupInfo1" style="width: 70%;">
+                            <thead>
+                            <tr>
+                                <th>差异特征维度</th>
+                                <th>用户群组特征值</th>
+                                <th>特征值业务理解</th>
+                                <th>推送配置建议</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>用户对类目的价值/沉默成本</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>用户对类目的生命周期阶段</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>用户下一次转化的活跃度节点</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-sm-12 table-striped">
+                                <div class="row m-t-10">
+                                    <div class="col-sm-12">
+                                        <p class="h6">使用过的个性化消息</p>
+                                        <div class="btn-group-sm" id="toolbar" role="group">
+                                            <a class="btn btn-success" id="btn_add" onclick="add()">
+                                                <i class="fa fa-plus"></i> 新增文案
+                                            </a>
+                                            <a class="btn btn-primary" id="btn_edit">
+                                                <i class="fa fa-edit"></i> 编辑文案
+                                            </a>
+                                            <a class="btn btn-warning" id="btn_refresh">
+                                                <i class="fa fa-refresh"></i> 解除引用
+                                            </a>
+                                            <a class="btn btn-cyan" id="btn_send" onclick="testSend()">
+                                                <i class="fa fa-puzzle-piece"></i> 屏蔽测试
+                                            </a>
+                                            <a class="btn btn-danger" id="btn_delete" onclick="del()">
+                                                <i class="fa fa-close"></i> 删除文案
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row m-t-10">
+                                    <div class="col-sm-12 ">
+                                        <table id="smsTemplateTable" class="table table-striped table-bordered"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="setSmsCode()">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title" id="myLargeModalLabel3">新增文案</h5>
+            </div>
+            <div class="modal-body" style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
+                <form class="form-horizontal" id="smsTemplateAddForm" novalidate="novalidate">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label">文案体现的个性化要素</label>
+                                    </div>
+                                    <div>
+                                        <div style="border: solid 1px #ebebeb;padding: 8px; float: left;" id="config-box">
+                                            <div class="example-box">
+                                                <label class="control-label">　　　　商品名称：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductName" value="1" onchange="$('#isProductName-error').show()"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductName" value="0" onchange="$('#isProductName-error').hide()"><span>否</span>
+                                                </label>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${PROD_NAME}粘贴到期望位置；</span>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">商品详情页短链接：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductUrl" value="1" onchange="isProdUrlTrueClick()"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductUrl" value="0" onchange="isProdUrlFalseClick()"><span>否</span>
+                                                </label>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${PROD_URL}粘贴到期望位置；</span>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">　　　　补贴名称：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponName" onchange="isCouponNameTrueClick()" value="1"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponName" value="0" onchange="isCouponNameFalseClick()"><span>否</span>
+                                                </label>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${COUPON_NAME}粘贴到期望位置；</span>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">　　　补贴短链接：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponUrl" value="1" onchange="isCouponUrlTrueClick()"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponUrl" value="0" onchange="isCouponUrlFalseClick()"><span>否</span>
+                                                </label>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${COUPON_URL}粘贴到消息期望位置；</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label">文案内容</label>
+                                    </div>
+                                    <div>
+                                        <textarea class="form-control" id="smsContent" name="smsContent" style="height: 102px;width:522px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
+                                        <input type="hidden" id="smsContentInput" name="smsContentInput"/>
+                                        <span class="wordwrap"><var id="word"></var></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="bubble" style="margin-top: 100px;">
+                                    <div class="demo clearfix">
+                                        <span class="triangle"></span>
+                                        <div class="article">我发短信给你了我发短信给你了我发短信给你了我发短信给你了我发短信给你了我发短信给你了我发短信给你了我发短信给你了</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="hr"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mg-stop">
+                                <div class="col-md-12 control-label" style="text-align: left;">
+                                    <p class="small">
+                                        文案中填充变量说明：<br/>
+                                        1.一条文案通常允许的总字符数为[[${smsLengthLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；<br/>
+                                        2.个性化推送文案中，包括运营者编写的内容，字符数以N表示；还包括系统填充的变量，字符数以M表示；Y=N+M；<br/>
+                                        3.由于系统填充变量也会占用字符，所以在此列出4种变量的占用字符情况<br/>
+                                        &nbsp;&nbsp;&nbsp;${COUPON_URL}：领券页短链接，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${COUPON_NAME}：补贴名称，占<font color="red">[[${couponNameLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${PROD_NAME}：商品短名称，占<font color="red">[[${prodNameLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${PROD_URL}：商品购买详情页短链接，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
+                                        4.鉴于上述情况，建议一条文案中对变量的选用采取两种方式<br/>
+                                        &nbsp;&nbsp;&nbsp;编写内容+领券页短链接+补贴名称+商品短名称
+                                        &nbsp;&nbsp;&nbsp;编写内容+商品短名称+商品购买详情页短链接
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" name="save" id="btn_save_sms">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input id="headerId" type="hidden">
