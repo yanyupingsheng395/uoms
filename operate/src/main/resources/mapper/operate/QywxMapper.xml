@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxMapper">
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.QyWxMsg">
+        <result property="qywxId" jdbcType="DECIMAL" column="qywx_id"/>
+        <result property="textContent" jdbcType="VARCHAR" column="text_content"/>
+        <result property="productUrl" jdbcType="VARCHAR" column="product_url"/>
+        <result property="productName" jdbcType="VARCHAR" column="product_name"/>
+        <result property="couponUrl" jdbcType="VARCHAR" column="coupon_url"/>
+        <result property="couponName" jdbcType="VARCHAR" column="coupon_name"/>
+        <result property="isPersonal" jdbcType="VARCHAR" column="is_personal"/>
+        <result property="materialType" jdbcType="VARCHAR" column="material_type"/>
+        <result property="materialContent" jdbcType="VARCHAR" column="material_content"/>
+    </resultMap>
+
+    <insert id="saveData">
+        insert into uo_qywx_msg_template(text_content, insert_by, product_url, product_name, coupon_url, coupon_name, is_personal, material_type, material_content)
+        values (#{textContent}, #{insertBy}, #{productUrl}, #{productName}, #{couponUrl}, #{couponName}, #{isPersonal}, #{materialType}, #{materialContent})
+    </insert>
+
+    <select id="getDataListPage" resultMap="BaseResultMap">
+        select * from uo_qywx_msg_template limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        select count(1) from uo_qywx_msg_template
+    </select>
+
+    <update id="updateQyWxMsg">
+        update uo_qywx_msg_template set(text_content, product_url, product_name, coupon_url, coupon_name, is_personal, material_type, material_content) =
+        (#{textContent}, #{productUrl}, #{productName}, #{couponUrl}, #{couponName}, #{isPersonal}, #{materialType}, #{materialContent}) where qywx_id = #{qywxId}
+    </update>
+
+    <delete id="deleteDataById">
+        delete from uo_qywx_msg_template where qywx_id = #{id}::integer
+    </delete>
+</mapper>

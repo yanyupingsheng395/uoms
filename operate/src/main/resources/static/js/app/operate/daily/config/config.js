@@ -1,7 +1,4 @@
 let step;
-let IS_COUPON_NAME_DISABLED;
-let IS_COUPON_URL_DISABLED;
-let IS_PROD_URL_DISABLED;
 $( function () {
     getTableData();
     step = steps( {
@@ -157,6 +154,7 @@ function getTableData() {
  * 微信消息窗口
  */
 function openWxMsgModal() {
+    getWxMsgTableData();
     $( '#wxMsgListModal' ).modal( 'show' );
 }
 
@@ -172,79 +170,8 @@ function openSelectedGroupModal() {
     $( "#selectedGroupModal" ).modal( 'show' );
 }
 
-getTableData2();
-function getTableData2() {
-    let settings = {
-        url: "",
-        cache: false,
-        pagination: true,
-        singleSelect: false,
-        sidePagination: "server",
-        pageNumber: 1,
-        pageSize: 10,
-        pageList: [10, 25, 50, 100],
-        columns: [
-            {
-                title: '消息内容',
-            },
-            {
-                title: '创建时间',
-            },
-            {
-                title: '使用天数',
-            }
-        ]
-    };
-    $MB.initTable( 'msgListDataTable', settings );
-}
-
 function personalMsg() {
     $( "#msgListModal" ).modal( 'show' );
-}
-
-// 补贴链接选是，补贴名称自动选是、商品链接自动选否；
-function isCouponUrlTrueClick() {
-    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponName"]:radio[value="1"]' ).prop( "checked", true );
-    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponName"]' ).attr( "disabled", "disabled" );
-    IS_COUPON_NAME_DISABLED = true;
-
-    $( "#smsTemplateAddForm" ).find( 'input[name="isProductUrl"]:radio[value="0"]' ).prop( "checked", true );
-    $( "#smsTemplateAddForm" ).find( 'input[name="isProductUrl"]' ).attr( "disabled", "disabled" );
-    IS_PROD_URL_DISABLED = true;
-}
-
-// 补贴链接选否，补贴名称自动选否、商品链接可选；
-function isCouponUrlFalseClick() {
-    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponName"]:radio[value="0"]' ).prop( "checked", true );
-    $( "#smsTemplateAddForm" ).find( 'input[name="isProductUrl"]' ).removeAttr( "disabled" );
-    IS_PROD_URL_DISABLED = false;
-}
-
-// 补贴名称选是，补贴链接自动选是；
-function isCouponNameTrueClick() {
-    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]:radio[value="1"]' ).prop( "checked", true );
-    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).attr( "disabled", "disabled" );
-    IS_COUPON_URL_DISABLED = true;
-}
-
-// 补贴名称选否，补贴链接自动选否；
-function isCouponNameFalseClick() {
-    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]:radio[value="0"]' ).prop( "checked", true );
-    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).attr( "disabled", "disabled" );
-    IS_COUPON_URL_DISABLED = true;
-}
-
-// 商品链接选是，补贴链接自动选否；
-function isProdUrlTrueClick() {
-    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]:radio[value="0"]' ).prop( "checked", true );
-    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).attr( "disabled", "disabled" );
-    IS_COUPON_URL_DISABLED = true;
-}
-
-// 商品链接选否，补贴链接可选；
-function isProdUrlFalseClick() {
-    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).removeAttr( "disabled" );
-    IS_COUPON_URL_DISABLED = false;
 }
 
 function contentInput() {

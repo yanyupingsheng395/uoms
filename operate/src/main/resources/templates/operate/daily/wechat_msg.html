@@ -83,7 +83,7 @@
                             <button class="btn btn-primary" id="btn_view">
                                 <i class="fa fa-eye"></i> 编辑消息
                             </button>
-                            <button class="btn btn-danger btn-view" id="btn_delete">
+                            <button class="btn btn-danger btn-view" id="btn_delete" onclick="deleteDataById()">
                                 <i class="fa fa-trash"></i> 删除消息
                             </button>
                             <a class="btn btn-info btn-edit" id="btn_plan">
@@ -139,40 +139,40 @@
                                                             <div class="example-box">
                                                                 <label class="control-label">　　　　商品名称：</label>
                                                                 <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="isProductName" value="1" onchange="$('#isProductName-error').show()"><span>是</span>
+                                                                    <input type="radio" name="productName" value="1"><span>是</span>
                                                                 </label>
                                                                 <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="isProductName" value="0" onchange="$('#isProductName-error').hide()"><span>否</span>
+                                                                    <input type="radio" name="productName" value="0"><span>否</span>
                                                                 </label>
                                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${PROD_NAME}粘贴到期望位置；</span>
                                                             </div>
                                                             <div class="example-box">
                                                                 <label class="control-label">商品详情页短链接：</label>
                                                                 <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="isProductUrl" value="1" onchange="isProdUrlTrueClick()"><span>是</span>
+                                                                    <input type="radio" name="productUrl" value="1"><span>是</span>
                                                                 </label>
                                                                 <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="isProductUrl" value="0" onchange="isProdUrlFalseClick()"><span>否</span>
+                                                                    <input type="radio" name="productUrl" value="0"><span>否</span>
                                                                 </label>
                                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${PROD_URL}粘贴到期望位置；</span>
                                                             </div>
                                                             <div class="example-box">
                                                                 <label class="control-label">　　　　补贴名称：</label>
                                                                 <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="isCouponName" onchange="isCouponNameTrueClick()" value="1"><span>是</span>
+                                                                    <input type="radio" name="couponName" value="1"><span>是</span>
                                                                 </label>
                                                                 <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="isCouponName" value="0" onchange="isCouponNameFalseClick()"><span>否</span>
+                                                                    <input type="radio" name="couponName" value="0"><span>否</span>
                                                                 </label>
                                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${COUPON_NAME}粘贴到期望位置；</span>
                                                             </div>
                                                             <div class="example-box">
                                                                 <label class="control-label">　　　补贴短链接：</label>
                                                                 <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="isCouponUrl" value="1" onchange="isCouponUrlTrueClick()"><span>是</span>
+                                                                    <input type="radio" name="couponUrl" value="1"><span>是</span>
                                                                 </label>
                                                                 <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="isCouponUrl" value="0" onchange="isCouponUrlFalseClick()"><span>否</span>
+                                                                    <input type="radio" name="couponUrl" value="0"><span>否</span>
                                                                 </label>
                                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${COUPON_URL}粘贴到消息期望位置；</span>
                                                             </div>
@@ -184,9 +184,7 @@
                                                         <label class="control-label">文案内容</label>
                                                     </div>
                                                     <div>
-                                                        <textarea class="form-control" id="smsContent" name="smsContent" style="height: 102px;width:522px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
-                                                        <input type="hidden" id="smsContentInput" name="smsContentInput"/>
-                                                        <span class="wordwrap"><var id="word"></var></span>
+                                                        <textarea class="form-control" name="textContent" style="height: 102px;width:522px;border: solid 1px #ebebeb;" oninput="wxMsgContentValid()"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -213,31 +211,31 @@
                             <div class="tab-pane fade" id="profile">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <form class="form-horizontal" novalidate="novalidate">
+                                        <form class="form-horizontal" novalidate="novalidate" id="mediaForm">
                                             <div style="border: solid 1px #ebebeb;padding: 8px;margin-top:0px; float: left;width: 400px;">
                                                 <div class="example-box">
                                                     <label class="control-label">是否体现个性化：</label>
                                                     <label class="lyear-radio radio-inline radio-primary">
-                                                        <input type="radio" name="isProductName" value="1"><span>是</span>
+                                                        <input type="radio" name="isPersonal" value="1" onclick="hiddenPersonalContent()"><span>是</span>
                                                     </label>
                                                     <label class="lyear-radio radio-inline radio-primary">
-                                                        <input type="radio" name="isProductName" value="0"><span>否</span>
+                                                        <input type="radio" name="isPersonal" value="0" onclick="hiddenPersonalContent()"><span>否</span>
                                                     </label>
                                                 </div>
-                                                <div class="example-box">
+                                                <div class="example-box" id="materialTypeDiv">
                                                     <label class="control-label">　选择素材类型：</label>
                                                     <label class="lyear-radio radio-inline radio-primary">
-                                                        <input type="radio" name="" value="1"><span>图片</span>
+                                                        <input type="radio" name="materialType" value="0"><span>图片</span>
                                                     </label>
                                                     <label class="lyear-radio radio-inline radio-primary">
-                                                        <input type="radio" name="" value="0"><span>网页</span>
+                                                        <input type="radio" name="materialType" value="1"><span>网页</span>
                                                     </label>
                                                     <label class="lyear-radio radio-inline radio-primary">
-                                                        <input type="radio" name="" value="0"><span>小程序</span>
+                                                        <input type="radio" name="materialType" value="2"><span>小程序</span>
                                                     </label>
                                                 </div>
-                                                <div class="example-box m-t-10">
-                                                    <input type="text" class="form-control" placeholder="请输入网页或小程序的地址"/>
+                                                <div class="example-box m-t-10" id="materialContentDiv">
+                                                    <input type="text" class="form-control" name="materialContent" placeholder="请输入网页或小程序的地址"/>
                                                 </div>
                                             </div>
                                         </form>
@@ -271,7 +269,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-sm" name="save" id="btn_save_sms">确定</button>
+                <button type="button" class="btn btn-primary btn-sm" name="save" id="btn_save_qywx">确定</button>
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
             </div>
         </div>

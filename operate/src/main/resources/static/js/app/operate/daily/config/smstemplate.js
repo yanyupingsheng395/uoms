@@ -1,3 +1,6 @@
+var IS_COUPON_NAME_DISABLED;
+var IS_COUPON_URL_DISABLED;
+var IS_PROD_URL_DISABLED;
 $(function () {
     statInputNum();
 });
@@ -629,62 +632,49 @@ $("#btn_edit").click(function () {
     });
 });
 
-var IS_COUPON_NAME_DISABLED;
-var IS_COUPON_URL_DISABLED;
-var IS_PROD_URL_DISABLED;
 // 补贴链接选是，补贴名称自动选是、商品链接自动选否；
 function isCouponUrlTrueClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponName"]:radio[value="1"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isCouponName"]').attr("disabled", "disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponName"]:radio[value="1"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponName"]' ).attr( "disabled", "disabled" );
     IS_COUPON_NAME_DISABLED = true;
 
-    $("#smsTemplateAddForm").find('input[name="isProductUrl"]:radio[value="0"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isProductUrl"]').attr("disabled", "disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isProductUrl"]:radio[value="0"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isProductUrl"]' ).attr( "disabled", "disabled" );
     IS_PROD_URL_DISABLED = true;
-
-    $('#isCouponUrl-error').show();
-    $('#isCouponName-error').show();
-    $('#isProductUrl-error').hide();
 }
 
 // 补贴链接选否，补贴名称自动选否、商品链接可选；
 function isCouponUrlFalseClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponName"]:radio[value="0"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isProductUrl"]').removeAttr("disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponName"]:radio[value="0"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isProductUrl"]' ).removeAttr( "disabled" );
     IS_PROD_URL_DISABLED = false;
-    $('#isCouponUrl-error').hide();
-    $('#isCouponName-error').hide();
 }
 
 // 补贴名称选是，补贴链接自动选是；
 function isCouponNameTrueClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="1"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]:radio[value="1"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).attr( "disabled", "disabled" );
     IS_COUPON_URL_DISABLED = true;
-    $('#isCouponName-error').show();
-    $('#isCouponUrl-error').show();
 }
+
 // 补贴名称选否，补贴链接自动选否；
 function isCouponNameFalseClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="0"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]:radio[value="0"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).attr( "disabled", "disabled" );
     IS_COUPON_URL_DISABLED = true;
-    $('#isCouponName-error').hide();
-    $('#isCouponUrl-error').hide();
 }
+
 // 商品链接选是，补贴链接自动选否；
 function isProdUrlTrueClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="0"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]:radio[value="0"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).attr( "disabled", "disabled" );
     IS_COUPON_URL_DISABLED = true;
-    $('#isProductUrl-error').show();
-    $('#isCouponUrl-error').hide();
 }
+
 // 商品链接选否，补贴链接可选；
 function isProdUrlFalseClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').removeAttr("disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).removeAttr( "disabled" );
     IS_COUPON_URL_DISABLED = false;
-    $('#isProductUrl-error').hide();
 }
 
 $("#btn_refresh").click(function () {
