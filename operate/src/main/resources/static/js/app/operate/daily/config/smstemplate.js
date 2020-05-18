@@ -1,10 +1,59 @@
+var IS_COUPON_NAME_DISABLED;
+var IS_COUPON_URL_DISABLED;
+var IS_PROD_URL_DISABLED;
 $(function () {
     statInputNum();
 });
+
+function openSmsTemplateModal(groupId) {
+    $( "#currentGroupId" ).val(groupId);
+    smsTemplateTable();
+    $( "#smsTemplateModal" ).modal( 'show' );
+}
+
+$("#smsTemplateModal").on('hidden.bs.modal', function () {
+    $( "#currentGroupId" ).val("");
+});
+
+/**
+ * 获取短信模板列表
+ */
+function smsTemplateTable() {
+    var settings = {
+        url: '/smsTemplate/smsTemplateList',
+        pagination: true,
+        clickToSelect: true,
+        singleSelect: true,
+        sidePagination: "server",
+        pageList: [10, 25, 50, 100],
+        queryParams: function (params) {
+            console.log(params)
+            return {
+                limit: params.limit,
+                offset: params.offset
+            };
+        },
+        columns: [
+            {checkbox: true},
+            {
+                title: '消息内容',
+                field: 'smsContent'
+            },
+            {
+                title: '创建时间',
+                field: 'createDt'
+            },{
+                title: '使用天数',
+                field: 'usedDays'
+            }
+        ]
+    };
+    $( "#smsTemplateTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+}
+
 // 新增文案
 function add() {
-    $("#msg_modal").modal('hide');
-    setUserGroupChecked();
+    $("#smsTemplateModal").modal('hide');
     $('#smsCode').val("");
     $('#smsContent').val("");
     $('#smsName').val("");
@@ -14,6 +63,29 @@ function add() {
     $("#myLargeModalLabel3").text("新增文案");
     $("#btn_save_sms").attr("name", "save");
     $('#add_modal').modal('show');
+}
+
+function setSmsCode() {
+    var selected = $( "#smsTemplateTable" ).bootstrapTable( 'getSelections' );
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning( '请选择文案！' );
+        return;
+    }
+    var smsCode = selected[0].smsCode;
+    var groupId = $( "#currentGroupId" ).val();
+    if (!(groupId !== undefined && groupId !== '')) {
+        $MB.n_warning( "请选择一条群组信息。" );
+        return;
+    }
+    $.get( '/daily/setSmsCode', {groupId: groupId, smsCode: smsCode}, function (r) {
+        if (r.code === 200) {
+            $MB.n_success( "设置文案成功！" );
+        } else {
+            $MB.n_danger( r.msg );
+        }
+        $("#smsTemplateModal").modal('hide');
+    } );
 }
 
 // 新增文案的时候，给群组信息设置默认选中和只读
@@ -107,11 +179,10 @@ function testSend()
     }
 
     var smsCode =selectRows[0]["smsCode"];
-
     //根据获取到的数据查询
     $.getJSON("/smsTemplate/getSmsTemplateNotValid?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
-            $("#msg_modal").modal('hide');
+            $("#smsTemplateModal").modal('hide');
             //更新测试面板
             $("#smsName1").val(resp.data.smsName);
             $("#smsContent1").val(resp.data.smsContent);
@@ -124,7 +195,7 @@ function testSend()
 }
 
 $("#send_modal").on('hidden.bs.modal', function () {
-    $('#msg_modal').modal('show');
+    $('#smsTemplateModal').modal('show');
 });
 
 
@@ -402,7 +473,7 @@ $("#btn_save_sms").click(function () {
                 }
                 $('#add_modal').modal('hide');
                 $('#smsTemplateTable').bootstrapTable('refresh');
-                $("#msg_modal").modal('show');
+                $("#smsTemplateModal").modal('show');
             });
         });
     }
@@ -459,7 +530,7 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $('#isCouponName-error').hide();
     $('#isProductUrl-error').hide();
     $('#isProductName-error').hide();
-    $("#msg_modal").modal('show');
+    $("#smsTemplateModal").modal('show');
 });
 
 // 文案检索
@@ -492,7 +563,7 @@ $("#btn_edit").click(function () {
         if(len === 0) {
             $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
                 if (resp.code === 200){
-                    $("#msg_modal").modal('hide');
+                    $("#smsTemplateModal").modal('hide');
                     var data = resp.data;
                     $("#smsCode").val(data.smsCode);
                     $("#smsName").val(data.smsName);
@@ -561,62 +632,49 @@ $("#btn_edit").click(function () {
     });
 });
 
-var IS_COUPON_NAME_DISABLED;
-var IS_COUPON_URL_DISABLED;
-var IS_PROD_URL_DISABLED;
 // 补贴链接选是，补贴名称自动选是、商品链接自动选否；
 function isCouponUrlTrueClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponName"]:radio[value="1"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isCouponName"]').attr("disabled", "disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponName"]:radio[value="1"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponName"]' ).attr( "disabled", "disabled" );
     IS_COUPON_NAME_DISABLED = true;
 
-    $("#smsTemplateAddForm").find('input[name="isProductUrl"]:radio[value="0"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isProductUrl"]').attr("disabled", "disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isProductUrl"]:radio[value="0"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isProductUrl"]' ).attr( "disabled", "disabled" );
     IS_PROD_URL_DISABLED = true;
-
-    $('#isCouponUrl-error').show();
-    $('#isCouponName-error').show();
-    $('#isProductUrl-error').hide();
 }
 
 // 补贴链接选否，补贴名称自动选否、商品链接可选；
 function isCouponUrlFalseClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponName"]:radio[value="0"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isProductUrl"]').removeAttr("disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponName"]:radio[value="0"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isProductUrl"]' ).removeAttr( "disabled" );
     IS_PROD_URL_DISABLED = false;
-    $('#isCouponUrl-error').hide();
-    $('#isCouponName-error').hide();
 }
 
 // 补贴名称选是，补贴链接自动选是；
 function isCouponNameTrueClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="1"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]:radio[value="1"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).attr( "disabled", "disabled" );
     IS_COUPON_URL_DISABLED = true;
-    $('#isCouponName-error').show();
-    $('#isCouponUrl-error').show();
 }
+
 // 补贴名称选否，补贴链接自动选否；
 function isCouponNameFalseClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="0"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]:radio[value="0"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).attr( "disabled", "disabled" );
     IS_COUPON_URL_DISABLED = true;
-    $('#isCouponName-error').hide();
-    $('#isCouponUrl-error').hide();
 }
+
 // 商品链接选是，补贴链接自动选否；
 function isProdUrlTrueClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]:radio[value="0"]').prop("checked", true);
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').attr("disabled", "disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]:radio[value="0"]' ).prop( "checked", true );
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).attr( "disabled", "disabled" );
     IS_COUPON_URL_DISABLED = true;
-    $('#isProductUrl-error').show();
-    $('#isCouponUrl-error').hide();
 }
+
 // 商品链接选否，补贴链接可选；
 function isProdUrlFalseClick() {
-    $("#smsTemplateAddForm").find('input[name="isCouponUrl"]').removeAttr("disabled");
+    $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).removeAttr( "disabled" );
     IS_COUPON_URL_DISABLED = false;
-    $('#isProductUrl-error').hide();
 }
 
 $("#btn_refresh").click(function () {

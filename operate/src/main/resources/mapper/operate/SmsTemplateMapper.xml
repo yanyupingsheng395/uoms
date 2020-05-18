@@ -22,32 +22,12 @@
         SELECT
         SMS_CODE, SMS_CONTENT, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE
         FROM UO_OP_SMS_TEMPLATE
-        where 1=1
-        <if test="smsTemplate.userValue != null and smsTemplate.userValue != ''">
-            and USER_VALUE like concat('%', #{smsTemplate.userValue}, '%')
-        </if>
-        <if test="smsTemplate.lifeCycle != null and smsTemplate.lifeCycle != ''">
-            and LIFE_CYCLE like concat('%', #{smsTemplate.lifeCycle}, '%')
-        </if>
-        <if test="smsTemplate.pathActive != null and smsTemplate.pathActive != ''">
-            and PATH_ACTIVE like concat('%', #{smsTemplate.pathActive}, '%')
-        </if>
         order by SMS_CODE::integer desc
         limit #{limit} offset #{offset}
     </select>
 
     <select id="getTotalCount" resultType="int">
         select count(1) from UO_OP_SMS_TEMPLATE
-        where 1=1
-        <if test="smsTemplate.userValue != null and smsTemplate.userValue != ''">
-            and USER_VALUE like concat('%', #{smsTemplate.userValue}, '%')
-        </if>
-        <if test="smsTemplate.lifeCycle != null and smsTemplate.lifeCycle != ''">
-            and LIFE_CYCLE like concat('%', #{smsTemplate.lifeCycle}, '%')
-        </if>
-        <if test="smsTemplate.pathActive != null and smsTemplate.pathActive != ''">
-            and PATH_ACTIVE like concat('%', #{smsTemplate.pathActive}, '%')
-        </if>
     </select>
 
     <insert id="saveSmsTemplate">
@@ -86,25 +66,6 @@
              #{item}
          </foreach>
          order by to_number(t1.sms_code) desc
-    </select>
-
-    <select id="getTemplate" resultMap="BaseResultMap">
-        select *
-        from (
-                 select case when SMS_CODE = #{groupSmsCode} then 1 else 0 end tmp,
-                        SMS_CODE,
-                        SMS_CONTENT,
-                        IS_COUPON_NAME,
-                        SMS_NAME,
-                        IS_PRODUCT_NAME,
-                        IS_PRODUCT_URL,
-                        REMARK,
-                        USER_VALUE,
-                        LIFE_CYCLE,
-                        PATH_ACTIVE,
-                        IS_COUPON_URL
-                 from UO_OP_SMS_TEMPLATE
-        ) t order by tmp desc, SMS_CODE desc
     </select>
 
     <select id="getSmsUsedGroupInfo" resultType="string">

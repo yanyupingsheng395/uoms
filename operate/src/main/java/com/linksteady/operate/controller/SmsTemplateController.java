@@ -44,16 +44,10 @@ public class SmsTemplateController extends BaseController {
      * @param
      * @return
      */
-    @RequestMapping("/list")
-    public ResponseBo smsTemplateList(@RequestBody QueryRequest request) {
-        int limit = request.getLimit();
-        int offset = request.getOffset();
-        SmsTemplate smsTemplate = new SmsTemplate();
-        smsTemplate.setUserValue(request.getParam().get("userValue"));
-        smsTemplate.setLifeCycle(request.getParam().get("lifeCycle"));
-        smsTemplate.setPathActive(request.getParam().get("pathActive"));
-        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList(limit, offset, smsTemplate);
-        int totalCount = smsTemplateService.getTotalCount(smsTemplate);
+    @RequestMapping("/smsTemplateList")
+    public ResponseBo smsTemplateList(Integer limit, Integer offset) {
+        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList(limit, offset);
+        int totalCount = smsTemplateService.getTotalCount();
         return ResponseBo.okOverPaging("", totalCount, result);
     }
 
@@ -163,16 +157,6 @@ public class SmsTemplateController extends BaseController {
     @RequestMapping("/getTemplateByGroupId")
     public ResponseBo getTemplateByGroupId(@RequestParam("groupId") String groupId) {
         return ResponseBo.okWithData(null, smsTemplateService.getTemplateByGroupId(groupId));
-    }
-
-    /**
-     * 通过三个维度筛选文案
-     * @return
-     */
-    @RequestMapping("/getTemplate")
-    public ResponseBo getTemplate(@RequestParam("userValue") String userValue, @RequestParam("pathActive") String pathActive,
-                                  @RequestParam("lifeCycle") String lifeCycle, @RequestParam("smsCode") String smsCode) {
-        return ResponseBo.okWithData(null, smsTemplateService.getTemplate(userValue, pathActive, lifeCycle, smsCode));
     }
 
     @RequestMapping("/getSmsUsedGroupInfo")

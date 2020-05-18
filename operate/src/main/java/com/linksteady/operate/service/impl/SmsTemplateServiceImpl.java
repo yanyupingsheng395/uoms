@@ -26,13 +26,13 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     private ConfigService configService;
 
     @Override
-    public List<SmsTemplate> getSmsTemplateList(int limit, int offset,SmsTemplate smsTemplate) {
-        return smsTemplateapper.getSmsTemplateList(limit, offset, smsTemplate);
+    public List<SmsTemplate> getSmsTemplateList(int limit, int offset) {
+        return smsTemplateapper.getSmsTemplateList(limit, offset);
     }
 
     @Override
-    public int getTotalCount(SmsTemplate smsTemplate) {
-        return smsTemplateapper.getTotalCount(smsTemplate);
+    public int getTotalCount() {
+        return smsTemplateapper.getTotalCount();
     }
 
     @Override
@@ -92,41 +92,6 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     public List<SmsTemplate> getTemplateByGroupId(String groupId) {
         List<String> groupIdList = Arrays.asList(groupId.split(","));
         return smsTemplateapper.getTemplateByGroupId(groupIdList);
-    }
-
-    @Override
-    public List<SmsTemplate> getTemplate(String userValue, String pathActive, String lifeCycle, String groupSmsCode) {
-        List<SmsTemplate> template = smsTemplateapper.getTemplate(userValue, pathActive, lifeCycle, groupSmsCode);
-        List<Map<String,Object>> groupData = smsTemplateapper.getGroupValue();
-        template.stream().forEach(x->{
-            final StringBuffer userValueTmp = new StringBuffer(null == x.getUserValue() ? "" : x.getUserValue());
-            final StringBuffer pathActiveTmp = new StringBuffer(null == x.getPathActive() ? "" : x.getPathActive());
-            final StringBuffer lifeCycleTmp = new StringBuffer(null == x.getLifeCycle() ? "" : x.getLifeCycle());
-            String smsCode = x.getSmsCode();
-            groupData.stream().filter(v->v.get("sms_code").equals(smsCode)).forEach(v1->{
-                userValueTmp.append(",");
-                userValueTmp.append(v1.get("user_value"));
-                pathActiveTmp.append(",");
-                pathActiveTmp.append(v1.get("path_active"));
-                lifeCycleTmp.append(",");
-                lifeCycleTmp.append(v1.get("lifecyle"));
-            });
-            if(userValueTmp.length() > 0) {
-                x.setUserValue(Arrays.stream(userValueTmp.toString().split(",")).distinct().sorted(StringUtils::compare).collect(Collectors.joining(",")));
-            }
-            if(pathActiveTmp.length() > 0) {
-                x.setPathActive(Arrays.stream(pathActiveTmp.toString().split(",")).distinct().sorted(StringUtils::compare).collect(Collectors.joining(",")));
-            }
-            if(lifeCycleTmp.length() > 0) {
-                x.setLifeCycle(Arrays.stream(lifeCycleTmp.toString().split(",")).distinct().sorted(StringUtils::compare).collect(Collectors.joining(",")));
-            }
-        });
-        List<SmsTemplate> collect = template.stream().filter(x -> (StringUtils.isNotEmpty(x.getUserValue()) && x.getUserValue().contains(userValue))
-                && (StringUtils.isNotEmpty(x.getLifeCycle()) && x.getLifeCycle().contains(lifeCycle))
-                && (StringUtils.isNotEmpty(x.getPathActive()) && x.getPathActive().contains(pathActive))
-        ).collect(Collectors.toList());
-        collect.stream().sorted();
-        return collect;
     }
 
     @Override

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.wxofficial.dao.ImageTextMapper">
+    <resultMap id="base" type="com.linksteady.wxofficial.entity.po.ImageText">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="BINARY"/>
+        <result column="cover" property="cover" jdbcType="BINARY"/>
+        <result column="author" property="author" jdbcType="VARCHAR"/>
+        <result column="abstract" property="wxAbstract" jdbcType="VARCHAR"/>
+        <result column="author" property="author" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="addImageText">
+        insert into wx_image_text(title, author, content, cover, abstract, create_by, create_dt)
+        values (#{title}, #{author}, #{content}, #{cover}, #{wxAbstract}, #{createBy}, #{createDt})
+    </insert>
+
+    <select id="getCount" resultType="int">
+        select count(1) from wx_image_text
+    </select>
+
+    <select id="getDataListPage" resultMap="base">
+        select id, title, author, content, cover, abstract, create_by, create_dt, update_by, update_dt from wx_image_text
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getImageText" resultMap="base">
+        select id, title, author, content, cover, abstract, create_by, create_dt, update_by, update_dt from wx_image_text
+        where id = #{id}
+    </select>
+
+    <delete id="deleteImageText">
+        delete from wx_image_text where id in
+        <foreach collection="idList" open="(" close=")" separator="," item="item">
+            #{item}::integer
+        </foreach>
+    </delete>
+
+    <update id="updateImageText">
+        update wx_image_text set (title, author, content, cover, abstract, create_by, create_dt, update_by, update_dt) =
+        (#{title}, #{author}, #{content}, #{cover}, #{wxAbstract}, #{createBy}, #{createDt})
+        where id = #{id}
+    </update>
+</mapper>

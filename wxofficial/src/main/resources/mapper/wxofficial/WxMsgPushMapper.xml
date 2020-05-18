@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.wxofficial.dao.WxMsgPushMapper">
+    <resultMap id="head" type="com.linksteady.wxofficial.entity.po.WxPushHead">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="msg_type" property="msgType" jdbcType="INTEGER"/>
+        <result column="msg_content" property="msgContent" jdbcType="BINARY"/>
+        <result column="is_total_user" property="isTotalUser" jdbcType="BINARY"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="tag_id" property="tagId" jdbcType="VARCHAR"/>
+        <result column="create_dt" property="createDt" jdbcType="TIMESTAMP"/>
+        <result column="media_id" property="mediaId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="detail" type="com.linksteady.wxofficial.entity.po.WxPushDetail">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="head_id" property="headId" jdbcType="INTEGER"/>
+        <result column="open_id" property="openId" jdbcType="VARCHAR"/>
+        <result column="push_date" property="pushDate" jdbcType="TIMESTAMP"/>
+        <result column="push_status" property="pushStatus" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getDataList" resultMap="head">
+        select *
+        from wx_msg_push_head
+        order by create_dt desc
+        limit #{limit}
+        offset
+        #{offset}
+    </select>
+
+    <select id="getCount" resultType="int">
+        select count(1)
+        from wx_msg_push_head
+    </select>
+
+    <insert id="saveData" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into wx_msg_push_head(is_total_user, msg_type, msg_content, status, create_dt, tag_id, media_id)
+        values (#{isTotalUser}, #{msgType}, #{msgContent}, #{status}, #{createDt}, #{tagId}, #{mediaId})
+    </insert>
+
+    <delete id="deleteById">
+        delete
+        from wx_msg_push_head
+        where id = #{id}::integer
+    </delete>
+
+    <select id="getHeadById" resultMap="head">
+        select *
+        from wx_msg_push_head
+        where id = #{id}::integer
+    </select>
+
+    <insert id="saveDetailData">
+        insert into wx_msg_push_detail(head_id, open_id, push_date, push_status) values
+        <foreach collection="wxPushDetails" item="item" separator=",">
+            (#{item.headId}, #{item.openId}, #{item.pushDate}, #{item.pushStatus})
+        </foreach>
+    </insert>
+
+    <select id="getDetailDataByHeadId" resultMap="detail">
+        select *
+        from wx_msg_push_detail
+        where head_id = #{headId}::integer
+          and push_status = 'todo'
+    </select>
+
+    <update id="updateDetailList">
+        update wx_msg_push_detail t
+        set push_status = tmp.push_status
+        from (values
+        <foreach collection="toPushList" item="item" separator=",">
+            (#{item.headId}, #{item.openId}, #{item.pushStatus})
+        </foreach>
+        ) as tmp (head_id, open_id, push_status)
+        where t.head_id = tmp.head_id
+        and t.open_id = tmp.open_id
+    </update>
+
+    <update id="updatePushDate">
+        update wx_msg_push_detail t set push_date = #{date} where head_id = #{headId}::integer
+    </update>
+
+    <update id="updateHeadStatus">
+        update wx_msg_push_head set status = #{status} where id = #{headId}::integer
+    </update>
+
+    <select id="getToPushMsg" resultType="string">
+        select id from wx_msg_push_head where status in ('todo', 'doing')
+    </select>
+</mapper>

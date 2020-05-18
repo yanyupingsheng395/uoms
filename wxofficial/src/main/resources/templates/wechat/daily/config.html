@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
+    <meta name="referrer" content="never">
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <style type="text/css">
+        .toolbar {
+            border: 1px solid #ccc;
+        }
+
+        .text {
+            border: 1px solid #ccc;
+            height: 400px;
+        }
+
+        .send {
+            position: absolute;
+            max-width: 200px;
+            width: auto;
+            height: auto;
+            background: #fff;
+            border-radius: 5px; /* 圆角 */
+            margin-top: 30px;
+            margin-left: 20px;
+            padding: 10px;
+            font-size: 12px;
+            color: #000;
+            word-wrap: break-word;
+        }
+
+        .send .arrow {
+            position: absolute;
+            top: 9px;
+            left: -16px; /* 圆角的位置需要细心调试哦 */
+            width: 0;
+            height: 0;
+            font-size: 0;
+            border: solid 8px;
+            border-color: rgb(235, 235, 235) #fff rgb(235, 235, 235) rgb(235, 235, 235);
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<div data-th-include="common/commonCSS"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <h5 class="navbar-page-title">日常运营配置</h5>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row">
+                            <div class="col-sm-12 table-striped">
+                                <table id="imageTextTable"
+                                       class="table table-striped table-bordered text-nowrap"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<div class="modal fade" id="msgListModal" data-keyboard="false" data-backdrop="static" tabindex="-1"
+     style="overflow: auto">
+    <div class="modal-dialog" style="width: 51%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">配置个性化消息</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="btn-group-sm" id="toolbar" role="group">
+                            <a class="btn btn-success btn-edit" id="btn_add" onclick="addMsg()">
+                                <i class="fa fa-pencil"></i> 新增消息
+                            </a>
+                            <a class="btn btn-success btn-edit" onclick="addMaterial()">
+                                <i class="fa fa-pencil"></i> 新增素材消息
+                            </a>
+                            <button class="btn btn-primary" id="btn_view">
+                                <i class="fa fa-eye"></i> 编辑消息
+                            </button>
+                            <button class="btn btn-danger btn-view" id="btn_delete">
+                                <i class="fa fa-trash"></i> 删除消息
+                            </button>
+                            <a class="btn btn-info btn-edit" id="btn_plan">
+                                <i class="fa fa-refresh"></i> 解除引用
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row m-t-10">
+                    <div class="col-md-12 table-striped">
+                        <table id="msgListDataTable" class="table table-hover table-bordered"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--新增文案-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal"
+     data-backdrop="static" style="overflow-y: scroll;">
+    <div class="modal-dialog" role="document" style="width: 70%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title" id="myLargeModalLabel3">新增消息</h5>
+            </div>
+            <div class="modal-body"
+                 style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
+                <form class="form-horizontal" id="smsTemplateAddForm" novalidate="novalidate">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label">个性化要素</label>
+                                    </div>
+                                    <div>
+                                        <div style="border: solid 1px #ebebeb;padding: 8px; float: left;"
+                                             id="config-box">
+                                            <div class="example-box">
+                                                <label class="control-label">　　　　商品名称：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductName" value="1"
+                                                           onchange="$('#isProductName-error').show()"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductName" value="0"
+                                                           onchange="$('#isProductName-error').hide()"><span>否</span>
+                                                </label>
+                                                <div>
+                                                    <label class="h6" hidden id="isProductName-error"
+                                                           style="color: #48b0f7;"><i class="fa fa-info-circle"></i>
+                                                        请将${PROD_NAME}粘贴到文案中希望位置，系统会自动填充名称，用户可知被推荐商品；
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">商品详情页短链接：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductUrl" value="1"
+                                                           onchange="isProdUrlTrueClick()"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProductUrl" value="0"
+                                                           onchange="isProdUrlFalseClick()"><span>否</span>
+                                                </label>
+                                                <div>
+                                                    <label class="h6" hidden id="isProductUrl-error"
+                                                           style="color: #48b0f7;"><i class="fa fa-info-circle"></i>
+                                                        请将${PROD_URL}粘贴到文案中希望位置，系统会自动填充名称，用户可知被推荐商品；
+                                                        <br/>&nbsp;&nbsp;&nbsp;&nbsp;1条文案中仅能填充一个链接；
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">　　　　补贴名称：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponName"
+                                                           onchange="isCouponNameTrueClick()" value="1"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponName" value="0"
+                                                           onchange="isCouponNameFalseClick()"><span>否</span>
+                                                </label>
+                                                <div>
+                                                    <label class="h6" id="isCouponName-error" style="color: #48b0f7;"
+                                                           hidden><i class="fa fa-info-circle"></i>
+                                                        请将${COUPON_NAME}粘贴到文案中希望位置，系统会自动填充名称，用户可知领券面额；
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">　　　补贴短链接：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponUrl" value="1"
+                                                           onchange="isCouponUrlTrueClick()"><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isCouponUrl" value="0"
+                                                           onchange="isCouponUrlFalseClick()"><span>否</span>
+                                                </label>
+                                                <div>
+                                                    <label class="h6" id="isCouponUrl-error" style="color: #48b0f7;"
+                                                           hidden><i class="fa fa-info-circle"></i>
+                                                        请将${COUPON_URL}粘贴到文案中希望位置，系统会自动填充链接，用户点链接可跳转领券页；
+                                                        <br/>&nbsp;&nbsp;&nbsp;&nbsp;1条文案中仅能填充一个链接；
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label">消息内容</label>
+                                    </div>
+                                    <div>
+                                        <textarea class="form-control" id="smsContent" name="smsContent"
+                                                  style="width:256px;height: 142px;"
+                                                  oninput="contentInput()"></textarea>
+                                        <input type="hidden" id="smsContentInput" name="smsContentInput"/>
+                                        <span class="wordwrap"><var id="word"></var></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row pull-right">
+                                    <div class="col-md-12">
+                                        <div style="height:360px;width:265px;margin-left: 20px;border-radius: 10px;">
+                                            <div style="height: 50px;width: 100%;background-color: rgb(49,46,51);border-top-right-radius: 10px;border-top-left-radius: 10px;"
+                                                 class="text-center">
+                                                <p style="color: #fff;line-height: 50px;">linksteady</p>
+                                            </div>
+                                            <div style="height: 300px;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
+                                                <div class="send" id="preview">
+                                                    <div class="arrow"></div>
+                                                    请输入消息内容
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="hr"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mg-stop">
+                                <div class="col-md-12 control-label" style="text-align: left;">
+                                    <p class="small">
+                                        个性化变量说明：
+                                        &nbsp;&nbsp;&nbsp;<br/>${PROD_NAME}:系统个性化填充商品短名称变量，不同用户看到不同商品短名称；
+                                        &nbsp;&nbsp;&nbsp;<br/>${PROD_URL}:系统个性化填充商品详情页短链接变量，不同用户收到不同的商品详情页；
+                                        &nbsp;&nbsp;&nbsp;<br/>${COUPON_NAME}:系统会个性化填充券名称，不同用户看到不同优惠券；
+                                        &nbsp;&nbsp;&nbsp;<br/>${COUPON_URL}:系统会个性化填充领券链接，不同用户看到不同优惠券领取链接；
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" name="save" id="btn_save_sms">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--预览消息-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_material_modal"
+     data-backdrop="static" style="overflow-y: scroll;">
+    <div class="modal-dialog" role="document" style="width: 40%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">媒体要素配置</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="padding-top: 0px;">是否体现个性化</label>
+                                <div class="col-md-7">
+                                    <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                        <input type="radio" name="e"><span>是</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                        <input type="radio" name="e"><span>否</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="padding-top: 0px;">选择素材类型</label>
+                                <div class="col-md-7">
+                                    <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                        <input type="radio" name="e"><span>图片</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                        <input type="radio" name="e"><span>网页</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                        <input type="radio" name="e"><span>小程序</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" style="padding-top: 0px;">选择素材内容</label>
+                                <div class="col-md-9">
+                                    <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                        <input type="radio" name="e"><span>个性化商品详情页</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                        <input type="radio" name="e"><span>个性化智能优惠券</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                                        <input type="radio" name="e"><span>其他</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                        <hr class="hr"/>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>
+                                    个性化素才说明：
+                                    选择体现个性化时，系统会个性化填充商品详情页的页面/小程序页面
+                                    选择体现个性化时，系统会个性化填充优惠券领取页的页面/小程序页面
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-th-include="common/commonJS"></div>
+<script src="/js/app/wechat/daily/list.js"></script>
+</body>
+</html>

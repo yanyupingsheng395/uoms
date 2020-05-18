@@ -98,7 +98,7 @@ public class ManualPushServiceImpl implements ManualPushService {
                 throw new RuntimeException("上传的文件为空！");
             }
             bufferedReader = new BufferedReader(new InputStreamReader(file.getInputStream(), Objects.requireNonNull(FileUtils.getCharSet(tmpFile))));
-            FileUtils.delteTempFile(tmpFile);
+            FileUtils.deleteTempFile(tmpFile);
         }catch (Exception e) {
             throw new LinkSteadyException("文件解析异常！");
         }

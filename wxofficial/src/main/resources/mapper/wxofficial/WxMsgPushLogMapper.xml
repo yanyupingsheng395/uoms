@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.wxofficial.dao.WxMsgPushLogMapper">
+
+    <insert id="saveDataList" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into wx_msg_push_log(head_id, open_id, push_date, push_status, msg_id) values
+        <foreach collection="xPushLogList" item="item" separator=",">
+            (#{item.headId}, #{item.openId}, #{item.pushDate}, #{item.pushStatus}, #{item.msgId})
+        </foreach>
+    </insert>
+</mapper>

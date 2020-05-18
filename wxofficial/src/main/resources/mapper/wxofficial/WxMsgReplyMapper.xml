@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.wxofficial.dao.WxMsgReplyMapper">
+    <resultMap id="base" type="com.linksteady.wxofficial.entity.po.WxMsgReply">
+        <result property="reqType" jdbcType="VARCHAR" column="req_type"/>
+        <result property="msgType" jdbcType="VARCHAR" column="MSG_TYPE"/>
+        <result property="mediaId" jdbcType="VARCHAR" column="media_id"/>
+        <result property="content" jdbcType="BINARY" column="content"/>
+        <result property="tagId" jdbcType="VARCHAR" column="tag_id"/>
+    </resultMap>
+    <insert id="saveData">
+        insert into wx_message_reply(tag_id, req_type, msg_type, content, media_id) values (#{tagId}, #{reqType}, #{msgType}, #{content}, #{mediaId})
+    </insert>
+
+    <select id="getDataList" resultMap="base">
+        select * from wx_message_reply
+    </select>
+
+    <select id="getDataById" resultMap="base">
+        select * from wx_message_reply where id = #{id}::integer
+    </select>
+
+    <delete id="deleteById">
+        delete from wx_message_reply where id = #{id}::integer
+    </delete>
+
+    <update id="updateData">
+        update wx_message_reply set(tag_id, req_type, msg_type, content, media_id) = (#{tagId}, #{reqType}, #{msgType}, #{content}, #{mediaId}) where id = #{id}::integer
+    </update>
+</mapper>
