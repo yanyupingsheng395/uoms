@@ -212,4 +212,10 @@ public class DailyConfigServiceImpl implements DailyConfigService {
     public void deleteSmsGroup(String groupId) {
         dailyConfigMapper.deleteSmsGroup(Arrays.asList(groupId.split(",")));
     }
+
+    @Override
+    public boolean validUserGroupForQywx() {
+        //todo 后续待补充
+        return false;
+    }
 }

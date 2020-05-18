@@ -700,7 +700,6 @@ function getProductOption(xdata, ydata,productName) {
                 splitArea: {show: false},
                 splitLine: {show: false}
             },
-
         ],
         series : [
             {

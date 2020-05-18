@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxDailyDetailMapper">
+
+    <resultMap id="baseResult" type="com.linksteady.operate.domain.QywxDailyDetail">
+        <result column="DETAIL_ID" jdbcType="DECIMAL" property="detailId"></result>
+        <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"></result>
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
+        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
+        <result column="SPU_NAME" jdbcType="VARCHAR" property="spuName"></result>
+        <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="piecePrice"></result>
+        <result column="JOIN_RATE" jdbcType="VARCHAR" property="joinRate"></result>
+        <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"></result>
+        <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"></result>
+        <result column="IS_CONVERSION" jdbcType="VARCHAR" property="isConversion"></result>
+        <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"></result>
+        <result column="TEXT_CONTENT" jdbcType="VARCHAR" property="textContent"></result>
+        <result column="USER_PHONE" jdbcType="VARCHAR" property="userPhone"></result>
+        <result column="USER_OPENID" jdbcType="VARCHAR" property="userOpenid"></result>
+        <result column="TAR_PRODUCT_NUM" jdbcType="VARCHAR" property="tarProductNum"></result>
+        <result column="COUPON_MIN" jdbcType="VARCHAR" property="couponMin"></result>
+        <result column="COUPON_DENO" jdbcType="VARCHAR" property="couponDeno"></result>
+        <result column="REC_PROD_ID" jdbcType="VARCHAR" property="recProdId"></result>
+        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"></result>
+        <result column="COMPLETE_PURCH" jdbcType="VARCHAR" property="completePurch"></result>
+        <result column="TAR_ORDER_PRICE" jdbcType="VARCHAR" property="tarOrderPrice"></result>
+        <result column="COUPON_ID" jdbcType="DECIMAL" property="couponId"></result>
+        <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
+        <result column="COUPON_URL" jdbcType="VARCHAR" property="couponUrl"></result>
+        <result column="IS_COUPON" jdbcType="DECIMAL" property="isCoupon"></result>
+        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
+        <result column="QYWX_CONTRACT_ID" jdbcType="VARCHAR" property="qywxContractId"></result>
+        <result column="QYWX_USER_ID" jdbcType="VARCHAR" property="qywxUserId"></result>
+        <result column="QYWX_USER_NAME" jdbcType="VARCHAR" property="qywxUserName"></result>
+        <result column="LIFECYCLE" jdbcType="VARCHAR" property="lifecycle"></result>
+    </resultMap>
+
+    <resultMap id="qywxUserResult" type="com.linksteady.operate.vo.QywxUserVO">
+        <result column="QYWX_USER_ID" jdbcType="VARCHAR" property="qywxUserId"></result>
+        <result column="QYWX_USER_NAME" jdbcType="VARCHAR" property="qywxUserName"></result>
+    </resultMap>
+
+    <select id="getUserCount" resultType="int">
+        select
+            count(*)
+        FROM
+              uo_qywx_daily_detail
+        WHERE head_id=#{headId}
+    </select>
+
+    <select id="getUserList" resultMap="baseResult">
+         select
+             T1.HEAD_ID,
+             T2.DETAIL_ID,
+             T2.USER_ID,
+             T2.USER_PHONE,
+             T2.qywx_user_id,
+             T2.qywx_user_name,
+             T2.qywx_contract_id,
+             msg.text_content,
+             T2.REC_PROD_ID,
+             T2.REC_PROD_NAME,
+             T2.COUPON_ID,
+             T3.IS_COUPON,
+             T2.REC_PIECE_PRICE,
+             T2.GROUP_ID
+         FROM uo_qywx_daily_header T1,
+              uo_qywx_daily_detail T2,
+              uo_op_daily_template_config T3,
+              uo_qywx_msg_template msg
+         WHERE T1.HEAD_ID = T2.HEAD_ID
+           AND T2.GROUP_ID = T3.GROUP_ID
+           AND T3.qywx_id = msg.qywx_id
+           AND T1.HEAD_ID = #{headId}
+         ORDER BY T2.detail_id DESC
+         limit #{limit} offset #{offset}
+    </select>
+
+    <update id="insertPushContentTemp">
+        insert into uo_qywx_daily_content_tmp(detail_id,head_id,text_content,coupon_id,coupon_min,coupon_deno)
+        values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            (#{item.detailId},
+            #{item.headId},
+            #{item.textContent},
+            #{item.couponId}::numeric,
+            #{item.couponMin}::numeric,
+            #{item.couponDeno}::numeric)
+        </foreach>
+    </update>
+
+    <delete id="deleteQywxPushContentTemp">
+        delete from uo_qywx_daily_content_tmp where head_id=#{headId}
+    </delete>
+
+    <update id="updatePushContentFromTemp">
+        update uo_qywx_daily_detail set (text_content,coupon_id,coupon_min,coupon_deno) =
+            (select text_content,coupon_id,coupon_min,coupon_deno from uo_qywx_daily_content_tmp where
+            uo_qywx_daily_content_tmp.detail_id = uo_qywx_daily_detail.detail_id
+            and uo_qywx_daily_content_tmp.head_id=uo_qywx_daily_detail.head_id)
+        where head_id=#{headId}
+    </update>
+
+    <select id="getQywxDetailCount" resultType="int">
+        select
+            count(*)
+        FROM
+              uo_qywx_daily_detail
+        WHERE head_id=#{headId}
+        <if test="qywxUserId != '' and qywxUserId != null">
+            and QYWX_USER_ID = #{qywxUserId}
+        </if>
+    </select>
+
+    <select id="getQywxDetailList" resultMap="baseResult">
+         select
+             T2.HEAD_ID,
+             T2.DETAIL_ID,
+             T2.USER_ID,
+             T2.USER_PHONE,
+             T2.qywx_user_id,
+             T2.qywx_user_name,
+             T2.qywx_contract_id,
+             T2.text_content,
+             T2.REC_PROD_ID,
+             T2.REC_PROD_NAME,
+             T2.COUPON_ID,
+             T2.REC_PIECE_PRICE,
+             T2.GROUP_ID
+         FROM
+              uo_qywx_daily_detail T2
+         WHERE  T2.HEAD_ID = #{headId}
+        <if test="qywxUserId != '' and qywxUserId != null">
+            and T2.QYWX_USER_ID = #{qywxUserId}
+        </if>
+         ORDER BY T2.detail_id DESC
+         limit #{limit} offset #{offset}
+    </select>
+
+    <insert id="copyToPushList">
+        INSERT INTO uo_qywx_push_list(
+            qywx_contract_id,
+            qywx_user_id,
+            text_content,
+            PUSH_STATUS,
+            SOURCE_CODE,
+            SOURCE_ID,
+            PUSH_PERIOD,
+            IS_PUSH
+        )
+        select
+               C.qywx_contract_id,
+               C.qywx_user_id,
+               C.text_content,
+               'P',
+               'D',
+               C.DETAIL_ID,
+               C.PUSH_ORDER_PERIOD::int4,
+               '0'
+        FROM uo_qywx_daily_detail C
+        WHERE C.HEAD_ID = #{headId}
+    </insert>
+
+    <update id="updatePushOrderPeriod">
+        update uo_qywx_daily_detail as d set PUSH_ORDER_PERIOD=d2.PUSH_ORDER_PERIOD
+        from (
+             SELECT
+				   d1.detail_id,
+                   (CASE WHEN H.PUSH_METHOD IN('IMME','FIXED') THEN H.PUSH_PERIOD ELSE D1.ORDER_PERIOD END) PUSH_ORDER_PERIOD
+              FROM uo_qywx_daily_header H,uo_qywx_daily_detail d1 WHERE H.HEAD_ID=d1.HEAD_ID and H.head_id=#{headId}
+        ) as d2 WHERE d.detail_id=d2.detail_id and d.head_id=#{headId}
+    </update>
+
+    <select id="getConversionCount" resultType="int">
+        select
+        count(*)
+        FROM
+        uo_qywx_daily_detail
+        WHERE head_id=#{headId}
+        <if test="qywxUserId != '' and qywxUserId != null">
+            and QYWX_USER_ID = #{qywxUserId}
+        </if>
+        and is_conversion='1'
+    </select>
+
+    <select id="getConversionList" resultMap="baseResult">
+        select
+        T2.HEAD_ID,
+        T2.DETAIL_ID,
+        T2.USER_ID,
+        T2.USER_PHONE,
+        T2.qywx_user_id,
+        T2.qywx_user_name,
+        T2.qywx_contract_id,
+        T2.text_content,
+        T2.REC_PROD_ID,
+        T2.REC_PROD_NAME,
+        T2.COUPON_ID,
+        T2.REC_PIECE_PRICE,
+        T2.GROUP_ID
+        FROM
+        uo_qywx_daily_detail T2
+        WHERE  T2.HEAD_ID = #{headId}
+        <if test="qywxUserId != '' and qywxUserId != null">
+            and T2.QYWX_USER_ID = #{qywxUserId}
+        </if>
+        and t2.is_conversion='1'
+        ORDER BY T2.detail_id DESC
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getQywxUserList" resultMap="qywxUserResult">
+        select distinct qywx_user_id,qywx_user_name from uo_qywx_daily_detail where head_id=#{headId}
+    </select>
+</mapper>

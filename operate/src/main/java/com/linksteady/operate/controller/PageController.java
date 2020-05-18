@@ -3,14 +3,8 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.operate.domain.ActivityHead;
-import com.linksteady.operate.domain.ActivityPlan;
-import com.linksteady.operate.domain.DailyHead;
-import com.linksteady.operate.domain.PushProperties;
-import com.linksteady.operate.service.ActivityHeadService;
-import com.linksteady.operate.service.ActivityPlanService;
-import com.linksteady.operate.service.DailyConfigService;
-import com.linksteady.operate.service.DailyService;
+import com.linksteady.operate.domain.*;
+import com.linksteady.operate.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,6 +39,9 @@ public class PageController extends BaseController {
 
     @Autowired
     private ActivityPlanService activityPlanService;
+
+    @Autowired
+    private QywxDailyService qywxDailyService;
 
     @Log(value = "用户成长监控",location = "用户成长系统")
     @RequestMapping("/operator/user")
@@ -81,56 +78,7 @@ public class PageController extends BaseController {
         return "operate/daily/config";
     }
 
-    /**
-     * 每日运营-任务执行
-     * @param model
-     * @param headId
-     * @return
-     */
-    @Log(value = "每日用户运营-任务执行",location = "用户成长系统")
-    @RequestMapping("/daily/edit")
-    public String dailyEdit(Model model, @RequestParam("id") String headId) {
 
-        //校验
-        if(StringUtils.isEmpty(headId))
-        {
-            model.addAttribute("errormsg","非法请求，请通过界面进行操作!");
-            return "operate/daily/list";
-        }else
-        {
-            DailyHead dailyHead=dailyService.getDailyHeadById(headId);
-
-            if(null==dailyHead)
-            {
-                model.addAttribute("errormsg","不存在的任务,请通过界面进行操作!");
-                return "operate/daily/list";
-            }
-
-            String currDay=LocalDate.now().format(DateTimeFormatter.ofPattern("YYYYMMdd"));
-
-            if(!"todo".equals(dailyHead.getStatus()))
-            {
-                model.addAttribute("errormsg","只有待执行状态的任务才能提交执行!");
-                return "operate/daily/list";
-            }
-
-//            if(!currDay.equals(dailyHead.getTouchDtStr()))
-//            {
-//                model.addAttribute("errormsg","只有当天的任务才能被执行!");
-//                return "operate/daily/list";
-//            }
-
-            //验证成长组是否通过
-            if(dailyConfigService.validUserGroup())
-            {
-                model.addAttribute("errormsg","成长组配置验证未通过!");
-                return "operate/daily/list";
-            }
-
-            model.addAttribute("headId", headId);
-            return "operate/daily/edit";
-        }
-    }
 
     /**
      * 短信模板配置
@@ -408,9 +356,52 @@ public class PageController extends BaseController {
         return "operate/shorturl/shorturl";
     }
 
+    /**
+     * 黑名单
+     * @return
+     */
     @Log(value = "黑名单", location = "用户成长系统")
     @RequestMapping("/black")
     public String black() {
         return "operate/black/list";
+    }
+
+    /**
+     * 每日用户运营(企业微信)
+     */
+    @Log(value = "每日用户运营(企业微信)",location = "用户成长系统")
+    @RequestMapping("/qywxDaily/list")
+    public String qywxDailyList() {
+        return "operate/qywx/list";
+    }
+
+
+    /**
+     * 日运营[企业微信]-效果跟踪
+     * @return
+     */
+    @Log(value = "每日用户运营[企业微信]-任务效果",location = "用户成长系统")
+    @RequestMapping("/qywxDaily/effect")
+    public String qywxDailyEffect(Model model, @RequestParam("headId") Long headId) {
+        String status = qywxDailyService.getHeadInfo(headId).getStatus();
+//        if(StringUtils.isNotEmpty(status)) {
+//            if(status.equals("done") || status.equals("finished") || status.equals("doing")) {
+//                model.addAttribute("headId", headId);
+//                //DailyHead dailyHead = dailyService.getEffectById(headId);
+//                QywxDailyHeader qywxDailyHeader=qywxDailyService.getHeadInfo(headId);
+//                if(qywxDailyHeader != null) {
+//                    model.addAttribute("qywxDailyHeader", qywxDailyHeader);
+//                }else {
+//                    return "redirect:/page/qywxDaily/list";
+//                }
+//                return "operate/qywx/effect";
+//            }
+//        }
+//        return "redirect:/page/qywxDaily/list";
+
+        QywxDailyHeader qywxDailyHeader=qywxDailyService.getHeadInfo(headId);
+        model.addAttribute("headId", headId);
+        model.addAttribute("qywxDailyHeader", qywxDailyHeader);
+        return "operate/qywx/effect";
     }
 }

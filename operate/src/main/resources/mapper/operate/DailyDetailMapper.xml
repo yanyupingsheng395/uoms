@@ -103,15 +103,17 @@
                C.PUSH_ORDER_PERIOD,
                '0'
         FROM UO_OP_DAILY_DETAIL C
-        WHERE C.HEAD_ID = #{headId}::int4
+        WHERE C.HEAD_ID = #{headId}
     </insert>
 
     <update id="updatePushOrderPeriod">
-        update UO_OP_DAILY_DETAIL as D set PUSH_ORDER_PERIOD=(
+        update uo_op_daily_detail as d set PUSH_ORDER_PERIOD=d2.PUSH_ORDER_PERIOD
+        from (
              SELECT
-                   (CASE WHEN H.PUSH_METHOD IN('IMME','FIXED') THEN H.PUSH_PERIOD ELSE D.ORDER_PERIOD END) PUSH_ORDER_PERIOD
-              FROM UO_OP_DAILY_HEADER H WHERE H.HEAD_ID=D.HEAD_ID
-        ) WHERE D.HEAD_ID=#{headId}::int4
+				   d1.daily_detail_id,
+                   (CASE WHEN H.PUSH_METHOD IN('IMME','FIXED') THEN H.PUSH_PERIOD ELSE D1.ORDER_PERIOD END) PUSH_ORDER_PERIOD
+              FROM uo_op_daily_header H,uo_op_daily_detail d1 WHERE H.HEAD_ID=d1.HEAD_ID and H.head_id=#{headId}
+        ) as d2 WHERE d.daily_detail_id=d2.daily_detail_id and d.head_id=#{headId}
     </update>
 
     <select id="getUserCount" resultType="int">

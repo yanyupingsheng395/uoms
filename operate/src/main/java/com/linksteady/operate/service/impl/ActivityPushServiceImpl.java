@@ -73,7 +73,6 @@ public class ActivityPushServiceImpl implements ActivityPushService {
     @Autowired
     ActivityProductMapper activityProductMapper;
 
-
     /**
      * 对活动推送文案进行转换
      * @return
@@ -81,23 +80,13 @@ public class ActivityPushServiceImpl implements ActivityPushService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void transActivityDetail( ActivityPlan activityPlan) throws Exception {
-        //获取锁
-        if(getTransActivityContentLock(activityPlan.getHeadId()))
-        {
-            initPlanGroup(activityPlan);
-
-            //删除临时表中的文案
-            activityPushMapper.deleteContentTmp(activityPlan.getPlanId());
-            transContent(activityPlan.getHeadId(),activityPlan.getPlanId(),activityPlan.getStage(),activityPlan.getPlanType());
-             //释放锁
-            delTransLock();
-        }else
-        {
-            throw new OptimisticLockException("其他用户正在操作，请稍后再试!");
-        }
+        //删除临时表中的文案
+        activityPushMapper.deleteContentTmp(activityPlan.getPlanId());
+        transContent(activityPlan.getHeadId(),activityPlan.getPlanId(),activityPlan.getStage(),activityPlan.getPlanType());
     }
 
-    private boolean getTransActivityContentLock(Long headId) {
+    @Override
+    public  boolean getTransActivityContentLock(Long headId) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
         //key 已经存在，则不做任何动作 否则将 key 的值设为 value 设置成功，返回true 否则返回false
         //以headId为key，同一个活动不允许多个计划同时生成文案
@@ -109,7 +98,8 @@ public class ActivityPushServiceImpl implements ActivityPushService {
     /**
      * 删除锁
      */
-    private void delTransLock() {
+    @Override
+    public void delTransLock() {
         redisTemplate.delete("activity_trans_lock");
     }
 
@@ -118,7 +108,8 @@ public class ActivityPushServiceImpl implements ActivityPushService {
      * @param activityPlan
      * @return
      */
-    private void initPlanGroup(ActivityPlan activityPlan)
+    @Override
+    public void initPlanGroup(ActivityPlan activityPlan)
     {
         //初始化计划选择群组表
         activityPushMapper.deletePlanGroup(activityPlan.getPlanId());

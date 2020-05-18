@@ -19,8 +19,6 @@ public interface DailyMapper {
 
     int getTotalCount(@Param("touchDt") String touchDt);
 
-    int getTouchTotalCount(@Param("touchDt") String touchDt);
-
     int updateStatus(@Param("headId") long headId, @Param("status") String status,@Param("version") int version);
 
     void updateActualNum(String headId, int num);
@@ -45,8 +43,6 @@ public interface DailyMapper {
     /**
      * 个体结果只获取已经转化的结果
      * @param dailyPersonalVo
-     * @param start
-     * @param end
      * @param headId
      * @return
      */
