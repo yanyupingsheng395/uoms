@@ -13,29 +13,9 @@ import java.util.Map;
 public interface DailyDetailService {
 
     /**
-     * 每日运营用户列表分页
-     * @param start
-     * @param end
-     * @param headId
-     * @param userValue
-     * @param pathActive
-     * @return
-     */
-    List<DailyDetail> getPageList(int limit, int offset, String headId, String userValue, String pathActive);
-
-    /**
-     * 每日运营明细记录数
-     * @param headId
-     * @param userValue
-     * @param pathActive
-     * @return
-     */
-    int getDataCount(String headId, String userValue, String pathActive);
-
-    /**
      * 策略列表用户数
-     * @param start
-     * @param end
+     * @param limit
+     * @param offset
      * @param headId
      * @return
      */

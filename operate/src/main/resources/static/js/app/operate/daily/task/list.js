@@ -53,7 +53,7 @@ function initTable() {
             title: '推送转化金额（元）'
         }, {
             field: 'effectDays',
-            title: '效果观察天数（元）'
+            title: '效果观察天数（天）'
         }, {
             title: '配置校验状态',
             align: 'center',
@@ -114,7 +114,7 @@ $("#btn_catch").click(function () {
     var selected = $("#dailyTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请勾选需要预览用户的任务！');
+        $MB.n_warning('请勾选要查看效果的任务！');
         return;
     }
     var status = selected[0].status;

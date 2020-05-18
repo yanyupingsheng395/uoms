@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxDailyMapper">
+
+    <resultMap id="baseResult" type="com.linksteady.operate.domain.QywxDailyHeader">
+        <result column="HEAD_ID" property="headId" jdbcType="DECIMAL"/>
+        <result column="TOTAL_NUM" property="totalNum" jdbcType="DECIMAL"/>
+        <result column="SUCCESS_NUM" property="successNum" jdbcType="DECIMAL"/>
+        <result column="CONVERT_RATE" property="convertRate" jdbcType="DECIMAL"/>
+        <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"/>
+        <result column="TASK_DATE" property="taskDate" jdbcType="DATE"/>
+        <result column="TASK_DATE_STR" property="taskDateStr" jdbcType="VARCHAR"/>
+        <result column="CONVERT_NUM" property="convertNum" jdbcType="DECIMAL"/>
+        <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"/>
+        <result column="CONVERT_RATE" property="convertRate" jdbcType="DECIMAL"/>
+        <result column="CONVERT_SPU_AMOUNT" property="convertSpuAmount" jdbcType="DECIMAL"/>
+        <result column="CONVERT_SPU_NUM" property="convertSpuNum" jdbcType="DECIMAL"/>
+        <result column="CONVERT_SPU_RATE" property="convertSpuRate" jdbcType="DECIMAL"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="VERSION" property="version" jdbcType="DECIMAL"/>
+        <result column="EFFECT_DAYS" property="effectDays" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <resultMap id="QywxUserStats" type="com.linksteady.operate.vo.QywxUserStats">
+        <result property="userValue" jdbcType="VARCHAR" column="USER_VALUE"></result>
+        <result property="pathActivity" jdbcType="VARCHAR" column="PATH_ACTIVE"></result>
+        <result property="lifecycle" jdbcType="VARCHAR" column="LIFECYCLE"></result>
+        <result property="ucnt" jdbcType="DECIMAL" column="UCNT"></result>
+        <result property="spuName" jdbcType="VARCHAR" column="SPU_NAME"></result>
+        <result property="prodName" jdbcType="VARCHAR" column="REC_PROD_NAME"></result>
+        <result property="userValueLabel" jdbcType="VARCHAR" column="user_value_label"></result>
+        <result property="qywxUser" jdbcType="VARCHAR" column="qywx_user_name"></result>
+        <result property="couponDeno" jdbcType="DECIMAL" column="coupon_deno"></result>
+        <result property="couponMin" jdbcType="DECIMAL" column="coupon_min"></result>
+    </resultMap>
+
+    <select id="getHeadList" resultMap="baseResult">
+        SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,EFFECT_DAYS
+        FROM uo_qywx_daily_header t
+        <where>
+            <if test="taskDate != null and taskDate != ''">
+                TASK_DATE_STR = #{taskDate}
+            </if>
+        </where>
+        ORDER BY HEAD_ID desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        select count(1) from uo_qywx_daily_header
+        where 1=1
+        <if test="taskDate != '' and taskDate != null">
+            and TASK_DATE_STR = #{taskDate}
+        </if>
+    </select>
+
+    <select id="getHeadInfo" resultMap="baseResult">
+        SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,EFFECT_DAYS,VERSION
+        FROM uo_qywx_daily_header t where HEAD_ID=#{headId}
+    </select>
+
+    <select id="getTargetInfoBySpu" resultMap="QywxUserStats">
+        select spu_name, ucnt from (
+        select spu_name,count(*) ucnt from uo_qywx_daily_detail where head_id =#{headId} group by spu_name
+        ) t order by ucnt asc
+    </select>
+
+    <select id="getTargetInfoByProd" resultMap="QywxUserStats">
+        select rec_prod_name, ucnt from (
+        select rec_prod_name,count(*) ucnt from uo_qywx_daily_detail where head_id =#{headId} and spu_name=#{spuName} group by rec_prod_name
+        ) t order by ucnt asc
+    </select>
+
+    <select id="getTargetInfoByUserValue" resultMap="QywxUserStats">
+        SELECT
+            v2.code user_value,
+            v2.VALUE user_value_label,
+            ucnt
+        FROM
+            ( SELECT user_value, COUNT ( * ) ucnt FROM uo_qywx_daily_detail WHERE head_id = #{headId} GROUP BY user_value ) v1
+            RIGHT JOIN ( SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'USER_VALUE' ) v2 ON v2.code = v1.user_value
+        ORDER BY
+            v2.order_no desc
+    </select>
+
+    <select id="getTargetInfoMatrix" resultMap="QywxUserStats">
+       select path_active,lifecycle,count(*) ucnt from uo_qywx_daily_detail where head_id =1 and user_value='ULC_01' group by path_active,lifecycle
+    </select>
+
+    <select id="getTargetInfoByUser" resultMap="QywxUserStats">
+        select qywx_user_name, ucnt from (
+            select qywx_user_name,count(*) ucnt from uo_qywx_daily_detail where head_id =#{headId} group by qywx_user_name
+            ) t order by ucnt desc
+    </select>
+
+    <select id="getTargetInfoByCoupon" resultMap="QywxUserStats">
+        select coupon_min,coupon_deno, ucnt from (
+            select coupon_deno,coupon_min,count(*) ucnt from uo_qywx_daily_detail where head_id =1 group by coupon_deno,coupon_min
+            ) t order by ucnt desc
+    </select>
+
+    <update id="updateStatus">
+        update uo_qywx_daily_header set status = #{status},version=version+1
+        where head_id = #{headId} and version=#{version}
+    </update>
+
+    <update id="updateHeaderPushInfo">
+        update uo_qywx_daily_header
+        <set>
+            <if test="pushMethod!=null and pushMethod!=''">
+                push_method=#{pushMethod},
+            </if>
+            <if test="pushPeriod!=null and pushPeriod!=''">
+                push_period=#{pushPeriod},
+            </if>
+            <if test="effectDays!=null and effectDays!=''">
+                EFFECT_DAYS=#{effectDays},
+            </if>
+        </set>
+        where head_id = #{headId}
+    </update>
+
+</mapper>

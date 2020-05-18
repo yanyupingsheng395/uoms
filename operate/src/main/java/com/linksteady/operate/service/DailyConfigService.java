@@ -9,4 +9,10 @@ public interface DailyConfigService {
     boolean validUserGroup();
 
     void deleteSmsGroup(String groupId);
+
+    /**
+     * 针对企业微信的成长组校验
+     * @return
+     */
+    boolean validUserGroupForQywx();
 }

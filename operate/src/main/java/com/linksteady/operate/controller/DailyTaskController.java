@@ -78,25 +78,6 @@ public class DailyTaskController {
     }
 
     /**
-     * 根据成长性，活跃度，组Id获取对应的用户列表
-     *
-     * @param request
-     * @return
-     */
-    @GetMapping("/getDetailPageList")
-    public ResponseBo getDetailPageList(QueryRequest request) {
-        int limit = request.getLimit();
-        int offset = request.getOffset();
-        String headId = request.getParam().get("headId");
-        String userValue = request.getParam().get("userValue");
-        String pathActive = request.getParam().get("pathActive");
-        List<DailyDetail> dataList = dailyDetailService.getPageList(limit, offset, headId, userValue, pathActive);
-        int count = dailyDetailService.getDataCount(headId, userValue, pathActive);
-        return ResponseBo.okOverPaging(null, count, dataList);
-    }
-
-
-    /**
      * 生成待推送的短信文案
      *
      * @return

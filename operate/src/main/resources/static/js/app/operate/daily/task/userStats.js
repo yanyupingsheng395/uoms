@@ -10,6 +10,7 @@ $("#userStats_modal").on("shown.bs.modal", function () {
         skin: "modern"
     });
     init();
+    chart1.resize();
 });
 
 $("#userStats_modal").on("hidden.bs.modal", function () {
@@ -56,10 +57,15 @@ function init() {
 /**
  * 设置step
  */
-let current_status = '';
-function setStep(status) {
+let current_status='';
+let current_touchDt='';
+let currDay=getNowFormatDate();
+function setStep(status,touchDtStr) {
     current_status = status;
-    if(status === 'todo') {
+    current_touchDt=touchDtStr;
+
+    //如果状态为todo 且 任务为当前日期，则显示 推送页
+    if(status === 'todo'&&current_touchDt==currDay) {
         stepObj=steps({
             el: "#pushSteps",
             data: [
@@ -95,6 +101,7 @@ function changeStep(count) {
     if(current_step < 0) {
         current_step = 0;
     }
+    //概要
     if(current_step === 0) {
         $("#prevStepBtn").attr("style", "display:none;");
         $("#nextStepBtn").attr("style", "display:inline-block");
@@ -104,13 +111,14 @@ function changeStep(count) {
         $("#step3").attr("style", "display:none;");
         stepObj.setActive(0);
     }
+    //明细
     if(current_step === 1) {
         $("#prevStepBtn").attr("style", "display:inline-block");
         $("#pushMsgBtn").attr("style", "display:none;");
         $("#step1").attr("style", "display:none;");
         $("#step2").attr("style", "display:block;");
         $("#step3").attr("style", "display:none;");
-        if(current_status === 'todo') {
+        if(current_status === 'todo'&&current_touchDt==currDay) {
             $("#nextStepBtn").attr("style", "display:inline-block;");
             generateStragegy();
         }else {
@@ -119,8 +127,9 @@ function changeStep(count) {
         }
         stepObj.setActive(1);
     }
+    //推送
     if(current_step === 2) {
-        if(current_status === 'todo') {
+        if(current_status === 'todo'&&current_touchDt==currDay) {
             $.get("/daily/validUserGroup", {}, function(r) {
                 if(r.code == 200) {
                     if(r.data) {
@@ -240,7 +249,6 @@ function getUserStrategyList() {
                 title: '补贴',
                 width: 100,
                 formatter: function (value, row, idx) {
-                    console.log(row.couponDeno)
                     if(row.couponMin==''||row.couponMin=='null'||row.couponMin==null)
                     {
                         return "无";
@@ -379,7 +387,8 @@ function getUserStatsData() {
                 code = "<tr class='text-center'><td colspan='2'>没有查询到相应的记录</td></tr>";
             }
             $("#prodTableData").html('').append(code);
-            setStep(selected[0].status);
+            //设置步骤组件
+            setStep(selected[0].status,selected[0].touchDtStr);
             //打开modal
             $("#userStats_modal").modal('show');
         }else {
@@ -530,9 +539,26 @@ function getChart1Option(data,chartTitle)
     return option;
 }
 
-$('#userStats_modal').on('shown.bs.modal',function(){
-    chart1.resize()
-})
+
+/**
+ * 获取当前日期的年月日格式
+ * @returns {string}
+ */
+function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = year + seperator1 + month + seperator1 + strDate;
+    return currentdate;
+}
 
 
 

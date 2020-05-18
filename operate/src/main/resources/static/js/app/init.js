@@ -104,6 +104,7 @@ function allExceptionCatch() {
                 $MB.n_danger('操作失败，服务出现异常了，快反馈给系统运维人员吧！');
                 //不管有没有出现loading 组件，都进行一次隐藏操作
                 lightyear.loading('hide');
+                $MB.loadingDesc('hide');
 
             }
         }
@@ -122,6 +123,7 @@ function getUserMenu() {
                 menu_tree();
                 subMenu();
                 $("#pageTitle").html("").html(r.data);
+
                 //设置返回导航页
                 $("#navigatorUrl").attr("href",r.msg.navigatorUrl);
 

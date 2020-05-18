@@ -230,18 +230,29 @@ public class ActivityPlanController {
                 return ResponseBo.error(msg);
             }
 
-            try {
-                activityPushService.transActivityDetail(activityPlan);
-                return ResponseBo.ok("转化文案成功!");
-            } catch (Exception e) {
-                log.error("活动运营出现转换文案异常，失败堆栈为{}",e);
-                if(e instanceof OptimisticLockException)
-                {
-                    return ResponseBo.error(e.getMessage());
-                }else
-                {
-                    return ResponseBo.error("转换文案出现未知异常！");
+            if(activityPushService.getTransActivityContentLock(activityPlan.getHeadId()))
+            {
+                try {
+                    activityPushService.initPlanGroup(activityPlan);
+                    activityPushService.transActivityDetail(activityPlan);
+                    return ResponseBo.ok("转化文案成功!");
+                } catch (Exception e) {
+                    log.error("活动运营出现转换文案异常，失败堆栈为{}",e);
+                    if(e instanceof OptimisticLockException)
+                    {
+                        return ResponseBo.error(e.getMessage());
+                    }else
+                    {
+                        return ResponseBo.error("转换文案出现未知异常！");
+                    }
+                }finally {
+                    //释放锁
+                    activityPushService.delTransLock();
                 }
+
+            }else
+            {
+                return ResponseBo.error("其他用户正在操作，请稍后再试！");
             }
         }
     }

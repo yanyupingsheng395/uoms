@@ -2,17 +2,19 @@ package com.linksteady.operate.domain;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
- * @author hxcao
- * @date 2019-07-31
+ * @author huang
+ * @date 2020-05-15
  */
 @Data
-public class DailyDetail {
+public class QywxDailyDetail implements Serializable {
 
     /**
      * ID
      */
-    private Long dailyDetailId;
+    private Long detailId;
 
     /**
      * 头表ID
@@ -74,7 +76,6 @@ public class DailyDetail {
      */
     private String couponUrl;
 
-
     /**
      * 所在群组
      */
@@ -91,25 +92,15 @@ public class DailyDetail {
     private String isConversion;
 
     /**
-     * 实际购买商品名称
-     */
-    private String actProdName;
-
-    /**
-     * 实际件单价
-     */
-    private String actPiecePrice;
-
-    /**
      * 是否核销
      */
     private String isCancle;
 
     private String pushStatus;
 
-    private String smsContent;
+    private String textContent;
 
-    private String actOrderPerice;
+    private String actOrderPrice;
 
     private String userPhone;
 
@@ -137,4 +128,23 @@ public class DailyDetail {
 
     private String groupId;
 
+    /**
+     * 对应企业微信客户ID
+     */
+    private String qywxContractId;
+
+    /**
+     * 对应企业微信成员ID
+     */
+    private String qywxUserId;
+
+    /**
+     * 对应企业微信成员名称
+     */
+    private String qywxUserName;
+
+    /**
+     * 用户生命周期 值参考数据字典 默认为0
+     */
+    private String lifecycle;
 }

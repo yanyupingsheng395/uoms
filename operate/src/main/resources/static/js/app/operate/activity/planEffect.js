@@ -23,7 +23,6 @@ function getPlanEffectInfo(kpiType) {
 
 $("#kpiType").change(function () {
     //判断计划阶段 如果是通知阶段，则不允许切换 否则刷新数据
-    console.log(planType);
 
     if(planType==='NOTIFY')
     {

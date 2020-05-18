@@ -109,16 +109,9 @@
         )where rn &gt;= #{start}
     </select>
 
-    <select id="getTouchTotalCount" resultType="int">
-        select count(1) from UO_OP_DAILY_HEADER
-        where 1=1 and STATUS in ('doing', 'done', 'finished')
-        <if test="touchDt != ''">
-            and to_char(touch_dt, 'YYYY-MM-DD') = #{touchDt}
-        </if>
-    </select>
-
     <update id="updateStatus">
-        update UO_OP_DAILY_HEADER set status = #{status} where head_id = #{headId}::int4
+        update UO_OP_DAILY_HEADER set status = #{status},version=version+1
+        where head_id = #{headId} and version=#{version}
     </update>
 
     <update id="updateActualNum">
@@ -258,10 +251,10 @@
                 push_period=#{pushPeriod},
             </if>
             <if test="effectDays!=null and effectDays!=''">
-                EFFECT_DAYS=#{effectDays}::int4,
+                EFFECT_DAYS=#{effectDays},
             </if>
         </set>
-        where head_id = #{headId}::int4
+        where head_id = #{headId}
     </update>
 
     <select id="getUserStats" resultMap="DailyUserStatsResult">

@@ -77,8 +77,8 @@ public interface DailyDetailMapper {
     /**
      * 分页获取当header_id下选中的用户名单
      * @param headId
-     * @param start
-     * @param end
+     * @param limit
+     * @param offset
      * @return
      */
     List<DailyDetail> getUserList(@Param("headId") String headId, @Param("limit") int limit, @Param("offset") int offset);
