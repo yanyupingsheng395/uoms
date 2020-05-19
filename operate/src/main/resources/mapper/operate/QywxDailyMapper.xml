@@ -84,7 +84,7 @@
     </select>
 
     <select id="getTargetInfoMatrix" resultMap="QywxUserStats">
-       select path_active,lifecycle,count(*) ucnt from uo_qywx_daily_detail where head_id =1 and user_value='ULC_01' group by path_active,lifecycle
+       select path_active,lifecycle,count(*) ucnt from uo_qywx_daily_detail where head_id =1 and user_value=#{userValue} group by path_active,lifecycle
     </select>
 
     <select id="getTargetInfoByUser" resultMap="QywxUserStats">

@@ -12,6 +12,7 @@ $(function () {
 let chart1;
 let chart2;
 let chart3;
+let userValueOption;
 let chart4;
 
 function initTable() {
@@ -189,23 +190,61 @@ $("#btn_insight").click(function () {
 
 function initUserTargetChart(data) {
     chart1 = echarts.init(document.getElementById("chart1"), 'macarons');
-    let option = getChart1Option(data,"成长目标的类目分布");
+    let option = getChart1Option(data.spuList,data.spuCountList,"成长目标的类目分布");
     chart1.setOption( option );
 
+    //为chart1增加点击事件
+    chart1.on('click', function(params) {
+        //刷新右侧产品条图
+        refreshChart2(params.name);
+    });
+
     chart2 = echarts.init(document.getElementById("chart2"), 'macarons');
-    option = getChart2Option(data,"成长目标的商品分布");
+    option = getChart2Option(data.prodList,data.prodCountList,"成长目标的商品分布");
     chart2.setOption( option );
+}
+
+/**
+ * 刷新按产品展示的条形图
+ */
+function refreshChart2(spuName)
+{
+    $.get("/qywxDaily/getProdCountBySpu", {headId:  $("#headId").val(),spuName:spuName}, function (r) {
+        chart2 = echarts.init(document.getElementById("chart2"), 'macarons');
+        let option = getChart2Option(r.data.prodList,r.data.prodCountList,"成长目标的商品分布");
+        chart2.setOption( option );
+    });
 }
 
 function initUserDiffChart(data)
 {
     chart3 = echarts.init(document.getElementById("chart3"), 'macarons');
-    let option = getChart3Option(data,"类目用户的价值分布");
-    chart3.setOption( option );
+    userValueOption = getChart3Option(data.userValueList,data.userValueLabelList,data.userValueCountList,"类目用户的价值分布");
+    chart3.setOption( userValueOption );
 
+    //为chart1增加点击事件
+    chart3.on('click', function(params) {
+        //获取当前点击的userValue
+        let userValue=userValueOption.series[params.seriesIndex].userValues[params.dataIndex];
+        //刷新右侧表格
+        refreshMatrixTable(userValue);
+    });
+
+    //渲染表格数据
+    applyMatrixTable(data.matrixResult);
+}
+
+function refreshMatrixTable(userValue) {
+    $.get("/qywxDaily/getMatrixData", {headId:  $("#headId").val(),userValue:userValue}, function (r) {
+        applyMatrixTable(r.data);
+    });
+}
+
+function applyMatrixTable(matrixResult)
+{
     //构造表格的数据
-    let code="<tr><th>项目</th><th colspan='"+data.matrixResult.columnTitle.length+"'>用户对类目的生命周期阶段</th></tr><tr><th>用户下一次转化的活跃度节点</th>";
-    $.each(data.matrixResult.columnTitle,function(index,value){
+    let code="<tr><th>项目</th><th colspan='"+matrixResult.columnTitle.length+"'>用户对类目的生命周期阶段</th></tr><tr><th>用户下一次转化的活跃度节点</th>";
+    $.each(matrixResult.columnTitle,function(index,value){
         code+="<th>"+value+"</th>";
     });
     code+="</tr>";
@@ -213,7 +252,7 @@ function initUserDiffChart(data)
     $("#matrixHead").html('').append(code);
 
     code='';
-    $.each(data.matrixResult.rows,function(index,value){
+    $.each(matrixResult.rows,function(index,value){
         let row=value;
         code+="<tr>";
         $.each(row,function (index,value) {
@@ -222,6 +261,7 @@ function initUserDiffChart(data)
         code+="</tr>";
     });
     $("#matrixTableData").html('').append(code);
+
 }
 
 function initUserStrategy(data)
@@ -252,7 +292,7 @@ function initUserStrategy(data)
 
 }
 
-function getChart1Option(data,chartTitle)
+function getChart1Option(spuList,spuCountList,chartTitle)
 {
     var option = {
         title: {
@@ -286,19 +326,20 @@ function getChart1Option(data,chartTitle)
         yAxis: {
             name: '类目',
             type: 'category',
-            data: data.spuList
+            data: spuList
         },
         series: [
             {
                 type: 'bar',
-                data: data.spuCountList
+                data: spuCountList
             }
         ]
     };
     return option;
 }
 
-function getChart2Option(data,chartTitle)
+
+function getChart2Option(prodList,prodCountList,chartTitle)
 {
     var option = {
         title: {
@@ -332,21 +373,21 @@ function getChart2Option(data,chartTitle)
         yAxis: {
             name: '商品',
             type: 'category',
-            data: data.prodList
+            data: prodList
         },
         series: [
             {
                 type: 'bar',
-                data: data.prodCountList
+                data: prodCountList
             }
         ]
     };
     return option;
 }
 
-function getChart3Option(data,chartTitle)
+function getChart3Option(userValueList,userValueLabelList,userValueCountList,chartTitle)
 {
-    let option = {
+    return {
         title: {
             text: chartTitle,
             x: 'center',
@@ -378,21 +419,21 @@ function getChart3Option(data,chartTitle)
         yAxis: {
             name: '用户价值',
             type: 'category',
-            data: data.userValueLabelList
+            data: userValueLabelList
         },
         series: [
             {
                 type: 'bar',
-                data: data.userValueCountList
+                data: userValueCountList,
+                userValues:userValueList
             }
         ]
     };
-    return option;
 }
 
 function getChart4Option(data,chartTitle)
 {
-    let option = {
+    return {
         title: {
             text: chartTitle,
             x: 'center',
@@ -433,8 +474,9 @@ function getChart4Option(data,chartTitle)
             }
         ]
     };
-    return option;
+
 }
+
 
 function gotoConfig() {
     $MB.confirm({

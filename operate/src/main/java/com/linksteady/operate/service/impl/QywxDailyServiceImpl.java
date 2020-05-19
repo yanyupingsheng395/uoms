@@ -81,42 +81,11 @@ public class QywxDailyServiceImpl implements QywxDailyService {
 
         //按价值的用户分布
         List<QywxUserStats> statsByUserValue=qywxDailyMapper.getTargetInfoByUserValue(headId);
+        List<String> userValueList=statsByUserValue.stream().map(QywxUserStats::getUserValue).collect(Collectors.toList());
         List<String> userValueLabelList=statsByUserValue.stream().map(QywxUserStats::getUserValueLabel).collect(Collectors.toList());
         List<Integer> userValueCountList=statsByUserValue.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
 
-        //给定价值下 在生命周期和活跃度上的分布表格
-        List<QywxUserStats> statsMatrix=qywxDailyMapper.getTargetInfoMatrix(headId,statsByUserValue.get(0).getUserValue());
-        //转化成table 方便同时通过活跃度和生命周期进行查找
-        Table<String,String,Integer> tables= HashBasedTable.create();
-        statsMatrix.forEach(i->{
-            tables.put(i.getPathActivity(),i.getLifecycle(),i.getUcnt());
-        });
-
-        Map<String,Object> matrixResult=Maps.newHashMap();
-        matrixResult.put("columnTitle",lifeCycleMap.values().toArray());
-        List<List<String>> rows=Lists.newArrayList();
-
-        List<String> row=null;
-        //遍历活跃度
-        for (Map.Entry<String, String> pathActive : pathActiveMap.entrySet()) {
-            row=Lists.newArrayList();
-            row.add(pathActive.getValue());
-
-             //对每一个活跃度遍历 生命周期
-            for (Map.Entry<String, String> lifeCycle : lifeCycleMap.entrySet()) {
-                //判断是否存在对应的值
-                if(tables.contains(pathActive.getKey(),lifeCycle.getKey()))
-                {
-                    row.add(String.valueOf(tables.get(pathActive.getKey(),lifeCycle.getKey())));
-                }else
-                {
-                    row.add("0");
-                }
-
-            }
-            rows.add(row);
-        }
-        matrixResult.put("rows",rows);
+        Map<String,Object> matrixResult=getMatrixData(headId,statsByUserValue.get(statsByUserValue.size()-1).getUserValue());
 
         //按成员的分布
         List<QywxUserStats> statsByUser=qywxDailyMapper.getTargetInfoByUser(headId);
@@ -134,11 +103,11 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         result.put("prodList",prodList);
         result.put("prodCountList",prodCountList);
 
+        result.put("userValueList",userValueList);
         result.put("userValueLabelList",userValueLabelList);
         result.put("userValueCountList",userValueCountList);
 
         result.put("matrixResult",matrixResult);
-
 
         result.put("qywxUserList",qywxUserList);
         result.put("qywxCountList",qywxCountList);
@@ -148,6 +117,75 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         result.put("taskDate",new SimpleDateFormat("yyyy年MM月dd日").format(qywxDailyHeader.getTaskDate()));
         result.put("userNum",qywxDailyHeader.getTotalNum());
         return result;
+    }
+
+    /**
+     * 获取给定SPU下的商品分布数据
+     * @param headId
+     * @param spuName
+     * @return
+     */
+    @Override
+    public Map<String, Object> getProdCountBySpu(Long headId, String spuName) {
+        Map<String,Object> result=Maps.newHashMap();
+        List<QywxUserStats> statsByProd=qywxDailyMapper.getTargetInfoByProd(headId,spuName);
+
+        List<String> prodList=statsByProd.stream().map(QywxUserStats::getProdName).collect(Collectors.toList());
+        List<Integer> prodCountList=statsByProd.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
+
+        result.put("prodList",prodList);
+        result.put("prodCountList",prodCountList);
+
+        return result;
+    }
+
+    /**
+     * 根据给定 用户价值 获取 活跃度和生命周期的交叉表格数据
+     * @param headId
+     * @param userValue
+     * @return
+     */
+    @Override
+    public Map<String, Object> getMatrixData(Long headId, String userValue) {
+
+        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
+        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
+
+        //给定价值下 在生命周期和活跃度上的分布表格
+        List<QywxUserStats> statsMatrix=qywxDailyMapper.getTargetInfoMatrix(headId,userValue);
+        //转化成table 方便同时通过活跃度和生命周期进行查找
+        Table<String,String,Integer> tables= HashBasedTable.create();
+        statsMatrix.forEach(i->{
+            tables.put(i.getPathActivity(),i.getLifecycle(),i.getUcnt());
+        });
+
+        Map<String,Object> matrixResult=Maps.newHashMap();
+        matrixResult.put("columnTitle",lifeCycleMap.values().toArray());
+        List<List<String>> rows=Lists.newArrayList();
+
+        List<String> row=null;
+        //遍历活跃度
+        for (Map.Entry<String, String> pathActive : pathActiveMap.entrySet()) {
+            row=Lists.newArrayList();
+            row.add(pathActive.getValue());
+
+            //对每一个活跃度遍历 生命周期
+            for (Map.Entry<String, String> lifeCycle : lifeCycleMap.entrySet()) {
+                //判断是否存在对应的值
+                if(tables.contains(pathActive.getKey(),lifeCycle.getKey()))
+                {
+                    row.add(String.valueOf(tables.get(pathActive.getKey(),lifeCycle.getKey())));
+                }else
+                {
+                    row.add("0");
+                }
+
+            }
+            rows.add(row);
+        }
+        matrixResult.put("rows",rows);
+
+        return matrixResult;
     }
 
     @Override

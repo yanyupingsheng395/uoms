@@ -1,21 +1,24 @@
 package com.linksteady.operate.controller;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.common.util.FileUtils;
-import com.linksteady.operate.domain.*;
+import com.linksteady.operate.domain.PushProperties;
+import com.linksteady.operate.domain.QywxDailyDetail;
+import com.linksteady.operate.domain.QywxDailyHeader;
 import com.linksteady.operate.exception.OptimisticLockException;
-import com.linksteady.operate.service.*;
-import com.linksteady.operate.vo.DailyPersonalVo;
+import com.linksteady.operate.service.DailyConfigService;
+import com.linksteady.operate.service.QywxDailyDetailService;
+import com.linksteady.operate.service.QywxDailyService;
 import com.linksteady.operate.vo.QywxUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -24,7 +27,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -126,6 +128,25 @@ public class QywxDailyController {
         }
     }
 
+    /**
+     * 预览 spuName上的点击事件
+     *
+     * @return
+     */
+    @GetMapping("/getProdCountBySpu")
+    public ResponseBo getProdCountBySpu(Long headId,String spuName) {
+        return ResponseBo.okWithData(null,qywxDailyService.getProdCountBySpu(headId,spuName));
+    }
+
+    /**
+     * 预览 userValue上的点击事件
+     *
+     * @return
+     */
+    @GetMapping("/getMatrixData")
+    public ResponseBo getMatrixData(Long headId,String userValue) {
+        return ResponseBo.okWithData(null,qywxDailyService.getMatrixData(headId,userValue));
+    }
 
     /**
      * 获取用户明细的列表
@@ -233,7 +254,7 @@ public class QywxDailyController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         Long headId = Long.parseLong(request.getParam().get("headId"));
-        String qywxUserId="";
+        String qywxUserId=request.getParam().get("qywxUserId");
         List<QywxDailyDetail> dataList = qywxDailyDetailService.getConversionList(headId,limit, offset,qywxUserId);
         int count = qywxDailyDetailService.getConversionCount(headId,qywxUserId);
         return ResponseBo.okOverPaging(null, count, dataList);
@@ -245,82 +266,11 @@ public class QywxDailyController {
      * @return
      */
     @GetMapping("/getQywxUserList")
-    public ResponseBo getQywxUserList(QueryRequest request) {
-        Long headId = Long.parseLong(request.getParam().get("headId"));
-
+    public ResponseBo getQywxUserList(@RequestParam Long headId) {
         List<QywxUserVO> dataList = qywxDailyDetailService.getQywxUserList(headId);
         return ResponseBo.okWithData(null, dataList);
     }
 
-
-//    /**
-//     * 每日运营-个体效果
-//     *
-//     * @return
-//     */
-//    @GetMapping("/getDailyPersonalEffect")
-//    public ResponseBo getDailyPersonalEffect(QueryRequest request) {
-//        int limit = request.getLimit();
-//        int offset = request.getOffset();
-//        String headId = request.getParam().get("headId");
-//        String spuIsConvert = request.getParam().get("spuIsConvert");
-//        String userValue = request.getParam().get("userValue");
-//        String pathActive = request.getParam().get("pathActive");
-//        DailyPersonalVo dailyPersonalVo = new DailyPersonalVo();
-//        dailyPersonalVo.setSpuIsConvert(spuIsConvert);
-//        dailyPersonalVo.setUserValue(userValue);
-//        dailyPersonalVo.setPathActive(pathActive);
-//
-//        List<DailyPersonal> personals = dailyService.getDailyPersonalEffect(dailyPersonalVo, limit, offset, headId);
-//        int count = dailyService.getDailyPersonalEffectCount(dailyPersonalVo, headId);
-//        return ResponseBo.okOverPaging(null, count, personals);
-//    }
-//
-//    /**
-//     * 导出每日运营个体结果表
-//     *
-//     * @param headId
-//     * @return
-//     * @throws InterruptedException
-//     */
-//    @PostMapping("/downloadExcel")
-//    public ResponseBo excel(@RequestParam("headId") String headId) throws InterruptedException {
-//        List<DailyPersonal> list = Lists.newLinkedList();
-//        List<Callable<List<DailyPersonal>>> tmp = Lists.newLinkedList();
-//        int count = dailyService.getDailyPersonalEffectCount(new DailyPersonalVo(), headId);
-//        ExecutorService service = Executors.newFixedThreadPool(10);
-//        int pageSize = 1000;
-//        int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize) + 1;
-//        for (int i = 0; i < pageNum; i++) {
-//            int idx = i;
-//            tmp.add(() -> {
-//                int start = idx * pageSize + 1;
-//                int end = (idx + 1) * pageSize;
-//                end = end > count ? count : end;
-//                int limit = start - 1;
-//                int offset = end - start + 1;
-//                return dailyService.getDailyPersonalEffect(new DailyPersonalVo(), limit, offset, headId);
-//            });
-//        }
-//
-//        List<Future<List<DailyPersonal>>> futures = service.invokeAll(tmp);
-//        futures.stream().forEach(x -> {
-//            try {
-//                list.addAll(x.get());
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            } catch (ExecutionException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//        try {
-//            return FileUtils.createExcelByPOIKit("每日运营个体结果表", list, DailyPersonal.class);
-//        } catch (Exception e) {
-//            log.error("导出每日运营个体结果表失败", e);
-//            return ResponseBo.error("导出每日运营个体结果表失败，请联系网站管理员！");
-//        }
-//    }
-//
 
     /**
      * 获取默认推送方式和定时推送时间
