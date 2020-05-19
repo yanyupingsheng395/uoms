@@ -17,6 +17,10 @@ function getUserSpu(userId) {
     });
 }
 
+function searchBySpuId() {
+    getUserBuyOrder(userId);
+}
+
 // 获取某个用户在某个spu下的购买次序
 function getUserBuyOrder(userId) {
     var spuId = $("#spuId").val();
@@ -85,7 +89,7 @@ function getProductOption(xdata, ydata, spuName, purchOrder, data) {
         },
         xAxis : [
             {
-                name: '下次有可能购买的商品',
+                name: '类目总计/商品名称',
                 type : 'category',
                 data : xdata,
                 axisTick: {
@@ -126,7 +130,7 @@ function getProductOption(xdata, ydata, spuName, purchOrder, data) {
             }
         ],
         title: {
-            text: '在'+spuName+'类目第'+purchOrder+'次购买'+data['ebpProductMap']['ebp_product_name']+'的用户，第'+(parseInt(purchOrder) + 1)+'次购买商品的概率分布',
+            text: '用户在'+spuName+'类目第'+(parseInt(purchOrder) + 1)+'次购买商品概率分布',
             x: 'center',
             y: 'top',
             textStyle: {
@@ -150,7 +154,7 @@ function getSpuChartOption(data, spuName, purchOrder) {
     let option = {
         color: ['#CD2626'],
         title: {
-            text: '用户在' + spuName + '类目第' + purchOrder + '次购买的商品分布',
+            text: '用户在' + spuName + '类目第' + purchOrder + '次购买的商品',
             x: 'center',
             y: 'top',
             textStyle: {
@@ -184,7 +188,7 @@ function getSpuChartOption(data, spuName, purchOrder) {
         },
         xAxis : [
             {
-                name: "购买类目/商品",
+                name: "类目总计/商品名称",
                 type : 'category',
                 data : data.xdata1,
                 axisTick: {
@@ -199,7 +203,7 @@ function getSpuChartOption(data, spuName, purchOrder) {
         ],
         yAxis : [
             {
-                name: '用户数(人)',
+                name: '购买用户数(人)',
                 type : 'value',
                 splitArea: {show: false},
                 splitLine: {show: false}
@@ -278,7 +282,7 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId, ebp
                 }
             },
             xAxis: {
-                name: '购买间隔(天)',
+                name: '距上次购买间隔(天)',
                 type: 'category',
                 data: data.xdata,
                 splitLine:{show: false},
@@ -340,7 +344,7 @@ function getConvertRateChart(spuId, purchOrder, ebpProductId, nextProductId, ebp
             }],
             grid: {left: '8%',right:'19%'},
             title: {
-                text: '在'+spuName+'类目中，第'+buyOrder.split('-')[0]+'次购买'+ebpProductName+'，第'+buyOrder.split('-')[1]+'次购买'+convert_product+'时，购买间隔与购买的概率分布',
+                text: '用户在'+spuName+'类目中第'+buyOrder.split('-')[0]+'次购买'+(ebpProductName === null ? '--' : ebpProductName)+'，第'+buyOrder.split('-')[1]+'次购买'+(convert_product === undefined ? '--' : convert_product)+'时，购买概率与间隔的概率分布',
                 x: 'center',
                 y: 'top',
                 textStyle: {
@@ -381,18 +385,18 @@ function getGrowthUserTable(userId, spuId) {
        var dual = res.data;
        var flag = false;
         $.get("/insight/getUserGrowthPathPoint", {userId:userId, spuId:spuId}, function (r) {
-            let code = "<thead><tr><th>下一步成长节点</th><th>距上次购买第天（天）</th><th>再次购买概率（%）</th><th>用户上次购买时间</th><th>用户成长节点日期</th></tr></thead>";
+            let code = "<thead><tr><th>上次购买时间</th><th>下一步成长节点</th><th>成长节点日期</th><th>距上次购买间隔</th></tr></thead>";
             code += "<tbody>";
             r.data.forEach((v,k)=>{
                 if(k < 3) {
                     if(!flag && v['active_dual'] > dual) {
                         flag = true;
-                        code += "<tr style='background-color: #FFEFD5'><td>"+v['active_type']+"</td><td>"+v['active_dual']+"</td><td>"+v['prob']+"</td><td>"+v['last_buy_dt']+"</td><td>"+v['growth_dt']+"</td></tr>";
+                        code += "<tr style='background-color: #FFEFD5'><td>"+v['last_buy_dt']+"</td><td>"+v['active_type']+"</td><td>"+v['growth_dt']+"</td><td>"+v['active_dual']+"</td></tr>";
                     }else {
-                        code += "<tr><td>"+v['active_type']+"</td><td>"+v['active_dual']+"</td><td>"+v['prob']+"</td><td>"+v['last_buy_dt']+"</td><td>"+v['growth_dt']+"</td></tr>";
+                        code += "<tr><td>"+v['last_buy_dt']+"</td><td>"+v['active_type']+"</td><td>"+v['growth_dt']+"</td><td>"+v['active_dual']+"</td></tr>";
                     }
                 }else {
-                    code += "<tr style='background-color: #ccc'><td>"+v['active_type']+"</td><td>"+v['active_dual']+"</td><td>"+v['prob']+"</td><td>"+v['last_buy_dt']+"</td><td>"+v['growth_dt']+"</td></tr>";
+                    code += "<tr style='background-color: #ccc'><td>"+v['last_buy_dt']+"</td><td>"+v['active_type']+"</td><td>"+v['growth_dt']+"</td><td>"+v['active_dual']+"</td></tr>";
                 }
             });
             code += "</tbody>";
@@ -400,7 +404,7 @@ function getGrowthUserTable(userId, spuId) {
                 code = "<tr class='text-center'><td colspan='5'>没有找到匹配的记录</td></tr>";
             }
             $("#growthTable").html('').append(code).find("tbody td:eq(3)").attr("style", "background-color:#fff;");
-            mergeCell('growthTable', 0, 5, 3);
+            mergeCell('growthTable', 0, 5, 0);
         });
     });
 }
@@ -442,24 +446,24 @@ function getUserValueOption(data) {
     ];
 
     var schema = [{
-        name: '用户对类目的收入贡献',
+        name: '综合价值分组',
         index: 0,
-        text: '用户对类目的收入贡献'
+        text: '综合价值分组'
         },
         {
-            name: '用户对类目的价值潜力',
+            name: '贡献收入',
             index: 1,
-            text: '用户对类目的价值潜力'
+            text: '贡献收入'
         },
         {
-            name: '用户对类目价格敏感度',
+            name: '收入潜力',
             index: 2,
-            text: '用户对类目价格敏感度'
+            text: '收入潜力'
         },
         {
-            name: '用户在类目的价值',
+            name: '价格敏感度',
             index: 3,
-            text: '用户在类目的价值'
+            text: '价格敏感度'
         }
     ];
     var lineStyle = {
@@ -475,25 +479,25 @@ function getUserValueOption(data) {
             dim: 0,
             name: schema[0].text,
             type: 'category',
-            data: ['低', '中', '高', '很高','超高']
+            data: ['低价值高敏感', '低价值低敏感', '中价值高敏感', '高价值高敏感','高价值低敏感']
         },
             {
                 dim: 1,
                 name: schema[1].text,
                 type: 'category',
-                data:['低', '高']
+                data:['0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1']
             },
             {
                 dim: 2,
                 name: schema[2].text,
                 type: 'category',
-                data: ['高', '中', '低']
+                data:['0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1']
             },
             {
                 dim: 3,
                 name: schema[3].text,
                 type: 'category',
-                data: ['长尾', '普通', '主要', '重要']
+                data:['0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1']
             }
         ],
         parallel: {

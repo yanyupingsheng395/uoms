@@ -193,7 +193,6 @@ public class ActivityController {
 
     /**
      * 获取产品信息
-     *
      * @param id
      * @return
      */
@@ -366,7 +365,6 @@ public class ActivityController {
 
         result.put("beginDt",new SimpleDateFormat("yyyy年MM月dd日").format(activityEffect.getPushDate()));
         result.put("userCount",activityEffect.getSuccessNum());
-
         return ResponseBo.ok(result);
     }
 
