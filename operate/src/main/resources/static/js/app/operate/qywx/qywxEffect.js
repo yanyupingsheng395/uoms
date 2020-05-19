@@ -1,7 +1,14 @@
 $(function () {
     getTaskDt();
     makePushChart();
+    //加载所有的企业微信成员
+    getAllQywxUserList();
     getEffectPersonalPage();
+
+    $("#qywxUserIdSelect").change(function() {
+          //重新加载数据
+        $MB.refreshTable('effectPersonalTable');
+    });
 });
 
 // 获取页面头的当前日期和任务日期
@@ -9,6 +16,14 @@ function getTaskDt() {
     $.get("/qywxDaily/getTaskInfo", {headId: headId}, function (r) {
         let data = r.data;
         $("#taskInfo").html('').append('<i class="mdi mdi-alert-circle-outline"></i>任务日期：' + data["taskDateStr"] + '，成功触达：'+data['successNum']+'人，效果累计天数：'+data['effectDays']);
+    });
+}
+
+function getAllQywxUserList() {
+    $.get("/qywxDaily/getQywxUserList", {headId: headId}, function (r) {
+        $.each(r.data,function (index,value) {
+            $("#qywxUserIdSelect").append("<option id="+value.qywxUserId+">"+value.qywxUserName+"</option>");
+        })
     });
 }
 
@@ -123,9 +138,7 @@ function getEffectPersonalPage() {
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
                     headId: headId,
-                    spuIsConvert: $("#spuIsConvert").val(),
-                    userValue: $("#userValue").val(),
-                    pathActive: $("#pathActive").val()
+                    qywxUserId: $("#qywxUserIdSelect").find("option:selected").val(),
                 }
             };
         },
@@ -184,16 +197,3 @@ function getEffectPersonalPage() {
 //     });
 // });
 
-// 查询个体结果
-// $("#btn_query").click(function () {
-//     $MB.refreshTable('effectPersonalTable');
-// });
-
-// 重置表单
-// $("#btn_reset").click(function () {
-//     $("#isConvert").find("option:selected").removeAttr("selected");
-//     $("#spuIsConvert").find("option:selected").removeAttr("selected");
-//     $("#userValue").find("option:selected").removeAttr("selected");
-//     $("#pathActive").find("option:selected").removeAttr("selected");
-//     $MB.refreshTable('effectPersonalTable');
-// });

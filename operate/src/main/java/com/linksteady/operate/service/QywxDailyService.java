@@ -20,6 +20,10 @@ public interface QywxDailyService {
 
     Map<String, Object> getTaskOverViewData(Long headId);
 
+    Map<String, Object> getProdCountBySpu(Long headId,String spuName);
+
+    Map<String, Object> getMatrixData(Long headId,String userValue);
+
     /**
      * 获取生成文案的锁  true表示加锁成功 false表示加锁失败
      */
