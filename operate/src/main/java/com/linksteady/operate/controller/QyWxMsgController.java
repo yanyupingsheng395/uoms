@@ -44,4 +44,9 @@ public class QyWxMsgController {
         qyWxMsgService.deleteDataById(id);
         return ResponseBo.ok();
     }
+
+    @RequestMapping("/getDataById")
+    public ResponseBo getDataById(@RequestParam("id") String id) {
+        return ResponseBo.okWithData(null, qyWxMsgService.getDataById(id));
+    }
 }

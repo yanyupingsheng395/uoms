@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * @author hxcao
@@ -192,7 +193,6 @@ public class ActivityController {
 
     /**
      * 获取产品信息
-     *
      * @param id
      * @return
      */
@@ -258,7 +258,11 @@ public class ActivityController {
     @PostMapping("/submitActivity")
     public ResponseBo submitActivity(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
         //生成计划明细数据
-        activityPlanService.savePlanList(headId, stage, type);
+        List<ActivityPlan> planList = activityPlanService.getPlanList(headId);
+        List<ActivityPlan> filterPlanList = planList.stream().filter(x -> x.getStage().equalsIgnoreCase(stage)).filter(y -> y.getPlanType().equalsIgnoreCase(type)).collect(Collectors.toList());
+        if(filterPlanList.size() == 0) {
+            activityPlanService.savePlanList(headId, stage, type);
+        }
         return ResponseBo.ok();
     }
 
@@ -361,7 +365,6 @@ public class ActivityController {
 
         result.put("beginDt",new SimpleDateFormat("yyyy年MM月dd日").format(activityEffect.getPushDate()));
         result.put("userCount",activityEffect.getSuccessNum());
-
         return ResponseBo.ok(result);
     }
 

@@ -34,4 +34,8 @@
     <delete id="deleteDataById">
         delete from uo_qywx_msg_template where qywx_id = #{id}::integer
     </delete>
+
+    <select id="getDataById" resultMap="BaseResultMap">
+        select * from uo_qywx_msg_template where qywx_id = #{id}::integer
+    </select>
 </mapper>

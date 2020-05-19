@@ -15,4 +15,5 @@ public interface QywxMapper {
     int getTotalCount();
     void updateQyWxMsg(QyWxMsg qyWxMsg);
     void deleteDataById(String id);
+    QyWxMsg getDataById(String id);
 }

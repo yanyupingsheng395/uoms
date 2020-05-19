@@ -42,4 +42,9 @@ public class QyWxMsgServiceImpl implements QyWxMsgService {
     public void deleteDataById(String id) {
         qywxMapper.deleteDataById(id);
     }
+
+    @Override
+    public QyWxMsg getDataById(String id) {
+        return qywxMapper.getDataById(id);
+    }
 }

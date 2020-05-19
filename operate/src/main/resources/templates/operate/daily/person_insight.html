@@ -48,7 +48,7 @@
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
                         <div class="row">
-                            <h5 class="navbar-page-title">理解用户成长目标与个性化推送策略</h5>
+                            <h5 class="navbar-page-title">用户成长目标</h5>
                         </div>
                         <div class="row">
                             <hr class="hr" style="margin-top: 10px;margin-bottom: 10px;"/>
@@ -57,14 +57,14 @@
                             <div class="select-list">
                                 <ul>
                                     <li>
-                                        选择用户成长所处类目
+                                        选择用户成长类目
                                         <a style="color: #48b0f7;font-size: 16px;" data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="用户在品牌有可能购买多个类目，即成长的类目" data-trigger="click">
                                             <i class="fa fa-question-circle "></i>
                                         </a>
                                         ：<select id="spuId" name="spuId" class="select2"></select>
                                     </li>
                                     <li>
-                                        <a class="btn btn-primary btn-rounded btn-sm" id="btn_query"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="btn_query" onclick="searchBySpuId()"><i class="fa fa-search"></i>&nbsp;搜索</a>
                                         <a class="btn btn-warning btn-rounded btn-sm" onclick="resetDaily()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
                                     </li>
                                 </ul>
@@ -74,7 +74,7 @@
                     <div class="col-md-12 select-table table-striped">
                         <div class="row">
                             <div class="col-sm-12">
-                                <p class="h5">用户在类目成长的节点与商品选择</p>
+                                <p class="h5">用户成长的商品选择</p>
                                 <hr class="hr" style="margin-top: 10px;margin-bottom: 10px;"/>
                             </div>
                         </div>
@@ -84,7 +84,7 @@
                                     <div class="select-list">
                                         <ul>
                                             <li>
-                                                用户在类目成长的次序：<input type="text" id="buyOrder" readonly style="background-color: #eee;opacity: 1;border: 1px solid #ddd;border-radius: 4px;color:#8b95a5;"/>
+                                                类目上的成长次序：<input type="text" id="buyOrder" readonly style="background-color: #eee;opacity: 1;border: 1px solid #ddd;border-radius: 4px;color:#8b95a5;"/>
                                             </li>
                                         </ul>
                                     </div>
@@ -97,9 +97,15 @@
                             <div class="col-md-6" id="chart_relation_2" style="height:400px;"></div>
                         </div>
                         <div class="row">
+                            <div class="col-sm-12">
+                                <p class="h5">用户成长的节点选择</p>
+                                <hr class="hr" style="margin-top: 10px;margin-bottom: 10px;">
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6" id="convert_chart" style="height: 380px"></div>
                             <div class="col-md-6" style="margin-top: 45px;">
-                                <p class="h6">用户在成长旅程中的成长节点与此用户今日所处的成长节点</p>
+                                <p class="h6">用户今日所处的成长节点</p>
                                 <table id="growthTable" class="table table-bordered table-condensed table-hover"></table>
                             </div>
                         </div>
@@ -108,7 +114,7 @@
                     <div class="col-md-12 select-table table-striped">
                         <div class="row">
                             <div class="col-sm-12">
-                                <p class="h5">用户在类目成长的价值</p>
+                                <p class="h5">用户差异特征</p>
                                 <hr class="hr" style="margin-top: 10px;margin-bottom: 10px;"/>
                             </div>
                         </div>
