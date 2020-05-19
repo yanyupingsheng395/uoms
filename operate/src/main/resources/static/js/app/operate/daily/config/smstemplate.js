@@ -490,13 +490,13 @@ function validate() {
     return true;
 }
 
-//
 function smsContentValid() {
     $('#smsContentInput').val($('#smsContent').val());
     if($('#smsContentInput').val() !== '') {
         $('#smsContentInput').removeClass('error');
         $("#smsContentInput-error").remove();
     }
+    $("#article").html('').append($('#smsContent').val());
 }
 $("#add_modal").on('shown.bs.modal', function () {
     var userBox = document.getElementById('user-box');
