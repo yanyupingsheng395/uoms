@@ -496,13 +496,9 @@ function smsContentValid() {
         $('#smsContentInput').removeClass('error');
         $("#smsContentInput-error").remove();
     }
-    $("#article").html('').append($('#smsContent').val());
+    var content = $('#smsContent').val() === "" ? "请输入短信内容": $('#smsContent').val();
+    $("#article").html('').append(content);
 }
-$("#add_modal").on('shown.bs.modal', function () {
-    var userBox = document.getElementById('user-box');
-    $("#config-box").attr("style", "border: solid 1px #ebebeb;padding: 8px; float: left;width:" + userBox.clientWidth + "px;");
-});
-
 $("#add_modal").on('hidden.bs.modal', function () {
     $('#smsCode').val("");
     $('#smsName').val("");
@@ -530,6 +526,7 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $('#isCouponName-error').hide();
     $('#isProductUrl-error').hide();
     $('#isProductName-error').hide();
+    $("#article").html('请输入短信内容');
     $("#smsTemplateModal").modal('show');
 });
 
@@ -568,6 +565,7 @@ $("#btn_edit").click(function () {
                     $("#smsCode").val(data.smsCode);
                     $("#smsName").val(data.smsName);
                     $("#smsContent").val(data.smsContent);
+                    $("#article").html(data.smsContent);
                     $("#smsContentInput").val(data.smsContent);
                     $("input[name='isCouponUrl']:radio[value='" + data.isCouponUrl + "']").prop("checked", true);
                     $("input[name='isCouponName']:radio[value='" + data.isCouponName + "']").prop("checked", true);
@@ -593,20 +591,6 @@ $("#btn_edit").click(function () {
                             $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
                         });
                     }
-                    // 设置当前群组信息被选中
-                    var groupInfo = $("#currentGroupInfo").val();
-                    var groupInfoArr = groupInfo.split("|");
-                    groupInfoArr.forEach((v,k)=>{
-                        if(k===0) {
-                            $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-                        }
-                        if(k===1) {
-                            $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-                        }
-                        if(k===2) {
-                            $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-                        }
-                    });
                     initGetInputNum();
                 }else {
                     $MB.n_danger(resp.msg);
@@ -713,3 +697,9 @@ $("#btn_refresh").click(function () {
         }
     });
 });
+
+function copyString(id) {
+    $('#' + id).select();
+    document.execCommand("copy");
+    $MB.n_success("成功复制到粘贴板!");
+}

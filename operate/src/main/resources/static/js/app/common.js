@@ -529,6 +529,16 @@ function copyInputToClipboard(id)
     $MB.n_success("成功复制到粘贴板!");
 }
 
+function copyValToClipboard(ElementObj)
+{
+    var clickContent = ElementObj.getAttribute('data');  //获取要复制的值
+    var inputElement =  document.getElementById("copy_content");  //获取要赋值的input的元素
+    inputElement.value = clickContent;  //给input框赋值
+    inputElement.select();//选中input框的内容
+    document.execCommand("Copy");// 执行浏览器复制命令
+    $MB.n_success("成功复制到粘贴板!");
+}
+
 /**
  * 适用于作为bootstrap table的formatter函数
  * @param value

@@ -188,6 +188,7 @@ function prevStep(stepNum) {
         getTableData();
         $( "#step1" ).attr( "style", "display:block;" );
         $( "#step2" ).attr( "style", "display:none;" );
+        $( "#step3" ).attr( "style", "display:none;" );
     }
 }
 
@@ -197,5 +198,36 @@ function nextStep(stepNum) {
         couponTable();
         $( "#step1" ).attr( "style", "display:none;" );
         $( "#step2" ).attr( "style", "display:block;" );
+        $( "#step3" ).attr( "style", "display:none;" );
     }
+    if(stepNum === 3) {
+        step.setActive( 2);
+        $( "#step1" ).attr( "style", "display:none;" );
+        $( "#step2" ).attr( "style", "display:none;" );
+        $( "#step3" ).attr( "style", "display:block;" );
+    }
+}
+
+smsCouponListTable();
+function smsCouponListTable() {
+    let settings = {
+        pagination: false,
+        singleSelect: false,
+        columns: [
+                {
+                    title: '门槛',
+                },
+                {
+                    title: '面额',
+                },
+                {
+                    title: '用户特征',
+                }
+            ]
+        };
+    $( "#smsCouponListTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+    // $.get( "/daily/userGroupList", {}, function (r) {
+    //     var dataList = r.data;
+    //     $( "#smsCouponListTable" ).bootstrapTable( 'load', dataList );
+    // } );
 }

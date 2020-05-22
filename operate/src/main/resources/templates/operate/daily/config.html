@@ -27,6 +27,7 @@
     <link rel="stylesheet" data-th-href="@{/plugins/font-awesome-4.7.0/css/font-awesome.css}"/>
     <link rel="stylesheet" data-th-href="@{/plugins/steps/steps.css}"/>
     <script data-th-src="@{/js/common/jquery.min.js}"></script>
+    <script data-th-src="@{/plugins/clipboard.min.js}"></script>
     <style type="text/css">
         .toolbar{border:1px solid #ccc;}.text{border:1px solid #ccc;height:400px;}.send{position:absolute;max-width:200px;width:auto;height:auto;background:#fff;border-radius:5px;margin-top:30px;margin-left:20px;padding:10px;font-size:12px;color:#000;word-wrap:break-word;}.send .arrow{position:absolute;top:9px;left:-16px;width:0;height:0;font-size:0;border:solid 8px;border-color:rgb(235,235,235) #fff rgb(235,235,235) rgb(235,235,235);}.msg-panel__context{background:#f5f5f5;}.cm-edit-content-con{background:#f5f5f5;}img{border-radius:5px;}.wx-audio-content{border-radius:5px;}.panel .panel-body{padding:0 !important;}.weui-media-box__title{font-size:15px !important;}.newtitle{font-size:15px !important;}.panel-heading{padding:0;}.steps{padding:0 !important;}
         .bubble { margin:0px auto; width:320px; }
@@ -153,6 +154,9 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div id="step3" style="display: none">
+                                    <div th:include="operate/daily/group_view"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -199,7 +203,6 @@
                             <input class="form-control" type="text" name="phoneNum"/>
                         </div>
                     </div>
-
                     <div class="form-group mg-stop">
                         <label class="col-md-4 control-label">手机号2：</label>
                         <div class="col-md-6 input-group">
@@ -262,5 +265,16 @@
 <script data-th-src="@{/js/app/operate/daily/config/coupon.js}"></script>
 <script data-th-src="@{/js/app/operate/daily/config/qyWxMsg.js}"></script>
 <script data-th-src="@{/js/app/operate/daily/config/config.js}"></script>
+<script>
+    var clipboard1 = new ClipboardJS('.copy_btn', {
+        container: document.getElementById('add_modal')
+    });
+    new ClipboardJS('.copy_btn', {
+        container: document.getElementById('wxMsgAddModal')
+    });
+    clipboard1.on('success', function(e) {
+        $MB.n_success("成功复制到粘贴板！");
+    });
+</script>
 </body>
 </html>
