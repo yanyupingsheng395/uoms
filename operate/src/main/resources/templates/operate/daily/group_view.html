@@ -16,29 +16,14 @@
         </div>
     </div>
 </div>
-<div class="row m-t-10">
-    <div class="col-md-4">
-        <p>通过在特征上选择取值定位某一群组用户</p>
-        <hr class="hr"/>
-    </div>
-<!--    <div class="col-md-4">-->
-<!--        <p>选定群组的个性化短信息预览</p>-->
-<!--        <hr class="hr"/>-->
-<!--    </div>-->
-<!--    <div class="col-md-4">-->
-<!--        <p>个性化优惠券</p>-->
-<!--        <hr class="hr"/>-->
-<!--    </div>-->
-    <div class="col-md-8">
-        <ul id="myTabs" class="nav nav-tabs" role="tablist">
-            <li class="active"><a href="#duanxin" id="home-tab" role="tab" data-toggle="tab">短信</a></li>
-            <li><a href="#weixin" role="tab" id="profile-tab" data-toggle="tab">微信</a></li>
-        </ul>
-    </div>
-</div>
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4" style="margin-top: 10px;">
         <!-- 当前所选标签 -->
+        <ul>
+            <li style="margin-bottom: 10px;">
+                <span style="color: #4d5259;">通过在特征上选择取值定位某一群组用户</span>
+            </li>
+        </ul>
         <div class="row desc_content uvalue">
             <div class="col-md-12" id="valueBtns" style="width:405px;height:110px;border:dashed 1px #faa64b;padding-top: 3px;padding-bottom: 3px;margin-left: 10px;">
                 <p class="h6" style="border-bottom: #faa64b 1px dashed">用户对类目的价值/沉默成本</p>
@@ -71,13 +56,16 @@
         <div class="row desc_content prop m-t-10">
             <div class="col-md-12" id="propBtns" style="width:405px;height:81px;border:dashed 1px #f96868;padding-top: 3px;padding-bottom: 3px;margin-left: 10px;">
                 <p class="h6" style="border-bottom: #f96868 1px dashed">用户成长类目的特性</p>
-                    <button class="btn btn-round btn-sm btn-danger m-t-5" onclick="userGroupButton(this, 'btn-danger')">高利润</button>
+                <button class="btn btn-round btn-sm btn-danger m-t-5" onclick="userGroupButton(this, 'btn-danger')">高利润</button>
                 &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-danger')">低利润</button>
             </div>
         </div>
     </div>
-
     <div class="col-md-8">
+        <ul id="myTabs" class="nav nav-tabs" role="tablist">
+            <li class="active"><a href="#duanxin" id="home-tab" role="tab" data-toggle="tab">短信</a></li>
+            <li><a href="#weixin" role="tab" id="profile-tab" data-toggle="tab">微信</a></li>
+        </ul>
         <div id="myTabContent" class="tab-content">
             <div class="tab-pane fade active in" id="duanxin">
                 <div class="row">
@@ -119,7 +107,6 @@
         </div>
     </div>
 </div>
-
 <!--<div class="row">-->
 <!--    <div class="col-md-12">-->
 <!--        <hr class="hr"/>-->
