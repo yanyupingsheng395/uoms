@@ -113,6 +113,7 @@
                                                     <input type="radio" name="isProductName" value="0" onchange="$('#isProductName-error').hide()"><span>否</span>
                                                 </label>
                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${PROD_NAME}粘贴到期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${PROD_NAME}" class="copy_btn">复制</a>
                                             </div>
                                             <div class="example-box">
                                                 <label class="control-label">商品详情页短链接：</label>
@@ -123,6 +124,7 @@
                                                     <input type="radio" name="isProductUrl" value="0" onchange="isProdUrlFalseClick()"><span>否</span>
                                                 </label>
                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${PROD_URL}粘贴到期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${PROD_URL}" class="copy_btn">复制</a>
                                             </div>
                                             <div class="example-box">
                                                 <label class="control-label">　　　　补贴名称：</label>
@@ -133,6 +135,7 @@
                                                     <input type="radio" name="isCouponName" value="0" onchange="isCouponNameFalseClick()"><span>否</span>
                                                 </label>
                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${COUPON_NAME}粘贴到期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${COUPON_NAME}" class="copy_btn">复制</a>
                                             </div>
                                             <div class="example-box">
                                                 <label class="control-label">　　　补贴短链接：</label>
@@ -143,6 +146,7 @@
                                                     <input type="radio" name="isCouponUrl" value="0" onchange="isCouponUrlFalseClick()"><span>否</span>
                                                 </label>
                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${COUPON_URL}粘贴到消息期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${COUPON_URL}" class="copy_btn">复制</a>
                                             </div>
                                         </div>
                                     </div>
@@ -152,17 +156,18 @@
                                         <label class="control-label">文案内容</label>
                                     </div>
                                     <div>
-                                        <textarea class="form-control" id="smsContent" name="smsContent" style="height: 102px;width:522px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
+                                        <textarea class="form-control" id="smsContent" name="smsContent" style="height: 102px;width:507px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
                                         <input type="hidden" id="smsContentInput" name="smsContentInput"/>
                                         <span class="wordwrap"><var id="word"></var></span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-5">
-                                <div class="bubble" style="margin-top: 100px;">
-                                    <div class="demo clearfix">
-                                        <span class="triangle"></span>
-                                        <div class="article">我发短信给你了我发短信给你了我发短信给你了我发短信给你了我发短信给你了我发短信给你了我发短信给你了我发短信给你了</div>
+                            <div class="col-md-4">
+                                <div style="position:absolute;height: 350px;width:100%;background:url(/images/app_content_01.png) no-repeat 20px -30px;}"></div>
+                                <div class="bubble" style="position: relative;margin-top: 140px;width: 230px;">
+                                    <div class="demo clearfix" style="padding-left: 32px;">
+                                        <span class="triangle" style="left:24px"></span>
+                                        <div class="article" id="article" style="font-size: 12px;">请输入短信内容</div>
                                     </div>
                                 </div>
                             </div>

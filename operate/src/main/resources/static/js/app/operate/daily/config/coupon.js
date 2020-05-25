@@ -107,7 +107,6 @@ function intelCouponData() {
         pagination: false,
         singleSelect: false,
         clickToSelect: true,
-        rowStyle: couponRowStyle,
         columns: [{
             checkbox: true,
             formatter: function (value, row, index) {

@@ -17,8 +17,19 @@ function getUserSpu(userId) {
     });
 }
 
+/**
+ * 查询接口
+ */
 function searchBySpuId() {
     getUserBuyOrder(userId);
+}
+
+/**
+ * 重置
+ */
+function resetSearch() {
+    getUserSpu(userId);
+    getDateChart(userId);
 }
 
 // 获取某个用户在某个spu下的购买次序
@@ -56,16 +67,14 @@ function getSpuRelation(userId, spuId, buyOrder, spuName) {
         var option2 = getProductOption(r.data.xdata2, r.data.ydata2, spuName, buyOrder, r.data);
         product_relation_chart.hideLoading();
         product_relation_chart.setOption(option2);
-
         let ebpProductId = r.data['ebpProductMap']['ebp_product_id'];
         let ebpProductName = r.data['ebpProductMap']['ebp_product_name'];
         let nextEbpProductId = r.data['ebpProductMap']['next_ebp_product_id'];
-        let nextEbpProductName = r.data['ebpProductMap']['next_ebp_product_name'];
+        //let nextEbpProductName = r.data['ebpProductMap']['next_ebp_product_name'];
         // 获取转化概率
         getConvertRateChart(spuId, buyOrder, ebpProductId, nextEbpProductId, ebpProductName);
         // 获取用户表格
         getGrowthUserTable(userId, spuId);
-
         // 获取用户在类目的成长价值
         getUserValue(userId);
     });
@@ -380,11 +389,12 @@ function getUserLastBuyDual(spuId) {
     return data;
 }
 
+// 获取成长用户表
 function getGrowthUserTable(userId, spuId) {
     $.get("/insight/getUserBuyDual", {taskDt:task_dt, userId: userId, spuId:spuId}, function (res) {
        var dual = res.data;
        var flag = false;
-        $.get("/insight/getUserGrowthPathPoint", {userId:userId, spuId:spuId}, function (r) {
+       $.get("/insight/getUserGrowthPathPoint", {userId:userId, spuId:spuId}, function (r) {
             let code = "<thead><tr><th>上次购买时间</th><th>下一步成长节点</th><th>成长节点日期</th><th>距上次购买间隔</th></tr></thead>";
             code += "<tbody>";
             r.data.forEach((v,k)=>{
