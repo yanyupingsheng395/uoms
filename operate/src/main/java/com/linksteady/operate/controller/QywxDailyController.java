@@ -310,13 +310,19 @@ public class QywxDailyController {
      */
     @GetMapping("/testQywxPush")
     public ResponseBo testQywxPush() {
+        return ResponseBo.ok(testPush());
+    }
+
+
+    private String  testPush()
+    {
         //绑定的corpID
         String corpId="ww372de12b2d0cdf17";
 
         String textContent="";
 
         //获取要推送的数据
-        List<Map<String,String>> result=qywxDailyDetailService.getTestPushData();
+        //List<Map<String,String>> result=qywxDailyDetailService.getTestPushData();
 
         //构造推送参数
         JSONObject param=new JSONObject();
@@ -324,11 +330,14 @@ public class QywxDailyController {
 
         JSONArray externalUserid=new JSONArray();
         externalUserid.add("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ");
+        externalUserid.add("wmXfFiDwAA2R-zN-afopB1W0aunsLowg");
 
         param.put("external_userid",externalUserid);
 
+        param.put("sender","brandonz");
+
         JSONObject text=new JSONObject();
-        text.put("content","这个一条测试的企业微信消息，提花浴巾, 欢迎购买10元");
+        text.put("content","您好，520活动季，您关注的提花浴巾低至35元，欢迎购买！");
         param.put("text",text);
 
         log.info("待推送的消息为{}",param.toJSONString());
@@ -336,7 +345,8 @@ public class QywxDailyController {
         String requesturl="http://qywx.growth-master.com/push/addMsgTemplate?corpId="+corpId;
         //发送http请求
         String backStr=OkHttpUtil.postRequestByJson(requesturl,param.toJSONString());
-        return ResponseBo.ok(backStr);
+
+        return backStr;
     }
 
 
