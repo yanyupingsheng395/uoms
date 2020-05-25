@@ -208,8 +208,9 @@ function nextStep(stepNum) {
     }
 }
 
-smsCouponListTable();
-function smsCouponListTable() {
+smsCouponListTable("smsCouponListTable");
+smsCouponListTable("weixinCouponListTable");
+function smsCouponListTable(tableId) {
     let settings = {
         pagination: false,
         singleSelect: false,
@@ -225,9 +226,15 @@ function smsCouponListTable() {
                 }
             ]
         };
-    $( "#smsCouponListTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+    $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
     // $.get( "/daily/userGroupList", {}, function (r) {
     //     var dataList = r.data;
     //     $( "#smsCouponListTable" ).bootstrapTable( 'load', dataList );
     // } );
+}
+
+// 用户群组按钮点击
+function userGroupButton(dom, className) {
+    $(dom).removeClass("btn-secondary").addClass(className);
+    $(dom).siblings('button').removeClass(className).addClass("btn-secondary");
 }
