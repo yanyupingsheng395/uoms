@@ -4,6 +4,7 @@ import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.vo.QywxUserVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author huang
@@ -55,5 +56,10 @@ public interface QywxDailyDetailService {
      * 获取微信企业成员列表
      */
     List<QywxUserVO> getQywxUserList(Long headId);
+
+    /**
+     * 获取推送的测试数据
+     */
+    List<Map<String,String>> getTestPushData();
 
 }

@@ -10,6 +10,8 @@ $(function () {
 });
 
 let chart1;
+let chart1a;
+let chart1b;
 let chart2;
 let chart3;
 let userValueOption;
@@ -199,6 +201,15 @@ function initUserTargetChart(data) {
         refreshChart2(params.name);
     });
 
+
+    chart1a = echarts.init(document.getElementById("chart1a"), 'macarons');
+    let optionChart1a = getChart1aOption(data,"成长目标的类型分布(1)");
+    chart1a.setOption( optionChart1a );
+
+    chart1b = echarts.init(document.getElementById("chart1b"), 'macarons');
+    let optionChart1b = getChart1Option(data,"成长目标的类型分布(2)");
+    chart1b.setOption( optionChart1b );
+
     chart2 = echarts.init(document.getElementById("chart2"), 'macarons');
     option = getChart2Option(data.prodList,data.prodCountList,"成长目标的商品分布");
     chart2.setOption( option );
@@ -337,6 +348,102 @@ function getChart1Option(spuList,spuCountList,chartTitle)
     };
     return option;
 }
+
+
+function getChart1aOption(data,chartTitle)
+{
+    var option = {
+        title: {
+            text: chartTitle,
+            x: 'center',
+            y: 'bottom',
+            textStyle: {
+                //文字颜色
+                color: '#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle: 'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight: 'normal',
+                //字体系列
+                fontFamily: 'sans-serif',
+                //字体大小
+                fontSize: 12
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        grid: {left:100,right:45},
+        xAxis: {
+            name: '人数',
+            type: 'value'
+        },
+        yAxis: {
+            name: '类型',
+            type: 'category',
+            data: spuList
+        },
+        series: [
+            {
+                type: 'bar',
+                data: spuCountList
+            }
+        ]
+    };
+    return option;
+}
+
+
+
+function getChart1bOption(data,chartTitle)
+{
+    var option = {
+        title: {
+            text: chartTitle,
+            x: 'center',
+            y: 'bottom',
+            textStyle: {
+                //文字颜色
+                color: '#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle: 'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight: 'normal',
+                //字体系列
+                fontFamily: 'sans-serif',
+                //字体大小
+                fontSize: 12
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        grid: {left:100,right:45},
+        xAxis: {
+            name: '人数',
+            type: 'value'
+        },
+        yAxis: {
+            name: '类型',
+            type: 'category',
+            data: spuList
+        },
+        series: [
+            {
+                type: 'bar',
+                data: spuCountList
+            }
+        ]
+    };
+    return option;
+}
+
 
 
 function getChart2Option(prodList,prodCountList,chartTitle)

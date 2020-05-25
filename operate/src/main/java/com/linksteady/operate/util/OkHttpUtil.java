@@ -1,8 +1,11 @@
 package com.linksteady.operate.util;
 
+import com.alibaba.fastjson.JSON;
 import lombok.SneakyThrows;
 import okhttp3.*;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class OkHttpUtil {
@@ -58,6 +61,30 @@ public class OkHttpUtil {
         Response response = call.execute();
         ResponseBody responseBody = response.body();
         return responseBody.string();
+    }
+
+    /**
+     * 调用一次post请求
+     * @param url
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    public static String postRequestByJson(String url, String param){
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Content-Type", "application/json; charset=utf-8")
+                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), param))
+                .build();
+        Call call = okHttpClient.newCall(request);
+        try {
+            Response response = call.execute();
+            ResponseBody responseBody = response.body();
+            return responseBody.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

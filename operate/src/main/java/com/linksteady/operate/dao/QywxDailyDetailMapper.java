@@ -91,4 +91,7 @@ public interface QywxDailyDetailMapper {
                                             @Param("qywxUserId") String qywxUserId);
 
     List<QywxUserVO> getQywxUserList(Long headId);
+
+
+    List<Map<String,String>> getTestPushData();
 }

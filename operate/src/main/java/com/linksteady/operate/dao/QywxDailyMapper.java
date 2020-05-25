@@ -32,6 +32,19 @@ public interface QywxDailyMapper {
     QywxDailyHeader getHeadInfo(long HeadId);
 
     /**
+     * 按成长类型统计人数
+     * @param headId
+     */
+    List<QywxUserStats> getTargetInfoByGrowthType(Long headId);
+
+    /**
+     * 按成长类型[序列]统计人数
+     * @param headId
+     */
+    List<QywxUserStats> getTargetInfoByGrowthSeriesType(Long headId);
+
+
+    /**
      * 按品类统计推荐人数
      * @param headId
      */

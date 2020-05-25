@@ -170,6 +170,12 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
         return qywxDailyDetailMapper.getQywxUserList(headId);
     }
 
+    @Override
+    public List<Map<String,String>> getTestPushData() {
+        List<Map<String,String>> pushResult=qywxDailyDetailMapper.getTestPushData();
+        return pushResult;
+    }
+
     /**
      * 对配在组上的优惠券按照GROUP_ID进行分组
      * @param groupCouponInfo

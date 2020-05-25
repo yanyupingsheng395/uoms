@@ -64,9 +64,6 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     public Map<String, Object> getTaskOverViewData(Long headId) {
         Map<String,Object> result=Maps.newHashMap();
 
-        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
-        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
-
         //获取按商品、spu的统计数据
         List<QywxUserStats> statsBySpu=qywxDailyMapper.getTargetInfoBySpu(headId);
 
@@ -95,6 +92,16 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         //按个性化补贴的分布
         List<QywxUserStats> statsByCoupon=qywxDailyMapper.getTargetInfoByCoupon(headId);
 
+        //按用户成长目标的分布
+        List<QywxUserStats> statsByGrowthType=qywxDailyMapper.getTargetInfoByGrowthType(headId);
+        List<String> growthTypeLabelList=statsByGrowthType.stream().map(QywxUserStats::getGrowthType).collect(Collectors.toList());
+        List<Integer> growthTypeCountList=statsByGrowthType.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
+
+        //按用户成长目标【序列】的分布
+        List<QywxUserStats> statsByGrowthTypeSeries=qywxDailyMapper.getTargetInfoByGrowthSeriesType(headId);
+        List<String> growthSeriesTypeLabelList=statsByGrowthTypeSeries.stream().map(QywxUserStats::getGrowthType).collect(Collectors.toList());
+        List<Integer> growthSeriesTypeCountList=statsByGrowthTypeSeries.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
+
         QywxDailyHeader qywxDailyHeader=qywxDailyMapper.getHeadInfo(headId);
 
         result.put("spuList",spuList);
@@ -111,6 +118,12 @@ public class QywxDailyServiceImpl implements QywxDailyService {
 
         result.put("qywxUserList",qywxUserList);
         result.put("qywxCountList",qywxCountList);
+
+        result.put("growthTypeLabelList",growthTypeLabelList);
+        result.put("growthTypeCountList",growthTypeCountList);
+
+        result.put("growthSeriesTypeLabelList",growthSeriesTypeLabelList);
+        result.put("growthSeriesTypeCountList",growthSeriesTypeCountList);
 
         result.put("statsByCoupon",statsByCoupon);
 
@@ -147,7 +160,6 @@ public class QywxDailyServiceImpl implements QywxDailyService {
      */
     @Override
     public Map<String, Object> getMatrixData(Long headId, String userValue) {
-
         Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
         Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
 

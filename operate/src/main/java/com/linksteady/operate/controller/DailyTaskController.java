@@ -103,7 +103,7 @@ public class DailyTaskController {
     }
 
     /**
-     * 获取用户的文案
+     * 获取用户的文案列表(预览推送第二步)
      *
      * @return
      */
@@ -425,20 +425,8 @@ public class DailyTaskController {
         return ResponseBo.okWithData(null, result);
     }
 
-    @GetMapping("/getDefaultGroup")
-    public ResponseBo getDefaultGroup() {
-        return ResponseBo.okWithData(null, configService.getValueByName("op.daily.pathactive.list"));
-    }
-
-    @GetMapping("/setDefaultGroup")
-    public ResponseBo setDefaultGroup(@RequestParam("active") String active) {
-        //设置默认活跃度 第一个参数为key 第二个参数为value
-        configService.updateConfig("op.daily.pathactive.list", active);
-        return ResponseBo.ok();
-    }
-
     @GetMapping("/getTouchDt")
     public ResponseBo getTouchDt(@RequestParam("headId") String headId) {
-        return ResponseBo.okWithData(null, dailyService.getTouchDt(headId));
+        return ResponseBo.okWithData(null, dailyService.getDailyHeadById(headId).getTouchDtStr());
     }
 }

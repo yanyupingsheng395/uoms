@@ -370,11 +370,6 @@ public class DailyServiceImpl implements DailyService {
     }
 
     @Override
-    public String getTouchDt(String headId) {
-        return dailyMapper.getDailyHeadById(headId).getTouchDtStr();
-    }
-
-    @Override
     public void expireDailyHead() {
         dailyMapper.expireDailyHead();
     }

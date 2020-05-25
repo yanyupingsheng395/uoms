@@ -32,6 +32,8 @@
         <result property="qywxUser" jdbcType="VARCHAR" column="qywx_user_name"></result>
         <result property="couponDeno" jdbcType="DECIMAL" column="coupon_deno"></result>
         <result property="couponMin" jdbcType="DECIMAL" column="coupon_min"></result>
+        <result property="growthType" jdbcType="VARCHAR" column="growth_type"></result>
+        <result property="growthSeriesType" jdbcType="VARCHAR" column="growth_series_type"></result>
     </resultMap>
 
     <select id="getHeadList" resultMap="baseResult">
@@ -57,6 +59,28 @@
     <select id="getHeadInfo" resultMap="baseResult">
         SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,EFFECT_DAYS,VERSION
         FROM uo_qywx_daily_header t where HEAD_ID=#{headId}
+    </select>
+
+    <select id="getTargetInfoByGrowthType" resultMap="QywxUserStats">
+        SELECT
+            v2.VALUE growth_type,
+            ucnt
+        FROM
+            ( SELECT growth_type, COUNT ( * ) ucnt FROM uo_qywx_daily_detail WHERE head_id = #{headId} GROUP BY growth_type ) v1
+            RIGHT JOIN ( SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'GROWTH_TYPE' ) v2 ON v2.code = v1.growth_type
+        ORDER BY
+            v2.order_no desc
+    </select>
+
+    <select id="getTargetInfoByGrowthSeriesType" resultMap="QywxUserStats">
+          SELECT
+            v2.VALUE growth_series_type,
+            ucnt
+        FROM
+            ( SELECT growth_series_type, COUNT ( * ) ucnt FROM uo_qywx_daily_detail WHERE head_id =#{headId}  GROUP BY growth_series_type ) v1
+            RIGHT JOIN ( SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'GROWTH_SERIES_TYPE' ) v2 ON v2.code = v1.growth_series_type
+        ORDER BY
+            v2.order_no desc
     </select>
 
     <select id="getTargetInfoBySpu" resultMap="QywxUserStats">
