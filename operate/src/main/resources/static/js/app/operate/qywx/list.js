@@ -207,7 +207,7 @@ function initUserTargetChart(data) {
     chart1a.setOption( optionChart1a );
 
     chart1b = echarts.init(document.getElementById("chart1b"), 'macarons');
-    let optionChart1b = getChart1Option(data,"成长目标的类型分布(2)");
+    let optionChart1b = getChart1bOption(data,"成长目标的类型分布(2)");
     chart1b.setOption( optionChart1b );
 
     chart2 = echarts.init(document.getElementById("chart2"), 'macarons');
@@ -384,12 +384,12 @@ function getChart1aOption(data,chartTitle)
         yAxis: {
             name: '类型',
             type: 'category',
-            data: spuList
+            data: data.growthTypeLabelList
         },
         series: [
             {
                 type: 'bar',
-                data: spuCountList
+                data: data.growthTypeCountList
             }
         ]
     };
@@ -432,12 +432,12 @@ function getChart1bOption(data,chartTitle)
         yAxis: {
             name: '类型',
             type: 'category',
-            data: spuList
+            data: data.growthSeriesTypeLabelList
         },
         series: [
             {
                 type: 'bar',
-                data: spuCountList
+                data: data.growthSeriesTypeCountList
             }
         ]
     };
@@ -624,6 +624,8 @@ $("#viewPush_modal").on("shown.bs.modal", function () {
     init();
 
     chart1.resize();
+    chart1a.resize();
+    chart1b.resize();
     chart2.resize();
     chart3.resize();
     chart4.resize();

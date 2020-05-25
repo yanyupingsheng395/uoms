@@ -99,7 +99,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
 
         //按用户成长目标【序列】的分布
         List<QywxUserStats> statsByGrowthTypeSeries=qywxDailyMapper.getTargetInfoByGrowthSeriesType(headId);
-        List<String> growthSeriesTypeLabelList=statsByGrowthTypeSeries.stream().map(QywxUserStats::getGrowthType).collect(Collectors.toList());
+        List<String> growthSeriesTypeLabelList=statsByGrowthTypeSeries.stream().map(QywxUserStats::getGrowthSeriesType).collect(Collectors.toList());
         List<Integer> growthSeriesTypeCountList=statsByGrowthTypeSeries.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
 
         QywxDailyHeader qywxDailyHeader=qywxDailyMapper.getHeadInfo(headId);
