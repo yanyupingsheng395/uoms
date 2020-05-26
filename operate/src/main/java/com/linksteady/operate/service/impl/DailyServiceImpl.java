@@ -1,8 +1,9 @@
 package com.linksteady.operate.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.dao.DailyMapper;
@@ -10,6 +11,7 @@ import com.linksteady.operate.domain.*;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.vo.DailyPersonalVo;
+import com.linksteady.operate.vo.DailyUserStats;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -57,12 +59,12 @@ public class DailyServiceImpl implements DailyService {
     }
 
     @Override
-    public DailyHead getDailyHeadById(String headId) {
+    public DailyHead getDailyHeadById(Long headId) {
         return dailyMapper.getDailyHeadById(headId);
     }
 
     @Override
-    public DailyHead getEffectById(String id) {
+    public DailyHead getEffectById(Long id) {
         return dailyMapper.getEffectById(id);
     }
 
@@ -73,7 +75,7 @@ public class DailyServiceImpl implements DailyService {
      * @return
      */
     @Override
-    public Map<String, Object> getPushData(String headId) {
+    public Map<String, Object> getPushData(Long headId) {
         Map<String, Object> result = Maps.newHashMap();
         String dateFormat = "yyyyMMdd";
         List<LocalDate> xdatas = Lists.newLinkedList();
@@ -186,20 +188,6 @@ public class DailyServiceImpl implements DailyService {
         redisTemplate.delete("daily_trans_lock");
     }
 
-    @Override
-    public List<DailyUserStats> getUserStats(String headerId) {
-        return dailyMapper.getUserStats(headerId);
-    }
-
-    @Override
-    public List<DailyUserStats> getUserStatsBySpu(String headerId, String userValue, String pathActive, String lifecycle) {
-        return dailyMapper.getUserStatsBySpu(headerId, userValue, pathActive, lifecycle);
-    }
-
-    @Override
-    public List<DailyUserStats> getUserStatsByProd(String headerId, String userValue, String pathActive, String lifecycle, String spuName) {
-        return dailyMapper.getUserStatsByProd(headerId, userValue, pathActive, lifecycle, spuName);
-    }
 
     @Override
     public Map<String, Object> getSelectedUserGroup(String groupId) {
@@ -222,111 +210,145 @@ public class DailyServiceImpl implements DailyService {
         dailyMapper.updateSmsCodeNull(smsCode);
     }
 
+    /**
+     * 获取推送预览的数据
+     * @param headId
+     * @return
+     */
     @Override
-    public Map<String, Object> getUserStatsData(String headId) {
+    public Map<String, Object> getUserStatsData(Long headId) {
         Map<String, Object> result = Maps.newHashMap();
-        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
-        Map<String, String> userValueMap =configService.selectDictByTypeCode("USER_VALUE");
-        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
-        //获取人群分布
-        List<DailyUserStats> dailyUserStats = getUserStats(headId);
-        //设置标签的显示值
-        dailyUserStats.stream().forEach(p -> {
-            p.setUserValueLabel(userValueMap.get(p.getUserValue()));
-            p.setGetPathActivityLabel(pathActiveMap.get(p.getPathActivity()));
-            p.setLifecycleLabel(lifeCycleMap.get(p.getLifecycle()));
-        });
 
-        JSONArray fparray = new JSONArray();
-        JSONArray rparray = new JSONArray();
-        JSONArray fpTemp = null;
-        for (DailyUserStats d1 : dailyUserStats) {
-            fpTemp = new JSONArray();
-            /**
-             * x轴的数据 人数
-             */
-            fpTemp.add(d1.getUcnt());
-            /**
-             * y轴 用户活跃度
-             */
-            fpTemp.add(d1.getGetPathActivityLabel());
+        //获取按商品、spu的统计数据
+        List<DailyUserStats> statsBySpu=dailyMapper.getTargetInfoBySpu(headId);
 
-            //价值的大小
-            int formatSize = 0;
-            if ("ULC_01".equals(d1.getUserValue())) {
-                formatSize = 80;
-            } else if ("ULC_02".equals(d1.getUserValue())) {
-                formatSize = 60;
-            } else if ("ULC_03".equals(d1.getUserValue())) {
-                formatSize = 40;
-            } else if ("ULC_04".equals(d1.getUserValue())) {
-                formatSize = 20;
-            }
-            fpTemp.add(formatSize);
-            fpTemp.add(d1.getLifecycleLabel());
-            fpTemp.add("人数:" + d1.getUcnt() + ",占比:" + d1.getPct() + "%");
-            fpTemp.add(d1.getUserValue());
-            fpTemp.add(d1.getPathActivity());
-            fpTemp.add(d1.getLifecycle());
+        List<String> spuList=statsBySpu.stream().map(DailyUserStats::getSpuName).collect(Collectors.toList());
+        List<Integer> spuCountList=statsBySpu.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
 
-            if ("1".equals(d1.getLifecycle())) {
-                fparray.add(fpTemp);
-            } else {
-                rparray.add(fpTemp);
-            }
-        }
-        //首购用户数据
-        result.put("fpUser", fparray);
-        //复购用户数据
-        result.put("rpUser", rparray);
+        //获取最后一个SPU下的商品信息
+        List<DailyUserStats> statsByProd=dailyMapper.getTargetInfoByProd(headId,spuList.get(spuList.size()-1));
 
-        List<String> yLabelList = Lists.newArrayList();
-        Set<String> activeSet = dailyUserStats.stream().map(DailyUserStats::getPathActivity).collect(Collectors.toSet());
-        for (Map.Entry<String, String> entry : pathActiveMap.entrySet()) {
-            if (activeSet.contains(entry.getKey())) {
-                yLabelList.add(entry.getValue());
-            }
-        }
-        result.put("ylabel", yLabelList);
+        List<String> prodList=statsByProd.stream().map(DailyUserStats::getProdName).collect(Collectors.toList());
+        List<Integer> prodCountList=statsByProd.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
 
-        //获取排名第一的群组 获取其类目信息
-        DailyUserStats dailyUserStats1 = dailyUserStats.size() > 0 ? dailyUserStats.get(0): null;
-        if (null != dailyUserStats1) {
-            //获取用户在SPU上top 10
-            List<DailyUserStats> spuList = getUserStatsBySpu(headId, dailyUserStats1.getUserValue(), dailyUserStats1.getPathActivity(), dailyUserStats1.getLifecycle());
-            result.put("spuList", spuList);
-            result.put("groupName", dailyUserStats1.getUserValueLabel() + "-" + dailyUserStats1.getGetPathActivityLabel() + "-" + dailyUserStats1.getLifecycleLabel() + "群组");
-            result.put("userValue", dailyUserStats1.getUserValue());
-            result.put("pathActive", dailyUserStats1.getPathActivity());
-            result.put("lifecycle", dailyUserStats1.getLifecycle());
+        //按价值的用户分布
+        List<DailyUserStats> statsByUserValue=dailyMapper.getTargetInfoByUserValue(headId);
+        List<String> userValueList=statsByUserValue.stream().map(DailyUserStats::getUserValue).collect(Collectors.toList());
+        List<String> userValueLabelList=statsByUserValue.stream().map(DailyUserStats::getUserValueLabel).collect(Collectors.toList());
+        List<Integer> userValueCountList=statsByUserValue.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
 
-            DailyUserStats dailyUserStats2 = spuList.get(0);
-            //获取top10 推荐商品
-            if (null != dailyUserStats2) {
-                List<DailyUserStats> prodList = getUserStatsByProd(headId, dailyUserStats1.getUserValue(), dailyUserStats1.getPathActivity(), dailyUserStats1.getLifecycle(), dailyUserStats2.getSpuName());
-                result.put("prodList", prodList);
-                result.put("prodGroupName", dailyUserStats1.getUserValueLabel() + "-" + dailyUserStats1.getGetPathActivityLabel() + "-" + dailyUserStats1.getLifecycleLabel() + "群组," + dailyUserStats2.getSpuName() + "类目");
-                result.put("spuName", dailyUserStats2.getSpuName());
-            } else {
-                result.put("prodList", Lists.newArrayList());
-                result.put("prodGroupName", "");
-                result.put("spuName", "");
-            }
+        Map<String,Object> matrixResult=getMatrixData(headId,statsByUserValue.get(statsByUserValue.size()-1).getUserValue());
 
-        } else {
-            result.put("spuList", Lists.newArrayList());
-            result.put("groupName", "");
-            result.put("userValue", "");
-            result.put("pathActive", "");
-            result.put("lifecycle", "");
-        }
+        //按个性化补贴的分布
+        List<DailyUserStats> statsByCoupon=dailyMapper.getTargetInfoByCoupon(headId);
 
-        //获取当前运营头表
-        DailyHead dailyHead = getDailyHeadById(headId);
-        result.put("touchDt", new SimpleDateFormat("yyyy年MM月dd日").format(dailyHead.getTouchDt()));
-        result.put("userNum", dailyHead.getTotalNum());
+        //按用户成长目标的分布
+        List<DailyUserStats> statsByGrowthType=dailyMapper.getTargetInfoByGrowthType(headId);
+        List<String> growthTypeLabelList=statsByGrowthType.stream().map(DailyUserStats::getGrowthType).collect(Collectors.toList());
+        List<Integer> growthTypeCountList=statsByGrowthType.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
+
+        //按用户成长目标【序列】的分布
+        List<DailyUserStats> statsByGrowthTypeSeries=dailyMapper.getTargetInfoByGrowthSeriesType(headId);
+        List<String> growthSeriesTypeLabelList=statsByGrowthTypeSeries.stream().map(DailyUserStats::getGrowthSeriesType).collect(Collectors.toList());
+        List<Integer> growthSeriesTypeCountList=statsByGrowthTypeSeries.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
+
+        DailyHead dailyHead=dailyMapper.getDailyHeadById(headId);
+
+        result.put("spuList",spuList);
+        result.put("spuCountList",spuCountList);
+
+        result.put("prodList",prodList);
+        result.put("prodCountList",prodCountList);
+
+        result.put("userValueList",userValueList);
+        result.put("userValueLabelList",userValueLabelList);
+        result.put("userValueCountList",userValueCountList);
+
+        result.put("matrixResult",matrixResult);
+
+
+        result.put("growthTypeLabelList",growthTypeLabelList);
+        result.put("growthTypeCountList",growthTypeCountList);
+
+        result.put("growthSeriesTypeLabelList",growthSeriesTypeLabelList);
+        result.put("growthSeriesTypeCountList",growthSeriesTypeCountList);
+
+        result.put("statsByCoupon",statsByCoupon);
+
+        result.put("touchDt",new SimpleDateFormat("yyyy年MM月dd日").format(dailyHead.getTouchDt()));
+        result.put("userNum",dailyHead.getTotalNum());
+
         return result;
     }
+
+    /**
+     * 获取给定SPU下的商品分布数据
+     * @param headId
+     * @param spuName
+     * @return
+     */
+    @Override
+    public Map<String, Object> getProdCountBySpu(Long headId, String spuName) {
+        Map<String,Object> result=Maps.newHashMap();
+        List<DailyUserStats> statsByProd=dailyMapper.getTargetInfoByProd(headId,spuName);
+
+        List<String> prodList=statsByProd.stream().map(DailyUserStats::getProdName).collect(Collectors.toList());
+        List<Integer> prodCountList=statsByProd.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
+
+        result.put("prodList",prodList);
+        result.put("prodCountList",prodCountList);
+
+        return result;
+    }
+
+    /**
+     * 根据给定 用户价值 获取 活跃度和生命周期的交叉表格数据
+     * @param headId
+     * @param userValue
+     * @return
+     */
+    @Override
+    public Map<String, Object> getMatrixData(Long headId, String userValue) {
+        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
+        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
+
+        //给定价值下 在生命周期和活跃度上的分布表格
+        List<DailyUserStats> statsMatrix=dailyMapper.getTargetInfoMatrix(headId,userValue);
+        //转化成table 方便同时通过活跃度和生命周期进行查找
+        Table<String,String,Integer> tables= HashBasedTable.create();
+        statsMatrix.forEach(i->{
+            tables.put(i.getPathActivity(),i.getLifecycle(),i.getUcnt());
+        });
+
+        Map<String,Object> matrixResult=Maps.newHashMap();
+        matrixResult.put("columnTitle",lifeCycleMap.values().toArray());
+        List<List<String>> rows=Lists.newArrayList();
+
+        List<String> row=null;
+        //遍历活跃度
+        for (Map.Entry<String, String> pathActive : pathActiveMap.entrySet()) {
+            row=Lists.newArrayList();
+            row.add(pathActive.getValue());
+
+            //对每一个活跃度遍历 生命周期
+            for (Map.Entry<String, String> lifeCycle : lifeCycleMap.entrySet()) {
+                //判断是否存在对应的值
+                if(tables.contains(pathActive.getKey(),lifeCycle.getKey()))
+                {
+                    row.add(String.valueOf(tables.get(pathActive.getKey(),lifeCycle.getKey())));
+                }else
+                {
+                    row.add("0");
+                }
+
+            }
+            rows.add(row);
+        }
+        matrixResult.put("rows",rows);
+
+        return matrixResult;
+    }
+
 
     /**
      * 对每日运营进行推送
@@ -337,7 +359,6 @@ public class DailyServiceImpl implements DailyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void pushContent(DailyHead dailyHead, String pushMethod, String pushPeriod,Long effectDays) throws Exception{
-
         //更新状态为已执行
         int count=dailyMapper.updateStatus(dailyHead.getHeadId(), "done",dailyHead.getVersion());
 

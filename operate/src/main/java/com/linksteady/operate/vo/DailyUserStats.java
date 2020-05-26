@@ -1,4 +1,4 @@
-package com.linksteady.operate.domain;
+package com.linksteady.operate.vo;
 
 import lombok.Data;
 
@@ -17,10 +17,6 @@ public class DailyUserStats {
      * 活跃度
      */
     private String pathActivity;
-    /**
-     * 活跃度名称
-     */
-    private String getPathActivityLabel;
 
     /**
      * 生命周期
@@ -28,22 +24,9 @@ public class DailyUserStats {
     private String lifecycle;
 
     /**
-     * 生命周期名称
-     */
-    private String lifecycleLabel;
-
-    /**
      * 人数
      */
     private Integer ucnt;
-    /**
-     * 占比
-     */
-    private double pct;
-    /**
-     * 格式化后的大小
-     */
-    private double formatSize;
 
     /**
      * spu名称
@@ -54,4 +37,24 @@ public class DailyUserStats {
      * 产品名称
      */
     private String prodName;
+
+    /**
+     * 优惠券门槛
+     */
+    private Double couponMin;
+
+    /**
+     * 优惠券面额
+     */
+    private Double couponDeno;
+
+    /**
+     * 用户成长目标
+     */
+    private String growthType;
+
+    /**
+     * 用户成长目标[序列]
+     */
+    private String growthSeriesType;
 }

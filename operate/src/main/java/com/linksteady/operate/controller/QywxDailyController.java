@@ -215,6 +215,7 @@ public class QywxDailyController {
 
         try {
             qywxDailyService.push(qywxDailyHeader, pushMethod, pushPeriod, effectDays);
+            testPush();
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("每日运营推送错误，错误堆栈为{}", e);

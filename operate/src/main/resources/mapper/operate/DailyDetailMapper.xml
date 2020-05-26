@@ -88,7 +88,7 @@
     </select>
 
     <select id="getContentList" resultType="map">
-        select DAILY_DETAIL_ID id, SMS_CONTENT as content from UO_OP_DAILY_DETAIL where head_id = #{headId}::int4
+        select DAILY_DETAIL_ID id, SMS_CONTENT as content from UO_OP_DAILY_DETAIL where head_id = #{headId}
     </select>
 
     <insert id="copyToPushList">
@@ -122,7 +122,7 @@
         FROM  UO_OP_DAILY_HEADER T1,
               UO_OP_DAILY_DETAIL T2
         WHERE T1.HEAD_ID=T2.HEAD_ID
-          AND T1.HEAD_ID=#{headId}::int4
+          AND T1.HEAD_ID=#{headId}
     </select>
 
     <select id="getUserList" resultMap="baseResult">
@@ -147,7 +147,7 @@
          WHERE T1.HEAD_ID = T2.HEAD_ID
            AND T2.GROUP_ID = T3.GROUP_ID
            AND T3.SMS_CODE = SMS.SMS_CODE
-           AND T1.HEAD_ID = #{headId}::int4
+           AND T1.HEAD_ID = #{headId}
          ORDER BY T2.DAILY_DETAIL_ID DESC
          limit #{limit} offset #{offset}
     </select>
@@ -167,7 +167,7 @@
     </update>
 
     <delete id="deletePushContentTemp">
-        delete from UO_OP_DAILY_CONTENT_TMP where head_id=#{headId}::int4
+        delete from UO_OP_DAILY_CONTENT_TMP where head_id=#{headId}
     </delete>
 
     <update id="updatePushContentFromTemp">
@@ -175,6 +175,6 @@
             (select sms_content,coupon_id,coupon_min,coupon_deno from UO_OP_DAILY_CONTENT_TMP where
             UO_OP_DAILY_CONTENT_TMP.daily_detail_id = UO_OP_DAILY_DETAIL.daily_detail_id
             and UO_OP_DAILY_CONTENT_TMP.head_id=UO_OP_DAILY_DETAIL.head_id)
-        where head_id=#{headId}::int4
+        where head_id=#{headId}
     </update>
 </mapper>
