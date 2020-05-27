@@ -83,4 +83,14 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
     void deleteLaseAisnpData();
 
     void insertNewData();
+
+    int getValidCoupon();
+
+    void updateDiscountLevel();
+
+    void deleteAllCouponGroupData();
+
+    void resetCouponGroupData();
+
+    List<CouponInfo> getCouponListByGroup(String userValue, String lifeCycle, String pathActive, String tarType);
 }

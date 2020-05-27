@@ -387,3 +387,29 @@ $("#btn_delete_coupon").click(function () {
         });
     });
 });
+
+function saveIntelCoupon() {
+    $MB.confirm({
+        title: '提示：',
+        content: '确定执行当前操作？'
+    }, function () {
+        var selected = $("#intelCouponTable").bootstrapTable( 'getSelections' );
+        var coupon = [];
+        selected.forEach((v,k)=>{
+            if(v['couponId'] === 1) {
+                var tmp = {};
+                tmp.couponDenom = v['couponDenom'];
+                tmp.couponThreshold = v['couponThreshold'];
+                coupon.push(tmp);
+            }
+        });
+        $.get("/coupon/getCalculatedCoupon", {coupon: JSON.stringify(coupon)}, function (r) {
+            if(r.code === 200) {
+                $MB.n_success("智能补贴更新成功。");
+                $( "#intel_coupon_modal" ).modal( 'hide' );
+                $( "#coupon_modal" ).modal( 'show' );
+                couponTable($("#currentGroupId").val());
+            }
+        });
+    });
+}

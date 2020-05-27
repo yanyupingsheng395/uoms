@@ -36,6 +36,8 @@ public class DailyGroupTemplate {
 
     private String pathActive;
 
+    private String pathActiveType;
+
     private String lifecycle;
 
     private String checkFlag;
@@ -43,4 +45,10 @@ public class DailyGroupTemplate {
     private String checkComments;
 
     private String groupInfo;
+
+    private String tarType;
+
+    private String wxpubId;
+
+    private String qywxId;
 }

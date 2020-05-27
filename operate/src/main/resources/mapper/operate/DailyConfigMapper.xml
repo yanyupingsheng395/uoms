@@ -31,4 +31,23 @@
             #{item}::int4
         </foreach>
     </update>
+
+    <update id="updateWxMsgId">
+        update uo_op_daily_template_config t1
+        set qywx_id = #{qywxId}::integer
+        where group_id in (
+            select t1.group_id
+            from uo_op_daily_template_config t1,
+                 uo_op_daily_template_config t2
+            where t1.user_value = t2.user_value
+              and t1.lifecycle = t2.lifecycle
+              and t1.path_active = t2.path_active and t2.group_id = #{groupId}::integer)
+    </update>
+
+    <select id="findMsgInfo" resultType="map">
+        select uost.sms_content duanxin, uqmt.text_content weixin from uo_op_daily_template_config t1
+            left join uo_op_sms_template uost on t1.sms_code = uost.sms_code
+            left join uo_qywx_msg_template uqmt on t1.qywx_id = uqmt.qywx_id
+        where t1.user_value = #{userValue} and t1.lifecycle = #{lifeCycle} and t1.path_active = #{pathActive} and t1.tar_type = #{tarType}
+    </select>
 </mapper>

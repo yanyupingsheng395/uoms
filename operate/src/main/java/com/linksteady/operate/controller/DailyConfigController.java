@@ -73,4 +73,33 @@ public class DailyConfigController {
         dailyConfigService.deleteSmsGroup(groupId);
         return ResponseBo.ok();
     }
+
+    @GetMapping("/updateWxMsgId")
+    public ResponseBo updateWxMsgId(@RequestParam("groupId") String groupId, @RequestParam("qywxId") String qywxId) {
+        dailyConfigService.updateWxMsgId(groupId, qywxId);
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 根据选定的组获取短信和微信内容 短信优惠券和微信优惠券
+     * @param userValue
+     * @param lifeCycle
+     * @param pathActive
+     * @param tarType
+     * @return
+     */
+    @GetMapping("/getCurrentGroupData")
+    public ResponseBo getCurrentGroupData(@RequestParam("userValue") String userValue, @RequestParam("lifeCycle") String lifeCycle,
+                                  @RequestParam("pathActive") String pathActive, @RequestParam("tarType") String tarType) {
+        return ResponseBo.okWithData(null, dailyConfigService.getCurrentGroupData(userValue, lifeCycle, pathActive, tarType));
+    }
+
+    /**
+     * 将补贴数据智能的安到每个组
+     * @return
+     */
+    @GetMapping("/resetGroupCoupon")
+    public ResponseBo resetGroupCoupon() {
+        return dailyConfigService.resetGroupCoupon();
+    }
 }

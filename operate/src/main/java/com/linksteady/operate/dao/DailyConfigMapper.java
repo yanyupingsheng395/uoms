@@ -3,6 +3,7 @@ package com.linksteady.operate.dao;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DailyConfigMapper {
 
@@ -23,4 +24,8 @@ public interface DailyConfigMapper {
     int validCheckedUserGroup(@Param("activeList") List<String> activeList);
 
     void deleteSmsGroup(List<String> groupIds);
+
+    void updateWxMsgId(String groupId, String qywxId);
+
+    Map<String, Object> findMsgInfo(String userValue, String lifeCycle, String pathActive, String tarType);
 }

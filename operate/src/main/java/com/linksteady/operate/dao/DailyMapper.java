@@ -27,7 +27,7 @@ public interface DailyMapper {
 
     List<DailyGroupTemplate> getUserGroupList(@Param("activeList") List<String> activeList);
 
-    void setSmsCode(List<String> groupIds, String smsCode);
+    void setSmsCode(String groupId, String smsCode);
 
     int validUserGroup();
 

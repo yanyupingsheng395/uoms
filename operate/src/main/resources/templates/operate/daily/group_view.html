@@ -27,37 +27,37 @@
         <div class="row desc_content uvalue">
             <div class="col-md-12" id="valueBtns" style="width:405px;height:110px;border:dashed 1px #faa64b;padding-top: 3px;padding-bottom: 3px;margin-left: 10px;">
                 <p class="h6" style="border-bottom: #faa64b 1px dashed">用户对类目的价值/沉默成本</p>
-                <button class="btn btn-round btn-sm btn-warning m-t-5" onclick="userGroupButton(this, 'btn-warning')">高价值低敏感</button>&nbsp;<button
-                    class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-warning')">高价值高敏感
-            </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-warning')">中价值高敏感</button>&nbsp;<button
-                    class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-warning')">低价值低敏感
-            </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-warning')">低价值高敏感</button>
+                <button class="btn btn-round btn-sm btn-warning m-t-5" onclick="userGroupButton('userValue', 'ULC_01',this, 'btn-warning')">高价值低敏感</button>&nbsp;<button
+                    class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_02',this, 'btn-warning')">高价值高敏感
+            </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_03',this, 'btn-warning')">中价值高敏感</button>&nbsp;<button
+                    class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_04',this, 'btn-warning')">低价值低敏感
+            </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_05',this, 'btn-warning')">低价值高敏感</button>
             </div>
         </div>
         <div class="row desc_content pactive m-t-10">
             <div class="col-md-12" id="activeBtns" style="width:405px;height:81px;border:dashed 1px #48b0f7;padding-top: 3px;padding-bottom: 3px;margin-left: 10px;">
                 <p class="h6" style="border-bottom: #48b0f7 1px dashed">用户对类目的生命周期阶段</p>
-                <button class="btn btn-round btn-sm btn-info m-t-5" onclick="userGroupButton(this, 'btn-info')">新手期</button>&nbsp;<button
-                    class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-info')">成长期
-            </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-info')">成熟期</button>&nbsp;
-                <button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-info')">衰退期</button>
+                <button class="btn btn-round btn-sm btn-info m-t-5" onclick="userGroupButton('lifeCycle', '1',this, 'btn-info')">新手期</button>&nbsp;<button
+                    class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('lifeCycle', '0',this, 'btn-info')">成长期
+            </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('lifeCycle', '0',this, 'btn-info')">成熟期</button>&nbsp;
+                <button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('lifeCycle', '0',this, 'btn-info')">衰退期</button>
             </div>
         </div>
         <div class="row desc_content ulifecycle m-t-10">
             <div class="col-md-12" id="lifecycleBtns" style="width:405px;height:81px;border:dashed 1px #33cabb;padding-top: 3px;padding-bottom: 3px;margin-left: 10px;">
                 <p class="h6" style="border-bottom: #33cabb 1px dashed">用户下一次转化的活跃度节点</p>
-                <button class="btn btn-round btn-sm btn-primary m-t-5" onclick="userGroupButton(this, 'btn-primary')">促活</button>
-                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-primary')">留存</button>
-                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-primary')">防弱流失</button>
-                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-primary')">防强流失</button>
-                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-primary')">防沉睡</button>
+                <button class="btn btn-round btn-sm btn-primary m-t-5" onclick="userGroupButton('pathActive', 'UAC_01',this, 'btn-primary')">促活</button>
+                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_02',this, 'btn-primary')">留存</button>
+                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_03',this, 'btn-primary')">防弱流失</button>
+                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_04',this, 'btn-primary')">防强流失</button>
+                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_05',this, 'btn-primary')">防沉睡</button>
             </div>
         </div>
         <div class="row desc_content prop m-t-10">
             <div class="col-md-12" id="propBtns" style="width:405px;height:81px;border:dashed 1px #f96868;padding-top: 3px;padding-bottom: 3px;margin-left: 10px;">
                 <p class="h6" style="border-bottom: #f96868 1px dashed">用户成长类目的特性</p>
-                <button class="btn btn-round btn-sm btn-danger m-t-5" onclick="userGroupButton(this, 'btn-danger')">高利润</button>
-                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton(this, 'btn-danger')">低利润</button>
+                <button class="btn btn-round btn-sm btn-danger m-t-5" onclick="userGroupButton('tarType', 'H', this, 'btn-danger')">高利润</button>
+                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('tarType', 'L',this, 'btn-danger')">低利润</button>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
                         <div class="bubble" style="position: relative;margin-top: 140px;width: 233px;">
                             <div class="demo clearfix">
                                 <span class="triangle" style="left: 42px"></span>
-                                <div class="article" id="article1" style="font-size: 12px;">请输入短信内容请输入短信内容请输入短信内容请输入短信内容请输入短信内容</div>
+                                <div class="article" id="duanxinContent" style="font-size: 12px;">请输入短信内容</div>
                             </div>
                         </div>
                     </div>
@@ -92,9 +92,9 @@
                                 <p style="color: #fff;line-height: 50px;">linksteady</p>
                             </div>
                             <div style="height: 300px;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
-                                <div class="send" id="preview" style="padding: 1px;">
+                                <div class="send">
                                     <div class="arrow"></div>
-                                    <img src="/images/gallery/1.jpg" alt="">
+                                    <span id="weixinContent"></span>
                                 </div>
                             </div>
                         </div>

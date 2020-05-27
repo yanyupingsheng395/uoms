@@ -157,10 +157,7 @@ public class DailyServiceImpl implements DailyService {
 
     @Override
     public void setSmsCode(String groupId, String smsCode) {
-        if (StringUtils.isNotEmpty(groupId)) {
-            List<String> groupIds = Arrays.asList(groupId.split(","));
-            dailyMapper.setSmsCode(groupIds, smsCode);
-        }
+        dailyMapper.setSmsCode(groupId, smsCode);
     }
 
     @Override

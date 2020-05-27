@@ -1,5 +1,7 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.common.domain.ResponseBo;
+
 import java.util.Map;
 
 public interface DailyConfigService {
@@ -15,4 +17,10 @@ public interface DailyConfigService {
      * @return
      */
     boolean validUserGroupForQywx();
+
+    void updateWxMsgId(String groupId, String qywxId);
+
+    Map<String, Object> getCurrentGroupData(String userValue, String lifeCycle, String pathActive, String tarType);
+
+    ResponseBo resetGroupCoupon();
 }

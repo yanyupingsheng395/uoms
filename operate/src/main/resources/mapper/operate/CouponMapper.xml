@@ -207,9 +207,9 @@
                  ),
              cy as
                  (
-                     select coupon_denom,coupon_threshold,string_agg(LIFECYLE, ',' order by LIFECYLE) LIFECYLE
+                     select coupon_denom,coupon_threshold,string_agg(LIFECYCLE, ',' order by LIFECYCLE) LIFECYCLE
                      from(
-                             select distinct coupon_denom,coupon_threshold,LIFECYLE from g1
+                             select distinct coupon_denom,coupon_threshold,LIFECYCLE from g1
                          ) v2
                      group by coupon_denom,coupon_threshold
                  ),
@@ -232,7 +232,7 @@
             group_list.coupon_threshold,
             group_list.group_list,
             uv.user_value,
-            cy.LIFECYLE LIFE_CYCLE,
+            cy.LIFECYCLE LIFE_CYCLE,
             pa.path_active
         from group_list,
              uv,
@@ -261,4 +261,64 @@
     <insert id="insertNewData">
         insert into UO_COUPON_AISNP select * from PP_COUPON
     </insert>
+
+    <select id="getValidCoupon" resultType="int">
+        select count(1) from uo_op_coupon where check_flag = '1'
+    </select>
+
+    <update id="updateDiscountLevel">
+        update uo_op_coupon
+        set discount_level = t.discount_level
+        from (with v1 as (select count(1) cnt, coupon_threshold
+                          from uo_op_coupon
+                          where check_flag = '1'
+                          group by coupon_threshold),
+                   v2 as (select coupon_id,
+                                 row_number() over (partition by coupon_threshold order by coupon_denom) rn,
+                                 coupon_threshold,
+                                 coupon_denom
+                          from uo_op_coupon
+                          where check_flag = '1'),
+                   v3 as (
+                       select case
+                                  when v1.cnt = 1 then '1,2,3'
+                                  when v1.cnt = 2 and v2.rn = 2 then '2,3'
+                                  when v1.cnt = 2 and v2.rn = 1 then '1'
+                                  when v1.cnt = 3 and v2.rn = 1 then '1'
+                                  when v1.cnt = 3 and v2.rn = 2 then '2'
+                                  when v1.cnt = 3 and v2.rn = 3 then '3'
+                                  when v1.cnt > 3 and v2.rn = v1.cnt then '3'
+                                  when v1.cnt > 3 and v2.rn = v1.cnt - 1 then '2'
+                                  when v1.cnt > 3 and v2.rn = v1.cnt - 2 then '1'
+                                  else null end discount_level,
+                              coupon_id,
+                              v1.coupon_threshold,
+                              coupon_denom
+                       from v1,
+                            v2
+                       where v1.coupon_threshold = v2.coupon_threshold
+                       group by v1.cnt, v2.rn, v2.coupon_id, v1.coupon_threshold, v2.coupon_denom
+                   )
+              select *
+              from v3) t
+        where t.coupon_id = uo_op_coupon.coupon_id
+    </update>
+
+    <delete id="deleteAllCouponGroupData">
+        delete from uo_op_daily_group_coupon where 1=1
+    </delete>
+
+    <insert id="resetCouponGroupData">
+        insert into uo_op_daily_group_coupon(group_id, coupon_id) select group_id, coupon_id from uo_op_daily_template_config t1, uo_op_coupon t2
+        where t2.discount_level ~ t1.discount_level::varchar
+    </insert>
+
+    <select id="getCouponListByGroup" resultMap="BaseResultMap">
+        select coupon_denom, coupon_threshold
+        from uo_op_daily_template_config uodtc
+                 right join uo_op_daily_group_coupon uodgc
+                            on uodtc.group_id = uodgc.group_id
+                 left join uo_op_coupon uoc on uodgc.coupon_id = uoc.coupon_id
+        where uodtc.user_value = #{userValue} and uodtc.lifecycle = #{lifeCycle} and uodtc.path_active = #{pathActive} and uodtc.tar_type = #{tarType}
+    </select>
 </mapper>

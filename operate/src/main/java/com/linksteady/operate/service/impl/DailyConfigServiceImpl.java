@@ -3,9 +3,13 @@ package com.linksteady.operate.service.impl;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyConfigMapper;
+import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.service.DailyConfigService;
+import com.linksteady.operate.vo.GroupCouponVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class DailyConfigServiceImpl implements DailyConfigService {
@@ -23,6 +29,9 @@ public class DailyConfigServiceImpl implements DailyConfigService {
 
     @Autowired
     private ConfigService configService;
+
+    @Autowired
+    private CouponMapper couponMapper;
 
 
     /**
@@ -36,11 +45,11 @@ public class DailyConfigServiceImpl implements DailyConfigService {
     @Override
     public Map<String, Object> usergroupdesc(String userValue, String pathActive, String lifecycle) {
         //根据活跃度，设置活跃度按钮
-        String activeCode =configService.getValueByName("op.daily.pathactive.list");
+        String activeCode = configService.getValueByName("op.daily.pathactive.list");
 
-        Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
-        Map<String, String> userValueMap =configService.selectDictByTypeCode("USER_VALUE");
-        Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
+        Map<String, String> pathActiveMap = configService.selectDictByTypeCode("PATH_ACTIVE");
+        Map<String, String> userValueMap = configService.selectDictByTypeCode("USER_VALUE");
+        Map<String, String> lifeCycleMap = configService.selectDictByTypeCode("LIFECYCLE");
 
         List<String> activeCodeList = Splitter.on(',').trimResults().omitEmptyStrings().splitToList(activeCode);
 
@@ -111,8 +120,8 @@ public class DailyConfigServiceImpl implements DailyConfigService {
                 activePolicy = "处在沉睡之前唤醒用户可行时机;";
                 break;
             default:
-                activeDesc="";
-                activePolicy="";
+                activeDesc = "";
+                activePolicy = "";
         }
 
         //设置用户价值 业务理解 及 运营策略
@@ -195,14 +204,14 @@ public class DailyConfigServiceImpl implements DailyConfigService {
         whereInfo = " and t1.sms_code is null";
         dailyConfigMapper.updateCheckFlagAndRemark(whereInfo, "尚未为群组配置文案");
 
-        String active =configService.getValueByName("op.daily.pathactive.list");
+        String active = configService.getValueByName("op.daily.pathactive.list");
         int result = 0;
-        if(StringUtils.isNotEmpty(active)) {
+        if (StringUtils.isNotEmpty(active)) {
             List<String> activeList = Arrays.asList(active.split(","));
-            if(activeList.size() > 0) {
+            if (activeList.size() > 0) {
                 result = dailyConfigMapper.validCheckedUserGroup(Arrays.asList(active.split(",")));
             }
-        }else {
+        } else {
             throw new RuntimeException("活跃度数据表配置有误！");
         }
         return result > 0;
@@ -217,5 +226,46 @@ public class DailyConfigServiceImpl implements DailyConfigService {
     public boolean validUserGroupForQywx() {
         //todo 后续待补充
         return false;
+    }
+
+    @Override
+    public void updateWxMsgId(String groupId, String qywxId) {
+        dailyConfigMapper.updateWxMsgId(groupId, qywxId);
+    }
+
+    @Override
+    public Map<String, Object> getCurrentGroupData(String userValue, String lifeCycle, String pathActive, String tarType) {
+        Map<String, Object> data = dailyConfigMapper.findMsgInfo(userValue, lifeCycle, pathActive, tarType);
+        List<CouponInfo> couponInfos = couponMapper.getCouponListByGroup(userValue, lifeCycle, pathActive, tarType);
+        if (data == null) {
+            data = Maps.newHashMap();
+        }
+        data.put("couponList", couponInfos);
+        return data;
+    }
+
+    /**
+     * 先验证有无合法的券，再根据折扣等级给群组安券
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseBo resetGroupCoupon() {
+        Lock lock = new ReentrantLock();
+        try {
+            lock.lock();
+            int count = couponMapper.getValidCoupon();
+            if (count == 0) {
+                return ResponseBo.error("无有效的优惠券，请先配置优惠券。");
+            }
+            // 更新discountLevel字段
+            couponMapper.updateDiscountLevel();
+            // 清空群组和券的关系表
+            couponMapper.deleteAllCouponGroupData();
+            // 根据discountLevel字段匹配到用户分组上
+            couponMapper.resetCouponGroupData();
+        } finally {
+            lock.unlock();
+        }
+        return ResponseBo.ok();
     }
 }

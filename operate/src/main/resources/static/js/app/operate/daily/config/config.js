@@ -1,4 +1,5 @@
 let step;
+let current_group = {userValue: 'ULC_01', lifeCycle: '1', pathActive: 'UAC_01', tarType: 'H'};
 $( function () {
     getTableData();
     step = steps( {
@@ -28,7 +29,7 @@ function getTableData() {
                 },
                 {
                     title: '用户差异',
-                    colspan: 3
+                    colspan: 4
                 },
                 {
                     title: '个性化推送(消息)',
@@ -37,31 +38,34 @@ function getTableData() {
             ], [
                 {
                     title: '购买商品与时间',
-                    field: 'groupInfo',
+                    field: 'timeAndShop',
                     align: 'center',
+                    valign: 'top',
                     formatter: function (value, row, index) {
-                        return "<a style='color: #333;cursor:pointer;' onclick='userInsight(\"" + row['userValue'] + "\",\"" + row['pathActive'] + "\",\"" + row['lifecycle'] + "\")'><i class='mdi mdi-account mdi-14px'></i></a>";
+                        return "<a href='/page/insight' target='_blank' style='color: #48b0f7;text-decoration: underline;'>系统配置</a>";
                     }
                 },
                 {
                     field: 'userValue',
                     title: '用户对类目的价值/沉默成本',
                     align: 'center',
-                    valign: "middle",
                     formatter: function (value, row, index) {
                         var res = "";
                         switch (value) {
                             case "ULC_01":
-                                res = "重要";
+                                res = "高价值低敏感";
                                 break;
                             case "ULC_02":
-                                res = "主要";
+                                res = "高价值高敏感";
                                 break;
                             case "ULC_03":
-                                res = "普通";
+                                res = "中价值高敏感";
                                 break;
                             case "ULC_04":
-                                res = "长尾";
+                                res = "低价值低敏感";
+                                break;
+                            case "ULC_05":
+                                res = "低价值高敏感";
                                 break;
                             default:
                                 res = "-";
@@ -76,10 +80,10 @@ function getTableData() {
                     valign: "middle",
                     formatter: function (value, row, index) {
                         if (value == "1") {
-                            return "新用户";
+                            return "新手期";
                         }
                         if (value == "0") {
-                            return "复购用户";
+                            return "成长期";
                         }
                         return "";
                     }
@@ -111,8 +115,7 @@ function getTableData() {
                         }
                         return res;
                     }
-                },
-                {
+                }, {
                     title: '理解用户群组',
                     align: 'center',
                     formatter: function (value, row, index) {
@@ -122,22 +125,51 @@ function getTableData() {
                 {
                     title: '短信',
                     align: 'center',
+                    field: 'smsCode',
                     formatter: function (value, row, index) {
-                        return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\")'><i class='fa fa-envelope-o'></i></a>";
+                        if(value === null || value === undefined || value === '') {
+                            return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\")'>" +
+                                "<i class='fa fa-envelope-o'></i><span style='color: #f96868'>&nbsp;[未配置]</span>" +
+                                "</a>";
+                        }else {
+                            return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\")'>" +
+                                "<i class='fa fa-envelope-o'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
+                                "</a>";
+                        }
+
                     }
                 },
                 {
                     title: '企业微信',
                     align: 'center',
+                    field: 'qywxId',
                     formatter: function (value, row, index) {
-                        return "<a style='color: #4c4c4c' onclick='openWxMsgModal()'><i style='color: #52c41a' class='fa fa-wechat'></i></a>";
+                        if(value === null || value === undefined || value === '') {
+                            return "<a style='color: #52c41a' onclick='openWxMsgModal(\""+row['groupId']+"\")'>" +
+                                "<i class='mdi mdi-wechat mdi-18px'></i><span style='color:#f96868;'>&nbsp;[未配置]</span>" +
+                                "</a>";
+                        }else {
+                            return "<a style='color: #52c41a' onclick='openWxMsgModal(\""+row['groupId']+"\")'>" +
+                                "<i class='mdi mdi-wechat mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
+                                "</a>";
+                        }
+
                     }
                 },
                 {
                     title: '公众号',
                     align: 'center',
                     formatter: function (value, row, index) {
-                        return "<a style='color: #4c4c4c' onclick='personalMsg()'><i style='color: #409eff' class='fa fa-users'></i></a>";
+                        if(value === null || value === undefined || value === '') {
+                            return "<a style='color: #48b0f7' onclick='personalMsg(\""+row['groupId']+"\")'>" +
+                                "<i class='mdi mdi-pig'></i><span style='color: #f96868'>&nbsp;[未配置]</span>" +
+                                "</a>";
+                        }else {
+                            return "<a style='color: #48b0f7' onclick='personalMsg(\""+row['groupId']+"\")'>" +
+                                "<i class='fa fa-users'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
+                                "</a>";
+                        }
+
                     }
                 }
             ]
@@ -146,14 +178,61 @@ function getTableData() {
     $( "#userGroupTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
     $.get( "/daily/userGroupList", {}, function (r) {
         var dataList = r.data;
+        var total = dataList.length;
+        var limit = total / 10;
         $( "#userGroupTable" ).bootstrapTable( 'load', dataList );
+        $( "a[data-toggle='tooltip']" ).tooltip();
+        // 合并单元格
+        let data = $( '#userGroupTable' ).bootstrapTable( 'getData', true );
+        mergeCells( data, "userValue", 1, $( '#userGroupTable' ) );
+        for (let i = 0; i < 10; i++) {
+            $( "#userGroupTable" ).bootstrapTable( 'mergeCells', {
+                index: i * 3,
+                field: "lifecycle",
+                colspan: 1,
+                rowspan: 3
+            } );
+        }
+        $( "#userGroupTable" ).bootstrapTable( 'mergeCells', {
+            index: 0,
+            field: "timeAndShop",
+            colspan: 1,
+            rowspan: total
+        } );
     } );
+}
+
+
+// 合并单元格
+function mergeCells(data, fieldName, colspan, target) {
+    //声明一个map计算相同属性值在data对象出现的次数和
+    var sortMap = {};
+    for (var i = 0; i < data.length; i++) {
+        for (var prop in data[i]) {
+            if (prop == fieldName) {
+                var key = data[i][prop]
+                if (sortMap.hasOwnProperty(key)) {
+                    sortMap[key] = sortMap[key] * 1 + 1;
+                } else {
+                    sortMap[key] = 1;
+                }
+                break;
+            }
+        }
+    }
+    var index = 0;
+    for (var prop in sortMap) {
+        var count = sortMap[prop] * 1;
+        $(target).bootstrapTable('mergeCells', {index: index, field: fieldName, colspan: colspan, rowspan: count});
+        index += count;
+    }
 }
 
 /**
  * 微信消息窗口
  */
-function openWxMsgModal() {
+function openWxMsgModal(groupId) {
+    $( "#currentGroupId" ).val(groupId);
     getWxMsgTableData();
     $( '#wxMsgListModal' ).modal( 'show' );
 }
@@ -201,25 +280,34 @@ function nextStep(stepNum) {
         $( "#step3" ).attr( "style", "display:none;" );
     }
     if(stepNum === 3) {
-        step.setActive( 2);
-        $( "#step1" ).attr( "style", "display:none;" );
-        $( "#step2" ).attr( "style", "display:none;" );
-        $( "#step3" ).attr( "style", "display:block;" );
+        $.get("/daily/resetGroupCoupon", {}, function (r) {
+            if(r.code === 200) {
+                $MB.n_success("根据您的当前补贴信息，系统已自动配置补贴到用户群组上！");
+                step.setActive( 2);
+                $( "#step1" ).attr( "style", "display:none;" );
+                $( "#step2" ).attr( "style", "display:none;" );
+                $( "#step3" ).attr( "style", "display:block;" );
+            }else {
+                $MB.n_warning(r.msg);
+            }
+        });
     }
 }
 
-smsCouponListTable("smsCouponListTable");
-smsCouponListTable("weixinCouponListTable");
-function smsCouponListTable(tableId) {
+function smsCouponListTable(tableId, data) {
     let settings = {
         pagination: false,
         singleSelect: false,
         columns: [
                 {
-                    title: '门槛',
+                    title: '门槛(元)',
+                    field: 'couponThreshold',
+                    align: 'center'
                 },
                 {
-                    title: '面额',
+                    title: '面额(元)',
+                    field: 'couponDenom',
+                    align: 'center'
                 },
                 {
                     title: '用户特征',
@@ -227,14 +315,43 @@ function smsCouponListTable(tableId) {
             ]
         };
     $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
-    // $.get( "/daily/userGroupList", {}, function (r) {
-    //     var dataList = r.data;
-    //     $( "#smsCouponListTable" ).bootstrapTable( 'load', dataList );
-    // } );
+    $( "#" + tableId ).bootstrapTable( 'load', data );
 }
 
+
 // 用户群组按钮点击
-function userGroupButton(dom, className) {
+function userGroupButton(key, value, dom, className) {
     $(dom).removeClass("btn-secondary").addClass(className);
     $(dom).siblings('button').removeClass(className).addClass("btn-secondary");
+    current_group[key] = value;
+    getCurrentGroupData();
+}
+getCurrentGroupData();
+function getCurrentGroupData() {
+    $.get("/daily/getCurrentGroupData",current_group, function (r) {
+        console.log(r);
+        var data = r.data;
+        $("#duanxinContent").html('').append(((data['duanxin'] === undefined) || (data['duanxin'] === null)) ? '未配置短信文案':data['duanxin']);
+        $("#weixinContent").html('').append(((data['weixin'] === undefined) || (data['weixin'] === null)) ? '未配置企业微信文案' : data['weixin']);
+
+        smsCouponListTable("smsCouponListTable", data['couponList']);
+        smsCouponListTable("weixinCouponListTable", data['couponList']);
+    });
+}
+
+// 更新微信消息到用户群组
+function updateWxMsg() {
+    var selected = $("#msgListDataTable").bootstrapTable('getSelections');
+    if(selected.length === 0) {
+        $MB.n_warning("请选择一条记录！");
+        return;
+    }
+    var qywxId = selected[0]['qywxId'];
+    $.get("/daily/updateWxMsgId", {qywxId: qywxId, groupId: $("#currentGroupId").val()}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("更新成功！");
+            $("#wxMsgListModal").modal('hide');
+            getTableData();
+        }
+    });
 }

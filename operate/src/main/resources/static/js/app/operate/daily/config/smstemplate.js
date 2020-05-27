@@ -85,6 +85,7 @@ function setSmsCode() {
             $MB.n_danger( r.msg );
         }
         $("#smsTemplateModal").modal('hide');
+        getTableData();
     } );
 }
 

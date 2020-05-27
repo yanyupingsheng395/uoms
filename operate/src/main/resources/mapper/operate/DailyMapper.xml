@@ -30,10 +30,14 @@
         <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
         <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
         <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
+        <result column="path_active_type" jdbcType="VARCHAR" property="pathActiveType"></result>
         <result column="LIFECYCLE" jdbcType="VARCHAR" property="lifecycle"></result>
         <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"></result>
         <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"></result>
         <result column="GROUP_INFO" jdbcType="VARCHAR" property="groupInfo"></result>
+        <result column="tar_type" jdbcType="VARCHAR" property="tarType"></result>
+        <result column="wxpub_id" jdbcType="VARCHAR" property="wxpubId"></result>
+        <result column="qywx_id" jdbcType="VARCHAR" property="qywxId"></result>
     </resultMap>
 
     <resultMap id="statisResult" type="com.linksteady.operate.domain.DailyStatis">
@@ -76,7 +80,8 @@
     </resultMap>
 
     <select id="getPageList" resultMap="baseResult">
-        SELECT HEAD_ID, to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,EFFECT_DAYS
+        SELECT HEAD_ID, to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE,
+        CONVERT_AMOUNT, STATUS,EFFECT_DAYS
         FROM UO_OP_DAILY_HEADER t
         <where>
             <if test="touchDt != null and touchDt != ''">
@@ -110,67 +115,70 @@
     </select>
 
     <update id="updateStatus">
-        update UO_OP_DAILY_HEADER set status = #{status},version=version+1
-        where head_id = #{headId} and version=#{version}
+        update UO_OP_DAILY_HEADER
+        set status = #{status},
+            version=version + 1
+        where head_id = #{headId}
+          and version = #{version}
     </update>
 
     <update id="updateActualNum">
-        update UO_OP_DAILY_HEADER set OPT_NUM = #{num} where head_id = #{headId}
+        update UO_OP_DAILY_HEADER
+        set OPT_NUM = #{num}
+        where head_id = #{headId}
     </update>
 
     <select id="getDailyHeadById" resultMap="baseResult">
-        SELECT HEAD_ID, TOUCH_DT,to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,VERSION,EFFECT_DAYS
-         FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}::int4
+        SELECT HEAD_ID,
+               TOUCH_DT,
+               to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR,
+               TOTAL_NUM,
+               SUCCESS_NUM,
+               CONVERT_NUM,
+               CONVERT_RATE,
+               CONVERT_AMOUNT,
+               STATUS,
+               VERSION,
+               EFFECT_DAYS
+        FROM UO_OP_DAILY_HEADER
+        WHERE HEAD_ID = #{headId}::int4
     </select>
 
     <select id="getUserGroupList" resultMap="templateResult">
-        select * from (
-            select t1.group_id, group_name, t1.is_coupon, t1.sms_code, t2.sms_content,t1.user_value,
-            t1.path_active, t1.lifecyle lifecycle,
-            string_agg(t4.coupon_threshold::varchar||'-'||t4.coupon_denom::varchar, ',' order by t4.coupon_threshold asc,t4.coupon_denom asc) coupon_name, t1.check_flag, t1.check_comments,
-            t1.group_info
-            from uo_op_daily_template_config t1 left join uo_op_sms_template t2 on t1.sms_code = t2.sms_code
-            left join uo_op_daily_group_coupon t3 on t1.group_id = t3.group_id
-            left join uo_op_coupon t4 on t3.coupon_id = t4.coupon_id
-            group by t1.group_id, group_name, t1.is_coupon, t1.sms_code, t2.sms_content,t1.user_value, t1.check_flag, t1.path_active, t1.lifecyle, t1.check_comments, t1.group_info
-            order by user_value asc, lifecyle desc, t1.path_active asc
-        ) t
-        <if test="activeList != null">
-            where PATH_ACTIVE in
-            <foreach collection="activeList" separator="," item="item" open="(" close=")">
-                #{item}
-            </foreach>
-        </if>
+        select distinct lifecycle, user_value, path_active, sms_code, wxpub_id, qywx_id, min(group_id) group_id
+        from uo_op_daily_template_config
+        group by lifecycle, user_value, path_active, sms_code, wxpub_id, qywx_id
+        order by user_value asc, lifecycle desc, path_active asc
     </select>
 
     <update id="setSmsCode">
-        update UO_OP_DAILY_TEMPLATE_CONFIG
-        set SMS_CODE = #{smsCode}, is_coupon = (
-        select count(1) from UO_OP_SMS_TEMPLATE
-        where (IS_COUPON_NAME = '1' or IS_COUPON_URL = '1') and SMS_CODE = #{smsCode}
-        )
-        where 1=1 and group_id in
-        <foreach collection="groupIds" open="(" close=")" separator="," item="item">
-            ${item}
-        </foreach>
+        update UO_OP_DAILY_TEMPLATE_CONFIG t1
+        set SMS_CODE = #{smsCode}
+        where group_id in (
+        select t1.group_id
+        from uo_op_daily_template_config t1,
+        uo_op_daily_template_config t2
+        where t1.user_value = t2.user_value
+        and t1.lifecycle = t2.lifecycle
+        and t1.path_active = t2.path_active and t2.group_id = #{groupId}::integer)
     </update>
 
     <select id="validUserGroup" resultType="int">
         select count(1)
         from (
-               SELECT t1.GROUP_ID,
-                      t1.IS_COUPON,
-                      t1.SMS_CODE,
-                      t2.SMS_CONTENT,
-                      LISTAGG(t4.coupon_name, ',') within group (order by t4.coupon_id) coupon_name
-               FROM UO_OP_DAILY_TEMPLATE_CONFIG t1,
-                    UO_OP_SMS_TEMPLATE t2,
-                    UO_OP_DAILY_GROUP_COUPON t3,
-                    UO_OP_COUPON t4
-               where t1.SMS_CODE = t2.SMS_CODE(+)
-                 and t1.group_id = t3.group_id(+)
-                 and t3.coupon_id = t4.coupon_id(+)
-               group by t1.GROUP_ID, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT
+                 SELECT t1.GROUP_ID,
+                        t1.IS_COUPON,
+                        t1.SMS_CODE,
+                        t2.SMS_CONTENT,
+                        LISTAGG(t4.coupon_name, ',') within group (order by t4.coupon_id) coupon_name
+                 FROM UO_OP_DAILY_TEMPLATE_CONFIG t1,
+                      UO_OP_SMS_TEMPLATE t2,
+                      UO_OP_DAILY_GROUP_COUPON t3,
+                      UO_OP_COUPON t4
+                 where t1.SMS_CODE = t2.SMS_CODE(+)
+                   and t1.group_id = t3.group_id(+)
+                   and t3.coupon_id = t4.coupon_id(+)
+                 group by t1.GROUP_ID, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT
              )
         where (IS_COUPON = 1 and coupon_name is null)
            or (IS_COUPON = 0 and coupon_name is not null)
@@ -178,31 +186,46 @@
     </select>
 
     <select id="getEffectById" resultMap="baseResult">
-        select TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, CONVERT_SPU_NUM, CONVERT_SPU_RATE, CONVERT_SPU_AMOUNT
+        select TOTAL_NUM,
+               SUCCESS_NUM,
+               CONVERT_NUM,
+               CONVERT_RATE,
+               CONVERT_AMOUNT,
+               CONVERT_SPU_NUM,
+               CONVERT_SPU_RATE,
+               CONVERT_SPU_AMOUNT
         from UO_OP_DAILY_HEADER
-        where HEAD_ID = #{id}::int4 and status &lt;&gt; 'todo'
+        where HEAD_ID = #{id}::int4
+          and status &lt;&gt; 'todo'
     </select>
 
     <select id="getDailyStatisList" resultMap="statisResult">
-        select CONVERT_SPU_RATE, CONVERT_RATE, CONVERT_SPU_NUM, CONVERT_NUM, to_char(CONVERSION_DATE, 'yyyymmdd') CONVERSION_DATE_STR
+        select CONVERT_SPU_RATE,
+               CONVERT_RATE,
+               CONVERT_SPU_NUM,
+               CONVERT_NUM,
+               to_char(CONVERSION_DATE, 'yyyymmdd') CONVERSION_DATE_STR
         from UO_OP_DAILY_STATIS
-        where HEAD_ID = #{headId}::int4 order by CONVERSION_DATE asc
+        where HEAD_ID = #{headId}::int4
+        order by CONVERSION_DATE asc
     </select>
 
-    <select id="getDailyPersonalEffect" resultMap="personalResult" parameterType="com.linksteady.operate.vo.DailyPersonalVo">
+    <select id="getDailyPersonalEffect" resultMap="personalResult"
+            parameterType="com.linksteady.operate.vo.DailyPersonalVo">
         select
         t.user_id, --用户ID
-        u.login_name user_name,  --用户名
+        u.login_name user_name, --用户名
         u.mobile, --手机号
         t.path_active, --活跃度
-        t.user_value,  --用户价值
-        t.push_period,  --推送时段
-        t.conversion_period CONVERT_PERIOD,  --转化时段
-        t.push_date,  --推送日期
+        t.user_value, --用户价值
+        t.push_period, --推送时段
+        t.conversion_period CONVERT_PERIOD, --转化时段
+        t.push_date, --推送日期
         t.conversion_date convert_date, --转化日期
-        round((extract(day from t.conversion_date::timestamp-t.push_date::timestamp) * 24 + extract(hour from t.conversion_date::timestamp-t.push_date::timestamp))::numeric/24::numeric, 1)::varchar CONVERT_INTERVAL, --转换间隔
+        round((extract(day from t.conversion_date::timestamp-t.push_date::timestamp) * 24 + extract(hour from
+        t.conversion_date::timestamp-t.push_date::timestamp))::numeric/24::numeric, 1)::varchar CONVERT_INTERVAL, --转换间隔
         t.spu_consistent, --推荐SPU与购买SPU是否一致 Y表示是 N表示否
-        t.rec_spu_name PUSH_SPU,  --推荐SPU名称
+        t.rec_spu_name PUSH_SPU, --推荐SPU名称
         t.IS_CONVERSION IS_CONVERT,
         t.SPU_CONSISTENT SPU_IS_CONVERT
         --转化的SPU名称
@@ -235,7 +258,9 @@
     </select>
 
     <update id="updateGroupCheckFlagByCouponId">
-        update UO_OP_DAILY_TEMPLATE_CONFIG set CHECK_FLAG = #{checkFlag}, CHECK_COMMENTS = '券已失效'
+        update UO_OP_DAILY_TEMPLATE_CONFIG
+        set CHECK_FLAG     = #{checkFlag},
+            CHECK_COMMENTS = '券已失效'
         where GROUP_ID in (
             select distinct GROUP_ID from UO_OP_DAILY_GROUP_COUPON where COUPON_ID = #{couponId}
         )
@@ -262,71 +287,91 @@
                PATH_ACTIVE,
                LIFECYCLE,
                UCNT,
-               ROUND(UCNT / SUM(UCNT) OVER(PARTITION BY NULL), 4) * 100 PCT
+               ROUND(UCNT / SUM(UCNT) OVER (PARTITION BY NULL), 4) * 100 PCT
         FROM (SELECT T.USER_VALUE,
                      T.PATH_ACTIVE,
                      (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END) LIFECYCLE,
-                     COUNT(*) UCNT
+                     COUNT(*)                                               UCNT
               FROM UO_OP_DAILY_DETAIL T
               WHERE T.HEAD_ID = #{headId}::int4
               GROUP BY T.USER_VALUE,
                        T.PATH_ACTIVE,
-                  (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)
-        ORDER BY UCNT DESC) v
+                       (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)
+              ORDER BY UCNT DESC) v
     </select>
 
     <select id="getUserStatsBySpu" resultMap="DailyUserStatsResult">
-        SELECT
-               SPU_NAME,
-                UCNT
+        SELECT SPU_NAME,
+               UCNT
         FROM (SELECT T.SPU_NAME,
-        COUNT(*) UCNT
-        FROM UO_OP_DAILY_DETAIL T
-        WHERE T.HEAD_ID = #{headId}::int4
-        AND T.PATH_ACTIVE= #{pathActive}
-        AND T.USER_VALUE= #{userValue}
-        AND (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)= #{lifecycle}
-        GROUP BY T.SPU_NAME
-        ORDER BY UCNT DESC) v limit 10 offset 0
+                     COUNT(*) UCNT
+              FROM UO_OP_DAILY_DETAIL T
+              WHERE T.HEAD_ID = #{headId}::int4
+                AND T.PATH_ACTIVE = #{pathActive}
+                AND T.USER_VALUE = #{userValue}
+                AND (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END) = #{lifecycle}
+              GROUP BY T.SPU_NAME
+              ORDER BY UCNT DESC) v
+        limit 10
+        offset
+        0
     </select>
 
     <select id="getUserStatsByProd" resultMap="DailyUserStatsResult">
-        SELECT      REC_PROD_NAME,
-        UCNT
+        SELECT REC_PROD_NAME,
+               UCNT
         FROM (SELECT T.REC_PROD_NAME,
-        COUNT(*) UCNT
-        FROM UO_OP_DAILY_DETAIL T
-        WHERE T.HEAD_ID = #{headId}::int4
-        AND T.PATH_ACTIVE=#{pathActive}
-        AND T.USER_VALUE= #{userValue}
-        AND (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)= #{lifecycle}
-        AND T.SPU_NAME= #{spuName}
-        GROUP BY T.REC_PROD_NAME
-        ORDER BY UCNT DESC) v limit 10 offset 0
+                     COUNT(*) UCNT
+              FROM UO_OP_DAILY_DETAIL T
+              WHERE T.HEAD_ID = #{headId}::int4
+                AND T.PATH_ACTIVE = #{pathActive}
+                AND T.USER_VALUE = #{userValue}
+                AND (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END) = #{lifecycle}
+                AND T.SPU_NAME = #{spuName}
+              GROUP BY T.REC_PROD_NAME
+              ORDER BY UCNT DESC) v
+        limit 10
+        offset
+        0
     </select>
 
     <select id="getTodayStatus" resultType="string">
-        select STATUS from UO_OP_DAILY_HEADER where to_char(TOUCH_DT, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd')
+        select STATUS
+        from UO_OP_DAILY_HEADER
+        where to_char(TOUCH_DT, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd')
     </select>
 
     <select id="getSelectedUserGroup" resultType="map">
-        select IS_COUPON, SMS_CODE from UO_OP_DAILY_TEMPLATE_CONFIG where GROUP_ID = #{groupId}::int4
+        select IS_COUPON, SMS_CODE
+        from UO_OP_DAILY_TEMPLATE_CONFIG
+        where GROUP_ID = #{groupId}::int4
     </select>
 
     <select id="getSmsIsCoupon" resultType="int">
-        select count(1) from UO_OP_SMS_TEMPLATE where (IS_COUPON_NAME = #{isCoupon} or IS_COUPON_URL = #{isCoupon}) and sms_code = #{smsCode}
+        select count(1)
+        from UO_OP_SMS_TEMPLATE
+        where (IS_COUPON_NAME = #{isCoupon} or IS_COUPON_URL = #{isCoupon})
+          and sms_code = #{smsCode}
     </select>
 
     <select id="getValidDailyHead" resultType="int">
-        select count(1) from UO_OP_DAILY_HEADER where to_char(TOUCH_DT, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd') and STATUS = 'todo'
+        select count(1)
+        from UO_OP_DAILY_HEADER
+        where to_char(TOUCH_DT, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd')
+          and STATUS = 'todo'
     </select>
 
     <update id="updateSmsCodeNull">
-        update UO_OP_DAILY_TEMPLATE_CONFIG set SMS_CODE = null where SMS_CODE = #{smsCode}
+        update UO_OP_DAILY_TEMPLATE_CONFIG
+        set SMS_CODE = null
+        where SMS_CODE = #{smsCode}
     </update>
 
     <update id="expireDailyHead">
-        update uo_op_daily_header h set h.status='timeout' where h.status='todo' and trunc(h.touch_dt)!=trunc(sysdate)
+        update uo_op_daily_header h
+        set h.status='timeout'
+        where h.status = 'todo'
+          and trunc(h.touch_dt) != trunc(sysdate)
     </update>
 
 </mapper>
