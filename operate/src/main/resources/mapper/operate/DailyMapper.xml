@@ -69,12 +69,11 @@
         <result property="convertDate" jdbcType="VARCHAR" column="CONVERT_DATE"></result>
     </resultMap>
 
-    <resultMap id="DailyUserStatsResult" type="com.linksteady.operate.domain.DailyUserStats">
+    <resultMap id="DailyUserStatsResult" type="com.linksteady.operate.vo.DailyUserStats">
         <result property="userValue" jdbcType="VARCHAR" column="USER_VALUE"></result>
         <result property="pathActivity" jdbcType="VARCHAR" column="PATH_ACTIVE"></result>
         <result property="lifecycle" jdbcType="VARCHAR" column="LIFECYCLE"></result>
         <result property="ucnt" jdbcType="DECIMAL" column="UCNT"></result>
-        <result property="pct" jdbcType="DECIMAL" column="PCT"></result>
         <result property="spuName" jdbcType="VARCHAR" column="SPU_NAME"></result>
         <result property="prodName" jdbcType="VARCHAR" column="REC_PROD_NAME"></result>
         <result property="userValueLabel" jdbcType="VARCHAR" column="user_value_label"></result>
@@ -249,52 +248,60 @@
         where head_id = #{headId}
     </update>
 
-    <select id="getUserStats" resultMap="DailyUserStatsResult">
-        SELECT USER_VALUE,
-               PATH_ACTIVE,
-               LIFECYCLE,
-               UCNT,
-               ROUND(UCNT / SUM(UCNT) OVER(PARTITION BY NULL), 4) * 100 PCT
-        FROM (SELECT T.USER_VALUE,
-                     T.PATH_ACTIVE,
-                     (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END) LIFECYCLE,
-                     COUNT(*) UCNT
-              FROM UO_OP_DAILY_DETAIL T
-              WHERE T.HEAD_ID = #{headId}::int4
-              GROUP BY T.USER_VALUE,
-                       T.PATH_ACTIVE,
-                  (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)
-        ORDER BY UCNT DESC) v
-    </select>
-
-    <select id="getUserStatsBySpu" resultMap="DailyUserStatsResult">
+    <select id="getTargetInfoByGrowthType" resultMap="DailyUserStatsResult">
         SELECT
-               SPU_NAME,
-                UCNT
-        FROM (SELECT T.SPU_NAME,
-        COUNT(*) UCNT
-        FROM UO_OP_DAILY_DETAIL T
-        WHERE T.HEAD_ID = #{headId}::int4
-        AND T.PATH_ACTIVE= #{pathActive}
-        AND T.USER_VALUE= #{userValue}
-        AND (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)= #{lifecycle}
-        GROUP BY T.SPU_NAME
-        ORDER BY UCNT DESC) v limit 10 offset 0
+            v2.VALUE growth_type,
+            ucnt
+        FROM
+            ( SELECT growth_type, COUNT ( * ) ucnt FROM uo_op_daily_detail WHERE head_id = #{headId} GROUP BY growth_type ) v1
+            RIGHT JOIN ( SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'GROWTH_TYPE' ) v2 ON v2.code = v1.growth_type
+        ORDER BY
+            v2.order_no desc
     </select>
 
-    <select id="getUserStatsByProd" resultMap="DailyUserStatsResult">
-        SELECT      REC_PROD_NAME,
-        UCNT
-        FROM (SELECT T.REC_PROD_NAME,
-        COUNT(*) UCNT
-        FROM UO_OP_DAILY_DETAIL T
-        WHERE T.HEAD_ID = #{headId}::int4
-        AND T.PATH_ACTIVE=#{pathActive}
-        AND T.USER_VALUE= #{userValue}
-        AND (CASE WHEN T.COMPLETE_PURCH = 1 THEN '1' ELSE '0' END)= #{lifecycle}
-        AND T.SPU_NAME= #{spuName}
-        GROUP BY T.REC_PROD_NAME
-        ORDER BY UCNT DESC) v limit 10 offset 0
+    <select id="getTargetInfoByGrowthSeriesType" resultMap="DailyUserStatsResult">
+          SELECT
+            v2.VALUE growth_series_type,
+            ucnt
+        FROM
+            ( SELECT growth_series_type, COUNT ( * ) ucnt FROM uo_op_daily_detail WHERE head_id =#{headId}  GROUP BY growth_series_type ) v1
+            RIGHT JOIN ( SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'GROWTH_SERIES_TYPE' ) v2 ON v2.code = v1.growth_series_type
+        ORDER BY
+            v2.order_no desc
+    </select>
+
+    <select id="getTargetInfoBySpu" resultMap="DailyUserStatsResult">
+        select spu_name, ucnt from (
+        select spu_name,count(*) ucnt from uo_op_daily_detail where head_id =#{headId} group by spu_name
+        ) t order by ucnt asc
+    </select>
+
+    <select id="getTargetInfoByProd" resultMap="DailyUserStatsResult">
+        select rec_prod_name, ucnt from (
+        select rec_prod_name,count(*) ucnt from uo_op_daily_detail where head_id =#{headId} and spu_name=#{spuName} group by rec_prod_name
+        ) t order by ucnt asc
+    </select>
+
+    <select id="getTargetInfoByUserValue" resultMap="DailyUserStatsResult">
+        SELECT
+            v2.code user_value,
+            v2.VALUE user_value_label,
+            ucnt
+        FROM
+            ( SELECT user_value, COUNT ( * ) ucnt FROM uo_op_daily_detail WHERE head_id = #{headId} GROUP BY user_value ) v1
+            RIGHT JOIN ( SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'USER_VALUE' ) v2 ON v2.code = v1.user_value
+        ORDER BY
+            v2.order_no desc
+    </select>
+
+    <select id="getTargetInfoMatrix" resultMap="DailyUserStatsResult">
+       select path_active,lifecycle,count(*) ucnt from uo_op_daily_detail where head_id =#{headId} and user_value=#{userValue} group by path_active,lifecycle
+    </select>
+
+    <select id="getTargetInfoByCoupon" resultMap="DailyUserStatsResult">
+        select coupon_min,coupon_deno, ucnt from (
+            select coupon_deno,coupon_min,count(*) ucnt from uo_op_daily_detail where head_id =#{headId} group by coupon_deno,coupon_min
+            ) t order by ucnt desc
     </select>
 
 
