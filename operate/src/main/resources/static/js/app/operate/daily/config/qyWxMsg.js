@@ -22,9 +22,7 @@ function getWxMsgTableData(qywxId) {
             {
                 checkbox: true,
                 formatter: function (value, row, index) {
-                    console.log(row['qywxId']);
-                    console.log(qywxId);
-                    if(row['qywxId'] === qywxId) {
+                    if(row['qywxId'] == qywxId) {
                         return {
                             checked: true
                         };
