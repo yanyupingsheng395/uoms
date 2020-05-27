@@ -17,10 +17,10 @@ import java.util.concurrent.Callable;
 public class TransDailyContentThread implements Callable {
     int start;
     int end;
-    String headerId;
+    Long headerId;
     Map<String,List<GroupCouponVO>> groupCouponList;
 
-    public TransDailyContentThread(String headerId, int start, int end, Map<String,List<GroupCouponVO>> groupCouponList) {
+    public TransDailyContentThread(Long headerId, int start, int end, Map<String,List<GroupCouponVO>> groupCouponList) {
         this.headerId = headerId;
         this.start = start;
         this.end = end;

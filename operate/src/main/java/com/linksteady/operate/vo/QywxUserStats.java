@@ -52,4 +52,14 @@ public class QywxUserStats {
      * 优惠券面额
      */
     private Double couponDeno;
+
+    /**
+     * 用户成长目标
+     */
+    private String growthType;
+
+    /**
+     * 用户成长目标[序列]
+     */
+    private String growthSeriesType;
 }

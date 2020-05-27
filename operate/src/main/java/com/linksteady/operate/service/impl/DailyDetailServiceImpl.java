@@ -74,7 +74,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      * @return
      */
     @Override
-    public List<Map<String, Object>> getContentList(String headId) {
+    public List<Map<String, Object>> getContentList(Long headId) {
         return dailyDetailMapper.getContentList(headId);
     }
 
@@ -84,7 +84,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void generatePushList(String headerId) throws Exception{
+    public void generatePushList(Long headerId) throws Exception{
         dailyDetailMapper.deletePushContentTemp(headerId);
         //获取group上配置的所有优惠券信息
         List<Map<String,Object>> groupCouponInfo=couponMapper.selectGroupCouponInfo();
@@ -329,7 +329,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
      * @param offset
      * @return
      */
-    public List<DailyDetail>  getUserList(String headerId,int limit,int offset){
+    public List<DailyDetail>  getUserList(Long headerId,int limit,int offset){
         return dailyDetailMapper.getUserList(headerId,limit,offset);
     }
 

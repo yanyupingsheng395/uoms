@@ -1,7 +1,6 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.DailyDetail;
-import com.linksteady.operate.domain.DailyUserStats;
 
 import java.util.List;
 import java.util.Map;
@@ -34,13 +33,13 @@ public interface DailyDetailService {
      * @param headId
      * @return
      */
-    List<Map<String, Object>> getContentList(String headId);
+    List<Map<String, Object>> getContentList(Long headId);
 
     /**
      * 生成短信文案
      * @param headerId
      */
-    void generatePushList(String headerId) throws Exception;
+    void generatePushList(Long headerId) throws Exception;
 
     /**
      * 保存文案信息到临时表

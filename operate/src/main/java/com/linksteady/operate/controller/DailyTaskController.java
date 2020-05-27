@@ -78,32 +78,7 @@ public class DailyTaskController {
     }
 
     /**
-     * 生成待推送的短信文案
-     *
-     * @return
-     */
-    @GetMapping("/generatePushList")
-    public ResponseBo generatePushList(String headId) {
-
-        //首先获取锁
-        if (dailyService.getTransContentLock(headId)) {
-            try {
-                dailyDetailService.generatePushList(headId);
-                return ResponseBo.ok();
-            } catch (Exception e) {
-                log.error("每日运营转化生成文案错误，异常堆栈为{}", e);
-                return ResponseBo.error("生成文案错误，请联系系统运维人员！");
-            } finally {
-                //释放锁
-                dailyService.delTransLock();
-            }
-        } else {
-            return ResponseBo.error("其他用户正在生成文案，请稍后再操作！");
-        }
-    }
-
-    /**
-     * 获取用户的文案
+     * 获取用户的文案列表(预览推送第二步)
      *
      * @return
      */
@@ -123,56 +98,67 @@ public class DailyTaskController {
      * @return
      */
     @GetMapping("/getUserStatsData")
-    public ResponseBo getUserStatsData(String headId) {
-        return ResponseBo.okWithData("", dailyService.getUserStatsData(headId));
-    }
-
-    /**
-     * 用户预览 刷新SPU表格和PROD表格
-     */
-    @GetMapping("/refreshUserStatData")
-    public ResponseBo refreshUserStatData(String headId, String userValue, String pathActive, String lifecycle) {
-        Map<String, String> pathActiveMap = configService.selectDictByTypeCode("PATH_ACTIVE");
-        Map<String, String> userValueMap = configService.selectDictByTypeCode("USER_VALUE");
-        Map<String, String> lifeCycleMap = configService.selectDictByTypeCode("LIFECYCLE");
-
-        Map<String, Object> result = Maps.newHashMap();
-
-        List<DailyUserStats> spuList = dailyService.getUserStatsBySpu(headId, userValue, pathActive, lifecycle);
-        result.put("spuList", spuList);
-        result.put("groupName", userValueMap.get(userValue) + "," + pathActiveMap.get(pathActive) + "," + lifeCycleMap.get(lifecycle) + "群组");
-
-        DailyUserStats dailyUserStats2 = spuList.get(0);
-
-        //获取top10 推荐商品
-        if (null != dailyUserStats2) {
-            List<DailyUserStats> prodList = dailyService.getUserStatsByProd(headId, userValue, pathActive, lifecycle, dailyUserStats2.getSpuName());
-            result.put("prodList", prodList);
-            result.put("prodGroupName", userValueMap.get(userValue) + "-" + pathActiveMap.get(pathActive) + "-" + lifeCycleMap.get(lifecycle) + "群组," + dailyUserStats2.getSpuName() + "类目");
-            result.put("spuName", dailyUserStats2.getSpuName());
-        } else {
-            result.put("prodList", Lists.newArrayList());
-            result.put("prodGroupName", "");
-            result.put("spuName", "");
+    public ResponseBo getUserStatsData(Long headId) {
+        // 首先判断状态和任务日期 如果任务是待执行及当天的任务，则执行文案、优惠券匹配
+        DailyHead dailyHead=dailyService.getDailyHeadById(headId);
+        if(null==dailyHead)
+        {
+            return ResponseBo.error("不存在的每日运营计划！！");
         }
-        return ResponseBo.okWithData("", result);
+
+        String currentDay=DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
+        if("todo".equals(dailyHead.getStatus())&&currentDay.equals(dailyHead.getTouchDtStr()))
+        {
+            //验证配置是否通过校验
+            if( dailyConfigService.validUserGroup())
+            {
+                return ResponseBo.error("成长组尚未完成配置，请先进行配置！");
+            }else
+            {
+                //首先获取锁
+                if (dailyService.getTransContentLock(String.valueOf(headId))) {
+                    try {
+                        dailyDetailService.generatePushList(headId);
+
+                        //查询数据并返回
+                        return ResponseBo.okWithData("", dailyService.getUserStatsData(headId));
+                    } catch (Exception e) {
+                        log.error("每日运营[微信]转化生成文案错误，异常堆栈为{}", e);
+                        return ResponseBo.error("每日运营[微信]生成文案错误，请联系系统运维人员！");
+                    } finally {
+                        //释放锁
+                        dailyService.delTransLock();
+                    }
+                } else {
+                    return ResponseBo.error("其他用户正在生成文案，请稍后再操作！");
+                }
+            }
+        }else
+        {
+            //直接查询数据并返回
+            return ResponseBo.okWithData("", dailyService.getUserStatsData(headId));
+        }
     }
 
     /**
-     * 用户预览 刷新PROD表格
+     * 预览 spuName上的点击事件
+     *
+     * @return
      */
-    @GetMapping("/refreshUserStatData2")
-    public ResponseBo refreshUserStatData2(String headId, String userValue, String pathActive, String lifecycle, String spuName) {
-        Map<String, String> pathActiveMap = configService.selectDictByTypeCode("PATH_ACTIVE");
-        Map<String, String> userValueMap = configService.selectDictByTypeCode("USER_VALUE");
-        Map<String, String> lifeCycleMap = configService.selectDictByTypeCode("LIFECYCLE");
-        Map<String, Object> result = Maps.newHashMap();
-        List<DailyUserStats> prodList = dailyService.getUserStatsByProd(headId, userValue, pathActive, lifecycle, spuName);
-        result.put("prodList", prodList);
-        result.put("prodGroupName", userValueMap.get(userValue) + "," + pathActiveMap.get(pathActive) + "," + lifeCycleMap.get(lifecycle) + "群组" + spuName + "类目");
-        return ResponseBo.okWithData("", result);
+    @GetMapping("/getProdCountBySpu")
+    public ResponseBo getProdCountBySpu(Long headId,String spuName) {
+        return ResponseBo.okWithData(null,dailyService.getProdCountBySpu(headId,spuName));
     }
 
+    /**
+     * 预览 userValue上的点击事件
+     *
+     * @return
+     */
+    @GetMapping("/getMatrixData")
+    public ResponseBo getMatrixData(Long headId,String userValue) {
+        return ResponseBo.okWithData(null,dailyService.getMatrixData(headId,userValue));
+    }
 
     /**
      * 启动群组推送
@@ -181,7 +167,7 @@ public class DailyTaskController {
      */
     @GetMapping("/submitData")
     @Transactional(rollbackFor = Exception.class)
-    public synchronized ResponseBo submitData(String headId, String pushMethod, String pushPeriod, Long effectDays) {
+    public synchronized ResponseBo submitData(Long headId, String pushMethod, String pushPeriod, Long effectDays) {
         //对参数进行校验
         if (StringUtils.isEmpty(headId) || StringUtils.isEmpty(pushMethod)) {
             return ResponseBo.error("参数错误，请通过系统界面进行操作！");
@@ -238,7 +224,7 @@ public class DailyTaskController {
      * @param headId
      * @return
      */
-    private String smsContentValid(String headId) {
+    private String smsContentValid(Long headId) {
         List<Map<String, Object>> smsContentList = dailyDetailService.getContentList(headId);
         int totalSize = smsContentList.size();
 
@@ -270,7 +256,7 @@ public class DailyTaskController {
      * @return
      */
     @GetMapping("/getStatusById")
-    public ResponseBo getStatusById(@RequestParam String headId) {
+    public ResponseBo getStatusById(@RequestParam Long headId) {
         return ResponseBo.okWithData(null, dailyService.getDailyHeadById(headId).getStatus());
     }
 
@@ -281,7 +267,7 @@ public class DailyTaskController {
      * @return
      */
     @GetMapping("/getCurrentAndTaskDate")
-    public ResponseBo getCurrentAndTaskDate(@RequestParam String headId) {
+    public ResponseBo getCurrentAndTaskDate(@RequestParam Long headId) {
         return ResponseBo.okWithData(null, dailyService.getDailyHeadById(headId));
     }
 
@@ -291,7 +277,7 @@ public class DailyTaskController {
      * @return
      */
     @GetMapping("/getPushData")
-    public ResponseBo getPushData(@RequestParam("headId") String headId) {
+    public ResponseBo getPushData(@RequestParam("headId") Long headId) {
         return ResponseBo.okWithData(null, dailyService.getPushData(headId));
     }
 
@@ -427,20 +413,8 @@ public class DailyTaskController {
         return ResponseBo.okWithData(null, result);
     }
 
-    @GetMapping("/getDefaultGroup")
-    public ResponseBo getDefaultGroup() {
-        return ResponseBo.okWithData(null, configService.getValueByName("op.daily.pathactive.list"));
-    }
-
-    @GetMapping("/setDefaultGroup")
-    public ResponseBo setDefaultGroup(@RequestParam("active") String active) {
-        //设置默认活跃度 第一个参数为key 第二个参数为value
-        configService.updateConfig("op.daily.pathactive.list", active);
-        return ResponseBo.ok();
-    }
-
     @GetMapping("/getTouchDt")
-    public ResponseBo getTouchDt(@RequestParam("headId") String headId) {
-        return ResponseBo.okWithData(null, dailyService.getTouchDt(headId));
+    public ResponseBo getTouchDt(@RequestParam("headId") Long headId) {
+        return ResponseBo.okWithData(null, dailyService.getDailyHeadById(headId).getTouchDtStr());
     }
 }

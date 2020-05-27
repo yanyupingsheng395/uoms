@@ -58,7 +58,7 @@ public interface DailyDetailMapper {
      * @param headId
      * @return
      */
-    List<Map<String, Object>> getContentList(String headId);
+    List<Map<String, Object>> getContentList(Long headId);
 
     /**
      * 将当前每日运营的推送数据复制到推送列表中
@@ -72,7 +72,7 @@ public interface DailyDetailMapper {
      * @param headId
      * @return
      */
-    int getUserCount(@Param("headId") String headId);
+    int getUserCount(@Param("headId") Long headId);
 
     /**
      * 分页获取当header_id下选中的用户名单
@@ -81,7 +81,7 @@ public interface DailyDetailMapper {
      * @param offset
      * @return
      */
-    List<DailyDetail> getUserList(@Param("headId") String headId, @Param("limit") int limit, @Param("offset") int offset);
+    List<DailyDetail> getUserList(@Param("headId") Long headId, @Param("limit") int limit, @Param("offset") int offset);
 
     /**
      * 保存推送的文案信息到临时表
@@ -91,11 +91,11 @@ public interface DailyDetailMapper {
     /**
      * 删除文案临时表中的数据
      */
-    void deletePushContentTemp(@Param("headId") String headId);
+    void deletePushContentTemp(@Param("headId") Long headId);
 
     /**
      * 将文案内容从临时表更新到每日运营明细表
      */
-    void updatePushContentFromTemp(@Param("headId") String headId);
+    void updatePushContentFromTemp(@Param("headId") Long headId);
 
 }

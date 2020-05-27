@@ -214,4 +214,8 @@
     <select id="getQywxUserList" resultMap="qywxUserResult">
         select distinct qywx_user_id,qywx_user_name from uo_qywx_daily_detail where head_id=#{headId}
     </select>
+
+    <select id="getTestPushData" resultType="map">
+      select qywx_contract_id,qywx_user_id,text_content from uo_qywx_push_list WHERE PUSH_id=1
+    </select>
 </mapper>

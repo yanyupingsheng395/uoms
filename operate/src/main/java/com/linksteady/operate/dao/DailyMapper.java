@@ -2,6 +2,7 @@ package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.vo.DailyPersonalVo;
+import com.linksteady.operate.vo.DailyUserStats;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -15,15 +16,13 @@ public interface DailyMapper {
 
     List<DailyHead> getPageList(int limit, int offset, String touchDt);
 
-    List<DailyHead> getTouchPageList(int limit, int offset, String touchDt);
-
     int getTotalCount(@Param("touchDt") String touchDt);
 
     int updateStatus(@Param("headId") long headId, @Param("status") String status,@Param("version") int version);
 
     void updateActualNum(String headId, int num);
 
-    DailyHead getDailyHeadById(String headId);
+    DailyHead getDailyHeadById(Long headId);
 
     List<DailyGroupTemplate> getUserGroupList(@Param("activeList") List<String> activeList);
 
@@ -31,14 +30,14 @@ public interface DailyMapper {
 
     int validUserGroup();
 
-    DailyHead getEffectById(String id);
+    DailyHead getEffectById(Long id);
 
     /**
      * 获取推送结果数据图
      * @param headId
      * @return
      */
-    List<DailyStatis> getDailyStatisList(String headId);
+    List<DailyStatis> getDailyStatisList(Long headId);
 
     /**
      * 个体结果只获取已经转化的结果
@@ -72,13 +71,44 @@ public interface DailyMapper {
                               @Param("effectDays") Long effectDays);
 
     /**
-     * 获取预览用户统计数据
+     * 按成长类型统计人数
+     * @param headId
      */
-    List<DailyUserStats> getUserStats(@Param("headId") String headId);
+    List<DailyUserStats> getTargetInfoByGrowthType(Long headId);
 
-    List<DailyUserStats> getUserStatsBySpu(@Param("headId") String headId, @Param("userValue") String userValue, @Param("pathActive") String pathActive, @Param("lifecycle") String lifecycle);
+    /**
+     * 按成长类型[序列]统计人数
+     * @param headId
+     */
+    List<DailyUserStats> getTargetInfoByGrowthSeriesType(Long headId);
 
-    List<DailyUserStats> getUserStatsByProd(@Param("headId") String headId, @Param("userValue") String userValue, @Param("pathActive") String pathActive, @Param("lifecycle") String lifecycle, @Param("spuName") String spuName);
+
+    /**
+     * 按品类统计推荐人数
+     * @param headId
+     */
+    List<DailyUserStats> getTargetInfoBySpu(Long headId);
+
+    /**
+     * 按商品统计推荐人数
+     * @param headId
+     */
+    List<DailyUserStats> getTargetInfoByProd(Long headId,String spuName);
+
+    /**
+     * 按用户价值统计
+     */
+    List<DailyUserStats> getTargetInfoByUserValue(Long headId);
+
+    /**
+     * 特定用户价值下，按用户活跃度、生命周期的统计
+     */
+    List<DailyUserStats> getTargetInfoMatrix(Long headId,String userValue);
+
+    /**
+     * 按优惠券来进行统计
+     */
+    List<DailyUserStats> getTargetInfoByCoupon(Long headId);
 
     String getTodayStatus();
 

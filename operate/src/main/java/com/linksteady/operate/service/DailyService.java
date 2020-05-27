@@ -3,9 +3,7 @@ package com.linksteady.operate.service;
 import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.domain.DailyPersonal;
-import com.linksteady.operate.domain.DailyUserStats;
 import com.linksteady.operate.vo.DailyPersonalVo;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -20,21 +18,21 @@ public interface DailyService {
 
     int getTotalCount(String touchDt);
 
-    DailyHead getDailyHeadById(String headId);
+    DailyHead getDailyHeadById(Long headId);
 
     /**
      * 获取每日成长任务的效果统计
      * @param id
      * @return
      */
-    DailyHead getEffectById(String id);
+    DailyHead getEffectById(Long id);
 
     /**
      * 获取推送数据
      * @param headId
      * @return
      */
-    Map<String, Object> getPushData(String headId);
+    Map<String, Object> getPushData(Long headId);
 
     List<DailyGroupTemplate> getUserGroupList();
 
@@ -54,15 +52,6 @@ public interface DailyService {
      */
     void delTransLock();
 
-    /**
-     * 获取预览用户的统计数据
-     */
-    List<DailyUserStats> getUserStats(String headerId);
-
-    List<DailyUserStats> getUserStatsBySpu(String headerId,String userValue,String pathActive,String lifecycle);
-
-    List<DailyUserStats> getUserStatsByProd(String headerId,String userValue,String pathActive,String lifecycle,String spuName);
-
     Map<String, Object> getSelectedUserGroup(String groupId);
 
     int getSmsIsCoupon(String smsCode, String is_coupon);
@@ -71,11 +60,13 @@ public interface DailyService {
 
     void updateSmsCodeNull(String smsCode);
 
-    Map<String, Object> getUserStatsData(String headId);
+    Map<String, Object> getUserStatsData(Long headId);
+
+    Map<String, Object> getProdCountBySpu(Long headId,String spuName);
+
+    Map<String, Object> getMatrixData(Long headId,String userValue);
 
     void pushContent(DailyHead dailyHead,String pushMethod,String pushPeriod,Long effectDays) throws Exception;
-
-    String getTouchDt(String headId);
 
     /**
      * 每日运营任务失效

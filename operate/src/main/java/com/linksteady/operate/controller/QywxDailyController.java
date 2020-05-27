@@ -1,5 +1,7 @@
 package com.linksteady.operate.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -11,6 +13,7 @@ import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.service.QywxDailyDetailService;
 import com.linksteady.operate.service.QywxDailyService;
+import com.linksteady.operate.util.OkHttpUtil;
 import com.linksteady.operate.vo.QywxUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -212,6 +215,7 @@ public class QywxDailyController {
 
         try {
             qywxDailyService.push(qywxDailyHeader, pushMethod, pushPeriod, effectDays);
+            testPush();
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("每日运营推送错误，错误堆栈为{}", e);
@@ -300,6 +304,50 @@ public class QywxDailyController {
     @GetMapping("/validUserGroupForQywx")
     public ResponseBo validUserGroupForQywx() {
         return ResponseBo.okWithData(null, dailyConfigService.validUserGroupForQywx());
+    }
+
+    /**
+     * 企业微信测试推送
+     */
+    @GetMapping("/testQywxPush")
+    public ResponseBo testQywxPush() {
+        return ResponseBo.ok(testPush());
+    }
+
+
+    private String  testPush()
+    {
+        //绑定的corpID
+        String corpId="ww372de12b2d0cdf17";
+
+        String textContent="";
+
+        //获取要推送的数据
+        //List<Map<String,String>> result=qywxDailyDetailService.getTestPushData();
+
+        //构造推送参数
+        JSONObject param=new JSONObject();
+        param.put("chat_type","single");
+
+        JSONArray externalUserid=new JSONArray();
+        externalUserid.add("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ");
+        externalUserid.add("wmXfFiDwAA2R-zN-afopB1W0aunsLowg");
+
+        param.put("external_userid",externalUserid);
+
+        param.put("sender","brandonz");
+
+        JSONObject text=new JSONObject();
+        text.put("content","您好，520活动季，您关注的提花浴巾低至35元，欢迎购买！");
+        param.put("text",text);
+
+        log.info("待推送的消息为{}",param.toJSONString());
+
+        String requesturl="http://qywx.growth-master.com/push/addMsgTemplate?corpId="+corpId;
+        //发送http请求
+        String backStr=OkHttpUtil.postRequestByJson(requesturl,param.toJSONString());
+
+        return backStr;
     }
 
 
