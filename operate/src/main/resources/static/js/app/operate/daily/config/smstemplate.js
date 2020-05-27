@@ -5,9 +5,9 @@ $(function () {
     statInputNum();
 });
 
-function openSmsTemplateModal(groupId) {
+function openSmsTemplateModal(groupId, smsCode) {
     $( "#currentGroupId" ).val(groupId);
-    smsTemplateTable();
+    smsTemplateTable(smsCode);
     $( "#smsTemplateModal" ).modal( 'show' );
 }
 
@@ -18,7 +18,7 @@ $("#smsTemplateModal").on('hidden.bs.modal', function () {
 /**
  * 获取短信模板列表
  */
-function smsTemplateTable() {
+function smsTemplateTable(smsCode) {
     var settings = {
         url: '/smsTemplate/smsTemplateList',
         pagination: true,
@@ -34,7 +34,16 @@ function smsTemplateTable() {
             };
         },
         columns: [
-            {checkbox: true},
+            {
+                checkbox: true,
+                formatter: function (value, row, index) {
+                    if(row['smsCode'] === smsCode) {
+                        return {
+                            checked : true
+                        };
+                    }
+                }
+            },
             {
                 title: '消息内容',
                 field: 'smsContent'

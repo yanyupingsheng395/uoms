@@ -119,7 +119,7 @@ function getTableData() {
                     title: '理解用户群组',
                     align: 'center',
                     formatter: function (value, row, index) {
-                        return "<a style='color: #4c4c4c' onclick='openSelectedGroupModal()'><i class='fa fa-user'></i></a>";
+                        return "<a style='color: #4c4c4c' onclick='openSelectedGroupModal()'><i class='mdi mdi-account mdi-18px'></i></a>";
                     }
                 },
                 {
@@ -129,11 +129,11 @@ function getTableData() {
                     formatter: function (value, row, index) {
                         if(value === null || value === undefined || value === '') {
                             return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\")'>" +
-                                "<i class='fa fa-envelope-o'></i><span style='color: #f96868'>&nbsp;[未配置]</span>" +
+                                "<i class='mdi mdi-email-variant mdi-18px'></i><span style='color: #f96868'>&nbsp;[未配置]</span>" +
                                 "</a>";
                         }else {
-                            return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\")'>" +
-                                "<i class='fa fa-envelope-o'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
+                            return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\", \""+value+"\")'>" +
+                                "<i class='mdi mdi-email-variant mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
                                 "</a>";
                         }
 
@@ -149,7 +149,7 @@ function getTableData() {
                                 "<i class='mdi mdi-wechat mdi-18px'></i><span style='color:#f96868;'>&nbsp;[未配置]</span>" +
                                 "</a>";
                         }else {
-                            return "<a style='color: #52c41a' onclick='openWxMsgModal(\""+row['groupId']+"\")'>" +
+                            return "<a style='color: #52c41a' onclick='openWxMsgModal(\""+row['groupId']+"\", \""+value+"\")'>" +
                                 "<i class='mdi mdi-wechat mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
                                 "</a>";
                         }
@@ -162,11 +162,11 @@ function getTableData() {
                     formatter: function (value, row, index) {
                         if(value === null || value === undefined || value === '') {
                             return "<a style='color: #48b0f7' onclick='personalMsg(\""+row['groupId']+"\")'>" +
-                                "<i class='mdi mdi-pig'></i><span style='color: #f96868'>&nbsp;[未配置]</span>" +
+                                "<i class='mdi mdi-account-multiple mdi-18px'></i><span style='color: #f96868'>&nbsp;[未配置]</span>" +
                                 "</a>";
                         }else {
                             return "<a style='color: #48b0f7' onclick='personalMsg(\""+row['groupId']+"\")'>" +
-                                "<i class='fa fa-users'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
+                                "<i class='mdi mdi-account-multiple mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
                                 "</a>";
                         }
 
@@ -231,9 +231,9 @@ function mergeCells(data, fieldName, colspan, target) {
 /**
  * 微信消息窗口
  */
-function openWxMsgModal(groupId) {
+function openWxMsgModal(groupId, qywxId) {
     $( "#currentGroupId" ).val(groupId);
-    getWxMsgTableData();
+    getWxMsgTableData(qywxId);
     $( '#wxMsgListModal' ).modal( 'show' );
 }
 
@@ -287,6 +287,7 @@ function nextStep(stepNum) {
                 $( "#step1" ).attr( "style", "display:none;" );
                 $( "#step2" ).attr( "style", "display:none;" );
                 $( "#step3" ).attr( "style", "display:block;" );
+                getCurrentGroupData();
             }else {
                 $MB.n_warning(r.msg);
             }

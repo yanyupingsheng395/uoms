@@ -320,5 +320,6 @@
                             on uodtc.group_id = uodgc.group_id
                  left join uo_op_coupon uoc on uodgc.coupon_id = uoc.coupon_id
         where uodtc.user_value = #{userValue} and uodtc.lifecycle = #{lifeCycle} and uodtc.path_active = #{pathActive} and uodtc.tar_type = #{tarType}
+        order by coupon_threshold asc, coupon_denom asc
     </select>
 </mapper>

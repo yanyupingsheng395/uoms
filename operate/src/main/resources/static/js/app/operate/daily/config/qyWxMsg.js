@@ -1,7 +1,7 @@
 /**
  * 微信消息列表
  */
-function getWxMsgTableData() {
+function getWxMsgTableData(qywxId) {
     let settings = {
         url: "/qywx/getDataListPage",
         cache: false,
@@ -20,7 +20,16 @@ function getWxMsgTableData() {
         },
         columns: [
             {
-                checkbox: true
+                checkbox: true,
+                formatter: function (value, row, index) {
+                    console.log(row['qywxId']);
+                    console.log(qywxId);
+                    if(row['qywxId'] === qywxId) {
+                        return {
+                            checked: true
+                        };
+                    }
+                }
             },
             {
                 title: '消息内容',
