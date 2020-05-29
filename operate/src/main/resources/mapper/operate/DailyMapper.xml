@@ -341,4 +341,9 @@
         update uo_op_daily_header h set h.status='timeout' where h.status='todo' and trunc(h.touch_dt)!=trunc(sysdate)
     </update>
 
+    <select id="getLifeCycleByUserId" resultType="string">
+        select uo_op_daily_template_config.lifecycle from uo_op_daily_detail left join uo_op_daily_template_config
+        on uo_op_daily_detail.group_id = uo_op_daily_template_config.group_id
+        where user_id = #{userId} and head_id = #{headId}::integer
+    </select>
 </mapper>

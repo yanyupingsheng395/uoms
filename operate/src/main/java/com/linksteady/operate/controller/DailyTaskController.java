@@ -417,4 +417,9 @@ public class DailyTaskController {
     public ResponseBo getTouchDt(@RequestParam("headId") Long headId) {
         return ResponseBo.okWithData(null, dailyService.getDailyHeadById(headId).getTouchDtStr());
     }
+
+    @GetMapping("/getLifeCycleByUserId")
+    public ResponseBo getLifeCycleByUserId(@RequestParam("userId") String userId, @RequestParam("headId") String headId) {
+        return ResponseBo.okWithData(null, dailyService.getLifeCycleByUserId(userId, headId));
+    }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -56,15 +57,6 @@ public class DailyConfigController {
     }
 
     /**
-     * 获取智能券
-     * @return
-     */
-    @GetMapping("/getIntelCouponList")
-    public List<CouponInfo> getIntelCouponList() {
-        return couPonService.getIntelCouponList();
-    }
-
-    /**
      * 删除用户群组上的文案配置
      * @return
      */
@@ -101,5 +93,11 @@ public class DailyConfigController {
     @GetMapping("/resetGroupCoupon")
     public ResponseBo resetGroupCoupon() {
         return dailyConfigService.resetGroupCoupon();
+    }
+
+    @GetMapping("/getUserGroupValue")
+    public List<Map<String, String>> getUserGroupValue(@RequestParam("userValue") String userValue, @RequestParam("lifecycle") String lifecycle,
+                                                       @RequestParam("pathActive") String pathActive) {
+        return dailyConfigService.getUserGroupValue(userValue, lifecycle, pathActive);
     }
 }

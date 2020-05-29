@@ -1,33 +1,37 @@
 package com.linksteady.operate.controller;
+
 import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.CouponInfo;
+import com.linksteady.operate.service.VmallCouPonService;
 import com.linksteady.operate.service.impl.CouponServiceImpl;
 import com.linksteady.operate.service.impl.ShortUrlServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
 /**
  * 短信相关的controller
  *
  * @author huang
  */
 @RestController
-@RequestMapping("/coupon")
+@RequestMapping("/vmallcoupon")
 @Slf4j
-public class CouponController extends BaseController {
+public class VmallCouponController extends BaseController {
 
     @Autowired
-    CouponServiceImpl couponService;
-
-    @Autowired
-    ShortUrlServiceImpl shortUrlService;
+    VmallCouPonService couponService;
 
     /**
      * 获取券list
@@ -42,19 +46,6 @@ public class CouponController extends BaseController {
         int totalCount = couponService.getTotalCount();
         return ResponseBo.okOverPaging("", totalCount, result);
     }
-
-    /**
-     * 根据群组信息过滤优惠券
-     * @return
-     */
-    @GetMapping("/getCouponList")
-    public ResponseBo getCouponList(@RequestParam("groupId") String groupId,
-                                    @RequestParam("userValue") String userValue,
-                                    @RequestParam("lifeCycle") String lifeCycle,
-                                    @RequestParam("pathActive") String pathActive) {
-        return ResponseBo.okWithData(null, couponService.getCouponList(groupId,userValue,lifeCycle, pathActive));
-    }
-
     /**
      * 获取某个groupId下的couponIds
      *
@@ -135,24 +126,6 @@ public class CouponController extends BaseController {
     public ResponseBo getByCouponId(String couponId) {
         CouponInfo couponInfo = couponService.getByCouponId(couponId);
         return ResponseBo.okWithData(null, couponInfo);
-    }
-
-    /**
-     * 获取短链
-     * @return
-     */
-    @RequestMapping("/getShortUrl")
-    public ResponseBo getShortUrl(String url) {
-        String shortUrl;
-        if (StringUtils.isNotEmpty(url)) {
-            shortUrl = shortUrlService.genConponShortUrl(url,"S");
-            if("error".equalsIgnoreCase(shortUrl)) {
-                return ResponseBo.error("生成短链错误！");
-            }
-        }else {
-            return ResponseBo.error("长链地址不合法！");
-        }
-        return ResponseBo.okWithData(null, shortUrl);
     }
 
     /**

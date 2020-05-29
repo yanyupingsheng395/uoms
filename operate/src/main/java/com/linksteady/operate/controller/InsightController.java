@@ -112,6 +112,12 @@ public class InsightController {
         return ResponseBo.okWithData(null, stringObjectMap);
     }
 
+    @GetMapping("/retentionInPurchaseTimesOfAll")
+    public ResponseBo retentionInPurchaseTimesOfAll(@RequestParam("spuId") String spuId) throws Exception{
+        Map<String, Object> stringObjectMap = insightService.retentionInPurchaseTimesOfAll(spuId);
+        return ResponseBo.okWithData(null, stringObjectMap);
+    }
+
     /**
      * 件单价随购买次数变化
      *
@@ -304,6 +310,17 @@ public class InsightController {
     @GetMapping("/getUserBuyOrder")
     public ResponseBo getUserBuyOrder(@RequestParam("userId") String userId, @RequestParam("spuId") String spuId) {
         return ResponseBo.okWithData(null, insightService.getUserBuyOrder(userId, spuId));
+    }
+
+    /**
+     * 获取最大购买次序和成长速度和成长目标
+     * @param userId
+     * @param spuId
+     * @return
+     */
+    @GetMapping("/getUserGrowthData")
+    public ResponseBo getUserGrowthData(@RequestParam("userId") String userId, @RequestParam("spuId") String spuId) {
+        return ResponseBo.okWithData(null, insightService.getUserGrowthData(userId, spuId));
     }
 
     /**

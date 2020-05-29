@@ -1,12 +1,15 @@
 package com.linksteady.operate.service.impl;
+
 import com.linksteady.operate.dao.CouponMapper;
+import com.linksteady.operate.dao.VmallCouponMapper;
 import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.service.CouPonService;
-import org.apache.commons.lang3.StringUtils;
+import com.linksteady.operate.service.VmallCouPonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,10 +19,10 @@ import java.util.stream.Collectors;
  * Created by hxcao on 2019-04-29
  */
 @Service
-public class CouponServiceImpl implements CouPonService {
+public class VmallCouponServiceImpl implements VmallCouPonService {
 
     @Autowired
-    private CouponMapper couponMapper;
+    private VmallCouponMapper couponMapper;
 
     @Autowired
     private PushProperties pushProperties;
@@ -157,8 +160,6 @@ public class CouponServiceImpl implements CouPonService {
         couponMapper.validEndDateNull();
         //补贴有效日期已失效
         couponMapper.validEndDateNotNull();
-        //补贴链接为空
-        couponMapper.validCouponUrl();
     }
 
     @Override

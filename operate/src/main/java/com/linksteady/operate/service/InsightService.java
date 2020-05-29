@@ -61,6 +61,8 @@ public interface InsightService {
      */
     Map<String, Object> retentionInPurchaseTimes(String type, String id, String period) throws Exception;
 
+    Map<String, Object> retentionInPurchaseTimesOfAll(String spuId) throws Exception;
+
     /**
      * 件单价随购买次数的变化
      *
@@ -166,4 +168,6 @@ public interface InsightService {
     Map<String, Object> getUserValueWithSpu(String userId, String spuId);
 
     Map<String, Object> getUserConvert(String spuId);
+
+    Map<String, String> getUserGrowthData(String userId, String spuId);
 }

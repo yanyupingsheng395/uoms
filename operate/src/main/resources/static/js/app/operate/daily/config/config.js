@@ -56,7 +56,7 @@ function getTableData() {
                                 res = "高价值低敏感";
                                 break;
                             case "ULC_02":
-                                res = "高价值高敏感";
+                                res = "高价值较敏感";
                                 break;
                             case "ULC_03":
                                 res = "中价值高敏感";
@@ -119,7 +119,7 @@ function getTableData() {
                     title: '理解用户群组',
                     align: 'center',
                     formatter: function (value, row, index) {
-                        return "<a style='color: #4c4c4c' onclick='openSelectedGroupModal()'><i class='mdi mdi-account mdi-18px'></i></a>";
+                        return "<a style='color: #4c4c4c' onclick='openSelectedGroupModal(\""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'><i class='mdi mdi-account mdi-18px'></i></a>";
                     }
                 },
                 {
@@ -128,11 +128,11 @@ function getTableData() {
                     field: 'smsCode',
                     formatter: function (value, row, index) {
                         if(value === null || value === undefined || value === '') {
-                            return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\")'>" +
+                            return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\", null, \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
                                 "<i class='mdi mdi-email-variant mdi-18px'></i><span style='color: #f96868'>&nbsp;[未配置]</span>" +
                                 "</a>";
                         }else {
-                            return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\", \""+value+"\")'>" +
+                            return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\", \""+value+"\", \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
                                 "<i class='mdi mdi-email-variant mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
                                 "</a>";
                         }
@@ -145,11 +145,11 @@ function getTableData() {
                     field: 'qywxId',
                     formatter: function (value, row, index) {
                         if(value === null || value === undefined || value === '') {
-                            return "<a style='color: #52c41a' onclick='openWxMsgModal(\""+row['groupId']+"\")'>" +
+                            return "<a style='color: #52c41a' onclick='openWxMsgModal(\""+row['groupId']+"\", null, \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
                                 "<i class='mdi mdi-wechat mdi-18px'></i><span style='color:#f96868;'>&nbsp;[未配置]</span>" +
                                 "</a>";
                         }else {
-                            return "<a style='color: #52c41a' onclick='openWxMsgModal(\""+row['groupId']+"\", \""+value+"\")'>" +
+                            return "<a style='color: #52c41a' onclick='openWxMsgModal(\""+row['groupId']+"\", \""+value+"\", \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
                                 "<i class='mdi mdi-wechat mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
                                 "</a>";
                         }
@@ -231,9 +231,10 @@ function mergeCells(data, fieldName, colspan, target) {
 /**
  * 微信消息窗口
  */
-function openWxMsgModal(groupId, qywxId) {
+function openWxMsgModal(groupId, qywxId, userValue, lifecycle, pathActive) {
     $( "#currentGroupId" ).val(groupId);
     getWxMsgTableData(qywxId);
+    getUserGroupValue(userValue, lifecycle, pathActive, 'selectedGroupInfo2');
     $( '#wxMsgListModal' ).modal( 'show' );
 }
 
@@ -245,9 +246,44 @@ function openWxMsgAddModal() {
     $( "#wxMsgListModal" ).modal( 'hide' );
 }
 
-function openSelectedGroupModal() {
+function openSelectedGroupModal(userValue, lifecycle, pathActive) {
+    getUserGroupValue(userValue, lifecycle, pathActive, 'userGroupDescTable');
     $( "#selectedGroupModal" ).modal( 'show' );
 }
+
+function getUserGroupValue(userValue, lifecycle, pathActive, tableId) {
+    let settings = {
+        url: '/daily/getUserGroupValue',
+        pagination: false,
+        singleSelect: false,
+        queryParams: function() {
+            return {
+                userValue: userValue,
+                lifecycle: lifecycle,
+                pathActive: pathActive
+            }
+        },
+        columns: [
+            {
+                title: '差异特征维度',
+                field: 'colName'
+            },
+            {
+                title: '用户群组特征值',
+                field: 'colValue'
+            },
+            {
+                title: '特征值业务理解',
+                field: 'colDesc'
+            },{
+                title: '推送配置建议',
+                field: 'colAdvice'
+            }
+        ]
+    };
+    $( "#" + tableId).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+}
+
 
 function personalMsg() {
     $( "#msgListModal" ).modal( 'show' );

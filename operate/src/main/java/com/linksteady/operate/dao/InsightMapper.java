@@ -23,6 +23,8 @@ public interface InsightMapper {
 
     List<Map<String, Object>> retentionInPurchaseTimes(String type, String id, int period);
 
+    List<Map<String, Object>> retentionInPurchaseTimesOfAll(String spuId);
+
     List<Map<String, Object>> unitPriceInPurchaseTimes(String type, String id, int period);
 
     List<Map<String, Object>> joinRateInPurchaseTimes(String type, String id, int period);
@@ -81,4 +83,6 @@ public interface InsightMapper {
     List<Map<String, Object>> getPushDate(String userId);
 
     List<Map<String, Object>> getPushAndConvertDate(String userId);
+
+    Map<String, String> getGrowthData(String userId, String spuId);
 }

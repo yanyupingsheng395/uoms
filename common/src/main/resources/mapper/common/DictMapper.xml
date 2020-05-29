@@ -11,6 +11,6 @@
     </resultMap>
 
     <select id="getDataListByTypeCode" resultMap="base">
-        select dict_id, code, value, type_code, type_name, order_no from T_DICT where TYPE_CODE = #{typeCode} order by code asc
+        select dict_id, code, value, type_code, type_name, order_no, remark from T_DICT where TYPE_CODE = #{typeCode} order by code asc
     </select>
 </mapper>

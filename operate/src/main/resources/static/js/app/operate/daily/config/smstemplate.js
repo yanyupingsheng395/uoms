@@ -5,9 +5,10 @@ $(function () {
     statInputNum();
 });
 
-function openSmsTemplateModal(groupId, smsCode) {
+function openSmsTemplateModal(groupId, smsCode, userValue, lifecycle, pathActive) {
     $( "#currentGroupId" ).val(groupId);
     smsTemplateTable(smsCode);
+    getUserGroupValue(userValue, lifecycle, pathActive, 'selectedGroupInfo1');
     $( "#smsTemplateModal" ).modal( 'show' );
 }
 

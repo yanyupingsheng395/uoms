@@ -1,12 +1,14 @@
 var validator;
 var $couponForm = $("#coupon_edit");
 init_date('validEnd', 'yyyy-mm-dd', 0,2,0);
+init_date('vmallValidEnd', 'yyyy-mm-dd', 0,2,0);
 $("#validEnd").datepicker('setStartDate', new Date());
+$("#vmallValidEnd").datepicker('setStartDate', new Date());
 $(function () {
     validateRule();
 });
 // 新增补贴
-function couponAdd() {
+function addCoupon() {
     $('#coupon_modal').modal('hide');
     $('#coupon_add_modal').modal('show');
     $("#btn_save_coupon").attr('name', 'save');
@@ -16,8 +18,96 @@ $("#coupon_add_modal").on('hidden.bs.modal', function () {
     closeModal();
 });
 
+var current_tab = 'taoke';
+$("#couponTab a").on("shown.bs.tab", function (e) {
+    var activeTab = $(e.target).text();
+    if(activeTab === '小程序券') {
+        vmallCouponTable();
+        current_tab = "xiaochengxu";
+        $("#taokeDiv").attr("style", "display:none;");
+    }
+    if(activeTab === '淘客券') {
+        couponTable();
+        current_tab = "taoke";
+        $("#taokeDiv").attr("style", "display:block;");
+    }
+});
+
 /**
- * 补贴列表
+ * 小程序券列表
+ */
+function vmallCouponTable() {
+    var settings = {
+        url: "/vmallcoupon/couponList",
+        cache: false,
+        pagination: true,
+        singleSelect: true,
+        sidePagination: "server",
+        pageNumber: 1,
+        pageSize: 10,
+        pageList: [10, 25, 50, 100],
+        clickToSelect: true,
+        queryParams: function(param) {
+            return {
+                limit: param.limit,
+                offset: param.offset
+            }
+        },
+        columns: [{
+            checkbox: true
+        },{
+            field: 'couponDisplayName',
+            align: 'center',
+            title: '补贴名称'
+        }, {
+            field: 'couponSource',
+            title: '补贴类型',
+            align: 'center',
+            formatter: function (value, row, index) {
+                var res = '-';
+                if (value === '0') {
+                    res = "智能";
+                }
+                if (value === '1') {
+                    res = "手动";
+                }
+                return res;
+            }
+        }, {
+            field: 'couponThreshold',
+            align: 'center',
+            title: '补贴门槛(元)'
+        }, {
+            field: 'couponDenom',
+            align: 'center',
+            title: '补贴面额(元)'
+        }, {
+            field: 'validEnd',
+            align: 'center',
+            title: '有效截止期'
+        }, {
+            field: 'checkFlag',
+            title: '校验结果',
+            align: 'center',
+            formatter: function (value, row, index) {
+                if (value === '1') {
+                    return "<span class=\"badge bg-success\">通过</span>";
+                }
+                if (value === '0') {
+                    return "<span class=\"badge bg-danger\">未通过</span>";
+                }
+                return "-";
+            }
+        }, {
+            field: 'checkComments',
+            title: '失败原因'
+        }]
+    };
+    $( '#vmallCouponTable' ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+}
+
+/**
+ * 淘客券列表
  */
 function couponTable() {
     var settings = {
@@ -30,6 +120,12 @@ function couponTable() {
         pageSize: 10,
         pageList: [10, 25, 50, 100],
         clickToSelect: true,
+        queryParams: function(param) {
+            return {
+                limit: param.limit,
+                offset: param.offset
+            }
+        },
         columns: [{
             checkbox: true
         },{
@@ -63,7 +159,7 @@ function couponTable() {
             align: 'center',
             title: '补贴短链接',
             formatter: function (value, row, index) {
-                if (value !== undefined && value !== null) {
+                if (value !== undefined && value !== null && value !== '') {
                     return "<a target='_blank' href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
                 } else {
                     return "-";
@@ -94,15 +190,23 @@ function couponTable() {
     $( '#couponTable' ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 
-$( "#btn_intel" ).click( function () {
-    intelCouponData();
+// 获取智能补贴数据
+function getIntellectCoupon(coupon_type) {
+    intelCouponData(coupon_type);
     $( "#coupon_modal" ).modal( 'hide' );
     $( "#intel_coupon_modal" ).modal( 'show' );
-} );
+}
 
-function intelCouponData() {
+function intelCouponData(coupon_type) {
+    var url = '';
+    if(coupon_type === '0') {
+        url = '/coupon/getIntelCouponList';
+    }
+    if(coupon_type === '1') {
+        url = "/vmallcoupon/getIntelCouponList";
+    }
     var settings = {
-        url: '/daily/getIntelCouponList',
+        url: url,
         cache: false,
         pagination: false,
         singleSelect: false,
@@ -177,7 +281,6 @@ function closeModal() {
     $form.find("input[name='couponDisplayName']").val("").removeAttr("readOnly");
     $form.find("input[name='validEnd']").val("").removeAttr("readOnly");
     $("input[name='validStatus']:radio[value='Y']").prop("checked", true);
-
     $MB.closeAndRestModal("coupon_add_modal");
     $("#couponValid").hide();
     $("#coupon_edit").validate().resetForm();
@@ -198,14 +301,10 @@ function validateRule() {
                 digits: true
             },
             couponInfo2: {
-                required: function () {
-                    return ($("#validUrl").val() === 'A');
-                }
+                required: false
             },
             couponUrl: {
-                required: function () {
-                    return ($("#validUrl").val() === 'A');
-                }
+                required: false
             },
             couponDisplayName: {
                 required: true,
@@ -213,7 +312,7 @@ function validateRule() {
             },
             validEnd: {
                 required: true
-            }
+            },
         },
         errorPlacement: function (error, element) {
             if (element.is(":checkbox") || element.is(":radio")) {
@@ -237,7 +336,7 @@ function validateRule() {
                 required: icon + "请输入补贴名称",
                 maxlength: icon + "最大长度不能超过"+couponNameLen+"个字符"
             },
-            validEnd: icon + "请输入有效截止日期"
+            validEnd: icon + "请输入有效截止日期",
         }
     });
 }
@@ -250,24 +349,40 @@ $("#btn_save_coupon").click(function () {
     if (flag) {
         var formData = $("#coupon_edit").serialize();
         if (name === "save") {
-            $.post("/coupon/save", formData, function (r) {
+            var url = "";
+            if(current_tab === 'taoke') {
+                url = "/coupon/save";
+            }
+            if(current_tab === 'xiaochengxu') {
+                url = "/vmallcoupon/save";
+            }
+            $.post(url, formData, function (r) {
                 if (r.code === 200) {
                     closeModal();
                     $MB.n_success(r.msg);
                     $MB.refreshTable("couponTable");
+                    $MB.refreshTable("vmallCouponTable");
                 } else $MB.n_danger(r.msg);
             });
         }
         if (name === "update") {
+            var url = "";
+            if(current_tab === 'taoke') {
+                url = "/coupon/save";
+            }
+            if(current_tab === 'xiaochengxu') {
+                url = "/vmallcoupon/update";
+            }
             if(!validCoupon()) {
                 $MB.n_warning("当前日期大于有效截止日期，'券是否有效'的更改无效！");
                 return;
             }
-            $.post("/coupon/update", formData, function (r) {
+            $.post(url, formData, function (r) {
                 if (r.code === 200) {
                     closeModal();
                     $MB.n_success(r.msg);
                     $MB.refreshTable("couponTable");
+                    $MB.refreshTable("vmallCouponTable");
                 } else $MB.n_danger(r.msg);
             });
         }
@@ -312,41 +427,77 @@ function resetValidEndVal() {
 }
 // 编辑补贴
 function updateCoupon() {
-    $("#btn_save_coupon").attr("name", "update");
-    var selected = $("#couponTable").bootstrapTable('getSelections');
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请勾选需要修改的补贴！');
-        return;
-    }
-    if(selected_length > 1) {
-        $MB.n_warning("一次只能编辑一条记录！");
-        return;
-    }
-    var couponId = selected[0].couponId;
-    $("#couponValid").show();
-    $.post("/coupon/getByCouponId", {"couponId": couponId}, function (r) {
-        if (r.code === 200) {
-            var $form = $('#coupon_edit');
-            $("#coupon_add_modal").modal('show');
-            $("#coupon_modal").modal('hide');
-            var coupon = r.data;
-            $("#myLargeModalLabel").html('修改补贴');
-            $form.find("input[name='couponId']").val(coupon.couponId);
-            $form.find("input[name='validStatus']").val(coupon.validStatus);
-            $form.find("input[name='couponDenom']").val(coupon.couponDenom).attr("readonly", true);
-            $form.find("input[name='couponThreshold']").val(coupon.couponThreshold).attr("readonly", true);
-            $form.find("input[name='couponInfo2']").val(coupon.couponInfo2);
-            $form.find("input[name='couponUrl']").val(coupon.couponUrl);
-            $form.find("input[name='couponNum']").val(coupon.couponNum);
-            $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName).attr("readonly", true);
-            $form.find("input[name='validEnd']").val(coupon.validEnd);
-            VALID_END = coupon.validEnd;
-            $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);
-        } else {
-            $MB.n_danger(r['msg']);
+    if(current_tab === 'taoke') {
+        $("#btn_save_coupon").attr("name", "update");
+        var selected = $("#couponTable").bootstrapTable('getSelections');
+        var selected_length = selected.length;
+        if (!selected_length) {
+            $MB.n_warning('请勾选需要修改的补贴！');
+            return;
         }
-    });
+        if(selected_length > 1) {
+            $MB.n_warning("一次只能编辑一条记录！");
+            return;
+        }
+        var couponId = selected[0].couponId;
+        $("#couponValid").show();
+        $.post("/coupon/getByCouponId", {"couponId": couponId}, function (r) {
+            if (r.code === 200) {
+                var $form = $('#coupon_edit');
+                $("#coupon_add_modal").modal('show');
+                $("#coupon_modal").modal('hide');
+                var coupon = r.data;
+                $("#myLargeModalLabel").html('修改补贴');
+                $form.find("input[name='couponId']").val(coupon.couponId);
+                $form.find("input[name='validStatus']").val(coupon.validStatus);
+                $form.find("input[name='couponDenom']").val(coupon.couponDenom).attr("readonly", true);
+                $form.find("input[name='couponThreshold']").val(coupon.couponThreshold).attr("readonly", true);
+                $form.find("input[name='couponInfo2']").val(coupon.couponInfo2);
+                $form.find("input[name='couponUrl']").val(coupon.couponUrl);
+                $form.find("input[name='couponNum']").val(coupon.couponNum);
+                $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName).attr("readonly", true);
+                $form.find("input[name='validEnd']").val(coupon.validEnd);
+                VALID_END = coupon.validEnd;
+                $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);
+            } else {
+                $MB.n_danger(r['msg']);
+            }
+        });
+    }
+    if(current_tab === 'xiaochengxu') {
+        $("#btn_save_coupon").attr("name", "update");
+        var selected = $("#vmallCouponTable").bootstrapTable('getSelections');
+        var selected_length = selected.length;
+        if (!selected_length) {
+            $MB.n_warning('请勾选需要修改的补贴！');
+            return;
+        }
+        if(selected_length > 1) {
+            $MB.n_warning("一次只能编辑一条记录！");
+            return;
+        }
+        var couponId = selected[0].couponId;
+        $("#couponValid").show();
+        $.post("/vmallcoupon/getByCouponId", {"couponId": couponId}, function (r) {
+            if (r.code === 200) {
+                var $form = $('#coupon_edit');
+                $("#coupon_add_modal").modal('show');
+                $("#coupon_modal").modal('hide');
+                var coupon = r.data;
+                $("#myLargeModalLabel").html('修改补贴');
+                $form.find("input[name='couponId']").val(coupon.couponId);
+                $form.find("input[name='validStatus']").val(coupon.validStatus);
+                $form.find("input[name='couponDenom']").val(coupon.couponDenom).attr("readonly", true);
+                $form.find("input[name='couponThreshold']").val(coupon.couponThreshold).attr("readonly", true);
+                $form.find("input[name='couponNum']").val(coupon.couponNum);
+                $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName).attr("readonly", true);
+                $form.find("input[name='validEnd']").val(coupon.validEnd);
+            } else {
+                $MB.n_danger(r['msg']);
+            }
+        });
+    }
+
 }
 
 // 验证券是否有效
@@ -361,32 +512,63 @@ function validCoupon() {
     return true;
 }
 
-$("#btn_delete_coupon").click(function () {
-    var selected = $("#couponTable").bootstrapTable('getSelections');
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请勾选需要删除的补贴！');
-        return;
-    }
-    var couponId = [];
-    selected.forEach((v, k) => {
-        couponId.push(v['couponId']);
-    });
-
-    $MB.confirm({
-        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认删除选中的补贴？'
-    }, function () {
-        $.post("/coupon/deleteCoupon", {"couponId": couponId.join(",")}, function (r) {
-            if(r.code == 200) {
-                $MB.n_success(r.msg);
-            }else {
-                $MB.n_danger(r.msg);
-            }
-            couponTable($("#currentGroupId").val());
+/**
+ * 删除补贴数据
+ */
+function deleteCoupon() {
+    if(current_tab === 'taoke') {
+        var selected = $("#couponTable").bootstrapTable('getSelections');
+        var selected_length = selected.length;
+        if (!selected_length) {
+            $MB.n_warning('请勾选需要删除的补贴！');
+            return;
+        }
+        var couponId = [];
+        selected.forEach((v, k) => {
+            couponId.push(v['couponId']);
         });
-    });
-});
+
+        $MB.confirm({
+            title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+            content: '确认删除选中的补贴？'
+        }, function () {
+            $.post("/coupon/deleteCoupon", {"couponId": couponId.join(",")}, function (r) {
+                if(r.code == 200) {
+                    $MB.n_success(r.msg);
+                }else {
+                    $MB.n_danger(r.msg);
+                }
+                $MB.refreshTable('couponTable');
+            });
+        });
+    }
+    if(current_tab === 'xiaochengxu') {
+        var selected = $("#vmallCouponTable").bootstrapTable('getSelections');
+        var selected_length = selected.length;
+        if (!selected_length) {
+            $MB.n_warning('请勾选需要删除的补贴！');
+            return;
+        }
+        var couponId = [];
+        selected.forEach((v, k) => {
+            couponId.push(v['couponId']);
+        });
+
+        $MB.confirm({
+            title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+            content: '确认删除选中的补贴？'
+        }, function () {
+            $.post("/vmallcoupon/deleteCoupon", {"couponId": couponId.join(",")}, function (r) {
+                if(r.code == 200) {
+                    $MB.n_success(r.msg);
+                }else {
+                    $MB.n_danger(r.msg);
+                }
+                $MB.refreshTable('vmallCouponTable');
+            });
+        });
+    }
+}
 
 function saveIntelCoupon() {
     $MB.confirm({
@@ -403,12 +585,19 @@ function saveIntelCoupon() {
                 coupon.push(tmp);
             }
         });
-        $.get("/coupon/getCalculatedCoupon", {coupon: JSON.stringify(coupon)}, function (r) {
+        var url = '';
+        if(current_tab == 'taoke') {
+            url = '/coupon/getCalculatedCoupon';
+        }
+        if(current_tab == 'xiaochengxu') {
+            url = '/vmallcoupon/getCalculatedCoupon';
+        }
+        $.get(url, {coupon: JSON.stringify(coupon)}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("智能补贴更新成功。");
                 $( "#intel_coupon_modal" ).modal( 'hide' );
-                $( "#coupon_modal" ).modal( 'show' );
-                couponTable($("#currentGroupId").val());
+                $MB.refreshTable('couponTable');
+                vmallCouponTable();
             }
         });
     });

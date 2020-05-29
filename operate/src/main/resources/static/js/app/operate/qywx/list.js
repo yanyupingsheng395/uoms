@@ -886,7 +886,7 @@ function growthInsight(user_id,head_id)
     $.get("/qywxDaily/getTaskDt", {headId: head_id}, function (res) {
         var taskDt = res.data;
         if(res.code === 200 && taskDt !== undefined && taskDt !== '') {
-            window.open("/page/personInsight?userId=" + user_id + "&taskDt=" + taskDt, "_blank");
+            window.open("/page/personInsight?headId="+head_id+"&userId=" + user_id + "&taskDt=" + taskDt, "_blank");
         }else {
             $MB.n_warning("获取任务日期有误！");
         }

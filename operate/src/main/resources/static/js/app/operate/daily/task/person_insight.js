@@ -36,11 +36,14 @@ function resetSearch() {
 function getUserBuyOrder(userId) {
     var spuId = $("#spuId").val();
     var spuName = $("#spuId").find("option:selected").text();
-    $.get("/insight/getUserBuyOrder", {spuId: spuId, userId: userId}, function (r) {
+    $.get("/insight/getUserGrowthData", {spuId: spuId, userId: userId}, function (r) {
         if(r.code === 200) {
-            var n = parseInt(r.data);
-            var m = parseInt(r.data) + 1;
+            var n = parseInt(r.data['rn']);
+            var m = parseInt(r.data['rn']) + 1;
             $("#buyOrder").val(n + "-" + m);
+            $("#growthType").val(r.data['growth_type']);
+            $("#growthSeriesType").val(r.data['growth_series_type']);
+            retentionInPurchaseTimes(spuId, m);
             getSpuRelation(userId, spuId, n, spuName);
         }else {
             $MB.n_danger("未知错误！");
@@ -241,12 +244,15 @@ function getSpuChartOption(data, spuName, purchOrder) {
                 label: {
                     normal: {
                         show: true,
-                        position: 'inside'
+                        position: 'top',
+                        color: '#CD2626'
                     }
                 },
                 data:data.ydataActual,
                 itemStyle: {
                     normal: {
+                        borderWidth:1,
+                        borderColor: '#CD2626',
                         color: function (d) {
                             if(d.name === data['ebpProductMap']['ebp_product_name']) {
                                 flag = true;
@@ -255,10 +261,11 @@ function getSpuChartOption(data, spuName, purchOrder) {
                                 if(!flag && d.name === '其他') {
                                     return '#CD2626';
                                 }
-                                return "rgba(205,38,38,0.4)";
+                                return "#fff";
                             }
                         }
-                    }
+                    },
+
                 }
             }
         ]
@@ -610,4 +617,111 @@ function getDateChartOption(chartId, data, title) {
     };
     var chart = echarts.init(document.getElementById(chartId), 'macarons');
     chart.setOption(option);
+}
+
+function retentionInPurchaseTimes(spuId, count) {
+    var chart_retention = echarts.init(document.getElementById("chart_retention"), 'macarons');
+    chart_retention.showLoading({
+        text : '正在加载数据'
+    });
+    $.get("/insight/retentionInPurchaseTimesOfAll", {spuId: spuId}, function (r) {
+        var data = r.data;
+        var option = getOptionWithFit(data, "再次购买类目概率（%）", "再次购买类目概率", count);
+        option.grid = {left: '15%', right:'15%'};
+        chart_retention.hideLoading();
+        chart_retention.setOption(option);
+    });
+}
+
+// 带拟合值
+function getOptionWithFit(data, name, titleName, count) {
+    return  {
+        legend: {
+            data: ['购买概率', '用户购买次序'],
+            align: 'right',
+            right: 10,
+        },
+        tooltip: {
+            trigger: 'axis',
+            padding: [15, 20],
+            axisPointer: {
+                type: 'shadow'
+            }
+        },
+        xAxis: {
+            name: '购买次数',
+            type: 'category',
+            data: data.xdata,
+            splitLine:{show: false},
+            splitArea : {show : false}
+        },
+        yAxis: {
+            name: name,
+            type: 'value',
+            splitLine:{show: false},
+            splitArea : {show : false}
+        },
+        series: [{
+            name: '用户购买次序',
+            type: 'line',
+            markLine :{
+                symbol: ['none', 'none'],//去掉箭头
+                itemStyle: {
+                    normal: {
+                        yAxisIndex: 0,
+                        lineStyle: {
+                            type: 'dotted',
+                            color:{//设置渐变
+                                type: 'linear',
+
+                                colorStops: [{
+                                    offset: 0, color: 'red '// 0% 处的颜色
+                                }, {
+                                    offset: 1, color: 'red' // 100% 处的颜色
+                                }],
+                                global: false // 缺省为 false
+                            }
+                        },
+                        label: {
+                            show: true,
+                            position:'middle',
+                            color: 'red',
+                            formatter:'第 {c} 次'
+                        }
+                    }
+                },
+                data: [{
+                    xAxis : count
+                }]
+            }
+        }, {
+            name: '购买概率',
+            data: data.ydata,
+            type: 'line'
+        }],
+        grid: {right:'15%'},
+        title: {
+            text: titleName + '随购买次数变化',
+            x: 'center',
+            y: 'bottom',
+            textStyle: {
+                //文字颜色
+                color: '#000',
+                //字体风格,'normal','italic','oblique'
+                fontStyle: 'normal',
+                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                fontWeight: 'normal',
+                //字体系列
+                fontFamily: 'sans-serif',
+                //字体大小
+                fontSize: 12
+            }
+        }
+    }
+}
+getLifeCycleByUserId();
+function getLifeCycleByUserId() {
+    $.get("/daily/getLifeCycleByUserId", {headId:headId, userId:userId}, function (r) {
+        $("#lifecycleType").val(r.data);
+    });
 }

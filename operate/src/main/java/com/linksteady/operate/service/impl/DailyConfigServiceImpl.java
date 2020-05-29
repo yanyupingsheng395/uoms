@@ -3,10 +3,13 @@ package com.linksteady.operate.service.impl;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.common.dao.DictMapper;
+import com.linksteady.common.domain.Dict;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyConfigMapper;
+import com.linksteady.operate.dao.VmallCouponMapper;
 import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.vo.GroupCouponVO;
@@ -20,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 @Service
 public class DailyConfigServiceImpl implements DailyConfigService {
@@ -32,6 +36,8 @@ public class DailyConfigServiceImpl implements DailyConfigService {
 
     @Autowired
     private CouponMapper couponMapper;
+    @Autowired
+    private VmallCouponMapper vmallCouponMapper;
 
 
     /**
@@ -251,10 +257,10 @@ public class DailyConfigServiceImpl implements DailyConfigService {
     @Transactional(rollbackFor = Exception.class)
     public ResponseBo resetGroupCoupon() {
         Lock lock = new ReentrantLock();
+        lock.lock();
         try {
-            lock.lock();
-            int count = couponMapper.getValidCoupon();
-            if (count == 0) {
+            int count1 = couponMapper.getValidCoupon();
+            if (count1 == 0) {
                 return ResponseBo.error("无有效的优惠券，请先配置优惠券。");
             }
             // 更新discountLevel字段
@@ -267,5 +273,45 @@ public class DailyConfigServiceImpl implements DailyConfigService {
             lock.unlock();
         }
         return ResponseBo.ok();
+    }
+
+    @Autowired
+    private DictMapper dictMapper;
+
+    @Override
+    public List<Map<String, String>> getUserGroupValue(String userValue, String lifecycle, String pathActive) {
+        List<Dict> userValueList = dictMapper.getDataListByTypeCode("USER_VALUE");
+        Map<String, String> userValueMap = userValueList.stream().collect(Collectors.toMap(Dict::getCode, Dict::getValue));
+        Map<String, String> userValueRemarkMap = userValueList.stream().collect(Collectors.toMap(Dict::getCode, Dict::getRemark));
+        List<Dict> lifecycleList = dictMapper.getDataListByTypeCode("LIFECYCLE");
+        Map<String, String> lifecycleMap = lifecycleList.stream().collect(Collectors.toMap(Dict::getCode, Dict::getValue));
+        Map<String, String> lifecycleRemarkMap = lifecycleList.stream().collect(Collectors.toMap(Dict::getCode, Dict::getRemark));
+        List<Dict> pathActiveList = dictMapper.getDataListByTypeCode("PATH_ACTIVE");
+        Map<String, String> pathActiveMap = pathActiveList.stream().collect(Collectors.toMap(Dict::getCode, Dict::getValue));
+        Map<String, String> pathActiveRemarkMap = pathActiveList.stream().filter(x->StringUtils.isNotEmpty(x.getRemark())).collect(Collectors.toMap(Dict::getCode, Dict::getRemark));
+        List<Map<String, String>> result = Lists.newArrayList();
+        Map<String, String> tmp1 = Maps.newHashMap();
+        tmp1.put("colName", "用户对类目的价值/沉默成本");
+        tmp1.put("colValue", userValueMap.get(userValue));
+        tmp1.put("colDesc", userValueRemarkMap.get(userValue).split("\\|")[0]);
+        tmp1.put("colAdvice", userValueRemarkMap.get(userValue).split("\\|")[1]);
+        Map<String, String> tmp2 = Maps.newHashMap();
+        tmp2.put("colName", "用户对类目的生命周期阶段");
+        tmp2.put("colValue", lifecycleMap.get(lifecycle));
+        tmp2.put("colDesc", lifecycleRemarkMap.get(lifecycle).split("\\|")[0]);
+        tmp2.put("colAdvice", lifecycleRemarkMap.get(lifecycle).split("\\|")[1]);
+        Map<String, String> tmp3 = Maps.newHashMap();
+        tmp3.put("colName", "用户下一次转化的活跃度节点");
+        tmp3.put("colValue", pathActiveMap.get(pathActive));
+        tmp3.put("colDesc", pathActiveRemarkMap.get(pathActive).split("\\|")[0]);
+        tmp3.put("colAdvice", pathActiveRemarkMap.get(pathActive).split("\\|")[1]);
+        result.add(tmp1);
+        result.add(tmp2);
+        result.add(tmp3);
+        return result;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("1|2".split("|")[0]);
     }
 }

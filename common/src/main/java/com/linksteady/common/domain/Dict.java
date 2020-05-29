@@ -27,4 +27,6 @@ public class Dict{
 
 	private String updateBy;
 
+	private String remark;
+
 }

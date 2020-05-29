@@ -17,6 +17,36 @@
         where SPU_WID = #{spuWid}::int4
     </select>
 
+    <select id="retentionInPurchaseTimesOfAll" resultType="map">
+        --留存率随购买次数的变化
+        WITH t1 AS (
+        SELECT v1.USER_ID, v1.ORDER_DT, v1.ORDER_ID, v2.SPU_WID
+        FROM W_ORDER_DETAILS v1
+        LEFT JOIN W_PRODUCT v2
+        ON v1.PRODUCT_ID = v2.PRODUCT_ID
+        where v1.VALID_STATUS = 1
+        and v2.SPU_WID = #{spuId}::int4
+        GROUP BY v1.USER_ID, v1.ORDER_DT, v1.ORDER_ID, v2.SPU_WID
+        ),
+        t2 as
+        (
+        SELECT
+        t1.USER_ID,
+        t1.SPU_WID,
+        DENSE_RANK () OVER (PARTITION BY t1.USER_ID,t1.SPU_WID
+        ORDER BY t1.ORDER_DT,t1.ORDER_ID) spu_rn --用户在spu上的购买次数
+        FROM t1
+        ),
+        t3 as (
+        --查询当前SPU在每个购买次数上的留存率
+        SELECT t2.SPU_WID, t2.SPU_RN,COUNT (1) leave_pearson FROM t2 GROUP BY t2.SPU_WID,t2.SPU_RN ORDER BY
+        t2.SPU_WID,t2.SPU_RN
+        )
+        --spu wid,spu购买次数、留存率
+        SELECT t3.SPU_WID,t3.SPU_RN,trunc(t3.leave_pearson/lag(t3.LEAVE_PEARSON,1,null) over(order by t3.SPU_RN),4)*100
+        leave_rate FROM t3
+    </select>
+
     <select id="retentionInPurchaseTimes" resultType="map">
         --留存率随购买次数的变化
         WITH t1 AS (
@@ -585,5 +615,17 @@
          to_char( v1.push_date, 'hh24' ),
          v3.spu_wid
         ORDER BY v3.SPU_WID
+    </select>
+
+    <select id="getGrowthData" resultType="map">
+        select growth_type, growth_series_type, t2.rn
+        from wp_user_path t1,
+             (select max(rn) rn
+              from WP_USER_PATH
+              where USER_ID = 23
+                and SPU_WID = 9) t2
+        where USER_ID = 23
+          and SPU_WID = 9
+          and t1.rn = t2.rn
     </select>
 </mapper>

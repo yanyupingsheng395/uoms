@@ -2,6 +2,7 @@ package com.linksteady.operate.service;
 
 import com.linksteady.common.domain.ResponseBo;
 
+import java.util.List;
 import java.util.Map;
 
 public interface DailyConfigService {
@@ -23,4 +24,6 @@ public interface DailyConfigService {
     Map<String, Object> getCurrentGroupData(String userValue, String lifeCycle, String pathActive, String tarType);
 
     ResponseBo resetGroupCoupon();
+
+    List<Map<String, String>> getUserGroupValue(String userValue, String lifecycle, String pathActive);
 }

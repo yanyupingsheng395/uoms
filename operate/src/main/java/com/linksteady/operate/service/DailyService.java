@@ -72,4 +72,6 @@ public interface DailyService {
      * 每日运营任务失效
      */
     void expireDailyHead();
+
+    String getLifeCycleByUserId(String userId, String headId);
 }

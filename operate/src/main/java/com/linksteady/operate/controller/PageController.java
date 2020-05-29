@@ -329,9 +329,10 @@ public class PageController extends BaseController {
      */
     @RequestMapping("/personInsight")
     @Log(value = "单一用户成长洞察",location = "用户成长系统")
-    public String personInsight(@RequestParam("userId") String userId, @RequestParam("taskDt") String taskDt, Model model) {
+    public String personInsight(@RequestParam("headId") String headId,@RequestParam("userId") String userId, @RequestParam("taskDt") String taskDt, Model model) {
         model.addAttribute("userId", userId);
         model.addAttribute("taskDt", taskDt);
+        model.addAttribute("headId", headId);
         model.addAttribute("pathActive", configService.getValueByName("op.daily.pathactive.list"));
         return "operate/daily/person_insight";
     }

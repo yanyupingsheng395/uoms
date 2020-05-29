@@ -2,6 +2,8 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.common.dao.DictMapper;
+import com.linksteady.common.domain.Dict;
 import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.dao.*;
 import com.linksteady.operate.domain.InsightGrowthPath;
@@ -55,6 +57,9 @@ public class InsightServiceImpl implements InsightService {
     @Autowired
     private DailyMapper dailyMapper;
 
+    @Autowired
+    private DictMapper dictMapper;
+
     /**
      * 由于thrift 中 seqid资源是线程不安全的，所以需要通过加锁的方式来同步调用资源。
      * 否则会报msg.seqid ！= seqid  => badseqid exception的异常信息。
@@ -90,7 +95,7 @@ public class InsightServiceImpl implements InsightService {
         } else {
             orderSql.append("order by cops_value desc, spu_path desc");
         }
-        return insightGrowthPathMapper.findGrowthPathList(limit,offset, orderSql.toString(), dateRange);
+        return insightGrowthPathMapper.findGrowthPathList(limit, offset, orderSql.toString(), dateRange);
     }
 
     @Override
@@ -127,7 +132,7 @@ public class InsightServiceImpl implements InsightService {
         } else {
             orderSql.append("order by case when SPU_ID = '" + spuId + "' then 1 else 0 end desc, CONTRIBUTE_RATE desc, SPU_ID asc");
         }
-        final List<InsightImportSpu> importSpuList = insightImportSpuMapper.findImportSpuList(limit,offset, purchOrder, dateRange, orderSql.toString(), spuId);
+        final List<InsightImportSpu> importSpuList = insightImportSpuMapper.findImportSpuList(limit, offset, purchOrder, dateRange, orderSql.toString(), spuId);
         InsightImportSpu avg = insightImportSpuMapper.findAvgImportSpu(purchOrder, dateRange);
         importSpuList.add(avg);
         return importSpuList;
@@ -218,6 +223,17 @@ public class InsightServiceImpl implements InsightService {
         result.put("xdata", xdata);
         result.put("ydata", ydata);
         result.put("fdata", getRetentionFitData(type, id, period));
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> retentionInPurchaseTimesOfAll(String spuId) throws TTransportException {
+        Map<String, Object> result = Maps.newHashMap();
+        List<Map<String, Object>> dataList = insightMapper.retentionInPurchaseTimesOfAll(spuId);
+        List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("spu_rn"))).collect(Collectors.toList());
+        List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("leave_rate") == null ? "0" : x.get("leave_rate"))).collect(Collectors.toList());
+        result.put("xdata", xdata);
+        result.put("ydata", ydata);
         return result;
     }
 
@@ -450,7 +466,7 @@ public class InsightServiceImpl implements InsightService {
 
     @Override
     public List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int limit, int offset) {
-        return insightMapper.getGrowthUser(spuId, purchOrder, ebpProductId, nextEbpProductId, limit,offset);
+        return insightMapper.getGrowthUser(spuId, purchOrder, ebpProductId, nextEbpProductId, limit, offset);
     }
 
     @Override
@@ -770,5 +786,23 @@ public class InsightServiceImpl implements InsightService {
         result.put("data2", data2List);
         result.put("data3", data3List);
         return result;
+    }
+
+    @Override
+    public Map<String, String> getUserGrowthData(String userId, String spuId) {
+        Map<String, String> data = insightMapper.getGrowthData(userId, spuId);
+        List<Dict> growthTypeList = dictMapper.getDataListByTypeCode("growth_type");
+        List<Dict> growthSeriesTypeList = dictMapper.getDataListByTypeCode("growth_series_type");
+        String growthType = data.get("growth_type");
+        String growthSeriesType = data.get("growth_series_type");
+        if (StringUtils.isNotEmpty(growthSeriesType)) {
+            List<String> growthSeriesTypeNameList = Arrays.asList(growthSeriesType.split(",")).stream().map(x -> growthSeriesTypeList.stream().filter(y -> y.getTypeCode().equalsIgnoreCase(x)).findFirst().get().getTypeName()).collect(Collectors.toList());
+            data.put("growth_series_type", String.join(",", growthSeriesTypeNameList));
+        } else {
+            data.put("growth_series_type", "");
+        }
+        growthTypeList.stream().filter(x -> x.getTypeCode().equalsIgnoreCase(growthType)).findFirst().ifPresent(x -> data.put("growth_type", x.getTypeName()));
+
+        return data;
     }
 }
