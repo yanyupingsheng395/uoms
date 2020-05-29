@@ -1,5 +1,6 @@
 package com.linksteady.operate.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.Date;
 public class QyWxMsg {
     private long qywxId;
     private String textContent;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date insertDt;
     private String insertBy;
     private Date updateDt;

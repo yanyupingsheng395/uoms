@@ -26,7 +26,5 @@ public interface SmsTemplateService {
 
     void update(SmsTemplate smsTemplate);
 
-    List<SmsTemplate> getTemplateByGroupId(String groupId);
-
     List<String> getSmsUsedGroupInfo(String smsCode);
 }

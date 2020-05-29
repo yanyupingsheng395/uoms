@@ -154,20 +154,15 @@ public class SmsTemplateController extends BaseController {
         return ResponseBo.okWithData(null, smsContent.length() <= pushProperties.getSmsLengthLimit());
     }
 
-    @RequestMapping("/getTemplateByGroupId")
-    public ResponseBo getTemplateByGroupId(@RequestParam("groupId") String groupId) {
-        return ResponseBo.okWithData(null, smsTemplateService.getTemplateByGroupId(groupId));
+    @RequestMapping("/updateSmsCodeNull")
+    public ResponseBo updateSmsCodeNull(@RequestParam("smsCode") String smsCode) {
+        dailyService.updateSmsCodeNull(smsCode);
+        return ResponseBo.ok();
     }
 
     @RequestMapping("/getSmsUsedGroupInfo")
     public ResponseBo getSmsUsedGroupInfo(@RequestParam("smsCode") String smsCode) {
         return ResponseBo.okWithData(null,smsTemplateService.getSmsUsedGroupInfo(smsCode));
-    }
-
-    @RequestMapping("/updateSmsCodeNull")
-    public ResponseBo updateSmsCodeNull(@RequestParam("smsCode") String smsCode) {
-        dailyService.updateSmsCodeNull(smsCode);
-        return ResponseBo.ok();
     }
 }
 

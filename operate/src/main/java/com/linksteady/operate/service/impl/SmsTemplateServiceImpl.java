@@ -89,17 +89,10 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     }
 
     @Override
-    public List<SmsTemplate> getTemplateByGroupId(String groupId) {
-        List<String> groupIdList = Arrays.asList(groupId.split(","));
-        return smsTemplateapper.getTemplateByGroupId(groupIdList);
-    }
-
-    @Override
     public List<String> getSmsUsedGroupInfo(String smsCode) {
         Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
         Map<String, String> userValueMap =configService.selectDictByTypeCode("USER_VALUE");
         Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
-
         List<String> data = smsTemplateapper.getSmsUsedGroupInfo(smsCode);
         List<String> result = data.stream().map(x -> {
             String[] tmpArray = x.split(",");

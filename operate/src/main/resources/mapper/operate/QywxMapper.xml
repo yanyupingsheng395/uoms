@@ -11,6 +11,7 @@
         <result property="isPersonal" jdbcType="VARCHAR" column="is_personal"/>
         <result property="materialType" jdbcType="VARCHAR" column="material_type"/>
         <result property="materialContent" jdbcType="VARCHAR" column="material_content"/>
+        <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"/>
     </resultMap>
 
     <insert id="saveData">

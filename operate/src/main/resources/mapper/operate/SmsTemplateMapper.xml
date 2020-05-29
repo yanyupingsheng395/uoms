@@ -2,9 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.SmsTemplateMapper">
     <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.SmsTemplate">
-        <!--
-          WARNING - @mbg.generated
-        -->
         <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode" />
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent" />
         <result column="IS_COUPON_URL" jdbcType="VARCHAR" property="isCouponUrl" />
@@ -16,11 +13,12 @@
         <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue" />
         <result column="LIFE_CYCLE" jdbcType="VARCHAR" property="lifeCycle" />
         <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive" />
+        <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
     </resultMap>
 
     <select id="getSmsTemplateList" resultMap="BaseResultMap">
         SELECT
-        SMS_CODE, SMS_CONTENT, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE
+        SMS_CODE, SMS_CONTENT, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE, create_dt
         FROM UO_OP_SMS_TEMPLATE
         order by SMS_CODE::integer desc
         limit #{limit} offset #{offset}
@@ -55,35 +53,11 @@
       USER_VALUE = #{smsTemplate.userValue}, LIFE_CYCLE = #{smsTemplate.lifeCycle}, PATH_ACTIVE = #{smsTemplate.pathActive}
       where SMS_CODE = #{smsTemplate.smsCode}
     </update>
-
-    <select id="getTemplateByGroupId" resultMap="BaseResultMap">
-        select distinct t1.* from UO_OP_SMS_TEMPLATE t1, UO_OP_DAILY_TEMPLATE_CONFIG t2
-        where (t1.USER_VALUE like concat('%', t2.USER_VALUE, '%')
-         or t1.LIFE_CYCLE like concat('%', t2.LIFECYLE, '%')
-         or t1.PATH_ACTIVE like concat('%', t2.PATH_ACTIVE, '%'))
-         and t2.GROUP_ID in
-         <foreach collection="groupIdList" open="(" close=")" item="item" separator=",">
-             #{item}
-         </foreach>
-         order by to_number(t1.sms_code) desc
-    </select>
-
     <select id="getSmsUsedGroupInfo" resultType="string">
-        select t2.USER_VALUE || ',' || t2.LIFECYLE || ',' || t2.PATH_ACTIVE
+        select t2.USER_VALUE || ',' || t2.LIFECYCLE || ',' || t2.PATH_ACTIVE
         from UO_OP_SMS_TEMPLATE t1,
              UO_OP_DAILY_TEMPLATE_CONFIG t2
         where t1.SMS_CODE = t2.SMS_CODE
-        and t1.SMS_CODE = #{smsCode}
-    </select>
-
-    <select id="getGroupValue" resultType="map">
-        select string_agg(t2.user_value, ',' order by t1.sms_code)  user_value,
-        string_agg(t2.path_active, ',' order by t1.sms_code) path_active,
-        string_agg(t2.lifecyle, ',' order by t1.sms_code)    lifecyle,
-        t1.sms_code
-        from uo_op_sms_template t1,
-             uo_op_daily_template_config t2
-        where t1.sms_code = t2.sms_code
-        group by t1.sms_code
+          and t1.SMS_CODE = #{smsCode}
     </select>
 </mapper>
