@@ -161,7 +161,7 @@
                                                         <label class="control-label">文案内容</label>
                                                     </div>
                                                     <div>
-                                                        <textarea class="form-control" name="textContent" style="height: 102px;width:522px;border: solid 1px #ebebeb;" oninput="wxMsgContentValid()"></textarea>
+                                                        <textarea class="form-control" name="textContent" style="height: 102px;width:522px;border: solid 1px #ebebeb;" oninput="wxMsgContentValid(this)"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -238,7 +238,7 @@
                             <div style="height: 300px;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
                                 <div class="send" id="preview">
                                     <div class="arrow"></div>
-                                    请输入消息内容
+                                    <span id="wxPreview">请输入消息内容</span>
                                 </div>
                             </div>
                         </div>

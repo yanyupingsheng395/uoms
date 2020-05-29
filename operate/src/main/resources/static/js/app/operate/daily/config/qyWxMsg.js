@@ -92,12 +92,11 @@ function saveData() {
             });
         });
     }
-
 }
 
 // 验证表单
-function wxMsgContentValid() {
-
+function wxMsgContentValid(dom) {
+    $('#wxPreview').html('').append($(dom).val()==='' ? '请输入消息内容':$(dom).val());
 }
 
 // 删除数据
