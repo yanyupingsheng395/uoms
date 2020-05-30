@@ -18,7 +18,7 @@
 
     <select id="getSmsTemplateList" resultMap="BaseResultMap">
         SELECT
-        SMS_CODE, SMS_CONTENT, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE, create_dt
+        SMS_CODE, SMS_CONTENT, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, create_dt
         FROM UO_OP_SMS_TEMPLATE
         order by SMS_CODE::integer desc
         limit #{limit} offset #{offset}
@@ -29,8 +29,8 @@
     </select>
 
     <insert id="saveSmsTemplate">
-     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CONTENT, IS_COUPON_URL, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE)
-     VALUES(#{smsContent},#{isCouponUrl},#{isCouponName}, #{smsName}, #{isProductName}, #{isProductUrl}, #{remark}, #{userValue}, #{lifeCycle}, #{pathActive})
+     INSERT INTO UO_OP_SMS_TEMPLATE(SMS_CONTENT, IS_COUPON_URL, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK)
+     VALUES(#{smsContent},#{isCouponUrl},#{isCouponName}, #{smsName}, #{isProductName}, #{isProductUrl}, #{remark})
   </insert>
 
     <select id="refrenceCount" resultType="int">
@@ -43,14 +43,13 @@
 
     <select id="getSmsTemplate" resultMap="BaseResultMap">
     SELECT
-        SMS_CODE, SMS_CONTENT, IS_COUPON_URL, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, USER_VALUE, LIFE_CYCLE, PATH_ACTIVE
+        SMS_CODE, SMS_CONTENT, IS_COUPON_URL, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK
         FROM UO_OP_SMS_TEMPLATE WHERE SMS_CODE=#{smsCode}
   </select>
 
     <update id="update" parameterType="com.linksteady.operate.domain.SmsTemplate">
       update UO_OP_SMS_TEMPLATE
-      set SMS_CONTENT = #{smsTemplate.smsContent}, IS_COUPON_URL = #{smsTemplate.isCouponUrl}, IS_COUPON_NAME = #{smsTemplate.isCouponName}, SMS_NAME = #{smsTemplate.smsName}, IS_PRODUCT_NAME = #{smsTemplate.isProductName}, IS_PRODUCT_URL = #{smsTemplate.isProductUrl}, REMARK = #{smsTemplate.remark},
-      USER_VALUE = #{smsTemplate.userValue}, LIFE_CYCLE = #{smsTemplate.lifeCycle}, PATH_ACTIVE = #{smsTemplate.pathActive}
+      set SMS_CONTENT = #{smsTemplate.smsContent}, IS_COUPON_URL = #{smsTemplate.isCouponUrl}, IS_COUPON_NAME = #{smsTemplate.isCouponName}, SMS_NAME = #{smsTemplate.smsName}, IS_PRODUCT_NAME = #{smsTemplate.isProductName}, IS_PRODUCT_URL = #{smsTemplate.isProductUrl}, REMARK = #{smsTemplate.remark}
       where SMS_CODE = #{smsTemplate.smsCode}
     </update>
     <select id="getSmsUsedGroupInfo" resultType="string">

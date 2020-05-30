@@ -368,7 +368,7 @@ $("#btn_save_coupon").click(function () {
         if (name === "update") {
             var url = "";
             if(current_tab === 'taoke') {
-                url = "/coupon/save";
+                url = "/coupon/update";
             }
             if(current_tab === 'xiaochengxu') {
                 url = "/vmallcoupon/update";

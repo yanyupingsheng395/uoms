@@ -5,169 +5,81 @@ $("#validEnd").datepicker('setStartDate', new Date());
 $(function () {
     validateRule();
     var settings = {
-        url: "/coupon/list",
-        method: 'post',
+        url: "/coupon/couponList",
         cache: false,
         pagination: true,
         singleSelect: true,
         sidePagination: "server",
-        pageNumber: 1,            //初始化加载第一页，默认第一页
-        pageSize: 10,            //每页的记录行数（*）
+        pageNumber: 1,
+        pageSize: 10,
         pageList: [10, 25, 50, 100],
-        queryParams: function (params) {
+        clickToSelect: true,
+        queryParams: function(param) {
             return {
-                pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit) + 1,  //页码
-                param: {validStatus: $("select[name='validStatus']").val()}
-            };
-        },
-        columns: [[
-            {
-                checkbox: true,
-                rowspan: 2
-            },
-            {
-                title: '补贴适用用户群组',
-                colspan: 3
-            },
-            {
-                title: '补贴信息设置',
-                colspan: 4
-            },
-            {
-                title: '3方平台建立补贴并录入',
-                colspan: 2
-            },
-            {
-                title: '补贴检验',
-                colspan: 2
+                limit: param.limit,
+                offset: param.offset
             }
-        ],
-            [{
-                field: 'userValue',
-                title: '价值',
-                formatter:function (value, row, index) {
-                    var res = [];
-                    if(value !== undefined && value !== ''&& value !== null) {
-                        value.split(",").forEach((v,k)=>{
-                            switch (v) {
-                                case "ULC_01":
-                                    res.push("重要");
-                                    break;
-                                case "ULC_02":
-                                    res.push("主要");
-                                    break;
-                                case "ULC_03":
-                                    res.push("普通");
-                                    break;
-                                case "ULC_04":
-                                    res.push("长尾");
-                                    break;
-                            }
-                        });
-                    }
-                    return res.length === 0 ? '-' : res.join(",");
+        },
+        columns: [{
+            checkbox: true
+        },{
+            field: 'couponDisplayName',
+            align: 'center',
+            title: '补贴名称'
+        }, {
+            field: 'couponSource',
+            title: '补贴类型',
+            align: 'center',
+            formatter: function (value, row, index) {
+                var res = '-';
+                if (value === '0') {
+                    res = "智能";
                 }
-            }, {
-                field: 'lifeCycle',
-                title: '生命周期阶段',
-                formatter:function (value, row, index) {
-                    var res = [];
-                    if(value !== undefined && value !== ''&& value !== null) {
-                        value.split(",").forEach((v,k)=>{
-                            switch (v) {
-                                case "0":
-                                    res.push("复购用户");
-                                    break;
-                                case "1":
-                                    res.push("新用户");
-                                    break;
-                            }
-                        });
-                    }
-                    return res.length === 0 ? '-' : res.join(",");
+                if (value === '1') {
+                    res = "手动";
                 }
-            }, {
-                field: 'pathActive',
-                title: '下步成长旅程活跃度',
-                formatter:function (value, row, index) {
-                    var res = [];
-                    if(value !== undefined && value !== ''&& value !== null) {
-                        value.split(",").forEach((v,k)=>{
-                            switch (v) {
-                                case "UAC_01":
-                                    res.push("活跃");
-                                    break;
-                                case "UAC_02":
-                                    res.push("留存");
-                                    break;
-                                case "UAC_03":
-                                    res.push("流失预警");
-                                    break;
-                                case "UAC_04":
-                                    res.push("弱流失");
-                                    break;
-                                case "UAC_05":
-                                    res.push("强流失");
-                                    break;
-                            }
-                        });
-                    }
-                    return res.length === 0 ? '-' : res.join(",");
-                }
-            },{
-                field: 'couponSource',
-                title: '补贴类型',
-                formatter: function (value, row, index) {
-                    var res = '-';
-                    if(value === '0') {
-                        res = "智能";
-                    }
-                    if(value === '1') {
-                        res = "手动";
-                    }
-                    return res;
-                }
-            },{
-                field: 'couponDisplayName',
-                title: '补贴名称(文案中体现)'
-            }, {
-                field: 'couponThreshold',
-                title: '补贴门槛(元)'
-            },{
-                field: 'couponDenom',
-                title: '补贴面额(元)'
-            }, {
-                field: 'couponUrl',
-                title: '补贴短链接',
-                formatter: function (value, row, index) {
-                    if(value !== '' && value !== null && value !== undefined) {
-                        var link = value.indexOf("http://") > -1 ? value : "http://" + value;
-                        return "<a target='_blank' href='" + link + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
-                    } else {
-                        return "-";
-                    }
-                }
-            }, {
-                field: 'validEnd',
-                title: '有效截止期'
-            }, {
-                field: 'checkFlag',
-                title: '校验结果',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(value === '1') {
-                        return "<span class=\"badge bg-success\">通过</span>";
-                    }
-                    if(value === '0') {
-                        return "<span class=\"badge bg-danger\">未通过</span>";
-                    }
+                return res;
+            }
+        }, {
+            field: 'couponThreshold',
+            align: 'center',
+            title: '补贴门槛(元)'
+        }, {
+            field: 'couponDenom',
+            align: 'center',
+            title: '补贴面额(元)'
+        }, {
+            field: 'couponUrl',
+            align: 'center',
+            title: '补贴短链接',
+            formatter: function (value, row, index) {
+                if (value !== undefined && value !== null && value !== '') {
+                    return "<a target='_blank' href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
+                } else {
                     return "-";
                 }
-            }, {
-                field: 'checkComments',
-                title: '失败原因'
-            }]]
+            }
+        }, {
+            field: 'validEnd',
+            align: 'center',
+            title: '有效截止期'
+        }, {
+            field: 'checkFlag',
+            title: '校验结果',
+            align: 'center',
+            formatter: function (value, row, index) {
+                if (value === '1') {
+                    return "<span class=\"badge bg-success\">通过</span>";
+                }
+                if (value === '0') {
+                    return "<span class=\"badge bg-danger\">未通过</span>";
+                }
+                return "-";
+            }
+        }, {
+            field: 'checkComments',
+            title: '失败原因'
+        }]
     };
 
     $MB.initTable('couponTable', settings);
@@ -229,6 +141,7 @@ $("#add_modal").on('hidden.bs.modal', function () {
 });
 
 function updateCoupon() {
+    $("#btn_save").attr("name", "update");
     var selected = $("#couponTable").bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
@@ -257,23 +170,6 @@ function updateCoupon() {
             $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName).attr("readonly", true);
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             VALID_END = coupon.validEnd;
-
-            if(coupon.userValue !== null) {
-                coupon.userValue.split(',').forEach((v,k)=>{
-                    $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true);
-                });
-            }
-            if(coupon.lifeCycle !== null) {
-                coupon.lifeCycle.split(',').forEach((v,k)=>{
-                    $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true);
-                });
-            }
-            if(coupon.pathActive !== null) {
-                coupon.pathActive.split(',').forEach((v,k)=>{
-                    $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
-                });
-            }
-            $("#btn_save").attr("name", "update");
         } else {
             $MB.n_danger(r['msg']);
         }
@@ -309,27 +205,10 @@ function validateRule() {
             couponDisplayName: {
                 required: true,
                 maxlength: couponNameLen
-                // remote: {
-                //     url: "/coupon/checkCouponName",
-                //     type: "get",
-                //     dataType: "json",
-                //     data: {
-                //         couponDisplayName: function () {
-                //             return $("#couponDisplayName").val();
-                //         },
-                //         operate: function () {
-                //             return $("#btn_save").attr("name");
-                //         }
-                //     }
-                // }
             },
             validEnd: {
                 required: true
             }
-            // couponNum: {
-            //     required: true,
-            //     digits: true
-            // }
         },
         errorPlacement: function (error, element) {
             if (element.is(":checkbox") || element.is(":radio")) {
@@ -352,13 +231,8 @@ function validateRule() {
             couponDisplayName: {
                 required: icon + "请输入补贴名称",
                 maxlength: icon + "最大长度不能超过"+couponNameLen+"个字符"
-                // remote: icon + "补贴名称已存在"
             },
             validEnd: icon + "请输入有效截止日期"
-            // couponNum: {
-            //     required: icon + "请输入数量",
-            //     digits: icon + "只能是整数"
-            // }
         }
     });
 }
@@ -428,7 +302,7 @@ $("#btn_intel").click(function () {
 // 获取智能补贴信息
 function intelCouponData() {
     var settings = {
-        url: '/daily/getIntelCouponList',
+        url: '/coupon/getIntelCouponList',
         cache: false,
         pagination: false,
         singleSelect: false,
