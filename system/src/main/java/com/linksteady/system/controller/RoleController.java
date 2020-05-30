@@ -7,11 +7,11 @@ import com.linksteady.common.bo.UserRoleBo;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.domain.Role;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.system.service.RoleService;
 import com.linksteady.system.service.UserRoleService;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -76,7 +76,7 @@ public class RoleController extends BaseController {
         } catch (Exception e) {
             log.error("获取角色信息失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("获取角色信息失败，请联系管理员！");
         }
     }
@@ -101,7 +101,7 @@ public class RoleController extends BaseController {
         } catch (Exception e) {
             log.error("新增角色失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("新增角色失败，请联系管理员！");
         }
     }
@@ -117,7 +117,7 @@ public class RoleController extends BaseController {
         } catch (Exception e) {
             log.error("删除角色失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("删除角色失败，请联系管理员！");
         }
     }
@@ -133,7 +133,7 @@ public class RoleController extends BaseController {
         } catch (Exception e) {
             log.error("修改角色失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("修改角色失败，请联系管理员！");
         }
     }
@@ -154,7 +154,7 @@ public class RoleController extends BaseController {
         }catch (Exception e) {
             log.error("授权失败，", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("授权失败，未知异常！");
         }
     }

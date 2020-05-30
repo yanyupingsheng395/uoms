@@ -107,7 +107,7 @@ public class TargetListController {
         } catch (Exception e) {
             log.error("ID: {} 拆分计算任务异常",targetId,e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             //更新目标的状态为错误状态
             targetListService.updateTargetStatus(targetId,"-1");
         }
@@ -255,7 +255,7 @@ public class TargetListController {
         } catch (Exception e) {
             log.error("ID: {} 拆分计算任务异常",targetId,e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             //更新目标的状态为错误状态
             targetListService.updateTargetStatus(targetId,"-1");
         }

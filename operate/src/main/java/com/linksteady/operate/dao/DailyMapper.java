@@ -116,6 +116,10 @@ public interface DailyMapper {
 
     int getSmsIsCoupon(String smsCode, String isCoupon);
 
+    /**
+     * 获取待运营的每日运营记录数量
+     * @return
+     */
     int getValidDailyHead();
 
     void updateSmsCodeNull(String smsCode);

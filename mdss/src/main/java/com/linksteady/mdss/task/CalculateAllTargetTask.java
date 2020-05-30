@@ -48,7 +48,7 @@ public class CalculateAllTargetTask extends IJobHandler {
                     tgtGmvCalculateService.calculateTarget(targetInfo);
                 } catch (Exception e) {
                     //进行异常日志的上报
-                    exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+                    exceptionNoticeHandler.exceptionNotice(e);
                     //更新任务的状态为失败
                     targetListMapper.updateTargetStatus(targetInfo.getId(),"-1");
 

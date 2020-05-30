@@ -6,7 +6,7 @@ import com.linksteady.common.annotation.Log;
 import com.linksteady.common.domain.LogTypeEnum;
 import com.linksteady.common.domain.SysLog;
 import com.linksteady.common.service.LogService;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -65,7 +65,7 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
         } catch (Exception e) {
             log.error("获取系统日志失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return new ArrayList<>();
         }
     }

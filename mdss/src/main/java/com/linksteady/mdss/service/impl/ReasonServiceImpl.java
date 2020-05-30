@@ -134,7 +134,7 @@ public class ReasonServiceImpl implements ReasonService {
             //todo 异常继续向上抛 同时需要将当前数据的状态更新为失败
             log.error("Exception:", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
            //更新状态
             reasonMapper.updateProgressAndStatusById(reasonId,"E",0);
         } finally {

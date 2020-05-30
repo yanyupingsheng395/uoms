@@ -8,9 +8,9 @@ import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.domain.SysInfo;
 import com.linksteady.system.service.SystemService;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -72,7 +72,7 @@ public class SystemController extends BaseController {
         } catch (Exception e) {
             log.error("新增系统失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("新增系统失败，请联系管理员！");
         }
     }
@@ -86,7 +86,7 @@ public class SystemController extends BaseController {
         } catch (Exception e) {
             log.error("获取系统信息失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("获取系统信息失败，请联系管理员！");
         }
     }
@@ -102,7 +102,7 @@ public class SystemController extends BaseController {
         } catch (Exception e) {
             log.error("修改系统失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("修改系统失败，请联系管理员！");
         }
     }
@@ -118,7 +118,7 @@ public class SystemController extends BaseController {
         } catch (Exception e) {
             log.error("删除系统失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("删除系统失败，请联系管理员！");
         }
     }

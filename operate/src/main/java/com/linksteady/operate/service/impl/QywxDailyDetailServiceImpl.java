@@ -1,37 +1,26 @@
 package com.linksteady.operate.service.impl;
 
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Table;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.QywxDailyDetailMapper;
-import com.linksteady.operate.dao.QywxDailyMapper;
-import com.linksteady.operate.domain.DailyDetail;
 import com.linksteady.operate.domain.QywxDailyDetail;
-import com.linksteady.operate.domain.QywxDailyHeader;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxDailyDetailService;
-import com.linksteady.operate.service.QywxDailyService;
 import com.linksteady.operate.service.ShortUrlService;
-import com.linksteady.operate.thread.TransDailyContentThread;
 import com.linksteady.operate.thread.TransQywxDailyContentThread;
 import com.linksteady.operate.vo.GroupCouponVO;
-import com.linksteady.operate.vo.QywxUserStats;
 import com.linksteady.operate.vo.QywxUserVO;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -130,7 +119,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
                 log.error("每日运营[企业微信]转化文案错误，错误堆栈为{}",e);
 
                 //上报
-                exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+                exceptionNoticeHandler.exceptionNotice(e);
 
                 //异常向上抛出
                 throw e;

@@ -16,7 +16,7 @@ public interface MsgService {
 
     int getDataCount(String msgLevel, String readFlag);
 
-    void updateMsgRead(String msgId);
+    void updateMsgRead(Long msgId);
 
     void updateAllMsgRead();
 

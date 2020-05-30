@@ -9,6 +9,9 @@ import com.linksteady.operate.service.InsightService;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +99,7 @@ public class InsightController {
     }
 
     @RequestMapping("/getProductTree")
-    public List<Ztree> getProductTree(@RequestParam("spuWid") String spuWid) {
+    public List<Ztree> getProductTree(@RequestParam("spuWid") Long spuWid) {
         return insightService.getProductTree(spuWid);
     }
 
@@ -107,8 +110,9 @@ public class InsightController {
      * @return
      */
     @GetMapping("/retentionInPurchaseTimes")
-    public ResponseBo retentionInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) throws Exception{
-        Map<String, Object> stringObjectMap = insightService.retentionInPurchaseTimes(type, id, period);
+    public ResponseBo retentionInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") Long id, @RequestParam("period") Long period) throws Exception{
+        Long periodStartDt=Long.parseLong(DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now().minusMonths(period)));
+        Map<String, Object> stringObjectMap = insightService.retentionInPurchaseTimes(type, id, period,periodStartDt);
         return ResponseBo.okWithData(null, stringObjectMap);
     }
 
@@ -127,8 +131,9 @@ public class InsightController {
      * @return
      */
     @GetMapping("/unitPriceInPurchaseTimes")
-    public ResponseBo unitPriceInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
-        return ResponseBo.okWithData(null, insightService.unitPriceInPurchaseTimes(type, id, period));
+    public ResponseBo unitPriceInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") Long id, @RequestParam("period") Long period) {
+        Long periodStartDt=Long.parseLong(DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now().minusMonths(period)));
+        return ResponseBo.okWithData(null, insightService.unitPriceInPurchaseTimes(type, id, periodStartDt));
     }
 
     /**
@@ -140,8 +145,9 @@ public class InsightController {
      * @return
      */
     @GetMapping("/joinRateInPurchaseTimes")
-    public ResponseBo joinRateInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
-        return ResponseBo.okWithData(null, insightService.joinRateInPurchaseTimes(type, id, period));
+    public ResponseBo joinRateInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") Long id, @RequestParam("period") Long period) {
+        Long periodStartDt=Long.parseLong(DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now().minusMonths(period)));
+        return ResponseBo.okWithData(null, insightService.joinRateInPurchaseTimes(type, id, periodStartDt));
     }
 
     /**
@@ -153,8 +159,9 @@ public class InsightController {
      * @return
      */
     @GetMapping("/categoryInPurchaseTimes")
-    public ResponseBo categoryInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
-        return ResponseBo.okWithData(null, insightService.categoryInPurchaseTimes(type, id, period));
+    public ResponseBo categoryInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") Long id, @RequestParam("period") Long period) {
+        Long periodStartDt=Long.parseLong(DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now().minusMonths(period)));
+        return ResponseBo.okWithData(null, insightService.categoryInPurchaseTimes(type, id, periodStartDt));
     }
 
     /**
@@ -166,8 +173,9 @@ public class InsightController {
      * @return
      */
     @GetMapping("/periodInPurchaseTimes")
-    public ResponseBo periodInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
-        return ResponseBo.okWithData(null, insightService.periodInPurchaseTimes(type, id, period));
+    public ResponseBo periodInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") Long id, @RequestParam("period") Long period) {
+        Long periodStartDt=Long.parseLong(DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now().minusMonths(period)));
+        return ResponseBo.okWithData(null, insightService.periodInPurchaseTimes(type, id, periodStartDt));
     }
 
     /**
@@ -179,8 +187,9 @@ public class InsightController {
      * @return
      */
     @GetMapping("/retentionChangeRateInPurchaseTimes")
-    public ResponseBo retentionChangeRateInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) {
-        return ResponseBo.okWithData(null, insightService.retentionChangeRateInPurchaseTimes(type, id, period));
+    public ResponseBo retentionChangeRateInPurchaseTimes(@RequestParam("type") String type, @RequestParam("id") Long id, @RequestParam("period") Long period) {
+        Long periodStartDt=Long.parseLong(DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now().minusMonths(period)));
+        return ResponseBo.okWithData(null, insightService.retentionChangeRateInPurchaseTimes(type, id, period,periodStartDt));
     }
 
     /**
@@ -190,23 +199,13 @@ public class InsightController {
      * @throws Exception
      */
     @GetMapping("/getRetentionFitData")
-    public ResponseBo getRetentionFitData(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) throws Exception {
+    public ResponseBo getRetentionFitData(@RequestParam("type") String type, @RequestParam("id") Long id, @RequestParam("period") Long period) throws Exception {
         return ResponseBo.okWithData(null, insightService.getRetentionFitData(type, id, period));
     }
 
     @GetMapping("/getRetentionChangeFitData")
-    public ResponseBo getRetentionChangeFitData(@RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("period") String period) throws Exception {
+    public ResponseBo getRetentionChangeFitData(@RequestParam("type") String type, @RequestParam("id") Long id, @RequestParam("period") Long period) throws Exception {
         return ResponseBo.okWithData(null, insightService.getRetentionChangeFitData(type, id, period));
-    }
-
-    /**
-     * 获取spu下所有商品下次购买转化的概率的top3的商品->商品关系图
-     *
-     * @return
-     */
-    @GetMapping("/getSpuConvertRate")
-    public ResponseBo getSpuConvertRateNodes(@RequestParam("id") String id, @RequestParam("type") String type, @RequestParam("purchOrder") String purchOrder) {
-        return ResponseBo.okWithData(null, insightService.getSpuConvertRateNodes(id, type, purchOrder));
     }
 
     /**
@@ -214,7 +213,7 @@ public class InsightController {
      * @return
      */
     @GetMapping("/findSpuByPurchOrder")
-    public ResponseBo findSpuByPurchOrder(@RequestParam("purchOrder") String purchOrder) {
+    public ResponseBo findSpuByPurchOrder(@RequestParam("purchOrder") Long purchOrder) {
         return ResponseBo.okWithData(null, insightService.findSpuByPurchOrder(purchOrder));
     }
 
@@ -225,7 +224,7 @@ public class InsightController {
      * @return
      */
     @GetMapping("/getSpuRelation")
-    public ResponseBo getSpuRelation(@RequestParam("spuId") String spuId, @RequestParam("purchOrder") String purchOrder) {
+    public ResponseBo getSpuRelation(@RequestParam("spuId") Long spuId, @RequestParam("purchOrder") Long purchOrder) {
         return ResponseBo.okWithData(null, insightService.getSpuRelation(spuId, purchOrder));
     }
 
@@ -234,7 +233,7 @@ public class InsightController {
      * @return
      */
     @GetMapping("/getProductConvertRate")
-    public ResponseBo getProductConvertRate(@RequestParam("productId") String productId, @RequestParam("spuId") String spuId, @RequestParam("purchOrder") String purchOrder) {
+    public ResponseBo getProductConvertRate(@RequestParam("productId") Long productId, @RequestParam("spuId") Long spuId, @RequestParam("purchOrder") Long purchOrder) {
         return ResponseBo.okWithData(null, insightService.getProductConvertRate(productId, spuId, purchOrder));
     }
 
@@ -245,7 +244,7 @@ public class InsightController {
      * @return
      */
     @GetMapping("/getUserGrowthPath")
-    public ResponseBo getUserGrowthPath(@RequestParam("spuId") String spuId, @RequestParam("purchOrder") String purchOrder, String ebpProductId, String nextEbpProductId) {
+    public ResponseBo getUserGrowthPath(@RequestParam("spuId") Long spuId, @RequestParam("purchOrder") Long purchOrder, Long ebpProductId, Long nextEbpProductId) {
         return ResponseBo.okWithData(null, insightService.getUserGrowthPath(spuId, purchOrder, ebpProductId, nextEbpProductId));
     }
 
@@ -255,10 +254,10 @@ public class InsightController {
      */
     @GetMapping("/getGrowthUser")
     public ResponseBo getGrowthUser(QueryRequest request) {
-        String spuId = request.getParam().get("spuId");
-        String purchOrder = request.getParam().get("purchOrder");
-        String ebpProductId = request.getParam().get("ebpProductId");
-        String nextEbpProductId = request.getParam().get("nextEbpProductId");
+        Long spuId = Long.parseLong(request.getParam().get("spuId"));
+        Long purchOrder = Long.parseLong(request.getParam().get("purchOrder"));
+        Long ebpProductId = Long.parseLong(request.getParam().get("ebpProductId"));
+        Long nextEbpProductId = Long.parseLong(request.getParam().get("nextEbpProductId"));
         int limit = request.getLimit();
         int offset = request.getOffset();
         List<Map<String, Object>> dataList = insightService.getGrowthUser(spuId, purchOrder, ebpProductId, nextEbpProductId, limit,offset);
@@ -271,7 +270,7 @@ public class InsightController {
      * @return
      */
     @GetMapping("/getConvertRateChart")
-    public ResponseBo getConvertRateChart(@RequestParam("spuId") String spuId, @RequestParam("purchOrder") String purchOrder,String ebpProductId, String nextEbpProductId) throws TException {
+    public ResponseBo getConvertRateChart(@RequestParam("spuId") Long spuId, @RequestParam("purchOrder") Long purchOrder,Long ebpProductId, Long nextEbpProductId) throws TException {
         return ResponseBo.okWithData(null, insightService.getConvertRateChart(spuId, purchOrder, ebpProductId, nextEbpProductId));
     }
 
@@ -285,7 +284,7 @@ public class InsightController {
     }
 
     @GetMapping("/getPathPurchOrder")
-    public ResponseBo getPathPurchOrder(@RequestParam("spuId") String spuId) {
+    public ResponseBo getPathPurchOrder(@RequestParam("spuId") Long spuId) {
         return ResponseBo.okWithData(null, insightService.getPathPurchOrder(spuId));
     }
 
@@ -297,7 +296,7 @@ public class InsightController {
      * @return
      */
     @GetMapping("/getUserSpu")
-    public ResponseBo getUserSpu(@RequestParam("userId") String userId) {
+    public ResponseBo getUserSpu(@RequestParam("userId") Long userId) {
         return ResponseBo.okWithData(null, insightService.getUserSpu(userId));
     }
 
@@ -308,7 +307,7 @@ public class InsightController {
      * @return
      */
     @GetMapping("/getUserBuyOrder")
-    public ResponseBo getUserBuyOrder(@RequestParam("userId") String userId, @RequestParam("spuId") String spuId) {
+    public ResponseBo getUserBuyOrder(@RequestParam("userId") Long userId, @RequestParam("spuId") Long spuId) {
         return ResponseBo.okWithData(null, insightService.getUserBuyOrder(userId, spuId));
     }
 
@@ -331,7 +330,7 @@ public class InsightController {
      * @return
      */
     @GetMapping("/getUserSpuRelation")
-    public ResponseBo getUserSpuRelation(@RequestParam("userId") String userId, @RequestParam("spuId") String spuId, @RequestParam("buyOrder") String buyOrder) {
+    public ResponseBo getUserSpuRelation(@RequestParam("userId") Long userId, @RequestParam("spuId") Long spuId, @RequestParam("buyOrder") Long buyOrder) {
         return ResponseBo.okWithData(null, insightService.getUserSpuRelation(userId, spuId, buyOrder));
     }
 
@@ -340,7 +339,7 @@ public class InsightController {
      * @return
      */
     @RequestMapping("/getUserBuyDual")
-    public ResponseBo getUserBuyDual(@RequestParam("taskDt") String taskDt, @RequestParam("spuId") String spuId, @RequestParam("userId") String userId) {
+    public ResponseBo getUserBuyDual(@RequestParam("taskDt") String taskDt, @RequestParam("spuId") Long spuId, @RequestParam("userId") Long userId) {
         return ResponseBo.okWithData(null, insightService.getUserBuyDual(spuId, userId, taskDt));
     }
 
@@ -351,7 +350,7 @@ public class InsightController {
      * 3.计算成长节点日期
      */
     @RequestMapping("/getUserGrowthPathPoint")
-    public ResponseBo getUserGrowthPathPoint(@RequestParam("userId") String userId, @RequestParam("spuId") String spuId) {
+    public ResponseBo getUserGrowthPathPoint(@RequestParam("userId") Long userId, @RequestParam("spuId") Long spuId) {
         return ResponseBo.okWithData(null, insightService.getUserGrowthPathPoint(userId, spuId));
     }
 
@@ -362,12 +361,12 @@ public class InsightController {
      * @return
      */
     @RequestMapping("/getUserValueWithSpu")
-    public ResponseBo getUserValueWithSpu(@RequestParam("userId") String userId, @RequestParam("spuId") String spuId) {
+    public ResponseBo getUserValueWithSpu(@RequestParam("userId") Long userId, @RequestParam("spuId") Long spuId) {
         return ResponseBo.okWithData(null, insightService.getUserValueWithSpu(userId, spuId));
     }
 
     @RequestMapping("/getUserConvert")
-    public ResponseBo getUserConvert(@RequestParam("userId") String userId) {
+    public ResponseBo getUserConvert(@RequestParam("userId") Long userId) {
         return ResponseBo.okWithData(null, insightService.getUserConvert(userId));
     }
 }

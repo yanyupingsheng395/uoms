@@ -4,16 +4,16 @@ import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.domain.*;
-import com.linksteady.operate.service.*;
+import com.linksteady.operate.service.ActivityHeadService;
+import com.linksteady.operate.service.ActivityPlanService;
+import com.linksteady.operate.service.DailyService;
+import com.linksteady.operate.service.QywxDailyService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 /**
  * @author hxcao
  * @date 2019-07-19
@@ -24,9 +24,6 @@ public class PageController extends BaseController {
 
     @Autowired
     private DailyService dailyService;
-
-    @Autowired
-    private DailyConfigService dailyConfigService;
 
     @Autowired
     private ActivityHeadService activityHeadService;
@@ -49,16 +46,6 @@ public class PageController extends BaseController {
         return "operate/useroperator/monitor";
     }
 
-    /**
-     * 品类列表
-     * @param
-     * @return
-     */
-    @Log(value="品类运营",location = "用户成长系统")
-    @RequestMapping("/lifecycle/catlist")
-    public String catlist() {
-        return "operate/lifecycle/cat_list";
-    }
 
     @Log(value = "每日用户运营",location = "用户成长系统")
     @RequestMapping("/daily/task")

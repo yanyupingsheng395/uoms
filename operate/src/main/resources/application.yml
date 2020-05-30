@@ -1,0 +1,6 @@
+#仅用于测试环境使用，勿提交
+spring:
+  profiles:
+    active: common,dev
+
+

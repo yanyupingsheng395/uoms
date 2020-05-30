@@ -3,6 +3,7 @@ package com.linksteady.system.service.impl;
 import com.google.common.collect.Lists;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.bo.UserRoleBo;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.dao.RoleMapper;
 import com.linksteady.system.dao.RoleMenuMapper;
 import com.linksteady.system.dao.UserRoleMapper;
@@ -12,7 +13,6 @@ import com.linksteady.system.domain.RoleWithMenu;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.common.service.impl.BaseService;
 import com.linksteady.common.util.TreeUtils;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.service.RoleMenuServie;
 import com.linksteady.system.service.RoleService;
 import com.linksteady.system.service.UserRoleService;
@@ -72,7 +72,7 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService {
         } catch (Exception e) {
             log.error("获取角色信息失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return new ArrayList<>();
         }
     }

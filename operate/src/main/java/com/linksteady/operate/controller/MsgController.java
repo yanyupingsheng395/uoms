@@ -49,8 +49,8 @@ public class MsgController extends BaseController {
     }
 
     @GetMapping("/updateMsgRead")
-    public ResponseBo updateMsgRead(String msgId) {
-        if(StringUtils.isEmpty(msgId))
+    public ResponseBo updateMsgRead(Long msgId) {
+        if(msgId==null)
         {
             msgService.updateAllMsgRead();
         }else
@@ -62,7 +62,7 @@ public class MsgController extends BaseController {
 
     @GetMapping("/updateMsgAllRead")
     public ResponseBo updateMsgAllRead() {
-        msgService.updateMsgRead(getCurrentUser().getUsername());
+        msgService.updateAllMsgRead();
         return ResponseBo.ok();
     }
 }

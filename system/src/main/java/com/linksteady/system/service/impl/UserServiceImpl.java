@@ -1,6 +1,7 @@
 package com.linksteady.system.service.impl;
 
 import com.linksteady.common.bo.UserBo;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.dao.UserMapper;
 import com.linksteady.system.dao.UserRoleMapper;
 import com.linksteady.common.domain.QueryRequest;
@@ -9,7 +10,6 @@ import com.linksteady.system.domain.UserRole;
 import com.linksteady.system.domain.UserWithRole;
 import com.linksteady.common.service.impl.BaseService;
 import com.linksteady.common.util.MD5Utils;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.service.UserRoleService;
 import com.linksteady.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +77,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         } catch (Exception e) {
             log.error("error", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return new ArrayList<>();
         }
     }

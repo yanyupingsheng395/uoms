@@ -18,12 +18,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.linksteady</groupId>
-			<artifactId>spring-boot-job-starter</artifactId>
-			<version>1.05</version>
-		</dependency>
-
-		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
 			<version>3.4.1</version>

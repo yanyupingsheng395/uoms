@@ -4,8 +4,6 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
 <generatorConfiguration>
 
-    <classPathEntry location="/Users/guojiayu/.m2/repository/com/oracle/ojdbc7/12.1.0.2/ojdbc7-12.1.0.2.jar"/>
-
     <context id="context" targetRuntime="MyBatis3Simple">
         <commentGenerator>
             <property name="suppressAllComments" value="false"/>

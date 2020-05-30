@@ -11,9 +11,9 @@ import java.io.Serializable;
 @Data
 public class Ztree implements Serializable {
 
-    private String id;
+    private long id;
 
-    private String pId;
+    private long pId;
 
     private String name;
 

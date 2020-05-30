@@ -2,7 +2,7 @@ package com.linksteady.common.handler;
 
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.HttpUtils;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
         log.error("全局异常捕获",e);
 
         //进行异常日志的上报
-        exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+        exceptionNoticeHandler.exceptionNotice(e);
 
         if (HttpUtils.isAjaxRequest(request)) {
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;

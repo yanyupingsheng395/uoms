@@ -1,11 +1,10 @@
 package com.linksteady.system.service.impl;
 
 import com.linksteady.common.bo.UserBo;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.dao.SystemMapper;
 import com.linksteady.system.domain.SysInfo;
 import com.linksteady.common.service.impl.BaseService;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
-import com.linksteady.system.domain.Role;
 import com.linksteady.system.service.SystemService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +56,7 @@ public class SystemServiceImpl extends BaseService<SysInfo> implements SystemSer
             this.updateNotNull(system);
         }catch (Exception e) {
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
         }
     }
 
@@ -80,7 +79,7 @@ public class SystemServiceImpl extends BaseService<SysInfo> implements SystemSer
         } catch (Exception e) {
             log.error("获取系统信息失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return new ArrayList<>();
         }
     }

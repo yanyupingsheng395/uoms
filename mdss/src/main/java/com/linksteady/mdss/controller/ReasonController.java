@@ -260,7 +260,7 @@ public class ReasonController  extends BaseController {
             } catch (TException e) {
                 log.error("效果评估出错",e);
                 //进行异常日志的上报
-                exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+                exceptionNoticeHandler.exceptionNotice(e);
                 return ResponseBo.error();
             } finally {
                 thriftClient.close();

@@ -1,4 +1,5 @@
 package com.linksteady.operate.service.impl;
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.User;
 import com.linksteady.operate.dao.MsgMapper;
 import com.linksteady.operate.domain.MsgInfo;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static org.apache.shiro.SecurityUtils.getSubject;
 
 /**
  * @author hxcao
@@ -35,14 +38,14 @@ public class MsgServiceImpl implements MsgService {
     }
 
     @Override
-    public void updateMsgRead(String msgId) {
-        String userName = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
+    public void updateMsgRead(Long msgId) {
+        String userName = ((UserBo) getSubject().getPrincipal()).getUsername();
         msgMapper.updateMsgRead(msgId, userName);
     }
 
     @Override
     public void updateAllMsgRead() {
-        String userName = ((User)SecurityUtils.getSubject().getPrincipal()).getUsername();
+        String userName = ((UserBo) getSubject().getPrincipal()).getUsername();
         msgMapper.updateAllMsgRead(userName);
     }
 }

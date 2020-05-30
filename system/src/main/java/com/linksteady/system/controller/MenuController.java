@@ -1,32 +1,29 @@
 package com.linksteady.system.controller;
 
 import com.linksteady.common.annotation.Log;
-import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.controller.BaseController;
-import com.linksteady.common.domain.*;
 import com.linksteady.common.domain.Menu;
-import com.linksteady.common.service.CommonFunService;
-import com.linksteady.system.domain.Role;
-import com.linksteady.system.domain.SysInfo;
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Tree;
-import com.linksteady.common.domain.User;
-import com.linksteady.system.service.MenuService;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
+import com.linksteady.common.service.CommonFunService;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.config.SystemProperties;
+import com.linksteady.system.service.MenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 @Controller
 @Slf4j
@@ -64,7 +61,7 @@ public class MenuController extends BaseController {
         } catch (Exception e) {
             log.error("获取菜单信息失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("获取信息失败，请联系管理员！");
         }
     }
@@ -81,7 +78,7 @@ public class MenuController extends BaseController {
             return ResponseBo.ok(tree);
         } catch (Exception e) {
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             log.error("获取菜单列表失败", e);
             return ResponseBo.error("获取菜单列表失败！");
         }
@@ -96,7 +93,7 @@ public class MenuController extends BaseController {
         } catch (Exception e) {
             log.error("获取菜单树失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("获取菜单树失败！");
         }
     }
@@ -115,7 +112,7 @@ public class MenuController extends BaseController {
         } catch (Exception e) {
             log.error("获取菜单集合失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return new ArrayList<>();
         }
     }
@@ -151,7 +148,7 @@ public class MenuController extends BaseController {
         } catch (Exception e) {
             log.error("新增{}失败", name, e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("新增" + name + "失败，请联系管理员！");
         }
     }
@@ -167,7 +164,7 @@ public class MenuController extends BaseController {
         } catch (Exception e) {
             log.error("获取菜单失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("删除失败，请联系管理员！");
         }
     }
@@ -189,7 +186,7 @@ public class MenuController extends BaseController {
         } catch (Exception e) {
             log.error("修改{}失败", name, e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("修改" + name + "失败，请联系管理员！");
         }
     }

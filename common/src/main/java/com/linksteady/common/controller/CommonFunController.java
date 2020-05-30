@@ -4,7 +4,7 @@ import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.util.MD5Utils;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -40,7 +40,7 @@ public class CommonFunController extends BaseController {
         } catch (Exception e) {
             log.error("更改密码失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("更改密码失败，请联系管理员！");
         }
     }

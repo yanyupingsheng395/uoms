@@ -2,7 +2,6 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.domain.DailyDetail;
@@ -11,7 +10,7 @@ import com.linksteady.operate.service.DailyDetailService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransDailyContentThread;
 import com.linksteady.operate.vo.GroupCouponVO;
-import lombok.SneakyThrows;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -148,7 +147,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                 log.error("每日运营转化文案错误，错误堆栈为{}",e);
 
                 //上报
-                exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+                exceptionNoticeHandler.exceptionNotice(e);
 
                 //异常向上抛出
                 throw e;

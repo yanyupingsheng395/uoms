@@ -3,7 +3,6 @@ package com.linksteady.system.aspect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.SysLog;
-import com.linksteady.common.domain.User;
 import com.linksteady.common.service.LogService;
 import com.linksteady.common.util.HttpContextUtils;
 import com.linksteady.common.util.IPUtils;

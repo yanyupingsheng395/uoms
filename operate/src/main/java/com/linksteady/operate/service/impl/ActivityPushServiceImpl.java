@@ -3,7 +3,6 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.operate.dao.ActivityDetailMapper;
 import com.linksteady.operate.dao.ActivityProductMapper;
 import com.linksteady.operate.dao.ActivityPushMapper;
@@ -15,12 +14,12 @@ import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
 import com.linksteady.operate.domain.enums.ActivityStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
-import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivityPushService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransActivityContentThread;
 import com.linksteady.operate.vo.ActivityContentVO;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -164,7 +163,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
                 //错误日志上报
                 log.error("活动运营转化文案错误，错误堆栈为{}",e);
                 //上报
-                exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+                exceptionNoticeHandler.exceptionNotice(e);
                 //异常向上抛出
                 throw e;
             }
@@ -216,7 +215,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
                 //错误日志上报
                 log.error("活动运营转化文案错误，错误堆栈为{}",e);
                 //上报
-                exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+                exceptionNoticeHandler.exceptionNotice(e);
                 //异常向上抛出
                 throw e;
             }finally {

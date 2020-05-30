@@ -5,8 +5,8 @@ import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.*;
 import com.linksteady.common.service.CommonFunService;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.common.domain.Menu;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.domain.SysInfo;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.common.domain.User;
@@ -116,7 +116,7 @@ public class PageController extends BaseController {
         } catch (Exception e) {
             log.error("获取用户菜单失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("获取用户菜单失败！");
         }
     }

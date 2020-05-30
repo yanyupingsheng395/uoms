@@ -1,7 +1,6 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.SmsTemplate;
-import com.linksteady.operate.domain.SpuCycle;
 
 import java.util.List;
 

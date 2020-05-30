@@ -49,7 +49,7 @@ public interface InsightService {
      * @param spuWid
      * @return
      */
-    List<Ztree> getProductTree(String spuWid);
+    List<Ztree> getProductTree(Long spuWid);
 
     /**
      * 留存率随购买次数的变化
@@ -59,7 +59,7 @@ public interface InsightService {
      * @param period
      * @return
      */
-    Map<String, Object> retentionInPurchaseTimes(String type, String id, String period) throws Exception;
+    Map<String, Object> retentionInPurchaseTimes(String type, Long id, Long period,Long periodStartDt) throws Exception;
 
     Map<String, Object> retentionInPurchaseTimesOfAll(String spuId) throws Exception;
 
@@ -68,57 +68,51 @@ public interface InsightService {
      *
      * @param type
      * @param id
-     * @param period
+     * @param periodStartDt
      * @return
      */
-    Map<String, Object> unitPriceInPurchaseTimes(String type, String id, String period);
+    Map<String, Object> unitPriceInPurchaseTimes(String type, Long id, Long periodStartDt);
 
     /**
      * 连带率随购买次数变化
      *
-     * @param type
-     * @param id
-     * @param period
+     * @param type 观测类型 spu or product
+     * @param id  对应观测类型的ID
+     * @param periodStartDt 观测周期的开始时间
      * @return
      */
-    Map<String, Object> joinRateInPurchaseTimes(String type, String id, String period);
+    Map<String, Object> joinRateInPurchaseTimes(String type, Long id, Long  periodStartDt);
 
     /**
      * 品类种数随购买次数变化
      *
      * @param type
      * @param id
-     * @param period
+     * @param periodStartDt
      * @return
      */
-    Map<String, Object> categoryInPurchaseTimes(String type, String id, String period);
+    Map<String, Object> categoryInPurchaseTimes(String type, Long id, Long  periodStartDt);
 
     /**
      * 时间间隔随购买次数变化
      *
      * @param type
      * @param id
-     * @param period
+     * @param periodStartDt
      * @return
      */
-    Map<String, Object> periodInPurchaseTimes(String type, String id, String period);
+    Map<String, Object> periodInPurchaseTimes(String type, Long id, Long periodStartDt);
 
     /**
      * 留存率变化率随购买次数变化
      *
      * @param type
      * @param id
-     * @param period
+     * @param periodStartDt
      * @return
      */
-    Map<String, Object> retentionChangeRateInPurchaseTimes(String type, String id, String period);
+    Map<String, Object> retentionChangeRateInPurchaseTimes(String type, Long id, Long period,Long periodStartDt);
 
-    /**
-     * 获取spu下商品转化关系网
-     *
-     * @return
-     */
-    Map<String, Object> getSpuConvertRateNodes(String id, String type, String purchOrder);
 
     /**
      * 获取购买次序下的spu
@@ -126,48 +120,48 @@ public interface InsightService {
      * @param purchOrder
      * @return
      */
-    List<Map<String, Object>> findSpuByPurchOrder(String purchOrder);
+    List<Map<String, Object>> findSpuByPurchOrder(Long purchOrder);
 
     /**
      * 获取spu关系柱状图
      *
-     * @param spu
+     * @param spuId
      * @param purchOrder
      * @return
      */
-    Map<String, Object> getSpuRelation(String spuId, String purchOrder);
+    Map<String, Object> getSpuRelation(Long spuId, Long purchOrder);
 
-    Map<String, Object> getProductConvertRate(String productId, String spuId, String purchOrder);
+    Map<String, Object> getProductConvertRate(Long productId, Long spuId, Long purchOrder);
 
-    List<Map<String, Object>> getUserGrowthPath(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
+    List<Map<String, Object>> getUserGrowthPath(Long spuId, Long purchOrder, Long ebpProductId, Long nextEbpProductId);
 
-    List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int limit, int offset);
+    List<Map<String, Object>> getGrowthUser(Long spuId, Long purchOrder, Long ebpProductId, Long nextEbpProductId, int limit, int offset);
 
-    int getGrowthUserCount(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
+    int getGrowthUserCount(Long spuId, Long purchOrder, Long ebpProductId, Long nextEbpProductId);
 
     List<Map<String, Object>> getPathSpu();
 
-    List<String> getPathPurchOrder(String spuId);
+    List<String> getPathPurchOrder(Long spuId);
 
-    List<String> getRetentionFitData(String type, String id, String period) throws TTransportException;
+    List<String> getRetentionFitData(String type, Long id, Long period) throws TTransportException;
 
-    List<String> getRetentionChangeFitData(String type, String id, String period);
+    List<String> getRetentionChangeFitData(String type, Long id, Long period);
 
-    Map<String, Object> getConvertRateChart(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
+    Map<String, Object> getConvertRateChart(Long spuId, Long purchOrder, Long ebpProductId, Long nextEbpProductId);
 
-    List<Map<String, Object>> getUserSpu(String userId);
+    List<Map<String, Object>> getUserSpu(Long userId);
 
-    String getUserBuyOrder(String userId, String spuId);
+    String getUserBuyOrder(Long userId, Long spuId);
 
-    Map<String, Object> getUserSpuRelation(String userId, String spuId, String buyOrder);
+    Map<String, Object> getUserSpuRelation(Long userId, Long spuId, Long buyOrder);
 
-    long getUserBuyDual(String spuId, String userId, String taskDt);
+    long getUserBuyDual(Long spuId, Long userId, String taskDt);
 
-    List<Map<String, String>> getUserGrowthPathPoint(String userId, String spuId);
+    List<Map<String, String>> getUserGrowthPathPoint(Long userId, Long spuId);
 
-    Map<String, Object> getUserValueWithSpu(String userId, String spuId);
+    Map<String, Object> getUserValueWithSpu(Long userId, Long spuId);
 
-    Map<String, Object> getUserConvert(String spuId);
+    Map<String, Object> getUserConvert(Long spuId);
 
     Map<String, String> getUserGrowthData(String userId, String spuId);
 }

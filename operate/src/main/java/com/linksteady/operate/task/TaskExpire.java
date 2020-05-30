@@ -1,11 +1,11 @@
 package com.linksteady.operate.task;
 
-import com.linksteady.jobclient.annotation.JobHandler;
-import com.linksteady.jobclient.domain.ResultInfo;
-import com.linksteady.jobclient.service.IJobHandler;
 import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivityPlanService;
 import com.linksteady.operate.service.DailyService;
+import com.linksteady.smp.starter.annotation.JobHandler;
+import com.linksteady.smp.starter.domain.ResultInfo;
+import com.linksteady.smp.starter.jobclient.service.IJobHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

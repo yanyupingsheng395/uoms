@@ -3,8 +3,7 @@ package com.linksteady.system.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -58,7 +57,7 @@ public class SessionController {
         } catch (Exception e) {
             log.error("踢出用户失败", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("踢出用户失败");
         }
 

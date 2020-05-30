@@ -15,8 +15,8 @@ public interface DailyDetailMapper {
     /**
      * 每日运营明细分页查询
      *
-     * @param start
-     * @param end
+     * @param limit
+     * @param offset
      * @param headId
      * @param userValue
      * @param pathActive
@@ -37,8 +37,8 @@ public interface DailyDetailMapper {
     /**
      * 每日运营策略分页
      *
-     * @param start
-     * @param end
+     * @param limit
+     * @param offset
      * @param headId
      * @return
      */

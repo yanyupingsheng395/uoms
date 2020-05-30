@@ -189,14 +189,14 @@ public class InsightServiceImpl implements InsightService {
         List<Ztree> zTreeList = insightMapper.getSpuTree();
         zTreeList.stream().forEach(x -> {
             x.setOpen(false);
-            x.setPId("0");
+            x.setPId(0);
             x.setIsParent(true);
         });
         return zTreeList;
     }
 
     @Override
-    public List<Ztree> getProductTree(String spuWid) {
+    public List<Ztree> getProductTree(Long spuWid) {
         List<Ztree> ztrees = insightMapper.getProductTree(spuWid);
         ztrees.stream().forEach(x -> {
             x.setPId(spuWid);
@@ -215,9 +215,9 @@ public class InsightServiceImpl implements InsightService {
      * @return
      */
     @Override
-    public Map<String, Object> retentionInPurchaseTimes(String type, String id, String period) throws TTransportException {
+    public Map<String, Object> retentionInPurchaseTimes(String type, Long id, Long period,Long periodStartDt) throws TTransportException {
         Map<String, Object> result = Maps.newHashMap();
-        List<Map<String, Object>> dataList = insightMapper.retentionInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
+        List<Map<String, Object>> dataList = insightMapper.retentionInPurchaseTimes(type, id, periodStartDt);
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("spu_rn"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("leave_rate") == null ? "0" : x.get("leave_rate"))).collect(Collectors.toList());
         result.put("xdata", xdata);
@@ -242,14 +242,14 @@ public class InsightServiceImpl implements InsightService {
      *
      * @param type
      * @param id
-     * @param period
+     * @param periodStartDt
      * @return
      */
     @Override
-    public Map<String, Object> retentionChangeRateInPurchaseTimes(String type, String id, String period) {
+    public Map<String, Object> retentionChangeRateInPurchaseTimes(String type, Long id,Long period,Long periodStartDt) {
         Map<String, Object> result = Maps.newHashMap();
         DecimalFormat df = new DecimalFormat("#.##");
-        List<Map<String, Object>> dataList = insightMapper.retentionInPurchaseTimes(type, id, 0 - Integer.parseInt(period));
+        List<Map<String, Object>> dataList = insightMapper.retentionInPurchaseTimes(type, id, periodStartDt);
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("spu_rn"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("leave_rate") == null ? "0" : x.get("leave_rate"))).collect(Collectors.toList());
         List<String> newXdata = Lists.newArrayList();
@@ -272,110 +272,14 @@ public class InsightServiceImpl implements InsightService {
         return result;
     }
 
-    /**
-     * 获取下次转化商品的转化率的top3
-     *
-     * @param purchOrder
-     * @return
-     */
-    @Override
-    public Map<String, Object> getSpuConvertRateNodes(String id, String type, String purchOrder) {
-        Map<String, Object> resultMap = Maps.newHashMap();
-        List<Map<String, Object>> dataList = insightMapper.getSpuConvertRateProducts(id, type, purchOrder);
-        if (dataList.size() == 0) {
-            return null;
-        }
-        // 如果是spu 则需要手动将节点去重
-        if ("product".equalsIgnoreCase(type)) {
-            // 封装data
-            List<Map<String, Object>> data = Lists.newArrayList();
-            dataList.forEach(x -> {
-                Map<String, Object> dataMap = Maps.newHashMap();
-                dataMap.put("name", x.get("target"));
-                dataMap.put("symbolSize", 30);
-                dataMap.put("category", x.get("source"));
-                dataMap.put("value", x.get("value"));
-                data.add(dataMap);
-            });
-            Map<String, Object> dataMap = Maps.newHashMap();
-            dataMap.put("name", dataList.get(0).get("source"));
-            dataMap.put("symbolSize", 50);
-            Map<String, Object> label = Maps.newHashMap();
-            label.put("show", true);
-            dataMap.put("label", label);
-            data.add(dataMap);
-
-            resultMap.put("data", data);
-            resultMap.put("name", dataList.get(0).get("source"));
-
-            // 封装links
-            List<Map<String, Object>> links = Lists.newArrayList();
-            dataList.forEach(x -> {
-                Map<String, Object> linkMap = Maps.newHashMap();
-                linkMap.put("source", x.get("source"));
-                linkMap.put("target", x.get("target"));
-                links.add(linkMap);
-            });
-
-            resultMap.put("links", links);
-
-            // 封装categories
-            List<Map<String, Object>> categories = Lists.newArrayList();
-            Map<String, Object> categoriesMap = Maps.newHashMap();
-            categoriesMap.put("name", dataList.get(0).get("source"));
-            categories.add(categoriesMap);
-            resultMap.put("categories", categories);
-        }
-        if ("spu".equalsIgnoreCase(type)) {
-            final Map<Object, List<Map<String, Object>>> nodeList = dataList.stream().collect(Collectors.groupingBy(x -> Objects.requireNonNull(x.get("SOURCE"))));
-            List<Map<String, Object>> categories = Lists.newArrayList();
-            List<Map<String, Object>> links = Lists.newArrayList();
-            List<Map<String, Object>> data = Lists.newArrayList();
-            nodeList.entrySet().forEach(node -> {
-                List<Map<String, Object>> eachListMap = node.getValue();
-                eachListMap.forEach(x -> {
-                    Map<String, Object> dataMap = Maps.newHashMap();
-                    dataMap.put("name", x.get("target"));
-                    dataMap.put("symbolSize", 30);
-                    dataMap.put("category", x.get("source"));
-                    dataMap.put("value", x.get("value"));
-                    data.add(dataMap);
-                });
-                Map<String, Object> dataMap = Maps.newHashMap();
-                dataMap.put("name", node.getKey());
-                dataMap.put("symbolSize", 50);
-                dataMap.put("category", node.getKey());
-                data.add(dataMap);
-
-                resultMap.put("data", data);
-
-                // 封装links
-                eachListMap.forEach(x -> {
-                    Map<String, Object> linkMap = Maps.newHashMap();
-                    linkMap.put("source", x.get("source"));
-                    linkMap.put("target", x.get("target"));
-                    links.add(linkMap);
-                });
-                resultMap.put("links", links);
-
-                // 封装categories
-                Map<String, Object> categoriesMap = Maps.newHashMap();
-                categoriesMap.put("name", node.getKey());
-                categories.add(categoriesMap);
-
-            });
-            resultMap.put("categories", categories);
-        }
-        return resultMap;
-    }
 
     @Override
-    public List<Map<String, Object>> findSpuByPurchOrder(String purchOrder) {
+    public List<Map<String, Object>> findSpuByPurchOrder(Long purchOrder) {
         return insightMapper.findSpuByPurchOrder(purchOrder);
     }
 
     @Override
-    public Map<String, Object> getSpuRelation(String spuId, String purchOrder) {
+    public Map<String, Object> getSpuRelation(Long spuId, Long purchOrder) {
         Map<String, Object> result = Maps.newHashMap();
         List<String> xdata = Lists.newArrayList();
         List<String> ebpProductIdList = Lists.newArrayList();
@@ -405,7 +309,7 @@ public class InsightServiceImpl implements InsightService {
                 }
                 ydataReduce.add(tmp);
             }
-            Map<String, Object> convertMap = getProductConvertRate(mapList.stream().findFirst().get().get("ebp_product_id").toString(), spuId, purchOrder);
+            Map<String, Object> convertMap = getProductConvertRate(Long.parseLong(mapList.stream().findFirst().get().get("ebp_product_id").toString()), spuId, purchOrder);
             result.put("xdata2", convertMap.get("xdata"));
             result.put("ydata2", convertMap.get("ydata"));
             result.put("nextProductId", convertMap.get("nextProductId"));
@@ -425,7 +329,7 @@ public class InsightServiceImpl implements InsightService {
      * @return
      */
     @Override
-    public Map<String, Object> getProductConvertRate(String productId, String spuId, String purchOrder) {
+    public Map<String, Object> getProductConvertRate(Long productId, Long spuId, Long purchOrder) {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> productConvertRate = insightMapper.getProductConvertRate(productId, spuId, purchOrder);
         List<String> xdata = productConvertRate.stream().map(x -> x.get("ebp_product_name").toString()).collect(Collectors.toList());
@@ -453,7 +357,7 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public List<Map<String, Object>> getUserGrowthPath(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId) {
+    public List<Map<String, Object>> getUserGrowthPath(Long spuId, Long purchOrder, Long ebpProductId, Long nextEbpProductId) {
         List<Map<String, Object>> dataList = Lists.newArrayList();
         if (StringUtils.isNotBlank("ebpProductId") && StringUtils.isNotBlank("nextEbpProductId")) {
             dataList = insightMapper.getUserGrowthPathWithProduct(spuId, purchOrder, ebpProductId, nextEbpProductId);
@@ -465,12 +369,12 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int limit, int offset) {
+    public List<Map<String, Object>> getGrowthUser(Long spuId, Long purchOrder, Long ebpProductId, Long nextEbpProductId, int limit, int offset) {
         return insightMapper.getGrowthUser(spuId, purchOrder, ebpProductId, nextEbpProductId, limit, offset);
     }
 
     @Override
-    public int getGrowthUserCount(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId) {
+    public int getGrowthUserCount(Long spuId, Long purchOrder, Long ebpProductId, Long nextEbpProductId) {
         return insightMapper.getGrowthUserCount(spuId, purchOrder, ebpProductId, nextEbpProductId);
     }
 
@@ -480,7 +384,7 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public List<String> getPathPurchOrder(String spuId) {
+    public List<String> getPathPurchOrder(Long spuId) {
         List<String> pathPurchOrder = insightMapper.getPathPurchOrder(spuId);
         if (!pathPurchOrder.isEmpty()) {
             pathPurchOrder.remove(pathPurchOrder.size() - 1);
@@ -489,7 +393,7 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public List<String> getRetentionFitData(String type, String id, String period) throws TTransportException {
+    public List<String> getRetentionFitData(String type, Long id, Long period) throws TTransportException {
         List<String> retentionFitList = Lists.newArrayList();
         lock.lock();
         try {
@@ -502,12 +406,12 @@ public class InsightServiceImpl implements InsightService {
             }
 
             if (type.equalsIgnoreCase("spu")) {
-                spu = Integer.parseInt(id);
+                spu = id.intValue();
             }
             if (type.equalsIgnoreCase("product")) {
-                product = Integer.parseInt(id);
+                product = id.intValue();
             }
-            RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
+            RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, period.intValue());
             List<Double> retentionFit = retentionFitData.getRetentionFit();
             retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
         } catch (Exception e) {
@@ -520,7 +424,7 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public List<String> getRetentionChangeFitData(String type, String id, String period) {
+    public List<String> getRetentionChangeFitData(String type, Long id, Long period) {
         List<String> retentionFitList = Lists.newArrayList();
         lock.lock();
         try {
@@ -533,12 +437,12 @@ public class InsightServiceImpl implements InsightService {
             }
 
             if (type.equalsIgnoreCase("spu")) {
-                spu = Integer.valueOf(id);
+                spu =id.intValue();
             }
             if (type.equalsIgnoreCase("product")) {
-                product = Integer.valueOf(id);
+                product = id.intValue();
             }
-            RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, Integer.valueOf(period));
+            RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, period.intValue());
             List<Double> retentionFit = retentionFitData.getRetentionFit();
             retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
         } catch (Exception e) {
@@ -551,7 +455,7 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public Map<String, Object> getConvertRateChart(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId) {
+    public Map<String, Object> getConvertRateChart(Long spuId, Long purchOrder, Long ebpProductId, Long nextEbpProductId) {
         DecimalFormat df = new DecimalFormat("#.##");
         Map<String, Object> result = Maps.newHashMap();
         lock.lock();
@@ -559,12 +463,12 @@ public class InsightServiceImpl implements InsightService {
             if (!insightThriftClient.isOpend()) {
                 insightThriftClient.open();
             }
-            if (StringUtils.isNotBlank(ebpProductId)) {
-                if (StringUtils.isEmpty(nextEbpProductId)) {
-                    nextEbpProductId = "-1";
+            if (null!=ebpProductId) {
+                if (null==nextEbpProductId) {
+                    nextEbpProductId = -1L;
                 }
-                ConversionData conversionData = insightThriftClient.getInsightService().getConversionData(Long.parseLong(spuId), Long.parseLong(purchOrder), Long.parseLong(ebpProductId), Long.parseLong(nextEbpProductId));
-//                ;
+                ConversionData conversionData = insightThriftClient.getInsightService().getConversionData(spuId, purchOrder, ebpProductId, nextEbpProductId);
+
                 result.put("xdata", conversionData.xdata);
                 result.put("ydata", conversionData.ydata.stream().map(x -> df.format(x * 100)).collect(Collectors.toList()));
                 result.put("zdata", conversionData.zdata.stream().map(x -> df.format(x * 100)).collect(Collectors.toList()));
@@ -582,12 +486,12 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public List<Map<String, Object>> getUserSpu(String userId) {
+    public List<Map<String, Object>> getUserSpu(Long userId) {
         return insightMapper.getUserSpu(userId);
     }
 
     @Override
-    public String getUserBuyOrder(String userId, String spuId) {
+    public String getUserBuyOrder(Long userId, Long spuId) {
         return insightMapper.getUserBuyOrder(userId, spuId);
     }
 
@@ -596,13 +500,13 @@ public class InsightServiceImpl implements InsightService {
      *
      * @param type
      * @param id
-     * @param period
+     * @param periodStartDt
      * @return
      */
     @Override
-    public Map<String, Object> unitPriceInPurchaseTimes(String type, String id, String period) {
+    public Map<String, Object> unitPriceInPurchaseTimes(String type, Long id, Long periodStartDt) {
         Map<String, Object> result = Maps.newHashMap();
-        List<Map<String, Object>> dataList = insightMapper.unitPriceInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
+        List<Map<String, Object>> dataList = insightMapper.unitPriceInPurchaseTimes(type, id, periodStartDt);
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("purch_times"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("uprice") == null ? "0" : x.get("uprice"))).collect(Collectors.toList());
         result.put("xdata", xdata);
@@ -615,13 +519,13 @@ public class InsightServiceImpl implements InsightService {
      *
      * @param type
      * @param id
-     * @param period
+     * @param periodStartDt
      * @return
      */
     @Override
-    public Map<String, Object> joinRateInPurchaseTimes(String type, String id, String period) {
+    public Map<String, Object> joinRateInPurchaseTimes(String type, Long id, Long periodStartDt) {
         Map<String, Object> result = Maps.newHashMap();
-        List<Map<String, Object>> dataList = insightMapper.joinRateInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
+        List<Map<String, Object>> dataList = insightMapper.joinRateInPurchaseTimes(type, id, periodStartDt);
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("purch_times"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("joint") == null ? "0" : x.get("joint"))).collect(Collectors.toList());
         result.put("xdata", xdata);
@@ -634,17 +538,17 @@ public class InsightServiceImpl implements InsightService {
      *
      * @param type
      * @param id
-     * @param period
+     * @param periodStartDt
      * @return
      */
     @Override
-    public Map<String, Object> categoryInPurchaseTimes(String type, String id, String period) {
+    public Map<String, Object> categoryInPurchaseTimes(String type, Long id, Long periodStartDt) {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> dataList = Lists.newArrayList();
         if (type.equalsIgnoreCase("spu")) {
-            dataList = insightMapper.spuCategoryInPurchaseTimes(type, id, 0 - Integer.parseInt(period));
+            dataList = insightMapper.spuCategoryInPurchaseTimes(type, id, periodStartDt);
         } else if (type.equalsIgnoreCase("product")) {
-            dataList = insightMapper.productCategoryInPurchaseTimes(type, id, 0 - Integer.parseInt(period));
+            dataList = insightMapper.productCategoryInPurchaseTimes(type, id, periodStartDt);
         }
 
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("purch_times"))).collect(Collectors.toList());
@@ -659,13 +563,13 @@ public class InsightServiceImpl implements InsightService {
      *
      * @param type
      * @param id
-     * @param period
+     * @param periodStartDt
      * @return
      */
     @Override
-    public Map<String, Object> periodInPurchaseTimes(String type, String id, String period) {
+    public Map<String, Object> periodInPurchaseTimes(String type, Long id, Long periodStartDt) {
         Map<String, Object> result = Maps.newHashMap();
-        List<Map<String, Object>> dataList = insightMapper.periodInPurchaseTimes(type, id, 0 - Integer.valueOf(period));
+        List<Map<String, Object>> dataList = insightMapper.periodInPurchaseTimes(type, id, periodStartDt);
         List<String> xdata = dataList.stream().map(x -> String.valueOf(x.get("purch_times"))).collect(Collectors.toList());
         List<String> ydata = dataList.stream().map(x -> String.valueOf(x.get("avg_pur_gap") == null ? "0" : x.get("avg_pur_gap"))).collect(Collectors.toList());
         result.put("xdata", xdata);
@@ -675,7 +579,7 @@ public class InsightServiceImpl implements InsightService {
 
 
     @Override
-    public Map<String, Object> getUserSpuRelation(String userId, String spuId, String buyOrder) {
+    public Map<String, Object> getUserSpuRelation(Long userId, Long spuId, Long buyOrder) {
         Map<String, Object> result = Maps.newHashMap();
         List<String> xdata = Lists.newArrayList();
         List<String> ebpProductIdList = Lists.newArrayList();
@@ -708,7 +612,7 @@ public class InsightServiceImpl implements InsightService {
 
             // 根据用户Id获取ebpProductId
             Map<String, String> ebpProductMap = insightMapper.getEbpProductIdByUserId(userId, spuId, buyOrder);
-            String ebpProductId = ebpProductMap.get("ebp_product_id");
+            Long ebpProductId = Long.parseLong(ebpProductMap.get("ebp_product_id"));
             Map<String, Object> convertMap = getProductConvertRate(ebpProductId, spuId, buyOrder);
             result.put("xdata2", convertMap.get("xdata"));
             result.put("ydata2", convertMap.get("ydata"));
@@ -727,13 +631,13 @@ public class InsightServiceImpl implements InsightService {
     /**
      * 获取每日运营的日期距离最后一次购买的间隔
      *
-     * @param headId
+     * @param spuId
      * @param spuId
      * @param userId
      * @return
      */
     @Override
-    public long getUserBuyDual(String spuId, String userId, String taskDt) {
+    public long getUserBuyDual(Long spuId, Long userId, String taskDt) {
         String dateFormat = "yyyyMMdd";
         String lastBuyDt = insightMapper.getLastBuyDt(spuId, userId);
         LocalDate lastDt = LocalDate.parse(lastBuyDt, DateTimeFormatter.ofPattern(dateFormat));
@@ -748,7 +652,7 @@ public class InsightServiceImpl implements InsightService {
      * @return
      */
     @Override
-    public List<Map<String, String>> getUserGrowthPathPoint(String userId, String spuId) {
+    public List<Map<String, String>> getUserGrowthPathPoint(Long userId, Long spuId) {
         String dateFormat = "yyyyMMdd";
         List<Map<String, String>> userGrowthPathPointWithSpu = insightMapper.getUserGrowthPathPointWithSpu(userId, spuId);
         String lastBuyDt = insightMapper.getLastBuyDt(spuId, userId);
@@ -762,7 +666,7 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public Map<String, Object> getUserValueWithSpu(String userId, String spuId) {
+    public Map<String, Object> getUserValueWithSpu(Long userId, Long spuId) {
         Map<String, Object> result = Maps.newHashMap();
         Map<String, String> data = insightMapper.getUserValueWithSpu(spuId, userId);
         if (null != data && !data.isEmpty()) {
@@ -774,7 +678,7 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public Map<String, Object> getUserConvert(String userId) {
+    public Map<String, Object> getUserConvert(Long userId) {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> data1 = insightMapper.getConvertDate(userId);
         List<Map<String, Object>> data2 = insightMapper.getPushDate(userId);

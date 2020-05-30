@@ -65,12 +65,12 @@
     </select>
 
     <update id="updateMsgRead">
-        update T_MSG_LIST set READ_FLAG = '1', READ_BY = #{userName}, READ_DT = sysdate
+        update T_MSG_LIST set READ_FLAG = '1', READ_BY = #{userName}, READ_DT = now()
         where MSG_ID = #{msgId}
     </update>
 
     <update id="updateAllMsgRead">
-        update T_MSG_LIST set READ_FLAG = '1', READ_BY = #{userName}, READ_DT = sysdate
+        update T_MSG_LIST set READ_FLAG = '1', READ_BY = #{userName}, READ_DT = now()
         where READ_FLAG='0' AND MSG_TYPE IN (
               SELECT MSG_TYPE FROM T_MSG_TYPE WHERE module_name='operate'
             )

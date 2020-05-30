@@ -1,43 +1,42 @@
 server:
-  port: 9091
+  port: 9081
 
 spring:
   datasource:
     druid:
-      url: jdbc:postgresql://39.98.78.201:5432/dapu_test?currentSchema=dapu_test
-      username: dapu_test
-      password: daputest123
+      url: jdbc:postgresql://172.16.99.43:5432/dapu
+      username: dapuprod
+      password: dapuprodgrowth123
 
   redis:
     # Redis数据库索引（默认为0）
-    database: 0
+    database: 14
     # Redis服务器地址
-    host: 127.0.0.1
+    host: 172.16.99.43
     # Redis服务器连接端口
-    port: 6379
+    port: 6019
     # Redis 密码
-    password:
+    password: aFoT0Ny$Py63BTvU
 
 # system 配置
 sys:
   # 是否开启对thrift接口连通性的检测
   validateThrift: false
   #当前应用名称
-  projectName: dapu-system-dev
+  projectName: dapu-system-prod
   #服务平台地址
   smpDomain: http://smp.growth-master.com
   #是否开启错误日志上报
-  openExceptionNotice: false
+  openExceptionNotice: true
 
-#权限相关配置
 shiro:
   # 登录 url
   loginUrl: /login
   # 登录成功后跳转的 url
-  successUrl: /main
+  successUrl: http://dapunew.growth-master.com/main
   # 登出 url
   logoutUrl: /logout
   #强制修改密码的url
   resetPasswordUrl: /resetPass
-  #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
-  cookieDomain: localhost
+  #设置cookie所在的域名
+  cookieDomain: dapunew.growth-master.com

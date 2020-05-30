@@ -40,8 +40,8 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Value("${spring.redis.host}")
     private String host;
 
-    @Value("${spring.redis.businessdatabase}")
-    private int businessdatabase;
+    @Value("${spring.redis.database}")
+    private int database;
 
     @Value("${spring.redis.port}")
     private int port;
@@ -69,9 +69,9 @@ public class RedisConfig extends CachingConfigurerSupport {
         jedisPoolConfig.setMaxWaitMillis(maxWaitMillis);
         if (StringUtils.isNotBlank(password)) {
             //业务数据库使用分片1 后续改到配置文件中
-            return new JedisPool(jedisPoolConfig, host, port, timeout, password,businessdatabase);
+            return new JedisPool(jedisPoolConfig, host, port, timeout, password,database);
         } else {
-            return new JedisPool(jedisPoolConfig, host, port, timeout,null,businessdatabase);
+            return new JedisPool(jedisPoolConfig, host, port, timeout,null,database);
         }
     }
 
@@ -85,8 +85,7 @@ public class RedisConfig extends CachingConfigurerSupport {
         redisStandaloneConfiguration.setHostName(host);
         redisStandaloneConfiguration.setPort(port);
         redisStandaloneConfiguration.setPassword(RedisPassword.of(password));
-        //业务数据存储到分片1中 后续改到配置文件中
-        redisStandaloneConfiguration.setDatabase(businessdatabase);
+        redisStandaloneConfiguration.setDatabase(database);
 
         JedisClientConfiguration.JedisClientConfigurationBuilder jedisClientConfiguration = JedisClientConfiguration.builder();
         jedisClientConfiguration.connectTimeout(Duration.ofMillis(timeout));

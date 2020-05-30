@@ -19,45 +19,43 @@ public interface InsightMapper {
      * @param spuWid
      * @return
      */
-    List<Ztree> getProductTree(@Param("spuWid") String spuWid);
+    List<Ztree> getProductTree(@Param("spuWid") long spuWid);
 
-    List<Map<String, Object>> retentionInPurchaseTimes(String type, String id, int period);
+    List<Map<String, Object>> retentionInPurchaseTimes(String type, long id, long periodStartDt);
 
     List<Map<String, Object>> retentionInPurchaseTimesOfAll(String spuId);
 
-    List<Map<String, Object>> unitPriceInPurchaseTimes(String type, String id, int period);
+    List<Map<String, Object>> unitPriceInPurchaseTimes(String type, long id, long periodStartDt);
 
-    List<Map<String, Object>> joinRateInPurchaseTimes(String type, String id, int period);
+    List<Map<String, Object>> joinRateInPurchaseTimes(String type, long id, long periodStartDt);
 
-    List<Map<String, Object>> spuCategoryInPurchaseTimes(String type, String id, int period);
+    List<Map<String, Object>> spuCategoryInPurchaseTimes(String type, long id, long periodStartDt);
 
-    List<Map<String, Object>> productCategoryInPurchaseTimes(String type, String id, int period);
+    List<Map<String, Object>> productCategoryInPurchaseTimes(String type, long id, long periodStartDt);
 
-    List<Map<String, Object>> periodInPurchaseTimes(String type, String id, int period);
+    List<Map<String, Object>> periodInPurchaseTimes(String type, long id, long periodStartDt);
 
-    List<Map<String, Object>> getSpuConvertRateProducts(String id, String type, String purchOrder);
+    List<Map<String, Object>> findSpuByPurchOrder(long purchOrder);
 
-    List<Map<String, Object>> findSpuByPurchOrder(String purchOrder);
+    List<Map<String, Object>> getSpuRelation(long spuId, long purchOrder);
 
-    List<Map<String, Object>> getSpuRelation(String spuId, String purchOrder);
+    List<Map<String, Object>> getProductConvertRate(long productId, long spuId, long purchOrder);
 
-    List<Map<String, Object>> getProductConvertRate(String productId, String spuId, String purchOrder);
+    List<Map<String, Object>> getUserGrowthPathWithProduct(long spuId, long purchOrder, long ebpProductId, long nextEbpProductId);
 
-    List<Map<String, Object>> getUserGrowthPathWithProduct(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
+    List<Map<String, Object>> getUserGrowthPathWithSpu(long spuId, long purchOrder);
 
-    List<Map<String, Object>> getUserGrowthPathWithSpu(String spuId, String purchOrder);
+    List<Map<String, Object>> getGrowthUser(long spuId, long purchOrder, long ebpProductId, long nextEbpProductId, int limit, int offset);
 
-    List<Map<String, Object>> getGrowthUser(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId, int limit, int offset);
-
-    int getGrowthUserCount(String spuId, String purchOrder, String ebpProductId, String nextEbpProductId);
+    int getGrowthUserCount(long spuId, long purchOrder, long ebpProductId, long nextEbpProductId);
 
     List<Map<String, Object>> getPathSpu();
 
-    List<String> getPathPurchOrder(String spuId);
+    List<String> getPathPurchOrder(long spuId);
 
-    List<Map<String, Object>> getUserSpu(String userId);
+    List<Map<String, Object>> getUserSpu(long userId);
 
-    String getUserBuyOrder(String userId, String spuId);
+    String getUserBuyOrder(long userId, long spuId);
 
     /**
      * 获取用户ebpProduct 和 nextEbpProduct
@@ -66,23 +64,23 @@ public interface InsightMapper {
      * @param buyOrder
      * @return
      */
-    Map<String, String> getEbpProductIdByUserId(String userId, String spuId, String buyOrder);
+    Map<String, String> getEbpProductIdByUserId(long userId, long spuId, long buyOrder);
 
-    String getLastBuyDt(String spuId, String userId);
+    String getLastBuyDt(long spuId, long userId);
 
-    List<Map<String, String>> getUserGrowthPathPointWithSpu(String userId, String spuId);
+    List<Map<String, String>> getUserGrowthPathPointWithSpu(long userId, long spuId);
 
-    List<Map<String, Object>> getUserGrowthPathPointWithProduct(String userId, String spuId);
+    List<Map<String, Object>> getUserGrowthPathPointWithProduct(long userId, long spuId);
 
-    Map<String, String> getUserValueWithSpu(String spuId, String userId);
+    Map<String, String> getUserValueWithSpu(long spuId, long userId);
 
-    int getUserValueWithSpuCount(String spuId);
+    int getUserValueWithSpuCount(long spuId);
 
-    List<Map<String, Object>> getConvertDate(String userId);
+    List<Map<String, Object>> getConvertDate(long userId);
 
-    List<Map<String, Object>> getPushDate(String userId);
+    List<Map<String, Object>> getPushDate(long userId);
 
-    List<Map<String, Object>> getPushAndConvertDate(String userId);
+    List<Map<String, Object>> getPushAndConvertDate(long userId);
 
     Map<String, String> getGrowthData(String userId, String spuId);
 }

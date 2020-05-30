@@ -30,7 +30,6 @@
         <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
         <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
         <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
-        <result column="path_active_type" jdbcType="VARCHAR" property="pathActiveType"></result>
         <result column="LIFECYCLE" jdbcType="VARCHAR" property="lifecycle"></result>
         <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"></result>
         <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"></result>
@@ -109,9 +108,7 @@
     </update>
 
     <update id="updateActualNum">
-        update UO_OP_DAILY_HEADER
-        set OPT_NUM = #{num}
-        where head_id = #{headId}
+        update UO_OP_DAILY_HEADER set OPT_NUM = #{num} where head_id = #{headId}
     </update>
 
     <select id="getDailyHeadById" resultMap="baseResult">
@@ -309,6 +306,7 @@
         select STATUS
         from UO_OP_DAILY_HEADER
         where to_char(TOUCH_DT, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd')
+        select STATUS from UO_OP_DAILY_HEADER where  TOUCH_DT::date = current_date
     </select>
 
     <select id="getSelectedUserGroup" resultType="map">
@@ -329,6 +327,7 @@
         from UO_OP_DAILY_HEADER
         where to_char(TOUCH_DT, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd')
           and STATUS = 'todo'
+        select count(1) from UO_OP_DAILY_HEADER where TOUCH_DT::date = current_date and STATUS = 'todo'
     </select>
 
     <update id="updateSmsCodeNull">
@@ -338,7 +337,7 @@
     </update>
 
     <update id="expireDailyHead">
-        update uo_op_daily_header h set h.status='timeout' where h.status='todo' and trunc(h.touch_dt)!=trunc(sysdate)
+        update uo_op_daily_header h set status='timeout' where h.status='todo' and touch_dt::date!=current_date
     </update>
 
     <select id="getLifeCycleByUserId" resultType="string">

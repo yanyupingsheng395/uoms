@@ -1,22 +1,22 @@
 server:
-  port: 9094
+  port: 9082
 
 spring:
   datasource:
     druid:
-      url: jdbc:postgresql://39.98.78.201:5432/dapu_test?currentSchema=dapu_test
-      username: dapu_test
-      password: daputest123
+      url: jdbc:postgresql://172.16.99.43:5432/dapu
+      username: dapuprod
+      password: dapuprodgrowth123
 
   redis:
     # Redis数据库索引（默认为0）
     database: 14
     # Redis服务器地址
-    host: 127.0.0.1
+    host: 172.16.99.43
     # Redis服务器连接端口
-    port: 6379
+    port: 6019
     # Redis 密码
-    password:
+    password: aFoT0Ny$Py63BTvU
 
 sys:
   # 是否开启对thrift接口连通性的检测
@@ -29,15 +29,15 @@ sys:
   openExceptionNotice: false
 shiro:
   # 登录 url
-  loginUrl: http://localhost:9091/login
+  loginUrl: http://dapunew.growth-master.com/login
   # 登录成功后跳转的 url
-  successUrl: http://localhost:9091/main
+  successUrl: http://dapunew.growth-master.com/main
   # 登出 url
-  logoutUrl: http://localhost:9091/logout
+  logoutUrl: http://dapunew.growth-master.com/logout
   #强制修改密码的url
-  resetPasswordUrl: http://localhost:9091/resetPass
+  resetPasswordUrl: http://dapunew.growth-master.com/resetPass
   #设置cookie所在的域名
-  cookieDomain: localhost
+  cookieDomain: dapunew.growth-master.com
 
 thrift:
   server:

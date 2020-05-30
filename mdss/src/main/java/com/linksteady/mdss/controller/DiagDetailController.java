@@ -34,7 +34,7 @@ public class DiagDetailController {
         }catch (Exception e) {
             log.error("保存信失败：", e);
             //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(StringUtils.substring(ExceptionUtils.getStackTrace(e),1,512));
+            exceptionNoticeHandler.exceptionNotice(e);
             return ResponseBo.error("未知错误发生！");
         }
     }

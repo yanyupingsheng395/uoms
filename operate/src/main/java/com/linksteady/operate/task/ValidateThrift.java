@@ -1,23 +1,16 @@
 package com.linksteady.operate.task;
 
-import com.linksteady.jobclient.annotation.JobHandler;
-import com.linksteady.jobclient.domain.ResultInfo;
-import com.linksteady.jobclient.service.IJobHandler;
-import com.linksteady.lognotice.service.ExceptionNoticeHandler;
-import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.thrift.InsightThriftClient;
 import com.linksteady.operate.thrift.RetentionData;
+import com.linksteady.smp.starter.annotation.JobHandler;
+import com.linksteady.smp.starter.domain.ResultInfo;
+import com.linksteady.smp.starter.jobclient.service.IJobHandler;
+import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.text.DecimalFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 /**
  * 对thrift的运行状态进行监测

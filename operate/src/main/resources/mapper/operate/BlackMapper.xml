@@ -34,7 +34,7 @@
 
     <insert id="insertData">
         insert into UO_OP_PHONEBLACKLIST(USER_PHONE,EXPIRE_DT,SMS_CONTENT, INSERT_DT,INSERT_TYPE,INSERT_BY)
-        values (#{userPhone}, to_date(#{expireDate}, 'yyyy-mm-dd'), #{smsContent}, sysdate, #{insertType}, #{insertBy})
+        values (#{userPhone}, to_date(#{expireDate}, 'yyyy-mm-dd'), #{smsContent}, now(), #{insertType}, #{insertBy})
     </insert>
 
     <delete id="deleteByPhone">
