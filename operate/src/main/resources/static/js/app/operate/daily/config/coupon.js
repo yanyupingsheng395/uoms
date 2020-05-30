@@ -160,7 +160,8 @@ function couponTable() {
             title: '补贴短链接',
             formatter: function (value, row, index) {
                 if (value !== undefined && value !== null && value !== '') {
-                    return "<a target='_blank' href='" + value + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
+                    var tmp = value.indexOf("http://") > -1 ? value:"http://"+value;
+                    return "<a target='_blank' href='" + tmp + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
                 } else {
                     return "-";
                 }
