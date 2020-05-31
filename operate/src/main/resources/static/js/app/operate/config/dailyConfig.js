@@ -20,7 +20,7 @@ $(function () {
 
 
     $("#saveConfig").click(function () {
-            var v_pushFlag="N";
+            let v_pushFlag="N";
             if($("#pushFlag").prop("checked")==true)
             {
                 v_pushFlag='Y';

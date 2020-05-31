@@ -439,8 +439,8 @@
                 // ['待推送', '拦截推送', '推送失败', '推送成功', '已推送'],
                 var dayData = r.data['day'];
                 var monthData = r.data['month'];
-                data1 = [dayData['PLAN_CNT'], dayData['INTERCEPT_CNT'], dayData['FAIL_CNT'], dayData['SUCCESS_CNT'], dayData['PUSH_CNT']];
-                data2 = [monthData['PLAN_CNT'], monthData['INTERCEPT_CNT'], monthData['FAIL_CNT'], monthData['SUCCESS_CNT'], monthData['PUSH_CNT']];
+                data1 = [dayData['plan_cnt'], dayData['intercept_cnt'], dayData['fail_cnt'], dayData['success_cnt'], dayData['push_cnt']];
+                data2 = [monthData['plan_cnt'], monthData['intercept_cnt'], monthData['fail_cnt'], monthData['success_cnt'], monthData['push_cnt']];
 
                 var chart1 = echarts.init( document.getElementById( "chart1" ), 'macarons' );
                 var chart2 = echarts.init( document.getElementById( "chart2" ), 'macarons' );
@@ -502,9 +502,9 @@
     function getRptAndBlackData() {
         $.get("/push/getRptAndBlackData", {day: Math.abs(day)}, function (r) {
             if(r.code === 200) {
-                $("#dayRpt").text(r.data['DAY_RPT']);
-                $("#monthRpt").text(r.data['MONTH_RPT']);
-                $("#dayBlack").text(r.data['DAY_BLACK']);
+                $("#dayRpt").text(r.data['day_rpt']);
+                $("#monthRpt").text(r.data['month_rpt']);
+                $("#dayBlack").text(r.data['day_black']);
             }
         });
     }

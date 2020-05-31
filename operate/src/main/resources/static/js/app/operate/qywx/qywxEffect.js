@@ -6,7 +6,7 @@ $(function () {
     getEffectPersonalPage();
 
     $("#qywxUserIdSelect").change(function() {
-          //重新加载数据
+        //重新加载数据
         $MB.refreshTable('effectPersonalTable');
     });
 });

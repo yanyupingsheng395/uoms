@@ -130,10 +130,10 @@ function changeStep(count) {
         $("#step3").attr("style", "display:none;");
         if(current_status === 'todo'&&current_touchDt==currDay) {
             $("#nextStepBtn").attr("style", "display:inline-block;");
-            getUserStrategyList();
+            getUserStrategyList($("#headId").val());
         }else {
             $("#nextStepBtn").attr("style", "display:none;");
-            getUserStrategyList();
+            getUserStrategyList($("#headId").val());
         }
         stepObj.setActive(1);
     }
@@ -212,7 +212,7 @@ $('input[name="pushMethod"]').click(function () {
 });
 
 
-function getUserStrategyList() {
+function getUserStrategyList(pheadId) {
     let settings = {
         url: '/daily/getUserStrategyList',
         pagination: true,
@@ -223,9 +223,7 @@ function getUserStrategyList() {
                 pageSize: params.limit,  //页面大小
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
-                    headId: function () {
-                        return $("#headId").val();
-                    }
+                    headId: pheadId
                 }
             };
         },
