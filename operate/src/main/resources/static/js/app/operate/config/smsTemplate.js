@@ -11,118 +11,34 @@ $("#btn_refresh").on("click",function () {
 
 function initTable() {
     var settings = {
-        url: "/smsTemplate/list",
-        method: 'post',
-        cache: false,
+        url: '/smsTemplate/smsTemplateList',
         pagination: true,
+        clickToSelect: true,
         singleSelect: true,
         sidePagination: "server",
-        pageNumber: 1,            //初始化加载第一页，默认第一页
-        pageSize: 25,            //每页的记录行数（*）
-        pageList: [25, 50, 100],
+        pageList: [10, 25, 50, 100],
         queryParams: function (params) {
+            console.log(params)
             return {
-                pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit )+ 1,  //页码
-                param: {
-                    userValue: $('#userValue').val(),
-                    lifeCycle: $('#userLifeCycle').val(),
-                    pathActive: $('#activePath').val()
-                }
+                limit: params.limit,
+                offset: params.offset
             };
         },
         columns: [
-            [
-                {
-                    checkbox: true,
-                    rowspan: 2
-                }, {
-                field: 'smsName',
-                title: '文案名称',
-                rowspan: 2,
-                valign: "middle",
-                clickToSelect: true
-            }, {
-                title: '适用人群',
-                colspan: 3
-            }, {
-                field: 'smsContent',
-                title: '文案内容',
-                rowspan: 2,
-                valign: "middle"
+            {
+                checkbox: true
+            },
+            {
+                title: '消息内容',
+                field: 'smsContent'
+            },
+            {
+                title: '创建时间',
+                field: 'createDt'
+            },{
+                title: '使用天数',
+                field: 'usedDays'
             }
-            ], [
-                {
-                    field: 'userValue',
-                    title: '价值',
-                    formatter:function (value, row, index) {
-                        var res = [];
-                        if(value !== undefined && value !== ''&& value !== null) {
-                            value.split(",").forEach((v,k)=>{
-                                switch (v) {
-                                    case "ULC_01":
-                                        res.push("重要");
-                                        break;
-                                    case "ULC_02":
-                                        res.push("主要");
-                                        break;
-                                    case "ULC_03":
-                                        res.push("普通");
-                                        break;
-                                    case "ULC_04":
-                                        res.push("长尾");
-                                        break;
-                                }
-                            });
-                        }
-                        return res.length === 0 ? '-' : res.join(",");
-                    }
-                }, {
-                    field: 'lifeCycle',
-                    title: '生命周期阶段',
-                    formatter:function (value, row, index) {
-                        var res = [];
-                        if(value !== undefined && value !== ''&& value !== null) {
-                            value.split(",").forEach((v,k)=>{
-                                switch (v) {
-                                    case "0":
-                                        res.push("复购用户");
-                                        break;
-                                    case "1":
-                                        res.push("新用户");
-                                        break;
-                                }
-                            });
-                        }
-                        return res.length === 0 ? '-' : res.join(",");
-                    }
-                }, {
-                    field: 'pathActive',
-                    title: '下步成长节点',
-                    formatter:function (value, row, index) {
-                        var res = [];
-                        if(value !== undefined && value !== ''&& value !== null) {
-                            value.split(",").forEach((v,k)=>{
-                                switch (v) {
-                                    case "UAC_01":
-                                        res.push("促活节点");
-                                        break;
-                                    case "UAC_02":
-                                        res.push("留存节点");
-                                        break;
-                                    case "UAC_03":
-                                        res.push("弱流失预警");
-                                        break;
-                                    case "UAC_04":
-                                        res.push("强流失预警");
-                                        break;
-                                }
-                            });
-                        }
-                        return res.length === 0 ? '-' : res.join(",");
-                    }
-                }
-            ]
         ]
     };
     $MB.initTable('smsTemplateTable', settings);
@@ -604,6 +520,8 @@ function smsContentValid() {
         $('#smsContentInput').removeClass('error');
         $("#smsContentInput-error").remove();
     }
+    var content = $('#smsContent').val() === "" ? "请输入短信内容": $('#smsContent').val();
+    $("#article").html('').append(content);
 }
 
 $("#add_modal").on('hidden.bs.modal', function () {
@@ -637,6 +555,9 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $('#isCouponName-error').hide();
     $('#isProductUrl-error').hide();
     $('#isProductName-error').hide();
+
+    var content = "请输入短信内容";
+    $("#article").html('').append(content);
 });
 
 // 文案检索
@@ -679,36 +600,7 @@ $("#btn_edit").click(function () {
                     $("#myLargeModalLabel3").text("修改文案");
                     $("#btn_save_sms").attr("name", "update");
                     $("#add_modal").modal('show');
-
-                    if(data.userValue !== null) {
-                        data.userValue.split(',').forEach((v,k)=>{
-                            $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true);
-                        });
-                    }
-                    if(data.lifeCycle !== null) {
-                        data.lifeCycle.split(',').forEach((v,k)=>{
-                            $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true);
-                        });
-                    }
-                    if(data.pathActive !== null) {
-                        data.pathActive.split(',').forEach((v,k)=>{
-                            $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
-                        });
-                    }
-                    // 设置当前群组信息被选中
-                    var groupInfo = $("#currentGroupInfo").val();
-                    var groupInfoArr = groupInfo.split("|");
-                    groupInfoArr.forEach((v,k)=>{
-                        if(k===0) {
-                            $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-                        }
-                        if(k===1) {
-                            $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-                        }
-                        if(k===2) {
-                            $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true).attr('disabled', 'disabled');
-                        }
-                    });
+                    $("#article").html('').append(data.smsContent);
                     initGetInputNum();
                 }else {
                     $MB.n_danger(resp.msg);
@@ -754,8 +646,7 @@ function statInputNum() {
 }
 
 $("#add_modal").on('shown.bs.modal', function () {
-    var userBox = document.getElementById('user-box');
-    $("#config-box").attr("style", "border: solid 1px #ebebeb;padding: 8px; float: left;width:" + userBox.clientWidth + "px;");
+
 });
 
 var IS_COUPON_NAME_DISABLED;

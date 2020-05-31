@@ -1,43 +1,206 @@
+app:
+  name: "OPERATE"
+  description: "link steady用户成长系统"
+  spring-boot-version: "2.0.4.RELEASE"
+  version: @project.version@
+  build:
+    time: @timestamp@
+
 server:
   port: 9094
+  tomcat:
+    uri-encoding: utf-8
+  compression:
+    enabled: true
+    mime-types: application/javascript,text/css,application/json,application/xml,text/html,text/xml,text/plain
 
 spring:
   datasource:
     druid:
-      url: jdbc:postgresql://39.98.78.201:5432/dapu_test?currentSchema=dapu_test
-      username: dapu_test
-      password: daputest123
+      # 数据库访问配置, 使用druid数据源
+      db-type: com.alibaba.druid.pool.DruidDataSource
+      driver-class-name: org.postgresql.Driver
+      #      url: jdbc:postgresql://39.98.78.201:5432/dapu_test?currentSchema=dapu_test
+      #      username: dapu_test
+      #      password: daputest123
+      url: jdbc:postgresql://127.0.0.1:5433/dapu
+      username: dapuprod
+      password: dapuprodgrowth123
+      # 连接池配置
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      # 连接等待超时时间
+      max-wait: 30000
+      # 配置检测可以关闭的空闲连接间隔时间
+      time-between-eviction-runs-millis: 60000
+      # 配置连接在池中的最小生存时间
+      min-evictable-idle-time-millis: 300000
+      validation-query: select '1'
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      pool-prepared-statements: true
+      max-open-prepared-statements: 20
+      max-pool-prepared-statement-per-connection-size: 20
+      # 配置监控统计拦截的filters, 去掉后监控界面sql无法统计, 'wall'用于防火墙
+      filters: stat
+      # Spring监控AOP切入点，如x.y.z.service.*,配置多个英文逗号分隔
+      aop-patterns: com.linksteady.servie.*
+
+      # WebStatFilter配置
+      web-stat-filter:
+        enabled: true
+        # 添加过滤规则
+        url-pattern: /*
+        # 忽略过滤的格式
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/actuator/*'
+
+      # StatViewServlet配置
+      stat-view-servlet:
+        enabled: true
+        # 访问路径为/druid时，跳转到StatViewServlet
+        url-pattern: /druid/*
+        # 是否能够重置数据
+        reset-enable: false
+        # 需要账号密码才能访问控制台
+        login-username: druid
+        login-password: druid123
+        # IP白名单
+        # allow: 127.0.0.1
+        # IP黑名单（共同存在时，deny优先于allow）
+        # deny: 192.168.1.218
+
+      # 配置StatFilter
+      filter:
+        stat:
+          log-slow-sql: true
 
   redis:
-    # Redis数据库索引（默认为0）
-    database: 14
+    # Redis数据库索引（默认为0） 存放session数据 ShiroConfig.java中使用
+    database: 0
+    # businessdatabase 存放业务数据的库 RedisConfig.java中使用
+    businessdatabase: 1
     # Redis服务器地址
     host: 127.0.0.1
     # Redis服务器连接端口
     port: 6379
     # Redis 密码
     password:
+    jedis:
+      pool:
+        # 连接池中的最小空闲连接
+        min-idle: 8
+        # 连接池中的最大空闲连接
+        max-idle: 500
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 2000
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: 10000
+    # 连接超时时间（毫秒）
+    timeout: 3000
+
+  thymeleaf:
+    cache: false
+
+  aop:
+    proxy-target-class: true
+  cache:
+    type:
+      redis
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+
+  # 添加静态资源md5版本控制
+  resources:
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /js/**, /css/**
+  main:
+    allow-bean-definition-overriding: true
+
+mybatis:
+  # type-aliases扫描路径
+  type-aliases-package: com.linksteady.**.domain
+  # mapper xml实现扫描路径
+  mapper-locations: classpath*:mapper/**/*.xml
+  property:
+    order: before
+  configuration:
+    # 注意这里需要加单引号
+    jdbc-type-for-null: 'null'
+    call-setters-on-nulls: true
+
+#mappers 多个接口时逗号隔开
+mapper:
+  mappers: com.linksteady.common.config.MyMapper
+  not-empty: false
+  identity: oracle
+  order: before
+
+#pagehelper
+pagehelper:
+  helperDialect: oracle
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+logging:
+  level:
+    com:
+      linksteady:
+        operate: debug
+        dao: debug
 
 sys:
+  # 时间类型参数在前端页面的展示格式，默认格式为 yyyy-MM-dd HH:mm:ss
+  timeFormat: yyyy-MM-dd HH:mm:ss
+  # 是否开启 AOP 日志，默认开启
+  openAopLog: true
   # 是否开启对thrift接口连通性的检测
   validateThrift: false
-  #当前应用名称
-  projectName: dapu-operate-prod
-  #服务平台地址
-  smpDomain: http://smp.growth-master.com
   #是否开启错误日志上报
   openExceptionNotice: false
+  #上报错误日志的地址
+  exceptionNoticeUrl: http://logstash.growth-master.com/logNoticeService
+  #上报错误日志的当前应用名称
+  exceptionNoticeAppName: uoms2-dev-operate
+  #默认的日志预警的模式 (BATCH 批量 IMME 立即)
+  exceptionNoticeMode: BATCH
 shiro:
+  # shiro redis缓存时长，默认1800秒  7200
+  expireIn: 1800
+  # session 超时时间，默认1800000毫秒 7200000
+  sessionTimeout: 1800000
+  # rememberMe cookie有效时长，默认86400秒，即一天
+  cookieTimeout: 86400
+  # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
+  anonUrl: /api/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo,/login,/job/**,/push,/push/**
   # 登录 url
   loginUrl: http://localhost:9091/login
   # 登录成功后跳转的 url
   successUrl: http://localhost:9091/main
   # 登出 url
   logoutUrl: http://localhost:9091/logout
+  # 未授权跳转 url
+  unauthorizedUrl: /403
   #强制修改密码的url
   resetPasswordUrl: http://localhost:9091/resetPass
-  #设置cookie所在的域名
+  #首次登陆是否强制要求修改密码
+  allowResetPassword: false
+  #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
   cookieDomain: localhost
+
+  job:
+    token: LINKSTEADY  #和调度中心通信校验用的token
+    callbackUrl: http://localhost:8084   #回写任务状态的回调地址
+    jobrewriteUrl: http://localhost:8084  #回写任务执行日志的地址
 
 thrift:
   server:

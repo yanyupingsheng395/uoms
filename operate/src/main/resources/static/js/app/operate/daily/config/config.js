@@ -324,6 +324,13 @@ function nextStep(stepNum) {
                 $( "#step2" ).attr( "style", "display:none;" );
                 $( "#step3" ).attr( "style", "display:block;" );
                 getCurrentGroupData();
+            }else if(r.code === 400){
+                $MB.n_warning(r.msg);
+                step.setActive( 2);
+                $( "#step1" ).attr( "style", "display:none;" );
+                $( "#step2" ).attr( "style", "display:none;" );
+                $( "#step3" ).attr( "style", "display:block;" );
+                getCurrentGroupData();
             }else {
                 $MB.n_warning(r.msg);
             }

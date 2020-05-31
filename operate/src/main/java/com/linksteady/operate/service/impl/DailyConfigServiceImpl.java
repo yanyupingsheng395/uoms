@@ -36,6 +36,10 @@ public class DailyConfigServiceImpl implements DailyConfigService {
 
     @Autowired
     private CouponMapper couponMapper;
+
+    @Autowired
+    private DictMapper dictMapper;
+
     @Autowired
     private VmallCouponMapper vmallCouponMapper;
 
@@ -260,7 +264,8 @@ public class DailyConfigServiceImpl implements DailyConfigService {
         lock.lock();
         try {
             int count1 = couponMapper.getValidCoupon();
-            if (count1 == 0) {
+            int count2 = vmallCouponMapper.getValidCoupon();
+            if (count1 == 0 && count2 == 0) {
                 return ResponseBo.error("无有效的优惠券，请先配置优惠券。");
             }
             // 更新discountLevel字段
@@ -269,14 +274,17 @@ public class DailyConfigServiceImpl implements DailyConfigService {
             couponMapper.deleteAllCouponGroupData();
             // 根据discountLevel字段匹配到用户分组上
             couponMapper.resetCouponGroupData();
+            if (count1 == 0) {
+                return ResponseBo.warn("淘客券无有效的优惠券，请先配置优惠券。");
+            }
+            if (count2 == 0) {
+                return ResponseBo.warn("小程序券无有效的优惠券，请先配置优惠券。");
+            }
         } finally {
             lock.unlock();
         }
         return ResponseBo.ok();
     }
-
-    @Autowired
-    private DictMapper dictMapper;
 
     @Override
     public List<Map<String, String>> getUserGroupValue(String userValue, String lifecycle, String pathActive) {

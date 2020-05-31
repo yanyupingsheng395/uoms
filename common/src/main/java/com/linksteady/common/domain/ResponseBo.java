@@ -11,6 +11,8 @@ public class ResponseBo extends HashMap<String, Object> {
 	// 异常 失败
 	private static final Integer FAIL = 500;
 
+	private static final Integer WARN = 400;
+
 
 	public ResponseBo() {
 		put("code", SUCCESS);
@@ -29,6 +31,13 @@ public class ResponseBo extends HashMap<String, Object> {
 	public static ResponseBo error(Object msg) {
 		ResponseBo responseBo = new ResponseBo();
 		responseBo.put("code", FAIL);
+		responseBo.put("msg", msg);
+		return responseBo;
+	}
+
+	public static ResponseBo warn(Object msg) {
+		ResponseBo responseBo = new ResponseBo();
+		responseBo.put("code", WARN);
 		responseBo.put("msg", msg);
 		return responseBo;
 	}
