@@ -161,6 +161,7 @@ function getProductOption(xdata, ydata, spuName, purchOrder, data) {
     };
     return option;
 }
+
 function getSpuChartOption(data, spuName, purchOrder) {
     var flag = false;
     let option = {
@@ -244,15 +245,12 @@ function getSpuChartOption(data, spuName, purchOrder) {
                 label: {
                     normal: {
                         show: true,
-                        position: 'top',
-                        color: '#CD2626'
+                        position: 'inside'
                     }
                 },
                 data:data.ydataActual,
                 itemStyle: {
                     normal: {
-                        borderWidth:1,
-                        borderColor: '#CD2626',
                         color: function (d) {
                             if(d.name === data['ebpProductMap']['ebp_product_name']) {
                                 flag = true;
@@ -261,11 +259,10 @@ function getSpuChartOption(data, spuName, purchOrder) {
                                 if(!flag && d.name === '其他') {
                                     return '#CD2626';
                                 }
-                                return "#fff";
+                                return "rgba(205,38,38,0.4)";
                             }
                         }
-                    },
-
+                    }
                 }
             }
         ]
@@ -722,6 +719,11 @@ function getOptionWithFit(data, name, titleName, count) {
 getLifeCycleByUserId();
 function getLifeCycleByUserId() {
     $.get("/daily/getLifeCycleByUserId", {headId:headId, userId:userId}, function (r) {
-        $("#lifecycleType").val(r.data);
+        var data = r.data;
+        if(data === '0') {
+            $("#lifecycleType").val('老用户');
+        }else if(data === '1') {
+            $("#lifecycleType").val('新用户');
+        }
     });
 }

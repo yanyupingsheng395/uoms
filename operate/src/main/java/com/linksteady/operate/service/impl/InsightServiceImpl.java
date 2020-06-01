@@ -611,7 +611,8 @@ public class InsightServiceImpl implements InsightService {
             }
 
             // 根据用户Id获取ebpProductId
-            Map<String, String> ebpProductMap = insightMapper.getEbpProductIdByUserId(userId, spuId, buyOrder);
+            List<Map<String, String>> ebpProductMapList = insightMapper.getEbpProductIdByUserId(userId, spuId, buyOrder);
+            Map<String, String> ebpProductMap = ebpProductMapList.get(0);
             Long ebpProductId = Long.parseLong(ebpProductMap.get("ebp_product_id"));
             Map<String, Object> convertMap = getProductConvertRate(ebpProductId, spuId, buyOrder);
             result.put("xdata2", convertMap.get("xdata"));

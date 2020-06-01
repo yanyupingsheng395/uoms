@@ -64,7 +64,7 @@ public interface InsightMapper {
      * @param buyOrder
      * @return
      */
-    Map<String, String> getEbpProductIdByUserId(long userId, long spuId, long buyOrder);
+    List<Map<String, String>> getEbpProductIdByUserId(long userId, long spuId, long buyOrder);
 
     String getLastBuyDt(long spuId, long userId);
 

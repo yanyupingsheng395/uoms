@@ -546,7 +546,7 @@
         on v1.rec_prod_id = v3.product_id
         WHERE
         --限制spu
-        v1.USER_ID = #{userId}
+        v1.USER_ID = #{userId}::varchar
         GROUP BY
         v2.weekday_name,
         to_char( v1.push_date, 'hh24' ),
@@ -574,7 +574,7 @@
          on v1.rec_prod_id = v3.product_id
         WHERE
            --限制spu
-          v1.USER_ID = #{userId}
+          v1.USER_ID = #{userId}::varchar
            -- 是否转化
           and v1.is_conversion = '1'
         GROUP BY
@@ -585,14 +585,15 @@
     </select>
 
     <select id="getGrowthData" resultType="map">
-        select growth_type, growth_series_type, t2.rn
+        select distinct growth_type, growth_series_type, t2.rn
         from wp_user_path t1,
              (select max(rn) rn
               from WP_USER_PATH
-              where USER_ID = 23
-                and SPU_WID = 9) t2
-        where USER_ID = 23
-          and SPU_WID = 9
+              where USER_ID = #{userId}::integer
+                and SPU_WID = #{spuId}::integer) t2
+        where USER_ID = #{userId}::integer
+          and SPU_WID = #{spuId}::integer
           and t1.rn = t2.rn
+        group by growth_type, growth_series_type, t2.rn
     </select>
 </mapper>
