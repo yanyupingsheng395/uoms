@@ -527,22 +527,22 @@ function getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId) {
             };
         },
         columns: [{
-            field: 'USER_ID',
+            field: 'user_id',
             title: 'ID'
         }, {
-            field: 'SPU_NAME',
+            field: 'spu_name',
             title: '类目'
         },{
-            field: 'RN',
+            field: 'rn',
             title: '类目购买次序'
         },{
-            field: 'EBP_PRODUCT_NAME',
+            field: 'ebp_product_name',
             title: '上次购买商品'
         }, {
-            field: 'NEXT_EBP_PRODUCT_NAME',
+            field: 'next_ebp_product_name',
             title: '下次转化商品'
         },  {
-            field: 'ACTIVE_LEVEL',
+            field: 'active_level',
             title: '下一步成长节点',
             formatter: function (value, row, index) {
                 var res = "";
@@ -568,10 +568,10 @@ function getGrowthUserTable(spuId, purchOrder, ebpProductId, nextProductId) {
                 return res;
             }
         }, {
-            field: 'TO_NOW_DAYS',
+            field: 'to_now_days',
             title: '距离上次购买间隔（天）'
         }, {
-            field: 'GROWTH_NODE_DATE',
+            field: 'growth_node_date',
             title: '成长节点'
         }]
     };
