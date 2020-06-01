@@ -417,7 +417,7 @@ function getGrowthUserTable(userId, spuId) {
             if(code === "") {
                 code = "<tr class='text-center'><td colspan='5'>没有找到匹配的记录</td></tr>";
             }
-            $("#growthTable").html('').append(code).find("tbody td:eq(3)").attr("style", "background-color:#fff;");
+            $("#growthTable").html('').append(code).find("tbody td:eq(0)").attr("style", "background-color:#fff;");
             mergeCell('growthTable', 0, 5, 0);
         });
     });
@@ -493,7 +493,7 @@ function getUserValueOption(data) {
             dim: 0,
             name: schema[0].text,
             type: 'category',
-            data: ['低价值高敏感', '低价值低敏感', '中价值高敏感', '高价值高敏感','高价值低敏感']
+            data: ['低价值高敏感', '低价值低敏感', '中价值高敏感', '高价值较敏感','高价值低敏感']
         },
             {
                 dim: 1,

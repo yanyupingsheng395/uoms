@@ -696,17 +696,17 @@ public class InsightServiceImpl implements InsightService {
     @Override
     public Map<String, String> getUserGrowthData(String userId, String spuId) {
         Map<String, String> data = insightMapper.getGrowthData(userId, spuId);
-        List<Dict> growthTypeList = dictMapper.getDataListByTypeCode("growth_type");
-        List<Dict> growthSeriesTypeList = dictMapper.getDataListByTypeCode("growth_series_type");
+        List<Dict> growthTypeList = dictMapper.getDataListByTypeCode("GROWTH_TYPE");
+        List<Dict> growthSeriesTypeList = dictMapper.getDataListByTypeCode("GROWTH_SERIES_TYPE");
         String growthType = data.get("growth_type");
         String growthSeriesType = data.get("growth_series_type");
         if (StringUtils.isNotEmpty(growthSeriesType)) {
-            List<String> growthSeriesTypeNameList = Arrays.asList(growthSeriesType.split(",")).stream().map(x -> growthSeriesTypeList.stream().filter(y -> y.getTypeCode().equalsIgnoreCase(x)).findFirst().get().getTypeName()).collect(Collectors.toList());
+            List<String> growthSeriesTypeNameList = Arrays.asList(growthSeriesType.split(",")).stream().map(x -> growthSeriesTypeList.stream().filter(y -> y.getCode().equalsIgnoreCase(x)).findFirst().get().getValue()).collect(Collectors.toList());
             data.put("growth_series_type", String.join(",", growthSeriesTypeNameList));
         } else {
             data.put("growth_series_type", "");
         }
-        growthTypeList.stream().filter(x -> x.getTypeCode().equalsIgnoreCase(growthType)).findFirst().ifPresent(x -> data.put("growth_type", x.getTypeName()));
+        growthTypeList.stream().filter(x -> x.getCode().equalsIgnoreCase(growthType)).findFirst().ifPresent(x -> data.put("growth_type", x.getValue()));
 
         return data;
     }

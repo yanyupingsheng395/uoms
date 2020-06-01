@@ -494,8 +494,15 @@
     </select>
 
     <select id="getUserValueWithSpu" resultType="java.util.LinkedHashMap">
-        select CONTRIBUTE_LEVEL, VALUE_POTENTIAL_LEVEL, PRICE_SENSE_LEVEL, case when USER_LEVEL = 'ULC_01' then '高价值低敏感'
-        when USER_LEVEL = 'ULC_02' then '高价值高敏感' when USER_LEVEL = 'ULC_03' then '中价值高敏感' when USER_LEVEL = 'ULC_04' then '低价值低敏感' when USER_LEVEL = 'ULC_05' then '低价值高敏感' end USER_LEVEL
+        select case
+                   when USER_LEVEL = 'ULC_01' then '高价值低敏感'
+                   when USER_LEVEL = 'ULC_02' then '高价值较敏感'
+                   when USER_LEVEL = 'ULC_03' then '中价值高敏感'
+                   when USER_LEVEL = 'ULC_04' then '低价值低敏感'
+                   when USER_LEVEL = 'ULC_05' then '低价值高敏感' end USER_LEVEL,
+               CONTRIBUTE_LEVEL,
+               VALUE_POTENTIAL_LEVEL,
+               PRICE_SENSE_LEVEL
         from PP_USER_SPU_VALUE where SPU_WID = #{spuId} and user_id = #{userId}
     </select>
 
