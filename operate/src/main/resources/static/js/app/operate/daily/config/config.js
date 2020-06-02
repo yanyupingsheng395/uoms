@@ -40,7 +40,7 @@ function getTableData() {
                     title: '购买商品与时间',
                     field: 'timeAndShop',
                     align: 'center',
-                    valign: 'middle',
+                    valign: 'top',
                     formatter: function (value, row, index) {
                         return "<a href='/page/insight' target='_blank' style='color: #48b0f7;text-decoration: underline;'>系统配置</a>";
                     }
