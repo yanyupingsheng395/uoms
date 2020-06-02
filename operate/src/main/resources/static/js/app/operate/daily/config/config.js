@@ -40,14 +40,14 @@ function getTableData() {
                     title: '购买商品与时间',
                     field: 'timeAndShop',
                     align: 'center',
-                    valign: 'top',
+                    valign: 'middle',
                     formatter: function (value, row, index) {
                         return "<a href='/page/insight' target='_blank' style='color: #48b0f7;text-decoration: underline;'>系统配置</a>";
                     }
                 },
                 {
                     field: 'userValue',
-                    title: '用户对类目的价值/沉默成本',
+                    title: '用户对类目的<br/>价值/沉默成本',
                     align: 'center',
                     formatter: function (value, row, index) {
                         var res = "";
@@ -75,7 +75,7 @@ function getTableData() {
                 },
                 {
                     field: 'lifecycle',
-                    title: '用户对类目的生命周期阶段',
+                    title: '用户对类目的<br/>生命周期阶段',
                     align: 'center',
                     valign: "middle",
                     formatter: function (value, row, index) {
@@ -91,7 +91,7 @@ function getTableData() {
                 {
                     field: 'pathActive',
                     align: 'center',
-                    title: '用户下一次转化的活跃度节点',
+                    title: '用户下一次转化<br/>的活跃度节点',
                     formatter: function (value, row, index) {
                         var res = "";
                         switch (value) {
@@ -118,6 +118,7 @@ function getTableData() {
                 }, {
                     title: '理解用户群组',
                     align: 'center',
+                    valign: 'middle',
                     formatter: function (value, row, index) {
                         return "<a style='color: #4c4c4c' onclick='openSelectedGroupModal(\""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'><i class='mdi mdi-account mdi-18px'></i></a>";
                     }
@@ -126,6 +127,7 @@ function getTableData() {
                     title: '短信',
                     align: 'center',
                     field: 'smsCode',
+                    valign: 'middle',
                     formatter: function (value, row, index) {
                         if(value === null || value === undefined || value === '') {
                             return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\", null, \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
@@ -143,6 +145,7 @@ function getTableData() {
                     title: '企业微信',
                     align: 'center',
                     field: 'qywxId',
+                    valign: 'middle',
                     formatter: function (value, row, index) {
                         if(value === null || value === undefined || value === '') {
                             return "<a style='color: #52c41a' onclick='openWxMsgModal(\""+row['groupId']+"\", null, \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
@@ -159,6 +162,7 @@ function getTableData() {
                 {
                     title: '公众号',
                     align: 'center',
+                    valign: 'middle',
                     formatter: function (value, row, index) {
                         if(value === null || value === undefined || value === '') {
                             return "<a style='color: #48b0f7' onclick='personalMsg(\""+row['groupId']+"\")'>" +
