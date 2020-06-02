@@ -33,14 +33,14 @@ function getTableData() {
                 },
                 {
                     title: '个性化推送(消息)',
-                    colspan: 4
+                    colspan: 2
                 }
             ], [
                 {
                     title: '购买商品与时间',
                     field: 'timeAndShop',
                     align: 'center',
-                    valign: 'top',
+                    valign: 'middle',
                     formatter: function (value, row, index) {
                         return "<a href='/page/insight' target='_blank' style='color: #48b0f7;text-decoration: underline;'>系统配置</a>";
                     }
@@ -158,24 +158,24 @@ function getTableData() {
                         }
 
                     }
-                },
-                {
-                    title: '公众号',
-                    align: 'center',
-                    valign: 'middle',
-                    formatter: function (value, row, index) {
-                        if(value === null || value === undefined || value === '') {
-                            return "<a style='color: #48b0f7' onclick='personalMsg(\""+row['groupId']+"\")'>" +
-                                "<i class='mdi mdi-account-multiple mdi-18px'></i><span style='color: #f96868'>&nbsp;[未配置]</span>" +
-                                "</a>";
-                        }else {
-                            return "<a style='color: #48b0f7' onclick='personalMsg(\""+row['groupId']+"\")'>" +
-                                "<i class='mdi mdi-account-multiple mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
-                                "</a>";
-                        }
-
-                    }
                 }
+                // {
+                //     title: '公众号',
+                //     align: 'center',
+                //     valign: 'middle',
+                //     formatter: function (value, row, index) {
+                //         if(value === null || value === undefined || value === '') {
+                //             return "<a style='color: #48b0f7' onclick='personalMsg(\""+row['groupId']+"\")'>" +
+                //                 "<i class='mdi mdi-account-multiple mdi-18px'></i><span style='color: #f96868'>&nbsp;[未配置]</span>" +
+                //                 "</a>";
+                //         }else {
+                //             return "<a style='color: #48b0f7' onclick='personalMsg(\""+row['groupId']+"\")'>" +
+                //                 "<i class='mdi mdi-account-multiple mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
+                //                 "</a>";
+                //         }
+                //
+                //     }
+                // }
             ]
         ]
     };
@@ -203,6 +203,7 @@ function getTableData() {
             colspan: 1,
             rowspan: total
         } );
+        $("#userGroupTable").find("tr[data-index=0]").find("td").first().attr('style', 'text-align: center; vertical-align: top; display: table-cell;');
     } );
 }
 
