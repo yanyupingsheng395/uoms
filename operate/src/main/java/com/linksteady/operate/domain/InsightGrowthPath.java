@@ -33,6 +33,5 @@ public class InsightGrowthPath {
     private String purch8SpuName;
     private String purch9SpuName;
     private String purch10SpuName;
-
     private String growthNumber;
 }
