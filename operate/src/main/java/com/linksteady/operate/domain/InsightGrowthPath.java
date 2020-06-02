@@ -9,10 +9,10 @@ import lombok.Data;
 @Data
 public class InsightGrowthPath {
 
-    private String copsValue;
-    private String incomeValue;
-    private String stepValue;
-    private String universValue;
+    private Double copsValue;
+    private Double incomeValue;
+    private Double stepValue;
+    private Double universValue;
     private String purch1SpuId;
     private String purch2SpuId;
     private String purch3SpuId;

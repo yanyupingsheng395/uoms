@@ -3,10 +3,10 @@
 <mapper namespace="com.linksteady.operate.dao.InsightGrowthPathMapper">
 
     <resultMap id="base" type="com.linksteady.operate.domain.InsightGrowthPath">
-        <result property="copsValue" jdbcType="VARCHAR" column="COPS_VALUE"/>
-        <result property="incomeValue" jdbcType="VARCHAR" column="INCOME_VALUE"/>
-        <result property="stepValue" jdbcType="VARCHAR" column="STEP_VALUE"/>
-        <result property="universValue" jdbcType="VARCHAR" column="UNIVERS_VALUE"/>
+        <result property="copsValue" jdbcType="DECIMAL" column="COPS_VALUE"/>
+        <result property="incomeValue" jdbcType="DECIMAL" column="INCOME_VALUE"/>
+        <result property="stepValue" jdbcType="DECIMAL" column="STEP_VALUE"/>
+        <result property="universValue" jdbcType="DECIMAL" column="UNIVERS_VALUE"/>
         <result property="purch1SpuName" jdbcType="VARCHAR" column="PURCH1_SPU_NAME"/>
         <result property="purch2SpuName" jdbcType="VARCHAR" column="PURCH2_SPU_NAME"/>
         <result property="purch3SpuName" jdbcType="VARCHAR" column="PURCH3_SPU_NAME"/>
