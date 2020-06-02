@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ActivityEffectService {
 
-    List<ActivityEffect> getEffectMainKpi(String headId, String kpiType);
+    List<ActivityEffect> getEffectMainKpi(Long headId, String kpiType);
 
-    ActivityEffect getEffectInfo(String headId);
+    ActivityEffect getEffectInfo(Long headId);
 }

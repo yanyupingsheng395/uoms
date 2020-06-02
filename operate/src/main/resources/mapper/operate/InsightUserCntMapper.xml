@@ -17,13 +17,13 @@
 
     <select id="findUserCntList" resultMap="base">
         with temp as (
-        select '观测期用户数（人）' purch_type, purch_order, current_user_cnt user_cnt
+        select '观测期用户数（人）' purch_type, purch_order, current_user_cnt user_cnt,1 orderNo
         from UO_INSIGHT_USER_CNT
-        where date_range = #{dateRange}::int4
+        where date_range = #{dateRange}
         union all
-        select '观测期30天前用户数（人）' purch_type, purch_order, before30_user_cnt user_cnt
+        select '观测期30天前用户数（人）' purch_type, purch_order, before30_user_cnt user_cnt,0 orderNo
         from UO_INSIGHT_USER_CNT
-        where date_range = #{dateRange}::int4
+        where date_range = #{dateRange}
             )
             select
                max(user_cnt) filter ( where purch_order = 1 ) as purch1,
@@ -34,8 +34,10 @@
                max(user_cnt) filter ( where purch_order = 6 ) as purch6,
                max(user_cnt) filter ( where purch_order = 7 ) as purch7,
                max(user_cnt) filter ( where purch_order = 8 ) as purch8,
-               purch_type
-        from (select purch_type, purch_order, user_cnt from temp) t
-        group by purch_type
+               purch_type,
+               orderNo
+        from (select purch_type, purch_order, user_cnt,orderNo from temp) t
+        group by purch_type,orderNo
+        order by orderNo asc
     </select>
 </mapper>

@@ -103,16 +103,16 @@ public class DailyTaskController {
         DailyHead dailyHead=dailyService.getDailyHeadById(headId);
         if(null==dailyHead)
         {
-            return ResponseBo.error("不存在的每日运营计划！！");
+            return ResponseBo.error("不存在的每日运营计划!");
         }
 
-        String currentDay=DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
+        String currentDay=DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
         if("todo".equals(dailyHead.getStatus())&&currentDay.equals(dailyHead.getTouchDtStr()))
         {
             //验证配置是否通过校验
             if( dailyConfigService.validUserGroup())
             {
-                return ResponseBo.error("成长组尚未完成配置，请先进行配置！");
+                return ResponseBo.error("成长组尚未完成配置，请先进行配置!");
             }else
             {
                 //首先获取锁

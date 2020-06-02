@@ -94,16 +94,16 @@ public class QywxDailyController {
         QywxDailyHeader qywxDailyHeader=qywxDailyService.getHeadInfo(headId);
         if(null==qywxDailyHeader)
         {
-            return ResponseBo.error("不存在的每日运营计划！！");
+            return ResponseBo.error("不存在的每日运营计划!");
         }
 
-        String currentDay=DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
+        String currentDay=DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
         if("todo".equals(qywxDailyHeader.getStatus())&&currentDay.equals(qywxDailyHeader.getTaskDateStr()))
         {
             //验证配置是否通过校验
             if( dailyConfigService.validUserGroupForQywx())
             {
-                return ResponseBo.error("成长组尚未完成配置，请先进行配置！");
+                return ResponseBo.error("成长组尚未完成配置，请先进行配置!");
             }else
             {
                 //首先获取锁
@@ -214,7 +214,9 @@ public class QywxDailyController {
         //todo 此处考虑是否再对文案进行校验
 
         try {
-            qywxDailyService.push(qywxDailyHeader, pushMethod, pushPeriod, effectDays);
+            //qywxDailyService.push(qywxDailyHeader, pushMethod, pushPeriod, effectDays);
+
+            //todo 临时代码 后续删除
             testPush();
             return ResponseBo.ok();
         } catch (Exception e) {

@@ -739,6 +739,7 @@ function changeStep(count) {
         $("#step1").attr("style", "display:none;");
         $("#step2").attr("style", "display:block;");
         $("#step3").attr("style", "display:none;");
+
         if(current_status === 'todo'&&current_taskDt==currDay) {
             $("#nextStepBtn").attr("style", "display:inline-block;");
             getUserStrategyList($("#headId").val());

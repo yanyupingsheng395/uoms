@@ -16,13 +16,13 @@ public interface ActivityEffectMapper {
      * @param kpiType
      * @return
      */
-    List<ActivityEffect> getEffectMainKpi(String headId, String kpiType);
+    List<ActivityEffect> getEffectMainKpi(Long headId, String kpiType);
 
     /**
      * 获取效果头部信息，pus_kpi 为2
      * @param headId
      * @return
      */
-    ActivityEffect getEffectInfo(String headId);
+    ActivityEffect getEffectInfo(Long headId);
 
 }

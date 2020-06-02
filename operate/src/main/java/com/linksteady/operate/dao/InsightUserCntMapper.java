@@ -15,5 +15,5 @@ public interface InsightUserCntMapper {
      * @param dateRange
      * @return
      */
-    List<InsightUserCnt> findUserCntList(String dateRange);
+    List<InsightUserCnt> findUserCntList(Long dateRange);
 }
