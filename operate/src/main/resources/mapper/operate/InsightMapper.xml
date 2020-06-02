@@ -9,12 +9,12 @@
     </resultMap>
 
     <select id="getSpuTree" resultMap="base">
-        select SPU_WID id, SPU_NAME as name from W_PRODUCT_SPU
+        select SPU_WID id, SPU_NAME as name from W_PRODUCT_SPU order by spu_name asc
     </select>
 
     <select id="getProductTree" resultMap="base">
         select distinct ebp_product_id id, EBP_PRODUCT_NAME as name from w_product
-        where SPU_WID = #{spuWid}
+        where SPU_WID = #{spuWid} order by EBP_PRODUCT_NAME asc
     </select>
 
     <select id="retentionInPurchaseTimesOfAll" resultType="map">
@@ -163,7 +163,7 @@
                    AND t1.PRICE > 0
                    and t1.ORDER_DT_WID >= #{periodStartDt}
         GROUP BY t2.SPU_WID, t1.USER_ID, ORDER_ID, ORDER_DT
-               )
+               ) v1
         ),
              PURCH_CATE_NUM AS (
                SELECT ORDER_ID, COUNT(DISTINCT SPU_WID) CATE_NUM
@@ -179,7 +179,7 @@
                  GROUP BY
                     SPU_WID,
                     PURCH_TIMES
-             ) order by PURCH_TIMES asc
+             ) v2 order by PURCH_TIMES asc
     </select>
 
     <select id="spuCategoryInPurchaseTimes" resultType="map">
@@ -308,7 +308,7 @@
     </select>
 
     <select id="findSpuByPurchOrder" resultType="map">
-        select SPU_WID id, SPU_NAME as name from W_PRODUCT_SPU
+        select SPU_WID id, SPU_NAME as name from W_PRODUCT_SPU order by spu_name asc
     </select>
 
     <!--获取top5人数的商品与spu关系图-->

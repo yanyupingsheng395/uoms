@@ -12,6 +12,7 @@
         <result property="materialType" jdbcType="VARCHAR" column="material_type"/>
         <result property="materialContent" jdbcType="VARCHAR" column="material_content"/>
         <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"/>
+        <result property="usedDays" jdbcType="VARCHAR" column="used_days"/>
     </resultMap>
 
     <insert id="saveData">
@@ -20,7 +21,10 @@
     </insert>
 
     <select id="getDataListPage" resultMap="BaseResultMap">
-        select * from uo_qywx_msg_template limit #{limit} offset #{offset}
+        select qywx_id, text_content, insert_dt, insert_by, update_dt, update_by, product_url, product_name, coupon_url, coupon_name, is_personal, material_type, material_content, date_part('day', now() - cast(insert_dt as TIMESTAMP)) used_days
+        from uo_qywx_msg_template
+        order by insert_dt desc
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="getTotalCount" resultType="int">

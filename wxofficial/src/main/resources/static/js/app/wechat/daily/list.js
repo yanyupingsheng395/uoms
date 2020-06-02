@@ -69,32 +69,6 @@ function getTableData() {
     })
 }
 
-getTableData2();
-function getTableData2() {
-    let settings = {
-        url: "",
-        cache: false,
-        pagination: true,
-        singleSelect: false,
-        sidePagination: "server",
-        pageNumber: 1,
-        pageSize: 10,
-        pageList: [10, 25, 50, 100],
-        columns: [
-                {
-                    title: '消息内容',
-                },
-                {
-                    title: '创建时间',
-                },
-                {
-                    title: '使用天数',
-                }
-            ]
-    };
-    $MB.initTable('msgListDataTable', settings);
-}
-
 function personalMsg() {
     $("#msgListModal").modal('show');
 }

@@ -25,4 +25,5 @@ public class QyWxMsg {
     private String isPersonal;
     private String materialType;
     private String materialContent;
+    private String usedDays;
 }

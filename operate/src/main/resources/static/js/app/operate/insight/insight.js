@@ -1049,7 +1049,6 @@ function getSpuName() {
         $('#spuName').select2({
             placeholder: '请选择'
         });
-
         findImportSpu();
     });
 }

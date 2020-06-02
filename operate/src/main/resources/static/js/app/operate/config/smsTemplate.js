@@ -37,7 +37,8 @@ function initTable() {
                 field: 'createDt'
             },{
                 title: '使用天数',
-                field: 'usedDays'
+                field: 'usedDays',
+                align: 'center'
             }
         ]
     };
