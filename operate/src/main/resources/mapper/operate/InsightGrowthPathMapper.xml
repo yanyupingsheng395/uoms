@@ -21,13 +21,14 @@
     </resultMap>
 
     <select id="findGrowthPathList" resultMap="base">
+        select t.*, row_number() over () GROWTH_NUMBER from (
         select trunc(COPS_VALUE,4) COPS_VALUE, trunc(INCOME_VALUE,4) INCOME_VALUE, trunc(S_VALUE,4) STEP_VALUE, trunc(UNIVERS_VALUE,4) UNIVERS_VALUE,
         PURCH1_SPU_NAME,PURCH2_SPU_NAME,PURCH3_SPU_NAME,PURCH4_SPU_NAME,PURCH5_SPU_NAME,PURCH6_SPU_NAME,PURCH7_SPU_NAME,PURCH8_SPU_NAME,PURCH9_SPU_NAME,PURCH10_SPU_NAME
         from UO_INSIGHT_GROWTH_PATH
         where date_range = #{dateRange}::int4
         <if test="orderSql != null and orderSql != ''">
             ${orderSql}
-        </if>
+        </if> ) t
         limit #{limit} offset #{offset}
     </select>
 
