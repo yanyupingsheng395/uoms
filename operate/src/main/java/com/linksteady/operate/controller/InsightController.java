@@ -35,7 +35,7 @@ public class InsightController {
      * @return
      */
     @RequestMapping("/findUserCntList")
-    public ResponseBo findUserCntList(@RequestParam("dateRange") String dateRange) {
+    public ResponseBo findUserCntList(@RequestParam("dateRange") Long dateRange) {
         return ResponseBo.okWithData(null, insightService.findUserCntList(dateRange));
     }
 

@@ -277,7 +277,7 @@ function getUserStrategyList(pheadId) {
             $( "a[data-toggle='tooltip']" ).tooltip();
         }
     };
-    $MB.initTable( 'userStrategyListTable', settings );
+    $("#userStrategyListTable").bootstrapTable('destroy').bootstrapTable(settings);
 }
 
 function growthInsight(user_id, head_id) {

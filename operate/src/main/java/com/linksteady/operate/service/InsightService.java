@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public interface InsightService {
 
-    List<InsightUserCnt> findUserCntList(String dateRange);
+    List<InsightUserCnt> findUserCntList(Long dateRange);
 
     List<InsightGrowthPath> findGrowthPathList(int limit, int offset, String sortColumn, String sortOrder, String dateRange);
 

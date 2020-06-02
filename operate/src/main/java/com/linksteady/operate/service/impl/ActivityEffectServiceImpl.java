@@ -19,13 +19,13 @@ public class ActivityEffectServiceImpl implements ActivityEffectService {
     private ActivityEffectMapper activityEffectMapper;
 
     @Override
-    public List<ActivityEffect> getEffectMainKpi(String headId, String kpiType) {
+    public List<ActivityEffect> getEffectMainKpi(Long headId, String kpiType) {
         List<ActivityEffect> activityEffectList = activityEffectMapper.getEffectMainKpi(headId, kpiType);
         return activityEffectList;
     }
 
     @Override
-    public ActivityEffect getEffectInfo(String headId) {
+    public ActivityEffect getEffectInfo(Long headId) {
         return activityEffectMapper.getEffectInfo(headId);
 
     }

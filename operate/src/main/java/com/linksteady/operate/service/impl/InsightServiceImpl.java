@@ -67,7 +67,7 @@ public class InsightServiceImpl implements InsightService {
     private ReentrantLock lock = new ReentrantLock();
 
     @Override
-    public List<InsightUserCnt> findUserCntList(String dateRange) {
+    public List<InsightUserCnt> findUserCntList(Long dateRange) {
         return insightUserCntMapper.findUserCntList(dateRange);
     }
 

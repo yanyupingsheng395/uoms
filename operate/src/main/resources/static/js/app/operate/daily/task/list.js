@@ -143,7 +143,7 @@ $("#btn_insight").click(function () {
     let totalNum = selected[0].totalNum;
     $("#headId").val(headId);
 
-    if(totalNum==0)
+    if(totalNum==null || totalNum=='' ||totalNum==='0' || totalNum==0)
     {
         $MB.n_warning('当前任务没有建议推送的用户！');
         return;

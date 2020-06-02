@@ -80,7 +80,7 @@
         t2.SPU_WID,t2.SPU_RN
         )
         --spu wid,spu购买次数、留存率
-        SELECT t3.SPU_WID,t3.SPU_RN,trunc(t3.leave_pearson/lag(t3.LEAVE_PEARSON,1,null) over(order by t3.SPU_RN),4)*100
+        SELECT t3.SPU_WID,t3.SPU_RN,trunc(t3.leave_pearson::numeric/lag(t3.LEAVE_PEARSON,1,null) over(order by t3.SPU_RN),4)*100
         leave_rate FROM t3
     </select>
 
@@ -201,7 +201,7 @@
         AND t1.PRICE > 0
         and t1.ORDER_DT_WID >= #{periodStartDt}
         GROUP BY t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT
-        )
+        ) tmp
         ),
         PURCH_CATE_NUM AS(
         SELECT ORDER_ID, COUNT(DISTINCT SPU_WID) CATE_NUM
@@ -217,7 +217,7 @@
         WHERE v1.ORDER_ID = v2.ORDER_ID
         and SPU_WID = #{id}
         GROUP BY SPU_WID,PURCH_TIMES
-        ) order by PURCH_TIMES asc
+        ) tmp2 order by PURCH_TIMES asc
     </select>
 
 
@@ -240,7 +240,7 @@
         AND t1.PRICE > 0
         and t1.ORDER_DT_WID >= #{periodStartDt}
         GROUP BY t2.EBP_PRODUCT_ID,t1.USER_ID,ORDER_ID,ORDER_DT
-        )
+        ) tmp
         ),
         PURCH_CATE_NUM AS(
         SELECT ORDER_ID, COUNT(DISTINCT EBP_PRODUCT_ID) CATE_NUM
@@ -256,7 +256,7 @@
         WHERE v1.ORDER_ID = v2.ORDER_ID
         and EBP_PRODUCT_ID = #{id}
         GROUP BY EBP_PRODUCT_ID,PURCH_TIMES
-        ) order by PURCH_TIMES asc
+        ) tmp2 order by PURCH_TIMES asc
     </select>
 
 
@@ -285,18 +285,18 @@
         AND t1.VALID_STATUS = 1
         AND t1.PRICE > 0
         and t1.ORDER_DT_WID >= #{periodStartDt}
-        GROUP BY t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT)),
+        GROUP BY t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT) tmp),
         PUR_GAP_RN AS(
         SELECT SPU_WID,
         PURCH_TIMES,
         USER_ID,
-        TRUNC(ORDER_DT) - TRUNC(PREV_PUR_DT) PUR_GAP,
-        ROW_NUMBER() OVER(PARTITION BY SPU_WID, PURCH_TIMES ORDER BY TRUNC(ORDER_DT) - TRUNC(PREV_PUR_DT) ASC) RN
+        date_part('day',ORDER_DT-PREV_PUR_DT)  PUR_GAP,
+        ROW_NUMBER() OVER(PARTITION BY SPU_WID, PURCH_TIMES ORDER BY date_part('day',ORDER_DT-PREV_PUR_DT) ASC) RN
         FROM SPU_PURCH
-        WHERE TRUNC(ORDER_DT) - TRUNC(PREV_PUR_DT) > 0
+        WHERE date_part('day',ORDER_DT-PREV_PUR_DT) > 0
         )
         select * from (
-        SELECT v1.SPU_WID, v1.PURCH_TIMES,TRUNC(AVG(v2.PUR_GAP),2) AVG_PUR_GAP FROM(
+        SELECT v1.SPU_WID, v1.PURCH_TIMES,TRUNC(AVG(v2.PUR_GAP)::numeric,2) AVG_PUR_GAP FROM(
         SELECT  SPU_WID,PURCH_TIMES,COUNT(*) TTL_NUM FROM PUR_GAP_RN GROUP BY  SPU_WID,PURCH_TIMES
 
         ) v1,PUR_GAP_RN v2
@@ -304,7 +304,7 @@
         AND v1.PURCH_TIMES = v2.PURCH_TIMES
         AND v2.RN &lt;=  CEIL(v1.TTL_NUM * 0.8)
         GROUP BY v1.SPU_WID,v1.PURCH_TIMES
-        ) order by PURCH_TIMES asc
+        ) tmp2 order by PURCH_TIMES asc
     </select>
 
     <select id="findSpuByPurchOrder" resultType="map">

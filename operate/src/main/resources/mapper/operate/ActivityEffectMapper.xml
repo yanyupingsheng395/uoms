@@ -36,8 +36,8 @@
                     NORMALALL,
                     NORMALNOTIFY,
                     NORMALDURING
-                FROM UO_OP_ACTIVITY_EFFECT  WHERE HEAD_ID = #{headId}::int4 AND KPI_TYPE = #{kpiType}) F2 right join
-            (SELECT CODE, VALUE, ORDER_NO
+                FROM UO_OP_ACTIVITY_EFFECT  WHERE HEAD_ID = #{headId} AND KPI_TYPE = #{kpiType}) F2 right join
+            (SELECT CODE::int8, VALUE, ORDER_NO
              FROM T_DICT
              WHERE TYPE_CODE = 'ACTIVITY_EFFECT_KPI') F3
         on F2.KPI_ID = F3.CODE
@@ -47,7 +47,7 @@
     <select id="getEffectInfo" resultMap="base">
         select sum(t.success_num) SUCCESS_NUM,
                min(t.plan_date) PUSH_DATE
-        from uo_op_activity_plan t where t.head_id=#{headId}::int4 and t.plan_status in ('2', '3')
+        from uo_op_activity_plan t where t.head_id=#{headId} and t.plan_status in ('2', '3')
     </select>
 
 </mapper>

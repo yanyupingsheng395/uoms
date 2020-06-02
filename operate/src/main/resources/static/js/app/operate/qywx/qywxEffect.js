@@ -176,7 +176,7 @@ function getEffectPersonalPage() {
                 }
             }]
     };
-    $MB.initTable('effectPersonalTable', settings);
+    $("#effectPersonalTable").bootstrapTable('destroy').bootstrapTable(settings);
 }
 
 // 导出个体结果

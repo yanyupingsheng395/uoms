@@ -344,7 +344,7 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/getEffectMainKpi")
-    public ResponseBo getEffectMainKpi(@RequestParam("headId") String headId, @RequestParam("kpiType") String kpiType) {
+    public ResponseBo getEffectMainKpi(@RequestParam("headId") Long headId, @RequestParam("kpiType") String kpiType) {
         return ResponseBo.okWithData(null, activityEffectService.getEffectMainKpi(headId, kpiType));
     }
 
@@ -354,7 +354,7 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/getEffectInfo")
-    public ResponseBo getEffectInfo(@RequestParam("headId") String headId) {
+    public ResponseBo getEffectInfo(@RequestParam("headId") Long headId) {
         ActivityEffect activityEffect=activityEffectService.getEffectInfo(headId);
 
         if(null==activityEffect)
