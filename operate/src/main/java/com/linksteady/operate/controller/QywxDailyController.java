@@ -161,7 +161,7 @@ public class QywxDailyController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         Long headId = Long.parseLong(request.getParam().get("headId"));
-        String qywxUserId="";
+        String qywxUserId=request.getParam().get("qywxUserId");
         List<QywxDailyDetail> dataList = qywxDailyDetailService.getQywxDetailList(headId,limit, offset,qywxUserId);
         int count = qywxDailyDetailService.getQywxDetailCount(headId,qywxUserId);
         return ResponseBo.okOverPaging(null, count, dataList);
@@ -272,7 +272,7 @@ public class QywxDailyController {
      * @return
      */
     @GetMapping("/getQywxUserList")
-    public ResponseBo getQywxUserList(@RequestParam Long headId) {
+    public ResponseBo getQywxUserList(Long headId) {
         List<QywxUserVO> dataList = qywxDailyDetailService.getQywxUserList(headId);
         return ResponseBo.okWithData(null, dataList);
     }

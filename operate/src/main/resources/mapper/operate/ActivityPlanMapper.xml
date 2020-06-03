@@ -155,10 +155,10 @@
         SELECT
             COUNT(ACTIVITY_DETAIL_ID) USER_COUNT,
             COUNT(CASE WHEN PUSH_STATUS='S' THEN PUSH_STATUS END) SUCCESS_COUNT,
-            coalesce(SUM(CASE WHEN coalesce(IS_CONVERSION,'X')='1' THEN 1 ELSE 0 END),0) COV_USERCOUNT,
+            coalesce(SUM(CASE WHEN IS_CONVERSION=1 THEN 1 ELSE 0 END),0) COV_USERCOUNT,
             coalesce(SUM(coalesce(COV_AMOUNT,0)),0) COV_AMOUNT,
-            coalesce(SUM(CASE WHEN coalesce(IS_CONVERSION,'X')='1' AND coalesce(SPU_CONSISTENT,'N')='Y' THEN 1 ELSE 0 END),0) SPU_USERCOUNT,
-            coalesce(SUM(CASE WHEN coalesce(IS_CONVERSION,'X')='1' AND coalesce(SPU_CONSISTENT,'N')='Y' THEN coalesce(COV_SPU_AMOUNT,0) ELSE 0 END),0) SPU_AMOUNT
+            coalesce(SUM(CASE WHEN IS_CONVERSION=1 AND coalesce(SPU_CONSISTENT,'N')='Y' THEN 1 ELSE 0 END),0) SPU_USERCOUNT,
+            coalesce(SUM(CASE WHEN IS_CONVERSION=1 AND coalesce(SPU_CONSISTENT,'N')='Y' THEN coalesce(COV_SPU_AMOUNT,0) ELSE 0 END),0) SPU_AMOUNT
         FROM(
                 SELECT T2.ACTIVITY_DETAIL_ID,
                        T2.PUSH_STATUS,
@@ -176,8 +176,8 @@
         SELECT
             CONVERSION_DATE,
             SUM(COUNT(CASE WHEN PUSH_STATUS='S' THEN PUSH_STATUS END))OVER(PARTITION BY NULL) SUCCESS_COUNT,
-            SUM(CASE WHEN coalesce(IS_CONVERSION,'X')='1' THEN 1 ELSE 0 END) COV_USERCOUNT,
-            SUM(CASE WHEN coalesce(IS_CONVERSION,'X')='1' AND coalesce(SPU_CONSISTENT,'N')='Y' THEN 1 ELSE 0 END) SPU_USERCOUNT
+            SUM(CASE WHEN IS_CONVERSION=1 THEN 1 ELSE 0 END) COV_USERCOUNT,
+            SUM(CASE WHEN IS_CONVERSION=1 AND coalesce(SPU_CONSISTENT,'N')='Y' THEN 1 ELSE 0 END) SPU_USERCOUNT
         FROM(
                 SELECT T2.ACTIVITY_DETAIL_ID,
                        T2.PUSH_STATUS,
@@ -210,7 +210,7 @@
             t.SPU_CONSISTENT SPU_IS_CONVERT
             --转化的SPU名称
         from UO_OP_ACTIVITY_CONVERT_DETAIL t, w_users u,UO_OP_ACTIVITY_DETAIL t2
-        where t.user_id = u.id::varchar and t.IS_CONVERSION = '1'
+        where t.user_id = u.id::varchar and t.IS_CONVERSION = 1
           and t.activity_detail_id=t2.activity_detail_id
           and t2.plan_id=#{planId}::int4
           ORDER BY t.activity_detail_id ASC

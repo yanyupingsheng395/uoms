@@ -179,6 +179,9 @@ $("#btn_insight").click(function () {
             //初始化步骤组件
             setStep(status,taskDate);
 
+            //加载当前任务所涉及的成员
+            getAllQywxUserList(headId);
+
             //打开modal
             $("#viewPush_modal").modal('show');
         }else {
@@ -837,7 +840,8 @@ function getUserStrategyList(pheadId) {
                 pageSize: params.limit,  //页面大小
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
-                    headId: pheadId
+                    headId: pheadId,
+                    qywxUserId: $("#qywxUserSelect").find("option:selected").val(),
                     }
             };
         },
@@ -872,7 +876,7 @@ function getUserStrategyList(pheadId) {
             $("a[data-toggle='tooltip']").tooltip();
         }
     };
-    $MB.initTable('userListTable', settings);
+    $("#userListTable").bootstrapTable('destroy').bootstrapTable(settings);
 }
 
 /**
@@ -891,4 +895,17 @@ function growthInsight(user_id,head_id)
         }
     });
 
+}
+
+function getAllQywxUserList(pheadId) {
+    $.get("/qywxDaily/getQywxUserList", {headId: pheadId}, function (r) {
+        $.each(r.data,function (index,value) {
+            $("#qywxUserSelect").append("<option id="+value.qywxUserId+">"+value.qywxUserName+"</option>");
+
+            $("#qywxUserSelect").change(function() {
+                //重新加载数据
+                getUserStrategyList(pheadId);
+            });
+        })
+    });
 }

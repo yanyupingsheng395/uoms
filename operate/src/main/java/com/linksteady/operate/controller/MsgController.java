@@ -33,7 +33,15 @@ public class MsgController extends BaseController {
         int dataCount = msgService.getDataCount("", "0");
         final List<MsgInfo> msgList = msgService.getMsgList();
         result.put("dataCount", dataCount);
-        result.put("msgList", msgList);
+
+        if(null!=msgList&&msgList.size()>10)
+        {
+            result.put("msgList", msgList.subList(0,10));
+        }else
+        {
+            result.put("msgList", msgList);
+        }
+
         return ResponseBo.okWithData(null, result);
     }
 
