@@ -62,7 +62,7 @@ $("#btn_save_qywx").click(function () {
     saveData();
 });
 function saveData() {
-    var data = $("#wxMsgAddForm").serialize() + "&" + $("#mediaForm").serialize();
+    var data = $("#wxMsgAddForm").serialize() + "&" + $("#mediaForm").serialize() + "&textContent=" + $("#textContent1").html();
     var operate = $("#btn_save_qywx").attr("name");
     if(operate === 'save') {
         $MB.confirm({
@@ -97,7 +97,7 @@ function saveData() {
 
 // 验证表单
 function wxMsgContentValid(dom) {
-    $('#wxPreview').html('').append($(dom).val()==='' ? '请输入消息内容':$(dom).val());
+    $('#wxPreview').html('').append($(dom).html()==='' ? '请输入消息内容':$(dom).html());
 }
 
 // 删除数据
@@ -137,7 +137,9 @@ function editDataById() {
         $("input[name='couponName']:radio[value='"+data['couponName']+"']").prop("checked", true);
         $("input[name='isPersonal']:radio[value='"+data['isPersonal']+"']").prop("checked", true);
         $("input[name='materialType']:radio[value='"+data['materialType']+"']").prop("checked", true);
-        $("textarea[name='textContent']").val(data['textContent']);
+        $("#textContent1").html(data['textContent']);
+        $("#wxPreview").html(data['textContent']);
+        //$("textarea[name='textContent']").val(data['textContent']);
         $("input[name='materialContent']").val(data['textContent']);
         $("input[name='qywxId']").val(data['qywxId']);
         hiddenPersonalContent();
@@ -156,6 +158,12 @@ $("#wxMsgAddModal").on('hidden.bs.modal', function () {
     $("textarea[name='textContent']").val('');
     $("input[name='materialContent']").val('');
     $("input[name='qywxId']").val('');
+    $("#textContent1").html('');
+    $("#wxPreview").html('请输入消息内容');
     hiddenPersonalContent();
     $("#btn_save_qywx").attr('name', 'save');
+});
+
+$("#textContent1").on('click keyup', function () {
+    $('#wxPreview').html('').append($('#textContent1').html()==='' ? '请输入消息内容':$('#textContent1').html());
 });

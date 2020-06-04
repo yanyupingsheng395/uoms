@@ -20,7 +20,7 @@
     <select id="getSmsTemplateList" resultMap="BaseResultMap">
         SELECT
         SMS_CODE, SMS_CONTENT, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, create_dt,
-        date_part('day', now() - cast(create_dt as TIMESTAMP)) used_days
+        (date_part('day', now() - cast(create_dt as TIMESTAMP)) + 1) used_days
         FROM UO_OP_SMS_TEMPLATE
         order by SMS_CODE::integer desc
         limit #{limit} offset #{offset}
