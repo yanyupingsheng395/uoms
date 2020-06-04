@@ -11,7 +11,7 @@ import java.util.Date;
  */
 @Data
 public class QyWxMsg {
-    private long qywxId;
+    private Long qywxId;
     private String textContent;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date insertDt;

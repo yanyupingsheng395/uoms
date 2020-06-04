@@ -687,7 +687,6 @@ let currDay=getNowFormatDate();
 function setStep(status,taskDate) {
     current_status = status;
     current_taskDt=taskDate;
-
     //如果状态为todo 且 任务为当前日期，则显示 推送页
     if(status === 'todo'&&current_taskDt==currDay) {
         stepObj=steps({

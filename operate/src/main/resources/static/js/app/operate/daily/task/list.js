@@ -139,7 +139,7 @@ $("#btn_insight").click(function () {
 
     let headId = selected[0].headId;
     let status = selected[0].status;
-    let touchDt = selected[0].touchDt;
+    let touchDt = selected[0].touchDtStr;
     let totalNum = selected[0].totalNum;
     $("#headId").val(headId);
 

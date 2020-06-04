@@ -74,7 +74,6 @@ let currDay = getNowFormatDate();
 function setStep(status, touchDtStr) {
     current_status = status;
     current_touchDt = touchDtStr;
-
     //如果状态为todo 且 任务为当前日期，则显示 推送页
     if (status === 'todo' && current_touchDt == currDay) {
         stepObj = steps( {
@@ -307,7 +306,7 @@ function getNowFormatDate() {
     if (strDate >= 0 && strDate <= 9) {
         strDate = "0" + strDate;
     }
-    var currentdate = year + seperator1 + month + seperator1 + strDate;
+    var currentdate = year + month + strDate;
     return currentdate;
 }
 
