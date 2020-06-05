@@ -59,8 +59,94 @@ function hiddenPersonalContent() {
 }
 // 保存数据
 $("#btn_save_qywx").click(function () {
-    saveData();
+    if(qywxValid()) {
+        saveData();
+    }
 });
+
+function qywxValid() {
+    var smsContent = $("#textContent1").html();
+    let couponUrl = $("input[name='couponUrl']:checked").val();
+    let couponName = $("input[name='couponName']:checked").val();
+    let productUrl = $("input[name='productUrl']:checked").val();
+    let productName = $("input[name='productName']:checked").val();
+    if(productName === undefined) {
+        $MB.n_warning("请选择商品名称！");
+        return false;
+    }
+    if(productUrl === undefined) {
+        $MB.n_warning("请选择商品详情页短链接！");
+        return false;
+    }
+    if(couponName === undefined) {
+        $MB.n_warning("请选择补贴名称！");
+        return false;
+    }
+    if(couponUrl === undefined) {
+        $MB.n_warning("请选择补贴短链接！");
+        return false;
+    }
+    if(smsContent === '') {
+        $MB.n_warning("请输入文案内容！");
+        return false;
+    }
+
+    if(productName === '0') {
+        if(smsContent.indexOf("${PROD_NAME}") > -1) {
+            $MB.n_warning("选择'商品名称:否'，文案内容不能出现${PROD_NAME}");
+            return false;
+        }
+    }
+
+    if(productUrl === '0') {
+        if(smsContent.indexOf("${{RPD_URL}") > -1) {
+            $MB.n_warning("选择'商品详情页链接:否'，文案内容不能出现${PROD_URL}");
+            return false;
+        }
+    }
+
+    if(couponUrl === '0') {
+        if(smsContent.indexOf("${COUPON_URL}") > -1) {
+            $MB.n_warning("选择'补贴短链接:否'，文案内容不能出现${COUPON_URL}");
+            return false;
+        }
+    }
+    if(couponName === '0') {
+        if(smsContent.indexOf("${COUPON_NAME}") > -1) {
+            $MB.n_warning("选择'补贴名称:否'，文案内容不能出现${COUPON_NAME}");
+            return false;
+        }
+    }
+
+    if(productName === '1') {
+        if(smsContent.indexOf("${PROD_NAME}") == -1) {
+            $MB.n_warning("选择'商品名称:是'，文案内容没有发现${PROD_NAME}");
+            return false;
+        }
+    }
+
+    if(productUrl === '1') {
+        if(smsContent.indexOf("${{RPD_URL}") == -1) {
+            $MB.n_warning("选择'商品详情页链接:是'，文案内容没有发现${PROD_URL}");
+            return false;
+        }
+    }
+
+    if(couponUrl === '1') {
+        if(smsContent.indexOf("${COUPON_URL}") == -1) {
+            $MB.n_warning("选择'补贴短链接:是'，文案内容没有发现${COUPON_URL}");
+            return false;
+        }
+    }
+    if(couponName === '1') {
+        if(smsContent.indexOf("${COUPON_NAME}") == -1) {
+            $MB.n_warning("选择'补贴名称:是'，文案内容没有发现${COUPON_NAME}");
+            return false;
+        }
+    }
+    return true;
+}
+
 function saveData() {
     var data = $("#wxMsgAddForm").serialize() + "&" + $("#mediaForm").serialize() + "&textContent=" + $("#textContent1").html();
     var operate = $("#btn_save_qywx").attr("name");
@@ -139,8 +225,7 @@ function editDataById() {
         $("input[name='materialType']:radio[value='"+data['materialType']+"']").prop("checked", true);
         $("#textContent1").html(data['textContent']);
         $("#wxPreview").html(data['textContent']);
-        //$("textarea[name='textContent']").val(data['textContent']);
-        $("input[name='materialContent']").val(data['textContent']);
+        $("input[name='materialContent']").val(data['materialContent']);
         $("input[name='qywxId']").val(data['qywxId']);
         hiddenPersonalContent();
         $("#wxMsgAddModal").modal('show');

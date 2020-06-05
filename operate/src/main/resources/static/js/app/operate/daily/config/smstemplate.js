@@ -331,11 +331,11 @@ function validCouponSendType() {
         return false;
     }
     if(isProductUrl === undefined) {
-        $MB.n_warning("请选择推荐商品名称！");
+        $MB.n_warning("请选择推荐商品短链接！");
         return false;
     }
     if(isProductName === undefined) {
-        $MB.n_warning("请选择推荐商品短链接！");
+        $MB.n_warning("请选择推荐商品名称！");
         return false;
     }
     if(smsName === '') {

@@ -303,8 +303,10 @@
     </delete>
 
     <insert id="resetCouponGroupData">
-        insert into uo_op_daily_group_coupon(group_id, coupon_id) select group_id, coupon_id from uo_op_daily_template_config t1, uo_op_coupon t2
-        where t2.discount_level ~ t1.discount_level::varchar
+        insert into uo_op_daily_group_coupon(group_id, coupon_id)
+        select group_id, coupon_id
+        from uo_op_daily_template_config t1,uo_op_coupon t2
+        where t2.discount_level ~ t1.discount_level::varchar and t2.valid_status = 'Y' and t2.check_flag = '1'
     </insert>
 
     <select id="getCouponListByGroup" resultMap="BaseResultMap">

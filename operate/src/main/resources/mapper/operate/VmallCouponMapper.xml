@@ -255,14 +255,14 @@
         update uo_op_vmall_coupon
         set discount_level = t.discount_level
         from (with v1 as (select count(1) cnt, coupon_threshold
-                          from uo_op_coupon
+                          from uo_op_vmall_coupon
                           where check_flag = '1'
                           group by coupon_threshold),
                    v2 as (select coupon_id,
                                  row_number() over (partition by coupon_threshold order by coupon_denom) rn,
                                  coupon_threshold,
                                  coupon_denom
-                          from uo_op_coupon
+                          from uo_op_vmall_coupon
                           where check_flag = '1'),
                    v3 as (
                        select case
@@ -294,8 +294,10 @@
     </delete>
 
     <insert id="resetCouponGroupData">
-        insert into uo_op_vmall_group_coupon(group_id, coupon_id) select group_id, coupon_id from uo_op_daily_template_config t1, uo_op_coupon t2
-        where t2.discount_level ~ t1.discount_level::varchar
+        insert into uo_op_vmall_group_coupon(group_id, coupon_id)
+        select group_id, coupon_id
+        from uo_op_daily_template_config t1,uo_op_coupon t2
+        where t2.discount_level ~ t1.discount_level::varchar and t2.valid_status = 'Y' and t2.check_flag = '1'
     </insert>
 
     <select id="getCouponListByGroup" resultMap="BaseResultMap">

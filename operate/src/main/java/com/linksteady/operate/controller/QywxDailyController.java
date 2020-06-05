@@ -352,6 +352,4 @@ public class QywxDailyController {
         return backStr;
     }
 
-
-
 }

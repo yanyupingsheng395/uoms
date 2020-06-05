@@ -274,6 +274,13 @@ public class DailyConfigServiceImpl implements DailyConfigService {
             couponMapper.deleteAllCouponGroupData();
             // 根据discountLevel字段匹配到用户分组上
             couponMapper.resetCouponGroupData();
+
+            // 更新discountLevel字段
+            vmallCouponMapper.updateDiscountLevel();
+            // 清空群组和券的关系表
+            vmallCouponMapper.deleteAllCouponGroupData();
+            // 根据discountLevel字段匹配到用户分组上
+            vmallCouponMapper.resetCouponGroupData();
             if (count1 == 0) {
                 return ResponseBo.warn("淘客券无有效的优惠券，请先配置优惠券。");
             }
