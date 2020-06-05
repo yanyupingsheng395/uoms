@@ -31,6 +31,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
+import java.util.Enumeration;
 import java.util.Map;
 
 /**
@@ -99,7 +100,10 @@ public class LoginController extends BaseController {
                 response.addCookie(cookie);
             }
         }
-
+        Enumeration em = request.getSession().getAttributeNames();
+        while(em.hasMoreElements()){
+            request.getSession().removeAttribute(em.nextElement().toString());
+        }
         //当前系统的名称
         String systemName= configService.getValueByName("system.name");
         model.addAttribute("systemName",systemName);
@@ -229,7 +233,11 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping("/logout")
-    public String logout() {
+    public String logout(HttpServletRequest request) {
+        Enumeration em = request.getSession().getAttributeNames();
+        while(em.hasMoreElements()){
+            request.getSession().removeAttribute(em.nextElement().toString());
+        }
         getSubject().logout();
         return "redirect:/login";
     }

@@ -1,6 +1,4 @@
 package com.linksteady.operate.service.impl;
-
-import com.google.common.collect.Lists;
 import com.linksteady.common.domain.Tconfig;
 import com.linksteady.common.dao.ConfigMapper;
 import com.linksteady.operate.domain.HeartBeatInfo;
@@ -35,8 +33,7 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
     @Autowired
     private ConfigMapper configMapper;
 
-
-    private static final String CONFIG_KEY_NAME="TCONFIG";
+    private static final String CONFIG_KEY_NAME = "TCONFIG";
 
     @Autowired
     RedisTemplate redisTemplate;
