@@ -383,8 +383,8 @@ function getCurrentGroupData() {
         $("#duanxinContent").html('').append(((data['duanxin'] === undefined) || (data['duanxin'] === null)) ? '未配置短信文案':data['duanxin']);
         $("#weixinContent").html('').append(((data['weixin'] === undefined) || (data['weixin'] === null)) ? '未配置企业微信文案' : data['weixin']);
 
-        smsCouponListTable("smsCouponListTable", data['couponList']);
-        smsCouponListTable("weixinCouponListTable", data['couponList']);
+        smsCouponListTable("smsCouponListTable", data['duanxinCouponInfos']);
+        smsCouponListTable("weixinCouponListTable", data['weixinCouponInfos']);
     });
 }
 

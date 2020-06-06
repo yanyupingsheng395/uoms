@@ -246,11 +246,13 @@ public class DailyConfigServiceImpl implements DailyConfigService {
     @Override
     public Map<String, Object> getCurrentGroupData(String userValue, String lifeCycle, String pathActive, String tarType) {
         Map<String, Object> data = dailyConfigMapper.findMsgInfo(userValue, lifeCycle, pathActive, tarType);
-        List<CouponInfo> couponInfos = couponMapper.getCouponListByGroup(userValue, lifeCycle, pathActive, tarType);
+        List<CouponInfo> duanxinCouponInfos = couponMapper.getCouponListByGroup(userValue, lifeCycle, pathActive, tarType);
+        List<CouponInfo> weixinCouponInfos = vmallCouponMapper.getCouponListByGroup(userValue, lifeCycle, pathActive, tarType);
         if (data == null) {
             data = Maps.newHashMap();
         }
-        data.put("couponList", couponInfos);
+        data.put("duanxinCouponInfos", duanxinCouponInfos);
+        data.put("weixinCouponInfos", weixinCouponInfos);
         return data;
     }
 

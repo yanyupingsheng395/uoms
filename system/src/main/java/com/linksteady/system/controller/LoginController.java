@@ -1,4 +1,5 @@
 package com.linksteady.system.controller;
+
 import com.google.common.collect.Maps;
 import com.linksteady.common.config.ShiroProperties;
 import com.linksteady.common.controller.BaseController;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import javax.imageio.ImageIO;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -88,26 +90,26 @@ public class LoginController extends BaseController {
     private String buildTime;
 
     @GetMapping("/login")
-    public String login(Model model,HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies=request.getCookies();
+    public String login(Model model, HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
         /**
          * 如果本地没有cookies缓存则不需要清除
          */
-        if(null != cookies) {
-            for (Cookie cookie:cookies) {
+        if (null != cookies) {
+            for (Cookie cookie : cookies) {
                 cookie.setMaxAge(0);
                 cookie.setPath("/");
                 response.addCookie(cookie);
             }
         }
+        // 清除session状态
         Enumeration em = request.getSession().getAttributeNames();
-        while(em.hasMoreElements()){
+        while (em.hasMoreElements()) {
             request.getSession().removeAttribute(em.nextElement().toString());
         }
         //当前系统的名称
-        String systemName= configService.getValueByName("system.name");
-        model.addAttribute("systemName",systemName);
-
+        String systemName = configService.getValueByName("system.name");
+        model.addAttribute("systemName", systemName);
         return "login";
     }
 
@@ -127,7 +129,7 @@ public class LoginController extends BaseController {
         }
         Session session = super.getSession();
         String sessionCode = (String) session.getAttribute(CODE_KEY);
-        if (null!=sessionCode&&!"".equals(sessionCode)&&!code.equalsIgnoreCase(sessionCode)) {
+        if (null != sessionCode && !"".equals(sessionCode) && !code.equalsIgnoreCase(sessionCode)) {
             return ResponseBo.error("验证码错误！");
         }
 
@@ -141,18 +143,16 @@ public class LoginController extends BaseController {
             super.login(token);
             this.userService.updateLoginTime(username);
             //记录登录事件
-            logLoginEvent(username,"登录成功");
+            logLoginEvent(username, "登录成功");
 
             //判断用户是否首次登陆 如果是强制跳到修改密码界面
-            String firstLogin=userService.findByName(username).getFirstLogin();
-            if(shiroProperties.isAllowResetPassword()&&"Y".equals(firstLogin))
-            {
+            String firstLogin = userService.findByName(username).getFirstLogin();
+            if (shiroProperties.isAllowResetPassword() && "Y".equals(firstLogin)) {
                 //记录登录事件
-                logLoginEvent(username,"登录成功，首次登陆将强制要求修改密码！");
+                logLoginEvent(username, "登录成功，首次登陆将强制要求修改密码！");
                 //首次登陆强制要求修改密码
                 return ResponseBo.ok("Y");
-            }else
-            {
+            } else {
                 //不要求修改密码
                 return ResponseBo.ok("N");
             }
@@ -160,20 +160,20 @@ public class LoginController extends BaseController {
 
         } catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e) {
             //记录登录事件
-            logLoginEvent(username,"登录失败：未知账号、账号锁定或凭证不正确");
+            logLoginEvent(username, "登录失败：未知账号、账号锁定或凭证不正确");
             return ResponseBo.error(e.getMessage());
         } catch (AuthenticationException e) {
-            logLoginEvent(username,"登录失败：其它认证失败原因");
+            logLoginEvent(username, "登录失败：其它认证失败原因");
             return ResponseBo.error("认证失败！");
         }
     }
 
     /**
      * 记录登录事件
+     *
      * @return
      */
-    private void logLoginEvent(String userName,String operation)
-    {
+    private void logLoginEvent(String userName, String operation) {
         // 获取request
         HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
         // 设置IP地址
@@ -212,7 +212,7 @@ public class LoginController extends BaseController {
         BufferedImage image = imageCode.getImage();
         imageCode.setImage(null);
 
-        Session session =super.getSession();
+        Session session = super.getSession();
         session.removeAttribute(CODE_KEY);
         session.setAttribute(CODE_KEY, imageCode.getCode());
         response.setContentType("image/jpeg");
@@ -222,20 +222,20 @@ public class LoginController extends BaseController {
     @RequestMapping("/sysinfo")
     @ResponseBody
     public ResponseBo getSysInfo() {
-        Map result= Maps.newHashMap();
+        Map result = Maps.newHashMap();
 
-        result.put("appname",appname);
-        result.put("version",version);
-        result.put("appdesc",appdesc);
-        result.put("buildtime",buildTime);
-        result.put("bootversion",bootversion);
-        return ResponseBo.okWithData("",result);
+        result.put("appname", appname);
+        result.put("version", version);
+        result.put("appdesc", appdesc);
+        result.put("buildtime", buildTime);
+        result.put("bootversion", bootversion);
+        return ResponseBo.okWithData("", result);
     }
 
     @RequestMapping("/logout")
     public String logout(HttpServletRequest request) {
         Enumeration em = request.getSession().getAttributeNames();
-        while(em.hasMoreElements()){
+        while (em.hasMoreElements()) {
             request.getSession().removeAttribute(em.nextElement().toString());
         }
         getSubject().logout();
