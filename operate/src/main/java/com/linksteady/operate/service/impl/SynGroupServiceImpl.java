@@ -420,7 +420,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         Map<String, String> result = Maps.newHashMap();
         int period = DateUtil.getPeriod(startDt, endDt);
         for (int i=0; i < period; i++) {
-            result.put("MONTH" + (i+1), DateUtil.getDateByPlusMonth(startDt, i));
+            result.put("month" + (i+1), DateUtil.getDateByPlusMonth(startDt, i));
         }
         return result;
     }
@@ -440,7 +440,7 @@ public class SynGroupServiceImpl implements SynGroupService {
         // 将未来数据置为空
         dataList.stream().forEach(x-> {
             // 当前行的日期
-            String startDt0 = String.valueOf(x.get("MONTH_ID"));
+            String startDt0 = String.valueOf(x.get("month_id"));
             Map<String, String> tmpMap = colAndDateMap(startDt0, endDt);
             x.keySet().stream().forEach(y-> {
                 List<String> colsList = Arrays.asList(UomsConstants.D_MONTH_COMMONS_COLS);
@@ -477,7 +477,7 @@ public class SynGroupServiceImpl implements SynGroupService {
                      * 均值
                      */
                     Long count = dataList.stream().filter(z-> z.get(x) != null && Double.valueOf(z.get(x).toString()) > 0D).count();
-                    if(colsMap.get(x) != null || x.equals("CURRENT_MONTH")) {
+                    if(colsMap.get(x) != null || x.equals("current_month")) {
                         total.put(x, count == 0 ? 0:String.format("%.2f", dss.getSum()/count));
                     }
                 }else {

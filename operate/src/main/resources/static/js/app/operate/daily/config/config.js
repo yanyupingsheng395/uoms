@@ -359,7 +359,7 @@ function smsCouponListTable(tableId, data) {
                     align: 'center'
                 },
                 {
-                    title: '用户特征',
+                    title: '用户特征'
                 }
             ]
         };

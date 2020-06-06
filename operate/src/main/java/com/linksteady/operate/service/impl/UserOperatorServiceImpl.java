@@ -483,7 +483,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         //处理条件 Y M D
         if(UomsConstants.PERIOD_TYPE_DAY.equals(periodType))
         {
-            bf.append(" AND W_DATE.DAY>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.DAY<=").append(StringUtils.replaceChars(endDt,"-",""));
+            bf.append(" AND W_DATE.DAY::integer>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.DAY::integer<=").append(StringUtils.replaceChars(endDt,"-",""));
         }else if(UomsConstants.PERIOD_TYPE_MONTH.equals(periodType))
         {
             bf.append(" AND W_DATE.MONTH>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.MONTH<=").append(StringUtils.replaceChars(endDt,"-",""));
@@ -524,7 +524,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         //处理条件 Y M D
         if(UomsConstants.PERIOD_TYPE_DAY.equals(periodType))
         {
-            bf.append(" AND W_DATE.DAY>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.DAY<=").append(StringUtils.replaceChars(endDt,"-",""));
+            bf.append(" AND W_DATE.DAY::integer>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.DAY::integer<=").append(StringUtils.replaceChars(endDt,"-",""));
         }else if(UomsConstants.PERIOD_TYPE_MONTH.equals(periodType))
         {
             bf.append(" AND W_DATE.MONTH>=").append(StringUtils.replaceChars(startDt,"-","")).append(" AND W_DATE.MONTH<=").append(StringUtils.replaceChars(endDt,"-",""));

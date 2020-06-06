@@ -232,6 +232,10 @@ public class DailyConfigServiceImpl implements DailyConfigService {
         dailyConfigMapper.deleteSmsGroup(Arrays.asList(groupId.split(",")));
     }
 
+    /**
+     * 验证
+     * @return
+     */
     @Override
     public boolean validUserGroupForQywx() {
         //todo 后续待补充
@@ -246,6 +250,7 @@ public class DailyConfigServiceImpl implements DailyConfigService {
     @Override
     public Map<String, Object> getCurrentGroupData(String userValue, String lifeCycle, String pathActive, String tarType) {
         Map<String, Object> data = dailyConfigMapper.findMsgInfo(userValue, lifeCycle, pathActive, tarType);
+        // 获取短信的补贴和微信补贴
         List<CouponInfo> duanxinCouponInfos = couponMapper.getCouponListByGroup(userValue, lifeCycle, pathActive, tarType);
         List<CouponInfo> weixinCouponInfos = vmallCouponMapper.getCouponListByGroup(userValue, lifeCycle, pathActive, tarType);
         if (data == null) {

@@ -94,20 +94,20 @@ function getDMonthCols(percent) {
     }
     var fmt = function (value, row, index) {if(value == null) {return "";}else {return value + fix;}};
     var cols = [
-        {field: 'MONTH_ID', title: '月份'},
-        {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px'},
-        {field: 'MONTH1', title: '+1月', formatter: fmt},
-        {field: 'MONTH2', title: '+2月', formatter: fmt},
-        {field: 'MONTH3', title: '+3月', formatter: fmt},
-        {field: 'MONTH4', title: '+4月', formatter: fmt},
-        {field: 'MONTH5', title: '+5月', formatter: fmt},
-        {field: 'MONTH6', title: '+6月', formatter: fmt},
-        {field: 'MONTH7', title: '+7月', formatter: fmt},
-        {field: 'MONTH8', title: '+8月', formatter: fmt},
-        {field: 'MONTH9', title: '+9月', formatter: fmt},
-        {field: 'MONTH10', title: '+10月', formatter: fmt},
-        {field: 'MONTH11', title: '+11月', formatter: fmt},
-        {field: 'MONTH12', title: '+12月', formatter: fmt},
+        {field: 'month_id', title: '月份'},
+        {field: 'total_user', title: '本月新增用户数', width: '132px'},
+        {field: 'month1', title: '+1月', formatter: fmt},
+        {field: 'month2', title: '+2月', formatter: fmt},
+        {field: 'month3', title: '+3月', formatter: fmt},
+        {field: 'month4', title: '+4月', formatter: fmt},
+        {field: 'month5', title: '+5月', formatter: fmt},
+        {field: 'month6', title: '+6月', formatter: fmt},
+        {field: 'month7', title: '+7月', formatter: fmt},
+        {field: 'month8', title: '+8月', formatter: fmt},
+        {field: 'month9', title: '+9月', formatter: fmt},
+        {field: 'month10', title: '+10月', formatter: fmt},
+        {field: 'month11', title: '+11月', formatter: fmt},
+        {field: 'month12', title: '+12月', formatter: fmt},
     ];
     return cols;
 }
@@ -127,21 +127,21 @@ function getKpiDMonthCols(percent, type) {
         }
     };
     var cols = [
-        {field: 'MONTH_ID', title: '月份'},
-        {field: 'TOTAL_USER', title: '本月新增用户数', width: '132px'},
-        {field: 'CURRENT_MONTH', title: type, width:'132px', formatter: fmt},
-        {field: 'MONTH1', title: '+1月', formatter: fmt},
-        {field: 'MONTH2', title: '+2月', formatter: fmt},
-        {field: 'MONTH3', title: '+3月', formatter: fmt},
-        {field: 'MONTH4', title: '+4月', formatter: fmt},
-        {field: 'MONTH5', title: '+5月', formatter: fmt},
-        {field: 'MONTH6', title: '+6月', formatter: fmt},
-        {field: 'MONTH7', title: '+7月', formatter: fmt},
-        {field: 'MONTH8', title: '+8月', formatter: fmt},
-        {field: 'MONTH9', title: '+9月', formatter: fmt},
-        {field: 'MONTH10', title: '+10月', formatter: fmt},
-        {field: 'MONTH11', title: '+11月', formatter: fmt},
-        {field: 'MONTH12', title: '+12月', formatter: fmt}
+        {field: 'month_id', title: '月份'},
+        {field: 'total_user', title: '本月新增用户数', width: '132px'},
+        {field: 'current_month', title: type, width:'132px', formatter: fmt},
+        {field: 'month1', title: '+1月', formatter: fmt},
+        {field: 'month2', title: '+2月', formatter: fmt},
+        {field: 'month3', title: '+3月', formatter: fmt},
+        {field: 'month4', title: '+4月', formatter: fmt},
+        {field: 'month5', title: '+5月', formatter: fmt},
+        {field: 'month6', title: '+6月', formatter: fmt},
+        {field: 'month7', title: '+7月', formatter: fmt},
+        {field: 'month8', title: '+8月', formatter: fmt},
+        {field: 'month9', title: '+9月', formatter: fmt},
+        {field: 'month10', title: '+10月', formatter: fmt},
+        {field: 'month11', title: '+11月', formatter: fmt},
+        {field: 'month12', title: '+12月', formatter: fmt}
     ];
     return cols;
 }

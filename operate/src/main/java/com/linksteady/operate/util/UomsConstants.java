@@ -25,17 +25,17 @@ public final class UomsConstants {
     /**
      * 同期群 - 留存列
      */
-    public static final String[] D_MONTH_COLS = {"MONTH_ID", "TOTAL_USER", "MONTH1", "MONTH2", "MONTH3", "MONTH4", "MONTH5", "MONTH6", "MONTH7", "MONTH8", "MONTH9", "MONTH10", "MONTH11", "MONTH12"};
+    public static final String[] D_MONTH_COLS = {"month_id", "total_user", "month1", "month2", "month3", "month4", "month5", "month6", "month7", "month8", "month9", "month10", "month11", "month12"};
 
     /**
      * 同期群 - 指标列
      */
-    public static final String[] D_MONTH_KPI_COLS = {"MONTH_ID", "TOTAL_USER", "CURRENT_MONTH", "MONTH1", "MONTH2", "MONTH3", "MONTH4", "MONTH5", "MONTH6", "MONTH7", "MONTH8", "MONTH9", "MONTH10", "MONTH11", "MONTH12"};
+    public static final String[] D_MONTH_KPI_COLS = {"month_id", "total_user", "current_month", "month1", "month2", "month3", "month4", "month5", "month6", "month7", "month8", "month9", "month10", "month11", "month12"};
 
     /**
      * 同期群 - 间隔月并集列
      */
-    public static final String[] D_MONTH_COMMONS_COLS = {"MONTH_ID", "TOTAL_USER", "CURRENT_MONTH"};
+    public static final String[] D_MONTH_COMMONS_COLS = {"month_id", "total_user", "current_month"};
 
     /**
      * ********************* 同期群常量 *********************
