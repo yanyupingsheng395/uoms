@@ -6,8 +6,6 @@ import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.util.MD5Utils;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +27,11 @@ public class CommonFunController extends BaseController {
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
 
+    /**
+     * 修改密码
+     * @param newPassword
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/updatePassword")
     public ResponseBo updatePassword(@RequestParam("newPassword") String newPassword) {

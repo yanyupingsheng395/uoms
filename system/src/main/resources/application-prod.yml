@@ -33,10 +33,10 @@ shiro:
   # 登录 url
   loginUrl: /login
   # 登录成功后跳转的 url
-  successUrl: http://dapunew.growth-master.com/main
+  successUrl: http://dapu.growth-master.com/main
   # 登出 url
   logoutUrl: /logout
   #强制修改密码的url
   resetPasswordUrl: /resetPass
   #设置cookie所在的域名
-  cookieDomain: dapunew.growth-master.com
+  cookieDomain: dapu.growth-master.com

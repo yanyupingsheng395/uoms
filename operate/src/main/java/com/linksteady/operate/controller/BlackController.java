@@ -51,4 +51,10 @@ public class BlackController extends BaseController {
     public boolean checkPhone(@RequestParam("userPhone") String userPhone) {
         return blackService.checkPhone(userPhone);
     }
+
+    @GetMapping("/test")
+    public ResponseBo test() {
+        System.out.println(1/0);
+        return ResponseBo.ok();
+    }
 }
