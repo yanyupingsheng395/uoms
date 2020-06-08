@@ -19,20 +19,25 @@
     </resultMap>
 
     <select id="getSmsTemplateList" resultMap="BaseResultMap">
-        with v1 as(select sms_code from uo_op_daily_template_config where group_id = #{groupId}::integer)
+        with v1 as (select sms_code from uo_op_daily_template_config where group_id = #{groupId}::integer),
+        v2 as (
         select t1.sms_code,
-               case when t1.sms_code = v1.sms_code::varchar then '1' else '0' end tmp_col,
-               sms_content,
-               is_coupon_name,
-               sms_name,
-               is_product_name,
-               is_product_url,
-               remark,
-               create_dt,
-               update_dt,
-               (date_part('day', now() - cast(create_dt as timestamp)) + 1) used_days
-        from uo_op_sms_template t1, v1
-        order by tmp_col desc,update_dt desc nulls last, create_dt desc
+        case when t1.sms_code = v1.sms_code::varchar and t1.sms_code is not null then '1' else '0' end tmp_col,
+        sms_content,
+        is_coupon_name,
+        sms_name,
+        is_product_name,
+        is_product_url,
+        remark,
+        create_dt,
+        update_dt,
+        case when update_dt is null then create_dt else update_dt end           op_dt,
+        (date_part('day', now() - cast(create_dt as timestamp)) + 1)                               used_days
+        from uo_op_sms_template t1,
+        v1
+        order by tmp_col desc, op_dt desc
+        )
+        select v2.* from v1, v2
         limit #{limit} offset #{offset}
     </select>
 
@@ -64,6 +69,7 @@
       set SMS_CONTENT = #{smsTemplate.smsContent}, IS_COUPON_URL = #{smsTemplate.isCouponUrl}, IS_COUPON_NAME = #{smsTemplate.isCouponName}, SMS_NAME = #{smsTemplate.smsName}, IS_PRODUCT_NAME = #{smsTemplate.isProductName}, IS_PRODUCT_URL = #{smsTemplate.isProductUrl}, REMARK = #{smsTemplate.remark}, UPDATE_DT = now()
       where SMS_CODE = #{smsTemplate.smsCode}
     </update>
+
     <select id="getSmsUsedGroupInfo" resultType="string">
         select distinct t2.USER_VALUE || ',' || t2.LIFECYCLE || ',' || t2.PATH_ACTIVE
         from UO_OP_SMS_TEMPLATE t1,
