@@ -14,7 +14,7 @@
         <result column="LIFE_CYCLE" jdbcType="VARCHAR" property="lifeCycle" />
         <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive" />
         <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
-        <result column="used_days" jdbcType="VARCHAR" property="usedDays" />
+        <result column="used_days" jdbcType="DECIMAL" property="usedDays" />
     </resultMap>
 
     <select id="getSmsTemplateList" resultMap="BaseResultMap">

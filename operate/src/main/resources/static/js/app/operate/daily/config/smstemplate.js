@@ -28,7 +28,6 @@ function smsTemplateTable(smsCode) {
         sidePagination: "server",
         pageList: [10, 25, 50, 100],
         queryParams: function (params) {
-            console.log(params)
             return {
                 limit: params.limit,
                 offset: params.offset
