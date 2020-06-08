@@ -18,7 +18,7 @@ public interface PushListMapper {
 
     List<PushListInfo> getPushInfoListPage(int limit, int offset, String sourceCode, String pushStatus, String pushDateStr);
 
-    Long insertTestMsg(PushListInfo pushListInfo);
+    void insertTestMsg(PushListInfo pushListInfo);
 
     Map<String, Object> getPushDataOfDay(int day);
 

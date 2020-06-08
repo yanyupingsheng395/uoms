@@ -100,7 +100,7 @@
                'P',
                'D',
                C.DAILY_DETAIL_ID,
-               C.PUSH_ORDER_PERIOD,
+               C.PUSH_ORDER_PERIOD::int4,
                '0'
         FROM UO_OP_DAILY_DETAIL C
         WHERE C.HEAD_ID = #{headId}
