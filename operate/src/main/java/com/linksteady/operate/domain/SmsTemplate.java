@@ -57,5 +57,6 @@ public class SmsTemplate {
     private String pathActive;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date createDt;
+    private Date updateDt;
     private Integer usedDays;
 }

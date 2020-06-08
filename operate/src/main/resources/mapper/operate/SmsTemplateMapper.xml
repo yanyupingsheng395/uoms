@@ -14,15 +14,25 @@
         <result column="LIFE_CYCLE" jdbcType="VARCHAR" property="lifeCycle" />
         <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive" />
         <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
         <result column="used_days" jdbcType="DECIMAL" property="usedDays" />
     </resultMap>
 
     <select id="getSmsTemplateList" resultMap="BaseResultMap">
-        SELECT
-        SMS_CODE, SMS_CONTENT, IS_COUPON_NAME, SMS_NAME, IS_PRODUCT_NAME, IS_PRODUCT_URL, REMARK, create_dt,
-        (date_part('day', now() - cast(create_dt as TIMESTAMP)) + 1) used_days
-        FROM UO_OP_SMS_TEMPLATE
-        order by SMS_CODE::integer desc
+        with v1 as(select sms_code from uo_op_daily_template_config where group_id = #{groupId}::integer)
+        select t1.sms_code,
+               case when t1.sms_code = v1.sms_code::varchar then '1' else '0' end tmp_col,
+               sms_content,
+               is_coupon_name,
+               sms_name,
+               is_product_name,
+               is_product_url,
+               remark,
+               create_dt,
+               update_dt,
+               (date_part('day', now() - cast(create_dt as timestamp)) + 1) used_days
+        from uo_op_sms_template t1, v1
+        order by tmp_col desc,update_dt desc nulls last, create_dt desc
         limit #{limit} offset #{offset}
     </select>
 
@@ -51,11 +61,11 @@
 
     <update id="update" parameterType="com.linksteady.operate.domain.SmsTemplate">
       update UO_OP_SMS_TEMPLATE
-      set SMS_CONTENT = #{smsTemplate.smsContent}, IS_COUPON_URL = #{smsTemplate.isCouponUrl}, IS_COUPON_NAME = #{smsTemplate.isCouponName}, SMS_NAME = #{smsTemplate.smsName}, IS_PRODUCT_NAME = #{smsTemplate.isProductName}, IS_PRODUCT_URL = #{smsTemplate.isProductUrl}, REMARK = #{smsTemplate.remark}
+      set SMS_CONTENT = #{smsTemplate.smsContent}, IS_COUPON_URL = #{smsTemplate.isCouponUrl}, IS_COUPON_NAME = #{smsTemplate.isCouponName}, SMS_NAME = #{smsTemplate.smsName}, IS_PRODUCT_NAME = #{smsTemplate.isProductName}, IS_PRODUCT_URL = #{smsTemplate.isProductUrl}, REMARK = #{smsTemplate.remark}, UPDATE_DT = now()
       where SMS_CODE = #{smsTemplate.smsCode}
     </update>
     <select id="getSmsUsedGroupInfo" resultType="string">
-        select t2.USER_VALUE || ',' || t2.LIFECYCLE || ',' || t2.PATH_ACTIVE
+        select distinct t2.USER_VALUE || ',' || t2.LIFECYCLE || ',' || t2.PATH_ACTIVE
         from UO_OP_SMS_TEMPLATE t1,
              UO_OP_DAILY_TEMPLATE_CONFIG t2
         where t1.SMS_CODE = t2.SMS_CODE

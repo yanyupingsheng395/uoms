@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
 
-    List<SmsTemplate> getSmsTemplateList(@Param("limit") int limit, @Param("offset") int offset);
+    List<SmsTemplate> getSmsTemplateList(@Param("limit") int limit, @Param("offset") int offset, @Param("groupId") String groupId);
 
     int getTotalCount();
 

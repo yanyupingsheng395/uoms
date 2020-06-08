@@ -12,10 +12,6 @@ function openSmsTemplateModal(groupId, smsCode, userValue, lifecycle, pathActive
     $( "#smsTemplateModal" ).modal( 'show' );
 }
 
-// $("#smsTemplateModal").on('hidden.bs.modal', function () {
-//     $( "#currentGroupId" ).val("");
-// });
-
 /**
  * 获取短信模板列表
  */
@@ -30,7 +26,8 @@ function smsTemplateTable(smsCode) {
         queryParams: function (params) {
             return {
                 limit: params.limit,
-                offset: params.offset
+                offset: params.offset,
+                groupId: $("#currentGroupId").val()
             };
         },
         columns: [
