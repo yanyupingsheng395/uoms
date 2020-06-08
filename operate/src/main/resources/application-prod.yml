@@ -26,20 +26,20 @@ sys:
   #服务平台地址
   smpDomain: http://smp.growth-master.com
   #是否开启错误日志上报
-  openExceptionNotice: false
+  openExceptionNotice: true
 shiro:
   # 登录 url
-  loginUrl: http://dapunew.growth-master.com/login
+  loginUrl: http://dapu.growth-master.com/login
   # 登录成功后跳转的 url
-  successUrl: http://dapunew.growth-master.com/main
+  successUrl: http://dapu.growth-master.com/main
   # 登出 url
-  logoutUrl: http://dapunew.growth-master.com/logout
+  logoutUrl: http://dapu.growth-master.com/logout
   #强制修改密码的url
-  resetPasswordUrl: http://dapunew.growth-master.com/resetPass
+  resetPasswordUrl: http://dapu.growth-master.com/resetPass
   #设置cookie所在的域名
-  cookieDomain: dapunew.growth-master.com
+  cookieDomain: dapu.growth-master.com
 
 thrift:
   server:
-    host: 39.100.145.35
+    host: 172.16.99.43
     port: 7777
