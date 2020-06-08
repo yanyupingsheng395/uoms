@@ -45,8 +45,8 @@ public class SmsTemplateController extends BaseController {
      * @return
      */
     @RequestMapping("/smsTemplateList")
-    public ResponseBo smsTemplateList(Integer limit, Integer offset) {
-        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList(limit, offset);
+    public ResponseBo smsTemplateList(Integer limit, Integer offset, String groupId) {
+        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList(limit, offset, groupId);
         int totalCount = smsTemplateService.getTotalCount();
         return ResponseBo.okOverPaging("", totalCount, result);
     }

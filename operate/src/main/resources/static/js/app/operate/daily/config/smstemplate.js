@@ -12,10 +12,6 @@ function openSmsTemplateModal(groupId, smsCode, userValue, lifecycle, pathActive
     $( "#smsTemplateModal" ).modal( 'show' );
 }
 
-$("#smsTemplateModal").on('hidden.bs.modal', function () {
-    $( "#currentGroupId" ).val("");
-});
-
 /**
  * 获取短信模板列表
  */
@@ -28,10 +24,10 @@ function smsTemplateTable(smsCode) {
         sidePagination: "server",
         pageList: [10, 25, 50, 100],
         queryParams: function (params) {
-            console.log(params)
             return {
                 limit: params.limit,
-                offset: params.offset
+                offset: params.offset,
+                groupId: $("#currentGroupId").val()
             };
         },
         columns: [
@@ -702,7 +698,7 @@ $("#btn_refresh").click(function () {
                         $MB.n_success("当前文案已解除引用。");
                         SMS_CODE = null;
                         smsTemplateTable();
-                        initTable();
+                        getTableData();
                     }
                 });
             });

@@ -26,8 +26,8 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
     private ConfigService configService;
 
     @Override
-    public List<SmsTemplate> getSmsTemplateList(int limit, int offset) {
-        return smsTemplateapper.getSmsTemplateList(limit, offset);
+    public List<SmsTemplate> getSmsTemplateList(int limit, int offset, String groupId) {
+        return smsTemplateapper.getSmsTemplateList(limit, offset, groupId);
     }
 
     @Override

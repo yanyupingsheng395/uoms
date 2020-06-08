@@ -34,7 +34,7 @@ $(function () {
                 visible: false
             },
             {
-                title: "预热",
+                title: "预售",
                 align: "center",
                 colspan: 5
             },
@@ -50,7 +50,7 @@ $(function () {
         },{
             field: 'preheatNotifyStatus',
             align: "center",
-            title: '通知状态',
+            title: '执行状态',
             formatter: function (value, row, index) {
                 let res = "-";
                 switch (value) {
@@ -75,15 +75,15 @@ $(function () {
         },{
             field: 'preheatStartDt',
             align: "center",
-            title: '活动开始时间'
+            title: '开始时间'
         }, {
             field: 'preheatEndDt',
             align: "center",
-            title: '活动结束时间'
+            title: '结束时间'
         }, {
             field: 'preheatStatus',
             align: "center",
-            title: '活动状态',
+            title: '执行状态',
             formatter: function (value, row, index) {
                 let res = "-";
                 switch (value) {
@@ -112,7 +112,7 @@ $(function () {
         },{
             field: 'formalNotifyStatus',
             align: "center",
-            title: '通知状态',
+            title: '执行状态',
             formatter: function (value, row, index) {
                 let res = "-";
                 switch (value) {
@@ -137,15 +137,15 @@ $(function () {
         },{
             field: 'formalStartDt',
             align: "center",
-            title: '活动开始时间'
+            title: '开始时间'
         }, {
             field: 'formalEndDt',
             align: "center",
-            title: '活动结束时间'
+            title: '结束时间'
         }, {
             field: 'formalStatus',
             align: "center",
-            title: '活动状态',
+            title: '执行状态',
             formatter: function (value, row, index) {
                 let res = "-";
                 switch (value) {

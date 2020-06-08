@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface SmsTemplateService {
 
-    List<SmsTemplate> getSmsTemplateList(int limit, int offset);
+    List<SmsTemplate> getSmsTemplateList(int limit, int offset, String groupId);
 
     int getTotalCount();
 
