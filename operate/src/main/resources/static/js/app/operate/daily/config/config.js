@@ -375,7 +375,6 @@ function userGroupButton(key, value, dom, className) {
     current_group[key] = value;
     getCurrentGroupData();
 }
-getCurrentGroupData();
 function getCurrentGroupData() {
     $.get("/daily/getCurrentGroupData",current_group, function (r) {
         console.log(r);

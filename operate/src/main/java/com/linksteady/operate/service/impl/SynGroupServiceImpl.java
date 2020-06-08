@@ -9,6 +9,7 @@ import com.linksteady.operate.domain.DatePeriodKpi;
 import com.linksteady.operate.service.SynGroupService;
 import com.linksteady.operate.vo.ParamVO;
 import com.linksteady.operate.vo.TemplateResult;
+import com.ulisesbocchio.jasyptspringboot.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -337,6 +338,7 @@ public class SynGroupServiceImpl implements SynGroupService {
      * @param data
      * @param beginDt yyyyMM
      * @param endDt yyyyMM
+     *
      * @return
      */
     private Map<String, List<DatePeriodKpi>> getNewData(List<DatePeriodKpi> data, String beginDt, String endDt) {
@@ -347,7 +349,6 @@ public class SynGroupServiceImpl implements SynGroupService {
         monthPeriod.stream().map(m-> {
             //如果当前月没数据
             if(!minPeriodKeysMap.keySet().contains(m)) {
-
                 List<DatePeriodKpi> tmpList = monthPeriod.stream().map(n->{
                     if(compareMonth(n, m))
                     {
@@ -599,5 +600,11 @@ public class SynGroupServiceImpl implements SynGroupService {
         cols.addAll(monthPeriod);
         result.put("columns", cols);
         return result;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> list = Arrays.asList(6,7,9,12,15,20,25,32,41,53,68,88,113,145,186,239,307,394,506,650,835,1073,1378,1771,2275,2922);
+        System.out.println(list.stream().collect(Collectors.summarizingInt(x->x)).getSum());
+        System.out.println(list.size());
     }
 }

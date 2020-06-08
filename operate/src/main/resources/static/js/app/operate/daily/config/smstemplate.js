@@ -12,9 +12,9 @@ function openSmsTemplateModal(groupId, smsCode, userValue, lifecycle, pathActive
     $( "#smsTemplateModal" ).modal( 'show' );
 }
 
-$("#smsTemplateModal").on('hidden.bs.modal', function () {
-    $( "#currentGroupId" ).val("");
-});
+// $("#smsTemplateModal").on('hidden.bs.modal', function () {
+//     $( "#currentGroupId" ).val("");
+// });
 
 /**
  * 获取短信模板列表
@@ -702,7 +702,7 @@ $("#btn_refresh").click(function () {
                         $MB.n_success("当前文案已解除引用。");
                         SMS_CODE = null;
                         smsTemplateTable();
-                        initTable();
+                        getTableData();
                     }
                 });
             });
