@@ -31,7 +31,7 @@
         remark,
         create_dt,
         update_dt,
-        case when update_dt is null then create_dt else update_dt end           op_dt,
+        case when update_dt is null then create_dt else update_dt end op_dt,
         (date_part('day', now() - cast(create_dt as timestamp)) + 1)                               used_days
         from uo_op_sms_template t1,
         v1
@@ -76,5 +76,22 @@
              UO_OP_DAILY_TEMPLATE_CONFIG t2
         where t1.SMS_CODE = t2.SMS_CODE
           and t1.SMS_CODE = #{smsCode}
+    </select>
+
+    <select id="getSmsTemplateListWithoutGroupId" resultMap="BaseResultMap">
+        select t1.sms_code,
+               sms_content,
+               is_coupon_name,
+               sms_name,
+               is_product_name,
+               is_product_url,
+               remark,
+               create_dt,
+               update_dt,
+               case when update_dt is null then create_dt else update_dt end op_dt,
+               (date_part('day', now() - cast(create_dt as timestamp)) + 1)                               used_days
+        from uo_op_sms_template t1
+        order by op_dt desc
+        limit #{limit} offset #{offset}
     </select>
 </mapper>
