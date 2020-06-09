@@ -270,9 +270,9 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                     smsContent = smsContent.replace("${COUPON_NAME}", convertNullToEmpty(couponTemp.getCouponDisplayName()));
 
                     dailyDetailTemp.setCouponId(couponTemp.getCouponId());
-                    dailyDetailTemp.setCouponDeno(String.valueOf(couponTemp.getCouponDenom()));
+                    dailyDetailTemp.setCouponDeno(couponTemp.getCouponDenom());
                     //优惠券门槛
-                    dailyDetailTemp.setCouponMin(String.valueOf(couponTemp.getCouponThreshold()));
+                    dailyDetailTemp.setCouponMin(couponTemp.getCouponThreshold());
                 }else
                 {
                     dailyDetailTemp.setCouponId("-1");

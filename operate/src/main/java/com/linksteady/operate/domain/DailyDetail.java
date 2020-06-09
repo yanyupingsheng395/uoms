@@ -120,12 +120,12 @@ public class DailyDetail {
     /**
      * 优惠券门槛
      */
-    private String couponMin;
+    private double couponMin;
 
     /**
      * 优惠券面额
      */
-    private String couponDeno;
+    private double couponDeno;
 
     private String tarOrderPrice;
 
