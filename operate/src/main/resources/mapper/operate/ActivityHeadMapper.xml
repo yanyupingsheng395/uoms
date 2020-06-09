@@ -171,31 +171,31 @@
 
     <update id="expirePreheatNotify">
         update uo_op_activity_header t
-        set t.preheat_notify_status = 'timeout'
+        set preheat_notify_status = 'timeout'
         where t.has_preheat = '1'
-            and t.preheat_notify_status = 'todo'
+            and t.preheat_notify_status in('todo','edit')
             and now() > t.preheat_notify_dt::timestamp
     </update>
 
     <update id="expirePreheatDuring">
         update uo_op_activity_header t
-        set t.preheat_status = 'timeout'
+        set preheat_status = 'timeout'
         where t.has_preheat = '1'
-            and t.preheat_status = 'todo'
+            and t.preheat_status in('todo','edit')
             and now() > t.preheat_end_dt::timestamp
     </update>
 
     <update id="expireFormalNotify">
         update uo_op_activity_header t
-        set t.formal_notify_status = 'timeout'
-        where t.formal_notify_status = 'todo'
+        set formal_notify_status = 'timeout'
+        where t.formal_notify_status in('todo','edit')
           and now() > t.formal_notify_dt::timestamp
     </update>
 
     <update id="expireFormalDuring">
         update uo_op_activity_header t
-        set t.formal_status = 'timeout'
-        where t.formal_status = 'todo'
+        set formal_status = 'timeout'
+        where t.formal_status in('todo','edit')
             and now() > t.formal_end_dt::timestamp
     </update>
 
