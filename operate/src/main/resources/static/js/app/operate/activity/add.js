@@ -1,13 +1,27 @@
+let create_step;
 $( function () {
-    // 初始化日期控件
+    create_step = steps({
+        el: "#addStep",
+        data: [
+            {title: "活动信息", description: ""},
+            {title: "商品信息", description: ""},
+            {title: "配置消息", description: ""}
+        ],
+        center: true,
+        dataOrder: ["title", "line", "description"]
+    });
+
+    if(operate_type === 'update') {
+        $("#basic-add-form").find("select").attr("disabled", "disabled");
+        $("#basic-add-form").find("input").attr("disabled", "disabled");
+    }
+});
+$(function (){
     initDt();
-    // 初始化上传商品的数据
     getProductInfo(  );
-
     validBasic();
-
     validateProductRule();
-} );
+});
 
 let validatorProduct;
 let $activityProductAddForm = $( "#add-product-form" );
@@ -23,7 +37,7 @@ function validateProductRule() {
             productName: {
                 required: true
             },
-            minPrice: {
+            activityPrice: {
                 required: true,
                 number: true
             },
@@ -34,9 +48,25 @@ function validateProductRule() {
             groupId: {
                 required: true
             },
-            notifyMinPrice: {
-                required: true,
-                number: true
+            discountSize: {
+                required: function () {
+                    return $("#activityRule").val() === '1';
+                }
+            },
+            discountThreadhold: {
+                required: function () {
+                    return $("#activityRule").val() === '2';
+                }
+            },
+            discountDeno: {
+                required: function () {
+                    return $("#activityRule").val() === '2';
+                }
+            },
+            discountAmount: {
+                required: function () {
+                    return $("#activityRule").val() === '4' || $("#activityRule").val() === '3';
+                }
             }
         },
         errorPlacement: function (error, element) {
@@ -53,17 +83,26 @@ function validateProductRule() {
             productName: {
                 required: icon + "请输入商品名称"
             },
-            minPrice: {
-                required: icon + "请输入活动期间体现最低单价"
+            activityPrice: {
+                required: icon + "请输入活动商品单价"
             },
             formalPrice: {
-                required: icon + "请输入非活动日常单价"
+                required: icon + "请输入日常商品单价"
             },
             groupId: {
-                required: icon + "请选择活动机制"
+                required: icon + "请选择店铺活动机制"
             },
-            notifyMinPrice: {
-                required: icon + "请输入活动通知体现最低单价"
+            discountSize: {
+                required: icon + "请输入满件打折的折扣"
+            },
+            discountThreadhold: {
+                required: icon + "请输入满元减钱门槛"
+            },
+            discountDeno: {
+                required: icon + "请输入满元减钱面额"
+            },
+            discountAmount: {
+                required: icon + "请输入立减金额"
             }
         }
     } );
@@ -123,9 +162,12 @@ $( "#saveActivityProduct" ).click( function () {
 $( "#addProductModal" ).on( "hidden.bs.modal", function () {
     $( "input[name='productId']" ).val( "" ).removeAttr("disabled");
     $( "input[name='productName']" ).val( "" );
-    $( "input[name='minPrice']" ).val( "" );
+    $( "input[name='activityPrice']" ).val( "" );
     $( "input[name='formalPrice']" ).val( "" );
-    $( "input[name='notifyMinPrice']" ).val( "" );
+    $( "input[name='discountSize']" ).val( "" );
+    $( "input[name='discountThreadhold']" ).val( "" );
+    $( "input[name='discountDeno']" ).val( "" );
+    $( "input[name='discountAmount']" ).val( "" );
     $( "select[name='groupId']" ).find( "option:selected" ).removeAttr( "selected" );
     $activityProductAddForm.validate().resetForm();
 } );
@@ -151,10 +193,47 @@ $( "#btn_edit_shop" ).click( function () {
             $("#add-product-form").find( "input[name='id']" ).val( data['id'] );
             $("#add-product-form").find( "input[name='productId']" ).val( data['productId'] ).attr("disabled", "disabled");
             $("#add-product-form").find( "input[name='productName']" ).val( data['productName'] );
-            $("#add-product-form").find( "input[name='minPrice']" ).val( data['minPrice'] );
-            $("#add-product-form").find( "input[name='notifyMinPrice']" ).val( data['notifyMinPrice'] );
+            $("#add-product-form").find( "input[name='activityPrice']" ).val( data['activityPrice'] );
             $("#add-product-form").find( "input[name='formalPrice']" ).val( data['formalPrice'] );
             $("#add-product-form").find("select[name='groupId']").find("option[value='"+data['groupId']+"']").prop("selected", true);
+            var val = $("#activityRule").find("option:selected").val();
+            switch (val) {
+                case "1":
+                    $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
+                        '<label class="col-md-4 control-label">满件打折</label>\n' +
+                        '<div class="col-md-7">\n' +
+                        '<input class="form-control" type="text" name="discountSize" value="'+data['discountSize']+'"/>\n' +
+                        '</div></div>');
+                    break;
+                case "2":
+                    $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
+                        '<label class="col-md-4 control-label">满元减钱门槛(元)</label>\n' +
+                        '<div class="col-md-7">\n' +
+                        '<input class="form-control" type="text" name="discountThreadhold" value="'+data['discountThreadhold']+'"/>\n' +
+                        '</div></div>').append('<div class="form-group">' +
+                        '<label class="col-md-4 control-label">满元减钱面额(元)</label>\n' +
+                        '<div class="col-md-7">\n' +
+                        '<input class="form-control" type="text" name="discountDeno" value="'+data['discountDeno']+'"/>\n' +
+                        '</div></div>');
+                    break;
+                case "3":
+                    $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
+                        '<label class="col-md-4 control-label">立减金额</label>\n' +
+                        '<div class="col-md-7">\n' +
+                        '<input class="form-control" type="text" name="discountAmount" value="'+data['discountAmount']+'"/>\n' +
+                        '</div></div>');
+                    break;
+                case "4":
+                    $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
+                        '<label class="col-md-4 control-label">立减金额</label>\n' +
+                        '<div class="col-md-7">\n' +
+                        '<input class="form-control" type="text" name="discountAmount" value="'+data['discountAmount']+'"/>\n' +
+                        '</div></div>');
+                    break;
+                default:
+                    $("#shopOffer").attr("style", "display:none;").html('');
+                    break;
+            }
             $( "#addProductModal" ).modal( 'show' );
         } else {
             $MB.n_danger( "获取信息失败！" );
@@ -416,53 +495,58 @@ function getProductInfo() {
             },
             {
                 field: 'productId',
-                title: '商品ID'
-            }, {
-                field: 'productName',
-                title: '名称'
-            },{
-                field: 'formalPrice',
-                title: '非活动日常单价（元/件）',
+                title: '商品ID',
+                valign: 'middle',
                 align: 'center'
             }, {
+                field: 'productName',
+                title: '名称',
+                valign: 'middle',
+                align: 'center'
+            },{
                 field: 'groupId',
-                title: '活动机制',
+                title: '店铺活动机制',
+                valign: 'middle',
+                align: 'center',
                 formatter: function (value, row, index) {
                     var res = "-";
                     if(value === '1') {
-                        res =  "活动价";
-                    }
-                    if(value === '2') {
                         res =  "满件打折";
                     }
-                    if(value === '3') {
+                    if(value === '2') {
                         res =  "满元减钱";
                     }
+                    if(value === '3') {
+                        res =  "特价秒杀";
+                    }
                     if(value === '4') {
-                        res =  "特价";
+                        res =  "预售付尾立减";
                     }
                     return res;
                 }
-            }, {
+            },{
                 field: 'notifyMinPrice',
-                title: '活动通知体现最低单价（元/件）',
+                title: '活动通知体现最<br/>低单价（元/件）',
+                align: 'center'
+            },{
+                field: 'notifyProfit',
+                title: '活动通知体现利益点',
+                valign: 'middle',
                 align: 'center'
             },  {
-                field: 'minPrice',
-                title: '活动期间体现最低单价（元/件）',
+                field: 'duringMinPrice',
+                title: '活动期间体现最<br/>低单价（元/件）',
                 align: 'center'
-            },  {
-                field: 'productUrl',
-                title: '商品短链',
-                formatter: function (value, row, index) {
-                    if(value !== '' && value !== null && value !== undefined) {
-                        var link = value.indexOf("http://") > -1 ? value : "http://" + value;
-                        return "<a style='color: #409eff;cursor:pointer;text-decoration: underline;' href='" + link + "' target='_blank'>" + value + "</a>";
-                    }
-                }
+            }, {
+                field: 'duringProfit',
+                title: '活动期间体现利益点',
+                valign: 'middle',
+                align: 'center'
             }, {
                 field: 'checkFlag',
                 title: '校验结果',
+                valign: 'middle',
+                align: 'center',
                 formatter: function (value, row, index) {
                     if(value === 'Y') {
                         return "<span class=\"badge bg-success\">通过</span>";
@@ -475,16 +559,13 @@ function getProductInfo() {
             }, {
                 field: 'checkComments',
                 title: '失败原因',
-            }, {
-                field: 'alikeProdId',
-                title: '相似商品ID',
+                valign: 'middle',
+                align: 'center'
             }]
     };
     $( "#activityProductTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
-
 let CURRENT_ACTIVITY_STAGE;
-
 // 跳转到
 function createActivity(stage) {
     $( "#step1" ).attr( "style", "display:none;" );
@@ -596,20 +677,43 @@ function initDt() {
 }
 
 $( "#btn_basic" ).click( function () {
-    var validator = $basicAddForm.validate();
-    if (validator.form() && validBasicDt()) {
-        $MB.confirm( {
-            title: '提示:',
-            content: '确定保存信息？'
-        }, function () {
-            saveActivityHead();
-        } );
+    // if(operate_type === 'save') {
+    //     var validator = $basicAddForm.validate();
+    //     if (validator.form() && validBasicDt()) {
+    //         $MB.confirm( {
+    //             title: '提示:',
+    //             content: '确定保存信息？'
+    //         }, function () {
+    //             saveActivityHead();
+    //             stepBreak(1);
+    //         } );
+    //     }
+    // }
+    // if(operate_type === 'update') {
+    //     stepBreak(1);
+    // }
+    stepBreak(1);
+});
+
+// 点击上一步下一步按钮
+function stepBreak(index) {
+    if(index == 1) {
+        create_step.setActive(1);
+        $("#step1").attr("style", "display:none;");
+        $("#step2").attr("style", "display:block;");
+        $("#step3").attr("style", "display:none;");
     }
-} );
+    if(index == 2) {
+        create_step.setActive(2);
+        $("#step1").attr("style", "display:none;");
+        $("#step2").attr("style", "display:none;");
+        $("#step3").attr("style", "display:block;");
+        createActivity('preheat');
+    }
+}
 
 var basic_validator;
 var $basicAddForm = $( "#basic-add-form" );
-
 function validBasic() {
     var icon = "<i class='fa fa-close'></i> ";
     basic_validator = $basicAddForm.validate( {
@@ -646,6 +750,15 @@ function validBasic() {
             },
             formalEndDt: {
                 required: true
+            },
+            platDiscount: {
+                required: true
+            },
+            platThreshold: {
+                required: true
+            },
+            platDeno: {
+                required: true
             }
         },
         errorPlacement: function (error, element) {
@@ -666,7 +779,7 @@ function validBasic() {
                 required: icon + "请选择是否预售"
             },
             preheatNotifyDt: {
-                required: icon + "请输入预售提醒时间"
+                required: icon + "请输入预售通知时间"
             },
             preheatStartDt: {
                 required: icon + "请输入预售开始时间"
@@ -675,13 +788,22 @@ function validBasic() {
                 required: icon + "请输入预售结束时间"
             },
             formalNotifyDt: {
-                required: icon + "请输入正式提醒时间"
+                required: icon + "请输入正式通知时间"
             },
             formalStartDt: {
                 required: icon + "请输入正式开始时间"
             },
             formalEndDt: {
                 required: icon + "请输入正式结束时间"
+            },
+            platDiscount: {
+                required: icon + "请选择平台优惠"
+            },
+            platThreshold: {
+                required: icon + "请输入门槛"
+            },
+            platDeno: {
+                required: icon + "请输入面额"
             }
         }
     } );
@@ -746,24 +868,14 @@ function saveActivityHead() {
 // 添加商品
 $( "#btn_add_shop" ).click( function () {
     var headId = $( "#headId" ).val();
-    if (headId === '') {
-        $MB.n_warning( "请先保存基本信息，再添加商品！" );
-    } else {
-        $( "#saveActivityProduct" ).attr( "name", "save" );
-        $( '#addProductModal' ).modal( 'show' );
-        $( "#modalLabel" ).html( '' ).append( '添加商品' );
-    }
+    $( "#saveActivityProduct" ).attr( "name", "save" );
+    $( '#addProductModal' ).modal( 'show' );
+    $( "#modalLabel" ).html( '' ).append( '添加商品' );
 } );
 
 // 批量添加商品
 $( "#btn_batch_upload" ).click( function () {
-    var headId = $( "#headId" ).val();
-    if (headId === '') {
-        $MB.n_warning( "请先保存基本信息，再添加商品！" );
-    } else {
-        //$( '#uploadFile' ).click();
-        $("#uploadProduct").modal('show');
-    }
+    $("#uploadProduct").modal('show');
 } );
 
 $( "#btn_create_preheat" ).click( function () {
@@ -805,12 +917,6 @@ $( "#btn_create_formal" ).click( function () {
 function getGroupList(stage, type, tableId) {
     var flag = getPlanStatus($("#headId").val(), stage);
     var headId = $( "#headId" ).val();
-    var groupName = '';
-    if(tableId === 'table1') {
-        groupName = '成长商品活动机制';
-    }else {
-        groupName = '推荐用户商品策略';
-    }
     var settings = {
         url: '/activity/getGroupList',
         pagination: false,
@@ -825,7 +931,7 @@ function getGroupList(stage, type, tableId) {
         columns: [
             {
                 field: 'prodActivityProp',
-                title: '成长商品活动属性',
+                title: '店铺活动机制',
                 formatter: function (value, row, index) {
                     if(value === 'Y') {
                         return "是";
@@ -837,10 +943,10 @@ function getGroupList(stage, type, tableId) {
                 }
             },
             {
-                field: 'groupName',
-                title: groupName
+                field: '',
+                title: '理解用户群组'
             }, {
-                title: '文案',
+                title: '短信',
                 align: 'center',
                 formatter: function (value, row, index) {
                     var res = "";
@@ -885,7 +991,7 @@ function getGroupList(stage, type, tableId) {
                 }
             }, {
                 field: 'smsTemplateContent',
-                title: '预览推送',
+                title: '企业微信',
                 formatter: function (value, row, index) {
                     return longTextFormat(value, row, index);
                 }
@@ -1593,4 +1699,74 @@ function removeSmsSelected(stage, smsCode, groupId) {
             }
         });
     });
+}
+
+covertDataTable();
+// 获取配置消息的用户转化数据
+function covertDataTable() {
+    var settings = {
+        // url: '/activity/getSmsTemplateList',
+        pagination: false,
+        singleSelect: true,
+        queryParams: function () {
+            return {}
+        },
+        columns: [
+            {
+                field: 'name',
+                title: '期望转化率（%）'
+            }, {
+                field: 'scene',
+                title: '对应推送用户数（人）'
+            }, {
+                field: 'isPersonal',
+                title: '对应的转化用户数'
+            }
+        ]
+    };
+    $( "#covertDataTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
+}
+
+// 店铺活动机制发生变化
+function groupIdChange(dom) {
+    $(dom).trigger('blur');
+    var val = $(dom).find("option:selected").val();
+    switch (val) {
+        case "1":
+            $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
+                '<label class="col-md-4 control-label">满件打折</label>\n' +
+                '<div class="col-md-7">\n' +
+                '<input class="form-control" type="text" name="discountSize"/>\n' +
+                '</div></div>');
+            break;
+        case "2":
+            $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
+                '<label class="col-md-4 control-label">满元减钱门槛(元)</label>\n' +
+                '<div class="col-md-7">\n' +
+                '<input class="form-control" type="text" name="discountThreadhold"/>\n' +
+                '</div></div>').append('<div class="form-group">' +
+                '<label class="col-md-4 control-label">满元减钱面额(元)</label>\n' +
+                '<div class="col-md-7">\n' +
+                '<input class="form-control" type="text" name="discountDeno"/>\n' +
+                '</div></div>');
+            break;
+        case "3":
+            $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
+                '<label class="col-md-4 control-label">立减金额</label>\n' +
+                '<div class="col-md-7">\n' +
+                '<input class="form-control" type="text" name="discountAmount"/>\n' +
+                '</div></div>');
+            break;
+        case "4":
+            $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
+                '<label class="col-md-4 control-label">立减金额</label>\n' +
+                '<div class="col-md-7">\n' +
+                '<input class="form-control" type="text" name="discountAmount"/>\n' +
+                '</div></div>');
+            break;
+        default:
+            $("#shopOffer").attr("style", "display:none;").html('');
+            break;
+    }
+
 }

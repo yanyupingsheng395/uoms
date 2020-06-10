@@ -1,7 +1,10 @@
 package com.linksteady.operate.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.linksteady.common.domain.User;
 import lombok.Data;
+import org.apache.catalina.security.SecurityUtil;
+import org.apache.shiro.SecurityUtils;
 
 import java.util.Date;
 
@@ -92,12 +95,12 @@ public class ActivityHead {
     private String formalNotifyDt;
 
     private Date insertDt;
-
     private String insertBy;
-
     private String preheatNotifyStatus;
-
     private String formalNotifyStatus;
-
     private String effectFlag;
+    private String activitySource;
+    private String platDiscount;
+    private String platThreshold;
+    private String platDeno;
 }

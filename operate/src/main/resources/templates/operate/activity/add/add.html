@@ -53,6 +53,7 @@
             font-size: 13px;
             line-height: 18px;
         }
+        .steps{padding:0 !important;}
     </style>
 </head>
 
@@ -72,10 +73,13 @@
                     <div class="col-sm-12 search-collapse">
                         <div class="row">
                             <div class="col-md-3 pull-left">
-                                <h5 id='stageName' class="modal-title" style="margin-top: 5px;"
+                                <h5 id='stageName' class="modal-title" style="margin-left: 0;margin-top:20px;"
                                     th:if="${operateType} eq 'update'">修改推送计划</h5>
-                                <h5 id='stageName' class="modal-title" style="margin-top: 5px;"
+                                <h5 id='stageName' class="modal-title" style="margin-left: 0;margin-top:20px;"
                                     th:if="${operateType} eq 'save'">创建推送计划</h5>
+                            </div>
+                            <div class="col-md-3 pull-right">
+                                <div id="addStep"></div>
                             </div>
                         </div>
                     </div>
@@ -83,7 +87,7 @@
                         <div data-th-include="operate/activity/add/step1"></div>
                     </div>
 
-                    <div id="step2">
+                    <div id="step2" style="display: none;">
                         <div class="col-md-12 select-table">
                             <div data-th-include="operate/activity/add/step2"></div>
                         </div>
@@ -91,20 +95,7 @@
 
                     <div id="step3" style="display: none;">
                         <div class="col-md-12 select-table">
-                            <ul id="myTabs" class="nav nav-tabs" role="tablist">
-                                <li class="active"><a href="#home" id="home-tab" role="tab" data-toggle="tab"
-                                                      aria-expanded="true">活动通知推送计划</a></li>
-                                <li class=""><a href="#profile" role="tab" id="profile-tab" data-toggle="tab"
-                                                aria-expanded="false">活动期间推送计划</a></li>
-                            </ul>
-                            <div id="myTabContent" class="tab-content">
-                                <div class="tab-pane fade active in" id="home">
-                                    <div data-th-include="operate/activity/add/step3"></div>
-                                </div>
-                                <div class="tab-pane fade" id="profile">
-                                    <div data-th-include="operate/activity/add/step4"></div>
-                                </div>
-                            </div>
+                            <div data-th-include="operate/activity/add/step3"></div>
                         </div>
                     </div>
                 </div>

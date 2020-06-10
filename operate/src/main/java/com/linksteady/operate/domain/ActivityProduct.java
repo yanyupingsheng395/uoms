@@ -46,6 +46,17 @@ public class ActivityProduct {
 
     private String alikeProdId;
 
+    private Double discountSize;
+    private Double discountThreadhold;
+    private Double discountDeno;
+    private Double discountAmount;
+    private Double activityPrice;
+
+    private Double notifyProfit;
+    private Double duringMinPrice;
+    private Double duringProfit;
+
+
     /**
      * 判断当前数据是否合法
      * @return
@@ -53,8 +64,9 @@ public class ActivityProduct {
     public boolean productValid() {
         return StringUtils.isNotEmpty(this.getProductId()) &&
                 StringUtils.isNotEmpty(this.getGroupId()) &&
-                0D != this.getMinPrice() &&
-                0D != this.getFormalPrice() &&
-                0D != this.getNotifyMinPrice();
+                (("1".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountSize())
+                        || ("2".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountThreadhold() && 0D!=this.getDiscountDeno())
+                        || ("3".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountAmount())
+                        || ("4".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountAmount()));
     }
 }
