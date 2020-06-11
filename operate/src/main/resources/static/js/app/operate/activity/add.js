@@ -10,11 +10,6 @@ $( function () {
         center: true,
         dataOrder: ["title", "line", "description"]
     });
-
-    if(operate_type === 'update') {
-        $("#basic-add-form").find("select").attr("disabled", "disabled");
-        $("#basic-add-form").find("input").attr("disabled", "disabled");
-    }
 });
 $(function (){
     initDt();
@@ -565,7 +560,7 @@ function getProductInfo() {
     };
     $( "#activityProductTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
-let CURRENT_ACTIVITY_STAGE;
+let CURRENT_ACTIVITY_STAGE = 'preheat';
 // 跳转到
 function createActivity(stage) {
     $( "#step1" ).attr( "style", "display:none;" );
@@ -577,7 +572,7 @@ function createActivity(stage) {
     $("#activity_stage").val(stage);
     getGroupList( stage, 'NOTIFY', 'table1');
     getGroupList( stage, 'DURING', 'table5');
-    geConvertInfo();
+    covertDataTable();
     setTitle(stage);
     // 根据不同的状态禁用相关通知的按钮
     if(stage === 'preheat') {
@@ -613,7 +608,6 @@ function createActivity(stage) {
                 $("#changePlan").attr("disabled", "disabled");
             }
         }
-
         if(formalStatus === 'done') {
             $("#duringSaveBtn").attr("disabled", "disabled");
         }else {
@@ -677,22 +671,22 @@ function initDt() {
 }
 
 $( "#btn_basic" ).click( function () {
-    // if(operate_type === 'save') {
-    //     var validator = $basicAddForm.validate();
-    //     if (validator.form() && validBasicDt()) {
-    //         $MB.confirm( {
-    //             title: '提示:',
-    //             content: '确定保存信息？'
-    //         }, function () {
-    //             saveActivityHead();
-    //             stepBreak(1);
-    //         } );
-    //     }
-    // }
-    // if(operate_type === 'update') {
-    //     stepBreak(1);
-    // }
-    stepBreak(1);
+    if(operate_type === 'save') {
+        var validator = $basicAddForm.validate();
+        if (validator.form() && validBasicDt()) {
+            $MB.confirm( {
+                title: '提示:',
+                content: '确定保存信息？'
+            }, function () {
+                saveActivityHead();
+                stepBreak(1);
+            } );
+        }
+    }
+    if(operate_type === 'update') {
+        stepBreak(1);
+    }
+    //stepBreak(1);
 });
 
 // 点击上一步下一步按钮
@@ -704,11 +698,19 @@ function stepBreak(index) {
         $("#step3").attr("style", "display:none;");
     }
     if(index == 2) {
-        create_step.setActive(2);
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:none;");
-        $("#step3").attr("style", "display:block;");
-        createActivity('preheat');
+        $.get("/activity/validProduct", {headId: $("#headId").val()}, function (r) {
+            if(r.code === 200) {
+                if(r.data > 0) {
+                    $MB.n_warning("存在校验不通过的商品！");
+                }else {
+                    create_step.setActive(2);
+                    $("#step1").attr("style", "display:none;");
+                    $("#step2").attr("style", "display:none;");
+                    $("#step3").attr("style", "display:block;");
+                    createActivity('preheat');
+                }
+            }
+        });
     }
 }
 
@@ -871,6 +873,7 @@ $( "#btn_add_shop" ).click( function () {
     $( "#saveActivityProduct" ).attr( "name", "save" );
     $( '#addProductModal' ).modal( 'show' );
     $( "#modalLabel" ).html( '' ).append( '添加商品' );
+    $("#shopOffer").html('');
 } );
 
 // 批量添加商品
@@ -930,20 +933,11 @@ function getGroupList(stage, type, tableId) {
         },
         columns: [
             {
-                field: 'prodActivityProp',
-                title: '店铺活动机制',
-                formatter: function (value, row, index) {
-                    if(value === 'Y') {
-                        return "是";
-                    }
-                    if(value === 'N') {
-                        return "否";
-                    }
-                    return "-";
-                }
+                field: 'groupName',
+                title: '店铺活动机制'
             },
             {
-                field: '',
+                field: 'groupInfo',
                 title: '理解用户群组'
             }, {
                 title: '短信',
@@ -1012,13 +1006,6 @@ function getGroupList(stage, type, tableId) {
                 title: '失败原因'
             }],
         onLoadSuccess: function () {
-            var n = 0;
-            if(tableId === 'table1') {
-                n = 4;
-            }else if(tableId === 'table5') {
-                n = 2;
-            }
-            $( "#" + tableId ).bootstrapTable('mergeCells',{index:0, field:"prodActivityProp", colspan: 1, rowspan: n})
             $("a[data-toggle='tooltip']").tooltip();
         }
     };
@@ -1056,15 +1043,24 @@ function getTmpTableData() {
         columns: [
             {
                 checkbox: true
-            }, {
-                field: 'name',
-                title: '文案名称'
-            }, {
+            },{
+                field: 'content',
+                title: '消息内容',
+                formatter: function (value, row, index) {
+                    return longTextFormat(value, row, index);
+                }
+            },{
+                field: 'insertDt',
+                title: '创建时间',
+                align: 'center'
+            },{
                 field: 'scene',
-                title: '使用场景'
+                title: '使用场景',
+                align: 'center'
             }, {
                 field: 'isPersonal',
                 title: '个性化',
+                align: 'center',
                 formatter: function (value, row, index) {
                     if(value === '1') {
                         return "是";
@@ -1073,15 +1069,6 @@ function getTmpTableData() {
                         return "否";
                     }
                     return '';
-                }
-            }, {
-                field: 'relation',
-                title: '用户与商品关系'
-            }, {
-                field: 'content',
-                title: '文案内容',
-                formatter: function (value, row, index) {
-                    return longTextFormat(value, row, index);
                 }
             }
         ], onLoadSuccess: function () {
@@ -1124,25 +1111,25 @@ $( "#btn_save_sms" ).click( function () {
 
 // 验证文案信息
 function validTmp() {
-    var name = $( "#name" ).val();
     var isProdName = $( "input[name='isProdName']:checked" ).val();
     var isProdUrl = $( "input[name='isProdUrl']:checked" ).val();
     var isPrice = $( "input[name='isPrice']:checked" ).val();
+    var isProfit = $( "input[name='isProfit']:checked" ).val();
     var contet = $( "#content" ).val();
-    if (name === '') {
-        $MB.n_warning( "文案名称不能为空" );
-        return false;
-    }
     if (isProdName === undefined) {
-        $MB.n_warning( "请选择推荐商品名称" );
+        $MB.n_warning( "请选择商品名称" );
         return false;
     }
     if (isProdUrl === undefined) {
-        $MB.n_warning( "请选择推荐商品短链接" );
+        $MB.n_warning( "请选择商品详情页短链接" );
+        return false;
+    }
+    if (isProfit === undefined) {
+        $MB.n_warning( "请选择商品利益点" );
         return false;
     }
     if (isPrice === undefined) {
-        $MB.n_warning( "请选择推荐商品活动期间最低单价" );
+        $MB.n_warning( "请选择商品活动期间最低单价" );
         return false;
     }
     if (contet === '') {
@@ -1152,37 +1139,49 @@ function validTmp() {
 
     // 验证短信内容是否合法
     if(isProdName === '1') {
-        if(contet.indexOf("${PROD_NAME}") === -1) {
-            $MB.n_warning("'推荐商品名称：是'，文案内容未发现${PROD_NAME}");
+        if(contet.indexOf("${商品名称}") === -1) {
+            $MB.n_warning("'商品名称：是'，文案内容未发现${商品名称}");
             return false;
         }
     }else {
-        if(contet.indexOf("${PROD_NAME}") !== -1) {
-            $MB.n_warning("'推荐商品名称：否'，文案内容却发现${PROD_NAME}");
+        if(contet.indexOf("${商品名称}") !== -1) {
+            $MB.n_warning("'商品名称：否'，文案内容却发现${商品名称}");
             return false;
         }
     }
 
     if(isProdUrl === '1') {
-        if(contet.indexOf("${PROD_URL}") === -1) {
-            $MB.n_warning("'推荐商品短链接：是'，文案内容未发现${PROD_URL}");
+        if(contet.indexOf("${商品短链}") === -1) {
+            $MB.n_warning("'商品详情页短链接：是'，文案内容未发现${商品短链}");
             return false;
         }
     }else {
-        if(contet.indexOf("${PROD_URL}") !== -1) {
-            $MB.n_warning("'推荐商品短链接：否'，文案内容却发现${PROD_URL}");
+        if(contet.indexOf("${商品短链}") !== -1) {
+            $MB.n_warning("'商品详情页短链接：否'，文案内容却发现${商品短链}");
+            return false;
+        }
+    }
+
+    if(isProfit === '1') {
+        if(contet.indexOf("${商品利益点}") === -1) {
+            $MB.n_warning("'商品利益点：是'，文案内容未发现${商品利益点}");
+            return false;
+        }
+    }else {
+        if(contet.indexOf("${商品利益点}") !== -1) {
+            $MB.n_warning("'商品利益点：否'，文案内容却发现${商品利益点}");
             return false;
         }
     }
 
     if(isPrice === '1') {
-        if(contet.indexOf("${PRICE}") === -1) {
-            $MB.n_warning("'推荐商品活动期间最低单价：是'，文案内容未发现${PRICE}");
+        if(contet.indexOf("${商品最低单价}") === -1) {
+            $MB.n_warning("'商品最低单价：是'，文案内容未发现${商品最低单价}");
             return false;
         }
     }else {
-        if(contet.indexOf("${PRICE}") !== -1) {
-            $MB.n_warning("'推荐商品活动期间最低单价：否'，文案内容却发现${PRICE}");
+        if(contet.indexOf("${商品最低单价}") !== -1) {
+            $MB.n_warning("'商品最低单价：否'，文案内容却发现${商品最低单价}");
             return false;
         }
     }
@@ -1190,17 +1189,21 @@ function validTmp() {
     let y = smsContent.length;
     let m = smsContent.length;
     let n = smsContent.length;
-    if(smsContent.indexOf('${PROD_URL}') > -1) {
-        y = y - '${PROD_URL}'.length + parseInt(PROD_URL_LEN);
-        m = m - '${PROD_URL}'.length;
+    if(smsContent.indexOf('${商品短链}') > -1) {
+        y = y - '${商品短链}'.length + parseInt(PROD_URL_LEN);
+        m = m - '${商品短链}'.length;
     }
-    if(smsContent.indexOf('${PROD_NAME}') > -1) {
-        y = y - '${PROD_NAME}'.length + parseInt(PROD_NAME_LEN);
-        m = m - '${PROD_NAME}'.length;
+    if(smsContent.indexOf('${商品名称}') > -1) {
+        y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
+        m = m - '${商品名称}'.length;
     }
-    if(smsContent.indexOf('${PRICE}') > -1) {
-        y = y - '${PRICE}'.length + parseInt(PRICE_LEN);
-        m = m - '${PRICE}'.length;
+    if(smsContent.indexOf('${商品利益点}') > -1) {
+        y = y - '${商品利益点}'.length + parseInt(PROFIT_LEN);
+        m = m - '${商品利益点}'.length;
+    }
+    if(smsContent.indexOf('${商品最低单价}') > -1) {
+        y = y - '${商品最低单价}'.length + parseInt(PRICE_LEN);
+        m = m - '${商品最低单价}'.length;
     }
 
     if(y > SMS_LEN_LIMIT) {
@@ -1258,6 +1261,11 @@ function setTmpCode() {
     });
 }
 
+function contextOnChange() {
+    var content = $('#content').val() === "" ? "请输入短信内容": $('#content').val();
+    $("#article").html('').append(content);
+}
+
 // 点击编辑文案按钮
 function editTmp() {
     var selected = $( "#tmpTable" ).bootstrapTable( 'getSelections' );
@@ -1273,14 +1281,14 @@ function editTmp() {
                 $MB.n_warning("当前文案已被引用无法修改！");
             }else {
                 $.get( "/activity/getTemplate", {code: code}, function (r) {
-                    $( "#sms_add_title" ).text( "编辑文案" );
                     var data = r.data;
                     $( "#code" ).val( data.code );
-                    $( "#name" ).val( data.name );
                     $( "#content" ).val( data.content );
+                    $("#article").html('').append(data.content);
                     $( "input[name='isProdName']:radio[value='" + data.isProdName + "']" ).prop( "checked", true );
                     $( "input[name='isProdUrl']:radio[value='" + data.isProdUrl + "']" ).prop( "checked", true );
                     $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
+                    $( "input[name='isProfit']:radio[value='" + data.isProfit + "']" ).prop( "checked", true );
                     $( "#btn_save_sms" ).attr( 'name', 'update' );
                     $( "#smstemplate_modal" ).modal( 'hide' );
                     $( "#sms_add_modal" ).modal( 'show' );
@@ -1301,12 +1309,11 @@ $( "#sms_add_modal" ).on( 'hidden.bs.modal', function () {
     $( "input[name='isProdName']" ).removeAttr( "checked" );
     $( "input[name='isProdUrl']" ).removeAttr( "checked" );
     $( "input[name='isPrice']" ).removeAttr( "checked" );
+    $( "input[name='isProfit']" ).removeAttr( "checked" );
+    $("#article").html('').append("请输入短信内容");
     $( "#smstemplate_modal" ).modal( 'show' );
     $( "#btn_save_sms" ).attr( 'name', 'save' );
     $("#word").text('');
-    $("#isProdName-error").attr("style", "display:none;");
-    $("#isProdUrl-error").attr("style", "display:none;");
-    $("#isPrice-error").attr("style", "display:none;");
 } );
 
 // 删除文案
@@ -1318,7 +1325,6 @@ function deleteTmp() {
         return;
     }
     var code = selected[0].code;
-
     $.get("/activity/checkTmpIsUsed", {tmpCode: code}, function (r) {
         if(r.code === 200) {
             if(r.data) {
@@ -1427,17 +1433,17 @@ function resetTmpInfo() {
 }
 
 // 获取默认的转化数据
-function geConvertInfo() {
-    $.get("/activity/geConvertInfo", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
-        var data = r.data;
-        var covRate = data['covRate'];
-        covRate = (covRate !== null && covRate !== '' && covRate !== undefined) ? parseFloat((data['covRate'] * 100).toFixed(2)) : '';
-        $("#covListId").val(data['covListId']);
-        $("#covRate").val(covRate);
-        $("#expectPushNum").val(data['expectPushNum']);
-        $("#expectCovNum").val(data['expectCovNum']);
-    });
-}
+// function geConvertInfo() {
+//     $.get("/activity/geConvertInfo", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
+//         var data = r.data;
+//         var covRate = data['covRate'];
+//         covRate = (covRate !== null && covRate !== '' && covRate !== undefined) ? parseFloat((data['covRate'] * 100).toFixed(2)) : '';
+//         $("#covListId").val(data['covListId']);
+//         $("#covRate").val(covRate);
+//         $("#expectPushNum").val(data['expectPushNum']);
+//         $("#expectCovNum").val(data['expectCovNum']);
+//     });
+// }
 
 function add_sms() {
     $('#smstemplate_modal').modal('hide');
@@ -1464,7 +1470,8 @@ $("#changePlan").click(function () {
 });
 
 function covRowStyle(row, index) {
-    if(row.covListId === $("#covListId").val()) {
+    var covListId = $("#covertDataTable").bootstrapTable('getData')[0]['covListId'];
+    if(row.covListId === covListId) {
         return {
             classes: 'success'
         };
@@ -1479,7 +1486,7 @@ function table3() {
         singleSelect: true,
         rowStyle: covRowStyle,
         onCheck:function(row){
-            var covListId = $("#covListId").val();
+            var covListId = $("#covertDataTable").bootstrapTable('getData')[0]['covListId'];
             if(covListId !== row['covListId']) {
                 var changedCovId = row['covListId'];
                 calculateCov(changedCovId);
@@ -1489,7 +1496,7 @@ function table3() {
             return {
                 headId: $("#headId").val(),
                 stage: CURRENT_ACTIVITY_STAGE,
-                covListId: $("#covListId").val()
+                covListId: $("#covertDataTable").bootstrapTable('getData')[0]['covListId']
             }
         },
         columns: [
@@ -1497,7 +1504,7 @@ function table3() {
                 field: 'check',
                 checkbox: true,
                 formatter: function (value, row, index) {
-                    if(row.covListId === $("#covListId").val()) {
+                    if(row.covListId === $("#covertDataTable").bootstrapTable('getData')[0]['covListId']) {
                         return {checked: true};
                     }
                     return {};
@@ -1505,6 +1512,7 @@ function table3() {
             }, {
                 field: 'covRate',
                 title: '推送的期望转化率（%）',
+                align: 'center',
                 formatter: function (value, row, index) {
                     if(value !== '' && value !== null && value !== undefined) {
                         return parseFloat((value * 100).toFixed(2));
@@ -1514,9 +1522,11 @@ function table3() {
                 }
             }, {
                 field: 'expectPushNum',
+                align: 'center',
                 title: '达成期望转化率<br/>对应的推送用户数（人）'
             }, {
                 field: 'expectCovNum',
+                align: 'center',
                 title: '达成期望转化率<br/>对应的转化用户数（人）'
             }
         ]
@@ -1526,7 +1536,7 @@ function table3() {
 
 // 测算转化率的值
 function calculateCov(changedCovId) {
-    var defaultCovId = $("#covListId").val();
+    var defaultCovId = $("#covertDataTable").bootstrapTable('getData')[0]['covListId'];
     var headId = $("#headId").val();
     $.get("/activity/calculateCov", {headId: headId, defaultCovId: defaultCovId, changedCovId: changedCovId, stage: CURRENT_ACTIVITY_STAGE}, function (r) {
         $("#table4").bootstrapTable('load', r.data);
@@ -1544,6 +1554,7 @@ function table4(data) {
             }, {
                 field: 'val',
                 title: '改变绝对值',
+                align: 'center',
                 formatter: function (value, row, index) {
                     if(value !== null && value !== '' && value !== undefined) {
                         if(index === 0) {
@@ -1557,6 +1568,7 @@ function table4(data) {
             }, {
                 field: 'per',
                 title: '改变幅度（%）',
+                align: 'center',
                 formatter: function (value, row, index) {
                     if(value !== null && value !== '' && value !== undefined) {
                         return parseFloat((value * 100).toFixed(2));
@@ -1700,27 +1712,32 @@ function removeSmsSelected(stage, smsCode, groupId) {
         });
     });
 }
-
-covertDataTable();
 // 获取配置消息的用户转化数据
 function covertDataTable() {
     var settings = {
-        // url: '/activity/getSmsTemplateList',
+        url: '/activity/geConvertInfo',
         pagination: false,
         singleSelect: true,
         queryParams: function () {
-            return {}
+            return {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}
         },
         columns: [
             {
-                field: 'name',
-                title: '期望转化率（%）'
+                field: 'covListId',
+                visible: false
+            },
+            {
+                field: 'covRate',
+                title: '期望转化率（%）',
+                align: 'center'
             }, {
-                field: 'scene',
-                title: '对应推送用户数（人）'
+                field: 'expectPushNum',
+                title: '对应推送用户数（人）',
+                align: 'center'
             }, {
-                field: 'isPersonal',
-                title: '对应的转化用户数'
+                field: 'expectCovNum',
+                title: '对应的转化用户数',
+                align: 'center'
             }
         ]
     };

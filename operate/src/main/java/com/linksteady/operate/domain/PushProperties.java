@@ -71,6 +71,11 @@ public class PushProperties {
     private int priceLen;
 
     /**
+     * 商品利益点最大长度
+     */
+    private int profitLen;
+
+    /**
      * 短信供应商
      */
     private String pushVendor;

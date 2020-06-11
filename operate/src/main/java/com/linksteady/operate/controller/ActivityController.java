@@ -440,8 +440,8 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/geConvertInfo")
-    public ResponseBo geConvertInfo(@RequestParam("headId") String headId, @RequestParam("stage") String stage) {
-        return ResponseBo.okWithData(null, activityCovService.geConvertInfo(headId, stage));
+    public List<ActivityCovInfo> geConvertInfo(@RequestParam("headId") String headId, @RequestParam("stage") String stage) {
+        return Lists.newArrayList(activityCovService.geConvertInfo(headId, stage));
     }
 
     @GetMapping("/getCovList")

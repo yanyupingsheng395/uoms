@@ -34,9 +34,11 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         String isProdUrl = activityTemplate.getIsProdUrl();
         String isProdName = activityTemplate.getIsProdName();
         String isPrice = activityTemplate.getIsPrice();
-        String prodUrl = "${PROD_URL}";
-        String prodName = "${PROD_NAME}";
-        String price = "${PRICE}";
+        String isProfit = activityTemplate.getIsProfit();
+        String prodUrl = "${商品短链}";
+        String prodName = "${商品名称}";
+        String price = "${商品最低单价}";
+        String profit = "${商品利益点}";
         String content = activityTemplate.getContent();
         if (StringUtils.isNotEmpty(isProdUrl) && isProdUrl.equalsIgnoreCase("1")) {
             content = content.replace(prodUrl, configService.getValueByName("op.activity.sms.prodUrl"));
@@ -46,6 +48,9 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         }
         if (StringUtils.isNotEmpty(isPrice) && isPrice.equalsIgnoreCase("1")) {
             content = content.replace(price, configService.getValueByName("op.activity.sms.price"));
+        }
+        if (StringUtils.isNotEmpty(isProfit) && isProfit.equalsIgnoreCase("1")) {
+            content = content.replace(profit, configService.getValueByName("op.activity.sms.profit"));
         }
         activityTemplate.setContent(content);
         return activityTemplate;
@@ -74,11 +79,17 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     public void saveTemplate(ActivityTemplate activityTemplate) {
         activityTemplate.setInsertBy((((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername()));
         activityTemplate.setInsertDt(new Date());
-        if("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice())) {
+        if("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice()) && "0".equalsIgnoreCase(activityTemplate.getIsProfit())) {
             activityTemplate.setIsPersonal("0");
         }else {
             activityTemplate.setIsPersonal("1");
         }
+        String content = activityTemplate.getContent();
+        if(StringUtils.isNotEmpty(content)) {
+            content = content.replace("${商品短链}", " ${商品短链} ");
+        }
+        content = content + " 回T退";
+        activityTemplate.setContent(content);
         activityTemplateMapper.saveTemplate(activityTemplate);
     }
 
@@ -99,6 +110,17 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
 
     @Override
     public void update(ActivityTemplate activityTemplate) {
+        if("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice()) && "0".equalsIgnoreCase(activityTemplate.getIsProfit())) {
+            activityTemplate.setIsPersonal("0");
+        }else {
+            activityTemplate.setIsPersonal("1");
+        }
+        String content = activityTemplate.getContent();
+        if(StringUtils.isNotEmpty(content)) {
+            content = content.replace("${商品短链}", " ${商品短链} ");
+        }
+        content = content + " 回T退";
+        activityTemplate.setContent(content);
         activityTemplateMapper.update(activityTemplate);
     }
 }

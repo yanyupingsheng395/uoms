@@ -9,6 +9,7 @@
         <result column="IS_PROD_URL" jdbcType="VARCHAR" property="isProdUrl"/>
         <result column="IS_PROD_NAME" jdbcType="VARCHAR" property="isProdName"/>
         <result column="IS_PRICE" jdbcType="VARCHAR" property="isPrice"/>
+        <result column="IS_PROFIT" jdbcType="VARCHAR" property="isProfit"/>
     </resultMap>
 
     <resultMap id="templateMap" type="com.linksteady.operate.domain.ActivityTemplate">
@@ -17,12 +18,14 @@
         <result property="content" jdbcType="VARCHAR" column="TMP_CONTENT"></result>
         <result property="remark" jdbcType="VARCHAR" column="REMARK"></result>
         <result property="isPersonal" jdbcType="VARCHAR" column="IS_PERSONAL"></result>
+        <result property="isProfit" jdbcType="VARCHAR" column="IS_PROFIT"></result>
+        <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"></result>
     </resultMap>
 
     <insert id="saveTemplate">
         insert into UO_OP_ACTIVITY_TEMPLATE(
-            TMP_CONTENT, INSERT_DT, INSERT_BY, IS_PERSONAL, TMP_NAME, IS_PROD_NAME, IS_PROD_URL, IS_PRICE
-        ) values (#{content}, #{insertDt}, #{insertBy}, #{isPersonal}, #{name}, #{isProdName}, #{isProdUrl}, #{isPrice})
+            TMP_CONTENT, INSERT_DT, INSERT_BY, IS_PERSONAL, TMP_NAME, IS_PROD_NAME, IS_PROD_URL, IS_PRICE, IS_PROFIT
+        ) values (#{content}, #{insertDt}, #{insertBy}, #{isPersonal}, #{name}, #{isProdName}, #{isProdUrl}, #{isPrice}, #{isProfit})
     </insert>
 
     <delete id="deleteTemplate">
@@ -30,12 +33,12 @@
     </delete>
 
     <select id="getTemplate" resultMap="base">
-        select TMP_CONTENT, REMARK, INSERT_DT, INSERT_BY, UPDATE_DT, UPDATE_BY, TMP_CODE, IS_PERSONAL, RELATION, TMP_NAME, SCENE, IS_PROD_NAME, IS_PROD_URL, IS_PRICE from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}::int4
+        select TMP_CONTENT, REMARK, INSERT_DT, INSERT_BY, UPDATE_DT, UPDATE_BY, TMP_CODE, IS_PERSONAL, RELATION, TMP_NAME, SCENE, IS_PROD_NAME, IS_PROD_URL, IS_PRICE, is_profit from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}::int4
     </select>
 
     <update id="update" parameterType="com.linksteady.operate.domain.ActivityTemplate">
         update UO_OP_ACTIVITY_TEMPLATE set TMP_CONTENT = #{content}, TMP_NAME = #{name}, IS_PROD_URL = #{isProdUrl},
-        IS_PROD_NAME = #{isProdName}, IS_PRICE = #{isPrice}
+        IS_PROD_NAME = #{isProdName}, IS_PRICE = #{isPrice}, IS_PROFIT = #{isProfit}, IS_PERSONAL = #{isPersonal}
         where TMP_CODE = #{code}::int4
     </update>
 
@@ -67,6 +70,7 @@
         t.TMP_CONTENT,
         t.IS_PERSONAL,
         v1.SCENE,
+        t.insert_dt,
         case
         when v2.relation in ('5', '8') then 'LATENT'
         when v2.relation is not null then 'GROWTH,LATENT' end relation
