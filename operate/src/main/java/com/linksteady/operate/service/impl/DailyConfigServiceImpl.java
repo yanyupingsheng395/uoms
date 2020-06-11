@@ -207,8 +207,8 @@ public class DailyConfigServiceImpl implements DailyConfigService {
 //        dailyConfigMapper.updateCheckFlagAndRemark(whereInfo, "文案不含补贴，补贴信息不能出现");
         // 验证券的有效期
 
-//        whereInfo = " and t4.VALID_END::timestamp < now()";
-//        dailyConfigMapper.updateCheckFlagAndRemark(whereInfo, "补贴有效期已过期");
+        whereInfo = " and t4.VALID_END::date < current_date";
+        dailyConfigMapper.updateCheckFlagAndRemark(whereInfo, "补贴有效期已过期");
 
         // 短信：不为空
         whereInfo = " and t1.sms_code is null";
