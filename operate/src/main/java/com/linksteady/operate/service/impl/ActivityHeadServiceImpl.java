@@ -182,29 +182,29 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         //类型 NOTIFY 通知 DURING 期间
         List<ActivityGroup> activityGroups = Lists.newArrayList();
         activityGroups.add(new ActivityGroup(
-                1L,headId, "满件打折", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
+                9L,headId, "满件打折", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
         ));
         activityGroups.add(new ActivityGroup(
-                2L, headId, "满元减钱", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
+                10L, headId, "满元减钱", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
         ));
         activityGroups.add(new ActivityGroup(
-                3L, headId, "特价秒杀", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
+                11L, headId, "特价秒杀", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
         ));
         activityGroups.add(new ActivityGroup(
-                4L, headId, "预售付尾立减", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
+                12L, headId, "预售付尾立减", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
         ));
 
         activityGroups.add(new ActivityGroup(
-                1L,headId, "满件打折", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
+                9L,headId, "满件打折", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
         ));
         activityGroups.add(new ActivityGroup(
-                2L, headId, "满元减钱", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
+                10L, headId, "满元减钱", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
         ));
         activityGroups.add(new ActivityGroup(
-                3L, headId, "特价秒杀", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
+                11L, headId, "特价秒杀", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
         ));
         activityGroups.add(new ActivityGroup(
-                4L, headId, "预售付尾立减", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
+                12L, headId, "预售付尾立减", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
         ));
         activityUserGroupMapper.saveGroupData(activityGroups);
     }

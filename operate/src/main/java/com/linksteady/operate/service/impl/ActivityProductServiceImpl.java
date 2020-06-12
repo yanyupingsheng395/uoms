@@ -66,7 +66,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     @Transactional(rollbackFor = Exception.class)
     public void saveActivityProduct(ActivityProduct activityProduct) {
         ActivityProduct newProduct = activityProduct.clone();
-        if(activityProduct.getActivityType().equalsIgnoreCase("ALL")) {
+        if (activityProduct.getActivityType().equalsIgnoreCase("ALL")) {
             activityProduct.setActivityType("DURING");
             newProduct.setActivityType("NOTIFY");
             newProduct = calculateProductMinPrice(newProduct);
@@ -78,6 +78,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
 
     /**
      * 计算商品的最低价和利益点
+     *
      * @param activityProduct
      * @return
      */
@@ -89,23 +90,20 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         String platDiscount = activityHead.getPlatDiscount();
         String groupId = activityProduct.getGroupId();
         double minPrice;
+        double shop_discount = 0;
+        double activityPrice = activityProduct.getActivityPrice();
         switch (groupId) {
-            case "1":
-                activityProduct.setActivityProfit(activityProduct.getDiscountSize());
-                minPrice = activityProduct.getActivityPrice() * activityProduct.getDiscountSize();
-                activityProduct.setMinPrice(minPrice);
+            case "9":
+                shop_discount = activityPrice * (1 - activityProduct.getDiscountSize());
                 break;
-            case "2":
-                activityProduct.setActivityProfit(activityProduct.getDiscountDeno());
-                if (activityProduct.getActivityPrice() >= activityProduct.getDiscountThreadhold()) {
-                    activityProduct.setMinPrice(activityProduct.getActivityPrice() - activityProduct.getDiscountDeno());
-                } else {
-                    activityProduct.setActivityProfit(activityProduct.getActivityPrice() - (activityProduct.getDiscountDeno() * (activityProduct.getActivityPrice() / activityProduct.getDiscountThreadhold())));
-                    activityProduct.setMinPrice(activityProduct.getActivityPrice() - (activityProduct.getDiscountDeno() * (activityProduct.getActivityPrice() / activityProduct.getDiscountThreadhold())));
+            case "10":
+                if(activityPrice >= activityProduct.getDiscountThreadhold()) {
+//                    shop_discount = activityProduct
                 }
+//                shop_discount =
                 break;
-            case "3":
-            case "4":
+            case "11":
+            case "12":
                 activityProduct.setActivityProfit(activityProduct.getDiscountAmount());
                 minPrice = activityProduct.getActivityPrice() - activityProduct.getDiscountAmount();
                 activityProduct.setMinPrice(minPrice);
@@ -327,16 +325,16 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                                 String groupName = Optional.of(row.getCell(4)).map(Cell::getStringCellValue).get();
                                 switch (groupName) {
                                     case "满件打折":
-                                        groupId = "1";
+                                        groupId = "9";
                                         break;
                                     case "满元减钱":
-                                        groupId = "2";
+                                        groupId = "10";
                                         break;
                                     case "特价秒杀":
-                                        groupId = "3";
+                                        groupId = "11";
                                         break;
                                     case "预售付尾立减":
-                                        groupId = "4";
+                                        groupId = "12";
                                         break;
                                     default:
                                         break;
@@ -423,13 +421,13 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                                 errorList.add(new ActivityProductUploadError("利益点场景为空类型有误，应改为文本型", i + 1));
                             }
                         }
-                        if(activityType.equalsIgnoreCase("活动通知")) {
+                        if (activityType.equalsIgnoreCase("活动通知")) {
                             activityType = "NOTIFY";
                         }
-                        if(activityType.equalsIgnoreCase("活动期间")) {
+                        if (activityType.equalsIgnoreCase("活动期间")) {
                             activityType = "DURING";
                         }
-                        if(activityType.equalsIgnoreCase("整个活动")) {
+                        if (activityType.equalsIgnoreCase("整个活动")) {
                             activityType = "ALL";
                         }
 
@@ -450,13 +448,13 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         activityProduct.setActivityStage(stage);
                         if (activityProduct.productValid()) {
                             activityProduct.setProductUrl(shortUrlService.genProdShortUrlByProdId(productId, "S"));
-                            if(activityType.equalsIgnoreCase("ALL")) {
+                            if (activityType.equalsIgnoreCase("ALL")) {
                                 activityProduct.setActivityType("NOTIFY");
                                 ActivityProduct newProduct = activityProduct.clone();
                                 newProduct = calculateProductMinPrice(newProduct);
                                 newProduct.setActivityType("DURING");
                                 productList.add(newProduct);
-                            }else {
+                            } else {
                                 activityProduct.setActivityType(activityType);
                             }
                             activityProduct = calculateProductMinPrice(activityProduct);
