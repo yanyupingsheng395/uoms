@@ -2,6 +2,7 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.domain.DailyDetail;
@@ -43,6 +44,9 @@ public class DailyDetailServiceImpl implements DailyDetailService {
 
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
+
+    @Autowired
+    private ConfigService configService;
 
 
     /**
@@ -199,7 +203,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             //文案内容
             String smsContent = dailyDetail1.getSmsContent();
 
-            smsContent = smsContent.replace("${PROD_NAME}", convertNullToEmpty(dailyDetail1.getRecProdName()));
+            smsContent = smsContent.replace("${商品名称}", convertNullToEmpty(dailyDetail1.getRecProdName()));
 
             //判断当前组是否含券 1表示含券，匹配优惠券信息
             if(1==dailyDetail1.getIsCoupon())
@@ -266,8 +270,8 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                 }
                 if(null!=couponTemp)
                 {
-                    smsContent = smsContent.replace("${COUPON_URL}", convertNullToEmpty(couponTemp.getCouponUrl()));
-                    smsContent = smsContent.replace("${COUPON_NAME}", convertNullToEmpty(couponTemp.getCouponDisplayName()));
+                    smsContent = smsContent.replace("${补贴短链}", " "+convertNullToEmpty(couponTemp.getCouponUrl())+" ");
+                    smsContent = smsContent.replace("${补贴名称}", convertNullToEmpty(couponTemp.getCouponDisplayName()));
 
                     dailyDetailTemp.setCouponId(couponTemp.getCouponId());
                     dailyDetailTemp.setCouponDeno(couponTemp.getCouponDenom());
@@ -291,9 +295,30 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                 //如果短链生成错误，则不再进行替换
                 if(!"error".equals(prodLongUrl))
                 {
-                    smsContent = smsContent.replace("${PROD_URL}",prodLongUrl);
+                    smsContent = smsContent.replace("${商品详情页短链}"," "+prodLongUrl+" ");
                 }
             }
+
+            //判断是否需要加上签名及退订方式
+            //获取签名
+            String signature=configService.getValueByName("op.push.signature");
+            String signatureFlag=configService.getValueByName("op.push.signature_flag");
+
+            String unsubscribe=configService.getValueByName("op.push.unsubscribe");
+            String unsubscribeFlag=configService.getValueByName("op.push.unsubscribe_flag");
+
+            //需要加上签名
+            if(null!=signatureFlag&&"Y".equals(signatureFlag))
+            {
+                smsContent =signature+smsContent;
+            }
+
+            //需要加上退订方式
+            if(null!=unsubscribeFlag&&"Y".equals(unsubscribeFlag))
+            {
+                smsContent=smsContent+unsubscribe;
+            }
+
 
             dailyDetailTemp.setDailyDetailId(dailyDetail1.getDailyDetailId());
             dailyDetailTemp.setSmsContent(smsContent);

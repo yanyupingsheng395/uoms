@@ -1,17 +1,25 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.domain.DailyGroupTemplate;
 
 import java.util.List;
 import java.util.Map;
 
 public interface DailyConfigService {
 
-    Map<String, Object> usergroupdesc(String userValue, String pathActive, String lifecycle);
+    /**
+     * 获取群组列表
+     * @return
+     */
+    List<DailyGroupTemplate> getUserGroupList();
 
+    /**
+     * 对用户群组信息进行校验
+     * @return
+     */
     boolean validUserGroup();
 
-    void deleteSmsGroup(String groupId);
 
     /**
      * 针对企业微信的成长组校验
@@ -19,11 +27,42 @@ public interface DailyConfigService {
      */
     boolean validUserGroupForQywx();
 
-    void updateWxMsgId(String groupId, String qywxId);
+    void updateWxMsgId(Long groupId, Long qywxId);
 
-    Map<String, Object> getCurrentGroupData(String userValue, String lifeCycle, String pathActive, String tarType);
+    /**
+     * 获取当前群组上配置的短信、微信消息
+     * @param userValue
+     * @param lifeCycle
+     * @param pathActive
+     * @param tarType
+     * @return
+     */
+    Map<String, Object> getConfigInfoByGroup(String userValue, String lifeCycle, String pathActive, String tarType);
 
-    ResponseBo resetGroupCoupon();
+    /**
+     * 将文案按给定的规则配置到用户群组上去
+     * @return
+     */
+    ResponseBo autoSetGroupCoupon();
 
-    List<Map<String, String>> getUserGroupValue(String userValue, String lifecycle, String pathActive);
+    /**
+     * 获取理解用户数据
+     * @param userValue
+     * @param lifecycle
+     * @param pathActive
+     * @return
+     */
+    List<Map<String, String>> getGroupDescription(String userValue, String lifecycle, String pathActive);
+
+    /**
+     * 设置群组信息
+     * @param groupId
+     * @param smsCode
+     */
+    void setSmsCode(Long groupId, String smsCode);
+
+    /**
+     * 恢复文案的配置标记
+     */
+    void resetOpFlag();
 }

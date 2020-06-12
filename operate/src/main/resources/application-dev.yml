@@ -24,7 +24,7 @@ sys:
   #当前应用名称
   projectName: dapu-operate-prod
   #服务平台地址
-  smpDomain: http://smp.growth-master.com
+  smpDomain: http://localhost:9063
   #是否开启错误日志上报
   openExceptionNotice: false
 
@@ -44,3 +44,9 @@ thrift:
   server:
     host: 39.100.145.35
     port: 7777
+logging:
+  level:
+    com:
+      linksteady:
+        operate:
+          dao: debug

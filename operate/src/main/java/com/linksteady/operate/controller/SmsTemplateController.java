@@ -2,16 +2,17 @@ package com.linksteady.operate.controller;
 
 import com.google.common.base.Splitter;
 import com.linksteady.common.controller.BaseController;
-import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.SmsTemplate;
-import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.service.SmsTemplateService;
 import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -35,21 +36,33 @@ public class SmsTemplateController extends BaseController {
     @Autowired
     RedisMessageServiceImpl redisMessageService;
 
-    @Autowired
-    private DailyService dailyService;
 
     /**
-     * 获取短信模板
+     * 获取短信模板列表 (增加排序，将当前组引用的文案排在第一个)  每日运营配置处使用
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping("/selectSmsTemplateListWithGroup")
+    public ResponseBo selectSmsTemplateListWithGroup(Integer limit, Integer offset,Long groupId) {
+        List<SmsTemplate> result = smsTemplateService.selectSmsTemplateListWithGroup(limit, offset,groupId);
+        int totalCount = smsTemplateService.getTotalCount();
+        return ResponseBo.okOverPaging("", totalCount, result);
+    }
+
+    /**
+     * 获取短信模板列表
      *
      * @param
      * @return
      */
     @RequestMapping("/smsTemplateList")
-    public ResponseBo smsTemplateList(Integer limit, Integer offset, String groupId) {
-        List<SmsTemplate> result = smsTemplateService.getSmsTemplateList(limit, offset, groupId);
+    public ResponseBo smsTemplateList(Integer limit, Integer offset) {
+        List<SmsTemplate> result = smsTemplateService.selectSmsTemplateList(limit, offset);
         int totalCount = smsTemplateService.getTotalCount();
         return ResponseBo.okOverPaging("", totalCount, result);
     }
+
 
     /**
      * 增加短信模板
@@ -71,11 +84,7 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/deleteSmsTemplate")
     public ResponseBo deleteSmsTemplate(@RequestParam("smsCode") String smsCode) {
-        //判断短信模板是否被引用
-        if (smsTemplateService.refrenceCount(smsCode) > 0) {
-            // 删除文案关系
-            dailyService.updateSmsCodeNull(smsCode);
-        }
+        //删除文案
         smsTemplateService.deleteSmsTemplate(smsCode);
         return ResponseBo.ok();
     }
@@ -87,11 +96,7 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/smsIsUsed")
     public boolean smsIsUsed(@RequestParam("smsCode") String smsCode) {
-        boolean result = false;
-        if (smsTemplateService.refrenceCount(smsCode) > 0) {
-            result = true;
-        }
-        return result;
+        return smsTemplateService.refrenceCount(smsCode) > 0;
     }
 
     /**
@@ -103,18 +108,25 @@ public class SmsTemplateController extends BaseController {
         return ResponseBo.okWithData("", smsTemplateService.getSmsTemplateBySmsCode(smsCode));
     }
 
-    @RequestMapping("/getSmsTemplateNotValid")
-    public ResponseBo getSmsTemplateNotValid(HttpServletRequest request) {
+    /**
+     * 读取文案(变量已被样例值替换)
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getSmsTemplateContent")
+    public ResponseBo getSmsTemplateContent(HttpServletRequest request) {
         String smsCode = request.getParameter("smsCode");
-        return ResponseBo.okWithData("", smsTemplateService.getSmsTemplate(smsCode));
+        return ResponseBo.okWithData("", smsTemplateService.getSmsContent(smsCode,"DISPLAY"));
     }
 
     /**
      * 发送测试
      */
     @RequestMapping("/testSend")
-    public ResponseBo testSend(String phoneNum, String smsContent) {
+    public ResponseBo testSend(String phoneNum, String smsCode) {
         List<String> phoneNumList=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(phoneNum);
+
+        String smsContent=smsTemplateService.getSmsContent(smsCode,"SEND");
         try {
             for(String num:phoneNumList)
             {
@@ -154,12 +166,11 @@ public class SmsTemplateController extends BaseController {
         return ResponseBo.okWithData(null, smsContent.length() <= pushProperties.getSmsLengthLimit());
     }
 
-    @RequestMapping("/updateSmsCodeNull")
-    public ResponseBo updateSmsCodeNull(@RequestParam("smsCode") String smsCode) {
-        dailyService.updateSmsCodeNull(smsCode);
-        return ResponseBo.ok();
-    }
-
+    /**
+     * 当前文案被引用的群组信息
+     * @param smsCode
+     * @return
+     */
     @RequestMapping("/getSmsUsedGroupInfo")
     public ResponseBo getSmsUsedGroupInfo(@RequestParam("smsCode") String smsCode) {
         return ResponseBo.okWithData(null,smsTemplateService.getSmsUsedGroupInfo(smsCode));

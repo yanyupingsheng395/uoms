@@ -7,7 +7,9 @@ import com.linksteady.operate.service.SmsTemplateService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Table;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -20,76 +22,124 @@ import java.util.stream.Collectors;
 public class SmsTemplateServiceImpl implements SmsTemplateService {
 
     @Autowired
-    private SmsTemplateMapper smsTemplateapper;
+    private SmsTemplateMapper smsTemplateMapper;
 
     @Autowired
     private ConfigService configService;
 
     @Override
-    public List<SmsTemplate> getSmsTemplateList(int limit, int offset, String groupId) {
-        if(StringUtils.isNotEmpty(groupId)) {
-            return smsTemplateapper.getSmsTemplateList(limit, offset, groupId);
-        }else {
-            return smsTemplateapper.getSmsTemplateListWithoutGroupId(limit, offset);
-        }
+    public List<SmsTemplate> selectSmsTemplateListWithGroup(int limit, int offset, long groupId) {
+        return smsTemplateMapper.selectSmsTemplateListWithGroup(limit, offset, groupId);
     }
 
     @Override
+    public List<SmsTemplate> selectSmsTemplateList(int limit, int offset) {
+        return smsTemplateMapper.selectSmsTemplateList(limit, offset);
+    }
+
+
+    @Override
     public int getTotalCount() {
-        return smsTemplateapper.getTotalCount();
+        return smsTemplateMapper.getTotalCount();
     }
 
     @Override
     public void saveSmsTemplate(SmsTemplate smsTemplate) {
-        smsTemplateapper.saveSmsTemplate(smsTemplate);
+        smsTemplateMapper.saveSmsTemplate(smsTemplate);
     }
 
     @Override
     public int refrenceCount(String smsCode) {
-        return smsTemplateapper.refrenceCount(smsCode);
+        return smsTemplateMapper.refrenceCount(smsCode);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteSmsTemplate(String smsCode) {
-        smsTemplateapper.deleteSmsTemplate(smsCode);
+        if(smsTemplateMapper.refrenceCount(smsCode)> 0)
+        {
+            //删除券的引用关系
+            smsTemplateMapper.updateSmsCodeNull(smsCode);
+        }
+        smsTemplateMapper.deleteSmsTemplate(smsCode);
     }
 
+    /**
+     * 获取文案的内容
+     * @param smsCode
+     * @param  scene DISPLAY为了预览显示 一律加上签名和退订方式  SEND为了实际发送 需要根据配置决定是否加签名和退订方式
+     * @return
+     */
     @Override
-    public SmsTemplate getSmsTemplate(String smsCode) {
-        SmsTemplate smsTemplate = smsTemplateapper.getSmsTemplate(smsCode);
+    public String getSmsContent(String smsCode,String scene) {
+        SmsTemplate smsTemplate = smsTemplateMapper.getSmsTemplate(smsCode);
         String isCouponUrl = smsTemplate.getIsCouponUrl();
         String isCouponName = smsTemplate.getIsCouponName();
         String isProductUrl = smsTemplate.getIsProductUrl();
         String isProductName = smsTemplate.getIsProductName();
-        String couponUrl = "${COUPON_URL}";
-        String couponName = "${COUPON_NAME}";
-        String prodName = "${PROD_NAME}";
-        String prodUrl = "${PROD_URL}";
-        String smsContent = smsTemplate.getSmsContent();
+        String couponUrl = "${补贴短链}";
+        String couponName = "${补贴名称}";
+        String prodName = "${商品名称}";
+        String prodUrl = "${商品详情页短链}";
+
+        String smsContent =smsTemplate.getSmsContent();
         if (StringUtils.isNotEmpty(isCouponUrl) && isCouponUrl.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(couponUrl, configService.getValueByName("op.daily.sms.cunponurl"));
+            //短链替换的时候前后各补一个空格
+            smsContent = smsContent.replace(couponUrl, " "+configService.getValueByName("op.daily.sms.cunponurl")+" ");
         }
         if (StringUtils.isNotEmpty(isCouponName) && isCouponName.equalsIgnoreCase("1")) {
             smsContent = smsContent.replace(couponName, configService.getValueByName("op.daily.sms.couponname"));
         }
         if (StringUtils.isNotEmpty(isProductUrl) && isProductUrl.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(prodUrl, configService.getValueByName("op.daily.sms.produrl"));
+            //短链替换的时候前后各补一个空格
+            smsContent = smsContent.replace(prodUrl, " "+configService.getValueByName("op.daily.sms.produrl")+" ");
         }
         if (StringUtils.isNotEmpty(isProductName) && isProductName.equalsIgnoreCase("1")) {
             smsContent = smsContent.replace(prodName, configService.getValueByName("op.daily.sms.prodname"));
         }
-        smsTemplate.setSmsContent(smsContent);
-        return  smsTemplate;
+
+        //获取签名
+        String signature=configService.getValueByName("op.push.signature");
+        String signatureFlag=configService.getValueByName("op.push.signature_flag");
+
+        String unsubscribe=configService.getValueByName("op.push.unsubscribe");
+        String unsubscribeFlag=configService.getValueByName("op.push.unsubscribe_flag");
+
+        if("DISPLAY".equals(scene))
+        {
+            smsContent =signature+smsContent;
+            smsContent=smsContent+unsubscribe;
+        }else if("SEND".equals(scene))
+        {
+            //需要系统自动加上签名
+            if(null!=signatureFlag&&"Y".equals(signatureFlag))
+            {
+                smsContent =signature+smsContent;
+            }
+
+            //需要加上退订方式
+            if(null!=unsubscribeFlag&&"Y".equals(unsubscribeFlag))
+            {
+                smsContent=smsContent+unsubscribe;
+            }
+        }
+
+        return  smsContent;
     }
 
+    /**
+     * 读取文案
+     * @param smsCode
+     * @return
+     */
     @Override
     public SmsTemplate getSmsTemplateBySmsCode(String smsCode) {
-        return  smsTemplateapper.getSmsTemplate(smsCode);
+        return  smsTemplateMapper.getSmsTemplate(smsCode);
     }
 
     @Override
     public void update(SmsTemplate smsTemplate) {
-        smsTemplateapper.update(smsTemplate);
+        smsTemplateMapper.update(smsTemplate);
     }
 
     @Override
@@ -97,14 +147,14 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         Map<String, String> pathActiveMap =configService.selectDictByTypeCode("PATH_ACTIVE");
         Map<String, String> userValueMap =configService.selectDictByTypeCode("USER_VALUE");
         Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
-        List<String> data = smsTemplateapper.getSmsUsedGroupInfo(smsCode);
+        List<String> data = smsTemplateMapper.getSmsUsedGroupInfo(smsCode);
         List<String> result = data.stream().map(x -> {
             String[] tmpArray = x.split(",");
             StringBuilder tmp = new StringBuilder();
             tmp.append(userValueMap.get(tmpArray[0]));
-            tmp.append(",");
+            tmp.append(" , ");
             tmp.append(lifeCycleMap.get(tmpArray[1]));
-            tmp.append(",");
+            tmp.append(" , ");
             tmp.append(pathActiveMap.get(tmpArray[2]));
             return tmp.toString();
         }).collect(Collectors.toList());

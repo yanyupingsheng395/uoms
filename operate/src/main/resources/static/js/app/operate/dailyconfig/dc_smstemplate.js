@@ -5,19 +5,28 @@ $(function () {
     statInputNum();
 });
 
+/**
+ * 打开短信消息配置面板
+ * @param groupId
+ * @param smsCode
+ * @param userValue
+ * @param lifecycle
+ * @param pathActive
+ */
 function openSmsTemplateModal(groupId, smsCode, userValue, lifecycle, pathActive) {
-    $( "#currentGroupId" ).val(groupId);
-    smsTemplateTable(smsCode);
-    getUserGroupValue(userValue, lifecycle, pathActive, 'selectedGroupInfo1');
+    $( "#currentGroupId").val(groupId);
+    //加载短信列表
+    smsTemplateTable();
+    getGroupDescription(userValue, lifecycle, pathActive, 'selectedGroupInfo1');
     $( "#smsTemplateModal" ).modal( 'show' );
 }
 
 /**
  * 获取短信模板列表
  */
-function smsTemplateTable(smsCode) {
+function smsTemplateTable() {
     var settings = {
-        url: '/smsTemplate/smsTemplateList',
+        url: '/smsTemplate/selectSmsTemplateListWithGroup',
         pagination: true,
         clickToSelect: true,
         singleSelect: true,
@@ -34,12 +43,17 @@ function smsTemplateTable(smsCode) {
             {
                 checkbox: true,
                 formatter: function (value, row, index) {
-                    if(row['smsCode'] === smsCode) {
+                    if(row.currentFlag=='1') {
                         return {
                             checked : true
                         };
                     }
                 }
+            },
+            {
+                field: 'currentFlag',
+                title: '当前选中文案',
+                visible: false
             },
             {
                 title: '消息内容',
@@ -51,6 +65,10 @@ function smsTemplateTable(smsCode) {
             },{
                 title: '使用天数',
                 field: 'usedDays',
+                align: 'center'
+            },{
+                title: '被引用组数',
+                field: 'refCnt',
                 align: 'center'
             }
         ]
@@ -72,6 +90,9 @@ function add() {
     $('#add_modal').modal('show');
 }
 
+/**
+ * 为当前组设置文案信息
+ */
 function setSmsCode() {
     var selected = $( "#smsTemplateTable" ).bootstrapTable( 'getSelections' );
     var selected_length = selected.length;
@@ -85,7 +106,7 @@ function setSmsCode() {
         $MB.n_warning( "请选择一条群组信息。" );
         return;
     }
-    $.get( '/daily/setSmsCode', {groupId: groupId, smsCode: smsCode}, function (r) {
+    $.get( '/dailyConfig/setSmsCode', {groupId: groupId, smsCode: smsCode}, function (r) {
         if (r.code === 200) {
             $MB.n_success( "设置文案成功！" );
         } else {
@@ -98,11 +119,7 @@ function setSmsCode() {
 
 // 新增文案的时候，给群组信息设置默认选中和只读
 function setUserGroupChecked() {
-    $("input[name='userValue']").attr("disabled", "disabled");
-    $("input[name='lifeCycle']").attr("disabled", "disabled");
-    $("input[name='pathActive']").attr("disabled", "disabled");
     $("#smsCode").attr("disabled", "disabled");
-    $("#smsName").attr("disabled", "disabled");
     $("input[name='isCouponUrl']").attr("disabled", "disabled");
     $("input[name='isCouponName']").attr("disabled", "disabled");
     $("input[name='isProductName']").attr("disabled", "disabled");
@@ -121,21 +138,21 @@ function statInputNum() {
         let y = smsContent.length;
         let m = smsContent.length;
         let n = smsContent.length;
-        if(smsContent.indexOf('${COUPON_URL}') > -1) {
-            y = y - '${COUPON_URL}'.length + shortUrlLen;
-            m = m - '${COUPON_URL}'.length;
+        if(smsContent.indexOf('${补贴短链}') > -1) {
+            y = y - '${补贴短链}'.length + shortUrlLen;
+            m = m - '${补贴短链}'.length;
         }
-        if(smsContent.indexOf('${COUPON_NAME}') > -1) {
-            y = y - '${COUPON_NAME}'.length + couponNameLen;
-            m = m - '${COUPON_NAME}'.length;
+        if(smsContent.indexOf('${补贴名称}') > -1) {
+            y = y - '${补贴名称}'.length + couponNameLen;
+            m = m - '${补贴名称}'.length;
         }
-        if(smsContent.indexOf('${PROD_NAME}') > -1) {
-            y = y - '${PROD_NAME}'.length + prodNameLen;
-            m = m - '${PROD_NAME}'.length;
+        if(smsContent.indexOf('${商品名称}') > -1) {
+            y = y - '${商品名称}'.length + prodNameLen;
+            m = m - '${商品名称}'.length;
         }
-        if(smsContent.indexOf('${PROD_URL}') > -1) {
-            y = y - '${PROD_URL}'.length + shortUrlLen;
-            m = m - '${PROD_URL}'.length;
+        if(smsContent.indexOf('${商品详情页短链}') > -1) {
+            y = y - '${商品详情页短链}'.length + shortUrlLen;
+            m = m - '${商品详情页短链}'.length;
         }
         total_num = y;
         var code = "";
@@ -144,26 +161,29 @@ function statInputNum() {
     });
 }
 
+/**
+ * 编辑 -初始化字数统计信息
+ */
 function initGetInputNum() {
     let smsContent = $('#smsContent').val();
     let y = smsContent.length;
     let m = smsContent.length;
     let n = smsContent.length;
-    if(smsContent.indexOf('${COUPON_URL}') > -1) {
-        y = y - '${COUPON_URL}'.length + shortUrlLen;
-        m = m - '${COUPON_URL}'.length;
+    if(smsContent.indexOf('${补贴短链}') > -1) {
+        y = y - '${补贴短链}'.length + shortUrlLen;
+        m = m - '${补贴短链}'.length;
     }
-    if(smsContent.indexOf('${COUPON_NAME}') > -1) {
-        y = y - '${COUPON_NAME}'.length + couponNameLen;
-        m = m - '${COUPON_NAME}'.length;
+    if(smsContent.indexOf('${补贴名称}') > -1) {
+        y = y - '${补贴名称}'.length + couponNameLen;
+        m = m - '${补贴名称}'.length;
     }
-    if(smsContent.indexOf('${PROD_NAME}') > -1) {
-        y = y - '${PROD_NAME}'.length + prodNameLen;
-        m = m - '${PROD_NAME}'.length;
+    if(smsContent.indexOf('${商品名称}') > -1) {
+        y = y - '${商品名称}'.length + prodNameLen;
+        m = m - '${商品名称}'.length;
     }
-    if(smsContent.indexOf('${PROD_URL}') > -1) {
-        y = y - '${PROD_URL}'.length + shortUrlLen;
-        m = m - '${PROD_URL}'.length;
+    if(smsContent.indexOf('${商品详情页短链}') > -1) {
+        y = y - '${商品详情页短链}'.length + shortUrlLen;
+        m = m - '${商品详情页短链}'.length;
     }
     total_num = y;
     var code = "";
@@ -188,14 +208,14 @@ function testSend()
 
     var smsCode =selectRows[0]["smsCode"];
     //根据获取到的数据查询
-    $.getJSON("/smsTemplate/getSmsTemplateNotValid?smsCode="+smsCode,function (resp) {
+    $.getJSON("/smsTemplate/getSmsTemplateContent?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
             $("#smsTemplateModal").modal('hide');
             //更新测试面板
-            $("#smsName1").val(resp.data.smsName);
-            $("#smsContent1").val(resp.data.smsContent);
+            $("#testSmsContent").val(resp.data);
+            $("#testSmsCode").val(smsCode);
 
-            var _value = $("#smsContent1").val().replace(/\n/gi,"");
+            let _value = $("#testSmsContent").val();
             $("#word1").text(_value.length);
             $('#send_modal').modal('show');
         }
@@ -209,43 +229,32 @@ $("#send_modal").on('hidden.bs.modal', function () {
 
 function sendMessage()
 {
-    //验证
-    var smsContent= $('#smsContent1').val();
+    let phoneNums=[];
+    $("input[name='phoneNum']").each(function(){
+        let temp=$(this).val();
+        if(temp!=='')
+        {
+            phoneNums.push(temp);
+        }
+    })
 
-    if($('input[name="phoneNum"]').eq(0).val() === '' && $('input[name="phoneNum"]').eq(1).val() === ''&& $('input[name="phoneNum"]').eq(2).val()=== '')
+
+    if(phoneNums.length==0)
     {
-        $MB.n_warning("手机号不能为空！");
-        return;
-    }
-    var phoneNum=[];
-    if($('input[name="phoneNum"]').eq(0).val() !== '') {
-        phoneNum.push($('input[name="phoneNum"]').eq(0).val());
-    }
-    if($('input[name="phoneNum"]').eq(1).val() !== '') {
-        phoneNum.push($('input[name="phoneNum"]').eq(1).val());
-    }
-    if($('input[name="phoneNum"]').eq(2).val() !== '') {
-        phoneNum.push($('input[name="phoneNum"]').eq(2).val());
-    }
-    phoneNum = phoneNum.join(',');
-    if(null==smsContent||smsContent=='')
-    {
-        $MB.n_warning("模板内容不能为空！");
+        $MB.n_warning("至少输入一个手机号！");
         return;
     }
 
-    //判断是否含有变量
-    if(smsContent.indexOf("$") >= 0 ) {
-        $MB.n_warning("模板内容的变量请替换为实际值！");
-        return;
-    }
 
+    let phoneNum = phoneNums.join(',');
+
+    let testSmsCode=$("#testSmsCode").val();
     //提交后端进行发送
     lightyear.loading('show');
 
     let param = {};
     param.phoneNum=phoneNum;
-    param.smsContent=smsContent;
+    param.smsCode=testSmsCode;
 
     $.ajax({
         url: "/smsTemplate/testSend",
@@ -282,7 +291,7 @@ function del() {
             if(resp) {
                 $MB.confirm({
                     title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-                    content: '当前文案已被成长组引用，确认要删除？'
+                    content: '当前文案已被用户组引用，确认要删除？'
                 },function () {
                     deleteSmsTemplate(smsCode);
                 });
@@ -342,85 +351,89 @@ function validCouponSendType() {
         $MB.n_warning("文案内容不能为空！");
         return false;
     }
-    if(couponSendType === 'A') { // 包含${COUPON_URL}
-        // 不能包含url
+
+    if(isProductName === '1') {
+        if(smsContent.indexOf("${商品名称}") === -1) {
+            $MB.n_warning("选择'商品名称：是'，文案内容未发现${商品名称}");
+            return false;
+        }
+    }
+    if(isProductName === '0') {
+        if(smsContent.indexOf("${商品名称}") > -1) {
+            $MB.n_warning("选择'商品名称：否'，文案内容不能出现${商品名称}");
+            return false;
+        }
+    }
+    if(isProductUrl === '1') {
+        if(smsContent.indexOf("${商品详情页短链}") === -1) {
+            $MB.n_warning("选择'商品详情页短链接：是'，文案内容未发现${商品详情页短链}");
+            return false;
+        }
+    }
+    if(isProductUrl === '0') {
+        if(smsContent.indexOf("${商品详情页短链}") > -1) {
+            $MB.n_warning("选择'商品详情页短链接：否'，文案内容不能出现${商品详情页短链}");
+            return false;
+        }
+    }
+
+    //用户自行领券
+    if(couponSendType === 'A') {
+        //不体现短链名称个性化
         if(isCouponUrl === '0') {
-            if(smsContent.indexOf("${COUPON_URL}") > -1) {
-                $MB.n_warning("选择'补贴链接:否'，文案内容不能出现${COUPON_URL}");
+            if(smsContent.indexOf("${补贴短链}") > -1) {
+                $MB.n_warning("选择'补贴短链接:否'，文案内容不能出现${补贴短链}");
                 return false;
             }
         }
+        //不体现补贴名称个性化
         if(isCouponName === '0') {
-            if(smsContent.indexOf("${COUPON_NAME}") > -1) {
-                $MB.n_warning("选择'补贴名称:否'，文案内容不能出现${COUPON_NAME}");
+            if(smsContent.indexOf("${补贴名称}") > -1) {
+                $MB.n_warning("选择'补贴名称:否'，文案内容不能出现${补贴名称}");
                 return false;
             }
         }
 
-        // 不能包含url
+        // 补贴短链 需要个性化
         if(isCouponUrl === '1') {
-            if(smsContent.indexOf("${COUPON_URL}") === -1) {
-                $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴链接：是'，模板内容未发现${COUPON_URL}");
+            if(smsContent.indexOf("${补贴短链}") === -1) {
+                $MB.n_warning("选择'补贴短链接：是'，文案内容未发现${补贴短链}");
                 return false;
             }
         }
         if(isCouponName === '1') {
-            if(smsContent.indexOf("${COUPON_NAME}") === -1) {
-                $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴名称：是'，模板内容未发现${COUPON_NAME}");
+            if(smsContent.indexOf("${补贴名称}") === -1) {
+                $MB.n_warning("选择'补贴名称：是'，文案内容未发现${补贴名称}");
                 return false;
             }
         }
 
         if(isCouponName === '1' && isCouponUrl === '0') {
-            $MB.n_warning("补贴发放方式为自行领取且您选择了'补贴名称：是'，'补贴链接'不能选否！");
+            $MB.n_warning("选择'补贴名称：是'，'补贴链接'不能选否！");
             return false;
         }
     }
-    if(couponSendType === 'B') { // 不包含${COUPON_URL}
-        if(smsContent.indexOf("${COUPON_URL}") > -1) {
-            $MB.n_warning("补贴发放方式为系统发送，文案内容不能出现${COUPON_URL}！");
+    //自动发送券到用户账号
+    if(couponSendType === 'B') {
+        if(smsContent.indexOf("${补贴短链}") > -1) {
+            $MB.n_warning("当前系统配置了补贴为自动发放形式，文案内容不能出现${补贴短链}！");
             return false;
         }
         if(isCouponUrl === '1') {
-            $MB.n_warning("补贴发放方式为系统发送，补贴链接不能选是！");
+            $MB.n_warning("当前系统配置了补贴为自动发放形式，补贴链接不能选是！");
             return false;
         }
 
         if(isCouponName === '1') {
-            if(smsContent.indexOf("${COUPON_NAME}") === -1) {
-                $MB.n_warning("补贴发放方式为系统发送且选择了'补贴名称：是'，文案内容没有发现${COUPON_NAME}！");
+            if(smsContent.indexOf("${补贴名称}") === -1) {
+                $MB.n_warning("选择'补贴名称：是'，文案内容未发现${补贴名称}！");
                 return false;
             }
         }else {
-            if(smsContent.indexOf("${COUPON_NAME}") > -1) {
-                $MB.n_warning("'补贴名称：否'，文案内容不能出现${COUPON_NAME}！");
+            if(smsContent.indexOf("${补贴名称}") > -1) {
+                $MB.n_warning("选择'补贴名称：否'，文案内容不能出现${补贴名称}！");
                 return false;
             }
-        }
-    }
-
-    if(isProductUrl === '1') {
-        if(smsContent.indexOf("${PROD_URL}") === -1) {
-            $MB.n_warning("选择'推荐商品链接：是'，文案内容未发现${PROD_URL}");
-            return false;
-        }
-    }
-    if(isProductUrl === '0') {
-        if(smsContent.indexOf("${PROD_URL}") > -1) {
-            $MB.n_warning("选择'推荐商品链接：否'，文案内容不能出现${PROD_URL}");
-            return false;
-        }
-    }
-    if(isProductName === '1') {
-        if(smsContent.indexOf("${PROD_NAME}") === -1) {
-            $MB.n_warning("选择'推荐商品名称：是'，文案内容未发现${PROD_NAME}");
-            return false;
-        }
-    }
-    if(isProductName === '0') {
-        if(smsContent.indexOf("${PROD_NAME}") > -1) {
-            $MB.n_warning("选择'推荐商品名称：否'，文案内容不能出现${PROD_NAME}");
-            return false;
         }
     }
     return true;
@@ -460,12 +473,7 @@ $("#btn_save_sms").click(function () {
             title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
             content: sure_msg
         }, function () {
-
-            $("input[name='userValue']").removeAttr("disabled");
-            $("input[name='lifeCycle']").removeAttr("disabled");
-            $("input[name='pathActive']").removeAttr("disabled");
             $("#smsCode").removeAttr("disabled");
-            $("#smsName").removeAttr("disabled");
             $("input[name='isCouponUrl']").removeAttr("disabled");
             $("input[name='isCouponName']").removeAttr("disabled");
             $("input[name='isProductName']").removeAttr("disabled");
@@ -498,6 +506,9 @@ function validate() {
     return true;
 }
 
+/**
+ * 用户输入文案内容时触发的事件
+ */
 function smsContentValid() {
     $('#smsContentInput').val($('#smsContent').val());
     if($('#smsContentInput').val() !== '') {
@@ -507,20 +518,14 @@ function smsContentValid() {
     var content = $('#smsContent').val() === "" ? "请输入短信内容": $('#smsContent').val();
     $("#article").html('').append(content);
 }
+
 $("#add_modal").on('hidden.bs.modal', function () {
     $('#smsCode').val("");
-    $('#smsName').val("");
     $('#smsContent').val("");
     $('#smsContentInput').val("");
-    $("input[name='userValue']:checked").removeAttr("checked");
-    $("input[name='lifeCycle']:checked").removeAttr("checked");
-    $("input[name='pathActive']:checked").removeAttr("checked");
     $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
     $("#fontNum").val('');
     $("#remark").val('');
-    $("input[name='userValue']:checked").removeAttr("checked");
-    $("input[name='lifeCycle']:checked").removeAttr("checked");
-    $("input[name='pathActive']:checked").removeAttr("checked");
     $("input[name='isCouponUrl']").removeAttr("disabled");
     $("input[name='isCouponUrl']:checked").removeAttr("checked");
     $("input[name='isCouponName']").removeAttr("disabled");
@@ -538,18 +543,9 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $("#smsTemplateModal").modal('show');
 });
 
-// 文案检索
-function searchSmsTemplate() {
-    $MB.refreshTable('smsTemplateTable');
-}
-
-function resetSmsTemplate() {
-    $("input[name='smsCode']").val("");
-    $MB.refreshTable('smsTemplateTable')
-}
 
 $("#btn_edit").click(function () {
-    var selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
+    let selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
     if(null==selectRows||selectRows.length==0)
     {
         lightyear.loading('hide');
@@ -557,61 +553,38 @@ $("#btn_edit").click(function () {
         return;
     }
 
-    var smsCode =selectRows[0]["smsCode"];
+    let smsCode =selectRows[0]["smsCode"];
+    //当前正在使用的文案
+    let currentFlag=selectRows[0]["currentFlag"];
+
+    //获取引用当前文案的群组信息
     $.get("/smsTemplate/getSmsUsedGroupInfo", {smsCode:smsCode}, function (r) {
-        var data = r.data;
-        var len = data.length;
-        var code = "";
+        let data = r.data;
+        let len = data.length;
+        let code = "";
         data.forEach((v, k)=>{
             code += "<br/>" + v + "；";
         });
-        if(len === 0) {
-            $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
-                if (resp.code === 200){
-                    $("#smsTemplateModal").modal('hide');
-                    var data = resp.data;
-                    $("#smsCode").val(data.smsCode);
-                    $("#smsName").val(data.smsName);
-                    $("#smsContent").val(data.smsContent);
-                    $("#article").html(data.smsContent);
-                    $("#smsContentInput").val(data.smsContent);
-                    $("input[name='isCouponUrl']:radio[value='" + data.isCouponUrl + "']").prop("checked", true);
-                    $("input[name='isCouponName']:radio[value='" + data.isCouponName + "']").prop("checked", true);
-                    $("input[name='isProductName']:radio[value='" + data.isProductName + "']").prop("checked", true);
-                    $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true);
-                    $("#remark").val(data.remark);
-                    $("#myLargeModalLabel3").text("修改文案");
-                    $("#btn_save_sms").attr("name", "update");
-                    $("#add_modal").modal('show');
 
-                    if(data.userValue !== null) {
-                        data.userValue.split(',').forEach((v,k)=>{
-                            $("input[name='userValue']:checkbox[value='" + v + "']").prop("checked", true);
-                        });
-                    }
-                    if(data.lifeCycle !== null) {
-                        data.lifeCycle.split(',').forEach((v,k)=>{
-                            $("input[name='lifeCycle']:checkbox[value='" + v + "']").prop("checked", true);
-                        });
-                    }
-                    if(data.pathActive !== null) {
-                        data.pathActive.split(',').forEach((v,k)=>{
-                            $("input[name='pathActive']:checkbox[value='" + v + "']").prop("checked", true);
-                        });
-                    }
-                    initGetInputNum();
-                }else {
-                    $MB.n_danger(resp.msg);
-                }
-            });
-        }else {
+        //如果当前文案被引用次数>1 或者被引用次数是1但是不是当前组正在使用的文案，则给出提示
+        if(len>1||(len==1&&currentFlag=='0')) {
+
             $.confirm({
                 title: "提示：",
-                content: "您选择的文案正在被以下" + len + "个群组引用，不可变更文案内容；可先解除文案与群组的引用关系；" +
+                content: "您选择的文案正在被以下" + len + "个群组引用，修改将会引起这些群组的文案被同步修改!" +
                     "<br/>------------------------------------------------------" + code,
-                type: 'red',
+                type: 'orange',
                 typeAnimated: true,
                 buttons: {
+                    modify:
+                        {
+                            text: '确定修改',
+                            btnClass: 'btn-orange',
+                            action: function () {
+                                //编辑
+                                modifySmsTemplate(smsCode);
+                            }
+                        },
                     close: {
                         text: '取消',
                         action: function () {
@@ -620,9 +593,38 @@ $("#btn_edit").click(function () {
                     }
                 }
             });
+        }else {
+             //直接打开修改框
+            modifySmsTemplate(smsCode);
         }
     });
 });
+
+function modifySmsTemplate(smsCode)
+{
+    $.getJSON("/smsTemplate/getSmsTemplate?smsCode="+smsCode,function (resp) {
+        if (resp.code === 200){
+            $("#smsTemplateModal").modal('hide');
+            var data = resp.data;
+            $("#smsCode").val(data.smsCode);
+            $("#smsContent").val(data.smsContent);
+            $("#article").html(data.smsContent);
+            $("#smsContentInput").val(data.smsContent);
+            $("input[name='isCouponUrl']:radio[value='" + data.isCouponUrl + "']").prop("checked", true);
+            $("input[name='isCouponName']:radio[value='" + data.isCouponName + "']").prop("checked", true);
+            $("input[name='isProductName']:radio[value='" + data.isProductName + "']").prop("checked", true);
+            $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true);
+            $("#remark").val(data.remark);
+            $("#myLargeModalLabel3").text("修改文案");
+            $("#btn_save_sms").attr("name", "update");
+            $("#add_modal").modal('show');
+
+            initGetInputNum();
+        }else {
+            $MB.n_danger(resp.msg);
+        }
+    });
+}
 
 // 补贴链接选是，补贴名称自动选是、商品链接自动选否；
 function isCouponUrlTrueClick() {
@@ -668,43 +670,6 @@ function isProdUrlFalseClick() {
     $( "#smsTemplateAddForm" ).find( 'input[name="isCouponUrl"]' ).removeAttr( "disabled" );
     IS_COUPON_URL_DISABLED = false;
 }
-
-$("#btn_refresh").click(function () {
-    var selectRows=$("#smsTemplateTable").bootstrapTable('getSelections');
-    if(null==selectRows||selectRows.length==0)
-    {
-        lightyear.loading('hide');
-        $MB.n_warning('请选择需要解除引用的文案！');
-        return;
-    }
-    var smsCode =selectRows[0]["smsCode"];
-    $.get("/smsTemplate/getSmsUsedGroupInfo", {smsCode:smsCode}, function (res) {
-        var data = res.data;
-        var len = data.length;
-        var code = "";
-        data.forEach((v, k)=>{
-            code += "<br/>" + v + "；";
-        });
-        if(len === 0) {
-            $MB.n_warning("当前文案未被引用，无需解除引用。");
-        }else {
-            $MB.confirm({
-                content: "您选择的文案正在被以下" + len + "个群组引用，解除文案会影响到其他群组的文案引用关系，确定要解除吗？" +
-                    "<br/>------------------------------------------------------" + code,
-                title: "提示："
-            }, function () {
-                $.post("/smsTemplate/updateSmsCodeNull", {smsCode:smsCode}, function (r2) {
-                    if(r2.code === 200) {
-                        $MB.n_success("当前文案已解除引用。");
-                        SMS_CODE = null;
-                        smsTemplateTable();
-                        getTableData();
-                    }
-                });
-            });
-        }
-    });
-});
 
 function copyString(id) {
     $('#' + id).select();

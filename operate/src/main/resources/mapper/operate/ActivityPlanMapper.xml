@@ -226,7 +226,7 @@
     </select>
 
     <update id="expireActivityPlan">
-        update uo_op_activity_plan t set t.plan_status='4' where plan_status='1' and now()>t.plan_date::timestamp
+        update uo_op_activity_plan t set plan_status='4' where plan_status='1' and now()>t.plan_date::timestamp
     </update>
 
     <select id="getPlanStatus" resultType="string">

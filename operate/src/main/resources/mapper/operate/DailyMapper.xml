@@ -21,24 +21,6 @@
         <result column="EFFECT_DAYS" property="effectDays" jdbcType="DECIMAL"/>
     </resultMap>
 
-    <resultMap id="templateResult" type="com.linksteady.operate.domain.DailyGroupTemplate">
-        <result column="GROUP_ID" jdbcType="VARCHAR" property="groupId"></result>
-        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
-        <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode"></result>
-        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
-        <result column="IS_COUPON" jdbcType="VARCHAR" property="isCoupon"></result>
-        <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
-        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
-        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
-        <result column="LIFECYCLE" jdbcType="VARCHAR" property="lifecycle"></result>
-        <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"></result>
-        <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"></result>
-        <result column="GROUP_INFO" jdbcType="VARCHAR" property="groupInfo"></result>
-        <result column="tar_type" jdbcType="VARCHAR" property="tarType"></result>
-        <result column="wxpub_id" jdbcType="VARCHAR" property="wxpubId"></result>
-        <result column="qywx_id" jdbcType="VARCHAR" property="qywxId"></result>
-    </resultMap>
-
     <resultMap id="statisResult" type="com.linksteady.operate.domain.DailyStatis">
         <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
         <result column="CONVERT_SPU_RATE" jdbcType="DECIMAL" property="convertSpuRate"></result>
@@ -115,25 +97,6 @@
         SELECT HEAD_ID, TOUCH_DT,to_char(TOUCH_DT, 'yyyymmdd') TOUCH_DT_STR, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,VERSION,EFFECT_DAYS
          FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}
     </select>
-
-    <select id="getUserGroupList" resultMap="templateResult">
-        select distinct lifecycle, user_value, path_active, sms_code, wxpub_id, qywx_id, min(group_id) group_id
-        from uo_op_daily_template_config
-        group by lifecycle, user_value, path_active, sms_code, wxpub_id, qywx_id
-        order by user_value asc, lifecycle desc, path_active asc
-    </select>
-
-    <update id="setSmsCode">
-        update UO_OP_DAILY_TEMPLATE_CONFIG t1
-        set SMS_CODE = #{smsCode}
-        where group_id in (
-        select t1.group_id
-        from uo_op_daily_template_config t1,
-        uo_op_daily_template_config t2
-        where t1.user_value = t2.user_value
-        and t1.lifecycle = t2.lifecycle
-        and t1.path_active = t2.path_active and t2.group_id = #{groupId}::integer)
-    </update>
 
     <select id="validUserGroup" resultType="int">
         select count(1)
@@ -329,12 +292,6 @@
           and STATUS = 'todo'
         select count(1) from UO_OP_DAILY_HEADER where TOUCH_DT::date = current_date and STATUS = 'todo'
     </select>
-
-    <update id="updateSmsCodeNull">
-        update UO_OP_DAILY_TEMPLATE_CONFIG
-        set SMS_CODE = null
-        where SMS_CODE = #{smsCode}
-    </update>
 
     <update id="expireDailyHead">
         update uo_op_daily_header h set status='timeout' where h.status='todo' and touch_dt::date!=current_date

@@ -1,6 +1,7 @@
 let step;
 let current_group = {userValue: 'ULC_01', lifeCycle: '1', pathActive: 'UAC_01', tarType: 'H'};
 $( function () {
+    //加载群组列表
     getTableData();
     step = steps( {
         el: "#configSteps",
@@ -33,7 +34,7 @@ function getTableData() {
                 },
                 {
                     title: '个性化推送(消息)',
-                    colspan: 2
+                    colspan: 4
                 }
             ], [
                 {
@@ -137,9 +138,16 @@ function getTableData() {
                             return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\", \""+value+"\", \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
                                 "<i class='mdi mdi-email-variant mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
                                 "</a>";
+
                         }
 
                     }
+                },
+                {
+                    title: '短信最后配置时间',
+                    align: 'center',
+                    field: 'smsOpDt',
+                    valign: 'middle'
                 },
                 {
                     title: '企业微信',
@@ -148,16 +156,22 @@ function getTableData() {
                     valign: 'middle',
                     formatter: function (value, row, index) {
                         if(value === null || value === undefined || value === '') {
-                            return "<a style='color: #52c41a' onclick='openWxMsgModal(\""+row['groupId']+"\", null, \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
+                            return "<a  style='color: #4c4c4c' onclick='openWxMsgModal(\""+row['groupId']+"\", null, \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
                                 "<i class='mdi mdi-wechat mdi-18px'></i><span style='color:#f96868;'>&nbsp;[未配置]</span>" +
                                 "</a>";
                         }else {
-                            return "<a style='color: #52c41a' onclick='openWxMsgModal(\""+row['groupId']+"\", \""+value+"\", \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
+                            return "<a  style='color: #4c4c4c' onclick='openWxMsgModal(\""+row['groupId']+"\", \""+value+"\", \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
                                 "<i class='mdi mdi-wechat mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
                                 "</a>";
                         }
 
                     }
+                },
+                {
+                    title: '企业微信最后配置时间',
+                    align: 'center',
+                    field: 'qywxOpDt',
+                    valign: 'middle'
                 }
                 // {
                 //     title: '公众号',
@@ -180,10 +194,9 @@ function getTableData() {
         ]
     };
     $( "#userGroupTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
-    $.get( "/daily/userGroupList", {}, function (r) {
+    $.get( "/dailyConfig/userGroupList", {}, function (r) {
         var dataList = r.data;
         var total = dataList.length;
-        var limit = total / 10;
         $( "#userGroupTable" ).bootstrapTable( 'load', dataList );
         $( "a[data-toggle='tooltip']" ).tooltip();
         // 合并单元格
@@ -234,31 +247,15 @@ function mergeCells(data, fieldName, colspan, target) {
 }
 
 /**
- * 微信消息窗口
+ * 获取 群组的描述信息 并渲染到对应的表格上去 (公用方法)
+ * @param userValue
+ * @param lifecycle
+ * @param pathActive
+ * @param tableId
  */
-function openWxMsgModal(groupId, qywxId, userValue, lifecycle, pathActive) {
-    $( "#currentGroupId" ).val(groupId);
-    getWxMsgTableData(qywxId);
-    getUserGroupValue(userValue, lifecycle, pathActive, 'selectedGroupInfo2');
-    $( '#wxMsgListModal' ).modal( 'show' );
-}
-
-/**
- * 企微新增窗口
- */
-function openWxMsgAddModal() {
-    $( "#wxMsgAddModal" ).modal( 'show' );
-    $( "#wxMsgListModal" ).modal( 'hide' );
-}
-
-function openSelectedGroupModal(userValue, lifecycle, pathActive) {
-    getUserGroupValue(userValue, lifecycle, pathActive, 'userGroupDescTable');
-    $( "#selectedGroupModal" ).modal( 'show' );
-}
-
-function getUserGroupValue(userValue, lifecycle, pathActive, tableId) {
+function getGroupDescription(userValue, lifecycle, pathActive, tableId) {
     let settings = {
-        url: '/daily/getUserGroupValue',
+        url: '/dailyConfig/getGroupDescription',
         pagination: false,
         singleSelect: false,
         queryParams: function() {
@@ -289,7 +286,38 @@ function getUserGroupValue(userValue, lifecycle, pathActive, tableId) {
     $( "#" + tableId).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 
+/**
+ * 微信消息窗口
+ */
+function openWxMsgModal(groupId, qywxId, userValue, lifecycle, pathActive) {
+    $( "#currentGroupId").val(groupId);
+    getWxMsgTableData(qywxId);
+    getGroupDescription(userValue, lifecycle, pathActive, 'selectedGroupInfo2');
+    $( '#wxMsgListModal' ).modal( 'show' );
+}
 
+/**
+ * 企微新增窗口
+ */
+function openWxMsgAddModal() {
+    $( "#wxMsgAddModal" ).modal( 'show' );
+    $( "#wxMsgListModal" ).modal( 'hide' );
+}
+
+/**
+ * 打开理解群组的modal页
+ * @param userValue
+ * @param lifecycle
+ * @param pathActive
+ */
+function openSelectedGroupModal(userValue, lifecycle, pathActive) {
+    getGroupDescription(userValue, lifecycle, pathActive, 'userGroupDescTable');
+    $( "#selectedGroupModal" ).modal( 'show' );
+}
+
+/**
+ * 打开公众号的消息配置面板 暂时用不到
+ */
 function personalMsg() {
     $( "#msgListModal" ).modal( 'show' );
 }
@@ -301,6 +329,7 @@ function contentInput() {
     }
     $( '#preview' ).html( '<div class=\'arrow\'></div>' + content )
 }
+
 
 function prevStep(stepNum) {
     if (stepNum === 1) {
@@ -315,27 +344,30 @@ function prevStep(stepNum) {
 function nextStep(stepNum) {
     if (stepNum === 2) {
         step.setActive( 1 );
-        couponTable();
-        $( "#step1" ).attr( "style", "display:none;" );
-        $( "#step2" ).attr( "style", "display:block;" );
-        $( "#step3" ).attr( "style", "display:none;" );
+        //将文案的修改标记进行恢复
+        $.get("/dailyConfig/resetOpFlag", {}, function (r) {
+            couponTable();
+            $( "#step1" ).attr( "style", "display:none;" );
+            $( "#step2" ).attr( "style", "display:block;" );
+            $( "#step3" ).attr( "style", "display:none;" );
+        });
     }
     if(stepNum === 3) {
-        $.get("/daily/resetGroupCoupon", {}, function (r) {
+        $.get("/dailyConfig/autoSetGroupCoupon", {}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("根据您的当前补贴信息，系统已自动配置补贴到用户群组上！");
                 step.setActive( 2);
                 $( "#step1" ).attr( "style", "display:none;" );
                 $( "#step2" ).attr( "style", "display:none;" );
                 $( "#step3" ).attr( "style", "display:block;" );
-                getCurrentGroupData();
+                getConfigInfoByGroup();
             }else if(r.code === 400){
                 $MB.n_warning(r.msg);
                 step.setActive( 2);
                 $( "#step1" ).attr( "style", "display:none;" );
                 $( "#step2" ).attr( "style", "display:none;" );
                 $( "#step3" ).attr( "style", "display:block;" );
-                getCurrentGroupData();
+                getConfigInfoByGroup();
             }else {
                 $MB.n_warning(r.msg);
             }
@@ -343,7 +375,12 @@ function nextStep(stepNum) {
     }
 }
 
-function smsCouponListTable(tableId, data) {
+/**
+ * 优惠券列表的表格 （短信和小程序券共用）
+ * @param tableId
+ * @param data
+ */
+function couponListTable(tableId, data) {
     let settings = {
         pagination: false,
         singleSelect: false,
@@ -368,26 +405,37 @@ function smsCouponListTable(tableId, data) {
 }
 
 
-// 用户群组按钮点击
+/**
+ * 第三步 预览群组页面 点击左侧标签后的响应事件
+ * @param key 标点当前点了那组属性 可能的值有userValue、pathActive、lifecycle、tarType
+ * @param value 在第一个key对应的属性上面的值
+ * @param dom 当前属性所在的html元素
+ * @param className 点击事件后修改的样式类名
+ */
 function userGroupButton(key, value, dom, className) {
     $(dom).removeClass("btn-secondary").addClass(className);
     $(dom).siblings('button').removeClass(className).addClass("btn-secondary");
     current_group[key] = value;
-    getCurrentGroupData();
+    getConfigInfoByGroup();
 }
-function getCurrentGroupData() {
-    $.get("/daily/getCurrentGroupData",current_group, function (r) {
-        console.log(r);
-        var data = r.data;
+
+/**
+ * 刷新右侧的预览数据
+ */
+function getConfigInfoByGroup() {
+    $.get("/dailyConfig/getConfigInfoByGroup",current_group, function (r) {
+        let data = r.data;
         $("#duanxinContent").html('').append(((data['duanxin'] === undefined) || (data['duanxin'] === null)) ? '未配置短信文案':data['duanxin']);
         $("#weixinContent").html('').append(((data['weixin'] === undefined) || (data['weixin'] === null)) ? '未配置企业微信文案' : data['weixin']);
-
-        smsCouponListTable("smsCouponListTable", data['duanxinCouponInfos']);
-        smsCouponListTable("weixinCouponListTable", data['weixinCouponInfos']);
+        //加载优惠券列表
+        couponListTable("smsCouponListTable", data['duanxinCouponInfos']);
+        couponListTable("weixinCouponListTable", data['weixinCouponInfos']);
     });
 }
 
-// 更新微信消息到用户群组
+/**
+ * 更新微信消息到用户群组上
+ */
 function updateWxMsg() {
     var selected = $("#msgListDataTable").bootstrapTable('getSelections');
     if(selected.length === 0) {
@@ -395,7 +443,7 @@ function updateWxMsg() {
         return;
     }
     var qywxId = selected[0]['qywxId'];
-    $.get("/daily/updateWxMsgId", {qywxId: qywxId, groupId: $("#currentGroupId").val()}, function (r) {
+    $.get("/dailyConfig/updateWxMsgId", {qywxId: qywxId, groupId: $("#currentGroupId").val()}, function (r) {
         if(r.code === 200) {
             $MB.n_success("更新成功！");
             $("#wxMsgListModal").modal('hide');

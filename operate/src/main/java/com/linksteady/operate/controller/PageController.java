@@ -54,15 +54,19 @@ public class PageController extends BaseController {
     }
 
     @Log(value = "每日运营配置",location = "用户成长系统")
-    @RequestMapping("/daily/config")
+    @RequestMapping("/dailyconfig")
     public String dailyGroupConfig(Model model) {
+        //短链长度
         model.addAttribute("shortUrlLen", pushProperties.getShortUrlLen());
+        //补贴名称长度
         model.addAttribute("couponNameLen", pushProperties.getCouponNameLen());
+        //商品名称长度
         model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
+        //补贴发放方式
         model.addAttribute("couponSendType", pushProperties.getCouponSendType());
+        //短链长度
         model.addAttribute("smsLengthLimit", pushProperties.getSmsLengthLimit());
-        model.addAttribute("validUrl", pushProperties.getCouponSendType());
-        return "operate/daily/config";
+        return "operate/dailyconfig/config";
     }
 
 
@@ -75,10 +79,15 @@ public class PageController extends BaseController {
     @Log(value = "每日运营文案",location = "用户成长系统")
     @RequestMapping("/cfg/smsTemplate")
     public String smsTemplateList(Model model) {
+        //短链长度
         model.addAttribute("shortUrlLen", pushProperties.getShortUrlLen());
+        //优惠券名称长度
         model.addAttribute("couponNameLen", pushProperties.getCouponNameLen());
+        //商品名称长度
         model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
+        //优惠券发放方式
         model.addAttribute("couponSendType", pushProperties.getCouponSendType());
+        //短信长度
         model.addAttribute("smsLengthLimit", pushProperties.getSmsLengthLimit());
         return "operate/config/smstemplate";
     }
@@ -91,7 +100,7 @@ public class PageController extends BaseController {
     @Log(value = "每日运营优惠券",location = "用户成长系统")
     @RequestMapping("/cfg/coupon")
     public String couponList(Model model) {
-        model.addAttribute("validUrl", pushProperties.getCouponSendType());
+        model.addAttribute("couponSendType", pushProperties.getCouponSendType());
         model.addAttribute("couponNameLen", pushProperties.getCouponNameLen());
         return "operate/config/coupon";
     }

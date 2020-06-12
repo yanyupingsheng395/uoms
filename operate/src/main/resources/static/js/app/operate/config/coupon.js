@@ -195,12 +195,12 @@ function validateRule() {
             },
             couponInfo2: {
                 required: function () {
-                    return ($("#validUrl").val() === 'A');
+                    return ($("#couponSendType").val() === 'A');
                 }
             },
             couponUrl: {
                 required: function () {
-                    return ($("#validUrl").val() === 'A');
+                    return ($("#couponSendType").val() === 'A');
                 }
             },
             couponDisplayName: {

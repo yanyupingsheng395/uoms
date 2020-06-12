@@ -1,11 +1,19 @@
 package com.linksteady.operate.dao;
 
+import com.linksteady.operate.domain.DailyGroupTemplate;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
 
 public interface DailyConfigMapper {
+
+    /**
+     * 获取用户组列表
+     * @param activeList
+     * @return
+     */
+    List<DailyGroupTemplate> getUserGroupList(@Param("activeList") List<String> activeList);
 
     /**
      * 更新check_flag 为 'Y'
@@ -23,9 +31,28 @@ public interface DailyConfigMapper {
 
     int validCheckedUserGroup(@Param("activeList") List<String> activeList);
 
-    void deleteSmsGroup(List<String> groupIds);
 
-    void updateWxMsgId(String groupId, String qywxId);
+    void updateWxMsgId(Long groupId, Long qywxId);
 
+    /**
+     * 获取组上配置的文案信息
+     * @param userValue
+     * @param lifeCycle
+     * @param pathActive
+     * @param tarType
+     * @return
+     */
     Map<String, Object> findMsgInfo(String userValue, String lifeCycle, String pathActive, String tarType);
+
+    /**
+     * 为组设置文案信息
+     * @param groupId
+     * @param smsCode
+     */
+    void setSmsCode(Long groupId, String smsCode);
+
+    /**
+     * 恢复文案的修改标记
+     */
+    void resetOpFlag();
 }

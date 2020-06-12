@@ -9,7 +9,9 @@ import java.util.Map;
 
 public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
 
-    List<SmsTemplate> getSmsTemplateList(@Param("limit") int limit, @Param("offset") int offset, @Param("groupId") String groupId);
+    List<SmsTemplate> selectSmsTemplateListWithGroup(@Param("limit") int limit, @Param("offset") int offset, @Param("groupId") long groupId);
+
+    List<SmsTemplate> selectSmsTemplateList(int limit, int offset);
 
     int getTotalCount();
 
@@ -25,5 +27,11 @@ public interface SmsTemplateMapper extends MyMapper<SmsTemplate> {
 
     List<String> getSmsUsedGroupInfo(String smsCode);
 
-    List<SmsTemplate> getSmsTemplateListWithoutGroupId(int limit, int offset);
+    /**
+     * 解除组和优惠券的绑定关系
+     * @param smsCode
+     */
+    void updateSmsCodeNull(String smsCode);
+
+
 }
