@@ -91,10 +91,11 @@ public class ActivityController {
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/uploadExcel")
     public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId,
-                                  @RequestParam("uploadMethod") String uploadMethod, @RequestParam("repeatProduct") String repeatProduct) {
+                                  @RequestParam("uploadMethod") String uploadMethod,
+                                  @RequestParam("repeatProduct") String repeatProduct, @RequestParam("stage") String stage) {
         List<ActivityProductUploadError> errorList;
         try {
-            errorList = activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct);
+            errorList = activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct, stage);
             validProductInfo(headId);
         } catch (Exception e) {
             log.error("上传商品列表出错", e);
@@ -128,12 +129,12 @@ public class ActivityController {
         String productId = request.getParam().get("productId");
         String productName = request.getParam().get("productName");
         String groupId = request.getParam().get("groupId");
-
+        String activityStage = request.getParam().get("activityStage");
         List<ActivityProduct> productList = Lists.newArrayList();
         int count = 0;
         if(StringUtils.isNotEmpty(headId)) {
-            count = activityProductService.getCount(headId, productId, productName, groupId);
-            productList = activityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId);
+            count = activityProductService.getCount(headId, productId, productName, groupId, activityStage);
+            productList = activityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId, activityStage);
         }
         return ResponseBo.okOverPaging(null, count, productList);
     }
@@ -152,16 +153,13 @@ public class ActivityController {
     // todo 商品名称不能超过短信预设的，商品ID防重复
     /**
      * 保存商品信息
-     * @param activityProduct
-     * @param headId
      * @return
      */
     @PostMapping("/saveActivityProduct")
-    public ResponseBo saveActivityProduct(ActivityProduct activityProduct, String headId, String operateType) {
-        activityProduct.setHeadId(Long.valueOf(headId));
+    public ResponseBo saveActivityProduct(ActivityProduct activityProduct) {
         activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
         activityProductService.saveActivityProduct(activityProduct);
-        validProductInfo(headId);
+        validProductInfo(activityProduct.getHeadId().toString());
         return ResponseBo.ok();
     }
 
@@ -193,12 +191,11 @@ public class ActivityController {
 
     /**
      * 获取产品信息
-     * @param id
      * @return
      */
     @GetMapping("/getProductById")
-    public ResponseBo getProductById(@RequestParam("id") String id) {
-        return ResponseBo.okWithData(null, activityProductService.getProductById(id));
+    public ResponseBo getProductById(@RequestParam("headId") String headId, @RequestParam("activityStage") String activityStage, @RequestParam("productId") String productId) {
+        return ResponseBo.okWithData(null, activityProductService.getProductById(headId, activityStage, productId));
     }
 
     /**
@@ -208,12 +205,14 @@ public class ActivityController {
      * @return
      */
     @PostMapping("/updateActivityProduct")
-    public ResponseBo updateActivityProduct(ActivityProduct activityProduct, String operateType) {
+    public ResponseBo updateActivityProduct(ActivityProduct activityProduct) {
         try {
             if(activityProduct.getProductName().length() > pushProperties.getProdNameLen()) {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
-            activityProductService.updateActivityProduct(activityProduct);
+            deleteProduct(activityProduct.getHeadId(), activityProduct.getActivityStage(), activityProduct.getProductId());
+            saveActivityProduct(activityProduct);
+//            activityProductService.updateActivityProduct(activityProduct);
             validProductInfo(String.valueOf(activityProduct.getHeadId()));
             return ResponseBo.ok();
         } catch (LinkSteadyException e) {
@@ -267,7 +266,7 @@ public class ActivityController {
     }
 
     @PostMapping("/deleteProduct")
-    public ResponseBo deleteProduct(@RequestParam Long headId, @RequestParam String stage, @RequestParam String operateType, @RequestParam String productIds) {
+    public ResponseBo deleteProduct(@RequestParam Long headId, @RequestParam String stage, @RequestParam String productIds) {
         activityProductService.deleteProduct(headId, stage, productIds);
         validProductInfo(String.valueOf(headId));
         return ResponseBo.ok();
@@ -283,24 +282,11 @@ public class ActivityController {
     public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
         Map<String, String> data = Maps.newHashMap();
         // 验证所有群组是否配置消息模板 0：合法，非0不合法
-        int templateIsNullCount = -1;
-        if(type.equalsIgnoreCase(ActivityPlanTypeEnum.During.getPlanTypeCode())) {
-            templateIsNullCount = activityUserGroupService.validGroupTemplate(headId, stage, type);
+        List<String> groupIds = activityProductService.getGroupIds(headId);
+        if(groupIds.size() != 0) {
+            int templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, stage, type, groupIds);
             if(templateIsNullCount > 0) {
-                data.put("error", "部分群组模板消息未配置");
-            }
-        }else if(type.equalsIgnoreCase(ActivityPlanTypeEnum.Notify.getPlanTypeCode())){
-            List<String> groupIds = activityProductService.getGroupIds(headId);
-            if(groupIds.size() != 0) {
-                templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, stage, type, groupIds);
-                if(templateIsNullCount > 0) {
-                    data.put("error", "上传的商品的与已配置文案的活动群组不符");
-                }
-            }
-            groupIds = Collections.singletonList("5");
-            templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, stage, type, groupIds);
-            if(templateIsNullCount > 0) {
-                data.put("warn", "不参加活动群组模板未配置");
+                data.put("error", "部分群组文案没有配置");
             }
         }
         return ResponseBo.okWithData(null, data);
@@ -488,7 +474,7 @@ public class ActivityController {
     }
 
     @PostMapping("/downloadExcel")
-    public ResponseBo excel(@RequestParam("headId") String headId) throws InterruptedException {
+    public ResponseBo excel(@RequestParam("headId") String headId, @RequestParam("activityStage") String activityStage) throws InterruptedException {
         List<ActivityProduct> list = Lists.newLinkedList();
         List<Callable<List<ActivityProduct>>> tmp = Lists.newLinkedList();
         int count = activityProductService.getCountByHeadId(headId);
@@ -503,7 +489,7 @@ public class ActivityController {
                 end = Math.min(end, count);
                 int limit = end - start + 1;
                 int offset = start -1;
-                return activityProductService.getActivityProductListPage(limit,offset, headId, "", "", "");
+                return activityProductService.getActivityProductListPage(limit,offset, headId, "", "", "", activityStage);
             });
         }
 
@@ -547,6 +533,7 @@ public class ActivityController {
 
     /**
      * 移除群组的券关系
+     * @param type 活动类型
      * @param headId
      * @param stage
      * @param smsCode
@@ -554,8 +541,16 @@ public class ActivityController {
      * @return
      */
     @PostMapping("/removeSmsSelected")
-    public ResponseBo removeSmsSelected(@RequestParam String headId, @RequestParam String stage, @RequestParam String smsCode, @RequestParam String groupId) {
-        activityUserGroupService.removeSmsSelected(headId, stage, smsCode, groupId);
+    public ResponseBo removeSmsSelected(@RequestParam String type,@RequestParam String headId, @RequestParam String stage, @RequestParam String smsCode, @RequestParam String groupId) {
+        activityUserGroupService.removeSmsSelected(type, headId, stage, smsCode, groupId);
         return ResponseBo.ok();
+    }
+
+    @GetMapping("/checkProductId")
+    public boolean checkProductId(@RequestParam String headId, @RequestParam String activityType, @RequestParam String activityStage, @RequestParam String productId) {
+        if(StringUtils. isEmpty(activityType)) {
+            return true;
+        }
+        return activityProductService.checkProductId(headId, activityType, activityStage, productId);
     }
 }

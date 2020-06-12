@@ -12,7 +12,7 @@
     </div>
 </div>
 <div class="row m-t-10">
-    <div class="col-md-6 text-right">
+    <div class="col-md-6 text-center">
         <button class="btn btn-primary btn-sm" type="button" id="changePlan"><i class="fa fa-server"></i>调整方案</button>
     </div>
 </div>
@@ -31,6 +31,13 @@
         </div>
     </div>
 </div>
+<div class="row m-t-10 text-center">
+    <div class="col-md-12">
+        <button class="btn btn-primary btn-sm" onclick="submitActivity('NOTIFY')">
+            保存计划
+        </button>
+    </div>
+</div>
 <div class="row m-t-10">
     <span class="navbar-page-title">配置活动期间消息</span>
 </div>
@@ -46,15 +53,25 @@
         </div>
     </div>
 </div>
+<div class="row m-t-10 text-center">
+    <div class="col-md-12">
+        <button class="btn btn-primary btn-sm" onclick="submitActivity('DURING')">
+            保存计划
+        </button>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-12">
         <div class="text-right m-t-10">
-            <button class="btn btn-primary btn-sm" id="notifySaveBtn" onclick="submitActivity('NOTIFY')">
+            <button class="btn btn-secondary btn-sm" id="notifySaveBtn" onclick="">
                 继续编辑正式计划
             </button>
-            <button class="btn btn-primary btn-sm" onclick="submitActivity('NOTIFY')">
+            <button class="btn btn-secondary btn-sm" onclick="">
                 暂不编辑保存退出
             </button>
+            <a class="btn btn-secondary btn-sm" href="/page/activity">
+                <i class="fa fa-backward"></i>&nbsp;返回
+            </a>
         </div>
     </div>
 </div>

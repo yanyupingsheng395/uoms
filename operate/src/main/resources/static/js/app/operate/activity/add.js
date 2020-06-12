@@ -27,7 +27,26 @@ function validateProductRule() {
     validatorProduct = $activityProductAddForm.validate( {
         rules: {
             productId: {
-                required: true
+                required: true,
+                remote: {
+                    url: "/activity/checkProductId",
+                    type: "get",
+                    dataType: "json",
+                    data: {
+                        activityStage: function () {
+                            return CURRENT_ACTIVITY_STAGE;
+                        },
+                        activityType: function () {
+                            return $("#activityType").val();
+                        },
+                        productId: function () {
+                            return $("#product_id").val()
+                        },
+                        headId: function () {
+                            return $("#headId").val()
+                        }
+                    }
+                }
             },
             productName: {
                 required: true
@@ -62,6 +81,9 @@ function validateProductRule() {
                 required: function () {
                     return $("#activityRule").val() === '4' || $("#activityRule").val() === '3';
                 }
+            },
+            activityType: {
+                required: true
             }
         },
         errorPlacement: function (error, element) {
@@ -73,7 +95,8 @@ function validateProductRule() {
         },
         messages: {
             productId: {
-                required: icon + "请输入商品ID"
+                required: icon + "请输入商品ID",
+                remote: icon + '已有相同商品ID'
             },
             productName: {
                 required: icon + "请输入商品名称"
@@ -98,6 +121,9 @@ function validateProductRule() {
             },
             discountAmount: {
                 required: icon + "请输入立减金额"
+            },
+            activityType: {
+                required: icon + "请选择利益点适用场景"
             }
         }
     } );
@@ -129,7 +155,7 @@ $( "#saveActivityProduct" ).click( function () {
     if (flag) {
         let operate = $( "#saveActivityProduct" ).attr( "name" );
         if (operate === "save") {
-            $.post( "/activity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val(),  function (r) {
+            $.post( "/activity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val() + "&activityStage=" + CURRENT_ACTIVITY_STAGE,  function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "添加商品成功！" );
                     getProductInfo();
@@ -141,7 +167,7 @@ $( "#saveActivityProduct" ).click( function () {
         }
         if (operate === 'update') {
             $.post( "/activity/updateActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" +
-                $( "#headId" ).val() + "&activityStage=" + $( "#activity_stage" ).val() + "&operateType=" + operateType + "&productId=" + $("#product_id").val(), function (r) {
+                $( "#headId" ).val() + "&activityStage=" + CURRENT_ACTIVITY_STAGE + "&operateType=" + operateType + "&productId=" + $("#product_id").val(), function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "更新商品成功！" );
                     getProductInfo();
@@ -164,6 +190,7 @@ $( "#addProductModal" ).on( "hidden.bs.modal", function () {
     $( "input[name='discountDeno']" ).val( "" );
     $( "input[name='discountAmount']" ).val( "" );
     $( "select[name='groupId']" ).find( "option:selected" ).removeAttr( "selected" );
+    $( "select[name='activityType']" ).find( "option:selected" ).removeAttr( "selected" );
     $activityProductAddForm.validate().resetForm();
 } );
 
@@ -181,8 +208,8 @@ $( "#btn_edit_shop" ).click( function () {
         $MB.n_warning( '一次只能选择一条记录修改！' );
         return;
     }
-    let id = selected[0].id;
-    $.get( "/activity/getProductById", {id: id}, function (r) {
+    let productId = selected[0].productId;
+    $.get( "/activity/getProductById", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE, productId: productId}, function (r) {
         if (r.code === 200) {
             let data = r.data;
             $("#add-product-form").find( "input[name='id']" ).val( data['id'] );
@@ -191,6 +218,7 @@ $( "#btn_edit_shop" ).click( function () {
             $("#add-product-form").find( "input[name='activityPrice']" ).val( data['activityPrice'] );
             $("#add-product-form").find( "input[name='formalPrice']" ).val( data['formalPrice'] );
             $("#add-product-form").find("select[name='groupId']").find("option[value='"+data['groupId']+"']").prop("selected", true);
+            $("#add-product-form").find("select[name='activityType']").find("option[value='"+data['activityType']+"']").prop("selected", true);
             var val = $("#activityRule").find("option:selected").val();
             switch (val) {
                 case "1":
@@ -268,6 +296,7 @@ $('#btn_upload').click(function () {
         formData.append("headId", $("#headId").val());
         formData.append("repeatProduct", repeatProduct);
         formData.append("uploadMethod", uploadMethod);
+        formData.append("stage", CURRENT_ACTIVITY_STAGE);
         $.ajax({
             url: "/activity/uploadExcel",
             type: "post",
@@ -480,7 +509,8 @@ function getProductInfo() {
                     headId: $( "#headId" ).val(),
                     productId: $( "#productId" ).val(),
                     productName: $( "#productName" ).val(),
-                    groupId: $("#groupId").find("option:selected").val()
+                    groupId: $("#groupId").find("option:selected").val(),
+                    activityStage: CURRENT_ACTIVITY_STAGE
                 }
             };
         },
@@ -950,7 +980,7 @@ function getGroupList(stage, type, tableId) {
                                 res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
                             }else {
                                 res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
+                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"NOTIFY\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
                                     "</a>";
                             }
                         }else {
@@ -958,7 +988,7 @@ function getGroupList(stage, type, tableId) {
                                 res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
                             }else {
                                 res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
+                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"NOTIFY\",\""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
                                     "</a>";
                             }
                         }
@@ -968,7 +998,7 @@ function getGroupList(stage, type, tableId) {
                                 res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
                             }else {
                                 res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
+                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"DURING\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
                                     "</a>";
                             }
                         }else {
@@ -976,7 +1006,7 @@ function getGroupList(stage, type, tableId) {
                                 res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
                             }else {
                                 res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
+                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"DURING\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
                                     "</a>";
                             }
                         }
@@ -1646,7 +1676,7 @@ $("#btn_download_data").click(function () {
         content: "确定下载商品数据?"
     }, function () {
         $("#btn_download_data").text("下载中...").attr("disabled", true);
-        $.post("/activity/downloadExcel", {headId: $("#headId").val()}, function (r) {
+        $.post("/activity/downloadExcel", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE}, function (r) {
             if (r.code === 200) {
                 window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
             } else {
@@ -1694,7 +1724,7 @@ function copyString(data){
 }
 
 // 移除组上的短信
-function removeSmsSelected(stage, smsCode, groupId) {
+function removeSmsSelected(type, stage, smsCode, groupId) {
     if(smsCode === null || smsCode === '' || smsCode === 'null') {
         $MB.n_warning("当前群组不需要重置文案！");
         return;
@@ -1703,7 +1733,7 @@ function removeSmsSelected(stage, smsCode, groupId) {
         title: '提示',
         content: '确定重置当前群组配置的文案吗？'
     }, function () {
-        $.post("/activity/removeSmsSelected", {headId: $("#headId").val(), stage:stage, smsCode: smsCode, groupId: groupId}, function (r) {
+        $.post("/activity/removeSmsSelected", {type: type, headId: $("#headId").val(), stage:stage, smsCode: smsCode, groupId: groupId}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("当前群组配置的文案已重置！");
                 $MB.refreshTable("table1");

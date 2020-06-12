@@ -110,13 +110,37 @@
     </update>
 
     <update id="validUserGroupDuring">
-        update UO_OP_ACTIVITY_GROUP set CHECK_FLAG = (
-            case when SMS_TEMPLATE_CODE is null then 'N' else 'Y' end
-        ),
-        CHECK_COMMENTS = (
-            case when SMS_TEMPLATE_CODE is null then '群组文案没有配置' else '' end
-        )
-        where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = 'DURING'
+        update UO_OP_ACTIVITY_GROUP
+        set CHECK_FLAG = (
+            case
+                when
+                            GROUP_ID in (
+                            select distinct GROUP_ID
+                            from UO_OP_ACTIVITY_PRODUCT
+                            where HEAD_ID = #{headId}::int4
+                        ) and
+                            SMS_TEMPLATE_CODE is null then 'N'
+                when
+                            GROUP_ID in (
+                            select distinct GROUP_ID
+                            from UO_OP_ACTIVITY_PRODUCT
+                            where HEAD_ID = #{headId}::int4
+                        ) and
+                            SMS_TEMPLATE_CODE is not null then 'Y'
+                else 'NA' end
+            ),
+            CHECK_COMMENTS = (
+                case
+                    when
+                                GROUP_ID in (
+                                select distinct GROUP_ID
+                                from UO_OP_ACTIVITY_PRODUCT
+                                where HEAD_ID = #{headId}::int4
+                            ) and
+                                SMS_TEMPLATE_CODE is null then '群组文案没有配置'
+                    else null end)
+        where HEAD_ID = #{headId}::int4
+          and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = 'DURING'
     </update>
 
     <select id="validGroupTemplate" resultType="int">
@@ -136,6 +160,6 @@
 
     <update id="removeSmsSelected">
         update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = null, CHECK_FLAG = 'N', CHECK_COMMENTS = '群组文案没有配置'
-        where head_id = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId}::int4
+        where head_id = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId}::int4 and activity_type = #{type}
     </update>
 </mapper>

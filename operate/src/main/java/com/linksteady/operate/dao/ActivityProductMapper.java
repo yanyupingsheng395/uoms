@@ -10,17 +10,17 @@ import java.util.List;
  */
 public interface ActivityProductMapper {
 
-    int getCount(String headId, String productId, String productName, String groupId);
+    int getCount(String headId, String productId, String productName, String groupId, String activityStage);
 
-    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId);
+    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage);
 
-    void saveDataList(List<ActivityProduct> productList);
+//    void saveDataList(List<ActivityProduct> productList);
 
     void deleteByHeadId(String headId);
 
     void saveActivityProduct(ActivityProduct activityProduct);
 
-    ActivityProduct getProductById(String id);
+    ActivityProduct getProductById(String headId, String activityStage, String productId);
 
     void updateActivityProduct(ActivityProduct activityProduct);
 
@@ -54,4 +54,6 @@ public interface ActivityProductMapper {
     List<String> getGroupIds(Long headId);
 
     List<ActivityProduct> getProductPriceList(long headId,String activityType);
+
+    int checkProductId(String headId, String activityType, String activityStage, String productId);
 }

@@ -32,5 +32,5 @@ public interface ActivityUserGroupService {
 
     int validGroupTemplateWithGroup(Long headId, String stage, String type, List<String> groupIds);
 
-    void removeSmsSelected(String headId, String stage, String smsCode, String groupId);
+    void removeSmsSelected(String type, String headId, String stage, String smsCode, String groupId);
 }

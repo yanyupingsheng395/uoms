@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
  * @date 2019-09-07
  */
 @Data
-public class ActivityProduct {
+public class ActivityProduct implements Cloneable {
 
     private Long id;
 
@@ -21,14 +21,11 @@ public class ActivityProduct {
     @ExportConfig(value = "名称")
     private String productName;
 
-    @ExportConfig(value = "非活动日常单价（元/件）")
+    @ExportConfig(value = "日常单价（元/件）")
     private double formalPrice;
 
     @ExportConfig(value = "活动动机制", convert = "s:1=活动价,2=满件打折,3=满元减钱,4=特价")
     private String groupId;
-
-    @ExportConfig(value = "活动通知体现最低单价（元/件）")
-    private double notifyMinPrice;
 
     @ExportConfig(value = "活动期间体现最低单价（元/件）")
     private double minPrice;
@@ -51,12 +48,13 @@ public class ActivityProduct {
     private Double discountDeno;
     private Double discountAmount;
     private Double activityPrice;
-
+    private Double activityProfit;
+    private String activityType;
+    private String activityStage;
+    private Double duringProfit;
     private Double notifyProfit;
     private Double duringMinPrice;
-    private Double duringProfit;
-
-
+    private Double notifyMinPrice;
     /**
      * 判断当前数据是否合法
      * @return
@@ -68,5 +66,16 @@ public class ActivityProduct {
                         || ("2".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountThreadhold() && 0D!=this.getDiscountDeno())
                         || ("3".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountAmount())
                         || ("4".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountAmount()));
+    }
+
+    @Override
+    public ActivityProduct clone() {
+        ActivityProduct activityProduct = null;
+        try {
+            activityProduct = (ActivityProduct) super.clone();
+        }catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return activityProduct;
     }
 }

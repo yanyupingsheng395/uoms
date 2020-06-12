@@ -53,18 +53,25 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     private ActivityHeadMapper activityHeadMapper;
 
     @Override
-    public int getCount(String headId, String productId, String productName, String groupId) {
-        return activityProductMapper.getCount(headId, productId, productName, groupId);
+    public int getCount(String headId, String productId, String productName, String groupId, String activityStage) {
+        return activityProductMapper.getCount(headId, productId, productName, groupId, activityStage);
     }
 
     @Override
-    public List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId) {
-        return activityProductMapper.getActivityProductListPage(limit, offset, headId, productId, productName, groupId);
+    public List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage) {
+        return activityProductMapper.getActivityProductListPage(limit, offset, headId, productId, productName, groupId, activityStage);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveActivityProduct(ActivityProduct activityProduct) {
+        ActivityProduct newProduct = activityProduct.clone();
+        if(activityProduct.getActivityType().equalsIgnoreCase("ALL")) {
+            activityProduct.setActivityType("DURING");
+            newProduct.setActivityType("NOTIFY");
+            newProduct = calculateProductMinPrice(newProduct);
+            activityProductMapper.saveActivityProduct(newProduct);
+        }
         activityProduct = calculateProductMinPrice(activityProduct);
         activityProductMapper.saveActivityProduct(activityProduct);
     }
@@ -72,7 +79,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     /**
      * 计算商品的最低价和利益点
      * @param activityProduct
-     * @param headId
      * @return
      */
     private ActivityProduct calculateProductMinPrice(ActivityProduct activityProduct) {
@@ -82,61 +88,46 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         String platDeno = activityHead.getPlatDeno();
         String platDiscount = activityHead.getPlatDiscount();
         String groupId = activityProduct.getGroupId();
-        double notifyMinPrice;
-        double duringMinPrice;
+        double minPrice;
         switch (groupId) {
             case "1":
-                activityProduct.setDuringProfit(activityProduct.getDiscountSize());
-                activityProduct.setNotifyProfit(activityProduct.getDiscountSize());
-                notifyMinPrice = activityProduct.getActivityPrice() * activityProduct.getDiscountSize();
-                activityProduct.setNotifyMinPrice(notifyMinPrice);
-                duringMinPrice = activityProduct.getActivityPrice() * activityProduct.getDiscountSize();
-                activityProduct.setDuringMinPrice(duringMinPrice);
+                activityProduct.setActivityProfit(activityProduct.getDiscountSize());
+                minPrice = activityProduct.getActivityPrice() * activityProduct.getDiscountSize();
+                activityProduct.setMinPrice(minPrice);
                 break;
             case "2":
-                activityProduct.setDuringProfit(activityProduct.getDiscountDeno());
-                activityProduct.setNotifyProfit(activityProduct.getDiscountDeno());
+                activityProduct.setActivityProfit(activityProduct.getDiscountDeno());
                 if (activityProduct.getActivityPrice() >= activityProduct.getDiscountThreadhold()) {
-                    activityProduct.setNotifyMinPrice(activityProduct.getActivityPrice() - activityProduct.getDiscountDeno());
-                    activityProduct.setDuringMinPrice(activityProduct.getActivityPrice() - activityProduct.getDiscountDeno());
+                    activityProduct.setMinPrice(activityProduct.getActivityPrice() - activityProduct.getDiscountDeno());
                 } else {
-                    activityProduct.setNotifyMinPrice(activityProduct.getActivityPrice() - (activityProduct.getDiscountDeno() * (activityProduct.getActivityPrice() / activityProduct.getDiscountThreadhold())));
-                    activityProduct.setDuringMinPrice(activityProduct.getActivityPrice() - (activityProduct.getDiscountDeno() * (activityProduct.getActivityPrice() / activityProduct.getDiscountThreadhold())));
+                    activityProduct.setActivityProfit(activityProduct.getActivityPrice() - (activityProduct.getDiscountDeno() * (activityProduct.getActivityPrice() / activityProduct.getDiscountThreadhold())));
+                    activityProduct.setMinPrice(activityProduct.getActivityPrice() - (activityProduct.getDiscountDeno() * (activityProduct.getActivityPrice() / activityProduct.getDiscountThreadhold())));
                 }
                 break;
             case "3":
             case "4":
-                activityProduct.setDuringProfit(activityProduct.getDiscountAmount());
-                activityProduct.setNotifyProfit(activityProduct.getDiscountAmount());
-                notifyMinPrice = activityProduct.getActivityPrice() - activityProduct.getDiscountAmount();
-                activityProduct.setNotifyMinPrice(notifyMinPrice);
-                duringMinPrice = activityProduct.getActivityPrice() - activityProduct.getDiscountAmount();
-                activityProduct.setDuringMinPrice(duringMinPrice);
+                activityProduct.setActivityProfit(activityProduct.getDiscountAmount());
+                minPrice = activityProduct.getActivityPrice() - activityProduct.getDiscountAmount();
+                activityProduct.setMinPrice(minPrice);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + groupId);
         }
         if (platDiscount.equalsIgnoreCase("1")) {
             double platDiscountSize = Double.valueOf(platDeno) / Double.parseDouble(platThreadHold);
-            double duringMultiple = activityProduct.getDuringMinPrice() / Double.parseDouble(platThreadHold);
-            double notifyMultiple = activityProduct.getNotifyMinPrice() / Double.parseDouble(platThreadHold);
-            if (duringMultiple < 1) {
-                activityProduct.setDuringMinPrice(activityProduct.getDuringMinPrice() * (1 - platDiscountSize));
+            double multiple = activityProduct.getMinPrice() / Double.parseDouble(platThreadHold);
+            if (multiple < 1) {
+                activityProduct.setMinPrice(activityProduct.getMinPrice() * (1 - platDiscountSize));
             } else {
-                activityProduct.setDuringMinPrice(activityProduct.getDuringMinPrice() - Math.floor(duringMultiple) * Double.parseDouble(platDeno));
-            }
-            if (notifyMultiple < 1) {
-                activityProduct.setNotifyMinPrice(activityProduct.getNotifyMinPrice() * (1 - platDiscountSize));
-            } else {
-                activityProduct.setNotifyMinPrice(activityProduct.getNotifyMinPrice() - Math.floor(notifyMultiple) * Double.parseDouble(platDeno));
+                activityProduct.setMinPrice(activityProduct.getMinPrice() - Math.floor(multiple) * Double.parseDouble(platDeno));
             }
         }
         return activityProduct;
     }
 
     @Override
-    public ActivityProduct getProductById(String id) {
-        return activityProductMapper.getProductById(id);
+    public ActivityProduct getProductById(String headId, String activityStage, String productId) {
+        return activityProductMapper.getProductById(headId, activityStage, productId);
     }
 
     @Override
@@ -215,12 +206,12 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public List<ActivityProductUploadError> uploadExcel(MultipartFile file, String headId, String uploadMethod, String repeatProduct) throws Exception {
+    public List<ActivityProductUploadError> uploadExcel(MultipartFile file, String headId, String uploadMethod, String repeatProduct, String stage) throws Exception {
         String xlsSuffix = ".xls";
         String xlsxSuffix = ".xlsx";
         // 表头
         List<String> headers = Arrays.asList(
-                "商品ID", "商品名称", "日常商品单价\n（元/件）", "活动商品单价\n（元/件）", "店铺活动机制", "满件打折\n（折）", "满元减钱门槛\n（元）", "满元减钱面额\n（元）", "立减金额\n（元）"
+                "商品ID", "商品名称", "日常商品单价\n（元/件）", "活动商品单价\n（元/件）", "店铺活动机制", "满件打折\n（折）", "满元减钱门槛\n（元）", "满元减钱面额\n（元）", "立减金额\n（元）", "利益点适用场景"
         );
         AtomicBoolean flag = new AtomicBoolean(true);
         List<ActivityProduct> productList = Lists.newArrayList();
@@ -420,6 +411,27 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                             default:
                                 throw new IllegalStateException("Unexpected value: " + groupId);
                         }
+                        String activityType = "";
+                        Cell cell9 = row.getCell(9);
+                        if (null == cell9 || cell9.getCellType() == 3) {
+                            validCount++;
+                            errorList.add(new ActivityProductUploadError("利益点场景为空", i + 1));
+                        } else {
+                            if (cell9.getCellType() == 1) {
+                                activityType = cell9.getStringCellValue();
+                            } else {
+                                errorList.add(new ActivityProductUploadError("利益点场景为空类型有误，应改为文本型", i + 1));
+                            }
+                        }
+                        if(activityType.equalsIgnoreCase("活动通知")) {
+                            activityType = "NOTIFY";
+                        }
+                        if(activityType.equalsIgnoreCase("活动期间")) {
+                            activityType = "DURING";
+                        }
+                        if(activityType.equalsIgnoreCase("整个活动")) {
+                            activityType = "ALL";
+                        }
 
                         if (validCount == 6) {
                             errorList = errorList.subList(0, errorList.size() - 6);
@@ -435,17 +447,24 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         activityProduct.setDiscountDeno(new BigDecimal(discountDeno).setScale(2, RoundingMode.HALF_UP).doubleValue());
                         activityProduct.setDiscountAmount(new BigDecimal(discountAmount).setScale(2, RoundingMode.HALF_UP).doubleValue());
                         activityProduct.setProductId(productId);
+                        activityProduct.setActivityStage(stage);
                         if (activityProduct.productValid()) {
                             activityProduct.setProductUrl(shortUrlService.genProdShortUrlByProdId(productId, "S"));
+                            if(activityType.equalsIgnoreCase("ALL")) {
+                                activityProduct.setActivityType("NOTIFY");
+                                ActivityProduct newProduct = activityProduct.clone();
+                                newProduct = calculateProductMinPrice(newProduct);
+                                newProduct.setActivityType("DURING");
+                                productList.add(newProduct);
+                            }else {
+                                activityProduct.setActivityType(activityType);
+                            }
+                            activityProduct = calculateProductMinPrice(activityProduct);
                             productList.add(activityProduct);
                         }
                     }
                     if (productList.size() != 0) {
-                        List<ActivityProduct> tmpList = Lists.newArrayList();
-                        productList.stream().forEach(x->{
-                            tmpList.add(calculateProductMinPrice(x));
-                        });
-                        saveUploadProductData(headId, tmpList, uploadMethod, repeatProduct);
+                        saveUploadProductData(headId, productList, uploadMethod, repeatProduct);
                     } else {
                         errorList.add(new ActivityProductUploadError("校验通过的记录条数为0"));
                     }
@@ -494,6 +513,11 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     @Override
     public List<String> getGroupIds(Long headId) {
         return activityProductMapper.getGroupIds(headId);
+    }
+
+    @Override
+    public boolean checkProductId(String headId, String activityType, String activityStage, String productId) {
+        return activityProductMapper.checkProductId(headId, activityType, activityStage, productId) == 0;
     }
 
     /**

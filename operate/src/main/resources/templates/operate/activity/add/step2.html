@@ -149,6 +149,17 @@
                         </div>
                     </div>
                     <div id="shopOffer" style="display: none;"></div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">利益点适用场景</label>
+                        <div class="col-md-7">
+                            <select name="activityType" id="activityType" class="form-control" onchange="$(this).trigger('blur')">
+                                <option value="">请选择</option>
+                                <option value="NOTIFY">活动通知</option>
+                                <option value="DURING">活动期间</option>
+                                <option value="ALL">整个活动</option>
+                            </select>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
