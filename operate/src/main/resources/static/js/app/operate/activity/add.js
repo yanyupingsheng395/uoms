@@ -1151,7 +1151,7 @@ function validTmp() {
         return false;
     }
     if (isProdUrl === undefined) {
-        $MB.n_warning( "请选择商品详情页短链接" );
+        $MB.n_warning( "请选择商品详情页短链" );
         return false;
     }
     if (isProfit === undefined) {
@@ -1181,13 +1181,13 @@ function validTmp() {
     }
 
     if(isProdUrl === '1') {
-        if(contet.indexOf("${商品短链}") === -1) {
-            $MB.n_warning("'商品详情页短链接：是'，文案内容未发现${商品短链}");
+        if(contet.indexOf("${商品详情页短链}") === -1) {
+            $MB.n_warning("'商品详情页短链：是'，文案内容未发现${商品详情页短链}");
             return false;
         }
     }else {
-        if(contet.indexOf("${商品短链}") !== -1) {
-            $MB.n_warning("'商品详情页短链接：否'，文案内容却发现${商品短链}");
+        if(contet.indexOf("${商品详情页短链}") !== -1) {
+            $MB.n_warning("'商品详情页短链：否'，文案内容却发现${商品详情页短链}");
             return false;
         }
     }
@@ -1219,9 +1219,9 @@ function validTmp() {
     let y = smsContent.length;
     let m = smsContent.length;
     let n = smsContent.length;
-    if(smsContent.indexOf('${商品短链}') > -1) {
-        y = y - '${商品短链}'.length + parseInt(PROD_URL_LEN);
-        m = m - '${商品短链}'.length;
+    if(smsContent.indexOf('${商品详情页短链}') > -1) {
+        y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
+        m = m - '${商品详情页短链}'.length;
     }
     if(smsContent.indexOf('${商品名称}') > -1) {
         y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
@@ -1385,12 +1385,11 @@ function testSend() {
     }
     var code = selectRows[0]["code"];
     //根据获取到的数据查询
-    $.getJSON( "/activity/getReplacedTmp?code=" + code, function (resp) {
+    $.getJSON( "/activity/getActivityTemplateContent?code=" + code, function (resp) {
         if (resp.code === 200) {
             $( "#smstemplate_modal" ).modal( 'hide' );
             //更新测试面板
-            $( "#smsName1" ).val( resp.data.name );
-            $( "#smsContent1" ).val( resp.data.content );
+            $( "#smsContent1" ).val( resp.data );
             $( '#send_modal' ).modal( 'show' );
         }
     } )
@@ -1403,43 +1402,34 @@ $( "#send_modal" ).on( 'hidden.bs.modal', function () {
 // 屏蔽测试短信发送
 function sendMessage() {
     //验证
-    var smsContent = $( '#smsContent1' ).val();
+    let phoneNums=[];
+    $("input[name='phoneNum']").each(function(){
+        let temp=$(this).val();
+        if(temp!=='')
+        {
+            phoneNums.push(temp);
+        }
+    })
 
-    if ($( 'input[name="phoneNum"]' ).eq( 0 ).val() === '' && $( 'input[name="phoneNum"]' ).eq( 1 ).val() === '' && $( 'input[name="phoneNum"]' ).eq( 2 ).val() === '') {
-        $MB.n_warning( "手机号不能为空！" );
-        return;
-    }
-    var phoneNum = [];
-    if ($( 'input[name="phoneNum"]' ).eq( 0 ).val() !== '') {
-        phoneNum.push( $( 'input[name="phoneNum"]' ).eq( 0 ).val() );
-    }
-    if ($( 'input[name="phoneNum"]' ).eq( 1 ).val() !== '') {
-        phoneNum.push( $( 'input[name="phoneNum"]' ).eq( 1 ).val() );
-    }
-    if ($( 'input[name="phoneNum"]' ).eq( 2 ).val() !== '') {
-        phoneNum.push( $( 'input[name="phoneNum"]' ).eq( 2 ).val() );
-    }
-    phoneNum = phoneNum.join( ',' );
-    if (null == smsContent || smsContent == '') {
-        $MB.n_warning( "模板内容不能为空！" );
+
+    if(phoneNums.length==0)
+    {
+        $MB.n_warning("至少输入一个手机号！");
         return;
     }
 
-    //判断是否含有变量
-    if (smsContent.indexOf( "$" ) >= 0) {
-        $MB.n_warning( "模板内容的变量请替换为实际值！" );
-        return;
-    }
+    let phoneNum = phoneNums.join(',');
+    let testSmsCode=$("#testSmsCode").val();
 
     //提交后端进行发送
     lightyear.loading( 'show' );
 
     let param = new Object();
     param.phoneNum = phoneNum;
-    param.smsContent = smsContent;
+    param.smsCode = testSmsCode;
 
     $.ajax( {
-        url: "/smsTemplate/testSend",
+        url: "/activity/activityContentTestSend",
         data: param,
         type: 'POST',
         success: function (r) {

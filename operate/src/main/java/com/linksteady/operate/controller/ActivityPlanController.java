@@ -11,6 +11,7 @@ import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.ActivityDetailService;
 import com.linksteady.operate.service.ActivityPlanService;
 import com.linksteady.operate.service.ActivityPushService;
+import com.linksteady.operate.vo.ActivityGroupVO;
 import com.linksteady.operate.vo.ActivityPlanEffectVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,18 +66,18 @@ public class ActivityPlanController {
      * @return
      */
     @GetMapping("/getUserGroupList")
-    public List<ActivityPlanGroup> getUserGroupList(long planId) {
+    public List<ActivityGroupVO> getUserGroupList(long planId) {
         ActivityPlan activityPlan = activityPlanService.getPlanInfo(planId);
         if (null == activityPlan) {
             return Lists.newArrayList();
         }
-        List<ActivityPlanGroup> planGroupInfo = activityPlanService.getPlanGroupList(planId);
+        List<ActivityGroupVO> planGroupInfo = activityPlanService.getPlanGroupList(planId);
 
-        ActivityPlanGroup activityPlanGroup = new ActivityPlanGroup();
-        activityPlanGroup.setGroupId(-1L);
-        activityPlanGroup.setGroupName("合计");
-        activityPlanGroup.setGroupUserNum(planGroupInfo.stream().mapToLong(ActivityPlanGroup::getGroupUserNum).sum());
-        planGroupInfo.add(activityPlanGroup);
+        ActivityGroupVO activityGroupVO = new ActivityGroupVO();
+        activityGroupVO.setGroupId(-1L);
+        activityGroupVO.setGroupName("合计");
+        activityGroupVO.setGroupUserNum(planGroupInfo.stream().mapToLong(ActivityGroupVO::getGroupUserNum).sum());
+        planGroupInfo.add(activityGroupVO);
         return planGroupInfo;
     }
 
@@ -218,14 +219,13 @@ public class ActivityPlanController {
             }
 
             //对文案配置情况进行校验
-            if (activityPushService.validateNotifySms(activityPlan)) {
-                msg = "部分活动机制有商品参与，但是并未配置文案，请先完成文案的配置!";
+            if (activityPushService.validateSmsConfig(activityPlan)) {
+                msg = "活动尚未完成文案的配置，请先完成文案的配置!";
                 return ResponseBo.error(msg);
             }
 
             if (activityPushService.getTransActivityContentLock(activityPlan.getHeadId())) {
                 try {
-                    activityPushService.initPlanGroup(activityPlan);
                     activityPushService.transActivityDetail(activityPlan);
                     return ResponseBo.ok("转化文案成功!");
                 } catch (Exception e) {

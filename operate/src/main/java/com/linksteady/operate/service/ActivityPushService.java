@@ -24,11 +24,6 @@ public interface ActivityPushService {
     void delTransLock();
 
     /**
-     * 初始化成长组
-     */
-    void initPlanGroup(ActivityPlan activityPlan);
-
-    /**
      * 对活动计划进行推送
      * @param pushMethod
      * @param pushPeriod
@@ -40,7 +35,7 @@ public interface ActivityPushService {
     void updatePlanToStop(ActivityPlan activityPlan) throws Exception;
 
     /**
-     * 对活动文案进行配置
+     * 对活动文案的配置进行校验
      */
-    boolean validateNotifySms(ActivityPlan activityPlan);
+    boolean validateSmsConfig(ActivityPlan activityPlan);
 }

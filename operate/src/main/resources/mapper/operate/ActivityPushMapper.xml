@@ -13,12 +13,13 @@
         <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"/>
         <result column="HEAD_ID" jdbcType="VARCHAR" property="headId"/>
         <result column="ACTIVITY_DETAIL_ID" jdbcType="VARCHAR" property="activityDetailId"/>
-        <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="recPiecePrice"/>
         <result column="ACTIVITY_STAGE" jdbcType="VARCHAR" property="activityStage"/>
+        <result column="PLAN_TYPE" jdbcType="VARCHAR" property="planType"/>
         <result column="PLAN_ID" jdbcType="DECIMAL" property="planId"/>
         <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"/>
-        <result column="PROD_ACTIVITY_PROP" jdbcType="VARCHAR" property="prodActivityProp"/>
         <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"/>
+        <result column="ACTIVITY_PROFIT" jdbcType="DECIMAL" property="activityProfit"/>
+        <result column="ACTIVITY_PRICE" jdbcType="DECIMAL" property="activityPrice"/>
     </resultMap>
 
     <delete id="deleteContentTmp">
@@ -37,8 +38,14 @@
     </select>
 
     <select id="getPushCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_DETAIL D,UO_OP_ACTIVITY_PLAN_GROUP G
-        where D.PLAN_ID=G.PLAN_ID AND D.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND D.PLAN_ID = #{planId}::int4
+        select count(1) from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
+       where
+             UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
+        AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
+        AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
+        AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
     </select>
 
     <select id="getPushList" resultMap="activityDetailResult">
@@ -52,20 +59,23 @@
            UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
            UO_OP_ACTIVITY_DETAIL.HEAD_ID,
            UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID,
-           UO_OP_ACTIVITY_DETAIL.REC_PIECE_PRICE,
            UO_OP_ACTIVITY_DETAIL.ACTIVITY_STAGE,
+           UO_OP_ACTIVITY_PLAN.PLAN_TYPE,
            UO_OP_ACTIVITY_DETAIL.ORDER_PERIOD,
-           UO_OP_ACTIVITY_PLAN_GROUP.GROUP_NAME,
-           UO_OP_ACTIVITY_PLAN_GROUP.PROD_ACTIVITY_PROP,
-           UO_OP_ACTIVITY_DETAIL.PLAN_ID
-    from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_PLAN_GROUP
-    where
-        UO_OP_ACTIVITY_DETAIL.PLAN_ID=UO_OP_ACTIVITY_PLAN_GROUP.PLAN_ID
-      AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_PLAN_GROUP.GROUP_ID
-      AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}::int4
-      AND  UO_OP_ACTIVITY_PLAN_GROUP.CHECK_FLAG='Y'
-    ORDER BY UO_OP_ACTIVITY_DETAIL.GROUP_ID ASC,UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID ASC
-    limit #{limit} offset #{offset}
+           UO_OP_ACTIVITY_GROUP.GROUP_NAME,
+           UO_OP_ACTIVITY_DETAIL.PLAN_ID,
+           UO_OP_ACTIVITY_DETAIL.ACTIVITY_PROFIT,
+           UO_OP_ACTIVITY_DETAIL.ACTIVITY_PRICE
+    from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_PLAN,UO_OP_ACTIVITY_GROUP
+        where
+             UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
+        AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
+        AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
+        AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+        ORDER BY UO_OP_ACTIVITY_DETAIL.GROUP_ID ASC,UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID ASC
+        limit #{limit} offset #{offset}
     </select>
 
     <insert id="insertPushContentTemp">
@@ -114,89 +124,35 @@
             IS_PUSH,
             PUSH_SCHEDULING_DATE
         )
-        SELECT T.SMS_CONTENT,
+        SELECT UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
                'P',
                'ACTIVITY',
-               T.ACTIVITY_DETAIL_ID,
-               T.USER_PHONE,
+               UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID,
+               UO_OP_ACTIVITY_DETAIL.USER_PHONE,
                '0',
-               PUSH_SCHEDULING_DATE
-        FROM UO_OP_ACTIVITY_DETAIL T ,UO_OP_ACTIVITY_PLAN_GROUP G
-        where  T.PLAN_ID=G.PLAN_ID AND T.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND T.plan_id = #{planId}::int4
+               UO_OP_ACTIVITY_DETAIL.PUSH_SCHEDULING_DATE
+        FROM UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
+       where
+             UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
+        AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
+        AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
+        AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
     </insert>
 
     <update id="updatePushMethod">
         update UO_OP_ACTIVITY_PLAN set
                       PUSH_METHOD = #{pushMethod},PUSH_PERIOD=#{pushPeriod}
-        where plan_id = #{planId}::int4
+        where plan_id = #{planId}
     </update>
 
-
-    <select id="validateNotifySms" resultType="int">
-        select count(*) from uo_op_activity_product p where p.head_id=#{headId} and p.group_id not in (
-            select p2.group_id from uo_op_activity_group p2 where p2.head_id=#{headId}::int4
-             and p2.activity_type=#{activityType}
-             and p2.activity_stage=#{activityStage} and p2.check_flag='Y'
-        ) t
+    <select id="validateSmsConfig" resultType="int">
+        select count(*) from UO_OP_ACTIVITY_GROUP
+          where head_id=#{headId}
+            and activity_stage=#{activityStage}
+            and activity_type=#{planType}
+            and sms_template_code is null
     </select>
 
-    <delete id="deletePlanGroup">
-        delete from UO_OP_ACTIVITY_PLAN_GROUP where plan_id = #{planId}::int4
-    </delete>
-
-    <insert id="insertActivityPlanGroup">
-        INSERT INTO UO_OP_ACTIVITY_PLAN_GROUP
-        (
-            head_id,
-            plan_id,
-            group_id,
-            group_name,
-            PROD_ACTIVITY_PROP,
-            check_allow,
-            check_flag,
-            group_usernum,
-            check_allow_desc,
-            activity_stage,
-            activity_type
-        )
-        SELECT
-            HEAD_ID,PLAN_ID,F1.GROUP_ID,GROUP_NAME,PROD_ACTIVITY_PROP,'Y',F1.check_flag,coalesce(USER_NUM,0) USER_NUM,'',activity_stage,activity_type
-        FROM (
-                 SELECT G1.HEAD_ID,PLAN_ID,G1.GROUP_ID,G1.GROUP_NAME,G1.PROD_ACTIVITY_PROP,G1.check_flag,G1.activity_stage,G1.activity_type
-                 FROM UO_OP_ACTIVITY_GROUP G1, UO_OP_ACTIVITY_PLAN P
-                 WHERE G1.HEAD_ID = P.HEAD_ID
-                   AND G1.ACTIVITY_STAGE = P.ACTIVITY_STAGE
-                   AND G1.ACTIVITY_TYPE = P.PLAN_TYPE
-                   AND P.PLAN_ID=#{planId}::int4) F1
-             left join (SELECT GROUP_ID,COUNT(*) USER_NUM FROM UO_OP_ACTIVITY_DETAIL WHERE PLAN_ID=#{planId} GROUP BY GROUP_ID) F2
-        on F1.GROUP_ID=F2.GROUP_ID
-        ORDER BY F1.GROUP_ID ASC
-    </insert>
-
-    <update id="updateActivityPlanGroup">
-        UPDATE UO_OP_ACTIVITY_PLAN_GROUP T SET T.CHECK_ALLOW='N',T.CHECK_ALLOW_DESC='无参加此活动机制的商品' where GROUP_ID NOT IN (
-            SELECT DISTINCT GROUP_ID FROM UO_OP_ACTIVITY_PRODUCT P WHERE P.HEAD_ID=T.HEAD_ID
-            ) AND T.PLAN_ID=#{planId}::int4 and PROD_ACTIVITY_PROP='Y'
-    </update>
-
-    <update id="updateActivityPlanGroup2">
-        UPDATE UO_OP_ACTIVITY_PLAN_GROUP T
-        SET T
-            .
-            CHECK_ALLOW =
-            'N',
-            T
-            .
-            CHECK_ALLOW_DESC =
-            '未配置文案'
-        where EXISTS (SELECT 1
-            FROM UO_OP_ACTIVITY_GROUP P
-            WHERE P.HEAD_ID = T.HEAD_ID
-            AND P.PROD_ACTIVITY_PROP = 'N'
-            AND P.ACTIVITY_TYPE = T.ACTIVITY_STAGE
-            AND P.ACTIVITY_STAGE = T.ACTIVITY_TYPE
-            AND T.PLAN_ID = #{planId}::int4
-            AND T.PROD_ACTIVITY_PROP = 'N'
-            )
-    </update>
 </mapper>

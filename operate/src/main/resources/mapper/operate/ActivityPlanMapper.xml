@@ -45,16 +45,12 @@
         <result property="convertDate" jdbcType="VARCHAR" column="CONVERT_DATE"></result>
     </resultMap>
 
-    <resultMap id="planGroupResult" type="com.linksteady.operate.domain.ActivityPlanGroup">
+    <resultMap id="activityGroupVOResult" type="com.linksteady.operate.vo.ActivityGroupVO">
         <result property="planId" column="PLAN_ID" jdbcType="DECIMAL"/>
         <result property="headId" column="HEAD_ID" jdbcType="DECIMAL"/>
         <result property="groupId" column="GROUP_ID" jdbcType="DECIMAL"/>
         <result property="groupName" column="GROUP_NAME" jdbcType="VARCHAR"/>
-        <result property="prodActivityProp" column="PROD_ACTIVITY_PROP" jdbcType="VARCHAR"/>
-        <result property="checkAllow" column="CHECK_ALLOW" jdbcType="VARCHAR"/>
-        <result property="checkFlag" column="CHECK_FLAG" jdbcType="VARCHAR"/>
         <result property="groupUserNum" column="GROUP_USERNUM" jdbcType="DECIMAL"/>
-        <result property="checkAllowDesc" column="CHECK_ALLOW_DESC" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="smsStatisResult" type="com.linksteady.operate.vo.SmsStatisVO">
@@ -115,38 +111,61 @@
         delete from UO_OP_ACTIVITY_PLAN where head_id = #{headId}::int4
     </delete>
 
-    <delete id="deletePlanGroup">
-        delete from UO_OP_ACTIVITY_PLAN_GROUP where head_id = #{headId}::int4
-    </delete>
-
-    <select id="getPlanGroupList" resultMap="planGroupResult">
-        SELECT
-            HEAD_ID          ,
-            PLAN_ID          ,
-            GROUP_ID         ,
-            GROUP_NAME       ,
-            PROD_ACTIVITY_PROP ,
-            CHECK_ALLOW      ,
-            CHECK_FLAG       ,
-            GROUP_USERNUM    ,
-            INSERT_DT        ,
-            CHECK_ALLOW_DESC
-        FROM UO_OP_ACTIVITY_PLAN_GROUP WHERE PLAN_ID=#{planId}::int4 AND CHECK_FLAG='Y'
-        ORDER BY GROUP_ID ASC
+    <select id="getPlanGroupList" resultMap="activityGroupVOResult">
+         select
+               UO_OP_ACTIVITY_DETAIL.HEAD_ID,
+               UO_OP_ACTIVITY_DETAIL.PLAN_ID,
+               UO_OP_ACTIVITY_GROUP.GROUP_ID,
+               UO_OP_ACTIVITY_GROUP.GROUP_NAME,
+               COUNT(UO_OP_ACTIVITY_DETAIL.activity_detail_id) GROUP_USERNUM
+          from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
+               where
+                     UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
+                AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
+                AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
+                AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
+                AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
+                AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+          GROUP BY UO_OP_ACTIVITY_DETAIL.HEAD_ID,
+                   UO_OP_ACTIVITY_DETAIL.PLAN_ID,
+                   UO_OP_ACTIVITY_GROUP.GROUP_ID,
+                   UO_OP_ACTIVITY_GROUP.GROUP_NAME
+          ORDER BY UO_OP_ACTIVITY_GROUP.GROUP_ID ASC
     </select>
 
     <select id="getPlanSmsContentListCount" resultType="int">
         SELECT count(*) FROM (
-              select T.SMS_CONTENT,COUNT(*) CNT from UO_OP_ACTIVITY_DETAIL T,UO_OP_ACTIVITY_PLAN_GROUP G
-              WHERE T.PLAN_ID=G.PLAN_ID AND T.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND T.PLAN_ID=#{planId}::int4 GROUP BY T.SMS_CONTENT) v
+                 select
+                           UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
+                           COUNT(UO_OP_ACTIVITY_DETAIL.activity_detail_id) CNT
+                      from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
+                           where
+                                 UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
+                            AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
+                            AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
+                            AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
+                            AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
+                            AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+                      GROUP BY UO_OP_ACTIVITY_DETAIL.SMS_CONTENT
+              ) v
     </select>
 
     <select id="getPlanSmsContentList" resultMap="smsStatisResult">
       SELECT SMS_CONTENT, CNT, LENGTH(SMS_CONTENT) SMSLENGTH
-      FROM (select T.SMS_CONTENT, COUNT(*) CNT
-            from UO_OP_ACTIVITY_DETAIL T,UO_OP_ACTIVITY_PLAN_GROUP G
-            WHERE T.PLAN_ID=G.PLAN_ID AND T.GROUP_ID=G.GROUP_ID AND G.CHECK_FLAG='Y' AND T.PLAN_ID=#{planId}::int4
-            GROUP BY T.SMS_CONTENT) v
+      FROM (
+             select
+                   UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
+                   COUNT(UO_OP_ACTIVITY_DETAIL.activity_detail_id) CNT
+              from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
+                   where
+                         UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
+                    AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
+                    AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
+                    AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
+                    AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
+                    AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+              GROUP BY UO_OP_ACTIVITY_DETAIL.SMS_CONTENT
+      ) v
       ORDER BY CNT DESC,SMS_CONTENT ASC
       limit #{limit} offset #{offset}
     </select>

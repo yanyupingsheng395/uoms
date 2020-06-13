@@ -257,13 +257,6 @@
           and CHECK_FLAG = 'Y'
     </select>
 
-    <select id="getProductPriceList" resultMap="base">
-        SELECT (CASE WHEN #{activityType} = 'NOTIFY' THEN NOTIFY_MIN_PRICE ELSE MIN_PRICE END) MIN_PRICE, EPB_PRODUCT_ID
-        FROM UO_OP_ACTIVITY_PRODUCT P
-        WHERE HEAD_ID = #{headId}::int4
-          and CHECK_FLAG = 'Y'
-    </select>
-
     <select id="checkProductId" resultType="int">
         select count(1) from uo_op_activity_product where head_id = #{headId}::integer and activity_stage = #{activityStage}
         <if test="activityType != null and activityType != 'ALL'">

@@ -1064,12 +1064,11 @@ function testSend() {
     }
     var code = selectRows[0]["code"];
     //根据获取到的数据查询
-    $.getJSON( "/activity/getReplacedTmp?code=" + code, function (resp) {
+    $.getJSON( "/activity/getActivityTemplateContent?code=" + code, function (resp) {
         if (resp.code === 200) {
             $( "#smstemplate_modal" ).modal( 'hide' );
             //更新测试面板
-            $( "#smsName1" ).val( resp.data.name );
-            $( "#smsContent1" ).val( resp.data.content );
+            $( "#smsContent1" ).val( resp.data );
             $( '#send_modal' ).modal( 'show' );
         }
     } )

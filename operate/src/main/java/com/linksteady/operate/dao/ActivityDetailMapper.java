@@ -12,9 +12,9 @@ import java.util.Map;
  */
 public interface ActivityDetailMapper {
 
-    List<ActivityDetail> getPageList(int limit, int offset, Long  planId);
-
     int getDataCount(Long planId);
+
+    List<ActivityDetail> getPageList(int limit, int offset, Long  planId);
 
     /**
      * 查询出所有文案为空的记录的条数

@@ -16,17 +16,14 @@ public class TransActivityContentThread  implements Callable {
 
     int start;
     int end;
-
     Long planId;
     Map<String,String> templateMap;
-    Map<String,Double> prodPriceMap;
 
-    public TransActivityContentThread(Long planId, int start, int end,Map<String,String> templateMap,Map<String,Double> prodPriceMap) {
+    public TransActivityContentThread(Long planId, int start, int end,Map<String,String> templateMap) {
         this.planId=planId;
         this.start = start;
         this.end = end;
         this.templateMap=templateMap;
-        this.prodPriceMap=prodPriceMap;
     }
 
     @Override
@@ -40,7 +37,7 @@ public class TransActivityContentThread  implements Callable {
             list = activityPushMapper.getPushList(end - start + 1,start-1,planId);
 
             //转换文案
-            List<ActivityContentVO> targetList = activityPushService.processVariable(list,templateMap,prodPriceMap);
+            List<ActivityContentVO> targetList = activityPushService.processVariable(list,templateMap);
             log.info("{}的第{}-{}调记录处理完成",planId,start, end);
             return targetList;
         } catch (Exception e) {

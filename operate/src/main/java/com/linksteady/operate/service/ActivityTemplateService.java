@@ -20,7 +20,12 @@ public interface ActivityTemplateService {
 
     void update(ActivityTemplate activityTemplate);
 
-    ActivityTemplate getReplacedTmp(String code);
+    /**
+     * 获取活动文案的预览
+     * @param code
+     * @return
+     */
+    String getActivityTemplateContent(String code,String scene);
 
     List<ActivityTemplate> getSmsTemplateList(ActivityTemplate activityTemplate);
 }
