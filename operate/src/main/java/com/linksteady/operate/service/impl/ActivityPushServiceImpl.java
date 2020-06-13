@@ -244,7 +244,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
             }
 
             //替换利益点
-            smsContent = smsContent.replace("${商品利益点}", String.valueOf(activityDetail.getActivityProfit()));
+            smsContent = smsContent.replace("${商品利益点}", getActivityProfilt(activityDetail.getActivityProfit(),activityDetail.getGroupId()));
 
             //判断是否需要加上签名及退订方式
             //获取签名
@@ -275,6 +275,16 @@ public class ActivityPushServiceImpl implements ActivityPushService {
             targetList.add(activityContentVO);
         }
         return targetList;
+    }
+
+    private String getActivityProfilt(double activityProfit,String groupId)
+    {
+        if("9".equals(groupId))
+        {
+            return activityProfit*10+"折";
+        }else {
+            return activityProfit+"元";
+        }
     }
 
     /**
