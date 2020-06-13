@@ -212,7 +212,16 @@ function getUserGroupTable(planId,planType) {
     var columns=initGroupColumn(planType);
     $("#userGroupTable").bootstrapTable('destroy').bootstrapTable({
         url: '/activityPlan/getUserGroupList',
-        columns: columns,
+        columns: [
+            {
+                field: 'groupName',
+                title: '店铺活动机制'
+            }, {
+                field: 'groupUserNum',
+                title: '人数（人）',
+                align: 'center'
+            }
+        ],
         fixedColumns: false,
         queryParams : function(params) {
             return {
@@ -222,77 +231,6 @@ function getUserGroupTable(planId,planType) {
     });
 }
 
-/**
- * 初始化成长组的列
- * @param planType
- * @returns {Array}
- */
-function initGroupColumn(planType) {
-     var cols=[];
-     cols.push( {
-         field: 'prodActivityProp',
-         title: '成长商品活动属性',
-         align: "center",
-         formatter: function (value, row, index) {
-            if(value==='Y')
-            {
-                return '是';
-            }else if(value==='N')
-            {
-                return '否';
-            }else
-            {
-                return '-';
-            }
-         }
-     });
-     if(planType==='NOTIFY')
-     {
-         cols.push({
-             field: 'groupName',
-             title: '成长商品活动机制',
-             formatter: function (value, row, index) {
-                 if(row.groupId===-1)
-                 {
-                     return  '<strong>'+value+'</strong>';
-                 }else
-                 {
-                     return value;
-                 }
-             }
-         });
-     }else
-     {
-         cols.push({
-             field: 'groupName',
-             title: '推荐用户商品策略',
-             formatter: function (value, row, index) {
-                 if(row.groupId===-1)
-                 {
-                     return  '<strong>'+value+'</strong>';
-                 }else
-                 {
-                     return value;
-                 }
-             }
-         });
-     }
-     cols.push(  {
-         field: 'groupUserNum',
-         title: '人数（人）',
-         align: 'center',
-         formatter: function (value, row, index) {
-             if(row.groupId===-1)
-             {
-                 return  '<strong>'+value+'</strong>';
-             }else
-             {
-                 return value;
-             }
-         }
-     });
-     return cols;
-}
 
 /**
  * 获取短信统计的表格
@@ -345,7 +283,36 @@ function getUserDetail(){
                 param: {planId: planId}
             };
         },
-        columns: columns,
+        columns: [
+            {field: 'epbProductId', title: '商品ID'},
+            {field: 'epbProductName', title: '商品名称'},
+            {field: 'userId', title: '用户ID'},
+            {
+                field: 'groupName',
+                title: '店铺活动机制'
+            },
+            {field: 'orderPeriod', title: '建议推送时段'},
+            {
+                field: 'smsContent',
+                title: '推送内容',
+                formatter: function (value, row, index) {
+                    if (value != null && value != undefined) {
+                        let temp = value.length > 20 ? value.substring(0, 20) + "..." : value;
+                        return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
+                    } else {
+                        return '-';
+                    }
+                }
+            }
+            //{
+            //     title: '成长洞察',
+            //     width: 80,
+            //     formatter: function (value, row, idx)
+            //     {
+            //         return "<button class='btn btn-primary btn-xs' onclick='growthInsight(\""+row['userId']+"\",\""+ headId+"\")'>know how</button>";
+            //     }
+            // }
+        ],
         fixedColumns: false,
         onLoadSuccess: function () {
             $("a[data-toggle='tooltip']").tooltip();
@@ -353,66 +320,6 @@ function getUserDetail(){
     };
     $("#userDetailTable").bootstrapTable('destroy').bootstrapTable(settings);
 }
-
-function initDetailColumns(planType)
-{
-    var cols=[];
-    cols.push({field: 'epbProductId', title: '商品ID'});
-    cols.push({field: 'epbProductName', title: '商品名称'});
-    cols.push({field: 'userId', title: '用户ID'});
-    cols.push({field: 'prodActivityProp', title: '成长商品活动属性',align: "center",
-        formatter: function (value, row, index) {
-            if(value==='Y')
-            {
-                return '是';
-            }else if(value==='N')
-            {
-                return '否';
-            }else
-            {
-                return '-';
-            }
-        }
-    });
-    if(planType==='NOTIFY')
-    {
-        cols.push({
-            field: 'groupName',
-            title: '成长商品活动机制'
-        });
-    }else
-    {
-        cols.push({
-            field: 'groupName',
-            title: '推荐用户商品策略'
-        });
-    }
-
-    cols.push({field: 'orderPeriod', title: '建议推送时段'});
-    cols.push({
-        field: 'smsContent',
-        title: '推送内容',
-        formatter: function (value, row, index) {
-            if (value != null && value != undefined) {
-                let temp = value.length > 20 ? value.substring(0, 20) + "..." : value;
-                return '<a style=\'color: #000000;cursor: pointer;\' data-toggle="tooltip" data-html="true" title="" data-original-title="' + value + '">' + temp + '</a>';
-            } else {
-                return '-';
-            }
-        }
-    });
-
-    // cols.push({
-    //     title: '成长洞察',
-    //     width: 80,
-    //     formatter: function (value, row, idx)
-    //     {
-    //         return "<button class='btn btn-primary btn-xs' onclick='growthInsight(\""+row['userId']+"\",\""+ headId+"\")'>know how</button>";
-    //     }
-    // });
-    return cols;
-}
-
 
 /**
  * 如果推送方式是固定时间，则让选择要推送的时间

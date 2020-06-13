@@ -723,19 +723,6 @@ function getGroupList(stage, type, tableId) {
         },
         columns: [
             {
-                field: 'prodActivityProp',
-                title: '成长商品活动属性',
-                formatter: function (value, row, index) {
-                    if(value === 'Y') {
-                        return "是";
-                    }
-                    if(value === 'N') {
-                        return "否";
-                    }
-                    return "-";
-                }
-            },
-            {
                 field: 'groupName',
                 title: groupName
             }, {
@@ -756,16 +743,7 @@ function getGroupList(stage, type, tableId) {
             },{
                 field: 'checkComments',
                 title: '失败原因'
-            }],
-        onLoadSuccess: function () {
-            var n = 0;
-            if(tableId === 'table1') {
-                n = 4;
-            }else if(tableId === 'table5') {
-                n = 2;
-            }
-            $( "#" + tableId ).bootstrapTable('mergeCells',{index:0, field:"prodActivityProp", colspan: 1, rowspan: n})
-        }
+            }]
     };
     $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
