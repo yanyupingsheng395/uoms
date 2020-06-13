@@ -288,7 +288,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             }
 
             //判断是否含有产品详情页链接
-            if(null!=smsContent&&smsContent.indexOf("${PROD_URL}")!=-1)
+            if(null!=smsContent&&smsContent.indexOf("${商品详情页短链}")!=-1)
             {
                 //获取商品的短链
                 String prodLongUrl=shortUrlService.genProdShortUrlByProdId(dailyDetail1.getRecProdId(),"S");

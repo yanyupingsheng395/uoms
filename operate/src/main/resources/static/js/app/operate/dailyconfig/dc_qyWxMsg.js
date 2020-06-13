@@ -48,7 +48,6 @@ function getWxMsgTableData(qywxId) {
 }
 
 function hiddenPersonalContent() {
-    // $('input[name="materialType"]:checked').val();
     if($('input[name="isPersonal"]:checked').val() === '1') {
         $("#materialTypeDiv").attr("style", "display:none;");
         $("#materialContentDiv").attr("style", "display:none;");
@@ -92,55 +91,55 @@ function qywxValid() {
     }
 
     if(productName === '0') {
-        if(smsContent.indexOf("${PROD_NAME}") > -1) {
-            $MB.n_warning("选择'商品名称:否'，文案内容不能出现${PROD_NAME}");
+        if(smsContent.indexOf("${商品名称}") > -1) {
+            $MB.n_warning("选择'商品名称:否'，文案内容不能出现${商品名称}");
             return false;
         }
     }
 
     if(productUrl === '0') {
-        if(smsContent.indexOf("${{RPD_URL}") > -1) {
-            $MB.n_warning("选择'商品详情页链接:否'，文案内容不能出现${PROD_URL}");
+        if(smsContent.indexOf("${{商品详情页短链}") > -1) {
+            $MB.n_warning("选择'商品详情页链接:否'，文案内容不能出现${商品详情页短链}");
             return false;
         }
     }
 
     if(couponUrl === '0') {
-        if(smsContent.indexOf("${COUPON_URL}") > -1) {
-            $MB.n_warning("选择'补贴短链接:否'，文案内容不能出现${COUPON_URL}");
+        if(smsContent.indexOf("${补贴短链}") > -1) {
+            $MB.n_warning("选择'补贴短链接:否'，文案内容不能出现${补贴短链}");
             return false;
         }
     }
     if(couponName === '0') {
-        if(smsContent.indexOf("${COUPON_NAME}") > -1) {
-            $MB.n_warning("选择'补贴名称:否'，文案内容不能出现${COUPON_NAME}");
+        if(smsContent.indexOf("${补贴名称}") > -1) {
+            $MB.n_warning("选择'补贴名称:否'，文案内容不能出现${补贴名称}");
             return false;
         }
     }
 
     if(productName === '1') {
-        if(smsContent.indexOf("${PROD_NAME}") == -1) {
-            $MB.n_warning("选择'商品名称:是'，文案内容没有发现${PROD_NAME}");
+        if(smsContent.indexOf("${商品名称}") == -1) {
+            $MB.n_warning("选择'商品名称:是'，文案内容没有发现${商品名称}");
             return false;
         }
     }
 
     if(productUrl === '1') {
-        if(smsContent.indexOf("${{RPD_URL}") == -1) {
-            $MB.n_warning("选择'商品详情页链接:是'，文案内容没有发现${PROD_URL}");
+        if(smsContent.indexOf("${{商品详情页短链}") == -1) {
+            $MB.n_warning("选择'商品详情页链接:是'，文案内容没有发现${商品详情页短链}");
             return false;
         }
     }
 
     if(couponUrl === '1') {
-        if(smsContent.indexOf("${COUPON_URL}") == -1) {
-            $MB.n_warning("选择'补贴短链接:是'，文案内容没有发现${COUPON_URL}");
+        if(smsContent.indexOf("${补贴短链}") == -1) {
+            $MB.n_warning("选择'补贴短链接:是'，文案内容没有发现${补贴短链}");
             return false;
         }
     }
     if(couponName === '1') {
-        if(smsContent.indexOf("${COUPON_NAME}") == -1) {
-            $MB.n_warning("选择'补贴名称:是'，文案内容没有发现${COUPON_NAME}");
+        if(smsContent.indexOf("${补贴名称}") == -1) {
+            $MB.n_warning("选择'补贴名称:是'，文案内容没有发现${补贴名称}");
             return false;
         }
     }

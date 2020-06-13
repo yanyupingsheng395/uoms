@@ -201,7 +201,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
 
             //文案内容
             String textContent = qywxDailyDetail.getTextContent();
-            textContent = textContent.replace("${PROD_NAME}", convertNullToEmpty(qywxDailyDetail.getRecProdName()));
+            textContent = textContent.replace("${商品名称}", convertNullToEmpty(qywxDailyDetail.getRecProdName()));
 
             //判断当前组是否含券 1表示含券，匹配优惠券信息
             if(1==qywxDailyDetail.getIsCoupon())
@@ -268,8 +268,8 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
                 }
                 if(null!=couponTemp)
                 {
-                    textContent = textContent.replace("${COUPON_URL}", convertNullToEmpty(couponTemp.getCouponUrl()));
-                    textContent = textContent.replace("${COUPON_NAME}", convertNullToEmpty(couponTemp.getCouponDisplayName()));
+                    textContent = textContent.replace("${补贴短链}", convertNullToEmpty(couponTemp.getCouponUrl()));
+                    textContent = textContent.replace("${补贴名称}", convertNullToEmpty(couponTemp.getCouponDisplayName()));
 
                     temp.setCouponId(couponTemp.getCouponId());
                     temp.setCouponDeno(String.valueOf(couponTemp.getCouponDenom()));
@@ -286,14 +286,14 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
             }
 
             //判断是否含有产品详情页链接
-            if(null!=textContent&&textContent.indexOf("${PROD_URL}")!=-1)
+            if(null!=textContent&&textContent.indexOf("${商品详情页短链}")!=-1)
             {
                 //获取商品的短链
                 String prodLongUrl=shortUrlService.genProdShortUrlByProdId(qywxDailyDetail.getRecProdId(),"S");
                 //如果短链生成错误，则不再进行替换
                 if(!"error".equals(prodLongUrl))
                 {
-                    textContent = textContent.replace("${PROD_URL}",prodLongUrl);
+                    textContent = textContent.replace("${商品详情页短链}",prodLongUrl);
                 }
             }
 
