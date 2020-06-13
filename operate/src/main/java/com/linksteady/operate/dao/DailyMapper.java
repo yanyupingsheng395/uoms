@@ -24,10 +24,6 @@ public interface DailyMapper {
 
     DailyHead getDailyHeadById(Long headId);
 
-    List<DailyGroupTemplate> getUserGroupList(@Param("activeList") List<String> activeList);
-
-    void setSmsCode(String groupId, String smsCode);
-
     int validUserGroup();
 
     DailyHead getEffectById(Long id);
@@ -121,8 +117,6 @@ public interface DailyMapper {
      * @return
      */
     int getValidDailyHead();
-
-    void updateSmsCodeNull(String smsCode);
 
     /**
      * 每日运营任务失效

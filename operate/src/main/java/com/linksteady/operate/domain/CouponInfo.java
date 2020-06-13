@@ -1,10 +1,6 @@
 package com.linksteady.operate.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.Table;
 
 @Data
 public class CouponInfo {

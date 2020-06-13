@@ -9,7 +9,9 @@ import java.util.List;
  */
 public interface SmsTemplateService {
 
-    List<SmsTemplate> getSmsTemplateList(int limit, int offset, String groupId);
+    List<SmsTemplate> selectSmsTemplateListWithGroup(int limit, int offset, long groupId);
+
+    List<SmsTemplate> selectSmsTemplateList(int limit, int offset);
 
     int getTotalCount();
 
@@ -19,7 +21,15 @@ public interface SmsTemplateService {
 
     void deleteSmsTemplate(String smsCode);
 
-    SmsTemplate getSmsTemplate(String smsCode);
+    /**
+     * 获取文案的内容
+     * @param smsCode
+     * @param scene DISPLAY 显示 SEND 发送
+     * @return
+     */
+    String getSmsContent(String smsCode,String scene);
+
+
 
     SmsTemplate getSmsTemplateBySmsCode(String smsCode);
 

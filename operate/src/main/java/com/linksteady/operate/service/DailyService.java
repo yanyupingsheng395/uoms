@@ -34,9 +34,6 @@ public interface DailyService {
      */
     Map<String, Object> getPushData(Long headId);
 
-    List<DailyGroupTemplate> getUserGroupList();
-
-    void setSmsCode(String groupId, String smsCode);
 
     List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int limit, int offset, String headId);
 
@@ -58,7 +55,7 @@ public interface DailyService {
 
     int getValidDailyHead();
 
-    void updateSmsCodeNull(String smsCode);
+//    void updateSmsCodeNull(String smsCode);
 
     Map<String, Object> getUserStatsData(Long headId);
 

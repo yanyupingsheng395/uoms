@@ -184,7 +184,7 @@ function gotoConfig() {
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
         content: "去完成配置？"
     }, function () {
-        location.href = "/page/daily/config";
+        location.href = "../../../../../config";
     });
 }
 

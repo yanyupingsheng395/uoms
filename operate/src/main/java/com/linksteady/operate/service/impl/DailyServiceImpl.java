@@ -143,20 +143,6 @@ public class DailyServiceImpl implements DailyService {
         return result;
     }
 
-    @Override
-    public List<DailyGroupTemplate> getUserGroupList() {
-        String active = configService.getValueByName("op.daily.pathactive.list");
-        List<String> activeList = null;
-        if (StringUtils.isNotEmpty(active)) {
-            activeList = Arrays.asList(active.split(","));
-        }
-        return dailyMapper.getUserGroupList(activeList);
-    }
-
-    @Override
-    public void setSmsCode(String groupId, String smsCode) {
-        dailyMapper.setSmsCode(groupId, smsCode);
-    }
 
     @Override
     public List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int limit, int offset, String headId) {
@@ -197,11 +183,6 @@ public class DailyServiceImpl implements DailyService {
         return dailyMapper.getValidDailyHead();
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateSmsCodeNull(String smsCode) {
-        dailyMapper.updateSmsCodeNull(smsCode);
-    }
 
     /**
      * 获取推送预览的数据

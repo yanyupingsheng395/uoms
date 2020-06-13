@@ -86,6 +86,7 @@ public class DailyTaskController {
         int offset = request.getOffset();
         String headId = request.getParam().get("headId");
         List<DailyDetail> dataList = dailyDetailService.getStrategyPageList(limit, offset, headId);
+
         int count = dailyDetailService.getStrategyCount(headId);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
@@ -277,48 +278,6 @@ public class DailyTaskController {
     @GetMapping("/getPushData")
     public ResponseBo getPushData(@RequestParam("headId") Long headId) {
         return ResponseBo.okWithData(null, dailyService.getPushData(headId));
-    }
-
-
-    /**
-     * 每日成长任务用户群组设置短信内容
-     *
-     * @param groupId
-     * @param smsCode
-     * @return
-     */
-    @GetMapping("/setSmsCode")
-    public ResponseBo setSmsCode(@RequestParam String groupId, @RequestParam String smsCode) {
-        dailyService.setSmsCode(groupId, smsCode);
-        return ResponseBo.ok();
-        // 判断该群组是否已经设置了文案，且是否有券这个标记与待设置文案的一致。
-        // 判断是否设置了文案
-//        Map<String, Object> validMap = dailyService.getSelectedUserGroup(groupId);
-//        if ((null == validMap.get("SMS_CODE")) || StringUtils.isEmpty(validMap.get("SMS_CODE").toString())) {
-//            dailyService.setSmsCode(groupId, smsCode);
-//            return ResponseBo.ok();
-//        } else {
-//            String isCoupon = validMap.get("IS_COUPON").toString();
-//            int count1 = dailyService.getSmsIsCoupon(smsCode, isCoupon);
-//            int count2 = dailyService.getValidDailyHead();
-//            if (count1 > 0) {// 所选的与之前一致
-//                dailyService.setSmsCode(groupId, smsCode);
-//                return ResponseBo.ok();
-//            } else {
-//                if (count2 == 0) { // 不存在待运营的每日运营
-//                    dailyService.setSmsCode(groupId, smsCode);
-//                    return ResponseBo.ok();
-//                } else {
-//                    String msg = "";
-//                    if ("1".equalsIgnoreCase(isCoupon)) {
-//                        msg = "不允许将含券文案修改为不含券文案。";
-//                    } else {
-//                        msg = "不允许将不含券文案修改为含券文案。";
-//                    }
-//                    return ResponseBo.error("今天每日运营尚未完成推送，" + msg);
-//                }
-//            }
-//        }
     }
 
     /**

@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.DailyConfigMapper">
+    <resultMap id="templateResult" type="com.linksteady.operate.domain.DailyGroupTemplate">
+        <result column="GROUP_ID" jdbcType="VARCHAR" property="groupId"></result>
+        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
+        <result column="SMS_CODE" jdbcType="VARCHAR" property="smsCode"></result>
+        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"></result>
+        <result column="IS_COUPON" jdbcType="VARCHAR" property="isCoupon"></result>
+        <result column="COUPON_NAME" jdbcType="VARCHAR" property="couponName"></result>
+        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"></result>
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"></result>
+        <result column="LIFECYCLE" jdbcType="VARCHAR" property="lifecycle"></result>
+        <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"></result>
+        <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"></result>
+        <result column="GROUP_INFO" jdbcType="VARCHAR" property="groupInfo"></result>
+        <result column="tar_type" jdbcType="VARCHAR" property="tarType"></result>
+        <result column="wxpub_id" jdbcType="VARCHAR" property="wxpubId"></result>
+        <result column="qywx_id" jdbcType="VARCHAR" property="qywxId"></result>
+        <result column="sms_op_flag" jdbcType="VARCHAR" property="smsOpFlag"></result>
+        <result column="qywx_op_flag" jdbcType="VARCHAR" property="qywxOpFlag"></result>
+        <result column="sms_op_dt" jdbcType="TIMESTAMP" property="smsOpDt" />
+        <result column="qywx_op_dt" jdbcType="TIMESTAMP" property="qywxOpDt" />
+    </resultMap>
+
+    <select id="getUserGroupList" resultMap="templateResult">
+        select lifecycle,
+               user_value,
+               path_active,
+               min(sms_code) sms_code,
+               min(wxpub_id) wxpub_id,
+               min(qywx_id) qywx_id,
+               min(group_id) group_id,
+               max(sms_op_flag) sms_op_flag,
+               max(sms_op_dt) sms_op_dt,
+               max(qywx_op_flag) qywx_op_flag,
+               max(qywx_op_dt) qywx_op_dt
+        from uo_op_daily_template_config where
+        path_active in
+        <foreach collection="activeList" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+        group by lifecycle, user_value, path_active
+        order by user_value asc, lifecycle desc, path_active asc
+    </select>
+
     <update id="updateCheckFlagY">
         update UO_OP_DAILY_TEMPLATE_CONFIG set CHECK_FLAG = 'Y', CHECK_COMMENTS = ''
     </update>
@@ -25,29 +68,42 @@
         </foreach>
     </select>
 
-    <update id="deleteSmsGroup">
-        update UO_OP_DAILY_TEMPLATE_CONFIG set SMS_CODE = null  where GROUP_ID in
-        <foreach collection="list" separator="," open="(" close=")" item="item">
-            #{item}::int4
-        </foreach>
-    </update>
-
     <update id="updateWxMsgId">
         update uo_op_daily_template_config t1
-        set qywx_id = #{qywxId}::integer
-        where group_id in (
-            select t1.group_id
-            from uo_op_daily_template_config t1,
+        set qywx_id = #{qywxId},
+            qywx_op_flag='Y',
+            qywx_op_dt=now()
+        where (user_value,path_active,lifecycle) in (
+            select user_value,path_active,lifecycle
+            from
                  uo_op_daily_template_config t2
-            where t1.user_value = t2.user_value
-              and t1.lifecycle = t2.lifecycle
-              and t1.path_active = t2.path_active and t2.group_id = #{groupId}::integer)
+            where  t2.group_id = #{groupId})
     </update>
 
     <select id="findMsgInfo" resultType="map">
         select uost.sms_content duanxin, uqmt.text_content weixin from uo_op_daily_template_config t1
             left join uo_op_sms_template uost on t1.sms_code = uost.sms_code
             left join uo_qywx_msg_template uqmt on t1.qywx_id = uqmt.qywx_id
-        where t1.user_value = #{userValue} and t1.lifecycle = #{lifeCycle} and t1.path_active = #{pathActive} and t1.tar_type = #{tarType}
+        where t1.user_value = #{userValue}
+        and t1.lifecycle = #{lifeCycle}
+        and t1.path_active = #{pathActive}
+        and t1.tar_type = #{tarType}
     </select>
+
+    <update id="setSmsCode">
+            update UO_OP_DAILY_TEMPLATE_CONFIG t1
+            set sms_code = #{smsCode},
+                sms_op_flag='Y',
+                sms_op_dt=now()
+            where (user_value,path_active,lifecycle) in (
+            select user_value,path_active,lifecycle
+              from
+                 uo_op_daily_template_config t2
+            where  t2.group_id = #{groupId})
+      </update>
+
+    <update id="resetOpFlag">
+        update UO_OP_DAILY_TEMPLATE_CONFIG set
+           sms_op_flag='N',qywx_op_flag='N'
+    </update>
 </mapper>

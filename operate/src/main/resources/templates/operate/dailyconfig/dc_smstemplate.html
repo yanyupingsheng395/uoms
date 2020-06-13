@@ -26,9 +26,6 @@
                                             <a class="btn btn-primary" id="btn_edit">
                                                 <i class="fa fa-edit"></i> 编辑文案
                                             </a>
-                                            <a class="btn btn-warning" id="btn_refresh">
-                                                <i class="fa fa-refresh"></i> 解除引用
-                                            </a>
                                             <a class="btn btn-cyan" id="btn_send" onclick="testSend()">
                                                 <i class="fa fa-puzzle-piece"></i> 屏蔽测试
                                             </a>
@@ -57,7 +54,7 @@
 </div>
 
 <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal" data-backdrop="static">
-    <div class="modal-dialog" role="document" style="width: 80%;">
+    <div class="modal-dialog" role="document" style="width: 90%;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -84,8 +81,8 @@
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isProductName" value="0" onchange="$('#isProductName-error').hide()"><span>否</span>
                                                 </label>
-                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${PROD_NAME}粘贴到期望位置；</span>
-                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${PROD_NAME}" class="copy_btn">复制</a>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品名称} 粘贴到期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
                                             </div>
                                             <div class="example-box">
                                                 <label class="control-label">商品详情页短链接：</label>
@@ -95,8 +92,8 @@
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isProductUrl" value="0" onchange="isProdUrlFalseClick()"><span>否</span>
                                                 </label>
-                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${PROD_URL}粘贴到期望位置；</span>
-                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${PROD_URL}" class="copy_btn">复制</a>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品详情页短链} 粘贴到期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品详情页短链}" class="copy_btn">复制</a>
                                             </div>
                                             <div class="example-box">
                                                 <label class="control-label">　　　　补贴名称：</label>
@@ -106,8 +103,8 @@
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isCouponName" value="0" onchange="isCouponNameFalseClick()"><span>否</span>
                                                 </label>
-                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${COUPON_NAME}粘贴到期望位置；</span>
-                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${COUPON_NAME}" class="copy_btn">复制</a>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${补贴名称} 粘贴到期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${补贴名称}" class="copy_btn">复制</a>
                                             </div>
                                             <div class="example-box">
                                                 <label class="control-label">　　　补贴短链接：</label>
@@ -117,8 +114,8 @@
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isCouponUrl" value="0" onchange="isCouponUrlFalseClick()"><span>否</span>
                                                 </label>
-                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将${COUPON_URL}粘贴到消息期望位置；</span>
-                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${COUPON_URL}" class="copy_btn">复制</a>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${补贴短链} 粘贴到消息期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${补贴短链}" class="copy_btn">复制</a>
                                             </div>
                                         </div>
                                     </div>
@@ -155,10 +152,10 @@
                                         1.一条文案通常允许的总字符数为[[${smsLengthLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；<br/>
                                         2.个性化推送文案中，包括运营者编写的内容，字符数以N表示；还包括系统填充的变量，字符数以M表示；Y=N+M；<br/>
                                         3.由于系统填充变量也会占用字符，所以在此列出4种变量的占用字符情况<br/>
-                                        &nbsp;&nbsp;&nbsp;${COUPON_URL}：领券页短链接，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${COUPON_NAME}：补贴名称，占<font color="red">[[${couponNameLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${PROD_NAME}：商品短名称，占<font color="red">[[${prodNameLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${PROD_URL}：商品购买详情页短链接，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${补贴短链}：补贴领取页短链接，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${补贴名称}：补贴名称，占<font color="red">[[${couponNameLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${商品名称}：商品短名称，占<font color="red">[[${prodNameLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${商品详情页短链}：商品购买详情页短链接，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
                                         4.鉴于上述情况，建议一条文案中对变量的选用采取两种方式<br/>
                                         &nbsp;&nbsp;&nbsp;编写内容+领券页短链接+补贴名称+商品短名称
                                         &nbsp;&nbsp;&nbsp;编写内容+商品短名称+商品购买详情页短链接
