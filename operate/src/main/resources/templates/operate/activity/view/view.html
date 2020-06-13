@@ -343,7 +343,7 @@
                                     <div>
                                         <div style="border: solid 1px #ebebeb;padding: 8px; float: left;width:340px;" id="config-box">
                                             <div class="example-box">
-                                                <label class="control-label">　　　　　　推荐商品名称：</label>
+                                                <label class="control-label">　　　　　　商品名称：</label>
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isProdName" value="1" onclick="$('#isProdName-error').show()"><span>是</span>
                                                 </label>
@@ -352,12 +352,12 @@
                                                 </label>
                                                 <div>
                                                     <label class="h6" id="isProdName-error" style="color: #48b0f7;" hidden><i class="fa fa-info-circle"></i>
-                                                        请将${PROD_NAME}粘贴到文案中希望位置，系统会自动填充名称，用户可知被推荐商品；
+                                                        请将 ${商品名称} 粘贴到文案中希望位置，系统会自动填充名称，用户可知被推荐商品；
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="example-box">
-                                                <label class="control-label">推荐商品活动期间最低单价：</label>
+                                                <label class="control-label">商品活动期间最低单价：</label>
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isPrice" value="1" onclick="$('#isPrice-error').show()"><span>是</span>
                                                 </label>
@@ -366,12 +366,12 @@
                                                 </label>
                                                 <div>
                                                     <label class="h6" hidden id="isPrice-error" style="color: #48b0f7;"><i class="fa fa-info-circle"></i>
-                                                        请将${PRICE}粘贴到文案中希望位置，系统会自动填充价格，用户可知被推荐商品的活动期间最低单价；
+                                                        请将 ${商品最低单价} 粘贴到文案中希望位置，系统会自动填充价格，用户可知被推荐商品的活动期间最低单价；
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="example-box">
-                                                <label class="control-label">　　　　　推荐商品短链接：</label>
+                                                <label class="control-label">　　　　　商品详情页短链接：</label>
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isProdUrl" onclick="$('#isProdUrl-error').show()" value="1"><span>是</span>
                                                 </label>
@@ -380,7 +380,7 @@
                                                 </label>
                                                 <div>
                                                     <label class="h6" id="isProdUrl-error" style="color: #48b0f7;" hidden><i class="fa fa-info-circle"></i>
-                                                        请将${PROD_URL}粘贴到文案中希望位置，系统会自动填充短链，用户可知被推荐商品； 1条文案中仅能填充一个链接；
+                                                        请将 ${商品详情页短链} 粘贴到文案中希望位置，系统会自动填充短链，用户可知被推荐商品； 1条文案中仅能填充一个链接；
                                                     </label>
                                                 </div>
                                             </div>
@@ -412,9 +412,9 @@
                                         1.一条文案通常允许的总字符数为[[${smsLenLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；<br/>
                                         2.个性化推送文案中，包括运营者编写的内容，字符数以N表示；还包括系统填充的变量，字符数以M表示；Y=N+M；<br/>
                                         3.由于系统填充变量也会占用字符，所以在此列出3种变量的占用字符情况<br/>
-                                        &nbsp;&nbsp;&nbsp;${PROD_NAME}：商品短名称，占<font color="red">[[${prodNameLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${PROD_URL}：商品购买详情页短链接，占<font color="red">[[${prodUrlLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${PRICE}：商品在活动期间的最低单价，占<font color="red">[[${priceLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${商品名称}：商品短名称，占<font color="red">[[${prodNameLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${商品详情页短链}：商品购买详情页短链接，占<font color="red">[[${prodUrlLen}]]</font>个字符；<br/>
+                                        &nbsp;&nbsp;&nbsp;${商品最低单价}：商品在活动期间的最低单价，占<font color="red">[[${priceLen}]]</font>个字符；<br/>
                                     </p>
                                 </div>
                             </div>
