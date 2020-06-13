@@ -1044,7 +1044,7 @@ function getGroupList(stage, type, tableId) {
                 field: 'groupInfo',
                 title: '理解用户群组'
             }, {
-                title: '短信',
+                title: '文案内容',
                 align: 'center',
                 formatter: function (value, row, index) {
                     var res = "";
