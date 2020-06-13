@@ -1866,6 +1866,19 @@ function editFormalActivity() {
     $("#formalFinishBtn").attr("style", "display:block;");
 }
 
+function editFormalActivity() {
+    CURRENT_ACTIVITY_STAGE = 'formal';
+    getProductInfo();
+    $("#productListTitle").html('正式商品列表');
+    create_step.setActive(1);
+    $("#step1").attr("style", "display:none;");
+    $("#step2").attr("style", "display:block;");
+    $("#step3").attr("style", "display:none;");
+
+    $("#preheatFinishBtn").attr("style", "display:none;");
+    $("#formalFinishBtn").attr("style", "display:block;");
+}
+
 function platDiscountClick(idx) {
     if(idx === 0){
         $("#platThresholdDiv").attr("style", "display:none;");

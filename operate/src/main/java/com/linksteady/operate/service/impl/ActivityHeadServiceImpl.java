@@ -194,7 +194,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
                 12L, headId, "预售付尾立减", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
         ));
         activityGroups.add(new ActivityGroup(
-                13L, headId, "无店铺活动", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
+                13L, headId, "无店铺活动", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
         ));
 
         activityGroups.add(new ActivityGroup(
@@ -210,7 +210,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
                 12L, headId, "预售付尾立减", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
         ));
         activityGroups.add(new ActivityGroup(
-                13L, headId, "无店铺活动", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "Y", "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
+                13L, headId, "无店铺活动", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
         ));
         activityUserGroupMapper.saveGroupData(activityGroups);
     }
