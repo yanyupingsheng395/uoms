@@ -50,21 +50,21 @@
                 </div>
                 <div class="row m-t-15">
                     <div class="col-md-4">
-                        <div class="form-group" style="margin-top: 8px;">
+                        <div class="form-group" style="margin-top: 8px;height: 38px;">
                             &#12288;&#12288;平台优惠：<label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                                <input type="radio" name="platDiscount" value="1"><span>是</span>
+                                <input type="radio" name="platDiscount" value="1" onclick="platDiscountClick(1)"><span>是</span>
                             </label>
                             <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                                <input type="radio" name="platDiscount" value="0"><span>否</span>
+                                <input type="radio" name="platDiscount" value="0" onclick="platDiscountClick(0)"><span>否</span>
                             </label>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4" id="platThresholdDiv">
                         <div class="form-group">
                             &#12288;&#12288;&#12288;&#12288;门槛：<input type="text" name="platThreshold" class="form-control"/>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4" id="platDenoDiv">
                         <div class="form-group">
                             &#12288;&#12288;&#12288;&#12288;面额：<input type="text" name="platDeno" class="form-control"/>
                         </div>

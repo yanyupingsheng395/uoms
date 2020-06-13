@@ -1,6 +1,6 @@
 <input type="hidden" id="activity_stage"/>
 <div class="row">
-    <span class="navbar-page-title">预售活动商品列表</span>
+    <span class="navbar-page-title" id="productListTitle">预售活动商品列表</span>
 </div>
 <div class="row">
     <div class="col-md-12">
@@ -27,6 +27,7 @@
                             <option value="10">满元减钱</option>
                             <option value="11">特价秒杀</option>
                             <option value="12">预售付尾立减</option>
+                            <option value="13">无店铺活动</option>
                         </select>
                     </li>
                     <li class="pull-right">
@@ -74,6 +75,7 @@
 </div>
 <div class="row m-t-10">
     <div class="col-md-12 text-right">
+        <button class="btn btn-secondary btn-sm" onclick="stepBreak(0)"><i class="fa fa-arrow-left"></i>上一步</button>
         <button class="btn btn-secondary btn-sm" onclick="stepBreak(2)"><i class="fa fa-arrow-right"></i>下一步</button>
     </div>
 </div>
@@ -145,6 +147,7 @@
                                 <option value="10">满元减钱</option>
                                 <option value="11">特价秒杀</option>
                                 <option value="12">预售付尾立减</option>
+                                <option value="13">无店铺活动</option>
                             </select>
                         </div>
                     </div>

@@ -89,37 +89,58 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         String platDeno = activityHead.getPlatDeno();
         String platDiscount = activityHead.getPlatDiscount();
         String groupId = activityProduct.getGroupId();
-        double minPrice;
         double shop_discount = 0;
         double activityPrice = activityProduct.getActivityPrice();
+        if(activityProduct.getProductId().equalsIgnoreCase("539377654791")) {
+            System.out.println(1);
+        }
         switch (groupId) {
-            case "9":
+            case "9": // 满件打折
                 shop_discount = activityPrice * (1 - activityProduct.getDiscountSize());
+                activityProduct.setActivityProfit(activityProduct.getDiscountSize());
                 break;
-            case "10":
-                if(activityPrice >= activityProduct.getDiscountThreadhold()) {
-//                    shop_discount = activityProduct
+            case "10": // 满元减钱
+                if (activityPrice >= activityProduct.getDiscountThreadhold()) {
+                    shop_discount = activityProduct.getDiscountDeno();
+                } else {
+                    shop_discount = activityPrice * (activityProduct.getDiscountDeno() / activityProduct.getDiscountThreadhold());
                 }
-//                shop_discount =
+                activityProduct.setActivityProfit(activityProduct.getDiscountDeno());
                 break;
-            case "11":
-            case "12":
+            case "11":// 特价秒杀
+            case "12":// 预售付尾立减
+                shop_discount = activityProduct.getDiscountAmount();
                 activityProduct.setActivityProfit(activityProduct.getDiscountAmount());
-                minPrice = activityProduct.getActivityPrice() - activityProduct.getDiscountAmount();
-                activityProduct.setMinPrice(minPrice);
+                break;
+            case "13":// 预售付尾立减
+                shop_discount = 0;
+                activityProduct.setActivityProfit(0D);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + groupId);
         }
+        // 包含平台优惠
+        double plat_discount = 0;
         if (platDiscount.equalsIgnoreCase("1")) {
             double platDiscountSize = Double.valueOf(platDeno) / Double.parseDouble(platThreadHold);
-            double multiple = activityProduct.getMinPrice() / Double.parseDouble(platThreadHold);
+            double multiple = activityPrice / Double.parseDouble(platThreadHold);
             if (multiple < 1) {
-                activityProduct.setMinPrice(activityProduct.getMinPrice() * (1 - platDiscountSize));
+                plat_discount = activityPrice * platDiscountSize;
             } else {
-                activityProduct.setMinPrice(activityProduct.getMinPrice() - Math.floor(multiple) * Double.parseDouble(platDeno));
+                plat_discount = Math.floor(multiple) * Double.valueOf(platDeno) + (activityPrice - Math.floor(multiple) * Double.valueOf(platThreadHold)) * platDiscountSize;
             }
         }
+
+        // 品类优惠，仅限本次使用，后续删除
+        double spu_discount = 0;
+        if (activityPrice < 300) {
+            spu_discount = activityPrice * (20 / 300D);
+        } else {
+            spu_discount = 20;
+        }
+
+        activityPrice = (activityPrice - shop_discount - plat_discount - spu_discount) < 0 ? 0 : activityPrice - shop_discount - plat_discount - spu_discount;
+        activityProduct.setMinPrice(Math.round(activityPrice));
         return activityProduct;
     }
 
@@ -181,11 +202,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     @Override
     public void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage) {
         activityProductMapper.deleteRepeatData(productList, headId, stage);
-    }
-
-    @Override
-    public ActivityProduct geFirstProductInfo(Long headId, String stage) {
-        return activityProductMapper.geFirstProductInfo(headId, stage);
     }
 
     @Override
@@ -336,6 +352,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                                     case "预售付尾立减":
                                         groupId = "12";
                                         break;
+                                    case "无店铺活动":
+                                        groupId = "13";
+                                        break;
                                     default:
                                         break;
                                 }
@@ -351,7 +370,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         Double discountDeno = 0D;
                         Double discountAmount = 0D;
                         switch (groupId) {
-                            case "1":
+                            case "9":
                                 // 满件打折
                                 Cell cell5 = row.getCell(5);
                                 if (null == cell5 || cell5.getCellType() == 3) {
@@ -365,7 +384,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                                     }
                                 }
                                 break;
-                            case "2":
+                            case "10":
                                 // 满元减钱
                                 Cell cell6 = row.getCell(6);
                                 if (null == cell6 || cell6.getCellType() == 3) {
@@ -391,8 +410,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                                     }
                                 }
                                 break;
-                            case "3":
-                            case "4":
+                            case "11":
+                            case "12":
                                 // 特价秒杀 + 预售付尾立减
                                 Cell cell8 = row.getCell(8);
                                 if (null == cell8 || cell8.getCellType() == 3) {
@@ -407,7 +426,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                                 }
                                 break;
                             default:
-                                throw new IllegalStateException("Unexpected value: " + groupId);
+                                break;
                         }
                         String activityType = "";
                         Cell cell9 = row.getCell(9);
@@ -448,21 +467,13 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         activityProduct.setActivityStage(stage);
                         if (activityProduct.productValid()) {
                             activityProduct.setProductUrl(shortUrlService.genProdShortUrlByProdId(productId, "S"));
-                            if (activityType.equalsIgnoreCase("ALL")) {
-                                activityProduct.setActivityType("NOTIFY");
-                                ActivityProduct newProduct = activityProduct.clone();
-                                newProduct = calculateProductMinPrice(newProduct);
-                                newProduct.setActivityType("DURING");
-                                productList.add(newProduct);
-                            } else {
-                                activityProduct.setActivityType(activityType);
-                            }
+                            activityProduct.setActivityType(activityType);
                             activityProduct = calculateProductMinPrice(activityProduct);
                             productList.add(activityProduct);
                         }
                     }
                     if (productList.size() != 0) {
-                        saveUploadProductData(headId, productList, uploadMethod, repeatProduct);
+                        saveUploadProductData(headId, productList, uploadMethod, repeatProduct, stage);
                     } else {
                         errorList.add(new ActivityProductUploadError("校验通过的记录条数为0"));
                     }
@@ -493,9 +504,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void validProductInfo(String headId) {
-        activityProductMapper.updateAllValidInfo(headId);
-        activityProductMapper.updateValidInfo(headId);
+    public void validProductInfo(String headId, String stage) {
+        activityProductMapper.updateAllValidInfo(headId, stage);
+        activityProductMapper.updateValidInfo(headId, stage);
     }
 
     @Override
@@ -504,8 +515,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 
     @Override
-    public int validProduct(String headId) {
-        return activityProductMapper.validProduct(headId);
+    public int validProduct(String headId, String stage) {
+        return activityProductMapper.validProduct(headId, stage);
     }
 
     @Override
@@ -521,14 +532,14 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     /**
      * 保存上传的数据
      */
-    private boolean saveUploadProductData(String headId, List<ActivityProduct> productList, String uploadMethod, String repeatProduct) {
+    private boolean saveUploadProductData(String headId, List<ActivityProduct> productList, String uploadMethod, String repeatProduct, String stage) {
         String uploadMethod0 = "0";
         String repeatProduct0 = "0";
         String repeatProduct1 = "1";
         String uploadMethod1 = "1";
         List<ActivityProduct> insertList = Lists.newArrayList();
         List<ActivityProduct> deleteList = Lists.newArrayList();
-        List<String> oldProductList = activityProductMapper.getProductIdByHeadId(headId);
+        List<String> oldProductList = activityProductMapper.getProductIdByHeadId(headId, stage);
         // 追加
         if (uploadMethod.equalsIgnoreCase(uploadMethod0)) {
             // 忽略
@@ -561,6 +572,14 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 activityProductMapper.deleteDataList(headId, productIdList);
             }
             if (insertList.size() > 0) {
+                List<ActivityProduct> tmpList = Lists.newArrayList();
+                insertList.stream().filter(x->x.getActivityType().equalsIgnoreCase("ALL")).forEach(x->{
+                    x.setActivityType("NOTIFY");
+                    ActivityProduct tmp = x.clone();
+                    tmp.setActivityType("DURING");
+                    tmpList.add(tmp);
+                });
+                insertList.addAll(tmpList);
                 activityProductMapper.saveActivityProductList(insertList);
             }
         } catch (Exception e) {

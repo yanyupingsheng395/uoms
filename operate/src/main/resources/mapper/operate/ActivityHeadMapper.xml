@@ -169,16 +169,16 @@
     </update>
 
     <update id="updateFormalStatusHead">
-        UPDATE UO_OP_ACTIVITY_HEADER H
+        UPDATE UO_OP_ACTIVITY_HEADER
         <set>
             <if test="planType!=null and planType=='NOTIFY'">
-                  H.FORMAL_NOTIFY_STATUS=#{status},
+                  FORMAL_NOTIFY_STATUS=#{status},
             </if>
             <if test="planType!=null and planType=='DURING'">
-                  H.FORMAL_STATUS=#{status},
+                  FORMAL_STATUS=#{status},
             </if>
         </set>
-        where h.head_id=#{headId}::int4
+        where head_id=#{headId}::int4
     </update>
 
     <update id="expirePreheatNotify">

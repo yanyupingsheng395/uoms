@@ -62,10 +62,10 @@ public class ActivityProduct implements Cloneable {
     public boolean productValid() {
         return StringUtils.isNotEmpty(this.getProductId()) &&
                 StringUtils.isNotEmpty(this.getGroupId()) &&
-                (("1".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountSize())
-                        || ("2".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountThreadhold() && 0D!=this.getDiscountDeno())
-                        || ("3".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountAmount())
-                        || ("4".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountAmount()));
+                (("9".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountSize())
+                        || ("10".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountThreadhold() && 0D!=this.getDiscountDeno())
+                        || ("11".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountAmount())
+                        || ("12".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountAmount()) || ("13".equalsIgnoreCase(this.getGroupId())));
     }
 
     @Override

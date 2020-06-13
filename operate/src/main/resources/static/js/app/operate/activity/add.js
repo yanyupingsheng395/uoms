@@ -13,7 +13,6 @@ $( function () {
 });
 $(function (){
     initDt();
-    getProductInfo(  );
     validBasic();
     validateProductRule();
 });
@@ -221,14 +220,14 @@ $( "#btn_edit_shop" ).click( function () {
             $("#add-product-form").find("select[name='activityType']").find("option[value='"+data['activityType']+"']").prop("selected", true);
             var val = $("#activityRule").find("option:selected").val();
             switch (val) {
-                case "1":
+                case "9":
                     $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
                         '<label class="col-md-4 control-label">满件打折</label>\n' +
                         '<div class="col-md-7">\n' +
                         '<input class="form-control" type="text" name="discountSize" value="'+data['discountSize']+'"/>\n' +
                         '</div></div>');
                     break;
-                case "2":
+                case "10":
                     $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
                         '<label class="col-md-4 control-label">满元减钱门槛(元)</label>\n' +
                         '<div class="col-md-7">\n' +
@@ -239,14 +238,14 @@ $( "#btn_edit_shop" ).click( function () {
                         '<input class="form-control" type="text" name="discountDeno" value="'+data['discountDeno']+'"/>\n' +
                         '</div></div>');
                     break;
-                case "3":
+                case "11":
                     $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
                         '<label class="col-md-4 control-label">立减金额</label>\n' +
                         '<div class="col-md-7">\n' +
                         '<input class="form-control" type="text" name="discountAmount" value="'+data['discountAmount']+'"/>\n' +
                         '</div></div>');
                     break;
-                case "4":
+                case "12":
                     $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
                         '<label class="col-md-4 control-label">立减金额</label>\n' +
                         '<div class="col-md-7">\n' +
@@ -472,7 +471,7 @@ $("#btn_delete_shop").click(function () {
         return;
     }
     var headId = $("#headId").val();
-    var stage = $("#activity_stage").val();
+    var stage = CURRENT_ACTIVITY_STAGE;
     var productIds = [];
     selected.forEach((v, k)=>{
         productIds.push(v['productId']);
@@ -482,7 +481,7 @@ $("#btn_delete_shop").click(function () {
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
         content: '确认删除选中的商品记录？'
     }, function () {
-        $.post("/activity/deleteProduct", {headId:headId, stage: stage, productIds: productIds.join(","), operateType: operate_type}, function (r) {
+        $.post("/activity/deleteProduct", {headId:headId, stage: stage, productIds: productIds.join(",")}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("删除成功！");
                 $MB.refreshTable('activityProductTable');
@@ -535,38 +534,77 @@ function getProductInfo() {
                 align: 'center',
                 formatter: function (value, row, index) {
                     var res = "-";
-                    if(value === '1') {
+                    if(value === '9') {
                         res =  "满件打折";
                     }
-                    if(value === '2') {
+                    if(value === '10') {
                         res =  "满元减钱";
                     }
-                    if(value === '3') {
+                    if(value === '11') {
                         res =  "特价秒杀";
                     }
-                    if(value === '4') {
+                    if(value === '12') {
                         res =  "预售付尾立减";
+                    }
+                    if(value === '13') {
+                        res = '无店铺活动'
                     }
                     return res;
                 }
             },{
-                field: 'notifyMinPrice',
+                field: 'minPrice',
                 title: '活动通知体现最<br/>低单价（元/件）',
-                align: 'center'
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if(row['activityType'] === 'NOTIFY' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
+                        return value;
+                    }else {
+                        return '-';
+                    }
+                }
             },{
-                field: 'notifyProfit',
+                field: 'activityProfit',
                 title: '活动通知体现利益点',
                 valign: 'middle',
-                align: 'center'
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if(row['activityType'] === 'NOTIFY' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
+                        if(row['groupId'] == '9') {
+                            return (value*10) +'折';
+                        }else {
+                            return value +'元';
+                        }
+                    }else {
+                        return '-';
+                    }
+                }
             },  {
-                field: 'duringMinPrice',
+                field: 'minPrice',
                 title: '活动期间体现最<br/>低单价（元/件）',
-                align: 'center'
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if(row['activityType'] === 'DURING' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
+                        return value;
+                    }else {
+                        return '-';
+                    }
+                }
             }, {
-                field: 'duringProfit',
+                field: 'activityProfit',
                 title: '活动期间体现利益点',
                 valign: 'middle',
-                align: 'center'
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if(row['activityType'] === 'DURING' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
+                        if(row['groupId'] == '9') {
+                            return (value*10) +'折';
+                        }else {
+                            return value +'元';
+                        }
+                    }else {
+                        return '-';
+                    }
+                }
             }, {
                 field: 'checkFlag',
                 title: '校验结果',
@@ -593,11 +631,6 @@ function getProductInfo() {
 let CURRENT_ACTIVITY_STAGE = 'preheat';
 // 跳转到
 function createActivity(stage) {
-    $( "#step1" ).attr( "style", "display:none;" );
-    $( "#step2" ).attr( "style", "display:none;" );
-    $( "#step3" ).attr( "style", "display:block;" );
-    $( "#step4" ).attr( "style", "display:block;" );
-
     CURRENT_ACTIVITY_STAGE = stage;
     $("#activity_stage").val(stage);
     getGroupList( stage, 'NOTIFY', 'table1');
@@ -721,14 +754,21 @@ $( "#btn_basic" ).click( function () {
 
 // 点击上一步下一步按钮
 function stepBreak(index) {
+    if(index == 0) {
+        create_step.setActive(0);
+        $("#step1").attr("style", "display:block;");
+        $("#step2").attr("style", "display:none;");
+        $("#step3").attr("style", "display:none;");
+    }
     if(index == 1) {
         create_step.setActive(1);
+        getProductInfo();
         $("#step1").attr("style", "display:none;");
         $("#step2").attr("style", "display:block;");
         $("#step3").attr("style", "display:none;");
     }
     if(index == 2) {
-        $.get("/activity/validProduct", {headId: $("#headId").val()}, function (r) {
+        $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
             if(r.code === 200) {
                 if(r.data > 0) {
                     $MB.n_warning("存在校验不通过的商品！");
@@ -737,7 +777,7 @@ function stepBreak(index) {
                     $("#step1").attr("style", "display:none;");
                     $("#step2").attr("style", "display:none;");
                     $("#step3").attr("style", "display:block;");
-                    createActivity('preheat');
+                    createActivity(CURRENT_ACTIVITY_STAGE);
                 }
             }
         });
@@ -787,10 +827,14 @@ function validBasic() {
                 required: true
             },
             platThreshold: {
-                required: true
+                required: function () {
+                    return $( "input[name='platDiscount']:checked" ).val() === '1';
+                }
             },
             platDeno: {
-                required: true
+                required: function () {
+                    return $( "input[name='platDiscount']:checked" ).val() === '1';
+                }
             }
         },
         errorPlacement: function (error, element) {
@@ -1769,14 +1813,14 @@ function groupIdChange(dom) {
     $(dom).trigger('blur');
     var val = $(dom).find("option:selected").val();
     switch (val) {
-        case "1":
+        case "9":
             $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
                 '<label class="col-md-4 control-label">满件打折</label>\n' +
                 '<div class="col-md-7">\n' +
                 '<input class="form-control" type="text" name="discountSize"/>\n' +
                 '</div></div>');
             break;
-        case "2":
+        case "10":
             $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
                 '<label class="col-md-4 control-label">满元减钱门槛(元)</label>\n' +
                 '<div class="col-md-7">\n' +
@@ -1787,23 +1831,48 @@ function groupIdChange(dom) {
                 '<input class="form-control" type="text" name="discountDeno"/>\n' +
                 '</div></div>');
             break;
-        case "3":
+        case "11":
             $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
                 '<label class="col-md-4 control-label">立减金额</label>\n' +
                 '<div class="col-md-7">\n' +
                 '<input class="form-control" type="text" name="discountAmount"/>\n' +
                 '</div></div>');
             break;
-        case "4":
+        case "12":
             $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
                 '<label class="col-md-4 control-label">立减金额</label>\n' +
                 '<div class="col-md-7">\n' +
                 '<input class="form-control" type="text" name="discountAmount"/>\n' +
                 '</div></div>');
             break;
+        case "13":
+            $("#shopOffer").attr("style", "display:none;").html('');
         default:
             $("#shopOffer").attr("style", "display:none;").html('');
             break;
     }
+}
 
+function editFormalActivity() {
+    CURRENT_ACTIVITY_STAGE = 'formal';
+    getProductInfo();
+    $("#productListTitle").html('正式商品列表');
+    create_step.setActive(1);
+    $("#step1").attr("style", "display:none;");
+    $("#step2").attr("style", "display:block;");
+    $("#step3").attr("style", "display:none;");
+
+    $("#preheatFinishBtn").attr("style", "display:none;");
+    $("#formalFinishBtn").attr("style", "display:block;");
+}
+
+function platDiscountClick(idx) {
+    if(idx === 0){
+        $("#platThresholdDiv").attr("style", "display:none;");
+        $("#platDenoDiv").attr("style", "display:none;");
+    }
+    if(idx === 1){
+        $("#platThresholdDiv").attr("style", "display:block;");
+        $("#platDenoDiv").attr("style", "display:block;");
+    }
 }
