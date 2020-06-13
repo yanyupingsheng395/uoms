@@ -1,5 +1,6 @@
 package com.linksteady.operate.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -21,6 +22,7 @@ public class ActivityTemplate {
 
     private String insertBy;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date insertDt;
 
     // 个性化
@@ -37,4 +39,6 @@ public class ActivityTemplate {
     private String isProdName;
 
     private String isPrice;
+
+    private String isProfit;
 }

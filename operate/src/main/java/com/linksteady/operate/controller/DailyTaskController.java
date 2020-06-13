@@ -69,11 +69,9 @@ public class DailyTaskController {
 
         //设置当前天记录的 校验状态
         String validateLabel = dailyConfigService.validUserGroup() ? "未通过" : "通过";
-
         dailyInfos.stream().forEach(p -> {
             p.setValidateLabel(validateLabel);
         });
-
         return ResponseBo.okOverPaging(validateLabel, count, dailyInfos);
     }
 

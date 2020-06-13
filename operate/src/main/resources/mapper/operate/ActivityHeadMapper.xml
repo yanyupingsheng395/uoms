@@ -17,6 +17,10 @@
         <result property="formalNotifyStatus" jdbcType="VARCHAR" column="FORMAL_NOTIFY_STATUS"></result>
         <result property="preheatNotifyStatus" jdbcType="VARCHAR" column="PREHEAT_NOTIFY_STATUS"></result>
         <result property="effectFlag" jdbcType="VARCHAR" column="EFFECT_FLAG"></result>
+        <result property="activitySource" jdbcType="VARCHAR" column="activity_source"></result>
+        <result property="platDiscount" jdbcType="VARCHAR" column="plat_discount"></result>
+        <result property="platThreshold" jdbcType="VARCHAR" column="plat_threshold"></result>
+        <result property="platDeno" jdbcType="VARCHAR" column="plat_deno"></result>
     </resultMap>
 
     <select id="getDataListOfPage" resultMap="baseResult">
@@ -48,47 +52,55 @@
 
     <select id="findById" resultMap="baseResult">
         select
-           HEAD_ID,
-           ACTIVITY_NAME,
-           HAS_PREHEAT,
-           PREHEAT_STATUS,
-           to_char(PREHEAT_START_DT, 'yyyy-mm-dd') PREHEAT_START_DT,
-           to_char(PREHEAT_END_DT, 'yyyy-mm-dd') PREHEAT_END_DT,
-           FORMAL_STATUS,
-           to_char(FORMAL_START_DT, 'yyyy-mm-dd') FORMAL_START_DT,
-           to_char(FORMAL_END_DT, 'yyyy-mm-dd') FORMAL_END_DT,
-           ACTIVITYFLAG,
-           to_char(PREHEAT_NOTIFY_DT, 'yyyy-mm-dd') PREHEAT_NOTIFY_DT,
-           to_char(FORMAL_NOTIFY_DT, 'yyyy-mm-dd') FORMAL_NOTIFY_DT,
-           FORMAL_NOTIFY_STATUS,
-           PREHEAT_NOTIFY_STATUS
-        from UO_OP_ACTIVITY_HEADER
-        where HEAD_ID = #{headId}::int4
+           head_id,
+           activity_name,
+           has_preheat,
+           preheat_status,
+           to_char(preheat_start_dt, 'yyyy-mm-dd') preheat_start_dt,
+           to_char(preheat_end_dt, 'yyyy-mm-dd') preheat_end_dt,
+           formal_status,
+           to_char(formal_start_dt, 'yyyy-mm-dd') formal_start_dt,
+           to_char(formal_end_dt, 'yyyy-mm-dd') formal_end_dt,
+           activityflag,
+           to_char(preheat_notify_dt, 'yyyy-mm-dd') preheat_notify_dt,
+           to_char(formal_notify_dt, 'yyyy-mm-dd') formal_notify_dt,
+           formal_notify_status,
+           preheat_notify_status,
+           activity_source,
+           plat_discount,
+           plat_threshold,
+           plat_deno
+        from uo_op_activity_header
+        where head_id = #{headId}::int4
     </select>
 
     <insert id="saveActivityHead">
         <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="headId">
             select nextval('uo_op_activity_head_id_seq')
         </selectKey>
-        insert into UO_OP_ACTIVITY_HEADER(
-        HEAD_ID,
-        ACTIVITY_NAME,
-        HAS_PREHEAT,
-        PREHEAT_STATUS,
-        PREHEAT_START_DT,
-        PREHEAT_END_DT,
-        FORMAL_STATUS,
-        FORMAL_START_DT,
-        FORMAL_END_DT,
-        INSERT_DT,
-        INSERT_BY,
-        PREHEAT_NOTIFY_DT,
-        FORMAL_NOTIFY_DT,
-        FORMAL_NOTIFY_STATUS,
-        PREHEAT_NOTIFY_STATUS,
-        ACTIVITYFLAG)
-        values (#{headId},#{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
-        #{insertDt}, #{insertBy}, to_date(#{preheatNotifyDt}, 'yyyy-mm-dd'), to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{formalNotifyStatus}, #{preheatNotifyStatus},#{activityflag})
+        insert into uo_op_activity_header(
+        head_id,
+        activity_name,
+        has_preheat,
+        preheat_status,
+        preheat_start_dt,
+        preheat_end_dt,
+        formal_status,
+        formal_start_dt,
+        formal_end_dt,
+        insert_dt,
+        insert_by,
+        preheat_notify_dt,
+        formal_notify_dt,
+        formal_notify_status,
+        preheat_notify_status,
+        activityflag,
+        activity_source,
+        plat_discount,
+        plat_threshold,
+        plat_deno)
+        values (#{headId}, #{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
+        #{insertDt}, #{insertBy}, to_date(#{preheatNotifyDt}, 'yyyy-mm-dd'), to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{formalNotifyStatus}, #{preheatNotifyStatus},#{activityflag}, #{activitySource}, #{platDiscount}, #{platThreshold}, #{platDeno})
     </insert>
 
     <update id="updateActiveHead">
@@ -157,16 +169,16 @@
     </update>
 
     <update id="updateFormalStatusHead">
-        UPDATE UO_OP_ACTIVITY_HEADER H
+        UPDATE UO_OP_ACTIVITY_HEADER
         <set>
             <if test="planType!=null and planType=='NOTIFY'">
-                  H.FORMAL_NOTIFY_STATUS=#{status},
+                  FORMAL_NOTIFY_STATUS=#{status},
             </if>
             <if test="planType!=null and planType=='DURING'">
-                  H.FORMAL_STATUS=#{status},
+                  FORMAL_STATUS=#{status},
             </if>
         </set>
-        where h.head_id=#{headId}::int4
+        where head_id=#{headId}::int4
     </update>
 
     <update id="expirePreheatNotify">

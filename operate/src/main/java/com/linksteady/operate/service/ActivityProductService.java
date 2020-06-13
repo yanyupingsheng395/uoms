@@ -14,9 +14,9 @@ import java.util.Map;
  */
 public interface ActivityProductService {
 
-    int getCount(String headId, String productId, String productName, String groupId);
+    int getCount(String headId, String productId, String productName, String groupId, String activityStage);
 
-    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId);
+    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage);
 
     /**
      * 保存活动商品
@@ -24,7 +24,7 @@ public interface ActivityProductService {
      */
     void saveActivityProduct(ActivityProduct activityProduct);
 
-    ActivityProduct getProductById(String id);
+    ActivityProduct getProductById(String headId, String activityStage, String productId);
 
     void updateActivityProduct(ActivityProduct activityProduct);
 
@@ -56,25 +56,21 @@ public interface ActivityProductService {
      */
     void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage);
 
-    /**
-     * 获取第一条商品的信息
-     * @return
-     */
-    ActivityProduct geFirstProductInfo(Long headId, String stage);
-
-
     void deleteData(Long headId);
 
     /**
      * 上传商品
      */
-    List<ActivityProductUploadError> uploadExcel(MultipartFile file, String headId, String uploadMethod, String repeatProduct) throws Exception;
+    List<ActivityProductUploadError> uploadExcel(MultipartFile file, String headId, String uploadMethod,
+                                                 String repeatProduct, String stage) throws Exception;
 
-    void validProductInfo(String headId);
+    void validProductInfo(String headId, String stage);
 
     int getCountByHeadId(String headId);
 
-    int validProduct(String headId);
+    int validProduct(String headId, String stage);
 
     List<String> getGroupIds(Long headId);
+
+    boolean checkProductId(String headId, String activityType, String activityStage, String productId);
 }

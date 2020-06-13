@@ -81,7 +81,7 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void removeSmsSelected(String headId, String stage, String smsCode, String groupId) {
-        activityUserGroupMapper.removeSmsSelected(headId, stage, smsCode, groupId);
+    public void removeSmsSelected(String type, String headId, String stage, String smsCode, String groupId) {
+        activityUserGroupMapper.removeSmsSelected(type, headId, stage, smsCode, groupId);
     }
 }

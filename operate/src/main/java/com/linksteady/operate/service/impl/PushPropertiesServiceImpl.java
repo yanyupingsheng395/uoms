@@ -99,7 +99,6 @@ public class PushPropertiesServiceImpl implements PushPropertiesService {
         {
             hashOperations.put(CONFIG_KEY_NAME,tconfig.getName(),tconfig);
         }
-
         for(PushPropertiesEnum pushPropertiesEnum:PushPropertiesEnum.values())
         {
             setPropertiesByKeyCode(prop,pushPropertiesEnum,configMap);

@@ -25,7 +25,6 @@ public class ActivityDetail implements Serializable {
     private String groupName;
 
     private String spuName;
-    private String recPiecePrice;
     private String joinRate;
     private String orderPeriod;
     private String referDeno;
@@ -75,6 +74,12 @@ public class ActivityDetail implements Serializable {
     private String smsContent;
     private String smsTemplateContent;
     private Long planId;
-    private String prodActivityProp;
+
+    //计划类型
+    private String planType;
+
+    private double activityProfit;
+
+    private double activityPrice;
 
 }

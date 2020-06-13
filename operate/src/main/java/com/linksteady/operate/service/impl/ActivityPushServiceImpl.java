@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.ActivityDetailMapper;
 import com.linksteady.operate.dao.ActivityProductMapper;
 import com.linksteady.operate.dao.ActivityPushMapper;
@@ -72,6 +73,9 @@ public class ActivityPushServiceImpl implements ActivityPushService {
     @Autowired
     ActivityProductMapper activityProductMapper;
 
+    @Autowired
+    private ConfigService configService;
+
     /**
      * 对活动推送文案进行转换
      * @return
@@ -103,29 +107,6 @@ public class ActivityPushServiceImpl implements ActivityPushService {
     }
 
     /**
-     * 初始化 执行计划-群组信息
-     * @param activityPlan
-     * @return
-     */
-    @Override
-    public void initPlanGroup(ActivityPlan activityPlan)
-    {
-        //初始化计划选择群组表
-        activityPushMapper.deletePlanGroup(activityPlan.getPlanId());
-
-        activityPushMapper.insertActivityPlanGroup(activityPlan.getPlanId());
-        //判断计划的类型 如果是通知阶段 则做额外的处理
-        if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equals(activityPlan.getPlanType()))
-        {
-            //没有活动商品 的活动机制所处的 group为不可选
-            activityPushMapper.updateActivityPlanGroup(activityPlan.getPlanId());
-            // 成长商品活动属性为否 且没有配文案，则设置 group不可选
-            activityPushMapper.updateActivityPlanGroup2(activityPlan.getPlanId(),activityPlan.getStage(),activityPlan.getPlanType());
-
-        }
-    }
-
-    /**
      * 实际进行文案转化的类
      * @param planId
      * @return 1表示生成成功 0表示生成失败
@@ -144,10 +125,6 @@ public class ActivityPushServiceImpl implements ActivityPushService {
             templateMap.put(String.valueOf(template.get("GROUP_ID")),template.get("TMP_CONTENT"));
         }
 
-        //获取所有活动商品的价格
-        List<ActivityProduct> productPriceList=activityProductMapper.getProductPriceList(headId,activityType);
-        Map<String,Double> prodPriceMap=productPriceList.stream().collect(Collectors.toMap(ActivityProduct::getProductId,ActivityProduct::getMinPrice,(o1,o2)->o1));
-
         //根据planId获取当前有多少人需要推送
         int pushUserCount= activityPushMapper.getPushCount(planId);
         int pageSize=400;
@@ -158,7 +135,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
             //填充模板 生成文案
             List<ActivityContentVO> targetList= null;
             try {
-                targetList = processVariable(list,templateMap,prodPriceMap);
+                targetList = processVariable(list,templateMap);
             } catch (Exception e) {
                 //错误日志上报
                 log.error("活动运营转化文案错误，错误堆栈为{}",e);
@@ -193,7 +170,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
                 //生成线程对象列表
                 for(int i=0;i<page;i++)
                 {
-                    taskList.add(new TransActivityContentThread(planId,i*pageSize+1,(i+1)*pageSize,templateMap,prodPriceMap));
+                    taskList.add(new TransActivityContentThread(planId,i*pageSize+1,(i+1)*pageSize,templateMap));
                 }
 
                 log.info("活动运营转换文案一共需要{}个线程来处理",taskList.size());
@@ -233,7 +210,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
      * @param list
      * @return
      */
-    public List<ActivityContentVO> processVariable(List<ActivityDetail> list, Map<String,String> templateMap,Map<String,Double> prodPriceMap){
+    public List<ActivityContentVO> processVariable(List<ActivityDetail> list, Map<String,String> templateMap){
         List<ActivityContentVO> targetList = Lists.newArrayList();
         ActivityContentVO activityContentVO = null;
         String smsContent="";
@@ -249,33 +226,44 @@ public class ActivityPushServiceImpl implements ActivityPushService {
             }
 
             //判断是否含有变量 如果有则进行替换
-            smsContent = smsContent.replace("${PROD_NAME}", convertNullToEmpty(activityDetail.getEpbProductName()));
+            smsContent = smsContent.replace("${商品名称}", convertNullToEmpty(activityDetail.getEpbProductName()));
 
             //判断文案中是否含有价格变量
-            if(smsContent.indexOf("${PRICE}")!=-1)
-            {
-                if(prodPriceMap.containsKey(activityDetail.getEpbProductId()))
-                {
-                    //替换价格
-                    smsContent = smsContent.replace("${PRICE}", BigDecimal.valueOf(prodPriceMap.get(activityDetail.getEpbProductId())).stripTrailingZeros().toEngineeringString());
-                }else
-                {
-                    //替换价格
-                    smsContent = smsContent.replace("${PRICE}", convertNullToEmpty(activityDetail.getRecPiecePrice()));
-                }
-            }
-
+            smsContent = smsContent.replace("${商品最低单价}", String.valueOf(activityDetail.getActivityPrice()+"元"));
 
             //判断是否含有商品链接变量
-            if(smsContent.indexOf("${PROD_URL}")!=-1)
+            if(smsContent.indexOf("${商品详情页短链}")!=-1)
             {
                 //获取商品的短链
                 String prodLongUrl=shortUrlService.genProdShortUrlByProdId(activityDetail.getEpbProductId(),"S");
                 //如果短链生成错误，则不再进行替换
                 if(!"error".equals(prodLongUrl))
                 {
-                    smsContent = smsContent.replace("${PROD_URL}",prodLongUrl);
+                    smsContent = smsContent.replace("${商品详情页短链}"," "+prodLongUrl+" ");
                 }
+            }
+
+            //替换利益点
+            smsContent = smsContent.replace("${商品利益点}", getActivityProfilt(activityDetail.getActivityProfit(),activityDetail.getGroupId()));
+
+            //判断是否需要加上签名及退订方式
+            //获取签名
+            String signature=configService.getValueByName("op.push.signature");
+            String signatureFlag=configService.getValueByName("op.push.signature_flag");
+
+            String unsubscribe=configService.getValueByName("op.push.unsubscribe");
+            String unsubscribeFlag=configService.getValueByName("op.push.unsubscribe_flag");
+
+            //需要加上签名
+            if(null!=signatureFlag&&"Y".equals(signatureFlag))
+            {
+                smsContent =signature+smsContent;
+            }
+
+            //需要加上退订方式
+            if(null!=unsubscribeFlag&&"Y".equals(unsubscribeFlag))
+            {
+                smsContent=smsContent+unsubscribe;
             }
 
             //构造对象
@@ -287,6 +275,16 @@ public class ActivityPushServiceImpl implements ActivityPushService {
             targetList.add(activityContentVO);
         }
         return targetList;
+    }
+
+    private String getActivityProfilt(double activityProfit,String groupId)
+    {
+        if("9".equals(groupId))
+        {
+            return activityProfit*10+"折";
+        }else {
+            return activityProfit+"元";
+        }
     }
 
     /**
@@ -394,18 +392,10 @@ public class ActivityPushServiceImpl implements ActivityPushService {
      * @return
      */
     @Override
-    public boolean validateNotifySms(ActivityPlan activityPlan) {
-        //仅对通知阶段进行判断
-        if(activityPlan.getPlanType().equals(ActivityPlanTypeEnum.Notify.getPlanTypeCode()))
-        {
-            int count =activityPushMapper.validateNotifySms(activityPlan.getHeadId(),activityPlan.getStage(),activityPlan.getPlanType());
-
-            //如果存在，则校验失败
-            return count>0;
-        }else
-        {
-            return false;
-        }
+    public boolean validateSmsConfig(ActivityPlan activityPlan) {
+        int count =activityPushMapper.validateSmsConfig(activityPlan.getHeadId(),activityPlan.getStage(),activityPlan.getPlanType());
+        //如果存在，则校验失败
+        return count>0;
     }
 
 

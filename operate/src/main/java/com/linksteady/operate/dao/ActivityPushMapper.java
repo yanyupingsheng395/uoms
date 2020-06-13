@@ -30,18 +30,6 @@ public interface ActivityPushMapper {
 
     int getPushCount(Long planId);
 
-
-//    /**
-//     * 更新状态
-//     * @param planId
-//     * @param status
-//     * @param version
-//     * @return  返回受影响的记录的条数
-//     */
-//    int updateStatus(Long planId, String status, int version);
-//
-//    void deleteData(Long headId);
-
     /**
      * 将文案内容写入临时表
      * @param targetList
@@ -76,19 +64,14 @@ public interface ActivityPushMapper {
      */
     void insertToPushListLarge(Long planId);
 
-    int validateNotifySms(long headId,String activityStage,String activityType);
-
     /**
      * 更新推送方式和推送时段
      */
     void updatePushMethod(Long planId, String pushMethod, String pushPeriod);
 
-    void deletePlanGroup(long planId);
-
-    void insertActivityPlanGroup(long planId);
-
-    void updateActivityPlanGroup(long planId);
-
-    void updateActivityPlanGroup2(long planId,String activityStage,String planType);
+    /**
+     * 判断活动是否配置了文案
+     */
+    int validateSmsConfig(long headId,String activityStage,String planType);
 
 }

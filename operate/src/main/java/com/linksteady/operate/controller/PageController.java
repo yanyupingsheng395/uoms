@@ -161,6 +161,7 @@ public class PageController extends BaseController {
         model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
         model.addAttribute("priceLen", pushProperties.getPriceLen());
         model.addAttribute("prodUrlLen", pushProperties.getShortUrlLen());
+        model.addAttribute("profitLen", pushProperties.getProfitLen());
         model.addAttribute("smsLenLimit", pushProperties.getSmsLengthLimit());
         return "operate/activity/add/add";
     }
@@ -200,6 +201,7 @@ public class PageController extends BaseController {
         model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
         model.addAttribute("priceLen", pushProperties.getPriceLen());
         model.addAttribute("prodUrlLen", pushProperties.getShortUrlLen());
+        model.addAttribute("profitLen", pushProperties.getProfitLen());
         model.addAttribute("smsLenLimit", pushProperties.getSmsLengthLimit());
         return "operate/activity/add/add";
     }

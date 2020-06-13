@@ -19,8 +19,7 @@ public enum  PushPropertiesEnum {
     couponSendType("couponSendType","op.push.couponSendType"),
     couponNameLen("couponNameLen","op.push.couponNameLen"),
     priceLen("priceLen","op.push.priceLen"),
-
-
+    profitLen("profitLen","op.push.profitLen"),
     pushVendor("pushVendor","op.push.pushVendor"),
 
     openNightSleep("openNightSleep","op.push.openNightSleep"),

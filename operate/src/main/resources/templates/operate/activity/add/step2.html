@@ -1,6 +1,6 @@
 <input type="hidden" id="activity_stage"/>
 <div class="row">
-    <span class="navbar-page-title">参加活动商品列表</span>
+    <span class="navbar-page-title" id="productListTitle">预售活动商品列表</span>
 </div>
 <div class="row">
     <div class="col-md-12">
@@ -23,10 +23,11 @@
                         活动机制：
                         <select name="groupId" id="groupId">
                             <option value="">所有</option>
-                            <option value="1">活动价</option>
-                            <option value="2">满件打折</option>
-                            <option value="3">满元减钱</option>
-                            <option value="4">特价</option>
+                            <option value="9">满件打折</option>
+                            <option value="10">满元减钱</option>
+                            <option value="11">特价秒杀</option>
+                            <option value="12">预售付尾立减</option>
+                            <option value="13">无店铺活动</option>
                         </select>
                     </li>
                     <li class="pull-right">
@@ -72,30 +73,36 @@
         <table id="activityProductTable" class="table table-bordered table-striped text-nowrap"></table>
     </div>
 </div>
-<div class="text-right m-t-10">
-    <div th:if="${operateType eq 'update'}">
-        <button id="btn_create_preheat" class="btn btn-secondary btn-sm" th:if="${activityHead.hasPreheat eq '1'}">
-            <i class="fa fa-arrow-right"></i> 修改预售推送计划
-        </button>
-        <button id="btn_create_formal" class="btn btn-secondary btn-sm">
-            <i class="fa fa-arrow-right"></i> 修改正式推送计划
-        </button>
-        <a class="btn btn-secondary btn-sm" href="/page/activity">
-            <i class="fa fa-reply"></i> 返回
-        </a>
-    </div>
-    <div th:if="${operateType eq 'save'}">
-        <button id="btn_create_preheat" class="btn btn-secondary btn-sm">
-            <i class="fa fa-arrow-right"></i> 创建预售推送计划
-        </button>
-        <button id="btn_create_formal" class="btn btn-secondary btn-sm">
-            <i class="fa fa-arrow-right"></i> 创建正式推送计划
-        </button>
-        <a class="btn btn-secondary btn-sm" href="/page/activity">
-            <i class="fa fa-reply"></i> 返回
-        </a>
+<div class="row m-t-10">
+    <div class="col-md-12 text-right">
+        <button class="btn btn-secondary btn-sm" onclick="stepBreak(0)"><i class="fa fa-arrow-left"></i>上一步</button>
+        <button class="btn btn-secondary btn-sm" onclick="stepBreak(2)"><i class="fa fa-arrow-right"></i>下一步</button>
     </div>
 </div>
+<!--<div class="text-right m-t-10">-->
+<!--    <div th:if="${operateType eq 'update'}">-->
+<!--        <button id="btn_create_preheat" class="btn btn-secondary btn-sm" th:if="${activityHead.hasPreheat eq '1'}">-->
+<!--            <i class="fa fa-arrow-right"></i> 修改预售推送计划-->
+<!--        </button>-->
+<!--        <button id="btn_create_formal" class="btn btn-secondary btn-sm">-->
+<!--            <i class="fa fa-arrow-right"></i> 修改正式推送计划-->
+<!--        </button>-->
+<!--        <a class="btn btn-secondary btn-sm" href="/page/activity">-->
+<!--            <i class="fa fa-reply"></i> 返回-->
+<!--        </a>-->
+<!--    </div>-->
+<!--    <div th:if="${operateType eq 'save'}">-->
+<!--        <button id="btn_create_preheat" class="btn btn-secondary btn-sm">-->
+<!--            <i class="fa fa-arrow-right"></i> 创建预售推送计划-->
+<!--        </button>-->
+<!--        <button id="btn_create_formal" class="btn btn-secondary btn-sm">-->
+<!--            <i class="fa fa-arrow-right"></i> 创建正式推送计划-->
+<!--        </button>-->
+<!--        <a class="btn btn-secondary btn-sm" href="/page/activity">-->
+<!--            <i class="fa fa-reply"></i> 返回-->
+<!--        </a>-->
+<!--    </div>-->
+<!--</div>-->
 
 <div class="modal fade" tabindex="-1" role="dialog" id="addProductModal" aria-labelledby="modalLabel" data-backdrop="static">
     <div class="modal-dialog" role="document">
@@ -108,44 +115,51 @@
                 <form class="form-horizontal" id="add-product-form">
                     <input type="hidden" name="id">
                     <div class="form-group">
-                        <label class="col-md-3 control-label">商品ID</label>
+                        <label class="col-md-4 control-label">商品ID</label>
                         <div class="col-md-7">
                             <input class="form-control" type="text" name="productId" id="product_id">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-3 control-label">商品名称</label>
+                        <label class="col-md-4 control-label">商品名称</label>
                         <div class="col-md-7">
                             <input class="form-control" type="text" name="productName">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-3 control-label">非活动日常单价（元/件）</label>
+                        <label class="col-md-4 control-label">日常商品单价(元/件)</label>
                         <div class="col-md-7">
                             <input class="form-control" type="text" name="formalPrice">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-3 control-label">活动期间体现最低单价（元/件）</label>
+                        <label class="col-md-4 control-label">活动商品单价(元/件)</label>
                         <div class="col-md-7">
-                            <input class="form-control" type="text" name="minPrice">
+                            <input class="form-control" type="text" name="activityPrice">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-3 control-label">活动通知体现最低单价（元/件）</label>
+                        <label class="col-md-4 control-label">店铺活动机制</label>
                         <div class="col-md-7">
-                            <input class="form-control" type="text" name="notifyMinPrice">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">活动机制</label>
-                        <div class="col-md-7">
-                            <select name="groupId" class="form-control" onchange="$(this).trigger('blur')">
+                            <select name="groupId" id="activityRule" class="form-control" onchange="groupIdChange(this)">
                                 <option value="">请选择</option>
-                                <option value="1">活动价</option>
-                                <option value="2">满件打折</option>
-                                <option value="3">满元减钱</option>
-                                <option value="4">特价</option>
+                                <option value="9">满件打折</option>
+                                <option value="10">满元减钱</option>
+                                <option value="11">特价秒杀</option>
+                                <option value="12">预售付尾立减</option>
+                                <option value="13">无店铺活动</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="shopOffer" style="display: none;"></div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">利益点适用场景</label>
+                        <div class="col-md-7">
+                            <select name="activityType" id="activityType" class="form-control" onchange="$(this).trigger('blur')">
+                                <option value="">请选择</option>
+                                <option value="NOTIFY">活动通知</option>
+                                <option value="DURING">活动期间</option>
+                                <option value="ALL">整个活动</option>
                             </select>
                         </div>
                     </div>

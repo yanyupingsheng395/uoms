@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.ActivityUserGroupMapper">
-
     <resultMap id="base" type="com.linksteady.operate.domain.ActivityGroup">
-
         <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
+        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
         <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
         <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
         <result column="SMS_TEMPLATE_CODE" jdbcType="VARCHAR" property="smsTemplateCode"></result>
@@ -12,7 +11,7 @@
         <result column="ACTIVITY_TYPE" jdbcType="VARCHAR" property="activityType"></result>
         <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"></result>
         <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"></result>
-        <result column="PROD_ACTIVITY_PROP" jdbcType="VARCHAR" property="prodActivityProp"></result>
+        <result column="GROUP_INFO" jdbcType="VARCHAR" property="groupInfo"></result>
     </resultMap>
 
     <select id="getCount" resultType="int">
@@ -27,9 +26,9 @@
     </select>
 
     <select id="getUserGroupList" resultMap="base">
-        select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE,CHECK_FLAG,CHECK_COMMENTS,PROD_ACTIVITY_PROP
+        select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE,CHECK_FLAG,CHECK_COMMENTS, GROUP_INFO
         from UO_OP_ACTIVITY_GROUP left join UO_OP_ACTIVITY_TEMPLATE
-        on SMS_TEMPLATE_CODE = TMP_CODE where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage} order by group_id asc
+        on SMS_TEMPLATE_CODE = TMP_CODE where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} order by group_id asc
     </select>
 
     <update id="updateGroupTemplate">
@@ -46,11 +45,11 @@
         INSERT_DT,
         INSERT_BY,
         ACTIVITY_TYPE,
-        PROD_ACTIVITY_PROP
+        GROUP_INFO
         )
         values
         <foreach collection="list" item="item" separator=",">
-           (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.activityStage}, #{item.insertDt}, #{item.insertBy}, #{item.activityType}, #{item.prodActivityProp})
+           (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.activityStage}, #{item.insertDt}, #{item.insertBy}, #{item.activityType}, #{item.groupInfo})
         </foreach>
     </insert>
 
@@ -107,13 +106,37 @@
     </update>
 
     <update id="validUserGroupDuring">
-        update UO_OP_ACTIVITY_GROUP set CHECK_FLAG = (
-            case when SMS_TEMPLATE_CODE is null then 'N' else 'Y' end
-        ),
-        CHECK_COMMENTS = (
-            case when SMS_TEMPLATE_CODE is null then '群组文案没有配置' else '' end
-        )
-        where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = 'DURING'
+        update UO_OP_ACTIVITY_GROUP
+        set CHECK_FLAG = (
+            case
+                when
+                            GROUP_ID in (
+                            select distinct GROUP_ID
+                            from UO_OP_ACTIVITY_PRODUCT
+                            where HEAD_ID = #{headId}::int4
+                        ) and
+                            SMS_TEMPLATE_CODE is null then 'N'
+                when
+                            GROUP_ID in (
+                            select distinct GROUP_ID
+                            from UO_OP_ACTIVITY_PRODUCT
+                            where HEAD_ID = #{headId}::int4
+                        ) and
+                            SMS_TEMPLATE_CODE is not null then 'Y'
+                else 'NA' end
+            ),
+            CHECK_COMMENTS = (
+                case
+                    when
+                                GROUP_ID in (
+                                select distinct GROUP_ID
+                                from UO_OP_ACTIVITY_PRODUCT
+                                where HEAD_ID = #{headId}::int4
+                            ) and
+                                SMS_TEMPLATE_CODE is null then '群组文案没有配置'
+                    else null end)
+        where HEAD_ID = #{headId}::int4
+          and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = 'DURING'
     </update>
 
     <select id="validGroupTemplate" resultType="int">
@@ -133,6 +156,6 @@
 
     <update id="removeSmsSelected">
         update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = null, CHECK_FLAG = 'N', CHECK_COMMENTS = '群组文案没有配置'
-        where head_id = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId}::int4
+        where head_id = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId}::int4 and activity_type = #{type}
     </update>
 </mapper>

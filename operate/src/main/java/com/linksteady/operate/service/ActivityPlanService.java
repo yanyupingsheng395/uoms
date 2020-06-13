@@ -1,9 +1,8 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityPersonal;
 import com.linksteady.operate.domain.ActivityPlan;
-import com.linksteady.operate.domain.ActivityPlanGroup;
+import com.linksteady.operate.vo.ActivityGroupVO;
 import com.linksteady.operate.vo.ActivityPlanEffectVO;
 import com.linksteady.operate.vo.SmsStatisVO;
 
@@ -38,7 +37,7 @@ public interface ActivityPlanService {
      * @param planId
      * @return
      */
-    List<ActivityPlanGroup> getPlanGroupList(Long planId);
+    List<ActivityGroupVO> getPlanGroupList(Long planId);
 
     /**
      * 获取按消息内容的统计信息的总行数
