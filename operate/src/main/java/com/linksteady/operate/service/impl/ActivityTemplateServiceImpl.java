@@ -28,20 +28,25 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     @Autowired
     private ConfigService configService;
 
+    /**
+     * 获取给定短信的预览文案
+     * @param code
+     * @return
+     */
     @Override
-    public ActivityTemplate getReplacedTmp(String code) {
+    public String getActivityTemplateContent(String code,String scene) {
         ActivityTemplate activityTemplate = activityTemplateMapper.getTemplate(code);
         String isProdUrl = activityTemplate.getIsProdUrl();
         String isProdName = activityTemplate.getIsProdName();
         String isPrice = activityTemplate.getIsPrice();
         String isProfit = activityTemplate.getIsProfit();
-        String prodUrl = "${商品短链}";
+        String prodUrl = "${商品详情页短链}";
         String prodName = "${商品名称}";
         String price = "${商品最低单价}";
         String profit = "${商品利益点}";
         String content = activityTemplate.getContent();
         if (StringUtils.isNotEmpty(isProdUrl) && isProdUrl.equalsIgnoreCase("1")) {
-            content = content.replace(prodUrl, configService.getValueByName("op.activity.sms.prodUrl"));
+            content = content.replace(prodUrl, " "+configService.getValueByName("op.activity.sms.prodUrl")+" ");
         }
         if (StringUtils.isNotEmpty(isProdName) && isProdName.equalsIgnoreCase("1")) {
             content = content.replace(prodName, configService.getValueByName("op.activity.sms.prodName"));
@@ -52,8 +57,34 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         if (StringUtils.isNotEmpty(isProfit) && isProfit.equalsIgnoreCase("1")) {
             content = content.replace(profit, configService.getValueByName("op.activity.sms.profit"));
         }
-        activityTemplate.setContent(content);
-        return activityTemplate;
+
+        //获取签名
+        String signature=configService.getValueByName("op.push.signature");
+        String signatureFlag=configService.getValueByName("op.push.signature_flag");
+
+        String unsubscribe=configService.getValueByName("op.push.unsubscribe");
+        String unsubscribeFlag=configService.getValueByName("op.push.unsubscribe_flag");
+
+        if("DISPLAY".equals(scene))
+        {
+            content =signature+content;
+            content=content+unsubscribe;
+        }else if("SEND".equals(scene))
+        {
+            //需要系统自动加上签名
+            if(null!=signatureFlag&&"Y".equals(signatureFlag))
+            {
+                content =signature+content;
+            }
+
+            //需要加上退订方式
+            if(null!=unsubscribeFlag&&"Y".equals(unsubscribeFlag))
+            {
+                content=content+unsubscribe;
+            }
+        }
+
+        return content;
     }
 
     @Override
@@ -84,12 +115,6 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         }else {
             activityTemplate.setIsPersonal("1");
         }
-        String content = activityTemplate.getContent();
-        if(StringUtils.isNotEmpty(content)) {
-            content = content.replace("${商品短链}", " ${商品短链} ");
-        }
-        content = content + " 回T退";
-        activityTemplate.setContent(content);
         activityTemplateMapper.saveTemplate(activityTemplate);
     }
 
@@ -115,12 +140,6 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         }else {
             activityTemplate.setIsPersonal("1");
         }
-        String content = activityTemplate.getContent();
-        if(StringUtils.isNotEmpty(content)) {
-            content = content.replace("${商品短链}", " ${商品短链} ");
-        }
-        content = content + " 回T退";
-        activityTemplate.setContent(content);
         activityTemplateMapper.update(activityTemplate);
     }
 }

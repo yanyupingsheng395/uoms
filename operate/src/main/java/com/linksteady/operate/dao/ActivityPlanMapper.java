@@ -3,11 +3,10 @@ package com.linksteady.operate.dao;
 import com.linksteady.operate.domain.ActivityPersonal;
 import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.ActivityPlanEffect;
-import com.linksteady.operate.domain.ActivityPlanGroup;
+import com.linksteady.operate.vo.ActivityGroupVO;
 import com.linksteady.operate.vo.SmsStatisVO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author hxcao
@@ -23,14 +22,12 @@ public interface ActivityPlanMapper {
 
     void deletePlan(Long headId);
 
-    void deletePlanGroup(Long headId);
-
     /**
      * 获取群组的统计信息
      * @param planId
      * @return
      */
-    List<ActivityPlanGroup> getPlanGroupList(Long planId);
+    List<ActivityGroupVO> getPlanGroupList(Long planId);
 
     /**
      * 获取按短信内容的统计信息的总记录数

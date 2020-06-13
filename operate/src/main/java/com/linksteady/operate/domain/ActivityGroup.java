@@ -21,8 +21,6 @@ public class ActivityGroup implements Cloneable{
 
     private String activityStage;
 
-    private Long userNum;
-
     private String smsTemplateCode;
 
     private String activityType;
@@ -40,15 +38,10 @@ public class ActivityGroup implements Cloneable{
 
     private String checkComments;
 
-    /**
-     * 活动属性 Y：是，N：否
-     */
-    private String prodActivityProp;
-
     public ActivityGroup() {};
 
     public ActivityGroup(Long groupId, Long headId, String groupName, String activityStage, String activityType,
-                         String insertBy, Date insertDt, String prodActivityProp, String groupInfo) {
+                         String insertBy, Date insertDt, String groupInfo) {
         this.groupId = groupId;
         this.headId = headId;
         this.groupName = groupName;
@@ -56,7 +49,6 @@ public class ActivityGroup implements Cloneable{
         this.activityType = activityType;
         this.insertBy = insertBy;
         this.insertDt = insertDt;
-        this.prodActivityProp = prodActivityProp;
         this.groupInfo = groupInfo;
     }
 }

@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
@@ -9,6 +10,7 @@ import com.linksteady.operate.domain.*;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
+import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +65,9 @@ public class ActivityController {
 
     @Autowired
     private ShortUrlService shortUrlService;
+
+    @Autowired
+    RedisMessageServiceImpl redisMessageService;
 
     /**
      * 获取头表的分页数据
@@ -414,9 +419,9 @@ public class ActivityController {
      * 屏蔽测试-短信模板
      * @return
      */
-    @GetMapping("/getReplacedTmp")
-    public ResponseBo getReplacedTmp(@RequestParam("code") String code) {
-        return ResponseBo.okWithData(null, activityTemplateService.getReplacedTmp(code));
+    @GetMapping("/getActivityTemplateContent")
+    public ResponseBo getActivityTemplateContent(@RequestParam("code") String code) {
+        return ResponseBo.okWithData(null, activityTemplateService.getActivityTemplateContent(code,"DISPLAY"));
     }
 
     /**
@@ -552,5 +557,25 @@ public class ActivityController {
             return true;
         }
         return activityProductService.checkProductId(headId, activityType, activityStage, productId);
+    }
+
+    /**
+     * 活动运营短信文案发送测试
+     */
+    @RequestMapping("/activityContentTestSend")
+    public ResponseBo testSend(String phoneNum, String smsCode) {
+        List<String> phoneNumList= Splitter.on(",").trimResults().omitEmptyStrings().splitToList(phoneNum);
+
+        String smsContent=activityTemplateService.getActivityTemplateContent(smsCode,"SEND");
+        try {
+            for(String num:phoneNumList)
+            {
+                redisMessageService.sendPhoneMessage(num,smsContent);
+            }
+            return ResponseBo.ok("测试发送成功！");
+        } catch (Exception e) {
+            log.info("发送测试短信错误，错误原因:{}",e);
+            return ResponseBo.error("测试发送失败！");
+        }
     }
 }

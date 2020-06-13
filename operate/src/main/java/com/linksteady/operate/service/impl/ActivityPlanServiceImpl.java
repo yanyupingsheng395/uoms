@@ -14,6 +14,7 @@ import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivityPlanService;
 import com.linksteady.operate.service.ShortUrlService;
+import com.linksteady.operate.vo.ActivityGroupVO;
 import com.linksteady.operate.vo.ActivityPlanEffectVO;
 import com.linksteady.operate.vo.SmsStatisVO;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
@@ -157,11 +158,10 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     @Transactional(rollbackFor = Exception.class)
     public void deletePlan(Long headId) {
         activityPlanMapper.deletePlan(headId);
-        activityPlanMapper.deletePlanGroup(headId);
     }
 
     @Override
-    public List<ActivityPlanGroup> getPlanGroupList(Long planId) {
+    public List<ActivityGroupVO> getPlanGroupList(Long planId) {
         return activityPlanMapper.getPlanGroupList(planId);
     }
 
