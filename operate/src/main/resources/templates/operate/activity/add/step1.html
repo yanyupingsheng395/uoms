@@ -30,10 +30,10 @@
                     <div class="col-md-4">
                         <div class="form-group" style="margin-top: 8px;">
                             &#12288;&#12288;是否预售：<label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                                <input type="radio" name="hasPreheat" value="1"><span>是</span>
+                                <input type="radio" name="hasPreheat" value="1" onclick="haspreheat('1')"><span>是</span>
                             </label>
                             <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                                <input type="radio" name="hasPreheat" value="0"><span>否</span>
+                                <input type="radio" name="hasPreheat" value="0" onclick="haspreheat('0')"><span>否</span>
                             </label>
                         </div>
                     </div>
@@ -181,18 +181,18 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4" th:if="${activityHead.platDiscount eq '1'}">
                         <div class="form-group">
                             &#12288;&#12288;&#12288;&#12288;门槛：<input disabled type="text" name="platThreshold" class="form-control" th:value="${activityHead.platThreshold}"/>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4" th:if="${activityHead.platDiscount eq '1'}">
                         <div class="form-group">
                             &#12288;&#12288;&#12288;&#12288;面额：<input disabled type="text" name="platDeno" class="form-control" th:value="${activityHead.platDeno}"/>
                         </div>
                     </div>
                 </div>
-                <div id="preheatDiv">
+                <div id="preheatDiv" th:if="${activityHead.hasPreheat eq '1'}">
                     <div class="row m-t-15">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -241,6 +241,9 @@
     <div class="row m-t-15">
         <div class="col-md-12 text-right">
             <button class="btn btn-secondary btn-sm" id="btn_basic"><i class="fa fa-arrow-right"></i>下一步</button>
+            <a class="btn btn-secondary btn-sm" href="/page/activity">
+                <i class="fa fa-backward"></i>&nbsp;返回
+            </a>
         </div>
     </div>
 </div>

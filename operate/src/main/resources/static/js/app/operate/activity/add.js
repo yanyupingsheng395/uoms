@@ -1,4 +1,5 @@
 let create_step;
+let CURRENT_ACTIVITY_STAGE;
 $( function () {
     create_step = steps({
         el: "#addStep",
@@ -10,7 +11,36 @@ $( function () {
         center: true,
         dataOrder: ["title", "line", "description"]
     });
+
+    if(operate_type == 'update') {
+        var hasPreheatVal = $( "input[name='hasPreheat']:checked" ).val();
+        haspreheat(hasPreheatVal);
+    }
 });
+
+function haspreheat(v) {
+    if(v === '1') {
+        CURRENT_ACTIVITY_STAGE = 'preheat';
+    }
+    if(v === '0') {
+        CURRENT_ACTIVITY_STAGE = 'formal';
+        $("#productListTitle").html('正式商品列表');
+        $("#preheatFinishBtn").attr("style", "display:none;");
+        $("#formalFinishBtn").attr("style", "display:block;");
+    }
+}
+
+function platDiscountClick(idx) {
+    if(idx === 0){
+        $("#platThresholdDiv").attr("style", "display:none;");
+        $("#platDenoDiv").attr("style", "display:none;");
+    }
+    if(idx === 1){
+        $("#platThresholdDiv").attr("style", "display:block;");
+        $("#platDenoDiv").attr("style", "display:block;");
+    }
+}
+
 $(function (){
     initDt();
     validBasic();
@@ -628,7 +658,7 @@ function getProductInfo() {
     };
     $( "#activityProductTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
-let CURRENT_ACTIVITY_STAGE = 'preheat';
+
 // 跳转到
 function createActivity(stage) {
     CURRENT_ACTIVITY_STAGE = stage;
