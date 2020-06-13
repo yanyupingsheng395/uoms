@@ -35,21 +35,20 @@ public interface ActivityProductMapper {
     void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage);
 
     void deleteData(Long headId);
-    ActivityProduct geFirstProductInfo(Long headId, String stage);
 
     void deleteData(String headId);
 
-    List<String> getProductIdByHeadId(String headId);
+    List<String> getProductIdByHeadId(String headId, String stage);
 
     void deleteDataList(@Param("headId") String headId, @Param("productIdList") List<String> productIdList);
 
-    void updateValidInfo(String headId);
+    void updateValidInfo(String headId, String stage);
 
-    void updateAllValidInfo(String headId);
+    void updateAllValidInfo(String headId, String stage);
 
     int getCountByHeadId(String headId);
 
-    int validProduct(String headId);
+    int validProduct(String headId, String stage);
 
     List<String> getGroupIds(Long headId);
 

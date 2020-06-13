@@ -56,13 +56,6 @@ public interface ActivityProductService {
      */
     void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage);
 
-    /**
-     * 获取第一条商品的信息
-     * @return
-     */
-    ActivityProduct geFirstProductInfo(Long headId, String stage);
-
-
     void deleteData(Long headId);
 
     /**
@@ -71,11 +64,11 @@ public interface ActivityProductService {
     List<ActivityProductUploadError> uploadExcel(MultipartFile file, String headId, String uploadMethod,
                                                  String repeatProduct, String stage) throws Exception;
 
-    void validProductInfo(String headId);
+    void validProductInfo(String headId, String stage);
 
     int getCountByHeadId(String headId);
 
-    int validProduct(String headId);
+    int validProduct(String headId, String stage);
 
     List<String> getGroupIds(Long headId);
 

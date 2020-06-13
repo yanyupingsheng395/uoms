@@ -29,7 +29,7 @@
     </select>
 
     <select id="getUserGroupList" resultMap="base">
-        select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE,CHECK_FLAG,CHECK_COMMENTS,PROD_ACTIVITY_PROP, GROUP_INFO
+        select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE,CHECK_FLAG,CHECK_COMMENTS, GROUP_INFO
         from UO_OP_ACTIVITY_GROUP left join UO_OP_ACTIVITY_TEMPLATE
         on SMS_TEMPLATE_CODE = TMP_CODE where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage} order by group_id asc
     </select>
@@ -48,12 +48,11 @@
         INSERT_DT,
         INSERT_BY,
         ACTIVITY_TYPE,
-        PROD_ACTIVITY_PROP,
         GROUP_INFO
         )
         values
         <foreach collection="list" item="item" separator=",">
-           (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.activityStage}, #{item.insertDt}, #{item.insertBy}, #{item.activityType}, #{item.prodActivityProp}, #{item.groupInfo})
+           (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.activityStage}, #{item.insertDt}, #{item.insertBy}, #{item.activityType}, #{item.groupInfo})
         </foreach>
     </insert>
 

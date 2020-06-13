@@ -29,22 +29,19 @@
     </resultMap>
 
     <select id="getActivityProductListPage" resultMap="base">
-        select distinct epb_product_id, product_name, check_flag, check_comments, group_id, notify_profit, notify_min_price, during_profit, during_min_price from (select t1.head_id,
-        t1.epb_product_id,
-        t1.product_name,
-        t1.check_flag,
-        t1.check_comments,
-        t1.group_id,
-        t1.activity_profit notify_profit,
-        t1.min_price notify_min_price,
-        t2.activity_profit during_profit,
-        t2.min_price during_min_price
-        from UO_OP_ACTIVITY_PRODUCT t1
-        left join UO_OP_ACTIVITY_PRODUCT t2
-        on t1.head_id = t2.head_id and t1.epb_product_id = t2.epb_product_id
-        where t1.HEAD_ID = #{headId}::integer
-        and t1.activity_stage = #{activityStage} and t1.activity_type = 'NOTIFY' or t2.activity_type = 'DURING') t
-        where 1=1
+        select
+        epb_product_id,
+        product_name,
+        min_price,
+        group_id,
+        activity_profit,
+        check_flag,
+        check_comments,
+        insert_dt,
+        string_agg(activity_type, ',') activity_type
+        from uo_op_activity_product
+        where head_id = #{headId}::integer
+        and activity_stage = #{activityStage}
         <if test="productId != null and productId != ''">
             and EPB_PRODUCT_ID = #{productId}
         </if>
@@ -54,12 +51,26 @@
         <if test="groupId != null and groupId != ''">
             and group_id = #{groupId}::int4
         </if>
-        order by CHECK_FLAG asc
+        group by epb_product_id, product_name, min_price, group_id, activity_profit,insert_dt,check_flag,
+        check_comments
+        order by CHECK_FLAG asc, insert_dt desc
         limit #{limit} offset #{offset}
     </select>
 
     <select id="getCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId}::int4 and activity_stage = #{activityStage}
+        select count(1) from (select
+        epb_product_id,
+        product_name,
+        min_price,
+        group_id,
+        activity_profit,
+        check_flag,
+        check_comments,
+        insert_dt,
+        string_agg(activity_type, ',') activity_type
+        from uo_op_activity_product
+        where head_id = #{headId}::integer
+        and activity_stage = #{activityStage}
         <if test="productId != null and productId != ''">
             and EPB_PRODUCT_ID = #{productId}
         </if>
@@ -69,6 +80,8 @@
         <if test="groupId != null and groupId != ''">
             and group_id = #{groupId}::int4
         </if>
+        group by epb_product_id, product_name, min_price, group_id, activity_profit,insert_dt,check_flag,
+        check_comments) t
     </select>
 
     <!--    <insert id="saveDataList">-->
@@ -154,6 +167,7 @@
         <foreach collection="productList" item="item" separator="," open="(" close=")">
             #{item}
         </foreach>
+        and activity_stage = #{stage}
     </delete>
 
     <select id="validProductNum" resultType="int">
@@ -202,7 +216,7 @@
     <select id="getProductIdByHeadId" resultType="string">
         select EPB_PRODUCT_ID
         from UO_OP_ACTIVITY_PRODUCT
-        where head_id = #{headId}::int4
+        where head_id = #{headId}::int4 and activity_stage = #{stage}
     </select>
 
     <delete id="deleteDataList">
@@ -216,17 +230,17 @@
         update UO_OP_ACTIVITY_PRODUCT
         set CHECK_FLAG     = 'N',
             CHECK_COMMENTS = '活动商品在在售商品库中不存在'
-        where HEAD_ID = #{headId}::int4
+        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
           and EPB_PRODUCT_ID in (
             with v1 as (select EPB_PRODUCT_ID
                         from UO_OP_ACTIVITY_PRODUCT t1,
                              (select distinct EBP_PRODUCT_ID from W_PRODUCT where UP_FLAG = 1) t2
                         where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID::varchar
-                          and t1.HEAD_ID = #{headId}::int4)
+                          and t1.HEAD_ID = #{headId}::int4 and activity_stage = #{stage})
             select t3.EPB_PRODUCT_ID
             from UO_OP_ACTIVITY_PRODUCT t3
                      left join v1 on t3.EPB_PRODUCT_ID = v1.EPB_PRODUCT_ID::varchar
-            where t3.HEAD_ID = #{headId}::int4
+            where t3.HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
               and v1.EPB_PRODUCT_ID is null)
     </update>
 
@@ -234,7 +248,7 @@
         update UO_OP_ACTIVITY_PRODUCT
         set CHECK_FLAG     = 'Y',
             CHECK_COMMENTS = ''
-        where HEAD_ID = #{headId}::int4
+        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
     </update>
 
     <select id="getCountByHeadId" resultType="int">
@@ -246,7 +260,7 @@
     <select id="validProduct" resultType="int">
         select count(1)
         from UO_OP_ACTIVITY_PRODUCT
-        where HEAD_ID = #{headId}::int4
+        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
           and CHECK_FLAG = 'N'
     </select>
 

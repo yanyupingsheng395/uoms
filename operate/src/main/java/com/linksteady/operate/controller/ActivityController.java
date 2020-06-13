@@ -96,7 +96,7 @@ public class ActivityController {
         List<ActivityProductUploadError> errorList;
         try {
             errorList = activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct, stage);
-            validProductInfo(headId);
+            validProductInfo(headId, stage);
         } catch (Exception e) {
             log.error("上传商品列表出错", e);
             return ResponseBo.error("上传商品出现未知错误！");
@@ -145,8 +145,8 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/validProductInfo")
-    public ResponseBo validProductInfo(@RequestParam("headId") String headId) {
-        activityProductService.validProductInfo(headId);
+    public ResponseBo validProductInfo(@RequestParam("headId") String headId, @RequestParam("stage") String stage) {
+        activityProductService.validProductInfo(headId, stage);
         return ResponseBo.ok();
     }
 
@@ -159,7 +159,7 @@ public class ActivityController {
     public ResponseBo saveActivityProduct(ActivityProduct activityProduct) {
         activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
         activityProductService.saveActivityProduct(activityProduct);
-        validProductInfo(activityProduct.getHeadId().toString());
+        validProductInfo(activityProduct.getHeadId().toString(), activityProduct.getActivityStage());
         return ResponseBo.ok();
     }
 
@@ -213,7 +213,7 @@ public class ActivityController {
             deleteProduct(activityProduct.getHeadId(), activityProduct.getActivityStage(), activityProduct.getProductId());
             saveActivityProduct(activityProduct);
 //            activityProductService.updateActivityProduct(activityProduct);
-            validProductInfo(String.valueOf(activityProduct.getHeadId()));
+            validProductInfo(String.valueOf(activityProduct.getHeadId()), activityProduct.getActivityStage());
             return ResponseBo.ok();
         } catch (LinkSteadyException e) {
             return ResponseBo.error(e.getMessage());
@@ -268,7 +268,7 @@ public class ActivityController {
     @PostMapping("/deleteProduct")
     public ResponseBo deleteProduct(@RequestParam Long headId, @RequestParam String stage, @RequestParam String productIds) {
         activityProductService.deleteProduct(headId, stage, productIds);
-        validProductInfo(String.valueOf(headId));
+        validProductInfo(String.valueOf(headId), stage);
         return ResponseBo.ok();
     }
 
@@ -512,8 +512,8 @@ public class ActivityController {
     }
 
     @GetMapping("/validProduct")
-    public ResponseBo validProduct(@RequestParam String headId) {
-        return ResponseBo.okWithData(null, activityProductService.validProduct(headId));
+    public ResponseBo validProduct(@RequestParam String headId, @RequestParam("stage") String stage) {
+        return ResponseBo.okWithData(null, activityProductService.validProduct(headId, stage));
     }
 
     /**
