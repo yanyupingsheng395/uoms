@@ -209,7 +209,7 @@ $("#btn_process").click(function () {
 
 // 获取用户群组列表
 function getUserGroupTable(planId,planType) {
-    var columns=initGroupColumn(planType);
+
     $("#userGroupTable").bootstrapTable('destroy').bootstrapTable({
         url: '/activityPlan/getUserGroupList',
         columns: [
@@ -222,7 +222,6 @@ function getUserGroupTable(planId,planType) {
                 align: 'center'
             }
         ],
-        fixedColumns: false,
         queryParams : function(params) {
             return {
                 planId : planId
@@ -266,7 +265,6 @@ function getSmsStatisTable(planId) {
 function getUserDetail(){
     var planId=$("#planId").val()
     var planType=$("#planType").val()
-    var columns=initDetailColumns(planType);
     let settings = {
         url: "/activityPlan/getDetailPage",
         cache: false,
@@ -313,7 +311,6 @@ function getUserDetail(){
             //     }
             // }
         ],
-        fixedColumns: false,
         onLoadSuccess: function () {
             $("a[data-toggle='tooltip']").tooltip();
         }

@@ -1394,6 +1394,9 @@ function editTmp() {
                     $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
                     $( "input[name='isProfit']:radio[value='" + data.isProfit + "']" ).prop( "checked", true );
                     $( "#btn_save_sms" ).attr( 'name', 'update' );
+
+                    //todo 文案的字数在编辑状态下好像没出来
+                    
                     $( "#smstemplate_modal" ).modal( 'hide' );
                     $( "#sms_add_modal" ).modal( 'show' );
                 } );
@@ -1484,7 +1487,6 @@ function sendMessage() {
             phoneNums.push(temp);
         }
     })
-
 
     if(phoneNums.length==0)
     {
@@ -1706,18 +1708,23 @@ function statTmpContentNum() {
         let y = smsContent.length;
         let m = smsContent.length;
         let n = smsContent.length;
-        if(smsContent.indexOf('${PROD_URL}') > -1) {
-            y = y - '${PROD_URL}'.length + parseInt(PROD_URL_LEN);
-            m = m - '${PROD_URL}'.length;
+        if(smsContent.indexOf('${商品详情页短链}') > -1) {
+            y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
+            m = m - '${商品详情页短链}'.length;
         }
-        if(smsContent.indexOf('${PROD_NAME}') > -1) {
-            y = y - '${PROD_NAME}'.length + parseInt(PROD_NAME_LEN);
-            m = m - '${PROD_NAME}'.length;
+        if(smsContent.indexOf('${商品名称}') > -1) {
+            y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
+            m = m - '${商品名称}'.length;
         }
-        if(smsContent.indexOf('${PRICE}') > -1) {
-            y = y - '${PRICE}'.length + parseInt(PRICE_LEN);
-            m = m - '${PRICE}'.length;
+        if(smsContent.indexOf('${商品最低单价}') > -1) {
+            y = y - '${商品最低单价}'.length + parseInt(PRICE_LEN);
+            m = m - '${商品最低单价}'.length;
         }
+        if(smsContent.indexOf('${商品利益点}') > -1) {
+            y = y - '${商品利益点}'.length + parseInt(PROFIT_LEN);
+            m = m - '${商品利益点}'.length;
+        }
+
         total_num = y;
         var code = "";
         code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";

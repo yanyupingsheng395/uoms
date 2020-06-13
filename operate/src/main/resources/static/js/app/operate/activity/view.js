@@ -870,37 +870,37 @@ function validTmp() {
 
     // 验证短信内容是否合法
     if(isProdName === '1') {
-        if(contet.indexOf("${PROD_NAME}") === -1) {
-            $MB.n_warning("'推荐商品名称：是'，文案内容未发现${PROD_NAME}");
+        if(contet.indexOf("${商品名称}") === -1) {
+            $MB.n_warning("'推荐商品名称：是'，文案内容未发现${商品名称}");
             return false;
         }
     }else {
-        if(contet.indexOf("${PROD_NAME}") !== -1) {
-            $MB.n_warning("'推荐商品名称：否'，文案内容却发现${PROD_NAME}");
+        if(contet.indexOf("${商品名称}") !== -1) {
+            $MB.n_warning("'推荐商品名称：否'，文案内容却发现${商品名称}");
             return false;
         }
     }
 
     if(isProdUrl === '1') {
-        if(contet.indexOf("${PROD_URL}") === -1) {
-            $MB.n_warning("'推荐商品短链接：是'，文案内容未发现${PROD_URL}");
+        if(contet.indexOf("${商品详情页短链}") === -1) {
+            $MB.n_warning("'推荐商品短链接：是'，文案内容未发现${商品详情页短链}");
             return false;
         }
     }else {
-        if(contet.indexOf("${PROD_URL}") !== -1) {
-            $MB.n_warning("'推荐商品短链接：否'，文案内容却发现${PROD_URL}");
+        if(contet.indexOf("${商品详情页短链}") !== -1) {
+            $MB.n_warning("'推荐商品短链接：否'，文案内容却发现${商品详情页短链}");
             return false;
         }
     }
 
     if(isPrice === '1') {
-        if(contet.indexOf("${PRICE}") === -1) {
-            $MB.n_warning("'推荐商品活动期间最低单价：是'，文案内容未发现${PRICE}");
+        if(contet.indexOf("${商品最低单价}") === -1) {
+            $MB.n_warning("'推荐商品活动期间最低单价：是'，文案内容未发现${商品最低单价}");
             return false;
         }
     }else {
-        if(contet.indexOf("${PRICE}") !== -1) {
-            $MB.n_warning("'推荐商品活动期间最低单价：否'，文案内容却发现${PRICE}");
+        if(contet.indexOf("${商品最低单价}") !== -1) {
+            $MB.n_warning("'推荐商品活动期间最低单价：否'，文案内容却发现${商品最低单价}");
             return false;
         }
     }
@@ -1059,43 +1059,33 @@ $( "#send_modal" ).on( 'hidden.bs.modal', function () {
 // 屏蔽测试短信发送
 function sendMessage() {
     //验证
-    var smsContent = $( '#smsContent1' ).val();
+    let phoneNums=[];
+    $("input[name='phoneNum']").each(function(){
+        let temp=$(this).val();
+        if(temp!=='')
+        {
+            phoneNums.push(temp);
+        }
+    })
 
-    if ($( 'input[name="phoneNum"]' ).eq( 0 ).val() === '' && $( 'input[name="phoneNum"]' ).eq( 1 ).val() === '' && $( 'input[name="phoneNum"]' ).eq( 2 ).val() === '') {
-        $MB.n_warning( "手机号不能为空！" );
-        return;
-    }
-    var phoneNum = [];
-    if ($( 'input[name="phoneNum"]' ).eq( 0 ).val() !== '') {
-        phoneNum.push( $( 'input[name="phoneNum"]' ).eq( 0 ).val() );
-    }
-    if ($( 'input[name="phoneNum"]' ).eq( 1 ).val() !== '') {
-        phoneNum.push( $( 'input[name="phoneNum"]' ).eq( 1 ).val() );
-    }
-    if ($( 'input[name="phoneNum"]' ).eq( 2 ).val() !== '') {
-        phoneNum.push( $( 'input[name="phoneNum"]' ).eq( 2 ).val() );
-    }
-    phoneNum = phoneNum.join( ',' );
-    if (null == smsContent || smsContent == '') {
-        $MB.n_warning( "模板内容不能为空！" );
+    if(phoneNums.length==0)
+    {
+        $MB.n_warning("至少输入一个手机号！");
         return;
     }
 
-    //判断是否含有变量
-    if (smsContent.indexOf( "$" ) >= 0) {
-        $MB.n_warning( "模板内容的变量请替换为实际值！" );
-        return;
-    }
+    let phoneNum = phoneNums.join(',');
+    let testSmsCode=$("#testSmsCode").val();
 
     //提交后端进行发送
     lightyear.loading( 'show' );
 
     let param = new Object();
     param.phoneNum = phoneNum;
-    param.smsContent = smsContent;
+    param.smsCode = testSmsCode;
 
     $.ajax( {
-        url: "/smsTemplate/testSend",
+        url: "/activity/activityContentTestSend",
         data: param,
         type: 'POST',
         success: function (r) {
@@ -1292,18 +1282,24 @@ function statTmpContentNum() {
         let y = smsContent.length;
         let m = smsContent.length;
         let n = smsContent.length;
-        if(smsContent.indexOf('${PROD_URL}') > -1) {
-            y = y - '${PROD_URL}'.length + parseInt(PROD_URL_LEN);
-            m = m - '${PROD_URL}'.length;
+        if(smsContent.indexOf('${商品详情页短链}') > -1) {
+            y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
+            m = m - '${商品详情页短链}'.length;
         }
-        if(smsContent.indexOf('${PROD_NAME}') > -1) {
-            y = y - '${PROD_NAME}'.length + parseInt(PROD_NAME_LEN);
-            m = m - '${PROD_NAME}'.length;
+        if(smsContent.indexOf('${商品名称}') > -1) {
+            y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
+            m = m - '${商品名称}'.length;
         }
-        if(smsContent.indexOf('${PRICE}') > -1) {
-            y = y - '${PRICE}'.length + parseInt(PRICE_LEN);
-            m = m - '${PRICE}'.length;
+        if(smsContent.indexOf('${商品最低单价}') > -1) {
+            y = y - '${商品最低单价}'.length + parseInt(PRICE_LEN);
+            m = m - '${商品最低单价}'.length;
         }
+
+        if(smsContent.indexOf('${商品利益点}') > -1) {
+            y = y - '${商品利益点}'.length + parseInt(PROFIT_LEN);
+            m = m - '${商品利益点}'.length;
+        }
+
         total_num = y;
         var code = "";
         code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
