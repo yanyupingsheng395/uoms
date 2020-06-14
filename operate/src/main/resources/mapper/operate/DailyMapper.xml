@@ -294,7 +294,7 @@
     </select>
 
     <update id="expireDailyHead">
-        update uo_op_daily_header h set status='timeout' where h.status='todo' and touch_dt::date!=current_date
+        update uo_op_daily_header h set status='timeout' where h.status='todo' and touch_dt::date&lt;current_date
     </update>
 
     <select id="getLifeCycleByUserId" resultType="string">

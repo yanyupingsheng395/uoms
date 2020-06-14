@@ -246,6 +246,7 @@ public class PageController extends BaseController {
     {
         int count = activityHeadService.getActivityStatus(id);
         if(count == 0) {
+            model.addAttribute("errormsg","无已经生成的执行计划!");
             return "redirect:/page/activity";
         }
         model.addAttribute("headId", id);

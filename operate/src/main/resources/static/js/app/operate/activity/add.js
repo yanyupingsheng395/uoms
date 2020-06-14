@@ -1044,7 +1044,7 @@ function getGroupList(stage, type, tableId) {
                 field: 'groupInfo',
                 title: '理解用户群组'
             }, {
-                title: '文案内容',
+                title: '设置文案',
                 align: 'center',
                 formatter: function (value, row, index) {
                     var res = "";
@@ -1089,7 +1089,7 @@ function getGroupList(stage, type, tableId) {
                 }
             }, {
                 field: 'smsTemplateContent',
-                title: '企业微信',
+                title: '文案内容',
                 formatter: function (value, row, index) {
                     return longTextFormat(value, row, index);
                 }

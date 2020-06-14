@@ -1,7 +1,5 @@
 $(function () {
-
     var errmsg=$("#errormsg").val();
-
     if(null!=errmsg&&errmsg!='')
     {
         $MB.n_warning(errmsg);

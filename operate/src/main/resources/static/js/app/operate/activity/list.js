@@ -1,5 +1,11 @@
 init_date('date', 'yyyy-mm-dd', 0,2,0)
 $(function () {
+    var errmsg=$("#errormsg").val();
+    if(null!=errmsg&&errmsg!='')
+    {
+        $MB.n_warning(errmsg);
+    }
+
     let settings = {
         url: "/activity/gePageOfHead",
         cache: false,
