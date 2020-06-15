@@ -3,7 +3,7 @@ package com.linksteady.operate.controller;
 import com.google.common.base.Splitter;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.PushProperties;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.service.SmsTemplateService;
 import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
@@ -31,7 +31,7 @@ public class SmsTemplateController extends BaseController {
     SmsTemplateService smsTemplateService;
 
     @Autowired
-    private PushProperties pushProperties;
+    private PushConfig pushConfig;
 
     @Autowired
     RedisMessageServiceImpl redisMessageService;
@@ -158,12 +158,12 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/getCouponSendType")
     public ResponseBo getCouponSendType() {
-        return ResponseBo.okWithData(null, pushProperties.getCouponSendType());
+        return ResponseBo.okWithData(null, pushConfig.getCouponSendType());
     }
 
     @GetMapping("/validSmsContentLength")
     public ResponseBo validSmsContentLength(@RequestParam("smsContent") String smsContent) {
-        return ResponseBo.okWithData(null, smsContent.length() <= pushProperties.getSmsLengthLimit());
+        return ResponseBo.okWithData(null, smsContent.length() <= pushConfig.getSmsLengthLimit());
     }
 
     /**

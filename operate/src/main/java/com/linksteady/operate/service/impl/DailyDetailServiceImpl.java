@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyDetailMapper;
 import com.linksteady.operate.domain.DailyDetail;
@@ -46,7 +47,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Autowired
-    private ConfigService configService;
+    private PushConfig pushConfig;
 
 
     /**
@@ -301,11 +302,11 @@ public class DailyDetailServiceImpl implements DailyDetailService {
 
             //判断是否需要加上签名及退订方式
             //获取签名
-            String signature=configService.getValueByName("op.push.signature");
-            String signatureFlag=configService.getValueByName("op.push.signature_flag");
+            String signature=pushConfig.getSignature();
+            String signatureFlag=pushConfig.getSignatureFlag();
 
-            String unsubscribe=configService.getValueByName("op.push.unsubscribe");
-            String unsubscribeFlag=configService.getValueByName("op.push.unsubscribe_flag");
+            String unsubscribe=pushConfig.getUnsubscribe();
+            String unsubscribeFlag=pushConfig.getUnsubscribeFlag();
 
             //需要加上签名
             if(null!=signatureFlag&&"Y".equals(signatureFlag))

@@ -4,61 +4,56 @@ package com.linksteady.operate.domain.enums;
  * 推送属性类的属性名及其在T_CONFIG中配置CODE的映射枚举类
  */
 public enum  PushPropertiesEnum {
-    repeatPushDays("repeatPushDays","op.push.repeatPushDays"),
+    repeatPushDays("op.push.repeatPushDays"),
 
-    pushFlag("pushFlag","op.push.pushFlag"),
-    pushMethod("pushMethod","op.push.pushMethod"),
-    smsLengthLimit("smsLengthLimit","op.push.smsLengthLimit"),
-    productUrl("productUrl","op.push.productUrl"),
-    isTestEnv("isTestEnv","op.push.isTestEnv"),
+    pushFlag("op.push.pushFlag"),
+    pushMethod("op.push.pushMethod"),
+    smsLengthLimit("op.push.smsLengthLimit"),
+    productUrl("op.push.productUrl"),
+    isTestEnv("op.push.isTestEnv"),
 
-    demoShortUrl("demoShortUrl","op.push.demoShortUrl"),
-    shortUrlLen("shortUrlLen","op.push.shortUrlLen"),
+    demoShortUrl("op.push.demoShortUrl"),
+    shortUrlLen("op.push.shortUrlLen"),
 
-    prodNameLen("prodNameLen","op.push.prodNameLen"),
-    couponSendType("couponSendType","op.push.couponSendType"),
-    couponNameLen("couponNameLen","op.push.couponNameLen"),
-    priceLen("priceLen","op.push.priceLen"),
-    profitLen("profitLen","op.push.profitLen"),
-    pushVendor("pushVendor","op.push.pushVendor"),
+    prodNameLen("op.push.prodNameLen"),
+    couponSendType("op.push.couponSendType"),
+    couponNameLen("op.push.couponNameLen"),
+    priceLen("op.push.priceLen"),
+    profitLen("op.push.profitLen"),
+    pushVendor("op.push.pushVendor"),
 
-    openNightSleep("openNightSleep","op.push.openNightSleep"),
-    nightStart("nightStart","op.push.nightStart"),
-    nightEnd("nightEnd","op.push.nightEnd"),
-    OpenCallback("OpenCallback","op.push.OpenCallback"),
+    openNightSleep("op.push.openNightSleep"),
+    nightStart("op.push.nightStart"),
+    nightEnd("op.push.nightEnd"),
+    openCallback("op.push.OpenCallback"),
 
-    clAccount("clAccount","op.push.clAccount"),
-    clPassword("clPassword","op.push.clPassword"),
-    clRequestServerUrl("clRequestServerUrl","op.push.clRequestServerUrl"),
-    clPullMoUrl("clPullMoUrl","op.push.clPullMoUrl"),
-    clReportRequestUrl("clReportRequestUrl","op.push.clReportRequestUrl"),
+    clAccount("op.push.clAccount"),
+    clPassword("op.push.clPassword"),
+    clRequestServerUrl("op.push.clRequestServerUrl"),
+    clPullMoUrl("op.push.clPullMoUrl"),
+    clReportRequestUrl("op.push.clReportRequestUrl"),
 
 
-    montnetsAccount("montnetsAccount","op.push.montnetsAccount"),
-    montnetsPassword("montnetsPassword","op.push.montnetsPassword"),
-    montnetsMasterIpAddress("montnetsMasterIpAddress","op.push.montnetsMasterIpAddress"),
+    montnetsAccount("op.push.montnetsAccount"),
+    montnetsPassword("op.push.montnetsPassword"),
+    montnetsMasterIpAddress("op.push.montnetsMasterIpAddress"),
 
-    dailyPollingMins("dailyPollingMins","op.push.dailyPollingMins"),
-    batchPollingMins("batchPollingMins","op.push.batchPollingMins"),
-    moPollingMins("moPollingMins","op.push.moPollingMins"),
-    rptPollingMins("rptPollingMins","op.push.rptPollingMins");
+    dailyPollingMins("op.push.dailyPollingMins"),
+    batchPollingMins("op.push.batchPollingMins"),
+    moPollingMins("op.push.moPollingMins"),
+    rptPollingMins("op.push.rptPollingMins"),
 
-    private String fieldName;
+    signature("op.push.signature"),
+    signatureFlag("op.push.signature_flag"),
+    unsubscribe("op.push.unsubscribe"),
+    unsubscribeFlag("op.push.unsubscribe_flag");
+
 
     private String keyCode;
 
 
-    PushPropertiesEnum(String fieldName, String keyCode) {
-        this.fieldName = fieldName;
+    PushPropertiesEnum(String keyCode) {
         this.keyCode = keyCode;
-    }
-
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
     }
 
     public String getKeyCode() {

@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.operate.domain.PushProperties;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.domain.QywxDailyHeader;
 import com.linksteady.operate.exception.OptimisticLockException;
@@ -51,7 +51,7 @@ public class QywxDailyController {
     private QywxDailyDetailService qywxDailyDetailService;
 
     @Autowired
-    private PushProperties pushProperties;
+    private PushConfig pushConfig;
 
     @Autowired
     private ConfigService configService;
@@ -286,7 +286,7 @@ public class QywxDailyController {
     @GetMapping("/getPushInfo")
     public ResponseBo getPushInfo() {
         Map<String, Object> result = Maps.newHashMap();
-        result.put("method", pushProperties.getPushMethod());
+        result.put("method", pushConfig.getPushMethod());
         int hour = LocalTime.now().getHour();
         final List<String> timeList = IntStream.rangeClosed(8, 22).filter(x -> x > hour).boxed().map(y -> {
             if (y < 10) {

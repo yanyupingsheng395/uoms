@@ -6,8 +6,8 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.FileUtils;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.*;
-import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
@@ -54,7 +54,7 @@ public class ActivityController {
     private ActivityPlanService activityPlanService;
 
     @Autowired
-    private PushProperties pushProperties;
+    private PushConfig pushConfig;
 
     @Autowired
     private ActivityEffectService activityEffectService;
@@ -214,7 +214,7 @@ public class ActivityController {
     @PostMapping("/updateActivityProduct")
     public ResponseBo updateActivityProduct(ActivityProduct activityProduct) {
         try {
-            if(activityProduct.getProductName().length() > pushProperties.getProdNameLen()) {
+            if(activityProduct.getProductName().length() > pushConfig.getProdNameLen()) {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
             deleteProduct(activityProduct.getHeadId(), activityProduct.getActivityStage(), activityProduct.getProductId());
@@ -541,20 +541,6 @@ public class ActivityController {
     @GetMapping("/validProduct")
     public ResponseBo validProduct(@RequestParam String headId, @RequestParam("stage") String stage) {
         return ResponseBo.okWithData(null, activityProductService.validProduct(headId, stage));
-    }
-
-    public static void main(String[] args) {
-        ActivityProduct p1 = new ActivityProduct();
-        p1.setProductId("1");
-        p1.setProductName("1a");
-        List<ActivityProduct> list = Lists.newArrayList();
-        list.add(p1);
-
-        Iterator<ActivityProduct> iterator = list.iterator();
-        while (iterator.hasNext()) {
-            iterator.next().setProductName("aaaa");
-        }
-        System.out.println(list);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.linksteady.operate.service.impl;
 
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.SmsTemplateMapper;
 import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.service.SmsTemplateService;
@@ -26,6 +27,9 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
 
     @Autowired
     private ConfigService configService;
+
+    @Autowired
+    private PushConfig pushConfig;
 
     @Override
     public List<SmsTemplate> selectSmsTemplateListWithGroup(int limit, int offset, long groupId) {
@@ -99,11 +103,11 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         }
 
         //获取签名
-        String signature=configService.getValueByName("op.push.signature");
-        String signatureFlag=configService.getValueByName("op.push.signature_flag");
+        String signature=pushConfig.getSignature();
+        String signatureFlag=pushConfig.getSignatureFlag();
 
-        String unsubscribe=configService.getValueByName("op.push.unsubscribe");
-        String unsubscribeFlag=configService.getValueByName("op.push.unsubscribe_flag");
+        String unsubscribe=pushConfig.getUnsubscribe();
+        String unsubscribeFlag=pushConfig.getUnsubscribeFlag();
 
         if("DISPLAY".equals(scene))
         {

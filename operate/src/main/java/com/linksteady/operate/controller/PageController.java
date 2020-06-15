@@ -3,6 +3,7 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivityPlanService;
@@ -29,9 +30,6 @@ public class PageController extends BaseController {
     private ActivityHeadService activityHeadService;
 
     @Autowired
-    private PushProperties pushProperties;
-
-    @Autowired
     private ConfigService configService;
 
     @Autowired
@@ -39,6 +37,9 @@ public class PageController extends BaseController {
 
     @Autowired
     private QywxDailyService qywxDailyService;
+
+    @Autowired
+    PushConfig pushConfig;
 
     @Log(value = "用户成长监控",location = "用户成长系统")
     @RequestMapping("/operator/user")
@@ -57,15 +58,15 @@ public class PageController extends BaseController {
     @RequestMapping("/dailyconfig")
     public String dailyGroupConfig(Model model) {
         //短链长度
-        model.addAttribute("shortUrlLen", pushProperties.getShortUrlLen());
+        model.addAttribute("shortUrlLen", pushConfig.getShortUrlLen());
         //补贴名称长度
-        model.addAttribute("couponNameLen", pushProperties.getCouponNameLen());
+        model.addAttribute("couponNameLen", pushConfig.getCouponNameLen());
         //商品名称长度
-        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
+        model.addAttribute("prodNameLen", pushConfig.getProdNameLen());
         //补贴发放方式
-        model.addAttribute("couponSendType", pushProperties.getCouponSendType());
+        model.addAttribute("couponSendType", pushConfig.getCouponSendType());
         //短链长度
-        model.addAttribute("smsLengthLimit", pushProperties.getSmsLengthLimit());
+        model.addAttribute("smsLengthLimit", pushConfig.getSmsLengthLimit());
         return "operate/dailyconfig/config";
     }
 
@@ -80,15 +81,15 @@ public class PageController extends BaseController {
     @RequestMapping("/cfg/smsTemplate")
     public String smsTemplateList(Model model) {
         //短链长度
-        model.addAttribute("shortUrlLen", pushProperties.getShortUrlLen());
+        model.addAttribute("shortUrlLen", pushConfig.getShortUrlLen());
         //优惠券名称长度
-        model.addAttribute("couponNameLen", pushProperties.getCouponNameLen());
+        model.addAttribute("couponNameLen", pushConfig.getCouponNameLen());
         //商品名称长度
-        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
+        model.addAttribute("prodNameLen", pushConfig.getProdNameLen());
         //优惠券发放方式
-        model.addAttribute("couponSendType", pushProperties.getCouponSendType());
+        model.addAttribute("couponSendType", pushConfig.getCouponSendType());
         //短信长度
-        model.addAttribute("smsLengthLimit", pushProperties.getSmsLengthLimit());
+        model.addAttribute("smsLengthLimit", pushConfig.getSmsLengthLimit());
         return "operate/config/smstemplate";
     }
 
@@ -100,8 +101,8 @@ public class PageController extends BaseController {
     @Log(value = "每日运营优惠券",location = "用户成长系统")
     @RequestMapping("/cfg/coupon")
     public String couponList(Model model) {
-        model.addAttribute("couponSendType", pushProperties.getCouponSendType());
-        model.addAttribute("couponNameLen", pushProperties.getCouponNameLen());
+        model.addAttribute("couponSendType", pushConfig.getCouponSendType());
+        model.addAttribute("couponNameLen", pushConfig.getCouponNameLen());
         return "operate/config/coupon";
     }
 
@@ -158,11 +159,11 @@ public class PageController extends BaseController {
     public String activityAdd(Model model)
     {
         model.addAttribute("operateType", "save");
-        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
-        model.addAttribute("priceLen", pushProperties.getPriceLen());
-        model.addAttribute("prodUrlLen", pushProperties.getShortUrlLen());
-        model.addAttribute("profitLen", pushProperties.getProfitLen());
-        model.addAttribute("smsLenLimit", pushProperties.getSmsLengthLimit());
+        model.addAttribute("prodNameLen", pushConfig.getProdNameLen());
+        model.addAttribute("priceLen", pushConfig.getPriceLen());
+        model.addAttribute("prodUrlLen", pushConfig.getShortUrlLen());
+        model.addAttribute("profitLen", pushConfig.getProfitLen());
+        model.addAttribute("smsLenLimit", pushConfig.getSmsLengthLimit());
         return "operate/activity/add/add";
     }
 
@@ -198,11 +199,11 @@ public class PageController extends BaseController {
         model.addAttribute("formalStatus", formalStatus);
         model.addAttribute("formalNotifyStatus", formalNotifyStatus);
 
-        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
-        model.addAttribute("priceLen", pushProperties.getPriceLen());
-        model.addAttribute("prodUrlLen", pushProperties.getShortUrlLen());
-        model.addAttribute("profitLen", pushProperties.getProfitLen());
-        model.addAttribute("smsLenLimit", pushProperties.getSmsLengthLimit());
+        model.addAttribute("prodNameLen", pushConfig.getProdNameLen());
+        model.addAttribute("priceLen", pushConfig.getPriceLen());
+        model.addAttribute("prodUrlLen", pushConfig.getShortUrlLen());
+        model.addAttribute("profitLen", pushConfig.getProfitLen());
+        model.addAttribute("smsLenLimit", pushConfig.getSmsLengthLimit());
         return "operate/activity/add/add";
     }
 
@@ -227,10 +228,10 @@ public class PageController extends BaseController {
         model.addAttribute("formalStatus", formalStatus);
         model.addAttribute("formalNotifyStatus", formalNotifyStatus);
 
-        model.addAttribute("prodNameLen", pushProperties.getProdNameLen());
-        model.addAttribute("priceLen", pushProperties.getPriceLen());
-        model.addAttribute("prodUrlLen", pushProperties.getShortUrlLen());
-        model.addAttribute("smsLenLimit", pushProperties.getSmsLengthLimit());
+        model.addAttribute("prodNameLen", pushConfig.getProdNameLen());
+        model.addAttribute("priceLen", pushConfig.getPriceLen());
+        model.addAttribute("prodUrlLen", pushConfig.getShortUrlLen());
+        model.addAttribute("smsLenLimit", pushConfig.getSmsLengthLimit());
         return "operate/activity/view/view";
     }
 
@@ -247,7 +248,7 @@ public class PageController extends BaseController {
         int count = activityHeadService.getActivityStatus(id);
         if(count == 0) {
             model.addAttribute("errormsg","无已经生成的执行计划!");
-            return "redirect:/page/activity";
+            return "operate/activity/list";
         }
         model.addAttribute("headId", id);
         return "operate/activity/plan";
@@ -319,7 +320,7 @@ public class PageController extends BaseController {
     @Log(value = "手工活动推送",location = "用户成长系统")
     @RequestMapping("/manual")
     public String manual(Model model) {
-        model.addAttribute("fontNum", pushProperties.getSmsLengthLimit());
+        model.addAttribute("fontNum", pushConfig.getSmsLengthLimit());
         return "operate/manual/manual";
     }
 

@@ -48,6 +48,9 @@
                             <a class="btn btn-dark" id="batchTest" onclick="batchTest()" shiro:hasPermission="pushadmin">
                                 <i class="fa fa-list-alt"></i> 批量推送测试
                             </a>
+                            <a class="btn btn-brown" id="reloadPushConfig" onclick="reloadPushConfig()" shiro:hasPermission="pushadmin">
+                                <i class="fa fa-refresh"></i> 重新加载推送配置
+                            </a>
 
                             <a class="btn btn-brown" id="noticeRefresh" onclick="noticeRefresh()" shiro:hasPermission="pushadmin">
                                 <i class="fa fa-list-alt"></i> 通知推送端重新加载配置
@@ -306,7 +309,7 @@
     function noticeRefresh() {
         $("#noticeRefresh").attr("disabled",true);
         $MB.loadingDesc('show', '通知中，请稍候...');
-        $.get( "/push/refreshPushProperties", {}, function (r) {
+        $.get( "/push/noticeRefresh", {}, function (r) {
             if (r.code === 200) {
                 //延迟 显示遮罩层 延迟7s后结束
                 setTimeout(
@@ -326,10 +329,34 @@
         } );
     }
 
+    function reloadPushConfig()
+    {
+        $("#reloadPushConfig").attr("disabled",true);
+        $MB.loadingDesc('show', '重新加载中，请稍候...');
+        $.get( "/push/reloadPushConfig", {}, function (r) {
+            if (r.code === 200) {
+                //延迟 显示遮罩层 延迟7s后结束
+                setTimeout(
+                    function()
+                    {
+                        $MB.n_success(r.msg);
+                        status();
+                        $MB.loadingDesc('hide');
+                        $("#reloadPushConfig").attr("disabled",false);
+                    }
+                    ,4000);
+            }else {
+                $MB.n_warning(r.msg);
+                $MB.loadingDesc('hide');
+                $("#reloadPushConfig").attr("disabled",false);
+            }
+        } );
+    }
+
     function noticePrint() {
         $("#noticePrint").attr("disabled",true);
         $MB.loadingDesc('show', '通知中，请稍候...');
-        $.get( "/push/printPushProperties", {}, function (r) {
+        $.get( "/push/noticePrint", {}, function (r) {
             if (r.code === 200) {
                 //延迟 显示遮罩层 延迟7s后结束
                 setTimeout(

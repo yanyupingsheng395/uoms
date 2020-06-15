@@ -2,14 +2,11 @@ package com.linksteady.operate.config;
 
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.ShortUrlMapper;
-import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.ShortUrlInfo;
 import com.linksteady.operate.exception.LinkSteadyException;
-import com.linksteady.operate.service.PushPropertiesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -29,9 +26,6 @@ public class LoadConfig implements CommandLineRunner {
     ConfigService configService;
 
     @Autowired
-    PushPropertiesService pushPropertiesService;
-
-    @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
@@ -46,6 +40,7 @@ public class LoadConfig implements CommandLineRunner {
         {
             throw new LinkSteadyException("无法正确加载到配置，请检查");
         }
+        //将短链加载到redis中去
         setShortUrlToRedis();
     }
 
@@ -76,16 +71,4 @@ public class LoadConfig implements CommandLineRunner {
         log.info("结束同步短链数据到redis");
     }
 
-    /**
-     * 读取推送的配置信息
-     *
-     */
-    @Bean(name="pushProperties")
-    public PushProperties pushProperties() throws Exception
-    {
-        //初始化配置对象
-        PushProperties pushProperties=new PushProperties();
-        pushPropertiesService.initProperties(pushProperties,"init");
-        return pushProperties;
-    }
 }

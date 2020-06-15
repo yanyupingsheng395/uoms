@@ -30,12 +30,13 @@ public class ConfigServiceImpl implements ConfigService {
     @Autowired
     RedisTemplate redisTemplate;
 
+    /**
+     * 将配置信息加载到redis中去
+     */
     @Override
     public synchronized  void loadConfigToRedis() {
         List<Tconfig> tconfigList=configMapper.selectConfigList();
-
         HashOperations<String, String, Tconfig> hashOperations= redisTemplate.opsForHash();
-
         //删除
         redisTemplate.delete(CONFIG_KEY_NAME);
         //存入redis
@@ -45,6 +46,11 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
+    /**
+     * 从字典表中根据给定的类型编码获取所有的 name-value对。
+     * @param typeCode
+     * @return
+     */
     @Override
     public Map<String,String> selectDictByTypeCode(String typeCode) {
         DictCacheManager dictCacheManager=DictCacheManager.getInstance();
@@ -54,7 +60,6 @@ public class ConfigServiceImpl implements ConfigService {
         {
             //从数据库中取，并放入到缓存中
             List<Dict> dictList=configMapper.selectDictByTypeCode(typeCode);
-
             Map<String,String> tempMap=dictList.stream().collect(Collectors.toMap(Dict::getCode,Dict::getValue,(o1,o2)->o1, LinkedHashMap::new));
             dictCacheManager.setDictMap(typeCode,tempMap);
 
@@ -62,23 +67,38 @@ public class ConfigServiceImpl implements ConfigService {
         return dictCacheManager.getdictMap(typeCode);
     }
 
+    /**
+     * 更新t_config表中某一个属性的值
+     * @param name
+     * @param value
+     */
     @Override
     public void updateConfig(String name, String value) {
         int count=configMapper.updateConfig(name,value);
-
         if(count>0)
         {
-            //根据name重新加载配置
-            Tconfig tconfig=configMapper.getTconfigByName(name);
-            HashOperations<String, String, Tconfig> hashOperations= redisTemplate.opsForHash();
-            hashOperations.put(CONFIG_KEY_NAME,name,tconfig);
+            synchronized(this)
+            {
+                //根据name重新加载配置
+                Tconfig tconfig=configMapper.getTconfigByName(name);
+                HashOperations<String, String, Tconfig> hashOperations= redisTemplate.opsForHash();
+                hashOperations.put(CONFIG_KEY_NAME,name,tconfig);
+            }
         }
     }
 
-
+    /**
+     * 从配置表中根据跟定的key获取其value
+     * @param name
+     * @return
+     */
     @Override
     public String getValueByName(String name) {
         HashOperations<String, String, Tconfig> hashOperations= redisTemplate.opsForHash();
+        if(!redisTemplate.hasKey(CONFIG_KEY_NAME))
+        {
+            loadConfigToRedis();
+        }
 
         Tconfig tconfig=hashOperations.get(CONFIG_KEY_NAME,name);
 
@@ -86,7 +106,7 @@ public class ConfigServiceImpl implements ConfigService {
         {
             return tconfig.getValue();
         }
-        return null;
+        return "";
     }
 
     @Override
@@ -94,6 +114,10 @@ public class ConfigServiceImpl implements ConfigService {
         return redisTemplate.hasKey(CONFIG_KEY_NAME);
     }
 
+    /**
+     * 从redis中读取所有的配置信息
+     * @return
+     */
     @Override
     public List<Tconfig> selectConfigListFromRedis() {
         HashOperations<String, String, Tconfig> hashOperations= redisTemplate.opsForHash();

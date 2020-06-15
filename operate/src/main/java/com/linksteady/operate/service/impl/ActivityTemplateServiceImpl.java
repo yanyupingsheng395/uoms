@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.User;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.ActivityTemplateMapper;
 import com.linksteady.operate.domain.ActivityTemplate;
 import com.linksteady.operate.service.ActivityTemplateService;
@@ -24,6 +25,9 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
 
     @Autowired
     private ActivityTemplateMapper activityTemplateMapper;
+
+    @Autowired
+    private PushConfig pushConfig;
 
     @Autowired
     private ConfigService configService;
@@ -59,11 +63,11 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         }
 
         //获取签名
-        String signature=configService.getValueByName("op.push.signature");
-        String signatureFlag=configService.getValueByName("op.push.signature_flag");
+        String signature=pushConfig.getSignature();
+        String signatureFlag=pushConfig.getSignatureFlag();
 
-        String unsubscribe=configService.getValueByName("op.push.unsubscribe");
-        String unsubscribeFlag=configService.getValueByName("op.push.unsubscribe_flag");
+        String unsubscribe=pushConfig.getUnsubscribe();
+        String unsubscribeFlag=pushConfig.getUnsubscribeFlag();
 
         if("DISPLAY".equals(scene))
         {

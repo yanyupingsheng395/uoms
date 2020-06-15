@@ -1,18 +1,17 @@
 package com.linksteady.operate.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.ActivityDetailMapper;
 import com.linksteady.operate.dao.ActivityProductMapper;
 import com.linksteady.operate.dao.ActivityPushMapper;
 import com.linksteady.operate.domain.ActivityDetail;
 import com.linksteady.operate.domain.ActivityPlan;
-import com.linksteady.operate.domain.ActivityProduct;
-import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
-import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
 import com.linksteady.operate.domain.enums.ActivityStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.ActivityHeadService;
@@ -22,15 +21,13 @@ import com.linksteady.operate.thread.TransActivityContentThread;
 import com.linksteady.operate.vo.ActivityContentVO;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -38,7 +35,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 /**
  * @author huangkun
@@ -62,9 +58,6 @@ public class ActivityPushServiceImpl implements ActivityPushService {
     ShortUrlService shortUrlService;
 
     @Autowired
-    private PushProperties pushProperties;
-
-    @Autowired
     RedisTemplate<String, String> redisTemplate;
 
     @Autowired
@@ -74,7 +67,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
     ActivityProductMapper activityProductMapper;
 
     @Autowired
-    private ConfigService configService;
+    private PushConfig pushConfig;
 
     /**
      * 对活动推送文案进行转换
@@ -117,12 +110,14 @@ public class ActivityPushServiceImpl implements ActivityPushService {
 
         //获取此活动上配置的所有模板
         List<Map<String,String>> templateList=activityPushMapper.getAllTemplate(headId,activityStage,activityType);
+        log.info("获取到模板的内容为{}",templateList.size());
 
         Map<String,String> templateMap= Maps.newHashMap();
         for(Map<String,String> template:templateList)
         {
+            log.info("获取到的文案内容为{}", JSON.toJSONString(template));
             //以GROUP_ID为key，内容模板作为value
-            templateMap.put(String.valueOf(template.get("GROUP_ID")),template.get("TMP_CONTENT"));
+            templateMap.put(String.valueOf(template.get("group_id")),template.get("tmp_content"));
         }
 
         //根据planId获取当前有多少人需要推送
@@ -212,13 +207,18 @@ public class ActivityPushServiceImpl implements ActivityPushService {
      */
     public List<ActivityContentVO> processVariable(List<ActivityDetail> list, Map<String,String> templateMap){
         List<ActivityContentVO> targetList = Lists.newArrayList();
+        DecimalFormat decimalFormat = new DecimalFormat("###################.###########");
         ActivityContentVO activityContentVO = null;
         String smsContent="";
+
+        log.info("获取到的文案集合为{}",templateMap.size());
+        templateMap.forEach((k, v) -> log.info("key:value = " + k + ":" + v));
 
         for(ActivityDetail activityDetail:list)
         {
             //获取文案内容
             smsContent=templateMap.get(activityDetail.getGroupId());
+            //log.info("{}获取到的文案内容为{}",activityDetail.getGroupId(),smsContent);
 
             if(null==smsContent)
             {
@@ -229,7 +229,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
             smsContent = smsContent.replace("${商品名称}", convertNullToEmpty(activityDetail.getEpbProductName()));
 
             //判断文案中是否含有价格变量
-            smsContent = smsContent.replace("${商品最低单价}", String.valueOf(activityDetail.getActivityPrice()+"元"));
+            smsContent = smsContent.replace("${商品最低单价}",decimalFormat.format(activityDetail.getActivityPrice())+"元");
 
             //判断是否含有商品链接变量
             if(smsContent.indexOf("${商品详情页短链}")!=-1)
@@ -248,11 +248,11 @@ public class ActivityPushServiceImpl implements ActivityPushService {
 
             //判断是否需要加上签名及退订方式
             //获取签名
-            String signature=configService.getValueByName("op.push.signature");
-            String signatureFlag=configService.getValueByName("op.push.signature_flag");
+            String signature=pushConfig.getSignature();
+            String signatureFlag=pushConfig.getSignatureFlag();
 
-            String unsubscribe=configService.getValueByName("op.push.unsubscribe");
-            String unsubscribeFlag=configService.getValueByName("op.push.unsubscribe_flag");
+            String unsubscribe=pushConfig.getUnsubscribe();
+            String unsubscribeFlag=pushConfig.getUnsubscribeFlag();
 
             //需要加上签名
             if(null!=signatureFlag&&"Y".equals(signatureFlag))
@@ -279,11 +279,12 @@ public class ActivityPushServiceImpl implements ActivityPushService {
 
     private String getActivityProfilt(double activityProfit,String groupId)
     {
+        DecimalFormat decimalFormat = new DecimalFormat("###################.###########");
         if("9".equals(groupId))
         {
             return activityProfit*10+"折";
         }else {
-            return activityProfit+"元";
+            return decimalFormat.format(activityProfit)+"元";
         }
     }
 
@@ -333,7 +334,24 @@ public class ActivityPushServiceImpl implements ActivityPushService {
                 throw new LinkSteadyException(validCount+"条文案为空，请核对活动配置！");
             }
 
-            validCount=activityDetailMapper.selectContentLimit(activityPlan.getPlanId(),pushProperties.getSmsLengthLimit());
+            //计算文案的字数限制 (因为库里存储的长度限制是去掉 签名和 退订信息的)
+            int smsLengthLimit=pushConfig.getSmsLengthLimit();
+            String signature=pushConfig.getSignature();
+            String signatureFlag=pushConfig.getSignatureFlag();
+
+            String unsubscribe=pushConfig.getSignature();
+            String unsubscribeFlag=pushConfig.getUnsubscribeFlag();
+
+            if("Y".equals(signatureFlag))
+            {
+                smsLengthLimit=smsLengthLimit+(null==signature?0:signature.length());
+            }
+            if("Y".equals(unsubscribeFlag))
+            {
+                smsLengthLimit=smsLengthLimit+(null==unsubscribe?0:unsubscribe.length());
+            }
+
+            validCount=activityDetailMapper.selectContentLimit(activityPlan.getPlanId(),smsLengthLimit);
             //判断文案是否有超字数
             if(validCount>0)
             {

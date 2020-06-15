@@ -2,8 +2,8 @@ package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.ShortUrlMapper;
-import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.ShortUrlInfo;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.util.OkHttpUtil;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class ShortUrlServiceImpl implements ShortUrlService {
 
     @Autowired
-    private PushProperties pushProperties;
+    private PushConfig pushConfig;
 
     @Autowired
     ShortUrlMapper shortUrlMapper;
@@ -90,8 +90,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     public String genProdShortUrl(String longUrl, String sourceType) {
 
         //判断是否是测试环节生成模拟短链接
-        if ("Y".equals(pushProperties.getIsTestEnv())) {
-            return pushProperties.getDemoShortUrl();
+        if ("Y".equals(pushConfig.getIsTestEnv())) {
+            return pushConfig.getDemoShortUrl();
         } else {
             String newLongUrl = "";
             //判断是否需要进行转跳 唤醒淘宝APP  如果长链接中包含 taobao.com tmall.com 则进行包裹
@@ -116,8 +116,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      */
     @Override
     public String genProdShortUrlDirect(String longUrl, String sourceType) {
-        if ("Y".equals(pushProperties.getIsTestEnv())) {
-            return pushProperties.getDemoShortUrl();
+        if ("Y".equals(pushConfig.getIsTestEnv())) {
+            return pushConfig.getDemoShortUrl();
         } else {
             return produceShortUrl(longUrl, sourceType);
         }
@@ -132,10 +132,10 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     @Override
     public String genProdShortUrlByProdId(String productId, String sourceType) {
         //判断是否是测试环节生成模拟短链接
-        if ("Y".equals(pushProperties.getIsTestEnv())) {
-            return pushProperties.getDemoShortUrl();
+        if ("Y".equals(pushConfig.getIsTestEnv())) {
+            return pushConfig.getDemoShortUrl();
         } else {
-            String newLongUrl = pushProperties.getProductUrl().replace("$PRODUCT_ID", productId);
+            String newLongUrl = pushConfig.getProductUrl().replace("$PRODUCT_ID", productId);
             //判断是否需要进行转跳 唤醒淘宝APP
             if (newLongUrl.indexOf("taobao.com") != -1 || newLongUrl.indexOf("tmall.com") != -1) {
                 //进行一层转跳
@@ -153,8 +153,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     @Override
     public String genConponShortUrl(String couponUrl, String sourceType) {
         //判断是否是测试环节生成模拟短链接
-        if ("Y".equals(pushProperties.getIsTestEnv())) {
-            return pushProperties.getDemoShortUrl();
+        if ("Y".equals(pushConfig.getIsTestEnv())) {
+            return pushConfig.getDemoShortUrl();
         } else {
             //判断是否需要进行转跳 唤醒淘宝APP
             if (couponUrl.indexOf("taobao.com") != -1 || couponUrl.indexOf("tmall.com") != -1) {
@@ -171,8 +171,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      */
     @Override
     public String genShortUrlDirect(String longUrl, String sourceType) {
-        if ("Y".equals(pushProperties.getIsTestEnv())) {
-            return pushProperties.getDemoShortUrl();
+        if ("Y".equals(pushConfig.getIsTestEnv())) {
+            return pushConfig.getDemoShortUrl();
         } else {
             return produceShortUrl(longUrl, sourceType);
         }

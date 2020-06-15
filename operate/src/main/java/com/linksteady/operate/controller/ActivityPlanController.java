@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
@@ -42,7 +43,7 @@ public class ActivityPlanController {
     private ActivityDetailService activityDetailService;
 
     @Autowired
-    private PushProperties pushProperties;
+    private PushConfig pushConfig;
 
     @Autowired
     private ActivityPushService activityPushService;
@@ -142,7 +143,7 @@ public class ActivityPlanController {
         }
 
         //进行一次时间的判断 (调度修改状态有一定的延迟)
-        if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(activityPlan.getPlanDateWid())) {
+        if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(String.valueOf(activityPlan.getPlanDateWid()))) {
             return ResponseBo.error("已过期的计划无法再执行!");
         }
 
@@ -254,7 +255,7 @@ public class ActivityPlanController {
     @GetMapping("/getDefaultPushInfo")
     public ResponseBo getPushInfo() {
         Map<String, Object> result = Maps.newHashMap();
-        result.put("method", pushProperties.getPushMethod());
+        result.put("method", pushConfig.getPushMethod());
         int hour = LocalTime.now().getHour();
         final List<String> timeList = IntStream.rangeClosed(8, 22).filter(x -> x > hour).boxed().map(y -> {
             if (y < 10) {

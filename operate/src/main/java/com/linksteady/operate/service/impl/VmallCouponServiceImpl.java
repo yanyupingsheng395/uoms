@@ -1,10 +1,8 @@
 package com.linksteady.operate.service.impl;
 
-import com.linksteady.operate.dao.CouponMapper;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.VmallCouponMapper;
 import com.linksteady.operate.domain.CouponInfo;
-import com.linksteady.operate.domain.PushProperties;
-import com.linksteady.operate.service.CouPonService;
 import com.linksteady.operate.service.VmallCouPonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,7 @@ public class VmallCouponServiceImpl implements VmallCouPonService {
     private VmallCouponMapper couponMapper;
 
     @Autowired
-    private PushProperties pushProperties;
+    private PushConfig pushConfig;
 
     @Override
     public List<CouponInfo> getList(int limit, int offset) {
@@ -150,7 +148,7 @@ public class VmallCouponServiceImpl implements VmallCouPonService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void validCoupon() {
-        String couponSendType = pushProperties.getCouponSendType();
+        String couponSendType = pushConfig.getCouponSendType();
         if(couponSendType == null) {
             throw new RuntimeException("系统发送补贴的方式未在配置表中配置！");
         }
