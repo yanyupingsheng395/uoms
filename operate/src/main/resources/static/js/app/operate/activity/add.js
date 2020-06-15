@@ -1091,7 +1091,17 @@ function getGroupList(stage, type, tableId) {
                 field: 'smsTemplateContent',
                 title: '文案内容',
                 formatter: function (value, row, index) {
-                    return longTextFormat(value, row, index);
+                    if(value === null || value.length==0)
+                    {
+                        return '';
+                    }else if(value.length <20) {
+                        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
+                            value+ "</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
+                    }else
+                    {
+                        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
+                            value.substring(0, 20) + "...</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
+                    }
                 }
             }, {
                 field: 'checkFlag',
