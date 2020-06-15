@@ -23,8 +23,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -488,6 +490,7 @@ public class ActivityController {
         ExecutorService service = Executors.newFixedThreadPool(10);
         int pageSize = 1000;
         int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize) + 1;
+        DecimalFormat df = new DecimalFormat("#.#");
         for (int i = 0; i < pageNum; i++) {
             int idx = i;
             tmp.add(() -> {
@@ -496,7 +499,24 @@ public class ActivityController {
                 end = Math.min(end, count);
                 int limit = end - start + 1;
                 int offset = start -1;
-                return activityProductService.getActivityProductListPage(limit,offset, headId, "", "", "", activityStage);
+                List<ActivityProduct> activityProductList = activityProductService.getActivityProductListPage(limit, offset, headId, "", "", "", activityStage);
+                Iterator<ActivityProduct> iterator = activityProductList.iterator();
+                while (iterator.hasNext()) {
+                    ActivityProduct next = iterator.next();
+                    if(next.getActivityType().equalsIgnoreCase("DURING")) {
+                        next.setDuringProfit(df.format(next.getActivityProfit()));
+                        next.setDuringMinPrice(df.format(next.getMinPrice()));
+                    } else if(next.getActivityType().equalsIgnoreCase("NOTIFY")) {
+                        next.setNotifyProfit(df.format(next.getActivityProfit()));
+                        next.setNotifyMinPrice(df.format(next.getMinPrice()));
+                    } else {
+                        next.setDuringProfit(df.format(next.getActivityProfit()));
+                        next.setDuringMinPrice(df.format(next.getMinPrice()));
+                        next.setNotifyProfit(df.format(next.getActivityProfit()));
+                        next.setNotifyMinPrice(df.format(next.getMinPrice()));
+                    }
+                }
+                return activityProductList;
             });
         }
 
@@ -521,6 +541,20 @@ public class ActivityController {
     @GetMapping("/validProduct")
     public ResponseBo validProduct(@RequestParam String headId, @RequestParam("stage") String stage) {
         return ResponseBo.okWithData(null, activityProductService.validProduct(headId, stage));
+    }
+
+    public static void main(String[] args) {
+        ActivityProduct p1 = new ActivityProduct();
+        p1.setProductId("1");
+        p1.setProductName("1a");
+        List<ActivityProduct> list = Lists.newArrayList();
+        list.add(p1);
+
+        Iterator<ActivityProduct> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            iterator.next().setProductName("aaaa");
+        }
+        System.out.println(list);
     }
 
     /**

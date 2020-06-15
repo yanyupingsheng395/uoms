@@ -1,116 +1,137 @@
 <div class="row">
     <span class="navbar-page-title">活动基本信息</span>
-    <hr/>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <hr class="hr"/>
+    </div>
 </div>
 <div class="row">
     <div class="col-sm-12">
-        <form class="form-horizontal" method="post" id="basic-add-form">
+        <form class="form-inline" method="post" id="basic-add-form">
             <input type="hidden" id="headId" th:value="${activityHead.headId}"/>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label class="col-md-3 control-label">活动类型</label>
-                        <div class="col-md-9">
-                            <div class="col-md-9" style="margin-top: 8px;">
-                                <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                                    <input type="radio" disabled name="activityflag" value="S" th:checked="${activityHead.activityflag eq 'S'} ? true:false"><span>普通</span>
-                                </label>
-                                <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                                    <input type="radio" disabled name="activityflag" value="B" th:checked="${activityHead.activityflag eq 'B'} ? true:false"><span>大促</span>
-                                </label>
-                            </div>
-                        </div>
+                        &#12288;&#12288;活动名称：<input type="text" class="form-control" name="activityName" th:value="${activityHead.activityName}" disabled/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group" style="margin-top: 8px;">
+                        &#12288;&#12288;活动类型：<label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                        <input type="radio" name="activityflag" value="S" th:checked="${activityHead.activityflag eq 'S'} ? true:false" disabled><span>普通</span>
+                    </label>
+                        <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                            <input type="radio" name="activityflag" value="B" th:checked="${activityHead.activityflag eq 'B'} ? true:false" disabled><span>大促</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group" style="margin-top: 8px;">
+                        &#12288;&#12288;是否预售：<label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                        <input type="radio" name="hasPreheat" value="1"
+                               th:checked="${activityHead.hasPreheat eq '1'} ? true:false" disabled
+                        ><span>是</span>
+                    </label>
+                        <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                            <input type="radio" name="hasPreheat" value="0"
+                                   th:checked="${activityHead.hasPreheat eq '0'} ? true:false" disabled
+                            ><span>否</span>
+                        </label>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6">
+            <div class="row m-t-15">
+                <div class="col-md-12">
                     <div class="form-group">
-                        <label class="col-md-3 control-label">活动名称</label>
-                        <div class="col-md-9">
-                            <input type="text" disabled class="form-control" name="activityName" th:value="${activityHead.activityName}"/>
-                        </div>
+                        &#12288;&#12288;活动渠道：<select disabled name="activitySource" id="activitySource" class="form-control" style="width: 172px;">
+                        <option value="0"
+                                th:selected="${activityHead.activitySource eq '0'} ? true:false"
+                        >第三方商城</option>
+                        <option value="1"
+                                th:selected="${activityHead.activitySource eq '1'} ? true:false"
+                        >自有小程序</option>
+                    </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+            </div>
+            <div class="row m-t-15">
+                <div class="col-md-4">
+                    <div class="form-group" style="margin-top: 8px;">
+                        &#12288;&#12288;平台优惠：<label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                        <input type="radio" name="platDiscount" value="1"
+                               th:checked="${activityHead.platDiscount eq '1'} ? true:false" disabled
+                        ><span>是</span>
+                    </label>
+                        <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
+                            <input type="radio" name="platDiscount" value="0"
+                                   th:checked="${activityHead.platDiscount eq '0'} ? true:false" disabled
+                            ><span>否</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4" th:if="${activityHead.platDiscount eq '1'}">
                     <div class="form-group">
-                        <label class="col-md-3 control-label">是否预售</label>
-                        <div class="col-md-9" style="margin-top: 8px;">
-                            <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                                <input type="radio" name="hasPreheat" value="1" disabled
-                                       th:checked="${activityHead.hasPreheat eq '1'} ? true:false"
-                                ><span>是</span>
-                            </label>
-                            <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                                <input type="radio" name="hasPreheat" value="0" disabled
-                                       th:checked="${activityHead.hasPreheat eq '0'} ? true:false"
-                                ><span>否</span>
-                            </label>
-                        </div>
+                        &#12288;&#12288;&#12288;&#12288;门槛：<input disabled type="text" name="platThreshold" class="form-control" th:value="${activityHead.platThreshold}"/>
+                    </div>
+                </div>
+                <div class="col-md-4" th:if="${activityHead.platDiscount eq '1'}">
+                    <div class="form-group">
+                        &#12288;&#12288;&#12288;&#12288;面额：<input disabled type="text" name="platDeno" class="form-control" th:value="${activityHead.platDeno}"/>
                     </div>
                 </div>
             </div>
             <div id="preheatDiv" th:if="${activityHead.hasPreheat eq '1'}">
-                <div class="row">
-                    <div class="col-md-6">
+                <div class="row m-t-15">
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label class="col-md-3 control-label">预售提醒时间</label>
-                            <div class="col-md-9">
-                                <input type="text" name="preheatNotifyDt" id="preheatNotifyDt" class="form-control" th:value="${activityHead.preheatNotifyDt}" disabled/>
-                            </div>
+                            预售通知时间：<input type="text" disabled name="preheatNotifyDt" id="preheatNotifyDt" class="form-control"
+                                          th:value="${activityHead.preheatNotifyDt}"/>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label class="col-md-3 control-label">预售开始时间</label>
-                            <div class="col-md-9">
-                                <input type="text" name="preheatStartDt" id="preheatStartDt" class="form-control" th:value="${activityHead.preheatStartDt}" disabled/>
-                            </div>
+                            预售开始时间：<input type="text" disabled name="preheatStartDt" id="preheatStartDt" class="form-control"
+                                          th:value="${activityHead.preheatStartDt}"/>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label class="col-md-3 control-label">预售结束日期</label>
-                            <div class="col-md-9">
-                                <input class="form-control" id="preheatEndDt" name="preheatEndDt" th:value="${activityHead.preheatEndDt}" disabled/>
-                            </div>
+                            预售结束日期：<input class="form-control" disabled id="preheatEndDt" name="preheatEndDt"
+                                          th:value="${activityHead.preheatEndDt}"/>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- 只有平台活动才会有 -->
-            <div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="col-md-3 control-label">正式提醒时间</label>
-                            <div class="col-md-9">
-                                <input type="text" name="formalNotifyDt" id="formalNotifyDt" class="form-control" th:value="${activityHead.formalNotifyDt}" disabled/>
-                            </div>
-                        </div>
+            <div class="row m-t-15">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        正式通知时间：<input type="text" disabled name="formalNotifyDt" id="formalNotifyDt" class="form-control"
+                                      th:value="${activityHead.formalNotifyDt}"/>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="col-md-3 control-label">正式开始时间</label>
-                            <div class="col-md-9">
-                                <input class="form-control" id="formalStartDt" name="formalStartDt" th:value="${activityHead.formalStartDt}" disabled/>
-                            </div>
-                        </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        正式开始时间：<input disabled class="form-control" id="formalStartDt" name="formalStartDt"
+                                      th:value="${activityHead.formalStartDt}"/>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="col-md-3 control-label">正式结束时间</label>
-                            <div class="col-md-9">
-                                <input class="form-control" id="formalEndDt" name="formalEndDt" th:value="${activityHead.formalEndDt}" disabled/>
-                            </div>
-                        </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        正式结束时间：<input disabled class="form-control" id="formalEndDt" name="formalEndDt"
+                                      th:value="${activityHead.formalEndDt}"/>
                     </div>
                 </div>
             </div>
         </form>
+    </div>
+</div>
+<div class="row m-t-15">
+    <div class="col-md-12 text-right">
+        <button class="btn btn-secondary btn-sm" id="btn_basic"><i class="fa fa-arrow-right"></i>下一步</button>
+        <a class="btn btn-secondary btn-sm" href="/page/activity">
+            <i class="fa fa-backward"></i>&nbsp;返回
+        </a>
     </div>
 </div>
