@@ -2,6 +2,7 @@ package com.linksteady.operate.controller;
 
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.service.ShortUrlService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ public class ShortUrlController {
 
     /**
      *
-     * @param type 转换类型：0id,1长链
+     * @param type 转换类型：0 商品id,1 长链
      * @return
      */
     @GetMapping("/getShortUrl")
@@ -32,6 +33,20 @@ public class ShortUrlController {
         }
         if(type.equalsIgnoreCase("1")) {
             shortUrl = shortUrlService.genProdShortUrl(data, "M");
+        }
+        return ResponseBo.okWithData(null, shortUrl);
+    }
+
+    /**
+     * 长链转短链
+     * @param url 长链
+     * @return
+     */
+    @GetMapping("/convertShortUrl")
+    public ResponseBo convertShortUrl(@RequestParam String url) {
+        String shortUrl = "";
+        if(StringUtils.isNotEmpty(url)) {
+            shortUrl = shortUrlService.genShortUrlDirect(url, "M");
         }
         return ResponseBo.okWithData(null, shortUrl);
     }

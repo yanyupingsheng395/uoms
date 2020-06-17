@@ -24,17 +24,13 @@ public interface ActivityUserGroupMapper {
 
     void deleteData(Long headId);
 
-    void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage);
+    /**
+     * 验证当前活动（某个阶段，类型） 活动商品对应的活动类型是否都配置了文案
+     * @param headId
+     * @param stage
+     * @param type
+     * @return
+     */
+    int validGroupTemplateWithGroup(Long headId, String stage, String type);
 
-    int checkTmpIsUsed(String tmpCode);
-
-    void validUserGroupNotify(String headId, String stage);
-
-    void validUserGroupDuring(String headId, String stage);
-
-    int validGroupTemplate(Long headId, String stage, String type);
-
-    int validGroupTemplateWithGroup(Long headId, String stage, String type, List<String> groupIds);
-
-    void removeSmsSelected(String type, String headId, String stage, String smsCode, String groupId);
 }

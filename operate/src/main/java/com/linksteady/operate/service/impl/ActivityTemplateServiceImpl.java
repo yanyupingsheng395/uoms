@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -145,5 +146,24 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
             activityTemplate.setIsPersonal("1");
         }
         activityTemplateMapper.update(activityTemplate);
+    }
+
+    @Override
+    public void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage) {
+        activityTemplateMapper.setSmsCode(groupId, tmpCode, headId, type, stage);
+        //设置完成后对当前活动stage上设置的文案情况进行一次校验
+        activityTemplateMapper.validUserGroup(headId,stage);
+    }
+
+    @Override
+    public boolean checkTmpIsUsed(String tmpCode) {
+        return activityTemplateMapper.checkTmpIsUsed(tmpCode) > 0;
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void removeSmsSelected(String type, String headId, String stage, String smsCode, String groupId) {
+        activityTemplateMapper.removeSmsSelected(type, headId, stage, smsCode, groupId);
     }
 }

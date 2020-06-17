@@ -61,101 +61,17 @@
         delete from UO_OP_ACTIVITY_GROUP where head_id = #{headId}::int4
     </delete>
 
-    <update id="setSmsCode">
-        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{tmpCode}::int4 where GROUP_ID = #{groupId}::int4 and HEAD_ID = #{headId}::int4
-        and ACTIVITY_TYPE = #{type} and ACTIVITY_STAGE = #{stage}
-    </update>
-
-    <select id="checkTmpIsUsed" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_GROUP t1, UO_OP_ACTIVITY_HEADER t2
-        where t1.HEAD_ID = t2.HEAD_ID and (t2.PREHEAT_STATUS &lt;&gt; 'done' and t2.FORMAL_STATUS &lt;&gt; 'done') and t1.SMS_TEMPLATE_CODE = #{tmpCode}::int4
-    </select>
-
-    <update id="validUserGroupNotify">
-        update UO_OP_ACTIVITY_GROUP
-        set CHECK_FLAG = (
-            case
-                when
-                    GROUP_ID in (
-                    select distinct GROUP_ID
-                    from UO_OP_ACTIVITY_PRODUCT
-                    where HEAD_ID = #{headId}::int4
-                ) and
-                    SMS_TEMPLATE_CODE is null then 'N'
-                when
-                    GROUP_ID in (
-                    select distinct GROUP_ID
-                    from UO_OP_ACTIVITY_PRODUCT
-                    where HEAD_ID = #{headId}::int4
-                ) and
-                    SMS_TEMPLATE_CODE is not null then 'Y'
-                else 'NA' end
-            ),
-            CHECK_COMMENTS = (
-                case
-                    when
-                        GROUP_ID in (
-                        select distinct GROUP_ID
-                        from UO_OP_ACTIVITY_PRODUCT
-                        where HEAD_ID = #{headId}::int4
-                    ) and
-                        SMS_TEMPLATE_CODE is null then '群组文案没有配置'
-            else null end)
-        where HEAD_ID = #{headId}::int4
-          and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = 'NOTIFY'
-    </update>
-
-    <update id="validUserGroupDuring">
-        update UO_OP_ACTIVITY_GROUP
-        set CHECK_FLAG = (
-            case
-                when
-                            GROUP_ID in (
-                            select distinct GROUP_ID
-                            from UO_OP_ACTIVITY_PRODUCT
-                            where HEAD_ID = #{headId}::int4
-                        ) and
-                            SMS_TEMPLATE_CODE is null then 'N'
-                when
-                            GROUP_ID in (
-                            select distinct GROUP_ID
-                            from UO_OP_ACTIVITY_PRODUCT
-                            where HEAD_ID = #{headId}::int4
-                        ) and
-                            SMS_TEMPLATE_CODE is not null then 'Y'
-                else 'NA' end
-            ),
-            CHECK_COMMENTS = (
-                case
-                    when
-                                GROUP_ID in (
-                                select distinct GROUP_ID
-                                from UO_OP_ACTIVITY_PRODUCT
-                                where HEAD_ID = #{headId}::int4
-                            ) and
-                                SMS_TEMPLATE_CODE is null then '群组文案没有配置'
-                    else null end)
-        where HEAD_ID = #{headId}::int4
-          and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = 'DURING'
-    </update>
-
-    <select id="validGroupTemplate" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_GROUP
-        where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{type} and SMS_TEMPLATE_CODE is null
-    </select>
-
     <select id="validGroupTemplateWithGroup" resultType="int">
         select count(1) from UO_OP_ACTIVITY_GROUP
-        where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{type}
+        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{stage}
         and GROUP_ID IN
-        <foreach collection="groupIds" open="(" close=")" separator="," item="item">
-            #{item}::int4
-        </foreach>
+        (
+           select distinct group_id from uo_op_activity_product where
+           head_id=#{headId}
+           and activity_stage=#{stage}
+           and activity_type=#{stage}
+        )
         and SMS_TEMPLATE_CODE is null
     </select>
 
-    <update id="removeSmsSelected">
-        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = null, CHECK_FLAG = 'N', CHECK_COMMENTS = '群组文案没有配置'
-        where head_id = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId}::int4 and activity_type = #{type}
-    </update>
 </mapper>

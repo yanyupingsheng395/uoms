@@ -57,7 +57,6 @@ function login()
 
                     } else {
                         reloadCode();
-                        $(".validate-form input[name='username']").val("");
                         $(".validate-form input[name='password']").val("");
                         $(".validate-form input[name='code']").val("");
                         //提示

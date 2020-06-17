@@ -20,4 +20,12 @@ public interface ActivityTemplateMapper {
     void update(ActivityTemplate activityTemplate);
 
     List<ActivityTemplate> getTemplateTableData(@Param("activityTemplate") ActivityTemplate activityTemplate);
+
+    void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage);
+
+    int checkTmpIsUsed(String tmpCode);
+
+    void validUserGroup(Long headId, String stage);
+
+    void removeSmsSelected(String type, String headId, String stage, String smsCode, String groupId);
 }

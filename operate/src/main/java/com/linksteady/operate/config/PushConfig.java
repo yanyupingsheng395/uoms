@@ -57,9 +57,7 @@ public class PushConfig {
             redisMessageService.sendPushSingal(heartBeatInfo);
         }else if(signal.getSignalCode().equals(PushSignalEnum.SIGNAL_REFRESH.getSignalCode()))
         {
-            //重新加载到redis
-            //todo
-            //initProperties(prop,currentUser);
+            configService.loadConfigToRedis();
             //通知推送端也重新加载配置
             heartBeatInfo.setSignal(signal);
             redisMessageService.sendPushSingal(heartBeatInfo);
