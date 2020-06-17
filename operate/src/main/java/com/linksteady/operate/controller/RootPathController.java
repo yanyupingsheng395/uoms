@@ -8,7 +8,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.common.service.CommonFunService;
-import com.linksteady.operate.domain.PushProperties;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +40,7 @@ public class RootPathController extends BaseController {
     ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Autowired
-    private PushProperties pushProperties;
+    private PushConfig pushConfig;
 
     @Value("${app.name}")
     private String appname;
@@ -141,8 +141,8 @@ public class RootPathController extends BaseController {
      */
     @RequestMapping("/push")
     public String push(Model model) {
-        if(pushProperties != null) {
-            String status = pushProperties.getPushFlag();
+        if(pushConfig != null) {
+            String status = pushConfig.getPushFlag();
             if(StringUtils.isNotEmpty(status)) {
                 model.addAttribute("status", status);
             }

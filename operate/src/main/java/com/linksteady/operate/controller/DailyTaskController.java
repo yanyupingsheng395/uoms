@@ -6,7 +6,10 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.FileUtils;
-import com.linksteady.operate.domain.*;
+import com.linksteady.operate.config.PushConfig;
+import com.linksteady.operate.domain.DailyDetail;
+import com.linksteady.operate.domain.DailyHead;
+import com.linksteady.operate.domain.DailyPersonal;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.service.DailyDetailService;
@@ -45,7 +48,7 @@ public class DailyTaskController {
     private DailyDetailService dailyDetailService;
 
     @Autowired
-    private PushProperties pushProperties;
+    private PushConfig pushConfig;
 
     @Autowired
     private ConfigService configService;
@@ -234,7 +237,7 @@ public class DailyTaskController {
         }
 
         // 短信长度超出限制
-        List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("content")).length() > pushProperties.getSmsLengthLimit())
+        List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("content")).length() > pushConfig.getSmsLengthLimit())
                 .map(y -> String.valueOf(y.get("id"))).collect(Collectors.toList());
         // 短信含未被替换的模板变量
         List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("content")).contains("$"))
@@ -356,7 +359,7 @@ public class DailyTaskController {
     @GetMapping("/getPushInfo")
     public ResponseBo getPushInfo() {
         Map<String, Object> result = Maps.newHashMap();
-        result.put("method", pushProperties.getPushMethod());
+        result.put("method", pushConfig.getPushMethod());
         int hour = LocalTime.now().getHour();
         final List<String> timeList = IntStream.rangeClosed(8, 22).filter(x -> x > hour).boxed().map(y -> {
             if (y < 10) {

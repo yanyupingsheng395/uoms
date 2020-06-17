@@ -27,14 +27,19 @@
     </delete>
 
     <select id="getAllTemplate"  resultType="map">
-        SELECT
-            UO_OP_ACTIVITY_GROUP.GROUP_ID,
-            UO_OP_ACTIVITY_TEMPLATE.TMP_CONTENT
-        FROM UO_OP_ACTIVITY_GROUP left join UO_OP_ACTIVITY_TEMPLATE
-        on UO_OP_ACTIVITY_GROUP.SMS_TEMPLATE_CODE =UO_OP_ACTIVITY_TEMPLATE.TMP_CODE
-          AND UO_OP_ACTIVITY_GROUP.HEAD_ID=#{headId}::int4
-          AND UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE=#{activityStage}
-          AND  UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE=#{activityType}
+        select GROUP_ID,
+               TMP_CONTENT
+       from (
+           (SELECT
+               UO_OP_ACTIVITY_GROUP.group_id,
+               UO_OP_ACTIVITY_GROUP.sms_template_code
+            FROM UO_OP_ACTIVITY_GROUP
+                where
+                      UO_OP_ACTIVITY_GROUP.HEAD_ID=#{headId}::int4
+              AND UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE=#{activityStage}
+              AND  UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE=#{activityType}) t1
+                join UO_OP_ACTIVITY_TEMPLATE
+            on t1.SMS_TEMPLATE_CODE =UO_OP_ACTIVITY_TEMPLATE.TMP_CODE) t2
     </select>
 
     <select id="getPushCount" resultType="int">
@@ -89,11 +94,10 @@
     </insert>
 
     <update id="updatePushContentFromTemp">
-        MERGE INTO UO_OP_ACTIVITY_DETAIL USING
-        UO_OP_ACTIVITY_CONTENT_TMP ON (UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID=UO_OP_ACTIVITY_CONTENT_TMP.ACTIVITY_DETAIL_ID
-        AND UO_OP_ACTIVITY_DETAIL.PLAN_ID=#{planId}::int4)
-        WHEN MATCHED THEN
-        UPDATE SET UO_OP_ACTIVITY_DETAIL.SMS_CONTENT=UO_OP_ACTIVITY_CONTENT_TMP.SMS_CONTENT
+        UPDATE UO_OP_ACTIVITY_DETAIL SET SMS_CONTENT=TMP.SMS_CONTENT
+        FROM UO_OP_ACTIVITY_CONTENT_TMP AS TMP
+        WHERE UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID=TMP.ACTIVITY_DETAIL_ID
+        AND UO_OP_ACTIVITY_DETAIL.PLAN_ID=#{planId}::int4
     </update>
 
 
@@ -103,15 +107,15 @@
     </update>
 
     <update id="updatePushScheduleDate">
-        UPDATE UO_OP_ACTIVITY_DETAIL C SET C.PUSH_SCHEDULING_DATE=(
+        UPDATE UO_OP_ACTIVITY_DETAIL C SET PUSH_SCHEDULING_DATE=(
                                            SELECT
             (CASE WHEN P.PUSH_METHOD='IMME' OR P.PUSH_METHOD='FIXED' THEN
                                            P.PUSH_PERIOD
                                            ELSE
-                                           P.PUSH_PERIOD||C.ORDER_PERIOD||'00' END)
+                                           P.PUSH_PERIOD||C.ORDER_PERIOD||'00' END)::int8
                                            FROM UO_OP_ACTIVITY_PLAN P WHERE C.PLAN_ID=P.PLAN_ID
             ) where
-            C.PLAN_ID=#{planId}::int4
+            PLAN_ID=#{planId}::int4
     </update>
 
     <insert id="insertToPushListLarge">
@@ -153,6 +157,13 @@
             and activity_stage=#{activityStage}
             and activity_type=#{planType}
             and sms_template_code is null
+             and group_id in (
+                 select group_id from uo_op_activity_product p
+                 where p.head_id=#{headId}
+                 and p.activity_type=#{planType}
+                 and p.activity_stage=#{activityStage}
+
+              )
     </select>
 
 </mapper>

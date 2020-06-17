@@ -5,14 +5,14 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Tconfig;
+import com.linksteady.common.service.ConfigService;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.HeartBeatInfo;
 import com.linksteady.operate.domain.PushListInfo;
 import com.linksteady.operate.domain.PushLog;
-import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.domain.enums.PushSignalEnum;
 import com.linksteady.operate.service.PushListService;
 import com.linksteady.operate.service.PushLogService;
-import com.linksteady.operate.service.PushPropertiesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,17 +36,18 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PushStatusController extends BaseController {
 
-    @Autowired
-    private PushProperties pushProperties;
-
-    @Autowired
-    private PushPropertiesService pushPropertiesService;
 
     @Autowired
     private PushLogService pushLogService;
 
     @Autowired
     private PushListService pushListService;
+
+    @Autowired
+    private ConfigService configService;
+
+    @Autowired
+    private PushConfig pushConfig;
 
     /**
      * 关闭推送服务
@@ -56,10 +57,10 @@ public class PushStatusController extends BaseController {
     @GetMapping("/stop")
     public ResponseBo stop() {
         //判断当前状态
-        if(null != pushProperties && pushProperties.getPushFlag().equalsIgnoreCase("Y")) {
+        if("Y".equalsIgnoreCase(pushConfig.getPushFlag())) {
             //关闭服务
             try {
-                pushPropertiesService.sendPushSignal(pushProperties,PushSignalEnum.SIGNAL_STOP,getCurrentUser().getUsername());
+                pushConfig.sendPushSignal(PushSignalEnum.SIGNAL_STOP,getCurrentUser().getUsername());
                 return ResponseBo.ok("关闭服务成功！");
             } catch (Exception e) {
                 log.error("关闭推送服务异常，异常原因为{}",e);
@@ -79,10 +80,10 @@ public class PushStatusController extends BaseController {
     @GetMapping("/start")
     public ResponseBo start() {
         //判断当前状态
-        if(null != pushProperties && pushProperties.getPushFlag().equalsIgnoreCase("N")) {
+        if("N".equalsIgnoreCase(pushConfig.getPushFlag())) {
             //开启服务
             try {
-                pushPropertiesService.sendPushSignal(pushProperties,PushSignalEnum.SIGNAL_START,getCurrentUser().getUsername());
+                pushConfig.sendPushSignal(PushSignalEnum.SIGNAL_START,getCurrentUser().getUsername());
                 return ResponseBo.ok("开启服务成功！");
             } catch (Exception e) {
                 log.error("开启推送服务异常，异常原因为{}",e);
@@ -101,7 +102,7 @@ public class PushStatusController extends BaseController {
      */
     @GetMapping("/status")
     public ResponseBo status() {
-        return ResponseBo.okWithData(null, pushProperties.getPushFlag());
+        return ResponseBo.okWithData(null, pushConfig.getPushFlag());
     }
 
     /**
@@ -145,32 +146,16 @@ public class PushStatusController extends BaseController {
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
+
     /**
-     * 推送推送配置信息 (让推送端到数据库重新加载配置)
+     * 重新加载配置
      * @param
      * @return
      */
-    @GetMapping("/refreshPushProperties")
-    public ResponseBo refreshPushProperties() {
+    @GetMapping("/reloadPushConfig")
+    public ResponseBo reloadPushConfig() {
         try {
-            pushPropertiesService.sendPushSignal(pushProperties,PushSignalEnum.SIGNAL_REFRESH,getCurrentUser().getUsername());
-            return ResponseBo.ok("发送刷新信号成功!");
-        } catch (Exception e) {
-            log.error("发送刷新信号异常，异常原因为{}",e);
-            return ResponseBo.error("发送刷新信号失败！");
-        }
-
-    }
-
-    /**
-     * 重新加载配置 (数据库加载到redis，然后刷新pushProperties对象)
-     * @param
-     * @return
-     */
-    @GetMapping("/reloadPushProperties")
-    public ResponseBo reloadPushProperties() {
-        try {
-            pushPropertiesService.initProperties(pushProperties,getCurrentUser().getUsername());
+            configService.loadConfigToRedis();
             return ResponseBo.ok("重新加载推送配置成功!");
         } catch (Exception e) {
             log.error("加载推送配置失败，异常原因为{}",e);
@@ -184,10 +169,10 @@ public class PushStatusController extends BaseController {
      * @param
      * @return
      */
-    @GetMapping("/printPushProperties")
+    @GetMapping("/noticePrint")
     public ResponseBo printPushProperties() {
         try {
-            pushPropertiesService.sendPushSignal(pushProperties,PushSignalEnum.SIGNAL_PRINT,getCurrentUser().getUsername());
+            pushConfig.sendPushSignal(PushSignalEnum.SIGNAL_PRINT,getCurrentUser().getUsername());
             return ResponseBo.ok("发送打印信号成功!");
         } catch (Exception e) {
             log.error("发送刷新信号失败，异常原因为{}",e);
@@ -196,13 +181,31 @@ public class PushStatusController extends BaseController {
     }
 
     /**
+     * 推送推送配置信息 (让推送端到数据库重新加载配置)
+     * @param
+     * @return
+     */
+    @GetMapping("/noticeRefresh")
+    public ResponseBo noticeRefresh() {
+        try {
+            pushConfig.sendPushSignal(PushSignalEnum.SIGNAL_REFRESH,getCurrentUser().getUsername());
+            return ResponseBo.ok("发送刷新信号成功!");
+        } catch (Exception e) {
+            log.error("发送刷新信号异常，异常原因为{}",e);
+            return ResponseBo.error("发送刷新信号失败！");
+        }
+
+    }
+
+
+    /**
      * 获取推送配置
      * @param
      * @return
      */
-    @GetMapping("/getPushProperties")
+    @GetMapping("/getPushConfig")
     public ResponseBo getPushProperties() {
-        List<Tconfig> list=pushPropertiesService.selectPushConfigList();
+        List<Tconfig> list=configService.selectConfigListFromRedis();
 
         Map<String,String> result=Maps.newHashMap();
 

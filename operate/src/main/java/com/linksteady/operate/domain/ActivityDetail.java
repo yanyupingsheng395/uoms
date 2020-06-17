@@ -12,7 +12,7 @@ import java.util.Date;
  */
 @Data
 public class ActivityDetail implements Serializable {
-    private String activityDetailId;
+    private Long activityDetailId;
     private String headId;
     @ExportConfig(value = "商品ID")
     private String epbProductId;

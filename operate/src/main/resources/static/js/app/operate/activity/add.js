@@ -404,77 +404,40 @@ function submitActivity(type) {
                 $MB.n_warning(data['error']);
                 return;
             }
-            if(data['warn'] !== null && data['warn'] !== undefined) {
-                $MB.confirm({
-                    title: '提示:',
-                    content: '成长商品没有活动价格的用户群组尚未配置文案，如未配置，此群组将不进行推送。确认保存？'
-                }, function () {
-                    if(type === 'DURING') {
-                        if(stage === 'preheat') {
-                            if(preheatStatus !== 'edit' && preheatStatus !== '' && preheatStatus !== null && preheatStatus !== undefined) {
-                                $MB.n_success("保存计划成功！");
-                            }else {
-                                submitData(headId, type);
-                            }
+            $MB.confirm({
+                title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+                content: "确认保存计划？"
+            }, function () {
+                if(type === 'DURING') {
+                    if(stage === 'preheat') {
+                        if(preheatStatus !== 'edit' && preheatStatus !== '' && preheatStatus !== null && preheatStatus !== undefined) {
+                            $MB.n_success("保存计划成功！");
                         }else {
-                            if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
-                                $MB.n_success("保存计划成功！");
-                            }else {
-                                submitData(headId, type);
-                            }
+                            submitData(headId, type);
                         }
                     }else {
-                        if(stage === 'preheat') {
-                            if(preheatNotifyStatus !== 'edit' && preheatNotifyStatus !== '' && preheatNotifyStatus !== null && preheatNotifyStatus !== undefined) {
-                                $MB.n_success("保存计划成功！");
-                            }else {
-                                submitData(headId, type);
-                            }
+                        if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
+                            $MB.n_success("保存计划成功！");
                         }else {
-                            if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
-                                $MB.n_success("保存计划成功！");
-                            }else {
-                                submitData(headId, type);
-                            }
+                            submitData(headId, type);
                         }
                     }
-                });
-            }else {
-                $MB.confirm({
-                    title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-                    content: "确认保存计划？"
-                }, function () {
-                    if(type === 'DURING') {
-                        if(stage === 'preheat') {
-                            if(preheatStatus !== 'edit' && preheatStatus !== '' && preheatStatus !== null && preheatStatus !== undefined) {
-                                $MB.n_success("保存计划成功！");
-                            }else {
-                                submitData(headId, type);
-                            }
+                }else {
+                    if(stage === 'preheat') {
+                        if(preheatNotifyStatus !== 'edit' && preheatNotifyStatus !== '' && preheatNotifyStatus !== null && preheatNotifyStatus !== undefined) {
+                            $MB.n_success("保存计划成功！");
                         }else {
-                            if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
-                                $MB.n_success("保存计划成功！");
-                            }else {
-                                submitData(headId, type);
-                            }
+                            submitData(headId, type);
                         }
                     }else {
-                        if(stage === 'preheat') {
-                            if(preheatNotifyStatus !== 'edit' && preheatNotifyStatus !== '' && preheatNotifyStatus !== null && preheatNotifyStatus !== undefined) {
-                                $MB.n_success("保存计划成功！");
-                            }else {
-                                submitData(headId, type);
-                            }
+                        if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
+                            $MB.n_success("保存计划成功！");
                         }else {
-                            if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
-                                $MB.n_success("保存计划成功！");
-                            }else {
-                                submitData(headId, type);
-                            }
+                            submitData(headId, type);
                         }
                     }
-                });
-            }
+                }
+            });
         }else {
             $MB.n_warning(r.msg);
         }
@@ -1794,7 +1757,7 @@ function convertShortUrl() {
         $MB.n_warning("长链不能为空！");
         return;
     }
-    $.get("/activity/convertShortUrl", {url:longUrl}, function (r) {
+    $.get("/url/convertShortUrl", {url:longUrl}, function (r) {
         $("#longUrl").val(r.data);
     });
 }

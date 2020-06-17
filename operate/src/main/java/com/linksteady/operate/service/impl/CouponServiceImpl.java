@@ -1,12 +1,13 @@
 package com.linksteady.operate.service.impl;
+
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.domain.CouponInfo;
-import com.linksteady.operate.domain.PushProperties;
 import com.linksteady.operate.service.CouPonService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,7 +23,7 @@ public class CouponServiceImpl implements CouPonService {
     private CouponMapper couponMapper;
 
     @Autowired
-    private PushProperties pushProperties;
+    private PushConfig pushConfig;
 
     @Override
     public List<CouponInfo> getList(int limit, int offset) {
@@ -147,7 +148,7 @@ public class CouponServiceImpl implements CouPonService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void validCoupon() {
-        String couponSendType = pushProperties.getCouponSendType();
+        String couponSendType = pushConfig.getCouponSendType();
         if(couponSendType == null) {
             throw new RuntimeException("系统发送补贴的方式未在配置表中配置！");
         }

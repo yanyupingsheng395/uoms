@@ -1,6 +1,6 @@
 init_date('date', 'yyyy-mm-dd', 0,2,0)
 $(function () {
-    var errmsg=$("#errormsg").val();
+    let errmsg=$("#errormsg").val();
     if(null!=errmsg&&errmsg!='')
     {
         $MB.n_warning(errmsg);

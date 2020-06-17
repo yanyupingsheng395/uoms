@@ -28,4 +28,11 @@ public interface ActivityTemplateService {
     String getActivityTemplateContent(String code,String scene);
 
     List<ActivityTemplate> getSmsTemplateList(ActivityTemplate activityTemplate);
+
+    boolean checkTmpIsUsed(String tmpCode);
+
+    void removeSmsSelected(String type, String headId, String stage, String smsCode, String groupId);
+
+    void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage);
+
 }

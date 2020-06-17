@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.operate.dao.ActivityTemplateMapper;
 import com.linksteady.operate.dao.ActivityUserGroupMapper;
 import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.service.ActivityUserGroupService;
@@ -20,6 +21,9 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     @Autowired
     private ActivityUserGroupMapper activityUserGroupMapper;
 
+    @Autowired
+    private ActivityTemplateMapper activityTemplateMapper;
+
     @Override
     public List<ActivityGroup> getUserGroupPage(Long headId, String stage, int limit, int offset) {
         return activityUserGroupMapper.getUserGroupPage(headId, stage, limit,offset);
@@ -27,7 +31,10 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
 
     @Override
     public List<ActivityGroup> getUserGroupList(Long headId, String stage, String type) {
+        //对活动当前stage的组上配置的文案情况进行一次校验
+        activityTemplateMapper.validUserGroup(headId, stage);
         List<ActivityGroup> userGroupList = activityUserGroupMapper.getUserGroupList(headId, stage);
+        //仅返回当前活动类型的组列表
         List<ActivityGroup> result = userGroupList.stream().filter(x -> type.equals(x.getActivityType())).collect(Collectors.toList());
         return result;
     }
@@ -52,36 +59,17 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
         activityUserGroupMapper.deleteData(headId);
     }
 
+
+    /**
+     * 验证当前活动（某个阶段，类型） 活动商品对应的活动类型是否都配置了文案 返回未设置文件的组数
+     * @param headId
+     * @param stage
+     * @param type
+     * @return
+     */
     @Override
-    public void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage) {
-        activityUserGroupMapper.setSmsCode(groupId, tmpCode, headId, type, stage);
+    public int validGroupTemplateWithGroup(Long headId, String stage, String type) {
+        return activityUserGroupMapper.validGroupTemplateWithGroup(headId, stage, type);
     }
 
-    @Override
-    public boolean checkTmpIsUsed(String tmpCode) {
-        return activityUserGroupMapper.checkTmpIsUsed(tmpCode) > 0;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void validUserGroup(String headId, String stage) {
-        activityUserGroupMapper.validUserGroupNotify(headId, stage);
-        activityUserGroupMapper.validUserGroupDuring(headId, stage);
-    }
-
-    @Override
-    public int validGroupTemplate(Long headId, String stage, String type) {
-        return activityUserGroupMapper.validGroupTemplate(headId, stage, type);
-    }
-
-    @Override
-    public int validGroupTemplateWithGroup(Long headId, String stage, String type, List<String> groupIds) {
-        return activityUserGroupMapper.validGroupTemplateWithGroup(headId, stage, type, groupIds);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void removeSmsSelected(String type, String headId, String stage, String smsCode, String groupId) {
-        activityUserGroupMapper.removeSmsSelected(type, headId, stage, smsCode, groupId);
-    }
 }

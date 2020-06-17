@@ -4,7 +4,7 @@ $(function () {
 
 function getTableData() {
     var settings = {
-        url: "/push/getPushProperties",
+        url: "/push/getPushConfig",
         sortable: true,
         sortOrder: "asc",
         pagination: false,

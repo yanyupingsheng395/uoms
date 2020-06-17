@@ -6,8 +6,8 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.FileUtils;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.*;
-import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
@@ -54,22 +54,13 @@ public class ActivityController {
     private ActivityPlanService activityPlanService;
 
     @Autowired
-    private PushProperties pushProperties;
+    private PushConfig pushConfig;
 
     @Autowired
     private ActivityEffectService activityEffectService;
 
     @Autowired
-    private ActivityTemplateService activityTemplateService;
-
-    @Autowired
     private ActivityCovService activityCovService;
-
-    @Autowired
-    private ShortUrlService shortUrlService;
-
-    @Autowired
-    RedisMessageServiceImpl redisMessageService;
 
     /**
      * 获取头表的分页数据
@@ -214,7 +205,7 @@ public class ActivityController {
     @PostMapping("/updateActivityProduct")
     public ResponseBo updateActivityProduct(ActivityProduct activityProduct) {
         try {
-            if(activityProduct.getProductName().length() > pushProperties.getProdNameLen()) {
+            if(activityProduct.getProductName().length() > pushConfig.getProdNameLen()) {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
             deleteProduct(activityProduct.getHeadId(), activityProduct.getActivityStage(), activityProduct.getProductId());
@@ -289,12 +280,10 @@ public class ActivityController {
     public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
         Map<String, String> data = Maps.newHashMap();
         // 验证所有群组是否配置消息模板 0：合法，非0不合法
-        List<String> groupIds = activityProductService.getGroupIds(headId);
-        if(groupIds.size() != 0) {
-            int templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, stage, type, groupIds);
-            if(templateIsNullCount > 0) {
-                data.put("error", "部分群组文案没有配置");
-            }
+
+        int templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, stage, type);
+        if(templateIsNullCount > 0) {
+            data.put("error", "部分群组文案没有配置");
         }
         return ResponseBo.okWithData(null, data);
     }
@@ -372,60 +361,7 @@ public class ActivityController {
      */
     @GetMapping("/getGroupList")
     public List<ActivityGroup> getGroupList(@RequestParam("headId") Long headId, @RequestParam("stage") String stage, @RequestParam("type") String type) {
-        activityUserGroupService.validUserGroup(headId.toString(), stage);
         return activityUserGroupService.getUserGroupList(headId, stage, type);
-    }
-
-    /**
-     * 保存文案信息
-     */
-    @PostMapping("/saveSmsTemplate")
-    public ResponseBo saveSmsTemplate(ActivityTemplate activityTemplate) {
-        activityTemplateService.saveTemplate(activityTemplate);
-        return ResponseBo.ok();
-    }
-
-    @GetMapping("/getSmsTemplateList")
-    public ResponseBo getSmsTemplateList(ActivityTemplate activityTemplate) {
-        return ResponseBo.okWithData(null, activityTemplateService.getSmsTemplateList(activityTemplate));
-    }
-
-    /**
-     * 为群组设置文案
-     * @return
-     */
-    @PostMapping("/setSmsCode")
-    public ResponseBo setSmsCode(@RequestParam("groupId") String groupId, @RequestParam("tmpCode") String tmpCode,
-                                 @RequestParam("headId") Long headId, @RequestParam("type") String type, @RequestParam("stage") String stage) {
-        activityUserGroupService.setSmsCode(groupId, tmpCode, headId, type, stage);
-        activityUserGroupService.validUserGroup(headId.toString(), stage);
-        return ResponseBo.ok();
-    }
-
-    @GetMapping("/getTemplate")
-    public ResponseBo getTemplate(@RequestParam("code") String code) {
-        return ResponseBo.okWithData(null, activityTemplateService.getTemplate(code));
-    }
-
-    @PostMapping("/updateSmsTemplate")
-    public ResponseBo updateSmsTemplate(ActivityTemplate activityTemplate) {
-        activityTemplateService.update(activityTemplate);
-        return ResponseBo.ok();
-    }
-
-    @PostMapping("/deleteTmp")
-    public ResponseBo deleteTmp(@RequestParam("code") String code) {
-        activityTemplateService.deleteTemplate(code);
-        return ResponseBo.ok();
-    }
-
-    /**
-     * 屏蔽测试-短信模板
-     * @return
-     */
-    @GetMapping("/getActivityTemplateContent")
-    public ResponseBo getActivityTemplateContent(@RequestParam("code") String code) {
-        return ResponseBo.okWithData(null, activityTemplateService.getActivityTemplateContent(code,"DISPLAY"));
     }
 
     /**
@@ -471,15 +407,6 @@ public class ActivityController {
     public ResponseBo updateCovInfo(@RequestParam("headId") long headId, @RequestParam("stage") String stage, @RequestParam("covId") String covId) {
         activityCovService.updateCovInfo(headId, stage, covId);
         return ResponseBo.ok();
-    }
-
-    /**
-     * 校验当前短信模板是否被引用
-     * @return
-     */
-    @GetMapping("/checkTmpIsUsed")
-    public ResponseBo checkTmpIsUsed(@RequestParam("tmpCode") String tmpCode) {
-        return ResponseBo.okWithData(null, activityUserGroupService.checkTmpIsUsed(tmpCode));
     }
 
     @PostMapping("/downloadExcel")
@@ -543,49 +470,6 @@ public class ActivityController {
         return ResponseBo.okWithData(null, activityProductService.validProduct(headId, stage));
     }
 
-    public static void main(String[] args) {
-        ActivityProduct p1 = new ActivityProduct();
-        p1.setProductId("1");
-        p1.setProductName("1a");
-        List<ActivityProduct> list = Lists.newArrayList();
-        list.add(p1);
-
-        Iterator<ActivityProduct> iterator = list.iterator();
-        while (iterator.hasNext()) {
-            iterator.next().setProductName("aaaa");
-        }
-        System.out.println(list);
-    }
-
-    /**
-     * 长链转短链
-     * @param url 长链
-     * @return
-     */
-    @GetMapping("/convertShortUrl")
-    public ResponseBo convertShortUrl(@RequestParam String url) {
-        String shortUrl = "";
-        if(StringUtils.isNotEmpty(url)) {
-            shortUrl = shortUrlService.genShortUrlDirect(url, "M");
-        }
-        return ResponseBo.okWithData(null, shortUrl);
-    }
-
-
-    /**
-     * 移除群组的券关系
-     * @param type 活动类型
-     * @param headId
-     * @param stage
-     * @param smsCode
-     * @param groupId
-     * @return
-     */
-    @PostMapping("/removeSmsSelected")
-    public ResponseBo removeSmsSelected(@RequestParam String type,@RequestParam String headId, @RequestParam String stage, @RequestParam String smsCode, @RequestParam String groupId) {
-        activityUserGroupService.removeSmsSelected(type, headId, stage, smsCode, groupId);
-        return ResponseBo.ok();
-    }
 
     @GetMapping("/checkProductId")
     public boolean checkProductId(@RequestParam String headId, @RequestParam String activityType, @RequestParam String activityStage, @RequestParam String productId) {
@@ -593,25 +477,5 @@ public class ActivityController {
             return true;
         }
         return activityProductService.checkProductId(headId, activityType, activityStage, productId);
-    }
-
-    /**
-     * 活动运营短信文案发送测试
-     */
-    @RequestMapping("/activityContentTestSend")
-    public ResponseBo testSend(String phoneNum, String smsCode) {
-        List<String> phoneNumList= Splitter.on(",").trimResults().omitEmptyStrings().splitToList(phoneNum);
-
-        String smsContent=activityTemplateService.getActivityTemplateContent(smsCode,"SEND");
-        try {
-            for(String num:phoneNumList)
-            {
-                redisMessageService.sendPhoneMessage(num,smsContent);
-            }
-            return ResponseBo.ok("测试发送成功！");
-        } catch (Exception e) {
-            log.info("发送测试短信错误，错误原因:{}",e);
-            return ResponseBo.error("测试发送失败！");
-        }
     }
 }

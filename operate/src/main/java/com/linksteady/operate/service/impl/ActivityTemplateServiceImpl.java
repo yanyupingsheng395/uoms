@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.User;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.ActivityTemplateMapper;
 import com.linksteady.operate.domain.ActivityTemplate;
 import com.linksteady.operate.service.ActivityTemplateService;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +26,9 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
 
     @Autowired
     private ActivityTemplateMapper activityTemplateMapper;
+
+    @Autowired
+    private PushConfig pushConfig;
 
     @Autowired
     private ConfigService configService;
@@ -59,11 +64,11 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         }
 
         //获取签名
-        String signature=configService.getValueByName("op.push.signature");
-        String signatureFlag=configService.getValueByName("op.push.signature_flag");
+        String signature=pushConfig.getSignature();
+        String signatureFlag=pushConfig.getSignatureFlag();
 
-        String unsubscribe=configService.getValueByName("op.push.unsubscribe");
-        String unsubscribeFlag=configService.getValueByName("op.push.unsubscribe_flag");
+        String unsubscribe=pushConfig.getUnsubscribe();
+        String unsubscribeFlag=pushConfig.getUnsubscribeFlag();
 
         if("DISPLAY".equals(scene))
         {
@@ -141,5 +146,24 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
             activityTemplate.setIsPersonal("1");
         }
         activityTemplateMapper.update(activityTemplate);
+    }
+
+    @Override
+    public void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage) {
+        activityTemplateMapper.setSmsCode(groupId, tmpCode, headId, type, stage);
+        //设置完成后对当前活动stage上设置的文案情况进行一次校验
+        activityTemplateMapper.validUserGroup(headId,stage);
+    }
+
+    @Override
+    public boolean checkTmpIsUsed(String tmpCode) {
+        return activityTemplateMapper.checkTmpIsUsed(tmpCode) > 0;
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void removeSmsSelected(String type, String headId, String stage, String smsCode, String groupId) {
+        activityTemplateMapper.removeSmsSelected(type, headId, stage, smsCode, groupId);
     }
 }
