@@ -244,7 +244,9 @@
     </div>
     <div class="row m-t-15">
         <div class="col-md-12 text-right">
-            <a class="btn btn-sm btn-secondary" onclick="preheatClick()" type="button"><i class="fa fa-arrow-right"></i>预售活动</a>
+            <a class="btn btn-sm btn-secondary" onclick="preheatClick()"
+               th:if="${activityHead.hasPreheat eq '1'} ? true:false"
+            ><i class="fa fa-arrow-right"></i>预售活动</a>
             <a class="btn btn-sm btn-secondary" onclick="formalClick()"><i class="fa fa-arrow-right"></i>正式活动</a>
             <a class="btn btn-secondary btn-sm" href="/page/activity">
                 <i class="fa fa-backward"></i>&nbsp;返回

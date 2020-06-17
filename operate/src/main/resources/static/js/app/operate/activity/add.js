@@ -1,5 +1,6 @@
 let create_step;
 let CURRENT_ACTIVITY_STAGE;
+let CURRENT_ACTIVITY_TYPE;
 $( function () {
     create_step = steps({
         el: "#addStep",
@@ -12,7 +13,7 @@ $( function () {
         dataOrder: ["title", "line", "description"]
     });
 
-    if(operate_type == 'update') {
+    if(operate_type === 'update') {
         var hasPreheatVal = $( "input[name='hasPreheat']:checked" ).val();
         haspreheat(hasPreheatVal);
     }
@@ -21,10 +22,12 @@ $( function () {
 function haspreheat(v) {
     if(v === '1') {
         CURRENT_ACTIVITY_STAGE = 'preheat';
+        $("#creatPreheat").attr("style", "display:inline;");
     }
     if(v === '0') {
         CURRENT_ACTIVITY_STAGE = 'formal';
         $("#productListTitle").html('正式活动商品列表');
+        $("#creatPreheat").attr("style", "display:none;");
     }
 }
 
@@ -50,7 +53,7 @@ let $activityProductAddForm = $( "#add-product-form" );
 
 // 验证商品表
 function validateProductRule() {
-    let icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i> ";
+    let icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i>";
     validatorProduct = $activityProductAddForm.validate( {
         rules: {
             productId: {
@@ -108,9 +111,6 @@ function validateProductRule() {
                 required: function () {
                     return $("#activityRule").val() === '4' || $("#activityRule").val() === '3';
                 }
-            },
-            activityType: {
-                required: true
             }
         },
         errorPlacement: function (error, element) {
@@ -148,9 +148,6 @@ function validateProductRule() {
             },
             discountAmount: {
                 required: icon + "请输入立减金额"
-            },
-            activityType: {
-                required: icon + "请选择利益点适用场景"
             }
         }
     } );
@@ -176,16 +173,20 @@ $( "#btn_download" ).click( function () {
 
 // 添加活动商品
 $( "#saveActivityProduct" ).click( function () {
-    let operateType = $("#activity_stage").val();
     let validator = $activityProductAddForm.validate();
     let flag = validator.form();
     if (flag) {
         let operate = $( "#saveActivityProduct" ).attr( "name" );
         if (operate === "save") {
-            $.post( "/activity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val() + "&activityStage=" + CURRENT_ACTIVITY_STAGE,  function (r) {
+            $.post( "/activity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val() + "&activityStage=" + CURRENT_ACTIVITY_STAGE + "&activityType=" + CURRENT_ACTIVITY_TYPE,  function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "添加商品成功！" );
-                    getProductInfo();
+                    if(CURRENT_ACTIVITY_TYPE === 'NOTIFY') {
+                        getProductInfo('NOTIFY', 'activityProductTable1');
+                    }
+                    if(CURRENT_ACTIVITY_TYPE === 'DURING') {
+                        getProductInfo('DURING', 'activityProductTable2');
+                    }
                     $MB.closeAndRestModal( "addProductModal" );
                 } else {
                     $MB.n_danger( r.msg );
@@ -193,11 +194,15 @@ $( "#saveActivityProduct" ).click( function () {
             } );
         }
         if (operate === 'update') {
-            $.post( "/activity/updateActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" +
-                $( "#headId" ).val() + "&activityStage=" + CURRENT_ACTIVITY_STAGE + "&operateType=" + operateType + "&productId=" + $("#product_id").val(), function (r) {
+            $.post( "/activity/updateActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val(), function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "更新商品成功！" );
-                    getProductInfo();
+                    if(CURRENT_ACTIVITY_TYPE === 'NOTIFY') {
+                        getProductInfo('NOTIFY', 'activityProductTable1');
+                    }
+                    if(CURRENT_ACTIVITY_TYPE === 'DURING') {
+                        getProductInfo('DURING', 'activityProductTable2');
+                    }
                     $MB.closeAndRestModal( "addProductModal" );
                 } else {
                     $MB.n_danger(r.msg);
@@ -222,10 +227,27 @@ $( "#addProductModal" ).on( "hidden.bs.modal", function () {
 } );
 
 // 修改商品信息
-$( "#btn_edit_shop" ).click( function () {
+$( "#btn_edit_shop1" ).click( function () {
+    editShop('NOTIFY');
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
+});
+
+$( "#btn_edit_shop2" ).click( function () {
+    editShop('DURING');
+    CURRENT_ACTIVITY_TYPE = 'DURING';
+});
+
+function editShop(type) {
+    var tableId = '';
+    if(type === 'NOTIFY') {
+        tableId = 'activityProductTable1';
+    }
+    if(type === 'DURING') {
+        tableId = 'activityProductTable2';
+    }
     $("#modalLabel").html('').append('修改商品');
     $( "#saveActivityProduct" ).attr( "name", "update" );
-    let selected = $( "#activityProductTable" ).bootstrapTable( 'getSelections' );
+    let selected = $( "#" + tableId ).bootstrapTable( 'getSelections' );
     let selected_length = selected.length;
     if (!selected_length) {
         $MB.n_warning( '请选择需要编辑的商品！' );
@@ -235,8 +257,8 @@ $( "#btn_edit_shop" ).click( function () {
         $MB.n_warning( '一次只能选择一条记录修改！' );
         return;
     }
-    let productId = selected[0].productId;
-    $.get( "/activity/getProductById", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE, productId: productId}, function (r) {
+    let id = selected[0].id;
+    $.get( "/activity/getProductById", {id: id}, function (r) {
         if (r.code === 200) {
             let data = r.data;
             $("#add-product-form").find( "input[name='id']" ).val( data['id'] );
@@ -289,7 +311,7 @@ $( "#btn_edit_shop" ).click( function () {
             $MB.n_danger( "获取信息失败！" );
         }
     } );
-} );
+}
 
 $( "#uploadFile" ).change( function () {
     $( '#filename' ).text( "文件名:" + $(this)[0].files[0].name).attr( "style", "display:inline-block;" );
@@ -453,9 +475,26 @@ function submitData(headId, type) {
     });
 }
 
+$("#btn_delete_shop1").click(function () {
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
+    deleteShop(CURRENT_ACTIVITY_TYPE);
+});
+
+$("#btn_delete_shop2").click(function () {
+    CURRENT_ACTIVITY_TYPE = 'DURING';
+    deleteShop(CURRENT_ACTIVITY_TYPE);
+});
+
 // 删除商品，同时更改头表数据状态
-$("#btn_delete_shop").click(function () {
-    var selected = $("#activityProductTable").bootstrapTable('getSelections');
+function deleteShop(type){
+    var tableId;
+    if(type === 'NOTIFY') {
+        tableId = 'activityProductTable1';
+    }
+    if(type === 'DURING') {
+        tableId = 'activityProductTable2';
+    }
+    var selected = $("#" + tableId).bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
         $MB.n_warning('请选择需要删除的商品记录！');
@@ -463,27 +502,33 @@ $("#btn_delete_shop").click(function () {
     }
     var headId = $("#headId").val();
     var stage = CURRENT_ACTIVITY_STAGE;
-    var productIds = [];
+    var ids = [];
     selected.forEach((v, k)=>{
-        productIds.push(v['productId']);
+        ids.push(v['id']);
     });
-
     $MB.confirm({
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
         content: '确认删除选中的商品记录？'
     }, function () {
-        $.post("/activity/deleteProduct", {headId:headId, stage: stage, productIds: productIds.join(",")}, function (r) {
+        $.post("/activity/deleteProduct", {ids: ids.join(",")}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("删除成功！");
-                $MB.refreshTable('activityProductTable');
+                $MB.refreshTable(tableId);
             }else {
                 $MB.n_danger("删除失败！");
             }
         });
     });
-});
+}
 
-function getProductInfo() {
+function getProductInfo(type, tableId) {
+    var title = '活动通知';
+    if(type === 'NOTIFY') {
+        title = '活动通知';
+    }
+    if(type === 'DURING') {
+        title = '活动期间';
+    }
     var settings = {
         url: '/activity/getActivityProductPage',
         pagination: true,
@@ -500,7 +545,8 @@ function getProductInfo() {
                     productId: $( "#productId" ).val(),
                     productName: $( "#productName" ).val(),
                     groupId: $("#groupId").find("option:selected").val(),
-                    activityStage: CURRENT_ACTIVITY_STAGE
+                    activityStage: CURRENT_ACTIVITY_STAGE,
+                    activityType: type
                 }
             };
         },
@@ -544,56 +590,18 @@ function getProductInfo() {
                 }
             },{
                 field: 'minPrice',
-                title: '活动通知体现最<br/>低单价（元/件）',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(row['activityType'] === 'NOTIFY' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
-                        return value;
-                    }else {
-                        return '-';
-                    }
-                }
+                title: title + '体现最<br/>低单价（元/件）',
+                align: 'center'
             },{
                 field: 'activityProfit',
-                title: '活动通知体现利益点',
+                title: title + '体现利益点',
                 valign: 'middle',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    if(row['activityType'] === 'NOTIFY' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
-                        if(row['groupId'] == '9') {
-                            return (value*10) +'折';
-                        }else {
-                            return value +'元';
-                        }
+                    if(row['groupId'] == '9') {
+                        return (value*10) +'折';
                     }else {
-                        return '-';
-                    }
-                }
-            },  {
-                field: 'minPrice',
-                title: '活动期间体现最<br/>低单价（元/件）',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(row['activityType'] === 'DURING' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
-                        return value;
-                    }else {
-                        return '-';
-                    }
-                }
-            }, {
-                field: 'activityProfit',
-                title: '活动期间体现利益点',
-                valign: 'middle',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(row['activityType'] === 'DURING' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
-                        if(row['groupId'] == '9') {
-                            return (value*10) +'折';
-                        }else {
-                            return value +'元';
-                        }
-                    }else {
-                        return '-';
+                        return value +'元';
                     }
                 }
             }, {
@@ -617,7 +625,7 @@ function getProductInfo() {
                 align: 'center'
             }]
     };
-    $( "#activityProductTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+    $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 
 // 跳转到
@@ -761,11 +769,12 @@ function stepBreak(index) {
         $("#step3").attr("style", "display:none;");
 
         $("#creatPreheat").attr('onclick', 'preheatClick()');
-        $("#creatPreheat").attr('onclick', 'preheatClick()');
+        $("#creatFormal").attr('onclick', 'formalClick()');
     }
     if(index == 1) {
         create_step.setActive(1);
-        getProductInfo();
+        getProductInfo('NOTIFY', 'activityProductTable1');
+        getProductInfo('DURING', 'activityProductTable2');
         $("#step1").attr("style", "display:none;");
         $("#step2").attr("style", "display:block;");
         $("#step3").attr("style", "display:none;");
@@ -945,7 +954,17 @@ function saveActivityHead() {
 }
 
 // 添加商品
-$( "#btn_add_shop" ).click( function () {
+$( "#btn_add_shop1" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
+    var headId = $( "#headId" ).val();
+    $( "#saveActivityProduct" ).attr( "name", "save" );
+    $( '#addProductModal' ).modal( 'show' );
+    $( "#modalLabel" ).html( '' ).append( '添加商品' );
+    $("#shopOffer").html('');
+} );
+
+$( "#btn_add_shop2" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'DURING';
     var headId = $( "#headId" ).val();
     $( "#saveActivityProduct" ).attr( "name", "save" );
     $( '#addProductModal' ).modal( 'show' );

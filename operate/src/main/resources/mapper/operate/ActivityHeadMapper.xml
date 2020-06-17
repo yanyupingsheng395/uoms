@@ -130,12 +130,6 @@
         select PREHEAT_STATUS from UO_OP_ACTIVITY_HEADER where head_id = #{headId}::int4
     </select>
 
-    <update id="updateGroupChanged">
-        update UO_OP_ACTIVITY_HEADER set
-            PREHEAT_CHANGED = #{changedStatus}, PREHEAT_CHANGED_TIME = #{time},
-            FORMAL_CHANGED = #{changedStatus}, FORMAL_CHANGED_TIME = #{time}
-    </update>
-
     <select id="getDataChangedStatus" resultType="map">
         select
         <if test="stage == 'preheat'">

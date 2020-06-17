@@ -53,26 +53,19 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     private ActivityHeadMapper activityHeadMapper;
 
     @Override
-    public int getCount(String headId, String productId, String productName, String groupId, String activityStage) {
-        return activityProductMapper.getCount(headId, productId, productName, groupId, activityStage);
+    public int getCount(String headId, String productId, String productName, String groupId, String activityStage, String activityType) {
+        return activityProductMapper.getCount(headId, productId, productName, groupId, activityStage, activityType);
     }
 
     @Override
-    public List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage) {
-        return activityProductMapper.getActivityProductListPage(limit, offset, headId, productId, productName, groupId, activityStage);
+    public List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage, String activityType) {
+        return activityProductMapper.getActivityProductListPage(limit, offset, headId, productId, productName, groupId, activityStage, activityType);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveActivityProduct(ActivityProduct activityProduct) {
-        ActivityProduct newProduct = activityProduct.clone();
-        if (activityProduct.getActivityType().equalsIgnoreCase("ALL")) {
-            activityProduct.setActivityType("DURING");
-            newProduct.setActivityType("NOTIFY");
-            newProduct = calculateProductMinPrice(newProduct);
-            activityProductMapper.saveActivityProduct(newProduct);
-        }
-        activityProduct = calculateProductMinPrice(activityProduct);
+        calculateProductMinPrice(activityProduct);
         activityProductMapper.saveActivityProduct(activityProduct);
     }
 
@@ -146,8 +139,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 
     @Override
-    public ActivityProduct getProductById(String headId, String activityStage, String productId) {
-        return activityProductMapper.getProductById(headId, activityStage, productId);
+    public ActivityProduct getProductById(String id) {
+        return activityProductMapper.getProductById(id);
     }
 
     @Override
@@ -165,18 +158,13 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     /**
      * todo 更新状态
      * 删除商品，删除完更新head表的数据状态
-     *
-     * @param headId
-     * @param stage
-     * @param productIds
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteProduct(Long headId, String stage, String productIds) {
-        List<String> productList = Arrays.asList(productIds.split(","));
+    public void deleteProduct(String ids) {
+        List<String> idList = Arrays.asList(ids.split(","));
         long time = System.currentTimeMillis();
-        activityHeadMapper.updateGroupChanged(time, headId, stage, "1");
-        activityProductMapper.deleteProduct(headId, stage, productList);
+        activityProductMapper.deleteProduct(idList);
     }
 
     @Override

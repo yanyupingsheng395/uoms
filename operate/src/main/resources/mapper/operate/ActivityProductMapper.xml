@@ -30,6 +30,7 @@
 
     <select id="getActivityProductListPage" resultMap="base">
         select
+        id,
         epb_product_id,
         product_name,
         min_price,
@@ -37,11 +38,11 @@
         activity_profit,
         check_flag,
         check_comments,
-        insert_dt,
-        string_agg(activity_type, ',') activity_type
+        insert_dt
         from uo_op_activity_product
         where head_id = #{headId}::integer
         and activity_stage = #{activityStage}
+        and activity_type = #{activityType}
         <if test="productId != null and productId != ''">
             and EPB_PRODUCT_ID = #{productId}
         </if>
@@ -51,26 +52,16 @@
         <if test="groupId != null and groupId != ''">
             and group_id = #{groupId}::int4
         </if>
-        group by epb_product_id, product_name, min_price, group_id, activity_profit,insert_dt,check_flag,
-        check_comments
         order by CHECK_FLAG asc, insert_dt desc
         limit #{limit} offset #{offset}
     </select>
 
     <select id="getCount" resultType="int">
-        select count(1) from (select
-        epb_product_id,
-        product_name,
-        min_price,
-        group_id,
-        activity_profit,
-        check_flag,
-        check_comments,
-        insert_dt,
-        string_agg(activity_type, ',') activity_type
+        select count(1)
         from uo_op_activity_product
         where head_id = #{headId}::integer
         and activity_stage = #{activityStage}
+        and activity_type = #{activityType}
         <if test="productId != null and productId != ''">
             and EPB_PRODUCT_ID = #{productId}
         </if>
@@ -80,20 +71,7 @@
         <if test="groupId != null and groupId != ''">
             and group_id = #{groupId}::int4
         </if>
-        group by epb_product_id, product_name, min_price, group_id, activity_profit,insert_dt,check_flag,
-        check_comments) t
     </select>
-
-    <!--    <insert id="saveDataList">-->
-    <!--        insert into UO_OP_ACTIVITY_PRODUCT(head_id, EPB_PRODUCT_ID, user_count, product_price, prefer_type,-->
-    <!--        prefer_value,-->
-    <!--        product_act_price, min_price15, min_price30)-->
-    <!--        <foreach item="item" collection="list" index="index" separator="union all">-->
-    <!--            select #{item.headId},-->
-    <!--            #{item.productId},#{item.userCount},#{item.productPrice},#{item.preferType},#{item.preferValue},#{item.productActPrice},-->
-    <!--            #{item.minPrice15}, #{item.minPrice30} from dual-->
-    <!--        </foreach>-->
-    <!--    </insert>-->
 
     <delete id="deleteByHeadId">
         delete
@@ -112,38 +90,22 @@
     </insert>
 
     <select id="getProductById" resultMap="base">
-        select distinct EPB_PRODUCT_ID,
-                        PRODUCT_NAME,
-                        FORMAL_PRICE,
-                        GROUP_ID,
-                        ACTIVITY_PRICE,
-                        DISCOUNT_SIZE,
-                        DISCOUNT_THREADHOLD,
-                        DISCOUNT_DENO,
-                        DISCOUNT_AMOUNT,
-                        activity_profit,
-                        case when string_agg(activity_type, ',') = 'NOTIFY,DURING' or string_agg(activity_type, ',') = 'DURING,NOTIFY'
-                                 then 'ALL' else string_agg(activity_type, ',') end activity_type
-        from UO_OP_ACTIVITY_PRODUCT
-        where head_id = #{headId}::integer
-          and activity_stage = #{activityStage}
-          and EPB_PRODUCT_ID = #{productId}
-        group by EPB_PRODUCT_ID, PRODUCT_NAME, FORMAL_PRICE, GROUP_ID, ACTIVITY_PRICE, DISCOUNT_SIZE, DISCOUNT_THREADHOLD, DISCOUNT_DENO, DISCOUNT_AMOUNT, activity_profit
+        select * from uo_op_activity_product where id = #{id}::integer
     </select>
 
     <update id="updateActivityProduct">
         update UO_OP_ACTIVITY_PRODUCT
-        set PRODUCT_NAME        = #{productName},
-            ACTIVITY_PRICE      = #{activityPrice},
-            FORMAL_PRICE        = #{formalPrice},
-            MIN_PRICE           = #{minPrice},
-            GROUP_ID            = #{groupId}::int4,
+        set product_name        = #{productName},
+            activity_price      = #{activityPrice},
+            formal_price        = #{formalPrice},
+            min_price           = #{minPrice},
+            group_id            = #{groupId}::integer,
             discount_size       = #{discountSize},
             discount_threadhold = #{discountThreadhold},
             discount_deno       = #{discountDeno},
             discount_amount     = #{discountAmount},
             activity_profit     = #{activityProfit}
-        where ID = #{id}::int4
+        where id = #{id}::integer
     </update>
 
     <insert id="saveActivityProductList">
@@ -163,11 +125,10 @@
     </insert>
 
     <delete id="deleteProduct">
-        delete from UO_OP_ACTIVITY_PRODUCT where head_id = #{headId} and EPB_PRODUCT_ID in
-        <foreach collection="productList" item="item" separator="," open="(" close=")">
-            #{item}
+        delete from UO_OP_ACTIVITY_PRODUCT where id in
+        <foreach collection="idList" item="item" separator="," open="(" close=")">
+            #{item}::integer
         </foreach>
-        and activity_stage = #{stage}
     </delete>
 
     <select id="validProductNum" resultType="int">
