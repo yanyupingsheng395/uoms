@@ -24,9 +24,7 @@ function haspreheat(v) {
     }
     if(v === '0') {
         CURRENT_ACTIVITY_STAGE = 'formal';
-        $("#productListTitle").html('正式商品列表');
-        $("#preheatFinishBtn").attr("style", "display:none;");
-        $("#formalFinishBtn").attr("style", "display:block;");
+        $("#productListTitle").html('正式活动商品列表');
     }
 }
 
@@ -758,12 +756,22 @@ function initDt() {
     $( "#preheatStartDt" ).datepicker( 'setStartDate', date );
     $( "#preheatEndDt" ).datepicker( 'setStartDate', date );
     $( "#formalStartDt" ).datepicker( 'setStartDate', date );
-    $( "#formalEndDt" ).datepicker( 'setStartDate', date );
+    $( "#formalEndDt" ).datepicker( 'setStartDate', date);
     $( "#preheatNotifyDt" ).datepicker( 'setStartDate', date );
     $( "#formalNotifyDt" ).datepicker( 'setStartDate', date );
 }
 
-$( "#btn_basic" ).click( function () {
+function preheatClick() {
+    stepBreak(1);
+}
+
+function formalClick() {
+    CURRENT_ACTIVITY_STAGE = 'formal';
+    $("#productListTitle").html('正式活动商品列表');
+    stepBreak(1);
+}
+
+function beforeSave(){
     if(operate_type === 'save') {
         var validator = $basicAddForm.validate();
         if (validator.form() && validBasicDt()) {
@@ -779,8 +787,7 @@ $( "#btn_basic" ).click( function () {
     if(operate_type === 'update') {
         stepBreak(1);
     }
-    //stepBreak(1);
-});
+}
 
 // 点击上一步下一步按钮
 function stepBreak(index) {
@@ -789,6 +796,9 @@ function stepBreak(index) {
         $("#step1").attr("style", "display:block;");
         $("#step2").attr("style", "display:none;");
         $("#step3").attr("style", "display:none;");
+
+        $("#creatPreheat").attr('onclick', 'preheatClick()');
+        $("#creatPreheat").attr('onclick', 'preheatClick()');
     }
     if(index == 1) {
         create_step.setActive(1);
@@ -1161,7 +1171,17 @@ function getTmpTableData() {
                 field: 'content',
                 title: '消息内容',
                 formatter: function (value, row, index) {
-                    return longTextFormat(value, row, index);
+                    if(value === null || value.length == 0)
+                    {
+                        return '';
+                    }else if(value.length <20) {
+                        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
+                            value+ "</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
+                    }else
+                    {
+                        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
+                            value.substring(0, 20) + "...</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
+                    }
                 }
             },{
                 field: 'insertDt',
@@ -1903,14 +1923,11 @@ function groupIdChange(dom) {
 function editFormalActivity() {
     CURRENT_ACTIVITY_STAGE = 'formal';
     getProductInfo();
-    $("#productListTitle").html('正式商品列表');
+    $("#productListTitle").html('正式活动商品列表');
     create_step.setActive(1);
     $("#step1").attr("style", "display:none;");
     $("#step2").attr("style", "display:block;");
     $("#step3").attr("style", "display:none;");
-
-    $("#preheatFinishBtn").attr("style", "display:none;");
-    $("#formalFinishBtn").attr("style", "display:block;");
 }
 
 function platDiscountClick(idx) {
