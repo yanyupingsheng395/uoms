@@ -14,9 +14,9 @@ import java.util.Map;
  */
 public interface ActivityProductService {
 
-    int getCount(String headId, String productId, String productName, String groupId, String activityStage);
+    int getCount(String headId, String productId, String productName, String groupId, String activityStage, String activityType);
 
-    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage);
+    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage, String activityType);
 
     /**
      * 保存活动商品
@@ -24,7 +24,7 @@ public interface ActivityProductService {
      */
     void saveActivityProduct(ActivityProduct activityProduct);
 
-    ActivityProduct getProductById(String headId, String activityStage, String productId);
+    ActivityProduct getProductById(String id);
 
     void updateActivityProduct(ActivityProduct activityProduct);
 
@@ -36,11 +36,8 @@ public interface ActivityProductService {
 
     /**
      * 删除活动商品
-     * @param headId
-     * @param stage
-     * @param productIds
      */
-    void deleteProduct(Long headId, String stage, String productIds);
+    void deleteProduct(String ids);
 
     int validProductNum(Long headId, String stage);
 

@@ -10,9 +10,9 @@ import java.util.List;
  */
 public interface ActivityProductMapper {
 
-    int getCount(String headId, String productId, String productName, String groupId, String activityStage);
+    int getCount(String headId, String productId, String productName, String groupId, String activityStage, String activityType);
 
-    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage);
+    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage, String activityType);
 
 //    void saveDataList(List<ActivityProduct> productList);
 
@@ -20,13 +20,13 @@ public interface ActivityProductMapper {
 
     void saveActivityProduct(ActivityProduct activityProduct);
 
-    ActivityProduct getProductById(String headId, String activityStage, String productId);
+    ActivityProduct getProductById(String id);
 
     void updateActivityProduct(ActivityProduct activityProduct);
 
     void saveActivityProductList(List<ActivityProduct> productList);
 
-    void deleteProduct(@Param("headId") Long headId, @Param("stage") String stage, @Param("productList") List<String> productList);
+    void deleteProduct(@Param("idList") List<String> idList);
 
     int validProductNum(Long headId, String stage);
 

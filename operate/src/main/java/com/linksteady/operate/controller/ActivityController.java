@@ -128,12 +128,9 @@ public class ActivityController {
         String productName = request.getParam().get("productName");
         String groupId = request.getParam().get("groupId");
         String activityStage = request.getParam().get("activityStage");
-        List<ActivityProduct> productList = Lists.newArrayList();
-        int count = 0;
-        if(StringUtils.isNotEmpty(headId)) {
-            count = activityProductService.getCount(headId, productId, productName, groupId, activityStage);
-            productList = activityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId, activityStage);
-        }
+        String activityType = request.getParam().get("activityType");
+        int count = activityProductService.getCount(headId, productId, productName, groupId, activityStage, activityType);
+        List<ActivityProduct> productList = activityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId, activityStage, activityType);
         return ResponseBo.okOverPaging(null, count, productList);
     }
 
@@ -192,8 +189,8 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/getProductById")
-    public ResponseBo getProductById(@RequestParam("headId") String headId, @RequestParam("activityStage") String activityStage, @RequestParam("productId") String productId) {
-        return ResponseBo.okWithData(null, activityProductService.getProductById(headId, activityStage, productId));
+    public ResponseBo getProductById(@RequestParam("id") String id) {
+        return ResponseBo.okWithData(null, activityProductService.getProductById(id));
     }
 
     /**
@@ -208,9 +205,7 @@ public class ActivityController {
             if(activityProduct.getProductName().length() > pushConfig.getProdNameLen()) {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
-            deleteProduct(activityProduct.getHeadId(), activityProduct.getActivityStage(), activityProduct.getProductId());
-            saveActivityProduct(activityProduct);
-//            activityProductService.updateActivityProduct(activityProduct);
+            activityProductService.updateActivityProduct(activityProduct);
             validProductInfo(String.valueOf(activityProduct.getHeadId()), activityProduct.getActivityStage());
             return ResponseBo.ok();
         } catch (LinkSteadyException e) {
@@ -264,9 +259,8 @@ public class ActivityController {
     }
 
     @PostMapping("/deleteProduct")
-    public ResponseBo deleteProduct(@RequestParam Long headId, @RequestParam String stage, @RequestParam String productIds) {
-        activityProductService.deleteProduct(headId, stage, productIds);
-        validProductInfo(String.valueOf(headId), stage);
+    public ResponseBo deleteProduct(@RequestParam String ids) {
+        activityProductService.deleteProduct(ids);
         return ResponseBo.ok();
     }
 
@@ -410,7 +404,7 @@ public class ActivityController {
     }
 
     @PostMapping("/downloadExcel")
-    public ResponseBo excel(@RequestParam("headId") String headId, @RequestParam("activityStage") String activityStage) throws InterruptedException {
+    public ResponseBo excel(@RequestParam("headId") String headId, @RequestParam("activityStage") String activityStage, @RequestParam("activityType") String activityType) throws InterruptedException {
         List<ActivityProduct> list = Lists.newLinkedList();
         List<Callable<List<ActivityProduct>>> tmp = Lists.newLinkedList();
         int count = activityProductService.getCountByHeadId(headId);
@@ -426,24 +420,7 @@ public class ActivityController {
                 end = Math.min(end, count);
                 int limit = end - start + 1;
                 int offset = start -1;
-                List<ActivityProduct> activityProductList = activityProductService.getActivityProductListPage(limit, offset, headId, "", "", "", activityStage);
-                Iterator<ActivityProduct> iterator = activityProductList.iterator();
-                while (iterator.hasNext()) {
-                    ActivityProduct next = iterator.next();
-                    if(next.getActivityType().equalsIgnoreCase("DURING")) {
-                        next.setDuringProfit(df.format(next.getActivityProfit()));
-                        next.setDuringMinPrice(df.format(next.getMinPrice()));
-                    } else if(next.getActivityType().equalsIgnoreCase("NOTIFY")) {
-                        next.setNotifyProfit(df.format(next.getActivityProfit()));
-                        next.setNotifyMinPrice(df.format(next.getMinPrice()));
-                    } else {
-                        next.setDuringProfit(df.format(next.getActivityProfit()));
-                        next.setDuringMinPrice(df.format(next.getMinPrice()));
-                        next.setNotifyProfit(df.format(next.getActivityProfit()));
-                        next.setNotifyMinPrice(df.format(next.getMinPrice()));
-                    }
-                }
-                return activityProductList;
+                return activityProductService.getActivityProductListPage(limit, offset, headId, "", "", "", activityStage, activityType);
             });
         }
 

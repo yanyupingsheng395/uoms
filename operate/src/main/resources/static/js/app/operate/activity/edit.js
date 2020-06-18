@@ -16,7 +16,6 @@ function getDataById() {
     $MB.loading('show');
     $.get("/activity/getDataById", {headId: headId}, function (r) {
         var data = r.data;
-        console.log(data);
         $("#actName").val(data['ACT_NAME']);
         $("#actName").attr('disabled', true);
 

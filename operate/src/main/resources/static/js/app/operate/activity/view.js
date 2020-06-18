@@ -1817,3 +1817,13 @@ function platDiscountClick(idx) {
         $("#platDenoDiv").attr("style", "display:block;");
     }
 }
+
+function preheatClick() {
+    stepBreak(1);
+}
+
+function formalClick() {
+    CURRENT_ACTIVITY_STAGE = 'formal';
+    $("#productListTitle").html('正式活动商品列表');
+    stepBreak(1);
+}

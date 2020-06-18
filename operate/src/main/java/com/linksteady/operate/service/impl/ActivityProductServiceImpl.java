@@ -53,26 +53,19 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     private ActivityHeadMapper activityHeadMapper;
 
     @Override
-    public int getCount(String headId, String productId, String productName, String groupId, String activityStage) {
-        return activityProductMapper.getCount(headId, productId, productName, groupId, activityStage);
+    public int getCount(String headId, String productId, String productName, String groupId, String activityStage, String activityType) {
+        return activityProductMapper.getCount(headId, productId, productName, groupId, activityStage, activityType);
     }
 
     @Override
-    public List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage) {
-        return activityProductMapper.getActivityProductListPage(limit, offset, headId, productId, productName, groupId, activityStage);
+    public List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage, String activityType) {
+        return activityProductMapper.getActivityProductListPage(limit, offset, headId, productId, productName, groupId, activityStage, activityType);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveActivityProduct(ActivityProduct activityProduct) {
-        ActivityProduct newProduct = activityProduct.clone();
-        if (activityProduct.getActivityType().equalsIgnoreCase("ALL")) {
-            activityProduct.setActivityType("DURING");
-            newProduct.setActivityType("NOTIFY");
-            newProduct = calculateProductMinPrice(newProduct);
-            activityProductMapper.saveActivityProduct(newProduct);
-        }
-        activityProduct = calculateProductMinPrice(activityProduct);
+        calculateProductMinPrice(activityProduct);
         activityProductMapper.saveActivityProduct(activityProduct);
     }
 
@@ -91,15 +84,14 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         String groupId = activityProduct.getGroupId();
         double shop_discount = 0;
         double activityPrice = activityProduct.getActivityPrice();
-        if(activityProduct.getProductId().equalsIgnoreCase("539377654791")) {
-            System.out.println(1);
-        }
         switch (groupId) {
-            case "9": // 满件打折
+            // 满件打折
+            case "9":
                 shop_discount = activityPrice * (1 - activityProduct.getDiscountSize());
                 activityProduct.setActivityProfit(activityProduct.getDiscountSize());
                 break;
-            case "10": // 满元减钱
+            // 满元减钱
+            case "10":
                 if (activityPrice >= activityProduct.getDiscountThreadhold()) {
                     shop_discount = activityProduct.getDiscountDeno();
                 } else {
@@ -107,12 +99,14 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 }
                 activityProduct.setActivityProfit(activityProduct.getDiscountDeno());
                 break;
-            case "11":// 特价秒杀
-            case "12":// 预售付尾立减
+            // 特价秒杀
+            case "11":// 预售付尾立减
+            case "12":
                 shop_discount = activityProduct.getDiscountAmount();
                 activityProduct.setActivityProfit(activityProduct.getDiscountAmount());
                 break;
-            case "13":// 预售付尾立减
+            // 预售付尾立减
+            case "13":
                 shop_discount = 0;
                 activityProduct.setActivityProfit(0D);
                 break;
@@ -145,8 +139,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 
     @Override
-    public ActivityProduct getProductById(String headId, String activityStage, String productId) {
-        return activityProductMapper.getProductById(headId, activityStage, productId);
+    public ActivityProduct getProductById(String id) {
+        return activityProductMapper.getProductById(id);
     }
 
     @Override
@@ -164,18 +158,13 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     /**
      * todo 更新状态
      * 删除商品，删除完更新head表的数据状态
-     *
-     * @param headId
-     * @param stage
-     * @param productIds
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteProduct(Long headId, String stage, String productIds) {
-        List<String> productList = Arrays.asList(productIds.split(","));
+    public void deleteProduct(String ids) {
+        List<String> idList = Arrays.asList(ids.split(","));
         long time = System.currentTimeMillis();
-        activityHeadMapper.updateGroupChanged(time, headId, stage, "1");
-        activityProductMapper.deleteProduct(headId, stage, productList);
+        activityProductMapper.deleteProduct(idList);
     }
 
     @Override
@@ -235,254 +224,255 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         List<ActivityProductUploadError> errorList = Lists.newArrayList();
         List<ActivityProductUploadError> dataList = Lists.newArrayList();
         if (fileType.equalsIgnoreCase(xlsSuffix) || fileType.equalsIgnoreCase(xlsxSuffix)) {
-            Workbook wb = null;
-            try {
-                InputStream is = file.getInputStream();
-                if (fileType.equalsIgnoreCase(xlsSuffix)) {
-                    wb = new HSSFWorkbook(is);
-                } else if (fileType.equalsIgnoreCase(xlsxSuffix)) {
-                    wb = new XSSFWorkbook(is);
-                }
-                Sheet sheet = wb.getSheetAt(0);
-                if (null == sheet) {
-                    errorList.add(new ActivityProductUploadError("系统只解析第一个sheet，当前文件第一个sheet为空"));
-                } else {
-                    for (int i = 0; i <= sheet.getLastRowNum(); i++) {
-                        int validCount = 0;
-                        Row row = sheet.getRow(i);
-                        if (null == row) {
-                            errorList.add(new ActivityProductUploadError("行为空", i + 1));
+            errorList.add(new ActivityProductUploadError("文件格式不符，只支持.xls,.xlsx后缀的文件！"));
+            return errorList;
+        }
+        Workbook wb = null;
+        try {
+            InputStream is = file.getInputStream();
+            if (fileType.equalsIgnoreCase(xlsSuffix)) {
+                wb = new HSSFWorkbook(is);
+            } else if (fileType.equalsIgnoreCase(xlsxSuffix)) {
+                wb = new XSSFWorkbook(is);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            if (null == sheet) {
+                errorList.add(new ActivityProductUploadError("系统只解析第一个sheet，当前文件第一个sheet为空"));
+            } else {
+                for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+                    int validCount = 0;
+                    Row row = sheet.getRow(i);
+                    //获取第一行的的数据
+                    if (null == row) {
+                        errorList.add(new ActivityProductUploadError("行为空", i + 1));
+                        continue;
+                    }
+                    // 校验文件第一行与模板是否一致
+                    if (i == 0) {
+                        Iterator<Cell> cellIterator = row.cellIterator();
+                        cellIterator.forEachRemaining(x -> {
+                            // 可能会出现空列的情况
+                            if (!x.getStringCellValue().equalsIgnoreCase("")) {
+                                if (headers.indexOf(x.getStringCellValue()) == -1) {
+                                    flag.set(false);
+                                }
+                            }
+                        });
+                        if (!flag.get()) {
+                            errorList.add(new ActivityProductUploadError("检测到上传数据与模板格式不符，请检查后重新上传"));
+                            break;
+                        } else {
                             continue;
                         }
-                        // 校验文件第一行与模板是否一致
-                        if (i == 0) {
-                            Iterator<Cell> cellIterator = row.cellIterator();
-                            cellIterator.forEachRemaining(x -> {
-                                // 可能会出现空列的情况
-                                if (!x.getStringCellValue().equalsIgnoreCase("")) {
-                                    if (headers.indexOf(x.getStringCellValue()) == -1) {
-                                        flag.set(false);
-                                    }
-                                }
-                            });
-                            if (!flag.get()) {
-                                errorList.add(new ActivityProductUploadError("检测到上传数据与模板格式不符，请检查后重新上传"));
-                                break;
-                            } else {
-                                continue;
-                            }
-                        }
-                        // 检查>=第二行数据
-                        // 商品ID
-                        String productId = "";
-                        Cell cell0 = row.getCell(0);
-                        if (null == cell0 || cell0.getCellType() == 3) {
-                            validCount++;
-                            errorList.add(new ActivityProductUploadError("商品ID为空", i + 1));
+                    }
+                    // 检查>=第二行数据
+                    // 商品ID
+                    String productId = "";
+                    Cell cell0 = row.getCell(0);
+                    if (null == cell0 || cell0.getCellType() == 3) {
+                        validCount++;
+                        errorList.add(new ActivityProductUploadError("商品ID为空", i + 1));
+                    } else {
+                        if (cell0.getCellType() == 1) {
+                            productId = cell0.getStringCellValue();
                         } else {
-                            if (cell0.getCellType() == 1) {
-                                productId = cell0.getStringCellValue();
-                            } else {
-                                errorList.add(new ActivityProductUploadError("商品ID数据类型有误，应改为文本型", i + 1));
-                            }
-                        }
-
-                        // 商品名称
-                        String productName = "";
-                        Cell cell1 = row.getCell(1);
-                        if (null == cell1 || cell1.getCellType() == 3) {
-                            validCount++;
-                            errorList.add(new ActivityProductUploadError("商品名称为空", i + 1, true));
-                        } else {
-                            if (cell1.getCellType() == 1) {
-                                productName = cell1.getStringCellValue();
-                            } else {
-                                errorList.add(new ActivityProductUploadError("商品名数据类型有误，应改为文本型", i + 1));
-                            }
-                        }
-
-                        // 日常商品单价
-                        Double formalPrice = 0D;
-                        Cell cell2 = row.getCell(2);
-                        if (null == cell2 || cell2.getCellType() == 3) {
-                            validCount++;
-                            errorList.add(new ActivityProductUploadError("日常商品单价为空", i + 1));
-                        } else {
-                            if (cell2.getCellType() == 0) {
-                                formalPrice = cell2.getNumericCellValue();
-                            } else {
-                                errorList.add(new ActivityProductUploadError("日常商品单价数据类型有误，应改为数值型", i + 1));
-                            }
-                        }
-
-                        // "商品ID", "商品名称", "日常商品单价（元/件）", "活动商品单价（元/件）", "店铺活动机制", "满件打折（折）", "满元减钱门槛（元）", "满元减钱面额（元）", "立减金额（元）"
-                        // 活动商品单价
-                        Double activityPrice = 0D;
-                        Cell cell3 = row.getCell(3);
-                        if (null == cell3 || cell3.getCellType() == 3) {
-                            validCount++;
-                            errorList.add(new ActivityProductUploadError("活动商品单价为空", i + 1));
-                        } else {
-                            if (cell3.getCellType() == 0) {
-                                activityPrice = cell3.getNumericCellValue();
-                            } else {
-                                errorList.add(new ActivityProductUploadError("活动商品单价数据类型有误，应改为数值型", i + 1));
-                            }
-                        }
-
-                        // 店铺活动机制
-                        String groupId = null;
-                        Cell cell4 = row.getCell(4);
-                        if (null == cell4 || cell4.getCellType() == 3) {
-                            validCount++;
-                            errorList.add(new ActivityProductUploadError("店铺活动机制为空", i + 1));
-                        } else {
-                            if (cell4.getCellType() == 1) {
-                                String groupName = Optional.of(row.getCell(4)).map(Cell::getStringCellValue).get();
-                                switch (groupName) {
-                                    case "满件打折":
-                                        groupId = "9";
-                                        break;
-                                    case "满元减钱":
-                                        groupId = "10";
-                                        break;
-                                    case "特价秒杀":
-                                        groupId = "11";
-                                        break;
-                                    case "预售付尾立减":
-                                        groupId = "12";
-                                        break;
-                                    case "无店铺活动":
-                                        groupId = "13";
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                if (StringUtils.isEmpty(groupId)) {
-                                    errorList.add(new ActivityProductUploadError("店铺活动机制值与模板给定的值不一致", i + 1));
-                                }
-                            } else {
-                                errorList.add(new ActivityProductUploadError("店铺活动机制数据类型有误，应改为文本型", i + 1));
-                            }
-                        }
-                        Double discountSize = 0D;
-                        Double discountThreadhold = 0D;
-                        Double discountDeno = 0D;
-                        Double discountAmount = 0D;
-                        switch (groupId) {
-                            case "9":
-                                // 满件打折
-                                Cell cell5 = row.getCell(5);
-                                if (null == cell5 || cell5.getCellType() == 3) {
-                                    validCount++;
-                                    errorList.add(new ActivityProductUploadError("满件打折为空", i + 1));
-                                } else {
-                                    if (cell5.getCellType() == 0) {
-                                        discountSize = cell5.getNumericCellValue();
-                                    } else {
-                                        errorList.add(new ActivityProductUploadError("满件打折数据类型有误，应改为数值型", i + 1));
-                                    }
-                                }
-                                break;
-                            case "10":
-                                // 满元减钱
-                                Cell cell6 = row.getCell(6);
-                                if (null == cell6 || cell6.getCellType() == 3) {
-                                    validCount++;
-                                    errorList.add(new ActivityProductUploadError("满元减钱门槛为空", i + 1));
-                                } else {
-                                    if (cell6.getCellType() == 0) {
-                                        discountThreadhold = cell6.getNumericCellValue();
-                                    } else {
-                                        errorList.add(new ActivityProductUploadError("满元减钱门槛数据类型有误，应改为数值型", i + 1));
-                                    }
-                                }
-
-                                Cell cell7 = row.getCell(7);
-                                if (null == cell7 || cell7.getCellType() == 3) {
-                                    validCount++;
-                                    errorList.add(new ActivityProductUploadError("满元减钱面额为空", i + 1));
-                                } else {
-                                    if (cell7.getCellType() == 0) {
-                                        discountDeno = cell7.getNumericCellValue();
-                                    } else {
-                                        errorList.add(new ActivityProductUploadError("满元减钱面额数据类型有误，应改为数值型", i + 1));
-                                    }
-                                }
-                                break;
-                            case "11":
-                            case "12":
-                                // 特价秒杀 + 预售付尾立减
-                                Cell cell8 = row.getCell(8);
-                                if (null == cell8 || cell8.getCellType() == 3) {
-                                    validCount++;
-                                    errorList.add(new ActivityProductUploadError("立减金额为空", i + 1));
-                                } else {
-                                    if (cell8.getCellType() == 0) {
-                                        discountAmount = cell8.getNumericCellValue();
-                                    } else {
-                                        errorList.add(new ActivityProductUploadError("立减金额数据类型有误，应改为数值型", i + 1));
-                                    }
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                        String activityType = "";
-                        Cell cell9 = row.getCell(9);
-                        if (null == cell9 || cell9.getCellType() == 3) {
-                            validCount++;
-                            errorList.add(new ActivityProductUploadError("利益点场景为空", i + 1));
-                        } else {
-                            if (cell9.getCellType() == 1) {
-                                activityType = cell9.getStringCellValue();
-                            } else {
-                                errorList.add(new ActivityProductUploadError("利益点场景为空类型有误，应改为文本型", i + 1));
-                            }
-                        }
-                        if (activityType.equalsIgnoreCase("活动通知")) {
-                            activityType = "NOTIFY";
-                        }
-                        if (activityType.equalsIgnoreCase("活动期间")) {
-                            activityType = "DURING";
-                        }
-                        if (activityType.equalsIgnoreCase("整个活动")) {
-                            activityType = "ALL";
-                        }
-
-                        if (validCount == 6) {
-                            errorList = errorList.subList(0, errorList.size() - 6);
-                        }
-                        ActivityProduct activityProduct = new ActivityProduct();
-                        activityProduct.setHeadId(Long.valueOf(headId));
-                        activityProduct.setGroupId(groupId);
-                        activityProduct.setProductName(productName);
-                        activityProduct.setActivityPrice(new BigDecimal(activityPrice).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                        activityProduct.setFormalPrice(new BigDecimal(formalPrice).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                        activityProduct.setDiscountSize(new BigDecimal(discountSize).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                        activityProduct.setDiscountThreadhold(new BigDecimal(discountThreadhold).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                        activityProduct.setDiscountDeno(new BigDecimal(discountDeno).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                        activityProduct.setDiscountAmount(new BigDecimal(discountAmount).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                        activityProduct.setProductId(productId);
-                        activityProduct.setActivityStage(stage);
-                        if (activityProduct.productValid()) {
-                            activityProduct.setProductUrl(shortUrlService.genProdShortUrlByProdId(productId, "S"));
-                            activityProduct.setActivityType(activityType);
-                            activityProduct = calculateProductMinPrice(activityProduct);
-                            productList.add(activityProduct);
+                            errorList.add(new ActivityProductUploadError("商品ID数据类型有误，应改为文本型", i + 1));
                         }
                     }
-                    if (productList.size() != 0) {
-                        saveUploadProductData(headId, productList, uploadMethod, repeatProduct, stage);
+
+                    // 商品名称
+                    String productName = "";
+                    Cell cell1 = row.getCell(1);
+                    if (null == cell1 || cell1.getCellType() == 3) {
+                        validCount++;
+                        errorList.add(new ActivityProductUploadError("商品名称为空", i + 1, true));
                     } else {
-                        errorList.add(new ActivityProductUploadError("校验通过的记录条数为0"));
+                        if (cell1.getCellType() == 1) {
+                            productName = cell1.getStringCellValue();
+                        } else {
+                            errorList.add(new ActivityProductUploadError("商品名数据类型有误，应改为文本型", i + 1));
+                        }
+                    }
+
+                    // 日常商品单价
+                    Double formalPrice = 0D;
+                    Cell cell2 = row.getCell(2);
+                    if (null == cell2 || cell2.getCellType() == 3) {
+                        validCount++;
+                        errorList.add(new ActivityProductUploadError("日常商品单价为空", i + 1));
+                    } else {
+                        if (cell2.getCellType() == 0) {
+                            formalPrice = cell2.getNumericCellValue();
+                        } else {
+                            errorList.add(new ActivityProductUploadError("日常商品单价数据类型有误，应改为数值型", i + 1));
+                        }
+                    }
+
+                    // "商品ID", "商品名称", "日常商品单价（元/件）", "活动商品单价（元/件）", "店铺活动机制", "满件打折（折）", "满元减钱门槛（元）", "满元减钱面额（元）", "立减金额（元）"
+                    // 活动商品单价
+                    Double activityPrice = 0D;
+                    Cell cell3 = row.getCell(3);
+                    if (null == cell3 || cell3.getCellType() == 3) {
+                        validCount++;
+                        errorList.add(new ActivityProductUploadError("活动商品单价为空", i + 1));
+                    } else {
+                        if (cell3.getCellType() == 0) {
+                            activityPrice = cell3.getNumericCellValue();
+                        } else {
+                            errorList.add(new ActivityProductUploadError("活动商品单价数据类型有误，应改为数值型", i + 1));
+                        }
+                    }
+
+                    // 店铺活动机制
+                    String groupId = null;
+                    Cell cell4 = row.getCell(4);
+                    if (null == cell4 || cell4.getCellType() == 3) {
+                        validCount++;
+                        errorList.add(new ActivityProductUploadError("店铺活动机制为空", i + 1));
+                    } else {
+                        if (cell4.getCellType() == 1) {
+                            String groupName = Optional.of(row.getCell(4)).map(Cell::getStringCellValue).get();
+                            switch (groupName) {
+                                case "满件打折":
+                                    groupId = "9";
+                                    break;
+                                case "满元减钱":
+                                    groupId = "10";
+                                    break;
+                                case "特价秒杀":
+                                    groupId = "11";
+                                    break;
+                                case "预售付尾立减":
+                                    groupId = "12";
+                                    break;
+                                case "无店铺活动":
+                                    groupId = "13";
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if (StringUtils.isEmpty(groupId)) {
+                                errorList.add(new ActivityProductUploadError("店铺活动机制值与模板给定的值不一致", i + 1));
+                            }
+                        } else {
+                            errorList.add(new ActivityProductUploadError("店铺活动机制数据类型有误，应改为文本型", i + 1));
+                        }
+                    }
+                    double discountSize = 0D;
+                    double discountThreadhold = 0D;
+                    double discountDeno = 0D;
+                    double discountAmount = 0D;
+                    switch (groupId) {
+                        case "9":
+                            // 满件打折
+                            Cell cell5 = row.getCell(5);
+                            if (null == cell5 || cell5.getCellType() == 3) {
+                                validCount++;
+                                errorList.add(new ActivityProductUploadError("满件打折为空", i + 1));
+                            } else {
+                                if (cell5.getCellType() == 0) {
+                                    discountSize = cell5.getNumericCellValue();
+                                } else {
+                                    errorList.add(new ActivityProductUploadError("满件打折数据类型有误，应改为数值型", i + 1));
+                                }
+                            }
+                            break;
+                        case "10":
+                            // 满元减钱
+                            Cell cell6 = row.getCell(6);
+                            if (null == cell6 || cell6.getCellType() == 3) {
+                                validCount++;
+                                errorList.add(new ActivityProductUploadError("满元减钱门槛为空", i + 1));
+                            } else {
+                                if (cell6.getCellType() == 0) {
+                                    discountThreadhold = cell6.getNumericCellValue();
+                                } else {
+                                    errorList.add(new ActivityProductUploadError("满元减钱门槛数据类型有误，应改为数值型", i + 1));
+                                }
+                            }
+
+                            Cell cell7 = row.getCell(7);
+                            if (null == cell7 || cell7.getCellType() == 3) {
+                                validCount++;
+                                errorList.add(new ActivityProductUploadError("满元减钱面额为空", i + 1));
+                            } else {
+                                if (cell7.getCellType() == 0) {
+                                    discountDeno = cell7.getNumericCellValue();
+                                } else {
+                                    errorList.add(new ActivityProductUploadError("满元减钱面额数据类型有误，应改为数值型", i + 1));
+                                }
+                            }
+                            break;
+                        case "11":
+                        case "12":
+                            // 特价秒杀 + 预售付尾立减
+                            Cell cell8 = row.getCell(8);
+                            if (null == cell8 || cell8.getCellType() == 3) {
+                                validCount++;
+                                errorList.add(new ActivityProductUploadError("立减金额为空", i + 1));
+                            } else {
+                                if (cell8.getCellType() == 0) {
+                                    discountAmount = cell8.getNumericCellValue();
+                                } else {
+                                    errorList.add(new ActivityProductUploadError("立减金额数据类型有误，应改为数值型", i + 1));
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    String activityType = "";
+                    Cell cell9 = row.getCell(9);
+                    if (null == cell9 || cell9.getCellType() == 3) {
+                        validCount++;
+                        errorList.add(new ActivityProductUploadError("利益点场景为空", i + 1));
+                    } else {
+                        if (cell9.getCellType() == 1) {
+                            activityType = cell9.getStringCellValue();
+                        } else {
+                            errorList.add(new ActivityProductUploadError("利益点场景为空类型有误，应改为文本型", i + 1));
+                        }
+                    }
+                    if (activityType.equalsIgnoreCase("活动通知")) {
+                        activityType = "NOTIFY";
+                    }
+                    if (activityType.equalsIgnoreCase("活动期间")) {
+                        activityType = "DURING";
+                    }
+                    if (activityType.equalsIgnoreCase("整个活动")) {
+                        activityType = "ALL";
+                    }
+
+                    if (validCount == 6) {
+                        errorList = errorList.subList(0, errorList.size() - 6);
+                    }
+                    ActivityProduct activityProduct = new ActivityProduct();
+                    activityProduct.setHeadId(Long.valueOf(headId));
+                    activityProduct.setGroupId(groupId);
+                    activityProduct.setProductName(productName);
+                    activityProduct.setActivityPrice(new BigDecimal(activityPrice).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    activityProduct.setFormalPrice(new BigDecimal(formalPrice).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    activityProduct.setDiscountSize(new BigDecimal(discountSize).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    activityProduct.setDiscountThreadhold(new BigDecimal(discountThreadhold).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    activityProduct.setDiscountDeno(new BigDecimal(discountDeno).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    activityProduct.setDiscountAmount(new BigDecimal(discountAmount).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    activityProduct.setProductId(productId);
+                    activityProduct.setActivityStage(stage);
+                    if (activityProduct.productValid()) {
+                        activityProduct.setProductUrl(shortUrlService.genProdShortUrlByProdId(productId, "S"));
+                        activityProduct.setActivityType(activityType);
+                        activityProduct = calculateProductMinPrice(activityProduct);
+                        productList.add(activityProduct);
                     }
                 }
-            } catch (IOException e) {
-                log.error("上传excel失败", e);
+                if (productList.size() != 0) {
+                    saveUploadProductData(headId, productList, uploadMethod, repeatProduct, stage);
+                } else {
+                    errorList.add(new ActivityProductUploadError("校验通过的记录条数为0"));
+                }
             }
-        } else {
-            errorList.add(new ActivityProductUploadError("文件格式不符，只支持.xls,.xlsx后缀的文件！"));
+        } catch (IOException e) {
+            log.error("上传excel失败", e);
         }
         List<ActivityProductUploadError> result = errorList.stream().filter(x -> !x.isIgnore()).collect(Collectors.toList());
         if (result.size() > 0) {
@@ -573,7 +563,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
             }
             if (insertList.size() > 0) {
                 List<ActivityProduct> tmpList = Lists.newArrayList();
-                insertList.stream().filter(x->x.getActivityType().equalsIgnoreCase("ALL")).forEach(x->{
+                insertList.stream().filter(x -> x.getActivityType().equalsIgnoreCase("ALL")).forEach(x -> {
                     x.setActivityType("NOTIFY");
                     ActivityProduct tmp = x.clone();
                     tmp.setActivityType("DURING");

@@ -47,6 +47,8 @@ public class ActivityProduct implements Cloneable {
     private String activityType;
     private String activityStage;
     private double formalPrice;
+    // 上传出现的错误信息
+    private String errorInfo;
     /**
      * 判断当前数据是否合法
      * @return

@@ -32,8 +32,6 @@ public interface ActivityHeadMapper {
 
     String getPreheatStatus(String headId);
 
-    void updateGroupChanged(Long time, Long headId, String stage, String changedStatus);
-
     Map<String, String> getDataChangedStatus(Long headId, String stage);
 
     /**
