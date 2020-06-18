@@ -13,19 +13,32 @@ public interface ActivityTemplateMapper {
 
     void saveTemplate(ActivityTemplate activityTemplate);
 
-    void deleteTemplate(String code);
+    void deleteActivityTemplate(Long code);
 
-    ActivityTemplate getTemplate(String code);
+    ActivityTemplate getTemplate(Long code);
 
     void update(ActivityTemplate activityTemplate);
 
-    List<ActivityTemplate> getTemplateTableData(@Param("activityTemplate") ActivityTemplate activityTemplate);
+    List<ActivityTemplate> getTemplateTableData(Long headId,String isPersonal,String scene);
 
-    void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage);
+    void setSmsCode(Long groupId, Long tmpCode, Long headId, String type, String stage);
 
-    int checkTmpIsUsed(String tmpCode);
+    /**
+     * 返回一个文案 在传入的活动阶段之外被引用的次数
+     * @param templateCode
+     * @param headId
+     * @param stage
+     * @return
+     */
+    int checkTemplateUsed(Long templateCode,Long headId,String stage,String type);
 
-    void validUserGroup(Long headId, String stage);
+    /**
+     * 对当前活动 stage、type上设置的文案进行校验
+     * @param headId
+     * @param stage
+     * @param type
+     */
+    void validUserGroup(Long headId, String stage,String type);
 
-    void removeSmsSelected(String type, String headId, String stage, String smsCode, String groupId);
+    void removeSmsSelected(String type, Long headId, String stage, Long groupId);
 }

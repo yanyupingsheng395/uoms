@@ -3,7 +3,7 @@
 <mapper namespace="com.linksteady.operate.dao.ActivityTemplateMapper">
 
     <resultMap id="base" type="com.linksteady.operate.domain.ActivityTemplate">
-        <result column="TMP_CODE" jdbcType="VARCHAR" property="code"/>
+        <result column="TMP_CODE" jdbcType="DECIMAL" property="code"/>
         <result column="TMP_NAME" jdbcType="VARCHAR" property="name"/>
         <result column="TMP_CONTENT" jdbcType="VARCHAR" property="content"/>
         <result column="IS_PROD_URL" jdbcType="VARCHAR" property="isProdUrl"/>
@@ -13,13 +13,14 @@
     </resultMap>
 
     <resultMap id="templateMap" type="com.linksteady.operate.domain.ActivityTemplate">
-        <result property="code" jdbcType="VARCHAR" column="TMP_CODE"></result>
+        <result property="code" jdbcType="DECIMAL" column="TMP_CODE"></result>
         <result property="name" jdbcType="VARCHAR" column="TMP_NAME"></result>
         <result property="content" jdbcType="VARCHAR" column="TMP_CONTENT"></result>
         <result property="remark" jdbcType="VARCHAR" column="REMARK"></result>
         <result property="isPersonal" jdbcType="VARCHAR" column="IS_PERSONAL"></result>
         <result property="isProfit" jdbcType="VARCHAR" column="IS_PROFIT"></result>
         <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"></result>
+        <result property="isCurrent" jdbcType="VARCHAR" column="IS_CURRENT"></result>
     </resultMap>
 
     <insert id="saveTemplate">
@@ -28,82 +29,67 @@
         ) values (#{content}, #{insertDt}, #{insertBy}, #{isPersonal}, #{name}, #{isProdName}, #{isProdUrl}, #{isPrice}, #{isProfit})
     </insert>
 
-    <delete id="deleteTemplate">
-        delete from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}::int4
+    <delete id="deleteActivityTemplate">
+        delete from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}
     </delete>
 
     <select id="getTemplate" resultMap="base">
-        select TMP_CONTENT, REMARK, INSERT_DT, INSERT_BY, UPDATE_DT, UPDATE_BY, TMP_CODE, IS_PERSONAL, RELATION, TMP_NAME, SCENE, IS_PROD_NAME, IS_PROD_URL, IS_PRICE, is_profit from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}::int4
+        select TMP_CONTENT, REMARK, INSERT_DT, INSERT_BY, UPDATE_DT, UPDATE_BY, TMP_CODE, IS_PERSONAL, RELATION, TMP_NAME, SCENE, IS_PROD_NAME, IS_PROD_URL, IS_PRICE, is_profit from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}
     </select>
 
     <update id="update" parameterType="com.linksteady.operate.domain.ActivityTemplate">
         update UO_OP_ACTIVITY_TEMPLATE set TMP_CONTENT = #{content}, TMP_NAME = #{name}, IS_PROD_URL = #{isProdUrl},
         IS_PROD_NAME = #{isProdName}, IS_PRICE = #{isPrice}, IS_PROFIT = #{isProfit}, IS_PERSONAL = #{isPersonal}
-        where TMP_CODE = #{code}::int4
+        where TMP_CODE = #{code}
     </update>
 
     <select id="getTemplateTableData" resultMap="templateMap">
-        select *
-        from (
-        with v1 as (select TMP_CODE, string_agg(ACTIVITY_TYPE, ',' order by SMS_TEMPLATE_CODE ) SCENE
-        from (
-        select TMP_CODE, t2.ACTIVITY_TYPE, t2.SMS_TEMPLATE_CODE
-        from UO_OP_ACTIVITY_TEMPLATE t1
-        left join UO_OP_ACTIVITY_GROUP t2
-        on t1.TMP_CODE = t2.SMS_TEMPLATE_CODE
-        group by TMP_CODE, ACTIVITY_TYPE, SMS_TEMPLATE_CODE
-        ) v11
-        group by TMP_CODE),
-        v2 as (
-        select TMP_CODE, string_agg(GROUP_ID::varchar, ',' order by SMS_TEMPLATE_CODE asc) relation
-        from (
-        select TMP_CODE, t2.GROUP_ID, t2.SMS_TEMPLATE_CODE
-        from UO_OP_ACTIVITY_TEMPLATE t1
-        left join UO_OP_ACTIVITY_GROUP t2
-        on t1.TMP_CODE = t2.SMS_TEMPLATE_CODE
-        group by TMP_CODE, GROUP_ID, SMS_TEMPLATE_CODE
-        ) v21
-        group by TMP_CODE
+        with v1 as (
+           select tmp_code, string_agg(activity_type, ' ' order by tmp_code ) SCENE
+            from (
+                    select t1.tmp_code,t2.activity_type
+                    from UO_OP_ACTIVITY_TEMPLATE t1
+                    left join UO_OP_ACTIVITY_GROUP t2
+                    on t1.tmp_code = t2.sms_template_code
+                    group by t1.tmp_code,t2.activity_type order by t1.tmp_code,t2.activity_type) c
+             group by c.tmp_code
+        ),
+        v2 as(
+           select sms_template_code from uo_op_activity_group where head_id=#{headId} and sms_template_code is not null
+        ),
+        v3 as(
+            select
+                t.tmp_code,
+                t.TMP_NAME,
+                t.TMP_CONTENT,
+                t.IS_PERSONAL,
+                v1.SCENE,
+                t.insert_dt,
+                (case when v2.sms_template_code is not null then '1' else '0' end) IS_CURRENT
+            from UO_OP_ACTIVITY_TEMPLATE t join v1 on t.TMP_CODE = v1.TMP_CODE
+                 left join v2 on t.TMP_CODE=v2.sms_template_code
         )
-        select t.TMP_CODE,
-        t.TMP_NAME,
-        t.TMP_CONTENT,
-        t.IS_PERSONAL,
-        v1.SCENE,
-        t.insert_dt,
-        case
-        when v2.relation in ('5', '8') then 'LATENT'
-        when v2.relation is not null then 'GROWTH,LATENT' end relation
-        from UO_OP_ACTIVITY_TEMPLATE t,
-        v1,
-        v2
-        where t.TMP_CODE = v1.TMP_CODE
-        and t.TMP_CODE = v2.TMP_CODE
-        order by TMP_CODE desc
-        ) tmp1
-        where 1=1
-        <if test="activityTemplate.name != null and activityTemplate.name != ''">
-            and TMP_NAME like concat('%', #{activityTemplate.name} ,'%')
+        select * from v3 where 1=1
+        <if test="isPersonal != null and isPersonal != ''">
+            and IS_PERSONAL = #{isPersonal}
         </if>
-        <if test="activityTemplate.isPersonal != null and activityTemplate.isPersonal != ''">
-            and IS_PERSONAL = #{activityTemplate.isPersonal}
+        <if test="scene != null and scene != ''">
+            and scene like concat('%', #{scene} ,'%')
         </if>
-        <if test="activityTemplate.relation != null and activityTemplate.relation != ''">
-            and relation like concat('%', #{activityTemplate.relation} ,'%')
-        </if>
-        <if test="activityTemplate.scene != null and activityTemplate.scene != ''">
-            and scene like concat('%', #{activityTemplate.scene} ,'%')
-        </if>
+        order by IS_CURRENT desc,insert_dt desc
     </select>
 
     <update id="setSmsCode">
-        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{tmpCode}::int4 where GROUP_ID = #{groupId}::int4 and HEAD_ID = #{headId}::int4
+        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{tmpCode} where GROUP_ID = #{groupId} and HEAD_ID = #{headId}
         and ACTIVITY_TYPE = #{type} and ACTIVITY_STAGE = #{stage}
     </update>
 
-    <select id="checkTmpIsUsed" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_GROUP t1, UO_OP_ACTIVITY_HEADER t2
-        where t1.HEAD_ID = t2.HEAD_ID and (t2.PREHEAT_STATUS &lt;&gt; 'done' and t2.FORMAL_STATUS &lt;&gt; 'done') and t1.SMS_TEMPLATE_CODE = #{tmpCode}::int4
+    <select id="checkTemplateUsed" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_GROUP t1
+         where head_id!=#{headId}
+           and activity_stage!=#{stage}
+           and activity_type!=#{type}
+           and sms_template_code=#{templateCode}
     </select>
 
     <update id="validUserGroup">
@@ -121,17 +107,19 @@
                       else '' end ) check_comments
                   from
                   UO_OP_ACTIVITY_GROUP t1 left join
-                  (select distinct group_id from UO_OP_ACTIVITY_PRODUCT where HEAD_ID = #{headId} and activity_stage=#{stage}) t2
+                  ( select distinct group_id from UO_OP_ACTIVITY_PRODUCT where
+                     HEAD_ID = #{headId} and activity_stage=#{stage} and activity_type=#{type}) t2
                   on t1.head_id=#{headId} and t1.group_id=t2.group_id
             ) t3
               where   UO_OP_ACTIVITY_GROUP.group_id=t3.group_id
                   and UO_OP_ACTIVITY_GROUP.HEAD_ID = #{headId}
                   and UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE = #{stage}
+                  and UO_OP_ACTIVITY_GROUP.activity_type=#{type}
     </update>
 
     <update id="removeSmsSelected">
         update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = null, CHECK_FLAG = 'N', CHECK_COMMENTS = '群组文案没有配置'
-        where head_id = #{headId}::int4 and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId}::int4 and activity_type = #{type}
+        where head_id = #{headId} and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId} and activity_type = #{type}
     </update>
 
 </mapper>

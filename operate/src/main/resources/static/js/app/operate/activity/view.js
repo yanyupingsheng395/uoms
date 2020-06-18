@@ -1701,14 +1701,14 @@ function copyString(data){
 // 移除组上的短信
 function removeSmsSelected(type, stage, smsCode, groupId) {
     if(smsCode === null || smsCode === '' || smsCode === 'null') {
-        $MB.n_warning("当前群组不需要重置文案！");
+        $MB.n_warning("当前群组尚未配置文案！");
         return;
     }
     $MB.confirm({
         title: '提示',
         content: '确定重置当前群组配置的文案吗？'
     }, function () {
-        $.post("/activity/removeSmsSelected", {type: type, headId: $("#headId").val(), stage:stage, smsCode: smsCode, groupId: groupId}, function (r) {
+        $.post("/activity/removeSmsSelected", {type: type, headId: $("#headId").val(), stage:stage, groupId: groupId}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("当前群组配置的文案已重置！");
                 $MB.refreshTable("table1");
@@ -1720,7 +1720,7 @@ function removeSmsSelected(type, stage, smsCode, groupId) {
 // 获取配置消息的用户转化数据
 function covertDataTable() {
     var settings = {
-        url: '/activity/geConvertInfo',
+        url: '/activity/getConvertInfo',
         pagination: false,
         singleSelect: true,
         queryParams: function () {

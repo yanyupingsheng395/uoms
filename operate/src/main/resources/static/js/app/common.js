@@ -529,16 +529,6 @@ function copyInputToClipboard(id)
     $MB.n_success("成功复制到粘贴板!");
 }
 
-function copyValToClipboard(ElementObj)
-{
-    var clickContent = ElementObj.getAttribute('data');  //获取要复制的值
-    var inputElement =  document.getElementById("copy_content");  //获取要赋值的input的元素
-    inputElement.value = clickContent;  //给input框赋值
-    inputElement.select();//选中input框的内容
-    document.execCommand("Copy");// 执行浏览器复制命令
-    $MB.n_success("成功复制到粘贴板!");
-}
-
 /**
  * 适用于作为bootstrap table的formatter函数
  * @param value
@@ -550,34 +540,14 @@ function longTextFormat(value, row, index) {
     if(value === null || value.length==0)
     {
         return '';
-    }else if(value.length <20) {
-        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"click\">\n" +
+    }else if(value.length <40) {
+        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
             value+ "</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
     }else
     {
-        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"click\">\n" +
-            value.substring(0, 20) + "...</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
+        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
+            value.substring(0, 40) + "...</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
     }
 }
 
-/**
- * 适用于一般情况
- * @param value
- * @param row
- * @param index
- * @returns {string}
- */
-function longTextFormatNormal(value) {
-    if(value.length==0)
-    {
-        return '';
-    }else if(value.length <20) {
-        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
-            value+ "</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
-    }else
-    {
-        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
-            value.substring(0, 20) + "...</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
-    }
-}
 

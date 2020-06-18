@@ -1144,41 +1144,38 @@ function selectGroup(type, tmpCode, groupId, tableId) {
     $( '#smstemplate_modal' ).modal( 'show' );
 }
 
+///////////////////////////////文案维护相关的js///////////////////////////////////////////
 // 获取文案列表数据
 function getTmpTableData() {
     var settings = {
         clickToSelect: true,
-        rowStyle: tmpRowStyle,
         url: '/activity/getSmsTemplateList',
         pagination: false,
         singleSelect: true,
         queryParams: function () {
             return {
-                name: $("#sms-form").find("input[name='name']").val(),
                 isPersonal: $("#sms-form").find("select[name='isPersonal']").val(),
-                relation: $("#sms-form").find("select[name='relation']").val(),
-                scene: $("#sms-form").find("select[name='scene']").val()
+                scene: $("#sms-form").find("select[name='scene']").val(),
+                headId: $( "#headId" ).val()
             }
         },
         columns: [
             {
-                checkbox: true
-            },{
-                field: 'content',
-                title: '消息内容',
+                checkbox: true,
                 formatter: function (value, row, index) {
-                    if(value === null || value.length == 0)
-                    {
-                        return '';
-                    }else if(value.length <20) {
-                        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
-                            value+ "</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
-                    }else
-                    {
-                        return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
-                            value.substring(0, 20) + "...</a>&nbsp;&nbsp;<a class='btn-xs' style='cursor:pointer' onclick='copyToClipboard(this)'>复制</a>";
+                    if(row.code===CURRENT_TMP_CODE) {
+                        return {
+                            checked : true
+                        };
                     }
                 }
+            },
+            {
+                field: 'code',
+                title: '文案编号'
+            },{
+                field: 'content',
+                title: '文案内容'
             },{
                 field: 'insertDt',
                 title: '创建时间',
@@ -1208,38 +1205,72 @@ function getTmpTableData() {
     $( "#tmpTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 
-//  保存文案内容
-$( "#btn_save_sms" ).click( function () {
-    var operateType = $( this ).attr( "name" );
-    var flag = validTmp();
+/**
+ * 保存文案内容
+ */
+$( "#btn_save_sms").click( function () {
+    let operateType = $( this ).attr( "name" );
+    let flag = validTmp();
     if (flag) {
-        $MB.confirm( {
-            title: '提示:',
-            content: operateType === 'save' ? '确定保存文案信息？' : '确定更新文案信息？'
-        }, function () {
-            var url = '';
-            if (operateType === 'save') {
-                url = '/activity/saveSmsTemplate';
-            } else if (operateType === 'update') {
-                url = '/activity/updateSmsTemplate';
-            }
-            $.post( url, $( "#tmp_add_form" ).serialize(), function (r) {
-                if (r.code === 200) {
-                    if (operateType === 'save') {
+        if(operateType === 'save')
+        {
+            $MB.confirm( {
+                title: '提示:',
+                content: '确定保存文案信息？'
+            }, function () {
+                $.post( '/activity/saveSmsTemplate', $( "#tmp_add_form" ).serialize(), function (r) {
+                    if (r.code === 200) {
                         $MB.n_success( "保存文案信息成功！" );
-                    } else if (operateType === 'update') {
-                        $MB.n_success( "更新文案信息成功！" );
                     }
-                }
-                $( "#sms_add_modal" ).modal( 'hide' );
-                $( "#smstemplate_modal" ).modal( 'show' );
-                getTmpTableData();
-            } );
-        } );
-    }
-} );
+                    $( "#sms_add_modal" ).modal( 'hide' );
+                    $( "#smstemplate_modal" ).modal( 'show' );
+                    getTmpTableData();
+                });
+            });
+        }else
+        {
+            //todo 前端判断文案内容是否发生变更
 
-// 验证文案信息
+            //更新操作 判断当前文案是否在其它地方已被引用
+            $.get("/activity/checkTemplateUsed", {
+                code: $("#code").val(),
+                stage: CURRENT_ACTIVITY_STAGE,
+                headId: $( "#headId" ).val(),
+                type: CURRENT_TYPE
+            }, function (r) {
+                let confirmmsg='';
+                let flag='';
+                if(r.code === 200) {
+                    if(r.msg==='Y') {
+                        confirmmsg='当前文案已在其它活动中被引用，无法直接保存，系统将会为您新增一条文案，确定要继续么？';
+                        flag='Y';
+                    }else {
+                        confirmmsg='确定更新文案?';
+                        flag='N';
+                    }
+                    $MB.confirm( {
+                        title: '提示:',
+                        content: confirmmsg,
+                    }, function () {
+                        $.post( '/activity/updateSmsTemplate', $("#tmp_add_form").serialize()+"&flag="+flag, function (r) {
+                            if (r.code === 200) {
+                                $MB.n_success(r.msg);
+                            }
+                            $( "#sms_add_modal" ).modal( 'hide' );
+                            $( "#smstemplate_modal" ).modal( 'show' );
+                            getTmpTableData();
+                        } );
+                    });
+                }
+            });
+        }
+    }
+});
+
+/**
+ * 验证文案信息
+ * @returns {boolean}
+ */
 function validTmp() {
     var isProdName = $( "input[name='isProdName']:checked" ).val();
     var isProdUrl = $( "input[name='isProdUrl']:checked" ).val();
@@ -1343,16 +1374,6 @@ function validTmp() {
     return true;
 }
 
-// 当前群组所选的文案
-function tmpRowStyle(row, index) {
-    if (CURRENT_TMP_CODE != undefined && CURRENT_TMP_CODE != null && row.code === CURRENT_TMP_CODE) {
-        return {
-            classes: 'success'
-        };
-    }
-    return {};
-}
-
 /**
  * 为群组设置模板信息
  * @param type 类型：期间，通知
@@ -1404,31 +1425,23 @@ function editTmp() {
         $MB.n_warning( '请选择需要编辑的文案！' );
         return;
     }
-    var code = selected[0].code;
-    $.get("/activity/checkTmpIsUsed", {tmpCode: code}, function (r) {
-        if(r.code === 200) {
-            if(r.data) {
-                $MB.n_warning("当前文案已被引用无法修改！");
-            }else {
-                $.get( "/activity/getTemplate", {code: code}, function (r) {
-                    var data = r.data;
-                    $( "#code" ).val( data.code );
-                    $( "#content" ).val( data.content );
-                    $("#article").html('').append(data.content);
-                    $( "input[name='isProdName']:radio[value='" + data.isProdName + "']" ).prop( "checked", true );
-                    $( "input[name='isProdUrl']:radio[value='" + data.isProdUrl + "']" ).prop( "checked", true );
-                    $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
-                    $( "input[name='isProfit']:radio[value='" + data.isProfit + "']" ).prop( "checked", true );
-                    $( "#btn_save_sms" ).attr( 'name', 'update' );
+    let code = selected[0].code;
+    $.get( "/activity/getTemplate", {code: code}, function (r) {
+        var data = r.data;
+        $( "#code" ).val( data.code );
+        $( "#content" ).val( data.content );
+        $("#article").html('').append(data.content);
+        $( "input[name='isProdName']:radio[value='" + data.isProdName + "']" ).prop( "checked", true );
+        $( "input[name='isProdUrl']:radio[value='" + data.isProdUrl + "']" ).prop( "checked", true );
+        $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
+        $( "input[name='isProfit']:radio[value='" + data.isProfit + "']" ).prop( "checked", true );
+        $( "#btn_save_sms" ).attr( 'name', 'update' );
 
-                    //todo 文案的字数在编辑状态下好像没出来
-                    
-                    $( "#smstemplate_modal" ).modal( 'hide' );
-                    $( "#sms_add_modal" ).modal( 'show' );
-                } );
-            }
-        }
-    });
+        //todo 文案的字数在编辑状态下好像没出来
+
+        $( "#smstemplate_modal" ).modal( 'hide' );
+        $( "#sms_add_modal" ).modal( 'show' );
+    } );
 }
 
 /**
@@ -1458,24 +1471,26 @@ function deleteTmp() {
         return;
     }
     var code = selected[0].code;
-    $.get("/activity/checkTmpIsUsed", {tmpCode: code}, function (r) {
-        if(r.code === 200) {
-            if(r.data) {
-                $MB.n_warning("当前文案已被引用无法删除！");
-            }else {
-                $MB.confirm( {
-                    title: '提示：',
-                    content: '确认删除选中的文案？'
-                }, function () {
-                    $.post( "/activity/deleteTmp", {code: code}, function (r) {
-                        if (r.code === 200) {
-                            $MB.n_success( "删除成功！" );
-                        }
-                        getTmpTableData();
-                    } );
-                } );
+
+    $MB.confirm( {
+        title: '提示：',
+        content: '确认删除选中的文案？'
+    }, function () {
+        $.post( "/activity/deleteActivityTemplate",
+            {code: code,
+                    headId:$( "#headId" ).val(),
+                    stage: CURRENT_ACTIVITY_STAGE,
+                    type: CURRENT_TYPE
+            }, function (r) {
+            if (r.code === 200) {
+                $MB.n_success( "删除成功");
+                getTmpTableData();
+            }else
+            {
+                $MB.n_warning(r.msg);
             }
-        }
+
+        } );
     });
 }
 
@@ -1554,26 +1569,51 @@ function resetTmpInfo() {
     getTmpTableData();
 }
 
-// 获取默认的转化数据
-// function geConvertInfo() {
-//     $.get("/activity/geConvertInfo", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
-//         var data = r.data;
-//         var covRate = data['covRate'];
-//         covRate = (covRate !== null && covRate !== '' && covRate !== undefined) ? parseFloat((data['covRate'] * 100).toFixed(2)) : '';
-//         $("#covListId").val(data['covListId']);
-//         $("#covRate").val(covRate);
-//         $("#expectPushNum").val(data['expectPushNum']);
-//         $("#expectCovNum").val(data['expectCovNum']);
-//     });
-// }
 
 function add_sms() {
     $('#smstemplate_modal').modal('hide');
     $('#sms_add_modal').modal('show');
 }
 
-// 调整系统方案
-function changePlan() {
+// 统计短信内容的字数
+statTmpContentNum();
+function statTmpContentNum() {
+    $("#content").on('input propertychange', function () {
+        let smsContent = $('#content').val();
+        let y = smsContent.length;
+        let m = smsContent.length;
+        let n = smsContent.length;
+        if(smsContent.indexOf('${商品详情页短链}') > -1) {
+            y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
+            m = m - '${商品详情页短链}'.length;
+        }
+        if(smsContent.indexOf('${商品名称}') > -1) {
+            y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
+            m = m - '${商品名称}'.length;
+        }
+        if(smsContent.indexOf('${商品最低单价}') > -1) {
+            y = y - '${商品最低单价}'.length + parseInt(PRICE_LEN);
+            m = m - '${商品最低单价}'.length;
+        }
+        if(smsContent.indexOf('${商品利益点}') > -1) {
+            y = y - '${商品利益点}'.length + parseInt(PROFIT_LEN);
+            m = m - '${商品利益点}'.length;
+        }
+
+        total_num = y;
+        var code = "";
+        code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
+        $("#word").text(code);
+    });
+}
+
+///////////////////////////////////////////文案相关js结束///////////////////////////////////
+
+///////////////////////////////////////转化率调整相关js/////////////////////////////////////
+/**
+ * 调整转化率
+ */
+$("#changePlan").click(function () {
     $("#plan_change_modal").modal('show');
     table3();
     var data = [{
@@ -1584,11 +1624,6 @@ function changePlan() {
         name: '改变方案对转化用户数造成的预期改变'
     }];
     table4(data);
-}
-
-// 调整方案
-$("#changePlan").click(function () {
-    changePlan();
 });
 
 function covRowStyle(row, index) {
@@ -1726,37 +1761,41 @@ function updateCovInfo() {
     });
 }
 
-// 统计短信内容的字数
-statTmpContentNum();
-function statTmpContentNum() {
-    $("#content").on('input propertychange', function () {
-        let smsContent = $('#content').val();
-        let y = smsContent.length;
-        let m = smsContent.length;
-        let n = smsContent.length;
-        if(smsContent.indexOf('${商品详情页短链}') > -1) {
-            y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
-            m = m - '${商品详情页短链}'.length;
-        }
-        if(smsContent.indexOf('${商品名称}') > -1) {
-            y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
-            m = m - '${商品名称}'.length;
-        }
-        if(smsContent.indexOf('${商品最低单价}') > -1) {
-            y = y - '${商品最低单价}'.length + parseInt(PRICE_LEN);
-            m = m - '${商品最低单价}'.length;
-        }
-        if(smsContent.indexOf('${商品利益点}') > -1) {
-            y = y - '${商品利益点}'.length + parseInt(PROFIT_LEN);
-            m = m - '${商品利益点}'.length;
-        }
-
-        total_num = y;
-        var code = "";
-        code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
-        $("#word").text(code);
-    });
+/**
+ * 获取当前活动所处阶段配置的转化率数据
+ */
+function covertDataTable() {
+    var settings = {
+        url: '/activity/getConvertInfo',
+        pagination: false,
+        singleSelect: true,
+        queryParams: function () {
+            return {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}
+        },
+        columns: [
+            {
+                field: 'covListId',
+                visible: false
+            },
+            {
+                field: 'covRate',
+                title: '期望转化率（%）',
+                align: 'center'
+            }, {
+                field: 'expectPushNum',
+                title: '对应推送用户数（人）',
+                align: 'center'
+            }, {
+                field: 'expectCovNum',
+                title: '对应的转化用户数',
+                align: 'center'
+            }
+        ]
+    };
+    $( "#covertDataTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
+
+///////////////////////////////////////转化率调整相关js结束/////////////////////////////////////
 
 $("#btn_valid_product").click(function () {
     $.get("/activity/validProductInfo", {headId: $("#headId").val()}, function (r) {
@@ -1842,14 +1881,14 @@ function copyString(data){
 // 移除组上的短信
 function removeSmsSelected(type, stage, smsCode, groupId) {
     if(smsCode === null || smsCode === '' || smsCode === 'null') {
-        $MB.n_warning("当前群组不需要重置文案！");
+        $MB.n_warning("当前群组尚未配置文案！");
         return;
     }
     $MB.confirm({
         title: '提示',
         content: '确定重置当前群组配置的文案吗？'
     }, function () {
-        $.post("/activity/removeSmsSelected", {type: type, headId: $("#headId").val(), stage:stage, smsCode: smsCode, groupId: groupId}, function (r) {
+        $.post("/activity/removeSmsSelected", {type: type, headId: $("#headId").val(), stage:stage,groupId: groupId}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("当前群组配置的文案已重置！");
                 $MB.refreshTable("table1");
@@ -1858,37 +1897,7 @@ function removeSmsSelected(type, stage, smsCode, groupId) {
         });
     });
 }
-// 获取配置消息的用户转化数据
-function covertDataTable() {
-    var settings = {
-        url: '/activity/geConvertInfo',
-        pagination: false,
-        singleSelect: true,
-        queryParams: function () {
-            return {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}
-        },
-        columns: [
-            {
-                field: 'covListId',
-                visible: false
-            },
-            {
-                field: 'covRate',
-                title: '期望转化率（%）',
-                align: 'center'
-            }, {
-                field: 'expectPushNum',
-                title: '对应推送用户数（人）',
-                align: 'center'
-            }, {
-                field: 'expectCovNum',
-                title: '对应的转化用户数',
-                align: 'center'
-            }
-        ]
-    };
-    $( "#covertDataTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
-}
+
 
 // 店铺活动机制发生变化
 function groupIdChange(dom) {

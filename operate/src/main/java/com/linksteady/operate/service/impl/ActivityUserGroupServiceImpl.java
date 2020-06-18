@@ -32,7 +32,7 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     @Override
     public List<ActivityGroup> getUserGroupList(Long headId, String stage, String type) {
         //对活动当前stage的组上配置的文案情况进行一次校验
-        activityTemplateMapper.validUserGroup(headId, stage);
+        activityTemplateMapper.validUserGroup(headId, stage,type);
         List<ActivityGroup> userGroupList = activityUserGroupMapper.getUserGroupList(headId, stage);
         //仅返回当前活动类型的组列表
         List<ActivityGroup> result = userGroupList.stream().filter(x -> type.equals(x.getActivityType())).collect(Collectors.toList());

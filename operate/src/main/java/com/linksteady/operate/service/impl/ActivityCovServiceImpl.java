@@ -24,7 +24,7 @@ public class ActivityCovServiceImpl implements ActivityCovService {
     private ActivityCovMapper activityCovMapper;
 
     @Override
-    public ActivityCovInfo geConvertInfo(String headId, String stage) {
+    public ActivityCovInfo getConvertInfo(String headId, String stage) {
         String sql = "";
         if (ActivityStageEnum.preheat.getStageCode().equals(stage)) {
             sql = "select ACTIVITY_HEAD_ID,PREHEAT_NOTIFY_COVID,PREHEAT_NOTIFY_COV,PREHEAT_NOTIFY_PUSHNUM,PREHEAT_NOTIFY_COVNUM from UO_OP_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID = '" + headId + "'";
@@ -39,11 +39,6 @@ public class ActivityCovServiceImpl implements ActivityCovService {
     @Override
     public List<ActivityCovInfo> getCovList() {
         return activityCovMapper.getCovList(null);
-    }
-
-    @Override
-    public void insertCovInfo(String headId, String covListId, String stage) {
-        activityCovMapper.insertCovInfo(headId, covListId, stage);
     }
 
     @Override

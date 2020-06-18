@@ -365,27 +365,14 @@ public class ActivityController {
      *
      * @return
      */
-    @GetMapping("/geConvertInfo")
+    @GetMapping("/getConvertInfo")
     public List<ActivityCovInfo> geConvertInfo(@RequestParam("headId") String headId, @RequestParam("stage") String stage) {
-        return Lists.newArrayList(activityCovService.geConvertInfo(headId, stage));
+        return Lists.newArrayList(activityCovService.getConvertInfo(headId, stage));
     }
 
     @GetMapping("/getCovList")
     public ResponseBo getCovList() {
         return ResponseBo.okWithData(null, activityCovService.getCovList());
-    }
-
-    /**
-     * 存入
-     * @param headId
-     * @param covListId
-     * @param stage
-     * @return
-     */
-    @PostMapping("/insertCovInfo")
-    public ResponseBo insertCovInfo(@RequestParam("headId") String headId, @RequestParam("covListId") String covListId, @RequestParam("stage") String stage) {
-        activityCovService.insertCovInfo(headId, covListId, stage);
-        return ResponseBo.ok();
     }
 
     /**
@@ -398,6 +385,13 @@ public class ActivityController {
         return ResponseBo.okWithData(null, activityCovService.calculateCov(headId, stage, changedCovId, defaultCovId));
     }
 
+    /**
+     * 新增或更新活动给定阶段的转化率数据
+     * @param headId
+     * @param stage
+     * @param covId
+     * @return
+     */
     @PostMapping("/updateCovInfo")
     public ResponseBo updateCovInfo(@RequestParam("headId") long headId, @RequestParam("stage") String stage, @RequestParam("covId") String covId) {
         activityCovService.updateCovInfo(headId, stage, covId);

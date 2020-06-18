@@ -12,27 +12,25 @@ public interface ActivityTemplateService {
 
     void saveTemplate(ActivityTemplate activityTemplate);
 
-    int refrenceCount(String smsCode);
+    void deleteActivityTemplate(Long code, Long headId, String stage,String type);
 
-    void deleteTemplate(String smsCode);
+    ActivityTemplate getTemplate(Long tmpCode);
 
-    ActivityTemplate getTemplate(String tmpCode);
-
-    void update(ActivityTemplate activityTemplate);
+    String updateSmsTemplate(ActivityTemplate activityTemplate,String flag);
 
     /**
      * 获取活动文案的预览
      * @param code
      * @return
      */
-    String getActivityTemplateContent(String code,String scene);
+    String getActivityTemplateContent(Long code,String scene);
 
-    List<ActivityTemplate> getSmsTemplateList(ActivityTemplate activityTemplate);
+    List<ActivityTemplate> getSmsTemplateList(Long headId,String isPersonal,String scene);
 
-    boolean checkTmpIsUsed(String tmpCode);
+    boolean checkTemplateUsed(Long templateCode,Long headId,String stage,String type);
 
-    void removeSmsSelected(String type, String headId, String stage, String smsCode, String groupId);
+    void removeSmsSelected(String type, Long headId, String stage, Long groupId);
 
-    void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage);
+    void setSmsCode(Long groupId, Long tmpCode, Long headId, String type, String stage);
 
 }

@@ -31,17 +31,6 @@
         order by COV_LIST_ID desc
     </select>
 
-    <insert id="insertCovInfo">
-        <if test="stage == 'prehat'">
-            insert into UO_OP_ACTIVITY_COVINFO(ACTIVITY_HEAD_ID, PREHEAT_NOTIFY_COVID, PREHEAT_NOTIFY_COV,PREHEAT_NOTIFY_PUSHNUM,PREHEAT_NOTIFY_COVNUM)
-            select #{headId}, COV_LIST_ID, COV_RATE,EXPECT_PUSHNUM,EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST where COV_LIST_ID = #{covListId}
-        </if>
-        <if test="stage == 'formal'">
-            insert into UO_OP_ACTIVITY_COVINFO(ACTIVITY_HEAD_ID, NORMAL_NOTIFY_COVID, NORMAL_NOTIFY_COV,NORMAL_NOTIFY_PUSHNUM,NORMAL_NOTIFY_COVNUM)
-            select #{headId}, COV_LIST_ID, COV_RATE,EXPECT_PUSHNUM,EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST where COV_LIST_ID = #{covListId}
-        </if>
-    </insert>
-
     <select id="getCovInfo" resultMap="infoMap">
         ${sql}
     </select>
