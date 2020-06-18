@@ -18,13 +18,13 @@ public class ActivityService {
      * @param head_id
      * @param stage
      */
-    public long genredictCovData(long head_id, java.lang.String stage) throws org.apache.thrift.TException;
+    public long genPredictCovData(long head_id, java.lang.String stage) throws org.apache.thrift.TException;
 
   }
 
   public interface AsyncIface {
 
-    public void genredictCovData(long head_id, java.lang.String stage, org.apache.thrift.async.AsyncMethodCallback<java.lang.Long> resultHandler) throws org.apache.thrift.TException;
+    public void genPredictCovData(long head_id, java.lang.String stage, org.apache.thrift.async.AsyncMethodCallback<java.lang.Long> resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -48,28 +48,28 @@ public class ActivityService {
       super(iprot, oprot);
     }
 
-    public long genredictCovData(long head_id, java.lang.String stage) throws org.apache.thrift.TException
+    public long genPredictCovData(long head_id, java.lang.String stage) throws org.apache.thrift.TException
     {
-      send_genredictCovData(head_id, stage);
-      return recv_genredictCovData();
+      send_genPredictCovData(head_id, stage);
+      return recv_genPredictCovData();
     }
 
-    public void send_genredictCovData(long head_id, java.lang.String stage) throws org.apache.thrift.TException
+    public void send_genPredictCovData(long head_id, java.lang.String stage) throws org.apache.thrift.TException
     {
-      genredictCovData_args args = new genredictCovData_args();
+      genPredictCovData_args args = new genPredictCovData_args();
       args.setHead_id(head_id);
       args.setStage(stage);
-      sendBase("genredictCovData", args);
+      sendBase("genPredictCovData", args);
     }
 
-    public long recv_genredictCovData() throws org.apache.thrift.TException
+    public long recv_genPredictCovData() throws org.apache.thrift.TException
     {
-      genredictCovData_result result = new genredictCovData_result();
-      receiveBase(result, "genredictCovData");
+      genPredictCovData_result result = new genPredictCovData_result();
+      receiveBase(result, "genPredictCovData");
       if (result.isSetSuccess()) {
         return result.success;
       }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "genredictCovData failed: unknown result");
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "genPredictCovData failed: unknown result");
     }
 
   }
@@ -90,25 +90,25 @@ public class ActivityService {
       super(protocolFactory, clientManager, transport);
     }
 
-    public void genredictCovData(long head_id, java.lang.String stage, org.apache.thrift.async.AsyncMethodCallback<java.lang.Long> resultHandler) throws org.apache.thrift.TException {
+    public void genPredictCovData(long head_id, java.lang.String stage, org.apache.thrift.async.AsyncMethodCallback<java.lang.Long> resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      genredictCovData_call method_call = new genredictCovData_call(head_id, stage, resultHandler, this, ___protocolFactory, ___transport);
+      genPredictCovData_call method_call = new genPredictCovData_call(head_id, stage, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
-    public static class genredictCovData_call extends org.apache.thrift.async.TAsyncMethodCall<java.lang.Long> {
+    public static class genPredictCovData_call extends org.apache.thrift.async.TAsyncMethodCall<java.lang.Long> {
       private long head_id;
       private java.lang.String stage;
-      public genredictCovData_call(long head_id, java.lang.String stage, org.apache.thrift.async.AsyncMethodCallback<java.lang.Long> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public genPredictCovData_call(long head_id, java.lang.String stage, org.apache.thrift.async.AsyncMethodCallback<java.lang.Long> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.head_id = head_id;
         this.stage = stage;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("genredictCovData", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        genredictCovData_args args = new genredictCovData_args();
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("genPredictCovData", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        genPredictCovData_args args = new genPredictCovData_args();
         args.setHead_id(head_id);
         args.setStage(stage);
         args.write(prot);
@@ -121,7 +121,7 @@ public class ActivityService {
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_genredictCovData();
+        return (new Client(prot)).recv_genPredictCovData();
       }
     }
 
@@ -138,17 +138,17 @@ public class ActivityService {
     }
 
     private static <I extends Iface> java.util.Map<java.lang.String,  org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>> getProcessMap(java.util.Map<java.lang.String, org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> processMap) {
-      processMap.put("genredictCovData", new genredictCovData());
+      processMap.put("genPredictCovData", new genPredictCovData());
       return processMap;
     }
 
-    public static class genredictCovData<I extends Iface> extends org.apache.thrift.ProcessFunction<I, genredictCovData_args> {
-      public genredictCovData() {
-        super("genredictCovData");
+    public static class genPredictCovData<I extends Iface> extends org.apache.thrift.ProcessFunction<I, genPredictCovData_args> {
+      public genPredictCovData() {
+        super("genPredictCovData");
       }
 
-      public genredictCovData_args getEmptyArgsInstance() {
-        return new genredictCovData_args();
+      public genPredictCovData_args getEmptyArgsInstance() {
+        return new genPredictCovData_args();
       }
 
       protected boolean isOneway() {
@@ -160,9 +160,9 @@ public class ActivityService {
         return false;
       }
 
-      public genredictCovData_result getResult(I iface, genredictCovData_args args) throws org.apache.thrift.TException {
-        genredictCovData_result result = new genredictCovData_result();
-        result.success = iface.genredictCovData(args.head_id, args.stage);
+      public genPredictCovData_result getResult(I iface, genPredictCovData_args args) throws org.apache.thrift.TException {
+        genPredictCovData_result result = new genPredictCovData_result();
+        result.success = iface.genPredictCovData(args.head_id, args.stage);
         result.setSuccessIsSet(true);
         return result;
       }
@@ -181,24 +181,24 @@ public class ActivityService {
     }
 
     private static <I extends AsyncIface> java.util.Map<java.lang.String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase,?>> getProcessMap(java.util.Map<java.lang.String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase, ?>> processMap) {
-      processMap.put("genredictCovData", new genredictCovData());
+      processMap.put("genPredictCovData", new genPredictCovData());
       return processMap;
     }
 
-    public static class genredictCovData<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, genredictCovData_args, java.lang.Long> {
-      public genredictCovData() {
-        super("genredictCovData");
+    public static class genPredictCovData<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, genPredictCovData_args, java.lang.Long> {
+      public genPredictCovData() {
+        super("genPredictCovData");
       }
 
-      public genredictCovData_args getEmptyArgsInstance() {
-        return new genredictCovData_args();
+      public genPredictCovData_args getEmptyArgsInstance() {
+        return new genPredictCovData_args();
       }
 
       public org.apache.thrift.async.AsyncMethodCallback<java.lang.Long> getResultHandler(final org.apache.thrift.server.AbstractNonblockingServer.AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
         return new org.apache.thrift.async.AsyncMethodCallback<java.lang.Long>() {
           public void onComplete(java.lang.Long o) {
-            genredictCovData_result result = new genredictCovData_result();
+            genPredictCovData_result result = new genPredictCovData_result();
             result.success = o;
             result.setSuccessIsSet(true);
             try {
@@ -214,7 +214,7 @@ public class ActivityService {
           public void onError(java.lang.Exception e) {
             byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
             org.apache.thrift.TSerializable msg;
-            genredictCovData_result result = new genredictCovData_result();
+            genPredictCovData_result result = new genPredictCovData_result();
             if (e instanceof org.apache.thrift.transport.TTransportException) {
               _LOGGER.error("TTransportException inside handler", e);
               fb.close();
@@ -242,21 +242,21 @@ public class ActivityService {
         return false;
       }
 
-      public void start(I iface, genredictCovData_args args, org.apache.thrift.async.AsyncMethodCallback<java.lang.Long> resultHandler) throws org.apache.thrift.TException {
-        iface.genredictCovData(args.head_id, args.stage,resultHandler);
+      public void start(I iface, genPredictCovData_args args, org.apache.thrift.async.AsyncMethodCallback<java.lang.Long> resultHandler) throws org.apache.thrift.TException {
+        iface.genPredictCovData(args.head_id, args.stage,resultHandler);
       }
     }
 
   }
 
-  public static class genredictCovData_args implements org.apache.thrift.TBase<genredictCovData_args, genredictCovData_args._Fields>, java.io.Serializable, Cloneable, Comparable<genredictCovData_args>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("genredictCovData_args");
+  public static class genPredictCovData_args implements org.apache.thrift.TBase<genPredictCovData_args, genPredictCovData_args._Fields>, java.io.Serializable, Cloneable, Comparable<genPredictCovData_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("genPredictCovData_args");
 
     private static final org.apache.thrift.protocol.TField HEAD_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("head_id", org.apache.thrift.protocol.TType.I64, (short)1);
     private static final org.apache.thrift.protocol.TField STAGE_FIELD_DESC = new org.apache.thrift.protocol.TField("stage", org.apache.thrift.protocol.TType.STRING, (short)2);
 
-    private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new genredictCovData_argsStandardSchemeFactory();
-    private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new genredictCovData_argsTupleSchemeFactory();
+    private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new genPredictCovData_argsStandardSchemeFactory();
+    private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new genPredictCovData_argsTupleSchemeFactory();
 
     public long head_id; // required
     public java.lang.String stage; // required
@@ -333,13 +333,13 @@ public class ActivityService {
       tmpMap.put(_Fields.STAGE, new org.apache.thrift.meta_data.FieldMetaData("stage", org.apache.thrift.TFieldRequirementType.DEFAULT,
               new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(genredictCovData_args.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(genPredictCovData_args.class, metaDataMap);
     }
 
-    public genredictCovData_args() {
+    public genPredictCovData_args() {
     }
 
-    public genredictCovData_args(
+    public genPredictCovData_args(
             long head_id,
             java.lang.String stage)
     {
@@ -352,7 +352,7 @@ public class ActivityService {
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public genredictCovData_args(genredictCovData_args other) {
+    public genPredictCovData_args(genPredictCovData_args other) {
       __isset_bitfield = other.__isset_bitfield;
       this.head_id = other.head_id;
       if (other.isSetStage()) {
@@ -360,8 +360,8 @@ public class ActivityService {
       }
     }
 
-    public genredictCovData_args deepCopy() {
-      return new genredictCovData_args(this);
+    public genPredictCovData_args deepCopy() {
+      return new genPredictCovData_args(this);
     }
 
     @Override
@@ -375,7 +375,7 @@ public class ActivityService {
       return this.head_id;
     }
 
-    public genredictCovData_args setHead_id(long head_id) {
+    public genPredictCovData_args setHead_id(long head_id) {
       this.head_id = head_id;
       setHead_idIsSet(true);
       return this;
@@ -398,7 +398,7 @@ public class ActivityService {
       return this.stage;
     }
 
-    public genredictCovData_args setStage(java.lang.String stage) {
+    public genPredictCovData_args setStage(java.lang.String stage) {
       this.stage = stage;
       return this;
     }
@@ -470,12 +470,12 @@ public class ActivityService {
     public boolean equals(java.lang.Object that) {
       if (that == null)
         return false;
-      if (that instanceof genredictCovData_args)
-        return this.equals((genredictCovData_args)that);
+      if (that instanceof genPredictCovData_args)
+        return this.equals((genPredictCovData_args)that);
       return false;
     }
 
-    public boolean equals(genredictCovData_args that) {
+    public boolean equals(genPredictCovData_args that) {
       if (that == null)
         return false;
       if (this == that)
@@ -516,7 +516,7 @@ public class ActivityService {
     }
 
     @Override
-    public int compareTo(genredictCovData_args other) {
+    public int compareTo(genPredictCovData_args other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -560,7 +560,7 @@ public class ActivityService {
 
     @Override
     public java.lang.String toString() {
-      java.lang.StringBuilder sb = new java.lang.StringBuilder("genredictCovData_args(");
+      java.lang.StringBuilder sb = new java.lang.StringBuilder("genPredictCovData_args(");
       boolean first = true;
 
       sb.append("head_id:");
@@ -601,15 +601,15 @@ public class ActivityService {
       }
     }
 
-    private static class genredictCovData_argsStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-      public genredictCovData_argsStandardScheme getScheme() {
-        return new genredictCovData_argsStandardScheme();
+    private static class genPredictCovData_argsStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+      public genPredictCovData_argsStandardScheme getScheme() {
+        return new genPredictCovData_argsStandardScheme();
       }
     }
 
-    private static class genredictCovData_argsStandardScheme extends org.apache.thrift.scheme.StandardScheme<genredictCovData_args> {
+    private static class genPredictCovData_argsStandardScheme extends org.apache.thrift.scheme.StandardScheme<genPredictCovData_args> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, genredictCovData_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, genPredictCovData_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -646,7 +646,7 @@ public class ActivityService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, genredictCovData_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, genPredictCovData_args struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -664,16 +664,16 @@ public class ActivityService {
 
     }
 
-    private static class genredictCovData_argsTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-      public genredictCovData_argsTupleScheme getScheme() {
-        return new genredictCovData_argsTupleScheme();
+    private static class genPredictCovData_argsTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+      public genPredictCovData_argsTupleScheme getScheme() {
+        return new genPredictCovData_argsTupleScheme();
       }
     }
 
-    private static class genredictCovData_argsTupleScheme extends org.apache.thrift.scheme.TupleScheme<genredictCovData_args> {
+    private static class genPredictCovData_argsTupleScheme extends org.apache.thrift.scheme.TupleScheme<genPredictCovData_args> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, genredictCovData_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, genPredictCovData_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TTupleProtocol oprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
         java.util.BitSet optionals = new java.util.BitSet();
         if (struct.isSetHead_id()) {
@@ -692,7 +692,7 @@ public class ActivityService {
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, genredictCovData_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, genPredictCovData_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
         java.util.BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
@@ -711,13 +711,13 @@ public class ActivityService {
     }
   }
 
-  public static class genredictCovData_result implements org.apache.thrift.TBase<genredictCovData_result, genredictCovData_result._Fields>, java.io.Serializable, Cloneable, Comparable<genredictCovData_result>   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("genredictCovData_result");
+  public static class genPredictCovData_result implements org.apache.thrift.TBase<genPredictCovData_result, genPredictCovData_result._Fields>, java.io.Serializable, Cloneable, Comparable<genPredictCovData_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("genPredictCovData_result");
 
     private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I64, (short)0);
 
-    private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new genredictCovData_resultStandardSchemeFactory();
-    private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new genredictCovData_resultTupleSchemeFactory();
+    private static final org.apache.thrift.scheme.SchemeFactory STANDARD_SCHEME_FACTORY = new genPredictCovData_resultStandardSchemeFactory();
+    private static final org.apache.thrift.scheme.SchemeFactory TUPLE_SCHEME_FACTORY = new genPredictCovData_resultTupleSchemeFactory();
 
     public long success; // required
 
@@ -788,13 +788,13 @@ public class ActivityService {
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
               new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
       metaDataMap = java.util.Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(genredictCovData_result.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(genPredictCovData_result.class, metaDataMap);
     }
 
-    public genredictCovData_result() {
+    public genPredictCovData_result() {
     }
 
-    public genredictCovData_result(
+    public genPredictCovData_result(
             long success)
     {
       this();
@@ -805,13 +805,13 @@ public class ActivityService {
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public genredictCovData_result(genredictCovData_result other) {
+    public genPredictCovData_result(genPredictCovData_result other) {
       __isset_bitfield = other.__isset_bitfield;
       this.success = other.success;
     }
 
-    public genredictCovData_result deepCopy() {
-      return new genredictCovData_result(this);
+    public genPredictCovData_result deepCopy() {
+      return new genPredictCovData_result(this);
     }
 
     @Override
@@ -824,7 +824,7 @@ public class ActivityService {
       return this.success;
     }
 
-    public genredictCovData_result setSuccess(long success) {
+    public genPredictCovData_result setSuccess(long success) {
       this.success = success;
       setSuccessIsSet(true);
       return this;
@@ -882,12 +882,12 @@ public class ActivityService {
     public boolean equals(java.lang.Object that) {
       if (that == null)
         return false;
-      if (that instanceof genredictCovData_result)
-        return this.equals((genredictCovData_result)that);
+      if (that instanceof genPredictCovData_result)
+        return this.equals((genPredictCovData_result)that);
       return false;
     }
 
-    public boolean equals(genredictCovData_result that) {
+    public boolean equals(genPredictCovData_result that) {
       if (that == null)
         return false;
       if (this == that)
@@ -915,7 +915,7 @@ public class ActivityService {
     }
 
     @Override
-    public int compareTo(genredictCovData_result other) {
+    public int compareTo(genPredictCovData_result other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
@@ -949,7 +949,7 @@ public class ActivityService {
 
     @Override
     public java.lang.String toString() {
-      java.lang.StringBuilder sb = new java.lang.StringBuilder("genredictCovData_result(");
+      java.lang.StringBuilder sb = new java.lang.StringBuilder("genPredictCovData_result(");
       boolean first = true;
 
       sb.append("success:");
@@ -982,15 +982,15 @@ public class ActivityService {
       }
     }
 
-    private static class genredictCovData_resultStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-      public genredictCovData_resultStandardScheme getScheme() {
-        return new genredictCovData_resultStandardScheme();
+    private static class genPredictCovData_resultStandardSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+      public genPredictCovData_resultStandardScheme getScheme() {
+        return new genPredictCovData_resultStandardScheme();
       }
     }
 
-    private static class genredictCovData_resultStandardScheme extends org.apache.thrift.scheme.StandardScheme<genredictCovData_result> {
+    private static class genPredictCovData_resultStandardScheme extends org.apache.thrift.scheme.StandardScheme<genPredictCovData_result> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, genredictCovData_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, genPredictCovData_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -1019,7 +1019,7 @@ public class ActivityService {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, genredictCovData_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, genPredictCovData_result struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -1034,16 +1034,16 @@ public class ActivityService {
 
     }
 
-    private static class genredictCovData_resultTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
-      public genredictCovData_resultTupleScheme getScheme() {
-        return new genredictCovData_resultTupleScheme();
+    private static class genPredictCovData_resultTupleSchemeFactory implements org.apache.thrift.scheme.SchemeFactory {
+      public genPredictCovData_resultTupleScheme getScheme() {
+        return new genPredictCovData_resultTupleScheme();
       }
     }
 
-    private static class genredictCovData_resultTupleScheme extends org.apache.thrift.scheme.TupleScheme<genredictCovData_result> {
+    private static class genPredictCovData_resultTupleScheme extends org.apache.thrift.scheme.TupleScheme<genPredictCovData_result> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, genredictCovData_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, genPredictCovData_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TTupleProtocol oprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
         java.util.BitSet optionals = new java.util.BitSet();
         if (struct.isSetSuccess()) {
@@ -1056,7 +1056,7 @@ public class ActivityService {
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, genredictCovData_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, genPredictCovData_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TTupleProtocol iprot = (org.apache.thrift.protocol.TTupleProtocol) prot;
         java.util.BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
