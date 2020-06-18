@@ -14,8 +14,6 @@ public interface ActivityCovMapper {
 
     List<ActivityCovInfo> getCovList(@Param("isDefault") String isDefault);
 
-    void insertCovInfo(String headId, String covListId, String stage);
-
     List<ActivityCovInfo> getCovInfo(@Param("sql") String sql);
 
     String getCovId(long headId, String stage);

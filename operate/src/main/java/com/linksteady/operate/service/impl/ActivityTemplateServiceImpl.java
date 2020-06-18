@@ -39,7 +39,7 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
      * @return
      */
     @Override
-    public String getActivityTemplateContent(String code,String scene) {
+    public String getActivityTemplateContent(Long code,String scene) {
         ActivityTemplate activityTemplate = activityTemplateMapper.getTemplate(code);
         String isProdUrl = activityTemplate.getIsProdUrl();
         String isProdName = activityTemplate.getIsProdName();
@@ -93,19 +93,14 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     }
 
     @Override
-    public List<ActivityTemplate> getSmsTemplateList(ActivityTemplate activityTemplate) {
-        List<ActivityTemplate> templateTableData = activityTemplateMapper.getTemplateTableData(activityTemplate);
+    public List<ActivityTemplate> getSmsTemplateList(Long headId,String isPersonal,String scene) {
+        List<ActivityTemplate> templateTableData = activityTemplateMapper.getTemplateTableData(headId,isPersonal,scene);
         templateTableData.stream().map(x->{
-            String relation = x.getRelation();
-            if(StringUtils.isNotEmpty(relation)) {
-                relation = relation.replace("GROWTH", "成长").replace("LATENT", "潜在");
+            String scene1 = x.getScene();
+            if(StringUtils.isNotEmpty(scene1)) {
+                scene1 = scene1.replace("DURING", "<span class=\"label label-primary\">通知</span>").replace("NOTIFY", "<span class=\"label label-success\">期间</span>");
             }
-            String scene = x.getScene();
-            if(StringUtils.isNotEmpty(scene)) {
-                scene = scene.replace("DURING", "活动期间").replace("NOTIFY", "活动通知");
-            }
-            x.setRelation(relation);
-            x.setScene(scene);
+            x.setScene(scene1);
             return x;
         }).collect(Collectors.toList());
         return templateTableData;
@@ -123,47 +118,66 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         activityTemplateMapper.saveTemplate(activityTemplate);
     }
 
+
     @Override
-    public int refrenceCount(String code) {
-        return 0;
+    public void deleteActivityTemplate(Long code, Long headId, String type, String stage) {
+        activityTemplateMapper.deleteActivityTemplate(code);
+        //对当前活动阶段的文案进行一次校验
+        activityTemplateMapper.validUserGroup(headId,stage,type);
     }
 
     @Override
-    public void deleteTemplate(String code) {
-        activityTemplateMapper.deleteTemplate(code);
-    }
-
-    @Override
-    public ActivityTemplate getTemplate(String code) {
+    public ActivityTemplate getTemplate(Long code) {
         return activityTemplateMapper.getTemplate(code);
     }
 
     @Override
-    public void update(ActivityTemplate activityTemplate) {
-        if("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice()) && "0".equalsIgnoreCase(activityTemplate.getIsProfit())) {
-            activityTemplate.setIsPersonal("0");
-        }else {
-            activityTemplate.setIsPersonal("1");
+    public String  updateSmsTemplate(ActivityTemplate activityTemplate,String flag) {
+        //判断当前文案是否已经被引用 如果是，则进行新增操作 否则直接更新
+       // activityTemplateMapper.templateContentChanged(activityTemplate.getCode(),activityTemplate.getContent())
+        if(true)
+        {
+            return "文案内容未发生改变,无需保存！";
+        }else
+        {
+            if("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice()) && "0".equalsIgnoreCase(activityTemplate.getIsProfit())) {
+                activityTemplate.setIsPersonal("0");
+            }else {
+                activityTemplate.setIsPersonal("1");
+            }
+
+            if("Y".equals(flag))
+            {
+                //新写入一条记录 并返回主键
+               // activityTemplate.setCode("");
+             //   String newCode=activityTemplateMapper.update(activityTemplate);
+                String newCode="123";
+                return "系统已为您生成文案编号为"+newCode+"的新文案，请在列表页查看！";
+            }else
+            {
+                //更新操作
+                activityTemplateMapper.update(activityTemplate);
+                return "保存文案信息成功！";
+            }
         }
-        activityTemplateMapper.update(activityTemplate);
     }
 
     @Override
-    public void setSmsCode(String groupId, String tmpCode, Long headId, String type, String stage) {
+    public void setSmsCode(Long groupId, Long tmpCode, Long headId, String type, String stage) {
         activityTemplateMapper.setSmsCode(groupId, tmpCode, headId, type, stage);
-        //设置完成后对当前活动stage上设置的文案情况进行一次校验
-        activityTemplateMapper.validUserGroup(headId,stage);
+        //设置完成后对当前活动stage、type上设置的文案情况进行一次校验
+        activityTemplateMapper.validUserGroup(headId,stage,type);
     }
 
     @Override
-    public boolean checkTmpIsUsed(String tmpCode) {
-        return activityTemplateMapper.checkTmpIsUsed(tmpCode) > 0;
+    public boolean checkTemplateUsed(Long templateCode,Long headId,String stage,String type) {
+        return activityTemplateMapper.checkTemplateUsed(templateCode,headId,stage,type) > 0;
     }
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void removeSmsSelected(String type, String headId, String stage, String smsCode, String groupId) {
-        activityTemplateMapper.removeSmsSelected(type, headId, stage, smsCode, groupId);
+    public void removeSmsSelected(String type, Long headId, String stage, Long groupId) {
+        activityTemplateMapper.removeSmsSelected(type, headId, stage, groupId);
     }
 }

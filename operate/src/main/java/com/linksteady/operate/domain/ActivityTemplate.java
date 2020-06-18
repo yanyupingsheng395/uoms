@@ -3,6 +3,7 @@ package com.linksteady.operate.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Date;
 @Data
 public class ActivityTemplate {
 
-    private String code;
+    private Integer code;
 
     private String name;
 
@@ -25,13 +26,14 @@ public class ActivityTemplate {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date insertDt;
 
-    // 个性化
+    /**
+     * 个性化
+     */
     private String isPersonal;
 
-    // 用户与商品关系
-    private String relation;
-
-    // 使用场景
+    /**
+     * 使用场景
+     */
     private String scene;
 
     private String isProdUrl;
@@ -41,4 +43,10 @@ public class ActivityTemplate {
     private String isPrice;
 
     private String isProfit;
+
+    /**
+     * 是否当前活动正在使用的文案
+     */
+    @Transient
+    private String isCurrent;
 }
