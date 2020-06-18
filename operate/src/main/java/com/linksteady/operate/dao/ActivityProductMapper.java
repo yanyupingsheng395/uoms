@@ -53,4 +53,6 @@ public interface ActivityProductMapper {
     List<String> getGroupIds(Long headId);
 
     int checkProductId(String headId, String activityType, String activityStage, String productId);
+
+    int validProductOfDuring(String headId, String stage);
 }

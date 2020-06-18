@@ -415,7 +415,18 @@ public class ActivityController {
                 end = Math.min(end, count);
                 int limit = end - start + 1;
                 int offset = start -1;
-                return activityProductService.getActivityProductListPage(limit, offset, headId, "", "", "", activityStage, activityType);
+                List<ActivityProduct> activityProductListPage = activityProductService.getActivityProductListPage(limit, offset, headId, "", "", "", activityStage, activityType);
+                activityProductListPage.stream().forEach(x->{
+                    if(activityType.equalsIgnoreCase("NOTIFY")) {
+                        x.setNotifyMinPrice(df.format(x.getMinPrice()));
+                        x.setNotifyProfit(df.format(x.getActivityProfit()));
+                    }
+                    if(activityType.equalsIgnoreCase("DURING")) {
+                        x.setDuringMinPrice(df.format(x.getMinPrice()));
+                        x.setDuringProfit(df.format(x.getActivityProfit()));
+                    }
+                });
+                return activityProductListPage;
             });
         }
 

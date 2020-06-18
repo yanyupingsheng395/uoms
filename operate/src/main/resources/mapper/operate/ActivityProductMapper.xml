@@ -238,4 +238,11 @@
             and activity_type = #{activityType}
         </if>
     </select>
+
+    <select id="validProductOfDuring" resultType="int">
+        select count(1)
+        from UO_OP_ACTIVITY_PRODUCT
+        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
+          and CHECK_FLAG = 'N' and activity_type = 'DURING'
+    </select>
 </mapper>

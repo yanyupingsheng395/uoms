@@ -72,19 +72,10 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         activityHead.setInsertBy(((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername());
         activityHeadMapper.saveActivityHead(activityHead);
         if(HAS_PREHEAT.equals(hasPreheat)) {
-            // 保存群组信息
             saveGroupInfo(activityHead.getHeadId(), ActivityStageEnum.preheat.getStageCode());
             saveGroupInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
-
-            // 保存转化率信息
-            saveCovInfo(activityHead.getHeadId(), ActivityStageEnum.preheat.getStageCode());
-            saveCovInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
         }else {
-            // 保存群组信息
             saveGroupInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
-
-            // 保存转化率信息
-            saveCovInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
         }
         return activityHead.getHeadId().intValue();
     }
@@ -155,23 +146,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 
         activityHeadMapper.expireFormalNotify();
         activityHeadMapper.expireFormalDuring();
-    }
-
-    /**
-     * 保存cov_info表
-     * 如果已有记录直接update，否则insert
-     */
-    private void saveCovInfo(long headId, String stage) {
-        String covId = activityCovMapper.getCovId(headId, stage);
-        if(StringUtils.isEmpty(covId)) {
-            covId = activityCovMapper.getCovList("Y").get(0).getCovListId();
-        }
-        if(ActivityStageEnum.preheat.getStageCode().equals(stage)) {
-            activityCovMapper.updatePreheatCovInfo(headId, covId);
-        }
-        if(ActivityStageEnum.formal.getStageCode().equals(stage)) {
-            activityCovMapper.updateFormalCovInfo(headId, covId);
-        }
     }
 
     /**

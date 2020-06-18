@@ -1813,7 +1813,7 @@ $("#btn_download_data1").click(function () {
     }, function () {
         $("#btn_download_data1").text("下载中...").attr("disabled", true);
         $.post("/activity/downloadExcel", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE
-        , activityType: CURRENT_ACTIVITY_TYPE}, function (r) {
+        , activityType: 'NOTIFY'}, function (r) {
             if (r.code === 200) {
                 window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
             } else {
@@ -1831,7 +1831,7 @@ $("#btn_download_data2").click(function () {
     }, function () {
         $("#btn_download_data2").text("下载中...").attr("disabled", true);
         $.post("/activity/downloadExcel", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE
-            , activityType: CURRENT_ACTIVITY_TYPE}, function (r) {
+            , activityType: 'DURING'}, function (r) {
             if (r.code === 200) {
                 window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
             } else {
