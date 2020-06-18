@@ -90,10 +90,11 @@ public class ActivityController {
     @PostMapping("/uploadExcel")
     public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId,
                                   @RequestParam("uploadMethod") String uploadMethod,
-                                  @RequestParam("repeatProduct") String repeatProduct, @RequestParam("stage") String stage) {
+                                  @RequestParam("repeatProduct") String repeatProduct, @RequestParam("stage") String stage,
+                                  @RequestParam("activityType") String activityType) {
         List<ActivityProductUploadError> errorList;
         try {
-            errorList = activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct, stage);
+            errorList = activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct, stage, activityType);
             validProductInfo(headId, stage);
         } catch (Exception e) {
             log.error("上传商品列表出错", e);

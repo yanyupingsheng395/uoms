@@ -177,7 +177,7 @@
     <select id="getProductIdByHeadId" resultType="string">
         select EPB_PRODUCT_ID
         from UO_OP_ACTIVITY_PRODUCT
-        where head_id = #{headId}::int4 and activity_stage = #{stage}
+        where head_id = #{headId}::int4 and activity_stage = #{stage} and activity_type = #{activityType}
     </select>
 
     <delete id="deleteDataList">

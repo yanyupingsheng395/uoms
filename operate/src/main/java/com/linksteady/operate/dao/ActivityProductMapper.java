@@ -38,7 +38,7 @@ public interface ActivityProductMapper {
 
     void deleteData(String headId);
 
-    List<String> getProductIdByHeadId(String headId, String stage);
+    List<String> getProductIdByHeadId(String headId, String stage, String activityType);
 
     void deleteDataList(@Param("headId") String headId, @Param("productIdList") List<String> productIdList);
 

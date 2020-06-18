@@ -59,7 +59,7 @@ public interface ActivityProductService {
      * 上传商品
      */
     List<ActivityProductUploadError> uploadExcel(MultipartFile file, String headId, String uploadMethod,
-                                                 String repeatProduct, String stage) throws Exception;
+                                                 String repeatProduct, String stage, String activityType) throws Exception;
 
     void validProductInfo(String headId, String stage);
 

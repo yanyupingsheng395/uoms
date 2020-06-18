@@ -22,7 +22,7 @@ $( function () {
 function haspreheat(v) {
     if(v === '1') {
         CURRENT_ACTIVITY_STAGE = 'preheat';
-        $("#creatPreheat").attr("style", "display:inline;");
+        $("#creatPreheat").removeAttr("style");
     }
     if(v === '0') {
         CURRENT_ACTIVITY_STAGE = 'formal';
@@ -346,6 +346,7 @@ $('#btn_upload').click(function () {
         formData.append("repeatProduct", repeatProduct);
         formData.append("uploadMethod", uploadMethod);
         formData.append("stage", CURRENT_ACTIVITY_STAGE);
+        formData.append("activityType", CURRENT_ACTIVITY_TYPE);
         $.ajax({
             url: "/activity/uploadExcel",
             type: "post",
@@ -360,7 +361,12 @@ $('#btn_upload').click(function () {
                     }else {
                         makeErrorTable(res.data);
                     }
-                    $MB.refreshTable('activityProductTable');
+                    if(CURRENT_ACTIVITY_TYPE == 'NOTIFY') {
+                        $MB.refreshTable('activityProductTable1');
+                    }
+                    if(CURRENT_ACTIVITY_TYPE == 'DURING') {
+                        $MB.refreshTable('activityProductTable2');
+                    }
                     $("#uploadProduct").modal('hide');
                 }else {
                     $MB.n_warning(res.msg);
@@ -535,7 +541,8 @@ function getProductInfo(type, tableId) {
         singleSelect: false,
         sidePagination: "server",
         clickToSelect: true,
-        pageList: [10, 25, 50, 100],
+        pageSize: 5,
+        pageList: [5, 15, 50, 100],
         queryParams: function (params) {
             return {
                 pageSize: params.limit,  ////页面大小
@@ -751,7 +758,6 @@ function beforeSave(){
                 content: '确定保存信息？'
             }, function () {
                 saveActivityHead();
-                stepBreak(1);
             } );
         }
     }
@@ -945,7 +951,9 @@ function saveActivityHead() {
         if (r.code === 200) {
             $MB.n_success( r.msg );
             $( "#headId" ).val( r.data );
+            stepBreak(1);
             $( "#basic-add-form" ).find( 'input' ).attr( "disabled", "disabled" );
+            $( "#basic-add-form" ).find( 'select' ).attr( "disabled", "disabled" );
             $( '#btn_basic' ).attr( "disabled", "disabled" );
         } else {
             $MB.n_danger( "有错误发生！" );
@@ -973,9 +981,15 @@ $( "#btn_add_shop2" ).click( function () {
 } );
 
 // 批量添加商品
-$( "#btn_batch_upload" ).click( function () {
+$( "#btn_batch_upload1" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
     $("#uploadProduct").modal('show');
-} );
+});
+
+$( "#btn_batch_upload2" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'DURING';
+    $("#uploadProduct").modal('show');
+});
 
 $( "#btn_create_preheat" ).click( function () {
     var headId = $( "#headId" ).val();
@@ -1753,19 +1767,38 @@ $("#btn_valid_product").click(function () {
     });
 });
 
-$("#btn_download_data").click(function () {
+$("#btn_download_data1").click(function () {
     $MB.confirm({
         title: "<i class='mdi mdi-alert-outline'></i>提示：",
         content: "确定下载商品数据?"
     }, function () {
-        $("#btn_download_data").text("下载中...").attr("disabled", true);
-        $.post("/activity/downloadExcel", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE}, function (r) {
+        $("#btn_download_data1").text("下载中...").attr("disabled", true);
+        $.post("/activity/downloadExcel", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE
+        , activityType: CURRENT_ACTIVITY_TYPE}, function (r) {
             if (r.code === 200) {
                 window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
             } else {
                 $MB.n_warning(r.msg);
             }
-            $("#btn_download_data").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
+            $("#btn_download_data1").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
+        });
+    });
+});
+
+$("#btn_download_data2").click(function () {
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定下载商品数据?"
+    }, function () {
+        $("#btn_download_data2").text("下载中...").attr("disabled", true);
+        $.post("/activity/downloadExcel", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE
+            , activityType: CURRENT_ACTIVITY_TYPE}, function (r) {
+            if (r.code === 200) {
+                window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
+            } else {
+                $MB.n_warning(r.msg);
+            }
+            $("#btn_download_data2").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
         });
     });
 });

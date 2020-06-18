@@ -209,7 +209,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public List<ActivityProductUploadError> uploadExcel(MultipartFile file, String headId, String uploadMethod, String repeatProduct, String stage) throws Exception {
+    public List<ActivityProductUploadError> uploadExcel(MultipartFile file, String headId, String uploadMethod,
+                                                        String repeatProduct, String stage, String activityType) throws Exception {
         String xlsSuffix = ".xls";
         String xlsxSuffix = ".xlsx";
         // 表头
@@ -223,7 +224,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
         List<ActivityProductUploadError> errorList = Lists.newArrayList();
         List<ActivityProductUploadError> dataList = Lists.newArrayList();
-        if (fileType.equalsIgnoreCase(xlsSuffix) || fileType.equalsIgnoreCase(xlsxSuffix)) {
+        if (!(fileType.equalsIgnoreCase(xlsSuffix) || fileType.equalsIgnoreCase(xlsxSuffix))) {
             errorList.add(new ActivityProductUploadError("文件格式不符，只支持.xls,.xlsx后缀的文件！"));
             return errorList;
         }
@@ -421,28 +422,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         default:
                             break;
                     }
-                    String activityType = "";
-                    Cell cell9 = row.getCell(9);
-                    if (null == cell9 || cell9.getCellType() == 3) {
-                        validCount++;
-                        errorList.add(new ActivityProductUploadError("利益点场景为空", i + 1));
-                    } else {
-                        if (cell9.getCellType() == 1) {
-                            activityType = cell9.getStringCellValue();
-                        } else {
-                            errorList.add(new ActivityProductUploadError("利益点场景为空类型有误，应改为文本型", i + 1));
-                        }
-                    }
-                    if (activityType.equalsIgnoreCase("活动通知")) {
-                        activityType = "NOTIFY";
-                    }
-                    if (activityType.equalsIgnoreCase("活动期间")) {
-                        activityType = "DURING";
-                    }
-                    if (activityType.equalsIgnoreCase("整个活动")) {
-                        activityType = "ALL";
-                    }
-
                     if (validCount == 6) {
                         errorList = errorList.subList(0, errorList.size() - 6);
                     }
@@ -458,15 +437,15 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     activityProduct.setDiscountAmount(new BigDecimal(discountAmount).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     activityProduct.setProductId(productId);
                     activityProduct.setActivityStage(stage);
+                    activityProduct.setActivityType(activityType);
                     if (activityProduct.productValid()) {
                         activityProduct.setProductUrl(shortUrlService.genProdShortUrlByProdId(productId, "S"));
-                        activityProduct.setActivityType(activityType);
                         activityProduct = calculateProductMinPrice(activityProduct);
                         productList.add(activityProduct);
                     }
                 }
                 if (productList.size() != 0) {
-                    saveUploadProductData(headId, productList, uploadMethod, repeatProduct, stage);
+                    saveUploadProductData(headId, productList, uploadMethod, repeatProduct, stage, activityType);
                 } else {
                     errorList.add(new ActivityProductUploadError("校验通过的记录条数为0"));
                 }
@@ -522,14 +501,14 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     /**
      * 保存上传的数据
      */
-    private boolean saveUploadProductData(String headId, List<ActivityProduct> productList, String uploadMethod, String repeatProduct, String stage) {
+    private boolean saveUploadProductData(String headId, List<ActivityProduct> productList, String uploadMethod, String repeatProduct, String stage, String activityType) {
         String uploadMethod0 = "0";
         String repeatProduct0 = "0";
         String repeatProduct1 = "1";
         String uploadMethod1 = "1";
         List<ActivityProduct> insertList = Lists.newArrayList();
         List<ActivityProduct> deleteList = Lists.newArrayList();
-        List<String> oldProductList = activityProductMapper.getProductIdByHeadId(headId, stage);
+        List<String> oldProductList = activityProductMapper.getProductIdByHeadId(headId, stage, activityType);
         // 追加
         if (uploadMethod.equalsIgnoreCase(uploadMethod0)) {
             // 忽略
@@ -562,14 +541,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 activityProductMapper.deleteDataList(headId, productIdList);
             }
             if (insertList.size() > 0) {
-                List<ActivityProduct> tmpList = Lists.newArrayList();
-                insertList.stream().filter(x -> x.getActivityType().equalsIgnoreCase("ALL")).forEach(x -> {
-                    x.setActivityType("NOTIFY");
-                    ActivityProduct tmp = x.clone();
-                    tmp.setActivityType("DURING");
-                    tmpList.add(tmp);
-                });
-                insertList.addAll(tmpList);
                 activityProductMapper.saveActivityProductList(insertList);
             }
         } catch (Exception e) {
