@@ -93,8 +93,8 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     }
 
     @Override
-    public List<ActivityTemplate> getSmsTemplateList(Long headId,String isPersonal,String scene) {
-        List<ActivityTemplate> templateTableData = activityTemplateMapper.getTemplateTableData(headId,isPersonal,scene);
+    public List<ActivityTemplate> getSmsTemplateList(Long headId,String isPersonal,String scene,String stage,String type) {
+        List<ActivityTemplate> templateTableData = activityTemplateMapper.getTemplateTableData(headId,isPersonal,scene,stage,type);
         templateTableData.stream().map(x->{
             String scene1 = x.getScene();
             if(StringUtils.isNotEmpty(scene1)) {
@@ -107,7 +107,7 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     }
 
     @Override
-    public void saveTemplate(ActivityTemplate activityTemplate) {
+    public void saveTemplate(ActivityTemplate activityTemplate,String currentUser) {
         activityTemplate.setInsertBy((((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername()));
         activityTemplate.setInsertDt(new Date());
         if("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice()) && "0".equalsIgnoreCase(activityTemplate.getIsProfit())) {
@@ -115,6 +115,10 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         }else {
             activityTemplate.setIsPersonal("1");
         }
+        activityTemplate.setInsertBy(currentUser);
+        activityTemplate.setUpdateBy(currentUser);
+        activityTemplate.setInsertDt(new Date());
+        activityTemplate.setUpdateDt(new Date());
         activityTemplateMapper.saveTemplate(activityTemplate);
     }
 
@@ -132,10 +136,9 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     }
 
     @Override
-    public String  updateSmsTemplate(ActivityTemplate activityTemplate,String flag) {
+    public String  updateSmsTemplate(ActivityTemplate activityTemplate,String flag,String currentUser) {
         //判断当前文案是否已经被引用 如果是，则进行新增操作 否则直接更新
-       // activityTemplateMapper.templateContentChanged(activityTemplate.getCode(),activityTemplate.getContent())
-        if(true)
+        if(activityTemplateMapper.templateContentChanged(activityTemplate.getCode(),activityTemplate.getContent())>1)
         {
             return "文案内容未发生改变,无需保存！";
         }else
@@ -149,13 +152,19 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
             if("Y".equals(flag))
             {
                 //新写入一条记录 并返回主键
-               // activityTemplate.setCode("");
-             //   String newCode=activityTemplateMapper.update(activityTemplate);
-                String newCode="123";
-                return "系统已为您生成文案编号为"+newCode+"的新文案，请在列表页查看！";
+                activityTemplate.setCode(null);
+                activityTemplate.setInsertBy(currentUser);
+                activityTemplate.setUpdateBy(currentUser);
+                activityTemplate.setInsertDt(new Date());
+                activityTemplate.setUpdateDt(new Date());
+                activityTemplateMapper.saveTemplate(activityTemplate);
+
+                return "系统已为您生成文案编号为"+activityTemplate.getCode()+"的新文案，请在列表页查看！";
             }else
             {
                 //更新操作
+                activityTemplate.setUpdateBy(currentUser);
+                activityTemplate.setUpdateDt(new Date());
                 activityTemplateMapper.update(activityTemplate);
                 return "保存文案信息成功！";
             }
@@ -163,8 +172,8 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     }
 
     @Override
-    public void setSmsCode(Long groupId, Long tmpCode, Long headId, String type, String stage) {
-        activityTemplateMapper.setSmsCode(groupId, tmpCode, headId, type, stage);
+    public void setSmsCode(Long groupId, Long tmpCode, Long headId, String stage,String type) {
+        activityTemplateMapper.setSmsCode(groupId, tmpCode, headId,stage, type);
         //设置完成后对当前活动stage、type上设置的文案情况进行一次校验
         activityTemplateMapper.validUserGroup(headId,stage,type);
     }

@@ -1059,7 +1059,7 @@ function getGroupList(stage, type, tableId) {
                             if(preheatNotifyStatus === 'done' || preheatNotifyStatus === 'timeout' || !flag) {
                                 res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
                             }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
+                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
                                     "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"NOTIFY\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
                                     "</a>";
                             }
@@ -1067,7 +1067,7 @@ function getGroupList(stage, type, tableId) {
                             if(formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout' || !flag) {
                                 res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
                             }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
+                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
                                     "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"NOTIFY\",\""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
                                     "</a>";
                             }
@@ -1077,7 +1077,7 @@ function getGroupList(stage, type, tableId) {
                             if(preheatStatus === 'done') {
                                 res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
                             }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
+                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
                                     "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"DURING\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
                                     "</a>";
                             }
@@ -1085,7 +1085,7 @@ function getGroupList(stage, type, tableId) {
                             if(formalStatus === 'done') {
                                 res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
                             }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\",\"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
+                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
                                     "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"DURING\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
                                     "</a>";
                             }
@@ -1096,6 +1096,13 @@ function getGroupList(stage, type, tableId) {
             }, {
                 field: 'smsTemplateContent',
                 title: '文案内容',
+                //td宽度及内容超过宽度隐藏
+                cellStyle : function(value, row, index, field){
+                    return {
+                        css: {"min-width": '300px',
+                              "max-width":'300px'
+                        }
+                    }},
                 formatter: function (value, row, index) {
                     if(value === null || value.length==0)
                     {
@@ -1156,7 +1163,9 @@ function getTmpTableData() {
             return {
                 isPersonal: $("#sms-form").find("select[name='isPersonal']").val(),
                 scene: $("#sms-form").find("select[name='scene']").val(),
-                headId: $( "#headId" ).val()
+                headId: $( "#headId" ).val(),
+                stage: CURRENT_ACTIVITY_STAGE,
+                type: CURRENT_TYPE
             }
         },
         columns: [
@@ -1177,8 +1186,8 @@ function getTmpTableData() {
                 field: 'content',
                 title: '文案内容'
             },{
-                field: 'insertDt',
-                title: '创建时间',
+                field: 'opDt',
+                title: '更新时间',
                 align: 'center'
             },{
                 field: 'scene',
@@ -1229,8 +1238,6 @@ $( "#btn_save_sms").click( function () {
             });
         }else
         {
-            //todo 前端判断文案内容是否发生变更
-
             //更新操作 判断当前文案是否在其它地方已被引用
             $.get("/activity/checkTemplateUsed", {
                 code: $("#code").val(),
@@ -1410,6 +1417,20 @@ function setTmpCode() {
             }
         });
     });
+}
+
+/**
+ * 关闭文案选择面板
+ */
+function closeTmpCode()
+{
+    $( "#smstemplate_modal" ).modal( 'hide' );
+    if(CURRENT_TYPE === 'DURING') {
+        getGroupList( CURRENT_ACTIVITY_STAGE, "DURING", 'table5');
+    }
+    if(CURRENT_TYPE === 'NOTIFY') {
+        getGroupList( CURRENT_ACTIVITY_STAGE, "NOTIFY", 'table1');
+    }
 }
 
 function contextOnChange() {

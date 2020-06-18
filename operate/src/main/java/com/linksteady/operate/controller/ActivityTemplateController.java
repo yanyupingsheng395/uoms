@@ -1,6 +1,7 @@
 package com.linksteady.operate.controller;
 
 import com.google.common.base.Splitter;
+import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.ActivityTemplate;
 import com.linksteady.operate.service.ActivityTemplateService;
@@ -16,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/activity")
-public class ActivityTemplateController {
+public class ActivityTemplateController extends BaseController {
 
     @Autowired
     private ActivityTemplateService activityTemplateService;
@@ -29,7 +30,7 @@ public class ActivityTemplateController {
      */
     @PostMapping("/saveSmsTemplate")
     public ResponseBo saveSmsTemplate(ActivityTemplate activityTemplate) {
-        activityTemplateService.saveTemplate(activityTemplate);
+        activityTemplateService.saveTemplate(activityTemplate,getCurrentUser().getUsername());
         return ResponseBo.ok();
     }
 
@@ -39,8 +40,8 @@ public class ActivityTemplateController {
      * @return
      */
     @GetMapping("/getSmsTemplateList")
-    public ResponseBo getSmsTemplateList(Long headId,String isPersonal,String scene) {
-        return ResponseBo.okWithData(null, activityTemplateService.getSmsTemplateList(headId,isPersonal,scene));
+    public ResponseBo getSmsTemplateList(Long headId,String isPersonal,String scene,String stage,String type) {
+        return ResponseBo.okWithData(null, activityTemplateService.getSmsTemplateList(headId,isPersonal,scene,stage,type));
     }
 
     /**
@@ -55,7 +56,7 @@ public class ActivityTemplateController {
 
     @PostMapping("/updateSmsTemplate")
     public ResponseBo updateSmsTemplate(ActivityTemplate activityTemplate,String flag) {
-        String result=activityTemplateService.updateSmsTemplate(activityTemplate,flag);
+        String result=activityTemplateService.updateSmsTemplate(activityTemplate,flag,getCurrentUser().getUsername());
         return ResponseBo.ok(result);
     }
 
@@ -129,7 +130,7 @@ public class ActivityTemplateController {
     @PostMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam("groupId") Long groupId, @RequestParam("tmpCode") Long tmpCode,
                                  @RequestParam("headId") Long headId, @RequestParam("type") String type, @RequestParam("stage") String stage) {
-        activityTemplateService.setSmsCode(groupId, tmpCode, headId, type, stage);
+        activityTemplateService.setSmsCode(groupId, tmpCode, headId, stage,type);
         return ResponseBo.ok();
     }
 
@@ -137,9 +138,10 @@ public class ActivityTemplateController {
      * 判断文案是否已在其它地方被引用
      * @return
      */
-    @PostMapping("/checkTemplateUsed")
+    @RequestMapping("/checkTemplateUsed")
     public ResponseBo checkTemplateUsed(@RequestParam("code") Long code,Long headId,String stage,String type) {
-        boolean flag=activityTemplateService.checkTemplateUsed(code, headId, type, stage);
+        boolean flag=activityTemplateService.checkTemplateUsed(code, headId, stage,type);
+        //如果flag为true 就表示被其它地方引用了，需要新增
         return ResponseBo.ok(flag==true?"Y":"N");
     }
 }

@@ -16,9 +16,9 @@ public interface ActivityUserGroupService {
 
     int getCount(Long headId, String stage);
 
-    void updateGroupTemplate(Long headId, String groupId, String code, String stage);
+    void updateGroupTemplate(Long headId, Long groupId, Long code, String stage);
 
-    int refrenceCount(String code);
+    int refrenceCount(Long code);
 
     void deleteData(Long headId);
 

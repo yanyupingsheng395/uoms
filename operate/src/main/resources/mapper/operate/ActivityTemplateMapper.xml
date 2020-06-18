@@ -10,23 +10,46 @@
         <result column="IS_PROD_NAME" jdbcType="VARCHAR" property="isProdName"/>
         <result column="IS_PRICE" jdbcType="VARCHAR" property="isPrice"/>
         <result column="IS_PROFIT" jdbcType="VARCHAR" property="isProfit"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"></result>
+        <result column="IS_PERSONAL" jdbcType="VARCHAR" property="isPersonal"></result>
+        <result column="IS_CURRENT" jdbcType="VARCHAR" property="isCurrent"></result>
+        <result column="op_dt"  jdbcType="TIMESTAMP" property="opDt"></result>
+        <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt" />
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+        <result column="insert_by" jdbcType="VARCHAR" property="insertBy" />
+        <result column="update_by" jdbcType="VARCHAR" property="updateDt" />
     </resultMap>
 
-    <resultMap id="templateMap" type="com.linksteady.operate.domain.ActivityTemplate">
-        <result property="code" jdbcType="DECIMAL" column="TMP_CODE"></result>
-        <result property="name" jdbcType="VARCHAR" column="TMP_NAME"></result>
-        <result property="content" jdbcType="VARCHAR" column="TMP_CONTENT"></result>
-        <result property="remark" jdbcType="VARCHAR" column="REMARK"></result>
-        <result property="isPersonal" jdbcType="VARCHAR" column="IS_PERSONAL"></result>
-        <result property="isProfit" jdbcType="VARCHAR" column="IS_PROFIT"></result>
-        <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"></result>
-        <result property="isCurrent" jdbcType="VARCHAR" column="IS_CURRENT"></result>
-    </resultMap>
 
     <insert id="saveTemplate">
+        <selectKey keyProperty="code" resultType="java.lang.Long" order="AFTER">
+            SELECT currval('uo_op_activity_template_seq'::regclass) as code
+        </selectKey>
         insert into UO_OP_ACTIVITY_TEMPLATE(
-            TMP_CONTENT, INSERT_DT, INSERT_BY, IS_PERSONAL, TMP_NAME, IS_PROD_NAME, IS_PROD_URL, IS_PRICE, IS_PROFIT
-        ) values (#{content}, #{insertDt}, #{insertBy}, #{isPersonal}, #{name}, #{isProdName}, #{isProdUrl}, #{isPrice}, #{isProfit})
+            TMP_CONTENT,
+            IS_PERSONAL,
+            TMP_NAME,
+            IS_PROD_NAME,
+            IS_PROD_URL,
+            IS_PRICE,
+            IS_PROFIT,
+            INSERT_DT,
+            UPDATE_DT,
+            INSERT_BY,
+            UPDATE_BY
+        ) values (
+            #{content},
+            #{isPersonal},
+            #{name},
+            #{isProdName},
+            #{isProdUrl},
+            #{isPrice},
+            #{isProfit},
+            #{insertDt},
+            #{updateDt},
+            #{insertBy},
+            #{updateBy}
+        )
     </insert>
 
     <delete id="deleteActivityTemplate">
@@ -34,16 +57,34 @@
     </delete>
 
     <select id="getTemplate" resultMap="base">
-        select TMP_CONTENT, REMARK, INSERT_DT, INSERT_BY, UPDATE_DT, UPDATE_BY, TMP_CODE, IS_PERSONAL, RELATION, TMP_NAME, SCENE, IS_PROD_NAME, IS_PROD_URL, IS_PRICE, is_profit from UO_OP_ACTIVITY_TEMPLATE where TMP_CODE = #{code}
+        select
+            TMP_CONTENT,
+            REMARK,
+            INSERT_DT,
+            INSERT_BY,
+            UPDATE_DT,
+            UPDATE_BY,
+            TMP_CODE,
+            IS_PERSONAL,
+            RELATION,
+            TMP_NAME,
+            SCENE,
+            IS_PROD_NAME,
+            IS_PROD_URL,
+            IS_PRICE,
+            is_profit
+        from UO_OP_ACTIVITY_TEMPLATE where
+        TMP_CODE = #{code}
     </select>
 
     <update id="update" parameterType="com.linksteady.operate.domain.ActivityTemplate">
         update UO_OP_ACTIVITY_TEMPLATE set TMP_CONTENT = #{content}, TMP_NAME = #{name}, IS_PROD_URL = #{isProdUrl},
-        IS_PROD_NAME = #{isProdName}, IS_PRICE = #{isPrice}, IS_PROFIT = #{isProfit}, IS_PERSONAL = #{isPersonal}
+        IS_PROD_NAME = #{isProdName}, IS_PRICE = #{isPrice}, IS_PROFIT = #{isProfit}, IS_PERSONAL = #{isPersonal},
+        UPDATE_DT=#{updateDt},UPDATE_BY=#{updateBy}
         where TMP_CODE = #{code}
     </update>
 
-    <select id="getTemplateTableData" resultMap="templateMap">
+    <select id="getTemplateTableData" resultMap="base">
         with v1 as (
            select tmp_code, string_agg(activity_type, ' ' order by tmp_code ) SCENE
             from (
@@ -55,7 +96,11 @@
              group by c.tmp_code
         ),
         v2 as(
-           select sms_template_code from uo_op_activity_group where head_id=#{headId} and sms_template_code is not null
+           select distinct sms_template_code from uo_op_activity_group
+           where head_id=#{headId}
+           and activity_stage=#{stage}
+           and activity_type=#{type}
+           and sms_template_code is not null
         ),
         v3 as(
             select
@@ -64,7 +109,7 @@
                 t.TMP_CONTENT,
                 t.IS_PERSONAL,
                 v1.SCENE,
-                t.insert_dt,
+                (case when t.update_dt is null then t.insert_dt else t.update_dt end) op_dt,
                 (case when v2.sms_template_code is not null then '1' else '0' end) IS_CURRENT
             from UO_OP_ACTIVITY_TEMPLATE t join v1 on t.TMP_CODE = v1.TMP_CODE
                  left join v2 on t.TMP_CODE=v2.sms_template_code
@@ -76,7 +121,7 @@
         <if test="scene != null and scene != ''">
             and scene like concat('%', #{scene} ,'%')
         </if>
-        order by IS_CURRENT desc,insert_dt desc
+        order by IS_CURRENT desc,op_dt desc
     </select>
 
     <update id="setSmsCode">
@@ -86,10 +131,13 @@
 
     <select id="checkTemplateUsed" resultType="int">
         select count(1) from UO_OP_ACTIVITY_GROUP t1
-         where head_id!=#{headId}
-           and activity_stage!=#{stage}
-           and activity_type!=#{type}
-           and sms_template_code=#{templateCode}
+         where sms_template_code=#{templateCode} and
+              (head_id,activity_stage,activity_type) not in (
+                 select distinct head_id,activity_stage,activity_type from UO_OP_ACTIVITY_GROUP  t2 where
+                   t2.head_id=#{headId}
+                 and t2.activity_stage=#{stage}
+                 and t2.activity_type=#{type}
+             )
     </select>
 
     <update id="validUserGroup">
@@ -121,5 +169,9 @@
         update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = null, CHECK_FLAG = 'N', CHECK_COMMENTS = '群组文案没有配置'
         where head_id = #{headId} and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId} and activity_type = #{type}
     </update>
+
+    <select id="templateContentChanged" resultType="int">
+        select count(*) from uo_op_activity_template where tmp_code=#{templateCode} and tmp_content=#{content}
+    </select>
 
 </mapper>

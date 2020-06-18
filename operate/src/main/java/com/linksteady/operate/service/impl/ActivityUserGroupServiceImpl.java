@@ -45,12 +45,12 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     }
 
     @Override
-    public void updateGroupTemplate(Long headId, String groupId, String code, String stage) {
+    public void updateGroupTemplate(Long headId, Long groupId, Long code, String stage) {
         activityUserGroupMapper.updateGroupTemplate(headId, groupId, code, stage);
     }
 
     @Override
-    public int refrenceCount(String code) {
+    public int refrenceCount(Long code) {
         return activityUserGroupMapper.refrenceCount(code);
     }
 
