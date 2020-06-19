@@ -11,8 +11,11 @@ import com.linksteady.operate.domain.*;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
+import com.linksteady.operate.thrift.ActivityService;
+import com.linksteady.operate.thrift.ActivityThriftClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +64,9 @@ public class ActivityController {
 
     @Autowired
     private ActivityCovService activityCovService;
+
+    @Autowired
+    private ActivityThriftClient activityThriftClient;
 
     /**
      * 获取头表的分页数据
@@ -371,8 +377,10 @@ public class ActivityController {
     }
 
     @GetMapping("/getCovList")
-    public ResponseBo getCovList() {
-        return ResponseBo.okWithData(null, activityCovService.getCovList());
+    public ResponseBo getCovList(
+            @RequestParam String headId, @RequestParam String stage
+    ) {
+        return ResponseBo.okWithData(null, activityCovService.getCovList(headId, stage));
     }
 
     /**
@@ -460,5 +468,19 @@ public class ActivityController {
             return true;
         }
         return activityProductService.checkProductId(headId, activityType, activityStage, productId);
+    }
+
+    @GetMapping("/genCovInfo")
+    public ResponseBo genCovInfo(@RequestParam String headId, @RequestParam String activityStage) {
+        long result = -1;
+        try {
+            activityThriftClient.open();
+            result = activityThriftClient.getActivityService().genPredictCovData(Long.parseLong(headId), activityStage);
+        }catch (TException e) {
+            log.info("生成转化率数据出错", e);
+        } finally {
+            activityThriftClient.close();
+        }
+        return ResponseBo.okWithData(null, result);
     }
 }

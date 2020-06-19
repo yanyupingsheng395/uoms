@@ -14,7 +14,6 @@ public class ActivityService {
 
     /**
      * 计算活动的转化率预估数据 返回1表示计算成功 0表示计算失败
-     *
      * @param head_id
      * @param stage
      */

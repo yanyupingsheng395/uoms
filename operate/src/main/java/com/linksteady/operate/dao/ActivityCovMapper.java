@@ -23,4 +23,6 @@ public interface ActivityCovMapper {
     void updatePreheatCovInfo(long headId, String covId);
 
     void updateFormalCovInfo(long headId, String covId);
+
+    List<ActivityCovInfo> getCovListByHeadId(String headId, String stage);
 }

@@ -37,8 +37,8 @@ public class ActivityCovServiceImpl implements ActivityCovService {
     }
 
     @Override
-    public List<ActivityCovInfo> getCovList() {
-        return activityCovMapper.getCovList(null);
+    public List<ActivityCovInfo> getCovList(String headId, String stage) {
+        return activityCovMapper.getCovListByHeadId(headId, stage);
     }
 
     @Override

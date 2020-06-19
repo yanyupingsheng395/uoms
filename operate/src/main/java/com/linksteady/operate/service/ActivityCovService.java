@@ -17,7 +17,7 @@ public interface ActivityCovService {
      */
     ActivityCovInfo getConvertInfo(String headId, String stage);
 
-    List<ActivityCovInfo> getCovList();
+    List<ActivityCovInfo> getCovList(String headId, String stage);
 
     List<Map<String, String>> calculateCov(String headId, String stage, String changedCovId, String defaultCovId);
 
