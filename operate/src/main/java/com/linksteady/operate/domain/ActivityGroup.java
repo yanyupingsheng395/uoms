@@ -21,7 +21,7 @@ public class ActivityGroup implements Cloneable{
 
     private String activityStage;
 
-    private String smsTemplateCode;
+    private Long smsTemplateCode;
 
     private String activityType;
 

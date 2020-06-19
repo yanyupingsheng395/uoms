@@ -6,7 +6,7 @@
         <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
         <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
         <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
-        <result column="SMS_TEMPLATE_CODE" jdbcType="VARCHAR" property="smsTemplateCode"></result>
+        <result column="SMS_TEMPLATE_CODE" jdbcType="DECIMAL" property="smsTemplateCode"></result>
         <result column="TMP_CONTENT" jdbcType="VARCHAR" property="smsTemplateContent"></result>
         <result column="ACTIVITY_TYPE" jdbcType="VARCHAR" property="activityType"></result>
         <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"></result>
@@ -15,13 +15,13 @@
     </resultMap>
 
     <select id="getCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_GROUP where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage}
+        select count(1) from UO_OP_ACTIVITY_GROUP where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
     </select>
 
     <select id="getUserGroupPage" resultMap="base">
         select GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, TMP_CONTENT, TMP_CONTENT_NORMAL,GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE from UO_OP_ACTIVITY_GROUP
             left join UO_OP_ACTIVITY_TEMPLATE on SMS_TEMPLATE_CODE = TMP_CODE
-            where HEAD_ID = #{headId}::int4 and ACTIVITY_STAGE = #{stage}
+            where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
         limit #{limit} offset #{offset}
     </select>
 
@@ -32,8 +32,8 @@
     </select>
 
     <update id="updateGroupTemplate">
-        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{code}::int4
-        where head_id = #{headId}::int4 and GROUP_ID = #{groupId}::int4 and ACTIVITY_STAGE = #{stage}
+        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{code}
+        where head_id = #{headId} and GROUP_ID = #{groupId} and ACTIVITY_STAGE = #{stage}
     </update>
 
     <insert id="saveGroupData">
@@ -54,11 +54,11 @@
     </insert>
 
     <select id="refrenceCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_GROUP where SMS_TEMPLATE_CODE = #{code}::int4
+        select count(1) from UO_OP_ACTIVITY_GROUP where SMS_TEMPLATE_CODE = #{code}
     </select>
 
     <delete id="deleteData">
-        delete from UO_OP_ACTIVITY_GROUP where head_id = #{headId}::int4
+        delete from UO_OP_ACTIVITY_GROUP where head_id = #{headId}
     </delete>
 
     <select id="validGroupTemplateWithGroup" resultType="int">

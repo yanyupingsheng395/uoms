@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 public class ActivityTemplate {
 
-    private Integer code;
+    private Long code;
 
     private String name;
 
@@ -25,6 +25,11 @@ public class ActivityTemplate {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date insertDt;
+
+    private String updateBy;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    private Date updateDt;
 
     /**
      * 个性化
@@ -49,4 +54,8 @@ public class ActivityTemplate {
      */
     @Transient
     private String isCurrent;
+
+    @Transient
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    private Date opDt;
 }

@@ -237,7 +237,7 @@ public class ActivityController {
     }
 
     @GetMapping("/updateGroupTemplate")
-    public ResponseBo updateGroupTemplate(@RequestParam Long headId,@RequestParam String groupId, @RequestParam String code, @RequestParam String stage, @RequestParam String operateType) {
+    public ResponseBo updateGroupTemplate(@RequestParam Long headId,@RequestParam Long groupId, @RequestParam Long code, @RequestParam String stage, @RequestParam String operateType) {
         activityUserGroupService.updateGroupTemplate(headId, groupId, code, stage);
         return ResponseBo.ok();
     }
