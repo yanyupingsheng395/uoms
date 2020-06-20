@@ -104,19 +104,11 @@ function stepBreak(index) {
         $("#step3").attr("style", "display:none;");
     }
     if(index == 2) {
-        $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
-            if(r.code === 200) {
-                if(r.data > 0) {
-                    $MB.n_warning("存在校验不通过的商品！");
-                }else {
-                    create_step.setActive(2);
-                    $("#step1").attr("style", "display:none;");
-                    $("#step2").attr("style", "display:none;");
-                    $("#step3").attr("style", "display:block;");
-                    createActivity(CURRENT_ACTIVITY_STAGE);
-                }
-            }
-        });
+        create_step.setActive(2);
+        $("#step1").attr("style", "display:none;");
+        $("#step2").attr("style", "display:none;");
+        $("#step3").attr("style", "display:block;");
+        createActivity(CURRENT_ACTIVITY_STAGE)
     }
 }
 /**************************按钮相关 end*****************************/
@@ -1014,7 +1006,7 @@ $( "#btn_create_preheat" ).click( function () {
 
 // 验证已有商品是否合法
 function validProduct(stage) {
-    $.get("/activity/validProduct", {headId: $("#headId").val()}, function (r) {
+    $.get("/activity/validProduct", {headId: $("#headId").val(), stage: stage, type:CURRENT_ACTIVITY_TYPE}, function (r) {
         if(r.code === 200) {
             if(r.data > 0) {
                 $MB.n_warning("存在校验不通过的商品！");
@@ -1994,11 +1986,13 @@ function genCovInfo(activityType) {
             title: '提示：',
             content: '确认商品信息并计算活动转化率？'
         }, function() {
-            $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
+            $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE, type:activityType}, function (r) {
                 if(r.code === 200) {
                     if(r.data > 0) {
                         $MB.n_warning("存在校验不通过的商品！");
+                        updateInfoStatus('product', '0', activityType);
                     }else {
+                        updateInfoStatus('product', '1', activityType);
                         var len = $("#activityProductTable1").bootstrapTable('getData').length;
                         if(len === 0) {
                             $MB.n_warning("没有获取到有效的活动通知商品，请先添加商品！");
@@ -2019,14 +2013,14 @@ function genCovInfo(activityType) {
             title: '提示：',
             content: '确认商品信息并计算活动转化率？'
         }, function() {
-            $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
+            $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE, type:activityType}, function (r) {
                 if(r.code === 200) {
-
                     if(r.data > 0) {
                         $MB.n_warning("存在校验不通过的商品！");
+                        updateInfoStatus('product', '0', activityType);
                     }else {
                         // 确认商品字段的维护
-
+                        updateInfoStatus('product', '1', activityType);
                     }
                 }
             });
@@ -2035,13 +2029,18 @@ function genCovInfo(activityType) {
 }
 
 /**
+ * 商品:记录数为0，存在验证不通过==0，否则==1
+ * 群组:存在商品和群组不一致的==0，否则==1
+ *
  * 更新群组和商品的状态信息
- * @param type 类型：product 商品，group:群组
+ * @param key 类型：product 商品，group:群组
  */
-function updateStatus(type) {
+function updateInfoStatus(key, value, type) {
     $.get("/activity/updateInfoStatus",
-        {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE, activityType: CURRENT_ACTIVITY_TYPE, type: type}, function (r) {
-
-        console.log(r);
+        {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE,
+            activityType: type, key: key, value: value}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("确认成功！");
+        }
     });
 }
