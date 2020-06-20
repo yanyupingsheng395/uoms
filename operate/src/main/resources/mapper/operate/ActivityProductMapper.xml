@@ -221,7 +221,7 @@
     <select id="validProduct" resultType="int">
         select count(1)
         from UO_OP_ACTIVITY_PRODUCT
-        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
+        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage} and activity_type = #{type}
           and CHECK_FLAG = 'N'
     </select>
 
@@ -237,12 +237,5 @@
         <if test="activityType != null and activityType != 'ALL'">
             and activity_type = #{activityType}
         </if>
-    </select>
-
-    <select id="validProductOfDuring" resultType="int">
-        select count(1)
-        from UO_OP_ACTIVITY_PRODUCT
-        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
-          and CHECK_FLAG = 'N' and activity_type = 'DURING'
     </select>
 </mapper>

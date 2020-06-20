@@ -286,6 +286,9 @@ public class ActivityController {
         int templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, stage, type);
         if(templateIsNullCount > 0) {
             data.put("error", "部分群组文案没有配置");
+            updateInfoStatus(headId.toString(), stage, type,  "group", "0");
+        }else {
+            updateInfoStatus(headId.toString(), stage, type,  "group", "1");
         }
         return ResponseBo.okWithData(null, data);
     }
@@ -458,8 +461,8 @@ public class ActivityController {
     }
 
     @GetMapping("/validProduct")
-    public ResponseBo validProduct(@RequestParam String headId, @RequestParam("stage") String stage) {
-        return ResponseBo.okWithData(null, activityProductService.validProduct(headId, stage));
+    public ResponseBo validProduct(@RequestParam String headId, @RequestParam("stage") String stage, @RequestParam String type) {
+        return ResponseBo.okWithData(null, activityProductService.validProduct(headId, stage, type));
     }
 
 
@@ -471,21 +474,35 @@ public class ActivityController {
         return activityProductService.checkProductId(headId, activityType, activityStage, productId);
     }
 
-    private ReentrantLock reentrantLock;
+    private final ReentrantLock reentrantLock = new ReentrantLock();
 
     @GetMapping("/genCovInfo")
     public ResponseBo genCovInfo(@RequestParam String headId, @RequestParam String activityStage) {
-        reentrantLock.lock();
         long result = -1;
+        reentrantLock.lock();
         try {
             activityThriftClient.open();
             result = activityThriftClient.getActivityService().genPredictCovData(Long.parseLong(headId), activityStage);
         }catch (TException e) {
             log.info("生成转化率数据出错", e);
         } finally {
-            activityThriftClient.close();
             reentrantLock.unlock();
+            activityThriftClient.close();
         }
         return ResponseBo.okWithData(null, result);
+    }
+
+    /**
+     * 校验商品和群组信息
+     * 商品:记录数为0，存在验证不通过==0，否则==1
+     * 群组:存在商品和群组不一致的==0，否则==1
+     *
+     * @return
+     */
+    @RequestMapping("/updateInfoStatus")
+    public ResponseBo updateInfoStatus(@RequestParam String headId, @RequestParam String activityStage,
+                                       @RequestParam String activityType, @RequestParam String key, @RequestParam String value) {
+        activityHeadService.updateInfoStatus(headId, activityStage, activityType, key, value);
+        return ResponseBo.ok();
     }
 }

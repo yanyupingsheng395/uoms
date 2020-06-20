@@ -73,4 +73,5 @@ public interface ActivityHeadMapper {
     void expireFormalDuring();
 
 
+    void updateInfoStatus(@Param("sql") String sql);
 }

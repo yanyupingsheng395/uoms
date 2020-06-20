@@ -65,7 +65,7 @@ public interface ActivityProductService {
 
     int getCountByHeadId(String headId);
 
-    int validProduct(String headId, String stage);
+    int validProduct(String headId, String stage, String type);
 
     List<String> getGroupIds(Long headId);
 

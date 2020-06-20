@@ -148,6 +148,41 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         activityHeadMapper.expireFormalDuring();
     }
 
+    @Override
+    public void updateInfoStatus(String headId, String activityStage, String activityType, String key, String value) {
+        String column = "";
+        if("product".equalsIgnoreCase(key)) {
+            if("preheat".equalsIgnoreCase(activityStage)) {
+                if("notify".equalsIgnoreCase(activityType)) {
+                    column = "pn_product_status";
+                }else if("during".equalsIgnoreCase(activityType)) {
+                    column = "pd_product_status";
+                }
+            }else if("group".equalsIgnoreCase(activityStage)) {
+                if("notify".equalsIgnoreCase(activityType)) {
+                    column = "pn_group_status";
+                }else if("during".equalsIgnoreCase(activityType)) {
+                    column = "pd_group_status";
+                }
+            }
+        }else if("group".equalsIgnoreCase(key)) {
+            if("preheat".equalsIgnoreCase(activityStage)) {
+                if("notify".equalsIgnoreCase(activityType)) {
+                    column = "fn_product_status";
+                }else if("during".equalsIgnoreCase(activityType)) {
+                    column = "fd_product_status";
+                }
+            }else if("group".equalsIgnoreCase(activityStage)) {
+                if("notify".equalsIgnoreCase(activityType)) {
+                    column = "fn_group_status";
+                }else if("during".equalsIgnoreCase(activityType)) {
+                    column = "fd_group_status";
+                }
+            }
+        }
+        String sql = "update uo_op_activity_header set " + column + " = '"+value+"' where head_id = " + Long.valueOf(headId);
+        activityHeadMapper.updateInfoStatus(sql);
+    }
     /**
      * 保存群组信息
      * @param headId

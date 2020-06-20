@@ -487,23 +487,20 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      * 判断当前
      * @param headId
      * @param stage
+     * @param type
      * @return
      */
     @Override
-    public int validProduct(String headId, String stage) {
+    public int validProduct(String headId, String stage, String type) {
         ActivityHead activityHead = activityHeadMapper.findById(Long.valueOf(headId));
         if(stage.equalsIgnoreCase("preheat")) {
             if(activityHead.getPreheatNotifyStatus().equalsIgnoreCase("edit")) {
-                return activityProductMapper.validProduct(headId, stage);
-            }else {
-                return activityProductMapper.validProductOfDuring(headId, stage);
+                return activityProductMapper.validProduct(headId, stage, type);
             }
         }
         if(stage.equalsIgnoreCase("formal")) {
             if(activityHead.getFormalNotifyStatus().equalsIgnoreCase("edit")) {
-                return activityProductMapper.validProduct(headId, stage);
-            }else {
-                return activityProductMapper.validProductOfDuring(headId, stage);
+                return activityProductMapper.validProduct(headId, stage, type);
             }
         }
         return -1;
