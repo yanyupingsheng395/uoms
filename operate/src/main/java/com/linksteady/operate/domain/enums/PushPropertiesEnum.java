@@ -12,7 +12,7 @@ public enum  PushPropertiesEnum {
     productUrl("op.push.productUrl"),
     isTestEnv("op.push.isTestEnv"),
 
-    demoShortUrl("op.push.demoShortUrl"),
+    demoShortUrl("op.sms.url"),
     shortUrlLen("op.push.shortUrlLen"),
 
     prodNameLen("op.push.prodNameLen"),
