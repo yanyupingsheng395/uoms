@@ -5,6 +5,7 @@ import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.SmsTemplateMapper;
 import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.service.SmsTemplateService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  * Created by hxcao on 2019-04-29
  */
 @Service
+@Slf4j
 public class SmsTemplateServiceImpl implements SmsTemplateService {
 
     @Autowired

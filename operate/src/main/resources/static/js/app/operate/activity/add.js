@@ -1530,15 +1530,16 @@ function deleteTmp() {
 function testSend() {
     let selectRows = $( "#tmpTable" ).bootstrapTable( 'getSelections' );
     if (null == selectRows || selectRows.length == 0) {
-        $MB.n_warning( '请选择需要测试的文案！' );
+        $MB.n_warning('请选择需要测试的文案！');
         return;
     }
-    var code = selectRows[0]["code"];
+    let code = selectRows[0]["code"];
     //根据获取到的数据查询
     $.getJSON( "/activity/getActivityTemplateContent?code=" + code, function (resp) {
         if (resp.code === 200) {
             $( "#smstemplate_modal" ).modal( 'hide' );
             //更新测试面板
+            $("#testSmsCode").val(code);
             $( "#smsContent1" ).val( resp.data );
             $( '#send_modal' ).modal( 'show' );
         }
