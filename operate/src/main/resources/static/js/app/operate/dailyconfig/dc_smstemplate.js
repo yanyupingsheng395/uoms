@@ -440,18 +440,18 @@ function validCouponSendType() {
 }
 
 // 获取优惠券发送方式
-function getCouponSendType() {
-    var res;
-    $.ajax({
-        url: "/smsTemplate/getCouponSendType",
-        method: "get",
-        async: false,
-        success: function (r) {
-            res = r.data;
-        }
-    });
-    return res;
-}
+// function getCouponSendType() {
+//     var res;
+//     $.ajax({
+//         url: "/smsTemplate/getCouponSendType",
+//         method: "get",
+//         async: false,
+//         success: function (r) {
+//             res = r.data;
+//         }
+//     });
+//     return res;
+// }
 
 // 新增&修改
 $("#btn_save_sms").click(function () {

@@ -17,6 +17,7 @@ public enum  PushPropertiesEnum {
 
     prodNameLen("op.push.prodNameLen"),
     couponSendType("op.push.couponSendType"),
+    prodUrlEnabled("op.push.produrl_enabled"),
     couponNameLen("op.push.couponNameLen"),
     priceLen("op.push.priceLen"),
     profitLen("op.push.profitLen"),

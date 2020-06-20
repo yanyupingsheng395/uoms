@@ -86,10 +86,13 @@ public class PageController extends BaseController {
         model.addAttribute("couponNameLen", pushConfig.getCouponNameLen());
         //商品名称长度
         model.addAttribute("prodNameLen", pushConfig.getProdNameLen());
-        //优惠券发放方式
-        model.addAttribute("couponSendType", pushConfig.getCouponSendType());
         //短信长度
         model.addAttribute("smsLengthLimit", pushConfig.getSmsLengthLimit());
+        //优惠券发放方式
+        model.addAttribute("couponSendType", pushConfig.getCouponSendType());
+        //优惠券发放方式
+        model.addAttribute("prodUrlEnabled", pushConfig.getProdUrlEnabled());
+
         return "operate/config/smstemplate";
     }
 

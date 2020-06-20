@@ -206,4 +206,8 @@ public class PushConfig {
     public String getUnsubscribeFlag() {
         return  configService.getValueByName(PushPropertiesEnum.unsubscribeFlag.getKeyCode());
     }
+
+    public String getProdUrlEnabled() {
+        return  configService.getValueByName(PushPropertiesEnum.unsubscribeFlag.getKeyCode());
+    }
 }

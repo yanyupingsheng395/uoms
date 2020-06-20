@@ -151,16 +151,6 @@ public class SmsTemplateController extends BaseController {
         return ResponseBo.ok();
     }
 
-    /**
-     * 获取优惠券发送方式
-     *
-     * @return
-     */
-    @RequestMapping("/getCouponSendType")
-    public ResponseBo getCouponSendType() {
-        return ResponseBo.okWithData(null, pushConfig.getCouponSendType());
-    }
-
     @GetMapping("/validSmsContentLength")
     public ResponseBo validSmsContentLength(@RequestParam("smsContent") String smsContent) {
         return ResponseBo.okWithData(null, smsContent.length() <= pushConfig.getSmsLengthLimit());

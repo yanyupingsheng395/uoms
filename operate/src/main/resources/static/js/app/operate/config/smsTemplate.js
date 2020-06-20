@@ -44,7 +44,6 @@ function initTable() {
     $MB.initTable('smsTemplateTable', settings);
 }
 
-
 /**
  * 测试推送
  * @param smsCode
@@ -58,18 +57,14 @@ function testSend()
         $MB.n_warning('请选择需要测试的文案！');
         return;
     }
-
-    var smsCode =selectRows[0]["smsCode"];
-
+    let smsCode =selectRows[0]["smsCode"];
     //根据获取到的数据查询
     $.getJSON("/smsTemplate/getSmsTemplateContent?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
             //更新测试面板
             $("#smsContent1").val(resp.data.smsContent);
-
-            var _value = $("#smsContent1").val().replace(/\n/gi,"");
+            let _value = $("#smsContent1").val().replace(/\n/gi,"");
             $("#word1").text(_value.length);
-
             $('#send_modal').modal('show');
         }
     })
@@ -85,24 +80,19 @@ function sendMessage()
             phoneNums.push(temp);
         }
     })
-
-
     if(phoneNums.length==0)
     {
         $MB.n_warning("至少输入一个手机号！");
         return;
     }
-
     let phoneNum = phoneNums.join(',');
     let testSmsCode=$("#testSmsCode").val();
 
     //提交后端进行发送
     lightyear.loading('show');
-
     let param = new Object();
     param.phoneNum=phoneNum;
     param.smsCode=testSmsCode;
-
     $.ajax({
         url: "/smsTemplate/testSend",
         data: param,
@@ -179,21 +169,6 @@ function add() {
     $("#smsTemplateAddForm").validate().resetForm();
 }
 
-// 获取优惠券发送方式
-function getCouponSendType() {
-    var res;
-    $.ajax({
-        url: "/smsTemplate/getCouponSendType",
-        method: "get",
-        async: false,
-        success: function (r) {
-            res = r.data;
-        }
-    });
-    return res;
-}
-
-
 // 新增&修改
 $("#btn_save_sms").click(function () {
     var url = "";
@@ -257,7 +232,6 @@ function validate() {
 
 // 验证补贴
 function validCouponSendType() {
-    let couponSendType = getCouponSendType();
     let smsName = $('#smsName').val();
     let smsContent = $('#smsContent').val();
     let isCouponUrl = $("input[name='isCouponUrl']:checked").val();
