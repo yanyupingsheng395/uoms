@@ -1,7 +1,7 @@
 <div class="col-md-12 select-table">
     <input type="hidden" id="activity_stage"/>
     <div class="row">
-        <span class="navbar-page-title" id="productListTitle1">预售活动商品列表</span>
+        <span class="navbar-page-title" id="productListTitle1">预售通知活动商品列表</span>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -80,7 +80,7 @@
 </div>
 <div class="col-md-12 select-table">
     <div class="row">
-        <span class="navbar-page-title" id="productListTitle2">正式期间活动商品列表</span>
+        <span class="navbar-page-title" id="productListTitle2">预售期间活动商品列表</span>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -147,7 +147,7 @@
                 <button class="btn btn-secondary" id="btn_valid_product2">
                     <i class="fa fa-refresh"></i> 数据校验
                 </button>
-                <button class="btn btn-secondary" id="btn_valid_product2">
+                <button class="btn btn-secondary" onclick="syncNotifyProduct()">
                     <i class="fa fa-refresh"></i> 同步通知商品
                 </button>
             </div>

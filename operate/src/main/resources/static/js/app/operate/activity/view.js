@@ -1,5 +1,11 @@
 let create_step;
 let CURRENT_ACTIVITY_STAGE;
+let CURRENT_ACTIVITY_TYPE;
+let validatorProduct;
+let $activityProductAddForm = $( "#add-product-form" );
+var basic_validator;
+var $basicAddForm = $( "#basic-add-form" );
+
 $( function () {
     create_step = steps({
         el: "#addStep",
@@ -11,20 +17,26 @@ $( function () {
         center: true,
         dataOrder: ["title", "line", "description"]
     });
-
-    var hasPreheatVal = $( "input[name='hasPreheat']:checked" ).val();
-    haspreheat(hasPreheatVal);
+    if(operate_type === 'update') {
+        var hasPreheatVal = $( "input[name='hasPreheat']:checked" ).val();
+        haspreheat(hasPreheatVal);
+    }
+    initDt();
+    validBasic();
+    validateProductRule();
 });
 
+/**************************按钮相关 start*****************************/
 function haspreheat(v) {
     if(v === '1') {
         CURRENT_ACTIVITY_STAGE = 'preheat';
+        $("#creatPreheat").removeAttr("style");
     }
     if(v === '0') {
         CURRENT_ACTIVITY_STAGE = 'formal';
-        $("#productListTitle").html('正式商品列表');
-        $("#preheatFinishBtn").attr("style", "display:none;");
-        $("#formalFinishBtn").attr("style", "display:block;");
+        $("#productListTitle1").html('正式预售活动商品列表');
+        $("#productListTitle2").html('正式通知活动商品列表');
+        $("#creatPreheat").attr("style", "display:none;");
     }
 }
 
@@ -39,18 +51,80 @@ function platDiscountClick(idx) {
     }
 }
 
-$(function (){
-    initDt();
-    validBasic();
-    validateProductRule();
-});
 
-let validatorProduct;
-let $activityProductAddForm = $( "#add-product-form" );
+function preheatClick() {
+    CURRENT_ACTIVITY_STAGE = 'preheat';
+    $("#productListTitle1").html('预售期间活动商品列表');
+    $("#productListTitle2").html('预售通知活动商品列表');
+    stepBreak(1);
+}
 
-// 验证商品表
+function formalClick() {
+    CURRENT_ACTIVITY_STAGE = 'formal';
+    $("#productListTitle1").html('正式期间活动商品列表');
+    $("#productListTitle2").html('正式通知活动商品列表');
+    stepBreak(1);
+}
+
+function beforeSave(activityStage){
+    CURRENT_ACTIVITY_STAGE = activityStage;
+    if(operate_type === 'save') {
+        var validator = $basicAddForm.validate();
+        if (validator.form() && validBasicDt()) {
+            $MB.confirm( {
+                title: '提示:',
+                content: '确定保存信息？'
+            }, function () {
+                saveActivityHead();
+            } );
+        }
+    }
+    if(operate_type === 'update') {
+        stepBreak(1);
+    }
+}
+
+// 点击上一步下一步按钮
+function stepBreak(index) {
+    if(index == 0) {
+        create_step.setActive(0);
+        $("#step1").attr("style", "display:block;");
+        $("#step2").attr("style", "display:none;");
+        $("#step3").attr("style", "display:none;");
+
+        $("#creatPreheat").attr('onclick', 'preheatClick()');
+        $("#creatFormal").attr('onclick', 'formalClick()');
+    }
+    if(index == 1) {
+        create_step.setActive(1);
+        getProductInfo('NOTIFY', 'activityProductTable1');
+        getProductInfo('DURING', 'activityProductTable2');
+        $("#step1").attr("style", "display:none;");
+        $("#step2").attr("style", "display:block;");
+        $("#step3").attr("style", "display:none;");
+    }
+    if(index == 2) {
+        $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
+            if(r.code === 200) {
+                if(r.data > 0) {
+                    $MB.n_warning("存在校验不通过的商品！");
+                }else {
+                    create_step.setActive(2);
+                    $("#step1").attr("style", "display:none;");
+                    $("#step2").attr("style", "display:none;");
+                    $("#step3").attr("style", "display:block;");
+                    createActivity(CURRENT_ACTIVITY_STAGE);
+                }
+            }
+        });
+    }
+}
+/**************************按钮相关 end*****************************/
+
+
+/*************************活动运营商品 start*****************************/
 function validateProductRule() {
-    let icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i> ";
+    let icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i>";
     validatorProduct = $activityProductAddForm.validate( {
         rules: {
             productId: {
@@ -108,9 +182,6 @@ function validateProductRule() {
                 required: function () {
                     return $("#activityRule").val() === '4' || $("#activityRule").val() === '3';
                 }
-            },
-            activityType: {
-                required: true
             }
         },
         errorPlacement: function (error, element) {
@@ -148,14 +219,10 @@ function validateProductRule() {
             },
             discountAmount: {
                 required: icon + "请输入立减金额"
-            },
-            activityType: {
-                required: icon + "请选择利益点适用场景"
             }
         }
     } );
 }
-
 
 // 查询商品信息
 function searchActivityProduct() {
@@ -176,16 +243,20 @@ $( "#btn_download" ).click( function () {
 
 // 添加活动商品
 $( "#saveActivityProduct" ).click( function () {
-    let operateType = $("#activity_stage").val();
     let validator = $activityProductAddForm.validate();
     let flag = validator.form();
     if (flag) {
         let operate = $( "#saveActivityProduct" ).attr( "name" );
         if (operate === "save") {
-            $.post( "/activity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val() + "&activityStage=" + CURRENT_ACTIVITY_STAGE,  function (r) {
+            $.post( "/activity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val() + "&activityStage=" + CURRENT_ACTIVITY_STAGE + "&activityType=" + CURRENT_ACTIVITY_TYPE,  function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "添加商品成功！" );
-                    getProductInfo();
+                    if(CURRENT_ACTIVITY_TYPE === 'NOTIFY') {
+                        getProductInfo('NOTIFY', 'activityProductTable1');
+                    }
+                    if(CURRENT_ACTIVITY_TYPE === 'DURING') {
+                        getProductInfo('DURING', 'activityProductTable2');
+                    }
                     $MB.closeAndRestModal( "addProductModal" );
                 } else {
                     $MB.n_danger( r.msg );
@@ -193,11 +264,15 @@ $( "#saveActivityProduct" ).click( function () {
             } );
         }
         if (operate === 'update') {
-            $.post( "/activity/updateActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" +
-                $( "#headId" ).val() + "&activityStage=" + CURRENT_ACTIVITY_STAGE + "&operateType=" + operateType + "&productId=" + $("#product_id").val(), function (r) {
+            $.post( "/activity/updateActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val(), function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "更新商品成功！" );
-                    getProductInfo();
+                    if(CURRENT_ACTIVITY_TYPE === 'NOTIFY') {
+                        getProductInfo('NOTIFY', 'activityProductTable1');
+                    }
+                    if(CURRENT_ACTIVITY_TYPE === 'DURING') {
+                        getProductInfo('DURING', 'activityProductTable2');
+                    }
                     $MB.closeAndRestModal( "addProductModal" );
                 } else {
                     $MB.n_danger(r.msg);
@@ -222,10 +297,27 @@ $( "#addProductModal" ).on( "hidden.bs.modal", function () {
 } );
 
 // 修改商品信息
-$( "#btn_edit_shop" ).click( function () {
+$( "#btn_edit_shop1" ).click( function () {
+    editShop('NOTIFY');
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
+});
+
+$( "#btn_edit_shop2" ).click( function () {
+    editShop('DURING');
+    CURRENT_ACTIVITY_TYPE = 'DURING';
+});
+
+function editShop(type) {
+    var tableId = '';
+    if(type === 'NOTIFY') {
+        tableId = 'activityProductTable1';
+    }
+    if(type === 'DURING') {
+        tableId = 'activityProductTable2';
+    }
     $("#modalLabel").html('').append('修改商品');
     $( "#saveActivityProduct" ).attr( "name", "update" );
-    let selected = $( "#activityProductTable" ).bootstrapTable( 'getSelections' );
+    let selected = $( "#" + tableId ).bootstrapTable( 'getSelections' );
     let selected_length = selected.length;
     if (!selected_length) {
         $MB.n_warning( '请选择需要编辑的商品！' );
@@ -235,8 +327,8 @@ $( "#btn_edit_shop" ).click( function () {
         $MB.n_warning( '一次只能选择一条记录修改！' );
         return;
     }
-    let productId = selected[0].productId;
-    $.get( "/activity/getProductById", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE, productId: productId}, function (r) {
+    let id = selected[0].id;
+    $.get( "/activity/getProductById", {id: id}, function (r) {
         if (r.code === 200) {
             let data = r.data;
             $("#add-product-form").find( "input[name='id']" ).val( data['id'] );
@@ -289,7 +381,7 @@ $( "#btn_edit_shop" ).click( function () {
             $MB.n_danger( "获取信息失败！" );
         }
     } );
-} );
+}
 
 $( "#uploadFile" ).change( function () {
     $( '#filename' ).text( "文件名:" + $(this)[0].files[0].name).attr( "style", "display:inline-block;" );
@@ -324,6 +416,7 @@ $('#btn_upload').click(function () {
         formData.append("repeatProduct", repeatProduct);
         formData.append("uploadMethod", uploadMethod);
         formData.append("stage", CURRENT_ACTIVITY_STAGE);
+        formData.append("activityType", CURRENT_ACTIVITY_TYPE);
         $.ajax({
             url: "/activity/uploadExcel",
             type: "post",
@@ -338,7 +431,12 @@ $('#btn_upload').click(function () {
                     }else {
                         makeErrorTable(res.data);
                     }
-                    $MB.refreshTable('activityProductTable');
+                    if(CURRENT_ACTIVITY_TYPE == 'NOTIFY') {
+                        $MB.refreshTable('activityProductTable1');
+                    }
+                    if(CURRENT_ACTIVITY_TYPE == 'DURING') {
+                        $MB.refreshTable('activityProductTable2');
+                    }
                     $("#uploadProduct").modal('hide');
                 }else {
                     $MB.n_warning(res.msg);
@@ -392,6 +490,164 @@ $("#uploadProduct").on('hidden.bs.modal', function () {
     $("#filename").html('').attr("style", "display:none;");
 });
 
+$("#btn_delete_shop1").click(function () {
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
+    deleteShop(CURRENT_ACTIVITY_TYPE);
+});
+
+$("#btn_delete_shop2").click(function () {
+    CURRENT_ACTIVITY_TYPE = 'DURING';
+    deleteShop(CURRENT_ACTIVITY_TYPE);
+});
+
+// 删除商品，同时更改头表数据状态
+function deleteShop(type){
+    var tableId;
+    if(type === 'NOTIFY') {
+        tableId = 'activityProductTable1';
+    }
+    if(type === 'DURING') {
+        tableId = 'activityProductTable2';
+    }
+    var selected = $("#" + tableId).bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要删除的商品记录！');
+        return;
+    }
+    var headId = $("#headId").val();
+    var stage = CURRENT_ACTIVITY_STAGE;
+    var ids = [];
+    selected.forEach((v, k)=>{
+        ids.push(v['id']);
+    });
+    $MB.confirm({
+        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+        content: '确认删除选中的商品记录？'
+    }, function () {
+        $.post("/activity/deleteProduct", {ids: ids.join(",")}, function (r) {
+            if(r.code === 200) {
+                $MB.n_success("删除成功！");
+                $MB.refreshTable(tableId);
+            }else {
+                $MB.n_danger("删除失败！");
+            }
+        });
+    });
+}
+
+function getProductInfo(type, tableId) {
+    var title = '活动通知';
+    if(type === 'NOTIFY') {
+        title = '活动通知';
+    }
+    if(type === 'DURING') {
+        title = '活动期间';
+    }
+    var settings = {
+        url: '/activity/getActivityProductPage',
+        pagination: true,
+        singleSelect: false,
+        sidePagination: "server",
+        clickToSelect: true,
+        pageSize: 5,
+        pageList: [5, 15, 50, 100],
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,  ////页面大小
+                pageNum: (params.offset / params.limit) + 1,
+                param: {
+                    headId: $( "#headId" ).val(),
+                    productId: $( "#productId" ).val(),
+                    productName: $( "#productName" ).val(),
+                    groupId: $("#groupId").find("option:selected").val(),
+                    activityStage: function () {
+                        return CURRENT_ACTIVITY_STAGE;
+                    },
+                    activityType: type
+                }
+            };
+        },
+        columns: [
+            {
+                checkbox: true
+            },
+            {
+                field: 'productId',
+                title: '商品ID',
+                valign: 'middle',
+                align: 'center'
+            }, {
+                field: 'productName',
+                title: '名称',
+                valign: 'middle',
+                align: 'center'
+            },{
+                field: 'groupId',
+                title: '店铺活动机制',
+                valign: 'middle',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    var res = "-";
+                    if(value === '9') {
+                        res =  "满件打折";
+                    }
+                    if(value === '10') {
+                        res =  "满元减钱";
+                    }
+                    if(value === '11') {
+                        res =  "特价秒杀";
+                    }
+                    if(value === '12') {
+                        res =  "预售付尾立减";
+                    }
+                    if(value === '13') {
+                        res = '无店铺活动'
+                    }
+                    return res;
+                }
+            },{
+                field: 'minPrice',
+                title: title + '体现最<br/>低单价（元/件）',
+                align: 'center'
+            },{
+                field: 'activityProfit',
+                title: title + '体现利益点',
+                valign: 'middle',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if(row['groupId'] == '9') {
+                        return (value*10) +'折';
+                    }else {
+                        return value +'元';
+                    }
+                }
+            }, {
+                field: 'checkFlag',
+                title: '校验结果',
+                valign: 'middle',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if(value === 'Y') {
+                        return "<span class=\"badge bg-success\">通过</span>";
+                    }
+                    if(value === 'N') {
+                        return "<span class=\"badge bg-danger\">未通过</span>";
+                    }
+                    return "-";
+                }
+            }, {
+                field: 'checkComments',
+                title: '失败原因',
+                valign: 'middle',
+                align: 'center'
+            }]
+    };
+    $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+}
+/********************************* 活动运营商品 end *********************************/
+
+/********************************* 活动运营计划 start *********************************/
 // 提交计划
 // type:NOTIFY 活动通知，DURING 活动期间
 function submitActivity(type) {
@@ -452,174 +708,6 @@ function submitData(headId, type) {
         }
     });
 }
-
-// 删除商品，同时更改头表数据状态
-$("#btn_delete_shop").click(function () {
-    var selected = $("#activityProductTable").bootstrapTable('getSelections');
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请选择需要删除的商品记录！');
-        return;
-    }
-    var headId = $("#headId").val();
-    var stage = CURRENT_ACTIVITY_STAGE;
-    var productIds = [];
-    selected.forEach((v, k)=>{
-        productIds.push(v['productId']);
-    });
-
-    $MB.confirm({
-        title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认删除选中的商品记录？'
-    }, function () {
-        $.post("/activity/deleteProduct", {headId:headId, stage: stage, productIds: productIds.join(",")}, function (r) {
-            if(r.code === 200) {
-                $MB.n_success("删除成功！");
-                $MB.refreshTable('activityProductTable');
-            }else {
-                $MB.n_danger("删除失败！");
-            }
-        });
-    });
-});
-
-function getProductInfo() {
-    var settings = {
-        url: '/activity/getActivityProductPage',
-        pagination: true,
-        singleSelect: false,
-        sidePagination: "server",
-        clickToSelect: true,
-        pageList: [10, 25, 50, 100],
-        queryParams: function (params) {
-            return {
-                pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit) + 1,
-                param: {
-                    headId: $( "#headId" ).val(),
-                    productId: $( "#productId" ).val(),
-                    productName: $( "#productName" ).val(),
-                    groupId: $("#groupId").find("option:selected").val(),
-                    activityStage: CURRENT_ACTIVITY_STAGE
-                }
-            };
-        },
-        columns: [
-            {
-                checkbox: true
-            },
-            {
-                field: 'productId',
-                title: '商品ID',
-                valign: 'middle',
-                align: 'center'
-            }, {
-                field: 'productName',
-                title: '名称',
-                valign: 'middle',
-                align: 'center'
-            },{
-                field: 'groupId',
-                title: '店铺活动机制',
-                valign: 'middle',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    var res = "-";
-                    if(value === '9') {
-                        res =  "满件打折";
-                    }
-                    if(value === '10') {
-                        res =  "满元减钱";
-                    }
-                    if(value === '11') {
-                        res =  "特价秒杀";
-                    }
-                    if(value === '12') {
-                        res =  "预售付尾立减";
-                    }
-                    if(value === '13') {
-                        res = '无店铺活动'
-                    }
-                    return res;
-                }
-            },{
-                field: 'minPrice',
-                title: '活动通知体现最<br/>低单价（元/件）',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(row['activityType'] === 'NOTIFY' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
-                        return value;
-                    }else {
-                        return '-';
-                    }
-                }
-            },{
-                field: 'activityProfit',
-                title: '活动通知体现利益点',
-                valign: 'middle',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(row['activityType'] === 'NOTIFY' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
-                        if(row['groupId'] == '9') {
-                            return (value*10) +'折';
-                        }else {
-                            return value +'元';
-                        }
-                    }else {
-                        return '-';
-                    }
-                }
-            },  {
-                field: 'minPrice',
-                title: '活动期间体现最<br/>低单价（元/件）',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(row['activityType'] === 'DURING' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
-                        return value;
-                    }else {
-                        return '-';
-                    }
-                }
-            }, {
-                field: 'activityProfit',
-                title: '活动期间体现利益点',
-                valign: 'middle',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(row['activityType'] === 'DURING' || row['activityType'] === 'NOTIFY,DURING' || row['activityType'] === 'DURING,NOTIFY'){
-                        if(row['groupId'] == '9') {
-                            return (value*10) +'折';
-                        }else {
-                            return value +'元';
-                        }
-                    }else {
-                        return '-';
-                    }
-                }
-            }, {
-                field: 'checkFlag',
-                title: '校验结果',
-                valign: 'middle',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(value === 'Y') {
-                        return "<span class=\"badge bg-success\">通过</span>";
-                    }
-                    if(value === 'N') {
-                        return "<span class=\"badge bg-danger\">未通过</span>";
-                    }
-                    return "-";
-                }
-            }, {
-                field: 'checkComments',
-                title: '失败原因',
-                valign: 'middle',
-                align: 'center'
-            }]
-    };
-    $( "#activityProductTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
-}
-
 // 跳转到
 function createActivity(stage) {
     CURRENT_ACTIVITY_STAGE = stage;
@@ -684,6 +772,8 @@ function getPlanStatus(headId, stage) {
     return false;
 }
 
+/********************************* 活动运营计划 end *********************************/
+
 // 根据当前选择设置标题
 function setTitle(stage) {
     if(stage === 'preheat') {
@@ -719,41 +809,11 @@ function initDt() {
     $( "#preheatStartDt" ).datepicker( 'setStartDate', date );
     $( "#preheatEndDt" ).datepicker( 'setStartDate', date );
     $( "#formalStartDt" ).datepicker( 'setStartDate', date );
-    $( "#formalEndDt" ).datepicker( 'setStartDate', date );
+    $( "#formalEndDt" ).datepicker( 'setStartDate', date);
     $( "#preheatNotifyDt" ).datepicker( 'setStartDate', date );
     $( "#formalNotifyDt" ).datepicker( 'setStartDate', date );
 }
 
-$( "#btn_basic" ).click( function () {
-    stepBreak(1);
-});
-
-// 点击上一步下一步按钮
-function stepBreak(index) {
-    if(index == 0) {
-        create_step.setActive(0);
-        $("#step1").attr("style", "display:block;");
-        $("#step2").attr("style", "display:none;");
-        $("#step3").attr("style", "display:none;");
-    }
-    if(index == 1) {
-        create_step.setActive(1);
-        getProductInfo();
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:block;");
-        $("#step3").attr("style", "display:none;");
-    }
-    if(index == 2) {
-        create_step.setActive(2);
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:none;");
-        $("#step3").attr("style", "display:block;");
-        createActivity(CURRENT_ACTIVITY_STAGE);
-    }
-}
-
-var basic_validator;
-var $basicAddForm = $( "#basic-add-form" );
 function validBasic() {
     var icon = "<i class='fa fa-close'></i> ";
     basic_validator = $basicAddForm.validate( {
@@ -901,7 +961,9 @@ function saveActivityHead() {
         if (r.code === 200) {
             $MB.n_success( r.msg );
             $( "#headId" ).val( r.data );
+            stepBreak(1);
             $( "#basic-add-form" ).find( 'input' ).attr( "disabled", "disabled" );
+            $( "#basic-add-form" ).find( 'select' ).attr( "disabled", "disabled" );
             $( '#btn_basic' ).attr( "disabled", "disabled" );
         } else {
             $MB.n_danger( "有错误发生！" );
@@ -910,7 +972,17 @@ function saveActivityHead() {
 }
 
 // 添加商品
-$( "#btn_add_shop" ).click( function () {
+$( "#btn_add_shop1" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
+    var headId = $( "#headId" ).val();
+    $( "#saveActivityProduct" ).attr( "name", "save" );
+    $( '#addProductModal' ).modal( 'show' );
+    $( "#modalLabel" ).html( '' ).append( '添加商品' );
+    $("#shopOffer").html('');
+} );
+
+$( "#btn_add_shop2" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'DURING';
     var headId = $( "#headId" ).val();
     $( "#saveActivityProduct" ).attr( "name", "save" );
     $( '#addProductModal' ).modal( 'show' );
@@ -919,10 +991,17 @@ $( "#btn_add_shop" ).click( function () {
 } );
 
 // 批量添加商品
-$( "#btn_batch_upload" ).click( function () {
+$( "#btn_batch_upload1" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
     $("#uploadProduct").modal('show');
-} );
+});
 
+$( "#btn_batch_upload2" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'DURING';
+    $("#uploadProduct").modal('show');
+});
+
+/*************************活动运营商品 end*****************************/
 $( "#btn_create_preheat" ).click( function () {
     var headId = $( "#headId" ).val();
     if (headId === '') {
@@ -982,8 +1061,59 @@ function getGroupList(stage, type, tableId) {
                 field: 'groupInfo',
                 title: '理解用户群组'
             }, {
+                title: '设置文案',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    var res = "";
+                    if(tableId === 'table1') {
+                        if(stage === 'preheat') {
+                            if(preheatNotifyStatus === 'done' || preheatNotifyStatus === 'timeout' || !flag) {
+                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
+                            }else {
+                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
+                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"NOTIFY\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
+                                    "</a>";
+                            }
+                        }else {
+                            if(formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout' || !flag) {
+                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
+                            }else {
+                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
+                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"NOTIFY\",\""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
+                                    "</a>";
+                            }
+                        }
+                    }else {
+                        if(stage === 'preheat') {
+                            if(preheatStatus === 'done') {
+                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
+                            }else {
+                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
+                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"DURING\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
+                                    "</a>";
+                            }
+                        }else {
+                            if(formalStatus === 'done') {
+                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
+                            }else {
+                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
+                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"DURING\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
+                                    "</a>";
+                            }
+                        }
+                    }
+                    return res;
+                }
+            }, {
                 field: 'smsTemplateContent',
                 title: '文案内容',
+                //td宽度及内容超过宽度隐藏
+                cellStyle : function(value, row, index, field){
+                    return {
+                        css: {"min-width": '300px',
+                            "max-width":'300px'
+                        }
+                    }},
                 formatter: function (value, row, index) {
                     if(value === null || value.length==0)
                     {
@@ -1032,34 +1162,43 @@ function selectGroup(type, tmpCode, groupId, tableId) {
     $( '#smstemplate_modal' ).modal( 'show' );
 }
 
+///////////////////////////////文案维护相关的js///////////////////////////////////////////
 // 获取文案列表数据
 function getTmpTableData() {
     var settings = {
         clickToSelect: true,
-        rowStyle: tmpRowStyle,
         url: '/activity/getSmsTemplateList',
         pagination: false,
         singleSelect: true,
         queryParams: function () {
             return {
-                name: $("#sms-form").find("input[name='name']").val(),
                 isPersonal: $("#sms-form").find("select[name='isPersonal']").val(),
-                relation: $("#sms-form").find("select[name='relation']").val(),
-                scene: $("#sms-form").find("select[name='scene']").val()
+                scene: $("#sms-form").find("select[name='scene']").val(),
+                headId: $( "#headId" ).val(),
+                stage: CURRENT_ACTIVITY_STAGE,
+                type: CURRENT_TYPE
             }
         },
         columns: [
             {
-                checkbox: true
+                checkbox: true,
+                formatter: function (value, row, index) {
+                    if(row.code===CURRENT_TMP_CODE) {
+                        return {
+                            checked : true
+                        };
+                    }
+                }
+            },
+            {
+                field: 'code',
+                title: '文案编号'
             },{
                 field: 'content',
-                title: '消息内容',
-                formatter: function (value, row, index) {
-                    return longTextFormat(value, row, index);
-                }
+                title: '文案内容'
             },{
-                field: 'insertDt',
-                title: '创建时间',
+                field: 'opDt',
+                title: '更新时间',
                 align: 'center'
             },{
                 field: 'scene',
@@ -1086,38 +1225,70 @@ function getTmpTableData() {
     $( "#tmpTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 
-//  保存文案内容
-$( "#btn_save_sms" ).click( function () {
-    var operateType = $( this ).attr( "name" );
-    var flag = validTmp();
+/**
+ * 保存文案内容
+ */
+$( "#btn_save_sms").click( function () {
+    let operateType = $( this ).attr( "name" );
+    let flag = validTmp();
     if (flag) {
-        $MB.confirm( {
-            title: '提示:',
-            content: operateType === 'save' ? '确定保存文案信息？' : '确定更新文案信息？'
-        }, function () {
-            var url = '';
-            if (operateType === 'save') {
-                url = '/activity/saveSmsTemplate';
-            } else if (operateType === 'update') {
-                url = '/activity/updateSmsTemplate';
-            }
-            $.post( url, $( "#tmp_add_form" ).serialize(), function (r) {
-                if (r.code === 200) {
-                    if (operateType === 'save') {
+        if(operateType === 'save')
+        {
+            $MB.confirm( {
+                title: '提示:',
+                content: '确定保存文案信息？'
+            }, function () {
+                $.post( '/activity/saveSmsTemplate', $( "#tmp_add_form" ).serialize(), function (r) {
+                    if (r.code === 200) {
                         $MB.n_success( "保存文案信息成功！" );
-                    } else if (operateType === 'update') {
-                        $MB.n_success( "更新文案信息成功！" );
                     }
+                    $( "#sms_add_modal" ).modal( 'hide' );
+                    $( "#smstemplate_modal" ).modal( 'show' );
+                    getTmpTableData();
+                });
+            });
+        }else
+        {
+            //更新操作 判断当前文案是否在其它地方已被引用
+            $.get("/activity/checkTemplateUsed", {
+                code: $("#code").val(),
+                stage: CURRENT_ACTIVITY_STAGE,
+                headId: $( "#headId" ).val(),
+                type: CURRENT_TYPE
+            }, function (r) {
+                let confirmmsg='';
+                let flag='';
+                if(r.code === 200) {
+                    if(r.msg==='Y') {
+                        confirmmsg='当前文案已在其它活动中被引用，无法直接保存，系统将会为您新增一条文案，确定要继续么？';
+                        flag='Y';
+                    }else {
+                        confirmmsg='确定更新文案?';
+                        flag='N';
+                    }
+                    $MB.confirm( {
+                        title: '提示:',
+                        content: confirmmsg,
+                    }, function () {
+                        $.post( '/activity/updateSmsTemplate', $("#tmp_add_form").serialize()+"&flag="+flag, function (r) {
+                            if (r.code === 200) {
+                                $MB.n_success(r.msg);
+                            }
+                            $( "#sms_add_modal" ).modal( 'hide' );
+                            $( "#smstemplate_modal" ).modal( 'show' );
+                            getTmpTableData();
+                        } );
+                    });
                 }
-                $( "#sms_add_modal" ).modal( 'hide' );
-                $( "#smstemplate_modal" ).modal( 'show' );
-                getTmpTableData();
-            } );
-        } );
+            });
+        }
     }
-} );
+});
 
-// 验证文案信息
+/**
+ * 验证文案信息
+ * @returns {boolean}
+ */
 function validTmp() {
     var isProdName = $( "input[name='isProdName']:checked" ).val();
     var isProdUrl = $( "input[name='isProdUrl']:checked" ).val();
@@ -1221,16 +1392,6 @@ function validTmp() {
     return true;
 }
 
-// 当前群组所选的文案
-function tmpRowStyle(row, index) {
-    if (CURRENT_TMP_CODE != undefined && CURRENT_TMP_CODE != null && row.code === CURRENT_TMP_CODE) {
-        return {
-            classes: 'success'
-        };
-    }
-    return {};
-}
-
 /**
  * 为群组设置模板信息
  * @param type 类型：期间，通知
@@ -1269,6 +1430,20 @@ function setTmpCode() {
     });
 }
 
+/**
+ * 关闭文案选择面板
+ */
+function closeTmpCode()
+{
+    $( "#smstemplate_modal" ).modal( 'hide' );
+    if(CURRENT_TYPE === 'DURING') {
+        getGroupList( CURRENT_ACTIVITY_STAGE, "DURING", 'table5');
+    }
+    if(CURRENT_TYPE === 'NOTIFY') {
+        getGroupList( CURRENT_ACTIVITY_STAGE, "NOTIFY", 'table1');
+    }
+}
+
 function contextOnChange() {
     var content = $('#content').val() === "" ? "请输入短信内容": $('#content').val();
     $("#article").html('').append(content);
@@ -1282,31 +1457,23 @@ function editTmp() {
         $MB.n_warning( '请选择需要编辑的文案！' );
         return;
     }
-    var code = selected[0].code;
-    $.get("/activity/checkTmpIsUsed", {tmpCode: code}, function (r) {
-        if(r.code === 200) {
-            if(r.data) {
-                $MB.n_warning("当前文案已被引用无法修改！");
-            }else {
-                $.get( "/activity/getTemplate", {code: code}, function (r) {
-                    var data = r.data;
-                    $( "#code" ).val( data.code );
-                    $( "#content" ).val( data.content );
-                    $("#article").html('').append(data.content);
-                    $( "input[name='isProdName']:radio[value='" + data.isProdName + "']" ).prop( "checked", true );
-                    $( "input[name='isProdUrl']:radio[value='" + data.isProdUrl + "']" ).prop( "checked", true );
-                    $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
-                    $( "input[name='isProfit']:radio[value='" + data.isProfit + "']" ).prop( "checked", true );
-                    $( "#btn_save_sms" ).attr( 'name', 'update' );
+    let code = selected[0].code;
+    $.get( "/activity/getTemplate", {code: code}, function (r) {
+        var data = r.data;
+        $( "#code" ).val( data.code );
+        $( "#content" ).val( data.content );
+        $("#article").html('').append(data.content);
+        $( "input[name='isProdName']:radio[value='" + data.isProdName + "']" ).prop( "checked", true );
+        $( "input[name='isProdUrl']:radio[value='" + data.isProdUrl + "']" ).prop( "checked", true );
+        $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
+        $( "input[name='isProfit']:radio[value='" + data.isProfit + "']" ).prop( "checked", true );
+        $( "#btn_save_sms" ).attr( 'name', 'update' );
 
-                    //todo 文案的字数在编辑状态下好像没出来
+        //todo 文案的字数在编辑状态下好像没出来
 
-                    $( "#smstemplate_modal" ).modal( 'hide' );
-                    $( "#sms_add_modal" ).modal( 'show' );
-                } );
-            }
-        }
-    });
+        $( "#smstemplate_modal" ).modal( 'hide' );
+        $( "#sms_add_modal" ).modal( 'show' );
+    } );
 }
 
 /**
@@ -1336,24 +1503,26 @@ function deleteTmp() {
         return;
     }
     var code = selected[0].code;
-    $.get("/activity/checkTmpIsUsed", {tmpCode: code}, function (r) {
-        if(r.code === 200) {
-            if(r.data) {
-                $MB.n_warning("当前文案已被引用无法删除！");
-            }else {
-                $MB.confirm( {
-                    title: '提示：',
-                    content: '确认删除选中的文案？'
-                }, function () {
-                    $.post( "/activity/deleteTmp", {code: code}, function (r) {
-                        if (r.code === 200) {
-                            $MB.n_success( "删除成功！" );
-                        }
-                        getTmpTableData();
-                    } );
-                } );
-            }
-        }
+
+    $MB.confirm( {
+        title: '提示：',
+        content: '确认删除选中的文案？'
+    }, function () {
+        $.post( "/activity/deleteActivityTemplate",
+            {code: code,
+                headId:$( "#headId" ).val(),
+                stage: CURRENT_ACTIVITY_STAGE,
+                type: CURRENT_TYPE
+            }, function (r) {
+                if (r.code === 200) {
+                    $MB.n_success( "删除成功");
+                    getTmpTableData();
+                }else
+                {
+                    $MB.n_warning(r.msg);
+                }
+
+            } );
     });
 }
 
@@ -1432,26 +1601,51 @@ function resetTmpInfo() {
     getTmpTableData();
 }
 
-// 获取默认的转化数据
-// function geConvertInfo() {
-//     $.get("/activity/geConvertInfo", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
-//         var data = r.data;
-//         var covRate = data['covRate'];
-//         covRate = (covRate !== null && covRate !== '' && covRate !== undefined) ? parseFloat((data['covRate'] * 100).toFixed(2)) : '';
-//         $("#covListId").val(data['covListId']);
-//         $("#covRate").val(covRate);
-//         $("#expectPushNum").val(data['expectPushNum']);
-//         $("#expectCovNum").val(data['expectCovNum']);
-//     });
-// }
 
 function add_sms() {
     $('#smstemplate_modal').modal('hide');
     $('#sms_add_modal').modal('show');
 }
 
-// 调整系统方案
-function changePlan() {
+// 统计短信内容的字数
+statTmpContentNum();
+function statTmpContentNum() {
+    $("#content").on('input propertychange', function () {
+        let smsContent = $('#content').val();
+        let y = smsContent.length;
+        let m = smsContent.length;
+        let n = smsContent.length;
+        if(smsContent.indexOf('${商品详情页短链}') > -1) {
+            y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
+            m = m - '${商品详情页短链}'.length;
+        }
+        if(smsContent.indexOf('${商品名称}') > -1) {
+            y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
+            m = m - '${商品名称}'.length;
+        }
+        if(smsContent.indexOf('${商品最低单价}') > -1) {
+            y = y - '${商品最低单价}'.length + parseInt(PRICE_LEN);
+            m = m - '${商品最低单价}'.length;
+        }
+        if(smsContent.indexOf('${商品利益点}') > -1) {
+            y = y - '${商品利益点}'.length + parseInt(PROFIT_LEN);
+            m = m - '${商品利益点}'.length;
+        }
+
+        total_num = y;
+        var code = "";
+        code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
+        $("#word").text(code);
+    });
+}
+
+///////////////////////////////////////////文案相关js结束///////////////////////////////////
+
+///////////////////////////////////////转化率调整相关js/////////////////////////////////////
+/**
+ * 调整转化率
+ */
+$("#changePlan").click(function () {
     $("#plan_change_modal").modal('show');
     table3();
     var data = [{
@@ -1462,11 +1656,6 @@ function changePlan() {
         name: '改变方案对转化用户数造成的预期改变'
     }];
     table4(data);
-}
-
-// 调整方案
-$("#changePlan").click(function () {
-    changePlan();
 });
 
 function covRowStyle(row, index) {
@@ -1598,44 +1787,46 @@ function updateCovInfo() {
             if(r.code === 200) {
                 $MB.n_success("设置成功！");
             }
-            geConvertInfo();
+            covertDataTable();
             $("#plan_change_modal").modal('hide');
         });
     });
 }
 
-// 统计短信内容的字数
-statTmpContentNum();
-function statTmpContentNum() {
-    $("#content").on('input propertychange', function () {
-        let smsContent = $('#content').val();
-        let y = smsContent.length;
-        let m = smsContent.length;
-        let n = smsContent.length;
-        if(smsContent.indexOf('${商品详情页短链}') > -1) {
-            y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
-            m = m - '${商品详情页短链}'.length;
-        }
-        if(smsContent.indexOf('${商品名称}') > -1) {
-            y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
-            m = m - '${商品名称}'.length;
-        }
-        if(smsContent.indexOf('${商品最低单价}') > -1) {
-            y = y - '${商品最低单价}'.length + parseInt(PRICE_LEN);
-            m = m - '${商品最低单价}'.length;
-        }
-        if(smsContent.indexOf('${商品利益点}') > -1) {
-            y = y - '${商品利益点}'.length + parseInt(PROFIT_LEN);
-            m = m - '${商品利益点}'.length;
-        }
-
-        total_num = y;
-        var code = "";
-        code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
-        $("#word").text(code);
-    });
+/**
+ * 获取当前活动所处阶段配置的转化率数据
+ */
+function covertDataTable() {
+    var settings = {
+        url: '/activity/getConvertInfo',
+        pagination: false,
+        singleSelect: true,
+        queryParams: function () {
+            return {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}
+        },
+        columns: [
+            {
+                field: 'covListId',
+                visible: false
+            },
+            {
+                field: 'covRate',
+                title: '期望转化率（%）',
+                align: 'center'
+            }, {
+                field: 'expectPushNum',
+                title: '对应推送用户数（人）',
+                align: 'center'
+            }, {
+                field: 'expectCovNum',
+                title: '对应的转化用户数',
+                align: 'center'
+            }
+        ]
+    };
+    $( "#covertDataTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
-
+///////////////////////////////////////转化率调整相关js结束/////////////////////////////////////
 $("#btn_valid_product").click(function () {
     $.get("/activity/validProductInfo", {headId: $("#headId").val()}, function (r) {
         if(r.code === 200) {
@@ -1645,19 +1836,38 @@ $("#btn_valid_product").click(function () {
     });
 });
 
-$("#btn_download_data").click(function () {
+$("#btn_download_data1").click(function () {
     $MB.confirm({
         title: "<i class='mdi mdi-alert-outline'></i>提示：",
         content: "确定下载商品数据?"
     }, function () {
-        $("#btn_download_data").text("下载中...").attr("disabled", true);
-        $.post("/activity/downloadExcel", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE}, function (r) {
+        $("#btn_download_data1").text("下载中...").attr("disabled", true);
+        $.post("/activity/downloadExcel", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE
+            , activityType: 'NOTIFY'}, function (r) {
             if (r.code === 200) {
                 window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
             } else {
                 $MB.n_warning(r.msg);
             }
-            $("#btn_download_data").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
+            $("#btn_download_data1").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
+        });
+    });
+});
+
+$("#btn_download_data2").click(function () {
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定下载商品数据?"
+    }, function () {
+        $("#btn_download_data2").text("下载中...").attr("disabled", true);
+        $.post("/activity/downloadExcel", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE
+            , activityType: 'DURING'}, function (r) {
+            if (r.code === 200) {
+                window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
+            } else {
+                $MB.n_warning(r.msg);
+            }
+            $("#btn_download_data2").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
         });
     });
 });
@@ -1708,7 +1918,7 @@ function removeSmsSelected(type, stage, smsCode, groupId) {
         title: '提示',
         content: '确定重置当前群组配置的文案吗？'
     }, function () {
-        $.post("/activity/removeSmsSelected", {type: type, headId: $("#headId").val(), stage:stage, groupId: groupId}, function (r) {
+        $.post("/activity/removeSmsSelected", {type: type, headId: $("#headId").val(), stage:stage,groupId: groupId}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("当前群组配置的文案已重置！");
                 $MB.refreshTable("table1");
@@ -1717,37 +1927,7 @@ function removeSmsSelected(type, stage, smsCode, groupId) {
         });
     });
 }
-// 获取配置消息的用户转化数据
-function covertDataTable() {
-    var settings = {
-        url: '/activity/getConvertInfo',
-        pagination: false,
-        singleSelect: true,
-        queryParams: function () {
-            return {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}
-        },
-        columns: [
-            {
-                field: 'covListId',
-                visible: false
-            },
-            {
-                field: 'covRate',
-                title: '期望转化率（%）',
-                align: 'center'
-            }, {
-                field: 'expectPushNum',
-                title: '对应推送用户数（人）',
-                align: 'center'
-            }, {
-                field: 'expectCovNum',
-                title: '对应的转化用户数',
-                align: 'center'
-            }
-        ]
-    };
-    $( "#covertDataTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
-}
+
 
 // 店铺活动机制发生变化
 function groupIdChange(dom) {
@@ -1797,14 +1977,12 @@ function groupIdChange(dom) {
 function editFormalActivity() {
     CURRENT_ACTIVITY_STAGE = 'formal';
     getProductInfo();
-    $("#productListTitle").html('正式商品列表');
+    $("#productListTitle1").html('正式期间活动商品列表');
+    $("#productListTitle2").html('正式通知活动商品列表');
     create_step.setActive(1);
     $("#step1").attr("style", "display:none;");
     $("#step2").attr("style", "display:block;");
     $("#step3").attr("style", "display:none;");
-
-    $("#preheatFinishBtn").attr("style", "display:none;");
-    $("#formalFinishBtn").attr("style", "display:block;");
 }
 
 function platDiscountClick(idx) {
@@ -1816,14 +1994,4 @@ function platDiscountClick(idx) {
         $("#platThresholdDiv").attr("style", "display:block;");
         $("#platDenoDiv").attr("style", "display:block;");
     }
-}
-
-function preheatClick() {
-    stepBreak(1);
-}
-
-function formalClick() {
-    CURRENT_ACTIVITY_STAGE = 'formal';
-    $("#productListTitle").html('正式活动商品列表');
-    stepBreak(1);
 }

@@ -55,4 +55,8 @@ public interface ActivityProductMapper {
     int checkProductId(String headId, String activityType, String activityStage, String productId);
 
     int validProductOfDuring(String headId, String stage);
+
+    void deleteDataOfDuring(String headId, String stage);
+
+    void syncNotifyProduct(String headId, String activityStage);
 }

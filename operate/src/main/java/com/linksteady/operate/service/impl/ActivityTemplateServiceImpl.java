@@ -138,7 +138,7 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     @Override
     public String  updateSmsTemplate(ActivityTemplate activityTemplate,String flag,String currentUser) {
         //判断当前文案是否已经被引用 如果是，则进行新增操作 否则直接更新
-        if(activityTemplateMapper.templateContentChanged(activityTemplate.getCode(),activityTemplate.getContent())>1)
+        if(activityTemplateMapper.templateContentChanged(activityTemplate.getCode().longValue(),activityTemplate.getContent())>1)
         {
             return "文案内容未发生改变,无需保存！";
         }else

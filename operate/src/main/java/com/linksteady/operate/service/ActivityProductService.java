@@ -70,4 +70,6 @@ public interface ActivityProductService {
     List<String> getGroupIds(Long headId);
 
     boolean checkProductId(String headId, String activityType, String activityStage, String productId);
+
+    void syncNotifyProduct(String headId, String activityStage);
 }

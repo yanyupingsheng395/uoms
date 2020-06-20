@@ -1,6 +1,11 @@
 let create_step;
 let CURRENT_ACTIVITY_STAGE;
 let CURRENT_ACTIVITY_TYPE;
+let validatorProduct;
+let $activityProductAddForm = $( "#add-product-form" );
+var basic_validator;
+var $basicAddForm = $( "#basic-add-form" );
+
 $( function () {
     create_step = steps({
         el: "#addStep",
@@ -12,13 +17,16 @@ $( function () {
         center: true,
         dataOrder: ["title", "line", "description"]
     });
-
     if(operate_type === 'update') {
         var hasPreheatVal = $( "input[name='hasPreheat']:checked" ).val();
         haspreheat(hasPreheatVal);
     }
+    initDt();
+    validBasic();
+    validateProductRule();
 });
 
+/**************************按钮相关 start*****************************/
 function haspreheat(v) {
     if(v === '1') {
         CURRENT_ACTIVITY_STAGE = 'preheat';
@@ -26,7 +34,8 @@ function haspreheat(v) {
     }
     if(v === '0') {
         CURRENT_ACTIVITY_STAGE = 'formal';
-        $("#productListTitle").html('正式活动商品列表');
+        $("#productListTitle1").html('正式预售活动商品列表');
+        $("#productListTitle2").html('正式通知活动商品列表');
         $("#creatPreheat").attr("style", "display:none;");
     }
 }
@@ -42,16 +51,78 @@ function platDiscountClick(idx) {
     }
 }
 
-$(function (){
-    initDt();
-    validBasic();
-    validateProductRule();
-});
 
-let validatorProduct;
-let $activityProductAddForm = $( "#add-product-form" );
+function preheatClick() {
+    CURRENT_ACTIVITY_STAGE = 'preheat';
+    $("#productListTitle1").html('预售期间活动商品列表');
+    $("#productListTitle2").html('预售通知活动商品列表');
+    stepBreak(1);
+}
 
-// 验证商品表
+function formalClick() {
+    CURRENT_ACTIVITY_STAGE = 'formal';
+    $("#productListTitle1").html('正式期间活动商品列表');
+    $("#productListTitle2").html('正式通知活动商品列表');
+    stepBreak(1);
+}
+
+function beforeSave(activityStage){
+    CURRENT_ACTIVITY_STAGE = activityStage;
+    if(operate_type === 'save') {
+        var validator = $basicAddForm.validate();
+        if (validator.form() && validBasicDt()) {
+            $MB.confirm( {
+                title: '提示:',
+                content: '确定保存信息？'
+            }, function () {
+                saveActivityHead();
+            } );
+        }
+    }
+    if(operate_type === 'update') {
+        stepBreak(1);
+    }
+}
+
+// 点击上一步下一步按钮
+function stepBreak(index) {
+    if(index == 0) {
+        create_step.setActive(0);
+        $("#step1").attr("style", "display:block;");
+        $("#step2").attr("style", "display:none;");
+        $("#step3").attr("style", "display:none;");
+
+        $("#creatPreheat").attr('onclick', 'preheatClick()');
+        $("#creatFormal").attr('onclick', 'formalClick()');
+    }
+    if(index == 1) {
+        create_step.setActive(1);
+        getProductInfo('NOTIFY', 'activityProductTable1');
+        getProductInfo('DURING', 'activityProductTable2');
+        $("#step1").attr("style", "display:none;");
+        $("#step2").attr("style", "display:block;");
+        $("#step3").attr("style", "display:none;");
+    }
+    if(index == 2) {
+        $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
+            if(r.code === 200) {
+                if(r.data > 0) {
+                    $MB.n_warning("存在校验不通过的商品！");
+                }else {
+                    create_step.setActive(2);
+                    $("#step1").attr("style", "display:none;");
+                    $("#step2").attr("style", "display:none;");
+                    $("#step3").attr("style", "display:block;");
+                    createActivity(CURRENT_ACTIVITY_STAGE);
+                }
+            }
+        });
+    }
+}
+/**************************按钮相关 end*****************************/
+
+
+/*************************活动运营商品 start*****************************/
 function validateProductRule() {
     let icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i>";
     validatorProduct = $activityProductAddForm.validate( {
@@ -152,7 +223,6 @@ function validateProductRule() {
         }
     } );
 }
-
 
 // 查询商品信息
 function searchActivityProduct() {
@@ -420,67 +490,6 @@ $("#uploadProduct").on('hidden.bs.modal', function () {
     $("#filename").html('').attr("style", "display:none;");
 });
 
-// 提交计划
-// type:NOTIFY 活动通知，DURING 活动期间
-function submitActivity(type) {
-    let headId = $("#headId").val();
-    var stage = $("#activity_stage").val();
-    $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: stage, type: type}, function (r) {
-        if(r.code === 200) {
-            var data = r.data;
-            if(data['error'] !== null && data['error'] !== undefined) {
-                $MB.n_warning(data['error']);
-                return;
-            }
-            $MB.confirm({
-                title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-                content: "确认保存计划？"
-            }, function () {
-                if(type === 'DURING') {
-                    if(stage === 'preheat') {
-                        if(preheatStatus !== 'edit' && preheatStatus !== '' && preheatStatus !== null && preheatStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                        }else {
-                            submitData(headId, type);
-                        }
-                    }else {
-                        if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                        }else {
-                            submitData(headId, type);
-                        }
-                    }
-                }else {
-                    if(stage === 'preheat') {
-                        if(preheatNotifyStatus !== 'edit' && preheatNotifyStatus !== '' && preheatNotifyStatus !== null && preheatNotifyStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                        }else {
-                            submitData(headId, type);
-                        }
-                    }else {
-                        if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                        }else {
-                            submitData(headId, type);
-                        }
-                    }
-                }
-            });
-        }else {
-            $MB.n_warning(r.msg);
-        }
-    });
-}
-function submitData(headId, type) {
-    $.post("/activity/submitActivity", {headId: headId, operateType: operate_type, stage: CURRENT_ACTIVITY_STAGE, type: type}, function (r) {
-        if(r.code === 200) {
-            $MB.n_success("保存计划成功！");
-        }else {
-            $MB.n_danger("保存计划失败！");
-        }
-    });
-}
-
 $("#btn_delete_shop1").click(function () {
     CURRENT_ACTIVITY_TYPE = 'NOTIFY';
     deleteShop(CURRENT_ACTIVITY_TYPE);
@@ -636,7 +645,69 @@ function getProductInfo(type, tableId) {
     };
     $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
+/********************************* 活动运营商品 end *********************************/
 
+/********************************* 活动运营计划 start *********************************/
+// 提交计划
+// type:NOTIFY 活动通知，DURING 活动期间
+function submitActivity(type) {
+    let headId = $("#headId").val();
+    var stage = $("#activity_stage").val();
+    $.get("/activity/validSubmit", {headId: $("#headId").val(), stage: stage, type: type}, function (r) {
+        if(r.code === 200) {
+            var data = r.data;
+            if(data['error'] !== null && data['error'] !== undefined) {
+                $MB.n_warning(data['error']);
+                return;
+            }
+            $MB.confirm({
+                title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
+                content: "确认保存计划？"
+            }, function () {
+                if(type === 'DURING') {
+                    if(stage === 'preheat') {
+                        if(preheatStatus !== 'edit' && preheatStatus !== '' && preheatStatus !== null && preheatStatus !== undefined) {
+                            $MB.n_success("保存计划成功！");
+                        }else {
+                            submitData(headId, type);
+                        }
+                    }else {
+                        if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
+                            $MB.n_success("保存计划成功！");
+                        }else {
+                            submitData(headId, type);
+                        }
+                    }
+                }else {
+                    if(stage === 'preheat') {
+                        if(preheatNotifyStatus !== 'edit' && preheatNotifyStatus !== '' && preheatNotifyStatus !== null && preheatNotifyStatus !== undefined) {
+                            $MB.n_success("保存计划成功！");
+                        }else {
+                            submitData(headId, type);
+                        }
+                    }else {
+                        if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
+                            $MB.n_success("保存计划成功！");
+                        }else {
+                            submitData(headId, type);
+                        }
+                    }
+                }
+            });
+        }else {
+            $MB.n_warning(r.msg);
+        }
+    });
+}
+function submitData(headId, type) {
+    $.post("/activity/submitActivity", {headId: headId, operateType: operate_type, stage: CURRENT_ACTIVITY_STAGE, type: type}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("保存计划成功！");
+        }else {
+            $MB.n_danger("保存计划失败！");
+        }
+    });
+}
 // 跳转到
 function createActivity(stage) {
     CURRENT_ACTIVITY_STAGE = stage;
@@ -701,6 +772,8 @@ function getPlanStatus(headId, stage) {
     return false;
 }
 
+/********************************* 活动运营计划 end *********************************/
+
 // 根据当前选择设置标题
 function setTitle(stage) {
     if(stage === 'preheat') {
@@ -741,73 +814,6 @@ function initDt() {
     $( "#formalNotifyDt" ).datepicker( 'setStartDate', date );
 }
 
-function preheatClick() {
-    CURRENT_ACTIVITY_STAGE = 'preheat';
-    stepBreak(1);
-}
-
-function formalClick() {
-    CURRENT_ACTIVITY_STAGE = 'formal';
-    $("#productListTitle").html('正式活动商品列表');
-    stepBreak(1);
-}
-
-function beforeSave(activityStage){
-    CURRENT_ACTIVITY_STAGE = activityStage;
-    if(operate_type === 'save') {
-        var validator = $basicAddForm.validate();
-        if (validator.form() && validBasicDt()) {
-            $MB.confirm( {
-                title: '提示:',
-                content: '确定保存信息？'
-            }, function () {
-                saveActivityHead();
-            } );
-        }
-    }
-    if(operate_type === 'update') {
-        stepBreak(1);
-    }
-}
-
-// 点击上一步下一步按钮
-function stepBreak(index) {
-    if(index == 0) {
-        create_step.setActive(0);
-        $("#step1").attr("style", "display:block;");
-        $("#step2").attr("style", "display:none;");
-        $("#step3").attr("style", "display:none;");
-
-        $("#creatPreheat").attr('onclick', 'preheatClick()');
-        $("#creatFormal").attr('onclick', 'formalClick()');
-    }
-    if(index == 1) {
-        create_step.setActive(1);
-        getProductInfo('NOTIFY', 'activityProductTable1');
-        getProductInfo('DURING', 'activityProductTable2');
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:block;");
-        $("#step3").attr("style", "display:none;");
-    }
-    if(index == 2) {
-        $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
-            if(r.code === 200) {
-                if(r.data > 0) {
-                    $MB.n_warning("存在校验不通过的商品！");
-                }else {
-                    create_step.setActive(2);
-                    $("#step1").attr("style", "display:none;");
-                    $("#step2").attr("style", "display:none;");
-                    $("#step3").attr("style", "display:block;");
-                    createActivity(CURRENT_ACTIVITY_STAGE);
-                }
-            }
-        });
-    }
-}
-
-var basic_validator;
-var $basicAddForm = $( "#basic-add-form" );
 function validBasic() {
     var icon = "<i class='fa fa-close'></i> ";
     basic_validator = $basicAddForm.validate( {
@@ -995,6 +1001,7 @@ $( "#btn_batch_upload2" ).click( function () {
     $("#uploadProduct").modal('show');
 });
 
+/*************************活动运营商品 end*****************************/
 $( "#btn_create_preheat" ).click( function () {
     var headId = $( "#headId" ).val();
     if (headId === '') {
@@ -1820,11 +1827,20 @@ function covertDataTable() {
     $( "#covertDataTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 ///////////////////////////////////////转化率调整相关js结束/////////////////////////////////////
-$("#btn_valid_product").click(function () {
-    $.get("/activity/validProductInfo", {headId: $("#headId").val()}, function (r) {
+$("#btn_valid_product1").click(function () {
+    $.get("/activity/validProductInfo", {headId: $("#headId").val(), stage: 'NOTIFY'}, function (r) {
         if(r.code === 200) {
             $MB.n_success("数据已校验完毕！");
-            $MB.refreshTable('activityProductTable');
+            $MB.refreshTable('activityProductTable1');
+        }
+    });
+});
+
+$("#btn_valid_product2").click(function () {
+    $.get("/activity/validProductInfo", {headId: $("#headId").val(), stage: 'DURING'}, function (r) {
+        if(r.code === 200) {
+            $MB.n_success("数据已校验完毕！");
+            $MB.refreshTable('activityProductTable2');
         }
     });
 });
@@ -1970,7 +1986,8 @@ function groupIdChange(dom) {
 function editFormalActivity() {
     CURRENT_ACTIVITY_STAGE = 'formal';
     getProductInfo();
-    $("#productListTitle").html('正式活动商品列表');
+    $("#productListTitle1").html('正式期间活动商品列表');
+    $("#productListTitle2").html('正式通知活动商品列表');
     create_step.setActive(1);
     $("#step1").attr("style", "display:none;");
     $("#step2").attr("style", "display:block;");
@@ -2003,13 +2020,29 @@ function genCovInfo() {
                     if(len === 0) {
                         $MB.n_warning("没有获取到有效的活动通知商品，请先添加商品！");
                     }else {
+                        $MB.loadingDesc('show', '正在计算商品转化率....');
                         $.get("/activity/genCovInfo", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE}, function (r) {
                             if(r.data === '1') {
-                                alert(1);
+                                $MB.loadingDesc('hide');
                             }
                         });
                     }
                 }
+            }
+        });
+    });
+}
+
+//  同步通知商品
+function syncNotifyProduct() {
+    $MB.confirm({
+        title: '提示：',
+        content: '确认同步商品？已有数据会被覆盖！'
+    }, function () {
+        $.get("/activity/syncNotifyProduct", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE}, function (r) {
+            if(r.code === 200) {
+                $MB.n_success("同步成功！");
+                $MB.refreshTable('activityProductTable2');
             }
         });
     });

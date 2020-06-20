@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -470,8 +471,11 @@ public class ActivityController {
         return activityProductService.checkProductId(headId, activityType, activityStage, productId);
     }
 
+    private ReentrantLock reentrantLock;
+
     @GetMapping("/genCovInfo")
     public ResponseBo genCovInfo(@RequestParam String headId, @RequestParam String activityStage) {
+        reentrantLock.lock();
         long result = -1;
         try {
             activityThriftClient.open();
@@ -480,7 +484,20 @@ public class ActivityController {
             log.info("生成转化率数据出错", e);
         } finally {
             activityThriftClient.close();
+            reentrantLock.unlock();
         }
         return ResponseBo.okWithData(null, result);
+    }
+
+    /**
+     * 同步活动体会这个能耐
+     * @param headId
+     * @param activityStage
+     * @return
+     */
+    @GetMapping("/syncNotifyProduct")
+    public ResponseBo syncNotifyProduct(@RequestParam String headId, @RequestParam String activityStage) {
+        activityProductService.syncNotifyProduct(headId, activityStage);
+        return ResponseBo.ok();
     }
 }

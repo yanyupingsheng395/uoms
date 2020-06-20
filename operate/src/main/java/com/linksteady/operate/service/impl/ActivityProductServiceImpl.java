@@ -519,6 +519,13 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         return activityProductMapper.checkProductId(headId, activityType, activityStage, productId) == 0;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void syncNotifyProduct(String headId, String activityStage) {
+        activityProductMapper.deleteDataOfDuring(headId, activityStage);
+        activityProductMapper.syncNotifyProduct(headId, activityStage);
+    }
+
     /**
      * 保存上传的数据
      */
@@ -607,4 +614,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
             return "错误类型";
         }
     }
+
+
 }
