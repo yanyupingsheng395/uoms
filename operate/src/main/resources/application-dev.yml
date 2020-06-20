@@ -42,8 +42,8 @@ shiro:
 
 thrift:
   server:
-    host: 39.100.145.35
-    port: 7777
+    host: 192.168.0.116
+    port: 7778
 logging:
   level:
     com:

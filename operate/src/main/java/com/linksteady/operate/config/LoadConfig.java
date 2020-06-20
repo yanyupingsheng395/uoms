@@ -38,7 +38,7 @@ public class LoadConfig implements CommandLineRunner {
         //判断redis中TCONFIG这个hashkey是否存在
         if(!configService.configExists())
         {
-            throw new LinkSteadyException("无法正确加载到配置，请检查");
+//            throw new LinkSteadyException("无法正确加载到配置，请检查");
         }
         //将短链加载到redis中去
         setShortUrlToRedis();

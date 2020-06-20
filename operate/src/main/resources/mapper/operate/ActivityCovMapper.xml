@@ -65,4 +65,10 @@
                                    NORMAL_NOTIFY_COVNUM) select #{headId}::int4, COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4
         on conflict(ACTIVITY_HEAD_ID) do update set (NORMAL_NOTIFY_COVID, NORMAL_NOTIFY_COV, NORMAL_NOTIFY_PUSHNUM, NORMAL_NOTIFY_COVNUM) = (select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4)
     </update>
+
+    <select id="getCovListByHeadId" resultMap="listMap">
+        select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM, IS_DEFAULT from UO_OP_ACTIVITY_COV_LIST
+            where activity_head_id = #{headId}::integer and stage = #{stage}
+        order by COV_LIST_ID desc
+    </select>
 </mapper>

@@ -552,7 +552,9 @@ function getProductInfo(type, tableId) {
                     productId: $( "#productId" ).val(),
                     productName: $( "#productName" ).val(),
                     groupId: $("#groupId").find("option:selected").val(),
-                    activityStage: CURRENT_ACTIVITY_STAGE,
+                    activityStage: function () {
+                        return CURRENT_ACTIVITY_STAGE;
+                    },
                     activityType: type
                 }
             };
@@ -740,6 +742,7 @@ function initDt() {
 }
 
 function preheatClick() {
+    CURRENT_ACTIVITY_STAGE = 'preheat';
     stepBreak(1);
 }
 
@@ -749,7 +752,8 @@ function formalClick() {
     stepBreak(1);
 }
 
-function beforeSave(){
+function beforeSave(activityStage){
+    CURRENT_ACTIVITY_STAGE = activityStage;
     if(operate_type === 'save') {
         var validator = $basicAddForm.validate();
         if (validator.form() && validBasicDt()) {
@@ -1776,7 +1780,7 @@ function updateCovInfo() {
             if(r.code === 200) {
                 $MB.n_success("设置成功！");
             }
-            geConvertInfo();
+            covertDataTable();
             $("#plan_change_modal").modal('hide');
         });
     });
@@ -1815,9 +1819,7 @@ function covertDataTable() {
     };
     $( "#covertDataTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
-
 ///////////////////////////////////////转化率调整相关js结束/////////////////////////////////////
-
 $("#btn_valid_product").click(function () {
     $.get("/activity/validProductInfo", {headId: $("#headId").val()}, function (r) {
         if(r.code === 200) {
@@ -1984,4 +1986,31 @@ function platDiscountClick(idx) {
         $("#platThresholdDiv").attr("style", "display:block;");
         $("#platDenoDiv").attr("style", "display:block;");
     }
+}
+
+// 调用生成转化率信息的数据
+function genCovInfo() {
+    $MB.confirm({
+        title: '提示：',
+        content: '确认保存？'
+    }, function() {
+        $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
+            if(r.code === 200) {
+                if(r.data > 0) {
+                    $MB.n_warning("存在校验不通过的商品！");
+                }else {
+                    var len = $("#activityProductTable1").bootstrapTable('getData').length;
+                    if(len === 0) {
+                        $MB.n_warning("没有获取到有效的活动通知商品，请先添加商品！");
+                    }else {
+                        $.get("/activity/genCovInfo", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE}, function (r) {
+                            if(r.data === '1') {
+                                alert(1);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    });
 }
