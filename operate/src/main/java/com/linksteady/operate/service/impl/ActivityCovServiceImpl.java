@@ -86,4 +86,9 @@ public class ActivityCovServiceImpl implements ActivityCovService {
             activityCovMapper.updateFormalCovInfo(headId, covId);
         }
     }
+
+    @Override
+    public boolean checkCovInfo(String headId) {
+        return activityCovMapper.checkCovInfo(headId) > 0;
+    }
 }

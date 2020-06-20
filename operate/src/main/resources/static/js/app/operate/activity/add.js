@@ -104,11 +104,17 @@ function stepBreak(index) {
         $("#step3").attr("style", "display:none;");
     }
     if(index == 2) {
-        create_step.setActive(2);
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:none;");
-        $("#step3").attr("style", "display:block;");
-        createActivity(CURRENT_ACTIVITY_STAGE)
+        $.get("/activity/checkCovInfo", {headId: $("#headId").val()}, function (r) {
+            if(!r) {
+                $MB.n_warning("请先点击活动通知商品的确认商品！");
+            }else {
+                create_step.setActive(2);
+                $("#step1").attr("style", "display:none;");
+                $("#step2").attr("style", "display:none;");
+                $("#step3").attr("style", "display:block;");
+                createActivity(CURRENT_ACTIVITY_STAGE);
+            }
+        });
     }
 }
 /**************************按钮相关 end*****************************/
@@ -1982,6 +1988,10 @@ function platDiscountClick(idx) {
 // 调用生成转化率信息的数据
 function genCovInfo(activityType) {
     if(activityType === 'NOTIFY') {
+        if($("#activityProductTable1").bootstrapTable('getData').length === 0) {
+            $MB.n_warning("商品数为0，请先添加商品！");
+            return;
+        }
         $MB.confirm({
             title: '提示：',
             content: '确认商品信息并计算活动转化率？'
@@ -2009,6 +2019,10 @@ function genCovInfo(activityType) {
             });
         });
     } else {
+        if($("#activityProductTable2").bootstrapTable('getData').length === 0) {
+            $MB.n_warning("商品数为0，请先添加商品！");
+            return;
+        }
         $MB.confirm({
             title: '提示：',
             content: '确认商品信息并计算活动转化率？'

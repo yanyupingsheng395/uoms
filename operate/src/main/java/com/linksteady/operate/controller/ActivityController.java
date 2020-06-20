@@ -505,4 +505,9 @@ public class ActivityController {
         activityHeadService.updateInfoStatus(headId, activityStage, activityType, key, value);
         return ResponseBo.ok();
     }
+
+    @RequestMapping("/checkCovInfo")
+    public boolean checkCovInfo(@RequestParam String headId) {
+        return activityCovService.checkCovInfo(headId);
+    }
 }
