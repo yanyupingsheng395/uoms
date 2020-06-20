@@ -245,14 +245,4 @@
         where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
           and CHECK_FLAG = 'N' and activity_type = 'DURING'
     </select>
-
-    <delete id="deleteDataOfDuring">
-        delete from uo_op_activity_product where head_id = #{headId}::integer and activity_type = 'DURING' and activity_stage = #{stage}
-    </delete>
-
-    <insert id="syncNotifyProduct">
-        insert into uo_op_activity_product(head_id, epb_product_id, product_name, min_price, formal_price, product_url, product_attr, alike_prod_id, group_id, activity_price, discount_size, discount_threadhold, discount_deno, discount_amount, activity_profit, activity_stage, activity_type)
-        select head_id, epb_product_id, product_name, min_price, formal_price, product_url, product_attr, alike_prod_id, group_id, activity_price, discount_size, discount_threadhold, discount_deno, discount_amount, activity_profit, activity_stage, 'DURING' from uo_op_activity_product
-        where head_id = #{headId}::integer and activity_stage = #{activityStage}
-    </insert>
 </mapper>

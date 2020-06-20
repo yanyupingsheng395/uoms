@@ -65,16 +65,13 @@
                 <button class="btn btn-secondary" id="btn_download_data1">
                     <i class="fa fa-download"></i> 下载数据
                 </button>
-                <button class="btn btn-secondary" id="btn_valid_product1">
-                    <i class="fa fa-refresh"></i> 数据校验
-                </button>
             </div>
         </div>
         <div class="col-md-12 table-striped m-t-10">
             <table id="activityProductTable1" class="table table-bordered table-striped text-nowrap"></table>
         </div>
         <div class="col-md-12 text-center m-t-10">
-            <button class="btn btn-sm btn-primary" onclick="genCovInfo()">保存商品</button>
+            <button class="btn btn-sm btn-primary" onclick="genCovInfo('NOTIFY')">确认商品</button>
         </div>
     </div>
 </div>
@@ -144,19 +141,13 @@
                 <button class="btn btn-secondary" id="btn_download_data2">
                     <i class="fa fa-download"></i> 下载数据
                 </button>
-                <button class="btn btn-secondary" id="btn_valid_product2">
-                    <i class="fa fa-refresh"></i> 数据校验
-                </button>
-                <button class="btn btn-secondary" onclick="syncNotifyProduct()">
-                    <i class="fa fa-refresh"></i> 同步通知商品
-                </button>
             </div>
         </div>
         <div class="col-md-12 table-striped m-t-10">
             <table id="activityProductTable2" class="table table-bordered table-striped text-nowrap"></table>
         </div>
         <div class="col-md-12 text-center m-t-10">
-            <button class="btn btn-sm btn-primary">保存商品</button>
+            <button class="btn btn-sm btn-primary" onclick="genCovInfo('DURING')">确认商品</button>
         </div>
     </div>
     <div class="row m-t-10">

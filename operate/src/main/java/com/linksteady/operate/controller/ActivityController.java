@@ -488,16 +488,4 @@ public class ActivityController {
         }
         return ResponseBo.okWithData(null, result);
     }
-
-    /**
-     * 同步活动体会这个能耐
-     * @param headId
-     * @param activityStage
-     * @return
-     */
-    @GetMapping("/syncNotifyProduct")
-    public ResponseBo syncNotifyProduct(@RequestParam String headId, @RequestParam String activityStage) {
-        activityProductService.syncNotifyProduct(headId, activityStage);
-        return ResponseBo.ok();
-    }
 }

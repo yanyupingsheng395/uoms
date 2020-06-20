@@ -34,8 +34,8 @@ function haspreheat(v) {
     }
     if(v === '0') {
         CURRENT_ACTIVITY_STAGE = 'formal';
-        $("#productListTitle1").html('正式预售活动商品列表');
-        $("#productListTitle2").html('正式通知活动商品列表');
+        $("#productListTitle1").html('正式通知活动商品列表');
+        $("#productListTitle12").html('正式期间活动商品列表');
         $("#creatPreheat").attr("style", "display:none;");
     }
 }
@@ -54,15 +54,15 @@ function platDiscountClick(idx) {
 
 function preheatClick() {
     CURRENT_ACTIVITY_STAGE = 'preheat';
-    $("#productListTitle1").html('预售期间活动商品列表');
-    $("#productListTitle2").html('预售通知活动商品列表');
+    $("#productListTitle1").html('预售通知活动商品列表');
+    $("#productListTitle2").html('预售期间活动商品列表');
     stepBreak(1);
 }
 
 function formalClick() {
     CURRENT_ACTIVITY_STAGE = 'formal';
-    $("#productListTitle1").html('正式期间活动商品列表');
-    $("#productListTitle2").html('正式通知活动商品列表');
+    $("#productListTitle1").html('正式通知活动商品列表');
+    $("#productListTitle2").html('正式期间活动商品列表');
     stepBreak(1);
 }
 
@@ -1827,24 +1827,6 @@ function covertDataTable() {
     $( "#covertDataTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 ///////////////////////////////////////转化率调整相关js结束/////////////////////////////////////
-$("#btn_valid_product1").click(function () {
-    $.get("/activity/validProductInfo", {headId: $("#headId").val(), stage: 'NOTIFY'}, function (r) {
-        if(r.code === 200) {
-            $MB.n_success("数据已校验完毕！");
-            $MB.refreshTable('activityProductTable1');
-        }
-    });
-});
-
-$("#btn_valid_product2").click(function () {
-    $.get("/activity/validProductInfo", {headId: $("#headId").val(), stage: 'DURING'}, function (r) {
-        if(r.code === 200) {
-            $MB.n_success("数据已校验完毕！");
-            $MB.refreshTable('activityProductTable2');
-        }
-    });
-});
-
 $("#btn_download_data1").click(function () {
     $MB.confirm({
         title: "<i class='mdi mdi-alert-outline'></i>提示：",
@@ -1986,8 +1968,8 @@ function groupIdChange(dom) {
 function editFormalActivity() {
     CURRENT_ACTIVITY_STAGE = 'formal';
     getProductInfo();
-    $("#productListTitle1").html('正式期间活动商品列表');
-    $("#productListTitle2").html('正式通知活动商品列表');
+    $("#productListTitle1").html('正式通知活动商品列表');
+    $("#productListTitle2").html('正式期间活动商品列表');
     create_step.setActive(1);
     $("#step1").attr("style", "display:none;");
     $("#step2").attr("style", "display:block;");
@@ -2006,44 +1988,60 @@ function platDiscountClick(idx) {
 }
 
 // 调用生成转化率信息的数据
-function genCovInfo() {
-    $MB.confirm({
-        title: '提示：',
-        content: '确认保存？'
-    }, function() {
-        $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
-            if(r.code === 200) {
-                if(r.data > 0) {
-                    $MB.n_warning("存在校验不通过的商品！");
-                }else {
-                    var len = $("#activityProductTable1").bootstrapTable('getData').length;
-                    if(len === 0) {
-                        $MB.n_warning("没有获取到有效的活动通知商品，请先添加商品！");
+function genCovInfo(activityType) {
+    if(activityType === 'NOTIFY') {
+        $MB.confirm({
+            title: '提示：',
+            content: '确认商品信息并计算活动转化率？'
+        }, function() {
+            $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
+                if(r.code === 200) {
+                    if(r.data > 0) {
+                        $MB.n_warning("存在校验不通过的商品！");
                     }else {
-                        $MB.loadingDesc('show', '正在计算商品转化率....');
-                        $.get("/activity/genCovInfo", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE}, function (r) {
-                            if(r.data === '1') {
-                                $MB.loadingDesc('hide');
-                            }
-                        });
+                        var len = $("#activityProductTable1").bootstrapTable('getData').length;
+                        if(len === 0) {
+                            $MB.n_warning("没有获取到有效的活动通知商品，请先添加商品！");
+                        }else {
+                            $MB.loadingDesc('show', '正在计算活动转化率....');
+                            $.get("/activity/genCovInfo", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE}, function (r) {
+                                if(r.data === '1') {
+                                    $MB.loadingDesc('hide');
+                                }
+                            });
+                        }
                     }
                 }
-            }
+            });
         });
-    });
+    } else {
+        $MB.confirm({
+            title: '提示：',
+            content: '确认商品信息并计算活动转化率？'
+        }, function() {
+            $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
+                if(r.code === 200) {
+
+                    if(r.data > 0) {
+                        $MB.n_warning("存在校验不通过的商品！");
+                    }else {
+                        // 确认商品字段的维护
+
+                    }
+                }
+            });
+        });
+    }
 }
 
-//  同步通知商品
-function syncNotifyProduct() {
-    $MB.confirm({
-        title: '提示：',
-        content: '确认同步商品？已有数据会被覆盖！'
-    }, function () {
-        $.get("/activity/syncNotifyProduct", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE}, function (r) {
-            if(r.code === 200) {
-                $MB.n_success("同步成功！");
-                $MB.refreshTable('activityProductTable2');
-            }
-        });
+/**
+ * 更新群组和商品的状态信息
+ * @param type 类型：product 商品，group:群组
+ */
+function updateStatus(type) {
+    $.get("/activity/updateInfoStatus",
+        {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE, activityType: CURRENT_ACTIVITY_TYPE, type: type}, function (r) {
+
+        console.log(r);
     });
 }

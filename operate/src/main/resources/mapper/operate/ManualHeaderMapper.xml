@@ -50,21 +50,21 @@
 
     <select id="getPushInfo" resultType="map">
         select PUSH_TYPE, to_char(SCHEDULE_DATE, 'yyyy-mm-dd hh24:mi:ss') SCHEDULE_DATE from UO_OP_MANUAL_HEADER
-        where HEAD_ID = #{headId}
+        where HEAD_ID = #{headId}::integer
     </select>
 
     <select id="getHeadStatus" resultType="string">
-        select STATUS from UO_OP_MANUAL_HEADER where HEAD_ID = #{headId}
+        select STATUS from UO_OP_MANUAL_HEADER where HEAD_ID = #{headId}::integer
     </select>
 
     <update id="updateScheduleDate">
         update UO_OP_MANUAL_HEADER set SCHEDULE_DATE = #{scheduleDate}
-        where head_id = #{headId}
+        where head_id = #{headId}::integer
     </update>
 
     <update id="updateStatus">
         update UO_OP_MANUAL_HEADER set STATUS = #{status}
-        where head_id = #{headId}
+        where head_id = #{headId}::integer
     </update>
 
     <delete id="deleteData">
