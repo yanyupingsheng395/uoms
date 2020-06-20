@@ -3,8 +3,6 @@ $(function () {
     initTable();
     statInputNum();
 });
-
-
 function initTable() {
     var settings = {
         url: '/smsTemplate/smsTemplateList',
@@ -59,17 +57,16 @@ function testSend()
         return;
     }
 
-    var smsCode =selectRows[0]["smsCode"];
+    let smsCode =selectRows[0]["smsCode"];
 
     //根据获取到的数据查询
     $.getJSON("/smsTemplate/getSmsTemplateContent?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
             //更新测试面板
-            $("#smsContent1").val(resp.data.smsContent);
-
-            var _value = $("#smsContent1").val().replace(/\n/gi,"");
+            $("#smsContent1").val(resp.data);
+            $("#testSmsCode").val(smsCode);
+            var _value = $("#smsContent1").val();
             $("#word1").text(_value.length);
-
             $('#send_modal').modal('show');
         }
     })

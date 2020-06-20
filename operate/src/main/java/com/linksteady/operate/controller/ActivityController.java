@@ -314,13 +314,9 @@ public class ActivityController {
         int count = activityHeadService.getDeleteCount(headId);
         if(count == 1) {
             activityHeadService.deleteData(headId);
-            activityProductService.deleteData(headId);
-            activityPlanService.deletePlan(headId);
-            activityUserGroupService.deleteData(headId);
-            //todo 对应的活动明细尚未删除
 
         }else {
-            return ResponseBo.error("该计划当前状态不支持删除操作！");
+            return ResponseBo.error("该活动当前状态不支持删除操作！");
         }
         return ResponseBo.ok();
     }

@@ -16,6 +16,8 @@ public interface ActivityDetailMapper {
 
     List<ActivityDetail> getPageList(int limit, int offset, Long  planId);
 
+    void deleteData(Long headId);
+
     /**
      * 查询出所有文案为空的记录的条数
      */

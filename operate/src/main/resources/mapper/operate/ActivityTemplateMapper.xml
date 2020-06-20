@@ -17,7 +17,7 @@
         <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt" />
         <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
         <result column="insert_by" jdbcType="VARCHAR" property="insertBy" />
-        <result column="update_by" jdbcType="VARCHAR" property="updateDt" />
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
     </resultMap>
 
 

@@ -206,7 +206,7 @@ function testSend()
         return;
     }
 
-    var smsCode =selectRows[0]["smsCode"];
+    let smsCode =selectRows[0]["smsCode"];
     //根据获取到的数据查询
     $.getJSON("/smsTemplate/getSmsTemplateContent?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
@@ -214,7 +214,6 @@ function testSend()
             //更新测试面板
             $("#testSmsContent").val(resp.data);
             $("#testSmsCode").val(smsCode);
-
             let _value = $("#testSmsContent").val();
             $("#word1").text(_value.length);
             $('#send_modal').modal('show');

@@ -63,6 +63,10 @@
         limit #{limit} offset #{offset}
     </select>
 
+    <delete id="deleteData">
+        delete from UO_OP_ACTIVITY_DETAIL where HEAD_ID=#{headId}
+    </delete>
+
     <select id="selectContentNulls" resultType="int">
        select count(1) from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
                where

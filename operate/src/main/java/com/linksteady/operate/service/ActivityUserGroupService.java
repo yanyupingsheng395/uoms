@@ -18,10 +18,6 @@ public interface ActivityUserGroupService {
 
     void updateGroupTemplate(Long headId, Long groupId, Long code, String stage);
 
-    int refrenceCount(Long code);
-
-    void deleteData(Long headId);
-
     int validGroupTemplateWithGroup(Long headId, String stage, String type);
 
 

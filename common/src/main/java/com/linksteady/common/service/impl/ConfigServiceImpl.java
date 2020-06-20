@@ -97,7 +97,13 @@ public class ConfigServiceImpl implements ConfigService {
         HashOperations<String, String, Tconfig> hashOperations= redisTemplate.opsForHash();
         if(!redisTemplate.hasKey(CONFIG_KEY_NAME))
         {
-            loadConfigToRedis();
+            List<Tconfig> tconfigList=configMapper.selectConfigList();
+            //存入redis
+            for(Tconfig tconfig:tconfigList)
+            {
+                hashOperations.put(CONFIG_KEY_NAME,tconfig.getName(),tconfig);
+            }
+
         }
 
         Tconfig tconfig=hashOperations.get(CONFIG_KEY_NAME,name);

@@ -5,6 +5,7 @@ import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.SmsTemplateMapper;
 import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.service.SmsTemplateService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  * Created by hxcao on 2019-04-29
  */
 @Service
+@Slf4j
 public class SmsTemplateServiceImpl implements SmsTemplateService {
 
     @Autowired
@@ -89,17 +91,17 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         String smsContent =smsTemplate.getSmsContent();
         if (StringUtils.isNotEmpty(isCouponUrl) && isCouponUrl.equalsIgnoreCase("1")) {
             //短链替换的时候前后各补一个空格
-            smsContent = smsContent.replace(couponUrl, " "+configService.getValueByName("op.daily.sms.cunponurl")+" ");
+            smsContent = smsContent.replace(couponUrl, " "+configService.getValueByName("op.sms.url")+" ");
         }
         if (StringUtils.isNotEmpty(isCouponName) && isCouponName.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(couponName, configService.getValueByName("op.daily.sms.couponname"));
+            smsContent = smsContent.replace(couponName, configService.getValueByName("op.sms.couponname"));
         }
         if (StringUtils.isNotEmpty(isProductUrl) && isProductUrl.equalsIgnoreCase("1")) {
             //短链替换的时候前后各补一个空格
-            smsContent = smsContent.replace(prodUrl, " "+configService.getValueByName("op.daily.sms.produrl")+" ");
+            smsContent = smsContent.replace(prodUrl, " "+configService.getValueByName("op.sms.url")+" ");
         }
         if (StringUtils.isNotEmpty(isProductName) && isProductName.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(prodName, configService.getValueByName("op.daily.sms.prodname"));
+            smsContent = smsContent.replace(prodName, configService.getValueByName("op.sms.prodname"));
         }
 
         //获取签名

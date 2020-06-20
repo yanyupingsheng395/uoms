@@ -53,8 +53,6 @@ public interface ActivityProductService {
      */
     void deleteRepeatData(List<ActivityProduct> productList, Long headId, String stage);
 
-    void deleteData(Long headId);
-
     /**
      * 上传商品
      */

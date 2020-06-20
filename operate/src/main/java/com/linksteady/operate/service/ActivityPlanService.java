@@ -27,12 +27,6 @@ public interface ActivityPlanService {
     List<ActivityPlan> getPlanList(Long headId);
 
     /**
-     * 删除某个活动的所有执行计划
-     * @param headId
-     */
-    void deletePlan(Long headId);
-
-    /**
      * 获取群组的统计信息
      * @param planId
      * @return

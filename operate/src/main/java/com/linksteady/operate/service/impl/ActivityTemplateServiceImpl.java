@@ -51,16 +51,16 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         String profit = "${商品利益点}";
         String content = activityTemplate.getContent();
         if (StringUtils.isNotEmpty(isProdUrl) && isProdUrl.equalsIgnoreCase("1")) {
-            content = content.replace(prodUrl, " "+configService.getValueByName("op.activity.sms.prodUrl")+" ");
+            content = content.replace(prodUrl, " "+configService.getValueByName("op.sms.url")+" ");
         }
         if (StringUtils.isNotEmpty(isProdName) && isProdName.equalsIgnoreCase("1")) {
-            content = content.replace(prodName, configService.getValueByName("op.activity.sms.prodName"));
+            content = content.replace(prodName, configService.getValueByName("op.sms.prodname"));
         }
         if (StringUtils.isNotEmpty(isPrice) && isPrice.equalsIgnoreCase("1")) {
-            content = content.replace(price, configService.getValueByName("op.activity.sms.price"));
+            content = content.replace(price, configService.getValueByName("op.sms.price"));
         }
         if (StringUtils.isNotEmpty(isProfit) && isProfit.equalsIgnoreCase("1")) {
-            content = content.replace(profit, configService.getValueByName("op.activity.sms.profit"));
+            content = content.replace(profit, configService.getValueByName("op.sms.profit"));
         }
 
         //获取签名

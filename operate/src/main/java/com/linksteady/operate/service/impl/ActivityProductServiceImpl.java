@@ -193,12 +193,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         activityProductMapper.deleteRepeatData(productList, headId, stage);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteData(Long headId) {
-        activityProductMapper.deleteData(headId);
-    }
-
     /**
      * 文件上传
      *
