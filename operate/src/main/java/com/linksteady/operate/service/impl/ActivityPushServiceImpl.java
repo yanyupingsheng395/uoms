@@ -211,14 +211,10 @@ public class ActivityPushServiceImpl implements ActivityPushService {
         ActivityContentVO activityContentVO = null;
         String smsContent="";
 
-        log.info("获取到的文案集合为{}",templateMap.size());
-        templateMap.forEach((k, v) -> log.info("key:value = " + k + ":" + v));
-
         for(ActivityDetail activityDetail:list)
         {
             //获取文案内容
             smsContent=templateMap.get(activityDetail.getGroupId());
-            //log.info("{}获取到的文案内容为{}",activityDetail.getGroupId(),smsContent);
 
             if(null==smsContent)
             {
