@@ -155,12 +155,6 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deletePlan(Long headId) {
-        activityPlanMapper.deletePlan(headId);
-    }
-
-    @Override
     public List<ActivityGroupVO> getPlanGroupList(Long planId) {
         return activityPlanMapper.getPlanGroupList(planId);
     }

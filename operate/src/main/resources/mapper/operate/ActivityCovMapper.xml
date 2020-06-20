@@ -71,4 +71,8 @@
             where activity_head_id = #{headId}::integer and stage = #{stage}
         order by COV_LIST_ID desc
     </select>
+
+    <delete id="deleteData">
+        delete from UO_OP_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID=#{headId}
+    </delete>
 </mapper>

@@ -209,7 +209,7 @@ $("#btn_edit").click(function () {
     if(!flag) {
         window.location.href = "/page/activity/edit?headId=" + headId;
     }else {
-        $MB.n_warning("活动当前状态不允许修改计划！");
+        $MB.n_warning("活动当前状态不允许编辑！");
     }
 });
 
@@ -217,7 +217,7 @@ $("#btn_plan").click(function () {
     let selected = $("#activityTable").bootstrapTable('getSelections');
     let selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请选择需要执行的计划！');
+        $MB.n_warning('请选择要查看执行计划的活动！');
         return;
     }
     let headId = selected[0].headId;
@@ -225,20 +225,17 @@ $("#btn_plan").click(function () {
     let preheatNotifyStatus = selected[0]['preheatNotifyStatus'];
     let formalNotifyStatus = selected[0]['formalNotifyStatus'];
     let formalStatus = selected[0]['formalStatus'];
-    let flag = true;
-    if((preheatStatus !== '' && preheatStatus !== null) && (preheatNotifyStatus !== '' && preheatNotifyStatus !== null)) {
-        if(preheatStatus === 'edit' && preheatNotifyStatus === 'edit' && formalNotifyStatus === 'edit' && formalStatus === 'edit') {
-            flag = false;
-        }
-    }else {
-        if(formalNotifyStatus === 'edit' && formalStatus === 'edit') {
-            flag = false;
-        }
-    }
-    if(flag) {
+    let hasPreheat = selected[0].hasPreheat;
+    let flag = (
+        (hasPreheat === '1' && preheatNotifyStatus === 'edit' && formalNotifyStatus === 'edit' && preheatStatus === 'edit' && formalStatus === 'edit') ||
+        (hasPreheat === '0' && formalStatus === 'edit' && formalNotifyStatus === 'edit') ||
+        (hasPreheat === '1' && preheatNotifyStatus === 'timeout' && formalNotifyStatus === 'timeout' && preheatStatus === 'timeout' && formalStatus === 'timeout') ||
+        (hasPreheat === '0' && formalStatus === 'timeout' && formalNotifyStatus === 'timeout')
+    );
+    if(!flag) {
         window.location.href = "/page/activity/plan?id=" + headId;
     }else {
-        $MB.n_warning("活动当前状态不允许执行计划！");
+        $MB.n_warning("全部为待计划或过期未执行的活动不允许查看执行计划！");
     }
 });
 
@@ -246,28 +243,36 @@ $("#btn_delete").click(function () {
     let selected = $("#activityTable").bootstrapTable('getSelections');
     let selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning('请选择需要删除的活动计划！');
+        $MB.n_warning('请选择需要删除的活动！');
         return;
     }
     let headId = selected[0].headId;
+    let preheatNotifyStatus = selected[0].preheatNotifyStatus;
+    let formalNotifyStatus = selected[0].formalNotifyStatus;
     let preheatStatus = selected[0].preheatStatus;
     let formalStatus = selected[0].formalStatus;
     let hasPreheat = selected[0].hasPreheat;
 
-    if(!((hasPreheat === '1' && preheatStatus === 'edit' && formalStatus === 'edit') || (hasPreheat === '0' && formalStatus === 'edit'))) {
-        $MB.n_warning("只有待计划的活动才可以被删除！");
+    if(!(
+        (hasPreheat === '1' && preheatNotifyStatus === 'edit' && formalNotifyStatus === 'edit' && preheatStatus === 'edit' && formalStatus === 'edit') ||
+        (hasPreheat === '0' && formalStatus === 'edit' && formalNotifyStatus === 'edit') ||
+        (hasPreheat === '1' && preheatNotifyStatus === 'timeout' && formalNotifyStatus === 'timeout' && preheatStatus === 'timeout' && formalStatus === 'timeout') ||
+        (hasPreheat === '0' && formalStatus === 'timeout' && formalNotifyStatus === 'timeout')
+        )
+    ) {
+        $MB.n_warning("只有全部为待计划或过期未执行的活动才可以被删除！");
         return;
     }
     $MB.confirm({
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
-        content: '确认删除选中活动计划？'
+        content: '确认删除选中活动？'
     }, function () {
         $.post("/activity/deleteActivity", {headId: headId}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("删除成功！");
                 $MB.refreshTable('activityTable');
             }else {
-                $MB.n_danger("删除失败！");
+                $MB.n_danger(r.msg);
             }
         });
     });

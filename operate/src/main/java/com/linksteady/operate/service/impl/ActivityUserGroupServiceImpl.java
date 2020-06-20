@@ -49,17 +49,6 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
         activityUserGroupMapper.updateGroupTemplate(headId, groupId, code, stage);
     }
 
-    @Override
-    public int refrenceCount(Long code) {
-        return activityUserGroupMapper.refrenceCount(code);
-    }
-
-    @Override
-    public void deleteData(Long headId) {
-        activityUserGroupMapper.deleteData(headId);
-    }
-
-
     /**
      * 验证当前活动（某个阶段，类型） 活动商品对应的活动类型是否都配置了文案 返回未设置文件的组数
      * @param headId

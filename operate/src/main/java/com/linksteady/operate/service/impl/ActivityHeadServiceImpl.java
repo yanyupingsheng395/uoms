@@ -3,9 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.User;
-import com.linksteady.operate.dao.ActivityCovMapper;
-import com.linksteady.operate.dao.ActivityHeadMapper;
-import com.linksteady.operate.dao.ActivityUserGroupMapper;
+import com.linksteady.operate.dao.*;
 import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
@@ -34,6 +32,15 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 
     @Autowired
     private ActivityUserGroupMapper activityUserGroupMapper;
+
+    @Autowired
+    private ActivityProductMapper activityProductMapper;
+
+    @Autowired
+    private ActivityPlanMapper activityPlanMapper;
+
+    @Autowired
+    private ActivityDetailMapper activityDetailMapper;
 
     @Autowired
     private ActivityCovMapper activityCovMapper;
@@ -105,8 +112,21 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteData(Long headId) {
         activityHeadMapper.deleteActivity(headId);
+        activityProductMapper.deleteData(headId);
+        activityPlanMapper.deletePlan(headId);
+        activityUserGroupMapper.deleteData(headId);
+        //删除活动明细数据
+        activityDetailMapper.deleteData(headId);
+        //删除转化率数据
+        activityCovMapper.deleteData(headId);
     }
 
+    /**
+     * 判断当前活动是否可以删除
+     * 可以删除的条件： 要么全部为待计划状态，要么全部为过期未执行状态
+     * @param headId
+     * @return
+     */
     @Override
     public int getDeleteCount(Long headId) {
         return activityHeadMapper.getDeleteCount(headId);

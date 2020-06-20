@@ -148,8 +148,12 @@
     <select id="getDeleteCount" resultType="int">
         select count(1) from UO_OP_ACTIVITY_HEADER where
         HEAD_ID = #{headId}
-        and ((HAS_PREHEAT = '1' and FORMAL_STATUS = 'edit' and PREHEAT_STATUS = 'edit')
-        or (HAS_PREHEAT = '0' and FORMAL_STATUS = 'edit'))
+        and (
+          (has_preheat='1' and preheat_notify_status='edit' and preheat_status='edit' and formal_notify_status='edit' and formal_status='edit') or
+          (has_preheat='0' and  preheat_status='edit' and formal_status='edit') or
+          (has_preheat='1' and preheat_notify_status='timeout' and preheat_status='timeout' and formal_notify_status='timeout' and formal_status='timeout') or
+          (has_preheat='0' and  preheat_status='timeout' and formal_status='timeout')
+        )
     </select>
 
     <update id="updatePreheatStatusHead">

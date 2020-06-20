@@ -20,8 +20,6 @@ public interface ActivityUserGroupMapper {
 
     void saveGroupData(List<ActivityGroup> dataList);
 
-    int refrenceCount(Long code);
-
     void deleteData(Long headId);
 
     /**
