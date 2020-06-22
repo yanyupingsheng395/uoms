@@ -274,21 +274,33 @@ public class ActivityController {
 
     /**
      * 提交计划之前验证条件是否满足
-     * 1.验证所有群组是否配置消息模板
-     * 2.验证商品是否为空
+     *   1. 活动商品，至少有一个活动商品；
+     *   2. 活动商品全部校验通过；
+     *   3. 活动转化率数据为最新；
+     *   4. 文案全部配置，且校验通过。
      * @return
      */
     @GetMapping("/validSubmit")
     public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
         Map<String, String> data = Maps.newHashMap();
         // 验证所有群组是否配置消息模板 0：合法，非0不合法
-
         int templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, stage, type);
         if(templateIsNullCount > 0) {
             data.put("error", "部分群组文案没有配置");
-            updateInfoStatus(headId.toString(), stage, type,  "group", "0");
-        }else {
-            updateInfoStatus(headId.toString(), stage, type,  "group", "1");
+        }
+        List<String> products = activityProductService.getNotValidProductCount(headId, stage, type);
+        int totalCount = products.size();
+        if(totalCount == 0) {
+            data.put("error", "至少需要一个有效商品！");
+        }
+        long notValidProductCount = products.stream().filter(x->x.equalsIgnoreCase("N")).count();
+        if(notValidProductCount > 0) {
+            data.put("error", "存在校验不通过的商品！");
+        }
+        if(type.equalsIgnoreCase("NOTIFY")) {
+            if(activityProductService.ifCalculate(headId.toString(), stage)) {
+                data.put("error", "活动转化率数据不是最新数据，请先获取最新数据！");
+            }
         }
         return ResponseBo.okWithData(null, data);
     }
@@ -457,8 +469,8 @@ public class ActivityController {
     }
 
     @GetMapping("/validProduct")
-    public ResponseBo validProduct(@RequestParam String headId, @RequestParam("stage") String stage, @RequestParam String type) {
-        return ResponseBo.okWithData(null, activityProductService.validProduct(headId, stage, type));
+    public ResponseBo validProduct(@RequestParam String headId, @RequestParam("stage") String stage) {
+        return ResponseBo.okWithData(null, activityProductService.validProduct(headId, stage));
     }
 
 
@@ -488,22 +500,13 @@ public class ActivityController {
         return ResponseBo.okWithData(null, result);
     }
 
-    /**
-     * 校验商品和群组信息
-     * 商品:记录数为0，存在验证不通过==0，否则==1
-     * 群组:存在商品和群组不一致的==0，否则==1
-     *
-     * @return
-     */
-    @RequestMapping("/updateInfoStatus")
-    public ResponseBo updateInfoStatus(@RequestParam String headId, @RequestParam String activityStage,
-                                       @RequestParam String activityType, @RequestParam String key, @RequestParam String value) {
-        activityHeadService.updateInfoStatus(headId, activityStage, activityType, key, value);
-        return ResponseBo.ok();
-    }
-
     @RequestMapping("/checkCovInfo")
     public boolean checkCovInfo(@RequestParam String headId) {
         return activityCovService.checkCovInfo(headId);
+    }
+
+    @RequestMapping("/ifCalculate")
+    public boolean ifCalculate(@RequestParam String headId, @RequestParam String stage) {
+        return activityProductService.ifCalculate(headId, stage);
     }
 }

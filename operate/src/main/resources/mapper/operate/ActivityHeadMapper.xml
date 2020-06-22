@@ -211,8 +211,4 @@
         where t.formal_status in('todo','edit')
             and t.formal_end_dt::date&lt;current_date
     </update>
-
-    <update id="updateInfoStatus">
-        ${sql}
-    </update>
 </mapper>

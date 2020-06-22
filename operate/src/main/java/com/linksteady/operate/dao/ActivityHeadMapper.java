@@ -71,7 +71,4 @@ public interface ActivityHeadMapper {
      * 失效正式正式
      */
     void expireFormalDuring();
-
-
-    void updateInfoStatus(@Param("sql") String sql);
 }

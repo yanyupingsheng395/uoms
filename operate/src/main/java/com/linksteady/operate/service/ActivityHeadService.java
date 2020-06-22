@@ -73,6 +73,4 @@ public interface ActivityHeadService {
      * 活动头表失效
      */
     void expireActivityHead();
-
-    void updateInfoStatus(String headId, String activityStage, String activityType, String key, String value);
 }
