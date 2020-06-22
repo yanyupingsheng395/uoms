@@ -509,4 +509,10 @@ public class ActivityController {
     public boolean ifCalculate(@RequestParam String headId, @RequestParam String stage) {
         return activityProductService.ifCalculate(headId, stage);
     }
+
+    @RequestMapping("/validUserGroup")
+    public ResponseBo validUserGroup(@RequestParam String headId, @RequestParam String stage) {
+        activityUserGroupService.validUserGroup(headId, stage);
+        return ResponseBo.ok();
+    }
 }

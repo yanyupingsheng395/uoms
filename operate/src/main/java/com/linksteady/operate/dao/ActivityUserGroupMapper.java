@@ -30,5 +30,4 @@ public interface ActivityUserGroupMapper {
      * @return
      */
     int validGroupTemplateWithGroup(Long headId, String stage, String type);
-
 }

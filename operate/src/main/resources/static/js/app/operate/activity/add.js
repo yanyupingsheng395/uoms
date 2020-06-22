@@ -109,12 +109,17 @@ function stepBreak(index) {
                 if(r.data > 0) {
                     $MB.n_warning("存在校验不通过的商品！");
                 }else {
-                    ifCalculate();
-                    create_step.setActive(2);
-                    $("#step1").attr("style", "display:none;");
-                    $("#step2").attr("style", "display:none;");
-                    $("#step3").attr("style", "display:block;");
-                    createActivity(CURRENT_ACTIVITY_STAGE);
+                    $.get("/activity/validUserGroup", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
+                        if(r.code === 200) {
+                            ifCalculate();
+                            create_step.setActive(2);
+                            $("#step1").attr("style", "display:none;");
+                            $("#step2").attr("style", "display:none;");
+                            $("#step3").attr("style", "display:block;");
+                            createActivity(CURRENT_ACTIVITY_STAGE);
+                        }
+                    });
+
                 }
             }
         });
