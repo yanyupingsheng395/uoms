@@ -86,8 +86,11 @@ public class PageController extends BaseController {
     @Log(value = "每日运营优惠券",location = "用户成长系统")
     @RequestMapping("/cfg/coupon")
     public String couponList(Model model) {
-        model.addAttribute("couponSendType", pushConfig.getCouponSendType());
-        model.addAttribute("couponNameLen", pushConfig.getCouponNameLen());
+        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig",sourceConfigVO);
+
+//        model.addAttribute("couponSendType", pushConfig.getCouponSendType());
+//        model.addAttribute("couponNameLen", pushConfig.getCouponNameLen());
         return "operate/config/coupon";
     }
 
