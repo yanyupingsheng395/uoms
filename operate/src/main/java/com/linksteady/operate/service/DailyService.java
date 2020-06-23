@@ -1,9 +1,8 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.domain.DailyPersonal;
-import com.linksteady.operate.vo.DailyPersonalVo;
+import com.linksteady.operate.vo.DailyPersonalVO;
 
 import java.util.List;
 import java.util.Map;
@@ -35,9 +34,9 @@ public interface DailyService {
     Map<String, Object> getPushData(Long headId);
 
 
-    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int limit, int offset, String headId);
+    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVO dailyPersonalVo, int limit, int offset, String headId);
 
-    int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
+    int getDailyPersonalEffectCount(DailyPersonalVO dailyPersonalVo, String headId);
 
     /**
      * 获取生成文案的锁  true表示加锁成功 false表示加锁失败

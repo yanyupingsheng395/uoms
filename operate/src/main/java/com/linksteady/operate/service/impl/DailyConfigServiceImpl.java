@@ -1,6 +1,5 @@
 package com.linksteady.operate.service.impl;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.dao.DictMapper;
@@ -9,11 +8,9 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyConfigMapper;
-import com.linksteady.operate.dao.VmallCouponMapper;
 import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.operate.service.DailyConfigService;
-import com.linksteady.operate.vo.GroupCouponVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,9 +37,6 @@ public class DailyConfigServiceImpl implements DailyConfigService {
 
     @Autowired
     private DictMapper dictMapper;
-
-    @Autowired
-    private VmallCouponMapper vmallCouponMapper;
 
     /**
      * 获取用户组列表
@@ -115,13 +109,10 @@ public class DailyConfigServiceImpl implements DailyConfigService {
         Map<String, Object> data = dailyConfigMapper.findMsgInfo(userValue, lifeCycle, pathActive, tarType);
         // 获取短信的补贴和微信补贴
         List<CouponInfo> duanxinCouponInfos = couponMapper.getCouponListByGroup(userValue, lifeCycle, pathActive, tarType);
-        //微信优惠券
-        List<CouponInfo> weixinCouponInfos = vmallCouponMapper.getCouponListByGroup(userValue, lifeCycle, pathActive, tarType);
         if (data == null) {
             data = Maps.newHashMap();
         }
         data.put("duanxinCouponInfos", duanxinCouponInfos);
-        data.put("weixinCouponInfos", weixinCouponInfos);
         return data;
     }
 
@@ -135,9 +126,8 @@ public class DailyConfigServiceImpl implements DailyConfigService {
         lock.lock();
         try {
             int count1 = couponMapper.getValidCoupon();
-            int count2 = vmallCouponMapper.getValidCoupon();
-            if (count1 == 0 && count2 == 0) {
-                return ResponseBo.error("无有效的优惠券，请先配置优惠券。");
+            if (count1 == 0) {
+                return ResponseBo.error("无有效的补贴，请先配置补贴!");
             }
             // 更新discountLevel字段
             couponMapper.updateDiscountLevel();
@@ -146,17 +136,8 @@ public class DailyConfigServiceImpl implements DailyConfigService {
             // 根据discountLevel字段匹配到用户分组上
             couponMapper.resetCouponGroupData();
 
-            // 更新discountLevel字段
-            vmallCouponMapper.updateDiscountLevel();
-            // 清空群组和券的关系表
-            vmallCouponMapper.deleteAllCouponGroupData();
-            // 根据discountLevel字段匹配到用户分组上
-            vmallCouponMapper.resetCouponGroupData();
             if (count1 == 0) {
-                return ResponseBo.warn("淘客券无有效的优惠券，请先配置优惠券。");
-            }
-            if (count2 == 0) {
-                return ResponseBo.warn("小程序券无有效的优惠券，请先配置优惠券。");
+                return ResponseBo.warn("无有效的补贴，请先配置补贴!");
             }
         } finally {
             lock.unlock();

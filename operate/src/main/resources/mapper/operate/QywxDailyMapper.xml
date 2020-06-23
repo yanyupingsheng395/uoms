@@ -21,7 +21,7 @@
         <result column="EFFECT_DAYS" property="effectDays" jdbcType="DECIMAL"/>
     </resultMap>
 
-    <resultMap id="QywxUserStats" type="com.linksteady.operate.vo.QywxUserStats">
+    <resultMap id="QywxUserStats" type="com.linksteady.operate.vo.QywxUserStatsVO">
         <result property="userValue" jdbcType="VARCHAR" column="USER_VALUE"></result>
         <result property="pathActivity" jdbcType="VARCHAR" column="PATH_ACTIVE"></result>
         <result property="lifecycle" jdbcType="VARCHAR" column="LIFECYCLE"></result>

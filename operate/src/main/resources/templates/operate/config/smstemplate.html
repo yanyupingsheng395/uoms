@@ -37,6 +37,7 @@
             width:0;
             height:0;
             overflow:hidden;
+            word-break: break-all;
             line-height:0;
             font-size:0;
             border-bottom:8px solid #FFF;
@@ -53,6 +54,7 @@
             padding:5px 10px;
             border:1px solid #409eff;
             background:#eee;
+            word-break: break-all;
             border-radius:5px;
             background-color: #4D90FE;
             background-image:-webkit-gradient(linear,left top,left bottom,from(#4D90FE),to(#4787ED));
@@ -74,6 +76,16 @@
 
         .fr .article {
             float:right;
+        }
+
+        .smscomments {
+            font-size: 12px;
+            padding-bottom: 2px;
+        }
+
+        .smsvariable {
+            font-size: 12px;
+            padding-bottom: 2px;
         }
     </style>
 </head>
@@ -139,14 +151,14 @@
                 <form class="form-horizontal" id="smsTemplateAddForm" novalidate="novalidate">
                     <div class="col-md-12">
                         <div class="row">
-                            <div class="col-md-7">
+                            <div class="col-md-8">
                                 <div class="form-group">
                                     <div>
                                         <label class="control-label">文案体现的个性化要素</label>
                                     </div>
                                     <div>
                                         <input type="hidden" name="smsCode" id="smsCode"/>
-                                        <div style="border: solid 1px #ebebeb;padding: 8px; float: left;" id="config-box">
+                                        <div style="border: solid 1px #ebebeb;padding: 8px; float: left;width:520px; " id="config-box">
                                             <div class="example-box">
                                                 <label class="control-label">　　　　商品名称：</label>
                                                 <label class="lyear-radio radio-inline radio-primary">
@@ -156,9 +168,9 @@
                                                     <input type="radio" name="isProductName" value="0" onchange="$('#isProductName-error').hide()"><span>否</span>
                                                 </label>
                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品名称} 粘贴到期望位置；</span>
-                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;text-align: right;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
                                             </div>
-                                            <div class="example-box">
+                                            <div class="example-box" id="produrlDiv">
                                                 <label class="control-label">商品详情页短链接：</label>
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isProductUrl" value="1" onchange="isProdUrlTrueClick()"><span>是</span>
@@ -167,7 +179,7 @@
                                                     <input type="radio" name="isProductUrl" value="0" onchange="isProdUrlFalseClick()"><span>否</span>
                                                 </label>
                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品详情页短链} 粘贴到期望位置；</span>
-                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品详情页短链}" class="copy_btn">复制</a>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;text-align: right;" data-clipboard-text="${商品详情页短链}" class="copy_btn">复制</a>
                                             </div>
                                             <div class="example-box">
                                                 <label class="control-label">　　　　补贴名称：</label>
@@ -178,9 +190,9 @@
                                                     <input type="radio" name="isCouponName" value="0" onchange="isCouponNameFalseClick()"><span>否</span>
                                                 </label>
                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${补贴名称} 粘贴到期望位置；</span>
-                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${补贴名称}" class="copy_btn">复制</a>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;text-align: right;" data-clipboard-text="${补贴名称}" class="copy_btn">复制</a>
                                             </div>
-                                            <div class="example-box">
+                                            <div class="example-box" id="couponurlDiv">
                                                 <label class="control-label">　　　补贴短链接：</label>
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isCouponUrl" value="1" onchange="isCouponUrlTrueClick()"><span>是</span>
@@ -189,7 +201,7 @@
                                                     <input type="radio" name="isCouponUrl" value="0" onchange="isCouponUrlFalseClick()"><span>否</span>
                                                 </label>
                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${补贴短链} 粘贴到消息期望位置；</span>
-                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${补贴短链}" class="copy_btn">复制</a>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;text-align: right;" data-clipboard-text="${补贴短链}" class="copy_btn">复制</a>
                                             </div>
                                         </div>
                                     </div>
@@ -199,7 +211,7 @@
                                         <label class="control-label">文案内容</label>
                                     </div>
                                     <div>
-                                        <textarea class="form-control" id="smsContent" name="smsContent" style="height: 102px;width:507px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
+                                        <textarea class="form-control" id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
                                         <input type="hidden" id="smsContentInput" name="smsContentInput"/>
                                         <span class="wordwrap"><var id="word"></var></span>
                                     </div>
@@ -218,26 +230,30 @@
                     </div>
                     <hr class="hr"/>
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group mg-stop">
-                                <div class="col-md-12 control-label" style="text-align: left;">
-                                    <p class="small">
-                                        文案中填充变量说明：<br/>
-                                        1.一条文案通常允许的总字符数为[[${smsLengthLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；<br/>
-                                        2.个性化推送文案中，包括运营者编写的内容，字符数以N表示；还包括系统填充的变量，字符数以M表示；Y=N+M；<br/>
-                                        3.由于系统填充变量也会占用字符，所以在此列出4种变量的占用字符情况<br/>
-                                        &nbsp;&nbsp;&nbsp;${补贴短链}：补贴领取页短链接，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${补贴名称}：补贴名称，占<font color="red">[[${couponNameLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${商品名称}：商品短名称，占<font color="red">[[${prodNameLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${商品详情页短链}：商品购买详情页短链接，占<font color="red">[[${shortUrlLen}]]</font>个字符；<br/>
-                                        4.鉴于上述情况，建议一条文案中对变量的选用采取两种方式<br/>
-                                        &nbsp;&nbsp;&nbsp;编写内容+补贴领取页短链接+补贴名称+商品短名称
-                                        &nbsp;&nbsp;&nbsp;编写内容+商品短名称+商品购买详情页短链接
-                                    </p>
+                                <div class="col-md-12 control-label" style="text-align: left;margin-left: 15px;padding-left: 5px;">
+                                        <ol class="list-inline">文案编写说明：</ol>
+                                        <ol style="padding-inline-start: 20px">
+                                            <li class="smscomments">1.一条文案通常允许的总字符数为[[${sourceConfig.smsLengthLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；</li>
+                                            <li class="smscomments">2.个性化推送文案中，包括运营者编写的内容的长度，字符数以N表示；还包括系统填充的变量占用的长度，字符数以M表示；Y=N+M；</li>
+
+                                            <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度情况如下：</li>
+                                            <ul>
+                                                <li id="couponurlComments" class="smsvariable">&nbsp;&nbsp;${补贴短链}：补贴领取页短链接，占<font color="red">[[${sourceConfig.shortUrlLen}]]</font>个字符；例如:[[${sourceConfig.url}]] </li>
+                                                <li class="smsvariable">&nbsp;&nbsp;${补贴名称}：补贴名称，占<font color="red">[[${sourceConfig.couponNameLen}]]</font>个字符；例如:[[${sourceConfig.couponName}]]</li>
+                                                <li class="smsvariable">&nbsp;&nbsp;${商品名称}：商品短名称，占<font color="red">[[${sourceConfig.prodNameLen}]]</font>个字符；例如:[[${sourceConfig.prodName}]]</li>
+                                                <li id="produrlComments" class="smsvariable">&nbsp;&nbsp;${商品详情页短链}：商品购买详情页短链接，占<font color="red">[[${sourceConfig.shortUrlLen}]]</font>个字符；例如:[[${sourceConfig.url}]]</li>
+                                            </ul>
+
+                                            <li  class="smscomments">4.鉴于上述情况，建议一条文案中对变量的选用采取两种方式:</li>
+                                            <ul>
+                                                <li class="smsvariable">&nbsp;&nbsp;编写内容+补贴领取页短链接+补贴名称+商品短名称</li>
+                                                <li class="smsvariable">&nbsp;&nbsp;编写内容+商品短名称+商品购买详情页短链接</li>
+                                            </ul>
+                                            <li  class="smscomments">5.编写文案时起始位置请<font color="red">[[${sourceConfig.signatureFlag}]]</font>签名信息[[${sourceConfig.signature}]]</li>
+                                            <li  class="smscomments">6.编写文案时结束位置请<font color="red">[[${sourceConfig.unsubscribeFlag}]]</font>退订信息 [[${sourceConfig.unsubscribe}]]</li>
+                                        </ol>
                                 </div>
-                            </div>
                         </div>
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -318,12 +334,12 @@
 <input id="headerId" type="hidden">
 <script data-th-src="@{/plugins/clipboard.min.js}"></script>
 <script>
-    let couponNameLen = [[${couponNameLen}]];
-    let smsLengthLimit = [[${smsLengthLimit}]];
-    let shortUrlLen = [[${shortUrlLen}]];
-    let prodNameLen = [[${prodNameLen}]];
-    let prodUrlEnabled=[[${prodUrlEnabled}]];
-    let couponSendType = [[${couponSendType}]];
+    let couponNameLen = [[${sourceConfig.couponNameLen}]];
+    let smsLengthLimit = [[${sourceConfig.smsLengthLimit}]];
+    let shortUrlLen = [[${sourceConfig.shortUrlLen}]];
+    let prodNameLen = [[${sourceConfig.prodNameLen}]];
+    let prodUrlEnabled='[[${sourceConfig.prodUrlEnabled}]]';
+    let couponSendType ='[[${sourceConfig.couponSendType}]]';
 
     let clipboard = new ClipboardJS('.copy_btn', {
         container: document.getElementById('add_modal')

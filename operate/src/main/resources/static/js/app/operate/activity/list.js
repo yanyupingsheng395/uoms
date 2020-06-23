@@ -164,6 +164,8 @@ $(function () {
                     case "doing":
                         res = "<span class=\"badge bg-warning\">执行中</span>";
                         break;
+                    case "done":
+                        res = "<span class=\"badge bg-success\">执行完</span>";
                     case "timeout":
                         res = "<span class=\"badge bg-gray\">过期未执行</span>";
                         break;

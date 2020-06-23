@@ -93,13 +93,6 @@ public class CouponServiceImpl implements CouPonService {
         validCoupon();
     }
 
-    @Override
-    public List<CouponInfo> getCouponList(String groupId, String userValue, String lifeCycle, String pathActive) {
-        List<CouponInfo> couponList = couponMapper.getCouponList(groupId);
-        validCoupon();
-        return couponList;
-    }
-
     /**
      * 获取智能补贴
      */
@@ -150,7 +143,7 @@ public class CouponServiceImpl implements CouPonService {
     public void validCoupon() {
         String couponSendType = pushConfig.getCouponSendType();
         if(couponSendType == null) {
-            throw new RuntimeException("系统发送补贴的方式未在配置表中配置！");
+            throw new RuntimeException("补贴的方法方式未在系统中配置！");
         }
         //设置所有券为验证通过
         couponMapper.validCouponPass();

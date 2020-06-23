@@ -6,7 +6,7 @@ import lombok.Data;
  * Created by hxcao on 2019-06-04
  */
 @Data
-public class KpiInfoVo {
+public class KpiInfoVO {
 
     /**
      * 指标值

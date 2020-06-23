@@ -24,4 +24,18 @@ public class ActivityEffect {
 
     private Long successNum;
     private Date pushDate;
+
+    public ActivityEffect() {
+    }
+
+    public ActivityEffect(String kpiName, Double allStage, Double preheatAll, Double preheatNotify, Double preheatDuring, Double normalAll, Double normalNotify, Double normalDuring) {
+        this.kpiName = kpiName;
+        this.allStage = allStage;
+        this.preheatAll = preheatAll;
+        this.preheatNotify = preheatNotify;
+        this.preheatDuring = preheatDuring;
+        this.normalAll = normalAll;
+        this.normalNotify = normalNotify;
+        this.normalDuring = normalDuring;
+    }
 }

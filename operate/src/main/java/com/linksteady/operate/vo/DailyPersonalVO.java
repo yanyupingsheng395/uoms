@@ -8,7 +8,7 @@ import lombok.Data;
  * @date 2019-10-28
  */
 @Data
-public class DailyPersonalVo {
+public class DailyPersonalVO {
 
     /**
      * 是否转化

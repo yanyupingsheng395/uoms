@@ -9,6 +9,7 @@ import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivityPlanService;
 import com.linksteady.operate.service.DailyService;
 import com.linksteady.operate.service.QywxDailyService;
+import com.linksteady.operate.vo.SourceConfigVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -57,16 +58,8 @@ public class PageController extends BaseController {
     @Log(value = "每日运营配置",location = "用户成长系统")
     @RequestMapping("/dailyconfig")
     public String dailyGroupConfig(Model model) {
-        //短链长度
-        model.addAttribute("shortUrlLen", pushConfig.getShortUrlLen());
-        //补贴名称长度
-        model.addAttribute("couponNameLen", pushConfig.getCouponNameLen());
-        //商品名称长度
-        model.addAttribute("prodNameLen", pushConfig.getProdNameLen());
-        //补贴发放方式
-        model.addAttribute("couponSendType", pushConfig.getCouponSendType());
-        //短链长度
-        model.addAttribute("smsLengthLimit", pushConfig.getSmsLengthLimit());
+        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig",sourceConfigVO);
         return "operate/dailyconfig/config";
     }
 
@@ -80,19 +73,8 @@ public class PageController extends BaseController {
     @Log(value = "每日运营文案",location = "用户成长系统")
     @RequestMapping("/cfg/smsTemplate")
     public String smsTemplateList(Model model) {
-        //短链长度
-        model.addAttribute("shortUrlLen", pushConfig.getShortUrlLen());
-        //优惠券名称长度
-        model.addAttribute("couponNameLen", pushConfig.getCouponNameLen());
-        //商品名称长度
-        model.addAttribute("prodNameLen", pushConfig.getProdNameLen());
-        //短信长度
-        model.addAttribute("smsLengthLimit", pushConfig.getSmsLengthLimit());
-        //优惠券发放方式
-        model.addAttribute("couponSendType", pushConfig.getCouponSendType());
-        //优惠券发放方式
-        model.addAttribute("prodUrlEnabled", pushConfig.getProdUrlEnabled());
-
+        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig",sourceConfigVO);
         return "operate/config/smstemplate";
     }
 

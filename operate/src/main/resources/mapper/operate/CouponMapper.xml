@@ -87,46 +87,6 @@
         select count(*) from  uo_op_daily_detail c where c.coupon_id=#{couponId}::int4
     </select>
 
-    <select id="getCouponList" resultMap="BaseResultMap">
-        select (case  when t4.COUPON_ID = v1.COUPON_ID then '1' else '0'  end ) IS_SELECTED,
-               --1.是否推荐  1推荐 0 不推荐
-               (case when t5.coupon_id is not null then '1' else '0' end) is_rec,
-               v1.coupon_id,
-               v1.coupon_denom,
-               v1.coupon_threshold,
-               v1.coupon_url,
-               v1.coupon_desc,
-               v1.coupon_num,
-               to_char(v1.valid_end, 'yyyy-mm-dd') valid_end,
-               v1.coupon_info1,
-               v1.coupon_info2,
-               v1.coupon_display_name,
-               v1.valid_status,
-               v1.coupon_source,
-               v1.discount_level,
-               v1.check_flag,
-               v1.check_comments
-        from  (select * from UO_OP_COUPON where valid_status='Y') v1 --优惠券列表                                                                                                                                                                                                                                                                                                                   from (select * from UO_OP_COUPON where valid_status='Y') v1 --优惠券列表
-                 left join UO_OP_DAILY_GROUP_COUPON t4 --已选,
-                           on v1.COUPON_ID = t4.COUPON_ID
-                               and t4.GROUP_ID = #{groupId}::int4
-                 left join
-             (
-                 select r4.coupon_id
-                 from (
-                          select r1.coupon_denom, r1.coupon_threshold, r2.group_id
-                          from UO_COUPON_AISNP r1,
-                               UO_OP_DAILY_TEMPLATE_CONFIG r2
-                          where r1.DISCOUNT_LEVEL = r2.DISCOUNT_LEVEL) r3,
-                      uo_op_coupon r4
-                 where r3.coupon_denom = r4.coupon_denom
-                   and r3.coupon_threshold = r4.coupon_threshold
-                   and r3.group_id = #{groupId}::int4
-             ) t5
-             on v1.coupon_id = t5.coupon_id
-        order by is_rec desc, coupon_threshold asc, coupon_denom asc
-    </select>
-
     <insert id="insertCalculatedCoupon">
         insert into UO_OP_COUPON(COUPON_DENOM,COUPON_THRESHOLD,COUPON_DISPLAY_NAME,COUPON_SOURCE,CHECK_FLAG,CHECK_COMMENTS)
         values
