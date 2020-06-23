@@ -82,12 +82,12 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
         }
 
         if(stage.equalsIgnoreCase("formal")) {
-            String preheatNotifyStatus = activityHead.getPreheatNotifyStatus();
-            if(preheatNotifyStatus.equalsIgnoreCase("edit") || preheatNotifyStatus.equalsIgnoreCase("todo")) {
+            String formalNotifyStatus = activityHead.getFormalNotifyStatus();
+            if(formalNotifyStatus.equalsIgnoreCase("edit") || formalNotifyStatus.equalsIgnoreCase("todo")) {
                 activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "NOTIFY");
             }
-            String preheatDuringStatus = activityHead.getPreheatStatus();
-            if(preheatDuringStatus.equalsIgnoreCase("edit") || preheatDuringStatus.equalsIgnoreCase("todo")) {
+            String formalStatus = activityHead.getFormalStatus();
+            if(formalStatus.equalsIgnoreCase("edit") || formalStatus.equalsIgnoreCase("todo")) {
                 activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "DURING");
             }
         }

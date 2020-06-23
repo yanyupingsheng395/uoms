@@ -97,6 +97,74 @@ function stepBreak(index) {
     }
     if(index == 1) {
         create_step.setActive(1);
+        if(operate_type === 'update') {
+            if(CURRENT_ACTIVITY_STAGE === 'preheat') {
+                if(preheatNotifyStatus === 'doing' || preheatNotifyStatus === 'done' || preheatNotifyStatus === 'timeout') {
+                    $("#btn_add_shop1").attr("style", "display:none;");
+                    $("#btn_edit_shop1").attr("style", "display:none;");
+                    $("#btn_delete_shop1").attr("style", "display:none;");
+                    $("#btn_batch_upload1").attr("style", "display:none;");
+                    $("#changePlan").attr("style", "display:none;");
+                    $("#calculateCovDataBtn").attr("style", "display:none;");
+                    $("#submitBtn1").attr("style", "display:none;");
+                    $("#submitBtn2").attr("style", "display:none;");
+                }else {
+                    $("#btn_add_shop1").attr("style", "display:inline-block;");
+                    $("#btn_edit_shop1").attr("style", "display:inline-block;");
+                    $("#btn_delete_shop1").attr("style", "display:inline-block;");
+                    $("#btn_batch_upload1").attr("style", "display:inline-block;");
+                    $("#changePlan").attr("style", "display:inline-block;");
+                    $("#calculateCovDataBtn").attr("style", "display:inline-block;");
+                    $("#submitBtn1").attr("style", "display:inline-block;");
+                    $("#submitBtn2").attr("style", "display:inline-block;");
+                }
+                if(preheatStatus === 'done' || preheatStatus === 'timeout') {
+                    $("#btn_add_shop2").attr("style", "display:none;");
+                    $("#btn_edit_shop2").attr("style", "display:none;");
+                    $("#btn_delete_shop2").attr("style", "display:none;");
+                    $("#btn_batch_upload2").attr("style", "display:none;");
+                }else {
+                    $("#btn_add_shop2").attr("style", "display:inline-block;");
+                    $("#btn_edit_shop2").attr("style", "display:inline-block;");
+                    $("#btn_delete_shop2").attr("style", "display:inline-block;");
+                    $("#btn_batch_upload2").attr("style", "display:inline-block;");
+                }
+            }
+            if(CURRENT_ACTIVITY_STAGE === 'formal') {
+                if(formalNotifyStatus === 'doing' || formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout') {
+                    if(formalNotifyStatus === 'doing' || formalNotifyStatus === 'done') {
+                        $("#btn_add_shop1").attr("style", "display:none;");
+                        $("#btn_edit_shop1").attr("style", "display:none;");
+                        $("#btn_delete_shop1").attr("style", "display:none;");
+                        $("#btn_batch_upload1").attr("style", "display:none;");
+                        $("#changePlan").attr("style", "display:none;");
+                        $("#calculateCovDataBtn").attr("style", "display:none;");
+                        $("#submitBtn1").attr("style", "display:none;");
+                        $("#submitBtn2").attr("style", "display:none;");
+                    }else {
+                        $("#btn_add_shop1").attr("style", "display:inline-block;");
+                        $("#btn_edit_shop1").attr("style", "display:inline-block;");
+                        $("#btn_delete_shop1").attr("style", "display:inline-block;");
+                        $("#btn_batch_upload1").attr("style", "display:inline-block;");
+                        $("#changePlan").attr("style", "display:inline-block;");
+                        $("#calculateCovDataBtn").attr("style", "display:inline-block;");
+                        $("#submitBtn1").attr("style", "display:inline-block;");
+                        $("#submitBtn2").attr("style", "display:inline-block;");
+                    }
+                }
+                if(formalStatus === 'done' || formalStatus === 'timeout') {
+                    $("#btn_add_shop2").attr("style", "display:none;");
+                    $("#btn_edit_shop2").attr("style", "display:none;");
+                    $("#btn_delete_shop2").attr("style", "display:none;");
+                    $("#btn_batch_upload2").attr("style", "display:none;");
+                }else {
+                    $("#btn_add_shop2").attr("style", "display:inline-block;");
+                    $("#btn_edit_shop2").attr("style", "display:inline-block;");
+                    $("#btn_delete_shop2").attr("style", "display:inline-block;");
+                    $("#btn_batch_upload2").attr("style", "display:inline-block;");
+                }
+            }
+        }
         getProductInfo('NOTIFY', 'activityProductTable1');
         getProductInfo('DURING', 'activityProductTable2');
         $("#step1").attr("style", "display:none;");
@@ -965,7 +1033,12 @@ function saveActivityHead() {
         if (r.code === 200) {
             $MB.n_success( r.msg );
             $( "#headId" ).val( r.data );
-            stepBreak(1);
+            if(CURRENT_ACTIVITY_STAGE === 'preheat') {
+                preheatClick();
+            }
+            if(CURRENT_ACTIVITY_STAGE === 'formal') {
+                formalClick();
+            }
             $( "#basic-add-form" ).find( 'input' ).attr( "disabled", "disabled" );
             $( "#basic-add-form" ).find( 'select' ).attr( "disabled", "disabled" );
             $( '#btn_basic' ).attr( "disabled", "disabled" );
@@ -1032,46 +1105,17 @@ function getGroupList(stage, type, tableId) {
             }, {
                 title: '设置文案',
                 align: 'center',
+                visible: setContent(stage, flag, tableId),
                 formatter: function (value, row, index) {
-                    var res = "";
                     if(tableId === 'table1') {
-                        if(stage === 'preheat') {
-                            if(preheatNotifyStatus === 'done' || preheatNotifyStatus === 'timeout' || !flag) {
-                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
-                            }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"NOTIFY\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
-                                    "</a>";
-                            }
-                        }else {
-                            if(formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout' || !flag) {
-                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
-                            }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"NOTIFY\",\""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
-                                    "</a>";
-                            }
-                        }
+                        return "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
+                            "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"NOTIFY\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
+                            "</a>";
                     }else {
-                        if(stage === 'preheat') {
-                            if(preheatStatus === 'done') {
-                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
-                            }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"DURING\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
-                                    "</a>";
-                            }
-                        }else {
-                            if(formalStatus === 'done') {
-                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
-                            }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"DURING\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
-                                    "</a>";
-                            }
-                        }
+                        return "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
+                            "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"DURING\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
+                            "</a>";
                     }
-                    return res;
                 }
             }, {
                 field: 'smsTemplateContent',
@@ -1117,6 +1161,27 @@ function getGroupList(stage, type, tableId) {
         }
     };
     $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+}
+
+function setContent(stage, flag, tableId) {
+    if(stage === 'preheat') {
+        if(tableId === 'table1' && (preheatNotifyStatus === 'doing' || preheatNotifyStatus === 'done' || preheatNotifyStatus === 'timeout' || !flag)) {
+            return false;
+        }
+        if(tableId === 'table5' && preheatStatus === 'done') {
+            return false;
+        }
+        return true;
+    }
+    if(stage === 'formal') {
+        if(tableId === 'table1' && (formalNotifyStatus === 'doing' || formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout' || !flag)) {
+            return false;
+        }
+        if(tableId === 'table5' && formalStatus === 'done') {
+            return false;
+        }
+        return true;
+    }
 }
 
 // 群组列表点击文案图标
