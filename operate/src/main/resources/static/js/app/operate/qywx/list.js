@@ -66,15 +66,25 @@ function initTable() {
             formatter: function (value, row, indx) {
                 var currDate=getNowFormatDate();
                 var res = "-";
-                if(row.touchDtStr ===currDate&&"通过"===row.validateLabel) {
+                if("通过"===row.validateLabel) {
                     res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
-                }else if(row.touchDtStr ===currDate&&"未通过"===row.validateLabel)
+                }else if("未通过"===row.validateLabel)
                 {
                     res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
                 }else
                 {
                     res='-';
                 }
+
+                // if(row.touchDtStr ===currDate&&"通过"===row.validateLabel) {
+                //     res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
+                // }else if(row.touchDtStr ===currDate&&"未通过"===row.validateLabel)
+                // {
+                //     res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
+                // }else
+                // {
+                //     res='-';
+                // }
                 return res;
             }
         },{
@@ -742,35 +752,40 @@ function changeStep(count) {
         $("#step2").attr("style", "display:block;");
         $("#step3").attr("style", "display:none;");
 
-        if(current_status === 'todo'&&current_taskDt==currDay) {
-            $("#nextStepBtn").attr("style", "display:inline-block;");
-            getUserStrategyList($("#headId").val());
-        }else {
-            $("#nextStepBtn").attr("style", "display:none;");
-            getUserStrategyList($("#headId").val());
-        }
+        //todo 此两行代码后续删除
+        $("#nextStepBtn").attr("style", "display:inline-block;");
+        getUserStrategyList($("#headId").val());
+
+        // if(current_status === 'todo'&&current_taskDt==currDay) {
+        //     $("#nextStepBtn").attr("style", "display:inline-block;");
+        //     getUserStrategyList($("#headId").val());
+        // }else {
+        //     $("#nextStepBtn").attr("style", "display:none;");
+        //     getUserStrategyList($("#headId").val());
+        // }
         stepObj.setActive(1);
     }
     //推送
     if(current_step === 2) {
-        if(current_status === 'todo'&&current_taskDt==currDay) {
-            $.get("/qywxDaily/validUserGroupForQywx", {}, function(r) {
-                if(r.code == 200) {
-                    if(r.data) {
-                        $MB.n_warning("成长组配置验证未通过！");
-                        return false;
-                    }else {
-                        $("#prevStepBtn").attr("style", "display:inline-block;");
-                        $("#nextStepBtn").attr("style", "display:none;");
-                        $("#pushMsgBtn").attr("style", "display:inline-block;");
-                        $("#step1").attr("style", "display:none;");
-                        $("#step2").attr("style", "display:none;");
-                        $("#step3").attr("style", "display:block;");
-                        stepObj.setActive(2);
-                    }
+        $.get("/qywxDaily/validUserGroupForQywx", {}, function(r) {
+            if(r.code == 200) {
+                if(r.data) {
+                    $MB.n_warning("成长组配置验证未通过！");
+                    return false;
+                }else {
+                    $("#prevStepBtn").attr("style", "display:inline-block;");
+                    $("#nextStepBtn").attr("style", "display:none;");
+                    $("#pushMsgBtn").attr("style", "display:inline-block;");
+                    $("#step1").attr("style", "display:none;");
+                    $("#step2").attr("style", "display:none;");
+                    $("#step3").attr("style", "display:block;");
+                    stepObj.setActive(2);
                 }
-            });
-        }
+            }
+        });
+        // if(current_status === 'todo'&&current_taskDt==currDay) {
+        //
+        // }
     }
 }
 

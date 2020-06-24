@@ -88,9 +88,6 @@ public class PageController extends BaseController {
     public String couponList(Model model) {
         SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
         model.addAttribute("sourceConfig",sourceConfigVO);
-
-//        model.addAttribute("couponSendType", pushConfig.getCouponSendType());
-//        model.addAttribute("couponNameLen", pushConfig.getCouponNameLen());
         return "operate/config/coupon";
     }
 

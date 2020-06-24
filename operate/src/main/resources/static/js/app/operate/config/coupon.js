@@ -127,9 +127,6 @@ function closeModal() {
     $form.find("input[name='couponNum']").val("").removeAttr("readOnly");
     $form.find("input[name='couponDisplayName']").val("").removeAttr("readOnly");
     $form.find("input[name='validEnd']").val("").removeAttr("readOnly");
-    $("input[name='userValue']:checked").removeAttr("checked");
-    $("input[name='lifeCycle']:checked").removeAttr("checked");
-    $("input[name='pathActive']:checked").removeAttr("checked");
     $("input[name='validStatus']:radio[value='Y']").prop("checked", true);
     $MB.closeAndRestModal("add_modal");
     $("#btn_save").attr("name", "save");

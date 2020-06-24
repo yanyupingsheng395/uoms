@@ -198,13 +198,13 @@ public class QywxDailyController {
         QywxDailyHeader qywxDailyHeader = qywxDailyService.getHeadInfo(headId);
 
         //进行一次时间的判断 (调度修改状态有一定的延迟)
-        if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(qywxDailyHeader.getTaskDateStr())) {
-            return ResponseBo.error("已过期的任务无法再执行!");
-        }
+//        if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(qywxDailyHeader.getTaskDateStr())) {
+//            return ResponseBo.error("已过期的任务无法再执行!");
+//        }
 
-        if (null == qywxDailyHeader || !qywxDailyHeader.getStatus().equalsIgnoreCase("todo")) {
-            return ResponseBo.error("当前任务非待执行状态，请返回刷新后重试！");
-        }
+//        if (null == qywxDailyHeader || !qywxDailyHeader.getStatus().equalsIgnoreCase("todo")) {
+//            return ResponseBo.error("当前任务非待执行状态，请返回刷新后重试！");
+//        }
 
         String validateLabel = dailyConfigService.validUserGroupForQywx() ? "未通过" : "通过";
         if (validateLabel.equalsIgnoreCase("未通过")) {

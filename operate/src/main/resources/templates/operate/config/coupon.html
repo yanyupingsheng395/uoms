@@ -36,6 +36,11 @@
                         <div class="row">
                             <h5 class="navbar-page-title">每日运营补贴</h5>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-sm-12 select-table table-striped">
                         <div class="row">
@@ -68,7 +73,7 @@
     </div>
 </div>
 <input id="headerId" type="hidden"/>
-<input id="couponSendType" type="hidden" th:value="${couponSendType}"/>
+<input id="couponSendType" type="hidden" th:value="${sourceConfig.couponSendType}"/>
 
 <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_modal" data-backdrop="static">
     <div class="modal-dialog" role="document" style="width: 60%;">
@@ -156,7 +161,7 @@
     </div>
 </div>
 <script>
-    let couponNameLen = [[${couponNameLen}]];
+    let couponNameLen = [[${sourceConfig.couponNameLen}]];
 </script>
 <div data-th-include="common/commonJS"></div>
 <script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
