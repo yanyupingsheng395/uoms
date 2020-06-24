@@ -1,13 +1,16 @@
 package com.linksteady.operate.thrift;
 
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TMultiplexedProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransportException;
 
 public class ThriftClient {
     private ProdInsightService.Client insightService;
     private  ActivityService.Client activityService;
-    private TBinaryProtocol protocol;
+    private TBinaryProtocol tBinaryProtocol;
+    private TMultiplexedProtocol insightProcessor;
+    private TMultiplexedProtocol activityProcessor;
     private TSocket transport;
     private String host;
     private int port;
@@ -30,9 +33,11 @@ public class ThriftClient {
 
     public void init() {
         transport = new TSocket(host, port);
-        protocol = new TBinaryProtocol(transport);
-        insightService = new ProdInsightService.Client(protocol);
-        activityService = new ActivityService.Client(protocol);
+        tBinaryProtocol=new TBinaryProtocol(transport);
+        insightProcessor = new TMultiplexedProtocol(tBinaryProtocol,"'insignt");
+        activityProcessor=new TMultiplexedProtocol(tBinaryProtocol,"'activity");
+        insightService = new ProdInsightService.Client(insightProcessor);
+        activityService = new ActivityService.Client(activityProcessor);
     }
 
     public ProdInsightService.Client getInsightService() {
