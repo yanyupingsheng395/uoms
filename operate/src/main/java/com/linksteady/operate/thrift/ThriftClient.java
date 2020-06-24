@@ -38,7 +38,11 @@ public class ThriftClient {
     }
 
     public void open() throws TTransportException {
-        transport.open();
+        if(!isOpend())
+        {
+            transport.open();
+        }
+
     }
 
     public boolean isOpend() {
