@@ -2037,10 +2037,12 @@ function genCovInfo() {
     }
     $MB.loadingDesc('show', '正在计算活动转化率....');
     $.get("/activity/genCovInfo", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE}, function (r) {
-        if(r.data === '1') {
-            $MB.n_success("计算成功！");
+        if(r.data == 1) {
+            $MB.n_success("获取数据成功！");
+        }else if(r.data == 0){
+            $MB.n_warning("获取数据失败！");
         }else {
-            $MB.n_warning("计算失败！");
+            $MB.n_warning("未知异常！");
         }
         $MB.refreshTable('covertDataTable');
         $MB.refreshTable('table3');

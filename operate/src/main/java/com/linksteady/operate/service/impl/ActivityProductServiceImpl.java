@@ -433,7 +433,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     activityProduct.setActivityStage(stage);
                     activityProduct.setActivityType(activityType);
                     if (activityProduct.productValid()) {
-                        activityProduct.setProductUrl(shortUrlService.genProdShortUrlByProdId(productId, "S"));
                         activityProduct = calculateProductMinPrice(activityProduct);
                         productList.add(activityProduct);
                     }
