@@ -1,7 +1,7 @@
 package com.linksteady.operate.task;
 
-import com.linksteady.operate.thrift.InsightThriftClient;
 import com.linksteady.operate.thrift.RetentionData;
+import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.smp.starter.annotation.JobHandler;
 import com.linksteady.smp.starter.domain.ResultInfo;
 import com.linksteady.smp.starter.jobclient.service.IJobHandler;
@@ -21,7 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @JobHandler(value = "validateThrift")
 public class ValidateThrift extends IJobHandler {
     @Autowired
-    private InsightThriftClient insightThriftClient;
+    private ThriftClient thriftClient;
 
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
@@ -33,17 +33,17 @@ public class ValidateThrift extends IJobHandler {
 
         lock.lock();
         try {
-            if (!insightThriftClient.isOpend()) {
-                insightThriftClient.open();
+            if (!thriftClient.isOpend()) {
+                thriftClient.open();
             }
 
-            RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(-1, 0, 12);
+            RetentionData retentionFitData = thriftClient.getInsightService().getRetentionFitData(-1, 0, 12);
 
             log.info("测试thrift接口，返回的结果为:{}",retentionFitData);
             return ResultInfo.success("测试thrift接口成功!");
         } catch (Exception e) {
             log.error("thrift接口获取拟合值数据异常", e);
-            insightThriftClient.close();
+            thriftClient.close();
             //错误日志的上报
             exceptionNoticeHandler.exceptionNotice(e.getMessage());
             return ResultInfo.faild(e.getMessage());

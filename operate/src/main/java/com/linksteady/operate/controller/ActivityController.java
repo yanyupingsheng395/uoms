@@ -1,6 +1,5 @@
 package com.linksteady.operate.controller;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
@@ -10,9 +9,7 @@ import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
-import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
-import com.linksteady.operate.thrift.ActivityService;
-import com.linksteady.operate.thrift.ActivityThriftClient;
+import com.linksteady.operate.thrift.ThriftClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.thrift.TException;
@@ -28,8 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -67,7 +62,7 @@ public class ActivityController {
     private ActivityCovService activityCovService;
 
     @Autowired
-    private ActivityThriftClient activityThriftClient;
+    private ThriftClient thriftClient;
 
     /**
      * 获取头表的分页数据
@@ -477,13 +472,13 @@ public class ActivityController {
         long result = -1;
         reentrantLock.lock();
         try {
-            activityThriftClient.open();
-            result = activityThriftClient.getActivityService().genPredictCovData(Long.parseLong(headId), activityStage);
+            thriftClient.open();
+            result = thriftClient.getActivityService().genPredictCovData(Long.parseLong(headId), activityStage);
         }catch (TException e) {
             log.info("生成转化率数据出错", e);
         } finally {
             reentrantLock.unlock();
-            activityThriftClient.close();
+            thriftClient.close();
         }
         return ResponseBo.okWithData(null, result);
     }
