@@ -192,12 +192,12 @@ function validateRule() {
             },
             couponInfo2: {
                 required: function () {
-                    return ($("#couponSendType").val() === 'A');
+                    return $("input[name='couponSendType']").val() === 'A';
                 }
             },
             couponUrl: {
                 required: function () {
-                    return ($("#couponSendType").val() === 'A');
+                    return $("input[name='couponSendType']").val() === 'A';
                 }
             },
             couponDisplayName: {
