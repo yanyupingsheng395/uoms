@@ -22,4 +22,6 @@ public interface ActivityCovService {
     List<Map<String, String>> calculateCov(String headId, String stage, String changedCovId, String defaultCovId);
 
     void updateCovInfo(long headId, String stage, String covId);
+
+    boolean checkCovInfo(String headId);
 }

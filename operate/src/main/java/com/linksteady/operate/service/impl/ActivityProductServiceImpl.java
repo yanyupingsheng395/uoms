@@ -485,19 +485,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      * @return
      */
     @Override
-    public int validProduct(String headId, String stage, String type) {
-        ActivityHead activityHead = activityHeadMapper.findById(Long.valueOf(headId));
-        if(stage.equalsIgnoreCase("preheat")) {
-            if(activityHead.getPreheatNotifyStatus().equalsIgnoreCase("edit")) {
-                return activityProductMapper.validProduct(headId, stage, type);
-            }
-        }
-        if(stage.equalsIgnoreCase("formal")) {
-            if(activityHead.getFormalNotifyStatus().equalsIgnoreCase("edit")) {
-                return activityProductMapper.validProduct(headId, stage, type);
-            }
-        }
-        return -1;
+    public int validProduct(String headId, String stage) {
+        return activityProductMapper.validProduct(headId, stage);
     }
 
     @Override
@@ -508,6 +497,16 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     @Override
     public boolean checkProductId(String headId, String activityType, String activityStage, String productId) {
         return activityProductMapper.checkProductId(headId, activityType, activityStage, productId) == 0;
+    }
+
+    @Override
+    public boolean ifCalculate(String headId, String stage) {
+        return activityProductMapper.ifCalculate(headId, stage) > 0;
+    }
+
+    @Override
+    public List<String> getNotValidProductCount(Long headId, String stage, String type) {
+        return activityProductMapper.getNotValidProduct(headId, stage, type);
     }
 
     /**

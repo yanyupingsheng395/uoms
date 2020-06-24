@@ -58,7 +58,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
     @Transactional(rollbackFor = Exception.class)
     public void generate(Long headerId) throws Exception {
         qywxDailyDetailMapper.deleteQywxPushContentTemp(headerId);
-        //获取group上配置的所有优惠券信息
+        //获取group上配置的所有补贴信息
         List<Map<String,Object>> groupCouponInfo=couponMapper.selectGroupCouponInfo();
         Map<String,List<GroupCouponVO>> groupCouponList=groupingCouponByGroupId(groupCouponInfo);
         Long startTime = System.currentTimeMillis();
@@ -166,7 +166,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
     }
 
     /**
-     * 对配在组上的优惠券按照GROUP_ID进行分组
+     * 对配在组上的补贴按照GROUP_ID进行分组
      * @param groupCouponInfo
      * @return
      */
@@ -203,29 +203,29 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
             String textContent = qywxDailyDetail.getTextContent();
             textContent = textContent.replace("${商品名称}", convertNullToEmpty(qywxDailyDetail.getRecProdName()));
 
-            //判断当前组是否含券 1表示含券，匹配优惠券信息
+            //判断当前组是否含券 1表示含券，匹配补贴信息
             if(1==qywxDailyDetail.getIsCoupon())
             {
-                //匹配优惠券信息
+                //匹配补贴信息
                 //获取推荐件单价 Rec_Piece_Price
                 double recpiecePrice=qywxDailyDetail.getPiecePrice();
 
-                //最佳优惠券的对象
+                //最佳补贴的对象
                 GroupCouponVO couponTemp=null;
-                //推荐件单价和优惠券门槛之间的差额  (差额最小的那个优惠券就是推荐的优惠券)
+                //推荐件单价和补贴门槛之间的差额  (差额最小的那个补贴就是推荐的补贴)
                 double distanceTemp=0d;
-                //门槛最小的优惠券
+                //门槛最小的补贴
                 GroupCouponVO minCoupon=null;
                 int count=0;
 
 
-                //根据当前的group_id获取当前组上配的优惠券列表
+                //根据当前的group_id获取当前组上配的补贴列表
                 List<GroupCouponVO> couponList=groupCouponList.get(qywxDailyDetail.getGroupId());
                 if(null!=couponList&&couponList.size()>0)
                 {
                     for(GroupCouponVO groupCouponVO:couponList)
                     {
-                        //计算推荐单价和优惠券门槛的差额 (取低于推荐单价 且 最接近最低单价的门槛)
+                        //计算推荐单价和补贴门槛的差额 (取低于推荐单价 且 最接近最低单价的门槛)
                         double diff=recpiecePrice-groupCouponVO.getCouponThreshold();
                         if(diff>0)
                         {
@@ -254,14 +254,14 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
                         {
                             if(groupCouponVO.getCouponThreshold()<minCoupon.getCouponThreshold())
                             {
-                                //替换门槛最小的优惠券为当前优惠券
+                                //替换门槛最小的补贴为当前补贴
                                 minCoupon=groupCouponVO;
                             }
                         }
                     }
                 }
 
-                //如果找低于推荐价格且最接近的优惠券 找不到，则取门槛最小的那个优惠券
+                //如果找低于推荐价格且最接近的补贴 找不到，则取门槛最小的那个补贴
                 if(couponTemp==null)
                 {
                     couponTemp=minCoupon;
@@ -273,7 +273,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
 
                     temp.setCouponId(couponTemp.getCouponId());
                     temp.setCouponDeno(String.valueOf(couponTemp.getCouponDenom()));
-                    //优惠券门槛
+                    //补贴门槛
                     temp.setCouponMin(String.valueOf(couponTemp.getCouponThreshold()));
                 }else
                 {

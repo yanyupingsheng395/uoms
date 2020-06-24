@@ -72,6 +72,10 @@
         order by COV_LIST_ID desc
     </select>
 
+    <select id="checkCovInfo" resultType="int">
+        select count(1) from uo_op_activity_covinfo where activity_head_id = #{headId}::int4
+    </select>
+
     <delete id="deleteData">
         delete from UO_OP_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID=#{headId}
     </delete>

@@ -48,9 +48,13 @@ public interface ActivityProductMapper {
 
     int getCountByHeadId(String headId);
 
-    int validProduct(String headId, String stage, String type);
+    int validProduct(String headId, String stage);
 
     List<String> getGroupIds(Long headId);
 
     int checkProductId(String headId, String activityType, String activityStage, String productId);
+
+    int ifCalculate(String headId, String stage);
+
+    List<String> getNotValidProduct(Long headId, String stage, String type);
 }

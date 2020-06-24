@@ -4,7 +4,7 @@ package com.linksteady.operate.dao;
  * Created by hxcao on 2019-06-05
  */
 import com.linksteady.operate.util.UserOperaterMapper;
-import com.linksteady.operate.vo.KpiInfoVo;
+import com.linksteady.operate.vo.KpiInfoVO;
 
 import java.util.List;
 
@@ -16,11 +16,11 @@ public interface OrderCntMapper extends UserOperaterMapper {
     Double getKpiOfDifferPeriod(String joinInfo, String whereInfo);
 
     @Override
-    List<KpiInfoVo> getDatePeriodData(String period_name, String joinInfo, String whereInfo);
+    List<KpiInfoVO> getDatePeriodData(String period_name, String joinInfo, String whereInfo);
 
     @Override
-    List<KpiInfoVo> getSpAndFpKpi(String period_name, String joinInfo, String whereInfo);
+    List<KpiInfoVO> getSpAndFpKpi(String period_name, String joinInfo, String whereInfo);
 
     @Override
-    KpiInfoVo getSpAndFpKpiTotal(String period_name, String joinInfo, String whereInfo);
+    KpiInfoVO getSpAndFpKpiTotal(String period_name, String joinInfo, String whereInfo);
 }

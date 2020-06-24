@@ -12,11 +12,6 @@
     </div>
 </div>
 <div class="row m-t-10">
-    <div class="col-md-6 text-center">
-        <button class="btn btn-primary btn-sm" type="button" readonly="readOnly" disabled><i class="fa fa-server"></i>调整方案</button>
-    </div>
-</div>
-<div class="row">
     <span class="navbar-page-title">配置活动通知消息</span>
 </div>
 <div class="row">
@@ -29,13 +24,6 @@
         <div class="table-striped m-t-10">
             <table class="table table-bordered table-striped" id="table1"></table>
         </div>
-    </div>
-</div>
-<div class="row m-t-10 text-center">
-    <div class="col-md-12">
-        <button class="btn btn-primary btn-sm" disabled readonly="readonly">
-            保存计划
-        </button>
     </div>
 </div>
 <div class="row m-t-10">
@@ -53,29 +41,11 @@
         </div>
     </div>
 </div>
-<div class="row m-t-10 text-center">
-    <div class="col-md-12">
-        <button class="btn btn-primary btn-sm" disabled readonly="readonly">
-            保存计划
-        </button>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="text-right m-t-10" id="preheatFinishBtn">
-            <button class="btn btn-secondary btn-sm" id="notifySaveBtn" onclick="editFormalActivity()">
-                查看正式计划
-            </button>
-            <button class="btn btn-secondary btn-sm" onclick="stepBreak(1)"><i class="fa fa-arrow-left"></i>上一步</button>
-            <a class="btn btn-secondary btn-sm" href="/page/activity">
-                <i class="fa fa-backward"></i>&nbsp;返回
-            </a>
-        </div>
-        <div class="text-right m-t-10" id="formalFinishBtn" style="display: none;">
-            <button class="btn btn-secondary btn-sm" onclick="stepBreak(1)"><i class="fa fa-arrow-left"></i>上一步</button>
-            <a class="btn btn-secondary btn-sm" href="/page/activity">
-                <i class="fa fa-backward"></i>&nbsp;返回
-            </a>
-        </div>
+<div class="row m-t-10">
+    <div class="col-md-12 text-right">
+        <button class="btn btn-secondary btn-sm" onclick="stepBreak(1)"><i class="fa fa-arrow-left"></i>上一步</button>
+        <a class="btn btn-secondary btn-sm" href="/page/activity">
+            <i class="fa fa-backward"></i>&nbsp;返回
+        </a>
     </div>
 </div>

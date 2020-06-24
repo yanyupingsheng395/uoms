@@ -7,13 +7,11 @@ import com.google.common.collect.Table;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.QywxDailyDetailMapper;
 import com.linksteady.operate.dao.QywxDailyMapper;
-import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.domain.DailyStatis;
-import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.domain.QywxDailyHeader;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.QywxDailyService;
-import com.linksteady.operate.vo.QywxUserStats;
+import com.linksteady.operate.vo.QywxUserStatsVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -65,42 +63,42 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         Map<String,Object> result=Maps.newHashMap();
 
         //获取按商品、spu的统计数据
-        List<QywxUserStats> statsBySpu=qywxDailyMapper.getTargetInfoBySpu(headId);
+        List<QywxUserStatsVO> statsBySpu=qywxDailyMapper.getTargetInfoBySpu(headId);
 
-        List<String> spuList=statsBySpu.stream().map(QywxUserStats::getSpuName).collect(Collectors.toList());
-        List<Integer> spuCountList=statsBySpu.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
+        List<String> spuList=statsBySpu.stream().map(QywxUserStatsVO::getSpuName).collect(Collectors.toList());
+        List<Integer> spuCountList=statsBySpu.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
 
         //获取最后一个SPU下的商品信息
-        List<QywxUserStats> statsByProd=qywxDailyMapper.getTargetInfoByProd(headId,spuList.get(spuList.size()-1));
+        List<QywxUserStatsVO> statsByProd=qywxDailyMapper.getTargetInfoByProd(headId,spuList.get(spuList.size()-1));
 
-        List<String> prodList=statsByProd.stream().map(QywxUserStats::getProdName).collect(Collectors.toList());
-        List<Integer> prodCountList=statsByProd.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
+        List<String> prodList=statsByProd.stream().map(QywxUserStatsVO::getProdName).collect(Collectors.toList());
+        List<Integer> prodCountList=statsByProd.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
 
         //按价值的用户分布
-        List<QywxUserStats> statsByUserValue=qywxDailyMapper.getTargetInfoByUserValue(headId);
-        List<String> userValueList=statsByUserValue.stream().map(QywxUserStats::getUserValue).collect(Collectors.toList());
-        List<String> userValueLabelList=statsByUserValue.stream().map(QywxUserStats::getUserValueLabel).collect(Collectors.toList());
-        List<Integer> userValueCountList=statsByUserValue.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
+        List<QywxUserStatsVO> statsByUserValue=qywxDailyMapper.getTargetInfoByUserValue(headId);
+        List<String> userValueList=statsByUserValue.stream().map(QywxUserStatsVO::getUserValue).collect(Collectors.toList());
+        List<String> userValueLabelList=statsByUserValue.stream().map(QywxUserStatsVO::getUserValueLabel).collect(Collectors.toList());
+        List<Integer> userValueCountList=statsByUserValue.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
 
         Map<String,Object> matrixResult=getMatrixData(headId,statsByUserValue.get(statsByUserValue.size()-1).getUserValue());
 
         //按成员的分布
-        List<QywxUserStats> statsByUser=qywxDailyMapper.getTargetInfoByUser(headId);
-        List<String> qywxUserList=statsByUser.stream().map(QywxUserStats::getQywxUser).collect(Collectors.toList());
-        List<Integer> qywxCountList=statsByUser.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
+        List<QywxUserStatsVO> statsByUser=qywxDailyMapper.getTargetInfoByUser(headId);
+        List<String> qywxUserList=statsByUser.stream().map(QywxUserStatsVO::getQywxUser).collect(Collectors.toList());
+        List<Integer> qywxCountList=statsByUser.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
 
         //按个性化补贴的分布
-        List<QywxUserStats> statsByCoupon=qywxDailyMapper.getTargetInfoByCoupon(headId);
+        List<QywxUserStatsVO> statsByCoupon=qywxDailyMapper.getTargetInfoByCoupon(headId);
 
         //按用户成长目标的分布
-        List<QywxUserStats> statsByGrowthType=qywxDailyMapper.getTargetInfoByGrowthType(headId);
-        List<String> growthTypeLabelList=statsByGrowthType.stream().map(QywxUserStats::getGrowthType).collect(Collectors.toList());
-        List<Integer> growthTypeCountList=statsByGrowthType.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
+        List<QywxUserStatsVO> statsByGrowthType=qywxDailyMapper.getTargetInfoByGrowthType(headId);
+        List<String> growthTypeLabelList=statsByGrowthType.stream().map(QywxUserStatsVO::getGrowthType).collect(Collectors.toList());
+        List<Integer> growthTypeCountList=statsByGrowthType.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
 
         //按用户成长目标【序列】的分布
-        List<QywxUserStats> statsByGrowthTypeSeries=qywxDailyMapper.getTargetInfoByGrowthSeriesType(headId);
-        List<String> growthSeriesTypeLabelList=statsByGrowthTypeSeries.stream().map(QywxUserStats::getGrowthSeriesType).collect(Collectors.toList());
-        List<Integer> growthSeriesTypeCountList=statsByGrowthTypeSeries.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
+        List<QywxUserStatsVO> statsByGrowthTypeSeries=qywxDailyMapper.getTargetInfoByGrowthSeriesType(headId);
+        List<String> growthSeriesTypeLabelList=statsByGrowthTypeSeries.stream().map(QywxUserStatsVO::getGrowthSeriesType).collect(Collectors.toList());
+        List<Integer> growthSeriesTypeCountList=statsByGrowthTypeSeries.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
 
         QywxDailyHeader qywxDailyHeader=qywxDailyMapper.getHeadInfo(headId);
 
@@ -141,10 +139,10 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     @Override
     public Map<String, Object> getProdCountBySpu(Long headId, String spuName) {
         Map<String,Object> result=Maps.newHashMap();
-        List<QywxUserStats> statsByProd=qywxDailyMapper.getTargetInfoByProd(headId,spuName);
+        List<QywxUserStatsVO> statsByProd=qywxDailyMapper.getTargetInfoByProd(headId,spuName);
 
-        List<String> prodList=statsByProd.stream().map(QywxUserStats::getProdName).collect(Collectors.toList());
-        List<Integer> prodCountList=statsByProd.stream().map(QywxUserStats::getUcnt).collect(Collectors.toList());
+        List<String> prodList=statsByProd.stream().map(QywxUserStatsVO::getProdName).collect(Collectors.toList());
+        List<Integer> prodCountList=statsByProd.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
 
         result.put("prodList",prodList);
         result.put("prodCountList",prodCountList);
@@ -164,7 +162,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         Map<String, String> lifeCycleMap =configService.selectDictByTypeCode("LIFECYCLE");
 
         //给定价值下 在生命周期和活跃度上的分布表格
-        List<QywxUserStats> statsMatrix=qywxDailyMapper.getTargetInfoMatrix(headId,userValue);
+        List<QywxUserStatsVO> statsMatrix=qywxDailyMapper.getTargetInfoMatrix(headId,userValue);
         //转化成table 方便同时通过活跃度和生命周期进行查找
         Table<String,String,Integer> tables= HashBasedTable.create();
         statsMatrix.forEach(i->{

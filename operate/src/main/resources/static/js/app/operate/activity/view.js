@@ -104,19 +104,11 @@ function stepBreak(index) {
         $("#step3").attr("style", "display:none;");
     }
     if(index == 2) {
-        $.get("/activity/validProduct", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}, function (r) {
-            if(r.code === 200) {
-                if(r.data > 0) {
-                    $MB.n_warning("存在校验不通过的商品！");
-                }else {
-                    create_step.setActive(2);
-                    $("#step1").attr("style", "display:none;");
-                    $("#step2").attr("style", "display:none;");
-                    $("#step3").attr("style", "display:block;");
-                    createActivity(CURRENT_ACTIVITY_STAGE);
-                }
-            }
-        });
+        create_step.setActive(2);
+        $("#step1").attr("style", "display:none;");
+        $("#step2").attr("style", "display:none;");
+        $("#step3").attr("style", "display:block;");
+        createActivity(CURRENT_ACTIVITY_STAGE);
     }
 }
 /**************************按钮相关 end*****************************/
@@ -1060,50 +1052,6 @@ function getGroupList(stage, type, tableId) {
             {
                 field: 'groupInfo',
                 title: '理解用户群组'
-            }, {
-                title: '设置文案',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    var res = "";
-                    if(tableId === 'table1') {
-                        if(stage === 'preheat') {
-                            if(preheatNotifyStatus === 'done' || preheatNotifyStatus === 'timeout' || !flag) {
-                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
-                            }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"NOTIFY\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
-                                    "</a>";
-                            }
-                        }else {
-                            if(formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout' || !flag) {
-                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
-                            }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"NOTIFY\",\""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
-                                    "</a>";
-                            }
-                        }
-                    }else {
-                        if(stage === 'preheat') {
-                            if(preheatStatus === 'done') {
-                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
-                            }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"DURING\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
-                                    "</a>";
-                            }
-                        }else {
-                            if(formalStatus === 'done') {
-                                res = "<span style='color: #333'><i class='fa fa-envelope-o'></i>&nbsp;&nbsp;<i class='fa fa-refresh'></i></span>";
-                            }else {
-                                res = "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
-                                    "&nbsp;&nbsp;<a onclick='removeSmsSelected(\"DURING\", \""+stage+"\", \"" + row['smsTemplateCode'] + "\", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-refresh'></i></a>" +
-                                    "</a>";
-                            }
-                        }
-                    }
-                    return res;
-                }
             }, {
                 field: 'smsTemplateContent',
                 title: '文案内容',

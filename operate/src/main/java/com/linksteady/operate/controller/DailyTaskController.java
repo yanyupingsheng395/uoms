@@ -14,7 +14,7 @@ import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.service.DailyDetailService;
 import com.linksteady.operate.service.DailyService;
-import com.linksteady.operate.vo.DailyPersonalVo;
+import com.linksteady.operate.vo.DailyPersonalVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -296,7 +296,7 @@ public class DailyTaskController {
         String spuIsConvert = request.getParam().get("spuIsConvert");
         String userValue = request.getParam().get("userValue");
         String pathActive = request.getParam().get("pathActive");
-        DailyPersonalVo dailyPersonalVo = new DailyPersonalVo();
+        DailyPersonalVO dailyPersonalVo = new DailyPersonalVO();
         dailyPersonalVo.setSpuIsConvert(spuIsConvert);
         dailyPersonalVo.setUserValue(userValue);
         dailyPersonalVo.setPathActive(pathActive);
@@ -317,7 +317,7 @@ public class DailyTaskController {
     public ResponseBo excel(@RequestParam("headId") String headId) throws InterruptedException {
         List<DailyPersonal> list = Lists.newLinkedList();
         List<Callable<List<DailyPersonal>>> tmp = Lists.newLinkedList();
-        int count = dailyService.getDailyPersonalEffectCount(new DailyPersonalVo(), headId);
+        int count = dailyService.getDailyPersonalEffectCount(new DailyPersonalVO(), headId);
         ExecutorService service = Executors.newFixedThreadPool(10);
         int pageSize = 1000;
         int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize) + 1;
@@ -329,7 +329,7 @@ public class DailyTaskController {
                 end = end > count ? count : end;
                 int limit = start - 1;
                 int offset = end - start + 1;
-                return dailyService.getDailyPersonalEffect(new DailyPersonalVo(), limit, offset, headId);
+                return dailyService.getDailyPersonalEffect(new DailyPersonalVO(), limit, offset, headId);
             });
         }
 

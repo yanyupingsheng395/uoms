@@ -1,8 +1,10 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.dao.ActivityTemplateMapper;
 import com.linksteady.operate.dao.ActivityUserGroupMapper;
 import com.linksteady.operate.domain.ActivityGroup;
+import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.service.ActivityUserGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
 
     @Autowired
     private ActivityTemplateMapper activityTemplateMapper;
+
+    @Autowired
+    private ActivityHeadMapper activityHeadMapper;
 
     @Override
     public List<ActivityGroup> getUserGroupPage(Long headId, String stage, int limit, int offset) {
@@ -61,4 +66,30 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
         return activityUserGroupMapper.validGroupTemplateWithGroup(headId, stage, type);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void validUserGroup(String headId, String stage) {
+        ActivityHead activityHead = activityHeadMapper.findById(Long.valueOf(headId));
+        if(stage.equalsIgnoreCase("preheat")) {
+            String preheatNotifyStatus = activityHead.getPreheatNotifyStatus();
+            if(preheatNotifyStatus.equalsIgnoreCase("edit") || preheatNotifyStatus.equalsIgnoreCase("todo")) {
+                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "NOTIFY");
+            }
+            String preheatDuringStatus = activityHead.getPreheatStatus();
+            if(preheatDuringStatus.equalsIgnoreCase("edit") || preheatDuringStatus.equalsIgnoreCase("todo")) {
+                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "DURING");
+            }
+        }
+
+        if(stage.equalsIgnoreCase("formal")) {
+            String formalNotifyStatus = activityHead.getFormalNotifyStatus();
+            if(formalNotifyStatus.equalsIgnoreCase("edit") || formalNotifyStatus.equalsIgnoreCase("todo")) {
+                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "NOTIFY");
+            }
+            String formalStatus = activityHead.getFormalStatus();
+            if(formalStatus.equalsIgnoreCase("edit") || formalStatus.equalsIgnoreCase("todo")) {
+                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "DURING");
+            }
+        }
+    }
 }

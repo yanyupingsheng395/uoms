@@ -84,16 +84,8 @@ public class PushConfig {
         return Integer.parseInt(configService.getValueByName(PushPropertiesEnum.smsLengthLimit.getKeyCode()));
     }
 
-    public String getProductUrl() {
-        return configService.getValueByName(PushPropertiesEnum.productUrl.getKeyCode());
-    }
-
     public String getIsTestEnv() {
         return configService.getValueByName(PushPropertiesEnum.isTestEnv.getKeyCode());
-    }
-
-    public String getDemoShortUrl() {
-        return configService.getValueByName(PushPropertiesEnum.demoShortUrl.getKeyCode());
     }
 
     public int getShortUrlLen() {
@@ -199,6 +191,10 @@ public class PushConfig {
         return  configService.getValueByName(PushPropertiesEnum.signatureFlag.getKeyCode());
     }
 
+    /**
+     * 退订信息
+     * @return
+     */
     public String getUnsubscribe() {
         return   configService.getValueByName(PushPropertiesEnum.unsubscribe.getKeyCode());
     }
@@ -206,4 +202,49 @@ public class PushConfig {
     public String getUnsubscribeFlag() {
         return  configService.getValueByName(PushPropertiesEnum.unsubscribeFlag.getKeyCode());
     }
+
+    /**
+     * 商品详情页短链是否可用的标记 Y表示可用 N表示不可用
+     * @return
+     */
+    public String getProdUrlEnabled() {
+        return  configService.getValueByName(PushPropertiesEnum.prodUrlEnabled.getKeyCode());
+    }
+
+    public String getUrl() {
+        return  configService.getValueByName(PushPropertiesEnum.url.getKeyCode());
+    }
+
+    public String getProdName() {
+        return  configService.getValueByName(PushPropertiesEnum.prodName.getKeyCode());
+    }
+
+    public String getCouponName() {
+        return  configService.getValueByName(PushPropertiesEnum.couponName.getKeyCode());
+    }
+
+    public String getPrice() {
+        return  configService.getValueByName(PushPropertiesEnum.price.getKeyCode());
+    }
+
+    public String getProfit() {
+        return  configService.getValueByName(PushPropertiesEnum.profit.getKeyCode());
+    }
+
+    public String getSoureName() {
+        return  configService.getValueByName(PushPropertiesEnum.sourceName.getKeyCode());
+    }
+
+    public String getSmsEnabled() {
+        return  configService.getValueByName(PushPropertiesEnum.smsEnabled.getKeyCode());
+    }
+
+    public String getQywxEnabled() {
+        return  configService.getValueByName(PushPropertiesEnum.qywxEnabled.getKeyCode());
+    }
+
+    public String getWxofficialEnabled() {
+        return  configService.getValueByName(PushPropertiesEnum.wxofficialEnabled.getKeyCode());
+    }
+
 }

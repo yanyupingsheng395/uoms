@@ -1,8 +1,8 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.*;
-import com.linksteady.operate.vo.DailyPersonalVo;
-import com.linksteady.operate.vo.DailyUserStats;
+import com.linksteady.operate.vo.DailyPersonalVO;
+import com.linksteady.operate.vo.DailyUserStatsVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public interface DailyMapper {
      * @param headId
      * @return
      */
-    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int limit, int offset, String headId);
+    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVO dailyPersonalVo, int limit, int offset, String headId);
 
     /**
      * 个体结果只获取已经转化的结果
@@ -49,7 +49,7 @@ public interface DailyMapper {
      * @param headId
      * @return
      */
-    int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId);
+    int getDailyPersonalEffectCount(DailyPersonalVO dailyPersonalVo, String headId);
 
     /**
      * 通过couponId更改群组的检查状态
@@ -70,41 +70,41 @@ public interface DailyMapper {
      * 按成长类型统计人数
      * @param headId
      */
-    List<DailyUserStats> getTargetInfoByGrowthType(Long headId);
+    List<DailyUserStatsVO> getTargetInfoByGrowthType(Long headId);
 
     /**
      * 按成长类型[序列]统计人数
      * @param headId
      */
-    List<DailyUserStats> getTargetInfoByGrowthSeriesType(Long headId);
+    List<DailyUserStatsVO> getTargetInfoByGrowthSeriesType(Long headId);
 
 
     /**
      * 按品类统计推荐人数
      * @param headId
      */
-    List<DailyUserStats> getTargetInfoBySpu(Long headId);
+    List<DailyUserStatsVO> getTargetInfoBySpu(Long headId);
 
     /**
      * 按商品统计推荐人数
      * @param headId
      */
-    List<DailyUserStats> getTargetInfoByProd(Long headId,String spuName);
+    List<DailyUserStatsVO> getTargetInfoByProd(Long headId, String spuName);
 
     /**
      * 按用户价值统计
      */
-    List<DailyUserStats> getTargetInfoByUserValue(Long headId);
+    List<DailyUserStatsVO> getTargetInfoByUserValue(Long headId);
 
     /**
      * 特定用户价值下，按用户活跃度、生命周期的统计
      */
-    List<DailyUserStats> getTargetInfoMatrix(Long headId,String userValue);
+    List<DailyUserStatsVO> getTargetInfoMatrix(Long headId, String userValue);
 
     /**
      * 按优惠券来进行统计
      */
-    List<DailyUserStats> getTargetInfoByCoupon(Long headId);
+    List<DailyUserStatsVO> getTargetInfoByCoupon(Long headId);
 
     String getTodayStatus();
 

@@ -2,17 +2,15 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.DateUtil;
-import com.linksteady.operate.util.DatePeriodUtil;
 import com.linksteady.operate.util.UomsConstants;
 import com.linksteady.operate.util.UserOperaterMapper;
 import com.linksteady.operate.util.UserOperatorMapperFactory;
 import com.linksteady.operate.dao.BrandMapper;
 import com.linksteady.operate.dao.KpiMonitorMapper;
 import com.linksteady.operate.dao.SourceMapper;
-import com.linksteady.operate.vo.KpiInfoVo;
+import com.linksteady.operate.vo.KpiInfoVO;
 import com.linksteady.operate.domain.KpiSumeryInfo;
 import com.linksteady.operate.service.UserOperatorService;
 import com.linksteady.operate.vo.TemplateResult;
@@ -21,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -130,15 +126,15 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         Map<String, Object> result = Maps.newHashMap();
         //获取周期内的明细列表
         List<String> dateList = DateUtil.getPeriodDate(periodType, startDt, endDt);
-        List<KpiInfoVo> currentDataList = getDatePeriodData(kpiType, startDt, endDt, periodType, source);
-        Map<String, Object> currentDataMap = currentDataList.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getKpiVal));
+        List<KpiInfoVO> currentDataList = getDatePeriodData(kpiType, startDt, endDt, periodType, source);
+        Map<String, Object> currentDataMap = currentDataList.stream().collect(Collectors.toMap(KpiInfoVO::getKpiDate, KpiInfoVO::getKpiVal));
         //修补数据为时间周期上连续，方便echarts展现
         List<Double> currentList = fixData(currentDataMap, dateList);
         String lastStart = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("start"));
         String lastEnd = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("end"));
         List<String> lastYearDateList = DateUtil.getPeriodDate(periodType, lastStart, lastEnd);
-        List<KpiInfoVo> lastDataList = getDatePeriodData(kpiType, lastStart, lastEnd, periodType, source);
-        Map<String, Object> lastDataMap = lastDataList.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getKpiVal));
+        List<KpiInfoVO> lastDataList = getDatePeriodData(kpiType, lastStart, lastEnd, periodType, source);
+        Map<String, Object> lastDataMap = lastDataList.stream().collect(Collectors.toMap(KpiInfoVO::getKpiDate, KpiInfoVO::getKpiVal));
         List<Double> lastList = fixData(lastDataMap, lastYearDateList);
         Double currentAvg = currentList.stream().mapToDouble(x->x).average().getAsDouble();
         Double lastAvg = lastList.stream().mapToDouble(x->x).average().getAsDouble();
@@ -161,7 +157,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
      * @param source
      * @return
      */
-    private List<KpiInfoVo> getDatePeriodData(String kpiType, String startDt, String endDt, String periodType, String source) {
+    private List<KpiInfoVO> getDatePeriodData(String kpiType, String startDt, String endDt, String periodType, String source) {
         TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
         String peroidName=buildPeriodName(periodType);
         UserOperaterMapper mapperTemplate = mapperFactory.getMapperTemplate(kpiType);
@@ -181,10 +177,10 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     public Map<String, Object> getSpAndFpKpi(String kpiType, String periodType, String startDt, String endDt,String source) {
         Map<String, Object> result = Maps.newHashMap();
         List<String> dateList = DateUtil.getPeriodDate(periodType, startDt, endDt);
-        List<KpiInfoVo> kpiInfoVos = getSpAndFpKpiDetail(kpiType, startDt, endDt, periodType, source);
-        Map<String, Object> kpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getKpiVal));
-        Map<String, Object> fpKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getFpKpiVal));
-        Map<String, Object> spKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getSpKpiVal));
+        List<KpiInfoVO> kpiInfoVos = getSpAndFpKpiDetail(kpiType, startDt, endDt, periodType, source);
+        Map<String, Object> kpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVO::getKpiDate, KpiInfoVO::getKpiVal));
+        Map<String, Object> fpKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVO::getKpiDate, KpiInfoVO::getFpKpiVal));
+        Map<String, Object> spKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVO::getKpiDate, KpiInfoVO::getSpKpiVal));
         List<Double> kpiValList = fixData(kpiValMap, dateList);
         List<Double> spKpiValList = fixData(spKpiValMap, dateList);
         List<Double> fpKpiValList = fixData(fpKpiValMap, dateList);
@@ -195,7 +191,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         return result;
     }
 
-    private List<KpiInfoVo> getSpAndFpKpiDetail(String kpiType, String startDt, String endDt , String periodType, String source) {
+    private List<KpiInfoVO> getSpAndFpKpiDetail(String kpiType, String startDt, String endDt , String periodType, String source) {
         TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
         UserOperaterMapper mapperTemplate = mapperFactory.getMapperTemplate(kpiType);
         String peroidName=buildPeriodName(periodType);
@@ -216,20 +212,20 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         DecimalFormat df = new DecimalFormat("#.##");
         Map<String, Object> result = Maps.newHashMap();
         List<String> dateList = DateUtil.getPeriodDate(periodType, startDt, endDt);
-        List<KpiInfoVo> kpiInfoVos = getSpOrFpKpiValDetail(kpiType,startDt, endDt, periodType, source);
+        List<KpiInfoVO> kpiInfoVos = getSpOrFpKpiValDetail(kpiType,startDt, endDt, periodType, source);
         //获取去年同期的值
         String lastStart = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("start"));
         String lastEnd = String.valueOf(getLastYearPeriod(periodType, startDt, endDt).get("end"));
         List<String> lastDateList = DateUtil.getPeriodDate(periodType, lastStart, lastEnd);
-        List<KpiInfoVo> lastKpiInfoVos = getSpOrFpKpiValDetail(kpiType, lastStart, lastEnd, periodType, source);
+        List<KpiInfoVO> lastKpiInfoVos = getSpOrFpKpiValDetail(kpiType, lastStart, lastEnd, periodType, source);
 
-        Map<String, Object> fpKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getFpKpiVal));
-        Map<String, Object> lastFpKpiValMap = lastKpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getFpKpiVal));
+        Map<String, Object> fpKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVO::getKpiDate, KpiInfoVO::getFpKpiVal));
+        Map<String, Object> lastFpKpiValMap = lastKpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVO::getKpiDate, KpiInfoVO::getFpKpiVal));
         List<Double> fpKpiValList = fixData(fpKpiValMap, dateList);
         List<Double> lastFpKpiValList = fixData(lastFpKpiValMap, lastDateList);
 
-        Map<String, Object> spKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getSpKpiVal));
-        Map<String, Object> lastSpKpiValMap = lastKpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVo::getKpiDate, KpiInfoVo::getSpKpiVal));
+        Map<String, Object> spKpiValMap = kpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVO::getKpiDate, KpiInfoVO::getSpKpiVal));
+        Map<String, Object> lastSpKpiValMap = lastKpiInfoVos.stream().collect(Collectors.toMap(KpiInfoVO::getKpiDate, KpiInfoVO::getSpKpiVal));
         List<Double> spKpiValList = fixData(spKpiValMap, dateList);
         List<Double> lastSpKpiValList = fixData(lastSpKpiValMap, lastDateList);
 
@@ -295,7 +291,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         return templateResult;
     }
 
-    private List<KpiInfoVo> getSpOrFpKpiValDetail(String kpiType,String startDt, String endDt, String periodType, String source) {
+    private List<KpiInfoVO> getSpOrFpKpiValDetail(String kpiType, String startDt, String endDt, String periodType, String source) {
         TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
         UserOperaterMapper mapperTemplate = mapperFactory.getMapperTemplate(kpiType);
         String peroidName=buildPeriodName(periodType);
@@ -313,12 +309,12 @@ public class UserOperatorServiceImpl implements UserOperatorService {
     @Override
     public Map<String, Object> getKpiCalInfo(String source, String kpiType, String periodType, String startDt, String endDt) {
         Map<String, Object> result = Maps.newHashMap();
-        KpiInfoVo kpiInfoVos = getSpAndFpKpiTotal(kpiType, periodType, startDt, endDt, source);
+        KpiInfoVO kpiInfoVos = getSpAndFpKpiTotal(kpiType, periodType, startDt, endDt, source);
         // 计算上一周期的GMV值
         Map<String, Object> lastDateMap = getLastPeriod(periodType, startDt, endDt);
         String lastStart = String.valueOf(lastDateMap.get("start"));
         String lastEnd = String.valueOf(lastDateMap.get("end"));
-        KpiInfoVo lastKpiInfoVos = null;
+        KpiInfoVO lastKpiInfoVos = null;
         if(!lastStart.equals("")) {
             lastKpiInfoVos = getSpAndFpKpiTotal(kpiType, periodType, lastStart, lastEnd, source);
         }
@@ -326,7 +322,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         Map<String, Object> lastYearMap = getLastYearPeriod(periodType, startDt, endDt);
         String lastYearStart = String.valueOf(lastYearMap.get("start"));
         String lastYearEnd = String.valueOf(lastYearMap.get("end"));
-        KpiInfoVo lastYearKpiInfoVos = getSpAndFpKpiTotal(kpiType, periodType, lastYearStart, lastYearEnd, source);
+        KpiInfoVO lastYearKpiInfoVos = getSpAndFpKpiTotal(kpiType, periodType, lastYearStart, lastYearEnd, source);
 
         DecimalFormat decimalFormat = new DecimalFormat(".##%");
         if(periodType.equals("Y") || periodType.equals("M")) {
@@ -388,7 +384,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         return result;
     }
 
-    private KpiInfoVo getSpAndFpKpiTotal(String kpiType, String periodType, String startDt, String endDt, String source) {
+    private KpiInfoVO getSpAndFpKpiTotal(String kpiType, String periodType, String startDt, String endDt, String source) {
         TemplateResult templateResult = getTemplateResult(kpiType, startDt, endDt, periodType, source);
         String peroidName=buildPeriodName(periodType);
         UserOperaterMapper mapperTemplate = mapperFactory.getMapperTemplate(kpiType);

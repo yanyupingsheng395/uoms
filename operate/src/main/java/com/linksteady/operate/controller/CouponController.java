@@ -44,18 +44,6 @@ public class CouponController extends BaseController {
     }
 
     /**
-     * 根据群组信息过滤优惠券
-     * @return
-     */
-    @GetMapping("/getCouponList")
-    public ResponseBo getCouponList(@RequestParam("groupId") String groupId,
-                                    @RequestParam("userValue") String userValue,
-                                    @RequestParam("lifeCycle") String lifeCycle,
-                                    @RequestParam("pathActive") String pathActive) {
-        return ResponseBo.okWithData(null, couponService.getCouponList(groupId,userValue,lifeCycle, pathActive));
-    }
-
-    /**
      * 获取某个groupId下的couponIds
      *
      * @param groupId

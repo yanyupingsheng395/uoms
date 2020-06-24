@@ -63,9 +63,13 @@ public interface ActivityProductService {
 
     int getCountByHeadId(String headId);
 
-    int validProduct(String headId, String stage, String type);
+    int validProduct(String headId, String stage);
 
     List<String> getGroupIds(Long headId);
 
     boolean checkProductId(String headId, String activityType, String activityStage, String productId);
+
+    boolean ifCalculate(String headId, String stage);
+
+    List<String> getNotValidProductCount(Long headId, String stage, String type);
 }

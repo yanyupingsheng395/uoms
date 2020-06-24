@@ -157,7 +157,7 @@
                   UO_OP_ACTIVITY_GROUP t1 left join
                   ( select distinct group_id from UO_OP_ACTIVITY_PRODUCT where
                      HEAD_ID = #{headId} and activity_stage=#{stage} and activity_type=#{type}) t2
-                  on t1.head_id=#{headId} and t1.group_id=t2.group_id
+                  on t1.group_id=t2.group_id where t1.head_id=#{headId} and t1.activity_stage = #{stage} and t1.activity_type = #{type}
             ) t3
               where   UO_OP_ACTIVITY_GROUP.group_id=t3.group_id
                   and UO_OP_ACTIVITY_GROUP.HEAD_ID = #{headId}

@@ -10,9 +10,8 @@ import com.linksteady.operate.dao.DailyMapper;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyService;
-import com.linksteady.operate.vo.DailyPersonalVo;
-import com.linksteady.operate.vo.DailyUserStats;
-import org.apache.commons.lang3.StringUtils;
+import com.linksteady.operate.vo.DailyPersonalVO;
+import com.linksteady.operate.vo.DailyUserStatsVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -145,12 +144,12 @@ public class DailyServiceImpl implements DailyService {
 
 
     @Override
-    public List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVo dailyPersonalVo, int limit, int offset, String headId) {
+    public List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVO dailyPersonalVo, int limit, int offset, String headId) {
         return dailyMapper.getDailyPersonalEffect(dailyPersonalVo, limit, offset, headId);
     }
 
     @Override
-    public int getDailyPersonalEffectCount(DailyPersonalVo dailyPersonalVo, String headId) {
+    public int getDailyPersonalEffectCount(DailyPersonalVO dailyPersonalVo, String headId) {
         return dailyMapper.getDailyPersonalEffectCount(dailyPersonalVo, headId);
     }
 
@@ -195,37 +194,37 @@ public class DailyServiceImpl implements DailyService {
         Map<String, Object> result = Maps.newHashMap();
 
         //获取按商品、spu的统计数据
-        List<DailyUserStats> statsBySpu = dailyMapper.getTargetInfoBySpu(headId);
+        List<DailyUserStatsVO> statsBySpu = dailyMapper.getTargetInfoBySpu(headId);
 
-        List<String> spuList = statsBySpu.stream().map(DailyUserStats::getSpuName).collect(Collectors.toList());
-        List<Integer> spuCountList = statsBySpu.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
+        List<String> spuList = statsBySpu.stream().map(DailyUserStatsVO::getSpuName).collect(Collectors.toList());
+        List<Integer> spuCountList = statsBySpu.stream().map(DailyUserStatsVO::getUcnt).collect(Collectors.toList());
 
         //获取最后一个SPU下的商品信息
-        List<DailyUserStats> statsByProd = dailyMapper.getTargetInfoByProd(headId, spuList.get(spuList.size() - 1));
+        List<DailyUserStatsVO> statsByProd = dailyMapper.getTargetInfoByProd(headId, spuList.get(spuList.size() - 1));
 
-        List<String> prodList = statsByProd.stream().map(DailyUserStats::getProdName).collect(Collectors.toList());
-        List<Integer> prodCountList = statsByProd.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
+        List<String> prodList = statsByProd.stream().map(DailyUserStatsVO::getProdName).collect(Collectors.toList());
+        List<Integer> prodCountList = statsByProd.stream().map(DailyUserStatsVO::getUcnt).collect(Collectors.toList());
 
         //按价值的用户分布
-        List<DailyUserStats> statsByUserValue = dailyMapper.getTargetInfoByUserValue(headId);
-        List<String> userValueList = statsByUserValue.stream().map(DailyUserStats::getUserValue).collect(Collectors.toList());
-        List<String> userValueLabelList = statsByUserValue.stream().map(DailyUserStats::getUserValueLabel).collect(Collectors.toList());
-        List<Integer> userValueCountList = statsByUserValue.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
+        List<DailyUserStatsVO> statsByUserValue = dailyMapper.getTargetInfoByUserValue(headId);
+        List<String> userValueList = statsByUserValue.stream().map(DailyUserStatsVO::getUserValue).collect(Collectors.toList());
+        List<String> userValueLabelList = statsByUserValue.stream().map(DailyUserStatsVO::getUserValueLabel).collect(Collectors.toList());
+        List<Integer> userValueCountList = statsByUserValue.stream().map(DailyUserStatsVO::getUcnt).collect(Collectors.toList());
 
         Map<String, Object> matrixResult = getMatrixData(headId, statsByUserValue.get(statsByUserValue.size() - 1).getUserValue());
 
         //按个性化补贴的分布
-        List<DailyUserStats> statsByCoupon = dailyMapper.getTargetInfoByCoupon(headId);
+        List<DailyUserStatsVO> statsByCoupon = dailyMapper.getTargetInfoByCoupon(headId);
 
         //按用户成长目标的分布
-        List<DailyUserStats> statsByGrowthType = dailyMapper.getTargetInfoByGrowthType(headId);
-        List<String> growthTypeLabelList = statsByGrowthType.stream().map(DailyUserStats::getGrowthType).collect(Collectors.toList());
-        List<Integer> growthTypeCountList = statsByGrowthType.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
+        List<DailyUserStatsVO> statsByGrowthType = dailyMapper.getTargetInfoByGrowthType(headId);
+        List<String> growthTypeLabelList = statsByGrowthType.stream().map(DailyUserStatsVO::getGrowthType).collect(Collectors.toList());
+        List<Integer> growthTypeCountList = statsByGrowthType.stream().map(DailyUserStatsVO::getUcnt).collect(Collectors.toList());
 
         //按用户成长目标【序列】的分布
-        List<DailyUserStats> statsByGrowthTypeSeries = dailyMapper.getTargetInfoByGrowthSeriesType(headId);
-        List<String> growthSeriesTypeLabelList = statsByGrowthTypeSeries.stream().map(DailyUserStats::getGrowthSeriesType).collect(Collectors.toList());
-        List<Integer> growthSeriesTypeCountList = statsByGrowthTypeSeries.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
+        List<DailyUserStatsVO> statsByGrowthTypeSeries = dailyMapper.getTargetInfoByGrowthSeriesType(headId);
+        List<String> growthSeriesTypeLabelList = statsByGrowthTypeSeries.stream().map(DailyUserStatsVO::getGrowthSeriesType).collect(Collectors.toList());
+        List<Integer> growthSeriesTypeCountList = statsByGrowthTypeSeries.stream().map(DailyUserStatsVO::getUcnt).collect(Collectors.toList());
 
         DailyHead dailyHead = dailyMapper.getDailyHeadById(headId);
 
@@ -266,10 +265,10 @@ public class DailyServiceImpl implements DailyService {
     @Override
     public Map<String, Object> getProdCountBySpu(Long headId, String spuName) {
         Map<String, Object> result = Maps.newHashMap();
-        List<DailyUserStats> statsByProd = dailyMapper.getTargetInfoByProd(headId, spuName);
+        List<DailyUserStatsVO> statsByProd = dailyMapper.getTargetInfoByProd(headId, spuName);
 
-        List<String> prodList = statsByProd.stream().map(DailyUserStats::getProdName).collect(Collectors.toList());
-        List<Integer> prodCountList = statsByProd.stream().map(DailyUserStats::getUcnt).collect(Collectors.toList());
+        List<String> prodList = statsByProd.stream().map(DailyUserStatsVO::getProdName).collect(Collectors.toList());
+        List<Integer> prodCountList = statsByProd.stream().map(DailyUserStatsVO::getUcnt).collect(Collectors.toList());
 
         result.put("prodList", prodList);
         result.put("prodCountList", prodCountList);
@@ -290,7 +289,7 @@ public class DailyServiceImpl implements DailyService {
         Map<String, String> lifeCycleMap = configService.selectDictByTypeCode("LIFECYCLE");
 
         //给定价值下 在生命周期和活跃度上的分布表格
-        List<DailyUserStats> statsMatrix = dailyMapper.getTargetInfoMatrix(headId, userValue);
+        List<DailyUserStatsVO> statsMatrix = dailyMapper.getTargetInfoMatrix(headId, userValue);
         //转化成table 方便同时通过活跃度和生命周期进行查找
         Table<String, String, Integer> tables = HashBasedTable.create();
         statsMatrix.forEach(i -> {

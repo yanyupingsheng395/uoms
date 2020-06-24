@@ -20,5 +20,5 @@ public interface ActivityUserGroupService {
 
     int validGroupTemplateWithGroup(Long headId, String stage, String type);
 
-
+    void validUserGroup(String headId, String stage);
 }

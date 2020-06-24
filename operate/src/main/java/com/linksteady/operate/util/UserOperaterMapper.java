@@ -1,6 +1,6 @@
 package com.linksteady.operate.util;
 
-import com.linksteady.operate.vo.KpiInfoVo;
+import com.linksteady.operate.vo.KpiInfoVO;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public interface UserOperaterMapper {
      * @param whereInfo
      * @return
      */
-    List<KpiInfoVo> getDatePeriodData(String period_name, String joinInfo, String whereInfo);
+    List<KpiInfoVO> getDatePeriodData(String period_name, String joinInfo, String whereInfo);
 
     /**
      * 获取首购和非首购的数据
@@ -34,7 +34,7 @@ public interface UserOperaterMapper {
      * @param whereInfo
      * @return
      */
-    List<KpiInfoVo> getSpAndFpKpi(String period_name, String joinInfo, String whereInfo);
+    List<KpiInfoVO> getSpAndFpKpi(String period_name, String joinInfo, String whereInfo);
 
     /**
      * 获取首购和非首购的总数据
@@ -43,5 +43,5 @@ public interface UserOperaterMapper {
      * @param whereInfo
      * @return
      */
-    KpiInfoVo getSpAndFpKpiTotal(String period_name, String joinInfo, String whereInfo);
+    KpiInfoVO getSpAndFpKpiTotal(String period_name, String joinInfo, String whereInfo);
 }

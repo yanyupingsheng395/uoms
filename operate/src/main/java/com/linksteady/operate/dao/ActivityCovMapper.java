@@ -26,5 +26,7 @@ public interface ActivityCovMapper {
 
     List<ActivityCovInfo> getCovListByHeadId(String headId, String stage);
 
+    int checkCovInfo(String headId);
+
     void deleteData(long headId);
 }

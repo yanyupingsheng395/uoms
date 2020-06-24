@@ -71,6 +71,7 @@ public class SmsTemplateController extends BaseController {
     public ResponseBo addSmsTemplate(SmsTemplate smsTemplate) {
         //添加
         try {
+            //todo 需要在服务端进行再次校验
             smsTemplateService.saveSmsTemplate(smsTemplate);
             return ResponseBo.ok();
         } catch (Exception e) {
@@ -147,18 +148,9 @@ public class SmsTemplateController extends BaseController {
      */
     @RequestMapping("/updateSmsTemplate")
     public ResponseBo updateSmsTemplate(SmsTemplate smsTemplate) {
+        //todo 需要在服务端进行再次校验
         smsTemplateService.update(smsTemplate);
         return ResponseBo.ok();
-    }
-
-    /**
-     * 获取优惠券发送方式
-     *
-     * @return
-     */
-    @RequestMapping("/getCouponSendType")
-    public ResponseBo getCouponSendType() {
-        return ResponseBo.okWithData(null, pushConfig.getCouponSendType());
     }
 
     @GetMapping("/validSmsContentLength")

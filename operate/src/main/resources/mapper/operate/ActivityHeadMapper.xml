@@ -149,10 +149,12 @@
         select count(1) from UO_OP_ACTIVITY_HEADER where
         HEAD_ID = #{headId}
         and (
-          (has_preheat='1' and preheat_notify_status='edit' and preheat_status='edit' and formal_notify_status='edit' and formal_status='edit') or
-          (has_preheat='0' and  preheat_status='edit' and formal_status='edit') or
-          (has_preheat='1' and preheat_notify_status='timeout' and preheat_status='timeout' and formal_notify_status='timeout' and formal_status='timeout') or
-          (has_preheat='0' and  preheat_status='timeout' and formal_status='timeout')
+                    (has_preheat = '1' and preheat_notify_status = 'edit' and preheat_status = 'edit' and
+                     formal_notify_status = 'edit' and formal_status = 'edit') or
+                    (has_preheat = '0' and formal_notify_status = 'edit' and formal_status = 'edit') or
+                    (has_preheat = '1' and preheat_notify_status = 'timeout' and preheat_status = 'timeout' and
+                     formal_notify_status = 'timeout' and formal_status = 'timeout') or
+                    (has_preheat = '0' and formal_notify_status = 'timeout' and formal_status = 'timeout')
         )
     </select>
 
@@ -210,9 +212,5 @@
         set formal_status = 'timeout'
         where t.formal_status in('todo','edit')
             and t.formal_end_dt::date&lt;current_date
-    </update>
-
-    <update id="updateInfoStatus">
-        ${sql}
     </update>
 </mapper>
