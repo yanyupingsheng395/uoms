@@ -21,6 +21,13 @@
         <result column="IS_REC" jdbcType="VARCHAR" property="isRec"/>
     </resultMap>
 
+    <select id="selectAllCouponList" resultMap="BaseResultMap">
+         select coupon_id, coupon_denom, coupon_threshold, coupon_url, coupon_desc, coupon_num, to_char(valid_end, 'yyyy-mm-dd') valid_end, coupon_info1, coupon_info2, coupon_display_name, valid_status, coupon_source, discount_level, check_flag, check_comments
+        from UO_OP_COUPON
+            where VALID_STATUS = 'Y'
+        order by coupon_threshold asc, coupon_denom asc
+    </select>
+
     <select id="getList" resultMap="BaseResultMap">
         select coupon_id, coupon_denom, coupon_threshold, coupon_url, coupon_desc, coupon_num, to_char(valid_end, 'yyyy-mm-dd') valid_end, coupon_info1, coupon_info2, coupon_display_name, valid_status, coupon_source, discount_level, check_flag, check_comments
         from UO_OP_COUPON
@@ -36,17 +43,6 @@
     <select id="getCouponIdsByGroupId" resultType="int">
         select COUPON_ID from UO_OP_DAILY_GROUP_COUPON where GROUP_ID = #{groupId}
     </select>
-
-    <delete id="deleteByGroupId">
-        delete from UO_OP_DAILY_GROUP_COUPON where GROUP_ID = #{groupId}::int4
-    </delete>
-
-    <insert id="insertByGroupId">
-        INSERT INTO UO_OP_DAILY_GROUP_COUPON (GROUP_ID, COUPON_ID) values
-        <foreach item="item" index="index" collection="couponIds" separator=",">
-            (#{groupId}::int4, #{item}::int4)
-        </foreach>
-    </insert>
 
     <insert id="save" parameterType="com.linksteady.operate.domain.CouponInfo">
         insert into UO_OP_COUPON(COUPON_DENOM, COUPON_THRESHOLD, COUPON_URL, COUPON_DESC, COUPON_NUM, COUPON_INFO1, COUPON_INFO2, COUPON_DISPLAY_NAME, VALID_STATUS, VALID_END, COUPON_SOURCE, CHECK_FLAG, CHECK_COMMENTS) VALUES
@@ -106,26 +102,26 @@
     </delete>
 
     <select id="checkCouponName" resultType="int">
-        select count(1) from UO_OP_COUPON where COUPON_DISPLAY_NAME = #{couponName}
+        select count(1) from UO_OP_COUPON where COUPON_DISPLAY_NAME = #{couponName} and VALID_STATUS='Y'
     </select>
 
     <update id="validEndDateNull">
         update UO_OP_COUPON set CHECK_FLAG = '0', CHECK_COMMENTS = '补贴有效截止日期未配置'
-        where VALID_END is null
+        where VALID_END is null AND VALID_STATUS='Y'
     </update>
 
     <update id="validEndDateNotNull">
         update UO_OP_COUPON set CHECK_FLAG = '0', CHECK_COMMENTS = '补贴已失效'
-        where VALID_END is not null and VALID_END::timestamp &lt; now()
+        where VALID_END is not null and VALID_END::date &lt; current_date AND VALID_STATUS='Y'
     </update>
 
     <update id="validCouponUrl">
         update UO_OP_COUPON set CHECK_FLAG = '0', CHECK_COMMENTS = '补贴链接未配置'
-        where COUPON_URL is null or coupon_url = ''
+        where (COUPON_URL is null or coupon_url = '') AND VALID_STATUS='Y'
     </update>
 
     <update id="validCouponPass">
-        update UO_OP_COUPON set CHECK_FLAG = '1', CHECK_COMMENTS = ''
+        update UO_OP_COUPON set CHECK_FLAG = '1', CHECK_COMMENTS = '' WHERE VALID_STATUS='Y'
     </update>
 
     <select id="selectGroupCouponInfo" resultType="map">
@@ -144,56 +140,11 @@
     </select>
 
     <select id="getSysCoupon" resultMap="BaseResultMap">
-        with g1 as (
-            select *
+        select coupon_denom,coupon_threshold
             from PP_COUPON t1,
                  UO_OP_DAILY_TEMPLATE_CONFIG t2
             where t1.DISCOUNT_LEVEL = t2.DISCOUNT_LEVEL
-        ),
-             uv as
-                 (
-                     select coupon_denom,coupon_threshold,string_agg(USER_VALUE, ',' order by USER_VALUE) USER_VALUE
-                     from(
-                             select distinct coupon_denom,coupon_threshold,user_value from g1
-                         ) v1
-                     group by coupon_denom,coupon_threshold
-                 ),
-             cy as
-                 (
-                     select coupon_denom,coupon_threshold,string_agg(LIFECYCLE, ',' order by LIFECYCLE) LIFECYCLE
-                     from(
-                             select distinct coupon_denom,coupon_threshold,LIFECYCLE from g1
-                         ) v2
-                     group by coupon_denom,coupon_threshold
-                 ),
-             pa as
-                 (
-                     select coupon_denom,coupon_threshold,string_agg(PATH_ACTIVE, ',' order by PATH_ACTIVE) PATH_ACTIVE
-                     from(
-                             select distinct coupon_denom,coupon_threshold,PATH_ACTIVE from g1
-                         ) v3
-                     group by coupon_denom,coupon_threshold
-                 ),
-             group_list as
-                 (
-                     select  coupon_denom,coupon_threshold, string_agg(group_id::varchar, ',' order by group_id) group_list
-                     from g1
-                     group by coupon_denom,coupon_threshold
-                 )
-        select
-            group_list.coupon_denom,
-            group_list.coupon_threshold,
-            group_list.group_list,
-            uv.user_value,
-            cy.LIFECYCLE LIFE_CYCLE,
-            pa.path_active
-        from group_list,
-             uv,
-             cy,
-             pa
-        where group_list.coupon_denom=uv.coupon_denom and group_list.coupon_threshold=uv.coupon_threshold
-          and group_list.coupon_denom=cy.coupon_denom and group_list.coupon_threshold=cy.coupon_threshold
-          and group_list.coupon_denom=pa.coupon_denom and group_list.coupon_threshold=pa.coupon_threshold
+            group by coupon_denom,coupon_threshold
     </select>
 
     <select id="getIntelCoupon" resultMap="BaseResultMap">
@@ -217,22 +168,29 @@
     </insert>
 
     <select id="getValidCoupon" resultType="int">
-        select count(1) from uo_op_coupon where check_flag = '1'
+        select count(1) from uo_op_coupon where check_flag = '1' and valid_status = 'Y'
+    </select>
+
+    <select id="getInvalidCoupon" resultType="int">
+        select count(1) from uo_op_coupon where check_flag = '0' and valid_status = 'Y'
     </select>
 
     <update id="updateDiscountLevel">
         update uo_op_coupon
         set discount_level = t.discount_level
-        from (with v1 as (select count(1) cnt, coupon_threshold
+        from (
+                 --不同门槛下面额类别的数量
+                 with v1 as (select count(1) cnt, coupon_threshold
                           from uo_op_coupon
-                          where check_flag = '1'
+                          where check_flag = '1' and valid_status = 'Y'
                           group by coupon_threshold),
+                   --同一个门槛下按面额进行分组排序
                    v2 as (select coupon_id,
                                  row_number() over (partition by coupon_threshold order by coupon_denom) rn,
                                  coupon_threshold,
                                  coupon_denom
                           from uo_op_coupon
-                          where check_flag = '1'),
+                          where check_flag = '1' and valid_status = 'Y'),
                    v3 as (
                        select case
                                   when v1.cnt = 1 then '1,2,3'
@@ -248,8 +206,7 @@
                               coupon_id,
                               v1.coupon_threshold,
                               coupon_denom
-                       from v1,
-                            v2
+                       from v1, v2
                        where v1.coupon_threshold = v2.coupon_threshold
                        group by v1.cnt, v2.rn, v2.coupon_id, v1.coupon_threshold, v2.coupon_denom
                    )

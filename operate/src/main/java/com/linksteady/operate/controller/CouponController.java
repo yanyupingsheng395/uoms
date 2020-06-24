@@ -30,6 +30,20 @@ public class CouponController extends BaseController {
     ShortUrlServiceImpl shortUrlService;
 
     /**
+     * 获取所有的有效优惠券列表
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping("/selectAllCouponList")
+    public ResponseBo selectAllCouponList() {
+        couponService.validCoupon();
+        List<CouponInfo> result = couponService.selectAllCouponList();
+        return ResponseBo.okWithData("", result);
+    }
+
+
+    /**
      * 获取券list
      *
      * @param
@@ -55,18 +69,6 @@ public class CouponController extends BaseController {
         return ResponseBo.okWithData(null, ids);
     }
 
-    /**
-     * 根据组ID更新couponId
-     *
-     * @param groupId
-     * @param couponId
-     * @return
-     */
-    @RequestMapping("/updateCouponId")
-    public ResponseBo updateCouponId(String groupId, String couponId) {
-        couponService.updateCouponId(groupId, couponId);
-        return ResponseBo.ok();
-    }
 
     @RequestMapping("/save")
     public ResponseBo save(CouponInfo couponInfo) {
@@ -108,8 +110,6 @@ public class CouponController extends BaseController {
         couponInfo = getCheckInfo(couponInfo);
         //保存
         couponService.update(couponInfo);
-        //保存完后对所有优惠券做个校验
-
         return ResponseBo.ok();
     }
 
@@ -150,7 +150,6 @@ public class CouponController extends BaseController {
      */
     @RequestMapping("/deleteCoupon")
     public ResponseBo deleteCoupon(@RequestParam("couponId") String couponId) {
-        String msg = "";
         if(StringUtils.isNotEmpty(couponId)) {
             List<String> ids = Arrays.asList(couponId.split(","));
             //已被引用的券IDs
@@ -180,7 +179,6 @@ public class CouponController extends BaseController {
         }else {
             return ResponseBo.error();
         }
-
     }
 
     @RequestMapping("/deleteCouponGroup")
@@ -190,7 +188,7 @@ public class CouponController extends BaseController {
     }
 
     /**
-     * 同步系统计算的券
+     * 智能补贴弹出面板-保存
      * @return
      */
     @GetMapping("/getCalculatedCoupon")

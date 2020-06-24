@@ -8,15 +8,15 @@ import java.util.List;
 /**
  * Created by hxcao on 2019-04-29
  */
-public interface CouPonService {
+public interface CouponService {
+
+    List<CouponInfo>  selectAllCouponList();
 
     List<CouponInfo> getList(int startRow, int endRow);
 
     int getTotalCount();
 
     List<Integer> getCouponIdsByGroupId(String groupId);
-
-    void updateCouponId(String groupId, String couponId);
 
     void save(CouponInfo couponInfo);
 
