@@ -151,8 +151,11 @@ public class CouponServiceImpl implements CouPonService {
         couponMapper.validEndDateNull();
         //补贴有效日期已失效
         couponMapper.validEndDateNotNull();
-        //补贴链接为空
-        couponMapper.validCouponUrl();
+        // 自行领取
+        if(couponSendType.equalsIgnoreCase("A")) {
+            //补贴链接为空
+            couponMapper.validCouponUrl();
+        }
     }
 
     @Override
