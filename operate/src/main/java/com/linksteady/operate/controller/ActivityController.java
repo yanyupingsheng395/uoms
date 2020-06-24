@@ -485,7 +485,7 @@ public class ActivityController {
         reentrantLock.lock();
         try {
             thriftClient.open();
-            result = thriftClient.getActivityService().genPredictCovData(Long.parseLong(headId), activityStage);
+            result = thriftClient.getInsightService().genPredictCovData(Long.parseLong(headId), activityStage);
         }catch (TException e) {
             log.info("生成转化率数据出错", e);
         } finally {
