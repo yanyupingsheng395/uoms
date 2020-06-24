@@ -1,8 +1,7 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.DailyHead;
 import com.linksteady.operate.domain.QywxDailyHeader;
-import com.linksteady.operate.vo.QywxUserStats;
+import com.linksteady.operate.vo.QywxUserStatsVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -35,46 +34,46 @@ public interface QywxDailyMapper {
      * 按成长类型统计人数
      * @param headId
      */
-    List<QywxUserStats> getTargetInfoByGrowthType(Long headId);
+    List<QywxUserStatsVO> getTargetInfoByGrowthType(Long headId);
 
     /**
      * 按成长类型[序列]统计人数
      * @param headId
      */
-    List<QywxUserStats> getTargetInfoByGrowthSeriesType(Long headId);
+    List<QywxUserStatsVO> getTargetInfoByGrowthSeriesType(Long headId);
 
 
     /**
      * 按品类统计推荐人数
      * @param headId
      */
-    List<QywxUserStats> getTargetInfoBySpu(Long headId);
+    List<QywxUserStatsVO> getTargetInfoBySpu(Long headId);
 
     /**
      * 按商品统计推荐人数
      * @param headId
      */
-    List<QywxUserStats> getTargetInfoByProd(Long headId,String spuName);
+    List<QywxUserStatsVO> getTargetInfoByProd(Long headId, String spuName);
 
     /**
      * 按用户价值统计
      */
-    List<QywxUserStats> getTargetInfoByUserValue(Long headId);
+    List<QywxUserStatsVO> getTargetInfoByUserValue(Long headId);
 
     /**
      * 特定用户价值下，按用户活跃度、生命周期的统计
      */
-    List<QywxUserStats> getTargetInfoMatrix(Long headId,String userValue);
+    List<QywxUserStatsVO> getTargetInfoMatrix(Long headId, String userValue);
 
     /**
      * 按企业微信成员统计
      */
-    List<QywxUserStats> getTargetInfoByUser(Long headId);
+    List<QywxUserStatsVO> getTargetInfoByUser(Long headId);
 
     /**
      * 按优惠券来进行统计
      */
-    List<QywxUserStats> getTargetInfoByCoupon(Long headId);
+    List<QywxUserStatsVO> getTargetInfoByCoupon(Long headId);
 
     int updateStatus(@Param("headId") long headId, @Param("status") String status,@Param("version") int version);
 

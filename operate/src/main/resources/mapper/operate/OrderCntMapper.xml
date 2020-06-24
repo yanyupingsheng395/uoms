@@ -19,7 +19,7 @@
     </select>
 
     <!--查询起止时间段内的GMV值-->
-    <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVO">
         SELECT COUNT(W_ORDERS.ID) kpiVal,
         ${period_name} kpiDate
         FROM
@@ -37,7 +37,7 @@
         ORDER BY  ${period_name} ASC
     </select>
 
-    <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVO">
         SELECT COUNT(W_ORDERS.ID) kpiVal,
             COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='Y' THEN W_ORDERS.ID END) fpKpiVal,
             COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='N' THEN W_ORDERS.ID END) spKpiVal,
@@ -57,7 +57,7 @@
         ORDER BY  ${period_name} ASC
     </select>
 
-    <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVO">
         SELECT
             COUNT(W_ORDERS.ID) kpiVal,
             COUNT(DISTINCT CASE WHEN W_ORDERS.IS_FP='Y' THEN W_ORDERS.ID END) fpKpiVal,

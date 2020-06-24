@@ -8,20 +8,18 @@ public enum  PushPropertiesEnum {
 
     pushFlag("op.push.pushFlag"),
     pushMethod("op.push.pushMethod"),
-    smsLengthLimit("op.push.smsLengthLimit"),
-    productUrl("op.push.productUrl"),
     isTestEnv("op.push.isTestEnv"),
 
-    demoShortUrl("op.sms.url"),
-    shortUrlLen("op.push.shortUrlLen"),
+    couponSendType("op.source.couponSendType"),
 
+    smsLengthLimit("op.push.smsLengthLimit"),
+    shortUrlLen("op.push.shortUrlLen"),
     prodNameLen("op.push.prodNameLen"),
-    couponSendType("op.push.couponSendType"),
     couponNameLen("op.push.couponNameLen"),
     priceLen("op.push.priceLen"),
     profitLen("op.push.profitLen"),
-    pushVendor("op.push.pushVendor"),
 
+    pushVendor("op.push.pushVendor"),
     openNightSleep("op.push.openNightSleep"),
     nightStart("op.push.nightStart"),
     nightEnd("op.push.nightEnd"),
@@ -32,7 +30,6 @@ public enum  PushPropertiesEnum {
     clRequestServerUrl("op.push.clRequestServerUrl"),
     clPullMoUrl("op.push.clPullMoUrl"),
     clReportRequestUrl("op.push.clReportRequestUrl"),
-
 
     montnetsAccount("op.push.montnetsAccount"),
     montnetsPassword("op.push.montnetsPassword"),
@@ -46,11 +43,21 @@ public enum  PushPropertiesEnum {
     signature("op.push.signature"),
     signatureFlag("op.push.signature_flag"),
     unsubscribe("op.push.unsubscribe"),
-    unsubscribeFlag("op.push.unsubscribe_flag");
+    unsubscribeFlag("op.push.unsubscribe_flag"),
 
+    url("op.sms.url"),
+    prodName("op.sms.prodname"),
+    couponName("op.sms.couponname"),
+    price("op.sms.price"),
+    profit("op.sms.profit"),
+
+    sourceName("op.source.name"),
+    smsEnabled("op.source.smsEnabled"),
+    qywxEnabled("op.source.qywxEnabled"),
+    wxofficialEnabled("op.source.wxofficialEnabled"),
+    prodUrlEnabled("op.source.produrl_enabled");
 
     private String keyCode;
-
 
     PushPropertiesEnum(String keyCode) {
         this.keyCode = keyCode;

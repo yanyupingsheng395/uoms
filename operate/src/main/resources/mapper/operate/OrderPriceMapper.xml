@@ -17,7 +17,7 @@
         </if>
     </select>
 
-    <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVO">
         SELECT
         TRUNC(AVG(W_ORDERS.REAL_FEE),2) kpiVal,
         ${period_name} kpiDate
@@ -36,7 +36,7 @@
         ORDER BY ${period_name} ASC
     </select>
 
-    <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVO">
         WITH g1 as(
         SELECT
         ${period_name} kpiDate,
@@ -74,7 +74,7 @@
         FROM g2 ORDER BY g2.kpiDate ASC
     </select>
 
-    <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVO">
         WITH g1 as(
         SELECT
         coalesce(W_ORDERS.REAL_FEE,0) FEE,

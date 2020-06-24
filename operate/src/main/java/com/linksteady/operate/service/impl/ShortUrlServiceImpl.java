@@ -91,7 +91,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
 
         //判断是否是测试环节生成模拟短链接
         if ("Y".equals(pushConfig.getIsTestEnv())) {
-            return pushConfig.getDemoShortUrl();
+            return pushConfig.getUrl();
         } else {
             String newLongUrl = "";
             //判断是否需要进行转跳 唤醒淘宝APP  如果长链接中包含 taobao.com tmall.com 则进行包裹
@@ -117,7 +117,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     @Override
     public String genProdShortUrlDirect(String longUrl, String sourceType) {
         if ("Y".equals(pushConfig.getIsTestEnv())) {
-            return pushConfig.getDemoShortUrl();
+            return pushConfig.getUrl();
         } else {
             return produceShortUrl(longUrl, sourceType);
         }
@@ -133,9 +133,9 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     public String genProdShortUrlByProdId(String productId, String sourceType) {
         //判断是否是测试环节生成模拟短链接
         if ("Y".equals(pushConfig.getIsTestEnv())) {
-            return pushConfig.getDemoShortUrl();
+            return pushConfig.getUrl();
         } else {
-            String newLongUrl = pushConfig.getProductUrl().replace("$PRODUCT_ID", productId);
+            String newLongUrl = pushConfig.getUrl().replace("$PRODUCT_ID", productId);
             //判断是否需要进行转跳 唤醒淘宝APP
             if (newLongUrl.indexOf("taobao.com") != -1 || newLongUrl.indexOf("tmall.com") != -1) {
                 //进行一层转跳
@@ -154,7 +154,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     public String genConponShortUrl(String couponUrl, String sourceType) {
         //判断是否是测试环节生成模拟短链接
         if ("Y".equals(pushConfig.getIsTestEnv())) {
-            return pushConfig.getDemoShortUrl();
+            return pushConfig.getUrl();
         } else {
             //判断是否需要进行转跳 唤醒淘宝APP
             if (couponUrl.indexOf("taobao.com") != -1 || couponUrl.indexOf("tmall.com") != -1) {
@@ -172,7 +172,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     @Override
     public String genShortUrlDirect(String longUrl, String sourceType) {
         if ("Y".equals(pushConfig.getIsTestEnv())) {
-            return pushConfig.getDemoShortUrl();
+            return pushConfig.getUrl();
         } else {
             return produceShortUrl(longUrl, sourceType);
         }

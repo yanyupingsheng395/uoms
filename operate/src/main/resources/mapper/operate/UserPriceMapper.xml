@@ -21,7 +21,7 @@
     </select>
 
     <!--查询起止时间段内的连带率值-->
-    <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVO">
         SELECT
         (CASE WHEN
         COUNT(DISTINCT W_ORDER_DETAILS.USER_ID)=0 THEN 0 ELSE
@@ -41,7 +41,7 @@
     </select>
 
     <!--获取首购和复购的连带率汇总值-->
-    <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVO">
         WITH G1 AS
         (
         SELECT
@@ -78,7 +78,7 @@
     </select>
 
     <!--获取首购和复购的明细数据 -->
-    <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVO">
         WITH G1 AS
         (
         SELECT

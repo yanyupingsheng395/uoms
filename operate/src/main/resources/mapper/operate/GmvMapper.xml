@@ -20,7 +20,7 @@
     </select>
 
     <!--查询起止时间段内的GMV值-->
-    <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVO">
         SELECT
         SUM(W_ORDERS.REAL_FEE) kpiVal,
         ${period_name} kpiDate
@@ -39,7 +39,7 @@
         ORDER BY  ${period_name} ASC
     </select>
 
-    <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getSpAndFpKpi" resultType="com.linksteady.operate.vo.KpiInfoVO">
         SELECT
         ${period_name} kpiDate,
         SUM( W_ORDERS.REAL_FEE ) kpiVal,
@@ -60,7 +60,7 @@
         ORDER BY  ${period_name} ASC
     </select>
 
-    <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVo">
+    <select id="getSpAndFpKpiTotal" resultType="com.linksteady.operate.vo.KpiInfoVO">
         SELECT
         SUM(W_ORDERS.REAL_FEE) kpiVal,
         SUM(CASE WHEN W_ORDERS.IS_FP='Y' THEN W_ORDERS.REAL_FEE ELSE 0 END) fpKpiVal,

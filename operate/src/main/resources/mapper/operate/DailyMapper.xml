@@ -50,7 +50,7 @@
         <result property="convertDate" jdbcType="VARCHAR" column="CONVERT_DATE"></result>
     </resultMap>
 
-    <resultMap id="DailyUserStatsResult" type="com.linksteady.operate.vo.DailyUserStats">
+    <resultMap id="DailyUserStatsResult" type="com.linksteady.operate.vo.DailyUserStatsVO">
         <result property="userValue" jdbcType="VARCHAR" column="USER_VALUE"></result>
         <result property="pathActivity" jdbcType="VARCHAR" column="PATH_ACTIVE"></result>
         <result property="lifecycle" jdbcType="VARCHAR" column="LIFECYCLE"></result>
@@ -137,7 +137,7 @@
     </select>
 
     <select id="getDailyPersonalEffect" resultMap="personalResult"
-            parameterType="com.linksteady.operate.vo.DailyPersonalVo">
+            parameterType="com.linksteady.operate.vo.DailyPersonalVO">
         select
         t.user_id, --用户ID
         u.login_name user_name, --用户名
@@ -170,7 +170,7 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="getDailyPersonalEffectCount" resultType="int" parameterType="com.linksteady.operate.vo.DailyPersonalVo">
+    <select id="getDailyPersonalEffectCount" resultType="int" parameterType="com.linksteady.operate.vo.DailyPersonalVO">
         select count(1) from UO_OP_DAILY_CONVERT_DETAIL where DAILY_HEADER_ID = #{headId}::int4 and IS_CONVERSION = '1'
         <if test="dailyPersonalVo.spuIsConvert != null and dailyPersonalVo.spuIsConvert != ''">
             and SPU_CONSISTENT = #{dailyPersonalVo.spuIsConvert}

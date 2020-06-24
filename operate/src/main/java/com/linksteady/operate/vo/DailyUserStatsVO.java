@@ -3,7 +3,7 @@ package com.linksteady.operate.vo;
 import lombok.Data;
 
 @Data
-public class DailyUserStats {
+public class DailyUserStatsVO {
 
     /**
      * 用户价值
