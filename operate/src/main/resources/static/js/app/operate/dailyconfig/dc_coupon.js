@@ -206,10 +206,14 @@ function validateRule() {
                 digits: true
             },
             couponInfo2: {
-                required: false
+                required: function () {
+                    return $("input[name='couponSendType']").val() === 'A';
+                }
             },
             couponUrl: {
-                required: false
+                required: function () {
+                    return $("input[name='couponSendType']").val() === 'A';
+                }
             },
             couponDisplayName: {
                 required: true,
