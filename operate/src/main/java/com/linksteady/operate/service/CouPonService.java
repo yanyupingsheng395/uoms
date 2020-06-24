@@ -16,8 +16,6 @@ public interface CouPonService {
 
     List<Integer> getCouponIdsByGroupId(String groupId);
 
-    void updateCouponId(String groupId, String couponId);
-
     void save(CouponInfo couponInfo);
 
     void update(CouponInfo couponInfo);

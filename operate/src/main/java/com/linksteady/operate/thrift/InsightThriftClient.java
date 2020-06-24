@@ -6,6 +6,7 @@ import org.apache.thrift.transport.TTransportException;
 
 public class InsightThriftClient {
     private ProdInsightService.Client insightService;
+    private  ActivityService.Client activityService;
     private TBinaryProtocol protocol;
     private TSocket transport;
     private String host;
@@ -31,10 +32,15 @@ public class InsightThriftClient {
         transport = new TSocket(host, port);
         protocol = new TBinaryProtocol(transport);
         insightService = new ProdInsightService.Client(protocol);
+        activityService = new ActivityService.Client(protocol);
     }
 
     public ProdInsightService.Client getInsightService() {
         return insightService;
+    }
+
+    public ActivityService.Client getActivityService() {
+        return activityService;
     }
 
     public void open() throws TTransportException {

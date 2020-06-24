@@ -6,7 +6,7 @@ $( function () {
     step = steps( {
         el: "#configSteps",
         data: [
-            {title: "创建消息", description: ""},
+            {title: "配置消息", description: ""},
             {title: "配置补贴", description: ""},
             {title: "配置完成", description: ""}
         ],

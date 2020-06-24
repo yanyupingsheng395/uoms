@@ -72,7 +72,7 @@ public class DailyConfigController {
     }
 
     /**
-     * 将补贴数据智能的安到每个组
+     * 将补贴数据智能的装配到每个组
      * @return
      */
     @GetMapping("/autoSetGroupCoupon")

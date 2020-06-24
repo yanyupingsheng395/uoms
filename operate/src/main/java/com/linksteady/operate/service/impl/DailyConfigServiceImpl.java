@@ -107,12 +107,12 @@ public class DailyConfigServiceImpl implements DailyConfigService {
     @Override
     public Map<String, Object> getConfigInfoByGroup(String userValue, String lifeCycle, String pathActive, String tarType) {
         Map<String, Object> data = dailyConfigMapper.findMsgInfo(userValue, lifeCycle, pathActive, tarType);
-        // 获取短信的补贴和微信补贴
-        List<CouponInfo> duanxinCouponInfos = couponMapper.getCouponListByGroup(userValue, lifeCycle, pathActive, tarType);
+        // 获取补贴信息
+        List<CouponInfo> couponInfos = couponMapper.getCouponListByGroup(userValue, lifeCycle, pathActive, tarType);
         if (data == null) {
             data = Maps.newHashMap();
         }
-        data.put("duanxinCouponInfos", duanxinCouponInfos);
+        data.put("duanxinCouponInfos", couponInfos);
         return data;
     }
 
@@ -125,6 +125,8 @@ public class DailyConfigServiceImpl implements DailyConfigService {
         Lock lock = new ReentrantLock();
         lock.lock();
         try {
+            //查找当前校验不通过的优惠券的条数
+            int count=couponMapper.getInvalidCoupon();
             int count1 = couponMapper.getValidCoupon();
             if (count1 == 0) {
                 return ResponseBo.error("无有效的补贴，请先配置补贴!");

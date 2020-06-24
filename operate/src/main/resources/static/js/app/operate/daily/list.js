@@ -65,7 +65,7 @@ function initTable() {
                     res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
                 }else
                 {
-                    res='';
+                    res='-';
                 }
                 return res;
             }

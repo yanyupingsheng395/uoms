@@ -40,13 +40,6 @@ public class CouponServiceImpl implements CouPonService {
         return couponMapper.getCouponIdsByGroupId(groupId);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateCouponId(String groupId, String couponId) {
-        couponMapper.deleteByGroupId(groupId);
-        List<String> couponIds = Arrays.asList(couponId.split(","));
-        couponMapper.insertByGroupId(groupId, couponIds);
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

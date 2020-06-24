@@ -55,18 +55,6 @@ public class CouponController extends BaseController {
         return ResponseBo.okWithData(null, ids);
     }
 
-    /**
-     * 根据组ID更新couponId
-     *
-     * @param groupId
-     * @param couponId
-     * @return
-     */
-    @RequestMapping("/updateCouponId")
-    public ResponseBo updateCouponId(String groupId, String couponId) {
-        couponService.updateCouponId(groupId, couponId);
-        return ResponseBo.ok();
-    }
 
     @RequestMapping("/save")
     public ResponseBo save(CouponInfo couponInfo) {
@@ -190,7 +178,7 @@ public class CouponController extends BaseController {
     }
 
     /**
-     * 同步系统计算的券
+     * 智能补贴弹出面板-保存
      * @return
      */
     @GetMapping("/getCalculatedCoupon")
