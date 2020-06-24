@@ -1502,7 +1502,6 @@ function editTmp() {
         $( "#btn_save_sms" ).attr( 'name', 'update' );
 
         //todo 文案的字数在编辑状态下好像没出来
-
         $( "#smstemplate_modal" ).modal( 'hide' );
         $( "#sms_add_modal" ).modal( 'show' );
     } );
