@@ -107,7 +107,6 @@ function stepBreak(index) {
                     $("#changePlan").attr("style", "display:none;");
                     $("#calculateCovDataBtn").attr("style", "display:none;");
                     $("#submitBtn1").attr("style", "display:none;");
-                    $("#submitBtn2").attr("style", "display:none;");
                 }else {
                     $("#btn_add_shop1").attr("style", "display:inline-block;");
                     $("#btn_edit_shop1").attr("style", "display:inline-block;");
@@ -115,53 +114,52 @@ function stepBreak(index) {
                     $("#btn_batch_upload1").attr("style", "display:inline-block;");
                     $("#changePlan").attr("style", "display:inline-block;");
                     $("#calculateCovDataBtn").attr("style", "display:inline-block;");
-                    $("#submitBtn1").attr("style", "display:inline-block;");
-                    $("#submitBtn2").attr("style", "display:inline-block;");
+                    $("#submitBtn1").attr("style", "display:block;");
                 }
                 if(preheatStatus === 'done' || preheatStatus === 'timeout') {
                     $("#btn_add_shop2").attr("style", "display:none;");
                     $("#btn_edit_shop2").attr("style", "display:none;");
                     $("#btn_delete_shop2").attr("style", "display:none;");
                     $("#btn_batch_upload2").attr("style", "display:none;");
+                    $("#submitBtn2").attr("style", "display:none;");
                 }else {
                     $("#btn_add_shop2").attr("style", "display:inline-block;");
                     $("#btn_edit_shop2").attr("style", "display:inline-block;");
                     $("#btn_delete_shop2").attr("style", "display:inline-block;");
                     $("#btn_batch_upload2").attr("style", "display:inline-block;");
+                    $("#submitBtn2").attr("style", "display:block;");
                 }
             }
             if(CURRENT_ACTIVITY_STAGE === 'formal') {
                 if(formalNotifyStatus === 'doing' || formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout') {
-                    if(formalNotifyStatus === 'doing' || formalNotifyStatus === 'done') {
-                        $("#btn_add_shop1").attr("style", "display:none;");
-                        $("#btn_edit_shop1").attr("style", "display:none;");
-                        $("#btn_delete_shop1").attr("style", "display:none;");
-                        $("#btn_batch_upload1").attr("style", "display:none;");
-                        $("#changePlan").attr("style", "display:none;");
-                        $("#calculateCovDataBtn").attr("style", "display:none;");
-                        $("#submitBtn1").attr("style", "display:none;");
-                        $("#submitBtn2").attr("style", "display:none;");
-                    }else {
-                        $("#btn_add_shop1").attr("style", "display:inline-block;");
-                        $("#btn_edit_shop1").attr("style", "display:inline-block;");
-                        $("#btn_delete_shop1").attr("style", "display:inline-block;");
-                        $("#btn_batch_upload1").attr("style", "display:inline-block;");
-                        $("#changePlan").attr("style", "display:inline-block;");
-                        $("#calculateCovDataBtn").attr("style", "display:inline-block;");
-                        $("#submitBtn1").attr("style", "display:inline-block;");
-                        $("#submitBtn2").attr("style", "display:inline-block;");
-                    }
+                    $("#btn_add_shop1").attr("style", "display:none;");
+                    $("#btn_edit_shop1").attr("style", "display:none;");
+                    $("#btn_delete_shop1").attr("style", "display:none;");
+                    $("#btn_batch_upload1").attr("style", "display:none;");
+                    $("#changePlan").attr("style", "display:none;");
+                    $("#calculateCovDataBtn").attr("style", "display:none;");
+                    $("#submitBtn1").attr("style", "display:none;");
+                }else {
+                    $("#btn_add_shop1").attr("style", "display:inline-block;");
+                    $("#btn_edit_shop1").attr("style", "display:inline-block;");
+                    $("#btn_delete_shop1").attr("style", "display:inline-block;");
+                    $("#btn_batch_upload1").attr("style", "display:inline-block;");
+                    $("#changePlan").attr("style", "display:inline-block;");
+                    $("#calculateCovDataBtn").attr("style", "display:inline-block;");
+                    $("#submitBtn1").attr("style", "display:block;");
                 }
                 if(formalStatus === 'done' || formalStatus === 'timeout') {
                     $("#btn_add_shop2").attr("style", "display:none;");
                     $("#btn_edit_shop2").attr("style", "display:none;");
                     $("#btn_delete_shop2").attr("style", "display:none;");
                     $("#btn_batch_upload2").attr("style", "display:none;");
+                    $("#submitBtn2").attr("style", "display:none;");
                 }else {
                     $("#btn_add_shop2").attr("style", "display:inline-block;");
                     $("#btn_edit_shop2").attr("style", "display:inline-block;");
                     $("#btn_delete_shop2").attr("style", "display:inline-block;");
                     $("#btn_batch_upload2").attr("style", "display:inline-block;");
+                    $("#submitBtn2").attr("style", "display:block;");
                 }
             }
         }
@@ -1681,16 +1679,23 @@ function statTmpContentNum() {
  * 调整转化率
  */
 $("#changePlan").click(function () {
-    $("#plan_change_modal").modal('show');
-    table3();
-    var data = [{
-        name: '改变方案对转化率造成的预期改变'
-    },{
-        name: '改变方案对推送用户数造成的预期改变'
-    },{
-        name: '改变方案对转化用户数造成的预期改变'
-    }];
-    table4(data);
+
+    // 判断活动通知商品是否上传
+    var data = $("#activityProductTable1").bootstrapTable('getData');
+    if(data.length === 0) {
+        $MB.n_warning("请先上传有效的活动通知商品！");
+    }else {
+        $("#plan_change_modal").modal('show');
+        table3();
+        var data = [{
+            name: '改变方案对转化率造成的预期改变'
+        },{
+            name: '改变方案对推送用户数造成的预期改变'
+        },{
+            name: '改变方案对转化用户数造成的预期改变'
+        }];
+        table4(data);
+    }
 });
 
 function covRowStyle(row, index) {

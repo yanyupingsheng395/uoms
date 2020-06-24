@@ -164,6 +164,9 @@ $(function () {
                     case "doing":
                         res = "<span class=\"badge bg-warning\">执行中</span>";
                         break;
+                    case "done":
+                        res = "<span class=\"badge bg-success\">执行完</span>";
+                        break;
                     case "timeout":
                         res = "<span class=\"badge bg-gray\">过期未执行</span>";
                         break;
@@ -207,7 +210,9 @@ $("#btn_edit").click(function () {
     let formalNotifyStatus = selected[0]['formalNotifyStatus'];
     let hasPreheat = selected[0]['hasPreheat'];
     let flag = (hasPreheat === '1' && preheatStatus === 'done' && formalStatus === 'done' && preheatNotifyStatus === 'done' && formalNotifyStatus === 'done') ||
-        (hasPreheat === '0' && formalStatus === 'done' && formalNotifyStatus === 'done');
+        (hasPreheat === '0' && formalStatus === 'done' && formalNotifyStatus === 'done') ||
+        (hasPreheat === '1' && preheatStatus === 'timeout' && formalStatus === 'timeout' && preheatNotifyStatus === 'timeout' && formalNotifyStatus === 'timeout') ||
+        (hasPreheat === '0' && formalStatus === 'timeout' && formalNotifyStatus === 'timeout');
     if(!flag) {
         window.location.href = "/page/activity/edit?headId=" + headId;
     }else {
