@@ -10,6 +10,7 @@ import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyConfigMapper;
 import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.DailyGroupTemplate;
+import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +113,7 @@ public class DailyConfigServiceImpl implements DailyConfigService {
         if (data == null) {
             data = Maps.newHashMap();
         }
-        data.put("duanxinCouponInfos", couponInfos);
+        data.put("couponInfos", couponInfos);
         return data;
     }
 
@@ -121,15 +122,14 @@ public class DailyConfigServiceImpl implements DailyConfigService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResponseBo autoSetGroupCoupon() {
-        Lock lock = new ReentrantLock();
-        lock.lock();
-        try {
+    public void autoSetGroupCoupon() throws OptimisticLockException{
             //查找当前校验不通过的优惠券的条数
             int count=couponMapper.getInvalidCoupon();
+            //todo 增加 如果存在校验不通过的券，则不允许往下走
+
             int count1 = couponMapper.getValidCoupon();
             if (count1 == 0) {
-                return ResponseBo.error("无有效的补贴，请先配置补贴!");
+                throw new OptimisticLockException("无有效的补贴，请先配置补贴!");
             }
             // 更新discountLevel字段
             couponMapper.updateDiscountLevel();
@@ -137,14 +137,6 @@ public class DailyConfigServiceImpl implements DailyConfigService {
             couponMapper.deleteAllCouponGroupData();
             // 根据discountLevel字段匹配到用户分组上
             couponMapper.resetCouponGroupData();
-
-            if (count1 == 0) {
-                return ResponseBo.warn("无有效的补贴，请先配置补贴!");
-            }
-        } finally {
-            lock.unlock();
-        }
-        return ResponseBo.ok();
     }
 
     @Override

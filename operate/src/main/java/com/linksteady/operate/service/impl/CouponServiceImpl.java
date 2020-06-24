@@ -3,7 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.domain.CouponInfo;
-import com.linksteady.operate.service.CouPonService;
+import com.linksteady.operate.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +17,18 @@ import java.util.stream.Collectors;
  * Created by hxcao on 2019-04-29
  */
 @Service
-public class CouponServiceImpl implements CouPonService {
+public class CouponServiceImpl implements CouponService {
 
     @Autowired
     private CouponMapper couponMapper;
 
     @Autowired
     private PushConfig pushConfig;
+
+    @Override
+    public List<CouponInfo> selectAllCouponList() {
+        return couponMapper.selectAllCouponList();
+    }
 
     @Override
     public List<CouponInfo> getList(int limit, int offset) {

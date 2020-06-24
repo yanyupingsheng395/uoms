@@ -22,14 +22,10 @@ $("#coupon_add_modal").on('hidden.bs.modal', function () {
  */
 function couponTable() {
     var settings = {
-        url: "/coupon/couponList",
+        url: "/coupon/selectAllCouponList",
         cache: false,
-        pagination: true,
+        pagination: false,
         singleSelect: true,
-        sidePagination: "server",
-        pageNumber: 1,
-        pageSize: 10,
-        pageList: [10, 25, 50, 100],
         clickToSelect: true,
         queryParams: function(param) {
             return {

@@ -2,6 +2,7 @@ package com.linksteady.operate.controller;
 
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.DailyGroupTemplate;
+import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 每日运营配置
@@ -77,7 +80,23 @@ public class DailyConfigController {
      */
     @GetMapping("/autoSetGroupCoupon")
     public ResponseBo autoSetGroupCoupon() {
-        return dailyConfigService.autoSetGroupCoupon();
+        Lock lock = new ReentrantLock();
+        if(lock.tryLock())
+        {
+            try {
+                dailyConfigService.autoSetGroupCoupon();
+                return ResponseBo.ok();
+            } catch (OptimisticLockException e)
+            {
+                return ResponseBo.error(e.getMessage());
+            }
+            finally {
+                lock.unlock();
+            }
+        }else
+        {
+            return ResponseBo.error("其他用户正在操作，请稍后再试!");
+        }
     }
 
     /**

@@ -21,6 +21,13 @@
         <result column="IS_REC" jdbcType="VARCHAR" property="isRec"/>
     </resultMap>
 
+    <select id="selectAllCouponList" resultMap="BaseResultMap">
+         select coupon_id, coupon_denom, coupon_threshold, coupon_url, coupon_desc, coupon_num, to_char(valid_end, 'yyyy-mm-dd') valid_end, coupon_info1, coupon_info2, coupon_display_name, valid_status, coupon_source, discount_level, check_flag, check_comments
+        from UO_OP_COUPON
+            where VALID_STATUS = 'Y'
+        order by coupon_threshold asc, coupon_denom asc
+    </select>
+
     <select id="getList" resultMap="BaseResultMap">
         select coupon_id, coupon_denom, coupon_threshold, coupon_url, coupon_desc, coupon_num, to_char(valid_end, 'yyyy-mm-dd') valid_end, coupon_info1, coupon_info2, coupon_display_name, valid_status, coupon_source, discount_level, check_flag, check_comments
         from UO_OP_COUPON

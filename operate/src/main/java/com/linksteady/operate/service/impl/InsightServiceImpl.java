@@ -11,7 +11,7 @@ import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.domain.InsightUserCnt;
 import com.linksteady.operate.service.InsightService;
 import com.linksteady.operate.thrift.ConversionData;
-import com.linksteady.operate.thrift.InsightThriftClient;
+import com.linksteady.operate.thrift.ThriftClient;
 import com.linksteady.operate.thrift.RetentionData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -52,10 +52,7 @@ public class InsightServiceImpl implements InsightService {
     private InsightMapper insightMapper;
 
     @Autowired
-    private InsightThriftClient insightThriftClient;
-
-    @Autowired
-    private DailyMapper dailyMapper;
+    private ThriftClient thriftClient;
 
     @Autowired
     private DictMapper dictMapper;
@@ -401,8 +398,8 @@ public class InsightServiceImpl implements InsightService {
             int spu = -1;
             int product = -1;
 
-            if (!insightThriftClient.isOpend()) {
-                insightThriftClient.open();
+            if (!thriftClient.isOpend()) {
+                thriftClient.open();
             }
 
             if (type.equalsIgnoreCase("spu")) {
@@ -411,12 +408,12 @@ public class InsightServiceImpl implements InsightService {
             if (type.equalsIgnoreCase("product")) {
                 product = id.intValue();
             }
-            RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, period.intValue());
+            RetentionData retentionFitData = thriftClient.getInsightService().getRetentionFitData(spu, product, period.intValue());
             List<Double> retentionFit = retentionFitData.getRetentionFit();
             retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
         } catch (Exception e) {
             log.error("获取拟合值数据异常", e);
-            insightThriftClient.close();
+            thriftClient.close();
         } finally {
             lock.unlock();
         }
@@ -432,8 +429,8 @@ public class InsightServiceImpl implements InsightService {
             int spu = -1;
             int product = -1;
 
-            if (!insightThriftClient.isOpend()) {
-                insightThriftClient.open();
+            if (!thriftClient.isOpend()) {
+                thriftClient.open();
             }
 
             if (type.equalsIgnoreCase("spu")) {
@@ -442,12 +439,12 @@ public class InsightServiceImpl implements InsightService {
             if (type.equalsIgnoreCase("product")) {
                 product = id.intValue();
             }
-            RetentionData retentionFitData = insightThriftClient.getInsightService().getRetentionFitData(spu, product, period.intValue());
+            RetentionData retentionFitData = thriftClient.getInsightService().getRetentionFitData(spu, product, period.intValue());
             List<Double> retentionFit = retentionFitData.getRetentionFit();
             retentionFitList = retentionFit.stream().map(df::format).collect(Collectors.toList());
         } catch (Exception e) {
             log.error("获取拟合值数据异常", e);
-            insightThriftClient.close();
+            thriftClient.close();
         } finally {
             lock.unlock();
         }
@@ -460,14 +457,14 @@ public class InsightServiceImpl implements InsightService {
         Map<String, Object> result = Maps.newHashMap();
         lock.lock();
         try {
-            if (!insightThriftClient.isOpend()) {
-                insightThriftClient.open();
+            if (!thriftClient.isOpend()) {
+                thriftClient.open();
             }
             if (null!=ebpProductId) {
                 if (null==nextEbpProductId) {
                     nextEbpProductId = -1L;
                 }
-                ConversionData conversionData = insightThriftClient.getInsightService().getConversionData(spuId, purchOrder, ebpProductId, nextEbpProductId);
+                ConversionData conversionData = thriftClient.getInsightService().getConversionData(spuId, purchOrder, ebpProductId, nextEbpProductId);
 
                 result.put("xdata", conversionData.xdata);
                 result.put("ydata", conversionData.ydata.stream().map(x -> df.format(x * 100)).collect(Collectors.toList()));

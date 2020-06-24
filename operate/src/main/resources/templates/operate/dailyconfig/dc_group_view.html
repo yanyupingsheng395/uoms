@@ -16,52 +16,54 @@
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-4" style="margin-top: 10px;">
-        <!-- 当前所选标签 -->
-        <ul style="margin-bottom: 10px;">
-            <li>
-                <span style="color: #4d5259;">通过在特征上选择取值定位某一群组用户</span>
-            </li>
+<div class="row m-t-10" >
+    <div class="col-md-4">
+        <ul id="tagTabs" class="nav nav-tabs" role="tablist">
+            <li class="active"><a href="#tagTabone" id="tag-tab" role="tab" data-toggle="tab">通过选择特征值定位群组</a></li>
         </ul>
-        <div class="row desc_content uvalue">
-            <div class="col-md-12" id="valueBtns" style="width:405px;height:126px;border:dashed 1px #faa64b;padding-top: 3px;padding-bottom: 3px;margin-left: 15px;">
-                <p class="h6" style="border-bottom: #faa64b 1px dashed;padding: 5px;">用户对类目的价值/沉默成本</p>
-                <button class="btn btn-round btn-sm btn-warning m-t-5" onclick="userGroupButton('userValue', 'ULC_01',this, 'btn-warning')">高价值低敏感</button>&nbsp;<button
-                    class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_02',this, 'btn-warning')">高价值较敏感
-            </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_03',this, 'btn-warning')">中价值高敏感</button>&nbsp;<button
-                    class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_04',this, 'btn-warning')">低价值低敏感
-            </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_05',this, 'btn-warning')">低价值高敏感</button>
-            </div>
-        </div>
-        <div class="row desc_content pactive" style="margin-top: 20px;">
-            <div class="col-md-12" id="activeBtns" style="width:405px;height:91px;border:dashed 1px #48b0f7;padding-top: 3px;padding-bottom: 3px;margin-left: 15px;">
-                <p class="h6" style="border-bottom: #48b0f7 1px dashed;padding: 5px;">用户对类目的生命周期阶段</p>
-                <button class="btn btn-round btn-sm btn-info m-t-5" onclick="userGroupButton('lifeCycle', '1',this, 'btn-info')">新手期</button>&nbsp;<button
-                    class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('lifeCycle', '0',this, 'btn-info')">成长期
-            </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('lifeCycle', '0',this, 'btn-info')">成熟期</button>&nbsp;
-                <button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('lifeCycle', '0',this, 'btn-info')">衰退期</button>
-            </div>
-        </div>
-        <div class="row desc_content ulifecycle" style="margin-top: 20px;">
-            <div class="col-md-12" id="lifecycleBtns" style="width:405px;height:91px;border:dashed 1px #33cabb;padding-top: 3px;padding-bottom: 3px;margin-left: 15px;">
-                <p class="h6" style="border-bottom: #33cabb 1px dashed;padding: 5px;">用户下一次转化的活跃度节点</p>
-                <button class="btn btn-round btn-sm btn-primary m-t-5" onclick="userGroupButton('pathActive', 'UAC_01',this, 'btn-primary')">促活</button>
-                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_02',this, 'btn-primary')">留存</button>
-                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_03',this, 'btn-primary')">防弱流失</button>
-                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_04',this, 'btn-primary')">防强流失</button>
-                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_05',this, 'btn-primary')">防沉睡</button>
-            </div>
-        </div>
-        <div class="row desc_content prop" style="margin-top: 20px;">
-            <div class="col-md-12" id="propBtns" style="width:405px;height:91px;border:dashed 1px #f96868;padding-top: 3px;padding-bottom: 3px;margin-left: 15px;">
-                <p class="h6" style="border-bottom: #f96868 1px dashed;padding: 5px;">用户成长类目的特性</p>
-                <button class="btn btn-round btn-sm btn-danger m-t-5" onclick="userGroupButton('tarType', 'H', this, 'btn-danger')">高利润</button>
-                &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('tarType', 'L',this, 'btn-danger')">低利润</button>
+
+        <div id="tagTabContent" class="tab-content">
+            <div class="tab-pane fade active in" id="tagTabone">
+                <div class="row desc_content uvalue">
+                    <div class="col-md-12" id="valueBtns" style="width:405px;height:126px;border:dashed 1px #faa64b;padding-top: 3px;padding-bottom: 3px;margin-left: 15px;">
+                        <p class="h6" style="border-bottom: #faa64b 1px dashed;padding: 5px;">用户对类目的价值/沉默成本</p>
+                        <button class="btn btn-round btn-sm btn-warning m-t-5" onclick="userGroupButton('userValue', 'ULC_01',this, 'btn-warning')">高价值低敏感</button>&nbsp;<button
+                            class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_02',this, 'btn-warning')">高价值较敏感
+                    </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_03',this, 'btn-warning')">中价值高敏感</button>&nbsp;<button
+                            class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_04',this, 'btn-warning')">低价值低敏感
+                    </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('userValue', 'ULC_05',this, 'btn-warning')">低价值高敏感</button>
+                    </div>
+                </div>
+                <div class="row desc_content pactive" style="margin-top: 20px;">
+                    <div class="col-md-12" id="activeBtns" style="width:405px;height:91px;border:dashed 1px #48b0f7;padding-top: 3px;padding-bottom: 3px;margin-left: 15px;">
+                        <p class="h6" style="border-bottom: #48b0f7 1px dashed;padding: 5px;">用户对类目的生命周期阶段</p>
+                        <button class="btn btn-round btn-sm btn-info m-t-5" onclick="userGroupButton('lifeCycle', '1',this, 'btn-info')">新手期</button>&nbsp;<button
+                            class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('lifeCycle', '0',this, 'btn-info')">成长期
+                    </button>&nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('lifeCycle', '0',this, 'btn-info')">成熟期</button>&nbsp;
+                        <button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('lifeCycle', '0',this, 'btn-info')">衰退期</button>
+                    </div>
+                </div>
+                <div class="row desc_content ulifecycle" style="margin-top: 20px;">
+                    <div class="col-md-12" id="lifecycleBtns" style="width:405px;height:91px;border:dashed 1px #33cabb;padding-top: 3px;padding-bottom: 3px;margin-left: 15px;">
+                        <p class="h6" style="border-bottom: #33cabb 1px dashed;padding: 5px;">用户下一次转化的活跃度节点</p>
+                        <button class="btn btn-round btn-sm btn-primary m-t-5" onclick="userGroupButton('pathActive', 'UAC_01',this, 'btn-primary')">促活</button>
+                        &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_02',this, 'btn-primary')">留存</button>
+                        &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_03',this, 'btn-primary')">防弱流失</button>
+                        &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_04',this, 'btn-primary')">防强流失</button>
+                        &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('pathActive', 'UAC_05',this, 'btn-primary')">防沉睡</button>
+                    </div>
+                </div>
+                <div class="row desc_content prop" style="margin-top: 20px;">
+                    <div class="col-md-12" id="propBtns" style="width:405px;height:91px;border:dashed 1px #f96868;padding-top: 3px;padding-bottom: 3px;margin-left: 15px;">
+                        <p class="h6" style="border-bottom: #f96868 1px dashed;padding: 5px;">用户成长类目的特性</p>
+                        <button class="btn btn-round btn-sm btn-danger m-t-5" onclick="userGroupButton('tarType', 'H', this, 'btn-danger')">高利润</button>
+                        &nbsp;<button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="userGroupButton('tarType', 'L',this, 'btn-danger')">低利润</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-8" style="height: 530px;">
+    <div class="col-md-4" style="height: 530px;">
         <ul id="myTabs" class="nav nav-tabs" role="tablist">
             <li class="active"><a href="#duanxin" id="home-tab" role="tab" data-toggle="tab">短信</a></li>
             <li><a href="#weixin" role="tab" id="profile-tab" data-toggle="tab">企业微信</a></li>
@@ -69,7 +71,7 @@
         <div id="myTabContent" class="tab-content">
             <div class="tab-pane fade active in" id="duanxin">
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-12">
                         <div style="position:absolute;height: 470px;width:100%;background:url(/images/app_content_01.png) no-repeat -23px -39px;}"></div>
                         <div class="bubble" style="position: relative;margin-top: 140px;width: 233px;">
                             <div class="demo clearfix">
@@ -78,16 +80,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <table id="smsCouponListTable" class="table table-striped table-bordered table-hover">
-                            <caption>本群组适配的淘客券</caption>
-                        </table>
-                    </div>
                 </div>
             </div>
             <div class="tab-pane fade" id="weixin">
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-12">
                         <div style="height:360px;width:265px;margin-left: 20px;border-radius: 10px;">
                             <div style="height: 50px;width: 100%;background-color: rgb(49,46,51);border-top-right-radius: 10px;border-top-left-radius: 10px;"
                                  class="text-center">
@@ -101,13 +98,25 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <table id="weixinCouponListTable" class="table table-striped table-bordered table-hover">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <ul id="couponTabs" class="nav nav-tabs" role="tablist">
+            <li class="active"><a href="#couponTabone" id="coupon-tab" role="tab" data-toggle="tab">本群组适配的补贴列表</a></li>
+        </ul>
+        <div id="couponTabContent" class="tab-content">
+            <div class="tab-pane fade active in" id="couponTabone">
+                <div class="row">
+                    <div class="col-md-12">
+                        <table id="couponPreviewTable" class="table table-striped table-bordered table-hover">
                             <caption>本群组适配的商城券</caption>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </div>

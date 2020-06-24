@@ -2,6 +2,7 @@ package com.linksteady.operate.service;
 
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.DailyGroupTemplate;
+import com.linksteady.operate.exception.OptimisticLockException;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ public interface DailyConfigService {
      * 将文案按给定的规则配置到用户群组上去
      * @return
      */
-    ResponseBo autoSetGroupCoupon();
+    void autoSetGroupCoupon() throws OptimisticLockException;
 
     /**
      * 获取理解用户数据

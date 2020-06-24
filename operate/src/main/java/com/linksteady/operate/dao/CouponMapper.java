@@ -10,6 +10,11 @@ import java.util.Map;
 public interface CouponMapper extends MyMapper<CouponInfo> {
 
     /**
+     * 获取所有有效的优惠券列表
+     */
+    List<CouponInfo>  selectAllCouponList();
+
+    /**
      * 获取优惠券的列表
      * @param limit
      * @param offset

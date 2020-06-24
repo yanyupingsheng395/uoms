@@ -138,9 +138,7 @@ function getTableData() {
                             return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\", \""+value+"\", \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
                                 "<i class='mdi mdi-email-variant mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
                                 "</a>";
-
                         }
-
                     }
                 },
                 {
@@ -164,7 +162,6 @@ function getTableData() {
                                 "<i class='mdi mdi-wechat mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
                                 "</a>";
                         }
-
                     }
                 },
                 {
@@ -219,7 +216,6 @@ function getTableData() {
         $("#userGroupTable").find("tr[data-index=0]").find("td").first().attr('style', 'text-align: center; vertical-align: top; display: table-cell;');
     } );
 }
-
 
 // 合并单元格
 function mergeCells(data, fieldName, colspan, target) {
@@ -361,13 +357,6 @@ function nextStep(stepNum) {
                 $( "#step2" ).attr( "style", "display:none;" );
                 $( "#step3" ).attr( "style", "display:block;" );
                 getConfigInfoByGroup();
-            }else if(r.code === 400){
-                $MB.n_warning(r.msg);
-                step.setActive( 2);
-                $( "#step1" ).attr( "style", "display:none;" );
-                $( "#step2" ).attr( "style", "display:none;" );
-                $( "#step3" ).attr( "style", "display:block;" );
-                getConfigInfoByGroup();
             }else {
                 $MB.n_warning(r.msg);
             }
@@ -428,8 +417,7 @@ function getConfigInfoByGroup() {
         $("#duanxinContent").html('').append(((data['duanxin'] === undefined) || (data['duanxin'] === null)) ? '未配置短信文案':data['duanxin']);
         $("#weixinContent").html('').append(((data['weixin'] === undefined) || (data['weixin'] === null)) ? '未配置企业微信文案' : data['weixin']);
         //加载优惠券列表
-        couponListTable("smsCouponListTable", data['duanxinCouponInfos']);
-        couponListTable("weixinCouponListTable", data['weixinCouponInfos']);
+        couponListTable("couponPreviewTable", data['couponInfos']);
     });
 }
 
