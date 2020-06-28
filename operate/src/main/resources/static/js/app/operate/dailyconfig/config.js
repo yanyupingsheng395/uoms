@@ -383,9 +383,6 @@ function couponListTable(tableId, data) {
                     title: '面额(元)',
                     field: 'couponDenom',
                     align: 'center'
-                },
-                {
-                    title: '用户特征'
                 }
             ]
         };
