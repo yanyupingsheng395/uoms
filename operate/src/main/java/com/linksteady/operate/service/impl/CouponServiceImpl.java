@@ -70,23 +70,13 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public List<String> isCouponUsed(List<String> couponIds){
-        return couponMapper.isCouponUsed(couponIds);
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteCoupon(List<String> ids) {
-        for(String couponId:ids)
-        {
-            //判断券是否曾被历史引用过
-            if(couponMapper.isUsedHistory(couponId)>0)
-            {
-                couponMapper.updateCouponInvalid(couponId);
-            }else
-            {
-                couponMapper.deleteCoupon(couponId);
-            }
+    public void deleteCoupon(List<String> ids) throws Exception{
+        for(String couponId:ids) {
+            //删除优惠券引用关系
+            couponMapper.deleteCouponGroup(couponId);
+            //删除优惠券(将状态标志置换为失效)
+            couponMapper.updateCouponInvalid(couponId);
         }
         validCoupon();
     }
@@ -124,11 +114,6 @@ public class CouponServiceImpl implements CouponService {
                 couponMapper.insertCalculatedCoupon(insertData);
             }
         }
-    }
-
-    @Override
-    public void deleteCouponGroup(String groupId) {
-        couponMapper.deleteCouponGroup(Arrays.asList(groupId.split(",")));
     }
 
     @Override

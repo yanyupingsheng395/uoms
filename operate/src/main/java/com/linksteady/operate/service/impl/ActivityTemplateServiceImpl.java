@@ -65,25 +65,32 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
 
         //获取签名
         String signature=pushConfig.getSignature();
-        String signatureFlag=pushConfig.getSignatureFlag();
-
         String unsubscribe=pushConfig.getUnsubscribe();
-        String unsubscribeFlag=pushConfig.getUnsubscribeFlag();
+
 
         if("DISPLAY".equals(scene))
         {
-            content =signature+content;
-            content=content+unsubscribe;
+            //(编辑短信时候不需要加上签名，则此处预览的时候补上)
+            if(null!=pushConfig.getSignatureFlag()&&"N".equals(pushConfig.getSignatureFlag()))
+            {
+                content =signature+content;
+            }
+
+            //(编辑短信时候不需要加上签名，则此处预览的时候补上)
+            if(null!=pushConfig.getUnsubscribeFlag()&&"Y".equals(pushConfig.getUnsubscribeFlag()))
+            {
+                content=content+unsubscribe;
+            }
         }else if("SEND".equals(scene))
         {
             //需要系统自动加上签名
-            if(null!=signatureFlag&&"Y".equals(signatureFlag))
+            if(null!=pushConfig.getSendSignatureFlag()&&"Y".equals(pushConfig.getSendSignatureFlag()))
             {
                 content =signature+content;
             }
 
             //需要加上退订方式
-            if(null!=unsubscribeFlag&&"Y".equals(unsubscribeFlag))
+            if(null!=pushConfig.getSendUnsubscribeFlag()&&"Y".equals(pushConfig.getSendUnsubscribeFlag()))
             {
                 content=content+unsubscribe;
             }

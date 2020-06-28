@@ -24,18 +24,9 @@ public interface CouponService {
 
     CouponInfo getByCouponId(String couponId);
 
-    /**
-     * 判断优惠券是否被成长组引用
-     * @param couponIds
-     * @return
-     */
-    List<String> isCouponUsed(List<String> couponIds);
-
-    void deleteCoupon(List<String> ids);
+    void deleteCoupon(List<String> ids) throws Exception;
 
     void getCalculatedCoupon(List<CouponInfo> dataList);
-
-    void deleteCouponGroup(String groupId);
 
     int checkCouponName(String couponName);
 

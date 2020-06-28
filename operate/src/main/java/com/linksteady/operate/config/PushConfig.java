@@ -187,6 +187,10 @@ public class PushConfig {
         return  configService.getValueByName(PushPropertiesEnum.signature.getKeyCode());
     }
 
+    /**
+     * 编辑短信时是否需要签名信息
+     * @return
+     */
     public String getSignatureFlag() {
         return  configService.getValueByName(PushPropertiesEnum.signatureFlag.getKeyCode());
     }
@@ -199,8 +203,30 @@ public class PushConfig {
         return   configService.getValueByName(PushPropertiesEnum.unsubscribe.getKeyCode());
     }
 
+
+    /**
+     * 编辑短信时是否需要退订信息
+     * @return
+     */
     public String getUnsubscribeFlag() {
         return  configService.getValueByName(PushPropertiesEnum.unsubscribeFlag.getKeyCode());
+    }
+
+
+    /**
+     * 实际发送短信时是否需要签名信息
+     * @return
+     */
+    public String getSendSignatureFlag() {
+        return  configService.getValueByName(PushPropertiesEnum.sendSignatureFlag.getKeyCode());
+    }
+
+    /**
+     * 编辑短信时是否需要退订信息
+     * @return
+     */
+    public String getSendUnsubscribeFlag() {
+        return  configService.getValueByName(PushPropertiesEnum.sendUnsubscribeFlag.getKeyCode());
     }
 
     /**

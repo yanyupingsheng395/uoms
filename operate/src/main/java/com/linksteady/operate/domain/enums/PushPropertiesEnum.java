@@ -44,6 +44,8 @@ public enum  PushPropertiesEnum {
     signatureFlag("op.push.signature_flag"),
     unsubscribe("op.push.unsubscribe"),
     unsubscribeFlag("op.push.unsubscribe_flag"),
+    sendSignatureFlag("op.push.send_signature_flag"),
+    sendUnsubscribeFlag("op.push.send_unsubscribe_flag"),
 
     url("op.sms.url"),
     prodName("op.sms.prodname"),

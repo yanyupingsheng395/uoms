@@ -255,7 +255,7 @@
                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品名称} 粘贴到期望位置；</span>
                                                 <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
                                             </div>
-                                            <div class="example-box">
+                                            <div class="example-box" id="produrlDiv">
                                                 <label class="control-label">　商品详情页短链：</label>
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isProdUrl" value="1"/><span>是</span>
@@ -315,21 +315,23 @@
                     </div>
                     <hr class="hr m-t-0 m-t-5"/>
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group mg-stop">
-                                <div class="col-md-12 control-label" style="text-align: left;">
-                                    <p class="small">
-                                        文案中填充变量说明：<br/>
-                                        1.一条文案通常允许的总字符数为[[${smsLenLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；<br/>
-                                        2.个性化推送文案中，包括运营者编写的内容，字符数以N表示；还包括系统填充的变量，字符数以M表示；Y=N+M；<br/>
-                                        3.由于系统填充变量也会占用字符，所以在此列出3种变量的占用字符情况<br/>
-                                        &nbsp;&nbsp;&nbsp;${商品名称}：商品名称，占<font color="red">[[${prodNameLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${商品详情页短链}：商品购买详情页短链接，占<font color="red">[[${prodUrlLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${商品利益点}：商品购买的利益点，占<font color="red">[[${profitLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${商品最低单价}：商品在活动期间的最低单价，占<font color="red">[[${priceLen}]]</font>个字符；<br/>
-                                    </p>
-                                </div>
-                            </div>
+                        <div class="col-md-12 control-label" style="text-align: left;margin-left: 15px;padding-left: 5px;">
+                            <ol class="list-inline">文案编写说明：</ol>
+                            <ol style="padding-inline-start: 20px">
+                                <li class="smscomments">1.一条文案通常允许的总字符数为[[${sourceConfig.smsLengthLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；</li>
+                                <li class="smscomments">2.个性化推送文案中，包括运营者编写的内容的长度，字符数以N表示；还包括系统填充的变量占用的长度，字符数以M表示；Y=N+M；</li>
+
+                                <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度情况如下：</li>
+                                <ul>
+                                    <li class="smsvariable">&nbsp;&nbsp;${商品名称}：商品短名称，占<font color="red">[[${sourceConfig.prodNameLen}]]</font>个字符；例如:[[${sourceConfig.prodName}]]</li>
+                                    <li id="produrlComments" class="smsvariable">&nbsp;&nbsp;${商品详情页短链}：商品购买详情页短链接，占<font color="red">[[${sourceConfig.shortUrlLen}]]</font>个字符；例如:[[${sourceConfig.url}]]</li>
+                                    <li class="smsvariable">&nbsp;&nbsp;${商品利益点}：商品利益点，占<font color="red">[[${sourceConfig.profitLen}]]</font>个字符；例如:[[${sourceConfig.profit}]]</li>
+                                    <li class="smsvariable">&nbsp;&nbsp;${商品最低单价}：商品最低单价，占<font color="red">[[${sourceConfig.priceLen}]]</font>个字符；例如:[[${sourceConfig.price}]]</li>
+                                </ul>
+
+                                <li  class="smscomments">4.编写文案时起始位置请<font color="red">[[${sourceConfig.signatureFlag}]]</font>签名信息[[${sourceConfig.signature}]]</li>
+                                <li  class="smscomments">5.编写文案时结束位置请<font color="red">[[${sourceConfig.unsubscribeFlag}]]</font>退订信息 [[${sourceConfig.unsubscribe}]]</li>
+                            </ol>
                         </div>
                     </div>
                 </form>
@@ -389,16 +391,16 @@
                         <div class="row m-t-10">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
-                                    <a class="btn btn-success" id="btn_add" onclick="add_sms()">
+                                    <a class="btn btn-success" id="btn_add" onclick="addTemplate()">
                                         <i class="fa fa-plus"></i> 新增文案
                                     </a>
-                                    <a class="btn btn-primary" id="btn_edit" onclick="editTmp()">
+                                    <a class="btn btn-primary" id="btn_edit" onclick="editTemplate()">
                                         <i class="fa fa-edit"></i> 编辑文案
                                     </a>
                                     <a class="btn btn-cyan" id="btn_send" onclick="testSend()">
                                         <i class="fa fa-puzzle-piece"></i> 屏蔽测试
                                     </a>
-                                    <a class="btn btn-danger" id="btn_delete" onclick="deleteTmp()">
+                                    <a class="btn btn-danger" id="btn_delete" onclick="deleteTemplate()">
                                         <i class="fa fa-close"></i> 删除文案
                                     </a>
                                 </div>
@@ -413,8 +415,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-sm" onclick="setTmpCode()">确定</button>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="closeTmpCode()">关闭</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="setTemplateCode()">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeTemplateCode()">关闭</button>
             </div>
         </div>
     </div>
@@ -542,11 +544,13 @@
 </div>
 <script>
     const operate_type = "[[${operateType}]]";
-    const PROD_NAME_LEN = "[[${prodNameLen}]]";
-    const PROFIT_LEN = "[[${profitLen}]]";
-    const PROD_URL_LEN = "[[${prodUrlLen}]]";
-    const PRICE_LEN = "[[${priceLen}]]";
-    const SMS_LEN_LIMIT = "[[${smsLenLimit}]]";
+    const PROD_NAME_LEN = [[${sourceConfig.prodNameLen}]];
+    const PROFIT_LEN = [[${sourceConfig.profitLen}]];
+    const PROD_URL_LEN = [[${sourceConfig.shortUrlLen}]];
+    const PRICE_LEN = [[${sourceConfig.priceLen}]];
+    const SMS_LEN_LIMIT = [[${sourceConfig.smsLenLimit}]];
+    const prodUrlEnabled='[[${sourceConfig.prodUrlEnabled}]]';
+    const couponSendType ='[[${sourceConfig.couponSendType}]]';
 
     const preheatStatus = "[[${preheatStatus}]]";
     const preheatNotifyStatus = "[[${preheatNotifyStatus}]]";

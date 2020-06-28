@@ -25,7 +25,7 @@ function couponTable() {
         url: "/coupon/selectAllCouponList",
         cache: false,
         pagination: false,
-        singleSelect: true,
+        singleSelect: false,
         clickToSelect: true,
         queryParams: function(param) {
             return {

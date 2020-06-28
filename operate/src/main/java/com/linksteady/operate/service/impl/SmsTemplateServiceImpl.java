@@ -106,25 +106,31 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
 
         //获取签名
         String signature=pushConfig.getSignature();
-        String signatureFlag=pushConfig.getSignatureFlag();
-
         String unsubscribe=pushConfig.getUnsubscribe();
-        String unsubscribeFlag=pushConfig.getUnsubscribeFlag();
 
         if("DISPLAY".equals(scene))
         {
-            smsContent =signature+smsContent;
-            smsContent=smsContent+unsubscribe;
+            //(编辑短信时候不需要加上签名，则此处预览的时候补上)
+            if(null!=pushConfig.getSignatureFlag()&&"N".equals(pushConfig.getSignatureFlag()))
+            {
+                smsContent =signature+smsContent;
+            }
+
+            //(编辑短信时候不需要加上签名，则此处预览的时候补上)
+            if(null!=pushConfig.getUnsubscribeFlag()&&"Y".equals(pushConfig.getUnsubscribeFlag()))
+            {
+                smsContent=smsContent+unsubscribe;
+            }
         }else if("SEND".equals(scene))
         {
             //需要系统自动加上签名
-            if(null!=signatureFlag&&"Y".equals(signatureFlag))
+            if(null!=pushConfig.getSendSignatureFlag()&&"Y".equals(pushConfig.getSendSignatureFlag()))
             {
                 smsContent =signature+smsContent;
             }
 
             //需要加上退订方式
-            if(null!=unsubscribeFlag&&"Y".equals(unsubscribeFlag))
+            if(null!=pushConfig.getSendUnsubscribeFlag()&&"Y".equals(pushConfig.getSendUnsubscribeFlag()))
             {
                 smsContent=smsContent+unsubscribe;
             }

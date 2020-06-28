@@ -13,7 +13,6 @@ function initCommentsDisplay() {
    {
        $("#produrlComments").addClass('hidden');
        $("#produrlDiv").hide();
-
    }
    if('B'===couponSendType)
    {

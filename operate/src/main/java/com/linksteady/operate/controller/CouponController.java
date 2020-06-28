@@ -152,39 +152,18 @@ public class CouponController extends BaseController {
     public ResponseBo deleteCoupon(@RequestParam("couponId") String couponId) {
         if(StringUtils.isNotEmpty(couponId)) {
             List<String> ids = Arrays.asList(couponId.split(","));
-            //已被引用的券IDs
-            List<String> couponIds = couponService.isCouponUsed(ids);
-            //未被引用的券IDs
-            List<String> others = ids.stream().filter(x->!couponIds.contains(x)).collect(Collectors.toList());
-            if(others.size() != 0) {
-                //判断是否被历史引用过，如果是则删除，否则打上失效标记
-                couponService.deleteCoupon(others);
+            try {
+                couponService.deleteCoupon(ids);
+                return ResponseBo.ok("删除成功!");
+            } catch (Exception e) {
+                log.error("删除优惠券失败，失败原因为{}",e);
+                return ResponseBo.error("删除失败!");
             }
-
-            //有可被删除的券
-            if(others.size()>0)
-            {
-                if(couponIds.size()>0) {
-
-                    return ResponseBo.ok("部分删除成功！"+couponIds.size()+"条记录被引用，无法删除。");
-                }else {
-                    return ResponseBo.ok("删除成功！");
-                }
-            }else
-            {
-                //未被引用的券为空
-                return ResponseBo.error(couponIds.size()+"条记录被引用，无法删除！");
-            }
-
-        }else {
-            return ResponseBo.error();
+        }else
+        {
+            return ResponseBo.error("删除失败，没有找到选择的优惠券!");
         }
-    }
 
-    @RequestMapping("/deleteCouponGroup")
-    public ResponseBo deleteCouponGroup(@RequestParam("groupId") String groupId) {
-        couponService.deleteCouponGroup(groupId);
-        return ResponseBo.ok();
     }
 
     /**

@@ -144,11 +144,8 @@ public class PageController extends BaseController {
     public String activityAdd(Model model)
     {
         model.addAttribute("operateType", "save");
-        model.addAttribute("prodNameLen", pushConfig.getProdNameLen());
-        model.addAttribute("priceLen", pushConfig.getPriceLen());
-        model.addAttribute("prodUrlLen", pushConfig.getShortUrlLen());
-        model.addAttribute("profitLen", pushConfig.getProfitLen());
-        model.addAttribute("smsLenLimit", pushConfig.getSmsLengthLimit());
+        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig",sourceConfigVO);
         return "operate/activity/add/add";
     }
 
@@ -184,11 +181,9 @@ public class PageController extends BaseController {
         model.addAttribute("formalStatus", formalStatus);
         model.addAttribute("formalNotifyStatus", formalNotifyStatus);
 
-        model.addAttribute("prodNameLen", pushConfig.getProdNameLen());
-        model.addAttribute("priceLen", pushConfig.getPriceLen());
-        model.addAttribute("prodUrlLen", pushConfig.getShortUrlLen());
-        model.addAttribute("profitLen", pushConfig.getProfitLen());
-        model.addAttribute("smsLenLimit", pushConfig.getSmsLengthLimit());
+        //文案相关变量
+        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig",sourceConfigVO);
         return "operate/activity/add/add";
     }
 
@@ -213,10 +208,9 @@ public class PageController extends BaseController {
         model.addAttribute("formalStatus", formalStatus);
         model.addAttribute("formalNotifyStatus", formalNotifyStatus);
 
-        model.addAttribute("prodNameLen", pushConfig.getProdNameLen());
-        model.addAttribute("priceLen", pushConfig.getPriceLen());
-        model.addAttribute("prodUrlLen", pushConfig.getShortUrlLen());
-        model.addAttribute("smsLenLimit", pushConfig.getSmsLengthLimit());
+        //文案相关变量
+        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig",sourceConfigVO);
         return "operate/activity/view/view";
     }
 

@@ -303,10 +303,12 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             //判断是否需要加上签名及退订方式
             //获取签名
             String signature=pushConfig.getSignature();
-            String signatureFlag=pushConfig.getSignatureFlag();
+            //实际发送时是否需要签名
+            String signatureFlag=pushConfig.getSendSignatureFlag();
 
             String unsubscribe=pushConfig.getUnsubscribe();
-            String unsubscribeFlag=pushConfig.getUnsubscribeFlag();
+            //实际发送时是否需要退订信息
+            String unsubscribeFlag=pushConfig.getSendUnsubscribeFlag();
 
             //需要加上签名
             if(null!=signatureFlag&&"Y".equals(signatureFlag))

@@ -61,27 +61,9 @@
         where COUPON_ID = #{couponId}::int4
     </select>
 
-    <select id="isCouponUsed" resultType="string">
-        select distinct COUPON_ID from UO_OP_DAILY_GROUP_COUPON
-        <where>
-            COUPON_ID in
-            <foreach collection="couponIds" open="(" close=")" item="item" separator=",">
-                #{item}::int4
-            </foreach>
-        </where>
-    </select>
-
-    <delete id="deleteCoupon">
-        delete from UO_OP_COUPON where COUPON_ID=#{couponId}::int4
-    </delete>
-
     <update id="updateCouponInvalid">
         UPDATE UO_OP_COUPON SET VALID_STATUS='N' where COUPON_ID=#{couponId}::int4
     </update>
-
-    <select id="isUsedHistory" resultType="int">
-        select count(*) from  uo_op_daily_detail c where c.coupon_id=#{couponId}::int4
-    </select>
 
     <insert id="insertCalculatedCoupon">
         insert into UO_OP_COUPON(COUPON_DENOM,COUPON_THRESHOLD,COUPON_DISPLAY_NAME,COUPON_SOURCE,CHECK_FLAG,CHECK_COMMENTS)
@@ -92,13 +74,7 @@
     </insert>
 
     <delete id="deleteCouponGroup">
-        delete from UO_OP_DAILY_GROUP_COUPON
-        <where>
-            GROUP_ID in
-            <foreach collection="groupIds" separator="," item="item" open="(" close=")">
-                #{item}::int4
-            </foreach>
-        </where>
+        delete from UO_OP_DAILY_GROUP_COUPON WHERE coupon_id=#{couponId}::int4
     </delete>
 
     <select id="checkCouponName" resultType="int">

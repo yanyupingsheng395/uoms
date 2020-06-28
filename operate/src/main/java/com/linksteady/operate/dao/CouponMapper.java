@@ -51,30 +51,10 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
     CouponInfo getByCouponId(String couponId);
 
     /**
-     * 优惠券是否已经被使用 返回已经被引用的优惠券的ID列表
-     * @param couponIds
-     * @return
-     */
-    List<String> isCouponUsed(@Param("couponIds") List<String> couponIds);
-
-    /**
-     * 删除优惠券
-     * @param couponId
-     */
-    void deleteCoupon(@Param("couponId") String couponId);
-
-    /**
      * 根据优惠券状态为无效
      * @param couponId
      */
     void updateCouponInvalid(@Param("couponId") String couponId);
-
-    /**
-     * 判断优惠券历史上时候被每日运营使用过
-     * @param couponId
-     * @return
-     */
-    int isUsedHistory(@Param("couponId") String couponId);
 
     /**
      * 写入从智能补贴过来的优惠券信息
@@ -84,9 +64,9 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
 
     /**
      * 删除优惠券群组关系
-     * @param groupIds
+     * @param couponId
      */
-    void deleteCouponGroup(@Param("groupIds") List<String> groupIds);
+    void deleteCouponGroup(@Param("couponId") String couponId);
 
     int checkCouponName(@Param("couponName") String couponName);
 

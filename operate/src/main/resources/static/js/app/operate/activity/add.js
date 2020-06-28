@@ -1262,7 +1262,7 @@ function getTmpTableData() {
  */
 $( "#btn_save_sms").click( function () {
     let operateType = $( this ).attr( "name" );
-    let flag = validTmp();
+    let flag = validTemplate();
     if (flag) {
         if(operateType === 'save')
         {
@@ -1321,12 +1321,13 @@ $( "#btn_save_sms").click( function () {
  * 验证文案信息
  * @returns {boolean}
  */
-function validTmp() {
-    var isProdName = $( "input[name='isProdName']:checked" ).val();
-    var isProdUrl = $( "input[name='isProdUrl']:checked" ).val();
-    var isPrice = $( "input[name='isPrice']:checked" ).val();
-    var isProfit = $( "input[name='isProfit']:checked" ).val();
-    var contet = $( "#content" ).val();
+function validTemplate() {
+    let isProdName = $( "input[name='isProdName']:checked" ).val();
+    let isProdUrl = $( "input[name='isProdUrl']:checked" ).val();
+    let isPrice = $( "input[name='isPrice']:checked" ).val();
+    let isProfit = $( "input[name='isProfit']:checked" ).val();
+    let smsContent = $('#content').val();
+
     if (isProdName === undefined) {
         $MB.n_warning( "请选择商品名称" );
         return false;
@@ -1343,78 +1344,73 @@ function validTmp() {
         $MB.n_warning( "请选择商品活动期间最低单价" );
         return false;
     }
-    if (contet === '') {
+    if (smsContent === '') {
         $MB.n_warning( "文案内容不能为空" );
         return false;
     }
 
     // 验证短信内容是否合法
     if(isProdName === '1') {
-        if(contet.indexOf("${商品名称}") === -1) {
+        if(smsContent.indexOf("${商品名称}") === -1) {
             $MB.n_warning("'商品名称：是'，文案内容未发现${商品名称}");
             return false;
         }
     }else {
-        if(contet.indexOf("${商品名称}") !== -1) {
+        if(smsContent.indexOf("${商品名称}") !== -1) {
             $MB.n_warning("'商品名称：否'，文案内容却发现${商品名称}");
             return false;
         }
     }
 
     if(isProdUrl === '1') {
-        if(contet.indexOf("${商品详情页短链}") === -1) {
+        if(smsContent.indexOf("${商品详情页短链}") === -1) {
             $MB.n_warning("'商品详情页短链：是'，文案内容未发现${商品详情页短链}");
             return false;
         }
     }else {
-        if(contet.indexOf("${商品详情页短链}") !== -1) {
+        if(smsContent.indexOf("${商品详情页短链}") !== -1) {
             $MB.n_warning("'商品详情页短链：否'，文案内容却发现${商品详情页短链}");
             return false;
         }
     }
 
     if(isProfit === '1') {
-        if(contet.indexOf("${商品利益点}") === -1) {
+        if(smsContent.indexOf("${商品利益点}") === -1) {
             $MB.n_warning("'商品利益点：是'，文案内容未发现${商品利益点}");
             return false;
         }
     }else {
-        if(contet.indexOf("${商品利益点}") !== -1) {
+        if(smsContent.indexOf("${商品利益点}") !== -1) {
             $MB.n_warning("'商品利益点：否'，文案内容却发现${商品利益点}");
             return false;
         }
     }
 
     if(isPrice === '1') {
-        if(contet.indexOf("${商品最低单价}") === -1) {
+        if(smsContent.indexOf("${商品最低单价}") === -1) {
             $MB.n_warning("'商品最低单价：是'，文案内容未发现${商品最低单价}");
             return false;
         }
     }else {
-        if(contet.indexOf("${商品最低单价}") !== -1) {
+        if(smsContent.indexOf("${商品最低单价}") !== -1) {
             $MB.n_warning("'商品最低单价：否'，文案内容却发现${商品最低单价}");
             return false;
         }
     }
-    let smsContent = $('#content').val();
+
     let y = smsContent.length;
-    let m = smsContent.length;
-    let n = smsContent.length;
     if(smsContent.indexOf('${商品详情页短链}') > -1) {
-        y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
-        m = m - '${商品详情页短链}'.length;
+        y = y - '${商品详情页短链}'.length + PROD_URL_LEN;
     }
     if(smsContent.indexOf('${商品名称}') > -1) {
-        y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
-        m = m - '${商品名称}'.length;
+        y = y - '${商品名称}'.length + PROD_NAME_LEN;
+
     }
     if(smsContent.indexOf('${商品利益点}') > -1) {
-        y = y - '${商品利益点}'.length + parseInt(PROFIT_LEN);
-        m = m - '${商品利益点}'.length;
+        y = y - '${商品利益点}'.length + PROFIT_LEN;
     }
     if(smsContent.indexOf('${商品最低单价}') > -1) {
-        y = y - '${商品最低单价}'.length + parseInt(PRICE_LEN);
-        m = m - '${商品最低单价}'.length;
+        y = y - '${商品最低单价}'.length + PRICE_LEN;
     }
 
     if(y > SMS_LEN_LIMIT) {
@@ -1428,10 +1424,10 @@ function validTmp() {
  * 为群组设置模板信息
  * @param type 类型：期间，通知
  */
-function setTmpCode() {
-    var groupId = CURRENT_GROUP_ID;
-    var selected = $( "#tmpTable").bootstrapTable( 'getSelections' );
-    var selected_length = selected.length;
+function setTemplateCode() {
+    let groupId = CURRENT_GROUP_ID;
+    let selected = $( "#tmpTable").bootstrapTable( 'getSelections' );
+    let selected_length = selected.length;
     if (!selected_length) {
         $MB.n_warning( '请选择为群组设置的文案！' );
         return;
@@ -1465,7 +1461,7 @@ function setTmpCode() {
 /**
  * 关闭文案选择面板
  */
-function closeTmpCode()
+function closeTemplateCode()
 {
     $( "#smstemplate_modal" ).modal( 'hide' );
     if(CURRENT_TYPE === 'DURING') {
@@ -1477,12 +1473,12 @@ function closeTmpCode()
 }
 
 function contextOnChange() {
-    var content = $('#content').val() === "" ? "请输入短信内容": $('#content').val();
+    let content = $('#content').val() === "" ? "请输入短信内容": $('#content').val();
     $("#article").html('').append(content);
 }
 
 // 点击编辑文案按钮
-function editTmp() {
+function editTemplate() {
     var selected = $( "#tmpTable" ).bootstrapTable( 'getSelections' );
     var selected_length = selected.length;
     if (!selected_length) {
@@ -1500,6 +1496,13 @@ function editTmp() {
         $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
         $( "input[name='isProfit']:radio[value='" + data.isProfit + "']" ).prop( "checked", true );
         $( "#btn_save_sms" ).attr( 'name', 'update' );
+
+        //根据变量设置一些初始化是否显示的参数
+        if('Y'!==prodUrlEnabled)
+        {
+            $("#produrlComments").addClass('hidden');
+            $("#produrlDiv").hide();
+        }
 
         //todo 文案的字数在编辑状态下好像没出来
         $( "#smstemplate_modal" ).modal( 'hide' );
@@ -1523,10 +1526,17 @@ $( "#sms_add_modal" ).on( 'hidden.bs.modal', function () {
     $( "#smstemplate_modal" ).modal( 'show' );
     $( "#btn_save_sms" ).attr( 'name', 'save' );
     $("#word").text('');
+    //根据变量设置一些初始化是否显示的参数
+    if('Y'!==prodUrlEnabled)
+    {
+        $("#produrlComments").addClass('hidden');
+        $("#produrlDiv").hide();
+    }
+
 } );
 
 // 删除文案
-function deleteTmp() {
+function deleteTemplate() {
     var selected = $( "#tmpTable" ).bootstrapTable( 'getSelections' );
     var selected_length = selected.length;
     if (!selected_length) {
@@ -1634,8 +1644,15 @@ function resetTmpInfo() {
 }
 
 
-function add_sms() {
+function addTemplate() {
     $('#smstemplate_modal').modal('hide');
+    //根据变量设置一些初始化是否显示的参数
+    if('Y'!==prodUrlEnabled)
+    {
+        $("#produrlComments").addClass('hidden');
+        $("#produrlDiv").hide();
+    }
+
     $('#sms_add_modal').modal('show');
 }
 

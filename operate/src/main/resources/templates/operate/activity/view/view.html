@@ -527,11 +527,13 @@
 </div>
 <script>
     const operate_type = "[[${operateType}]]";
-    const PROD_NAME_LEN = "[[${prodNameLen}]]";
-    const PROFIT_LEN = "[[${profitLen}]]";
-    const PROD_URL_LEN = "[[${prodUrlLen}]]";
-    const PRICE_LEN = "[[${priceLen}]]";
-    const SMS_LEN_LIMIT = "[[${smsLenLimit}]]";
+    const PROD_NAME_LEN = [[${sourceConfig.prodNameLen}]];
+    const PROFIT_LEN = [[${sourceConfig.profitLen}]];
+    const PROD_URL_LEN = [[${sourceConfig.prodUrlLen}]];
+    const PRICE_LEN = [[${sourceConfig.priceLen}]];
+    const SMS_LEN_LIMIT = [[${sourceConfig.smsLenLimit}]];
+    const prodUrlEnabled='[[${sourceConfig.prodUrlEnabled}]]';
+    const couponSendType ='[[${sourceConfig.couponSendType}]]';
 
     const preheatStatus = "[[${preheatStatus}]]";
     const preheatNotifyStatus = "[[${preheatNotifyStatus}]]";
