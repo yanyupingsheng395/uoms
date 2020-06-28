@@ -81,6 +81,5 @@ function resetPush() {
  */
 $("#btn_query").click(function () {
     $("#pushInfoTable").bootstrapTable("destroy");
-    // $MB.refreshTable("pushInfoTable");
     initTable();
 });

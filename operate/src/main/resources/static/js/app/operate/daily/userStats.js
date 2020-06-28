@@ -141,7 +141,7 @@ function changeStep(count) {
     //推送
     if (current_step === 2) {
         if (current_status === 'todo' && current_touchDt == currDay) {
-            $.get( "/daily/validUserGroup", {}, function (r) {
+            $.get( "/dailyConfig/validUserGroup", {}, function (r) {
                 if (r.code == 200) {
                     if (r.data) {
                         $MB.n_warning( "成长组配置验证未通过！" );

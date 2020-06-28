@@ -41,12 +41,6 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public List<Integer> getCouponIdsByGroupId(String groupId) {
-        return couponMapper.getCouponIdsByGroupId(groupId);
-    }
-
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(CouponInfo couponInfo) {
         couponMapper.save(couponInfo);

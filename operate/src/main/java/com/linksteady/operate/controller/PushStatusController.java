@@ -197,14 +197,13 @@ public class PushStatusController extends BaseController {
 
     }
 
-
     /**
      * 获取推送配置
      * @param
      * @return
      */
     @GetMapping("/getPushConfig")
-    public ResponseBo getPushProperties() {
+    public ResponseBo getPushConfig() {
         List<Tconfig> list=configService.selectConfigListFromRedis();
 
         Map<String,String> result=Maps.newHashMap();

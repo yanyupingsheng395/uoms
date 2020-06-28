@@ -11,6 +11,7 @@ public enum  PushPropertiesEnum {
     isTestEnv("op.push.isTestEnv"),
 
     couponSendType("op.source.couponSendType"),
+    productDetailUrl("op.push.productDetailUrl"),
 
     smsLengthLimit("op.push.smsLengthLimit"),
     shortUrlLen("op.push.shortUrlLen"),

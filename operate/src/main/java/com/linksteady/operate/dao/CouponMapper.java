@@ -25,13 +25,6 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
     int getTotalCount();
 
     /**
-     * 获取优惠券的数量
-     * @param groupId
-     * @return
-     */
-    List<Integer> getCouponIdsByGroupId(String groupId);
-
-    /**
      * 新增补贴
      * @param couponInfo
      */
@@ -124,11 +117,6 @@ public interface CouponMapper extends MyMapper<CouponInfo> {
      * @return
      */
     int getValidCoupon();
-
-    /**
-     * 获取无效的优惠券条数
-     */
-    int getInvalidCoupon();
 
     void updateDiscountLevel();
 

@@ -88,6 +88,11 @@ public class PushConfig {
         return configService.getValueByName(PushPropertiesEnum.isTestEnv.getKeyCode());
     }
 
+    public String getProductDetailUrl()
+    {
+        return configService.getValueByName(PushPropertiesEnum.productDetailUrl.getKeyCode());
+    }
+
     public int getShortUrlLen() {
         return Integer.parseInt(configService.getValueByName(PushPropertiesEnum.shortUrlLen.getKeyCode()));
     }

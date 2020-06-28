@@ -135,7 +135,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         if ("Y".equals(pushConfig.getIsTestEnv())) {
             return pushConfig.getUrl();
         } else {
-            String newLongUrl = pushConfig.getUrl().replace("$PRODUCT_ID", productId);
+            String newLongUrl = pushConfig.getProductDetailUrl().replace("$PRODUCT_ID", productId);
             //判断是否需要进行转跳 唤醒淘宝APP
             if (newLongUrl.indexOf("taobao.com") != -1 || newLongUrl.indexOf("tmall.com") != -1) {
                 //进行一层转跳

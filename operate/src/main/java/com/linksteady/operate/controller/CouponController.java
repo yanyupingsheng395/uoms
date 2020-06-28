@@ -4,6 +4,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.CouponInfo;
+import com.linksteady.operate.service.CouponService;
 import com.linksteady.operate.service.impl.CouponServiceImpl;
 import com.linksteady.operate.service.impl.ShortUrlServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +25,13 @@ import java.util.stream.Collectors;
 public class CouponController extends BaseController {
 
     @Autowired
-    CouponServiceImpl couponService;
+    CouponService couponService;
 
     @Autowired
     ShortUrlServiceImpl shortUrlService;
 
     /**
-     * 获取所有的有效优惠券列表
+     * 获取所有的有效优惠券列表(不分页)
      *
      * @param
      * @return
@@ -56,19 +57,6 @@ public class CouponController extends BaseController {
         int totalCount = couponService.getTotalCount();
         return ResponseBo.okOverPaging("", totalCount, result);
     }
-
-    /**
-     * 获取某个groupId下的couponIds
-     *
-     * @param groupId
-     * @return
-     */
-    @RequestMapping("/getCouponIdsByGroupId")
-    public ResponseBo getCouponIdsByGroupId(String groupId) {
-        List<Integer> ids = couponService.getCouponIdsByGroupId(groupId);
-        return ResponseBo.okWithData(null, ids);
-    }
-
 
     @RequestMapping("/save")
     public ResponseBo save(CouponInfo couponInfo) {

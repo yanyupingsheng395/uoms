@@ -40,10 +40,6 @@
         select count(1) from UO_OP_COUPON where VALID_STATUS = 'Y'
     </select>
 
-    <select id="getCouponIdsByGroupId" resultType="int">
-        select COUPON_ID from UO_OP_DAILY_GROUP_COUPON where GROUP_ID = #{groupId}
-    </select>
-
     <insert id="save" parameterType="com.linksteady.operate.domain.CouponInfo">
         insert into UO_OP_COUPON(COUPON_DENOM, COUPON_THRESHOLD, COUPON_URL, COUPON_DESC, COUPON_NUM, COUPON_INFO1, COUPON_INFO2, COUPON_DISPLAY_NAME, VALID_STATUS, VALID_END, COUPON_SOURCE, CHECK_FLAG, CHECK_COMMENTS) VALUES
         (#{couponDenom}, #{couponThreshold}, #{couponUrl}, #{couponDesc}, #{couponNum}, #{couponInfo1}, #{couponInfo2}, #{couponDisplayName}, 'Y', to_date(#{validEnd}, 'yyyy-mm-dd'), #{couponSource}, #{checkFlag}, #{checkComments})
@@ -113,6 +109,7 @@
              uo_op_coupon                t3
         where t1.group_id=t2.group_id
           and t3.coupon_id=t2.coupon_id
+          and t3.valid_status='Y'
     </select>
 
     <select id="getSysCoupon" resultMap="BaseResultMap">
@@ -145,10 +142,6 @@
 
     <select id="getValidCoupon" resultType="int">
         select count(1) from uo_op_coupon where check_flag = '1' and valid_status = 'Y'
-    </select>
-
-    <select id="getInvalidCoupon" resultType="int">
-        select count(1) from uo_op_coupon where check_flag = '0' and valid_status = 'Y'
     </select>
 
     <update id="updateDiscountLevel">

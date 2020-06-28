@@ -16,8 +16,6 @@ public interface CouponService {
 
     int getTotalCount();
 
-    List<Integer> getCouponIdsByGroupId(String groupId);
-
     void save(CouponInfo couponInfo);
 
     void update(CouponInfo couponInfo);

@@ -123,10 +123,7 @@ public class DailyConfigServiceImpl implements DailyConfigService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void autoSetGroupCoupon() throws OptimisticLockException{
-            //查找当前校验不通过的优惠券的条数
-            int count=couponMapper.getInvalidCoupon();
-            //todo 增加 如果存在校验不通过的券，则不允许往下走
-
+            //查找当前校验通过的优惠券的条数
             int count1 = couponMapper.getValidCoupon();
             if (count1 == 0) {
                 throw new OptimisticLockException("无有效的补贴，请先配置补贴!");

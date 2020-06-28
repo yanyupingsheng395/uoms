@@ -1,9 +1,5 @@
 $(function () {
-    getTableData();
-});
-
-function getTableData() {
-    var settings = {
+    let settings = {
         url: "/push/getPushConfig",
         sortable: true,
         sortOrder: "asc",
@@ -24,13 +20,11 @@ function getTableData() {
         }]
     };
     $('#configTable').bootstrapTable('destroy').bootstrapTable(settings);
-}
-
-$.get("/push/getPushProperties", {}, function (r) {
-    var dataList = r.data;
-    $("#vendor").text(r.msg.vendorName);
-    $("#configTable").bootstrapTable('load', dataList);
+    $.get("/push/getPushConfig", {}, function (r) {
+        let dataList = r.data;
+        $("#vendor").text(r.msg.vendorName);
+        $("#configTable").bootstrapTable('load', dataList);
+    });
 });
-
 
 
