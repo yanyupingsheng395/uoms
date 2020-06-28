@@ -392,7 +392,7 @@
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
                                     <a class="btn btn-success" id="btn_add" onclick="addTemplate()">
-                                        <i class="fa fa-plus"></i> 新增文案
+                                        <i class="fa fa-pencil"></i> 新增文案
                                     </a>
                                     <a class="btn btn-primary" id="btn_edit" onclick="editTemplate()">
                                         <i class="fa fa-edit"></i> 编辑文案
@@ -548,7 +548,7 @@
     const PROFIT_LEN = [[${sourceConfig.profitLen}]];
     const PROD_URL_LEN = [[${sourceConfig.shortUrlLen}]];
     const PRICE_LEN = [[${sourceConfig.priceLen}]];
-    const SMS_LEN_LIMIT = [[${sourceConfig.smsLenLimit}]];
+    const SMS_LEN_LIMIT = '[[${sourceConfig.smsLengthLimit}]]';
     const prodUrlEnabled='[[${sourceConfig.prodUrlEnabled}]]';
     const couponSendType ='[[${sourceConfig.couponSendType}]]';
 
