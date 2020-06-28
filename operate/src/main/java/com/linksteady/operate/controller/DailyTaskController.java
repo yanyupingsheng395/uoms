@@ -236,8 +236,14 @@ public class DailyTaskController {
             return "文案内容为空，合计：" + totalSize + "条，内容为空：" + nullContentSize + "条";
         }
 
+        //不管情况如何，这个长度都是 70-签名-退订信息的长度
+        int smsLength=pushConfig.getSmsLengthLimit();
+        //如果实际发送时需要签名，则将签名的长度加回来
+
+        //如果实际发送时需要退订信息，则将退订信息的长度加回来
+
         // 短信长度超出限制
-        List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("content")).length() > pushConfig.getSmsLengthLimit())
+        List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("content")).length() >smsLength )
                 .map(y -> String.valueOf(y.get("id"))).collect(Collectors.toList());
         // 短信含未被替换的模板变量
         List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("content")).contains("$"))

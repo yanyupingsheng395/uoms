@@ -5,6 +5,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.*;
+import com.linksteady.operate.domain.enums.ConfigEnum;
 import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivityPlanService;
 import com.linksteady.operate.service.DailyService;
@@ -312,7 +313,7 @@ public class PageController extends BaseController {
         model.addAttribute("userId", userId);
         model.addAttribute("taskDt", taskDt);
         model.addAttribute("headId", headId);
-        model.addAttribute("pathActive", configService.getValueByName("op.daily.pathactive.list"));
+        model.addAttribute("pathActive", configService.getValueByName(ConfigEnum.pathActiveList.getKeyCode()));
         return "operate/daily/person_insight";
     }
 

@@ -10,6 +10,7 @@ import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyConfigMapper;
 import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.DailyGroupTemplate;
+import com.linksteady.operate.domain.enums.ConfigEnum;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyConfigService;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +46,7 @@ public class DailyConfigServiceImpl implements DailyConfigService {
      */
     @Override
     public List<DailyGroupTemplate> getUserGroupList() {
-        String active = configService.getValueByName("op.daily.pathactive.list");
+        String active = configService.getValueByName(ConfigEnum.pathActiveList.getKeyCode());
         List<String> activeList = null;
         if (StringUtils.isNotEmpty(active)) {
             activeList = Arrays.asList(active.split(","));
@@ -76,7 +77,7 @@ public class DailyConfigServiceImpl implements DailyConfigService {
         whereInfo = " and t1.sms_code is null";
         dailyConfigMapper.updateCheckFlagAndRemark(whereInfo, "尚未为群组配置文案");
 
-        String active = configService.getValueByName("op.daily.pathactive.list");
+        String active = configService.getValueByName(ConfigEnum.pathActiveList.getKeyCode());
         int result = 0;
         if (StringUtils.isNotEmpty(active)) {
             List<String> activeList = Arrays.asList(active.split(","));

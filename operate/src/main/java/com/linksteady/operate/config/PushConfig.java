@@ -3,7 +3,7 @@ package com.linksteady.operate.config;
 import com.linksteady.common.dao.ConfigMapper;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.domain.HeartBeatInfo;
-import com.linksteady.operate.domain.enums.PushPropertiesEnum;
+import com.linksteady.operate.domain.enums.ConfigEnum;
 import com.linksteady.operate.domain.enums.PushSignalEnum;
 import com.linksteady.operate.service.RedisMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class PushConfig {
         if(signal.getSignalCode().equals(PushSignalEnum.SIGNAL_START.getSignalCode()))
         {
             //更新数据库
-            configMapper.updateConfig(PushPropertiesEnum.pushFlag.getKeyCode(),"Y");
+            configMapper.updateConfig(ConfigEnum.pushFlag.getKeyCode(),"Y");
             //重新加载配置到redis
             configService.loadConfigToRedis();
             //发送命令到远端
@@ -43,7 +43,7 @@ public class PushConfig {
         }else if(signal.getSignalCode().equals(PushSignalEnum.SIGNAL_STOP.getSignalCode()))
         {
             //更新数据库
-            configMapper.updateConfig(PushPropertiesEnum.pushFlag.getKeyCode(),"N");
+            configMapper.updateConfig(ConfigEnum.pushFlag.getKeyCode(),"N");
             //重新加载配置到redis
             configService.loadConfigToRedis();
             //发送命令到远端
@@ -69,135 +69,127 @@ public class PushConfig {
 
 
     public int getRepeatPushDays() {
-        return Integer.parseInt(configService.getValueByName(PushPropertiesEnum.repeatPushDays.getKeyCode()));
+        return Integer.parseInt(configService.getValueByName(ConfigEnum.repeatPushDays.getKeyCode()));
     }
 
     public String getPushFlag() {
-        return configService.getValueByName(PushPropertiesEnum.pushFlag.getKeyCode());
+        return configService.getValueByName(ConfigEnum.pushFlag.getKeyCode());
     }
 
     public String getPushMethod() {
-        return configService.getValueByName(PushPropertiesEnum.pushMethod.getKeyCode());
+        return configService.getValueByName(ConfigEnum.pushMethod.getKeyCode());
     }
 
     public int getSmsLengthLimit() {
-        return Integer.parseInt(configService.getValueByName(PushPropertiesEnum.smsLengthLimit.getKeyCode()));
+        return Integer.parseInt(configService.getValueByName(ConfigEnum.smsLengthLimit.getKeyCode()));
     }
 
     public String getIsTestEnv() {
-        return configService.getValueByName(PushPropertiesEnum.isTestEnv.getKeyCode());
+        return configService.getValueByName(ConfigEnum.isTestEnv.getKeyCode());
     }
 
     public String getProductDetailUrl()
     {
-        return configService.getValueByName(PushPropertiesEnum.productDetailUrl.getKeyCode());
+        return configService.getValueByName(ConfigEnum.productDetailUrl.getKeyCode());
     }
 
     public int getShortUrlLen() {
-        return Integer.parseInt(configService.getValueByName(PushPropertiesEnum.shortUrlLen.getKeyCode()));
+        return Integer.parseInt(configService.getValueByName(ConfigEnum.shortUrlLen.getKeyCode()));
     }
 
     public int getProdNameLen() {
-        return Integer.parseInt(configService.getValueByName(PushPropertiesEnum.prodNameLen.getKeyCode()));
+        return Integer.parseInt(configService.getValueByName(ConfigEnum.prodNameLen.getKeyCode()));
     }
 
     public String getCouponSendType() {
-        return configService.getValueByName(PushPropertiesEnum.couponSendType.getKeyCode());
+        return configService.getValueByName(ConfigEnum.couponSendType.getKeyCode());
     }
 
     public int getCouponNameLen() {
-        return Integer.parseInt(configService.getValueByName(PushPropertiesEnum.couponNameLen.getKeyCode()));
+        return Integer.parseInt(configService.getValueByName(ConfigEnum.couponNameLen.getKeyCode()));
     }
 
     public int getPriceLen() {
-        return Integer.parseInt(configService.getValueByName(PushPropertiesEnum.priceLen.getKeyCode()));
+        return Integer.parseInt(configService.getValueByName(ConfigEnum.priceLen.getKeyCode()));
     }
 
     public int getProfitLen() {
-        return Integer.parseInt(configService.getValueByName(PushPropertiesEnum.profitLen.getKeyCode()));
+        return Integer.parseInt(configService.getValueByName(ConfigEnum.profitLen.getKeyCode()));
     }
 
     public String getPushVendor() {
-        return configService.getValueByName(PushPropertiesEnum.pushVendor.getKeyCode());
+        return configService.getValueByName(ConfigEnum.pushVendor.getKeyCode());
     }
 
     public String getOpenNightSleep() {
-        return configService.getValueByName(PushPropertiesEnum.openNightSleep.getKeyCode());
+        return configService.getValueByName(ConfigEnum.openNightSleep.getKeyCode());
     }
 
     public int getNightStart() {
-        return Integer.parseInt(configService.getValueByName(PushPropertiesEnum.nightStart.getKeyCode()));
+        return Integer.parseInt(configService.getValueByName(ConfigEnum.nightStart.getKeyCode()));
     }
 
     public int getNightEnd() {
-        return Integer.parseInt(configService.getValueByName(PushPropertiesEnum.nightEnd.getKeyCode()));
+        return Integer.parseInt(configService.getValueByName(ConfigEnum.nightEnd.getKeyCode()));
     }
 
     public String getOpenCallback() {
-        return configService.getValueByName(PushPropertiesEnum.openCallback.getKeyCode());
+        return configService.getValueByName(ConfigEnum.openCallback.getKeyCode());
     }
 
     public String getClAccount() {
-        return configService.getValueByName(PushPropertiesEnum.clAccount.getKeyCode());
+        return configService.getValueByName(ConfigEnum.clAccount.getKeyCode());
     }
 
     public String getClPassword() {
-        return configService.getValueByName(PushPropertiesEnum.clPassword.getKeyCode());
+        return configService.getValueByName(ConfigEnum.clPassword.getKeyCode());
     }
 
     public String getClRequestServerUrl() {
-        return configService.getValueByName(PushPropertiesEnum.clRequestServerUrl.getKeyCode());
+        return configService.getValueByName(ConfigEnum.clRequestServerUrl.getKeyCode());
     }
 
     public String getClPullMoUrl() {
-        return configService.getValueByName(PushPropertiesEnum.clPullMoUrl.getKeyCode());
+        return configService.getValueByName(ConfigEnum.clPullMoUrl.getKeyCode());
     }
 
     public String getClReportRequestUrl() {
-        return configService.getValueByName(PushPropertiesEnum.clReportRequestUrl.getKeyCode());
+        return configService.getValueByName(ConfigEnum.clReportRequestUrl.getKeyCode());
     }
 
     public String getMontnetsAccount() {
-        return configService.getValueByName(PushPropertiesEnum.montnetsAccount.getKeyCode());
+        return configService.getValueByName(ConfigEnum.montnetsAccount.getKeyCode());
     }
 
     public String getMontnetsPassword() {
-        return configService.getValueByName(PushPropertiesEnum.montnetsPassword.getKeyCode());
+        return configService.getValueByName(ConfigEnum.montnetsPassword.getKeyCode());
     }
 
     public String getMontnetsMasterIpAddress() {
-        return configService.getValueByName(PushPropertiesEnum.montnetsMasterIpAddress.getKeyCode());
+        return configService.getValueByName(ConfigEnum.montnetsMasterIpAddress.getKeyCode());
     }
 
     public long getDailyPollingMins() {
-        return Long.parseLong(configService.getValueByName(PushPropertiesEnum.dailyPollingMins.getKeyCode()));
+        return Long.parseLong(configService.getValueByName(ConfigEnum.dailyPollingMins.getKeyCode()));
     }
 
     public long getBatchPollingMins() {
-        return Long.parseLong(configService.getValueByName(PushPropertiesEnum.batchPollingMins.getKeyCode()));
+        return Long.parseLong(configService.getValueByName(ConfigEnum.batchPollingMins.getKeyCode()));
     }
 
     public long getMoPollingMins() {
-        return Long.parseLong(configService.getValueByName(PushPropertiesEnum.moPollingMins.getKeyCode()));
+        return Long.parseLong(configService.getValueByName(ConfigEnum.moPollingMins.getKeyCode()));
     }
 
     public long getRptPollingMins() {
-        return Long.parseLong(configService.getValueByName(PushPropertiesEnum.rptPollingMins.getKeyCode()));
+        return Long.parseLong(configService.getValueByName(ConfigEnum.rptPollingMins.getKeyCode()));
     }
 
     /**
      * 签名
      */
     public String getSignature() {
-        return  configService.getValueByName(PushPropertiesEnum.signature.getKeyCode());
-    }
-
-    /**
-     * 编辑短信时是否需要签名信息
-     * @return
-     */
-    public String getSignatureFlag() {
-        return  configService.getValueByName(PushPropertiesEnum.signatureFlag.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.signature.getKeyCode());
     }
 
     /**
@@ -205,25 +197,15 @@ public class PushConfig {
      * @return
      */
     public String getUnsubscribe() {
-        return   configService.getValueByName(PushPropertiesEnum.unsubscribe.getKeyCode());
+        return   configService.getValueByName(ConfigEnum.unsubscribe.getKeyCode());
     }
-
-
-    /**
-     * 编辑短信时是否需要退订信息
-     * @return
-     */
-    public String getUnsubscribeFlag() {
-        return  configService.getValueByName(PushPropertiesEnum.unsubscribeFlag.getKeyCode());
-    }
-
 
     /**
      * 实际发送短信时是否需要签名信息
      * @return
      */
     public String getSendSignatureFlag() {
-        return  configService.getValueByName(PushPropertiesEnum.sendSignatureFlag.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.sendSignatureFlag.getKeyCode());
     }
 
     /**
@@ -231,7 +213,7 @@ public class PushConfig {
      * @return
      */
     public String getSendUnsubscribeFlag() {
-        return  configService.getValueByName(PushPropertiesEnum.sendUnsubscribeFlag.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.sendUnsubscribeFlag.getKeyCode());
     }
 
     /**
@@ -239,43 +221,43 @@ public class PushConfig {
      * @return
      */
     public String getProdUrlEnabled() {
-        return  configService.getValueByName(PushPropertiesEnum.prodUrlEnabled.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.prodUrlEnabled.getKeyCode());
     }
 
     public String getUrl() {
-        return  configService.getValueByName(PushPropertiesEnum.url.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.url.getKeyCode());
     }
 
     public String getProdName() {
-        return  configService.getValueByName(PushPropertiesEnum.prodName.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.prodName.getKeyCode());
     }
 
     public String getCouponName() {
-        return  configService.getValueByName(PushPropertiesEnum.couponName.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.couponName.getKeyCode());
     }
 
     public String getPrice() {
-        return  configService.getValueByName(PushPropertiesEnum.price.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.price.getKeyCode());
     }
 
     public String getProfit() {
-        return  configService.getValueByName(PushPropertiesEnum.profit.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.profit.getKeyCode());
     }
 
     public String getSoureName() {
-        return  configService.getValueByName(PushPropertiesEnum.sourceName.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.sourceName.getKeyCode());
     }
 
     public String getSmsEnabled() {
-        return  configService.getValueByName(PushPropertiesEnum.smsEnabled.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.smsEnabled.getKeyCode());
     }
 
     public String getQywxEnabled() {
-        return  configService.getValueByName(PushPropertiesEnum.qywxEnabled.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.qywxEnabled.getKeyCode());
     }
 
     public String getWxofficialEnabled() {
-        return  configService.getValueByName(PushPropertiesEnum.wxofficialEnabled.getKeyCode());
+        return  configService.getValueByName(ConfigEnum.wxofficialEnabled.getKeyCode());
     }
 
 }

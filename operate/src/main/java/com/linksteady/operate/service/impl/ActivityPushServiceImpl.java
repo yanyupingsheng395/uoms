@@ -335,16 +335,14 @@ public class ActivityPushServiceImpl implements ActivityPushService {
             //计算文案的字数限制 (因为库里存储的长度限制是去掉 签名和 退订信息的)
             int smsLengthLimit=pushConfig.getSmsLengthLimit();
             String signature=pushConfig.getSignature();
-            String signatureFlag=pushConfig.getSignatureFlag();
-
             String unsubscribe=pushConfig.getSignature();
-            String unsubscribeFlag=pushConfig.getUnsubscribeFlag();
 
-            if("Y".equals(signatureFlag))
+             //如果发送时应包含签名信息，则将签名长度加进来
+            if("Y".equals(pushConfig.getSendSignatureFlag()))
             {
                 smsLengthLimit=smsLengthLimit+(null==signature?0:signature.length());
             }
-            if("Y".equals(unsubscribeFlag))
+            if("Y".equals(pushConfig.getSendUnsubscribeFlag()))
             {
                 smsLengthLimit=smsLengthLimit+(null==unsubscribe?0:unsubscribe.length());
             }

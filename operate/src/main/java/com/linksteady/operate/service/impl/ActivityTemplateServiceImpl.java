@@ -51,16 +51,16 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         String profit = "${商品利益点}";
         String content = activityTemplate.getContent();
         if (StringUtils.isNotEmpty(isProdUrl) && isProdUrl.equalsIgnoreCase("1")) {
-            content = content.replace(prodUrl, " "+configService.getValueByName("op.sms.url")+" ");
+            content = content.replace(prodUrl, " "+pushConfig.getUrl()+" ");
         }
         if (StringUtils.isNotEmpty(isProdName) && isProdName.equalsIgnoreCase("1")) {
-            content = content.replace(prodName, configService.getValueByName("op.sms.prodname"));
+            content = content.replace(prodName, pushConfig.getProdName());
         }
         if (StringUtils.isNotEmpty(isPrice) && isPrice.equalsIgnoreCase("1")) {
-            content = content.replace(price, configService.getValueByName("op.sms.price"));
+            content = content.replace(price, pushConfig.getPrice());
         }
         if (StringUtils.isNotEmpty(isProfit) && isProfit.equalsIgnoreCase("1")) {
-            content = content.replace(profit, configService.getValueByName("op.sms.profit"));
+            content = content.replace(profit, pushConfig.getProfit());
         }
 
         //获取签名
@@ -70,17 +70,9 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
 
         if("DISPLAY".equals(scene))
         {
-            //(编辑短信时候不需要加上签名，则此处预览的时候补上)
-            if(null!=pushConfig.getSignatureFlag()&&"N".equals(pushConfig.getSignatureFlag()))
-            {
-                content =signature+content;
-            }
-
-            //(编辑短信时候不需要加上签名，则此处预览的时候补上)
-            if(null!=pushConfig.getUnsubscribeFlag()&&"Y".equals(pushConfig.getUnsubscribeFlag()))
-            {
-                content=content+unsubscribe;
-            }
+            //(编辑短信时候不需要加上签名和退订信息，则此处预览的时候补上)
+            content =signature+content;
+            content=content+unsubscribe;
         }else if("SEND".equals(scene))
         {
             //需要系统自动加上签名

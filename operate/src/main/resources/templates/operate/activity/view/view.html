@@ -312,21 +312,23 @@
                     </div>
                     <hr class="hr m-t-0 m-t-5"/>
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group mg-stop">
-                                <div class="col-md-12 control-label" style="text-align: left;">
-                                    <p class="small">
-                                        文案中填充变量说明：<br/>
-                                        1.一条文案通常允许的总字符数为[[${smsLenLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；<br/>
-                                        2.个性化推送文案中，包括运营者编写的内容，字符数以N表示；还包括系统填充的变量，字符数以M表示；Y=N+M；<br/>
-                                        3.由于系统填充变量也会占用字符，所以在此列出3种变量的占用字符情况<br/>
-                                        &nbsp;&nbsp;&nbsp;${商品名称}：商品名称，占<font color="red">[[${prodNameLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${商品详情页短链}：商品购买详情页短链接，占<font color="red">[[${prodUrlLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${商品利益点}：商品购买的利益点，占<font color="red">[[${profitLen}]]</font>个字符；<br/>
-                                        &nbsp;&nbsp;&nbsp;${商品最低单价}：商品在活动期间的最低单价，占<font color="red">[[${priceLen}]]</font>个字符；<br/>
-                                    </p>
-                                </div>
-                            </div>
+                        <div class="col-md-12 control-label" style="text-align: left;margin-left: 15px;padding-left: 5px;">
+                            <ol class="list-inline">文案编写说明：</ol>
+                            <ol style="padding-inline-start: 20px">
+                                <li class="smscomments">1.一条文案通常允许的总字符数为[[${sourceConfig.smsLengthLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；</li>
+                                <li class="smscomments">2.个性化推送文案中，包括运营者编写的内容的长度，字符数以N表示；还包括系统填充的变量占用的长度，字符数以M表示；Y=N+M；</li>
+
+                                <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度情况如下：</li>
+                                <ul>
+                                    <li class="smsvariable">&nbsp;&nbsp;${商品名称}：商品短名称，占<font color="red">[[${sourceConfig.prodNameLen}]]</font>个字符；例如:[[${sourceConfig.prodName}]]</li>
+                                    <li id="produrlComments" class="smsvariable">&nbsp;&nbsp;${商品详情页短链}：商品购买详情页短链接，占<font color="red">[[${sourceConfig.shortUrlLen}]]</font>个字符；例如:[[${sourceConfig.url}]]</li>
+                                    <li class="smsvariable">&nbsp;&nbsp;${商品利益点}：商品利益点，占<font color="red">[[${sourceConfig.profitLen}]]</font>个字符；例如:[[${sourceConfig.profit}]]</li>
+                                    <li class="smsvariable">&nbsp;&nbsp;${商品最低单价}：商品最低单价，占<font color="red">[[${sourceConfig.priceLen}]]</font>个字符；例如:[[${sourceConfig.price}]]</li>
+                                </ul>
+
+                                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${sourceConfig.signature}]]</li>
+                                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息 [[${sourceConfig.unsubscribe}]]</li>
+                            </ol>
                         </div>
                     </div>
                 </form>
@@ -533,7 +535,6 @@
     const PRICE_LEN = [[${sourceConfig.priceLen}]];
     const SMS_LEN_LIMIT = [[${sourceConfig.smsLengthLimit}]];
     const prodUrlEnabled='[[${sourceConfig.prodUrlEnabled}]]';
-    const couponSendType ='[[${sourceConfig.couponSendType}]]';
 
     const preheatStatus = "[[${preheatStatus}]]";
     const preheatNotifyStatus = "[[${preheatNotifyStatus}]]";

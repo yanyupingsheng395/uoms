@@ -1178,7 +1178,7 @@ function getTmpTableData() {
  */
 $( "#btn_save_sms").click( function () {
     let operateType = $( this ).attr( "name" );
-    let flag = validTmp();
+    let flag = validateTemplate();
     if (flag) {
         if(operateType === 'save')
         {
@@ -1237,7 +1237,7 @@ $( "#btn_save_sms").click( function () {
  * 验证文案信息
  * @returns {boolean}
  */
-function validTmp() {
+function validateTemplate() {
     var isProdName = $( "input[name='isProdName']:checked" ).val();
     var isProdUrl = $( "input[name='isProdUrl']:checked" ).val();
     var isPrice = $( "input[name='isPrice']:checked" ).val();

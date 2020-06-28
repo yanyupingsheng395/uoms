@@ -43,8 +43,6 @@ public class SourceConfigVO {
                 .setSmsLengthLimit(pushConfig.getSmsLengthLimit())
                 .setSignature(pushConfig.getSignature())
                 .setUnsubscribe(pushConfig.getUnsubscribe())
-                .setSignatureFlag("Y".equalsIgnoreCase(pushConfig.getSignatureFlag())?"包含":"不包含")
-                .setUnsubscribeFlag("Y".equalsIgnoreCase(pushConfig.getUnsubscribeFlag())?"包含":"不包含")
         ;
     }
 

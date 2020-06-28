@@ -3,7 +3,7 @@ package com.linksteady.operate.domain.enums;
 /**
  * 推送属性类的属性名及其在T_CONFIG中配置CODE的映射枚举类
  */
-public enum  PushPropertiesEnum {
+public enum  ConfigEnum {
     repeatPushDays("op.push.repeatPushDays"),
 
     pushFlag("op.push.pushFlag"),
@@ -58,11 +58,14 @@ public enum  PushPropertiesEnum {
     smsEnabled("op.source.smsEnabled"),
     qywxEnabled("op.source.qywxEnabled"),
     wxofficialEnabled("op.source.wxofficialEnabled"),
-    prodUrlEnabled("op.source.produrl_enabled");
+    prodUrlEnabled("op.source.produrl_enabled"),
+
+    pathActiveList("op.daily.pathactive.list");
+
 
     private String keyCode;
 
-    PushPropertiesEnum(String keyCode) {
+    ConfigEnum(String keyCode) {
         this.keyCode = keyCode;
     }
 

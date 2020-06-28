@@ -1262,8 +1262,9 @@ function getTmpTableData() {
  */
 $( "#btn_save_sms").click( function () {
     let operateType = $( this ).attr( "name" );
-    let flag = validTemplate();
+    let flag = validateTemplate();
     if (flag) {
+        //新增
         if(operateType === 'save')
         {
             $MB.confirm( {
@@ -1321,7 +1322,7 @@ $( "#btn_save_sms").click( function () {
  * 验证文案信息
  * @returns {boolean}
  */
-function validTemplate() {
+function validateTemplate() {
     let isProdName = $( "input[name='isProdName']:checked" ).val();
     let isProdUrl = $( "input[name='isProdUrl']:checked" ).val();
     let isPrice = $( "input[name='isPrice']:checked" ).val();
@@ -1329,71 +1330,84 @@ function validTemplate() {
     let smsContent = $('#content').val();
 
     if (isProdName === undefined) {
-        $MB.n_warning( "请选择商品名称" );
-        return false;
-    }
-    if (isProdUrl === undefined) {
-        $MB.n_warning( "请选择商品详情页短链" );
+        $MB.n_warning( "请选择个性化要素:商品名称！" );
         return false;
     }
     if (isProfit === undefined) {
-        $MB.n_warning( "请选择商品利益点" );
+        $MB.n_warning( "请选择个性化要素:商品利益点！" );
         return false;
     }
     if (isPrice === undefined) {
-        $MB.n_warning( "请选择商品活动期间最低单价" );
+        $MB.n_warning( "请选择个性化要素:商品最低单价！" );
         return false;
     }
     if (smsContent === '') {
-        $MB.n_warning( "文案内容不能为空" );
+        $MB.n_warning( "文案内容不能为空！" );
         return false;
     }
+
+    //商品详情页url是否可用 Y表示可用
+    if('Y'===prodUrlEnabled)
+    {
+        if(isProductUrl === undefined) {
+            $MB.n_warning("请选择个性化要素:商品详情页短链接！");
+            return false;
+        }
+
+        if(isProductUrl === '1') {
+            if(smsContent.indexOf("${商品详情页短链}") === -1) {
+                $MB.n_warning("个性化要素:商品详情页短链接为是，文案内容未发现${商品详情页短链}！");
+                return false;
+            }
+        }
+        if(isProductUrl === '0') {
+            if(smsContent.indexOf("${商品详情页短链}") > -1) {
+                $MB.n_warning("个性化要素:商品详情页短链接为否'，文案内容不能出现${商品详情页短链}！");
+                return false;
+            }
+        }
+    }else
+    {
+        if(smsContent.indexOf("${商品详情页短链}") > -1) {
+            $MB.n_warning("当前系统配置不允许出现${商品详情页短链}变量！");
+            return false;
+        }
+    }
+
 
     // 验证短信内容是否合法
     if(isProdName === '1') {
         if(smsContent.indexOf("${商品名称}") === -1) {
-            $MB.n_warning("'商品名称：是'，文案内容未发现${商品名称}");
+            $MB.n_warning("个性化要素:商品名称为是，文案内容未发现${商品名称}!");
             return false;
         }
     }else {
         if(smsContent.indexOf("${商品名称}") !== -1) {
-            $MB.n_warning("'商品名称：否'，文案内容却发现${商品名称}");
-            return false;
-        }
-    }
-
-    if(isProdUrl === '1') {
-        if(smsContent.indexOf("${商品详情页短链}") === -1) {
-            $MB.n_warning("'商品详情页短链：是'，文案内容未发现${商品详情页短链}");
-            return false;
-        }
-    }else {
-        if(smsContent.indexOf("${商品详情页短链}") !== -1) {
-            $MB.n_warning("'商品详情页短链：否'，文案内容却发现${商品详情页短链}");
+            $MB.n_warning("个性化要素:商品名称为否，文案内容不能出现${商品名称}!");
             return false;
         }
     }
 
     if(isProfit === '1') {
         if(smsContent.indexOf("${商品利益点}") === -1) {
-            $MB.n_warning("'商品利益点：是'，文案内容未发现${商品利益点}");
+            $MB.n_warning("个性化要素:商品利益点为是，文案内容未发现${商品利益点}!");
             return false;
         }
     }else {
         if(smsContent.indexOf("${商品利益点}") !== -1) {
-            $MB.n_warning("'商品利益点：否'，文案内容却发现${商品利益点}");
+            $MB.n_warning("个性化要素:商品利益点为否'，文案内容不能出现${商品利益点}!");
             return false;
         }
     }
 
     if(isPrice === '1') {
         if(smsContent.indexOf("${商品最低单价}") === -1) {
-            $MB.n_warning("'商品最低单价：是'，文案内容未发现${商品最低单价}");
+            $MB.n_warning("个性化要素:商品最低单价为是，文案内容未发现${商品最低单价}");
             return false;
         }
     }else {
         if(smsContent.indexOf("${商品最低单价}") !== -1) {
-            $MB.n_warning("'商品最低单价：否'，文案内容却发现${商品最低单价}");
+            $MB.n_warning("个性化要素:商品最低单价为否，文案内容不能出现${商品最低单价}");
             return false;
         }
     }

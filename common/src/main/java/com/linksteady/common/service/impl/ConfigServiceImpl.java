@@ -1,6 +1,5 @@
 package com.linksteady.common.service.impl;
 
-import com.google.common.collect.Lists;
 import com.linksteady.common.config.DictCacheManager;
 import com.linksteady.common.dao.ConfigMapper;
 import com.linksteady.common.domain.Dict;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

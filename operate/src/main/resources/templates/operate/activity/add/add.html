@@ -329,8 +329,8 @@
                                     <li class="smsvariable">&nbsp;&nbsp;${商品最低单价}：商品最低单价，占<font color="red">[[${sourceConfig.priceLen}]]</font>个字符；例如:[[${sourceConfig.price}]]</li>
                                 </ul>
 
-                                <li  class="smscomments">4.编写文案时起始位置请<font color="red">[[${sourceConfig.signatureFlag}]]</font>签名信息[[${sourceConfig.signature}]]</li>
-                                <li  class="smscomments">5.编写文案时结束位置请<font color="red">[[${sourceConfig.unsubscribeFlag}]]</font>退订信息 [[${sourceConfig.unsubscribe}]]</li>
+                                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${sourceConfig.signature}]]</li>
+                                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息 [[${sourceConfig.unsubscribe}]]</li>
                             </ol>
                         </div>
                     </div>
@@ -550,7 +550,6 @@
     const PRICE_LEN = [[${sourceConfig.priceLen}]];
     const SMS_LEN_LIMIT = '[[${sourceConfig.smsLengthLimit}]]';
     const prodUrlEnabled='[[${sourceConfig.prodUrlEnabled}]]';
-    const couponSendType ='[[${sourceConfig.couponSendType}]]';
 
     const preheatStatus = "[[${preheatStatus}]]";
     const preheatNotifyStatus = "[[${preheatNotifyStatus}]]";

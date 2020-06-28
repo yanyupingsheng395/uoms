@@ -277,13 +277,13 @@ function validateTemplate() {
 
         if(isProductUrl === '1') {
             if(smsContent.indexOf("${商品详情页短链}") === -1) {
-                $MB.n_warning("个性化要素:商品详情页短链接为是，文案内容未发现${商品详情页短链}");
+                $MB.n_warning("个性化要素:商品详情页短链接为是，文案内容未发现${商品详情页短链}！");
                 return false;
             }
         }
         if(isProductUrl === '0') {
             if(smsContent.indexOf("${商品详情页短链}") > -1) {
-                $MB.n_warning("个性化要素:商品详情页短链接为否'，文案内容不能出现${商品详情页短链}");
+                $MB.n_warning("个性化要素:商品详情页短链接为否'，文案内容不能出现${商品详情页短链}！");
                 return false;
             }
         }
@@ -297,13 +297,13 @@ function validateTemplate() {
 
     if(isProductName === '1') {
         if(smsContent.indexOf("${商品名称}") === -1) {
-            $MB.n_warning("个性化要素:商品名称为是，文案内容未发现${商品名称}");
+            $MB.n_warning("个性化要素:商品名称为是，文案内容未发现${商品名称}！");
             return false;
         }
     }
     if(isProductName === '0') {
         if(smsContent.indexOf("${商品名称}") > -1) {
-            $MB.n_warning("个性化要素:商品名称为否，文案内容不能出现${商品名称}");
+            $MB.n_warning("个性化要素:商品名称为否，文案内容不能出现${商品名称}！");
             return false;
         }
     }
@@ -318,14 +318,14 @@ function validateTemplate() {
         //不体现短链名称个性化
         if(isCouponUrl === '0') {
             if(smsContent.indexOf("${补贴短链}") > -1) {
-                $MB.n_warning("个性化要素:补贴短链接为否，文案内容不能出现${补贴短链}");
+                $MB.n_warning("个性化要素:补贴短链接为否，文案内容不能出现${补贴短链}！");
                 return false;
             }
         }
         //不体现补贴名称个性化
         if(isCouponName === '0') {
             if(smsContent.indexOf("${补贴名称}") > -1) {
-                $MB.n_warning("个性化要素:补贴名称为否，文案内容不能出现${补贴名称}");
+                $MB.n_warning("个性化要素:补贴名称为否，文案内容不能出现${补贴名称}！");
                 return false;
             }
         }
@@ -333,13 +333,13 @@ function validateTemplate() {
         // 补贴短链 需要个性化
         if(isCouponUrl === '1') {
             if(smsContent.indexOf("${补贴短链}") === -1) {
-                $MB.n_warning("个性化要素:补贴短链接为是，文案内容未发现${补贴短链}");
+                $MB.n_warning("个性化要素:补贴短链接为是，文案内容未发现${补贴短链}！");
                 return false;
             }
         }
         if(isCouponName === '1') {
             if(smsContent.indexOf("${补贴名称}") === -1) {
-                $MB.n_warning("个性化要素:补贴名称为是，文案内容未发现${补贴名称}");
+                $MB.n_warning("个性化要素:补贴名称为是，文案内容未发现${补贴名称}！");
                 return false;
             }
         }

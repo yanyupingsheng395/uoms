@@ -91,17 +91,17 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
         String smsContent =smsTemplate.getSmsContent();
         if (StringUtils.isNotEmpty(isCouponUrl) && isCouponUrl.equalsIgnoreCase("1")) {
             //短链替换的时候前后各补一个空格
-            smsContent = smsContent.replace(couponUrl, " "+configService.getValueByName("op.sms.url")+" ");
+            smsContent = smsContent.replace(couponUrl, " "+pushConfig.getUrl()+" ");
         }
         if (StringUtils.isNotEmpty(isCouponName) && isCouponName.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(couponName, configService.getValueByName("op.sms.couponname"));
+            smsContent = smsContent.replace(couponName, pushConfig.getCouponName());
         }
         if (StringUtils.isNotEmpty(isProductUrl) && isProductUrl.equalsIgnoreCase("1")) {
             //短链替换的时候前后各补一个空格
-            smsContent = smsContent.replace(prodUrl, " "+configService.getValueByName("op.sms.url")+" ");
+            smsContent = smsContent.replace(prodUrl, " "+pushConfig.getUrl()+" ");
         }
         if (StringUtils.isNotEmpty(isProductName) && isProductName.equalsIgnoreCase("1")) {
-            smsContent = smsContent.replace(prodName, configService.getValueByName("op.sms.prodname"));
+            smsContent = smsContent.replace(prodName, pushConfig.getProdName());
         }
 
         //获取签名
@@ -110,17 +110,10 @@ public class SmsTemplateServiceImpl implements SmsTemplateService {
 
         if("DISPLAY".equals(scene))
         {
-            //(编辑短信时候不需要加上签名，则此处预览的时候补上)
-            if(null!=pushConfig.getSignatureFlag()&&"N".equals(pushConfig.getSignatureFlag()))
-            {
-                smsContent =signature+smsContent;
-            }
+            //(编辑短信时候不需要加上签名和退订信息，则此处预览的时候补上)
+            smsContent =signature+smsContent;
+            smsContent=smsContent+unsubscribe;
 
-            //(编辑短信时候不需要加上签名，则此处预览的时候补上)
-            if(null!=pushConfig.getUnsubscribeFlag()&&"Y".equals(pushConfig.getUnsubscribeFlag()))
-            {
-                smsContent=smsContent+unsubscribe;
-            }
         }else if("SEND".equals(scene))
         {
             //需要系统自动加上签名
