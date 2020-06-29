@@ -98,28 +98,6 @@
          FROM UO_OP_DAILY_HEADER WHERE HEAD_ID = #{headId}
     </select>
 
-    <select id="validUserGroup" resultType="int">
-        select count(1)
-        from (
-                 SELECT t1.GROUP_ID,
-                        t1.IS_COUPON,
-                        t1.SMS_CODE,
-                        t2.SMS_CONTENT,
-                        LISTAGG(t4.coupon_name, ',') within group (order by t4.coupon_id) coupon_name
-                 FROM UO_OP_DAILY_TEMPLATE_CONFIG t1,
-                      UO_OP_SMS_TEMPLATE t2,
-                      UO_OP_DAILY_GROUP_COUPON t3,
-                      UO_OP_COUPON t4
-                 where t1.SMS_CODE = t2.SMS_CODE(+)
-                   and t1.group_id = t3.group_id(+)
-                   and t3.coupon_id = t4.coupon_id(+)
-                 group by t1.GROUP_ID, t1.IS_COUPON, t1.SMS_CODE, t2.SMS_CONTENT
-             )
-        where (IS_COUPON = 1 and coupon_name is null)
-           or (IS_COUPON = 0 and coupon_name is not null)
-           or SMS_CONTENT is null
-    </select>
-
     <select id="getEffectById" resultMap="baseResult">
         select TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, CONVERT_SPU_NUM, CONVERT_SPU_RATE, CONVERT_SPU_AMOUNT
         from UO_OP_DAILY_HEADER
@@ -272,25 +250,11 @@
         select STATUS from UO_OP_DAILY_HEADER where  TOUCH_DT::date = current_date
     </select>
 
-    <select id="getSelectedUserGroup" resultType="map">
-        select IS_COUPON, SMS_CODE
-        from UO_OP_DAILY_TEMPLATE_CONFIG
-        where GROUP_ID = #{groupId}::int4
-    </select>
-
     <select id="getSmsIsCoupon" resultType="int">
         select count(1)
         from UO_OP_SMS_TEMPLATE
         where (IS_COUPON_NAME = #{isCoupon} or IS_COUPON_URL = #{isCoupon})
           and sms_code = #{smsCode}
-    </select>
-
-    <select id="getValidDailyHead" resultType="int">
-        select count(1)
-        from UO_OP_DAILY_HEADER
-        where to_char(TOUCH_DT, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd')
-          and STATUS = 'todo'
-        select count(1) from UO_OP_DAILY_HEADER where TOUCH_DT::date = current_date and STATUS = 'todo'
     </select>
 
     <update id="expireDailyHead">

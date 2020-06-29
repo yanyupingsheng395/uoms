@@ -166,23 +166,6 @@ public class DailyServiceImpl implements DailyService {
         redisTemplate.delete("daily_trans_lock");
     }
 
-
-    @Override
-    public Map<String, Object> getSelectedUserGroup(String groupId) {
-        return dailyMapper.getSelectedUserGroup(groupId);
-    }
-
-    @Override
-    public int getSmsIsCoupon(String smsCode, String isCoupon) {
-        return dailyMapper.getSmsIsCoupon(smsCode, isCoupon);
-    }
-
-    @Override
-    public int getValidDailyHead() {
-        return dailyMapper.getValidDailyHead();
-    }
-
-
     /**
      * 获取推送预览的数据
      *

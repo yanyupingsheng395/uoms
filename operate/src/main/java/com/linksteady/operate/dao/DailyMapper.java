@@ -24,8 +24,6 @@ public interface DailyMapper {
 
     DailyHead getDailyHeadById(Long headId);
 
-    int validUserGroup();
-
     DailyHead getEffectById(Long id);
 
     /**
@@ -108,15 +106,7 @@ public interface DailyMapper {
 
     String getTodayStatus();
 
-    Map<String, Object> getSelectedUserGroup(String groupId);
-
     int getSmsIsCoupon(String smsCode, String isCoupon);
-
-    /**
-     * 获取待运营的每日运营记录数量
-     * @return
-     */
-    int getValidDailyHead();
 
     /**
      * 每日运营任务失效

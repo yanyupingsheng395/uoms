@@ -48,14 +48,6 @@ public interface DailyService {
      */
     void delTransLock();
 
-    Map<String, Object> getSelectedUserGroup(String groupId);
-
-    int getSmsIsCoupon(String smsCode, String is_coupon);
-
-    int getValidDailyHead();
-
-//    void updateSmsCodeNull(String smsCode);
-
     Map<String, Object> getUserStatsData(Long headId);
 
     Map<String, Object> getProdCountBySpu(Long headId,String spuName);
