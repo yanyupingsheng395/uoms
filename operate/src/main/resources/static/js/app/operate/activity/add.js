@@ -1349,18 +1349,18 @@ function validateTemplate() {
     //商品详情页url是否可用 Y表示可用
     if('Y'===prodUrlEnabled)
     {
-        if(isProductUrl === undefined) {
+        if(isProdUrl === undefined) {
             $MB.n_warning("请选择个性化要素:商品详情页短链接！");
             return false;
         }
 
-        if(isProductUrl === '1') {
+        if(isProdUrl === '1') {
             if(smsContent.indexOf("${商品详情页短链}") === -1) {
                 $MB.n_warning("个性化要素:商品详情页短链接为是，文案内容未发现${商品详情页短链}！");
                 return false;
             }
         }
-        if(isProductUrl === '0') {
+        if(isProdUrl === '0') {
             if(smsContent.indexOf("${商品详情页短链}") > -1) {
                 $MB.n_warning("个性化要素:商品详情页短链接为否'，文案内容不能出现${商品详情页短链}！");
                 return false;
@@ -1518,7 +1518,9 @@ function editTemplate() {
             $("#produrlDiv").hide();
         }
 
-        //todo 文案的字数在编辑状态下好像没出来
+        // 统计短信内容的字数
+        initGetInputNum();
+
         $( "#smstemplate_modal" ).modal( 'hide' );
         $( "#sms_add_modal" ).modal( 'show' );
     } );
@@ -1666,18 +1668,16 @@ function addTemplate() {
         $("#produrlComments").addClass('hidden');
         $("#produrlDiv").hide();
     }
-
+    initGetInputNum();
     $('#sms_add_modal').modal('show');
 }
 
-// 统计短信内容的字数
 statTmpContentNum();
 function statTmpContentNum() {
     $("#content").on('input propertychange', function () {
         let smsContent = $('#content').val();
         let y = smsContent.length;
         let m = smsContent.length;
-        let n = smsContent.length;
         if(smsContent.indexOf('${商品详情页短链}') > -1) {
             y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
             m = m - '${商品详情页短链}'.length;
@@ -1700,6 +1700,34 @@ function statTmpContentNum() {
         code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
         $("#word").text(code);
     });
+}
+
+function initGetInputNum() {
+    let smsContent = $('#content').val();
+    let y = smsContent.length;
+    let m = smsContent.length;
+
+    if(smsContent.indexOf('${商品详情页短链}') > -1) {
+        y = y - '${商品详情页短链}'.length + PROD_URL_LEN;
+        m = m - '${商品详情页短链}'.length;
+    }
+    if(smsContent.indexOf('${商品名称}') > -1) {
+        y = y - '${商品名称}'.length + PROD_NAME_LEN;
+        m = m - '${商品名称}'.length;
+    }
+    if(smsContent.indexOf('${商品最低单价}') > -1) {
+        y = y - '${商品最低单价}'.length + PRICE_LEN;
+        m = m - '${商品最低单价}'.length;
+    }
+    if(smsContent.indexOf('${商品利益点}') > -1) {
+        y = y - '${商品利益点}'.length + PROFIT_LEN;
+        m = m - '${商品利益点}'.length;
+    }
+
+    total_num = y;
+    let code = "";
+    code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
+    $("#word").text(code);
 }
 
 ///////////////////////////////////////////文案相关js结束///////////////////////////////////
