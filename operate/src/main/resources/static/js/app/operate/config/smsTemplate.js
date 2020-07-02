@@ -78,7 +78,7 @@ function testSend()
     $.getJSON("/smsTemplate/getSmsTemplateContent?smsCode="+smsCode,function (resp) {
         if (resp.code === 200){
             //更新测试面板
-            $("#smsContent1").val(resp.data.smsContent);
+            $("#smsContent1").val(resp.data);
             let _value = $("#smsContent1").val().replace(/\n/gi,"");
             $("#word1").text(_value.length);
             $('#send_modal').modal('show');

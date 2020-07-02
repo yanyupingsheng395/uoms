@@ -1238,99 +1238,108 @@ $( "#btn_save_sms").click( function () {
  * @returns {boolean}
  */
 function validateTemplate() {
-    var isProdName = $( "input[name='isProdName']:checked" ).val();
-    var isProdUrl = $( "input[name='isProdUrl']:checked" ).val();
-    var isPrice = $( "input[name='isPrice']:checked" ).val();
-    var isProfit = $( "input[name='isProfit']:checked" ).val();
-    var contet = $( "#content" ).val();
+    let isProdName = $( "input[name='isProdName']:checked" ).val();
+    let isProdUrl = $( "input[name='isProdUrl']:checked" ).val();
+    let isPrice = $( "input[name='isPrice']:checked" ).val();
+    let isProfit = $( "input[name='isProfit']:checked" ).val();
+    let smsContent = $('#content').val();
+
     if (isProdName === undefined) {
-        $MB.n_warning( "请选择商品名称" );
-        return false;
-    }
-    if (isProdUrl === undefined) {
-        $MB.n_warning( "请选择商品详情页短链" );
+        $MB.n_warning( "请选择个性化要素:商品名称！" );
         return false;
     }
     if (isProfit === undefined) {
-        $MB.n_warning( "请选择商品利益点" );
+        $MB.n_warning( "请选择个性化要素:商品利益点！" );
         return false;
     }
     if (isPrice === undefined) {
-        $MB.n_warning( "请选择商品活动期间最低单价" );
+        $MB.n_warning( "请选择个性化要素:商品最低单价！" );
         return false;
     }
-    if (contet === '') {
-        $MB.n_warning( "文案内容不能为空" );
+    if (smsContent === '') {
+        $MB.n_warning( "文案内容不能为空！" );
         return false;
     }
+
+    //商品详情页url是否可用 Y表示可用
+    if('Y'===prodUrlEnabled)
+    {
+        if(isProdUrl === undefined) {
+            $MB.n_warning("请选择个性化要素:商品详情页短链接！");
+            return false;
+        }
+
+        if(isProdUrl === '1') {
+            if(smsContent.indexOf("${商品详情页短链}") === -1) {
+                $MB.n_warning("个性化要素:商品详情页短链接为是，文案内容未发现${商品详情页短链}！");
+                return false;
+            }
+        }
+        if(isProdUrl === '0') {
+            if(smsContent.indexOf("${商品详情页短链}") > -1) {
+                $MB.n_warning("个性化要素:商品详情页短链接为否'，文案内容不能出现${商品详情页短链}！");
+                return false;
+            }
+        }
+    }else
+    {
+        if(smsContent.indexOf("${商品详情页短链}") > -1) {
+            $MB.n_warning("当前系统配置不允许出现${商品详情页短链}变量！");
+            return false;
+        }
+    }
+
 
     // 验证短信内容是否合法
     if(isProdName === '1') {
-        if(contet.indexOf("${商品名称}") === -1) {
-            $MB.n_warning("'商品名称：是'，文案内容未发现${商品名称}");
+        if(smsContent.indexOf("${商品名称}") === -1) {
+            $MB.n_warning("个性化要素:商品名称为是，文案内容未发现${商品名称}!");
             return false;
         }
     }else {
-        if(contet.indexOf("${商品名称}") !== -1) {
-            $MB.n_warning("'商品名称：否'，文案内容却发现${商品名称}");
-            return false;
-        }
-    }
-
-    if(isProdUrl === '1') {
-        if(contet.indexOf("${商品详情页短链}") === -1) {
-            $MB.n_warning("'商品详情页短链：是'，文案内容未发现${商品详情页短链}");
-            return false;
-        }
-    }else {
-        if(contet.indexOf("${商品详情页短链}") !== -1) {
-            $MB.n_warning("'商品详情页短链：否'，文案内容却发现${商品详情页短链}");
+        if(smsContent.indexOf("${商品名称}") !== -1) {
+            $MB.n_warning("个性化要素:商品名称为否，文案内容不能出现${商品名称}!");
             return false;
         }
     }
 
     if(isProfit === '1') {
-        if(contet.indexOf("${商品利益点}") === -1) {
-            $MB.n_warning("'商品利益点：是'，文案内容未发现${商品利益点}");
+        if(smsContent.indexOf("${商品利益点}") === -1) {
+            $MB.n_warning("个性化要素:商品利益点为是，文案内容未发现${商品利益点}!");
             return false;
         }
     }else {
-        if(contet.indexOf("${商品利益点}") !== -1) {
-            $MB.n_warning("'商品利益点：否'，文案内容却发现${商品利益点}");
+        if(smsContent.indexOf("${商品利益点}") !== -1) {
+            $MB.n_warning("个性化要素:商品利益点为否'，文案内容不能出现${商品利益点}!");
             return false;
         }
     }
 
     if(isPrice === '1') {
-        if(contet.indexOf("${商品最低单价}") === -1) {
-            $MB.n_warning("'商品最低单价：是'，文案内容未发现${商品最低单价}");
+        if(smsContent.indexOf("${商品最低单价}") === -1) {
+            $MB.n_warning("个性化要素:商品最低单价为是，文案内容未发现${商品最低单价}");
             return false;
         }
     }else {
-        if(contet.indexOf("${商品最低单价}") !== -1) {
-            $MB.n_warning("'商品最低单价：否'，文案内容却发现${商品最低单价}");
+        if(smsContent.indexOf("${商品最低单价}") !== -1) {
+            $MB.n_warning("个性化要素:商品最低单价为否，文案内容不能出现${商品最低单价}");
             return false;
         }
     }
-    let smsContent = $('#content').val();
+
     let y = smsContent.length;
-    let m = smsContent.length;
-    let n = smsContent.length;
     if(smsContent.indexOf('${商品详情页短链}') > -1) {
-        y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
-        m = m - '${商品详情页短链}'.length;
+        y = y - '${商品详情页短链}'.length + PROD_URL_LEN;
     }
     if(smsContent.indexOf('${商品名称}') > -1) {
-        y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
-        m = m - '${商品名称}'.length;
+        y = y - '${商品名称}'.length + PROD_NAME_LEN;
+
     }
     if(smsContent.indexOf('${商品利益点}') > -1) {
-        y = y - '${商品利益点}'.length + parseInt(PROFIT_LEN);
-        m = m - '${商品利益点}'.length;
+        y = y - '${商品利益点}'.length + PROFIT_LEN;
     }
     if(smsContent.indexOf('${商品最低单价}') > -1) {
-        y = y - '${商品最低单价}'.length + parseInt(PRICE_LEN);
-        m = m - '${商品最低单价}'.length;
+        y = y - '${商品最低单价}'.length + PRICE_LEN;
     }
 
     if(y > SMS_LEN_LIMIT) {
@@ -1344,7 +1353,7 @@ function validateTemplate() {
  * 为群组设置模板信息
  * @param type 类型：期间，通知
  */
-function setTmpCode() {
+function setTemplateCode() {
     var groupId = CURRENT_GROUP_ID;
     var selected = $( "#tmpTable").bootstrapTable( 'getSelections' );
     var selected_length = selected.length;
@@ -1381,7 +1390,7 @@ function setTmpCode() {
 /**
  * 关闭文案选择面板
  */
-function closeTmpCode()
+function closeTemplateCode()
 {
     $( "#smstemplate_modal" ).modal( 'hide' );
     if(CURRENT_TYPE === 'DURING') {
@@ -1398,7 +1407,7 @@ function contextOnChange() {
 }
 
 // 点击编辑文案按钮
-function editTmp() {
+function editTemplate() {
     var selected = $( "#tmpTable" ).bootstrapTable( 'getSelections' );
     var selected_length = selected.length;
     if (!selected_length) {
@@ -1443,11 +1452,11 @@ $( "#sms_add_modal" ).on( 'hidden.bs.modal', function () {
 } );
 
 // 删除文案
-function deleteTmp() {
+function deleteTemplate() {
     var selected = $( "#tmpTable" ).bootstrapTable( 'getSelections' );
     var selected_length = selected.length;
     if (!selected_length) {
-        $MB.n_warning( '请选择需要删除的文案！' );
+        $MB.n_warning('请选择需要删除的文案！');
         return;
     }
     var code = selected[0].code;
@@ -1463,7 +1472,7 @@ function deleteTmp() {
                 type: CURRENT_TYPE
             }, function (r) {
                 if (r.code === 200) {
-                    $MB.n_success( "删除成功");
+                    $MB.n_success( "删除成功！");
                     getTmpTableData();
                 }else
                 {
@@ -1478,18 +1487,18 @@ function deleteTmp() {
 function testSend() {
     let selectRows = $( "#tmpTable" ).bootstrapTable( 'getSelections' );
     if (null == selectRows || selectRows.length == 0) {
-        $MB.n_warning( '请选择需要测试的文案！' );
+        $MB.n_warning('请选择需要测试的文案！');
         return;
     }
     let code = selectRows[0]["code"];
     //根据获取到的数据查询
-    $.getJSON( "/activity/getActivityTemplateContent?code=" + code, function (resp) {
+    $.getJSON("/activity/getActivityTemplateContent?code=" + code, function (resp) {
         if (resp.code === 200) {
-            $( "#smstemplate_modal" ).modal( 'hide' );
+            $("#smstemplate_modal" ).modal('hide');
             //更新测试面板
-            $( "#smsContent1" ).val( resp.data );
+            $("#smsContent1").val( resp.data);
             $("#testSmsCode").val(code);
-            $( '#send_modal' ).modal( 'show' );
+            $('#send_modal').modal('show');
         }
     } )
 }
