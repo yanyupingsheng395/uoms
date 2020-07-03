@@ -3,10 +3,8 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.qywx.service.UserTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 /**
  * 导购任务
  * @author caohuixue
@@ -37,6 +35,11 @@ public class UserTaskController {
         return ResponseBo.okWithData(null, userTaskService.getProductData(userId));
     }
 
+    /**
+     * 获取用户购买历史数据
+     * @param userId
+     * @return
+     */
     @GetMapping("/getUserBuyHistory")
     public ResponseBo getUserBuyHistory(String userId) {
         return ResponseBo.okWithData(null, userTaskService.getUserBuyHistory(userId));
