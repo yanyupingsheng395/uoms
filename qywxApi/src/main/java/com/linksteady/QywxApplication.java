@@ -1,4 +1,5 @@
-package com.linksteady.qywx;
+package com.linksteady;
+import com.linksteady.smp.starter.annotation.EnableExceptionNotice;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAspectJAutoProxy(proxyTargetClass=true,exposeProxy=true)
 @MapperScan("com.linksteady.**.dao")
 @EnableAsync
+@EnableExceptionNotice
 @Slf4j
 public class QywxApplication {
     public static void main(String[] args) {

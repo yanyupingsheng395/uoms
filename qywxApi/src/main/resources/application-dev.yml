@@ -17,3 +17,25 @@ spring:
     port: 6379
     # Redis 密码
     password:
+  thymeleaf:
+    enabled: false
+
+mybatis:
+  # type-aliases扫描路径
+  type-aliases-package: com.linksteady.**.domain
+  # mapper xml实现扫描路径
+  mapper-locations: classpath*:mapper/**/*.xml
+  property:
+    order: before
+  configuration:
+    # 注意这里需要加单引号
+    jdbc-type-for-null: 'null'
+    call-setters-on-nulls: true
+
+sys:
+  #当前应用名称
+  projectName: qywxApi
+  #服务平台地址
+  smpDomain: http://localhost:9063
+  #是否开启错误日志上报
+  openExceptionNotice: false

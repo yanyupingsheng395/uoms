@@ -108,9 +108,6 @@ public interface DailyMapper {
 
     int getSmsIsCoupon(String smsCode, String isCoupon);
 
-    /**
-     * 每日运营任务失效
-     */
     void expireDailyHead();
 
     String getLifeCycleByUserId(String userId, String headId);
