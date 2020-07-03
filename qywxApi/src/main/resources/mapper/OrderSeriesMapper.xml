@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.OrderSeriesMapper">
+    <resultMap id="base" type="com.linksteady.qywx.domain.OrderSeries">
+        <result column="user_id" property="userId" jdbcType="DECIMAL"/>
+        <result column="order_dt" property="orderDt" jdbcType="TIMESTAMP"/>
+        <result column="order_dt_str" property="orderDtStr" jdbcType="VARCHAR"/>
+        <result column="spu_name" property="spuName" jdbcType="VARCHAR"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="order_fee" property="orderFee" jdbcType="DECIMAL"/>
+        <result column="interval_days" property="intervalDays" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <select id="getOrderData" resultMap="base">
+        select
+           user_id,
+           order_dt,
+           to_char(order_dt,'yyyy年MM月dd日 HH24:MI:ss') order_dt_str,
+           spu_name,
+           product_name,
+           order_fee,
+           interval_days
+        from wp_insight_user_orderseries where user_id=#{userId} order by order_dt desc
+    </select>
+
+</mapper>
