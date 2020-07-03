@@ -98,4 +98,9 @@ public interface DailyDetailMapper {
      */
     void updatePushContentFromTemp(@Param("headId") Long headId);
 
+    /**
+     * 更新试验组的状态为 TS （测试完成）
+     */
+    void updateExperimentStatus(@Param("headId") Long headId);
+
 }

@@ -250,13 +250,6 @@
         select STATUS from UO_OP_DAILY_HEADER where  TOUCH_DT::date = current_date
     </select>
 
-    <select id="getSmsIsCoupon" resultType="int">
-        select count(1)
-        from UO_OP_SMS_TEMPLATE
-        where (IS_COUPON_NAME = #{isCoupon} or IS_COUPON_URL = #{isCoupon})
-          and sms_code = #{smsCode}
-    </select>
-
     <update id="expireDailyHead">
         update uo_op_daily_header h set status='timeout' where h.status='todo' and touch_dt::date&lt;current_date
     </update>

@@ -1529,7 +1529,7 @@ function sendMessage() {
     let testSmsCode=$("#testSmsCode").val();
 
     //提交后端进行发送
-    lightyear.loading( 'show' );
+    lightyear.loading('show');
 
     let param = new Object();
     param.phoneNum = phoneNum;
@@ -1572,21 +1572,20 @@ function statTmpContentNum() {
         let smsContent = $('#content').val();
         let y = smsContent.length;
         let m = smsContent.length;
-        let n = smsContent.length;
         if(smsContent.indexOf('${商品详情页短链}') > -1) {
-            y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
+            y = y - '${商品详情页短链}'.length + PROD_URL_LEN;
             m = m - '${商品详情页短链}'.length;
         }
         if(smsContent.indexOf('${商品名称}') > -1) {
-            y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
+            y = y - '${商品名称}'.length + PROD_NAME_LEN;
             m = m - '${商品名称}'.length;
         }
         if(smsContent.indexOf('${商品最低单价}') > -1) {
-            y = y - '${商品最低单价}'.length + parseInt(PRICE_LEN);
+            y = y - '${商品最低单价}'.length + PRICE_LEN;
             m = m - '${商品最低单价}'.length;
         }
         if(smsContent.indexOf('${商品利益点}') > -1) {
-            y = y - '${商品利益点}'.length + parseInt(PROFIT_LEN);
+            y = y - '${商品利益点}'.length + PROFIT_LEN;
             m = m - '${商品利益点}'.length;
         }
 

@@ -110,6 +110,7 @@
                '0'
         FROM UO_OP_DAILY_DETAIL C
         WHERE C.HEAD_ID = #{headId}
+         AND  abtest_group!='A'
     </insert>
 
     <update id="updatePushOrderPeriod">
@@ -182,5 +183,10 @@
             UO_OP_DAILY_CONTENT_TMP.daily_detail_id = UO_OP_DAILY_DETAIL.daily_detail_id
             and UO_OP_DAILY_CONTENT_TMP.head_id=UO_OP_DAILY_DETAIL.head_id)
         where head_id=#{headId}
+    </update>
+
+    <update id="updateExperimentStatus">
+        update UO_OP_DAILY_DETAIL set
+          push_status='TS' where head_id=#{headId} and abtest_group='A'
     </update>
 </mapper>
