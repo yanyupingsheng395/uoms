@@ -106,7 +106,6 @@ public interface DailyMapper {
 
     String getTodayStatus();
 
-    int getSmsIsCoupon(String smsCode, String isCoupon);
 
     /**
      * 每日运营任务失效

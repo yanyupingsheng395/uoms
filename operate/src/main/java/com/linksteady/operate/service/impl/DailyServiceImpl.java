@@ -342,7 +342,9 @@ public class DailyServiceImpl implements DailyService {
         //更新行上的push_order_period
         dailyDetailMapper.updatePushOrderPeriod(dailyHead.getHeadId());
 
-        //复制写入待推送列表
+        //更新试验组的状态为TS
+        dailyDetailMapper.updateExperimentStatus(dailyHead.getHeadId());
+        //复制写入待推送列表(对照组及不参加组)
         dailyDetailMapper.copyToPushList(dailyHead.getHeadId());
 
     }
