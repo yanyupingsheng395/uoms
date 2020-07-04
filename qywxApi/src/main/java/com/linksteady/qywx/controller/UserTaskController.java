@@ -20,7 +20,7 @@ public class UserTaskController {
      * 根据用户ID和商品ID获取相关的数据
      * @return
      */
-    @GetMapping("/getUserData")
+    @RequestMapping("/getUserData")
     public ResponseBo getUserData(String userId, String productId) {
         return ResponseBo.okWithData(null, userTaskService.getUserData(userId, productId));
     }
@@ -30,7 +30,7 @@ public class UserTaskController {
      * @param userId
      * @return
      */
-    @GetMapping("/getProductData")
+    @RequestMapping("/getProductData")
     public ResponseBo getProductData(String userId) {
         return ResponseBo.okWithData(null, userTaskService.getProductData(userId));
     }
@@ -40,7 +40,7 @@ public class UserTaskController {
      * @param userId
      * @return
      */
-    @GetMapping("/getUserBuyHistory")
+    @RequestMapping("/getUserBuyHistory")
     public ResponseBo getUserBuyHistory(String userId) {
         return ResponseBo.okWithData(null, userTaskService.getUserBuyHistory(userId));
     }

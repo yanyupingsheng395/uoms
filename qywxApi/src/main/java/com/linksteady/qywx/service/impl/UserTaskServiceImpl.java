@@ -66,7 +66,7 @@ public class UserTaskServiceImpl implements UserTaskService {
         }
         // 用户沟通的时间点
         List<Map<String, String>> userTimeList = userTaskMapper.getUserTimes(userId);
-        List<Map<String, String>> couponList = userTaskMapper.getCouponListOfProduct(userId, productId);
+        List<Map<String, String>> couponList = userTaskMapper.getCouponListOfProduct(userId);
         result.put("userTodayStatus", userTodayStatusList);
         result.put("userTimeList", userTimeList);
         result.put("couponList", couponList);
