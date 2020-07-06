@@ -22,7 +22,7 @@ mybatis:
 
 sys:
   #当前应用名称
-  projectName: qywxApi
+  projectName: dapu-qywxApi-dev
   #服务平台地址
   smpDomain: http://localhost:9063
   #是否开启错误日志上报

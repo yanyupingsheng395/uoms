@@ -3,18 +3,17 @@ package com.linksteady.qywx.dao;
 import com.linksteady.qywx.domain.OrderSeries;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author huang
  * @date 2020/7/3
  */
-public interface OrderSeriesMapper {
+public interface ApiMapper {
 
     /**
-     * 获取用户购买时序数据
+     * 获取企业微信部署的IP地址
      * @return
      */
-    List<OrderSeries> getOrderData(String userId);
+    String getQywxDomainAddress();
 
 }

@@ -23,6 +23,6 @@ public class WxOfficialApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(WxOfficialApplication.class, args);
-        log.info("微信端系统启动成功.");
+        log.info("微信公众号运营系统启动成功.");
     }
 }

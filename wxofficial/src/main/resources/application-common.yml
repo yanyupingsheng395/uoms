@@ -1,13 +1,12 @@
 app:
-  name: "WxOfficial"
-  description: "link steady用户成长系统"
+  name: "UOMS"
+  description: "link steady 诊断&运营系统-公众号运营"
   spring-boot-version: "2.0.4.RELEASE"
   version: @project.version@
   build:
     time: @timestamp@
 
 server:
-  port: 9095
   tomcat:
     uri-encoding: utf-8
   compression:
@@ -20,9 +19,6 @@ spring:
       # 数据库访问配置, 使用druid数据源
       db-type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: org.postgresql.Driver
-      url: jdbc:postgresql://39.98.78.201:5432/dapu_test?currentSchema=dapu_test
-      username: dapu_test
-      password: daputest123
       # 连接池配置
       initial-size: 5
       min-idle: 5
@@ -33,7 +29,7 @@ spring:
       time-between-eviction-runs-millis: 60000
       # 配置连接在池中的最小生存时间
       min-evictable-idle-time-millis: 300000
-      validation-query: select '1'
+      validation-query: SELECT 'x'
       test-while-idle: true
       test-on-borrow: false
       test-on-return: false
@@ -63,11 +59,7 @@ spring:
         reset-enable: false
         # 需要账号密码才能访问控制台
         login-username: druid
-        login-password: druid123
-        # IP白名单
-        # allow: 127.0.0.1
-        # IP黑名单（共同存在时，deny优先于allow）
-        # deny: 192.168.1.218
+        login-password: druid!@#
 
       # 配置StatFilter
       filter:
@@ -75,16 +67,6 @@ spring:
           log-slow-sql: true
 
   redis:
-    # Redis数据库索引（默认为0） 存放session数据 ShiroConfig.java中使用
-    database: 0
-    # businessdatabase 存放业务数据的库 RedisConfig.java中使用
-    businessdatabase: 1
-    # Redis服务器地址
-    host: 127.0.0.1
-    # Redis服务器连接端口
-    port: 6376
-    # Redis 密码
-    password: growthmaster666
     jedis:
       pool:
         # 连接池中的最小空闲连接
@@ -96,21 +78,17 @@ spring:
         # 连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: 10000
     # 连接超时时间（毫秒）
-    timeout: 3000
+    timeout: 200
 
   thymeleaf:
     cache: false
-
   aop:
     proxy-target-class: true
   cache:
     type:
       redis
-
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 50MB
+  main:
+    allow-bean-definition-overriding: true
 
   # 添加静态资源md5版本控制
   resources:
@@ -118,9 +96,7 @@ spring:
       strategy:
         content:
           enabled: true
-          paths: /js/**, /css/**
-  main:
-    allow-bean-definition-overriding: true
+          paths: /js/**,/css/**
 
 mybatis:
   # type-aliases扫描路径
@@ -138,63 +114,32 @@ mybatis:
 mapper:
   mappers: com.linksteady.common.config.MyMapper
   not-empty: false
-  identity: oracle
   order: before
 
 #pagehelper
 pagehelper:
-  helperDialect: oracle
+  helperDialect: PostgreSQL
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
 
-logging:
-  level:
-    com:
-      linksteady:
-        operate: debug
-        dao: debug
-
+# system 配置
 sys:
   # 时间类型参数在前端页面的展示格式，默认格式为 yyyy-MM-dd HH:mm:ss
   timeFormat: yyyy-MM-dd HH:mm:ss
   # 是否开启 AOP 日志，默认开启
   openAopLog: true
-  # 是否开启对thrift接口连通性的检测
-  validateThrift: false
-  #是否开启错误日志上报
-  openExceptionNotice: false
-  #上报错误日志的地址
-  exceptionNoticeUrl: http://logstash.growth-master.com/logNoticeService
-  #上报错误日志的当前应用名称
-  exceptionNoticeAppName: uoms2-dev-operate
-  #默认的日志预警的模式 (BATCH 批量 IMME 立即)
-  exceptionNoticeMode: BATCH
+
 shiro:
-  # shiro redis缓存时长，默认1800秒  7200
+  # shiro redis缓存时长，默认1800秒
   expireIn: 1800
-  # session 超时时间，默认1800000毫秒 7200000
+  # session 超时时间，默认1800000毫秒
   sessionTimeout: 1800000
   # rememberMe cookie有效时长，默认86400秒，即一天
   cookieTimeout: 86400
   # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-  anonUrl: /api/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/,/actuator/**,/test/**,/sysinfo,/login,/job/**,/push,/push/**
-  # 登录 url
-  loginUrl: http://localhost:9091/login
-  # 登录成功后跳转的 url
-  successUrl: http://localhost:9091/main
-  # 登出 url
-  logoutUrl: http://localhost:9091/logout
+  anonUrl: /smpclient/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/actuator/**,/test/**,/sysinfo,/dailyConfig/**,/login,/gifCode
   # 未授权跳转 url
   unauthorizedUrl: /403
-  #强制修改密码的url
-  resetPasswordUrl: http://localhost:9091/resetPass
   #首次登陆是否强制要求修改密码
   allowResetPassword: false
-  #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
-  cookieDomain: localhost
-
-  job:
-    token: LINKSTEADY  #和调度中心通信校验用的token
-    callbackUrl: http://localhost:8084   #回写任务状态的回调地址
-    jobrewriteUrl: http://localhost:8084  #回写任务执行日志的地址

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.ApiMapper">
+
+    <select id="getQywxDomainAddress" resultType="string">
+        select
+           value
+        from t_config where name='qywx.domainIpAddress'
+    </select>
+
+</mapper>

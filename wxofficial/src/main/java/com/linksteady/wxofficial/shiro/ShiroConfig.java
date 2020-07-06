@@ -67,8 +67,6 @@ public class ShiroConfig {
      */
     private RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();
-        // 这里设置并没有什么用 源码里面 如果通过sessionDAO传入的值具有最高的优先级，如果传入的值为0（注意如果没传，则默认值为1800m），则才会使用这设置的值
-        //redisManager.setExpire(systemProperties.getShiro().getExpireIn());
         redisManager.setHost(host + ":" + port);
         redisManager.setDatabase(database);
         if (StringUtils.isNotBlank(password)) {
@@ -81,8 +79,6 @@ public class ShiroConfig {
     private RedisCacheManager cacheManager() {
         RedisCacheManager redisCacheManager = new RedisCacheManager();
         redisCacheManager.setRedisManager(redisManager());
-        //不设置 默认的缓存过期时间为1800m 即半小时
-        //redisCacheManager.setExpire(systemProperties.getShiro().getExpireIn());
         return redisCacheManager;
     }
 
