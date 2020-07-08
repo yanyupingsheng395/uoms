@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAsync
 @EnableExceptionNotice
 @Slf4j
-public class QywxApplication {
+public class QywxApiApplication {
     public static void main(String[] args) {
-        SpringApplication.run(QywxApplication.class, args);
+        SpringApplication.run(QywxApiApplication.class, args);
     }
 }

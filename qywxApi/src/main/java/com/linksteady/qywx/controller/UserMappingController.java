@@ -42,12 +42,21 @@ public class UserMappingController extends ApiBaseController{
             return ResponseBo.error(validate);
         }
         //对参数进行校验
-        if(StringUtils.isEmpty(externalUserId)||StringUtils.isEmpty(followUserId)||StringUtils.isEmpty(phoneNum))
+        if(StringUtils.isEmpty(externalUserId)||StringUtils.isEmpty(followUserId))
         {
             return ResponseBo.error("参数不能为空!");
         }
+        Long userId=null;
+        if(StringUtils.isNotEmpty(phoneNum))
+        {
+             userId=userMappingService.updateMappingInfo(externalUserId,followUserId,phoneNum);
+        }else
+        {
+            //将externalUserId对应的映射信息全部清空 以为将外部联系人标记的手机号置为空了 所有要将之前匹配上的信息清空
+            userMappingService.deleteMappingInfo(externalUserId,followUserId);
+        }
 
-        Long userId=userMappingService.updateMappingInfo(externalUserId,followUserId,phoneNum);
+
         return ResponseBo.okWithData("",userId);
     }
 
