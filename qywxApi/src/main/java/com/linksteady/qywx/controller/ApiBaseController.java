@@ -28,12 +28,6 @@ public class ApiBaseController {
 
     protected String validateLegality(HttpServletRequest request,String signature,String...args)
     {
-        //判断签名
-        String sign= SHA1.gen(args);
-        if(!sign.equals(signature))
-        {
-            return "签名错误，请校验数据!";
-        }
         //默认第一个参数为时间戳
         String timestamp=args[0];
         //判断时间戳
@@ -44,6 +38,12 @@ public class ApiBaseController {
             return "参数错误，请稍后再试!";
         }
 
+        //判断签名
+        String sign= SHA1.gen(args);
+        if(!sign.equals(signature))
+        {
+            return "签名错误，请校验数据!";
+        }
         //判断IP地址
        String allowAddress=apiService.getQywxDomainAddress();
        if(StringUtils.isEmpty(allowAddress)||"*".equals(allowAddress))
@@ -61,6 +61,18 @@ public class ApiBaseController {
                return "当前IP不在可调用白名单之内!";
            }
        }
+    }
+
+
+    public static void main(String[] args) {
+        test("1", "2", "3");
+    }
+
+    public static void test(String... args) {
+        for (String i:
+            args ) {
+            System.out.println(i);
+        }
     }
 
 }

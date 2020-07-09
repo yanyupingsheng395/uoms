@@ -2,6 +2,7 @@ package com.linksteady.qywx.controller;
 
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.qywx.service.UserTaskService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  * 导购任务
  * @author caohuixue
  */
+@Slf4j
 @RestController
 @RequestMapping("/userTask")
 public class UserTaskController extends ApiBaseController{
@@ -52,6 +54,7 @@ public class UserTaskController extends ApiBaseController{
                                      @RequestParam("timestamp")String timestamp,
                                      @RequestParam("userId")String userId) {
         String validate=validateLegality(request,signature,timestamp,userId);
+        log.info("签名校验结果：" + validate);
         if(StringUtils.isNotEmpty(validate))
         {
             return ResponseBo.error(validate);
@@ -71,8 +74,8 @@ public class UserTaskController extends ApiBaseController{
                                         @RequestParam("signature")String signature,
                                         @RequestParam("timestamp")String timestamp,
                                         @RequestParam("userId")String userId) {
-
         String validate=validateLegality(request,signature,timestamp,userId);
+        log.info("签名校验结果：" + validate);
         if(StringUtils.isNotEmpty(validate))
         {
             return ResponseBo.error(validate);
