@@ -27,21 +27,19 @@ public class UserMappingServiceImpl implements UserMappingService {
         //判断当前手机号是否在当前库存在
         Long userId=userMappingMapper.getUserIdByPhone(phoneNum);
 
-        if(null!=userId)
+        //更新
+        synchronized (this.updateMappingLock)
         {
-            //更新
-            synchronized (this.updateMappingLock)
+            if(null!=userId)
             {
-                if(null!=userId)
-                {
-                    userMappingMapper.updateMappingInfo(userId,externalUserId,followUserId);
-                }else
-                {
-                    userMappingMapper.flushMappingInfo(externalUserId, followUserId);
-                }
-
+                userMappingMapper.updateMappingInfo(userId,externalUserId,followUserId);
+            }else
+            {
+                userMappingMapper.flushMappingInfo(externalUserId, followUserId);
             }
+
         }
+
         return userId;
     }
 }
