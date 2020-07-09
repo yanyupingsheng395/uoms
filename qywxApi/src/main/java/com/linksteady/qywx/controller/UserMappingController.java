@@ -36,7 +36,7 @@ public class UserMappingController extends ApiBaseController{
                                   String externalUserId,
                                   String followUserId,
                                   String phoneNum) {
-        String validate=validateLegality(request,signature,timestamp,externalUserId,followUserId,phoneNum);
+        String validate=validateLegality(request,signature,timestamp,externalUserId,followUserId);
         if(StringUtils.isNotEmpty(validate))
         {
             return ResponseBo.error(validate);
