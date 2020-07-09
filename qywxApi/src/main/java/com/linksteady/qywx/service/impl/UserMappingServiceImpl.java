@@ -32,7 +32,14 @@ public class UserMappingServiceImpl implements UserMappingService {
             //更新
             synchronized (this.updateMappingLock)
             {
-                userMappingMapper.updateMappingInfo(userId,externalUserId,followUserId);
+                if(null!=userId)
+                {
+                    userMappingMapper.updateMappingInfo(userId,externalUserId,followUserId);
+                }else
+                {
+                    userMappingMapper.flushMappingInfo(externalUserId, followUserId);
+                }
+
             }
         }
         return userId;
