@@ -19,7 +19,7 @@
     <update id="updateMappingInfo">
          update w_users set
              qywx_user_id=#{externalUserId},
-             qywx_mapping_flag='N',
+             qywx_mapping_flag='Y',
              qywx_mapping_date=now(),
              qywx_follow_user_id=#{followUserId}
         where id=#{userId}
