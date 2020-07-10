@@ -151,7 +151,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
                 lastYearEndDtDay = LocalDate.now().plusYears(-1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             }
         }
-        DecimalFormat df = new DecimalFormat(".##");
+        DecimalFormat df = new DecimalFormat("#.##");
         Map<String, Object> result = Maps.newHashMap();
         //获取周期内的明细列表
         List<String> dateList = DateUtil.getPeriodDate(periodType, startDt, endDt);
@@ -394,7 +394,7 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         String lastYearEnd = String.valueOf(lastYearMap.get("end"));
         KpiInfoVO lastYearKpiInfoVos = getSpAndFpKpiTotal(kpiType, periodType, lastYearStart, lastYearEnd, source,
                 dayCondition, lastYearEndDtDay);
-        DecimalFormat decimalFormat = new DecimalFormat(".##%");
+        DecimalFormat decimalFormat = new DecimalFormat("#.##%");
         // 计算首复购同比指
         if (kpiInfoVos != null && lastYearKpiInfoVos != null) {
             if (kpiInfoVos.getFpKpiVal() != null && lastYearKpiInfoVos.getFpKpiVal() != null) {
