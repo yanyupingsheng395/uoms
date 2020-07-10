@@ -72,7 +72,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         String lastYearEndDtDay = "";
         if(periodType.equalsIgnoreCase(UomsConstants.PERIOD_TYPE_MONTH) || periodType.equalsIgnoreCase(
                 UomsConstants.PERIOD_TYPE_YEAR)) {
-            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")))) {
+            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))) ||
+                    endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy")))) {
                 dayCondition = true;
                 endDtDay = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 lastYearEndDtDay = LocalDate.now().plusYears(-1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -145,7 +146,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         String lastYearEndDtDay = "";
         if(periodType.equalsIgnoreCase(UomsConstants.PERIOD_TYPE_MONTH) || periodType.equalsIgnoreCase(
                 UomsConstants.PERIOD_TYPE_YEAR)) {
-            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")))) {
+            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))) ||
+                    endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy")))) {
                 dayCondition = true;
                 endDtDay = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 lastYearEndDtDay = LocalDate.now().plusYears(-1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -209,13 +211,12 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         Map<String, Object> result = Maps.newHashMap();
         boolean dayCondition = false;
         String endDtDay = "";
-        String lastYearEndDtDay = "";
         if(periodType.equalsIgnoreCase(UomsConstants.PERIOD_TYPE_MONTH) || periodType.equalsIgnoreCase(
                 UomsConstants.PERIOD_TYPE_YEAR)) {
-            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")))) {
+            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))) ||
+                    endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy")))) {
                 dayCondition = true;
                 endDtDay = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-                lastYearEndDtDay = LocalDate.now().plusYears(-1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             }
         }
         List<String> dateList = DateUtil.getPeriodDate(periodType, startDt, endDt);
@@ -258,7 +259,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         String lastYearEndDtDay = "";
         if(periodType.equalsIgnoreCase(UomsConstants.PERIOD_TYPE_MONTH) || periodType.equalsIgnoreCase(
                 UomsConstants.PERIOD_TYPE_YEAR)) {
-            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")))) {
+            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))) ||
+                    endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy")))) {
                 dayCondition = true;
                 endDtDay = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 lastYearEndDtDay = LocalDate.now().plusYears(-1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -373,7 +375,8 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         String lastYearEndDtDay = "";
         if(periodType.equalsIgnoreCase(UomsConstants.PERIOD_TYPE_MONTH) || periodType.equalsIgnoreCase(
                 UomsConstants.PERIOD_TYPE_YEAR)) {
-            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")))) {
+            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))) ||
+                    endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy")))) {
                 dayCondition = true;
                 endDtDay = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 lastYearEndDtDay = LocalDate.now().plusYears(-1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -535,7 +538,9 @@ public class UserOperatorServiceImpl implements UserOperatorService {
         String endDtDay = "";
         if(periodType.equalsIgnoreCase(UomsConstants.PERIOD_TYPE_MONTH) || periodType.equalsIgnoreCase(
                 UomsConstants.PERIOD_TYPE_YEAR)) {
-            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")))) {
+
+            if(endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))) ||
+                    endDt.equalsIgnoreCase(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy")))) {
                 dayCondition = true;
                 endDtDay = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             }
