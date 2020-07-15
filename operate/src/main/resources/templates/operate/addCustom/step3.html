@@ -7,7 +7,7 @@
         </div>
         <div style="border: solid 1px #ebebeb;padding: 8px; float: left;width: 520px;" id="config-box">
             <div class="example-box">
-                <label class="control-label text-right">渠道名称：</label>
+                <label class="control-label text-right">&#12288;渠道名称：</label>
                 <label class="lyear-radio radio-inline radio-primary">
                     <input type="radio" name="isProductName" value="1"><span>是</span>
                 </label>
@@ -18,7 +18,7 @@
                 <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${渠道名称}" class="copy_btn">复制</a>
             </div>
             <div class="example-box">
-                <label class="control-label text-right">商品名称：</label>
+                <label class="control-label text-right">&#12288;商品名称：</label>
                 <label class="lyear-radio radio-inline radio-primary">
                     <input type="radio" name="isProductName" value="1"><span>是</span>
                 </label>
@@ -29,7 +29,7 @@
                 <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
             </div>
             <div class="example-box">
-                <label class="control-label text-right">补贴名称：</label>
+                <label class="control-label text-right">&#12288;补贴名称：</label>
                 <label class="lyear-radio radio-inline radio-primary">
                     <input type="radio" name="isCouponName" value="1"><span>是</span>
                 </label>
@@ -40,18 +40,24 @@
                 <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${补贴名称}" class="copy_btn">复制</a>
 <!--                <a style="color:#409eff;text-decoration: underline;cursor: pointer;font-size: 12px;">去配置</a>-->
             </div>
+
+            <div class="example-box">
+                <label class="control-label text-right">二维码短链：</label>
+                <label class="lyear-radio radio-inline radio-primary">
+                    <input type="radio" name="isQrShortUrl" value="1"><span>是</span>
+                </label>
+                <label class="lyear-radio radio-inline radio-primary">
+                    <input type="radio" name="isQrShortUrl" value="0"><span>否</span>
+                </label>
+                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${二维码短链} 粘贴到期望位置；</span>
+                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${二维码短链}" class="copy_btn">复制</a>
+            </div>
         </div>
         <div style="clear: both;" class="clearfix">
             <div class="row m-t-15">
                 <div class="col-md-12 form-inline">
                     <h5>二维码的短链配置</h5>
-                    <div>
-                        二维码长链：<input type="text" class="form-control" name="longUrl" id="longUrl" style="width: 300px;">
-                        <button style="margin-left:6px;margin-top: 30px;position:absolute;" class="btn btn-secondary btn-sm" onclick="getShortUrl()"><i class="fa fa-long-arrow-down"></i></button>
-                    </div>
-                    <div class="m-t-10">
-                        二维码短链：<input type="text" class="form-control" style="width: 300px;" id="shortUrl"/>
-                    </div>
+                    <button id='selectQrCodeBtn' class="btn btn-success btn-sm" onclick="selectQrCode()"><i class="fa fa-square"></i>&nbsp;选择二维码</button>
                 </div>
             </div>
         </div>
@@ -59,8 +65,10 @@
             <div class="col-md-12 control-label" style="margin-top:10px;text-align: left;margin-left: 15px;padding-left: 5px;">
                 <ul>
                     <li class="smsvariable">个性化变量说明：</li>
-                    <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;${补贴名称}：系统会个性化填充券名称，不同用户看到不同优惠券；</li>
-                    <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;${商品名称}：商品短名称，占<font color="red">10</font>个字符；例如:100支轻奢贡缎件套</li>
+                    <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;${渠道名称}：系统会根据用户购买渠道进行对应的选择；</li>
+                    <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;${商品名称}：系统会选择用户最近购买的商品名称；</li>
+                    <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;${补贴名称}：系统会个性化填充补贴名称，不同用户看到不同补贴；</li>
+                    <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;${二维码短链}：系统会选择已配置的二维码短链；</li>
                 </ul>
             </div>
         </div>
@@ -97,6 +105,29 @@
             <a class="btn btn-secondary" href="/page/addCustom">
                 <i class="fa fa-backward"></i> 返回
             </a>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="selectQrModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog" style="width: 70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">选择二维码</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <table class="table table-hover table-bordered" id="qrDataTable"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save btn-sm" onclick="setQrCode()">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
         </div>
     </div>
 </div>

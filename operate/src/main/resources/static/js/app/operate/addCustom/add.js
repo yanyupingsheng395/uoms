@@ -8,7 +8,6 @@ let custom_step = steps({
     center: true,
     dataOrder: ["title", "line", "description"]
 });
-
 // 筛选用户
 function selectUser(flag) {
     if(flag) {
@@ -82,6 +81,10 @@ function statTmpContentNum() {
             y = y - '${渠道名称}'.length + parseInt(CHANNEL_LEN);
             m = m - '${渠道名称}'.length;
         }
+        if(smsContent.indexOf('${二维码短链}') > -1) {
+            y = y - '${二维码短链}'.length + parseInt(CHANNEL_LEN);
+            m = m - '${二维码短链}'.length;
+        }
         total_num = y;
         var code = "";
         code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
@@ -116,4 +119,84 @@ function getQrData() {
         });
         $("#qrData").html(code);
     });
+}
+
+// 获取二维码数据
+function selectQrCode() {
+    var settings = {
+        url: "/contactWay/getList",
+        cache: false,
+        clickToSelect:true,
+        pagination: true,
+        singleSelect: true,
+        sidePagination: "server",
+        pageNumber: 1,            //初始化加载第一页，默认第一页
+        pageSize: 10,            //每页的记录行数（*）
+        pageList: [10, 25, 50, 100],
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,  ////页面大小
+                pageNum: (params.offset / params.limit) + 1,
+                param: {qstate:'', qremark:''}
+            };
+        },
+        columns: [
+            {
+                checkbox:true
+            },{
+            field: 'qrCode',
+            align: "center",
+            title: '二维码样式',
+            formatter: function (value, row, index) {
+                return "<img src='"+value+"' width='100' height='100'>";
+            }
+        },{
+            field: 'usersList',
+            align: "center",
+            title: '可联系成员数（人）',
+            formatter: function (value, row, index) {
+                if(value !== '') {
+                    var tmp = value.split(",");
+                    return tmp.length;
+                }
+            }
+        }, {
+            field: 'type',
+            align: "center",
+            title: '二维码类型',
+            formatter: function (value, row, index) {
+                if(value === '1') {
+                    return '单人';
+                }
+                if(value === '2') {
+                    return '多人';
+                }
+            }
+        }, {
+            field: 'scene',
+            align: "center",
+            title: '渠道'
+        }, {
+            field: 'remark',
+            align: "center",
+            title: '备注'
+        },{
+            field: 'createDt',
+            align: "center",
+            title: '创建人'
+        }]
+    };
+    $("#qrDataTable").bootstrapTable(settings);
+    $("#selectQrModal").modal('show');
+}
+
+function setQrCode() {
+    var selected = $("#qrDataTable").bootstrapTable('getSelections');
+    if(selected.length === 0) {
+        $MB.n_warning("请选择二维码");
+        return;
+    }
+    $("#selectQrModal").modal('hide');
+    $("#selectQrCodeBtn").attr("class", "btn btn-info btn-sm");
+    $("#selectQrCodeBtn").html('<i class="fa fa-check-square-o"></i>&nbsp;选择二维码');
 }

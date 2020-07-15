@@ -43,7 +43,7 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
 
     public QywxContactWay()
     {
-
+        
     }
 
     public QywxContactWay(Long id,String qrCode,String type,String remark,String state,String userList,String configId)
