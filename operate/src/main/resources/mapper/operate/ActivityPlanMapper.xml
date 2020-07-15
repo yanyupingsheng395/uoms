@@ -155,7 +155,7 @@
       SELECT SMS_CONTENT,sms_billing_count, CNT, LENGTH(SMS_CONTENT) SMSLENGTH
       FROM (
              select
-                   UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,UO_OP_ACTIVITY_DETAIL.sms_billing_count
+                   UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,UO_OP_ACTIVITY_DETAIL.sms_billing_count,
                    COUNT(UO_OP_ACTIVITY_DETAIL.activity_detail_id) CNT
               from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
                    where
