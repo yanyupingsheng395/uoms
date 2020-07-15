@@ -2,6 +2,7 @@ package com.linksteady.operate.vo;
 
 import com.linksteady.operate.config.PushConfig;
 import lombok.Synchronized;
+import org.springframework.util.StringUtils;
 
 /**
  * 每日运营渠道信息配置的VO
@@ -40,9 +41,10 @@ public class SourceConfigVO {
                 .setPriceLen(pushConfig.getPriceLen())
                 .setCouponNameLen(pushConfig.getCouponNameLen())
                 .setProfitLen(pushConfig.getProfitLen())
-                .setSmsLengthLimit(pushConfig.getSmsLengthLimit())
                 .setSignature(pushConfig.getSignature())
                 .setUnsubscribe(pushConfig.getUnsubscribe())
+                .setSignatureLen(StringUtils.isEmpty(pushConfig.getSignature())?0:pushConfig.getSignature().length())
+                .setUnsubscribeLen(StringUtils.isEmpty(pushConfig.getUnsubscribe())?0:pushConfig.getUnsubscribe().length())
         ;
     }
 
@@ -107,11 +109,6 @@ public class SourceConfigVO {
     private Integer prodNameLen;
 
     /**
-     * 文案总长度
-     */
-    private Integer smsLengthLimit;
-
-    /**
      * 价格长度
      */
     private Integer priceLen;
@@ -122,14 +119,14 @@ public class SourceConfigVO {
     private Integer profitLen;
 
     /**
-     * 是否包含签名信息
+     * 实际发送短信时是否需要签名
      * @param sourceName
      * @return
      */
     private String signatureFlag;
 
     /**
-     * 是否包含退订信息
+     * 实际发送短信时是否需要退订信息
      * @param sourceName
      * @return
      */
@@ -149,6 +146,19 @@ public class SourceConfigVO {
      */
     private String unsubscribe;
 
+    /**
+     * 签名信息长度
+     * @param sourceName
+     * @return
+     */
+    private Integer signatureLen;
+
+    /**
+     * 退订信息长度
+     * @param sourceName
+     * @return
+     */
+    private Integer unsubscribeLen;
 
     private SourceConfigVO setSourceName(String sourceName) {
         this.sourceName = sourceName;
@@ -210,11 +220,6 @@ public class SourceConfigVO {
         return this;
     }
 
-    private SourceConfigVO setSmsLengthLimit(Integer smsLengthLimit) {
-        this.smsLengthLimit = smsLengthLimit;
-        return this;
-    }
-
     private SourceConfigVO setPriceLen(Integer priceLen) {
         this.priceLen = priceLen;
         return this;
@@ -244,6 +249,16 @@ public class SourceConfigVO {
         this.unsubscribe = unsubscribe;
         return this;
     }
+
+    private SourceConfigVO setSignatureLen(Integer signatureLen) {
+        this.signatureLen = signatureLen;
+        return this;
+    }
+    private SourceConfigVO setUnsubscribeLen(Integer unsubscribeLen) {
+        this.unsubscribeLen = unsubscribeLen;
+        return this;
+    }
+
 
     public String getSourceName() {
         return sourceName;
@@ -293,10 +308,6 @@ public class SourceConfigVO {
         return prodNameLen;
     }
 
-    public Integer getSmsLengthLimit() {
-        return smsLengthLimit;
-    }
-
     public Integer getPriceLen() {
         return priceLen;
     }
@@ -320,4 +331,14 @@ public class SourceConfigVO {
     public String getUnsubscribe() {
         return unsubscribe;
     }
+
+    public Integer getSignatureLen() {
+        return signatureLen;
+    }
+
+    public Integer getUnsubscribeLen() {
+        return unsubscribeLen;
+    }
+
+
 }

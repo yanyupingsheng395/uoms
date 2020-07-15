@@ -137,4 +137,9 @@ public class DailyDetail {
 
     private String groupId;
 
+    /**
+     * 短信文案计费条数
+     */
+    private Integer smsBillingCount;
+
 }

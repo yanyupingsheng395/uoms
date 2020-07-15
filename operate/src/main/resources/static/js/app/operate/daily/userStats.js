@@ -266,6 +266,10 @@ function getUserStrategyList(pheadId) {
                 }
             },
             {
+                field: 'smsBillingCount',
+                title: '文案计费条数'
+            },
+            {
                 title: '成长洞察',
                 width: 80,
                 formatter: function (value, row, idx) {

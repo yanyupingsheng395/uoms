@@ -39,6 +39,10 @@
             font-size: 12px;
             padding-bottom: 2px;
         }
+        .wordstatis {
+            font-size: 12px;
+            padding-top: 2px;
+        }
     </style>
 </head>
 <body class="gray-bg">
@@ -201,11 +205,15 @@
 <div th:include="operate/dailyconfig/dc_coupon"></div>
 <script>
     let couponNameLen = [[${sourceConfig.couponNameLen}]];
-    let smsLengthLimit = [[${sourceConfig.smsLengthLimit}]];
     let shortUrlLen = [[${sourceConfig.shortUrlLen}]];
     let prodNameLen = [[${sourceConfig.prodNameLen}]];
     let prodUrlEnabled='[[${sourceConfig.prodUrlEnabled}]]';
     let couponSendType ='[[${sourceConfig.couponSendType}]]';
+
+    let signatureLen = [[${sourceConfig.signatureLen}]];
+    let unsubscribeLen = [[${sourceConfig.unsubscribeLen}]];
+    let signature='[[${sourceConfig.signature}]]';
+    let unsubscribe='[[${sourceConfig.unsubscribe}]]';
 </script>
 <script data-th-src="@{/js/app/common.js}"></script>
 <script data-th-src="@{/js/common/bootstrap.min.js}"></script>

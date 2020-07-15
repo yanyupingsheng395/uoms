@@ -13,7 +13,6 @@ public enum  ConfigEnum {
     couponSendType("op.source.couponSendType"),
     productDetailUrl("op.push.productDetailUrl"),
 
-    smsLengthLimit("op.push.smsLengthLimit"),
     shortUrlLen("op.push.shortUrlLen"),
     prodNameLen("op.push.prodNameLen"),
     couponNameLen("op.push.couponNameLen"),

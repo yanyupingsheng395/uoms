@@ -57,6 +57,7 @@
         <result property="smsContent" column="SMS_CONTENT" jdbcType="VARCHAR"/>
         <result property="cnt" column="CNT" jdbcType="VARCHAR"/>
         <result property="smsLength" column="SMSLENGTH" jdbcType="VARCHAR"/>
+        <result property="smsBillingCount" column="sms_billing_count" jdbcType="DECIMAL" />
     </resultMap>
 
     <insert id="savePlanList">
@@ -151,10 +152,10 @@
     </select>
 
     <select id="getPlanSmsContentList" resultMap="smsStatisResult">
-      SELECT SMS_CONTENT, CNT, LENGTH(SMS_CONTENT) SMSLENGTH
+      SELECT SMS_CONTENT,sms_billing_count, CNT, LENGTH(SMS_CONTENT) SMSLENGTH
       FROM (
              select
-                   UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
+                   UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,UO_OP_ACTIVITY_DETAIL.sms_billing_count
                    COUNT(UO_OP_ACTIVITY_DETAIL.activity_detail_id) CNT
               from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
                    where
@@ -164,7 +165,7 @@
                     AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
                     AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
                     AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
-              GROUP BY UO_OP_ACTIVITY_DETAIL.SMS_CONTENT
+              GROUP BY UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,UO_OP_ACTIVITY_DETAIL.sms_billing_count
       ) v
       ORDER BY CNT DESC,SMS_CONTENT ASC
       limit #{limit} offset #{offset}

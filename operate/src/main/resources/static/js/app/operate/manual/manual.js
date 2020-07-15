@@ -163,20 +163,7 @@ function beforeSubmit() {
         $MB.n_warning("短信内容不能为空！");
         return false;
     }
-    let valid = true;
-    // 验证短信长度
-    $.ajax({
-        url: '/smsTemplate/validSmsContentLength',
-        data: {smsContent: smsContent},
-        async: false,
-        success: function (r) {
-            valid = r.data;
-        }
-    });
-    if(!valid) {
-        $MB.n_warning("短信长度超出系统限制！");
-        return false;
-    }
+
     let sendType = $("input[name='sendType']:checked").val();
     if(sendType === undefined) {
         $MB.n_warning("请选择短信推送方式！");

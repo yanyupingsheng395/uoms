@@ -80,10 +80,6 @@ public class PushConfig {
         return configService.getValueByName(ConfigEnum.pushMethod.getKeyCode());
     }
 
-    public int getSmsLengthLimit() {
-        return Integer.parseInt(configService.getValueByName(ConfigEnum.smsLengthLimit.getKeyCode()));
-    }
-
     public String getIsTestEnv() {
         return configService.getValueByName(ConfigEnum.isTestEnv.getKeyCode());
     }

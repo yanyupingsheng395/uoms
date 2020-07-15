@@ -14,11 +14,11 @@ import com.linksteady.operate.thread.TransDailyContentThread;
 import com.linksteady.operate.vo.GroupCouponVO;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -310,6 +310,13 @@ public class DailyDetailServiceImpl implements DailyDetailService {
             //实际发送时是否需要退订信息
             String unsubscribeFlag=pushConfig.getSendUnsubscribeFlag();
 
+            //计算文案计费条数
+            int smsLength= (StringUtils.isEmpty(smsContent)?0:smsContent.length())+
+                    (StringUtils.isEmpty(signature)?0:signature.length())+
+                    (StringUtils.isEmpty(unsubscribe)?0:unsubscribe.length());
+
+            int billCount=smsLength<=70?1:(smsLength/67+1);
+
             //需要加上签名
             if(null!=signatureFlag&&"Y".equals(signatureFlag))
             {
@@ -322,11 +329,10 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                 smsContent=smsContent+unsubscribe;
             }
 
-
             dailyDetailTemp.setDailyDetailId(dailyDetail1.getDailyDetailId());
             dailyDetailTemp.setSmsContent(smsContent);
             dailyDetailTemp.setHeadId(dailyDetail1.getHeadId());
-
+            dailyDetailTemp.setSmsBillingCount(billCount);
             targetList.add(dailyDetailTemp);
         }
         return targetList;

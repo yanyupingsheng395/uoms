@@ -52,9 +52,4 @@ public class BlackController extends BaseController {
         return blackService.checkPhone(userPhone);
     }
 
-    @GetMapping("/test")
-    public ResponseBo test() {
-        System.out.println(1/0);
-        return ResponseBo.ok();
-    }
 }

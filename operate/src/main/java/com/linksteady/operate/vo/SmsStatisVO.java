@@ -10,4 +10,6 @@ public class SmsStatisVO {
     private int cnt;
 
     private int smsLength;
+
+    private int smsBillingCount;
 }

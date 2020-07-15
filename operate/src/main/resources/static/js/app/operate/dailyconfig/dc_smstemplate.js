@@ -94,10 +94,9 @@ function add() {
     $("#smsTemplateModal").modal('hide');
     $('#smsCode').val("");
     $('#smsContent').val("");
-    $('#smsName').val("");
-    $('#remark').val("");
-    $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
-    $("#fontNum").val('');
+    $("#snum1").text("0");
+    $("#snum2").text("0");
+    $("#snum3").text("0");
     $("#myLargeModalLabel3").text("新增文案");
     $("#btn_save_sms").attr("name", "save");
     $('#add_modal').modal('show');
@@ -144,7 +143,6 @@ function setUserGroupChecked() {
  * @param textArea
  * @param numItem
  */
-let total_num;
 function statInputNum() {
     $("#smsContent").on('input propertychange', function () {
         let smsContent = $('#smsContent').val();
@@ -167,10 +165,20 @@ function statInputNum() {
             y = y - '${商品详情页短链}'.length + shortUrlLen;
             m = m - '${商品详情页短链}'.length;
         }
-        total_num = y;
-        var code = "";
-        code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + smsLengthLimit + ":文案总字符数";
-        $("#word").text(code);
+        let total_num = y+signatureLen+unsubscribeLen;
+        let snum3=0;
+        $("#snum1").text(m);
+        $("#snum2").text(total_num);
+
+        if(total_num<=70)
+        {
+            snum3=1;
+        }else
+        {
+            snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
+        }
+        //计算文案的条数
+        $("#snum3").text(snum3);
     });
 }
 
@@ -198,10 +206,20 @@ function initGetInputNum() {
         y = y - '${商品详情页短链}'.length + shortUrlLen;
         m = m - '${商品详情页短链}'.length;
     }
-    total_num = y;
-    var code = "";
-    code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + smsLengthLimit + ":文案总字符数";
-    $("#word").text(code);
+    let total_num = y+signatureLen+unsubscribeLen;
+    let snum3=0;
+    $("#snum1").text(m);
+    $("#snum2").text(total_num);
+
+    if(total_num<=70)
+    {
+        snum3=1;
+    }else
+    {
+        snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
+    }
+    //计算文案的条数
+    $("#snum3").text(snum3);
 }
 
 
@@ -501,10 +519,6 @@ function validate() {
     if(!validateTemplate()) {
         return false;
     }
-    if(total_num > smsLengthLimit) {
-        $MB.n_warning('文案字数超出最大限制！');
-        return false;
-    }
     return true;
 }
 
@@ -517,7 +531,7 @@ function smsContentValid() {
         $('#smsContentInput').removeClass('error');
         $("#smsContentInput-error").remove();
     }
-    var content = $('#smsContent').val() === "" ? "请输入短信内容": $('#smsContent').val();
+    var content = $('#smsContent').val() === "" ? "请输入短信内容": signature+$('#smsContent').val()+unsubscribe;
     $("#article").html('').append(content);
 }
 
@@ -525,9 +539,10 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $('#smsCode').val("");
     $('#smsContent').val("");
     $('#smsContentInput').val("");
-    $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
-    $("#fontNum").val('');
-    $("#remark").val('');
+    $("#snum1").text("0");
+    $("#snum2").text("0");
+    $("#snum3").text("0");
+
     $("input[name='isCouponUrl']").removeAttr("disabled");
     $("input[name='isCouponUrl']:checked").removeAttr("checked");
     $("input[name='isCouponName']").removeAttr("disabled");
@@ -610,13 +625,13 @@ function modifySmsTemplate(smsCode)
             var data = resp.data;
             $("#smsCode").val(data.smsCode);
             $("#smsContent").val(data.smsContent);
-            $("#article").html(data.smsContent);
+            $("#article").html('').append(signature+data.smsContent+unsubscribe);
             $("#smsContentInput").val(data.smsContent);
             $("input[name='isCouponUrl']:radio[value='" + data.isCouponUrl + "']").prop("checked", true);
             $("input[name='isCouponName']:radio[value='" + data.isCouponName + "']").prop("checked", true);
             $("input[name='isProductName']:radio[value='" + data.isProductName + "']").prop("checked", true);
             $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true);
-            $("#remark").val(data.remark);
+
             $("#myLargeModalLabel3").text("修改文案");
             $("#btn_save_sms").attr("name", "update");
             $("#add_modal").modal('show');

@@ -254,6 +254,7 @@ function getSmsStatisTable(planId) {
         columns: [
             {field: 'smsContent', title: '文案内容'},
             {field: 'smsLength', title: '文案长度'},
+            {field: 'smsBillingCount', title: '单条文案计费条数'},
             {field: 'cnt', title: '发送人数'}
         ],
     });

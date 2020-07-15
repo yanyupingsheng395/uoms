@@ -300,7 +300,6 @@ public class PageController extends BaseController {
     @Log(value = "手工活动推送",location = "用户成长系统")
     @RequestMapping("/manual")
     public String manual(Model model) {
-        model.addAttribute("fontNum", pushConfig.getSmsLengthLimit());
         return "operate/manual/manual";
     }
 
@@ -356,9 +355,8 @@ public class PageController extends BaseController {
         return "operate/qywx/list";
     }
 
-
     /**
-     * 日运营[企业微信]-效果跟踪
+     * 每日运营[企业微信]-效果跟踪
      * @return
      */
     @Log(value = "每日用户运营[企业微信]-任务效果",location = "用户成长系统")
@@ -401,4 +399,14 @@ public class PageController extends BaseController {
     public String addCustomAdd() {
         return "/operate/addCustom/add";
     }
+
+    /**
+     * 渠道活码
+     */
+    @Log(value = "渠道活码",location = "用户成长系统")
+    @RequestMapping("/contactWay/list")
+    public String contactWayList() {
+        return "operate/contactWay/list";
+    }
+
 }

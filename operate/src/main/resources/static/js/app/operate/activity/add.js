@@ -1411,26 +1411,6 @@ function validateTemplate() {
             return false;
         }
     }
-
-    let y = smsContent.length;
-    if(smsContent.indexOf('${商品详情页短链}') > -1) {
-        y = y - '${商品详情页短链}'.length + PROD_URL_LEN;
-    }
-    if(smsContent.indexOf('${商品名称}') > -1) {
-        y = y - '${商品名称}'.length + PROD_NAME_LEN;
-
-    }
-    if(smsContent.indexOf('${商品利益点}') > -1) {
-        y = y - '${商品利益点}'.length + PROFIT_LEN;
-    }
-    if(smsContent.indexOf('${商品最低单价}') > -1) {
-        y = y - '${商品最低单价}'.length + PRICE_LEN;
-    }
-
-    if(y > SMS_LEN_LIMIT) {
-        $MB.n_warning("文案字符数超过允许最大长度！");
-        return false;
-    }
     return true;
 }
 
@@ -1487,7 +1467,7 @@ function closeTemplateCode()
 }
 
 function contextOnChange() {
-    let content = $('#content').val() === "" ? "请输入短信内容": $('#content').val();
+    let content = $('#content').val() === "" ? "请输入短信内容": signature+$('#content').val()+unsubscribe;
     $("#article").html('').append(content);
 }
 
@@ -1504,7 +1484,7 @@ function editTemplate() {
         var data = r.data;
         $( "#code" ).val( data.code );
         $( "#content" ).val( data.content );
-        $("#article").html('').append(data.content);
+        $("#article").html('').append(signature+data.content+unsubscribe);
         $( "input[name='isProdName']:radio[value='" + data.isProdName + "']" ).prop( "checked", true );
         $( "input[name='isProdUrl']:radio[value='" + data.isProdUrl + "']" ).prop( "checked", true );
         $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
@@ -1531,9 +1511,11 @@ function editTemplate() {
  */
 $( "#sms_add_modal" ).on( 'hidden.bs.modal', function () {
     $( "#sms_add_title" ).text( "新增文案" );
-    $( "#code" ).val( "" );
-    $( "#name" ).val( "" );
-    $( "#content" ).val( "" );
+    $( "#code" ).val("");
+    $( "#content" ).val("");
+    $("#snum1").text("0");
+    $("#snum2").text("0");
+    $("#snum3").text("0");
     $( "input[name='isProdName']" ).removeAttr( "checked" );
     $( "input[name='isProdUrl']" ).removeAttr( "checked" );
     $( "input[name='isPrice']" ).removeAttr( "checked" );
@@ -1695,10 +1677,20 @@ function statTmpContentNum() {
             m = m - '${商品利益点}'.length;
         }
 
-        total_num = y;
-        var code = "";
-        code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
-        $("#word").text(code);
+        let total_num = y+signatureLen+unsubscribeLen;
+        let snum3=0;
+        $("#snum1").text(m);
+        $("#snum2").text(total_num);
+
+        if(total_num<=70)
+        {
+            snum3=1;
+        }else
+        {
+            snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
+        }
+        //计算文案的条数
+        $("#snum3").text(snum3);
     });
 }
 
@@ -1723,11 +1715,20 @@ function initGetInputNum() {
         y = y - '${商品利益点}'.length + PROFIT_LEN;
         m = m - '${商品利益点}'.length;
     }
+    let total_num = y+signatureLen+unsubscribeLen;
+    let snum3=0;
+    $("#snum1").text(m);
+    $("#snum2").text(total_num);
 
-    total_num = y;
-    let code = "";
-    code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
-    $("#word").text(code);
+    if(total_num<=70)
+    {
+        snum3=1;
+    }else
+    {
+        snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
+    }
+    //计算文案的条数
+    $("#snum3").text(snum3);
 }
 
 ///////////////////////////////////////////文案相关js结束///////////////////////////////////

@@ -64,6 +64,10 @@
             font-size: 12px;
             padding-bottom: 2px;
         }
+        .wordstatis {
+            font-size: 12px;
+            padding-top: 2px;
+        }
     </style>
 </head>
 
@@ -302,9 +306,13 @@
                                         <label class="control-label">文案内容</label>
                                     </div>
                                     <div>
-                                        <textarea class="form-control" id="content" name="content" style="width:554px;height: 102px;" onchange="contextOnChange()"></textarea>
+                                        <textarea class="form-control" id="content" name="content" style="width:554px;height: 102px;" oninput="contextOnChange()"></textarea>
                                         <input type="hidden" id="smsContentInput" name="smsContentInput"/>
-                                        <span class="wordwrap"><var id="word"></var></span>
+                                        <div class="wordstatis">
+                                            长度估算：当前内容字数<span id="snum1" style="color:rgb(255, 152, 0);"></span>
+                                            ,签名+填充变量+退订后总字数<span id="snum2" style="color:rgb(255, 152, 0);"></span>
+                                            ,按照<span id="snum3" style="color:rgb(255, 0, 0);font-size: 14px;font-weight: bold"></span>条消息发送并计费。本估算依变量的最大占用长度估算，与实际会有偏差。
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -324,15 +332,17 @@
                         <div class="col-md-12 control-label" style="text-align: left;margin-left: 15px;padding-left: 5px;">
                             <ol class="list-inline">文案编写说明：</ol>
                             <ol style="padding-inline-start: 20px">
-                                <li class="smscomments">1.一条文案通常允许的总字符数为[[${sourceConfig.smsLengthLimit}]]字，以Y表示；字数超过Y时，文案会被分割成2条推送给用户，体验较差、2倍成本；</li>
-                                <li class="smscomments">2.个性化推送文案中，包括运营者编写的内容的长度，字符数以N表示；还包括系统填充的变量占用的长度，字符数以M表示；Y=N+M；</li>
+                                <li class="smscomments">1.文案字数=运营者编写内容的字数+系统填充的变量占用的长度+签名长度+退订信息长度；</li>
+                                <li class="smscomments">2.计费规则：文案字数<=70个字数，按照70个字数一条计算；文案字数>70个字数，即为长信息，按照67个字数记为一条；</li>
 
-                                <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度情况如下：</li>
+                                <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度、签名长度、退订信息长度情况如下：</li>
                                 <ul>
                                     <li class="smsvariable">&nbsp;&nbsp;${商品名称}：商品短名称，占<font color="red">[[${sourceConfig.prodNameLen}]]</font>个字符；例如:[[${sourceConfig.prodName}]]</li>
                                     <li id="produrlComments" class="smsvariable">&nbsp;&nbsp;${商品详情页短链}：商品购买详情页短链接，占<font color="red">[[${sourceConfig.shortUrlLen}]]</font>个字符；例如:[[${sourceConfig.url}]]</li>
                                     <li class="smsvariable">&nbsp;&nbsp;${商品利益点}：商品利益点，占<font color="red">[[${sourceConfig.profitLen}]]</font>个字符；例如:[[${sourceConfig.profit}]]</li>
                                     <li class="smsvariable">&nbsp;&nbsp;${商品最低单价}：商品最低单价，占<font color="red">[[${sourceConfig.priceLen}]]</font>个字符；例如:[[${sourceConfig.price}]]</li>
+                                    <li class="smsvariable">&nbsp;&nbsp;签名：[[${sourceConfig.signature}]]，占<font color="red">[[${sourceConfig.signatureLen}]]</font>个字符；</li>
+                                    <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${sourceConfig.unsubscribe}]]，占<font color="red">[[${sourceConfig.unsubscribeLen}]]</font>个字符；
                                 </ul>
 
                                 <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${sourceConfig.signature}]]</li>
@@ -542,7 +552,6 @@
     const PROFIT_LEN = [[${sourceConfig.profitLen}]];
     const PROD_URL_LEN = [[${sourceConfig.shortUrlLen}]];
     const PRICE_LEN = [[${sourceConfig.priceLen}]];
-    const SMS_LEN_LIMIT = [[${sourceConfig.smsLengthLimit}]];
     const prodUrlEnabled='[[${sourceConfig.prodUrlEnabled}]]';
 
     const preheatStatus = "[[${preheatStatus}]]";

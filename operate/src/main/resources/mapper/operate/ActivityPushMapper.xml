@@ -84,17 +84,18 @@
     </select>
 
     <insert id="insertPushContentTemp">
-        insert into UO_OP_ACTIVITY_CONTENT_TMP(activity_detail_id,plan_id,sms_content) values
+        insert into UO_OP_ACTIVITY_CONTENT_TMP(activity_detail_id,plan_id,sms_content,sms_billing_count) values
         <foreach collection="list" item="item" index="index"
                  separator=",">
             (#{item.activityDetailId},
             #{item.planId},
-            #{item.smsContent})
+            #{item.smsContent},
+            #{item.smsBillingCount})
         </foreach>
     </insert>
 
     <update id="updatePushContentFromTemp">
-        UPDATE UO_OP_ACTIVITY_DETAIL SET SMS_CONTENT=TMP.SMS_CONTENT
+        UPDATE UO_OP_ACTIVITY_DETAIL SET SMS_CONTENT=TMP.SMS_CONTENT,sms_billing_count=TMP.sms_billing_count
         FROM UO_OP_ACTIVITY_CONTENT_TMP AS TMP
         WHERE UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID=TMP.ACTIVITY_DETAIL_ID
         AND UO_OP_ACTIVITY_DETAIL.PLAN_ID=#{planId}::int4

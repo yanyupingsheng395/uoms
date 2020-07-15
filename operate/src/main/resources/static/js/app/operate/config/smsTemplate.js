@@ -172,12 +172,12 @@ function deleteSmsTemplate(smsCode) {
 function add() {
     $('#smsCode').val("");
     $('#smsContent').val("");
-    $('#remark').val("");
     $("input[name='isCoupon']:radio").removeAttr("checked").removeAttr("disabled");
     $("input[name='isProductName']:radio").removeAttr("checked").removeAttr("disabled");
     $("input[name='isProductUrl']:radio").removeAttr("checked").removeAttr("disabled");
-    $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
-    $("#fontNum").val('');
+    $("#snum1").text("0");
+    $("#snum2").text("0");
+    $("#snum3").text("0");
     $("#myLargeModalLabel3").text("新增文案");
     $("#btn_save_sms").attr("name", "save");
     $('#add_modal').modal('show');
@@ -236,10 +236,6 @@ function setDisabled() {
 // 表单验证
 function validate() {
     if(!validateTemplate()) {
-        return false;
-    }
-    if(total_num > smsLengthLimit) {
-        $MB.n_warning('文案字数超出最大限制！');
         return false;
     }
     return true;
@@ -380,7 +376,7 @@ function smsContentValid() {
         $('#smsContentInput').removeClass('error');
         $("#smsContentInput-error").remove();
     }
-    let content = $('#smsContent').val() === "" ? "请输入短信内容": $('#smsContent').val();
+    let content = $('#smsContent').val() === "" ? "请输入短信内容": signature+$('#smsContent').val()+unsubscribe;
     $("#article").html('').append(content);
 }
 
@@ -388,9 +384,9 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $('#smsCode').val("");
     $('#smsContent').val("");
     $('#smsContentInput').val("");
-    $("#word").text("0:编写内容字符数 / 0:填充变量最大字符数 / "+smsLengthLimit+":文案总字符数");
-    $("#fontNum").val('');
-    $("#remark").val('');
+    $("#snum1").text("0");
+    $("#snum2").text("0");
+    $("#snum3").text("0");
     $("#smsTemplateAddForm").validate().resetForm();
 
     $("input[name='isCouponUrl']").removeAttr("disabled");
@@ -407,7 +403,7 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $('#isProductUrl-error').hide();
     $('#isProductName-error').hide();
 
-    var content = "请输入短信内容";
+    let content = "请输入短信内容";
     $("#article").html('').append(content);
 });
 
@@ -438,11 +434,10 @@ $("#btn_edit").click(function () {
                 $("input[name='isCouponName']:radio[value='" + data.isCouponName + "']").prop("checked", true);
                 $("input[name='isProductName']:radio[value='" + data.isProductName + "']").prop("checked", true);
                 $("input[name='isProductUrl']:radio[value='" + data.isProductUrl + "']").prop("checked", true);
-                $("#remark").val(data.remark);
                 $("#myLargeModalLabel3").text("修改文案");
                 $("#btn_save_sms").attr("name", "update");
                 $("#add_modal").modal('show');
-                $("#article").html('').append(data.smsContent);
+                $("#article").html('').append(signature+data.smsContent+unsubscribe);
                 initGetInputNum();
             }else {
                 $MB.n_danger(resp.msg);
@@ -458,7 +453,7 @@ function initGetInputNum() {
     let smsContent = $('#smsContent').val();
     let y = smsContent.length;
     let m = smsContent.length;
-    let n = smsContent.length;
+
     if(smsContent.indexOf('${补贴短链}') > -1) {
         y = y - '${补贴短链}'.length + shortUrlLen;
         m = m - '${补贴短链}'.length;
@@ -475,10 +470,21 @@ function initGetInputNum() {
         y = y - '${商品详情页短链}'.length + shortUrlLen;
         m = m - '${商品详情页短链}'.length;
     }
-    total_num = y;
-    var code = "";
-    code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + smsLengthLimit + ":文案总字符数";
-    $("#word").text(code);
+
+    let total_num = y+signatureLen+unsubscribeLen;
+    let snum3=0;
+    $("#snum1").text(m);
+    $("#snum2").text(total_num);
+
+    if(total_num<=70)
+    {
+        snum3=1;
+    }else
+    {
+        snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
+    }
+    //计算文案的条数
+    $("#snum3").text(snum3);
 }
 
 
@@ -487,7 +493,6 @@ function initGetInputNum() {
  * @param textArea
  * @param numItem
  */
-let total_num;
 function statInputNum() {
     $("#smsContent").on('input propertychange', function () {
         let smsContent = $('#smsContent').val();
@@ -511,10 +516,20 @@ function statInputNum() {
             y = y - '${商品详情页短链}'.length + shortUrlLen;
             m = m - '${商品详情页短链}'.length;
         }
-        total_num = y;
-        let code = "";
-        code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + smsLengthLimit + ":文案总字符数";
-        $("#word").text(code);
+        let total_num = y+signatureLen+unsubscribeLen;
+        let snum3=0;
+        $("#snum1").text(m);
+        $("#snum2").text(total_num);
+
+        if(total_num<=70)
+        {
+            snum3=1;
+        }else
+        {
+            snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
+        }
+        //计算文案的条数
+        $("#snum3").text(snum3);
     });
 }
 

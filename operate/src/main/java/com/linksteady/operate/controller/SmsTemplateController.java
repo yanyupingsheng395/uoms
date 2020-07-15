@@ -31,9 +31,6 @@ public class SmsTemplateController extends BaseController {
     SmsTemplateService smsTemplateService;
 
     @Autowired
-    private PushConfig pushConfig;
-
-    @Autowired
     RedisMessageServiceImpl redisMessageService;
 
 
@@ -126,7 +123,6 @@ public class SmsTemplateController extends BaseController {
     @RequestMapping("/testSend")
     public ResponseBo testSend(String phoneNum, String smsCode) {
         List<String> phoneNumList=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(phoneNum);
-
         String smsContent=smsTemplateService.getSmsContent(smsCode,"SEND");
         try {
             for(String num:phoneNumList)
@@ -151,11 +147,6 @@ public class SmsTemplateController extends BaseController {
         //todo 需要在服务端进行再次校验
         smsTemplateService.update(smsTemplate);
         return ResponseBo.ok();
-    }
-
-    @GetMapping("/validSmsContentLength")
-    public ResponseBo validSmsContentLength(@RequestParam("smsContent") String smsContent) {
-        return ResponseBo.okWithData(null, smsContent.length() <= pushConfig.getSmsLengthLimit());
     }
 
     /**

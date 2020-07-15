@@ -235,27 +235,10 @@ public class DailyTaskController {
             return "文案内容为空，合计：" + totalSize + "条，内容为空：" + nullContentSize + "条";
         }
 
-        //不管情况如何，这个长度都是 70-签名-退订信息的长度
-        int smsLength=pushConfig.getSmsLengthLimit();
-        //如果实际发送时需要签名，则将签名的长度加回来
-        if("Y".equalsIgnoreCase(pushConfig.getSendSignatureFlag())) {
-            smsLength = smsLength + (pushConfig.getSignature() == null ? 0 : pushConfig.getSignature().length());
-        }
-        //如果实际发送时需要退订信息，则将退订信息的长度加回来
-        if("Y".equalsIgnoreCase(pushConfig.getSendUnsubscribeFlag())) {
-            smsLength = smsLength + (pushConfig.getUnsubscribe() == null ? 0 : pushConfig.getUnsubscribe().length());
-            log.info("不加签名后的长度：" + smsLength);
-        }
-        // 短信长度超出限制
-        int finalSmsLength = smsLength;
-        List<String> lengthIds = smsContentList.stream().filter(x -> String.valueOf(x.get("content")).length() > finalSmsLength)
-                .map(y -> String.valueOf(y.get("id"))).collect(Collectors.toList());
         // 短信含未被替换的模板变量
         List<String> invalidIds = smsContentList.stream().filter(x -> String.valueOf(x.get("content")).contains("$"))
                 .map(y -> String.valueOf(y.get("id"))).collect(Collectors.toList());
-        if (0 != lengthIds.size()) {
-            return "文案长度超出限制，合计：" + totalSize + "条，不符合规范：" + lengthIds.size() + "条";
-        }
+
         if (0 != invalidIds.size()) {
             return "文案含未不符合规范的字符，合计：" + totalSize + "条，不符合规范：" + invalidIds.size() + "条";
         }

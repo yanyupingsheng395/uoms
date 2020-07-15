@@ -322,10 +322,8 @@ public class QywxDailyController {
         //绑定的corpID
         String corpId="ww372de12b2d0cdf17";
 
-        String textContent="";
-
         //获取要推送的数据
-        //List<Map<String,String>> result=qywxDailyDetailService.getTestPushData();
+//        List<Map<String,String>> result=qywxDailyDetailService.getTestPushData();
 
         //构造推送参数
         JSONObject param=new JSONObject();

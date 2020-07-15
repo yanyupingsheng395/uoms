@@ -31,6 +31,7 @@
         <result column="COUPON_URL" jdbcType="VARCHAR" property="couponUrl"></result>
         <result column="IS_COUPON" jdbcType="DECIMAL" property="isCoupon"></result>
         <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
+        <result column="SMS_BILLING_COUNT" jdbcType="DECIMAL" property="smsBillingCount"></result>
     </resultMap>
 
     <resultMap id="effectResult" type="com.linksteady.operate.domain.DailyDetail">
@@ -83,7 +84,8 @@
                ORDER_PERIOD,
                COUPON_MIN,
                COUPON_DENO,
-               SMS_CONTENT
+               SMS_CONTENT,
+               SMS_BILLING_COUNT
         from UO_OP_DAILY_DETAIL where head_id = #{headId}::int4
         order by COUPON_DENO,COUPON_MIN, DAILY_DETAIL_ID asc
         limit #{limit} offset #{offset}
@@ -160,7 +162,7 @@
     </select>
 
     <update id="insertPushContentTemp">
-        insert into UO_OP_DAILY_CONTENT_TMP(daily_detail_id,head_id,sms_content,coupon_id,coupon_min,coupon_deno)
+        insert into UO_OP_DAILY_CONTENT_TMP(daily_detail_id,head_id,sms_content,coupon_id,coupon_min,coupon_deno,sms_billing_count)
         values
         <foreach collection="list" item="item" index="index"
                  separator=",">
@@ -169,7 +171,8 @@
             #{item.smsContent},
             #{item.couponId}::numeric,
             #{item.couponMin}::numeric,
-            #{item.couponDeno}::numeric)
+            #{item.couponDeno}::numeric),
+            #{item.smsBillingCount}
         </foreach>
     </update>
 
@@ -178,8 +181,8 @@
     </delete>
 
     <update id="updatePushContentFromTemp">
-        update UO_OP_DAILY_DETAIL set (sms_content,coupon_id,coupon_min,coupon_deno) =
-            (select sms_content,coupon_id,coupon_min,coupon_deno from UO_OP_DAILY_CONTENT_TMP where
+        update UO_OP_DAILY_DETAIL set (sms_content,coupon_id,coupon_min,coupon_deno,sms_billing_count) =
+            (select sms_content,coupon_id,coupon_min,coupon_deno,sms_billing_count from UO_OP_DAILY_CONTENT_TMP where
             UO_OP_DAILY_CONTENT_TMP.daily_detail_id = UO_OP_DAILY_DETAIL.daily_detail_id
             and UO_OP_DAILY_CONTENT_TMP.head_id=UO_OP_DAILY_DETAIL.head_id)
         where head_id=#{headId}

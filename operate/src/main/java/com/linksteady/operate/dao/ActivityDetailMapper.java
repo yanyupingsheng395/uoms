@@ -24,11 +24,6 @@ public interface ActivityDetailMapper {
     int selectContentNulls(@Param("planId")  Long planId);
 
     /**
-     * 查询出所有文案长度超长的记录的条数
-     */
-    int selectContentLimit(@Param("planId")  Long planId,@Param("limit") int limit);
-
-    /**
      * 查询出所有文案含非法变量的记录的条数
      */
     int selectContentVariable(@Param("planId")  Long planId);

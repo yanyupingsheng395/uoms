@@ -26,6 +26,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -252,6 +253,13 @@ public class ActivityPushServiceImpl implements ActivityPushService {
             //实际推送时是否需要退订信息
             String unsubscribeFlag=pushConfig.getSendUnsubscribeFlag();
 
+            //计算文案计费条数
+            int smsLength= (StringUtils.isEmpty(smsContent)?0:smsContent.length())+
+                    (StringUtils.isEmpty(signature)?0:signature.length())+
+                    (StringUtils.isEmpty(unsubscribe)?0:unsubscribe.length());
+
+            int billCount=smsLength<=70?1:(smsLength/67+1);
+
             //需要加上签名
             if(null!=signatureFlag&&"Y".equals(signatureFlag))
             {
@@ -269,6 +277,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
             activityContentVO.setSmsContent(smsContent);
             activityContentVO.setPlanId(activityDetail.getPlanId());
             activityContentVO.setActivityDetailId(activityDetail.getActivityDetailId());
+            activityContentVO.setSmsBillingCount(billCount);
 
             targetList.add(activityContentVO);
         }
@@ -330,28 +339,6 @@ public class ActivityPushServiceImpl implements ActivityPushService {
             if(validCount>0)
             {
                 throw new LinkSteadyException(validCount+"条文案为空，请核对活动配置！");
-            }
-
-            //计算文案的字数限制 (因为库里存储的长度限制是去掉 签名和 退订信息的)
-            int smsLengthLimit=pushConfig.getSmsLengthLimit();
-            String signature=pushConfig.getSignature();
-            String unsubscribe=pushConfig.getSignature();
-
-             //如果发送时应包含签名信息，则将签名长度加进来
-            if("Y".equals(pushConfig.getSendSignatureFlag()))
-            {
-                smsLengthLimit=smsLengthLimit+(null==signature?0:signature.length());
-            }
-            if("Y".equals(pushConfig.getSendUnsubscribeFlag()))
-            {
-                smsLengthLimit=smsLengthLimit+(null==unsubscribe?0:unsubscribe.length());
-            }
-
-            validCount=activityDetailMapper.selectContentLimit(activityPlan.getPlanId(),smsLengthLimit);
-            //判断文案是否有超字数
-            if(validCount>0)
-            {
-                throw new LinkSteadyException(validCount+"条文案长度超过长度限制，请核对活动配置！");
             }
 
             //判断文案是否存在非法变量

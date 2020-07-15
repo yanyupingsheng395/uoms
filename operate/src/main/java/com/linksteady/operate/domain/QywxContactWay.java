@@ -12,7 +12,7 @@ import java.util.Date;
 @Data
 public class QywxContactWay implements Comparable<QywxContactWay>{
 
-    private Long id;
+    private Long contactWayId;
 
     private String qrCode;
 
@@ -39,16 +39,16 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
 
     private int externalUserNum;
 
-    private String shortUrl="dwz.cn/FJWX8n";
+    private String shortUrl="wz2.in/0K6i6C";
 
     public QywxContactWay()
     {
         
     }
 
-    public QywxContactWay(Long id,String qrCode,String type,String remark,String state,String userList,String configId)
+    public QywxContactWay(Long contactWayId,String qrCode,String type,String remark,String state,String userList,String configId)
     {
-        this.id=id;
+        this.contactWayId=contactWayId;
         this.qrCode=qrCode;
         this.type=type;
         this.remark=remark;
@@ -60,6 +60,6 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
 
     @Override
     public int compareTo(QywxContactWay o) {
-        return (int)(this.getCreateDt().getTime()-o.getCreateDt().getTime());
+        return (int)(o.getCreateDt().getTime()-this.getCreateDt().getTime());
     }
 }

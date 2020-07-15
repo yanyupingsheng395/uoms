@@ -10,4 +10,6 @@ public class ActivityContentVO {
     private Long planId;
 
     private String smsContent;
+
+    private Integer smsBillingCount;
 }
