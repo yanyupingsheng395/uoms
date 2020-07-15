@@ -42,7 +42,7 @@ function initTable() {
             title: '短链接',
             align: 'center',
             formatter: function (value, row, indx) {
-               return "<a href=http://'"+value+"' target='_blank'>"+value+"</a>";
+               return "<a href=http://"+value+" target='_blank'>"+value+"</a>";
             }
         },  {
             field: 'usersList',
