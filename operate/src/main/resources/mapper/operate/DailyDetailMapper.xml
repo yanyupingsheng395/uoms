@@ -171,8 +171,8 @@
             #{item.smsContent},
             #{item.couponId}::numeric,
             #{item.couponMin}::numeric,
-            #{item.couponDeno}::numeric),
-            #{item.smsBillingCount}
+            #{item.couponDeno}::numeric,
+            #{item.smsBillingCount})
         </foreach>
     </update>
 
