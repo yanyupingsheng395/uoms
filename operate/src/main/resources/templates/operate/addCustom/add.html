@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
+    <title>用户成长系统</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/steps/steps.css}"/>
+    <link rel="stylesheet" data-th-href="@{/plugins/ion-rangeslider/ion.rangeSlider.min.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/loading/css/animate.css}">
+    <link rel="stylesheet" data-th-href="@{/plugins/loading/css/loading.css}">
+    <script data-th-src="@{/plugins/clipboard.min.js}"></script>
+    <style>
+        .step-icon-number {
+            cursor: pointer;
+        }
+
+        .irs--flat .irs-bar {
+            background-color: #33cabb;
+        }
+
+        .irs-single {
+            background-color: #33cabb;
+        }
+
+        .irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before {
+            background-top-color: #33cabb;
+        }
+
+        .irs--flat .irs-from, .irs--flat .irs-to, .irs--flat .irs-single {
+            background-color: #33cabb;
+        }
+
+        .tag {
+            border: none;
+            -moz-border-radius: 2px;
+            -webkit-border-radius: 2px;
+            display: block;
+            float: left;
+            padding: 2px 5px;
+            text-decoration: none;
+            background: #33cabb;
+            color: #fff;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-family: 'Microsoft yahei', Roboto, sans-serif;
+            font-size: 13px;
+            line-height: 18px;
+        }
+        .steps{padding:0 !important;}
+        .toolbar{border:1px solid #ccc;}.text{border:1px solid #ccc;height:400px;}.send{position:absolute;max-width:200px;width:auto;height:auto;background:#fff;border-radius:5px;margin-top:30px;margin-left:20px;padding:10px;font-size:12px;color:#000;word-wrap:break-word;}.send .arrow{position:absolute;top:9px;left:-16px;width:0;height:0;font-size:0;border:solid 8px;border-color:rgb(235,235,235) #fff rgb(235,235,235) rgb(235,235,235);}.msg-panel__context{background:#f5f5f5;}.cm-edit-content-con{background:#f5f5f5;}img{border-radius:5px;}.wx-audio-content{border-radius:5px;}.panel .panel-body{padding:0 !important;}.weui-media-box__title{font-size:15px !important;}.newtitle{font-size:15px !important;}.panel-heading{padding:0;}.steps{padding:0 !important;}.bubble{width:320px;}.demo{margin-bottom:20px;padding-left:50px;position:relative;}.triangle{position:absolute;top:50%;margin-top:-8px;left:42px;display:block;width:0;height:0;overflow:hidden;line-height:0;font-size:0;border-bottom:8px solid #FFF;border-top:8px solid #FFF;border-left:none;border-right:8px solid #409eff;}.demo .article{float:left;color:#FFF;display:inline-block;*display:inline;zoom:1;padding:5px 10px;border:1px solid #409eff;background:#eee;border-radius:5px;background-color:#4D90FE;background-image:-webkit-gradient(linear,left top,left bottom,from(#4D90FE),to(#4787ED));background-image:-webkit-linear-gradient(top,#4D90FE,#4787ED);background-image:-moz-linear-gradient(center top,#4D90FE,#4787ED);background-image:linear-gradient(top,#4D90FE,#4787ED);}.fr{padding-left:0px;padding-right:50px;}.fr .triangle{left:auto;right:42px;border-bottom:8px solid #FFF;border-top:8px solid #FFF;border-right:none;border-left:8px solid #3079ED;}.fr .article{float:right;}
+        .smscomments {
+            font-size: 12px;
+            padding-bottom: 2px;
+        }
+
+        .smsvariable {
+            font-size: 12px;
+            padding-bottom: 2px;
+        }
+
+        .selected_td {
+            background-color: #48b0f7 !important;
+            color:#fff;
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<!-- 公共组件 -->
+<div data-th-include="common/commonCSS"></div>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse" style="padding-bottom: 0;">
+                        <div class="row">
+                            <div class="col-md-3 pull-left">
+                                <h5 class="modal-title" style="margin-left: 0;margin-top:20px;">新建任务</h5>
+                            </div>
+                            <div class="col-md-3 pull-right">
+                                <div id="addStep"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table" id="step1">
+                        <div data-th-include="operate/addCustom/step1"></div>
+                    </div>
+
+                    <div id="step2" class="col-md-12 select-table" style="display: none;">
+                        <div data-th-include="operate/addCustom/step2"></div>
+                    </div>
+
+                    <div id="step3" style="display: none;">
+                        <div class="col-md-12 select-table">
+                            <div data-th-include="operate/addCustom/step3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<div data-th-include="common/commonJS"></div>
+<script data-th-src="@{/plugins/steps/steps.js}"></script>
+<script data-th-src="@{/js/app/operate/addCustom/add.js}"></script>
+<script>
+    var clipboard1 = new ClipboardJS('.copy_btn', {
+        container: document.getElementById('config-box')
+    });
+    clipboard1.on('success', function(e) {
+        $MB.n_success("成功复制到粘贴板！");
+    });
+</script>
+</body>
+</html>

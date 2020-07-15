@@ -385,4 +385,20 @@ public class PageController extends BaseController {
         model.addAttribute("qywxDailyHeader", qywxDailyHeader);
         return "operate/qywx/effect";
     }
+
+    /**
+     *添加外部联系人-列表
+     */
+    @RequestMapping("/addCustom")
+    public String addCustomList() {
+        return "/operate/addCustom/list";
+    }
+
+    /**
+     *添加外部联系人-新增
+     */
+    @RequestMapping("/addCustom/add")
+    public String addCustomAdd() {
+        return "/operate/addCustom/add";
+    }
 }

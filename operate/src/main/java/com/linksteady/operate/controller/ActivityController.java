@@ -77,7 +77,6 @@ public class ActivityController {
 
         List<ActivityHead> dataList = activityHeadService.getDataListOfPage(limit, offset, name, date, status);
         int count = activityHeadService.getDataCount(name);
-
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 

@@ -1,0 +1,39 @@
+<div class="row">
+    <div class="col-md-12 form-inline">
+        <h5>选择添加的二维码</h5>
+        二维码：<select class="form-control" style="width: 200px;" id="qrData">
+        <option value="0">二维码1</option>
+        <option value="1">二维码2</option>
+        <option value="2">二维码3</option>
+    </select>
+    </div>
+</div>
+<div class="row m-t-15">
+    <div class="col-md-12">
+        <h5>选择添加方式类型</h5>
+        <label class="lyear-radio radio-inline radio-primary">
+            <input type="radio" name="sendType" value="0"><span>通过企业微信自动添加好友</span>
+        </label>
+        <label class="lyear-radio radio-inline radio-primary">
+            <input type="radio" name="sendType" value="1"><span>通过短信推送带有二维码的页面</span>
+        </label>
+        <label class="lyear-radio radio-inline radio-primary">
+            <input type="radio" name="sendType" value="2"><span>用户发生购买后短信推送申请</span>
+        </label>
+    </div>
+</div>
+<div class="row m-t-10">
+    <div class="col-md-12 text-right">
+        <div class="btn-group-sm" role="group">
+            <a class="btn btn-secondary" onclick="stepBreak(0)">
+                <i class="fa fa-arrow-left"></i> 上一步
+            </a>
+            <a class="btn btn-secondary" onclick="stepBreak(2)">
+                <i class="fa fa-arrow-right"></i> 下一步
+            </a>
+            <a class="btn btn-secondary" href="/page/addCustom">
+                <i class="fa fa-backward"></i> 返回
+            </a>
+        </div>
+    </div>
+</div>
