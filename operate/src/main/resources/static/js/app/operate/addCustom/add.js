@@ -173,7 +173,7 @@ function selectQrCode() {
                 }
             }
         }, {
-            field: 'scene',
+            field: 'state',
             align: "center",
             title: '渠道'
         }, {

@@ -389,7 +389,7 @@ public class PageController extends BaseController {
      */
     @RequestMapping("/addCustom")
     public String addCustomList() {
-        return "/operate/addCustom/list";
+        return "operate/addCustom/list";
     }
 
     /**
@@ -397,7 +397,7 @@ public class PageController extends BaseController {
      */
     @RequestMapping("/addCustom/add")
     public String addCustomAdd() {
-        return "/operate/addCustom/add";
+        return "operate/addCustom/add";
     }
 
     /**
