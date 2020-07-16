@@ -127,7 +127,7 @@
     <select id="getIntelCouponList" resultMap="BaseResultMap">
         select case when t.COUPON_ID is null then '1' else '0' end coupon_id, COUPON_DENOM, COUPON_THRESHOLD from (
             select t1.COUPON_DENOM, t1.COUPON_THRESHOLD, t2.COUPON_ID
-            from PP_COUPON t1 left join (select * from UO_OP_COUPON where COUPON_SOURCE = '0') t2 on t1.COUPON_THRESHOLD = t2.COUPON_THRESHOLD and t1.COUPON_DENOM = t2.COUPON_DENOM
+            from PP_COUPON t1 left join (select * from UO_OP_COUPON where COUPON_SOURCE = '0' and valid_status = 'Y') t2 on t1.COUPON_THRESHOLD = t2.COUPON_THRESHOLD and t1.COUPON_DENOM = t2.COUPON_DENOM
             where t1.coupon_type = '0'
         ) t order by coupon_id desc
     </select>
