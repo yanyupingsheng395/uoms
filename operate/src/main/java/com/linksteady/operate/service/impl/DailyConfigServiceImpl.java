@@ -73,6 +73,9 @@ public class DailyConfigServiceImpl implements DailyConfigService {
         String whereInfo = " and t4.VALID_END::date < current_date";
         dailyConfigMapper.updateCheckFlagAndRemark(whereInfo, "补贴有效期已过期");
 
+        //验证是否存在未配置优惠券的情况
+        dailyConfigMapper.updateCheckFlagNotConfigCoupon("尚未为群组配置补贴");
+
         //验证是否配置了文案
         whereInfo = " and t1.sms_code is null";
         dailyConfigMapper.updateCheckFlagAndRemark(whereInfo, "尚未为群组配置文案");

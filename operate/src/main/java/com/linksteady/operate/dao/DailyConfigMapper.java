@@ -29,6 +29,12 @@ public interface DailyConfigMapper {
      */
     int updateCheckFlagAndRemark(@Param("whereInfo") String whereInfo, @Param("remark") String remark);
 
+    /**
+     * 验证补贴未配置的情况
+     * @return
+     */
+    void updateCheckFlagNotConfigCoupon(@Param("remark") String remark);
+
     int validCheckedUserGroup(@Param("activeList") List<String> activeList);
 
 

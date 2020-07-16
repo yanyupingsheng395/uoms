@@ -61,6 +61,16 @@
         )
     </update>
 
+    <update id="updateCheckFlagNotConfigCoupon">
+        update uo_op_daily_template_config set check_flag='N',
+                                               check_comments=#{remark}
+        where is_coupon='1' and
+              not exists (
+                  select 1 from uo_op_daily_group_coupon
+                  where uo_op_daily_group_coupon.group_id=uo_op_daily_template_config.group_id
+                  )
+    </update>
+
     <select id="validCheckedUserGroup" resultType="int">
         select count(1) from UO_OP_DAILY_TEMPLATE_CONFIG where CHECK_FLAG = 'N' and PATH_ACTIVE in
         <foreach collection="activeList" open="(" close=")" item="item" separator=",">
