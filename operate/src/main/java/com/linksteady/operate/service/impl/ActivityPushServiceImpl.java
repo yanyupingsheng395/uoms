@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.ActivityDetailMapper;
 import com.linksteady.operate.dao.ActivityProductMapper;
@@ -289,7 +288,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
         DecimalFormat decimalFormat = new DecimalFormat("###################.###########");
         if("9".equals(groupId))
         {
-            return activityProfit*10+"折";
+            return decimalFormat.format(activityProfit)+"折";
         }else {
             return decimalFormat.format(activityProfit)+"元";
         }
