@@ -710,7 +710,7 @@ function getProductInfo(type, tableId) {
                 align: 'center',
                 formatter: function (value, row, index) {
                     if(row['groupId'] == '9') {
-                        return (value*10) +'折';
+                        return value +'折';
                     }else {
                         return value +'元';
                     }
