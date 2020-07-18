@@ -201,7 +201,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         String xlsxSuffix = ".xlsx";
         // 表头
         List<String> headers = Arrays.asList(
-                "商品ID", "商品名称", "日常商品单价\n（元/件）", "报名活动单价\n（元/件）", "店铺活动机制", "满件打折力度\n（折）", "立减特价（元）", "单品券", "单品券门槛\n（元）", "单品券面额\n（元）"
+                "商品ID", "商品名称", "日常商品单价\n（元/件）", "报名活动单价\n（元/件）", "店铺活动机制", "满件打折力度\n（折）", "立减特价（元）", "单品券", "单品券门槛\n（元）", "单品券面额\n（元）", "最低价", "利益点"
         );
         AtomicBoolean flag = new AtomicBoolean(true);
         List<ActivityProduct> productList = Lists.newArrayList();
@@ -423,6 +423,35 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                             errorList.add(new ActivityProductUploadError("单品券面额类型有误，应改为数值型", i + 1));
                         }
                     }
+
+                    double minPrice = 0D;
+                    Cell cell10 = row.getCell(10);
+                    if (null == cell10 || cell10.getCellType() == 3) {
+
+                    } else {
+                        if (cell10.getCellType() == 0) {
+                            minPrice = cell10.getNumericCellValue();
+                        } else if (cell2.getCellType() == 1) {
+                            minPrice = new BigDecimal(cell10.getStringCellValue()).doubleValue();
+                        } else {
+                            errorList.add(new ActivityProductUploadError("最低价数据类型有误，应改为数值型", i + 1));
+                        }
+                    }
+
+                    double activityProfit = 0D;
+                    Cell cell11 = row.getCell(11);
+                    if (null == cell11 || cell11.getCellType() == 3) {
+
+                    } else {
+                        if (cell11.getCellType() == 0) {
+                            activityProfit = cell11.getNumericCellValue();
+                        } else if (cell11.getCellType() == 1) {
+                            activityProfit = new BigDecimal(cell11.getStringCellValue()).doubleValue();
+                        } else {
+                            errorList.add(new ActivityProductUploadError("利益点数据类型有误，应改为数值型", i + 1));
+                        }
+                    }
+
                     ActivityProduct activityProduct = new ActivityProduct();
                     activityProduct.setHeadId(Long.valueOf(headId));
                     activityProduct.setGroupId(groupId);
@@ -434,6 +463,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     activityProduct.setProductId(productId);
                     activityProduct.setActivityStage(stage);
                     activityProduct.setActivityType(activityType);
+                    activityProduct.setMinPrice(new BigDecimal(minPrice).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    activityProduct.setActivityProfit(new BigDecimal(activityProfit).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     if(StringUtils.isNotEmpty(singleProduct)) {
                         activityProduct.setSpCouponFlag(singleProduct);
                         activityProduct.setSpCouponThreshold((new BigDecimal(singleProductThreadHold).setScale(2, RoundingMode.HALF_UP).doubleValue()));
