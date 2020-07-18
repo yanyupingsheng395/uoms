@@ -30,7 +30,7 @@
     </resultMap>
 
     <select id="getActivityProductListPage" resultMap="base">
-        select
+        select t.* from (select
         id,
         epb_product_id,
         product_name,
@@ -53,8 +53,8 @@
         <if test="groupId != null and groupId != ''">
             and group_id = #{groupId}::int4
         </if>
+        limit #{limit} offset #{offset}) t
         order by CHECK_FLAG asc, insert_dt desc
-        limit #{limit} offset #{offset}
     </select>
 
     <select id="getCount" resultType="int">
