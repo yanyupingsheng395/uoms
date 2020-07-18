@@ -26,9 +26,10 @@
     </select>
 
     <select id="getUserGroupList" resultMap="base">
-        select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE,CHECK_FLAG,CHECK_COMMENTS, GROUP_INFO
-        from UO_OP_ACTIVITY_GROUP left join UO_OP_ACTIVITY_TEMPLATE
-        on SMS_TEMPLATE_CODE = TMP_CODE where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} order by group_id asc
+        select case when group_id = 13 then 99 else group_id end group_id, group_name, tmp_content, activity_type, sms_template_code, check_flag, check_comments, group_info from (select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE,CHECK_FLAG,CHECK_COMMENTS, GROUP_INFO
+                       from UO_OP_ACTIVITY_GROUP left join UO_OP_ACTIVITY_TEMPLATE
+                                                           on SMS_TEMPLATE_CODE = TMP_CODE where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} order by group_id asc) t
+        order by group_id asc
     </select>
 
     <update id="updateGroupTemplate">

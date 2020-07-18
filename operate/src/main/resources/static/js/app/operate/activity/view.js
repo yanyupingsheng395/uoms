@@ -165,19 +165,6 @@ function getProductInfo(type, tableId) {
     $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 
-// step2:查询商品信息
-function searchActivityProduct() {
-    $MB.refreshTable( 'activityProductTable' );
-}
-
-// step2:重置查询条件
-function resetActivityProduct() {
-    $( "#productId" ).val( "" );
-    $( "#productName" ).val( "" );
-    $( "#activity-form" ).find( "option:selected" ).removeAttr( "selected" );
-    $MB.refreshTable( 'activityProductTable' );
-}
-
 // step2:下载商品数据
 $( "#btn_download" ).click( function () {
     window.location.href = "/activity/downloadFile";
@@ -290,4 +277,28 @@ function getGroupList(stage, type, tableId) {
         }
     };
     $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+}
+
+// 查询商品信息
+function searchActivityProduct1() {
+    $MB.refreshTable( 'activityProductTable1' );
+}
+
+function searchActivityProduct2() {
+    $MB.refreshTable( 'activityProductTable2' );
+}
+
+// 重置查询条件
+function resetActivityProduct1() {
+    $( "#productId" ).val( "" );
+    $( "#productName" ).val( "" );
+    $( "#activity-form" ).find( "option:selected" ).removeAttr( "selected" );
+    $MB.refreshTable( 'activityProductTable1' );
+}
+
+function resetActivityProduct2() {
+    $( "#productId" ).val( "" );
+    $( "#productName" ).val( "" );
+    $( "#activity-form" ).find( "option:selected" ).removeAttr( "selected" );
+    $MB.refreshTable( 'activityProductTable2' );
 }

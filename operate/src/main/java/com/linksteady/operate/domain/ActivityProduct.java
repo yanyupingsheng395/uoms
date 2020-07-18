@@ -39,8 +39,6 @@ public class ActivityProduct implements Cloneable {
     private String checkComments;
     private String alikeProdId;
     private Double discountSize;
-    private Double discountThreadhold;
-    private Double discountDeno;
     private Double discountAmount;
     private Double activityPrice;
     private Double activityProfit;
@@ -49,17 +47,32 @@ public class ActivityProduct implements Cloneable {
     private double formalPrice;
     // 上传出现的错误信息
     private String errorInfo;
+    // 是否是单品券：1是，0否
+    private String spCouponFlag;
+    // 单品券门槛
+    private Double spCouponThreshold;
+    // 单品券面额
+    private Double spCouponDenom;
+
     /**
      * 判断当前数据是否合法
+     *
      * @return
      */
     public boolean productValid() {
-        return StringUtils.isNotEmpty(this.getProductId()) &&
-                StringUtils.isNotEmpty(this.getGroupId()) &&
-                (("9".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountSize())
-                        || ("10".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountThreadhold() && 0D!=this.getDiscountDeno())
-                        || ("11".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountAmount())
-                        || ("12".equalsIgnoreCase(this.getGroupId()) && 0D!=this.getDiscountAmount()) || ("13".equalsIgnoreCase(this.getGroupId())));
+        if ("1".equalsIgnoreCase(this.getSpCouponFlag())) {
+            return StringUtils.isNotEmpty(this.getProductId()) && StringUtils.isNotEmpty(this.getGroupId()) &&
+                    ("9".equalsIgnoreCase(this.getGroupId()) && 0D != this.getDiscountSize() ||
+                            "13".equalsIgnoreCase(this.getGroupId()) && 0D != this.getDiscountAmount() ||
+                            "14".equalsIgnoreCase(this.getGroupId()) && 0D != this.getDiscountAmount())
+                    && (0D != this.getSpCouponThreshold()) && (0D != this.getSpCouponDenom());
+        } else {
+            return StringUtils.isNotEmpty(this.getProductId()) &&
+                    StringUtils.isNotEmpty(this.getGroupId()) &&
+                    (("9".equalsIgnoreCase(this.getGroupId()) && 0D != this.getDiscountSize())
+                            || ("13".equalsIgnoreCase(this.getGroupId()) && 0D != this.getDiscountAmount())
+                            || ("14".equalsIgnoreCase(this.getGroupId()) && 0D != this.getDiscountAmount()));
+        }
     }
 
     @Override
@@ -67,7 +80,7 @@ public class ActivityProduct implements Cloneable {
         ActivityProduct activityProduct = null;
         try {
             activityProduct = (ActivityProduct) super.clone();
-        }catch (CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
         return activityProduct;
