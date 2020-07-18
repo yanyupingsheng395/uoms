@@ -181,7 +181,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
                 13L, headId, "仅店铺券", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
         ));
         activityGroups.add(new ActivityGroup(
-                14L, headId, "立减特价", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
+                14L, headId, "立减特价", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
         ));
 
         activityGroups.add(new ActivityGroup(
@@ -191,7 +191,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
                 13L, headId, "仅店铺券", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
         ));
         activityGroups.add(new ActivityGroup(
-                14L, headId, "立减特价", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
+                14L, headId, "立减特价", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
         ));
         activityUserGroupMapper.saveGroupData(activityGroups);
     }
