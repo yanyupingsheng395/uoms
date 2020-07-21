@@ -2,9 +2,7 @@ package com.linksteady.operate.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-
 import java.util.Date;
-
 /**
  * @author huang
  * 渠道活码
@@ -16,7 +14,7 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
 
     private String qrCode;
 
-    private String type;
+    private String contactType;
 
     private String scene;
 
@@ -24,7 +22,7 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
 
     private String remark;
 
-    private String skipVerify;
+    private Boolean skipVerify=true;
 
     private String state;
 
@@ -37,27 +35,28 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date createDt;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    private Date updateDt;
+
+    private String createBy;
+
+    private String updateBy;
+
+    /**
+     * 已添加的用户数量
+     */
     private int externalUserNum;
 
-    private String shortUrl="wz2.in/0K6i6C";
+    /**
+     * 对应的短链接
+     */
+    private String shortUrl;
 
     public QywxContactWay()
     {
         
     }
-
-    public QywxContactWay(Long contactWayId,String qrCode,String type,String remark,String state,String userList,String configId)
-    {
-        this.contactWayId=contactWayId;
-        this.qrCode=qrCode;
-        this.type=type;
-        this.remark=remark;
-        this.state=state;
-        this.usersList=userList;
-        this.configId=configId;
-        this.createDt=new Date();
-    }
-
+    
     @Override
     public int compareTo(QywxContactWay o) {
         return (int)(o.getCreateDt().getTime()-this.getCreateDt().getTime());

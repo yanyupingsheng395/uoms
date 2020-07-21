@@ -10,7 +10,7 @@ import java.util.Date;
  * @date 2020/5/15
  */
 @Data
-public class QyWxMsg {
+public class QywxMsg {
     private Long qywxId;
     private String textContent;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")

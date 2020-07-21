@@ -59,7 +59,11 @@ public enum  ConfigEnum {
     wxofficialEnabled("op.source.wxofficialEnabled"),
     prodUrlEnabled("op.source.produrl_enabled"),
 
-    pathActiveList("op.daily.pathactive.list");
+    pathActiveList("op.daily.pathactive.list"),
+
+    qywxCorpId("qywx.corpid"),
+    qywxDomainUrl("qywx.domainUrl"),
+    qywxDomainIpAddress("qywx.domainIpAddress");
 
 
     private String keyCode;

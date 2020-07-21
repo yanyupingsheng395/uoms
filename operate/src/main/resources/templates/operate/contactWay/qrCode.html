@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -18,7 +18,6 @@
         .brand_explain{text-align:center;margin:10px auto;font-size:12px;color:#545454;}
         .brand_info{clear:both;}
         .brand_info p,.brand_info a{color:#C3C3C3;text-align:center;font-size:12px;text-decoration:none;line-height:2em;}
-
     </style>
 </head>
 <body>
@@ -29,9 +28,10 @@
                <p>添加企业微信客服，为您提供专业的服务！</p>
            </div>
            <div class="add_qrcode">
-               <img src="https://wework.qpic.cn/wwpic/27022_KSm1a8KyTEWWlHn_1594800699/0" alt="扫码支持" title="扫一扫" />
+               <img th:src='${qrCode}' alt="扫码支持" title="扫一扫" />
            </div>
-           <div class="brand_explain">识别二维码添加企业微信客服，领取专享优惠</div>
+           <div class="brand_explain">识别二维码添加企业微信客服，领取专享优惠
+           </div>
            <div class="brand_info">
                <p>如无法识别，请先保存二维码图片到手机，</br>然后使用微信 扫一扫，选择刚才保存的二维码进行识别。</p>
            </div>

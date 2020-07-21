@@ -139,6 +139,7 @@ $("#btn_edit").click(function () {
             let d = r.data;
             $("#myLargeModalLabel").html('修改渠道活码');
             $form.find("input[name='contactWayId']").val(d.contactWayId);
+            $form.find("input[name='configId']").val(d.configId);
             $form.find("input[name='state']").val(d.state);
             $form.find("input[name='remark']").val(d.remark);
             $form.find("select[name='userSelect']").selectpicker('val', d.usersList.split(','));
@@ -296,7 +297,6 @@ $("#btn_url").click(function () {
             var $form = $('#modifyurlForm');
             $("#modifyurl_modal").modal('show');
             let d = r.data;
-            $("#myLargeModalLabel4").html('修改渠道活码');
             $form.find("input[name='modifyurl_contactWayId']").val(d.contactWayId);
             $form.find("input[name='state2']").val(d.state);
             $form.find("input[name='remark2']").val(d.remark);

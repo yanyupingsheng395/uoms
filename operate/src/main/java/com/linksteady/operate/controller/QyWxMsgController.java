@@ -1,7 +1,7 @@
 package com.linksteady.operate.controller;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.QyWxMsg;
-import com.linksteady.operate.service.QyWxMsgService;
+import com.linksteady.operate.domain.QywxMsg;
+import com.linksteady.operate.service.QywxMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,35 +18,35 @@ import java.util.List;
 public class QyWxMsgController {
 
     @Autowired
-    private QyWxMsgService qyWxMsgService;
+    private QywxMsgService qywxMsgService;
 
     @RequestMapping("/saveData")
-    public ResponseBo saveData(QyWxMsg qyWxMsg) {
-        qyWxMsgService.saveData(qyWxMsg);
+    public ResponseBo saveData(QywxMsg qyWxMsg) {
+        qywxMsgService.saveData(qyWxMsg);
         return ResponseBo.ok();
     }
 
     @RequestMapping("/getDataListPage")
     public ResponseBo getDataListPage(Integer limit, Integer offset) {
-        List<QyWxMsg> dataList = qyWxMsgService.getDataListPage(limit, offset);
-        int count = qyWxMsgService.getTotalCount();
+        List<QywxMsg> dataList = qywxMsgService.getDataListPage(limit, offset);
+        int count = qywxMsgService.getTotalCount();
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
     @RequestMapping("/updateData")
-    public ResponseBo updateData(QyWxMsg qyWxMsg) {
-        qyWxMsgService.updateQyWxMsg(qyWxMsg);
+    public ResponseBo updateData(QywxMsg qyWxMsg) {
+        qywxMsgService.updateQyWxMsg(qyWxMsg);
         return ResponseBo.ok();
     }
 
     @RequestMapping("/deleteDataById")
     public ResponseBo deleteDataById(@RequestParam("id") String id) {
-        qyWxMsgService.deleteDataById(id);
+        qywxMsgService.deleteDataById(id);
         return ResponseBo.ok();
     }
 
     @RequestMapping("/getDataById")
     public ResponseBo getDataById(@RequestParam("id") String id) {
-        return ResponseBo.okWithData(null, qyWxMsgService.getDataById(id));
+        return ResponseBo.okWithData(null, qywxMsgService.getDataById(id));
     }
 }
