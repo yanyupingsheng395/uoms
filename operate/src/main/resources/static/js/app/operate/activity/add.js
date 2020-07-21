@@ -40,17 +40,38 @@ function haspreheat(v) {
     }
 }
 
-function platDiscountClick(idx) {
-    if(idx === 0){
-        $("#platThresholdDiv").attr("style", "display:none;");
-        $("#platDenoDiv").attr("style", "display:none;");
+// 平台优惠点击是否
+$("select[name='platDiscount']").change(function() {
+    var idx = $(this).find("option:selected").val();
+    if(idx === 'N'){
+        $("#addPlatDiscountBtn").hide();
+        $("#platDiscountItems").hide();
+        $("#platCouponDiv").removeAttr("style");
     }
-    if(idx === 1){
-        $("#platThresholdDiv").attr("style", "display:block;");
-        $("#platDenoDiv").attr("style", "display:block;");
+    if(idx === 'Y'){
+        $("#addPlatDiscountBtn").show();
+        if($("#platDiscountItems").text().trim() !== '') {
+            $("#platDiscountItems").show();
+            $("#platCouponDiv").attr("style", "border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;");
+        }
     }
-}
+});
 
+$("select[name='shopDiscount']").change(function() {
+    var idx = $(this).find("option:selected").val();
+    if(idx === 'N'){
+        $("#addShopDiscountBtn").hide();
+        $("#shopDiscountItems").hide();
+        $("#shopCouponDiv").removeAttr("style");
+    }
+    if(idx === 'Y'){
+        $("#addShopDiscountBtn").show();
+        if($("#shopDiscountItems").text().trim() !== '') {
+            $("#shopDiscountItems").show();
+            $("#shopCouponDiv").attr("style", "border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;");
+        }
+    }
+});
 
 function preheatClick() {
     CURRENT_ACTIVITY_STAGE = 'preheat';
@@ -70,7 +91,7 @@ function beforeSave(activityStage){
     CURRENT_ACTIVITY_STAGE = activityStage;
     if(operate_type === 'save') {
         var validator = $basicAddForm.validate();
-        if (validator.form() && validBasicDt()) {
+        if (validator.form() && validBasicDt() && validDiscount()) {
             $MB.confirm( {
                 title: '提示:',
                 content: '确定保存信息？'
@@ -82,6 +103,42 @@ function beforeSave(activityStage){
     if(operate_type === 'update') {
         stepBreak(1);
     }
+}
+
+// 验证平台优惠 + 补贴优惠
+function validDiscount() {
+    var platDiscount = $("select[name='platDiscount']").find("option:selected").val();
+    var shopDiscount = $("select[name='shopDiscount']").find("option:selected").val();
+    var flag = true;
+    if(platDiscount === 'Y') {
+        $("#platDiscountItems").find(".row").each(function (v, k) {
+            var couponThreshold = $(this).find("input[name='couponThreshold']").val();
+            var couponDenom = $(this).find("input[name='couponDenom']").val();
+            if(couponThreshold === '') {
+                $MB.n_warning("请输入平台优惠的门槛！");
+                return (flag = false);
+            }
+            if(couponDenom === '') {
+                $MB.n_warning("请输入平台优惠的面额！");
+                return (flag = false);
+            }
+        });
+    }
+    if(shopDiscount === 'Y') {
+        $("#shopDiscountItems").find(".row").each(function (v, k) {
+            var couponThreshold = $(this).find("input[name='couponThreshold']").val();
+            var couponDenom = $(this).find("input[name='couponDenom']").val();
+            if(couponThreshold === '') {
+                $MB.n_warning("请输入店铺优惠的门槛！");
+                return (flag = false);
+            }
+            if(couponDenom === '') {
+                $MB.n_warning("请输入店铺优惠的面额！");
+                return (flag = false);
+            }
+        });
+    }
+    return flag;
 }
 
 // 点击上一步下一步按钮
@@ -235,23 +292,21 @@ function validateProductRule() {
             },
             discountSize: {
                 required: function () {
-                    return $("#activityRule").val() === '1';
+                    return $("#activityRule").val() === '9';
                 }
             },
-            discountThreadhold: {
+            discountCnt: {
                 required: function () {
-                    return $("#activityRule").val() === '2';
-                }
-            },
-            discountDeno: {
-                required: function () {
-                    return $("#activityRule").val() === '2';
+                    return $("#activityRule").val() === '9';
                 }
             },
             discountAmount: {
                 required: function () {
-                    return $("#activityRule").val() === '4' || $("#activityRule").val() === '3';
+                    return $("#activityRule").val() === '13';
                 }
+            },
+            spCouponFlag: {
+                required: true
             }
         },
         errorPlacement: function (error, element) {
@@ -281,14 +336,14 @@ function validateProductRule() {
             discountSize: {
                 required: icon + "请输入满件打折的折扣"
             },
-            discountThreadhold: {
-                required: icon + "请输入满元减钱门槛"
-            },
-            discountDeno: {
-                required: icon + "请输入满元减钱面额"
+            discountCnt: {
+                required: icon + "请输入满件打折的件数"
             },
             discountAmount: {
                 required: icon + "请输入立减金额"
+            },
+            spCouponFlag: {
+                required: icon + '请选择单品券'
             }
         }
     } );
@@ -561,7 +616,7 @@ function makeErrorTable(data) {
         }]
     });
     $("#errorDataTable").bootstrapTable('load', data);
-    $("#upload_error_motable1dal").modal('show');
+    $("#upload_error_modal").modal('show');
 }
 
 $("#uploadProduct").on('hidden.bs.modal', function () {
@@ -944,9 +999,6 @@ function validBasic() {
             formalEndDt: {
                 required: true
             },
-            platDiscount: {
-                required: true
-            },
             platThreshold: {
                 required: function () {
                     return $( "input[name='platDiscount']:checked" ).val() === '1';
@@ -992,9 +1044,6 @@ function validBasic() {
             },
             formalEndDt: {
                 required: icon + "请输入正式结束时间"
-            },
-            platDiscount: {
-                required: icon + "请选择平台优惠"
             },
             platThreshold: {
                 required: icon + "请输入门槛"
@@ -1050,7 +1099,41 @@ $( "input[name='hasPreheat']" ).click( function () {
 
 // 保存基本信息
 function saveActivityHead() {
-    $.post( "/activity/saveActivityHead", $basicAddForm.serialize(), function (r) {
+    var data = $basicAddForm.serialize();
+    var couponList = [];
+    var platDiscount = $("select[name='platDiscount']").find("option:selected").val();
+    var shopDiscount = $("select[name='shopDiscount']").find("option:selected").val();
+    if(platDiscount === 'Y') {
+        $("#platDiscountItems").find(".row").each(function (v, k) {
+            var addFlag = $(this).find("select[name='addFlag']").find("option:selected").val();
+            var couponThreshold = $(this).find("input[name='couponThreshold']").val();
+            var couponDenom = $(this).find("input[name='couponDenom']").val();
+            var couponType = $(this).find("input[name='couponType']").val();
+            var coupon = {};
+            coupon['addFlag'] = addFlag;
+            coupon['couponThreshold'] = couponThreshold;
+            coupon['couponDenom'] = couponDenom;
+            coupon['couponType'] = couponType;
+            couponList.push(coupon);
+        });
+    }
+    if(shopDiscount === 'Y') {
+        $("#shopDiscountItems").find(".row").each(function (v, k) {
+            var addFlag = $(this).find("select[name='addFlag']").find("option:selected").val();
+            var couponThreshold = $(this).find("input[name='couponThreshold']").val();
+            var couponDenom = $(this).find("input[name='couponDenom']").val();
+            var couponType = $(this).find("input[name='couponType']").val();
+            var coupon = {};
+            coupon['addFlag'] = addFlag;
+            coupon['couponThreshold'] = couponThreshold;
+            coupon['couponDenom'] = couponDenom;
+            coupon['couponType'] = couponType;
+            couponList.push(coupon);
+        });
+    }
+
+    data += "&coupons=" + JSON.stringify(couponList);
+    $.post( "/activity/saveActivityHead", data, function (r) {
         if (r.code === 200) {
             $MB.n_success( r.msg );
             $( "#headId" ).val( r.data );
@@ -2049,63 +2132,25 @@ function groupIdChange(dom) {
     switch (val) {
         case "9":
             $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
-                '<label class="col-md-4 control-label">满件打折</label>\n' +
+                '<label class="col-md-4 control-label">满件打折件数（件）</label>\n' +
+                '<div class="col-md-7">\n' +
+                '<input class="form-control" type="text" name="discountCnt"/>\n' +
+                '</div></div>').append('<div class="form-group">' +
+                '<label class="col-md-4 control-label">满件打折力度（折）</label>\n' +
                 '<div class="col-md-7">\n' +
                 '<input class="form-control" type="text" name="discountSize"/>\n' +
                 '</div></div>');
             break;
-        case "10":
+        case "14":
             $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
-                '<label class="col-md-4 control-label">满元减钱门槛(元)</label>\n' +
-                '<div class="col-md-7">\n' +
-                '<input class="form-control" type="text" name="discountThreadhold"/>\n' +
-                '</div></div>').append('<div class="form-group">' +
-                '<label class="col-md-4 control-label">满元减钱面额(元)</label>\n' +
-                '<div class="col-md-7">\n' +
-                '<input class="form-control" type="text" name="discountDeno"/>\n' +
-                '</div></div>');
-            break;
-        case "11":
-            $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
-                '<label class="col-md-4 control-label">立减金额</label>\n' +
+                '<label class="col-md-4 control-label">立减特价金额（元）</label>\n' +
                 '<div class="col-md-7">\n' +
                 '<input class="form-control" type="text" name="discountAmount"/>\n' +
                 '</div></div>');
             break;
-        case "12":
-            $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
-                '<label class="col-md-4 control-label">立减金额</label>\n' +
-                '<div class="col-md-7">\n' +
-                '<input class="form-control" type="text" name="discountAmount"/>\n' +
-                '</div></div>');
-            break;
-        case "13":
-            $("#shopOffer").attr("style", "display:none;").html('');
         default:
             $("#shopOffer").attr("style", "display:none;").html('');
             break;
-    }
-}
-
-// function editFormalActivity() {
-//     CURRENT_ACTIVITY_STAGE = 'formal';
-//     getProductInfo();
-//     $("#productListTitle1").html('正式通知活动商品列表');
-//     $("#productListTitle2").html('正式期间活动商品列表');
-//     create_step.setActive(1);
-//     $("#step1").attr("style", "display:none;");
-//     $("#step2").attr("style", "display:block;");
-//     $("#step3").attr("style", "display:none;");
-// }
-
-function platDiscountClick(idx) {
-    if(idx === 0){
-        $("#platThresholdDiv").attr("style", "display:none;");
-        $("#platDenoDiv").attr("style", "display:none;");
-    }
-    if(idx === 1){
-        $("#platThresholdDiv").attr("style", "display:block;");
-        $("#platDenoDiv").attr("style", "display:block;");
     }
 }
 
@@ -2144,4 +2189,54 @@ function ifCalculate() {
             $("#calculateCovDataBtn").attr("style", "display:none;");
         }
     });
+}
+
+// 添加平台优惠
+function addPlatCoupon(idx) {
+    var couponType = (idx == 1) ? 'P' : 'S';
+    var code = '<div class="row m-t-10">\n' +
+        '<input type="hidden" name="couponType" value="'+couponType+'"/>\n' +
+        '                        <div class="col-md-4">\n' +
+        '                            <div class="form-group">\n' +
+        '                                &#12288;&#12288;&#12288;券叠加：<select name="addFlag" class="form-control" style="width: 172px;">\n' +
+        '                                    <option value="1">是</option>\n' +
+        '                                    <option value="0">否</option>\n' +
+        '                                </select>\n' +
+        '                            </div>\n' +
+        '                        </div>\n' +
+        '                        <div class="col-md-4">\n' +
+        '                            <div class="form-group">\n' +
+        '                                &#12288;&#12288;&#12288;&#12288;门槛：<input type="text" name="couponThreshold" class="form-control"/>\n' +
+        '                            </div>\n' +
+        '                        </div>\n' +
+        '                        <div class="col-md-4">\n' +
+        '                            <div class="form-group">\n' +
+        '                                &#12288;&#12288;&#12288;&#12288;面额：<input type="text" name="couponDenom" class="form-control"/>\n' +
+        '                            </div>\n' +
+        '                            &nbsp;&nbsp;<a style="color: #f96868;cursor: pointer;" onclick="deleteCoupon(this)"><i class="fa fa-trash"></i>删除</a>\n' +
+        '                        </div>\n' +
+        '                    </div>';
+    if(idx == 1) {
+        if($('#platCouponDiv').find('.row').length == 1) {
+            $("#platDiscountItems").show();
+            $("#platCouponDiv").attr("style", "border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;");
+        }
+        $("#platDiscountItems").append(code);
+    }else {
+        if($('#shopCouponDiv').find('.row').length == 1) {
+            $("#shopDiscountItems").show();
+            $("#shopCouponDiv").attr("style", "border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;");
+        }
+        $("#shopDiscountItems").append(code);
+    }
+}
+
+function deleteCoupon(dom) {
+    $(dom).parent().parent().remove();
+    if($('#platCouponDiv').find('.row').length == 1) {
+        $('#platCouponDiv').removeAttr("style");
+    }
+    if($('#shopCouponDiv').find('.row').length == 1) {
+        $('#shopCouponDiv').removeAttr("style");
+    }
 }

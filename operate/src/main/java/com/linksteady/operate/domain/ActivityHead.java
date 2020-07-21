@@ -103,4 +103,5 @@ public class ActivityHead {
     private String platDiscount;
     private String platThreshold;
     private String platDeno;
+    private String shopDiscount;
 }

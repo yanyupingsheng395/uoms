@@ -1,5 +1,6 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.operate.domain.ActivityCoupon;
 import com.linksteady.operate.domain.ActivityHead;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public interface ActivityHeadService {
      * @param activityHead
      * @return
      */
-    int saveActivityHead(ActivityHead activityHead);
+    int saveActivityHead(ActivityHead activityHead, String coupons);
 
     /**
      * 根据ID获取
@@ -73,4 +74,6 @@ public interface ActivityHeadService {
      * 活动头表失效
      */
     void expireActivityHead();
+
+    List<ActivityCoupon> findCouponList(Long headId);
 }

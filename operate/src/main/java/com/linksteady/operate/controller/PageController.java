@@ -17,6 +17,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author hxcao
  * @date 2019-07-19
@@ -170,11 +174,16 @@ public class PageController extends BaseController {
     @RequestMapping("/activity/edit")
     public String activityEdit(@RequestParam("headId") Long headId, Model model) {
         ActivityHead activityHead = activityHeadService.findById(headId);
+        List<ActivityCoupon> activityCouponList = activityHeadService.findCouponList(headId);
+        List<ActivityCoupon> platCouponList = activityCouponList.stream().filter(x->x.getCouponType().equalsIgnoreCase("P")).collect(Collectors.toList());
+        List<ActivityCoupon> shopCouponList = activityCouponList.stream().filter(x->x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());
         String preheatStatus = activityHead.getPreheatStatus();
         String preheatNotifyStatus = activityHead.getPreheatNotifyStatus();
         String formalStatus = activityHead.getFormalStatus();
         String formalNotifyStatus = activityHead.getFormalNotifyStatus();
         model.addAttribute("activityHead", activityHead);
+        model.addAttribute("platCouponList", platCouponList);
+        model.addAttribute("shopCouponList", shopCouponList);
         model.addAttribute("operateType", "update");
         // 当处于done状态的时候，按钮不显示
         model.addAttribute("preheatStatus", preheatStatus);

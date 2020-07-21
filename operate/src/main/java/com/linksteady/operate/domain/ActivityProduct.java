@@ -53,6 +53,8 @@ public class ActivityProduct implements Cloneable {
     private Double spCouponThreshold;
     // 单品券面额
     private Double spCouponDenom;
+    // 满件打折，N件
+    private Integer discountCnt;
 
     /**
      * 判断当前数据是否合法

@@ -1,9 +1,11 @@
 package com.linksteady.operate.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Lists;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.User;
 import com.linksteady.operate.dao.*;
+import com.linksteady.operate.domain.ActivityCoupon;
 import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
@@ -57,7 +59,7 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int saveActivityHead(ActivityHead activityHead) {
+    public int saveActivityHead(ActivityHead activityHead, String coupons) {
         final String HAS_PREHEAT = "1";
         final String NO_PREHEAT = "0";
         String hasPreheat = activityHead.getHasPreheat();
@@ -83,6 +85,11 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
             saveGroupInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
         }else {
             saveGroupInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
+        }
+        List<ActivityCoupon> couponList = JSONArray.parseArray(coupons, ActivityCoupon.class);
+        if(couponList.size() > 0) {
+            couponList.forEach(x->x.setHeadId(activityHead.getHeadId()));
+            activityHeadMapper.saveActivityCouponList(couponList);
         }
         return activityHead.getHeadId().intValue();
     }
@@ -167,6 +174,12 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         activityHeadMapper.expireFormalNotify();
         activityHeadMapper.expireFormalDuring();
     }
+
+    @Override
+    public List<ActivityCoupon> findCouponList(Long headId) {
+        return activityHeadMapper.getActivityCouponList(headId);
+    }
+
     /**
      * 保存群组信息
      * @param headId

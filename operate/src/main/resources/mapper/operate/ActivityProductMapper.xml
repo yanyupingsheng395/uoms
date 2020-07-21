@@ -27,6 +27,7 @@
         <result property="spCouponFlag" jdbcType="VARCHAR" column="SP_COUPON_FLAG"/>
         <result property="spCouponThreshold" jdbcType="DECIMAL" column="SP_COUPON_THRESHOLD"/>
         <result property="spCouponDenom" jdbcType="DECIMAL" column="SP_COUPON_DENOM"/>
+        <result property="discountCnt" jdbcType="DECIMAL" column="discount_cnt"/>
     </resultMap>
 
     <select id="getActivityProductListPage" resultMap="base">
@@ -39,7 +40,8 @@
         activity_profit,
         check_flag,
         check_comments,
-        insert_dt
+        insert_dt,
+        case when check_flag = 'Y' then '1' else '0' end order_col
         from uo_op_activity_product
         where head_id = #{headId}::integer
         and activity_stage = #{activityStage}
@@ -53,8 +55,9 @@
         <if test="groupId != null and groupId != ''">
             and group_id = #{groupId}::int4
         </if>
-        limit #{limit} offset #{offset}) t
-        order by CHECK_FLAG asc, insert_dt desc
+        order by order_col asc, insert_dt desc
+        ) t
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="getCount" resultType="int">
@@ -83,10 +86,10 @@
     <insert id="saveActivityProduct">
         insert into UO_OP_ACTIVITY_PRODUCT(HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, ACTIVITY_PRICE, FORMAL_PRICE,
                                            PRODUCT_URL, GROUP_ID, discount_size, discount_amount, activity_profit, min_price, activity_type,
-                                           activity_stage, sp_coupon_flag,sp_coupon_threshold,sp_coupon_denom)
+                                           activity_stage, sp_coupon_flag,sp_coupon_threshold,sp_coupon_denom, discount_cnt)
         values (#{headId}, #{productId}, #{productName}, #{activityPrice}, #{formalPrice}, #{productUrl},
                 #{groupId}::int4, #{discountSize}, #{discountAmount}, #{activityProfit}, #{minPrice}, #{activityType}, #{activityStage},
-                #{spCouponFlag},#{spCouponThreshold},#{spCouponDenom})
+                #{spCouponFlag},#{spCouponThreshold},#{spCouponDenom}, #{discountCnt})
     </insert>
 
     <select id="getProductById" resultMap="base">
@@ -105,13 +108,14 @@
             activity_profit     = #{activityProfit},
             sp_coupon_flag      = #{spCouponFlag},
             sp_coupon_threshold = #{spCouponThreshold},
-            sp_coupon_denom     = #{spCouponDenom}
+            sp_coupon_denom     = #{spCouponDenom},
+            discount_cnt        = #{discountCnt}
         where id = #{id}::integer
     </update>
 
     <insert id="saveActivityProductList">
         insert into UO_OP_ACTIVITY_PRODUCT(HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL, GROUP_ID, discount_size,discount_amount,
-        activity_profit, activity_price, activity_type, activity_stage, sp_coupon_flag,sp_coupon_threshold,sp_coupon_denom) values
+        activity_profit, activity_price, activity_type, activity_stage, sp_coupon_flag,sp_coupon_threshold,sp_coupon_denom, discount_cnt) values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.headId}::int4,
             #{item.productId},
@@ -121,7 +125,7 @@
             #{item.productUrl},
             #{item.groupId}::int4,
             #{item.discountSize},#{item.discountAmount},
-            #{item.activityProfit}, #{item.activityPrice}, #{item.activityType}, #{item.activityStage}, #{item.spCouponFlag},#{item.spCouponThreshold},#{item.spCouponDenom})
+            #{item.activityProfit}, #{item.activityPrice}, #{item.activityType}, #{item.activityStage}, #{item.spCouponFlag},#{item.spCouponThreshold},#{item.spCouponDenom}, #{item.discountCnt})
         </foreach>
     </insert>
 
