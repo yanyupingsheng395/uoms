@@ -155,7 +155,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteProduct(String ids) {
         List<String> idList = Arrays.asList(ids.split(","));
-        long time = System.currentTimeMillis();
         activityProductMapper.deleteProduct(idList);
     }
 

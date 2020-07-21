@@ -1,6 +1,5 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.DailyDetail;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.vo.QywxUserVO;
 import io.lettuce.core.dynamic.annotation.Param;

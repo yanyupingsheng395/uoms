@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.linksteady.operate.dao.QywxMapper">
-    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.QyWxMsg">
+<mapper namespace="com.linksteady.operate.dao.QywxMsgMapper">
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.QywxMsg">
         <result property="qywxId" jdbcType="DECIMAL" column="qywx_id"/>
         <result property="textContent" jdbcType="VARCHAR" column="text_content"/>
         <result property="productUrl" jdbcType="VARCHAR" column="product_url"/>
@@ -31,7 +31,7 @@
         select count(1) from uo_qywx_msg_template
     </select>
 
-    <update id="updateQyWxMsg">
+    <update id="updateQywxMsg">
         update uo_qywx_msg_template set(text_content, product_url, product_name, coupon_url, coupon_name, is_personal, material_type, material_content) =
         (#{textContent}, #{productUrl}, #{productName}, #{couponUrl}, #{couponName}, #{isPersonal}, #{materialType}, #{materialContent}) where qywx_id = #{qywxId}
     </update>
