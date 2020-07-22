@@ -418,4 +418,8 @@ public class PageController extends BaseController {
         return "operate/contactWay/list";
     }
 
+    @RequestMapping("/test")
+    public String test() {
+        return "operate/contactWay/qrCode3";
+    }
 }

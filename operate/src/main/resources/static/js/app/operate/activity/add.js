@@ -423,11 +423,13 @@ $( "#addProductModal" ).on( "hidden.bs.modal", function () {
     $( "input[name='productName']" ).val( "" );
     $( "input[name='activityPrice']" ).val( "" );
     $( "input[name='formalPrice']" ).val( "" );
+    $( "input[name='discountCnt']" ).val( "" );
     $( "input[name='discountSize']" ).val( "" );
-    $( "input[name='discountThreadhold']" ).val( "" );
-    $( "input[name='discountDeno']" ).val( "" );
     $( "input[name='discountAmount']" ).val( "" );
+    $( "input[name='spCouponThreshold']" ).val( "" );
+    $( "input[name='spCouponDenom']" ).val( "" );
     $( "select[name='groupId']" ).find( "option:selected" ).removeAttr( "selected" );
+    $( "select[name='spCouponFlag']" ).find( "option:selected" ).removeAttr( "selected" );
     $( "select[name='activityType']" ).find( "option:selected" ).removeAttr( "selected" );
     $activityProductAddForm.validate().resetForm();
 } );
