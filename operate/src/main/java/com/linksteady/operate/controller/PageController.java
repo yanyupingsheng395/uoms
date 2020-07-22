@@ -206,12 +206,17 @@ public class PageController extends BaseController {
     @RequestMapping("/activity/view")
     public String activityView(@RequestParam("headId") Long headId, Model model) {
         ActivityHead activityHead = activityHeadService.findById(headId);
+        List<ActivityCoupon> activityCouponList = activityHeadService.findCouponList(headId);
+        List<ActivityCoupon> platCouponList = activityCouponList.stream().filter(x->x.getCouponType().equalsIgnoreCase("P")).collect(Collectors.toList());
+        List<ActivityCoupon> shopCouponList = activityCouponList.stream().filter(x->x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());
         String preheatStatus = activityHead.getPreheatStatus();
         String preheatNotifyStatus = activityHead.getPreheatNotifyStatus();
         String formalStatus = activityHead.getFormalStatus();
         String formalNotifyStatus = activityHead.getFormalNotifyStatus();
         model.addAttribute("activityHead", activityHead);
         model.addAttribute("operateType", "view");
+        model.addAttribute("platCouponList", platCouponList);
+        model.addAttribute("shopCouponList", shopCouponList);
         // 当处于done状态的时候，按钮不显示
         model.addAttribute("preheatStatus", preheatStatus);
         model.addAttribute("preheatNotifyStatus", preheatNotifyStatus);

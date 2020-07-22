@@ -474,38 +474,27 @@ function editShop(type) {
             $("#add-product-form").find( "input[name='productName']" ).val( data['productName'] );
             $("#add-product-form").find( "input[name='activityPrice']" ).val( data['activityPrice'] );
             $("#add-product-form").find( "input[name='formalPrice']" ).val( data['formalPrice'] );
+            $("#add-product-form").find( "input[name='spCouponThreshold']" ).val( data['spCouponThreshold'] );
+            $("#add-product-form").find( "input[name='spCouponDenom']" ).val( data['spCouponDenom'] );
             $("#add-product-form").find("select[name='groupId']").find("option[value='"+data['groupId']+"']").prop("selected", true);
+            $("#add-product-form").find("select[name='spCouponFlag']").find("option[value='"+data['spCouponFlag']+"']").prop("selected", true);
             $("#add-product-form").find("select[name='activityType']").find("option[value='"+data['activityType']+"']").prop("selected", true);
             var val = $("#activityRule").find("option:selected").val();
             switch (val) {
                 case "9":
                     $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
-                        '<label class="col-md-4 control-label">满件打折</label>\n' +
+                        '<label class="col-md-4 control-label">满件打折件数（件）</label>\n' +
                         '<div class="col-md-7">\n' +
-                        '<input class="form-control" type="text" name="discountSize" value="'+data['discountSize']+'"/>\n' +
-                        '</div></div>');
-                    break;
-                case "10":
-                    $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
-                        '<label class="col-md-4 control-label">满元减钱门槛(元)</label>\n' +
-                        '<div class="col-md-7">\n' +
-                        '<input class="form-control" type="text" name="discountThreadhold" value="'+data['discountThreadhold']+'"/>\n' +
+                        '<input value="'+data['discountCnt']+'" class="form-control" type="text" name="discountCnt"/>\n' +
                         '</div></div>').append('<div class="form-group">' +
-                        '<label class="col-md-4 control-label">满元减钱面额(元)</label>\n' +
+                        '<label class="col-md-4 control-label">满件打折力度（折）</label>\n' +
                         '<div class="col-md-7">\n' +
-                        '<input class="form-control" type="text" name="discountDeno" value="'+data['discountDeno']+'"/>\n' +
+                        '<input class="form-control" type="text" name="discountSize" value="' + data['discountSize']+'"/>\n' +
                         '</div></div>');
                     break;
-                case "11":
+                case "14":
                     $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
-                        '<label class="col-md-4 control-label">立减金额</label>\n' +
-                        '<div class="col-md-7">\n' +
-                        '<input class="form-control" type="text" name="discountAmount" value="'+data['discountAmount']+'"/>\n' +
-                        '</div></div>');
-                    break;
-                case "12":
-                    $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
-                        '<label class="col-md-4 control-label">立减金额</label>\n' +
+                        '<label class="col-md-4 control-label">立减特价金额（元）</label>\n' +
                         '<div class="col-md-7">\n' +
                         '<input class="form-control" type="text" name="discountAmount" value="'+data['discountAmount']+'"/>\n' +
                         '</div></div>');
