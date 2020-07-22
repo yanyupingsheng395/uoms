@@ -111,17 +111,11 @@ function getProductInfo(type, tableId) {
                     if(value === '9') {
                         res =  "满件打折";
                     }
-                    if(value === '10') {
-                        res =  "满元减钱";
-                    }
-                    if(value === '11') {
-                        res =  "特价秒杀";
-                    }
-                    if(value === '12') {
-                        res =  "预售付尾立减";
-                    }
                     if(value === '13') {
-                        res = '无店铺活动'
+                        res =  "仅店铺券";
+                    }
+                    if(value === '14') {
+                        res =  "立减特价";
                     }
                     return res;
                 }
@@ -136,7 +130,7 @@ function getProductInfo(type, tableId) {
                 align: 'center',
                 formatter: function (value, row, index) {
                     if(row['groupId'] == '9') {
-                        return (value*10) +'折';
+                        return value + '折';
                     }else {
                         return value +'元';
                     }

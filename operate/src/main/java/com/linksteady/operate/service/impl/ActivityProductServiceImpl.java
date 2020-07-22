@@ -133,7 +133,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         .sorted(Comparator.comparingDouble(v->Double.parseDouble(v.getCouponThreshold())))
                         .forEach(v -> {
                             if (finalActivityPrice >= Double.parseDouble(v.getCouponThreshold())) {
-                                System.out.println(v);
                                 tmpThreshold.put("tmp", v);
                             }
                         });
