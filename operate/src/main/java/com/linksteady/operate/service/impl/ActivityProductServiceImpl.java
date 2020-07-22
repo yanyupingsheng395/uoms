@@ -2,14 +2,11 @@ package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.dao.ActivityHeadMapper;
 import com.linksteady.operate.dao.ActivityProductMapper;
-import com.linksteady.operate.domain.ActivityHead;
+import com.linksteady.operate.domain.ActivityCoupon;
 import com.linksteady.operate.domain.ActivityProduct;
 import com.linksteady.operate.domain.ActivityProductUploadError;
-import com.linksteady.operate.exception.LinkSteadyException;
-import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.ActivityProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +18,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,9 +26,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -77,56 +73,199 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      */
     private ActivityProduct calculateProductMinPrice(ActivityProduct activityProduct) {
         Long headId = activityProduct.getHeadId();
-        ActivityHead activityHead = activityHeadMapper.findById(headId);
-        String platThreadHold = activityHead.getPlatThreshold();
-        String platDeno = activityHead.getPlatDeno();
-        String platDiscount = activityHead.getPlatDiscount();
+        List<ActivityCoupon> couponList = activityHeadMapper.getActivityCouponList(headId);
+
+        double preferAmount1 = 0;
+        double preferAmount2 = 0;
+        double preferAmount3_1 = 0;
+        double preferAmount3_2 = 0;
+        double activityPrice = activityProduct.getActivityPrice() == null ? 0 : activityProduct.getActivityPrice();
+        double discountAmount = activityProduct.getDiscountAmount() == null ? 0 : activityProduct.getDiscountAmount();
+        // 计算商品优惠
         String groupId = activityProduct.getGroupId();
-        double shop_discount = 0;
-        double activityPrice = activityProduct.getActivityPrice();
+        double discountSize = activityProduct.getDiscountSize();
+        discountSize = discountSize < 1 ? discountSize : (discountSize > 10 ? (discountSize / 100):(discountSize / 10));
         switch (groupId) {
-            // 满件打折
             case "9":
-                shop_discount = activityPrice * (1 - activityProduct.getDiscountSize());
-                activityProduct.setActivityProfit(activityProduct.getDiscountSize());
+                preferAmount1 = activityPrice * (1 - discountSize);
                 break;
-            // 满元减钱
-            // 特价秒杀
-            case "11":// 预售付尾立减
-            case "12":
-                shop_discount = activityProduct.getDiscountAmount();
-                activityProduct.setActivityProfit(activityProduct.getDiscountAmount());
+            case "14":
+                preferAmount1 = discountAmount;
                 break;
-            // 预售付尾立减
             case "13":
-                shop_discount = 0;
-                activityProduct.setActivityProfit(0D);
-                break;
+                preferAmount1 = 0;
             default:
-                throw new IllegalStateException("Unexpected value: " + groupId);
+                break;
         }
-        // 包含平台优惠
-        double plat_discount = 0;
-        if (platDiscount.equalsIgnoreCase("1")) {
-            double platDiscountSize = Double.valueOf(platDeno) / Double.parseDouble(platThreadHold);
-            double multiple = activityPrice / Double.parseDouble(platThreadHold);
-            if (multiple < 1) {
-                plat_discount = activityPrice * platDiscountSize;
+
+        String spCouponFlag = activityProduct.getSpCouponFlag();
+        Double spCouponThreshold = activityProduct.getSpCouponThreshold();
+        Double spCouponDenom = activityProduct.getSpCouponDenom();
+        // 店铺优惠:叠加
+        List<ActivityCoupon> shopCouponList = couponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());
+        long shopAddFlagY = shopCouponList.stream().filter(x -> x.getAddFlag().equalsIgnoreCase("1")).count();
+        long shopAddFlagN = shopCouponList.stream().filter(x -> x.getAddFlag().equalsIgnoreCase("0")).count();
+        if (shopAddFlagY > 0 && shopAddFlagN > 0) {
+            throw new IllegalArgumentException("店铺优惠不能同时存在叠加券和非叠加券！");
+        }
+        // 店铺优惠:不叠加
+        if (shopAddFlagN > 0) {
+            // 有单品券
+            if (StringUtils.isNotEmpty(spCouponFlag) && spCouponFlag.equalsIgnoreCase("1")) {
+                if (activityPrice >= spCouponThreshold) {
+                    preferAmount2 = spCouponDenom;
+                } else {
+                    preferAmount2 = 0;
+                }
             } else {
-                plat_discount = Math.floor(multiple) * Double.valueOf(platDeno) + (activityPrice - Math.floor(multiple) * Double.valueOf(platThreadHold)) * platDiscountSize;
+                // 没有单品
+                // 如果是满件打折，活动价*N
+                double finalActivityPrice;
+                Integer discountCnt = activityProduct.getDiscountCnt();
+                if (groupId.equalsIgnoreCase("9")) {
+                    finalActivityPrice = activityPrice * discountCnt;
+                } else {
+                    finalActivityPrice = activityPrice;
+                }
+
+                Map<String, ActivityCoupon> tmpThreshold = Maps.newHashMap();
+                couponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S"))
+                        .sorted(Comparator.comparingDouble(v->Double.parseDouble(v.getCouponThreshold())))
+                        .forEach(v -> {
+                            if (finalActivityPrice >= Double.parseDouble(v.getCouponThreshold())) {
+                                System.out.println(v);
+                                tmpThreshold.put("tmp", v);
+                            }
+                        });
+                ActivityCoupon tmp = tmpThreshold.get("tmp");
+                if (tmp == null) {
+                    tmp = couponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S"))
+                            .sorted(Comparator.comparingDouble(v->Double.parseDouble(v.getCouponThreshold()))).findFirst().orElse(null);
+                    preferAmount2 = activityPrice * (Double.parseDouble(tmp.getCouponDenom()) / Double.parseDouble(tmp.getCouponThreshold()));
+                } else {
+                    preferAmount2 = Double.parseDouble(tmp.getCouponDenom());
+                }
+                if (groupId.equalsIgnoreCase("9")) {
+                    preferAmount2 = Math.round(preferAmount2 / discountCnt);
+                }
             }
         }
 
-        // 品类优惠，仅限本次使用，后续删除
-        double spu_discount = 0;
-        if (activityPrice < 300) {
-            spu_discount = activityPrice * (20 / 300D);
-        } else {
-            spu_discount = 20;
+        if (shopAddFlagY > 0) {
+            if (shopAddFlagY > 1) {
+                throw new IllegalArgumentException("店铺优惠只能有一个叠加券！");
+            } else {
+                // 有单品券
+                if (StringUtils.isNotEmpty(spCouponFlag) && spCouponFlag.equalsIgnoreCase("1")) {
+                    if (activityPrice >= spCouponThreshold) {
+                        preferAmount2 = spCouponDenom;
+                    } else {
+                        preferAmount2 = 0;
+                    }
+                } else {
+                    double finalActivityPrice;
+                    Integer discountCnt = activityProduct.getDiscountCnt();
+                    if (groupId.equalsIgnoreCase("9")) {
+                        finalActivityPrice = activityPrice * discountCnt;
+                    } else {
+                        finalActivityPrice = activityPrice;
+                    }
+
+                    ActivityCoupon tmp = shopCouponList.get(0);
+                    double n1 = Double.parseDouble(tmp.getCouponDenom()) / Double.parseDouble(tmp.getCouponThreshold());
+                    double n2 = finalActivityPrice / Double.parseDouble(tmp.getCouponThreshold());
+                    if (n2 < 1) {
+                        preferAmount2 = finalActivityPrice * n1;
+                    } else {
+                        preferAmount2 = Math.floor(n1) * Double.parseDouble(tmp.getCouponDenom());
+                    }
+
+                    if (groupId.equalsIgnoreCase("9")) {
+                        preferAmount2 = preferAmount2 / discountCnt;
+                    }
+                }
+            }
+        }
+        // 平台优惠
+        List<ActivityCoupon> platCouponList = couponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("P")).collect(Collectors.toList());
+        long platAddFlagY = platCouponList.stream().filter(x -> x.getAddFlag().equalsIgnoreCase("1")).count();
+        long platAddFlagN = platCouponList.stream().filter(x -> x.getAddFlag().equalsIgnoreCase("0")).count();
+        // 非叠加券
+        if (platAddFlagN > 0) {
+            double finalActivityPrice;
+            Integer discountCnt = activityProduct.getDiscountCnt();
+            if (groupId.equalsIgnoreCase("9")) {
+                finalActivityPrice = activityPrice * discountCnt;
+            } else {
+                finalActivityPrice = activityPrice;
+            }
+
+            Map<String, ActivityCoupon> tmpThreshold = Maps.newHashMap();
+            platCouponList.stream().filter(x -> x.getAddFlag().equalsIgnoreCase("0"))
+                    .sorted(Comparator.comparingDouble(v->Double.parseDouble(v.getCouponThreshold())))
+                    .forEach(v -> {
+                        if (finalActivityPrice >= Double.parseDouble(v.getCouponThreshold())) {
+                            System.out.println(v);
+                            tmpThreshold.put("tmp", v);
+                        }
+                    });
+            ActivityCoupon tmp = tmpThreshold.get("tmp");
+
+            if (tmp == null) {
+                preferAmount3_1 = 0;
+            } else {
+                preferAmount3_1 = Double.parseDouble(tmp.getCouponDenom());
+            }
+            if (groupId.equalsIgnoreCase("9")) {
+                preferAmount3_1 = preferAmount3_1 / discountCnt;
+            }
         }
 
-        activityPrice = (activityPrice - shop_discount - plat_discount - spu_discount) < 0 ? 0 : activityPrice - shop_discount - plat_discount - spu_discount;
+        // 叠加券
+        if (platAddFlagY > 0) {
+            if (platAddFlagY > 1) {
+                throw new IllegalArgumentException("平台优惠只能有一个叠加券！");
+            } else {
+                double finalActivityPrice;
+                Integer discountCnt = activityProduct.getDiscountCnt();
+                if (groupId.equalsIgnoreCase("9")) {
+                    finalActivityPrice = activityPrice * discountCnt;
+                } else {
+                    finalActivityPrice = activityPrice;
+                }
+
+                ActivityCoupon tmp = platCouponList.get(0);
+                double n1 = Double.parseDouble(tmp.getCouponDenom()) / Double.parseDouble(tmp.getCouponThreshold());
+                double n2 = finalActivityPrice / Double.parseDouble(tmp.getCouponThreshold());
+                if (n2 < 1) {
+                    preferAmount3_2 = 0;
+                } else {
+                    preferAmount3_2 = Math.floor(n2) * Double.parseDouble(tmp.getCouponDenom());
+                }
+
+                if (groupId.equalsIgnoreCase("9")) {
+                    preferAmount3_2 = preferAmount3_2 / discountCnt;
+                }
+            }
+        }
+        double activityProfit = 0D;
+        switch (groupId) {
+            case "9":
+                activityProfit = activityProduct.getDiscountSize();
+                break;
+            case "13":
+                activityProfit = preferAmount2 + preferAmount3_1 + preferAmount3_2;
+                break;
+            case "14":
+                activityProfit = preferAmount1 + preferAmount2 + preferAmount3_1 + preferAmount3_2;
+                break;
+            default:
+                break;
+        }
+        double totalDiscount = preferAmount1 + preferAmount2 + preferAmount3_1 + preferAmount3_2;
+        activityPrice = (activityPrice - totalDiscount) < 0 ? 0 : (activityPrice - totalDiscount);
         activityProduct.setMinPrice(Math.round(activityPrice));
+        activityProduct.setActivityProfit((double) Math.round(activityProfit));
         return activityProduct;
     }
 
@@ -200,7 +339,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         String xlsxSuffix = ".xlsx";
         // 表头
         List<String> headers = Arrays.asList(
-                "商品ID", "商品名称", "日常商品单价\n（元/件）", "报名活动单价\n（元/件）", "店铺活动机制", "满件打折力度\n（折）", "立减特价（元）", "单品券", "单品券门槛\n（元）", "单品券面额\n（元）", "最低价", "利益点"
+                "商品ID", "商品名称", "日常商品单价\n（元/件）", "报名活动单价\n（元/件）", "店铺活动机制", "满件打折件数\n（件）", "满件打折力度\n（折）", "立减特价（元）", "单品券", "单品券门槛\n（元）", "单品券面额\n（元）", "最低价", "利益点"
         );
         AtomicBoolean flag = new AtomicBoolean(true);
         List<ActivityProduct> productList = Lists.newArrayList();
@@ -337,6 +476,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                             errorList.add(new ActivityProductUploadError("店铺活动机制数据类型有误，应改为文本型", i + 1));
                         }
                     }
+                    // 折扣件数
+                    double discountCnt = 0D;
                     // 折扣力度
                     double discountSize = 0D;
                     // 折扣金额
@@ -346,108 +487,92 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                             // 满件打折
                             Cell cell5 = row.getCell(5);
                             if (null == cell5 || cell5.getCellType() == 3) {
-                                errorList.add(new ActivityProductUploadError("满件打折力度为空", i + 1));
+                                errorList.add(new ActivityProductUploadError("满件打折件数为空", i + 1));
                             } else {
                                 if (cell5.getCellType() == 0) {
-                                    discountSize = cell5.getNumericCellValue();
+                                    discountCnt = cell5.getNumericCellValue();
+                                } else {
+                                    errorList.add(new ActivityProductUploadError("满件打折件数数据类型有误，应改为数值型", i + 1));
+                                }
+                            }
+
+                            Cell cell6 = row.getCell(6);
+                            if (null == cell6 || cell6.getCellType() == 3) {
+                                errorList.add(new ActivityProductUploadError("满件打折力度为空", i + 1));
+                            } else {
+                                if (cell6.getCellType() == 0) {
+                                    discountSize = cell6.getNumericCellValue();
                                 } else {
                                     errorList.add(new ActivityProductUploadError("满件打折力度数据类型有误，应改为数值型", i + 1));
                                 }
                             }
                             break;
                         case "13":
-                        case "14":
                             // 满元减钱
-                            Cell cell6 = row.getCell(6);
-                            if (null == cell6 || cell6.getCellType() == 3) {
+                            Cell cell7 = row.getCell(7);
+                            if (null == cell7 || cell7.getCellType() == 3) {
                                 errorList.add(new ActivityProductUploadError("立减特价金额为空", i + 1));
                             } else {
-                                if (cell6.getCellType() == 0) {
-                                    discountAmount = cell6.getNumericCellValue();
+                                if (cell7.getCellType() == 0) {
+                                    discountAmount = cell7.getNumericCellValue();
                                 } else {
                                     errorList.add(new ActivityProductUploadError("立减特价金额数据类型有误，应改为数值型", i + 1));
                                 }
                             }
+                            break;
+                        case "14":
                             break;
                         default:
                             throw new IllegalArgumentException("活动机制未匹配到组ID");
                     }
 
                     String singleProduct = "";
-                    Cell cell7 = row.getCell(7);
-                    if (null == cell7 || cell7.getCellType() == 3) {
+                    Cell cell8 = row.getCell(8);
+                    if (null == cell8 || cell8.getCellType() == 3) {
                         // do nothing
                     } else {
-                        if (cell7.getCellType() == 1) {
-                            singleProduct = cell7.getStringCellValue();
+                        if (cell8.getCellType() == 1) {
+                            singleProduct = cell8.getStringCellValue();
                         } else {
                             errorList.add(new ActivityProductUploadError("单品券数据类型有误，应改为文本型", i + 1));
                         }
                     }
 
-                    if(StringUtils.isNotEmpty(singleProduct)) {
-                        singleProduct = singleProduct.equals("有") ? "1": (singleProduct.equals("无") ? "0":null);
-                        if(singleProduct == null) {
+                    if (StringUtils.isNotEmpty(singleProduct)) {
+                        singleProduct = singleProduct.equals("有") ? "1" : (singleProduct.equals("无") ? "0" : null);
+                        if (singleProduct == null) {
                             errorList.add(new ActivityProductUploadError("单品券值与限定值不匹配", i + 1));
                         }
                     }
                     double singleProductThreadHold = 0;
-                    Cell cell8 = row.getCell(8);
-                    if (null == cell8 || cell8.getCellType() == 3) {
-                        if(StringUtils.isNotEmpty(singleProduct)) {
+                    Cell cell9 = row.getCell(9);
+                    if (null == cell9 || cell9.getCellType() == 3) {
+                        if (StringUtils.isNotEmpty(singleProduct)) {
                             errorList.add(new ActivityProductUploadError("单品券门槛为空", i + 1));
                         }
                     } else {
-                        if (cell8.getCellType() == 0) {
-                            singleProductThreadHold = cell8.getNumericCellValue();
-                        } else if (cell8.getCellType() == 1) {
-                            singleProductThreadHold = new BigDecimal(cell8.getStringCellValue()).doubleValue();
-                        }else {
+                        if (cell9.getCellType() == 0) {
+                            singleProductThreadHold = cell9.getNumericCellValue();
+                        } else if (cell9.getCellType() == 1) {
+                            singleProductThreadHold = new BigDecimal(cell9.getStringCellValue()).doubleValue();
+                        } else {
                             errorList.add(new ActivityProductUploadError("单品券门槛类型有误，应改为数值型", i + 1));
                         }
                     }
 
                     double singleProductDeno = 0;
-                    Cell cell9 = row.getCell(9);
-                    if (null == cell9 || cell9.getCellType() == 3) {
-                        if(StringUtils.isNotEmpty(singleProduct)) {
+                    Cell cell10 = row.getCell(10);
+                    if (null == cell10 || cell10.getCellType() == 3) {
+                        if (StringUtils.isNotEmpty(singleProduct)) {
                             errorList.add(new ActivityProductUploadError("单品券面额为空", i + 1));
                         }
                     } else {
-                        if (cell9.getCellType() == 0) {
-                            singleProductDeno = cell9.getNumericCellValue();
-                        } else if (cell9.getCellType() == 1) {
-                            singleProductDeno = new BigDecimal(cell9.getStringCellValue()).doubleValue();
-                        }else {
-                            errorList.add(new ActivityProductUploadError("单品券面额类型有误，应改为数值型", i + 1));
-                        }
-                    }
-
-                    double minPrice = 0D;
-                    Cell cell10 = row.getCell(10);
-                    if (null == cell10 || cell10.getCellType() == 3) {
-
-                    } else {
                         if (cell10.getCellType() == 0) {
-                            minPrice = cell10.getNumericCellValue();
-                        } else if (cell2.getCellType() == 1) {
-                            minPrice = new BigDecimal(cell10.getStringCellValue()).doubleValue();
+                            singleProductDeno = cell10.getNumericCellValue();
+                        } else if (cell10.getCellType() == 1) {
+                            singleProductDeno = new BigDecimal(cell10.getStringCellValue()).doubleValue();
                         } else {
-                            errorList.add(new ActivityProductUploadError("最低价数据类型有误，应改为数值型", i + 1));
-                        }
-                    }
-
-                    double activityProfit = 0D;
-                    Cell cell11 = row.getCell(11);
-                    if (null == cell11 || cell11.getCellType() == 3) {
-
-                    } else {
-                        if (cell11.getCellType() == 0) {
-                            activityProfit = cell11.getNumericCellValue();
-                        } else if (cell11.getCellType() == 1) {
-                            activityProfit = new BigDecimal(cell11.getStringCellValue()).doubleValue();
-                        } else {
-                            errorList.add(new ActivityProductUploadError("利益点数据类型有误，应改为数值型", i + 1));
+                            errorList.add(new ActivityProductUploadError("单品券面额类型有误，应改为数值型", i + 1));
                         }
                     }
 
@@ -458,21 +583,18 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     activityProduct.setActivityPrice(new BigDecimal(activityPrice).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     activityProduct.setFormalPrice(new BigDecimal(formalPrice).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     activityProduct.setDiscountSize(new BigDecimal(discountSize).setScale(2, RoundingMode.HALF_UP).doubleValue());
+                    activityProduct.setDiscountCnt(new BigDecimal(discountCnt).setScale(2, RoundingMode.HALF_UP).intValue());
                     activityProduct.setDiscountAmount(new BigDecimal(discountAmount).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     activityProduct.setProductId(productId);
                     activityProduct.setActivityStage(stage);
                     activityProduct.setActivityType(activityType);
-                    activityProduct.setMinPrice(new BigDecimal(minPrice).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                    activityProduct.setActivityProfit(new BigDecimal(activityProfit).setScale(2, RoundingMode.HALF_UP).doubleValue());
-                    if(StringUtils.isNotEmpty(singleProduct)) {
+                    if (StringUtils.isNotEmpty(singleProduct)) {
                         activityProduct.setSpCouponFlag(singleProduct);
                         activityProduct.setSpCouponThreshold((new BigDecimal(singleProductThreadHold).setScale(2, RoundingMode.HALF_UP).doubleValue()));
                         activityProduct.setSpCouponDenom((new BigDecimal(singleProductDeno).setScale(2, RoundingMode.HALF_UP).doubleValue()));
                     }
-                    if (activityProduct.productValid()) {
-//                        activityProduct = calculateProductMinPrice(activityProduct);
 
-                    }
+                    activityProduct = calculateProductMinPrice(activityProduct);
                     productList.add(activityProduct);
                 }
                 if (productList.size() != 0) {
@@ -494,7 +616,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
             });
         }
         List<ActivityProductUploadError> errors = dataList.stream().sorted(Comparator.comparing(ActivityProductUploadError::getFirstErrorRow)).collect(Collectors.toList());
-        if(errors.size() > 6) {
+        if (errors.size() > 6) {
             errors = errors.subList(0, 6);
         }
         return errors;
@@ -520,6 +642,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
 
     /**
      * 判断当前
+     *
      * @param headId
      * @param stage
      * @return
@@ -637,6 +760,4 @@ public class ActivityProductServiceImpl implements ActivityProductService {
             return "错误类型";
         }
     }
-
-
 }

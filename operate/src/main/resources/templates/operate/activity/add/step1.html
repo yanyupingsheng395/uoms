@@ -38,7 +38,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row m-t-15">
+                <div class="row m-t-10">
                     <div class="col-md-12">
                         <div class="form-group">
                             &#12288;&#12288;活动渠道：<select name="activitySource" id="activitySource" class="form-control" style="width: 172px;">
@@ -48,41 +48,82 @@
                         </div>
                     </div>
                 </div>
-                <div class="row m-t-15">
-                    <div class="col-md-4">
-                        <div class="form-group" style="margin-top: 8px;height: 38px;">
-                            &#12288;&#12288;平台优惠：<label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                                <input type="radio" name="platDiscount" value="1" onclick="platDiscountClick(1)"><span>是</span>
-                            </label>
-                            <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                                <input type="radio" name="platDiscount" value="0" onclick="platDiscountClick(0)"><span>否</span>
-                            </label>
-                            &nbsp;&nbsp;<button type="button" class="btn btn-secondary btn-sm">添加</button>
+                <div style="border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;" id="platCouponDiv">
+                    <div class="row m-t-10">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                &#12288;&#12288;平台优惠：<select name="platDiscount" class="form-control" style="width: 172px;">
+                                <option value="Y">是</option>
+                                <option value="N">否</option>
+                            </select>
+                                &nbsp;&nbsp;<a id='addPlatDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="addPlatCoupon(1)"><i class="fa fa-plus-circle"></i>添加</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="platDiscountItems">
+                        <div class="row m-t-10">
+                            <input type="hidden" name="couponType" value="P"/>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;券叠加：<select name="addFlag" class="form-control" style="width: 172px;">
+                                    <option value="1">是</option>
+                                    <option value="0">否</option>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;&#12288;门槛：<input type="text" name="couponThreshold" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;&#12288;面额：<input type="text" name="couponDenom" class="form-control"/>
+                                </div>
+                                &nbsp;&nbsp;<a style="color: #f96868;cursor: pointer;" onclick="deleteCoupon(this)"><i class="fa fa-trash"></i>删除</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-<!--                <div class="row m-t-15">-->
-<!--                    <div class="col-md-4">-->
-<!--                        <div class="form-group">-->
-<!--                            &#12288;&#12288;&#12288;券叠加：<select name="activitySource" id="activitySource" class="form-control" style="width: 172px;">-->
-<!--                            <option value="1">是</option>-->
-<!--                            <option value="0">否</option>-->
-<!--                        </select>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-4">-->
-<!--                        <div class="form-group">-->
-<!--                            &#12288;&#12288;&#12288;&#12288;门槛：<input type="text" name="preheatStartDt" id="preheatStartDt" class="form-control"/>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-4">-->
-<!--                        <div class="form-group">-->
-<!--                            &#12288;&#12288;&#12288;&#12288;面额：<input type="text" name="preheatStartDt" id="preheatStartDt" class="form-control"/>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <div style="border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;" id="shopCouponDiv">
+                    <div class="row m-t-10">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                &#12288;&#12288;店铺优惠：<select name="shopDiscount" class="form-control" style="width: 172px;">
+                                <option value="Y">是</option>
+                                <option value="N">否</option>
+                            </select>
+                                &nbsp;&nbsp;<a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="addPlatCoupon(2)"><i class="fa fa-plus-circle"></i>添加</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="shopDiscountItems">
+                        <div class="row m-t-10">
+                            <input type="hidden" name="couponType" value="S"/>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;券叠加：<select name="addFlag" class="form-control" style="width: 172px;">
+                                    <option value="1">是</option>
+                                    <option value="0">否</option>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;&#12288;门槛：<input type="text" name="couponThreshold" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;&#12288;面额：<input type="text" name="couponDenom" class="form-control"/>
+                                </div>
+                                &nbsp;&nbsp;<a style="color: #f96868;cursor: pointer;" onclick="deleteCoupon(this)"><i class="fa fa-trash"></i>删除</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div id="preheatDiv">
-                    <div class="row m-t-15">
+                    <div class="row m-t-10">
                         <div class="col-md-4">
                             <div class="form-group">
                                 预售通知时间：<input type="text" name="preheatNotifyDt" id="preheatNotifyDt" class="form-control"/>
@@ -181,29 +222,73 @@
                         </div>
                     </div>
                 </div>
-                <div class="row m-t-15">
-                    <div class="col-md-4">
-                        <div class="form-group" style="margin-top: 8px;">
-                            &#12288;&#12288;平台优惠：<label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                            <input type="radio" name="platDiscount" value="1"
-                                   th:checked="${activityHead.platDiscount eq '1'} ? true:false" disabled
-                            ><span>是</span>
-                        </label>
-                            <label class="lyear-radio radio-inline radio-primary" style="padding-top: 0px;">
-                                <input type="radio" name="platDiscount" value="0"
-                                       th:checked="${activityHead.platDiscount eq '0'} ? true:false" disabled
-                                ><span>否</span>
-                            </label>
+
+                <div style="border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;">
+                    <div class="row m-t-10">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                &#12288;&#12288;平台优惠：<select name="platDiscount" class="form-control" style="width: 172px;" disabled>
+                                <option value="Y" th:selected="${activityHead.platDiscount eq 'Y'} ? true:false">是</option>
+                                <option value="N" th:selected="${activityHead.platDiscount eq 'N'} ? true:false">否</option>
+                            </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4" th:if="${activityHead.platDiscount eq '1'}">
-                        <div class="form-group">
-                            &#12288;&#12288;&#12288;&#12288;门槛：<input disabled type="text" name="platThreshold" class="form-control" th:value="${activityHead.platThreshold}"/>
+                    <div th:each="p:${platCouponList}">
+                        <div class="row m-t-10">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;券叠加：<select name="addFlag" class="form-control" style="width: 172px;" disabled>
+                                    <option value="1" th:selected="${p.addFlag eq '1'} ? true:false">是</option>
+                                    <option value="0" th:selected="${p.addFlag eq '0'} ? true:false">否</option>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;&#12288;门槛：<input type="text" name="couponThreshold" class="form-control" th:value="${p.couponThreshold}" disabled/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;&#12288;面额：<input type="text" name="couponDenom" class="form-control" th:value="${p.couponDenom}" disabled/>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4" th:if="${activityHead.platDiscount eq '1'}">
-                        <div class="form-group">
-                            &#12288;&#12288;&#12288;&#12288;面额：<input disabled type="text" name="platDeno" class="form-control" th:value="${activityHead.platDeno}"/>
+                </div>
+
+                <div style="border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;">
+                    <div class="row m-t-10">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                &#12288;&#12288;店铺优惠：<select name="shopDiscount" class="form-control" style="width: 172px;" disabled>
+                                <option value="Y" th:selected="${activityHead.shopDiscount eq 'Y'} ? true:false">是</option>
+                                <option value="N" th:selected="${activityHead.shopDiscount eq 'N'} ? true:false">否</option>
+                            </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:each="s:${shopCouponList}">
+                        <div class="row m-t-10">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;券叠加：<select name="addFlag" class="form-control" style="width: 172px;" disabled>
+                                    <option value="1" th:selected="${s.addFlag eq '1'} ? true:false">是</option>
+                                    <option value="0" th:selected="${s.addFlag eq '0'} ? true:false">否</option>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;&#12288;门槛：<input type="text" name="couponThreshold" class="form-control" th:value="${s.couponThreshold}" disabled/>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    &#12288;&#12288;&#12288;&#12288;面额：<input type="text" name="couponDenom" class="form-control" th:value="${s.couponDenom}" disabled/>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

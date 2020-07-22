@@ -111,8 +111,8 @@ public class ActivityController {
      * @return
      */
     @PostMapping("/saveActivityHead")
-    public ResponseBo saveActivityHead(ActivityHead activityHead) {
-        int headId = activityHeadService.saveActivityHead(activityHead);
+    public ResponseBo saveActivityHead(ActivityHead activityHead, String coupons) {
+        int headId = activityHeadService.saveActivityHead(activityHead, coupons);
         return ResponseBo.okWithData("活动信息保存成功,接下来请添加活动商品！", headId);
     }
 

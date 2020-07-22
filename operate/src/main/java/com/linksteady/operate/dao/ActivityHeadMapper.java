@@ -1,6 +1,7 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.domain.ActivityCoupon;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.ActivityTemplate;
@@ -71,4 +72,17 @@ public interface ActivityHeadMapper {
      * 失效正式正式
      */
     void expireFormalDuring();
+
+    /**
+     * 保存优惠券列表
+     * @param couponList
+     */
+    void saveActivityCouponList(@Param("couponList") List<ActivityCoupon> couponList);
+
+    /**
+     * 获取优惠券列表
+     * @param headId
+     * @return
+     */
+    List<ActivityCoupon> getActivityCouponList(Long headId);
 }

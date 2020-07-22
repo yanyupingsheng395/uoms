@@ -19,8 +19,18 @@
         <result property="effectFlag" jdbcType="VARCHAR" column="EFFECT_FLAG"></result>
         <result property="activitySource" jdbcType="VARCHAR" column="activity_source"></result>
         <result property="platDiscount" jdbcType="VARCHAR" column="plat_discount"></result>
+        <result property="shopDiscount" jdbcType="VARCHAR" column="shop_discount"></result>
         <result property="platThreshold" jdbcType="VARCHAR" column="plat_threshold"></result>
         <result property="platDeno" jdbcType="VARCHAR" column="plat_deno"></result>
+    </resultMap>
+
+    <resultMap id="couponMap" type="com.linksteady.operate.domain.ActivityCoupon">
+        <result property="activityCouponId" jdbcType="DECIMAL" column="activity_coupon_id"></result>
+        <result property="headId" jdbcType="DECIMAL" column="head_id"></result>
+        <result property="couponThreshold" jdbcType="VARCHAR" column="coupon_threshold"></result>
+        <result property="couponDenom" jdbcType="VARCHAR" column="coupon_denom"></result>
+        <result property="couponType" jdbcType="VARCHAR" column="coupon_type"></result>
+        <result property="addFlag" jdbcType="VARCHAR" column="add_flag"></result>
     </resultMap>
 
     <select id="getDataListOfPage" resultMap="baseResult">
@@ -69,7 +79,8 @@
            activity_source,
            plat_discount,
            plat_threshold,
-           plat_deno
+           plat_deno,
+           shop_discount
         from uo_op_activity_header
         where head_id = #{headId}::int4
     </select>
@@ -213,4 +224,16 @@
         where t.formal_status in('todo','edit')
             and t.formal_end_dt::date&lt;current_date
     </update>
+
+    <insert id="saveActivityCouponList">
+        insert into uo_op_activity_coupon(head_id, coupon_threshold, coupon_denom, add_flag, coupon_type)
+        values
+        <foreach collection="couponList" item="item" separator=",">
+            (#{item.headId}, #{item.couponThreshold}::numeric, #{item.couponDenom}::numeric, #{item.addFlag}, #{item.couponType})
+        </foreach>
+    </insert>
+
+    <select id="getActivityCouponList" resultMap="couponMap">
+        select * from uo_op_activity_coupon where head_id = #{headId}
+    </select>
 </mapper>

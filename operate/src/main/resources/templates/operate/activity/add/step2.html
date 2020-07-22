@@ -195,14 +195,34 @@
                                     onchange="groupIdChange(this)">
                                 <option value="">请选择</option>
                                 <option value="9">满件打折</option>
-                                <option value="10">满元减钱</option>
-                                <option value="11">特价秒杀</option>
-                                <option value="12">预售付尾立减</option>
-                                <option value="13">无店铺活动</option>
+                                <option value="14">立减特价</option>
+                                <option value="13">仅店铺券</option>
                             </select>
                         </div>
                     </div>
                     <div id="shopOffer" style="display: none;"></div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">单品券</label>
+                        <div class="col-md-7">
+                            <select name="spCouponFlag" id="spCouponFlag" class="form-control">
+                                <option value="">请选择</option>
+                                <option value="1">有</option>
+                                <option value="0">无</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">单品券门槛（元）</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="text" name="spCouponThreshold">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">单品券面额（元）</label>
+                        <div class="col-md-7">
+                            <input class="form-control" type="text" name="spCouponDenom">
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
