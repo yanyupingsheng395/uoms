@@ -29,10 +29,6 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     @Autowired
     private ActivityHeadMapper activityHeadMapper;
 
-    @Override
-    public List<ActivityGroup> getUserGroupPage(Long headId, String stage, int limit, int offset) {
-        return activityUserGroupMapper.getUserGroupPage(headId, stage, limit,offset);
-    }
 
     @Override
     public List<ActivityGroup> getUserGroupList(Long headId, String stage, String type) {

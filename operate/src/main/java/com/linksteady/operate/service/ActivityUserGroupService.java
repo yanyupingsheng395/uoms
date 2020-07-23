@@ -10,8 +10,6 @@ import java.util.List;
  */
 public interface ActivityUserGroupService {
 
-    List<ActivityGroup> getUserGroupPage(Long headId, String stage, int limit, int offset);
-
     List<ActivityGroup> getUserGroupList(Long headId, String stage, String type);
 
     int getCount(Long headId, String stage);

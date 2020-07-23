@@ -12,8 +12,6 @@ public interface ActivityUserGroupMapper {
 
     int getCount(Long headId, String stage);
 
-    List<ActivityGroup> getUserGroupPage(Long headId, String stage, int limit, int offset);
-
     List<ActivityGroup> getUserGroupList(Long headId, String stage);
 
     void updateGroupTemplate(Long headId, Long groupId, Long code, String stage);

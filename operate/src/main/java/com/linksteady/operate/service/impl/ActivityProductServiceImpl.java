@@ -506,7 +506,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                                 }
                             }
                             break;
-                        case "13":
+                        case "14":
                             // 满元减钱
                             Cell cell7 = row.getCell(7);
                             if (null == cell7 || cell7.getCellType() == 3) {
@@ -519,7 +519,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                                 }
                             }
                             break;
-                        case "14":
+                        case "13":
                             break;
                         default:
                             throw new IllegalArgumentException("活动机制未匹配到组ID");

@@ -18,18 +18,11 @@
         select count(1) from UO_OP_ACTIVITY_GROUP where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
     </select>
 
-    <select id="getUserGroupPage" resultMap="base">
-        select GROUP_ID, HEAD_ID, GROUP_NAME, IN_GROWTH_PATH, ACTIVE_LEVEL, TMP_CONTENT, TMP_CONTENT_NORMAL,GROUP_USER_CNT, GROWTH_USER_CNT, ACTIVE_USER_CNT, ACTIVITY_STAGE from UO_OP_ACTIVITY_GROUP
-            left join UO_OP_ACTIVITY_TEMPLATE on SMS_TEMPLATE_CODE = TMP_CODE
-            where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
-        limit #{limit} offset #{offset}
-    </select>
-
     <select id="getUserGroupList" resultMap="base">
-        select case when group_id = 13 then 99 else group_id end group_id, group_name, tmp_content, activity_type, sms_template_code, check_flag, check_comments, group_info from (select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE,CHECK_FLAG,CHECK_COMMENTS, GROUP_INFO
+        select case when group_id = 13 then 99 else group_id end order_id, group_id, group_name, tmp_content, activity_type, sms_template_code, check_flag, check_comments, group_info from (select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE,CHECK_FLAG,CHECK_COMMENTS, GROUP_INFO
                        from UO_OP_ACTIVITY_GROUP left join UO_OP_ACTIVITY_TEMPLATE
                                                            on SMS_TEMPLATE_CODE = TMP_CODE where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} order by group_id asc) t
-        order by group_id asc
+        order by order_id asc
     </select>
 
     <update id="updateGroupTemplate">
