@@ -64,6 +64,10 @@ $(function () {
                 field: 'createDt',
                 title: '创建时间'
             }
+            ,{
+                field: 'updateDt',
+                title: '更新时间'
+            }
         ]
     };
     $MB.initTable('userTable', settings);

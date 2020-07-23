@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -134,8 +135,20 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         UserBo userBo=(UserBo) SecurityUtils.getSubject().getPrincipal();
         user.setPassword(null);
         user.setUsername(null);
+        user.setFirstLogin(null);
         user.setUpdateDt(new Date());
         user.setUpdateBy(userBo.getUsername());
+        String expire=user.getExpire();
+        if(StringUtils.isNotEmpty(expire))
+        {
+            try {
+                Date expireDate=new SimpleDateFormat("yyyy-MM-dd").parse(expire);
+                user.setExpireDate(expireDate);
+            } catch (ParseException e) {
+                log.error("系统管理更新用户失效日期转换错误");
+            }
+        }
+
         this.updateNotNull(user);
         Example example = new Example(UserRole.class);
         example.createCriteria().andCondition("user_id=", user.getUserId());

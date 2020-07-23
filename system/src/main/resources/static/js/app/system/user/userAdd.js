@@ -24,7 +24,6 @@ $(function () {
                 });
             }
             if (name === "update") {
-                alert('test');
                 $.post(ctx + "user/update", $userAddForm.serialize(), function (r) {
                     if (r.code === 200) {
                         closeModal();

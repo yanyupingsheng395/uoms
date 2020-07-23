@@ -25,7 +25,7 @@ function updateMenu() {
             $form.find("input[name='url']").val(menu.url);
             $form.find("input[name='perms']").val(menu.perms);
             $form.find("input[name='orderNum']").val(menu.orderNum);
-            $form.find("select[name='sysId']").selectpicker('val', menu.sysId);
+            $form.find("select[name='sysCode']").selectpicker('val', menu.sysCode);
             currentMenuId = menu.menuId;
             currentMenuParentId = menu.parentId;
             $("#menu-add-button").attr("name", "update");
