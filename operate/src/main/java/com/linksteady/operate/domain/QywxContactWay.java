@@ -2,6 +2,9 @@ package com.linksteady.operate.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 /**
  * @author huang
@@ -55,6 +58,24 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
     public QywxContactWay()
     {
         
+    }
+
+    public QywxContactWay(Long contactWayId,String qrCode,String contactType,String state,
+                          String usersList,String shortUrl,int externalUserNum,String createDt,String remark)
+    {
+         this.contactWayId=contactWayId;
+         this.qrCode=qrCode;
+         this.contactType=contactType;
+         this.state=state;
+         this.usersList=usersList;
+         this.shortUrl=shortUrl;
+         this.externalUserNum=externalUserNum;
+        try {
+            this.createDt=new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(createDt);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        this.remark=remark;
     }
     
     @Override

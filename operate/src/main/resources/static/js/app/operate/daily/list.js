@@ -115,13 +115,13 @@ $("#btn_catch").click(function () {
         $MB.n_warning('请勾选要查看效果的任务！');
         return;
     }
-    var status = selected[0].status;
+    let status = selected[0].status;
     if (status != 'done' && status != 'finished') {
         $MB.n_warning("只有已执行，已结束状态可查看任务效果！");
         return;
     }
     var headId = selected[0].headId;
-    window.location.href = "/page/daily/task/effect?id=" + headId;
+    window.location.href = "/page/daily/effect?id=" + headId;
 });
 
 /**

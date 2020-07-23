@@ -16,6 +16,8 @@ function getTableData() {
         //     };
         // },
         columns: [{
+            checkbox: true
+        },{
             field: 'sendRange',
             align: "center",
             title: '发送申请范围',
@@ -78,7 +80,39 @@ function getTableData() {
             }
         }]
     };
-    var data = [{sendRange: '1', sendCount:55400, applySuccess: 500, applySuccessRate: '9%', applyTriggerRule: '通过短信推送带有二维码的页面',
-        taskStartDt: '20200709', taskStatus: 'done'}];
+    var data = [
+        {sendRange: '0', sendCount:28799, applySuccess: 9881, applySuccessRate: '24%', applyTriggerRule: '用户发生购买后短信推送申请',
+        taskStartDt: '20200514', taskStatus: 'doing'},
+        {sendRange: '0', sendCount:140, applySuccess: 42, applySuccessRate: '30%', applyTriggerRule: '通过短信推送带有二维码的页面',
+            taskStartDt: '20200531', taskStatus: 'done'},
+        {sendRange: '0', sendCount:213, applySuccess: 21, applySuccessRate: '10%', applyTriggerRule: '通过短信推送带有二维码的页面',
+            taskStartDt: '20200530', taskStatus: 'done'},
+        {sendRange: '0', sendCount:429, applySuccess: 55, applySuccessRate: '13%', applyTriggerRule: '通过短信推送带有二维码的页面',
+            taskStartDt: '20200529', taskStatus: 'done'},
+        {sendRange: '0', sendCount:224, applySuccess: 38, applySuccessRate: '17%', applyTriggerRule: '通过短信推送带有二维码的页面',
+            taskStartDt: '20200528', taskStatus: 'done'},
+        {sendRange: '0', sendCount:2862, applySuccess: 429, applySuccessRate: '15%', applyTriggerRule: '通过短信推送带有二维码的页面',
+            taskStartDt: '20200527', taskStatus: 'done'},
+        {sendRange: '0', sendCount:674, applySuccess: 127, applySuccessRate: '19%', applyTriggerRule: '通过短信推送带有二维码的页面',
+            taskStartDt: '20200526', taskStatus: 'done'},
+        {sendRange: '0', sendCount:358, applySuccess: 78, applySuccessRate: '21%', applyTriggerRule: '通过短信推送带有二维码的页面',
+            taskStartDt: '20200525', taskStatus: 'done'},
+        {sendRange: '0', sendCount:351, applySuccess: 91, applySuccessRate: '26%', applyTriggerRule: '通过短信推送带有二维码的页面',
+            taskStartDt: '20200524', taskStatus: 'done'},
+        {sendRange: '0', sendCount:730, applySuccess: 226, applySuccessRate: '31%', applyTriggerRule: '通过短信推送带有二维码的页面',
+            taskStartDt: '20200523', taskStatus: 'done'},
+        {sendRange: '1', sendCount:184841, applySuccess: 38816, applySuccessRate: '21%', applyTriggerRule: '通过企业微信自动添加好友',
+            taskStartDt: '20200516', taskStatus: 'done'}];
     $("#dataTable").bootstrapTable(settings).bootstrapTable('load', data);
 }
+
+$("#btn_effect").click(function () {
+    let selected = $("#dataTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请勾选要查看效果的任务！');
+        return;
+    }
+    let status = selected[0].taskStatus;
+    window.location.href = "/page/addCustom/effect";
+});

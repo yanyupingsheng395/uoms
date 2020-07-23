@@ -35,7 +35,7 @@ function initTable() {
             align: 'center',
             formatter: function (value, row, indx)
             {
-                return "<img style='width:120px;height:120px' src='"+value+"'></img>";
+                return "<img style='width:120px;height:120px' src='"+value+"'></img><a href='#' style='font-size: 12px;'>下载</a>";
             }
         }, {
             field: 'shortUrl',
@@ -48,6 +48,7 @@ function initTable() {
             field: 'usersList',
             title: '可联系成员',
             align: 'center',
+            width: 240,
             formatter: function (value,row,indx) {
                 let arr=value.split(',');
                 let result='';
@@ -72,7 +73,7 @@ function initTable() {
                 return result;
             }
         },  {
-            field: 'type',
+            field: 'contactType',
             title: '二维码类型',
             align: 'center',
             formatter: function (value,row,indx) {
@@ -95,7 +96,8 @@ function initTable() {
         },  {
             field: 'externalUserNum',
             title: '添加客户人数',
-            align: 'center'
+            align: 'center',
+            visible: false
         },  {
             field: 'createDt',
             title: '创建时间',

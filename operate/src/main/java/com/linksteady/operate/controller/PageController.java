@@ -112,7 +112,7 @@ public class PageController extends BaseController {
      * @return
      */
     @Log(value = "每日用户运营-任务效果",location = "用户成长系统")
-    @RequestMapping("daily/task/effect")
+    @RequestMapping("daily/effect")
     public String effectTrack(Model model, @RequestParam("id") Long headId) {
         String status = dailyService.getDailyHeadById(headId).getStatus();
         if(StringUtils.isNotEmpty(status)) {
@@ -415,16 +415,20 @@ public class PageController extends BaseController {
     }
 
     /**
+     * 添加外部联系人效果
+     * @return
+     */
+    @RequestMapping("/addCustom/effect")
+    public String addCustomEffect() {
+        return "operate/addCustom/effect";
+    }
+
+    /**
      * 渠道活码
      */
     @Log(value = "渠道活码",location = "用户成长系统")
     @RequestMapping("/contactWay/list")
     public String contactWayList() {
         return "operate/contactWay/list";
-    }
-
-    @RequestMapping("/test")
-    public String test() {
-        return "operate/contactWay/qrCode3";
     }
 }

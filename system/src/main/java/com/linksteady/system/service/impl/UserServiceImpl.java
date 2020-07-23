@@ -108,7 +108,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
             user.setExpireDate(Date.from(LocalDate.parse(user.getExpire(),dtf).atStartOfDay(ZoneId.systemDefault()).toInstant()));
         }
 
-        user.setAvatar("20180414165936.jpg");
+        user.setAvatar("default.jpg");
         user.setTheme("cyan");
         user.setCreateBy(userBo.getUsername());
         userMapper.saveUser(user);
