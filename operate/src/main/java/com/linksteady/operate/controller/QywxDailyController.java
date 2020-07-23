@@ -14,6 +14,7 @@ import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.service.QywxDailyDetailService;
 import com.linksteady.operate.service.QywxDailyService;
 import com.linksteady.operate.util.OkHttpUtil;
+import com.linksteady.operate.util.SHA1;
 import com.linksteady.operate.vo.QywxUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -321,6 +324,8 @@ public class QywxDailyController {
     {
         //绑定的corpID
         String corpId="ww372de12b2d0cdf17";
+        //时间戳
+        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
 
         //获取要推送的数据
 //        List<Map<String,String>> result=qywxDailyDetailService.getTestPushData();
@@ -328,13 +333,10 @@ public class QywxDailyController {
         //构造推送参数
         JSONObject param=new JSONObject();
         param.put("chat_type","single");
-
         JSONArray externalUserid=new JSONArray();
         externalUserid.add("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ");
         externalUserid.add("wmXfFiDwAA2R-zN-afopB1W0aunsLowg");
-
         param.put("external_userid",externalUserid);
-
         param.put("sender","brandonz");
 
         JSONObject text=new JSONObject();
@@ -343,10 +345,13 @@ public class QywxDailyController {
 
         log.info("待推送的消息为{}",param.toJSONString());
 
-        String requesturl="http://qywx.growth-master.com/push/addMsgTemplate?corpId="+corpId;
+        String signature= SHA1.gen(timestamp,param.toJSONString());
+
+        String requesturl="http://qywx.growth-master.com/push/addMsgTemplate?corpId="+corpId
+                +"&timestamp="+timestamp+"&signature="+signature;
         //发送http请求
         String backStr=OkHttpUtil.postRequestByJson(requesturl,param.toJSONString());
-
+        log.info("推送后的返回结果为{}",backStr);
         return backStr;
     }
 
