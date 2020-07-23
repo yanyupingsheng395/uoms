@@ -6,10 +6,7 @@ import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.domain.enums.ConfigEnum;
-import com.linksteady.operate.service.ActivityHeadService;
-import com.linksteady.operate.service.ActivityPlanService;
-import com.linksteady.operate.service.DailyService;
-import com.linksteady.operate.service.QywxDailyService;
+import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.SourceConfigVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +43,9 @@ public class PageController extends BaseController {
 
     @Autowired
     PushConfig pushConfig;
+
+    @Autowired
+    private AddUserService addUserService;
 
     @Log(value = "用户成长监控",location = "用户成长系统")
     @RequestMapping("/operator/user")
@@ -410,7 +410,19 @@ public class PageController extends BaseController {
      *添加外部联系人-新增
      */
     @RequestMapping("/addCustom/add")
-    public String addCustomAdd() {
+    public String addCustomAdd(Model model) {
+        model.addAttribute("opType", "save");
+        return "operate/addCustom/add";
+    }
+
+    /**
+     *添加外部联系人-编辑
+     */
+    @RequestMapping("/addCustom/edit")
+    public String addCustomEdit(@RequestParam String id, Model model) {
+        AddUserConfig addUserConfig = addUserService.getConfigByHeadId(id);
+        model.addAttribute("addUserConfig", addUserConfig);
+        model.addAttribute("opType", "update");
         return "operate/addCustom/add";
     }
 
@@ -423,8 +435,4 @@ public class PageController extends BaseController {
         return "operate/contactWay/list";
     }
 
-    @RequestMapping("/test")
-    public String test() {
-        return "operate/contactWay/qrCode3";
-    }
 }

@@ -1,52 +1,64 @@
 getTableData();
 function getTableData() {
     var settings = {
-        // url: "",
-        // cache: false,
-        // pagination: true,
-        // singleSelect: true,
-        // sidePagination: "server",
-        // pageNumber: 1,            //初始化加载第一页，默认第一页
-        // pageSize: 10,            //每页的记录行数（*）
-        // pageList: [10, 25, 50, 100],
-        // queryParams: function (params) {
-        //     return {
-        //         pageSize: params.limit,  ////页面大小
-        //         pageNum: (params.offset / params.limit) + 1
-        //     };
-        // },
+        url: "/addUser/getHeadPageList",
+        cache: false,
+        pagination: true,
+        singleSelect: true,
+        clickToSelect: true,
+        sidePagination: "server",
+        pageNumber: 1,
+        pageSize: 10,
+        pageList: [10, 25, 50, 100],
+        queryParams: function (params) {
+            return {
+                limit: params.limit,
+                offset: params.offset
+            };
+        },
         columns: [{
-            field: 'sendRange',
+            checkbox: true
+        },{
+            field: 'sendType',
             align: "center",
             title: '发送申请范围',
             formatter: function (value, row, index) {
                 let res = "-";
                 switch (value) {
-                    case "0":
+                    case "1":
                         res = "筛选";
                         break;
-                    case "1":
+                    case "0":
                         res = "全部";
                         break;
                 }
                 return res;
             }
         },{
-            field: 'sendCount',
+            field: 'applyUserCnt',
             align: "center",
             title: '发送申请数量（人）'
         }, {
-            field: 'applySuccess',
+            field: 'applyPassCnt',
             align: "center",
             title: '通过申请数量（人）'
         }, {
-            field: 'applySuccessRate',
+            field: 'applyPassRate',
             align: "center",
             title: '申请通过率（%）'
         }, {
-            field: 'applyTriggerRule',
+            field: 'addUserMethod',
             align: "center",
-            title: '申请触发机制'
+            title: '申请触发机制',
+            formatter: function (value, row, index) {
+                if(value === '0') {
+                    return "通过企业微信自动添加好友";
+                } else if(value === '1') {
+                    return "通过短信推送带有二维码的页面 ";
+                } else if(value === '2') {
+                    return "用户发生购买后短信推送申请";
+                }
+            }
         },{
             field: 'taskStartDt',
             align: "center",
@@ -78,7 +90,34 @@ function getTableData() {
             }
         }]
     };
-    var data = [{sendRange: '1', sendCount:55400, applySuccess: 500, applySuccessRate: '9%', applyTriggerRule: '通过短信推送带有二维码的页面',
-        taskStartDt: '20200709', taskStatus: 'done'}];
-    $("#dataTable").bootstrapTable(settings).bootstrapTable('load', data);
+    $("#dataTable").bootstrapTable(settings);
+}
+
+function deleteTask() {
+    var selected = $("#dataTable").bootstrapTable('getSelections');
+    if(selected[0].length === 0) {
+        $MB.n_warning("请先选择一条记录！");
+    }
+    var id = selected[0].id;
+    $MB.confirm({
+        title: '提示:',
+        content: '确认删除选中的记录？'
+    }, function () {
+        $.get("/addUser/deleteTask", {id: id}, function (r) {
+            if(r.code === 200) {
+                $MB.refreshTable('dataTable');
+                $MB.n_success("删除任务成功！");
+            }
+        });
+    });
+}
+
+
+function editTask() {
+    var selected = $("#dataTable").bootstrapTable('getSelections');
+    if(selected[0].length === 0) {
+        $MB.n_warning("请先选择一条记录！");
+    }
+    var id = selected[0].id;
+    window.location.href = "/page/addCustom/edit?id=" + id;
 }

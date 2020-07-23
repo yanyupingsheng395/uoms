@@ -1,72 +1,149 @@
-<div class="row">
-    <div class="col-md-12">
-        <h5>选择申请发送范围</h5>
-        <label class="lyear-radio radio-inline radio-primary">
-            <input type="radio" checked='checked' name="sendType" value="0" onclick="selectUser(false)"><span>全部用户</span>
-        </label>
-        <label class="lyear-radio radio-inline radio-primary">
-            <input type="radio" name="sendType" value="1" onclick="selectUser(true)"><span>筛选用户</span>
-        </label>
+<div th:if="${opType eq 'save'}">
+    <div class="row">
+        <div class="col-md-12">
+            <h5>选择申请发送范围</h5>
+            <label class="lyear-radio radio-inline radio-primary">
+                <input type="radio" checked='checked' name="sendType" value="0" onclick="selectUser(false)"><span>全部用户</span>
+            </label>
+            <label class="lyear-radio radio-inline radio-primary">
+                <input type="radio" name="sendType" value="1" onclick="selectUser(true)"><span>筛选用户</span>
+            </label>
+        </div>
+    </div>
+    <div class="row m-t-15">
+        <div class="col-md-12">
+            <h5>筛选部分用户群组</h5>
+            <table class="table table-bordered" id="userPropTable" style="margin-bottom: 10px !important;">
+                <tr>
+                    <td style="background-color: rgb(239, 243, 249)">用户对类目的价值/沉默成本</td>
+                    <td><span data-value="ULC_01">高价值低敏感</span></td>
+                    <td><span data-value="ULC_02">高价值较敏感</span></td>
+                    <td><span data-value="ULC_03">中价值高敏感</span></td>
+                    <td><span data-value="ULC_04">低价值低敏感</span></td>
+                    <td><span data-value="ULC_05">低价值高敏感</span></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(239, 243, 249)">用户对类目的生命周期阶段</td>
+                    <td><span data-value="1">新手期</span></td>
+                    <td><span data-value="0">成长期</span></td>
+                    <td><span data-value="2">成熟期</span></td>
+                    <td><span data-value="3">衰退期</span></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(239, 243, 249)">用户下一次转化的活跃度节点</td>
+                    <td><span data-value="UAC_01">促活</span></td>
+                    <td><span data-value="UAC_02">留存</span></td>
+                    <td><span data-value="UAC_03">防弱流失</span></td>
+                    <td><span data-value="UAC_04">防强流失</span></td>
+                    <td><span data-value="UAC_05">沉睡</span></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(239, 243, 249)">用户成长类目的特性</td>
+                    <td><span data-value="UG_01">高价位高利润</span></td>
+                    <td><span data-value="UG_02">高价位低利润</span></td>
+                    <td><span data-value="UG_03">低价位高利润</span></td>
+                    <td><span data-value="UG_04">低价位低利润</span></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 control-label" style="margin-top:10px;text-align: left;margin-left: 15px;padding-left: 5px;">
+            <ul>
+                <li class="smsvariable">备注：</li>
+                <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;1.当品牌选择“筛选用户”时，默认选择优质用户群，优质需要分析师构建模型；</li>
+                <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;2.媒介&渠道偏好目前无模型；</li>
+                <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;3.上述标签可以复选；</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <div class="btn-group-sm" role="group">
+                <a class="btn btn-secondary" onclick="stepBreak(1)">
+                    <i class="fa fa-arrow-right"></i> 下一步
+                </a>
+                <a class="btn btn-secondary" href="/page/addCustom">
+                    <i class="fa fa-backward"></i> 返回
+                </a>
+            </div>
+        </div>
     </div>
 </div>
-<div class="row m-t-15">
-    <div class="col-md-12">
-        <h5>筛选部分用户群组</h5>
-        <table class="table table-bordered" id="userPropTable" style="margin-bottom: 10px !important;">
-            <tr>
-                <td style="background-color: rgb(239, 243, 249)">用户对类目的价值/沉默成本</td>
-                <td>高价值低敏感</td>
-                <td>高价值较敏感</td>
-                <td>中价值高敏感</td>
-                <td>低价值低敏感</td>
-                <td>低价值高敏感</td>
-            </tr>
-            <tr>
-                <td style="background-color: rgb(239, 243, 249)">用户对类目的生命周期阶段</td>
-                <td>新手期</td>
-                <td>成长期</td>
-                <td>成熟期</td>
-                <td>衰退期</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td style="background-color: rgb(239, 243, 249)">用户下一次转化的活跃度节点</td>
-                <td>促活</td>
-                <td>留存</td>
-                <td>防弱流失</td>
-                <td>防强流失</td>
-                <td>沉睡</td>
-            </tr>
-            <tr>
-                <td style="background-color: rgb(239, 243, 249)">用户成长类目的特性</td>
-                <td>高价位高利润</td>
-                <td>高价位低利润</td>
-                <td>低价位高利润</td>
-                <td>低价位低利润</td>
-                <td></td>
-            </tr>
-        </table>
+
+<div th:if="${opType eq 'update'}">
+    <div class="row">
+        <div class="col-md-12">
+            <h5>选择申请发送范围</h5>
+            <label class="lyear-radio radio-inline radio-primary">
+                <input type="radio" th:checked="${addUserConfig.sendType eq '0'} ? true:false" name="sendType" value="0" onclick="selectUser(false)"><span>全部用户</span>
+            </label>
+            <label class="lyear-radio radio-inline radio-primary">
+                <input type="radio" th:checked="${addUserConfig.sendType eq '1'} ? true:false" name="sendType" value="1" onclick="selectUser(true)"><span>筛选用户</span>
+            </label>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-12 control-label" style="margin-top:10px;text-align: left;margin-left: 15px;padding-left: 5px;">
-        <ul>
-            <li class="smsvariable">备注：</li>
-            <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;1.当品牌选择“筛选用户”时，默认选择优质用户群，优质需要分析师构建模型；</li>
-            <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;2.媒介&渠道偏好目前无模型；</li>
-            <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;3.上述标签可以复选；</li>
-        </ul>
+    <div class="row m-t-15">
+        <div class="col-md-12">
+            <h5>筛选部分用户群组</h5>
+            <table class="table table-bordered" id="userPropTable" style="margin-bottom: 10px !important;">
+                <tr>
+                    <td style="background-color: rgb(239, 243, 249)">用户对类目的价值/沉默成本</td>
+                    <td th:classappend="${#strings.contains(addUserConfig.userValue, 'ULC_01')} ? 'selected_td' : ''"><span data-value="ULC_01">高价值低敏感</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.userValue, 'ULC_02')} ? 'selected_td' : ''"><span data-value="ULC_02">高价值较敏感</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.userValue, 'ULC_03')} ? 'selected_td' : ''"><span data-value="ULC_03">中价值高敏感</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.userValue, 'ULC_04')} ? 'selected_td' : ''"><span data-value="ULC_04">低价值低敏感</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.userValue, 'ULC_05')} ? 'selected_td' : ''"><span data-value="ULC_05">低价值高敏感</span></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(239, 243, 249)">用户对类目的生命周期阶段</td>
+                    <td th:classappend="${#strings.contains(addUserConfig.lifeCycle, '1')} ? 'selected_td' : ''"><span data-value="1">新手期</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.lifeCycle, '0')} ? 'selected_td' : ''"><span data-value="0">成长期</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.lifeCycle, '2')} ? 'selected_td' : ''"><span data-value="2">成熟期</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.lifeCycle, '3')} ? 'selected_td' : ''"><span data-value="3">衰退期</span></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(239, 243, 249)">用户下一次转化的活跃度节点</td>
+                    <td th:classappend="${#strings.contains(addUserConfig.pathActive, 'UAC_01')} ? 'selected_td' : ''"><span data-value="UAC_01">促活</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.pathActive, 'UAC_02')} ? 'selected_td' : ''"><span data-value="UAC_02">留存</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.pathActive, 'UAC_03')} ? 'selected_td' : ''"><span data-value="UAC_03">防弱流失</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.pathActive, 'UAC_04')} ? 'selected_td' : ''"><span data-value="UAC_04">防强流失</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.pathActive, 'UAC_05')} ? 'selected_td' : ''"><span data-value="UAC_05">沉睡</span></td>
+                </tr>
+                <tr>
+                    <td style="background-color: rgb(239, 243, 249)">用户成长类目的特性</td>
+                    <td th:classappend="${#strings.contains(addUserConfig.userGrowth, 'UG_01')} ? 'selected_td' : ''"><span data-value="UG_01">高价位高利润</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.userGrowth, 'UG_02')} ? 'selected_td' : ''"><span data-value="UG_02">高价位低利润</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.userGrowth, 'UG_03')} ? 'selected_td' : ''"><span data-value="UG_03">低价位高利润</span></td>
+                    <td th:classappend="${#strings.contains(addUserConfig.userGrowth, 'UG_04')} ? 'selected_td' : ''"><span data-value="UG_04">低价位低利润</span></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-12 text-right">
-        <div class="btn-group-sm" role="group">
-            <a class="btn btn-secondary" onclick="stepBreak(1)">
-                <i class="fa fa-arrow-right"></i> 下一步
-            </a>
-            <a class="btn btn-secondary" href="/page/addCustom">
-                <i class="fa fa-backward"></i> 返回
-            </a>
+    <div class="row">
+        <div class="col-md-12 control-label" style="margin-top:10px;text-align: left;margin-left: 15px;padding-left: 5px;">
+            <ul>
+                <li class="smsvariable">备注：</li>
+                <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;1.当品牌选择“筛选用户”时，默认选择优质用户群，优质需要分析师构建模型；</li>
+                <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;2.媒介&渠道偏好目前无模型；</li>
+                <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;3.上述标签可以复选；</li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <div class="btn-group-sm" role="group">
+                <a class="btn btn-secondary" onclick="stepBreak(1)">
+                    <i class="fa fa-arrow-right"></i> 下一步
+                </a>
+                <a class="btn btn-secondary" href="/page/addCustom">
+                    <i class="fa fa-backward"></i> 返回
+                </a>
+            </div>
         </div>
     </div>
 </div>
