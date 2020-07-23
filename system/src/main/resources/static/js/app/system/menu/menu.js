@@ -14,6 +14,7 @@ function initTreeTable() {
         url: ctx + 'menu/list',
         expandAll: false,
         expandColumn: "1",
+        singleSelect: true,
         ajaxParams: {
             menuName: $menuTableForm.find("input[name='qmenuName']").val() == null ? null : $menuTableForm.find("input[name='qmenuName']").val().trim(),
             type: $menuTableForm.find("select[name='type']").find("option:selected").val(),
@@ -85,8 +86,8 @@ function getSystem() {
         $("#systemId").html("").html(options);
 
         //绑定新增页面的选择列表
-        $("#sysId").html("").html(options);
-        $("#sysId").selectpicker("refresh");
+        $("#sysCode").html("").html(options);
+        $("#sysCode").selectpicker("refresh");
     });
 }
 

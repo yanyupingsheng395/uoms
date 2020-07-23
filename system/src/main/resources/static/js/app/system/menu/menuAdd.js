@@ -95,7 +95,7 @@ function clearMenuAddForm() {
     // $MB.refreshJsTree("menuTree", createMenuTree());
 
     $("#menu-add-form")[0].reset();
-    $("#sysId").selectpicker('val', '');
+    $("#sysCode").selectpicker('val', '');
     $("input[name='system']").val("");
 }
 
@@ -153,12 +153,12 @@ function validateRule() {
     });
 }
 
-$('#sysId').on('changed.bs.select',function(e){
-    var sysId = $(this).val();
-    $("input[name='system']").val(sysId);
+$('#sysCode').on('changed.bs.select',function(e){
+    var sysCode = $(this).val();
+    $("input[name='system']").val(sysCode);
     $MB.loading('show');
     $.jstree.destroy();
-    createMenuTree(sysId);
+    createMenuTree(sysCode);
 });
 
 function createMenuTree(sysCode) {

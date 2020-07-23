@@ -41,3 +41,8 @@ shiro:
   resetPasswordUrl: /resetPass
   #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
   cookieDomain: localhost
+
+logging:
+  level:
+    com.linksteady.system.dao: debug
+
