@@ -10,11 +10,15 @@ import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxContactWayService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.util.OkHttpUtil;
+import com.linksteady.operate.util.SHA1;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 /**
@@ -66,9 +70,15 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         Long contactWayId=qywxContactWay.getContactWayId();
         String url = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + ADD_CONTACT_WAY;
         String param = JSON.toJSONString(qywxContactWay);
+
+        String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+        //时间戳
+        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+        String signature= SHA1.gen(timestamp,param);
+        String requesturl=url+"?corpId="+corpId +"&timestamp="+timestamp+"&signature="+signature;
         //构造数据，请求企业微信端 生成渠道码
-        String result = OkHttpUtil.postRequestByJson(url, param);
-        log.debug("请求获取渠道活码的url:{},参数:{},返回的结果{}", url, param, result);
+        String result = OkHttpUtil.postRequestByJson(requesturl, param);
+        log.debug("请求获取渠道活码的url:{},参数:{},返回的结果{}", requesturl, param, result);
 
         JSONObject jsonObject = JSON.parseObject(result);
         if (null != jsonObject && "0".equalsIgnoreCase(jsonObject.getString("errcode"))) {
@@ -101,12 +111,18 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     public void updateContractWay(QywxContactWay qywxContactWay) throws Exception{
         //更新数据库
         qywxContactWayMapper.updateContractWay(qywxContactWay);
-        String url = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + UPDATE_CONTACT_WAY;
+        String updateUrl = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + UPDATE_CONTACT_WAY;
         String param = JSON.toJSONString(qywxContactWay);
 
+        String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+        //时间戳
+        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+        String signature= SHA1.gen(timestamp,param);
+        String requesturl=updateUrl+"?corpId="+corpId +"&timestamp="+timestamp+"&signature="+signature;
+
         //构造数据，请求企业微信端 生成渠道码
-        String result = OkHttpUtil.postRequestByJson(url, param);
-        log.debug("请求更新渠道活码的url:{},参数:{},返回的结果{}", url, param, result);
+        String result = OkHttpUtil.postRequestByJson(requesturl, param);
+        log.debug("请求更新渠道活码的url:{},参数:{},返回的结果{}", requesturl, param, result);
 
         JSONObject jsonObject = JSON.parseObject(result);
         if (null != jsonObject && "0".equalsIgnoreCase(jsonObject.getString("errcode"))) {
@@ -150,12 +166,18 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
      */
     @Override
     public JSONObject getContactWayByConfigId(String configId) {
-        String url = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + GET_CONTACT_WAY;
+        String getUrl = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + GET_CONTACT_WAY;
         String param = JSON.toJSONString(configId);
 
+        String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+        //时间戳
+        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+        String signature= SHA1.gen(timestamp,param);
+        String requesturl=getUrl+"?corpId="+corpId +"&timestamp="+timestamp+"&signature="+signature;
+
         //构造数据，请求企业微信端 生成渠道码
-        String result = OkHttpUtil.postRequestByJson(url, param);
-        log.debug("请求获取渠道活码详细信息的url:{},参数:{},返回的结果{}", url, param, result);
+        String result = OkHttpUtil.postRequestByJson(requesturl, param);
+        log.debug("请求获取渠道活码详细信息的url:{},参数:{},返回的结果{}", requesturl, param, result);
 
         JSONObject jsonObject = JSON.parseObject(result);
         if (null != jsonObject && "0".equalsIgnoreCase(jsonObject.getString("errcode")))
@@ -176,12 +198,18 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     @Transactional
     public void deleteContactWay(String configId) throws Exception{
         //发送到企业微信端进行删除
-        String url = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + DELETE_CONTACT_WAY;
+        String delUrl = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + DELETE_CONTACT_WAY;
         String param = JSON.toJSONString(configId);
 
+        String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+        //时间戳
+        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+        String signature= SHA1.gen(timestamp,param);
+        String requesturl=delUrl+"?corpId="+corpId +"&timestamp="+timestamp+"&signature="+signature;
+
         //构造数据，请求企业微信端 生成渠道码
-        String result = OkHttpUtil.postRequestByJson(url, param);
-        log.debug("请求删除渠道活码的url:{},参数:{},返回的结果{}", url, param, result);
+        String result = OkHttpUtil.postRequestByJson(requesturl, param);
+        log.debug("请求删除渠道活码的url:{},参数:{},返回的结果{}", requesturl, param, result);
 
         JSONObject jsonObject = JSON.parseObject(result);
         if (null != jsonObject && "0".equalsIgnoreCase(jsonObject.getString("errcode")))

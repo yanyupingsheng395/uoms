@@ -324,8 +324,6 @@ public class QywxDailyController {
     {
         //绑定的corpID
         String corpId="ww372de12b2d0cdf17";
-        //时间戳
-        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
 
         //获取要推送的数据
 //        List<Map<String,String>> result=qywxDailyDetailService.getTestPushData();
@@ -345,8 +343,9 @@ public class QywxDailyController {
 
         log.info("待推送的消息为{}",param.toJSONString());
 
+        //时间戳
+        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
         String signature= SHA1.gen(timestamp,param.toJSONString());
-
         String requesturl="http://qywx.growth-master.com/push/addMsgTemplate?corpId="+corpId
                 +"&timestamp="+timestamp+"&signature="+signature;
         //发送http请求
