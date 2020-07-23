@@ -340,12 +340,12 @@ function updateCoupon() {
             $("#myLargeModalLabel").html('修改补贴');
             $form.find("input[name='couponId']").val(coupon.couponId);
             $form.find("input[name='validStatus']").val(coupon.validStatus);
-            $form.find("input[name='couponDenom']").val(coupon.couponDenom).attr("readonly", true);
-            $form.find("input[name='couponThreshold']").val(coupon.couponThreshold).attr("readonly", true);
+            $form.find("input[name='couponDenom']").val(coupon.couponDenom);
+            $form.find("input[name='couponThreshold']").val(coupon.couponThreshold);
             $form.find("input[name='couponInfo2']").val(coupon.couponInfo2);
             $form.find("input[name='couponUrl']").val(coupon.couponUrl);
             $form.find("input[name='couponNum']").val(coupon.couponNum);
-            $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName).attr("readonly", true);
+            $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName);
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             VALID_END = coupon.validEnd;
             $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);

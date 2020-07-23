@@ -1,17 +1,36 @@
-<div class="row">
-    <div class="col-md-12">
-        <h5>选择添加方式类型</h5>
-        <label class="lyear-radio radio-inline radio-primary">
-            <input type="radio" name="sendType" value="0"><span>通过企业微信自动添加好友</span>
-        </label>
-        <label class="lyear-radio radio-inline radio-primary">
-            <input type="radio" name="sendType" value="1"><span>通过短信推送带有二维码的页面</span>
-        </label>
-        <label class="lyear-radio radio-inline radio-primary">
-            <input type="radio" name="sendType" value="2"><span>用户发生购买后短信推送申请</span>
-        </label>
+<div th:if="${opType eq 'save'}">
+    <div class="row">
+        <div class="col-md-12">
+            <h5>选择添加方式类型</h5>
+            <label class="lyear-radio radio-inline radio-primary">
+                <input type="radio" name="addUserMethod" value="0"><span>通过企业微信自动添加好友</span>
+            </label>
+            <label class="lyear-radio radio-inline radio-primary">
+                <input type="radio" name="addUserMethod" value="1"><span>通过短信推送带有二维码的页面</span>
+            </label>
+            <label class="lyear-radio radio-inline radio-primary">
+                <input type="radio" name="addUserMethod" value="2"><span>用户发生购买后短信推送申请</span>
+            </label>
+        </div>
     </div>
 </div>
+<div th:if="${opType eq 'update'}">
+    <div class="row">
+        <div class="col-md-12">
+            <h5>选择添加方式类型</h5>
+            <label class="lyear-radio radio-inline radio-primary">
+                <input type="radio" name="addUserMethod" value="0" th:checked="${addUserConfig.addUserMethod eq '0'} ? true:false"><span>通过企业微信自动添加好友</span>
+            </label>
+            <label class="lyear-radio radio-inline radio-primary">
+                <input type="radio" name="addUserMethod" value="1" th:checked="${addUserConfig.addUserMethod eq '1'} ? true:false"><span>通过短信推送带有二维码的页面</span>
+            </label>
+            <label class="lyear-radio radio-inline radio-primary">
+                <input type="radio" name="addUserMethod" value="2" th:checked="${addUserConfig.addUserMethod eq '2'} ? true:false"><span>用户发生购买后短信推送申请</span>
+            </label>
+        </div>
+    </div>
+</div>
+
 <div class="row m-t-10">
     <div class="col-md-12 text-right">
         <div class="btn-group-sm" role="group">

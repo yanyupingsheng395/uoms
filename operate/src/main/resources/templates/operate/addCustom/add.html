@@ -94,19 +94,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 select-table" id="step1">
-                        <div data-th-include="operate/addCustom/step1"></div>
-                    </div>
-
-                    <div id="step2" class="col-md-12 select-table" style="display: none;">
-                        <div data-th-include="operate/addCustom/step2"></div>
-                    </div>
-
-                    <div id="step3" style="display: none;">
-                        <div class="col-md-12 select-table">
-                            <div data-th-include="operate/addCustom/step3"></div>
+                    <form id="dataForm">
+                        <div class="col-md-12 select-table" id="step1">
+                            <div data-th-include="operate/addCustom/step1"></div>
                         </div>
-                    </div>
+
+                        <div id="step2" class="col-md-12 select-table" style="display: none;">
+                            <div data-th-include="operate/addCustom/step2"></div>
+                        </div>
+
+                        <div id="step3" style="display: none;">
+                            <div class="col-md-12 select-table">
+                                <div data-th-include="operate/addCustom/step3"></div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </main>
@@ -116,6 +118,8 @@
 <script data-th-src="@{/plugins/steps/steps.js}"></script>
 <script data-th-src="@{/js/app/operate/addCustom/add.js}"></script>
 <script>
+    var opType = "[[${opType}]]";
+    var sendType = "[[${addUserConfig.sendType}]]";
     var clipboard1 = new ClipboardJS('.copy_btn', {
         container: document.getElementById('config-box')
     });

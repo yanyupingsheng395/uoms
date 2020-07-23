@@ -8,6 +8,12 @@ let custom_step = steps({
     center: true,
     dataOrder: ["title", "line", "description"]
 });
+
+$(function () {
+    if(opType === 'update' && sendType === '1') {
+        selectUser(true);
+    }
+});
 // 筛选用户
 function selectUser(flag) {
     if(flag) {
@@ -34,16 +40,20 @@ function stepBreak(idx) {
         $("#step3").attr("style", "display:none;");
     }
     if(idx == 1) {
-        custom_step.setActive(1);
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:block;");
-        $("#step3").attr("style", "display:none;");
+        if(validData(idx)) {
+            custom_step.setActive(1);
+            $("#step1").attr("style", "display:none;");
+            $("#step2").attr("style", "display:block;");
+            $("#step3").attr("style", "display:none;");
+        }
     }
     if(idx == 2) {
-        custom_step.setActive(2);
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:none;");
-        $("#step3").attr("style", "display:block;");
+        if(validData(idx)) {
+            custom_step.setActive(2);
+            $("#step1").attr("style", "display:none;");
+            $("#step2").attr("style", "display:none;");
+            $("#step3").attr("style", "display:block;");
+        }
     }
 }
 
@@ -190,13 +200,204 @@ function selectQrCode() {
     $("#selectQrModal").modal('show');
 }
 
+// 选择二维码
 function setQrCode() {
     var selected = $("#qrDataTable").bootstrapTable('getSelections');
     if(selected.length === 0) {
         $MB.n_warning("请选择二维码");
         return;
     }
+    $("#qrId").val(selected[0].contactWayId);
     $("#selectQrModal").modal('hide');
     $("#selectQrCodeBtn").attr("class", "btn btn-info btn-sm");
     $("#selectQrCodeBtn").html('<i class="fa fa-check-square-o"></i>&nbsp;选择二维码');
+}
+
+// 保存数据
+function saveData(opType) {
+    // 验证表单数据
+    if(validData(3)) {
+        var userValue = [];
+        $("#userPropTable").find("tr:eq(0)").find("td[class='selected_td']").each(function (k, v) {
+            userValue.push($(v).find("span").attr('data-value'));
+        });
+
+        var lifeCycle = [];
+        $("#userPropTable").find("tr:eq(1)").find("td[class='selected_td']").each(function (k, v) {
+            lifeCycle.push($(v).find("span").attr('data-value'));
+        });
+
+        var pathActive = [];
+        $("#userPropTable").find("tr:eq(2)").find("td[class='selected_td']").each(function (k, v) {
+            pathActive.push($(v).find("span").attr('data-value'));
+        });
+
+        var userGrowth = [];
+        $("#userPropTable").find("tr:eq(3)").find("td[class='selected_td']").each(function (k, v) {
+            userGrowth.push($(v).find("span").attr('data-value'));
+        });
+
+        if(opType === 'save') {
+            $MB.confirm({
+                title: '提示:',
+                content: '确认保存数据？'
+            }, function () {
+                $.post("/addUser/saveData",
+                    $("#dataForm").serialize() + '&userValue=' + userValue.join() + "&lifeCycle=" + lifeCycle.join() +
+                    "&pathActive=" + pathActive.join() + "&userGrowth=" + userGrowth.join(),
+                    function (r) {
+                        if(r.code === 200) {
+                            $MB.n_success("保存成功！");
+                            setTimeout(function () {
+                                window.location.href = "/page/addCustom";
+                            }, 1400);
+                        }else {
+                            $MB.n_danger("保存失败！");
+                        }
+                    });
+            });
+        }else {
+            $MB.confirm({
+                title: '提示:',
+                content: '确认修改数据？'
+            }, function () {
+                $.post("/addUser/editConfig",
+                    $("#dataForm").serialize() + '&userValue=' + userValue.join() + "&lifeCycle=" + lifeCycle.join() +
+                    "&pathActive=" + pathActive.join() + "&userGrowth=" + userGrowth.join(),
+                    function (r) {
+                        if(r.code === 200) {
+                            $MB.n_success("修改成功！");
+                            setTimeout(function () {
+                                window.location.href = "/page/addCustom";
+                            }, 1400);
+                        }else {
+                            $MB.n_danger("修改失败！");
+                        }
+                    });
+            });
+        }
+    }
+}
+
+// 验证数据
+function validData(stepIndex) {
+    var userGroupData;
+    // 验证第一步
+    if(stepIndex == 1) {
+        var sendType = $("input[name='sendType']:checked").val();
+        if(sendType === '1') {
+            var flag = false;
+            var userValue = [];
+            $("#userPropTable").find("tr:eq(0)").find("td[class='selected_td']").each(function (k, v) {
+                userValue.push($(v).find("span").attr('data-value'));
+                flag = true;
+            });
+
+            var lifeCycle = [];
+            $("#userPropTable").find("tr:eq(1)").find("td[class='selected_td']").each(function (k, v) {
+                lifeCycle.push($(v).find("span").attr('data-value'));
+                flag = true;
+            });
+
+            var pathActive = [];
+            $("#userPropTable").find("tr:eq(2)").find("td[class='selected_td']").each(function (k, v) {
+                pathActive.push($(v).find("span").attr('data-value'));
+                flag = true;
+            });
+
+            var userGrowth = [];
+            $("#userPropTable").find("tr:eq(3)").find("td[class='selected_td']").each(function (k, v) {
+                userGrowth.push($(v).find("span").attr('data-value'));
+                flag = true;
+            });
+            if(!flag) {
+                $MB.n_warning("筛选用户至少需要选择一个项！");
+            }
+        }else {
+            return true;
+        }
+        return flag;
+    }
+
+    // 验证第二步
+    if(stepIndex == 2) {
+        var addUserMethod = $("input[name='addUserMethod']:checked").val();
+        if(addUserMethod === undefined) {
+            $MB.n_warning("请选择添加方式类型！");
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    if(stepIndex == 3) {
+        var isChannel = $("input[name='isChannel']:checked").val();
+        var isProduct = $("input[name='isProduct']:checked").val();
+        var isCoupon = $("input[name='isCoupon']:checked").val();
+        var isQrcode = $("input[name='isQrcode']:checked").val();
+        if(isChannel === undefined) {
+            $MB.n_warning("请选择渠道名称！");
+            return false;
+        }
+        if(isProduct === undefined) {
+            $MB.n_warning("请选择商品名称！");
+            return false;
+        }
+        if(isCoupon === undefined) {
+            $MB.n_warning("请选择补贴名称！");
+            return false;
+        }
+        if(isQrcode === undefined) {
+            $MB.n_warning("请选择二维码短链！");
+            return false;
+        }
+        var qrId = $("#qrId").val();
+        if(qrId === '') {
+            $MB.n_warning("请配置二维码短链！");
+            return false;
+        }
+        var smsContent = $("#smsContent").val();
+        if(smsContent === undefined || smsContent === '') {
+            $MB.n_warning("请输入短信内容！");
+            return false;
+        }
+        if(isChannel === '1' && smsContent.indexOf('${渠道名称}') == -1) {
+            $MB.n_warning("渠道名称：是，文案中没有发现${渠道名称}模板变量！");
+            return false;
+        }
+        if(isChannel === '0' && smsContent.indexOf('${渠道名称}') > -1) {
+            $MB.n_warning("渠道名称：否，文案中发现${渠道名称}模板变量！");
+            return false;
+        }
+
+        if(isProduct === '1' && smsContent.indexOf('${商品名称}') == -1) {
+            $MB.n_warning("商品名称：是，文案中没有发现${商品名称}模板变量！");
+            return false;
+        }
+        if(isProduct === '0' && smsContent.indexOf('${商品名称}') > -1) {
+            $MB.n_warning("商品名称：否，文案中发现${商品名称}模板变量！");
+            return false;
+        }
+
+        if(isCoupon === '1' && smsContent.indexOf('${补贴名称}') == -1) {
+            $MB.n_warning("补贴名称：是，文案中没有发现${补贴名称}模板变量！");
+            return false;
+        }
+        if(isCoupon === '0' && smsContent.indexOf('${补贴名称}') > -1) {
+            $MB.n_warning("补贴名称：否，文案中发现${补贴名称}模板变量！");
+            return false;
+        }
+
+        if(isQrcode === '1' && smsContent.indexOf('${二维码短链}') == -1) {
+            $MB.n_warning("二维码短链：是，文案中没有发现${二维码短链}模板变量！");
+            return false;
+        }
+        if(isQrcode === '0' && smsContent.indexOf('${二维码短链}') > -1) {
+            $MB.n_warning("二维码短链：否，文案中发现${二维码短链}模板变量！");
+            return false;
+        }
+        // 判断文案的长度是否超最大限制
+        return true;
+    }
+    return false;
 }
