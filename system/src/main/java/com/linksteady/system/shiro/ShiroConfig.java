@@ -59,6 +59,8 @@ public class ShiroConfig {
     @Value("${spring.redis.timeout}")
     private int timeout;
 
+    private String cipherKey="Vfixl8Hi8tXf/hS8jt2AHw==";
+
     /**
      * shiro 中配置 redis 缓存
      *
@@ -187,7 +189,7 @@ public class ShiroConfig {
         CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
         cookieRememberMeManager.setCookie(rememberMeCookie());
         // rememberMe cookie 加密的密钥
-        cookieRememberMeManager.setCipherKey(Base64.decode("4AvVhmFLUs0KTA3Kprsdag=="));
+        cookieRememberMeManager.setCipherKey(Base64.decode(cipherKey));
         return cookieRememberMeManager;
     }
 

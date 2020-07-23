@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.google.common.collect.Lists;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -29,6 +30,63 @@ public class QywxContactWayController extends BaseController {
     @Autowired
     QywxContactWayService qywxContactWayService;
 
+    private static List<QywxContactWay> dataList= Lists.newArrayList();
+
+    static{
+        dataList.add(new QywxContactWay(1l,"https://wwcdn.weixin.qq.com/node/wework/images/qrcode_group_new.1e6c2aa1dc.png","1","荷乳有赞","荷兰乳牛有赞客服专员","dwz.cn/mGph4YnP",0,"2020-05-17 11:28","荷乳有赞客服"));
+        dataList.add(new QywxContactWay(2l,"https://wwcdn.weixin.qq.com/node/wework/images/qrcode_group_new.1e6c2aa1dc.png","2","荷乳天猫旗舰店","荷兰乳牛天猫客服01,荷兰乳牛天猫客服02,荷兰乳牛天猫客服03","dwz.cn/YZS0q5u7",0,"2020-05-17 11:25","荷乳天猫旗舰店客服"));
+        dataList.add(new QywxContactWay(3l,"https://wwcdn.weixin.qq.com/node/wework/images/qrcode_group_new.1e6c2aa1dc.png","2","荷乳京东","荷兰乳牛京东客服01,荷兰乳牛京东客服01","dwz.cn/VVS0ouwT",0,"2020-05-17 11:23","荷乳京东客服"));
+        dataList.add(new QywxContactWay(4l,"https://wwcdn.weixin.qq.com/node/wework/images/qrcode_group_new.1e6c2aa1dc.png","1","优莎蓓爱天猫","优莎蓓爱天猫客服专员","dwz.cn/USmuZF3q",0,"2020-05-16 14:06","优莎蓓爱天猫客服"));
+        dataList.add(new QywxContactWay(5l,"https://wwcdn.weixin.qq.com/node/wework/images/qrcode_group_new.1e6c2aa1dc.png","1","优莎蓓爱京东食品","优莎蓓爱京东客服专员","dwz.cn/2mkn0e3X",0,"2020-05-16 14:08","优莎蓓爱京东食品客服"));
+
+        dataList.add(new QywxContactWay(6l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(7l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(8l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(9l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(10l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(11l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(12l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(13l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(14l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(6l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(7l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(8l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(9l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(10l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(11l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(12l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(13l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(14l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(6l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(7l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(8l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(9l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(10l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(11l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(12l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(13l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(14l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(6l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(7l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(8l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(9l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(10l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(11l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(12l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(13l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(14l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(6l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(7l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(8l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(9l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(10l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(11l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(12l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(13l,"","","","","",0,"2020-04-13 11:23",""));
+        dataList.add(new QywxContactWay(14l,"","","","","",0,"2020-04-13 11:23",""));
+
+    }
+
     /**
      * 获取所有的活码列表
      *
@@ -55,8 +113,10 @@ public class QywxContactWayController extends BaseController {
         int offset = request.getOffset();
         String qstate = request.getParam().get("qstate");
         String qremark=request.getParam().get("qremark");
-        int count =qywxContactWayService.getContactWayCount(qstate,qremark);
-        List<QywxContactWay> list=qywxContactWayService.getContactWayList(limit,offset,qstate,qremark);
+        int count=dataList.size();
+        List<QywxContactWay> list=dataList.subList(0,5);
+//        int count =qywxContactWayService.getContactWayCount(qstate,qremark);
+//        List<QywxContactWay> list=qywxContactWayService.getContactWayList(limit,offset,qstate,qremark);
         return ResponseBo.okOverPaging("", count,list);
     }
 
@@ -179,4 +239,5 @@ public class QywxContactWayController extends BaseController {
 
         return "operate/contactWay/qrCode";
     }
+
 }

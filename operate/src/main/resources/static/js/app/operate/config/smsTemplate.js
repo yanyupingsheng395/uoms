@@ -79,6 +79,7 @@ function testSend()
         if (resp.code === 200){
             //更新测试面板
             $("#smsContent1").val(resp.data);
+            $("#testSmsCode").val(smsCode);
             let _value = $("#smsContent1").val().replace(/\n/gi,"");
             $("#word1").text(_value.length);
             $('#send_modal').modal('show');
