@@ -348,6 +348,8 @@ public class QywxDailyController {
         String signature= SHA1.gen(timestamp,param.toJSONString());
         String requesturl="http://qywx.growth-master.com/push/addMsgTemplate?corpId="+corpId
                 +"&timestamp="+timestamp+"&signature="+signature;
+
+        log.info("请求的url为{}",requesturl);
         //发送http请求
         String backStr=OkHttpUtil.postRequestByJson(requesturl,param.toJSONString());
         log.info("推送后的返回结果为{}",backStr);
