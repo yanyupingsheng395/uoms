@@ -43,9 +43,29 @@
         limit #{limit} offset #{offset}
     </select>
 
-    <insert id="saveHeader">
-        insert into UO_OP_MANUAL_HEADER(file_name, all_num, valid_num, unvalid_num, status, insert_dt, insert_by, sms_content, push_type, schedule_date)
-        values (#{fileName}, #{allNum}, #{validNum}, #{unvalidNum}, #{status}, #{insertDt}, #{insertBy}, #{smsContent}, #{pushType}, #{scheduleDate})
+    <insert id="saveHeader"  useGeneratedKeys="true" keyProperty="headId" keyColumn="head_id">
+        insert into UO_OP_MANUAL_HEADER(
+            file_name,
+            all_num,
+            valid_num,
+            unvalid_num,
+            status,
+            insert_dt,
+            insert_by,
+            sms_content,
+            push_type,
+            schedule_date)
+        values (
+            #{fileName},
+            #{allNum},
+            #{validNum},
+            #{unvalidNum},
+            #{status},
+            #{insertDt},
+            #{insertBy},
+            #{smsContent},
+            #{pushType},
+            #{scheduleDate})
     </insert>
 
     <select id="getPushInfo" resultType="map">
@@ -54,20 +74,20 @@
     </select>
 
     <select id="getHeadStatus" resultType="string">
-        select STATUS from UO_OP_MANUAL_HEADER where HEAD_ID = #{headId}::integer
+        select STATUS from UO_OP_MANUAL_HEADER where HEAD_ID = #{headId}
     </select>
 
     <update id="updateScheduleDate">
         update UO_OP_MANUAL_HEADER set SCHEDULE_DATE = #{scheduleDate}
-        where head_id = #{headId}::integer
+        where head_id = #{headId}
     </update>
 
-    <update id="updateStatus">
-        update UO_OP_MANUAL_HEADER set STATUS = #{status}
-        where head_id = #{headId}::integer
+    <update id="updateStatusToPlaning">
+        update UO_OP_MANUAL_HEADER set STATUS = '1'
+        where head_id = #{headId} and  STATUS = '0'
     </update>
 
     <delete id="deleteData">
-        delete from UO_OP_MANUAL_HEADER where HEAD_ID = #{headId}::integer
+        delete from UO_OP_MANUAL_HEADER where HEAD_ID = #{headId}
     </delete>
 </mapper>

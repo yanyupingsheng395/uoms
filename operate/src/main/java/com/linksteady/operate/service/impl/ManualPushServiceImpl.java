@@ -10,6 +10,7 @@ import com.linksteady.operate.dao.PushLargeListMapper;
 import com.linksteady.operate.domain.ManualDetail;
 import com.linksteady.operate.domain.ManualHeader;
 import com.linksteady.operate.exception.LinkSteadyException;
+import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.ManualPushService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,22 +53,21 @@ public class ManualPushServiceImpl implements ManualPushService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void pushMessage(String headId, String pushType) {
-        synchronized (this) {
-            // 立刻发送，更新当前schedule_date
-            if (pushType.equalsIgnoreCase("1")) {
-                ManualHeader manualHeader = new ManualHeader();
-                manualHeader.setScheduleDate(new Date());
-                manualHeader.setHeadId(Long.parseLong(headId));
-                manualHeaderMapper.updateScheduleDate(manualHeader);
-            }
-            // 写入large表
-            pushLargeListMapper.insertLargeDataByManual(headId);
-            // head status的update 已提交，计划中
-            String status = "1";
-            manualHeaderMapper.updateStatus(status, headId);
-
+    public void pushMessage(Long headId, String pushType) throws Exception{
+        int count=manualHeaderMapper.updateStatusToPlaning(headId);
+        if(count==0)
+        {
+            throw new OptimisticLockException();
         }
+        // 立刻发送，更新当前schedule_date
+        if (pushType.equalsIgnoreCase("1")) {
+            ManualHeader manualHeader = new ManualHeader();
+            manualHeader.setScheduleDate(new Date());
+            manualHeader.setHeadId(headId);
+            manualHeaderMapper.updateScheduleDate(manualHeader);
+        }
+        // 写入large表
+        pushLargeListMapper.insertLargeDataByManual(headId);
     }
 
     @Override
@@ -158,18 +158,18 @@ public class ManualPushServiceImpl implements ManualPushService {
     }
 
     @Override
-    public Map<String, Object> getPushInfo(String headId) {
+    public Map<String, Object> getPushInfo(Long headId) {
         return manualHeaderMapper.getPushInfo(headId);
     }
 
     @Override
-    public String getHeadStatus(String headId) {
+    public String getHeadStatus(Long headId) {
         return manualHeaderMapper.getHeadStatus(headId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteData(String headId) {
+    public void deleteData(Long headId) {
         manualHeaderMapper.deleteData(headId);
         manualDetailMapper.deleteData(headId);
     }

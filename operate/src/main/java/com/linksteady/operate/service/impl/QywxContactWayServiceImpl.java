@@ -81,14 +81,19 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         log.debug("请求获取渠道活码的url:{},参数:{},返回的结果{}", requesturl, param, result);
 
         JSONObject jsonObject = JSON.parseObject(result);
-        if (null != jsonObject && "0".equalsIgnoreCase(jsonObject.getString("errcode"))) {
-            String configId = jsonObject.getString("config_id");
+        if (null != jsonObject && jsonObject.getIntValue("code")==200) {
+            //返回的结构里面data的内容时configId
+            String configId = jsonObject.getString("data");
             qywxContactWay.setConfigId(configId);
 
-            JSONObject contactDetail=getContactWayByConfigId(qywxContactWay.getConfigId());
+            JSONObject contactDetail=JSON.parseObject(getContactWayByConfigId(qywxContactWay.getConfigId()));
             //更新configId获取一次二维码的地址
-            String qrCode = contactDetail.getString("qr_code");;
-            qywxContactWay.setQrCode(qrCode);
+            String qrCode="";
+            if(null!=contactDetail&&StringUtils.isNotEmpty(contactDetail.getString("qr_code")))
+            {
+                qrCode=contactDetail.getString("qr_code");
+                qywxContactWay.setQrCode(qrCode);
+            }
 
             //获取当前应用的域名
             String currentDomain=qywxContactWayMapper.getCurrentDomain();
@@ -125,10 +130,14 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         log.debug("请求更新渠道活码的url:{},参数:{},返回的结果{}", requesturl, param, result);
 
         JSONObject jsonObject = JSON.parseObject(result);
-        if (null != jsonObject && "0".equalsIgnoreCase(jsonObject.getString("errcode"))) {
-            //获取二维码
-            JSONObject contactDetail=getContactWayByConfigId(qywxContactWay.getConfigId());
-            String qrCode = contactDetail.getString("qr_code");
+        if (null != jsonObject && jsonObject.getIntValue("code")==200) {
+            //如果调用企业微信端接口成功，则重新获取一遍数据
+            JSONObject contactDetail=JSON.parseObject(getContactWayByConfigId(qywxContactWay.getConfigId()));
+            String qrCode="";
+            if(null!=contactDetail&&StringUtils.isNotEmpty(contactDetail.getString("qr_code")))
+            {
+                qrCode=contactDetail.getString("qr_code");
+            }
 
             qywxContactWayMapper.updateContactWayQrCode(qywxContactWay.getContactWayId(),qrCode,qywxContactWay.getUpdateBy());
         }else
@@ -165,7 +174,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
      * @return
      */
     @Override
-    public JSONObject getContactWayByConfigId(String configId) {
+    public String getContactWayByConfigId(String configId) {
         String getUrl = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + GET_CONTACT_WAY;
         String param = JSON.toJSONString(configId);
 
@@ -180,12 +189,12 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         log.debug("请求获取渠道活码详细信息的url:{},参数:{},返回的结果{}", requesturl, param, result);
 
         JSONObject jsonObject = JSON.parseObject(result);
-        if (null != jsonObject && "0".equalsIgnoreCase(jsonObject.getString("errcode")))
+        if (null != jsonObject && jsonObject.getIntValue("code")==200)
         {
-            return jsonObject.getJSONObject("contact_way");
+            return jsonObject.getString("data");
         }else
         {
-            return new JSONObject();
+            return "";
         }
     }
 
@@ -212,7 +221,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         log.debug("请求删除渠道活码的url:{},参数:{},返回的结果{}", requesturl, param, result);
 
         JSONObject jsonObject = JSON.parseObject(result);
-        if (null != jsonObject && "0".equalsIgnoreCase(jsonObject.getString("errcode")))
+        if (null != jsonObject && jsonObject.getIntValue("code")==200)
         {
             //从数据库进行删除
             qywxContactWayMapper.deleteContactWay(configId);

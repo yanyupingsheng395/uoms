@@ -69,24 +69,29 @@ public class ManualPushController {
      * @return
      */
     @PostMapping("/pushMessage")
-    public synchronized ResponseBo pushMessage(@RequestParam("headId") String headId, @RequestParam("pushType") String pushType) {
+    public synchronized ResponseBo pushMessage(@RequestParam("headId") Long headId, @RequestParam("pushType") String pushType) {
         String status = manualPushService.getHeadStatus(headId);
         // 判读当前状态为已上传，待推送，则可以继续执行
         if(status.equalsIgnoreCase("0")) {
-            manualPushService.pushMessage(headId, pushType);
+
+            try {
+                manualPushService.pushMessage(headId, pushType);
+                return ResponseBo.ok();
+            } catch (Exception e) {
+                return ResponseBo.error("当前记录已被其它用户操作，请刷新后再试！");
+            }
         }else {
-            return ResponseBo.error("记录已被另一用户操作，请重新进行！");
+            return ResponseBo.error("当前状态不允许进行推送操作！");
         }
-        return ResponseBo.ok();
     }
 
     @GetMapping("/getPushInfo")
-    public ResponseBo getPushInfo(@RequestParam("headId") String headId) {
+    public ResponseBo getPushInfo(@RequestParam("headId") Long headId) {
         return ResponseBo.okWithData(null, manualPushService.getPushInfo(headId));
     }
 
     @GetMapping("/deleteData")
-    public ResponseBo deleteData(@RequestParam("headId") String headId) {
+    public ResponseBo deleteData(@RequestParam("headId") Long headId) {
         manualPushService.deleteData(headId);
         return ResponseBo.ok();
     }

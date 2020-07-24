@@ -27,6 +27,6 @@ public interface PushLargeListMapper {
      * 手动导入短信
      * @param headId
      */
-    void insertLargeDataByManual(String headId);
+    void insertLargeDataByManual(Long headId);
 
 }

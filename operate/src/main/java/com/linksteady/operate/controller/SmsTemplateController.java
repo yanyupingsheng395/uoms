@@ -8,6 +8,7 @@ import com.linksteady.operate.domain.SmsTemplate;
 import com.linksteady.operate.service.SmsTemplateService;
 import com.linksteady.operate.service.impl.RedisMessageServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -118,16 +119,32 @@ public class SmsTemplateController extends BaseController {
     }
 
     /**
-     * 发送测试
+     * 发送测试(手机号、文案编码)
      */
     @RequestMapping("/testSend")
-    public ResponseBo testSend(String phoneNum, String smsCode) {
+    public ResponseBo testSend(String phoneNum, String smsCode,String smsContent) {
         List<String> phoneNumList=Splitter.on(",").trimResults().omitEmptyStrings().splitToList(phoneNum);
-        String smsContent=smsTemplateService.getSmsContent(smsCode,"SEND");
+        String content="";
+        if(StringUtils.isNotEmpty(smsCode))
+        {
+            content=smsTemplateService.getSmsContent(smsCode,"SEND");
+        }else
+        {
+            content=smsContent;
+        }
+
+        if(null==phoneNumList||phoneNumList.size()==0)
+        {
+            return ResponseBo.error("测试的手机号列表为空");
+        }
+        if(StringUtils.isEmpty(content))
+        {
+            return ResponseBo.error("待测试的发送内容为空");
+        }
         try {
             for(String num:phoneNumList)
             {
-                redisMessageService.sendPhoneMessage(num,smsContent);
+                redisMessageService.sendPhoneMessage(num,content);
             }
             return ResponseBo.ok("测试发送成功！");
         } catch (Exception e) {

@@ -17,13 +17,13 @@ public interface ManualPushService {
 
     List<ManualHeader> getHeaderListData(int limit, int offset, String scheduleDate);
 
-    void pushMessage(String headId, String pushType);
+    void pushMessage(Long headId, String pushType) throws Exception;
 
     void saveManualData(String smsContent, MultipartFile file, String sendType, String pushDate) throws IOException, LinkSteadyException;
 
-    Map<String, Object> getPushInfo(String headId);
+    Map<String, Object> getPushInfo(Long headId);
 
-    String getHeadStatus(String headId);
+    String getHeadStatus(Long headId);
 
-    void deleteData(String headId);
+    void deleteData(Long headId);
 }

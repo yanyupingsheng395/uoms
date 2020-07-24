@@ -10,6 +10,6 @@
     </insert>
 
     <delete id="deleteData">
-        delete from UO_OP_MANUAL_DETAIL where HEAD_ID = #{headId}::integer
+        delete from UO_OP_MANUAL_DETAIL where HEAD_ID = #{headId}
     </delete>
 </mapper>
