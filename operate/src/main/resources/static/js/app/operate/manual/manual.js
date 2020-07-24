@@ -1,4 +1,11 @@
-initTable();
+$(function () {
+    initTable();
+    statInputNum();
+    $("#snum1").text("0");
+    $("#snum2").text("0");
+    $("#snum3").text("0");
+});
+
 function initTable() {
     let settings = {
         url: '/manual/getHeaderListPage',
@@ -21,9 +28,30 @@ function initTable() {
             field: 'headId',
             title: 'ID',
             visible: false
-        }, {
+        },  {
             field: 'fileName',
             title: '文件名称'
+        },{
+            field: 'status',
+            title: '状态',
+            formatter: function (value, row, indx) {
+                var res;
+                switch (value) {
+                    case "0":
+                        res = "<span class=\"badge bg-info\">已上传，待推送</span>";
+                        break;
+                    case "1":
+                        res = "<span class=\"badge bg-success\">已提交，计划中</span>";
+                        break;
+                    case "2":
+                        res = "<span class=\"badge bg-primary\">推送完成</span>";
+                        break;
+                    default:
+                        res = "-";
+                        break;
+                }
+                return res;
+            }
         }, {
             field: 'allNum',
             title: '总手机号数量'
@@ -71,27 +99,6 @@ function initTable() {
         }, {
             field: 'actualPushDate',
             title: '实际推送时间'
-        }, {
-            field: 'status',
-            title: '状态',
-            formatter: function (value, row, indx) {
-                var res;
-                switch (value) {
-                    case "0":
-                        res = "<span class=\"badge bg-info\">已上传，待推送</span>";
-                        break;
-                    case "1":
-                        res = "<span class=\"badge bg-success\">已提交，计划中</span>";
-                        break;
-                    case "2":
-                        res = "<span class=\"badge bg-primary\">推送完成</span>";
-                        break;
-                    default:
-                        res = "-";
-                        break;
-                }
-                return res;
-            }
         }, {
             field: 'insertDt',
             title: '创建时间'
@@ -192,7 +199,7 @@ function pushMessage() {
         return;
     }
     if(validNum === '0') {
-        $MB.n_warning("该记录的合法数据为0条，不支持推送操作！");
+        $MB.n_warning("该记录的有效手机号为0，不支持推送操作！");
         return;
     }
     getPushInfo(headId);
@@ -201,8 +208,8 @@ function pushMessage() {
 function getPushInfo(headId) {
     $.get("/manual/getPushInfo", {headId: headId}, function (r) {
         if(r.code === 200) {
-            let pushType = r.data['PUSH_TYPE'];
-            let scheduleDate = r.data['SCHEDULE_DATE'];
+            let pushType = r.data['push_type'];
+            let scheduleDate = r.data['schedule_date'];
             let content = "";
             if(pushType === '0') {
                 content = "短信推送方式为定时发送，推送时间为" + scheduleDate + "。确定推送？";
@@ -270,15 +277,28 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $("#upload_file_name").text('');
     $("#file").val('');
     $("input[name='sendType']:checked").attr("checked", false);
-    $("#word").text('0');
+    $("#snum1").text("0");
+    $("#snum2").text("0");
+    $("#snum3").text("0");
 });
-statInputNum($("#smsContent"),$("#word"));
-function statInputNum(textArea,numItem) {
-    let curLength = textArea.val().length;
-    numItem.text(curLength);
-    textArea.on('input propertychange', function () {
-        var _value = $(this).val().replace(/\n/gi,"");
-        numItem.text(_value.length);
+
+function statInputNum() {
+    $("#smsContent").on('input propertychange', function () {
+        let curLength = $('#smsContent').val().length;
+        let total_num = curLength+signatureLen+unsubscribeLen;
+        let snum3=0;
+        $("#snum1").text(curLength);
+        $("#snum2").text(total_num);
+
+        if(total_num<=70)
+        {
+            snum3=1;
+        }else
+        {
+            snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
+        }
+        //计算文案的条数
+        $("#snum3").text(snum3);
     });
 }
 
@@ -289,10 +309,19 @@ function testSend() {
         $MB.n_warning('请选择需要测试的记录！');
         return;
     }
-    let content = selected[0].smsContent;
+    let content =signature+selected[0].smsContent+unsubscribe;
     $('#smsContent1').val(content);
     $('#smsContent1').attr("readOnly", "readOnly");
-    statInputNum($("#smsContent1"),$("#word1"));
+    $("#snum4").text(content.length);
+    if(content.length<=70)
+    {
+        $("#snum5").text(1);
+    }else
+    {
+        $("#snum5").text(content.length%67===0?content.length/67:(parseInt(content.length/67)+1));
+    }
+
+
     $('#send_modal').modal('show');
 }
 
@@ -302,14 +331,22 @@ $("#send_modal").on('hidden.bs.modal', function () {
 
 function sendMessage()
 {
-    //验证
-    var phoneNum=$('#phoneNum').val();
-    var smsContent = $('#smsContent1').val();
-
-    if(null==phoneNum||phoneNum=='') {
-        $MB.n_warning("手机号不能为空！");
+    let phoneNums=[];
+    $("input[name='phoneNum']").each(function(){
+        let temp=$(this).val();
+        if(temp!=='')
+        {
+            phoneNums.push(temp);
+        }
+    })
+    if(phoneNums.length==0)
+    {
+        $MB.n_warning("至少输入一个手机号！");
         return;
     }
+    let phoneNum = phoneNums.join(',');
+
+    var smsContent = $('#smsContent1').val();
     if(null==smsContent||smsContent=='') {
         $MB.n_warning("消息内容不能为空！");
         return;

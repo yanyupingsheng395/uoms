@@ -29,9 +29,12 @@
 
     <insert id="insertLargeDataByManual">
         insert into UO_OP_PUSH_LIST_LARGE(PUSH_CONTENT, PUSH_SCHEDULING_DATE, USER_PHONE, SOURCE_ID, PUSH_STATUS, SOURCE_CODE)
-        select SMS_CONTENT PUSH_CONTENT, to_number(to_char(SCHEDULE_DATE, 'yyyymmddhh24mi')) PUSH_SCHEDULING_DATE,
-        PHONE_NUM USER_PHONE, DETAIL_ID SOURCE_ID, 'P' PUSH_STATUS, 'M' SOURCE_CODE from UO_OP_MANUAL_HEADER t1, UO_OP_MANUAL_DETAIL t2
-        where t1.HEAD_ID = t2.HEAD_ID
-        and STATUS = '0' and t1.HEAD_ID = #{headId}
+        select SMS_CONTENT PUSH_CONTENT,
+               to_char(SCHEDULE_DATE, 'yyyymmddhh24mi')::int8 PUSH_SCHEDULING_DATE,
+               PHONE_NUM USER_PHONE,
+               DETAIL_ID SOURCE_ID,
+               'P' PUSH_STATUS,
+                'M' SOURCE_CODE from UO_OP_MANUAL_HEADER t1, UO_OP_MANUAL_DETAIL t2
+        where t1.HEAD_ID = t2.HEAD_ID and t1.HEAD_ID = #{headId}
     </insert>
 </mapper>

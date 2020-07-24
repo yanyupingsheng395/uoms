@@ -1,6 +1,5 @@
 package com.linksteady.operate.controller;
 
-import com.google.common.collect.Lists;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;

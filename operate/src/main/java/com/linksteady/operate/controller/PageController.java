@@ -311,9 +311,11 @@ public class PageController extends BaseController {
      * 手动短信推送
      * @return
      */
-    @Log(value = "手工活动推送",location = "用户成长系统")
+    @Log(value = "手工短信推送",location = "用户成长系统")
     @RequestMapping("/manual")
     public String manual(Model model) {
+        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig",sourceConfigVO);
         return "operate/manual/manual";
     }
 

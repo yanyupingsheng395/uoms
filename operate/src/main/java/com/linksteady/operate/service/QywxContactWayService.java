@@ -24,7 +24,7 @@ public interface QywxContactWayService {
 
     QywxContactWay getContactWayById(Long contactWayId);
 
-    JSONObject getContactWayByConfigId(String configId);
+    String getContactWayByConfigId(String configId);
 
     void updateShortUrl(Long contactWayId,String shortUrl,String updateBy);
 
