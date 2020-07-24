@@ -121,7 +121,7 @@ $("#btn_catch").click(function () {
         return;
     }
     var headId = selected[0].headId;
-    window.location.href = "/page/daily/effect?id=" + headId;
+    window.location.href = "/page/daily/task/effect?id=" + headId;
 });
 
 /**
