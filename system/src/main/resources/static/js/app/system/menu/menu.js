@@ -1,6 +1,5 @@
 $(function () {
     initTreeTable();
-    getSystem();
 });
 
 var ctx = "/";
@@ -75,6 +74,9 @@ function initTreeTable() {
     };
     $MB.initTreeTable('menuTable', setting);
     $MB.loading('hide');
+
+    createMenuTree();
+    getSystem();
 }
 
 function getSystem() {

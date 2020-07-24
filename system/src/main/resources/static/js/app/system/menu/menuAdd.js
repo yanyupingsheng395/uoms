@@ -11,8 +11,6 @@ var $menuTree = $menuAddForm.find(".menu-tree");
 $(function () {
     $icon_drop.hide();
     validateRule();
-    createMenuTree();
-
     $menuAddForm.find("input[name='type']").change(function () {
         var $value = $menuAddForm.find("input[name='type']:checked").val();
         if ($value === "0") {

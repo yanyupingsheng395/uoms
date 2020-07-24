@@ -215,22 +215,6 @@ public class ActivityController {
         }
     }
 
-    /**
-     * 用户群组的分页数据
-     * @param request
-     * @return
-     */
-    @GetMapping("/getActivityUserGroupPage")
-    public ResponseBo getActivityUserGroupPage(QueryRequest request) {
-        int limit = request.getLimit();
-        int offset = request.getOffset();
-        String stage = request.getParam().get("stage");
-        Long headId = Long.parseLong(request.getParam().get("headId"));
-        int count = activityUserGroupService.getCount(headId, stage);
-        List<ActivityGroup> activityGroups = activityUserGroupService.getUserGroupPage(headId, stage, limit,offset);
-        return ResponseBo.okOverPaging(null, count, activityGroups);
-    }
-
     @GetMapping("/updateGroupTemplate")
     public ResponseBo updateGroupTemplate(@RequestParam Long headId,@RequestParam Long groupId, @RequestParam Long code, @RequestParam String stage, @RequestParam String operateType) {
         activityUserGroupService.updateGroupTemplate(headId, groupId, code, stage);
