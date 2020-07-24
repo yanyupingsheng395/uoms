@@ -41,7 +41,6 @@ function initTreeTable() {
                 formatter: function (item, index) {
                     return '<i class="zmdi ' + item.icon + '"></i>';
                 }
-
             },
             {
                 title: '类型',

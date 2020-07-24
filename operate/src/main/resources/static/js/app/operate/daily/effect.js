@@ -148,19 +148,24 @@ function getEffectPersonalPage() {
                 colspan: 2
             }
         ], [{
+            align: "center",
             field: 'pushPeriod',
             title: '推送时段'
         }, {
             field: 'convertPeriod',
+            align: "center",
             title: '转化时段'
         }, {
             field: 'convertInterval',
+            align: "center",
             title: '转化间隔（天）'
         }, {
             field: 'pushSpu',
+            align: "center",
             title: '推送SPU'
         }, {
             field: "spuIsConvert",
+            align: "center",
             title: "推送SPU是否转化",
             formatter: function (value, row, index) {
                 let res = "-";
@@ -174,21 +179,25 @@ function getEffectPersonalPage() {
             }
         }, {
             field: "userValue",
+            align: "center",
             title: "用户价值",
             formatter: function (value, row, index) {
                 var res = "";
                 switch (value) {
                     case "ULC_01":
-                        res = "重要";
+                        res = "高价值低敏感";
                         break;
                     case "ULC_02":
-                        res = "主要";
+                        res = "高价值较敏感";
                         break;
                     case "ULC_03":
-                        res = "普通";
+                        res = "中价值高敏感";
                         break;
                     case "ULC_04":
-                        res = "长尾";
+                        res = "低价值低敏感";
+                        break;
+                    case "ULC_05":
+                        res = "低价值高敏感";
                         break;
                     default:
                         res = "-";
@@ -197,24 +206,25 @@ function getEffectPersonalPage() {
             }
         }, {
             field: "pathActive",
+            align: "center",
             title: "用户活跃度",
             formatter: function (value, row, index) {
                 let res = "";
                 switch (value) {
                     case "UAC_01":
-                        res = "高度活跃";
+                        res = "促活节点";
                         break;
                     case "UAC_02":
-                        res = "中度活跃";
+                        res = "留存节点";
                         break;
                     case "UAC_03":
-                        res = "流失预警";
+                        res = "弱流失预警";
                         break;
                     case "UAC_04":
-                        res = "弱流失";
+                        res = "强流失预警";
                         break;
                     case "UAC_05":
-                        res = "强流失";
+                        res = "沉睡预警";
                         break;
                     case "UAC_06":
                         res = "沉睡";
