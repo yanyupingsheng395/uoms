@@ -112,7 +112,7 @@ public class PageController extends BaseController {
      * @return
      */
     @Log(value = "每日用户运营-任务效果",location = "用户成长系统")
-    @RequestMapping("daily/task/effect")
+    @RequestMapping("/daily/task/effect")
     public String effectTrack(Model model, @RequestParam("id") Long headId) {
         String status = dailyService.getDailyHeadById(headId).getStatus();
         if(StringUtils.isNotEmpty(status)) {
