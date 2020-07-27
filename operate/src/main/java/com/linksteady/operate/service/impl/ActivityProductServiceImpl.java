@@ -338,7 +338,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         String xlsxSuffix = ".xlsx";
         // 表头
         List<String> headers = Arrays.asList(
-                "商品ID", "商品名称", "日常商品单价\n（元/件）", "报名活动单价\n（元/件）", "店铺活动机制", "满件打折件数\n（件）", "满件打折力度\n（折）", "立减特价（元）", "单品券", "单品券门槛\n（元）", "单品券面额\n（元）", "最低价", "利益点"
+                "商品ID", "商品名称", "日常商品单价\n（元/件）", "报名活动单价\n（元/件）", "店铺活动机制", "满件打折件数\n（件）", "满件打折力度\n（折）", "立减特价金额（元）", "单品券", "单品券门槛\n（元）", "单品券面额\n（元）", "最低价", "利益点"
         );
         AtomicBoolean flag = new AtomicBoolean(true);
         List<ActivityProduct> productList = Lists.newArrayList();
@@ -364,6 +364,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 errorList.add(new ActivityProductUploadError("系统只解析第一个sheet，当前文件第一个sheet为空"));
             } else {
                 for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+                    if(i==255) {
+                        System.out.println(1);
+                    }
                     Row row = sheet.getRow(i);
                     //获取第一行的的数据
                     if (null == row) {
