@@ -242,4 +242,30 @@
         from uo_op_activity_product
         where head_id = #{headId}::int4 and activity_stage = #{stage} and activity_type = #{type}
     </select>
+
+    <update id="updateValidRepeatSkuInfo">
+        update UO_OP_ACTIVITY_PRODUCT
+        set CHECK_FLAG     = 'N',
+            CHECK_COMMENTS = '存在与当前商品类似的在售商品，当前活动商品建议删除'
+        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
+          and EPB_PRODUCT_ID in (
+            select EPB_PRODUCT_ID from (
+               with v1 as (select EPB_PRODUCT_ID
+                           from UO_OP_ACTIVITY_PRODUCT t1,
+                                (select distinct EBP_PRODUCT_ID from W_PRODUCT where UP_FLAG = 1) t2
+                           where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID::varchar
+                             and t1.HEAD_ID = #{headId}::int4
+                             and activity_stage = #{stage})
+               select t3.EPB_PRODUCT_ID, count(t4.goods_id) cnt
+               from UO_OP_ACTIVITY_PRODUCT t3
+                        left join v1 on t3.EPB_PRODUCT_ID = v1.EPB_PRODUCT_ID::varchar
+                        left join (SELECT goods_id FROM o_dapu_product_onsale WHERE INSERT_DT::date &gt;= (
+                   select max(insert_dt::date) from o_dapu_product_onsale
+               )) t4 on t3.epb_product_id = t4.goods_id::varchar
+               where t3.HEAD_ID = #{headId}::int4
+                 and activity_stage = #{stage}
+                 and v1.EPB_PRODUCT_ID is null
+               group by t3.EPB_PRODUCT_ID
+           ) t where t.cnt &gt; 0)
+    </update>
 </mapper>
