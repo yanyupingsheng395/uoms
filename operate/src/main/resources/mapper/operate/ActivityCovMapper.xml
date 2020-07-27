@@ -46,6 +46,7 @@
 
     <select id="getCovInfoById" resultMap="listMap">
         select COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST where COV_LIST_ID = #{covId}::int4
+        and activity_head_id = #{headId}::integer and stage = #{stage}
     </select>
 
     <update id="updatePreheatCovInfo">
@@ -53,8 +54,8 @@
                                    PREHEAT_NOTIFY_COVID,
                                    PREHEAT_NOTIFY_COV,
                                    PREHEAT_NOTIFY_PUSHNUM,
-                                   PREHEAT_NOTIFY_COVNUM) select #{headId}::int4, COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4
-        on conflict(ACTIVITY_HEAD_ID) do update set (PREHEAT_NOTIFY_COVID, PREHEAT_NOTIFY_COV, PREHEAT_NOTIFY_PUSHNUM, PREHEAT_NOTIFY_COVNUM) = (select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4)
+                                   PREHEAT_NOTIFY_COVNUM) select #{headId}::int4, COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4 and activity_head_id = #{headId} and stage = #{stage}
+        on conflict(ACTIVITY_HEAD_ID) do update set (PREHEAT_NOTIFY_COVID, PREHEAT_NOTIFY_COV, PREHEAT_NOTIFY_PUSHNUM, PREHEAT_NOTIFY_COVNUM) = (select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4 and activity_head_id = #{headId} and stage = #{stage})
     </update>
 
     <update id="updateFormalCovInfo">
@@ -62,8 +63,8 @@
                                    NORMAL_NOTIFY_COVID,
                                    NORMAL_NOTIFY_COV,
                                    NORMAL_NOTIFY_PUSHNUM,
-                                   NORMAL_NOTIFY_COVNUM) select #{headId}::int4, COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4
-        on conflict(ACTIVITY_HEAD_ID) do update set (NORMAL_NOTIFY_COVID, NORMAL_NOTIFY_COV, NORMAL_NOTIFY_PUSHNUM, NORMAL_NOTIFY_COVNUM) = (select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4)
+                                   NORMAL_NOTIFY_COVNUM) select #{headId}::int4, COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4 and activity_head_id = #{headId} and stage = #{stage}
+        on conflict(ACTIVITY_HEAD_ID) do update set (NORMAL_NOTIFY_COVID, NORMAL_NOTIFY_COV, NORMAL_NOTIFY_PUSHNUM, NORMAL_NOTIFY_COVNUM) = (select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4 and activity_head_id = #{headId} and stage = #{stage})
     </update>
 
     <select id="getCovListByHeadId" resultMap="listMap">
