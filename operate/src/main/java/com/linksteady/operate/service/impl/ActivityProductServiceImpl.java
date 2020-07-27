@@ -364,9 +364,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 errorList.add(new ActivityProductUploadError("系统只解析第一个sheet，当前文件第一个sheet为空"));
             } else {
                 for (int i = 0; i <= sheet.getLastRowNum(); i++) {
-                    if(i==255) {
-                        System.out.println(1);
-                    }
                     Row row = sheet.getRow(i);
                     //获取第一行的的数据
                     if (null == row) {
