@@ -204,7 +204,8 @@ public class ActivityController {
     @PostMapping("/updateActivityProduct")
     public ResponseBo updateActivityProduct(ActivityProduct activityProduct) {
         try {
-            if(activityProduct.getProductName().length() > pushConfig.getProdNameLen()) {
+//            if(activityProduct.getProductName().length() > pushConfig.getProdNameLen()) {
+            if(activityProduct.getProductName().length() >= 64) {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
             activityProductService.updateActivityProduct(activityProduct);

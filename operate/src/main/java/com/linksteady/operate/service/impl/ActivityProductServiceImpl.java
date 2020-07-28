@@ -83,7 +83,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         double discountAmount = activityProduct.getDiscountAmount() == null ? 0 : activityProduct.getDiscountAmount();
         // 计算商品优惠
         String groupId = activityProduct.getGroupId();
-        double discountSize = activityProduct.getDiscountSize();
+        double discountSize = activityProduct.getDiscountSize()== null ? 0 : activityProduct.getDiscountSize();
         discountSize = discountSize < 1 ? discountSize : (discountSize > 10 ? (discountSize / 100):(discountSize / 10));
         switch (groupId) {
             case "9":
@@ -115,7 +115,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 if (activityPrice >= spCouponThreshold) {
                     preferAmount2 = spCouponDenom;
                 } else {
-                    preferAmount2 = 0;
+                    preferAmount2 = spCouponDenom / Math.ceil(spCouponThreshold/activityPrice);
                 }
             } else {
                 // 没有单品
@@ -143,9 +143,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     preferAmount2 = activityPrice * (Double.parseDouble(tmp.getCouponDenom()) / Double.parseDouble(tmp.getCouponThreshold()));
                 } else {
                     preferAmount2 = Double.parseDouble(tmp.getCouponDenom());
-                }
-                if (groupId.equalsIgnoreCase("9")) {
-                    preferAmount2 = Math.round(preferAmount2 / discountCnt);
+                    if (groupId.equalsIgnoreCase("9")) {
+                        preferAmount2 = Math.round(preferAmount2 / discountCnt);
+                    }
                 }
             }
         }
@@ -159,7 +159,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     if (activityPrice >= spCouponThreshold) {
                         preferAmount2 = spCouponDenom;
                     } else {
-                        preferAmount2 = 0;
+                        preferAmount2 = spCouponDenom / Math.ceil(spCouponThreshold/activityPrice);
                     }
                 } else {
                     double finalActivityPrice;
@@ -176,11 +176,10 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     if (n2 < 1) {
                         preferAmount2 = finalActivityPrice * n1;
                     } else {
-                        preferAmount2 = Math.floor(n1) * Double.parseDouble(tmp.getCouponDenom());
-                    }
-
-                    if (groupId.equalsIgnoreCase("9")) {
-                        preferAmount2 = preferAmount2 / discountCnt;
+                        preferAmount2 = Math.floor(n2) * Double.parseDouble(tmp.getCouponDenom());
+                        if (groupId.equalsIgnoreCase("9")) {
+                            preferAmount2 = preferAmount2 / discountCnt;
+                        }
                     }
                 }
             }
@@ -214,9 +213,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 preferAmount3_1 = 0;
             } else {
                 preferAmount3_1 = Double.parseDouble(tmp.getCouponDenom());
-            }
-            if (groupId.equalsIgnoreCase("9")) {
-                preferAmount3_1 = preferAmount3_1 / discountCnt;
+                if (groupId.equalsIgnoreCase("9")) {
+                    preferAmount3_1 = preferAmount3_1 / discountCnt;
+                }
             }
         }
 
@@ -240,10 +239,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     preferAmount3_2 = 0;
                 } else {
                     preferAmount3_2 = Math.floor(n2) * Double.parseDouble(tmp.getCouponDenom());
-                }
-
-                if (groupId.equalsIgnoreCase("9")) {
-                    preferAmount3_2 = preferAmount3_2 / discountCnt;
+                    if (groupId.equalsIgnoreCase("9")) {
+                        preferAmount3_2 = preferAmount3_2 / discountCnt;
+                    }
                 }
             }
         }
@@ -398,7 +396,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         if (cell0.getCellType() == 1) {
                             productId = cell0.getStringCellValue();
                         } else if (cell0.getCellType() == 0) {
-                            productId = BigDecimal.valueOf(cell0.getNumericCellValue()).toString();
+                            productId = new BigDecimal(cell0.getNumericCellValue()).toString();
                         } else {
                             errorList.add(new ActivityProductUploadError("商品ID数据类型有误，应改为文本型或数值型", i + 1));
                         }
