@@ -398,7 +398,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         if (cell0.getCellType() == 1) {
                             productId = cell0.getStringCellValue();
                         } else if (cell0.getCellType() == 0) {
-                            productId = new BigDecimal(cell0.getNumericCellValue()).toString();
+                            productId = BigDecimal.valueOf(cell0.getNumericCellValue()).toString();
                         } else {
                             errorList.add(new ActivityProductUploadError("商品ID数据类型有误，应改为文本型或数值型", i + 1));
                         }
@@ -416,9 +416,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                             errorList.add(new ActivityProductUploadError("商品名数据类型有误，应改为文本型", i + 1));
                         }
                     }
-
                     // 日常商品单价
-                    Double formalPrice = 0D;
+                    double formalPrice = 0D;
                     Cell cell2 = row.getCell(2);
                     if (null == cell2 || cell2.getCellType() == 3) {
                         errorList.add(new ActivityProductUploadError("日常商品单价为空", i + 1));

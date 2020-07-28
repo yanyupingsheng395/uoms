@@ -870,7 +870,7 @@ function createActivity(stage) {
             $("#changePlan").attr("disabled", "disabled");
             $("#notifySaveBtn").attr("disabled", "disabled");
         }else {
-            var data = getPlanStatus($("#headId").val(), stage);
+            var data = getPlanStatus($("#headId").val(), stage, 'button');
             if(data) {
                 $("#notifySaveBtn").removeAttr("disabled");
                 $("#changePlan").removeAttr("disabled");
@@ -889,7 +889,7 @@ function createActivity(stage) {
             $("#changePlan").attr("disabled", "disabled");
             $("#notifySaveBtn").attr("disabled", "disabled");
         }else {
-            var data = getPlanStatus($("#headId").val(), stage);
+            var data = getPlanStatus($("#headId").val(), stage, 'button');
             if(data) {
                 $("#notifySaveBtn").removeAttr("disabled");
                 $("#changePlan").removeAttr("disabled");
@@ -907,15 +907,22 @@ function createActivity(stage) {
 }
 
 // 获取plan的状态
-function getPlanStatus(headId, stage) {
+function getPlanStatus(headId, stage, remark) {
     var res = $.ajax({
         url: '/activityPlan/getPlanStatus',
         data: {headId: headId, stage: stage},
         async: false
     });
     var status = JSON.parse(res.responseText).data;
-    if(status === '0' || status === '' || status === undefined || status === null || status === 'null') {
-        return true;
+    if(remark === 'smsContent') {
+        if(status === '0' || status === '1' || status === '' || status === undefined || status === null || status === 'null') {
+            return true;
+        }
+    }
+    if(remark === 'button') {
+        if(status === '0' || status === '' || status === undefined || status === null || status === 'null') {
+            return true;
+        }
     }
     return false;
 }
@@ -1185,7 +1192,7 @@ $( "#btn_batch_upload2" ).click( function () {
 /*************************活动运营商品 end*****************************/
 // 获取群组列表信息
 function getGroupList(stage, type, tableId) {
-    var flag = getPlanStatus($("#headId").val(), stage);
+    var flag = getPlanStatus($("#headId").val(), stage, 'smsContent');
     var headId = $( "#headId" ).val();
     var settings = {
         url: '/activity/getGroupList',
