@@ -125,7 +125,9 @@
     </select>
 
     <update id="setSmsCode">
-        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{tmpCode} where GROUP_ID = #{groupId} and HEAD_ID = #{headId}
+        update UO_OP_ACTIVITY_GROUP set
+        SMS_TEMPLATE_CODE = #{tmpCode},update_by=#{currentUserName},update_dt=now()
+         where GROUP_ID = #{groupId} and HEAD_ID = #{headId}
         and ACTIVITY_TYPE = #{type} and ACTIVITY_STAGE = #{stage}
     </update>
 
@@ -166,7 +168,12 @@
     </update>
 
     <update id="removeSmsSelected">
-        update UO_OP_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = null, CHECK_FLAG = 'N', CHECK_COMMENTS = '群组文案没有配置'
+        update UO_OP_ACTIVITY_GROUP set
+         SMS_TEMPLATE_CODE = null,
+         CHECK_FLAG = 'N',
+         CHECK_COMMENTS = '群组文案没有配置',
+         update_by=#{currentUserName},
+         update_dt=now()
         where head_id = #{headId} and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId} and activity_type = #{type}
     </update>
 

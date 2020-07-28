@@ -897,7 +897,12 @@ function createActivity(stage) {
     }
 }
 
-// 获取plan的状态
+/**
+ * 获取通知计划的状态 如果获取不到 或为尚未计算则为true 否则为false
+ * @param headId
+ * @param stage
+ * @returns {boolean}
+ */
 function getPlanStatus(headId, stage) {
     var res = $.ajax({
         url: '/activityPlan/getPlanStatus',

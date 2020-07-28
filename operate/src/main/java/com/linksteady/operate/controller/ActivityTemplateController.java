@@ -119,7 +119,7 @@ public class ActivityTemplateController extends BaseController {
      */
     @PostMapping("/removeSmsSelected")
     public ResponseBo removeSmsSelected(@RequestParam String type,@RequestParam Long headId, @RequestParam String stage, @RequestParam Long groupId) {
-        activityTemplateService.removeSmsSelected(type, headId, stage, groupId);
+        activityTemplateService.removeSmsSelected(type, headId, stage, groupId,getCurrentUser().getUsername());
         return ResponseBo.ok();
     }
 
@@ -130,7 +130,7 @@ public class ActivityTemplateController extends BaseController {
     @PostMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam("groupId") Long groupId, @RequestParam("tmpCode") Long tmpCode,
                                  @RequestParam("headId") Long headId, @RequestParam("type") String type, @RequestParam("stage") String stage) {
-        activityTemplateService.setSmsCode(groupId, tmpCode, headId, stage,type);
+        activityTemplateService.setSmsCode(groupId, tmpCode, headId, stage,type,getCurrentUser().getUsername());
         return ResponseBo.ok();
     }
 
