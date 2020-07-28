@@ -57,4 +57,6 @@ public interface ActivityProductMapper {
     int ifCalculate(String headId, String stage);
 
     List<String> getNotValidProduct(Long headId, String stage, String type);
+
+    void updateValidRepeatSkuInfo(String headId, String stage);
 }

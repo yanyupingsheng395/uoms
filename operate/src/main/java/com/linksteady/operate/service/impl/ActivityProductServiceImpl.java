@@ -338,7 +338,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         String xlsxSuffix = ".xlsx";
         // 表头
         List<String> headers = Arrays.asList(
-                "商品ID", "商品名称", "日常商品单价\n（元/件）", "报名活动单价\n（元/件）", "店铺活动机制", "满件打折件数\n（件）", "满件打折力度\n（折）", "立减特价（元）", "单品券", "单品券门槛\n（元）", "单品券面额\n（元）", "最低价", "利益点"
+                "商品ID", "商品名称", "日常商品单价\n（元/件）", "报名活动单价\n（元/件）", "店铺活动机制", "满件打折件数\n（件）", "满件打折力度\n（折）", "立减特价金额（元）", "单品券", "单品券门槛\n（元）", "单品券面额\n（元）", "最低价", "利益点"
         );
         AtomicBoolean flag = new AtomicBoolean(true);
         List<ActivityProduct> productList = Lists.newArrayList();
@@ -632,6 +632,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     public void validProductInfo(String headId, String stage) {
         activityProductMapper.updateAllValidInfo(headId, stage);
         activityProductMapper.updateValidInfo(headId, stage);
+        activityProductMapper.updateValidRepeatSkuInfo(headId, stage);
     }
 
     @Override

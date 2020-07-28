@@ -125,7 +125,12 @@ function validDiscount() {
         });
     }
     if(shopDiscount === 'Y') {
+        var cnt = 0;
         $("#shopDiscountItems").find(".row").each(function (v, k) {
+            var addFlag = $(this).find("select[name='addFlag']").find("option:selected").val();
+            if(addFlag === '1') {
+                cnt++;
+            }
             var couponThreshold = $(this).find("input[name='couponThreshold']").val();
             var couponDenom = $(this).find("input[name='couponDenom']").val();
             if(couponThreshold === '') {
@@ -137,6 +142,10 @@ function validDiscount() {
                 return (flag = false);
             }
         });
+        if(cnt > 1) {
+            $MB.n_warning("店铺优惠只能有一个可叠加券！");
+            return (flag = false);
+        }
     }
     return flag;
 }
@@ -2013,7 +2022,14 @@ function covertDataTable() {
             {
                 field: 'covRate',
                 title: '期望转化率（%）',
-                align: 'center'
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if(value !== null && value !== '' && value !== undefined) {
+                        return value * 100;
+                    }else {
+                        return '-';
+                    }
+                }
             }, {
                 field: 'expectPushNum',
                 title: '对应推送用户数（人）',

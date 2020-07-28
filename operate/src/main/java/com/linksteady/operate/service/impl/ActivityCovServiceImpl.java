@@ -45,8 +45,8 @@ public class ActivityCovServiceImpl implements ActivityCovService {
     public List<Map<String, String>> calculateCov(String headId, String stage, String changedCovId, String defaultCovId) {
         DecimalFormat df = new DecimalFormat("#.##");
         List<Map<String, String>> result = Lists.newArrayList();
-        ActivityCovInfo activityCovInfo1 = activityCovMapper.getCovInfoById(changedCovId);
-        ActivityCovInfo activityCovInfo2 = activityCovMapper.getCovInfoById(defaultCovId);
+        ActivityCovInfo activityCovInfo1 = activityCovMapper.getCovInfoById(changedCovId, headId, stage);
+        ActivityCovInfo activityCovInfo2 = activityCovMapper.getCovInfoById(defaultCovId, headId, stage);
         double rate_val = Math.abs((Double.parseDouble(activityCovInfo1.getCovRate()) - Double.parseDouble(activityCovInfo2.getCovRate())));
         int push_val = Math.abs((Integer.parseInt(activityCovInfo1.getExpectPushNum()) - Integer.parseInt(activityCovInfo2.getExpectPushNum())));
         int cov_val = Math.abs((Integer.parseInt(activityCovInfo1.getExpectCovNum()) - Integer.parseInt(activityCovInfo2.getExpectCovNum())));
@@ -80,10 +80,10 @@ public class ActivityCovServiceImpl implements ActivityCovService {
     @Transactional(rollbackFor = Exception.class)
     public void updateCovInfo(long headId, String stage, String covId) {
         if (ActivityStageEnum.preheat.getStageCode().equals(stage)) {
-            activityCovMapper.updatePreheatCovInfo(headId, covId);
+            activityCovMapper.updatePreheatCovInfo(headId, covId, stage);
         }
         if (ActivityStageEnum.formal.getStageCode().equals(stage)) {
-            activityCovMapper.updateFormalCovInfo(headId, covId);
+            activityCovMapper.updateFormalCovInfo(headId, covId, stage);
         }
     }
 

@@ -190,7 +190,14 @@ function covertDataTable() {
             {
                 field: 'covRate',
                 title: '期望转化率（%）',
-                align: 'center'
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if(value !== null && value !== '' && value !== undefined) {
+                        return value * 100;
+                    }else {
+                        return '-';
+                    }
+                }
             }, {
                 field: 'expectPushNum',
                 title: '对应推送用户数（人）',

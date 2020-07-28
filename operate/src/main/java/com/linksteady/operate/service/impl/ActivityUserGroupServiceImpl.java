@@ -30,7 +30,6 @@ public class ActivityUserGroupServiceImpl implements ActivityUserGroupService {
     @Autowired
     private ActivityHeadMapper activityHeadMapper;
 
-
     @Override
     public List<ActivityGroup> getUserGroupList(Long headId, String stage, String type) {
         //对活动当前stage的组上配置的文案情况进行一次校验
