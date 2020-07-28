@@ -21,7 +21,7 @@ public interface ActivityTemplateMapper {
 
     List<ActivityTemplate> getTemplateTableData(Long headId,String isPersonal,String scene,String stage,String type);
 
-    void setSmsCode(Long groupId, Long tmpCode, Long headId, String stage,String type);
+    void setSmsCode(Long groupId, Long tmpCode, Long headId, String stage,String type,String currentUserName);
 
     /**
      * 返回一个文案 在传入的活动阶段之外被引用的次数
@@ -40,7 +40,7 @@ public interface ActivityTemplateMapper {
      */
     void validUserGroup(Long headId, String stage,String type);
 
-    void removeSmsSelected(String type, Long headId, String stage, Long groupId);
+    void removeSmsSelected(String type, Long headId, String stage, Long groupId,String currentUserName);
 
     /**
      * 判断活动文案是否发生改变

@@ -313,7 +313,7 @@ public class ActivityPlanController {
     }
 
     /**
-     * 获取计划的状态
+     * 获取计划的状态(获取当前head_id下某个阶段 通知计划的状态)
      *
      * @return
      */

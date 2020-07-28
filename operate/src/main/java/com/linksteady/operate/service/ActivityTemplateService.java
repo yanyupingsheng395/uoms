@@ -29,8 +29,8 @@ public interface ActivityTemplateService {
 
     boolean checkTemplateUsed(Long templateCode,Long headId,String stage,String type);
 
-    void removeSmsSelected(String type, Long headId, String stage, Long groupId);
+    void removeSmsSelected(String type, Long headId, String stage, Long groupId,String currentUserName);
 
-    void setSmsCode(Long groupId, Long tmpCode, Long headId,String stage, String type);
+    void setSmsCode(Long groupId, Long tmpCode, Long headId,String stage, String type,String currentUserName);
 
 }

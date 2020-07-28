@@ -171,8 +171,8 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
     }
 
     @Override
-    public void setSmsCode(Long groupId, Long tmpCode, Long headId, String stage,String type) {
-        activityTemplateMapper.setSmsCode(groupId, tmpCode, headId,stage, type);
+    public void setSmsCode(Long groupId, Long tmpCode, Long headId, String stage,String type,String currentUserName) {
+        activityTemplateMapper.setSmsCode(groupId, tmpCode, headId,stage, type,currentUserName);
         //设置完成后对当前活动stage、type上设置的文案情况进行一次校验
         activityTemplateMapper.validUserGroup(headId,stage,type);
     }
@@ -185,7 +185,7 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void removeSmsSelected(String type, Long headId, String stage, Long groupId) {
-        activityTemplateMapper.removeSmsSelected(type, headId, stage, groupId);
+    public void removeSmsSelected(String type, Long headId, String stage, Long groupId,String currentUserName) {
+        activityTemplateMapper.removeSmsSelected(type, headId, stage, groupId,currentUserName);
     }
 }
