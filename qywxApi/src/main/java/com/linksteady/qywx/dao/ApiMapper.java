@@ -16,4 +16,14 @@ public interface ApiMapper {
      */
     String getQywxDomainAddress();
 
+    /**
+     * 获取企业微信应用的域名
+     */
+    String getQywxDomainUrl();
+
+    /**
+     * 获取当前应用绑定的企业微信的corpId
+     */
+    String getQywxCorpId();
+
 }

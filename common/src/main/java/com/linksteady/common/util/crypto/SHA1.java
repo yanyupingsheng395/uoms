@@ -1,4 +1,4 @@
-package com.linksteady.qywx.crypto;
+package com.linksteady.common.util.crypto;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;

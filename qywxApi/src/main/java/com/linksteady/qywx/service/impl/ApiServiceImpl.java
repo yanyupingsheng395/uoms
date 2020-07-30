@@ -17,4 +17,16 @@ public class ApiServiceImpl implements ApiService {
     public String getQywxDomainAddress() {
         return apiMapper.getQywxDomainAddress();
     }
+
+    @Override
+    @Cacheable(value="qywx", key="'qywxDominUrl'")
+    public String getQywxDomainUrl() {
+        return apiMapper.getQywxDomainUrl();
+    }
+
+    @Override
+    @Cacheable(value="qywx", key="'qywxCorpId'")
+    public String getQywxCorpId() {
+        return apiMapper.getQywxCorpId();
+    }
 }
