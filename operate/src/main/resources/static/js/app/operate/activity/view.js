@@ -77,9 +77,27 @@ function getProductInfo(type, tableId) {
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
                     headId: $( "#headId" ).val(),
-                    productId: $( "#productId" ).val(),
-                    productName: $( "#productName" ).val(),
-                    groupId: $("#groupId").find("option:selected").val(),
+                    productId: function() {
+                        if(tableId === 'activityProductTable1') {
+                            return $( "#productId1" ).val();
+                        }else if(tableId === 'activityProductTable2') {
+                            return $( "#productId1" ).val();
+                        }
+                    },
+                    productName:function() {
+                        if(tableId === 'activityProductTable1') {
+                            return $( "#productName1" ).val();
+                        }else if(tableId === 'activityProductTable2') {
+                            return $( "#productName2" ).val();
+                        }
+                    },
+                    groupId: function() {
+                        if(tableId === 'activityProductTable1') {
+                            return $("#groupId1").find("option:selected").val();
+                        }else if(tableId === 'activityProductTable2') {
+                            return $("#groupId2").find("option:selected").val();
+                        }
+                    },
                     activityStage: function () {
                         return CURRENT_ACTIVITY_STAGE;
                     },
@@ -291,15 +309,15 @@ function searchActivityProduct2() {
 
 // 重置查询条件
 function resetActivityProduct1() {
-    $( "#productId" ).val( "" );
-    $( "#productName" ).val( "" );
-    $( "#activity-form" ).find( "option:selected" ).removeAttr( "selected" );
+    $( "#productId1" ).val( "" );
+    $( "#productName1" ).val( "" );
+    $( "#groupId1" ).find( "option:selected" ).removeAttr( "selected" );
     $MB.refreshTable( 'activityProductTable1' );
 }
 
 function resetActivityProduct2() {
-    $( "#productId" ).val( "" );
-    $( "#productName" ).val( "" );
-    $( "#activity-form" ).find( "option:selected" ).removeAttr( "selected" );
+    $( "#productId2" ).val( "" );
+    $( "#productName2" ).val( "" );
+    $( "#groupId2" ).find( "option:selected" ).removeAttr( "selected" );
     $MB.refreshTable( 'activityProductTable2' );
 }
