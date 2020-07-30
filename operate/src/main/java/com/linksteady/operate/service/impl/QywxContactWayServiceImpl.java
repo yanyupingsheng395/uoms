@@ -9,7 +9,7 @@ import com.linksteady.operate.domain.enums.ConfigEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxContactWayService;
 import com.linksteady.operate.service.ShortUrlService;
-import com.linksteady.operate.util.OkHttpUtil;
+import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.operate.util.SHA1;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

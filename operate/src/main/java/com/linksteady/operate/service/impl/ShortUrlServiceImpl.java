@@ -6,7 +6,7 @@ import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.ShortUrlMapper;
 import com.linksteady.operate.domain.ShortUrlInfo;
 import com.linksteady.operate.service.ShortUrlService;
-import com.linksteady.operate.util.OkHttpUtil;
+import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.operate.util.UrlUtil;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.SneakyThrows;

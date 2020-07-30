@@ -8,4 +8,16 @@
         from t_config where name='qywx.domainIpAddress'
     </select>
 
+    <select id="getQywxDomainUrl" resultType="string">
+        select
+           value
+        from t_config where name='qywx.domainUrl'
+    </select>
+
+    <select id="getQywxCorpId" resultType="string">
+        select
+           value
+        from t_config where name='qywx.corpid'
+    </select>
+
 </mapper>

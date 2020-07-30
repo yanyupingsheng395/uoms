@@ -1,6 +1,7 @@
 package com.linksteady.operate.util;
 
 import com.google.common.collect.Maps;
+import com.linksteady.operate.constant.UomsConstants;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

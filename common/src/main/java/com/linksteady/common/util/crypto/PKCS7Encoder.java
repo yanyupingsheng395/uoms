@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 1998-2014 Tencent Inc.
  */
 
-package com.linksteady.qywx.crypto;
+package com.linksteady.common.util.crypto;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;

@@ -13,7 +13,7 @@ import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.service.QywxDailyDetailService;
 import com.linksteady.operate.service.QywxDailyService;
-import com.linksteady.operate.util.OkHttpUtil;
+import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.operate.util.SHA1;
 import com.linksteady.operate.vo.QywxUserVO;
 import lombok.extern.slf4j.Slf4j;

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.SyncTaskMapper">
+
+    <insert id="saveFollowUser">
+         insert into uo_qywx_followuser_list(corp_id,user_id,user_name,insert_dt,flag) values
+        <foreach collection="followUserList" item="item" index="index" separator=",">
+            (#{corpId},#{item},#{item},now(),'Y')
+        </foreach>
+        ON CONFLICT(user_id) DO UPDATE set flag='Y'
+    </insert>
+
+    <insert id="saveSyncTask" useGeneratedKeys="true" keyProperty="taskId" keyColumn="task_id">
+        insert into uo_qywx_synctask_list(corp_id,task_type,status,insert_dt,insert_by)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.corpId},#{item.taskType},'P',#{item.insertDt},#{item.insertBy})
+        </foreach>
+    </insert>
+
+    <update id="updateSyncTask">
+        update uo_qywx_synctask_list set status=#{status} where task_id=#{taskId}::int4
+    </update>
+
+    <update id="updateFollowUserFlag">
+        update uo_qywx_followuser_list set flag='N'
+    </update>
+
+    <delete id="deleteFollowUser">
+        delete from uo_qywx_followuser_list where flag='N'
+    </delete>
+</mapper>

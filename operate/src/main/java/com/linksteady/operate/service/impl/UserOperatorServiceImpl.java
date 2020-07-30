@@ -4,7 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.DateUtil;
-import com.linksteady.operate.util.UomsConstants;
+import com.linksteady.operate.constant.UomsConstants;
 import com.linksteady.operate.util.UserOperaterMapper;
 import com.linksteady.operate.util.UserOperatorMapperFactory;
 import com.linksteady.operate.dao.BrandMapper;

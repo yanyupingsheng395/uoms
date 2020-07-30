@@ -1,4 +1,4 @@
-package com.linksteady.qywx.crypto;
+package com.linksteady.common.util.crypto;
 
 import java.util.ArrayList;
 

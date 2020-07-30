@@ -36,10 +36,10 @@ public class UserMappingController extends ApiBaseController{
                                   String externalUserId,
                                   String followUserId,
                                   String phoneNum) {
-        String validate=validateLegality(request,signature,timestamp,externalUserId,followUserId);
-        if(StringUtils.isNotEmpty(validate))
-        {
-            return ResponseBo.error(validate);
+        try {
+            validateLegality(request,signature,timestamp,externalUserId,followUserId);
+        } catch (Exception e) {
+            return ResponseBo.error(e.getMessage());
         }
         //对参数进行校验
         if(StringUtils.isEmpty(externalUserId)||StringUtils.isEmpty(followUserId))
@@ -73,10 +73,10 @@ public class UserMappingController extends ApiBaseController{
     public ResponseBo userMapping(HttpServletRequest request, String signature, String timestamp,
                                   String externalUserId,
                                   String followUserId) {
-        String validate=validateLegality(request,signature,timestamp,externalUserId,followUserId);
-        if(StringUtils.isNotEmpty(validate))
-        {
-            return ResponseBo.error(validate);
+        try {
+            validateLegality(request,signature,timestamp,externalUserId,followUserId);
+        } catch (Exception e) {
+            return ResponseBo.error(e.getMessage());
         }
 
         //对参数进行校验

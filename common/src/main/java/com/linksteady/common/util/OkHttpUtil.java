@@ -1,9 +1,10 @@
-package com.linksteady.operate.util;
+package com.linksteady.common.util;
 
 import com.alibaba.fastjson.JSON;
 import lombok.SneakyThrows;
 import okhttp3.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +33,7 @@ public class OkHttpUtil {
      * @return
      */
     @SneakyThrows
-    public static String callTextPlain(String url) {
+    public static String getRequest(String url) {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -50,7 +51,7 @@ public class OkHttpUtil {
      * @return
      */
     @SneakyThrows
-    public static String callTextPlainPost(String url,String value) {
+    public static String postRequest(String url,String value) {
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Content-Type", "text/plain")
@@ -61,6 +62,30 @@ public class OkHttpUtil {
         Response response = call.execute();
         ResponseBody responseBody = response.body();
         return responseBody.string();
+    }
+
+    /**
+     * 调用一次post请求
+     * @param url
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    public static String postRequestByFormBody(String url, Map<String, String> param){
+        FormBody.Builder builder = new FormBody.Builder();
+        param.forEach(builder::add);
+        RequestBody requestBody = builder.build();
+        Request request = new Request.Builder().post(requestBody).url(url)
+                .post(requestBody).build();
+        Call call = okHttpClient.newCall(request);
+        try {
+            Response response = call.execute();
+            ResponseBody responseBody = response.body();
+            return responseBody.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -124,6 +149,47 @@ public class OkHttpUtil {
         Response response = call.execute();
         ResponseBody responseBody = response.body();
         return responseBody.string();
+    }
+
+    /**
+     * 提交数据和文件
+     * @param url
+     * @param map
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    public static String postFileAndData(String url, Map<String,String> map, File file){
+        // form 表单形式上传
+        MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        if(file != null){
+            // MediaType.parse() 里面是上传的文件类型。
+            RequestBody body = RequestBody.create(MediaType.parse("image/*"), file);
+            String filename = file.getName();
+            // 参数分别为， 请求key ，文件名称 ， RequestBody
+            requestBody.addFormDataPart("file", file.getName(), body);
+        }
+        if (map != null) {
+            // map 里面是请求中所需要的 key 和 value
+            for (Map.Entry<String,String> entry : map.entrySet()) {
+                requestBody.addFormDataPart(entry.getKey(),entry.getValue());
+            }
+        }
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Content-Type", "text/plain")
+                .post(requestBody.build())
+                .build();
+
+        Call call = okHttpClient.newCall(request);
+        try {
+            Response response = call.execute();
+            ResponseBody responseBody = response.body();
+            return responseBody.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
