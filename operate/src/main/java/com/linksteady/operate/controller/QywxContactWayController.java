@@ -97,7 +97,15 @@ public class QywxContactWayController extends BaseController {
             qywxContactWayService.updateContractWay(qywxContactWay);
             return ResponseBo.ok();
         } catch (Exception e) {
-            return ResponseBo.error(e.getMessage());
+            log.error("新增渠道活码失败，{}",e);
+            String message=e.getMessage();
+            if(message.indexOf("uo_qywx_contact_way_u1")!=-1)
+            {
+                return ResponseBo.error("新增失败，当前渠道已经存在！");
+            }else
+            {
+                return ResponseBo.error("新增渠道活码失败！");
+            }
         }
 
     }
@@ -129,7 +137,16 @@ public class QywxContactWayController extends BaseController {
             qywxContactWayService.saveContactWay(qywxContactWay);
             return ResponseBo.ok();
         } catch (Exception e){
-            return ResponseBo.error(e.getMessage());
+            log.error("保存渠道活码失败，{}",e);
+            String message=e.getMessage();
+            if(message.indexOf("uo_qywx_contact_way_u1")!=-1)
+            {
+                return ResponseBo.error("保存失败，当前渠道已经存在！");
+            }else
+            {
+                return ResponseBo.error("保存渠道活码失败！");
+            }
+
         }
     }
 
@@ -156,11 +173,11 @@ public class QywxContactWayController extends BaseController {
     public ResponseBo deleteContactWay(String configId) {
         try {
             qywxContactWayService.deleteContactWay(configId);
-            return ResponseBo.ok();
+            return ResponseBo.ok("删除成功！");
         } catch (Exception e) {
-            return ResponseBo.error(e.getMessage());
+            log.error("删除渠道活码失败，{}",e);
+            return ResponseBo.error("删除失败！");
         }
-
     }
 
 

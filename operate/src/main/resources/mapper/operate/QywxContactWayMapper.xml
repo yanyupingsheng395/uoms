@@ -104,7 +104,7 @@
                 party=#{party},
                 config_id=#{configId},
                 create_dt=#{createDt},
-                create_dt=#{updateDt},
+                update_dt=#{updateDt},
                 create_by=#{createBy},
                 update_by=#{updateBy}
          where contactway_id=#{contactWayId}

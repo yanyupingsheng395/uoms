@@ -106,6 +106,10 @@ function initTable() {
             field: 'contactWayId',
             title: 'contactWayId',
             visible: false
+        },  {
+            field: 'configId',
+            title: 'configId',
+            visible: false
         }]
     };
     $MB.initTable('contactWayTable', settings);
@@ -161,14 +165,40 @@ $("#btn_add").click(function () {
 });
 
 $("#btn_delete").click(function () {
-    $MB.n_warning('演示环境暂不支持删除数据!');
+    var selected = $("#contactWayTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+
+    if (!selected_length) {
+        $MB.n_warning('请选择需要删除的渠道活码！');
+        return;
+    }
+    let configId = selected[0].configId;
+
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定删除选中的渠道活码?"
+    }, function () {
+        $.post('/contactWay/delete', {"configId": configId}, function (r) {
+            if (r.code === 200) {
+                $MB.n_success(r.msg);
+                $MB.refreshTable("contactWayTable");
+            } else {
+                $MB.n_danger(r.msg);
+            }
+        });
+    });
 });
 
 $("#add_modal").on('hidden.bs.modal', function () {
     //执行一些清空操作
-    $MB.closeAndRestModal("add_modal");
     $("#btn_save").attr("name", "save");
-    $("#contactWay_edit").validate().resetForm();
+    $contactWayForm.validate().resetForm();
+    $contactWayForm.find("input[name='contactWayId']").val("");
+    $contactWayForm.find("input[name='configId']").val("");
+    $contactWayForm.find("input[name='state']").val("");
+    $contactWayForm.find("input[name='usersList']").val("");
+    $contactWayForm.find("input[name='remark']").val("");
+    $contactWayForm.find("select[name='userSelect']").selectpicker('val', "");
 });
 
 $("#btn_save").click(function () {
@@ -182,7 +212,9 @@ $("#btn_save").click(function () {
                     closeModal();
                     $MB.n_success(r.msg);
                     $MB.refreshTable("contactWayTable");
-                } else $MB.n_danger(r.msg);
+                } else {
+                    $MB.n_danger(r.msg);
+                };
             });
         }
         if (name === "update") {
@@ -191,7 +223,9 @@ $("#btn_save").click(function () {
                     closeModal();
                     $MB.n_success(r.msg);
                     $MB.refreshTable("contactWayTable");
-                } else $MB.n_danger(r.msg);
+                } else {
+                    $MB.n_danger(r.msg);
+                }
             });
         }
     }
