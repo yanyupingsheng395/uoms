@@ -620,14 +620,14 @@
     <select id="getGrowthTableDataCount" resultType="int">
         select count(1) from wp_push_user_effect
         <if test="startDt != '' and startDt != null and endDt != '' and endDt != null">
-            where to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &lt;= to_date(#{endDt}, 'yyyy-mm-dd') and to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &gt;= to_date(#{startDt}, 'yyyy-mm-dd')
+            where to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &lt;= to_date(#{endDt}, 'yyyy-mm') and to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &gt;= to_date(#{startDt}, 'yyyy-mm')
         </if>
     </select>
 
     <select id="getGrowthTableDataList" resultMap="userEffectMap">
         select user_id, push_rn, push_date, growth_potential, is_growth, growth_rn, growth_push_cnt, growth_dt, growth_v from wp_push_user_effect where 1=1
         <if test="startDt != '' and startDt != null and endDt != '' and endDt != null">
-            and to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &lt;= to_date(#{endDt}, 'yyyy-mm-dd') and to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &gt;= to_date(#{startDt}, 'yyyy-mm-dd')
+            and to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &lt;= to_date(#{endDt}, 'yyyy-mm') and to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &gt;= to_date(#{startDt}, 'yyyy-mm')
         </if>
         limit #{limit} offset #{offset}
     </select>
@@ -635,7 +635,7 @@
     <select id="allGrowthP" resultType="map">
         select growth_potential value_, to_char(push_date, 'yyyymm') date_ from wp_push_user_effect
         <if test="startDt != '' and startDt != null and endDt != '' and endDt != null">
-            where to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &lt;= to_date(#{endDt}, 'yyyy-mm-dd') and to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &gt;= to_date(#{startDt}, 'yyyy-mm-dd')
+            where to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &lt;= to_date(#{endDt}, 'yyyy-mm') and to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &gt;= to_date(#{startDt}, 'yyyy-mm')
         </if>
     </select>
 
@@ -643,7 +643,7 @@
         select growth_v value_, to_char(growth_dt, 'yyyymm') date_ from wp_push_user_effect
         where growth_dt is not null
         <if test="startDt != '' and startDt != null and endDt != '' and endDt != null">
-            and to_date(to_char( growth_dt, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &lt;= to_date(#{endDt}, 'yyyy-mm-dd') and to_date(to_char( growth_dt, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &gt;= to_date(#{startDt}, 'yyyy-mm-dd')
+            and to_date(to_char( growth_dt, 'yyyy-mm' ), 'yyyy-mm') &lt;= to_date(#{endDt}, 'yyyy-mm') and to_date(to_char( growth_dt, 'yyyy-mm' ), 'yyyy-mm') &gt;= to_date(#{startDt}, 'yyyy-mm')
         </if>
     </select>
 
