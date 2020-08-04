@@ -3,6 +3,7 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.operate.domain.QywxContactWay;
 import com.linksteady.operate.service.QywxContactWayService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
@@ -54,9 +60,8 @@ public class QywxContactWayController extends BaseController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         String qstate = request.getParam().get("qstate");
-        String qremark=request.getParam().get("qremark");
-        int count =qywxContactWayService.getContactWayCount(qstate,qremark);
-        List<QywxContactWay> list=qywxContactWayService.getContactWayList(limit,offset,qstate,qremark);
+        int count =qywxContactWayService.getContactWayCount(qstate);
+        List<QywxContactWay> list=qywxContactWayService.getContactWayList(limit,offset,qstate);
         return ResponseBo.okOverPaging("", count,list);
     }
 
@@ -97,13 +102,13 @@ public class QywxContactWayController extends BaseController {
             qywxContactWayService.updateContractWay(qywxContactWay);
             return ResponseBo.ok();
         } catch (Exception e) {
-            log.error("新增渠道活码失败，{}",e);
             String message=e.getMessage();
             if(message.indexOf("uo_qywx_contact_way_u1")!=-1)
             {
                 return ResponseBo.error("新增失败，当前渠道已经存在！");
             }else
             {
+                log.error("新增渠道活码失败，{}",e);
                 return ResponseBo.error("新增渠道活码失败！");
             }
         }
@@ -137,13 +142,13 @@ public class QywxContactWayController extends BaseController {
             qywxContactWayService.saveContactWay(qywxContactWay);
             return ResponseBo.ok();
         } catch (Exception e){
-            log.error("保存渠道活码失败，{}",e);
             String message=e.getMessage();
             if(message.indexOf("uo_qywx_contact_way_u1")!=-1)
             {
                 return ResponseBo.error("保存失败，当前渠道已经存在！");
             }else
             {
+                log.error("保存渠道活码失败，{}",e);
                 return ResponseBo.error("保存渠道活码失败！");
             }
 
@@ -180,21 +185,51 @@ public class QywxContactWayController extends BaseController {
         }
     }
 
-
     @RequestMapping("/images/qrcode/{configId}")
     public String mappingToQrCode(Model model, @PathVariable(name="configId") String configId)
     {
         //根据configId查找对应的二维码地址
-        String qrCode=qywxContactWayService.getQrcodeByConfigId(configId);
-        if(StringUtils.isNotEmpty(qrCode))
+        QywxContactWay qywxContactWay=qywxContactWayService.getQrcodeByConfigId(configId);
+        if(StringUtils.isNotEmpty(qywxContactWay.getQrCode()))
         {
-            model.addAttribute("qrCode",qrCode);
+            model.addAttribute("qrCode",qywxContactWay.getQrCode());
         }else
         {
             model.addAttribute("qrCode","/images/qrcode_error.png");
         }
 
         return "operate/contactWay/qrCode";
+    }
+
+    /**
+     * 二维码下载
+     * @param configId
+     * @return
+     */
+    @RequestMapping("/contactWay/download")
+    public void contactWayDownLoad(String configId, HttpServletResponse response)
+    {
+        //根据configId查找对应的二维码地址
+        QywxContactWay qywxContactWay=qywxContactWayService.getQrcodeByConfigId(configId);
+
+        InputStream is=OkHttpUtil.downLoadFile(qywxContactWay.getQrCode());
+
+        String fileName=qywxContactWay.getState()+".png";
+        try {
+            // 设置下载的响应头信息
+            response.setHeader("Content-Disposition",
+                    "attachment;fileName=" + URLEncoder.encode(fileName, "UTF-8"));
+            OutputStream os = response.getOutputStream();
+            byte [] buffer = new byte[1024]; // 图片文件流缓存池
+            int index;
+            while((index = is.read(buffer)) != -1){
+                os.write(buffer,0,index);
+                os.flush();
+            }
+            os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

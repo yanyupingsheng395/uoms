@@ -7,7 +7,6 @@
         <result property="contactType" jdbcType="VARCHAR" column="contact_type"/>
         <result property="scene" jdbcType="VARCHAR" column="scene"/>
         <result property="style" jdbcType="VARCHAR" column="style"/>
-        <result property="remark" jdbcType="VARCHAR" column="remark"/>
         <result property="skipVerify" jdbcType="BOOLEAN" column="skip_verify"/>
         <result property="state" jdbcType="VARCHAR" column="state"/>
         <result property="usersList" jdbcType="VARCHAR" column="user_list"/>
@@ -33,28 +32,25 @@
     </update>
 
     <select id="getContactWayById" resultMap="BaseResultMap">
-        select contactway_id,qrcode,contact_type,scene,style,remark,skip_verify,state,user_list,party,
+        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,
                 config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
         from uo_qywx_contact_way where  contactway_id=#{contactWayId}
     </select>
 
     <select id="getAllContactWayList" resultMap="BaseResultMap">
-        select contactway_id,qrcode,contact_type,scene,style,remark,skip_verify,state,user_list,party,
+        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,
                 config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
         from uo_qywx_contact_way
         ORDER BY update_dt desc
     </select>
 
     <select id="getContactWayList" resultMap="BaseResultMap">
-       select contactway_id,qrcode,contact_type,scene,style,remark,skip_verify,state,user_list,party,
+       select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,
                 config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
         from uo_qywx_contact_way
         <where>
             <if test="qstate != null and qstate != ''">
                 state like concat('%', #{qstate}, '%')
-            </if>
-            <if test="qremark != null and qremark != ''">
-                remark like concat('%', #{qremark}, '%')
             </if>
         </where>
         ORDER BY update_dt desc
@@ -67,9 +63,6 @@
         <where>
             <if test="qstate != null and qstate != ''">
                 state like concat('%', #{qstate}, '%')
-            </if>
-            <if test="qremark != null and qremark != ''">
-                remark like concat('%', #{qremark}, '%')
             </if>
         </where>
     </select>
@@ -97,15 +90,11 @@
                 contact_type=#{contactType},
                 scene=#{scene},
                 style=#{style},
-                remark=#{remark},
                 skip_verify=#{skipVerify},
                 state=#{state},
                 user_list=#{usersList},
                 party=#{party},
-                config_id=#{configId},
-                create_dt=#{createDt},
                 update_dt=#{updateDt},
-                create_by=#{createBy},
                 update_by=#{updateBy}
          where contactway_id=#{contactWayId}
     </update>
@@ -115,7 +104,6 @@
              contact_type,
              scene,
              style,
-             remark,
              skip_verify,
              state,
              user_list,
@@ -129,7 +117,6 @@
             #{contactType},
             #{scene},
             #{style},
-            #{remark},
             #{skipVerify},
             #{state},
             #{usersList},
@@ -146,7 +133,7 @@
             select domain from t_system where code='operate'
     </select>
 
-    <select id="getQrcodeByConfigId" resultType="string">
-        select qrcode from uo_qywx_contact_way where config_id=#{configId}
+    <select id="getQrcodeByConfigId" resultMap="BaseResultMap">
+        select qrcode,state from uo_qywx_contact_way where config_id=#{configId}
     </select>
 </mapper>

@@ -8,6 +8,11 @@ $(function () {
     modifyUrlValidateRule();
     initTable();
     initFollowUser();
+
+    let clipboard1 = new ClipboardJS('.copy_btn');
+    clipboard1.on('success', function(e) {
+        $MB.n_success("成功复制到粘贴板！");
+    });
 });
 
 function initTable() {
@@ -23,8 +28,7 @@ function initTable() {
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,
-                param: { state: $("#state").val(),
-                        remark: $("#remark").val()}
+                param: { state: $("#state").val()}
             };
         },
         columns: [{
@@ -35,11 +39,12 @@ function initTable() {
             align: 'center',
             formatter: function (value, row, indx)
             {
-                return "<img style='width:120px;height:120px' src='"+value+"'></img><a href='"+qrCode+"' style='font-size: 12px;'>下载</a>";
+                return "<img style='width:120px;height:120px' src='"+value+"'><a href='/contactWay/download?configId="+row.configId+"' style='font-size: 12px;' target='_blank'>下载</a>" +
+                    "&nbsp;&nbsp;<a style='font-size: 12px;cursor: pointer;' data-clipboard-text='"+value+"' class='copy_btn'>复制二维码地址</a>";
             }
         }, {
             field: 'shortUrl',
-            title: '短链接',
+            title: '海报短链接',
             align: 'center',
             formatter: function (value, row, indx) {
                return "<a href=http://"+value+" target='_blank'>"+value+"</a>";
@@ -90,10 +95,6 @@ function initTable() {
             title: '渠道',
             align: 'center'
         },  {
-            field: 'remark',
-            title: '备注',
-            align: 'center'
-        },  {
             field: 'externalUserNum',
             title: '添加客户人数',
             align: 'center',
@@ -117,7 +118,6 @@ function initTable() {
 
 function resetQuery() {
     $("#state").val("");
-    $("#remark").val("");
     $MB.refreshTable("contactWayTable");
 }
 
@@ -147,7 +147,6 @@ $("#btn_edit").click(function () {
             $form.find("input[name='contactWayId']").val(d.contactWayId);
             $form.find("input[name='configId']").val(d.configId);
             $form.find("input[name='state']").val(d.state);
-            $form.find("input[name='remark']").val(d.remark);
             $form.find("select[name='userSelect']").selectpicker('val', d.usersList.split(','));
             $form.find("input[name='usersList']").val($form.find("select[name='userSelect']").selectpicker('val'));
         } else {
@@ -197,7 +196,6 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $contactWayForm.find("input[name='configId']").val("");
     $contactWayForm.find("input[name='state']").val("");
     $contactWayForm.find("input[name='usersList']").val("");
-    $contactWayForm.find("input[name='remark']").val("");
     $contactWayForm.find("select[name='userSelect']").selectpicker('val', "");
 });
 
@@ -242,9 +240,6 @@ function validateRule() {
             },
             usersList: {
                 required: true
-            },
-            remark: {
-                maxlength: 30
             }
         },
         errorPlacement: function (error, element) {
@@ -261,9 +256,6 @@ function validateRule() {
             },
             usersList: {
                 required: icon + "请选择使用成员"
-            },
-            remark: {
-                maxlength: icon + "最大长度不能超过30个字符"
             }
         }
     });
@@ -335,7 +327,6 @@ $("#btn_url").click(function () {
             let d = r.data;
             $form.find("input[name='modifyurl_contactWayId']").val(d.contactWayId);
             $form.find("input[name='state2']").val(d.state);
-            $form.find("input[name='remark2']").val(d.remark);
         } else {
             $MB.n_danger(r['msg']);
         }
