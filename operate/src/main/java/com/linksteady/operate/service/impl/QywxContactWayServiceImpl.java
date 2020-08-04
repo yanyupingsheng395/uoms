@@ -176,17 +176,16 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     @Override
     public String getContactWayByConfigId(String configId) {
         String getUrl = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + GET_CONTACT_WAY;
-        String param = JSON.toJSONString(configId);
 
         String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
         //时间戳
         String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-        String signature= SHA1.gen(timestamp,param);
+        String signature= SHA1.gen(timestamp,configId);
         String requesturl=getUrl+"?corpId="+corpId +"&timestamp="+timestamp+"&signature="+signature;
 
         //构造数据，请求企业微信端 生成渠道码
-        String result = OkHttpUtil.postRequestByJson(requesturl, param);
-        log.debug("请求获取渠道活码详细信息的url:{},参数:{},返回的结果{}", requesturl, param, result);
+        String result = OkHttpUtil.postRequest(requesturl, configId);
+        log.debug("请求获取渠道活码详细信息的url:{},参数:{},返回的结果{}", requesturl, configId, result);
 
         JSONObject jsonObject = JSON.parseObject(result);
         if (null != jsonObject && jsonObject.getIntValue("code")==200)
@@ -208,17 +207,16 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     public void deleteContactWay(String configId) throws Exception{
         //发送到企业微信端进行删除
         String delUrl = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + DELETE_CONTACT_WAY;
-        String param = JSON.toJSONString(configId);
 
         String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
         //时间戳
         String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-        String signature= SHA1.gen(timestamp,param);
+        String signature= SHA1.gen(timestamp,configId);
         String requesturl=delUrl+"?corpId="+corpId +"&timestamp="+timestamp+"&signature="+signature;
 
         //构造数据，请求企业微信端 生成渠道码
-        String result = OkHttpUtil.postRequestByJson(requesturl, param);
-        log.debug("请求删除渠道活码的url:{},参数:{},返回的结果{}", requesturl, param, result);
+        String result = OkHttpUtil.postRequest(requesturl, configId);
+        log.debug("请求删除渠道活码的url:{},参数:{},返回的结果{}", requesturl, configId, result);
 
         JSONObject jsonObject = JSON.parseObject(result);
         if (null != jsonObject && jsonObject.getIntValue("code")==200)
