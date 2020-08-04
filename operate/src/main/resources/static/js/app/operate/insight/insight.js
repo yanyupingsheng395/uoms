@@ -952,86 +952,6 @@ function resetConvertRate() {
     $("#purchOrder").find("option:selected").removeAttr("selected");
 }
 
-// 关系柱状图
-function relationChart(data) {
-    let categories = data.categories;
-    let option = {
-        tooltip: {
-            formatter: function(params) {
-                return params.name + (params.value ? ' : ' + params.value : '')
-            }
-        },
-        animationDurationUpdate: 1500,
-        animationEasingUpdate: "quinticInOut",
-
-        toolbox: {
-            feature: {
-                restore: {}
-            }
-        },
-        legend: {
-            show: true,
-            data: categories,
-            type: 'scroll',
-            orient: 'vertical',
-            right: 10,
-            top: 20,
-            bottom: 20,
-            selected: legendSeleted(categories)
-        },
-        series: [{
-            type: "graph",
-            layout: "force",
-            roam: true,
-            hoverAnimation: true,
-            focusNodeAdjacency: true,
-            draggable: true,
-            symbolSize: 33,
-            force: {
-                repulsion: 200,
-                edgeLength: 100
-            },
-            itemStyle: {
-                normal: {
-                    borderColor: "#fff",
-                    borderWidth: 1,
-                    shadowBlur: 10,
-                    shadowColor: "rgba(0, 0, 0, 0.3)"
-                }
-            },
-            lineStyle: {
-                width: 0.5,
-                curveness: 0.3,
-                opacity: 0.8
-            },
-            label: {
-                emphasis: {
-                    position: 'right',
-                    show: true
-                }
-            },
-
-            data: data.data,
-            links: data.links,
-            categories: categories
-        }]
-    };
-    return option;
-}
-
-function legendSeleted(data) {
-    var res = {};
-    data.forEach((v, k)=>{
-        var name = v['name'];
-        if(k < 10) {
-            res[name] = true;
-        }else {
-            res[name] = false;
-        }
-    });
-    return res;
-}
-
 $("#purchOrder1").change(function () {
     getSpuName();
 });
@@ -1178,7 +1098,8 @@ function brandUserDataTable() {
 }
 
 function singleGrowthData(userId) {
-    $.get("/insight/singleGrowthData", {userId: userId}, function (r) {
+    $.get("/insight/" +
+        "", {userId: userId}, function (r) {
         var growthV = r.data['growthV'];
         var growthP = r.data['growthP'];
 
@@ -1208,8 +1129,8 @@ function singleGrowthChart(x, y, chartId, xName, yName, title) {
         },
         tooltip: {
             trigger: 'axis',
-            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            axisPointer: {
+                type: 'shadow'
             }
         },
         grid: {
