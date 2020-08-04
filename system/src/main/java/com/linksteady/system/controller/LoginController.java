@@ -15,6 +15,7 @@ import com.linksteady.common.util.MD5Utils;
 import com.linksteady.system.config.SystemProperties;
 import com.linksteady.system.util.code.img.ImageCode;
 import com.linksteady.system.util.code.img.ImageCodeGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.session.Session;
@@ -40,6 +41,7 @@ import java.util.Map;
  * @author
  */
 @Controller
+@Slf4j
 public class LoginController extends BaseController {
 
     private static final String CODE_KEY = "_code";
@@ -127,12 +129,15 @@ public class LoginController extends BaseController {
         if (!StringUtils.isNotBlank(code)) {
             return ResponseBo.error("验证码不能为空！");
         }
+        long time1=System.currentTimeMillis();
+
         Session session = super.getSession();
         String sessionCode = (String) session.getAttribute(CODE_KEY);
         if (null != sessionCode && !"".equals(sessionCode) && !code.equalsIgnoreCase(sessionCode)) {
             return ResponseBo.error("验证码错误！");
         }
 
+        long time2=System.currentTimeMillis();
         password = MD5Utils.encrypt(username, password);
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         try {
@@ -145,6 +150,8 @@ public class LoginController extends BaseController {
             //记录登录事件
             logLoginEvent(username, "登录成功");
 
+            long time3=System.currentTimeMillis();
+            log.info("{}登录总共耗时:{},从进入shiro到结束总共耗时{}",username,time3-time1,time3-time2);
             //判断用户是否首次登陆 如果是强制跳到修改密码界面
             String firstLogin = userService.findByName(username).getFirstLogin();
             if (shiroProperties.isAllowResetPassword() && "Y".equals(firstLogin)) {
@@ -156,8 +163,6 @@ public class LoginController extends BaseController {
                 //不要求修改密码
                 return ResponseBo.ok("N");
             }
-
-
         } catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e) {
             //记录登录事件
             logLoginEvent(username, "登录失败：未知账号、账号锁定或凭证不正确");

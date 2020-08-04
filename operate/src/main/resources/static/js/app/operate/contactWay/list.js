@@ -35,7 +35,7 @@ function initTable() {
             align: 'center',
             formatter: function (value, row, indx)
             {
-                return "<img style='width:120px;height:120px' src='"+value+"'></img><a href='#' style='font-size: 12px;'>下载</a>";
+                return "<img style='width:120px;height:120px' src='"+value+"'></img><a href='"+qrCode+"' style='font-size: 12px;'>下载</a>";
             }
         }, {
             field: 'shortUrl',

@@ -5,6 +5,7 @@ import com.linksteady.common.domain.Tree;
 import com.linksteady.common.domain.User;
 import lombok.Data;
 
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Data
 public class UserBo implements Serializable {
 
+    @Id
     private Long userId;
 
     private String username;

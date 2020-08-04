@@ -11,7 +11,6 @@ import org.springframework.cache.annotation.Cacheable;
 import java.util.List;
 import java.util.Map;
 
-@CacheConfig(cacheNames = "UserService")
 public interface UserService extends IService<User> {
 
     UserWithRole findById(Long userId);
@@ -20,20 +19,16 @@ public interface UserService extends IService<User> {
 
     User findByName(String userName);
 
-    @Cacheable(key = "#p0.toString()+ #p1.toString()")
     List<User> findUsers(User user, QueryRequest request);
 
     void updateTheme(String theme, String userName);
 
-    @CacheEvict(allEntries = true)
     void addUser(User user, Long[] roles) throws Exception;
 
     void setUserRoles(User user, Long[] roles,String currUser);
 
-    @CacheEvict(key = "#p0", allEntries = true)
     void updateUser(User user, Long[] roles);
 
-    @CacheEvict(key = "#p0", allEntries = true)
     void deleteUsers(String userIds);
 
     void updateLoginTime(String userName);
@@ -42,7 +37,6 @@ public interface UserService extends IService<User> {
 
     void updateUserProfile(User user);
 
-    @CacheEvict(key = "#p0", allEntries = true)
     void resetPassword(Long userId);
 
     String getDefaultPwd();
