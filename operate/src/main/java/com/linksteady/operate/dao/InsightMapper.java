@@ -1,6 +1,7 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.common.domain.Ztree;
+import com.linksteady.operate.domain.InsightUserEffect;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
@@ -83,4 +84,16 @@ public interface InsightMapper {
     List<Map<String, Object>> getPushAndConvertDate(long userId);
 
     Map<String, String> getGrowthData(String userId, String spuId);
+
+    int getGrowthTableDataCount(String startDt, String endDt);
+
+    List<InsightUserEffect> getGrowthTableDataList(String startDt, String endDt, Integer limit, Integer offset);
+
+    List<Map<String, Object>> allGrowthP(String startDt, String endDt);
+
+    List<Map<String, Object>> allGrowthV(String startDt, String endDt);
+
+    List<Map<String, Object>> singleGrowthP(String userId);
+
+    List<Map<String, Object>> singleGrowthV(String userId);
 }

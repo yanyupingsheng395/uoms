@@ -4,6 +4,7 @@ import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.domain.InsightUserCnt;
+import com.linksteady.operate.domain.InsightUserEffect;
 import org.apache.thrift.transport.TTransportException;
 
 import java.util.List;
@@ -164,4 +165,12 @@ public interface InsightService {
     Map<String, Object> getUserConvert(Long spuId);
 
     Map<String, String> getUserGrowthData(String userId, String spuId);
+
+    int getGrowthTableDataCount(String startDt, String endDt);
+
+    List<InsightUserEffect> getGrowthTableDataList(String startDt, String endDt, Integer limit, Integer offset);
+
+    Map<String, Object> allGrowthData(String startDt, String endDt);
+
+    Map<String, Object> singleGrowthData(String userId);
 }

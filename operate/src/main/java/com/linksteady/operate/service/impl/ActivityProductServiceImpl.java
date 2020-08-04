@@ -83,8 +83,8 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         double discountAmount = activityProduct.getDiscountAmount() == null ? 0 : activityProduct.getDiscountAmount();
         // 计算商品优惠
         String groupId = activityProduct.getGroupId();
-        double discountSize = activityProduct.getDiscountSize()== null ? 0 : activityProduct.getDiscountSize();
-        discountSize = discountSize < 1 ? discountSize : (discountSize > 10 ? (discountSize / 100):(discountSize / 10));
+        double discountSize = activityProduct.getDiscountSize() == null ? 0 : activityProduct.getDiscountSize();
+        discountSize = discountSize < 1 ? discountSize : (discountSize > 10 ? (discountSize / 100) : (discountSize / 10));
         switch (groupId) {
             case "9":
                 preferAmount1 = activityPrice * (1 - discountSize);
@@ -115,7 +115,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 if (activityPrice >= spCouponThreshold) {
                     preferAmount2 = spCouponDenom;
                 } else {
-                    preferAmount2 = spCouponDenom / Math.ceil(spCouponThreshold/activityPrice);
+                    preferAmount2 = spCouponDenom / Math.ceil(spCouponThreshold / activityPrice);
                 }
             } else {
                 // 没有单品
@@ -130,7 +130,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
 
                 Map<String, ActivityCoupon> tmpThreshold = Maps.newHashMap();
                 couponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S"))
-                        .sorted(Comparator.comparingDouble(v->Double.parseDouble(v.getCouponThreshold())))
+                        .sorted(Comparator.comparingDouble(v -> Double.parseDouble(v.getCouponThreshold())))
                         .forEach(v -> {
                             if (finalActivityPrice >= Double.parseDouble(v.getCouponThreshold())) {
                                 tmpThreshold.put("tmp", v);
@@ -139,7 +139,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                 ActivityCoupon tmp = tmpThreshold.get("tmp");
                 if (tmp == null) {
                     tmp = couponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S"))
-                            .sorted(Comparator.comparingDouble(v->Double.parseDouble(v.getCouponThreshold()))).findFirst().orElse(null);
+                            .sorted(Comparator.comparingDouble(v -> Double.parseDouble(v.getCouponThreshold()))).findFirst().orElse(null);
                     preferAmount2 = activityPrice * (Double.parseDouble(tmp.getCouponDenom()) / Double.parseDouble(tmp.getCouponThreshold()));
                 } else {
                     preferAmount2 = Double.parseDouble(tmp.getCouponDenom());
@@ -159,7 +159,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     if (activityPrice >= spCouponThreshold) {
                         preferAmount2 = spCouponDenom;
                     } else {
-                        preferAmount2 = spCouponDenom / Math.ceil(spCouponThreshold/activityPrice);
+                        preferAmount2 = spCouponDenom / Math.ceil(spCouponThreshold / activityPrice);
                     }
                 } else {
                     double finalActivityPrice;
@@ -200,7 +200,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
 
             Map<String, ActivityCoupon> tmpThreshold = Maps.newHashMap();
             platCouponList.stream().filter(x -> x.getAddFlag().equalsIgnoreCase("0"))
-                    .sorted(Comparator.comparingDouble(v->Double.parseDouble(v.getCouponThreshold())))
+                    .sorted(Comparator.comparingDouble(v -> Double.parseDouble(v.getCouponThreshold())))
                     .forEach(v -> {
                         if (finalActivityPrice >= Double.parseDouble(v.getCouponThreshold())) {
                             System.out.println(v);
@@ -588,8 +588,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                         activityProduct.setSpCouponFlag(singleProduct);
                         activityProduct.setSpCouponThreshold((new BigDecimal(singleProductThreadHold).setScale(2, RoundingMode.HALF_UP).doubleValue()));
                         activityProduct.setSpCouponDenom((new BigDecimal(singleProductDeno).setScale(2, RoundingMode.HALF_UP).doubleValue()));
+                    }else {
+                        activityProduct.setSpCouponFlag("0");
                     }
-
                     activityProduct = calculateProductMinPrice(activityProduct);
                     productList.add(activityProduct);
                 }
@@ -756,5 +757,20 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         } else {
             return "错误类型";
         }
+    }
+}
+
+enum ActivityType {
+    //满件打折
+    FULL_DISCOUNT("9", "满件打折"),
+    //立减特价
+    SPECIAL_REDUCE("14", "立减特价"),
+    //仅店铺券
+    ONLY_SHOP_DISCOUNT("13", "仅店铺券");
+    public String code;
+    public String msg;
+    ActivityType(String code, String msg) {
+        this.code = code;
+        this.msg = msg;
     }
 }

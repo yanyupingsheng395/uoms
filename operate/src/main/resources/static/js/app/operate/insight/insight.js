@@ -1099,3 +1099,155 @@ function getPurchOrder(spuId) {
         }
     });
 }
+
+// 用户在品牌下的数据
+function brandUserDataTable() {
+    var settings = {
+        url: "/insight/getGrowthTableData",
+        cache: false,
+        pagination: true,
+        singleSelect: true,
+        sidePagination: "server",
+        pageNumber: 1,
+        pageSize: 5,
+        pageList: [5, 10, 25, 50, 100],
+        queryParams: function (params) {
+            return {
+                limit: params.limit,
+                offset: params.offset,
+                startDt: function () {
+                    return $("#growthStartDt").val();
+                },
+                endDt: function () {
+                    return $("#growthEndDt").val();
+                }
+            };
+        },
+        columns: [{
+            field: 'userId',
+            title: '用户ID'
+        }, {
+            field: 'pushRn',
+            title: '推送次序'
+        },{
+            field: 'pushDate',
+            title: '推送时间'
+        },{
+            field: 'growthPotential',
+            title: '成长潜力',
+            formatter: function (value, row, index) {
+                if(value === "0") {
+                    return value;
+                }else {
+                    if(value != '' && value != null && value != undefined) {
+                        return Number.parseFloat(value).toFixed(2);
+                    }else {
+                        return "-";
+                    }
+                }
+            }
+        }, {
+            field: 'isGrowth',
+            title: '是否成长'
+        }, {
+            field: 'growthRn',
+            title: '成长次序'
+        }, {
+            field: 'growthDt',
+            title: '成长日期'
+        }, {
+            field: 'growthPushCnt',
+            title: '完成本次成长推送的次数'
+        }, {
+            field: 'growthV',
+            title: '成长速度',
+            formatter: function (value, row, index) {
+                if(value === "0") {
+                    return value;
+                }else {
+                    if(value != '' && value != null && value != undefined) {
+                        return Number.parseFloat(value).toFixed(2);
+                    }else {
+                        return "-";
+                    }
+                }
+            }
+        }]
+    };
+    $("#brandUserDataTable").bootstrapTable('destroy').bootstrapTable(settings);
+}
+
+function singleGrowthData(userId) {
+    $.get("/insight/singleGrowthData", {userId: userId}, function (r) {
+        var growthV = r.data['growthV'];
+        var growthP = r.data['growthP'];
+
+        var x1 = growthV.map(x=>x['rn']);
+        var y1 = growthV.map(x=>x['value_']);
+        var x2 = growthP.map(x=>x['rn']);
+        var y2 = growthP.map(x=>x['value_']);
+        singleGrowthChart(x1, y1, 'singleGRChart', '成长次序', '成长速度', '单个用户成长速度监控图');
+        singleGrowthChart(x2, y2, 'singleGPChart', '推送次序', '成长潜力', '单个用户成长潜力监控图');
+    });
+}
+
+function singleGrowthChart(x, y, chartId, xName, yName, title) {
+    var option = {
+        color: ['#3398DB'],
+        title: {
+            text: title,
+            x: 'center',
+            y: 'bottom',
+            textStyle: {
+                color: '#000',
+                fontStyle: 'normal',
+                fontWeight: 'normal',
+                fontFamily: 'sans-serif',
+                fontSize: 12
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        grid: {
+            top: '15%',
+            left: '6%',
+            right: '14%',
+            bottom: '11%',
+            containLabel: true
+        },
+        xAxis: [
+            {
+                name: xName,
+                type: 'category',
+                data: x,
+                axisTick: {
+                    alignWithLabel: true
+                },
+                splitArea: {show: false},
+                splitLine: {show: false}
+            }
+        ],
+        yAxis: [
+            {
+                name: yName,
+                type: 'value',
+                splitArea: {show: false},
+                splitLine: {show: false}
+            }
+        ],
+        series: [
+            {
+                name: yName,
+                type: 'bar',
+                barWidth: '60%',
+                data: y
+            }
+        ]
+    };
+    echarts.init(document.getElementById(chartId), 'macarons').setOption(option);
+}
+

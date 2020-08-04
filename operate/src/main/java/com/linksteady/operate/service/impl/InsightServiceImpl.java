@@ -5,10 +5,12 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.dao.DictMapper;
 import com.linksteady.common.domain.Dict;
 import com.linksteady.common.domain.Ztree;
+import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.*;
 import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
 import com.linksteady.operate.domain.InsightUserCnt;
+import com.linksteady.operate.domain.InsightUserEffect;
 import com.linksteady.operate.service.InsightService;
 import com.linksteady.operate.thrift.ConversionData;
 import com.linksteady.operate.thrift.ThriftClient;
@@ -706,5 +708,60 @@ public class InsightServiceImpl implements InsightService {
         growthTypeList.stream().filter(x -> x.getCode().equalsIgnoreCase(growthType)).findFirst().ifPresent(x -> data.put("growth_type", x.getValue()));
 
         return data;
+    }
+
+    @Override
+    public int getGrowthTableDataCount(String startDt, String endDt) {
+        return insightMapper.getGrowthTableDataCount(startDt, endDt);
+    }
+
+    @Override
+    public List<InsightUserEffect> getGrowthTableDataList(String startDt, String endDt, Integer limit, Integer offset) {
+        return insightMapper.getGrowthTableDataList(startDt, endDt, limit, offset);
+    }
+
+    @Override
+    public Map<String, Object> allGrowthData(String startDt, String endDt) {
+        Map<String, Object> result = Maps.newHashMap();
+        List<Map<String, Object>> growthP = insightMapper.allGrowthP(startDt, endDt);
+        List<Map<String, Object>> growthV = insightMapper.allGrowthV(startDt, endDt);
+        if(growthP.size() == 0) {
+            List<String> datePeriod = DateUtil.getPeriodDate("M", startDt, endDt);
+            growthP = datePeriod.stream().map(x -> {
+                Map<String, Object> tmp = Maps.newHashMap();
+                tmp.put("date_", x);
+                tmp.put("value_", 0);
+                return tmp;
+            }).collect(Collectors.toList());
+        }
+        if(growthV.size() == 0) {
+            List<String> datePeriod = DateUtil.getPeriodDate("M", startDt, endDt);
+            growthV = datePeriod.stream().map(x -> {
+                Map<String, Object> tmp = Maps.newHashMap();
+                tmp.put("date_", x);
+                tmp.put("value_", 0);
+                return tmp;
+            }).collect(Collectors.toList());
+        }
+        result.put("growthP", growthP);
+        result.put("growthV", growthV);
+        return result;
+    }
+
+    public static void main(String[] args) {
+        String a = "2020-02";
+        String b = "2020-12";
+
+        System.out.println(DateUtil.getPeriodDate("M", a, b));
+    }
+
+    @Override
+    public Map<String, Object> singleGrowthData(String userId) {
+        Map<String, Object> result = Maps.newHashMap();
+        List<Map<String, Object>> growthP = insightMapper.singleGrowthP(userId);
+        List<Map<String, Object>> growthV = insightMapper.singleGrowthV(userId);
+        result.put("growthP", growthP);
+        result.put("growthV", growthV);
+        return result;
     }
 }

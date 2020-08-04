@@ -8,6 +8,19 @@
         <result column="open" jdbcType="BOOLEAN" property="open"/>
     </resultMap>
 
+    <resultMap id="userEffectMap" type="com.linksteady.operate.domain.InsightUserEffect">
+        <result column="user_id" jdbcType="DECIMAL" property="userId"/>
+        <result column="push_rn" jdbcType="DECIMAL" property="pushRn"/>
+        <result column="push_date" jdbcType="TIMESTAMP" property="pushDate"/>
+        <result column="push_date_str" jdbcType="VARCHAR" property="pushDateStr"/>
+        <result column="growth_potential" jdbcType="VARCHAR" property="growthPotential"/>
+        <result column="is_growth" jdbcType="VARCHAR" property="isGrowth"/>
+        <result column="growth_push_cnt" jdbcType="DECIMAL" property="growthPushCnt"/>
+        <result column="growth_dt" jdbcType="TIMESTAMP" property="growthDt"/>
+        <result column="growth_dt_str" jdbcType="VARCHAR" property="growthDtStr"/>
+        <result column="growth_v" jdbcType="VARCHAR" property="growthV"/>
+    </resultMap>
+
     <select id="getSpuTree" resultMap="base">
         select SPU_WID id, SPU_NAME as name from W_PRODUCT_SPU order by spu_name asc
     </select>
@@ -602,5 +615,46 @@
           and SPU_WID = #{spuId}::integer
           and t1.rn = t2.rn
         group by growth_type, growth_series_type, t2.rn
+    </select>
+
+    <select id="getGrowthTableDataCount" resultType="int">
+        select count(1) from wp_push_user_effect
+        <if test="startDt != '' and startDt != null and endDt != '' and endDt != null">
+            where to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &lt;= to_date(#{endDt}, 'yyyy-mm-dd') and to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &gt;= to_date(#{startDt}, 'yyyy-mm-dd')
+        </if>
+    </select>
+
+    <select id="getGrowthTableDataList" resultMap="userEffectMap">
+        select user_id, push_rn, push_date, growth_potential, is_growth, growth_rn, growth_push_cnt, growth_dt, growth_v from wp_push_user_effect where 1=1
+        <if test="startDt != '' and startDt != null and endDt != '' and endDt != null">
+            and to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &lt;= to_date(#{endDt}, 'yyyy-mm-dd') and to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &gt;= to_date(#{startDt}, 'yyyy-mm-dd')
+        </if>
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="allGrowthP" resultType="map">
+        select growth_potential value_, to_char(push_date, 'yyyymm') date_ from wp_push_user_effect
+        <if test="startDt != '' and startDt != null and endDt != '' and endDt != null">
+            where to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &lt;= to_date(#{endDt}, 'yyyy-mm-dd') and to_date(to_char( push_date, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &gt;= to_date(#{startDt}, 'yyyy-mm-dd')
+        </if>
+    </select>
+
+    <select id="allGrowthV" resultType="map">
+        select growth_v value_, to_char(growth_dt, 'yyyymm') date_ from wp_push_user_effect
+        where growth_dt is not null
+        <if test="startDt != '' and startDt != null and endDt != '' and endDt != null">
+            and to_date(to_char( growth_dt, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &lt;= to_date(#{endDt}, 'yyyy-mm-dd') and to_date(to_char( growth_dt, 'yyyy-mm-dd' ), 'yyyy-mm-dd') &gt;= to_date(#{startDt}, 'yyyy-mm-dd')
+        </if>
+    </select>
+
+    <select id="singleGrowthP" resultType="map">
+        select growth_potential value_, push_rn rn from wp_push_user_effect where user_id = #{userId}::integer
+        order by push_rn asc
+    </select>
+
+    <select id="singleGrowthV" resultType="map">
+        select growth_v value_, growth_rn rn from wp_push_user_effect where user_id = #{userId}::integer
+        and growth_v is not null and growth_rn is not null
+        order by growth_rn asc
     </select>
 </mapper>

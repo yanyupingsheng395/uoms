@@ -5,6 +5,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.InsightGrowthPath;
 import com.linksteady.operate.domain.InsightImportSpu;
+import com.linksteady.operate.domain.InsightUserEffect;
 import com.linksteady.operate.service.InsightService;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -368,5 +369,31 @@ public class InsightController {
     @RequestMapping("/getUserConvert")
     public ResponseBo getUserConvert(@RequestParam("userId") Long userId) {
         return ResponseBo.okWithData(null, insightService.getUserConvert(userId));
+    }
+
+    @RequestMapping("/getGrowthTableData")
+    public ResponseBo getGrowthTableData(@RequestParam String startDt, @RequestParam String endDt,
+                                         Integer limit, Integer offset) {
+        int count = insightService.getGrowthTableDataCount(startDt, endDt);
+        List<InsightUserEffect> dataList = insightService.getGrowthTableDataList(startDt, endDt, limit, offset);
+        return ResponseBo.okOverPaging(null, count, dataList);
+    }
+
+    /**
+     * 成长速度、成长潜力分布图
+     * @return
+     */
+    @RequestMapping("/allGrowthData")
+    public ResponseBo allGrowthData(@RequestParam String startDt, @RequestParam String endDt) {
+        return ResponseBo.okWithData(null, insightService.allGrowthData(startDt, endDt));
+    }
+
+    /**
+     * 成长速度、成长潜力分布图
+     * @return
+     */
+    @RequestMapping("/singleGrowthData")
+    public ResponseBo singleGrowthData(@RequestParam String userId) {
+        return ResponseBo.okWithData(null, insightService.singleGrowthData(userId));
     }
 }

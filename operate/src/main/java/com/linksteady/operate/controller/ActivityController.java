@@ -204,7 +204,7 @@ public class ActivityController {
     @PostMapping("/updateActivityProduct")
     public ResponseBo updateActivityProduct(ActivityProduct activityProduct) {
         try {
-//            if(activityProduct.getProductName().length() > pushConfig.getProdNameLen()) {
+            // 由于短信中的商品名称不从此处获取，因此最大长度为数据库所支持的长度
             if(activityProduct.getProductName().length() >= 64) {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
