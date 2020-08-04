@@ -6,6 +6,7 @@ import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -32,16 +33,20 @@ public class OkHttpUtil {
      * @param url
      * @return
      */
-    @SneakyThrows
     public static String getRequest(String url) {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
 
         Call call = okHttpClient.newCall(request);
-        Response response = call.execute();
-        ResponseBody responseBody = response.body();
-        return responseBody.string();
+        try {
+            Response response = call.execute();
+            ResponseBody responseBody = response.body();
+            return responseBody.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     /**
@@ -50,7 +55,6 @@ public class OkHttpUtil {
      * @param value
      * @return
      */
-    @SneakyThrows
     public static String postRequest(String url,String value) {
         Request request = new Request.Builder()
                 .url(url)
@@ -58,10 +62,15 @@ public class OkHttpUtil {
                 .post(RequestBody.create(MediaType.parse("text/plain"), value.getBytes()))
                 .build();
 
-        Call call = okHttpClient.newCall(request);
-        Response response = call.execute();
-        ResponseBody responseBody = response.body();
-        return responseBody.string();
+        try {
+            Call call = okHttpClient.newCall(request);
+            Response response = call.execute();
+            ResponseBody responseBody = response.body();
+            return responseBody.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     /**
@@ -186,6 +195,26 @@ public class OkHttpUtil {
             Response response = call.execute();
             ResponseBody responseBody = response.body();
             return responseBody.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 请求url 进行文件的下载
+     */
+    public static InputStream downLoadFile(String url)
+    {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        try {
+            Call call = okHttpClient.newCall(request);
+            Response response = call.execute();
+            ResponseBody responseBody = response.body();
+            return responseBody.byteStream();
         } catch (IOException e) {
             e.printStackTrace();
         }

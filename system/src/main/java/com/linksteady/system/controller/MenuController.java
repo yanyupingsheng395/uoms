@@ -197,9 +197,4 @@ public class MenuController extends BaseController {
         return this.menuService.getAllUrl("1");
     }
 
-    public static void main(String[] args) {
-        Stack s = new Stack();
-        s.push(1);
-    }
-
 }

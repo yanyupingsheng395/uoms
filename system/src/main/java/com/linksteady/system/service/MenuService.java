@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.Cacheable;
 import java.util.List;
 import java.util.Map;
 
-@CacheConfig(cacheNames = "MenuService")
 public interface MenuService extends IService<Menu> {
 
     List<Menu> findUserPermissions(Long userId);
@@ -34,6 +33,5 @@ public interface MenuService extends IService<Menu> {
 
     void deleteMeuns(String menuIds);
 
-    @Cacheable(key = "'url_'+ #p0")
     List<Map<String, String>> getAllUrl(String p1);
 }

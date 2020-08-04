@@ -95,15 +95,16 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
                 qywxContactWay.setQrCode(qrCode);
             }
 
-            //获取当前应用的域名
-            String currentDomain=qywxContactWayMapper.getCurrentDomain();
-            if(StringUtils.isEmpty(currentDomain))
-            {
-                throw new LinkSteadyException("新增渠道活码失败,无法生成短链！");
-            }
-            //获取渠道活码对应的二维码链接
-            String shortUrl =shortUrlService.genShortUrlDirect(currentDomain+CONTACT_DETAIL_URL+"/"+configId,"S");
-            qywxContactWay.setShortUrl(shortUrl);
+//            //获取当前应用的域名
+//            String currentDomain=qywxContactWayMapper.getCurrentDomain();
+//            if(StringUtils.isEmpty(currentDomain))
+//            {
+//                throw new LinkSteadyException("新增渠道活码失败,无法生成短链！");
+//            }
+//            //获取渠道活码对应的二维码链接
+//            String shortUrl =shortUrlService.genShortUrlDirect(currentDomain+CONTACT_DETAIL_URL+"/"+configId,"S");
+//            qywxContactWay.setShortUrl(shortUrl);
+            String shortUrl="";
             qywxContactWayMapper.updateContactWayFullInfo(contactWayId,configId,qrCode,shortUrl,qywxContactWay.getUpdateBy());
         }else
         {
@@ -138,19 +139,16 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
             {
                 qrCode=contactDetail.getString("qr_code");
             }
-
             qywxContactWayMapper.updateContactWayQrCode(qywxContactWay.getContactWayId(),qrCode,qywxContactWay.getUpdateBy());
         }else
         {
             throw new LinkSteadyException("更新失败！");
         }
-
-
     }
 
     @Override
-    public int getContactWayCount(String qstate, String qremark) {
-        return qywxContactWayMapper.getContactWayCount(qstate,qremark);
+    public int getContactWayCount(String qstate) {
+        return qywxContactWayMapper.getContactWayCount(qstate);
     }
 
     @Override
@@ -159,8 +157,8 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     }
 
     @Override
-    public List<QywxContactWay> getContactWayList(int limit,int offset,String qstate, String qremark) {
-        return qywxContactWayMapper.getContactWayList(limit,offset,qstate,qremark);
+    public List<QywxContactWay> getContactWayList(int limit,int offset,String qstate) {
+        return qywxContactWayMapper.getContactWayList(limit,offset,qstate);
     }
 
     @Override
@@ -230,7 +228,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     }
 
     @Override
-    public String getQrcodeByConfigId(String configId) {
+    public QywxContactWay getQrcodeByConfigId(String configId) {
         return qywxContactWayMapper.getQrcodeByConfigId(configId);
     }
 }

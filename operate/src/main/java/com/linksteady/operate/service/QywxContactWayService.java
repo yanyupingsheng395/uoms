@@ -16,11 +16,11 @@ public interface QywxContactWayService {
 
     void updateContractWay(QywxContactWay qywxContactWay)  throws Exception;
 
-    int getContactWayCount(String qstate,String remark);
+    int getContactWayCount(String qstate);
 
     List<QywxContactWay> getContactWayList();
 
-    List<QywxContactWay> getContactWayList(int limit,int offset,String qstate,String qremark);
+    List<QywxContactWay> getContactWayList(int limit,int offset,String qstate);
 
     QywxContactWay getContactWayById(Long contactWayId);
 
@@ -30,6 +30,6 @@ public interface QywxContactWayService {
 
     void deleteContactWay(String configId) throws Exception;
 
-    String getQrcodeByConfigId(String configId);
+    QywxContactWay getQrcodeByConfigId(String configId);
 
 }

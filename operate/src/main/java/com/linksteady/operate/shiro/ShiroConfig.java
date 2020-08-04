@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import redis.clients.jedis.JedisPool;
 
 import javax.servlet.Filter;
 import java.util.ArrayList;
@@ -45,20 +46,8 @@ public class ShiroConfig {
     @Autowired
     private ShiroProperties shiroProperties;
 
-    @Value("${spring.redis.host}")
-    private String host;
-
-    @Value("${spring.redis.port}")
-    private int port;
-
-    @Value("${spring.redis.database}")
-    private int database;
-
-    @Value("${spring.redis.password}")
-    private String password;
-
-    @Value("${spring.redis.timeout}")
-    private int timeout;
+    @Autowired
+    JedisPool jedisPool;
 
     private String cipherKey="Vfixl8Hi8tXf/hS8jt2AHw==";
 
@@ -69,22 +58,14 @@ public class ShiroConfig {
      */
     private RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();
-        // 这里设置并没有什么用 源码里面 如果通过sessionDAO传入的值具有最高的优先级，如果传入的值为0（注意如果没传，则默认值为1800m），则才会使用这设置的值
-        //redisManager.setExpire(systemProperties.getShiro().getExpireIn());
-        redisManager.setHost(host + ":" + port);
-        redisManager.setDatabase(database);
-        if (StringUtils.isNotBlank(password)) {
-            redisManager.setPassword(password);
-        }
-        redisManager.setTimeout(timeout);
+        redisManager.setJedisPool(jedisPool);
         return redisManager;
     }
 
     private RedisCacheManager cacheManager() {
         RedisCacheManager redisCacheManager = new RedisCacheManager();
         redisCacheManager.setRedisManager(redisManager());
-        //不设置 默认的缓存过期时间为1800m 即半小时
-        //redisCacheManager.setExpire(systemProperties.getShiro().getExpireIn());
+        redisCacheManager.setPrincipalIdFieldName("userId");
         return redisCacheManager;
     }
 

@@ -18,9 +18,9 @@ public interface QywxContactWayMapper {
 
     List<QywxContactWay> getAllContactWayList();
 
-    List<QywxContactWay> getContactWayList(int limit,int offset,String qstate, String qremark);
+    List<QywxContactWay> getContactWayList(int limit,int offset,String qstate);
 
-    int getContactWayCount(String qstate, String qremark);
+    int getContactWayCount(String qstate);
 
     void updateContactWayFullInfo(Long contactWayId,String configId,String qrCode,String shortUrl,String updateBy);
 
@@ -32,5 +32,5 @@ public interface QywxContactWayMapper {
 
     String getCurrentDomain();
 
-    String getQrcodeByConfigId(String configId);
+    QywxContactWay getQrcodeByConfigId(String configId);
 }

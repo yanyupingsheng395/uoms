@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import redis.clients.jedis.JedisPool;
 
 import javax.servlet.Filter;
 import java.util.ArrayList;
@@ -44,20 +45,8 @@ public class ShiroConfig {
     @Autowired
     private ShiroProperties shiroProperties;
 
-    @Value("${spring.redis.host}")
-    private String host;
-
-    @Value("${spring.redis.port}")
-    private int port;
-
-    @Value("${spring.redis.database}")
-    private int database;
-
-    @Value("${spring.redis.password}")
-    private String password;
-
-    @Value("${spring.redis.timeout}")
-    private int timeout;
+    @Autowired
+    JedisPool jedisPool;
 
     private String cipherKey="Vfixl8Hi8tXf/hS8jt2AHw==";
 
@@ -68,19 +57,14 @@ public class ShiroConfig {
      */
     private RedisManager redisManager() {
         RedisManager redisManager = new RedisManager();
-        redisManager.setHost(host);
-        redisManager.setPort(port);
-        redisManager.setDatabase(database);
-        if (StringUtils.isNotBlank(password)) {
-            redisManager.setPassword(password);
-        }
-        redisManager.setTimeout(timeout);
+        redisManager.setJedisPool(jedisPool);
         return redisManager;
     }
 
     private RedisCacheManager cacheManager() {
         RedisCacheManager redisCacheManager = new RedisCacheManager();
         redisCacheManager.setRedisManager(redisManager());
+        redisCacheManager.setPrincipalIdFieldName("userId");
         return redisCacheManager;
     }
 
