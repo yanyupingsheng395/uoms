@@ -62,34 +62,6 @@ function refreshLog() {
     searchLog();
 }
 
-function deleteLogs() {
-    var selected = $("#logTable").bootstrapTable('getSelections');
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请勾选需要删除的日志！');
-        return;
-    }
-    var ids = "";
-    for (var i = 0; i < selected_length; i++) {
-        ids += selected[i].id;
-        if (i !== (selected_length - 1)) ids += ",";
-    }
-
-    $MB.confirm({
-        title: "<i class='mdi mdi-alert-circle-outline'></i>提示：",
-        content: "确定删除选中的日志？"
-    }, function () {
-        $.post(ctx + 'push/delete', {"ids": ids}, function (r) {
-            if (r.code === 0) {
-                $MB.n_success(r.msg);
-                refreshLog();
-            } else {
-                $MB.n_danger(r.msg);
-            }
-        });
-    });
-}
-
 function exportLogExcel() {
     $.post(ctx + "log/excel", $(".push-table-form").serialize(), function (r) {
         if (r.code === 200) {

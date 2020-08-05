@@ -5,12 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="edge" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
-    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/font-awesome-4.7.0/css/font-awesome.css}"/>
+    <th:block th:include="common/include :: common-css" />
     <link rel="stylesheet" th:href="@{/css/login.css}" type="text/css">
-    <link rel="stylesheet" data-th-href="@{/css/common.css}">
-    <script data-th-src="@{/js/common/jquery.min.js}"></script>
 </head>
 <body class="gray-bg">
 <div class="limiter">
@@ -58,10 +54,10 @@
     </div>
     <div style="background:#ebeeef;text-align: center;padding-bottom: 10px;">LinkSteady&copy;版权所有</div>
 </div>
-<script data-th-src="@{/js/common/jquery.min.js}"></script>
-<script data-th-src="@{/js/common/bootstrap.min.js}"></script>
-<!--notify -->
-<script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
-<script data-th-src="@{/js/app/login.js}"></script>
+<script src='/plugins/bootstrap/jquery.min.js'></script>
+<script src='/plugins/bootstrap/bootstrap.min.js'></script>
+<script src='/plugins/bootstrap/bootstrap-notify.min.js'></script>
+<script data-th-src="@{/js/common/common.js}"></script>
+<script src="/js/app/login.js"></script>
 </body>
 </html>
