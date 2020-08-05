@@ -372,10 +372,10 @@ public class InsightController {
     }
 
     @RequestMapping("/getGrowthTableData")
-    public ResponseBo getGrowthTableData(@RequestParam String startDt, @RequestParam String endDt,
+    public ResponseBo getGrowthTableData(@RequestParam String startDt, @RequestParam String endDt, String userId,
                                          Integer limit, Integer offset) {
-        int count = insightService.getGrowthTableDataCount(startDt, endDt);
-        List<InsightUserEffect> dataList = insightService.getGrowthTableDataList(startDt, endDt, limit, offset);
+        int count = insightService.getGrowthTableDataCount(startDt, endDt, userId);
+        List<InsightUserEffect> dataList = insightService.getGrowthTableDataList(startDt, endDt, limit, offset, userId);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 

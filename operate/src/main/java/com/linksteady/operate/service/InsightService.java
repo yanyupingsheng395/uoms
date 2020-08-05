@@ -166,9 +166,9 @@ public interface InsightService {
 
     Map<String, String> getUserGrowthData(String userId, String spuId);
 
-    int getGrowthTableDataCount(String startDt, String endDt);
+    int getGrowthTableDataCount(String startDt, String endDt, String userId);
 
-    List<InsightUserEffect> getGrowthTableDataList(String startDt, String endDt, Integer limit, Integer offset);
+    List<InsightUserEffect> getGrowthTableDataList(String startDt, String endDt, Integer limit, Integer offset, String userId);
 
     Map<String, Object> allGrowthData(String startDt, String endDt);
 

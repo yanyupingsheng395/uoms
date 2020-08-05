@@ -73,36 +73,34 @@ function getProductInfo(type, tableId) {
         pageList: [5, 15, 50, 100],
         queryParams: function (params) {
             return {
-                pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit) + 1,
-                param: {
-                    headId: $( "#headId" ).val(),
-                    productId: function() {
-                        if(tableId === 'activityProductTable1') {
-                            return $( "#productId1" ).val();
-                        }else if(tableId === 'activityProductTable2') {
-                            return $( "#productId1" ).val();
-                        }
-                    },
-                    productName:function() {
-                        if(tableId === 'activityProductTable1') {
-                            return $( "#productName1" ).val();
-                        }else if(tableId === 'activityProductTable2') {
-                            return $( "#productName2" ).val();
-                        }
-                    },
-                    groupId: function() {
-                        if(tableId === 'activityProductTable1') {
-                            return $("#groupId1").find("option:selected").val();
-                        }else if(tableId === 'activityProductTable2') {
-                            return $("#groupId2").find("option:selected").val();
-                        }
-                    },
-                    activityStage: function () {
-                        return CURRENT_ACTIVITY_STAGE;
-                    },
-                    activityType: type
-                }
+                limit: params.limit,
+                offset: params.offset,
+                headId: $( "#headId" ).val(),
+                productId: function() {
+                    if(tableId === 'activityProductTable1') {
+                        return $( "#productId1" ).val();
+                    }else if(tableId === 'activityProductTable2') {
+                        return $( "#productId1" ).val();
+                    }
+                },
+                productName:function() {
+                    if(tableId === 'activityProductTable1') {
+                        return $( "#productName1" ).val();
+                    }else if(tableId === 'activityProductTable2') {
+                        return $( "#productName2" ).val();
+                    }
+                },
+                groupId: function() {
+                    if(tableId === 'activityProductTable1') {
+                        return $("#groupId1").find("option:selected").val();
+                    }else if(tableId === 'activityProductTable2') {
+                        return $("#groupId2").find("option:selected").val();
+                    }
+                },
+                activityStage: function () {
+                    return CURRENT_ACTIVITY_STAGE;
+                },
+                activityType: type
             };
         },
         columns: [

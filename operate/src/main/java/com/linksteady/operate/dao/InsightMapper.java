@@ -85,9 +85,9 @@ public interface InsightMapper {
 
     Map<String, String> getGrowthData(String userId, String spuId);
 
-    int getGrowthTableDataCount(String startDt, String endDt);
+    int getGrowthTableDataCount(String startDt, String endDt, String userId);
 
-    List<InsightUserEffect> getGrowthTableDataList(String startDt, String endDt, Integer limit, Integer offset);
+    List<InsightUserEffect> getGrowthTableDataList(String startDt, String endDt, Integer limit, Integer offset, String userId);
 
     List<Map<String, Object>> allGrowthP(String startDt, String endDt);
 

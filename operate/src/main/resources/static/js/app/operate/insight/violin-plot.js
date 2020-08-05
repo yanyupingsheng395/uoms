@@ -41,22 +41,25 @@ function getDate(format, date) {
 }
 
 function getAllGrowthChartData() {
+    var allGRChart = echarts.init(document.getElementById('allGRChart'), 'macarons');
+    var allGPChart = echarts.init(document.getElementById('allGPChart'), 'macarons');
+    allGRChart.showLoading({
+        text : '加载数据中...'
+    });
+    allGPChart.showLoading({
+        text : '加载数据中...'
+    });
     $.get("/insight/allGrowthData", {startDt: $("#growthStartDt").val(), endDt: $("#growthEndDt").val()}, function (r) {
-        allGrowthChartData('allGRChart', r.data.growthV, '所有发生成长用户的成长速度监控图', '成长日期', '成长速度');
-        allGrowthChartData('allGPChart', r.data.growthP, '所有推送的用户成长潜力监控图', '成长日期', '成长潜力');
+        allGrowthChartData(allGRChart, r.data.growthV, '所有发生成长用户的成长速度监控图', '成长日期', '成长速度');
+        allGrowthChartData(allGPChart, r.data.growthP, '所有推送的用户成长潜力监控图', '成长日期', '成长潜力');
     });
 }
 
 function allGrowthChartData(chartId, data, title, xName, yName) {
-    var dom = document.getElementById(chartId);
     const columns = [...new Set(data.map(v => v.date_))].sort((a, b) => a - b);
     const dataSource = columns.map(date =>data.filter(item => item.date_ === date).map(item => item.value_));
     const tooltipData = echarts.dataTool.prepareBoxplotData(dataSource);
     const { boxData } = tooltipData;
-    const myChart = echarts.init(dom);
-    myChart.showLoading({
-        text : '加载数据中...'
-    });
     const option = {
         grid: {
             top: '17%',
@@ -132,9 +135,7 @@ function allGrowthChartData(chartId, data, title, xName, yName) {
                 name: 'violin plot',
                 renderItem: (params, api) => {
                     const categoryIndex = api.value(0);
-
                     const min = Math.min(...dataSource[categoryIndex]);
-                    console.log(min)
                     const max = Math.max(...dataSource[categoryIndex]);
                     const liner = d3
                         .scaleLinear()
@@ -194,8 +195,8 @@ function allGrowthChartData(chartId, data, title, xName, yName) {
             }
         ]
     };
-    myChart.setOption(option);
-    myChart.hideLoading();
+    chartId.setOption(option);
+    chartId.hideLoading();
 }
 
 function kernelDensityEstimator(kernel, X) {

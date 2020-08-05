@@ -12,15 +12,15 @@ import java.util.Date;
 @Data
 public class InsightUserEffect {
 
-    private long userId;
-    private long pushRn;
+    private Long userId;
+    private Long pushRn;
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date pushDate;
     private String pushDateStr;
     private String growthPotential;
     private String isGrowth;
-    private long growthRn;
-    private long growthPushCnt;
+    private Long growthRn;
+    private Long growthPushCnt;
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date growthDt;
     private String growthDtStr;

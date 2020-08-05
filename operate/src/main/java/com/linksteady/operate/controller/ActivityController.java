@@ -15,6 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -122,15 +127,8 @@ public class ActivityController {
      * @return
      */
     @GetMapping("/getActivityProductPage")
-    public ResponseBo getActivityProductPage(QueryRequest request) {
-        int limit = request.getLimit();
-        int offset = request.getOffset();
-        String headId = request.getParam().get("headId");
-        String productId = request.getParam().get("productId");
-        String productName = request.getParam().get("productName");
-        String groupId = request.getParam().get("groupId");
-        String activityStage = request.getParam().get("activityStage");
-        String activityType = request.getParam().get("activityType");
+    public ResponseBo getActivityProductPage(Integer limit, Integer offset, String headId, String productId, String productName,
+                                             String groupId, String activityStage, String activityType) {
         int count = activityProductService.getCount(headId, productId, productName, groupId, activityStage, activityType);
         List<ActivityProduct> productList = activityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId, activityStage, activityType);
         return ResponseBo.okOverPaging(null, count, productList);

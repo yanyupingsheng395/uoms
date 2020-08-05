@@ -618,9 +618,12 @@
     </select>
 
     <select id="getGrowthTableDataCount" resultType="int">
-        select count(1) from wp_push_user_effect
+        select count(1) from wp_push_user_effect where 1=1
         <if test="startDt != '' and startDt != null and endDt != '' and endDt != null">
-            where to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &lt;= to_date(#{endDt}, 'yyyy-mm') and to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &gt;= to_date(#{startDt}, 'yyyy-mm')
+            and to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &lt;= to_date(#{endDt}, 'yyyy-mm') and to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &gt;= to_date(#{startDt}, 'yyyy-mm')
+        </if>
+        <if test="userId != '' and userId != null">
+            and user_id = #{userId}::integer
         </if>
     </select>
 
@@ -629,6 +632,10 @@
         <if test="startDt != '' and startDt != null and endDt != '' and endDt != null">
             and to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &lt;= to_date(#{endDt}, 'yyyy-mm') and to_date(to_char( push_date, 'yyyy-mm' ), 'yyyy-mm') &gt;= to_date(#{startDt}, 'yyyy-mm')
         </if>
+        <if test="userId != '' and userId != null">
+            and user_id = #{userId}::integer
+        </if>
+        order by user_id asc
         limit #{limit} offset #{offset}
     </select>
 
@@ -648,7 +655,7 @@
     </select>
 
     <select id="singleGrowthP" resultType="map">
-        select growth_potential value_, push_rn rn from wp_push_user_effect where user_id = #{userId}::integer
+        select growth_potential value_, push_rn rn from wp_push_user_effect where user_id = #{userId}::integer and push_rn is not null and growth_potential is not null
         order by push_rn asc
     </select>
 

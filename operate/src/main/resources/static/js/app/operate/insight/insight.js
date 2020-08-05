@@ -1040,6 +1040,9 @@ function brandUserDataTable() {
                 },
                 endDt: function () {
                     return $("#growthEndDt").val();
+                },
+                userId: function () {
+                    return $("#growthUserId").val();
                 }
             };
         },
@@ -1068,7 +1071,18 @@ function brandUserDataTable() {
             }
         }, {
             field: 'isGrowth',
-            title: '是否成长'
+            title: '是否成长',
+            formatter: function (value, row, index) {
+                if(value !== '' && value !== null && value !== undefined) {
+                    if(value === '1' || value === 1) {
+                        return "是";
+                    }else {
+                        return "否";
+                    }
+                }else {
+                    return "-";
+                }
+            }
         }, {
             field: 'growthRn',
             title: '成长次序'
@@ -1098,8 +1112,15 @@ function brandUserDataTable() {
 }
 
 function singleGrowthData(userId) {
-    $.get("/insight/" +
-        "", {userId: userId}, function (r) {
+    var singleGRChart = echarts.init(document.getElementById('singleGRChart'), 'macarons');
+    var singleGPChart = echarts.init(document.getElementById('singleGPChart'), 'macarons');
+    singleGRChart.showLoading({
+        text : '加载数据中...'
+    });
+    singleGPChart.showLoading({
+        text : '加载数据中...'
+    });
+    $.get("/insight/singleGrowthData", {userId: userId}, function (r) {
         var growthV = r.data['growthV'];
         var growthP = r.data['growthP'];
 
@@ -1107,8 +1128,8 @@ function singleGrowthData(userId) {
         var y1 = growthV.map(x=>x['value_']);
         var x2 = growthP.map(x=>x['rn']);
         var y2 = growthP.map(x=>x['value_']);
-        singleGrowthChart(x1, y1, 'singleGRChart', '成长次序', '成长速度', '单个用户成长速度监控图');
-        singleGrowthChart(x2, y2, 'singleGPChart', '推送次序', '成长潜力', '单个用户成长潜力监控图');
+        singleGrowthChart(x1, y1, singleGRChart, '成长次序', '成长速度', '单个用户成长速度监控图');
+        singleGrowthChart(x2, y2, singleGPChart, '推送次序', '成长潜力', '单个用户成长潜力监控图');
     });
 }
 
@@ -1169,6 +1190,7 @@ function singleGrowthChart(x, y, chartId, xName, yName, title) {
             }
         ]
     };
-    echarts.init(document.getElementById(chartId), 'macarons').setOption(option);
+    chartId.setOption(option);
+    chartId.hideLoading();
 }
 

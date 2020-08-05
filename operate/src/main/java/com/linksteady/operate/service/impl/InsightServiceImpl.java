@@ -711,13 +711,13 @@ public class InsightServiceImpl implements InsightService {
     }
 
     @Override
-    public int getGrowthTableDataCount(String startDt, String endDt) {
-        return insightMapper.getGrowthTableDataCount(startDt, endDt);
+    public int getGrowthTableDataCount(String startDt, String endDt, String userId) {
+        return insightMapper.getGrowthTableDataCount(startDt, endDt, userId);
     }
 
     @Override
-    public List<InsightUserEffect> getGrowthTableDataList(String startDt, String endDt, Integer limit, Integer offset) {
-        return insightMapper.getGrowthTableDataList(startDt, endDt, limit, offset);
+    public List<InsightUserEffect> getGrowthTableDataList(String startDt, String endDt, Integer limit, Integer offset, String userId) {
+        return insightMapper.getGrowthTableDataList(startDt, endDt, limit, offset, userId);
     }
 
     @Override
@@ -746,13 +746,6 @@ public class InsightServiceImpl implements InsightService {
         result.put("growthP", growthP);
         result.put("growthV", growthV);
         return result;
-    }
-
-    public static void main(String[] args) {
-        String a = "2020-02";
-        String b = "2020-12";
-
-        System.out.println(DateUtil.getPeriodDate("M", a, b));
     }
 
     @Override
