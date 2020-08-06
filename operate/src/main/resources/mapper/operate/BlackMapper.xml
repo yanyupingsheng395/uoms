@@ -13,15 +13,13 @@
     </resultMap>
 
     <select id="getDataList" resultMap="base">
-        select * from (
-            select t.*, ROWNUM rn from (
-                select USER_PHONE,to_char(EXPIRE_DT, 'yyyy-mm-dd') EXPIRE_DT,SMS_CONTENT,INSERT_TYPE,INSERT_BY,INSERT_DT from UO_OP_PHONEBLACKLIST
-                where 1=1
-                <if test="phone != null and phone != ''">
-                    and USER_PHONE = #{phone}
-                </if>
-            ) t where ROWNUM &gt;= #{start}
-        ) where rn &lt;= #{end}
+        select USER_PHONE,to_char(EXPIRE_DT, 'yyyy-mm-dd') EXPIRE_DT,SMS_CONTENT,INSERT_TYPE,INSERT_BY,INSERT_DT from UO_OP_PHONEBLACKLIST
+        where 1=1
+        <if test="phone != null and phone != ''">
+            and USER_PHONE = #{phone}
+        </if>
+        order by INSERT_BY desc
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="getCount" resultType="int">

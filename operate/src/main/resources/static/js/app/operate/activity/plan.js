@@ -19,6 +19,7 @@ function getActivityName() {
 function getPlanTable() {
     var settings = {
         singleSelect: true,
+        pagination: false,
         columns: [
             {
                 checkbox: true,
@@ -127,10 +128,10 @@ function getPlanTable() {
             }
             ]
     };
-    $("#planTable").bootstrapTable(settings);
+    $("#planTable").bootstrapTable('destroy').bootstrapTable(settings);
     $.get("/activityPlan/getPlanList", {headId: headId},function (r) {
         if(r.code === 200) {
-            $("#planTable").bootstrapTable('load', r.data);
+           $("#planTable").bootstrapTable('load', r.data);
         }else {
             $MB.n_danger("获取计划数据异常！");
         }

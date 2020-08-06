@@ -1,6 +1,7 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.QywxContactWay;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface QywxContactWayMapper {
 
     List<QywxContactWay> getContactWayList(int limit,int offset,String qstate);
 
-    int getContactWayCount(String qstate);
+    int getContactWayCount(@Param("qstate") String qstate);
 
     void updateContactWayFullInfo(Long contactWayId,String configId,String qrCode,String shortUrl,String updateBy);
 

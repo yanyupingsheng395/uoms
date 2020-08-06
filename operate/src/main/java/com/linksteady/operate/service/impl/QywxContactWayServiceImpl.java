@@ -203,6 +203,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     @Override
     @Transactional
     public void deleteContactWay(String configId) throws Exception{
+        log.info("删除渠道活码，接收到的configId为{}",configId);
         //发送到企业微信端进行删除
         String delUrl = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + DELETE_CONTACT_WAY;
 
@@ -214,7 +215,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
 
         //构造数据，请求企业微信端 生成渠道码
         String result = OkHttpUtil.postRequest(requesturl, configId);
-        log.debug("请求删除渠道活码的url:{},参数:{},返回的结果{}", requesturl, configId, result);
+        log.info("请求删除渠道活码的url:{},参数:{},返回的结果{}", requesturl, configId, result);
 
         JSONObject jsonObject = JSON.parseObject(result);
         if (null != jsonObject && jsonObject.getIntValue("code")==200)
