@@ -5,12 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="edge" />
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
-    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/common.css}">
+    <th:block th:include="common/include :: common-css" />
     <style>
         .system {
             background: #fff;
@@ -26,8 +21,6 @@
 </head>
 
 <body class="lyear-layout-sidebar-close" style="background-color: #f5f6fa;">
-<!-- 公共组件 -->
-<div data-th-include="common/commonCSS"></div>
 <div class="lyear-layout-sidebar-scroll" hidden></div>
 <div class="lyear-layout-web">
     <div class="lyear-layout-container">
@@ -64,8 +57,10 @@
         </main>
     </div>
 </div>
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::common-js" />
 <script>
-
     $(function () {
         getSysInfo();
     });
@@ -113,6 +108,5 @@
         }
     }
 </script>
-<div data-th-include="common/commonJS"></div>
 </body>
 </html>

@@ -60,7 +60,7 @@ function login()
                         $(".validate-form input[name='password']").val("");
                         $(".validate-form input[name='code']").val("");
                         //提示
-                        login_notify(r.msg);
+                        $MB.n_danger(r.msg);
                         $loginButton.html("登录");
                         $loginButton.attr("disabled", false);
                     }
@@ -76,48 +76,6 @@ function login()
 
 function reloadCode() {
     $("#validateCodeImg").attr("src", "/gifCode?data=" + new Date() + "");
-}
-
-function login_notify(message)
-{
-    $.notify({
-        icon: "fa fa-warning",
-        title: "",
-        message: message,
-        url: ''
-    }, {
-        element: 'body',
-        type: "warning",
-        allow_dismiss: true,
-        placement: {
-            from: "top",
-            align: "center"
-        },
-        offset: {
-            x: 20,
-            y: 20
-        },
-        spacing: 10,
-        z_index: 3001,
-        delay: 2500,
-        timer: 1000,
-        url_target: '_blank',
-        mouse_over: false,
-        animate: {
-            enter: "animated fadeInDown",
-            exit: "animated fadeOutUp"
-        },
-        template: '<div data-notify="container" class="alert alert-dismissible alert-{0} alert--notify" role="alert">' +
-            '<span data-notify="icon"></span> ' +
-            '<span data-notify="title">{1}</span> ' +
-            '<span data-notify="message" style="font-weight: 600">{2}</span>' +
-            '<div class="progress" data-notify="progressbar">' +
-            '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0;"></div>' +
-            '</div>' +
-            '<a href="{3}" target="{4}" data-notify="url"></a>' +
-            '<button type="button" aria-hidden="true" data-notify="dismiss" class="alert--notify__close"><span style="background-color: rgba(255,255,255,.2);line-height: 19px;height: 20px;width: 20px;border-radius: 50%;font-size: 1.1rem;display: block;" aria-hidden="true">×</span></button>' +
-            '</div>'
-    });
 }
 
 $('.input100').each(function(){
