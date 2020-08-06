@@ -146,7 +146,7 @@ function selectQrCode() {
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,
-                param: {qstate:'', qremark:''}
+                param: {qstate:''}
             };
         },
         columns: [

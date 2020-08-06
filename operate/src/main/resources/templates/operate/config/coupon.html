@@ -6,12 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="edge"/>
     <title>用户成长系统</title>
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
-    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
-    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+    <th:block th:include="common/include::datepicker-css" />
     <style>
         .form-horizontal .checkbox, .form-horizontal .checkbox-inline, .form-horizontal .radio, .form-horizontal .radio-inline {
             padding-top: 0;
@@ -20,8 +18,6 @@
 </head>
 
 <body class="gray-bg">
-<!-- 公共组件 -->
-<div data-th-include="common/commonCSS"></div>
 <div class="lyear-layout-web">
     <div class="lyear-layout-container">
         <!-- 左侧导航 -->
@@ -174,10 +170,13 @@
 <script>
     let couponNameLen = [[${sourceConfig.couponNameLen}]];
 </script>
-<div data-th-include="common/commonJS"></div>
-<script data-th-src="@{/js/common/bootstrap-notify.min.js}"></script>
-<script data-th-src="@{/js/common/lightyear.js}"></script>
-<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::common-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<th:block th:include="common/include::datepicker-js" />
 <script data-th-src="@{/js/app/operate/config/coupon.js}"></script>
 </body>
 </html>

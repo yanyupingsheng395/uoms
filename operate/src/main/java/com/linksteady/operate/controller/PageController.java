@@ -418,6 +418,14 @@ public class PageController extends BaseController {
     }
 
     /**
+     *添加外部联系人-效果
+     */
+    @RequestMapping("/addCustom/effect")
+    public String addCustomEffect() {
+        return "operate/addCustom/effect";
+    }
+
+    /**
      *添加外部联系人-编辑
      */
     @RequestMapping("/addCustom/edit")

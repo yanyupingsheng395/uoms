@@ -6,16 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="edge"/>
     <title>用户成长系统</title>
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}"/>
-    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/steps/steps.css}"/>
-    <link rel="stylesheet" data-th-href="@{/plugins/ion-rangeslider/ion.rangeSlider.min.css}">
-    <link rel="stylesheet" data-th-href="@{/plugins/loading/css/animate.css}">
-    <link rel="stylesheet" data-th-href="@{/plugins/loading/css/loading.css}">
-    <script data-th-src="@{/plugins/clipboard.min.js}"></script>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+    <th:block th:include="common/include::rangeslider-css" />
+    <th:block th:include="common/include::step-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+    <th:block th:include="common/include::datepicker-css" />
+    <th:block th:include="common/include::clipboard-js" />
     <style>
         .step-icon-number {
             cursor: pointer;
@@ -86,8 +83,6 @@
 </head>
 
 <body class="gray-bg">
-<!-- 公共组件 -->
-<div data-th-include="common/commonCSS"></div>
 <div class="lyear-layout-web">
     <div class="lyear-layout-container">
         <!-- 左侧导航 -->
@@ -600,14 +595,18 @@
         $MB.n_success("成功复制到粘贴板！");
     });
 </script>
-<div data-th-include="common/commonJS"></div>
-<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
-<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
-<script data-th-src="@{/plugins/echarts/dataTool.min.js}"></script>
+
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<th:block th:include="common/include::echarts" />
+<th:block th:include="common/include::step-js" />
+<th:block th:include="common/include::datepicker-js" />
+<th:block th:include="common/include::rangeslider-js" />
+<th:block th:include="common/include::common-js" />
 <script data-th-src="@{/js/app/operate/common/template.js}"></script>
-<script data-th-src="@{/plugins/steps/steps.js}"></script>
-<script data-th-src="@{/plugins/ion-rangeslider/ion.rangeSlider.min.js}"></script>
 <script data-th-src="@{/js/app/operate/activity/add.js}"></script>
-<script data-th-src="@{/plugins/loading/js/loading.js}"></script>
 </body>
 </html>

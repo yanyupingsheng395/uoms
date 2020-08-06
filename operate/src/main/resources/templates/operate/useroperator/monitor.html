@@ -6,18 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="edge" />
     <title>用户成长系统</title>
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.ico}" />
-    <!--<link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>-->
-    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/materialdesignicons.min.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/animate.css}"/>
-    <!--时间选择插件-->
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css}">
-    <!--日期选择插件-->
-    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-datepicker/bootstrap-datepicker3.css}">
-    <link rel="stylesheet" data-th-href="@{/plugins/confirm/jquery-confirm.min.css}">
-    <link rel="stylesheet" data-th-href="@{/plugins/jsmind/jsmind.css}"/>
-    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include :: datepicker-css" />
+    <th:block th:include="common/include :: datetimepicker-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+
+    <link rel="stylesheet" href="/plugins/jsmind/jsmind.css"/>
+    <link rel="stylesheet" href="/css/style.min.css"/>
     <style>
         #jsmind_container{
             width:100%;
@@ -27,8 +22,6 @@
     </style>
 </head>
 <body class="gray-bg">
-<!-- 公共组件 -->
-<div data-th-include="common/commonCSS"></div>
 <div class="lyear-layout-web">
     <div class="lyear-layout-container">
         <!-- 左侧导航 -->
@@ -151,19 +144,20 @@
         </main>
     </div>
 </div>
-<div data-th-include="common/commonJS"></div>
-<!--时间选择插件-->
-<script data-th-src="@{/plugins/bootstrap-datetimepicker/moment.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-datetimepicker/locale/zh-cn.js}"></script>
-<!--日期选择插件-->
-<script data-th-src="@{/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js}"></script>
-<script data-th-src="@{/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
-<script data-th-src="@{/plugins/confirm/jquery-confirm.min.js}"></script>
-<script data-th-src="@{/plugins/jsmind/jsmind.js}"></script>
-<script data-th-src="@{/plugins/jsmind/jsmind.draggable.js}"></script>
-<script data-th-src="@{/plugins/echarts/echarts.min.js}"></script>
-<script data-th-src="@{/plugins/echarts/macarons.js}"></script>
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::common-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<th:block th:include="common/include::echarts" />
+<th:block th:include="common/include::bootstrap-year-calendar-js" />
+<th:block th:include="common/include::datepicker-js" />
+<th:block th:include="common/include::datetimepicker-js" />
+<script src="/js/common/accounting.min.js"></script>
+<script src="/plugins/jsmind/jsmind.js"></script>
+<script src="/plugins/jsmind/jsmind.draggable.js"></script>
+
 <script data-th-src="@{/js/app/operate/common/template.js}"></script>
 <script data-th-src="@{/js/app/operate/useroperator/monitor.js}"></script>
 <script data-th-src="@{/js/app/operate/useroperator/cohort.js}"></script>
