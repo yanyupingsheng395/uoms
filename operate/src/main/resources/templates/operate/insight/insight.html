@@ -380,69 +380,69 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12 select-table table-striped" style="margin-bottom: 10px;">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h5 class="modal-title pull-left">用户在品牌下成长洞察
-                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="从类目的指定购买次序观察用户在商品层级的流转关系；" data-trigger="click">
-                                        <i class="fa fa-question-circle"></i>
-                                    </a>
-                                </h5>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <hr class="hr m-t-0 m-t-5"/>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <form id="user-form">
-                                    <div class="select-list" id="selectCondition1">
-                                        <ul>
-                                            <li>
-                                                用户ID：
-                                                <input type="text" id="growthUserId">
-                                            </li>
-                                            <li>
-                                                开始时间：
-                                                <input type="text" name="startDt" class="js-datepicker" id="growthStartDt">
-                                            </li>
-                                            <li>
-                                                结束时间：
-                                                <input type="text" name="endDt" class="js-datepicker" id="growthEndDt">
-                                            </li>
-                                            <li class="pull-right">
-                                                <a class="btn btn-primary btn-rounded btn-sm" onclick="searchGrowthData()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                                <a class="btn btn-warning btn-rounded btn-sm" onclick="resetGrowthData()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="row" style="margin-top: 5px;">
-                            <div class="col-md-12">
-                                <table class="table table-bordered table-hover" id="brandUserDataTable"></table>
-                            </div>
-                        </div>
-                        <div class="row" id="singleDiv" style="display: none;">
-                            <div class="col-md-6">
-                                <div id="singleGRChart" style="height: 300px;"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div id="singleGPChart" style="height: 300px;"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div id="allGRChart" style="height: 300px;"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div id="allGPChart" style="height: 300px;"></div>
-                            </div>
-                        </div>
-                    </div>
+<!--                    <div class="col-md-12 select-table table-striped" style="margin-bottom: 10px;">-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-12">-->
+<!--                                <h5 class="modal-title pull-left">用户在品牌下成长洞察-->
+<!--                                    <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="从类目的指定购买次序观察用户在商品层级的流转关系；" data-trigger="click">-->
+<!--                                        <i class="fa fa-question-circle"></i>-->
+<!--                                    </a>-->
+<!--                                </h5>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-12">-->
+<!--                                <hr class="hr m-t-0 m-t-5"/>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-12">-->
+<!--                                <form id="user-form">-->
+<!--                                    <div class="select-list" id="selectCondition1">-->
+<!--                                        <ul>-->
+<!--                                            <li>-->
+<!--                                                用户ID：-->
+<!--                                                <input type="text" id="growthUserId">-->
+<!--                                            </li>-->
+<!--                                            <li>-->
+<!--                                                开始时间：-->
+<!--                                                <input type="text" name="startDt" class="js-datepicker" id="growthStartDt">-->
+<!--                                            </li>-->
+<!--                                            <li>-->
+<!--                                                结束时间：-->
+<!--                                                <input type="text" name="endDt" class="js-datepicker" id="growthEndDt">-->
+<!--                                            </li>-->
+<!--                                            <li class="pull-right">-->
+<!--                                                <a class="btn btn-primary btn-rounded btn-sm" onclick="searchGrowthData()"><i class="fa fa-search"></i>&nbsp;搜索</a>-->
+<!--                                                <a class="btn btn-warning btn-rounded btn-sm" onclick="resetGrowthData()"><i class="fa fa-refresh"></i>&nbsp;重置</a>-->
+<!--                                            </li>-->
+<!--                                        </ul>-->
+<!--                                    </div>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="row" style="margin-top: 5px;">-->
+<!--                            <div class="col-md-12">-->
+<!--                                <table class="table table-bordered table-hover" id="brandUserDataTable"></table>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="row" id="singleDiv" style="display: none;">-->
+<!--                            <div class="col-md-6">-->
+<!--                                <div id="singleGRChart" style="height: 300px;"></div>-->
+<!--                            </div>-->
+<!--                            <div class="col-md-6">-->
+<!--                                <div id="singleGPChart" style="height: 300px;"></div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-md-6">-->
+<!--                                <div id="allGRChart" style="height: 300px;"></div>-->
+<!--                            </div>-->
+<!--                            <div class="col-md-6">-->
+<!--                                <div id="allGPChart" style="height: 300px;"></div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
             </div>
         </main>
@@ -470,7 +470,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
 <script src="https://cdn.bootcdn.net/ajax/libs/d3/5.16.0/d3.min.js"></script>
-<script data-th-src="@{/js/app/operate/insight/violin-plot.js}"></script>
+<!--<script data-th-src="@{/js/app/operate/insight/violin-plot.js}"></script>-->
 <script data-th-src="@{/js/app/operate/insight/tree.js}"></script>
 </body>
 </html>
