@@ -725,8 +725,8 @@ public class InsightServiceImpl implements InsightService {
         Map<String, Object> result = Maps.newHashMap();
         List<Map<String, Object>> growthP = insightMapper.allGrowthP(startDt, endDt);
         List<Map<String, Object>> growthV = insightMapper.allGrowthV(startDt, endDt);
+        List<String> datePeriod = DateUtil.getPeriodDate("M", startDt, endDt);
         if(growthP.size() == 0) {
-            List<String> datePeriod = DateUtil.getPeriodDate("M", startDt, endDt);
             growthP = datePeriod.stream().map(x -> {
                 Map<String, Object> tmp = Maps.newHashMap();
                 tmp.put("date_", x);
@@ -735,7 +735,6 @@ public class InsightServiceImpl implements InsightService {
             }).collect(Collectors.toList());
         }
         if(growthV.size() == 0) {
-            List<String> datePeriod = DateUtil.getPeriodDate("M", startDt, endDt);
             growthV = datePeriod.stream().map(x -> {
                 Map<String, Object> tmp = Maps.newHashMap();
                 tmp.put("date_", x);

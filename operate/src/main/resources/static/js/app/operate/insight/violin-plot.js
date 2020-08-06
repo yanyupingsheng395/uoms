@@ -50,6 +50,8 @@ function getAllGrowthChartData() {
         text : '加载数据中...'
     });
     $.get("/insight/allGrowthData", {startDt: $("#growthStartDt").val(), endDt: $("#growthEndDt").val()}, function (r) {
+        console.log(r.data['growthV']);
+        console.log(r.data['growthP']);
         allGrowthChartData(allGRChart, r.data.growthV, '所有发生成长用户的成长速度监控图', '成长日期', '成长速度');
         allGrowthChartData(allGPChart, r.data.growthP, '所有推送的用户成长潜力监控图', '成长日期', '成长潜力');
     });
