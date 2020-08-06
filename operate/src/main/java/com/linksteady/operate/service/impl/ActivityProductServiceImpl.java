@@ -760,6 +760,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 }
 
+/**
+ * 活动类型的枚举
+  */
 enum ActivityType {
     //满件打折
     FULL_DISCOUNT("9", "满件打折"),

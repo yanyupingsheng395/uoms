@@ -8,7 +8,6 @@ let custom_step = steps({
     center: true,
     dataOrder: ["title", "line", "description"]
 });
-
 $(function () {
     if(opType === 'update' && sendType === '1') {
         selectUser(true);

@@ -116,10 +116,13 @@
 </div>
 <div data-th-include="common/commonJS"></div>
 <script data-th-src="@{/plugins/steps/steps.js}"></script>
-<script data-th-src="@{/js/app/operate/addCustom/add.js}"></script>
+<div th:if="${opType eq 'update'}">
+    <script>
+        var sendType = "[[${addUserConfig.sendType}]]";
+    </script>
+</div>
 <script>
     var opType = "[[${opType}]]";
-    var sendType = "[[${addUserConfig.sendType}]]";
     var clipboard1 = new ClipboardJS('.copy_btn', {
         container: document.getElementById('config-box')
     });
@@ -127,5 +130,6 @@
         $MB.n_success("成功复制到粘贴板！");
     });
 </script>
+<script data-th-src="@{/js/app/operate/addCustom/add.js}"></script>
 </body>
 </html>
