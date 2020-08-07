@@ -1,9 +1,11 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.AddUserConfig;
 import com.linksteady.operate.domain.AddUserHead;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -22,4 +24,6 @@ public interface AddUserService {
     AddUserConfig getConfigByHeadId(String id);
 
     void editConfig(AddUserConfig addUserConfig);
+
+    List<Map<String, String>> getSource();
 }

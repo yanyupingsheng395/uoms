@@ -47,4 +47,9 @@ public class AddUserController {
         addUserService.editConfig(addUserConfig);
         return ResponseBo.ok();
     }
+
+    @RequestMapping("/getSource")
+    public ResponseBo getSource() {
+        return ResponseBo.okWithData(null, addUserService.getSource());
+    }
 }

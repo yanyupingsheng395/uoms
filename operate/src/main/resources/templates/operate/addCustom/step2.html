@@ -1,48 +1,207 @@
 <div th:if="${opType eq 'save'}">
     <div class="row">
         <div class="col-md-12">
-            <h5>选择添加方式类型</h5>
-            <label class="lyear-radio radio-inline radio-primary">
-                <input type="radio" name="addUserMethod" value="0"><span>通过企业微信自动添加好友</span>
-            </label>
-            <label class="lyear-radio radio-inline radio-primary">
-                <input type="radio" name="addUserMethod" value="1"><span>通过短信推送带有二维码的页面</span>
-            </label>
-            <label class="lyear-radio radio-inline radio-primary">
-                <input type="radio" name="addUserMethod" value="2"><span>用户发生购买后短信推送申请</span>
-            </label>
+            <h5>配置消息中的二维码</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-inline">
+                <div class="row">
+                    <div class="col-md-12">
+                        获取二维码链接：<input type="text" style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;"/>
+                        <a style="cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn"><i class="fa fa-clone"></i>复制二维码</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <hr style="margin-top: 15px;margin-bottom: 15px;">
+    <div class="row">
+        <div class="col-md-12">
+            <h5>编辑好友申请消息</h5>
+            <div>
+                <textarea placeholder="请输入消息内容..." class="form-control" id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
+                <input type="hidden" id="smsContentInput" name="smsContentInput">
+                <h6 style="color: #8b95a5"><i class="fa fa-info-circle"></i>&nbsp;最大文案字符数:33字，当前文案字数:32字</h6>
+            </div>
+        </div>
+    </div>
+    <div class="row m-t-15">
+        <div class="col-md-12">
+            <a class="btn btn-secondary btn-sm" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="true" aria-controls="collapseExample">
+                预览效果
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="m-t-10 collapse" id="collapseExample" aria-expanded="true">
+                <div class="well" style="height: 490px;padding: 8px;margin-bottom: 15px;">
+                    <div class="row">
+                        <div class="col-md-offset-4 col-md-4 text-left">
+                            <div style="position:absolute;height: 470px;width:100%;background:url(/images/app_content_01.png) no-repeat -23px -39px;}"></div>
+                            <div class="bubble" style="position: relative;margin-top: 140px;width: 233px;">
+                                <div class="demo clearfix">
+                                    <span class="triangle" style="left: 42px"></span>
+                                    <div class="article" id="article" style="font-size: 12px;">请输入消息内容...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="clear: both;">
+        <div class="col-md-12 text-right">
+            <div class="btn-group-sm" role="group">
+                <a class="btn btn-secondary" onclick="stepBreak(0)">
+                    <i class="fa fa-arrow-left"></i> 上一步
+                </a>
+                <a class="btn btn-primary" onclick="saveData('save')">
+                    <i class="fa fa-save"></i> 完成
+                </a>
+                <a class="btn btn-secondary" href="/page/addCustom">
+                    <i class="fa fa-backward"></i> 返回
+                </a>
+            </div>
         </div>
     </div>
 </div>
 <div th:if="${opType eq 'update'}">
+    <div class="row" style="height: 480px">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>体现个性化的要素</h5>
+                </div>
+            </div>
+            <div style="border: solid 1px #ebebeb;padding: 8px; float: left;width: 520px;" id="config-box">
+                <input type="hidden" th:value="${addUserConfig.id}" name="id"/>
+                <div class="example-box">
+                    <label class="control-label text-right">&#12288;渠道名称：</label>
+                    <label class="lyear-radio radio-inline radio-primary">
+                        <input type="radio" name="isChannel" value="1" th:checked="${addUserConfig.isChannel == 1} ? true:false"><span>是</span>
+                    </label>
+                    <label class="lyear-radio radio-inline radio-primary">
+                        <input type="radio" name="isChannel" value="0" th:checked="${addUserConfig.isChannel == 0} ? true:false"><span>否</span>
+                    </label>
+                    &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${渠道名称} 粘贴到期望位置；</span>
+                    <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${渠道名称}" class="copy_btn">复制</a>
+                </div>
+                <div class="example-box">
+                    <label class="control-label text-right">&#12288;商品名称：</label>
+                    <label class="lyear-radio radio-inline radio-primary">
+                        <input type="radio" name="isProduct" value="1" th:checked="${addUserConfig.isProduct == 1} ? true:false"><span>是</span>
+                    </label>
+                    <label class="lyear-radio radio-inline radio-primary">
+                        <input type="radio" name="isProduct" value="0" th:checked="${addUserConfig.isProduct == 0} ? true:false"><span>否</span>
+                    </label>
+                    &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品名称} 粘贴到期望位置；</span>
+                    <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
+                </div>
+                <div class="example-box">
+                    <label class="control-label text-right">&#12288;补贴名称：</label>
+                    <label class="lyear-radio radio-inline radio-primary">
+                        <input type="radio" name="isCoupon" value="1" th:checked="${addUserConfig.isCoupon eq 1} ? true:false"><span>是</span>
+                    </label>
+                    <label class="lyear-radio radio-inline radio-primary">
+                        <input type="radio" name="isCoupon" value="0" th:checked="${addUserConfig.isCoupon eq 0} ? true:false"><span>否</span>
+                    </label>
+                    &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${补贴名称} 粘贴到期望位置；</span>
+                    <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${补贴名称}" class="copy_btn">复制</a>
+                    <!--                <a style="color:#409eff;text-decoration: underline;cursor: pointer;font-size: 12px;">去配置</a>-->
+                </div>
+
+                <div class="example-box">
+                    <label class="control-label text-right">二维码短链：</label>
+                    <label class="lyear-radio radio-inline radio-primary">
+                        <input type="radio" name="isQrcode" value="1" th:checked="${addUserConfig.isQrcode eq 1} ? true:false"><span>是</span>
+                    </label>
+                    <label class="lyear-radio radio-inline radio-primary">
+                        <input type="radio" name="isQrcode" value="0" th:checked="${addUserConfig.isQrcode eq 0} ? true:false"><span>否</span>
+                    </label>
+                    &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${二维码短链} 粘贴到期望位置；</span>
+                    <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${二维码短链}" class="copy_btn">复制</a>
+                </div>
+            </div>
+            <div style="clear: both;" class="clearfix">
+                <div class="row m-t-15">
+                    <div class="col-md-12 form-inline">
+                        <h5>二维码的短链配置</h5>
+                        <input type="hidden" id="qrId" name="qrId" th:value="${addUserConfig.qrId}"/>
+                        <button type="button" id='selectQrCodeBtn' class="btn btn-info btn-sm" onclick="selectQrCode()"><i class="fa fa-check-square-o"></i>&nbsp;选择二维码</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 control-label" style="margin-top:10px;text-align: left;margin-left: 15px;padding-left: 5px;">
+                    <ul>
+                        <li class="smsvariable">个性化变量说明：</li>
+                        <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;${渠道名称}：系统会根据用户购买渠道进行对应的选择；</li>
+                        <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;${商品名称}：系统会选择用户最近购买的商品名称；</li>
+                        <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;${补贴名称}：系统会个性化填充补贴名称，不同用户看到不同补贴；</li>
+                        <li class="smsvariable"><i class="fa fa-angle-double-right"></i>&nbsp;${二维码短链}：系统会选择已配置的二维码短链；</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row m-t-15">
+                <div class="col-md-12">
+                    <h5>编辑好友申请内容</h5>
+                    <div>
+                        <textarea class="form-control" id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentValid()" th:text="${addUserConfig.smsContent}"></textarea>
+                        <input type="hidden" id="smsContentInput" name="smsContentInput">
+                        <span class="wordwrap"><var id="word">0:编写内容字符数 / 0:填充变量最大字符数 / 0:文案总字符数</var></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 text-left">
+            <div style="position:absolute;height: 470px;width:100%;background:url(/images/app_content_01.png) no-repeat -23px -39px;}"></div>
+            <div class="bubble" style="position: relative;margin-top: 140px;width: 233px;">
+                <div class="demo clearfix">
+                    <span class="triangle" style="left: 42px"></span>
+                    <div class="article" id="article" style="font-size: 12px;" th:text="${addUserConfig.smsContent}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
-        <div class="col-md-12">
-            <h5>选择添加方式类型</h5>
-            <label class="lyear-radio radio-inline radio-primary">
-                <input type="radio" name="addUserMethod" value="0" th:checked="${addUserConfig.addUserMethod eq '0'} ? true:false"><span>通过企业微信自动添加好友</span>
-            </label>
-            <label class="lyear-radio radio-inline radio-primary">
-                <input type="radio" name="addUserMethod" value="1" th:checked="${addUserConfig.addUserMethod eq '1'} ? true:false"><span>通过短信推送带有二维码的页面</span>
-            </label>
-            <label class="lyear-radio radio-inline radio-primary">
-                <input type="radio" name="addUserMethod" value="2" th:checked="${addUserConfig.addUserMethod eq '2'} ? true:false"><span>用户发生购买后短信推送申请</span>
-            </label>
+        <div class="col-md-12 text-right">
+            <div class="btn-group-sm" role="group">
+                <a class="btn btn-secondary" onclick="stepBreak(1)">
+                    <i class="fa fa-arrow-left"></i> 上一步
+                </a>
+                <a class="btn btn-primary" onclick="saveData('update')">
+                    <i class="fa fa-save"></i> 完成
+                </a>
+                <a class="btn btn-secondary" href="/page/addCustom">
+                    <i class="fa fa-backward"></i> 返回
+                </a>
+            </div>
         </div>
     </div>
 </div>
-
-<div class="row m-t-10">
-    <div class="col-md-12 text-right">
-        <div class="btn-group-sm" role="group">
-            <a class="btn btn-secondary" onclick="stepBreak(0)">
-                <i class="fa fa-arrow-left"></i> 上一步
-            </a>
-            <a class="btn btn-secondary" onclick="stepBreak(2)">
-                <i class="fa fa-arrow-right"></i> 下一步
-            </a>
-            <a class="btn btn-secondary" href="/page/addCustom">
-                <i class="fa fa-backward"></i> 返回
-            </a>
+<div class="modal fade" id="selectQrModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog" style="width: 70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">选择二维码</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <table class="table table-hover table-bordered" id="qrDataTable"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save btn-sm" onclick="setQrCode()">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
         </div>
     </div>
 </div>

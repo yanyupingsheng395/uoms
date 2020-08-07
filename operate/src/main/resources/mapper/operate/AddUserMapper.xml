@@ -68,4 +68,15 @@
         update uo_qywx_add_user_config set (send_type, user_value, life_cycle, path_active, user_growth, add_user_method, is_channel, is_product, is_coupon, is_qrcode, qr_id, sms_content) = (#{sendType}, #{userValue}, #{lifeCycle}, #{pathActive}, #{userGrowth}, #{addUserMethod}, #{isChannel}::integer, #{isProduct}::integer, #{isCoupon}::integer, #{isQrcode}, #{qrId}::integer, #{smsContent})
         where id = #{id}::integer
     </update>
+
+    <resultMap id="treeMap" type="com.linksteady.common.domain.Ztree">
+        <result column="id" jdbcType="VARCHAR" property="id"></result>
+        <result column="pid" jdbcType="VARCHAR" property="pId"></result>
+        <result column="name" jdbcType="VARCHAR" property="name"></result>
+        <result column="no_check" jdbcType="BOOLEAN" property="nocheck"></result>
+    </resultMap>
+
+    <select id="getSource" resultType="map">
+        select source_id id, source_name as name from w_source
+    </select>
 </mapper>

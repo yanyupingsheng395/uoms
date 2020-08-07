@@ -2,7 +2,6 @@ let custom_step = steps({
     el: "#addStep",
     data: [
         {title: "选择目标用户", description: ""},
-        {title: "配置触发机制", description: ""},
         {title: "编辑申请消息", description: ""}
     ],
     center: true,
@@ -15,19 +14,10 @@ $(function () {
 });
 // 筛选用户
 function selectUser(flag) {
-    if(flag) {
-        $("#userPropTable").find("tr td:not(:nth-child(1))").bind('click', function (e) {
-            if($(this).text() !== '') {
-                if($(this).is(".selected_td")) {
-                    $(this).removeClass('selected_td');
-                }else {
-                    $(this).addClass('selected_td');
-                }
-            }
-        });
+    if(!flag) {
+        $("#selectUserDiv").attr("style", "display:none;");
     }else {
-        $("#userPropTable").find("tr td:not(:nth-child(1))").removeClass('selected_td');
-        $("#userPropTable").find("tr td:not(:nth-child(1))").unbind('click');
+        $("#selectUserDiv").attr("style", "display:block;");
     }
 }
 
@@ -36,22 +26,12 @@ function stepBreak(idx) {
         custom_step.setActive(0);
         $("#step1").attr("style", "display:block;");
         $("#step2").attr("style", "display:none;");
-        $("#step3").attr("style", "display:none;");
     }
     if(idx == 1) {
         if(validData(idx)) {
             custom_step.setActive(1);
             $("#step1").attr("style", "display:none;");
             $("#step2").attr("style", "display:block;");
-            $("#step3").attr("style", "display:none;");
-        }
-    }
-    if(idx == 2) {
-        if(validData(idx)) {
-            custom_step.setActive(2);
-            $("#step1").attr("style", "display:none;");
-            $("#step2").attr("style", "display:none;");
-            $("#step3").attr("style", "display:block;");
         }
     }
 }
@@ -282,54 +262,29 @@ function saveData(opType) {
 function validData(stepIndex) {
     var userGroupData;
     // 验证第一步
+    var flag = true;
     if(stepIndex == 1) {
         var sendType = $("input[name='sendType']:checked").val();
         if(sendType === '1') {
-            var flag = false;
-            var userValue = [];
-            $("#userPropTable").find("tr:eq(0)").find("td[class='selected_td']").each(function (k, v) {
-                userValue.push($(v).find("span").attr('data-value'));
-                flag = true;
-            });
-
-            var lifeCycle = [];
-            $("#userPropTable").find("tr:eq(1)").find("td[class='selected_td']").each(function (k, v) {
-                lifeCycle.push($(v).find("span").attr('data-value'));
-                flag = true;
-            });
-
-            var pathActive = [];
-            $("#userPropTable").find("tr:eq(2)").find("td[class='selected_td']").each(function (k, v) {
-                pathActive.push($(v).find("span").attr('data-value'));
-                flag = true;
-            });
-
-            var userGrowth = [];
-            $("#userPropTable").find("tr:eq(3)").find("td[class='selected_td']").each(function (k, v) {
-                userGrowth.push($(v).find("span").attr('data-value'));
-                flag = true;
-            });
-            if(!flag) {
-                $MB.n_warning("筛选用户至少需要选择一个项！");
+            if(selected_city_code.length == 0) {
+                $MB.n_warning("请选择地域！");
+                flag = false;
             }
-        }else {
-            return true;
+            if(selected_source_code === null) {
+                $MB.n_warning("请选择渠道！");
+                flag = false;
+            }
+        }
+        var taskName = $("input[name='taskName']").val();
+        if(taskName === '') {
+            $MB.n_warning("请输入任务名称！");
+            flag = false;
         }
         return flag;
     }
 
     // 验证第二步
     if(stepIndex == 2) {
-        var addUserMethod = $("input[name='addUserMethod']:checked").val();
-        if(addUserMethod === undefined) {
-            $MB.n_warning("请选择添加方式类型！");
-            return false;
-        }else {
-            return true;
-        }
-    }
-
-    if(stepIndex == 3) {
         var isChannel = $("input[name='isChannel']:checked").val();
         var isProduct = $("input[name='isProduct']:checked").val();
         var isCoupon = $("input[name='isCoupon']:checked").val();
@@ -399,4 +354,59 @@ function validData(stepIndex) {
         return true;
     }
     return false;
+}
+
+// 选择城市modal
+function selectCityModal() {
+    $("#selectCityModal").modal('show');
+}
+
+var selected_city_code = [];
+var selected_city_name = [];
+function addCity() {
+    var cityName = $("#city").find("option:selected").val();
+    var cityCode = $("#city").find("option:selected").attr("data-code");
+    if(selected_city_code.indexOf(cityCode) == -1) {
+        if(selected_city_code.length <= 4) {
+            $("#cityTags").append("<span class=\"tag\"><span>" + cityName + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"$(this).parent().remove()\">x</a></span>");
+            selected_city_code.push(cityCode);
+            selected_city_name.push(cityName);
+            console.log(selected_city_name)
+        }else {
+            $MB.n_warning("最多可选5个城市！");
+        }
+    }
+}
+
+function addCityClick() {
+    if(selected_city_name.length == 0) {
+        $MB.n_warning("您尚未选择城市！");
+    }else {
+        var code = "";
+        selected_city_name.forEach((v, k)=>{
+            code += "<button class=\"btn btn-round btn-sm btn-warning m-t-5\">"+v+"</button>&nbsp;";
+        });
+        $("#cityDiv").html(code);
+    }
+    $("#selectCityModal").modal('hide');
+}
+
+getSource();
+function getSource() {
+    $.get("/addUser/getSource", {}, function (r) {
+        var code = "";
+        r.data.forEach((v, k)=>{
+            code += "<button\n" +
+                "class=\"btn btn-round btn-sm btn-secondary m-t-5\" onclick='sourceClick(this, \'"+v[id]+"\')'>"+v['name']+"\n" +
+                "</button>&nbsp;";
+        });
+        $("#sourceDiv").html(code);
+    });
+}
+
+var selected_source_code = null;
+function sourceClick(dom, id) {
+    selected_source_code = id;
+    $(dom).addClass('btn-info').removeClass('btn-secondary');
+    $(dom).siblings().removeClass('btn-info').addClass('btn-secondary');
 }

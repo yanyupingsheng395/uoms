@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.dao.AddUserMapper;
 import com.linksteady.operate.domain.AddUserConfig;
 import com.linksteady.operate.domain.AddUserHead;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -52,5 +54,10 @@ public class AddUserServiceImpl implements AddUserService {
     @Override
     public void editConfig(AddUserConfig addUserConfig) {
         addUserMapper.editConfig(addUserConfig);
+    }
+
+    @Override
+    public List<Map<String, String>> getSource() {
+        return addUserMapper.getSource();
     }
 }
