@@ -1,5 +1,6 @@
 package com.linksteady.operate.dao;
 
+import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.AddUserConfig;
 import com.linksteady.operate.domain.AddUserHead;
 import com.linksteady.operate.domain.QywxParam;
@@ -7,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -29,6 +31,8 @@ public interface AddUserMapper {
     AddUserConfig getConfigByHeadId(String headId);
 
     void editConfig(AddUserConfig addUserConfig);
+
+    List<Map<String, String>> getSource();
 
     /**
      * 写入待推送的用户明细

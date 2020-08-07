@@ -48,6 +48,11 @@ public class AddUserController {
         return ResponseBo.ok();
     }
 
+    @RequestMapping("/getSource")
+    public ResponseBo getSource() {
+        return ResponseBo.okWithData(null, addUserService.getSource());
+    }
+
     @RequestMapping("/test")
     public ResponseBo test() {
         try {

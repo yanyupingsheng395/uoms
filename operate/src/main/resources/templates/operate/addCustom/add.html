@@ -12,6 +12,7 @@
     <th:block th:include="common/include::jquery-confirm-css" />
     <th:block th:include="common/include::rangeslider-css" />
     <th:block th:include="common/include::clipboard-js" />
+    <th:block th:include="common/include::ztree" />
     <style>
         .step-icon-number {
             cursor: pointer;
@@ -92,14 +93,9 @@
                         <div class="col-md-12 select-table" id="step1">
                             <div data-th-include="operate/addCustom/step1"></div>
                         </div>
-
-                        <div id="step2" class="col-md-12 select-table" style="display: none;">
-                            <div data-th-include="operate/addCustom/step2"></div>
-                        </div>
-
-                        <div id="step3" style="display: none;">
+                        <div id="step2" style="display: none;">
                             <div class="col-md-12 select-table">
-                                <div data-th-include="operate/addCustom/step3"></div>
+                                <div data-th-include="operate/addCustom/step2"></div>
                             </div>
                         </div>
                     </form>
@@ -117,6 +113,9 @@
 <th:block th:include="common/include::jquery-confirm-js" />
 <th:block th:include="common/include::step-js" />
 <th:block th:include="common/include::rangeslider-js" />
+<script src="/plugins/data-picker/distpicker.data.js"></script>
+<script src="/plugins/data-picker/distpicker.js"></script>
+<script src="/plugins/data-picker/main.js"></script>
 <div th:if="${opType eq 'update'}">
     <script>
         var sendType = "[[${addUserConfig.sendType}]]";

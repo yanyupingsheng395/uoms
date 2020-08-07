@@ -74,6 +74,17 @@
         where id = #{id}::integer
     </update>
 
+    <resultMap id="treeMap" type="com.linksteady.common.domain.Ztree">
+        <result column="id" jdbcType="VARCHAR" property="id"></result>
+        <result column="pid" jdbcType="VARCHAR" property="pId"></result>
+        <result column="name" jdbcType="VARCHAR" property="name"></result>
+        <result column="no_check" jdbcType="BOOLEAN" property="nocheck"></result>
+    </resultMap>
+
+    <select id="getSource" resultType="map">
+        select source_id id, source_name as name from w_source
+    </select>
+
     <insert id="insertAddUserList">
        insert into uo_qywx_add_user_list
        (
