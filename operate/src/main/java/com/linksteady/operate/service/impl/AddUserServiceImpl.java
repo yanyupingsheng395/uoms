@@ -119,8 +119,8 @@ public class AddUserServiceImpl implements AddUserService {
             defaultApplyRate=5;
         }else
         {
-            defaultAddcount=2000;
-            defaultApplyRate=5;
+            defaultAddcount=qywxParam.getDailyAddNum();
+            defaultApplyRate=qywxParam.getDailyAddRate();
         }
 
 
