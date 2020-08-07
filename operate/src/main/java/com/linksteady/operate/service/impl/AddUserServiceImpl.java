@@ -144,6 +144,29 @@ public class AddUserServiceImpl implements AddUserService {
         addUserMapper.updatePushParameter(headId,count,defaultAddcount,defaultApplyRate,dailyAddNum,waitDays,addTotal);
     }
 
+    /**
+     * 执行一次推送任务
+     * @param headId
+     */
+    @Override
+    public void execTask(long headId) throws Exception{
+       //判断任务的状态
+
+      //判断任务的剩余人数
+
+      //判断当天是否已经有推送计划
+
+      //写入推送计划
+
+      //更新推送明细
+
+      //更新主记录表的剩余人数
+
+      //将推送明细数据放到短信表里面去
+
+
+    }
+
     @Override
     public AddUserHead getHeadById(long id) {
         return addUserMapper.getHeadById(id);
