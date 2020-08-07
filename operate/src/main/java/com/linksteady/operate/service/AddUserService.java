@@ -28,4 +28,9 @@ public interface AddUserService {
      */
     void filterUsers(long headId, String sourceId, String regionIds)  throws Exception;
 
+    /**
+     * 执行一次拉新推送任务
+     * @param headId
+     */
+    void execTask(long headId) throws Exception;
 }
