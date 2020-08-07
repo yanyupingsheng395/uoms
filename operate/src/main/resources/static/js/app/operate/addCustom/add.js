@@ -195,41 +195,27 @@ function setQrCode() {
 // 保存数据
 function saveData(opType) {
     // 验证表单数据
-    if(validData(3)) {
-        var userValue = [];
-        $("#userPropTable").find("tr:eq(0)").find("td[class='selected_td']").each(function (k, v) {
-            userValue.push($(v).find("span").attr('data-value'));
-        });
-
-        var lifeCycle = [];
-        $("#userPropTable").find("tr:eq(1)").find("td[class='selected_td']").each(function (k, v) {
-            lifeCycle.push($(v).find("span").attr('data-value'));
-        });
-
-        var pathActive = [];
-        $("#userPropTable").find("tr:eq(2)").find("td[class='selected_td']").each(function (k, v) {
-            pathActive.push($(v).find("span").attr('data-value'));
-        });
-
-        var userGrowth = [];
-        $("#userPropTable").find("tr:eq(3)").find("td[class='selected_td']").each(function (k, v) {
-            userGrowth.push($(v).find("span").attr('data-value'));
-        });
-
+    if(validData(1)) {
         if(opType === 'save') {
+            var taskName = $("input[name='taskName']").val();
+            var sendType = $("input[name='sendType']:checked").val();
+            var sourceId = selected_source_code;
+            var sourceName = selected_source_name;
+            var regionId = selected_city_code.join(",");
+            var regionName = selected_city_name.join(",");
+            if(sendType === '0') {
+                sourceId = '';
+                regionId = '';
+            }
             $MB.confirm({
                 title: '提示:',
                 content: '确认保存数据？'
             }, function () {
-                $.post("/addUser/saveData",
-                    $("#dataForm").serialize() + '&userValue=' + userValue.join() + "&lifeCycle=" + lifeCycle.join() +
-                    "&pathActive=" + pathActive.join() + "&userGrowth=" + userGrowth.join(),
+                $.post("/addUser/saveData",{taskName:taskName, sendType: sendType, sourceId: sourceId,
+                        regionId: regionId, sourceName: sourceName, regionName: regionName},
                     function (r) {
                         if(r.code === 200) {
                             $MB.n_success("保存成功！");
-                            setTimeout(function () {
-                                window.location.href = "/page/addCustom";
-                            }, 1400);
                         }else {
                             $MB.n_danger("保存失败！");
                         }
@@ -260,27 +246,25 @@ function saveData(opType) {
 
 // 验证数据
 function validData(stepIndex) {
-    var userGroupData;
     // 验证第一步
-    var flag = true;
     if(stepIndex == 1) {
         var sendType = $("input[name='sendType']:checked").val();
         if(sendType === '1') {
             if(selected_city_code.length == 0) {
                 $MB.n_warning("请选择地域！");
-                flag = false;
+                return false;
             }
             if(selected_source_code === null) {
                 $MB.n_warning("请选择渠道！");
-                flag = false;
+                return false;
             }
         }
         var taskName = $("input[name='taskName']").val();
         if(taskName === '') {
             $MB.n_warning("请输入任务名称！");
-            flag = false;
+            return false;
         }
-        return flag;
+        return true;
     }
 
     // 验证第二步
@@ -384,7 +368,7 @@ function addCityClick() {
     }else {
         var code = "";
         selected_city_name.forEach((v, k)=>{
-            code += "<button class=\"btn btn-round btn-sm btn-warning m-t-5\">"+v+"</button>&nbsp;";
+            code += "<button type=\"button\" class=\"btn btn-round btn-sm btn-warning m-t-5\">"+v+"</button>&nbsp;";
         });
         $("#cityDiv").html(code);
     }
@@ -396,8 +380,8 @@ function getSource() {
     $.get("/addUser/getSource", {}, function (r) {
         var code = "";
         r.data.forEach((v, k)=>{
-            code += "<button\n" +
-                "class=\"btn btn-round btn-sm btn-secondary m-t-5\" onclick='sourceClick(this, \'"+v[id]+"\')'>"+v['name']+"\n" +
+            code += "<button type=\"button\" \n" +
+                "class=\"btn btn-round btn-sm btn-secondary m-t-5\" onclick='sourceClick(this, \""+v['id']+"\",  \""+v['name']+"\")'>"+v['name']+"\n" +
                 "</button>&nbsp;";
         });
         $("#sourceDiv").html(code);
@@ -405,8 +389,10 @@ function getSource() {
 }
 
 var selected_source_code = null;
-function sourceClick(dom, id) {
+var selected_source_name = null;
+function sourceClick(dom, id, name) {
     selected_source_code = id;
+    selected_source_name = name;
     $(dom).addClass('btn-info').removeClass('btn-secondary');
     $(dom).siblings().removeClass('btn-info').addClass('btn-secondary');
 }

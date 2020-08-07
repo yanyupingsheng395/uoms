@@ -10,7 +10,15 @@
         <result column="apply_pass_rate" jdbcType="DECIMAL" property="applyPassRate"/>
         <result column="task_start_dt" jdbcType="TIMESTAMP" property="taskStartDt"/>
         <result column="task_status" jdbcType="VARCHAR" property="taskStatus"/>
-        <result column="add_user_method" jdbcType="VARCHAR" property="addUserMethod"/>
+        <result column="region_id" jdbcType="VARCHAR" property="regionId"/>
+        <result column="region_name" jdbcType="VARCHAR" property="regionName"/>
+        <result column="source_id" jdbcType="VARCHAR" property="sourceId"/>
+        <result column="source_name" jdbcType="VARCHAR" property="sourceName"/>
+        <result column="daily_user_cnt" jdbcType="DECIMAL" property="dailyUserCnt"/>
+        <result column="daily_apply_rate" jdbcType="VARCHAR" property="dailyApplyRate"/>
+        <result column="daily_add_user_cnt" jdbcType="DECIMAL" property="dailyAddUserCnt"/>
+        <result column="daily_wait_days" jdbcType="DECIMAL" property="dailyWaitDays"/>
+        <result column="daily_add_total" jdbcType="DECIMAL" property="dailyAddTotal"/>
     </resultMap>
 
     <resultMap id="configMap" type="com.linksteady.operate.domain.AddUserConfig">
@@ -40,8 +48,8 @@
     </select>
 
     <select id="getHeadPageList" resultMap="base">
-        select t1.id, apply_user_cnt, apply_pass_cnt, apply_pass_rate, task_start_dt, task_status, t2.add_user_method, t2.send_type from uo_qywx_add_user_header t1
-        left join uo_qywx_add_user_config t2 on t1.id = t2.head_id
+        select id, apply_user_cnt, apply_pass_cnt, apply_pass_rate, task_start_dt, task_status, send_type from uo_qywx_add_user_header
+        order by insert_dt desc
         limit #{limit} offset #{offset}
     </select>
 
@@ -49,24 +57,16 @@
         <selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="id">
             select nextval('qywx_add_user_header_id_seq'::regclass)
         </selectKey>
-        insert into uo_qywx_add_user_header(id, task_status) values (#{id}, 'edit')
-    </insert>
-
-    <insert id="saveConfigData">
-        insert into uo_qywx_add_user_config(head_id, send_type, user_value, life_cycle, path_active, user_growth, add_user_method, is_channel, is_product, is_coupon, is_qrcode, qr_id, sms_content)
-        values (#{headId}::integer, #{sendType}, #{userValue}, #{lifeCycle}, #{pathActive}, #{userGrowth}, #{addUserMethod}, #{isChannel}::integer, #{isProduct}::integer, #{isCoupon}::integer, #{isQrcode}::integer, #{qrId}::integer, #{smsContent})
+        insert into uo_qywx_add_user_header(id, send_type, task_status, task_name, region_id, region_name, source_id, source_name)
+        values (#{id}, #{sendType}, 'edit', #{taskName}, #{regionId}, #{regionName}, #{sourceId}, #{sourceName})
     </insert>
 
     <delete id="deleteHead">
         delete from uo_qywx_add_user_header where id = #{id}::integer
     </delete>
 
-    <delete id="deleteConfig">
-        delete from uo_qywx_add_user_config where head_id = #{id}::integer
-    </delete>
-
-    <select id="getConfigByHeadId" resultMap="configMap">
-        select * from uo_qywx_add_user_config where head_id = #{id}::integer
+    <select id="getHeadById" resultMap="base">
+        select * from uo_qywx_add_user_header where id = #{id}
     </select>
 
     <update id="editConfig">
@@ -78,7 +78,6 @@
         <result column="id" jdbcType="VARCHAR" property="id"></result>
         <result column="pid" jdbcType="VARCHAR" property="pId"></result>
         <result column="name" jdbcType="VARCHAR" property="name"></result>
-        <result column="no_check" jdbcType="BOOLEAN" property="nocheck"></result>
     </resultMap>
 
     <select id="getSource" resultType="map">

@@ -430,8 +430,6 @@ public class PageController extends BaseController {
      */
     @RequestMapping("/addCustom/edit")
     public String addCustomEdit(@RequestParam String id, Model model) {
-        AddUserConfig addUserConfig = addUserService.getConfigByHeadId(id);
-        model.addAttribute("addUserConfig", addUserConfig);
         model.addAttribute("opType", "update");
         return "operate/addCustom/add";
     }

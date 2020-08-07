@@ -7,6 +7,7 @@ import com.linksteady.operate.domain.AddUserConfig;
 import com.linksteady.operate.domain.AddUserHead;
 import com.linksteady.operate.domain.QywxParam;
 import com.linksteady.operate.service.AddUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @date 2020/7/16
  */
 @Service
+@Slf4j
 public class AddUserServiceImpl implements AddUserService {
 
     @Autowired
@@ -36,23 +38,20 @@ public class AddUserServiceImpl implements AddUserService {
     }
 
     @Override
-    public void saveData(AddUserConfig addUserConfig) {
-        AddUserHead addUserHead = new AddUserHead();
+    @Transactional(rollbackFor = Exception.class)
+    public void saveData(AddUserHead addUserHead) {
         addUserHead.setTaskStatus("edit");
         addUserMapper.saveHeadData(addUserHead);
-        addUserConfig.setHeadId(addUserHead.getId());
-        addUserMapper.saveConfigData(addUserConfig);
+        try {
+            filterUsers(addUserHead.getId(), addUserHead.getSourceId(), addUserHead.getRegionId());
+        }catch (Exception e) {
+            log.error("计算数据出错", e);
+        }
     }
 
     @Override
     public void deleteTask(String id) {
         addUserMapper.deleteHead(id);
-        addUserMapper.deleteConfig(id);
-    }
-
-    @Override
-    public AddUserConfig getConfigByHeadId(String id) {
-        return addUserMapper.getConfigByHeadId(id);
     }
 
     @Override
@@ -143,6 +142,11 @@ public class AddUserServiceImpl implements AddUserService {
         }
         //更新记录
         addUserMapper.updatePushParameter(headId,count,defaultAddcount,defaultApplyRate,dailyAddNum,waitDays,addTotal);
+    }
+
+    @Override
+    public AddUserHead getHeadById(long id) {
+        return addUserMapper.getHeadById(id);
     }
 
 }

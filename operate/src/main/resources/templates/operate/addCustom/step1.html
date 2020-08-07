@@ -1,22 +1,24 @@
 <div th:if="${opType eq 'save'}">
-    <form class="form-inline">
-        <div class="row">
-            <div class="col-md-6">
-                <label class="form-inline" />任务名称：
-                <input type="text" class="form-control" name="task"/></label>
-            </div>
-            <div class="col-md-6" style="margin-top: 9px;">
-                <label class="form-inline" />选择申请发送范围：
+    <div class="m-t-10">
+        <form class="form-inline">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-inline" />任务名称：
+                    <input type="text" class="form-control" name="taskName"/></label>
+                </div>
+                <div class="col-md-6" style="margin-top: 9px;">
+                    <label class="form-inline" />选择申请发送范围：
                     <label class="lyear-radio radio-inline radio-primary">
                         <input type="radio" checked='checked' name="sendType" value="0" onclick="selectUser(false)"><span>全部用户</span>
                     </label>
                     <label class="lyear-radio radio-inline radio-primary">
                         <input type="radio" name="sendType" value="1" onclick="selectUser(true)"><span>筛选用户</span>
                     </label>
-                </label>
+                    </label>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
     <div class="row m-t-15" id="selectUserDiv" style="display:none;">
         <div class="col-md-12">
             <h5>筛选部分用户群组</h5>
@@ -40,7 +42,7 @@
                                         </div>
                                     </div>
                                     <div style="position: relative;" id="cityDiv">
-                                        <button class="btn btn-round btn-sm btn-secondary m-t-5" onclick="selectCityModal()">请选择地域</button>
+                                        <button type="button" class="btn btn-round btn-sm btn-secondary m-t-5" onclick="selectCityModal()">请选择地域</button>
                                     </div>
                                 </div>
                             </div>
@@ -58,7 +60,7 @@
             </div>
         </div>
     </div>
-    <div class="row m-t-15">
+    <div class="row m-t-15" style="display: none;">
         <div class="col-md-12">
             <h5>设定推送任务的节奏</h5>
             <h6>
@@ -82,22 +84,25 @@
                     </div>
                     <div class="row m-t-10">
                         <div class="col-md-4">
-                            预计每日添加好友人数（人/天）：<input disabled readonly type="text" style="border: none 0;outline: medium;background: transparent;-webkit-appearance: none;-moz-appearance:none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color:transparent;border-bottom: 1px solid #ccc;" value="333">
+                            预计每日添加好友人数（人/天）：<input disabled readonly type="text" style="border: none 0;outline: medium;background: transparent;-webkit-appearance: none;-moz-appearance:none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color:transparent;border-bottom: 1px solid #ccc;"/>
                         </div>
                         <div class="col-md-4">
-                            预计全部推送所需天数（天）：<input disabled readonly type="text" style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;" value="333">
+                            预计全部推送所需天数（天）：<input disabled readonly type="text" style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;"/>
                         </div>
                         <div class="col-md-4">
-                            预计添加好友总人数（人）：<input disabled readonly type="text" style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;" value="333">
+                            预计添加好友总人数（人）：<input disabled readonly type="text" style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;"/>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div class="row m-t-15">
+    <div class="row">
         <div class="col-md-12 text-right">
             <div class="btn-group-sm" role="group">
+                <a class="btn btn-primary" onclick="saveData('save')">
+                    <i class="fa fa-save"></i> 保存
+                </a>
                 <a class="btn btn-secondary" onclick="stepBreak(1)">
                     <i class="fa fa-arrow-right"></i> 下一步
                 </a>

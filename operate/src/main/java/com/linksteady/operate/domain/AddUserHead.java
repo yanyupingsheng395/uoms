@@ -11,19 +11,30 @@ import java.util.Date;
 @Data
 public class AddUserHead {
 
-    private int id;
-
-    private String sendType;
-
-    private Integer applyUserCnt;
-
-    private String applyPassCnt;
-
-    private Double applyPassRate;
-
+    private long id;
+    private long applyUserCnt;
+    private long applyPassCnt;
+    private String applyPassRate;
     private Date taskStartDt;
-
     private String taskStatus;
-
-    private String addUserMethod;
+    private Date insertDt;
+    private String insertBy;
+    private Date updateDt;
+    private String updateBy;
+    private Date taskEndDt;
+    private String taskName;
+    private long deliveredUserCnt;
+    private long waitUserCnt;
+    private long dailyUserCnt;
+    private String dailyApplyRate;
+    private long dailyAddUserCnt;
+    private long dailyWaitDays;
+    private long dailyAddTotal;
+    private long contactwayId;
+    private String smsContent;
+    private String sourceId;
+    private String sourceName;
+    private String regionId;
+    private String regionName;
+    private String sendType;
 }

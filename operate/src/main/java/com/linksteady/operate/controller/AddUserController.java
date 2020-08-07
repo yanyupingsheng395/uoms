@@ -30,9 +30,9 @@ public class AddUserController {
     }
 
     @RequestMapping("/saveData")
-    public ResponseBo saveData(AddUserConfig addUserConfig) {
-        addUserService.saveData(addUserConfig);
-        return ResponseBo.ok();
+    public ResponseBo saveData(AddUserHead addUserHead) {
+        addUserService.saveData(addUserHead);
+        return ResponseBo.okWithData(null, addUserService.getHeadById(addUserHead.getId()));
     }
 
 

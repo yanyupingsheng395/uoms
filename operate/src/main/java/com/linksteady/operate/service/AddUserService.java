@@ -17,11 +17,9 @@ public interface AddUserService {
 
     List<AddUserHead> getHeadPageList(int limit, int offset);
 
-    void saveData(AddUserConfig addUserConfig);
+    void saveData(AddUserHead addUserHead);
 
     void deleteTask(String id);
-
-    AddUserConfig getConfigByHeadId(String id);
 
     void editConfig(AddUserConfig addUserConfig);
 
@@ -32,4 +30,5 @@ public interface AddUserService {
      */
     void filterUsers(long headId, String sourceId, String regionIds)  throws Exception;
 
+    AddUserHead getHeadById(long id);
 }

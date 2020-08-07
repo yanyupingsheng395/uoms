@@ -22,13 +22,9 @@ public interface AddUserMapper {
 
     void saveHeadData(AddUserHead addUserHead);
 
-    void saveConfigData(AddUserConfig addUserConfig);
-
     void deleteHead(String id);
 
-    void deleteConfig(String headId);
-
-    AddUserConfig getConfigByHeadId(String headId);
+    AddUserHead getHeadById(long id);
 
     void editConfig(AddUserConfig addUserConfig);
 
