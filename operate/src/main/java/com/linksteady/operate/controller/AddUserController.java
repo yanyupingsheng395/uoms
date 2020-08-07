@@ -52,4 +52,14 @@ public class AddUserController {
     public ResponseBo getSource() {
         return ResponseBo.okWithData(null, addUserService.getSource());
     }
+
+    @RequestMapping("/test")
+    public ResponseBo test() {
+        try {
+            addUserService.filterUsers(20,"11","110000,120000");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseBo.ok();
+    }
 }
