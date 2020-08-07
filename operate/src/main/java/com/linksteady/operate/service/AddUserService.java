@@ -22,4 +22,10 @@ public interface AddUserService {
     AddUserConfig getConfigByHeadId(String id);
 
     void editConfig(AddUserConfig addUserConfig);
+
+    /**
+     * 针对选择的条件，筛选用户，并返回筛选后的信息
+     */
+    void filterUsers(long headId, String sourceId, String regionIds)  throws Exception;
+
 }

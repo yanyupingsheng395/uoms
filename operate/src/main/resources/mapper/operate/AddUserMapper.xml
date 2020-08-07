@@ -30,6 +30,11 @@
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"/>
     </resultMap>
 
+    <resultMap id="paramMap" type="com.linksteady.operate.domain.QywxParam">
+        <result column="daily_add_num" jdbcType="DECIMAL" property="dailyAddNum"/>
+        <result column="daily_add_rate" jdbcType="DECIMAL" property="dailyAddRate"/>
+    </resultMap>
+
     <select id="getHeadCount" resultType="int">
         select count(1) from uo_qywx_add_user_header
     </select>
@@ -67,5 +72,37 @@
     <update id="editConfig">
         update uo_qywx_add_user_config set (send_type, user_value, life_cycle, path_active, user_growth, add_user_method, is_channel, is_product, is_coupon, is_qrcode, qr_id, sms_content) = (#{sendType}, #{userValue}, #{lifeCycle}, #{pathActive}, #{userGrowth}, #{addUserMethod}, #{isChannel}::integer, #{isProduct}::integer, #{isCoupon}::integer, #{isQrcode}, #{qrId}::integer, #{smsContent})
         where id = #{id}::integer
+    </update>
+
+    <insert id="insertAddUserList">
+       insert into uo_qywx_add_user_list
+       (
+          head_id,user_id,phone_num,is_push,push_status,insert_dt,update_dt
+       )
+       select
+          #{headId},id,mobile,0,'X',now(),now()
+          from w_users where valid_status=1
+            <if test="whereInfo != null and whereInfo != ''">
+                ${whereInfo}
+            </if>
+    </insert>
+
+    <select id="getAddUserListCount" resultType="int">
+         select count(*) from uo_qywx_add_user_list where head_id= #{headId}
+    </select>
+
+    <select id="getQywxParam" resultMap="paramMap">
+         select daily_add_num,daily_add_rate from uo_qywx_param limit 1
+    </select>
+
+    <update id="updatePushParameter">
+        update uo_qywx_add_user_header set
+          apply_user_cnt=#{totalNum},
+          daily_user_cnt=#{defaultAddCount},
+          daily_apply_rate=#{defaultApplyRate},
+          daily_add_user_cnt=#{dailyAddNum},
+          daily_wait_days=#{waitDays},
+          daily_add_total=#{addTotal}
+       where id= #{headId}
     </update>
 </mapper>
