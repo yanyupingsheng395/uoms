@@ -19,6 +19,10 @@ function getTableData() {
         columns: [{
             checkbox: true
         },{
+            field: 'taskName',
+            align: "center",
+            title: '任务名称',
+        },{
             field: 'sendType',
             align: "center",
             title: '发送申请范围',

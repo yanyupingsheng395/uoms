@@ -36,4 +36,6 @@ public interface AddUserService {
      * @param headId
      */
     void execTask(long headId) throws Exception;
+
+    void saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate);
 }

@@ -192,6 +192,9 @@ function setQrCode() {
     $("#selectQrCodeBtn").html('<i class="fa fa-check-square-o"></i>&nbsp;选择二维码');
 }
 
+var daily_user_cnt;
+var daily_apply_rate;
+var head_id;
 // 保存数据
 function saveData(opType) {
     // 验证表单数据
@@ -216,6 +219,18 @@ function saveData(opType) {
                     function (r) {
                         if(r.code === 200) {
                             $MB.n_success("保存成功！");
+                            $("#sendUserDataDiv").attr("style", "display:block;");
+                            $("#saveBasicBtn").attr("style", "display:none;");
+                            $("input[name='taskName']").attr("disabled", "disabled").attr("readOnly", "readOnly");
+                            $("input[name='sendType']").attr("disabled", "disabled").attr("readOnly", "readOnly");
+                            $("input[name='dailyUserCnt']").val(r.data['dailyUserCnt']);
+                            daily_user_cnt = r.data['dailyUserCnt'];
+                            daily_apply_rate = r.data['dailyApplyRate'];
+                            $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
+                            $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
+                            $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
+                            $("input[name='dailyAddTotal']").val(r.data['dailyAddTotal']);
+                            head_id = r.data['id'];
                         }else {
                             $MB.n_danger("保存失败！");
                         }
@@ -244,6 +259,24 @@ function saveData(opType) {
     }
 }
 
+function userDataChange(dom, idx) {
+    if(($("input[name='dailyUserCnt']").val() !== daily_user_cnt) || ($("input[name='dailyApplyRate']").val() !== daily_apply_rate)) {
+        $("#saveDailyUserBtn").attr("style", "display:inline-block;");
+    }else {
+        $("#saveDailyUserBtn").attr("style", "display:none;");
+    }
+}
+// 调整每日转化用户数
+function saveDailyUserData() {
+    $.get("/addUser/saveDailyUserData", {headId: head_id, dailyUserCnt:daily_user_cnt, dailyApplyRate:daily_apply_rate}, function (r) {
+        if(r.code === 200) {
+            $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
+            $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
+            $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
+            $MB.n_success("更新成功！");
+        }
+    });
+}
 // 验证数据
 function validData(stepIndex) {
     // 验证第一步

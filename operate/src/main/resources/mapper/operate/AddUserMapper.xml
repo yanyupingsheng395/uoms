@@ -19,23 +19,7 @@
         <result column="daily_add_user_cnt" jdbcType="DECIMAL" property="dailyAddUserCnt"/>
         <result column="daily_wait_days" jdbcType="DECIMAL" property="dailyWaitDays"/>
         <result column="daily_add_total" jdbcType="DECIMAL" property="dailyAddTotal"/>
-    </resultMap>
-
-    <resultMap id="configMap" type="com.linksteady.operate.domain.AddUserConfig">
-        <result column="id" jdbcType="DECIMAL" property="id"/>
-        <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"/>
-        <result column="SEND_TYPE" jdbcType="VARCHAR" property="sendType"/>
-        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"/>
-        <result column="LIFE_CYCLE" jdbcType="VARCHAR" property="lifeCycle"/>
-        <result column="PATH_ACTIVE" jdbcType="TIMESTAMP" property="pathActive"/>
-        <result column="USER_GROWTH" jdbcType="VARCHAR" property="userGrowth"/>
-        <result column="ADD_USER_METHOD" jdbcType="VARCHAR" property="addUserMethod"/>
-        <result column="IS_CHANNEL" jdbcType="DECIMAL" property="isChannel"/>
-        <result column="IS_PRODUCT" jdbcType="DECIMAL" property="isProduct"/>
-        <result column="IS_COUPON" jdbcType="DECIMAL" property="isCoupon"/>
-        <result column="IS_QRCODE" jdbcType="DECIMAL" property="isQrcode"/>
-        <result column="QR_ID" jdbcType="VARCHAR" property="qrId"/>
-        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"/>
+        <result column="task_name" jdbcType="VARCHAR" property="taskName"/>
     </resultMap>
 
     <resultMap id="paramMap" type="com.linksteady.operate.domain.QywxParam">
@@ -48,7 +32,7 @@
     </select>
 
     <select id="getHeadPageList" resultMap="base">
-        select id, apply_user_cnt, apply_pass_cnt, apply_pass_rate, task_start_dt, task_status, send_type from uo_qywx_add_user_header
+        select id, task_name, apply_user_cnt, apply_pass_cnt, apply_pass_rate, task_start_dt, task_status, send_type from uo_qywx_add_user_header
         order by insert_dt desc
         limit #{limit} offset #{offset}
     </select>

@@ -62,4 +62,10 @@ public class AddUserController {
         }
         return ResponseBo.ok();
     }
+
+    @RequestMapping("/saveDailyUserData")
+    public ResponseBo saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate){
+        addUserService.saveDailyUserData(headId, dailyUserCnt, dailyApplyRate);
+        return ResponseBo.ok();
+    }
 }
