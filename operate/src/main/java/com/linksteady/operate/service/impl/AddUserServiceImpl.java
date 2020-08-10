@@ -1,5 +1,7 @@
 package com.linksteady.operate.service.impl;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.linksteady.common.domain.Ztree;
 import com.google.common.base.Splitter;
 import com.linksteady.operate.dao.AddUserMapper;
@@ -183,6 +185,31 @@ public class AddUserServiceImpl implements AddUserService {
     @Transactional(rollbackFor = Exception.class)
     public void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl) {
         addUserMapper.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
+    }
+
+    @Override
+    public Map<String, Object> getTaskResultData(String headId) {
+        Map<String, Object> result = Maps.newHashMap();
+        // 获取发送范围
+        AddUserHead addUserHead = addUserMapper.getHeadById(Long.parseLong(headId));
+        String sendType = "0".equalsIgnoreCase(addUserHead.getSendType()) ? "全部用户" : addUserHead.getSourceName() + "|" + addUserHead.getRegionName();
+        // 发送申请数+申请通过数
+        List<Map<String, Object>> sendAndApplyData = addUserMapper.getSendAndApplyData(headId);
+        // 统计所有数据
+        List<Map<String, Object>> statisApplyData = Lists.newArrayList();
+        if (sendAndApplyData.size() > 0) {
+            // 申请通过随统计日期变化图
+            String scheduleId = sendAndApplyData.get(0).get("scheduleId").toString();
+            statisApplyData = addUserMapper.getStatisApplyData(headId, scheduleId);
+
+        }
+        result.put("statisApplyData", statisApplyData);
+        result.put("applyUserCnt", addUserHead.getApplyUserCnt() == null ? "-" : addUserHead.getApplyUserCnt());
+        result.put("applyPassCnt", addUserHead.getApplyPassCnt() == null ? "-" : addUserHead.getApplyPassCnt());
+        result.put("applyPassRate", addUserHead.getApplyPassRate() == null ? "-" : addUserHead.getApplyPassRate());
+        result.put("sendAndApplyData", sendAndApplyData);
+        result.put("sendType", sendType);
+        return result;
     }
 
     @Override

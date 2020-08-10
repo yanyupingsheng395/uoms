@@ -40,4 +40,6 @@ public interface AddUserService {
     AddUserHead saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate);
 
     void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl);
+
+    Map<String, Object> getTaskResultData(String headId);
 }

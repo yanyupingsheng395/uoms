@@ -12,8 +12,8 @@ import java.util.Date;
 public class AddUserHead {
 
     private long id;
-    private long applyUserCnt;
-    private long applyPassCnt;
+    private Long applyUserCnt;
+    private Long applyPassCnt;
     private String applyPassRate;
     private Date taskStartDt;
     private String taskStatus;

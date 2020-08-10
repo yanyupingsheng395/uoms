@@ -119,9 +119,20 @@ function deleteTask() {
 
 function editTask() {
     var selected = $("#dataTable").bootstrapTable('getSelections');
-    if(selected[0].length === 0) {
+    if(selected.length === 0) {
         $MB.n_warning("请先选择一条记录！");
+        return false;
     }
     var id = selected[0].id;
     window.location.href = "/page/addCustom/edit?id=" + id;
 }
+
+$("#btn_effect").click(function () {
+    var selected = $("#dataTable").bootstrapTable('getSelections');
+    if(selected.length == 0) {
+        $MB.n_warning("请先选择一条记录！");
+        return false;
+    }
+    var id = selected[0].id;
+    window.location.href = "/page/addCustom/effect?id=" + id;
+});

@@ -107,4 +107,14 @@
         update uo_qywx_add_user_header set sms_content = #{smsContent}, contactway_id =  #{contactWayId}::integer, contactway_url = #{contactWayUrl}
         where id= #{headId}::integer
     </update>
+
+    <select id="getSendAndApplyData" resultType="map">
+        select schedule_date_wid date, apply_num applyNum, apply_pass_num applyPassNum, schedule_id scheduleId from uo_qywx_add_user_schedule where head_id = #{headId}::integer
+        order by schedule_date_wid asc
+    </select>
+
+    <select id="getStatisApplyData" resultType="map">
+        select statis_day day, stats_pass_num num, statis_pass_rate rate from uo_qywx_add_user_effect where head_id = #{headId}::integer and schedule_id = #{scheduleId}::integer
+        order by statis_day asc
+    </select>
 </mapper>
