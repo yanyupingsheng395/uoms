@@ -75,19 +75,16 @@ function getTableData() {
                 let res = "-";
                 switch (value) {
                     case "edit":
-                        res = "<span class=\"badge bg-info\">待计划</span>";
-                        break;
-                    case "todo":
-                        res = "<span class=\"badge bg-primary\">待执行</span>";
+                        res = "<span class=\"badge bg-info\">计划中</span>";
                         break;
                     case "doing":
                         res = "<span class=\"badge bg-warning\">执行中</span>";
                         break;
+                    case "stop":
+                        res = "<span class=\"badge bg-gray\">停止</span>";
+                        break;
                     case "done":
                         res = "<span class=\"badge bg-success\">执行完</span>";
-                        break;
-                    case "timeout":
-                        res = "<span class=\"badge bg-gray\">过期未执行</span>";
                         break;
                 }
                 return res;
@@ -124,4 +121,42 @@ function editTask() {
     }
     var id = selected[0].id;
     window.location.href = "/page/addCustom/edit?id=" + id;
+}
+
+function executeTask()
+{
+    var selected = $("#dataTable").bootstrapTable('getSelections');
+    if(selected[0].length === 0) {
+        $MB.n_warning("请先选择要执行的任务！");
+        return;
+    }
+    var id = selected[0].id;
+    var status=selected[0].taskStatus;
+
+    if(status!='edit'&&status!='stop')
+    {
+        $MB.n_warning("只有计划中或停止状态的任务才能被执行！");
+        return;
+    }
+    //提交后端进行执行
+    $MB.confirm({
+        title: '提示',
+        content: "确定要提交任务进行执行？"
+    }, function () {
+        //打开遮罩层
+        $MB.loadingDesc('show', '提交中，请稍候...');
+        $.post("/addUser/executeTask", {headId: id}, function (r) {
+            if(r.code === 200) {
+                $MB.n_success("任务已成功提交执行！");
+            }else
+            {
+                $MB.n_danger(r.msg);
+            }
+            $MB.loadingDesc('hide');
+        });
+
+    });
+
+
+
 }
