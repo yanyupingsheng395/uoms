@@ -30,7 +30,8 @@ public class AddUserHead {
     private long dailyAddUserCnt;
     private long dailyWaitDays;
     private long dailyAddTotal;
-    private long contactwayId;
+    private long contactWayId;
+    private String contactWayUrl;
     private String smsContent;
     private String sourceId;
     private String sourceName;

@@ -20,6 +20,9 @@
         <result column="daily_wait_days" jdbcType="DECIMAL" property="dailyWaitDays"/>
         <result column="daily_add_total" jdbcType="DECIMAL" property="dailyAddTotal"/>
         <result column="task_name" jdbcType="VARCHAR" property="taskName"/>
+        <result column="contactway_id" jdbcType="VARCHAR" property="contactWayId"/>
+        <result column="contactway_url" jdbcType="VARCHAR" property="contactWayUrl"/>
+        <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
     </resultMap>
 
     <resultMap id="paramMap" type="com.linksteady.operate.domain.QywxParam">
@@ -98,5 +101,10 @@
           daily_wait_days=#{waitDays},
           daily_add_total=#{addTotal}
        where id= #{headId}
+    </update>
+
+    <update id="updateSmsContentAndContactWay">
+        update uo_qywx_add_user_header set sms_content = #{smsContent}, contactway_id =  #{contactWayId}::integer, contactway_url = #{contactWayUrl}
+        where id= #{headId}::integer
     </update>
 </mapper>

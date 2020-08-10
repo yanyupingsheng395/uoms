@@ -37,5 +37,7 @@ public interface AddUserService {
      */
     void execTask(long headId) throws Exception;
 
-    void saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate);
+    AddUserHead saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate);
+
+    void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl);
 }

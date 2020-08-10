@@ -45,7 +45,7 @@ public class SourceConfigVO {
                 .setUnsubscribe(pushConfig.getUnsubscribe())
                 .setSignatureLen(StringUtils.isEmpty(pushConfig.getSignature())?0:pushConfig.getSignature().length())
                 .setUnsubscribeLen(StringUtils.isEmpty(pushConfig.getUnsubscribe())?0:pushConfig.getUnsubscribe().length())
-        ;
+                .setSmsLengthLimit(pushConfig.getSmsLengthLimit());
     }
 
     /**
@@ -159,6 +159,16 @@ public class SourceConfigVO {
      * @return
      */
     private Integer unsubscribeLen;
+
+    /**
+     * 短信最大长度
+     */
+    private Integer smsLengthLimit;
+
+    public SourceConfigVO setSmsLengthLimit(Integer smsLengthLimit) {
+        this.smsLengthLimit = smsLengthLimit;
+        return this;
+    }
 
     private SourceConfigVO setSourceName(String sourceName) {
         this.sourceName = sourceName;
@@ -340,5 +350,7 @@ public class SourceConfigVO {
         return unsubscribeLen;
     }
 
-
+    public Integer getSmsLengthLimit() {
+        return smsLengthLimit;
+    }
 }

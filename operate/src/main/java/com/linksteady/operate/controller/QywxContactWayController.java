@@ -23,6 +23,8 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 渠道活码
@@ -59,9 +61,10 @@ public class QywxContactWayController extends BaseController {
     public ResponseBo getHeadList(QueryRequest request) {
         int limit = request.getLimit();
         int offset = request.getOffset();
-        String qstate = request.getParam().get("qstate");
-        int count =qywxContactWayService.getContactWayCount(qstate);
-        List<QywxContactWay> list=qywxContactWayService.getContactWayList(limit,offset,qstate);
+        AtomicReference<String> qstate = new AtomicReference<>("");
+        Optional.ofNullable(request.getParam()).ifPresent(x -> qstate.set(x.get("qstate")));
+        int count =qywxContactWayService.getContactWayCount(qstate.get());
+        List<QywxContactWay> list=qywxContactWayService.getContactWayList(limit,offset, qstate.get());
         return ResponseBo.okOverPaging("", count,list);
     }
 

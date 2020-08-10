@@ -62,4 +62,6 @@ public interface AddUserMapper {
             int dailyAddNum,
             int waitDays,
             int addTotal);
+
+    void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl);
 }

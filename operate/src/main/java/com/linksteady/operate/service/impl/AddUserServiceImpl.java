@@ -161,7 +161,7 @@ public class AddUserServiceImpl implements AddUserService {
     }
 
     @Override
-    public void saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate) {
+    public AddUserHead saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate) {
         Integer dailyUserCntLong = Integer.parseInt(dailyUserCnt);
         Double dailyApplyRateDouble = Double.parseDouble(dailyApplyRate);
         int count = addUserMapper.getAddUserListCount(Long.parseLong(headId));
@@ -176,6 +176,13 @@ public class AddUserServiceImpl implements AddUserService {
         }
         //更新记录
         addUserMapper.updatePushParameter(Long.parseLong(headId), count, dailyUserCntLong, dailyApplyRateDouble, dailyAddNum, waitDays, addTotal);
+        return addUserMapper.getHeadById(Long.parseLong(headId));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl) {
+        addUserMapper.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
     }
 
     @Override

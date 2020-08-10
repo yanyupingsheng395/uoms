@@ -65,7 +65,12 @@ public class AddUserController {
 
     @RequestMapping("/saveDailyUserData")
     public ResponseBo saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate){
-        addUserService.saveDailyUserData(headId, dailyUserCnt, dailyApplyRate);
+        return ResponseBo.okWithData(null, addUserService.saveDailyUserData(headId, dailyUserCnt, dailyApplyRate));
+    }
+
+    @RequestMapping("/updateSmsContentAndContactWay")
+    public ResponseBo updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl) {
+        addUserService.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
         return ResponseBo.ok();
     }
 }

@@ -112,67 +112,100 @@ function getQrData() {
 
 // 获取二维码数据
 function selectQrCode() {
-    var settings = {
-        url: "/contactWay/getList",
-        cache: false,
-        clickToSelect:true,
+    let settings = {
+        url: '/contactWay/getList',
         pagination: true,
         singleSelect: true,
         sidePagination: "server",
-        pageNumber: 1,            //初始化加载第一页，默认第一页
-        pageSize: 10,            //每页的记录行数（*）
         pageList: [10, 25, 50, 100],
+        sortable: true,
+        sortOrder: "asc",
         queryParams: function (params) {
             return {
                 pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit) + 1,
-                param: {qstate:''}
+                pageNum: (params.offset / params.limit) + 1
             };
         },
-        columns: [
-            {
-                checkbox:true
-            },{
+        columns: [{
+            checkbox: true
+        },  {
             field: 'qrCode',
-            align: "center",
             title: '二维码样式',
-            formatter: function (value, row, index) {
-                return "<img src='"+value+"' width='100' height='100'>";
+            align: 'center',
+            formatter: function (value, row, indx)
+            {
+                return "<img style='width:120px;height:120px' src='"+value+"'><a href='/contactWay/download?configId="+row.configId+"' style='font-size: 12px;' target='_blank'>下载</a>" +
+                    "&nbsp;&nbsp;<a style='font-size: 12px;cursor: pointer;' data-clipboard-text='"+value+"' class='copy_btn'>复制二维码地址</a>";
             }
-        },{
+        }, {
+            field: 'shortUrl',
+            title: '海报短链接',
+            align: 'center',
+            formatter: function (value, row, indx) {
+                return "<a href=http://"+value+" target='_blank'>"+value+"</a>";
+            }
+        },  {
             field: 'usersList',
-            align: "center",
-            title: '可联系成员数（人）',
-            formatter: function (value, row, index) {
-                if(value !== '') {
-                    var tmp = value.split(",");
-                    return tmp.length;
+            title: '可联系成员',
+            align: 'center',
+            width: 240,
+            formatter: function (value,row,indx) {
+                let arr=value.split(',');
+                let result='';
+                if(null!=arr&&arr.length>0)
+                {
+                    for(let i=0;i<arr.length;i++)
+                    {
+                        if(i>=1)
+                        {
+                            result+= "&nbsp;&nbsp;<span><i class='mdi mdi-account' style='color:#33cabb'></i>"+arr[i]+"</span>";
+                        }else
+                        {
+                            result+= "<span><i class='mdi mdi-account' style='color:#33cabb'></i>"+arr[i]+"</span>";
+                        }
+
+
+                    }
+                }else
+                {
+                    result+= "<span><i class='mdi mdi-account' style='color:#33cabb'></i>"+value+"</span>";
                 }
+                return result;
             }
-        }, {
-            field: 'type',
-            align: "center",
+        },  {
+            field: 'contactType',
             title: '二维码类型',
-            formatter: function (value, row, index) {
-                if(value === '1') {
-                    return '单人';
-                }
-                if(value === '2') {
-                    return '多人';
+            align: 'center',
+            formatter: function (value,row,indx) {
+                if(value==='1')
+                {
+                    return "<span class=\"badge bg-info\">单人</span>";;
+                }else if(value==='2')
+                {
+                    return "<span class=\"badge bg-warning\">多人</span>";;
                 }
             }
-        }, {
+        },  {
             field: 'state',
-            align: "center",
-            title: '渠道'
-        }, {
-            field: 'remark',
-            align: "center",
-            title: '备注'
-        },{
+            title: '渠道',
+            align: 'center'
+        },  {
+            field: 'externalUserNum',
+            title: '添加客户人数',
+            align: 'center',
+            visible: false
+        },  {
             field: 'createDt',
-            align: "center",
-            title: '创建人'
+            title: '创建时间',
+            align: 'center'
+        },  {
+            field: 'contactWayId',
+            title: 'contactWayId',
+            visible: false
+        },  {
+            field: 'configId',
+            title: 'configId',
+            visible: false
         }]
     };
     $("#qrDataTable").bootstrapTable(settings);
@@ -184,12 +217,18 @@ function setQrCode() {
     var selected = $("#qrDataTable").bootstrapTable('getSelections');
     if(selected.length === 0) {
         $MB.n_warning("请选择二维码");
-        return;
+        return false;
     }
     $("#qrId").val(selected[0].contactWayId);
+    $.get("/coupon/getShortUrl", {url: selected[0].qrCode}, function(r) {
+        if(r.code === 200) {
+            $("#copyQrCodeBtn").attr("data-clipboard-text", r.data);
+            $("#qrCode").val(r.data);
+        }else {
+            $MB.n_danger(r['msg']);
+        }
+    });
     $("#selectQrModal").modal('hide');
-    $("#selectQrCodeBtn").attr("class", "btn btn-info btn-sm");
-    $("#selectQrCodeBtn").html('<i class="fa fa-check-square-o"></i>&nbsp;选择二维码');
 }
 
 var daily_user_cnt;
@@ -268,8 +307,15 @@ function userDataChange(dom, idx) {
 }
 // 调整每日转化用户数
 function saveDailyUserData() {
-    $.get("/addUser/saveDailyUserData", {headId: head_id, dailyUserCnt:daily_user_cnt, dailyApplyRate:daily_apply_rate}, function (r) {
+    var currentDailyUserCnt = $('input[name="dailyUserCnt"]').val();
+    var currentDailyApplyRate = $('input[name="dailyApplyRate"]').val();
+    var headId = head_id;
+    if(opType === 'update') {
+        headId = $("#headId").val();
+    }
+    $.get("/addUser/saveDailyUserData", {headId: headId, dailyUserCnt:currentDailyUserCnt, dailyApplyRate:currentDailyApplyRate}, function (r) {
         if(r.code === 200) {
+            $("#saveDailyUserBtn").attr("style", "display:none;");
             $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
             $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
             $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
@@ -428,4 +474,24 @@ function sourceClick(dom, id, name) {
     selected_source_name = name;
     $(dom).addClass('btn-info').removeClass('btn-secondary');
     $(dom).siblings().removeClass('btn-info').addClass('btn-secondary');
+}
+
+// 文案内容输入
+function smsContentInput(dom) {
+    $("#currentWordCnt").text($(dom).val().length);
+    $("#article").html($(dom).val() === '' ? "请输入消息内容...":$(dom).val());
+}
+
+// 更新文案值
+function updateSmsContent() {
+    var headId = head_id;
+    if(opType === 'update') {
+        headId = $("#headId").val();
+    }
+    $.post("/addUser/updateSmsContentAndContactWay", {headId: headId, smsContent: $("textarea[name='smsContent']").val(),
+    contactWayId: $("#qrId").val(), contactWayUrl: $("#qrCode").val()}, function (r) {
+        if(r.code == 200) {
+            $MB.n_success("更新成功！");
+        }
+    });
 }

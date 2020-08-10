@@ -82,7 +82,12 @@
                     <div class="col-sm-12 search-collapse" style="padding-bottom: 0;">
                         <div class="row">
                             <div class="col-md-3 pull-left">
-                                <h5 class="modal-title" style="margin-left: 0;margin-top:20px;">新建任务</h5>
+                                <h5 th:if="${opType eq 'save'}" class="modal-title" style="margin-left: 0;margin-top:20px;">
+                                    新建任务
+                                </h5>
+                                <h5 th:if="${opType eq 'update'}" class="modal-title" style="margin-left: 0;margin-top:20px;">
+                                    新建任务
+                                </h5>
                             </div>
                             <div class="col-md-3 pull-right">
                                 <div id="addStep"></div>
@@ -118,14 +123,16 @@
 <script src="/plugins/data-picker/main.js"></script>
 <div th:if="${opType eq 'update'}">
     <script>
-        var sendType = "[[${addUserConfig.sendType}]]";
+        var sendType = "[[${addUserHead.sendType}]]";
     </script>
 </div>
 <script>
     var opType = "[[${opType}]]";
+    var smsLengthLimit = "[[${smsLengthLimit}]]";
     var clipboard1 = new ClipboardJS('.copy_btn', {
-        container: document.getElementById('config-box')
+        container: document.getElementById('selectQrModal')
     });
+    new ClipboardJS('.copy_btn');
     clipboard1.on('success', function(e) {
         $MB.n_success("成功复制到粘贴板！");
     });
