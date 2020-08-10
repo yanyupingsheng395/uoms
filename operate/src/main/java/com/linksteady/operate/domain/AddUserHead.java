@@ -26,7 +26,7 @@ public class AddUserHead {
     private long deliveredUserCnt;
     private long waitUserCnt;
     private long dailyUserCnt;
-    private String dailyApplyRate;
+    private double dailyApplyRate;
     private long dailyAddUserCnt;
     private long dailyWaitDays;
     private long dailyAddTotal;
@@ -37,4 +37,6 @@ public class AddUserHead {
     private String regionId;
     private String regionName;
     private String sendType;
+
+    private int version;
 }
