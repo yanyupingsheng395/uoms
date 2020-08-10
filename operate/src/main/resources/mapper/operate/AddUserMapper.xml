@@ -181,7 +181,7 @@
            where
              id=#{headId}
     </update>
-    
+
     <insert id="pushToPushListLarge">
         INSERT INTO uo_op_push_list_large(
             PUSH_CONTENT,
@@ -238,4 +238,14 @@
              select 1 from uo_qywx_add_user_schedule s where s.head_id=uo_qywx_add_user_header.id and s.status='doing')
     </update>
 
+
+    <select id="getSendAndApplyData" resultType="map">
+        select schedule_date_wid date, apply_num applyNum, apply_pass_num applyPassNum, schedule_id scheduleId from uo_qywx_add_user_schedule where head_id = #{headId}::integer
+        order by schedule_date_wid asc
+    </select>
+
+    <select id="getStatisApplyData" resultType="map">
+        select statis_day day, stats_pass_num num, statis_pass_rate rate from uo_qywx_add_user_effect where head_id = #{headId}::integer and schedule_id = #{scheduleId}::integer
+        order by statis_day asc
+    </select>
 </mapper>

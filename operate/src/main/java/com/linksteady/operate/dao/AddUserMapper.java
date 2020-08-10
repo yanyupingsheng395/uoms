@@ -116,6 +116,10 @@ public interface AddUserMapper {
     void updateHeadToDone();
 
     void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl);
+
+    List<Map<String, Object>> getSendAndApplyData(String headId);
+
+    List<Map<String, Object>> getStatisApplyData(String headId, String scheduleId);
 }
 
 

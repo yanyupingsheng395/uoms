@@ -54,4 +54,6 @@ public interface AddUserService {
      * 计算任务的效果
      */
     void calculateAddUserEffect();
+
+    Map<String, Object> getTaskResultData(String headId);
 }

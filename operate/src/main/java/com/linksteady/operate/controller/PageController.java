@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -423,7 +424,10 @@ public class PageController extends BaseController {
      *添加外部联系人-效果
      */
     @RequestMapping("/addCustom/effect")
-    public String addCustomEffect() {
+    public String addCustomEffect(String id, Model model) {
+        Map<String, Object> data = addUserService.getTaskResultData(id);
+        model.addAttribute("id", id);
+        model.addAttribute("data", data);
         return "operate/addCustom/effect";
     }
 

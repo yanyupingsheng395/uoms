@@ -86,7 +86,7 @@
                                     新建任务
                                 </h5>
                                 <h5 th:if="${opType eq 'update'}" class="modal-title" style="margin-left: 0;margin-top:20px;">
-                                    新建任务
+                                    编辑任务
                                 </h5>
                             </div>
                             <div class="col-md-3 pull-right">
@@ -124,6 +124,9 @@
 <div th:if="${opType eq 'update'}">
     <script>
         var sendType = "[[${addUserHead.sendType}]]";
+        var smsContent = "[[${addUserHead.smsContent}]]";
+        var smsLen = (smsContent === '') ? 0 : smsContent.length;
+        $("#currentWordCnt").text(smsLen);
     </script>
 </div>
 <script>
